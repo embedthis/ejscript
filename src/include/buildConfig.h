@@ -67,9 +67,9 @@
     #define BLD_VER_PREFIX "/usr/lib/ejs/1.1.0"
     #define BLD_WEB_PREFIX "/var/www/ejs-default"
 
-    #define BLD_BUILD_BIN_DIR "/Users/mob/hg/ejs/bin"
-    #define BLD_BUILD_LIB_DIR "/Users/mob/hg/ejs/lib"
-    #define BLD_BUILD_MOD_DIR "/Users/mob/hg/ejs/modules"
+    #define BLD_BUILD_BIN_DIR "/Users/mob/git/ejs/bin"
+    #define BLD_BUILD_LIB_DIR "/Users/mob/git/ejs/lib"
+    #define BLD_BUILD_MOD_DIR "/Users/mob/git/ejs/modules"
 
     #define BLD_FEATURE_ASSERT 1
     #define BLD_FEATURE_COMPLETE_NATIVE 1
@@ -141,12 +141,12 @@
     #define 	BLD_JEM_DIR ${BLD_TOP}/jlocal
     #define 	BLD_LIB_DIR ${BLD_TOP}/lib
     #define 	BLD_INC_DIR ${BLD_TOP}/src/include
-    #define 	BLD_ABS_BIN_DIR "/Users/mob/hg/ejs/bin"
-    #define 	BLD_ABS_LIB_DIR "/Users/mob/hg/ejs/lib"
-    #define 	BLD_ABS_OBJ_DIR "/Users/mob/hg/ejs/obj"
-    #define 	BLD_ABS_MOD_DIR "/Users/mob/hg/ejs/modules"
-    #define 	BLD_ABS_JEM_DIR "/Users/mob/hg/ejs/jlocal"
-    #define 	BLD_ABS_INC_DIR "/Users/mob/hg/ejs/src/include"
+    #define 	BLD_ABS_BIN_DIR "/Users/mob/git/ejs/bin"
+    #define 	BLD_ABS_LIB_DIR "/Users/mob/git/ejs/lib"
+    #define 	BLD_ABS_OBJ_DIR "/Users/mob/git/ejs/obj"
+    #define 	BLD_ABS_MOD_DIR "/Users/mob/git/ejs/modules"
+    #define 	BLD_ABS_JEM_DIR "/Users/mob/git/ejs/jlocal"
+    #define 	BLD_ABS_INC_DIR "/Users/mob/git/ejs/src/include"
 
     #define     BLD_FEATURE_ROMFS 0
 
@@ -197,7 +197,7 @@
     #define 	BLD_FEATURE_MPR 1
     #define 	BLD_MPR "src/deps/mpr"
     #define 	BLD_MPR_BUILTIN 1
-    #define 	BLD_MPR_LIBPATHS "/Users/mob/hg/ejs/src/deps/mpr/lib"
+    #define 	BLD_MPR_LIBPATHS "/Users/mob/git/ejs/src/deps/mpr/lib"
     #define 	BLD_MPR_LIBS "mpr"
     #define 	BLD_MPR_WITH "1"
 
@@ -210,62 +210,42 @@
     #define 	BLD_HTTP_WITH "1"
     #define 	BLD_HTTP_WITHLIBS "pcre"
 
-    #define 	BLD_FEATURE_MATRIXSSL 1
-    #define 	BLD_MATRIXSSL "/Users/mob/hg/ejs/extensions/matrixssl/latest"
-    #define 	BLD_MATRIXSSL_BUILTIN 1
-    #define 	BLD_MATRIXSSL_IFLAGS "-I/Users/mob/hg/ejs/extensions/matrixssl/latest"
-    #define 	BLD_MATRIXSSL_IMPORTS " ${BLD_TOP}/extensions/matrixssl/latest/src/libmatrixsslstatic.a"
-    #define 	BLD_MATRIXSSL_LIBS "matrixsslstatic.a"
-    #define 	BLD_MATRIXSSL_WITH "1"
+    #define 	BLD_FEATURE_MATRIXSSL 0
 
-    #define 	BLD_FEATURE_OPENSSL 1
-    #define 	BLD_OPENSSL "/Users/mob/hg/ejs/extensions/openssl/latest"
-    #define 	BLD_OPENSSL_BUILTIN 1
-    #define 	BLD_OPENSSL_IFLAGS "-I/Users/mob/hg/ejs/extensions/openssl/latest/include"
-    #define 	BLD_OPENSSL_IMPORTS " ${BLD_TOP}/extensions/openssl/latest/libssl.a ${BLD_TOP}/extensions/openssl/latest/libcrypto.a"
-    #define 	BLD_OPENSSL_LIBS "ssl.a crypto.a"
-    #define 	BLD_OPENSSL_WITH "1"
+    #define 	BLD_FEATURE_OPENSSL 0
 
-    #define 	BLD_FEATURE_SSL 1
-    #define 	BLD_SSL "src/ssl"
-    #define 	BLD_SSL_BUILTIN 1
-    #define 	BLD_SSL_DEPENDENCIES " openssl matrixssl mpr"
-    #define 	BLD_SSL_LIBPATHS "/Users/mob/hg/ejs/src/deps/mpr/lib"
-    #define 	BLD_SSL_LIBS "mprssl ssl.a crypto.a matrixsslstatic.a mpr"
-    #define 	BLD_SSL_WITH "1"
-    #define 	BLD_SSL_WITHLIBS "ssl.a crypto.a matrixsslstatic.a mpr"
-    #define 	BLD_SSL_WITHPATHS "/Users/mob/hg/ejs/src/deps/mpr/lib"
+    #define 	BLD_FEATURE_SSL 0
 
     #define 	BLD_FEATURE_SQLITE 1
-    #define 	BLD_SQLITE "/Users/mob/hg/ejs/src/jems/ejs.db.sqlite/src"
+    #define 	BLD_SQLITE "/Users/mob/git/ejs/src/jems/ejs.db.sqlite/src"
     #define 	BLD_SQLITE_BUILTIN 1
     #define 	BLD_SQLITE_DEPENDENCIES "mpr"
-    #define 	BLD_SQLITE_LIBPATHS "/Users/mob/hg/ejs/src/deps/mpr/lib"
+    #define 	BLD_SQLITE_LIBPATHS "/Users/mob/git/ejs/src/deps/mpr/lib"
     #define 	BLD_SQLITE_LIBS "sqlite3 mpr"
     #define 	BLD_SQLITE_WITH "1"
     #define 	BLD_SQLITE_WITHLIBS "mpr"
-    #define 	BLD_SQLITE_WITHPATHS "/Users/mob/hg/ejs/src/deps/mpr/lib"
+    #define 	BLD_SQLITE_WITHPATHS "/Users/mob/git/ejs/src/deps/mpr/lib"
 
     #define 	BLD_FEATURE_APPWEB 1
     #define 	BLD_APPWEB "src/deps/appweb"
     #define 	BLD_APPWEB_BUILTIN 1
     #define 	BLD_APPWEB_DEPENDENCIES "mpr http"
-    #define 	BLD_APPWEB_LIBPATHS "/Users/mob/hg/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
-    #define 	BLD_APPWEB_LIBS "appweb mprssl ssl.a crypto.a matrixsslstatic.a mpr http pcre"
+    #define 	BLD_APPWEB_LIBPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
+    #define 	BLD_APPWEB_LIBS "appweb mpr http pcre"
     #define 	BLD_APPWEB_OPTIONAL_DEPENDENCIES "ssl"
     #define 	BLD_APPWEB_WITH "1"
-    #define 	BLD_APPWEB_WITHLIBS "mprssl ssl.a crypto.a matrixsslstatic.a mpr http pcre"
-    #define 	BLD_APPWEB_WITHPATHS "/Users/mob/hg/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
+    #define 	BLD_APPWEB_WITHLIBS "mpr http pcre"
+    #define 	BLD_APPWEB_WITHPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
 
     #define 	BLD_FEATURE_EJS 1
-    #define 	BLD_EJS "/Users/mob/hg/ejs"
+    #define 	BLD_EJS "/Users/mob/git/ejs"
     #define 	BLD_EJS_BUILTIN 1
     #define 	BLD_EJS_DEPENDENCIES "mpr http"
-    #define 	BLD_EJS_LIBPATHS "/Users/mob/hg/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
-    #define 	BLD_EJS_LIBS "ejs mprssl ssl.a crypto.a matrixsslstatic.a mpr http pcre"
+    #define 	BLD_EJS_LIBPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
+    #define 	BLD_EJS_LIBS "ejs mpr http pcre"
     #define 	BLD_EJS_OPTIONAL_DEPENDENCIES "ssl"
     #define 	BLD_EJS_WITH "1"
-    #define 	BLD_EJS_WITHLIBS "mprssl ssl.a crypto.a matrixsslstatic.a mpr http pcre"
-    #define 	BLD_EJS_WITHPATHS "/Users/mob/hg/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
+    #define 	BLD_EJS_WITHLIBS "mpr http pcre"
+    #define 	BLD_EJS_WITHPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
 
 

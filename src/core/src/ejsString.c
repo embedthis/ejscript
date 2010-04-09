@@ -731,7 +731,7 @@ static EjsObj *isAlpha(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return (EjsObj*) ejs->falseValue;
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (!isalpha((int) *cp)) {
+        if (*cp & 0x80 || !isalpha((int) *cp)) {
             return (EjsObj*) ejs->falseValue;
         }
     }
@@ -747,7 +747,7 @@ static EjsObj *isAlphaNum(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return (EjsObj*) ejs->falseValue;
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (!isalnum((int) *cp)) {
+        if (*cp & 0x80 || !isalnum((int) *cp)) {
             return (EjsObj*) ejs->falseValue;
         }
     }
@@ -763,7 +763,7 @@ static EjsObj *isDigit(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return (EjsObj*) ejs->falseValue;
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (!isdigit((int) *cp)) {
+        if (*cp & 0x80 || !isdigit((int) *cp)) {
             return (EjsObj*) ejs->falseValue;
         }
     }
@@ -795,7 +795,7 @@ static EjsObj *isSpace(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return (EjsObj*) ejs->falseValue;
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (!isspace((int) *cp)) {
+        if (*cp & 0x80 || !isspace((int) *cp)) {
             return (EjsObj*) ejs->falseValue;
         }
     }

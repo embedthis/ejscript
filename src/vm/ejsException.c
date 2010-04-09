@@ -185,11 +185,7 @@ EjsObj *ejsThrowMemoryError(Ejs *ejs)
         Don't do double exceptions for memory errors
      */
     if (ejs->exception == 0) {
-#if BLD_WIN_LIKE
-        va_list dummy = {0};
-#else
-        va_list dummy = {{0}};
-#endif
+        va_list dummy = VA_NULL;
         return ejsCreateException(ejs, ES_MemoryError, NULL, dummy);
     }
     return ejs->exception;

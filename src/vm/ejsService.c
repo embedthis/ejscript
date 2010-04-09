@@ -403,11 +403,7 @@ static void allocFailure(Ejs *ejs, uint size, uint total, bool granted)
     MprAlloc    *alloc;
     EjsObj      *argv[2], *thisObj;
     char        msg[MPR_MAX_STRING];
-#if BLD_WIN_LIKE
-    va_list     dummy = {0};
-#else
-    va_list     dummy = {{0}};
-#endif
+    va_list     dummy = VA_NULL;
 
     alloc = mprGetAllocStats(ejs);
     if (granted) {

@@ -2752,9 +2752,7 @@ EjsBlock *ejsPopBlock(Ejs *ejs)
     EjsBlock    *bp;
 
     bp = ejs->state->bp;
-    if (bp->prev) {
-        ejs->state->stack = bp->stackBase;
-    }
+    ejs->state->stack = bp->stackBase;
     return ejs->state->bp = bp->prev;
 }
 
@@ -3022,6 +3020,7 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
         return;
     }
     block->prev = block->scopeChain = state->bp;
+    block->stackBase = state->stack;
     state->bp = block;
 
     /*

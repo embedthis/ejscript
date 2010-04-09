@@ -266,11 +266,7 @@ EjsObj *ejsThrowMemoryError(Ejs *ejs)
         Don't do double exceptions for memory errors
      */
     if (ejs->exception == 0) {
-#if BLD_WIN_LIKE
-        va_list dummy = {0};
-#else
-        va_list dummy = {{0}};
-#endif
+        va_list dummy = VA_NULL;
         return ejsCreateException(ejs, ES_MemoryError, NULL, dummy);
     }
     return ejs->exception;
@@ -4258,9 +4254,7 @@ EjsBlock *ejsPopBlock(Ejs *ejs)
     EjsBlock    *bp;
 
     bp = ejs->state->bp;
-    if (bp->prev) {
-        ejs->state->stack = bp->stackBase;
-    }
+    ejs->state->stack = bp->stackBase;
     return ejs->state->bp = bp->prev;
 }
 
@@ -4528,6 +4522,7 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
         return;
     }
     block->prev = block->scopeChain = state->bp;
+    block->stackBase = state->stack;
     state->bp = block;
 
     /*
@@ -8658,11 +8653,7 @@ static void allocFailure(Ejs *ejs, uint size, uint total, bool granted)
     MprAlloc    *alloc;
     EjsObj      *argv[2], *thisObj;
     char        msg[MPR_MAX_STRING];
-#if BLD_WIN_LIKE
-    va_list     dummy = {0};
-#else
-    va_list     dummy = {{0}};
-#endif
+    va_list     dummy = VA_NULL;
 
     alloc = mprGetAllocStats(ejs);
     if (granted) {
@@ -26964,7 +26955,7 @@ static EjsObj *isAlpha(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return (EjsObj*) ejs->falseValue;
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (!isalpha((int) *cp)) {
+        if (*cp & 0x80 || !isalpha((int) *cp)) {
             return (EjsObj*) ejs->falseValue;
         }
     }
@@ -26980,7 +26971,7 @@ static EjsObj *isAlphaNum(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return (EjsObj*) ejs->falseValue;
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (!isalnum((int) *cp)) {
+        if (*cp & 0x80 || !isalnum((int) *cp)) {
             return (EjsObj*) ejs->falseValue;
         }
     }
@@ -26996,7 +26987,7 @@ static EjsObj *isDigit(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return (EjsObj*) ejs->falseValue;
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (!isdigit((int) *cp)) {
+        if (*cp & 0x80 || !isdigit((int) *cp)) {
             return (EjsObj*) ejs->falseValue;
         }
     }
@@ -27028,7 +27019,7 @@ static EjsObj *isSpace(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
         return (EjsObj*) ejs->falseValue;
     }
     for (cp = sp->value; cp < &sp->value[sp->length]; cp++) {
-        if (!isspace((int) *cp)) {
+        if (*cp & 0x80 || !isspace((int) *cp)) {
             return (EjsObj*) ejs->falseValue;
         }
     }
@@ -57291,13 +57282,11 @@ void ecReportError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNum
 #if FUTURE_WITH_ERROR_CODES
     if (currentLine) {
         highlightPtr = makeHighlight(cp, (char*) currentLine, column);
-        errorMsg = mprAsprintf(cp, -1, "%s: %s: %d: %d: %s: %s\n  %s  \n  %s\n", appName, filename, lineNumber, errCode, severity,
-            msg, currentLine, highlightPtr);
-
+        errorMsg = mprAsprintf(cp, -1, "%s: %s: %d: %d: %s: %s\n  %s  \n  %s\n", appName, filename, lineNumber, 
+            errCode, severity, msg, currentLine, highlightPtr);
     } else if (lineNumber >= 0) {
         errorMsg = mprAsprintf(cp, -1, "%s: %s: %d: %d: %s: %s\n", appName, filename, lineNumber, errCode, severity, msg);
-
-     else {
+    } else {
         errorMsg = mprAsprintf(cp, -1, "%s: %s: 0: %d: %s: %s\n", appName, filename, errCode, severity, msg);
     }
 #else
@@ -57305,10 +57294,8 @@ void ecReportError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNum
         highlightPtr = makeHighlight(cp, (char*) currentLine, column);
         errorMsg = mprAsprintf(cp, -1, "%s: %s: %d: %s: %s\n  %s  \n  %s\n", appName, filename, lineNumber, severity,
             msg, currentLine, highlightPtr);
-
     } else if (lineNumber >= 0) {
         errorMsg = mprAsprintf(cp, -1, "%s: %s: %d: %s: %s\n", appName, filename, lineNumber, severity, msg);
-
     } else {
         errorMsg = mprAsprintf(cp, -1, "%s: %s: 0: %s: %s\n", appName, filename, severity, msg);
     }

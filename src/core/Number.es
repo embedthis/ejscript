@@ -27,30 +27,30 @@ module ejs {
             Return the maximim value this number type can assume. Alias for MaxValue.
             An object of the appropriate number with its value set to the maximum value allowed.
          */
-        static const MAX_VALUE: Number = MaxValue
+        static var /* const */ MAX_VALUE: Number = MaxValue
 
         /**
             Return the minimum value this number type can assume. Alias for MinValue.
             An object of the appropriate number with its value set to the minimum value allowed.
          */
-        static const MIN_VALUE: Number = MinValue
+        static var /* const */ MIN_VALUE: Number = MinValue
 
         /**
             Not a Number. This is the result of an arithmetic expression which has no value.
          */
-        static const NaN : Number = NaN
+        static var /* const */ NaN : Number = NaN
 
         /**
             Return a unique value which is less than or equal then any value which the number can assume. 
             @return A number with its value set to -Infinity. If the numeric type is integral, then return zero.
          */
-        static const NEGATIVE_INFINITY: Number = NegativeInfinity
+        static var /* const */ NEGATIVE_INFINITY: Number = NegativeInfinity
 
         /**
             Return a unique value which is greater then any value which the number can assume. 
             @return A number with its value set to Infinity. If the numeric type is integral, then return MaxValue.
          */
-        static const POSITIVE_INFINITY: Number = Infinity
+        static var /* const */ POSITIVE_INFINITY: Number = Infinity
 
         /**
             Return the maximim value this number type can assume.
