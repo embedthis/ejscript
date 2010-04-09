@@ -1,0 +1,2326 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ec_node" kind="struct" prot="public">
+    <compoundname>EcNode</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ec_node_144829da3a3f13203411e51509ab7057c" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::arg</definition>
+        <argsstring></argsstring>
+        <name>arg</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5139" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5139" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_103abbbd47f3dd8781e9a94f726a8ca9e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::attributes</definition>
+        <argsstring></argsstring>
+        <name>attributes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4874" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4874" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1867db6ce9e6016f0e83df89d0a159dc9" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@14</type>
+        <definition>struct EcNode::@14  EcNode::binary</definition>
+        <argsstring></argsstring>
+        <name>binary</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4937"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_17567aadd991ff8fe080402c3804dfaab" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EcNode::blockCreated</definition>
+        <argsstring></argsstring>
+        <name>blockCreated</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4872" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4872" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_11255bab11397cd42b089276ef5b2d561" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::blockLess</definition>
+        <argsstring></argsstring>
+        <name>blockLess</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5239" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1554daeec1371c709ccc239856d198b96" prot="public" static="no" mutable="no">
+        <type>EjsBlock *</type>
+        <definition>EjsBlock* EcNode::blockRef</definition>
+        <argsstring></argsstring>
+        <name>blockRef</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4870" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4870" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_14c67ab748556b937110081bb67b89496" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::body</definition>
+        <argsstring></argsstring>
+        <name>body</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4946" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4946" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_179e63b07b93690f7b24db018917b3899" prot="public" static="no" mutable="no">
+        <type>struct EcCodeGen *</type>
+        <definition>struct EcCodeGen* EcNode::bodyCode</definition>
+        <argsstring></argsstring>
+        <name>bodyCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4948" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4948" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1b73260f807beb0ae737f82287cab8668" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@33</type>
+        <definition>struct EcNode::@33  EcNode::call</definition>
+        <argsstring></argsstring>
+        <name>call</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5146"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1d6c3bfa887f28274e9d2e357623d8976" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::call</definition>
+        <argsstring></argsstring>
+        <name>call</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5060" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5060" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1b75a39be31f4d09700e015b89c25d5f5" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::callConstructors</definition>
+        <argsstring></argsstring>
+        <name>callConstructors</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5123" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5123" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_16449c69592334acb6cdbd1f497ce4490" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@37</type>
+        <definition>struct EcNode::@37  EcNode::caseLabel</definition>
+        <argsstring></argsstring>
+        <name>caseLabel</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5188"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1ce3fa0d45f093745b609d4856445c82f" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@32</type>
+        <definition>struct EcNode::@32  EcNode::catchBlock</definition>
+        <argsstring></argsstring>
+        <name>catchBlock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5140"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_128ce6f4da6a0d685c3d2ca4f4be84f39" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::catchClauses</definition>
+        <argsstring></argsstring>
+        <name>catchClauses</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5131" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5131" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1d0d9c3993b17657e2c777f36a2ad3f72" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EcNode::children</definition>
+        <argsstring></argsstring>
+        <name>children</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5251" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5251" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1523ab35aba372c676216ece6266d7feb" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EcNode::classMethods</definition>
+        <argsstring></argsstring>
+        <name>classMethods</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5099" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5099" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f5f4391c18b4259f48572ec0d29bd1e0" prot="public" static="no" mutable="no">
+        <type>struct EcCodeGen *</type>
+        <definition>struct EcCodeGen* EcNode::code</definition>
+        <argsstring></argsstring>
+        <name>code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5269" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5269" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_16f5ff6969e1c991c1f95081e58fdd7ae" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::column</definition>
+        <argsstring></argsstring>
+        <name>column</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5255" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5255" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_12e85a55f0c21c683498abc3f7f9e602e" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::cond</definition>
+        <argsstring></argsstring>
+        <name>cond</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4958" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4958" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_13ace6a948a0ea01bbd91e1b2a7ee4e00" prot="public" static="no" mutable="no">
+        <type>struct EcCodeGen *</type>
+        <definition>struct EcCodeGen* EcNode::condCode</definition>
+        <argsstring></argsstring>
+        <name>condCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4961" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4961" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_15209a52877117ea81906ca2305111ad9" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::constructor</definition>
+        <argsstring></argsstring>
+        <name>constructor</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5101" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5101" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1705d96f8d5e815ffc39c83662d340d24" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::constructorSettings</definition>
+        <argsstring></argsstring>
+        <name>constructorSettings</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5070" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5070" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1d46508baab7ce32b8631200b3e477be0" prot="public" static="no" mutable="no">
+        <type>struct EcCompiler *</type>
+        <definition>struct EcCompiler* EcNode::cp</definition>
+        <argsstring></argsstring>
+        <name>cp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5253" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5253" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1be994b715881c47e007404e84b7b76d8" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EcNode::createBlockObject</definition>
+        <argsstring></argsstring>
+        <name>createBlockObject</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4871" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4871" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_17e9b3bb32f0bb58b1f6f4c2318990b65" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::currentLine</definition>
+        <argsstring></argsstring>
+        <name>currentLine</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4864" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4864" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f416cb2679b1ca920ff66ac61c5f3386" prot="public" static="no" mutable="no">
+        <type>MprBuf *</type>
+        <definition>MprBuf* EcNode::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5209" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_10f8be76322991f38bbf01ebbbafdcc2c" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::decimalContext</definition>
+        <argsstring></argsstring>
+        <name>decimalContext</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5017" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5017" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1cb4fc758dbfbfa3618c64acd5c8255c4" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@21</type>
+        <definition>struct EcNode::@21  EcNode::def</definition>
+        <argsstring></argsstring>
+        <name>def</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5008"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1b33534148cf8397253b51ac6e7945a29" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EcNode::dependencies</definition>
+        <argsstring></argsstring>
+        <name>dependencies</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5151" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f9bca7a7af22973e9e7f4f75139be469" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EcNode::disabled</definition>
+        <argsstring></argsstring>
+        <name>disabled</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4997" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4997" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1ec8f45c2116255ea4011f160db505d1c" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::doc</definition>
+        <argsstring></argsstring>
+        <name>doc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5274" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5274" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f1647848a07d05e0bc54da9be35347cb" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@17</type>
+        <definition>struct EcNode::@17  EcNode::doWhile</definition>
+        <argsstring></argsstring>
+        <name>doWhile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4973"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_180418e1f276c464cbab46b5584bb4863" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::dummmy</definition>
+        <argsstring></argsstring>
+        <name>dummmy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5145" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5145" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1299bbbde261024838a91d27053868977" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::dummy</definition>
+        <argsstring></argsstring>
+        <name>dummy</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4979" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4979" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_17668e3775cb66eae79a73cbf120380f4" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::each</definition>
+        <argsstring></argsstring>
+        <name>each</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4942" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4942" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_151d292a2ed08e2ae1e33c24694db5525" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::elseBlock</definition>
+        <argsstring></argsstring>
+        <name>elseBlock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4987" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4987" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1fce73b5551283917926615b0294739ed" prot="public" static="no" mutable="no">
+        <type>struct EcCodeGen *</type>
+        <definition>struct EcCodeGen* EcNode::elseCode</definition>
+        <argsstring></argsstring>
+        <name>elseCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4989" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4989" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1e61eb3398739a0b8a523421094409a34" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::enabled</definition>
+        <argsstring></argsstring>
+        <name>enabled</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5266" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5266" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_13346184dadbd53120e66fde32b141c88" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@31</type>
+        <definition>struct EcNode::@31  EcNode::exception</definition>
+        <argsstring></argsstring>
+        <name>exception</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5134"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_17fa87f17ab54a3b55c8011f3fc6f1076" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@44</type>
+        <definition>struct EcNode::@44  EcNode::expr</definition>
+        <argsstring></argsstring>
+        <name>expr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5245"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1a236d0aac20635849046fd8b82519bde" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::expr</definition>
+        <argsstring></argsstring>
+        <name>expr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4995" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4995" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_124215dc32bfc8f103d30fcc82c69e59a" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::expression</definition>
+        <argsstring></argsstring>
+        <name>expression</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5184" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5184" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1cb316f5213318321a63c178c9afe1734" prot="public" static="no" mutable="no">
+        <type>struct EcCodeGen *</type>
+        <definition>struct EcCodeGen* EcNode::expressionCode</definition>
+        <argsstring></argsstring>
+        <name>expressionCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5186" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5186" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_11de2722d8c8f301079a466dc8756a476" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::expressionRef</definition>
+        <argsstring></argsstring>
+        <name>expressionRef</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5076" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5076" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1a196427ba5a6ca38c11a430bd6c0e506" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::extends</definition>
+        <argsstring></argsstring>
+        <name>extends</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5095" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5095" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1215997a685af316a23c04df3a1bccfc8" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@41</type>
+        <definition>struct EcNode::@41  EcNode::field</definition>
+        <argsstring></argsstring>
+        <name>field</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5229"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_13d618da390e50bea2b0d95bd3359cecf" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::fieldKind</definition>
+        <argsstring></argsstring>
+        <name>fieldKind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5225" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5225" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_15f8392581270fe8dd717bc9b7937bb18" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::fieldName</definition>
+        <argsstring></argsstring>
+        <name>fieldName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5227" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5227" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1e381dd4eb7430e4158b18ca2493414c3" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::filename</definition>
+        <argsstring></argsstring>
+        <name>filename</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5029" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5029" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1ee545c8182db41c85a1a5891ff8ae3eb" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EcNode::filename</definition>
+        <argsstring></argsstring>
+        <name>filename</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4863" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4863" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1d0f3bb61b3df530f6c17996cc309853f" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::finallyBlock</definition>
+        <argsstring></argsstring>
+        <name>finallyBlock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5132" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5132" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_10343d296b2a1f57f83f19875f766c257" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@15</type>
+        <definition>struct EcNode::@15  EcNode::forInLoop</definition>
+        <argsstring></argsstring>
+        <name>forInLoop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4949"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_18e95a20e62b7c686f1f1704e164a3117" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@16</type>
+        <definition>struct EcNode::@16  EcNode::forLoop</definition>
+        <argsstring></argsstring>
+        <name>forLoop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4964"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1b9bf6e692a37989520810cf0580a2451" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@26</type>
+        <definition>struct EcNode::@26  EcNode::function</definition>
+        <argsstring></argsstring>
+        <name>function</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5078"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1969b7682257f79cc429fe01c0bf6705b" prot="public" static="no" mutable="no">
+        <type>EjsFunction *</type>
+        <definition>EjsFunction* EcNode::functionVar</definition>
+        <argsstring></argsstring>
+        <name>functionVar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5075" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5075" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1fe625090b9178f3f6cdafe60236a8b4e" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::getter</definition>
+        <argsstring></argsstring>
+        <name>getter</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5058" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5058" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_10f860f0a8589585a006ce0711b691a01" prot="public" static="no" mutable="no">
+        <type>EjsName *</type>
+        <definition>EjsName* EcNode::globalProp</definition>
+        <argsstring></argsstring>
+        <name>globalProp</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5273" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5273" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_156b093a5e34cac2dc99de198852f970d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::groupMask</definition>
+        <argsstring></argsstring>
+        <name>groupMask</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4890" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4890" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1d6a80108599143d096897f92f921872c" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::has</definition>
+        <argsstring></argsstring>
+        <name>has</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5061" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5061" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f40afb6a780a7920ed0dcbc11ada5976" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@20</type>
+        <definition>struct EcNode::@20  EcNode::hash</definition>
+        <argsstring></argsstring>
+        <name>hash</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4998"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1b210698e3ccd0e709fe910ac0a764728" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::hasRest</definition>
+        <argsstring></argsstring>
+        <name>hasRest</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5062" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5062" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_18513be5c98d09e011c06f1abff4dfd57" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::hasReturn</definition>
+        <argsstring></argsstring>
+        <name>hasReturn</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5063" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5063" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_10ecc6809aa2f71b08b3e88f11f2fa35e" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::implements</definition>
+        <argsstring></argsstring>
+        <name>implements</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5096" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5096" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1b490e52ecb0bebe504da6e3a92c7da65" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::index</definition>
+        <argsstring></argsstring>
+        <name>index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4878" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4878" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1082620da1cbd8eb9035747148daf5b33" prot="public" static="no" mutable="no">
+        <type>struct EcCodeGen *</type>
+        <definition>struct EcCodeGen* EcNode::initCode</definition>
+        <argsstring></argsstring>
+        <name>initCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4947" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4947" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1289e5162b64e376b046d660182037b42" prot="public" static="no" mutable="no">
+        <type>EjsFunction *</type>
+        <definition>EjsFunction* EcNode::initializer</definition>
+        <argsstring></argsstring>
+        <name>initializer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5105" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1579afadbccd357b888d773c35410b16b" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::initializer</definition>
+        <argsstring></argsstring>
+        <name>initializer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4957" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4957" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_127f41da67fbc84019fa46c9525135e9e" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EcNode::instanceProperties</definition>
+        <argsstring></argsstring>
+        <name>instanceProperties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5098" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5098" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1d0018137e049c0662060c6da1af22fab" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::instanceVar</definition>
+        <argsstring></argsstring>
+        <name>instanceVar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4918" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4918" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_147b4ea1c6bb52b82a77a97007b42b753" prot="public" static="no" mutable="no">
+        <type>EjsNamespace *</type>
+        <definition>EjsNamespace* EcNode::internalSpace</definition>
+        <argsstring></argsstring>
+        <name>internalSpace</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5108" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f978a83fad62d0cbf4a58b4fdb7a12cf" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::isAttribute</definition>
+        <argsstring></argsstring>
+        <name>isAttribute</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4914" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4914" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_15a38cf906182ed0d9a43ba1ea4c47f18" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::isConstructor</definition>
+        <argsstring></argsstring>
+        <name>isConstructor</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5065" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5065" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_19187205fa5318524ea9d6e993f0d4e10" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::isDefault</definition>
+        <argsstring></argsstring>
+        <name>isDefault</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5050" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5050" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f141ace68602aa9c6da652037bacb9b1" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::isDefaultConstructor</definition>
+        <argsstring></argsstring>
+        <name>isDefaultConstructor</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5066" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5066" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f92ab4b735ac22d4efedb4148518ea70" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::isInterface</definition>
+        <argsstring></argsstring>
+        <name>isInterface</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5102" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5102" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_171abd301a36a4bdd57ae9e338c55e307" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::isLiteral</definition>
+        <argsstring></argsstring>
+        <name>isLiteral</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5051" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5051" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_13dbbd82b94a7c6faeb98c2ea8ca9437f" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::isMethod</definition>
+        <argsstring></argsstring>
+        <name>isMethod</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5064" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5064" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_12ab223e4410f060412050d46ce64c979" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::isNamespace</definition>
+        <argsstring></argsstring>
+        <name>isNamespace</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4916" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4916" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_130b18df31bbf42e224b6395f9ccdc444" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::isRest</definition>
+        <argsstring></argsstring>
+        <name>isRest</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4919" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4919" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_151508f65aaf4680697b1d6eb2aaa37aa" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::isType</definition>
+        <argsstring></argsstring>
+        <name>isType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4915" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4915" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_11f67b03877315a7bd40c4219b39a0181" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::iterGet</definition>
+        <argsstring></argsstring>
+        <name>iterGet</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4944" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4944" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f4512ad4b49fa102f8cfa4b97df1ee4c" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::iterNext</definition>
+        <argsstring></argsstring>
+        <name>iterNext</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4945" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4945" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1c8b24d9820d9346886b935b959c5b176" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::iterVar</definition>
+        <argsstring></argsstring>
+        <name>iterVar</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4943" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4943" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1898d8604fe673d3450b2393e1dbbf565" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::jumpLength</definition>
+        <argsstring></argsstring>
+        <name>jumpLength</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5270" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5270" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_112dc5af6cad475750610a78ce02a8707" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::kind</definition>
+        <argsstring></argsstring>
+        <name>kind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5185" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5185" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_17081f7745f620629a3e044e74fbf4f50" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::kindName</definition>
+        <argsstring></argsstring>
+        <name>kindName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4855" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4855" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1cba4b427686b1a5c43434a9729cd6218" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@28</type>
+        <definition>struct EcNode::@28  EcNode::klass</definition>
+        <argsstring></argsstring>
+        <name>klass</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5110"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_17aea3e578ce9e29b7f0be6419032ec6d" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::left</definition>
+        <argsstring></argsstring>
+        <name>left</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4867" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4867" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1b3e4b03f080d3b5166df628146587329" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::letScope</definition>
+        <argsstring></argsstring>
+        <name>letScope</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4917" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4917" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1441b37b8f1b3cb665b038f181b56a012" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::lineNumber</definition>
+        <argsstring></argsstring>
+        <name>lineNumber</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4865" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4865" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_17bf0baf7382bcb3d8e73bcf0e01e054e" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@39</type>
+        <definition>struct EcNode::@39  EcNode::literal</definition>
+        <argsstring></argsstring>
+        <name>literal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5210"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1e36f6434989b5b175456975cae22434d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::literalNamespace</definition>
+        <argsstring></argsstring>
+        <name>literalNamespace</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4861" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4861" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1fa2314777e89cb4fc267a7bd6d9ff014" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_ejs_lookup" kindref="compound">EjsLookup</ref></type>
+        <definition>EjsLookup EcNode::lookup</definition>
+        <argsstring></argsstring>
+        <name>lookup</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4873" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4873" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1abcdf5b8889a5eb81dfccde53c24fe8f" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::maxVersion</definition>
+        <argsstring></argsstring>
+        <name>maxVersion</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5041" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5041" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1fc0b800b6164aad8954d480f15499992" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EcNode::methods</definition>
+        <argsstring></argsstring>
+        <name>methods</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5100" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5100" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1e34505301b3a2f751d587c782f59cac0" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::minVersion</definition>
+        <argsstring></argsstring>
+        <name>minVersion</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5040" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5040" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f33d8da91da2aea13fa7500fcc805048" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@23</type>
+        <definition>struct EcNode::@23  EcNode::module</definition>
+        <argsstring></argsstring>
+        <name>module</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5032"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1cca0b45b7eb3d172efdcac5621ea12ea" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::moduleName</definition>
+        <argsstring></argsstring>
+        <name>moduleName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5019" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5019" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_11808c86397f905fec9f8dd4176e2b3cc" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5030" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5030" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_106b3eb7dd0821ee5579fa8987bcc0cb2" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@13</type>
+        <definition>struct EcNode::@13  EcNode::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4921"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_134819b6158e158d4a1d2bf24817030ad" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::nameExpr</definition>
+        <argsstring></argsstring>
+        <name>nameExpr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4911" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4911" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1ae025c521c838a86ef759c7d6ae926ae" prot="public" static="no" mutable="no">
+        <type>EjsNamespace *</type>
+        <definition>EjsNamespace* EcNode::namespaceRef</definition>
+        <argsstring></argsstring>
+        <name>namespaceRef</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4880" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4880" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1e74e512dd3f7516d6e9aecf0888a8302" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EcNode::namespaces</definition>
+        <argsstring></argsstring>
+        <name>namespaces</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4881" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4881" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_17c11bd4b4bc8612357dda231f1ef0897" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::needDup</definition>
+        <argsstring></argsstring>
+        <name>needDup</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5264" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5264" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1e2233d9b730c77b59b5b4b8f1588822a" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::needDupObj</definition>
+        <argsstring></argsstring>
+        <name>needDupObj</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5263" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5263" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_179170a7360b32b6a5849449d464412a4" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::needThis</definition>
+        <argsstring></argsstring>
+        <name>needThis</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5262" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5262" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_171c74c2cfaecd6704a240c30e25a4b5b" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@30</type>
+        <definition>struct EcNode::@30  EcNode::newExpr</definition>
+        <argsstring></argsstring>
+        <name>newExpr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5124"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_18bb394c4bbbe98bff80eafb5db12368a" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::nextCaseCode</definition>
+        <argsstring></argsstring>
+        <name>nextCaseCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5187" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5187" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1db80a6c38ed0e0471dead5dcf3a335bf" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::node</definition>
+        <argsstring></argsstring>
+        <name>node</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5169" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5169" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_117a28503fddcaa268fc30f6f115c331b" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::nullable</definition>
+        <argsstring></argsstring>
+        <name>nullable</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4877" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4877" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1949e61679543dad2d259729028fb8393" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::numBlocks</definition>
+        <argsstring></argsstring>
+        <name>numBlocks</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5133" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5133" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_19e637a514cd230474bdca0ff3f30e2ed" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::object</definition>
+        <argsstring></argsstring>
+        <name>object</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5233" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5233" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1ed39ee4dc225cc9a8f636c450269f14a" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@40</type>
+        <definition>struct EcNode::@40  EcNode::objectLiteral</definition>
+        <argsstring></argsstring>
+        <name>objectLiteral</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5215"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_10528169cc3ce992b28d2b66062d4f645" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::operatorFn</definition>
+        <argsstring></argsstring>
+        <name>operatorFn</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5057" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5057" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1c320a92bf3dd0ce7a5792d3aa2be9f47" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@27</type>
+        <definition>struct EcNode::@27  EcNode::parameter</definition>
+        <argsstring></argsstring>
+        <name>parameter</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5087"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_11ec8c2057bfc196e536144ab48b15937" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::parameters</definition>
+        <argsstring></argsstring>
+        <name>parameters</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5069" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5069" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1ee2aab7672fcc56a7626769c2b4a1c7c" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::parent</definition>
+        <argsstring></argsstring>
+        <name>parent</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4879" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4879" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_10ab88d6f27cc375d07ee5733d3dd4e6c" prot="public" static="no" mutable="no">
+        <type>uchar *</type>
+        <definition>uchar* EcNode::patchAddress</definition>
+        <argsstring></argsstring>
+        <name>patchAddress</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5268" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5268" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1a5d59c2753bcf903201660a16a982cd7" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::perLoop</definition>
+        <argsstring></argsstring>
+        <name>perLoop</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4959" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4959" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_19ac710393084c5da138fa65c3d84af22" prot="public" static="no" mutable="no">
+        <type>struct EcCodeGen *</type>
+        <definition>struct EcCodeGen* EcNode::perLoopCode</definition>
+        <argsstring></argsstring>
+        <name>perLoopCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4963" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4963" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1a905eefd8032fb69af4205601c80bd1c" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@22</type>
+        <definition>struct EcNode::@22  EcNode::pragma</definition>
+        <argsstring></argsstring>
+        <name>pragma</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5020"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1274040ba2d3c220612a90d7dec9a3f91" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@34</type>
+        <definition>struct EcNode::@34  EcNode::program</definition>
+        <argsstring></argsstring>
+        <name>program</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5152"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_153e24e508a02d04f2b0f49f91fa216cb" prot="public" static="no" mutable="no">
+        <type>EjsNamespace *</type>
+        <definition>EjsNamespace* EcNode::publicSpace</definition>
+        <argsstring></argsstring>
+        <name>publicSpace</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5107" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_14fc59c6e047edeceb5579ea70dd86aa2" prot="public" static="no" mutable="no">
+        <type>EjsName</type>
+        <definition>EjsName EcNode::qname</definition>
+        <argsstring></argsstring>
+        <name>qname</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4860" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4860" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f9efdf021e608072f1448a1a75b58ad8" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::qualifierExpr</definition>
+        <argsstring></argsstring>
+        <name>qualifierExpr</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4912" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4912" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_120ed88c3d7f1ada7f53cf360dcc8961e" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@35</type>
+        <definition>struct EcNode::@35  EcNode::ref</definition>
+        <argsstring></argsstring>
+        <name>ref</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5170"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1be1179d4913764d9f1df696fc3fda6e7" prot="public" static="no" mutable="no">
+        <type>EjsType *</type>
+        <definition>EjsType* EcNode::ref</definition>
+        <argsstring></argsstring>
+        <name>ref</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5104" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5104" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1a06be6b6b310968ea46eb16358d66d0c" prot="public" static="no" mutable="no">
+        <type>EjsModule *</type>
+        <definition>EjsModule* EcNode::ref</definition>
+        <argsstring></argsstring>
+        <name>ref</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5028" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5028" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1ed28b1c01a9c15d98b7bb2665f14ae5f" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::resultType</definition>
+        <argsstring></argsstring>
+        <name>resultType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5067" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5067" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1c65bce4245def61aa88e478602aec8ba" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@43</type>
+        <definition>struct EcNode::@43  EcNode::ret</definition>
+        <argsstring></argsstring>
+        <name>ret</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5240"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1045f761965f2b7b4a953cc4c69f40f3e" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::right</definition>
+        <argsstring></argsstring>
+        <name>right</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4868" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4868" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_16708db576a016dd8cf02311d6d44ee11" prot="public" static="no" mutable="no">
+        <type>struct EcCodeGen *</type>
+        <definition>struct EcCodeGen* EcNode::rightCode</definition>
+        <argsstring></argsstring>
+        <name>rightCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4936" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4936" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1bd445e9261890c0854cb311a67745848" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::seqno</definition>
+        <argsstring></argsstring>
+        <name>seqno</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5272" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5272" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1864df5b815ef9e4788676b4abf3d19eb" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::setter</definition>
+        <argsstring></argsstring>
+        <name>setter</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5059" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5059" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_15b0de46f76f56167d950899eb9e598ad" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::slotFixed</definition>
+        <argsstring></argsstring>
+        <name>slotFixed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5261" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5261" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1d143addb4a102f3ca3857ee667f5e555" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::slotNum</definition>
+        <argsstring></argsstring>
+        <name>slotNum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5265" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5265" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1504a8ca7f7747ccdf7a1b51be8452208" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::space</definition>
+        <argsstring></argsstring>
+        <name>space</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5244" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5244" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1ff426ea73b8808afc576e45cee8c4e76" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EcNode::specialNamespace</definition>
+        <argsstring></argsstring>
+        <name>specialNamespace</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4875" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4875" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_126707996066c7c6cd9ca606564c00393" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::statement</definition>
+        <argsstring></argsstring>
+        <name>statement</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5234" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5234" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1dd3bb59d73e98324d178ed5c7542a441" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EcNode::staticProperties</definition>
+        <argsstring></argsstring>
+        <name>staticProperties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5097" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5097" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1df9be74e08d4ed2e6b5504bdaee47bb2" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EcNode::strict</definition>
+        <argsstring></argsstring>
+        <name>strict</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5018" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5018" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1bcb15f85ea1053ab80a3a9975b160f06" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::subId</definition>
+        <argsstring></argsstring>
+        <name>subId</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4891" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4891" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1dbb50f039c7fe7d03da62c5984110df8" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@29</type>
+        <definition>struct EcNode::@29  EcNode::super</definition>
+        <argsstring></argsstring>
+        <name>super</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5118"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f65a1ec812ecac924bd6776c49b7be95" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@36</type>
+        <definition>struct EcNode::@36  EcNode::switchNode</definition>
+        <argsstring></argsstring>
+        <name>switchNode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5176"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1bf49a145af09fbe81e6370493a240c3e" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@19</type>
+        <definition>struct EcNode::@19  EcNode::tenary</definition>
+        <argsstring></argsstring>
+        <name>tenary</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4990"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_162a70893fcd5c8e0c4da856659df5799" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::thenBlock</definition>
+        <argsstring></argsstring>
+        <name>thenBlock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4986" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4986" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_10f06ae6dfa4f0a3ecd97b03584d20a70" prot="public" static="no" mutable="no">
+        <type>struct EcCodeGen *</type>
+        <definition>struct EcCodeGen* EcNode::thenCode</definition>
+        <argsstring></argsstring>
+        <name>thenCode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4988" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4988" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1bb61308b9f3ce294643c83d91474ff28" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::thisKind</definition>
+        <argsstring></argsstring>
+        <name>thisKind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5198" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5198" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1218d9de652de436f6edcf93ffd0d2c19" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@38</type>
+        <definition>struct EcNode::@38  EcNode::thisNode</definition>
+        <argsstring></argsstring>
+        <name>thisNode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5199"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1d65c63ce7419b9bfbbd1da5f2f6dc26e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::tokenId</definition>
+        <argsstring></argsstring>
+        <name>tokenId</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4889" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4889" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_14983d67818171ad393ceeb3ab92bbb5a" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::tokenName</definition>
+        <argsstring></argsstring>
+        <name>tokenName</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4886" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4886" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1f312f9f16fb8c38de5a80e593610e4b9" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::tryBlock</definition>
+        <argsstring></argsstring>
+        <name>tryBlock</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5130" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5130" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_16594655244b3a13fa340a066b3f39b6d" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5084" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5084" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_11e692ee6dcf563a36f599adb6031359e" prot="public" static="no" mutable="no">
+        <type>Node</type>
+        <definition>Node EcNode::typeNode</definition>
+        <argsstring></argsstring>
+        <name>typeNode</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4876" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4876" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_135719578edb9d4926a40647f58aab478" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@18</type>
+        <definition>struct EcNode::@18  EcNode::unary</definition>
+        <argsstring></argsstring>
+        <name>unary</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4980"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_15904b9e254f0006bd30f993000a6303c" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@24</type>
+        <definition>struct EcNode::@24  EcNode::useModule</definition>
+        <argsstring></argsstring>
+        <name>useModule</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5042"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1a7d09a2573feacaba833bd32393bb6c3" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@25</type>
+        <definition>struct EcNode::@25  EcNode::useNamespace</definition>
+        <argsstring></argsstring>
+        <name>useNamespace</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5052"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_19650b02570eb311fb767a9a8d4ab66a0" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcNode::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5085" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5085" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1e8be36b9ad3a5df359486133b6dc12b6" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EcNode::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4920" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4920" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_17dcf113c2b94ec4d8bbc980bb8b6621d" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EcNode::var</definition>
+        <argsstring></argsstring>
+        <name>var</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5208" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_1318e528a0caccdb6924b95724036100d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::varKind</definition>
+        <argsstring></argsstring>
+        <name>varKind</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5007" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5007" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_14fe97fcb2394f5060d7252a7299b501e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcNode::version</definition>
+        <argsstring></argsstring>
+        <name>version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5031" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5031" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_node_17ba3b1dfef8c95daa1d0623dbe2bb3bd" prot="public" static="no" mutable="no">
+        <type>struct EcNode::@42</type>
+        <definition>struct EcNode::@42  EcNode::with</definition>
+        <argsstring></argsstring>
+        <name>with</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5235"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="20">
+        <label>EcNode</label>
+        <childnode refid="21" relation="usage">
+          <edgelabel>lookup</edgelabel>
+        </childnode>
+      </node>
+      <node id="22">
+        <label>EjsTrait</label>
+        <link refid="struct_ejs_trait"/>
+      </node>
+      <node id="21">
+        <label>EjsLookup</label>
+        <link refid="struct_ejs_lookup"/>
+        <childnode refid="22" relation="usage">
+          <edgelabel>trait</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="4849" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4849" bodyend="5275"/>
+    <listofallmembers>
+      <member refid="struct_ec_node_144829da3a3f13203411e51509ab7057c" prot="public" virt="non-virtual"><scope>EcNode</scope><name>arg</name></member>
+      <member refid="struct_ec_node_103abbbd47f3dd8781e9a94f726a8ca9e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>attributes</name></member>
+      <member refid="struct_ec_node_1867db6ce9e6016f0e83df89d0a159dc9" prot="public" virt="non-virtual"><scope>EcNode</scope><name>binary</name></member>
+      <member refid="struct_ec_node_17567aadd991ff8fe080402c3804dfaab" prot="public" virt="non-virtual"><scope>EcNode</scope><name>blockCreated</name></member>
+      <member refid="struct_ec_node_11255bab11397cd42b089276ef5b2d561" prot="public" virt="non-virtual"><scope>EcNode</scope><name>blockLess</name></member>
+      <member refid="struct_ec_node_1554daeec1371c709ccc239856d198b96" prot="public" virt="non-virtual"><scope>EcNode</scope><name>blockRef</name></member>
+      <member refid="struct_ec_node_14c67ab748556b937110081bb67b89496" prot="public" virt="non-virtual"><scope>EcNode</scope><name>body</name></member>
+      <member refid="struct_ec_node_179e63b07b93690f7b24db018917b3899" prot="public" virt="non-virtual"><scope>EcNode</scope><name>bodyCode</name></member>
+      <member refid="struct_ec_node_1d6c3bfa887f28274e9d2e357623d8976" prot="public" virt="non-virtual"><scope>EcNode</scope><name>call</name></member>
+      <member refid="struct_ec_node_1b73260f807beb0ae737f82287cab8668" prot="public" virt="non-virtual"><scope>EcNode</scope><name>call</name></member>
+      <member refid="struct_ec_node_1b75a39be31f4d09700e015b89c25d5f5" prot="public" virt="non-virtual"><scope>EcNode</scope><name>callConstructors</name></member>
+      <member refid="struct_ec_node_16449c69592334acb6cdbd1f497ce4490" prot="public" virt="non-virtual"><scope>EcNode</scope><name>caseLabel</name></member>
+      <member refid="struct_ec_node_1ce3fa0d45f093745b609d4856445c82f" prot="public" virt="non-virtual"><scope>EcNode</scope><name>catchBlock</name></member>
+      <member refid="struct_ec_node_128ce6f4da6a0d685c3d2ca4f4be84f39" prot="public" virt="non-virtual"><scope>EcNode</scope><name>catchClauses</name></member>
+      <member refid="struct_ec_node_1d0d9c3993b17657e2c777f36a2ad3f72" prot="public" virt="non-virtual"><scope>EcNode</scope><name>children</name></member>
+      <member refid="struct_ec_node_1523ab35aba372c676216ece6266d7feb" prot="public" virt="non-virtual"><scope>EcNode</scope><name>classMethods</name></member>
+      <member refid="struct_ec_node_1f5f4391c18b4259f48572ec0d29bd1e0" prot="public" virt="non-virtual"><scope>EcNode</scope><name>code</name></member>
+      <member refid="struct_ec_node_16f5ff6969e1c991c1f95081e58fdd7ae" prot="public" virt="non-virtual"><scope>EcNode</scope><name>column</name></member>
+      <member refid="struct_ec_node_12e85a55f0c21c683498abc3f7f9e602e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>cond</name></member>
+      <member refid="struct_ec_node_13ace6a948a0ea01bbd91e1b2a7ee4e00" prot="public" virt="non-virtual"><scope>EcNode</scope><name>condCode</name></member>
+      <member refid="struct_ec_node_15209a52877117ea81906ca2305111ad9" prot="public" virt="non-virtual"><scope>EcNode</scope><name>constructor</name></member>
+      <member refid="struct_ec_node_1705d96f8d5e815ffc39c83662d340d24" prot="public" virt="non-virtual"><scope>EcNode</scope><name>constructorSettings</name></member>
+      <member refid="struct_ec_node_1d46508baab7ce32b8631200b3e477be0" prot="public" virt="non-virtual"><scope>EcNode</scope><name>cp</name></member>
+      <member refid="struct_ec_node_1be994b715881c47e007404e84b7b76d8" prot="public" virt="non-virtual"><scope>EcNode</scope><name>createBlockObject</name></member>
+      <member refid="struct_ec_node_17e9b3bb32f0bb58b1f6f4c2318990b65" prot="public" virt="non-virtual"><scope>EcNode</scope><name>currentLine</name></member>
+      <member refid="struct_ec_node_1f416cb2679b1ca920ff66ac61c5f3386" prot="public" virt="non-virtual"><scope>EcNode</scope><name>data</name></member>
+      <member refid="struct_ec_node_10f8be76322991f38bbf01ebbbafdcc2c" prot="public" virt="non-virtual"><scope>EcNode</scope><name>decimalContext</name></member>
+      <member refid="struct_ec_node_1cb4fc758dbfbfa3618c64acd5c8255c4" prot="public" virt="non-virtual"><scope>EcNode</scope><name>def</name></member>
+      <member refid="struct_ec_node_1b33534148cf8397253b51ac6e7945a29" prot="public" virt="non-virtual"><scope>EcNode</scope><name>dependencies</name></member>
+      <member refid="struct_ec_node_1f9bca7a7af22973e9e7f4f75139be469" prot="public" virt="non-virtual"><scope>EcNode</scope><name>disabled</name></member>
+      <member refid="struct_ec_node_1ec8f45c2116255ea4011f160db505d1c" prot="public" virt="non-virtual"><scope>EcNode</scope><name>doc</name></member>
+      <member refid="struct_ec_node_1f1647848a07d05e0bc54da9be35347cb" prot="public" virt="non-virtual"><scope>EcNode</scope><name>doWhile</name></member>
+      <member refid="struct_ec_node_180418e1f276c464cbab46b5584bb4863" prot="public" virt="non-virtual"><scope>EcNode</scope><name>dummmy</name></member>
+      <member refid="struct_ec_node_1299bbbde261024838a91d27053868977" prot="public" virt="non-virtual"><scope>EcNode</scope><name>dummy</name></member>
+      <member refid="struct_ec_node_17668e3775cb66eae79a73cbf120380f4" prot="public" virt="non-virtual"><scope>EcNode</scope><name>each</name></member>
+      <member refid="struct_ec_node_151d292a2ed08e2ae1e33c24694db5525" prot="public" virt="non-virtual"><scope>EcNode</scope><name>elseBlock</name></member>
+      <member refid="struct_ec_node_1fce73b5551283917926615b0294739ed" prot="public" virt="non-virtual"><scope>EcNode</scope><name>elseCode</name></member>
+      <member refid="struct_ec_node_1e61eb3398739a0b8a523421094409a34" prot="public" virt="non-virtual"><scope>EcNode</scope><name>enabled</name></member>
+      <member refid="struct_ec_node_13346184dadbd53120e66fde32b141c88" prot="public" virt="non-virtual"><scope>EcNode</scope><name>exception</name></member>
+      <member refid="struct_ec_node_1a236d0aac20635849046fd8b82519bde" prot="public" virt="non-virtual"><scope>EcNode</scope><name>expr</name></member>
+      <member refid="struct_ec_node_17fa87f17ab54a3b55c8011f3fc6f1076" prot="public" virt="non-virtual"><scope>EcNode</scope><name>expr</name></member>
+      <member refid="struct_ec_node_124215dc32bfc8f103d30fcc82c69e59a" prot="public" virt="non-virtual"><scope>EcNode</scope><name>expression</name></member>
+      <member refid="struct_ec_node_1cb316f5213318321a63c178c9afe1734" prot="public" virt="non-virtual"><scope>EcNode</scope><name>expressionCode</name></member>
+      <member refid="struct_ec_node_11de2722d8c8f301079a466dc8756a476" prot="public" virt="non-virtual"><scope>EcNode</scope><name>expressionRef</name></member>
+      <member refid="struct_ec_node_1a196427ba5a6ca38c11a430bd6c0e506" prot="public" virt="non-virtual"><scope>EcNode</scope><name>extends</name></member>
+      <member refid="struct_ec_node_1215997a685af316a23c04df3a1bccfc8" prot="public" virt="non-virtual"><scope>EcNode</scope><name>field</name></member>
+      <member refid="struct_ec_node_13d618da390e50bea2b0d95bd3359cecf" prot="public" virt="non-virtual"><scope>EcNode</scope><name>fieldKind</name></member>
+      <member refid="struct_ec_node_15f8392581270fe8dd717bc9b7937bb18" prot="public" virt="non-virtual"><scope>EcNode</scope><name>fieldName</name></member>
+      <member refid="struct_ec_node_1ee545c8182db41c85a1a5891ff8ae3eb" prot="public" virt="non-virtual"><scope>EcNode</scope><name>filename</name></member>
+      <member refid="struct_ec_node_1e381dd4eb7430e4158b18ca2493414c3" prot="public" virt="non-virtual"><scope>EcNode</scope><name>filename</name></member>
+      <member refid="struct_ec_node_1d0f3bb61b3df530f6c17996cc309853f" prot="public" virt="non-virtual"><scope>EcNode</scope><name>finallyBlock</name></member>
+      <member refid="struct_ec_node_10343d296b2a1f57f83f19875f766c257" prot="public" virt="non-virtual"><scope>EcNode</scope><name>forInLoop</name></member>
+      <member refid="struct_ec_node_18e95a20e62b7c686f1f1704e164a3117" prot="public" virt="non-virtual"><scope>EcNode</scope><name>forLoop</name></member>
+      <member refid="struct_ec_node_1b9bf6e692a37989520810cf0580a2451" prot="public" virt="non-virtual"><scope>EcNode</scope><name>function</name></member>
+      <member refid="struct_ec_node_1969b7682257f79cc429fe01c0bf6705b" prot="public" virt="non-virtual"><scope>EcNode</scope><name>functionVar</name></member>
+      <member refid="struct_ec_node_1fe625090b9178f3f6cdafe60236a8b4e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>getter</name></member>
+      <member refid="struct_ec_node_10f860f0a8589585a006ce0711b691a01" prot="public" virt="non-virtual"><scope>EcNode</scope><name>globalProp</name></member>
+      <member refid="struct_ec_node_156b093a5e34cac2dc99de198852f970d" prot="public" virt="non-virtual"><scope>EcNode</scope><name>groupMask</name></member>
+      <member refid="struct_ec_node_1d6a80108599143d096897f92f921872c" prot="public" virt="non-virtual"><scope>EcNode</scope><name>has</name></member>
+      <member refid="struct_ec_node_1f40afb6a780a7920ed0dcbc11ada5976" prot="public" virt="non-virtual"><scope>EcNode</scope><name>hash</name></member>
+      <member refid="struct_ec_node_1b210698e3ccd0e709fe910ac0a764728" prot="public" virt="non-virtual"><scope>EcNode</scope><name>hasRest</name></member>
+      <member refid="struct_ec_node_18513be5c98d09e011c06f1abff4dfd57" prot="public" virt="non-virtual"><scope>EcNode</scope><name>hasReturn</name></member>
+      <member refid="struct_ec_node_10ecc6809aa2f71b08b3e88f11f2fa35e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>implements</name></member>
+      <member refid="struct_ec_node_1b490e52ecb0bebe504da6e3a92c7da65" prot="public" virt="non-virtual"><scope>EcNode</scope><name>index</name></member>
+      <member refid="struct_ec_node_1082620da1cbd8eb9035747148daf5b33" prot="public" virt="non-virtual"><scope>EcNode</scope><name>initCode</name></member>
+      <member refid="struct_ec_node_1579afadbccd357b888d773c35410b16b" prot="public" virt="non-virtual"><scope>EcNode</scope><name>initializer</name></member>
+      <member refid="struct_ec_node_1289e5162b64e376b046d660182037b42" prot="public" virt="non-virtual"><scope>EcNode</scope><name>initializer</name></member>
+      <member refid="struct_ec_node_127f41da67fbc84019fa46c9525135e9e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>instanceProperties</name></member>
+      <member refid="struct_ec_node_1d0018137e049c0662060c6da1af22fab" prot="public" virt="non-virtual"><scope>EcNode</scope><name>instanceVar</name></member>
+      <member refid="struct_ec_node_147b4ea1c6bb52b82a77a97007b42b753" prot="public" virt="non-virtual"><scope>EcNode</scope><name>internalSpace</name></member>
+      <member refid="struct_ec_node_1f978a83fad62d0cbf4a58b4fdb7a12cf" prot="public" virt="non-virtual"><scope>EcNode</scope><name>isAttribute</name></member>
+      <member refid="struct_ec_node_15a38cf906182ed0d9a43ba1ea4c47f18" prot="public" virt="non-virtual"><scope>EcNode</scope><name>isConstructor</name></member>
+      <member refid="struct_ec_node_19187205fa5318524ea9d6e993f0d4e10" prot="public" virt="non-virtual"><scope>EcNode</scope><name>isDefault</name></member>
+      <member refid="struct_ec_node_1f141ace68602aa9c6da652037bacb9b1" prot="public" virt="non-virtual"><scope>EcNode</scope><name>isDefaultConstructor</name></member>
+      <member refid="struct_ec_node_1f92ab4b735ac22d4efedb4148518ea70" prot="public" virt="non-virtual"><scope>EcNode</scope><name>isInterface</name></member>
+      <member refid="struct_ec_node_171abd301a36a4bdd57ae9e338c55e307" prot="public" virt="non-virtual"><scope>EcNode</scope><name>isLiteral</name></member>
+      <member refid="struct_ec_node_13dbbd82b94a7c6faeb98c2ea8ca9437f" prot="public" virt="non-virtual"><scope>EcNode</scope><name>isMethod</name></member>
+      <member refid="struct_ec_node_12ab223e4410f060412050d46ce64c979" prot="public" virt="non-virtual"><scope>EcNode</scope><name>isNamespace</name></member>
+      <member refid="struct_ec_node_130b18df31bbf42e224b6395f9ccdc444" prot="public" virt="non-virtual"><scope>EcNode</scope><name>isRest</name></member>
+      <member refid="struct_ec_node_151508f65aaf4680697b1d6eb2aaa37aa" prot="public" virt="non-virtual"><scope>EcNode</scope><name>isType</name></member>
+      <member refid="struct_ec_node_11f67b03877315a7bd40c4219b39a0181" prot="public" virt="non-virtual"><scope>EcNode</scope><name>iterGet</name></member>
+      <member refid="struct_ec_node_1f4512ad4b49fa102f8cfa4b97df1ee4c" prot="public" virt="non-virtual"><scope>EcNode</scope><name>iterNext</name></member>
+      <member refid="struct_ec_node_1c8b24d9820d9346886b935b959c5b176" prot="public" virt="non-virtual"><scope>EcNode</scope><name>iterVar</name></member>
+      <member refid="struct_ec_node_1898d8604fe673d3450b2393e1dbbf565" prot="public" virt="non-virtual"><scope>EcNode</scope><name>jumpLength</name></member>
+      <member refid="struct_ec_node_112dc5af6cad475750610a78ce02a8707" prot="public" virt="non-virtual"><scope>EcNode</scope><name>kind</name></member>
+      <member refid="struct_ec_node_17081f7745f620629a3e044e74fbf4f50" prot="public" virt="non-virtual"><scope>EcNode</scope><name>kindName</name></member>
+      <member refid="struct_ec_node_1cba4b427686b1a5c43434a9729cd6218" prot="public" virt="non-virtual"><scope>EcNode</scope><name>klass</name></member>
+      <member refid="struct_ec_node_17aea3e578ce9e29b7f0be6419032ec6d" prot="public" virt="non-virtual"><scope>EcNode</scope><name>left</name></member>
+      <member refid="struct_ec_node_1b3e4b03f080d3b5166df628146587329" prot="public" virt="non-virtual"><scope>EcNode</scope><name>letScope</name></member>
+      <member refid="struct_ec_node_1441b37b8f1b3cb665b038f181b56a012" prot="public" virt="non-virtual"><scope>EcNode</scope><name>lineNumber</name></member>
+      <member refid="struct_ec_node_17bf0baf7382bcb3d8e73bcf0e01e054e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>literal</name></member>
+      <member refid="struct_ec_node_1e36f6434989b5b175456975cae22434d" prot="public" virt="non-virtual"><scope>EcNode</scope><name>literalNamespace</name></member>
+      <member refid="struct_ec_node_1fa2314777e89cb4fc267a7bd6d9ff014" prot="public" virt="non-virtual"><scope>EcNode</scope><name>lookup</name></member>
+      <member refid="struct_ec_node_1abcdf5b8889a5eb81dfccde53c24fe8f" prot="public" virt="non-virtual"><scope>EcNode</scope><name>maxVersion</name></member>
+      <member refid="struct_ec_node_1fc0b800b6164aad8954d480f15499992" prot="public" virt="non-virtual"><scope>EcNode</scope><name>methods</name></member>
+      <member refid="struct_ec_node_1e34505301b3a2f751d587c782f59cac0" prot="public" virt="non-virtual"><scope>EcNode</scope><name>minVersion</name></member>
+      <member refid="struct_ec_node_1f33d8da91da2aea13fa7500fcc805048" prot="public" virt="non-virtual"><scope>EcNode</scope><name>module</name></member>
+      <member refid="struct_ec_node_1cca0b45b7eb3d172efdcac5621ea12ea" prot="public" virt="non-virtual"><scope>EcNode</scope><name>moduleName</name></member>
+      <member refid="struct_ec_node_106b3eb7dd0821ee5579fa8987bcc0cb2" prot="public" virt="non-virtual"><scope>EcNode</scope><name>name</name></member>
+      <member refid="struct_ec_node_11808c86397f905fec9f8dd4176e2b3cc" prot="public" virt="non-virtual"><scope>EcNode</scope><name>name</name></member>
+      <member refid="struct_ec_node_134819b6158e158d4a1d2bf24817030ad" prot="public" virt="non-virtual"><scope>EcNode</scope><name>nameExpr</name></member>
+      <member refid="struct_ec_node_1ae025c521c838a86ef759c7d6ae926ae" prot="public" virt="non-virtual"><scope>EcNode</scope><name>namespaceRef</name></member>
+      <member refid="struct_ec_node_1e74e512dd3f7516d6e9aecf0888a8302" prot="public" virt="non-virtual"><scope>EcNode</scope><name>namespaces</name></member>
+      <member refid="struct_ec_node_17c11bd4b4bc8612357dda231f1ef0897" prot="public" virt="non-virtual"><scope>EcNode</scope><name>needDup</name></member>
+      <member refid="struct_ec_node_1e2233d9b730c77b59b5b4b8f1588822a" prot="public" virt="non-virtual"><scope>EcNode</scope><name>needDupObj</name></member>
+      <member refid="struct_ec_node_179170a7360b32b6a5849449d464412a4" prot="public" virt="non-virtual"><scope>EcNode</scope><name>needThis</name></member>
+      <member refid="struct_ec_node_171c74c2cfaecd6704a240c30e25a4b5b" prot="public" virt="non-virtual"><scope>EcNode</scope><name>newExpr</name></member>
+      <member refid="struct_ec_node_18bb394c4bbbe98bff80eafb5db12368a" prot="public" virt="non-virtual"><scope>EcNode</scope><name>nextCaseCode</name></member>
+      <member refid="struct_ec_node_1db80a6c38ed0e0471dead5dcf3a335bf" prot="public" virt="non-virtual"><scope>EcNode</scope><name>node</name></member>
+      <member refid="struct_ec_node_117a28503fddcaa268fc30f6f115c331b" prot="public" virt="non-virtual"><scope>EcNode</scope><name>nullable</name></member>
+      <member refid="struct_ec_node_1949e61679543dad2d259729028fb8393" prot="public" virt="non-virtual"><scope>EcNode</scope><name>numBlocks</name></member>
+      <member refid="struct_ec_node_19e637a514cd230474bdca0ff3f30e2ed" prot="public" virt="non-virtual"><scope>EcNode</scope><name>object</name></member>
+      <member refid="struct_ec_node_1ed39ee4dc225cc9a8f636c450269f14a" prot="public" virt="non-virtual"><scope>EcNode</scope><name>objectLiteral</name></member>
+      <member refid="struct_ec_node_10528169cc3ce992b28d2b66062d4f645" prot="public" virt="non-virtual"><scope>EcNode</scope><name>operatorFn</name></member>
+      <member refid="struct_ec_node_1c320a92bf3dd0ce7a5792d3aa2be9f47" prot="public" virt="non-virtual"><scope>EcNode</scope><name>parameter</name></member>
+      <member refid="struct_ec_node_11ec8c2057bfc196e536144ab48b15937" prot="public" virt="non-virtual"><scope>EcNode</scope><name>parameters</name></member>
+      <member refid="struct_ec_node_1ee2aab7672fcc56a7626769c2b4a1c7c" prot="public" virt="non-virtual"><scope>EcNode</scope><name>parent</name></member>
+      <member refid="struct_ec_node_10ab88d6f27cc375d07ee5733d3dd4e6c" prot="public" virt="non-virtual"><scope>EcNode</scope><name>patchAddress</name></member>
+      <member refid="struct_ec_node_1a5d59c2753bcf903201660a16a982cd7" prot="public" virt="non-virtual"><scope>EcNode</scope><name>perLoop</name></member>
+      <member refid="struct_ec_node_19ac710393084c5da138fa65c3d84af22" prot="public" virt="non-virtual"><scope>EcNode</scope><name>perLoopCode</name></member>
+      <member refid="struct_ec_node_1a905eefd8032fb69af4205601c80bd1c" prot="public" virt="non-virtual"><scope>EcNode</scope><name>pragma</name></member>
+      <member refid="struct_ec_node_1274040ba2d3c220612a90d7dec9a3f91" prot="public" virt="non-virtual"><scope>EcNode</scope><name>program</name></member>
+      <member refid="struct_ec_node_153e24e508a02d04f2b0f49f91fa216cb" prot="public" virt="non-virtual"><scope>EcNode</scope><name>publicSpace</name></member>
+      <member refid="struct_ec_node_14fc59c6e047edeceb5579ea70dd86aa2" prot="public" virt="non-virtual"><scope>EcNode</scope><name>qname</name></member>
+      <member refid="struct_ec_node_1f9efdf021e608072f1448a1a75b58ad8" prot="public" virt="non-virtual"><scope>EcNode</scope><name>qualifierExpr</name></member>
+      <member refid="struct_ec_node_1a06be6b6b310968ea46eb16358d66d0c" prot="public" virt="non-virtual"><scope>EcNode</scope><name>ref</name></member>
+      <member refid="struct_ec_node_1be1179d4913764d9f1df696fc3fda6e7" prot="public" virt="non-virtual"><scope>EcNode</scope><name>ref</name></member>
+      <member refid="struct_ec_node_120ed88c3d7f1ada7f53cf360dcc8961e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>ref</name></member>
+      <member refid="struct_ec_node_1ed28b1c01a9c15d98b7bb2665f14ae5f" prot="public" virt="non-virtual"><scope>EcNode</scope><name>resultType</name></member>
+      <member refid="struct_ec_node_1c65bce4245def61aa88e478602aec8ba" prot="public" virt="non-virtual"><scope>EcNode</scope><name>ret</name></member>
+      <member refid="struct_ec_node_1045f761965f2b7b4a953cc4c69f40f3e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>right</name></member>
+      <member refid="struct_ec_node_16708db576a016dd8cf02311d6d44ee11" prot="public" virt="non-virtual"><scope>EcNode</scope><name>rightCode</name></member>
+      <member refid="struct_ec_node_1bd445e9261890c0854cb311a67745848" prot="public" virt="non-virtual"><scope>EcNode</scope><name>seqno</name></member>
+      <member refid="struct_ec_node_1864df5b815ef9e4788676b4abf3d19eb" prot="public" virt="non-virtual"><scope>EcNode</scope><name>setter</name></member>
+      <member refid="struct_ec_node_15b0de46f76f56167d950899eb9e598ad" prot="public" virt="non-virtual"><scope>EcNode</scope><name>slotFixed</name></member>
+      <member refid="struct_ec_node_1d143addb4a102f3ca3857ee667f5e555" prot="public" virt="non-virtual"><scope>EcNode</scope><name>slotNum</name></member>
+      <member refid="struct_ec_node_1504a8ca7f7747ccdf7a1b51be8452208" prot="public" virt="non-virtual"><scope>EcNode</scope><name>space</name></member>
+      <member refid="struct_ec_node_1ff426ea73b8808afc576e45cee8c4e76" prot="public" virt="non-virtual"><scope>EcNode</scope><name>specialNamespace</name></member>
+      <member refid="struct_ec_node_126707996066c7c6cd9ca606564c00393" prot="public" virt="non-virtual"><scope>EcNode</scope><name>statement</name></member>
+      <member refid="struct_ec_node_1dd3bb59d73e98324d178ed5c7542a441" prot="public" virt="non-virtual"><scope>EcNode</scope><name>staticProperties</name></member>
+      <member refid="struct_ec_node_1df9be74e08d4ed2e6b5504bdaee47bb2" prot="public" virt="non-virtual"><scope>EcNode</scope><name>strict</name></member>
+      <member refid="struct_ec_node_1bcb15f85ea1053ab80a3a9975b160f06" prot="public" virt="non-virtual"><scope>EcNode</scope><name>subId</name></member>
+      <member refid="struct_ec_node_1dbb50f039c7fe7d03da62c5984110df8" prot="public" virt="non-virtual"><scope>EcNode</scope><name>super</name></member>
+      <member refid="struct_ec_node_1f65a1ec812ecac924bd6776c49b7be95" prot="public" virt="non-virtual"><scope>EcNode</scope><name>switchNode</name></member>
+      <member refid="struct_ec_node_1bf49a145af09fbe81e6370493a240c3e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>tenary</name></member>
+      <member refid="struct_ec_node_162a70893fcd5c8e0c4da856659df5799" prot="public" virt="non-virtual"><scope>EcNode</scope><name>thenBlock</name></member>
+      <member refid="struct_ec_node_10f06ae6dfa4f0a3ecd97b03584d20a70" prot="public" virt="non-virtual"><scope>EcNode</scope><name>thenCode</name></member>
+      <member refid="struct_ec_node_1bb61308b9f3ce294643c83d91474ff28" prot="public" virt="non-virtual"><scope>EcNode</scope><name>thisKind</name></member>
+      <member refid="struct_ec_node_1218d9de652de436f6edcf93ffd0d2c19" prot="public" virt="non-virtual"><scope>EcNode</scope><name>thisNode</name></member>
+      <member refid="struct_ec_node_1d65c63ce7419b9bfbbd1da5f2f6dc26e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>tokenId</name></member>
+      <member refid="struct_ec_node_14983d67818171ad393ceeb3ab92bbb5a" prot="public" virt="non-virtual"><scope>EcNode</scope><name>tokenName</name></member>
+      <member refid="struct_ec_node_1f312f9f16fb8c38de5a80e593610e4b9" prot="public" virt="non-virtual"><scope>EcNode</scope><name>tryBlock</name></member>
+      <member refid="struct_ec_node_16594655244b3a13fa340a066b3f39b6d" prot="public" virt="non-virtual"><scope>EcNode</scope><name>type</name></member>
+      <member refid="struct_ec_node_11e692ee6dcf563a36f599adb6031359e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>typeNode</name></member>
+      <member refid="struct_ec_node_135719578edb9d4926a40647f58aab478" prot="public" virt="non-virtual"><scope>EcNode</scope><name>unary</name></member>
+      <member refid="struct_ec_node_15904b9e254f0006bd30f993000a6303c" prot="public" virt="non-virtual"><scope>EcNode</scope><name>useModule</name></member>
+      <member refid="struct_ec_node_1a7d09a2573feacaba833bd32393bb6c3" prot="public" virt="non-virtual"><scope>EcNode</scope><name>useNamespace</name></member>
+      <member refid="struct_ec_node_1e8be36b9ad3a5df359486133b6dc12b6" prot="public" virt="non-virtual"><scope>EcNode</scope><name>value</name></member>
+      <member refid="struct_ec_node_19650b02570eb311fb767a9a8d4ab66a0" prot="public" virt="non-virtual"><scope>EcNode</scope><name>value</name></member>
+      <member refid="struct_ec_node_17dcf113c2b94ec4d8bbc980bb8b6621d" prot="public" virt="non-virtual"><scope>EcNode</scope><name>var</name></member>
+      <member refid="struct_ec_node_1318e528a0caccdb6924b95724036100d" prot="public" virt="non-virtual"><scope>EcNode</scope><name>varKind</name></member>
+      <member refid="struct_ec_node_14fe97fcb2394f5060d7252a7299b501e" prot="public" virt="non-virtual"><scope>EcNode</scope><name>version</name></member>
+      <member refid="struct_ec_node_17ba3b1dfef8c95daa1d0623dbe2bb3bd" prot="public" virt="non-virtual"><scope>EcNode</scope><name>with</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

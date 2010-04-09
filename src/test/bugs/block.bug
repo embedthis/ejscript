@@ -1,0 +1,13 @@
+
+module my 1.2 {
+
+    class Shape {
+        var a = 1
+        static var b =2
+        {
+            static var c = 3
+            //  Compiler error
+            var d = 4
+        }
+    }
+}

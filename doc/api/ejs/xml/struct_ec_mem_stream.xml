@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ec_mem_stream" kind="struct" prot="public">
+    <compoundname>EcMemStream</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ec_mem_stream_199f357d99e713113e0434d53652178f3" prot="public" static="no" mutable="no">
+        <type>EcStream</type>
+        <definition>EcStream EcMemStream::stream</definition>
+        <argsstring></argsstring>
+        <name>stream</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5573" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5573" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="5572" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5572" bodyend="5574"/>
+    <listofallmembers>
+      <member refid="struct_ec_mem_stream_199f357d99e713113e0434d53652178f3" prot="public" virt="non-virtual"><scope>EcMemStream</scope><name>stream</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

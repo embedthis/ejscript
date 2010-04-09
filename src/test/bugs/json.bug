@@ -1,0 +1,6 @@
+o = {
+    name: "Michael O'Brien"
+}
+
+//  BUG ejs is back quoting the "'"
+print(JSON.stringify(o))

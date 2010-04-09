@@ -1,0 +1,9 @@
+
+"red"::x = function() {
+    print("HI")
+}
+
+// "red"::x()
+//
+
+"red"::["" + "x"]()

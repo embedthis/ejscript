@@ -1,0 +1,141 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ec_input" kind="struct" prot="public">
+    <compoundname>EcInput</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ec_input_19fb9c7f008d95705ecc22178f1d60f0f" prot="public" static="no" mutable="no">
+        <type>struct EcCompiler *</type>
+        <definition>struct EcCompiler* EcInput::compiler</definition>
+        <argsstring></argsstring>
+        <name>compiler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5630" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5630" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_input_1b75a8d53e2036193f9232a0fb68115e1" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcInput::doc</definition>
+        <argsstring></argsstring>
+        <name>doc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5626" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5626" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_input_1ceff242bdcb388c7299cb045d4413c9d" prot="public" static="no" mutable="no">
+        <type>EcToken *</type>
+        <definition>EcToken* EcInput::freeTokens</definition>
+        <argsstring></argsstring>
+        <name>freeTokens</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5624" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5624" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_input_1c196d2e6771f2d9543961a579298af22" prot="public" static="no" mutable="no">
+        <type>struct EcLexer *</type>
+        <definition>struct EcLexer* EcInput::lexer</definition>
+        <argsstring></argsstring>
+        <name>lexer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5628" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5628" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_input_115e3a56ebdd69828ab80574af7e90616" prot="public" static="no" mutable="no">
+        <type>struct EcInput *</type>
+        <definition>struct EcInput* EcInput::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5629" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5629" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_input_1be709d0a50e5645e9eb8d53ac1c74b27" prot="public" static="no" mutable="no">
+        <type>EcToken *</type>
+        <definition>EcToken* EcInput::putBack</definition>
+        <argsstring></argsstring>
+        <name>putBack</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5622" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5622" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_input_12d2f9f9151687440e6bf30e0cc986c8e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcInput::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5620" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5620" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_input_1bf8edbef2979be65e15dbed1d203ec85" prot="public" static="no" mutable="no">
+        <type>EcStream *</type>
+        <definition>EcStream* EcInput::stream</definition>
+        <argsstring></argsstring>
+        <name>stream</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5618" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5618" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_input_1a051617711dc863c39c61ea96caf9e40" prot="public" static="no" mutable="no">
+        <type>EcToken *</type>
+        <definition>EcToken* EcInput::token</definition>
+        <argsstring></argsstring>
+        <name>token</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5623" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5623" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="5617" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5617" bodyend="5631"/>
+    <listofallmembers>
+      <member refid="struct_ec_input_19fb9c7f008d95705ecc22178f1d60f0f" prot="public" virt="non-virtual"><scope>EcInput</scope><name>compiler</name></member>
+      <member refid="struct_ec_input_1b75a8d53e2036193f9232a0fb68115e1" prot="public" virt="non-virtual"><scope>EcInput</scope><name>doc</name></member>
+      <member refid="struct_ec_input_1ceff242bdcb388c7299cb045d4413c9d" prot="public" virt="non-virtual"><scope>EcInput</scope><name>freeTokens</name></member>
+      <member refid="struct_ec_input_1c196d2e6771f2d9543961a579298af22" prot="public" virt="non-virtual"><scope>EcInput</scope><name>lexer</name></member>
+      <member refid="struct_ec_input_115e3a56ebdd69828ab80574af7e90616" prot="public" virt="non-virtual"><scope>EcInput</scope><name>next</name></member>
+      <member refid="struct_ec_input_1be709d0a50e5645e9eb8d53ac1c74b27" prot="public" virt="non-virtual"><scope>EcInput</scope><name>putBack</name></member>
+      <member refid="struct_ec_input_12d2f9f9151687440e6bf30e0cc986c8e" prot="public" virt="non-virtual"><scope>EcInput</scope><name>state</name></member>
+      <member refid="struct_ec_input_1bf8edbef2979be65e15dbed1d203ec85" prot="public" virt="non-virtual"><scope>EcInput</scope><name>stream</name></member>
+      <member refid="struct_ec_input_1a051617711dc863c39c61ea96caf9e40" prot="public" virt="non-virtual"><scope>EcInput</scope><name>token</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

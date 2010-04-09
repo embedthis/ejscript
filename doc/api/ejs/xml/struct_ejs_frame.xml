@@ -1,0 +1,127 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_frame" kind="struct" prot="public">
+    <compoundname>EjsFrame</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_frame_12caff238172f19ed4f415ccbd7082ce3" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsFrame::argc</definition>
+        <argsstring></argsstring>
+        <name>argc</name>
+        <briefdescription>
+<para>Actual parameter count. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2771" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2771" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_1b7d532c9e17694a5d99a81ef61fcd89a" prot="public" static="no" mutable="no">
+        <type>struct EjsFrame *</type>
+        <definition>struct EjsFrame* EjsFrame::caller</definition>
+        <argsstring></argsstring>
+        <name>caller</name>
+        <briefdescription>
+<para>Previous invoking frame. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2765" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2765" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_1a54674980f4e207efb5c0ef0e4f95ccc" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EjsFrame::currentLine</definition>
+        <argsstring></argsstring>
+        <name>currentLine</name>
+        <briefdescription>
+<para>Current source code line. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2768" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2768" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_131a378fb4c5329a2534f964f7c529510" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EjsFrame::filename</definition>
+        <argsstring></argsstring>
+        <name>filename</name>
+        <briefdescription>
+<para>Source code file name. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2769" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2769" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_12c7305c531cf6d9c588fff3de7417e9b" prot="public" static="no" mutable="no">
+        <type>EjsFunction</type>
+        <definition>EjsFunction EjsFrame::function</definition>
+        <argsstring></argsstring>
+        <name>function</name>
+        <briefdescription>
+<para>Activation frame for function calls. </para>        </briefdescription>
+        <detaileddescription>
+<para>Stores local variables </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2764" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2764" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_12c3602f352df2147dc6cd0f0a462aed4" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsFrame::lineNumber</definition>
+        <argsstring></argsstring>
+        <name>lineNumber</name>
+        <briefdescription>
+<para>Source code line number. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2770" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2770" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_1adb0dbdaad3c1605feb197a7d7dbff23" prot="public" static="no" mutable="no">
+        <type>uchar *</type>
+        <definition>uchar* EjsFrame::pc</definition>
+        <argsstring></argsstring>
+        <name>pc</name>
+        <briefdescription>
+<para>Program counter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2767" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2767" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_177bad679929af827df70ec481848ae08" prot="public" static="no" mutable="no">
+        <type>EjsObj **</type>
+        <definition>EjsObj** EjsFrame::stackBase</definition>
+        <argsstring></argsstring>
+        <name>stackBase</name>
+        <briefdescription>
+<para>Start of the eval stack for this function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2766" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2766" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="2763" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2763" bodyend="2772"/>
+    <listofallmembers>
+      <member refid="struct_ejs_frame_12caff238172f19ed4f415ccbd7082ce3" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>argc</name></member>
+      <member refid="struct_ejs_frame_1b7d532c9e17694a5d99a81ef61fcd89a" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>caller</name></member>
+      <member refid="struct_ejs_frame_1a54674980f4e207efb5c0ef0e4f95ccc" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>currentLine</name></member>
+      <member refid="struct_ejs_frame_131a378fb4c5329a2534f964f7c529510" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>filename</name></member>
+      <member refid="struct_ejs_frame_12c7305c531cf6d9c588fff3de7417e9b" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>function</name></member>
+      <member refid="struct_ejs_frame_12c3602f352df2147dc6cd0f0a462aed4" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>lineNumber</name></member>
+      <member refid="struct_ejs_frame_1adb0dbdaad3c1605feb197a7d7dbff23" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>pc</name></member>
+      <member refid="struct_ejs_frame_177bad679929af827df70ec481848ae08" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>stackBase</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

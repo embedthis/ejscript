@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_service" kind="struct" prot="public">
+    <compoundname>EjsService</compoundname>
+    <includes refid="ejs_8h" local="no">ejs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_service_127e70fcc40460b32d5bec29827a292d9" prot="public" static="no" mutable="no">
+        <type>Http *</type>
+        <definition>Http* EjsService::http</definition>
+        <argsstring></argsstring>
+        <name>http</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1235" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1235" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_service_1fa1cfbf79f6d726c2d801327aee89c5a" prot="public" static="no" mutable="no">
+        <type>struct EjsObj *(*</type>
+        <definition>struct EjsObj*(* EjsService::loadScriptFile)(struct Ejs *ejs, cchar *path, cchar *cache)</definition>
+        <argsstring>)(struct Ejs *ejs, cchar *path, cchar *cache)</argsstring>
+        <name>loadScriptFile</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1233"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_service_1b3f6d37f0e86a06c0e65082ae23f7003" prot="public" static="no" mutable="no">
+        <type>struct EjsObj *(*</type>
+        <definition>struct EjsObj*(* EjsService::loadScriptLiteral)(struct Ejs *ejs, cchar *script, cchar *cache)</definition>
+        <argsstring>)(struct Ejs *ejs, cchar *script, cchar *cache)</argsstring>
+        <name>loadScriptLiteral</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1232"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_service_197efd2f39a6f98e5845ba19894a30817" prot="public" static="no" mutable="no">
+        <type>MprHashTable *</type>
+        <definition>MprHashTable* EjsService::nativeModules</definition>
+        <argsstring></argsstring>
+        <name>nativeModules</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1234" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1234" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Ejscript Service structure. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The Ejscript service manages the overall language runtime. It is the factory that creates interpreter instances via <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref>. </para></simplesect>
+</para>    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="1231" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1231" bodyend="1236"/>
+    <listofallmembers>
+      <member refid="struct_ejs_service_127e70fcc40460b32d5bec29827a292d9" prot="public" virt="non-virtual"><scope>EjsService</scope><name>http</name></member>
+      <member refid="struct_ejs_service_1fa1cfbf79f6d726c2d801327aee89c5a" prot="public" virt="non-virtual"><scope>EjsService</scope><name>loadScriptFile</name></member>
+      <member refid="struct_ejs_service_1b3f6d37f0e86a06c0e65082ae23f7003" prot="public" virt="non-virtual"><scope>EjsService</scope><name>loadScriptLiteral</name></member>
+      <member refid="struct_ejs_service_197efd2f39a6f98e5845ba19894a30817" prot="public" virt="non-virtual"><scope>EjsService</scope><name>nativeModules</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

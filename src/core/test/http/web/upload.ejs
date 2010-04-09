@@ -1,0 +1,14 @@
+<html>
+<body>
+<% 	
+	if (request.method == "POST") {
+        write("PARAMS: " + serialize(request.params, {pretty: true}) + "\n")
+        write("request.files: " + serialize(request.files, {pretty: true}) + "\n")
+        //image = request.files.logo
+		//mv(logo.filename, "/tmp/uploaded.tmp")
+        write("Uploaded" + "\n")
+    }
+%>
+</body>
+</html>
+

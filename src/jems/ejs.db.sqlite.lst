@@ -1,0 +1,1920 @@
+#
+#  ejs.db.sqlite.lst -- Module Listing for ../../modules/ejs.db.sqlite.mod
+#
+
+==============================================================================================
+
+MODULE:   ejs.db.sqlite <hasInitializer, >
+
+
+FUNCTION:   [initializer]  ejs function __initializer__() : Void
+
+   LOCAL:   [local-00] var block_0007_171 : Block
+
+    0000: [0] 8d 00 00 ................... openBlock <slot: 0> <0> 
+    0003: [0] 33 0a d6 04 3a ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:299 }
+
+    0008: [0] 01 3e ...................... addNamespace <internal-2c16a813a0a20e98d343ed0350a11bde-6> 
+    0010: [0] 01 96 01 ................... addNamespace <ejs.db.sqlite> 
+    0013: [0] 33 0a 0e b2 01 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:7 module ejs.db.sqlite {
+
+    0018: [0] 33 0a 1c e0 01 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:14     "ejs.db" class Sqlite {
+
+    0023: [0] 34 e2 08 a6 02 ............. defineClass <var: 0x231,  ejs.db::Sqlite> 
+    0028: [0] 24 ......................... closeBlock 
+    0029: [0] 3b ......................... endCode 
+    
+
+BLOCK:      [block_0007_171-00]  block_0007_171 (Slots 0)
+
+CLASS:      class Sqlite extends Object
+            #  Class Details: 56 class traits, 0 instance traits, requested slot 148
+
+FUNCTION:   [Sqlite-26]  -constructor- native const function Sqlite(connectionString: String) : void
+
+     ARG:   [arg-00]   private connectionString : String
+
+    
+VARIABLE:   [connectionString-00]  private var connectionString : String
+
+FUNCTION:   [Sqlite-27]  -initializer- static function Sqlite-initializer() : Void
+
+
+    0000: [0] 33 0a 26 b4 02 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:19         static const DataTypeToSqlType: Object = {
+
+    0005: [0] 33 0a 28 cc 03 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:20             "binary":       "blob",
+
+    0010: [0] 56 94 04 ................... loadString <> 
+    0013: [1] 56 96 04 ................... loadString <binary> 
+    0016: [2] 56 a4 04 ................... loadString <blob> 
+    0019: [3] 33 0a 2a ae 04 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:21             "boolean":      "tinyint",
+
+    0024: [3] 56 94 04 ................... loadString <> 
+    0027: [4] 56 fc 04 ................... loadString <boolean> 
+    0030: [5] 56 8c 05 ................... loadString <tinyint> 
+    0033: [6] 33 0a 2c 9c 05 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:22             "date":         "date",
+
+    0038: [6] 56 94 04 ................... loadString <> 
+    0041: [7] 56 e4 05 ................... loadString <date> 
+    0044: [8] 56 e4 05 ................... loadString <date> 
+    0047: [9] 33 0a 2e ee 05 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:23             "datetime":     "datetime",
+
+    0052: [9] 56 94 04 ................... loadString <> 
+    0055: [10] 56 be 06 ................... loadString <datetime> 
+    0058: [11] 56 be 06 ................... loadString <datetime> 
+    0061: [12] 33 0a 30 d0 06 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:24             "decimal":      "decimal",
+
+    0066: [12] 56 94 04 ................... loadString <> 
+    0069: [13] 56 9e 07 ................... loadString <decimal> 
+    0072: [14] 56 9e 07 ................... loadString <decimal> 
+    0075: [15] 33 0a 32 ae 07 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:25             "float":        "float",
+
+    0080: [15] 56 94 04 ................... loadString <> 
+    0083: [16] 56 f8 07 ................... loadString <float> 
+    0086: [17] 56 f8 07 ................... loadString <float> 
+    0089: [18] 33 0a 34 84 08 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:26             "integer":      "int",
+
+    0094: [18] 56 94 04 ................... loadString <> 
+    0097: [19] 56 ca 08 ................... loadString <integer> 
+    0100: [20] 56 da 08 ................... loadString <int> 
+    0103: [21] 33 0a 36 e2 08 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:27             "number":       "decimal",
+
+    0108: [21] 56 94 04 ................... loadString <> 
+    0111: [22] 56 b0 09 ................... loadString <number> 
+    0114: [23] 56 9e 07 ................... loadString <decimal> 
+    0117: [24] 33 0a 38 be 09 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:28             "string":       "varchar",
+
+    0122: [24] 56 94 04 ................... loadString <> 
+    0125: [25] 56 8c 0a ................... loadString <string> 
+    0128: [26] 56 9a 0a ................... loadString <varchar> 
+    0131: [27] 33 0a 3a aa 0a ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:29             "text":         "text",
+
+    0136: [27] 56 94 04 ................... loadString <> 
+    0139: [28] 56 f2 0a ................... loadString <text> 
+    0142: [29] 56 f2 0a ................... loadString <text> 
+    0145: [30] 33 0a 3c fc 0a ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:30             "time":         "time",
+
+    0150: [30] 56 94 04 ................... loadString <> 
+    0153: [31] 56 c4 0b ................... loadString <time> 
+    0156: [32] 56 c4 0b ................... loadString <time> 
+    0159: [33] 33 0a 3e ce 0b ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:31             "timestamp":    "datetime",
+
+    0164: [33] 56 94 04 ................... loadString <> 
+    0167: [34] 56 9e 0c ................... loadString <timestamp> 
+    0170: [35] 56 be 06 ................... loadString <datetime> 
+    0173: [36] 8a e4 06 18 00 00 00 00 00 00 00 00 00 00 00 00  newObject <type: 0x1b2,  ejs::Object> <argc: 12> <att: 12 12 12 12 12 12 12 12 12 12 12 12 >
+    0189: [1] 33 0a 26 b4 02 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:19         static const DataTypeToSqlType: Object = {
+
+    0194: [1] bc 38 02 ................... putThisTypeSlot <slot: 28> <1> 
+    0197: [0] 33 0a 4a b2 0c ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:37         static const SqlTypeToDataType: Object = {
+
+    0202: [0] 33 0a 4c bc 0d ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:38             "blob":         "binary",
+
+    0207: [0] 56 94 04 ................... loadString <> 
+    0210: [1] 56 a4 04 ................... loadString <blob> 
+    0213: [2] 56 96 04 ................... loadString <binary> 
+    0216: [3] 33 0a 4e 88 0e ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:39             "tinyint":      "boolean",
+
+    0221: [3] 56 94 04 ................... loadString <> 
+    0224: [4] 56 8c 05 ................... loadString <tinyint> 
+    0227: [5] 56 fc 04 ................... loadString <boolean> 
+    0230: [6] 33 0a 50 9c 05 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:40             "date":         "date",
+
+    0235: [6] 56 94 04 ................... loadString <> 
+    0238: [7] 56 e4 05 ................... loadString <date> 
+    0241: [8] 56 e4 05 ................... loadString <date> 
+    0244: [9] 33 0a 52 ee 05 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:41             "datetime":     "datetime",
+
+    0249: [9] 56 94 04 ................... loadString <> 
+    0252: [10] 56 be 06 ................... loadString <datetime> 
+    0255: [11] 56 be 06 ................... loadString <datetime> 
+    0258: [12] 33 0a 54 d0 06 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:42             "decimal":      "decimal",
+
+    0263: [12] 56 94 04 ................... loadString <> 
+    0266: [13] 56 9e 07 ................... loadString <decimal> 
+    0269: [14] 56 9e 07 ................... loadString <decimal> 
+    0272: [15] 33 0a 56 ae 07 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:43             "float":        "float",
+
+    0277: [15] 56 94 04 ................... loadString <> 
+    0280: [16] 56 f8 07 ................... loadString <float> 
+    0283: [17] 56 f8 07 ................... loadString <float> 
+    0286: [18] 33 0a 58 d6 0e ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:44             "int":          "integer",
+
+    0291: [18] 56 94 04 ................... loadString <> 
+    0294: [19] 56 da 08 ................... loadString <int> 
+    0297: [20] 56 ca 08 ................... loadString <integer> 
+    0300: [21] 33 0a 5a a4 0f ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:45             "varchar":      "string",
+
+    0305: [21] 56 94 04 ................... loadString <> 
+    0308: [22] 56 9a 0a ................... loadString <varchar> 
+    0311: [23] 56 8c 0a ................... loadString <string> 
+    0314: [24] 33 0a 5c aa 0a ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:46             "text":         "text",
+
+    0319: [24] 56 94 04 ................... loadString <> 
+    0322: [25] 56 f2 0a ................... loadString <text> 
+    0325: [26] 56 f2 0a ................... loadString <text> 
+    0328: [27] 33 0a 5e fc 0a ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:47             "time":         "time",
+
+    0333: [27] 56 94 04 ................... loadString <> 
+    0336: [28] 56 c4 0b ................... loadString <time> 
+    0339: [29] 56 c4 0b ................... loadString <time> 
+    0342: [30] 8a e4 06 14 00 00 00 00 00 00 00 00 00 00  newObject <type: 0x1b2,  ejs::Object> <argc: 10> <att: 10 10 10 10 10 10 10 10 10 10 >
+    0356: [1] 33 0a 4a b2 0c ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:37         static const SqlTypeToDataType: Object = {
+
+    0361: [1] bc 3a 02 ................... putThisTypeSlot <slot: 29> <1> 
+    0364: [0] 33 0a 6a f0 0f ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:53         static const SqlTypeToEjsType: Object = {
+
+    0369: [0] 33 0a 6c f6 10 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:54             "blob":         String,
+
+    0374: [0] 56 94 04 ................... loadString <> 
+    0377: [1] 56 a4 04 ................... loadString <blob> 
+    0380: [2] 7e e8 01 ................... getGlobalSlot <slot: 116> 
+    0383: [3] 33 0a 6e be 11 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:55             "date":         Date,
+
+    0388: [3] 56 94 04 ................... loadString <> 
+    0391: [4] 56 e4 05 ................... loadString <date> 
+    0394: [5] 7e 1e ...................... getGlobalSlot <slot: 15> 
+    0396: [6] 33 0a 70 82 12 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:56             "datetime":     Date,
+
+    0401: [6] 56 94 04 ................... loadString <> 
+    0404: [7] 56 be 06 ................... loadString <datetime> 
+    0407: [8] 7e 1e ...................... getGlobalSlot <slot: 15> 
+    0409: [9] 33 0a 72 c6 12 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:57             "decimal":      Number,
+
+    0414: [9] 56 94 04 ................... loadString <> 
+    0417: [10] 56 9e 07 ................... loadString <decimal> 
+    0420: [11] 7e d6 01 ................... getGlobalSlot <slot: 107> 
+    0423: [12] 33 0a 74 8e 13 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:58             "int":          Number,
+
+    0428: [12] 56 94 04 ................... loadString <> 
+    0431: [13] 56 da 08 ................... loadString <int> 
+    0434: [14] 7e d6 01 ................... getGlobalSlot <slot: 107> 
+    0437: [15] 33 0a 76 d6 13 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:59             "integer":      Number,
+
+    0442: [15] 56 94 04 ................... loadString <> 
+    0445: [16] 56 ca 08 ................... loadString <integer> 
+    0448: [17] 7e d6 01 ................... getGlobalSlot <slot: 107> 
+    0451: [18] 33 0a 78 9e 14 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:60             "float":        Number,
+
+    0456: [18] 56 94 04 ................... loadString <> 
+    0459: [19] 56 f8 07 ................... loadString <float> 
+    0462: [20] 7e d6 01 ................... getGlobalSlot <slot: 107> 
+    0465: [21] 33 0a 7a e6 14 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:61             "time":         Date,
+
+    0470: [21] 56 94 04 ................... loadString <> 
+    0473: [22] 56 c4 0b ................... loadString <time> 
+    0476: [23] 7e 1e ...................... getGlobalSlot <slot: 15> 
+    0478: [24] 33 0a 7c aa 15 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:62             "tinyint":      Boolean,
+
+    0483: [24] 56 94 04 ................... loadString <> 
+    0486: [25] 56 8c 05 ................... loadString <tinyint> 
+    0489: [26] 7e 10 ...................... getGlobalSlot <slot: 8> 
+    0491: [27] 33 0a 7e f4 15 ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:63             "text":         String,
+
+    0496: [27] 56 94 04 ................... loadString <> 
+    0499: [28] 56 f2 0a ................... loadString <text> 
+    0502: [29] 7e e8 01 ................... getGlobalSlot <slot: 116> 
+    0505: [30] 33 0a 80 01 bc 16 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:64             "varchar":      String,
+
+    0511: [30] 56 94 04 ................... loadString <> 
+    0514: [31] 56 9a 0a ................... loadString <varchar> 
+    0517: [32] 7e e8 01 ................... getGlobalSlot <slot: 116> 
+    0520: [33] 8a e4 06 16 00 00 00 00 00 00 00 00 00 00 00  newObject <type: 0x1b2,  ejs::Object> <argc: 11> <att: 11 11 11 11 11 11 11 11 11 11 11 >
+    0535: [1] 33 0a 6a f0 0f ............. debug 
+
+    # ejs.db.sqlite/Sqlite.es:53         static const SqlTypeToEjsType: Object = {
+
+    0540: [1] bc 3c 02 ................... putThisTypeSlot <slot: 30> <1> 
+    0543: [0] 33 0a a0 01 84 17 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:80         use default namespace public
+
+    0549: [0] 7e 5c ...................... getGlobalSlot <slot: 46> 
+    0551: [1] 02 ......................... addNamespaceRef 
+    0552: [0] 33 0a b6 01 ce 17 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:91         native "ejs.db" function Sqlite(connectionString: String)
+
+    0558: [0] 33 0a bc 01 ae 19 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:94         function addColumn(table: String, column: String, datatype: String, options = null): Void {
+
+    0564: [0] 33 0a ce 01 f0 20 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:103         function addIndex(table: String, column: String, index: String): Void
+
+    0570: [0] 33 0a de 01 82 24 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:111         function changeColumn(table: String, column: String, datatype: String, options = null): Void {
+
+    0576: [0] 33 0a f2 01 88 2a .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:121         native function close(): Void
+
+    0582: [0] 33 0a f8 01 e0 2a .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:124         function commit(): Void {}
+
+    0588: [0] 33 0a 86 02 b4 2b .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:131         native function connect(connectionString: String): Void
+
+    0594: [0] 33 0a 8c 02 c4 2c .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:134         function createDatabase(name: String, options = null): Void {
+
+    0600: [0] 33 0a 96 02 f8 2d .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:139         function createTable(table: String, columns: Array? = null): Void {
+
+    0606: [0] 33 0a c0 02 e0 3b .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:160         static function dataTypeToSqlType(dataType:String): String
+
+    0612: [0] 33 0a c8 02 ec 3d .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:164         function destroyDatabase(name: String): Void
+
+    0618: [0] 33 0a d0 02 b6 3f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:168         function destroyTable(table: String): Void
+
+    0624: [0] 33 0a d8 02 b6 40 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:172         function endTransaction(): Void {}
+
+    0630: [0] 33 0a de 02 aa 41 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:175         function getColumns(table: String): Array {
+
+    0636: [0] 33 0a f8 02 8c 47 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:188         function getNumRows(table: String): Array {
+
+    0642: [0] 33 0a 86 03 ae 4b .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:195         function getTables(): Array {
+
+    0648: [0] 33 0a a2 03 b2 53 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:209         function removeColumns(table: String, columns: Array): Void {
+
+    0654: [0] 33 0a f8 03 e4 6c .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:252         function removeIndex(table: String, index: String): Void
+
+    0660: [0] 33 0a 88 04 f4 6e .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:260         function renameColumn(table: String, oldColumn: String, newColumn: String): Void {
+
+    0666: [0] 33 0a 94 04 b8 72 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:266         function renameTable(oldTable: String, newTable: String): Void
+
+    0672: [0] 33 0a a2 04 b6 75 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:273         function rollback(): Void {}
+
+    0678: [0] 33 0a a8 04 92 76 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:276         function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
+
+    0684: [0] 33 0a bc 04 ca 79 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:286         native function sql(cmd: String): Array
+
+    0690: [0] 33 0a c2 04 b2 7a .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:289         function sqlTypeToDataType(sqlType: String): String
+
+    0696: [0] 33 0a ca 04 ce 7c .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:293         function sqlTypeToEjsType(sqlType: String): Type
+
+    0702: [0] 33 0a d2 04 da 7e .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:297         function startTransaction(): Void {}
+
+    0708: [0] be ......................... return 
+    
+VARIABLE:   [Sqlite-28]  internal-2c16a813a0a20e98d343ed0350a11bde-6 const static var DataTypeToSqlType : Object
+VARIABLE:   [Sqlite-29]  internal-2c16a813a0a20e98d343ed0350a11bde-6 const static var SqlTypeToDataType : Object
+VARIABLE:   [Sqlite-30]  internal-2c16a813a0a20e98d343ed0350a11bde-6 const static var SqlTypeToEjsType : Object
+
+FUNCTION:   [Sqlite-31]  public const function addColumn(table: String, column: String, datatype: String, options) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private column : String
+     ARG:   [arg-02]   private datatype : String
+     ARG:   [arg-03]   private options
+
+    0000: [0] 41 02 02 08 ................ initDefaultArgs8 <2> <4> <10> 
+    0004: [0] 50 ......................... loadGlobal 
+    0005: [1] 7b f6 1a 02 ................ getObjName <null> <ejs> 
+    0009: [1] 97 ......................... putLocalSlot3 
+    0010: [0] 33 0a be 01 80 1b .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:95             datatype = DataTypeToSqlType[datatype.toLower()]
+
+    0016: [0] 83 38 02 ................... getThisTypeSlot <slot: 28> <1> 
+    0019: [1] 56 94 04 ................... loadString <> 
+    0022: [2] 5d ......................... getLocalSlot2 
+    0023: [3] 18 7a 00 ................... callObjSlot <slot: 61> <argc: 0> 
+    0026: [2] 93 ......................... pushResult 
+    0027: [3] 7c ......................... getObjNameExpr 
+    0028: [1] 96 ......................... putLocalSlot2 
+    0029: [0] 33 0a c0 01 fa 1b .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:96             if (datatype == undefined) {
+
+    0035: [0] 5d ......................... getLocalSlot2 
+    0036: [1] 50 ......................... loadGlobal 
+    0037: [2] 7b cc 1c 02 ................ getObjName <undefined> <ejs> 
+    0041: [2] 25 ......................... compareEq 
+    0042: [1] 13 0e ...................... branchFalse8 <addr: 58> 
+    0044: [0] 33 0a c2 01 e0 1c .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:97                 throw "Bad Ejscript column type: " + datatype
+
+    0050: [0] 56 dc 1d ................... loadString <Bad Ejscript column type: > 
+    0053: [1] 5d ......................... getLocalSlot2 
+    0054: [2] 00 ......................... add 
+    0055: [1] c6 ......................... throw 
+    0056: [1] 3e 00 ...................... goto8 <addr: 58> 
+    0058: [1] 33 0a c4 01 92 1e .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:98             }
+
+    0064: [1] 33 0a c6 01 ae 1e .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:99             query("ALTER TABLE " + table + " ADD " + column + " " + datatype)
+
+    0070: [1] 56 ca 1f ................... loadString <ALTER TABLE > 
+    0073: [2] 5b ......................... getLocalSlot0 
+    0074: [3] 00 ......................... add 
+    0075: [2] 56 e4 1f ................... loadString < ADD > 
+    0078: [3] 00 ......................... add 
+    0079: [2] 5c ......................... getLocalSlot1 
+    0080: [3] 00 ......................... add 
+    0081: [2] 56 f0 1f ................... loadString < > 
+    0084: [3] 00 ......................... add 
+    0085: [2] 5d ......................... getLocalSlot2 
+    0086: [3] 00 ......................... add 
+    0087: [2] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0090: [1] be ......................... return 
+    0091: [0] 33 0a c8 01 f4 1f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:100         }
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [column-01]  private var column : String
+VARIABLE:   [datatype-02]  private var datatype : String
+VARIABLE:   [options-03]  private var options
+
+FUNCTION:   [Sqlite-32]  public const function addIndex(table: String, column: String, index: String) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private column : String
+     ARG:   [arg-02]   private index : String
+
+    0000: [0] 33 0a d0 01 8c 22 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:104             query("CREATE INDEX " + index + " ON " + table + " (" + column + ");")
+
+    0006: [0] 56 b2 23 ................... loadString <CREATE INDEX > 
+    0009: [1] 5d ......................... getLocalSlot2 
+    0010: [2] 00 ......................... add 
+    0011: [1] 56 ce 23 ................... loadString < ON > 
+    0014: [2] 00 ......................... add 
+    0015: [1] 5b ......................... getLocalSlot0 
+    0016: [2] 00 ......................... add 
+    0017: [1] 56 d8 23 ................... loadString < (> 
+    0020: [2] 00 ......................... add 
+    0021: [1] 5c ......................... getLocalSlot1 
+    0022: [2] 00 ......................... add 
+    0023: [1] 56 de 23 ................... loadString <);> 
+    0026: [2] 00 ......................... add 
+    0027: [1] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0030: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [column-01]  private var column : String
+VARIABLE:   [index-02]  private var index : String
+
+FUNCTION:   [Sqlite-33]  public const function changeColumn(table: String, column: String, datatype: String, options) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private column : String
+     ARG:   [arg-02]   private datatype : String
+     ARG:   [arg-03]   private options
+
+    0000: [0] 41 02 02 08 ................ initDefaultArgs8 <2> <4> <10> 
+    0004: [0] 50 ......................... loadGlobal 
+    0005: [1] 7b f6 1a 02 ................ getObjName <null> <ejs> 
+    0009: [1] 97 ......................... putLocalSlot3 
+    0010: [0] 33 0a e0 01 d0 25 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:112             datatype = datatype.toLower()
+
+    0016: [0] 5d ......................... getLocalSlot2 
+    0017: [1] 18 7a 00 ................... callObjSlot <slot: 61> <argc: 0> 
+    0020: [0] 93 ......................... pushResult 
+    0021: [1] 96 ......................... putLocalSlot2 
+    0022: [0] 33 0a e2 01 a4 26 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:113             if (DataTypeToSqlType[datatype] == undefined) {
+
+    0028: [0] 83 38 02 ................... getThisTypeSlot <slot: 28> <1> 
+    0031: [1] 56 94 04 ................... loadString <> 
+    0034: [2] 5d ......................... getLocalSlot2 
+    0035: [3] 7c ......................... getObjNameExpr 
+    0036: [1] 50 ......................... loadGlobal 
+    0037: [2] 7b cc 1c 02 ................ getObjName <undefined> <ejs> 
+    0041: [2] 25 ......................... compareEq 
+    0042: [1] 13 0e ...................... branchFalse8 <addr: 58> 
+    0044: [0] 33 0a e4 01 9c 27 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:114                 throw "Bad column type: " + datatype
+
+    0050: [0] 56 86 28 ................... loadString <Bad column type: > 
+    0053: [1] 5d ......................... getLocalSlot2 
+    0054: [2] 00 ......................... add 
+    0055: [1] c6 ......................... throw 
+    0056: [1] 3e 00 ...................... goto8 <addr: 58> 
+    0058: [1] 33 0a ea 01 aa 28 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:117             throw "SQLite does not support column changes"
+
+    0064: [1] 56 a0 29 ................... loadString <SQLite does not support column changes> 
+    0067: [2] c6 ......................... throw 
+    0068: [2] be ......................... return 
+    0069: [0] 33 0a ec 01 f4 1f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:118         }
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [column-01]  private var column : String
+VARIABLE:   [datatype-02]  private var datatype : String
+VARIABLE:   [options-03]  private var options
+
+FUNCTION:   [Sqlite-34]  public native const function close() : Void
+
+
+    
+
+FUNCTION:   [Sqlite-35]  public const function commit() : Void
+
+
+    0000: [0] be ......................... return 
+    
+
+FUNCTION:   [Sqlite-36]  public native const function connect(connectionString: String) : Void
+
+     ARG:   [arg-00]   private connectionString : String
+
+    
+VARIABLE:   [connectionString-00]  private var connectionString : String
+
+FUNCTION:   [Sqlite-37]  public const function createDatabase(name: String, options) : Void
+
+     ARG:   [arg-00]   private name : String
+     ARG:   [arg-01]   private options
+
+    0000: [0] 41 02 02 08 ................ initDefaultArgs8 <2> <4> <10> 
+    0004: [0] 50 ......................... loadGlobal 
+    0005: [1] 7b f6 1a 02 ................ getObjName <null> <ejs> 
+    0009: [1] 95 ......................... putLocalSlot1 
+    0010: [0] be ......................... return 
+    0011: [0] 33 0a 90 02 f4 1f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:136         }
+    
+VARIABLE:   [name-00]  private var name : String
+VARIABLE:   [options-01]  private var options
+
+FUNCTION:   [Sqlite-38]  public const function createTable(table: String, columns: Array) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private columns : Array
+   LOCAL:   [local-02] var cmd : String
+   LOCAL:   [local-03] var colspec : String
+   LOCAL:   [local-04] var spec : Array
+   LOCAL:   [local-05] var column : String
+   LOCAL:   [local-06] var datatype : String
+
+    0000: [0] 41 02 02 08 ................ initDefaultArgs8 <2> <4> <10> 
+    0004: [0] 50 ......................... loadGlobal 
+    0005: [1] 7b f6 1a 02 ................ getObjName <null> <ejs> 
+    0009: [1] 95 ......................... putLocalSlot1 
+    0010: [0] 33 0a 98 02 98 2f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:140             let cmd: String
+
+    0016: [0] 33 0a 9c 02 d0 2f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:142             query("DROP TABLE IF EXISTS " + table + ";")
+
+    0022: [0] 56 c2 30 ................... loadString <DROP TABLE IF EXISTS > 
+    0025: [1] 5b ......................... getLocalSlot0 
+    0026: [2] 00 ......................... add 
+    0027: [1] 56 ee 30 ................... loadString <;> 
+    0030: [2] 00 ......................... add 
+    0031: [1] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0034: [0] 33 0a 9e 02 f2 30 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:143             query("CREATE TABLE " + table + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL);")
+
+    0040: [0] 56 b2 32 ................... loadString <CREATE TABLE > 
+    0043: [1] 5b ......................... getLocalSlot0 
+    0044: [2] 00 ......................... add 
+    0045: [1] 56 ce 32 ................... loadString <(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL);> 
+    0048: [2] 00 ......................... add 
+    0049: [1] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0052: [0] 33 0a a2 02 b0 33 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:145             if (columns) {
+
+    0058: [0] 5c ......................... getLocalSlot1 
+    0059: [1] 13 77 ...................... branchFalse8 <addr: 180> 
+    0061: [0] 33 0a a4 02 e6 33 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:146                 for each (let colspec: String in columns) {
+
+    0067: [0] 5c ......................... getLocalSlot1 
+    0068: [1] 18 18 00 ................... callObjSlot <slot: 12> <argc: 0> 
+    0071: [0] 93 ......................... pushResult 
+    0072: [1] 39 ......................... dup 
+    0073: [2] 18 34 00 ................... callObjSlot <slot: 26> <argc: 0> 
+    0076: [1] 93 ......................... pushResult 
+    0077: [2] 97 ......................... putLocalSlot3 
+    0078: [1] 33 0a a8 02 8e 35 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:148                     let spec: Array = colspec.split(":")
+
+    0084: [1] 5e ......................... getLocalSlot3 
+    0085: [2] 56 80 36 ................... loadString <:> 
+    0088: [3] 18 70 02 ................... callObjSlot <slot: 56> <argc: 1> 
+    0091: [1] 93 ......................... pushResult 
+    0092: [2] 98 ......................... putLocalSlot4 
+    0093: [1] 33 0a aa 02 84 36 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:149                     if (spec.length != 2) {
+
+    0099: [1] 5f ......................... getLocalSlot4 
+    0100: [2] 7b dc 36 9c 20 ............. getObjName <length> <public> 
+    0105: [2] 46 ......................... load2 
+    0106: [3] 2c ......................... compareNe 
+    0107: [2] 13 0e ...................... branchFalse8 <addr: 123> 
+    0109: [1] 33 0a ac 02 ea 36 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:150                         throw "Bad column spec: " + spec
+
+    0115: [1] 56 dc 37 ................... loadString <Bad column spec: > 
+    0118: [2] 5f ......................... getLocalSlot4 
+    0119: [3] 00 ......................... add 
+    0120: [2] c6 ......................... throw 
+    0121: [2] 3e 00 ...................... goto8 <addr: 123> 
+    0123: [2] 33 0a ae 02 80 38 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:151                     }
+
+    0129: [2] 33 0a b0 02 ac 38 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:152                     let column: String = spec[0]
+
+    0135: [2] 5f ......................... getLocalSlot4 
+    0136: [3] 56 94 04 ................... loadString <> 
+    0139: [4] 44 ......................... load0 
+    0140: [5] 7c ......................... getObjNameExpr 
+    0141: [3] 99 ......................... putLocalSlot5 
+    0142: [2] 33 0a b2 02 8e 39 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:153                     let datatype: String = spec[1]
+
+    0148: [2] 5f ......................... getLocalSlot4 
+    0149: [3] 56 94 04 ................... loadString <> 
+    0152: [4] 45 ......................... load1 
+    0153: [5] 7c ......................... getObjNameExpr 
+    0154: [3] 9a ......................... putLocalSlot6 
+    0155: [2] 33 0a b4 02 f4 39 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:154                     addColumn(table, column.trim(), datatype.trim())
+
+    0161: [2] 5b ......................... getLocalSlot0 
+    0162: [3] 60 ......................... getLocalSlot5 
+    0163: [4] 18 7e 00 ................... callObjSlot <slot: 63> <argc: 0> 
+    0166: [3] 93 ......................... pushResult 
+    0167: [4] 61 ......................... getLocalSlot6 
+    0168: [5] 18 7e 00 ................... callObjSlot <slot: 63> <argc: 0> 
+    0171: [4] 93 ......................... pushResult 
+    0172: [5] 19 3e 06 ................... callThisSlot <slot: 31> <argc: 3> 
+    0175: [2] 3e 97 ...................... goto8 <addr: 72> 
+    0177: [2] 90 ......................... pop 
+    0178: [1] 3e 00 ...................... goto8 <addr: 180> 
+    0180: [1] be ......................... return 
+    0181: [0] 33 0a ba 02 f4 1f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:157         }
+    
+
+#
+#  Exception Section
+#    Kind     TryStart TryEnd  HandlerStart  HandlerEnd   CatchType
+#
+0   iteration     73      76        177          177       StopIteration
+
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [columns-01]  private var columns : Array
+VARIABLE:   [cmd-02]  private var cmd : String
+VARIABLE:   [colspec-03]  -hoisted-3 var colspec : String
+VARIABLE:   [spec-04]  -hoisted-3 var spec : Array
+VARIABLE:   [column-05]  -hoisted-3 var column : String
+VARIABLE:   [datatype-06]  -hoisted-3 var datatype : String
+
+FUNCTION:   [Sqlite-39]  public const static function dataTypeToSqlType(dataType: String) : String
+
+     ARG:   [arg-00]   private dataType : String
+
+    0000: [0] 33 0a c2 02 e6 3c .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:161             DataTypeToSqlType[dataType]
+
+    0006: [0] 83 38 02 ................... getThisTypeSlot <slot: 28> <1> 
+    0009: [1] 56 94 04 ................... loadString <> 
+    0012: [2] 5b ......................... getLocalSlot0 
+    0013: [3] 7c ......................... getObjNameExpr 
+    0014: [1] bf ......................... returnValue 
+    
+VARIABLE:   [dataType-00]  private var dataType : String
+
+FUNCTION:   [Sqlite-40]  public const function destroyDatabase(name: String) : Void
+
+     ARG:   [arg-00]   private name : String
+
+    0000: [0] 33 0a ca 02 d6 3e .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:165             Path(name).remove()
+
+    0006: [0] 5b ......................... getLocalSlot0 
+    0007: [1] 17 da 01 02 ................ callGlobalSlot <slot: 109> <argc: 1> 
+    0011: [0] 93 ......................... pushResult 
+    0012: [1] 18 8c 01 00 ................ callObjSlot <slot: 70> <argc: 0> 
+    0016: [0] be ......................... return 
+    
+VARIABLE:   [name-00]  private var name : String
+
+FUNCTION:   [Sqlite-41]  public const function destroyTable(table: String) : Void
+
+     ARG:   [arg-00]   private table : String
+
+    0000: [0] 33 0a d2 02 d0 2f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:169             query("DROP TABLE IF EXISTS " + table + ";")
+
+    0006: [0] 56 c2 30 ................... loadString <DROP TABLE IF EXISTS > 
+    0009: [1] 5b ......................... getLocalSlot0 
+    0010: [2] 00 ......................... add 
+    0011: [1] 56 ee 30 ................... loadString <;> 
+    0014: [2] 00 ......................... add 
+    0015: [1] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0018: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+
+FUNCTION:   [Sqlite-42]  public const function endTransaction() : Void
+
+
+    0000: [0] be ......................... return 
+    
+
+FUNCTION:   [Sqlite-43]  public const function getColumns(table: String) : Array
+
+     ARG:   [arg-00]   private table : String
+   LOCAL:   [local-01] var names
+   LOCAL:   [local-02] var row
+   LOCAL:   [local-03] var name : String
+
+    0000: [0] 33 0a e0 02 92 42 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:176             grid = query('PRAGMA table_info("' + table + '");')
+
+    0006: [0] 56 92 43 ................... loadString <PRAGMA table_info("> 
+    0009: [1] 5b ......................... getLocalSlot0 
+    0010: [2] 00 ......................... add 
+    0011: [1] 56 ba 43 ................... loadString <");> 
+    0014: [2] 00 ......................... add 
+    0015: [1] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0018: [0] 93 ......................... pushResult 
+    0019: [1] b4 c2 43 94 04 ............. putScopedName <grid> <> 
+    0024: [0] 33 0a e2 02 cc 43 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:177             let names = []
+
+    0030: [0] 7e 0a ...................... getGlobalSlot <slot: 5> 
+    0032: [1] 89 ......................... new 
+    0033: [1] 95 ......................... putLocalSlot1 
+    0034: [0] 33 0a e4 02 8e 44 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:178             for each (let row in grid) {
+
+    0040: [0] 79 c2 43 94 04 ............. getScopedName <grid> <> 
+    0045: [1] 1e fe 44 ce 3b 00 .......... callObjName <getValues> <iterator> <argc: 0> 
+    0051: [0] 93 ......................... pushResult 
+    0052: [1] 39 ......................... dup 
+    0053: [2] 18 34 00 ................... callObjSlot <slot: 26> <argc: 0> 
+    0056: [1] 93 ......................... pushResult 
+    0057: [2] 96 ......................... putLocalSlot2 
+    0058: [1] 33 0a e6 02 92 45 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:179                 let name: String = row["name"]
+
+    0064: [1] 5d ......................... getLocalSlot2 
+    0065: [2] 56 94 04 ................... loadString <> 
+    0068: [3] 56 ee 2d ................... loadString <name> 
+    0071: [4] 7c ......................... getObjNameExpr 
+    0072: [2] 97 ......................... putLocalSlot3 
+    0073: [1] 33 0a e8 02 f0 45 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:180                 names.append(name)
+
+    0079: [1] 5c ......................... getLocalSlot1 
+    0080: [2] 5e ......................... getLocalSlot3 
+    0081: [3] 1e b6 46 00 02 ............. callObjName <append> <> <argc: 1> 
+    0086: [1] 3e dc ...................... goto8 <addr: 52> 
+    0088: [1] 90 ......................... pop 
+    0089: [0] 33 0a ec 02 c4 46 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:182             return names
+
+    0095: [0] 5c ......................... getLocalSlot1 
+    0096: [1] bf ......................... returnValue 
+    
+
+#
+#  Exception Section
+#    Kind     TryStart TryEnd  HandlerStart  HandlerEnd   CatchType
+#
+0   iteration     53      56         88           88       StopIteration
+
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [names-01]  private var names
+VARIABLE:   [row-02]  -hoisted-2 var row
+VARIABLE:   [name-03]  -hoisted-2 var name : String
+
+FUNCTION:   [Sqlite-44]  public const function getNumRows(table: String) : Array
+
+     ARG:   [arg-00]   private table : String
+   LOCAL:   [local-01] var cmd : String
+   LOCAL:   [local-02] var grid : Array
+
+    0000: [0] 33 0a fa 02 f4 47 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:189             let cmd: String = "SELECT COUNT(*) FROM " + table + ";"
+
+    0006: [0] 56 fc 48 ................... loadString <SELECT COUNT(*) FROM > 
+    0009: [1] 5b ......................... getLocalSlot0 
+    0010: [2] 00 ......................... add 
+    0011: [1] 56 ee 30 ................... loadString <;> 
+    0014: [2] 00 ......................... add 
+    0015: [1] 95 ......................... putLocalSlot1 
+    0016: [0] 33 0a fc 02 a8 49 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:190             let grid: Array = query(cmd, "numRows")
+
+    0022: [0] 5c ......................... getLocalSlot1 
+    0023: [1] 56 90 4a ................... loadString <numRows> 
+    0026: [2] 19 66 04 ................... callThisSlot <slot: 51> <argc: 2> 
+    0029: [0] 93 ......................... pushResult 
+    0030: [1] 96 ......................... putLocalSlot2 
+    0031: [0] 33 0a fe 02 a0 4a .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:191             return grid[0]["COUNT(*)"] cast Number
+
+    0037: [0] 5d ......................... getLocalSlot2 
+    0038: [1] 56 94 04 ................... loadString <> 
+    0041: [2] 44 ......................... load0 
+    0042: [3] 7c ......................... getObjNameExpr 
+    0043: [1] 56 94 04 ................... loadString <> 
+    0046: [2] 56 86 4b ................... loadString <COUNT(*)> 
+    0049: [3] 7c ......................... getObjNameExpr 
+    0050: [1] 7e d6 01 ................... getGlobalSlot <slot: 107> 
+    0053: [2] 22 ......................... cast 
+    0054: [1] bf ......................... returnValue 
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [cmd-01]  private var cmd : String
+VARIABLE:   [grid-02]  private var grid : Array
+
+FUNCTION:   [Sqlite-45]  public const function getTables() : Array
+
+   LOCAL:   [local-00] var cmd : String
+   LOCAL:   [local-01] var grid : Array
+   LOCAL:   [local-02] var result : Array
+   LOCAL:   [local-03] var row : Object
+   LOCAL:   [local-04] var name : String
+
+    0000: [0] 33 0a 88 03 fa 4b .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:196             let cmd: String = "SELECT name from sqlite_master WHERE type = 'table' order by NAME;"
+
+    0006: [0] 56 c0 4d ................... loadString <SELECT name from sqlite_master WHERE type = 'table' order by NAME;> 
+    0009: [1] 94 ......................... putLocalSlot0 
+    0010: [0] 33 0a 8a 03 c6 4e .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:197             let grid: Array = query(cmd)
+
+    0016: [0] 5b ......................... getLocalSlot0 
+    0017: [1] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0020: [0] 93 ......................... pushResult 
+    0021: [1] 95 ......................... putLocalSlot1 
+    0022: [0] 33 0a 8c 03 98 4f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:198             let result: Array = new Array
+
+    0028: [0] 7e 0a ...................... getGlobalSlot <slot: 5> 
+    0030: [1] 89 ......................... new 
+    0031: [1] 20 00 ...................... callConstructor <argc: 0> 
+    0033: [1] 96 ......................... putLocalSlot2 
+    0034: [0] 33 0a 8e 03 fa 4f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:199             for each (let row: Object in grid) {
+
+    0040: [0] 5c ......................... getLocalSlot1 
+    0041: [1] 18 18 00 ................... callObjSlot <slot: 12> <argc: 0> 
+    0044: [0] 93 ......................... pushResult 
+    0045: [1] 39 ......................... dup 
+    0046: [2] 18 34 00 ................... callObjSlot <slot: 26> <argc: 0> 
+    0049: [1] 93 ......................... pushResult 
+    0050: [2] 97 ......................... putLocalSlot3 
+    0051: [1] 33 0a 90 03 92 45 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:200                 let name: String = row["name"]
+
+    0057: [1] 5e ......................... getLocalSlot3 
+    0058: [2] 56 94 04 ................... loadString <> 
+    0061: [3] 56 ee 2d ................... loadString <name> 
+    0064: [4] 7c ......................... getObjNameExpr 
+    0065: [2] 98 ......................... putLocalSlot4 
+    0066: [1] 33 0a 92 03 dc 50 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:201                 if (!name.contains("sqlite_") && !name.contains("_Ejs")) {
+
+    0072: [1] 5f ......................... getLocalSlot4 
+    0073: [2] 56 f2 51 ................... loadString <sqlite_> 
+    0076: [3] 18 40 02 ................... callObjSlot <slot: 32> <argc: 1> 
+    0079: [1] 93 ......................... pushResult 
+    0080: [2] 86 ......................... logicalNot 
+    0081: [2] 39 ......................... dup 
+    0082: [3] 13 0a ...................... branchFalse8 <addr: 94> 
+    0084: [2] 90 ......................... pop 
+    0085: [1] 5f ......................... getLocalSlot4 
+    0086: [2] 56 82 52 ................... loadString <_Ejs> 
+    0089: [3] 18 40 02 ................... callObjSlot <slot: 32> <argc: 1> 
+    0092: [1] 93 ......................... pushResult 
+    0093: [2] 86 ......................... logicalNot 
+    0094: [2] 13 14 ...................... branchFalse8 <addr: 116> 
+    0096: [1] 33 0a 94 03 8c 52 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:202                     result.append(row["name"])
+
+    0102: [1] 5d ......................... getLocalSlot2 
+    0103: [2] 5e ......................... getLocalSlot3 
+    0104: [3] 56 94 04 ................... loadString <> 
+    0107: [4] 56 ee 2d ................... loadString <name> 
+    0110: [5] 7c ......................... getObjNameExpr 
+    0111: [3] 18 36 02 ................... callObjSlot <slot: 27> <argc: 1> 
+    0114: [1] 3e 00 ...................... goto8 <addr: 116> 
+    0116: [1] 3e b7 ...................... goto8 <addr: 45> 
+    0118: [1] 90 ......................... pop 
+    0119: [0] 33 0a 9a 03 ea 52 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:205             return result
+
+    0125: [0] 5d ......................... getLocalSlot2 
+    0126: [1] bf ......................... returnValue 
+    
+
+#
+#  Exception Section
+#    Kind     TryStart TryEnd  HandlerStart  HandlerEnd   CatchType
+#
+0   iteration     46      49        118          118       StopIteration
+
+VARIABLE:   [cmd-00]  private var cmd : String
+VARIABLE:   [grid-01]  private var grid : Array
+VARIABLE:   [result-02]  private var result : Array
+VARIABLE:   [row-03]  -hoisted-3 var row : Object
+VARIABLE:   [name-04]  -hoisted-3 var name : String
+
+FUNCTION:   [Sqlite-46]  public const function removeColumns(table: String, columns: Array) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private columns : Array
+   LOCAL:   [local-02] var column
+   LOCAL:   [local-03] var row
+   LOCAL:   [local-04] var name : String
+   LOCAL:   [local-05] var k
+
+    0000: [0] 33 0a aa 03 be 54 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:213             backup = "_backup_" + table
+
+    0006: [0] 56 8e 55 ................... loadString <_backup_> 
+    0009: [1] 5b ......................... getLocalSlot0 
+    0010: [2] 00 ......................... add 
+    0011: [1] b4 a0 55 94 04 ............. putScopedName <backup> <> 
+    0016: [0] 33 0a ac 03 ae 55 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:214             keep = getColumns(table)
+
+    0022: [0] 5b ......................... getLocalSlot0 
+    0023: [1] 19 56 02 ................... callThisSlot <slot: 43> <argc: 1> 
+    0026: [0] 93 ......................... pushResult 
+    0027: [1] b4 f8 55 94 04 ............. putScopedName <keep> <> 
+    0032: [0] 33 0a ae 03 82 56 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:215             for each (column in columns) {
+
+    0038: [0] 5c ......................... getLocalSlot1 
+    0039: [1] 18 18 00 ................... callObjSlot <slot: 12> <argc: 0> 
+    0042: [0] 93 ......................... pushResult 
+    0043: [1] 39 ......................... dup 
+    0044: [2] 18 34 00 ................... callObjSlot <slot: 26> <argc: 0> 
+    0047: [1] 93 ......................... pushResult 
+    0048: [2] 96 ......................... putLocalSlot2 
+    0049: [1] 33 0a b0 03 d8 56 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:216                 if ((index = keep.indexOf(column)) < 0) {
+
+    0055: [1] 79 f8 55 94 04 ............. getScopedName <keep> <> 
+    0060: [2] 5d ......................... getLocalSlot2 
+    0061: [3] 1e cc 57 00 02 ............. callObjName <indexOf> <> <argc: 1> 
+    0066: [1] 93 ......................... pushResult 
+    0067: [2] 39 ......................... dup 
+    0068: [3] b4 f6 23 94 04 ............. putScopedName <index> <> 
+    0073: [2] 44 ......................... load0 
+    0074: [3] 2b ......................... compareLt 
+    0075: [2] 13 14 ...................... branchFalse8 <addr: 97> 
+    0077: [1] 33 0a b2 03 dc 57 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:217                     throw "Column \"" + column + "\" does not exist in " + table
+
+    0083: [1] 56 fe 58 ................... loadString <Column "> 
+    0086: [2] 5d ......................... getLocalSlot2 
+    0087: [3] 00 ......................... add 
+    0088: [2] 56 90 59 ................... loadString <" does not exist in > 
+    0091: [3] 00 ......................... add 
+    0092: [2] 5b ......................... getLocalSlot0 
+    0093: [3] 00 ......................... add 
+    0094: [2] c6 ......................... throw 
+    0095: [2] 3e 00 ...................... goto8 <addr: 97> 
+    0097: [2] 33 0a b4 03 ba 59 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:218                 } 
+
+    0103: [2] 33 0a b6 03 e0 59 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:219                 keep.remove(index)
+
+    0109: [2] 79 f8 55 94 04 ............. getScopedName <keep> <> 
+    0114: [3] 79 f6 23 94 04 ............. getScopedName <index> <> 
+    0119: [4] 1e a6 5a 00 02 ............. callObjName <remove> <> <argc: 1> 
+    0124: [2] 3e ad ...................... goto8 <addr: 43> 
+    0126: [2] 90 ......................... pop 
+    0127: [1] 33 0a b8 03 92 1e .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:220             }
+
+    0133: [1] 33 0a be 03 b4 5a .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:223             schema = 'PRAGMA table_info("' + table + '");'
+
+    0139: [1] 56 92 43 ................... loadString <PRAGMA table_info("> 
+    0142: [2] 5b ......................... getLocalSlot0 
+    0143: [3] 00 ......................... add 
+    0144: [2] 56 ba 43 ................... loadString <");> 
+    0147: [3] 00 ......................... add 
+    0148: [2] b4 aa 5b 94 04 ............. putScopedName <schema> <> 
+    0153: [1] 33 0a c0 03 b8 5b .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:224             grid = query(schema)
+
+    0159: [1] 79 aa 5b 94 04 ............. getScopedName <schema> <> 
+    0164: [2] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0167: [1] 93 ......................... pushResult 
+    0168: [2] b4 c2 43 94 04 ............. putScopedName <grid> <> 
+    0173: [1] 33 0a c2 03 fa 5b .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:225             types = {}
+
+    0179: [1] 8a e4 06 00 ................ newObject <type: 0x1b2,  ejs::Object> <argc: 0> <att: >
+    0183: [2] b4 a8 5c 94 04 ............. putScopedName <types> <> 
+    0188: [1] 33 0a c4 03 8e 44 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:226             for each (let row in grid) {
+
+    0194: [1] 79 c2 43 94 04 ............. getScopedName <grid> <> 
+    0199: [2] 1e fe 44 ce 3b 00 .......... callObjName <getValues> <iterator> <argc: 0> 
+    0205: [1] 93 ......................... pushResult 
+    0206: [2] 39 ......................... dup 
+    0207: [3] 18 34 00 ................... callObjSlot <slot: 26> <argc: 0> 
+    0210: [2] 93 ......................... pushResult 
+    0211: [3] 97 ......................... putLocalSlot3 
+    0212: [2] 33 0a c6 03 92 45 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:227                 let name: String = row["name"]
+
+    0218: [2] 5e ......................... getLocalSlot3 
+    0219: [3] 56 94 04 ................... loadString <> 
+    0222: [4] 56 ee 2d ................... loadString <name> 
+    0225: [5] 7c ......................... getObjNameExpr 
+    0226: [3] 98 ......................... putLocalSlot4 
+    0227: [2] 33 0a c8 03 b4 5c .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:228                 types[name] = row["type"]
+
+    0233: [2] 5e ......................... getLocalSlot3 
+    0234: [3] 56 94 04 ................... loadString <> 
+    0237: [4] 56 88 5d ................... loadString <type> 
+    0240: [5] 7c ......................... getObjNameExpr 
+    0241: [3] 79 a8 5c 94 04 ............. getScopedName <types> <> 
+    0246: [4] 56 94 04 ................... loadString <> 
+    0249: [5] 5f ......................... getLocalSlot4 
+    0250: [6] b2 ......................... putObjNameExpr 
+    0251: [2] 3e d1 ...................... goto8 <addr: 206> 
+    0253: [2] 90 ......................... pop 
+    0254: [1] 33 0a ca 03 92 1e .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:229             }
+
+    0260: [1] 33 0a ce 03 92 5d .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:231             columnSpec = []
+
+    0266: [1] 7e 0a ...................... getGlobalSlot <slot: 5> 
+    0268: [2] 89 ......................... new 
+    0269: [2] b4 ca 5d 94 04 ............. putScopedName <columnSpec> <> 
+    0274: [1] 33 0a d0 03 e0 5d .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:232             for each (k in keep) {
+
+    0280: [1] 79 f8 55 94 04 ............. getScopedName <keep> <> 
+    0285: [2] 1e fe 44 ce 3b 00 .......... callObjName <getValues> <iterator> <argc: 0> 
+    0291: [1] 93 ......................... pushResult 
+    0292: [2] 39 ......................... dup 
+    0293: [3] 18 34 00 ................... callObjSlot <slot: 26> <argc: 0> 
+    0296: [2] 93 ......................... pushResult 
+    0297: [3] 99 ......................... putLocalSlot5 
+    0298: [2] 33 0a d2 03 c0 5e .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:233                 if (k == "id") {
+
+    0304: [2] 60 ......................... getLocalSlot5 
+    0305: [3] 56 82 5f ................... loadString <id> 
+    0308: [4] 25 ......................... compareEq 
+    0309: [3] 13 17 ...................... branchFalse8 <addr: 334> 
+    0311: [2] 33 0a d4 03 88 5f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:234                     columnSpec.append(k + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL")
+
+    0317: [2] 79 ca 5d 94 04 ............. getScopedName <columnSpec> <> 
+    0322: [3] 60 ......................... getLocalSlot5 
+    0323: [4] 56 ba 60 ................... loadString < INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL> 
+    0326: [5] 00 ......................... add 
+    0327: [4] 1e b6 46 00 02 ............. callObjName <append> <> <argc: 1> 
+    0332: [2] 3e 26 ...................... goto8 <addr: 372> 
+    0334: [2] 33 0a d6 03 92 61 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:235                 } else {
+
+    0340: [2] 33 0a d8 03 c4 61 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:236                     columnSpec.append(k + " " + types[k])
+
+    0346: [2] 79 ca 5d 94 04 ............. getScopedName <columnSpec> <> 
+    0351: [3] 60 ......................... getLocalSlot5 
+    0352: [4] 56 f0 1f ................... loadString < > 
+    0355: [5] 00 ......................... add 
+    0356: [4] 79 a8 5c 94 04 ............. getScopedName <types> <> 
+    0361: [5] 56 94 04 ................... loadString <> 
+    0364: [6] 60 ......................... getLocalSlot5 
+    0365: [7] 7c ......................... getObjNameExpr 
+    0366: [5] 00 ......................... add 
+    0367: [4] 1e b6 46 00 02 ............. callObjName <append> <> <argc: 1> 
+    0372: [2] 3e ae ...................... goto8 <addr: 292> 
+    0374: [2] 90 ......................... pop 
+    0375: [1] 33 0a dc 03 92 1e .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:238             }
+
+    0381: [1] 33 0a e0 03 b8 62 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:240             cmd = "BEGIN TRANSACTION;
+
+    0387: [1] 33 0a ec 03 84 63 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:246                 DROP TABLE " + backup + ";
+
+    0393: [1] 33 0a ea 03 da 63 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:245                 INSERT INTO " + table + " SELECT " + keep + " FROM " + backup + ";
+
+    0399: [1] 33 0a e8 03 80 65 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:244                 CREATE TABLE " + table + "(" + columnSpec + ");
+
+    0405: [1] 33 0a e6 03 80 66 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:243                 DROP TABLE " + table + ";
+
+    0411: [1] 33 0a e4 03 d4 66 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:242                 INSERT INTO " + backup + " SELECT " + keep + " FROM " + table + ";
+
+    0417: [1] 33 0a e2 03 fa 67 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:241                 CREATE TEMPORARY TABLE " + backup + "(" + columnSpec + ");
+
+    0423: [1] 33 0a e0 03 b8 62 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:240             cmd = "BEGIN TRANSACTION;
+
+    0429: [1] 56 90 69 ................... loadString <BEGIN TRANSACTION;
+                CREATE TEMPORARY TABLE > 
+    0432: [2] 33 0a e2 03 fa 67 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:241                 CREATE TEMPORARY TABLE " + backup + "(" + columnSpec + ");
+
+    0438: [2] 79 a0 55 94 04 ............. getScopedName <backup> <> 
+    0443: [3] 00 ......................... add 
+    0444: [2] 56 86 6a ................... loadString <(> 
+    0447: [3] 00 ......................... add 
+    0448: [2] 79 ca 5d 94 04 ............. getScopedName <columnSpec> <> 
+    0453: [3] 00 ......................... add 
+    0454: [2] 56 8a 6a ................... loadString <);
+                INSERT INTO > 
+    0457: [3] 00 ......................... add 
+    0458: [2] 33 0a e4 03 d4 66 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:242                 INSERT INTO " + backup + " SELECT " + keep + " FROM " + table + ";
+
+    0464: [2] 79 a0 55 94 04 ............. getScopedName <backup> <> 
+    0469: [3] 00 ......................... add 
+    0470: [2] 56 ca 6a ................... loadString < SELECT > 
+    0473: [3] 00 ......................... add 
+    0474: [2] 79 f8 55 94 04 ............. getScopedName <keep> <> 
+    0479: [3] 00 ......................... add 
+    0480: [2] 56 dc 6a ................... loadString < FROM > 
+    0483: [3] 00 ......................... add 
+    0484: [2] 5b ......................... getLocalSlot0 
+    0485: [3] 00 ......................... add 
+    0486: [2] 56 ea 6a ................... loadString <;
+                DROP TABLE > 
+    0489: [3] 00 ......................... add 
+    0490: [2] 33 0a e6 03 80 66 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:243                 DROP TABLE " + table + ";
+
+    0496: [2] 5b ......................... getLocalSlot0 
+    0497: [3] 00 ......................... add 
+    0498: [2] 56 a6 6b ................... loadString <;
+                CREATE TABLE > 
+    0501: [3] 00 ......................... add 
+    0502: [2] 33 0a e8 03 80 65 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:244                 CREATE TABLE " + table + "(" + columnSpec + ");
+
+    0508: [2] 5b ......................... getLocalSlot0 
+    0509: [3] 00 ......................... add 
+    0510: [2] 56 86 6a ................... loadString <(> 
+    0513: [3] 00 ......................... add 
+    0514: [2] 79 ca 5d 94 04 ............. getScopedName <columnSpec> <> 
+    0519: [3] 00 ......................... add 
+    0520: [2] 56 8a 6a ................... loadString <);
+                INSERT INTO > 
+    0523: [3] 00 ......................... add 
+    0524: [2] 33 0a ea 03 da 63 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:245                 INSERT INTO " + table + " SELECT " + keep + " FROM " + backup + ";
+
+    0530: [2] 5b ......................... getLocalSlot0 
+    0531: [3] 00 ......................... add 
+    0532: [2] 56 ca 6a ................... loadString < SELECT > 
+    0535: [3] 00 ......................... add 
+    0536: [2] 79 f8 55 94 04 ............. getScopedName <keep> <> 
+    0541: [3] 00 ......................... add 
+    0542: [2] 56 dc 6a ................... loadString < FROM > 
+    0545: [3] 00 ......................... add 
+    0546: [2] 79 a0 55 94 04 ............. getScopedName <backup> <> 
+    0551: [3] 00 ......................... add 
+    0552: [2] 56 ea 6a ................... loadString <;
+                DROP TABLE > 
+    0555: [3] 00 ......................... add 
+    0556: [2] 33 0a ec 03 84 63 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:246                 DROP TABLE " + backup + ";
+
+    0562: [2] 79 a0 55 94 04 ............. getScopedName <backup> <> 
+    0567: [3] 00 ......................... add 
+    0568: [2] 56 e6 6b ................... loadString <;
+                COMMIT;> 
+    0571: [3] 00 ......................... add 
+    0572: [2] 33 0a e0 03 b8 62 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:240             cmd = "BEGIN TRANSACTION;
+
+    0578: [2] b4 90 2f 94 04 ............. putScopedName <cmd> <> 
+    0583: [1] 33 0a f0 03 9a 6c .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:248             query(cmd)
+
+    0589: [1] 79 90 2f 94 04 ............. getScopedName <cmd> <> 
+    0594: [2] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0597: [1] be ......................... return 
+    0598: [0] 33 0a f2 03 f4 1f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:249         }
+    
+
+#
+#  Exception Section
+#    Kind     TryStart TryEnd  HandlerStart  HandlerEnd   CatchType
+#
+0   iteration     44      47        126          126       StopIteration
+1   iteration    207     210        253          253       StopIteration
+2   iteration    293     296        374          374       StopIteration
+
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [columns-01]  private var columns : Array
+VARIABLE:   [column-02]  -hoisted-2 var column
+VARIABLE:   [row-03]  -hoisted-3 var row
+VARIABLE:   [name-04]  -hoisted-3 var name : String
+VARIABLE:   [k-05]  -hoisted-5 var k
+
+FUNCTION:   [Sqlite-47]  public const function removeIndex(table: String, index: String) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private index : String
+
+    0000: [0] 33 0a fa 03 e6 6d .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:253             query("DROP INDEX " + index + ";")
+
+    0006: [0] 56 c4 6e ................... loadString <DROP INDEX > 
+    0009: [1] 5c ......................... getLocalSlot1 
+    0010: [2] 00 ......................... add 
+    0011: [1] 56 ee 30 ................... loadString <;> 
+    0014: [2] 00 ......................... add 
+    0015: [1] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0018: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [index-01]  private var index : String
+
+FUNCTION:   [Sqlite-48]  public const function renameColumn(table: String, oldColumn: String, newColumn: String) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private oldColumn : String
+     ARG:   [arg-02]   private newColumn : String
+
+    0000: [0] 33 0a 8a 04 aa 70 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:261             throw "SQLite does not support renaming columns"
+
+    0006: [0] 56 a4 71 ................... loadString <SQLite does not support renaming columns> 
+    0009: [1] c6 ......................... throw 
+    0010: [1] be ......................... return 
+    0011: [0] 33 0a 8e 04 f4 1f .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:263         }
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [oldColumn-01]  private var oldColumn : String
+VARIABLE:   [newColumn-02]  private var newColumn : String
+
+FUNCTION:   [Sqlite-49]  public const function renameTable(oldTable: String, newTable: String) : Void
+
+     ARG:   [arg-00]   private oldTable : String
+     ARG:   [arg-01]   private newTable : String
+
+    0000: [0] 33 0a 96 04 c6 73 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:267             query("ALTER TABLE " + oldTable + " RENAME TO " + newTable + ";")
+
+    0006: [0] 56 ca 1f ................... loadString <ALTER TABLE > 
+    0009: [1] 5b ......................... getLocalSlot0 
+    0010: [2] 00 ......................... add 
+    0011: [1] 56 e2 74 ................... loadString < RENAME TO > 
+    0014: [2] 00 ......................... add 
+    0015: [1] 5c ......................... getLocalSlot1 
+    0016: [2] 00 ......................... add 
+    0017: [1] 56 ee 30 ................... loadString <;> 
+    0020: [2] 00 ......................... add 
+    0021: [1] 19 66 02 ................... callThisSlot <slot: 51> <argc: 1> 
+    0024: [0] be ......................... return 
+    
+VARIABLE:   [oldTable-00]  private var oldTable : String
+VARIABLE:   [newTable-01]  private var newTable : String
+
+FUNCTION:   [Sqlite-50]  public const function rollback() : Void
+
+
+    0000: [0] be ......................... return 
+    
+
+FUNCTION:   [Sqlite-51]  public const function query(cmd: String, tag: String, trace: Boolean) : Array
+
+     ARG:   [arg-00]   private cmd : String
+     ARG:   [arg-01]   private tag : String
+     ARG:   [arg-02]   private trace : Boolean
+
+    0000: [0] 41 03 03 07 0d ............. initDefaultArgs8 <3> <5> <9> <15> 
+    0005: [0] 56 c6 77 ................... loadString <SQL> 
+    0008: [1] 95 ......................... putLocalSlot1 
+    0009: [0] 50 ......................... loadGlobal 
+    0010: [1] 7b ce 77 02 ................ getObjName <false> <ejs> 
+    0014: [1] 96 ......................... putLocalSlot2 
+    0015: [0] 33 0a ae 04 da 77 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:279             if (trace) {
+
+    0021: [0] 5d ......................... getLocalSlot2 
+    0022: [1] 13 13 ...................... branchFalse8 <addr: 43> 
+    0024: [0] 33 0a b0 04 8c 78 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:280                 print(tag + ": " + cmd)
+
+    0030: [0] 5c ......................... getLocalSlot1 
+    0031: [1] 56 dc 78 ................... loadString <: > 
+    0034: [2] 00 ......................... add 
+    0035: [1] 5b ......................... getLocalSlot0 
+    0036: [2] 00 ......................... add 
+    0037: [1] 17 aa 01 02 ................ callGlobalSlot <slot: 85> <argc: 1> 
+    0041: [0] 3e 00 ...................... goto8 <addr: 43> 
+    0043: [0] 33 0a b4 04 e2 78 .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:282             return sql(cmd)
+
+    0049: [0] 5b ......................... getLocalSlot0 
+    0050: [1] 19 68 02 ................... callThisSlot <slot: 52> <argc: 1> 
+    0053: [0] 93 ......................... pushResult 
+    0054: [1] bf ......................... returnValue 
+    
+VARIABLE:   [cmd-00]  private var cmd : String
+VARIABLE:   [tag-01]  private var tag : String
+VARIABLE:   [trace-02]  private var trace : Boolean
+
+FUNCTION:   [Sqlite-52]  public native const function sql(cmd: String) : Array
+
+     ARG:   [arg-00]   private cmd : String
+
+    
+VARIABLE:   [cmd-00]  private var cmd : String
+
+FUNCTION:   [Sqlite-53]  public const function sqlTypeToDataType(sqlType: String) : String
+
+     ARG:   [arg-00]   private sqlType : String
+
+    0000: [0] 33 0a c4 04 aa 7b .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:290             "ejs.db"::Sqlite.SqlTypeToDataType[sqlType]
+
+    0006: [0] 50 ......................... loadGlobal 
+    0007: [1] 7b 98 02 a6 02 ............. getObjName <Sqlite> <ejs.db> 
+    0012: [1] 82 3a 00 ................... getTypeSlot <slot: 29> <0> 
+    0015: [1] 56 94 04 ................... loadString <> 
+    0018: [2] 5b ......................... getLocalSlot0 
+    0019: [3] 7c ......................... getObjNameExpr 
+    0020: [1] bf ......................... returnValue 
+    
+VARIABLE:   [sqlType-00]  private var sqlType : String
+
+FUNCTION:   [Sqlite-54]  public const function sqlTypeToEjsType(sqlType: String) : Type
+
+     ARG:   [arg-00]   private sqlType : String
+
+    0000: [0] 33 0a cc 04 c0 7d .......... debug 
+
+    # ejs.db.sqlite/Sqlite.es:294             "ejs.db"::Sqlite.SqlTypeToEjsType[sqlType]
+
+    0006: [0] 50 ......................... loadGlobal 
+    0007: [1] 7b 98 02 a6 02 ............. getObjName <Sqlite> <ejs.db> 
+    0012: [1] 82 3c 00 ................... getTypeSlot <slot: 30> <0> 
+    0015: [1] 56 94 04 ................... loadString <> 
+    0018: [2] 5b ......................... getLocalSlot0 
+    0019: [3] 7c ......................... getObjNameExpr 
+    0020: [1] bf ......................... returnValue 
+    
+VARIABLE:   [sqlType-00]  private var sqlType : String
+
+FUNCTION:   [Sqlite-55]  public const function startTransaction() : Void
+
+
+    0000: [0] be ......................... return 
+    
+
+----------------------------------------------------------------------------------------------
+
+#
+#  Global slot assignments (Num prop 149)
+#
+0148    ejs.db var Sqlite: Type
+
+#
+#  Initializer slot assignments (Num prop 0)
+#
+
+#
+#  Class slot assignments for the "Sqlite" class (Num slots 56, num inherited 26)
+#
+0000    public function constructor
+0001    ejs function length
+0002    public function prototype
+0003    public function clone
+0004    reserved slot for base class property
+0005    reserved slot for base class property
+0006    reserved slot for base class property
+0007    reserved slot for base class property
+0008    iterator function get
+0009    reserved slot for base class property
+0010    reserved slot for base class property
+0011    reserved slot for base class property
+0012    iterator function getValues
+0013    public function hasOwnProperty
+0014    reserved slot for base class property
+0015    reserved slot for base class property
+0016    public function isPrototypeOf
+0017    reserved slot for base class property
+0018    reserved slot for base class property
+0019    reserved slot for base class property
+0020    public function propertyIsEnumerable
+0021    reserved slot for base class property
+0022    public function toJSON
+0023    public function toLocaleString
+0024    public function toString
+0025    public function valueOf
+0026    -constructor- function Sqlite
+0027    -initializer- function Sqlite-initializer
+0028    internal-2c16a813a0a20e98d343ed0350a11bde-6 var DataTypeToSqlType: Object
+0029    internal-2c16a813a0a20e98d343ed0350a11bde-6 var SqlTypeToDataType: Object
+0030    internal-2c16a813a0a20e98d343ed0350a11bde-6 var SqlTypeToEjsType: Object
+0031    public function addColumn
+0032    public function addIndex
+0033    public function changeColumn
+0034    public function close
+0035    public function commit
+0036    public function connect
+0037    public function createDatabase
+0038    public function createTable
+0039    public function dataTypeToSqlType
+0040    public function destroyDatabase
+0041    public function destroyTable
+0042    public function endTransaction
+0043    public function getColumns
+0044    public function getNumRows
+0045    public function getTables
+0046    public function removeColumns
+0047    public function removeIndex
+0048    public function renameColumn
+0049    public function renameTable
+0050    public function rollback
+0051    public function query
+0052    public function sql
+0053    public function sqlTypeToDataType
+0054    public function sqlTypeToEjsType
+0055    public function startTransaction
+
+#
+#  Instance slot assignments for the "Sqlite" class (Num prop 0, num inherited 0)
+#
+
+----------------------------------------------------------------------------------------------
+#
+#  Constant Pool (size 8389 bytes)
+#
+0000   ""
+0001   "ejs"
+0002   "ejs.db.sqlite/Sqlite.es"
+0003   "}"
+0004   "internal-2c16a813a0a20e98d343ed0350a11bde-6"
+0005   "ejs.db.sqlite"
+0006   "module ejs.db.sqlite {"
+0007   "    "ejs.db" class Sqlite {"
+0008   "Sqlite"
+0009   "ejs.db"
+0010   "        static const DataTypeToSqlType: Object = {"
+0011   "DataTypeToSqlType"
+0012   "Object"
+0013   "            "binary":       "blob","
+0014   ""
+0015   "binary"
+0016   "blob"
+0017   "            "boolean":      "tinyint","
+0018   "boolean"
+0019   "tinyint"
+0020   "            "date":         "date","
+0021   "date"
+0022   "            "datetime":     "datetime","
+0023   "datetime"
+0024   "            "decimal":      "decimal","
+0025   "decimal"
+0026   "            "float":        "float","
+0027   "float"
+0028   "            "integer":      "int","
+0029   "integer"
+0030   "int"
+0031   "            "number":       "decimal","
+0032   "number"
+0033   "            "string":       "varchar","
+0034   "string"
+0035   "varchar"
+0036   "            "text":         "text","
+0037   "text"
+0038   "            "time":         "time","
+0039   "time"
+0040   "            "timestamp":    "datetime","
+0041   "timestamp"
+0042   "        static const SqlTypeToDataType: Object = {"
+0043   "SqlTypeToDataType"
+0044   "            "blob":         "binary","
+0045   "            "tinyint":      "boolean","
+0046   "            "int":          "integer","
+0047   "            "varchar":      "string","
+0048   "        static const SqlTypeToEjsType: Object = {"
+0049   "SqlTypeToEjsType"
+0050   "            "blob":         String,"
+0051   "            "date":         Date,"
+0052   "            "datetime":     Date,"
+0053   "            "decimal":      Number,"
+0054   "            "int":          Number,"
+0055   "            "integer":      Number,"
+0056   "            "float":        Number,"
+0057   "            "time":         Date,"
+0058   "            "tinyint":      Boolean,"
+0059   "            "text":         String,"
+0060   "            "varchar":      String,"
+0061   "        use default namespace public"
+0062   "        native "ejs.db" function Sqlite(connectionString: String)"
+0063   "-constructor-"
+0064   "connectionString"
+0065   "private"
+0066   "String"
+0067   "        function addColumn(table: String, column: String, datatype: String, options = null): Void {"
+0068   "null"
+0069   "            datatype = DataTypeToSqlType[datatype.toLower()]"
+0070   "            if (datatype == undefined) {"
+0071   "undefined"
+0072   "                throw "Bad Ejscript column type: " + datatype"
+0073   "Bad Ejscript column type: "
+0074   "            }"
+0075   "            query("ALTER TABLE " + table + " ADD " + column + " " + datatype)"
+0076   "ALTER TABLE "
+0077   " ADD "
+0078   " "
+0079   "        }"
+0080   "addColumn"
+0081   "public"
+0082   "table"
+0083   "column"
+0084   "datatype"
+0085   "options"
+0086   "Void"
+0087   "        function addIndex(table: String, column: String, index: String): Void"
+0088   "            query("CREATE INDEX " + index + " ON " + table + " (" + column + ");")"
+0089   "CREATE INDEX "
+0090   " ON "
+0091   " ("
+0092   ");"
+0093   "addIndex"
+0094   "index"
+0095   "        function changeColumn(table: String, column: String, datatype: String, options = null): Void {"
+0096   "            datatype = datatype.toLower()"
+0097   "            if (DataTypeToSqlType[datatype] == undefined) {"
+0098   "                throw "Bad column type: " + datatype"
+0099   "Bad column type: "
+0100   "            throw "SQLite does not support column changes""
+0101   "SQLite does not support column changes"
+0102   "changeColumn"
+0103   "        native function close(): Void"
+0104   "close"
+0105   "        function commit(): Void {}"
+0106   "commit"
+0107   "        native function connect(connectionString: String): Void"
+0108   "connect"
+0109   "        function createDatabase(name: String, options = null): Void {"
+0110   "createDatabase"
+0111   "name"
+0112   "        function createTable(table: String, columns: Array? = null): Void {"
+0113   "cmd"
+0114   "            let cmd: String"
+0115   "            query("DROP TABLE IF EXISTS " + table + ";")"
+0116   "DROP TABLE IF EXISTS "
+0117   ";"
+0118   "            query("CREATE TABLE " + table + "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL);")"
+0119   "CREATE TABLE "
+0120   "(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL);"
+0121   "            if (columns) {"
+0122   "                for each (let colspec: String in columns) {"
+0123   "colspec"
+0124   "-hoisted-3"
+0125   "spec"
+0126   "                    let spec: Array = colspec.split(":")"
+0127   ":"
+0128   "                    if (spec.length != 2) {"
+0129   "length"
+0130   "                        throw "Bad column spec: " + spec"
+0131   "Bad column spec: "
+0132   "                    }"
+0133   "                    let column: String = spec[0]"
+0134   "                    let datatype: String = spec[1]"
+0135   "                    addColumn(table, column.trim(), datatype.trim())"
+0136   "createTable"
+0137   "columns"
+0138   "Array"
+0139   "StopIteration"
+0140   "iterator"
+0141   "        static function dataTypeToSqlType(dataType:String): String"
+0142   "            DataTypeToSqlType[dataType]"
+0143   "dataTypeToSqlType"
+0144   "dataType"
+0145   "        function destroyDatabase(name: String): Void"
+0146   "            Path(name).remove()"
+0147   "destroyDatabase"
+0148   "        function destroyTable(table: String): Void"
+0149   "destroyTable"
+0150   "        function endTransaction(): Void {}"
+0151   "endTransaction"
+0152   "        function getColumns(table: String): Array {"
+0153   "            grid = query('PRAGMA table_info("' + table + '");')"
+0154   "PRAGMA table_info(""
+0155   "");"
+0156   "grid"
+0157   "            let names = []"
+0158   "names"
+0159   "            for each (let row in grid) {"
+0160   "row"
+0161   "-hoisted-2"
+0162   "getValues"
+0163   "                let name: String = row["name"]"
+0164   "                names.append(name)"
+0165   "append"
+0166   "            return names"
+0167   "getColumns"
+0168   "        function getNumRows(table: String): Array {"
+0169   "            let cmd: String = "SELECT COUNT(*) FROM " + table + ";""
+0170   "SELECT COUNT(*) FROM "
+0171   "            let grid: Array = query(cmd, "numRows")"
+0172   "numRows"
+0173   "            return grid[0]["COUNT(*)"] cast Number"
+0174   "COUNT(*)"
+0175   "getNumRows"
+0176   "        function getTables(): Array {"
+0177   "            let cmd: String = "SELECT name from sqlite_master WHERE type = 'table' order by NAME;""
+0178   "SELECT name from sqlite_master WHERE type = 'table' order by NAME;"
+0179   "            let grid: Array = query(cmd)"
+0180   "            let result: Array = new Array"
+0181   "result"
+0182   "            for each (let row: Object in grid) {"
+0183   "                if (!name.contains("sqlite_") && !name.contains("_Ejs")) {"
+0184   "sqlite_"
+0185   "_Ejs"
+0186   "                    result.append(row["name"])"
+0187   "            return result"
+0188   "getTables"
+0189   "        function removeColumns(table: String, columns: Array): Void {"
+0190   "            backup = "_backup_" + table"
+0191   "_backup_"
+0192   "backup"
+0193   "            keep = getColumns(table)"
+0194   "keep"
+0195   "            for each (column in columns) {"
+0196   "                if ((index = keep.indexOf(column)) < 0) {"
+0197   "indexOf"
+0198   "                    throw "Column \"" + column + "\" does not exist in " + table"
+0199   "Column ""
+0200   "" does not exist in "
+0201   "                } "
+0202   "                keep.remove(index)"
+0203   "remove"
+0204   "            schema = 'PRAGMA table_info("' + table + '");'"
+0205   "schema"
+0206   "            grid = query(schema)"
+0207   "            types = {}"
+0208   "types"
+0209   "                types[name] = row["type"]"
+0210   "type"
+0211   "            columnSpec = []"
+0212   "columnSpec"
+0213   "            for each (k in keep) {"
+0214   "k"
+0215   "-hoisted-5"
+0216   "                if (k == "id") {"
+0217   "id"
+0218   "                    columnSpec.append(k + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL")"
+0219   " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL"
+0220   "                } else {"
+0221   "                    columnSpec.append(k + " " + types[k])"
+0222   "            cmd = "BEGIN TRANSACTION;"
+0223   "                DROP TABLE " + backup + ";"
+0224   "                INSERT INTO " + table + " SELECT " + keep + " FROM " + backup + ";"
+0225   "                CREATE TABLE " + table + "(" + columnSpec + ");"
+0226   "                DROP TABLE " + table + ";"
+0227   "                INSERT INTO " + backup + " SELECT " + keep + " FROM " + table + ";"
+0228   "                CREATE TEMPORARY TABLE " + backup + "(" + columnSpec + ");"
+0229   "BEGIN TRANSACTION;
+                CREATE TEMPORARY TABLE "
+0230   "("
+0231   ");
+                INSERT INTO "
+0232   " SELECT "
+0233   " FROM "
+0234   ";
+                DROP TABLE "
+0235   ";
+                CREATE TABLE "
+0236   ";
+                COMMIT;"
+0237   "            query(cmd)"
+0238   "removeColumns"
+0239   "        function removeIndex(table: String, index: String): Void"
+0240   "            query("DROP INDEX " + index + ";")"
+0241   "DROP INDEX "
+0242   "removeIndex"
+0243   "        function renameColumn(table: String, oldColumn: String, newColumn: String): Void {"
+0244   "            throw "SQLite does not support renaming columns""
+0245   "SQLite does not support renaming columns"
+0246   "renameColumn"
+0247   "oldColumn"
+0248   "newColumn"
+0249   "        function renameTable(oldTable: String, newTable: String): Void"
+0250   "            query("ALTER TABLE " + oldTable + " RENAME TO " + newTable + ";")"
+0251   " RENAME TO "
+0252   "renameTable"
+0253   "oldTable"
+0254   "newTable"
+0255   "        function rollback(): Void {}"
+0256   "rollback"
+0257   "        function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {"
+0258   "SQL"
+0259   "false"
+0260   "            if (trace) {"
+0261   "                print(tag + ": " + cmd)"
+0262   ": "
+0263   "            return sql(cmd)"
+0264   "query"
+0265   "tag"
+0266   "trace"
+0267   "Boolean"
+0268   "        native function sql(cmd: String): Array"
+0269   "sql"
+0270   "        function sqlTypeToDataType(sqlType: String): String"
+0271   "            "ejs.db"::Sqlite.SqlTypeToDataType[sqlType]"
+0272   "sqlTypeToDataType"
+0273   "sqlType"
+0274   "        function sqlTypeToEjsType(sqlType: String): Type"
+0275   "            "ejs.db"::Sqlite.SqlTypeToEjsType[sqlType]"
+0276   "sqlTypeToEjsType"
+0277   "Type"
+0278   "        function startTransaction(): Void {}"
+0279   "startTransaction"
+0280   "Sqlite-initializer"
+0281   "-initializer-"
+0282   "constructor"
+0283   "Function"
+0284   "Number"
+0285   "prototype"
+0286   "clone"
+0287   "get"
+0288   "Iterator"
+0289   "hasOwnProperty"
+0290   "isPrototypeOf"
+0291   "propertyIsEnumerable"
+0292   "toJSON"
+0293   "toLocaleString"
+0294   "toString"
+0295   "valueOf"
+0296   "block_0007_171"
+0297   "-block-"
+0298   "__initializer__"

@@ -1,0 +1,4 @@
+//  Crashes
+module mob {
+    var x = 77
+}

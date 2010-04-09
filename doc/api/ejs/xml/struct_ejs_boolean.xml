@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_boolean" kind="struct" prot="public">
+    <compoundname>EjsBoolean</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_boolean_1253c5cf8ffbd42b93f75866543b2cebd" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsBoolean::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object - Property storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2828" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2828" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_boolean_1a1306ba1639f5e6b8e1858d010e34dac" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EjsBoolean::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>Boolean value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2829" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2829" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="2827" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2827" bodyend="2830"/>
+    <listofallmembers>
+      <member refid="struct_ejs_boolean_1253c5cf8ffbd42b93f75866543b2cebd" prot="public" virt="non-virtual"><scope>EjsBoolean</scope><name>obj</name></member>
+      <member refid="struct_ejs_boolean_1a1306ba1639f5e6b8e1858d010e34dac" prot="public" virt="non-virtual"><scope>EjsBoolean</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

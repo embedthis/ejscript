@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_names" kind="struct" prot="public">
+    <compoundname>EjsNames</compoundname>
+    <includes refid="ejs_8h" local="no">ejs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_names_1650046b3c43024aafa3c006aabdbd861" prot="public" static="no" mutable="no">
+        <type>int *</type>
+        <definition>int* EjsNames::buckets</definition>
+        <argsstring></argsstring>
+        <name>buckets</name>
+        <briefdescription>
+<para>Hash buckets and head of link chains. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1768" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1768" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_names_1a3328b235654bdaceccde4e85ee7847e" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_ejs_hash_entry" kindref="compound">EjsHashEntry</ref> *</type>
+        <definition>EjsHashEntry* EjsNames::entries</definition>
+        <argsstring></argsstring>
+        <name>entries</name>
+        <briefdescription>
+<para>Hash entries. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1767" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1767" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_names_1ddef94a7058ef6a2e545cbe7b5f1ec43" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsNames::sizeBuckets</definition>
+        <argsstring></argsstring>
+        <name>sizeBuckets</name>
+        <briefdescription>
+<para>Size of buckets. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1769" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1769" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_names_1778f3f13f7e4bf057ea02d5ec0e8a3e5" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsNames::sizeEntries</definition>
+        <argsstring></argsstring>
+        <name>sizeEntries</name>
+        <briefdescription>
+<para>Size of entries array in elements. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1770" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1770" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Property Names. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>This structure stores the names of all the properties in an object and holds the hash table state. </para></simplesect>
+</para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="96">
+        <label>EjsHashEntry</label>
+        <link refid="struct_ejs_hash_entry"/>
+      </node>
+      <node id="95">
+        <label>EjsNames</label>
+        <link refid="struct_ejs_names"/>
+        <childnode refid="96" relation="usage">
+          <edgelabel>entries</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="1766" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1766" bodyend="1771"/>
+    <listofallmembers>
+      <member refid="struct_ejs_names_1650046b3c43024aafa3c006aabdbd861" prot="public" virt="non-virtual"><scope>EjsNames</scope><name>buckets</name></member>
+      <member refid="struct_ejs_names_1a3328b235654bdaceccde4e85ee7847e" prot="public" virt="non-virtual"><scope>EjsNames</scope><name>entries</name></member>
+      <member refid="struct_ejs_names_1ddef94a7058ef6a2e545cbe7b5f1ec43" prot="public" virt="non-virtual"><scope>EjsNames</scope><name>sizeBuckets</name></member>
+      <member refid="struct_ejs_names_1778f3f13f7e4bf057ea02d5ec0e8a3e5" prot="public" virt="non-virtual"><scope>EjsNames</scope><name>sizeEntries</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

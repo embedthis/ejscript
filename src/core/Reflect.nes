@@ -1,0 +1,67 @@
+
+interface Type 
+{
+  function canConvertTo(t: Type): Boolean;
+  function isSubtypeOf(t: Type): Boolean;
+}
+
+interface Field
+{
+  function namespace() : String;
+  function name(): String;
+  function type(): Type;
+}
+
+type FieldIterator = iterator::IteratorType.<Field>;
+
+interface NominalType extends Type
+{
+  function name(): String;
+  function namespace(): String;
+  function superTypes(): IteratorType.<ClassType>;
+  function publicMembers(): FieldIterator;
+  function publicStaticMembers(): FieldIterator;
+}
+
+interface InterfaceType extends NominalType
+{
+  function implementedBy():IteratorType.<ClassType>
+}
+
+type TypeIterator = iterator::IteratorType.<Type>;
+type ValueIterator = iterator::IteratorType.<*>;
+
+interface ClassType extends NominalType
+{
+  function construct(typeArgs: TypeIterator, valArgs: ValueIterator): Object;
+}
+
+interface UnionType extends Type
+{
+  function members(): TypeIterator;
+  function construct(typeArgs: TypeIterator, valArgs: ValueIterator): *;
+}
+
+interface FieldValue
+{
+  function namespace() : String;
+  function name(): String;
+  function value(): *;
+}
+
+type FieldValueIterator = iterator::IteratorType.<FieldValue>;
+
+interface RecordType extends Type
+{
+  function fields(): FieldIterator;
+  function construct(typeArgs: TypeIterator, valArgs: FieldValueIterator): Object;
+}
+
+interface FunctionType extends Type
+{
+  function hasBoundThis(): Boolean;
+  function returnType(): Type;
+  function argTypes(): TypeIterator;
+  function construct(typeArgs: TypeIterator, valArgs: ValueIterator): *;
+  function apply(typeArgs: TypeIterator, thisArg: Object?, valArgs: ValueIterator): *;
+}

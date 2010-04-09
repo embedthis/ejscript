@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_file_system" kind="struct" prot="public">
+    <compoundname>EjsFileSystem</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_file_system_105d6c4ce087975928414e4f114fa3cf4" prot="public" static="no" mutable="no">
+        <type>MprFileSystem *</type>
+        <definition>MprFileSystem* EjsFileSystem::fs</definition>
+        <argsstring></argsstring>
+        <name>fs</name>
+        <briefdescription>
+<para>MPR file system object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3343" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3343" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_file_system_1352e365a28495b022f31473cf7b4ae4d" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsFileSystem::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3341" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3341" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_file_system_13ce9843f44721612050d89f292c70e66" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsFileSystem::path</definition>
+        <argsstring></argsstring>
+        <name>path</name>
+        <briefdescription>
+<para>Filename path. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3342" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3342" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3340" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3340" bodyend="3344"/>
+    <listofallmembers>
+      <member refid="struct_ejs_file_system_105d6c4ce087975928414e4f114fa3cf4" prot="public" virt="non-virtual"><scope>EjsFileSystem</scope><name>fs</name></member>
+      <member refid="struct_ejs_file_system_1352e365a28495b022f31473cf7b4ae4d" prot="public" virt="non-virtual"><scope>EjsFileSystem</scope><name>obj</name></member>
+      <member refid="struct_ejs_file_system_13ce9843f44721612050d89f292c70e66" prot="public" virt="non-virtual"><scope>EjsFileSystem</scope><name>path</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

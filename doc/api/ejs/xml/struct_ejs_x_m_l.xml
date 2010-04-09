@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_x_m_l" kind="struct" prot="public">
+    <compoundname>EjsXML</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_x_m_l_18a2b38b2e599414cf9a86dc23375c284" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsXML::attributes</definition>
+        <argsstring></argsstring>
+        <name>attributes</name>
+        <briefdescription>
+<para>Node attributes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3856" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3856" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_133fc144d8c125151ab8ff9b3ae1fb417" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsXML::elements</definition>
+        <argsstring></argsstring>
+        <name>elements</name>
+        <briefdescription>
+<para>List elements or child nodes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3855" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3855" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_133f23f4b4f3e5ccab486f6381e197e1d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsXML::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3862" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3862" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1403260c3cf02227c37852100bde58818" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsXML::kind</definition>
+        <argsstring></argsstring>
+        <name>kind</name>
+        <briefdescription>
+<para>Kind of XML node. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3854" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3854" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1e6fd29a23c644db32cf21cb959894e1b" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsXML::namespaces</definition>
+        <argsstring></argsstring>
+        <name>namespaces</name>
+        <briefdescription>
+<para>List of namespaces as Namespace objects. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3857" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3857" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_1d9389317e3b8f6dc226b3588e6ca5331" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsXML::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object - Property storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3852" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3852" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_14f50c79236c2e8a7446086da7a73e5ad" prot="public" static="no" mutable="no">
+        <type>struct EjsXML *</type>
+        <definition>struct EjsXML* EjsXML::parent</definition>
+        <argsstring></argsstring>
+        <name>parent</name>
+        <briefdescription>
+<para>Parent node reference (XML or XMLList). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3858" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3858" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_179d1c70b36ab426847374ba8bee26e9b" prot="public" static="no" mutable="no">
+        <type>EjsName</type>
+        <definition>EjsName EjsXML::qname</definition>
+        <argsstring></argsstring>
+        <name>qname</name>
+        <briefdescription>
+<para>XML node name (e.g. </para>        </briefdescription>
+        <detaileddescription>
+<para>tagName) </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3853" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3853" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_16f9239522faeb0b297d32a44a239aa86" prot="public" static="no" mutable="no">
+        <type>struct EjsXML *</type>
+        <definition>struct EjsXML* EjsXML::targetObject</definition>
+        <argsstring></argsstring>
+        <name>targetObject</name>
+        <briefdescription>
+<para>XML/XMLList object modified when items inserted into an empty list. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3859" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3859" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_19ee63e27793fcf69847185cefdfc168f" prot="public" static="no" mutable="no">
+        <type>EjsName</type>
+        <definition>EjsName EjsXML::targetProperty</definition>
+        <argsstring></argsstring>
+        <name>targetProperty</name>
+        <briefdescription>
+<para>XML property modified when items inserted into an empty list. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3860" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3860" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_x_m_l_180d6616d833107f2cef71d29f01c1628" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsXML::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>String vale of text|attribute|comment|pi. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3861" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3861" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3851" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3851" bodyend="3863"/>
+    <listofallmembers>
+      <member refid="struct_ejs_x_m_l_18a2b38b2e599414cf9a86dc23375c284" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>attributes</name></member>
+      <member refid="struct_ejs_x_m_l_133fc144d8c125151ab8ff9b3ae1fb417" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>elements</name></member>
+      <member refid="struct_ejs_x_m_l_133f23f4b4f3e5ccab486f6381e197e1d" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>flags</name></member>
+      <member refid="struct_ejs_x_m_l_1403260c3cf02227c37852100bde58818" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>kind</name></member>
+      <member refid="struct_ejs_x_m_l_1e6fd29a23c644db32cf21cb959894e1b" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>namespaces</name></member>
+      <member refid="struct_ejs_x_m_l_1d9389317e3b8f6dc226b3588e6ca5331" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>obj</name></member>
+      <member refid="struct_ejs_x_m_l_14f50c79236c2e8a7446086da7a73e5ad" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>parent</name></member>
+      <member refid="struct_ejs_x_m_l_179d1c70b36ab426847374ba8bee26e9b" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>qname</name></member>
+      <member refid="struct_ejs_x_m_l_16f9239522faeb0b297d32a44a239aa86" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>targetObject</name></member>
+      <member refid="struct_ejs_x_m_l_19ee63e27793fcf69847185cefdfc168f" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>targetProperty</name></member>
+      <member refid="struct_ejs_x_m_l_180d6616d833107f2cef71d29f01c1628" prot="public" virt="non-virtual"><scope>EjsXML</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

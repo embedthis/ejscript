@@ -1,0 +1,765 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="group___ejs_error" kind="group">
+    <compoundname>EjsError</compoundname>
+    <title>EjsError ejsFormatStack ejsGetErrorMsg ejsHasException ejsThrowArgError ejsThrowAssertError</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group___ejs_error_1g35da8eaaba0bdd967e5a88b885aed0f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* ejsFormatStack</definition>
+        <argsstring>(Ejs *ejs, EjsError *error)</argsstring>
+        <name>ejsFormatStack</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsError *</type>
+          <declname>error</declname>
+        </param>
+        <briefdescription>
+<para>Format the stack backtrace. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Return a string containing the current interpreter stack backtrace </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Error exception object to analyseo analyseo analyseo analyse </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string containing the stack backtrace. The caller must free. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3040"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1geb4b7e379abf1ffa3778b1d74dea6243" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>char *</type>
+        <definition>char* ejsGetErrorMsg</definition>
+        <argsstring>(Ejs *ejs, int withStack)</argsstring>
+        <name>ejsGetErrorMsg</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>withStack</declname>
+        </param>
+        <briefdescription>
+<para>Get the interpreter error message. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Return a string containing the current interpreter error message </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>withStack</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set to 1 to include a stack backtrace in the error message </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string containing the error message. The caller must free. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3050"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1gba0d6e967d7b71217b76f8166baf7183" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ejsHasException</definition>
+        <argsstring>(Ejs *ejs)</argsstring>
+        <name>ejsHasException</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <briefdescription>
+<para>Determine if an exception has been thrown. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True if an exception has been thrown </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3058"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g728c0c3c7353c5ece9d9c8a7252eca57" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowArgError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowArgError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an argument exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3070"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g2ed4b80af588982f4b5eaf4d10012447" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowArithmeticError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowArithmeticError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an math exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3088"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g841a5e9818d58b407f0845f72f31baea" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowAssertError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowAssertError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an assertion exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3079"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g287d5245d90a95dbc8db2e184672b3c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an general error exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3106"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g4e7cf341078092e2b455be68e0710b8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowInstructionError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowInstructionError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an instruction code exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3097"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1gb17c0d454663539ea9e4e37576e9d1ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowInternalError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowInternalError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an internal error exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3115"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g77d16ceec4830daccf21493931c3647b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowIOError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowIOError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an IO exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3124"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g8397057f54899e31de1e6a16a90888f5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowMemoryError</definition>
+        <argsstring>(Ejs *ejs)</argsstring>
+        <name>ejsThrowMemoryError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <briefdescription>
+<para>Throw an Memory depletion exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3131"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g0f340392e88ad2bd7fba1d8b4c5b8d1a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowOutOfBoundsError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowOutOfBoundsError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an out of bounds exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3140"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g5a7fcf0e6f50be3f9338a22b2de2ef4a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowReferenceError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowReferenceError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an reference exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3149"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g89a1a9b3b3af372c438c1220c2af988e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowResourceError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowResourceError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an resource exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3158"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g0ce5ad97f148ce6e0ad50009d08dec23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowStateError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowStateError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an state exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3167"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g1e0a863535a31f998de69e7814136e52" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowStopIteration</definition>
+        <argsstring>(Ejs *ejs)</argsstring>
+        <name>ejsThrowStopIteration</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <briefdescription>
+<para>Throw an stop iteration exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3174"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g53d90d6cf4328f62db3d8d27df4ee6d0" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowSyntaxError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowSyntaxError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an syntax error exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3183"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_error_1g2e69a566496d92803f39017fb9cba1d7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsThrowTypeError</definition>
+        <argsstring>(Ejs *ejs, cchar *fmt,...)</argsstring>
+        <name>ejsThrowTypeError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Throw an type error exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Printf style format string to use for the error message </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Message arguments </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3192"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Error classes. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Base class for error exception objects. Exception objects are created by programs and by the system as part of changing the normal flow of execution when some error condition occurs. When an exception is created and acted upon (&quot;thrown&quot;), the system transfers the flow of control to a pre-defined instruction stream (the handler or &quot;catch&quot; code). The handler may return processing to the point at which the exception was thrown or not. It may re-throw the exception or pass control up the call stack. </para></simplesect>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving.</para></simplesect>
+ejsThrowArithmeticError ejsThrowInstructionError ejsThrowError ejsThrowInternalError ejsThrowIOError ejsThrowMemoryError ejsThrowOutOfBoundsError ejsThrowReferenceError ejsThrowResourceError ejsThrowStateError ejsThrowStopIteration ejsThrowSyntaxError ejsThrowTypeError </para>    </detaileddescription>
+  </compounddef>
+</doxygen>

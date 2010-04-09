@@ -1,0 +1,220 @@
+#
+#  ejs.cache.lst -- Module Listing for ../../modules/ejs.cache.mod
+#
+
+==============================================================================================
+
+MODULE:   ejs.cache <hasInitializer, >
+
+
+FUNCTION:   [initializer]  ejs function __initializer__() : Void
+
+   LOCAL:   [local-00] var block_0010_1 : Block
+
+    0000: [0] 8d 00 00 ................... openBlock <slot: 0> <0> 
+    0003: [0] 33 0a 5c 30 ................ debug 
+
+    # ejs.cache/Cache.es:46     }
+
+    0007: [0] 01 34 ...................... addNamespace <internal-823cc7ceab81d020e96c20dd11105fb4-0> 
+    0009: [0] 01 8c 01 ................... addNamespace <ejs.cache> 
+    0012: [0] 33 0a 14 a0 01 ............. debug 
+
+    # ejs.cache/Cache.es:10     module ejs.cache {
+
+    0017: [0] 33 0a 22 c6 01 ............. debug 
+
+    # ejs.cache/Cache.es:17         class Cache {
+
+    0022: [0] 34 aa 07 8c 01 ............. defineClass <var: 0x1d5,  ejs.cache::Cache> 
+    0027: [0] 24 ......................... closeBlock 
+    0028: [0] 3b ......................... endCode 
+    
+
+BLOCK:      [block_0010_1-00]  block_0010_1 (Slots 0)
+
+CLASS:      class Cache extends Object
+            #  Class Details: 32 class traits, 0 instance traits, requested slot 137
+
+FUNCTION:   [Cache-26]  -constructor- native const function Cache(options: Object) : void
+
+     ARG:   [arg-00]   private options : Object
+
+    
+VARIABLE:   [options-00]  private var options : Object
+
+FUNCTION:   [Cache-27]  -initializer- static function Cache-initializer() : Void
+
+
+    0000: [0] 33 0a 26 f6 01 ............. debug 
+
+    # ejs.cache/Cache.es:19             use default namespace public
+
+    0005: [0] 7e 5c ...................... getGlobalSlot <slot: 46> 
+    0007: [1] 02 ......................... addNamespaceRef 
+    0008: [0] 33 0a 2a c0 02 ............. debug 
+
+    # ejs.cache/Cache.es:21             private static var cache: Object = {}
+
+    0013: [0] 8a e4 06 00 ................ newObject <type: 0x1b2,  ejs::Object> <argc: 0> <att: >
+    0017: [1] bc 38 02 ................... putThisTypeSlot <slot: 28> <1> 
+    0020: [0] 33 0a 38 ec 03 ............. debug 
+
+    # ejs.cache/Cache.es:28             native function Cache(options: Object? = null)
+
+    0025: [0] 33 0a 42 96 05 ............. debug 
+
+    # ejs.cache/Cache.es:33             native function read(domain: String, key: String): Object
+
+    0030: [0] 33 0a 4e d6 06 ............. debug 
+
+    # ejs.cache/Cache.es:39             native function write(domain: String, key: String, value: Object, options: Object = {}): Void
+
+    0035: [0] 33 0a 58 c4 08 ............. debug 
+
+    # ejs.cache/Cache.es:44             native function remove(domain: String, key: String): Void
+
+    0040: [0] be ......................... return 
+    
+VARIABLE:   [Cache-28]  [ejs.cache::Cache,private] static var cache : Object
+
+FUNCTION:   [Cache-29]  public native const function read(domain: String, key: String) : Object
+
+     ARG:   [arg-00]   private domain : String
+     ARG:   [arg-01]   private key : String
+
+    
+VARIABLE:   [domain-00]  private var domain : String
+VARIABLE:   [key-01]  private var key : String
+
+FUNCTION:   [Cache-30]  public native const function write(domain: String, key: String, value: Object, options: Object) : Void
+
+     ARG:   [arg-00]   private domain : String
+     ARG:   [arg-01]   private key : String
+     ARG:   [arg-02]   private value : Object
+     ARG:   [arg-03]   private options : Object
+
+    
+VARIABLE:   [domain-00]  private var domain : String
+VARIABLE:   [key-01]  private var key : String
+VARIABLE:   [value-02]  private var value : Object
+VARIABLE:   [options-03]  private var options : Object
+
+FUNCTION:   [Cache-31]  public native const function remove(domain: String, key: String) : Void
+
+     ARG:   [arg-00]   private domain : String
+     ARG:   [arg-01]   private key : String
+
+    
+VARIABLE:   [domain-00]  private var domain : String
+VARIABLE:   [key-01]  private var key : String
+
+----------------------------------------------------------------------------------------------
+
+#
+#  Global slot assignments (Num prop 138)
+#
+0137    ejs.cache var Cache: Type
+
+#
+#  Initializer slot assignments (Num prop 0)
+#
+
+#
+#  Class slot assignments for the "Cache" class (Num slots 32, num inherited 26)
+#
+0000    public function constructor
+0001    ejs function length
+0002    public function prototype
+0003    public function clone
+0004    reserved slot for base class property
+0005    reserved slot for base class property
+0006    reserved slot for base class property
+0007    reserved slot for base class property
+0008    iterator function get
+0009    reserved slot for base class property
+0010    reserved slot for base class property
+0011    reserved slot for base class property
+0012    iterator function getValues
+0013    public function hasOwnProperty
+0014    reserved slot for base class property
+0015    reserved slot for base class property
+0016    public function isPrototypeOf
+0017    reserved slot for base class property
+0018    reserved slot for base class property
+0019    reserved slot for base class property
+0020    public function propertyIsEnumerable
+0021    reserved slot for base class property
+0022    public function toJSON
+0023    public function toLocaleString
+0024    public function toString
+0025    public function valueOf
+0026    -constructor- function Cache
+0027    -initializer- function Cache-initializer
+0028    [ejs.cache::Cache,private] var cache: Object
+0029    public function read
+0030    public function write
+0031    public function remove
+
+#
+#  Instance slot assignments for the "Cache" class (Num prop 0, num inherited 0)
+#
+
+----------------------------------------------------------------------------------------------
+#
+#  Constant Pool (size 869 bytes)
+#
+0000   ""
+0001   "ejs"
+0002   "ejs.cache/Cache.es"
+0003   "}"
+0004   "internal-823cc7ceab81d020e96c20dd11105fb4-0"
+0005   "ejs.cache"
+0006   "module ejs.cache {"
+0007   "    class Cache {"
+0008   "Cache"
+0009   "        use default namespace public"
+0010   "        private static var cache: Object = {}"
+0011   "cache"
+0012   "[ejs.cache::Cache,private]"
+0013   "Object"
+0014   "        native function Cache(options: Object? = null)"
+0015   "-constructor-"
+0016   "options"
+0017   "private"
+0018   "        native function read(domain: String, key: String): Object"
+0019   "read"
+0020   "public"
+0021   "domain"
+0022   "String"
+0023   "key"
+0024   "        native function write(domain: String, key: String, value: Object, options: Object = {}): Void"
+0025   "write"
+0026   "value"
+0027   "Void"
+0028   "        native function remove(domain: String, key: String): Void"
+0029   "remove"
+0030   "Cache-initializer"
+0031   "-initializer-"
+0032   "constructor"
+0033   "Function"
+0034   "length"
+0035   "Number"
+0036   "prototype"
+0037   "clone"
+0038   ""
+0039   "get"
+0040   "iterator"
+0041   "Iterator"
+0042   "getValues"
+0043   "hasOwnProperty"
+0044   "Boolean"
+0045   "isPrototypeOf"
+0046   "propertyIsEnumerable"
+0047   "toJSON"
+0048   "toLocaleString"
+0049   "toString"
+0050   "valueOf"
+0051   "block_0010_1"
+0052   "-block-"
+0053   "__initializer__"

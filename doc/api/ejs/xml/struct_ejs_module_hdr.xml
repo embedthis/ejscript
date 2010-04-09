@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_module_hdr" kind="struct" prot="public">
+    <compoundname>EjsModuleHdr</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_module_hdr_1480d88b741e99abaa5f4fd2ed1b7509b" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModuleHdr::fileVersion</definition>
+        <argsstring></argsstring>
+        <name>fileVersion</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4376" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4376" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_hdr_1c6f23cfbfc949549382a82fe139bc23f" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModuleHdr::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4377" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4377" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_hdr_1a978414dd8da3ae3c4e549dcd1efa9a0" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModuleHdr::magic</definition>
+        <argsstring></argsstring>
+        <name>magic</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4375" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4375" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="4374" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4374" bodyend="4378"/>
+    <listofallmembers>
+      <member refid="struct_ejs_module_hdr_1480d88b741e99abaa5f4fd2ed1b7509b" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>fileVersion</name></member>
+      <member refid="struct_ejs_module_hdr_1c6f23cfbfc949549382a82fe139bc23f" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>flags</name></member>
+      <member refid="struct_ejs_module_hdr_1a978414dd8da3ae3c4e549dcd1efa9a0" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>magic</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

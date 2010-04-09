@@ -1,0 +1,15 @@
+/*
+    Cant specify version with use default namespace
+ */
+
+module my 1.2 {
+
+    var x
+    use default namespace public
+
+    var x
+
+    use default namespace "my"
+    var x 
+}
+

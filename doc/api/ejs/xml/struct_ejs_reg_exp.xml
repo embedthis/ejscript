@@ -1,0 +1,155 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_reg_exp" kind="struct" prot="public">
+    <compoundname>EjsRegExp</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_reg_exp_138113ddd232a0eab38a8733a2f312c0d" prot="public" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* EjsRegExp::compiled</definition>
+        <argsstring></argsstring>
+        <name>compiled</name>
+        <briefdescription>
+<para>Compiled pattern. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3591" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3591" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_13fe4a32b5f2879681ccd5c1386d53e9b" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsRegExp::endLastMatch</definition>
+        <argsstring></argsstring>
+        <name>endLastMatch</name>
+        <briefdescription>
+<para>End of the last match (one past end). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3596" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3596" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_129d158952bb4802f6621fdfe50d74bec" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EjsRegExp::global</definition>
+        <argsstring></argsstring>
+        <name>global</name>
+        <briefdescription>
+<para>Search for pattern globally (multiple times). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3592" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3592" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1554f78a11c645b36c1d4567ba476aadd" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EjsRegExp::ignoreCase</definition>
+        <argsstring></argsstring>
+        <name>ignoreCase</name>
+        <briefdescription>
+<para>Do case insensitive matching. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3593" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3593" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1487866d2284e60be4ce76fca881914d1" prot="public" static="no" mutable="no">
+        <type>struct EjsString *</type>
+        <definition>struct EjsString* EjsRegExp::matched</definition>
+        <argsstring></argsstring>
+        <name>matched</name>
+        <briefdescription>
+<para>Last matched component. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3598" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3598" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1cda7cae8de4179d1f352344df15d7727" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EjsRegExp::multiline</definition>
+        <argsstring></argsstring>
+        <name>multiline</name>
+        <briefdescription>
+<para>Match patterns over multiple lines. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3594" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3594" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1793dcb1dd4c97991dcf3234a5f3e1674" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsRegExp::pattern</definition>
+        <argsstring></argsstring>
+        <name>pattern</name>
+        <briefdescription>
+<para>Pattern to match with. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3590" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3590" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_1ff979b4935d1a8ecbab91cb0a2c1bf03" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsRegExp::startLastMatch</definition>
+        <argsstring></argsstring>
+        <name>startLastMatch</name>
+        <briefdescription>
+<para>Start of the last match. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3597" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3597" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_17ad5d837154c9a97a41b4c08dee5fb94" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EjsRegExp::sticky</definition>
+        <argsstring></argsstring>
+        <name>sticky</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3595" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3595" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reg_exp_12bc2197aed7522daec99aa15a71c2e05" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsRegExp::var</definition>
+        <argsstring></argsstring>
+        <name>var</name>
+        <briefdescription>
+<para>Extends Object - Property storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3589" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3589" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3588" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3588" bodyend="3599"/>
+    <listofallmembers>
+      <member refid="struct_ejs_reg_exp_138113ddd232a0eab38a8733a2f312c0d" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>compiled</name></member>
+      <member refid="struct_ejs_reg_exp_13fe4a32b5f2879681ccd5c1386d53e9b" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>endLastMatch</name></member>
+      <member refid="struct_ejs_reg_exp_129d158952bb4802f6621fdfe50d74bec" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>global</name></member>
+      <member refid="struct_ejs_reg_exp_1554f78a11c645b36c1d4567ba476aadd" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>ignoreCase</name></member>
+      <member refid="struct_ejs_reg_exp_1487866d2284e60be4ce76fca881914d1" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>matched</name></member>
+      <member refid="struct_ejs_reg_exp_1cda7cae8de4179d1f352344df15d7727" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>multiline</name></member>
+      <member refid="struct_ejs_reg_exp_1793dcb1dd4c97991dcf3234a5f3e1674" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>pattern</name></member>
+      <member refid="struct_ejs_reg_exp_1ff979b4935d1a8ecbab91cb0a2c1bf03" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>startLastMatch</name></member>
+      <member refid="struct_ejs_reg_exp_17ad5d837154c9a97a41b4c08dee5fb94" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>sticky</name></member>
+      <member refid="struct_ejs_reg_exp_12bc2197aed7522daec99aa15a71c2e05" prot="public" virt="non-virtual"><scope>EjsRegExp</scope><name>var</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,9 @@
+class Shape {
+    function fun(length) {
+        print("Actual length is " + length + " expected be 100")
+        assert(length == 100)
+    }
+}
+
+s = new Shape
+s.fun(100)

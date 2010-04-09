@@ -1,0 +1,11 @@
+locations: {
+    _ejs: "/usr/lib/ejs",
+    _jems: "/usr/lib/ejs/jems",
+    _modules: "/usr/lib/ejs/modules",
+    _repositories: [ "http://jems.ejscript.org" ],
+
+    ejs: "XXXXX",
+    jems: "jems",
+    modules: "modules",
+    repositories: [ "local" ],
+}

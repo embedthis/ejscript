@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ec_lexer" kind="struct" prot="public">
+    <compoundname>EcLexer</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ec_lexer_1540431b31dc0ac0a9d4640d25498ece7" prot="public" static="no" mutable="no">
+        <type>struct EcCompiler *</type>
+        <definition>struct EcCompiler* EcLexer::compiler</definition>
+        <argsstring></argsstring>
+        <name>compiler</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5638" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5638" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_lexer_1ca791c0ca9c86dc6c858ffea6e9b787d" prot="public" static="no" mutable="no">
+        <type>EcInput *</type>
+        <definition>EcInput* EcLexer::input</definition>
+        <argsstring></argsstring>
+        <name>input</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5637" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5637" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_lexer_1d46efd309f72337f488bc7ac0e532caa" prot="public" static="no" mutable="no">
+        <type>MprHashTable *</type>
+        <definition>MprHashTable* EcLexer::keywords</definition>
+        <argsstring></argsstring>
+        <name>keywords</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5636" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5636" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="5635" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5635" bodyend="5639"/>
+    <listofallmembers>
+      <member refid="struct_ec_lexer_1540431b31dc0ac0a9d4640d25498ece7" prot="public" virt="non-virtual"><scope>EcLexer</scope><name>compiler</name></member>
+      <member refid="struct_ec_lexer_1ca791c0ca9c86dc6c858ffea6e9b787d" prot="public" virt="non-virtual"><scope>EcLexer</scope><name>input</name></member>
+      <member refid="struct_ec_lexer_1d46efd309f72337f488bc7ac0e532caa" prot="public" virt="non-virtual"><scope>EcLexer</scope><name>keywords</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

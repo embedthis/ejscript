@@ -1,0 +1,11 @@
+LIBRARY ejs.web.dll
+EXPORTS
+  ejsAddWebHandler
+  ejsCloneRequest
+  ejsConfigureHttpServerType
+  ejsConfigureRequestType
+  ejsConfigureSessionType
+  ejsCreateRequest
+  ejsCreateSession
+  ejsDestroySession
+  ejs_web_Init

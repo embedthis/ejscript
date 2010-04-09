@@ -1,0 +1,13 @@
+
+o = {}
+namespace red
+o."red"::"x" = 7
+o.x = 8
+
+//  TODO BUG  - syntax should be o."red"::x
+dump(o)
+print("RED " + o."red"::"x")
+print("NORM " + o.x)
+
+a = "x"
+print("RED " + o."red"::[a])

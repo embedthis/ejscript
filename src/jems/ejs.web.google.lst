@@ -1,0 +1,61 @@
+#
+#  ejs.web.google.lst -- Module Listing for ../../modules/ejs.web.google.mod
+#
+
+==============================================================================================
+
+MODULE:   ejs.web.google <hasInitializer, >
+
+
+FUNCTION:   [initializer]  ejs function __initializer__() : Void
+
+   LOCAL:   [local-00] var block_0005_478 : Block
+
+    0000: [0] 8d 00 00 ................... openBlock <slot: 0> <0> 
+    0003: [0] 33 1a f2 02 4c ............. debug 
+
+    # ejs.web.google/Google.es:185 }
+
+    0008: [0] 01 50 ...................... addNamespace <internal-a961c0feb5fdaf03997f2d08f79a5239-20> 
+    0010: [0] 01 aa 01 ................... addNamespace <ejs.web.google> 
+    0013: [0] 33 1a 0a c8 01 ............. debug 
+
+    # ejs.web.google/Google.es:5 module ejs.web.google {
+
+    0018: [0] 33 1a 0e f8 01 ............. debug 
+
+    # ejs.web.google/Google.es:7     require ejs.web
+
+    0023: [0] 01 0a ...................... addNamespace <ejs.web> 
+    0025: [0] 24 ......................... closeBlock 
+    0026: [0] 3b ......................... endCode 
+    
+
+BLOCK:      [block_0005_478-00]  block_0005_478 (Slots 0)
+
+----------------------------------------------------------------------------------------------
+
+#
+#  Global slot assignments (Num prop 185)
+#
+
+#
+#  Initializer slot assignments (Num prop 0)
+#
+
+----------------------------------------------------------------------------------------------
+#
+#  Constant Pool (size 183 bytes)
+#
+0000   ""
+0001   "ejs"
+0002   "ejs.web"
+0003   "ejs.web.google/Google.es"
+0004   "}"
+0005   "internal-a961c0feb5fdaf03997f2d08f79a5239-20"
+0006   "ejs.web.google"
+0007   "module ejs.web.google {"
+0008   "    require ejs.web"
+0009   "block_0005_478"
+0010   "-block-"
+0011   "__initializer__"

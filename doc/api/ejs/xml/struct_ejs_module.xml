@@ -1,0 +1,415 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_module" kind="struct" prot="public">
+    <compoundname>EjsModule</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_module_1dfb30c36425beafe7f6ddceea892a2ec" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModule::checksum</definition>
+        <argsstring></argsstring>
+        <name>checksum</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4402" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4402" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_13d7bcf2c5cad5b3d486880de2827ca16" prot="public" static="no" mutable="no">
+        <type>struct EcCodeGen *</type>
+        <definition>struct EcCodeGen* EjsModule::code</definition>
+        <argsstring></argsstring>
+        <name>code</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4409" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4409" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_161d7dfebb5ce7d1bd09b56ab7e8a034d" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsModule::compiling</definition>
+        <argsstring></argsstring>
+        <name>compiling</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4424" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4424" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1430b2fb1f5e0a588cde461e0749d5c8e" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsModule::configured</definition>
+        <argsstring></argsstring>
+        <name>configured</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4425" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4425" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1345a1de2ff1062693dc9be5994bd19ec" prot="public" static="no" mutable="no">
+        <type>EjsConst *</type>
+        <definition>EjsConst* EjsModule::constants</definition>
+        <argsstring></argsstring>
+        <name>constants</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4418" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4418" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_11cd88ace43937fb57490464bbeabeb4d" prot="public" static="no" mutable="no">
+        <type>struct EjsFunction *</type>
+        <definition>struct EjsFunction* EjsModule::currentMethod</definition>
+        <argsstring></argsstring>
+        <name>currentMethod</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4422" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4422" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_119c46e3ec766caaf9c02872813474e6a" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsModule::dependencies</definition>
+        <argsstring></argsstring>
+        <name>dependencies</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4404" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4404" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1c4c6eea4189634ccda368e725b42d168" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsModule::doc</definition>
+        <argsstring></argsstring>
+        <name>doc</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4433" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4433" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_11bf92a0bacba780aa7089b2c58124149" prot="public" static="no" mutable="no">
+        <type>MprFile *</type>
+        <definition>MprFile* EjsModule::file</definition>
+        <argsstring></argsstring>
+        <name>file</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4410" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4410" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_154155c501e8116e2258246308872fdd5" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModule::firstGlobal</definition>
+        <argsstring></argsstring>
+        <name>firstGlobal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4420" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4420" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_17441410f7f20da03996fdea47d6498c3" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModule::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4432" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4432" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_112646b19a87f56117dbf24c6dbc116f6" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsModule::globalProperties</definition>
+        <argsstring></argsstring>
+        <name>globalProperties</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4411" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4411" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_14ebef31e7a9f5b76885c5c35d1d8f0d5" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsModule::hasError</definition>
+        <argsstring></argsstring>
+        <name>hasError</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4431" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4431" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_18abbf3c00377b4c39b5809cb5a00f317" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsModule::hasInitializer</definition>
+        <argsstring></argsstring>
+        <name>hasInitializer</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4429" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4429" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_19a30ed807960aa16a14bda00b1d319d0" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsModule::hasNative</definition>
+        <argsstring></argsstring>
+        <name>hasNative</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4428" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4428" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_134537aad02c0844bf4e4868ab14adeea" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsModule::initialized</definition>
+        <argsstring></argsstring>
+        <name>initialized</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4430" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4430" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1199a3c56836e73b019588503225db7d1" prot="public" static="no" mutable="no">
+        <type>EjsFunction *</type>
+        <definition>EjsFunction* EjsModule::initializer</definition>
+        <argsstring></argsstring>
+        <name>initializer</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4412" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4412" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1f7b2e87022565d902a95736bf42577f7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModule::lastGlobal</definition>
+        <argsstring></argsstring>
+        <name>lastGlobal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4421" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4421" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1294b9706d8bef13094b9198593bf1a43" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsModule::loaded</definition>
+        <argsstring></argsstring>
+        <name>loaded</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4426" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4426" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_189a4ae4a2d25f4df661e1e815952e90b" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModule::maxVersion</definition>
+        <argsstring></argsstring>
+        <name>maxVersion</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4401" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4401" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1ee971fc8dd3d2574e3e152119f9a1d29" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModule::minVersion</definition>
+        <argsstring></argsstring>
+        <name>minVersion</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4400" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4400" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_155ae637a25d266f49522e0f1e74dd7e9" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsModule::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4396" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4396" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_16afe56ae175b6e3e7173efef7ef138ab" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModule::nameToken</definition>
+        <argsstring></argsstring>
+        <name>nameToken</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4419" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4419" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1eb0b8178717ec41bc7091c375f82f536" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsModule::nativeLoaded</definition>
+        <argsstring></argsstring>
+        <name>nativeLoaded</name>
+        <bitfield> 1</bitfield>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4427" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4427" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1a9ef54f52922a4f517e6c3301191cf0a" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsModule::path</definition>
+        <argsstring></argsstring>
+        <name>path</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4398" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4398" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_10274a276e3e61ad39c1febe7177b6c72" prot="public" static="no" mutable="no">
+        <type>EjsBlock *</type>
+        <definition>EjsBlock* EjsModule::scopeChain</definition>
+        <argsstring></argsstring>
+        <name>scopeChain</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4417" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4417" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1a3fa2e8386124d5eafcc9bb408b3ed99" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsModule::version</definition>
+        <argsstring></argsstring>
+        <name>version</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4399" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4399" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_module_1887aac4b4aec6de40b41b412c31ddda9" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsModule::vname</definition>
+        <argsstring></argsstring>
+        <name>vname</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4397" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4397" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="4395" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4395" bodyend="4434"/>
+    <listofallmembers>
+      <member refid="struct_ejs_module_1dfb30c36425beafe7f6ddceea892a2ec" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>checksum</name></member>
+      <member refid="struct_ejs_module_13d7bcf2c5cad5b3d486880de2827ca16" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>code</name></member>
+      <member refid="struct_ejs_module_161d7dfebb5ce7d1bd09b56ab7e8a034d" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>compiling</name></member>
+      <member refid="struct_ejs_module_1430b2fb1f5e0a588cde461e0749d5c8e" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>configured</name></member>
+      <member refid="struct_ejs_module_1345a1de2ff1062693dc9be5994bd19ec" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>constants</name></member>
+      <member refid="struct_ejs_module_11cd88ace43937fb57490464bbeabeb4d" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>currentMethod</name></member>
+      <member refid="struct_ejs_module_119c46e3ec766caaf9c02872813474e6a" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>dependencies</name></member>
+      <member refid="struct_ejs_module_1c4c6eea4189634ccda368e725b42d168" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>doc</name></member>
+      <member refid="struct_ejs_module_11bf92a0bacba780aa7089b2c58124149" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>file</name></member>
+      <member refid="struct_ejs_module_154155c501e8116e2258246308872fdd5" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>firstGlobal</name></member>
+      <member refid="struct_ejs_module_17441410f7f20da03996fdea47d6498c3" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>flags</name></member>
+      <member refid="struct_ejs_module_112646b19a87f56117dbf24c6dbc116f6" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>globalProperties</name></member>
+      <member refid="struct_ejs_module_14ebef31e7a9f5b76885c5c35d1d8f0d5" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>hasError</name></member>
+      <member refid="struct_ejs_module_18abbf3c00377b4c39b5809cb5a00f317" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>hasInitializer</name></member>
+      <member refid="struct_ejs_module_19a30ed807960aa16a14bda00b1d319d0" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>hasNative</name></member>
+      <member refid="struct_ejs_module_134537aad02c0844bf4e4868ab14adeea" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>initialized</name></member>
+      <member refid="struct_ejs_module_1199a3c56836e73b019588503225db7d1" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>initializer</name></member>
+      <member refid="struct_ejs_module_1f7b2e87022565d902a95736bf42577f7" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>lastGlobal</name></member>
+      <member refid="struct_ejs_module_1294b9706d8bef13094b9198593bf1a43" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>loaded</name></member>
+      <member refid="struct_ejs_module_189a4ae4a2d25f4df661e1e815952e90b" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>maxVersion</name></member>
+      <member refid="struct_ejs_module_1ee971fc8dd3d2574e3e152119f9a1d29" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>minVersion</name></member>
+      <member refid="struct_ejs_module_155ae637a25d266f49522e0f1e74dd7e9" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>name</name></member>
+      <member refid="struct_ejs_module_16afe56ae175b6e3e7173efef7ef138ab" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>nameToken</name></member>
+      <member refid="struct_ejs_module_1eb0b8178717ec41bc7091c375f82f536" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>nativeLoaded</name></member>
+      <member refid="struct_ejs_module_1a9ef54f52922a4f517e6c3301191cf0a" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>path</name></member>
+      <member refid="struct_ejs_module_10274a276e3e61ad39c1febe7177b6c72" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>scopeChain</name></member>
+      <member refid="struct_ejs_module_1a3fa2e8386124d5eafcc9bb408b3ed99" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>version</name></member>
+      <member refid="struct_ejs_module_1887aac4b4aec6de40b41b412c31ddda9" prot="public" virt="non-virtual"><scope>EjsModule</scope><name>vname</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

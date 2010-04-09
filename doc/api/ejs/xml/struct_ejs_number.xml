@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_number" kind="struct" prot="public">
+    <compoundname>EjsNumber</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_number_1da84521f476a3837a682f1a6a95a3491" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsNumber::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object - Property storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3531" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3531" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_number_12765fd51277611ce593f5218d8c64edd" prot="public" static="no" mutable="no">
+        <type>MprNumber</type>
+        <definition>MprNumber EjsNumber::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>Numeric value. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3532" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3532" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3530" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3530" bodyend="3533"/>
+    <listofallmembers>
+      <member refid="struct_ejs_number_1da84521f476a3837a682f1a6a95a3491" prot="public" virt="non-virtual"><scope>EjsNumber</scope><name>obj</name></member>
+      <member refid="struct_ejs_number_12765fd51277611ce593f5218d8c64edd" prot="public" virt="non-virtual"><scope>EjsNumber</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

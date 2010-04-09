@@ -1,0 +1,48 @@
+/*
+    Initialize for Ejscript unit tests
+ */
+require ejs.unix
+
+let conf        = Path("ejsweb.conf").readString()
+const PORT      = conf.replace(/.*Listen ([0-9]+) *# MAIN.*/ms, "$1")
+const SSL_PORT  = conf.replace(/.*Listen ([0-9]+) *# SSL.*/ms, "$1")
+const PIDFILE   = ".ejsweb.pid"
+const LOCALHOST = "127.0.0.1"
+const HTTP      = "http://" + LOCALHOST + ":" + PORT
+const HTTPS     = "https://" + LOCALHOST + ":" + SSL_PORT
+
+mkdir("web/tmp")
+
+let EJSWEB = App.exeDir.join("ejsweb")
+if (Config.OS == "WIN") {
+    EJSWEB += ".exe"
+}
+
+if (exists(PIDFILE)) {
+    path = Path(PIDFILE)
+    pid = path.readString()
+    path.remove()
+    try { kill(pid); } catch {}
+}
+
+if (exists(EJSWEB)) {
+    if (!App.getenv("NOSERVER")) {
+        /* Start a web server for testing */
+        pid = System.daemon(EJSWEB + " --name forEjsTest --config ejsweb.conf")
+        Path(PIDFILE).write(pid)
+        share("webPidFile", PIDFILE)
+        http = new Http
+        for (i in 50) {
+            try { http.get(HTTP + "/alive.html"); } catch {}
+            if (http.status == 200) break
+            App.sleep(100)
+            http.close()
+        }
+        if (http.status != 200) {
+            throw "Can't start web server"
+        }
+    }
+    share("http", HTTP)
+    share("https", HTTPS)
+    share("port", PORT)
+}

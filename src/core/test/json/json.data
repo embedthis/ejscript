@@ -1,0 +1,12 @@
+/*
+ *  Json data with comments
+ */
+
+{
+    //  First a user
+    user: {
+        name: "Peter Smith",        //  Comments at the end
+        /* Comments before */ address: "1414 Cherry Lane",
+    },
+}
+//  And a final word

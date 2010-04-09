@@ -1,0 +1,491 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Request</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Request</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Request'>
+   <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
+   <tr><td><strong>Definition</strong></td><td>dynamic  class Request</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Request <img src='images/inherit.gif' alt='inherit'/> <a href='intrinsic-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-1.1</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>Web request class.</p>
+
+<p class='classDescription'>Request objects manage the state and execution of a web request. The HttpServer class creates
+instances of Request in response to incoming client requests. The Request object holds the client request state
+including the request URL and headers. It is also a Stream and by calling the read() method, request body 
+content can be read.<br/><br/>The response to send back to the client can be defined by setting status and calling setHeaders() and write() to 
+set the response status, headers and body content respectively.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='jsgi'></a>
+   <tr><td nowrap align='center'>public static </td><td>jsgi</td><td><a href='intrinsic-Object.html'>Object</a></td><td>JSGI specification configuration object. </td></tr>
+<a name='absHome'></a>
+   <tr><td nowrap align='center'>public </td><td>absHome</td><td><a href='ejs.io-Uri.html'>Uri</a></td><td>Absolute Uri for the top-level of the application. This returns a absolute Uri (includes scheme and host) 
+for the top most application Uri. See <a href='#home'>home</a> to get a relative Uri.</td></tr>
+<a name='authGroup'></a>
+   <tr><td nowrap align='center'>public </td><td>authGroup</td><td><a href='intrinsic-String.html'>String</a></td><td>Authentication group. This property is set to the value of the authentication group header.</td></tr>
+<a name='authType'></a>
+   <tr><td nowrap align='center'>public </td><td>authType</td><td><a href='intrinsic-String.html'>String</a></td><td>Authentication method if authorization is being used (basic or digest). Set to null if not using authentication.</td></tr>
+<a name='authUser'></a>
+   <tr><td nowrap align='center'>public </td><td>authUser</td><td><a href='intrinsic-String.html'>String</a></td><td>Authentication user name. This property is set to the value of the authentication user header. Set to null if
+not yet defined.</td></tr>
+<a name='chunkSize'></a>
+   <tr><td nowrap align='center'>public </td><td>chunkSize</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Preferred response chunk size for transfer chunk encoding. Chunked encoding is used when an explicit request 
+content length is unknown at the time the response headers must be emitted.  Chunked encoding is automatically 
+enabled if the chunkFilter is configured and a contentLength has not been defined.</td></tr>
+<a name='config'></a>
+   <tr><td nowrap align='center'>public </td><td>config</td><td><a href='intrinsic-Object.html'>Object</a></td><td>Request configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
+Middleware may modify to refer to a request local configuration object.</td></tr>
+<a name='contentLength'></a>
+   <tr><td nowrap align='center'>public </td><td>contentLength</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Get the request content length. This property is readonly and is set to the length of the request content 
+body in bytes or -1 if not known.</td></tr>
+<a name='contentType'></a>
+   <tr><td nowrap align='center'>public </td><td>contentType</td><td><a href='intrinsic-String.html'>String</a></td><td>The request content type as specified by the "Content-Type" Http request header. This is set to null 
+if not defined.</td></tr>
+<a name='cookies'></a>
+   <tr><td nowrap align='center'>public </td><td>cookies</td><td><a href='intrinsic-Object.html'>Object</a></td><td>Cookie headers. Cookies are sent by the client browser via the Set-Cookie Http header. They are typically 
+used used to specify the session state. If sessions are being used, an Ejscript session cookie will be 
+sent to and from the browser with each request.</td></tr>
+<a name='dir'></a>
+   <tr><td nowrap align='center'>public </td><td>dir</td><td><a href='ejs.io-Path.html'>Path</a></td><td>Application web document directory on the local file system. This is set to the directory containing the
+application. For MVC applications, this is set to the base directory of the application. For non-MVC apps, 
+it is set to the directory containing the application startup script.</td></tr>
+<a name='encoding'></a>
+   <tr><td nowrap align='center'>public </td><td>encoding</td><td><a href='intrinsic-String.html'>String</a></td><td>Get the encoding scheme for serializing strings. Not yet implemented.</td></tr>
+<a name='env'></a>
+   <tr><td nowrap align='center'>public </td><td>env</td><td><a href='intrinsic-Object.html'>Object</a></td><td>Storage for middleware specific state. Added for JSGI compliance.</td></tr>
+<a name='files'></a>
+   <tr><td nowrap align='center'>public </td><td>files</td><td><a href='intrinsic-Object.html'>Object</a></td><td>Files uploaded as part of the request. For each uploaded file, an instance of UploadFile is created in files. 
+Each element is named by the file upload HTML input element ID in the HTML page form.</td></tr>
+<a name='headers'></a>
+   <tr><td nowrap align='center'>public </td><td>headers</td><td><a href='intrinsic-Object.html'>Object</a></td><td>Request Http headers. This is an object hash filled with the Http request headers. If multiple headers of 
+the same key value are defined, their contents will be catenated with a ", " separator as per the HTTP/1.1 
+specification. Use the header() method if you want to retrieve a single header.</td></tr>
+<a name='home'></a>
+   <tr><td nowrap align='center'>public </td><td>home</td><td><a href='ejs.io-Uri.html'>Uri</a></td><td>Relative Uri for the top-level of the application. This returns a relative Uri from the current request
+up to the top most application Uri.</td></tr>
+<a name='host'></a>
+   <tr><td nowrap align='center'>public </td><td>host</td><td><a href='intrinsic-String.html'>String</a></td><td>Client requested Host. This is the Http request "Host" header value.</td></tr>
+<a name='method'></a>
+   <tr><td nowrap align='center'>public </td><td>method</td><td><a href='intrinsic-String.html'>String</a></td><td>Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE).</td></tr>
+<a name='params'></a>
+   <tr><td nowrap align='center'>public </td><td>params</td><td><a href='intrinsic-Object.html'>Object</a></td><td>The request form parameters. Object hash of user url-encoded post data parameters.</td></tr>
+<a name='pathInfo'></a>
+   <tr><td nowrap align='center'>public </td><td>pathInfo</td><td><a href='intrinsic-String.html'>String</a></td><td>Portion of the request URL after the scriptName. This is the location of the request within the application.</td></tr>
+<a name='query'></a>
+   <tr><td nowrap align='center'>public </td><td>query</td><td><a href='intrinsic-String.html'>String</a></td><td>Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.</td></tr>
+<a name='referrer'></a>
+   <tr><td nowrap align='center'>public </td><td>referrer</td><td><a href='intrinsic-String.html'>String</a></td><td>Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
+no defined referrer.</td></tr>
+<a name='remoteAddress'></a>
+   <tr><td nowrap align='center'>public </td><td>remoteAddress</td><td><a href='intrinsic-String.html'>String</a></td><td>IP address of the client issuing the request. </td></tr>
+<a name='route'></a>
+   <tr><td nowrap align='center'>public </td><td>route</td><td><a href='ejs.web-Route.html'>Route</a></td><td>Route used for the request. The route is the matching entry in the route table for the request.
+The route has properties two properties of particular interest: "name" which is the name of the route and
+and "type" which classifies the type of request.</td></tr>
+<a name='scheme'></a>
+   <tr><td nowrap align='center'>public </td><td>scheme</td><td><a href='intrinsic-String.html'>String</a></td><td>Http request protocol scheme (http | https). </td></tr>
+<a name='scriptName'></a>
+   <tr><td nowrap align='center'>public </td><td>scriptName</td><td><a href='intrinsic-String.html'>String</a></td><td>Script name for the current application serving the request. This is typically the leading Uri portion 
+corresponding to the application, but middleware may modify this to be an arbitrary string representing 
+the application.  The script name is typically determined by the Router as it parses the request using 
+the routing tables.</td></tr>
+<a name='secure'></a>
+   <tr><td nowrap align='center'>public </td><td>secure</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
+protocol scheme.</td></tr>
+<a name='server'></a>
+   <tr><td nowrap align='center'>public </td><td>server</td><td><a href='ejs.web-HttpServer.html'>HttpServer</a></td><td>Owning server for the request. This is the HttpServer object that created this request.</td></tr>
+<a name='session'></a>
+   <tr><td nowrap align='center'>public </td><td>session</td><td><a href='intrinsic-Object.html'>Object</a></td><td>Session state object. The session state object can be used to share state between requests.
+If a session has not already been created, this call creates a session and sets the <a href='#sessionID'>sessionID</a> property. 
+A cookie containing a session ID is automatically created and sent to the client on the first 
+response after creating the session. Objects stored in the session state must be serializable using JSON.</td></tr>
+<a name='sessionID'></a>
+   <tr><td nowrap align='center'>public </td><td>sessionID</td><td><a href='intrinsic-String.html'>String</a></td><td>Current session ID. Index into the <a href='#sessions'>sessions</a> object. Set to null if no session is defined.</td></tr>
+<a name='status'></a>
+   <tr><td nowrap align='center'>public </td><td>status</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Set to the (proposed) Http response status code. </td></tr>
+<a name='timeout'></a>
+   <tr><td nowrap align='center'>public </td><td>timeout</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Request timeout. Number of milliseconds for requests to block while processing the request.
+A value of -1 means no timeout.</td></tr>
+<a name='uri'></a>
+   <tr><td nowrap align='center'>public </td><td>uri</td><td><a href='ejs.io-Uri.html'>Uri</a></td><td>The request URL as a parsed Uri. This is the original Uri and may not reflect changes to pathInfo or
+scriptName.</td></tr>
+<a name='userAgent'></a>
+   <tr><td nowrap align='center'>public </td><td>userAgent</td><td><a href='intrinsic-String.html'>String</a></td><td>Get the name of the client browser software set in the "User-Agent" Http header. </td></tr>
+<a name='extension'></a>
+   <tr><td nowrap align='left'>public const get </td><td>extension</td><td>&nbsp;</td><td>Get the file extension of the script corresponding to the request. </td></tr>
+<a name='input'></a>
+   <tr><td nowrap align='left'>public const get </td><td>input</td><td><a href='intrinsic-Stream.html'>Stream</a></td><td>Request content stream. This is equivalent to using "this" as Request objects are streams connected to the
+input content. Added for JSGI compliance.</td></tr>
+<a name='log'></a>
+   <tr><td nowrap align='left'>public const get </td><td>log</td><td><a href='ejs.io-Logger.html'>Logger</a></td><td>Logger object. Set to App.logger. This is configured from the "log" section of the "ejsrc" config file.</td></tr>
+<a name='queryString'></a>
+   <tr><td nowrap align='left'>public const get </td><td>queryString</td><td><a href='intrinsic-String.html'>String</a></td><td>Decoded query string (URL query string). Eqivalent to the <a href='#query'>query</a> property. Added for JSGI compliance.</td></tr>
+<a name='serverName'></a>
+   <tr><td nowrap align='left'>public const get </td><td>serverName</td><td><a href='intrinsic-String.html'>String</a></td><td>Name of the server responding to the request. This is the portion of the URL that follows the scheme.
+If a "Host" header is provided, it is used in preference.</td></tr>
+<a name='serverPort'></a>
+   <tr><td nowrap align='left'>public const get </td><td>serverPort</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Listening port number for the server. </td></tr>
+</table>
+
+<p class='inheritedLink'><a href='intrinsic-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Request Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addListener'><b>addListener</b></a>(name, listener: <a href='intrinsic-Function.html'>Function</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a listener to the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#cachable'><b>cachable</b></a>(enable: <a href='intrinsic-Boolean.html'>Boolean</a> = false): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Control the caching of the response content.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This closes the current request.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#destroySession'><b>destroySession</b></a>(): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Destroy a session.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#dump'><b>dump</b></a>(args: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Dump objects for debugging.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getResponseHeaders'><b>getResponseHeaders</b></a>(): <a href='intrinsic-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) response headers.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='intrinsic-String.html'>String</a>): <a href='intrinsic-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a request header by keyword.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='intrinsic-ByteArray.html'>ByteArray</a>, offset: <a href='intrinsic-Number.html'>Number</a> = 0 , count: <a href='intrinsic-Number.html'>Number</a> = -1): <a href='intrinsic-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#redirect'><b>redirect</b></a>(url: <a href='intrinsic-String.html'>String</a>, status: <a href='intrinsic-Number.html'>Number</a> = expression): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to a new URL.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeListener'><b>removeListener</b></a>(name, listener: <a href='intrinsic-Function.html'>Function</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a listener from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#sendResponse'><b>sendResponse</b></a>(response: <a href='intrinsic-Object.html'>Object</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a response to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setCookie'><b>setCookie</b></a>(name: <a href='intrinsic-String.html'>String</a>, options: <a href='intrinsic-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a cookie header to send with the response.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='intrinsic-String.html'>String</a>, value: <a href='intrinsic-String.html'>String</a>, overwrite: <a href='intrinsic-Boolean.html'>Boolean</a> = true): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a header.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='intrinsic-Object.html'>Object</a>, overwrite: <a href='intrinsic-Boolean.html'>Boolean</a> = true): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the HTTP response headers.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLocation'><b>setLocation</b></a>(prefix: <a href='intrinsic-String.html'>String</a>, location: <a href='ejs.io-Path.html'>Path</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to define an application at a given Uri prefix and directory location.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setStatus'><b>setStatus</b></a>(status: <a href='intrinsic-Number.html'>Number</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set to the (proposed) Http response status code.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write data to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#writeError'><b>writeError</b></a>(msg: <a href='intrinsic-String.html'>String</a>, code: <a href='intrinsic-Number.html'>Number</a> = expression): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write an error message back to the user.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#writeHtml'><b>writeHtml</b></a>(args: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send text back to the client which is first HTML escaped.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='intrinsic-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='addListener'></a>
+<div class='api'>
+<div class='apiSig'>const   public  addListener(name, listener: <a href='intrinsic-Function.html'>Function</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Add a listener to the stream.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='intrinsic-Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function listener(event: String, ...args): Void.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+<td class='param'>readable</td><td>Issued when some body content is available.</td></tr>
+<td class='param'>writable</td><td>Issued when the connection is writable to accept body data (PUT, POST).</td></tr>
+<td class='param'>complete</td><td>Issued when the request completes.</td></tr>
+<td class='param'>error</td><td>Issued if the request does not complete All events are called with the signature: function (event: String, http: Http): Void.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='cachable'></a>
+<div class='api'>
+<div class='apiSig'>const   public  cachable(enable: <a href='intrinsic-Boolean.html'>Boolean</a> = false): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Control the caching of the response content.</p>
+<dl><dt>Description</dt><dd>Setting cacheable to false will add a Cache-Control: no-cache
+header to the output.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>enable: <a href='intrinsic-Boolean.html'>Boolean</a> </td><td>Set to false (default) to disable caching of the response content. [default: false]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='close'></a>
+<div class='api'>
+<div class='apiSig'>const   public  close(): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Close the stream.This closes the current request.</p>
+<dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>close</td><td>Issued before closing the stream.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='destroySession'></a>
+<div class='api'>
+<div class='apiSig'>const   public  destroySession(): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Destroy a session.</p>
+<dl><dt>Description</dt><dd>This call destroys the session state store that is being used for the current client. 
+If no session exists, this call has no effect.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='dump'></a>
+<div class='api'>
+<div class='apiSig'>const   public  dump(args: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Dump objects for debugging.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>args: <a href='intrinsic-Array.html'>Array</a> </td><td>List of arguments to print.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='finalize'></a>
+<div class='api'>
+<div class='apiSig'>const   public  finalize(): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Signals the end of any write data.</p>
+<dl><dt>Description</dt><dd>If using chunked writes (no content length specified), finalize() must
+be called to properly signify the end of write data. This causes the chunk filter to write a chunk trailer.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='getResponseHeaders'></a>
+<div class='api'>
+<div class='apiSig'>const   public  getResponseHeaders(): <a href='intrinsic-Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<p>Get the (proposed) response headers.</p>
+<dl><dt>Returns</dt>
+<dd>The set of response headers that will be used when the response is sent.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='header'></a>
+<div class='api'>
+<div class='apiSig'>const   public  header(key: <a href='intrinsic-String.html'>String</a>): <a href='intrinsic-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Get a request header by keyword.</p>
+<dl><dt>Description</dt><dd>Header properties are lower case. ie. "content_length". This is higher 
+performance than using request.headers["key"].</dd></dl>
+<dl><dt>Returns</dt>
+<dd>The header value.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='read'></a>
+<div class='api'>
+<div class='apiSig'>const   public  read(buffer: <a href='intrinsic-ByteArray.html'>ByteArray</a>, offset: <a href='intrinsic-Number.html'>Number</a> = 0 , count: <a href='intrinsic-Number.html'>Number</a> = -1): <a href='intrinsic-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Read a data from the stream.</p>
+<dl><dt>Description</dt><dd>If data is available, the call will return immediately. 
+If no data is available and the stream is in sync mode, the call will block until data is available.
+If no data is available and the stream is in async mode, the call will not block and will return immediately.
+In this case a "readable" event will be issued when data is available for reading.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>buffer: <a href='intrinsic-ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='intrinsic-Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated [default: 0 ]</td></tr><tr class='param'><td class='param'>count: <a href='intrinsic-Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. [default: -1]</td></tr><tr class='param'><td class='param'>offset: <a href='intrinsic-Number.html'>Number</a> </td><td> [default: 0 ]</td></tr><tr class='param'><td class='param'>count: <a href='intrinsic-Number.html'>Number</a> </td><td> [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='redirect'></a>
+<div class='api'>
+<div class='apiSig'>const   public  redirect(url: <a href='intrinsic-String.html'>String</a>, status: <a href='intrinsic-Number.html'>Number</a> = expression): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Redirect the client to a new URL.</p>
+<dl><dt>Description</dt><dd>This call redirects the client's browser to a new location specified 
+by the.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>url: <a href='intrinsic-String.html'>String</a> </td><td>Url to redirect the client to.</td></tr><tr class='param'><td class='param'>status: <a href='intrinsic-Number.html'>Number</a> </td><td>Optional HTTP redirection status. [default: expression]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='removeListener'></a>
+<div class='api'>
+<div class='apiSig'>const   public  removeListener(name, listener: <a href='intrinsic-Function.html'>Function</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Remove a listener from the stream.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Event name previously used with addListener. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='intrinsic-Function.html'>Function</a> </td><td>Listener function previously used with addListener.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='sendResponse'></a>
+<div class='api'>
+<div class='apiSig'>const   public  sendResponse(response: <a href='intrinsic-Object.html'>Object</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Send a response to the client.</p>
+<dl><dt>Description</dt><dd>This can be used instead of setting status and calling setHeaders() and write(). 
+The <a href='#response'>response</a> argument is an object hash containing status, headers and
+body properties. The respond method replaces previously defined status and headers.</dd></dl>
+<dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>status</td><td>Numeric Http status code (e.g. 200 for a successful response).</td></tr>
+<td class='param'>header</td><td>Object hash of Http headers.</td></tr>
+<td class='param'>body</td><td>Body content.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='setCookie'></a>
+<div class='api'>
+<div class='apiSig'>const   public  setCookie(name: <a href='intrinsic-String.html'>String</a>, options: <a href='intrinsic-Object.html'>Object</a>)
+</div>
+<div class='apiDetail'>
+<p>Define a cookie header to send with the response.</p>
+<dl><dt>Description</dt><dd>Path, domain and lifetime can be set to null for 
+default values.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='intrinsic-String.html'>String</a> </td><td>Cookie name.</td></tr><tr class='param'><td class='param'>options: <a href='intrinsic-Object.html'>Object</a> </td><td>Cookie field options.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>value</td><td>Cookie value.</td></tr>
+<td class='param'>path</td><td>Uri path to which the cookie applies.</td></tr>
+<td class='param'>domain</td><td>Domain in which the cookie applies. Must have 2-3 dots.</td></tr>
+<td class='param'>lifetime</td><td>Duration for the cookie to persist in seconds.</td></tr>
+<td class='param'>secure</td><td>Set to true if the cookie only applies for SSL based connections.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='setHeader'></a>
+<div class='api'>
+<div class='apiSig'>const   public  setHeader(key: <a href='intrinsic-String.html'>String</a>, value: <a href='intrinsic-String.html'>String</a>, overwrite: <a href='intrinsic-Boolean.html'>Boolean</a> = true): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Set a header.</p>
+<dl><dt>Description</dt><dd>If a header has already been defined and <a href='#overwrite'>overwrite</a> is true, the header will be overwritten.
+NOTE: case does not matter in the header keyword.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>key: <a href='intrinsic-String.html'>String</a> </td><td>The header keyword for the request, e.g. "accept".</td></tr><tr class='param'><td class='param'>value: <a href='intrinsic-String.html'>String</a> </td><td>The value to associate with the header, e.g. "yes".</td></tr><tr class='param'><td class='param'>overwrite: <a href='intrinsic-Boolean.html'>Boolean</a> </td><td>If the header is already defined and overwrite is true, then the new value will overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", " separator. [default: true]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='setHeaders'></a>
+<div class='api'>
+<div class='apiSig'>const   public  setHeaders(headers: <a href='intrinsic-Object.html'>Object</a>, overwrite: <a href='intrinsic-Boolean.html'>Boolean</a> = true): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Set the HTTP response headers.</p>
+<dl><dt>Description</dt><dd>Use getHeaders to inspect the response headers.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>headers: <a href='intrinsic-Object.html'>Object</a> </td><td>Set of headers to use.</td></tr><tr class='param'><td class='param'>overwrite: <a href='intrinsic-Boolean.html'>Boolean</a> </td><td>If the header is already defined and overwrite is true, then the new value will overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", " separator. [default: true]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='setLocation'></a>
+<div class='api'>
+<div class='apiSig'>const   public  setLocation(prefix: <a href='intrinsic-String.html'>String</a>, location: <a href='ejs.io-Path.html'>Path</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Convenience routine to define an application at a given Uri prefix and directory location.</p>
+<dl><dt>Description</dt><dd>This is typically
+called from routing tables.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>prefix: <a href='intrinsic-String.html'>String</a> </td><td>The leading Uri prefix for the application. This prefix is removed from the pathInfo and the <a href='#scriptName'>scriptName</a> property is set to the prefix after removing the leading "/".</td></tr><tr class='param'><td class='param'>location: <a href='ejs.io-Path.html'>Path</a> </td><td>Path to where the application home directory is. This sets the <a href='#dir'>dir</a> property to the <a href='#location'>location</a> argument.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='setStatus'></a>
+<div class='api'>
+<div class='apiSig'>const   public  setStatus(status: <a href='intrinsic-Number.html'>Number</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Set to the (proposed) Http response status code.</p>
+<dl><dt>Description</dt><dd>This is equivalent to assigning to the <a href='#status'>status</a> property.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='write'></a>
+<div class='api'>
+<div class='apiSig'>const   public  write(data: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Write data to the stream.Write data to the client.</p>
+<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of elements written. 
+If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
+If writing more data than the stream can absorb in async mode, the call will not block and will return 
+immediately. A "writable" event will be issued when all the data has been written.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='intrinsic-Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty and it is ready to be written to.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually written.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='intrinsic-IOError.html'>IOError</a>: if there is an I/O error. 
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='writeError'></a>
+<div class='api'>
+<div class='apiSig'>const   public  writeError(msg: <a href='intrinsic-String.html'>String</a>, code: <a href='intrinsic-Number.html'>Number</a> = expression): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Write an error message back to the user.</p>
+<dl><dt>Description</dt><dd>The status is set to Http.ServerError (500) and the content type
+is set to text/html. The output is html escaped for security. Output is finalized.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msg: <a href='intrinsic-String.html'>String</a> </td><td>Message to send. The message may be modified for readability if it contains an exception backtrace.</td></tr><tr class='param'><td class='param'>code: <a href='intrinsic-Number.html'>Number</a> </td><td> [default: expression]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='writeHtml'></a>
+<div class='api'>
+<div class='apiSig'>const   public  writeHtml(args: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Send text back to the client which is first HTML escaped.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>args: <a href='intrinsic-Array.html'>Array</a> </td><td>Objects to emit.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

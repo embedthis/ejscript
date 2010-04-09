@@ -1,0 +1,293 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_doc" kind="struct" prot="public">
+    <compoundname>EjsDoc</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_doc_106f17999b969709a1ca3f73ad0c9bb22" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsDoc::brief</definition>
+        <argsstring></argsstring>
+        <name>brief</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4454" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4454" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_11e9311651d90b22e2898594d21763583" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsDoc::cracked</definition>
+        <argsstring></argsstring>
+        <name>cracked</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4463" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4463" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_1f933327a5a0ad33c684a740d9c451a9f" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsDoc::defaults</definition>
+        <argsstring></argsstring>
+        <name>defaults</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4467" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4467" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_17171627fa5c2426070005c7ac0de2876" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsDoc::deprecated</definition>
+        <argsstring></argsstring>
+        <name>deprecated</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4461" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4461" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_1a807ae5dcfd0f4332453402844422cef" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsDoc::description</definition>
+        <argsstring></argsstring>
+        <name>description</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4455" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4455" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_17e412930e644cecebbf2c6038532fd55" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsDoc::docString</definition>
+        <argsstring></argsstring>
+        <name>docString</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4453" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4453" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_1734f92694712c0f65bf6e19aaf4a8847" prot="public" static="no" mutable="no">
+        <type>struct EjsDoc *</type>
+        <definition>struct EjsDoc* EjsDoc::duplicate</definition>
+        <argsstring></argsstring>
+        <name>duplicate</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4465" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4465" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_19024df9edbcbe976d02d814082c47d7d" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsDoc::events</definition>
+        <argsstring></argsstring>
+        <name>events</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4470" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4470" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_12c802411e6dbc75e727ce1fbaf99d2bd" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsDoc::example</definition>
+        <argsstring></argsstring>
+        <name>example</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4456" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4456" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_120584a48112f6327ed668e55342f4ad6" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsDoc::hide</definition>
+        <argsstring></argsstring>
+        <name>hide</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4462" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4462" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_17b0c88e9accc4c7802361e64bb0dfe3a" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsDoc::options</definition>
+        <argsstring></argsstring>
+        <name>options</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4469" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4469" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_1f636bb80468c57c164b76e29259abe2f" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsDoc::params</definition>
+        <argsstring></argsstring>
+        <name>params</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4468" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4468" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_1c87bcc31c4b75638ba372c133ccff302" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsDoc::requires</definition>
+        <argsstring></argsstring>
+        <name>requires</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4457" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4457" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_1208a1ff5be29cf83bd672bfbd4bf4fc1" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsDoc::returns</definition>
+        <argsstring></argsstring>
+        <name>returns</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4458" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4458" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_16eb106f043f24614358eb27d2719d4b9" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsDoc::see</definition>
+        <argsstring></argsstring>
+        <name>see</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4471" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4471" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_160621ebddfbc5dda9b1cc2f725726abb" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsDoc::spec</definition>
+        <argsstring></argsstring>
+        <name>spec</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4460" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4460" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_1015137db3159a60f15e57766e80dbd53" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsDoc::stability</definition>
+        <argsstring></argsstring>
+        <name>stability</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4459" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4459" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_10e458dee42d6a66b38ea0ddbd2b8f27d" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsDoc::throws</definition>
+        <argsstring></argsstring>
+        <name>throws</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4472" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4472" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_doc_106d4d0c00514eb228fd53070b60cd069" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_ejs_trait" kindref="compound">EjsTrait</ref> *</type>
+        <definition>EjsTrait* EjsDoc::trait</definition>
+        <argsstring></argsstring>
+        <name>trait</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4474" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4474" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="53">
+        <label>EjsDoc</label>
+        <childnode refid="54" relation="usage">
+          <edgelabel>trait</edgelabel>
+        </childnode>
+      </node>
+      <node id="54">
+        <label>EjsTrait</label>
+        <link refid="struct_ejs_trait"/>
+      </node>
+    </collaborationgraph>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="4452" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4452" bodyend="4475"/>
+    <listofallmembers>
+      <member refid="struct_ejs_doc_106f17999b969709a1ca3f73ad0c9bb22" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>brief</name></member>
+      <member refid="struct_ejs_doc_11e9311651d90b22e2898594d21763583" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>cracked</name></member>
+      <member refid="struct_ejs_doc_1f933327a5a0ad33c684a740d9c451a9f" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>defaults</name></member>
+      <member refid="struct_ejs_doc_17171627fa5c2426070005c7ac0de2876" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>deprecated</name></member>
+      <member refid="struct_ejs_doc_1a807ae5dcfd0f4332453402844422cef" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>description</name></member>
+      <member refid="struct_ejs_doc_17e412930e644cecebbf2c6038532fd55" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>docString</name></member>
+      <member refid="struct_ejs_doc_1734f92694712c0f65bf6e19aaf4a8847" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>duplicate</name></member>
+      <member refid="struct_ejs_doc_19024df9edbcbe976d02d814082c47d7d" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>events</name></member>
+      <member refid="struct_ejs_doc_12c802411e6dbc75e727ce1fbaf99d2bd" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>example</name></member>
+      <member refid="struct_ejs_doc_120584a48112f6327ed668e55342f4ad6" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>hide</name></member>
+      <member refid="struct_ejs_doc_17b0c88e9accc4c7802361e64bb0dfe3a" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>options</name></member>
+      <member refid="struct_ejs_doc_1f636bb80468c57c164b76e29259abe2f" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>params</name></member>
+      <member refid="struct_ejs_doc_1c87bcc31c4b75638ba372c133ccff302" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>requires</name></member>
+      <member refid="struct_ejs_doc_1208a1ff5be29cf83bd672bfbd4bf4fc1" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>returns</name></member>
+      <member refid="struct_ejs_doc_16eb106f043f24614358eb27d2719d4b9" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>see</name></member>
+      <member refid="struct_ejs_doc_160621ebddfbc5dda9b1cc2f725726abb" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>spec</name></member>
+      <member refid="struct_ejs_doc_1015137db3159a60f15e57766e80dbd53" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>stability</name></member>
+      <member refid="struct_ejs_doc_10e458dee42d6a66b38ea0ddbd2b8f27d" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>throws</name></member>
+      <member refid="struct_ejs_doc_106d4d0c00514eb228fd53070b60cd069" prot="public" virt="non-virtual"><scope>EjsDoc</scope><name>trait</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

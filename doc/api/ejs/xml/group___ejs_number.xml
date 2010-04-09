@@ -1,0 +1,206 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="group___ejs_number" kind="group">
+    <compoundname>EjsNumber</compoundname>
+    <title>EjsNumber</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group___ejs_number_1gbbc997d13a55ae22b87abb9d3b1df9ec" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsNumber *</type>
+        <definition>EjsNumber* ejsCreateNumber</definition>
+        <argsstring>(Ejs *ejs, MprNumber value)</argsstring>
+        <name>ejsCreateNumber</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>MprNumber</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Create a number object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Numeric value to initialize the number object </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A number object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3543"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_number_1gae335f1dd005f157bc1ea3c936f91c72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>double</type>
+        <definition>double ejsGetDouble</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp)</argsstring>
+        <name>ejsGetDouble</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+<para>Get the numeric value stored in a EjsNumber object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A double value </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3935"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_number_1ge6b4ff8d014588ca4582ed211a67e11a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsGetInt</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp)</argsstring>
+        <name>ejsGetInt</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+<para>Get the numeric value stored in a EjsNumber object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An integer value </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3927"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_number_1g28517af3e15a4830ac4aef33c77ca443" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>MprNumber</type>
+        <definition>MprNumber ejsGetNumber</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp)</argsstring>
+        <name>ejsGetNumber</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+<para>Get the numeric value stored in a EjsNumber object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A numeric value </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3919"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_number_1g359aca35bd4958b29d540500deea7621" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ejsIsNumber</definition>
+        <argsstring>(EjsObj *vp)</argsstring>
+        <name>ejsIsNumber</name>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+<para>Determine if a variable is a number. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True if the variable is a number </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3911"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_number_1ge58a7214afe9bc9b439197ce04511214" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct EjsNumber *</type>
+        <definition>struct EjsNumber* ejsToNumber</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp)</argsstring>
+        <name>ejsToNumber</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+<para>Cast a variable to a number. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to cast </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A number object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3552"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Number class. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The Number class provide the base class for all numeric values. The primitive number storage data type may be set via the configure program to be either double, float, int or int64. </para></simplesect>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving</para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_number" kindref="compound">EjsNumber</ref> <ref refid="group___ejs_number_1ge58a7214afe9bc9b439197ce04511214" kindref="member">ejsToNumber</ref> <ref refid="group___ejs_number_1gbbc997d13a55ae22b87abb9d3b1df9ec" kindref="member">ejsCreateNumber</ref> <ref refid="group___ejs_number_1g359aca35bd4958b29d540500deea7621" kindref="member">ejsIsNumber</ref> <ref refid="group___ejs_number_1g28517af3e15a4830ac4aef33c77ca443" kindref="member">ejsGetNumber</ref> <ref refid="group___ejs_number_1ge6b4ff8d014588ca4582ed211a67e11a" kindref="member">ejsGetInt</ref> <ref refid="group___ejs_number_1gae335f1dd005f157bc1ea3c936f91c72" kindref="member">ejsGetDouble</ref> ejsIsInfinite ejsIsNan </para></simplesect>
+</para>    </detaileddescription>
+  </compounddef>
+</doxygen>

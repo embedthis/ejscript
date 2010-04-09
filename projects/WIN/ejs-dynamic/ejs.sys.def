@@ -1,0 +1,11 @@
+LIBRARY ejs.sys.dll
+EXPORTS
+  __dummyEjsDebug
+  ejsConfigureAppType
+  ejsConfigureGCType
+  ejsConfigureMemoryType
+  ejsConfigureSystemType
+  ejsConfigureWorkerType
+  ejsCreateWorker
+  ejsServiceEvents
+  ejs_sys_Init

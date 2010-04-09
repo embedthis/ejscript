@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_timer" kind="struct" prot="public">
+    <compoundname>EjsTimer</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_timer_175790d463858fa51b4cfcbaf6abbad25" prot="public" static="no" mutable="no">
+        <type>EjsFunction *</type>
+        <definition>EjsFunction* EjsTimer::callback</definition>
+        <argsstring></argsstring>
+        <name>callback</name>
+        <briefdescription>
+<para>Callback function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3771" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3771" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_timer_1a10a6ba8ace236996a4e40ec5bc19f03" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsTimer::drift</definition>
+        <argsstring></argsstring>
+        <name>drift</name>
+        <briefdescription>
+<para>Timer event is allowed to drift if system conditions requrie. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3768" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3768" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_timer_1399249bd7db64b666db26042fd8cd8f0" prot="public" static="no" mutable="no">
+        <type>Ejs *</type>
+        <definition>Ejs* EjsTimer::ejs</definition>
+        <argsstring></argsstring>
+        <name>ejs</name>
+        <briefdescription>
+<para>Need interpreter reference in callback. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3766" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3766" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_timer_1c3b8e3d8dc99d7eb2f867dd2718ce47f" prot="public" static="no" mutable="no">
+        <type>MprEvent *</type>
+        <definition>MprEvent* EjsTimer::event</definition>
+        <argsstring></argsstring>
+        <name>event</name>
+        <briefdescription>
+<para>MPR event for the timer. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3767" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3767" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_timer_19d7e0b5bb2fc481ac63761a83b273ef3" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsTimer::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3765" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3765" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_timer_1e311183f4439cdd4c4aa45e3cb6abcfe" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsTimer::oneShot</definition>
+        <argsstring></argsstring>
+        <name>oneShot</name>
+        <briefdescription>
+<para>Timer fires just once. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3769" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3769" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_timer_1f1b41480264b08ac68057626e5038346" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsTimer::period</definition>
+        <argsstring></argsstring>
+        <name>period</name>
+        <briefdescription>
+<para>Time in msec between invocations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3770" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3770" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3764" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3764" bodyend="3772"/>
+    <listofallmembers>
+      <member refid="struct_ejs_timer_175790d463858fa51b4cfcbaf6abbad25" prot="public" virt="non-virtual"><scope>EjsTimer</scope><name>callback</name></member>
+      <member refid="struct_ejs_timer_1a10a6ba8ace236996a4e40ec5bc19f03" prot="public" virt="non-virtual"><scope>EjsTimer</scope><name>drift</name></member>
+      <member refid="struct_ejs_timer_1399249bd7db64b666db26042fd8cd8f0" prot="public" virt="non-virtual"><scope>EjsTimer</scope><name>ejs</name></member>
+      <member refid="struct_ejs_timer_1c3b8e3d8dc99d7eb2f867dd2718ce47f" prot="public" virt="non-virtual"><scope>EjsTimer</scope><name>event</name></member>
+      <member refid="struct_ejs_timer_19d7e0b5bb2fc481ac63761a83b273ef3" prot="public" virt="non-virtual"><scope>EjsTimer</scope><name>obj</name></member>
+      <member refid="struct_ejs_timer_1e311183f4439cdd4c4aa45e3cb6abcfe" prot="public" virt="non-virtual"><scope>EjsTimer</scope><name>oneShot</name></member>
+      <member refid="struct_ejs_timer_1f1b41480264b08ac68057626e5038346" prot="public" virt="non-virtual"><scope>EjsTimer</scope><name>period</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

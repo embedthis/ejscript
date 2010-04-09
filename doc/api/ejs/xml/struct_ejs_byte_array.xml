@@ -1,0 +1,183 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_byte_array" kind="struct" prot="public">
+    <compoundname>EjsByteArray</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_byte_array_19e272123e0724a7c5e5942199ff14799" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsByteArray::async</definition>
+        <argsstring></argsstring>
+        <name>async</name>
+        <briefdescription>
+<para>Async mode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2907" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2907" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_12726b5683842d750c82be0d73f0033ad" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsByteArray::emitter</definition>
+        <argsstring></argsstring>
+        <name>emitter</name>
+        <briefdescription>
+<para>Event emitter for listeners. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2905" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2905" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_173264bfd149b2ecf99d9e9de34f67b01" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsByteArray::endian</definition>
+        <argsstring></argsstring>
+        <name>endian</name>
+        <briefdescription>
+<para>Endian encoding. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2908" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2908" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1d0666c26ea644d492784ce29ed378d45" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EjsByteArray::growable</definition>
+        <argsstring></argsstring>
+        <name>growable</name>
+        <briefdescription>
+<para>Aray is growable. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2914" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2914" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1ad2577f9623ff202c87d3c54c0c45a7c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsByteArray::growInc</definition>
+        <argsstring></argsstring>
+        <name>growInc</name>
+        <briefdescription>
+<para>Current read position. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2910" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2910" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_135df4a3bf416977a78906833935874d0" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsByteArray::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+<para>Length property. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2909" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2909" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1fbcbdf8ca36b06823b224c05e9a583a0" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsByteArray::listeners</definition>
+        <argsstring></argsstring>
+        <name>listeners</name>
+        <briefdescription>
+<para>Event listeners in async mode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2915" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2915" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1aa06c82f020a92e05b8d91bf6c0154f7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsByteArray::readPosition</definition>
+        <argsstring></argsstring>
+        <name>readPosition</name>
+        <briefdescription>
+<para>Current read position. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2912" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2912" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1e7888d719484c26bac5f66ab57210748" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsByteArray::swap</definition>
+        <argsstring></argsstring>
+        <name>swap</name>
+        <briefdescription>
+<para>I/O must swap bytes due to endian byte ordering. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2911" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2911" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1ca374103530189fe5409dafca458bebd" prot="public" static="no" mutable="no">
+        <type>uchar *</type>
+        <definition>uchar* EjsByteArray::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>Data bytes in the array. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2906" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2906" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_14c1c1c9351682bab02f6789086a023da" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsByteArray::var</definition>
+        <argsstring></argsstring>
+        <name>var</name>
+        <briefdescription>
+<para>Extends Object - Property storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2904" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2904" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_byte_array_1df7060fd4fccee16f7da447fb07cf5cb" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsByteArray::writePosition</definition>
+        <argsstring></argsstring>
+        <name>writePosition</name>
+        <briefdescription>
+<para>Current write position. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2913" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2913" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="2903" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2903" bodyend="2916"/>
+    <listofallmembers>
+      <member refid="struct_ejs_byte_array_19e272123e0724a7c5e5942199ff14799" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>async</name></member>
+      <member refid="struct_ejs_byte_array_12726b5683842d750c82be0d73f0033ad" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>emitter</name></member>
+      <member refid="struct_ejs_byte_array_173264bfd149b2ecf99d9e9de34f67b01" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>endian</name></member>
+      <member refid="struct_ejs_byte_array_1d0666c26ea644d492784ce29ed378d45" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>growable</name></member>
+      <member refid="struct_ejs_byte_array_1ad2577f9623ff202c87d3c54c0c45a7c" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>growInc</name></member>
+      <member refid="struct_ejs_byte_array_135df4a3bf416977a78906833935874d0" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>length</name></member>
+      <member refid="struct_ejs_byte_array_1fbcbdf8ca36b06823b224c05e9a583a0" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>listeners</name></member>
+      <member refid="struct_ejs_byte_array_1aa06c82f020a92e05b8d91bf6c0154f7" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>readPosition</name></member>
+      <member refid="struct_ejs_byte_array_1e7888d719484c26bac5f66ab57210748" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>swap</name></member>
+      <member refid="struct_ejs_byte_array_1ca374103530189fe5409dafca458bebd" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>value</name></member>
+      <member refid="struct_ejs_byte_array_14c1c1c9351682bab02f6789086a023da" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>var</name></member>
+      <member refid="struct_ejs_byte_array_1df7060fd4fccee16f7da447fb07cf5cb" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>writePosition</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

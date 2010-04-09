@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Logger</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Logger</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Logger'>
+   <tr><td><strong>Module</strong></td><td>ejs.io</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Logger</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Logger <img src='images/inherit.gif' alt='inherit'/> <a href='intrinsic-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-1.1</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>Logger objects provide a convenient and consistent method to capture and store logging information.</p>
+
+<p class='classDescription'>Loggers can direct output to streams and may be aggregated in a hierarchical manner. The verbosity of 
+logging can be managed and messages can be filtered.<br/><br/>A logger may have a "parent" logger in order to create hierarchies of loggers for granular control of logging.
+For example, a logger can be created for each class in a package with all such loggers having a single parent. 
+Loggers can send log messages to their parent and inherit their parent's log level. 
+The top level logger for an application is defined by App.logger.<br/><br/>Loggers may define a filter function that returns true or false depending on whether a specific message 
+should be logged or not. A matching pattern can alternatively be used to filter messages based on the logger name.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='All'></a>
+   <tr><td nowrap align='center'>public static const </td><td>All</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Logging level to output all messages. </td></tr>
+<a name='Config'></a>
+   <tr><td nowrap align='center'>public static const </td><td>Config</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Logging level for configuration output. </td></tr>
+<a name='Error'></a>
+   <tr><td nowrap align='center'>public static const </td><td>Error</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Logging level for most serious errors. </td></tr>
+<a name='Info'></a>
+   <tr><td nowrap align='center'>public static const </td><td>Info</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Logging level for informational messages. </td></tr>
+<a name='Off'></a>
+   <tr><td nowrap align='center'>public static const </td><td>Off</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Logging level for no logging. </td></tr>
+<a name='Warn'></a>
+   <tr><td nowrap align='center'>public static const </td><td>Warn</td><td><a href='intrinsic-Number.html'>Number</a></td><td>Logging level for warnings. </td></tr>
+</table>
+
+<p class='inheritedLink'><a href='intrinsic-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Logger Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the logger.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#config'><b>config</b></a>(msgs: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a configuration message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#debug'><b>debug</b></a>(level: <a href='intrinsic-Number.html'>Number</a>, msgs: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a debug message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#error'><b>error</b></a>(msgs: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an error message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#info'><b>info</b></a>(msgs: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an informational message.</td></tr>
+   <tr class='apiDef'><td class='apiType'> const </td><td><a href='#Logger'><b>Logger</b></a>(name: <a href='intrinsic-String.html'>String</a>, output = null , level: <a href='intrinsic-Number.html'>Number</a> = 0)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Logger constructor.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#warn'><b>warn</b></a>(msgs: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a warning message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write informational data to logger.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='intrinsic-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='close'></a>
+<div class='api'>
+<div class='apiSig'>const   public  close(): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Close the logger.</p>
+</div>
+</div>
+<hr />
+<a name='config'></a>
+<div class='api'>
+<div class='apiSig'>const   public  config(msgs: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Emit a configuration message.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='intrinsic-Array.html'>Array</a> </td><td>Strings to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='debug'></a>
+<div class='api'>
+<div class='apiSig'>const   public  debug(level: <a href='intrinsic-Number.html'>Number</a>, msgs: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Emit a debug message.</p>
+<dl><dt>Description</dt><dd>The message level will be compared to the logger setting to determine 
+whether it will be output to the devices or not. Also, if the logger has a filter function set that 
+may filter the message out before logging.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>level: <a href='intrinsic-Number.html'>Number</a> </td><td>The level of the message.</td></tr><tr class='param'><td class='param'>msgs: <a href='intrinsic-Array.html'>Array</a> </td><td>The string message to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='error'></a>
+<div class='api'>
+<div class='apiSig'>const   public  error(msgs: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Emit an error message.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='intrinsic-Array.html'>Array</a> </td><td>Strings to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='info'></a>
+<div class='api'>
+<div class='apiSig'>const   public  info(msgs: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Emit an informational message.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='intrinsic-Array.html'>Array</a> </td><td>Strings to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='Logger'></a>
+<div class='api'>
+<div class='apiSig'>const   public  Logger(name: <a href='intrinsic-String.html'>String</a>, output = null , level: <a href='intrinsic-Number.html'>Number</a> = 0)
+</div>
+<div class='apiDetail'>
+<p>Logger constructor.</p>
+<dl><dt>Description</dt><dd>The Logger constructor can create different types of loggers based on the three (optional) arguments.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='intrinsic-String.html'>String</a> </td><td>Unique name of the logger. Loggers are typically named after the module, class or subsystem they  are associated with.</td></tr><tr class='param'><td class='param'>output </td><td>Optional output device or Logger to send messages to. If a parent Logger instance is provided for the output parameter, messages are sent to the parent for rendering. The default output device is defined  by the application, typically via a "--log" command line switch. [default: null ]</td></tr><tr class='param'><td class='param'>level: <a href='intrinsic-Number.html'>Number</a> </td><td>Optional integer verbosity level. Messages with a message level less than or equal to the defined logger level will be emitted. Range is 0 (least verbose) to 9. [default: 0]</td></tr></table></dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>var file = File("progress.log", "w")
+var logger = new Logger("name", file, 5)
+logger.log(2, "message")
+</pre></dd></dl>
+</div>
+</div>
+<hr />
+<a name='warn'></a>
+<div class='api'>
+<div class='apiSig'>const   public  warn(msgs: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Emit a warning message.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='intrinsic-Array.html'>Array</a> </td><td>The strings to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='write'></a>
+<div class='api'>
+<div class='apiSig'>const   public  write(data: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Write data to the stream.Write informational data to logger.</p>
+<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of elements written. 
+If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
+If writing more data than the stream can absorb in async mode, the call will not block and will return 
+immediately. A "writable" event will be issued when all the data has been written.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='intrinsic-Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty and it is ready to be written to.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually written.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='intrinsic-IOError.html'>IOError</a>: if there is an I/O error. 
+</dd>
+</dl></div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_trait" kind="struct" prot="public">
+    <compoundname>EjsTrait</compoundname>
+    <includes refid="ejs_8h" local="no">ejs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_trait_16c7bb3a39392f6decb954181dcd69bcb" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsTrait::attributes</definition>
+        <argsstring></argsstring>
+        <name>attributes</name>
+        <briefdescription>
+<para>Property attributes. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2239" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2239" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_trait_1961914cbb3a11edfc7ff443f3ae937bc" prot="public" static="no" mutable="no">
+        <type>struct EjsType *</type>
+        <definition>struct EjsType* EjsTrait::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+<para>Property type. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2237" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2237" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Property traits. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Property traits describe the type and access attributes of a property. The Trait structure is used by EjsBlock to describe the attributes of properties defined within a block. Note: These traits apply to a property definition and not to the referenced object. ie. two property definitions may have different traits but will refer to the same object. </para></simplesect>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving </para></simplesect>
+</para>    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="2236" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2236" bodyend="2240"/>
+    <listofallmembers>
+      <member refid="struct_ejs_trait_16c7bb3a39392f6decb954181dcd69bcb" prot="public" virt="non-virtual"><scope>EjsTrait</scope><name>attributes</name></member>
+      <member refid="struct_ejs_trait_1961914cbb3a11edfc7ff443f3ae937bc" prot="public" virt="non-virtual"><scope>EjsTrait</scope><name>type</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

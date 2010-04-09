@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="group___ejs_global" kind="group">
+    <compoundname>EjsGlobal</compoundname>
+    <title>EjsGlobal</title>
+    <briefdescription>
+<para>EjsGlobal cass. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The Global class is the base class for the global object. The global object is the top level scoping object. </para></simplesect>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Stable </para></simplesect>
+</para>    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_http_server" kind="struct" prot="public">
+    <compoundname>EjsHttpServer</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_http_server_12aa1ff4acd7762d40c389731999ac1cd" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsHttpServer::certFile</definition>
+        <argsstring></argsstring>
+        <name>certFile</name>
+        <briefdescription>
+<para>SSL certificate file. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4663" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4663" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_11b40630765ef082497c13841276e436b" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsHttpServer::ciphers</definition>
+        <argsstring></argsstring>
+        <name>ciphers</name>
+        <briefdescription>
+<para>SSL ciphers. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4665" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4665" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_152ba3116eb5145dc3bbbfd696e0bbfdc" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EjsHttpServer::dir</definition>
+        <argsstring></argsstring>
+        <name>dir</name>
+        <briefdescription>
+<para>Directory containing web documents. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4661" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4661" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1787f61aafd0a9586cca3fe9cba52366c" prot="public" static="no" mutable="no">
+        <type>Ejs *</type>
+        <definition>Ejs* EjsHttpServer::ejs</definition>
+        <argsstring></argsstring>
+        <name>ejs</name>
+        <briefdescription>
+<para>Ejscript interpreter handle. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4659" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4659" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_11aea0626e24076795d1c5d71e4ceed5b" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsHttpServer::emitter</definition>
+        <argsstring></argsstring>
+        <name>emitter</name>
+        <briefdescription>
+<para>Event emitter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4658" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4658" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1855cfb5ef544bdbc2ad98b067846dc15" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsHttpServer::ip</definition>
+        <argsstring></argsstring>
+        <name>ip</name>
+        <briefdescription>
+<para>Listening address. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4666" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4666" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_158b92959115df6f11548e69172a9e069" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsHttpServer::keyFile</definition>
+        <argsstring></argsstring>
+        <name>keyFile</name>
+        <briefdescription>
+<para>SSL key file. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4662" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4662" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_170f8bb92fc75172913d2fe2fe898b609" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsHttpServer::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4657" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4657" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1955cb722d3ad1f8bac7a752af6bc502e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsHttpServer::port</definition>
+        <argsstring></argsstring>
+        <name>port</name>
+        <briefdescription>
+<para>Listening port. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4667" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4667" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1ae0cfca4f05dddad51b3470a7fdcb5e7" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsHttpServer::protocols</definition>
+        <argsstring></argsstring>
+        <name>protocols</name>
+        <briefdescription>
+<para>SSL protocols. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4664" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4664" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1fe36e30c3e9afa1d8289c4f9d3448d9b" prot="public" static="no" mutable="no">
+        <type>HttpServer *</type>
+        <definition>HttpServer* EjsHttpServer::server</definition>
+        <argsstring></argsstring>
+        <name>server</name>
+        <briefdescription>
+<para>Http server object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4660" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4660" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="4656" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4656" bodyend="4668"/>
+    <listofallmembers>
+      <member refid="struct_ejs_http_server_12aa1ff4acd7762d40c389731999ac1cd" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>certFile</name></member>
+      <member refid="struct_ejs_http_server_11b40630765ef082497c13841276e436b" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>ciphers</name></member>
+      <member refid="struct_ejs_http_server_152ba3116eb5145dc3bbbfd696e0bbfdc" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>dir</name></member>
+      <member refid="struct_ejs_http_server_1787f61aafd0a9586cca3fe9cba52366c" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>ejs</name></member>
+      <member refid="struct_ejs_http_server_11aea0626e24076795d1c5d71e4ceed5b" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>emitter</name></member>
+      <member refid="struct_ejs_http_server_1855cfb5ef544bdbc2ad98b067846dc15" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>ip</name></member>
+      <member refid="struct_ejs_http_server_158b92959115df6f11548e69172a9e069" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>keyFile</name></member>
+      <member refid="struct_ejs_http_server_170f8bb92fc75172913d2fe2fe898b609" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>obj</name></member>
+      <member refid="struct_ejs_http_server_1955cb722d3ad1f8bac7a752af6bc502e" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>port</name></member>
+      <member refid="struct_ejs_http_server_1ae0cfca4f05dddad51b3470a7fdcb5e7" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>protocols</name></member>
+      <member refid="struct_ejs_http_server_1fe36e30c3e9afa1d8289c4f9d3448d9b" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>server</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

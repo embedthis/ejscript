@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_reflect" kind="struct" prot="public">
+    <compoundname>EjsReflect</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_reflect_1c933d5b68df400397e5d9f44704bcbb8" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsReflect::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object - Property storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3573" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3573" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_reflect_120082e6b3d9ae3f56cf8639a5b85b36d" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsReflect::subject</definition>
+        <argsstring></argsstring>
+        <name>subject</name>
+        <briefdescription>
+<para>Object under examination. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3574" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3574" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3572" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3572" bodyend="3575"/>
+    <listofallmembers>
+      <member refid="struct_ejs_reflect_1c933d5b68df400397e5d9f44704bcbb8" prot="public" virt="non-virtual"><scope>EjsReflect</scope><name>obj</name></member>
+      <member refid="struct_ejs_reflect_120082e6b3d9ae3f56cf8639a5b85b36d" prot="public" virt="non-virtual"><scope>EjsReflect</scope><name>subject</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

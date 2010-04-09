@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="group___ejs_file" kind="group">
+    <compoundname>EjsFile</compoundname>
+    <title>EjsFile</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group___ejs_file_1g5f2c865e36e54f93f3caa0159982cff9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsFile *</type>
+        <definition>EjsFile* ejsCreateFile</definition>
+        <argsstring>(Ejs *ejs, cchar *filename)</argsstring>
+        <name>ejsCreateFile</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>filename</declname>
+        </param>
+        <briefdescription>
+<para>Create a File object. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Create a file object associated with the given filename. The filename is not opened, just stored. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>filename</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filename to associate with the file object </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new file object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3228"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>File class. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The File class provides a foundation of I/O services to interact with physical files and directories. Each File object represents a single file or directory and provides methods for creating, opening, reading, writing and deleting files, and for accessing and modifying information about the file. </para></simplesect>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Prototype</para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_file" kindref="compound">EjsFile</ref> <ref refid="group___ejs_file_1g5f2c865e36e54f93f3caa0159982cff9" kindref="member">ejsCreateFile</ref> ejsIsFile </para></simplesect>
+</para>    </detaileddescription>
+  </compounddef>
+</doxygen>

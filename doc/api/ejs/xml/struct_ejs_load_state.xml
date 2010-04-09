@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_load_state" kind="struct" prot="public">
+    <compoundname>EjsLoadState</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_load_state_1fe4e384ad24e94faf5b39f88205c00c2" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsLoadState::firstModule</definition>
+        <argsstring></argsstring>
+        <name>firstModule</name>
+        <briefdescription>
+<para>First module in ejs-&gt;modules for this load. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1065" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1065" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_load_state_1dcc614753c60e92511391cf19e9da191" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsLoadState::strict</definition>
+        <argsstring></argsstring>
+        <name>strict</name>
+        <briefdescription>
+<para>Load module in strict mode (standard permits redefinitions). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1066" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1066" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_load_state_1ac6f5071a6360cff8d8657e1fa55e931" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsLoadState::typeFixups</definition>
+        <argsstring></argsstring>
+        <name>typeFixups</name>
+        <briefdescription>
+<para>Loaded types to fixup. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1064" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1064" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="1063" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1063" bodyend="1067"/>
+    <listofallmembers>
+      <member refid="struct_ejs_load_state_1fe4e384ad24e94faf5b39f88205c00c2" prot="public" virt="non-virtual"><scope>EjsLoadState</scope><name>firstModule</name></member>
+      <member refid="struct_ejs_load_state_1dcc614753c60e92511391cf19e9da191" prot="public" virt="non-virtual"><scope>EjsLoadState</scope><name>strict</name></member>
+      <member refid="struct_ejs_load_state_1ac6f5071a6360cff8d8657e1fa55e931" prot="public" virt="non-virtual"><scope>EjsLoadState</scope><name>typeFixups</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

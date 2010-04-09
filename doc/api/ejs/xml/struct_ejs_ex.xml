@@ -1,0 +1,115 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_ex" kind="struct" prot="public">
+    <compoundname>EjsEx</compoundname>
+    <includes refid="ejs_8h" local="no">ejs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_ex_17828edd37cb2f8e0f72a8abe84a1092c" prot="public" static="no" mutable="no">
+        <type>struct EjsType *</type>
+        <definition>struct EjsType* EjsEx::catchType</definition>
+        <argsstring></argsstring>
+        <name>catchType</name>
+        <briefdescription>
+<para>Type of error to catch. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2561" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2561" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_ex_187d151aba36a9e6b141e3c26a19e9506" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsEx::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+<para>Exception flags. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2562" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2562" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_ex_10d87e1294e4f3c9253deaab0322b6457" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsEx::handlerEnd</definition>
+        <argsstring></argsstring>
+        <name>handlerEnd</name>
+        <briefdescription>
+<para>Ptr to one past the end. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2566" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2566" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_ex_1d7b33fe2f697cfbbf44e5769b5c5c678" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsEx::handlerStart</definition>
+        <argsstring></argsstring>
+        <name>handlerStart</name>
+        <briefdescription>
+<para>Ptr to start of catch/finally block. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2565" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2565" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_ex_19001e876331edefed444af2b3d494491" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsEx::numBlocks</definition>
+        <argsstring></argsstring>
+        <name>numBlocks</name>
+        <briefdescription>
+<para>Count of blocks opened in the try block. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2567" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2567" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_ex_14dce233c5db38cfde56cd4adf525a5d8" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsEx::tryEnd</definition>
+        <argsstring></argsstring>
+        <name>tryEnd</name>
+        <briefdescription>
+<para>Ptr to one past the end. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2564" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2564" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_ex_147bbb2fd50b22b520fab4cfc650b854f" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsEx::tryStart</definition>
+        <argsstring></argsstring>
+        <name>tryStart</name>
+        <briefdescription>
+<para>Ptr to start of try block. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2563" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2563" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Exception Handler Record. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Each exception handler has an exception handler record allocated that describes it. </para></simplesect>
+</para>    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="2560" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2560" bodyend="2568"/>
+    <listofallmembers>
+      <member refid="struct_ejs_ex_17828edd37cb2f8e0f72a8abe84a1092c" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>catchType</name></member>
+      <member refid="struct_ejs_ex_187d151aba36a9e6b141e3c26a19e9506" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>flags</name></member>
+      <member refid="struct_ejs_ex_10d87e1294e4f3c9253deaab0322b6457" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>handlerEnd</name></member>
+      <member refid="struct_ejs_ex_1d7b33fe2f697cfbbf44e5769b5c5c678" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>handlerStart</name></member>
+      <member refid="struct_ejs_ex_19001e876331edefed444af2b3d494491" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>numBlocks</name></member>
+      <member refid="struct_ejs_ex_14dce233c5db38cfde56cd4adf525a5d8" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>tryEnd</name></member>
+      <member refid="struct_ejs_ex_147bbb2fd50b22b520fab4cfc650b854f" prot="public" virt="non-virtual"><scope>EjsEx</scope><name>tryStart</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

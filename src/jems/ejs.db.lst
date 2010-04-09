@@ -1,0 +1,1348 @@
+#
+#  ejs.db.lst -- Module Listing for ../../modules/ejs.db.mod
+#
+
+==============================================================================================
+
+MODULE:   ejs.db <hasInitializer, >
+
+
+FUNCTION:   [initializer]  ejs function __initializer__() : Void
+
+   LOCAL:   [local-00] var block_0007_18 : Block
+   LOCAL:   [local-01] var block_0007_27 : Block
+
+    0000: [0] 8d 00 00 ................... openBlock <slot: 0> <0> 
+    0003: [0] 33 0a 94 05 30 ............. debug 
+
+    # ejs.db/Database.es:330    }
+
+    0008: [0] 01 34 ...................... addNamespace <internal-bd20ebe9fd562ca6ce0924d3858ac8a2-2> 
+    0010: [0] 01 8c 01 ................... addNamespace <ejs.db> 
+    0013: [0] 33 0a 0e 9a 01 ............. debug 
+
+    # ejs.db/Database.es:7      module ejs.db {
+
+    0018: [0] 33 0a 1e ba 01 ............. debug 
+
+    # ejs.db/Database.es:15         class Database {
+
+    0023: [0] 34 92 07 8c 01 ............. defineClass <var: 0x1c9,  ejs.db::Database> 
+    0028: [0] 24 ......................... closeBlock 
+    0029: [0] 8d 02 00 ................... openBlock <slot: 1> <0> 
+    0032: [0] 33 b0 55 b4 01 30 .......... debug 
+
+    # ejs.db/DatabaseConnector.es:90 }
+
+    0038: [0] 01 e8 55 ................... addNamespace <internal-bf776138024ac0112d1b3271e4cfd5e4-3> 
+    0041: [0] 01 8c 01 ................... addNamespace <ejs.db> 
+    0044: [0] 33 b0 55 0e 9a 01 .......... debug 
+
+    # ejs.db/DatabaseConnector.es:7 module ejs.db {
+
+    0050: [0] 33 b0 55 1c c0 56 .......... debug 
+
+    # ejs.db/DatabaseConnector.es:14     interface DatabaseConnector {
+
+    0056: [0] 34 92 dc 02 8c 01 .......... defineClass <var: 0x5709,  ejs.db::DatabaseConnector> 
+    0062: [0] 24 ......................... closeBlock 
+    0063: [0] 3b ......................... endCode 
+    
+
+BLOCK:      [block_0007_18-00]  block_0007_18 (Slots 0)
+
+BLOCK:      [block_0007_27-01]  block_0007_27 (Slots 0)
+
+CLASS:      class Database extends Object
+            #  Class Details: 59 class traits, 4 instance traits, requested slot 140
+
+FUNCTION:   [Database-26]  -constructor- const function Database(adapter: String, connectionString: String) : void
+
+     ARG:   [arg-00]   private adapter : String
+     ARG:   [arg-01]   private connectionString : String
+   LOCAL:   [local-02] var adapterClass
+   LOCAL:   [local-03] var 
+   LOCAL:   [local-04] var block_0042_19 : Block
+   LOCAL:   [local-05] var e
+
+    0000: [0] 33 0a 50 98 08 ............. debug 
+
+    # ejs.db/Database.es:40                 Database.defaultDb ||= this
+
+    0005: [0] 50 ......................... loadGlobal 
+    0006: [1] 7b e4 01 8c 01 ............. getObjName <Database> <ejs.db> 
+    0011: [1] 82 36 00 ................... getTypeSlot <slot: 27> <0> 
+    0014: [1] 39 ......................... dup 
+    0015: [2] 14 02 ...................... branchTrue8 <addr: 19> 
+    0017: [1] 90 ......................... pop 
+    0018: [0] 57 ......................... loadThis 
+    0019: [1] 50 ......................... loadGlobal 
+    0020: [2] 7b e4 01 8c 01 ............. getObjName <Database> <ejs.db> 
+    0025: [2] bb 36 00 ................... putTypeSlot <slot: 27> <0> 
+    0028: [0] 33 0a 52 e8 08 ............. debug 
+
+    # ejs.db/Database.es:41                 if (adapter == "sqlite3") adapter = "sqlite"
+
+    0033: [0] 5b ......................... getLocalSlot0 
+    0034: [1] 56 da 09 ................... loadString <sqlite3> 
+    0037: [2] 25 ......................... compareEq 
+    0038: [1] 13 06 ...................... branchFalse8 <addr: 46> 
+    0040: [0] 56 ea 09 ................... loadString <sqlite> 
+    0043: [1] 94 ......................... putLocalSlot0 
+    0044: [0] 3e 00 ...................... goto8 <addr: 46> 
+    0046: [0] 33 0a 54 f8 09 ............. debug 
+
+    # ejs.db/Database.es:42                 try {
+
+    0051: [0] 8d 08 00 ................... openBlock <slot: 4> <0> 
+    0054: [0] 33 0a 56 9c 0a ............. debug 
+
+    # ejs.db/Database.es:43                     _name = Path(connectionString).basename
+
+    0059: [0] 7d 02 02 ................... getBlockSlot <slot: 1> <1> 
+    0062: [1] 17 da 01 02 ................ callGlobalSlot <slot: 109> <argc: 1> 
+    0066: [0] 93 ......................... pushResult 
+    0067: [1] 7b 8c 0b 9e 0b ............. getObjName <basename> <public> 
+    0072: [1] 57 ......................... loadThis 
+    0073: [2] b3 d0 04 d2 02 ............. putObjName <_name> <[ejs.db::Database,private]> 
+    0078: [0] 33 0a 58 ac 0b ............. debug 
+
+    # ejs.db/Database.es:44                     _connection = connectionString
+
+    0083: [0] 7d 02 02 ................... getBlockSlot <slot: 1> <1> 
+    0086: [1] 57 ......................... loadThis 
+    0087: [2] b3 e6 03 d2 02 ............. putObjName <_connection> <[ejs.db::Database,private]> 
+    0092: [0] 33 0a 5a 8a 0c ............. debug 
+
+    # ejs.db/Database.es:45                     let adapterClass = adapter.toPascal()
+
+    0097: [0] 7d 00 02 ................... getBlockSlot <slot: 0> <1> 
+    0100: [1] 18 60 00 ................... callObjSlot <slot: 48> <argc: 0> 
+    0103: [0] 93 ......................... pushResult 
+    0104: [1] b6 04 02 ................... putBlockSlot <slot: 2> <1> 
+    0107: [0] 33 0a 5c a6 0d ............. debug 
+
+    # ejs.db/Database.es:46                     if (!global."ejs.db"::[adapterClass]) {
+
+    0112: [0] 50 ......................... loadGlobal 
+    0113: [1] 7b 96 0e 02 ................ getObjName <global> <ejs> 
+    0117: [1] 56 8c 01 ................... loadString <ejs.db> 
+    0120: [2] 7d 04 02 ................... getBlockSlot <slot: 2> <1> 
+    0123: [3] 7c ......................... getObjNameExpr 
+    0124: [1] 86 ......................... logicalNot 
+    0125: [1] 13 16 ...................... branchFalse8 <addr: 149> 
+    0127: [0] 33 0a 5e a4 0e ............. debug 
+
+    # ejs.db/Database.es:47                         load("ejs.db." + adapter + ".mod")
+
+    0132: [0] 56 92 0f ................... loadString <ejs.db.> 
+    0135: [1] 7d 00 02 ................... getBlockSlot <slot: 0> <1> 
+    0138: [2] 00 ......................... add 
+    0139: [1] 56 a2 0f ................... loadString <.mod> 
+    0142: [2] 00 ......................... add 
+    0143: [1] 17 a8 01 02 ................ callGlobalSlot <slot: 84> <argc: 1> 
+    0147: [0] 3e 00 ...................... goto8 <addr: 149> 
+    0149: [0] 33 0a 60 ac 0f ............. debug 
+
+    # ejs.db/Database.es:48                     }
+
+    0154: [0] 33 0a 62 d0 0f ............. debug 
+
+    # ejs.db/Database.es:49                     _adapter = new global."ejs.db"::[adapterClass](connectionString)
+
+    0159: [0] 50 ......................... loadGlobal 
+    0160: [1] 7b 96 0e 02 ................ getObjName <global> <ejs> 
+    0164: [1] 56 8c 01 ................... loadString <ejs.db> 
+    0167: [2] 7d 04 02 ................... getBlockSlot <slot: 2> <1> 
+    0170: [3] 7c ......................... getObjNameExpr 
+    0171: [1] 89 ......................... new 
+    0172: [1] 7d 02 02 ................... getBlockSlot <slot: 1> <1> 
+    0175: [2] 20 02 ...................... callConstructor <argc: 1> 
+    0177: [1] 57 ......................... loadThis 
+    0178: [2] b3 c0 02 d2 02 ............. putObjName <_adapter> <[ejs.db::Database,private]> 
+    0183: [0] 24 ......................... closeBlock 
+    0184: [0] 3e 23 ...................... goto8 <addr: 221> 
+    0186: [0] 33 0a 64 a4 11 ............. debug 
+
+    # ejs.db/Database.es:50                 } catch (e) {
+
+    0191: [0] 92 ......................... pushCatchArg 
+    0192: [1] b6 0a 02 ................... putBlockSlot <slot: 5> <1> 
+    0195: [0] 33 0a 66 f2 11 ............. debug 
+
+    # ejs.db/Database.es:51                     print(e)
+
+    0200: [0] 7d 0a 02 ................... getBlockSlot <slot: 5> <1> 
+    0203: [1] 17 aa 01 02 ................ callGlobalSlot <slot: 85> <argc: 1> 
+    0207: [0] 33 0a 68 a4 12 ............. debug 
+
+    # ejs.db/Database.es:52                     throw "Can't find database connector for " + adapter
+
+    0212: [0] 56 ae 13 ................... loadString <Can't find database connector for > 
+    0215: [1] 7d 00 02 ................... getBlockSlot <slot: 0> <1> 
+    0218: [2] 00 ......................... add 
+    0219: [1] c6 ......................... throw 
+    0220: [1] 3c ......................... endException 
+    0221: [1] be ......................... return 
+    0222: [0] 33 0a 6c fe 13 ............. debug 
+
+    # ejs.db/Database.es:54             }
+    
+
+#
+#  Exception Section
+#    Kind     TryStart TryEnd  HandlerStart  HandlerEnd   CatchType
+#
+0   catch         46     186        186          221       Void
+
+VARIABLE:   [adapter-00]  private var adapter : String
+VARIABLE:   [connectionString-01]  private var connectionString : String
+VARIABLE:   [adapterClass-02]  -hoisted-2 var adapterClass
+
+BLOCK:      [block_0042_19-04]  block_0042_19 (Slots 1)
+VARIABLE:   [e-05]  -hoisted-5 var e
+VARIABLE:   [Database-27]  [ejs.db::Database,private] static var defaultDb : Database
+
+FUNCTION:   [Database-28]  public const function addColumn(table: String, column: String, datatype: String, options) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private column : String
+     ARG:   [arg-02]   private datatype : String
+     ARG:   [arg-03]   private options
+
+    0000: [0] 41 02 02 08 ................ initDefaultArgs8 <2> <4> <10> 
+    0004: [0] 50 ......................... loadGlobal 
+    0005: [1] 7b b6 16 02 ................ getObjName <null> <ejs> 
+    0009: [1] 97 ......................... putLocalSlot3 
+    0010: [0] 33 0a 82 01 c0 16 .......... debug 
+
+    # ejs.db/Database.es:65                 _adapter.addColumn(table, column, datatype, options)
+
+    0016: [0] 57 ......................... loadThis 
+    0017: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0022: [1] 5b ......................... getLocalSlot0 
+    0023: [2] 5c ......................... getLocalSlot1 
+    0024: [3] 5d ......................... getLocalSlot2 
+    0025: [4] 5e ......................... getLocalSlot3 
+    0026: [5] 1e c2 17 f0 14 08 .......... callObjName <addColumn> <> <argc: 4> 
+    0032: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [column-01]  private var column : String
+VARIABLE:   [datatype-02]  private var datatype : String
+VARIABLE:   [options-03]  private var options
+
+FUNCTION:   [Database-29]  public const function addIndex(table: String, column: String, index: String) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private column : String
+     ARG:   [arg-02]   private index : String
+
+    0000: [0] 33 0a 94 01 ae 19 .......... debug 
+
+    # ejs.db/Database.es:74                 _adapter.addIndex(table, column, index)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 5c ......................... getLocalSlot1 
+    0014: [3] 5d ......................... getLocalSlot2 
+    0015: [4] 1e 96 1a f0 14 06 .......... callObjName <addIndex> <> <argc: 3> 
+    0021: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [column-01]  private var column : String
+VARIABLE:   [index-02]  private var index : String
+
+FUNCTION:   [Database-30]  public const function changeColumn(table: String, column: String, datatype: String, options: Object) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private column : String
+     ARG:   [arg-02]   private datatype : String
+     ARG:   [arg-03]   private options : Object
+
+    0000: [0] 41 02 02 08 ................ initDefaultArgs8 <2> <4> <10> 
+    0004: [0] 50 ......................... loadGlobal 
+    0005: [1] 7b b6 16 02 ................ getObjName <null> <ejs> 
+    0009: [1] 97 ......................... putLocalSlot3 
+    0010: [0] 33 0a aa 01 90 1c .......... debug 
+
+    # ejs.db/Database.es:85                 _adapter.changeColumn(table, column, datatype, options)
+
+    0016: [0] 57 ......................... loadThis 
+    0017: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0022: [1] 5b ......................... getLocalSlot0 
+    0023: [2] 5c ......................... getLocalSlot1 
+    0024: [3] 5d ......................... getLocalSlot2 
+    0025: [4] 5e ......................... getLocalSlot3 
+    0026: [5] 1e 98 1d f0 14 08 .......... callObjName <changeColumn> <> <argc: 4> 
+    0032: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [column-01]  private var column : String
+VARIABLE:   [datatype-02]  private var datatype : String
+VARIABLE:   [options-03]  private var options : Object
+
+FUNCTION:   [Database-31]  public const function close() : Void
+
+
+    0000: [0] 33 0a b8 01 f0 1d .......... debug 
+
+    # ejs.db/Database.es:92                 _adapter.close()
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 1e aa 1e f0 14 00 .......... callObjName <close> <> <argc: 0> 
+    0018: [0] be ......................... return 
+    
+
+FUNCTION:   [Database-32]  public const function commit() : Void
+
+
+    0000: [0] 33 0a c4 01 f6 1e .......... debug 
+
+    # ejs.db/Database.es:98                 _adapter.commit()
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 1e b2 1f f0 14 00 .......... callObjName <commit> <> <argc: 0> 
+    0018: [0] be ......................... return 
+    
+
+FUNCTION:   [Database-33]  public const function connect(connectionString: String) : Void
+
+     ARG:   [arg-00]   private connectionString : String
+
+    0000: [0] 33 0a d6 01 b2 20 .......... debug 
+
+    # ejs.db/Database.es:107                _adapter.connect(connectionString)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 1e 90 21 f0 14 02 .......... callObjName <connect> <> <argc: 1> 
+    0019: [0] be ......................... return 
+    
+VARIABLE:   [connectionString-00]  private var connectionString : String
+
+FUNCTION:   [Database-34]  public const get function connection() : String
+
+
+    0000: [0] 33 0a e2 01 f4 21 .......... debug 
+
+    # ejs.db/Database.es:113                _connection
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b e6 03 d2 02 ............. getObjName <_connection> <[ejs.db::Database,private]> 
+    0012: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Database-35]  public const function createDatabase(name: String, options: Object) : Void
+
+     ARG:   [arg-00]   private name : String
+     ARG:   [arg-01]   private options : Object
+
+    0000: [0] 41 02 02 08 ................ initDefaultArgs8 <2> <4> <10> 
+    0004: [0] 50 ......................... loadGlobal 
+    0005: [1] 7b b6 16 02 ................ getObjName <null> <ejs> 
+    0009: [1] 95 ......................... putLocalSlot1 
+    0010: [0] 33 0a f2 01 d4 23 .......... debug 
+
+    # ejs.db/Database.es:121                _adapter.createDatabase(name, options)
+
+    0016: [0] 57 ......................... loadThis 
+    0017: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0022: [1] 5b ......................... getLocalSlot0 
+    0023: [2] 5c ......................... getLocalSlot1 
+    0024: [3] 1e ba 24 f0 14 04 .......... callObjName <createDatabase> <> <argc: 2> 
+    0030: [0] be ......................... return 
+    
+VARIABLE:   [name-00]  private var name : String
+VARIABLE:   [options-01]  private var options : Object
+
+FUNCTION:   [Database-36]  public const function createTable(table: String, columns: Array) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private columns : Array
+
+    0000: [0] 41 02 02 08 ................ initDefaultArgs8 <2> <4> <10> 
+    0004: [0] 50 ......................... loadGlobal 
+    0005: [1] 7b b6 16 02 ................ getObjName <null> <ejs> 
+    0009: [1] 95 ......................... putLocalSlot1 
+    0010: [0] 33 0a 84 02 f6 25 .......... debug 
+
+    # ejs.db/Database.es:130                _adapter.createTable(table, columns)
+
+    0016: [0] 57 ......................... loadThis 
+    0017: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0022: [1] 5b ......................... getLocalSlot0 
+    0023: [2] 5c ......................... getLocalSlot1 
+    0024: [3] 1e d8 26 f0 14 04 .......... callObjName <createTable> <> <argc: 2> 
+    0030: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [columns-01]  private var columns : Array
+
+FUNCTION:   [Database-37]  public const function dataTypeToSqlType(dataType: String) : String
+
+     ARG:   [arg-00]   private dataType : String
+
+    0000: [0] 33 0a 94 02 84 28 .......... debug 
+
+    # ejs.db/Database.es:138                _adapter.dataTypeToSqlType(dataType)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 1e e6 28 f0 14 02 .......... callObjName <dataTypeToSqlType> <> <argc: 1> 
+    0019: [0] 93 ......................... pushResult 
+    0020: [1] bf ......................... returnValue 
+    
+VARIABLE:   [dataType-00]  private var dataType : String
+
+FUNCTION:   [Database-38]  public const static get function defaultDatabase() : Database
+
+
+    0000: [0] 33 0a a0 02 8c 2a .......... debug 
+
+    # ejs.db/Database.es:144                defaultDb
+
+    0006: [0] 83 36 02 ................... getThisTypeSlot <slot: 27> <1> 
+    0009: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Database-38]  public const static set function defaultDatabase(db: Database) : Void
+
+     ARG:   [arg-00]   private db : Database
+
+    0000: [0] 33 0a b4 02 dc 2b .......... debug 
+
+    # ejs.db/Database.es:154                defaultDb = db
+
+    0006: [0] 5b ......................... getLocalSlot0 
+    0007: [1] bc 36 02 ................... putThisTypeSlot <slot: 27> <1> 
+    0010: [0] be ......................... return 
+    0011: [0] 33 0a b6 02 fe 13 .......... debug 
+
+    # ejs.db/Database.es:155            }
+    
+VARIABLE:   [db-00]  private var db : Database
+
+FUNCTION:   [Database-39]  public const function destroyDatabase(name: String) : Void
+
+     ARG:   [arg-00]   private name : String
+
+    0000: [0] 33 0a c4 02 82 2d .......... debug 
+
+    # ejs.db/Database.es:162                _adapter.destroyDatabase(name)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 1e d8 2d f0 14 02 .......... callObjName <destroyDatabase> <> <argc: 1> 
+    0019: [0] be ......................... return 
+    
+VARIABLE:   [name-00]  private var name : String
+
+FUNCTION:   [Database-40]  public const function destroyTable(table: String) : Void
+
+     ARG:   [arg-00]   private table : String
+
+    0000: [0] 33 0a d2 02 de 2e .......... debug 
+
+    # ejs.db/Database.es:169                _adapter.destroyTable(table)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 1e b0 2f f0 14 02 .......... callObjName <destroyTable> <> <argc: 1> 
+    0019: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+
+FUNCTION:   [Database-41]  public const function endTransaction() : Void
+
+
+    0000: [0] 33 0a de 02 9a 30 .......... debug 
+
+    # ejs.db/Database.es:175                _adapter.endTransaction()
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 1e e6 30 f0 14 00 .......... callObjName <endTransaction> <> <argc: 0> 
+    0018: [0] be ......................... return 
+    
+
+FUNCTION:   [Database-42]  public const function getColumns(table: String) : Array
+
+     ARG:   [arg-00]   private table : String
+
+    0000: [0] 33 0a f0 02 e8 31 .......... debug 
+
+    # ejs.db/Database.es:184                _adapter.getColumns(table)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 1e b6 32 f0 14 02 .......... callObjName <getColumns> <> <argc: 1> 
+    0019: [0] 93 ......................... pushResult 
+    0020: [1] bf ......................... returnValue 
+    
+VARIABLE:   [table-00]  private var table : String
+
+FUNCTION:   [Database-43]  public const function getTables() : Array
+
+
+    0000: [0] 33 0a fe 02 94 33 .......... debug 
+
+    # ejs.db/Database.es:191                _adapter.getTables()
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 1e d6 33 f0 14 00 .......... callObjName <getTables> <> <argc: 0> 
+    0018: [0] 93 ......................... pushResult 
+    0019: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Database-44]  public const function getNumRows(table: String) : Number
+
+     ARG:   [arg-00]   private table : String
+
+    0000: [0] 33 0a 8c 03 d0 34 .......... debug 
+
+    # ejs.db/Database.es:198                _adapter.getNumRows()
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 1e 94 35 f0 14 00 .......... callObjName <getNumRows> <> <argc: 0> 
+    0018: [0] 93 ......................... pushResult 
+    0019: [1] bf ......................... returnValue 
+    
+VARIABLE:   [table-00]  private var table : String
+
+FUNCTION:   [Database-45]  public const get function name() : String
+
+
+    0000: [0] 33 0a 98 03 80 36 .......... debug 
+
+    # ejs.db/Database.es:204                _name
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b d0 04 d2 02 ............. getObjName <_name> <[ejs.db::Database,private]> 
+    0012: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Database-46]  public const function query(cmd: String, tag: String, trace: Boolean) : Array
+
+     ARG:   [arg-00]   private cmd : String
+     ARG:   [arg-01]   private tag : String
+     ARG:   [arg-02]   private trace : Boolean
+
+    0000: [0] 41 03 03 07 0d ............. initDefaultArgs8 <3> <5> <9> <15> 
+    0005: [0] 56 d8 37 ................... loadString <SQL> 
+    0008: [1] 95 ......................... putLocalSlot1 
+    0009: [0] 50 ......................... loadGlobal 
+    0010: [1] 7b e0 37 02 ................ getObjName <false> <ejs> 
+    0014: [1] 96 ......................... putLocalSlot2 
+    0015: [0] 33 0a b0 03 ec 37 .......... debug 
+
+    # ejs.db/Database.es:216                if (_traceAll || trace) {
+
+    0021: [0] 57 ......................... loadThis 
+    0022: [1] 7b aa 05 d2 02 ............. getObjName <_traceAll> <[ejs.db::Database,private]> 
+    0027: [1] 39 ......................... dup 
+    0028: [2] 14 02 ...................... branchTrue8 <addr: 32> 
+    0030: [1] 90 ......................... pop 
+    0031: [0] 5d ......................... getLocalSlot2 
+    0032: [1] 13 13 ...................... branchFalse8 <addr: 53> 
+    0034: [0] 33 0a b2 03 b8 38 .......... debug 
+
+    # ejs.db/Database.es:217                    print(tag + ": " + cmd)
+
+    0040: [0] 5c ......................... getLocalSlot1 
+    0041: [1] 56 88 39 ................... loadString <: > 
+    0044: [2] 00 ......................... add 
+    0045: [1] 5b ......................... getLocalSlot0 
+    0046: [2] 00 ......................... add 
+    0047: [1] 17 aa 01 02 ................ callGlobalSlot <slot: 85> <argc: 1> 
+    0051: [0] 3e 00 ...................... goto8 <addr: 53> 
+    0053: [0] 33 0a b6 03 8e 39 .......... debug 
+
+    # ejs.db/Database.es:219                return _adapter.sql(cmd)
+
+    0059: [0] 57 ......................... loadThis 
+    0060: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0065: [1] 5b ......................... getLocalSlot0 
+    0066: [2] 1e d8 39 f0 14 02 .......... callObjName <sql> <> <argc: 1> 
+    0072: [0] 93 ......................... pushResult 
+    0073: [1] bf ......................... returnValue 
+    
+VARIABLE:   [cmd-00]  private var cmd : String
+VARIABLE:   [tag-01]  private var tag : String
+VARIABLE:   [trace-02]  private var trace : Boolean
+
+FUNCTION:   [Database-47]  public const function removeColumns(table: String, columns: Array) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private columns : Array
+
+    0000: [0] 33 0a c8 03 90 3b .......... debug 
+
+    # ejs.db/Database.es:228                _adapter.removeColumns(table, columns)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 5c ......................... getLocalSlot1 
+    0014: [3] 1e f6 3b f0 14 04 .......... callObjName <removeColumns> <> <argc: 2> 
+    0020: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [columns-01]  private var columns : Array
+
+FUNCTION:   [Database-48]  public const function removeIndex(table: String, index: String) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private index : String
+
+    0000: [0] 33 0a d8 03 94 3d .......... debug 
+
+    # ejs.db/Database.es:236                _adapter.removeIndex(table, index)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 5c ......................... getLocalSlot1 
+    0014: [3] 1e f2 3d f0 14 04 .......... callObjName <removeIndex> <> <argc: 2> 
+    0020: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [index-01]  private var index : String
+
+FUNCTION:   [Database-49]  public const function renameColumn(table: String, oldColumn: String, newColumn: String) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private oldColumn : String
+     ARG:   [arg-02]   private newColumn : String
+
+    0000: [0] 33 0a ea 03 bc 3f .......... debug 
+
+    # ejs.db/Database.es:245                _adapter.renameColumn(table, oldColumn, newColumn)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 5c ......................... getLocalSlot1 
+    0014: [3] 5d ......................... getLocalSlot2 
+    0015: [4] 1e ba 40 f0 14 06 .......... callObjName <renameColumn> <> <argc: 3> 
+    0021: [0] be ......................... return 
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [oldColumn-01]  private var oldColumn : String
+VARIABLE:   [newColumn-02]  private var newColumn : String
+
+FUNCTION:   [Database-50]  public const function renameTable(oldTable: String, newTable: String) : Void
+
+     ARG:   [arg-00]   private oldTable : String
+     ARG:   [arg-01]   private newTable : String
+
+    0000: [0] 33 0a fa 03 8a 42 .......... debug 
+
+    # ejs.db/Database.es:253                _adapter.renameTable(oldTable, newTable)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 5c ......................... getLocalSlot1 
+    0014: [3] 1e f4 42 f0 14 04 .......... callObjName <renameTable> <> <argc: 2> 
+    0020: [0] be ......................... return 
+    
+VARIABLE:   [oldTable-00]  private var oldTable : String
+VARIABLE:   [newTable-01]  private var newTable : String
+
+FUNCTION:   [Database-51]  public const function rollback() : Void
+
+
+    0000: [0] 33 0a 88 04 f4 43 .......... debug 
+
+    # ejs.db/Database.es:260                _adapter.rollback()
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 1e b4 44 f0 14 00 .......... callObjName <rollback> <> <argc: 0> 
+    0018: [0] be ......................... return 
+    
+
+FUNCTION:   [Database-52]  public const function sql(cmd: String) : Array
+
+     ARG:   [arg-00]   private cmd : String
+
+    0000: [0] 33 0a 9c 04 98 45 .......... debug 
+
+    # ejs.db/Database.es:270                _adapter.sql(cmd)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 1e d8 39 f0 14 02 .......... callObjName <sql> <> <argc: 1> 
+    0019: [0] 93 ......................... pushResult 
+    0020: [1] bf ......................... returnValue 
+    
+VARIABLE:   [cmd-00]  private var cmd : String
+
+FUNCTION:   [Database-53]  public const function sqlTypeToDataType(sqlType: String) : String
+
+     ARG:   [arg-00]   private sqlType : String
+
+    0000: [0] 33 0a ac 04 cc 46 .......... debug 
+
+    # ejs.db/Database.es:278                _adapter.sqlTypeToDataType(sqlType)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 1e ac 47 f0 14 02 .......... callObjName <sqlTypeToDataType> <> <argc: 1> 
+    0019: [0] 93 ......................... pushResult 
+    0020: [1] bf ......................... returnValue 
+    
+VARIABLE:   [sqlType-00]  private var sqlType : String
+
+FUNCTION:   [Database-54]  public const function sqlTypeToEjsType(sqlType: String) : Type
+
+     ARG:   [arg-00]   private sqlType : String
+
+    0000: [0] 33 0a bc 04 d2 48 .......... debug 
+
+    # ejs.db/Database.es:286                _adapter.sqlTypeToEjsType(sqlType)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 1e b0 49 f0 14 02 .......... callObjName <sqlTypeToEjsType> <> <argc: 1> 
+    0019: [0] 93 ......................... pushResult 
+    0020: [1] bf ......................... returnValue 
+    
+VARIABLE:   [sqlType-00]  private var sqlType : String
+
+FUNCTION:   [Database-55]  public const function startTransaction() : Void
+
+
+    0000: [0] 33 0a c8 04 b0 4a .......... debug 
+
+    # ejs.db/Database.es:292                _adapter.startTransaction()
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b c0 02 d2 02 ............. getObjName <_adapter> <[ejs.db::Database,private]> 
+    0012: [1] 1e 80 4b f0 14 00 .......... callObjName <startTransaction> <> <argc: 0> 
+    0018: [0] be ......................... return 
+    
+
+FUNCTION:   [Database-56]  public const function trace(on: Boolean) : Void
+
+     ARG:   [arg-00]   private on : Boolean
+
+    0000: [0] 33 0a da 04 f6 4b .......... debug 
+
+    # ejs.db/Database.es:301                _traceAll = on
+
+    0006: [0] 5b ......................... getLocalSlot0 
+    0007: [1] 57 ......................... loadThis 
+    0008: [2] b3 aa 05 d2 02 ............. putObjName <_traceAll> <[ejs.db::Database,private]> 
+    0013: [0] be ......................... return 
+    
+VARIABLE:   [on-00]  private var on : Boolean
+
+FUNCTION:   [Database-57]  public const function transaction(code: Function) : Void
+
+     ARG:   [arg-00]   private code : Function
+   LOCAL:   [local-01] var 
+   LOCAL:   [local-02] var block_0309_23 : Block
+   LOCAL:   [local-03] var e : Error
+
+    0000: [0] 33 0a e8 04 9c 4d .......... debug 
+
+    # ejs.db/Database.es:308                startTransaction()
+
+    0006: [0] 19 6e 00 ................... callThisSlot <slot: 55> <argc: 0> 
+    0009: [0] 33 0a ea 04 f8 09 .......... debug 
+
+    # ejs.db/Database.es:309                try {
+
+    0015: [0] 8d 04 00 ................... openBlock <slot: 2> <0> 
+    0018: [0] 33 0a ec 04 da 4d .......... debug 
+
+    # ejs.db/Database.es:310                    code()
+
+    0024: [0] 1a 00 02 00 ................ callBlockSlot <slot: 0> <1> <argc: 0> 
+    0028: [0] 24 ......................... closeBlock 
+    0029: [0] ca ......................... finally 
+    0030: [0] 3e 13 ...................... goto8 <addr: 51> 
+    0032: [0] 33 0a ee 04 a4 4e .......... debug 
+
+    # ejs.db/Database.es:311                } catch (e: Error) {
+
+    0038: [0] 92 ......................... pushCatchArg 
+    0039: [1] b6 06 02 ................... putBlockSlot <slot: 3> <1> 
+    0042: [0] 33 0a f0 04 fc 4e .......... debug 
+
+    # ejs.db/Database.es:312                    rollback();
+
+    0048: [0] 19 66 00 ................... callThisSlot <slot: 51> <argc: 0> 
+    0051: [0] 33 0a f2 04 b4 4f .......... debug 
+
+    # ejs.db/Database.es:313                } finally {
+
+    0057: [0] 33 0a f4 04 e4 4f .......... debug 
+
+    # ejs.db/Database.es:314                    endTransaction()
+
+    0063: [0] 19 52 00 ................... callThisSlot <slot: 41> <argc: 0> 
+    0066: [0] 3c ......................... endException 
+    0067: [0] be ......................... return 
+    0068: [0] 33 0a f8 04 fe 13 .......... debug 
+
+    # ejs.db/Database.es:316            }
+    
+
+#
+#  Exception Section
+#    Kind     TryStart TryEnd  HandlerStart  HandlerEnd   CatchType
+#
+0   catch          9      32         32           51       Error
+1   finally        9      32         51           67       Void
+
+VARIABLE:   [code-00]  private var code : Function
+
+BLOCK:      [block_0309_23-02]  block_0309_23 (Slots 0)
+VARIABLE:   [e-03]  -hoisted-3 var e : Error
+
+FUNCTION:   [Database-58]  public const static function quote(str: String) : String
+
+     ARG:   [arg-00]   private str : String
+
+    0000: [0] 33 0a 8e 05 d2 51 .......... debug 
+
+    # ejs.db/Database.es:327                return str.replace(/'/g, "''")
+
+    0006: [0] 5b ......................... getLocalSlot0 
+    0007: [1] 55 a8 52 ................... loadRegexp </'/g> 
+    0010: [2] 56 b2 52 ................... loadString <''> 
+    0013: [3] 18 68 04 ................... callObjSlot <slot: 52> <argc: 2> 
+    0016: [0] 93 ......................... pushResult 
+    0017: [1] bf ......................... returnValue 
+    
+VARIABLE:   [str-00]  private var str : String
+VARIABLE:   [_adapter-00]  [ejs.db::Database,private] var _adapter : Object
+VARIABLE:   [_connection-01]  [ejs.db::Database,private] var _connection : String
+VARIABLE:   [_name-02]  [ejs.db::Database,private] var _name : String
+VARIABLE:   [_traceAll-03]  [ejs.db::Database,private] var _traceAll : Boolean
+
+CLASS:      class DatabaseConnector
+            #  Class Details: 22 class traits, 0 instance traits, requested slot 141
+
+FUNCTION:   [DatabaseConnector-00]  public const function addColumn(table: String, column: String, datatype: String, options: Object) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private column : String
+     ARG:   [arg-02]   private datatype : String
+     ARG:   [arg-03]   private options : Object
+
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [column-01]  private var column : String
+VARIABLE:   [datatype-02]  private var datatype : String
+VARIABLE:   [options-03]  private var options : Object
+
+FUNCTION:   [DatabaseConnector-01]  public const function addIndex(table: String, column: String, index: String) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private column : String
+     ARG:   [arg-02]   private index : String
+
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [column-01]  private var column : String
+VARIABLE:   [index-02]  private var index : String
+
+FUNCTION:   [DatabaseConnector-02]  public const function changeColumn(table: String, column: String, datatype: String, options: Object) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private column : String
+     ARG:   [arg-02]   private datatype : String
+     ARG:   [arg-03]   private options : Object
+
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [column-01]  private var column : String
+VARIABLE:   [datatype-02]  private var datatype : String
+VARIABLE:   [options-03]  private var options : Object
+
+FUNCTION:   [DatabaseConnector-03]  public const function close() : Void
+
+
+    
+
+FUNCTION:   [DatabaseConnector-04]  public const function commit() : Void
+
+
+    
+
+FUNCTION:   [DatabaseConnector-05]  public const function connect(connectionString: String) : Void
+
+     ARG:   [arg-00]   private connectionString : String
+
+    
+VARIABLE:   [connectionString-00]  private var connectionString : String
+
+FUNCTION:   [DatabaseConnector-06]  public const function createDatabase(name: String, options: Object) : Void
+
+     ARG:   [arg-00]   private name : String
+     ARG:   [arg-01]   private options : Object
+
+    
+VARIABLE:   [name-00]  private var name : String
+VARIABLE:   [options-01]  private var options : Object
+
+FUNCTION:   [DatabaseConnector-07]  public const function createTable(table: String, columns: Array) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private columns : Array
+
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [columns-01]  private var columns : Array
+
+FUNCTION:   [DatabaseConnector-08]  public const function dataTypeToSqlType(dataType: String) : String
+
+     ARG:   [arg-00]   private dataType : String
+
+    
+VARIABLE:   [dataType-00]  private var dataType : String
+
+FUNCTION:   [DatabaseConnector-09]  public const function destroyDatabase(name: String) : Void
+
+     ARG:   [arg-00]   private name : String
+
+    
+VARIABLE:   [name-00]  private var name : String
+
+FUNCTION:   [DatabaseConnector-10]  public const function destroyTable(table: String) : Void
+
+     ARG:   [arg-00]   private table : String
+
+    
+VARIABLE:   [table-00]  private var table : String
+
+FUNCTION:   [DatabaseConnector-11]  public const function getColumns(table: String) : Array
+
+     ARG:   [arg-00]   private table : String
+
+    
+VARIABLE:   [table-00]  private var table : String
+
+FUNCTION:   [DatabaseConnector-12]  public const function getTables() : Array
+
+
+    
+
+FUNCTION:   [DatabaseConnector-13]  public const function removeColumns(table: String, columns: Array) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private columns : Array
+
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [columns-01]  private var columns : Array
+
+FUNCTION:   [DatabaseConnector-14]  public const function removeIndex(table: String, index: String) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private index : String
+
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [index-01]  private var index : String
+
+FUNCTION:   [DatabaseConnector-15]  public const function renameColumn(table: String, oldColumn: String, newColumn: String) : Void
+
+     ARG:   [arg-00]   private table : String
+     ARG:   [arg-01]   private oldColumn : String
+     ARG:   [arg-02]   private newColumn : String
+
+    
+VARIABLE:   [table-00]  private var table : String
+VARIABLE:   [oldColumn-01]  private var oldColumn : String
+VARIABLE:   [newColumn-02]  private var newColumn : String
+
+FUNCTION:   [DatabaseConnector-16]  public const function renameTable(oldTable: String, newTable: String) : Void
+
+     ARG:   [arg-00]   private oldTable : String
+     ARG:   [arg-01]   private newTable : String
+
+    
+VARIABLE:   [oldTable-00]  private var oldTable : String
+VARIABLE:   [newTable-01]  private var newTable : String
+
+FUNCTION:   [DatabaseConnector-17]  public const function rollback() : Void
+
+
+    
+
+FUNCTION:   [DatabaseConnector-18]  public const function sql(cmd: String) : Array
+
+     ARG:   [arg-00]   private cmd : String
+
+    
+VARIABLE:   [cmd-00]  private var cmd : String
+
+FUNCTION:   [DatabaseConnector-19]  public const function sqlTypeToDataType(sqlType: String) : String
+
+     ARG:   [arg-00]   private sqlType : String
+
+    
+VARIABLE:   [sqlType-00]  private var sqlType : String
+
+FUNCTION:   [DatabaseConnector-20]  public const function sqlTypeToEjsType(sqlType: String) : String
+
+     ARG:   [arg-00]   private sqlType : String
+
+    
+VARIABLE:   [sqlType-00]  private var sqlType : String
+
+FUNCTION:   [DatabaseConnector-21]  public const function startTransaction() : Void
+
+
+    
+
+----------------------------------------------------------------------------------------------
+
+#
+#  Global slot assignments (Num prop 142)
+#
+0140    ejs.db var Database: Type
+0141    ejs.db var DatabaseConnector: Type
+
+#
+#  Initializer slot assignments (Num prop 0)
+#
+
+#
+#  Class slot assignments for the "Database" class (Num slots 59, num inherited 26)
+#
+0000    public function constructor
+0001    ejs function length
+0002    public function prototype
+0003    public function clone
+0004    reserved slot for base class property
+0005    reserved slot for base class property
+0006    reserved slot for base class property
+0007    reserved slot for base class property
+0008    iterator function get
+0009    reserved slot for base class property
+0010    reserved slot for base class property
+0011    reserved slot for base class property
+0012    iterator function getValues
+0013    public function hasOwnProperty
+0014    reserved slot for base class property
+0015    reserved slot for base class property
+0016    public function isPrototypeOf
+0017    reserved slot for base class property
+0018    reserved slot for base class property
+0019    reserved slot for base class property
+0020    public function propertyIsEnumerable
+0021    reserved slot for base class property
+0022    public function toJSON
+0023    public function toLocaleString
+0024    public function toString
+0025    public function valueOf
+0026    -constructor- function Database
+0027    [ejs.db::Database,private] var defaultDb: Database
+0028    public function addColumn
+0029    public function addIndex
+0030    public function changeColumn
+0031    public function close
+0032    public function commit
+0033    public function connect
+0034    public function connection
+0035    public function createDatabase
+0036    public function createTable
+0037    public function dataTypeToSqlType
+0038    public function defaultDatabase
+0039    public function destroyDatabase
+0040    public function destroyTable
+0041    public function endTransaction
+0042    public function getColumns
+0043    public function getTables
+0044    public function getNumRows
+0045    public function name
+0046    public function query
+0047    public function removeColumns
+0048    public function removeIndex
+0049    public function renameColumn
+0050    public function renameTable
+0051    public function rollback
+0052    public function sql
+0053    public function sqlTypeToDataType
+0054    public function sqlTypeToEjsType
+0055    public function startTransaction
+0056    public function trace
+0057    public function transaction
+0058    public function quote
+
+#
+#  Instance slot assignments for the "Database" class (Num prop 4, num inherited 0)
+#
+0000    [ejs.db::Database,private] var _adapter: Object
+0001    [ejs.db::Database,private] var _connection: String
+0002    [ejs.db::Database,private] var _name: String
+0003    [ejs.db::Database,private] var _traceAll: Boolean
+
+#
+#  Class slot assignments for the "DatabaseConnector" class (Num slots 22, num inherited 0)
+#
+0000    public function addColumn
+0001    public function addIndex
+0002    public function changeColumn
+0003    public function close
+0004    public function commit
+0005    public function connect
+0006    public function createDatabase
+0007    public function createTable
+0008    public function dataTypeToSqlType
+0009    public function destroyDatabase
+0010    public function destroyTable
+0011    public function getColumns
+0012    public function getTables
+0013    public function removeColumns
+0014    public function removeIndex
+0015    public function renameColumn
+0016    public function renameTable
+0017    public function rollback
+0018    public function sql
+0019    public function sqlTypeToDataType
+0020    public function sqlTypeToEjsType
+0021    public function startTransaction
+
+#
+#  Instance slot assignments for the "DatabaseConnector" class (Num prop 0, num inherited 0)
+#
+
+----------------------------------------------------------------------------------------------
+#
+#  Constant Pool (size 5618 bytes)
+#
+0000   ""
+0001   "ejs"
+0002   "ejs.db/Database.es"
+0003   "}"
+0004   "internal-bd20ebe9fd562ca6ce0924d3858ac8a2-2"
+0005   "ejs.db"
+0006   "module ejs.db {"
+0007   "    class Database {"
+0008   "Database"
+0009   "        private var _adapter: Object"
+0010   "_adapter"
+0011   "[ejs.db::Database,private]"
+0012   "Object"
+0013   "        private var _connection: String"
+0014   "_connection"
+0015   "String"
+0016   "        private var _name: String"
+0017   "_name"
+0018   "        private var _traceAll: Boolean"
+0019   "_traceAll"
+0020   "Boolean"
+0021   "        private static var defaultDb: Database"
+0022   "defaultDb"
+0023   "        use default namespace public"
+0024   "        function Database(adapter: String, connectionString: String) {"
+0025   "            Database.defaultDb ||= this"
+0026   "            if (adapter == "sqlite3") adapter = "sqlite""
+0027   "sqlite3"
+0028   "sqlite"
+0029   "            try {"
+0030   "                _name = Path(connectionString).basename"
+0031   "basename"
+0032   "public"
+0033   "                _connection = connectionString"
+0034   "                let adapterClass = adapter.toPascal()"
+0035   "adapterClass"
+0036   "-hoisted-2"
+0037   "                if (!global."ejs.db"::[adapterClass]) {"
+0038   "global"
+0039   "                    load("ejs.db." + adapter + ".mod")"
+0040   "ejs.db."
+0041   ".mod"
+0042   "                }"
+0043   "                _adapter = new global."ejs.db"::[adapterClass](connectionString)"
+0044   "block_0042_19"
+0045   "-hoisted-4"
+0046   "            } catch (e) {"
+0047   "e"
+0048   "-hoisted-5"
+0049   "                print(e)"
+0050   "                throw "Can't find database connector for " + adapter"
+0051   "Can't find database connector for "
+0052   "Void"
+0053   "        }"
+0054   "-constructor-"
+0055   "adapter"
+0056   "private"
+0057   "connectionString"
+0058   ""
+0059   "        function addColumn(table: String, column: String, datatype: String, options = null): Void"
+0060   "null"
+0061   "            _adapter.addColumn(table, column, datatype, options)"
+0062   "addColumn"
+0063   "table"
+0064   "column"
+0065   "datatype"
+0066   "options"
+0067   "        function addIndex(table: String, column: String, index: String): Void"
+0068   "            _adapter.addIndex(table, column, index)"
+0069   "addIndex"
+0070   "index"
+0071   "        function changeColumn(table: String, column: String, datatype: String, options: Object? = null): Void"
+0072   "            _adapter.changeColumn(table, column, datatype, options)"
+0073   "changeColumn"
+0074   "        function close(): Void"
+0075   "            _adapter.close()"
+0076   "close"
+0077   "        function commit(): Void"
+0078   "            _adapter.commit()"
+0079   "commit"
+0080   "        function connect(connectionString: String): Void"
+0081   "            _adapter.connect(connectionString)"
+0082   "connect"
+0083   "        function get connection(): String"
+0084   "            _connection"
+0085   "connection"
+0086   "        function createDatabase(name: String, options: Object? = null): Void"
+0087   "            _adapter.createDatabase(name, options)"
+0088   "createDatabase"
+0089   "name"
+0090   "        function createTable(table: String, columns: Array? = null): Void"
+0091   "            _adapter.createTable(table, columns)"
+0092   "createTable"
+0093   "columns"
+0094   "Array"
+0095   "        function dataTypeToSqlType(dataType:String): String"
+0096   "            _adapter.dataTypeToSqlType(dataType)"
+0097   "dataTypeToSqlType"
+0098   "dataType"
+0099   "        static function get defaultDatabase(): Database"
+0100   "            defaultDb"
+0101   "defaultDatabase"
+0102   "        static function set defaultDatabase(db: Database): Void {"
+0103   "            defaultDb = db"
+0104   "db"
+0105   "        function destroyDatabase(name: String): Void"
+0106   "            _adapter.destroyDatabase(name)"
+0107   "destroyDatabase"
+0108   "        function destroyTable(table: String): Void"
+0109   "            _adapter.destroyTable(table)"
+0110   "destroyTable"
+0111   "        function endTransaction(): Void"
+0112   "            _adapter.endTransaction()"
+0113   "endTransaction"
+0114   "        function getColumns(table: String): Array"
+0115   "            _adapter.getColumns(table)"
+0116   "getColumns"
+0117   "        function getTables(): Array"
+0118   "            _adapter.getTables()"
+0119   "getTables"
+0120   "        function getNumRows(table: String): Number"
+0121   "            _adapter.getNumRows()"
+0122   "getNumRows"
+0123   "Number"
+0124   "        function get name(): String"
+0125   "            _name"
+0126   "        function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {"
+0127   "SQL"
+0128   "false"
+0129   "            if (_traceAll || trace) {"
+0130   "                print(tag + ": " + cmd)"
+0131   ": "
+0132   "            return _adapter.sql(cmd)"
+0133   "sql"
+0134   "query"
+0135   "cmd"
+0136   "tag"
+0137   "trace"
+0138   "        function removeColumns(table: String, columns: Array): Void"
+0139   "            _adapter.removeColumns(table, columns)"
+0140   "removeColumns"
+0141   "        function removeIndex(table: String, index: String): Void"
+0142   "            _adapter.removeIndex(table, index)"
+0143   "removeIndex"
+0144   "        function renameColumn(table: String, oldColumn: String, newColumn: String): Void"
+0145   "            _adapter.renameColumn(table, oldColumn, newColumn)"
+0146   "renameColumn"
+0147   "oldColumn"
+0148   "newColumn"
+0149   "        function renameTable(oldTable: String, newTable: String): Void"
+0150   "            _adapter.renameTable(oldTable, newTable)"
+0151   "renameTable"
+0152   "oldTable"
+0153   "newTable"
+0154   "        function rollback(): Void"
+0155   "            _adapter.rollback()"
+0156   "rollback"
+0157   "        function sql(cmd: String): Array"
+0158   "            _adapter.sql(cmd)"
+0159   "        function sqlTypeToDataType(sqlType: String): String"
+0160   "            _adapter.sqlTypeToDataType(sqlType)"
+0161   "sqlTypeToDataType"
+0162   "sqlType"
+0163   "        function sqlTypeToEjsType(sqlType: String): Type"
+0164   "            _adapter.sqlTypeToEjsType(sqlType)"
+0165   "sqlTypeToEjsType"
+0166   "Type"
+0167   "        function startTransaction(): Void"
+0168   "            _adapter.startTransaction()"
+0169   "startTransaction"
+0170   "        function trace(on: Boolean): void"
+0171   "            _traceAll = on"
+0172   "on"
+0173   "        function transaction(code: Function): Void {"
+0174   "            startTransaction()"
+0175   "                code()"
+0176   "block_0309_23"
+0177   "            } catch (e: Error) {"
+0178   "-hoisted-3"
+0179   "                rollback();"
+0180   "            } finally {"
+0181   "                endTransaction()"
+0182   "Error"
+0183   "transaction"
+0184   "code"
+0185   "Function"
+0186   "        static function quote(str: String): String  {"
+0187   "            return str.replace(/'/g, "''")"
+0188   "/'/g"
+0189   "''"
+0190   "quote"
+0191   "str"
+0192   "constructor"
+0193   "length"
+0194   "prototype"
+0195   "clone"
+0196   "get"
+0197   "iterator"
+0198   "Iterator"
+0199   "getValues"
+0200   "hasOwnProperty"
+0201   "isPrototypeOf"
+0202   "propertyIsEnumerable"
+0203   "toJSON"
+0204   "toLocaleString"
+0205   "toString"
+0206   "valueOf"
+0207   "block_0007_18"
+0208   "-block-"
+0209   "ejs.db/DatabaseConnector.es"
+0210   "internal-bf776138024ac0112d1b3271e4cfd5e4-3"
+0211   "    interface DatabaseConnector {"
+0212   "DatabaseConnector"
+0213   "block_0007_27"
+0214   "__initializer__"

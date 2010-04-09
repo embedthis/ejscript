@@ -1,0 +1,309 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_g_c" kind="struct" prot="public">
+    <compoundname>EjsGC</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_g_c_1cbbd12d48ed4cdd78508709f4b158778" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::allocatedObjects</definition>
+        <argsstring></argsstring>
+        <name>allocatedObjects</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1028" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1028" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1c2234a19d71e35b094cff159402e25bd" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::allocatedTypes</definition>
+        <argsstring></argsstring>
+        <name>allocatedTypes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1026" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1026" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1fb5ee78d5cd0d21696f0569a8e51d506" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::allocGeneration</definition>
+        <argsstring></argsstring>
+        <name>allocGeneration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1019" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1019" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1e3ce410958c0ad046e74170ff00100cc" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::collectGeneration</definition>
+        <argsstring></argsstring>
+        <name>collectGeneration</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1020" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1020" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_13a5d24de798ff5a9516c510041b00c48" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EjsGC::collecting</definition>
+        <argsstring></argsstring>
+        <name>collecting</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1023" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1023" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_18e85b4a644cbb6ab48d3575d88a38586" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsGC::degraded</definition>
+        <argsstring></argsstring>
+        <name>degraded</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1025" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1025" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1ac5e1418a3ed0e6882dcdd17d5c83ce2" prot="public" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool EjsGC::enabled</definition>
+        <argsstring></argsstring>
+        <name>enabled</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1024" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1024" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1412246fc05aaa314bddea647f7f57464" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::firstGlobal</definition>
+        <argsstring></argsstring>
+        <name>firstGlobal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1022" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1022" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1841f3aaeba034d5ddc4388f0e0685e12" prot="public" static="no" mutable="no">
+        <type>EjsGen *</type>
+        <definition>EjsGen* EjsGC::generations[EJS_MAX_GEN]</definition>
+        <argsstring>[EJS_MAX_GEN]</argsstring>
+        <name>generations</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1016" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1016" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1a6a23d0dd40e9394bba7d0d53706ed4a" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsGC::indent</definition>
+        <argsstring></argsstring>
+        <name>indent</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1037" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1037" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1e6a4825bb2772a0c63dfd23ef48497d1" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::markGenRef</definition>
+        <argsstring></argsstring>
+        <name>markGenRef</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1021" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1021" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_18d8b9bf1b6aaffcd20cb77a75a8d8cd8" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsGC::numPools</definition>
+        <argsstring></argsstring>
+        <name>numPools</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1018" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1018" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_101951f42b450ee7dc41d5d1dc8f738b0" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::peakAllocatedObjects</definition>
+        <argsstring></argsstring>
+        <name>peakAllocatedObjects</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1029" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1029" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_166764374341a6b4fc5e5c87bbaea2384" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::peakAllocatedTypes</definition>
+        <argsstring></argsstring>
+        <name>peakAllocatedTypes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1027" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1027" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1489f46fe3ec4c7a3cd6b032e16fe3e5d" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::peakMemory</definition>
+        <argsstring></argsstring>
+        <name>peakMemory</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1030" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1030" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1821993d881a1c0c797c574508ac6c719" prot="public" static="no" mutable="no">
+        <type>EjsPool *</type>
+        <definition>EjsPool* EjsGC::pools[EJS_MAX_TYPE]</definition>
+        <argsstring>[EJS_MAX_TYPE]</argsstring>
+        <name>pools</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1017" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1017" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1eaa43e598a4c116fa85552693e3224db" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::totalAllocated</definition>
+        <argsstring></argsstring>
+        <name>totalAllocated</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1031" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1031" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_106f491d8911b1ee32e9727e2be8c08e5" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::totalOverflows</definition>
+        <argsstring></argsstring>
+        <name>totalOverflows</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1033" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1033" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1b06e114ae7416580ee12c135bbd33afb" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::totalReclaimed</definition>
+        <argsstring></argsstring>
+        <name>totalReclaimed</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1032" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1032" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_1ad165281cfdda7217edf740b97f3eaa1" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::totalRedlines</definition>
+        <argsstring></argsstring>
+        <name>totalRedlines</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1034" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1034" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_g_c_12bc4bb857b39814a930fc2bcc7d9461b" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsGC::totalSweeps</definition>
+        <argsstring></argsstring>
+        <name>totalSweeps</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1035" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1035" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="1014" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1014" bodyend="1039"/>
+    <listofallmembers>
+      <member refid="struct_ejs_g_c_1cbbd12d48ed4cdd78508709f4b158778" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>allocatedObjects</name></member>
+      <member refid="struct_ejs_g_c_1c2234a19d71e35b094cff159402e25bd" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>allocatedTypes</name></member>
+      <member refid="struct_ejs_g_c_1fb5ee78d5cd0d21696f0569a8e51d506" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>allocGeneration</name></member>
+      <member refid="struct_ejs_g_c_1e3ce410958c0ad046e74170ff00100cc" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>collectGeneration</name></member>
+      <member refid="struct_ejs_g_c_13a5d24de798ff5a9516c510041b00c48" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>collecting</name></member>
+      <member refid="struct_ejs_g_c_18e85b4a644cbb6ab48d3575d88a38586" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>degraded</name></member>
+      <member refid="struct_ejs_g_c_1ac5e1418a3ed0e6882dcdd17d5c83ce2" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>enabled</name></member>
+      <member refid="struct_ejs_g_c_1412246fc05aaa314bddea647f7f57464" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>firstGlobal</name></member>
+      <member refid="struct_ejs_g_c_1841f3aaeba034d5ddc4388f0e0685e12" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>generations</name></member>
+      <member refid="struct_ejs_g_c_1a6a23d0dd40e9394bba7d0d53706ed4a" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>indent</name></member>
+      <member refid="struct_ejs_g_c_1e6a4825bb2772a0c63dfd23ef48497d1" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>markGenRef</name></member>
+      <member refid="struct_ejs_g_c_18d8b9bf1b6aaffcd20cb77a75a8d8cd8" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>numPools</name></member>
+      <member refid="struct_ejs_g_c_101951f42b450ee7dc41d5d1dc8f738b0" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>peakAllocatedObjects</name></member>
+      <member refid="struct_ejs_g_c_166764374341a6b4fc5e5c87bbaea2384" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>peakAllocatedTypes</name></member>
+      <member refid="struct_ejs_g_c_1489f46fe3ec4c7a3cd6b032e16fe3e5d" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>peakMemory</name></member>
+      <member refid="struct_ejs_g_c_1821993d881a1c0c797c574508ac6c719" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>pools</name></member>
+      <member refid="struct_ejs_g_c_1eaa43e598a4c116fa85552693e3224db" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>totalAllocated</name></member>
+      <member refid="struct_ejs_g_c_106f491d8911b1ee32e9727e2be8c08e5" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>totalOverflows</name></member>
+      <member refid="struct_ejs_g_c_1b06e114ae7416580ee12c135bbd33afb" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>totalReclaimed</name></member>
+      <member refid="struct_ejs_g_c_1ad165281cfdda7217edf740b97f3eaa1" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>totalRedlines</name></member>
+      <member refid="struct_ejs_g_c_12bc4bb857b39814a930fc2bcc7d9461b" prot="public" virt="non-virtual"><scope>EjsGC</scope><name>totalSweeps</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

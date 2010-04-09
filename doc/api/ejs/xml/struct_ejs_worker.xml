@@ -1,0 +1,169 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_worker" kind="struct" prot="public">
+    <compoundname>EjsWorker</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_worker_157247d2434f1bb3fc5466c4e07f412ae" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsWorker::complete</definition>
+        <argsstring></argsstring>
+        <name>complete</name>
+        <briefdescription>
+<para>Worker has completed its work. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3796" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3796" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_132f10f83148506a1965382c175aff584" prot="public" static="no" mutable="no">
+        <type>Ejs *</type>
+        <definition>Ejs* EjsWorker::ejs</definition>
+        <argsstring></argsstring>
+        <name>ejs</name>
+        <briefdescription>
+<para>Interpreter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3790" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3790" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_1d50790def8ff17926a396742044f30c8" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsWorker::gotMessage</definition>
+        <argsstring></argsstring>
+        <name>gotMessage</name>
+        <briefdescription>
+<para>Worker has received a message. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3797" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3797" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_1f75f574e79b1d85eab545b6961e55286" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsWorker::inside</definition>
+        <argsstring></argsstring>
+        <name>inside</name>
+        <briefdescription>
+<para>Running inside the worker. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3795" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3795" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_1198946ed4fa32ccc48e7be14bac810b8" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsWorker::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>Optional worker name. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3789" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3789" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_11b390586e9913c3f5cf265b2c29e0102" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsWorker::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Logically extentends Object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3788" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3788" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_1d281213c66907b3dee69dbfe6a7b3054" prot="public" static="no" mutable="no">
+        <type>struct EjsWorker *</type>
+        <definition>struct EjsWorker* EjsWorker::pair</definition>
+        <argsstring></argsstring>
+        <name>pair</name>
+        <briefdescription>
+<para>Corresponding worker object in other thread. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3791" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3791" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_1bfafdcc7675631c37e1439059221a2dc" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsWorker::scriptFile</definition>
+        <argsstring></argsstring>
+        <name>scriptFile</name>
+        <briefdescription>
+<para>Script or module to run. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3792" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3792" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_1400839516fd27fe2e7c9f63fa1b23ccb" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsWorker::scriptLiteral</definition>
+        <argsstring></argsstring>
+        <name>scriptLiteral</name>
+        <briefdescription>
+<para>Literal script string to run. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3793" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3793" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_148fdffcd3c341d886eaed339bb74480b" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsWorker::state</definition>
+        <argsstring></argsstring>
+        <name>state</name>
+        <briefdescription>
+<para>Worker state. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3794" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3794" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_worker_13de9eaad1f237564bd9d810abde8c246" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsWorker::terminated</definition>
+        <argsstring></argsstring>
+        <name>terminated</name>
+        <briefdescription>
+<para>Worker has had terminate() called. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3798" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3798" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3787" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3787" bodyend="3799"/>
+    <listofallmembers>
+      <member refid="struct_ejs_worker_157247d2434f1bb3fc5466c4e07f412ae" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>complete</name></member>
+      <member refid="struct_ejs_worker_132f10f83148506a1965382c175aff584" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>ejs</name></member>
+      <member refid="struct_ejs_worker_1d50790def8ff17926a396742044f30c8" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>gotMessage</name></member>
+      <member refid="struct_ejs_worker_1f75f574e79b1d85eab545b6961e55286" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>inside</name></member>
+      <member refid="struct_ejs_worker_1198946ed4fa32ccc48e7be14bac810b8" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>name</name></member>
+      <member refid="struct_ejs_worker_11b390586e9913c3f5cf265b2c29e0102" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>obj</name></member>
+      <member refid="struct_ejs_worker_1d281213c66907b3dee69dbfe6a7b3054" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>pair</name></member>
+      <member refid="struct_ejs_worker_1bfafdcc7675631c37e1439059221a2dc" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>scriptFile</name></member>
+      <member refid="struct_ejs_worker_1400839516fd27fe2e7c9f63fa1b23ccb" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>scriptLiteral</name></member>
+      <member refid="struct_ejs_worker_148fdffcd3c341d886eaed339bb74480b" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>state</name></member>
+      <member refid="struct_ejs_worker_13de9eaad1f237564bd9d810abde8c246" prot="public" virt="non-virtual"><scope>EjsWorker</scope><name>terminated</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

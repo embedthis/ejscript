@@ -1,0 +1,211 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ec_token" kind="struct" prot="public">
+    <compoundname>EcToken</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ec_token_1bce6f56d89a583deeb6ac1b1c8fbd46f" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcToken::column</definition>
+        <argsstring></argsstring>
+        <name>column</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5605" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5605" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_1075e1051d7d06625bdef34e4f6578b36" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcToken::currentLine</definition>
+        <argsstring></argsstring>
+        <name>currentLine</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5603" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5603" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_14a678f2401b78188136877b50bedeae0" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcToken::eol</definition>
+        <argsstring></argsstring>
+        <name>eol</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5606" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5606" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_1a205389eb5ffc6879127b46d68050ee1" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EcToken::filename</definition>
+        <argsstring></argsstring>
+        <name>filename</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5602" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5602" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_106b2dca1c4ba95cf15162c8bb19e675d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcToken::groupMask</definition>
+        <argsstring></argsstring>
+        <name>groupMask</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5594" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5594" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_11b1447db2e728342da4ad6645f1e7b80" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcToken::lineNumber</definition>
+        <argsstring></argsstring>
+        <name>lineNumber</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5604" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5604" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_1e36b7670e2db5c8c8282d9506c6b7fad" prot="public" static="no" mutable="no">
+        <type>struct EcToken *</type>
+        <definition>struct EcToken* EcToken::next</definition>
+        <argsstring></argsstring>
+        <name>next</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5609" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5609" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_160dfe78af3694700f9230e340d001cc5" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EcToken::number</definition>
+        <argsstring></argsstring>
+        <name>number</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5600" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5600" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_10e1b0e055078671323244cd640122c94" prot="public" static="no" mutable="no">
+        <type>EcStream *</type>
+        <definition>EcStream* EcToken::stream</definition>
+        <argsstring></argsstring>
+        <name>stream</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5608" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5608" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_1ec36d3954faf0f13f374bbb6cf237cf7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcToken::subId</definition>
+        <argsstring></argsstring>
+        <name>subId</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5593" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5593" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_1ae85c38142b3cc83b19ff76d54b85e8e" prot="public" static="no" mutable="no">
+        <type>uchar *</type>
+        <definition>uchar* EcToken::text</definition>
+        <argsstring></argsstring>
+        <name>text</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5596" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5596" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_13ebbf7d7edf71ab5887d0ab734d9395b" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcToken::textBufSize</definition>
+        <argsstring></argsstring>
+        <name>textBufSize</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5598" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5598" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_12de17464a5e7e94ac8dd3289937dbe7c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcToken::textLen</definition>
+        <argsstring></argsstring>
+        <name>textLen</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5597" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5597" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_token_1bb5990f4f7d8d459cf85217aae4896e7" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcToken::tokenId</definition>
+        <argsstring></argsstring>
+        <name>tokenId</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5592" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5592" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="5591" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5591" bodyend="5610"/>
+    <listofallmembers>
+      <member refid="struct_ec_token_1bce6f56d89a583deeb6ac1b1c8fbd46f" prot="public" virt="non-virtual"><scope>EcToken</scope><name>column</name></member>
+      <member refid="struct_ec_token_1075e1051d7d06625bdef34e4f6578b36" prot="public" virt="non-virtual"><scope>EcToken</scope><name>currentLine</name></member>
+      <member refid="struct_ec_token_14a678f2401b78188136877b50bedeae0" prot="public" virt="non-virtual"><scope>EcToken</scope><name>eol</name></member>
+      <member refid="struct_ec_token_1a205389eb5ffc6879127b46d68050ee1" prot="public" virt="non-virtual"><scope>EcToken</scope><name>filename</name></member>
+      <member refid="struct_ec_token_106b2dca1c4ba95cf15162c8bb19e675d" prot="public" virt="non-virtual"><scope>EcToken</scope><name>groupMask</name></member>
+      <member refid="struct_ec_token_11b1447db2e728342da4ad6645f1e7b80" prot="public" virt="non-virtual"><scope>EcToken</scope><name>lineNumber</name></member>
+      <member refid="struct_ec_token_1e36b7670e2db5c8c8282d9506c6b7fad" prot="public" virt="non-virtual"><scope>EcToken</scope><name>next</name></member>
+      <member refid="struct_ec_token_160dfe78af3694700f9230e340d001cc5" prot="public" virt="non-virtual"><scope>EcToken</scope><name>number</name></member>
+      <member refid="struct_ec_token_10e1b0e055078671323244cd640122c94" prot="public" virt="non-virtual"><scope>EcToken</scope><name>stream</name></member>
+      <member refid="struct_ec_token_1ec36d3954faf0f13f374bbb6cf237cf7" prot="public" virt="non-virtual"><scope>EcToken</scope><name>subId</name></member>
+      <member refid="struct_ec_token_1ae85c38142b3cc83b19ff76d54b85e8e" prot="public" virt="non-virtual"><scope>EcToken</scope><name>text</name></member>
+      <member refid="struct_ec_token_13ebbf7d7edf71ab5887d0ab734d9395b" prot="public" virt="non-virtual"><scope>EcToken</scope><name>textBufSize</name></member>
+      <member refid="struct_ec_token_12de17464a5e7e94ac8dd3289937dbe7c" prot="public" virt="non-virtual"><scope>EcToken</scope><name>textLen</name></member>
+      <member refid="struct_ec_token_1bb5990f4f7d8d459cf85217aae4896e7" prot="public" virt="non-virtual"><scope>EcToken</scope><name>tokenId</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

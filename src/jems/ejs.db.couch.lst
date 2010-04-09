@@ -1,0 +1,955 @@
+#
+#  ejs.db.couch.lst -- Module Listing for ../../modules/ejs.db.couch.mod
+#
+
+==============================================================================================
+
+MODULE:   ejs.db.couch <hasInitializer, >
+
+
+FUNCTION:   [initializer]  ejs function __initializer__() : Void
+
+   LOCAL:   [local-00] var block_0030_29 : Block
+
+    0000: [0] 8d 00 00 ................... openBlock <slot: 0> <0> 
+    0003: [0] 33 0a e4 03 36 ............. debug 
+
+    # ejs.db.couch/Couch.es:242 }
+
+    0008: [0] 01 3a ...................... addNamespace <internal-b96835566cdd0b64a5164faac5d10b13-4> 
+    0010: [0] 01 92 01 ................... addNamespace <ejs.db.couch> 
+    0013: [0] 33 0a 3c ac 01 ............. debug 
+
+    # ejs.db.couch/Couch.es:30  module ejs.db.couch {
+
+    0018: [0] 33 0a 4c d8 01 ............. debug 
+
+    # ejs.db.couch/Couch.es:38      class Couch implements Stream {
+
+    0023: [0] 34 82 09 92 01 ............. defineClass <var: 0x241,  ejs.db.couch::Couch> 
+    0028: [0] 24 ......................... closeBlock 
+    0029: [0] 3b ......................... endCode 
+    
+
+BLOCK:      [block_0030_29-00]  block_0030_29 (Slots 0)
+
+CLASS:      class Couch extends Object
+            #  Class Details: 51 class traits, 3 instance traits, requested slot 142
+
+FUNCTION:   [Couch-26]  -constructor- const function Couch(uri: Uri, db: String) : void
+
+     ARG:   [arg-00]   private uri : Uri
+     ARG:   [arg-01]   private db : String
+
+    0000: [0] 33 0a 6a f6 05 ............. debug 
+
+    # ejs.db.couch/Couch.es:53              this.db = db
+
+    0005: [0] 5c ......................... getLocalSlot1 
+    0006: [1] 57 ......................... loadThis 
+    0007: [2] b3 b4 03 ba 03 ............. putObjName <db> <[ejs.db.couch::Couch,private]> 
+    0012: [0] 33 0a 6c a8 06 ............. debug 
+
+    # ejs.db.couch/Couch.es:54              this.uri = uri
+
+    0017: [0] 5b ......................... getLocalSlot0 
+    0018: [1] 57 ......................... loadThis 
+    0019: [2] b3 be 04 ba 03 ............. putObjName <uri> <[ejs.db.couch::Couch,private]> 
+    0024: [0] 33 0a 6e de 06 ............. debug 
+
+    # ejs.db.couch/Couch.es:55              hp = new Http
+
+    0029: [0] 7e bc 01 ................... getGlobalSlot <slot: 94> 
+    0032: [1] 89 ......................... new 
+    0033: [1] 20 00 ...................... callConstructor <argc: 0> 
+    0035: [1] 57 ......................... loadThis 
+    0036: [2] b3 88 05 ba 03 ............. putObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0041: [0] 33 0a 70 92 07 ............. debug 
+
+    # ejs.db.couch/Couch.es:56              hp.async = true
+
+    0046: [0] 50 ......................... loadGlobal 
+    0047: [1] 7b ca 07 02 ................ getObjName <true> <ejs> 
+    0051: [1] 57 ......................... loadThis 
+    0052: [2] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0057: [2] b3 d4 07 e0 07 ............. putObjName <async> <public> 
+    0062: [0] be ......................... return 
+    0063: [0] 33 0a 72 ee 07 ............. debug 
+
+    # ejs.db.couch/Couch.es:57          }
+    
+VARIABLE:   [uri-00]  private var uri : Uri
+VARIABLE:   [db-01]  private var db : String
+
+FUNCTION:   [Couch-27]  public const function addListener(event: String, listener: Function) : Void
+
+     ARG:   [arg-00]   private event : String
+     ARG:   [arg-01]   private listener : Function
+
+    0000: [0] 33 0a 7e ba 09 ............. debug 
+
+    # ejs.db.couch/Couch.es:63              hp.addListener(event, listener)
+
+    0005: [0] 57 ......................... loadThis 
+    0006: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0011: [1] 5b ......................... getLocalSlot0 
+    0012: [2] 5c ......................... getLocalSlot1 
+    0013: [3] 18 80 01 04 ................ callObjSlot <slot: 64> <argc: 2> 
+    0017: [0] be ......................... return 
+    
+VARIABLE:   [event-00]  private var event : String
+VARIABLE:   [listener-01]  private var listener : Function
+
+FUNCTION:   [Couch-28]  public const get function async() : Boolean
+
+
+    0000: [0] 33 0a 8a 01 b0 0b .......... debug 
+
+    # ejs.db.couch/Couch.es:69              hp.async
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0012: [1] 7b d4 07 e0 07 ............. getObjName <async> <public> 
+    0017: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Couch-28]  public const set function async(enabled: Boolean) : Void
+
+     ARG:   [arg-00]   private enabled : Boolean
+
+    0000: [0] 33 0a 96 01 d4 0c .......... debug 
+
+    # ejs.db.couch/Couch.es:75              hp.async = enabled
+
+    0006: [0] 5b ......................... getLocalSlot0 
+    0007: [1] 57 ......................... loadThis 
+    0008: [2] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0013: [2] b3 d4 07 e0 07 ............. putObjName <async> <public> 
+    0018: [0] be ......................... return 
+    0019: [0] 33 0a 98 01 ee 07 .......... debug 
+
+    # ejs.db.couch/Couch.es:76          }
+    
+VARIABLE:   [enabled-00]  private var enabled : Boolean
+
+FUNCTION:   [Couch-29]  public const function close() : Void
+
+
+    0000: [0] 33 0a aa 01 e2 0d .......... debug 
+
+    # ejs.db.couch/Couch.es:85              hp.close
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0012: [1] 82 86 01 02 ................ getTypeSlot <slot: 67> <1> 
+    0016: [1] 90 ......................... pop 
+    0017: [0] be ......................... return 
+    
+
+FUNCTION:   [Couch-30]  public const function cmd(method: String, url: String, data: String) : Object
+
+     ARG:   [arg-00]   private method : String
+     ARG:   [arg-01]   private url : String
+     ARG:   [arg-02]   private data : String
+
+    0000: [0] 41 02 02 08 ................ initDefaultArgs8 <2> <4> <10> 
+    0004: [0] 50 ......................... loadGlobal 
+    0005: [1] 7b bc 0f 02 ................ getObjName <null> <ejs> 
+    0009: [1] 96 ......................... putLocalSlot2 
+    0010: [0] 33 0a b6 01 c6 0f .......... debug 
+
+    # ejs.db.couch/Couch.es:91              hp.method = method
+
+    0016: [0] 5b ......................... getLocalSlot0 
+    0017: [1] 57 ......................... loadThis 
+    0018: [2] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0023: [2] b3 84 10 e0 07 ............. putObjName <method> <public> 
+    0028: [0] 33 0a b8 01 92 10 .......... debug 
+
+    # ejs.db.couch/Couch.es:92              if (data) {
+
+    0034: [0] 5d ......................... getLocalSlot2 
+    0035: [1] 13 1b ...................... branchFalse8 <addr: 64> 
+    0037: [0] 33 0a ba 01 c2 10 .......... debug 
+
+    # ejs.db.couch/Couch.es:93                  hp.setHeader("Content-Length", data.length)
+
+    0043: [0] 57 ......................... loadThis 
+    0044: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0049: [1] 56 ba 11 ................... loadString <Content-Length> 
+    0052: [2] 5d ......................... getLocalSlot2 
+    0053: [3] 7b d8 11 e0 07 ............. getObjName <length> <public> 
+    0058: [3] 18 c8 01 04 ................ callObjSlot <slot: 100> <argc: 2> 
+    0062: [0] 3e 00 ...................... goto8 <addr: 64> 
+    0064: [0] 33 0a bc 01 e6 11 .......... debug 
+
+    # ejs.db.couch/Couch.es:94              }
+
+    0070: [0] 33 0a be 01 82 12 .......... debug 
+
+    # ejs.db.couch/Couch.es:95              hp.connect(uri.join(url))
+
+    0076: [0] 57 ......................... loadThis 
+    0077: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0082: [1] 57 ......................... loadThis 
+    0083: [2] 7b be 04 ba 03 ............. getObjName <uri> <[ejs.db.couch::Couch,private]> 
+    0088: [2] 5c ......................... getLocalSlot1 
+    0089: [3] 18 60 02 ................... callObjSlot <slot: 48> <argc: 1> 
+    0092: [1] 93 ......................... pushResult 
+    0093: [2] 18 88 01 02 ................ callObjSlot <slot: 68> <argc: 1> 
+    0097: [0] 33 0a c0 01 92 10 .......... debug 
+
+    # ejs.db.couch/Couch.es:96              if (data) {
+
+    0103: [0] 5d ......................... getLocalSlot2 
+    0104: [1] 13 13 ...................... branchFalse8 <addr: 125> 
+    0106: [0] 33 0a c4 01 ce 12 .......... debug 
+
+    # ejs.db.couch/Couch.es:98                  hp.write(data)
+
+    0112: [0] 57 ......................... loadThis 
+    0113: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0118: [1] 5d ......................... getLocalSlot2 
+    0119: [2] 18 dc 01 02 ................ callObjSlot <slot: 110> <argc: 1> 
+    0123: [0] 3e 00 ...................... goto8 <addr: 125> 
+    0125: [0] 33 0a c6 01 e6 11 .......... debug 
+
+    # ejs.db.couch/Couch.es:99              }
+
+    0131: [0] 33 0a c8 01 8c 13 .......... debug 
+
+    # ejs.db.couch/Couch.es:100             hp.finalize()
+
+    0137: [0] 57 ......................... loadThis 
+    0138: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0143: [1] 18 98 01 00 ................ callObjSlot <slot: 76> <argc: 0> 
+    0147: [0] 33 0a ca 01 c0 13 .......... debug 
+
+    # ejs.db.couch/Couch.es:101             if (!hp.async) {
+
+    0153: [0] 57 ......................... loadThis 
+    0154: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0159: [1] 7b d4 07 e0 07 ............. getObjName <async> <public> 
+    0164: [1] 86 ......................... logicalNot 
+    0165: [1] 13 19 ...................... branchFalse8 <addr: 192> 
+    0167: [0] 33 0a cc 01 fa 13 .......... debug 
+
+    # ejs.db.couch/Couch.es:102                 return deserialize(hp.response)
+
+    0173: [0] 57 ......................... loadThis 
+    0174: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0179: [1] 7b da 14 e0 07 ............. getObjName <response> <public> 
+    0184: [1] 17 c6 01 02 ................ callGlobalSlot <slot: 99> <argc: 1> 
+    0188: [0] 93 ......................... pushResult 
+    0189: [1] bf ......................... returnValue 
+    0190: [0] 3e 00 ...................... goto8 <addr: 192> 
+    0192: [0] 54 ......................... loadNull 
+    0193: [1] bf ......................... returnValue 
+    0194: [0] 33 0a d0 01 ee 07 .......... debug 
+
+    # ejs.db.couch/Couch.es:104         }
+    
+VARIABLE:   [method-00]  private var method : String
+VARIABLE:   [url-01]  private var url : String
+VARIABLE:   [data-02]  private var data : String
+
+FUNCTION:   [Couch-31]  public const function flush() : Void
+
+
+    0000: [0] be ......................... return 
+    
+
+FUNCTION:   [Couch-32]  public const get function http() : Http
+
+
+    0000: [0] 33 0a e8 01 a8 16 .......... debug 
+
+    # ejs.db.couch/Couch.es:116             hp
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0012: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Couch-33]  public const function removeListener(event: String, listener: Function) : Void
+
+     ARG:   [arg-00]   private event : String
+     ARG:   [arg-01]   private listener : Function
+
+    0000: [0] 33 0a f4 01 e2 17 .......... debug 
+
+    # ejs.db.couch/Couch.es:122             hp.removeListener(event, listener)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 5c ......................... getLocalSlot1 
+    0014: [3] 18 c0 01 04 ................ callObjSlot <slot: 96> <argc: 2> 
+    0018: [0] be ......................... return 
+    
+VARIABLE:   [event-00]  private var event : String
+VARIABLE:   [listener-01]  private var listener : Function
+
+FUNCTION:   [Couch-34]  public const get function status() : Number
+
+
+    0000: [0] 33 0a 80 02 aa 19 .......... debug 
+
+    # ejs.db.couch/Couch.es:128             hp.status
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0012: [1] 7b d6 19 e0 07 ............. getObjName <status> <public> 
+    0017: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Couch-35]  public const get function success() : Boolean
+
+
+    0000: [0] 33 0a 88 02 c2 1a .......... debug 
+
+    # ejs.db.couch/Couch.es:132             200 <= hp.status && hp.status < 300
+
+    0006: [0] 51 90 03 ................... loadInt <200> 
+    0009: [1] 57 ......................... loadThis 
+    0010: [2] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0015: [2] 7b d6 19 e0 07 ............. getObjName <status> <public> 
+    0020: [2] 2a ......................... compareLe 
+    0021: [1] 39 ......................... dup 
+    0022: [2] 13 10 ...................... branchFalse8 <addr: 40> 
+    0024: [1] 90 ......................... pop 
+    0025: [0] 57 ......................... loadThis 
+    0026: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0031: [1] 7b d6 19 e0 07 ............. getObjName <status> <public> 
+    0036: [1] 51 d8 04 ................... loadInt <300> 
+    0039: [2] 2b ......................... compareLt 
+    0040: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Couch-36]  public const function read(buffer: ByteArray, offset: Number, count: Number) : Number
+
+     ARG:   [arg-00]   private buffer : ByteArray
+     ARG:   [arg-01]   private offset : Number
+     ARG:   [arg-02]   private count : Number
+
+    0000: [0] 41 03 03 05 08 ............. initDefaultArgs8 <3> <5> <7> <10> 
+    0005: [0] 44 ......................... load0 
+    0006: [1] 95 ......................... putLocalSlot1 
+    0007: [0] 45 ......................... load1 
+    0008: [1] 88 ......................... neg 
+    0009: [1] 96 ......................... putLocalSlot2 
+    0010: [0] 33 0a 96 02 e4 1c .......... debug 
+
+    # ejs.db.couch/Couch.es:139             hp.read(buffer, offset, count)
+
+    0016: [0] 57 ......................... loadThis 
+    0017: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0022: [1] 5b ......................... getLocalSlot0 
+    0023: [2] 5c ......................... getLocalSlot1 
+    0024: [3] 5d ......................... getLocalSlot2 
+    0025: [4] 18 b8 01 06 ................ callObjSlot <slot: 92> <argc: 3> 
+    0029: [0] 93 ......................... pushResult 
+    0030: [1] bf ......................... returnValue 
+    
+VARIABLE:   [buffer-00]  private var buffer : ByteArray
+VARIABLE:   [offset-01]  private var offset : Number
+VARIABLE:   [count-02]  private var count : Number
+
+FUNCTION:   [Couch-37]  public const function write(data: Array) : Void
+
+     ARG:   [arg-00]   private data : Array
+
+    0000: [0] 33 0a a2 02 cc 1e .......... debug 
+
+    # ejs.db.couch/Couch.es:145             hp.write(data)
+
+    0006: [0] 57 ......................... loadThis 
+    0007: [1] 7b 88 05 ba 03 ............. getObjName <hp> <[ejs.db.couch::Couch,private]> 
+    0012: [1] 5b ......................... getLocalSlot0 
+    0013: [2] 18 dc 01 02 ................ callObjSlot <slot: 110> <argc: 1> 
+    0017: [0] be ......................... return 
+    
+VARIABLE:   [data-00]  private var data : Array
+
+FUNCTION:   [Couch-38]  public const function getDatabases() : Object
+
+
+    0000: [0] 33 0a ae 02 ec 1f .......... debug 
+
+    # ejs.db.couch/Couch.es:151             cmd("GET", "/_all_dbs")
+
+    0006: [0] 56 b4 20 ................... loadString <GET> 
+    0009: [1] 56 bc 20 ................... loadString </_all_dbs> 
+    0012: [2] 19 3c 04 ................... callThisSlot <slot: 30> <argc: 2> 
+    0015: [0] 93 ......................... pushResult 
+    0016: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Couch-39]  public const function bulkUpdate(data) : Object
+
+     ARG:   [arg-00]   private data
+
+    0000: [0] 33 0a c2 02 be 21 .......... debug 
+
+    # ejs.db.couch/Couch.es:161             cmd("POST", "/" + db + "/_bulk_docs", data)
+
+    0006: [0] 56 ae 22 ................... loadString <POST> 
+    0009: [1] 56 b8 22 ................... loadString </> 
+    0012: [2] 57 ......................... loadThis 
+    0013: [3] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0018: [3] 00 ......................... add 
+    0019: [2] 56 bc 22 ................... loadString </_bulk_docs> 
+    0022: [3] 00 ......................... add 
+    0023: [2] 5b ......................... getLocalSlot0 
+    0024: [3] 19 3c 06 ................... callThisSlot <slot: 30> <argc: 3> 
+    0027: [0] 93 ......................... pushResult 
+    0028: [1] bf ......................... returnValue 
+    
+VARIABLE:   [data-00]  private var data
+
+FUNCTION:   [Couch-40]  public const function compact() : Object
+
+
+    0000: [0] 33 0a ce 02 b0 23 .......... debug 
+
+    # ejs.db.couch/Couch.es:167             cmd("POST", db + "/_compact")
+
+    0006: [0] 56 ae 22 ................... loadString <POST> 
+    0009: [1] 57 ......................... loadThis 
+    0010: [2] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0015: [2] 56 84 24 ................... loadString </_compact> 
+    0018: [3] 00 ......................... add 
+    0019: [2] 19 3c 04 ................... callThisSlot <slot: 30> <argc: 2> 
+    0022: [0] 93 ......................... pushResult 
+    0023: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Couch-41]  public const function createDatabase() : Object
+
+
+    0000: [0] 33 0a da 02 fc 24 .......... debug 
+
+    # ejs.db.couch/Couch.es:173             cmd("PUT", "/" + db)
+
+    0006: [0] 56 be 25 ................... loadString <PUT> 
+    0009: [1] 56 b8 22 ................... loadString </> 
+    0012: [2] 57 ......................... loadThis 
+    0013: [3] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0018: [3] 00 ......................... add 
+    0019: [2] 19 3c 04 ................... callThisSlot <slot: 30> <argc: 2> 
+    0022: [0] 93 ......................... pushResult 
+    0023: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Couch-42]  public const function destroyDatabase() : Object
+
+
+    0000: [0] 33 0a e6 02 ba 26 .......... debug 
+
+    # ejs.db.couch/Couch.es:179             cmd("DELETE", "/" + db)
+
+    0006: [0] 56 82 27 ................... loadString <DELETE> 
+    0009: [1] 56 b8 22 ................... loadString </> 
+    0012: [2] 57 ......................... loadThis 
+    0013: [3] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0018: [3] 00 ......................... add 
+    0019: [2] 19 3c 04 ................... callThisSlot <slot: 30> <argc: 2> 
+    0022: [0] 93 ......................... pushResult 
+    0023: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Couch-43]  public const function cleanupView() : Object
+
+
+    0000: [0] 33 0a f2 02 fe 27 .......... debug 
+
+    # ejs.db.couch/Couch.es:185             cmd("POST", url + "/_view_cleanup/")
+
+    0006: [0] 56 ae 22 ................... loadString <POST> 
+    0009: [1] 79 f4 14 e0 28 ............. getScopedName <url> <> 
+    0014: [2] 56 e2 28 ................... loadString </_view_cleanup/> 
+    0017: [3] 00 ......................... add 
+    0018: [2] 19 3c 04 ................... callThisSlot <slot: 30> <argc: 2> 
+    0021: [0] 93 ......................... pushResult 
+    0022: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Couch-44]  public const function getDocuments() : Object
+
+
+    0000: [0] 33 0a fe 02 ea 29 .......... debug 
+
+    # ejs.db.couch/Couch.es:191             cmd("GET", db + "/_all_docs")
+
+    0006: [0] 56 b4 20 ................... loadString <GET> 
+    0009: [1] 57 ......................... loadThis 
+    0010: [2] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0015: [2] 56 be 2a ................... loadString </_all_docs> 
+    0018: [3] 00 ......................... add 
+    0019: [2] 19 3c 04 ................... callThisSlot <slot: 30> <argc: 2> 
+    0022: [0] 93 ......................... pushResult 
+    0023: [1] bf ......................... returnValue 
+    
+
+FUNCTION:   [Couch-45]  public const function createDoc(data) : Object
+
+     ARG:   [arg-00]   private data
+
+    0000: [0] 33 0a 92 03 c0 2b .......... debug 
+
+    # ejs.db.couch/Couch.es:201             cmd("POST", db, data)
+
+    0006: [0] 56 ae 22 ................... loadString <POST> 
+    0009: [1] 57 ......................... loadThis 
+    0010: [2] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0015: [2] 5b ......................... getLocalSlot0 
+    0016: [3] 19 3c 06 ................... callThisSlot <slot: 30> <argc: 3> 
+    0019: [0] 93 ......................... pushResult 
+    0020: [1] bf ......................... returnValue 
+    
+VARIABLE:   [data-00]  private var data
+
+FUNCTION:   [Couch-46]  public const function deleteDoc(name: String, ref: String) : Object
+
+     ARG:   [arg-00]   private name : String
+     ARG:   [arg-01]   private ref : String
+
+    0000: [0] 33 0a 9e 03 94 2d .......... debug 
+
+    # ejs.db.couch/Couch.es:207             cmd("DELETE", db + "/" + name + "?ref=" + ref)
+
+    0006: [0] 56 82 27 ................... loadString <DELETE> 
+    0009: [1] 57 ......................... loadThis 
+    0010: [2] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0015: [2] 56 b8 22 ................... loadString </> 
+    0018: [3] 00 ......................... add 
+    0019: [2] 5b ......................... getLocalSlot0 
+    0020: [3] 00 ......................... add 
+    0021: [2] 56 8a 2e ................... loadString <?ref=> 
+    0024: [3] 00 ......................... add 
+    0025: [2] 5c ......................... getLocalSlot1 
+    0026: [3] 00 ......................... add 
+    0027: [2] 19 3c 04 ................... callThisSlot <slot: 30> <argc: 2> 
+    0030: [0] 93 ......................... pushResult 
+    0031: [1] bf ......................... returnValue 
+    
+VARIABLE:   [name-00]  private var name : String
+VARIABLE:   [ref-01]  private var ref : String
+
+FUNCTION:   [Couch-47]  public const function getDoc(id: String) : Object
+
+     ARG:   [arg-00]   private id : String
+
+    0000: [0] 33 0a aa 03 94 2f .......... debug 
+
+    # ejs.db.couch/Couch.es:213             cmd("GET", db + "/" + id)
+
+    0006: [0] 56 b4 20 ................... loadString <GET> 
+    0009: [1] 57 ......................... loadThis 
+    0010: [2] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0015: [2] 56 b8 22 ................... loadString </> 
+    0018: [3] 00 ......................... add 
+    0019: [2] 5b ......................... getLocalSlot0 
+    0020: [3] 00 ......................... add 
+    0021: [2] 19 3c 04 ................... callThisSlot <slot: 30> <argc: 2> 
+    0024: [0] 93 ......................... pushResult 
+    0025: [1] bf ......................... returnValue 
+    
+VARIABLE:   [id-00]  private var id : String
+
+FUNCTION:   [Couch-48]  public const function updateDoc(name: String, data) : Object
+
+     ARG:   [arg-00]   private name : String
+     ARG:   [arg-01]   private data
+
+    0000: [0] 33 0a b6 03 e2 30 .......... debug 
+
+    # ejs.db.couch/Couch.es:219             cmd("PUT", db + "/" + name, data)
+
+    0006: [0] 56 be 25 ................... loadString <PUT> 
+    0009: [1] 57 ......................... loadThis 
+    0010: [2] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0015: [2] 56 b8 22 ................... loadString </> 
+    0018: [3] 00 ......................... add 
+    0019: [2] 5b ......................... getLocalSlot0 
+    0020: [3] 00 ......................... add 
+    0021: [2] 5c ......................... getLocalSlot1 
+    0022: [3] 19 3c 06 ................... callThisSlot <slot: 30> <argc: 3> 
+    0025: [0] 93 ......................... pushResult 
+    0026: [1] bf ......................... returnValue 
+    
+VARIABLE:   [name-00]  private var name : String
+VARIABLE:   [data-01]  private var data
+
+FUNCTION:   [Couch-49]  public const function tempView(viewCode: String) : Object
+
+     ARG:   [arg-00]   private viewCode : String
+
+    0000: [0] 33 0a c4 03 bc 32 .......... debug 
+
+    # ejs.db.couch/Couch.es:226             cmd("POST", db + "/_temp_view", viewCode)
+
+    0006: [0] 56 ae 22 ................... loadString <POST> 
+    0009: [1] 57 ......................... loadThis 
+    0010: [2] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0015: [2] 56 a8 33 ................... loadString </_temp_view> 
+    0018: [3] 00 ......................... add 
+    0019: [2] 5b ......................... getLocalSlot0 
+    0020: [3] 19 3c 06 ................... callThisSlot <slot: 30> <argc: 3> 
+    0023: [0] 93 ......................... pushResult 
+    0024: [1] bf ......................... returnValue 
+    
+VARIABLE:   [viewCode-00]  private var viewCode : String
+
+FUNCTION:   [Couch-50]  public const function view(name: String, options) : Object
+
+     ARG:   [arg-00]   private name : String
+     ARG:   [arg-01]   private options
+   LOCAL:   [local-02] var parts
+   LOCAL:   [local-03] var view
+   LOCAL:   [local-04] var design
+   LOCAL:   [local-05] var uri
+
+    0000: [0] 41 02 02 08 ................ initDefaultArgs8 <2> <4> <10> 
+    0004: [0] 50 ......................... loadGlobal 
+    0005: [1] 7b bc 0f 02 ................ getObjName <null> <ejs> 
+    0009: [1] 95 ......................... putLocalSlot1 
+    0010: [0] 33 0a d0 03 ec 34 .......... debug 
+
+    # ejs.db.couch/Couch.es:232             let parts = name.split(":")
+
+    0016: [0] 5b ......................... getLocalSlot0 
+    0017: [1] 56 bc 35 ................... loadString <:> 
+    0020: [2] 18 70 02 ................... callObjSlot <slot: 56> <argc: 1> 
+    0023: [0] 93 ......................... pushResult 
+    0024: [1] 96 ......................... putLocalSlot2 
+    0025: [0] 33 0a d2 03 c0 35 .......... debug 
+
+    # ejs.db.couch/Couch.es:233             let view = parts[0]
+
+    0031: [0] 5d ......................... getLocalSlot2 
+    0032: [1] 56 e0 28 ................... loadString <> 
+    0035: [2] 44 ......................... load0 
+    0036: [3] 7c ......................... getObjNameExpr 
+    0037: [1] 97 ......................... putLocalSlot3 
+    0038: [0] 33 0a d4 03 8a 36 .......... debug 
+
+    # ejs.db.couch/Couch.es:234             let design = parts[1] || "master"
+
+    0044: [0] 5d ......................... getLocalSlot2 
+    0045: [1] 56 e0 28 ................... loadString <> 
+    0048: [2] 45 ......................... load1 
+    0049: [3] 7c ......................... getObjNameExpr 
+    0050: [1] 39 ......................... dup 
+    0051: [2] 14 04 ...................... branchTrue8 <addr: 57> 
+    0053: [1] 90 ......................... pop 
+    0054: [0] 56 f4 36 ................... loadString <master> 
+    0057: [1] 98 ......................... putLocalSlot4 
+    0058: [0] 33 0a d6 03 82 37 .......... debug 
+
+    # ejs.db.couch/Couch.es:235             let uri = db + "/_design/" + design + "/_view/" + view
+
+    0064: [0] 57 ......................... loadThis 
+    0065: [1] 7b b4 03 ba 03 ............. getObjName <db> <[ejs.db.couch::Couch,private]> 
+    0070: [1] 56 88 38 ................... loadString </_design/> 
+    0073: [2] 00 ......................... add 
+    0074: [1] 5f ......................... getLocalSlot4 
+    0075: [2] 00 ......................... add 
+    0076: [1] 56 9c 38 ................... loadString </_view/> 
+    0079: [2] 00 ......................... add 
+    0080: [1] 5e ......................... getLocalSlot3 
+    0081: [2] 00 ......................... add 
+    0082: [1] 99 ......................... putLocalSlot5 
+    0083: [0] 33 0a d8 03 ac 38 .......... debug 
+
+    # ejs.db.couch/Couch.es:236             if (options) {
+
+    0089: [0] 5c ......................... getLocalSlot1 
+    0090: [1] 13 10 ...................... branchFalse8 <addr: 108> 
+    0092: [0] 33 0a da 03 e2 38 .......... debug 
+
+    # ejs.db.couch/Couch.es:237                 uri += "?" + options
+
+    0098: [0] 60 ......................... getLocalSlot5 
+    0099: [1] 56 ac 39 ................... loadString <?> 
+    0102: [2] 5c ......................... getLocalSlot1 
+    0103: [3] 00 ......................... add 
+    0104: [2] 00 ......................... add 
+    0105: [1] 99 ......................... putLocalSlot5 
+    0106: [0] 3e 00 ...................... goto8 <addr: 108> 
+    0108: [0] 33 0a de 03 b0 39 .......... debug 
+
+    # ejs.db.couch/Couch.es:239             return cmd("GET", uri)
+
+    0114: [0] 56 b4 20 ................... loadString <GET> 
+    0117: [1] 60 ......................... getLocalSlot5 
+    0118: [2] 19 3c 04 ................... callThisSlot <slot: 30> <argc: 2> 
+    0121: [0] 93 ......................... pushResult 
+    0122: [1] bf ......................... returnValue 
+    
+VARIABLE:   [name-00]  private var name : String
+VARIABLE:   [options-01]  private var options
+VARIABLE:   [parts-02]  private var parts
+VARIABLE:   [view-03]  private var view
+VARIABLE:   [design-04]  private var design
+VARIABLE:   [uri-05]  private var uri
+VARIABLE:   [db-00]  [ejs.db.couch::Couch,private] var db : String
+VARIABLE:   [uri-01]  [ejs.db.couch::Couch,private] var uri : Uri
+VARIABLE:   [hp-02]  [ejs.db.couch::Couch,private] var hp : Http
+
+----------------------------------------------------------------------------------------------
+
+#
+#  Global slot assignments (Num prop 143)
+#
+0142    ejs.db.couch var Couch: Type
+
+#
+#  Initializer slot assignments (Num prop 0)
+#
+
+#
+#  Class slot assignments for the "Couch" class (Num slots 51, num inherited 26)
+#
+0000    public function constructor
+0001    ejs function length
+0002    public function prototype
+0003    public function clone
+0004    reserved slot for base class property
+0005    reserved slot for base class property
+0006    reserved slot for base class property
+0007    reserved slot for base class property
+0008    iterator function get
+0009    reserved slot for base class property
+0010    reserved slot for base class property
+0011    reserved slot for base class property
+0012    iterator function getValues
+0013    public function hasOwnProperty
+0014    reserved slot for base class property
+0015    reserved slot for base class property
+0016    public function isPrototypeOf
+0017    reserved slot for base class property
+0018    reserved slot for base class property
+0019    reserved slot for base class property
+0020    public function propertyIsEnumerable
+0021    reserved slot for base class property
+0022    public function toJSON
+0023    public function toLocaleString
+0024    public function toString
+0025    public function valueOf
+0026    -constructor- function Couch
+0027    public function addListener
+0028    public function async
+0029    public function close
+0030    public function cmd
+0031    public function flush
+0032    public function http
+0033    public function removeListener
+0034    public function status
+0035    public function success
+0036    public function read
+0037    public function write
+0038    public function getDatabases
+0039    public function bulkUpdate
+0040    public function compact
+0041    public function createDatabase
+0042    public function destroyDatabase
+0043    public function cleanupView
+0044    public function getDocuments
+0045    public function createDoc
+0046    public function deleteDoc
+0047    public function getDoc
+0048    public function updateDoc
+0049    public function tempView
+0050    public function view
+
+#
+#  Instance slot assignments for the "Couch" class (Num prop 3, num inherited 0)
+#
+0000    [ejs.db.couch::Couch,private] var db: String
+0001    [ejs.db.couch::Couch,private] var uri: Uri
+0002    [ejs.db.couch::Couch,private] var hp: Http
+
+----------------------------------------------------------------------------------------------
+#
+#  Constant Pool (size 3902 bytes)
+#
+0000   ""
+0001   "ejs"
+0002   "ejs.db.couch/Couch.es"
+0003   "}"
+0004   "internal-b96835566cdd0b64a5164faac5d10b13-4"
+0005   "ejs.db.couch"
+0006   "module ejs.db.couch {"
+0007   "    class Couch implements Stream {"
+0008   "Couch"
+0009   "        use default namespace public"
+0010   "        private var db: String"
+0011   "db"
+0012   "[ejs.db.couch::Couch,private]"
+0013   "String"
+0014   "        private var uri: Uri"
+0015   "uri"
+0016   "Uri"
+0017   "        private var hp: Http"
+0018   "hp"
+0019   "Http"
+0020   "        function Couch(uri: Uri, db: String) {"
+0021   "            this.db = db"
+0022   "            this.uri = uri"
+0023   "            hp = new Http"
+0024   "            hp.async = true"
+0025   "true"
+0026   "async"
+0027   "public"
+0028   "        }"
+0029   "-constructor-"
+0030   "private"
+0031   "        function addListener(event: String, listener: Function): Void"
+0032   "            hp.addListener(event, listener)"
+0033   "addListener"
+0034   "event"
+0035   "listener"
+0036   "Function"
+0037   "Void"
+0038   "        function get async(): Boolean"
+0039   "            hp.async"
+0040   "Boolean"
+0041   "        function set async(enabled: Boolean): Void {"
+0042   "            hp.async = enabled"
+0043   "enabled"
+0044   "        function close(): Void "
+0045   "            hp.close"
+0046   "close"
+0047   "        function cmd(method: String, url: String, data: String? = null): Object {"
+0048   "null"
+0049   "            hp.method = method"
+0050   "method"
+0051   "            if (data) {"
+0052   "                hp.setHeader("Content-Length", data.length)"
+0053   "Content-Length"
+0054   "length"
+0055   "            }"
+0056   "            hp.connect(uri.join(url))"
+0057   "                hp.write(data)"
+0058   "            hp.finalize()"
+0059   "            if (!hp.async) {"
+0060   "                return deserialize(hp.response)"
+0061   "response"
+0062   "cmd"
+0063   "url"
+0064   "data"
+0065   "Object"
+0066   "        function flush(): Void {}"
+0067   "flush"
+0068   "        function get http(): Http"
+0069   "            hp"
+0070   "http"
+0071   "        function removeListener(event: String, listener: Function): Void"
+0072   "            hp.removeListener(event, listener)"
+0073   "removeListener"
+0074   "        function get status(): Number"
+0075   "            hp.status"
+0076   "status"
+0077   "Number"
+0078   "        function get success(): Boolean"
+0079   "            200 <= hp.status && hp.status < 300"
+0080   "success"
+0081   "        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number"
+0082   "            hp.read(buffer, offset, count)"
+0083   "read"
+0084   "buffer"
+0085   "ByteArray"
+0086   "offset"
+0087   "count"
+0088   "        function write(...data): Void"
+0089   "            hp.write(data)"
+0090   "write"
+0091   "Array"
+0092   "        function getDatabases(): Object "
+0093   "            cmd("GET", "/_all_dbs")"
+0094   "GET"
+0095   "/_all_dbs"
+0096   "getDatabases"
+0097   "        function bulkUpdate(data): Object"
+0098   "            cmd("POST", "/" + db + "/_bulk_docs", data)"
+0099   "POST"
+0100   "/"
+0101   "/_bulk_docs"
+0102   "bulkUpdate"
+0103   "        function compact(): Object"
+0104   "            cmd("POST", db + "/_compact")"
+0105   "/_compact"
+0106   "compact"
+0107   "        function createDatabase(): Object"
+0108   "            cmd("PUT", "/" + db)"
+0109   "PUT"
+0110   "createDatabase"
+0111   "        function destroyDatabase(): Object"
+0112   "            cmd("DELETE", "/" + db)"
+0113   "DELETE"
+0114   "destroyDatabase"
+0115   "        function cleanupView(): Object"
+0116   "            cmd("POST", url + "/_view_cleanup/")"
+0117   ""
+0118   "/_view_cleanup/"
+0119   "cleanupView"
+0120   "        function getDocuments(): Object"
+0121   "            cmd("GET", db + "/_all_docs")"
+0122   "/_all_docs"
+0123   "getDocuments"
+0124   "        function createDoc(data): Object"
+0125   "            cmd("POST", db, data)"
+0126   "createDoc"
+0127   "        function deleteDoc(name: String, ref: String): Object"
+0128   "            cmd("DELETE", db + "/" + name + "?ref=" + ref)"
+0129   "?ref="
+0130   "deleteDoc"
+0131   "name"
+0132   "ref"
+0133   "        function getDoc(id: String): Object"
+0134   "            cmd("GET", db + "/" + id)"
+0135   "getDoc"
+0136   "id"
+0137   "        function updateDoc(name: String, data): Object"
+0138   "            cmd("PUT", db + "/" + name, data)"
+0139   "updateDoc"
+0140   "        function tempView(viewCode: String): Object "
+0141   "            cmd("POST", db + "/_temp_view", viewCode)"
+0142   "/_temp_view"
+0143   "tempView"
+0144   "viewCode"
+0145   "        function view(name: String, options = null): Object {"
+0146   "parts"
+0147   "            let parts = name.split(":")"
+0148   ":"
+0149   "            let view = parts[0]"
+0150   "view"
+0151   "            let design = parts[1] || "master""
+0152   "design"
+0153   "master"
+0154   "            let uri = db + "/_design/" + design + "/_view/" + view"
+0155   "/_design/"
+0156   "/_view/"
+0157   "            if (options) {"
+0158   "                uri += "?" + options"
+0159   "?"
+0160   "            return cmd("GET", uri)"
+0161   "options"
+0162   "constructor"
+0163   "prototype"
+0164   "clone"
+0165   "get"
+0166   "iterator"
+0167   "Iterator"
+0168   "getValues"
+0169   "hasOwnProperty"
+0170   "isPrototypeOf"
+0171   "propertyIsEnumerable"
+0172   "toJSON"
+0173   "toLocaleString"
+0174   "toString"
+0175   "valueOf"
+0176   "block_0030_29"
+0177   "-block-"
+0178   "__initializer__"

@@ -1,0 +1,14 @@
+class Shape {
+    public var x
+
+    function render() {
+        x++
+    }
+}
+
+
+var s: Shape = new Shape
+
+//  Bound to s.x        BUG 
+print(s.x)
+

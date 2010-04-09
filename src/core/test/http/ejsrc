@@ -1,0 +1,12 @@
+{
+    cache: {
+        enable: true,
+        reload: true,
+    },
+    log: {
+        enable: true,
+        where: "ejs.log",
+        level: 4,
+        showClient: true,
+    },
+}

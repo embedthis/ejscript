@@ -1,0 +1,429 @@
+#
+#  ejs.web.jsgi.lst -- Module Listing for ../../modules/ejs.web.jsgi.mod
+#
+
+==============================================================================================
+
+MODULE:   ejs.web.jsgi <hasInitializer, >
+
+
+FUNCTION:   [initializer]  ejs function __initializer__() : Void
+
+   LOCAL:   [local-00] var block_0009_504 : Block
+   LOCAL:   [local-01] var block_0011_508 : Block
+   LOCAL:   [local-02] var block_0002_511 : Block
+
+    0000: [0] 8d 00 00 ................... openBlock <slot: 0> <0> 
+    0003: [0] 33 0a 2e 3a ................ debug 
+
+    # ejs.web.jsgi/Cascade.es:23 }
+
+    0007: [0] 01 3e ...................... addNamespace <internal-408ddbfa9dd3c73025c9cfa8cef630fa-21> 
+    0009: [0] 01 98 01 ................... addNamespace <ejs.web.jsgi> 
+    0012: [0] 33 0a 12 b2 01 ............. debug 
+
+    # ejs.web.jsgi/Cascade.es:9 module ejs.web.jsgi {
+
+    0017: [0] 33 0a 18 de 01 ............. debug 
+
+    # ejs.web.jsgi/Cascade.es:12     function Cascade(apps, status = 404) {
+
+    0022: [0] 24 ......................... closeBlock 
+    0023: [0] 8d 02 00 ................... openBlock <slot: 1> <0> 
+    0026: [0] 33 c2 08 2c 3a ............. debug 
+
+    # ejs.web.jsgi/Head.es:22   }
+
+    0031: [0] 01 ec 08 ................... addNamespace <internal-446c1cb7588a065bc45829a5f98c59f0-22> 
+    0034: [0] 01 98 01 ................... addNamespace <ejs.web.jsgi> 
+    0037: [0] 33 c2 08 16 b2 01 .......... debug 
+
+    # ejs.web.jsgi/Head.es:11   module ejs.web.jsgi {
+
+    0043: [0] 33 c2 08 1a c6 09 .......... debug 
+
+    # ejs.web.jsgi/Head.es:13       function Head(app) {
+
+    0049: [0] 24 ......................... closeBlock 
+    0050: [0] 8d 04 00 ................... openBlock <slot: 2> <0> 
+    0053: [0] 33 9a 0d 20 3a ............. debug 
+
+    # ejs.web.jsgi/Static.es:16 }
+
+    0058: [0] 01 c8 0d ................... addNamespace <internal-ee513f379b5d49446f07dc9d746845d2-23> 
+    0061: [0] 01 98 01 ................... addNamespace <ejs.web.jsgi> 
+    0064: [0] 33 9a 0d 04 b2 01 .......... debug 
+
+    # ejs.web.jsgi/Static.es:2  module ejs.web.jsgi {
+
+    0070: [0] 33 9a 0d 0a a2 0e .......... debug 
+
+    # ejs.web.jsgi/Static.es:5      function Static(app, options = {}) {
+
+    0076: [0] 24 ......................... closeBlock 
+    0077: [0] 3b ......................... endCode 
+    
+
+BLOCK:      [block_0009_504-00]  block_0009_504 (Slots 0)
+
+BLOCK:      [block_0011_508-01]  block_0011_508 (Slots 0)
+
+BLOCK:      [block_0002_511-02]  block_0002_511 (Slots 0)
+
+FUNCTION:   [Cascade-185]  ejs.web.jsgi function Cascade(apps, status) : void
+
+     ARG:   [arg-00]   private apps
+     ARG:   [arg-01]   private status
+   LOCAL:   [local-02] var --fun_20693--697345712-- : Function
+
+    0000: [0] 41 02 02 06 ................ initDefaultArgs8 <2> <4> <8> 
+    0004: [0] 51 a8 06 ................... loadInt <404> 
+    0007: [1] 95 ......................... putLocalSlot1 
+    0008: [0] 33 0a 1a b4 02 ............. debug 
+
+    # ejs.web.jsgi/Cascade.es:13         return function(request) {
+
+    0013: [0] 35 04 00 ................... defineFunction <slot: 2> <0> 
+    0016: [0] 33 0a 1a b4 02 ............. debug 
+
+    # ejs.web.jsgi/Cascade.es:13         return function(request) {
+
+    0021: [0] 33 0a 2a d4 07 ............. debug 
+
+    # ejs.web.jsgi/Cascade.es:21         }
+
+    0026: [0] 5d ......................... getLocalSlot2 
+    0027: [1] bf ......................... returnValue 
+    
+VARIABLE:   [apps-00]  private var apps
+VARIABLE:   [status-01]  private var status
+
+FUNCTION:   [--fun_20693--697345712---02]  private function --fun_20693--697345712--(request) : void
+
+     ARG:   [arg-00]   private request
+   LOCAL:   [local-01] var app
+   LOCAL:   [local-02] var response
+
+    0000: [0] 33 0a 1c fa 02 ............. debug 
+
+    # ejs.web.jsgi/Cascade.es:14             for each (app in apps) {
+
+    0005: [0] 7d 00 02 ................... getBlockSlot <slot: 0> <1> 
+    0008: [1] 1e e2 03 f6 03 00 .......... callObjName <getValues> <iterator> <argc: 0> 
+    0014: [0] 93 ......................... pushResult 
+    0015: [1] 39 ......................... dup 
+    0016: [2] 18 34 00 ................... callObjSlot <slot: 26> <argc: 0> 
+    0019: [1] 93 ......................... pushResult 
+    0020: [2] 95 ......................... putLocalSlot1 
+    0021: [1] 33 0a 1e 9a 04 ............. debug 
+
+    # ejs.web.jsgi/Cascade.es:15                 let response = app(request)
+
+    0026: [1] 5b ......................... getLocalSlot0 
+    0027: [2] 1a 02 00 02 ................ callBlockSlot <slot: 1> <0> <argc: 1> 
+    0031: [1] 93 ......................... pushResult 
+    0032: [2] 96 ......................... putLocalSlot2 
+    0033: [1] 33 0a 20 f2 04 ............. debug 
+
+    # ejs.web.jsgi/Cascade.es:16                 if (response.status !== status) {
+
+    0038: [1] 5d ......................... getLocalSlot2 
+    0039: [2] 7b d6 05 00 ................ getObjName <status> <> 
+    0043: [2] 7d 02 02 ................... getBlockSlot <slot: 1> <1> 
+    0046: [3] 2d ......................... compareStrictlyNe 
+    0047: [2] 13 09 ...................... branchFalse8 <addr: 58> 
+    0049: [1] 33 0a 22 e4 05 ............. debug 
+
+    # ejs.web.jsgi/Cascade.es:17                     return response
+
+    0054: [1] 5d ......................... getLocalSlot2 
+    0055: [2] bf ......................... returnValue 
+    0056: [0] 3e 00 ...................... goto8 <addr: 58> 
+    0058: [0] 3e d3 ...................... goto8 <addr: 15> 
+    0060: [0] 90 ......................... pop 
+    0061: [-1] 33 0a 28 ac 06 ............. debug 
+
+    # ejs.web.jsgi/Cascade.es:20             return null
+
+    0066: [-1] 50 ......................... loadGlobal 
+    0067: [0] 7b dc 06 02 ................ getObjName <null> <ejs> 
+    0071: [0] bf ......................... returnValue 
+    
+
+#
+#  Exception Section
+#    Kind     TryStart TryEnd  HandlerStart  HandlerEnd   CatchType
+#
+0   iteration     16      19         60           60       StopIteration
+
+VARIABLE:   [request-00]  private var request
+VARIABLE:   [app-01]  -hoisted-1 static var app
+VARIABLE:   [response-02]  -hoisted-1 static var response
+
+FUNCTION:   [Head-186]  ejs.web.jsgi function Head(app) : void
+
+     ARG:   [arg-00]   private app
+   LOCAL:   [local-01] var --fun_20758--697345711-- : Function
+
+    0000: [0] 33 c2 08 1c b4 02 .......... debug 
+
+    # ejs.web.jsgi/Head.es:14           return function(request) {
+
+    0006: [0] 35 02 00 ................... defineFunction <slot: 1> <0> 
+    0009: [0] 33 c2 08 1c b4 02 .......... debug 
+
+    # ejs.web.jsgi/Head.es:14           return function(request) {
+
+    0015: [0] 33 c2 08 28 d4 07 .......... debug 
+
+    # ejs.web.jsgi/Head.es:20           }
+
+    0021: [0] 5c ......................... getLocalSlot1 
+    0022: [1] bf ......................... returnValue 
+    
+VARIABLE:   [app-00]  private var app
+
+FUNCTION:   [--fun_20758--697345711---01]  private function --fun_20758--697345711--(request) : void
+
+     ARG:   [arg-00]   private request
+   LOCAL:   [local-01] var response
+
+    0000: [0] 33 c2 08 1e f8 09 .......... debug 
+
+    # ejs.web.jsgi/Head.es:15               var response = app(request)
+
+    0006: [0] 5b ......................... getLocalSlot0 
+    0007: [1] 1a 00 02 02 ................ callBlockSlot <slot: 0> <1> <argc: 1> 
+    0011: [0] 93 ......................... pushResult 
+    0012: [1] 95 ......................... putLocalSlot1 
+    0013: [0] 33 c2 08 20 c8 0a .......... debug 
+
+    # ejs.web.jsgi/Head.es:16               if (request.method == "HEAD") {
+
+    0019: [0] 5b ......................... getLocalSlot0 
+    0020: [1] 7b a0 0b 00 ................ getObjName <method> <> 
+    0024: [1] 56 ae 0b ................... loadString <HEAD> 
+    0027: [2] 25 ......................... compareEq 
+    0028: [1] 13 10 ...................... branchFalse8 <addr: 46> 
+    0030: [0] 33 c2 08 22 b8 0b .......... debug 
+
+    # ejs.web.jsgi/Head.es:17                   response.body = []
+
+    0036: [0] 7e 0a ...................... getGlobalSlot <slot: 5> 
+    0038: [1] 89 ......................... new 
+    0039: [1] 5c ......................... getLocalSlot1 
+    0040: [2] b3 fe 0b 00 ................ putObjName <body> <> 
+    0044: [0] 3e 00 ...................... goto8 <addr: 46> 
+    0046: [0] 33 c2 08 26 88 0c .......... debug 
+
+    # ejs.web.jsgi/Head.es:19               return response
+
+    0052: [0] 5c ......................... getLocalSlot1 
+    0053: [1] bf ......................... returnValue 
+    
+VARIABLE:   [request-00]  private var request
+VARIABLE:   [response-01]  private var response
+
+FUNCTION:   [Static-187]  ejs.web.jsgi function Static(app, options) : void
+
+     ARG:   [arg-00]   private app
+     ARG:   [arg-01]   private options
+   LOCAL:   [local-02] var urls
+   LOCAL:   [local-03] var root
+   LOCAL:   [local-04] var --fun_20850--697345710-- : Function
+
+    0000: [0] 41 02 02 07 ................ initDefaultArgs8 <2> <4> <9> 
+    0004: [0] 8a e4 06 00 ................ newObject <type: 0x1b2,  ejs::Object> <argc: 0> <att: >
+    0008: [1] 95 ......................... putLocalSlot1 
+    0009: [0] 33 9a 0d 0c fe 0e .......... debug 
+
+    # ejs.web.jsgi/Static.es:6          let urls = options.urls || ["/favicon.ico"]
+
+    0015: [0] 5c ......................... getLocalSlot1 
+    0016: [1] 7b f4 0e 00 ................ getObjName <urls> <> 
+    0020: [1] 39 ......................... dup 
+    0021: [2] 14 0e ...................... branchTrue8 <addr: 37> 
+    0023: [1] 90 ......................... pop 
+    0024: [0] 7e 0a ...................... getGlobalSlot <slot: 5> 
+    0026: [1] 89 ......................... new 
+    0027: [1] 39 ......................... dup 
+    0028: [2] 56 e6 0f ................... loadString </favicon.ico> 
+    0031: [3] c5 ......................... swap 
+    0032: [3] 56 80 10 ................... loadString <> 
+    0035: [4] 44 ......................... load0 
+    0036: [5] b2 ......................... putObjNameExpr 
+    0037: [1] 96 ......................... putLocalSlot2 
+    0038: [0] 33 9a 0d 0e 82 10 .......... debug 
+
+    # ejs.web.jsgi/Static.es:7          let root = options.root || request.dir
+
+    0044: [0] 5c ......................... getLocalSlot1 
+    0045: [1] 7b e0 10 00 ................ getObjName <root> <> 
+    0049: [1] 39 ......................... dup 
+    0050: [2] 14 0a ...................... branchTrue8 <addr: 62> 
+    0052: [1] 90 ......................... pop 
+    0053: [0] 79 a8 07 80 10 ............. getScopedName <request> <> 
+    0058: [1] 7b ea 10 00 ................ getObjName <dir> <> 
+    0062: [1] 97 ......................... putLocalSlot3 
+    0063: [0] 33 9a 0d 10 b4 02 .......... debug 
+
+    # ejs.web.jsgi/Static.es:8          return function(request) {
+
+    0069: [0] 35 08 00 ................... defineFunction <slot: 4> <0> 
+    0072: [0] 33 9a 0d 10 b4 02 .......... debug 
+
+    # ejs.web.jsgi/Static.es:8          return function(request) {
+
+    0078: [0] 33 9a 0d 1c d4 07 .......... debug 
+
+    # ejs.web.jsgi/Static.es:14         }
+
+    0084: [0] 5f ......................... getLocalSlot4 
+    0085: [1] bf ......................... returnValue 
+    
+VARIABLE:   [app-00]  private var app
+VARIABLE:   [options-01]  private var options
+VARIABLE:   [urls-02]  private var urls
+VARIABLE:   [root-03]  private var root
+
+FUNCTION:   [--fun_20850--697345710---04]  private function --fun_20850--697345710--(request) : void
+
+     ARG:   [arg-00]   private request
+   LOCAL:   [local-01] var path
+
+    0000: [0] 33 9a 0d 12 f2 10 .......... debug 
+
+    # ejs.web.jsgi/Static.es:9              if (urls.contains(request.pathInfo)) {
+
+    0006: [0] 7d 04 02 ................... getBlockSlot <slot: 2> <1> 
+    0009: [1] 5b ......................... getLocalSlot0 
+    0010: [2] 7b d8 11 00 ................ getObjName <pathInfo> <> 
+    0014: [2] 1e ea 11 00 02 ............. callObjName <contains> <> <argc: 1> 
+    0019: [0] 93 ......................... pushResult 
+    0020: [1] 13 3d ...................... branchFalse8 <addr: 83> 
+    0022: [0] 33 9a 0d 14 86 12 .......... debug 
+
+    # ejs.web.jsgi/Static.es:10                 let path = root + request.pathInfo
+
+    0028: [0] 7d 06 02 ................... getBlockSlot <slot: 3> <1> 
+    0031: [1] 5b ......................... getLocalSlot0 
+    0032: [2] 7b d8 11 00 ................ getObjName <pathInfo> <> 
+    0036: [2] 00 ......................... add 
+    0037: [1] 95 ......................... putLocalSlot1 
+    0038: [0] 33 9a 0d 16 ec 12 .......... debug 
+
+    # ejs.web.jsgi/Static.es:11                 return { status: 200, headers: "content-type: application/octet-stream", body: File(path, "r") }
+
+    0044: [0] 56 00 ...................... loadString <> 
+    0046: [1] 56 d6 05 ................... loadString <status> 
+    0049: [2] 51 90 03 ................... loadInt <200> 
+    0052: [3] 56 00 ...................... loadString <> 
+    0054: [4] 56 ce 14 ................... loadString <headers> 
+    0057: [5] 56 de 14 ................... loadString <content-type: application/octet-stream> 
+    0060: [6] 56 00 ...................... loadString <> 
+    0062: [7] 56 fe 0b ................... loadString <body> 
+    0065: [8] 5c ......................... getLocalSlot1 
+    0066: [9] 56 ac 15 ................... loadString <r> 
+    0069: [10] 17 48 04 ................... callGlobalSlot <slot: 36> <argc: 2> 
+    0072: [8] 93 ......................... pushResult 
+    0073: [9] 8a e4 06 06 00 00 00 ....... newObject <type: 0x1b2,  ejs::Object> <argc: 3> <att: 3 3 3 >
+    0080: [1] bf ......................... returnValue 
+    0081: [0] 3e 00 ...................... goto8 <addr: 83> 
+    0083: [0] 33 9a 0d 1a b0 15 .......... debug 
+
+    # ejs.web.jsgi/Static.es:13             return app(request);
+
+    0089: [0] 5b ......................... getLocalSlot0 
+    0090: [1] 1a 00 02 02 ................ callBlockSlot <slot: 0> <1> <argc: 1> 
+    0094: [0] 93 ......................... pushResult 
+    0095: [1] bf ......................... returnValue 
+    
+VARIABLE:   [request-00]  private var request
+VARIABLE:   [path-01]  -hoisted-1 static var path
+
+----------------------------------------------------------------------------------------------
+
+#
+#  Global slot assignments (Num prop 188)
+#
+0185    ejs.web.jsgi function Cascade
+0186    ejs.web.jsgi function Head
+0187    ejs.web.jsgi function Static
+
+#
+#  Initializer slot assignments (Num prop 0)
+#
+
+----------------------------------------------------------------------------------------------
+#
+#  Constant Pool (size 1472 bytes)
+#
+0000   ""
+0001   "ejs"
+0002   "ejs.web.jsgi/Cascade.es"
+0003   "}"
+0004   "internal-408ddbfa9dd3c73025c9cfa8cef630fa-21"
+0005   "ejs.web.jsgi"
+0006   "module ejs.web.jsgi {"
+0007   "    function Cascade(apps, status = 404) {"
+0008   "        return function(request) {"
+0009   "            for each (app in apps) {"
+0010   "app"
+0011   "-hoisted-1"
+0012   "getValues"
+0013   "iterator"
+0014   "response"
+0015   "                let response = app(request)"
+0016   "                if (response.status !== status) {"
+0017   "status"
+0018   "                    return response"
+0019   "            return null"
+0020   "null"
+0021   "--fun_20693--697345712--"
+0022   "private"
+0023   "request"
+0024   "StopIteration"
+0025   "        }"
+0026   "Cascade"
+0027   "apps"
+0028   "Function"
+0029   "block_0009_504"
+0030   "-block-"
+0031   "ejs.web.jsgi/Head.es"
+0032   "internal-446c1cb7588a065bc45829a5f98c59f0-22"
+0033   "    function Head(app) {"
+0034   "            var response = app(request)"
+0035   "            if (request.method == "HEAD") {"
+0036   "method"
+0037   "HEAD"
+0038   "                response.body = []"
+0039   "body"
+0040   "            return response"
+0041   "--fun_20758--697345711--"
+0042   "Head"
+0043   "block_0011_508"
+0044   "ejs.web.jsgi/Static.es"
+0045   "internal-ee513f379b5d49446f07dc9d746845d2-23"
+0046   "    function Static(app, options = {}) {"
+0047   "urls"
+0048   "        let urls = options.urls || ["/favicon.ico"]"
+0049   "/favicon.ico"
+0050   ""
+0051   "        let root = options.root || request.dir"
+0052   "root"
+0053   "dir"
+0054   "            if (urls.contains(request.pathInfo)) {"
+0055   "pathInfo"
+0056   "contains"
+0057   "path"
+0058   "                let path = root + request.pathInfo"
+0059   "                return { status: 200, headers: "content-type: application/octet-stream", body: File(path, "r") }"
+0060   "headers"
+0061   "content-type: application/octet-stream"
+0062   "r"
+0063   "            return app(request);"
+0064   "--fun_20850--697345710--"
+0065   "Static"
+0066   "options"
+0067   "block_0002_511"
+0068   "__initializer__"

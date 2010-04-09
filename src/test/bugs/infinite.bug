@@ -1,0 +1,15 @@
+/*
+ *  Infinite loop. When the exception is caused with a partial expression on the stack, the 
+ *  iterator fails because it keeps the iterator on the stack. Soln: create a local for it.
+ */
+for each (i in 10) {
+    try {
+        if (i == 7) {
+            //  Exception here with partial expression on the stack
+            print("ABC " + 123 + " DEF " + unknown.field)
+        }
+    } catch (e) {
+    }
+    print(i)
+}
+

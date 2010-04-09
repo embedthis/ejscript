@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_path" kind="struct" prot="public">
+    <compoundname>EjsPath</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_path_1ae248807571cf51539ae0777e3bf561c" prot="public" static="no" mutable="no">
+        <type>MprList *</type>
+        <definition>MprList* EjsPath::files</definition>
+        <argsstring></argsstring>
+        <name>files</name>
+        <briefdescription>
+<para>File list for enumeration. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3259" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3259" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_path_126dc6e3850293d15fb41ea3fa2dee122" prot="public" static="no" mutable="no">
+        <type>MprPath</type>
+        <definition>MprPath EjsPath::info</definition>
+        <argsstring></argsstring>
+        <name>info</name>
+        <briefdescription>
+<para>Cached file info. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3255" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3255" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_path_18a0ffeb59486a8079de590e838eb8082" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsPath::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3254" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3254" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_path_157d9e8289aacc181652dea3ead88bc3c" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsPath::path</definition>
+        <argsstring></argsstring>
+        <name>path</name>
+        <briefdescription>
+<para>Filename path. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3258" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3258" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3253" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3253" bodyend="3266"/>
+    <listofallmembers>
+      <member refid="struct_ejs_path_1ae248807571cf51539ae0777e3bf561c" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>files</name></member>
+      <member refid="struct_ejs_path_126dc6e3850293d15fb41ea3fa2dee122" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>info</name></member>
+      <member refid="struct_ejs_path_18a0ffeb59486a8079de590e838eb8082" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>obj</name></member>
+      <member refid="struct_ejs_path_157d9e8289aacc181652dea3ead88bc3c" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>path</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

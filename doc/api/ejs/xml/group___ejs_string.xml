@@ -1,0 +1,216 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="group___ejs_string" kind="group">
+    <compoundname>EjsString</compoundname>
+    <title>EjsString</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group___ejs_string_1g611144db7d4c394839bbaf8187eec557" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsString *</type>
+        <definition>EjsString* ejsCreateBareString</definition>
+        <argsstring>(Ejs *ejs, int len)</argsstring>
+        <name>ejsCreateBareString</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Create an empty string object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of space to reserve for future string data </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3722"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_string_1g140c9b85c965bf99b43cefab10fc9c6a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsString *</type>
+        <definition>EjsString* ejsCreateString</definition>
+        <argsstring>(Ejs *ejs, cchar *value)</argsstring>
+        <name>ejsCreateString</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Create a string object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>C string value to define for the string object. Note: this will soon be changed to unicode. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Prototype </para></simplesect>
+<simplesect kind="return"><para>A string object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3703"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_string_1gee6c60b8ef53bd637a6d7b9c4312f103" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsString *</type>
+        <definition>EjsString* ejsCreateStringAndFree</definition>
+        <argsstring>(Ejs *ejs, char *value)</argsstring>
+        <name>ejsCreateStringAndFree</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Create a string object and free the argument. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>C string value to define for the string object. Note: this will soon be changed to unicode. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Prototype </para></simplesect>
+<simplesect kind="return"><para>A string object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3713"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_string_1g68b0413293779cdd7151b3743e93fe11" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsString *</type>
+        <definition>EjsString* ejsCreateStringWithLength</definition>
+        <argsstring>(Ejs *ejs, cchar *value, int len)</argsstring>
+        <name>ejsCreateStringWithLength</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>len</declname>
+        </param>
+        <briefdescription>
+<para>Create a string and reserve extra room. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>C string value to define for the string object. Note: this will soon be changed to unicode. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>len</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Length of the string storage to allocate. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3732"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_string_1gc7d6dba8b2e401b79b01a3410e6794c2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsString *</type>
+        <definition>EjsString* ejsDupString</definition>
+        <argsstring>(Ejs *ejs, EjsString *sp)</argsstring>
+        <name>ejsDupString</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsString *</type>
+          <declname>sp</declname>
+        </param>
+        <briefdescription>
+<para>Duplicate a string object. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>String value to copy </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3742"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>String Class. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The String class provides the base class for all strings. Each String object represents a single immutable linear sequence of characters. Strings have operators for: comparison, concatenation, copying, searching, conversion, matching, replacement, and, subsetting. <linebreak/>
+<linebreak/>
+ Strings are currently sequences of UTF-8 characters. They will soon be upgraded to UTF-16. </para></simplesect>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving</para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_string" kindref="compound">EjsString</ref> <ref refid="group___ejs_obj_1g3bf38c71fac27819c73611bcf78ca2dd" kindref="member">ejsToString</ref> <ref refid="group___ejs_string_1g140c9b85c965bf99b43cefab10fc9c6a" kindref="member">ejsCreateString</ref> <ref refid="group___ejs_string_1g611144db7d4c394839bbaf8187eec557" kindref="member">ejsCreateBareString</ref> <ref refid="group___ejs_string_1g68b0413293779cdd7151b3743e93fe11" kindref="member">ejsCreateStringWithLength</ref> <ref refid="group___ejs_string_1gc7d6dba8b2e401b79b01a3410e6794c2" kindref="member">ejsDupString</ref> ejsVarToString ejsStrdup ejsStrcat ejsIsString ejsGetString ejsToJson </para></simplesect>
+</para>    </detaileddescription>
+  </compounddef>
+</doxygen>

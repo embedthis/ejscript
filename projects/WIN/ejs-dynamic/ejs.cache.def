@@ -1,0 +1,3 @@
+LIBRARY ejs.cache.dll
+EXPORTS
+  ejs_cache_Init

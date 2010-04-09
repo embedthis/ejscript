@@ -1,0 +1,7 @@
+//  Both won't compile
+
+function aaa(): Object
+    this
+
+function aaa(): Object
+    throw "bad"

@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Stream</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Stream</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Stream'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Stream</td></tr>
+<tr><td><strong>Specified</strong></td><td>evolving</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>Stream objects represent streams of data that pass data elements between an endpoint known as a source or sink 
+and a consumer or producer.</p>
+
+<p class='classDescription'>Streams are full-duplex and may be stacked where intermediate streams are be used 
+as filters or data mutators. Example endpoints are the File, Socket, and Http classes. The TextStream is an 
+example of a filter stream. The data elements passed by streams may be any series of objects including: bytes, 
+lines of text, numbers or objects. Streams may buffer the incoming data or not. Streams may issue events to 
+registered listeners for topics of interest. Streams may offer synchronous and asynchronous APIs.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+   <tr><td nowrap align='center'> </td><td></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+   <tr><td nowrap align='center'> </td><td></td><td>&nbsp;</td><td>&nbsp;</td></tr>
+</table>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Stream Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addListener'><b>addListener</b></a>(name, listener: <a href='intrinsic-Function.html'>Function</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a listener to the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='intrinsic-ByteArray.html'>ByteArray</a>, offset: <a href='intrinsic-Number.html'>Number</a> = 0 , count: <a href='intrinsic-Number.html'>Number</a> = -1): <a href='intrinsic-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeListener'><b>removeListener</b></a>(name, listener: <a href='intrinsic-Function.html'>Function</a>): <a href='intrinsic-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a listener from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.</td></tr>
+</table>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='addListener'></a>
+<div class='api'>
+<div class='apiSig'>const   public  addListener(name, listener: <a href='intrinsic-Function.html'>Function</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Add a listener to the stream.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='intrinsic-Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function listener(event: String, ...args): Void.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='close'></a>
+<div class='api'>
+<div class='apiSig'>const   public  close(): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Close the stream.</p>
+<dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>close</td><td>Issued before closing the stream.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='flush'></a>
+<div class='api'>
+<div class='apiSig'>const   public  flush(): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Flush the stream and underlying streams.</p>
+<dl><dt>Description</dt><dd>The act of flushing requests a stream with buffered data to 
+attempt to write all buffered data downstream. Flushing a stream with read data will cause the
+stream to discard the read data. If the stream is in sync mode, this call will block until all data is
+written. If the stream is in async mode, it will attempt to write all data but will not wait for completion.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='read'></a>
+<div class='api'>
+<div class='apiSig'>const   public  read(buffer: <a href='intrinsic-ByteArray.html'>ByteArray</a>, offset: <a href='intrinsic-Number.html'>Number</a> = 0 , count: <a href='intrinsic-Number.html'>Number</a> = -1): <a href='intrinsic-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Read a data from the stream.</p>
+<dl><dt>Description</dt><dd>If data is available, the call will return immediately. 
+If no data is available and the stream is in sync mode, the call will block until data is available.
+If no data is available and the stream is in async mode, the call will not block and will return immediately.
+In this case a "readable" event will be issued when data is available for reading.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>buffer: <a href='intrinsic-ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='intrinsic-Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated [default: 0 ]</td></tr><tr class='param'><td class='param'>count: <a href='intrinsic-Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='removeListener'></a>
+<div class='api'>
+<div class='apiSig'>const   public  removeListener(name, listener: <a href='intrinsic-Function.html'>Function</a>): <a href='intrinsic-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Remove a listener from the stream.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Event name previously used with addListener. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='intrinsic-Function.html'>Function</a> </td><td>Listener function previously used with addListener.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='write'></a>
+<div class='api'>
+<div class='apiSig'>const   public  write(data: <a href='intrinsic-Array.html'>Array</a>): <a href='intrinsic-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Write data to the stream.</p>
+<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of elements written. 
+If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
+If writing more data than the stream can absorb in async mode, the call will not block and will return 
+immediately. A "writable" event will be issued when all the data has been written.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='intrinsic-Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty and it is ready to be written to.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually written.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='intrinsic-IOError.html'>IOError</a>: if there is an I/O error. 
+</dd>
+</dl></div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,11 @@
+class Shape {
+    protected static var x = 7
+}
+
+class Eclipse extends Shape {
+
+    function Eclipse() {
+        print(super.x)
+    }
+}
+e = new Eclipse

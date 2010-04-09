@@ -1,0 +1,401 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_obj" kind="struct" prot="public">
+    <compoundname>EjsObj</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_obj_1cbc75cbb094d2e96c6227484ac4a8ce5" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsObj::bits</definition>
+        <argsstring></argsstring>
+        <name>bits</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1830" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1830" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_182dbb7c563b3cfe44671ac991ccc6a1c" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::builtin</definition>
+        <argsstring></argsstring>
+        <name>builtin</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Variable is part of the core and is always present. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1806" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1806" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1f117d8fb075f6df363222c553833e5cd" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsObj::capacity</definition>
+        <argsstring></argsstring>
+        <name>capacity</name>
+        <briefdescription>
+<para>Current size of slots[]. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1835" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1835" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1bcc4113c8369c8107167e7a99b9bd693" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::dynamic</definition>
+        <argsstring></argsstring>
+        <name>dynamic</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Object may add properties. </para>        </briefdescription>
+        <detaileddescription>
+<para>Derrived from type </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1807" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1807" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_17d4db4fba2d9037309a6e88da194098d" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::hasGetterSetter</definition>
+        <argsstring></argsstring>
+        <name>hasGetterSetter</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Class has getter/setter functions. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1808" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1808" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_11d841333a232ad42bf0f8ab90385d9fe" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::hasNativeBase</definition>
+        <argsstring></argsstring>
+        <name>hasNativeBase</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Variable has a non-object based native base class. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1809" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1809" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_11f32107977abd72ea3c4fdee8c3e00d9" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::hidden</definition>
+        <argsstring></argsstring>
+        <name>hidden</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Not enumerable via for/in. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1811" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1811" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1b3ea5e0b56436138d14c78fc36100c59" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::isFunction</definition>
+        <argsstring></argsstring>
+        <name>isFunction</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Instance is a function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1812" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1812" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1101d10ac899124bdb9a28cf8b15a7c13" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::isInstanceBlock</definition>
+        <argsstring></argsstring>
+        <name>isInstanceBlock</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Object is a type instance block object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1813" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1813" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1966e1fe7b2b26fa217075ab00fda210f" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::isType</definition>
+        <argsstring></argsstring>
+        <name>isType</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Instance is a type object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1814" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1814" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1c65da8ff96860c42c09a8c6be6af7343" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::jsonVisited</definition>
+        <argsstring></argsstring>
+        <name>jsonVisited</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>JSON traversal. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1816" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1816" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_19594c1a412141a1d661a2d8f5c3daaa2" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::marked</definition>
+        <argsstring></argsstring>
+        <name>marked</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>GC marked in use. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1817" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1817" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_11b84c8622d58f540814c725de30775d8" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::master</definition>
+        <argsstring></argsstring>
+        <name>master</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Allocated in the master interpreter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1818" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1818" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1c9879956e6040fa19f7e8ede92d031a1" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EjsObj::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>Name useful when debugging memory allocations. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1797" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1797" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1b3997352608fc1f42f41468f7d89c4b0" prot="public" static="no" mutable="no">
+        <type><ref refid="struct_ejs_names" kindref="compound">EjsNames</ref> *</type>
+        <definition>EjsNames* EjsObj::names</definition>
+        <argsstring></argsstring>
+        <name>names</name>
+        <briefdescription>
+<para>Hash table of property names. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1833" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1833" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_15660a1fde75c040c5568f8f7e6e79456" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::native</definition>
+        <argsstring></argsstring>
+        <name>native</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Native property backed by C/Java implementation. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1819" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1819" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1f390eb9d5bc1da1f28b50c9c01d1e6fb" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::noPool</definition>
+        <argsstring></argsstring>
+        <name>noPool</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Object has private allocations and can&apos;t be pooled. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1821" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1821" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1373b747c9a7c50967b65e535b92af601" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsObj::numProp</definition>
+        <argsstring></argsstring>
+        <name>numProp</name>
+        <briefdescription>
+<para>Number of properties in slots[]. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1836" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1836" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_12538cfe4043bb22bb1a61ab538365dd6" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::permanent</definition>
+        <argsstring></argsstring>
+        <name>permanent</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Object is immune from GC. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1822" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1822" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1f41d7be27b444126f17c97530b4a3c8a" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::primitive</definition>
+        <argsstring></argsstring>
+        <name>primitive</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Variable is primitive and has no properties of any kind. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1823" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1823" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1c6e912b1529b363a946324f0af2dca13" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::separateSlots</definition>
+        <argsstring></argsstring>
+        <name>separateSlots</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Has a separate memory allocation for slots. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1824" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1824" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1d7318b55d89fc6157e65879784d62ec6" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsObj::seq</definition>
+        <argsstring></argsstring>
+        <name>seq</name>
+        <briefdescription>
+<para>Unique allocations squence. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1798" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1798" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_19c460c52c3f533cf69e45a9dea1458e3" prot="public" static="no" mutable="no">
+        <type>struct EjsObj **</type>
+        <definition>struct EjsObj** EjsObj::slots</definition>
+        <argsstring></argsstring>
+        <name>slots</name>
+        <briefdescription>
+<para>Vector of slots containing property references. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1834" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1834" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_1688e8ba664658a66e322e5418cb5abc4" prot="public" static="no" mutable="no">
+        <type>struct EjsType *</type>
+        <definition>struct EjsType* EjsObj::type</definition>
+        <argsstring></argsstring>
+        <name>type</name>
+        <briefdescription>
+<para>Type of this object (not base type). </para>        </briefdescription>
+        <detaileddescription>
+<para>ie. type for Object is EjsType </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1800" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1800" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_obj_15cb7f8e3294f55f810dbc1def5edc5d7" prot="public" static="no" mutable="no">
+        <type>uint</type>
+        <definition>uint EjsObj::visited</definition>
+        <argsstring></argsstring>
+        <name>visited</name>
+        <bitfield>  1</bitfield>
+        <briefdescription>
+<para>Has been traversed. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1826" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1826" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <collaborationgraph>
+      <node id="106">
+        <label>EjsHashEntry</label>
+        <link refid="struct_ejs_hash_entry"/>
+      </node>
+      <node id="105">
+        <label>EjsNames</label>
+        <link refid="struct_ejs_names"/>
+        <childnode refid="106" relation="usage">
+          <edgelabel>entries</edgelabel>
+        </childnode>
+      </node>
+      <node id="104">
+        <label>EjsObj</label>
+        <childnode refid="105" relation="usage">
+          <edgelabel>names</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="1795" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1795" bodyend="1837"/>
+    <listofallmembers>
+      <member refid="struct_ejs_obj_1cbc75cbb094d2e96c6227484ac4a8ce5" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>bits</name></member>
+      <member refid="struct_ejs_obj_182dbb7c563b3cfe44671ac991ccc6a1c" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>builtin</name></member>
+      <member refid="struct_ejs_obj_1f117d8fb075f6df363222c553833e5cd" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>capacity</name></member>
+      <member refid="struct_ejs_obj_1bcc4113c8369c8107167e7a99b9bd693" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>dynamic</name></member>
+      <member refid="struct_ejs_obj_17d4db4fba2d9037309a6e88da194098d" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>hasGetterSetter</name></member>
+      <member refid="struct_ejs_obj_11d841333a232ad42bf0f8ab90385d9fe" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>hasNativeBase</name></member>
+      <member refid="struct_ejs_obj_11f32107977abd72ea3c4fdee8c3e00d9" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>hidden</name></member>
+      <member refid="struct_ejs_obj_1b3ea5e0b56436138d14c78fc36100c59" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>isFunction</name></member>
+      <member refid="struct_ejs_obj_1101d10ac899124bdb9a28cf8b15a7c13" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>isInstanceBlock</name></member>
+      <member refid="struct_ejs_obj_1966e1fe7b2b26fa217075ab00fda210f" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>isType</name></member>
+      <member refid="struct_ejs_obj_1c65da8ff96860c42c09a8c6be6af7343" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>jsonVisited</name></member>
+      <member refid="struct_ejs_obj_19594c1a412141a1d661a2d8f5c3daaa2" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>marked</name></member>
+      <member refid="struct_ejs_obj_11b84c8622d58f540814c725de30775d8" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>master</name></member>
+      <member refid="struct_ejs_obj_1c9879956e6040fa19f7e8ede92d031a1" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>name</name></member>
+      <member refid="struct_ejs_obj_1b3997352608fc1f42f41468f7d89c4b0" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>names</name></member>
+      <member refid="struct_ejs_obj_15660a1fde75c040c5568f8f7e6e79456" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>native</name></member>
+      <member refid="struct_ejs_obj_1f390eb9d5bc1da1f28b50c9c01d1e6fb" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>noPool</name></member>
+      <member refid="struct_ejs_obj_1373b747c9a7c50967b65e535b92af601" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>numProp</name></member>
+      <member refid="struct_ejs_obj_12538cfe4043bb22bb1a61ab538365dd6" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>permanent</name></member>
+      <member refid="struct_ejs_obj_1f41d7be27b444126f17c97530b4a3c8a" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>primitive</name></member>
+      <member refid="struct_ejs_obj_1c6e912b1529b363a946324f0af2dca13" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>separateSlots</name></member>
+      <member refid="struct_ejs_obj_1d7318b55d89fc6157e65879784d62ec6" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>seq</name></member>
+      <member refid="struct_ejs_obj_19c460c52c3f533cf69e45a9dea1458e3" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>slots</name></member>
+      <member refid="struct_ejs_obj_1688e8ba664658a66e322e5418cb5abc4" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>type</name></member>
+      <member refid="struct_ejs_obj_15cb7f8e3294f55f810dbc1def5edc5d7" prot="public" virt="non-virtual"><scope>EjsObj</scope><name>visited</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

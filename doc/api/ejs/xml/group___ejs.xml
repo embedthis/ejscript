@@ -1,0 +1,437 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="group___ejs" kind="group">
+    <compoundname>Ejs</compoundname>
+    <title>Ejs</title>
+    <innerclass refid="struct_ejs_service" prot="public">EjsService</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group___ejs_1g2074536c4ebc6f82689d783ec5cde5bf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct EjsArray *</type>
+        <definition>struct EjsArray* ejsCreateSearchPath</definition>
+        <argsstring>(Ejs *ejs, cchar *searchPath)</argsstring>
+        <name>ejsCreateSearchPath</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>searchPath</declname>
+        </param>
+        <briefdescription>
+<para>Create a search path array. </para>        </briefdescription>
+        <detaileddescription>
+<para>This can be used in ejsCreateVm. <simplesect kind="par"><title><bold>Description</bold>:</title><para>Create and array of search paths. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs interpreter </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>searchPath</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Search path string. This is a colon (or semicolon on Windows) separated string of directories. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An array of search paths </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1283"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_1g78fb0ad5d9f4998a0b64914370aacd24" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="struct_ejs_service" kindref="compound">EjsService</ref> *</type>
+        <definition>EjsService* ejsCreateService</definition>
+        <argsstring>(MprCtx ctx)</argsstring>
+        <name>ejsCreateService</name>
+        <param>
+          <type>MprCtx</type>
+          <declname>ctx</declname>
+        </param>
+        <briefdescription>
+<para>Open the Ejscript service. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>One Ejscript service object is required per application. From this service, interpreters can be created. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Any memory context returned by mprAlloc </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>An ejs service object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1251"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_1ge37bf8c732be5bbce31360a2053fd9c1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>Ejs *</type>
+        <definition>Ejs* ejsCreateVm</definition>
+        <argsstring>(MprCtx ctx, struct Ejs *master, cchar *search, MprList *require, int flags)</argsstring>
+        <name>ejsCreateVm</name>
+        <param>
+          <type>MprCtx</type>
+          <declname>ctx</declname>
+        </param>
+        <param>
+          <type>struct Ejs *</type>
+          <declname>master</declname>
+        </param>
+        <param>
+          <type>cchar *</type>
+          <declname>search</declname>
+        </param>
+        <param>
+          <type>MprList *</type>
+          <declname>require</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>flags</declname>
+        </param>
+        <briefdescription>
+<para>Create an ejs virtual machine. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Create a virtual machine interpreter object to evalute Ejscript programs. Ejscript supports multiple interpreters. One interpreter can be designated as a master interpreter and then it can be cloned by supplying the master interpreter to this call. A master interpreter provides the standard system types and clone interpreters can quickly be created an utilize the master interpreter&apos;s types. This saves memory and speeds initialization. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ctx</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Any memory context returned by mprAlloc </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>master</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional master interpreter to clone. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>search</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Module search path to use. Set to NULL for the default search path. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>require</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional list of required modules to load. If NULL, the following modules will be loaded: ejs, ejs.io, ejs.events, ejs.xml, ejs.sys and ejs.unix. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>flags</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional flags to modify the interpreter behavior. Valid flags are: <itemizedlist>
+<listitem><para>EJS_FLAG_COMPILER - Interpreter will compile code from source </para></listitem>
+<listitem><para>EJS_FLAG_NO_EXE - Don&apos;t execute any code. Just compile. </para></listitem>
+<listitem><para>EJS_FLAG_MASTER - Create a master interpreter </para></listitem>
+<listitem><para>EJS_FLAG_DOC - Load documentation from modules </para></listitem>
+<listitem><para>EJS_FLAG_NOEXIT - App should service events and not exit unless explicitly instructed </para></listitem>
+</itemizedlist>
+</para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new interpreter </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1273"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_1g2dd387ab6e232ecbe44b901cd5b01e58" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsEvalFile</definition>
+        <argsstring>(cchar *path)</argsstring>
+        <name>ejsEvalFile</name>
+        <param>
+          <type>cchar *</type>
+          <declname>path</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate a file. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Evaluate a file containing an Ejscript. This requires linking with the Ejscript compiler library (libec). </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>path</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filename of the script to evaluate </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Return zero on success. Otherwise return a negative Mpr error code. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1313"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_1g9ab6a1f6c32ecbadc72d1f09495b85b8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsEvalModule</definition>
+        <argsstring>(cchar *path)</argsstring>
+        <name>ejsEvalModule</name>
+        <param>
+          <type>cchar *</type>
+          <declname>path</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate a module. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Evaluate a module containing compiled Ejscript. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>path</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Filename of the module to evaluate. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Return zero on success. Otherwise return a negative Mpr error code. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1326"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_1gc9d73946c6d81f299103daa26fcbc7f1" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsEvalScript</definition>
+        <argsstring>(cchar *script)</argsstring>
+        <name>ejsEvalScript</name>
+        <param>
+          <type>cchar *</type>
+          <declname>script</declname>
+        </param>
+        <briefdescription>
+<para>Evaluate a script. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Evaluate a script. This requires linking with the Ejscript compiler library (libec). </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>script</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Script to evaluate </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Return zero on success. Otherwise return a negative Mpr error code. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1335"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_1g913f7898999e35964f1e93783808bda5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ejsExit</definition>
+        <argsstring>(Ejs *ejs, int status)</argsstring>
+        <name>ejsExit</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>status</declname>
+        </param>
+        <briefdescription>
+<para>Instruct the interpreter to exit. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>This will instruct the interpreter to cease interpreting any further script code. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpeter object returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>status</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reserved and ignored </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1344"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_1g219502088780c6399a9a49241c477dbe" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* ejsGetHandle</definition>
+        <argsstring>(Ejs *ejs)</argsstring>
+        <name>ejsGetHandle</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <briefdescription>
+<para>Get the hosting handle. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The interpreter can store a hosting handle. This is typically a web server object if hosted inside a web server </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpeter object returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Hosting handle </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1354"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_1ga8b22395b62585cbd8edabfea237e48d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ejsReportError</definition>
+        <argsstring>(Ejs *ejs, char *fmt,...)</argsstring>
+        <name>ejsReportError</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>char *</type>
+          <declname>fmt</declname>
+        </param>
+        <param>
+          <type>...</type>
+        </param>
+        <briefdescription>
+<para>Report an error message using the MprLog error channel. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>This will emit an error message of the format: <itemizedlist>
+<listitem><para>program:line:errorCode:SEVERITY: message </para></listitem>
+</itemizedlist>
+</para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpeter object returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>fmt</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Is an alternate printf style format to emit if the interpreter has no valid error message. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>...</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Arguments for fmt </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1384"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_1gce4f9f6ccb7c748e5a4a03f4378eca7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ejsSetSearchPath</definition>
+        <argsstring>(Ejs *ejs, struct EjsArray *search)</argsstring>
+        <name>ejsSetSearchPath</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>struct EjsArray *</type>
+          <declname>search</declname>
+        </param>
+        <briefdescription>
+<para>Set the module search path. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Set the ejs module search path. The search path is by default set to the value of the EJSPATH environment directory. Ejsript will search for modules by name. The search strategy is: Given a name &quot;a.b.c&quot;, scan for: <itemizedlist>
+<listitem><para>File named a.b.c </para></listitem>
+<listitem><para>File named a/b/c </para></listitem>
+<listitem><para>File named a.b.c in EJSPATH </para></listitem>
+<listitem><para>File named a/b/c in EJSPATH </para></listitem>
+<listitem><para>File named c in EJSPATH</para></listitem>
+</itemizedlist>
+Ejs will search for files with no extension and also search for modules with a &quot;.mod&quot; extension. If there is a shared library of the same name with a shared library extension (.so, .dll, .dylib) and the module requires native code, then the shared library will also be loaded. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs interpreter </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>search</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of search paths </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1303"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_1gc5d3f09118810332711502a61e62824b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct EjsObj *</type>
+        <definition>struct EjsObj* ejsThrowException</definition>
+        <argsstring>(Ejs *ejs, struct EjsObj *error)</argsstring>
+        <name>ejsThrowException</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>struct EjsObj *</type>
+          <declname>error</declname>
+        </param>
+        <briefdescription>
+<para>Throw an exception. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Throw an exception object </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpeter object returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Exception argument object. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The exception argument for chaining. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1372"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Ejsript Interperter Structure. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The Ejs structure contains the state for a single interpreter. The <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> routine may be used to create multiple interpreters and returns a reference to be used in subsequent Ejscript API calls. </para></simplesect>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Prototype.</para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref>, <ref refid="group___ejs_1g78fb0ad5d9f4998a0b64914370aacd24" kindref="member">ejsCreateService</ref>, ejsAppendSearchPath, <ref refid="group___ejs_1gce4f9f6ccb7c748e5a4a03f4378eca7d" kindref="member">ejsSetSearchPath</ref>, <ref refid="group___ejs_1g2dd387ab6e232ecbe44b901cd5b01e58" kindref="member">ejsEvalFile</ref>, <ref refid="group___ejs_1gc9d73946c6d81f299103daa26fcbc7f1" kindref="member">ejsEvalScript</ref>, <ref refid="group___ejs_1g913f7898999e35964f1e93783808bda5" kindref="member">ejsExit</ref> </para></simplesect>
+</para>    </detaileddescription>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,30 @@
+
+    GDB style commands:
+    set args
+    file path       Path to run
+    r               Run
+    b               breakpoint      Class.function, function in scope, linenumber in current file
+    n [count]       Step over
+    c [count]       continue count
+    s               Step into
+    finish          Finish function
+    set EXPR
+    bt              Stack trace
+    p /x            print
+    show [args|
+    up [n]
+    down [n]
+    watch expr
+    display [var]
+    help
+    kill
+    cd
+    pwd
+    clear
+    info            [locals|frame|args]
+    jump            line
+    call function
+
+???
+    dir Path
+

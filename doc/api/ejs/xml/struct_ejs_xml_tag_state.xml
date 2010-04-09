@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_xml_tag_state" kind="struct" prot="public">
+    <compoundname>EjsXmlTagState</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_xml_tag_state_1e8efcd8d23344191f7aff2f4c0901fbd" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsXmlTagState::attributes</definition>
+        <argsstring></argsstring>
+        <name>attributes</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3823" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3823" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_xml_tag_state_11ee515ee13089908a5cd9d12b76bc5ef" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsXmlTagState::comments</definition>
+        <argsstring></argsstring>
+        <name>comments</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3824" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3824" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_xml_tag_state_132f313083e2200f3fe69160d10c39b9c" prot="public" static="no" mutable="no">
+        <type>struct EjsXML *</type>
+        <definition>struct EjsXML* EjsXmlTagState::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3821" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3821" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3820" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3820" bodyend="3825"/>
+    <listofallmembers>
+      <member refid="struct_ejs_xml_tag_state_1e8efcd8d23344191f7aff2f4c0901fbd" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>attributes</name></member>
+      <member refid="struct_ejs_xml_tag_state_11ee515ee13089908a5cd9d12b76bc5ef" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>comments</name></member>
+      <member refid="struct_ejs_xml_tag_state_132f313083e2200f3fe69160d10c39b9c" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>obj</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

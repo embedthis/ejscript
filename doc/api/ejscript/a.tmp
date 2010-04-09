@@ -1,0 +1,12 @@
+hg rm  ejs.db.couch-classes.html
+hg rm  ejs.db.couch.html
+hg rm  ejs.db.mapper-classes.html
+hg rm  ejs.db.mapper.html
+hg rm  ejs.sys-Logger.html
+hg rm  ejs.web.mvc-Controller.html
+hg rm  ejs.web.mvc-HtmlConnector.html
+hg rm  ejs.web.mvc-View.html
+hg rm  ejs.web.mvc-classes.html
+hg rm  ejs.web.mvc.html
+hg rm  ejs.web.template-classes.html
+hg rm  ejs.web.template.html

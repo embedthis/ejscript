@@ -1,0 +1,3 @@
+.TP
+\fB\--require 'module ...'\fR
+List of modules to preload before compiling input files.

@@ -1,0 +1,25 @@
+function fun() {
+
+    for (i in 10) {
+        try {
+            print("CALL")
+            fun1()
+        }
+        catch (e) {
+            print("CATCH " + e)
+            break
+        } 
+        finally {
+            print("FINALLY")
+        }
+        print("BOTTOM")
+    }
+    print("OUTSIDE")
+}
+
+function fun1() {
+    print("THROW")
+    throw "BAD"
+}
+
+fun()

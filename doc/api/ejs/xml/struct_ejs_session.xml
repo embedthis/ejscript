@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_session" kind="struct" prot="public">
+    <compoundname>EjsSession</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_session_15e1a40a8af011aab2fb77aac20d055fb" prot="public" static="no" mutable="no">
+        <type>MprTime</type>
+        <definition>MprTime EjsSession::expire</definition>
+        <argsstring></argsstring>
+        <name>expire</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4683" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4683" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_session_1f8e2e5fa6a22410c0adaa22dca2884f5" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EjsSession::id</definition>
+        <argsstring></argsstring>
+        <name>id</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4684" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4684" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_session_165ce966ab5265cbbaac237f3bb53a5af" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsSession::index</definition>
+        <argsstring></argsstring>
+        <name>index</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4686" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4686" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_session_13ea9c6c840eb181990ea2f1bdc8c9c5e" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsSession::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4682" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4682" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_session_16aef5ace193eccd837611685a3d25c52" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsSession::timeout</definition>
+        <argsstring></argsstring>
+        <name>timeout</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4685" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4685" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="4681" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4680" bodyend="4687"/>
+    <listofallmembers>
+      <member refid="struct_ejs_session_15e1a40a8af011aab2fb77aac20d055fb" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>expire</name></member>
+      <member refid="struct_ejs_session_1f8e2e5fa6a22410c0adaa22dca2884f5" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>id</name></member>
+      <member refid="struct_ejs_session_165ce966ab5265cbbaac237f3bb53a5af" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>index</name></member>
+      <member refid="struct_ejs_session_13ea9c6c840eb181990ea2f1bdc8c9c5e" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>obj</name></member>
+      <member refid="struct_ejs_session_16aef5ace193eccd837611685a3d25c52" prot="public" virt="non-virtual"><scope>EjsSession</scope><name>timeout</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

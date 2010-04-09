@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="group___ejs_file_system" kind="group">
+    <compoundname>EjsFileSystem</compoundname>
+    <title>EjsFileSystem</title>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group___ejs_file_system_1gc98cb8ddcfec2dfa858cabfda4a76fb3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool ejsIsFileSystem</definition>
+        <argsstring>(EjsObj *vp)</argsstring>
+        <name>ejsIsFileSystem</name>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+<para>Determine if a variable is a Path. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to test </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>True if the variable is a FileSystem </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3364"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>FileSystem class. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The FileSystem class provides file system services. </para></simplesect>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Prototype</para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_file" kindref="compound">EjsFile</ref> <ref refid="group___ejs_file_1g5f2c865e36e54f93f3caa0159982cff9" kindref="member">ejsCreateFile</ref> ejsIsFile </para></simplesect>
+</para>    </detaileddescription>
+  </compounddef>
+</doxygen>

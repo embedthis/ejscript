@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_http" kind="struct" prot="public">
+    <compoundname>EjsHttp</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_http_177d4512edef737f6ac0adadc10910366" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsHttp::certFile</definition>
+        <argsstring></argsstring>
+        <name>certFile</name>
+        <briefdescription>
+<para>SSL certificate file. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3404" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3404" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_1226910c9b47c8557be8561b931a9676a" prot="public" static="no" mutable="no">
+        <type>HttpConn *</type>
+        <definition>HttpConn* EjsHttp::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+<para>Http connection object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3398" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3398" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_1ba88793fa4f2e119c2c1848591d194e4" prot="public" static="no" mutable="no">
+        <type>EjsByteArray *</type>
+        <definition>EjsByteArray* EjsHttp::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Buffered write data. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3396" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3396" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_1d16c20ca4c9fcd018fa9afdf91f34430" prot="public" static="no" mutable="no">
+        <type>Ejs *</type>
+        <definition>Ejs* EjsHttp::ejs</definition>
+        <argsstring></argsstring>
+        <name>ejs</name>
+        <briefdescription>
+<para>Convenience access to ejs interpreter instance. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3394" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3394" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_1f0dc799f7c7467d9d3e7680db8db5119" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsHttp::emitter</definition>
+        <argsstring></argsstring>
+        <name>emitter</name>
+        <briefdescription>
+<para>Event emitter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3395" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3395" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_1988210a9fb6266f423961a06783bac60" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsHttp::keyFile</definition>
+        <argsstring></argsstring>
+        <name>keyFile</name>
+        <briefdescription>
+<para>SSL key file. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3403" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3403" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_1ed0c91d0fc9d88375f2f3274075b571b" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsHttp::method</definition>
+        <argsstring></argsstring>
+        <name>method</name>
+        <briefdescription>
+<para>HTTP method. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3402" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3402" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_1f27f33f36c5beedecb329af236d9bd9d" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsHttp::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3393" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3393" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_138f75b2cfa8270ad37e7e7f956fd1e85" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsHttp::readCount</definition>
+        <argsstring></argsstring>
+        <name>readCount</name>
+        <briefdescription>
+<para>Count of body bytes read. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3405" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3405" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_18c55ca283a87d3de82a8850c73b7ef1e" prot="public" static="no" mutable="no">
+        <type>MprBuf *</type>
+        <definition>MprBuf* EjsHttp::requestContent</definition>
+        <argsstring></argsstring>
+        <name>requestContent</name>
+        <briefdescription>
+<para>Request body data supplied. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3399" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3399" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_10043c79ec64eade6300bbeec1d346628" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsHttp::requestContentCount</definition>
+        <argsstring></argsstring>
+        <name>requestContentCount</name>
+        <briefdescription>
+<para>Count of bytes written from requestContent. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3406" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3406" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_186e0de5180645a4a6a5242d7f837c3ad" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsHttp::responseCache</definition>
+        <argsstring></argsstring>
+        <name>responseCache</name>
+        <briefdescription>
+<para>Cached response (only used if response() is used). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3397" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3397" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_12ec5739c53c7f441ca1adb909fc0234a" prot="public" static="no" mutable="no">
+        <type>MprBuf *</type>
+        <definition>MprBuf* EjsHttp::responseContent</definition>
+        <argsstring></argsstring>
+        <name>responseContent</name>
+        <briefdescription>
+<para>Response data. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3400" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3400" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_1354a43461ebc68600ca6503203be82bf" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsHttp::uri</definition>
+        <argsstring></argsstring>
+        <name>uri</name>
+        <briefdescription>
+<para>Target uri. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3401" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3401" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_100a18371cc2a05c3fd045399b7fb7568" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsHttp::writeCount</definition>
+        <argsstring></argsstring>
+        <name>writeCount</name>
+        <briefdescription>
+<para>Count of bytes written via write(). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3407" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3407" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3392" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3392" bodyend="3408"/>
+    <listofallmembers>
+      <member refid="struct_ejs_http_177d4512edef737f6ac0adadc10910366" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>certFile</name></member>
+      <member refid="struct_ejs_http_1226910c9b47c8557be8561b931a9676a" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>conn</name></member>
+      <member refid="struct_ejs_http_1ba88793fa4f2e119c2c1848591d194e4" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>data</name></member>
+      <member refid="struct_ejs_http_1d16c20ca4c9fcd018fa9afdf91f34430" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>ejs</name></member>
+      <member refid="struct_ejs_http_1f0dc799f7c7467d9d3e7680db8db5119" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>emitter</name></member>
+      <member refid="struct_ejs_http_1988210a9fb6266f423961a06783bac60" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>keyFile</name></member>
+      <member refid="struct_ejs_http_1ed0c91d0fc9d88375f2f3274075b571b" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>method</name></member>
+      <member refid="struct_ejs_http_1f27f33f36c5beedecb329af236d9bd9d" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>obj</name></member>
+      <member refid="struct_ejs_http_138f75b2cfa8270ad37e7e7f956fd1e85" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>readCount</name></member>
+      <member refid="struct_ejs_http_18c55ca283a87d3de82a8850c73b7ef1e" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>requestContent</name></member>
+      <member refid="struct_ejs_http_10043c79ec64eade6300bbeec1d346628" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>requestContentCount</name></member>
+      <member refid="struct_ejs_http_186e0de5180645a4a6a5242d7f837c3ad" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>responseCache</name></member>
+      <member refid="struct_ejs_http_12ec5739c53c7f441ca1adb909fc0234a" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>responseContent</name></member>
+      <member refid="struct_ejs_http_1354a43461ebc68600ca6503203be82bf" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>uri</name></member>
+      <member refid="struct_ejs_http_100a18371cc2a05c3fd045399b7fb7568" prot="public" virt="non-virtual"><scope>EjsHttp</scope><name>writeCount</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

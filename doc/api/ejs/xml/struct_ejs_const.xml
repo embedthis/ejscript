@@ -1,0 +1,99 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_const" kind="struct" prot="public">
+    <compoundname>EjsConst</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_const_1b284020b800068b2880e2625994dcd44" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsConst::base</definition>
+        <argsstring></argsstring>
+        <name>base</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4387" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4387" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_const_1017d5dc5e8b73481ca8aa1100b01b13c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsConst::len</definition>
+        <argsstring></argsstring>
+        <name>len</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4386" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4386" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_const_198dd9efa704a34e82f12aadd1288eaa0" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsConst::locked</definition>
+        <argsstring></argsstring>
+        <name>locked</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4388" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4388" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_const_1f2f9509d64733fd5f18acb4ce6322293" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsConst::pool</definition>
+        <argsstring></argsstring>
+        <name>pool</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4384" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4384" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_const_1533b5f07d33149e92bdffa43515fecc8" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsConst::size</definition>
+        <argsstring></argsstring>
+        <name>size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4385" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4385" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_const_12d27d44f3c94dde18c9488922900a840" prot="public" static="no" mutable="no">
+        <type>MprHashTable *</type>
+        <definition>MprHashTable* EjsConst::table</definition>
+        <argsstring></argsstring>
+        <name>table</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4389" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4389" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="4383" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4383" bodyend="4390"/>
+    <listofallmembers>
+      <member refid="struct_ejs_const_1b284020b800068b2880e2625994dcd44" prot="public" virt="non-virtual"><scope>EjsConst</scope><name>base</name></member>
+      <member refid="struct_ejs_const_1017d5dc5e8b73481ca8aa1100b01b13c" prot="public" virt="non-virtual"><scope>EjsConst</scope><name>len</name></member>
+      <member refid="struct_ejs_const_198dd9efa704a34e82f12aadd1288eaa0" prot="public" virt="non-virtual"><scope>EjsConst</scope><name>locked</name></member>
+      <member refid="struct_ejs_const_1f2f9509d64733fd5f18acb4ce6322293" prot="public" virt="non-virtual"><scope>EjsConst</scope><name>pool</name></member>
+      <member refid="struct_ejs_const_1533b5f07d33149e92bdffa43515fecc8" prot="public" virt="non-virtual"><scope>EjsConst</scope><name>size</name></member>
+      <member refid="struct_ejs_const_12d27d44f3c94dde18c9488922900a840" prot="public" virt="non-virtual"><scope>EjsConst</scope><name>table</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

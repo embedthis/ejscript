@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_array" kind="struct" prot="public">
+    <compoundname>EjsArray</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_array_1f363002c3a744338ac67a0892cc726b1" prot="public" static="no" mutable="no">
+        <type>EjsObj **</type>
+        <definition>EjsObj** EjsArray::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Array elements. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2791" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2791" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_array_10f492640e108ba507772cd5545ae10a6" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsArray::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+<para>Array length property. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2792" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2792" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_array_1973dd020b30c461650d02427c683bdc2" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsArray::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2790" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2790" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="2789" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2789" bodyend="2793"/>
+    <listofallmembers>
+      <member refid="struct_ejs_array_1f363002c3a744338ac67a0892cc726b1" prot="public" virt="non-virtual"><scope>EjsArray</scope><name>data</name></member>
+      <member refid="struct_ejs_array_10f492640e108ba507772cd5545ae10a6" prot="public" virt="non-virtual"><scope>EjsArray</scope><name>length</name></member>
+      <member refid="struct_ejs_array_1973dd020b30c461650d02427c683bdc2" prot="public" virt="non-virtual"><scope>EjsArray</scope><name>obj</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

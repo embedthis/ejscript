@@ -1,0 +1,225 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_request" kind="struct" prot="public">
+    <compoundname>EjsRequest</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_request_161eab3eab4bb8d92bcf48703fd07b49b" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EjsRequest::absHome</definition>
+        <argsstring></argsstring>
+        <name>absHome</name>
+        <briefdescription>
+<para>Absolute URI to the home of the application from this request. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4728" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4728" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_15aef4cf67425e097cc8e19258a09ba4b" prot="public" static="no" mutable="no">
+        <type>HttpConn *</type>
+        <definition>HttpConn* EjsRequest::conn</definition>
+        <argsstring></argsstring>
+        <name>conn</name>
+        <briefdescription>
+<para>Underlying Http connection object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4717" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4717" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_122c41376596a1ebaf384e1ff7923c763" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsRequest::cookies</definition>
+        <argsstring></argsstring>
+        <name>cookies</name>
+        <briefdescription>
+<para>Cached cookies. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4716" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4716" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_106d1c5321298049a88d90bd802d2a7db" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EjsRequest::dir</definition>
+        <argsstring></argsstring>
+        <name>dir</name>
+        <briefdescription>
+<para>Home directory containing the application. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4726" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4726" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_1b24a55a52ed417fbc49470c612b5b667" prot="public" static="no" mutable="no">
+        <type>Ejs *</type>
+        <definition>Ejs* EjsRequest::ejs</definition>
+        <argsstring></argsstring>
+        <name>ejs</name>
+        <briefdescription>
+<para>Ejscript interpreter handle. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4725" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4725" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_1016606ae349c15af272ae4c7b957decc" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsRequest::emitter</definition>
+        <argsstring></argsstring>
+        <name>emitter</name>
+        <briefdescription>
+<para>Event emitter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4719" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4719" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_10e15a484cfae0363afd09a3bef1e7e9f" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsRequest::env</definition>
+        <argsstring></argsstring>
+        <name>env</name>
+        <briefdescription>
+<para>Request.env. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4724" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4724" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_118547da60942e764ef28e585384f9e10" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsRequest::files</definition>
+        <argsstring></argsstring>
+        <name>files</name>
+        <briefdescription>
+<para>Cached files object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4721" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4721" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_10a9da01d67c147fae67d97b604f2a7c1" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsRequest::headers</definition>
+        <argsstring></argsstring>
+        <name>headers</name>
+        <briefdescription>
+<para>Cached headers object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4722" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4722" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_178945a6d8bf290e431e5e4d1963dbbfe" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EjsRequest::home</definition>
+        <argsstring></argsstring>
+        <name>home</name>
+        <briefdescription>
+<para>Relative URI to the home of the application from this request. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4727" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4727" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_1a6df737b20a5cb02ae18591fa000b1d6" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsRequest::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Base object storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4715" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4715" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_127b1d5e3a383f5f692af42ae30e5ed2d" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsRequest::params</definition>
+        <argsstring></argsstring>
+        <name>params</name>
+        <briefdescription>
+<para>Form variables. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4723" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4723" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_10a03a7ad8079da6160bd71f9a3ab74fc" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsRequest::running</definition>
+        <argsstring></argsstring>
+        <name>running</name>
+        <briefdescription>
+<para>Request has started. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4729" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4729" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_13a6eba9953cc0f2cae9569d8cc36a6a3" prot="public" static="no" mutable="no">
+        <type>EjsHttpServer *</type>
+        <definition>EjsHttpServer* EjsRequest::server</definition>
+        <argsstring></argsstring>
+        <name>server</name>
+        <briefdescription>
+<para>Owning server. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4718" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4718" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_request_12dcb9b4c22cb11fdbc85c9599153377d" prot="public" static="no" mutable="no">
+        <type>EjsSession *</type>
+        <definition>EjsSession* EjsRequest::session</definition>
+        <argsstring></argsstring>
+        <name>session</name>
+        <briefdescription>
+<para>Current session. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4720" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4720" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="4714" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4714" bodyend="4730"/>
+    <listofallmembers>
+      <member refid="struct_ejs_request_161eab3eab4bb8d92bcf48703fd07b49b" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>absHome</name></member>
+      <member refid="struct_ejs_request_15aef4cf67425e097cc8e19258a09ba4b" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>conn</name></member>
+      <member refid="struct_ejs_request_122c41376596a1ebaf384e1ff7923c763" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>cookies</name></member>
+      <member refid="struct_ejs_request_106d1c5321298049a88d90bd802d2a7db" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>dir</name></member>
+      <member refid="struct_ejs_request_1b24a55a52ed417fbc49470c612b5b667" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>ejs</name></member>
+      <member refid="struct_ejs_request_1016606ae349c15af272ae4c7b957decc" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>emitter</name></member>
+      <member refid="struct_ejs_request_10e15a484cfae0363afd09a3bef1e7e9f" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>env</name></member>
+      <member refid="struct_ejs_request_118547da60942e764ef28e585384f9e10" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>files</name></member>
+      <member refid="struct_ejs_request_10a9da01d67c147fae67d97b604f2a7c1" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>headers</name></member>
+      <member refid="struct_ejs_request_178945a6d8bf290e431e5e4d1963dbbfe" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>home</name></member>
+      <member refid="struct_ejs_request_1a6df737b20a5cb02ae18591fa000b1d6" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>obj</name></member>
+      <member refid="struct_ejs_request_127b1d5e3a383f5f692af42ae30e5ed2d" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>params</name></member>
+      <member refid="struct_ejs_request_10a03a7ad8079da6160bd71f9a3ab74fc" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>running</name></member>
+      <member refid="struct_ejs_request_13a6eba9953cc0f2cae9569d8cc36a6a3" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>server</name></member>
+      <member refid="struct_ejs_request_12dcb9b4c22cb11fdbc85c9599153377d" prot="public" virt="non-virtual"><scope>EjsRequest</scope><name>session</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

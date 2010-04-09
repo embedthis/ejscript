@@ -1,0 +1,1535 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="group___ejs_obj" kind="group">
+    <compoundname>EjsObj</compoundname>
+    <title>EjsObj</title>
+    <innerclass refid="struct_ejs_hash_entry" prot="public">EjsHashEntry</innerclass>
+    <innerclass refid="struct_ejs_names" prot="public">EjsNames</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="group___ejs_obj_1g014ab23d93ad3819be8750470abad3f3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsAlloc</definition>
+        <argsstring>(Ejs *ejs, struct EjsType *type, int size)</argsstring>
+        <name>ejsAlloc</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>struct EjsType *</type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Allocate a new variable. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>This will allocate space for a bare variable. This routine should only be called by type factories when implementing the createVar helper. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type object from which to create an object instance </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of extra property slots to reserve. This is used for dynamic objects. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A newly allocated variable of the requested type. Caller must not free as the GC will manage the lifecycle of the variable. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1878"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1ge967dfd860839bcd524474c111081306" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsCast</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, struct EjsType *type)</argsstring>
+        <name>ejsCast</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>struct EjsType *</type>
+          <declname>type</declname>
+        </param>
+        <briefdescription>
+<para>Cast a variable to a new type. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Cast a variable and return a new variable of the required type. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to cast </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type to cast to </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A newly allocated variable of the requested type. Caller must not free as the GC will manage the lifecycle of the variable. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1902"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g082697e0e380a6c98c35f6affb4abd03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsClone</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, bool deep)</argsstring>
+        <name>ejsClone</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>deep</declname>
+        </param>
+        <briefdescription>
+<para>Clone a variable. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Copy a variable and create a new copy. This may do a shallow or deep copy. A shallow copy will not copy the property instances, rather it will only duplicate the property reference. A deep copy will recursively clone all the properties of the variable. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to clone </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>deep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set to true to do a deep copy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A newly allocated variable of the requested type. Caller must not free as the GC will manage the lifecycle of the variable. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1916"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g0f4ceab7ddfe58c199feba1a83facfc7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsCopyObject</definition>
+        <argsstring>(Ejs *ejs, EjsObj *src, bool deep)</argsstring>
+        <name>ejsCopyObject</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>deep</declname>
+        </param>
+        <briefdescription>
+<para>Copy an object. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Copy an object create a new instance. This may do a shallow or deep copy depending on the value of <emphasis>deep</emphasis>. A shallow copy will not copy the property instances, rather it will only duplicate the property reference. A deep copy will recursively clone all the properties of the variable. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>src</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Source object to copy </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>deep</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Set to true to do a deep copy. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A newly allocated object. Caller must not free as the GC will manage the lifecycle of the variable. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2182"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsCreate</definition>
+        <argsstring>(Ejs *ejs, struct EjsType *type, int numSlots)</argsstring>
+        <name>ejsCreate</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>struct EjsType *</type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>numSlots</declname>
+        </param>
+        <briefdescription>
+<para>Create a variable. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Create a variable of the required type. This invokes the createVar helper method for the specified type. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type to cast to </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numSlots</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of extra property slots to reserve. This is used for dynamic objects. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A newly allocated variable of the requested type. Caller must not free as the GC will manage the lifecycle of the variable. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1941"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g7bb8763a6168fed21e045e1508ef10e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsCreateInstance</definition>
+        <argsstring>(Ejs *ejs, struct EjsType *type, int argc, EjsObj **argv)</argsstring>
+        <name>ejsCreateInstance</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>struct EjsType *</type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>argc</declname>
+        </param>
+        <param>
+          <type>EjsObj **</type>
+          <declname>argv</declname>
+        </param>
+        <briefdescription>
+<para>Create a new variable instance. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Create a new variable instance and invoke any required constructors with the given arguments. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type from which to create a new instance </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>argc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Count of args in argv </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>argv</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of arguments. Each arg is an EjsObj. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A newly allocated variable of the requested type. Caller must not free as the GC will manage the lifecycle of the variable. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1929"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g400b8ab5c3245413957adfb54a79efd5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsCreateObject</definition>
+        <argsstring>(Ejs *ejs, struct EjsType *type, int size)</argsstring>
+        <name>ejsCreateObject</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>struct EjsType *</type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Create an object instance of the specified type. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Create a new object using the specified type as a base class. Note: the constructor is not called. If you require the constructor to be invoked, use <ref refid="group___ejs_obj_1g7bb8763a6168fed21e045e1508ef10e9" kindref="member">ejsCreateInstance</ref> </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Base type to use when creating the object instance </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of extra slots to allocate when creating the object </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new object instance </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2167"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1gea80a8028f9d83f0acb4b350904cb40e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsCreateSimpleObject</definition>
+        <argsstring>(Ejs *ejs)</argsstring>
+        <name>ejsCreateSimpleObject</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <briefdescription>
+<para>Create a simple object. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Create a simple object using Object as its base type. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new object instance </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2155"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g1732eae4380d684c18b88a41b11e6b73" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsDefineProperty</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *qname, struct EjsType *type, int attributes, EjsObj *value)</argsstring>
+        <name>ejsDefineProperty</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>slotNum</declname>
+        </param>
+        <param>
+          <type>EjsName *</type>
+          <declname>qname</declname>
+        </param>
+        <param>
+          <type>struct EjsType *</type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>attributes</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Define a property. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Define a property in a variable and give it a name, base type, attributes and default value. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable in which to define a property </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slotNum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Slot number in the variable for the property. Slots are numbered sequentially from zero. Set to -1 to request the next available slot number. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>qname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Qualified name containing a name and a namespace. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Base type of the property. Set to ejs-&gt;voidType to leave as untyped. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>attributes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Attribute traits. Useful attributes include: <itemizedlist>
+<listitem><para>EJS_ATTR_OVERRIDE </para></listitem>
+<listitem><para>EJS_ATTR_CONST </para></listitem>
+<listitem><para>EJS_ATTR_ENUMERABLE </para></listitem>
+</itemizedlist>
+</para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initial value of the property </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A postitive slot number or a negative MPR error code. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1972"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1gb2ce5c61164fab3e4537b096c2643002" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsDeleteProperty</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum)</argsstring>
+        <name>ejsDeleteProperty</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>slotNum</declname>
+        </param>
+        <briefdescription>
+<para>Delete a property. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Delete a variable&apos;s property and set its slot to null. The slot is not reclaimed and subsequent properties are not compacted. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable in which to delete the property </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slotNum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Slot number in the variable for the property to delete. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero if successful, otherwise a negative MPR error code. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1984"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g1618c62932d871e10abf445cb4f2cad5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsDeletePropertyByName</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, EjsName *qname)</argsstring>
+        <name>ejsDeletePropertyByName</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>EjsName *</type>
+          <declname>qname</declname>
+        </param>
+        <briefdescription>
+<para>Delete a property by name. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Delete a variable&apos;s property by name and set its slot to null. The property is resolved by using ejsLookupProperty with the specified name. Once deleted, the slot is not reclaimed and subsequent properties are not compacted. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable in which to delete the property </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>qname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Qualified name for the property including name and namespace. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Zero if successful, otherwise a negative MPR error code. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1997"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g28cf08bc202cd514555e701ebfd7a4af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ejsDestroy</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp)</argsstring>
+        <name>ejsDestroy</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+<para>Destroy a variable. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Destroy a variable of the required type. This invokes the destroyVar helper method for the specified type. The default action for the destroyVar helper is to simply invoke ejsFreeObj which will return the variable storage to a type pool or return the memory to the heap. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Varaible to destroy </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1952"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g1a9af47dc49bd75b24cc2fbb229d7579" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ejsFree</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, int pool)</argsstring>
+        <name>ejsFree</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>pool</declname>
+        </param>
+        <briefdescription>
+<para>Free a new variable. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>This should typically only be called by the destroyVar type helper which is invoked by the GC when a variable is no longer needed. It should not be called by normal code. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to free </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>pool</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional pool id. Set to -1 for defaults. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1890"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g731ca9c63755ae82dca1f9721f33edd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsGetProperty</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum)</argsstring>
+        <name>ejsGetProperty</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>slotNum</declname>
+        </param>
+        <briefdescription>
+<para>Get a property. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Get a property from a variable at a given slot. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slotNum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Slot number for the requested property. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The variable property stored at the nominated slot. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2008"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g979202b8c189568be54adffa146038cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsGetPropertyByName</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, EjsName *qname)</argsstring>
+        <name>ejsGetPropertyByName</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>EjsName *</type>
+          <declname>qname</declname>
+        </param>
+        <briefdescription>
+<para>Get a property by name. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Get a property from a variable by name. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>qname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Qualified name specifying both a namespace and name. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The variable property stored at the nominated slot. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2040"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1gcc5c8bebf6c9d7876ea0761423013051" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsGetPropertyCount</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp)</argsstring>
+        <name>ejsGetPropertyCount</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+<para>Get a count of properties in a variable. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Get a property from a variable at a given slot. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A positive integer count of the properties stored by the variable. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2018"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g5a2d5f21d02464c7a69afd16b58bdb6f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsName</type>
+        <definition>EjsName ejsGetPropertyName</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum)</argsstring>
+        <name>ejsGetPropertyName</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>slotNum</declname>
+        </param>
+        <briefdescription>
+<para>Get a variable property&apos;s name. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Get a property name for the property at a given slot in the variable. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slotNum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Slot number for the requested property. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The qualified property name including namespace and name. Caller must not free. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2029"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1ga0f26761cb72cc7387a88a011c90a419" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct <ref refid="struct_ejs_trait" kindref="compound">EjsTrait</ref> *</type>
+        <definition>struct EjsTrait* ejsGetPropertyTrait</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum)</argsstring>
+        <name>ejsGetPropertyTrait</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>slotNum</declname>
+        </param>
+        <briefdescription>
+<para>Get a property&apos;s traits. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Get a property&apos;s trait description. The property traits define the properties base type, and access attributes. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slotNum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Slot number for the requested property. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A trait structure reference for the property. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2052"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g5cb5fc3dcebf49849eec312e5a9c6de6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsType *</type>
+        <definition>EjsType* ejsGetVarType</definition>
+        <argsstring>(EjsObj *vp)</argsstring>
+        <name>ejsGetVarType</name>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+<para>Get a variables type. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Get the base type for a variable </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable reference </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A reference to the variables type object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1850"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g7b0048b5ec2e775886ad7b0b8c4c3937" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsGrowObject</definition>
+        <argsstring>(Ejs *ejs, EjsObj *obj, int size)</argsstring>
+        <name>ejsGrowObject</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>obj</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+<para>Grow an object. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Grow the slot storage for an object. Object properties are stored in slots. To store more properties, you need to grow the slots. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Object reference to grow </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New minimum count of properties. If size is less than the current number of properties, the call will be ignored, i.e. it will not shrink objects. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new object instance </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2195"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g6c73cc22a93ad0d05f14e75d753ea164" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsObj *</type>
+        <definition>EjsObj* ejsInvokeOperator</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, int opCode, EjsObj *rhs)</argsstring>
+        <name>ejsInvokeOperator</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>opCode</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>rhs</declname>
+        </param>
+        <briefdescription>
+<para>Invoke an opcode on a native type. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Invoke an Ejscript byte code operator on the specified variable given the expression right hand side. Native types would normally implement the invokeOperator helper function to respond to this function call. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>opCode</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Byte ope code to execute </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>rhs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Expression right hand side for binary expression op codes. May be null for other op codes. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The result of the op code or NULL if the opcode does not require a result. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2065"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1gdf491fc04a99f00ed31ec30979a87470" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsLookupProperty</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, EjsName *qname)</argsstring>
+        <name>ejsLookupProperty</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>EjsName *</type>
+          <declname>qname</declname>
+        </param>
+        <briefdescription>
+<para>Lookup a property by name. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Search for a property by name in the given variable. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>qname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Qualified name of the property to search for. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The slot number containing the property. Then use <ref refid="group___ejs_obj_1g731ca9c63755ae82dca1f9721f33edd8" kindref="member">ejsGetProperty</ref> to retrieve the property or alternatively use ejsGetPropertyByName to lookup and retrieve in one step. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2077"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1gc722fb9954e29e6b38468f6853689c8f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ejsMark</definition>
+        <argsstring>(Ejs *ejs, EjsObj *parent, EjsObj *vp)</argsstring>
+        <name>ejsMark</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <briefdescription>
+<para>Mark a variable as currently in use. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Mark a variables as currently active so the garbage collector will preserve it. This routine should be called by native types in their markVar helper. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>parent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Owning variable for the property </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to mark as currently being used. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2088"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1ge8690f530f1574aa019fb1d5bf592465" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void ejsMarkObject</definition>
+        <argsstring>(Ejs *ejs, EjsObj *parent, EjsObj *obj)</argsstring>
+        <name>ejsMarkObject</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>obj</declname>
+        </param>
+        <briefdescription>
+<para>Mark an object as currently in use. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Mark an object as currently active so the garbage collector will preserve it. This routine should be called by native types that extend EjsObj in their markVar helper. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>parent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Owning variable for the property </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Object to mark as currently being used. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2207"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g1620c1da1b80901a0cef2138c8d4be99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsSetProperty</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum, EjsObj *value)</argsstring>
+        <name>ejsSetProperty</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>slotNum</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set a property&apos;s value. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Set a value for a property at a given slot in the specified variable. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slotNum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Slot number for the requested property. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to a value to store. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The slot number of the property updated. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2100"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g41f28084a2ad721ed22af37fc19e8847" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsSetPropertyByName</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, EjsName *qname, EjsObj *value)</argsstring>
+        <name>ejsSetPropertyByName</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>EjsName *</type>
+          <declname>qname</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Set a property&apos;s value. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Set a value for a property. The property is located by name in the specified variable. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>qname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Qualified property name. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to a value to store. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The slot number of the property updated. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2112"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g7fabfe8aff123c995c670685fff11a9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsSetPropertyName</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *qname)</argsstring>
+        <name>ejsSetPropertyName</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>slotNum</declname>
+        </param>
+        <param>
+          <type>EjsName *</type>
+          <declname>qname</declname>
+        </param>
+        <briefdescription>
+<para>Set a property&apos;s name. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Set a qualified name for a property at the specified slot in the variable. The qualified name consists of a namespace and name - both of which must be persistent. A typical paradigm is for these name strings to be owned by the memory context of the variable. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slotNum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Slot number of the property in the variable. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>qname</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Qualified property name. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The slot number of the property updated. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2126"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g8e22dcbfaea2e1d8805f363d88eef455" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>int</type>
+        <definition>int ejsSetPropertyTrait</definition>
+        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum, struct EjsType *type, int attributes)</argsstring>
+        <name>ejsSetPropertyTrait</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>vp</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>slotNum</declname>
+        </param>
+        <param>
+          <type>struct EjsType *</type>
+          <declname>type</declname>
+        </param>
+        <param>
+          <type>int</type>
+          <declname>attributes</declname>
+        </param>
+        <briefdescription>
+<para>Set a property&apos;s traits. </para>        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Set the traits describing a property. These include the property&apos;s base type and access attributes. </para></simplesect>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Interpreter instance returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>vp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Variable to examine </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>slotNum</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Slot number of the property in the variable. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>type</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Base type for the property. Set to NULL for an untyped property. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>attributes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Integer mask of access attributes. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The slot number of the property updated. </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2139"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1gd6ac7066a19ea6e2cda258a5192e8329" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsString *</type>
+        <definition>EjsString* ejsToJSON</definition>
+        <argsstring>(Ejs *ejs, EjsObj *obj, EjsObj *options)</argsstring>
+        <name>ejsToJSON</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>obj</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>options</declname>
+        </param>
+        <briefdescription>
+<para>Convert a variable to a string in JSON format. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Object to cast </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>options</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Options object. See serialize for details. </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3693"/>
+      </memberdef>
+      <memberdef kind="function" id="group___ejs_obj_1g3bf38c71fac27819c73611bcf78ca2dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>EjsString *</type>
+        <definition>EjsString* ejsToString</definition>
+        <argsstring>(Ejs *ejs, EjsObj *obj)</argsstring>
+        <name>ejsToString</name>
+        <param>
+          <type>Ejs *</type>
+          <declname>ejs</declname>
+        </param>
+        <param>
+          <type>EjsObj *</type>
+          <declname>obj</declname>
+        </param>
+        <briefdescription>
+<para>Cast a variable to a string. </para>        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>obj</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Object to convert </para></parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A string object </para></simplesect>
+</para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3683"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Object Type. </para>    </briefdescription>
+    <detaileddescription>
+<para>Base type for all objects. <simplesect kind="par"><title><bold>Description</bold>:</title><para>The EjsObj type is the foundation for all types, blocks, functions and scripted classes. It provides storage and hashed lookup for properties. <linebreak/>
+<linebreak/>
+ EjsObj stores properties in an array of slots. These slots store a reference to the property value. Property names are stored in a names hash. Dynamic objects own their own name hash. Sealed object instances of a type, will simply refer to the hash of names owned by the type. <linebreak/>
+<linebreak/>
+ EjsObjs may be either dynamic or sealed. Dynamic objects can grow the number of properties. Sealed objects cannot. Sealed objects will store the slot array as part of the EjsObj memory chunk. Dynamic objects will perform a separate allocation for the slot array so that it can grow. </para></simplesect>
+<simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving.</para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_obj" kindref="compound">EjsObj</ref> ejsIsObject <ref refid="group___ejs_obj_1gea80a8028f9d83f0acb4b350904cb40e" kindref="member">ejsCreateSimpleObject</ref> <ref refid="group___ejs_obj_1g400b8ab5c3245413957adfb54a79efd5" kindref="member">ejsCreateObject</ref> <ref refid="group___ejs_obj_1g0f4ceab7ddfe58c199feba1a83facfc7" kindref="member">ejsCopyObject</ref> <ref refid="group___ejs_obj_1g7b0048b5ec2e775886ad7b0b8c4c3937" kindref="member">ejsGrowObject</ref> <ref refid="group___ejs_obj_1ge8690f530f1574aa019fb1d5bf592465" kindref="member">ejsMarkObject</ref> TODO - change these From Var <ref refid="group___ejs_obj_1g5cb5fc3dcebf49849eec312e5a9c6de6" kindref="member">ejsGetVarType</ref> ejsAllocObj ejsFreeObj <ref refid="group___ejs_obj_1ge967dfd860839bcd524474c111081306" kindref="member">ejsCast</ref> <ref refid="group___ejs_obj_1g082697e0e380a6c98c35f6affb4abd03" kindref="member">ejsClone</ref> <ref refid="group___ejs_obj_1g7bb8763a6168fed21e045e1508ef10e9" kindref="member">ejsCreateInstance</ref> ejsCreateVar ejsDestroyVar <ref refid="group___ejs_obj_1g1732eae4380d684c18b88a41b11e6b73" kindref="member">ejsDefineProperty</ref> <ref refid="group___ejs_obj_1gb2ce5c61164fab3e4537b096c2643002" kindref="member">ejsDeleteProperty</ref> <ref refid="group___ejs_obj_1g1618c62932d871e10abf445cb4f2cad5" kindref="member">ejsDeletePropertyByName</ref> <ref refid="group___ejs_obj_1g731ca9c63755ae82dca1f9721f33edd8" kindref="member">ejsGetProperty</ref> <ref refid="group___ejs_obj_1gdf491fc04a99f00ed31ec30979a87470" kindref="member">ejsLookupProperty</ref> ejsMarkVar <ref refid="group___ejs_obj_1g1620c1da1b80901a0cef2138c8d4be99" kindref="member">ejsSetProperty</ref> <ref refid="group___ejs_obj_1g41f28084a2ad721ed22af37fc19e8847" kindref="member">ejsSetPropertyByName</ref> <ref refid="group___ejs_obj_1g7fabfe8aff123c995c670685fff11a9b" kindref="member">ejsSetPropertyName</ref> <ref refid="group___ejs_obj_1g8e22dcbfaea2e1d8805f363d88eef455" kindref="member">ejsSetPropertyTrait</ref> ejsDeserialize ejsParseVar </para></simplesect>
+</para>    </detaileddescription>
+  </compounddef>
+</doxygen>

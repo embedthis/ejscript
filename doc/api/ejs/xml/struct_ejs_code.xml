@@ -1,0 +1,114 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_code" kind="struct" prot="public">
+    <compoundname>EjsCode</compoundname>
+    <includes refid="ejs_8h" local="no">ejs.h</includes>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_code_140d6a7a1679bbb1befa8bc5eefa0bad8" prot="public" static="no" mutable="no">
+        <type>uchar *</type>
+        <definition>uchar* EjsCode::byteCode</definition>
+        <argsstring></argsstring>
+        <name>byteCode</name>
+        <briefdescription>
+<para>Byte code. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2579" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2579" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_code_1b09c2c01aaed134f977f5b6441038936" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsCode::codeLen</definition>
+        <argsstring></argsstring>
+        <name>codeLen</name>
+        <briefdescription>
+<para>Byte code length. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2580" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2580" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_code_1c7d843374ff7e8431f3a833b0554c6d4" prot="public" static="no" mutable="no">
+        <type>struct EjsConst *</type>
+        <definition>struct EjsConst* EjsCode::constants</definition>
+        <argsstring></argsstring>
+        <name>constants</name>
+        <briefdescription>
+<para>Constant pool. </para>        </briefdescription>
+        <detaileddescription>
+<para>Reference to module constant pool </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2581" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2581" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_code_1cfc7f15ba5b176c8d31770d7f55467e1" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="struct_ejs_ex" kindref="compound">EjsEx</ref> **</type>
+        <definition>struct EjsEx** EjsCode::handlers</definition>
+        <argsstring></argsstring>
+        <name>handlers</name>
+        <briefdescription>
+<para>Exception handlers. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2584" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2584" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_code_12b0bd63868d71736e564ff6f7978b379" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsCode::numHandlers</definition>
+        <argsstring></argsstring>
+        <name>numHandlers</name>
+        <briefdescription>
+<para>Number of exception handlers. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2582" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2582" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_code_142462a42fdd5fcc595f79d706b087167" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsCode::sizeHandlers</definition>
+        <argsstring></argsstring>
+        <name>sizeHandlers</name>
+        <briefdescription>
+<para>Size of handlers array. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2583" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2583" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Byte code. </para>    </briefdescription>
+    <detaileddescription>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>This structure describes a sequence of byte code for a function. It also defines a set of execption handlers pertaining to this byte code. </para></simplesect>
+</para>    </detaileddescription>
+    <collaborationgraph>
+      <node id="47">
+        <label>EjsEx</label>
+        <link refid="struct_ejs_ex"/>
+      </node>
+      <node id="46">
+        <label>EjsCode</label>
+        <link refid="struct_ejs_code"/>
+        <childnode refid="47" relation="usage">
+          <edgelabel>handlers</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="2578" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2578" bodyend="2585"/>
+    <listofallmembers>
+      <member refid="struct_ejs_code_140d6a7a1679bbb1befa8bc5eefa0bad8" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>byteCode</name></member>
+      <member refid="struct_ejs_code_1b09c2c01aaed134f977f5b6441038936" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>codeLen</name></member>
+      <member refid="struct_ejs_code_1c7d843374ff7e8431f3a833b0554c6d4" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>constants</name></member>
+      <member refid="struct_ejs_code_1cfc7f15ba5b176c8d31770d7f55467e1" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>handlers</name></member>
+      <member refid="struct_ejs_code_12b0bd63868d71736e564ff6f7978b379" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>numHandlers</name></member>
+      <member refid="struct_ejs_code_142462a42fdd5fcc595f79d706b087167" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>sizeHandlers</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

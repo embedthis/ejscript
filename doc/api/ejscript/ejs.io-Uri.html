@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Uri</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Uri</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Uri'>
+   <tr><td><strong>Module</strong></td><td>ejs.io</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Uri</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Uri <img src='images/inherit.gif' alt='inherit'/> <a href='intrinsic-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-1.1</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>Uri class to manage Uris.</p>
+
+<p class='classDescription'></p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='basename'></a>
+   <tr><td nowrap align='left'>public const get </td><td>basename</td><td><a href='ejs.io-Uri.html'>Uri</a></td><td>The base of portion of the Uri. The base portion is the trailing portion of the path without any 
+directory elements.</td></tr>
+<a name='complete'></a>
+   <tr><td nowrap align='left'>public const get </td><td>complete</td><td><a href='ejs.io-Uri.html'>Uri</a></td><td>A completed Uri including scheme, host. The Uri path will be normalized and completed with default values 
+for missing components.</td></tr>
+<a name='dirname'></a>
+   <tr><td nowrap align='left'>public const get </td><td>dirname</td><td><a href='ejs.io-Uri.html'>Uri</a></td><td>The directory portion of a Uri path. The directory portion is the leading portion including all directory 
+elements of the Uri path excluding the base name. On some systems, it will include a drive specifier.</td></tr>
+<a name='hasExtension'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasExtension</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Does the Uri has an explicit extension. </td></tr>
+<a name='hasHost'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasHost</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit host component. For example: "www.example.com".</td></tr>
+<a name='hasPort'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasPort</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit port number. </td></tr>
+<a name='hasQuery'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasQuery</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit query component. </td></tr>
+<a name='hasReference'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasReference</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit reference component. </td></tr>
+<a name='hasScheme'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasScheme</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit scheme (protocol) specifier. For example: "http://".</td></tr>
+<a name='isAbsolute'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isAbsolute</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Is the Uri is absolute. Set to true if the Uri is an absolute path with the path component beginning with "/".</td></tr>
+<a name='isDir'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isDir</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Is the Uri is a directory Uri. Set to true if the Uri ends with "/". NOTE: this only tests the Uri and 
+not any physical resource associated with the Uri.</td></tr>
+<a name='isRegular'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isRegular</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Is the Uri is a regular resource and not a directory. Set to true if the Uri does not end with "/". 
+NOTE: this only tests the Uri and not any physical resource associated with the Uri.</td></tr>
+<a name='isRelative'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isRelative</td><td><a href='intrinsic-Boolean.html'>Boolean</a></td><td>Is if the Uri is relative. Set to true if the Uri's path component does not begin with "/".</td></tr>
+<a name='mimeType'></a>
+   <tr><td nowrap align='left'>public const get </td><td>mimeType</td><td><a href='intrinsic-String.html'>String</a></td><td>The mime type of the Uri. This is set to a mime type string by examining the Uri extension. Set to null if
+the Uri has no extension.</td></tr>
+<a name='normalize'></a>
+   <tr><td nowrap align='left'>public const get </td><td>normalize</td><td><a href='ejs.io-Uri.html'>Uri</a></td><td>Normalized Uri by removing all redundant and invalid Uri components. Set to a Uri with "segment/.." 
+and "./" components removed. The value will not be converted to an absolute Uri nor will it map character case.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='intrinsic-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Uri Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#components'><b>components</b></a>(): <a href='intrinsic-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Break a Uri into its components by converting the Uri to an absolute Uri and breaking into components.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decode'><b>decode</b></a>(str: <a href='intrinsic-String.html'>String</a>): <a href='intrinsic-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a Uri encoded string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decodeComponent'><b>decodeComponent</b></a>(str: <a href='intrinsic-String.html'>String</a>): <a href='intrinsic-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a Uri encoded component.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#encode'><b>encode</b></a>(str: <a href='intrinsic-String.html'>String</a>): <a href='intrinsic-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a Uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#encodeComponent'><b>encodeComponent</b></a>(str: <a href='intrinsic-String.html'>String</a>): <a href='intrinsic-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a Uri component.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#endsWith'><b>endsWith</b></a>(suffix: <a href='intrinsic-Object.html'>Object</a>): <a href='intrinsic-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the Uri path ends with the given suffix.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#join'><b>join</b></a>(other: <a href='intrinsic-Array.html'>Array</a>): <a href='ejs.io-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join Uris.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#joinExt'><b>joinExt</b></a>(ext: <a href='intrinsic-String.html'>String</a>): <a href='ejs.io-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join an extension to a Uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#relative'><b>relative</b></a>(target: <a href='ejs.io-Uri.html'>Uri</a>): <a href='ejs.io-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Uri with a releative path from the current Uri to a given Uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#replaceExt'><b>replaceExt</b></a>(ext: <a href='intrinsic-String.html'>String</a>): <a href='ejs.io-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace the extension and return a new Uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#same'><b>same</b></a>(other: <a href='intrinsic-Object.html'>Object</a>, exact: <a href='intrinsic-Boolean.html'>Boolean</a> = false): <a href='intrinsic-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two Uris test if they represent the same resource.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#startsWith'><b>startsWith</b></a>(prefix: <a href='intrinsic-Object.html'>Object</a>): <a href='intrinsic-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the Uri path starts with the given prefix.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const override </td><td><a href='#toJSON'><b>toJSON</b></a>(): <a href='intrinsic-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the Uri to a JSON string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const override </td><td><a href='#toString'><b>toString</b></a>(): <a href='intrinsic-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the Uri to a string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trimEnd'><b>trimEnd</b></a>(pat: <a href='intrinsic-String.html'>String</a>): <a href='ejs.io-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a pattern from the end of the Uri path
+NOTE: this does a case-sensitive match.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trimExt'><b>trimExt</b></a>(): <a href='ejs.io-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim the extension portion off the Uri path.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trimStart'><b>trimStart</b></a>(pat: <a href='intrinsic-String.html'>String</a>): <a href='ejs.io-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a pattern from the start of the path
+NOTE: this does a case-sensitive match.</td></tr>
+   <tr class='apiDef'><td class='apiType'> const </td><td><a href='#Uri'><b>Uri</b></a>(uri: <a href='intrinsic-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and parse a Uri object.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='intrinsic-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='components'></a>
+<div class='api'>
+<div class='apiSig'>const   public  components(): <a href='intrinsic-Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<p>Break a Uri into its components by converting the Uri to an absolute Uri and breaking into components.</p>
+<dl><dt>Description</dt><dd>The components are: scheme, host, port, path, reference and query.</dd></dl>
+<dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>scheme:</td><td>String.</td></tr>
+<td class='param'>host:</td><td>String.</td></tr>
+<td class='param'>port:</td><td>Number.</td></tr>
+<td class='param'>path:</td><td>String.</td></tr>
+<td class='param'>query:</td><td>String.</td></tr>
+<td class='param'>reference:</td><td>String.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An object hash defining the following fields:.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='decode'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  decode(str: <a href='intrinsic-String.html'>String</a>): <a href='intrinsic-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Decode a Uri encoded string.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='intrinsic-String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A decoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='decodeComponent'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  decodeComponent(str: <a href='intrinsic-String.html'>String</a>): <a href='intrinsic-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Decode a Uri encoded component.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='intrinsic-String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A decoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='encode'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  encode(str: <a href='intrinsic-String.html'>String</a>): <a href='intrinsic-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Encode a Uri.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='intrinsic-String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An encoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='encodeComponent'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  encodeComponent(str: <a href='intrinsic-String.html'>String</a>): <a href='intrinsic-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Encode a Uri component.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='intrinsic-String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An encoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='endsWith'></a>
+<div class='api'>
+<div class='apiSig'>const   public  endsWith(suffix: <a href='intrinsic-Object.html'>Object</a>): <a href='intrinsic-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Return true if the Uri path ends with the given suffix.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>suffix: <a href='intrinsic-Object.html'>Object</a> </td><td>Uri or String suffix to compare with the path.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the path does begin with the suffix.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='join'></a>
+<div class='api'>
+<div class='apiSig'>const   public  join(other: <a href='intrinsic-Array.html'>Array</a>): <a href='ejs.io-Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<p>Join Uris.</p>
+<dl><dt>Description</dt><dd>Joins Uris together. If a Uris is absolute, replace the join with it and continue. If a Uri is
+relative add a separator and continue joining.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A joined Uri.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='joinExt'></a>
+<div class='api'>
+<div class='apiSig'>const   public  joinExt(ext: <a href='intrinsic-String.html'>String</a>): <a href='ejs.io-Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<p>Join an extension to a Uri.</p>
+<dl><dt>Description</dt><dd>If the basename of the Uri already has an extension, this call does nothing.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A Uri with an extension.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='relative'></a>
+<div class='api'>
+<div class='apiSig'>const   public  relative(target: <a href='ejs.io-Uri.html'>Uri</a>): <a href='ejs.io-Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<p>Create a Uri with a releative path from the current Uri to a given Uri.</p>
+<dl><dt>Description</dt><dd>This call computes the relative
+path from this Uri to the <a href='#target'>target</a> Uri argument.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>target: <a href='ejs.io-Uri.html'>Uri</a> </td><td>Uri Target Uri to locate.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A new Uri object for the target Uri.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='replaceExt'></a>
+<div class='api'>
+<div class='apiSig'>const   public  replaceExt(ext: <a href='intrinsic-String.html'>String</a>): <a href='ejs.io-Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<p>Replace the extension and return a new Uri.</p>
+<dl><dt>Returns</dt>
+<dd>A path with extension.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='same'></a>
+<div class='api'>
+<div class='apiSig'>const   public  same(other: <a href='intrinsic-Object.html'>Object</a>, exact: <a href='intrinsic-Boolean.html'>Boolean</a> = false): <a href='intrinsic-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Compare two Uris test if they represent the same resource.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>other: <a href='intrinsic-Object.html'>Object</a> </td><td>Other Uri to compare with.</td></tr><tr class='param'><td class='param'>exact: <a href='intrinsic-Boolean.html'>Boolean</a> </td><td>If exact is true, then the query and reference portions must match. [default: false]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the Uris represent the same underlying resource.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='startsWith'></a>
+<div class='api'>
+<div class='apiSig'>const   public  startsWith(prefix: <a href='intrinsic-Object.html'>Object</a>): <a href='intrinsic-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Return true if the Uri path starts with the given prefix.</p>
+<dl><dt>Description</dt><dd>This skips the scheme, host and port portions
+and examines the Uri path only.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>prefix: <a href='intrinsic-Object.html'>Object</a> </td><td>Uri or String prefix to compare with the Uri.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the path does begin with the prefix.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toJSON'></a>
+<div class='api'>
+<div class='apiSig'>const override   public  toJSON(): <a href='intrinsic-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Convert the Uri to a JSON string.</p>
+<dl><dt>Returns</dt>
+<dd>A JSON string representing the Uri.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='toString'></a>
+<div class='api'>
+<div class='apiSig'>const override   public  toString(): <a href='intrinsic-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Convert the Uri to a string.</p>
+<dl><dt>Description</dt><dd>The format of the string will depend on the defined <a href='#representation'>representation</a> format.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A string representing the Uri.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='trimEnd'></a>
+<div class='api'>
+<div class='apiSig'>const   public  trimEnd(pat: <a href='intrinsic-String.html'>String</a>): <a href='ejs.io-Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<p>Trim a pattern from the end of the Uri path
+NOTE: this does a case-sensitive match.</p>
+<dl><dt>Description</dt><dd>MOB - is this right?.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A new Uri containing the trimmed Uri TODO - should support reg expressions.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='trimExt'></a>
+<div class='api'>
+<div class='apiSig'>const   public  trimExt(): <a href='ejs.io-Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<p>Trim the extension portion off the Uri path.</p>
+<dl><dt>Returns</dt>
+<dd>A Uri with no extension.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='trimStart'></a>
+<div class='api'>
+<div class='apiSig'>const   public  trimStart(pat: <a href='intrinsic-String.html'>String</a>): <a href='ejs.io-Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<p>Trim a pattern from the start of the path
+NOTE: this does a case-sensitive match.</p>
+<dl><dt>Description</dt><dd>MOB - is this right?.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A Uri containing the trimmed path name TODO - should support reg expressions.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='Uri'></a>
+<div class='api'>
+<div class='apiSig'>const   public  Uri(uri: <a href='intrinsic-Object.html'>Object</a>)
+</div>
+<div class='apiDetail'>
+<p>Create and parse a Uri object.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>uri: <a href='intrinsic-Object.html'>Object</a> </td><td>A string or object hash that describes the Uri. The <a href='#uri'>uri</a> specify a complete absolute Uri string or it may specify a partial Uri where missing elements take the normal defaults. The <a href='#uri'>uri</a> argument may also be  an object hash with the following properties.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>scheme:</td><td>String.</td></tr>
+<td class='param'>host:</td><td>String.</td></tr>
+<td class='param'>port:</td><td>Number.</td></tr>
+<td class='param'>path:</td><td>String.</td></tr>
+<td class='param'>query:</td><td>String.</td></tr>
+<td class='param'>reference:</td><td>String.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

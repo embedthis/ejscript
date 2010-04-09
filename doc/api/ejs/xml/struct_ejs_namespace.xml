@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_namespace" kind="struct" prot="public">
+    <compoundname>EjsNamespace</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_namespace_12ac1387f0bd92819496b77f342fb845c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsNamespace::flags</definition>
+        <argsstring></argsstring>
+        <name>flags</name>
+        <briefdescription>
+<para>Fast comparison flags. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3472" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3472" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_namespace_1f0bfa328f34b011a8a547e4dbd4e6152" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsNamespace::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>Textual name of the namespace. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3469" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3469" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_namespace_19a9b08dfb990dcd9cb09ada87a510d49" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsNamespace::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object - Property storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3468" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3468" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_namespace_1a626f9a2b35adaf942f246bf7e75cefd" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsNamespace::uri</definition>
+        <argsstring></argsstring>
+        <name>uri</name>
+        <briefdescription>
+<para>Optional uri definition. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3471" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3471" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3467" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3467" bodyend="3474"/>
+    <listofallmembers>
+      <member refid="struct_ejs_namespace_12ac1387f0bd92819496b77f342fb845c" prot="public" virt="non-virtual"><scope>EjsNamespace</scope><name>flags</name></member>
+      <member refid="struct_ejs_namespace_1f0bfa328f34b011a8a547e4dbd4e6152" prot="public" virt="non-virtual"><scope>EjsNamespace</scope><name>name</name></member>
+      <member refid="struct_ejs_namespace_19a9b08dfb990dcd9cb09ada87a510d49" prot="public" virt="non-virtual"><scope>EjsNamespace</scope><name>obj</name></member>
+      <member refid="struct_ejs_namespace_1a626f9a2b35adaf942f246bf7e75cefd" prot="public" virt="non-virtual"><scope>EjsNamespace</scope><name>uri</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

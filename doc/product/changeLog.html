@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!-- BeginDsi "dsi/head.html" -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Embedthis Ejscript 1.0.0 Documentation</title>
+    <meta name="keywords" content="Ejscript, JavaScript, ECMAScript, Server-Side JavaScript, Dynamic languages, 
+        Embedded, AJAX, language"/>
+	<meta name="description" content="Ejscript -- Embedded Server-Side JavaScript Language."/>
+	<meta name="robots" content="index,follow" />
+	<link href="../doc.css" rel="stylesheet" type="text/css" />
+	<link href="../print.css" rel="stylesheet" type="text/css" media="print"/>
+    <!--[if IE]>
+    <link href="../iehacks.css" rel="stylesheet" type="text/css" />
+    </![endif]-->
+</head>
+
+<body>
+    <div class="top">
+        <a class="logo"  href="http://www.ejscript.org/">&nbsp;</a>
+        <div class="topRight">
+             <div class="search">
+                 <form method="get" action="http://www.google.com/search" title="Search www.embedthis.com">
+                     <p>
+                        <label title="Search">Search</label> 
+                        <input type="text" id="q" name="q" size="15" maxlength="255" />
+                        <input type="submit" id="submit" value="Go" /> 
+                        <input type="hidden" name="domains" value="embedthis.com" /> 
+                        <input type="hidden" name="sitesearch" value="embedthis.com" />
+                    </p>
+                 </form>
+              </div>
+            <!--TITLE-->Embedthis Ejscript 1.0.0
+        </div>
+        <div class="crumbs">
+            <a href="../product/index.html">Home</a>
+<!-- EndDsi -->
+             &gt; <b>Change Log</b>
+        </div>
+    </div>
+    <div class="content">
+        <div class="contentRight">
+            <h2>Quick Nav</h2>
+            <ul>
+                <li><a href="#r080">Release 0.8.0</a></li>
+            </ul>
+            <h2>See Also</h2>
+            <ul>
+                <li><a href="releaseNotes.html">Release Notes</a></li>
+                <li><a href="roadmap.html">Roadmap</a></li>
+                <li><a href="../guide/ejs/source/porting.html"></a></li>
+                <li><a href="install/index.html">Installation</a></li>
+            </ul>
+        </div>
+        <div class="contentLeft">
+            <h1>Ejscript Change Log</h1>
+            <p>This change log chronicles the features and fixes in each Ejscript release. </p>
+            <p>While Ejscript has been used in many commercial products, we want to effectively communicate our
+            commitment to versioning and stability of APIs. We are adopting the 
+            <a href="http://semver.org/">Semantic Versioning Scheme</a> and have reset the Ejscript
+            version number back to 0.8.0. This is because the public API for Ejscript is still evolving and we are not 
+            yet ready to make firm commitments to backwards compatibility. When the public API is stable, we will
+            bump the version number to 1.0.0.</p>
+
+            <a name="r080" id="r080"></a>
+            <h2 class="section">Changes in 0.8.0</h2>
+            <h3>Major New Features</h3>
+            <ul>
+                <li>Packages. Packages provide a means and format for distributing Ejscript programs and libraries. 
+                An Ejscript package is a cohesive wrapping of a collection of modules, code and other assets into 
+                a single distributable unit. It provides the basis for convenient delivery, installation and management 
+                of CommonJS components.</li>
+                <li>Decouple core components into packages. Some of the packages provided include: database, sqlite, 
+                database ORM mapper, Appweb bindings, web page templating, MVC web framework and XML support.</p>
+                <li>Package manager command <b>jem</b>.</li>
+                <li>Run pure scripts as web commands supporting the JSGI (Rack/Jack style) interface.</li>
+                <li>Stand-alone web templating command.</li>
+                <li>Enhanced caching for scripts and web pages. Cached, pre-compiled code stored in 
+                    common cache directory.</li>
+                <li>Events, Timers and Async execution.</li>
+                <li>Sockets class.</li>
+                <li>Optimized VM performance by ~20%, web page serving performance by 130% and event handling by 270%.</li>
+                <li>Support for the <a href="http://wiki.commonjs.org/Modules">CommonJS Secure Modules</a> interface 
+                    specification.</li>
+                <li>Support for the <a href="http://wiki.commonjs.org/JSGI">CommonJS JSGI</a> web interface 
+                    specification.</li>
+                <li>Support for the <a href="http://wiki.commonjs.org/Packages/0.1">CommonJS Package</a> specification.</li>
+            </ul>
+            <h3><strong>Minor Features</strong></h3>
+            <ul>
+                <li>Inline compilation of web pages and web scripts.</li>
+                <li>Support for an "ejsrc" configuration file to tailor the execution environment.</li>
+                <li>MD5 checksum function.</li>
+            </ul>
+            <h3><strong>Fixes</strong></h3>
+            <ul>
+                <li>Update to use latest Appweb release.</li>
+            </ul>
+            <h3><strong>API Changes</strong></h3>
+            <ul>
+                <li>ejsweb command renamed to ejsmvc.</li>
+                <li>ejswebserver command renamed to ejsweb.</li>
+                <h4>ejs Package</h4>
+                <ul>
+                    <li>EjsVar renamed to EO</li>
+                    <li>ejsXXXVar renamed to ejsXXX or ejsXXXObj where appropriate.</li>
+                </ul>
+                <h4>ejs.xml Package</h4>
+                <ul>
+                    <li>Need require ejs.xml to use XML</li>
+                </ul>
+                <h4>ejs.web.appweb Package</h4>
+                <ul>
+                    <li>Not mapping "-" to "_" in headers anymore, but now mapped to lower case.</li>
+                </ul>
+                <h4>ejs.web.mvc Package </h4>
+                <ul>
+                    <li>redirect renamed to redirectAction</li>
+                    <li>redirectUrl renamed to redirect</li>
+                </ul>
+            </ul>
+        </div>
+    </div>
+<!-- BeginDsi "dsi/bottom.html" -->
+	<div class="bottom">
+		<p class="footnote"> 
+            <a href="../product/copyright.html" >&copy; Embedthis Software LLC, 2003-2010. 
+            All rights reserved. Embedthis, Ejscript and Appweb are trademarks of Embedthis Software LLC.</a>
+		</p>
+	</div>
+<!-- EndDsi -->
+</body>
+</html>

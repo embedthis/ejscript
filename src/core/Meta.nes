@@ -1,0 +1,101 @@
+/*
+    Meta.es -- Definition of meta calls
+    Copyright (c) All Rights Reserved. See details at the end of this file.
+ */
+
+/*
+    Questions 
+        - Are these called when the normal mechansims fail or before?
+ */
+
+module ejs {
+
+    namespace meta
+
+    use default namespace meta
+
+    /** 
+     */
+    native interface IMeta {
+            this.apply(name, args)
+        meta function call(name, ...args)
+
+        /**
+            Called to cast args to the hosting type
+            Same as Type(from)
+         */
+        meta static function cast(from: Object)
+
+        /**
+            Called when invoking the type as a function
+         */
+        meta static function invoke(x)
+
+
+        /**
+            Called to get a named property
+            The property is searched using the set of currently open namespaces.
+         */
+        meta function get(name: String): Object
+
+        /**
+            Called to set a named property
+            The property is searched using the set of currently open namespaces.
+            @param name Given property name.
+            @param value New value for the property
+         */
+        meta function set(name: String, value: Object): Void
+
+        /**
+            Called to determine if an object has a given named property. 
+            The property is searched using the set of currently open namespaces.
+            @param name Given property name.
+         */
+        meta function has(name: String)
+        
+        /**
+            Called to delete the named property. 
+            The property is searched using the set of currently open namespaces.
+            @param name Given property name.
+         */
+        meta function delete(name)
+            delete this[name]
+
+        /**
+            Called to cast an object instance to another type
+            MOB -- who calls this?
+         */
+        meta cast function to(otherType: Type): Object
+    }
+}
+
+
+/*
+    @copy   default
+    
+    Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.
+    
+    This software is distributed under commercial and open source licenses.
+    You may use the GPL open source license described below or you may acquire 
+    a commercial license from Embedthis Software. You agree to be fully bound 
+    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    this software for full details.
+    
+    This software is open source; you can redistribute it and/or modify it 
+    under the terms of the GNU General Public License as published by the 
+    Free Software Foundation; either version 2 of the License, or (at your 
+    option) any later version. See the GNU General Public License for more 
+    details at: http://www.embedthis.com/downloads/gplLicense.html
+    
+    This program is distributed WITHOUT ANY WARRANTY; without even the 
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+    
+    This GPL license does NOT permit incorporating this software into 
+    proprietary programs. If you are unable to comply with the GPL, you must
+    acquire a commercial license to use this software. Commercial licenses 
+    for this software and support services are available from Embedthis 
+    Software at http://www.embedthis.com 
+    
+    @end
+ */

@@ -1,0 +1,5 @@
+require ejs.unix
+
+sh(locate("ejssql") + " test.sdb < test.sql")
+
+test.skip("DB tests disabled until Record refactored")

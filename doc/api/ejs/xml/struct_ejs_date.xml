@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_date" kind="struct" prot="public">
+    <compoundname>EjsDate</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_date_179a395af082c483a5b15c83a72b59fb0" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsDate::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object - Property storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2983" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2983" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_date_11d8f722d3c2e03a4f47e809d6e56d342" prot="public" static="no" mutable="no">
+        <type>MprTime</type>
+        <definition>MprTime EjsDate::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>Time in milliseconds since &quot;1970/01/01 GMT&quot;. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2984" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2984" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="2982" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2982" bodyend="2985"/>
+    <listofallmembers>
+      <member refid="struct_ejs_date_179a395af082c483a5b15c83a72b59fb0" prot="public" virt="non-virtual"><scope>EjsDate</scope><name>obj</name></member>
+      <member refid="struct_ejs_date_11d8f722d3c2e03a4f47e809d6e56d342" prot="public" virt="non-virtual"><scope>EjsDate</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

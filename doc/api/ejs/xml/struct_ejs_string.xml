@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_string" kind="struct" prot="public">
+    <compoundname>EjsString</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_string_1324977c4c34f41fb4dce23ba0738ef8d" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsString::length</definition>
+        <argsstring></argsstring>
+        <name>length</name>
+        <briefdescription>
+<para>String length (sans null). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3671" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3671" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_string_110172a0557f21593181ce215ff2b75d5" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsString::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object - Property storage. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3670" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3670" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_string_18c8862bcc92d704ebda939928b76b3f4" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsString::value</definition>
+        <argsstring></argsstring>
+        <name>value</name>
+        <briefdescription>
+<para>String value. </para>        </briefdescription>
+        <detaileddescription>
+<para>Currently UTF-8. Will upgrade to UTF-16 soon </para>        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3672" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3672" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3669" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3669" bodyend="3673"/>
+    <listofallmembers>
+      <member refid="struct_ejs_string_1324977c4c34f41fb4dce23ba0738ef8d" prot="public" virt="non-virtual"><scope>EjsString</scope><name>length</name></member>
+      <member refid="struct_ejs_string_110172a0557f21593181ce215ff2b75d5" prot="public" virt="non-virtual"><scope>EjsString</scope><name>obj</name></member>
+      <member refid="struct_ejs_string_18c8862bcc92d704ebda939928b76b3f4" prot="public" virt="non-virtual"><scope>EjsString</scope><name>value</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,112 @@
+/*
+    Master ejsrc
+ */
+{
+    /* ejs.sys::App.es, ejs.cjs::Loader.es */
+    cache: {
+        enable: true,
+        reload: true,
+    },
+    log: {
+        enable: true,
+        where: "stdout",
+        level: 2,
+        match: null,
+    },
+    search: null,
+    scripts: null,
+
+    //  MOB -- unknown
+    http: {
+        timeout: 60,
+    },
+
+    /* ejs.web::Web.es */
+    log: {
+        showClient: true,
+    },
+    mvc: {
+        start: "start.es",
+        views: {
+            connectors: { },
+            formats: { },
+        },
+    },
+    session: {
+        enable: true,
+        timeout: 1800,
+    },
+
+    /* ejs.mvc:ejsmvc.es */
+    mode: "debug",
+    database: {
+        timeout: 5000,
+        debug: { },
+        test: { },
+        production: { },
+    },
+    directories: {
+        bin: Path("bin"),
+        db: Path("db"),
+        cache: Path("cache"),
+        controllers: Path("controllers"),
+        layouts: Path("views/layouts"),
+        models: Path("models"),
+        views: Path("views"),
+        src: Path("src"),
+        web: Path("web"),
+    },
+    extensions: {
+        es: "es",
+        ejs: "ejs",
+        mod: "mod",
+    },
+    mvc: {
+        appmod: "App.mod",
+        compiler: "ejsc --debug --optimize 9 --web",
+        start: "start.es",
+        views: {
+            connectors: {
+                table: "html",
+                chart: "google",
+                rest: "html",
+            },
+            formats: {
+                currency: "$%10f",
+                Date: "%a %e %b %H:%M",
+            },
+        },
+        webserver: 'ejsweb --ejs "/" --log stdout:2',
+    },
+    session: {
+        enable: true,
+        timeout: 1800,
+    },
+
+
+    /* ejs.jem::jem.es */
+    extensions: {
+        es: "es",
+        js: "js",
+        ejs: "ejs",
+        jem: "jem",
+        mod: "mod",
+        //  MOB -- should be ["so", "dylib", "dll"]
+        lib: "so"
+    },
+    directories: {
+        cache: Path("cache"),
+        ejs: Path("XXXXX"),
+        jems: Path("/Users/mob/hg/ejs/jlocal"),
+        modules: Path("/Users/mob/hg/ejs/modules"),
+        lib: Path("/Users/mob/hg/ejs/lib"),
+        bin: Path("/Users/mob/hg/ejs/bin"),
+        repositories: [ Path("/Users/mob/hg/ejs/jremote") ],
+    },
+    //  MOB -- should move to a jems paragraph
+    filenames: {
+        package: Path("package.json"),
+        //  MOB -- replicates cache.dir
+        cache: Path("cache")
+    },
+}

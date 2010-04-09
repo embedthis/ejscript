@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.5.8">
+  <compounddef id="struct_ejs_file" kind="struct" prot="public">
+    <compoundname>EjsFile</compoundname>
+      <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_file_1a01266cf22ddfc7ff74ead2bb53a49e5" prot="public" static="no" mutable="no">
+        <type>MprFile *</type>
+        <definition>MprFile* EjsFile::file</definition>
+        <argsstring></argsstring>
+        <name>file</name>
+        <briefdescription>
+<para>Open file handle. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3206" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3206" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_file_11fa1313d7306c82f1edea65cbe2b2388" prot="public" static="no" mutable="no">
+        <type>MprPath</type>
+        <definition>MprPath EjsFile::info</definition>
+        <argsstring></argsstring>
+        <name>info</name>
+        <briefdescription>
+<para>Cached file info. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3207" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3207" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_file_17eebd56860cf238343026a8b25c2f6be" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsFile::mode</definition>
+        <argsstring></argsstring>
+        <name>mode</name>
+        <briefdescription>
+<para>Current open mode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3210" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3210" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_file_1a0fce2236ad118d012ec37239695dcd2" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsFile::modeString</definition>
+        <argsstring></argsstring>
+        <name>modeString</name>
+        <briefdescription>
+<para>User supplied mode string. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3209" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3209" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_file_18b23be6acd53d8bde079e27983f922cc" prot="public" static="no" mutable="no">
+        <type>EjsObj</type>
+        <definition>EjsObj EjsFile::obj</definition>
+        <argsstring></argsstring>
+        <name>obj</name>
+        <briefdescription>
+<para>Extends Object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3205" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3205" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_file_100ed29fa03ab2c88850d10d05a8a65cf" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsFile::path</definition>
+        <argsstring></argsstring>
+        <name>path</name>
+        <briefdescription>
+<para>Filename path. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3208" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3208" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_file_16d35bf5ef4f6eb7b40ff8f0c9e715814" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsFile::perms</definition>
+        <argsstring></argsstring>
+        <name>perms</name>
+        <briefdescription>
+<para>Posix permissions mask. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3211" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3211" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3204" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3204" bodyend="3218"/>
+    <listofallmembers>
+      <member refid="struct_ejs_file_1a01266cf22ddfc7ff74ead2bb53a49e5" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>file</name></member>
+      <member refid="struct_ejs_file_11fa1313d7306c82f1edea65cbe2b2388" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>info</name></member>
+      <member refid="struct_ejs_file_17eebd56860cf238343026a8b25c2f6be" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>mode</name></member>
+      <member refid="struct_ejs_file_1a0fce2236ad118d012ec37239695dcd2" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>modeString</name></member>
+      <member refid="struct_ejs_file_18b23be6acd53d8bde079e27983f922cc" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>obj</name></member>
+      <member refid="struct_ejs_file_100ed29fa03ab2c88850d10d05a8a65cf" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>path</name></member>
+      <member refid="struct_ejs_file_16d35bf5ef4f6eb7b40ff8f0c9e715814" prot="public" virt="non-virtual"><scope>EjsFile</scope><name>perms</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

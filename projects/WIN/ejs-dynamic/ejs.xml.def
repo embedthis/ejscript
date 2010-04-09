@@ -1,0 +1,17 @@
+LIBRARY ejs.xml.dll
+EXPORTS
+  ejsAppendAttributeToXML
+  ejsAppendToXML
+  ejsConfigureXML
+  ejsConfigureXMLListType
+  ejsConfigureXMLType
+  ejsCreateXML
+  ejsCreateXMLList
+  ejsCreateXmlParser
+  ejsDeepCopyXML
+  ejsLoadXMLString
+  ejsMarkXML
+  ejsSetXML
+  ejsXMLDescendants
+  ejsXMLToString
+  ejs_xml_Init

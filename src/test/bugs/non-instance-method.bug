@@ -1,0 +1,7 @@
+//  NOTE: missing new or Http()
+http = Http
+
+//  Calling instance method on a type
+//  CRASH
+http.get("http://www.ccadfsasdfadsfasdfasdf.com")
+print(http.status)
