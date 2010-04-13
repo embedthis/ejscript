@@ -11,6 +11,7 @@
     #define BLD_NAME "Embedthis Ejscript"
     #define BLD_VERSION "1.1.0"
     #define BLD_NUMBER "1-repos"
+    #define BLD_NUMBER_ONLY "1"
     #define BLD_MAJOR_VERSION 1
     #define BLD_MINOR_VERSION 1
     #define BLD_PATCH_VERSION 0
@@ -202,19 +203,39 @@
     #define 	BLD_MPR_WITH "1"
 
     #define 	BLD_FEATURE_HTTP 1
-    #define 	BLD_HTTP "/Users/mob/hg/ejs/bin/http"
+    #define 	BLD_HTTP "/Users/mob/git/ejs/bin/http"
     #define 	BLD_HTTP_BUILTIN 1
-    #define 	BLD_HTTP_LIBPATHS "/Users/mob/hg/ejs/bin/http/lib"
+    #define 	BLD_HTTP_LIBPATHS "/Users/mob/git/ejs/bin/http/lib"
     #define 	BLD_HTTP_LIBS "http pcre"
     #define 	BLD_HTTP_OPTIONAL_DEPENDENCIES "regexp"
     #define 	BLD_HTTP_WITH "1"
     #define 	BLD_HTTP_WITHLIBS "pcre"
 
-    #define 	BLD_FEATURE_MATRIXSSL 0
+    #define 	BLD_FEATURE_MATRIXSSL 1
+    #define 	BLD_MATRIXSSL "/Users/mob/git/ejs/extensions/matrixssl/latest"
+    #define 	BLD_MATRIXSSL_BUILTIN 1
+    #define 	BLD_MATRIXSSL_IFLAGS "-I/Users/mob/git/ejs/extensions/matrixssl/latest"
+    #define 	BLD_MATRIXSSL_IMPORTS " ${BLD_TOP}/extensions/matrixssl/latest/src/libmatrixsslstatic.a"
+    #define 	BLD_MATRIXSSL_LIBS "matrixsslstatic.a"
+    #define 	BLD_MATRIXSSL_WITH "1"
 
-    #define 	BLD_FEATURE_OPENSSL 0
+    #define 	BLD_FEATURE_OPENSSL 1
+    #define 	BLD_OPENSSL "/Users/mob/git/ejs/extensions/openssl/latest"
+    #define 	BLD_OPENSSL_BUILTIN 1
+    #define 	BLD_OPENSSL_IFLAGS "-I/Users/mob/git/ejs/extensions/openssl/latest/include"
+    #define 	BLD_OPENSSL_IMPORTS " ${BLD_TOP}/extensions/openssl/latest/libssl.a ${BLD_TOP}/extensions/openssl/latest/libcrypto.a"
+    #define 	BLD_OPENSSL_LIBS "ssl.a crypto.a"
+    #define 	BLD_OPENSSL_WITH "1"
 
-    #define 	BLD_FEATURE_SSL 0
+    #define 	BLD_FEATURE_SSL 1
+    #define 	BLD_SSL "src/ssl"
+    #define 	BLD_SSL_BUILTIN 1
+    #define 	BLD_SSL_DEPENDENCIES " openssl matrixssl mpr"
+    #define 	BLD_SSL_LIBPATHS "/Users/mob/git/ejs/src/deps/mpr/lib"
+    #define 	BLD_SSL_LIBS "mprssl ssl.a crypto.a matrixsslstatic.a mpr"
+    #define 	BLD_SSL_WITH "1"
+    #define 	BLD_SSL_WITHLIBS "ssl.a crypto.a matrixsslstatic.a mpr"
+    #define 	BLD_SSL_WITHPATHS "/Users/mob/git/ejs/src/deps/mpr/lib"
 
     #define 	BLD_FEATURE_SQLITE 1
     #define 	BLD_SQLITE "/Users/mob/git/ejs/src/jems/ejs.db.sqlite/src"
@@ -230,22 +251,22 @@
     #define 	BLD_APPWEB "src/deps/appweb"
     #define 	BLD_APPWEB_BUILTIN 1
     #define 	BLD_APPWEB_DEPENDENCIES "mpr http"
-    #define 	BLD_APPWEB_LIBPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
-    #define 	BLD_APPWEB_LIBS "appweb mpr http pcre"
+    #define 	BLD_APPWEB_LIBPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/git/ejs/bin/http/lib"
+    #define 	BLD_APPWEB_LIBS "appweb mprssl ssl.a crypto.a matrixsslstatic.a mpr http pcre"
     #define 	BLD_APPWEB_OPTIONAL_DEPENDENCIES "ssl"
     #define 	BLD_APPWEB_WITH "1"
-    #define 	BLD_APPWEB_WITHLIBS "mpr http pcre"
-    #define 	BLD_APPWEB_WITHPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
+    #define 	BLD_APPWEB_WITHLIBS "mprssl ssl.a crypto.a matrixsslstatic.a mpr http pcre"
+    #define 	BLD_APPWEB_WITHPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/git/ejs/bin/http/lib"
 
     #define 	BLD_FEATURE_EJS 1
     #define 	BLD_EJS "/Users/mob/git/ejs"
     #define 	BLD_EJS_BUILTIN 1
     #define 	BLD_EJS_DEPENDENCIES "mpr http"
-    #define 	BLD_EJS_LIBPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
-    #define 	BLD_EJS_LIBS "ejs mpr http pcre"
+    #define 	BLD_EJS_LIBPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/git/ejs/bin/http/lib"
+    #define 	BLD_EJS_LIBS "ejs mprssl ssl.a crypto.a matrixsslstatic.a mpr http pcre"
     #define 	BLD_EJS_OPTIONAL_DEPENDENCIES "ssl"
     #define 	BLD_EJS_WITH "1"
-    #define 	BLD_EJS_WITHLIBS "mpr http pcre"
-    #define 	BLD_EJS_WITHPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/hg/ejs/bin/http/lib"
+    #define 	BLD_EJS_WITHLIBS "mprssl ssl.a crypto.a matrixsslstatic.a mpr http pcre"
+    #define 	BLD_EJS_WITHPATHS "/Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/git/ejs/src/deps/mpr/lib /Users/mob/git/ejs/bin/http/lib"
 
 

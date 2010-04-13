@@ -1507,6 +1507,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
          */
         CASE (EJS_OP_POP):
             ejs->result = pop(ejs);
+#if MACOSX || UNUSED
+            mprAssert(ejs->result != (void*) 0xf7f7f7f7f7f7f7f7);
+#endif
+            mprAssert(ejs->exception || ejs->result);
             BREAK;
 
         /*

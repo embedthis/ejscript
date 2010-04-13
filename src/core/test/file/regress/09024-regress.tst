@@ -4,7 +4,7 @@
 
 require ejs.unix
 
-datafile = "09024-" + hashcode(self) + ".tdat"
+datafile = "09024-" + hashcode(global) + ".tdat"
 
 var generate = function() {
     file = new File(datafile)

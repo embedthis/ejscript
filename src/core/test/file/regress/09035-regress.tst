@@ -4,7 +4,7 @@
 
 require ejs.unix
 
-fname = "/tmp/" + hashcode(self) + ".tmp"
+fname = "/tmp/" + hashcode(global) + ".tmp"
 
 data = "example text example text    001 
 example text example text    002 

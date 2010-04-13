@@ -219,3 +219,6 @@ update:
 	hg pull ; hg update -C
 	make TRACE=0 clean depend compile install-binary test
 
+debug:
+	open projects/MACOSX/ejs-all/ejs-all.xcodeproj
+

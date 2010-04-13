@@ -2129,7 +2129,6 @@ static void astTry(EcCompiler *cp, EcNode *np)
     mprAssert(np->exception.tryBlock);
 
     ejs = cp->ejs;
-    np->exception.tryBlock->createBlockObject = 1;
 
     processAstNode(cp, np->exception.tryBlock);
 
@@ -2145,7 +2144,6 @@ static void astTry(EcCompiler *cp, EcNode *np)
         }
         np->exception.numBlocks = count;
     }
-
     if (np->exception.catchClauses) {
         next = 0;
         while ((child = getNextAstNode(cp, np->exception.catchClauses, &next))) {

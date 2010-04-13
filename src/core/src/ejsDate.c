@@ -1084,7 +1084,7 @@ static EjsObj *date_set_year(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 
     mprDecodeLocalTime(ejs, &tm, dp->value);
     tm.tm_year = ejsGetNumber(ejs, argv[0]) - 1900;
-    dp->value = mprMakeTime(ejs, &tm);
+    value = mprMakeTime(ejs, &tm);
     if (value == -1) {
         ejsThrowArgError(ejs, "Invalid year");
     } else {

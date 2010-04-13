@@ -24,3 +24,13 @@ lib/mime.types
 bin/angel
 bin/http
 bin/jem
+all/*.c
+all/*.h
+projects/MACOSX/*/*/*.mode1v3
+projects/MACOSX/*/*/*.pbxuser
+projects/MACOSX/*/*/*.perspectivev3
+src/compiler/test/t.es
+src/core/test/t.es
+build/bin/buildConfig.sh
+src/include/ejs.*.slots.h
+projects/MACOSX/*/build

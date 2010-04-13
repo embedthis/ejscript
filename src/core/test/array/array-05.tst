@@ -86,9 +86,9 @@ assert(a.insert(3, 7, 8, 9) == "1,2,3,7,8,9")
 a = [1,2,4]
 assert(a.insert(-1, 3) == "1,2,3,4")
 
-a = ['a','b']
+a = [ 1, 2, 3 ]
 assert(a.insert(9, "4") == "1,2,3,4")
-assert(a.insert(0, "0") == "0,1,2,3")
+assert(a.insert(0, "0") == "0,1,2,3,4")
 
 
 // join
