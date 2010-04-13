@@ -18,11 +18,8 @@
     Local slots for global methods 
  */
 #define ES_ejs_web_parseCookies_cookieHeader                           0
-#define ES_ejs_web_parseCookies_cookies                                1
-#define ES_ejs_web_parseCookies__hoisted_2_c                           2
 #define ES_ejs_web_escapeHtml_s                                        0
 #define ES_ejs_web_html_args                                           0
-#define ES_ejs_web_html__hoisted_1_s                                   1
 #define ES_ejs_web_unescapeHtml_s                                      0
 
 
@@ -81,19 +78,8 @@
  */
 #define ES_ejs_web_Controller_Controller_r                             0
 #define ES_ejs_web_Controller_ejs_web_create_request                   0
-#define ES_ejs_web_Controller_ejs_web_create_cname                     1
-#define ES_ejs_web_Controller_ejs_web_create_uname                     2
-#define ES_ejs_web_Controller_ejs_web_create_c                         3
 #define ES_ejs_web_Controller_openDatabase_request                     0
-#define ES_ejs_web_Controller_openDatabase_deploymentMode              1
-#define ES_ejs_web_Controller_openDatabase_dbconfig                    2
-#define ES_ejs_web_Controller_openDatabase_klass                       3
-#define ES_ejs_web_Controller_openDatabase_adapter                     4
-#define ES_ejs_web_Controller_openDatabase_profile                     5
-#define ES_ejs_web_Controller_openDatabase__hoisted_6_db               6
 #define ES_ejs_web_Controller_ejs_web_run_request                      0
-#define ES_ejs_web_Controller_flashAfter__hoisted_0_item               0
-#define ES_ejs_web_Controller_flashAfter__hoisted_1_old                1
 #define ES_ejs_web_Controller_ejs_web_beforeFilter_fn                  0
 #define ES_ejs_web_Controller_ejs_web_beforeFilter_options             1
 #define ES_ejs_web_Controller_ejs_web_afterFilter_fn                   0
@@ -101,32 +87,16 @@
 #define ES_ejs_web_Controller_ejs_web_wrapFilter_fn                    0
 #define ES_ejs_web_Controller_ejs_web_wrapFilter_options               1
 #define ES_ejs_web_Controller_runFilters_filters                       0
-#define ES_ejs_web_Controller_runFilters__hoisted_1_filter             1
-#define ES_ejs_web_Controller_runFilters__hoisted_1_fn                 2
-#define ES_ejs_web_Controller_runFilters__hoisted_1_options            3
 #define ES_ejs_web_Controller_ejs_web_loadView_path                    0
 #define ES_ejs_web_Controller_ejs_web_loadView_name                    1
-#define ES_ejs_web_Controller_ejs_web_loadView_cached                  2
-#define ES_ejs_web_Controller_ejs_web_loadView__hoisted_3_layout       3
-#define ES_ejs_web_Controller_ejs_web_loadView__hoisted_3_code         4
 #define ES_ejs_web_Controller_ejs_web_renderError_msg                  0
 #define ES_ejs_web_Controller_ejs_web_renderError_status               1
 #define ES_ejs_web_Controller_ejs_web_redirect_uri                     0
 #define ES_ejs_web_Controller_ejs_web_redirect_status                  1
 #define ES_ejs_web_Controller_ejs_web_render_args                      0
 #define ES_ejs_web_Controller_ejs_web_renderFile_filename              0
-#define ES_ejs_web_Controller_ejs_web_renderFile_file                  1
-#define ES_ejs_web_Controller_ejs_web_renderFile__hoisted_2_e          2
 #define ES_ejs_web_Controller_ejs_web_renderPartial_path               0
-#define ES_ejs_web_Controller_ejs_web_renderPartial_name               1
-#define ES_ejs_web_Controller_ejs_web_renderPartial_viewClass          2
-#define ES_ejs_web_Controller_ejs_web_renderPartial__hoisted_3_path    3
-#define ES_ejs_web_Controller_ejs_web_renderPartial__hoisted_3_name    4
-#define ES_ejs_web_Controller_ejs_web_renderPartial__hoisted_5_n       5
 #define ES_ejs_web_Controller_ejs_web_renderView_viewName              0
-#define ES_ejs_web_Controller_ejs_web_renderView_path                  1
-#define ES_ejs_web_Controller_ejs_web_renderView_viewClass             2
-#define ES_ejs_web_Controller_ejs_web_renderView__hoisted_3_n          3
 #define ES_ejs_web_Controller_ejs_web_error_msg                        0
 #define ES_ejs_web_Controller_ejs_web_inform_msg                       0
 #define ES_ejs_web_Controller_ejs_web_warn_msg                         0
@@ -199,7 +169,6 @@
 #define ES_HtmlConnector_ejs_web_checkbox_choice                       1
 #define ES_HtmlConnector_ejs_web_checkbox_submitValue                  2
 #define ES_HtmlConnector_ejs_web_checkbox_options                      3
-#define ES_HtmlConnector_ejs_web_checkbox_checked                      4
 #define ES_HtmlConnector_ejs_web_flash_kind                            0
 #define ES_HtmlConnector_ejs_web_flash_msg                             1
 #define ES_HtmlConnector_ejs_web_flash_options                         2
@@ -219,10 +188,6 @@
 #define ES_HtmlConnector_ejs_web_list_choices                          1
 #define ES_HtmlConnector_ejs_web_list_defaultValue                     2
 #define ES_HtmlConnector_ejs_web_list_options                          3
-#define ES_HtmlConnector_ejs_web_list_isSelected                       4
-#define ES_HtmlConnector_ejs_web_list_i                                5
-#define ES_HtmlConnector_ejs_web_list__hoisted_6_choice                6
-#define ES_HtmlConnector_ejs_web_list__hoisted_7_field                 7
 #define ES_HtmlConnector_ejs_web_mail_name                             0
 #define ES_HtmlConnector_ejs_web_mail_address                          1
 #define ES_HtmlConnector_ejs_web_mail_options                          2
@@ -232,9 +197,6 @@
 #define ES_HtmlConnector_ejs_web_radio_selected                        1
 #define ES_HtmlConnector_ejs_web_radio_choices                         2
 #define ES_HtmlConnector_ejs_web_radio_options                         3
-#define ES_HtmlConnector_ejs_web_radio_checked                         4
-#define ES_HtmlConnector_ejs_web_radio__hoisted_5_v                    5
-#define ES_HtmlConnector_ejs_web_radio__hoisted_6_item                 6
 #define ES_HtmlConnector_ejs_web_script_uri                            0
 #define ES_HtmlConnector_ejs_web_script_options                        1
 #define ES_HtmlConnector_ejs_web_status_initialData                    0
@@ -243,35 +205,8 @@
 #define ES_HtmlConnector_ejs_web_stylesheet_options                    1
 #define ES_HtmlConnector_ejs_web_tabs_initialData                      0
 #define ES_HtmlConnector_ejs_web_tabs_options                          1
-#define ES_HtmlConnector_ejs_web_tabs__hoisted_2_t                     2
-#define ES_HtmlConnector_ejs_web_tabs__hoisted_3_name                  3
-#define ES_HtmlConnector_ejs_web_tabs__hoisted_3_uri                   4
 #define ES_HtmlConnector_ejs_web_table_data                            0
 #define ES_HtmlConnector_ejs_web_table_options                         1
-#define ES_HtmlConnector_ejs_web_table_originalOptions                 2
-#define ES_HtmlConnector_ejs_web_table_tableId                         3
-#define ES_HtmlConnector_ejs_web_table_columns                         4
-#define ES_HtmlConnector_ejs_web_table_refresh                         5
-#define ES_HtmlConnector_ejs_web_table_sortOrder                       6
-#define ES_HtmlConnector_ejs_web_table_sort                            7
-#define ES_HtmlConnector_ejs_web_table_styleBody                       8
-#define ES_HtmlConnector_ejs_web_table_row                             9
-#define ES_HtmlConnector_ejs_web_table__hoisted_10_uri                 10
-#define ES_HtmlConnector_ejs_web_table__hoisted_11_gif                 11
-#define ES_HtmlConnector_ejs_web_table__hoisted_12_name                12
-#define ES_HtmlConnector_ejs_web_table__hoisted_12_header              13
-#define ES_HtmlConnector_ejs_web_table__hoisted_12_width               14
-#define ES_HtmlConnector_ejs_web_table__hoisted_15_r                   15
-#define ES_HtmlConnector_ejs_web_table__hoisted_15_uri                 16
-#define ES_HtmlConnector_ejs_web_table__hoisted_15_uriOptions          17
-#define ES_HtmlConnector_ejs_web_table__hoisted_15_odd                 18
-#define ES_HtmlConnector_ejs_web_table__hoisted_15_even                19
-#define ES_HtmlConnector_ejs_web_table__hoisted_15_col                 20
-#define ES_HtmlConnector_ejs_web_table__hoisted_21_name                21
-#define ES_HtmlConnector_ejs_web_table__hoisted_21_column              22
-#define ES_HtmlConnector_ejs_web_table__hoisted_21_styleCell           23
-#define ES_HtmlConnector_ejs_web_table__hoisted_21_align               24
-#define ES_HtmlConnector_ejs_web_table__hoisted_21_cellUrl             25
 #define ES_HtmlConnector_ejs_web_text_field                            0
 #define ES_HtmlConnector_ejs_web_text_value                            1
 #define ES_HtmlConnector_ejs_web_text_options                          2
@@ -282,11 +217,7 @@
 #define ES_HtmlConnector_ejs_web_tree_options                          1
 #define ES_HtmlConnector_getColumns_data                               0
 #define ES_HtmlConnector_getColumns_options                            1
-#define ES_HtmlConnector_getColumns_columns                            2
-#define ES_HtmlConnector_getColumns__hoisted_3_name                    3
-#define ES_HtmlConnector_getColumns__hoisted_4_name                    4
 #define ES_HtmlConnector_getTextKind_options                           0
-#define ES_HtmlConnector_getTextKind_kind                              1
 #define ES_HtmlConnector_getOptions_options                            0
 #define ES_HtmlConnector_write_str                                     0
 
@@ -354,29 +285,10 @@
     Local slots for methods in type "Mvc" 
  */
 #define ES_Mvc_defaultAppExports_request                               0
-#define ES_Mvc_defaultAppExports_controller                            1
 #define ES_Mvc_load_request                                            0
-#define ES_Mvc_load_dir                                                1
-#define ES_Mvc_load_path                                               2
-#define ES_Mvc_load_config                                             3
-#define ES_Mvc_load_start                                              4
-#define ES_Mvc_load_exports                                            5
-#define ES_Mvc_load__hoisted_6_appConfig                               6
 #define ES_Mvc_init_request                                            0
-#define ES_Mvc_init_config                                             1
-#define ES_Mvc_init_dir                                                2
-#define ES_Mvc_init_mod                                                3
-#define ES_Mvc_init_deps                                               4
-#define ES_Mvc_init_controller                                         5
-#define ES_Mvc_init_ucontroller                                        6
 #define ES_Mvc_loadComponent_mod                                       0
 #define ES_Mvc_loadComponent_deps                                      1
-#define ES_Mvc_loadComponent_rebuild                                   2
-#define ES_Mvc_loadComponent__hoisted_3_when                           3
-#define ES_Mvc_loadComponent__hoisted_4_dep                            4
-#define ES_Mvc_loadComponent__hoisted_5_code                           5
-#define ES_Mvc_loadComponent__hoisted_6_dep                            6
-#define ES_Mvc_loadComponent__hoisted_6_path                           7
 
 
 /*
@@ -462,7 +374,6 @@
 #define ES_ejs_web_Request_addListener_listener                        1
 #define ES_ejs_web_Request_cachable_enable                             0
 #define ES_ejs_web_Request_dump_args                                   0
-#define ES_ejs_web_Request_dump_e                                      1
 #define ES_ejs_web_Request_header_key                                  0
 #define ES_ejs_web_Request_read_buffer                                 0
 #define ES_ejs_web_Request_read_offset                                 1
@@ -472,25 +383,20 @@
 #define ES_ejs_web_Request_removeListener_name                         0
 #define ES_ejs_web_Request_removeListener_listener                     1
 #define ES_ejs_web_Request_makeUri_parts                               0
-#define ES_ejs_web_Request_makeUri_uri                                 1
-#define ES_ejs_web_Request_makeUri__hoisted_2_part                     2
 #define ES_ejs_web_Request_setLocation_prefix                          0
 #define ES_ejs_web_Request_setLocation_location                        1
 #define ES_ejs_web_Request_sendResponse_response                       0
 #define ES_ejs_web_Request_setCookie_name                              0
 #define ES_ejs_web_Request_setCookie_options                           1
-#define ES_ejs_web_Request_setCookie_value                             2
 #define ES_ejs_web_Request_setHeader_key                               0
 #define ES_ejs_web_Request_setHeader_value                             1
 #define ES_ejs_web_Request_setHeader_overwrite                         2
 #define ES_ejs_web_Request_setHeaders_headers                          0
 #define ES_ejs_web_Request_setHeaders_overwrite                        1
-#define ES_ejs_web_Request_setHeaders__hoisted_2_key                   2
 #define ES_ejs_web_Request_setStatus_status                            0
 #define ES_ejs_web_Request_write_data                                  0
 #define ES_ejs_web_Request_writeError_msg                              0
 #define ES_ejs_web_Request_writeError_code                             1
-#define ES_ejs_web_Request_writeError_text                             2
 #define ES_ejs_web_Request_writeHtml_args                              0
 
 
@@ -522,24 +428,7 @@
 #define ES_ejs_web_Router_Router_set                                   0
 #define ES_ejs_web_Router_addRoutes_routeSet                           0
 #define ES_ejs_web_Router_addRoutes_outer                              1
-#define ES_ejs_web_Router_addRoutes__hoisted_2_route                   2
-#define ES_ejs_web_Router_addRoutes__hoisted_3_p                       3
-#define ES_ejs_web_Router_addRoutes__hoisted_2_splitter                4
-#define ES_ejs_web_Router_addRoutes__hoisted_2_tokens                  5
-#define ES_ejs_web_Router_addRoutes__hoisted_6_i                       6
-#define ES_ejs_web_Router_addRoutes__hoisted_7_template                7
-#define ES_ejs_web_Router_addRoutes__hoisted_8_c                       8
 #define ES_ejs_web_Router_route_request                                0
-#define ES_ejs_web_Router_route_params                                 1
-#define ES_ejs_web_Router_route_pathInfo                               2
-#define ES_ejs_web_Router_route__hoisted_3_route                       3
-#define ES_ejs_web_Router_route__hoisted_4_i                           4
-#define ES_ejs_web_Router_route__hoisted_5_results                     5
-#define ES_ejs_web_Router_route__hoisted_6_name                        6
-#define ES_ejs_web_Router_route__hoisted_6_value                       7
-#define ES_ejs_web_Router_route__hoisted_8_i                           8
-#define ES_ejs_web_Router_route__hoisted_9_i                           9
-#define ES_ejs_web_Router_route__hoisted_3_location                    10
 
 
 /*
@@ -575,15 +464,8 @@
  */
 #define ES_ejs_web_Route_Route_route                                   0
 #define ES_ejs_web_Route_Route_router                                  1
-#define ES_ejs_web_Route_Route__hoisted_2_field                        2
 #define ES_ejs_web_Route_makeUri_request                               0
 #define ES_ejs_web_Route_makeUri_parts                                 1
-#define ES_ejs_web_Route_makeUri_result                                2
-#define ES_ejs_web_Route_makeUri_routeName                             3
-#define ES_ejs_web_Route_makeUri_route                                 4
-#define ES_ejs_web_Route_makeUri_path                                  5
-#define ES_ejs_web_Route_makeUri__hoisted_6_r                          6
-#define ES_ejs_web_Route_makeUri__hoisted_7_token                      7
 
 
 /*
@@ -698,137 +580,76 @@
 #define ES_ejs_web_View_write_data                                     0
 #define ES_ejs_web_View_ejs_web_aform_record                           0
 #define ES_ejs_web_View_ejs_web_aform_options                          1
-#define ES_ejs_web_View_ejs_web_aform_connector                        2
 #define ES_ejs_web_View_ejs_web_alink_text                             0
 #define ES_ejs_web_View_ejs_web_alink_options                          1
-#define ES_ejs_web_View_ejs_web_alink_connector                        2
 #define ES_ejs_web_View_ejs_web_button_value                           0
 #define ES_ejs_web_View_ejs_web_button_buttonName                      1
 #define ES_ejs_web_View_ejs_web_button_options                         2
-#define ES_ejs_web_View_ejs_web_button_connector                       3
 #define ES_ejs_web_View_ejs_web_buttonLink_text                        0
 #define ES_ejs_web_View_ejs_web_buttonLink_options                     1
-#define ES_ejs_web_View_ejs_web_buttonLink_connector                   2
 #define ES_ejs_web_View_ejs_web_chart_initialData                      0
 #define ES_ejs_web_View_ejs_web_chart_options                          1
-#define ES_ejs_web_View_ejs_web_chart_connector                        2
 #define ES_ejs_web_View_ejs_web_checkbox_field                         0
 #define ES_ejs_web_View_ejs_web_checkbox_choice                        1
 #define ES_ejs_web_View_ejs_web_checkbox_options                       2
-#define ES_ejs_web_View_ejs_web_checkbox_value                         3
-#define ES_ejs_web_View_ejs_web_checkbox_connector                     4
-#define ES_ejs_web_View_ejs_web_endform_connector                      0
 #define ES_ejs_web_View_ejs_web_form_record                            0
 #define ES_ejs_web_View_ejs_web_form_options                           1
-#define ES_ejs_web_View_ejs_web_form_connector                         2
 #define ES_ejs_web_View_ejs_web_image_src                              0
 #define ES_ejs_web_View_ejs_web_image_options                          1
 #define ES_ejs_web_View_ejs_web_imageLink_image                        0
 #define ES_ejs_web_View_ejs_web_imageLink_options                      1
-#define ES_ejs_web_View_ejs_web_imageLink_connector                    2
 #define ES_ejs_web_View_ejs_web_input_field                            0
 #define ES_ejs_web_View_ejs_web_input_options                          1
 #define ES_ejs_web_View_ejs_web_label_text                             0
 #define ES_ejs_web_View_ejs_web_label_options                          1
-#define ES_ejs_web_View_ejs_web_label_connector                        2
 #define ES_ejs_web_View_ejs_web_link_text                              0
 #define ES_ejs_web_View_ejs_web_link_options                           1
-#define ES_ejs_web_View_ejs_web_link_connector                         2
 #define ES_ejs_web_View_ejs_web_extlink_text                           0
 #define ES_ejs_web_View_ejs_web_extlink_options                        1
-#define ES_ejs_web_View_ejs_web_extlink_connector                      2
 #define ES_ejs_web_View_ejs_web_list_field                             0
 #define ES_ejs_web_View_ejs_web_list_choices                           1
 #define ES_ejs_web_View_ejs_web_list_options                           2
-#define ES_ejs_web_View_ejs_web_list_value                             3
-#define ES_ejs_web_View_ejs_web_list_connector                         4
 #define ES_ejs_web_View_ejs_web_mail_name                              0
 #define ES_ejs_web_View_ejs_web_mail_address                           1
 #define ES_ejs_web_View_ejs_web_mail_options                           2
-#define ES_ejs_web_View_ejs_web_mail_connector                         3
 #define ES_ejs_web_View_ejs_web_progress_initialData                   0
 #define ES_ejs_web_View_ejs_web_progress_options                       1
-#define ES_ejs_web_View_ejs_web_progress_connector                     2
 #define ES_ejs_web_View_ejs_web_radio_field                            0
 #define ES_ejs_web_View_ejs_web_radio_choices                          1
 #define ES_ejs_web_View_ejs_web_radio_options                          2
-#define ES_ejs_web_View_ejs_web_radio_value                            3
-#define ES_ejs_web_View_ejs_web_radio_connector                        4
 #define ES_ejs_web_View_ejs_web_script_uri                             0
 #define ES_ejs_web_View_ejs_web_script_options                         1
-#define ES_ejs_web_View_ejs_web_script_connector                       2
-#define ES_ejs_web_View_ejs_web_script__hoisted_3_u                    3
 #define ES_ejs_web_View_ejs_web_status_initialData                     0
 #define ES_ejs_web_View_ejs_web_status_options                         1
-#define ES_ejs_web_View_ejs_web_status_connector                       2
 #define ES_ejs_web_View_ejs_web_stylesheet_uri                         0
 #define ES_ejs_web_View_ejs_web_stylesheet_options                     1
-#define ES_ejs_web_View_ejs_web_stylesheet_connector                   2
-#define ES_ejs_web_View_ejs_web_stylesheet__hoisted_3_u                3
 #define ES_ejs_web_View_ejs_web_table_data                             0
 #define ES_ejs_web_View_ejs_web_table_options                          1
-#define ES_ejs_web_View_ejs_web_table_connector                        2
 #define ES_ejs_web_View_ejs_web_tabs_initialData                       0
 #define ES_ejs_web_View_ejs_web_tabs_options                           1
-#define ES_ejs_web_View_ejs_web_tabs_connector                         2
 #define ES_ejs_web_View_ejs_web_text_field                             0
 #define ES_ejs_web_View_ejs_web_text_options                           1
-#define ES_ejs_web_View_ejs_web_text_value                             2
-#define ES_ejs_web_View_ejs_web_text_connector                         3
 #define ES_ejs_web_View_ejs_web_textarea_field                         0
 #define ES_ejs_web_View_ejs_web_textarea_options                       1
-#define ES_ejs_web_View_ejs_web_textarea_value                         2
-#define ES_ejs_web_View_ejs_web_textarea_connector                     3
 #define ES_ejs_web_View_ejs_web_tree_initialData                       0
 #define ES_ejs_web_View_ejs_web_tree_options                           1
-#define ES_ejs_web_View_ejs_web_tree_connector                         2
 #define ES_ejs_web_View_ejs_web_flash_kinds                            0
 #define ES_ejs_web_View_ejs_web_flash_options                          1
-#define ES_ejs_web_View_ejs_web_flash_cflash                           2
-#define ES_ejs_web_View_ejs_web_flash_msgs                             3
-#define ES_ejs_web_View_ejs_web_flash__hoisted_4_kind                  4
-#define ES_ejs_web_View_ejs_web_flash__hoisted_5_kind                  5
-#define ES_ejs_web_View_ejs_web_flash__hoisted_5_msg                   6
-#define ES_ejs_web_View_ejs_web_flash__hoisted_7_connector             7
 #define ES_ejs_web_View_emitFormErrors_record                          0
-#define ES_ejs_web_View_emitFormErrors_errors                          1
-#define ES_ejs_web_View_emitFormErrors__hoisted_2_e                    2
 #define ES_ejs_web_View_getConnector_kind                              0
 #define ES_ejs_web_View_getConnector_options                           1
-#define ES_ejs_web_View_getConnector_views                             2
-#define ES_ejs_web_View_getConnector_connectorName                     3
-#define ES_ejs_web_View_getConnector_name                              4
-#define ES_ejs_web_View_getConnector__hoisted_5_e                      5
 #define ES_ejs_web_View_setOptions_field                               0
 #define ES_ejs_web_View_setOptions_options                             1
 #define ES_ejs_web_View_ejs_web_getValue_record                        0
 #define ES_ejs_web_View_ejs_web_getValue_field                         1
 #define ES_ejs_web_View_ejs_web_getValue_options                       2
-#define ES_ejs_web_View_ejs_web_getValue_value                         3
-#define ES_ejs_web_View_ejs_web_getValue_typeName                      4
-#define ES_ejs_web_View_ejs_web_getValue_fmt                           5
-#define ES_ejs_web_View_ejs_web_getValue_mvc                           6
-#define ES_ejs_web_View_ejs_web_getValue__hoisted_7_part               7
 #define ES_ejs_web_View_ejs_web_date_fmt                               0
 #define ES_ejs_web_View_ejs_web_currency_fmt                           0
 #define ES_ejs_web_View_ejs_web_number_fmt                             0
 #define ES_ejs_web_View_ejs_web_getOptions_options                     0
-#define ES_ejs_web_View_ejs_web_getOptions_result                      1
-#define ES_ejs_web_View_ejs_web_getOptions__hoisted_2_option           2
-#define ES_ejs_web_View_ejs_web_getOptions__hoisted_2_mapped           3
 #define ES_ejs_web_View_pivot_grid                                     0
 #define ES_ejs_web_View_pivot_options                                  1
-#define ES_ejs_web_View_pivot_headers                                  2
-#define ES_ejs_web_View_pivot_i                                        3
-#define ES_ejs_web_View_pivot_table                                    4
-#define ES_ejs_web_View_pivot_row                                      5
-#define ES_ejs_web_View_pivot__hoisted_6_name                          6
-#define ES_ejs_web_View_pivot__hoisted_7_name                          7
-#define ES_ejs_web_View_pivot__hoisted_7_r                             8
 #define ES_ejs_web_View_filter_data                                    0
-#define ES_ejs_web_View_filter__hoisted_1_i                            1
-#define ES_ejs_web_View_filter__hoisted_1_found                        2
-#define ES_ejs_web_View_filter__hoisted_3_f                            3
 
 
 /*
@@ -851,32 +672,13 @@
 /*
     Local slots for methods in type "Web" 
  */
-#define ES_ejs_web_Web_init_path                                       0
-#define ES_ejs_web_Web_init_config                                     1
-#define ES_ejs_web_Web_init__hoisted_2_webConfig                       2
 #define ES_ejs_web_Web_serve_request                                   0
 #define ES_ejs_web_Web_serve_router                                    1
-#define ES_ejs_web_Web_serve__hoisted_2_exports                        2
-#define ES_ejs_web_Web_serve__hoisted_3_e                              3
 #define ES_ejs_web_Web_worker_request                                  0
 #define ES_ejs_web_Web_workerHelper_request                            0
-#define ES_ejs_web_Web_workerHelper__hoisted_1_exports                 1
-#define ES_ejs_web_Web_workerHelper__hoisted_2_e                       2
 #define ES_ejs_web_Web_load_request                                    0
-#define ES_ejs_web_Web_load__hoisted_1_type                            1
-#define ES_ejs_web_Web_load__hoisted_1_exports                         2
-#define ES_ejs_web_Web_load__hoisted_3_path                            3
-#define ES_ejs_web_Web_load__hoisted_4_path                            4
-#define ES_ejs_web_Web_load__hoisted_5_e                               5
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
-#define ES_ejs_web_Web_start__hoisted_2_result                         2
-#define ES_ejs_web_Web_start__hoisted_3_headers                        3
-#define ES_ejs_web_Web_start__hoisted_3_body                           4
-#define ES_ejs_web_Web_start__hoisted_5_item                           5
-#define ES_ejs_web_Web_start__block__block_0170_471                    6
-#define ES_ejs_web_Web_start__block__block_0184_474                    7
-#define ES_ejs_web_Web_start__hoisted_8_e                              8
 
 #define _ES_CHECKSUM_ejs_web   513731
 
