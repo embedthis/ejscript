@@ -10,7 +10,6 @@
 
 /*OK
 // print(typeOf(x))
-breakpoint()
 x = "abc"
 x = null ; print(typeOf(x))
 x = undefined ; print(typeOf(x))

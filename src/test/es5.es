@@ -110,7 +110,6 @@ assert(s3.area() == 10)
 
 /*
 o = {}
-breakpoint()
 Object.defineProperty(o, "width", {
     configurable: true,
     enumerable: true,
