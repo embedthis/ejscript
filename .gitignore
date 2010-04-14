@@ -36,3 +36,5 @@ src/include/ejs.*.slots.h
 projects/MACOSX/*/build
 src/jems/ejs.db/test/test.sdb
 all/*.es
+lib/*.so
+lib/lib*.0
