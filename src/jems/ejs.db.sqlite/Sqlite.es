@@ -185,7 +185,7 @@ module ejs.db.sqlite {
         /**
             @duplicate ejs.db::Database.getNumRows
          */
-        function getNumRows(table: String): Array {
+        function getNumRows(table: String): Number {
             let cmd: String = "SELECT COUNT(*) FROM " + table + ";"
             let grid: Array = query(cmd, "numRows")
             return grid[0]["COUNT(*)"] cast Number
