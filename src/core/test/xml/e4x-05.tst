@@ -1,5 +1,5 @@
 /*
- 	Test E4X operations on elements 
+  	Test E4X operations on elements 
  */
 
 var order : XML = <order id="1234" color="red">
@@ -19,7 +19,7 @@ var order : XML = <order id="1234" color="red">
 </order>;
 
 
-//  Add an element
+//	Add an element
 
 order.item[2] = <item level="slow">
 		<price>9.50</price>
@@ -30,10 +30,12 @@ assert(order.item.length() == 3)
 var o: XML = order.item
 assert(o.length() == 3)
 
-//  Add an attribute
+
+//	Add an attribute
 
 order.customer.@id = 7777
 assert(order.customer.@id == 7777)
+
 
 item = order.item[0]
 price = item.price * item.qty

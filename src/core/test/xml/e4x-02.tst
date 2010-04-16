@@ -1,5 +1,5 @@
 /*
-  	Test E4X get access
+  	Test get access
  */
 
 var order : XML = <order id="1234" color="red">
@@ -19,8 +19,6 @@ var order : XML = <order id="1234" color="red">
 </order>;
 
 
-//  TODO - does this just copy a reference or do a deep copy?
- 
 var all = order
 assert(all.customer.name != null)
 assert(all.customer.name != undefined)
@@ -34,13 +32,13 @@ assert(address.length() == 1)
 assert(order.item.length() == 2)
 
 
-//  Extract a text value
+//	Extract a text value
 
 var city = order.customer.address.city
 assert(city == "New York")
 
 
-//  Extract an attribute value
+//	Extract an attribute value
 
 var level = order.item[0].@level
 assert(level == "rush")

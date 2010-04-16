@@ -20,7 +20,7 @@ var simple = <order id="1234" color="red">
 		</address>
 	 </customer>
 	<item level="rush" priority="low">
-		<price>2.50</price>
+		<price class="discount">2.50</price>
 		<qty>30</qty>
 	</item>
 </order>

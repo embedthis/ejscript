@@ -113,6 +113,9 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
                 mprFree(buf);
                 return 0;
             }
+            if (next < vp->elements->length) {
+                mprPutStringToBuf(buf, ", ");
+            }
         }
         result = (EjsObj*) ejsCreateString(ejs, (char*) buf->start);
         mprFree(buf);
@@ -548,6 +551,15 @@ static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname, EjsO
     return index;
 }
 
+
+/*
+    function parent(): XML
+ */
+static EjsVar *xl_parent(Ejs *ejs, EjsXML *xml, int argc, EjsVar **argv)
+{
+    return xml->targetObject ? (EjsVar*) xml->targetObject : (EjsVar*) ejs->nullValue;
+}
+
 /******************************** Support Routines **************************/
 
 static bool allDigitsForXmlList(cchar *name)
@@ -837,6 +849,8 @@ void ejsConfigureXMLListType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_XMLList_name, (EjsProc) getXmlListNodeName);
     ejsBindMethod(ejs, type, ES_XMLList_XMLList, (EjsProc) xmlListConstructor);
 
+    ejsBindMethod(ejs, type, ES_XMLList_parent, (EjsNativeFunction) xl_parent);
+    
     /*
         Override these methods
      */

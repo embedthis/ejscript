@@ -16,23 +16,7 @@ static EjsObj   *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv);
 static EjsObj   *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv);
 static EjsObj   *xmlToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
 
-#if KEEP
-static EjsObj   *valueOf(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *toXmlString(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *appendChild(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *attributes(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *child(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *elements(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *comments(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *decendants(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *elements(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *insertChildAfter(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *insertChildBefore(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *replace(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *setName(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-static EjsObj   *text(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-
-#endif
+static EjsVar   *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsVar **argv);
 
 static bool allDigitsForXml(cchar *name);
 static bool deepCompare(EjsXML *lhs, EjsXML *rhs);
@@ -625,6 +609,7 @@ static bool deepCompare(EjsXML *lhs, EjsXML *rhs)
 
 
 //  TODO - rename ejsGetXMLDescendants. Check all other names.
+
 EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName *qname)
 {
     EjsXML          *item, *result;
@@ -634,14 +619,21 @@ EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName *qname)
     if (result == 0) {
         return 0;
     }
-
-    if (qname->name[0] == '@') {
+    if (qname->name[0] == '.' && qname->name[1] == '@') {
         if (xml->attributes) {
             for (next = 0; (item = mprGetNextItem(xml->attributes, &next)) != 0; ) {
-                mprAssert(qname->name[0] == '@');
-                if (qname->name[1] == '*' || strcmp(item->qname.name, &qname->name[1]) == 0) {
+                if (qname->name[2] == '*' || strcmp(item->qname.name, &qname->name[2]) == 0) {
                     result = ejsAppendToXML(ejs, result, item);
+#if UNUSED
+                } else {
+                    result = ejsAppendToXML(ejs, result, ejsXMLDescendants(ejs, item, qname));
+#endif
                 }
+            }
+        }
+        if (xml->elements) {
+            for (next = 0; (item = mprGetNextItem(xml->elements, &next)) != 0; ) {
+                result = ejsAppendToXML(ejs, result, ejsXMLDescendants(ejs, item, qname));
             }
         }
 
@@ -950,6 +942,15 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 }
 #endif
 
+
+/*
+    function parent(): XML
+ */
+static EjsVar *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsVar **argv)
+{
+    return xml->parent ? (EjsVar*) xml->parent : (EjsVar*) ejs->nullValue;
+}
+
 /********************************** Support **********************************/
 /*
     Set an indexed element to an XML value
@@ -1088,6 +1089,7 @@ static bool allDigitsForXml(cchar *name)
     return 1;
 }
 
+
 /*********************************** Factory **********************************/
 
 EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName *qname, EjsXML *parent, cchar *value)
@@ -1186,6 +1188,8 @@ void ejsConfigureXMLType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_XML_load, (EjsProc) loadXml);
     ejsBindMethod(ejs, type, ES_XML_save, (EjsProc) saveXml);
     ejsBindMethod(ejs, type, ES_XML_name, (EjsProc) getXmlNodeName);
+
+    ejsBindMethod(ejs, type, ES_XML_parent, (EjsNativeFunction) xml_parent);
 
     /*
         Override these methods

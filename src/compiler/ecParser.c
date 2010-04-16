@@ -2462,9 +2462,13 @@ struct EcNode *parseXMLAttributes(EcCompiler *cp, EcNode *np)
             return LEAVE(cp, expected(cp, "}"));
         }
 
-    } else while (tid == T_COLON || tid == T_ID) {
-        np = parseXMLAttribute(cp, np);
-        tid = peekToken(cp);
+    } else {
+        while (tid != T_GT && tid != T_SLASH_GT) {
+            if ((np = parseXMLAttribute(cp, np)) == 0) {
+                break;
+            }
+            tid = peekToken(cp);
+        }
     }
     return LEAVE(cp, np);
 }

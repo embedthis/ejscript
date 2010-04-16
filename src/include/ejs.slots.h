@@ -1337,7 +1337,7 @@
 #define ES_Http_addHeader_key                                          0
 #define ES_Http_addHeader_value                                        1
 #define ES_Http_addHeader_overwrite                                    2
-#define ES_Http_mimeType_ext                                           0
+#define ES_Http_mimeType_path                                          0
 
 
 /*
@@ -2265,10 +2265,14 @@
 #define ES_XML_XML                                                     26
 #define ES_XML_load                                                    27
 #define ES_XML_save                                                    28
-#define ES_XML_length                                                  29
-#define ES_XML_name                                                    30
+#define ES_XML_attribute                                               29
+#define ES_XML_attributes                                              30
+#define ES_XML_elements                                                31
+#define ES_XML_length                                                  32
+#define ES_XML_name                                                    33
+#define ES_XML_parent                                                  34
 
-#define ES_XML_NUM_CLASS_PROP                                          31
+#define ES_XML_NUM_CLASS_PROP                                          35
 #define ES_XML_NUM_INSTANCE_PROP                                       0
 
 /*
@@ -2277,6 +2281,8 @@
 #define ES_XML_XML_value                                               0
 #define ES_XML_load_filename                                           0
 #define ES_XML_save_filename                                           0
+#define ES_XML_attribute_name                                          0
+#define ES_XML_elements_name                                           0
 
 
 /*
@@ -2337,12 +2343,22 @@
  */
 #define ES_XMLList__origin                                             26
 #define ES_XMLList_XMLList                                             26
-#define ES_XMLList_length                                              27
-#define ES_XMLList_name                                                28
+#define ES_XMLList_attribute                                           27
+#define ES_XMLList_attributes                                          28
+#define ES_XMLList_elements                                            29
+#define ES_XMLList_length                                              30
+#define ES_XMLList_name                                                31
+#define ES_XMLList_parent                                              32
 
-#define ES_XMLList_NUM_CLASS_PROP                                      29
+#define ES_XMLList_NUM_CLASS_PROP                                      33
 #define ES_XMLList_NUM_INSTANCE_PROP                                   0
 
-#define _ES_CHECKSUM_ejs   1251816
+/*
+    Local slots for methods in type "XMLList" 
+ */
+#define ES_XMLList_attribute_name                                      0
+#define ES_XMLList_elements_name                                       0
+
+#define _ES_CHECKSUM_ejs   1261012
 
 #endif
