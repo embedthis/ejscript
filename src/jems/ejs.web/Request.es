@@ -82,6 +82,7 @@ module ejs.web {
 
         /** 
             Get the encoding scheme for serializing strings. Not yet implemented.
+            MOB -- should this not be in the headers?
          */
         native var encoding: String
 
@@ -98,6 +99,7 @@ module ejs.web {
          */
         native var headers: Object
 
+//  MOB -- bad name
         /** 
             Relative Uri for the top-level of the application. This returns a relative Uri from the current request
             up to the top most application Uri.

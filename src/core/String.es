@@ -371,6 +371,7 @@ module ejs {
          */ 
         override native function toString(): String
 
+//  MOB -- should be toUpperCase, toLowerCase
         /**
             Convert the string to upper case.
             @return Returns a new upper case version of the string.

@@ -94,7 +94,8 @@ module ejs {
                 Options can be either a mode string or can be an options hash. 
             @options mode optional file access mode string. Use "r" for read, "w" for write, "a" for append to existing
                 content, "+" never truncate. Defaults to "r".
-            @options permissions optional Posix permissions number mask. Defaults to 0664.
+            @options permissions Number containing the Posix permissions number value. Note: this is a number
+                and not a string representation of an octal posix number.
             @options owner String representing the file owner (Not implemented)
             @options group String representing the file group (Not implemented)
             @return the File object. This permits method chaining.

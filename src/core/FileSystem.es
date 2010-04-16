@@ -28,8 +28,7 @@ module ejs {
         native function get space(): Number
 
         /** 
-            Do path names have a drive specifications (C:).
-            @return True if the file path has a drive spec
+            Do path names on this file system support a drive specifications.
          */
         native function get hasDrives(): Boolean 
 
@@ -50,10 +49,7 @@ module ejs {
          */
         native function get newline(): String 
 
-        /** 
-            @duplicate FileSystem.newline
-            @param terminator the new line termination characters Usually "\n" or "\r\n"
-         */
+        /** */
         native function set newline(terminator: String): Void
 
         /** 
@@ -66,10 +62,7 @@ module ejs {
          */
         native function get separators(): String 
 
-        /** 
-            @duplicate FileSystem.separators
-            @param sep the new path segment separators. Usually "/" or "/\\". The first characters is the default separator.
-         */
+        /** */
         native function set separators(sep: String): Void 
 
         /** 

@@ -272,6 +272,14 @@ module ejs {
          */
         native function readString(count: Number = -1): String
 
+        /**
+         *  Read an XML document from the array. Data is read from the current read $position pointer.
+         *  @returns an XML document
+         *  @throws IOError if an I/O error occurs or a premature end of file.
+         */
+        # MOB
+        native function readXML(): XML
+
         /** 
             Remove a listener to the stream. If there are no listeners on the stream, the stream is put back into sync mode.
             @param name Event name previously used with addListener. The name may be an array of events.
