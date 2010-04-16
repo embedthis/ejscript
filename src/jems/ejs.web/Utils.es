@@ -95,5 +95,5 @@ UNUSED && KEEP
         @stability prototype
      */
     function unescapeHtml(s: String): String
-        s.replace(/&amp/g,'&;').replace(/&gt/g,'>').replace(/&lt/g,'<').replace(/&quot/g,'"')
+        s.replace(/&amp;/g,'&').replace(/&gt;/g,'>').replace(/&lt;/g,'<').replace(/&quot;/g,'"')
 }
