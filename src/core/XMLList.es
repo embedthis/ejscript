@@ -28,8 +28,10 @@ module ejs {
             @param child The child to add.
             @return This object with the added child.
          */
-        # FUTURE
-        native function appendChild(child: XML): XML
+        function appendChild(child: XML): XML {
+            this[child.name()] = child
+            return this
+        }
 
         /**
             Get an XMLList containing all of the attributes of this object with the given name.
@@ -51,22 +53,34 @@ module ejs {
             @param name The name to search on.
             @return An XMLList with all the children names (zero or more).
          */
-        # FUTURE
-        native function child(name: String): XMLList
+        function child(name: String): XMLList {
+            if (name.isDigit) {
+                return this[name cast Number]
+            } else {
+                return this[name]
+            }
+        }
 
         /**
             Get the position of this object within the context of its parent.
             @return A number with the zero-based position.
          */
-        # FUTURE
-        native function childIndex(): Number
+        function childIndex(): Number {
+            let p = parent()
+            for (i in p) {
+                if (p[i] === this) {
+                    return i
+                }
+            }
+            return -1
+        }
 
         /**
             Get an XMLList containing the children (properties) of this object in order.
             @return An XMLList with all the properties.
          */
-        # FUTURE
-        native function children(): XMLList
+        function children(): XMLList
+            this.*
         
         /**
             Get an XMLList containing the properties of this object that are
@@ -88,8 +102,8 @@ module ejs {
             Deep copy an XML object. The new object has its parent set to null.
             @return Then new XML object.
          */
-        # FUTURE
-        native function copy(): XML
+        function copy(): XML
+            this.clone(true)
 
         /**
             Get the defaults settings for an XML object. The settings include boolean values for: ignoring comments, 
@@ -106,8 +120,8 @@ module ejs {
             @param name The (optional) name to search on.
             @return The list of descendants.
          */
-        # FUTURE
-        native function descendants(name: String = "*"): Object
+        function descendants(name: String = "*"): Object
+            this["." + name]
 
         /**
             Get all the children of this XML node that are elements having the
@@ -135,16 +149,16 @@ module ejs {
             considered complex.
             @return True if this object has complex content.
          */
-        # FUTURE
-        native function hasComplexContent(): Boolean
+        function hasComplexContent(): Boolean
+            this.*.length() > 0
 
         /**
             Determine whether this object has its own property of the given name.
             @param prop The property to look for.
             @return True if this object does have that property.
          */
-        # FUTURE
-        override native function hasOwnProperty(name: String): Boolean
+        override function hasOwnProperty(name: String): Boolean
+            this[name] != null
 
         /**
             Determine whether this XML object has simple content. If the object
@@ -159,8 +173,8 @@ module ejs {
             Return the namespace in scope
             @return Array of namespaces
          */
-        # FUTURE
-        native function inScopeNamespaces(): Array
+        function inScopeNamespaces(): Array
+            this.*.length() == 0
 
         /**
             Insert a child object into an XML object immediately after a specified marker object. If the marker 
@@ -336,10 +350,8 @@ module ejs {
             Return this XML object.
             @return This object.
          */
-        # FUTURE
-        override function valueOf(): XML {
-            return this
-        }
+        override function valueOf(): XML
+            this
 
         /*
            XML
