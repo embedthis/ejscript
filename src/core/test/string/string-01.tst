@@ -299,6 +299,7 @@ a = "abcdef"
 b = "def"
 c = a - b
 assert((a - b) == "abc")
+assert(("abc" - "xyz") == "abc")
 
 
 // operator: <
