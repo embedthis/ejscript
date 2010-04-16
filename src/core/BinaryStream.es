@@ -174,7 +174,7 @@ module ejs {
             @returns a double
             @throws IOError if an I/O error occurs or premature eof
          */
-        function readDouble(): Date
+        function readDouble(): Double
             inbuf.readDouble()
 
         /** 
