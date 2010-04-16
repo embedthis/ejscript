@@ -138,19 +138,13 @@ module ejs {
             @return Return a list of matching files and directories
          */
         function find(glob: String = "*", recurse: Boolean = true): Array {
-            function recursiveFind(path: Path, pattern: RegExp, recurse: Boolean): Array {
+            function recursiveFind(path: Path, pattern: RegExp, level: Number): Array {
                 let result: Array = []
-                if (path.isDir) {
+                if (path.isDir && (recurse || level == 0)) {
                     for each (f in path.files(true)) {
-                        if (recurse) {
-                            let got: Array = recursiveFind(f, pattern, recurse)
-                            for each (i in got) {
-                                result.append(i)
-                            }
-                        } else {
-                            if (f.basename.toString().match(pattern)) {
-                                result.append(f)
-                            }
+                        let got: Array = recursiveFind(f, pattern, level + 1)
+                        for each (i in got) {
+                            result.append(i)
                         }
                     }
                 }
@@ -160,7 +154,7 @@ module ejs {
                 return result
             }
             pattern = RegExp("^" + glob.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$")
-            return recursiveFind(this, pattern, recurse)
+            return recursiveFind(this, pattern, recurse, 0)
         }
 
         /**
