@@ -122,7 +122,8 @@ module ejs.web {
             }
             onclick += '}); return false;'
             options.uri ||= request.makeUri(options)
-            write('<a href="' + options.uri + '"' + getOptions(options) + "onclick='" + onclick + "' >" + text + '</a>')
+            write('<a href="' + options.uri + '"' + getOptions(options) + "onclick='" + onclick + "' rel='nofollow'>" + 
+                text + '</a>')
 		}
 
 		function button(value: String, buttonName: String, options: Object): Void {
@@ -180,12 +181,12 @@ module ejs.web {
 
 		function link(text: String, options: Object): Void {
             options.uri ||= request.makeUri(options)
-			write('<a href="' + options.uri + '"' + getOptions(options) + '>' + text + '</a>')
+			write('<a href="' + options.uri + '"' + getOptions(options) + ' rel="nofollow">' + text + '</a>')
 		}
 
 		function extlink(text: String, options: Object): Void {
             options.uri ||= request.makeUri(options)
-			write('<a href="' + uri + '"' + getOptions(options) + '>' + text + '</a>')
+			write('<a href="' + uri + '"' + getOptions(options) + ' rel="nofollow">' + text + '</a>')
 		}
 
 		function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
@@ -217,7 +218,7 @@ module ejs.web {
         }
 
 		function mail(name: String, address: String, options: Object): Void  {
-			write('<a href="mailto:' + address + '" ' + getOptions(options) + '>' + name + '</a>')
+			write('<a href="mailto:' + address + '" ' + getOptions(options) + ' rel="nofollow">' + name + '</a>')
 		}
 
 		function progress(initialData: Array, options: Object): Void {
@@ -259,7 +260,7 @@ module ejs.web {
             for each (t in initialData) {
                 for (name in t) {
                     let uri = t[name]
-                    write('      <li onclick="window.location=\'' + uri + '\'"><a href="' + uri + '">' + 
+                    write('      <li onclick="window.location=\'' + uri + '\'"><a href="' + uri + '" rel="nofollow">' + 
                         name + '</a></li>\r\n')
                 }
             }
@@ -422,7 +423,7 @@ module ejs.web {
 					styleCell = styleCell.trim()
                     if (cellUrl) {
                         write('    <td class="' + styleCell + '"' + align + 
-                            ' xonclick="window.location=\'' + cellUrl + '\';"><a href="' + cellUrl + '">' + 
+                            ' xonclick="window.location=\'' + cellUrl + '\';"><a href="' + cellUrl + '" rel="nofollow">' + 
                             data + '</a></td>\r\n')
                     } else {
                         write('    <td class="' + styleCell + '"' + align + '>' + data + '</td>\r\n')
