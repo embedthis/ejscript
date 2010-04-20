@@ -38,3 +38,5 @@ src/include/buildConfig.h
 src/jems/ejs.db/test/test.sdb
 modules/*.so
 lib/*.so
+src/test/t.es
+build/bin/api-diff
