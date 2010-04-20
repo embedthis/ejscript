@@ -288,6 +288,13 @@ module ejs.web {
             let sort = options.sort
             if (sort == undefined) sort = true
 
+            if (options["data-remote"]) {
+                attributes += ' data-remote="' + options["data-remote"] + '"'
+            }
+            if (options["data-apply"]) {
+                attributes += ' data-apply="' + options["data-apply"] + '"'
+            }
+
             //  TODO - would be nice to auto sense this
             if (!options.ajax) {
                 let uri = (data is String) ? data : null
@@ -307,7 +314,8 @@ module ejs.web {
                 write('  <script type="text/javascript">$("#' + tableId + '").eTableSetOptions({ refresh: ' + refresh +
                     ', sort: "' + sort + '", sortOrder: "' + sortOrder + '"})' + ';</script>\r\n')
             }
-			write('  <table id="' + tableId + '" class="-ejs-table ' + (options.styleTable || "" ) + '">\r\n')
+			write('  <table id="' + tableId + '" class="-ejs-table ' + (options.styleTable || "" ) + '"' + 
+                attributes + '>\r\n')
 
             /*
                 Table title and column headings

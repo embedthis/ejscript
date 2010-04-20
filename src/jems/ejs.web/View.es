@@ -825,6 +825,7 @@ module ejs.web {
          */
         private static const htmlOptions: Object = { 
             background: "", color: "", id: "", height: "", method: "", size: "", style: "class", visible: "", width: "",
+            remote: "data-remote",
         }
 
         /**
@@ -862,6 +863,8 @@ module ejs.web {
                         mapped = option
                     }
                     result += ' ' +  mapped + '="' + options[option] + '"'
+                } else if (option.startsWith("data-")) {
+                    result += ' ' +  option + '="' + options[option] + '"'
                 }
             }
             return result + " "
