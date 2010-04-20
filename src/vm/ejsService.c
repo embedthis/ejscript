@@ -19,11 +19,6 @@ static int  loadStandardModules(Ejs *ejs, MprList *require);
 static int  runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName);
 static int  searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn);
 
-/*
-    Global singleton for the Ejs service
- */
-EjsService *_globalEjsService;
-
 /************************************* Code ***********************************/
 /*  
     Initialize the EJS subsystem
@@ -36,7 +31,7 @@ EjsService *ejsCreateService(MprCtx ctx)
     if (sp == 0) {
         return 0;
     }
-    _globalEjsService = sp;
+    mprGetMpr(ctx)->ejsService = sp;
     sp->nativeModules = mprCreateHash(sp, -1);
     return sp;
 }
@@ -44,7 +39,7 @@ EjsService *ejsCreateService(MprCtx ctx)
 
 EjsService *ejsGetService(MprCtx ctx)
 {
-    return _globalEjsService;
+    return mprGetMpr(ctx)->ejsService;
 }
 
 
@@ -66,7 +61,7 @@ Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, i
         return 0;
     }
     mprSetAllocCallback(ejs, (MprAllocFailure) allocFailure);
-    ejs->service = _globalEjsService;
+    ejs->service = mprGetMpr(ctx)->ejsService;
     ejs->empty = require && mprGetListCount(require) == 0;
     ejs->heap = mprAllocHeap(ejs, "Ejs Object Heap", 1, 0, NULL);
     ejs->mutex = mprCreateLock(ejs);
@@ -569,7 +564,7 @@ int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
             If the script calls App.noexit(), this will service events until App.exit() is called.
             TODO - should deprecate noexit()
          */
-        mprServiceEvents(ejs->dispatcher, -1, 0);
+        mprServiceEvents(ejs, ejs->dispatcher, -1, 0);
     }
     if (ejs->exception) {
         return -1;
@@ -790,7 +785,7 @@ static void logHandler(MprCtx ctx, int flags, int level, const char *msg)
     MprFile     *file;
     char        *prefix;
 
-    mpr = mprGetMpr();
+    mpr = mprGetMpr(ctx);
     file = (MprFile*) mpr->logHandlerData;
     prefix = mpr->name;
 

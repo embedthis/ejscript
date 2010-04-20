@@ -194,7 +194,7 @@ static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsObj          *result;
     int             c;
 
-    fs = mprGetMpr()->fileSystem;
+    fs = mprGetMpr(ejs)->fileSystem;
 
     buf = mprCreateBuf(ejs, -1, -1);
     while ((c = getchar()) != EOF) {

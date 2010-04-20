@@ -237,7 +237,7 @@ int maParseConfig(MaServer *server, cchar *configFile)
     char            *cp, *tok, *key, *value, *path;
     int             i, rc, top, next, nextAlias, len;
 
-    mpr = mprGetMpr();
+    mpr = mprGetMpr(server);
     mprLog(mpr, 2, "Config File %s", configFile);
 
     appweb = server->appweb;
@@ -1137,7 +1137,7 @@ static int processSetting(MaServer *server, char *key, char *value, MaConfigStat
                 port = HTTP_DEFAULT_PORT;
             }
 
-            ipList = mprGetMpr()->socketService->getInterfaceList();
+            ipList = mprGetMpr(server)->socketService->getInterfaceList();
             ip = (MprInterface*) ipList->getFirst();
             if (ip == 0) {
                 mprError(server, "Can't find interfaces, use Listen-directive with IP address.");
@@ -1838,7 +1838,7 @@ int HttpServer::saveConfig(char *configFile)
 
     mprFprintf(fd, "ServerRoot \"%s\"\n", serverRoot);
 
-    logService = mprGetMpr()->logService;
+    logService = mprGetMpr(server)->logService;
     logSpec = mprStrdup(logService->getLogSpec());
     if ((cp = strchr(logSpec, ':')) != 0) {
         *cp = '\0';
@@ -2754,7 +2754,7 @@ int maServiceWebServer(MaServer *server)
         mprError(server, "Can't start the web server");
         return MPR_ERR_CANT_CREATE;
     }
-    mprServiceEvents(mprGetDispatcher(server), -1, 0);
+    mprServiceEvents(server, mprGetDispatcher(server), -1, 0);
     maStopServer(server);
     return 0;
 }
@@ -2812,7 +2812,7 @@ int maRunSimpleWebServer(cchar *ip, int port, cchar *docRoot)
         mprError(mpr, "Can't start the web server");
         return MPR_ERR_CANT_CREATE;
     }
-    mprServiceEvents(mprGetDispatcher(mpr), -1, 0);
+    mprServiceEvents(mpr, mprGetDispatcher(mpr), -1, 0);
     maStopServer(server);
     mprFree(mpr);
     return 0;
@@ -5801,7 +5801,9 @@ static void registerServerVars(zval *track_vars_array TSRMLS_DC)
 
 static void logMessage(char *message)
 {
-    mprLog(mprGetMpr(), 0, "phpModule: %s", message);
+#if FUTURE
+    mprLog(mprGetMpr(ctx), 0, "phpModule: %s", message);
+#endif
 }
 
 
@@ -6795,7 +6797,7 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
     MprFile     *file;
     char        *prefix, buf[MPR_MAX_STRING];
 
-    mpr = mprGetMpr();
+    mpr = mprGetMpr(ctx);
     if ((file = (MprFile*) mpr->logHandlerData) == 0) {
         return;
     }
@@ -6846,7 +6848,7 @@ int maStartLogging(MprCtx ctx, cchar *logSpec)
     static int  once = 0;
 
     level = 0;
-    mpr = mprGetMpr();
+    mpr = mprGetMpr(ctx);
 
     if (logSpec == 0) {
         logSpec = "stdout:0";
@@ -6902,7 +6904,7 @@ int maStopLogging(MprCtx ctx)
     MprFile     *file;
     Mpr         *mpr;
 
-    mpr = mprGetMpr();
+    mpr = mprGetMpr(ctx);
 
     file = mpr->logHandlerData;
     if (file) {

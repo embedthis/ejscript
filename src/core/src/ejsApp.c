@@ -134,7 +134,7 @@ static EjsObj *exitApp(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (status != 0) {
         exit(status);
     } else {
-        mprTerminate(mprGetMpr(), 1);
+        mprTerminate(mprGetMpr(ejs), 1);
         ejsAttention(ejs);
     }
     return 0;
@@ -200,7 +200,7 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
     expires = mprGetTime(ejs) + timeout;
     remaining = timeout;
     do {
-        rc = mprServiceEvents(ejs->dispatcher, remaining, MPR_SERVICE_ONE_THING);
+        rc = mprServiceEvents(ejs, ejs->dispatcher, remaining, MPR_SERVICE_ONE_THING);
         if (rc > 0 && flags & MPR_SERVICE_ONE_THING) {
             break;
         }

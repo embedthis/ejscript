@@ -366,8 +366,7 @@ static EjsObj *charAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsNumber(argv[0]));
     index = ejsGetInt(ejs, argv[0]);
     if (index < 0 || index >= sp->length) {
-        ejsThrowOutOfBoundsError(ejs, "Bad string subscript");
-        return 0;
+        return (EjsObj*) ejs->emptyStringValue;
     }
     return (EjsObj*) ejsCreateStringWithLength(ejs, &sp->value[index], 1);
 }
@@ -692,7 +691,7 @@ static EjsObj *stringLength(Ejs *ejs, EjsString *ap, int argc, EjsObj **argv)
 
     function indexOf(pattern: String, startIndex: Number = 0): Number
  */
-static EjsObj *indexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsObj*indexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     cchar   *pattern;
     int     index, start, patternLength;
@@ -836,19 +835,14 @@ static EjsObj *lastIndexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 
     if (argc == 2) {
         start = ejsGetInt(ejs, argv[1]);
-        if (start > sp->length) {
-            start = sp->length;
+        if (start >= sp->length) {
+            start = sp->length - 1;
         }
         if (start < 0) {
             start = 0;
         }
-
     } else {
         start = 0;
-    }
-    if (start < 0 || start >= sp->length) {
-        ejsThrowOutOfBoundsError(ejs, "Bad start subscript");
-        return 0;
     }
     index = indexof(sp->value, sp->length, pattern, patternLength, -1);
     if (index < 0) {
@@ -1215,27 +1209,26 @@ static EjsObj *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     } else {
         step = 1;
     }
-
     if (start < 0) {
         start += sp->length;
     }
-    if (end < 0) {
-        end += sp->length;
-    }
-    if (step == 0) {
-        step = 1;
+    if (start >= sp->length) {
+        start = sp->length - 1;
     }
     if (start < 0) {
         start = 0;
     }
-    if (start >= sp->length) {
-        start = sp->length;
+    if (end < 0) {
+        end += sp->length;
+    }
+    if (end >= sp->length) {
+        end = sp->length;
     }
     if (end < 0) {
         end = 0;
     }
-    if (end >= sp->length) {
-        end = sp->length;
+    if (step == 0) {
+        step = 1;
     }
     result = ejsCreateBareString(ejs, (end - start) / abs(step));
     if (result == 0) {
@@ -1371,7 +1364,6 @@ static EjsObj *substring(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     } else {
         end = sp->length;
     }
-
     if (start < 0) {
         start = 0;
     }

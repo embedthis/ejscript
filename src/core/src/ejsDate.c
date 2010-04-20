@@ -511,7 +511,7 @@ static EjsObj *date_set_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 */
 static EjsObj *date_getTimezoneOffset(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, -mprGetMpr()->timezone);
+    return (EjsObj*) ejsCreateNumber(ejs, -mprGetMpr(ejs)->timezone);
 }
 
 

@@ -1797,6 +1797,10 @@ static EcNode *parseLiteralField(EcCompiler *cp, EcNode *on)
         if (fp->function.body == 0) {
             return LEAVE(cp, 0);
         }
+
+        np = createNode(cp, N_FIELD);
+        np->field.fieldKind = FIELD_KIND_FUNCTION;
+        np->attributes = fp->attributes;
         /*
             The function must get linked into the current var block. It must not get processed inline at
             this point in the AST tree because it must not use the block scope. Create a name based on the
@@ -1807,10 +1811,6 @@ static EcNode *parseLiteralField(EcCompiler *cp, EcNode *on)
         fp->qname.space = mprStrdup(fp, cp->fileState->namespace);
         mprAssert(cp->state->topVarBlockNode);
         appendNode(cp->state->topVarBlockNode, fp);
-
-        np = createNode(cp, N_FIELD);
-        np->field.fieldKind = FIELD_KIND_FUNCTION;
-        np->attributes = fp->attributes;
         /*
             Must clear the getter|setter attributes so it can be loaded without invoking the accessor.
             The NEW_OBJECT opcode will call ejsDefineProperty which will restore the attributes.
