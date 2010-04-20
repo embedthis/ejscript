@@ -2,8 +2,6 @@
     utest.worker - Injected into the unit test global scope
  */
 
-// GC.enabled = false
-
 public class Test {
     public var bin: Path
     public var config: Object
