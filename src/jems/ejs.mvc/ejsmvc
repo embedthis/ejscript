@@ -404,14 +404,14 @@ class EjsMvc {
 
         default:
             for each (f in args) {
-                compileItem(Path(f).relative)
+                compileItem(Path(f).relative.normalize)
             }
         }
     }
 
     function compileItem(file: Path) {
         if (file.isDir) {
-            for each (f in file.files(true)) {
+            for each (f in file.normalize.files(true)) {
                 compileItem(f)
             }
         } else {
@@ -542,7 +542,6 @@ class EjsMvc {
     }
 
     function buildWebPage(file: Path, compile: Boolean = true): String {
-        file = file.portable
         let sansExt: Path = file.trimExt()
         file = file.joinExt(ext.ejs)
         if (file.extension != ext.ejs) {
