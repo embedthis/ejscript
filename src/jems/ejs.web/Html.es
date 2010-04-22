@@ -132,7 +132,12 @@ module ejs.web {
 
 		function buttonLink(text: String, options: Object): Void {
             options.uri ||= request.makeUri(options)
-			write('<button onclick="window.location=\'' + options.uri + '\';">' + text + '</button></a>')
+            if (options["data-remote"]) {
+                let attributes = getDataAttributes(options)
+                write('<button ' + attributes + '>' + text + '</button></a>')
+            } else {
+                write('<button onclick="window.location=\'' + options.uri + '\';">' + text + '</button></a>')
+            }
         }
 
 		function chart(initialData: Array, options: Object): Void {
@@ -208,8 +213,8 @@ module ejs.web {
                             }
                         }
                     } else {
-                        isSelected = (i == defaultValue) ? 'selected="yes"' : ''
-                        write('  <option value="' + i + '"' + isSelected + '>' + choice + '</option>')
+                        isSelected = (choice == defaultValue) ? 'selected="yes"' : ''
+                        write('  <option value="' + choice + '"' + isSelected + '>' + choice + '</option>')
                     }
                 }
                 i++
@@ -288,13 +293,7 @@ module ejs.web {
             let sortOrder = options.sortOrder || ""
             let sort = options.sort
             if (sort == undefined) sort = true
-
-            if (options["data-remote"]) {
-                attributes += ' data-remote="' + options["data-remote"] + '"'
-            }
-            if (options["data-apply"]) {
-                attributes += ' data-apply="' + options["data-apply"] + '"'
-            }
+            let attributes = getDataAttributes(options)
 
             //  TODO - would be nice to auto sense this
             if (!options.ajax) {
@@ -502,6 +501,20 @@ module ejs.web {
 
         private function write(str: String): Void
             request.write(str)
+
+        private function getDataAttributes(options): String {
+            let attributes = ""
+            if (options["data-remote"]) {
+                attributes += ' data-remote="' + options["data-remote"] + '"'
+            }
+            if (options["data-apply"]) {
+                attributes += ' data-apply="' + options["data-apply"] + '"'
+            }
+            if (options["data-id"]) {
+                attributes += ' data-id="' + options["data-id"] + '"'
+            }
+            return attributes
+        }
 	}
 }
 
