@@ -298,6 +298,7 @@ module ejs.db.mapper {
          */
         function error(field: String, msg: String): Void {
             field ||= ""
+            _errors ||= {}
             _errors[field] = msg
         }
 
