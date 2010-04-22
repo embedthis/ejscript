@@ -22,7 +22,6 @@ static int  createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, Ej
 static int  createSection(EcCompiler *cp, EjsObj *block, int slotNum);
 static int  reserveRoom(EcCompiler *cp, int room);
 static int  sum(cchar *name, int value);
-static int  swapShortField(EcCompiler *cp, int word);
 static int  swapWordField(EcCompiler *cp, int word);
 
 static int  createDocSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsTrait *trait);
@@ -36,7 +35,7 @@ int ecCreateModuleHeader(EcCompiler *cp)
     EjsModuleHdr    hdr;
 
     memset(&hdr, 0, sizeof(hdr));
-    hdr.magic = swapShortField(cp, EJS_MODULE_MAGIC);
+    hdr.magic = swapWordField(cp, EJS_MODULE_MAGIC);
     hdr.fileVersion = swapWordField(cp, EJS_MODULE_VERSION);
     if (ecEncodeBlock(cp, (uchar*) &hdr, sizeof(hdr)) < 0) {
         return MPR_ERR_CANT_WRITE;
@@ -1149,6 +1148,7 @@ void ecAdjustCodeLength(EcCompiler *cp, int adj)
 }
 
 
+#if UNUSED && KEEP
 static int swapShortField(EcCompiler *cp, int word)
 {
     if (mprGetEndian(cp) == MPR_LITTLE_ENDIAN) {
@@ -1157,6 +1157,7 @@ static int swapShortField(EcCompiler *cp, int word)
     word = ((word & 0xFFFF) << 16) | ((word & 0xFFFF0000) >> 16);
     return ((word & 0xFF) << 8) | ((word & 0xFF00) >> 8);
 }
+#endif
 
 
 static int swapWordField(EcCompiler *cp, int word)
