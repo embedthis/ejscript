@@ -138,8 +138,9 @@
 #define ES_HtmlConnector_getTextKind                                   54
 #define ES_HtmlConnector_getOptions                                    55
 #define ES_HtmlConnector_write                                         56
+#define ES_HtmlConnector_getDataAttributes                             57
 
-#define ES_HtmlConnector_NUM_CLASS_PROP                                57
+#define ES_HtmlConnector_NUM_CLASS_PROP                                58
 
 /*
  * Instance slots for "HtmlConnector" type 
@@ -220,6 +221,7 @@
 #define ES_HtmlConnector_getTextKind_options                           0
 #define ES_HtmlConnector_getOptions_options                            0
 #define ES_HtmlConnector_write_str                                     0
+#define ES_HtmlConnector_getDataAttributes_options                     0
 
 
 /*
@@ -680,6 +682,6 @@
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
 
-#define _ES_CHECKSUM_ejs_web   513731
+#define _ES_CHECKSUM_ejs_web   519648
 
 #endif
