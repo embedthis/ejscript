@@ -171,7 +171,7 @@ module ejs.web.template  {
             if (layoutPage && layoutPage != options.currentLayout) {
                 let layoutOptions = blend(options.clone(), { currentLayout: layoutPage })
                 let layoutText: String = new TemplateParser().parse(layoutPage.readString(), layoutOptions)
-                return layoutText.replace(ContentPattern, out.toString())
+                return layoutText.replace(ContentPattern, out.toString().replace(/\$/g, "$$$$"))
             }
             return out.toString()
         }
