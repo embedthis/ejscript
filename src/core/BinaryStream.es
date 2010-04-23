@@ -121,7 +121,7 @@ module ejs {
         /**
             @duplicate Stream.flush
          */
-        function flush(dir: Number): Void {
+        function flush(dir: Number = Stream.BOTH): Void {
             if (dir & Stream.READ) 
                 inbuf.flush(Stream.READ)
             if (dir & Stream.WRITE) 

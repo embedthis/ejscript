@@ -287,7 +287,7 @@ module ejs.web {
             @duplicate Stream.flush
             @hide 
          */
-        function flush(dir: Number): Void {}
+        function flush(dir: Number = Stream.BOTH): Void {}
 
         /** 
             Get the (proposed) response headers

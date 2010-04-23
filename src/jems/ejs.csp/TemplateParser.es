@@ -181,7 +181,7 @@ module ejs.web.template  {
          */
         function getToken(token: ByteArray): Number {
             var tid = Token.Literal
-            token.flush()
+            token.flush(Stream.BOTH)
             var c
             while (pos < script.length) {
                 c = script[pos++]

@@ -143,7 +143,7 @@ module ejs {
             @param dir Direction in which to flush. Set to a mask containing: Stream.READ, Stream.WRITE or Stream.BOTH.
                 A read flush will discard read data. A write flush will attempt to write buffered write data.
          */
-        native function flush(dir: Number): Void
+        native function flush(dir: Number = Stream.BOTH): Void
 
         /**
             Is the ByteArray is growable.

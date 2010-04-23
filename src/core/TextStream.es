@@ -120,7 +120,7 @@ module ejs {
         /** 
             @duplicate Stream.flush
          */
-        function flush(dir: Number): Void {
+        function flush(dir: Number = Stream.BOTH): Void {
             if (dir & Stream.WRITE)
                 inbuf.flush()
             if (!(nextStream is ByteArray)) {

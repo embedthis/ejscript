@@ -249,7 +249,7 @@ EjsObj *ejsCloneObject(Ejs *ejs, EjsObj *src, bool deep)
     for (i = 0; i < numSlots; i++, sp++, dp++) {
         *dp = *sp;
         //  MOB -- all native types must provide clone or set immutable
-        if (deep /* MOB || !sp->value.ref->type->immutable */) {
+        if (deep && !sp->value.ref->type->immutable) {
             dp->value.ref = ejsClone(ejs, sp->value.ref, deep);
         }
     }

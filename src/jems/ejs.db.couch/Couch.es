@@ -107,7 +107,7 @@ module ejs.db.couch {
             @duplicate Stream.flush
             @hide 
          */
-        function flush(dir: Number): Void {}
+        function flush(dir: Number = Stream.BOTH): Void {}
 
         /**
             @hide

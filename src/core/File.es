@@ -67,7 +67,7 @@ module ejs {
         /** 
             @duplicate Stream.flush
          */
-        function flush(dir: Number): Void {}
+        function flush(dir: Number = Stream.BOTH): Void {}
 
         /** 
             Iterate over the positions in a file. This will get an iterator for this file to be used by 
