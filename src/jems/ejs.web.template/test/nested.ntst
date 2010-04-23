@@ -1,0 +1,20 @@
+</html>
+<html><head><title>index.html</title></head>
+<body><%
+
+var c = this
+
+class Shape {
+    var x
+
+    public function render() {
+        c.write("RENDER\n")
+    }
+}
+
+s = new Shape
+s.render()
+
+%></body>
+</html>
+
