@@ -12,7 +12,7 @@
 static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
 static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
 
-static int  flushByteArray(Ejs *ejs, EjsByteArray *ap);
+static int  flushByteArray(Ejs *ejs, EjsByteArray *ap, int dir);
 static int  getInput(Ejs *ejs, EjsByteArray *ap, int required);
 static int  lookupByteArrayProperty(Ejs *ejs, EjsByteArray *ap, EjsName *qname);
  static bool makeRoom(Ejs *ejs, EjsByteArray *ap, int require);
@@ -371,7 +371,8 @@ static EjsObj *ba_close(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     if (ap->emitter) {
         ejsSendEvent(ejs, ap->emitter, "close", (EjsObj*) ap);
     }
-    return ba_flush(ejs, ap, argc, argv);
+    ap->writePosition = ap->readPosition = 0;
+    return 0;
 }
 
 
@@ -564,12 +565,15 @@ static EjsObj *ba_getValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 
 /*  
     Flush the data in the byte array and reset the read and write position pointers
-    function flush(): Void
+    function flush(dir: Number): Void
  */
 static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
+    int     dir;
+
+    dir = ejsGetInt(ejs, argv[0]);
     if (argc == 0 || argv[0] == (EjsObj*) ejs->trueValue) {
-        flushByteArray(ejs, ap);
+        flushByteArray(ejs, ap, dir);
     }
     ap->writePosition = ap->readPosition = 0;
     return 0;
@@ -579,7 +583,7 @@ static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 /*
     Get the length of an array.
     @return Returns the number of items in the array
-    intrinsic override function get length(): Number
+    override function get length(): Number
  */
 static EjsObj *ba_getLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
@@ -590,7 +594,7 @@ static EjsObj *ba_getLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 #if KEEP
 /*
     Set the length of an array.
-    intrinsic override function set length(value: Number): void
+    override function set length(value: Number): void
  */
 static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
@@ -608,6 +612,17 @@ static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     return 0;
 }
 #endif
+
+
+/*
+    Get the length of an array.
+    @return Returns the number of items in the array
+    function growable(): Boolean
+ */
+static EjsObj *ba_growable(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateNumber(ejs, ap->length);
+}
 
 
 /*
@@ -1122,13 +1137,13 @@ static EjsObj *ba_setWritePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj 
 /*
     Flush the array. Issue a "flush" event. Flushing attempts to write pending data before resetting the array.
  */
-static int flushByteArray(Ejs *ejs, EjsByteArray *ap)
+static int flushByteArray(Ejs *ejs, EjsByteArray *ap, int dir)
 {
-    if (ap->emitter && availableBytes(ap) && !ejs->exception) {
+    if ((dir & EJS_STREAM_WRITE) && ap->emitter && availableBytes(ap) && !ejs->exception) {
         ejsSendEvent(ejs, ap->emitter, "flush", (EjsObj*) ap);
     }
     ap->writePosition = ap->readPosition = 0;
-    if (ap->emitter) {
+    if ((dir & EJS_STREAM_WRITE) && ap->emitter) {
         ejsSendEvent(ejs, ap->emitter, "writable", (EjsObj*) ap);
     }
     return 0;
@@ -1410,6 +1425,9 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_ByteArray_copyIn, (EjsProc) ba_copyIn);
     ejsBindMethod(ejs, type, ES_ByteArray_copyOut, (EjsProc) ba_copyOut);
     ejsBindMethod(ejs, type, ES_ByteArray_flush, (EjsProc) ba_flush);
+#if ES_ByteArray_growable
+    ejsBindMethod(ejs, type, ES_ByteArray_growable, (EjsProc) ba_growable);
+#endif
     ejsBindMethod(ejs, type, ES_ByteArray_length, (EjsProc) ba_getLength);
     ejsBindMethod(ejs, type, ES_Object_get, (EjsProc) ba_get);
     ejsBindMethod(ejs, type, ES_Object_getValues, (EjsProc) ba_getValues);

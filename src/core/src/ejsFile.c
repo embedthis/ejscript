@@ -628,7 +628,7 @@ static EjsObj *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 
 /*  
     Get the size of the file associated with this File object.
-    override intrinsic function get size(): Number
+    override function get size(): Number
  */
 static EjsObj *getFileSize(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {

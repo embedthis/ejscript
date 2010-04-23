@@ -20,6 +20,15 @@ module ejs {
 
         use default namespace public
 
+        /** Read direction constant for flush() */
+        const READ = 0x1
+
+        /** Write direction constant for flush() */
+        const WRITE = 0x2
+
+        /** Both directions constant for flush() */
+        const BOTH = 0x3
+
         /** 
             Add a listener to the stream. 
             @param name Name of the event to listen for. The name may be an array of events.
@@ -51,12 +60,14 @@ module ejs {
         function close(): Void
 
         /**
-            Flush the stream and underlying streams. The act of flushing requests a stream with buffered data to 
-            attempt to write all buffered data downstream. Flushing a stream with read data will cause the
-            stream to discard the read data. If the stream is in sync mode, this call will block until all data is
-            written. If the stream is in async mode, it will attempt to write all data but will not wait for completion.
+            Flush the stream and underlying streams. A supplied flush $direction argument modifies the effect of this call.
+            If direction is set to Stream.READ, then all read data is discarded. If direction is set to Stream.WRITE, 
+            any buffered data is written. Stream.BOTH will cause both directions to be flushed.  If the stream is in 
+            sync mode, this call will block until all data is written. If the stream is in async mode, it will attempt 
+            to write all data but will return immediately.
+            @param
          */
-        function flush(): Void 
+        function flush(dir: Number): Void 
 
         /** 
             Read a data from the stream. 

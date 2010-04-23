@@ -121,12 +121,14 @@ module ejs {
         /**
             @duplicate Stream.flush
          */
-        function flush(): Void {
-            inbuf.flush()
-            outbuf.flush()
+        function flush(dir: Number): Void {
+            if (dir & Stream.READ) 
+                inbuf.flush(Stream.READ)
+            if (dir & Stream.WRITE) 
+                outbuf.flush(Stream.WRITE)
             if (!(nextStream is ByteArray)) {
                 /* Don't flush loopback bytearrays */
-                nextStream.flush()
+                nextStream.flush(dir)
             }
         }
 

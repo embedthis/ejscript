@@ -11,8 +11,8 @@
 /******************************************************************************/
 /*
     Cast the operand to a primitive type
- *
-    intrinsic function cast(type: Type) : Object
+
+    function cast(type: Type) : Object
  */
 
 static EjsObj *castBooleanVar(Ejs *ejs, EjsBoolean *vp, EjsType *type)

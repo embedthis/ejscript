@@ -139,8 +139,11 @@ module ejs {
 
         /** 
             Flush (discard) the data in the byte array and reset the read and write positions.
+            This call may block if the stream is in sync mode.
+            @param dir Direction in which to flush. Set to a mask containing: Stream.READ, Stream.WRITE or Stream.BOTH.
+                A read flush will discard read data. A write flush will attempt to write buffered write data.
          */
-        native function flush(): Void
+        native function flush(dir: Number): Void
 
         /**
             Is the ByteArray is growable.
@@ -277,8 +280,8 @@ module ejs {
          *  @returns an XML document
          *  @throws IOError if an I/O error occurs or a premature end of file.
          */
-        # MOB
-        native function readXML(): XML
+        function readXML(): XML
+            XML(readString())
 
         /** 
             Remove a listener to the stream. If there are no listeners on the stream, the stream is put back into sync mode.

@@ -287,7 +287,7 @@ module ejs.web {
             @duplicate Stream.flush
             @hide 
          */
-        function flush(): Void {}
+        function flush(dir: Number): Void {}
 
         /** 
             Get the (proposed) response headers
@@ -530,6 +530,108 @@ module ejs.web {
          */
         function get serverPort(): Number
             server.port
+
+        //  DEPRECATED
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get accept(): String
+            header("accept")
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get acceptCharset(): String
+            header("accept-charset")
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get acceptEncoding(): String
+            header("accept-encoding")
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get authAcl(): String {
+            throw new Error("Not supported")
+            return null
+        }
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get body(): String
+            input.readString()
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get connection(): String
+            header("connection")
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get extension(): String
+            Uri(pathInfo.extension)
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get hostName(): String
+            host
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get mimeType(): String
+            header("content-type")
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get pathTranslated(): String
+            dir.join(pathInfo)
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get pragma(): String
+            header("pragma")
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get remoteHost(): String
+            header("host")
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get url(): String
+            pathInfo
+
+        /** 
+            @stability deprecated
+            @hide
+          */
+        function get originalUri(): String
+            pathInfo
     }
 }
 

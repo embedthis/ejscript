@@ -1000,7 +1000,7 @@ static EjsObj *lastArrayIndexOf(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     Get the length of an array.
     @return Returns the number of items in the array
 
-    intrinsic override function get length(): Number
+    override function get length(): Number
  */
 
 static EjsObj *getArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
@@ -1012,7 +1012,7 @@ static EjsObj *getArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 /*
     Set the length of an array.
 
-    intrinsic override function set length(value: Number): void
+    override function set length(value: Number): void
  */
 
 static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
@@ -1279,7 +1279,9 @@ void quickSort(Ejs *ejs, EjsArray *ap, EjsFunction *compare, int direction, int 
 
 /**
     Sort the array using the supplied compare function
-    intrinsic native function sort(compare: Function = null, direction: Number = 1): Array
+
+    function sort(compare: Function = null, direction: Number = 1): Array
+
     Where compare is defined as:
         function compare(a,b): Number
  */

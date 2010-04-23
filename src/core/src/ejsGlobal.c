@@ -171,8 +171,9 @@ static EjsObj *formatStackMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
 
 #if ES_hashcode
-/*  Get the hash code for the object.
-    intrinsic function hashcode(o: Object): Number
+/*  
+    Get the hash code for the object.
+    function hashcode(o: Object): Number
  */
 static EjsObj *hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
@@ -441,7 +442,7 @@ void ejsCreateGlobalBlock(Ejs *ejs)
     
     /*  
         Create the standard namespaces. Order matters here. This is the (reverse) order of lookup.
-        Empty is first intrinsic is last. TODO - OPT Optimize this ordering.
+        TODO - OPT Optimize this ordering.
      */
     block = (EjsBlock*) ejs->global;
     ejs->iteratorSpace =    addNamespace(ejs, block, EJS_ITERATOR_NAMESPACE);

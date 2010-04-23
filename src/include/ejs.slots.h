@@ -237,12 +237,14 @@
 #define ES_App_putenv                                                  45
 #define ES_App_search                                                  46
 #define ES_App_createSearch                                            47
-#define ES_App_serviceEvents                                           48
+#define ES_App_eventLoop                                               48
 #define ES_App_sleep                                                   49
 #define ES_App_title                                                   50
 #define ES_App_version                                                 51
+#define ES_App_searchPath                                              52
+#define ES_App_serviceEvents                                           53
 
-#define ES_App_NUM_CLASS_PROP                                          52
+#define ES_App_NUM_CLASS_PROP                                          54
 #define ES_App_NUM_INSTANCE_PROP                                       0
 
 /*
@@ -255,9 +257,11 @@
 #define ES_App_putenv_name                                             0
 #define ES_App_putenv_value                                            1
 #define ES_App_createSearch_searchPath                                 0
-#define ES_App_serviceEvents_timeout                                   0
-#define ES_App_serviceEvents_oneEvent                                  1
+#define ES_App_eventLoop_timeout                                       0
+#define ES_App_eventLoop_oneEvent                                      1
 #define ES_App_sleep_delay                                             0
+#define ES_App_serviceEvents_count                                     0
+#define ES_App_serviceEvents_timeout                                   1
 
 
 /*
@@ -385,6 +389,7 @@
 #define ES_BinaryStream_BinaryStream_stream                            0
 #define ES_BinaryStream_addListener_name                               0
 #define ES_BinaryStream_addListener_listener                           1
+#define ES_BinaryStream_flush_dir                                      0
 #define ES_BinaryStream_read_buffer                                    0
 #define ES_BinaryStream_read_offset                                    1
 #define ES_BinaryStream_read_count                                     2
@@ -447,20 +452,21 @@
 #define ES_ByteArray_readPosition                                      49
 #define ES_ByteArray_readShort                                         50
 #define ES_ByteArray_readString                                        51
-#define ES_ByteArray_removeListener                                    52
-#define ES_ByteArray_reset                                             53
-#define ES_ByteArray_room                                              54
-#define ES_ByteArray_write                                             55
-#define ES_ByteArray_writeByte                                         56
-#define ES_ByteArray_writeShort                                        57
-#define ES_ByteArray_writeDouble                                       58
-#define ES_ByteArray_writeInteger                                      59
-#define ES_ByteArray_writeLong                                         60
-#define ES_ByteArray_writePosition                                     61
-#define ES_ByteArray_input                                             62
-#define ES_ByteArray_output                                            63
+#define ES_ByteArray_readXML                                           52
+#define ES_ByteArray_removeListener                                    53
+#define ES_ByteArray_reset                                             54
+#define ES_ByteArray_room                                              55
+#define ES_ByteArray_write                                             56
+#define ES_ByteArray_writeByte                                         57
+#define ES_ByteArray_writeShort                                        58
+#define ES_ByteArray_writeDouble                                       59
+#define ES_ByteArray_writeInteger                                      60
+#define ES_ByteArray_writeLong                                         61
+#define ES_ByteArray_writePosition                                     62
+#define ES_ByteArray_input                                             63
+#define ES_ByteArray_output                                            64
 
-#define ES_ByteArray_NUM_CLASS_PROP                                    64
+#define ES_ByteArray_NUM_CLASS_PROP                                    65
 #define ES_ByteArray_NUM_INSTANCE_PROP                                 0
 
 /*
@@ -478,6 +484,7 @@
 #define ES_ByteArray_copyOut_dest                                      1
 #define ES_ByteArray_copyOut_destOffset                                2
 #define ES_ByteArray_copyOut_count                                     3
+#define ES_ByteArray_flush_dir                                         0
 #define ES_ByteArray_read_buffer                                       0
 #define ES_ByteArray_read_offset                                       1
 #define ES_ByteArray_read_count                                        2
@@ -1112,6 +1119,7 @@
 #define ES_File_File_options                                           1
 #define ES_File_addListener_name                                       0
 #define ES_File_addListener_listener                                   1
+#define ES_File_flush_dir                                              0
 #define ES_File_open_options                                           0
 #define ES_File_read_buffer                                            0
 #define ES_File_read_offset                                            1
@@ -1285,8 +1293,10 @@
 #define ES_Http_available                                              116
 #define ES_Http_contentEncoding                                        117
 #define ES_Http_mimeType                                               118
+#define ES_Http_setCallback                                            119
+#define ES_Http_chunked                                                120
 
-#define ES_Http_NUM_CLASS_PROP                                         119
+#define ES_Http_NUM_CLASS_PROP                                         121
 
 /*
  * Instance slots for "Http" type 
@@ -1304,6 +1314,7 @@
 #define ES_Http_connect_data                                           1
 #define ES_Http_del_uri                                                0
 #define ES_Http_del_data                                               1
+#define ES_Http_flush_dir                                              0
 #define ES_Http_form_uri                                               0
 #define ES_Http_form_postData                                          1
 #define ES_Http_get_uri                                                0
@@ -1339,6 +1350,8 @@
 #define ES_Http_addHeader_value                                        1
 #define ES_Http_addHeader_overwrite                                    2
 #define ES_Http_mimeType_path                                          0
+#define ES_Http_setCallback_eventMask                                  0
+#define ES_Http_setCallback_cb                                         1
 
 
 /*
@@ -1457,6 +1470,7 @@
 #define ES_Logger_Logger_level                                         2
 #define ES_Logger_addListener_name                                     0
 #define ES_Logger_addListener_listener                                 1
+#define ES_Logger_flush_dir                                            0
 #define ES_Logger_debug_level                                          0
 #define ES_Logger_debug_msgs                                           1
 #define ES_Logger_config_msgs                                          0
@@ -1899,6 +1913,7 @@
 #define ES_Socket_addListener_name                                     0
 #define ES_Socket_addListener_listener                                 1
 #define ES_Socket_connect_address                                      0
+#define ES_Socket_flush_dir                                            0
 #define ES_Socket_listen_address                                       0
 #define ES_Socket_read_buffer                                          0
 #define ES_Socket_read_offset                                          1
@@ -1921,13 +1936,21 @@
 #define ES_Stream_write                                                6
 
 #define ES_Stream_NUM_CLASS_PROP                                       7
-#define ES_Stream_NUM_INSTANCE_PROP                                    0
+
+/*
+ * Instance slots for "Stream" type 
+ */
+#define ES_Stream_READ                                                 0
+#define ES_Stream_WRITE                                                1
+#define ES_Stream_BOTH                                                 2
+#define ES_Stream_NUM_INSTANCE_PROP                                    3
 
 /*
     Local slots for methods in type "Stream" 
  */
 #define ES_Stream_addListener_name                                     0
 #define ES_Stream_addListener_listener                                 1
+#define ES_Stream_flush_dir                                            0
 #define ES_Stream_read_buffer                                          0
 #define ES_Stream_read_offset                                          1
 #define ES_Stream_read_count                                           2
@@ -2093,6 +2116,7 @@
 #define ES_TextStream_TextStream_stream                                0
 #define ES_TextStream_addListener_name                                 0
 #define ES_TextStream_addListener_listener                             1
+#define ES_TextStream_flush_dir                                        0
 #define ES_TextStream_read_buffer                                      0
 #define ES_TextStream_read_offset                                      1
 #define ES_TextStream_read_count                                       2
@@ -2384,6 +2408,6 @@
 #define ES_XMLList_descendants_name                                    0
 #define ES_XMLList_elements_name                                       0
 
-#define _ES_CHECKSUM_ejs   1293563
+#define _ES_CHECKSUM_ejs   1309451
 
 #endif

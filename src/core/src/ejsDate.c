@@ -28,7 +28,7 @@
 /*
     Cast the operand to the specified type
 
-    intrinsic function cast(type: Type) : Object
+    function cast(type: Type) : Object
  */
 
 static EjsObj *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)

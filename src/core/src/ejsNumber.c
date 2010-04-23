@@ -363,7 +363,7 @@ static EjsObj *getNumberIterator(Ejs *ejs, EjsObj *np, int argc, EjsObj **argv)
 
 /*
     Convert the number to a string.
-    intrinsic function toString(): String
+    function toString(): String
  */
 static EjsObj *numberToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {

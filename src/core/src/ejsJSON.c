@@ -395,7 +395,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
 /*
     Global function to convert the object to a source code string in JSON format. This is the actual work-horse.
   
-    intrinsic function serialize(obj: Object, options: Object = null)
+    function serialize(obj: Object, options: Object = null)
  */
 static EjsObj *serialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {

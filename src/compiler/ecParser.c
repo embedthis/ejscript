@@ -7115,6 +7115,7 @@ static EcNode *parseNamespaceAttribute(EcCompiler *cp)
     switch (cp->peekToken->tokenId) {
     case T_RESERVED_NAMESPACE:
         if (!inClass && (subId == T_PRIVATE || subId ==  T_PROTECTED)) {
+            getToken(cp);
             return LEAVE(cp, unexpected(cp));
         }
         qualifier = parseReservedNamespace(cp);
@@ -7151,6 +7152,7 @@ static EcNode *parseNamespaceAttribute(EcCompiler *cp)
         break;
 
     default:
+        getToken(cp);
         np = unexpected(cp);
         break;
     }
@@ -7992,7 +7994,7 @@ static EcNode *parseResultType(EcCompiler *cp)
 
     } else {
         /*  Don't handle EMPTY here */
-        mprAssert(0);
+        getToken(cp);
         np = unexpected(cp);;
     }
     return LEAVE(cp, np);
@@ -8879,6 +8881,7 @@ static EcNode *parsePragma(EcCompiler *cp, EcNode *np)
         break;
 
     default:
+        getToken(cp);
         np = unexpected(cp);
         break;
     }

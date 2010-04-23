@@ -1593,7 +1593,7 @@ static EjsObj *obj_hasOwnProperty(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv
 /*
     Get the length for the object.
 
-    intrinsic function get length(): Number
+    function get length(): Number
  */
 static EjsObj *obj_length(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
@@ -1749,7 +1749,7 @@ static EjsObj *obj_seal(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 
 
 /*
-    intrinsic native function propertyIsEnumerable(property: String, flag: Object = undefined): Boolean
+    native function propertyIsEnumerable(property: String, flag: Object = undefined): Boolean
  */
 static EjsObj *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
@@ -1943,7 +1943,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 /*
     Convert the object to a localized string
 
-    intrinsic function toLocaleString(): String
+    function toLocaleString(): String
  */
 static EjsObj *toLocaleString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {

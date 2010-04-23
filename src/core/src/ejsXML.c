@@ -885,7 +885,7 @@ static EjsObj *xmlToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 /*
     Convert the XML object to a string.
 
-    intrinsic function toString() : String
+    function toString() : String
  */
 static EjsObj *xmlToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
@@ -897,7 +897,7 @@ static EjsObj *xmlToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     Get the length of an array.
     @return Returns the number of items in the array
 
-    intrinsic public override function get length(): int
+    public override function get length(): int
  */
 static EjsObj *xmlLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
@@ -908,7 +908,7 @@ static EjsObj *xmlLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 #if KEEP
 /*
     Set the length. TODO - what does this do?
-    intrinsic public override function set length(value: int): void
+    public override function set length(value: int): void
  */
 static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {

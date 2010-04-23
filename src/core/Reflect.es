@@ -61,7 +61,7 @@ module ejs {
 /*
     ES4 reflection proposal
  
-    intrinsic function typeOf(e: *): Type
+    function typeOf(e: *): Type
 
     interface Type {
         function canConvertTo(t: Type): Boolean

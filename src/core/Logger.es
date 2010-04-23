@@ -148,7 +148,7 @@ module ejs {
         /**
             @hide
          */
-        function flush(): Void {}
+        function flush(dir: Number): Void {}
 
         /** 
             The numeric verbosity setting (0-9) of this logger.

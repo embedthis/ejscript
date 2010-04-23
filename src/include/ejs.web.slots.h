@@ -328,8 +328,21 @@
 #define ES_ejs_web_Request_queryString                                 54
 #define ES_ejs_web_Request_serverName                                  55
 #define ES_ejs_web_Request_serverPort                                  56
+#define ES_ejs_web_Request_accept                                      57
+#define ES_ejs_web_Request_acceptCharset                               58
+#define ES_ejs_web_Request_acceptEncoding                              59
+#define ES_ejs_web_Request_authAcl                                     60
+#define ES_ejs_web_Request_body                                        61
+#define ES_ejs_web_Request_connection                                  62
+#define ES_ejs_web_Request_hostName                                    63
+#define ES_ejs_web_Request_mimeType                                    64
+#define ES_ejs_web_Request_pathTranslated                              65
+#define ES_ejs_web_Request_pragma                                      66
+#define ES_ejs_web_Request_remoteHost                                  67
+#define ES_ejs_web_Request_url                                         68
+#define ES_ejs_web_Request_originalUri                                 69
 
-#define ES_ejs_web_Request_NUM_CLASS_PROP                              57
+#define ES_ejs_web_Request_NUM_CLASS_PROP                              70
 
 /*
  * Instance slots for "Request" type 
@@ -376,6 +389,7 @@
 #define ES_ejs_web_Request_addListener_listener                        1
 #define ES_ejs_web_Request_cachable_enable                             0
 #define ES_ejs_web_Request_dump_args                                   0
+#define ES_ejs_web_Request_flush_dir                                   0
 #define ES_ejs_web_Request_header_key                                  0
 #define ES_ejs_web_Request_read_buffer                                 0
 #define ES_ejs_web_Request_read_offset                                 1
@@ -682,6 +696,6 @@
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
 
-#define _ES_CHECKSUM_ejs_web   519648
+#define _ES_CHECKSUM_ejs_web   532739
 
 #endif

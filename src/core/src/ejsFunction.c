@@ -34,7 +34,7 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numSlots)
 /*
     Cast the operand to the specified type
 
-    intrinsic function cast(type: Type) : Object
+    function cast(type: Type) : Object
  */
 static EjsObj *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
 {

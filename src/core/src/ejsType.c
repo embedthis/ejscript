@@ -24,7 +24,7 @@ static void setAttributes(EjsType *type, int attributes);
 /*
     Copy a type. 
 
-    intrinsic function copy(type: Object): Object
+    function copy(type: Object): Object
  */
 static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
 {

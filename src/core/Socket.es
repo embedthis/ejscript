@@ -82,9 +82,8 @@ module ejs {
 
         /** 
             @duplicate Stream.flush
-            @hide 
          */
-        function flush(): Void {}
+        function flush(dir: Number): Void {}
 
         /** 
             Listen on a socket for client connections. This will put the socket into a server role for communcations.

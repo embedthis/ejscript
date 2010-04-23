@@ -19,7 +19,7 @@ static int parseFlags(EjsRegExp *rp, cchar *flags);
 /*
     Cast the operand to the specified type
 
-    intrinsic function cast(type: Type) : Object
+    function cast(type: Type) : Object
  */
 static EjsObj *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 {

@@ -12,7 +12,7 @@
 /*
     Cast the operand to the specified type
 
-    intrinsic function cast(type: Type) : Object
+    function cast(type: Type) : Object
  */
 
 static EjsObj *castError(Ejs *ejs, EjsError *vp, EjsType *type)

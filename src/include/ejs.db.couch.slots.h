@@ -65,6 +65,7 @@
 #define ES_ejs_db_couch_Couch_cmd_method                               0
 #define ES_ejs_db_couch_Couch_cmd_url                                  1
 #define ES_ejs_db_couch_Couch_cmd_data                                 2
+#define ES_ejs_db_couch_Couch_flush_dir                                0
 #define ES_ejs_db_couch_Couch_removeListener_event                     0
 #define ES_ejs_db_couch_Couch_removeListener_listener                  1
 #define ES_ejs_db_couch_Couch_read_buffer                              0
@@ -82,6 +83,6 @@
 #define ES_ejs_db_couch_Couch_view_name                                0
 #define ES_ejs_db_couch_Couch_view_options                             1
 
-#define _ES_CHECKSUM_ejs_db_couch   41144
+#define _ES_CHECKSUM_ejs_db_couch   41464
 
 #endif

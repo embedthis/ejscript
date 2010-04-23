@@ -210,9 +210,9 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
 
 
 /*  
-    static function serviceEvents(timeout: Number = -1, oneEvent: Boolean = false): void
+    static function eventLoop(timeout: Number = -1, oneEvent: Boolean = false): void
  */
-static EjsObj *serviceEvents(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int     timeout, oneEvent;
 
@@ -264,7 +264,9 @@ void ejsConfigureAppType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_App_noexit, (EjsProc) noexit);
     ejsBindMethod(ejs, type, ES_App_createSearch, (EjsProc) createSearch);
     ejsBindAccess(ejs, type, ES_App_search, (EjsProc) getSearch, (EjsProc) setSearch);
-    ejsBindMethod(ejs, type, ES_App_serviceEvents, (EjsProc) serviceEvents);
+#if ES_App_eventLoop
+    ejsBindMethod(ejs, type, ES_App_eventLoop, (EjsProc) eventLoop);
+#endif
     ejsBindMethod(ejs, type, ES_App_sleep, (EjsProc) sleepProc);
 
 #if FUTURE

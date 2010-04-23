@@ -86,7 +86,7 @@ module ejs {
             @duplicate Stream.close
          */
         function close(): Void {
-            inbuf.flush()
+            inbuf.flush(Stream.WRITE)
             nextStream.close()
         }
 
@@ -120,10 +120,11 @@ module ejs {
         /** 
             @duplicate Stream.flush
          */
-        function flush(): Void {
-            inbuf.flush()
+        function flush(dir: Number): Void {
+            if (dir & Stream.WRITE)
+                inbuf.flush()
             if (!(nextStream is ByteArray)) {
-                nextStream.flush()
+                nextStream.flush(dir)
             }
         }
 
@@ -144,7 +145,7 @@ module ejs {
             if (offset < 0) {
                 buffer.reset()
             } else {
-                buffer.flush()
+                buffer.flush(Stream.READ)
             }
             let where = buffer.writePosition
             while (count > 0) {

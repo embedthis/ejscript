@@ -217,7 +217,7 @@ module ejs {
 
         /** 
             Set the current module search path
-            @parram paths An array of paths
+            @param paths An array of paths
          */
         native static function set search(paths: Array): Void
 
@@ -230,12 +230,13 @@ module ejs {
         native static function createSearch(searchPath: String? = null): Array
 
         /** 
-            Service events
+            Run the event loop. This is typically done automatically by the hosting program and is not normally required
+            in user programs.
             @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
                 call returns immediately.
             @param oneEvent If true, return immediately after servicing one event.
          */
-        native static function serviceEvents(timeout: Number = -1, oneEvent: Boolean = false): Void
+        native static function eventLoop(timeout: Number = -1, oneEvent: Boolean = false): Void
 
         /** 
             Set an environment variable.
@@ -263,6 +264,50 @@ module ejs {
          */
         static static function get version(): String
             Config.Version
+
+
+        //  DEPRECATED
+        /** 
+            The current module search path . Set to a delimited searchPath string. Warning: This will be changed to an
+            array of paths in a future release.
+            @stability deprecated.
+            @hide
+         */
+        static function get searchPath(): String {
+            if (Config.OS == "WIN") {
+                return search.join(";")
+            } else {
+                return search.join(":")
+            }
+        }
+
+        //  DEPRECATED
+        /** 
+            @stability deprecated.
+            @hide
+         */
+        static function set searchPath(path: String): Void {
+            if (Config.OS == "WIN") {
+                search = path.split(";")
+            } else {
+                search = path.split(":")
+            }
+        }
+
+        //  DEPRECATED
+        /**
+            Service events
+            @param count Count of events to service. Defaults to unlimited.
+            @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
+                call returns immediately.
+            @stability deprecated
+            @hide
+         */
+        static function serviceEvents(count: Number = -1, timeout: Number = -1): Void {
+            for (i in count) {
+                eventLoop(timeout, true)
+            }
+        }
     }
 
     /**  

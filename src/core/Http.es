@@ -20,187 +20,187 @@ module ejs {
         /** 
           HTTP Continue Status (100)
          */     
-        static const Continue : Number   = 100
+        static const Continue : Number = 100
 
         /** 
             HTTP Success Status (200) 
          */     
-        static const Ok : Number   = 200
+        static const Ok : Number = 200
 
         /** 
             HTTP Created Status (201) 
          */     
-        static const Created : Number   = 201
+        static const Created : Number = 201
 
         /** 
             HTTP Accepted Status (202) 
          */     
-        static const Accepted : Number   = 202
+        static const Accepted : Number = 202
 
         /** 
             HTTP Non-Authoritative Information Status (203) 
          */     
-        static const NotAuthoritative : Number   = 203
+        static const NotAuthoritative : Number = 203
 
         /** 
             HTTP No Content Status (204)  
          */     
-        static const NoContent : Number   = 204
+        static const NoContent : Number = 204
 
         /** 
             HTTP Reset Content Status (205) 
          */     
-        static const Reset : Number   = 205
+        static const Reset : Number = 205
 
         /** 
             HTTP Partial Content Status (206) 
          */     
-        static const PartialContent : Number   = 206
+        static const PartialContent : Number = 206
 
         /** 
             HTTP Multiple Choices Status (300) 
          */     
-        static const MultipleChoice : Number   = 300
+        static const MultipleChoice : Number = 300
 
         /** 
             HTTP Moved Permanently Status (301) 
          */     
-        static const MovedPermanently : Number   = 301
+        static const MovedPermanently : Number = 301
 
         /** 
             HTTP Found but Moved Temporily Status (302) 
          */     
-        static const MovedTemporarily : Number   = 302
+        static const MovedTemporarily : Number = 302
 
         /** 
             HTTP See Other Status (303) 
          */     
-        static const SeeOther : Number   = 303
+        static const SeeOther : Number = 303
 
         /** 
             HTTP Not Modified Status (304)     
          */
-        static const NotModified : Number   = 304
+        static const NotModified : Number = 304
 
         /** 
             HTTP Use Proxy Status (305) 
          */     
-        static const UseProxy : Number   = 305
+        static const UseProxy : Number = 305
 
         /** 
             HTTP Bad Request Status(400) 
          */     
-        static const BadRequest : Number   = 400
+        static const BadRequest : Number = 400
 
         /** 
             HTTP Unauthorized Status (401) 
          */     
-        static const Unauthorized : Number   = 401
+        static const Unauthorized : Number = 401
 
         /** 
             HTTP Payment Required Status (402) 
          */     
-        static const PaymentRequired : Number   = 402
+        static const PaymentRequired : Number = 402
 
         /** 
             HTTP Forbidden Status (403)  
          */     
-        static const Forbidden : Number   = 403
+        static const Forbidden : Number = 403
 
         /** 
             HTTP Not Found Status (404) 
          */     
-        static const NotFound : Number   = 404
+        static const NotFound : Number = 404
 
         /** 
             HTTP Method Not Allowed Status (405) 
          */     
-        static const BadMethod : Number   = 405
+        static const BadMethod : Number = 405
 
         /** 
             HTTP Not Acceptable Status (406) 
          */     
-        static const NotAcceptable : Number   = 406
+        static const NotAcceptable : Number = 406
 
         /** 
             HTTP ProxyAuthentication Required Status (407) 
          */     
-        static const ProxyAuthRequired : Number   = 407
+        static const ProxyAuthRequired : Number = 407
 
         /** 
             HTTP Request Timeout Status (408) 
          */     
-        static const RequestTimeout : Number   = 408
+        static const RequestTimeout : Number = 408
 
         /** 
             HTTP Conflict Status (409) 
          */     
-        static const Conflict : Number   = 409
+        static const Conflict : Number = 409
 
         /** 
             HTTP Gone Status (410) 
          */     
-        static const Gone : Number   = 410
+        static const Gone : Number = 410
 
         /** 
             HTTP Length Required Status (411) 
          */     
-        static const LengthRequired : Number   = 411
+        static const LengthRequired : Number = 411
         
         /** 
             HTTP Precondition Failed Status (412) 
          */     
-        static const PrecondFailed : Number   = 412
+        static const PrecondFailed : Number = 412
 
         /** 
             HTTP Request Entity Too Large Status (413) 
          */     
-        static const EntityTooLarge : Number   = 413
+        static const EntityTooLarge : Number = 413
 
         /** 
             HTTP Request URI Too Long Status (414)  
          */     
-        static const UriTooLong : Number   = 414
+        static const UriTooLong : Number = 414
 
         /** 
             HTTP Unsupported Media Type (415) 
          */     
-        static const UnsupportedMedia : Number   = 415
+        static const UnsupportedMedia : Number = 415
 
         /** 
             HTTP Requested Range Not Satisfiable (416) 
          */     
-        static const BadRange : Number   = 416
+        static const BadRange : Number = 416
 
         /** 
             HTTP Server Error Status (500) 
          */     
-        static const ServerError : Number   = 500
+        static const ServerError : Number = 500
 
         /** 
             HTTP Not Implemented Status (501) 
          */     
-        static const NotImplemented : Number   = 501
+        static const NotImplemented : Number = 501
 
         /** 
             HTTP Bad Gateway Status (502) 
          */     
-        static const BadGateway : Number   = 502
+        static const BadGateway : Number = 502
 
         /** 
             HTTP Service Unavailable Status (503) 
          */     
-        static const ServiceUnavailable : Number   = 503
+        static const ServiceUnavailable : Number = 503
 
         /** 
             HTTP Gateway Timeout Status (504) 
          */     
-        static const GatewayTimeout : Number   = 504
+        static const GatewayTimeout : Number = 504
 
         /** 
             HTTP Http Version Not Supported Status (505) 
          */     
-        static const VersionNotSupported: Number   = 505
+        static const VersionNotSupported: Number = 505
 
         /* Cached response data */
         private var _response: String
@@ -228,29 +228,16 @@ module ejs {
             @duplicate Stream.async
          */
         native function get async(): Boolean
-
-        /** 
-            @duplicate Stream.async
-         */
         native function set async(enable: Boolean): Void
 
         /** 
-            The preferred chunk size used if transfer chunk encoding will be used. Chunked encoding is used when 
-            an explicit request content length is unknown at the time the request headers must be emitted. Chunked 
+            The preferred chunk size to use if transfer chunk encoding is employed. Chunked encoding will be used when 
+            an explicit request body content length is unknown at the time the request headers must be emitted. Chunked 
             encoding is automatically enabled if $post, $put or $upload is called and a contentLength has not been 
-            previously set. The chunk size is normally automatically determined by can be explicitly specified via
-            set $chunkSize. Set to zero if a size has not yet been defined.
+            previously set. The chunk size is normally automatically determined but can be explicitly specified by updating
+            the $chunkSize. It will be set to zero if a chunk size size has not yet been defined.
          */
         native function get chunkSize(): Boolean
-
-        /** 
-            Set the preferred chunk size to use for transfer chunk encoding. Chunked encoding is used when an explicit 
-            request content length is unknown at the time the request headers must be emitted.  Chunked encoding is 
-            automatically enabled if $post, $put or $upload is called and a contentLength has not been previously set.
-            @param value Number of bytes in chunks. This is advisory and the platform is free to determine a different
-            chunk size if required.
-            @hide
-         */
         native function set chunkSize(value: Boolean): Void
 
         /** 
@@ -332,6 +319,7 @@ module ejs {
             throw "Not yet implemented"
         }
 
+        //  MOB -- should this be script and not native
         /** 
             When the response content expires. This is derrived from the response Http Expires header.
          */
@@ -347,9 +335,8 @@ module ejs {
 
         /** 
             @duplicate Stream.flush
-            @hide 
          */
-        function flush(): Void {}
+        function flush(dir: Number): Void {}
 
         /** 
             Get whether redirects should be automatically followed by this Http object.
@@ -631,7 +618,7 @@ module ejs {
             let http = this
             buf.addListener("readable", function (event, buf) {
                 http.write(buf)
-                buf.flush()
+                buf.flush(Stream.WRITE)
             })
             setHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
             post(uri)
@@ -696,7 +683,7 @@ module ejs {
         native function write(...data): Void
 
 //  TODO - Cleanup and remove
-        //  LEGACY 11/23/2010 1.0.0-B1
+        //  LEGACY 11/23/2010 1.0.0
         /** @hide */
         function addHeader(key: String, value: String, overwrite: Boolean = true): Void
             setHeader(key, value, overwrite)
@@ -705,6 +692,11 @@ module ejs {
         /** @hide */
         function get bodyLength(): Void
             contentLength
+
+        //  DEPRECATED
+        function set contentLength(value: Number): Void {
+            setHeader("content-length", value)
+        }
 
         //  DEPRECATED
         /** @hide */
@@ -743,6 +735,21 @@ module ejs {
         /** @hide */
         static function mimeType(path: String): String
             Uri(path)..mimeType
+
+        //  DEPRECATED
+        /** @hide */
+        function setCallback(eventMask: Number, cb: Function): Void {
+            addListener("" + eventMask, cb);
+        }
+
+        //  DEPRECATED
+        /** @hide */
+        function get chunked(): Boolean {
+            return chunksize != 0
+        }
+        function set chunked(enable: Boolean): Void {
+            chunkSize = (enable) ? 8192 : 0
+        }
     }
 }
 

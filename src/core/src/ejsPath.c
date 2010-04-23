@@ -581,7 +581,7 @@ static EjsObj *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 /*
     Get the length of the path name.
   
-    override intrinsic function get length(): Number
+    override function get length(): Number
  */
 static EjsObj *pathLength(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
@@ -1115,7 +1115,7 @@ static EjsObj *pathSeparator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 /*
     Get the size of the file associated with this Path
   
-    intrinsic function get size(): Number
+    function get size(): Number
  */
 static EjsObj *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
