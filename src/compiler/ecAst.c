@@ -679,12 +679,13 @@ static void astClass(EcCompiler *cp, EcNode *np)
     cp->classState = state;
     type = np->klass.ref;
     
+#if UNUSED && OLD
     if (state->inClass || state->inFunction) {
         astError(cp, np, "Classes must be top level and not nested inside other classes or functions.");
         LEAVE(cp);
         return;
     }
-
+#endif
     if (np->klass.implements) {
         processAstNode(cp, np->klass.implements);
     }        
@@ -716,6 +717,7 @@ static void astClass(EcCompiler *cp, EcNode *np)
     state->currentClassNode = np;
     state->currentClassName = type->qname;
     state->inClass = 1;
+    state->inFunction = 0;
 
     /*
         Add the type to the scope chain and the static initializer if present. Use push frame to make it eaiser to
