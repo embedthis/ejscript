@@ -1475,6 +1475,19 @@ static EjsObj *obj_getValues(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 }
 
 
+#if ES_Object_getOwnPropertyCount
+/*
+    Get the number of properties in the object.
+
+    function get getOwnPropertyCount(obj): Number
+ */
+static EjsObj *obj_getOwnPropertyCount(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateNumber(ejs, ejsGetPropertyCount(ejs, argv[0]));
+}
+#endif
+
+
 /*
     static native function getOwnPropertyDescriptor(obj: Object, prop: String): Object
  */
@@ -2008,6 +2021,9 @@ void ejsConfigureObjectType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Object_defineProperty, obj_defineProperty);
     ejsBindMethod(ejs, type, ES_Object_freeze, obj_freeze);
     ejsBindMethod(ejs, type, ES_Object_get, obj_get);
+#if ES_Object_getOwnPropertyCount
+    ejsBindMethod(ejs, type, ES_Object_getOwnPropertyCount, obj_getOwnPropertyCount);
+#endif
     ejsBindMethod(ejs, type, ES_Object_getOwnPropertyDescriptor, obj_getOwnPropertyDescriptor);
     ejsBindMethod(ejs, type, ES_Object_getOwnPropertyNames, obj_getOwnPropertyNames);
     ejsBindMethod(ejs, type, ES_Object_getOwnPrototypeOf, obj_getOwnPrototypeOf);
