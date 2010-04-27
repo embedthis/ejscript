@@ -977,7 +977,8 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
     if (staticMethod) {
         mprAssert(ejsIsType(lookup->obj));
         if (state->currentClass && state->inFunction && 
-                ejsIsTypeSubType(ejs, state->currentClass, (EjsType*) lookup->originalObj)) {
+                ejsIsTypeSubType(ejs, state->currentClass, (EjsType*) lookup->originalObj) && 
+                lookup->obj != (EjsObj*) ejs->objectType) {
             /*
                 Calling a static method from within a class or subclass. So we can use "this".
              */

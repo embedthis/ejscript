@@ -1209,9 +1209,6 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
         }
     }
 
-    /*
-        We dont have a trait for the function return type.
-     */
     if (resolveName(cp, np, block, &np->qname) < 0) {
         astError(cp, np, "Internal error. Can't bind function %s", np->qname.name);
         resolveName(cp, np, block, &np->qname);
@@ -3924,7 +3921,6 @@ int ecLookupVar(EcCompiler *cp, EjsObj *vp, EjsName *name, bool anySpace)
     mprAssert(name);
 
     ejs = cp->ejs;
-
     if (name->space == 0) {
         name->space = "";
     }    
@@ -3995,7 +3991,20 @@ static int ecLookupVarWithNamespaces(Ejs *ejs, EjsObj *originalObj, EjsObj *vp, 
     }
     if (slotNum >= 0) {
         ref = (EjsFunction*) ejsGetProperty(ejs, vp, slotNum);
-        if (!(ejsIsType(vp) && originalObj != vp && !ejsIsType(originalObj) && (!ejsIsFunction(ref) || ref->staticMethod))) {
+
+        if (ejsIsType(vp) && originalObj != vp && !ejsIsType(originalObj) && (!ejsIsFunction(ref) || ref->staticMethod)) {
+            /* Accessing static var or static method from a sub-type of the original instance. 
+               ie. Type properties should not be visible to instances */
+            ;
+#if UNUSED
+        } else if (ejsIsFunction(ref) && !ref->staticMethod && ejsIsType(originalObj) && vp != (EjsObj*) ejs->objectType &&
+                   !ref->constructor) {
+            /* Accessing an instance method from a type and the method is not in Object.
+               ie. Instance methods should not be visible to Type Objects */
+            ;
+#endif
+        } else {
+
             /* Not accessing a static method from an instance */
             lookup->name = *name;
             lookup->obj = vp;
@@ -4022,11 +4031,28 @@ static int ecLookupVarWithNamespaces(Ejs *ejs, EjsObj *originalObj, EjsObj *vp, 
             if (qname.space) {
                 slotNum = ejsLookupProperty(ejs, vp, &qname);
                 if (slotNum >= 0) {
-                    //  MOB -- since we need to get the trait anyway, better to determine this from the trait
-                    lookup->name = qname;
-                    lookup->obj = vp;
-                    lookup->slotNum = slotNum;
-                    return slotNum;
+                    ref = (EjsFunction*) ejsGetProperty(ejs, vp, slotNum);
+#if UNUSED
+                    if (ejsIsType(vp) && originalObj != vp && !ejsIsType(originalObj) && 
+                            (!ejsIsFunction(ref) || ref->staticMethod)) {
+                        /* Accessing static var or static method from a sub-type of the original instance. 
+                           ie. Type properties should not be visible to instances */
+                        ;
+                    } else if (ejsIsFunction(ref) && !ref->staticMethod && ejsIsType(originalObj) && 
+                            vp != (EjsObj*) ejs->objectType && !ref->constructor) {
+                        /* Accessing an instance method from a type and the method is not in Object.
+                           ie. Instance methods should not be visible to Type Objects */
+                        ;
+                    } else {
+#endif
+                        //  MOB -- since we need to get the trait anyway, better to determine this from the trait
+                        lookup->name = qname;
+                        lookup->obj = vp;
+                        lookup->slotNum = slotNum;
+                        return slotNum;
+#if UNUSED
+                    }
+#endif
                 }
             }
         }
