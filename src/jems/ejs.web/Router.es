@@ -28,8 +28,9 @@ module ejs.web {
             Simple top level route table for "es" and "ejs" scripts. Matches simply by script extension.
          */
         public static var TopRoutes = [
-          { name: "es",      type: "es",  match: /\.es$/   },
-          { name: "ejs",     type: "ejs", match: /\.ejs$/  },
+          { name: "es",      type: "es",     match: /\.es$/   },
+          { name: "ejs",     type: "ejs",    match: /\.ejs$/  },
+          { name: "default", type: "static", },
         ]
 
         /** 
@@ -78,7 +79,7 @@ module ejs.web {
           { name: "destroy", type: "mvc", method: "POST", match: "/:controller/destroy",     params: { action: "destroy" } },
           { name: "index",   type: "mvc", method: "GET",  match: "/:controller",             params: { action: "index" } },
 
-          { name: "funny",   type: "mvc", method: "GET",  match: "/funny/:controller/:id/edit",  params: { action: "edit" } },
+          { name: "funny",   type: "mvc", method: "GET",  match: "/funny/:controller/:id/edit",  params: { action: "edit" }},
         ]
 
         function Router(set: Array = RestfulRoutes) {
@@ -168,20 +169,26 @@ module ejs.web {
                     }
 
                 } else if (!route.splitter) { 
-                    let results = pathInfo.match(route.matcher)
-                    if (!results) {
-                        continue
-                    }
-                    for (let name in route.params) {
-                        let value = route.params[name]
-                        if (value.contains("$")) {
-                            value = pathInfo.replace(route.matcher, value)
+                    if (route.matcher) {
+                        let results = pathInfo.match(route.matcher)
+                        if (!results) {
+                            continue
                         }
-                        params[name] = value
+                        for (let name in route.params) {
+                            let value = route.params[name]
+                            if (value.contains("$")) {
+                                value = pathInfo.replace(route.matcher, value)
+                            }
+                            params[name] = value
+                        }
+                    } else {
+                        for (i in route.params) {
+                            params[i] = route.params[i]
+                        }
                     }
 
                 } else {
-                    /*  String based matcher */
+                    /*  String or RegExp based matcher */
                     if (!pathInfo.match(route.matcher)) {
                         continue
                     }

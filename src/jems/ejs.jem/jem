@@ -1,5 +1,4 @@
-#!/Users/mob/hg/ejs/bin/ejs
-// #!/usr/bin/env ejs
+#!/usr/bin/env ejs
 
 /*
     Background
@@ -141,14 +140,14 @@ class JemCmd
 {
     private const RC: String = ".jemrc"
     private const DIR_PERMS: Number = 0775
-    private const logFile: String = "stdout"
-    private const logLevel: Number = 1
 
     private var appName: String = "jem"
     private var cmd: CmdArgs
     private var config: Object
     private var ext: Object
     private var libext: String
+    private var logFile: String = "stdout"
+    private var logLevel: Number = 1
     private var out: File = App.outputStream
     private var searchPath: String
     private var tempFile: Path
@@ -182,11 +181,11 @@ class JemCmd
 
             //  TODO - is this used?
             ejs: Path("XXXXX"),
-            jems: Path("/Users/mob/hg/ejs/jlocal"),
-            modules: Path("/Users/mob/hg/ejs/modules"),
-            lib: Path("/Users/mob/hg/ejs/lib"),
-            bin: Path("/Users/mob/hg/ejs/bin"),
-            repositories: [ Path("/Users/mob/hg/ejs/jremote") ],
+            jems: Path("/Users/mob/git/ejs/jlocal"),
+            modules: Path("/Users/mob/git/ejs/modules"),
+            lib: Path("/Users/mob/git/ejs/lib"),
+            bin: Path("/Users/mob/git/ejs/bin"),
+            repositories: [ Path("/Users/mob/git/ejs/jremote") ],
         },
         filenames: {
             package: Path("package.json"),
@@ -198,7 +197,6 @@ class JemCmd
         loadDefaults()
         blend(config, defaultConfig, false)
 
-
         dirs = config.directories
         dirs.home = App.dir
         ext = config.extensions
@@ -209,7 +207,7 @@ class JemCmd
             }
         }
         for (d in dirs.repositories) {
-            dirs[d] = Path(dirs[d])
+            dirs.repositories[d] = Path(dirs.repositories[d])
         }
 
         // TODO - should be in Config

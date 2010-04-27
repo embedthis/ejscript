@@ -27,6 +27,10 @@
 #define ES_ejs_cache_Cache_remove                                      31
 
 #define ES_ejs_cache_Cache_NUM_CLASS_PROP                              32
+
+/*
+ * Instance slots for "Cache" type 
+ */
 #define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           0
 
 /*
@@ -42,6 +46,6 @@
 #define ES_ejs_cache_Cache_remove_domain                               0
 #define ES_ejs_cache_Cache_remove_key                                  1
 
-#define _ES_CHECKSUM_ejs_cache   12857
+#define _ES_CHECKSUM_ejs_cache   12720
 
 #endif

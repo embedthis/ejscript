@@ -148,7 +148,6 @@ module ejs {
         /**
             Is the ByteArray is growable.
          */
-        # FUTURE
         native function get growable(): Boolean
 
         /** 

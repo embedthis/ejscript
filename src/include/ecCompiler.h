@@ -506,6 +506,7 @@ typedef struct EcNode {
  */
 #undef T_NULL
 
+#if UNUSED && MOVED
 /*
     Flags for ecCompile()
  */
@@ -515,6 +516,7 @@ typedef struct EcNode {
 #define EC_FLAGS_NO_OUT          0x10                   /* Don't generate any output file */
 #define EC_FLAGS_PARSE_ONLY      0x20                   /* Just parse source. Don't generate code */
 #define EC_FLAGS_THROW           0x40                   /* Throw errors when compiling. Used for eval() */
+#endif
 
 /*
     Lexical tokens (must start at 1)

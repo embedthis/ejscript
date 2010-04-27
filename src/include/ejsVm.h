@@ -464,6 +464,16 @@ extern void ejsInitSearchPath(Ejs *ejs);
  */
 extern int ejsEvalFile(cchar *path);
 
+/*
+    Flags for LoadScript and compiling
+ */
+#define EC_FLAGS_BIND            0x1                    /* Bind global references and type/object properties */
+#define EC_FLAGS_DEBUG           0x2                    /* Generate symbolic debugging information */
+#define EC_FLAGS_MERGE           0x8                    /* Merge all output onto one output file */
+#define EC_FLAGS_NO_OUT          0x10                   /* Don't generate any output file */
+#define EC_FLAGS_PARSE_ONLY      0x20                   /* Just parse source. Don't generate code */
+#define EC_FLAGS_THROW           0x40                   /* Throw errors when compiling. Used for eval() */
+
 //  TODO - DOC
 extern int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags);
 extern int ejsLoadScriptLiteral(Ejs *ejs, cchar *script, cchar *cache, int flags);

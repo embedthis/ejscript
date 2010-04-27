@@ -11,11 +11,11 @@
         views/layouts/default.ejs
  */
 
-require ejs.io
+GC.enabled = false
+
 require ejs.web
 require ejs.web.template
 require ejs.db
-require ejs.sys
 require ejs.unix
 
 use default namespace public
@@ -412,13 +412,15 @@ class EjsMvc {
     function compileItem(file: Path) {
         if (file.isDir) {
             for each (f in file.normalize.files(true)) {
-                compileItem(f)
+                if (f.extension == ext.ejs || f.startsWith(dirs.views) || f.startsWith(dirs.controllers)) {
+                    compileItem(f)
+                }
             }
         } else {
             if (file.startsWith(dirs.views)) {
                 buildView(file)
             } else if (file.startsWith(dirs.controllers)) {
-                buildController(dirs.controllers.join(file).joinExt(ext.es))
+                buildController(file)
             } else if (file.extension == ext.ejs) {
                 buildWebPage(file, true)
             } else {
@@ -435,11 +437,10 @@ class EjsMvc {
     }
 
     function buildController(file: Path) {
-        file = file.portable
         if (!file.exists) {
             throw "Controller : \"" + file + "\" does not exist"   
         }
-        if (!file.startsWith(dirs.controllers.toString() + "/")) {
+        if (!file.startsWith(dirs.controllers.toString())) {
             throw "File \"" + file + "\" is not a controller"
         }
         if (file.toString() == dirs.controllers.join("Base.es")) {
@@ -460,13 +461,12 @@ class EjsMvc {
     }
 
     function buildView(file: Path, compile: Boolean = false): String {
-        file = file.portable
-        if (file.toString().contains(/^views\/layouts\//)) {
+        if (file.toString().contains(/^views.layouts/)) {
              //  Skip layouts
             return null
         }
         if (!file.startsWith(dirs.views.toString() + "/") || file.extension != ext.ejs) {
-            throw "File \"" + file + " \" is not a view. Path should be \"" + dirs.views + "/CONTROLLER/VIEW.ejs\""
+            throw "File \"" + file + " \" is not a view. Path should be \"" + dirs.views.join("CONTROLLER/VIEW.ejs") + "\""
         }
         if (!file.exists) {
             throw "Can't find view file: " + file
@@ -595,7 +595,8 @@ class EjsMvc {
         Build the entire app into a single mod file.
      */
     function buildFiles(out: Path, files: Array) {
-        let search = App.search.join(Path.SearchSeparator)
+        let sep = (Config.OS == "WIN") ? ";" : ":"
+        let search = App.search.join(sep)
         let cmd = getCompilerPath() + " --out " + out + " --search \"" + search + "\" " + files.join(" ")
         if (verbose > 1) {
             trace("[BUILD]", cmd)
@@ -944,7 +945,7 @@ class EjsMvc {
      */
     function generateApp(args: Array): Void {
         appName = args[0].toLower()
-        let f: File = new Path(appName)
+        // let f: File = new Path(appName)
 
         //  TODO - convert all paths to use dirs.name 
         makeDir(appName)
@@ -1294,7 +1295,7 @@ class EjsMvc {
     }
 
     function isApp(fatal: Boolean = false): Boolean
-        dirs.home.join("start.es").exists && dirs.controllers.exists
+        dirs.controllers.exists && dirs.views.exists && exists("ejsrc")
 
     function checkApp(task: String, rest: Array): Void {
         if (task == "generate") {

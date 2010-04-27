@@ -18,7 +18,7 @@ shared native function get constructor(): Function
 
         //  ejs so other types don't need to use override when defining "length"
 
-shared ejs static native function get length(): Number
+shared ejs native function get length(): Number
 
         /**
             The prototype object for the type. The prototype object provides the template of instance properties 

@@ -292,20 +292,6 @@ typedef struct EjsTrait {
 } EjsTrait;
 
 
-#if UNUSED
-/** 
-    Property Traits
-    @description This structure stores the type and access attributes of all the properties in an object
-    @ingroup EjsObj
- */
-typedef struct EjsTraits {
-    EjsTrait        *entries;               /**< Trait entries */
-    int             numTraits;              /**< Number of used trait elements */
-    int             sizeTraits;             /**< Size of traits array in elements */
-} EjsTraits;
-#endif
-
-
 typedef struct EjsSlot {
     EjsName         qname;                  /**< Property name */
     int             hashChain;              /**< Next property in hash chain */
@@ -919,7 +905,7 @@ typedef struct EjsType {
     void            *typeData;                      /**< Type specific data */
 
     /*
-        Denormalized for convenience (type->baseType->block.obj.numTraits, type->prototype->numTraits)
+        Denormalized for convenience (type->baseType->block.obj.numSlots, type->prototype->numSlots)
      */
     int             numInherited;
     int             numPrototypeInherited;

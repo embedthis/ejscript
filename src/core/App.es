@@ -304,8 +304,12 @@ module ejs {
             @hide
          */
         static function serviceEvents(count: Number = -1, timeout: Number = -1): Void {
-            for (i in count) {
-                eventLoop(timeout, true)
+            if (count < 0) {
+                eventLoop(timeout, false)
+            } else {
+                for (i in count) {
+                    eventLoop(timeout, true)
+                }
             }
         }
     }
@@ -354,9 +358,7 @@ module ejs {
             }
         }
 
-        /*  
-            Append search paths
-         */
+        /*  Append search paths */
         if (config.search) {
             if (config.search is Array) {
                 App.search = config.search + App.search
@@ -365,9 +367,7 @@ module ejs {
             }
         }
 
-        /*  
-            Run load scripts
-         */
+        /*  Run load scripts */
         if (config.scripts) {
             for each (m in config.scripts) {
                 load(m)

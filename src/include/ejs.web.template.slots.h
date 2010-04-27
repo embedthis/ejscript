@@ -22,6 +22,10 @@
 #define ES_Template_load                                               26
 
 #define ES_Template_NUM_CLASS_PROP                                     27
+
+/*
+ * Instance slots for "Template" type 
+ */
 #define ES_Template_NUM_INSTANCE_PROP                                  0
 
 /*
@@ -84,8 +88,12 @@
 #define ES_ejs_web_template_Token_tokens                               34
 
 #define ES_ejs_web_template_Token_NUM_CLASS_PROP                       35
+
+/*
+ * Instance slots for "Token" type 
+ */
 #define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    0
 
-#define _ES_CHECKSUM_ejs_web_template   42161
+#define _ES_CHECKSUM_ejs_web_template   41783
 
 #endif

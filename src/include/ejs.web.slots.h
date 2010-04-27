@@ -281,6 +281,10 @@
 #define ES_Mvc_loadComponent                                           34
 
 #define ES_Mvc_NUM_CLASS_PROP                                          35
+
+/*
+ * Instance slots for "Mvc" type 
+ */
 #define ES_Mvc_NUM_INSTANCE_PROP                                       0
 
 /*
@@ -494,6 +498,10 @@
 #define ES_ejs_web_Session_setSessionTimeout                           29
 
 #define ES_ejs_web_Session_NUM_CLASS_PROP                              30
+
+/*
+ * Instance slots for "Session" type 
+ */
 #define ES_ejs_web_Session_NUM_INSTANCE_PROP                           0
 
 /*
@@ -683,6 +691,10 @@
 #define ES_ejs_web_Web_start                                           34
 
 #define ES_ejs_web_Web_NUM_CLASS_PROP                                  35
+
+/*
+ * Instance slots for "Web" type 
+ */
 #define ES_ejs_web_Web_NUM_INSTANCE_PROP                               0
 
 /*
@@ -696,6 +708,6 @@
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
 
-#define _ES_CHECKSUM_ejs_web   532739
+#define _ES_CHECKSUM_ejs_web   533535
 
 #endif

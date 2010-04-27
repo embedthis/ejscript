@@ -5,8 +5,8 @@
 #
 
 EXT			+= ejs.cache ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.sqlite ejs.tar ejs.unix ejs.web \
-			   ejs.web.google ejs.web.jsgi ejs.web.template
-APPS		+= ejs.jem ejs.web.cgi
+			   ejs.web.jsgi ejs.web.template 
+APPS		+= ejs.jem ejs.web.cgi ejs.mvc
 
 PRE_DIRS 	+= core 
 POST_DIRS	+= ejs $(EXT) $(APPS)

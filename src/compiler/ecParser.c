@@ -561,7 +561,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv, int flags)
                 }
             }
             nodes[i] = 0;
-
         } else  {
             parseFile(cp, argv[i], &nodes[i]);
         }
@@ -579,14 +578,12 @@ static int compileInner(EcCompiler *cp, int argc, char **argv, int flags)
         Process the internal representation and generate code
      */
     if (!cp->parseOnly && cp->errorCount == 0) {
-
         ecResetParser(cp);
         if (ecAstProcess(cp, argc, nodes) < 0) {
             ejsPopBlock(ejs);
             mprFree(nodes);
             return EJS_ERR;
         }
-
         /*
             TODO createNode will set cp->token which causes "^" in error messages which are only
             appropriate during the parse phase. When listings are removed and done by the disassembler,
@@ -9738,7 +9735,9 @@ void ecReportError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNum
     }
 #endif
     cp->errorMsg = mprReallocStrcat(cp, -1, cp->errorMsg, errorMsg, NULL);
+#if UNUSED
     mprPrintfError(cp, "%s", cp->errorMsg);
+#endif
     mprBreakpoint();
 }
 

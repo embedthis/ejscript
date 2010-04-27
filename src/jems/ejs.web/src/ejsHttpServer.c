@@ -192,7 +192,7 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
     mprAssert(conn);
 
     ejs = 0;
-    if ((req = httpGetConnContext(conn)) == 0) {
+    if ((req = httpGetConnContext(conn)) != 0) {
         ejs = req->ejs;
     }
 

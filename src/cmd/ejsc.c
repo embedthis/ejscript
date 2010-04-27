@@ -177,8 +177,6 @@ MAIN(ejscMain, int argc, char **argv)
                 requiredModules = mprCreateList(mpr);
             }
             require(requiredModules, "ejs");
-            require(requiredModules, "ejs.sys");
-            require(requiredModules, "ejs.io");
             require(requiredModules, "ejs.unix");
             require(requiredModules, "ejs.db");
             //  TODO MOB - decouple and remove this
@@ -272,6 +270,7 @@ MAIN(ejscMain, int argc, char **argv)
             optionally also save to module files.
          */
         if (ecCompile(cp, argc - nextArg, &argv[nextArg], 0) < 0) {
+            mprError(cp, "%s", cp->errorMsg);
             err++;
         }
     }

@@ -51,6 +51,10 @@
 #define ES_ejs_db_Sqlite_startTransaction                              55
 
 #define ES_ejs_db_Sqlite_NUM_CLASS_PROP                                56
+
+/*
+ * Instance slots for "Sqlite" type 
+ */
 #define ES_ejs_db_Sqlite_NUM_INSTANCE_PROP                             0
 
 /*
@@ -94,6 +98,6 @@
 #define ES_ejs_db_Sqlite_sqlTypeToDataType_sqlType                     0
 #define ES_ejs_db_Sqlite_sqlTypeToEjsType_sqlType                      0
 
-#define _ES_CHECKSUM_ejs_db_sqlite   75249
+#define _ES_CHECKSUM_ejs_db_sqlite   75101
 
 #endif

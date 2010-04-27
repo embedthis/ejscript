@@ -3433,7 +3433,11 @@ static void fixupTypeSlots(EcCompiler *cp, EjsType *type)
     }
 
     if (baseType) {
+#if MOB
+        ejsFixupClass(ejs, type, baseType, type->implements, 1);
+#else
         ejsFixupType(ejs, type, baseType, 1);
+#endif
     }
     
     /*

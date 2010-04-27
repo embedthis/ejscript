@@ -153,6 +153,7 @@ static EjsObj *invokeUriOperator(Ejs *ejs, EjsUri *lhs, int opcode,  EjsUri *rhs
 
 /*  
     Constructor
+    function Uri(uri: Uri)
     function Uri(path: String)
     function Uri(parts: Object)
  */
@@ -169,6 +170,16 @@ static EjsObj *uri_constructor(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
         up->uri = httpCreateUri(up, ustr, 0);
         mprFree(ustr);
+
+    } else if (ejsIsUri(ejs, arg)) {
+        ustr = httpUriToString(up, ((EjsUri*) arg)->uri, 0);
+        up->uri = httpCreateUri(up, ustr, 0);
+        mprFree(ustr);
+
+    } else if (ejsIsPath(ejs, arg)) {
+        ustr = ((EjsPath*) arg)->path;
+        up->uri = httpCreateUri(up, ustr, 0);
+
     } else {
         setUriFromHash(ejs, up, arg);
     }

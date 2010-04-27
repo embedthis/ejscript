@@ -10,9 +10,9 @@ TARGET		+= $(BLD_BIN_DIR)/jem
 
 compileExtra: $(TARGET)
 
-$(TARGET): jem.es
+$(TARGET): jem
 	$(call log) "[Generate]" $(TARGET)
-	cp jem.es $(TARGET)
+	cp jem $(TARGET)
 	chmod 755 $(TARGET)
 
 build:

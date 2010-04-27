@@ -18,5 +18,4 @@ var shape = Object.create(
         }
     }
 )
-
 print(shape.getValue())

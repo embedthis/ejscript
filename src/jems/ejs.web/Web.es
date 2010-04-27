@@ -121,6 +121,21 @@ module ejs.web {
                 } else if (type == "mvc") {
                     exports = Mvc.load(request)
 
+                } else if (type == "static") {
+                    exports = {
+                        app: function (request) {
+                            let path = request.dir.join(request.uri.filename)
+                            return {
+                                status: Http.Ok,
+                                headers: {
+                                    "Content-Type": Uri(request.uri).mimeType,
+                                    "Content-Length": path.size,
+                                },
+                                body: path.readString()
+                            }
+                        }
+                    }
+
                 } else {
                     throw "Request type: " + type + " is not supported by Web.load"
                 }
@@ -188,13 +203,13 @@ module ejs.web {
                     }
                 }
             } catch (e) {
-print("Web.start() CATCH " + e)
+                print("Web.start() CATCH " + e)
                 request.writeError(e)
 
             } finally {
+//  MOB -- but finalize may not be complete. 
                 request.finalize()
             }
-//  MOB -- but finalize may not be complete. 
         }
     }
 }

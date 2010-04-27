@@ -39,6 +39,10 @@
 #define ES_Loader_setConfig                                            38
 
 #define ES_Loader_NUM_CLASS_PROP                                       39
+
+/*
+ * Instance slots for "Loader" type 
+ */
 #define ES_Loader_NUM_INSTANCE_PROP                                    0
 
 /*
@@ -55,6 +59,6 @@
 #define ES_Loader_locate_id                                            0
 #define ES_Loader_setConfig_newConfig                                  0
 
-#define _ES_CHECKSUM_ejs_cjs   27267
+#define _ES_CHECKSUM_ejs_cjs   27128
 
 #endif

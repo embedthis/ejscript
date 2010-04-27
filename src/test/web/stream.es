@@ -1,18 +1,14 @@
 require ejs.web
 require ejs.web.jsgi
 
-exports.app = function (request: Request) { 
+exports.app = function (r: Request) { 
 
-print("IN FUNCTION")
-    request.setStatus(200)
-    request.setHeaders({"Content-Type": "text/plain"})
-    let input = request.input
+    r.setStatus(200)
+    r.setHeaders({"Content-Type": "text/plain"})
+    let input = r.input
     let data = new ByteArray
-print("ABOUT TO READ")
     while (input.read(data)) {
-print("LEN " + data.available)
-        request.write(data)
+        r.write(data)
     }
-print("DONE")
-    request.finalize()
+    r.finalize()
 }

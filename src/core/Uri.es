@@ -107,6 +107,9 @@ module ejs {
          */
         native function set extension(value: String): Void
 
+        function get filename(): Path
+            Path(path.slice(1))
+
         /** 
             Does the Uri has an explicit extension
          */

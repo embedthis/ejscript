@@ -3814,6 +3814,11 @@ int httpAddHandler(HttpLocation *location, cchar *name, cchar *extensions)
         return MPR_ERR_NOT_FOUND;
     }
     if (extensions && *extensions) {
+        mprLog(location, MPR_CONFIG, "Add handler \"%s\" for \"%s\"", name, extensions);
+    } else {
+        mprLog(location, MPR_CONFIG, "Add handler \"%s\" for \"%s\"", name, location->prefix);
+    }
+    if (extensions && *extensions) {
         /*
             Add to the handler extension hash
          */ 
@@ -3840,12 +3845,6 @@ int httpAddHandler(HttpLocation *location, cchar *name, cchar *extensions)
             mprAddHash(location->extensions, "", handler);
         }
         mprAddItem(location->handlers, handler);
-    }
-
-    if (extensions && *extensions) {
-        mprLog(location, MPR_CONFIG, "Add handler \"%s\" for \"%s\"", name, extensions);
-    } else {
-        mprLog(location, MPR_CONFIG, "Add handler \"%s\" for \"%s\"", name, location->prefix);
     }
     return 0;
 }
@@ -3999,6 +3998,19 @@ void httpSetLocationPrefix(HttpLocation *location, cchar *uri)
 void httpSetLocationFlags(HttpLocation *location, int flags)
 {
     location->flags = flags;
+}
+
+
+void httpSetLocationAutoDelete(HttpLocation *location, int enable)
+{
+    location->autoDelete = enable;
+}
+
+
+void httpSetLocationScript(HttpLocation *location, cchar *script)
+{
+    mprFree(location->script);
+    location->script = mprStrdup(location, script);
 }
 
 
@@ -7773,6 +7785,35 @@ void httpSetServerAsync(HttpServer *server, int async)
     server->async = async;
 }
 
+
+void httpSetDocumentRoot(HttpServer *server, cchar *documentRoot)
+{
+    mprFree(server->documentRoot);
+    server->documentRoot = mprStrdup(server, documentRoot);
+}
+
+
+void httpSetServerRoot(HttpServer *server, cchar *serverRoot)
+{
+    mprFree(server->serverRoot);
+    server->serverRoot = mprStrdup(server, serverRoot);
+}
+
+
+void httpSetIpAddr(HttpServer *server, cchar *ip, int port)
+{
+    if (ip) {
+        mprFree(server->ip);
+        server->ip = mprStrdup(server, ip);
+    }
+    if (port >= 0) {
+        server->port = port;
+    }
+    if (server->sock) {
+        httpStopServer(server);
+        httpStartServer(server);
+    }
+}
 
 /*
     @copy   default

@@ -245,6 +245,10 @@
 #define ES_App_serviceEvents                                           53
 
 #define ES_App_NUM_CLASS_PROP                                          54
+
+/*
+ * Instance slots for "App" type 
+ */
 #define ES_App_NUM_INSTANCE_PROP                                       0
 
 /*
@@ -300,6 +304,10 @@
 #define ES_Array_unshift                                               55
 
 #define ES_Array_NUM_CLASS_PROP                                        56
+
+/*
+ * Instance slots for "Array" type 
+ */
 #define ES_Array_NUM_INSTANCE_PROP                                     0
 
 /*
@@ -404,6 +412,10 @@
 #define ES_BinaryStream_writeLong_data                                 0
 
 #define ES_Block_NUM_CLASS_PROP                                        26
+
+/*
+ * Instance slots for "Block" type 
+ */
 #define ES_Block_NUM_INSTANCE_PROP                                     0
 
 
@@ -414,6 +426,10 @@
 #define ES_Boolean_Boolean                                             26
 
 #define ES_Boolean_NUM_CLASS_PROP                                      27
+
+/*
+ * Instance slots for "Boolean" type 
+ */
 #define ES_Boolean_NUM_INSTANCE_PROP                                   0
 
 /*
@@ -440,33 +456,38 @@
 #define ES_ByteArray_encoding                                          37
 #define ES_ByteArray_endian                                            38
 #define ES_ByteArray_flush                                             39
-#define ES_ByteArray_length                                            40
-#define ES_ByteArray_MD5                                               41
-#define ES_ByteArray_read                                              42
-#define ES_ByteArray_readBoolean                                       43
-#define ES_ByteArray_readByte                                          44
-#define ES_ByteArray_readDate                                          45
-#define ES_ByteArray_readDouble                                        46
-#define ES_ByteArray_readInteger                                       47
-#define ES_ByteArray_readLong                                          48
-#define ES_ByteArray_readPosition                                      49
-#define ES_ByteArray_readShort                                         50
-#define ES_ByteArray_readString                                        51
-#define ES_ByteArray_readXML                                           52
-#define ES_ByteArray_removeListener                                    53
-#define ES_ByteArray_reset                                             54
-#define ES_ByteArray_room                                              55
-#define ES_ByteArray_write                                             56
-#define ES_ByteArray_writeByte                                         57
-#define ES_ByteArray_writeShort                                        58
-#define ES_ByteArray_writeDouble                                       59
-#define ES_ByteArray_writeInteger                                      60
-#define ES_ByteArray_writeLong                                         61
-#define ES_ByteArray_writePosition                                     62
-#define ES_ByteArray_input                                             63
-#define ES_ByteArray_output                                            64
+#define ES_ByteArray_growable                                          40
+#define ES_ByteArray_length                                            41
+#define ES_ByteArray_MD5                                               42
+#define ES_ByteArray_read                                              43
+#define ES_ByteArray_readBoolean                                       44
+#define ES_ByteArray_readByte                                          45
+#define ES_ByteArray_readDate                                          46
+#define ES_ByteArray_readDouble                                        47
+#define ES_ByteArray_readInteger                                       48
+#define ES_ByteArray_readLong                                          49
+#define ES_ByteArray_readPosition                                      50
+#define ES_ByteArray_readShort                                         51
+#define ES_ByteArray_readString                                        52
+#define ES_ByteArray_readXML                                           53
+#define ES_ByteArray_removeListener                                    54
+#define ES_ByteArray_reset                                             55
+#define ES_ByteArray_room                                              56
+#define ES_ByteArray_write                                             57
+#define ES_ByteArray_writeByte                                         58
+#define ES_ByteArray_writeShort                                        59
+#define ES_ByteArray_writeDouble                                       60
+#define ES_ByteArray_writeInteger                                      61
+#define ES_ByteArray_writeLong                                         62
+#define ES_ByteArray_writePosition                                     63
+#define ES_ByteArray_input                                             64
+#define ES_ByteArray_output                                            65
 
-#define ES_ByteArray_NUM_CLASS_PROP                                    65
+#define ES_ByteArray_NUM_CLASS_PROP                                    66
+
+/*
+ * Instance slots for "ByteArray" type 
+ */
 #define ES_ByteArray_NUM_INSTANCE_PROP                                 0
 
 /*
@@ -509,6 +530,10 @@
 #define ES_Cmd_runx                                                    29
 
 #define ES_Cmd_NUM_CLASS_PROP                                          30
+
+/*
+ * Instance slots for "Cmd" type 
+ */
 #define ES_Cmd_NUM_INSTANCE_PROP                                       0
 
 /*
@@ -564,6 +589,10 @@
 #define ES_Config_ModDir                                               34
 
 #define ES_Config_NUM_CLASS_PROP                                       35
+
+/*
+ * Instance slots for "Config" type 
+ */
 #define ES_Config_NUM_INSTANCE_PROP                                    0
 
 
@@ -634,6 +663,10 @@
 #define ES_Date_year                                                   86
 
 #define ES_Date_NUM_CLASS_PROP                                         87
+
+/*
+ * Instance slots for "Date" type 
+ */
 #define ES_Date_NUM_INSTANCE_PROP                                      0
 
 /*
@@ -748,7 +781,7 @@
 /*
  * Instance slots for "ArgError" type 
  */
-#define ES_ArgError_NUM_INSTANCE_PROP                                  2
+#define ES_ArgError_NUM_INSTANCE_PROP                                  4
 
 /*
     Local slots for methods in type "ArgError" 
@@ -767,7 +800,7 @@
 /*
  * Instance slots for "ArithmeticError" type 
  */
-#define ES_ArithmeticError_NUM_INSTANCE_PROP                           2
+#define ES_ArithmeticError_NUM_INSTANCE_PROP                           4
 
 /*
     Local slots for methods in type "ArithmeticError" 
@@ -786,7 +819,7 @@
 /*
  * Instance slots for "AssertError" type 
  */
-#define ES_AssertError_NUM_INSTANCE_PROP                               2
+#define ES_AssertError_NUM_INSTANCE_PROP                               4
 
 /*
     Local slots for methods in type "AssertError" 
@@ -805,7 +838,7 @@
 /*
  * Instance slots for "InstructionError" type 
  */
-#define ES_InstructionError_NUM_INSTANCE_PROP                          2
+#define ES_InstructionError_NUM_INSTANCE_PROP                          4
 
 /*
     Local slots for methods in type "InstructionError" 
@@ -846,7 +879,7 @@
 /*
  * Instance slots for "IOError" type 
  */
-#define ES_IOError_NUM_INSTANCE_PROP                                   2
+#define ES_IOError_NUM_INSTANCE_PROP                                   4
 
 /*
     Local slots for methods in type "IOError" 
@@ -865,7 +898,7 @@
 /*
  * Instance slots for "InternalError" type 
  */
-#define ES_InternalError_NUM_INSTANCE_PROP                             2
+#define ES_InternalError_NUM_INSTANCE_PROP                             4
 
 /*
     Local slots for methods in type "InternalError" 
@@ -884,7 +917,7 @@
 /*
  * Instance slots for "MemoryError" type 
  */
-#define ES_MemoryError_NUM_INSTANCE_PROP                               2
+#define ES_MemoryError_NUM_INSTANCE_PROP                               4
 
 /*
     Local slots for methods in type "MemoryError" 
@@ -903,7 +936,7 @@
 /*
  * Instance slots for "OutOfBoundsError" type 
  */
-#define ES_OutOfBoundsError_NUM_INSTANCE_PROP                          2
+#define ES_OutOfBoundsError_NUM_INSTANCE_PROP                          4
 
 /*
     Local slots for methods in type "OutOfBoundsError" 
@@ -922,7 +955,7 @@
 /*
  * Instance slots for "ReferenceError" type 
  */
-#define ES_ReferenceError_NUM_INSTANCE_PROP                            2
+#define ES_ReferenceError_NUM_INSTANCE_PROP                            4
 
 /*
     Local slots for methods in type "ReferenceError" 
@@ -941,7 +974,7 @@
 /*
  * Instance slots for "ResourceError" type 
  */
-#define ES_ResourceError_NUM_INSTANCE_PROP                             2
+#define ES_ResourceError_NUM_INSTANCE_PROP                             4
 
 /*
     Local slots for methods in type "ResourceError" 
@@ -960,7 +993,7 @@
 /*
  * Instance slots for "SecurityError" type 
  */
-#define ES_SecurityError_NUM_INSTANCE_PROP                             2
+#define ES_SecurityError_NUM_INSTANCE_PROP                             4
 
 /*
     Local slots for methods in type "SecurityError" 
@@ -979,7 +1012,7 @@
 /*
  * Instance slots for "StateError" type 
  */
-#define ES_StateError_NUM_INSTANCE_PROP                                2
+#define ES_StateError_NUM_INSTANCE_PROP                                4
 
 /*
     Local slots for methods in type "StateError" 
@@ -998,7 +1031,7 @@
 /*
  * Instance slots for "SyntaxError" type 
  */
-#define ES_SyntaxError_NUM_INSTANCE_PROP                               2
+#define ES_SyntaxError_NUM_INSTANCE_PROP                               4
 
 /*
     Local slots for methods in type "SyntaxError" 
@@ -1017,7 +1050,7 @@
 /*
  * Instance slots for "TypeError" type 
  */
-#define ES_TypeError_NUM_INSTANCE_PROP                                 2
+#define ES_TypeError_NUM_INSTANCE_PROP                                 4
 
 /*
     Local slots for methods in type "TypeError" 
@@ -1036,7 +1069,7 @@
 /*
  * Instance slots for "URIError" type 
  */
-#define ES_URIError_NUM_INSTANCE_PROP                                  2
+#define ES_URIError_NUM_INSTANCE_PROP                                  4
 
 /*
     Local slots for methods in type "URIError" 
@@ -1110,6 +1143,10 @@
 #define ES_File_write                                                  46
 
 #define ES_File_NUM_CLASS_PROP                                         47
+
+/*
+ * Instance slots for "File" type 
+ */
 #define ES_File_NUM_INSTANCE_PROP                                      0
 
 /*
@@ -1143,6 +1180,10 @@
 #define ES_FileSystem_separators                                       30
 
 #define ES_FileSystem_NUM_CLASS_PROP                                   31
+
+/*
+ * Instance slots for "FileSystem" type 
+ */
 #define ES_FileSystem_NUM_INSTANCE_PROP                                0
 
 /*
@@ -1151,6 +1192,10 @@
 #define ES_FileSystem_FileSystem_path                                  0
 
 #define ES_Frame_NUM_CLASS_PROP                                        31
+
+/*
+ * Instance slots for "Frame" type 
+ */
 #define ES_Frame_NUM_INSTANCE_PROP                                     0
 
 
@@ -1165,6 +1210,10 @@
 #define ES_Function_setScope                                           30
 
 #define ES_Function_NUM_CLASS_PROP                                     31
+
+/*
+ * Instance slots for "Function" type 
+ */
 #define ES_Function_NUM_INSTANCE_PROP                                  0
 
 /*
@@ -1188,6 +1237,10 @@
 #define ES_GC_run                                                      28
 
 #define ES_GC_NUM_CLASS_PROP                                           29
+
+/*
+ * Instance slots for "GC" type 
+ */
 #define ES_GC_NUM_INSTANCE_PROP                                        0
 
 /*
@@ -1372,9 +1425,17 @@
 #define ES_Iterator_next                                               26
 
 #define ES_Iterator_NUM_CLASS_PROP                                     27
+
+/*
+ * Instance slots for "Iterator" type 
+ */
 #define ES_Iterator_NUM_INSTANCE_PROP                                  0
 
 #define ES_StopIteration_NUM_CLASS_PROP                                26
+
+/*
+ * Instance slots for "StopIteration" type 
+ */
 #define ES_StopIteration_NUM_INSTANCE_PROP                             0
 
 
@@ -1386,6 +1447,10 @@
 #define ES_JSON_stringify                                              27
 
 #define ES_JSON_NUM_CLASS_PROP                                         28
+
+/*
+ * Instance slots for "JSON" type 
+ */
 #define ES_JSON_NUM_INSTANCE_PROP                                      0
 
 /*
@@ -1407,6 +1472,10 @@
 #define ES_Locale_textEncoding                                         28
 
 #define ES_Locale_NUM_CLASS_PROP                                       29
+
+/*
+ * Instance slots for "Locale" type 
+ */
 #define ES_Locale_NUM_INSTANCE_PROP                                    0
 
 /*
@@ -1524,6 +1593,10 @@
 #define ES_Math_tan                                                    53
 
 #define ES_Math_NUM_CLASS_PROP                                         54
+
+/*
+ * Instance slots for "Math" type 
+ */
 #define ES_Math_NUM_INSTANCE_PROP                                      0
 
 /*
@@ -1568,12 +1641,24 @@
 #define ES_Memory_stats                                                34
 
 #define ES_Memory_NUM_CLASS_PROP                                       35
+
+/*
+ * Instance slots for "Memory" type 
+ */
 #define ES_Memory_NUM_INSTANCE_PROP                                    0
 
 #define ES_Namespace_NUM_CLASS_PROP                                    26
+
+/*
+ * Instance slots for "Namespace" type 
+ */
 #define ES_Namespace_NUM_INSTANCE_PROP                                 0
 
 #define ES_Null_NUM_CLASS_PROP                                         26
+
+/*
+ * Instance slots for "Null" type 
+ */
 #define ES_Null_NUM_INSTANCE_PROP                                      0
 
 
@@ -1606,6 +1691,10 @@
 #define ES_Number_power                                                48
 
 #define ES_Number_NUM_CLASS_PROP                                       49
+
+/*
+ * Instance slots for "Number" type 
+ */
 #define ES_Number_NUM_INSTANCE_PROP                                    0
 
 /*
@@ -1748,6 +1837,10 @@
 #define ES_Path_write                                                  84
 
 #define ES_Path_NUM_CLASS_PROP                                         85
+
+/*
+ * Instance slots for "Path" type 
+ */
 #define ES_Path_NUM_INSTANCE_PROP                                      0
 
 /*
@@ -1869,6 +1962,10 @@
 #define ES_RegExp_test                                                 38
 
 #define ES_RegExp_NUM_CLASS_PROP                                       39
+
+/*
+ * Instance slots for "RegExp" type 
+ */
 #define ES_RegExp_NUM_INSTANCE_PROP                                    0
 
 /*
@@ -1905,6 +2002,10 @@
 #define ES_Socket_write                                                40
 
 #define ES_Socket_NUM_CLASS_PROP                                       41
+
+/*
+ * Instance slots for "Socket" type 
+ */
 #define ES_Socket_NUM_INSTANCE_PROP                                    0
 
 /*
@@ -2007,6 +2108,10 @@
 #define ES_String_MOD                                                  67
 
 #define ES_String_NUM_CLASS_PROP                                       68
+
+/*
+ * Instance slots for "String" type 
+ */
 #define ES_String_NUM_INSTANCE_PROP                                    0
 
 /*
@@ -2066,6 +2171,10 @@
 #define ES_System_exec                                                 35
 
 #define ES_System_NUM_CLASS_PROP                                       36
+
+/*
+ * Instance slots for "System" type 
+ */
 #define ES_System_NUM_INSTANCE_PROP                                    0
 
 /*
@@ -2139,6 +2248,10 @@
 #define ES_Timer_stop                                                  30
 
 #define ES_Timer_NUM_CLASS_PROP                                        31
+
+/*
+ * Instance slots for "Timer" type 
+ */
 #define ES_Timer_NUM_INSTANCE_PROP                                     0
 
 /*
@@ -2161,9 +2274,13 @@
 /*
  * Instance slots for "TimerEvent" type 
  */
-#define ES_TimerEvent_NUM_INSTANCE_PROP                                2
+#define ES_TimerEvent_NUM_INSTANCE_PROP                                4
 
 #define ES_Type_NUM_CLASS_PROP                                         26
+
+/*
+ * Instance slots for "Type" type 
+ */
 #define ES_Type_NUM_INSTANCE_PROP                                      0
 
 
@@ -2182,36 +2299,41 @@
 #define ES_Uri_encodeComponent                                         34
 #define ES_Uri_endsWith                                                35
 #define ES_Uri_extension                                               36
-#define ES_Uri_hasExtension                                            37
-#define ES_Uri_hasHost                                                 38
-#define ES_Uri_hasPort                                                 39
-#define ES_Uri_hasQuery                                                40
-#define ES_Uri_hasReference                                            41
-#define ES_Uri_hasScheme                                               42
-#define ES_Uri_host                                                    43
-#define ES_Uri_isAbsolute                                              44
-#define ES_Uri_isDir                                                   45
-#define ES_Uri_isRegular                                               46
-#define ES_Uri_isRelative                                              47
-#define ES_Uri_join                                                    48
-#define ES_Uri_joinExt                                                 49
-#define ES_Uri_mimeType                                                50
-#define ES_Uri_normalize                                               51
-#define ES_Uri_path                                                    52
-#define ES_Uri_port                                                    53
-#define ES_Uri_scheme                                                  54
-#define ES_Uri_query                                                   55
-#define ES_Uri_reference                                               56
-#define ES_Uri_relative                                                57
-#define ES_Uri_replaceExt                                              58
-#define ES_Uri_same                                                    59
-#define ES_Uri_startsWith                                              60
-#define ES_Uri_trimEnd                                                 61
-#define ES_Uri_trimExt                                                 62
-#define ES_Uri_trimStart                                               63
-#define ES_Uri_uri                                                     64
+#define ES_Uri_filename                                                37
+#define ES_Uri_hasExtension                                            38
+#define ES_Uri_hasHost                                                 39
+#define ES_Uri_hasPort                                                 40
+#define ES_Uri_hasQuery                                                41
+#define ES_Uri_hasReference                                            42
+#define ES_Uri_hasScheme                                               43
+#define ES_Uri_host                                                    44
+#define ES_Uri_isAbsolute                                              45
+#define ES_Uri_isDir                                                   46
+#define ES_Uri_isRegular                                               47
+#define ES_Uri_isRelative                                              48
+#define ES_Uri_join                                                    49
+#define ES_Uri_joinExt                                                 50
+#define ES_Uri_mimeType                                                51
+#define ES_Uri_normalize                                               52
+#define ES_Uri_path                                                    53
+#define ES_Uri_port                                                    54
+#define ES_Uri_scheme                                                  55
+#define ES_Uri_query                                                   56
+#define ES_Uri_reference                                               57
+#define ES_Uri_relative                                                58
+#define ES_Uri_replaceExt                                              59
+#define ES_Uri_same                                                    60
+#define ES_Uri_startsWith                                              61
+#define ES_Uri_trimEnd                                                 62
+#define ES_Uri_trimExt                                                 63
+#define ES_Uri_trimStart                                               64
+#define ES_Uri_uri                                                     65
 
-#define ES_Uri_NUM_CLASS_PROP                                          65
+#define ES_Uri_NUM_CLASS_PROP                                          66
+
+/*
+ * Instance slots for "Uri" type 
+ */
 #define ES_Uri_NUM_INSTANCE_PROP                                       0
 
 /*
@@ -2234,6 +2356,10 @@
 #define ES_Uri_trimStart_pat                                           0
 
 #define ES_Void_NUM_CLASS_PROP                                         26
+
+/*
+ * Instance slots for "Void" type 
+ */
 #define ES_Void_NUM_INSTANCE_PROP                                      0
 
 
@@ -2307,6 +2433,10 @@
 #define ES_XML_parent                                                  43
 
 #define ES_XML_NUM_CLASS_PROP                                          44
+
+/*
+ * Instance slots for "XML" type 
+ */
 #define ES_XML_NUM_INSTANCE_PROP                                       0
 
 /*
@@ -2397,6 +2527,10 @@
 #define ES_XMLList_parent                                              40
 
 #define ES_XMLList_NUM_CLASS_PROP                                      41
+
+/*
+ * Instance slots for "XMLList" type 
+ */
 #define ES_XMLList_NUM_INSTANCE_PROP                                   0
 
 /*
@@ -2408,6 +2542,6 @@
 #define ES_XMLList_descendants_name                                    0
 #define ES_XMLList_elements_name                                       0
 
-#define _ES_CHECKSUM_ejs   1309451
+#define _ES_CHECKSUM_ejs   1329526
 
 #endif

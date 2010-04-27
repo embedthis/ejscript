@@ -13,9 +13,10 @@
 
 /********************************* Tunables ***********************************/
 
-#define MA_MAX_CONFIG_DEPTH     16          /**< Max nest of directives in config file */
-#define MA_MAX_ACCESS_LOG       20971520    /**< Access file size (20 MB) */
-#define MA_MAX_REWRITE          10          /**< Maximum recursive URI rewrites */
+#define MA_MAX_CONFIG_DEPTH     16              /**< Max nest of directives in config file */
+#define MA_MAX_ACCESS_LOG       20971520        /**< Access file size (20 MB) */
+#define MA_MAX_REWRITE          10              /**< Maximum recursive URI rewrites */
+#define MA_EJS_STARTUP          "startup.es"    /**< Default ejs startup script */
 
 /*  These constants are to sanity check user input in the http.conf
  */
@@ -133,7 +134,8 @@ extern struct MaServer *maLookupServer(MaAppweb *appweb, cchar *name);
 extern int          maLoadModule(MaAppweb *appweb, cchar *name, cchar *libname);
 
 //  MOB - name
-extern void         maSetDefaultServer(MaAppweb *appweb, struct MaServer *server);
+extern void maSetDefaultServer(MaAppweb *appweb, struct MaServer *server);
+extern void maUnloadStaticModules(MaAppweb *appweb);
 
 extern void maSetKeepAliveTimeout(MaAppweb *appweb, int timeout);
 extern void maSetTimeout(MaAppweb *appweb, int timeout);
@@ -269,20 +271,20 @@ extern int maRunSimpleWebServer(cchar *ip, int port, cchar *docRoot);
  */
 extern MaServer *maCreateServer(MaAppweb *appweb, cchar *name, cchar *root, cchar *ip, int port);
 
-//  TODO - this seems to be missing the server root directory for when using IP:port. It has a document root.
-//  TODO - Seems better to split this into 2 APIs. One for a config file and one for manual configuration.
 /** Configure a web server.
     @description This will configure a web server based on either a configuration file or using the supplied
         IP address and port. 
     @param server MaServer object created via #maCreateServer
     @param configFile File name of the Appweb configuration file (appweb.conf) that defines the web server configuration.
-    @param ip If using a config file, set to null. Otherwise, set to a host name or IP address.
-    @param port If using a config file, set to -1. Otherwise, set to the port number to listen on.
-    @param documentRoot If not using a config file, set this to the directory containing the web documents to serve.
+    @param serverRoot Admin directory for the server. This overrides the value in the config file.
+    @param documentRoot Default directory for web documents to serve. This overrides the value in the config file.
+    @param ip IP address to listen on. This overrides the value specified in the config file.
+    @param port Port address to listen on. This overrides the value specified in the config file.
     @return Zero if successful, otherwise a negative Mpr error code. See the Appweb log for diagnostics.
     @ingroup HttpServer
  */
-extern int maConfigureServer(MaServer *server, cchar *configFile, cchar *ip, int port, cchar *documentRoot);
+extern int maConfigureServer(MaServer *server, cchar *configFile, cchar *serverRoot, cchar *documentRoot, 
+        cchar *ip, int port);
 
 /**
     Load static modules
@@ -295,19 +297,23 @@ extern int maConfigureServer(MaServer *server, cchar *configFile, cchar *ip, int
 extern void maLoadStaticModules(MaAppweb *appweb);
 
 extern void     maAddHost(MaServer *server, struct MaHost *host);
+extern MaHostAddress *maAddHostAddress(MaServer *server, cchar *ip, int port);
 extern void     maAddHttpServer(MaServer *server, HttpServer *httpServer);
 extern int      maCreateHostAddresses(MaServer *server, struct MaHost *host, cchar *value);
 extern struct MaHost *maLookupHost(MaServer *server, cchar *name);
 extern int      maGetConfigValue(MprCtx ctx, char **arg, char *buf, char **nextToken, int quotes);
 extern void     maNotifyServerStateChange(HttpConn *conn, int state, int notifyFlags);
 extern int      maParseConfig(MaServer *server, cchar *configFile);
+extern MaHostAddress *maRemoveHostFromHostAddress(MaServer *server, cchar *ip, int port, struct MaHost *host);
 extern void     maSetDefaultHost(MaServer *server, struct MaHost *host);
 extern void     maSetDefaultIndex(MaServer *server, cchar *path, cchar *filename);
+extern void     maSetDocumentRoot(MaServer *server, cchar *path);
+extern void     maSetIpAddr(MaServer *server, cchar *ip, int port);
 extern void     maSetServerRoot(MaServer *server, cchar *path);
 extern int      maSplitConfigValue(MprCtx ctx, char **s1, char **s2, char *buf, int quotes);
 extern int      maStartServer(MaServer *server);
 extern int      maStopServer(MaServer *server);
-extern void     maUnloadStaticModules(MaAppweb *appweb);
+extern int      maValidateConfiguration(MaServer *server);
 
 /************************************* HttpAuth *********************************/
 #if BLD_FEATURE_AUTH_FILE
@@ -503,12 +509,13 @@ extern int          maAddLocation(MaHost *host, HttpLocation *newLocation);
 extern int          maInsertDir(MaHost *host, MaDir *newDir);
 extern int          maOpenMimeTypes(MaHost *host, cchar *path);
 extern void         maRemoveConn(MaHost *host, struct HttpConn *conn);
+extern void         maSetHostDocumentRoot(MaHost *host, cchar *path);
 extern int          maSetMimeActionProgram(MaHost *host, cchar *mimetype, cchar *actionProgram);
 extern int          maStartHost(MaHost *host);
 extern int          maStopHost(MaHost *host);
-extern void         maSetDocumentRoot(MaHost *host, cchar *dir) ;
 extern void         maSetHostIpAddrPort(MaHost *host, cchar *ipAddrPort);
 extern void         maSetHostName(MaHost *host, cchar *name);
+extern void         maSetHostDirs(MaHost *host, cchar *path);
 extern void         maSetHttpVersion(MaHost *host, int version);
 
 extern void         maSetNamedVirtualHost(MaHost *host);
@@ -1960,6 +1967,8 @@ typedef struct HttpConn {
     MprWaitHandler  waitHandler;            /**< I/O wait handler */
     struct HttpServer *server;              /**< Server object (if releveant) */
     MprSocket       *sock;                  /**< Underlying socket handle */
+
+    /* NOTE: documentRoot may be different for virtual hosts, so can't use server->documentRoot */
     char            *documentRoot;          /**< Directory for documents */
 
     struct HttpReceiver *receiver;          /**< Receiver object */
@@ -2439,6 +2448,8 @@ extern bool     maValidatePamCredentials(HttpAuth *auth, cchar *realm, cchar *us
                     cchar *requiredPass, char **msg);
 #endif /* AUTH_PAM */
 
+
+#if UNUSED
 /*
     Location flags
  */
@@ -2446,6 +2457,7 @@ extern bool     maValidatePamCredentials(HttpAuth *auth, cchar *realm, cchar *us
 #define HTTP_LOC_APP_DIR          0x4       /**< Location defines a directory of applications */
 #define HTTP_LOC_AUTO_SESSION     0x8       /**< Auto create sessions in this location */
 #define HTTP_LOC_BROWSER          0x10      /**< Send errors back to the browser for this location */
+#endif
 #define HTTP_LOC_PUT_DELETE       0x20      /**< Support PUT|DELETE */
 
 /**
@@ -2485,9 +2497,11 @@ extern struct HttpStage *httpGetHandlerByExtension(HttpLocation *location, cchar
 extern cchar *httpLookupErrorDocument(HttpLocation *location, int code);
 extern void httpResetPipeline(HttpLocation *location);
 extern void httpSetLocationAuth(HttpLocation *location, HttpAuth *auth);
+extern void httpSetLocationAutoDelete(HttpLocation *location, int enable);
+extern void httpSetLocationFlags(HttpLocation *location, int flags);
 extern void httpSetLocationHandler(HttpLocation *location, cchar *name);
 extern void httpSetLocationPrefix(HttpLocation *location, cchar *uri);
-extern void httpSetLocationFlags(HttpLocation *location, int flags);
+extern void httpSetLocationScript(HttpLocation *location, cchar *script);
 extern int httpSetConnector(HttpLocation *location, cchar *name);
 extern int httpAddHandler(HttpLocation *location, cchar *name, cchar *extensions);
 
@@ -3313,6 +3327,11 @@ extern int httpStartServer(HttpServer *server);
     @ingroup HttpServer
  */
 extern void httpStopServer(HttpServer *server);
+
+//  MOB
+extern void httpSetDocumentRoot(HttpServer *server, cchar *path);
+extern void httpSetServerRoot(HttpServer *server, cchar *path);
+extern void httpSetIpAddr(HttpServer *server, cchar *ip, int port);
 
 #ifdef __cplusplus
 } /* extern C */

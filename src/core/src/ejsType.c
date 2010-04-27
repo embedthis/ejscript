@@ -16,7 +16,7 @@ static EjsType *createBootstrapType(Ejs *ejs, int numSlots);
 static EjsType *createType(Ejs *ejs, EjsName *qname, EjsModule *up, EjsType *baseType, int instanceSize, int numSlots, 
         int attributes, void *typeData);
 static void fixInstanceSize(Ejs *ejs, EjsType *type);
-static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsObj *obj, EjsObj *base, int makeRoom);
+static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom);
 static int fixupTypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom);
 static void setAttributes(EjsType *type, int attributes);
 
@@ -613,13 +613,12 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
     if (fixupTypeProperties(ejs, type, baseType, makeRoom) < 0) {
         return EJS_ERR;
     }
-    if (baseType && baseType->prototype /*  || type->implements) */) {
-        mprAssert(type->baseType == baseType);
+    if (baseType) {
         if (type->prototype == 0) {
             type->prototype = ejsCreatePrototype(ejs, type, 0);
-        } else {
-            fixupPrototypeProperties(ejs, type, type->prototype, baseType->prototype, 1);
         }
+        mprAssert(type->baseType == baseType);
+        fixupPrototypeProperties(ejs, type, baseType, 1);
     }
     fixInstanceSize(ejs, type);
     return 0;
@@ -670,6 +669,12 @@ static int fixupTypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, int m
 
     if (type->implements) {
         for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
+            if (!iface->isInterface) {
+                count = iface->block.obj.numSlots - iface->numInherited;
+                if (ejsInheritProperties(ejs, (EjsObj*) type, (EjsObj*) iface, count, offset, 1) < 0) {
+                    return EJS_ERR;
+                }
+            }
             for (nextNsp = 0; (nsp = (EjsNamespace*) ejsGetNextItem(&iface->block.namespaces, &nextNsp)) != 0;) {
                 mprAssert(ejsIsBlock(type));
                 ejsAddNamespaceToBlock(ejs, (EjsBlock*) type, nsp);
@@ -680,15 +685,51 @@ static int fixupTypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, int m
 }
 
 
-static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsObj *obj, EjsObj *base, int makeRoom)
+static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
 {
-    mprAssert(obj != base);
+    EjsType     *iface;
+    EjsObj      *ip;
+    int         count, offset, next;
 
-    if (makeRoom && base->numSlots > 0 && ejsInsertGrowObject(ejs, obj, base->numSlots, 0) < 0) {
-        return EJS_ERR;
+    mprAssert(type != baseType);
+
+    if (makeRoom) {
+        count = 0;
+        if (baseType->prototype) {
+            count = baseType->prototype->numSlots;
+        }
+        for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
+            if (!iface->isInterface && iface->prototype) {
+                count += iface->prototype->numSlots;
+            }
+        }
+        if (count > 0 && ejsInsertGrowObject(ejs, type->prototype, count, 0) < 0) {
+            return EJS_ERR;
+        }
     }
-    if (ejsInheritProperties(ejs, obj, base, base->numSlots, 0, 0) < 0) {
-        return EJS_ERR;
+    offset = 0;
+    if (baseType->prototype) {
+        if (ejsInheritProperties(ejs, type->prototype, baseType->prototype, type->prototype->numSlots, offset, 0) < 0) {
+            return EJS_ERR;
+        }
+    }
+    offset += type->prototype->numSlots;
+
+    if (type->implements) {
+        for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
+            if (iface->isInterface) {
+                continue;
+            }
+            /* Only come here for implemented classes */
+            if ((ip = iface->prototype) == 0) {
+                continue;
+            }
+            count = ip->numSlots;
+            if (ejsInheritProperties(ejs, type->prototype, ip, count, offset, 1) < 0) {
+                return EJS_ERR;
+            }
+            offset += ip->numSlots;
+        }
     }
     return 0;
 }

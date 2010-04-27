@@ -444,10 +444,6 @@ void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 }
 
 
-/*  
-    Create a default module search path. For example:
-        APP_EXE_DIR/../modules : APP_EXE_DIR : /usr/lib/ejs/1.0.0/modules : .
- */
 EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 {
     EjsObj      *ap;
@@ -465,6 +461,10 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
         mprFree(next);
         return (EjsArray*) ap;
     }
+    /*
+        Create a default search path
+        "." : APP_DIR : APP_EXE_DIR/../modules : /usr/lib/ejs/1.0.0/modules
+     */
 #if VXWORKS
     ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePathAndFree(ejs, mprGetCurrentPath(ejs)));
 #elif WIN

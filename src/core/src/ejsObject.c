@@ -203,7 +203,7 @@ EjsObj *ejsCreateObject(Ejs *ejs, EjsType *type, int numSlots)
     ejsSetDebugName(obj, type->qname.name);
 
     if (obj->sizeSlots > 0) {
-        if (prototype == 0 || type->dontCopyPrototype) {
+        if (prototype == 0 || prototype->numSlots == 0 || type->dontCopyPrototype) {
             ejsZeroSlots(ejs, obj->slots, obj->sizeSlots);
         } else {
             ejsCopySlots(ejs, obj, obj->slots, prototype->slots, prototype->numSlots, 1);
@@ -675,7 +675,7 @@ int ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int incr, int offset)
     mprAssert(obj);
     mprAssert(incr >= 0);
 
-    if (incr < 0) {
+    if (incr <= 0) {
         return 0;
     }
     size = obj->numSlots + incr;

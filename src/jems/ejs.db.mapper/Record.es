@@ -4,12 +4,6 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
-/*
-    Notes:
-    - Don't use getters/setters in this module. This avoids collisions with record fields. Even with namespaces, 
-      this can be a conceptual problem for users.
- */
-
 module ejs.db.mapper {
 
     require ejs.db

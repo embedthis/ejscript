@@ -34,6 +34,7 @@ static int  lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr);
 static void lstProperty(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNum, EjsName qname, int attributes, 
     EjsName typeName);
 static void lstModule(EjsMod *mp, EjsModule *module);
+static cchar *mapSpace(MprCtx ctx, cchar *space);
 
 /*********************************** Code *************************************/
 /*
@@ -316,12 +317,13 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
     EjsName     lname;
     EjsType     *resultType;
     EjsObj      *activation;
-    cchar       *blockName;
+    cchar       *blockName, *space;
     int         i, numLocals, numSlots;
 
     ejs = mp->ejs;
     activation = fun->activation;
     numSlots = activation ? activation->numSlots : 0;
+    space = mapSpace(mp, qname.space);
 
     mprFprintf(mp->file,  "\nFUNCTION:   ");
 
@@ -331,16 +333,16 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
     if (attributes) {
         if (slotNum < 0) {
             /* Special just for global initializers */
-            mprFprintf(mp->file,  "[initializer]  %s %sfunction %s(", qname.space, getAttributeString(mp, attributes), 
+            mprFprintf(mp->file,  "[initializer]  %s %sfunction %s(", space, getAttributeString(mp, attributes), 
                 qname.name);
         } else {
             blockName = getBlockName(mp, block, slotNum);
-            mprFprintf(mp->file,  "[%s-%02d]  %s %sfunction %s(", blockName, slotNum, qname.space,
+            mprFprintf(mp->file,  "[%s-%02d]  %s %sfunction %s(", blockName, slotNum, space,
                 getAttributeString(mp, attributes), qname.name);
         }
     } else {
         blockName = getBlockName(mp, block, slotNum);
-        mprFprintf(mp->file,  "[%s-%02d]  %s function %s(", blockName, slotNum, qname.space, qname.name);
+        mprFprintf(mp->file,  "[%s-%02d]  %s function %s(", blockName, slotNum, space, qname.name);
     }
 
     for (i = 0; i < (int) fun->numArgs; ) {
@@ -438,13 +440,15 @@ static void lstProperty(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
 {
     Ejs         *ejs;
     EjsType     *propType;
-    cchar       *blockName;
+    cchar       *blockName, *space;
 
     ejs = mp->ejs;
+    space = mapSpace(mp, qname.space);
+
     mprFprintf(mp->file, "VARIABLE:   ");
 
     blockName = getBlockName(mp, block, slotNum);
-    mprFprintf(mp->file, "[%s-%02d]  %s %svar %s", blockName, slotNum, qname.space,
+    mprFprintf(mp->file, "[%s-%02d]  %s %svar %s", blockName, slotNum, space,
         getAttributeString(mp, attributes), qname.name);
 
     if (typeName.name && typeName.name[0]) {
@@ -758,25 +762,29 @@ badToken:
 
 static void lstVarSlot(EjsMod *mp, EjsModule *module, EjsName *qname, EjsTrait *trait, int slotNum)
 {
+    cchar  *space;
+
     mprAssert(slotNum >= 0);
     mprAssert(qname);
 
+    space = mapSpace(mp, qname->space);
+
     if (qname->name == 0 || qname->name[0] == '\0') {
-        mprFprintf(mp->file, "%04d    reserved slot for base class property\n", slotNum);
+        mprFprintf(mp->file, "%04d    <inherited>\n", slotNum);
 
     } else if (trait && trait->type) {
         if (trait->type == mp->ejs->functionType) {
-            mprFprintf(mp->file, "%04d    %s function %s\n", slotNum, qname->space, qname->name);
+            mprFprintf(mp->file, "%04d    %s function %s\n", slotNum, space, qname->name);
 
         } else if (trait->type == mp->ejs->functionType) {
-            mprFprintf(mp->file, "%04d    %s class %s\n", slotNum, qname->space, qname->name);
+            mprFprintf(mp->file, "%04d    %s class %s\n", slotNum, space, qname->name);
 
         } else {
-            mprFprintf(mp->file, "%04d    %s var %s: %s\n", slotNum, qname->space, qname->name, trait->type->qname.name);
+            mprFprintf(mp->file, "%04d    %s var %s: %s\n", slotNum, space, qname->name, trait->type->qname.name);
         }
 
     } else {
-        mprFprintf(mp->file, "%04d    %s var %s\n", slotNum, qname->space, qname->name);
+        mprFprintf(mp->file, "%04d    %s var %s\n", slotNum, space, qname->name);
     }
 }
 
@@ -1163,6 +1171,15 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
 static void leadin(EjsMod *mp, EjsModule *module, int classDec, int inFunction)
 {
     mprFprintf(mp->file, "    ");
+}
+
+
+static cchar *mapSpace(MprCtx ctx, cchar *space)
+{
+    if (strstr(space, "internal-") != 0) {
+        return "internal";
+    }
+    return space;
 }
 
 
