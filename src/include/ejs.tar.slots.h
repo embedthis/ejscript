@@ -18,14 +18,14 @@
 /*
     Class property slots for the "Tar" type 
  */
-#define ES_ejs_tar_Tar__origin                                         26
-#define ES_ejs_tar_Tar_Tar                                             26
-#define ES_ejs_tar_Tar_add                                             27
-#define ES_ejs_tar_Tar_xcreate                                         28
-#define ES_ejs_tar_Tar_extract                                         29
-#define ES_ejs_tar_Tar_cat                                             30
+#define ES_ejs_tar_Tar__origin                                         27
+#define ES_ejs_tar_Tar_Tar                                             27
+#define ES_ejs_tar_Tar_add                                             28
+#define ES_ejs_tar_Tar_xcreate                                         29
+#define ES_ejs_tar_Tar_extract                                         30
+#define ES_ejs_tar_Tar_cat                                             31
 
-#define ES_ejs_tar_Tar_NUM_CLASS_PROP                                  31
+#define ES_ejs_tar_Tar_NUM_CLASS_PROP                                  32
 
 /*
  * Instance slots for "Tar" type 
@@ -42,6 +42,6 @@
 #define ES_ejs_tar_Tar_extract_files                                   0
 #define ES_ejs_tar_Tar_cat_files                                       0
 
-#define _ES_CHECKSUM_ejs_tar   8355
+#define _ES_CHECKSUM_ejs_tar   8361
 
 #endif

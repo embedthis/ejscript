@@ -987,23 +987,25 @@ static bool matchAuth(HttpConn *conn, HttpStage *handler)
 
     rec = conn->receiver;
     trans = conn->transmitter;
-    if (rec->auth == NULL || rec->auth->type == 0) {
-        return 0;
-    }
     http = conn->http;
     auth = rec->auth;
 
-    if (auth == 0) {
-        httpError(conn, HTTP_CODE_UNAUTHORIZED, "Access Denied, Authorization enabled");
-        return 1;
+    if (!conn->server || auth == 0 || auth->type == 0) {
+        return 0;
     }
     if ((ad = mprAllocObjZeroed(rec, AuthData)) == 0) {
-        return 0;
+        return 1;
+    }
+#if UNUSED
+    if (auth == 0) {
+        httpError(conn, HTTP_CODE_UNAUTHORIZED, "Access Denied, Authorization not enabled");
+        return 1;
     }
     if (auth->type == 0) {
         formatAuthResponse(conn, auth, HTTP_CODE_UNAUTHORIZED, "Access Denied, Authorization required.", 0);
         return 1;
     }
+#endif
     if (rec->authDetails == 0) {
         formatAuthResponse(conn, auth, HTTP_CODE_UNAUTHORIZED, "Access Denied, Missing authorization details.", 0);
         return 1;
@@ -3392,6 +3394,7 @@ Http *httpCreate(MprCtx ctx)
 
     //  MOB -- this needs to be controllable via the HttpServer API in ejs
     //  MOB -- test that memory allocation errors are correctly handled
+
     http->location = location = httpCreateLocation(http);
     httpAddFilter(location, http->authFilter->name, NULL, HTTP_STAGE_OUTGOING);
     httpAddFilter(location, http->rangeFilter->name, NULL, HTTP_STAGE_OUTGOING);
@@ -3770,6 +3773,7 @@ HttpLocation *httpCreateInheritedLocation(Http *http, HttpLocation *parent)
     location->auth = httpCreateAuth(location, parent->auth);
     location->uploadDir = parent->uploadDir;
     location->autoDelete = parent->autoDelete;
+    location->script = parent->script;
     location->searchPath = parent->searchPath;
     location->ssl = parent->ssl;
     return location;

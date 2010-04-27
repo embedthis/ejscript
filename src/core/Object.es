@@ -18,7 +18,7 @@ shared native function get constructor(): Function
 
         //  ejs so other types don't need to use override when defining "length"
 
-shared ejs native function get length(): Number
+shared ejs static native function get length(): Number
 
         /**
             The prototype object for the type. The prototype object provides the template of instance properties 
@@ -113,6 +113,11 @@ shared static native function get prototype(): Object
         static native function getOwnPropertyNames(obj: Object): Array
 
         /** 
+            The number of properties in the of the object including non-enumerable properties.
+         */
+        static native function getOwnPropertyCount(obj: Object): Number
+
+        /** 
             Get the prototype object
             @param obj Object to inspect
             @return The prototype object for the given object.
@@ -176,15 +181,6 @@ shared static native function get prototype(): Object
             return result
         }
 
-//  MOB -- removed
-        /** 
-            The length of the object.
-            This is the most natural size or length for the object. For types based on Object, it will be set to the 
-            number of properties in the object. For Arrays, it will be set to the number of elements in the array. 
-            For some types, the size property may be writable (e.g. Array). For null objects, length is 0, for 
-            undefined objects, length is -1.
-        native function get length(): Number 
-         */
 
         /** 
             Prevent extensions to object. Sets the extensible property to false 

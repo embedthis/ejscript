@@ -23,7 +23,7 @@
 /**
     appweb.c  -- AppWeb main program
 
-    usage: %s [options] [IpAddr[:port]] [documentRoot]
+    usage: %s [options] [IpAddr][:port] [documentRoot]
             --config configFile     # Use given config file instead 
             --debug                 # Run in debug mode
             --ejs name:path         # Create an ejs application at the path
@@ -250,7 +250,7 @@ static MaAppweb *setup(Mpr *mpr, cchar *configFile, cchar *serverRoot, cchar *do
         exit(6);
     }
 #if BLD_FEATURE_EJS
-#if BLD_EJS_PRODUCT
+#if BLD_EJS_PRODUCT && UNUSED
     if (scripts == 0) {
         scripts = mprCreateList(mpr);
         mprAddItem(scripts, MA_EJS_STARTUP);
@@ -281,7 +281,8 @@ static char *findConfigFile(Mpr *mpr, char *configFile)
     }
     if (!mprPathExists(mpr, configFile, R_OK)) {
         mprFree(configFile);
-        configFile = mprAsprintf(mpr, -1, "%s/../lib/%s.conf", mprGetAppDir(mpr), mprGetAppName(mpr));
+        //  MOB -- will BLD_LIB_NAME be bad for cross-compilation?
+        configFile = mprAsprintf(mpr, -1, "%s/../%s/%s.conf", mprGetAppDir(mpr), BLD_LIB_NAME, mprGetAppName(mpr));
         if (!mprPathExists(mpr, configFile, R_OK)) {
             mprPrintfError(mpr, "Can't open config file %s\n", configFile);
             exit(2);
@@ -352,8 +353,7 @@ static void usageError(Mpr *mpr)
     name = mprGetAppName(mpr);
 
     mprPrintfError(mpr, "\n\n%s Usage:\n\n"
-    "  %s [options]\n"
-    "  %s [options] [IPaddress][:port] [documentRoot] \n\n"
+    "  %s [options] [IPaddress][:port] [documentRoot]\n\n"
     "  Options:\n"
     "    --config configFile    # Use named config file instead appweb.conf\n"
     "    --chroot directory     # Change root directory to run more securely (Unix)\n"
@@ -549,7 +549,7 @@ static int writePort(MaHost *host)
 
     path = mprJoinPath(host, mprGetAppDir(host), "../.port.log");
     if ((fd = open(path, O_CREAT | O_WRONLY | O_TRUNC, 0666)) < 0) {
-        mprError(host, "Could not create port file %s\n", path);
+        mprError(host, "Could not create port file %s", path);
         return MPR_ERR_CANT_CREATE;
     }
 
@@ -564,7 +564,7 @@ static int writePort(MaHost *host)
     len = (int) strlen(numBuf);
     numBuf[len++] = '\n';
     if (write(fd, numBuf, len) != len) {
-        mprError(host, "Write to file %s failed\n", path);
+        mprError(host, "Write to file %s failed", path);
         return MPR_ERR_CANT_WRITE;
     }
     close(fd);

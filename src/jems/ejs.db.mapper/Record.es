@@ -509,7 +509,7 @@ module ejs.db.mapper {
                 return (_errors && _errors[field])
             }
             if (_errors) {
-                return (_errors.length > 0)
+                return (Object.getOwnPropertyCount(_errors) > 0)
             } 
             return false
         }
@@ -1003,10 +1003,8 @@ module ejs.db.mapper {
             if (thisType["validate"]) {
                 thisType["validate"].call(this)
             }
-            if (_errors.length == 0) {
-                coerceToEjsTypes()
-            }
-            return _errors.length == 0
+            coerceToEjsTypes()
+            return Object.getOwnPropertyCount(_errors) == 0
         }
 
         /** @hide TODO */

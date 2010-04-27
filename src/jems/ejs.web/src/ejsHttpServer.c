@@ -25,12 +25,12 @@ static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     if (argc >= 1) {
         ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot, (EjsObj*) argv[0]);
     } else {
-        ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot, (EjsObj*) ejsCreateString(ejs, "."));
+        ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot, (EjsObj*) ejsCreatePath(ejs, "."));
     }
     if (argc >= 2) {
         ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot, (EjsObj*) argv[1]);
     } else {
-        ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot, (EjsObj*) ejsCreateString(ejs, "."));
+        ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot, (EjsObj*) ejsCreatePath(ejs, "."));
     }
     return (EjsObj*) sp;
 }
@@ -80,7 +80,8 @@ static EjsObj *hs_set_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
  */
 static EjsObj *hs_attach(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    //  MOB -- would be great to require users to call attach
+    //  MOB -- would be great if users did not have to call attach
+    sp->obj.permanent = 1;
     if (ejs->location) {
         ejs->location->context = sp;
     } else {
@@ -96,6 +97,7 @@ static EjsObj *hs_attach(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     if (sp->server) {
+        //  MOB -- who make sure that the server object is permanent?
         ejsSendEvent(ejs, sp->emitter, "close", (EjsObj*) sp);
         mprFree(sp->server);
         sp->server = 0;
@@ -138,6 +140,8 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     //  MOB -- is this needed?
     root = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
     server->serverRoot = mprStrdup(server, root->path);
+
+    //  MOB -- who make sure that the sp object is permanent?
 
     httpSetServerContext(server, sp);
     httpSetServerNotifier(server, (HttpNotifier) stateChangeNotifier);
@@ -284,12 +288,17 @@ static void runEjs(HttpQueue *q)
                     return;
                 }
                 sp = (EjsHttpServer*) location->context;
+                sp->server = conn->server;
                 httpSetServerContext(conn->server, sp);
                 httpSetRequestNotifier(conn, (HttpNotifier) stateChangeNotifier);
+                ejs = sp->ejs;
+                dirPath = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
+                dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : conn->documentRoot;
+            } else {
+                ejs = sp->ejs;
+                dirPath = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
+                dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : ".";
             }
-            ejs = sp->ejs;
-            dirPath = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-            dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : ".";
             req = ejsCreateRequest(ejs, sp, conn, dir);
             httpSetConnContext(conn, req);
             conn->dispatcher = ejs->dispatcher;

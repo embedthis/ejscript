@@ -10,6 +10,7 @@ MAKE_IFLAGS		+= $(BLD_APPWEB_IFLAGS)
 MAKE_IFLAGS		+= $(BLD_OPENSSL_IFLAGS) $(BLD_MATRIXSSL_IFLAGS)
 
 TARGETS			+= $(BLD_LIB_DIR)/ejsweb.conf
+TARGETS			+= $(BLD_LIB_DIR)/startup.es
 MODULES			+= $(BLD_BIN_DIR)/ejsweb$(BLD_EXE)
 ifeq ($(BLD_UNIX_LIKE),1)
     TARGETS		+= $(BLD_BIN_DIR)/angel$(BLD_EXE)
@@ -43,3 +44,6 @@ $(BLD_LIB_DIR)/ejsweb.conf: ejsweb.conf
 	$(call log) "[Generate]" "ejsweb.conf"
 	cp ejsweb.conf $(BLD_LIB_DIR)
 
+$(BLD_LIB_DIR)/startup.es: startup.es
+	$(call log) "[Generate]" "startup.es"
+	cp startup.es $(BLD_LIB_DIR)

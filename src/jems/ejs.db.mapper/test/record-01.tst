@@ -9,8 +9,6 @@ require ejs.db.sqlite
 let db = Database.defaultDatabase = new Database("sqlite", "test.sdb")
 // db.trace(true)
 
-assert(db.getColumns("Trades") == "id,date,stockId,quantity,price")
-
 public dynamic class Trade implements Record { }
 
 assert(Trade.getColumnNames() == "id,date,stockId,quantity,price")

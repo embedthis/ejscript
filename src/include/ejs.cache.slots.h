@@ -18,15 +18,15 @@
 /*
     Class property slots for the "Cache" type 
  */
-#define ES_ejs_cache_Cache__origin                                     26
-#define ES_ejs_cache_Cache_Cache                                       26
-#define ES_ejs_cache_Cache__initializer__Cache_initializer             27
-#define ES_ejs_cache_Cache_cache                                       28
-#define ES_ejs_cache_Cache_read                                        29
-#define ES_ejs_cache_Cache_write                                       30
-#define ES_ejs_cache_Cache_remove                                      31
+#define ES_ejs_cache_Cache__origin                                     27
+#define ES_ejs_cache_Cache_Cache                                       27
+#define ES_ejs_cache_Cache__initializer__Cache_initializer             28
+#define ES_ejs_cache_Cache_cache                                       29
+#define ES_ejs_cache_Cache_read                                        30
+#define ES_ejs_cache_Cache_write                                       31
+#define ES_ejs_cache_Cache_remove                                      32
 
-#define ES_ejs_cache_Cache_NUM_CLASS_PROP                              32
+#define ES_ejs_cache_Cache_NUM_CLASS_PROP                              33
 
 /*
  * Instance slots for "Cache" type 
@@ -46,6 +46,6 @@
 #define ES_ejs_cache_Cache_remove_domain                               0
 #define ES_ejs_cache_Cache_remove_key                                  1
 
-#define _ES_CHECKSUM_ejs_cache   12720
+#define _ES_CHECKSUM_ejs_cache   12727
 
 #endif

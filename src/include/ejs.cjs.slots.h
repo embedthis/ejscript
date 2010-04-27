@@ -23,22 +23,22 @@
 /*
     Class property slots for the "Loader" type 
  */
-#define ES_Loader__origin                                              26
-#define ES_Loader__initializer__Loader_initializer                     26
-#define ES_Loader_mainId                                               27
-#define ES_Loader_signatures                                           28
-#define ES_Loader_timestamps                                           29
-#define ES_Loader_defaultExtensions                                    30
-#define ES_Loader_config                                               31
-#define ES_Loader_init                                                 32
-#define ES_Loader_require                                              33
-#define ES_Loader_load                                                 34
-#define ES_Loader_cached                                               35
-#define ES_Loader_wrap                                                 36
-#define ES_Loader_locate                                               37
-#define ES_Loader_setConfig                                            38
+#define ES_Loader__origin                                              27
+#define ES_Loader__initializer__Loader_initializer                     27
+#define ES_Loader_mainId                                               28
+#define ES_Loader_signatures                                           29
+#define ES_Loader_timestamps                                           30
+#define ES_Loader_defaultExtensions                                    31
+#define ES_Loader_config                                               32
+#define ES_Loader_init                                                 33
+#define ES_Loader_require                                              34
+#define ES_Loader_load                                                 35
+#define ES_Loader_cached                                               36
+#define ES_Loader_wrap                                                 37
+#define ES_Loader_locate                                               38
+#define ES_Loader_setConfig                                            39
 
-#define ES_Loader_NUM_CLASS_PROP                                       39
+#define ES_Loader_NUM_CLASS_PROP                                       40
 
 /*
  * Instance slots for "Loader" type 
@@ -59,6 +59,6 @@
 #define ES_Loader_locate_id                                            0
 #define ES_Loader_setConfig_newConfig                                  0
 
-#define _ES_CHECKSUM_ejs_cjs   27128
+#define _ES_CHECKSUM_ejs_cjs   27142
 
 #endif

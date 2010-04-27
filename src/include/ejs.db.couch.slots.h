@@ -18,34 +18,34 @@
 /*
     Class property slots for the "Couch" type 
  */
-#define ES_ejs_db_couch_Couch__origin                                  26
-#define ES_ejs_db_couch_Couch_Couch                                    26
-#define ES_ejs_db_couch_Couch_addListener                              27
-#define ES_ejs_db_couch_Couch_async                                    28
-#define ES_ejs_db_couch_Couch_close                                    29
-#define ES_ejs_db_couch_Couch_cmd                                      30
-#define ES_ejs_db_couch_Couch_flush                                    31
-#define ES_ejs_db_couch_Couch_http                                     32
-#define ES_ejs_db_couch_Couch_removeListener                           33
-#define ES_ejs_db_couch_Couch_status                                   34
-#define ES_ejs_db_couch_Couch_success                                  35
-#define ES_ejs_db_couch_Couch_read                                     36
-#define ES_ejs_db_couch_Couch_write                                    37
-#define ES_ejs_db_couch_Couch_getDatabases                             38
-#define ES_ejs_db_couch_Couch_bulkUpdate                               39
-#define ES_ejs_db_couch_Couch_compact                                  40
-#define ES_ejs_db_couch_Couch_createDatabase                           41
-#define ES_ejs_db_couch_Couch_destroyDatabase                          42
-#define ES_ejs_db_couch_Couch_cleanupView                              43
-#define ES_ejs_db_couch_Couch_getDocuments                             44
-#define ES_ejs_db_couch_Couch_createDoc                                45
-#define ES_ejs_db_couch_Couch_deleteDoc                                46
-#define ES_ejs_db_couch_Couch_getDoc                                   47
-#define ES_ejs_db_couch_Couch_updateDoc                                48
-#define ES_ejs_db_couch_Couch_tempView                                 49
-#define ES_ejs_db_couch_Couch_view                                     50
+#define ES_ejs_db_couch_Couch__origin                                  27
+#define ES_ejs_db_couch_Couch_Couch                                    27
+#define ES_ejs_db_couch_Couch_addListener                              28
+#define ES_ejs_db_couch_Couch_async                                    29
+#define ES_ejs_db_couch_Couch_close                                    30
+#define ES_ejs_db_couch_Couch_cmd                                      31
+#define ES_ejs_db_couch_Couch_flush                                    32
+#define ES_ejs_db_couch_Couch_http                                     33
+#define ES_ejs_db_couch_Couch_removeListener                           34
+#define ES_ejs_db_couch_Couch_status                                   35
+#define ES_ejs_db_couch_Couch_success                                  36
+#define ES_ejs_db_couch_Couch_read                                     37
+#define ES_ejs_db_couch_Couch_write                                    38
+#define ES_ejs_db_couch_Couch_getDatabases                             39
+#define ES_ejs_db_couch_Couch_bulkUpdate                               40
+#define ES_ejs_db_couch_Couch_compact                                  41
+#define ES_ejs_db_couch_Couch_createDatabase                           42
+#define ES_ejs_db_couch_Couch_destroyDatabase                          43
+#define ES_ejs_db_couch_Couch_cleanupView                              44
+#define ES_ejs_db_couch_Couch_getDocuments                             45
+#define ES_ejs_db_couch_Couch_createDoc                                46
+#define ES_ejs_db_couch_Couch_deleteDoc                                47
+#define ES_ejs_db_couch_Couch_getDoc                                   48
+#define ES_ejs_db_couch_Couch_updateDoc                                49
+#define ES_ejs_db_couch_Couch_tempView                                 50
+#define ES_ejs_db_couch_Couch_view                                     51
 
-#define ES_ejs_db_couch_Couch_NUM_CLASS_PROP                           51
+#define ES_ejs_db_couch_Couch_NUM_CLASS_PROP                           52
 
 /*
  * Instance slots for "Couch" type 
@@ -83,6 +83,6 @@
 #define ES_ejs_db_couch_Couch_view_name                                0
 #define ES_ejs_db_couch_Couch_view_options                             1
 
-#define _ES_CHECKSUM_ejs_db_couch   41464
+#define _ES_CHECKSUM_ejs_db_couch   41491
 
 #endif

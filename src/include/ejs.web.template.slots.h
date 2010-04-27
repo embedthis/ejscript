@@ -18,10 +18,10 @@
 /*
     Class property slots for the "Template" type 
  */
-#define ES_Template__origin                                            26
-#define ES_Template_load                                               26
+#define ES_Template__origin                                            27
+#define ES_Template_load                                               27
 
-#define ES_Template_NUM_CLASS_PROP                                     27
+#define ES_Template_NUM_CLASS_PROP                                     28
 
 /*
  * Instance slots for "Template" type 
@@ -37,15 +37,15 @@
 /*
     Class property slots for the "TemplateParser" type 
  */
-#define ES_TemplateParser__origin                                      26
-#define ES_TemplateParser_TemplateParser                               26
-#define ES_TemplateParser_build                                        27
-#define ES_TemplateParser_buildView                                    28
-#define ES_TemplateParser_parse                                        29
-#define ES_TemplateParser_getToken                                     30
-#define ES_TemplateParser_eatSpace                                     31
+#define ES_TemplateParser__origin                                      27
+#define ES_TemplateParser_TemplateParser                               27
+#define ES_TemplateParser_build                                        28
+#define ES_TemplateParser_buildView                                    29
+#define ES_TemplateParser_parse                                        30
+#define ES_TemplateParser_getToken                                     31
+#define ES_TemplateParser_eatSpace                                     32
 
-#define ES_TemplateParser_NUM_CLASS_PROP                               32
+#define ES_TemplateParser_NUM_CLASS_PROP                               33
 
 /*
  * Instance slots for "TemplateParser" type 
@@ -76,24 +76,24 @@
 /*
     Class property slots for the "Token" type 
  */
-#define ES_ejs_web_template_Token__origin                              26
-#define ES_ejs_web_template_Token__initializer__Token_initializer      26
-#define ES_ejs_web_template_Token_Err                                  27
-#define ES_ejs_web_template_Token_Eof                                  28
-#define ES_ejs_web_template_Token_EjsTag                               29
-#define ES_ejs_web_template_Token_Var                                  30
-#define ES_ejs_web_template_Token_Literal                              31
-#define ES_ejs_web_template_Token_Equals                               32
-#define ES_ejs_web_template_Token_Control                              33
-#define ES_ejs_web_template_Token_tokens                               34
+#define ES_ejs_web_template_Token__origin                              27
+#define ES_ejs_web_template_Token__initializer__Token_initializer      27
+#define ES_ejs_web_template_Token_Err                                  28
+#define ES_ejs_web_template_Token_Eof                                  29
+#define ES_ejs_web_template_Token_EjsTag                               30
+#define ES_ejs_web_template_Token_Var                                  31
+#define ES_ejs_web_template_Token_Literal                              32
+#define ES_ejs_web_template_Token_Equals                               33
+#define ES_ejs_web_template_Token_Control                              34
+#define ES_ejs_web_template_Token_tokens                               35
 
-#define ES_ejs_web_template_Token_NUM_CLASS_PROP                       35
+#define ES_ejs_web_template_Token_NUM_CLASS_PROP                       36
 
 /*
  * Instance slots for "Token" type 
  */
 #define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    0
 
-#define _ES_CHECKSUM_ejs_web_template   41783
+#define _ES_CHECKSUM_ejs_web_template   41802
 
 #endif

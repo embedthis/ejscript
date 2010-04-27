@@ -810,14 +810,16 @@ int maValidateConfiguration(MaServer *server)
                 hp->mimeTypes = defaultHost->mimeTypes;
 
             } else if (maOpenMimeTypes(hp, "mime.types") < 0) {
-                static int once = 0;
                 /*
                     Do minimal mime types configuration
                  */
                 maAddStandardMimeTypes(hp);
+#if UNUSED
+                static int once = 0;
                 if (once++ == 0) {
                     mprLog(server, 2, "No supplied \"mime.types\" file, using builtin mime configuration");
                 }
+#endif
             }
         }
 
@@ -3819,7 +3821,7 @@ static void buildArgs(HttpConn *conn, MprCmd *cmd, int *argcp, char ***argvp)
             This is an Apache compatible hack for PHP 5.3
          */
         mprItoa(status, sizeof(status), HTTP_CODE_MOVED_TEMPORARILY, 10);
-        mprAddHash(rec->headers, "REDIRECT_STATUS", status);
+        mprAddHash(rec->headers, "REDIRECT_STATUS", mprStrdup(rec, status));
     }
 
     /*
@@ -5159,9 +5161,35 @@ static int parseEjs(Http *http, cchar *key, char *value, MaConfigState *state)
 }
 
 
+/*
+    Find a startup script. Default to /usr/lib/PRODUCT/lib/PRODUCT.es.
+ */
+static char *findScript(MprCtx ctx, char *script)
+{
+    char        *base, *result;
+
+    if (script == 0 || *script == '\0') {
+        script = mprAsprintf(ctx, -1, "%s/../%s/%s", mprGetAppDir(ctx), BLD_LIB_NAME, MA_EJS_STARTUP);
+    } else {
+        if (!mprPathExists(ctx, script, R_OK)) {
+            base = mprGetPathBase(ctx, script);
+            script = mprAsprintf(ctx, -1, "%s/../%s/%s", mprGetAppDir(ctx), BLD_LIB_NAME, base);
+            mprFree(base);
+        }
+    }
+    if (mprPathExists(ctx, script, R_OK)) {
+        result = mprGetNativePath(ctx, script);
+        mprFree(script);
+        return result;
+    }
+    return 0;
+}
+
+
 static int loadStartupScript(Http *http, HttpLocation *location)
 {
     Ejs         *ejs;
+    char        *script;
     int         ver;
 
     ejs = ejsCreateVm(http, NULL, NULL, NULL, EJS_FLAG_MASTER);
@@ -5174,11 +5202,16 @@ static int loadStartupScript(Http *http, HttpLocation *location)
         mprError(ejs, "Can't load ejs.web.mod: %s", ejsGetErrorMsg(ejs, 1));
         return MPR_ERR_CANT_INITIALIZE;
     }
-    if (ejsLoadScriptFile(ejs, location->script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
-        mprError(ejs, "Can't load \"%s\"", location->script);
-    } else {
-        LOG(http, 2, "Loading Ejscript Server script: \"%s\"", location->script);
+    if ((script = findScript(http, location->script)) == 0) {
+        mprError(http, "Can't find script file %s", location->script);
+        return MPR_ERR_CANT_OPEN;
     }
+    if (ejsLoadScriptFile(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_BIND) < 0) {
+        mprError(ejs, "Can't load \"%s\"", script);
+    } else {
+        LOG(http, 2, "Loading Ejscript Server script: \"%s\"", script);
+    }
+    mprFree(script);
     return 0;
 }
 

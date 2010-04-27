@@ -11,7 +11,7 @@ assert(Object.getOwnPropertyNames(Date).sort() == "UTC,length,now,parse,parseDat
 assert(Object.getOwnPropertyNames(Error).sort() == "length,prototype")
 assert(Object.getOwnPropertyNames(Function).sort() == "length,prototype")
 assert(Object.getOwnPropertyNames(Number).sort() == "MAX_VALUE,MIN_VALUE,MaxValue,MinValue,NEGATIVE_INFINITY,NaN,POSITIVE_INFINITY,length,prototype")
-assert(Object.getOwnPropertyNames(Object).sort() == "create,defineProperties,defineProperty,freeze,getOwnPropertyDescriptor,getOwnPropertyNames,getOwnPrototypeOf,isExtensible,isFrozen,isSealed,keys,length,preventExtensions,prototype,seal")
+assert(Object.getOwnPropertyNames(Object).sort() == "create,defineProperties,defineProperty,freeze,getOwnPropertyCount,getOwnPropertyDescriptor,getOwnPropertyNames,getOwnPrototypeOf,isExtensible,isFrozen,isSealed,keys,length,preventExtensions,prototype,seal")
 assert(Object.getOwnPropertyNames(String).sort() == "fromCharCode,length,prototype")
 
 
