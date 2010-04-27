@@ -45,3 +45,6 @@ build/bin/api-diff
 *.exp
 bin/*.def
 bin/mime.types
+src/jems/ejs.db.mapper/test/test.sdb
+lib/www
+lib/startup.es
