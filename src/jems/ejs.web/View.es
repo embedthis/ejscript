@@ -8,8 +8,8 @@ module ejs.web {
     /**
         Base class for web framework views. This class provides the core functionality for all Ejscript view web pages.
         Ejscript web pages are compiled to create a new View class which extends the View base class. In addition to
-        the properties defined by this class, user view classes will inherit at runtime all public properites of the
-        current controller object.
+        the properties defined by this class, user view classes will typically inherit at runtime all public properites 
+        of the current controller object.
         @spec ejs
         @stability prototype
      */
@@ -19,24 +19,19 @@ module ejs.web {
          */
         use default namespace module
 
-        /**
-            Current request object
-         */
+        /** Current request object */
         var request: Request
 
-        /*
-            Current record being used inside a form
-         */
+        /* Current record being used inside a form */
         private var currentRecord: Object
 
-        /*
-            Configuration from the applications ejsrc files
-         */
+        /* Configuration from the applications ejsrc files */
         private var config: Object
 
-        /*
-            Sequential DOM ID generator
-         */
+        /** Logger channel */
+        var log: Logger
+
+        /* Sequential DOM ID generator */
         private var nextId: Number = 0
 
         /** @hide */
@@ -51,6 +46,7 @@ module ejs.web {
         function View(request: Object) {
             this.request = request
             this.config = request.config
+            this.log = request.log
             view = this
         }
 
@@ -74,6 +70,7 @@ module ejs.web {
                 renderer.setScope(View)
                 renderer.call(this, request)
             }
+            request.finalize()
         }
 
         /** 
@@ -236,6 +233,7 @@ module ejs.web {
                 whether the field has been previously saved.
             @option uri String Use a URL rather than action and controller for the target uri.
          */
+//  MOB -- COMPAT was form(action, record, options)
         function form(record: Object, options: Object = {}): Void {
             currentRecord = record
             emitFormErrors(record)
@@ -286,8 +284,9 @@ module ejs.web {
                 <% input(null, { options }) %>
          */
         function input(field: String, options: Object = {}): Void {
-            if (currentRecord && currentRecord.getColumnType) {
-                datatype = currentRecord.getColumnType(field)
+            try {
+                datatype = Reflect(currentRecord).type.getColumnType(field)
+
                 //  TODO - needs fleshing out for each type
                 switch (datatype) {
                 case "binary":
@@ -311,12 +310,8 @@ module ejs.web {
                 default:
                     throw "input control: Unknown field type: " + datatype + " for field " + field
                 }
-            } else {
-                if (datatype is Boolean) {
-                    checkbox(field, "true", options)
-                } else {
-                    text(field, options)
-                }
+            } catch {
+                text(field, options)
             }
         }
 
@@ -709,7 +704,9 @@ module ejs.web {
          */
         private function getConnector(kind: String, options: Object) {
             let views = request.config.mvc.views
-            let connectorName = options["connector"] || views.connectors[kind] || views.connectors["rest"] || "html"
+            //  TODO OPT
+            let connectorName = (options && options["connector"]) || views.connectors[kind] ||
+                views.connectors["rest"] || "html"
             views.connectors[kind] = connectorName
             let name = (connectorName + "Connector").toPascal()
             try {
@@ -769,7 +766,7 @@ module ejs.web {
             //  TODO OPT
             let fmt
             let mvc = request.config.mvc
-            if (mvc.views && config.views.formats) {
+            if (mvc.views && mvc.views.formats) {
                 fmt = mvc.views.formats[typeName]
             }
             if (fmt == undefined || fmt == null || fmt == "") {
@@ -856,7 +853,7 @@ module ejs.web {
             }
             let result: String = ""
             for (let option: String in options) {
-                let mapped = htmlOptions[option]
+                let mapped = View.htmlOptions[option]
                 if (mapped || mapped == "") {
                     if (mapped == "") {
                         /* No mapping, keep the original option name */

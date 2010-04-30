@@ -358,7 +358,7 @@ typedef struct Ejs {
     void                *sqlite;            /**< Sqlite context information */
 
     Http                *http;              /**< Http service object (copy of EjsService.http) */
-    HttpLocation        *location;          /**< Current HttpLocation object for web startup scripts */
+    HttpLocation        *location;          /**< Current HttpLocation object for web start scripts */
     struct EjsObj       *emitter;           /**< Event emitter */
 
     struct EjsObj       *sessions;          /**< Session cache */

@@ -2,9 +2,7 @@
    GoogleConnector.es -- View connector for the Google Visualization library
  */
 
-module ejs.web.google {
-
-    require ejs.web
+module ejs.web {
 
     /**
         @hide

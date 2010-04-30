@@ -52,8 +52,11 @@ module ejs.web {
           { name: "show",    type: "mvc", method: "GET",    match: "/:controller/:id",       params: { action: "show" } },
           { name: "update",  type: "mvc", method: "PUT",    match: "/:controller/:id",       params: { action: "update" } },
           { name: "delete",  type: "mvc", method: "DELETE", match: "/:controller/:id",       params: { action: "delete" } },
+          { name: "default", type: "mvc", method: "GET",  match: "/:controller/:action",     params: {} },
           { name: "create",  type: "mvc", method: "POST",   match: "/:controller",           params: { action: "create" } },
           { name: "index",   type: "mvc", method: "GET",    match: "/:controller",           params: { action: "index" } },
+          { name: "home",    type: "static", match: /^\/$/, redirect: "/web/index.ejs" },
+          { name: "static",  type: "static", },
         ]
 
         /**
@@ -64,7 +67,10 @@ module ejs.web {
           { name: "edit",    type: "mvc", method: "GET",  match: "/:controller/:id",         params: { action: "edit" } },
           { name: "update",  type: "mvc", method: "POST", match: "/:controller/:id",         params: { action: "update" } },
           { name: "destroy", type: "mvc", method: "POST", match: "/:controller/destroy/:id", params: { action: "destroy" }},
+          { name: "default", type: "mvc", method: "GET",  match: "/:controller/:action",     params: {} },
           { name: "index",   type: "mvc", method: "GET",  match: "/:controller",             params: { action: "index" } },
+          { name: "home",    type: "static", match: /^\/$/, redirect: "/web/index.ejs" },
+          { name: "static",  type: "static", },
         ]
          */
 
@@ -72,14 +78,18 @@ module ejs.web {
             Routes used in Ejscript 1.X
          */
         public static var LegacyRoutes = [
+          { name: "es",      type: "es",  match: /web\/.*\.es$/   },
+          { name: "ejs",     type: "ejs", match: /web\/.*\.ejs$/  },
+          { name: "web",     type: "static", match: /web\//  },
           { name: "list",    type: "mvc", method: "GET",  match: "/:controller/list",        params: { action: "list" } },
           { name: "create",  type: "mvc", method: "POST", match: "/:controller/create",      params: { action: "create" } },
           { name: "edit",    type: "mvc", method: "GET",  match: "/:controller/edit",        params: { action: "edit" } },
           { name: "update",  type: "mvc", method: "POST", match: "/:controller/update",      params: { action: "update" } },
           { name: "destroy", type: "mvc", method: "POST", match: "/:controller/destroy",     params: { action: "destroy" } },
+          { name: "default", type: "mvc", method: "GET",  match: "/:controller/:action",     params: {} },
           { name: "index",   type: "mvc", method: "GET",  match: "/:controller",             params: { action: "index" } },
-
-          { name: "funny",   type: "mvc", method: "GET",  match: "/funny/:controller/:id/edit",  params: { action: "edit" }},
+          { name: "home",    type: "static", match: /^\/$/, redirect: "/Base/home" },
+          { name: "static",  type: "static", },
         ]
 
         function Router(set: Array = RestfulRoutes) {
@@ -156,68 +166,73 @@ module ejs.web {
         public function route(request): Void {
             let params = request.params
             let pathInfo = request.pathInfo
-            for each (route in routes) {
-                if (route.method && request.method != route.method) {
+            for each (r in routes) {
+                if (r.method && request.method != r.method) {
                     continue
                 }
-                if (route.matcher is Function) { 
-                    if (!route.matcher(request)) {
+                if (r.matcher is Function) { 
+                    if (!r.matcher(request)) {
                         continue
                     }
-                    for (i in route.params) {
-                        params[i] = route.params[i]
+                    for (i in r.params) {
+                        params[i] = r.params[i]
                     }
 
-                } else if (!route.splitter) { 
-                    if (route.matcher) {
-                        let results = pathInfo.match(route.matcher)
+                } else if (!r.splitter) { 
+                    if (r.matcher) {
+                        let results = pathInfo.match(r.matcher)
                         if (!results) {
                             continue
                         }
-                        for (let name in route.params) {
-                            let value = route.params[name]
+                        for (let name in r.params) {
+                            let value = r.params[name]
                             if (value.contains("$")) {
-                                value = pathInfo.replace(route.matcher, value)
+                                value = pathInfo.replace(r.matcher, value)
                             }
                             params[name] = value
                         }
                     } else {
-                        for (i in route.params) {
-                            params[i] = route.params[i]
+                        for (i in r.params) {
+                            params[i] = r.params[i]
                         }
                     }
 
                 } else {
                     /*  String or RegExp based matcher */
-                    if (!pathInfo.match(route.matcher)) {
+                    if (!pathInfo.match(r.matcher)) {
                         continue
                     }
-                    parts = pathInfo.replace(route.matcher, route.splitter)
+                    parts = pathInfo.replace(r.matcher, r.splitter)
                     parts = parts.split(":")
-                    for (i in route.tokens) {
-                        params[route.tokens[i]] = parts[i]
+                    for (i in r.tokens) {
+                        params[r.tokens[i]] = parts[i]
                     }
                     /*  Apply override params */
-                    for (i in route.params) {
-                        params[i] = route.params[i]
+                    for (i in r.params) {
+                        params[i] = r.params[i]
                     }
                 }
-                request.route = route
-                if (route.rewrite && !route.rewrite(request)) {
-                    request.route = null
-                    continue
+                if (r.rewrite && !r.rewrite(request)) {
+                    route(request)
+                    return
                 }
-                let location = route.location
+                if (r.redirect) {
+                    request.pathInfo = r.redirect;
+                    this.route(request)
+                    return
+                }
+                request.route = r
+                let location = r.location
                 if (location && location.prefix && location.dir) {
                     request.setLocation(location.prefix, location.dir)
+                }
+                let log = request.log
+                if (log.level >= 5) {
+                    show(request.log)
                 }
                 return
             }
             throw "No route for " + pathInfo
-        }
-
-        function dumpRoutes(): Void {
-            dump(routes)
         }
     }
 
@@ -317,17 +332,33 @@ module ejs.web {
             this.router = router
         }
 
+        public function show(log: Logger, msg) {
+            log.debug(5, msg + " \"" + name + "\":")
+            for each (f in Object.getOwnPropertyNames(this)) {
+                if (f != "params" && f != "router") {
+                    log.debug(5, "    " + f + " = " + this[f])
+                }
+            }
+            log.debug(5, "    params = " + serialize(params))
+        }
+
         /**
             Make a URI provided parts of a URI. The URI is completed using the current request and route. 
+            @param where MOB
          */
-        public function makeUri(request: Request, parts: Object): Uri {
-            if (urimaker)
-                return urimaker(request, parts)
-            if (request)
-                parts = blend(request.absHome.components(), parts)
-            else parts = parts.clone()
-            let result = Uri(parts)
-            let routeName = parts.route
+        public function makeUri(request: Request, where: Object): Uri {
+            if (urimaker) {
+                return urimaker(request, where)
+            }
+            if (request) {
+                if (where is String) {
+                    where = blend(request.absHome.components(), { path: where })
+                } else {
+                    where = blend(request.absHome.components(), where)
+                }
+            }
+            let result = Uri(where)
+            let routeName = where.route || "default"
             let route = this
             if (routeName != this.name) {
                 for each (r in router.routes) {
@@ -339,10 +370,10 @@ module ejs.web {
             }
             let path = ""
             for each (token in route.tokens) {
-                if (!parts[token]) {
+                if (!where[token]) {
                     throw "Missing URI token " + token
                 }
-                path += "/" + parts[token]
+                path += "/" + where[token]
             }
             result.path = path
             return result

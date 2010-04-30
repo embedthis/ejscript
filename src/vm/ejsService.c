@@ -237,6 +237,7 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureGCType(ejs);
     ejsConfigureHttpType(ejs);
     ejsConfigureJSONType(ejs);
+    ejsConfigureLoggerType(ejs);
     ejsConfigureMathType(ejs);
     ejsConfigureMemoryType(ejs);
     ejsConfigureNamespaceType(ejs);
@@ -793,12 +794,10 @@ static void logHandler(MprCtx ctx, int flags, int level, const char *msg)
         mprFprintf(file, "\n");
         msg++;
     }
-
     if (flags & MPR_LOG_SRC) {
         mprFprintf(file, "%s: %d: %s\n", prefix, level, msg);
 
     } else if (flags & MPR_ERROR_SRC) {
-
         /*  
             Use static printing to avoid malloc when the messages are small.
             This is important for memory allocation errors.
@@ -808,10 +807,8 @@ static void logHandler(MprCtx ctx, int flags, int level, const char *msg)
         } else {
             mprFprintf(file, "%s: Error: %s\n", prefix, msg);
         }
-
     } else if (flags & MPR_FATAL_SRC) {
         mprFprintf(file, "%s: Fatal: %s\n", prefix, msg);
-        
     } else if (flags & MPR_RAW) {
         mprFprintf(file, "%s", msg);
     }
@@ -831,7 +828,6 @@ int ejsStartLogging(Mpr *mpr, char *logSpec)
         *levelSpec++ = '\0';
         level = atoi(levelSpec);
     }
-
     if (strcmp(logSpec, "stdout") == 0) {
         file = mpr->fileSystem->stdOutput;
 
@@ -845,10 +841,9 @@ int ejsStartLogging(Mpr *mpr, char *logSpec)
             return EJS_ERR;
         }
     }
-
+    mprSetLogFd(mpr, mprGetFileFd(file));
     mprSetLogLevel(mpr, level);
     mprSetLogHandler(mpr, logHandler, (void*) file);
-
     mprFree(logSpec);
     return 0;
 }

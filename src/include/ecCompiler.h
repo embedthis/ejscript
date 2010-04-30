@@ -1097,7 +1097,7 @@ extern int          ecAstProcess(struct EcCompiler *cp, int argc,  struct EcNode
     Module file creation routines.
  */
 extern void     ecAddFunctionConstants(EcCompiler *cp, EjsFunction *fun);
-extern void     ecAddBlockConstants(EcCompiler *cp, EjsBlock *block);
+extern void     ecAddConstants(EcCompiler *cp, EjsObj *obj);
 extern int      ecAddConstant(EcCompiler *cp, cchar *str);
 extern int      ecAddNameConstant(EcCompiler *cp, EjsName *qname);
 extern int      ecAddDocConstant(EcCompiler *cp, EjsTrait *trait, EjsObj *block, int slotNum);

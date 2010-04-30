@@ -1,0 +1,8 @@
+/*
+    Thse two should be qual
+ */
+e = new Error("The lazy dog")
+
+//  toString does not work
+print(e)
+print(e.toString())

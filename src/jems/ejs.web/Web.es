@@ -46,7 +46,7 @@ module ejs.web {
 
         /** 
             Serve a web request. Convenience function to route, load and start a web application. 
-            Called by web application startup script (server.es)
+            Called by web application start script
             @param request Request object
             @param router Configured router instance. If omitted, a default Router will be created using the TopRoutes
                 routing table.
@@ -125,6 +125,16 @@ module ejs.web {
                     exports = {
                         app: function (request) {
                             let path = request.dir.join(request.uri.filename)
+                            if (path.isDir) {
+                                //  MOB -- should come from HttpServer.index[]
+                                for each (index in ["index.ejs", "index.html"]) {
+                                    let p = path.join(index)
+                                    if (p.exists) {
+                                        path = p
+                                        break
+                                    }
+                                }
+                            }
                             return {
                                 status: Http.Ok,
                                 headers: {
@@ -157,7 +167,7 @@ module ejs.web {
         static function start(request: Request, app: Function): Void {
 //  WARNING: this may block in write?? - is request in async mode?
             try {
-                let result = app(request)
+                let result = app.call(request, request)
                 if (!result) {
                     if (request.route.type == "ejs") {
                         request.finalize()
@@ -165,7 +175,7 @@ module ejs.web {
 
                 } else if (result is Function) {
                     /* The callback is responsible for calling finalize() */
-                    result(request)
+                    result.call(request, request)
 
                 } else {
                     request.status = result.status || 200
@@ -174,14 +184,15 @@ module ejs.web {
                     let body = result.body
                     if (body is String) {
                         request.write(body)
+                        request.finalize()
 
                     } else if (body is Array) {
                         for each (let item in body) {
                             request.write(item)
                         }
+                        request.finalize()
 
                     } else if (body is Stream) {
-//  MOB - finish
                         if (body.async) {
                             request.async = true
                             //  Should we wait on request being writable or on the body stream being readable?
@@ -195,19 +206,20 @@ module ejs.web {
                             while (body.read(ba)) {
                                 request.write(ba)
                             }
+                            request.finalize()
                         }
                     } else if (body.forEach) {
                         body.forEach(function(block) {
                             request.write(block)
                         })
+                        request.finalize()
                     }
                 }
-            } catch (e) {
-                print("Web.start() CATCH " + e)
-                request.writeError(e)
 
-            } finally {
-//  MOB -- but finalize may not be complete. 
+            } catch (e) {
+                print("URI " + request.uri)
+                print("Web.start(): CATCH " + e)
+                request.writeError(e)
                 request.finalize()
             }
         }

@@ -44,6 +44,11 @@ module ejs {
          */
         static var config: Object
 
+        /**
+            Separator string to use when constructing PATH style search strings
+         */
+        static var SearchSeparator: String = (Config.OS == "WIN") ? ";" : ":"
+
         /*  
             Standard I/O streams. These can be any kind of stream.
          */
@@ -60,9 +65,7 @@ module ejs {
                 enable: true,
                 where: "stdout",
                 level: 2,
-                /*
-                    match: null,
-                 */
+                /* match: null, */
             },
             cache: {
                 enable: true,
@@ -168,7 +171,7 @@ module ejs {
         /** 
             Set the current logger
          */
-        public static var logger: Logger
+        public static var log: Logger
 
         /** 
             Application name. Set to a single word, lower-case name for the application.
@@ -344,17 +347,19 @@ module ejs {
 
         let log = config.log
         if (log.enable) {
-            let stream
-            if (log.where == "stdout") {
+            let stream = Logger.mprStream
+            if (stream) {
+                log.level = Logger.mprLevel
+            } else if (log.where == "stdout") {
                 stream = App.outputStream
             } else if (log.where == "stderr") {
                 stream = App.errorStream
             } else {
                 stream = File(log.where, "w")
             }
-            App.logger = new Logger(App.name, stream, log.level)
+            App.log = new Logger(App.name, stream, log.level)
             if (log.match) {
-                App.logger.match = log.match
+                App.log.match = log.match
             }
         }
 
@@ -363,7 +368,7 @@ module ejs {
             if (config.search is Array) {
                 App.search = config.search + App.search
             } else if (config.search is String) {
-                App.search = config.search.split(Path.SearchSeparator) + App.search
+                App.search = config.search.split(App.SearchSeparator) + App.search
             }
         }
 

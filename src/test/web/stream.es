@@ -7,6 +7,7 @@ exports.app = function (r: Request) {
     r.setHeaders({"Content-Type": "text/plain"})
     let input = r.input
     let data = new ByteArray
+    /* Echo input */
     while (input.read(data)) {
         r.write(data)
     }

@@ -67,6 +67,7 @@ ejs static native function get length(): Number
          */
         native function bind(thisObj: Object, overwrite: Boolean = true): Void
 
+        //  MOB -- DOC
         /** @hide */
         native function setScope(scope: Object): Void
     }

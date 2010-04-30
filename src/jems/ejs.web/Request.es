@@ -20,7 +20,7 @@ module ejs.web {
         use default namespace public
 
         /** 
-            Absolute Uri for the top-level of the application. This returns a absolute Uri (includes scheme and host) 
+            Absolute Uri for the top-level of the application. This returns an absolute Uri (includes scheme and host) 
             for the top most application Uri. See $home to get a relative Uri.
          */ 
         native var absHome: Uri
@@ -112,10 +112,10 @@ module ejs.web {
         native var host: String
 
         /** 
-            Logger object. Set to App.logger. This is configured from the "log" section of the "ejsrc" config file.
+            Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.
          */
         function get log(): Logger 
-            App.logger
+            App.log
 
         /** 
             Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE)
@@ -255,11 +255,12 @@ module ejs.web {
          */
         native function close(): Void
 
+        //  MOB - unique name to not conflict with global.dump()
         /** 
             Dump objects for debugging
             @param args List of arguments to print.
          */
-        function dump(...args): Void {
+        function show(...args): Void {
             for each (var e: Object in args) {
                 write(serialize(e, {pretty: true}) + "\r\n")
             }
@@ -342,15 +343,21 @@ module ejs.web {
 
         //    MOB - doc
         /** @hide */
-        function makeUri(parts: Object): Uri {
+        function makeUri(where: Object): Uri {
             if (route) {
-                return route.makeUri(this, blend(params.clone(), parts))
+                if (where is String) {
+                    return route.makeUri(this, params).join(where)
+                } else {
+                    return route.makeUri(this, blend(params.clone(), where))
+                }
             }
-            let uri = request.absHome.components()
-            for each (part in parts) {
-                blend(uri, part)
+            let comoponents = request.absHome.components()
+            if (where is String) {
+                return Uri(components).join(where)
+            } else {
+                blend(components, where)
             }
-            return Uri(uri)
+            return Uri(components)
         }
 
         /**
@@ -446,6 +453,7 @@ module ejs.web {
          */
         native function write(...data): Number
 
+//  MOB -- was Controller.reportError
         /** 
             Write an error message back to the user. The status is set to Http.ServerError (500) and the content type
             is set to text/html. The output is html escaped for security. Output is finalized.
@@ -484,7 +492,7 @@ module ejs.web {
             @spec jsgi-0.3
          */
         static var jsgi: Object = {
-            errors: App.logger,
+            errors: App.log,
             version: [0,3],
             multithread: true,
             multiprocess: false,

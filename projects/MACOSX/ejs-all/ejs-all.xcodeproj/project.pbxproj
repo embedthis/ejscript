@@ -137,6 +137,7 @@
 		C9248E5F10A4933400B29BDD /* ejsmod.c in Sources */ = {isa = PBXBuildFile; fileRef = C9248E5A10A4933400B29BDD /* ejsmod.c */; };
 		C9248E6010A4933400B29BDD /* listing.c in Sources */ = {isa = PBXBuildFile; fileRef = C9248E5B10A4933400B29BDD /* listing.c */; };
 		C9248E6110A4933400B29BDD /* slotGen.c in Sources */ = {isa = PBXBuildFile; fileRef = C9248E5C10A4933400B29BDD /* slotGen.c */; };
+		C9267D9A118AAEF000A446EA /* ejsLogger.c in Sources */ = {isa = PBXBuildFile; fileRef = C9267D99118AAEF000A446EA /* ejsLogger.c */; };
 		C92F848810F2B80300CA953D /* ejsHttpServer.c in Sources */ = {isa = PBXBuildFile; fileRef = C92F848610F2B80300CA953D /* ejsHttpServer.c */; };
 		C92F848910F2B80300CA953D /* ejsWeb.c in Sources */ = {isa = PBXBuildFile; fileRef = C92F848710F2B80300CA953D /* ejsWeb.c */; };
 		C92F849B10F2B93200CA953D /* libhttp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C95E4FDB10EBFD9300982610 /* libhttp.dylib */; };
@@ -773,6 +774,7 @@
 		C9248E5A10A4933400B29BDD /* ejsmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ejsmod.c; sourceTree = "<group>"; };
 		C9248E5B10A4933400B29BDD /* listing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = listing.c; sourceTree = "<group>"; };
 		C9248E5C10A4933400B29BDD /* slotGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = slotGen.c; sourceTree = "<group>"; };
+		C9267D99118AAEF000A446EA /* ejsLogger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsLogger.c; path = ../../../src/core/src/ejsLogger.c; sourceTree = SOURCE_ROOT; };
 		C928EF3C10741AE800A81F4D /* libmatrixsslstatic.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmatrixsslstatic.a; path = ../../../lib/libmatrixsslstatic.a; sourceTree = SOURCE_ROOT; };
 		C92CCCC311389C1E007F17A9 /* ejs.tar.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.tar.slots.h; path = ../../../src/include/ejs.tar.slots.h; sourceTree = SOURCE_ROOT; };
 		C92CCCC411389C1E007F17A9 /* ejs.web.google.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.web.google.slots.h; path = ../../../src/include/ejs.web.google.slots.h; sourceTree = SOURCE_ROOT; };
@@ -1047,6 +1049,7 @@
 		C9188AF6115DAB760018846C /* core */ = {
 			isa = PBXGroup;
 			children = (
+				C9267D99118AAEF000A446EA /* ejsLogger.c */,
 				C9902A681161776B00473F37 /* ejsFrame.c */,
 				C9188B31115DAC060018846C /* ejsApp.c */,
 				C9188B32115DAC060018846C /* ejsArray.c */,
@@ -1987,93 +1990,100 @@
 			files = (
 			);
 			inputPaths = (
+				"$(SRC)/core/App.es",
 				"$(SRC)/core/Array.es",
+				"$(SRC)/core/BinaryStream.es",
 				"$(SRC)/core/Block.es",
 				"$(SRC)/core/Boolean.es",
 				"$(SRC)/core/ByteArray.es",
+				"$(SRC)/core/Cmd.es",
+				"$(SRC)/core/CmdArgs.es",
+				"$(SRC)/core/Compat.es",
 				"$(SRC)/core/Config.es",
-				"$(SRC)/core/Dispatcher.es",
 				"$(SRC)/core/Date.es",
+				"$(SRC)/core/Debug.es",
+				"$(SRC)/core/Emitter.es",
 				"$(SRC)/core/Error.es",
 				"$(SRC)/core/Event.es",
+				"$(SRC)/core/File.es",
+				"$(SRC)/core/FileSystem.es",
 				"$(SRC)/core/Frame.es",
 				"$(SRC)/core/Function.es",
+				"$(SRC)/core/GC.es",
 				"$(SRC)/core/Global.es",
+				"$(SRC)/core/Http.es",
 				"$(SRC)/core/Iterator.es",
 				"$(SRC)/core/JSON.es",
+				"$(SRC)/core/Locale.es",
+				"$(SRC)/core/Logger.es",
 				"$(SRC)/core/Math.es",
+				"$(SRC)/core/Memory.es",
 				"$(SRC)/core/Name.es",
 				"$(SRC)/core/Namespace.es",
 				"$(SRC)/core/Null.es",
 				"$(SRC)/core/Number.es",
 				"$(SRC)/core/Object.es",
+				"$(SRC)/core/Path.es",
+				"$(SRC)/core/Promise.es",
 				"$(SRC)/core/Reflect.es",
 				"$(SRC)/core/RegExp.es",
+				"$(SRC)/core/Socket.es",
 				"$(SRC)/core/Stream.es",
 				"$(SRC)/core/String.es",
+				"$(SRC)/core/System.es",
+				"$(SRC)/core/TextStream.es",
 				"$(SRC)/core/Timer.es",
 				"$(SRC)/core/Type.es",
+				"$(SRC)/core/Uri.es",
 				"$(SRC)/core/Void.es",
-				"$(SRC)/core/XML.es",
-				"$(SRC)/core/XMLList.es",
-				"$(SRC)/core/BinaryStream.es",
-				"$(SRC)/core/File.es",
-				"$(SRC)/core/FileSystem.es",
-				"$(SRC)/core/Http.es",
-				"$(SRC)/core/Path.es",
-				"$(SRC)/core/Socket.es",
-				"$(SRC)/core/TextStream.es",
-				"$(SRC)/core/XMLHttp.es",
-				"$(SRC)/core/App.es",
-				"$(SRC)/core/Cmd.es",
-				"$(SRC)/core/CmdArgs.es",
-				"$(SRC)/core/Debug.es",
-				"$(SRC)/core/GC.es",
-				"$(SRC)/core/Logger.es",
-				"$(SRC)/core/Memory.es",
-				"$(SRC)/core/System.es",
 				"$(SRC)/core/Worker.es",
+				"$(SRC)/core/XML.es",
+				"$(SRC)/core/XMLHttp.es",
+				"$(SRC)/core/XMLList.es",
 				"$(JEMS)/ejs.cache/Cache.es",
-				"$(JEMS)/ejs.cjs/Require.es",
-				"$(JEMS)/ejs.db.mapper/Record.es",
-				"$(JEMS)/ejs.db.sqlite/Sqlite.es",
+				"$(JEMS)/ejs.cjs/Loader.es",
 				"$(JEMS)/ejs.db/Database.es",
 				"$(JEMS)/ejs.db/DatabaseConnector.es",
+				"$(JEMS)/ejs.db.couch/Couch.es",
+				"$(JEMS)/ejs.db.mapper/Record.es",
+				"$(JEMS)/ejs.db.sqlite/Sqlite.es",
 				"$(JEMS)/ejs.unix/Unix.es",
 				"$(JEMS)/ejs.web.jsgi/Cascade.es",
 				"$(JEMS)/ejs.web.jsgi/Head.es",
 				"$(JEMS)/ejs.web.jsgi/Static.es",
 				"$(JEMS)/ejs.web.template/TemplateParser.es",
-				"$(JEMS)/ejs.web.mvc.google/Google.es",
-				"$(JEMS)/ejs.web.mvc/Controller.es",
-				"$(JEMS)/ejs.web.mvc/Html.es",
-				"$(JEMS)/ejs.web.mvc/Router.es",
-				"$(JEMS)/ejs.web.mvc/View.es",
-				"$(JEMS)/ejs.web/OutOfBand.es",
+				"$(JEMS)/ejs.web/Controller.es",
+				"$(JEMS)/ejs.web/Google.es",
+				"$(JEMS)/ejs.web/Html.es",
+				"$(JEMS)/ejs.web/HttpServer.es",
 				"$(JEMS)/ejs.web/Request.es",
+				"$(JEMS)/ejs.web/Router.es",
 				"$(JEMS)/ejs.web/Session.es",
 				"$(JEMS)/ejs.web/UploadFile.es",
 				"$(JEMS)/ejs.web/Utils.es",
+				"$(JEMS)/ejs.web/View.es",
 				"$(JEMS)/ejs.web/Web.es",
-				"$(JEMS)/ejs.web/WebLoader.es",
+				"$(JEMS)/ejs.web/Web.es",
+				"$(JEMS)/ejs.web.jsgi/Cascade.es",
+				"$(JEMS)/ejs.web.jsgi/Head.es",
+				"$(JEMS)/ejs.web.jsgi/Static.es",
 			);
 			outputPaths = (
 				"$(BUILT_PRODUCTS_DIR)/ejs.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.cache.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.cjs.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.db.mod",
+				"$(BUILT_PRODUCTS_DIR)/ejs.db.couch.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.db.mapper.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.db.sqlite.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.unix.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.web.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.web.jsgi.mod",
-				"$(BUILT_PRODUCTS_DIR)/ejs.mvc.mod",
-				"$(BUILT_PRODUCTS_DIR)/ejs.web.mvc.google.mod",
 				"$(BUILT_PRODUCTS_DIR)/ejs.web.template.mod",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -x\nmake -C $SRC ../modules/ejs.mod && cp $TOP/modules/*.mod $BUILT_PRODUCTS_DIR\nmkdir -p $BUILT_PRODUCTS_DIR/../lib\ncp $SRC/deps/appweb/ejsweb.conf $BUILT_PRODUCTS_DIR/../lib/ejsweb.conf\ncp $SRC/deps/appweb/startup.es $BUILT_PRODUCTS_DIR/../lib/startup.es\n\n";
+			shellScript = "set -x\nmake -C $SRC && cp $TOP/modules/*.mod $BUILT_PRODUCTS_DIR\nmkdir -p $BUILT_PRODUCTS_DIR/../lib\ncp $SRC/deps/appweb/ejsweb.conf $BUILT_PRODUCTS_DIR/../lib/ejsweb.conf\ncp $SRC/deps/appweb/start.es $BUILT_PRODUCTS_DIR/../lib/start.es\n\n";
 			showEnvVarsInLog = 0;
 		};
 		C99A33CD10C2F14000F6C7BC /* ShellScript */ = {
@@ -2244,6 +2254,7 @@
 				C9188B7F115DAC060018846C /* ejsXMLList.c in Sources */,
 				C9188B80115DAC060018846C /* ejsXMLLoader.c in Sources */,
 				C9902A691161776B00473F37 /* ejsFrame.c in Sources */,
+				C9267D9A118AAEF000A446EA /* ejsLogger.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -280,10 +280,10 @@ module ejs {
 
         /**
             Get a path after mapping the path directory separator
-            @param separator Path directory separator to use
+            @param separator Path directory separator to use. Defaults to the separator of for this path.
             @return a new Path after mapping separators
          */
-        native function map(separator: String): Path
+        native function map(sep: String = separator): Path
 
         /** 
             Get the mime type for a path or extension string. The path's extension is used to lookup the corresponding

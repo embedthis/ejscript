@@ -246,12 +246,9 @@ void ejsConfigureAppType(Ejs *ejs)
     type = ejs->appType = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "App");
     mprAssert(type);
 
-    ejsSetProperty(ejs, (EjsObj*) type, ES_App__inputStream,
-        (EjsObj*) ejsCreateFileFromFd(ejs, 1, "stdin", O_WRONLY));
-    ejsSetProperty(ejs, (EjsObj*) type, ES_App__errorStream,
-        (EjsObj*) ejsCreateFileFromFd(ejs, 1, "stderr", O_WRONLY));
-    ejsSetProperty(ejs, (EjsObj*) type, ES_App__outputStream,
-        (EjsObj*) ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));
+    ejsSetProperty(ejs, (EjsObj*) type, ES_App__inputStream, (EjsObj*) ejsCreateFileFromFd(ejs, 0, "stdin", O_RDONLY));
+    ejsSetProperty(ejs, (EjsObj*) type, ES_App__outputStream, (EjsObj*) ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));
+    ejsSetProperty(ejs, (EjsObj*) type, ES_App__errorStream, (EjsObj*) ejsCreateFileFromFd(ejs, 2, "stderr", O_WRONLY));
 
     ejsBindMethod(ejs, type, ES_App_args, (EjsProc) getArgs);
     ejsBindMethod(ejs, type, ES_App_dir, (EjsProc) currentDir);
@@ -264,9 +261,7 @@ void ejsConfigureAppType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_App_noexit, (EjsProc) noexit);
     ejsBindMethod(ejs, type, ES_App_createSearch, (EjsProc) createSearch);
     ejsBindAccess(ejs, type, ES_App_search, (EjsProc) getSearch, (EjsProc) setSearch);
-#if ES_App_eventLoop
     ejsBindMethod(ejs, type, ES_App_eventLoop, (EjsProc) eventLoop);
-#endif
     ejsBindMethod(ejs, type, ES_App_sleep, (EjsProc) sleepProc);
 
 #if FUTURE

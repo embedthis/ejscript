@@ -1,0 +1,6 @@
+class C {
+    static var x = {
+        //  Error regarding using an instance
+        fun: function () { return true; }
+    }
+}

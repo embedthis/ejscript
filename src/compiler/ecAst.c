@@ -951,7 +951,7 @@ static EjsFunction *defineFunction(EcCompiler *cp, EcNode *np)
         astError(cp, np, "Can't create function \"%s\"", np->qname.name);
         return 0;
     }    
-    ejsSetDebugName(fun, np->qname.name);
+    ejsSetDebugName(fun, mprStrdup(fun, np->qname.name));
     np->function.functionVar = fun;
 
     /*

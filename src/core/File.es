@@ -22,10 +22,15 @@ module ejs {
         native function addListener(name, listener: Function): Void
 
         /** @duplicate Stream.async */
-        native function get async(): Boolean
+        function get async(): Boolean
+            false
 
         /** @duplicate Stream.async */
-        native function set async(enable: Boolean): Void
+        function set async(enable: Boolean): Void {
+            if (enable) {
+                throw new ArgError("File class does not support async I/O")
+            }
+        }
 
         /** 
             Create a File object and open the requested path.

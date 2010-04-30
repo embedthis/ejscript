@@ -217,34 +217,35 @@
 #define ES_App__origin                                                 27
 #define ES_App__initializer__App_initializer                           27
 #define ES_App_config                                                  28
-#define ES_App__errorStream                                            29
-#define ES_App__inputStream                                            30
-#define ES_App__outputStream                                           31
-#define ES_App_defaultConfig                                           32
-#define ES_App_args                                                    33
-#define ES_App_dir                                                     34
-#define ES_App_chdir                                                   35
-#define ES_App_exeDir                                                  36
-#define ES_App_exePath                                                 37
-#define ES_App_errorStream                                             38
-#define ES_App_exit                                                    39
-#define ES_App_getenv                                                  40
-#define ES_App_inputStream                                             41
-#define ES_App_logger                                                  42
-#define ES_App_name                                                    43
-#define ES_App_noexit                                                  44
-#define ES_App_outputStream                                            45
-#define ES_App_putenv                                                  46
-#define ES_App_search                                                  47
-#define ES_App_createSearch                                            48
-#define ES_App_eventLoop                                               49
-#define ES_App_sleep                                                   50
-#define ES_App_title                                                   51
-#define ES_App_version                                                 52
-#define ES_App_searchPath                                              53
-#define ES_App_serviceEvents                                           54
+#define ES_App_SearchSeparator                                         29
+#define ES_App__errorStream                                            30
+#define ES_App__inputStream                                            31
+#define ES_App__outputStream                                           32
+#define ES_App_defaultConfig                                           33
+#define ES_App_args                                                    34
+#define ES_App_dir                                                     35
+#define ES_App_chdir                                                   36
+#define ES_App_exeDir                                                  37
+#define ES_App_exePath                                                 38
+#define ES_App_errorStream                                             39
+#define ES_App_exit                                                    40
+#define ES_App_getenv                                                  41
+#define ES_App_inputStream                                             42
+#define ES_App_log                                                     43
+#define ES_App_name                                                    44
+#define ES_App_noexit                                                  45
+#define ES_App_outputStream                                            46
+#define ES_App_putenv                                                  47
+#define ES_App_search                                                  48
+#define ES_App_createSearch                                            49
+#define ES_App_eventLoop                                               50
+#define ES_App_sleep                                                   51
+#define ES_App_title                                                   52
+#define ES_App_version                                                 53
+#define ES_App_searchPath                                              54
+#define ES_App_serviceEvents                                           55
 
-#define ES_App_NUM_CLASS_PROP                                          55
+#define ES_App_NUM_CLASS_PROP                                          56
 
 /*
  * Instance slots for "App" type 
@@ -1505,20 +1506,22 @@
 #define ES_Logger_flush                                                39
 #define ES_Logger_level                                                40
 #define ES_Logger_match                                                41
-#define ES_Logger_name                                                 42
-#define ES_Logger_outstream                                            43
-#define ES_Logger_parent                                               44
-#define ES_Logger_debug                                                45
-#define ES_Logger_config                                               46
-#define ES_Logger_error                                                47
-#define ES_Logger_info                                                 48
-#define ES_Logger_read                                                 49
-#define ES_Logger_removeListener                                       50
-#define ES_Logger_write                                                51
-#define ES_Logger_warn                                                 52
-#define ES_Logger_emit                                                 53
+#define ES_Logger_mprLevel                                             42
+#define ES_Logger_mprStream                                            43
+#define ES_Logger_name                                                 44
+#define ES_Logger_outStream                                            45
+#define ES_Logger_parent                                               46
+#define ES_Logger_debug                                                47
+#define ES_Logger_config                                               48
+#define ES_Logger_error                                                49
+#define ES_Logger_info                                                 50
+#define ES_Logger_read                                                 51
+#define ES_Logger_removeListener                                       52
+#define ES_Logger_write                                                53
+#define ES_Logger_warn                                                 54
+#define ES_Logger_emit                                                 55
 
-#define ES_Logger_NUM_CLASS_PROP                                       54
+#define ES_Logger_NUM_CLASS_PROP                                       56
 
 /*
  * Instance slots for "Logger" type 
@@ -1527,7 +1530,7 @@
 #define ES_Logger__level                                               1
 #define ES_Logger__pattern                                             2
 #define ES_Logger__name                                                3
-#define ES_Logger__outstream                                           4
+#define ES_Logger__outStream                                           4
 #define ES_Logger__parent                                              5
 #define ES_Logger_NUM_INSTANCE_PROP                                    6
 
@@ -1861,7 +1864,7 @@
 #define ES_Path_makeDir_options                                        0
 #define ES_Path_makeLink_target                                        0
 #define ES_Path_makeLink_hard                                          1
-#define ES_Path_map_separator                                          0
+#define ES_Path_map_sep                                                0
 #define ES_Path_open_options                                           0
 #define ES_Path_openTextStream_options                                 0
 #define ES_Path_openBinaryStream_options                               0
@@ -2544,6 +2547,6 @@
 #define ES_XMLList_descendants_name                                    0
 #define ES_XMLList_elements_name                                       0
 
-#define _ES_CHECKSUM_ejs   1332795
+#define _ES_CHECKSUM_ejs   1335247
 
 #endif

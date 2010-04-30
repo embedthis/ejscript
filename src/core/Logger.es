@@ -15,7 +15,7 @@ module ejs {
         A logger may have a "parent" logger in order to create hierarchies of loggers for granular control of logging.
         For example, a logger can be created for each class in a package with all such loggers having a single parent. 
         Loggers can send log messages to their parent and inherit their parent's log level. 
-        The top level logger for an application is defined by App.logger.
+        The top level logger for an application is defined by App.log.
  
         Loggers may define a filter function that returns true or false depending on whether a specific message 
         should be logged or not. A matching pattern can alternatively be used to filter messages based on the logger name.
@@ -60,7 +60,7 @@ module ejs {
         private var _level: Number = 0
         private var _pattern: RegExp
         private var _name: String
-        private var _outstream: Stream
+        private var _outStream: Stream
         private var _parent: Logger
 
         /** 
@@ -75,21 +75,24 @@ module ejs {
                 logger level will be emitted. Range is 0 (least verbose) to 9.
             @example:
                 var file = File("progress.log", "w")
-                var logger = new Logger("name", file, 5)
-                logger.log(2, "message")
+                var log = new Logger("name", file, 5)
+                log.debug(2, "message")
          */
         function Logger(name: String, output = null, level: Number? = 0) {
             _name = name
             if (output && output is Logger) {
                 _level = output.level
                 _parent = output
+            } else if (output && output is Stream) {
+                _outStream = output
+                _level = level
             } else {
                 if (output == "stdout") {
-                    _outstream = App.outputStream
+                    _outStream = App.outputStream
                 } else if (output == "stderr") {
-                    _outstream = App.errorStream
+                    _outStream = App.errorStream
                 } else {
-                    _outstream = output || App.errorStream
+                    _outStream = output || App.errorStream
                 }
                 _level = level
             }
@@ -125,7 +128,7 @@ module ejs {
             Close the logger 
          */
         function close(): Void {
-            _outstream = null
+            _outStream = null
         }
 
         /** 
@@ -178,6 +181,10 @@ module ejs {
             _pattern = pattern
         }
 
+        //  MOB
+        static native function get mprLevel(): Stream
+        static native function get mprStream(): Stream
+
         /** 
             The name of this logger.
          */
@@ -195,15 +202,15 @@ module ejs {
         /** 
             The output stream used by the logger.
          */
-        function get outstream(): Stream
-            _outstream
+        function get outStream(): Stream
+            _outStream
 
         /** 
             Set the output stream device for this logger.
             @param stream New output stream for the logger
          */
-        function set outstream(stream: Stream): void {
-            _outstream = outstream
+        function set outStream(stream: Stream): void {
+            _outStream = outStream
         }
 
         /** 
@@ -291,7 +298,7 @@ module ejs {
             @param msg The string message to emit
          */
         private function emit(log: Logger, level: Number, name: String, kind: String, msg: String): Void {
-            if (level > _level || !_outstream)
+            if (level > _level || !_outStream)
                 return
             if (name)
                 name = _name + "." + name
@@ -304,8 +311,8 @@ module ejs {
                 _parent.emit(log, level, name, kind, msg)
             } else {
                 if (kind)
-                    _outstream.write(name + ": " + kind + ": " + msg)
-                else _outstream.write(name + ": " + msg)
+                    _outStream.write(name + ": " + kind + ": " + msg)
+                else _outStream.write(name + ": " + level + ": " + msg)
             }
         }
     }

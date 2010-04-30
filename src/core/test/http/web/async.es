@@ -1,13 +1,14 @@
 require ejs.web
 require ejs.web.jsgi
 
-exports.app = Response(function (request) { 
-    return function() {
-        setStatus(200)
-        setHeaders({"Content-Type": "text/html"})
+exports.app = function (request) { 
+    return function(r) {
+        r.setStatus(200)
+        r.setHeaders({"Content-Type": "text/html"})
         Timer(5000, function() {
-            request.write("Now done\n")
-            request.finish()
+            r.write("Now done\n")
+            r.finish()
+            r.finalize()
         })
     } 
-})
+}

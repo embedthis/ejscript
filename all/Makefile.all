@@ -94,7 +94,9 @@ $(BLD_MOD_DIR)/ejs.mod: $(BLD_INC_DIR)/ejs.slots.h *.es $(TOOLS)
 		chmod +w $(BLD_INC_DIR)/ejs.slots.h ; \
 		cp .ejs.slots.h $(BLD_INC_DIR)/ejs.slots.h ; \
 		touch .ejs.slots.h ; \
-		make compile; [ $$? != 0 ] && exit 255 ; true ; \
+		if [ "$(RETRY)" = "" ] ; then \
+			make TRACE=$(TRACE) RETRY=1 compile; [ $$? != 0 ] && exit 255 ; true ; \
+		fi ; \
 	else true ; \
 	fi
 

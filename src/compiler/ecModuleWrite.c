@@ -726,11 +726,14 @@ void ecAddFunctionConstants(EcCompiler *cp, EjsFunction *fun)
     if (cp->ejs->flags & EJS_FLAG_DOC) {
         ecAddDocConstant(cp, 0, fun->owner, fun->slotNum);
     }
-    ecAddBlockConstants(cp, (EjsBlock*) fun);
+    ecAddConstants(cp, (EjsObj*) fun);
+    if (fun->activation) {
+        ecAddConstants(cp, fun->activation);
+    }
 }
 
 
-void ecAddBlockConstants(EcCompiler *cp, EjsBlock *block)
+void ecAddConstants(EcCompiler *cp, EjsObj *block)
 {
     Ejs         *ejs;
     EjsName     qname;
@@ -740,20 +743,20 @@ void ecAddBlockConstants(EcCompiler *cp, EjsBlock *block)
 
     ejs = cp->ejs;
 
-    numTraits = ejsGetNumTraits((EjsObj*) block);
+    numTraits = ejsGetNumTraits(block);
     for (i = 0; i < numTraits; i++) {
-        qname = ejsGetPropertyName(ejs, (EjsObj*) block, i);
+        qname = ejsGetPropertyName(ejs, block, i);
         ecAddNameConstant(cp, &qname);
-        trait = ejsGetPropertyTrait(ejs, (EjsObj*) block, i);
+        trait = ejsGetPropertyTrait(ejs, block, i);
         if (trait && trait->type) {
             ecAddNameConstant(cp, &trait->type->qname);
         }
-        vp = ejsGetProperty(ejs, (EjsObj*) block, i);
-        if (vp != (EjsObj*) block) {
+        vp = ejsGetProperty(ejs, block, i);
+        if (vp != block) {
             if (ejsIsFunction(vp)) {
                 ecAddFunctionConstants(cp, (EjsFunction*) vp);
             } else if (ejsIsBlock(vp)) {
-                ecAddBlockConstants(cp, (EjsBlock*) vp);
+                ecAddConstants(cp, (EjsObj*) vp);
             }
         }
     }

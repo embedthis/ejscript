@@ -90,7 +90,6 @@ module ejs.web.template  {
             if (options.layout) {
                 layoutPage = Path(options.layout)
             }
-
             this.script = script
             while ((tid = getToken(token)) != Token.Eof) {
                 // print("getToken => " + Token.tokens[tid + 1] + " TOKEN => \"" + token + "\"")
@@ -136,15 +135,13 @@ module ejs.web.template  {
                         break
 
                     case "layout":
+                        let layouts = options.layouts || "views/layouts"
                         let path = args[1]
                         if (path == "" || path == '""') {
                             layoutPage = undefined
                         } else {
                             path = args[1].trim("'").trim('"').trim('.ejs') + ".ejs"
-                            if (!options.layouts) {
-                                throw "Location of layout page not defined in options"
-                            }
-                            layoutPage = Path(options.layouts).join(path)
+                            layoutPage = Path(layouts).join(path)
                             if (!layoutPage.exists) {
                                 throw "Can't find layout page " + layoutPage
                             }
@@ -167,7 +164,6 @@ module ejs.web.template  {
 
                 }
             }
-
             if (layoutPage && layoutPage != options.currentLayout) {
                 let layoutOptions = blend(options.clone(), { currentLayout: layoutPage })
                 let layoutText: String = new TemplateParser().parse(layoutPage.readString(), layoutOptions)

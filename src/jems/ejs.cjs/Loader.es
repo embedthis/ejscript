@@ -60,6 +60,7 @@ module ejs.cjs {
             if (path) {
                 let cache: Path = cached(path)
                 if (cache && cache.exists && cache.modified >= path.modified) {
+                    App.log.debug(4, "Use cache for: " + path)
                     initializer = global.load(cache)
                 } else {
                     if (codeReader) {
@@ -68,10 +69,12 @@ module ejs.cjs {
                         code = path.readString()
                         code = wrap(code)
                     }
+                    App.log.debug(4, "Recompile module to: " + path)
                     initializer = eval(code, cache)
                 }
                 timestamps[path] = path.modified
             } else {
+//  MOB BUG - code doesn't exist
                 code = wrap(code)
                 initializer = eval(code)
             }

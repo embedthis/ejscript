@@ -678,7 +678,8 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     EjsRequest      *req;
     EjsType         *type;
     HttpReceiver    *rec;
-    cchar           *scheme;
+    cchar           *scheme, *ip;
+    int             port;
 
     type = ejsGetTypeByName(ejs, "ejs.web", "Request");
     if ((req = (EjsRequest*) ejsCreate(ejs, type, 0)) == NULL) {
@@ -688,15 +689,14 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     req->ejs = ejs;
     req->server = server;
     rec = conn->receiver;
-#if UNUSED
-    req->pathInfo = rec->pathInfo;
-    req->scriptName = rec->scriptName;
-#endif
     req->dir = mprGetAbsPath(req, dir);
     req->home = makeRelativeHome(ejs, req);
     scheme = conn->secure ? "https" : "http";
-    //  MOB -- should there be a way to get a symbolic server name?
-    req->absHome = mprAsprintf(req, -1, "%s://%s:%d%s/", scheme, server->ip, server->port, rec->scriptName);
+    ip = conn->sock ? conn->sock->acceptIp : server->ip;
+    port = conn->sock ? conn->sock->acceptPort : server->port;
+    
+    //  MOB -- should really use a symbolic server name from appweb.conf
+    req->absHome = mprAsprintf(req, -1, "%s://%s:%d%s/", scheme, conn->sock->ip, server->port, rec->scriptName);
     return req;
 }
 

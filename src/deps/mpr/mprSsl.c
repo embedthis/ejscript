@@ -3261,6 +3261,8 @@ extern int mprWriteString(MprFile *file, cchar *str);
  */
 extern int mprWriteFormat(MprFile *file, cchar *fmt, ...);
 
+extern int mprGetFileFd(MprFile *file);
+
 
 /**
     Path (filename) Information
@@ -6499,6 +6501,7 @@ typedef struct Mpr {
     int             timezone;               /**< Minutes west of Greenwich */
     int             hasDedicatedService;    /**< Running a dedicated events thread */
     int             allocPolicy;            /**< Memory allocation depletion policy */
+    int             logFd;                  /**< Logging file descriptor */
 
     /*
         Service pointers
@@ -6828,7 +6831,10 @@ extern int mprGetRandomBytes(MprCtx ctx, char *buf, int size, int block);
  */
 extern int mprGetEndian(MprCtx ctx);
 
+//  MOB
 extern void mprNop();
+extern int mprGetLogFd(MprCtx ctx);
+extern int mprSetLogFd(MprCtx ctx, int fd);
 
 
 #if WIN || WINCE

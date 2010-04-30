@@ -414,7 +414,8 @@ module ejs.db.mapper {
             return result
         }
 
-        /** Get the type of a column
+        /** 
+            Get the type of a column
             @param field Name of the field to examine.
             @return A string with the data type of the column
          */

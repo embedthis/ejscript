@@ -16,8 +16,8 @@ module ejs.web {
      */
     class Controller {
         /*  
-            Define properties and functions (by default) in the ejs.web namespace so that user controller variables 
-            don't clash. Override with "public" the specific properties that must be copied to views.
+            Define properties and functions in the ejs.web namespace so that user controller variables don't clash. 
+            Override with "public" the specific properties that must be copied to views.
          */
         use default namespace module
 
@@ -68,11 +68,11 @@ module ejs.web {
          */
         function Controller(r: Request) {
             request = r || _initRequest
+            log = request.log
             if (request) {
-                log = request.logger
+                log = request.log
                 params = request.params
-//  MOB - should be able to use a bare Controller and then set Name to something?
-                controllerName = Reflect(this).name.trim("Controller")
+                controllerName = typeOf(this).trim("Controller") || "-Controller-"
                 if (request.config.database) {
                     openDatabase(request)
                 }
@@ -92,7 +92,7 @@ module ejs.web {
             }
             _initRequest = request
             let uname = cname.toPascal() + "Controller"
-            let c = new global[uname]()
+            let c = new global[uname](request)
             _initRequest = null
             return c
         }
@@ -116,6 +116,8 @@ module ejs.web {
             let adapter = dbconfig.adapter
             let profile = dbconfig[deploymentMode]
             if (klass && dbconfig.adapter && profile.name) {
+                //  MOB -- should NS be here
+                use namespace "ejs.db"
                 let db = new global[klass](dbconfig.adapter, request.dir.join(profile.name))
                 if (profile.trace) {
                     db.trace(true)
@@ -144,6 +146,8 @@ module ejs.web {
                 runFilters(_afterFilters)
             }
             flashAfter()
+            //  MOB -- but what if you don't want a controller to finalize?
+            request.finalize()
         }
 
         /* 
@@ -244,16 +248,18 @@ module ejs.web {
             Load the view
          */
         function loadView(path: Path, name: String) {
-            let cached = Loader.cached(path, request.dir.join(request.config.directories.cache))
+            let dirs = request.config.directories
+            let cached = Loader.cached(path, request.dir.join(dirs.cache))
             if (cached && cached.exists && cached.modified >= path.modified) {
+                log.debug(4, "Load view \"" + name + "\" from cache: " + cached);
                 load(cached)
             } else {
                 if (!global.TemplateParser) {
                     load("ejs.web.template.mod")
                 }
-                //  MOB - should be in ejsrc
-                let layout = request.dir.join("views/layouts/default.ejs")
-                let code = TemplateParser().buildView(name, path.readString(), { layout: layout })
+                let layouts = request.dir.join(dirs.layouts)
+                log.debug(4, "Rebuild and template \"" + name + "\" from cache: " + cached);
+                let code = TemplateParser().buildView(name, path.readString(), { layouts: layouts })
                 eval(code, cached)
             }
         }
@@ -282,6 +288,7 @@ module ejs.web {
         function render(...args): Void { 
             rendered = true
             request.write(args)
+            request.finalize()
         }
 
         /** 
@@ -291,35 +298,23 @@ module ejs.web {
             rendered = true
             let file: File = new File(filename)
             try {
+                //  MOB -- should use SENDFILE
                 file.open()
                 while (data = file.read(4096)) {
                     request.write(data)
                 }
                 file.close()
+                request.finalize()
             } catch (e: Error) {
                 reportError(Http.ServerError, "Can't read file: " + filename, e)
             }
         }
 
         /** 
-            Render a partial ejs template. Does not set "rendered"
+            Render a partial ejs template. Does not set "rendered" to true.
          */
         function renderPartial(path: Path): void { 
-            //  TODO - untested
-            let name = path.replace("/", "_") + "View"
-            let viewClass: String = name.toPascal()
-            if (!global[viewClass]) {
-                //  TOOD - where should partials come from?
-                let path = request.dir.join("views", controllerName, actionName + ".ejs")
-                let name = controllerName + "_" + actionName
-                loadView(path, name)
-            }
-            view = new global[viewClass](request)
-            for (let n: String in this) {
-                view.public::[n] = this[n]
-            }
-            // view.setController(this)
-            view.render(request)
+            //  MOB -- todo
         }
 
         /** 
@@ -331,18 +326,20 @@ module ejs.web {
                 return
             }
             rendered = true
-            viewName = controllerName + "_" + (viewName || actionName)
-            let path = request.dir.join("views", controllerName, actionName).joinExt(request.config.extensions.ejs)
-            loadView(path, viewName)
-            let viewClass: String = viewName + "View"
+            viewName ||= actionName
+            let viewClass = controllerName + "_" + viewName + "View"
             if (!global[viewClass]) {
-                loadView(path, viewName)
+                let path = request.dir.join("views", controllerName, viewName).joinExt(request.config.extensions.ejs)
+                loadView(path, controllerName + "_" + viewName)
             }
             view = new global[viewClass](request)
-            for (let n: String in this) {
-                view.public::[n] = this[n]
+            //  MOB -- slow. Native method for this?
+            for each (let n: String in Object.getOwnPropertyNames(this)) {
+                if (this.public::[n]) {
+                    view.public::[n] = this[n]
+                }
             }
-            // view.setController(this)
+            log.debug(4, "render view: \"" + controllerName + "/" + viewName + "\"")
             view.render(request)
         }
 
@@ -371,7 +368,7 @@ module ejs.web {
 //  MOB -- revise doc
         /** 
             Make a URI suitable for invoking actions. This routine will construct a URL Based on a supplied action name, 
-            model id and options that may contain an optional controller name. This is a convenience routine remove from 
+            model id and options that may contain an optional controller name. This is a convenience routine to remove from 
             applications the burden of building URLs that correctly use action and controller names.
             @params parts 
             @return A string URL.

@@ -285,7 +285,7 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
             }
         }
         if (fp) {
-            if (fp->function.owner && fp->function.slotNum >= 0) {
+            if (fp->function.owner && fp->function.slotNum >= 0 && fp->function.slotNum < fp->function.owner->numSlots) {
                 functionName = ejsGetPropertyName(ejs, fp->function.owner, fp->function.slotNum).name;
             }
             if (ejsIsType(fp->function.owner)) {

@@ -88,6 +88,7 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
     if (src->activation) {
         dest->activation = ejsCloneObject(ejs, src->activation, 0);
     }
+    ejsSetDebugName(dest, ejsGetDebugName(src));
     return dest;
 }
 

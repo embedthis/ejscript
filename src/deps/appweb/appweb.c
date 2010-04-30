@@ -298,9 +298,7 @@ static char *findConfigFile(Mpr *mpr, char *configFile)
  */
 static int setupEjsApps(MaAppweb *appweb, MaServer *server, MprList *scripts)
 {
-    MaAlias         *alias;
     MaHost          *host;
-    MaDir           *dir, *parent;
     MprCtx          ctx;
     HttpLocation    *location;
     char            *home, *path, *uri, *script;
@@ -312,8 +310,10 @@ static int setupEjsApps(MaAppweb *appweb, MaServer *server, MprList *scripts)
 
     for (next = 0; (script = mprGetNextItem(scripts, &next)) != 0; ) {
         path = mprGetPathDir(ctx, mprJoinPath(ctx, home, script));
+#if UNUSED
         alias = maCreateAlias(host, "/", path, 0);
         maInsertAlias(host, alias);
+#endif
         mprLog(appweb, 3, "Ejs Alias \"%s\" for \"%s\"", uri, path);
 
         if (maLookupLocation(host, uri)) {
@@ -322,19 +322,34 @@ static int setupEjsApps(MaAppweb *appweb, MaServer *server, MprList *scripts)
             return MPR_ERR_ALREADY_EXISTS;
         }
         location = httpCreateInheritedLocation(appweb->http, host->location);
+#if UNUSED
         httpSetLocationAuth(location, host->location->auth);
+#endif
         httpSetLocationPrefix(location, uri);
         httpSetLocationScript(location, script);
         httpSetLocationAutoDelete(location, 1);
         maAddLocation(host, location);
         httpSetHandler(location, "ejsHandler");
-
+        
+#if UNUSED
         /* Make sure there is a directory for the alias target */
         dir = maLookupBestDir(host, path);
         if (dir == 0) {
             parent = mprGetFirstItem(host->dirs);
+#if UNUSED
+            dir = maCreateDir(host, alias->filename, parent);
+#else
+            dir = maCreateDir(host, path, parent);
+#endif
             dir = maCreateDir(host, alias->filename, parent);
             maInsertDir(host, dir);
+        }
+#endif
+        uri = "/web";
+        if (!maLookupLocation(host, uri)) {
+            location = httpCreateInheritedLocation(appweb->http, host->location);
+            httpSetLocationPrefix(location, uri);
+            maAddLocation(host, location);
         }
     }
     mprFree(ctx);

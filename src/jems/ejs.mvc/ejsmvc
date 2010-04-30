@@ -75,7 +75,6 @@ class EjsMvc {
         },
         mvc: {
             appmod: "App.mod",
-            compiler: "ejsc --debug --optimize 9 --web",
             start: "start.es",
             views: {
                 connectors: {
@@ -88,7 +87,6 @@ class EjsMvc {
                     Date: "%a %e %b %H:%M",
                 },
             },
-            webserver: 'ejsweb --ejs "/" --log stdout:2',
         },
         session: {
             enable: true,
@@ -111,7 +109,7 @@ class EjsMvc {
             for (d in dirs) {
                 dirs[d] = Path(dirs[d])
             }
-            layoutPage = dirs.layouts
+            layoutPage = dirs.layouts.join("default.ejs")
             ejsmvc = Path(App.args[0]).basename
         }
     }
@@ -120,6 +118,7 @@ class EjsMvc {
         [ [ "apply", "a" ] ],
         [ "database", String ],
         [ "debug" ],
+        [ "full" ],
         [ [ "keep", "k" ] ],
         [ "layout", String ],
         [ "min" ],
@@ -135,6 +134,7 @@ class EjsMvc {
             "  Options:\n" + 
             "    --apply                      # Apply migrations\n" + 
             "    --database [sqlite | mysql]  # Sqlite only currently supported adapter\n" + 
+            "    --full\n" + 
             "    --keep\n" + 
             "    --layout layoutPage\n" + 
             "    --min\n" + 
@@ -199,7 +199,7 @@ class EjsMvc {
     function processOptions(cmd: CmdArgs) {
         options = cmd.options
         if (options.search) {
-            App.search = options.search.split(Path.SearchSeparator)
+            App.search = options.search.split(App.SearchSeparator)
         }
         if (options.quiet) {
             options.verbose = 0
@@ -315,7 +315,6 @@ class EjsMvc {
                 buildView(name, true)
             }
             files = find("web", "." + ext.ejs)
-            options.layoutPage = undefined;
             for each (name in files) {
                 buildWebPage(name, true)
             }
@@ -323,7 +322,7 @@ class EjsMvc {
 
         case "all":
             /*
-             *  Build entire app as one module
+                Build entire app as one module
              */
             let saveVerbose = verbose
             let saveKeep = options.keep
@@ -450,7 +449,7 @@ class EjsMvc {
         let out = dirs.cache.join(file.basename).replaceExt(ext.mod)
         let cmd: String
         //  MOB -- but search is an array !!
-        let search = App.search.join(Path.SearchSeparator)
+        let search = App.search.join(App.SearchSeparator)
         cmd = getCompilerPath() + " --out " + out + " --search \"" + search + "\" " + dirs.cache.join(mvc.appmod) + 
             " " + file
         trace("[BUILD]", (verbose > 1) ? cmd : file)
@@ -460,8 +459,8 @@ class EjsMvc {
         }
     }
 
-    function buildView(file: Path, compile: Boolean = false): String {
-        if (file.toString().contains(/^views.layouts/)) {
+    function buildView(file: Path, compile: Boolean = false): Path {
+        if (file.toString().startsWith(dirs.layouts + "/")) {
              //  Skip layouts
             return null
         }
@@ -471,7 +470,6 @@ class EjsMvc {
         if (!file.exists) {
             throw "Can't find view file: " + file
         }
-
         let sansExt: Path = file.trimExt()
         let controller: String
         let controllerPrefix: String
@@ -494,26 +492,17 @@ class EjsMvc {
             trace("[PARSE]", file)
         }
         let parser: TemplateParser = new TemplateParser
-/* UNUSED
-        results = Templates.ViewHeader + parser.buildView(file.readString(), App.dir, options.layoutPage) + 
-            Templates.ViewFooter
-*/
-        results = parser.buildView(controllerPrefix + viewName, file.readString(), { layout: options.layoutPage })
-/* UNUSED
-        results = results.replace(/\${CONTROLLER}/g, controllerPrefix)
-        results = results.replace(/\${VIEW}/g, viewName)
-*/
-
+        results = parser.buildView(controllerPrefix + viewName, file.readString(), { layout: layoutPage })
         let intermediate: Path = dirs.cache.join(md5(file)).joinExt(ext.es)
         let out = intermediate.replaceExt(ext.mod)
         try {
-            Path(intermediate).write(results)
+            intermediate.write(results)
         } catch (e) {
             throw "Can't write module file: " + intermediate + ". Ensure directory is writable."
         }
         if (compile) {
             let cmd: String = getCompilerPath()
-            let search = App.search.join(Path.SearchSeparator)
+            let search = App.search.join(App.SearchSeparator)
             if (controllerMod.exists) {
                 cmd += " --out " + out + " --search \"" + search + "\" " + dirs.cache.join(mvc.appmod) + " " + 
                     controllerMod + " " + intermediate
@@ -541,7 +530,7 @@ class EjsMvc {
         return intermediate
     }
 
-    function buildWebPage(file: Path, compile: Boolean = true): String {
+    function buildWebPage(file: Path, compile: Boolean = true): Path {
         let sansExt: Path = file.trimExt()
         file = file.joinExt(ext.ejs)
         if (file.extension != ext.ejs) {
@@ -554,17 +543,17 @@ class EjsMvc {
             trace("[PARSE]", file)
         }
         let parser: TemplateParser = new TemplateParser
-        results = parser.build(file.readString(), { layouts: layoutPage })
+        results = parser.build(file.readString(), { layout: layoutPage })
         let intermediate: Path = dirs.cache.join(md5(file)).joinExt(ext.es)
         try {
-            Path(intermediate).write(results)
+            intermediate.write(results)
         } catch (e) {
             throw "Can't write module file: " + intermediate + ". Ensure directory is writable."
         }
         if (compile) {
             let out = intermediate.replaceExt(ext.mod)
             let cmd: String = getCompilerPath()
-            let search = App.search.join(Path.SearchSeparator)
+            let search = App.search.join(App.SearchSeparator)
             cmd += " --out " + out + " --search \"" + search + "\" " + intermediate
             trace("[BUILD]", (verbose > 1) ? cmd : file)
             command(cmd)
@@ -595,8 +584,7 @@ class EjsMvc {
         Build the entire app into a single mod file.
      */
     function buildFiles(out: Path, files: Array) {
-        let sep = (Config.OS == "WIN") ? ";" : ":"
-        let search = App.search.join(sep)
+        let search = App.search.join(App.SearchSeparator)
         let cmd = getCompilerPath() + " --out " + out + " --search \"" + search + "\" " + files.join(" ")
         if (verbose > 1) {
             trace("[BUILD]", cmd)
@@ -617,7 +605,7 @@ class EjsMvc {
 
     function browse(args: Array): Void {
         throw("No yet supported")
-        let cmd = config.mvc.webserver
+        let cmd = config.mvc.browser
 
         if (!cmd.match(/^\/|^[a-zA-Z]:\//)) {
             cmd = cmd.trim('"').replace(/^[^ ]+/, App.exeDir.join("$&"))
@@ -795,7 +783,7 @@ class EjsMvc {
         /*  
             Load the models
          */
-        let appmod = dirs.cache.join(filesnames.appmod)
+        let appmod = dirs.cache.join(mvc.appmod)
         if (!appmod.exists) {
             buildApp()
         }
@@ -812,22 +800,23 @@ class EjsMvc {
         let MigrationsTable = getMigrationModel()
         let migrations = MigrationsTable.findAll()
         let lastMigration = migrations.slice(-1)
+        let command
 
         if (args && args.length > 0) {
-            cmd = args.slice(0).toString().toLower()
+            command = args.slice(0).toString().toLower()
         } else {
-            cmd = ""
+            command = ""
         }
-        if (cmd == "forward" || cmd == "forw") {
+        if (command == "forward" || command == "forw") {
             onlyOne = true
 
-        } else if (cmd == "backward" || cmd == "back") {
+        } else if (command == "backward" || command == "back") {
             onlyOne = true
             backward = true
 
-        } else if (cmd != "") {
-            /* cmd may be a pure sequence number or a filename */
-            targetSeq = cmd
+        } else if (command != "") {
+            /* command may be a pure sequence number or a filename */
+            targetSeq = command
             let found = false
             for each (f in files) {
                 let base = f.basename.toString().toLower()
@@ -911,22 +900,9 @@ class EjsMvc {
     }
 
     function run(args: Array): Void {
-        let cmd = config.mvc.webserver
-
-        /*  Handle quotes around the program name. Because we try to convert to an absolute path, we need
-            to remove quotes around a program name that has no spaces. If the program name has spaces or starts
-            with quotes, we really can't convert to an absolute path easily.
-         */
-        argv = cmd.split(" ")
-        if (argv[0].startsWith('"') && argv[0].endsWith('"')) {
-            argv[0] = argv[0].trim('"')
-            cmd = argv.join(" ")
-        }
-        if (!cmd.match(/^\/|^[a-zA-Z]:\//) && !cmd.startsWith('"')) {
-            cmd = cmd.replace(/^[^ ]+/, App.exeDir.join("$&"))
-        }
-        trace("[RUN]", cmd)
-        System.runx(cmd)
+        let start = config.mvc.start
+        trace("[RUN]", start)
+        load(start)
     }
 
     function findTop(dir: Path) {
@@ -950,9 +926,7 @@ class EjsMvc {
         //  TODO - convert all paths to use dirs.name 
         makeDir(appName)
         App.chdir(appName)
-        if (!options.min) {
-            makeDir(".tmp")
-            makeDir(".ejs")
+        if (options.full) {
             makeDir("bin")
             makeDir("doc")
             makeDir("logs")
@@ -960,6 +934,8 @@ class EjsMvc {
             makeDir("test")
             makeDir("utils")
         }
+
+        //  MOB - all these should come from dirs?
         makeDir("cache")
         makeDir(dirs.controllers)
         makeDir("db")
@@ -975,6 +951,7 @@ class EjsMvc {
 
         generateStart()
         generateAppSrc()
+
         generateConfig()
         generateLayouts()
         generatePages()
@@ -1402,7 +1379,7 @@ class EjsMvc {
         } 
         catch (e) {
             msg = "Compilation failure, for " + command + "\n\n" +
-                e.toString().replace(/Error Exception: Command failed: Status code [0-9]*.\n/, "")
+                (e cast String).replace(/Error Exception: Command failed: Status code [0-9]*.\n/, "")
             throw msg
         }
         return results
@@ -1459,12 +1436,16 @@ class Templates {
         },
     },
     
-    session: {
+    log: {
         enable: true,
-        timeout: 1800,
+        where: "stdout",
+        level: 1,
     },
 
     mvc: {
+        compiler: "ejsc --debug --optimize 9 --web",
+        endpoint: "127.0.0.1:4000",
+        start: "start.es",
         views: {
             connectors: {
                 table: "html",
@@ -1476,8 +1457,13 @@ class Templates {
                 Date:       "%a %e %b %H:%M",
             },
         },
-        webserver: \'"${WEBSERVER}" --ejs "/:${PATH}/" --log stdout:2\',
     },
+
+    session: {
+        enable: true,
+        timeout: 1800,
+    },
+
 }
 '
 
@@ -1486,7 +1472,7 @@ class Templates {
      */
     public static const BaseController = 
 '/*
- *  BaseController.es - Base class for all controllers
+    BaseController.es - Base class for all controllers
  */
 require ejs.web
 
@@ -1496,7 +1482,7 @@ public class BaseController extends Controller {
     public var style: String
 
     function BaseController() {
-        style = request.home.joine("/web/style.css")
+        style = request.home.join("web/style.css")
     }
 }
 '
@@ -1654,7 +1640,7 @@ public class ${NAME}Controller extends BaseController {
      */
     public static const Model = 
 '/*
- *  ${NAME}.es - ${NAME} Model Class
+    ${NAME}.es - ${NAME} Model Class
  */
 
 require ejs.db
@@ -1674,7 +1660,7 @@ public dynamic class ${NAME} implements Record {
      */
     public static const Migration = 
 '/*
- *  ${COMMENT}
+    ${COMMENT}
  */
 require App
 require ejs.db
@@ -1698,9 +1684,11 @@ ${BACKWARD}
      */
     public static const Readme = 
 '
-README - Overview of files and documentation generated by ejsmvc
+README - Overview of files and documentation generated by ejsmvc.
+Some of these directories will not be present if generation did 
+not use the --full switch. 
 
-These Directories are created via "ejsmvc generate app ${NAME}:"
+These Directories are created via command "ejsmvc generate app"
 
     bin                       Programs and scripts
     cache                     Cached module files
@@ -1717,6 +1705,7 @@ These Directories are created via "ejsmvc generate app ${NAME}:"
     views                     View source files
     views/layouts             View layout files
     web                       Public web directory
+    web/js                    Client side Javascript files
     web/themes                Theme style sheet directory
 
 These files are also created:
@@ -1756,6 +1745,27 @@ public dynamic class ${CONTROLLER}${VIEW}View extends View {
 '
 require ejs.web
     
+let server: HttpServer = new HttpServer
+var router = Router(Router.LegacyRoutes)
+
+server.addListener("readable", function (event, request) {
+    Web.serve(request, router)
+})
+
+//  See ejsrc to modify the endpoint
+//  Use server.attach() instead of listen if using inside Appweb
+server.listen(App.config.mvc.endpoint)
+
+App.eventLoop()
+'
+
+    /*
+     ***************************  mvc.es ****************************
+     */
+    public static const MvcApp = 
+'
+require ejs.web
+    
 exports.app = function(request: Request) {
     router = new Router(Router.LegacyRoutes)
     router.route(request)
@@ -1787,6 +1797,7 @@ module App {
 <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <title>@@title</title>
+    <link href="web/images/favicon.ico" rel="shortcut icon" />
     <% stylesheet(["web/layout.css", "web/themes/default.css" ]); %>
     <% script(["web/js/jquery.js", "web/js/jquery.tablesorter.js", "web/js/jquery.ejs.js"]) %>
 </head>

@@ -4,7 +4,6 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
-require ejs.io
 require ejs.web.template
 
 class EjsPage {

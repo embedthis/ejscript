@@ -32,6 +32,13 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
     state = ejs->state;
     fp = state->fp;
 
+    if (fp->function.thisObj) {
+        if ((slotNum = ejsLookupVar(ejs, fp->function.thisObj, name, lookup)) >= 0) {
+            lookup->slotNum = slotNum;
+            return slotNum;
+        }
+    }
+    
     /*
         Look for the name in the scope chain considering each block scope. LookupVar will consider base classes and 
         namespaces. Don't search the last scope chain entry which will be global. For cloned interpreters, global 
@@ -39,6 +46,7 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
      */
     for (nth = 0, block = state->bp; block->scopeChain; block = block->scopeChain) {
 
+        //  MOB -- rationalize with the code above
         if (fp->function.thisObj && block == (EjsBlock*) fp->function.thisObj->type) {
             /*
                 This will lookup the instance and all base classes

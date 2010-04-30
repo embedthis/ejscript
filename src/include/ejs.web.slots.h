@@ -275,12 +275,11 @@
 #define ES_Mvc_mvc                                                     29
 #define ES_Mvc_dirs                                                    30
 #define ES_Mvc_ext                                                     31
-#define ES_Mvc_defaultAppExports                                       32
-#define ES_Mvc_load                                                    33
-#define ES_Mvc_init                                                    34
-#define ES_Mvc_loadComponent                                           35
+#define ES_Mvc_load                                                    32
+#define ES_Mvc_init                                                    33
+#define ES_Mvc_loadComponent                                           34
 
-#define ES_Mvc_NUM_CLASS_PROP                                          36
+#define ES_Mvc_NUM_CLASS_PROP                                          35
 
 /*
  * Instance slots for "Mvc" type 
@@ -290,11 +289,11 @@
 /*
     Local slots for methods in type "Mvc" 
  */
-#define ES_Mvc_defaultAppExports_request                               0
 #define ES_Mvc_load_request                                            0
 #define ES_Mvc_init_request                                            0
-#define ES_Mvc_loadComponent_mod                                       0
-#define ES_Mvc_loadComponent_deps                                      1
+#define ES_Mvc_loadComponent_request                                   0
+#define ES_Mvc_loadComponent_mod                                       1
+#define ES_Mvc_loadComponent_deps                                      2
 
 
 /*
@@ -307,7 +306,7 @@
 #define ES_ejs_web_Request_async                                       30
 #define ES_ejs_web_Request_cachable                                    31
 #define ES_ejs_web_Request_close                                       32
-#define ES_ejs_web_Request_dump                                        33
+#define ES_ejs_web_Request_show                                        33
 #define ES_ejs_web_Request_destroySession                              34
 #define ES_ejs_web_Request_extension                                   35
 #define ES_ejs_web_Request_finalize                                    36
@@ -392,7 +391,7 @@
 #define ES_ejs_web_Request_addListener_name                            0
 #define ES_ejs_web_Request_addListener_listener                        1
 #define ES_ejs_web_Request_cachable_enable                             0
-#define ES_ejs_web_Request_dump_args                                   0
+#define ES_ejs_web_Request_show_args                                   0
 #define ES_ejs_web_Request_flush_dir                                   0
 #define ES_ejs_web_Request_header_key                                  0
 #define ES_ejs_web_Request_read_buffer                                 0
@@ -402,7 +401,7 @@
 #define ES_ejs_web_Request_redirect_status                             1
 #define ES_ejs_web_Request_removeListener_name                         0
 #define ES_ejs_web_Request_removeListener_listener                     1
-#define ES_ejs_web_Request_makeUri_parts                               0
+#define ES_ejs_web_Request_makeUri_where                               0
 #define ES_ejs_web_Request_setLocation_prefix                          0
 #define ES_ejs_web_Request_setLocation_location                        1
 #define ES_ejs_web_Request_sendResponse_response                       0
@@ -432,9 +431,8 @@
 #define ES_ejs_web_Router_addRestfulRoutes                             32
 #define ES_ejs_web_Router_addRoutes                                    33
 #define ES_ejs_web_Router_route                                        34
-#define ES_ejs_web_Router_dumpRoutes                                   35
 
-#define ES_ejs_web_Router_NUM_CLASS_PROP                               36
+#define ES_ejs_web_Router_NUM_CLASS_PROP                               35
 
 /*
  * Instance slots for "Router" type 
@@ -456,9 +454,10 @@
  */
 #define ES_ejs_web_Route__origin                                       27
 #define ES_ejs_web_Route_Route                                         27
-#define ES_ejs_web_Route_makeUri                                       28
+#define ES_ejs_web_Route_show                                          28
+#define ES_ejs_web_Route_makeUri                                       29
 
-#define ES_ejs_web_Route_NUM_CLASS_PROP                                29
+#define ES_ejs_web_Route_NUM_CLASS_PROP                                30
 
 /*
  * Instance slots for "Route" type 
@@ -484,8 +483,10 @@
  */
 #define ES_ejs_web_Route_Route_route                                   0
 #define ES_ejs_web_Route_Route_router                                  1
+#define ES_ejs_web_Route_show_log                                      0
+#define ES_ejs_web_Route_show_msg                                      1
 #define ES_ejs_web_Route_makeUri_request                               0
-#define ES_ejs_web_Route_makeUri_parts                                 1
+#define ES_ejs_web_Route_makeUri_where                                 1
 
 
 /*
@@ -586,8 +587,9 @@
 #define ES_ejs_web_View_ejs_web_request                                0
 #define ES_ejs_web_View_currentRecord                                  1
 #define ES_ejs_web_View_config                                         2
-#define ES_ejs_web_View_nextId                                         3
-#define ES_ejs_web_View_NUM_INSTANCE_PROP                              4
+#define ES_ejs_web_View_ejs_web_log                                    3
+#define ES_ejs_web_View_nextId                                         4
+#define ES_ejs_web_View_NUM_INSTANCE_PROP                              5
 
 /*
     Local slots for methods in type "View" 
@@ -708,6 +710,6 @@
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
 
-#define _ES_CHECKSUM_ejs_web   533739
+#define _ES_CHECKSUM_ejs_web   532094
 
 #endif

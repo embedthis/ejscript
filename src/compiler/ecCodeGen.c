@@ -903,7 +903,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
     EcState         *state;
     EjsFunction     *fun;
     EjsLookup       *lookup;
-    int             fast, argc, staticMethod;    
+    int             fast, argc, staticMethod, count;    
         
     ejs = cp->ejs;
     state = cp->state;
@@ -929,9 +929,21 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             popStack(cp, 1);
             
         } else {
+            /*
+                MOB BUG. Could be an arbitrary expression on the left. Need a consistent way to save the right most
+                object before the property. */
+#if OLD
             ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
             pushStack(cp, 1);
+#else
+            count = getStackCount(cp);
+            left->needThis = 1;
+#endif
             processNodeGetValue(cp, left);
+            if (getStackCount(cp) < (count + 2)) {
+                ecEncodeOpcode(cp, EJS_OP_DUP);
+                pushStack(cp, 1);
+            }
             argc = genCallArgs(cp, right);
             ecEncodeOpcode(cp, EJS_OP_CALL);
             popStack(cp, 2);
@@ -1326,9 +1338,9 @@ static void genClass(EcCompiler *cp, EcNode *np)
     /*
         Emit any properties implemented via another class (there is no Node for these)
      */
-    ecAddBlockConstants(cp, (EjsBlock*) type);
+    ecAddConstants(cp, (EjsObj*) type);
     if (type->prototype) {
-        ecAddBlockConstants(cp, (EjsBlock*) type->prototype);
+        ecAddConstants(cp, type->prototype);
     }
     if (cp->ejs->flags & EJS_FLAG_DOC) {
         ecAddDocConstant(cp, np->lookup.trait, ejs->global, np->lookup.slotNum);

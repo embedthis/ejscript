@@ -210,6 +210,7 @@ class JemCmd
             dirs.repositories[d] = Path(dirs.repositories[d])
         }
 
+        //  MOB -- should not have "." prefix
         // TODO - should be in Config
         if (Config.OS == "MACOSX") {
             ext.lib = ".dylib"

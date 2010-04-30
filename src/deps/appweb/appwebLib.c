@@ -5162,14 +5162,14 @@ static int parseEjs(Http *http, cchar *key, char *value, MaConfigState *state)
 
 
 /*
-    Find a startup script. Default to /usr/lib/PRODUCT/lib/PRODUCT.es.
+    Find a start script. Default to /usr/lib/PRODUCT/lib/PRODUCT.es.
  */
 static char *findScript(MprCtx ctx, char *script)
 {
     char        *base, *result;
 
     if (script == 0 || *script == '\0') {
-        script = mprAsprintf(ctx, -1, "%s/../%s/%s", mprGetAppDir(ctx), BLD_LIB_NAME, MA_EJS_STARTUP);
+        script = mprAsprintf(ctx, -1, "%s/../%s/%s", mprGetAppDir(ctx), BLD_LIB_NAME, MA_EJS_START);
     } else {
         if (!mprPathExists(ctx, script, R_OK)) {
             base = mprGetPathBase(ctx, script);

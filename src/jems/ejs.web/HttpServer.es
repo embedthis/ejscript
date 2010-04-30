@@ -9,6 +9,7 @@ module ejs.web {
     dynamic class HttpServer {
         use default namespace public
 
+//  MOB -- remove serverRoot completely
         /** 
             Create a HttpServer object. The server is created in async mode by default.
             @param serverRoot Base directory for the server configuration. If set to null and the HttpServer is hosted,
@@ -19,7 +20,7 @@ module ejs.web {
             @stability prototype
             @example: This is a fully async server:
 
-            let server: HttpServer = new HttpServer(".", "./web")
+            let server: HttpServer = new HttpServer(".", "web")
             let router = Router(Router.RestfulRoutes)
             server.addListener("readable", function (event: String, request: Request) {
                 request.status = 200
@@ -117,6 +118,7 @@ module ejs.web {
 
         /** 
             Default root directory for the server. The app does not change its current directory to this path.
+            MOB -- is this needed?
          */
         var serverRoot: Path
 

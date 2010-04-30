@@ -37,8 +37,8 @@ module ejs.web {
                 mod: "mod",
             },
             mvc: {
+                app: "",
                 appmod: "App.mod",
-                start: "start.es",
                 views: {
                     connectors: { },
                     formats: { },
@@ -51,22 +51,11 @@ module ejs.web {
         private static var dirs: Object
         private static var ext: Object
 
-        /*  
-            Default app exports function. Used if an MVC app does not provide a start.es script
-         */
-        private static function defaultAppExports(request: Request): Object {
-            //  TODO - change to RestfulRoutes
-            Route(request, Router.LegacyRoutes)
-            Mvc.init(request)
-            let controller = Controller.create(request)
-            return controller.start(request)
-        }
-
         /** 
             Load an MVC application. This is typically called by the Router to load an application after routing
             the request to determine the appropriate controller
             @param request Request object
-            @returns The exports object of the start slice
+            @returns The exports object
          */
         public static function load(request: Request): Object {
             let dir = request.dir
@@ -75,28 +64,45 @@ module ejs.web {
             if (path.exists) {
                 let appConfig = deserialize(path.readString())
                 /* Clone to get a request private copy of the configuration */
+                /* MOB - why do this? */
                 config = request.config = request.config.clone()
                 blend(config, appConfig, true)
+/* MOB - future create a new logger
+                if (app.config.log) {
+                    request.logger = new Logger("request", App.log, log.level)
+                    if (log.match) {
+                        App.log.match = log.match
+                    }
+                }
+ */
             }
             blend(config, defaultConfig, false)
             mvc = config.mvc
             dirs = config.directories
             ext = config.extensions
-            let start = dir.join(mvc.start)
+            //  MOB temp
+            App.log.level = config.log.level
             let exports
-            if (start && start.exists) {
-                exports = Loader.load(start, start)
-            } else {
-                exports = defaultAppExports
+            if (mvc.app) {
+                let app = dir.join(mvc.app)
+                if (app.exists) {
+                    exports = Loader.load(app, app)
+                }
             }
-            return exports
+            return exports || { 
+                app: function (request: Request): Object {
+                    //  BUG - can't use Mvc.init as "this" has been modified from Mvc to request
+                    global["Mvc"].init(request)
+                    let controller = Controller.create(request)
+                    return controller.run(request)
+                }
+            }
         }
 
         /** 
             Load an MVC application. This is typically called by the Router to load an application after routing
             the request to determine the appropriate controller
             @param request Request object
-            @returns The exports object of the start slice
          */
         public static function init(request: Request): Void {
             let config = request.config
@@ -111,16 +117,16 @@ module ejs.web {
                 deps.append(dir.join(dirs.src).find("*" + ext.es))
                 deps.append(dir.join(dirs.controllers, "Base").joinExt(ext.es))
             }
-            loadComponent(mod, deps)
+            loadComponent(request, mod, deps)
 
             /* Load controller */
             let controller = request.params.controller
             let ucontroller = controller.toPascal()
             mod = dir.join(dirs.cache, ucontroller).joinExt(ext.mod)
             if (!mod.exists || config.cache.reload) {
-                loadComponent(mod, [dir.join(dirs.controllers, ucontroller).joinExt(ext.es)])
+                loadComponent(request, mod, [dir.join(dirs.controllers, ucontroller).joinExt(ext.es)])
             } else {
-                loadComponent(mod)
+                loadComponent(request, mod)
             }
         }
 
@@ -130,7 +136,7 @@ module ejs.web {
             @param mod Path to the module to load
             @param deps Module dependencies
          */
-        public static function loadComponent(mod: Path, deps: Array? = null) {
+        public static function loadComponent(request: Request, mod: Path, deps: Array? = null) {
             let rebuild
             if (mod.exists) {
                 rebuild = false
@@ -152,8 +158,10 @@ module ejs.web {
                     }
                     code += path.readString()
                 }
+                request.log.debug(4, "Rebuild component " + mod)
                 eval(code, mod)
             } else {
+                request.log.debug(4, "Load component from cache " + mod)
                 global.load(mod)
             }
         }

@@ -24,13 +24,17 @@ static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     sp->ejs = ejs;
     if (argc >= 1) {
         ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot, (EjsObj*) argv[0]);
+#if UNUSED
     } else {
         ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot, (EjsObj*) ejsCreatePath(ejs, "."));
+#endif
     }
     if (argc >= 2) {
         ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot, (EjsObj*) argv[1]);
+#if UNUSED
     } else {
         ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot, (EjsObj*) ejsCreatePath(ejs, "."));
+#endif
     }
     return (EjsObj*) sp;
 }
@@ -116,6 +120,13 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     EjsString   *address;
     EjsPath     *root;
 
+    if (ejs->location) {
+        /* Being called hosted */
+        sp->obj.permanent = 1;
+        ejs->location->context = sp;
+        return 0;
+    }
+
     if (sp->server) {
         mprFree(sp->server);
         sp->server = 0;
@@ -137,7 +148,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     //  MOB -- why
     server->documentRoot = mprStrdup(server, root->path);
 
-    //  MOB -- is this needed?
+    //  MOB -- is this needed? -- remove
     root = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
     server->serverRoot = mprStrdup(server, root->path);
 
@@ -288,12 +299,17 @@ static void runEjs(HttpQueue *q)
                     return;
                 }
                 sp = (EjsHttpServer*) location->context;
-                sp->server = conn->server;
-                httpSetServerContext(conn->server, sp);
-                httpSetRequestNotifier(conn, (HttpNotifier) stateChangeNotifier);
                 ejs = sp->ejs;
                 dirPath = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
                 dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : conn->documentRoot;
+                if (sp->server == 0) {
+                    sp->server = conn->server;
+                    sp->ip = mprStrdup(sp, conn->server->ip);
+                    sp->port = conn->server->port;
+                    sp->dir = mprStrdup(sp, dir);
+                }
+                httpSetServerContext(conn->server, sp);
+                httpSetRequestNotifier(conn, (HttpNotifier) stateChangeNotifier);
             } else {
                 ejs = sp->ejs;
                 dirPath = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);

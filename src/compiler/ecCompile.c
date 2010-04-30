@@ -29,7 +29,7 @@ int ejsInitCompiler(EjsService *service)
  */
 static EjsObj *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache)
 {
-    if (ejsLoadScriptFile(ejs, path, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_BIND | EC_FLAGS_THROW) < 0) {
+    if (ejsLoadScriptFile(ejs, path, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW) < 0) {
         return 0;
     }
     return ejs->result;
@@ -41,7 +41,7 @@ static EjsObj *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache)
  */
 static EjsObj *loadScriptLiteral(Ejs *ejs, cchar *script, cchar *cache)
 {
-    if (ejsLoadScriptLiteral(ejs, script, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_BIND | EC_FLAGS_THROW) < 0) {
+    if (ejsLoadScriptLiteral(ejs, script, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW) < 0) {
         return 0;
     }
     return ejs->result;
@@ -87,7 +87,7 @@ int ejsLoadScriptLiteral(Ejs *ejs, cchar *script, cchar *cache, int flags)
     EcCompiler      *ec;
     cchar           *path;
 
-    if ((ec = ecCreateCompiler(ejs, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_BIND)) == 0) {
+    if ((ec = ecCreateCompiler(ejs, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG)) == 0) {
         return MPR_ERR_NO_MEMORY;
     }
     if (cache) {
@@ -137,7 +137,7 @@ int ejsEvalFile(cchar *path)
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
-    if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_BIND) == 0) {
+    if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
         mprFree(mpr);
         return MPR_ERR;
@@ -165,7 +165,7 @@ int ejsEvalScript(cchar *script)
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
-    if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_BIND) == 0) {
+    if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
         mprFree(mpr);
         return MPR_ERR;

@@ -1,21 +1,16 @@
 require ejs.web
 
-/*
-    Pure script View
 class MyView extends View {
     function MyView(request) {
         super(request)
     }
-    override function render() {
-        write("Hello World")
-    }
+    //  MOB -- what to do here
 }
-*/
 
 
 exports.app = function(request: Request) {
     View(request).render(function(request: Request) {
         write("Hello World\r\n")
-        print("URI " + makeUri("/logout.es"))
+        write("URI " + makeUri("/logout.es") + "\r\n")
     })
 }

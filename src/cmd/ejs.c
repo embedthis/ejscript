@@ -166,6 +166,9 @@ MAIN(ejsMain, int argc, char **argv)
                 }
             }
 
+        } else if (strcmp(argp, "--verbose") == 0 || strcmp(argp, "-v") == 0) {
+            ejsStartLogging(mpr, "stdout:2");
+
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
             mprPrintfError(mpr, "%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);
             exit(0);
@@ -209,6 +212,7 @@ MAIN(ejsMain, int argc, char **argv)
             "  --stats                  # Print stats on exit\n"
             "  --strict                 # Default compilation mode to strict\n"
             "  --require 'module,...'   # Required list of modules to pre-load\n"
+            "  --verbose | -v           # Same as --log stdout:2 \n"
             "  --version                # Emit the compiler version information\n"
             "  --warn level             # Set the warning message level (0-9 default is 0)\n\n",
             mpr->name);
