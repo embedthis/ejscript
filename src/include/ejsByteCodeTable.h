@@ -99,7 +99,7 @@ EjsOptable ejsOptable[] = {
     {   "COMPARE_ZERO",             -1,         { EBC_NONE,                               },},
     {   "DEBUG",                     0,         { EBC_NUM, EBC_STRING,                    },},
     {   "DEFINE_CLASS",              0,         { EBC_GLOBAL,                             },},
-    {   "DEFINE_FUNCTION",           0,         { EBC_SLOT, EBC_NUM,                      },},
+    {   "DEFINE_FUNCTION",           0,         { EBC_STRING, EBC_STRING,                 },},
     {   "DELETE_NAME_EXPR",         -3,         { EBC_NONE,                               },},
     {   "DELETE_SCOPED_NAME_EXPR",  -2,         { EBC_NONE,                               },},
     {   "DIV",                      -1,         { EBC_NONE,                               },},

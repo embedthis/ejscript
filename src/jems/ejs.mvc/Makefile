@@ -10,6 +10,7 @@ TARGETS		+= $(BLD_BIN_DIR)/ejsmvc
 ifeq ($(BLD_OS),WIN)
 	TARGETS	+= $(BLD_BIN_DIR)/ejsmvc.cmd
 endif
+TARGETS		+= $(BLD_LIB_DIR)/www
 
 compileExtra: $(TARGETS)
 
@@ -23,3 +24,11 @@ $(BLD_BIN_DIR)/ejsmvc.cmd: ejsmvc.cmd
 	$(call log) "[Generate]" "ejsmvc.cmd"
 	cp ejsmvc.cmd $(BLD_BIN_DIR)/ejsmvc.cmd
 	chmod 755 $(BLD_BIN_DIR)/ejsmvc.cmd
+
+$(BLD_LIB_DIR)/www: Makefile www/*
+	mkdir -p $(BLD_LIB_DIR)/www/images
+	mkdir -p $(BLD_LIB_DIR)/www/themes
+	cp -r www/* $(BLD_LIB_DIR)/www
+
+cleanExtra:
+	rm -rf $(BLD_LIB_DIR)/www

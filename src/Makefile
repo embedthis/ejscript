@@ -18,8 +18,8 @@ include 		.makedep
 
 compileExtra: $(EJS_LIB) ejsc $(EJS_MOD)
 
-compileFinal: 
-	@+T=modules ; D="deps/appweb" ; $(DO_RECURSE) 
+#	compileFinal: 
+#		@+T=modules ; D="deps/appweb" ; $(DO_RECURSE) 
 
 $(EJS_LIB): $(EJS_SOURCES) $(EJS_OBJECTS) $(call lib, mpr)
 	bld --library $(EJS_LIB) --libs "$(BLD_EJS_WITHLIBS)" $(EJS_OBJECTS)

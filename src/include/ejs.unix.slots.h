@@ -44,6 +44,6 @@
 #define ES_rmdir_contents                                              1
 #define ES_tempname_directory                                          0
 
-#define _ES_CHECKSUM_ejs_unix   31890
+#define _ES_CHECKSUM_ejs_unix   31880
 
 #endif

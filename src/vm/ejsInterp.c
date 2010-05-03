@@ -1224,6 +1224,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 ejsThrowReferenceError(ejs, "Can't find function \"%s\"", qname.name);
             } else {
                 fun = (EjsFunction*) ejsGetProperty(ejs, lookup.obj, slotNum);
+                if (fun->staticMethod) {
+                    vp = lookup.obj;
+                }
                 callProperty(ejs, fun, vp, argc, 1);
             }
             BREAK;
@@ -1402,16 +1405,26 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 DefineFunction <slot> <nthBlock>
          */
         CASE (EJS_OP_DEFINE_FUNCTION):
-            slotNum = GET_INT();
-            vp = getNthBlock(ejs, GET_INT());
-            f1 = (EjsFunction*) ejsGetProperty(ejs, vp, slotNum);
-            if (!ejsIsFunction(f1)) {
+            qname = GET_NAME();
+            if ((slotNum = ejsLookupScope(ejs, &qname, &lookup)) >= 0) {
+                f1 = (EjsFunction*) ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
+            }
+            if (slotNum < 0 || !ejsIsFunction(f1)) {
                 ejsThrowReferenceError(ejs, "Reference is not a function");
             } else if (f1->fullScope) {
-                f2 = ejsCloneFunction(ejs, f1, 0);
+                //  MOB OPT - don't need to clone global functions. or class static functions?
+                if (lookup.obj != ejs->global) {
+                    f2 = ejsCloneFunction(ejs, f1, 0);
+                } else {
+                    f2 = f1;
+                }
                 f2->block.scopeChain = state.bp;
                 f2->thisObj = FRAME->function.thisObj;
+                /*
+                   Must not run getter/setter
                 SET_SLOT(NULL, vp, slotNum, f2);
+                */
+                ejsSetProperty(ejs, lookup.obj, lookup.slotNum, (EjsObj*) f2);
             }
             BREAK;
 
@@ -2236,9 +2249,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (nameVar == 0) {
                 ejsThrowTypeError(ejs, "Can't convert to a name");
             } else {
-                ejsName(&qname, "", nameVar->value);                        //  Don't consult namespaces
+                ejsName(&qname, "", nameVar->value);
                 slotNum = ejsLookupProperty(ejs, v1, &qname);
                 if (slotNum < 0) {
+                    //  MOB -- Reconsider
                     slotNum = ejsLookupVar(ejs, v1, &qname, &lookup);
                     if (slotNum < 0 && ejsIsType(v1)) {
                         slotNum = ejsLookupVar(ejs, (EjsObj*) ((EjsType*) v1)->prototype, &qname, &lookup);
@@ -2352,6 +2366,7 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, EjsName *qname
             return;
         }
     }
+    //  MOB -- reconsider this 
     if ((slotNum = ejsLookupVar(ejs, obj, qname, &lookup)) < 0) {
         //  MOB -- who is using this
         if (dupName) {
@@ -2456,9 +2471,6 @@ int ejsRun(Ejs *ejs)
 }
 
 
-/*
-    Run a function with the given parameters
- */
 EjsObj *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int         i;

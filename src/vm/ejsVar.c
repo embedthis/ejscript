@@ -299,7 +299,6 @@ int ejsLookupProperty(Ejs *ejs, EjsObj *vp, EjsName *name)
     mprAssert(vp);
     mprAssert(name);
     mprAssert(name->name);
-    mprAssert(name->space);
 
     mprAssert(vp->type->helpers->lookupProperty);
     return (vp->type->helpers->lookupProperty)(ejs, vp, name);

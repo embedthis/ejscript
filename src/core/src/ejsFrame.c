@@ -131,6 +131,7 @@ void ejsCreateFrameType(Ejs *ejs)
     EjsTypeHelpers  *helpers;
 
     type = ejs->frameType = ejsCreateNativeType(ejs, "ejs", "Frame", ES_Frame, sizeof(EjsFrame));
+    type->block.obj.skipScope = 1;
 
     helpers = type->helpers;
     helpers->destroy = (EjsDestroyHelper) destroyFrame;

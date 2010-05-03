@@ -1,15 +1,3 @@
-        static native function get constructor(): Function
-        static native function get prototype(): Function
-        static native function create(prototype, props: Object = undefined): Object 
-        static native function defineProperty(obj: Object, name: String, options: Object): Void
-        static function defineProperties(obj: Object, properties: Object): Void {
-        static native function freeze(obj: Object): Void
-        static native function getOwnPropertyDescriptor(obj: Object, prop: String): Object
-        static native function getOwnPropertyNames(obj: Object): Array
-        static native function getOwnPrototypeOf(obj: Object): Type
-        static native function isExtensible(obj: Object): Boolean
-        static native function isFrozen(obj: Object): Boolean
-        static native function isSealed(obj: Object): Boolean
-        static function keys(obj: Object): Array {
-        static native function preventExtensions(obj: Object): Object
-        static native function seal(obj: Object): Void
+var i = new String
+print(i.charAt)
+print(i.prototype.fromCharCode)

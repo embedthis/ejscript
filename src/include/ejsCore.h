@@ -352,6 +352,7 @@ typedef struct EjsObj {
             uint    visited           :  1;     /**< Has been traversed */
 
             uint    separateSlots     :  1;     /**< Object has separate slots[] memory */
+            uint    skipScope         :  1;     /**< Skip examining this object when searching the scope chain */
 
 #if LEGACY || 1
             //  MOB -- cleanup and review
@@ -896,7 +897,6 @@ typedef struct EjsType {
     uint            needFinalize            :  1;   /**< Instances need finalization */
     uint            needFixup               :  1;   /**< Slots need fixup */
     uint            numericIndicies         :  1;   /**< Instances support direct numeric indicies */
-    uint            skipScope               :  1;   /**< Skip examining this object when searching the scope chain */
     
     short           id;                             /**< Unique type id */
     ushort          instanceSize;                   /**< Size of instances in bytes */
@@ -922,7 +922,7 @@ typedef struct EjsType {
     extern bool ejsIsType(EjsObj *vp);
 
     /** 
-        Determine if a variable is a prototype object. Types store the template for instance properties in a prototype object.
+        Determine if a variable is a prototype object. Types store the template for instance properties in a prototype object
         @param vp Variable to test
         @return True if the variable is a prototype object.
         @ingroup EjsType

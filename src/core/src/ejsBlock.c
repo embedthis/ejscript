@@ -165,7 +165,7 @@ void ejsCreateBlockType(Ejs *ejs)
 
     type = ejs->blockType = ejsCreateNativeType(ejs, "ejs", "Block", ES_Block, sizeof(EjsBlock));
 
-    type->skipScope = 1;
+    type->block.obj.skipScope = 1;
     type->helpers->clone = (EjsCloneHelper) ejsCloneBlock;
     type->helpers->mark = (EjsMarkHelper) ejsMarkBlock;
 }

@@ -980,7 +980,6 @@ int ecEncodeName(EcCompiler *cp, EjsName *qname)
     rc += ecEncodeString(cp, qname->name);
     rc += ecEncodeString(cp, qname->space);
     return rc;
-
 }
 
 

@@ -62,9 +62,15 @@ assert(         fn(10)                              == 10)
 //  These will be call by name because instance is untyped
 
 var instance = circ
+
+/*
+    MOB - if statics not visible to instances
 assert(instance.cfun == undefined)
-assert(Circle.cfun(1) == 1)
 assert(instance.sfun == undefined)
+*/
+assert(instance.cfun(88) == 88)
+assert(Circle.cfun(1) == 1)
+assert(instance.sfun(99) == 99)
 assert(Shape.sfun(2) == 2)
 assert(instance.ifun(3) == 3)
 

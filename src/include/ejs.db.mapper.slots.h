@@ -225,6 +225,6 @@
 #define ES_ejs_db_mapper_Column_Column_ejsType                         2
 #define ES_ejs_db_mapper_Column_Column_sqlType                         3
 
-#define _ES_CHECKSUM_ejs_db_mapper   190935
+#define _ES_CHECKSUM_ejs_db_mapper   190656
 
 #endif

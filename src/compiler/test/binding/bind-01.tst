@@ -31,7 +31,12 @@ assert(s.getName() == "Shape")
 s2 = new Shape
 //  Unbound access
 assert(s2.origin == 1)
+
+/*
+    MOB - if statics not visible to instances 
 assert(s2.getName == undefined)
+*/
+assert(s2.getName() == "Shape")
 assert(Shape.getName() == "Shape")
 
 //  Mask type and invoke 

@@ -113,16 +113,22 @@ typedef struct EjsState {
     @description Location information returned when looking up properties.
     @ingroup EjsVm
  */
+//  MOB -- Some fields just for compiler
 typedef struct EjsLookup {
     struct EjsObj   *obj;                   /* Final object / Type containing the variable */
     int             slotNum;                /* Final slot in obj containing the variable reference */
     uint            nthBase;                /* Property on Nth super type -- count from the object */
     uint            nthBlock;               /* Property on Nth block in the scope chain -- count from the end */
     uint            useThis;                /* Property accessible via "this." */
+    //  MOB -- check all these being used
     uint            instanceProperty;       /* Property is an instance property */
+    //  MOB -- check all these being used
     uint            ownerIsType;            /* Original object owning the property is a type */
+
+    //  MOB -- check all these being used
     uint            storing;                /* Lookup and then store a value */
 
+    //  MOB -- check all these being used
     struct EjsObj   *originalObj;           /* Original object used for the search */
     struct EjsObj   *ref;                   /* Actual property reference */
     struct EjsTrait *trait;                 /* Property trait describing the property */
@@ -557,7 +563,7 @@ extern void ejsLog(Ejs *ejs, cchar *fmt, ...);
 
 //  MOB -- move to ejsCore.h
 extern int ejsLookupVar(Ejs *ejs, struct EjsObj *vp, EjsName *name, EjsLookup *lookup);
-extern int ejsLookupVarWithNamespaces(Ejs *ejs, struct EjsObj *orig, struct EjsObj *vp, EjsName *name, EjsLookup *lookup);
+extern int ejsLookupVarWithNamespaces(Ejs *ejs, struct EjsObj *vp, EjsName *name, EjsLookup *lookup);
 
 extern struct EjsModule *ejsLookupModule(Ejs *ejs, cchar *name, int minVersion, int maxVersion);
 extern int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup);

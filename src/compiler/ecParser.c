@@ -1608,7 +1608,11 @@ static EcNode *parseFunctionExpression(EcCompiler *cp)
     if (np->qname.name == 0) {
         np->qname.name = mprAsprintf(np, -1, "--fun_%d-%d--", np->seqno, (int) mprGetTime(np));
     }
+#if CHANGE && MOB
     np->qname.space = mprStrdup(np, state->inFunction ? EJS_PRIVATE_NAMESPACE: cp->fileState->namespace);
+#else
+    np->qname.space = mprStrdup(np, state->inFunction ? EJS_EMPTY_NAMESPACE: cp->fileState->namespace);
+#endif
 
     np = parseFunctionSignature(cp, np);
     if (np == 0) {
@@ -8176,7 +8180,11 @@ static EcNode *parseFunctionBody(EcCompiler *cp, EcNode *fun)
     ENTER(cp);
 
     cp->state->inFunction = 1;
+#if CHANGE && UNUSED
     cp->state->namespace = EJS_PRIVATE_NAMESPACE;
+#else
+    cp->state->namespace = EJS_EMPTY_NAMESPACE;
+#endif
 
     if (peekToken(cp) == T_LBRACE) {
         np = parseBlock(cp);
@@ -10366,6 +10374,7 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, c
             Functions don't need qualification of private properties.
          */
         if (strcmp(namespace, EJS_PRIVATE_NAMESPACE) == 0) {
+            //  MOB -- this code is the same in both cases
             namespace = (char*) mprStrdup(np, namespace);
         } else {
             namespace = (char*) mprStrdup(np, namespace);

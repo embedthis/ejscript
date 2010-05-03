@@ -1,8 +1,7 @@
 /**
     ejsScope.c - Lookup variables in the scope chain.
   
-    This modules provides scope chain management including lookup, get and set services for variables. It will 
-    lookup variables using the current execution variable scope and the set of open namespaces.
+    This modules provides variable lookup and scope chain management.
   
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -14,72 +13,79 @@
 /************************************* Code ***********************************/
 /*
     Look for a variable by name in the scope chain and return the location in "lookup" and a positive slot number if found. 
-    If the name.space is non-null/non-empty, then only the given namespace will be used. otherwise the set of open 
-    namespaces will be used. The lookup structure will contain details about the location of the variable.
+    If the name.space is non-empty, then only the given namespace will be used. Otherwise the set of open namespaces will 
+    be used. The lookup structure will contain details about the location of the variable.
  */
 int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
 {
-    EjsFrame        *fp;
-    EjsBlock        *block;
+    EjsBlock        *block, *thisType;
     EjsState        *state;
-    int             slotNum, nth;
+    EjsType         *type;
+    EjsObj          *prototype, *obj, *thisObj;
+    int             slotNum, nthBlock, nthBase;
 
     mprAssert(ejs);
     mprAssert(name);
+    mprAssert(name->name);
+    mprAssert(name->space);
     mprAssert(lookup);
 
-    slotNum = -1;
     state = ejs->state;
-    fp = state->fp;
+    thisObj = state->fp->function.thisObj;
+    thisType = (EjsBlock*) thisObj->type;
 
-    if (fp->function.thisObj) {
-        if ((slotNum = ejsLookupVar(ejs, fp->function.thisObj, name, lookup)) >= 0) {
-            lookup->slotNum = slotNum;
+    for (nthBlock = 0, block = state->bp; block; block = block->scopeChain, nthBlock++) {
+        if (thisType == block) {
+            obj = thisObj;
+        } else {
+            obj = (EjsObj*) block;
+        }
+        if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, name, lookup)) >= 0) {
+            lookup->nthBlock = nthBlock;
             return slotNum;
         }
-    }
-    
-    /*
-        Look for the name in the scope chain considering each block scope. LookupVar will consider base classes and 
-        namespaces. Don't search the last scope chain entry which will be global. For cloned interpreters, global 
-        will belong to the master interpreter, so we must do that explicitly below to get the right global.
-     */
-    for (nth = 0, block = state->bp; block->scopeChain; block = block->scopeChain) {
-
-        //  MOB -- rationalize with the code above
-        if (fp->function.thisObj && block == (EjsBlock*) fp->function.thisObj->type) {
-            /*
-                This will lookup the instance and all base classes
-             */
-            if ((slotNum = ejsLookupVar(ejs, fp->function.thisObj, name, lookup)) >= 0) {
-                lookup->nthBlock = nth;
+        type = block->obj.type;
+        for (nthBase = 1; type; type = type->baseType, nthBase++) {
+            if ((prototype = type->prototype) == 0 || prototype->skipScope) {
                 break;
             }
-            
-        } else {
-            if ((slotNum = ejsLookupVar(ejs, (EjsObj*) block, name, lookup)) >= 0) {
-                lookup->nthBlock = nth;
-                break;
+            if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
+                lookup->nthBlock = nthBlock;
+                lookup->nthBase = nthBase;
+                return slotNum;
             }
         }
-        nth++;
     }
-    if (slotNum < 0 && ((slotNum = ejsLookupVar(ejs, ejs->global, name, lookup)) >= 0)) {
-        lookup->nthBlock = nth;
+    for (nthBlock = 0, block = state->bp; block; block = block->scopeChain, nthBlock++) {
+        if (thisType == block) {
+            type = (EjsType*) block;
+        } else {
+            type = block->obj.type;
+        }
+        for (nthBase = 1; type; type = type->baseType, nthBase++) {
+            if (type->block.obj.skipScope) {
+                //  MOB -- continue or break?
+                continue;
+            }
+            if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
+                lookup->nthBase = nthBase;
+                lookup->nthBlock = nthBlock;
+                return slotNum;
+            }
+        }
     }
-    lookup->slotNum = slotNum;
-    return slotNum;
+    return -1;
 }
 
 
 /*
-    Find a property in an object or type and its base classes.
+    Find a property in an object or its prototype and base classes.
  */
 int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
 {
     EjsType     *type;
-    EjsObj      *vp;
-    int         slotNum;
+    EjsObj      *prototype;
+    int         slotNum, nthBase;
 
     mprAssert(obj);
     mprAssert(obj->type);
@@ -90,134 +96,115 @@ int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
      */
     lookup->nthBase = 0;
     lookup->nthBlock = 0;
-    lookup->useThis = 0;
-    lookup->instanceProperty = 0;
-    lookup->ownerIsType = 0;
     lookup->trait = 0;
-    lookup->slotNum = -1;
-    vp = obj;
 
-    /*
-        Search through the inheritance chain of base classes. nthBase counts the subtypes that must be traversed. 
-     */
-    for (slotNum = -1, lookup->nthBase = 0; vp; lookup->nthBase++) {
-        if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, vp, name, lookup)) >= 0) {
+    //  MOB - what about this
+    lookup->useThis = 0;
+    //  MOB -- not used here
+    lookup->instanceProperty = 0;
+    //  MOB - what about this
+    lookup->ownerIsType = 0;
+
+    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, name, lookup)) >= 0) {
+        return slotNum;
+    }
+    type = obj->type;
+    for (nthBase = 1; type; type = type->baseType, nthBase++) {
+        if ((prototype = type->prototype) == 0 || prototype->skipScope) {
             break;
         }
-        if (ejsIsFrame(vp)) break;
-        vp = (vp->isType) ? (EjsObj*) ((EjsType*) vp)->baseType: (EjsObj*) vp->type;
-        type = (EjsType*) vp;
-        if (type == 0 || type->skipScope) {
-            break;
+        if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
+            lookup->nthBase = nthBase;
+            return slotNum;
         }
     }
-    if (slotNum < 0 && obj->type->prototype) {
-        vp = obj->type->prototype;
-        for (lookup->nthBase = 0; vp; lookup->nthBase++) {
-            if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, vp, name, lookup)) >= 0) {
-                break;
-            }
-            //  MOB -- fix (Object prototype loops)
-            if (vp == vp->type->prototype) {
-                break;
-            }
-            vp = vp->type->prototype;
+    type = obj->type;
+    for (nthBase = 1; type; type = type->baseType, nthBase++) {
+        if (type->block.obj.skipScope) {
+            //  MOB -- continue or break?
+            continue;
         }
-    } 
-    if (slotNum >= 0) {
-        lookup->trait = ejsGetTrait(lookup->obj, lookup->slotNum);
+        if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
+            lookup->nthBase = nthBase;
+            return slotNum;
+        }
     }
-    return lookup->slotNum = slotNum;
+    return -1;
 }
 
 
 /*
-    Find a variable in a block. Scope blocks are provided by the global object, types, functions and statement blocks.
+    Find a variable in an object considering namespaces. If the space is "", then search for the property name using
+    the set of open namespaces.
  */
-int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *originalObj, EjsObj *vp, EjsName *name, EjsLookup *lookup)
+//  MOB -- rename 
+int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
 {
     EjsNamespace    *nsp;
-    EjsName         qname;
+    EjsName         qname, qn;
     EjsBlock        *b;
-    EjsObj          *owner;
-    EjsFunction     *ref;
-    int             slotNum, nextNsp;
+    int             slotNum, next;
 
-    mprAssert(vp);
+    mprAssert(obj);
     mprAssert(name);
     mprAssert(name->name);
     mprAssert(name->space);
     mprAssert(lookup);
 
-    if ((slotNum = ejsLookupProperty(ejs, vp, name)) < 0 && name->space[0] != EJS_EMPTY_NAMESPACE[0]) {
-        return slotNum;
-    }
-    if (slotNum >= 0) {
-        ref = (EjsFunction*) ejsGetProperty(ejs, vp, slotNum);
-        
-        if (ejsIsType(vp) && originalObj != vp && !ejsIsType(originalObj) && (!ejsIsFunction(ref) || ref->staticMethod)) {
-             /* 
-                Accessing a static var or static method from a sub-type of the original instance.
-                i.e. Type properties should not be visible to instances.
-              */
-            ;
-        } else {
-        
-            if (ejsIsFunction(ref) && !ref->staticMethod && ejsIsType(originalObj) && vp != (EjsObj*) ejs->objectType) {
-                /* 
-                    Accessing an instance method from a type and the method is not in Object
-                    i.e. Instance methods should not be visible to Type objects.
-                 */
-                ;
-                
-            } else {
-                lookup->name = *name;
-                lookup->obj = vp;
-                lookup->slotNum = slotNum;
-                return slotNum;
-            }
-        }
-    }
-    qname = *name;
-    for (b = ejs->state->bp; b; b = b->scopeChain) {
-        for (nextNsp = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&b->namespaces, &nextNsp)) != 0; ) {
+    if (name->space[0]) {
+        /* Lookup with an explicit namespace */
+        slotNum = ejsLookupProperty(ejs, obj, name);
 
-            if (nsp->flags & EJS_NSP_PROTECTED && vp->isType && ejs->state->fp) {
-                /*
-                    Protected access. See if the type containing the method we are executing is a sub class of the type 
-                    containing the property ie. Can we see protected properties?
-                 */
-                owner = (EjsObj*) ejs->state->fp->function.owner;
-                if (owner && !ejsIsA(ejs, owner, (EjsType*) vp)) {
-                    continue;
+    } else {
+        /* Lookup with the set of open namespaces in the current scope */
+        qname.name = name->name;
+        qname.space = 0;
+        /* Special lookup with space == NULL. Means lookup only match if there is only one property of this name */
+        if ((slotNum = ejsLookupProperty(ejs, obj, ejsName(&qname, NULL, name->name))) >= 0) {
+            qn = ejsGetPropertyName(ejs, obj, slotNum);
+            if (name->space[0] && (name->space[0] != qn.space[0] || strcmp(name->space, qn.space) != 0)) {
+                /* Unique name match. Name matches, but namespace does not */
+                return -1;
+            }
+            if (qn.space[0]) {
+                for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&ejs->globalBlock->namespaces, &next)) != 0; ) {
+                    if (strcmp(nsp->uri, qn.space) == 0) {
+                        goto done;
+                    }
+                }
+                //  MOB -- need a fast way to know if the space is a standard reserved namespace or not */
+                /* Verify namespace is open */
+                for (b = ejs->state->bp; b->scopeChain; b = b->scopeChain) {
+                    for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&b->namespaces, &next)) != 0; ) {
+                        if (strcmp(nsp->uri, qn.space) == 0) {
+                            goto done;
+                        }
+                    }
                 }
             }
-            qname.space = nsp->uri;
-            mprAssert(qname.space);
-            if (qname.space) {
-                slotNum = ejsLookupProperty(ejs, vp, &qname);
-                if (slotNum >= 0) {
-                    //  MOB -- since we need to get the trait anyway, better to determine this from the trait
-                    ref = (EjsFunction*) ejsGetProperty(ejs, vp, slotNum);
-                    if (ejsIsType(vp) && originalObj != vp && !ejsIsType(originalObj) && 
-                            (!ejsIsFunction(ref) || ref->staticMethod)) {
-                        /* Accessing static property or static method from an instance */
-                        continue;
+
+        } else {
+            qname = *name;
+            for (b = ejs->state->bp; b; b = b->scopeChain) {
+                for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&b->namespaces, &next)) != 0; ) {
+                    qname.space = nsp->uri;
+                    if ((slotNum = ejsLookupProperty(ejs, obj, &qname)) >= 0) {
+                        mprLog(ejs, 0, "Object has multiple properties of the same name \"%s\"", name->name); 
+                        goto done;
                     }
-                    if (ejsIsFunction(ref) && !ref->staticMethod && ejsIsType(originalObj) && 
-                            vp != (EjsObj*) ejs->objectType) {
-                        mprNop();
-                        continue;
-                    }
-                    lookup->name = qname;
-                    lookup->obj = vp;
-                    lookup->slotNum = slotNum;
-                    return slotNum;
                 }
             }
         }
     }
-    return -1;
+done:
+    if (slotNum >= 0) {
+        lookup->ref = ejsGetProperty(ejs, obj, slotNum);
+        lookup->name = *name;
+        lookup->obj = obj;
+        lookup->slotNum = slotNum;
+        lookup->trait = ejsGetTrait(lookup->obj, lookup->slotNum);
+    }
+    return slotNum;
 }
 
 

@@ -399,7 +399,7 @@ static void allocFailure(Ejs *ejs, uint size, uint total, bool granted)
     MprAlloc    *alloc;
     EjsObj      *argv[2], *thisObj;
     char        msg[MPR_MAX_STRING];
-    va_list     dummy = VA_NULL;
+    va_list     dummy = NULL_INIT;
 
     alloc = mprGetAllocStats(ejs);
     if (granted) {

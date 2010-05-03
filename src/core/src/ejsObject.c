@@ -11,9 +11,11 @@
 /*********************************** Defines **********************************/
 
 #define CMP_QNAME(a,b) cmpQname(a, b)
+#define CMP_NAME(a,b) cmpName(a, b)
 
 /****************************** Forward Declarations **************************/
 
+static int      cmpName(EjsName *a, EjsName *b);
 static int      cmpQname(EjsName *a, EjsName *b);
 static EjsName  getObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum);
 static int      growSlots(Ejs *ejs, EjsObj *obj, int size);
@@ -243,6 +245,7 @@ EjsObj *ejsCloneObject(Ejs *ejs, EjsObj *src, bool deep)
     dest->isPrototype = src->isPrototype;
     dest->isType = src->isType;
     dest->permanent = src->permanent;
+    dest->skipScope = src->skipScope;
 
     dp = dest->slots;
     sp = src->slots;
@@ -453,21 +456,37 @@ static EjsTrait *getObjectPropertyTrait(Ejs *ejs, EjsObj *obj, int slotNum)
  */
 static int lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
 {
-    EjsName     *propName;
-    int         slotNum, index;
+    EjsSlot     *slots, *sp;
+    int         slotNum, index, prior;
 
     mprAssert(qname);
     mprAssert(qname->name);
-    mprAssert(qname->space);
 
+    slots = obj->slots;
     if (obj->hash == 0) {
         /* No hash. Just do a linear search */
-        for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
-            propName = &obj->slots[slotNum].qname;
-            if (CMP_QNAME(propName, qname)) {
-                return slotNum;
+        if (qname->space) {
+            for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
+                sp = &slots[slotNum];
+                if (CMP_QNAME(&sp->qname, qname)) {
+                    return slotNum;
+                }
             }
+            return -1;
+        } else {
+            for (slotNum = 0, prior = -1; slotNum < obj->numSlots; slotNum++) {
+                sp = &slots[slotNum];
+                if (CMP_NAME(&sp->qname, qname)) {
+                    if (prior >= 0) {
+                        /* Multiple properties with the same name */
+                        return -1;
+                    }
+                    prior = slotNum;
+                }
+            }
+            return prior;
         }
+
     } else {
         /*
             Find the property in the hash chain if it exists. Note the hash does not include the namespace portion.
@@ -475,14 +494,27 @@ static int lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
             hash probe and find matching names. Lookup will then pick the right namespace.
          */
         index = ejsComputeHashCode(obj, qname);
-        for (slotNum = obj->hash[index]; slotNum >= 0; slotNum = obj->slots[slotNum].hashChain) {
-            propName = &obj->slots[slotNum].qname;
-            if (CMP_QNAME(propName, qname)) {
-                return slotNum;
+        if (qname->space) {
+            for (slotNum = obj->hash[index]; slotNum >= 0; slotNum = slots[slotNum].hashChain) {
+                sp = &slots[slotNum];
+                if (CMP_QNAME(&sp->qname, qname)) {
+                    return slotNum;
+                }
+            }
+        } else {
+            for (slotNum = obj->hash[index]; slotNum >= 0; slotNum = sp->hashChain) {
+                sp = &slots[slotNum];
+                if (CMP_NAME(&sp->qname, qname)) {
+                    if (sp->hashChain < 0 || !CMP_QNAME(&sp->qname, &slots[sp->hashChain].qname)) {
+                        return slotNum;
+                    }
+                    /* Multiple properties with the same name */
+                    break;
+                }
             }
         }
     }
-    return EJS_ERR;
+    return -1;
 }
 
 
@@ -1182,6 +1214,17 @@ int ejsComputeHashCode(EjsObj *obj, EjsName *qname)
 }
 
 
+static int cmpName(EjsName *a, EjsName *b) 
+{
+    mprAssert(a);
+    mprAssert(b);
+    mprAssert(a->name);
+    mprAssert(b->name);
+
+    return (a->name == b->name || (a->name[0] == b->name[0] && strcmp(a->name, b->name) == 0));
+}
+
+
 static int cmpQname(EjsName *a, EjsName *b) 
 {
     mprAssert(a);
@@ -1504,7 +1547,7 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
 
     obj = argv[0];
     prop = ejsGetString(ejs, argv[1]);
-    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, obj, EN(&qname, prop), &lookup)) < 0) {
+    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, EN(&qname, prop), &lookup)) < 0) {
         return (EjsObj*) ejs->falseValue;
     }
     trait = ejsGetTrait(obj, slotNum);
@@ -1597,7 +1640,7 @@ static EjsObj *obj_hasOwnProperty(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv
     cchar       *prop;
 
     prop = ejsGetString(ejs, argv[0]);
-    slotNum = ejsLookupVarWithNamespaces(ejs, obj, obj, EN(&qname, prop), &lookup);
+    slotNum = ejsLookupVarWithNamespaces(ejs, obj, EN(&qname, prop), &lookup);
     return (EjsObj*) ejsCreateBoolean(ejs, slotNum >= 0);
 }
 
@@ -1775,7 +1818,7 @@ static EjsObj *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, EjsObj 
     mprAssert(argc == 1 || argc == 2);
 
     prop = ejsGetString(ejs, argv[0]);
-    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, obj, EN(&qname, prop), &lookup)) < 0) {
+    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, EN(&qname, prop), &lookup)) < 0) {
         return (EjsObj*) ejs->falseValue;
     }
     trait = ejsGetTrait(obj, slotNum);

@@ -1506,21 +1506,22 @@
 #define ES_Logger_flush                                                39
 #define ES_Logger_level                                                40
 #define ES_Logger_match                                                41
-#define ES_Logger_mprStream                                            42
-#define ES_Logger_name                                                 43
-#define ES_Logger_outStream                                            44
-#define ES_Logger_parent                                               45
-#define ES_Logger_debug                                                46
-#define ES_Logger_config                                               47
-#define ES_Logger_error                                                48
-#define ES_Logger_info                                                 49
-#define ES_Logger_read                                                 50
-#define ES_Logger_removeListener                                       51
-#define ES_Logger_write                                                52
-#define ES_Logger_warn                                                 53
-#define ES_Logger_emit                                                 54
+#define ES_Logger_mprLevel                                             42
+#define ES_Logger_mprStream                                            43
+#define ES_Logger_name                                                 44
+#define ES_Logger_outStream                                            45
+#define ES_Logger_parent                                               46
+#define ES_Logger_debug                                                47
+#define ES_Logger_config                                               48
+#define ES_Logger_error                                                49
+#define ES_Logger_info                                                 50
+#define ES_Logger_read                                                 51
+#define ES_Logger_removeListener                                       52
+#define ES_Logger_write                                                53
+#define ES_Logger_warn                                                 54
+#define ES_Logger_emit                                                 55
 
-#define ES_Logger_NUM_CLASS_PROP                                       55
+#define ES_Logger_NUM_CLASS_PROP                                       56
 
 /*
  * Instance slots for "Logger" type 
@@ -2546,6 +2547,6 @@
 #define ES_XMLList_descendants_name                                    0
 #define ES_XMLList_elements_name                                       0
 
-#define _ES_CHECKSUM_ejs   1334349
+#define _ES_CHECKSUM_ejs   1335247
 
 #endif

@@ -212,7 +212,9 @@ static void astAssignOp(EcCompiler *cp, EcNode *np)
          */
         fun = state->currentFunction;
         openBlock(cp, state->currentFunctionNode->function.body, (EjsBlock*) fun);
+#if CHANGE && MOB
         ejsDefineReservedNamespace(cp->ejs, (EjsBlock*) fun, 0, EJS_PRIVATE_NAMESPACE);
+#endif
         processAstNode(cp, np->right);
         closeBlock(cp);
 
@@ -1018,7 +1020,11 @@ static int defineParameters(EcCompiler *cp, EcNode *np)
         }
         attributes |= nameNode->attributes;
 
+#if CHANGE && MOB
         ejsName(&qname, EJS_PRIVATE_NAMESPACE, nameNode->qname.name);
+#else
+        ejsName(&qname, EJS_EMPTY_NAMESPACE, nameNode->qname.name);
+#endif
         allocName(ejs, &qname);
         slotNum = ejsDefineProperty(ejs, (EjsObj*) fun, slotNum, &qname, NULL, attributes, NULL);
         mprAssert(slotNum >= 0);
@@ -1077,8 +1083,13 @@ static void bindParameters(EcCompiler *cp, EcNode *np)
                  */
                 if (np->function.body) {
                     assignNode = child->left;
+
+                    //  MOB WARNING - this is for compiler/functions/function-05.tst fun(a = a)
+
                     openBlock(cp, np->function.body, (EjsBlock*) fun);
+#if CHANGE && MOB
                     ejsDefineReservedNamespace(ejs, (EjsBlock*) fun, 0, EJS_PRIVATE_NAMESPACE);
+#endif
                     processAstNode(cp, assignNode->left);
                     closeBlock(cp);
                     processAstNode(cp, assignNode->right);
@@ -1233,8 +1244,10 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
 
     /*
         Optimize away closures
+        Global functions need scope for the "internal" namespace. If defined as public, dont need it.
+        TODO OPT. Dont set fullScope if public
      */
-    if (fun->owner == ejs->global || np->function.isMethod || np->attributes & EJS_PROP_NATIVE) {
+    if (/* fun->owner == ejs->global || */ np->function.isMethod || np->attributes & EJS_PROP_NATIVE) {
         fun->fullScope = 0;
     } else {
         fun->fullScope = 1;
@@ -1304,7 +1317,9 @@ static void astFunction(EcCompiler *cp, EcNode *np)
 
     if (np->function.body) {
         openBlock(cp, np->function.body, (EjsBlock*) fun);
+#if CHANGE && MOB
         ejsDefineReservedNamespace(ejs, (EjsBlock*) fun, 0, EJS_PRIVATE_NAMESPACE);
+#endif
         mprAssert(np->function.body->kind == N_DIRECTIVES);
         processAstNode(cp, np->function.body);
         closeBlock(cp);
@@ -1744,6 +1759,15 @@ static void astBindName(EcCompiler *cp, EcNode *np)
         Disable binding of names in certain cases.
      */
     lookup = &np->lookup;
+
+#if MOB || DISABLE_ALL_BINDING || 1
+    if (lookup->obj != (EjsObj*) state->currentFunction) {
+        lookup->slotNum = -1;
+        lookup->obj = 0;
+        lookup->useThis = 0;
+    }
+#endif
+
     if (lookup->slotNum >= 0) {
         /*
             Unbind if slot number won't fit in one byte or the object is not a standard Object. The bound op codes 
@@ -2540,7 +2564,7 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
                 return;
             }
         } else {
-            //  TODO - could / should change context to be obj for the names
+            //  TODO MOB BUG - could / should change context to be obj for the names
             allocName(ejs, &np->qname);
             slotNum = ejsDefineProperty(ejs, obj, -1, &np->qname, 0, attributes, value);
         }
@@ -2582,7 +2606,8 @@ static bool hoistBlockVar(EcCompiler *cp, EcNode *np)
 
     mprAssert(cp->phase == EC_PHASE_CONDITIONAL);
 
-    if (cp->optimizeLevel == 0) {
+    //  MOB -- all hoisting is currently disabled.
+    if (1 || cp->optimizeLevel == 0) {
         return 0;
     }
     ejs = cp->ejs;
@@ -3508,18 +3533,15 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsObj *block,
     if (namespace == 0 || !ejsIsNamespace(namespace)) {
         namespace = ejsLookupNamespace(cp->ejs, np->qname.space);
     }
-
     if (namespace == 0) {
         if (strcmp(cp->state->namespace, np->qname.space) == 0) {
             namespace = ejsCreateNamespace(ejs, np->qname.space, np->qname.space);
         }
     }
-
     if (namespace == 0) {
         if (!np->literalNamespace) {
             astError(cp, np, "Can't find namespace \"%s\"", qname.name);
         }
-
     } else {
         if (strcmp(namespace->uri, np->qname.space) != 0) {
             slotNum = ejsLookupProperty(ejs, block, &np->qname);
@@ -3530,7 +3552,8 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsObj *block,
                     Change the name to use the namespace URI. This will change the property name and set
                     "modified" so that the caller can modify the type name if block is a type.
                  */
-                np->qname.space = mprStrdup(np, namespace->uri);
+                //  MOB BUG - context not right for names
+                np->qname.space = mprStrdup(ejs, namespace->uri);
                 ejsSetPropertyName(ejs, block, slotNum, &np->qname);
                 if (modified) {
                     *modified = 1;
@@ -3538,7 +3561,6 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsObj *block,
             }
         }
     }
-
     return namespace;
 }
 
@@ -3605,7 +3627,7 @@ static int resolveName(EcCompiler *cp, EcNode *np, EjsObj *vp, EjsName *qname)
     if ((ejsIsType(lookup->obj) || ejsIsPrototype(lookup->obj)) && state->currentObjectNode == 0) {
         mprAssert(lookup->obj != ejs->global);
         //  NOTE: could potentially do this for static properties as well
-        if (lookup->trait) {
+        if (lookup->trait && lookup->slotNum >= 0) {
             /*
                 class instance or method properties
              */
@@ -3630,7 +3652,7 @@ static int resolveName(EcCompiler *cp, EcNode *np, EjsObj *vp, EjsName *qname)
 
     if (np) {
         np->lookup = cp->lookup;
-#if DISABLE || 1
+#if DISABLE
         if (np->lookup.slotNum >= 0) {
             /*
                 Once we have resolved the name, we now know the selected namespace. Update it in "np" so that if

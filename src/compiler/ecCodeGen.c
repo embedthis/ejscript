@@ -813,8 +813,13 @@ static void genBoundName(EcCompiler *cp, EcNode *np)
             genGlobalName(cp, lookup->slotNum);
         }
 
+#if OLD
     } else if (ejsIsFunction(lookup->obj) && lookup->nthBlock == 0) {
         genLocalName(cp, lookup->slotNum);
+#else
+    } else if (lookup->obj == (EjsObj*) state->currentFunction) {
+        genLocalName(cp, lookup->slotNum);
+#endif
 
     } else if ((ejsIsBlock(lookup->obj) || ejsIsFunction(lookup->obj)) && 
             (!ejsIsType(lookup->obj) && !ejsIsPrototype(lookup->obj))) {
@@ -1960,13 +1965,11 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
 
     for (next = 0; (child = getNextNode(cp, parameters, &next)) && !cp->error; ) {
         mprAssert(child->kind == N_VAR_DEFINITION);
-
         if (child->left->kind == N_ASSIGN_OP) {
             buffers[next - 1] = state->code = allocCodeBuffer(cp);
             genAssignOp(cp, child->left);
         }
     }
-
     firstDefault = fun->numArgs - fun->numDefault;
     mprAssert(firstDefault >= 0);
     needLongJump = cp->optimizeLevel > 0 ? 0 : 1;
@@ -1985,7 +1988,6 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
             }
         }
     }
-
     setCodeBuffer(cp, saveCode);
 
     /*
@@ -2071,10 +2073,13 @@ static void genFunction(EcCompiler *cp, EcNode *np)
      */
     if (fun->fullScope) {
         lookup = &np->lookup;
-        mprAssert(lookup->slotNum >= 0);
         ecEncodeOpcode(cp, EJS_OP_DEFINE_FUNCTION);
+        ecEncodeName(cp, &np->qname);
+#if OLD
+        mprAssert(lookup->slotNum >= 0);
         ecEncodeNumber(cp, lookup->slotNum);
         ecEncodeNumber(cp, lookup->nthBlock);
+#endif
     }
     code = state->code = allocCodeBuffer(cp);
     addDebugInstructions(cp, np);
@@ -3202,7 +3207,6 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
             pushStack(cp, 1);
             np->needThis = 0;
         }
-
         code = (!state->onLeft) ?  EJS_OP_GET_OBJ_NAME :  EJS_OP_PUT_OBJ_NAME;
         ecEncodeOpcode(cp, code);
         ecEncodeName(cp, &np->qname);

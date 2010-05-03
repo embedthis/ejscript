@@ -11,7 +11,7 @@ MAKE_IFLAGS		+= $(BLD_OPENSSL_IFLAGS) $(BLD_MATRIXSSL_IFLAGS)
 
 TARGETS			+= $(BLD_LIB_DIR)/ejsweb.conf
 TARGETS			+= $(BLD_LIB_DIR)/start.es
-MODULES			+= $(BLD_BIN_DIR)/ejsweb$(BLD_EXE)
+# MODULES		+= $(BLD_BIN_DIR)/ejsweb$(BLD_EXE)
 ifeq ($(BLD_UNIX_LIKE),1)
     TARGETS		+= $(BLD_BIN_DIR)/angel$(BLD_EXE)
 endif
@@ -20,7 +20,7 @@ WEB_OBJECTS		+= $(patsubst %,$(BLD_OBJ_DIR)/%$(BLD_OBJ),appweb appwebLib)
 
 compileExtra:	$(TARGETS)
 
-modules:		$(MODULES)
+# modules:		$(MODULES)
 
 $(BLD_BIN_DIR)/ejsweb$(BLD_EXE): $(OBJECTS)
 	bld --exe $(BLD_BIN_DIR)/ejsweb$(BLD_EXE) --libs "$(BLD_EJS_LIBS)" \

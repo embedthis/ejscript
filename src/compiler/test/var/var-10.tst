@@ -58,9 +58,19 @@ assert(Shape.count == "shapeCountUpdate")
 var name: String = "count"
 
 assert(s["pos"] == "shapePosUpdate")
+
+/*
+    STATIC
 assert(s["count"] == undefined)
+*/
+assert(s["count"] == "shapeCountUpdate")
 assert(Shape["count"] == "shapeCountUpdate")
+
+/*
+    STATIC
 assert(s[name] == undefined)
+*/
+assert(s[name] == "shapeCountUpdate")
 assert(Shape[name] == "shapeCountUpdate")
 assert(Shape["count"] == "shapeCountUpdate")
 assert(Shape[name] == "shapeCountUpdate")
@@ -94,8 +104,17 @@ assert(Ellipse.count == "ellipseCountUpdate")
 assert(Ellipse.len == "ellipseLengthUpdate")
 
 assert(e["pos"] == "ellipsePosUpdate")
+/*
+    STATIC
 assert(e["count"] == undefined)
+*/
+assert(e["count"] == "ellipseCountUpdate")
 assert(Ellipse["count"] == "ellipseCountUpdate")
+
+/*
+    STATIC
 assert(e[name] == undefined)
+*/
+assert(e[name] == "ellipseCountUpdate")
 assert(Ellipse["count"] == "ellipseCountUpdate")
 assert(Ellipse[name] == "ellipseCountUpdate")

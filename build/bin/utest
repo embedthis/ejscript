@@ -136,6 +136,9 @@ class Test {
                 App.exit()
                 break
             default:
+print(args.length);
+breakpoint()
+print(args.length);
                 if (args[i].startsWith("-")) {
                     usage()
                 }
@@ -517,6 +520,7 @@ test.initialize()
 try {
     test.runner()
 } catch (e) { 
+    //  MOB -- error is deprecated
     error("\nException: " + e)
 }
 test.summary()

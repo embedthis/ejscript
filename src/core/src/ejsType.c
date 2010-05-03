@@ -62,10 +62,8 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
     dest->numericIndicies = src->numericIndicies;
     dest->qname = src->qname;
 
-    dest->skipScope = src->skipScope;
     dest->subTypeCount = src->subTypeCount;
     dest->typeData = src->typeData;
-
     return dest;
 }
 
@@ -614,11 +612,13 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
         return EJS_ERR;
     }
     if (baseType) {
-        if (type->prototype == 0) {
-            type->prototype = ejsCreatePrototype(ejs, type, 0);
+        if (type->implements || (baseType->prototype && baseType->prototype->numSlots > 0)) {
+            if (type->prototype == 0) {
+                type->prototype = ejsCreatePrototype(ejs, type, 0);
+            }
+            mprAssert(type->baseType == baseType);
+            fixupPrototypeProperties(ejs, type, baseType, 1);
         }
-        mprAssert(type->baseType == baseType);
-        fixupPrototypeProperties(ejs, type, baseType, 1);
     }
     fixInstanceSize(ejs, type);
     return 0;

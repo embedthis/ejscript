@@ -442,12 +442,12 @@ void ejsCreateGlobalBlock(Ejs *ejs)
     
     /*  
         Create the standard namespaces. Order matters here. This is the (reverse) order of lookup.
-        TODO - OPT Optimize this ordering.
+        Empty is first to maximize speed of searching dynamic properties. Ejs second to maximize builtin lookups.
      */
     block = (EjsBlock*) ejs->global;
     ejs->iteratorSpace =    addNamespace(ejs, block, EJS_ITERATOR_NAMESPACE);
-    ejs->ejsSpace =         addNamespace(ejs, block, EJS_EJS_NAMESPACE);
     ejs->publicSpace =      addNamespace(ejs, block, EJS_PUBLIC_NAMESPACE);
+    ejs->ejsSpace =         addNamespace(ejs, block, EJS_EJS_NAMESPACE);
     ejs->emptySpace =       addNamespace(ejs, block, EJS_EMPTY_NAMESPACE);
 }
 
