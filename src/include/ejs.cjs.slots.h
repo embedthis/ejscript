@@ -15,6 +15,10 @@
  */
 
 /*
+ * Instance slots for "global" type 
+ */
+
+/*
     Local slots for global methods 
  */
 #define ES_ejs_cjs_require_id                                          0
@@ -23,27 +27,27 @@
 /*
     Class property slots for the "Loader" type 
  */
-#define ES_Loader__origin                                              27
-#define ES_Loader__initializer__Loader_initializer                     27
-#define ES_Loader_mainId                                               28
-#define ES_Loader_signatures                                           29
-#define ES_Loader_timestamps                                           30
-#define ES_Loader_defaultExtensions                                    31
-#define ES_Loader_config                                               32
-#define ES_Loader_init                                                 33
-#define ES_Loader_require                                              34
-#define ES_Loader_load                                                 35
-#define ES_Loader_cached                                               36
-#define ES_Loader_wrap                                                 37
-#define ES_Loader_locate                                               38
-#define ES_Loader_setConfig                                            39
+#define ES_Loader__origin                                              0
+#define ES_Loader__initializer__Loader_initializer                     0
+#define ES_Loader_mainId                                               1
+#define ES_Loader_signatures                                           2
+#define ES_Loader_timestamps                                           3
+#define ES_Loader_defaultExtensions                                    4
+#define ES_Loader_config                                               5
+#define ES_Loader_init                                                 6
+#define ES_Loader_require                                              7
+#define ES_Loader_load                                                 8
+#define ES_Loader_cached                                               9
+#define ES_Loader_wrap                                                 10
+#define ES_Loader_locate                                               11
+#define ES_Loader_setConfig                                            12
 
-#define ES_Loader_NUM_CLASS_PROP                                       40
+#define ES_Loader_NUM_CLASS_PROP                                       13
 
 /*
  * Instance slots for "Loader" type 
  */
-#define ES_Loader_NUM_INSTANCE_PROP                                    0
+#define ES_Loader_NUM_INSTANCE_PROP                                    24
 
 /*
     Local slots for methods in type "Loader" 
@@ -59,6 +63,6 @@
 #define ES_Loader_locate_id                                            0
 #define ES_Loader_setConfig_newConfig                                  0
 
-#define _ES_CHECKSUM_ejs_cjs   27125
+#define _ES_CHECKSUM_ejs_cjs   26771
 
 #endif

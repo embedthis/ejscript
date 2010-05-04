@@ -119,6 +119,7 @@ typedef struct EjsLookup {
     int             slotNum;                /* Final slot in obj containing the variable reference */
     uint            nthBase;                /* Property on Nth super type -- count from the object */
     uint            nthBlock;               /* Property on Nth block in the scope chain -- count from the end */
+#if UNUSED || 1
     uint            useThis;                /* Property accessible via "this." */
     //  MOB -- check all these being used
     uint            instanceProperty;       /* Property is an instance property */
@@ -130,6 +131,7 @@ typedef struct EjsLookup {
 
     //  MOB -- check all these being used
     struct EjsObj   *originalObj;           /* Original object used for the search */
+#endif
     struct EjsObj   *ref;                   /* Actual property reference */
     struct EjsTrait *trait;                 /* Property trait describing the property */
     struct EjsName  name;                   /* Name and namespace used to find the property */

@@ -14,34 +14,24 @@
    Slots for the "ejs.tar" module 
  */
 
-
 /*
-    Class property slots for the "Tar" type 
+ * Instance slots for "global" type 
  */
-#define ES_ejs_tar_Tar__origin                                         27
-#define ES_ejs_tar_Tar_Tar                                             27
-#define ES_ejs_tar_Tar_add                                             28
-#define ES_ejs_tar_Tar_xcreate                                         29
-#define ES_ejs_tar_Tar_extract                                         30
-#define ES_ejs_tar_Tar_cat                                             31
 
-#define ES_ejs_tar_Tar_NUM_CLASS_PROP                                  32
+#define ES_ejs_tar_Tar_NUM_CLASS_PROP                                  0
 
 /*
  * Instance slots for "Tar" type 
  */
-#define ES_ejs_tar_Tar_path                                            0
-#define ES_ejs_tar_Tar_files                                           1
-#define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               2
+#define ES_ejs_tar_Tar_Tar                                             12
+#define ES_ejs_tar_Tar_path                                            13
+#define ES_ejs_tar_Tar_files                                           14
+#define ES_ejs_tar_Tar_add                                             15
+#define ES_ejs_tar_Tar_xcreate                                         16
+#define ES_ejs_tar_Tar_extract                                         17
+#define ES_ejs_tar_Tar_cat                                             18
+#define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               31
 
-/*
-    Local slots for methods in type "Tar" 
- */
-#define ES_ejs_tar_Tar_Tar_path                                        0
-#define ES_ejs_tar_Tar_add_path                                        0
-#define ES_ejs_tar_Tar_extract_files                                   0
-#define ES_ejs_tar_Tar_cat_files                                       0
-
-#define _ES_CHECKSUM_ejs_tar   8361
+#define _ES_CHECKSUM_ejs_tar   23809
 
 #endif

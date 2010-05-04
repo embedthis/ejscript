@@ -131,14 +131,11 @@ EjsTypeHelpers *ejsCloneObjectHelpers(Ejs *ejs, cchar *name)
 {
     EjsTypeHelpers  *helpers;
 
-    if (ejs->objectType) {
-        helpers = (EjsTypeHelpers*) mprMemdup(ejs, ejs->objectType->helpers, sizeof(EjsTypeHelpers));
-        if (helpers) {
-            helpers->name = name;
-        }
-        return helpers;
+    helpers = (EjsTypeHelpers*) mprMemdup(ejs, ejs->objectType->helpers, sizeof(EjsTypeHelpers));
+    if (helpers) {
+        helpers->name = name;
     }
-    return 0;
+    return helpers;
 }
 
 
@@ -164,7 +161,7 @@ static int defineTypes(Ejs *ejs)
         Create the essential bootstrap types: Object, Type and the global object, these are the foundation.
         All types are instances of Type. Order matters here.
      */
-    ejsCreateObjectType(ejs);
+    ejsBootstrapTypes(ejs);
     ejsCreateBlockType(ejs);
     ejsCreateTypeType(ejs);
     ejsCreateNullType(ejs);
@@ -584,7 +581,7 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
     EjsFunction     *fun;
     EjsName         qname;
     EjsObj          *args;
-    int             attributes, i;
+    int             attributes, i, slotNum;
 
     type = 0;
     if (className == 0 && methodName == 0) {
@@ -612,16 +609,17 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
     }
 
     ejsName(&qname, EJS_PUBLIC_NAMESPACE, methodName);
-    fun = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) type, &qname);
-    if (fun == 0) {
+    slotNum = ejsLookupProperty(ejs, (EjsObj*) type, &qname);
+    if (slotNum < 0) {
         return MPR_ERR_CANT_ACCESS;
     }
+    fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
     if (! ejsIsFunction(fun)) {
         mprError(ejs, "Property \"%s\" is not a function");
         return MPR_ERR_BAD_STATE;
     }
 
-    attributes = ejsGetTypePropertyAttributes(ejs, (EjsObj*) type, fun->slotNum);
+    attributes = ejsGetTypePropertyAttributes(ejs, (EjsObj*) type, slotNum);
     if (!(attributes & EJS_PROP_STATIC)) {
         mprError(ejs, "Method \"%s\" is not declared static");
         return EJS_ERR;

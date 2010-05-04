@@ -15,6 +15,10 @@
  */
 
 /*
+ * Instance slots for "global" type 
+ */
+
+/*
     Local slots for global methods 
  */
 #define ES_ejs_db_mapper_plural_name                                   0
@@ -25,99 +29,97 @@
 /*
     Class property slots for the "Record" type 
  */
-#define ES_Record__origin                                              27
-#define ES_Record_Record                                               27
-#define ES_Record__initializer__Record_initializer                     28
-#define ES_Record__assocName                                           29
-#define ES_Record__belongsTo                                           30
-#define ES_Record__className                                           31
-#define ES_Record__columns                                             32
-#define ES_Record__hasOne                                              33
-#define ES_Record__hasMany                                             34
-#define ES_Record__db                                                  35
-#define ES_Record__foreignId                                           36
-#define ES_Record__keyName                                             37
-#define ES_Record__model                                               38
-#define ES_Record__tableName                                           39
-#define ES_Record__trace                                               40
-#define ES_Record__validations                                         41
-#define ES_Record__beforeFilters                                       42
-#define ES_Record__afterFilters                                        43
-#define ES_Record__wrapFilters                                         44
-#define ES_Record_ErrorMessages                                        45
-#define ES_Record_initialize                                           46
-#define ES_Record_afterFilter                                          47
-#define ES_Record_beforeFilter                                         48
-#define ES_Record_belongsTo                                            49
-#define ES_Record_cachedRead                                           50
-#define ES_Record_checkFormat                                          51
-#define ES_Record_checkNumber                                          52
-#define ES_Record_checkPresent                                         53
-#define ES_Record_checkUnique                                          54
-#define ES_Record_coerceToEjsTypes                                     55
-#define ES_Record_createAssociations                                   56
-#define ES_Record_createRecord                                         57
-#define ES_Record_error                                                58
-#define ES_Record_find                                                 59
-#define ES_Record_findAll                                              60
-#define ES_Record_findOneWhere                                         61
-#define ES_Record_findWhere                                            62
-#define ES_Record_getColumnNames                                       63
-#define ES_Record_getColumnTitles                                      64
-#define ES_Record_getColumnType                                        65
-#define ES_Record_getDb                                                66
-#define ES_Record_getErrors                                            67
-#define ES_Record_getKeyName                                           68
-#define ES_Record_getNumRows                                           69
-#define ES_Record_getSchema                                            70
-#define ES_Record_getTableName                                         71
-#define ES_Record_hasAndBelongsToMany                                  72
-#define ES_Record_hasError                                             73
-#define ES_Record_hasMany                                              74
-#define ES_Record_hasOne                                               75
-#define ES_Record_innerFind                                            76
-#define ES_Record_makeLazyReader                                       77
-#define ES_Record_mapSqlTypeToEjs                                      78
-#define ES_Record_prepareValue                                         79
-#define ES_Record_readRecords                                          80
-#define ES_Record_remove                                               81
-#define ES_Record_runFilters                                           82
-#define ES_Record_save                                                 83
-#define ES_Record_saveUpdate                                           84
-#define ES_Record_setDb                                                85
-#define ES_Record_setKeyName                                           86
-#define ES_Record_setTableName                                         87
-#define ES_Record_sql                                                  88
-#define ES_Record_trace                                                89
-#define ES_Record_validateFormat                                       90
-#define ES_Record_validateNumber                                       91
-#define ES_Record_validatePresence                                     92
-#define ES_Record_validateRecord                                       93
-#define ES_Record_validateUnique                                       94
-#define ES_Record_wrapFilter                                           95
-#define ES_Record_columnNames                                          96
-#define ES_Record_columnTitles                                         97
-#define ES_Record_db                                                   98
-#define ES_Record_keyName                                              99
-#define ES_Record_numRows                                              100
-#define ES_Record_tableName                                            101
-#define ES_Record_constructorOLD                                       102
+#define ES_Record__origin                                              0
+#define ES_Record__initializer__Record_initializer                     0
+#define ES_Record__assocName                                           1
+#define ES_Record__belongsTo                                           2
+#define ES_Record__className                                           3
+#define ES_Record__columns                                             4
+#define ES_Record__hasOne                                              5
+#define ES_Record__hasMany                                             6
+#define ES_Record__db                                                  7
+#define ES_Record__foreignId                                           8
+#define ES_Record__keyName                                             9
+#define ES_Record__model                                               10
+#define ES_Record__tableName                                           11
+#define ES_Record__trace                                               12
+#define ES_Record__validations                                         13
+#define ES_Record__beforeFilters                                       14
+#define ES_Record__afterFilters                                        15
+#define ES_Record__wrapFilters                                         16
+#define ES_Record_ErrorMessages                                        17
+#define ES_Record_afterFilter                                          18
+#define ES_Record_beforeFilter                                         19
+#define ES_Record_belongsTo                                            20
+#define ES_Record_cachedRead                                           21
+#define ES_Record_checkFormat                                          22
+#define ES_Record_checkNumber                                          23
+#define ES_Record_checkPresent                                         24
+#define ES_Record_checkUnique                                          25
+#define ES_Record_createAssociations                                   26
+#define ES_Record_createRecord                                         27
+#define ES_Record_find                                                 28
+#define ES_Record_findAll                                              29
+#define ES_Record_findOneWhere                                         30
+#define ES_Record_findWhere                                            31
+#define ES_Record_getColumnNames                                       32
+#define ES_Record_getColumnTitles                                      33
+#define ES_Record_getColumnType                                        34
+#define ES_Record_getDb                                                35
+#define ES_Record_getKeyName                                           36
+#define ES_Record_getNumRows                                           37
+#define ES_Record_getSchema                                            38
+#define ES_Record_getTableName                                         39
+#define ES_Record_hasAndBelongsToMany                                  40
+#define ES_Record_hasMany                                              41
+#define ES_Record_hasOne                                               42
+#define ES_Record_innerFind                                            43
+#define ES_Record_makeLazyReader                                       44
+#define ES_Record_mapSqlTypeToEjs                                      45
+#define ES_Record_prepareValue                                         46
+#define ES_Record_readRecords                                          47
+#define ES_Record_remove                                               48
+#define ES_Record_setDb                                                49
+#define ES_Record_setKeyName                                           50
+#define ES_Record_setTableName                                         51
+#define ES_Record_sql                                                  52
+#define ES_Record_trace                                                53
+#define ES_Record_validateFormat                                       54
+#define ES_Record_validateNumber                                       55
+#define ES_Record_validatePresence                                     56
+#define ES_Record_validateUnique                                       57
+#define ES_Record_wrapFilter                                           58
+#define ES_Record_columnNames                                          59
+#define ES_Record_columnTitles                                         60
+#define ES_Record_db                                                   61
+#define ES_Record_keyName                                              62
+#define ES_Record_numRows                                              63
+#define ES_Record_tableName                                            64
 
-#define ES_Record_NUM_CLASS_PROP                                       103
+#define ES_Record_NUM_CLASS_PROP                                       65
 
 /*
  * Instance slots for "Record" type 
  */
-#define ES_Record__keyValue                                            0
-#define ES_Record__errors                                              1
-#define ES_Record__cacheAssoc                                          2
-#define ES_Record_NUM_INSTANCE_PROP                                    3
+#define ES_Record_Record                                               12
+#define ES_Record__keyValue                                            13
+#define ES_Record__errors                                              14
+#define ES_Record__cacheAssoc                                          15
+#define ES_Record_initialize                                           16
+#define ES_Record_coerceToEjsTypes                                     17
+#define ES_Record_error                                                18
+#define ES_Record_getErrors                                            19
+#define ES_Record_hasError                                             20
+#define ES_Record_runFilters                                           21
+#define ES_Record_save                                                 22
+#define ES_Record_saveUpdate                                           23
+#define ES_Record_validateRecord                                       24
+#define ES_Record_constructorOLD                                       25
+#define ES_Record_NUM_INSTANCE_PROP                                    38
 
 /*
     Local slots for methods in type "Record" 
  */
-#define ES_Record_Record_fields                                        0
-#define ES_Record_initialize_fields                                    0
 #define ES_Record_afterFilter_fn                                       0
 #define ES_Record_afterFilter_options                                  1
 #define ES_Record_beforeFilter_fn                                      0
@@ -151,8 +153,6 @@
 #define ES_Record_createAssociations_options                           3
 #define ES_Record_createRecord_data                                    0
 #define ES_Record_createRecord_options                                 1
-#define ES_Record_error_field                                          0
-#define ES_Record_error_msg                                            1
 #define ES_Record_find_key                                             0
 #define ES_Record_find_options                                         1
 #define ES_Record_findAll_options                                      0
@@ -162,7 +162,6 @@
 #define ES_Record_getColumnType_field                                  0
 #define ES_Record_hasAndBelongsToMany_model                            0
 #define ES_Record_hasAndBelongsToMany_options                          1
-#define ES_Record_hasError_field                                       0
 #define ES_Record_hasMany_model                                        0
 #define ES_Record_hasMany_options                                      1
 #define ES_Record_hasOne_model                                         0
@@ -181,8 +180,6 @@
 #define ES_Record_readRecords_key                                      0
 #define ES_Record_readRecords_options                                  1
 #define ES_Record_remove_ids                                           0
-#define ES_Record_runFilters_filters                                   0
-#define ES_Record_saveUpdate_fields                                    0
 #define ES_Record_setDb_database                                       0
 #define ES_Record_setKeyName_name                                      0
 #define ES_Record_setTableName_name                                    0
@@ -199,32 +196,17 @@
 #define ES_Record_validateUnique_option                                1
 #define ES_Record_wrapFilter_fn                                        0
 #define ES_Record_wrapFilter_options                                   1
-#define ES_Record_constructorOLD_fields                                0
 
-
-/*
-    Class property slots for the "Column" type 
- */
-#define ES_ejs_db_mapper_Column__origin                                27
-#define ES_ejs_db_mapper_Column_Column                                 27
-
-#define ES_ejs_db_mapper_Column_NUM_CLASS_PROP                         28
+#define ES_ejs_db_mapper_Column_NUM_CLASS_PROP                         0
 
 /*
  * Instance slots for "Column" type 
  */
-#define ES_ejs_db_mapper_Column_ejsType                                0
-#define ES_ejs_db_mapper_Column_sqlType                                1
-#define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      2
+#define ES_ejs_db_mapper_Column_Column                                 12
+#define ES_ejs_db_mapper_Column_ejsType                                13
+#define ES_ejs_db_mapper_Column_sqlType                                14
+#define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      27
 
-/*
-    Local slots for methods in type "Column" 
- */
-#define ES_ejs_db_mapper_Column_Column_name                            0
-#define ES_ejs_db_mapper_Column_Column_accessor                        1
-#define ES_ejs_db_mapper_Column_Column_ejsType                         2
-#define ES_ejs_db_mapper_Column_Column_sqlType                         3
-
-#define _ES_CHECKSUM_ejs_db_mapper   190656
+#define _ES_CHECKSUM_ejs_db_mapper   203594
 
 #endif

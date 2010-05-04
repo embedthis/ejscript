@@ -69,6 +69,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     obj->sizeSlots = sizeSlots;
     obj->numSlots = numSlots;
     if (activation) {
+        //  MOB -- could the function be setup as the prototype and thus avoid doing this?
         //  MOB -- assumes that the function is sealed
         memcpy(obj->slots, activation->slots, numSlots * sizeof(EjsSlot));
         ejsMakeObjHash(obj);
@@ -77,7 +78,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     obj->dynamic = 1;
 
     frame->function.block.namespaces = fun->block.namespaces;
-    frame->function.block.scopeChain = fun->block.scopeChain;
+    frame->function.block.scope = fun->block.scope;
     frame->function.block.prev = fun->block.prev;
     frame->function.block.breakCatch = fun->block.breakCatch;
     frame->function.block.nobind = fun->block.nobind;
@@ -105,8 +106,10 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 #endif
     frame->function.thisObj = thisObj;
     frame->function.resultType = fun->resultType;
+#if UNUSED
     frame->function.slotNum = fun->slotNum;
     frame->function.owner = fun->owner;
+#endif
     frame->function.body = fun->body;
     frame->pc = fun->body.code.byteCode;
 
@@ -131,7 +134,7 @@ void ejsCreateFrameType(Ejs *ejs)
     EjsTypeHelpers  *helpers;
 
     type = ejs->frameType = ejsCreateNativeType(ejs, "ejs", "Frame", ES_Frame, sizeof(EjsFrame));
-    type->block.obj.skipScope = 1;
+    type->block.obj.shortScope = 1;
 
     helpers = type->helpers;
     helpers->destroy = (EjsDestroyHelper) destroyFrame;

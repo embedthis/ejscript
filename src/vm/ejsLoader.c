@@ -359,7 +359,7 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
         return 0;
     }
     ejsSetModuleConstants(ejs, mp, pool, poolSize);
-    mp->scopeChain = ejs->globalBlock;
+    mp->scope = ejs->globalBlock;
     mp->checksum = checksum;
     *created = 1;
 
@@ -415,7 +415,6 @@ static int loadDependencySection(Ejs *ejs, MprFile *file, EjsModule *mp)
         return 0;
     }
     saveCallback = ejs->loaderCallback;
-    //  TODO - was ejs->loadState->modules
     nextModule = mprGetListCount(ejs->modules);
     ejs->loaderCallback = NULL;
 
@@ -433,7 +432,6 @@ static int loadDependencySection(Ejs *ejs, MprFile *file, EjsModule *mp)
             return MPR_ERR_BAD_STATE;
         }
     }
-
     if (mp->dependencies == 0) {
         mp->dependencies = mprCreateList(mp);
     }
@@ -483,8 +481,8 @@ static int loadBlockSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_BLOCK, mp, current, slotNum, qname.name, numSlot, bp);
     }
-    bp->scopeChain = mp->scopeChain;
-    mp->scopeChain = bp;
+    bp->scope = mp->scope;
+    mp->scope = bp;
     return 0;
 }
 
@@ -496,7 +494,7 @@ static int loadEndBlockSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_BLOCK_END, mp);
     }
-    mp->scopeChain = mp->scopeChain->scopeChain;
+    mp->scope = mp->scope->scope;
     return 0;
 }
 
@@ -514,6 +512,7 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     
     qname.name = ejsModuleReadString(ejs, mp);
     qname.space = ejsModuleReadString(ejs, mp);
+    mprAssert(strcmp(qname.name, "String") != 0);
 
     ejsModuleReadNumber(ejs, mp, &attributes);
     ejsModuleReadNumber(ejs, mp, &slotNum);
@@ -536,20 +535,17 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     }
     type = nativeType = 0;
     if (!ejs->empty) {
-        /*
-            Find pre-existing native types.
-         */
         if (attributes & EJS_PROP_NATIVE) {
             type = nativeType = (EjsType*) mprLookupHash(ejs->coreTypes, qname.name);
             if (type == 0) {
                 mprLog(ejs, 1, "WARNING: can't find native type \"%s\"", qname.name);
             }
         } else {
-    #if BLD_DEBUG
+#if BLD_DEBUG
             if (mprLookupHash(ejs->coreTypes, qname.name)) {
                 mprError(ejs, "WARNING: type \"%s\" defined as a native type but not declared as native", qname.name);
             }
-    #endif
+#endif
         }
     }
     if (attributes & EJS_TYPE_FIXUP) {
@@ -603,11 +599,9 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
             }
             if (iface) {
                 mprAddItem(type->implements, iface);
-            } else {
-                if (addFixup(ejs, EJS_FIXUP_INTERFACE_TYPE, (EjsObj*) type, -1, ifixup) < 0) {
-                    ejsThrowMemoryError(ejs);
-                    return MPR_ERR_NO_MEMORY;
-                }
+            } else if (addFixup(ejs, EJS_FIXUP_INTERFACE_TYPE, (EjsObj*) type, -1, ifixup) < 0) {
+                ejsThrowMemoryError(ejs);
+                return MPR_ERR_NO_MEMORY;
             }
         }
     }
@@ -636,8 +630,8 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     setDoc(ejs, mp, ejs->global, slotNum);
 
     block = (EjsBlock*) type;
-    block->scopeChain = mp->scopeChain;
-    mp->scopeChain = block;
+    block->scope = mp->scope;
+    mp->scope = block;
 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS, mp, slotNum, qname, type, attributes);
@@ -653,13 +647,13 @@ static int loadEndClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     mprLog(ejs, 9, "    End class section");
 
     if (ejs->loaderCallback) {
-        (ejs->loaderCallback)(ejs, EJS_SECT_CLASS_END, mp, mp->scopeChain);
+        (ejs->loaderCallback)(ejs, EJS_SECT_CLASS_END, mp, mp->scope);
     }
-    type = (EjsType*) mp->scopeChain;
+    type = (EjsType*) mp->scope;
     if (type->block.obj.hasScriptFunctions && type->baseType) {
         ejsDefineTypeNamespaces(ejs, type);
     }
-    mp->scopeChain = mp->scopeChain->scopeChain;
+    mp->scope = mp->scope->scope;
     return 0;
 }
 
@@ -670,6 +664,7 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     EjsTypeFixup    *fixup;
     EjsFunction     *fun;
     EjsName         qname, returnTypeName;
+    EjsBlock        *scope;
     EjsObj          *current;
     uchar           *code;
     int             slotNum, numSlots, numArgs, numDefault, codeLen, numExceptions, attributes, strict, sn;
@@ -693,7 +688,9 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
         return MPR_ERR_CANT_READ;
     }
     current = getCurrentBlock(ejs, mp);
-
+    if (ejsIsType(current) && !(attributes & EJS_PROP_STATIC)) {
+        current = ((EjsType*) current)->prototype;
+    }
     mprAssert(current);
     mprAssert(numArgs >= 0 && numArgs < EJS_MAX_ARGS);
     mprAssert(numExceptions >= 0 && numExceptions < EJS_MAX_EXCEPTIONS);
@@ -742,8 +739,9 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
         Create the function using the current scope chain. Non-methods revise this scope chain via 
         the DefineFunction op code.
      */
-    fun = ejsCreateFunction(ejs, code, codeLen, numArgs, numDefault, numExceptions, returnType, attributes, mp->constants, 
-        mp->scopeChain, strict);
+    scope = ejsIsType(mp->scope) ? mp->scope->scope : mp->scope;
+    fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, attributes, 
+        mp->constants, mp->scope, strict);
     if (fun == 0) {
         mprFree(code);
         return MPR_ERR_NO_MEMORY;
@@ -754,13 +752,13 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (code) {
         mprStealBlock(fun, code);
     }
-    ejsSetDebugName(fun, qname.name);
 
     if (numSlots > 0) {
         fun->activation = ejsCreateActivation(ejs, fun, numSlots);
     }
 
     if (current == ejs->global && slotNum < 0) {
+        //  MOB -- don't understand this. Why ejs->global and override?
         if (attributes & EJS_FUN_OVERRIDE) {
             slotNum = ejsLookupProperty(ejs, current, &qname);
             if (slotNum < 0) {
@@ -791,8 +789,8 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     setDoc(ejs, mp, current, slotNum);
 
     mp->currentMethod = fun;
-    fun->block.scopeChain = mp->scopeChain;
-    mp->scopeChain = (EjsBlock*) fun;
+    fun->block.scope = mp->scope;
+    mp->scope = (EjsBlock*) fun;
 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_FUNCTION, mp, current, slotNum, qname, fun, attributes);
@@ -807,11 +805,11 @@ static int loadEndFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
 
     mprLog(ejs, 9, "    End function section");
 
-    fun = (EjsFunction*) mp->scopeChain;
+    fun = (EjsFunction*) mp->scope;
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_FUNCTION_END, mp, fun);
     }
-    mp->scopeChain = mp->scopeChain->scopeChain;
+    mp->scope = mp->scope->scope;
     return 0;
 }
 
@@ -880,6 +878,7 @@ static int loadPropertySection(Ejs *ejs, MprFile *file, EjsModule *mp, int secti
     ejsModuleReadType(ejs, mp, &type, &fixup, &propTypeName, 0);
 
     //  MOB -- remove the need for this flag
+
     if (attributes & EJS_PROP_HAS_VALUE) {
         if ((str = ejsModuleReadString(ejs, mp)) == 0) {
             return MPR_ERR_CANT_READ;
@@ -1052,7 +1051,7 @@ static EjsObj *getCurrentBlock(Ejs *ejs, EjsModule *mp)
     EjsFunction     *fun;
     EjsObj          *block;
     
-    block = (EjsObj*) mp->scopeChain;
+    block = (EjsObj*) mp->scope;
     mprAssert(block);
 
     if (ejsIsFunction(block)) {

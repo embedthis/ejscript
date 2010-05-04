@@ -14,17 +14,19 @@ module ejs {
 
         use default namespace public
 
-shared native function get constructor(): Function
+/* shared */ native function get constructor(): Function
 
         //  ejs so other types don't need to use override when defining "length"
 
+/*
 shared ejs static native function get length(): Number
+*/
 
         /**
             The prototype object for the type. The prototype object provides the template of instance properties 
             shared by all Objects.
          */
-shared static native function get prototype(): Object
+/* shared static */ native function get prototype(): Object
 
 
         /** 

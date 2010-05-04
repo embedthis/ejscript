@@ -15,6 +15,10 @@
  */
 
 /*
+ * Instance slots for "global" type 
+ */
+
+/*
     Local slots for global methods 
  */
 #define ES_basename_path                                               0

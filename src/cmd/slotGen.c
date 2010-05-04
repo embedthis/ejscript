@@ -26,7 +26,6 @@ int emCreateSlotFiles(EjsMod *bp, EjsModule *mp, MprFile *outfile)
 
     rc = 0;
     defaultVersion = mprAsprintf(bp, -1, "-%d", ejsParseModuleVersion(BLD_VERSION));
-
     if (bp->cslots) {
         rc += createSlotFile(bp, mp, outfile, 0);
     }
@@ -59,7 +58,6 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file, bool java)
             *cp = '_';
         }
     }
-
     mprSprintf(slotsName, sizeof(slotsName), "%sSlots", mp->name);
     slotsName[0] = toupper((int) slotsName[0]);
     for (dp = sp = slotsName; *sp; sp++) {
@@ -123,7 +121,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file, bool java)
 
     ejsName(&qname, EJS_EJS_NAMESPACE, EJS_GLOBAL);
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
-    type = ejsCreateType(ejs, &qname, NULL, NULL, sizeof(EjsType), slotNum, ejs->globalBlock->obj.numSlots, 0, 0, NULL);
+    type = ejsCreateType(ejs, &qname, NULL, NULL, sizeof(EjsType), slotNum, ejs->global->numSlots, 0, 0, NULL);
     type->block = *ejs->globalBlock;
     type->block.obj.type = ejs->typeType;
     type->block.obj.isType = 1;
@@ -349,7 +347,6 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
                 }
             }
         }
-
         for (sp = nameBuf; *sp; sp++) {
             if (*sp == '.') {
                 *sp = '_';
@@ -369,6 +366,7 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
 }
 
 
+#if UNUSED
 static void defineSlotOrigin(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int slotNum, bool java)
 {
     char    name[MPR_MAX_STRING], *typeStr, *sp;
@@ -381,7 +379,6 @@ static void defineSlotOrigin(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *
     if (typeStr && typeStr[0] != '\0') {
         if (java) {
             mprSprintf(name, sizeof(name), "    public static final int %s__origin = ", typeStr);
-
         } else {
             mprSprintf(name, sizeof(name), "#define ES_%s__origin", typeStr);
         }
@@ -398,6 +395,7 @@ static void defineSlotOrigin(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *
     }
     mprFree(typeStr);
 }
+#endif
 
 
 static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, char *suffix, int numSlots, bool java)
@@ -409,13 +407,11 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
         mprFree(typeStr);
         typeStr = mprStrdup(file, EJS_GLOBAL);
     }
-
     if (java) {
         mprSprintf(name, sizeof(name), "    public static final int %s_NUM_%s_PROP = ", typeStr, suffix);
     } else {
         mprSprintf(name, sizeof(name), "#define ES_%s_NUM_%s_PROP", typeStr, suffix);
     }
-
     for (sp = name; *sp; sp++) {
         if (*sp == '.') {
             *sp = '_';
@@ -443,7 +439,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     EjsFunction     *fun;
     cchar           *typeName;
     EjsName         qname, lqname;
-    int             slotNum, i, methodHeader, numClassInherited, numInstanceInherited, count;
+    int             slotNum, i, methodHeader, numInstanceInherited, count;
 
     mprAssert(bp);
     mprAssert(type);
@@ -451,7 +447,6 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
 
     ejs = bp->ejs;
     typeName = type->qname.name;
-    
     lastClassSlot = max(firstClassSlot, lastClassSlot);
 
     if (!isGlobal || strcmp(mp->name, "ejs") == 0) {
@@ -464,11 +459,13 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
             } else {
                 mprFprintf(file, "\n\n/*\n    Class property slots for the \"%s\" type \n */\n", typeName);
             }
+#if UNUSED
             /*
                 Process class traits (skip base class slots)
                 Class traits are any class properties or methods.
              */
             defineSlotOrigin(bp, file, mp, type, firstClassSlot, java);
+#endif
 
             for (slotNum = firstClassSlot; slotNum < lastClassSlot; slotNum++) {
                 trait = ejsGetPropertyTrait(ejs, (EjsObj*) type, slotNum);
@@ -488,8 +485,8 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
      */
     prototype = type->prototype;
     if (prototype) {
-        mprFprintf(file, "\n/*\n * Instance slots for \"%s\" type \n */\n", typeName);
-        count = ejsGetNumTraits(prototype);
+        mprFprintf(file, "\n/*\n   Prototype (instance) slots for \"%s\" type \n */\n", typeName);
+        count = ejsGetPropertyCount(ejs, prototype);
         for (slotNum = firstInstanceSlot; slotNum < count; slotNum++) {
             trait = ejsGetPropertyTrait(ejs, prototype, slotNum);
             qname = ejsGetPropertyName(ejs, prototype, slotNum);
@@ -579,11 +576,10 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         vp->visited = 1;
 
         count = ejsGetPropertyCount(ejs, (EjsObj*) nt);
-        numClassInherited = (nt->baseType) ? ejsGetPropertyCount(ejs, (EjsObj*) nt->baseType) : 0;
         numInstanceInherited = (nt->prototype && nt->baseType && nt->baseType->prototype) ?
             ejsGetPropertyCount(ejs, nt->baseType->prototype) : 0;
 
-        if (genType(bp, file, mp, nt, numClassInherited, count, numInstanceInherited, java, 0) < 0) {
+        if (genType(bp, file, mp, nt, 0, count, numInstanceInherited, java, 0) < 0) {
             vp->visited = 0;
             return EJS_ERR;
         }

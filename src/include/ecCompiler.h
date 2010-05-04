@@ -1067,8 +1067,8 @@ extern int          ecGetToken(EcInput *input);
 extern int          ecGetRegExpToken(EcInput *input);
 extern EcNode       *ecLinkNode(EcNode *np, EcNode *child);
 extern EjsModule    *ecLookupModule(EcCompiler *cp, cchar *name, int minVersion, int maxVersion);
-extern int          ecLookupScope(EcCompiler *cp, EjsName *name, bool anySpace);
-extern int          ecLookupVar(EcCompiler *cp, EjsObj *vp, EjsName *name, bool anySpace);
+extern int          ecLookupScope(EcCompiler *cp, EjsName *name);
+extern int          ecLookupVar(EcCompiler *cp, EjsObj *vp, EjsName *name);
 extern EcNode       *ecParseWarning(EcCompiler *cp, char *fmt, ...);
 extern int          ecPeekToken(EcCompiler *cp);
 extern int          ecPutSpecificToken(EcInput *input, EcToken *token);
@@ -1096,7 +1096,7 @@ extern int          ecAstProcess(struct EcCompiler *cp, int argc,  struct EcNode
 /*
     Module file creation routines.
  */
-extern void     ecAddFunctionConstants(EcCompiler *cp, EjsFunction *fun);
+extern void     ecAddFunctionConstants(EcCompiler *cp, EjsObj *obj, int slotNum);
 extern void     ecAddConstants(EcCompiler *cp, EjsObj *obj);
 extern int      ecAddConstant(EcCompiler *cp, cchar *str);
 extern int      ecAddNameConstant(EcCompiler *cp, EjsName *qname);

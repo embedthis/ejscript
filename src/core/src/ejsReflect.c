@@ -172,7 +172,7 @@ void ejsConfigureReflectType(Ejs *ejs)
 
     type->helpers->mark = (EjsMarkHelper) markReflectVar;
 
-    ejsBindMethod(ejs, type, type->numInherited, (EjsProc) ref_Reflect);
+    ejsBindMethod(ejs, type, ES_Reflect_Reflect, (EjsProc) ref_Reflect);
     ejsBindMethod(ejs, type, ES_Reflect_base, (EjsProc) ref_base);
     ejsBindMethod(ejs, type, ES_Reflect_isType, (EjsProc) ref_isType);
     ejsBindMethod(ejs, type, ES_Reflect_name, (EjsProc) ref_name);

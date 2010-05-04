@@ -296,7 +296,7 @@ static int growList(MprCtx ctx, EjsList *lp, int incr)
 
     /*
         Grow the list of items. Use the existing context for lp->items if it already exists. Otherwise use the list as the
-        memory context owner.
+        memory context.
      */
     lp->items = (void**) mprRealloc(ctx, lp->items, memsize);
 

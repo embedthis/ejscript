@@ -147,7 +147,7 @@ static void configureType(Ejs *ejs, cchar *name)
     EjsType     *type;
 
     type = ejsGetTypeByName(ejs, "ejs", name);
-    ejsBindMethod(ejs, type, type->numInherited, (EjsProc) errorConstructor);
+    ejsBindMethod(ejs, type, type->numPrototypeInherited, (EjsProc) errorConstructor);
 }
 
 

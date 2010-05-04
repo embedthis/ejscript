@@ -14,9 +14,6 @@
 #include    "ejs.h"
 
 /********************************** Inline Code *******************************/
-
-static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, int stackAdjust);
-
 /*
     The stack is a stack of pointers to EjsObj. The top of stack (stack.top) always points to the current top item 
     on the stack. To push a new value, top is incremented then the value is stored. To pop, simply copy the value at 
@@ -55,6 +52,8 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
         FRAME->currentLine = GET_STRING(); \
     }
 
+
+static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, int stackAdjust);
 
 static MPR_INLINE void getPropertyFromSlot(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, int slotNum) 
 {
@@ -164,7 +163,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsObj *value, EjsObj *thisObj, Ejs
 
 static void callConstructor(Ejs *ejs, EjsFunction *vp, int argc, int stackAdjust);
 static void callInterfaceInitializers(Ejs *ejs, EjsType *type);
-static void callProperty(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, int stackAdjust);
+static void callProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *thisObj, int argc, int stackAdjust);
 static void checkExceptionHandlers(Ejs *ejs);
 static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags);
 static EjsObj *evalBinaryExpr(Ejs *ejs, EjsObj *lhs, EjsOpCode opcode, EjsObj *rhs);
@@ -1075,7 +1074,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL):
             argc = GET_INT();
             vp = state.stack[-argc - 1];
-            callProperty(ejs, (EjsFunction*) state.stack[-argc], vp, argc, 2);
+            callFunction(ejs, (EjsFunction*) state.stack[-argc], vp, argc, 2);
             BREAK;
 
         /*
@@ -1087,8 +1086,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_GLOBAL_SLOT):
             slotNum = GET_INT();
             argc = GET_INT();
-            //  MOB -- this binding is okay
-            callProperty(ejs, (EjsFunction*) global->slots[slotNum].value.ref, NULL, argc, 0);
+            callProperty(ejs, global, slotNum, NULL, argc, 0);
             BREAK;
 
         /*
@@ -1104,14 +1102,12 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             vp = state.stack[-argc];
             if (vp == ejs->nullValue || vp == ejs->undefinedValue) {
                 if (vp && (slotNum == ES_Object_get || slotNum == ES_Object_getValues)) {
-                    fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) vp->type, slotNum); 
-                    callProperty(ejs, fun, vp, argc, 1);
+                    callProperty(ejs, (EjsObj*) vp->type, slotNum, vp, argc, 1);
                 } else {
                     ejsThrowReferenceError(ejs, "Object reference is null or undefined");
                 }
             } else {
-                fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) vp->type, slotNum); 
-                callProperty(ejs, fun, vp, argc, 1);
+                callProperty(ejs, (EjsObj*) vp->type, slotNum, vp, argc, 1);
             }
             BREAK;
 
@@ -1125,8 +1121,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             slotNum = GET_INT();
             argc = GET_INT();
             obj = (EjsObj*) THIS->type;
-            fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) obj, slotNum); 
-            callProperty(ejs, fun, NULL, argc, 0);
+            callProperty(ejs, obj, slotNum, NULL, argc, 0);
             BREAK;
 
         /*
@@ -1139,8 +1134,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             slotNum = GET_INT();
             obj = (EjsObj*) getNthBlock(ejs, GET_INT());
             argc = GET_INT();
-            fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) obj, slotNum); 
-            callProperty(ejs, fun, NULL, argc, 0);
+            callProperty(ejs, obj, slotNum, NULL, argc, 0);
             BREAK;
 
         /*
@@ -1157,8 +1151,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (vp == 0 || vp == ejs->nullValue || vp == ejs->undefinedValue) {
                 ejsThrowReferenceError(ejs, "Object reference is null");
             } else {
-                fun = (EjsFunction*) ejsGetProperty(ejs, vp, slotNum);
-                callProperty(ejs, fun, vp, argc, 1);
+                callProperty(ejs, vp, slotNum, vp, argc, 1);
             }
             BREAK;
 
@@ -1178,8 +1171,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 throwNull(ejs);
             } else {
                 type = (EjsType*) getNthBase(ejs, vp, nthBase);
-                fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
-                callProperty(ejs, fun, (EjsObj*) type, argc, 1);
+                callProperty(ejs, (EjsObj*) type, slotNum, (EjsObj*) type, argc, 1);
             }
             BREAK;
 
@@ -1199,8 +1191,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 ejsThrowReferenceError(ejs, "Bad type reference");
                 BREAK;
             }
-            fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
-            callProperty(ejs, fun, (EjsObj*) type, argc, 0);
+            callProperty(ejs, (EjsObj*) type, slotNum, (EjsObj*) type, argc, 0);
             BREAK;
 
         /*
@@ -1223,11 +1214,11 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Can't find function \"%s\"", qname.name);
             } else {
-                fun = (EjsFunction*) ejsGetProperty(ejs, lookup.obj, slotNum);
-                if (fun->staticMethod) {
+                EjsTrait *trait = ejsGetTrait(lookup.obj, slotNum);
+                if (trait && trait->attributes & EJS_PROP_STATIC) {
                     vp = lookup.obj;
                 }
-                callProperty(ejs, fun, vp, argc, 1);
+                callProperty(ejs, lookup.obj, slotNum, vp, argc, 1);
             }
             BREAK;
 
@@ -1240,7 +1231,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_SCOPED_NAME):
             qname = GET_NAME();
             argc = GET_INT();
+#if UNUSED
             lookup.storing = 0;
+#endif
             slotNum = ejsLookupScope(ejs, &qname, &lookup);
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Can't find method %s", qname.name);
@@ -1263,7 +1256,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                         vp = ejs->global;
                     }
                 }
-                callProperty(ejs, fun, vp, argc, 0);
+                callProperty(ejs, lookup.obj, slotNum, vp, argc, 0);
             }
             BREAK;
 
@@ -1286,8 +1279,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (type && type->hasConstructor) {
                 mprAssert(type->baseType);
                 //  Constructor is always at slot 0 (offset by base properties)
-                slotNum = type->numInherited;
-                fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
+                slotNum = type->numPrototypeInherited;
+                fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
                 callFunction(ejs, fun, (EjsObj*) vp, argc, 0);
             }
             BREAK;
@@ -1300,14 +1293,18 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
          */
         CASE (EJS_OP_CALL_NEXT_CONSTRUCTOR):
             argc = GET_INT();
+#if OLD
             type = (EjsType*) FRAME->function.owner;
+#else
+            type = THIS->type;
+#endif
             mprAssert(type);
             type = type->baseType;
             mprAssert(type);
             if (type) {
                 mprAssert(type->hasConstructor);
-                slotNum = type->numInherited;
-                fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
+                slotNum = type->numPrototypeInherited;
+                fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
                 callFunction(ejs, fun, NULL, argc, 0);
             }
             BREAK;
@@ -1345,7 +1342,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             }
             //  OPT
             blk = ejsCloneBlock(ejs, (EjsBlock*) v1, 0);
-            blk->prev = blk->scopeChain = state.bp;
+            blk->prev = blk->scope = state.bp;
             state.bp = blk;
             blk->stackBase = state.stack;
             ejsSetDebugName(state.bp, mprGetName(v1));
@@ -1360,7 +1357,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             blk = ejsCreateBlock(ejs, 0);
             ejsSetDebugName(blk, "with");
             memcpy((void*) blk, vp, vp->type->instanceSize);
-            blk->prev = blk->scopeChain = state.bp;
+            blk->prev = blk->scope = state.bp;
             state.bp = blk;
             BREAK;
 
@@ -1382,14 +1379,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (type == 0 || !ejsIsType(type)) {
                 ejsThrowReferenceError(ejs, "Reference is not a class");
             } else {
-                type->block.scopeChain = state.bp;
+                type->block.scope = state.bp;
                 if (type && type->hasStaticInitializer) {
-                    //  Static initializer is always immediately after the constructor (if present)
-                    slotNum = type->numInherited;
-                    if (type->hasConstructor) {
-                        slotNum++;
-                    }
-                    fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
+                    fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, 0);
                     callFunction(ejs, fun, (EjsObj*) type, 0, 0);
                     if (type->implements && !ejs->exception) {
                         callInterfaceInitializers(ejs, type);
@@ -1418,7 +1410,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 } else {
                     f2 = f1;
                 }
-                f2->block.scopeChain = state.bp;
+                f2->block.scope = state.bp;
                 f2->thisObj = FRAME->function.thisObj;
                 /*
                    Must not run getter/setter
@@ -2159,7 +2151,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             } else {
                 qname.space = ejsToString(ejs, v1)->value;
             }
+#if UNUSED
             lookup.storing = 0;
+#endif
             slotNum = ejsLookupScope(ejs, &qname, &lookup);
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Property \"%s\" does not exist", qname.name);
@@ -2396,7 +2390,9 @@ static void storePropertyToScope(Ejs *ejs, EjsName *qname, EjsObj *value, bool d
     mprAssert(qname);
 
     fp = ejs->state->fp;
+#if UNUSED
     lookup.storing = 1;
+#endif
     if ((slotNum = ejsLookupScope(ejs, qname, &lookup)) < 0) {
         if (fp->caller) {
             obj = (EjsObj*) fp;
@@ -2683,10 +2679,10 @@ static void callConstructor(Ejs *ejs, EjsFunction *vp, int argc, int stackAdjust
         
         if (type->hasConstructor) {
             /*
-                Constructor is always at slot 0 (offset by base properties)
+                Constructor is always at slot 0, offset by inherited propertie
              */
-            slotNum = type->numInherited;
-            fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
+            slotNum = type->numPrototypeInherited;
+            fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
 
             if (ejsIsNativeFunction(fun)) {
                 mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);    
@@ -2707,6 +2703,7 @@ static void callConstructor(Ejs *ejs, EjsFunction *vp, int argc, int stackAdjust
 }
 
 
+#if UNUSED
 /*
     Find the right base class to use as "this" for a static method
  */
@@ -2720,21 +2717,18 @@ static EjsObj *getStaticThis(Ejs *ejs, EjsType *type, int slotNum)
     }
     return (EjsObj*) type;
 }
+#endif
 
 
 static void callInterfaceInitializers(Ejs *ejs, EjsType *type)
 {
     EjsType     *iface;
     EjsFunction *fun;
-    int         next, slotNum;
+    int         next;
 
     for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
         if (iface->hasStaticInitializer) {
-            slotNum = iface->numInherited;
-            if (iface->hasConstructor) {
-                slotNum++;
-            }
-            fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) iface, slotNum);
+            fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) iface, 0);
             callFunction(ejs, fun, (EjsObj*) type, 0, 0);
         }
     }
@@ -2752,7 +2746,7 @@ EjsBlock *ejsPushBlock(Ejs *ejs, EjsBlock *original)
     mprAssert(!ejsIsFunction(original));
 
     block = ejsCloneBlock(ejs, original, 0);
-    block->scopeChain = ejs->state->bp;
+    block->scope = ejs->state->bp;
     block->prev = ejs->state->bp;
     block->stackBase = ejs->state->stack;
     ejs->state->bp = block;
@@ -3035,7 +3029,7 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
         /*  Exception will continue to bubble up */
         return;
     }
-    block->prev = block->scopeChain = state->bp;
+    block->prev = block->scope = state->bp;
     block->stackBase = state->stack;
     state->bp = block;
 
@@ -3304,18 +3298,16 @@ static EjsObj *getGlobalArg(Ejs *ejs, EjsFrame *fp)
 }
 
 
-static void callProperty(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, int stackAdjust)
+static void callProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *thisObj, int argc, int stackAdjust)
 {
     EjsTrait    *trait;
+    EjsFunction *fun;
 
-    if (ejsIsFunction(fun)) {
-        //  MOB -- but the owner may not be the right owner if the property is copied
-        trait = ejsGetTrait(fun->owner, fun->slotNum);
-        if (trait && trait->attributes & EJS_TRAIT_GETTER) {
-            fun = (EjsFunction*) ejsRunFunction(ejs, fun, thisObj, 0, NULL);
-            if (ejs->exception) {
-                return;
-            }
+    trait = ejsGetTrait(obj, slotNum);
+    if (trait && trait->attributes & EJS_TRAIT_GETTER) {
+        fun = (EjsFunction*) ejsRunFunction(ejs, fun, thisObj, 0, NULL);
+        if (ejs->exception) {
+            return;
         }
     }
     callFunction(ejs, fun, thisObj, argc, stackAdjust);
@@ -3330,7 +3322,6 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 {
     EjsState        *state;
     EjsFrame        *fp;
-    EjsName         qname;
     EjsObj          **argv;
 
     mprAssert(fun);
@@ -3349,10 +3340,13 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
         } 
     } 
     if (fun->staticMethod && !ejsIsType(thisObj)) {
+        mprAssert(0);
+#if UNUSED
         /*
             Calling a static method via an instance object
          */
         thisObj = getStaticThis(ejs, thisObj->type, fun->slotNum);
+#endif
     }
     /*
         Validate the args. Cast to the right type, handle rest args and return with argc adjusted.
@@ -3369,8 +3363,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     }
     if (ejsIsNativeFunction(fun)) {
         if (fun->body.proc == 0) {
-            qname = ejsGetPropertyName(ejs, fun->owner, fun->slotNum);
-            ejsThrowInternalError(ejs, "Native function \"%s\" is not defined", qname.name);
+            ejsThrowInternalError(ejs, "Native function \"%s\" is not defined", fun->name);
             return;
         }
         ejsClearAttention(ejs);
@@ -3460,7 +3453,7 @@ static EjsObj *getNthBlock(Ejs *ejs, int nth)
     for (block = ejs->state->bp; block && --nth >= 0; ) {
         /* TODO - this is done for loading scripts into ejs. Really the compiler should remove these blocks */
         if (block->obj.hidden) nth++;
-        block = block->scopeChain;
+        block = block->scope;
     }
     return (EjsObj*) block;
 }

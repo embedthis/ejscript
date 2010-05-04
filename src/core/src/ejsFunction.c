@@ -23,8 +23,10 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numSlots)
     if (fun == 0) {
         return 0;
     }
+#if UNUSED
     //  MOB -- get rid of owner+slotNum
     fun->slotNum = -1;
+#endif
     fun->block.obj.isFunction = 1;
     fun->block.obj.dynamic = 1;
     return fun;
@@ -67,8 +69,10 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
     dest->body.code = src->body.code;
     dest->resultType = src->resultType;
     dest->thisObj = src->thisObj;
+#if UNUSED
     dest->owner = src->owner;
     dest->slotNum = src->slotNum;
+#endif
     dest->numArgs = src->numArgs;
     dest->numDefault = src->numDefault;
 
@@ -79,7 +83,6 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
     dest->constructor = src->constructor;
     dest->hasReturn = src->hasReturn;
     dest->isInitializer = src->isInitializer;
-    dest->override = src->override;
     dest->rest = src->rest;
     dest->fullScope = src->fullScope;
     dest->nativeProc = src->nativeProc;
@@ -159,9 +162,11 @@ void ejsMarkFunction(Ejs *ejs, EjsFunction *fun)
     if (fun->creator) {
         ejsMark(ejs, (EjsObj*) fun->creator);
     }
+#if UNUSED
     if (fun->owner) {
         ejsMark(ejs, fun->owner);
     }
+#endif
     if (fun->thisObj) {
         ejsMark(ejs, fun->thisObj);
     }
@@ -266,7 +271,7 @@ static EjsObj *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
             return 0;
         }
     }
-    fun->block.scopeChain = scope;
+    fun->block.scope = scope;
     return 0;
 }
 
@@ -276,8 +281,8 @@ static EjsObj *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
     Create a script function. This defines the method traits. It does not create a  method slot. ResultType may
     be null to indicate untyped. NOTE: untyped functions may return a result at their descretion.
  */
-EjsFunction *ejsCreateFunction(Ejs *ejs, cuchar *byteCode, int codeLen, int numArgs, int numDefault, int numExceptions, 
-    EjsType *resultType, int attributes, EjsConst *constants, EjsBlock *scopeChain, int strict)
+EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *byteCode, int codeLen, int numArgs, int numDefault, 
+    int numExceptions, EjsType *resultType, int attributes, EjsConst *constants, EjsBlock *scopeChain, int strict)
 {
     EjsFunction     *fun;
     EjsCode         *code;
@@ -286,8 +291,10 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cuchar *byteCode, int codeLen, int numA
     if (fun == 0) {
         return 0;
     }
+    fun->name = mprStrdup(fun, name);
+    ejsSetDebugName(fun, fun->name);
     if (scopeChain) {
-        fun->block.scopeChain = scopeChain;
+        fun->block.scope = scopeChain;
     }
     fun->numArgs = numArgs;
     fun->numDefault = numDefault;
@@ -306,9 +313,6 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cuchar *byteCode, int codeLen, int numA
     }
     if (attributes & EJS_PROP_STATIC) {
         fun->staticMethod = 1;
-    }
-    if (attributes & EJS_FUN_OVERRIDE) {
-        fun->override = 1;
     }
     if (attributes & EJS_PROP_NATIVE) {
         fun->nativeProc = 1;
@@ -334,6 +338,13 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cuchar *byteCode, int codeLen, int numA
 }
 
 
+void ejsSetFunctionName(EjsFunction *fun, cchar *name)
+{
+    fun->name = name;
+}
+
+
+#if UNUSED
 void ejsSetFunctionLocation(EjsFunction *fun, EjsObj *obj, int slotNum)
 {
     mprAssert(fun);
@@ -342,6 +353,7 @@ void ejsSetFunctionLocation(EjsFunction *fun, EjsObj *obj, int slotNum)
     fun->owner = obj;
     fun->slotNum = slotNum;
 }
+#endif
 
 
 EjsEx *ejsAddException(EjsFunction *fun, uint tryStart, uint tryEnd, EjsType *catchType, uint handlerStart,
@@ -492,10 +504,7 @@ void ejsCreateFunctionType(Ejs *ejs)
     helpers->mark           = (EjsMarkHelper) ejsMarkFunction;
     helpers->lookupProperty = (EjsLookupPropertyHelper) lookupFunctionProperty;
 
-    /*
-        Utility nop function
-     */
-    nop = ejs->nopFunction = ejsCreateFunction(ejs, NULL, 0, -1, 0, 0, NULL, EJS_PROP_NATIVE, NULL, NULL, 0);
+    nop = ejs->nopFunction = ejsCreateFunction(ejs, "nop", NULL, 0, -1, 0, 0, NULL, EJS_PROP_NATIVE, NULL, NULL, 0);
     nop->body.proc = nopFunction;
     nop->nativeProc = 1;
 }

@@ -438,6 +438,7 @@ void ejsCreateGlobalBlock(Ejs *ejs)
     ejs->global = (EjsObj*) ejs->globalBlock;
     ejs->global->numSlots = (ejs->empty) ? 0: ES_global_NUM_CLASS_PROP;
     ejs->global->dynamic = 1;
+    ejs->global->shortScope = 1;
     ejsSetDebugName(ejs->global, "global");
     
     /*  

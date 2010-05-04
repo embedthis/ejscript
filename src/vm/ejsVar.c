@@ -64,7 +64,8 @@ EjsObj *ejsCast(Ejs *ejs, EjsObj *vp, EjsType *type)
 #if FUTURE
     EjsName         qname;
     if (type->hasMeta) {
-        return ejsRunFunctionByName(ejs, (EjsObj*) type, ejsName(&qname, EJS_META_NAMESPACE, "cast"), (EjsObj*) type, 1, &vp);
+        return ejsRunFunctionByName(ejs, (EjsObj*) type, ejsName(&qname, EJS_META_NAMESPACE, "cast"), 
+            (EjsObj*) type, 1, &vp);
         if ((slotNum = ejsLookupProperty(ejs, (EjsObj*) type, ejsName(&qname, EJS_META_NAMESPACE, "cast"))) >= 0) {
             type->hasMeta
         }
@@ -77,8 +78,8 @@ EjsObj *ejsCast(Ejs *ejs, EjsObj *vp, EjsType *type)
             return (EjsObj*) vp;
         }
         if (vp->type->block.obj.numSlots >= ES_Object_toString) {
-            fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) vp->type, ES_Object_toString);
-            if (ejsIsFunction(fun) && fun->override) {
+            if (ejsGetTraitAttributes((EjsObj*) vp->type, ES_Object_toString) & EJS_FUN_OVERRIDE) {
+                fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) vp->type, ES_Object_toString);
                 return (EjsObj*) ejsRunFunction(ejs, fun, vp, 0, NULL);
             }
         }
@@ -500,7 +501,6 @@ EjsObj *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
 {
     EjsFunction     *fun;
     EjsObj          *vp;
-    int             slotNum;
 
     mprAssert(type);
 
@@ -510,12 +510,8 @@ EjsObj *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
         return 0;
     }
     if (type->hasConstructor) {
-        slotNum = type->numInherited;
-        fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
-        if (fun == 0) {
-            return 0;
-        }
-        if (!ejsIsFunction(fun)) {
+        fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type->prototype, 0);
+        if (fun == 0 || !ejsIsFunction(fun)) {
             return 0;
         }
         vp->permanent = 1;

@@ -73,7 +73,9 @@ struct EjsTypeHelpers;
 #define EJS_FUN_HAS_RETURN              0x200000     /**< Function has a return statement */
 #define EJS_FUN_INITIALIZER             0x400000     /**< Initializer code */
 #define EJS_FUN_OVERRIDE                0x800000     /**< Override base type */
+#if UNUSED
 #define EJS_FUN_INHERITED               0x1000000    /**< Override function is inherited */
+#endif
 #define EJS_FUN_REST_ARGS               0x2000000    /**< Parameter is a "..." rest */
 
 #define EJS_PROP_HAS_VALUE              0x4000000    /**< Property has a value record */
@@ -340,6 +342,7 @@ typedef struct EjsObj {
             uint    hasScriptFunctions:  1;     /**< Block has non-native functions requiring namespaces */
 
             //  MOB -- these should be using ejsIsXXX(vp->type)
+            //  MOB -- Frame is not setting isFunction
             uint    isFunction        :  1;     /**< Instance is a function */
             uint    isPrototype       :  1;     /**< Object is a type prototype object */
             uint    isType            :  1;     /**< Instance is a type object */
@@ -352,7 +355,7 @@ typedef struct EjsObj {
             uint    visited           :  1;     /**< Has been traversed */
 
             uint    separateSlots     :  1;     /**< Object has separate slots[] memory */
-            uint    skipScope         :  1;     /**< Skip examining this object when searching the scope chain */
+            uint    shortScope        :  1;     /**< Don't follow type or base classes */
 
 #if LEGACY || 1
             //  MOB -- cleanup and review
@@ -366,9 +369,12 @@ typedef struct EjsObj {
 #endif
     struct EjsType  *type;                      /**< Type of this object (not base type). ie. type for Object is EjsType  */
     struct EjsSlot  *slots;                     /**< Vector of slots containing property references */
+
+    //  MOB -- OPT. Remove sizeSlots and just use numSlots. Also scan for slots with name == NULL means free.
     int             sizeSlots;                  /**< Current size of traits[] and slots[] */
     int             numSlots;                   /**< Number of properties in traits/slots */
 
+    //  TODO - OPT Change this to a Hash type with size internal to the hash
     int             *hash;                      /**< Hash buckets and head of link chains */
     int             sizeHash;                   /**< Size of hash */
 } EjsObj;
@@ -401,8 +407,6 @@ typedef EjsObj EO;
     #define ejsSetFmtDebugName(vp, fmt, arg)
     #endif
 #endif
-
-extern int ejsGetNumInherited(EjsObj *obj);
 
 /** 
     Allocate a new variable
@@ -755,7 +759,7 @@ extern int      ejsGetSlot(Ejs *ejs, EjsObj *obj, int slotNum);
 extern EjsObj   *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs);
 extern int      ejsComputeHashCode(EjsObj *obj, EjsName *qname);
 extern int      ejsGetHashSize(int numProp);
-extern void     ejsInitializeObjectHelpers(struct EjsTypeHelpers *helpers);
+extern void     ejsCreateObjectHelpers(Ejs *ejs);
 extern int      ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int size, int offset);
 extern int      ejsLookupSingleProperty(Ejs *ejs, EjsObj *obj, EjsName *qname);
 extern void     ejsMakePropertyDontDelete(EjsObj *vp, int dontDelete);
@@ -782,7 +786,7 @@ extern EjsObj   *ejsToSource(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
 typedef struct EjsBlock {
     EjsObj          obj;                            /**< Extends Object - Property storage */
     EjsList         namespaces;                     /**< Current list of namespaces open in this block of properties */
-    struct EjsBlock *scopeChain;                    /**< Lexical scope chain for this block */
+    struct EjsBlock *scope;                         /**< Lexical scope chain for this block */
     struct EjsBlock *prev;                          /**< Previous block in activation chain */
     struct EjsObj   *prevException;                 /**< Previous exception if nested exceptions */
     EjsVar          **stackBase;                    /**< Start of stack in this block */
@@ -841,23 +845,17 @@ extern int      ejsCopyScope(EjsBlock *block, EjsList *chain);
 
 extern int      ejsGetNamespaceCount(EjsBlock *block);
 
-extern int      ejsGetNumTraits(EjsObj *obj);
-extern int      ejsGetNumInheritedTraits(EjsObj *obj);
-extern int      ejsGetSizeTraits(EjsObj *obj);
 extern EjsBlock *ejsGetTopScope(EjsBlock *block);
 extern EjsTrait *ejsGetTrait(EjsObj *obj, int slotNum);
 extern int      ejsHasTrait(EjsObj *obj, int slotNum, int attributes);
 extern int      ejsGetTraitAttributes(EjsObj *obj, int slotNum);
 extern struct EjsType *ejsGetTraitType(EjsObj *obj, int slotNum);
-extern int      ejsInheritProperties(Ejs *ejs, EjsObj *obj, EjsObj *baseBlock, int count, int offset, bool implementing);
 extern int      ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int numSlots, int offset);
 extern void     ejsMarkBlock(Ejs *ejs, EjsBlock *block);
 extern void     ejsPopBlockNamespaces(EjsBlock *block, int count);
 extern int      ejsRemoveProperty(Ejs *ejs, EjsObj *obj, int slotNum);
 extern EjsBlock *ejsRemoveScope(EjsBlock *block);
 extern void     ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block);
-extern void     ejsSetNumInheritedTraits(EjsObj *obj, int numInheritedTraits);
-extern void     ejsSetTraitName(EjsObj *obj, int slotNum, cchar *name);
 
 /** 
     Type class
@@ -878,7 +876,11 @@ typedef struct EjsType {
     struct EjsType  *baseType;                      /**< Base class */
     MprList         *implements;                    /**< List of implemented interfaces */
         
-    uint            subTypeCount            :  8;   /**< Length of baseType chain Governed by EJS_MAX_BASE_CLASS */
+#if UNUSED
+    //  MOB -- who uses this?
+    uint            subTypeCount            :  8;   /**< Length of baseType chain governed by EJS_MAX_BASE_CLASS */
+#endif
+
     uint            callsSuper              :  1;   /**< Constructor calls super() */
     uint            dontPool                :  1;   /**< Don't pool instances */
     uint            dynamicInstance         :  1;   /**< Object instances may add properties */
@@ -904,10 +906,12 @@ typedef struct EjsType {
     struct EjsModule *module;                       /**< Module owning the type - stores the constant pool */
     void            *typeData;                      /**< Type specific data */
 
+#if UNUSED
     /*
         Denormalized for convenience (type->baseType->block.obj.numSlots, type->prototype->numSlots)
      */
     int             numInherited;
+#endif
     int             numPrototypeInherited;
 } EjsType;
 
@@ -1128,6 +1132,8 @@ typedef struct EjsFunction {
         transfers them into the activation block when complete.
      */
     EjsBlock        block;                  /** Activation block for local vars */
+    cchar           *name;
+
     EjsObj          *activation;            /** Activation properties (parameters + locals) */
 
     //  MOB -- these two could be a union - can't be both
@@ -1143,9 +1149,11 @@ typedef struct EjsFunction {
     EjsObj          *thisObj;               /**< Bound "this" for method extraction */
     struct EjsType  *resultType;            /**< Return type of method */
 
+#if UNUSED
     //  MOB -- be great to do without these
     EjsObj          *owner;                 /**< Back reference to original owning block */
     int             slotNum;                /**< Slot number in owner for this function */
+#endif
 
 #if BLD_HAS_UNNAMED_UNIONS
     union {
@@ -1163,7 +1171,9 @@ typedef struct EjsFunction {
 
             //  MOB - move to traits
             uint    nativeProc: 1;          /**< Function is native procedure */
+#if UNUSED
             uint    override: 1;            /**< Function overrides a base class method */
+#endif
             uint    rest: 1;                /**< Function has a "..." rest of args parameter */
 
             //  MOB - move to traits
@@ -1215,6 +1225,7 @@ typedef struct EjsFunction {
     Create a function object
     @description This creates a function object and optionally associates byte code with the function.
     @param ejs Ejs reference returned from #ejsCreate
+    @param name Function name used in stack backtraces.
     @param code Pointer to the byte code. The byte code is not copied so this must be a persistent pointer.
     @param codeLen Length of the code.
     @param numArgs Number of formal arguments to the function.
@@ -1229,7 +1240,7 @@ typedef struct EjsFunction {
     @return An initialized function object
     @ingroup EjsFunction
  */
-extern EjsFunction *ejsCreateFunction(Ejs *ejs, const uchar *code, int codeLen, int numArgs, int numDefault,
+extern EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *code, int codeLen, int numArgs, int numDefault,
     int numExceptions, EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, int strict);
 
 extern EjsObj *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numSlots);
@@ -1284,7 +1295,6 @@ extern int ejsDefineException(Ejs *ejs, struct EjsType *vp, int slot, uint tryOf
     uint tryLength, uint handlerOffset, uint handlerLength, int flags);
 extern void ejsOffsetExceptions(EjsFunction *mp, int offset);
 extern int  ejsSetFunctionCode(EjsFunction *mp, uchar *byteCode, int len);
-extern void ejsSetFunctionLocation(EjsFunction *mp, EjsObj *obj, int slotNum);
 extern void ejsMarkFunction(Ejs *ejs, EjsFunction *fun);
 extern void ejsShowOpFrequency(Ejs *ejs);
 
@@ -1293,6 +1303,7 @@ typedef struct EjsFrame {
     struct EjsFrame *caller;                /**< Previous invoking frame */
     EjsVar          **stackBase;            /**< Start of stack in this function */
     EjsObj          **stackReturn;          /**< Top of stack to return to */
+    int             slotNum;                /**< Slot in owner */
     uchar           *pc;                    /**< Program counter */
     uchar           *attentionPc;           /**< Restoration PC value after attention */
     int             ignoreAttention;        /**< Ignore attention commands */
@@ -2557,6 +2568,7 @@ typedef struct EjsTrait *(*EjsGetPropertyTraitHelper)(Ejs *ejs, EjsObj *vp, int 
 
 /******************************** Private Prototypes **********************************/
 
+extern int      ejsBootstrapTypes(Ejs *ejs);
 extern void     ejsCreateArrayType(Ejs *ejs);
 extern void     ejsCreateBlockType(Ejs *ejs);
 extern void     ejsCreateBooleanType(Ejs *ejs);

@@ -38,7 +38,7 @@ void ejsMarkBlock(Ejs *ejs, EjsBlock *block)
             ejsMark(ejs, item);
         }
     }
-    for (b = block->scopeChain; b; b = b->scopeChain) {
+    for (b = block->scope; b; b = b->scope) {
         ejsMark(ejs, (EjsObj*) b);
     }
     //  TODO MOB - this should not be required as GC in mark() follows the block caller/prev chain
@@ -55,7 +55,7 @@ EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
     dest = (EjsBlock*) ejsCloneObject(ejs, (EjsObj*) src, deep);
 
     dest->nobind = src->nobind;
-    dest->scopeChain = src->scopeChain;
+    dest->scope = src->scope;
     dest->namespaces = src->namespaces;
     return dest;
 }
@@ -102,8 +102,8 @@ int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
     list = &block->namespaces;
 
     if (ejsIsFunction(fun)) {
-        if (fun->isInitializer && fun->owner) {
-            block = block->scopeChain;
+        if (fun->isInitializer) {
+            block = block->scope;
             list = &block->namespaces;
             /*
                 If defining a namespace at the class level (outside functions) use the class itself.
@@ -165,7 +165,7 @@ void ejsCreateBlockType(Ejs *ejs)
 
     type = ejs->blockType = ejsCreateNativeType(ejs, "ejs", "Block", ES_Block, sizeof(EjsBlock));
 
-    type->block.obj.skipScope = 1;
+    type->block.obj.shortScope = 1;
     type->helpers->clone = (EjsCloneHelper) ejsCloneBlock;
     type->helpers->mark = (EjsMarkHelper) ejsMarkBlock;
 }

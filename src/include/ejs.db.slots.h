@@ -14,106 +14,70 @@
    Slots for the "ejs.db" module 
  */
 
+/*
+ * Instance slots for "global" type 
+ */
+
 
 /*
     Class property slots for the "Database" type 
  */
-#define ES_ejs_db_Database__origin                                     27
-#define ES_ejs_db_Database_Database                                    27
-#define ES_ejs_db_Database_defaultDb                                   28
-#define ES_ejs_db_Database_addColumn                                   29
-#define ES_ejs_db_Database_addIndex                                    30
-#define ES_ejs_db_Database_changeColumn                                31
-#define ES_ejs_db_Database_close                                       32
-#define ES_ejs_db_Database_commit                                      33
-#define ES_ejs_db_Database_connect                                     34
-#define ES_ejs_db_Database_connection                                  35
-#define ES_ejs_db_Database_createDatabase                              36
-#define ES_ejs_db_Database_createTable                                 37
-#define ES_ejs_db_Database_dataTypeToSqlType                           38
-#define ES_ejs_db_Database_defaultDatabase                             39
-#define ES_ejs_db_Database_destroyDatabase                             40
-#define ES_ejs_db_Database_destroyTable                                41
-#define ES_ejs_db_Database_endTransaction                              42
-#define ES_ejs_db_Database_getColumns                                  43
-#define ES_ejs_db_Database_getTables                                   44
-#define ES_ejs_db_Database_getNumRows                                  45
-#define ES_ejs_db_Database_name                                        46
-#define ES_ejs_db_Database_query                                       47
-#define ES_ejs_db_Database_removeColumns                               48
-#define ES_ejs_db_Database_removeIndex                                 49
-#define ES_ejs_db_Database_renameColumn                                50
-#define ES_ejs_db_Database_renameTable                                 51
-#define ES_ejs_db_Database_rollback                                    52
-#define ES_ejs_db_Database_sql                                         53
-#define ES_ejs_db_Database_sqlTypeToDataType                           54
-#define ES_ejs_db_Database_sqlTypeToEjsType                            55
-#define ES_ejs_db_Database_startTransaction                            56
-#define ES_ejs_db_Database_trace                                       57
-#define ES_ejs_db_Database_transaction                                 58
-#define ES_ejs_db_Database_quote                                       59
+#define ES_ejs_db_Database__origin                                     0
+#define ES_ejs_db_Database_defaultDb                                   0
+#define ES_ejs_db_Database_defaultDatabase                             1
+#define ES_ejs_db_Database_quote                                       2
 
-#define ES_ejs_db_Database_NUM_CLASS_PROP                              60
+#define ES_ejs_db_Database_NUM_CLASS_PROP                              3
 
 /*
  * Instance slots for "Database" type 
  */
-#define ES_ejs_db_Database__adapter                                    0
-#define ES_ejs_db_Database__connection                                 1
-#define ES_ejs_db_Database__name                                       2
-#define ES_ejs_db_Database__traceAll                                   3
-#define ES_ejs_db_Database_NUM_INSTANCE_PROP                           4
+#define ES_ejs_db_Database_Database                                    12
+#define ES_ejs_db_Database__adapter                                    13
+#define ES_ejs_db_Database__connection                                 14
+#define ES_ejs_db_Database__name                                       15
+#define ES_ejs_db_Database__traceAll                                   16
+#define ES_ejs_db_Database_addColumn                                   17
+#define ES_ejs_db_Database_addIndex                                    18
+#define ES_ejs_db_Database_changeColumn                                19
+#define ES_ejs_db_Database_close                                       20
+#define ES_ejs_db_Database_commit                                      21
+#define ES_ejs_db_Database_connect                                     22
+#define ES_ejs_db_Database_connection                                  23
+#define ES_ejs_db_Database_createDatabase                              24
+#define ES_ejs_db_Database_createTable                                 25
+#define ES_ejs_db_Database_dataTypeToSqlType                           26
+#define ES_ejs_db_Database_destroyDatabase                             27
+#define ES_ejs_db_Database_destroyTable                                28
+#define ES_ejs_db_Database_endTransaction                              29
+#define ES_ejs_db_Database_getColumns                                  30
+#define ES_ejs_db_Database_getTables                                   31
+#define ES_ejs_db_Database_getNumRows                                  32
+#define ES_ejs_db_Database_name                                        33
+#define ES_ejs_db_Database_query                                       34
+#define ES_ejs_db_Database_removeColumns                               35
+#define ES_ejs_db_Database_removeIndex                                 36
+#define ES_ejs_db_Database_renameColumn                                37
+#define ES_ejs_db_Database_renameTable                                 38
+#define ES_ejs_db_Database_rollback                                    39
+#define ES_ejs_db_Database_sql                                         40
+#define ES_ejs_db_Database_sqlTypeToDataType                           41
+#define ES_ejs_db_Database_sqlTypeToEjsType                            42
+#define ES_ejs_db_Database_startTransaction                            43
+#define ES_ejs_db_Database_trace                                       44
+#define ES_ejs_db_Database_transaction                                 45
+#define ES_ejs_db_Database_NUM_INSTANCE_PROP                           58
 
 /*
     Local slots for methods in type "Database" 
  */
-#define ES_ejs_db_Database_Database_adapter                            0
-#define ES_ejs_db_Database_Database_connectionString                   1
-#define ES_ejs_db_Database_addColumn_table                             0
-#define ES_ejs_db_Database_addColumn_column                            1
-#define ES_ejs_db_Database_addColumn_datatype                          2
-#define ES_ejs_db_Database_addColumn_options                           3
-#define ES_ejs_db_Database_addIndex_table                              0
-#define ES_ejs_db_Database_addIndex_column                             1
-#define ES_ejs_db_Database_addIndex_index                              2
-#define ES_ejs_db_Database_changeColumn_table                          0
-#define ES_ejs_db_Database_changeColumn_column                         1
-#define ES_ejs_db_Database_changeColumn_datatype                       2
-#define ES_ejs_db_Database_changeColumn_options                        3
-#define ES_ejs_db_Database_connect_connectionString                    0
-#define ES_ejs_db_Database_createDatabase_name                         0
-#define ES_ejs_db_Database_createDatabase_options                      1
-#define ES_ejs_db_Database_createTable_table                           0
-#define ES_ejs_db_Database_createTable_columns                         1
-#define ES_ejs_db_Database_dataTypeToSqlType_dataType                  0
-#define ES_ejs_db_Database_destroyDatabase_name                        0
-#define ES_ejs_db_Database_destroyTable_table                          0
-#define ES_ejs_db_Database_getColumns_table                            0
-#define ES_ejs_db_Database_getNumRows_table                            0
-#define ES_ejs_db_Database_query_cmd                                   0
-#define ES_ejs_db_Database_query_tag                                   1
-#define ES_ejs_db_Database_query_trace                                 2
-#define ES_ejs_db_Database_removeColumns_table                         0
-#define ES_ejs_db_Database_removeColumns_columns                       1
-#define ES_ejs_db_Database_removeIndex_table                           0
-#define ES_ejs_db_Database_removeIndex_index                           1
-#define ES_ejs_db_Database_renameColumn_table                          0
-#define ES_ejs_db_Database_renameColumn_oldColumn                      1
-#define ES_ejs_db_Database_renameColumn_newColumn                      2
-#define ES_ejs_db_Database_renameTable_oldTable                        0
-#define ES_ejs_db_Database_renameTable_newTable                        1
-#define ES_ejs_db_Database_sql_cmd                                     0
-#define ES_ejs_db_Database_sqlTypeToDataType_sqlType                   0
-#define ES_ejs_db_Database_sqlTypeToEjsType_sqlType                    0
-#define ES_ejs_db_Database_trace_on                                    0
-#define ES_ejs_db_Database_transaction_code                            0
 #define ES_ejs_db_Database_quote_str                                   0
 
+#define ES_ejs_db_DatabaseConnector_NUM_CLASS_PROP                     0
 
 /*
-    Class property slots for the "DatabaseConnector" type 
+ * Instance slots for "DatabaseConnector" type 
  */
-#define ES_ejs_db_DatabaseConnector__origin                            0
 #define ES_ejs_db_DatabaseConnector_addColumn                          0
 #define ES_ejs_db_DatabaseConnector_addIndex                           1
 #define ES_ejs_db_DatabaseConnector_changeColumn                       2
@@ -136,46 +100,8 @@
 #define ES_ejs_db_DatabaseConnector_sqlTypeToDataType                  19
 #define ES_ejs_db_DatabaseConnector_sqlTypeToEjsType                   20
 #define ES_ejs_db_DatabaseConnector_startTransaction                   21
+#define ES_ejs_db_DatabaseConnector_NUM_INSTANCE_PROP                  22
 
-#define ES_ejs_db_DatabaseConnector_NUM_CLASS_PROP                     22
-#define ES_ejs_db_DatabaseConnector_NUM_INSTANCE_PROP                  0
-
-/*
-    Local slots for methods in type "DatabaseConnector" 
- */
-#define ES_ejs_db_DatabaseConnector_addColumn_table                    0
-#define ES_ejs_db_DatabaseConnector_addColumn_column                   1
-#define ES_ejs_db_DatabaseConnector_addColumn_datatype                 2
-#define ES_ejs_db_DatabaseConnector_addColumn_options                  3
-#define ES_ejs_db_DatabaseConnector_addIndex_table                     0
-#define ES_ejs_db_DatabaseConnector_addIndex_column                    1
-#define ES_ejs_db_DatabaseConnector_addIndex_index                     2
-#define ES_ejs_db_DatabaseConnector_changeColumn_table                 0
-#define ES_ejs_db_DatabaseConnector_changeColumn_column                1
-#define ES_ejs_db_DatabaseConnector_changeColumn_datatype              2
-#define ES_ejs_db_DatabaseConnector_changeColumn_options               3
-#define ES_ejs_db_DatabaseConnector_connect_connectionString           0
-#define ES_ejs_db_DatabaseConnector_createDatabase_name                0
-#define ES_ejs_db_DatabaseConnector_createDatabase_options             1
-#define ES_ejs_db_DatabaseConnector_createTable_table                  0
-#define ES_ejs_db_DatabaseConnector_createTable_columns                1
-#define ES_ejs_db_DatabaseConnector_dataTypeToSqlType_dataType         0
-#define ES_ejs_db_DatabaseConnector_destroyDatabase_name               0
-#define ES_ejs_db_DatabaseConnector_destroyTable_table                 0
-#define ES_ejs_db_DatabaseConnector_getColumns_table                   0
-#define ES_ejs_db_DatabaseConnector_removeColumns_table                0
-#define ES_ejs_db_DatabaseConnector_removeColumns_columns              1
-#define ES_ejs_db_DatabaseConnector_removeIndex_table                  0
-#define ES_ejs_db_DatabaseConnector_removeIndex_index                  1
-#define ES_ejs_db_DatabaseConnector_renameColumn_table                 0
-#define ES_ejs_db_DatabaseConnector_renameColumn_oldColumn             1
-#define ES_ejs_db_DatabaseConnector_renameColumn_newColumn             2
-#define ES_ejs_db_DatabaseConnector_renameTable_oldTable               0
-#define ES_ejs_db_DatabaseConnector_renameTable_newTable               1
-#define ES_ejs_db_DatabaseConnector_sql_cmd                            0
-#define ES_ejs_db_DatabaseConnector_sqlTypeToDataType_sqlType          0
-#define ES_ejs_db_DatabaseConnector_sqlTypeToEjsType_sqlType           0
-
-#define _ES_CHECKSUM_ejs_db   123088
+#define _ES_CHECKSUM_ejs_db   134809
 
 #endif

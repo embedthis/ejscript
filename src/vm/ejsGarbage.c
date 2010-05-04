@@ -409,7 +409,7 @@ static void resetMarks(Ejs *ejs)
 {
     EjsGen      *gen;
     EjsGC       *gc;
-    EjsObj      *vp;
+    EjsObj      *obj;
     EjsBlock    *block, *b;
     MprBlk      *bp;
     int         i;
@@ -418,8 +418,8 @@ static void resetMarks(Ejs *ejs)
     for (i = 0; i < EJS_MAX_GEN; i++) {
         gen = gc->generations[i];
         for (bp = mprGetFirstChild(gen); bp; bp = bp->next) {
-            vp = MPR_GET_PTR(bp);
-            vp->marked = 0;
+            obj = MPR_GET_PTR(bp);
+            obj->marked = 0;
         }
     }
     for (block = ejs->state->bp; block; block = block->prev) {
@@ -427,7 +427,7 @@ static void resetMarks(Ejs *ejs)
         if (block->prevException) {
             block->prevException->marked = 0;
         }
-        for (b = block->scopeChain; b; b = b->scopeChain) {
+        for (b = block->scope; b; b = b->scope) {
             b->obj.marked = 0;
         }
     }

@@ -244,7 +244,7 @@ typedef struct EjsModule {
     /*
         Used only while loading modules
      */
-    EjsBlock        *scopeChain;            /* Scope of nested types/functions/blocks, being loaded */
+    EjsBlock        *scope;                 /* Lexical scope chain */
     EjsConst        *constants;             /* Constant pool */
     int             nameToken;              /* */
     int             firstGlobal;            /* First global property */

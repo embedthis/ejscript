@@ -257,9 +257,8 @@ EjsObj *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...)
  */
 char *ejsFormatStack(Ejs *ejs, EjsError *error)
 {
-    EjsType         *type;
     EjsFrame        *fp;
-    cchar           *typeName, *functionName, *line, *typeSep, *codeSep;
+    cchar           *line, *codeSep;
     char            *backtrace, *traceLine;
     int             level, len, oldFlags;
 
@@ -269,13 +268,12 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
     len = 0;
     level = 0;
 
-    /*
-        Pretend to be the compiler so we can access function frame names
-     */
     oldFlags = ejs->flags;
     for (fp = ejs->state->fp; fp; fp = fp->caller) {
+#if UNUSED
         typeName = "";
         functionName = "global";
+#endif
 
         if (fp->currentLine == 0) {
             line = "";
@@ -285,25 +283,29 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
             }
         }
         if (fp) {
-            if (fp->function.owner && fp->function.slotNum >= 0 && fp->function.slotNum < fp->function.owner->numSlots) {
-                functionName = ejsGetPropertyName(ejs, fp->function.owner, fp->function.slotNum).name;
+#if UNUSED
+            if (fp->owner && fp->slotNum >= 0 && fp->slotNum < fp->owner->numSlots) {
+                functionName = ejsGetPropertyName(ejs, fp->owner, fp->slotNum).name;
             }
-            if (ejsIsType(fp->function.owner)) {
-                type = (EjsType*) fp->function.owner;
+            if (ejsIsType(fp->owner)) {
+                type = (EjsType*) fp->owner;
                 if (type) {
                     typeName = type->qname.name;
                 }
             }
+#endif
         }
+#if UNSUSED
         typeSep = (*typeName) ? "." : "";
+#endif
         codeSep = (*line) ? "->" : "";
 
         if (error && backtrace == 0) {
             error->filename = mprStrdup(error, fp->filename);
             error->lineNumber = fp->lineNumber;
         }
-        if ((traceLine = mprAsprintf(ejs, MPR_MAX_STRING, " [%02d] %s, %s%s%s, line %d %s %s\n",
-                level++, fp->filename ? fp->filename : "script", typeName, typeSep, functionName,
+        if ((traceLine = mprAsprintf(ejs, MPR_MAX_STRING, " [%02d] %s, %s, line %d %s %s\n",
+                level++, fp->filename ? fp->filename : "script", fp->function.name,
                 fp->lineNumber, codeSep, line)) == NULL) {
             break;
         }

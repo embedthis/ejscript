@@ -92,7 +92,7 @@ static void     generateClassPages(EjsMod *mp);
 static void     generateClassPageHeader(EjsMod *mp, EjsType *type, EjsTrait *trait, EjsDoc *doc);
 static void     generateClassPropertyTable(EjsMod *mp, EjsType *type);
 static int      generateClassPropertyTableEntries(EjsMod *mp, EjsObj *obj, int numInhertied);
-static int      generateClassGetterTableEntries(EjsMod *mp, EjsType *type, int numInherited);
+static int      generateClassGetterTableEntries(EjsMod *mp, EjsObj *obj, int numInherited);
 static void     generateClassList(EjsMod *mp, cchar *namespace);
 static void     generateContentFooter(EjsMod *mp);
 static void     generateContentHeader(EjsMod *mp, cchar *fmt, ... );
@@ -791,7 +791,6 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName *qname, EjsTrait *ty
     EjsType         *type;
     EjsTrait        *trait;
     EjsObj          *prototype;
-    EjsFunction     *fun;
     EjsName         pname;
     EjsDoc          *dp;
     char            *combined;
@@ -803,7 +802,9 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName *qname, EjsTrait *ty
         crackDoc(mp, doc, qname);
     }
     type = ejsIsType(obj) ? (EjsType*) obj : 0;
+#if UNUSED
     numInherited = type ? type->numInherited : 0;
+#endif
 
     /*
         Loop over all the static properties
@@ -813,6 +814,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName *qname, EjsTrait *ty
         if (trait == 0) {
             continue;
         }
+#if UNUSED
         if (slotNum < numInherited) {
             fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
             if (fun && ejsIsFunction(fun) && fun->owner != obj) {
@@ -820,6 +822,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName *qname, EjsTrait *ty
                 continue;
             }
         }
+#endif
         dp = getDoc(ejs, obj, slotNum);
         if (dp) {
             pname = ejsGetPropertyName(ejs, obj, slotNum);
@@ -835,9 +838,9 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName *qname, EjsTrait *ty
         prototype = type->prototype;
         if (prototype) {
             numInherited = type->numPrototypeInherited;
-            if (ejsGetNumTraits((EjsObj*) prototype) > 0) {
+            if (ejsGetPropertyCount(ejs, prototype) > 0) {
                 for (slotNum = numInherited; slotNum < prototype->numSlots; slotNum++) {
-                    trait = ejsGetTrait((EjsObj*) prototype, slotNum);
+                    trait = ejsGetTrait(prototype, slotNum);
                     if (trait == 0) {
                         continue;
                     }
@@ -978,12 +981,11 @@ static void generateClassPropertyTable(EjsMod *mp, EjsType *type)
     out(mp, "<table class='itemTable' summary='properties'>\n");
     out(mp, "   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%%'>Description</th></tr>\n");
 
-    count = generateClassPropertyTableEntries(mp, (EjsObj*) type, type->numInherited);
-    if (type && type->prototype) {
+    count = generateClassPropertyTableEntries(mp, (EjsObj*) type, 0);
+    count += generateClassGetterTableEntries(mp, (EjsObj*) type, 0);
+    if (type->prototype) {
         count += generateClassPropertyTableEntries(mp, type->prototype, type->numPrototypeInherited);
-    }
-    if (type) {
-        count += generateClassGetterTableEntries(mp, type, type->numInherited);
+        count += generateClassGetterTableEntries(mp, type->prototype, type->numPrototypeInherited);
     }
     if (count == 0) {
         out(mp, "   <tr><td colspan='4'>No properties defined</td></tr>");
@@ -1168,10 +1170,7 @@ static int generateClassPropertyTableEntries(EjsMod *mp, EjsObj *obj, int numInh
 }
 
 
-/*
-    Generate the entries for getters
- */
-static int generateClassGetterTableEntries(EjsMod *mp, EjsType *type, int numInherited)
+static int generateClassGetterTableEntries(EjsMod *mp, EjsObj *obj, int numInherited)
 {
     Ejs             *ejs;
     EjsTrait        *trait;
@@ -1185,7 +1184,7 @@ static int generateClassGetterTableEntries(EjsMod *mp, EjsType *type, int numInh
 
     ejs = mp->ejs;
     count = 0;
-    getters  = buildGetterList(mp, (EjsObj*) type, numInherited);
+    getters  = buildGetterList(mp, obj, numInherited);
 
     for (next = 0; (prec = (PropRec*) mprGetNextItem(getters, &next)) != 0; ) {
         fun = (EjsFunction*) prec->vp;
@@ -1211,12 +1210,16 @@ static int generateClassGetterTableEntries(EjsMod *mp, EjsType *type, int numInh
         if (isalpha((int) name[0])) {
             out(mp, "<a name='%s'></a>\n", name);
         }
-        if (type && strcmp(qname.space, type->qname.space) == 0) {
+#if KEEP
+        if (strcmp(qname.space, type->qname.space) == 0) {
             out(mp, "   <tr><td nowrap align='left'>%s%s</td><td>%s</td>", fmtAttributes(trait->attributes, 1), set, name);
         } else {
+#endif
             out(mp, "   <tr><td nowrap align='left'>%s %s%s</td><td>%s</td>", fmtNamespace(qname),
                 fmtAttributes(trait->attributes, 1), set, name);
+#if KEEP
         }
+#endif
         if (fun->resultType) {
             tname = fmtType(fun->resultType->qname);
             if (mprStrcmpAnyCase(tname, "intrinsic::Void") == 0) {
@@ -1290,6 +1293,7 @@ static MprList *buildMethodList(EjsMod *mp, EjsType *type)
         if (strncmp(qname.space, "internal", 8) == 0) {
             continue;
         }
+#if UNUSED && KEEP
         fun = (EjsFunction*) vp;
         if (slotNum < type->numInherited) {
             if (fun->owner != obj) {
@@ -1297,6 +1301,7 @@ static MprList *buildMethodList(EjsMod *mp, EjsType *type)
                 continue;
             }
         }
+#endif
         fp = mprAllocObjZeroed(methods, FunRec);
         fp->fun = fun;
         fp->block = (EjsBlock*) type;
@@ -1416,7 +1421,7 @@ static void generateBlockMethods(EjsMod *mp, EjsType *type)
         Loop over all the methods
      */
     for (next = 0; (fp = (FunRec*) mprGetNextItem(methods, &next)) != 0; ) {
-        generateClassMethod(mp, (EjsBlock*) fp->fun->owner, fp->fun->slotNum);
+        generateClassMethod(mp, (EjsBlock*) fp->block, fp->slotNum);
     }
     mprFree(methods);
 }
@@ -1505,7 +1510,11 @@ static void generateClassMethod(EjsMod *mp, EjsBlock *block, int slotNum)
     type = ejsIsType(block) ? (EjsType*) block : 0;
     obj = (EjsObj*) block;
     fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
+#if KEEP
     numInherited = type ? type->numInherited : 0;
+#else
+    numInherited = 0;
+#endif
     mprAssert(ejsIsFunction(fun));
 
     qname = ejsGetPropertyName(ejs, obj, slotNum);

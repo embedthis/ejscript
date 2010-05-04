@@ -98,6 +98,6 @@
 #define ES_ejs_db_Sqlite_sqlTypeToDataType_sqlType                     0
 #define ES_ejs_db_Sqlite_sqlTypeToEjsType_sqlType                      0
 
-#define _ES_CHECKSUM_ejs_db_sqlite   75091
+#define _ES_CHECKSUM_ejs_db_sqlite   75132
 
 #endif

@@ -8289,6 +8289,7 @@ static EcNode *parseClassDefinition(EcCompiler *cp, EcNode *attributeNode)
         np->klass.constructor = linkNode(np, constructor);
         constructor->qname.name = mprStrdup(np, np->qname.name);
         applyAttributes(cp, constructor, 0, EJS_PUBLIC_NAMESPACE);
+        constructor->function.isMethod = 1;
         constructor->function.isConstructor = 1;
         constructor->function.isDefaultConstructor = 1;
     }

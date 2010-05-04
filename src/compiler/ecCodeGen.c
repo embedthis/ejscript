@@ -1147,7 +1147,7 @@ static void genCall(EcCompiler *cp, EcNode *np)
         if (fun->resultType && fun->resultType != ejs->voidType) {
             hasResult = 1;
 
-        } else if (fun->hasReturn) {
+        } else if (fun->hasReturn || fun->constructor) {
             /*
                 Untyped function, but it has a return stmt.
                 We don't do data flow to make sure all return cases have returns (sorry).
@@ -1192,10 +1192,9 @@ static void genClass(EcCompiler *cp, EcNode *np)
     EjsName         qname;
     MprBuf          *codeBuf;
     uchar           *buf;
-    int             next, len, initializerLen, constructorLen, slotNum, i;
+    int             next, len, initializerLen, constructorLen, i;
 
     ENTER(cp);
-
     mprAssert(np->kind == N_CLASS);
 
     ejs = cp->ejs;
@@ -1329,11 +1328,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
     ecAddNameConstant(cp, &np->qname);
 
     if (type->hasStaticInitializer) {
-        slotNum = type->numInherited;
-        if (type->hasConstructor) {
-            slotNum++;
-        }
-        qname = ejsGetPropertyName(ejs, (EjsObj*) type, slotNum);
+        qname = ejsGetPropertyName(ejs, (EjsObj*) type, 0);
         ecAddNameConstant(cp, &qname);
     }
     if (type->baseType) {
@@ -2156,7 +2151,7 @@ static void genFunction(EcCompiler *cp, EcNode *np)
     }
     if (cp->ejs->flags & EJS_FLAG_DOC) {
         //  MOB -- could move outside to avoid using owner
-        ecAddDocConstant(cp, 0, fun->owner, fun->slotNum);
+        ecAddDocConstant(cp, NULL, np->lookup.obj, np->lookup.slotNum);
     }
     LEAVE(cp);
 }

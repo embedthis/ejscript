@@ -175,14 +175,16 @@ EjsObj *ejsObjectOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
  */
 EjsObj *ejsCreateObject(Ejs *ejs, EjsType *type, int numSlots)
 {
-    EjsObj      *obj, *prototype;
+    EjsObj      *obj;
 
     mprAssert(type);
     mprAssert(numSlots >= 0);
 
-    if ((prototype = (EjsObj*) type->prototype) != 0) {
+#if UNUSED
+    if ((prototype = type->prototype) != 0) {
         numSlots = max(numSlots, prototype->numSlots);
     }
+#endif
     if (type->dynamicInstance) {
         if ((obj = (EjsObj*) ejsAlloc(ejs, type, 0)) == 0) {
             return 0;
@@ -205,7 +207,10 @@ EjsObj *ejsCreateObject(Ejs *ejs, EjsType *type, int numSlots)
     ejsSetDebugName(obj, type->qname.name);
 
     if (obj->sizeSlots > 0) {
-        if (prototype == 0 || prototype->numSlots == 0 || type->dontCopyPrototype) {
+        ejsZeroSlots(ejs, obj->slots, obj->sizeSlots);
+#if UNUSED
+        //  MOB - Don't every copy prototype slots
+        if (1 || prototype == 0 || prototype->numSlots == 0 || type->dontCopyPrototype) {
             ejsZeroSlots(ejs, obj->slots, obj->sizeSlots);
         } else {
             ejsCopySlots(ejs, obj, obj->slots, prototype->slots, prototype->numSlots, 1);
@@ -214,6 +219,7 @@ EjsObj *ejsCreateObject(Ejs *ejs, EjsType *type, int numSlots)
             }
             ejsZeroSlots(ejs, &obj->slots[prototype->numSlots], obj->sizeSlots - prototype->numSlots);
         }
+#endif
     }
     return obj;
 }
@@ -245,7 +251,7 @@ EjsObj *ejsCloneObject(Ejs *ejs, EjsObj *src, bool deep)
     dest->isPrototype = src->isPrototype;
     dest->isType = src->isType;
     dest->permanent = src->permanent;
-    dest->skipScope = src->skipScope;
+    dest->shortScope = src->shortScope;
 
     dp = dest->slots;
     sp = src->slots;
@@ -280,7 +286,9 @@ static EjsObj *prepareAccessors(Ejs *ejs, EjsObj *obj, int slotNum, int *attribu
             fun = (EjsFunction*) ejsCloneFunction(ejs, ejs->nopFunction, 0);
             fun->setter = (EjsFunction*) value;
         }
+#if UNUSED
         ejsSetFunctionLocation(fun->setter, obj, slotNum);
+#endif
         value = (EjsObj*) fun;
 
     } else if (*attributes & EJS_TRAIT_GETTER) {
@@ -342,7 +350,9 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
         if (attributes & EJS_FUN_CONSTRUCTOR) {
             fun->constructor = 1;
         }
+#if UNUSED
         ejsSetFunctionLocation(fun, obj, slotNum);
+#endif
         if (!ejsIsNativeFunction(fun)) {
             obj->hasScriptFunctions = 1;
         }
@@ -700,7 +710,6 @@ int ejsGrowObject(Ejs *ejs, EjsObj *obj, int numSlots)
  */
 int ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int incr, int offset)
 {
-    EjsFunction     *fun;
     EjsSlot         *sp;
     int             i, size, mark;
 
@@ -721,12 +730,14 @@ int ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int incr, int offset)
     for (mark = offset + incr, i = obj->numSlots - 1; i >= mark; i--) {
         sp = &obj->slots[i - mark];
         obj->slots[i] = *sp;
+#if UNUSED
         if (ejsIsFunction(sp->value.ref)) {
             fun = (EjsFunction*) sp->value.ref;
             if (fun->owner == obj) {
                 fun->slotNum = i;
             }
         }
+#endif
     }
     ejsZeroSlots(ejs, &obj->slots[offset], incr);
     if (ejsMakeObjHash(obj) < 0) {
@@ -748,6 +759,7 @@ static int growSlots(Ejs *ejs, EjsObj *obj, int sizeSlots)
     mprAssert(sizeSlots > 0);
     mprAssert(sizeSlots > obj->sizeSlots);
 
+    //  MOB -- should not round down here. Prevents exact sizing of instances from builtin types
     if (sizeSlots > obj->sizeSlots) {
         //  MOB OPT - this could grow by more than just 16 each time for < 256
         if (obj->sizeSlots > EJS_LOTSA_PROP) {
@@ -927,21 +939,8 @@ EjsType *ejsGetTraitType(EjsObj *obj, int slotNum)
 }
 
 
-//  MOB -- remove
-int ejsGetNumTraits(EjsObj *obj)
-{
-    if (obj == 0) {
-        return 0;
-    }
-    return obj->numSlots;
-}
-
-
 int ejsRemoveProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 {
-    EjsFunction *fun;
-    int         i;
-    
     mprAssert(ejs);
     mprAssert(obj);
     
@@ -950,6 +949,7 @@ int ejsRemoveProperty(Ejs *ejs, EjsObj *obj, int slotNum)
     }
     removeSlot(ejs, (EjsObj*) obj, slotNum, 1);
 
+#if UNUSED
     //  MOB -- great to get rid of owner/slotNum
 
     for (i = slotNum; i < obj->numSlots; i++) {
@@ -962,6 +962,7 @@ int ejsRemoveProperty(Ejs *ejs, EjsObj *obj, int slotNum)
             fun->setter->slotNum--;
         }
     }
+#endif
     return 0;
 }
 
@@ -1259,12 +1260,15 @@ static EjsObj *obj_prototype(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
 {
     mprAssert(ejsIsType(type));
 
+#if UNUSED
     if (type->prototype == 0) {
         if ((type->prototype = ejsCreatePrototype(ejs, type, 0)) == 0) {
             return 0;
         }
+        //  MOB -- rethink
         ejsSetProperty(ejs, (EjsObj*) type, ES_Object, type->prototype);
     }
+#endif
     return type->prototype;
 }
 
@@ -2018,15 +2022,13 @@ static EjsObj *obj_toString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
 
 /************************************ Factory *********************************/
-/*
-    Create the object type
- */
-void ejsCreateObjectType(Ejs *ejs)
+
+void ejsCreateObjectHelpers(Ejs *ejs)
 {
     EjsType         *type;
     EjsTypeHelpers  *helpers;
 
-    type = ejs->objectType = ejsCreateNativeType(ejs, "ejs", "Object", ES_Object, sizeof(EjsObj));
+    type = ejs->objectType;
 
     helpers = type->helpers = (EjsTypeHelpers*) mprAllocZeroed(ejs, sizeof(EjsTypeHelpers));
 
@@ -2078,7 +2080,9 @@ void ejsConfigureObjectType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Object_isSealed, obj_isSealed);
 
     //  MOB -- change back to public
+#if ES_Object_length
     ejsBindMethod(ejs, type, ES_Object_length, obj_length);
+#endif
     ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
     ejsBindMethod(ejs, type, ES_Object_propertyIsEnumerable, obj_propertyIsEnumerable);
     ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);

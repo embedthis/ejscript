@@ -136,7 +136,6 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
     default:
         mprAssert(0);
     }
-
     lst->kind = kind;
     mprAddItem(mp->lstRecords, lst);
 }
@@ -263,7 +262,6 @@ static void lstClass(EjsMod *mp, EjsModule *module, int slotNum, EjsType *klass,
     } else {
         mprFprintf(mp->file, "CLASS:      %sclass %s\n", getAttributeString(mp, attributes), klass->qname.name);
     }
-
     leadin(mp, module, 1, 0);
     mprFprintf(mp->file, "        #  Class Details: %d class traits, %d instance traits, requested slot %d\n",
         ejsGetPropertyCount(ejs, (EjsObj*) klass),
@@ -839,7 +837,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
                 "#  Initializer slot assignments (Num prop %d)\n"
                 "#\n", ejsGetPropertyCount(ejs, (EjsObj*) fun));
 
-            count = ejsGetNumTraits((EjsObj*) fun);
+            count = ejsGetPropertyCount(ejs, (EjsObj*) fun);
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTrait(ejs, (EjsObj*) fun, i);
                 qname = ejsGetPropertyName(ejs, (EjsObj*) fun, i);
@@ -852,15 +850,12 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         }
 
     } else if (ejsIsFunction(obj)) {
-
         fun = (EjsFunction*) obj;
-        qname = ejsGetPropertyName(ejs, fun->owner, fun->slotNum);
-
-        count = ejsGetNumTraits((EjsObj*) obj);
+        count = ejsGetPropertyCount(ejs, (EjsObj*) obj);
         if (count > 0) {
             mprFprintf(mp->file,  "\n#\n"
                 "#  Local slot assignments for the \"%s\" function (Num slots %d)\n"
-                "#\n", qname.name, count);
+                "#\n", fun->name, count);
 
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTrait(ejs, obj, i);
@@ -875,13 +870,12 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
             Types
          */
         type = (EjsType*) obj;
-        numInherited = type->baseType ? ejsGetPropertyCount(ejs, (EjsObj*) type->baseType) : 0;
         mprFprintf(mp->file,  "\n#\n"
-            "#  Class slot assignments for the \"%s\" class (Num slots %d, num inherited %d)\n"
+            "#  Class slot assignments for the \"%s\" class (Num slots %d)\n"
             "#\n", type->qname.name,
-            ejsGetPropertyCount(ejs, (EjsObj*) type), numInherited);
+            ejsGetPropertyCount(ejs, (EjsObj*) type));
 
-        count = ejsGetNumTraits((EjsObj*) type);
+        count = ejsGetPropertyCount(ejs, (EjsObj*) type);
         for (i = 0; i < count; i++) {
             trait = ejsGetPropertyTrait(ejs, (EjsObj*) type, i);
             mprAssert(trait);
@@ -898,11 +892,10 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         mprFprintf(mp->file,  "\n#\n"
             "#  Instance slot assignments for the \"%s\" class (Num prop %d, num inherited %d)\n"
             "#\n", type->qname.name,
-            prototype ? ejsGetPropertyCount(ejs, prototype): 0 ,
-            numInherited);
+            prototype ? ejsGetPropertyCount(ejs, prototype): 0, numInherited);
 
         if (prototype) {
-            count = ejsGetNumTraits(prototype);
+            count = ejsGetPropertyCount(ejs, prototype);
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTrait(ejs, prototype, i);
                 mprAssert(trait);
@@ -914,17 +907,16 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         }
 
     } else if (ejsIsBlock(obj)) {
-
         qname = ejsGetPropertyName(ejs, parent, slotNum);
         block = (EjsBlock*) obj;
-        count = ejsGetNumTraits((EjsObj*) block);
+        count = ejsGetPropertyCount(ejs, (EjsObj*) block);
         if (count > 0) {
             mprFprintf(mp->file,  
                 "\n#\n"
                 "#  Block slot assignments for the \"%s\" (Num slots %d)\n"
                 "#\n", qname.name, ejsGetPropertyCount(ejs, obj));
             
-            count = ejsGetNumTraits(obj);
+            count = ejsGetPropertyCount(ejs, obj);
             for (i = 0; i < count; i++) {
                 trait = ejsGetPropertyTrait(ejs, obj, i);
                 mprAssert(trait);
@@ -942,7 +934,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         count = module->lastGlobal;
     } else {
         i = 0;
-        count = ejsGetNumTraits(obj);
+        count = ejsGetPropertyCount(ejs, obj);
     }
     for (; i < count; i++) {
         trait = ejsGetPropertyTrait(ejs, obj, i);
@@ -961,7 +953,6 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
 
 static cchar *getBlockName(EjsMod *mp, EjsObj *block, int slotNum)
 {
-    EjsFunction     *fun;
     EjsName         qname;
 
     if (block) {
@@ -969,16 +960,7 @@ static cchar *getBlockName(EjsMod *mp, EjsObj *block, int slotNum)
             return ((EjsType*) block)->qname.name;
 
         } else if (ejsIsFunction(block)) {
-            fun = (EjsFunction*) block;
-            if (fun->owner) {
-                qname = ejsGetPropertyName(mp->ejs, fun->owner, fun->slotNum);
-            } else {
-                /*
-                    Only the initializers don't have an owner
-                 */
-                ejsName(&qname, 0, EJS_INITIALIZER_NAME);
-            }
-            return qname.name;
+            return ((EjsFunction*) block)->name;
         }
     }
     qname = ejsGetPropertyName(mp->ejs, block, slotNum);
