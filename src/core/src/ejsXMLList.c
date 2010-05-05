@@ -730,7 +730,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *xmlListToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    return (vp->type->helpers->cast)(ejs, vp, ejs->stringType);
+    return (vp->type->helpers.cast)(ejs, vp, ejs->stringType);
 }
 
 
@@ -822,47 +822,40 @@ void ejsCreateXMLListType(Ejs *ejs)
      */
     type->block.nobind = 1;
 
-    type->helpers = ejsCloneObjectHelpers(ejs, "xmllist-helpers");
-    type->helpers->clone = (EjsCloneHelper) cloneXmlList;
-    type->helpers->cast = (EjsCastHelper) xlCast;
-    type->helpers->create = (EjsCreateHelper) createXmlListVar;
-    type->helpers->destroy = (EjsDestroyHelper) destroyXmlList;
-    type->helpers->getPropertyByName = (EjsGetPropertyByNameHelper) getXmlListPropertyByName;
-    type->helpers->getPropertyCount = (EjsGetPropertyCountHelper) getXmlListPropertyCount;
-    type->helpers->deletePropertyByName = (EjsDeletePropertyByNameHelper) deleteXmlListPropertyByName;
-    type->helpers->invokeOperator = (EjsInvokeOperatorHelper) ejsObjectOperator;
-    type->helpers->mark = (EjsMarkHelper) ejsMarkXML;
-    type->helpers->setPropertyByName = (EjsSetPropertyByNameHelper) setXmlListPropertyByName;
+    type->helpers.clone = (EjsCloneHelper) cloneXmlList;
+    type->helpers.cast = (EjsCastHelper) xlCast;
+    type->helpers.create = (EjsCreateHelper) createXmlListVar;
+    type->helpers.destroy = (EjsDestroyHelper) destroyXmlList;
+    type->helpers.getPropertyByName = (EjsGetPropertyByNameHelper) getXmlListPropertyByName;
+    type->helpers.getPropertyCount = (EjsGetPropertyCountHelper) getXmlListPropertyCount;
+    type->helpers.deletePropertyByName = (EjsDeletePropertyByNameHelper) deleteXmlListPropertyByName;
+    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) ejsObjectOperator;
+    type->helpers.mark = (EjsMarkHelper) ejsMarkXML;
+    type->helpers.setPropertyByName = (EjsSetPropertyByNameHelper) setXmlListPropertyByName;
 }
+
 
 void ejsConfigureXMLListType(Ejs *ejs)
 {
     EjsType     *type;
-
+    EjsObj      *prototype;
 
     type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "XMLList");
+    prototype = type->prototype;
 
-    /*
-        Define the XMLList class methods
-     */
-    ejsBindMethod(ejs, type, ES_XMLList_length, (EjsProc) xlLength);
-    ejsBindMethod(ejs, type, ES_XMLList_name, (EjsProc) getXmlListNodeName);
-    ejsBindMethod(ejs, type, ES_XMLList_XMLList, (EjsProc) xmlListConstructor);
-
-    ejsBindMethod(ejs, type, ES_XMLList_parent, (EjsNativeFunction) xl_parent);
-    
-    /*
-        Override these methods
-     */
-    ejsBindMethod(ejs, type, ES_Object_toJSON, (EjsProc) xmlListToJson);
-    ejsBindMethod(ejs, type, ES_Object_toString, (EjsProc) xmlListToString);
-
-    ejsBindMethod(ejs, type, ES_Object_get, getXmlListIterator);
-    ejsBindMethod(ejs, type, ES_Object_getValues, getXmlListValues);
+    ejsBindMethod(ejs, prototype, ES_XMLList_XMLList, (EjsProc) xmlListConstructor);
+    ejsBindMethod(ejs, prototype, ES_XMLList_length, (EjsProc) xlLength);
+    ejsBindMethod(ejs, prototype, ES_XMLList_name, (EjsProc) getXmlListNodeName);
+    ejsBindMethod(ejs, prototype, ES_XMLList_parent, (EjsNativeFunction) xl_parent);
 #if FUTURE
-    ejsBindMethod(ejs, type, "name", name, NULL);
-    ejsBindMethod(ejs, type, "valueOf", valueOf, NULL);
+    ejsBindMethod(ejs, prototype, "name", name, NULL);
+    ejsBindMethod(ejs, prototype, "valueOf", valueOf, NULL);
 #endif
+    
+    ejsBindMethod(ejs, prototype, ES_Object_toJSON, (EjsProc) xmlListToJson);
+    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) xmlListToString);
+    ejsBindMethod(ejs, prototype, ES_Object_get, getXmlListIterator);
+    ejsBindMethod(ejs, prototype, ES_Object_getValues, getXmlListValues);
 }
 
 

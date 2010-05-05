@@ -137,7 +137,7 @@ static int lookupFunctionProperty(struct Ejs *ejs, EjsFunction *fun, EjsName *qn
 #endif
     int         slotNum;
 
-    slotNum = (ejs->objectType->helpers->lookupProperty)(ejs, (EjsObj*) fun, qname);
+    slotNum = (ejs->objectType->helpers.lookupProperty)(ejs, (EjsObj*) fun, qname);
 
 #if UNUSED
     if (slotNum < 0 && qname->name[0] == 'p' && strcmp(qname->name, "prototype") == 0 && qname->space[0] == '\0') {
@@ -282,7 +282,7 @@ static EjsObj *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
     be null to indicate untyped. NOTE: untyped functions may return a result at their descretion.
  */
 EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *byteCode, int codeLen, int numArgs, int numDefault, 
-    int numExceptions, EjsType *resultType, int attributes, EjsConst *constants, EjsBlock *scopeChain, int strict)
+    int numExceptions, EjsType *resultType, int attributes, EjsConst *constants, EjsBlock *scope, int strict)
 {
     EjsFunction     *fun;
     EjsCode         *code;
@@ -293,8 +293,8 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *byteCode, int code
     }
     fun->name = mprStrdup(fun, name);
     ejsSetDebugName(fun, fun->name);
-    if (scopeChain) {
-        fun->block.scope = scopeChain;
+    if (scope) {
+        fun->block.scope = scope;
     }
     fun->numArgs = numArgs;
     fun->numDefault = numDefault;
@@ -495,7 +495,7 @@ void ejsCreateFunctionType(Ejs *ejs)
 
     type = ejs->functionType = ejsCreateNativeType(ejs, "ejs", "Function", ES_Function, sizeof(EjsFunction));
 
-    helpers = type->helpers;
+    helpers = &type->helpers;
     helpers->create         = (EjsCreateHelper) createFunction;
     helpers->cast           = (EjsCastHelper) castFunction;
     helpers->clone          = (EjsCloneHelper) ejsCloneFunction;
@@ -513,16 +513,19 @@ void ejsCreateFunctionType(Ejs *ejs)
 void ejsConfigureFunctionType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejs->functionType;
-    ejsBindMethod(ejs, type, ES_Function_apply, (EjsProc) fun_applyFunction);
-    ejsBindMethod(ejs, type, ES_Function_bind, (EjsProc) fun_bindFunction);
-    ejsBindMethod(ejs, type, ES_Function_boundThis, (EjsProc) fun_boundThis);
+    prototype = type->prototype;
+
+    ejsBindMethod(ejs, prototype, ES_Function_apply, (EjsProc) fun_applyFunction);
+    ejsBindMethod(ejs, prototype, ES_Function_bind, (EjsProc) fun_bindFunction);
+    ejsBindMethod(ejs, prototype, ES_Function_boundThis, (EjsProc) fun_boundThis);
 #if UNUSED
-    ejsBindMethod(ejs, type, ES_Function_prototype, (EjsProc) fun_prototype);
+    ejsBindMethod(ejs, prototype, ES_Function_prototype, (EjsProc) fun_prototype);
 #endif
-    ejsBindMethod(ejs, type, ES_Function_setScope, (EjsProc) fun_setScope);
-    ejsBindMethod(ejs, type, ES_Function_call, (EjsProc) fun_call);
+    ejsBindMethod(ejs, prototype, ES_Function_setScope, (EjsProc) fun_setScope);
+    ejsBindMethod(ejs, prototype, ES_Function_call, (EjsProc) fun_call);
 }
 
 

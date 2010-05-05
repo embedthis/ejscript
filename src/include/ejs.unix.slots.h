@@ -15,7 +15,7 @@
  */
 
 /*
- * Instance slots for "global" type 
+   Prototype (instance) slots for "global" type 
  */
 
 /*

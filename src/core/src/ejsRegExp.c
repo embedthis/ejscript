@@ -335,29 +335,31 @@ void ejsCreateRegExpType(Ejs *ejs)
 
     type = ejs->regExpType = ejsCreateNativeType(ejs, "ejs", "RegExp", ES_RegExp, sizeof(EjsRegExp));
     type->needFinalize = 1;
-    type->helpers->cast = (EjsCastHelper) castRegExp;
-    type->helpers->destroy = (EjsDestroyHelper) destroyRegExp;
+    type->helpers.cast = (EjsCastHelper) castRegExp;
+    type->helpers.destroy = (EjsDestroyHelper) destroyRegExp;
 }
 
 
 void ejsConfigureRegExpType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsConfigureNativeType(ejs, "ejs", "RegExp", sizeof(EjsRegExp));
+    prototype = type->prototype;
 
-    ejsBindMethod(ejs, type, ES_RegExp_RegExp, (EjsProc) regexConstructor);
-    ejsBindMethod(ejs, type, ES_RegExp_exec, (EjsProc) exec);
-    ejsBindAccess(ejs, type, ES_RegExp_lastIndex, (EjsProc) getLastIndex, (EjsProc) setLastIndex);
-    ejsBindMethod(ejs, type, ES_RegExp_global, (EjsProc) getGlobalFlag);
-    ejsBindMethod(ejs, type, ES_RegExp_ignoreCase, (EjsProc) getIgnoreCase);
-    ejsBindMethod(ejs, type, ES_RegExp_multiline, (EjsProc) getMultiline);
-    ejsBindMethod(ejs, type, ES_RegExp_source, (EjsProc) getSource);
-    ejsBindMethod(ejs, type, ES_RegExp_matched, (EjsProc) matched);
-    ejsBindMethod(ejs, type, ES_RegExp_start, (EjsProc) start);
-    ejsBindMethod(ejs, type, ES_RegExp_sticky, (EjsProc) sticky);
-    ejsBindMethod(ejs, type, ES_RegExp_test, (EjsProc) test);
-    ejsBindMethod(ejs, type, ES_Object_toString, (EjsProc) ejsRegExpToString);
+    ejsBindMethod(ejs, prototype, ES_RegExp_RegExp, (EjsProc) regexConstructor);
+    ejsBindMethod(ejs, prototype, ES_RegExp_exec, (EjsProc) exec);
+    ejsBindAccess(ejs, prototype, ES_RegExp_lastIndex, (EjsProc) getLastIndex, (EjsProc) setLastIndex);
+    ejsBindMethod(ejs, prototype, ES_RegExp_global, (EjsProc) getGlobalFlag);
+    ejsBindMethod(ejs, prototype, ES_RegExp_ignoreCase, (EjsProc) getIgnoreCase);
+    ejsBindMethod(ejs, prototype, ES_RegExp_multiline, (EjsProc) getMultiline);
+    ejsBindMethod(ejs, prototype, ES_RegExp_source, (EjsProc) getSource);
+    ejsBindMethod(ejs, prototype, ES_RegExp_matched, (EjsProc) matched);
+    ejsBindMethod(ejs, prototype, ES_RegExp_start, (EjsProc) start);
+    ejsBindMethod(ejs, prototype, ES_RegExp_sticky, (EjsProc) sticky);
+    ejsBindMethod(ejs, prototype, ES_RegExp_test, (EjsProc) test);
+    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) ejsRegExpToString);
 }
 
 

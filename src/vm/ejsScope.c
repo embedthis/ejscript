@@ -18,10 +18,10 @@
  */
 int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
 {
-    EjsBlock        *bp, *thisType;
+    EjsBlock        *bp;
     EjsState        *state;
     EjsType         *type;
-    EjsObj          *prototype, *obj, *thisObj;
+    EjsObj          *prototype, *obj;
     int             slotNum, nthBase;
 
     mprAssert(ejs);
@@ -31,53 +31,69 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
     mprAssert(lookup);
 
     state = ejs->state;
-    thisObj = state->fp->function.thisObj;
-    thisType = (EjsBlock*) thisObj->type;
     slotNum = -1;
     
     //  MOB - OPT 
     memset(lookup, 0, sizeof(*lookup));
 
     for (lookup->nthBlock = 0, bp = state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
-        //  MOB -- remove types from scope chain!!!
-        if (ejsIsType(bp)) {
-            continue;
-        }
+        /* Seach simple object */
         if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) bp, name, lookup)) >= 0) {
-            break;
+            return slotNum;
         }
+        if (bp->isPrototype) {
+        }
+        if (prior->instanceMethod) {
+        if (ejsIsType(bp) && (!ejsIsFunction(prior) || !((EjsFunction*) prior)->staticMethod)) {
+        }
+
+
+
+
+
         if (ejsIsFrame(bp)) {
-            /* Perhaps only do for methods as per ECMA spec (need obj.isMethod) */
             obj = ((EjsFrame*) bp)->function.thisObj;
-            if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, name, lookup)) >= 0) {
-                break;
-            }
-            if (!obj->shortScope) {
-                type = obj->type;
-                for (nthBase = 1; type; type = type->baseType, nthBase++) {
-                    if ((prototype = type->prototype) == 0 || prototype->shortScope) {
-                        break;
-                    }
-                    if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
-                        lookup->nthBase = nthBase;
-                        return slotNum;
-                    }
+            if (obj != ejs->global) {
+                /* Search "this", perhaps only do for methods as per ECMA spec (need obj.isMethod) */
+                if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, name, lookup)) >= 0) {
+                    return slotNum;
                 }
-                for (nthBase = 1; type; type = type->baseType, nthBase++) {
-                    if (type->block.obj.shortScope) {
-                        //  MOB -- continue or break?
-                        continue;
-                    }
-                    if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
-                        lookup->nthBase = nthBase;
-                        return slotNum;
-                    }
+            }
+            if (obj->shortScope) {
+                continue;
+            }
+            /* Search prototype chain */
+            type = obj->type;
+            for (nthBase = 1; type; type = type->baseType, nthBase++) {
+                if ((prototype = type->prototype) == 0 || prototype->shortScope) {
+                    break;
+                }
+                if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
+                    lookup->nthBase = nthBase;
+                    return slotNum;
+                }
+            }
+            type = obj->type;
+
+        } else if (ejsIsType(bp)) {
+            type = (EjsType*) bp;
+        } else {
+            type = 0;
+        }
+        if (!bp->obj.shortScope && type) {
+            /* Search base class chain */
+            for (nthBase = 1; type; type = type->baseType, nthBase++) {
+                if (type->block.obj.shortScope) {
+                    break;
+                }
+                if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
+                    lookup->nthBase = nthBase;
+                    return slotNum;
                 }
             }
         }
     }
-    //  MOB - fix return vs break
-    return slotNum;
+    return -1;
 }
 
 
@@ -97,10 +113,12 @@ int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
     //  MOB OPT - if called from scope, then zeroed multiple times
     memset(lookup, 0, sizeof(*lookup));
 
+    /* Lookup simple object */
     if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, name, lookup)) >= 0) {
         return slotNum;
     }
     type = obj->type;
+    /* Lookup prototype chain */
     for (nthBase = 1; type; type = type->baseType, nthBase++) {
         if ((prototype = type->prototype) == 0 || prototype->shortScope) {
             break;
@@ -110,7 +128,8 @@ int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
             return slotNum;
         }
     }
-    type = obj->type;
+    /* Lookup base-class chain */
+    type = ejsIsType(obj) ? ((EjsType*) obj)->baseType : obj->type;
     for (nthBase = 1; type; type = type->baseType, nthBase++) {
         if (type->block.obj.shortScope) {
             //  MOB -- continue or break?
@@ -213,8 +232,8 @@ EjsObj *ejsGetVarByName(Ejs *ejs, EjsObj *vp, EjsName *name, EjsLookup *lookup)
     mprAssert(name);
 
     //  OPT - really nice to remove this
-    if (vp && vp->type->helpers->getPropertyByName) {
-        result = (*vp->type->helpers->getPropertyByName)(ejs, vp, name);
+    if (vp && vp->type->helpers.getPropertyByName) {
+        result = (*vp->type->helpers.getPropertyByName)(ejs, vp, name);
         if (result) {
             return result;
         }

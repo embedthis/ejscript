@@ -10,7 +10,6 @@
 #define _h_EJS_h 1
 
 #include    "mpr.h"
-#include    "ejsVm.h"
 #include    "ejsCore.h"
 #include    "ejsModule.h"
 

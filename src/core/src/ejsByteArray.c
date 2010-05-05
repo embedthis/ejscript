@@ -1402,57 +1402,59 @@ EjsByteArray *ejsCreateByteArray(Ejs *ejs, int size)
 
 void ejsConfigureByteArrayType(Ejs *ejs)
 {
-    EjsType     *type;
+    EjsType         *type;
+    EjsTypeHelpers  *helpers;
+    EjsObj          *prototype;
 
     type = ejs->byteArrayType = ejsConfigureNativeType(ejs, "ejs", "ByteArray", sizeof(EjsByteArray));
+    prototype = type->prototype;
 
-    type->helpers->cast = (EjsCastHelper) castByteArrayVar;
-    type->helpers->clone = (EjsCloneHelper) cloneByteArrayVar;
-    type->helpers->getProperty = (EjsGetPropertyHelper) getByteArrayProperty;
-    type->helpers->getPropertyCount = (EjsGetPropertyCountHelper) getByteArrayPropertyCount;
-    type->helpers->deleteProperty = (EjsDeletePropertyHelper) deleteByteArrayProperty;
-    type->helpers->invokeOperator = (EjsInvokeOperatorHelper) invokeByteArrayOperator;
-    type->helpers->mark = (EjsMarkHelper) markByteArrayVar;
-    type->helpers->lookupProperty = (EjsLookupPropertyHelper) lookupByteArrayProperty;
-    type->helpers->setProperty = (EjsSetPropertyHelper) setByteArrayProperty;
+    helpers = &type->helpers;
+    helpers->cast = (EjsCastHelper) castByteArrayVar;
+    helpers->clone = (EjsCloneHelper) cloneByteArrayVar;
+    helpers->getProperty = (EjsGetPropertyHelper) getByteArrayProperty;
+    helpers->getPropertyCount = (EjsGetPropertyCountHelper) getByteArrayPropertyCount;
+    helpers->deleteProperty = (EjsDeletePropertyHelper) deleteByteArrayProperty;
+    helpers->invokeOperator = (EjsInvokeOperatorHelper) invokeByteArrayOperator;
+    helpers->mark = (EjsMarkHelper) markByteArrayVar;
+    helpers->lookupProperty = (EjsLookupPropertyHelper) lookupByteArrayProperty;
+    helpers->setProperty = (EjsSetPropertyHelper) setByteArrayProperty;
     
-    ejsBindMethod(ejs, type, ES_ByteArray_ByteArray, (EjsProc) ba_ByteArray);
-    ejsBindMethod(ejs, type, ES_ByteArray_addListener, (EjsProc) ba_addListener);
-    ejsBindMethod(ejs, type, ES_ByteArray_available, (EjsProc) ba_available);
-    ejsBindAccess(ejs, type, ES_ByteArray_async, (EjsProc) ba_async, (EjsProc) ba_setAsync);
-    ejsBindMethod(ejs, type, ES_ByteArray_close, (EjsProc) ba_close);
-    ejsBindMethod(ejs, type, ES_ByteArray_compact, (EjsProc) ba_compact);
-    ejsBindMethod(ejs, type, ES_ByteArray_copyIn, (EjsProc) ba_copyIn);
-    ejsBindMethod(ejs, type, ES_ByteArray_copyOut, (EjsProc) ba_copyOut);
-    ejsBindMethod(ejs, type, ES_ByteArray_flush, (EjsProc) ba_flush);
-#if ES_ByteArray_growable
-    ejsBindMethod(ejs, type, ES_ByteArray_growable, (EjsProc) ba_growable);
-#endif
-    ejsBindMethod(ejs, type, ES_ByteArray_length, (EjsProc) ba_getLength);
-    ejsBindMethod(ejs, type, ES_Object_get, (EjsProc) ba_get);
-    ejsBindMethod(ejs, type, ES_Object_getValues, (EjsProc) ba_getValues);
-    ejsBindAccess(ejs, type, ES_ByteArray_endian, (EjsProc) endian, (EjsProc) setEndian);
-    ejsBindMethod(ejs, type, ES_ByteArray_read, (EjsProc) ba_read);
-    ejsBindMethod(ejs, type, ES_ByteArray_readBoolean, (EjsProc) ba_readBoolean);
-    ejsBindMethod(ejs, type, ES_ByteArray_readByte, (EjsProc) ba_readByte);
-    ejsBindMethod(ejs, type, ES_ByteArray_readDate, (EjsProc) ba_readDate);
-    ejsBindMethod(ejs, type, ES_ByteArray_readDouble, (EjsProc) ba_readDouble);
-    ejsBindMethod(ejs, type, ES_ByteArray_readInteger, (EjsProc) ba_readInteger);
-    ejsBindMethod(ejs, type, ES_ByteArray_readLong, (EjsProc) ba_readLong);
-    ejsBindAccess(ejs, type, ES_ByteArray_readPosition, (EjsProc) ba_readPosition,(EjsProc) ba_setReadPosition);
-    ejsBindMethod(ejs, type, ES_ByteArray_readShort, (EjsProc) ba_readShort);
-    ejsBindMethod(ejs, type, ES_ByteArray_readString, (EjsProc) ba_readString);
-    ejsBindMethod(ejs, type, ES_ByteArray_removeListener, (EjsProc) ba_removeListener);
-    ejsBindMethod(ejs, type, ES_ByteArray_reset, (EjsProc) ba_reset);
-    ejsBindMethod(ejs, type, ES_ByteArray_room, (EjsProc) ba_room);
-    ejsBindMethod(ejs, type, ES_Object_toString, (EjsProc) ba_toString);
-    ejsBindMethod(ejs, type, ES_ByteArray_write, (EjsProc) ejsWriteToByteArray);
-    ejsBindMethod(ejs, type, ES_ByteArray_writeByte, (EjsProc) ba_writeByte);
-    ejsBindMethod(ejs, type, ES_ByteArray_writeShort, (EjsProc) ba_writeShort);
-    ejsBindMethod(ejs, type, ES_ByteArray_writeInteger, (EjsProc) ba_writeInteger);
-    ejsBindMethod(ejs, type, ES_ByteArray_writeLong, (EjsProc) ba_writeLong);
-    ejsBindMethod(ejs, type, ES_ByteArray_writeDouble, (EjsProc) ba_writeDouble);
-    ejsBindAccess(ejs, type, ES_ByteArray_writePosition, (EjsProc) ba_writePosition, (EjsProc) ba_setWritePosition);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_ByteArray, (EjsProc) ba_ByteArray);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_addListener, (EjsProc) ba_addListener);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_available, (EjsProc) ba_available);
+    ejsBindAccess(ejs, prototype, ES_ByteArray_async, (EjsProc) ba_async, (EjsProc) ba_setAsync);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_close, (EjsProc) ba_close);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_compact, (EjsProc) ba_compact);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_copyIn, (EjsProc) ba_copyIn);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_copyOut, (EjsProc) ba_copyOut);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_flush, (EjsProc) ba_flush);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_growable, (EjsProc) ba_growable);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_length, (EjsProc) ba_getLength);
+    ejsBindMethod(ejs, prototype, ES_Object_get, (EjsProc) ba_get);
+    ejsBindMethod(ejs, prototype, ES_Object_getValues, (EjsProc) ba_getValues);
+    ejsBindAccess(ejs, prototype, ES_ByteArray_endian, (EjsProc) endian, (EjsProc) setEndian);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_read, (EjsProc) ba_read);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readBoolean, (EjsProc) ba_readBoolean);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readByte, (EjsProc) ba_readByte);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readDate, (EjsProc) ba_readDate);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readDouble, (EjsProc) ba_readDouble);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readInteger, (EjsProc) ba_readInteger);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readLong, (EjsProc) ba_readLong);
+    ejsBindAccess(ejs, prototype, ES_ByteArray_readPosition, (EjsProc) ba_readPosition,(EjsProc) ba_setReadPosition);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readShort, (EjsProc) ba_readShort);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readString, (EjsProc) ba_readString);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_removeListener, (EjsProc) ba_removeListener);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_reset, (EjsProc) ba_reset);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_room, (EjsProc) ba_room);
+    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) ba_toString);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_write, (EjsProc) ejsWriteToByteArray);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_writeByte, (EjsProc) ba_writeByte);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_writeShort, (EjsProc) ba_writeShort);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_writeInteger, (EjsProc) ba_writeInteger);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_writeLong, (EjsProc) ba_writeLong);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_writeDouble, (EjsProc) ba_writeDouble);
+    ejsBindAccess(ejs, prototype, ES_ByteArray_writePosition, (EjsProc) ba_writePosition, (EjsProc) ba_setWritePosition);
 }
 
 

@@ -27,7 +27,7 @@ static EjsVar *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
 
     master = ejs->master ? ejs->master : ejs;
     ejsLockVm(master);
-    vp = ejs->objectType->helpers->getProperty(ejs, (EjsVar*) sp, slotNum);
+    vp = ejs->objectType->helpers.getProperty(ejs, (EjsVar*) sp, slotNum);
     if (vp) {
         vp = ejsDeserialize(ejs, (EjsString*) vp);
     }
@@ -50,14 +50,14 @@ static EjsVar *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName *qname
     master = ejs->master ? ejs->master : ejs;
     ejsLockVm(master);
 
-    slotNum = ejs->objectType->helpers->lookupProperty(ejs, (EjsVar*) sp, qname);
+    slotNum = ejs->objectType->helpers.lookupProperty(ejs, (EjsVar*) sp, qname);
     if (slotNum < 0) {
         /*  
             Return empty string so that web pages can access session values without having to test for null/undefined
          */
         vp = (EjsVar*) ejs->emptyStringValue;
     } else {
-        vp = ejs->objectType->helpers->getProperty(ejs, (EjsVar*) sp, slotNum);
+        vp = ejs->objectType->helpers.getProperty(ejs, (EjsVar*) sp, slotNum);
         if (vp) {
             vp = ejsDeserialize(ejs, (EjsString*) vp);
         }
@@ -79,7 +79,7 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsVar *val
     ejsLockVm(master);
 
     value = (EjsVar*) ejsToJSON(master, value, NULL);
-    slotNum = master->objectType->helpers->setProperty(master, (EjsVar*) sp, slotNum, value);
+    slotNum = master->objectType->helpers.setProperty(master, (EjsVar*) sp, slotNum, value);
     noteSessionActivity(ejs, sp);
     ejsUnlockVm(master);
     return slotNum;
@@ -310,14 +310,14 @@ static EjsObj *sess_removeListener(Ejs *ejs, EjsSession *sp, int argc, EjsObj **
 
 void ejsConfigureSessionType(Ejs *ejs)
 {
-    EjsType     *type;
+    EjsType         *type;
+    EjsTypeHelpers  *helpers;
 
     type = ejs->sessionType = ejsConfigureNativeType(ejs, "ejs.web", "Session", sizeof(EjsSession));
-
-    type->helpers = ejsCloneObjectHelpers(ejs, "session-helpers");
-    type->helpers->getProperty = (EjsGetPropertyHelper) getSessionProperty;
-    type->helpers->getPropertyByName = (EjsGetPropertyByNameHelper) getSessionPropertyByName;
-    type->helpers->setProperty = (EjsSetPropertyHelper) setSessionProperty;
+    helpers = &type->helpers;
+    helpers->getProperty = (EjsGetPropertyHelper) getSessionProperty;
+    helpers->getPropertyByName = (EjsGetPropertyByNameHelper) getSessionPropertyByName;
+    helpers->setProperty = (EjsSetPropertyHelper) setSessionProperty;
 
     ejsBindMethod(ejs, type, ES_ejs_web_Session_addListener, (EjsFun) sess_addListener);
     ejsBindMethod(ejs, type, ES_ejs_web_Session_count, (EjsFun) sess_count);

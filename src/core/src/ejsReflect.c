@@ -167,16 +167,18 @@ static void markReflectVar(Ejs *ejs, EjsReflect *rp)
 void ejsConfigureReflectType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Reflect", sizeof(EjsReflect));
+    prototype = type->prototype;
 
-    type->helpers->mark = (EjsMarkHelper) markReflectVar;
+    type->helpers.mark = (EjsMarkHelper) markReflectVar;
 
-    ejsBindMethod(ejs, type, ES_Reflect_Reflect, (EjsProc) ref_Reflect);
-    ejsBindMethod(ejs, type, ES_Reflect_base, (EjsProc) ref_base);
-    ejsBindMethod(ejs, type, ES_Reflect_isType, (EjsProc) ref_isType);
-    ejsBindMethod(ejs, type, ES_Reflect_name, (EjsProc) ref_name);
-    ejsBindMethod(ejs, type, ES_Reflect_type, (EjsProc) ref_type);
+    ejsBindMethod(ejs, prototype, ES_Reflect_Reflect, (EjsProc) ref_Reflect);
+    ejsBindMethod(ejs, prototype, ES_Reflect_base, (EjsProc) ref_base);
+    ejsBindMethod(ejs, prototype, ES_Reflect_isType, (EjsProc) ref_isType);
+    ejsBindMethod(ejs, prototype, ES_Reflect_name, (EjsProc) ref_name);
+    ejsBindMethod(ejs, prototype, ES_Reflect_type, (EjsProc) ref_type);
     ejsBindFunction(ejs, ejs->globalBlock, ES_typeOf, (EjsProc) ref_typeOf);
 }
 

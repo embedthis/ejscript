@@ -393,8 +393,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     EjsType     *type;
 
     type = ejsConfigureNativeType(ejs, "ejs.web", "HttpServer", sizeof(EjsHttpServer));
-    type->helpers = ejsCloneObjectHelpers(ejs, "httpserver-helpers");
-    type->helpers->mark = (EjsMarkHelper) markHttpServer;
+    type->helpers.mark = (EjsMarkHelper) markHttpServer;
 
     ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_HttpServer, (EjsProc) hs_HttpServer);
     ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_addListener, (EjsProc) hs_addListener);

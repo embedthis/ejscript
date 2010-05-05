@@ -418,25 +418,25 @@ EjsSocket *ejsCreateSocket(Ejs *ejs)
 void ejsConfigureSocketType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Socket", sizeof(EjsSocket));
+    type->helpers.mark = (EjsMarkHelper) markSocket;
+    prototype = type->prototype;
 
-    type->helpers = ejsCloneObjectHelpers(ejs, "socket-helpers");
-    type->helpers->mark = (EjsMarkHelper) markSocket;
-
-    ejsBindMethod(ejs, type, ES_Socket_Socket, (EjsProc) sock_Socket);
-    ejsBindMethod(ejs, type, ES_Socket_accept, (EjsProc) sock_accept);
-    ejsBindMethod(ejs, type, ES_Socket_addListener, (EjsProc) sock_addListener);
-    ejsBindMethod(ejs, type, ES_Socket_address, (EjsProc) sock_address);
-    ejsBindAccess(ejs, type, ES_Socket_async, (EjsProc) sock_async, (EjsProc) sock_set_async);
-    ejsBindMethod(ejs, type, ES_Socket_close, (EjsProc) sock_close);
-    ejsBindMethod(ejs, type, ES_Socket_connect, (EjsProc) sock_connect);
-    ejsBindMethod(ejs, type, ES_Socket_listen, (EjsProc) sock_listen);
-    ejsBindMethod(ejs, type, ES_Socket_port, (EjsProc) sock_port);
-    ejsBindMethod(ejs, type, ES_Socket_read, (EjsProc) sock_read);
-    ejsBindMethod(ejs, type, ES_Socket_remoteAddress, (EjsProc) sock_remoteAddress);
-    ejsBindMethod(ejs, type, ES_Socket_removeListener, (EjsProc) sock_removeListener);
-    ejsBindMethod(ejs, type, ES_Socket_write, (EjsProc) sock_write);
+    ejsBindMethod(ejs, prototype, ES_Socket_Socket, (EjsProc) sock_Socket);
+    ejsBindMethod(ejs, prototype, ES_Socket_accept, (EjsProc) sock_accept);
+    ejsBindMethod(ejs, prototype, ES_Socket_addListener, (EjsProc) sock_addListener);
+    ejsBindMethod(ejs, prototype, ES_Socket_address, (EjsProc) sock_address);
+    ejsBindAccess(ejs, prototype, ES_Socket_async, (EjsProc) sock_async, (EjsProc) sock_set_async);
+    ejsBindMethod(ejs, prototype, ES_Socket_close, (EjsProc) sock_close);
+    ejsBindMethod(ejs, prototype, ES_Socket_connect, (EjsProc) sock_connect);
+    ejsBindMethod(ejs, prototype, ES_Socket_listen, (EjsProc) sock_listen);
+    ejsBindMethod(ejs, prototype, ES_Socket_port, (EjsProc) sock_port);
+    ejsBindMethod(ejs, prototype, ES_Socket_read, (EjsProc) sock_read);
+    ejsBindMethod(ejs, prototype, ES_Socket_remoteAddress, (EjsProc) sock_remoteAddress);
+    ejsBindMethod(ejs, prototype, ES_Socket_removeListener, (EjsProc) sock_removeListener);
+    ejsBindMethod(ejs, prototype, ES_Socket_write, (EjsProc) sock_write);
 }
 
 /*

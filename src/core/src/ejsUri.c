@@ -879,46 +879,48 @@ EjsUri *ejsCreateUriAndFree(Ejs *ejs, char *value)
 void ejsConfigureUriType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejs->uriType = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Uri", sizeof(EjsUri));
+    prototype = type->prototype;
 
-    type->helpers = ejsCloneObjectHelpers(ejs, "uri-helpers");
-    type->helpers->clone = (EjsCloneHelper) cloneUri;
-    type->helpers->invokeOperator = (EjsInvokeOperatorHelper) invokeUriOperator;
+    type->helpers.clone = (EjsCloneHelper) cloneUri;
+    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeUriOperator;
 
-    ejsBindMethod(ejs, type, ES_Uri_Uri, (EjsProc) uri_constructor);
-    ejsBindMethod(ejs, type, ES_Uri_basename, (EjsProc) uri_basename);
-    ejsBindMethod(ejs, type, ES_Uri_complete, (EjsProc) uri_complete);
-    ejsBindMethod(ejs, type, ES_Uri_components, (EjsProc) uri_components);
     ejsBindMethod(ejs, type, ES_Uri_decode, (EjsProc) uri_decode);
     ejsBindMethod(ejs, type, ES_Uri_decodeComponent, (EjsProc) uri_decodeComponent);
-    ejsBindMethod(ejs, type, ES_Uri_dirname, (EjsProc) uri_dirname);
     ejsBindMethod(ejs, type, ES_Uri_encode, (EjsProc) uri_encode);
     ejsBindMethod(ejs, type, ES_Uri_encodeComponent, (EjsProc) uri_encodeComponent);
-    ejsBindAccess(ejs, type, ES_Uri_extension, (EjsProc) uri_extension, (EjsProc) uri_set_extension);
-    ejsBindMethod(ejs, type, ES_Uri_hasExtension, (EjsProc) uri_hasExtension);
-    ejsBindMethod(ejs, type, ES_Uri_hasHost, (EjsProc) uri_hasHost);
-    ejsBindMethod(ejs, type, ES_Uri_hasPort, (EjsProc) uri_hasPort);
-    ejsBindMethod(ejs, type, ES_Uri_hasQuery, (EjsProc) uri_hasQuery);
-    ejsBindMethod(ejs, type, ES_Uri_hasReference, (EjsProc) uri_hasReference);
-    ejsBindMethod(ejs, type, ES_Uri_hasScheme, (EjsProc) uri_hasScheme);
-    ejsBindAccess(ejs, type, ES_Uri_host, (EjsProc) uri_host, (EjsProc) uri_set_host);
-    ejsBindMethod(ejs, type, ES_Uri_isAbsolute, (EjsProc) uri_isAbsolute);
-    ejsBindMethod(ejs, type, ES_Uri_isDir, (EjsProc) uri_isDir);
-    ejsBindMethod(ejs, type, ES_Uri_join, (EjsProc) uri_join);
-    ejsBindMethod(ejs, type, ES_Uri_joinExt, (EjsProc) uri_joinExt);
-    ejsBindMethod(ejs, type, ES_Uri_mimeType, (EjsProc) uri_mimeType);
-    ejsBindMethod(ejs, type, ES_Uri_normalize, (EjsProc) uri_normalize);
-    ejsBindAccess(ejs, type, ES_Uri_path, (EjsProc) uri_path, (EjsProc) uri_set_path);
-    ejsBindAccess(ejs, type, ES_Uri_port, (EjsProc) uri_port, (EjsProc) uri_set_port);
-    ejsBindAccess(ejs, type, ES_Uri_scheme, (EjsProc) uri_scheme, (EjsProc) uri_set_scheme);
-    ejsBindAccess(ejs, type, ES_Uri_query, (EjsProc) uri_query, (EjsProc) uri_set_query);
-    ejsBindAccess(ejs, type, ES_Uri_reference, (EjsProc) uri_reference, (EjsProc) uri_set_reference);
-    ejsBindMethod(ejs, type, ES_Uri_replaceExt, (EjsProc) uri_replaceExtension);
-    ejsBindMethod(ejs, type, ES_Uri_same, (EjsProc) uri_same);
-    ejsBindMethod(ejs, type, ES_Uri_trimExt, (EjsProc) uri_trimExt);
-    ejsBindAccess(ejs, type, ES_Uri_uri, (EjsProc) uri_toString, (EjsProc) uri_set_uri);
-    ejsBindMethod(ejs, type, ES_Object_toString, (EjsProc) uri_toString);
+
+    ejsBindMethod(ejs, prototype, ES_Uri_Uri, (EjsProc) uri_constructor);
+    ejsBindMethod(ejs, prototype, ES_Uri_basename, (EjsProc) uri_basename);
+    ejsBindMethod(ejs, prototype, ES_Uri_complete, (EjsProc) uri_complete);
+    ejsBindMethod(ejs, prototype, ES_Uri_components, (EjsProc) uri_components);
+    ejsBindMethod(ejs, prototype, ES_Uri_dirname, (EjsProc) uri_dirname);
+    ejsBindAccess(ejs, prototype, ES_Uri_extension, (EjsProc) uri_extension, (EjsProc) uri_set_extension);
+    ejsBindMethod(ejs, prototype, ES_Uri_hasExtension, (EjsProc) uri_hasExtension);
+    ejsBindMethod(ejs, prototype, ES_Uri_hasHost, (EjsProc) uri_hasHost);
+    ejsBindMethod(ejs, prototype, ES_Uri_hasPort, (EjsProc) uri_hasPort);
+    ejsBindMethod(ejs, prototype, ES_Uri_hasQuery, (EjsProc) uri_hasQuery);
+    ejsBindMethod(ejs, prototype, ES_Uri_hasReference, (EjsProc) uri_hasReference);
+    ejsBindMethod(ejs, prototype, ES_Uri_hasScheme, (EjsProc) uri_hasScheme);
+    ejsBindAccess(ejs, prototype, ES_Uri_host, (EjsProc) uri_host, (EjsProc) uri_set_host);
+    ejsBindMethod(ejs, prototype, ES_Uri_isAbsolute, (EjsProc) uri_isAbsolute);
+    ejsBindMethod(ejs, prototype, ES_Uri_isDir, (EjsProc) uri_isDir);
+    ejsBindMethod(ejs, prototype, ES_Uri_join, (EjsProc) uri_join);
+    ejsBindMethod(ejs, prototype, ES_Uri_joinExt, (EjsProc) uri_joinExt);
+    ejsBindMethod(ejs, prototype, ES_Uri_mimeType, (EjsProc) uri_mimeType);
+    ejsBindMethod(ejs, prototype, ES_Uri_normalize, (EjsProc) uri_normalize);
+    ejsBindAccess(ejs, prototype, ES_Uri_path, (EjsProc) uri_path, (EjsProc) uri_set_path);
+    ejsBindAccess(ejs, prototype, ES_Uri_port, (EjsProc) uri_port, (EjsProc) uri_set_port);
+    ejsBindAccess(ejs, prototype, ES_Uri_scheme, (EjsProc) uri_scheme, (EjsProc) uri_set_scheme);
+    ejsBindAccess(ejs, prototype, ES_Uri_query, (EjsProc) uri_query, (EjsProc) uri_set_query);
+    ejsBindAccess(ejs, prototype, ES_Uri_reference, (EjsProc) uri_reference, (EjsProc) uri_set_reference);
+    ejsBindMethod(ejs, prototype, ES_Uri_replaceExt, (EjsProc) uri_replaceExtension);
+    ejsBindMethod(ejs, prototype, ES_Uri_same, (EjsProc) uri_same);
+    ejsBindMethod(ejs, prototype, ES_Uri_trimExt, (EjsProc) uri_trimExt);
+    ejsBindAccess(ejs, prototype, ES_Uri_uri, (EjsProc) uri_toString, (EjsProc) uri_set_uri);
+    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) uri_toString);
 }
 
 /*

@@ -512,7 +512,6 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     
     qname.name = ejsModuleReadString(ejs, mp);
     qname.space = ejsModuleReadString(ejs, mp);
-    mprAssert(strcmp(qname.name, "String") != 0);
 
     ejsModuleReadNumber(ejs, mp, &attributes);
     ejsModuleReadNumber(ejs, mp, &slotNum);
@@ -586,7 +585,6 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
         }
 #endif
     }
-    mprAssert(type->helpers);
     
     /*
         Read implemented interfaces. Add to type->implements. Create fixup record if the interface type is not yet known.
@@ -736,10 +734,15 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     }
 
     /*
-        Create the function using the current scope chain. Non-methods revise this scope chain via 
-        the DefineFunction op code.
+        Create the function using the current scope chain
      */
-    scope = ejsIsType(mp->scope) ? mp->scope->scope : mp->scope;
+    if (!ejsIsType(mp->scope) || !(attributes & EJS_PROP_STATIC)) {
+        /* Instance method. Don't put type on the scope chain */
+        scope = mp->scope->scope;
+    } else {
+        /* Type must be present on the scope chain */
+        scope = mp->scope;
+    }
     fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, attributes, 
         mp->constants, mp->scope, strict);
     if (fun == 0) {
@@ -752,7 +755,6 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (code) {
         mprStealBlock(fun, code);
     }
-
     if (numSlots > 0) {
         fun->activation = ejsCreateActivation(ejs, fun, numSlots);
     }
@@ -1062,6 +1064,7 @@ static EjsObj *getCurrentBlock(Ejs *ejs, EjsModule *mp)
     }
     return block;
 }
+
 
 static int fixupTypes(Ejs *ejs, MprList *list)
 {

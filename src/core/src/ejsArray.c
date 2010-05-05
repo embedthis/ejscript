@@ -139,7 +139,7 @@ static int deleteArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName *qname)
     if (isdigit((int) qname->name[0])) {
         return deleteArrayProperty(ejs, ap, atoi(qname->name));
     }
-    return (ejs->objectType->helpers->deletePropertyByName)(ejs, (EjsObj*) ap, qname);
+    return (ejs->objectType->helpers.deletePropertyByName)(ejs, (EjsObj*) ap, qname);
 }
 
 
@@ -180,11 +180,11 @@ static EjsObj *getArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName *qname)
     if (strcmp(qname->name, "length") == 0) {
         return 0;
     }
-    slotNum = (ejs->objectType->helpers->lookupProperty)(ejs, (EjsObj*) ap, qname);
+    slotNum = (ejs->objectType->helpers.lookupProperty)(ejs, (EjsObj*) ap, qname);
     if (slotNum < 0) {
         return 0;
     }
-    return (ejs->objectType->helpers->getProperty)(ejs, (EjsObj*) ap, slotNum);
+    return (ejs->objectType->helpers.getProperty)(ejs, (EjsObj*) ap, slotNum);
 }
 
 
@@ -378,19 +378,19 @@ static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName *qname, EjsObj
         if (strcmp(qname->name, "length") == 0) {
             return EJS_ERR;
         }
-        slotNum = (ejs->objectType->helpers->lookupProperty)(ejs, (EjsObj*) ap, qname);
+        slotNum = (ejs->objectType->helpers.lookupProperty)(ejs, (EjsObj*) ap, qname);
         if (slotNum < 0) {
-            slotNum = (ejs->objectType->helpers->setProperty)(ejs, (EjsObj*) ap, slotNum, value);
+            slotNum = (ejs->objectType->helpers.setProperty)(ejs, (EjsObj*) ap, slotNum, value);
             if (slotNum < 0) {
                 return EJS_ERR;
             }
-            if ((ejs->objectType->helpers->setPropertyName)(ejs, (EjsObj*) ap, slotNum, qname) < 0) {
+            if ((ejs->objectType->helpers.setPropertyName)(ejs, (EjsObj*) ap, slotNum, qname) < 0) {
                 return EJS_ERR;
             }
             return slotNum;
 
         } else {
-            return (ejs->objectType->helpers->setProperty)(ejs, (EjsObj*) ap, slotNum, value);
+            return (ejs->objectType->helpers.setProperty)(ejs, (EjsObj*) ap, slotNum, value);
         }
     }
 
@@ -1569,7 +1569,7 @@ void ejsCreateArrayType(Ejs *ejs)
     type = ejs->arrayType = ejsCreateNativeType(ejs, "ejs", "Array", ES_Array, sizeof(EjsArray));
     type->numericIndicies = 1;
 
-    helpers = type->helpers;
+    helpers = &type->helpers;
     helpers->cast = (EjsCastHelper) castArray;
     helpers->clone = (EjsCloneHelper) cloneArray;
     helpers->create = (EjsCreateHelper) createArray;
@@ -1590,52 +1590,51 @@ void ejsCreateArrayType(Ejs *ejs)
 void ejsConfigureArrayType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsGetTypeByName(ejs, "ejs", "Array");
+    prototype = type->prototype;
 
     /*
         We override some Object methods
      */
-    ejsBindMethod(ejs, type, ES_Object_get, getArrayIterator);
-    ejsBindMethod(ejs, type, ES_Object_getValues, getArrayValues);
-    ejsBindMethod(ejs, type, ES_Object_clone, (EjsProc) cloneArrayMethod);
-    ejsBindMethod(ejs, type, ES_Object_toString, (EjsProc) arrayToString);
+    ejsBindMethod(ejs, prototype, ES_Object_get, getArrayIterator);
+    ejsBindMethod(ejs, prototype, ES_Object_getValues, getArrayValues);
+    ejsBindMethod(ejs, prototype, ES_Object_clone, (EjsProc) cloneArrayMethod);
+    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) arrayToString);
 
-    /*
-        Methods and Operators, including constructor.
-     */
-    ejsBindMethod(ejs, type, ES_Array_Array, (EjsProc) arrayConstructor);
-    ejsBindMethod(ejs, type, ES_Array_append, (EjsProc) appendArray);
-    ejsBindMethod(ejs, type, ES_Array_clear, (EjsProc) clearArray);
-    ejsBindMethod(ejs, type, ES_Array_compact, (EjsProc) compactArray);
-    ejsBindMethod(ejs, type, ES_Array_concat, (EjsProc) concatArray);
+    ejsBindMethod(ejs, prototype, ES_Array_Array, (EjsProc) arrayConstructor);
+    ejsBindMethod(ejs, prototype, ES_Array_append, (EjsProc) appendArray);
+    ejsBindMethod(ejs, prototype, ES_Array_clear, (EjsProc) clearArray);
+    ejsBindMethod(ejs, prototype, ES_Array_compact, (EjsProc) compactArray);
+    ejsBindMethod(ejs, prototype, ES_Array_concat, (EjsProc) concatArray);
 
-    ejsBindMethod(ejs, type, ES_Array_indexOf, (EjsProc) indexOfArray);
-    ejsBindMethod(ejs, type, ES_Array_insert, (EjsProc) insertArray);
-    ejsBindMethod(ejs, type, ES_Array_join, (EjsProc) joinArray);
-    ejsBindMethod(ejs, type, ES_Array_lastIndexOf, (EjsProc) lastArrayIndexOf);
-    ejsBindAccess(ejs, type, ES_Array_length, (EjsProc) getArrayLength, (EjsProc) setArrayLength);
-    ejsBindMethod(ejs, type, ES_Array_pop, (EjsProc) popArray);
-    ejsBindMethod(ejs, type, ES_Array_push, (EjsProc) pushArray);
-    ejsBindMethod(ejs, type, ES_Array_reverse, (EjsProc) reverseArray);
-    ejsBindMethod(ejs, type, ES_Array_shift, (EjsProc) shiftArray);
-    ejsBindMethod(ejs, type, ES_Array_slice, (EjsProc) sliceArray);
-    ejsBindMethod(ejs, type, ES_Array_sort, (EjsProc) sortArray);
-    ejsBindMethod(ejs, type, ES_Array_splice, (EjsProc) spliceArray);
-    ejsBindMethod(ejs, type, ES_Array_unique, (EjsProc) uniqueArray);
+    ejsBindMethod(ejs, prototype, ES_Array_indexOf, (EjsProc) indexOfArray);
+    ejsBindMethod(ejs, prototype, ES_Array_insert, (EjsProc) insertArray);
+    ejsBindMethod(ejs, prototype, ES_Array_join, (EjsProc) joinArray);
+    ejsBindMethod(ejs, prototype, ES_Array_lastIndexOf, (EjsProc) lastArrayIndexOf);
+    ejsBindAccess(ejs, prototype, ES_Array_length, (EjsProc) getArrayLength, (EjsProc) setArrayLength);
+    ejsBindMethod(ejs, prototype, ES_Array_pop, (EjsProc) popArray);
+    ejsBindMethod(ejs, prototype, ES_Array_push, (EjsProc) pushArray);
+    ejsBindMethod(ejs, prototype, ES_Array_reverse, (EjsProc) reverseArray);
+    ejsBindMethod(ejs, prototype, ES_Array_shift, (EjsProc) shiftArray);
+    ejsBindMethod(ejs, prototype, ES_Array_slice, (EjsProc) sliceArray);
+    ejsBindMethod(ejs, prototype, ES_Array_sort, (EjsProc) sortArray);
+    ejsBindMethod(ejs, prototype, ES_Array_splice, (EjsProc) spliceArray);
+    ejsBindMethod(ejs, prototype, ES_Array_unique, (EjsProc) uniqueArray);
 
 #if FUTURE
-    ejsBindMethod(ejs, type, ES_Array_toLocaleString, toLocaleString);
-    ejsBindMethod(ejs, type, ES_Array_toJSONString, toJSONString);
-    ejsBindMethod(ejs, type, ES_Array_LBRACKET, operLBRACKET);
-    ejsBindMethod(ejs, type, ES_Array_AND, operAND);
-    ejsBindMethod(ejs, type, ES_Array_EQ, operEQ);
-    ejsBindMethod(ejs, type, ES_Array_GT, operGT);
-    ejsBindMethod(ejs, type, ES_Array_LT, operLT);
-    ejsBindMethod(ejs, type, ES_Array_LSH, operLSH);
-    ejsBindMethod(ejs, type, ES_Array_MINUS, operMINUS);
-    ejsBindMethod(ejs, type, ES_Array_OR, operOR);
-    ejsBindMethod(ejs, type, ES_Array_AND, operAND);
+    ejsBindMethod(ejs, prototype, ES_Array_toLocaleString, toLocaleString);
+    ejsBindMethod(ejs, prototype, ES_Array_toJSONString, toJSONString);
+    ejsBindMethod(ejs, prototype, ES_Array_LBRACKET, operLBRACKET);
+    ejsBindMethod(ejs, prototype, ES_Array_AND, operAND);
+    ejsBindMethod(ejs, prototype, ES_Array_EQ, operEQ);
+    ejsBindMethod(ejs, prototype, ES_Array_GT, operGT);
+    ejsBindMethod(ejs, prototype, ES_Array_LT, operLT);
+    ejsBindMethod(ejs, prototype, ES_Array_LSH, operLSH);
+    ejsBindMethod(ejs, prototype, ES_Array_MINUS, operMINUS);
+    ejsBindMethod(ejs, prototype, ES_Array_OR, operOR);
+    ejsBindMethod(ejs, prototype, ES_Array_AND, operAND);
 #endif
 }
 

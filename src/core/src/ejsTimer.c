@@ -162,16 +162,18 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
 void ejsConfigureTimerType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     ejs->timerEventType = ejsGetTypeByName(ejs, "ejs", "TimerEvent");
     type = ejsGetTypeByName(ejs, "ejs", "Timer");
     type->instanceSize = sizeof(EjsTimer);
+    prototype = type->prototype;
 
-    ejsBindMethod(ejs, type, ES_Timer_Timer, (EjsProc) constructor);
-    ejsBindMethod(ejs, type, ES_Timer_restart, (EjsProc) restart);
-    ejsBindMethod(ejs, type, ES_Timer_stop, (EjsProc) stop);
-    ejsBindAccess(ejs, type, ES_Timer_period, (EjsProc) getPeriod, (EjsProc) setPeriod);
-    ejsBindAccess(ejs, type, ES_Timer_drift, (EjsProc) getDrift, (EjsProc) setDrift);
+    ejsBindMethod(ejs, prototype, ES_Timer_Timer, (EjsProc) constructor);
+    ejsBindMethod(ejs, prototype, ES_Timer_restart, (EjsProc) restart);
+    ejsBindMethod(ejs, prototype, ES_Timer_stop, (EjsProc) stop);
+    ejsBindAccess(ejs, prototype, ES_Timer_period, (EjsProc) getPeriod, (EjsProc) setPeriod);
+    ejsBindAccess(ejs, prototype, ES_Timer_drift, (EjsProc) getDrift, (EjsProc) setDrift);
 }
 
 /*

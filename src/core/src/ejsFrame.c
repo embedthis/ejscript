@@ -48,9 +48,6 @@ static EjsFrame *allocFrame(Ejs *ejs, int numSlots)
 }
 
 
-/*
-    Create an activation frame
- */
 EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     EjsFrame    *frame;
@@ -77,6 +74,8 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     ejsZeroSlots(ejs, &obj->slots[numSlots], sizeSlots - numSlots);
     obj->dynamic = 1;
 
+    frame->function.name = fun->name;
+    frame->function.block.obj.isFrame = 1;
     frame->function.block.namespaces = fun->block.namespaces;
     frame->function.block.scope = fun->block.scope;
     frame->function.block.prev = fun->block.prev;
@@ -106,10 +105,6 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 #endif
     frame->function.thisObj = thisObj;
     frame->function.resultType = fun->resultType;
-#if UNUSED
-    frame->function.slotNum = fun->slotNum;
-    frame->function.owner = fun->owner;
-#endif
     frame->function.body = fun->body;
     frame->pc = fun->body.code.byteCode;
 
@@ -136,7 +131,7 @@ void ejsCreateFrameType(Ejs *ejs)
     type = ejs->frameType = ejsCreateNativeType(ejs, "ejs", "Frame", ES_Frame, sizeof(EjsFrame));
     type->block.obj.shortScope = 1;
 
-    helpers = type->helpers;
+    helpers = &type->helpers;
     helpers->destroy = (EjsDestroyHelper) destroyFrame;
     helpers->mark    = (EjsMarkHelper) markFrame;
 }

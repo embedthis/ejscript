@@ -1273,67 +1273,64 @@ EjsPath *ejsCreatePathAndFree(Ejs *ejs, char *value)
 void ejsConfigurePathType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejs->pathType = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Path", sizeof(EjsPath));
     ejs->pathType = type;
+    prototype = type->prototype;
 
-    type->helpers = ejsCloneObjectHelpers(ejs, "path-helpers");
-    type->helpers->clone = (EjsCloneHelper) clonePath;
-    type->helpers->invokeOperator = (EjsInvokeOperatorHelper) invokePathOperator;
-    type->helpers->destroy = (EjsDestroyHelper) destroyPath;
+    type->helpers.clone = (EjsCloneHelper) clonePath;
+    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokePathOperator;
+    type->helpers.destroy = (EjsDestroyHelper) destroyPath;
 
     //  TODO - rename all and use pa_ prefix
-    ejsBindMethod(ejs, type, ES_Path_Path, (EjsProc) pathConstructor);
-    ejsBindMethod(ejs, type, ES_Path_absolute, (EjsProc) absolutePath);
-    ejsBindMethod(ejs, type, ES_Path_accessed, (EjsProc) getAccessedDate);
-    ejsBindMethod(ejs, type, ES_Path_basename, (EjsProc) getPathBasename);
-    ejsBindMethod(ejs, type, ES_Path_components, (EjsProc) getPathComponents);
-    ejsBindMethod(ejs, type, ES_Path_copy, (EjsProc) copyPath);
-    ejsBindMethod(ejs, type, ES_Path_created, (EjsProc) getCreatedDate);
-    ejsBindMethod(ejs, type, ES_Path_dirname, (EjsProc) getPathDirname);
-    ejsBindMethod(ejs, type, ES_Path_exists, (EjsProc) getPathExists);
-    ejsBindMethod(ejs, type, ES_Path_extension, (EjsProc) getPathExtension);
-    ejsBindMethod(ejs, type, ES_Path_files, (EjsProc) getPathFiles);
-    ejsBindMethod(ejs, type, ES_Path_hasDrive, (EjsProc) pathHasDrive);
-    ejsBindMethod(ejs, type, ES_Path_isAbsolute, (EjsProc) isPathAbsolute);
-    ejsBindMethod(ejs, type, ES_Path_isDir, (EjsProc) isPathDir);
-    ejsBindMethod(ejs, type, ES_Path_isLink, (EjsProc) isPathLink);
-    ejsBindMethod(ejs, type, ES_Path_isRegular, (EjsProc) isPathRegular);
-    ejsBindMethod(ejs, type, ES_Path_isRelative, (EjsProc) isPathRelative);
-    ejsBindMethod(ejs, type, ES_Path_join, (EjsProc) joinPath);
-    ejsBindMethod(ejs, type, ES_Path_joinExt, (EjsProc) joinPathExt);
-    ejsBindMethod(ejs, type, ES_Path_length, (EjsProc) pathLength);
-    ejsBindMethod(ejs, type, ES_Path_linkTarget, (EjsProc) pathLinkTarget);
-    ejsBindMethod(ejs, type, ES_Path_makeDir, (EjsProc) makePathDir);
-    ejsBindMethod(ejs, type, ES_Path_makeLink, (EjsProc) makePathLink);
-    ejsBindMethod(ejs, type, ES_Path_makeTemp, (EjsProc) makePathTemp);
-#if ES_Path_map
-    ejsBindMethod(ejs, type, ES_Path_map, (EjsProc) pa_map);
-#endif
-    ejsBindMethod(ejs, type, ES_Path_mimeType, (EjsProc) getMimeType);
-    ejsBindMethod(ejs, type, ES_Path_modified, (EjsProc) getModifiedDate);
-#if ES_Path_name
-    ejsBindMethod(ejs, type, ES_Path_name, (EjsProc) pa_name);
-#endif
-    ejsBindMethod(ejs, type, ES_Path_natural, (EjsProc) getNaturalPath);
-    ejsBindMethod(ejs, type, ES_Path_normalize, (EjsProc) normalizePath);
-    ejsBindMethod(ejs, type, ES_Path_parent, (EjsProc) getPathParent);
-    ejsBindAccess(ejs, type, ES_Path_perms, (EjsProc) getPerms, (EjsProc) setPerms);
-    ejsBindMethod(ejs, type, ES_Path_portable, (EjsProc) getPortablePath);
-    ejsBindMethod(ejs, type, ES_Path_relative, (EjsProc) relativePath);
-    ejsBindMethod(ejs, type, ES_Path_remove, (EjsProc) removePath);
-    ejsBindMethod(ejs, type, ES_Path_rename, (EjsProc) renamePathFile);
-    ejsBindMethod(ejs, type, ES_Path_resolve, (EjsProc) resolvePath);
-    ejsBindMethod(ejs, type, ES_Path_same, (EjsProc) isPathSame);
-    ejsBindMethod(ejs, type, ES_Path_separator, (EjsProc) pathSeparator);
-    ejsBindMethod(ejs, type, ES_Path_size, (EjsProc) getPathFileSize);
-    ejsBindMethod(ejs, type, ES_Path_trimExt, (EjsProc) trimExt);
-    ejsBindMethod(ejs, type, ES_Path_truncate, (EjsProc) truncatePath);
+    ejsBindMethod(ejs, prototype, ES_Path_Path, (EjsProc) pathConstructor);
+    ejsBindMethod(ejs, prototype, ES_Path_absolute, (EjsProc) absolutePath);
+    ejsBindMethod(ejs, prototype, ES_Path_accessed, (EjsProc) getAccessedDate);
+    ejsBindMethod(ejs, prototype, ES_Path_basename, (EjsProc) getPathBasename);
+    ejsBindMethod(ejs, prototype, ES_Path_components, (EjsProc) getPathComponents);
+    ejsBindMethod(ejs, prototype, ES_Path_copy, (EjsProc) copyPath);
+    ejsBindMethod(ejs, prototype, ES_Path_created, (EjsProc) getCreatedDate);
+    ejsBindMethod(ejs, prototype, ES_Path_dirname, (EjsProc) getPathDirname);
+    ejsBindMethod(ejs, prototype, ES_Path_exists, (EjsProc) getPathExists);
+    ejsBindMethod(ejs, prototype, ES_Path_extension, (EjsProc) getPathExtension);
+    ejsBindMethod(ejs, prototype, ES_Path_files, (EjsProc) getPathFiles);
+    ejsBindMethod(ejs, prototype, ES_Path_hasDrive, (EjsProc) pathHasDrive);
+    ejsBindMethod(ejs, prototype, ES_Path_isAbsolute, (EjsProc) isPathAbsolute);
+    ejsBindMethod(ejs, prototype, ES_Path_isDir, (EjsProc) isPathDir);
+    ejsBindMethod(ejs, prototype, ES_Path_isLink, (EjsProc) isPathLink);
+    ejsBindMethod(ejs, prototype, ES_Path_isRegular, (EjsProc) isPathRegular);
+    ejsBindMethod(ejs, prototype, ES_Path_isRelative, (EjsProc) isPathRelative);
+    ejsBindMethod(ejs, prototype, ES_Path_join, (EjsProc) joinPath);
+    ejsBindMethod(ejs, prototype, ES_Path_joinExt, (EjsProc) joinPathExt);
+    ejsBindMethod(ejs, prototype, ES_Path_length, (EjsProc) pathLength);
+    ejsBindMethod(ejs, prototype, ES_Path_linkTarget, (EjsProc) pathLinkTarget);
+    ejsBindMethod(ejs, prototype, ES_Path_makeDir, (EjsProc) makePathDir);
+    ejsBindMethod(ejs, prototype, ES_Path_makeLink, (EjsProc) makePathLink);
+    ejsBindMethod(ejs, prototype, ES_Path_makeTemp, (EjsProc) makePathTemp);
+    ejsBindMethod(ejs, prototype, ES_Path_map, (EjsProc) pa_map);
+    ejsBindMethod(ejs, prototype, ES_Path_mimeType, (EjsProc) getMimeType);
+    ejsBindMethod(ejs, prototype, ES_Path_modified, (EjsProc) getModifiedDate);
+    ejsBindMethod(ejs, prototype, ES_Path_name, (EjsProc) pa_name);
+    ejsBindMethod(ejs, prototype, ES_Path_natural, (EjsProc) getNaturalPath);
+    ejsBindMethod(ejs, prototype, ES_Path_normalize, (EjsProc) normalizePath);
+    ejsBindMethod(ejs, prototype, ES_Path_parent, (EjsProc) getPathParent);
+    ejsBindAccess(ejs, prototype, ES_Path_perms, (EjsProc) getPerms, (EjsProc) setPerms);
+    ejsBindMethod(ejs, prototype, ES_Path_portable, (EjsProc) getPortablePath);
+    ejsBindMethod(ejs, prototype, ES_Path_relative, (EjsProc) relativePath);
+    ejsBindMethod(ejs, prototype, ES_Path_remove, (EjsProc) removePath);
+    ejsBindMethod(ejs, prototype, ES_Path_rename, (EjsProc) renamePathFile);
+    ejsBindMethod(ejs, prototype, ES_Path_resolve, (EjsProc) resolvePath);
+    ejsBindMethod(ejs, prototype, ES_Path_same, (EjsProc) isPathSame);
+    ejsBindMethod(ejs, prototype, ES_Path_separator, (EjsProc) pathSeparator);
+    ejsBindMethod(ejs, prototype, ES_Path_size, (EjsProc) getPathFileSize);
+    ejsBindMethod(ejs, prototype, ES_Path_trimExt, (EjsProc) trimExt);
+    ejsBindMethod(ejs, prototype, ES_Path_truncate, (EjsProc) truncatePath);
 
-    ejsBindMethod(ejs, type, ES_Object_get, (EjsProc) getPathIterator);
-    ejsBindMethod(ejs, type, ES_Object_getValues, (EjsProc) getPathValues);
-    ejsBindMethod(ejs, type, ES_Object_toJSON, (EjsProc) pathToJSON);
-    ejsBindMethod(ejs, type, ES_Object_toString, (EjsProc) pathToString);
+    ejsBindMethod(ejs, prototype, ES_Object_get, (EjsProc) getPathIterator);
+    ejsBindMethod(ejs, prototype, ES_Object_getValues, (EjsProc) getPathValues);
+    ejsBindMethod(ejs, prototype, ES_Object_toJSON, (EjsProc) pathToJSON);
+    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) pathToString);
 }
 
 

@@ -98,8 +98,8 @@ void ejsDestroyGCService(Ejs *ejs)
             /*
                 Only the types that MUST free resources will set needFinalize. All will have a destroy helper.
              */
-            if (vp->type->needFinalize && vp->type->helpers->destroy) {
-                (vp->type->helpers->destroy)(ejs, vp);
+            if (vp->type->needFinalize && vp->type->helpers.destroy) {
+                (vp->type->helpers.destroy)(ejs, vp);
             }
         }
     }
@@ -388,7 +388,7 @@ static void sweep(Ejs *ejs, int maxGeneration)
             vp = MPR_GET_PTR(bp);
             checkAddr(vp);
             if (!vp->marked && !vp->permanent) {
-                (vp->type->helpers->destroy)(ejs, vp);
+                (vp->type->helpers.destroy)(ejs, vp);
                 destroyed++;
             }
         }
@@ -485,7 +485,7 @@ void ejsMark(Ejs *ejs, EjsObj *vp)
     if (vp && !vp->marked) {
         checkAddr(vp);
         vp->marked = 1;
-        (vp->type->helpers->mark)(ejs, vp);
+        (vp->type->helpers.mark)(ejs, vp);
     }
 }
 

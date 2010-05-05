@@ -15,7 +15,7 @@
  */
 
 /*
- * Instance slots for "global" type 
+   Prototype (instance) slots for "global" type 
  */
 
 /*
@@ -27,8 +27,7 @@
 /*
     Class property slots for the "Loader" type 
  */
-#define ES_Loader__origin                                              0
-#define ES_Loader__initializer__Loader_initializer                     0
+#define ES_Loader__initializer__Loader                                 0
 #define ES_Loader_mainId                                               1
 #define ES_Loader_signatures                                           2
 #define ES_Loader_timestamps                                           3
@@ -45,9 +44,9 @@
 #define ES_Loader_NUM_CLASS_PROP                                       13
 
 /*
- * Instance slots for "Loader" type 
+   Prototype (instance) slots for "Loader" type 
  */
-#define ES_Loader_NUM_INSTANCE_PROP                                    24
+#define ES_Loader_NUM_INSTANCE_PROP                                    12
 
 /*
     Local slots for methods in type "Loader" 
@@ -63,6 +62,6 @@
 #define ES_Loader_locate_id                                            0
 #define ES_Loader_setConfig_newConfig                                  0
 
-#define _ES_CHECKSUM_ejs_cjs   26771
+#define _ES_CHECKSUM_ejs_cjs   25538
 
 #endif

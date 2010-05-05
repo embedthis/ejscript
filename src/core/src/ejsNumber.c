@@ -433,9 +433,9 @@ void ejsCreateNumberType(Ejs *ejs)
     type = ejs->numberType = ejsCreateNativeType(ejs, "ejs", "Number", ES_Number, sizeof(EjsNumber));
     type->immutable = 1;
 
-    type->helpers->cast = (EjsCastHelper) castNumber;
-    type->helpers->clone = (EjsCloneHelper) cloneNumber;
-    type->helpers->invokeOperator = (EjsInvokeOperatorHelper) invokeNumberOperator;
+    type->helpers.cast = (EjsCastHelper) castNumber;
+    type->helpers.clone = (EjsCloneHelper) cloneNumber;
+    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeNumberOperator;
 
     ejs->zeroValue = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
     ejs->zeroValue->value = 0;
@@ -471,24 +471,25 @@ void ejsCreateNumberType(Ejs *ejs)
 void ejsConfigureNumberType(Ejs *ejs)
 {
     EjsType         *type;
+    EjsObj      *prototype;
 
     type = ejsGetTypeByName(ejs, "ejs", "Number");
+    prototype = type->prototype;
 
-    ejsBindMethod(ejs, type, ES_Number_Number, (EjsProc) numberConstructor);
-    ejsBindMethod(ejs, type, ES_Number_integral, (EjsProc) integral);
-    ejsBindMethod(ejs, type, ES_Number_isFinite, (EjsProc) isFinite);
-    ejsBindMethod(ejs, type, ES_Number_isNaN, (EjsProc) isNaN);
-    ejsBindMethod(ejs, type, ES_Number_toExponential, (EjsProc) toExponential);
-    ejsBindMethod(ejs, type, ES_Number_toFixed, (EjsProc) toFixed);
-    ejsBindMethod(ejs, type, ES_Number_toPrecision, (EjsProc) toPrecision);
+    ejsBindMethod(ejs, prototype, ES_Number_Number, (EjsProc) numberConstructor);
+    ejsBindMethod(ejs, prototype, ES_Number_integral, (EjsProc) integral);
+    ejsBindMethod(ejs, prototype, ES_Number_isFinite, (EjsProc) isFinite);
+    ejsBindMethod(ejs, prototype, ES_Number_isNaN, (EjsProc) isNaN);
+    ejsBindMethod(ejs, prototype, ES_Number_toExponential, (EjsProc) toExponential);
+    ejsBindMethod(ejs, prototype, ES_Number_toFixed, (EjsProc) toFixed);
+    ejsBindMethod(ejs, prototype, ES_Number_toPrecision, (EjsProc) toPrecision);
 
-    ejsBindMethod(ejs, type, ES_Object_get, getNumberIterator);
-    ejsBindMethod(ejs, type, ES_Object_getValues, getNumberIterator);
-    ejsBindMethod(ejs, type, ES_Object_toString, numberToString);
+    ejsBindMethod(ejs, prototype, ES_Object_get, getNumberIterator);
+    ejsBindMethod(ejs, prototype, ES_Object_getValues, getNumberIterator);
+    ejsBindMethod(ejs, prototype, ES_Object_toString, numberToString);
 
     ejsSetProperty(ejs, (EjsObj*) type, ES_Number_MaxValue, (EjsObj*) ejs->maxValue);
     ejsSetProperty(ejs, (EjsObj*) type, ES_Number_MinValue, (EjsObj*) ejs->minValue);
-
     ejsSetProperty(ejs, (EjsObj*) type, ES_Number_NEGATIVE_INFINITY, (EjsObj*) ejs->negativeInfinityValue);
     ejsSetProperty(ejs, (EjsObj*) type, ES_Number_POSITIVE_INFINITY, (EjsObj*) ejs->infinityValue);
     ejsSetProperty(ejs, (EjsObj*) type, ES_Number_NaN, (EjsObj*) ejs->nanValue);

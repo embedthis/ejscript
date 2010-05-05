@@ -666,6 +666,13 @@
 			remoteGlobalIDString = C97627B50FD077E7009C78E1;
 			remoteInfo = libmprssl;
 		};
+		C9ED10D21190E3C6006328BF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9222E520FD5813F00AFA5A4;
+			remoteInfo = modules;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -1696,6 +1703,7 @@
 				C9EA94090FD4FB0C00870DB0 /* PBXTargetDependency */,
 				C9EA940B0FD4FB0C00870DB0 /* PBXTargetDependency */,
 				C9EA940D0FD4FB0C00870DB0 /* PBXTargetDependency */,
+				C9ED10D31190E3C6006328BF /* PBXTargetDependency */,
 			);
 			name = ejs;
 			productName = ejs;
@@ -2604,6 +2612,11 @@
 			isa = PBXTargetDependency;
 			target = C97627B50FD077E7009C78E1 /* libmprssl */;
 			targetProxy = C9EA94720FD4FCA700870DB0 /* PBXContainerItemProxy */;
+		};
+		C9ED10D31190E3C6006328BF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9222E520FD5813F00AFA5A4 /* modules */;
+			targetProxy = C9ED10D21190E3C6006328BF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 

@@ -127,27 +127,15 @@ static int destroyEjs(Ejs *ejs)
 }
 
 
-EjsTypeHelpers *ejsCloneObjectHelpers(Ejs *ejs, cchar *name)
+void ejsCloneObjectHelpers(Ejs *ejs, EjsType *type)
 {
-    EjsTypeHelpers  *helpers;
-
-    helpers = (EjsTypeHelpers*) mprMemdup(ejs, ejs->objectType->helpers, sizeof(EjsTypeHelpers));
-    if (helpers) {
-        helpers->name = name;
-    }
-    return helpers;
+    type->helpers = ejs->objectType->helpers;
 }
 
 
-EjsTypeHelpers *ejsCloneBlockHelpers(Ejs *ejs, cchar *name)
+void ejsCloneBlockHelpers(Ejs *ejs, EjsType *type)
 {
-    EjsTypeHelpers  *helpers;
-
-    helpers = (EjsTypeHelpers*) mprMemdup(ejs, ejs->blockType->helpers, sizeof(EjsTypeHelpers));
-    if (helpers) {
-        helpers->name = name;
-    }
-    return helpers;
+    type->helpers = ejs->blockType->helpers;
 }
 
 
@@ -880,7 +868,7 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
     buf = mprVasprintf(ejs, 0, fmt, arg);
     msg = ejsGetErrorMsg(ejs, 1);
     
-    mprError(ejs, "%s", (msg) ? msg: buf);
+    mprError(ejs, "%s", (msg && *msg) ? msg: buf);
     mprFree(buf);
     va_end(arg);
 }

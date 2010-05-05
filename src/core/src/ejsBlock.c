@@ -18,6 +18,7 @@ EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
     if (block == 0) {
         return 0;
     }
+    block->obj.shortScope = 1;
     ejsInitList(&block->namespaces);
     return block;
 }
@@ -166,8 +167,8 @@ void ejsCreateBlockType(Ejs *ejs)
     type = ejs->blockType = ejsCreateNativeType(ejs, "ejs", "Block", ES_Block, sizeof(EjsBlock));
 
     type->block.obj.shortScope = 1;
-    type->helpers->clone = (EjsCloneHelper) ejsCloneBlock;
-    type->helpers->mark = (EjsMarkHelper) ejsMarkBlock;
+    type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;
+    type->helpers.mark = (EjsMarkHelper) ejsMarkBlock;
 }
 
 

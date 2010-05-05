@@ -373,7 +373,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
         count = ejsGetPropertyCount(ejs, prototype);
         for (slotNum = 0; slotNum < count; slotNum++) {
             pname = ejsGetPropertyName(ejs, prototype, slotNum);
-            trait = ejsGetPropertyTrait(ejs, (EjsObj*) type, slotNum);
+            trait = ejsGetPropertyTrait(ejs, prototype, slotNum);
             if (slotNum < type->numPrototypeInherited) {
                 if (trait && !(trait->attributes & EJS_FUN_OVERRIDE)) {
                     continue;

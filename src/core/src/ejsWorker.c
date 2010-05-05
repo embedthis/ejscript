@@ -759,25 +759,27 @@ static void markWorker(Ejs *ejs, EjsWorker *worker)
 void ejsConfigureWorkerType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejs->workerType = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Worker", sizeof(EjsWorker));
     type->needFinalize = 1;
+    prototype = type->prototype;
 
-    type->helpers = ejsCloneObjectHelpers(ejs, "worker-helpers");
-    type->helpers->destroy = (EjsDestroyHelper) destroyWorker;
-    type->helpers->mark = (EjsMarkHelper) markWorker;
+    type->helpers.destroy = (EjsDestroyHelper) destroyWorker;
+    type->helpers.mark = (EjsMarkHelper) markWorker;
 
-    ejsBindMethod(ejs, type, ES_Worker_Worker, (EjsProc) workerConstructor);
-    ejsBindMethod(ejs, type, ES_Worker_eval, (EjsProc) workerEval);
     ejsBindMethod(ejs, type, ES_Worker_exit, (EjsProc) workerExit);
     ejsBindMethod(ejs, type, ES_Worker_join, (EjsProc) workerJoin);
-    ejsBindMethod(ejs, type, ES_Worker_load, (EjsProc) workerLoad);
     ejsBindMethod(ejs, type, ES_Worker_lookup, (EjsProc) workerLookup);
-    ejsBindMethod(ejs, type, ES_Worker_preload, (EjsProc) workerPreload);
-    ejsBindMethod(ejs, type, ES_Worker_preeval, (EjsProc) workerPreeval);
-    ejsBindMethod(ejs, type, ES_Worker_postMessage, (EjsProc) workerPostMessage);
-    ejsBindMethod(ejs, type, ES_Worker_terminate, (EjsProc) workerTerminate);
-    ejsBindMethod(ejs, type, ES_Worker_waitForMessage, (EjsProc) workerWaitForMessage);
+
+    ejsBindMethod(ejs, prototype, ES_Worker_Worker, (EjsProc) workerConstructor);
+    ejsBindMethod(ejs, prototype, ES_Worker_eval, (EjsProc) workerEval);
+    ejsBindMethod(ejs, prototype, ES_Worker_load, (EjsProc) workerLoad);
+    ejsBindMethod(ejs, prototype, ES_Worker_preload, (EjsProc) workerPreload);
+    ejsBindMethod(ejs, prototype, ES_Worker_preeval, (EjsProc) workerPreeval);
+    ejsBindMethod(ejs, prototype, ES_Worker_postMessage, (EjsProc) workerPostMessage);
+    ejsBindMethod(ejs, prototype, ES_Worker_terminate, (EjsProc) workerTerminate);
+    ejsBindMethod(ejs, prototype, ES_Worker_waitForMessage, (EjsProc) workerWaitForMessage);
 }
 
 /*

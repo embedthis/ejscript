@@ -52,7 +52,17 @@ static EjsObj *assertMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *breakpoint(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    mprBreakpoint();
+#if BLD_DEBUG && DEBUG_IDE
+#if BLD_HOST_CPU_ARCH == MPR_CPU_IX86 || BLD_HOST_CPU_ARCH == MPR_CPU_IX64
+#if WINCE
+    /* Do nothing */
+#elif BLD_WIN_LIKE
+    __asm { int 3 };
+#else
+    asm("int $03");
+#endif
+#endif
+#endif
     return 0;
 }
 #endif

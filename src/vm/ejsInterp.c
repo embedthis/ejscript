@@ -782,6 +782,48 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
 #endif
             BREAK;
 
+#if XXXX
+        CASE (EJS_OP_GET_POLY_SLOT):
+            vp = pop(ejs);
+            slotNum = GET_UINT32();
+            type = GET_PTR();
+            if (vp->type != type) {
+                GET_SLOT(thisObj, vp, slotNum);
+            } else {
+                v1 = ejsGetVarByName(ejs, vp, &qname, &lookup);
+                CHECK_VALUE(v1, vp, lookup.obj, lookup.slotNum);
+            }
+
+        /*
+            Load a property by property name
+                GetObjName          <qname>
+                Stack before (top)  [obj]
+                Stack after         [result]
+         */
+        CASE (EJS_OP_GET_OBJ_NAME):
+            mark = FRAME->pc - 1;
+            qname = GET_NAME();
+            vp = pop(ejs);
+            if (vp == ejs->nullValue || vp == ejs->undefinedValue) {
+                ejsThrowReferenceError(ejs, "Object reference is null");
+                BREAK;
+            }
+            v1 = ejsGetVarByName(ejs, vp, &qname, &lookup);
+            CHECK_VALUE(v1, vp, lookup.obj, lookup.slotNum);
+
+            if (v1 && lookup.obj == vp) {
+                *mark++ = EJS_OP_GET_POLY_SLOT;
+                *mark++ = lookup.slotNum;
+                uint *ui = (uint*) mark;
+                *ui++ = lookup.
+                uint *ui = (uint*) FRAME->pc;
+                *ui = ejsEncodeUint(mark, lookup.slotNum);
+            }
+
+            FILL(mark);
+            BREAK;
+#endif
+
         /*
             Load a property by property a qualified name expression
                 GetObjNameExpr
@@ -1107,7 +1149,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                     ejsThrowReferenceError(ejs, "Object reference is null or undefined");
                 }
             } else {
-                callProperty(ejs, (EjsObj*) vp->type, slotNum, vp, argc, 1);
+                //  MOB -- need a function to invoke 
+                callProperty(ejs, (EjsObj*) vp->type->prototype, slotNum, vp, argc, 1);
             }
             BREAK;
 
@@ -1120,7 +1163,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_THIS_SLOT):
             slotNum = GET_INT();
             argc = GET_INT();
-            obj = (EjsObj*) THIS->type;
+            obj = (EjsObj*) THIS->type->prototype;
             callProperty(ejs, obj, slotNum, NULL, argc, 0);
             BREAK;
 
@@ -1277,10 +1320,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             type = vp->type;
             mprAssert(type);
             if (type && type->hasConstructor) {
-                mprAssert(type->baseType);
-                //  Constructor is always at slot 0 (offset by base properties)
-                slotNum = type->numPrototypeInherited;
-                fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
+                mprAssert(type->prototype);
+                fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, type->numPrototypeInherited);
                 callFunction(ejs, fun, (EjsObj*) vp, argc, 0);
             }
             BREAK;
@@ -1292,16 +1333,12 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 Stack after         []
          */
         CASE (EJS_OP_CALL_NEXT_CONSTRUCTOR):
+            qname = GET_NAME();
             argc = GET_INT();
-#if OLD
-            type = (EjsType*) FRAME->function.owner;
-#else
-            type = THIS->type;
-#endif
-            mprAssert(type);
-            type = type->baseType;
-            mprAssert(type);
-            if (type) {
+            type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, &qname);
+            if (type == 0) {
+                ejsThrowReferenceError(ejs, "Can't find constructor %s", qname.name);
+            } else {
                 mprAssert(type->hasConstructor);
                 slotNum = type->numPrototypeInherited;
                 fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
@@ -1404,7 +1441,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (slotNum < 0 || !ejsIsFunction(f1)) {
                 ejsThrowReferenceError(ejs, "Reference is not a function");
             } else if (f1->fullScope) {
-                //  MOB OPT - don't need to clone global functions. or class static functions?
                 if (lookup.obj != ejs->global) {
                     f2 = ejsCloneFunction(ejs, f1, 0);
                 } else {
@@ -1412,10 +1448,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 }
                 f2->block.scope = state.bp;
                 f2->thisObj = FRAME->function.thisObj;
-                /*
-                   Must not run getter/setter
-                SET_SLOT(NULL, vp, slotNum, f2);
-                */
+                mprAssert(!lookup.obj->isPrototype);
                 ejsSetProperty(ejs, lookup.obj, lookup.slotNum, (EjsObj*) f2);
             }
             BREAK;
@@ -2347,6 +2380,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, int slot
 static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, EjsName *qname, EjsObj *value, bool dupName)
 {
     EjsLookup       lookup;
+    EjsTrait        *trait;
     int             slotNum;
 
     mprAssert(qname);
@@ -2354,26 +2388,39 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, EjsName *qname
     mprAssert(obj);
 
     //  MOB -- ONLY XML requires this.  NOTE: this bypasses ES5 traits
-    if (obj->type->helpers->setPropertyByName) {
-        slotNum = (*obj->type->helpers->setPropertyByName)(ejs, obj, qname, value);
+    if (obj->type->helpers.setPropertyByName) {
+        slotNum = (*obj->type->helpers.setPropertyByName)(ejs, obj, qname, value);
         if (slotNum >= 0) {
             return;
         }
     }
     //  MOB -- reconsider this 
-    if ((slotNum = ejsLookupVar(ejs, obj, qname, &lookup)) < 0) {
+    if ((slotNum = ejsLookupVar(ejs, obj, qname, &lookup)) >= 0) {
+        if (lookup.obj->isPrototype) {
+            /* obj = (EjsObj*) ejs->state->fp->function.thisObj; */
+            mprAssert(obj);
+#if NOT_PRESERVE_SLOT_NUMBER
+            slotNum = -1;
+#endif
+            slotNum = ejsGetSlot(ejs, obj, slotNum);
+            if ((trait = ejsGetTrait(lookup.obj, lookup.slotNum)) != 0) {
+                obj->slots[slotNum].trait = lookup.obj->slots[slotNum].trait;
+                obj->slots[slotNum].value = lookup.obj->slots[slotNum].value;
+                slotNum = ejsSetPropertyName(ejs, obj, slotNum, qname);
+            }
+        } else {
+            obj = lookup.obj;
+        }
+
+    } else {
         //  MOB -- who is using this
         if (dupName) {
             qname->name = mprStrdup(obj, qname->name);
             qname->space = mprStrdup(obj, qname->space);
         }
         slotNum = ejsSetPropertyName(ejs, obj, slotNum, qname);
-    } else {
-        obj = lookup.obj;
     }
-    if (slotNum >= 0) {
-        storePropertyToSlot(ejs, thisObj, obj, slotNum, value);
-    }
+    storePropertyToSlot(ejs, thisObj, obj, slotNum, value);
 }
 
 
@@ -2385,27 +2432,36 @@ static void storePropertyToScope(Ejs *ejs, EjsName *qname, EjsObj *value, bool d
     EjsFrame        *fp;
     EjsObj          *obj;
     EjsLookup       lookup;
+    EjsTrait        *trait;
     int             slotNum;
 
     mprAssert(qname);
 
     fp = ejs->state->fp;
-#if UNUSED
-    lookup.storing = 1;
+    if ((slotNum = ejsLookupScope(ejs, qname, &lookup)) >= 0) {
+        if (lookup.obj->isPrototype) {
+            mprAssert(lookup.obj == fp->function.thisObj->type->prototype);
+            obj = (EjsObj*) fp->function.thisObj;
+            mprAssert(obj);
+#if NOT_PRESERVE_SLOT_NUMBER
+            slotNum = -1;
 #endif
-    if ((slotNum = ejsLookupScope(ejs, qname, &lookup)) < 0) {
-        if (fp->caller) {
-            obj = (EjsObj*) fp;
+            slotNum = ejsGetSlot(ejs, obj, slotNum);
+            if ((trait = ejsGetTrait(lookup.obj, slotNum)) != 0) {
+                obj->slots[slotNum].trait = lookup.obj->slots[slotNum].trait;
+                slotNum = ejsSetPropertyName(ejs, obj, slotNum, qname);
+            }
         } else {
-            obj = ejs->global;
+            obj = lookup.obj;
         }
+
+    } else {
+        obj = fp->caller ? (EjsObj*) fp : ejs->global;
         if (dup) {
             qname->name = mprStrdup(obj, qname->name);
             qname->space = mprStrdup(obj, qname->space);
         }
         slotNum = ejsSetPropertyName(ejs, obj, slotNum, qname);
-    } else {
-        obj = lookup.obj;
     }
     storePropertyToSlot(ejs, obj, obj, slotNum, value);
 }
@@ -3303,6 +3359,8 @@ static void callProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *thisObj, in
     EjsTrait    *trait;
     EjsFunction *fun;
 
+    //  MOB -- rethink this.
+    fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
     trait = ejsGetTrait(obj, slotNum);
     if (trait && trait->attributes & EJS_TRAIT_GETTER) {
         fun = (EjsFunction*) ejsRunFunction(ejs, fun, thisObj, 0, NULL);

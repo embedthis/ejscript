@@ -15,13 +15,13 @@
  */
 
 /*
- * Instance slots for "global" type 
+   Prototype (instance) slots for "global" type 
  */
 
 #define ES_ejs_tar_Tar_NUM_CLASS_PROP                                  0
 
 /*
- * Instance slots for "Tar" type 
+   Prototype (instance) slots for "Tar" type 
  */
 #define ES_ejs_tar_Tar_Tar                                             12
 #define ES_ejs_tar_Tar_path                                            13
@@ -30,8 +30,8 @@
 #define ES_ejs_tar_Tar_xcreate                                         16
 #define ES_ejs_tar_Tar_extract                                         17
 #define ES_ejs_tar_Tar_cat                                             18
-#define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               31
+#define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               19
 
-#define _ES_CHECKSUM_ejs_tar   23809
+#define _ES_CHECKSUM_ejs_tar   8322
 
 #endif

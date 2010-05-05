@@ -110,7 +110,7 @@ void ejsCreateIteratorType(Ejs *ejs)
         ES_Iterator, sizeof(EjsIterator));
     ejs->iterator = (EjsIterator*) ejsCreate(ejs, type, 0);
 
-    type->helpers->mark  = (EjsMarkHelper) markIteratorVar;
+    type->helpers.mark  = (EjsMarkHelper) markIteratorVar;
 
     type = ejs->stopIterationType = ejsCreateNativeType(ejs, EJS_ITERATOR_NAMESPACE, "StopIteration", 
         ES_StopIteration, sizeof(EjsObj));
@@ -120,9 +120,12 @@ void ejsCreateIteratorType(Ejs *ejs)
 void ejsConfigureIteratorType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsGetTypeByName(ejs, EJS_ITERATOR_NAMESPACE, "Iterator");
-    ejsBindMethod(ejs, ejs->iteratorType, ES_Iterator_next, (EjsProc) nextIterator);
+    prototype = type->prototype;
+
+    ejsBindMethod(ejs, prototype, ES_Iterator_next, (EjsProc) nextIterator);
 }
 
 

@@ -1,4 +1,3 @@
-
 /*
  *	Empty for-in loop
  */
@@ -8,9 +7,8 @@ for (i in new Array) {
 assert(global.i == null)
 
 
-/*
- *	Simple iteration over ten elements. But this will actually iterate over none as all elements are null.
- */
+//	Simple iteration over ten elements. But this will actually iterate over none as all elements are null.
+
 count = 0
 for (i in new Array(10)) {
 	count++
@@ -18,18 +16,16 @@ for (i in new Array(10)) {
 assert(count == 0)
 
 
-/*
- *	Iterate over an object
- */
+//	Iterate over an object
+
 count = 0
 for (i in { "one": 1, "two": 2 })
 	count++
 assert(count == 2)
 
 
-/*
- *	For in with let
- */
+//	For in with let
+
 count = 0
 assert(global.lx == undefined)
 for (let lx in [1, 2, 3, 4, 5]) {
@@ -39,9 +35,8 @@ assert(count == 5)
 assert(global.lx == undefined)
 
 
-/*
- *	For/in with var
- */
+//  For/in with var
+
 count = 0
 assert(x == undefined)
 for (var vx in [1, 2, 3, 4, 5]) {
@@ -51,9 +46,8 @@ assert(count == 5)
 assert(vx == 4)
 
 
-/*
- *	For/in with unspecified var (defaults to let)
- */
+//	For/in with unspecified var (defaults to let)
+
 count = 0
 assert(global.ux == undefined)
 for (ux in [1, 2, 3, 4, 5]) {
@@ -63,9 +57,8 @@ assert(count == 5)
 assert(global.ux == undefined)
 
 
-/*
- *	Break
- */
+//	Break
+
 count = 0
 for (x in [1, 2, 3, 4, 5]) {
 	count = 11
@@ -75,9 +68,8 @@ for (x in [1, 2, 3, 4, 5]) {
 assert(count == 11)
 
 
-/*
- *	Continue
- */
+//	Continue
+
 evenCount = 0
 for (var x in [1, 2, 3, 4, 5]) {
 

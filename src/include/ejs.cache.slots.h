@@ -14,38 +14,28 @@
    Slots for the "ejs.cache" module 
  */
 
+/*
+   Prototype (instance) slots for "global" type 
+ */
+
 
 /*
     Class property slots for the "Cache" type 
  */
-#define ES_ejs_cache_Cache__origin                                     27
-#define ES_ejs_cache_Cache_Cache                                       27
-#define ES_ejs_cache_Cache__initializer__Cache_initializer             28
-#define ES_ejs_cache_Cache_cache                                       29
-#define ES_ejs_cache_Cache_read                                        30
-#define ES_ejs_cache_Cache_write                                       31
-#define ES_ejs_cache_Cache_remove                                      32
+#define ES_ejs_cache_Cache__initializer__Cache                         0
+#define ES_ejs_cache_Cache_cache                                       1
 
-#define ES_ejs_cache_Cache_NUM_CLASS_PROP                              33
+#define ES_ejs_cache_Cache_NUM_CLASS_PROP                              2
 
 /*
- * Instance slots for "Cache" type 
+   Prototype (instance) slots for "Cache" type 
  */
-#define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           0
+#define ES_ejs_cache_Cache_Cache                                       12
+#define ES_ejs_cache_Cache_read                                        13
+#define ES_ejs_cache_Cache_write                                       14
+#define ES_ejs_cache_Cache_remove                                      15
+#define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           16
 
-/*
-    Local slots for methods in type "Cache" 
- */
-#define ES_ejs_cache_Cache_Cache_options                               0
-#define ES_ejs_cache_Cache_read_domain                                 0
-#define ES_ejs_cache_Cache_read_key                                    1
-#define ES_ejs_cache_Cache_write_domain                                0
-#define ES_ejs_cache_Cache_write_key                                   1
-#define ES_ejs_cache_Cache_write_value                                 2
-#define ES_ejs_cache_Cache_write_options                               3
-#define ES_ejs_cache_Cache_remove_domain                               0
-#define ES_ejs_cache_Cache_remove_key                                  1
-
-#define _ES_CHECKSUM_ejs_cache   12727
+#define _ES_CHECKSUM_ejs_cache   11373
 
 #endif

@@ -165,7 +165,6 @@ void ejsConfigureMemoryType(Ejs *ejs)
         return;
     }
     ejsBindMethod(ejs, type, ES_Memory_allocated, (EjsProc) getAllocatedMemory);
-    ejsBindAccess(ejs, type, ES_Memory_callback, NULL, (EjsProc) setRedlineCallback);
     ejsBindAccess(ejs, type, ES_Memory_maximum, (EjsProc) getMaxMemory, (EjsProc) setMaxMemory);
     ejsBindMethod(ejs, type, ES_Memory_peak, (EjsProc) getPeakMemory);
     ejsBindAccess(ejs, type, ES_Memory_redline, (EjsProc) getRedline, (EjsProc) setRedline);
@@ -173,6 +172,10 @@ void ejsConfigureMemoryType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Memory_stack, (EjsProc) getStack);
     ejsBindMethod(ejs, type, ES_Memory_system, (EjsProc) getSystemRam);
     ejsBindMethod(ejs, type, ES_Memory_stats, (EjsProc) printStats);
+
+    EjsObj      *prototype;
+    prototype = type->prototype;
+    ejsBindAccess(ejs, type, ES_Memory_callback, NULL, (EjsProc) setRedlineCallback);
 }
 
 /*

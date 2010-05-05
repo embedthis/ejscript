@@ -1152,56 +1152,57 @@ static void destroyHttp(Ejs *ejs, EjsHttp *hp)
 void ejsConfigureHttpType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Http", sizeof(EjsHttp));
     type->needFinalize = 1;
+    prototype = type->prototype;
 
-    type->helpers = ejsCloneObjectHelpers(ejs, "http-helpers");
-    type->helpers->mark = (EjsMarkHelper) markHttp;
-    type->helpers->destroy = (EjsDestroyHelper) destroyHttp;
+    type->helpers.mark = (EjsMarkHelper) markHttp;
+    type->helpers.destroy = (EjsDestroyHelper) destroyHttp;
 
-    ejsBindMethod(ejs, type, ES_Http_Http, (EjsProc) httpConstructor);
-    ejsBindMethod(ejs, type, ES_Http_addListener, (EjsProc) http_addListener);
-    ejsBindAccess(ejs, type, ES_Http_async, (EjsProc) http_async, (EjsProc) http_set_async);
-    ejsBindMethod(ejs, type, ES_Http_available, (EjsProc) http_available);
-    ejsBindAccess(ejs, type, ES_Http_chunkSize, (EjsProc) http_chunkSize, (EjsProc) http_set_chunkSize);
-    ejsBindMethod(ejs, type, ES_Http_close, (EjsProc) http_close);
-    ejsBindMethod(ejs, type, ES_Http_connect, (EjsProc) http_connect);
-    ejsBindAccess(ejs, type, ES_Http_certificate, (EjsProc) http_certificate, (EjsProc) http_set_certificate);
-    ejsBindMethod(ejs, type, ES_Http_contentLength, (EjsProc) http_contentLength);
-    ejsBindMethod(ejs, type, ES_Http_contentType, (EjsProc) http_contentType);
-    ejsBindMethod(ejs, type, ES_Http_date, (EjsProc) http_date);
-    ejsBindMethod(ejs, type, ES_Http_del, (EjsProc) http_del);
-    ejsBindMethod(ejs, type, ES_Http_expires, (EjsProc) http_expires);
-    ejsBindMethod(ejs, type, ES_Http_finalize, (EjsProc) http_finalize);
-    ejsBindAccess(ejs, type, ES_Http_followRedirects, (EjsProc) http_followRedirects, 
+    ejsBindMethod(ejs, prototype, ES_Http_Http, (EjsProc) httpConstructor);
+    ejsBindMethod(ejs, prototype, ES_Http_addListener, (EjsProc) http_addListener);
+    ejsBindAccess(ejs, prototype, ES_Http_async, (EjsProc) http_async, (EjsProc) http_set_async);
+    ejsBindMethod(ejs, prototype, ES_Http_available, (EjsProc) http_available);
+    ejsBindAccess(ejs, prototype, ES_Http_chunkSize, (EjsProc) http_chunkSize, (EjsProc) http_set_chunkSize);
+    ejsBindMethod(ejs, prototype, ES_Http_close, (EjsProc) http_close);
+    ejsBindMethod(ejs, prototype, ES_Http_connect, (EjsProc) http_connect);
+    ejsBindAccess(ejs, prototype, ES_Http_certificate, (EjsProc) http_certificate, (EjsProc) http_set_certificate);
+    ejsBindMethod(ejs, prototype, ES_Http_contentLength, (EjsProc) http_contentLength);
+    ejsBindMethod(ejs, prototype, ES_Http_contentType, (EjsProc) http_contentType);
+    ejsBindMethod(ejs, prototype, ES_Http_date, (EjsProc) http_date);
+    ejsBindMethod(ejs, prototype, ES_Http_del, (EjsProc) http_del);
+    ejsBindMethod(ejs, prototype, ES_Http_expires, (EjsProc) http_expires);
+    ejsBindMethod(ejs, prototype, ES_Http_finalize, (EjsProc) http_finalize);
+    ejsBindAccess(ejs, prototype, ES_Http_followRedirects, (EjsProc) http_followRedirects, 
         (EjsProc) http_set_followRedirects);
-    ejsBindMethod(ejs, type, ES_Http_form, (EjsProc) http_form);
-    ejsBindMethod(ejs, type, ES_Http_get, (EjsProc) http_get);
-    ejsBindMethod(ejs, type, ES_Http_getRequestHeaders, (EjsProc) http_getRequestHeaders);
-    ejsBindMethod(ejs, type, ES_Http_head, (EjsProc) http_head);
-    ejsBindMethod(ejs, type, ES_Http_header, (EjsProc) http_header);
-    ejsBindMethod(ejs, type, ES_Http_headers, (EjsProc) http_headers);
-    ejsBindMethod(ejs, type, ES_Http_isSecure, (EjsProc) http_isSecure);
-    ejsBindAccess(ejs, type, ES_Http_key, (EjsProc) http_key, (EjsProc) http_set_key);
-    ejsBindMethod(ejs, type, ES_Http_lastModified, (EjsProc) http_lastModified);
-    ejsBindAccess(ejs, type, ES_Http_method, (EjsProc) http_method, (EjsProc) http_set_method);
-    ejsBindMethod(ejs, type, ES_Http_post, (EjsProc) http_post);
-    ejsBindMethod(ejs, type, ES_Http_put, (EjsProc) http_put);
-    ejsBindMethod(ejs, type, ES_Http_read, (EjsProc) http_read);
-    ejsBindMethod(ejs, type, ES_Http_readString, (EjsProc) http_readString);
-    ejsBindMethod(ejs, type, ES_Http_removeListener, (EjsProc) http_removeListener);
-    ejsBindMethod(ejs, type, ES_Http_response, (EjsProc) http_response);
-    ejsBindMethod(ejs, type, ES_Http_options, (EjsProc) http_options);
-    ejsBindMethod(ejs, type, ES_Http_setCredentials, (EjsProc) http_setCredentials);
-    ejsBindMethod(ejs, type, ES_Http_setHeader, (EjsProc) http_setHeader);
-    ejsBindMethod(ejs, type, ES_Http_status, (EjsProc) http_status);
-    ejsBindMethod(ejs, type, ES_Http_statusMessage, (EjsProc) http_statusMessage);
-    ejsBindAccess(ejs, type, ES_Http_timeout, (EjsProc) http_timeout, (EjsProc) http_set_timeout);
-    ejsBindMethod(ejs, type, ES_Http_trace, (EjsProc) http_trace);
-    ejsBindAccess(ejs, type, ES_Http_uri, (EjsProc) http_uri, (EjsProc) http_set_uri);
-    ejsBindMethod(ejs, type, ES_Http_write, (EjsProc) http_write);
-    ejsBindMethod(ejs, type, ES_Http_wait, (EjsProc) http_wait);
+    ejsBindMethod(ejs, prototype, ES_Http_form, (EjsProc) http_form);
+    ejsBindMethod(ejs, prototype, ES_Http_get, (EjsProc) http_get);
+    ejsBindMethod(ejs, prototype, ES_Http_getRequestHeaders, (EjsProc) http_getRequestHeaders);
+    ejsBindMethod(ejs, prototype, ES_Http_head, (EjsProc) http_head);
+    ejsBindMethod(ejs, prototype, ES_Http_header, (EjsProc) http_header);
+    ejsBindMethod(ejs, prototype, ES_Http_headers, (EjsProc) http_headers);
+    ejsBindMethod(ejs, prototype, ES_Http_isSecure, (EjsProc) http_isSecure);
+    ejsBindAccess(ejs, prototype, ES_Http_key, (EjsProc) http_key, (EjsProc) http_set_key);
+    ejsBindMethod(ejs, prototype, ES_Http_lastModified, (EjsProc) http_lastModified);
+    ejsBindAccess(ejs, prototype, ES_Http_method, (EjsProc) http_method, (EjsProc) http_set_method);
+    ejsBindMethod(ejs, prototype, ES_Http_post, (EjsProc) http_post);
+    ejsBindMethod(ejs, prototype, ES_Http_put, (EjsProc) http_put);
+    ejsBindMethod(ejs, prototype, ES_Http_read, (EjsProc) http_read);
+    ejsBindMethod(ejs, prototype, ES_Http_readString, (EjsProc) http_readString);
+    ejsBindMethod(ejs, prototype, ES_Http_removeListener, (EjsProc) http_removeListener);
+    ejsBindMethod(ejs, prototype, ES_Http_response, (EjsProc) http_response);
+    ejsBindMethod(ejs, prototype, ES_Http_options, (EjsProc) http_options);
+    ejsBindMethod(ejs, prototype, ES_Http_setCredentials, (EjsProc) http_setCredentials);
+    ejsBindMethod(ejs, prototype, ES_Http_setHeader, (EjsProc) http_setHeader);
+    ejsBindMethod(ejs, prototype, ES_Http_status, (EjsProc) http_status);
+    ejsBindMethod(ejs, prototype, ES_Http_statusMessage, (EjsProc) http_statusMessage);
+    ejsBindAccess(ejs, prototype, ES_Http_timeout, (EjsProc) http_timeout, (EjsProc) http_set_timeout);
+    ejsBindMethod(ejs, prototype, ES_Http_trace, (EjsProc) http_trace);
+    ejsBindAccess(ejs, prototype, ES_Http_uri, (EjsProc) http_uri, (EjsProc) http_set_uri);
+    ejsBindMethod(ejs, prototype, ES_Http_write, (EjsProc) http_write);
+    ejsBindMethod(ejs, prototype, ES_Http_wait, (EjsProc) http_wait);
 }
 
 /*

@@ -15,7 +15,7 @@
  */
 
 /*
- * Instance slots for "global" type 
+   Prototype (instance) slots for "global" type 
  */
 
 /*
@@ -29,8 +29,7 @@
 /*
     Class property slots for the "Record" type 
  */
-#define ES_Record__origin                                              0
-#define ES_Record__initializer__Record_initializer                     0
+#define ES_Record__initializer__Record                                 0
 #define ES_Record__assocName                                           1
 #define ES_Record__belongsTo                                           2
 #define ES_Record__className                                           3
@@ -99,7 +98,7 @@
 #define ES_Record_NUM_CLASS_PROP                                       65
 
 /*
- * Instance slots for "Record" type 
+   Prototype (instance) slots for "Record" type 
  */
 #define ES_Record_Record                                               12
 #define ES_Record__keyValue                                            13
@@ -115,7 +114,7 @@
 #define ES_Record_saveUpdate                                           23
 #define ES_Record_validateRecord                                       24
 #define ES_Record_constructorOLD                                       25
-#define ES_Record_NUM_INSTANCE_PROP                                    38
+#define ES_Record_NUM_INSTANCE_PROP                                    26
 
 /*
     Local slots for methods in type "Record" 
@@ -200,13 +199,13 @@
 #define ES_ejs_db_mapper_Column_NUM_CLASS_PROP                         0
 
 /*
- * Instance slots for "Column" type 
+   Prototype (instance) slots for "Column" type 
  */
 #define ES_ejs_db_mapper_Column_Column                                 12
 #define ES_ejs_db_mapper_Column_ejsType                                13
 #define ES_ejs_db_mapper_Column_sqlType                                14
-#define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      27
+#define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      15
 
-#define _ES_CHECKSUM_ejs_db_mapper   203594
+#define _ES_CHECKSUM_ejs_db_mapper   186874
 
 #endif

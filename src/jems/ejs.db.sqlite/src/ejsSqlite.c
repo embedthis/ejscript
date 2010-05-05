@@ -462,8 +462,7 @@ static int configureSqliteTypes(Ejs *ejs)
     type = (EjsType*) ejsConfigureNativeType(ejs, "ejs.db", "Sqlite", sizeof(EjsSqlite));
     type->needFinalize = 1;
 
-    type->helpers = ejsCloneObjectHelpers(ejs, "sqlite-helpers");
-    type->helpers->destroy = (EjsDestroyHelper) destroySqliteDb;
+    type->helpers.destroy = (EjsDestroyHelper) destroySqliteDb;
 
     ejsBindMethod(ejs, type, ES_ejs_db_Sqlite_Sqlite, (EjsProc) sqliteConstructor);
     ejsBindMethod(ejs, type, ES_ejs_db_Sqlite_close, (EjsProc) sqliteClose);

@@ -1113,54 +1113,57 @@ EjsDate *ejsCreateDate(Ejs *ejs, MprTime value)
 void ejsConfigureDateType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejs->dateType = ejsConfigureNativeType(ejs, "ejs", "Date", sizeof(EjsDate));
+    prototype = type->prototype;
 
-    type->helpers->cast = (EjsCastHelper) castDate;
-    type->helpers->clone = (EjsCloneHelper) cloneDate;
-    type->helpers->invokeOperator = (EjsInvokeOperatorHelper) invokeDateOperator;
+    type->helpers.cast = (EjsCastHelper) castDate;
+    type->helpers.clone = (EjsCloneHelper) cloneDate;
+    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeDateOperator;
 
-    ejsBindMethod(ejs, type, ES_Date_Date, (EjsProc) date_Date);
-    ejsBindAccess(ejs, type, ES_Date_day, (EjsProc) date_day, (EjsProc) date_set_day);
-    ejsBindAccess(ejs, type, ES_Date_dayOfYear, (EjsProc) date_dayOfYear, (EjsProc) date_set_dayOfYear);
-    ejsBindAccess(ejs, type, ES_Date_date, (EjsProc) date_date, (EjsProc) date_set_date);
-    ejsBindMethod(ejs, type, ES_Date_elapsed, (EjsProc) date_elapsed);
-    ejsBindMethod(ejs, type, ES_Date_format, (EjsProc) date_format);
-    ejsBindMethod(ejs, type, ES_Date_formatUTC, (EjsProc) date_formatUTC);
-    ejsBindAccess(ejs, type, ES_Date_fullYear, (EjsProc) date_fullYear, (EjsProc) date_set_fullYear);
-    ejsBindMethod(ejs, type, ES_Date_getTimezoneOffset, (EjsProc) date_getTimezoneOffset); 
-    ejsBindMethod(ejs, type, ES_Date_getUTCDate, (EjsProc) date_getUTCDate);
-    ejsBindMethod(ejs, type, ES_Date_getUTCDay, (EjsProc) date_getUTCDay);
-    ejsBindMethod(ejs, type, ES_Date_getUTCFullYear, (EjsProc) date_getUTCFullYear);
-    ejsBindMethod(ejs, type, ES_Date_getUTCHours, (EjsProc) date_getUTCHours);
-    ejsBindMethod(ejs, type, ES_Date_getUTCMilliseconds, (EjsProc) date_getUTCMilliseconds);
-    ejsBindMethod(ejs, type, ES_Date_getUTCMinutes, (EjsProc) date_getUTCMinutes);
-    ejsBindMethod(ejs, type, ES_Date_getUTCMonth, (EjsProc) date_getUTCMonth);
-    ejsBindMethod(ejs, type, ES_Date_getUTCSeconds, (EjsProc) date_getUTCSeconds);
-    ejsBindAccess(ejs, type, ES_Date_hours, (EjsProc) date_hours, (EjsProc) date_set_hours);
-    ejsBindAccess(ejs, type, ES_Date_milliseconds, (EjsProc) date_milliseconds, (EjsProc) date_set_milliseconds);
-    ejsBindAccess(ejs, type, ES_Date_minutes, (EjsProc) date_minutes, (EjsProc) date_set_minutes);
-    ejsBindAccess(ejs, type, ES_Date_month, (EjsProc) date_month, (EjsProc) date_set_month);
-    ejsBindMethod(ejs, type, ES_Date_nextDay, (EjsProc) date_nextDay);
     ejsBindMethod(ejs, type, ES_Date_now, (EjsProc) date_now);
-    ejsBindMethod(ejs, type, ES_Date_parse, (EjsProc) date_parse);
     ejsBindMethod(ejs, type, ES_Date_parseDate, (EjsProc) date_parseDate);
     ejsBindMethod(ejs, type, ES_Date_parseUTCDate, (EjsProc) date_parseUTCDate);
-    ejsBindAccess(ejs, type, ES_Date_seconds, (EjsProc) date_seconds, (EjsProc) date_set_seconds);
-    ejsBindMethod(ejs, type, ES_Date_setUTCDate, (EjsProc) date_setUTCDate);
-    ejsBindMethod(ejs, type, ES_Date_setUTCFullYear, (EjsProc) date_setUTCFullYear);
-    ejsBindMethod(ejs, type, ES_Date_setUTCHours, (EjsProc) date_setUTCHours);
-    ejsBindMethod(ejs, type, ES_Date_setUTCMilliseconds, (EjsProc) date_setUTCMilliseconds);
-    ejsBindMethod(ejs, type, ES_Date_setUTCMinutes, (EjsProc) date_setUTCMinutes);
-    ejsBindMethod(ejs, type, ES_Date_setUTCMonth, (EjsProc) date_setUTCMonth);
-    ejsBindMethod(ejs, type, ES_Date_setUTCSeconds, (EjsProc) date_setUTCSeconds);
-    ejsBindAccess(ejs, type, ES_Date_time, (EjsProc) date_time, (EjsProc) date_set_time);
-    ejsBindMethod(ejs, type, ES_Date_toISOString, (EjsProc) date_toISOString);
     ejsBindMethod(ejs, type, ES_Date_UTC, (EjsProc) date_UTC);
-    ejsBindAccess(ejs, type, ES_Date_year, (EjsProc) date_year, (EjsProc) date_set_year);
 
-    ejsBindMethod(ejs, type, ES_Object_toString, (EjsProc) date_toString);
-    ejsBindMethod(ejs, type, ES_Object_toJSON, (EjsProc) date_toJSON);
+    ejsBindMethod(ejs, prototype, ES_Date_Date, (EjsProc) date_Date);
+    ejsBindAccess(ejs, prototype, ES_Date_day, (EjsProc) date_day, (EjsProc) date_set_day);
+    ejsBindAccess(ejs, prototype, ES_Date_dayOfYear, (EjsProc) date_dayOfYear, (EjsProc) date_set_dayOfYear);
+    ejsBindAccess(ejs, prototype, ES_Date_date, (EjsProc) date_date, (EjsProc) date_set_date);
+    ejsBindMethod(ejs, prototype, ES_Date_elapsed, (EjsProc) date_elapsed);
+    ejsBindMethod(ejs, prototype, ES_Date_format, (EjsProc) date_format);
+    ejsBindMethod(ejs, prototype, ES_Date_formatUTC, (EjsProc) date_formatUTC);
+    ejsBindAccess(ejs, prototype, ES_Date_fullYear, (EjsProc) date_fullYear, (EjsProc) date_set_fullYear);
+    ejsBindMethod(ejs, prototype, ES_Date_getTimezoneOffset, (EjsProc) date_getTimezoneOffset); 
+    ejsBindMethod(ejs, prototype, ES_Date_getUTCDate, (EjsProc) date_getUTCDate);
+    ejsBindMethod(ejs, prototype, ES_Date_getUTCDay, (EjsProc) date_getUTCDay);
+    ejsBindMethod(ejs, prototype, ES_Date_getUTCFullYear, (EjsProc) date_getUTCFullYear);
+    ejsBindMethod(ejs, prototype, ES_Date_getUTCHours, (EjsProc) date_getUTCHours);
+    ejsBindMethod(ejs, prototype, ES_Date_getUTCMilliseconds, (EjsProc) date_getUTCMilliseconds);
+    ejsBindMethod(ejs, prototype, ES_Date_getUTCMinutes, (EjsProc) date_getUTCMinutes);
+    ejsBindMethod(ejs, prototype, ES_Date_getUTCMonth, (EjsProc) date_getUTCMonth);
+    ejsBindMethod(ejs, prototype, ES_Date_getUTCSeconds, (EjsProc) date_getUTCSeconds);
+    ejsBindAccess(ejs, prototype, ES_Date_hours, (EjsProc) date_hours, (EjsProc) date_set_hours);
+    ejsBindAccess(ejs, prototype, ES_Date_milliseconds, (EjsProc) date_milliseconds, (EjsProc) date_set_milliseconds);
+    ejsBindAccess(ejs, prototype, ES_Date_minutes, (EjsProc) date_minutes, (EjsProc) date_set_minutes);
+    ejsBindAccess(ejs, prototype, ES_Date_month, (EjsProc) date_month, (EjsProc) date_set_month);
+    ejsBindMethod(ejs, prototype, ES_Date_nextDay, (EjsProc) date_nextDay);
+    ejsBindMethod(ejs, prototype, ES_Date_parse, (EjsProc) date_parse);
+    ejsBindAccess(ejs, prototype, ES_Date_seconds, (EjsProc) date_seconds, (EjsProc) date_set_seconds);
+    ejsBindMethod(ejs, prototype, ES_Date_setUTCDate, (EjsProc) date_setUTCDate);
+    ejsBindMethod(ejs, prototype, ES_Date_setUTCFullYear, (EjsProc) date_setUTCFullYear);
+    ejsBindMethod(ejs, prototype, ES_Date_setUTCHours, (EjsProc) date_setUTCHours);
+    ejsBindMethod(ejs, prototype, ES_Date_setUTCMilliseconds, (EjsProc) date_setUTCMilliseconds);
+    ejsBindMethod(ejs, prototype, ES_Date_setUTCMinutes, (EjsProc) date_setUTCMinutes);
+    ejsBindMethod(ejs, prototype, ES_Date_setUTCMonth, (EjsProc) date_setUTCMonth);
+    ejsBindMethod(ejs, prototype, ES_Date_setUTCSeconds, (EjsProc) date_setUTCSeconds);
+    ejsBindAccess(ejs, prototype, ES_Date_time, (EjsProc) date_time, (EjsProc) date_set_time);
+    ejsBindMethod(ejs, prototype, ES_Date_toISOString, (EjsProc) date_toISOString);
+    ejsBindAccess(ejs, prototype, ES_Date_year, (EjsProc) date_year, (EjsProc) date_set_year);
+
+    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) date_toString);
+    ejsBindMethod(ejs, prototype, ES_Object_toJSON, (EjsProc) date_toJSON);
 }
 
 /*

@@ -9,7 +9,7 @@ include 		.makedep
 COMPILE			=
 JDIR			= ../src/jems
 TARGETS			+= ejs.h ejs.slots.h ejsLib.c ejs.c ejsc.c ejsmod.c ejssql.c sqlite3.c sqlite3.h ejs.es
-EJS_HEADERS		+= $(patsubst %,../src/include/%.h, ejsTune ejsByteCode ejsByteCodeTable ejsVm ejsCore ejsModule ejs ejsWeb)
+EJS_HEADERS		+= $(patsubst %,../src/include/%.h, ejsTune ejsByteCode ejsByteCodeTable ejsCore ejsModule ejs ejsWeb)
 SLOT_HEADERS	+= $(shell find ../src/include -name 'ejs*slots.h')
 EC_HEADERS		+= $(patsubst %,../src/include/%.h, ecCompiler)
 EJS_SOURCES		+= $(shell find ../src/vm ../src/core -name '*.c') 

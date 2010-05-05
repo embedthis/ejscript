@@ -53,7 +53,7 @@ static EjsObj *getErrorProperty(Ejs *ejs, EjsError *error, int slotNum)
     case ES_Error_message:
         return (EjsObj*) ejsCreateString(ejs, error->message);
     }
-    return (ejs->objectType->helpers->getProperty)(ejs, (EjsObj*) error, slotNum);
+    return (ejs->objectType->helpers.getProperty)(ejs, (EjsObj*) error, slotNum);
 }
 
 
@@ -113,9 +113,9 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 
     type = ejsCreateNativeType(ejs, "ejs", name, id, sizeof(EjsError));
     type->block.nobind = 1;
-    type->helpers->cast = (EjsCastHelper) castError;
-    type->helpers->getProperty = (EjsGetPropertyHelper) getErrorProperty;
-    type->helpers->lookupProperty = (EjsLookupPropertyHelper) lookupErrorProperty;
+    type->helpers.cast = (EjsCastHelper) castError;
+    type->helpers.getProperty = (EjsGetPropertyHelper) getErrorProperty;
+    type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupErrorProperty;
     return type;
 }
 
@@ -147,7 +147,7 @@ static void configureType(Ejs *ejs, cchar *name)
     EjsType     *type;
 
     type = ejsGetTypeByName(ejs, "ejs", name);
-    ejsBindMethod(ejs, type, type->numPrototypeInherited, (EjsProc) errorConstructor);
+    ejsBindMethod(ejs, type->prototype, type->numPrototypeInherited, (EjsProc) errorConstructor);
 }
 
 
@@ -170,7 +170,7 @@ void ejsConfigureErrorType(Ejs *ejs)
     configureType(ejs, "TypeError");
     configureType(ejs, "URIError");
 
-    ejsBindAccess(ejs, ejs->errorType, ES_Error_code, (EjsProc) getCode, (EjsProc) setCode);
+    ejsBindAccess(ejs, ejs->errorType->prototype, ES_Error_code, (EjsProc) getCode, (EjsProc) setCode);
 }
 
 

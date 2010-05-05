@@ -623,8 +623,8 @@ module ejs {
             @param seconds Secods of minute
             @param milliseconds Milliseconds of second
          */
-        native static function UTC(year: Number, month: Number, day: Number, hours: Number = 0, 
-                minutes: Number = 0, seconds: Number = 0, milliseconds: Number = 0): Date
+        static native function UTC(year: Number, month: Number, day: Number, hours: Number = 0, 
+            minutes: Number = 0, seconds: Number = 0, milliseconds: Number = 0): Date
 
         /**
             Return the primitive value of the object

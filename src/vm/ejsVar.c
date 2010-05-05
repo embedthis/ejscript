@@ -84,8 +84,8 @@ EjsObj *ejsCast(Ejs *ejs, EjsObj *vp, EjsType *type)
             }
         }
     }
-    if (vp->type->helpers->cast) {
-        return (vp->type->helpers->cast)(ejs, vp, type);
+    if (vp->type->helpers.cast) {
+        return (vp->type->helpers.cast)(ejs, vp, type);
     }
     ejsThrowInternalError(ejs, "Cast helper not defined for type \"%s\"", vp->type->qname.name);
     return 0;
@@ -105,8 +105,8 @@ EjsObj *ejsCreate(Ejs *ejs, EjsType *type, int numSlots)
         return 0;
     }
 #endif
-    mprAssert(type->helpers->create);
-    return (type->helpers->create)(ejs, type, numSlots);
+    mprAssert(type->helpers.create);
+    return (type->helpers.create)(ejs, type, numSlots);
 }
 
 
@@ -122,10 +122,10 @@ EjsObj *ejsClone(Ejs *ejs, EjsObj *vp, bool deep)
     if (vp == 0) {
         return 0;
     }
-    mprAssert(vp->type->helpers->clone);
+    mprAssert(vp->type->helpers.clone);
     if (vp->visited == 0) {
         vp->visited = 1;
-        result = (vp->type->helpers->clone)(ejs, vp, deep);
+        result = (vp->type->helpers.clone)(ejs, vp, deep);
         vp->visited = 0;
     } else {
         result = vp;
@@ -144,8 +144,8 @@ int ejsDefineProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *name, EjsType 
     mprAssert(name->name);
     mprAssert(name->space);
     
-    mprAssert(vp->type->helpers->defineProperty);
-    return (vp->type->helpers->defineProperty)(ejs, vp, slotNum, name, propType, attributes, value);
+    mprAssert(vp->type->helpers.defineProperty);
+    return (vp->type->helpers.defineProperty)(ejs, vp, slotNum, name, propType, attributes, value);
 }
 
 
@@ -160,8 +160,8 @@ int ejsDeleteProperty(Ejs *ejs, EjsObj *vp, int slotNum)
     mprAssert(slotNum >= 0);
     
     type = getOwningType(vp, slotNum);
-    mprAssert(type->helpers->deleteProperty);
-    return (type->helpers->deleteProperty)(ejs, vp, slotNum);
+    mprAssert(type->helpers.deleteProperty);
+    return (type->helpers.deleteProperty)(ejs, vp, slotNum);
 }
 
 
@@ -178,8 +178,8 @@ int ejsDeletePropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname)
     mprAssert(qname->name);
     mprAssert(qname->space);
     
-    if (vp->type->helpers->deletePropertyByName) {
-        return (vp->type->helpers->deletePropertyByName)(ejs, vp, qname);
+    if (vp->type->helpers.deletePropertyByName) {
+        return (vp->type->helpers.deletePropertyByName)(ejs, vp, qname);
     } else {
         slotNum = ejsLookupVar(ejs, vp, qname, &lookup);
         if (slotNum < 0) {
@@ -198,8 +198,8 @@ void ejsDestroy(Ejs *ejs, EjsObj *vp)
     mprAssert(vp);
 
     type = vp->type;
-    mprAssert(type->helpers->destroy);
-    (type->helpers->destroy)(ejs, vp);
+    mprAssert(type->helpers.destroy);
+    (type->helpers.destroy)(ejs, vp);
 }
 
 
@@ -216,8 +216,8 @@ EjsObj *ejsGetProperty(Ejs *ejs, EjsObj *vp, int slotNum)
     mprAssert(slotNum >= 0);
 
     type = getOwningType(vp, slotNum);
-    mprAssert(type->helpers->getProperty);
-    return (type->helpers->getProperty)(ejs, vp, slotNum);
+    mprAssert(type->helpers.getProperty);
+    return (type->helpers.getProperty)(ejs, vp, slotNum);
 }
 
 
@@ -235,8 +235,8 @@ EjsObj *ejsGetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *name)
     /*
      *  WARNING: this is not implemented by most types
      */
-    if (vp->type->helpers->getPropertyByName) {
-        return (vp->type->helpers->getPropertyByName)(ejs, vp, name);
+    if (vp->type->helpers.getPropertyByName) {
+        return (vp->type->helpers.getPropertyByName)(ejs, vp, name);
     }
 
     /*
@@ -256,8 +256,8 @@ EjsObj *ejsGetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *name)
  */
 int ejsGetPropertyCount(Ejs *ejs, EjsObj *vp)
 {
-    mprAssert(vp->type->helpers->getPropertyCount);
-    return (vp->type->helpers->getPropertyCount)(ejs, vp);
+    mprAssert(vp->type->helpers.getPropertyCount);
+    return (vp->type->helpers.getPropertyCount)(ejs, vp);
 }
 
 
@@ -270,8 +270,8 @@ EjsName ejsGetPropertyName(Ejs *ejs, EjsObj *vp, int slotNum)
     EjsType     *type;
 
     type = getOwningType(vp, slotNum);
-    mprAssert(type->helpers->getPropertyName);
-    return (type->helpers->getPropertyName)(ejs, vp, slotNum);
+    mprAssert(type->helpers.getPropertyName);
+    return (type->helpers.getPropertyName)(ejs, vp, slotNum);
 }
 
 
@@ -284,8 +284,8 @@ EjsTrait *ejsGetPropertyTrait(Ejs *ejs, EjsObj *vp, int slotNum)
     EjsType     *type;
 
     type = getOwningType(vp, slotNum);
-    mprAssert(type->helpers->getPropertyTrait);
-    return (type->helpers->getPropertyTrait)(ejs, vp, slotNum);
+    mprAssert(type->helpers.getPropertyTrait);
+    return (type->helpers.getPropertyTrait)(ejs, vp, slotNum);
 }
 
 
@@ -301,8 +301,8 @@ int ejsLookupProperty(Ejs *ejs, EjsObj *vp, EjsName *name)
     mprAssert(name);
     mprAssert(name->name);
 
-    mprAssert(vp->type->helpers->lookupProperty);
-    return (vp->type->helpers->lookupProperty)(ejs, vp, name);
+    mprAssert(vp->type->helpers.lookupProperty);
+    return (vp->type->helpers.lookupProperty)(ejs, vp, name);
 }
 
 
@@ -315,8 +315,8 @@ EjsObj *ejsInvokeOperator(Ejs *ejs, EjsObj *vp, int opCode, EjsObj *rhs)
 {
     mprAssert(vp);
 
-    mprAssert(vp->type->helpers->invokeOperator);
-    return (vp->type->helpers->invokeOperator)(ejs, vp, opCode, rhs);
+    mprAssert(vp->type->helpers.invokeOperator);
+    return (vp->type->helpers.invokeOperator)(ejs, vp, opCode, rhs);
 }
 
 
@@ -335,8 +335,8 @@ int ejsSetProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsObj *value)
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
-    mprAssert(vp->type->helpers->setProperty);
-    return (vp->type->helpers->setProperty)(ejs, vp, slotNum, value);
+    mprAssert(vp->type->helpers.setProperty);
+    return (vp->type->helpers.setProperty)(ejs, vp, slotNum, value);
 }
 
 
@@ -354,8 +354,8 @@ int ejsSetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname, EjsObj *value)
     /*
      *  WARNING: Not all types implement this
      */
-    if (vp->type->helpers->setPropertyByName) {
-        return (vp->type->helpers->setPropertyByName)(ejs, vp, qname, value);
+    if (vp->type->helpers.setPropertyByName) {
+        return (vp->type->helpers.setPropertyByName)(ejs, vp, qname, value);
     }
 
     /*
@@ -381,15 +381,15 @@ int ejsSetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname, EjsObj *value)
  */
 int ejsSetPropertyName(Ejs *ejs, EjsObj *vp, int slot, EjsName *qname)
 {
-    mprAssert(vp->type->helpers->setPropertyName);
-    return (vp->type->helpers->setPropertyName)(ejs, vp, slot, qname);
+    mprAssert(vp->type->helpers.setPropertyName);
+    return (vp->type->helpers.setPropertyName)(ejs, vp, slot, qname);
 }
 
 
 int ejsSetPropertyTrait(Ejs *ejs, EjsObj *vp, int slot, EjsType *propType, int attributes)
 {
-    mprAssert(vp->type->helpers->setPropertyTrait);
-    return (vp->type->helpers->setPropertyTrait)(ejs, vp, slot, propType, attributes);
+    mprAssert(vp->type->helpers.setPropertyTrait);
+    return (vp->type->helpers.setPropertyTrait)(ejs, vp, slot, propType, attributes);
 }
 
 
@@ -414,8 +414,8 @@ EjsString *ejsToString(Ejs *ejs, EjsObj *vp)
             return (EjsString*) ejsRunFunction(ejs, fn, vp, 0, NULL);
         }
     }
-    if (vp->type->helpers->cast) {
-        return (EjsString*) (vp->type->helpers->cast)(ejs, vp, ejs->stringType);
+    if (vp->type->helpers.cast) {
+        return (EjsString*) (vp->type->helpers.cast)(ejs, vp, ejs->stringType);
     }
     ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%s\"", vp->type->qname.name);
     return 0;
@@ -432,8 +432,8 @@ EjsNumber *ejsToNumber(Ejs *ejs, EjsObj *vp)
     if (vp == 0 || ejsIsNumber(vp)) {
         return (EjsNumber*) vp;
     }
-    if (vp->type->helpers->cast) {
-        return (EjsNumber*) (vp->type->helpers->cast)(ejs, vp, ejs->numberType);
+    if (vp->type->helpers.cast) {
+        return (EjsNumber*) (vp->type->helpers.cast)(ejs, vp, ejs->numberType);
     }
     ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%s\"", vp->type->qname.name);
     return 0;
@@ -449,8 +449,8 @@ EjsBoolean *ejsToBoolean(Ejs *ejs, EjsObj *vp)
     if (vp == 0 || ejsIsBoolean(vp)) {
         return (EjsBoolean*) vp;
     }
-    if (vp->type->helpers->cast) {
-        return (EjsBoolean*) (vp->type->helpers->cast)(ejs, vp, ejs->booleanType);
+    if (vp->type->helpers.cast) {
+        return (EjsBoolean*) (vp->type->helpers.cast)(ejs, vp, ejs->booleanType);
     }
     ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%s\"", vp->type->qname.name);
     return 0;
@@ -510,7 +510,7 @@ EjsObj *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
         return 0;
     }
     if (type->hasConstructor) {
-        fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type->prototype, 0);
+        fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type->prototype, type->numPrototypeInherited);
         if (fun == 0 || !ejsIsFunction(fun)) {
             return 0;
         }

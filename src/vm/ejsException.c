@@ -71,7 +71,11 @@ static EjsObj *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
         return 0;
     }
     if (!ejs->initialized) {
-        mprLog(ejs, 5, "Exception: %s", msg);
+        if (ejs->empty) {
+            mprLog(ejs, 5, "Exception: %s", msg);
+        } else {
+            mprError(ejs, "Exception: %s", msg);
+        }
         error = ejsCreateObject(ejs, type, 0);
     } else {
         error = (EjsObj*) ejsCreateInstance(ejs, type, 1, argv);

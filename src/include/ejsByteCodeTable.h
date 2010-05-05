@@ -79,7 +79,7 @@ EjsOptable ejsOptable[] = {
     {   "CALL_OBJ_NAME",            -1,         { EBC_STRING, EBC_STRING, EBC_ARGC,       },},
     {   "CALL_SCOPED_NAME",          0,         { EBC_STRING, EBC_STRING, EBC_ARGC,       },},
     {   "CALL_CONSTRUCTOR",          0,         { EBC_ARGC,                               },},
-    {   "CALL_NEXT_CONSTRUCTOR",     0,         { EBC_ARGC,                               },},
+    {   "CALL_NEXT_CONSTRUCTOR",     0,         { EBC_STRING, EBC_STRING, EBC_ARGC,       },},
     {   "CAST",                     -1,         { EBC_NONE,                               },},
     {   "CAST_BOOLEAN",              0,         { EBC_NONE,                               },},
     {   "CLOSE_BLOCK",               0,         { EBC_NONE,                               },},

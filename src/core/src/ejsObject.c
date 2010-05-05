@@ -48,7 +48,11 @@ static EjsObj *castObject(Ejs *ejs, EjsObj *obj, EjsType *type)
         return ejsParse(ejs, ejsGetString(ejs, result), ES_Number);
 
     case ES_String:
-        return (EjsObj*) ejsCreateStringAndFree(ejs, mprStrcat(ejs, -1, "[object ", obj->type->qname.name, "]", NULL));
+        if (obj == ejs->global) {
+            return (EjsObj*) ejsCreateString(ejs, "[object global]");
+        } else {
+            return (EjsObj*) ejsCreateStringAndFree(ejs, mprStrcat(ejs, -1, "[object ", obj->type->qname.name, "]", NULL));
+        }
 
     default:
         if (ejsIsA(ejs, (EjsObj*) obj, type)) {
@@ -243,7 +247,7 @@ EjsObj *ejsCloneObject(Ejs *ejs, EjsObj *src, bool deep)
         return 0;
     }
     dest->numSlots = numSlots;
-    //  TODO - OPT make a flags word
+    //  MOB - OPT make a flags word
     dest->builtin = src->builtin;
     dest->dynamic = src->dynamic;
     dest->hidden = src->hidden;
@@ -286,9 +290,6 @@ static EjsObj *prepareAccessors(Ejs *ejs, EjsObj *obj, int slotNum, int *attribu
             fun = (EjsFunction*) ejsCloneFunction(ejs, ejs->nopFunction, 0);
             fun->setter = (EjsFunction*) value;
         }
-#if UNUSED
-        ejsSetFunctionLocation(fun->setter, obj, slotNum);
-#endif
         value = (EjsObj*) fun;
 
     } else if (*attributes & EJS_TRAIT_GETTER) {
@@ -299,9 +300,6 @@ static EjsObj *prepareAccessors(Ejs *ejs, EjsObj *obj, int slotNum, int *attribu
                 *attributes |= EJS_TRAIT_SETTER;
             }
         }
-    } else {
-        mprAssert(0);
-        return value;
     }
     return value;
 }
@@ -350,9 +348,6 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
         if (attributes & EJS_FUN_CONSTRUCTOR) {
             fun->constructor = 1;
         }
-#if UNUSED
-        ejsSetFunctionLocation(fun, obj, slotNum);
-#endif
         if (!ejsIsNativeFunction(fun)) {
             obj->hasScriptFunctions = 1;
         }
@@ -463,6 +458,9 @@ static EjsTrait *getObjectPropertyTrait(Ejs *ejs, EjsObj *obj, int slotNum)
 
 /*
     Lookup a property with a namespace qualifier in an object and return the slot if found. Return EJS_ERR if not found.
+    If qname.space is NULL, then only return a positive slot if there is only one property of the given name.
+    Only the name portion is hashed. The namespace is not included in the hash. This is used to do a one-step lookup 
+    for properties regardless of the namespace.
  */
 static int lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
 {
@@ -536,15 +534,13 @@ void ejsMarkObject(Ejs *ejs, EjsObj *obj)
     EjsSlot     *sp;
     int         i;
 
-    //  MOB -- probably not needed
     ejsMark(ejs, (EjsObj*) obj->type);
 
     sp = obj->slots;
     for (i = 0; i < obj->numSlots; i++, sp++) {
-        if (sp->value.ref == ejs->nullValue) {
-            continue;
+        if (sp->value.ref != ejs->nullValue) {
+            ejsMark(ejs, sp->value.ref);
         }
-        ejsMark(ejs, sp->value.ref);
     }
 }
 
@@ -568,15 +564,12 @@ int ejsGetSlot(Ejs *ejs, EjsObj *obj, int slotNum)
             }
             return EJS_ERR;
         }
-        slotNum = obj->numSlots;
-        if (obj->numSlots >= obj->sizeSlots) {
-            if (growSlots(ejs, obj, obj->numSlots + 1) < 0) {
+        slotNum = obj->numSlots++;
+        if (slotNum >= obj->sizeSlots) {
+            if (growSlots(ejs, obj, obj->numSlots) < 0) {
                 ejsThrowMemoryError(ejs);
                 return EJS_ERR;
             }
-            obj->numSlots++;
-        } else {
-            obj->numSlots++;
         }
     } else if (slotNum >= obj->numSlots) {
         if (slotNum >= obj->sizeSlots) {
@@ -608,12 +601,8 @@ static int setObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *value)
     mprAssert(slotNum < obj->numSlots);
     mprAssert(obj->numSlots <= obj->sizeSlots);
 
-    //  MOB -- remove this
-    if (obj->permanent && (EjsObj*) obj != ejs->global && !value->permanent) {
-        value->permanent = 1;
-    }
-
     mprAssert(value);
+    value->permanent |= obj->permanent;
     obj->slots[slotNum].value.ref = value;
     return slotNum;
 }
@@ -630,6 +619,8 @@ static int setObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qn
 {
     mprAssert(obj);
     mprAssert(qname);
+    mprAssert(qname->name);
+    mprAssert(qname->space);
 
     if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
@@ -649,7 +640,7 @@ static int setObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qn
     mprAssert(slotNum < obj->numSlots);
     mprAssert(obj->numSlots <= obj->sizeSlots);
     
-    if (obj->numSlots > EJS_HASH_MIN_PROP && qname->name) {
+    if (obj->hash || obj->numSlots > EJS_HASH_MIN_PROP) {
         if (hashProperty(obj, slotNum, qname) < 0) {
             ejsThrowMemoryError(ejs);
             return EJS_ERR;
@@ -730,14 +721,6 @@ int ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int incr, int offset)
     for (mark = offset + incr, i = obj->numSlots - 1; i >= mark; i--) {
         sp = &obj->slots[i - mark];
         obj->slots[i] = *sp;
-#if UNUSED
-        if (ejsIsFunction(sp->value.ref)) {
-            fun = (EjsFunction*) sp->value.ref;
-            if (fun->owner == obj) {
-                fun->slotNum = i;
-            }
-        }
-#endif
     }
     ejsZeroSlots(ejs, &obj->slots[offset], incr);
     if (ejsMakeObjHash(obj) < 0) {
@@ -759,9 +742,7 @@ static int growSlots(Ejs *ejs, EjsObj *obj, int sizeSlots)
     mprAssert(sizeSlots > 0);
     mprAssert(sizeSlots > obj->sizeSlots);
 
-    //  MOB -- should not round down here. Prevents exact sizing of instances from builtin types
     if (sizeSlots > obj->sizeSlots) {
-        //  MOB OPT - this could grow by more than just 16 each time for < 256
         if (obj->sizeSlots > EJS_LOTSA_PROP) {
             factor = max(obj->sizeSlots / 4, EJS_ROUND_PROP);
             sizeSlots = (sizeSlots + factor) / factor * factor;
@@ -833,6 +814,7 @@ void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
     mprAssert(count >= 0);
 
     if (slots) {
+        //  TODO OPT. If hashChans were biased by +1 and NULL was allowed for names, then a simple zero would suffice.
         for (sp = &slots[count - 1]; sp >= slots; sp--) {
             sp->value.ref = ejs->nullValue;
             sp->hashChain = -1;
@@ -857,6 +839,7 @@ void ejsCopySlots(Ejs *ejs, EjsObj *obj, EjsSlot *dest, EjsSlot *src, int count,
         dest->hashChain = -1;
         dest->hashChain = -1;
         if (dup) {
+            //  TOOD
             dest->qname.space = mprStrdup(obj, src->qname.space);
             dest->qname.name = mprStrdup(obj, src->qname.name);
         }
@@ -948,21 +931,6 @@ int ejsRemoveProperty(Ejs *ejs, EjsObj *obj, int slotNum)
         return EJS_ERR;
     }
     removeSlot(ejs, (EjsObj*) obj, slotNum, 1);
-
-#if UNUSED
-    //  MOB -- great to get rid of owner/slotNum
-
-    for (i = slotNum; i < obj->numSlots; i++) {
-        fun = (EjsFunction*) obj->slots[i].value.ref;
-        if (!ejsIsFunction(fun)) {
-            continue;
-        }
-        fun->slotNum--;
-        if (fun->setter) {
-            fun->setter->slotNum--;
-        }
-    }
-#endif
     return 0;
 }
 
@@ -1273,9 +1241,9 @@ static EjsObj *obj_prototype(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
 }
 
 
-//  MOB -- complete
 static EjsObj *obj_constructor(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
 {
+    //  MOB -- complete
     return (EjsObj*) 0;
 }
 
@@ -1649,6 +1617,7 @@ static EjsObj *obj_hasOwnProperty(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv
 }
 
 
+#if FUTURE
 //  MOB -- object should not have a length
 /*
     Get the length for the object.
@@ -1659,6 +1628,7 @@ static EjsObj *obj_length(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateNumber(ejs, ejsGetPropertyCount(ejs, vp));
 }
+#endif
 
 
 /*
@@ -2029,10 +1999,7 @@ void ejsCreateObjectHelpers(Ejs *ejs)
     EjsTypeHelpers  *helpers;
 
     type = ejs->objectType;
-
-    helpers = type->helpers = (EjsTypeHelpers*) mprAllocZeroed(ejs, sizeof(EjsTypeHelpers));
-
-    helpers->name                   = "object-helpers";
+    helpers = &type->helpers;
     helpers->cast                   = (EjsCastHelper) castObject;
     helpers->clone                  = (EjsCloneHelper) ejsCloneObject;
     helpers->create                 = (EjsCreateHelper) ejsCreateObject;
@@ -2055,40 +2022,42 @@ void ejsCreateObjectHelpers(Ejs *ejs)
 
 void ejsConfigureObjectType(Ejs *ejs)
 {
-    EjsType         *type;
+    EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsGetTypeByName(ejs, "ejs", "Object");
+    prototype = type->prototype;
 
-    ejsBindMethod(ejs, type, ES_Object_constructor, (EjsProc) obj_constructor);
-    ejsBindMethod(ejs, type, ES_Object_prototype, (EjsProc) obj_prototype);
-    ejsBindMethod(ejs, type, ES_Object_clone, obj_clone);
     ejsBindMethod(ejs, type, ES_Object_create, obj_create);
     ejsBindMethod(ejs, type, ES_Object_defineProperty, obj_defineProperty);
     ejsBindMethod(ejs, type, ES_Object_freeze, obj_freeze);
-    ejsBindMethod(ejs, type, ES_Object_get, obj_get);
-#if ES_Object_getOwnPropertyCount
     ejsBindMethod(ejs, type, ES_Object_getOwnPropertyCount, obj_getOwnPropertyCount);
-#endif
     ejsBindMethod(ejs, type, ES_Object_getOwnPropertyDescriptor, obj_getOwnPropertyDescriptor);
     ejsBindMethod(ejs, type, ES_Object_getOwnPropertyNames, obj_getOwnPropertyNames);
     ejsBindMethod(ejs, type, ES_Object_getOwnPrototypeOf, obj_getOwnPrototypeOf);
-    ejsBindMethod(ejs, type, ES_Object_getValues, obj_getValues);
-    ejsBindMethod(ejs, type, ES_Object_hasOwnProperty, obj_hasOwnProperty);
     ejsBindMethod(ejs, type, ES_Object_isExtensible, obj_isExtensible);
     ejsBindMethod(ejs, type, ES_Object_isFrozen, obj_isFrozen);
-    ejsBindMethod(ejs, type, ES_Object_isPrototypeOf, obj_isPrototypeOf);
     ejsBindMethod(ejs, type, ES_Object_isSealed, obj_isSealed);
+    ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
+    ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
 
     //  MOB -- change back to public
 #if ES_Object_length
     ejsBindMethod(ejs, type, ES_Object_length, obj_length);
 #endif
-    ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
-    ejsBindMethod(ejs, type, ES_Object_propertyIsEnumerable, obj_propertyIsEnumerable);
-    ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
-    ejsBindMethod(ejs, type, ES_Object_toLocaleString, toLocaleString);
-    ejsBindMethod(ejs, type, ES_Object_toString, obj_toString);
-    ejsBindMethod(ejs, type, ES_Object_toJSON, obj_toJSON);
+
+    ejsBindMethod(ejs, prototype, ES_Object_constructor, (EjsProc) obj_constructor);
+    ejsBindMethod(ejs, prototype, ES_Object_prototype, (EjsProc) obj_prototype);
+    ejsBindMethod(ejs, prototype, ES_Object_clone, obj_clone);
+    ejsBindMethod(ejs, prototype, ES_Object_get, obj_get);
+    ejsBindMethod(ejs, prototype, ES_Object_getValues, obj_getValues);
+    ejsBindMethod(ejs, prototype, ES_Object_hasOwnProperty, obj_hasOwnProperty);
+    ejsBindMethod(ejs, prototype, ES_Object_isPrototypeOf, obj_isPrototypeOf);
+    ejsBindMethod(ejs, prototype, ES_Object_propertyIsEnumerable, obj_propertyIsEnumerable);
+    ejsBindMethod(ejs, prototype, ES_Object_toLocaleString, toLocaleString);
+    ejsBindMethod(ejs, prototype, ES_Object_toString, obj_toString);
+    ejsBindMethod(ejs, prototype, ES_Object_toJSON, obj_toJSON);
+
 }
 
 /*

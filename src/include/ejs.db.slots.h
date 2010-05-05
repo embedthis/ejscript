@@ -15,14 +15,13 @@
  */
 
 /*
- * Instance slots for "global" type 
+   Prototype (instance) slots for "global" type 
  */
 
 
 /*
     Class property slots for the "Database" type 
  */
-#define ES_ejs_db_Database__origin                                     0
 #define ES_ejs_db_Database_defaultDb                                   0
 #define ES_ejs_db_Database_defaultDatabase                             1
 #define ES_ejs_db_Database_quote                                       2
@@ -30,7 +29,7 @@
 #define ES_ejs_db_Database_NUM_CLASS_PROP                              3
 
 /*
- * Instance slots for "Database" type 
+   Prototype (instance) slots for "Database" type 
  */
 #define ES_ejs_db_Database_Database                                    12
 #define ES_ejs_db_Database__adapter                                    13
@@ -66,7 +65,7 @@
 #define ES_ejs_db_Database_startTransaction                            43
 #define ES_ejs_db_Database_trace                                       44
 #define ES_ejs_db_Database_transaction                                 45
-#define ES_ejs_db_Database_NUM_INSTANCE_PROP                           58
+#define ES_ejs_db_Database_NUM_INSTANCE_PROP                           46
 
 /*
     Local slots for methods in type "Database" 
@@ -76,7 +75,7 @@
 #define ES_ejs_db_DatabaseConnector_NUM_CLASS_PROP                     0
 
 /*
- * Instance slots for "DatabaseConnector" type 
+   Prototype (instance) slots for "DatabaseConnector" type 
  */
 #define ES_ejs_db_DatabaseConnector_addColumn                          0
 #define ES_ejs_db_DatabaseConnector_addIndex                           1
@@ -102,6 +101,6 @@
 #define ES_ejs_db_DatabaseConnector_startTransaction                   21
 #define ES_ejs_db_DatabaseConnector_NUM_INSTANCE_PROP                  22
 
-#define _ES_CHECKSUM_ejs_db   134809
+#define _ES_CHECKSUM_ejs_db   122505
 
 #endif

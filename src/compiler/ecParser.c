@@ -568,6 +568,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv, int flags)
 
     /*
         Allocate the eval frame stack. This is used for property lookups. We have one dummy block at the top always.
+        MOB -- why ?
      */
     block = ejsCreateBlock(ejs, 0);
     ejsSetDebugName(block, "Compiler");

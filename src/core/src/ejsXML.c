@@ -889,7 +889,7 @@ static EjsObj *xmlToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *xmlToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    return (vp->type->helpers->cast)(ejs, vp, ejs->stringType);
+    return (vp->type->helpers.cast)(ejs, vp, ejs->stringType);
 }
 
 
@@ -1160,49 +1160,50 @@ void ejsCreateXMLType(Ejs *ejs)
      */
     type->block.nobind = 1;
 
-    type->helpers = ejsCloneObjectHelpers(ejs, "xml-helpers");
-    type->helpers->clone = (EjsCloneHelper) cloneXml;
-    type->helpers->cast = (EjsCastHelper) castXml;
-    type->helpers->create = (EjsCreateHelper) createXml;
-    type->helpers->destroy = (EjsDestroyHelper) destroyXml;
-    type->helpers->getPropertyByName = (EjsGetPropertyByNameHelper) getXmlPropertyByName;
-    type->helpers->getPropertyCount = (EjsGetPropertyCountHelper) getXmlPropertyCount;
-    type->helpers->deletePropertyByName = (EjsDeletePropertyByNameHelper) deleteXmlPropertyByName;
-    type->helpers->invokeOperator = (EjsInvokeOperatorHelper) invokeXmlOperator;
-    type->helpers->mark = (EjsMarkHelper) ejsMarkXML;
-    type->helpers->setPropertyByName = (EjsSetPropertyByNameHelper) setXmlPropertyByName;
+    type->helpers.clone = (EjsCloneHelper) cloneXml;
+    type->helpers.cast = (EjsCastHelper) castXml;
+    type->helpers.create = (EjsCreateHelper) createXml;
+    type->helpers.destroy = (EjsDestroyHelper) destroyXml;
+    type->helpers.getPropertyByName = (EjsGetPropertyByNameHelper) getXmlPropertyByName;
+    type->helpers.getPropertyCount = (EjsGetPropertyCountHelper) getXmlPropertyCount;
+    type->helpers.deletePropertyByName = (EjsDeletePropertyByNameHelper) deleteXmlPropertyByName;
+    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeXmlOperator;
+    type->helpers.mark = (EjsMarkHelper) ejsMarkXML;
+    type->helpers.setPropertyByName = (EjsSetPropertyByNameHelper) setXmlPropertyByName;
 }
 
 
 void ejsConfigureXMLType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "XML");
+    prototype = type->prototype;
 
     /*
         Define the XML class methods
      */
-    ejsBindMethod(ejs, type, ES_XML_XML, (EjsProc) xmlConstructor);
-    ejsBindMethod(ejs, type, ES_XML_length, (EjsProc) xmlLength);
-    ejsBindMethod(ejs, type, ES_XML_load, (EjsProc) loadXml);
-    ejsBindMethod(ejs, type, ES_XML_save, (EjsProc) saveXml);
-    ejsBindMethod(ejs, type, ES_XML_name, (EjsProc) getXmlNodeName);
+    ejsBindMethod(ejs, prototype, ES_XML_XML, (EjsProc) xmlConstructor);
+    ejsBindMethod(ejs, prototype, ES_XML_length, (EjsProc) xmlLength);
+    ejsBindMethod(ejs, prototype, ES_XML_load, (EjsProc) loadXml);
+    ejsBindMethod(ejs, prototype, ES_XML_save, (EjsProc) saveXml);
+    ejsBindMethod(ejs, prototype, ES_XML_name, (EjsProc) getXmlNodeName);
 
-    ejsBindMethod(ejs, type, ES_XML_parent, (EjsNativeFunction) xml_parent);
+    ejsBindMethod(ejs, prototype, ES_XML_parent, (EjsNativeFunction) xml_parent);
 
     /*
         Override these methods
      */
-    ejsBindMethod(ejs, type, ES_Object_toString, (EjsProc) xmlToString);
-    ejsBindMethod(ejs, type, ES_Object_toJSON, (EjsProc) xmlToJson);
+    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) xmlToString);
+    ejsBindMethod(ejs, prototype, ES_Object_toJSON, (EjsProc) xmlToJson);
 
-    ejsBindMethod(ejs, type, ES_Object_get, getXmlIterator);
-    ejsBindMethod(ejs, type, ES_Object_getValues, getXmlValues);
+    ejsBindMethod(ejs, prototype, ES_Object_get, getXmlIterator);
+    ejsBindMethod(ejs, prototype, ES_Object_getValues, getXmlValues);
 
 #if FUTURE
-    ejsBindMethod(ejs, type, ES_XML_parent, parent);
-    ejsBindMethod(ejs, type, "valueOf", valueOf, NULL);
+    ejsBindMethod(ejs, prototype, ES_XML_parent, parent);
+    ejsBindMethod(ejs, prototype, "valueOf", valueOf, NULL);
 #endif
 }
 

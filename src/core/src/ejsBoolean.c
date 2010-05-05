@@ -235,8 +235,8 @@ void ejsCreateBooleanType(Ejs *ejs)
     type = ejs->booleanType = ejsCreateNativeType(ejs, "ejs", "Boolean", ES_Boolean, sizeof(EjsBoolean));
     type->immutable = 1;
 
-    type->helpers->cast = (EjsCastHelper) castBooleanVar;
-    type->helpers->invokeOperator = (EjsInvokeOperatorHelper) invokeBooleanOperator;
+    type->helpers.cast = (EjsCastHelper) castBooleanVar;
+    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeBooleanOperator;
 
     /*
         Pre-create the only two valid instances for boolean
@@ -257,14 +257,16 @@ void ejsCreateBooleanType(Ejs *ejs)
 void ejsConfigureBooleanType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsGetTypeByName(ejs, "ejs", "Boolean");
+    prototype = type->prototype;
 
     ejsSetProperty(ejs, ejs->global, ES_boolean, (EjsObj*) type);
     ejsSetProperty(ejs, ejs->global, ES_true, (EjsObj*) ejs->trueValue);
     ejsSetProperty(ejs, ejs->global, ES_false, (EjsObj*) ejs->falseValue);
 
-    ejsBindMethod(ejs, type, ES_Boolean_Boolean, (EjsProc) booleanConstructor);
+    ejsBindMethod(ejs, prototype, ES_Boolean_Boolean, (EjsProc) booleanConstructor);
 }
 
 

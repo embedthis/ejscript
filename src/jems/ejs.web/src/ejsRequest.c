@@ -227,7 +227,7 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return (EjsObj*) ejsCreateBoolean(ejs, httpGetChunkSize(conn));
 
     case ES_ejs_web_Request_config:
-        value = ejs->objectType->helpers->getProperty(ejs, (EjsObj*) req, slotNum);
+        value = ejs->objectType->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
         if (value == (EjsObj*) ejs->nullValue) {
             /* Default to App.config */
             value = ejsGetProperty(ejs, (EjsObj*) ejs->appType, ES_App_config);
@@ -314,7 +314,7 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     default:
         if (slotNum < req->obj.numSlots) {
-            return ejs->objectType->helpers->getProperty(ejs, (EjsObj*) req, slotNum);
+            return ejs->objectType->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
         }
     }
     return 0;
@@ -431,7 +431,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 
     case ES_ejs_web_Request_config:
     default:
-        return ejs->objectType->helpers->setProperty(ejs, (EjsObj*) req, slotNum, value);
+        return ejs->objectType->helpers.setProperty(ejs, (EjsObj*) req, slotNum, value);
     }
     return 0;
 }
@@ -736,18 +736,19 @@ static void markRequest(Ejs *ejs, EjsRequest *req)
 
 void ejsConfigureRequestType(Ejs *ejs)
 {
-    EjsType     *type;
+    EjsType         *type;
+    EjsTypeHelpers  *helpers;
 
     type = ejs->requestType = ejsConfigureNativeType(ejs, "ejs.web", "Request", sizeof(EjsRequest));
 
-    type->helpers = ejsCloneObjectHelpers(ejs, "request-helpers");
-    type->helpers->mark = (EjsMarkHelper) markRequest;
-    type->helpers->clone = (EjsCloneHelper) ejsCloneRequest;
-    type->helpers->getProperty = (EjsGetPropertyHelper) getRequestProperty;
-    type->helpers->getPropertyCount = (EjsGetPropertyCountHelper) getRequestPropertyCount;
-    type->helpers->getPropertyName = (EjsGetPropertyNameHelper) getRequestPropertyName;
-    type->helpers->lookupProperty = (EjsLookupPropertyHelper) lookupRequestProperty;
-    type->helpers->setProperty = (EjsSetPropertyHelper) setRequestProperty;
+    helpers = &type->helpers;
+    helpers->mark = (EjsMarkHelper) markRequest;
+    helpers->clone = (EjsCloneHelper) ejsCloneRequest;
+    helpers->getProperty = (EjsGetPropertyHelper) getRequestProperty;
+    helpers->getPropertyCount = (EjsGetPropertyCountHelper) getRequestPropertyCount;
+    helpers->getPropertyName = (EjsGetPropertyNameHelper) getRequestPropertyName;
+    helpers->lookupProperty = (EjsLookupPropertyHelper) lookupRequestProperty;
+    helpers->setProperty = (EjsSetPropertyHelper) setRequestProperty;
 
     ejsBindMethod(ejs, type, ES_ejs_web_Request_addListener, (EjsProc) req_addListener);
     ejsBindAccess(ejs, type, ES_ejs_web_Request_async, (EjsProc) req_async, (EjsProc) req_set_async);

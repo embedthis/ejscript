@@ -14,90 +14,52 @@
    Slots for the "ejs.db.sqlite" module 
  */
 
+/*
+   Prototype (instance) slots for "global" type 
+ */
+
 
 /*
     Class property slots for the "Sqlite" type 
  */
-#define ES_ejs_db_Sqlite__origin                                       27
-#define ES_ejs_db_Sqlite_Sqlite                                        27
-#define ES_ejs_db_Sqlite__initializer__Sqlite_initializer              28
-#define ES_ejs_db_Sqlite_DataTypeToSqlType                             29
-#define ES_ejs_db_Sqlite_SqlTypeToDataType                             30
-#define ES_ejs_db_Sqlite_SqlTypeToEjsType                              31
-#define ES_ejs_db_Sqlite_addColumn                                     32
-#define ES_ejs_db_Sqlite_addIndex                                      33
-#define ES_ejs_db_Sqlite_changeColumn                                  34
-#define ES_ejs_db_Sqlite_close                                         35
-#define ES_ejs_db_Sqlite_commit                                        36
-#define ES_ejs_db_Sqlite_connect                                       37
-#define ES_ejs_db_Sqlite_createDatabase                                38
-#define ES_ejs_db_Sqlite_createTable                                   39
-#define ES_ejs_db_Sqlite_dataTypeToSqlType                             40
-#define ES_ejs_db_Sqlite_destroyDatabase                               41
-#define ES_ejs_db_Sqlite_destroyTable                                  42
-#define ES_ejs_db_Sqlite_endTransaction                                43
-#define ES_ejs_db_Sqlite_getColumns                                    44
-#define ES_ejs_db_Sqlite_getNumRows                                    45
-#define ES_ejs_db_Sqlite_getTables                                     46
-#define ES_ejs_db_Sqlite_removeColumns                                 47
-#define ES_ejs_db_Sqlite_removeIndex                                   48
-#define ES_ejs_db_Sqlite_renameColumn                                  49
-#define ES_ejs_db_Sqlite_renameTable                                   50
-#define ES_ejs_db_Sqlite_rollback                                      51
-#define ES_ejs_db_Sqlite_query                                         52
-#define ES_ejs_db_Sqlite_sql                                           53
-#define ES_ejs_db_Sqlite_sqlTypeToDataType                             54
-#define ES_ejs_db_Sqlite_sqlTypeToEjsType                              55
-#define ES_ejs_db_Sqlite_startTransaction                              56
+#define ES_ejs_db_Sqlite__initializer__Sqlite                          0
+#define ES_ejs_db_Sqlite_DataTypeToSqlType                             1
+#define ES_ejs_db_Sqlite_SqlTypeToDataType                             2
+#define ES_ejs_db_Sqlite_SqlTypeToEjsType                              3
 
-#define ES_ejs_db_Sqlite_NUM_CLASS_PROP                                57
+#define ES_ejs_db_Sqlite_NUM_CLASS_PROP                                4
 
 /*
- * Instance slots for "Sqlite" type 
+   Prototype (instance) slots for "Sqlite" type 
  */
-#define ES_ejs_db_Sqlite_NUM_INSTANCE_PROP                             0
+#define ES_ejs_db_Sqlite_Sqlite                                        12
+#define ES_ejs_db_Sqlite_addColumn                                     13
+#define ES_ejs_db_Sqlite_addIndex                                      14
+#define ES_ejs_db_Sqlite_changeColumn                                  15
+#define ES_ejs_db_Sqlite_close                                         16
+#define ES_ejs_db_Sqlite_commit                                        17
+#define ES_ejs_db_Sqlite_connect                                       18
+#define ES_ejs_db_Sqlite_createDatabase                                19
+#define ES_ejs_db_Sqlite_createTable                                   20
+#define ES_ejs_db_Sqlite_dataTypeToSqlType                             21
+#define ES_ejs_db_Sqlite_destroyDatabase                               22
+#define ES_ejs_db_Sqlite_destroyTable                                  23
+#define ES_ejs_db_Sqlite_endTransaction                                24
+#define ES_ejs_db_Sqlite_getColumns                                    25
+#define ES_ejs_db_Sqlite_getNumRows                                    26
+#define ES_ejs_db_Sqlite_getTables                                     27
+#define ES_ejs_db_Sqlite_removeColumns                                 28
+#define ES_ejs_db_Sqlite_removeIndex                                   29
+#define ES_ejs_db_Sqlite_renameColumn                                  30
+#define ES_ejs_db_Sqlite_renameTable                                   31
+#define ES_ejs_db_Sqlite_rollback                                      32
+#define ES_ejs_db_Sqlite_query                                         33
+#define ES_ejs_db_Sqlite_sql                                           34
+#define ES_ejs_db_Sqlite_sqlTypeToDataType                             35
+#define ES_ejs_db_Sqlite_sqlTypeToEjsType                              36
+#define ES_ejs_db_Sqlite_startTransaction                              37
+#define ES_ejs_db_Sqlite_NUM_INSTANCE_PROP                             38
 
-/*
-    Local slots for methods in type "Sqlite" 
- */
-#define ES_ejs_db_Sqlite_Sqlite_connectionString                       0
-#define ES_ejs_db_Sqlite_addColumn_table                               0
-#define ES_ejs_db_Sqlite_addColumn_column                              1
-#define ES_ejs_db_Sqlite_addColumn_datatype                            2
-#define ES_ejs_db_Sqlite_addColumn_options                             3
-#define ES_ejs_db_Sqlite_addIndex_table                                0
-#define ES_ejs_db_Sqlite_addIndex_column                               1
-#define ES_ejs_db_Sqlite_addIndex_index                                2
-#define ES_ejs_db_Sqlite_changeColumn_table                            0
-#define ES_ejs_db_Sqlite_changeColumn_column                           1
-#define ES_ejs_db_Sqlite_changeColumn_datatype                         2
-#define ES_ejs_db_Sqlite_changeColumn_options                          3
-#define ES_ejs_db_Sqlite_connect_connectionString                      0
-#define ES_ejs_db_Sqlite_createDatabase_name                           0
-#define ES_ejs_db_Sqlite_createDatabase_options                        1
-#define ES_ejs_db_Sqlite_createTable_table                             0
-#define ES_ejs_db_Sqlite_createTable_columns                           1
-#define ES_ejs_db_Sqlite_dataTypeToSqlType_dataType                    0
-#define ES_ejs_db_Sqlite_destroyDatabase_name                          0
-#define ES_ejs_db_Sqlite_destroyTable_table                            0
-#define ES_ejs_db_Sqlite_getColumns_table                              0
-#define ES_ejs_db_Sqlite_getNumRows_table                              0
-#define ES_ejs_db_Sqlite_removeColumns_table                           0
-#define ES_ejs_db_Sqlite_removeColumns_columns                         1
-#define ES_ejs_db_Sqlite_removeIndex_table                             0
-#define ES_ejs_db_Sqlite_removeIndex_index                             1
-#define ES_ejs_db_Sqlite_renameColumn_table                            0
-#define ES_ejs_db_Sqlite_renameColumn_oldColumn                        1
-#define ES_ejs_db_Sqlite_renameColumn_newColumn                        2
-#define ES_ejs_db_Sqlite_renameTable_oldTable                          0
-#define ES_ejs_db_Sqlite_renameTable_newTable                          1
-#define ES_ejs_db_Sqlite_query_cmd                                     0
-#define ES_ejs_db_Sqlite_query_tag                                     1
-#define ES_ejs_db_Sqlite_query_trace                                   2
-#define ES_ejs_db_Sqlite_sql_cmd                                       0
-#define ES_ejs_db_Sqlite_sqlTypeToDataType_sqlType                     0
-#define ES_ejs_db_Sqlite_sqlTypeToEjsType_sqlType                      0
-
-#define _ES_CHECKSUM_ejs_db_sqlite   75132
+#define _ES_CHECKSUM_ejs_db_sqlite   73279
 
 #endif

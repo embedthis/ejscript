@@ -182,9 +182,9 @@ void ejsCreateVoidType(Ejs *ejs)
 
     type = ejs->voidType = ejsCreateNativeType(ejs, "ejs", "Void", ES_Void, sizeof(EjsVoid));
 
-    type->helpers->cast             = (EjsCastHelper) castVoid;
-    type->helpers->invokeOperator   = (EjsInvokeOperatorHelper) invokeVoidOperator;
-    type->helpers->getProperty      = (EjsGetPropertyHelper) getVoidProperty;
+    type->helpers.cast             = (EjsCastHelper) castVoid;
+    type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeVoidOperator;
+    type->helpers.getProperty      = (EjsGetPropertyHelper) getVoidProperty;
 
     ejs->undefinedValue = ejsCreate(ejs, type, 0);
     ejsSetDebugName(ejs->undefinedValue, "undefined");
@@ -194,13 +194,15 @@ void ejsCreateVoidType(Ejs *ejs)
 void ejsConfigureVoidType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsGetTypeByName(ejs, "ejs", "Void");
+    prototype = type->prototype;
 
     ejsSetProperty(ejs, ejs->global, ES_void, (EjsObj*) type);
     ejsSetProperty(ejs, ejs->global, ES_undefined, ejs->undefinedValue);
-    ejsBindMethod(ejs, type, ES_Object_get, getVoidIterator);
-    ejsBindMethod(ejs, type, ES_Object_getValues, getVoidIterator);
+    ejsBindMethod(ejs, prototype, ES_Object_get, getVoidIterator);
+    ejsBindMethod(ejs, prototype, ES_Object_getValues, getVoidIterator);
 }
 
 

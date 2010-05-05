@@ -241,7 +241,7 @@ static EjsObj *sleepProc(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 void ejsConfigureAppType(Ejs *ejs)
 {
-    EjsType         *type;
+    EjsType     *type;
 
     type = ejs->appType = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "App");
     mprAssert(type);

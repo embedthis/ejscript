@@ -812,7 +812,6 @@ static void genBoundName(EcCompiler *cp, EcNode *np)
         } else {
             genGlobalName(cp, lookup->slotNum);
         }
-
 #if OLD
     } else if (ejsIsFunction(lookup->obj) && lookup->nthBlock == 0) {
         genLocalName(cp, lookup->slotNum);
@@ -990,7 +989,6 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
         popStack(cp, argc);
         return;
     }
-    
     if (staticMethod) {
         mprAssert(ejsIsType(lookup->obj));
         if (state->currentClass && state->inFunction && 
@@ -1271,6 +1269,11 @@ static void genClass(EcCompiler *cp, EcNode *np)
             baseType = type->baseType;
             if (baseType && baseType->hasConstructor) {
                 ecEncodeOpcode(cp, EJS_OP_CALL_NEXT_CONSTRUCTOR);
+#if UNUSED
+                ejsName(&qname, EJS_CONSTRUCTOR_NAMESPACE, baseType->qname.name);
+                ecEncodeName(cp, &qname);
+#endif
+                ecEncodeName(cp, &baseType->qname);
                 ecEncodeNumber(cp, 0);
             }
             ecEncodeOpcode(cp, EJS_OP_RETURN);
@@ -2070,11 +2073,6 @@ static void genFunction(EcCompiler *cp, EcNode *np)
         lookup = &np->lookup;
         ecEncodeOpcode(cp, EJS_OP_DEFINE_FUNCTION);
         ecEncodeName(cp, &np->qname);
-#if OLD
-        mprAssert(lookup->slotNum >= 0);
-        ecEncodeNumber(cp, lookup->slotNum);
-        ecEncodeNumber(cp, lookup->nthBlock);
-#endif
     }
     code = state->code = allocCodeBuffer(cp);
     addDebugInstructions(cp, np);
@@ -2102,6 +2100,11 @@ static void genFunction(EcCompiler *cp, EcNode *np)
         if (!state->currentClass->callsSuper && baseType && baseType->hasConstructor && 
                 !(np->attributes & EJS_PROP_NATIVE)) {
             ecEncodeOpcode(cp, EJS_OP_CALL_NEXT_CONSTRUCTOR);
+#if UNUSED
+            ejsName(&qname, EJS_CONSTRUCTOR_NAMESPACE, baseType->qname.name);
+            ecEncodeName(cp, &qname);
+#endif
+            ecEncodeName(cp, &baseType->qname);
             ecEncodeNumber(cp, 0);
         }
     }
@@ -2621,10 +2624,9 @@ static void genReturn(EcCompiler *cp, EcNode *np)
  */
 static void genSuper(EcCompiler *cp, EcNode *np)
 {
-    int     argc;
+    int         argc;
 
     ENTER(cp);
-
     mprAssert(np->kind == N_SUPER);
 
     if (np->left) {
@@ -2633,6 +2635,11 @@ static void genSuper(EcCompiler *cp, EcNode *np)
             processNode(cp, np->left);
         }
         ecEncodeOpcode(cp, EJS_OP_CALL_NEXT_CONSTRUCTOR);
+        ecEncodeName(cp, &cp->state->currentClass->baseType->qname);
+#if UNUSED
+        ejsName(&qname, EJS_CONSTRUCTOR_NAMESPACE, cp->state->currentClass->baseType->qname.name);
+        ecEncodeName(cp, &qname);
+#endif
         ecEncodeNumber(cp, argc);        
         popStack(cp, argc);
     } else {

@@ -15,22 +15,21 @@
  */
 
 /*
- * Instance slots for "global" type 
+   Prototype (instance) slots for "global" type 
  */
 
 
 /*
     Class property slots for the "Template" type 
  */
-#define ES_Template__origin                                            0
 #define ES_Template_load                                               0
 
 #define ES_Template_NUM_CLASS_PROP                                     1
 
 /*
- * Instance slots for "Template" type 
+   Prototype (instance) slots for "Template" type 
  */
-#define ES_Template_NUM_INSTANCE_PROP                                  24
+#define ES_Template_NUM_INSTANCE_PROP                                  12
 
 /*
     Local slots for methods in type "Template" 
@@ -40,7 +39,7 @@
 #define ES_TemplateParser_NUM_CLASS_PROP                               0
 
 /*
- * Instance slots for "TemplateParser" type 
+   Prototype (instance) slots for "TemplateParser" type 
  */
 #define ES_TemplateParser_TemplateParser                               12
 #define ES_TemplateParser_ContentMarker                                13
@@ -56,14 +55,13 @@
 #define ES_TemplateParser_parse                                        23
 #define ES_TemplateParser_getToken                                     24
 #define ES_TemplateParser_eatSpace                                     25
-#define ES_TemplateParser_NUM_INSTANCE_PROP                            38
+#define ES_TemplateParser_NUM_INSTANCE_PROP                            26
 
 
 /*
     Class property slots for the "Token" type 
  */
-#define ES_ejs_web_template_Token__origin                              0
-#define ES_ejs_web_template_Token__initializer__Token_initializer      0
+#define ES_ejs_web_template_Token__initializer__Token                  0
 #define ES_ejs_web_template_Token_Err                                  1
 #define ES_ejs_web_template_Token_Eof                                  2
 #define ES_ejs_web_template_Token_EjsTag                               3
@@ -76,10 +74,10 @@
 #define ES_ejs_web_template_Token_NUM_CLASS_PROP                       9
 
 /*
- * Instance slots for "Token" type 
+   Prototype (instance) slots for "Token" type 
  */
-#define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    24
+#define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    12
 
-#define _ES_CHECKSUM_ejs_web_template   75121
+#define _ES_CHECKSUM_ejs_web_template   41076
 
 #endif
