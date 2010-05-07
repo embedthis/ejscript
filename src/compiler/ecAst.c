@@ -550,6 +550,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         if (constructor && !constructor->function.isDefaultConstructor) {
             type->hasConstructor = 1;
             //  MZZ
+            type->hasInitializer = 1;
         }
     }
     return type;
@@ -3460,6 +3461,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         if (type->hasBaseConstructors) {
             type->hasConstructor = 1;
             //  MZZ
+            type->hasInitializer = 1;
         }
         if (!type->hasConstructor) {
             if (np && np->klass.constructor && np->klass.constructor->function.isDefaultConstructor) {

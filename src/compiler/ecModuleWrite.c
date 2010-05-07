@@ -298,7 +298,6 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     createDocSection(cp, ejs->global, slotNum, trait);
     qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
     mprAssert(qname.name);
-    mprAssert(strcmp(qname.name, "Array") != 0);
 
     mprLog(cp, 5, "    type section %s for module %s", qname.name, mp->name);
 
