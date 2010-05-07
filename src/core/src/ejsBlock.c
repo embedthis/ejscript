@@ -102,15 +102,11 @@ int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
     fun = (EjsFunction*) block;
     list = &block->namespaces;
 
+#if UNUSED
     if (ejsIsFunction(fun)) {
         if (fun->isInitializer) {
             block = block->scope;
             list = &block->namespaces;
-            /*
-                If defining a namespace at the class level (outside functions) use the class itself.
-                Initializers only run once so this should only happen once.
-             */
-            /* TODO OPT - this is only needed when classes implement other classes (Model <= Record) */
             for (next = 0; (namespace = ejsGetNextItem(list, &next)) != 0; ) {
                 if (strcmp(namespace->name, nsp->name) == 0) {
                     /* Already there */
@@ -122,6 +118,7 @@ int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
             }
         }
     }
+#endif
     ejsAddItemToSharedList(block, list, nsp);
     return 0;
 }

@@ -606,7 +606,7 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (mp->flags & EJS_LOADER_BUILTIN) {
         type->block.obj.builtin = 1;
     }
-    if (attributes & EJS_TYPE_HAS_STATIC_INITIALIZER) {
+    if (attributes & EJS_TYPE_HAS_TYPE_INITIALIZER) {
         type->hasStaticInitializer = 1;
     }
     if (attributes & EJS_TYPE_DYNAMIC_INSTANCE) {
@@ -648,6 +648,9 @@ static int loadEndClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS_END, mp, mp->scope);
     }
     type = (EjsType*) mp->scope;
+    if (type->prototype->hasScriptFunctions) {
+        type->block.obj.hasScriptFunctions = 1;
+    }
     if (type->block.obj.hasScriptFunctions && type->baseType) {
         ejsDefineTypeNamespaces(ejs, type);
     }
@@ -662,7 +665,6 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     EjsTypeFixup    *fixup;
     EjsFunction     *fun;
     EjsName         qname, returnTypeName;
-    EjsBlock        *scope;
     EjsObj          *current;
     uchar           *code;
     int             slotNum, numSlots, numArgs, numDefault, codeLen, numExceptions, attributes, strict, sn;
@@ -733,6 +735,7 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
         }
     }
 
+#if UNUSED
     /*
         Create the function using the current scope chain
      */
@@ -743,6 +746,7 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
         /* Type must be present on the scope chain */
         scope = mp->scope;
     }
+#endif
     fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, attributes, 
         mp->constants, mp->scope, strict);
     if (fun == 0) {

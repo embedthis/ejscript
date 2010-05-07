@@ -218,7 +218,7 @@
 /*
     Class property slots for the "App" type 
  */
-#define ES_App__initializer__App                                       0
+#define ES_App__initializer___App_                                     0
 #define ES_App_config                                                  1
 #define ES_App_SearchSeparator                                         2
 #define ES_App__errorStream                                            3
@@ -312,7 +312,7 @@
 /*
     Class property slots for the "BinaryStream" type 
  */
-#define ES_BinaryStream__initializer__BinaryStream                     0
+#define ES_BinaryStream__initializer___BinaryStream_                   0
 #define ES_BinaryStream_BigEndian                                      1
 #define ES_BinaryStream_LittleEndian                                   2
 
@@ -370,7 +370,7 @@
 /*
     Class property slots for the "ByteArray" type 
  */
-#define ES_ByteArray__initializer__ByteArray                           0
+#define ES_ByteArray__initializer___ByteArray_                         0
 #define ES_ByteArray_LittleEndian                                      1
 #define ES_ByteArray_BigEndian                                         2
 
@@ -833,7 +833,7 @@
 /*
     Class property slots for the "Http" type 
  */
-#define ES_Http__initializer__Http                                     0
+#define ES_Http__initializer___Http_                                   0
 #define ES_Http_Continue                                               1
 #define ES_Http_Ok                                                     2
 #define ES_Http_Created                                                3
@@ -993,7 +993,7 @@
 /*
     Class property slots for the "Locale" type 
  */
-#define ES_Locale__initializer__Locale                                 0
+#define ES_Locale__initializer___Locale_                               0
 #define ES_Locale_textEncoding                                         1
 
 #define ES_Locale_NUM_CLASS_PROP                                       2
@@ -1008,7 +1008,7 @@
 /*
     Class property slots for the "Logger" type 
  */
-#define ES_Logger__initializer__Logger                                 0
+#define ES_Logger__initializer___Logger_                               0
 #define ES_Logger_Off                                                  1
 #define ES_Logger_Error                                                2
 #define ES_Logger_Warn                                                 3
@@ -1055,7 +1055,7 @@
 /*
     Class property slots for the "Math" type 
  */
-#define ES_Math__initializer__Math                                     0
+#define ES_Math__initializer___Math_                                   0
 #define ES_Math_E                                                      1
 #define ES_Math_LN2                                                    2
 #define ES_Math_LN10                                                   3
@@ -1156,7 +1156,7 @@
 /*
     Class property slots for the "Number" type 
  */
-#define ES_Number__initializer__Number                                 0
+#define ES_Number__initializer___Number_                               0
 #define ES_Number_MAX_VALUE                                            1
 #define ES_Number_MIN_VALUE                                            2
 #define ES_Number_NaN                                                  3
@@ -1470,7 +1470,7 @@
 /*
     Class property slots for the "System" type 
  */
-#define ES_System__initializer__System                                 0
+#define ES_System__initializer___System_                               0
 #define ES_System_Bufsize                                              1
 #define ES_System_hostname                                             2
 #define ES_System_ipaddr                                               3
@@ -1681,7 +1681,7 @@
 /*
     Class property slots for the "XMLHttp" type 
  */
-#define ES_XMLHttp__initializer__XMLHttp                               0
+#define ES_XMLHttp__initializer___XMLHttp_                             0
 #define ES_XMLHttp_Uninitialized                                       1
 #define ES_XMLHttp_Open                                                2
 #define ES_XMLHttp_Sent                                                3
@@ -1737,6 +1737,6 @@
 #define ES_XMLList_parent                                              26
 #define ES_XMLList_NUM_INSTANCE_PROP                                   27
 
-#define _ES_CHECKSUM_ejs   1283175
+#define _ES_CHECKSUM_ejs   1284075
 
 #endif

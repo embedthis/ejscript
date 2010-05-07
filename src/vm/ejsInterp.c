@@ -188,7 +188,7 @@ static void throwNull(Ejs *ejs);
  */
 static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stackAdjust)
 {
-    EjsState    *priorState, state;
+    EjsState    state;
     EjsName     qname;
     EjsObj      *result, *vp, *v1, *v2, *obj, *value;
     int         slotNum, nthBase;
@@ -220,8 +220,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
     slotNum = -1;
     global = (EjsObj*) ejs->global;
 
-    priorState = ejs->state;
     state = *ejs->state;
+    state.prev = ejs->state;
     ejs->state = &state;
 
     callFunction(ejs, fun, otherThis, argc, stackAdjust);
@@ -1291,7 +1291,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                     "this" object use the current thisObj. If the lookup.obj is a type, then use it. Otherwise global.
                  */
                 if ((vp = fun->thisObj) == 0) {
-                    if (ejsIsA(ejs, THIS, (EjsType*) lookup.obj)) {
+                    if (lookup.obj->isPrototype && ejsIsA(ejs, THIS, lookup.type)) {
+                        vp = THIS;
+                    } else if (ejsIsA(ejs, THIS, (EjsType*) lookup.obj)) {
                         vp = THIS;
                     } else if (ejsIsType(lookup.obj)) {
                         vp = lookup.obj;
@@ -1320,6 +1322,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             type = vp->type;
             mprAssert(type);
             if (type && type->hasConstructor) {
+                mprAssert(type->hasInitializer);
                 mprAssert(type->prototype);
                 fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, type->numPrototypeInherited);
                 callFunction(ejs, fun, (EjsObj*) vp, argc, 0);
@@ -1340,6 +1343,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 ejsThrowReferenceError(ejs, "Can't find constructor %s", qname.name);
             } else {
                 mprAssert(type->hasConstructor);
+                mprAssert(type->hasInitializer);
                 slotNum = type->numPrototypeInherited;
                 fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
                 callFunction(ejs, fun, NULL, argc, 0);
@@ -1519,19 +1523,15 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 mprResetAllocError(ejs);
                 ejsThrowMemoryError(ejs);
             }
-                mprAssert(FRAME->pc);
             if (ejs->exiting || mprIsExiting(ejs)) {
                 goto done;
             }
-                mprAssert(FRAME->pc);
             if (ejs->gcRequired) {
                 ejsCollectGarbage(ejs, EJS_GEN_NEW);
             }
-                mprAssert(FRAME->pc);
             if (ejs->exception && !manageExceptions(ejs)) {
                 goto done;
             }
-                mprAssert(FRAME->pc);
             BREAK;
 
 
@@ -1545,9 +1545,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
          */
         CASE (EJS_OP_POP):
             ejs->result = pop(ejs);
-#if MACOSX || UNUSED
-            mprAssert(ejs->result != (void*) 0xf7f7f7f7f7f7f7f7);
-#endif
             mprAssert(ejs->exception || ejs->result);
             BREAK;
 
@@ -2154,6 +2151,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 qname.space = ejsToString(ejs, v1)->value;
             }
             vp = pop(ejs);
+#if OLD
             slotNum = ejsLookupVar(ejs, vp, &qname, &lookup);
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Property \"%s\" does not exist", qname.name);
@@ -2167,6 +2165,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                     ejsDeleteProperty(ejs, lookup.obj, slotNum);
                 }
             }
+#else
+            ejsDeletePropertyByName(ejs, vp, &qname);
+#endif
             BREAK;
 
         /*
@@ -2191,6 +2192,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Property \"%s\" does not exist", qname.name);
             } else {
+#if OLD
                 if (!lookup.obj->dynamic) {
                     //  MOB -- probably can remove this and rely on fixed below as per ecma spec
                     ejsThrowTypeError(ejs, "Can't delete properties in a non-dynamic object");
@@ -2199,6 +2201,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 } else {
                     ejsDeleteProperty(ejs, lookup.obj, slotNum);
                 }
+#endif
+                ejsDeletePropertyByName(ejs, lookup.obj, &qname);
             }
             BREAK;
 
@@ -2308,7 +2312,7 @@ done:
     }
 #endif
     mprAssert(FRAME == 0 || FRAME->attentionPc == 0);
-    ejs->state = priorState;
+    ejs->state = ejs->state->prev;;
     if (ejs->exception) {
         ejsAttention(ejs);
     }
@@ -2444,6 +2448,7 @@ static void storePropertyToScope(Ejs *ejs, EjsName *qname, EjsObj *value, bool d
             obj = (EjsObj*) fp->function.thisObj;
             mprAssert(obj);
 #if NOT_PRESERVE_SLOT_NUMBER
+            //  THIS probably prevents PIC
             slotNum = -1;
 #endif
             slotNum = ejsGetSlot(ejs, obj, slotNum);
@@ -2567,6 +2572,7 @@ EjsObj *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, Ej
 
 
 //  MOB TODO - reverse obj and slot
+//  MOB - can only be used to run instance methods -- rename to clarify
 
 EjsObj *ejsRunFunctionBySlot(Ejs *ejs, EjsObj *thisObj, int slotNum, int argc, EjsObj **argv)
 {
@@ -2577,8 +2583,10 @@ EjsObj *ejsRunFunctionBySlot(Ejs *ejs, EjsObj *thisObj, int slotNum, int argc, E
     }
     if (thisObj == ejs->global) {
         fun = (EjsFunction*) ejsGetProperty(ejs, thisObj, slotNum);
+    } else if (ejsIsType(thisObj)) {
+        fun = (EjsFunction*) ejsGetProperty(ejs, thisObj, slotNum);
     } else {
-        fun = (EjsFunction*) ejsGetProperty(ejs, ejsIsType(thisObj) ? thisObj : (EjsObj*) thisObj->type, slotNum);
+        fun = (EjsFunction*) ejsGetProperty(ejs, thisObj->type->prototype, slotNum);
     }
     if (fun == 0) {
         ejsThrowReferenceError(ejs, "Can't find function at slot %d in %s::%s", slotNum, thisObj->type->qname.space, 
@@ -2734,6 +2742,7 @@ static void callConstructor(Ejs *ejs, EjsFunction *vp, int argc, int stackAdjust
         ejsClearAttention(ejs);
         
         if (type->hasConstructor) {
+            mprAssert(type->hasInitializer);
             /*
                 Constructor is always at slot 0, offset by inherited propertie
              */
@@ -3074,6 +3083,9 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
         for (i = 0; i < count; i++) {
             ejsPopBlock(ejs);
         }
+        count = (state->stack - fp->stackReturn);
+        state->stack -= (count - ex->numStack);
+        mprAssert(state->stack >= fp->stackReturn);
     }
     
     /*
@@ -3651,7 +3663,7 @@ static void manageBreakpoint(Ejs *ejs)
     //  OPT - compiler should strip '\n' from currentLine and we should explicitly add it here
     optable = ejsGetOptable(ejs);
     mprLog(ejs, 7, "%0s %04d: [%d] %02x: %-35s # %s:%d %s",
-        mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn + 1),
+        mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
         (uchar) opcode, optable[opcode].name, fp->filename, fp->lineNumber, fp->currentLine);
     if (stop && once++ == 0) {
         mprSleep(ejs, 0);
@@ -3714,7 +3726,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
         //  OPT - compiler should strip '\n' from currentLine and we should explicitly add it here
         optable = ejsGetOptable(ejs);
         mprLog(ejs, 7, "%0s %04d: [%d] %02x: %-35s # %s:%d %s",
-            mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn + 1),
+            mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
             (uchar) opcode, optable[opcode].name, fp->filename, fp->lineNumber, fp->currentLine);
 #if UNUSED
         if (showFrequency && ((once % 1000) == 999)) {

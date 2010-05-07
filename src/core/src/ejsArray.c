@@ -24,6 +24,7 @@ static EjsObj *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
 static EjsObj *makeIntersection(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
 static EjsObj *makeUnion(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
 static EjsObj *removeArrayElements(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
+static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
 
 /******************************************************************************/
 /*
@@ -376,7 +377,8 @@ static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName *qname, EjsObj
     if (!isdigit((int) qname->name[0])) { 
         /* The "length" property is a method getter */
         if (strcmp(qname->name, "length") == 0) {
-            return EJS_ERR;
+            setArrayLength(ejs, ap, 1, &value);
+            return ES_Array_length;
         }
         slotNum = (ejs->objectType->helpers.lookupProperty)(ejs, (EjsObj*) ap, qname);
         if (slotNum < 0) {
@@ -398,7 +400,6 @@ static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName *qname, EjsObj
         return EJS_ERR;
     }
     ap->data[slotNum] = value;
-
     return slotNum;
 }
 
@@ -542,11 +543,9 @@ static EjsObj *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsArray(argv[0]));
 
     args = (EjsArray*) argv[0];
-    
     if (args->length == 0) {
         return 0;
     }
-
     size = 0;
     arg0 = getArrayProperty(ejs, args, 0);
 
@@ -578,7 +577,6 @@ static EjsObj *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         }
     }
     ap->length = size;
-
     return (EjsObj*) ap;
 }
 
@@ -1002,7 +1000,6 @@ static EjsObj *lastArrayIndexOf(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     override function get length(): Number
  */
-
 static EjsObj *getArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateNumber(ejs, ap->length);
@@ -1014,7 +1011,6 @@ static EjsObj *getArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     override function set length(value: Number): void
  */
-
 static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsObj      **data, **dest;
@@ -1034,7 +1030,6 @@ static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
             *dest = 0;
         }
     }
-
     ap->length = length;
     return 0;
 }

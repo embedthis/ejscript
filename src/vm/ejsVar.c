@@ -51,6 +51,7 @@ static inline EjsType *getOwningType(EjsObj *vp, int slotNum)
 EjsObj *ejsCast(Ejs *ejs, EjsObj *vp, EjsType *type)
 {
     EjsFunction     *fun;
+    EjsObj          *prototype;
 
     mprAssert(ejs);
     mprAssert(type);
@@ -77,9 +78,11 @@ EjsObj *ejsCast(Ejs *ejs, EjsObj *vp, EjsType *type)
         } else if (ejsIsString(vp)) {
             return (EjsObj*) vp;
         }
-        if (vp->type->block.obj.numSlots >= ES_Object_toString) {
-            if (ejsGetTraitAttributes((EjsObj*) vp->type, ES_Object_toString) & EJS_FUN_OVERRIDE) {
-                fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) vp->type, ES_Object_toString);
+        prototype = vp->type->prototype;
+        //  MOB BUG This should use ejsLookupVar
+        if (prototype->numSlots >= ES_Object_toString) {
+            if (ejsGetTraitAttributes((EjsObj*) prototype, ES_Object_toString) & EJS_FUN_OVERRIDE) {
+                fun = (EjsFunction*) ejsGetProperty(ejs, prototype, ES_Object_toString);
                 return (EjsObj*) ejsRunFunction(ejs, fun, vp, 0, NULL);
             }
         }
@@ -476,7 +479,7 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *vp, EjsObj *options)
     }    
     vp->jsonVisited = 1;
     
-    fn = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) vp->type, ES_Object_toJSON);
+    fn = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) vp->type->prototype, ES_Object_toJSON);
     if (ejsIsFunction(fn)) {
         if (options) {
             argc = 1;
@@ -510,6 +513,7 @@ EjsObj *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
         return 0;
     }
     if (type->hasConstructor) {
+        mprAssert(type->hasInitializer);
         fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type->prototype, type->numPrototypeInherited);
         if (fun == 0 || !ejsIsFunction(fun)) {
             return 0;
@@ -517,6 +521,8 @@ EjsObj *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
         vp->permanent = 1;
         ejsRunFunction(ejs, fun, vp, argc, argv);
         vp->permanent = 0;
+    } else {
+        mprAssert(!type->hasInitializer);
     }
     return vp;
 }

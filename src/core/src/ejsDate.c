@@ -1125,6 +1125,7 @@ void ejsConfigureDateType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Date_now, (EjsProc) date_now);
     ejsBindMethod(ejs, type, ES_Date_parseDate, (EjsProc) date_parseDate);
     ejsBindMethod(ejs, type, ES_Date_parseUTCDate, (EjsProc) date_parseUTCDate);
+    ejsBindMethod(ejs, type, ES_Date_parse, (EjsProc) date_parse);
     ejsBindMethod(ejs, type, ES_Date_UTC, (EjsProc) date_UTC);
 
     ejsBindMethod(ejs, prototype, ES_Date_Date, (EjsProc) date_Date);
@@ -1149,7 +1150,6 @@ void ejsConfigureDateType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_Date_minutes, (EjsProc) date_minutes, (EjsProc) date_set_minutes);
     ejsBindAccess(ejs, prototype, ES_Date_month, (EjsProc) date_month, (EjsProc) date_set_month);
     ejsBindMethod(ejs, prototype, ES_Date_nextDay, (EjsProc) date_nextDay);
-    ejsBindMethod(ejs, prototype, ES_Date_parse, (EjsProc) date_parse);
     ejsBindAccess(ejs, prototype, ES_Date_seconds, (EjsProc) date_seconds, (EjsProc) date_set_seconds);
     ejsBindMethod(ejs, prototype, ES_Date_setUTCDate, (EjsProc) date_setUTCDate);
     ejsBindMethod(ejs, prototype, ES_Date_setUTCFullYear, (EjsProc) date_setUTCFullYear);

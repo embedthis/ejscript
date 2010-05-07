@@ -82,7 +82,7 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
     dest->staticMethod = src->staticMethod;
     dest->constructor = src->constructor;
     dest->hasReturn = src->hasReturn;
-    dest->isInitializer = src->isInitializer;
+    dest->initializer = src->initializer;
     dest->rest = src->rest;
     dest->fullScope = src->fullScope;
     dest->nativeProc = src->nativeProc;
@@ -309,7 +309,7 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *byteCode, int code
         fun->rest = 1;
     }
     if (attributes & EJS_FUN_INITIALIZER) {
-        fun->isInitializer = 1;
+        fun->initializer = 1;
     }
     if (attributes & EJS_PROP_STATIC) {
         fun->staticMethod = 1;

@@ -61,7 +61,7 @@
 /*
     Class property slots for the "Token" type 
  */
-#define ES_ejs_web_template_Token__initializer__Token                  0
+#define ES_ejs_web_template_Token__initializer___Token_                0
 #define ES_ejs_web_template_Token_Err                                  1
 #define ES_ejs_web_template_Token_Eof                                  2
 #define ES_ejs_web_template_Token_EjsTag                               3
@@ -78,6 +78,6 @@
  */
 #define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    12
 
-#define _ES_CHECKSUM_ejs_web_template   41076
+#define _ES_CHECKSUM_ejs_web_template   41166
 
 #endif

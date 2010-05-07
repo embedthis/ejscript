@@ -29,7 +29,7 @@
 /*
     Class property slots for the "Record" type 
  */
-#define ES_Record__initializer__Record                                 0
+#define ES_Record__initializer___Record_                               0
 #define ES_Record__assocName                                           1
 #define ES_Record__belongsTo                                           2
 #define ES_Record__className                                           3
@@ -206,6 +206,6 @@
 #define ES_ejs_db_mapper_Column_sqlType                                14
 #define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      15
 
-#define _ES_CHECKSUM_ejs_db_mapper   186874
+#define _ES_CHECKSUM_ejs_db_mapper   186964
 
 #endif

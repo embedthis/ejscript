@@ -449,6 +449,7 @@ static void genBlockName(EcCompiler *cp, int slotNum, int nthBlock)
 
     mprAssert(slotNum >= 0);
 
+    //  MOB BINDING OK
     code = (!cp->state->onLeft) ?  EJS_OP_GET_BLOCK_SLOT :  EJS_OP_PUT_BLOCK_SLOT;
     ecEncodeOpcode(cp, code);
     ecEncodeNumber(cp, slotNum);
@@ -528,6 +529,7 @@ static void genGlobalName(EcCompiler *cp, int slotNum)
 
     mprAssert(slotNum >= 0);
 
+    mprAssert(0);
     code = (!cp->state->onLeft) ?  EJS_OP_GET_GLOBAL_SLOT :  EJS_OP_PUT_GLOBAL_SLOT;
     ecEncodeOpcode(cp, code);
     ecEncodeNumber(cp, slotNum);
@@ -544,6 +546,8 @@ static void genLocalName(EcCompiler *cp, int slotNum)
     int     code;
 
     mprAssert(slotNum >= 0);
+
+    //  MOB BINDING OK
 
     if (slotNum < 10) {
         code = (!cp->state->onLeft) ?  EJS_OP_GET_LOCAL_SLOT_0 :  EJS_OP_PUT_LOCAL_SLOT_0;
@@ -648,6 +652,7 @@ static void genPropertyName(EcCompiler *cp, int slotNum)
 
     state = cp->state;
 
+    mprAssert(0);
     if (slotNum < 10) {
         code = (!state->onLeft) ?  EJS_OP_GET_OBJ_SLOT_0 :  EJS_OP_PUT_OBJ_SLOT_0;
         ecEncodeOpcode(cp, code + slotNum);
@@ -676,6 +681,7 @@ static void genBaseClassPropertyName(EcCompiler *cp, int slotNum, int nthBase)
 
     state = cp->state;
 
+    mprAssert(0);
     code = (!cp->state->onLeft) ?  EJS_OP_GET_TYPE_SLOT : EJS_OP_PUT_TYPE_SLOT;
 
     ecEncodeOpcode(cp, code);
@@ -703,6 +709,7 @@ static void genThisBaseClassPropertyName(EcCompiler *cp, EjsType *type, int slot
     ejs = cp->ejs;
     state = cp->state;
 
+    mprAssert(0);
     /*
         Count based up from object 
      */
@@ -766,6 +773,7 @@ static void genPropertyViaThis(EcCompiler *cp, int slotNum)
     ejs = cp->ejs;
     state = cp->state;
 
+    mprAssert(0);
     /*
         Property in the current "this" object
      */
@@ -804,8 +812,7 @@ static void genBoundName(EcCompiler *cp, EcNode *np)
             Global variable.
          */
         //  TODO -- this logic looks strange
-        if (lookup->slotNum < 0 || 
-                (!cp->bind && (lookup->ref == 0 || !lookup->ref->builtin))) {
+        if (lookup->slotNum < 0 || (!cp->bind && (lookup->ref == 0 || !lookup->ref->builtin))) {
             lookup->slotNum = -1;
             genUnboundName(cp, np);
 
@@ -998,6 +1005,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
                 Calling a static method from within a class or subclass. So we can use "this".
              */
             argc = genCallArgs(cp, right);
+            mprAssert(0);
             ecEncodeOpcode(cp, EJS_OP_CALL_THIS_STATIC_SLOT);
             ecEncodeNumber(cp, lookup->slotNum);
             /*
@@ -1023,6 +1031,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
              */
             processNode(cp, left->left);
             argc = genCallArgs(cp, right);
+            mprAssert(0);
             ecEncodeOpcode(cp, EJS_OP_CALL_OBJ_STATIC_SLOT);
             ecEncodeNumber(cp, lookup->slotNum);
             if (lookup->ownerIsType) {
@@ -1037,6 +1046,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
              */
             genClassName(cp, (EjsType*) lookup->obj);
             argc = genCallArgs(cp, right);
+            mprAssert(0);
             ecEncodeOpcode(cp, EJS_OP_CALL_OBJ_STATIC_SLOT);
             ecEncodeNumber(cp, lookup->slotNum);
             ecEncodeNumber(cp, 0);
@@ -1053,6 +1063,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
         
         if (lookup->useThis && !lookup->instanceProperty) {
             argc = genCallArgs(cp, right);
+            mprAssert(0);
             ecEncodeOpcode(cp, EJS_OP_CALL_THIS_SLOT);
             ecEncodeNumber(cp, lookup->slotNum);
             
@@ -1061,12 +1072,14 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
                 Instance function or type being invoked as a constructor (e.g. Reflect(obj))
              */
             argc = genCallArgs(cp, right);
+            mprAssert(0);
             ecEncodeOpcode(cp, EJS_OP_CALL_GLOBAL_SLOT);
             ecEncodeNumber(cp, lookup->slotNum);
             
         } else if (lookup->instanceProperty && left->left) {
             processNodeGetValue(cp, left->left);
             argc = genCallArgs(cp, right);
+            mprAssert(0);
             ecEncodeOpcode(cp, EJS_OP_CALL_OBJ_INSTANCE_SLOT);
             ecEncodeNumber(cp, lookup->slotNum);
             popStack(cp, 1);
@@ -1075,6 +1088,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             if (left->kind == N_DOT && left->right->kind == N_QNAME) {
                 processNodeGetValue(cp, left->left);
                 argc = genCallArgs(cp, right);
+                mprAssert(0);
                 ecEncodeOpcode(cp, EJS_OP_CALL_OBJ_SLOT);
                 mprAssert(lookup->slotNum >= 0);
                 ecEncodeNumber(cp, lookup->slotNum);
@@ -1089,6 +1103,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             }
             
         } else if (ejsIsBlock(lookup->obj)) {
+            //  MOB BINDING OK
             argc = genCallArgs(cp, right);
             ecEncodeOpcode(cp, EJS_OP_CALL_BLOCK_SLOT);
             ecEncodeNumber(cp, lookup->slotNum);
@@ -1282,6 +1297,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
             ecAddConstant(cp, EJS_CONSTRUCTOR_NAMESPACE);
 
         } else if (type->hasInitializer) {
+            mprAssert(type->hasConstructor);
 
             /*
                 Inject initializer code into the pre-existing constructor code. It is injected before any constructor code.
@@ -1873,8 +1889,14 @@ static void genForIn(EcCompiler *cp, EcNode *np)
      */
     tryStart = getCodeLength(cp, np->forInLoop.bodyCode);
 
-    ecEncodeOpcode(cp, EJS_OP_CALL_OBJ_SLOT);
-    ecEncodeNumber(cp, np->forInLoop.iterNext->lookup.slotNum);
+    if (np->forInLoop.iterNext->lookup.slotNum >= 0) {
+        mprAssert(0);
+        ecEncodeOpcode(cp, EJS_OP_CALL_OBJ_SLOT);
+        ecEncodeNumber(cp, np->forInLoop.iterNext->lookup.slotNum);
+    } else {
+        ecEncodeOpcode(cp, EJS_OP_CALL_OBJ_NAME);
+        ecEncodeName(cp, &np->forInLoop.iterNext->qname);
+    }
     ecEncodeNumber(cp, 0);
     popStack(cp, 1);
     
@@ -3613,7 +3635,7 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
         Note: if hasInitializer is false, we may still have some code in the buffer if --debug is used.
         We can safely just ignore this debug code.
      */
-    if (! mp->hasInitializer) {
+    if (!mp->hasInitializer) {
         LEAVE(cp);
         return;
     }

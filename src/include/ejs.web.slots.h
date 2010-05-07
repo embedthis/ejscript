@@ -147,7 +147,7 @@
 /*
     Class property slots for the "Mvc" type 
  */
-#define ES_Mvc__initializer__Mvc                                       0
+#define ES_Mvc__initializer___Mvc_                                     0
 #define ES_Mvc_defaultConfig                                           1
 #define ES_Mvc_mvc                                                     2
 #define ES_Mvc_dirs                                                    3
@@ -176,7 +176,7 @@
 /*
     Class property slots for the "Request" type 
  */
-#define ES_ejs_web_Request__initializer__Request                       0
+#define ES_ejs_web_Request__initializer___Request_                     0
 #define ES_ejs_web_Request_jsgi                                        1
 
 #define ES_ejs_web_Request_NUM_CLASS_PROP                              2
@@ -265,7 +265,7 @@
 /*
     Class property slots for the "Router" type 
  */
-#define ES_ejs_web_Router__initializer__Router                         0
+#define ES_ejs_web_Router__initializer___Router_                       0
 #define ES_ejs_web_Router_TopRoutes                                    1
 #define ES_ejs_web_Router_RestfulRoutes                                2
 #define ES_ejs_web_Router_LegacyRoutes                                 3
@@ -346,7 +346,7 @@
 /*
     Class property slots for the "View" type 
  */
-#define ES_ejs_web_View__initializer__View                             0
+#define ES_ejs_web_View__initializer___View_                           0
 #define ES_ejs_web_View_htmlOptions                                    1
 
 #define ES_ejs_web_View_NUM_CLASS_PROP                                 2
@@ -410,7 +410,7 @@
 /*
     Class property slots for the "Web" type 
  */
-#define ES_ejs_web_Web__initializer__Web                               0
+#define ES_ejs_web_Web__initializer___Web_                             0
 #define ES_ejs_web_Web_config                                          1
 #define ES_ejs_web_Web_defaultConfig                                   2
 #define ES_ejs_web_Web_init                                            3
@@ -438,6 +438,6 @@
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
 
-#define _ES_CHECKSUM_ejs_web   524940
+#define _ES_CHECKSUM_ejs_web   525390
 
 #endif

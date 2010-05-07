@@ -521,7 +521,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             Find the end of the format specifier and determine the format type (kind)
          */
         start = i++;
-        i += (int) strspn(&sp->value[i], "-+ #,0*123456789.hlL");
+        i += (int) strspn(&sp->value[i], "-+ #,0*123456789.");
         kind = sp->value[i];
 
         if (strchr("cdefginopsSuxX", kind)) {
@@ -535,12 +535,12 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             switch (kind) {
             case 'd': case 'i': case 'o': case 'u':
                 value = (EjsObj*) ejsToNumber(ejs, value);
-                buf = mprAsprintf(ejs, -1, fmt, (int64) ejsGetNumber(ejs, value));
+                buf = mprAsprintf(ejs, -1, fmt, (int) ejsGetNumber(ejs, value));
                 break;
 
             case 'e': case 'g': case 'f':
                 value = (EjsObj*) ejsToNumber(ejs, value);
-                buf = mprAsprintf(ejs, -1, fmt, (double) ejsGetNumber(ejs, value));
+                buf = mprAsprintf(ejs, -1, fmt, ejsGetNumber(ejs, value));
                 break;
 
             case 's':
@@ -549,7 +549,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 break;
 
             case 'X': case 'x':
-                buf = mprAsprintf(ejs, -1, fmt, (int64) ejsGetNumber(ejs, value));
+                buf = mprAsprintf(ejs, -1, fmt, (int) ejsGetNumber(ejs, value));
                 break;
 
             case 'n':
@@ -565,12 +565,10 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             nextArg++;
         }
     }
-
     i = (int) strlen(sp->value);
     if (i > last) {
         catString(ejs, result, &sp->value[last], i - last);
     }
-
     return (EjsObj*) result;
 }
 

@@ -46,6 +46,7 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
     dest->hasBaseStaticInitializers = src->hasBaseStaticInitializers;
     dest->hasConstructor = src->hasConstructor;
     dest->hasInitializer = src->hasInitializer;
+mprAssert(dest->hasConstructor == dest->hasInitializer);
     dest->hasMeta = src->hasMeta;
     dest->hasStaticInitializer = src->hasStaticInitializer;
     dest->helpers = src->helpers;
@@ -391,15 +392,16 @@ static void setAttributes(EjsType *type, int attributes)
     if (attributes & EJS_TYPE_FINAL) {
         type->final = 1;
     }
-    if (attributes & EJS_TYPE_HAS_CONSTRUCTOR) {
-        type->hasConstructor = 1;
-    }
     if (attributes & EJS_TYPE_DYNAMIC_INSTANCE) {
         type->dynamicInstance = 1;
+    }
+    if (attributes & EJS_TYPE_HAS_CONSTRUCTOR) {
+        type->hasConstructor = 1;
     }
     if (attributes & EJS_TYPE_HAS_INITIALIZER) {
         type->hasInitializer = 1;
     }
+mprAssert(type->hasConstructor == type->hasInitializer);
     if (attributes & EJS_TYPE_IMMUTABLE) {
         type->immutable = 1;
     }
@@ -409,7 +411,7 @@ static void setAttributes(EjsType *type, int attributes)
     if (attributes & EJS_TYPE_FIXUP) {
         type->needFixup = 1;
     }
-    if (attributes & EJS_TYPE_HAS_STATIC_INITIALIZER) {
+    if (attributes & EJS_TYPE_HAS_TYPE_INITIALIZER) {
         type->hasStaticInitializer = 1;
     }
     if (attributes & EJS_TYPE_CALLS_SUPER) {
@@ -492,6 +494,7 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
         if (baseType->hasInitializer || baseType->hasBaseInitializers) {
             type->hasBaseInitializers = 1;
         }
+mprAssert(type->hasBaseConstructors == type->hasBaseInitializers);
         if (baseType != ejs->objectType && baseType->dynamicInstance) {
             type->dynamicInstance = 1;
         }

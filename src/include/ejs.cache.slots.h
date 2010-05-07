@@ -22,7 +22,7 @@
 /*
     Class property slots for the "Cache" type 
  */
-#define ES_ejs_cache_Cache__initializer__Cache                         0
+#define ES_ejs_cache_Cache__initializer___Cache_                       0
 #define ES_ejs_cache_Cache_cache                                       1
 
 #define ES_ejs_cache_Cache_NUM_CLASS_PROP                              2
@@ -36,6 +36,6 @@
 #define ES_ejs_cache_Cache_remove                                      15
 #define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           16
 
-#define _ES_CHECKSUM_ejs_cache   11373
+#define _ES_CHECKSUM_ejs_cache   11463
 
 #endif

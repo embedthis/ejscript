@@ -380,6 +380,14 @@ static int deleteObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum)
         ejsThrowReferenceError(ejs, "Invalid property slot to delete");
         return EJS_ERR;
     }
+    if (!obj->dynamic) {
+        //  MOB -- probably can remove this and rely on fixed below as per ecma spec
+        ejsThrowTypeError(ejs, "Can't delete properties in a non-dynamic object");
+        return EJS_ERR;
+    } else if (ejsHasTrait(obj, slotNum, EJS_TRAIT_FIXED)) {
+        ejsThrowTypeError(ejs, "Property \"%s\" is not deletable", qname.name);
+        return EJS_ERR;
+    }
     qname = getObjectPropertyName(ejs, obj, slotNum);
     if (qname.name) {
         removeHashEntry(ejs, obj, &qname);
@@ -513,7 +521,7 @@ static int lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
             for (slotNum = obj->hash[index]; slotNum >= 0; slotNum = sp->hashChain) {
                 sp = &slots[slotNum];
                 if (CMP_NAME(&sp->qname, qname)) {
-                    if (sp->hashChain < 0 || !CMP_QNAME(&sp->qname, &slots[sp->hashChain].qname)) {
+                    if (sp->hashChain < 0 || !CMP_NAME(&sp->qname, &slots[sp->hashChain].qname)) {
                         return slotNum;
                     }
                     /* Multiple properties with the same name */
@@ -822,7 +830,6 @@ void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
             sp->qname.space = "";
             sp->trait.type = 0;
             sp->trait.attributes = 0;
-            sp->value.ref = 0;
         }
     }
 }

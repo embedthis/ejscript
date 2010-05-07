@@ -22,7 +22,7 @@
 /*
     Class property slots for the "Sqlite" type 
  */
-#define ES_ejs_db_Sqlite__initializer__Sqlite                          0
+#define ES_ejs_db_Sqlite__initializer___Sqlite_                        0
 #define ES_ejs_db_Sqlite_DataTypeToSqlType                             1
 #define ES_ejs_db_Sqlite_SqlTypeToDataType                             2
 #define ES_ejs_db_Sqlite_SqlTypeToEjsType                              3
@@ -60,6 +60,6 @@
 #define ES_ejs_db_Sqlite_startTransaction                              37
 #define ES_ejs_db_Sqlite_NUM_INSTANCE_PROP                             38
 
-#define _ES_CHECKSUM_ejs_db_sqlite   73279
+#define _ES_CHECKSUM_ejs_db_sqlite   73369
 
 #endif

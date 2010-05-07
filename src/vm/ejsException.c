@@ -71,7 +71,7 @@ static EjsObj *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
         return 0;
     }
     if (!ejs->initialized) {
-        if (ejs->empty) {
+        if (ejs->empty || ejs->flags & EJS_FLAG_NO_INIT) {
             mprLog(ejs, 5, "Exception: %s", msg);
         } else {
             mprError(ejs, "Exception: %s", msg);
@@ -262,9 +262,10 @@ EjsObj *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...)
 char *ejsFormatStack(Ejs *ejs, EjsError *error)
 {
     EjsFrame        *fp;
+    EjsState        *state;
     cchar           *line, *codeSep;
     char            *backtrace, *traceLine;
-    int             level, len, oldFlags;
+    int             level, len;
 
     mprAssert(ejs);
 
@@ -272,56 +273,62 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
     len = 0;
     level = 0;
 
-    oldFlags = ejs->flags;
-    for (fp = ejs->state->fp; fp; fp = fp->caller) {
 #if UNUSED
-        typeName = "";
-        functionName = "global";
+    oldFlags = ejs->flags;
+#endif
+    for (state = ejs->state; state; state = state->prev) {
+        for (fp = state->fp; fp; fp = fp->caller) {
+#if UNUSED
+            typeName = "";
+            functionName = "global";
 #endif
 
-        if (fp->currentLine == 0) {
-            line = "";
-        } else {
-            for (line = fp->currentLine; *line && isspace((int) *line); line++) {
-                ;
-            }
-        }
-        if (fp) {
-#if UNUSED
-            if (fp->owner && fp->slotNum >= 0 && fp->slotNum < fp->owner->numSlots) {
-                functionName = ejsGetPropertyName(ejs, fp->owner, fp->slotNum).name;
-            }
-            if (ejsIsType(fp->owner)) {
-                type = (EjsType*) fp->owner;
-                if (type) {
-                    typeName = type->qname.name;
+            if (fp->currentLine == 0) {
+                line = "";
+            } else {
+                for (line = fp->currentLine; *line && isspace((int) *line); line++) {
+                    ;
                 }
             }
+            if (fp) {
+#if UNUSED
+                if (fp->owner && fp->slotNum >= 0 && fp->slotNum < fp->owner->numSlots) {
+                    functionName = ejsGetPropertyName(ejs, fp->owner, fp->slotNum).name;
+                }
+                if (ejsIsType(fp->owner)) {
+                    type = (EjsType*) fp->owner;
+                    if (type) {
+                        typeName = type->qname.name;
+                    }
+                }
 #endif
-        }
+            }
 #if UNSUSED
-        typeSep = (*typeName) ? "." : "";
+            typeSep = (*typeName) ? "." : "";
 #endif
-        codeSep = (*line) ? "->" : "";
+            codeSep = (*line) ? "->" : "";
 
-        if (error && backtrace == 0) {
-            error->filename = mprStrdup(error, fp->filename);
-            error->lineNumber = fp->lineNumber;
+            if (error && backtrace == 0) {
+                error->filename = mprStrdup(error, fp->filename);
+                error->lineNumber = fp->lineNumber;
+            }
+            if ((traceLine = mprAsprintf(ejs, MPR_MAX_STRING, " [%02d] %s, %s, line %d %s %s\n",
+                    level++, fp->filename ? fp->filename : "script", fp->function.name,
+                    fp->lineNumber, codeSep, line)) == NULL) {
+                break;
+            }
+            backtrace = (char*) mprRealloc(ejs, backtrace, len + (int) strlen(traceLine) + 1);
+            if (backtrace == 0) {
+                return 0;
+            }
+            memcpy(&backtrace[len], traceLine, strlen(traceLine) + 1);
+            len += (int) strlen(traceLine);
+            mprFree(traceLine);
         }
-        if ((traceLine = mprAsprintf(ejs, MPR_MAX_STRING, " [%02d] %s, %s, line %d %s %s\n",
-                level++, fp->filename ? fp->filename : "script", fp->function.name,
-                fp->lineNumber, codeSep, line)) == NULL) {
-            break;
-        }
-        backtrace = (char*) mprRealloc(ejs, backtrace, len + (int) strlen(traceLine) + 1);
-        if (backtrace == 0) {
-            return 0;
-        }
-        memcpy(&backtrace[len], traceLine, strlen(traceLine) + 1);
-        len += (int) strlen(traceLine);
-        mprFree(traceLine);
     }
+#if UNUSED
     ejs->flags = oldFlags;
+#endif
     if (error) {
         error->stack = backtrace;
     }

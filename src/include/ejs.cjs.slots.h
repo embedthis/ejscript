@@ -27,7 +27,7 @@
 /*
     Class property slots for the "Loader" type 
  */
-#define ES_Loader__initializer__Loader                                 0
+#define ES_Loader__initializer___Loader_                               0
 #define ES_Loader_mainId                                               1
 #define ES_Loader_signatures                                           2
 #define ES_Loader_timestamps                                           3
@@ -62,6 +62,6 @@
 #define ES_Loader_locate_id                                            0
 #define ES_Loader_setConfig_newConfig                                  0
 
-#define _ES_CHECKSUM_ejs_cjs   25538
+#define _ES_CHECKSUM_ejs_cjs   25628
 
 #endif

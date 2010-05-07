@@ -90,7 +90,7 @@ struct EjsXML;
 #define EJS_TYPE_FIXUP                  0x2000      /**< Type needs to inherit base types properties */
 #define EJS_TYPE_HAS_CONSTRUCTOR        0x4000      /**< Type has a constructor */
 #define EJS_TYPE_HAS_INITIALIZER        0x8000      /**< Type has an initializer */
-#define EJS_TYPE_HAS_STATIC_INITIALIZER 0x10000     /**< Type has an initializer */
+#define EJS_TYPE_HAS_TYPE_INITIALIZER   0x10000     /**< Type has an initializer */
 #define EJS_TYPE_IMMUTABLE              0x20000     /**< Instances are immutable */
 #define EJS_TYPE_INTERFACE              0x40000     /**< Class is an interface */
 
@@ -1195,7 +1195,7 @@ typedef struct EjsFunction {
             uint    hasReturn: 1;           /**< Function has a return stmt */
             uint    inCatch: 1;             /**< Executing catch block */
             uint    inException: 1;         /**< Executing catch/finally exception processing */
-            uint    isInitializer: 1;       /**< Function is an initializer function */
+            uint    initializer: 1;         /**< Function is an initializer function */
 
             //  MOB - move to traits
             uint    nativeProc: 1;          /**< Function is native procedure */
@@ -2922,6 +2922,7 @@ typedef struct EjsState {
     struct EjsBlock     *bp;                /* Current block pointer */
     struct EjsObj       **stack;            /* Top of stack (points to the last element pushed) */
     struct EjsObj       **stackBase;        /* Pointer to start of stack mem */
+    struct EjsState     *prev;              /* Previous state */
 
     //  MOB -- not used
     struct EjsObj       **stackEnd;         /* Only used on non-virtual memory systems */
@@ -2936,10 +2937,11 @@ typedef struct EjsState {
  */
 //  MOB -- Some fields just for compiler
 typedef struct EjsLookup {
-    struct EjsObj   *obj;                   /* Final object / Type containing the variable */
+    EjsObj          *obj;                   /* Final object / Type containing the variable */
     int             slotNum;                /* Final slot in obj containing the variable reference */
     uint            nthBase;                /* Property on Nth super type -- count from the object */
     uint            nthBlock;               /* Property on Nth block in the scope chain -- count from the end */
+    EjsType         *type;                  /* Type containing property (if on a prototype obj) */
 #if UNUSED || 1
     uint            useThis;                /* Property accessible via "this." */
     //  MOB -- check all these being used

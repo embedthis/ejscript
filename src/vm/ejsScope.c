@@ -18,10 +18,11 @@
  */
 int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
 {
+    EjsFrame        *frame;
     EjsBlock        *bp;
     EjsState        *state;
     EjsType         *type;
-    EjsObj          *prototype, *obj;
+    EjsObj          *prototype, *thisObj;
     int             slotNum, nthBase;
 
     mprAssert(ejs);
@@ -33,56 +34,38 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
     state = ejs->state;
     slotNum = -1;
     
-    //  MOB - OPT 
     memset(lookup, 0, sizeof(*lookup));
 
+    //  MOB -- remove nthBlock. Not needed if not binding
     for (lookup->nthBlock = 0, bp = state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
         /* Seach simple object */
         if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) bp, name, lookup)) >= 0) {
             return slotNum;
         }
-        if (bp->isPrototype) {
-        }
-        if (prior->instanceMethod) {
-        if (ejsIsType(bp) && (!ejsIsFunction(prior) || !((EjsFunction*) prior)->staticMethod)) {
-        }
-
-
-
-
-
-        if (ejsIsFrame(bp)) {
-            obj = ((EjsFrame*) bp)->function.thisObj;
-            if (obj != ejs->global) {
-                /* Search "this", perhaps only do for methods as per ECMA spec (need obj.isMethod) */
-                if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, name, lookup)) >= 0) {
+        if (ejsIsFrame(bp) && ejsIsType(bp->scope)) {
+            frame = (EjsFrame*) bp;
+            if (!frame->function.staticMethod && !frame->function.initializer) {
+                /* Instance method only */
+                thisObj = ((EjsFrame*) bp)->function.thisObj;
+                if ((slotNum = ejsLookupVarWithNamespaces(ejs, thisObj, name, lookup)) >= 0) {
                     return slotNum;
                 }
-            }
-            if (obj->shortScope) {
-                continue;
-            }
-            /* Search prototype chain */
-            type = obj->type;
-            for (nthBase = 1; type; type = type->baseType, nthBase++) {
-                if ((prototype = type->prototype) == 0 || prototype->shortScope) {
-                    break;
-                }
-                if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
-                    lookup->nthBase = nthBase;
-                    return slotNum;
+                /* Search prototype chain */
+                for (nthBase = 1, type = thisObj->type; type; type = type->baseType, nthBase++) {
+                    if ((prototype = type->prototype) == 0 || prototype->shortScope) {
+                        break;
+                    }
+                    if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
+                        lookup->nthBase = nthBase;
+                        lookup->type = type;
+                        return slotNum;
+                    }
                 }
             }
-            type = obj->type;
-
         } else if (ejsIsType(bp)) {
-            type = (EjsType*) bp;
-        } else {
-            type = 0;
-        }
-        if (!bp->obj.shortScope && type) {
+            //  MOB -- remove nthBase. Not needed if not binding.
             /* Search base class chain */
-            for (nthBase = 1; type; type = type->baseType, nthBase++) {
+            for (nthBase = 1, type = (EjsType*) bp; type; type = type->baseType, nthBase++) {
                 if (type->block.obj.shortScope) {
                     break;
                 }
@@ -110,16 +93,15 @@ int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
     mprAssert(name);
     mprAssert(lookup);
 
-    //  MOB OPT - if called from scope, then zeroed multiple times
     memset(lookup, 0, sizeof(*lookup));
 
     /* Lookup simple object */
     if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, name, lookup)) >= 0) {
         return slotNum;
     }
-    type = obj->type;
+    
     /* Lookup prototype chain */
-    for (nthBase = 1; type; type = type->baseType, nthBase++) {
+    for (nthBase = 1, type = obj->type; type; type = type->baseType, nthBase++) {
         if ((prototype = type->prototype) == 0 || prototype->shortScope) {
             break;
         }
@@ -128,6 +110,7 @@ int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
             return slotNum;
         }
     }
+
     /* Lookup base-class chain */
     type = ejsIsType(obj) ? ((EjsType*) obj)->baseType : obj->type;
     for (nthBase = 1; type; type = type->baseType, nthBase++) {
@@ -148,7 +131,6 @@ int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
     Find a variable in an object considering namespaces. If the space is "", then search for the property name using
     the set of open namespaces.
  */
-//  MOB -- rename 
 int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
 {
     EjsNamespace    *nsp;
@@ -175,9 +157,8 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *
             qn = ejsGetPropertyName(ejs, obj, slotNum);
             if (name->space[0] && (name->space[0] != qn.space[0] || strcmp(name->space, qn.space) != 0)) {
                 /* Unique name match. Name matches, but namespace does not */
-                return -1;
-            }
-            if (qn.space[0]) {
+                slotNum = -1;
+            } else if (qn.space[0]) {
                 for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&ejs->globalBlock->namespaces, &next)) != 0; ) {
                     if (strcmp(nsp->uri, qn.space) == 0) {
                         goto done;
@@ -192,6 +173,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *
                         }
                     }
                 }
+                slotNum = -1;
             }
 
         } else {
@@ -200,7 +182,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *
                 for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&b->namespaces, &next)) != 0; ) {
                     qname.space = nsp->uri;
                     if ((slotNum = ejsLookupProperty(ejs, obj, &qname)) >= 0) {
-                        mprLog(ejs, 0, "Object has multiple properties of the same name \"%s\"", name->name); 
+                        // mprLog(ejs, 5, "WARNING: Object has multiple properties of the same name \"%s\"", name->name); 
                         goto done;
                     }
                 }
@@ -233,8 +215,7 @@ EjsObj *ejsGetVarByName(Ejs *ejs, EjsObj *vp, EjsName *name, EjsLookup *lookup)
 
     //  OPT - really nice to remove this
     if (vp && vp->type->helpers.getPropertyByName) {
-        result = (*vp->type->helpers.getPropertyByName)(ejs, vp, name);
-        if (result) {
+        if ((result = (*vp->type->helpers.getPropertyByName)(ejs, vp, name)) != 0) {
             return result;
         }
     }

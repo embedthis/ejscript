@@ -298,6 +298,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     createDocSection(cp, ejs->global, slotNum, trait);
     qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
     mprAssert(qname.name);
+    mprAssert(strcmp(qname.name, "Array") != 0);
 
     mprLog(cp, 5, "    type section %s for module %s", qname.name, mp->name);
 
@@ -314,12 +315,14 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     attributes &= ~EJS_TYPE_FIXUP;
 
     if (type->hasStaticInitializer) {
-        attributes |= EJS_TYPE_HAS_STATIC_INITIALIZER;
+        attributes |= EJS_TYPE_HAS_TYPE_INITIALIZER;
     }
     if (type->hasConstructor) {
+        mprAssert(type->hasInitializer);
         attributes |= EJS_TYPE_HAS_CONSTRUCTOR;
     }
     if (type->hasInitializer) {
+        mprAssert(type->hasConstructor);
         attributes |= EJS_TYPE_HAS_INITIALIZER;
     }
     if (type->callsSuper) {
@@ -424,7 +427,7 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
         createDocSection(cp, block, slotNum, trait);
         qname = ejsGetPropertyName(ejs, block, slotNum);
         attributes = trait->attributes;
-        if (fun->isInitializer) {
+        if (fun->initializer) {
             attributes |= EJS_FUN_INITIALIZER;
         }
         if (trait->attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER)) {

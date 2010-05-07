@@ -1,140 +1,142 @@
 /*
- *  Cmd.es - Cmd class
- *
- *  Copyright (c) All Rights Reserved. See details at the end of the file.
+    Cmd.es - Cmd class
+
+    Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
 module ejs {
 
     /**
-     *  The Cmd class supports invoking other programs on the same system. 
-     *  @spec ejs-11
+        The Cmd class supports invoking other programs on the same system. 
+        @spec ejs-11
      */
     native class Cmd implements Stream {
 
         use default namespace public
 
         /**
-         *  Callback event mask for readable events
+            Callback event mask for readable events
          */
         static const Read: Number  = 2
 
         /**
-         *  Callback event mask for writeable events
+            Callback event mask for writeable events
          */
         static const Write: Number = 4
 
         /**
-         *  Cached command output
+            Cached command output
          */
         private var _response: String
 
         /**
-         *  Create an Cmd object. The Cmd object is initialized with the command line
-         *  @param cmdline The (optional) command line to initialize with. This may be overridden via the $start
-         *      or command cmdline methods.
-         *  @param options. Command options hash. Supported options are:
-         *  @options detach Boolean If true, run the command in the background. Do not capture the command's stdout or
-         *      stderr nor collect status. Defaults to false.
-         *  @options dir Path or String. Directory to set as the current working directory for the command.
-         *  @options exception Boolean If true, throw exceptions on errors. Defaults to true.
-         *  @throws IOError if the command line is malformed.
+            Create an Cmd object. The Cmd object is initialized with the command line
+            @param cmdline The (optional) command line to initialize with. This may be overridden via the $start
+                or command cmdline methods.
+            @param options. Command options hash. Supported options are:
+            @options detach Boolean If true, run the command in the background. Do not capture the command's stdout or
+                stderr nor collect status. Defaults to false.
+            @options dir Path or String. Directory to set as the current working directory for the command.
+            @options exception Boolean If true, throw exceptions on errors. Defaults to true.
+            @throws IOError if the command line is malformed.
          */
         native function Cmd(cmdline: String = null, options: Object = null)
 
+//  MOB -- remove
         /**
-         *  Get the number of command output bytes that are currently available for reading from the command.
-         *  This API is not supported and is provided only for compliance with the Stream interface.
-         *  @returns The number of available bytes.
+            Get the number of command output bytes that are currently available for reading from the command.
+            This API is not supported and is provided only for compliance with the Stream interface.
+            @returns The number of available bytes.
+            @hide
          */
         native function get available(): Number 
 
         /**
-         *  Close the connection to the server and free up all associated resources. It is not normally required to call 
-         *  $close. But it can be useful to force a disconnect.
-         *  @param graceful if true, then close the socket gracefully after writing all pending data.
+            Close the connection to the server and free up all associated resources. It is not normally required to call 
+            $close. But it can be useful to force a disconnect.
+            @param graceful if true, then close the socket gracefully after writing all pending data.
          */
         native function close(graceful: Boolean = true): Void 
 
         /**
-         *  Get the command line for this Cmd object.
-         *  @return The current cmdline string.
+            Get the command line for this Cmd object.
+            @return The current cmdline string.
          */
         native function get cmdline(): String
 
         /**
-         *  Set or reset the Cmd object's command line.
-         *  @param cmdline The command line as a string.
-         *  @throws IOError if the command line is malformed.
+            Set or reset the Cmd object's command line.
+            @param cmdline The command line as a string.
+            @throws IOError if the command line is malformed.
          */
         native function set cmdline(cmdlineString: String): Void
 
         /**
-         *  Return a stream object for the command's stderr output 
-         *  @returns A stream channel opened for reading 
+            Return a stream object for the command's stderr output 
+            @returns A stream channel opened for reading 
          */
         native function get error(): Stream
 
         /**
-         *  Get the current array of environment strings the command will use when it is started.
-         *  @returns An object hash of environment strings if an environment has been defined. Otherwise null will be
-         *      returned.
+            Get the current array of environment strings the command will use when it is started.
+            @returns An object hash of environment strings if an environment has been defined. Otherwise null will be
+                returned.
          */
         native function get env(): Object
 
         /**
-         *  Set the current environment for the command
-         *  @param values Object hash of environment strings to pass to the command when it is started.
+            Set the current environment for the command
+            @param values Object hash of environment strings to pass to the command when it is started.
          */
         native function set env(values: Object): Void
 
         /**
-         *  Flush any buffered write data to the command
-         *  @param graceful If true, then write all pending data.
+            Flush any buffered write data to the command
+            @param graceful If true, then write all pending data.
          */
         native function flush(graceful: Boolean = true): Void
 
         /**
-         *  Read a block of output data from the command. This reads from the command's standard output. Use the $error
-         *  stream to read from the command's standard error channel.
-         *  @param buffer Destination byte array for the read data.
-         *  @param offset Offset in the byte array to place the data. If offset is not supplied, data is appended at the 
-         *      current byte array write position.
-         *  @param count Number of bytes to read. 
-         *  @returns a count of the bytes actually read. Returns zero if no data is available. Returns -1 when the end of 
-         *      the output data has been reached.
-         *  @throws IOError if an I/O error occurs.
+            Read a block of output data from the command. This reads from the command's standard output. Use the $error
+            stream to read from the command's standard error channel.
+            @param buffer Destination byte array for the read data.
+            @param offset Offset in the byte array to place the data. If offset is not supplied, data is appended at the 
+                current byte array write position.
+            @param count Number of bytes to read. 
+            @returns a count of the bytes actually read. Returns zero if no data is available. Returns -1 when the end of 
+                the output data has been reached.
+            @throws IOError if an I/O error occurs.
          */
         native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
 
         /**
-         *  Read the data from the command output as a string. This reads from the command's standard output. 
-         *  @param count of bytes to read. Returns the entire output data contents if count is -1.
-         *  @returns a string of $count characters beginning at the start of the output data.
-         *  @throws IOError if an I/O error occurs.
+            Read the data from the command output as a string. This reads from the command's standard output. 
+            @param count of bytes to read. Returns the entire output data contents if count is -1.
+            @returns a string of $count characters beginning at the start of the output data.
+            @throws IOError if an I/O error occurs.
          */
         native function readString(count: Number = -1): String
 
         /**
-         *  Read the data from the command as an array of lines. This reads from the command's standard output.
-         *  @param count of linese to read. Returns the entire output contents if count is -1.
-         *  @returns a string containing count lines of data starting with the first line of output data
-         *  @throws IOError if an I/O error occurs.
+            Read the data from the command as an array of lines. This reads from the command's standard output.
+            @param count of linese to read. Returns the entire output contents if count is -1.
+            @returns a string containing count lines of data starting with the first line of output data
+            @throws IOError if an I/O error occurs.
          */
         native function readLines(count: Number = -1): Array
 
         /**
-         *  Read the command output as an XML document. This reads from the command's standard output.
-         *  @returns the output content as an XML object 
-         *  @throws IOError if an I/O error occurs.
+            Read the command output as an XML document. This reads from the command's standard output.
+            @returns the output content as an XML object 
+            @throws IOError if an I/O error occurs.
          */
         native function readXml(): XML
 
         /**
-         *  Return the command output data as a string. This is an alias for $readString() but it will cache the 
-         *      output data and may be called multiple times. This reads from the command's standard output.
-         *  @returns the output as a string of characters.
-         *  @throws IOError if an I/O error occurs.
+            Return the command output data as a string. This is an alias for $readString() but it will cache the 
+                output data and may be called multiple times. This reads from the command's standard output.
+            @returns the output as a string of characters.
+            @throws IOError if an I/O error occurs.
          */
         function get response(): String {
             if (!_response) {
@@ -144,28 +146,28 @@ module ejs {
         }
 
         /**
-         *  Define a callback to be invoked for readable and/or writable events. Callbacks are used when writing event
-         *  based programs that must not block. When a callback is defined, the $read and $write routines will not block. 
-         *  WARNING: this feature is experimental and is not supported.
-         *  @param eventMask Mask of events of interest. Select from Read, Write.
-         *  @param cb Callback function to invoke in response to I/O events.
-         *  <pre>
-         *      function callback(e: Event): Void
-         *  </pre>
-         *  Where e.data == http. The event arg may be either a CmdDataEvent or a HtttpErrorEvent. The callback is
-         *  invoked when there is an error, response data to read  or on end of request where $available == 0 and a read
-         *      will return null). It may also invoked to signal that the underlying socket can accept write data. 
-         *  The CmdError event will be passed  on any request processing errors. Does not include remote server errors.
+            Define a callback to be invoked for readable and/or writable events. Callbacks are used when writing event
+            based programs that must not block. When a callback is defined, the $read and $write routines will not block. 
+            WARNING: this feature is experimental and is not supported.
+            @param eventMask Mask of events of interest. Select from Read, Write.
+            @param cb Callback function to invoke in response to I/O events.
+            <pre>
+                function callback(e: Event): Void
+            </pre>
+            Where e.data == http. The event arg may be either a CmdDataEvent or a HtttpErrorEvent. The callback is
+            invoked when there is an error, response data to read  or on end of request where $available == 0 and a read
+                will return null). It may also invoked to signal that the underlying socket can accept write data. 
+            The CmdError event will be passed  on any request processing errors. Does not include remote server errors.
          */
         native function setCallback(eventMask: Number, cb: Function): Void
 
         /**
-         *  Issue a HTTP request for the current method and cmdline. The HTTP method should be defined via the $method 
-         *  property and cmdline via the $cmdline property. This routine is typically not used. Rather $get, $head, 
-         *  $post or $put are used instead.
-         *  @param cmdline New cmdline to use. This overrides any previously defined cmdline for the Cmd object.
-         *  @param options Command options. Sames as options in $Cmd
-         *  @throws IOError if the request was cannot be issued to the remote server.
+            Issue a HTTP request for the current method and cmdline. The HTTP method should be defined via the $method 
+            property and cmdline via the $cmdline property. This routine is typically not used. Rather $get, $head, 
+            $post or $put are used instead.
+            @param cmdline New cmdline to use. This overrides any previously defined cmdline for the Cmd object.
+            @param options Command options. Sames as options in $Cmd
+            @throws IOError if the request was cannot be issued to the remote server.
          */
         native function start(cmdline: String = null, options: Object = {}): Void
 
@@ -173,56 +175,56 @@ module ejs {
         native function get status(): Number
 
         /**
-         *  Get the request timeout. 
-         *  @returns Number of milliseconds for requests to block while attempting the request.
+            Get the request timeout. 
+            @returns Number of milliseconds for requests to block while attempting the request.
          */
         native function get timeout(): Number
 
         /**
-         *  Set the request timeout.
-         *  @param timeout Number of milliseconds to block while attempting requests. -1 means no timeout.
+            Set the request timeout.
+            @param timeout Number of milliseconds to block while attempting requests. -1 means no timeout.
          */
         native function set timeout(timeout: Number): Void
 
 //  TODO - could this return the exit status
         /**
-         *  Wait for a request to complete.
-         *  @param timeout Time in seconds to wait for the request to complete
-         *  @return True if the request successfully completes.
+            Wait for a request to complete.
+            @param timeout Time in seconds to wait for the request to complete
+            @return True if the request successfully completes.
          */
         native function wait(timeout: Number = -1): Boolean
 
         /**
-         *  Write body data to the request stream. The write call blocks while writing data. The Cmd.contentLength should 
-         *  normally be set prior to writing any data to ensure that the request "Content-length" header is properly 
-         *  defined. If the body length has not been defined, the data will be transferred using chunked transfers. In
-         *  this case, you should call write() with no data to signify the end of the write stream.
-         *  the Content-Length header will not be defined and the remote server will have to close the underling 
-         *  HTTP connection at the completion of the request. This will prevent HTTP keep-alive for subsequent 
-         *  requests.
-         *  @param data Data objects to write to the request stream. Data is written raw and is not encoded or converted. 
-         *      However, write intelligently handles arrays such that, each element of the array will be written. 
-         *      If encoding of write data is required, use the BinaryStream filter. 
-         *  @throws StateError if the Cmd method is not set to POST.
-         *  @throws IOError if more post data is written than specified via the contentLength property.
+            Write body data to the request stream. The write call blocks while writing data. The Cmd.contentLength should 
+            normally be set prior to writing any data to ensure that the request "Content-length" header is properly 
+            defined. If the body length has not been defined, the data will be transferred using chunked transfers. In
+            this case, you should call write() with no data to signify the end of the write stream.
+            the Content-Length header will not be defined and the remote server will have to close the underling 
+            HTTP connection at the completion of the request. This will prevent HTTP keep-alive for subsequent 
+            requests.
+            @param data Data objects to write to the request stream. Data is written raw and is not encoded or converted. 
+                However, write intelligently handles arrays such that, each element of the array will be written. 
+                If encoding of write data is required, use the BinaryStream filter. 
+            @throws StateError if the Cmd method is not set to POST.
+            @throws IOError if more post data is written than specified via the contentLength property.
          */
         native function write(...data): Void
 
         /* STATIC METHODS */
 
         /*
-         *  Run a command using the system command shell and wait for completion. This supports pipelines.
+            Run a command using the system command shell and wait for completion. This supports pipelines.
          */
         static function sh(cmdline: String, data: String = null): String
             run(("/bin/sh -c \"" + cmdline + "\"").trim('\n'), data)
 
         /**
-         *  Execute a command/program.
-         *  @param command Command or program to execute
-         *  @param data Optional data to write to the command on it's standard input.
-         *  @returns The command output from it's standard output.
-         *  @throws IOError if the command exits with non-zero status. The exception object will contain the command's
-         *      standard error output. 
+            Execute a command/program.
+            @param command Command or program to execute
+            @param data Optional data to write to the command on it's standard input.
+            @returns The command output from it's standard output.
+            @throws IOError if the command exits with non-zero status. The exception object will contain the command's
+                standard error output. 
          */
         native static function run(cmdline: String, data: String = null): String {
             let cmd = new Cmd(cmdline)
@@ -244,17 +246,17 @@ module ejs {
     }
 
     /**
-     *  Data event issued to the callback function.
+        Data event issued to the callback function.
      */
     class CmdDataEvent extends Event {
         /**
-         *  Mask of pending events. Set to include $Read and/or $Write values.
+            Mask of pending events. Set to include $Read and/or $Write values.
          */
         public var eventMask: Number
     }
 
     /**
-     *  Error event issued to the callback function if any errors occur dcmdlineng an Cmd request.
+        Error event issued to the callback function if any errors occur dcmdlineng an Cmd request.
      */
     class CmdErrorEvent extends Event {
     }
@@ -263,31 +265,31 @@ module ejs {
 
 
 /*
- *  @copy   default
- *  
- *  Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
- *  Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.
- *  
- *  This software is distributed under commercial and open source licenses.
- *  You may use the GPL open source license described below or you may acquire 
- *  a commercial license from Embedthis Software. You agree to be fully bound 
- *  by the terms of either license. Consult the LICENSE.TXT distributed with 
- *  this software for full details.
- *  
- *  This software is open source; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the 
- *  Free Software Foundation; either version 2 of the License, or (at your 
- *  option) any later version. See the GNU General Public License for more 
- *  details at: http://www.embedthis.com/downloads/gplLicense.html
- *  
- *  This program is distributed WITHOUT ANY WARRANTY; without even the 
- *  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- *  
- *  This GPL license does NOT permit incorporating this software into 
- *  proprietary programs. If you are unable to comply with the GPL, you must
- *  acquire a commercial license to use this software. Commercial licenses 
- *  for this software and support services are available from Embedthis 
- *  Software at http://www.embedthis.com 
- *  
- *  @end
+    @copy   default
+    
+    Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.
+    
+    This software is distributed under commercial and open source licenses.
+    You may use the GPL open source license described below or you may acquire 
+    a commercial license from Embedthis Software. You agree to be fully bound 
+    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    this software for full details.
+    
+    This software is open source; you can redistribute it and/or modify it 
+    under the terms of the GNU General Public License as published by the 
+    Free Software Foundation; either version 2 of the License, or (at your 
+    option) any later version. See the GNU General Public License for more 
+    details at: http://www.embedthis.com/downloads/gplLicense.html
+    
+    This program is distributed WITHOUT ANY WARRANTY; without even the 
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+    
+    This GPL license does NOT permit incorporating this software into 
+    proprietary programs. If you are unable to comply with the GPL, you must
+    acquire a commercial license to use this software. Commercial licenses 
+    for this software and support services are available from Embedthis 
+    Software at http://www.embedthis.com 
+    
+    @end
  */

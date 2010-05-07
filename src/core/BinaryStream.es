@@ -72,7 +72,8 @@ module ejs {
         native function set async(enable: Boolean): Void
 
         /** 
-            The number of bytes available to read
+            The number of bytes available to read without blocking. This is the number of bytes internally buffered
+            in the binary stream and does not include any data buffered downstream.
             @return the number of available bytes
          */
         function get available(): Number
