@@ -71,8 +71,8 @@ struct EjsXML;
 
 /*
     Trait, type, function and property attributes. These are sometimes combined into a single attributes word.
-    MOB -- should add TRAIT_OVERRIDE
  */
+//  MOB -- which of these are stored in trait->attributes
 #define EJS_TRAIT_BUILTIN               0x1         /**< Property can take a null value */
 #define EJS_TRAIT_CAST_NULLS            0x2         /**< Property casts nulls */
 #define EJS_TRAIT_DELETED               0x4         /**< Property has been deleted */
@@ -83,32 +83,35 @@ struct EjsXML;
 #define EJS_TRAIT_READONLY              0x80        /**< !Writable */
 #define EJS_TRAIT_SETTER                0x100       /**< Property is a settter */
 #define EJS_TRAIT_THROW_NULLS           0x200       /**< Property rejects null */
+#define EJS_TRAIT_MASK                  0x3FF       /**< Mask of trait attributes */
 
-#define EJS_TYPE_CALLS_SUPER            0x400       /**< Constructor calls super() */
-#define EJS_TYPE_DYNAMIC_INSTANCE       0x800       /**< Instances are not sealed */
-#define EJS_TYPE_FINAL                  0x1000      /**< Type can't be subclassed */
-#define EJS_TYPE_FIXUP                  0x2000      /**< Type needs to inherit base types properties */
-#define EJS_TYPE_HAS_CONSTRUCTOR        0x4000      /**< Type has a constructor */
-#define EJS_TYPE_HAS_INITIALIZER        0x8000      /**< Type has an initializer */
-#define EJS_TYPE_HAS_TYPE_INITIALIZER   0x10000     /**< Type has an initializer */
-#define EJS_TYPE_IMMUTABLE              0x20000     /**< Instances are immutable */
-#define EJS_TYPE_INTERFACE              0x40000     /**< Class is an interface */
+#define EJS_PROP_HAS_VALUE              0x400       /**< Property has a value record */
+#define EJS_PROP_NATIVE                 0x800       /**< Property is backed by native code */
+#define EJS_PROP_STATIC                 0x1000      /**< Class static property */
+#define EJS_PROP_SHARED                 0x2000      /**< Share static method with all subclasses */
+#define EJS_PROP_ENUMERABLE             0x4000      /**< Property will be enumerable (compiler use only) */
 
-#define EJS_FUN_CONSTRUCTOR             0x80000      /**< Method is a constructor */
-#define EJS_FUN_FULL_SCOPE              0x100000     /**< Function needs closure when defined */
-#define EJS_FUN_HAS_RETURN              0x200000     /**< Function has a return statement */
-#define EJS_FUN_INITIALIZER             0x400000     /**< Initializer code */
-#define EJS_FUN_OVERRIDE                0x800000     /**< Override base type */
-#if UNUSED
-#define EJS_FUN_INHERITED               0x1000000    /**< Override function is inherited */
-#endif
-#define EJS_FUN_REST_ARGS               0x2000000    /**< Parameter is a "..." rest */
+#define EJS_FUN_CONSTRUCTOR             0x8000      /**< Method is a constructor */
+#define EJS_FUN_FULL_SCOPE              0x10000     /**< Function needs closure when defined */
+#define EJS_FUN_HAS_RETURN              0x20000     /**< Function has a return statement */
+#define EJS_FUN_INITIALIZER             0x40000     /**< Type initializer code */
+#define EJS_FUN_OVERRIDE                0x80000     /**< Override base type */
+#define EJS_FUN_MODULE_INITIALIZER      0x100000    /**< Module initializer */
+#define EJS_FUN_REST_ARGS               0x200000    /**< Parameter is a "..." rest */
 
-#define EJS_PROP_HAS_VALUE              0x4000000    /**< Property has a value record */
-#define EJS_PROP_NATIVE                 0x8000000    /**< Property is backed by native code */
-#define EJS_PROP_STATIC                 0x10000000   /**< Class static property */
-#define EJS_PROP_SHARED                 0x20000000   /**< Share static method with all subclasses */
-#define EJS_PROP_ENUMERABLE             0x40000000   /**< Property will be enumerable (compiler use only) */
+/*
+    These attributes are never stored in EjsTrait but are often passed in "attributes"
+ */
+#define EJS_TYPE_CALLS_SUPER            0x400000    /**< Constructor calls super() */
+#define EJS_TYPE_COPY_PROTOTYPE         0x800000    /**< Instance copies prototype properties */
+#define EJS_TYPE_DYNAMIC_INSTANCE       0x1000000   /**< Instances are not sealed */
+#define EJS_TYPE_FINAL                  0x2000000   /**< Type can't be subclassed */
+#define EJS_TYPE_FIXUP                  0x4000000   /**< Type needs to inherit base types properties */
+#define EJS_TYPE_HAS_CONSTRUCTOR        0x8000000   /**< Type has a constructor */
+#define EJS_TYPE_HAS_TYPE_INITIALIZER   0x10000000  /**< Type has an initializer */
+#define EJS_TYPE_IMMUTABLE              0x20000000  /**< Instances are immutable */
+#define EJS_TYPE_INTERFACE              0x40000000  /**< Class is an interface */
+#define EJS_TYPE_ORPHAN                 0x80000000  /**< Don't inherit properties from parent */
 
 /*
     Interpreter flags
@@ -350,7 +353,7 @@ typedef struct Ejs {
 
     struct EjsService   *service;           /**< Back pointer to the service */
     struct Ejs          *master;            /**< Inherit builtin types from the master */
-    struct EjsGC               gc;                 /**< Garbage collector state */
+    struct EjsGC        gc;                 /**< Garbage collector state */
     EjsGen              *currentGeneration; /**< Current allocation generation */
     MprHeap             *heap;              /**< Allocation heap */
     cchar               *bootSearch;        /**< Module search when bootstrapping the VM */
@@ -764,7 +767,7 @@ extern void ejsDestroy(Ejs *ejs, EjsObj *vp);
     @ingroup EjsObj
  */
 extern int ejsDefineProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *qname, struct EjsType *type, 
-    int attributes, EjsObj *value);
+    int64 attributes, EjsObj *value);
 
 /** 
     Delete a property
@@ -1177,12 +1180,6 @@ typedef struct EjsFunction {
     EjsObj          *thisObj;               /**< Bound "this" for method extraction */
     struct EjsType  *resultType;            /**< Return type of method */
 
-#if UNUSED
-    //  MOB -- be great to do without these
-    EjsObj          *owner;                 /**< Back reference to original owning block */
-    int             slotNum;                /**< Slot number in owner for this function */
-#endif
-
 #if BLD_HAS_UNNAMED_UNIONS
     union {
         struct {
@@ -1195,16 +1192,10 @@ typedef struct EjsFunction {
             uint    hasReturn: 1;           /**< Function has a return stmt */
             uint    inCatch: 1;             /**< Executing catch block */
             uint    inException: 1;         /**< Executing catch/finally exception processing */
-            uint    initializer: 1;         /**< Function is an initializer function */
-
-            //  MOB - move to traits
+            uint    initializer: 1;         /**< Function is a type initializer */
+            uint    moduleInitializer: 1;   /**< Function is a module initializer */
             uint    nativeProc: 1;          /**< Function is native procedure */
-#if UNUSED
-            uint    override: 1;            /**< Function overrides a base class method */
-#endif
             uint    rest: 1;                /**< Function has a "..." rest of args parameter */
-
-            //  MOB - move to traits
             uint    staticMethod: 1;        /**< Function is a static method */
             uint    strict: 1;              /**< Language strict mode (vs standard) */
             uint    throwNulls: 1;          /**< Return type cannot be null */
@@ -1269,7 +1260,8 @@ typedef struct EjsFunction {
     @ingroup EjsFunction
  */
 extern EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *code, int codeLen, int numArgs, int numDefault,
-    int numExceptions, struct EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, int strict);
+    int numExceptions, struct EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, 
+    int strict);
 
 extern EjsObj *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numSlots);
 extern void ejsCompleteFunction(Ejs *ejs, EjsFunction *fun);
@@ -2611,29 +2603,31 @@ typedef struct EjsType {
     struct EjsType  *baseType;                      /**< Base class */
     MprList         *implements;                    /**< List of implemented interfaces */
         
-#if UNUSED
-    //  MOB -- who uses this?
-    uint            subTypeCount            :  8;   /**< Length of baseType chain governed by EJS_MAX_BASE_CLASS */
-#endif
-
     uint            callsSuper              :  1;   /**< Constructor calls super() */
+    uint            copyPrototype           :  1;   /**< Instances copy prototype slots */
     uint            dontPool                :  1;   /**< Don't pool instances */
     uint            dynamicInstance         :  1;   /**< Object instances may add properties */
     uint            final                   :  1;   /**< Type is final */
     uint            hasBaseConstructors     :  1;   /**< Base types has constructors */
+#if UNUSED
     uint            hasBaseInitializers     :  1;   /**< Base types have initializers */
+    uint            hasInitializer          :  1;   /**< Type has instance level initialization code */
+#endif
+    //  MOB -- rename has BaseInitializers
     uint            hasBaseStaticInitializers: 1;   /**< Base types have initializers */
     uint            hasConstructor          :  1;   /**< Type has a constructor */
-    uint            hasInitializer          :  1;   /**< Type has instance level initialization code */
     uint            hasMeta                 :  1;   /**< Type has meta methods */
+
+    //  MOB -- rename hasInitializer
     uint            hasStaticInitializer    :  1;   /**< Type has static level initialization code */
     uint            immutable               :  1;   /**< Instances are immutable */
     uint            initialized             :  1;   /**< Static initializer has run */
     uint            isInterface             :  1;   /**< Interface vs class */
-    uint            dontCopyPrototype       :  1;   /**< Don't copy prototype properties for instances */
     uint            needFinalize            :  1;   /**< Instances need finalization */
     uint            needFixup               :  1;   /**< Slots need fixup */
     uint            numericIndicies         :  1;   /**< Instances support direct numeric indicies */
+    uint            orphan                  :  1;   /**< Type should not inherit super-class prototype properties */
+    uint            virtualSlots            :  1;   /**< Properties are not stored in slots[] */
     
     short           id;                             /**< Unique type id */
     ushort          instanceSize;                   /**< Size of instances in bytes */
@@ -2641,12 +2635,7 @@ typedef struct EjsType {
     struct EjsModule *module;                       /**< Module owning the type - stores the constant pool */
     void            *typeData;                      /**< Type specific data */
 
-#if UNUSED
-    /*
-        Denormalized for convenience (type->baseType->block.obj.numSlots, type->prototype->numSlots)
-     */
-    int             numInherited;
-#endif
+    //  MOB -- rename numInherited
     int             numPrototypeInherited;
 } EjsType;
 
@@ -2686,6 +2675,7 @@ typedef struct EjsType {
     @param numTypeProp Number of type (class) properties for the type. These include static properties and methods.
     @param numInstanceProp Number of instance properties.
     @param attributes Attribute mask to modify how the type is initialized. Valid values include:
+        MOB -- fix these
         @li EJS_ATTR_BLOCK_HELPERS - Type uses EjsBlock helpers
         @li EJS_TYPE_CALLS_SUPER - Type calls super()
         @li EJS_TYPE_DYNAMIC_INSTANCE - Instance objects are dynamic
@@ -2703,10 +2693,10 @@ typedef struct EjsType {
     @ingroup EjsType EjsType
  */
 extern EjsType *ejsCreateType(Ejs *ejs, EjsName *name, struct EjsModule *up, EjsType *baseType, int size, 
-    int slotNum, int numTypeProp, int numInstanceProp, int attributes, void *data);
+    int slotNum, int numTypeProp, int numInstanceProp, int64 attributes, void *data);
 
 extern EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, struct EjsModule *up, EjsType *baseType, 
-    int numTypeProp, int numInstanceProp, int attributes);
+    int numTypeProp, int numInstanceProp, int64 attributes);
 
 extern EjsObj *ejsCreatePrototype(Ejs *ejs, EjsType *type, int numProp);
 extern EjsType *ejsCreateTypeFromFunction(Ejs *ejs, struct EjsFunction *fun);
@@ -2776,7 +2766,7 @@ extern int ejsBindAccess(Ejs *ejs, void *obj, int slotNum, EjsProc getter, EjsPr
     @ingroup EjsType
  */
 extern int ejsDefineInstanceProperty(Ejs *ejs, EjsType *type, int slotNum, EjsName *name, EjsType *propType, 
-                    int attributes, EjsObj *value);
+    int attributes, EjsObj *value);
 
 /** 
     Get a type
@@ -2810,7 +2800,7 @@ extern void     ejsTypeNeedsFixup(Ejs *ejs, EjsType *type);
 extern int      ejsGetTypeSize(Ejs *ejs, EjsType *type);
 
 extern EjsType  *ejsCreateCoreType(Ejs *ejs, EjsName *name, EjsType *extendsType, int size, int slotNum, 
-                    int numTypeProp, int numInstanceProp, int attributes);
+    int numTypeProp, int numInstanceProp, int64 attributes);
 
 extern EjsType  *ejsCreateNativeType(Ejs *ejs, cchar *space, cchar *name, int id, int size);
 extern EjsType  *ejsConfigureNativeType(Ejs *ejs, cchar *space, cchar *name, int size);

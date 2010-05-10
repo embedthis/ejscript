@@ -1154,6 +1154,7 @@ void ejsCreateXMLType(Ejs *ejs)
     EjsType     *type;
 
     type = ejs->xmlType = ejsCreateNativeType(ejs, EJS_EJS_NAMESPACE, "XML", 0, sizeof(EjsXML));
+    type->orphan = 1;
 
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
@@ -1195,11 +1196,11 @@ void ejsConfigureXMLType(Ejs *ejs)
     /*
         Override these methods
      */
-    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) xmlToString);
-    ejsBindMethod(ejs, prototype, ES_Object_toJSON, (EjsProc) xmlToJson);
+    ejsBindMethod(ejs, prototype, ES_XML_toString, (EjsProc) xmlToString);
+    ejsBindMethod(ejs, prototype, ES_XML_toJSON, (EjsProc) xmlToJson);
 
-    ejsBindMethod(ejs, prototype, ES_Object_get, getXmlIterator);
-    ejsBindMethod(ejs, prototype, ES_Object_getValues, getXmlValues);
+    ejsBindMethod(ejs, prototype, ES_XML_get, getXmlIterator);
+    ejsBindMethod(ejs, prototype, ES_XML_getValues, getXmlValues);
 
 #if FUTURE
     ejsBindMethod(ejs, prototype, ES_XML_parent, parent);

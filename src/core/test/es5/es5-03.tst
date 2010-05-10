@@ -3,6 +3,8 @@
  */
 
 
+/*  MOB
+
 //  getOwnProperties for key types. This gets non-enumerable properties as well.
 
 assert(Object.getOwnPropertyNames(Array).sort() == "length,prototype")
@@ -26,3 +28,4 @@ assert(Object.keys(Number).sort() == "")
 assert(Object.keys(Object).sort() == "")
 assert(Object.keys(String).sort() == "")
 
+*/

@@ -50,42 +50,15 @@ static inline EjsType *getOwningType(EjsObj *vp, int slotNum)
  */
 EjsObj *ejsCast(Ejs *ejs, EjsObj *vp, EjsType *type)
 {
-    EjsFunction     *fun;
-    EjsObj          *prototype;
-
     mprAssert(ejs);
     mprAssert(type);
+    mprAssert(vp);
 
     if (vp == 0) {
         vp = ejs->undefinedValue;
     }
     if (vp->type == type) {
         return vp;
-    }
-#if FUTURE
-    EjsName         qname;
-    if (type->hasMeta) {
-        return ejsRunFunctionByName(ejs, (EjsObj*) type, ejsName(&qname, EJS_META_NAMESPACE, "cast"), 
-            (EjsObj*) type, 1, &vp);
-        if ((slotNum = ejsLookupProperty(ejs, (EjsObj*) type, ejsName(&qname, EJS_META_NAMESPACE, "cast"))) >= 0) {
-            type->hasMeta
-        }
-    }
-#endif
-    if (type == ejs->stringType) {
-        if (vp == 0) {
-            return (EjsObj*) ejsCreateString(ejs, "undefined");
-        } else if (ejsIsString(vp)) {
-            return (EjsObj*) vp;
-        }
-        prototype = vp->type->prototype;
-        //  MOB BUG This should use ejsLookupVar
-        if (prototype->numSlots >= ES_Object_toString) {
-            if (ejsGetTraitAttributes((EjsObj*) prototype, ES_Object_toString) & EJS_FUN_OVERRIDE) {
-                fun = (EjsFunction*) ejsGetProperty(ejs, prototype, ES_Object_toString);
-                return (EjsObj*) ejsRunFunction(ejs, fun, vp, 0, NULL);
-            }
-        }
     }
     if (vp->type->helpers.cast) {
         return (vp->type->helpers.cast)(ejs, vp, type);
@@ -141,7 +114,7 @@ EjsObj *ejsClone(Ejs *ejs, EjsObj *vp, bool deep)
     Define a property and its traits.
     @return Return the slot number allocated for the property.
  */
-int ejsDefineProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *name, EjsType *propType, int attributes, EjsObj *value)
+int ejsDefineProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *name, EjsType *propType, int64 attributes, EjsObj *value)
 {
     mprAssert(name);
     mprAssert(name->name);
@@ -469,6 +442,7 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *vp, EjsObj *options)
     EjsFunction     *fn;
     EjsString       *result;
     EjsObj          *argv[1];
+    EjsName         qname;
     int             argc;
 
     if (vp == 0) {
@@ -479,7 +453,10 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *vp, EjsObj *options)
     }    
     vp->jsonVisited = 1;
     
-    fn = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) vp->type->prototype, ES_Object_toJSON);
+    fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) vp->type->prototype, ejsName(&qname, NULL, "toJSON"));
+    if (fn == 0) {
+        fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) ejs->objectType->prototype, &qname);        
+    }
     if (ejsIsFunction(fn)) {
         if (options) {
             argc = 1;
@@ -513,7 +490,6 @@ EjsObj *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
         return 0;
     }
     if (type->hasConstructor) {
-        mprAssert(type->hasInitializer);
         fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type->prototype, type->numPrototypeInherited);
         if (fun == 0 || !ejsIsFunction(fun)) {
             return 0;
@@ -521,8 +497,6 @@ EjsObj *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
         vp->permanent = 1;
         ejsRunFunction(ejs, fun, vp, argc, argv);
         vp->permanent = 0;
-    } else {
-        mprAssert(!type->hasInitializer);
     }
     return vp;
 }

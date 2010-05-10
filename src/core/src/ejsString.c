@@ -1922,6 +1922,7 @@ void ejsCreateStringType(Ejs *ejs)
     EjsType     *type;
 
     type = ejs->stringType = ejsCreateNativeType(ejs, "ejs", "String", ES_String, sizeof(EjsString));
+    type->orphan = 1;
 
     type->helpers.cast = (EjsCastHelper) castString;
     type->helpers.clone = (EjsCloneHelper) cloneString;
@@ -1961,8 +1962,8 @@ void ejsConfigureStringType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_String_contains, (EjsProc) containsString);
     ejsBindMethod(ejs, prototype, ES_String_endsWith, (EjsProc) endsWith);
     ejsBindMethod(ejs, prototype, ES_String_format, (EjsProc) formatString);
-    ejsBindMethod(ejs, prototype, ES_Object_get, (EjsProc) getStringIterator);
-    ejsBindMethod(ejs, prototype, ES_Object_getValues, (EjsProc) getStringValues);
+    ejsBindMethod(ejs, prototype, ES_String_get, (EjsProc) getStringIterator);
+    ejsBindMethod(ejs, prototype, ES_String_getValues, (EjsProc) getStringValues);
     ejsBindMethod(ejs, prototype, ES_String_indexOf, (EjsProc) indexOf);
     ejsBindMethod(ejs, prototype, ES_String_isDigit, (EjsProc) isDigit);
     ejsBindMethod(ejs, prototype, ES_String_isAlpha, (EjsProc) isAlpha);
@@ -1984,10 +1985,10 @@ void ejsConfigureStringType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_String_startsWith, (EjsProc) startsWith);
     ejsBindMethod(ejs, prototype, ES_String_substring, (EjsProc) substring);
     ejsBindMethod(ejs, prototype, ES_String_toCamel, (EjsProc) toCamel);
-    ejsBindMethod(ejs, prototype, ES_Object_toJSON, (EjsProc) stringToJSON);
+    ejsBindMethod(ejs, prototype, ES_String_toJSON, (EjsProc) stringToJSON);
     ejsBindMethod(ejs, prototype, ES_String_toLower, (EjsProc) toLower);
     ejsBindMethod(ejs, prototype, ES_String_toPascal, (EjsProc) toPascal);
-    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) stringToString);
+    ejsBindMethod(ejs, prototype, ES_String_toString, (EjsProc) stringToString);
     ejsBindMethod(ejs, prototype, ES_String_toUpper, (EjsProc) toUpper);
     ejsBindMethod(ejs, prototype, ES_String_tokenize, (EjsProc) tokenize);
     ejsBindMethod(ejs, prototype, ES_String_trim, (EjsProc) trimString);

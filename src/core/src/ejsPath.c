@@ -14,6 +14,15 @@ static char *getPathString(Ejs *ejs, EjsObj *vp);
 
 /************************************ Helpers *********************************/
 
+static EjsObj *castPath(Ejs *ejs, EjsPath *fp, EjsType *type)
+{
+    if (type->id == ES_String) {
+        return (EjsObj*) ejsCreateString(ejs, fp->path);
+    }
+    return (ejs->objectType->helpers.cast)(ejs, (EjsObj*) fp, type);
+}
+
+
 static EjsPath *clonePath(Ejs *ejs, EjsPath *src, bool deep)
 {
     EjsPath     *dest;
@@ -1279,6 +1288,7 @@ void ejsConfigurePathType(Ejs *ejs)
     ejs->pathType = type;
     prototype = type->prototype;
 
+    type->helpers.cast = (EjsCastHelper) castPath;
     type->helpers.clone = (EjsCloneHelper) clonePath;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokePathOperator;
     type->helpers.destroy = (EjsDestroyHelper) destroyPath;
@@ -1295,6 +1305,8 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_exists, (EjsProc) getPathExists);
     ejsBindMethod(ejs, prototype, ES_Path_extension, (EjsProc) getPathExtension);
     ejsBindMethod(ejs, prototype, ES_Path_files, (EjsProc) getPathFiles);
+    ejsBindMethod(ejs, prototype, ES_Path_get, (EjsProc) getPathIterator);
+    ejsBindMethod(ejs, prototype, ES_Path_getValues, (EjsProc) getPathValues);
     ejsBindMethod(ejs, prototype, ES_Path_hasDrive, (EjsProc) pathHasDrive);
     ejsBindMethod(ejs, prototype, ES_Path_isAbsolute, (EjsProc) isPathAbsolute);
     ejsBindMethod(ejs, prototype, ES_Path_isDir, (EjsProc) isPathDir);
@@ -1324,13 +1336,10 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_same, (EjsProc) isPathSame);
     ejsBindMethod(ejs, prototype, ES_Path_separator, (EjsProc) pathSeparator);
     ejsBindMethod(ejs, prototype, ES_Path_size, (EjsProc) getPathFileSize);
+    ejsBindMethod(ejs, prototype, ES_Path_toJSON, (EjsProc) pathToJSON);
+    ejsBindMethod(ejs, prototype, ES_Path_toString, (EjsProc) pathToString);
     ejsBindMethod(ejs, prototype, ES_Path_trimExt, (EjsProc) trimExt);
     ejsBindMethod(ejs, prototype, ES_Path_truncate, (EjsProc) truncatePath);
-
-    ejsBindMethod(ejs, prototype, ES_Object_get, (EjsProc) getPathIterator);
-    ejsBindMethod(ejs, prototype, ES_Object_getValues, (EjsProc) getPathValues);
-    ejsBindMethod(ejs, prototype, ES_Object_toJSON, (EjsProc) pathToJSON);
-    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) pathToString);
 }
 
 

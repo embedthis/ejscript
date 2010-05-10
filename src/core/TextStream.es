@@ -114,6 +114,7 @@ module ejs {
             @returns The number of new characters added to the input bufer
          */
         function fill(): Number {
+breakpoint()
             inbuf.compact()
             return nextStream.read(inbuf, -1)
         }
@@ -151,6 +152,7 @@ module ejs {
             let where = buffer.writePosition
             while (count > 0) {
                 if (inbuf.available == 0) {
+breakpoint()
                     if (fill() <= 0) {
                         if (total == 0) {
                             return null

@@ -42,6 +42,7 @@ static EcCodeGen *allocCodeBuffer(EcCompiler *cp);
 static void     badNode(EcCompiler *cp, EcNode *np);
 static void     copyCodeBuffer(EcCompiler *cp, EcCodeGen *dest, EcCodeGen *code);
 static void     createInitializer(EcCompiler *cp, EjsModule *mp);
+static void     discardBlockItems(EcCompiler *cp, int preserve);
 static void     discardStackItems(EcCompiler *cp, int preserve);
 static void     emitNamespace(EcCompiler *cp, EjsNamespace *nsp);
 static int      flushModule(MprFile *file, EcCodeGen *code);
@@ -365,7 +366,7 @@ static void genBreak(EcCompiler *cp, EcNode *np)
     ENTER(cp);
 
     state = cp->state;
-
+    discardBlockItems(cp, state->code->blockMark);
     if (state->captureBreak) {
         ecEncodeOpcode(cp, EJS_OP_FINALLY);
     }
@@ -406,6 +407,7 @@ static void genBlock(EcCompiler *cp, EcNode *np)
             ecEncodeOpcode(cp, EJS_OP_OPEN_BLOCK);
             ecEncodeNumber(cp, lookup->slotNum);
             ecEncodeNumber(cp, lookup->nthBlock);
+            state->code->blockCount++;
         }
         /*
             Emit block namespaces
@@ -426,6 +428,7 @@ static void genBlock(EcCompiler *cp, EcNode *np)
         }
         if (lookup->slotNum >= 0) {
             ecEncodeOpcode(cp, EJS_OP_CLOSE_BLOCK);
+            state->code->blockCount--;
         }
         cp->blockState = state->prevBlockState;
         ecAddNameConstant(cp, &np->qname);
@@ -462,6 +465,7 @@ static void genContinue(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
+    discardBlockItems(cp, cp->state->code->blockMark);
     if (cp->state->captureBreak) {
         ecEncodeOpcode(cp, EJS_OP_FINALLY);
     }
@@ -1279,7 +1283,9 @@ static void genClass(EcCompiler *cp, EcNode *np)
 
         if (constructorNode->function.isDefaultConstructor) {
             /*
-                Generate the default constructor. Append the default constructor instructions after any initialization code.
+                No constructor exists, so generate the default constructor. Append the default constructor 
+                instructions after any initialization code. Will only get here if there is no required instance 
+                initialization.
              */
             baseType = type->baseType;
             if (baseType && baseType->hasConstructor) {
@@ -1295,12 +1301,12 @@ static void genClass(EcCompiler *cp, EcNode *np)
             setFunctionCode(cp, constructor, code);
             ecAddConstant(cp, EJS_PUBLIC_NAMESPACE);
             ecAddConstant(cp, EJS_CONSTRUCTOR_NAMESPACE);
+            //MOB - was type->hasInitializer
 
-        } else if (type->hasInitializer) {
-            mprAssert(type->hasConstructor);
-
+        } else if (type->hasConstructor) {
             /*
-                Inject initializer code into the pre-existing constructor code. It is injected before any constructor code.
+                Inject instance initializer code into the pre-existing constructor code. 
+                It is injected before any constructor code.
              */
             initializerLen = mprGetBufLength(codeBuf);
             mprAssert(initializerLen >= 0);
@@ -1314,14 +1320,12 @@ static void genClass(EcCompiler *cp, EcNode *np)
                     genError(cp, np, "Can't allocate code buffer");
                     LEAVE(cp);
                 }
-
                 mprMemcpy((char*) buf, initializerLen, mprGetBufStart(codeBuf), initializerLen);
                 if (constructorLen) {
                     mprMemcpy((char*) &buf[initializerLen], constructorLen, (char*) constructor->body.code.byteCode, 
                         constructorLen);
                 }
                 ejsSetFunctionCode(constructor, buf, len);
-
                 /*
                     Adjust existing exception blocks to accomodate injected code.
                     Then define new try/catch blocks encountered.
@@ -3495,8 +3499,10 @@ static EcCodeGen *allocCodeBuffer(EcCompiler *cp)
      */
     if (state->code) {
         code->jumpKinds = state->code->jumpKinds;
+        code->blockCount = state->code->blockCount;
         code->stackCount = state->code->stackCount;
         code->breakMark = state->code->breakMark;
+        code->blockMark = state->code->blockMark;
     }
     return code;
 }
@@ -4207,6 +4213,24 @@ static void discardStackItems(EcCompiler *cp, int preserve)
 }
 
 
+static void discardBlockItems(EcCompiler *cp, int preserve)
+{
+    EcCodeGen       *code;
+    int             count, i;
+
+    code = cp->state->code;
+    mprAssert(code);
+    count = code->blockCount - preserve;
+
+    for (i = 0; i < count; i++) {
+        ecEncodeOpcode(cp, EJS_OP_CLOSE_BLOCK);
+    }
+    code->blockCount -= count;
+    mprAssert(code->blockCount >= 0);
+    mprLog(cp, level, "Block level %d, after discard\n", code->blockCount);
+}
+
+
 /*
     Set the default code buffer
  */
@@ -4312,6 +4336,7 @@ void ecStartBreakableStatement(EcCompiler *cp, int kinds)
     state->code->jumpKinds |= kinds;
     state->breakState = state;
     state->code->breakMark = state->code->stackCount;
+    state->code->blockMark = state->code->blockCount;
 }
 
 /*

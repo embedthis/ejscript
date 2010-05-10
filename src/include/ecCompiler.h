@@ -692,9 +692,9 @@ typedef struct EcNode {
 #define T_REGEXP 170
 #define T_REQUIRE 171
 #define T_SHARED 172
-
-#define T_NOP 173
-#define T_ERR 174
+#define T_ORPHAN 173
+#define T_NOP 174
+#define T_ERR 175
 
 /*
     Group masks
@@ -861,7 +861,9 @@ typedef struct EcCodeGen {
     MprList     *exceptions;            /* Exception handlers for this code block */
     int         jumpKinds;              /* Kinds of jumps allowed */
     int         breakMark;              /* Stack item counter for the target for break/continue stmts */
+    int         blockMark;              /* Lexical block counter for the target for break/continue stmts */
     int         stackCount;             /* Current stack item counter */
+    int         blockCount;             /* Current block counter */
 } EcCodeGen;
 
 

@@ -195,7 +195,8 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     if (join(ejs, (EjsObj*) outsideWorker, timeout) < 0) {
         return ejs->undefinedValue;
     }
-    result = (EjsObj*) ejsToJSON(ejs, inside->result, NULL);
+    //  MOB was "ejs"
+    result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
         return ejs->nullValue;
     }
@@ -493,7 +494,8 @@ static EjsObj *workerPreeval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
         handleError(ejs, worker, inside->exception);
         return 0;
     }
-    result = (EjsObj*) ejsToJSON(ejs, inside->result, NULL);
+    //  MOB - first arg was "ejs"
+    result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
         return ejs->nullValue;
     }
@@ -527,7 +529,8 @@ static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
         handleError(ejs, worker, inside->exception);
         return 0;
     }
-    result = (EjsObj*) ejsToJSON(ejs, inside->result, NULL);
+    //  MOB - first arg was "ejs"
+    result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
         return ejs->nullValue;
     }

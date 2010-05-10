@@ -108,12 +108,14 @@ void ejsCreateIteratorType(Ejs *ejs)
 
     type = ejs->iteratorType = ejsCreateNativeType(ejs, EJS_ITERATOR_NAMESPACE, "Iterator", 
         ES_Iterator, sizeof(EjsIterator));
+    type->orphan = 1;
     ejs->iterator = (EjsIterator*) ejsCreate(ejs, type, 0);
 
     type->helpers.mark  = (EjsMarkHelper) markIteratorVar;
 
     type = ejs->stopIterationType = ejsCreateNativeType(ejs, EJS_ITERATOR_NAMESPACE, "StopIteration", 
         ES_StopIteration, sizeof(EjsObj));
+    type->orphan = 1;
 }
 
 

@@ -918,9 +918,9 @@ void ejsConfigureUriType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_Uri_reference, (EjsProc) uri_reference, (EjsProc) uri_set_reference);
     ejsBindMethod(ejs, prototype, ES_Uri_replaceExt, (EjsProc) uri_replaceExtension);
     ejsBindMethod(ejs, prototype, ES_Uri_same, (EjsProc) uri_same);
+    ejsBindMethod(ejs, prototype, ES_Uri_toString, (EjsProc) uri_toString);
     ejsBindMethod(ejs, prototype, ES_Uri_trimExt, (EjsProc) uri_trimExt);
     ejsBindAccess(ejs, prototype, ES_Uri_uri, (EjsProc) uri_toString, (EjsProc) uri_set_uri);
-    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) uri_toString);
 }
 
 /*

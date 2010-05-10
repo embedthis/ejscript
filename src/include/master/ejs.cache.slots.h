@@ -14,38 +14,39 @@
    Slots for the "ejs.cache" module 
  */
 
+/*
+   Prototype (instance) slots for "global" type 
+ */
+
 
 /*
     Class property slots for the "Cache" type 
  */
-#define ES_ejs_cache_Cache__origin                                     27
-#define ES_ejs_cache_Cache_Cache                                       27
-#define ES_ejs_cache_Cache__initializer__Cache_initializer             28
-#define ES_ejs_cache_Cache_cache                                       29
-#define ES_ejs_cache_Cache_read                                        30
-#define ES_ejs_cache_Cache_write                                       31
-#define ES_ejs_cache_Cache_remove                                      32
+#define ES_ejs_cache_Cache__initializer___Cache_                       0
+#define ES_ejs_cache_Cache_cache                                       1
 
-#define ES_ejs_cache_Cache_NUM_CLASS_PROP                              33
+#define ES_ejs_cache_Cache_NUM_CLASS_PROP                              2
 
 /*
- * Instance slots for "Cache" type 
+   Prototype (instance) slots for "Cache" type 
  */
-#define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           0
+#define ES_ejs_cache_Cache_constructor                                 0
+#define ES_ejs_cache_Cache_clone                                       1
+#define ES_ejs_cache_Cache_get                                         2
+#define ES_ejs_cache_Cache_getValues                                   3
+#define ES_ejs_cache_Cache_hasOwnProperty                              4
+#define ES_ejs_cache_Cache_isPrototypeOf                               5
+#define ES_ejs_cache_Cache_propertyIsEnumerable                        6
+#define ES_ejs_cache_Cache_toJSON                                      7
+#define ES_ejs_cache_Cache_toLocaleString                              8
+#define ES_ejs_cache_Cache_toString                                    9
+#define ES_ejs_cache_Cache_valueOf                                     10
+#define ES_ejs_cache_Cache_Cache                                       11
+#define ES_ejs_cache_Cache_read                                        12
+#define ES_ejs_cache_Cache_write                                       13
+#define ES_ejs_cache_Cache_remove                                      14
+#define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           15
 
-/*
-    Local slots for methods in type "Cache" 
- */
-#define ES_ejs_cache_Cache_Cache_options                               0
-#define ES_ejs_cache_Cache_read_domain                                 0
-#define ES_ejs_cache_Cache_read_key                                    1
-#define ES_ejs_cache_Cache_write_domain                                0
-#define ES_ejs_cache_Cache_write_key                                   1
-#define ES_ejs_cache_Cache_write_value                                 2
-#define ES_ejs_cache_Cache_write_options                               3
-#define ES_ejs_cache_Cache_remove_domain                               0
-#define ES_ejs_cache_Cache_remove_key                                  1
-
-#define _ES_CHECKSUM_ejs_cache   12727
+#define _ES_CHECKSUM_ejs_cache   11457
 
 #endif

@@ -6976,13 +6976,14 @@ static EcNode *parseAttribute(EcCompiler *cp)
 {
     EcNode      *np;
     EcState     *state;
-    int         inClass, subId;
+    int         inClass, inInterface, subId;
 
     ENTER(cp);
 
     state = cp->state;
+    inClass =state->inClass ? 1 : 0;
+    inInterface = state->inInterface ? 1 : 0;
     np = 0;
-    inClass = (cp->state->inClass) ? 1 : 0;
 
     if (state->inFunction) {
         np = parseNamespaceAttribute(cp);
@@ -7007,7 +7008,7 @@ static EcNode *parseAttribute(EcCompiler *cp)
         np = createNode(cp, N_ATTRIBUTES);
         switch (cp->token->subId) {
         case T_DYNAMIC:
-            if (inClass) {
+            if (inClass || inInterface) {
                 np = unexpected(cp);
             } else {
                 np->attributes |= EJS_TYPE_DYNAMIC_INSTANCE;
@@ -7022,30 +7023,28 @@ static EcNode *parseAttribute(EcCompiler *cp)
             np->attributes |= EJS_PROP_NATIVE;
             break;
 
+        case T_ORPHAN:
+            if (inClass || inInterface) {
+                np = unexpected(cp);
+            } else {
+                np->attributes |= EJS_TYPE_ORPHAN;
+            }
+            break;
+
         case T_OVERRIDE:
-            if (inClass) {
+            if (inClass || inInterface) {
                 np->attributes |= EJS_FUN_OVERRIDE;
             } else {
                 np = unexpected(cp);
             }
             break;
 
-#if FUTURE
-        case T_PROTOTYPE:
-            if (inClass) {
-                np->attributes |= EJS_ATTR_PROTOTYPE;
-            } else {
-                np = unexpected(cp);
-            }
-            break;
-#endif
-
         case T_SHARED:
             np->attributes |= EJS_PROP_SHARED;
             break;
 
         case T_STATIC:
-            if (inClass) {
+            if (inClass || inInterface) {
                 np->attributes |= EJS_PROP_STATIC;
             } else {
                 np = unexpected(cp);

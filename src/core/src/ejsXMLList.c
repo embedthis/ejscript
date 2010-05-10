@@ -816,6 +816,7 @@ void ejsCreateXMLListType(Ejs *ejs)
     EjsType     *type;
 
     type = ejs->xmlListType = ejsCreateNativeType(ejs, EJS_EJS_NAMESPACE, "XMLList", ES_XMLList, sizeof(EjsXML));
+    type->orphan = 1;
 
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
@@ -852,10 +853,10 @@ void ejsConfigureXMLListType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, "valueOf", valueOf, NULL);
 #endif
     
-    ejsBindMethod(ejs, prototype, ES_Object_toJSON, (EjsProc) xmlListToJson);
-    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) xmlListToString);
-    ejsBindMethod(ejs, prototype, ES_Object_get, getXmlListIterator);
-    ejsBindMethod(ejs, prototype, ES_Object_getValues, getXmlListValues);
+    ejsBindMethod(ejs, prototype, ES_XMLList_toJSON, (EjsProc) xmlListToJson);
+    ejsBindMethod(ejs, prototype, ES_XMLList_toString, (EjsProc) xmlListToString);
+    ejsBindMethod(ejs, prototype, ES_XMLList_get, getXmlListIterator);
+    ejsBindMethod(ejs, prototype, ES_XMLList_getValues, getXmlListValues);
 }
 
 

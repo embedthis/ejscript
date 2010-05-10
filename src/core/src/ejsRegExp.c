@@ -334,6 +334,7 @@ void ejsCreateRegExpType(Ejs *ejs)
     EjsType     *type;
 
     type = ejs->regExpType = ejsCreateNativeType(ejs, "ejs", "RegExp", ES_RegExp, sizeof(EjsRegExp));
+    type->orphan = 1;
     type->needFinalize = 1;
     type->helpers.cast = (EjsCastHelper) castRegExp;
     type->helpers.destroy = (EjsDestroyHelper) destroyRegExp;
@@ -359,7 +360,7 @@ void ejsConfigureRegExpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_RegExp_start, (EjsProc) start);
     ejsBindMethod(ejs, prototype, ES_RegExp_sticky, (EjsProc) sticky);
     ejsBindMethod(ejs, prototype, ES_RegExp_test, (EjsProc) test);
-    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) ejsRegExpToString);
+    ejsBindMethod(ejs, prototype, ES_RegExp_toString, (EjsProc) ejsRegExpToString);
 }
 
 

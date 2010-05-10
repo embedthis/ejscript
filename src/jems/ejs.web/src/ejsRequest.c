@@ -738,6 +738,7 @@ void ejsConfigureRequestType(Ejs *ejs)
 {
     EjsType         *type;
     EjsTypeHelpers  *helpers;
+    EjsObj          *prototype;
 
     type = ejs->requestType = ejsConfigureNativeType(ejs, "ejs.web", "Request", sizeof(EjsRequest));
 
@@ -750,16 +751,17 @@ void ejsConfigureRequestType(Ejs *ejs)
     helpers->lookupProperty = (EjsLookupPropertyHelper) lookupRequestProperty;
     helpers->setProperty = (EjsSetPropertyHelper) setRequestProperty;
 
-    ejsBindMethod(ejs, type, ES_ejs_web_Request_addListener, (EjsProc) req_addListener);
-    ejsBindAccess(ejs, type, ES_ejs_web_Request_async, (EjsProc) req_async, (EjsProc) req_set_async);
-    ejsBindMethod(ejs, type, ES_ejs_web_Request_close, (EjsProc) req_close);
-    ejsBindMethod(ejs, type, ES_ejs_web_Request_destroySession, (EjsProc) req_destroySession);
-    ejsBindMethod(ejs, type, ES_ejs_web_Request_finalize, (EjsProc) req_finalize);
-    ejsBindMethod(ejs, type, ES_ejs_web_Request_getResponseHeaders, (EjsProc) req_getResponseHeaders);
-    ejsBindMethod(ejs, type, ES_ejs_web_Request_read, (EjsProc) req_read);
-    ejsBindMethod(ejs, type, ES_ejs_web_Request_removeListener, (EjsProc) req_removeListener);
-    ejsBindMethod(ejs, type, ES_ejs_web_Request_setHeader, (EjsProc) req_setHeader);
-    ejsBindMethod(ejs, type, ES_ejs_web_Request_write, (EjsProc) req_write);
+    prototype = type->prototype;
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_addListener, (EjsProc) req_addListener);
+    ejsBindAccess(ejs, prototype, ES_ejs_web_Request_async, (EjsProc) req_async, (EjsProc) req_set_async);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_close, (EjsProc) req_close);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_destroySession, (EjsProc) req_destroySession);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalize, (EjsProc) req_finalize);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_getResponseHeaders, (EjsProc) req_getResponseHeaders);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_read, (EjsProc) req_read);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_removeListener, (EjsProc) req_removeListener);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setHeader, (EjsProc) req_setHeader);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_write, (EjsProc) req_write);
 
 #if UNUSED
     for (i = 0; i < ES_ejs_web_Request_NUM_INSTANCE_PROP; i++) {

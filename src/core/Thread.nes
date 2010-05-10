@@ -22,7 +22,7 @@ module ejs {
      *  Threads are pre-emptive. They can be created, run, interrupted, paused (sleep), prioritized and destroyed. 
      *  Various helper methods provide information about threads such as their number, name, priority, state, etc.
      */
-    native class Thread extends Object {
+    native class Thread {
 
         /**
          *  Test if a thread can have its state (e.g. made interrupted) changed by code in this thread.

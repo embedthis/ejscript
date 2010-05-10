@@ -1159,11 +1159,10 @@ void ejsConfigureDateType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Date_setUTCMonth, (EjsProc) date_setUTCMonth);
     ejsBindMethod(ejs, prototype, ES_Date_setUTCSeconds, (EjsProc) date_setUTCSeconds);
     ejsBindAccess(ejs, prototype, ES_Date_time, (EjsProc) date_time, (EjsProc) date_set_time);
+    ejsBindMethod(ejs, prototype, ES_Date_toJSON, (EjsProc) date_toJSON);
     ejsBindMethod(ejs, prototype, ES_Date_toISOString, (EjsProc) date_toISOString);
+    ejsBindMethod(ejs, prototype, ES_Date_toString, (EjsProc) date_toString);
     ejsBindAccess(ejs, prototype, ES_Date_year, (EjsProc) date_year, (EjsProc) date_set_year);
-
-    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) date_toString);
-    ejsBindMethod(ejs, prototype, ES_Object_toJSON, (EjsProc) date_toJSON);
 }
 
 /*

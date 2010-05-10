@@ -317,12 +317,18 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
         attributes |= EJS_TYPE_HAS_TYPE_INITIALIZER;
     }
     if (type->hasConstructor) {
-        mprAssert(type->hasInitializer);
         attributes |= EJS_TYPE_HAS_CONSTRUCTOR;
     }
+#if UNUSED
     if (type->hasInitializer) {
-        mprAssert(type->hasConstructor);
         attributes |= EJS_TYPE_HAS_INITIALIZER;
+    }
+#endif
+    if (type->orphan) {
+        attributes |= EJS_TYPE_ORPHAN;
+    }
+    if (type->copyPrototype) {
+        attributes |= EJS_TYPE_COPY_PROTOTYPE;
     }
     if (type->callsSuper) {
         attributes |= EJS_TYPE_CALLS_SUPER;
@@ -429,6 +435,9 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
         if (fun->initializer) {
             attributes |= EJS_FUN_INITIALIZER;
         }
+        if (fun->moduleInitializer) {
+            attributes |= EJS_FUN_MODULE_INITIALIZER;
+        }
         if (trait->attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER)) {
             if (isSetter) {
                 attributes &= ~EJS_TRAIT_GETTER;
@@ -438,7 +447,7 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
             mprAssert(attributes);
         }
     } else {
-        attributes = EJS_FUN_INITIALIZER;
+        attributes = EJS_FUN_MODULE_INITIALIZER;
         qname.name = EJS_INITIALIZER_NAME;
         qname.space = EJS_EJS_NAMESPACE;
     }

@@ -497,7 +497,9 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     if (np->klass.isInterface) {
         attributes |= EJS_TYPE_INTERFACE;
     }
-
+    if (ejs->empty && !np->klass.extends) {
+        attributes |= EJS_TYPE_ORPHAN;
+    }
     /*
         Create the class type object
      */
@@ -508,6 +510,11 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         return 0;
     }
     np->klass.ref = type;
+#if UNUSED
+    if (ejs->empty && mprStrcmp(np->qname.name, "Block") == 0 && strcmp(np->qname.space, "ejs") == 0) {
+        type->dontInherit = 1;
+    }
+#endif
 
     nsp = ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PROTECTED_NAMESPACE);
     //  MOB -- these flags should be args to above()
@@ -549,8 +556,10 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         constructor = np->klass.constructor;
         if (constructor && !constructor->function.isDefaultConstructor) {
             type->hasConstructor = 1;
+#if UNUSED
             //  MZZ
             type->hasInitializer = 1;
+#endif
         }
     }
     return type;
@@ -602,6 +611,7 @@ static void validateClass(EcCompiler *cp, EcNode *np)
     }
     if (type->implements) {
         if (mprGetListCount(type->implements) > 1 || (type->baseType && strcmp(type->baseType->qname.name, "Object") != 0)) {
+            //  MOB -- fix. Should support multiple implements
             astError(cp, np, "Only one implements or one extends supported");
         }
     }        
@@ -631,7 +641,7 @@ static void bindClass(EcCompiler *cp, EcNode *np)
             Create the static initializer function. Code gen will fill out the code. The type must be on the scope chain.
          */
         mp = state->currentModule;
-        fun = ejsCreateFunction(ejs, np->qname.name, NULL, -1, 0, 0, 0, cp->ejs->voidType, EJS_FUN_INITIALIZER, 
+        fun = ejsCreateFunction(ejs, np->qname.name, NULL, -1, 0, 0, 0, cp->ejs->voidType, EJS_FUN_MODULE_INITIALIZER, 
             mp->constants, NULL, cp->fileState->strict);
         np->klass.initializer = fun;
         //  MOB -- better to use DefineProperty and set traits for initializer
@@ -1898,7 +1908,6 @@ static void astNew(EcCompiler *cp, EcNode *np)
         LEAVE(cp);
         return;
     }
-
     mprAssert(cp->phase >= EC_PHASE_BIND);
 
     np->newExpr.callConstructors = 1;
@@ -1958,7 +1967,6 @@ static void astPragmas(EcCompiler *cp, EcNode *np)
     mprAssert(np->kind == N_PRAGMAS);
 
     ENTER(cp);
-
     ejs = cp->ejs;
 
     next = 0;
@@ -1989,7 +1997,6 @@ static void astPostfixOp(EcCompiler *cp, EcNode *np)
     mprAssert(np->kind == N_POSTFIX_OP);
 
     ENTER(cp);
-
     left = np->left;
     if (left->kind == N_LITERAL) {
         astError(cp, np, "Invalid postfix operand");
@@ -2008,7 +2015,6 @@ static void astProgram(EcCompiler *cp, EcNode *np)
     int             next;
 
     ENTER(cp);
-
     ejs = cp->ejs;
     state = cp->state;
     state->namespace = np->qname.name;
@@ -2028,7 +2034,6 @@ static void astReturn(EcCompiler *cp, EcNode *np)
     EcState         *state;
 
     ENTER(cp);
-
     state = cp->state;
 
     mprAssert(state->currentFunctionNode->kind == N_FUNCTION);
@@ -2074,7 +2079,6 @@ static void astSuper(EcCompiler *cp, EcNode *np)
     EcState     *state;
 
     ENTER(cp);
-
     state = cp->state;
     if (state->currentObjectNode == 0) {
 
@@ -2784,16 +2788,12 @@ static void astVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
     if (state->inClass && !(np->attributes & EJS_PROP_STATIC)) {
         if (state->inMethod) {
             state->instanceCode = 1;
-
         } else if (cp->classState->blockNestCount == (cp->state->blockNestCount - 1)) {
             /*
                 Top level var declaration without a static attribute
              */
             state->instanceCode = 1;
         }
-
-    } else {
-        mprAssert(state->instanceCode == 0);
     }
 
     if (np->typeNode) {
@@ -2855,6 +2855,7 @@ static void astVarDefinition(EcCompiler *cp, EcNode *np, int *codeRequired, int 
         } else {
             var = child;
         }
+        //  MOBXX - could open block for constructor
         astVar(cp, var, np->def.varKind, var->name.value);
         
         if (state->disabled) {
@@ -2931,8 +2932,8 @@ static EjsFunction *createModuleInitializer(EcCompiler *cp, EcNode *np, EjsModul
     EjsFunction     *fun;
 
     ejs = cp->ejs;
-    fun = ejsCreateFunction(ejs, mp->name, 0, -1, 0, 0, 0, ejs->voidType, EJS_FUN_INITIALIZER, mp->constants, mp->scope, 
-        cp->state->strict);
+    fun = ejsCreateFunction(ejs, mp->name, 0, -1, 0, 0, 0, ejs->voidType, EJS_FUN_MODULE_INITIALIZER, 
+            mp->constants, mp->scope, cp->state->strict);
     if (fun == 0) {
         astError(cp, np, "Can't create initializer function");
         return 0;
@@ -3298,7 +3299,9 @@ static void processAstNode(EcCompiler *cp, EcNode *np)
         if (state->inClass && !state->currentClass->isInterface) {
             if (instanceCode) {
                 state->currentClass->hasConstructor = 1;
+#if UNUSED
                 state->currentClass->hasInitializer = 1;
+#endif
             } else {
                 state->currentClass->hasStaticInitializer = 1;
             }
@@ -3349,11 +3352,11 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
     Ejs             *ejs;
     EjsType         *baseType, *iface;
     EjsFunction     *fun;
-    EjsObj          *prototype;
+    EjsObj          *prototype, *obj;
     EjsName         qname;
     EjsTrait        *trait;
     EcNode          *np, *child;
-    int             rc, slotNum, attributes, next;
+    int             rc, slotNum, attributes, next, copyPrototype;
 
     if (type->block.obj.visited || !type->needFixup) {
         return;
@@ -3385,7 +3388,6 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
             }
         }
     }
-
     if (np->klass.implements) {
         type->implements = mprCreateList(type);
         next = 0;
@@ -3418,10 +3420,12 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         if (baseType->hasConstructor) {
             type->hasBaseConstructors = 1;
         }
+#if UNUSED
         if (baseType->hasInitializer) {
             type->hasBaseInitializers = 1;
         }
         mprAssert(type->hasBaseConstructors == type->hasBaseInitializers);
+#endif
         if (baseType->hasStaticInitializer) {
             type->hasBaseStaticInitializers = 1;
         }
@@ -3435,9 +3439,11 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
             if (iface->hasConstructor) {
                 type->hasBaseConstructors = 1;
             }
+#if UNUSED
             if (iface->hasInitializer) {
                 type->hasBaseInitializers = 1;
             }
+#endif
             if (iface->hasStaticInitializer) {
                 type->hasBaseStaticInitializers = 1;
             }
@@ -3460,8 +3466,10 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
          */
         if (type->hasBaseConstructors) {
             type->hasConstructor = 1;
+#if UNUSED
             //  MZZ
             type->hasInitializer = 1;
+#endif
         }
         if (!type->hasConstructor) {
             if (np && np->klass.constructor && np->klass.constructor->function.isDefaultConstructor) {
@@ -3509,13 +3517,16 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
             continue;
         }
         attributes = trait->attributes;
-        if (attributes & EJS_FUN_OVERRIDE) {
+        if (attributes & EJS_FUN_OVERRIDE && !type->orphan) {
+            /*
+                If the type is not an orphan, it must preserve the slot order dictated by the base class
+             */
             fun = (EjsFunction*) ejsGetProperty(ejs, prototype, slotNum);
             mprAssert(fun && ejsIsFunction(fun));
             qname = ejsGetPropertyName(ejs, prototype, slotNum);
             ejsRemoveProperty(ejs, prototype, slotNum);
             slotNum--;
-            if (resolveName(cp, NULL, prototype, &qname) < 0 || cp->lookup.slotNum < 0) {
+            if (resolveName(cp, NULL, (EjsObj*) type, &qname) < 0 || cp->lookup.slotNum < 0) {
                 astError(cp, 0, "Can't find method \"%s::%s\" in base type of \"%s\" to override", qname.space, qname.name, 
                     type->qname.name);
             } else {
@@ -3529,6 +3540,17 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         }
     }
     type->block.obj.visited = 0;
+
+    copyPrototype = 0;
+    for (slotNum = 0; slotNum < prototype->numSlots; slotNum++) {
+        obj = ejsGetProperty(ejs, prototype, slotNum);
+        if (!ejsIsFunction(obj) && !ejsIsBlock(obj)) {
+            copyPrototype = 1;
+            break;
+        }
+    }
+    type->copyPrototype |= copyPrototype;
+    // MOB printf("%s orphan %d copyPrototype %d\n", type->qname.name, type->orphan, type->copyPrototype);
     LEAVE(cp);
 }
 
@@ -4009,6 +4031,18 @@ int ecLookupScope(EcCompiler *cp, EjsName *name)
                 }
             }
         } else if (ejsIsType(bp)) {
+            if (cp->state->inClass && !cp->state->inFunction) {
+                /* MOBXX Instance level initialization code. Should really be inside a constructor */
+                for (nthBase = 1, type = cp->state->currentClass; type; type = type->baseType, nthBase++) {
+                    if ((prototype = type->prototype) == 0 || prototype->shortScope) {
+                        break;
+                    }
+                    if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
+                        lookup->nthBase = nthBase;
+                        return slotNum;
+                    }
+                }
+            }
             //  MOB -- remove nthBase. Not needed if not binding.
             /* Search base class chain */
             for (nthBase = 1, type = (EjsType*) bp; type; type = type->baseType, nthBase++) {
@@ -4028,11 +4062,54 @@ int ecLookupScope(EcCompiler *cp, EjsName *name)
 
 int ecLookupVar(EcCompiler *cp, EjsObj *obj, EjsName *name)
 {
+    Ejs         *ejs;
+    EjsLookup   *lookup;
+    EjsType     *type;
+    EjsObj      *prototype;
+    int         slotNum, nthBase;
+
+    mprAssert(obj);
+    mprAssert(name);
+    
+    ejs = cp->ejs;
+    lookup = &cp->lookup;
     if (name->space == 0) {
         //  MOB -- this should be moved back into parser
         name->space = "";
     }
-    return ejsLookupVar(cp->ejs, obj, name, &cp->lookup);
+
+    memset(lookup, 0, sizeof(*lookup));
+
+    /* Lookup simple object */
+    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, name, lookup)) >= 0) {
+        return slotNum;
+    }
+    
+    /* Lookup prototype chain */
+    type = ejsIsType(obj) ? ((EjsType*) obj) : obj->type;
+    for (nthBase = 1; type; type = type->baseType, nthBase++) {
+        if ((prototype = type->prototype) == 0 || prototype->shortScope) {
+            break;
+        }
+        if ((slotNum = ejsLookupVarWithNamespaces(ejs, prototype, name, lookup)) >= 0) {
+            lookup->nthBase = nthBase;
+            return slotNum;
+        }
+    }
+
+    /* Lookup base-class chain */
+    type = ejsIsType(obj) ? ((EjsType*) obj)->baseType : obj->type;
+    for (nthBase = 1; type; type = type->baseType, nthBase++) {
+        if (type->block.obj.shortScope) {
+            //  MOB -- continue or break?
+            continue;
+        }
+        if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
+            lookup->nthBase = nthBase;
+            return slotNum;
+        }
+    }
+    return -1;
 }
 
 

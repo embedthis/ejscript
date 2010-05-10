@@ -81,9 +81,6 @@ static EjsByteArray *cloneByteArrayVar(Ejs *ejs, EjsByteArray *ap, bool deep)
 }
 
 
-/*
-    Delete a property and update the length
- */
 static int deleteByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slot)
 {
     if (slot >= ap->length) {
@@ -106,18 +103,12 @@ static int deleteByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slot)
 }
 
 
-/*
-    Return the number of elements in the array
- */
 static int getByteArrayPropertyCount(Ejs *ejs, EjsByteArray *ap)
 {
     return ap->length;
 }
 
 
-/*
-    Get an array element. Slot numbers correspond to indicies.
- */
 static EjsObj *getByteArrayProperty(Ejs *ejs, EjsByteArray *ap, int slotNum)
 {
     if (slotNum < 0 || slotNum >= ap->length) {
@@ -128,9 +119,6 @@ static EjsObj *getByteArrayProperty(Ejs *ejs, EjsByteArray *ap, int slotNum)
 }
 
 
-/*
-    Lookup an array index.
- */
 static int lookupByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, EjsName *qname)
 {
     int     index;
@@ -285,7 +273,6 @@ static int setByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slotNum, 
     } else {
         ap->value[slotNum] = ejsGetInt(ejs, ejsToNumber(ejs, value));
     }
-
     if (slotNum >= ap->length) {
         ap->length = slotNum + 1;
     }
@@ -1407,6 +1394,9 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     EjsObj          *prototype;
 
     type = ejs->byteArrayType = ejsConfigureNativeType(ejs, "ejs", "ByteArray", sizeof(EjsByteArray));
+    type->numericIndicies = 1;
+    type->orphan = 1;
+    type->virtualSlots = 1;
     prototype = type->prototype;
 
     helpers = &type->helpers;
@@ -1431,8 +1421,8 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ByteArray_flush, (EjsProc) ba_flush);
     ejsBindMethod(ejs, prototype, ES_ByteArray_growable, (EjsProc) ba_growable);
     ejsBindMethod(ejs, prototype, ES_ByteArray_length, (EjsProc) ba_getLength);
-    ejsBindMethod(ejs, prototype, ES_Object_get, (EjsProc) ba_get);
-    ejsBindMethod(ejs, prototype, ES_Object_getValues, (EjsProc) ba_getValues);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_get, (EjsProc) ba_get);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_getValues, (EjsProc) ba_getValues);
     ejsBindAccess(ejs, prototype, ES_ByteArray_endian, (EjsProc) endian, (EjsProc) setEndian);
     ejsBindMethod(ejs, prototype, ES_ByteArray_read, (EjsProc) ba_read);
     ejsBindMethod(ejs, prototype, ES_ByteArray_readBoolean, (EjsProc) ba_readBoolean);
@@ -1447,7 +1437,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ByteArray_removeListener, (EjsProc) ba_removeListener);
     ejsBindMethod(ejs, prototype, ES_ByteArray_reset, (EjsProc) ba_reset);
     ejsBindMethod(ejs, prototype, ES_ByteArray_room, (EjsProc) ba_room);
-    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) ba_toString);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_toString, (EjsProc) ba_toString);
     ejsBindMethod(ejs, prototype, ES_ByteArray_write, (EjsProc) ejsWriteToByteArray);
     ejsBindMethod(ejs, prototype, ES_ByteArray_writeByte, (EjsProc) ba_writeByte);
     ejsBindMethod(ejs, prototype, ES_ByteArray_writeShort, (EjsProc) ba_writeShort);

@@ -100,21 +100,32 @@
 /*
    Prototype (instance) slots for "Record" type 
  */
-#define ES_Record_Record                                               12
-#define ES_Record__keyValue                                            13
-#define ES_Record__errors                                              14
-#define ES_Record__cacheAssoc                                          15
-#define ES_Record_initialize                                           16
-#define ES_Record_coerceToEjsTypes                                     17
-#define ES_Record_error                                                18
-#define ES_Record_getErrors                                            19
-#define ES_Record_hasError                                             20
-#define ES_Record_runFilters                                           21
-#define ES_Record_save                                                 22
-#define ES_Record_saveUpdate                                           23
-#define ES_Record_validateRecord                                       24
-#define ES_Record_constructorOLD                                       25
-#define ES_Record_NUM_INSTANCE_PROP                                    26
+#define ES_Record_constructor                                          0
+#define ES_Record_clone                                                1
+#define ES_Record_get                                                  2
+#define ES_Record_getValues                                            3
+#define ES_Record_hasOwnProperty                                       4
+#define ES_Record_isPrototypeOf                                        5
+#define ES_Record_propertyIsEnumerable                                 6
+#define ES_Record_toJSON                                               7
+#define ES_Record_toLocaleString                                       8
+#define ES_Record_toString                                             9
+#define ES_Record_valueOf                                              10
+#define ES_Record_Record                                               11
+#define ES_Record__keyValue                                            12
+#define ES_Record__errors                                              13
+#define ES_Record__cacheAssoc                                          14
+#define ES_Record_initialize                                           15
+#define ES_Record_coerceToEjsTypes                                     16
+#define ES_Record_error                                                17
+#define ES_Record_getErrors                                            18
+#define ES_Record_hasError                                             19
+#define ES_Record_runFilters                                           20
+#define ES_Record_save                                                 21
+#define ES_Record_saveUpdate                                           22
+#define ES_Record_validateRecord                                       23
+#define ES_Record_constructorOLD                                       24
+#define ES_Record_NUM_INSTANCE_PROP                                    25
 
 /*
     Local slots for methods in type "Record" 
@@ -201,11 +212,22 @@
 /*
    Prototype (instance) slots for "Column" type 
  */
-#define ES_ejs_db_mapper_Column_Column                                 12
-#define ES_ejs_db_mapper_Column_ejsType                                13
-#define ES_ejs_db_mapper_Column_sqlType                                14
-#define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      15
+#define ES_ejs_db_mapper_Column_constructor                            0
+#define ES_ejs_db_mapper_Column_clone                                  1
+#define ES_ejs_db_mapper_Column_get                                    2
+#define ES_ejs_db_mapper_Column_getValues                              3
+#define ES_ejs_db_mapper_Column_hasOwnProperty                         4
+#define ES_ejs_db_mapper_Column_isPrototypeOf                          5
+#define ES_ejs_db_mapper_Column_propertyIsEnumerable                   6
+#define ES_ejs_db_mapper_Column_toJSON                                 7
+#define ES_ejs_db_mapper_Column_toLocaleString                         8
+#define ES_ejs_db_mapper_Column_toString                               9
+#define ES_ejs_db_mapper_Column_valueOf                                10
+#define ES_ejs_db_mapper_Column_Column                                 11
+#define ES_ejs_db_mapper_Column_ejsType                                12
+#define ES_ejs_db_mapper_Column_sqlType                                13
+#define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      14
 
-#define _ES_CHECKSUM_ejs_db_mapper   186964
+#define _ES_CHECKSUM_ejs_db_mapper   186943
 
 #endif

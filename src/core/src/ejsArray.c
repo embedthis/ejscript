@@ -491,7 +491,6 @@ static EjsObj *removeArrayElements(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
             }
         }
     }
-
     return (EjsObj*) lhs;
 }
 #endif
@@ -504,7 +503,6 @@ static int checkSlot(Ejs *ejs, EjsArray *ap, int slotNum)
             ejsThrowTypeError(ejs, "Object is not dynamic");
             return EJS_ERR;
         }
-        
         slotNum = ap->length;
         if (growArray(ejs, ap, ap->length + 1) < 0) {
             ejsThrowMemoryError(ejs);
@@ -1563,6 +1561,8 @@ void ejsCreateArrayType(Ejs *ejs)
 
     type = ejs->arrayType = ejsCreateNativeType(ejs, "ejs", "Array", ES_Array, sizeof(EjsArray));
     type->numericIndicies = 1;
+    type->orphan = 1;
+    type->virtualSlots = 1;
 
     helpers = &type->helpers;
     helpers->cast = (EjsCastHelper) castArray;
@@ -1593,10 +1593,10 @@ void ejsConfigureArrayType(Ejs *ejs)
     /*
         We override some Object methods
      */
-    ejsBindMethod(ejs, prototype, ES_Object_get, getArrayIterator);
-    ejsBindMethod(ejs, prototype, ES_Object_getValues, getArrayValues);
-    ejsBindMethod(ejs, prototype, ES_Object_clone, (EjsProc) cloneArrayMethod);
-    ejsBindMethod(ejs, prototype, ES_Object_toString, (EjsProc) arrayToString);
+    ejsBindMethod(ejs, prototype, ES_Array_get, getArrayIterator);
+    ejsBindMethod(ejs, prototype, ES_Array_getValues, getArrayValues);
+    ejsBindMethod(ejs, prototype, ES_Array_clone, (EjsProc) cloneArrayMethod);
+    ejsBindMethod(ejs, prototype, ES_Array_toString, (EjsProc) arrayToString);
 
     ejsBindMethod(ejs, prototype, ES_Array_Array, (EjsProc) arrayConstructor);
     ejsBindMethod(ejs, prototype, ES_Array_append, (EjsProc) appendArray);

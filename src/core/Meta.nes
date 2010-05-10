@@ -38,14 +38,15 @@ module ejs {
          */
         meta function get(name: String): Object
 
+//  MOB -- what about NS
         /**
             Called to set a named property
-            The property is searched using the set of currently open namespaces.
             @param name Given property name.
             @param value New value for the property
          */
         meta function set(name: String, value: Object): Void
 
+//  MOB -- how to do an explicit NS
         /**
             Called to determine if an object has a given named property. 
             The property is searched using the set of currently open namespaces.

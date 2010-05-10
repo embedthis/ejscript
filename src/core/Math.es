@@ -13,7 +13,7 @@ module ejs {
         or positive or negative infinity.
         @stability evolving
      */
-    class Math extends Object {
+    class Math {
 
         use default namespace public
 

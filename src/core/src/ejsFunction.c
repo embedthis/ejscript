@@ -83,6 +83,7 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
     dest->constructor = src->constructor;
     dest->hasReturn = src->hasReturn;
     dest->initializer = src->initializer;
+    dest->moduleInitializer = src->moduleInitializer;
     dest->rest = src->rest;
     dest->fullScope = src->fullScope;
     dest->nativeProc = src->nativeProc;
@@ -311,6 +312,9 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *byteCode, int code
     if (attributes & EJS_FUN_INITIALIZER) {
         fun->initializer = 1;
     }
+    if (attributes & EJS_FUN_MODULE_INITIALIZER) {
+        fun->moduleInitializer = 1;
+    }
     if (attributes & EJS_PROP_STATIC) {
         fun->staticMethod = 1;
     }
@@ -494,6 +498,7 @@ void ejsCreateFunctionType(Ejs *ejs)
     EjsFunction     *nop;
 
     type = ejs->functionType = ejsCreateNativeType(ejs, "ejs", "Function", ES_Function, sizeof(EjsFunction));
+    type->orphan = 1;
 
     helpers = &type->helpers;
     helpers->create         = (EjsCreateHelper) createFunction;

@@ -21,13 +21,13 @@ module ejs {
         use default namespace public
 
         /** Read direction constant for flush() */
-        const READ = 0x1
+        static const READ = 0x1
 
         /** Write direction constant for flush() */
-        const WRITE = 0x2
+        static const WRITE = 0x2
 
         /** Both directions constant for flush() */
-        const BOTH = 0x3
+        static const BOTH = 0x3
 
         /** 
             Add a listener to the stream. 

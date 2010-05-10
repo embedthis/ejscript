@@ -90,6 +90,26 @@ static EjsObj *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
 }
 
 
+
+static int lookupFileProperty(Ejs *ejs, EjsFile *fp, EjsName *qname)
+{
+    int     index;
+
+    if (qname == 0 || !isdigit((int) qname->name[0])) {
+        return EJS_ERR;
+    }
+    if (!(fp->mode & FILE_OPEN)) {
+        ejsThrowIOError(ejs, "File is not open");
+        return 0;
+    }
+    index = atoi(qname->name);
+    if (index < mprGetFileSize(fp->file)) {
+        return index;
+    }
+    return EJS_ERR;
+}
+
+
 /*  
     Set a byte in the file at the offset designated by slotNum.
  */
@@ -862,18 +882,21 @@ void ejsConfigureFileType(Ejs *ejs)
 
     type = ejs->fileType = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "File", sizeof(EjsFile));
     type->numericIndicies = 1;
+    type->orphan = 1;
+    type->virtualSlots = 1;
     prototype = type->prototype;
 
     type->helpers.destroy = (EjsDestroyHelper) destroyFile;
     type->helpers.getProperty = (EjsGetPropertyHelper) getFileProperty;
+    type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupFileProperty;
     type->helpers.setProperty = (EjsSetPropertyHelper) setFileProperty;
 
     ejsBindMethod(ejs, prototype, ES_File_File, (EjsProc) fileConstructor);
     ejsBindMethod(ejs, prototype, ES_File_canRead, (EjsProc) canReadFile);
     ejsBindMethod(ejs, prototype, ES_File_canWrite, (EjsProc) canWriteFile);
     ejsBindMethod(ejs, prototype, ES_File_close, (EjsProc) closeFile);
-    ejsBindMethod(ejs, prototype, ES_Object_get, (EjsProc) getFileIterator);
-    ejsBindMethod(ejs, prototype, ES_Object_getValues, (EjsProc) getFileValues);
+    ejsBindMethod(ejs, prototype, ES_File_get, (EjsProc) getFileIterator);
+    ejsBindMethod(ejs, prototype, ES_File_getValues, (EjsProc) getFileValues);
     ejsBindMethod(ejs, prototype, ES_File_isOpen, (EjsProc) isFileOpen);
     ejsBindMethod(ejs, prototype, ES_File_open, (EjsProc) openFile);
     ejsBindMethod(ejs, prototype, ES_File_options, (EjsProc) getFileOptions);

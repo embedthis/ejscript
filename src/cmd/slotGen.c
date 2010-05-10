@@ -1,5 +1,5 @@
 /**
-    slotGen.c - Slot file generator
+    slotGen.c - Generate property slot offset definitions.
   
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -14,9 +14,9 @@ static char *defaultVersion;
 
 /***************************** Forward Declarations ***************************/
 
-static int  createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file, bool java);
+static int  createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file);
 static int  genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int firstClassSlot, int lastClassSlot,
-                int firstInstanceSlot, bool java, int isGlobal);
+                int isGlobal);
 
 /*********************************** Code *************************************/
 
@@ -27,23 +27,20 @@ int emCreateSlotFiles(EjsMod *bp, EjsModule *mp, MprFile *outfile)
     rc = 0;
     defaultVersion = mprAsprintf(bp, -1, "-%d", ejsParseModuleVersion(BLD_VERSION));
     if (bp->cslots) {
-        rc += createSlotFile(bp, mp, outfile, 0);
-    }
-    if (bp->jslots) {
-        rc += createSlotFile(bp, mp, outfile, 1);
+        rc += createSlotFile(bp, mp, outfile);
     }
     return rc;
 }
 
 
-static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file, bool java)
+static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 {
     MprFile     *localFile;
     Ejs         *ejs;
     EjsName     qname;
     EjsType     *type;
     char        *path, slotsName[MPR_MAX_FNAME], moduleName[MPR_MAX_FNAME];
-    char        *cp, *sp, *dp, *javaPackage;
+    char        *cp, *sp, *dp;
     int         slotNum;
 
     mprAssert(bp);
@@ -71,11 +68,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file, bool java)
     *dp = '\0';
 
     if (file == 0) {
-        if (java) {
-            path = mprStrcat(bp, -1, slotsName, ".java", NULL);
-        } else {
-            path = mprStrcat(bp, -1, mp->name, ".slots.h", NULL);
-        }
+        path = mprStrcat(bp, -1, mp->name, ".slots.h", NULL);
         localFile = file = mprOpen(bp, path, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
     } else {
         path = mprStrdup(bp, file->path);
@@ -97,25 +90,10 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file, bool java)
         " */\n"
         "\n", path, mp->name, BLD_VERSION);
 
-    if (java) {
-        /*
-            Java won't allow a package called "default" so we remap it to ejs.
-            This only affects java source packaging, not Ejscript package naming.
-         */
-        javaPackage = (char*) ((strcmp(mp->name, "default") == 0) ? "ejs" : mp->name);
-        mprFprintf(file,
-            "package %s;\n"
-            "\n"
-            "public class %s\n"
-            "{\n",
-            javaPackage, slotsName);
-
-    } else {
-        mprFprintf(file,
-            "#ifndef _h_SLOTS_%s\n"
-            "#define _h_SLOTS_%s 1\n\n",
-            slotsName, slotsName);
-    }
+    mprFprintf(file,
+        "#ifndef _h_SLOTS_%s\n"
+        "#define _h_SLOTS_%s 1\n\n",
+        slotsName, slotsName);
 
     mprFprintf(file, "\n/*\n   Slots for the \"%s\" module \n */\n", mp->name);
 
@@ -126,26 +104,21 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file, bool java)
     type->block.obj.type = ejs->typeType;
     type->block.obj.isType = 1;
 
-    if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 0, java, 1) < 0) {
+    if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
         mprError(bp, "Can't generate slot file for module %s", mp->name);
         mprFree(path);
         mprFree(localFile);
         return EJS_ERR;
     }
     mprFprintf(file, "\n#define _ES_CHECKSUM_%s   %d\n", moduleName, mp->checksum);
-
-    if (java) {
-        mprFprintf(file, "\n}\n");
-    } else {
-        mprFprintf(file, "\n#endif\n");
-    }
+    mprFprintf(file, "\n#endif\n");
     mprFree(localFile);
     mprFree(path);
     return 0;
 }
 
 
-static char *mapName(MprCtx ctx, cchar *name, int java, int mapTypeName)
+static char *mapName(MprCtx ctx, cchar *name, int mapTypeName)
 {
     cchar   *value;
     char    *buf, *cp;
@@ -163,40 +136,6 @@ static char *mapName(MprCtx ctx, cchar *name, int java, int mapTypeName)
     if (strcmp(name, "*") == 0) {
         value = "DEFAULT";
     }
-    if (java) {
-        if (strcmp(name, "int") == 0) {
-            value = "intValue";
-        } else if (strcmp(name, "boolean") == 0) {
-            value = "booleanValue";
-        } else if (strcmp(name, "double") == 0) {
-            value = "doubleValue";
-        } else if (strcmp(name, "long") == 0) {
-            value = "longValue";
-        } else if (strcmp(name, "false") == 0) {
-            value = "falseValue";
-        } else if (strcmp(name, "true") == 0) {
-            value = "trueValue";
-        } else if (strcmp(name, "assert") == 0) {
-            value = "assertValue";
-        } else if (strcmp(name, "int") == 0) {
-            value = "intValue";
-        } else if (strcmp(name, "int") == 0) {
-            value = "intValue";
-        } else if (strcmp(name, "int") == 0) {
-            value = "intValue";
-        } else if (strcmp(name, "int") == 0) {
-            value = "intValue";
-        } else if (strcmp(name, "int") == 0) {
-            value = "intValue";
-        } else if (strcmp(name, "int") == 0) {
-            value = "intValue";
-        } else if (strcmp(name, "int") == 0) {
-            value = "intValue";
-        } else if (strcmp(name, "int") == 0) {
-            value = "intValue";
-        }
-    }
-
     if (strcmp(name, "+") == 0) {
         value = "PLUS";
     } else if (strcmp(name, "-") == 0) {
@@ -255,7 +194,7 @@ static char *mapName(MprCtx ctx, cchar *name, int java, int mapTypeName)
 }
 
 
-static char *mapSpace(MprCtx ctx, cchar *space, int java, int mapTypeName)
+static char *mapSpace(MprCtx ctx, cchar *space, int mapTypeName)
 {
     char    *cp, *value;
 
@@ -288,7 +227,7 @@ static char *mapSpace(MprCtx ctx, cchar *space, int java, int mapTypeName)
 }
 
 
-static char *mapFullName(MprCtx ctx, EjsName *qname, int java, int mapTypeName)
+static char *mapFullName(MprCtx ctx, EjsName *qname, int mapTypeName)
 {
     cchar       *name, *space;
     char        *cp, *buf;
@@ -296,8 +235,8 @@ static char *mapFullName(MprCtx ctx, EjsName *qname, int java, int mapTypeName)
     if (qname == 0) {
         return mprStrdup(ctx, "");
     }
-    name = mapName(ctx, qname->name, java, mapTypeName);
-    space = mapSpace(ctx, qname->space, java, mapTypeName);
+    name = mapName(ctx, qname->name, mapTypeName);
+    space = mapSpace(ctx, qname->space, mapTypeName);
 
     if (*space) {
         buf = mprStrcat(ctx, -1, space, "_", name, NULL);
@@ -313,8 +252,7 @@ static char *mapFullName(MprCtx ctx, EjsName *qname, int java, int mapTypeName)
 }
 
 
-static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, EjsName *fun, EjsName *name, int slotNum, 
-    bool java)
+static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, EjsName *fun, EjsName *name, int slotNum)
 {
     Ejs     *ejs;
     char    nameBuf[MPR_MAX_STRING];
@@ -322,29 +260,19 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
 
     ejs = bp->ejs;
 
-    typeStr = mapFullName(file, &type->qname, java, 1);
-    funStr = mapFullName(file, fun, java, 0);
-    nameStr = mapFullName(file, name, java, 0);
+    typeStr = mapFullName(file, &type->qname, 1);
+    funStr = mapFullName(file, fun, 0);
+    nameStr = mapFullName(file, name, 0);
 
     if (nameStr[0] != '\0') {
         funSep = (char*) ((*funStr && *typeStr) ? "_" : "");
-        if (java) {
-            if (*funStr == '\0') {
-                mprSprintf(nameBuf, sizeof(nameBuf), "  public static final int %s = ", nameStr);
-            } else {
-                mprSprintf(nameBuf, sizeof(nameBuf), "  public static final int %s%s%s_%s = ", typeStr, funSep, 
-                    funStr, nameStr);
-            }
-
+        if (*typeStr == '\0' && *funStr == '\0') {
+            mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s", nameStr);
         } else {
-            if (*typeStr == '\0' && *funStr == '\0') {
-                mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s", nameStr);
+            if (!(nameStr[0] == '_' && nameStr[1] == '_')) {
+                mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s%s%s_%s", typeStr, funSep, funStr, nameStr);
             } else {
-                if (!(nameStr[0] == '_' && nameStr[1] == '_')) {
-                    mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s%s%s_%s", typeStr, funSep, funStr, nameStr);
-                } else {
-                    nameBuf[0] = '\0';
-                }
+                nameBuf[0] = '\0';
             }
         }
         for (sp = nameBuf; *sp; sp++) {
@@ -353,11 +281,7 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
             }
         }
         if (nameBuf[0]) {
-            if (java) {
-                mprFprintf(file, "%-70s %d;\n", nameBuf, slotNum);
-            } else {
-                mprFprintf(file, "%-70s %d\n", nameBuf, slotNum);
-            }
+            mprFprintf(file, "%-70s %d\n", nameBuf, slotNum);
         }
     }
     mprFree(typeStr);
@@ -367,61 +291,45 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
 
 
 #if UNUSED
-static void defineSlotOrigin(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int slotNum, bool java)
+static void defineSlotOrigin(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int slotNum)
 {
     char    name[MPR_MAX_STRING], *typeStr, *sp;
 
     if ((EjsObj*) type == bp->ejs->global) {
         return;
     }
-    typeStr = mapFullName(file, &type->qname, java, 1);
+    typeStr = mapFullName(file, &type->qname, 1);
 
     if (typeStr && typeStr[0] != '\0') {
-        if (java) {
-            mprSprintf(name, sizeof(name), "    public static final int %s__origin = ", typeStr);
-        } else {
-            mprSprintf(name, sizeof(name), "#define ES_%s__origin", typeStr);
-        }
+        mprSprintf(name, sizeof(name), "#define ES_%s__origin", typeStr);
         for (sp = name; *sp; sp++) {
             if (*sp == '.') {
                 *sp = '_';
             }
         }
-        if (java) {
-            mprFprintf(file, "%-70s %d;\n", name, slotNum);
-        } else {
-            mprFprintf(file, "%-70s %d\n", name, slotNum);
-        }
+        mprFprintf(file, "%-70s %d\n", name, slotNum);
     }
     mprFree(typeStr);
 }
 #endif
 
 
-static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, char *suffix, int numSlots, bool java)
+static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, char *suffix, int numSlots)
 {
     char        name[MPR_MAX_STRING], *typeStr, *sp;
 
-    typeStr = mapFullName(file, &type->qname, java, 1);
+    typeStr = mapFullName(file, &type->qname, 1);
     if (*typeStr == '\0') {
         mprFree(typeStr);
         typeStr = mprStrdup(file, EJS_GLOBAL);
     }
-    if (java) {
-        mprSprintf(name, sizeof(name), "    public static final int %s_NUM_%s_PROP = ", typeStr, suffix);
-    } else {
-        mprSprintf(name, sizeof(name), "#define ES_%s_NUM_%s_PROP", typeStr, suffix);
-    }
+    mprSprintf(name, sizeof(name), "#define ES_%s_NUM_%s_PROP", typeStr, suffix);
     for (sp = name; *sp; sp++) {
         if (*sp == '.') {
             *sp = '_';
         }
     }
-    if (java) {
-        mprFprintf(file, "%-70s %d;\n", name, numSlots);
-    } else {
-        mprFprintf(file, "%-70s %d\n", name, numSlots);
-    }
+    mprFprintf(file, "%-70s %d\n", name, numSlots);
     mprFree(typeStr);
 }
 
@@ -430,7 +338,7 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
     Generate the slot offsets for a type
  */
 static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int firstClassSlot, int lastClassSlot,
-    int firstInstanceSlot, bool java, int isGlobal)
+    int isGlobal)
 {
     Ejs             *ejs;
     EjsObj          *vp, *prototype, *activation;
@@ -439,7 +347,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     EjsFunction     *fun;
     cchar           *typeName;
     EjsName         qname, lqname;
-    int             slotNum, i, methodHeader, numInstanceInherited, count;
+    int             slotNum, i, methodHeader, count, offset;
 
     mprAssert(bp);
     mprAssert(type);
@@ -464,7 +372,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
                 Process class traits (skip base class slots)
                 Class traits are any class properties or methods.
              */
-            defineSlotOrigin(bp, file, mp, type, firstClassSlot, java);
+            defineSlotOrigin(bp, file, mp, type, firstClassSlot);
 #endif
 
             for (slotNum = firstClassSlot; slotNum < lastClassSlot; slotNum++) {
@@ -473,11 +381,11 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
                 if (qname.name == 0) {
                     continue;
                 }
-                defineSlot(bp, file, mp, type, 0, &qname, slotNum, java);
+                defineSlot(bp, file, mp, type, 0, &qname, slotNum);
             }
         }
         mprFprintf(file, "\n");
-        defineSlotCount(bp, file, mp, type, "CLASS", lastClassSlot, java);
+        defineSlotCount(bp, file, mp, type, "CLASS", lastClassSlot);
     }
 
     /*
@@ -487,13 +395,19 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     if (prototype) {
         mprFprintf(file, "\n/*\n   Prototype (instance) slots for \"%s\" type \n */\n", typeName);
         count = ejsGetPropertyCount(ejs, prototype);
-        for (slotNum = firstInstanceSlot; slotNum < count; slotNum++) {
+        offset = 0;
+#if UNUSED
+        if (!type->orphan && type->baseType) {
+            offset = type->baseType->prototype->numSlots;
+        }
+#endif
+        for (slotNum = offset; slotNum < count; slotNum++) {
             trait = ejsGetPropertyTrait(ejs, prototype, slotNum);
             qname = ejsGetPropertyName(ejs, prototype, slotNum);
             if (qname.name == 0) {
                 continue;
             }
-            defineSlot(bp, file, mp, type, 0, &qname, slotNum, java);
+            defineSlot(bp, file, mp, type, 0, &qname, slotNum);
         }
     } else {
         slotNum = 0;
@@ -503,7 +417,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         For the global type, only emit the count for the "ejs" module
      */
     if (!isGlobal || strcmp(mp->name, "ejs") == 0) {
-        defineSlotCount(bp, file, mp, type, "INSTANCE", slotNum, java);
+        defineSlotCount(bp, file, mp, type, "INSTANCE", slotNum);
     }
 
     /*
@@ -543,12 +457,12 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         for (i = 0; i < (int) fun->numArgs; i++) {
             lp = ejsGetPropertyTrait(ejs, activation, i);
             lqname = ejsGetPropertyName(ejs, activation, i);
-            defineSlot(bp, file, mp, type, &qname, &lqname, i, java);
+            defineSlot(bp, file, mp, type, &qname, &lqname, i);
         }
         for (; i < fun->block.obj.numSlots; i++) {
             lp = ejsGetPropertyTrait(ejs, activation, i);
             lqname = ejsGetPropertyName(ejs, activation, i);
-            defineSlot(bp, file, mp, type, &qname, &lqname, i, java);
+            defineSlot(bp, file, mp, type, &qname, &lqname, i);
         }
     }
 
@@ -576,10 +490,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         vp->visited = 1;
 
         count = ejsGetPropertyCount(ejs, (EjsObj*) nt);
-        numInstanceInherited = (nt->prototype && nt->baseType && nt->baseType->prototype) ?
-            ejsGetPropertyCount(ejs, nt->baseType->prototype) : 0;
-
-        if (genType(bp, file, mp, nt, 0, count, numInstanceInherited, java, 0) < 0) {
+        if (genType(bp, file, mp, nt, 0, count, 0) < 0) {
             vp->visited = 0;
             return EJS_ERR;
         }

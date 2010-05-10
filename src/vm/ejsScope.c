@@ -134,7 +134,7 @@ int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
 int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
 {
     EjsNamespace    *nsp;
-    EjsName         qname, qn;
+    EjsName         qname, target;
     EjsBlock        *b;
     int             slotNum, next;
 
@@ -147,33 +147,37 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *
     if (name->space[0]) {
         /* Lookup with an explicit namespace */
         slotNum = ejsLookupProperty(ejs, obj, name);
+        lookup->name = *name;
 
     } else {
-        /* Lookup with the set of open namespaces in the current scope */
-        qname.name = name->name;
-        qname.space = 0;
-        /* Special lookup with space == NULL. Means lookup only match if there is only one property of this name */
+        /* 
+            Lookup with the set of open namespaces in the current scope 
+            Special lookup with space == NULL. Means lookup only match if there is only one property of this name 
+         */
         if ((slotNum = ejsLookupProperty(ejs, obj, ejsName(&qname, NULL, name->name))) >= 0) {
-            qn = ejsGetPropertyName(ejs, obj, slotNum);
-            if (name->space[0] && (name->space[0] != qn.space[0] || strcmp(name->space, qn.space) != 0)) {
-                /* Unique name match. Name matches, but namespace does not */
-                slotNum = -1;
-            } else if (qn.space[0]) {
-                for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&ejs->globalBlock->namespaces, &next)) != 0; ) {
-                    if (strcmp(nsp->uri, qn.space) == 0) {
-                        goto done;
-                    }
-                }
-                //  MOB -- need a fast way to know if the space is a standard reserved namespace or not */
-                /* Verify namespace is open */
-                for (b = ejs->state->bp; b->scope; b = b->scope) {
-                    for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&b->namespaces, &next)) != 0; ) {
-                        if (strcmp(nsp->uri, qn.space) == 0) {
+            if (!obj->type->virtualSlots) {
+                target = ejsGetPropertyName(ejs, obj, slotNum);
+                lookup->name = target;
+                if (name->space[0] && (name->space[0] != target.space[0] || strcmp(name->space, target.space) != 0)) {
+                    /* Unique name match. Name matches, but namespace does not */
+                    slotNum = -1;
+                } else if (target.space[0]) {
+                    for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&ejs->globalBlock->namespaces, &next)) != 0; ) {
+                        if (strcmp(nsp->uri, target.space) == 0) {
                             goto done;
                         }
                     }
+                    //  MOB -- need a fast way to know if the space is a standard reserved namespace or not */
+                    /* Verify namespace is open */
+                    for (b = ejs->state->bp; b->scope; b = b->scope) {
+                        for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&b->namespaces, &next)) != 0; ) {
+                            if (strcmp(nsp->uri, target.space) == 0) {
+                                goto done;
+                            }
+                        }
+                    }
+                    slotNum = -1;
                 }
-                slotNum = -1;
             }
 
         } else {
@@ -192,7 +196,6 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *
 done:
     if (slotNum >= 0) {
         lookup->ref = ejsGetProperty(ejs, obj, slotNum);
-        lookup->name = *name;
         lookup->obj = obj;
         lookup->slotNum = slotNum;
         lookup->trait = ejsGetTrait(lookup->obj, lookup->slotNum);
@@ -214,6 +217,7 @@ EjsObj *ejsGetVarByName(Ejs *ejs, EjsObj *vp, EjsName *name, EjsLookup *lookup)
     mprAssert(name);
 
     //  OPT - really nice to remove this
+    //  MOB -- perhaps delegate the logic below down into a getPropertyByName?
     if (vp && vp->type->helpers.getPropertyByName) {
         if ((result = (*vp->type->helpers.getPropertyByName)(ejs, vp, name)) != 0) {
             return result;

@@ -23,15 +23,26 @@
 /*
    Prototype (instance) slots for "Tar" type 
  */
-#define ES_ejs_tar_Tar_Tar                                             12
-#define ES_ejs_tar_Tar_path                                            13
-#define ES_ejs_tar_Tar_files                                           14
-#define ES_ejs_tar_Tar_add                                             15
-#define ES_ejs_tar_Tar_xcreate                                         16
-#define ES_ejs_tar_Tar_extract                                         17
-#define ES_ejs_tar_Tar_cat                                             18
-#define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               19
+#define ES_ejs_tar_Tar_constructor                                     0
+#define ES_ejs_tar_Tar_clone                                           1
+#define ES_ejs_tar_Tar_get                                             2
+#define ES_ejs_tar_Tar_getValues                                       3
+#define ES_ejs_tar_Tar_hasOwnProperty                                  4
+#define ES_ejs_tar_Tar_isPrototypeOf                                   5
+#define ES_ejs_tar_Tar_propertyIsEnumerable                            6
+#define ES_ejs_tar_Tar_toJSON                                          7
+#define ES_ejs_tar_Tar_toLocaleString                                  8
+#define ES_ejs_tar_Tar_toString                                        9
+#define ES_ejs_tar_Tar_valueOf                                         10
+#define ES_ejs_tar_Tar_Tar                                             11
+#define ES_ejs_tar_Tar_path                                            12
+#define ES_ejs_tar_Tar_files                                           13
+#define ES_ejs_tar_Tar_add                                             14
+#define ES_ejs_tar_Tar_xcreate                                         15
+#define ES_ejs_tar_Tar_extract                                         16
+#define ES_ejs_tar_Tar_cat                                             17
+#define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               18
 
-#define _ES_CHECKSUM_ejs_tar   8322
+#define _ES_CHECKSUM_ejs_tar   8313
 
 #endif

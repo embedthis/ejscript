@@ -995,6 +995,9 @@ static char *getAttributeString(EjsMod *mp, int attributes)
     if (attributes & EJS_TYPE_DYNAMIC_INSTANCE) {
         strcat(attributeBuf, "dynamic ");
     }
+    if (attributes & EJS_TYPE_ORPHAN) {
+        strcat(attributeBuf, "orphan ");
+    }
     if (attributes & EJS_TRAIT_GETTER) {
         strcat(attributeBuf, "get ");
     }

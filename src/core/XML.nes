@@ -9,7 +9,7 @@ module ejs {
     /**
         The XML class provides a simple ability to load, parse and save XML documents.
      */
-    final native class XML extends Object {
+    final native class XML {
 
         use default namespace public
 

@@ -390,21 +390,23 @@ static void markHttpServer(Ejs *ejs, EjsHttpServer *sp)
 
 void ejsConfigureHttpServerType(Ejs *ejs)
 {
+    EjsObj      *prototype;
     EjsType     *type;
 
     type = ejsConfigureNativeType(ejs, "ejs.web", "HttpServer", sizeof(EjsHttpServer));
     type->helpers.mark = (EjsMarkHelper) markHttpServer;
 
-    ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_HttpServer, (EjsProc) hs_HttpServer);
-    ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_addListener, (EjsProc) hs_addListener);
-    ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_address, (EjsProc) hs_address);
-    ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_attach, (EjsProc) hs_attach);
-    ejsBindAccess(ejs, type, ES_ejs_web_HttpServer_async, (EjsProc) hs_async, (EjsProc) hs_set_async);
-    ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_close, (EjsProc) hs_close);
-    ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_listen, (EjsProc) hs_listen);
-    ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_port, (EjsProc) hs_port);
-    ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_removeListener, (EjsProc) hs_removeListener);
-    ejsBindMethod(ejs, type, ES_ejs_web_HttpServer_software, (EjsProc) hs_software);
+    prototype = type->prototype;
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_HttpServer, (EjsProc) hs_HttpServer);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_addListener, (EjsProc) hs_addListener);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_address, (EjsProc) hs_address);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_attach, (EjsProc) hs_attach);
+    ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_async, (EjsProc) hs_async, (EjsProc) hs_set_async);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_close, (EjsProc) hs_close);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_listen, (EjsProc) hs_listen);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_port, (EjsProc) hs_port);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_removeListener, (EjsProc) hs_removeListener);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_software, (EjsProc) hs_software);
     
     ejsAddWebHandler(ejs->http);
 }

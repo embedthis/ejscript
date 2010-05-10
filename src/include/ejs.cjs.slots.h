@@ -46,7 +46,18 @@
 /*
    Prototype (instance) slots for "Loader" type 
  */
-#define ES_Loader_NUM_INSTANCE_PROP                                    12
+#define ES_Loader_constructor                                          0
+#define ES_Loader_clone                                                1
+#define ES_Loader_get                                                  2
+#define ES_Loader_getValues                                            3
+#define ES_Loader_hasOwnProperty                                       4
+#define ES_Loader_isPrototypeOf                                        5
+#define ES_Loader_propertyIsEnumerable                                 6
+#define ES_Loader_toJSON                                               7
+#define ES_Loader_toLocaleString                                       8
+#define ES_Loader_toString                                             9
+#define ES_Loader_valueOf                                              10
+#define ES_Loader_NUM_INSTANCE_PROP                                    11
 
 /*
     Local slots for methods in type "Loader" 
@@ -62,6 +73,6 @@
 #define ES_Loader_locate_id                                            0
 #define ES_Loader_setConfig_newConfig                                  0
 
-#define _ES_CHECKSUM_ejs_cjs   25628
+#define _ES_CHECKSUM_ejs_cjs   25626
 
 #endif

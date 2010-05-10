@@ -54,7 +54,6 @@ typedef struct EjsMod
     int         exitOnError;                /* Exit if module file errors are detected */
     int         firstGlobal;                /* First global to examine */
     int         genSlots;                   /* Set if either cslots || jsslots */
-    int         jslots;                     /* Create Java slot definitions */
     int         listing;                    /* Generate listing file */
     int         showDebug;                  /* Show debug instructions */
     int         verbosity;                  /* Verbosity level */

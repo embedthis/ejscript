@@ -431,6 +431,7 @@ void ejsCreateNumberType(Ejs *ejs)
     static int  zero = 0;
 
     type = ejs->numberType = ejsCreateNativeType(ejs, "ejs", "Number", ES_Number, sizeof(EjsNumber));
+    type->orphan = 1;
     type->immutable = 1;
 
     type->helpers.cast = (EjsCastHelper) castNumber;
@@ -477,16 +478,15 @@ void ejsConfigureNumberType(Ejs *ejs)
     prototype = type->prototype;
 
     ejsBindMethod(ejs, prototype, ES_Number_Number, (EjsProc) numberConstructor);
+    ejsBindMethod(ejs, prototype, ES_Number_get, getNumberIterator);
+    ejsBindMethod(ejs, prototype, ES_Number_getValues, getNumberIterator);
     ejsBindMethod(ejs, prototype, ES_Number_integral, (EjsProc) integral);
     ejsBindMethod(ejs, prototype, ES_Number_isFinite, (EjsProc) isFinite);
     ejsBindMethod(ejs, prototype, ES_Number_isNaN, (EjsProc) isNaN);
     ejsBindMethod(ejs, prototype, ES_Number_toExponential, (EjsProc) toExponential);
     ejsBindMethod(ejs, prototype, ES_Number_toFixed, (EjsProc) toFixed);
     ejsBindMethod(ejs, prototype, ES_Number_toPrecision, (EjsProc) toPrecision);
-
-    ejsBindMethod(ejs, prototype, ES_Object_get, getNumberIterator);
-    ejsBindMethod(ejs, prototype, ES_Object_getValues, getNumberIterator);
-    ejsBindMethod(ejs, prototype, ES_Object_toString, numberToString);
+    ejsBindMethod(ejs, prototype, ES_Number_toString, numberToString);
 
     ejsSetProperty(ejs, (EjsObj*) type, ES_Number_MaxValue, (EjsObj*) ejs->maxValue);
     ejsSetProperty(ejs, (EjsObj*) type, ES_Number_MinValue, (EjsObj*) ejs->minValue);

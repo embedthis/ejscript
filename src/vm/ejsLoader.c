@@ -606,12 +606,18 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (mp->flags & EJS_LOADER_BUILTIN) {
         type->block.obj.builtin = 1;
     }
+#if UNUSED && MOVED
+    //  MOB -- push these into ejsConfigureType ejsCreateType
     if (attributes & EJS_TYPE_HAS_TYPE_INITIALIZER) {
         type->hasStaticInitializer = 1;
     }
     if (attributes & EJS_TYPE_DYNAMIC_INSTANCE) {
         type->dynamicInstance = 1;
     }
+    if (attributes & EJS_TYPE_COPY_PROTOTYPE) {
+        type->copyPrototype = 1;
+    }
+#endif
     slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, &qname, ejs->typeType, attributes, (EjsObj*) type);
     if (slotNum < 0) {
         ejsThrowMemoryError(ejs);
@@ -716,7 +722,7 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (attributes & EJS_PROP_NATIVE) {
         mp->hasNative = 1;
     }
-    if (attributes & EJS_FUN_INITIALIZER) {
+    if (attributes & EJS_FUN_MODULE_INITIALIZER) {
         mp->hasInitializer = 1;
     }
     if (ejs->loadState->flags & EJS_LOADER_STRICT) {
@@ -776,7 +782,7 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
             slotNum = -1;
         }
     }
-    if (attributes & EJS_FUN_INITIALIZER && current == ejs->global) {
+    if (attributes & EJS_FUN_MODULE_INITIALIZER && current == ejs->global) {
         mp->initializer = fun;
         slotNum = -1;
     } else {

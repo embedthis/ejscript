@@ -137,10 +137,8 @@ module ejs {
         */
         function CmdArgs(template: Object, argv: Array = App.args.slice(1)) {
             parseTemplate(template)
-breakpoint()
             for (i = 0; i < argv.length; i++) {
                 let arg = argv[i]
-if (i == 1) breakpoint()
                 if (arg.startsWith("-")) {
                     let key = arg.slice(arg.startsWith("--") ? 2 : 1)
                     if (aliases[key]) {

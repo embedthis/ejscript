@@ -68,13 +68,6 @@ MAIN(ejsmodMain, int argc, char **argv)
             mp->exitOnError++;
             mp->warnOnError++;
             
-        } else if (strcmp(argp, "--jslots") == 0) {
-            /*
-                This command is currently not documented until the JVM is released.
-             */
-            mp->jslots = 1;
-            mp->genSlots = 1;
-
         } else if (strcmp(argp, "--html") == 0) {
             if (nextArg >= argc) {
                 err++;
