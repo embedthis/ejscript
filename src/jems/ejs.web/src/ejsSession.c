@@ -312,7 +312,6 @@ void ejsConfigureSessionType(Ejs *ejs)
 {
     EjsType         *type;
     EjsTypeHelpers  *helpers;
-    EjsObj          *prototype;
 
     type = ejs->sessionType = ejsConfigureNativeType(ejs, "ejs.web", "Session", sizeof(EjsSession));
     helpers = &type->helpers;

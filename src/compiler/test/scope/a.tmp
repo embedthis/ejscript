@@ -1,3 +1,0 @@
-var i = new String
-print(i.charAt)
-print(i.prototype.fromCharCode)
