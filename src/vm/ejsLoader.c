@@ -609,7 +609,7 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
 #if UNUSED && MOVED
     //  MOB -- push these into ejsConfigureType ejsCreateType
     if (attributes & EJS_TYPE_HAS_TYPE_INITIALIZER) {
-        type->hasStaticInitializer = 1;
+        type->hasInitializer = 1;
     }
     if (attributes & EJS_TYPE_DYNAMIC_INSTANCE) {
         type->dynamicInstance = 1;

@@ -636,7 +636,7 @@ static void bindClass(EcCompiler *cp, EcNode *np)
 
     mprAssert(cp->phase == EC_PHASE_BIND);
 
-    if (type->hasStaticInitializer) {
+    if (type->hasInitializer) {
         /*
             Create the static initializer function. Code gen will fill out the code. The type must be on the scope chain.
          */
@@ -689,7 +689,7 @@ static void astClass(EcCompiler *cp, EcNode *np)
     EjsType         *type;
     EcState         *state;
     EcNode          *constructor;
-    bool            hasStaticInitializer;
+    bool            hasInitializer;
 
     mprAssert(np->kind == N_CLASS);
     
@@ -734,11 +734,11 @@ static void astClass(EcCompiler *cp, EcNode *np)
         Add the type to the scope chain and the static initializer if present. Use push frame to make it eaiser to
         pop the type off the scope chain later.
      */
-    hasStaticInitializer = 0;
+    hasInitializer = 0;
     addScope(cp, (EjsBlock*) type);
     if (np->klass.initializer) {
         openBlock(cp, np, (EjsBlock*) np->klass.initializer);
-        hasStaticInitializer++;
+        hasInitializer++;
     }
     if (cp->phase == EC_PHASE_FIXUP && type->baseType) {
         ejsInheritBaseClassNamespaces(ejs, type, type->baseType);
@@ -753,7 +753,7 @@ static void astClass(EcCompiler *cp, EcNode *np)
     mprAssert(np->left->kind == N_DIRECTIVES);
     processAstNode(cp, np->left);
     
-    if (hasStaticInitializer) {
+    if (hasInitializer) {
 #if UNUSED       //  Close block should 
         state->letBlock = (EjsBlock*) np->klass.initializer;
 #endif
@@ -3303,7 +3303,7 @@ static void processAstNode(EcCompiler *cp, EcNode *np)
                 state->currentClass->hasInitializer = 1;
 #endif
             } else {
-                state->currentClass->hasStaticInitializer = 1;
+                state->currentClass->hasInitializer = 1;
             }
         } else {
             state->currentModule->hasInitializer = 1;
@@ -3426,8 +3426,8 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         }
         mprAssert(type->hasBaseConstructors == type->hasBaseInitializers);
 #endif
-        if (baseType->hasStaticInitializer) {
-            type->hasBaseStaticInitializers = 1;
+        if (baseType->hasInitializer) {
+            type->hasBaseInitializers = 1;
         }
     }
 
@@ -3444,8 +3444,8 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
                 type->hasBaseInitializers = 1;
             }
 #endif
-            if (iface->hasStaticInitializer) {
-                type->hasBaseStaticInitializers = 1;
+            if (iface->hasInitializer) {
+                type->hasBaseInitializers = 1;
             }
         }
     }
@@ -3455,10 +3455,10 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
             Remove the static initializer slot if this class does not require a static initializer
             By convention, it is installed in slot number 1.
          */
-        if (type->hasBaseStaticInitializers) {
-            type->hasStaticInitializer = 1;
+        if (type->hasBaseInitializers) {
+            type->hasInitializer = 1;
         }
-        if (!type->hasStaticInitializer) {
+        if (!type->hasInitializer) {
             ejsRemoveProperty(ejs, (EjsObj*) type, 0);
         }
         /*
@@ -3511,7 +3511,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         Remove the original overridden method. Set the inherited slot to the overridden method. This implements a v-table.
      */
     prototype = type->prototype;
-    for (slotNum = type->numPrototypeInherited; slotNum < prototype->numSlots; slotNum++) {
+    for (slotNum = type->numInherited; slotNum < prototype->numSlots; slotNum++) {
         trait = ejsGetPropertyTrait(ejs, prototype, slotNum);
         if (trait == 0) {
             continue;

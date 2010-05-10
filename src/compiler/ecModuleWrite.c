@@ -313,7 +313,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     attributes = (trait) ? trait->attributes : 0;
     attributes &= ~EJS_TYPE_FIXUP;
 
-    if (type->hasStaticInitializer) {
+    if (type->hasInitializer) {
         attributes |= EJS_TYPE_HAS_TYPE_INITIALIZER;
     }
     if (type->hasConstructor) {
@@ -382,7 +382,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
         for (slotNum = 0; slotNum < count; slotNum++) {
             pname = ejsGetPropertyName(ejs, prototype, slotNum);
             trait = ejsGetPropertyTrait(ejs, prototype, slotNum);
-            if (slotNum < type->numPrototypeInherited) {
+            if (slotNum < type->numInherited) {
                 if (trait && !(trait->attributes & EJS_FUN_OVERRIDE)) {
                     continue;
                 }

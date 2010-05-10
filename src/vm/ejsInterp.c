@@ -1327,7 +1327,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             mprAssert(type);
             if (type && type->hasConstructor) {
                 mprAssert(type->prototype);
-                fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, type->numPrototypeInherited);
+                fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, type->numInherited);
                 callFunction(ejs, fun, (EjsObj*) vp, argc, 0);
             }
             BREAK;
@@ -1346,7 +1346,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 ejsThrowReferenceError(ejs, "Can't find constructor %s", qname.name);
             } else {
                 mprAssert(type->hasConstructor);
-                slotNum = type->numPrototypeInherited;
+                slotNum = type->numInherited;
                 fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
                 callFunction(ejs, fun, NULL, argc, 0);
             }
@@ -1423,7 +1423,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 ejsThrowReferenceError(ejs, "Reference is not a class");
             } else {
                 type->block.scope = state.bp;
-                if (type && type->hasStaticInitializer) {
+                if (type && type->hasInitializer) {
                     fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, 0);
                     callFunction(ejs, fun, (EjsObj*) type, 0, 0);
                     if (type->implements && !ejs->exception) {
@@ -2741,7 +2741,7 @@ static void callConstructor(Ejs *ejs, EjsFunction *vp, int argc, int stackAdjust
             /*
                 Constructor is always at slot 0, offset by inherited propertie
              */
-            slotNum = type->numPrototypeInherited;
+            slotNum = type->numInherited;
             fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
 
             if (ejsIsNativeFunction(fun)) {
@@ -2787,7 +2787,7 @@ static void callInterfaceInitializers(Ejs *ejs, EjsType *type)
     int         next;
 
     for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
-        if (iface->hasStaticInitializer) {
+        if (iface->hasInitializer) {
             fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) iface, 0);
             callFunction(ejs, fun, (EjsObj*) type, 0, 0);
         }

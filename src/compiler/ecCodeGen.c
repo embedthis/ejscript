@@ -1263,7 +1263,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
         processNode(cp, np->left);
     }
 
-    if (type->hasStaticInitializer) {
+    if (type->hasInitializer) {
         /*
             Create the static initializer
          */
@@ -1350,7 +1350,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
      */
     ecAddNameConstant(cp, &np->qname);
 
-    if (type->hasStaticInitializer) {
+    if (type->hasInitializer) {
         qname = ejsGetPropertyName(ejs, (EjsObj*) type, 0);
         ecAddNameConstant(cp, &qname);
     }

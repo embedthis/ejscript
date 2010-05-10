@@ -46,10 +46,10 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
     dest->hasBaseInitializers = src->hasBaseInitializers;
     dest->hasInitializer = src->hasInitializer;
 #endif
-    dest->hasBaseStaticInitializers = src->hasBaseStaticInitializers;
+    dest->hasBaseInitializers = src->hasBaseInitializers;
     dest->hasConstructor = src->hasConstructor;
     dest->hasMeta = src->hasMeta;
-    dest->hasStaticInitializer = src->hasStaticInitializer;
+    dest->hasInitializer = src->hasInitializer;
     dest->helpers = src->helpers;
     dest->id = src->id;
     dest->immutable = src->immutable;
@@ -265,9 +265,8 @@ EjsType *ejsCreateTypeFromFunction(Ejs *ejs, EjsFunction *fun)
         Install the function as the constructor
      */
     mprAssert(type->prototype);
-    ejsSetProperty(ejs, (EjsObj*) type->prototype, type->numPrototypeInherited, (EjsObj*) fun);
-    ejsSetPropertyTrait(ejs, type->prototype, type->numPrototypeInherited, ejs->functionType, 
-        EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED);
+    ejsSetProperty(ejs, (EjsObj*) type->prototype, type->numInherited, (EjsObj*) fun);
+    ejsSetPropertyTrait(ejs, type->prototype, type->numInherited, ejs->functionType, EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED);
     fun->constructor = 1;
     fun->thisObj = 0;
     return type;
@@ -425,7 +424,7 @@ mprAssert(type->hasConstructor == type->hasInitializer);
         type->isInterface = 1;
     }
     if (attributes & EJS_TYPE_HAS_TYPE_INITIALIZER) {
-        type->hasStaticInitializer = 1;
+        type->hasInitializer = 1;
     }
     if (attributes & EJS_TYPE_ORPHAN) {
         type->orphan = 1;
@@ -603,7 +602,7 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
         if (inheritProperties(ejs, type->prototype, offset, basePrototype, basePrototype->numSlots, 0) < 0) {
             return EJS_ERR;
         }
-        type->numPrototypeInherited = basePrototype->numSlots;
+        type->numInherited = basePrototype->numSlots;
     }
     offset += type->prototype->numSlots;
 

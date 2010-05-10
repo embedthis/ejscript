@@ -837,7 +837,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName *qname, EjsTrait *ty
     if (type) {
         prototype = type->prototype;
         if (prototype) {
-            numInherited = type->numPrototypeInherited;
+            numInherited = type->numInherited;
             if (ejsGetPropertyCount(ejs, prototype) > 0) {
                 for (slotNum = numInherited; slotNum < prototype->numSlots; slotNum++) {
                     trait = ejsGetTrait(prototype, slotNum);
@@ -984,8 +984,8 @@ static void generateClassPropertyTable(EjsMod *mp, EjsType *type)
     count = generateClassPropertyTableEntries(mp, (EjsObj*) type, 0);
     count += generateClassGetterTableEntries(mp, (EjsObj*) type, 0);
     if (type->prototype) {
-        count += generateClassPropertyTableEntries(mp, type->prototype, type->numPrototypeInherited);
-        count += generateClassGetterTableEntries(mp, type->prototype, type->numPrototypeInherited);
+        count += generateClassPropertyTableEntries(mp, type->prototype, type->numInherited);
+        count += generateClassGetterTableEntries(mp, type->prototype, type->numInherited);
     }
     if (count == 0) {
         out(mp, "   <tr><td colspan='4'>No properties defined</td></tr>");

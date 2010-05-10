@@ -32,10 +32,10 @@ static inline EjsType *getOwningType(EjsObj *vp, int slotNum)
                 } while (slotNum < type->numInherited);
             }
         } else if (type->prototype) {
-            if (slotNum < type->numPrototypeInherited) {
+            if (slotNum < type->numInherited) {
                 do {
                     type = type->baseType;
-                } while (slotNum < type->numPrototypeInherited);
+                } while (slotNum < type->numInherited);
             }
         }
     }
@@ -490,7 +490,7 @@ EjsObj *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
         return 0;
     }
     if (type->hasConstructor) {
-        fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type->prototype, type->numPrototypeInherited);
+        fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type->prototype, type->numInherited);
         if (fun == 0 || !ejsIsFunction(fun)) {
             return 0;
         }

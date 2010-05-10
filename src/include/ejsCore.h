@@ -2609,17 +2609,10 @@ typedef struct EjsType {
     uint            dynamicInstance         :  1;   /**< Object instances may add properties */
     uint            final                   :  1;   /**< Type is final */
     uint            hasBaseConstructors     :  1;   /**< Base types has constructors */
-#if UNUSED
     uint            hasBaseInitializers     :  1;   /**< Base types have initializers */
-    uint            hasInitializer          :  1;   /**< Type has instance level initialization code */
-#endif
-    //  MOB -- rename has BaseInitializers
-    uint            hasBaseStaticInitializers: 1;   /**< Base types have initializers */
     uint            hasConstructor          :  1;   /**< Type has a constructor */
     uint            hasMeta                 :  1;   /**< Type has meta methods */
-
-    //  MOB -- rename hasInitializer
-    uint            hasStaticInitializer    :  1;   /**< Type has static level initialization code */
+    uint            hasInitializer          :  1;   /**< Type has static level initialization code */
     uint            immutable               :  1;   /**< Instances are immutable */
     uint            initialized             :  1;   /**< Static initializer has run */
     uint            isInterface             :  1;   /**< Interface vs class */
@@ -2629,14 +2622,13 @@ typedef struct EjsType {
     uint            orphan                  :  1;   /**< Type should not inherit super-class prototype properties */
     uint            virtualSlots            :  1;   /**< Properties are not stored in slots[] */
     
+    int             numInherited;
     short           id;                             /**< Unique type id */
     ushort          instanceSize;                   /**< Size of instances in bytes */
     EjsTypeHelpers  helpers;                        /**< Type helper methods */
     struct EjsModule *module;                       /**< Module owning the type - stores the constant pool */
     void            *typeData;                      /**< Type specific data */
 
-    //  MOB -- rename numInherited
-    int             numPrototypeInherited;
 } EjsType;
 
 
@@ -2913,9 +2905,10 @@ typedef struct EjsState {
     struct EjsObj       **stack;            /* Top of stack (points to the last element pushed) */
     struct EjsObj       **stackBase;        /* Pointer to start of stack mem */
     struct EjsState     *prev;              /* Previous state */
-
+#if UNUSED
     //  MOB -- not used
     struct EjsObj       **stackEnd;         /* Only used on non-virtual memory systems */
+#endif
     int                 stackSize;          /* Stack size */
 } EjsState;
 
