@@ -557,9 +557,14 @@ typedef struct EjsSlot {
     } value;
 } EjsSlot;
 
+typedef struct EjsSlots {
+    struct EjsSlot  *slots;                 /**< Vector of slots containing property references */
+    int             sizeSlots;              /**< Current size of traits[] and slots[] */
+    int             numSlots;               /**< Number of properties in traits/slots */
+} EjsSlots;
 
 typedef struct EjsHash {
-    int             sizeHash;               /**< Size of hash */
+    int             size;                   /**< Size of hash */
     int             *buckets;               /**< Hash buckets and head of link chains */
 } EjsHash;
 
@@ -622,10 +627,11 @@ typedef struct EjsObj {
     };
 #endif
     struct EjsType  *type;                      /**< Type of this object (not base type). ie. type for Object is EjsType  */
-    struct EjsSlot  *slots;                     /**< Vector of slots containing property references */
 
+    struct EjsSlot  *slots;                     /**< Vector of slots containing property references */
     int             sizeSlots;                  /**< Current size of traits[] and slots[] */
     int             numSlots;                   /**< Number of properties in traits/slots */
+
     EjsHash         *hash;                      /**< Hash buckets and head of link chains */
 } EjsObj;
 

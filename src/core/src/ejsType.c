@@ -92,8 +92,8 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numSlots)
         typeSize = sizeof(EjsType);
         typeSize += (int) sizeof(EjsSlot) * numSlots;
         if (numSlots > EJS_HASH_MIN_PROP) {
-            sizeHash = sizeof(EjsHash) + ejsGetHashSize(numSlots);
-            typeSize += (sizeHash * (int) sizeof(EjsSlot*));
+            sizeHash = ejsGetHashSize(numSlots);
+            typeSize += sizeof(EjsHash) + (sizeHash * (int) sizeof(EjsSlot*));
         }
     }
     if ((vp = (EjsObj*) mprAllocZeroed(ejsGetAllocCtx(ejs), typeSize)) == 0) {
@@ -127,10 +127,10 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numSlots)
         }
         if (sizeHash > 0) {
             obj->hash = (EjsHash*) start;
-            obj->hash->buckets = (int*) &obj->hash[1];
-            obj->hash->sizeHash = sizeHash;
+            obj->hash->buckets = (int*) (start + sizeof(EjsHash));
+            obj->hash->size = sizeHash;
             memset(obj->hash->buckets, -1, sizeHash * sizeof(int));
-            start += sizeof(int) * sizeHash;
+            start += sizeof(EjsHash) + sizeof(int) * sizeHash;
         }
         mprAssert((start - (char*) type) <= typeSize);
     }
@@ -441,45 +441,30 @@ EjsType *ejsGetTypeByName(Ejs *ejs, cchar *space, cchar *name)
 }
 
 
-static int inheritProperties(Ejs *ejs, EjsType *type, EjsObj *obj, int offset, EjsObj *baseBlock, int count, 
-        bool implementing)
+static int inheritProperties(Ejs *ejs, EjsType *type, EjsObj *obj, int destOffset, EjsObj *baseBlock, int srcOffset, 
+        int count, bool resetScope)
 {
     EjsFunction     *fun;
-    int             start, i;
+    int             i;
 
     mprAssert(obj);
     mprAssert(baseBlock);
     mprAssert(count > 0);
+    mprAssert(destOffset < obj->numSlots);
+    mprAssert(srcOffset < baseBlock->numSlots);
+    mprAssert((destOffset + count) <= baseBlock->numSlots);
+    mprAssert((srcOffset + count) <= baseBlock->numSlots);
 
-    if (baseBlock == 0 || count <= 0) {
-        return 0;
-    }
-    start = baseBlock->numSlots - count;
-    ejsCopySlots(ejs, obj, &obj->slots[offset], &baseBlock->slots[start], count, 1);
+    ejsCopySlots(ejs, obj, &obj->slots[destOffset], &baseBlock->slots[srcOffset], count, 1);
     
-    if (implementing) {
-        /*
-            Correct the scope and bound "this" for methods that are implemented from another class.
-         */
-        for (i = offset; i < count; i++) {
+    if (resetScope) {
+        for (i = destOffset; i < (destOffset + count); i++) {
             fun = (EjsFunction*) ejsGetProperty(ejs, obj, i);
             if (ejsIsFunction(fun)) {
                 fun->thisObj = 0;
                 fun->block.scope = (EjsBlock*) type;
             }
         }
-#if UNSUSED
-        EjsBlock *b = (EjsBlock*) type;
-        printf("Type %s\n", type->qname.name);
-        for (i = 0; i < b->namespaces.length; i++) {
-            printf("%s\n", (cchar*) ((EjsNamespace*) b->namespaces.items[i])->uri);
-        }
-        b = (EjsBlock*) baseBlock;
-        printf("Base %s\n", baseBlock->name);
-        for (i = 0; i < b->namespaces.length; i++) {
-            printf("%s\n", (cchar*) ((EjsNamespace*) b->namespaces.items[i])->uri);
-        }
-#endif
     }
     ejsMakeObjHash(obj);
     return 0;
@@ -520,6 +505,7 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
         if (baseType != ejs->objectType && baseType->dynamicInstance) {
             type->dynamicInstance = 1;
         }
+        type->hasInstanceVars |= baseType->hasInstanceVars;
     }
     if (type->implements) {
         if (fixupTypeImplements(ejs, type, makeRoom) < 0) {
@@ -553,6 +539,7 @@ static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom)
         for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
             if (!iface->isInterface) {
                 count += iface->block.obj.numSlots;
+                type->hasInstanceVars |= iface->hasInstanceVars;
             }
         }
         if (count > 0 && ejsInsertGrowObject(ejs, (EjsObj*) type, count, 0) < 0) {
@@ -563,9 +550,10 @@ static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom)
     for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
         if (!iface->isInterface) {
             count = iface->block.obj.numSlots;
-            if (inheritProperties(ejs, type, (EjsObj*) type, offset, (EjsObj*) iface, count, 1) < 0) {
+            if (inheritProperties(ejs, type, (EjsObj*) type, offset, (EjsObj*) iface, 0, count, 1) < 0) {
                 return EJS_ERR;
             }
+            offset += count;
         }
         for (nextNsp = 0; (nsp = (EjsNamespace*) ejsGetNextItem(&iface->block.namespaces, &nextNsp)) != 0;) {
             ejsAddNamespaceToBlock(ejs, (EjsBlock*) type, nsp);
@@ -583,7 +571,7 @@ static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom)
 static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
 {
     EjsType     *iface;
-    EjsObj      *ip, *basePrototype;
+    EjsObj      *basePrototype;
     int         count, offset, next;
 
     mprAssert(type != baseType);
@@ -591,20 +579,6 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
     mprAssert(baseType->prototype);
     
     basePrototype = baseType->prototype;
-
-#if UNUSED
-    /*
-        Determine if instances need to copy the prototype properties. True if the type has instance vars.
-     */
-    prototype = type->prototype;
-    for (slotNum = 0; slotNum < prototype->numSlots; slotNum++) {
-        obj = ejsGetProperty(ejs, prototype, slotNum);
-        if (!ejsIsFunction(obj) && !ejsIsBlock(obj)) {
-            type->hasInstanceVars |= 1;
-            break;
-        }
-    }
-#endif
 
     if (makeRoom) {
         count = 0;
@@ -615,7 +589,7 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
         }
         for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
             if (!iface->isInterface && iface->prototype) {
-                count += iface->prototype->numSlots;
+                count += iface->prototype->numSlots - iface->numInherited;
             }
         }
         if (count > 0 && ejsInsertGrowObject(ejs, type->prototype, count, 0) < 0) {
@@ -625,12 +599,12 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
     offset = 0;
     if (type->hasInstanceVars) {
         mprAssert(type->prototype->numSlots >= basePrototype->numSlots);
-        if (inheritProperties(ejs, type, type->prototype, offset, basePrototype, basePrototype->numSlots, 0) < 0) {
+        if (inheritProperties(ejs, type, type->prototype, offset, basePrototype, 0, basePrototype->numSlots, 0) < 0) {
             return EJS_ERR;
         }
         type->numInherited = basePrototype->numSlots;
+        offset += basePrototype->numSlots;
     }
-    offset += type->prototype->numSlots;
 
     if (type->implements) {
         for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
@@ -638,14 +612,15 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
                 continue;
             }
             /* Only come here for implemented classes */
-            if ((ip = iface->prototype) == 0) {
+            if (iface->prototype == 0) {
                 continue;
             }
-            count = ip->numSlots;
-            if (inheritProperties(ejs, type, type->prototype, offset, ip, count, 1) < 0) {
+            count = iface->prototype->numSlots - iface->numInherited;
+            if (inheritProperties(ejs, type, type->prototype, offset, iface->prototype, iface->numInherited, count, 1) < 0) {
                 return EJS_ERR;
             }
-            offset += ip->numSlots;
+            type->numInherited += count;
+            offset += count;
         }
     }
     return 0;
@@ -856,7 +831,7 @@ static int ejsGetBlockSize(Ejs *ejs, EjsObj *obj)
     numSlots = ejsGetPropertyCount(ejs, obj);
     size = (numSlots * sizeof(EjsSlot));
     if (obj->hash) {
-        size += sizeof(EjsHash) + (obj->hash->sizeHash * sizeof(int));
+        size += sizeof(EjsHash) + (obj->hash->size * sizeof(int));
     }
     if (ejsIsBlock(obj)) {
         size += sizeof(EjsBlock) - sizeof(EjsObj);

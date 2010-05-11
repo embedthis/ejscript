@@ -325,17 +325,17 @@
 /*
    Prototype (instance) slots for "BinaryStream" type 
  */
-#define ES_BinaryStream_Object_constructor                             0
-#define ES_BinaryStream_Object_clone                                   1
-#define ES_BinaryStream_Object_iterator_get                            2
-#define ES_BinaryStream_Object_iterator_getValues                      3
-#define ES_BinaryStream_Object_hasOwnProperty                          4
-#define ES_BinaryStream_Object_isPrototypeOf                           5
-#define ES_BinaryStream_Object_propertyIsEnumerable                    6
-#define ES_BinaryStream_Object_toJSON                                  7
-#define ES_BinaryStream_Object_toLocaleString                          8
-#define ES_BinaryStream_Object_toString                                9
-#define ES_BinaryStream_Object_valueOf                                 10
+#define ES_BinaryStream_constructor                                    0
+#define ES_BinaryStream_clone                                          1
+#define ES_BinaryStream_iterator_get                                   2
+#define ES_BinaryStream_iterator_getValues                             3
+#define ES_BinaryStream_hasOwnProperty                                 4
+#define ES_BinaryStream_isPrototypeOf                                  5
+#define ES_BinaryStream_propertyIsEnumerable                           6
+#define ES_BinaryStream_toJSON                                         7
+#define ES_BinaryStream_toLocaleString                                 8
+#define ES_BinaryStream_toString                                       9
+#define ES_BinaryStream_valueOf                                        10
 #define ES_BinaryStream_BinaryStream                                   11
 #define ES_BinaryStream_inbuf                                          12
 #define ES_BinaryStream_outbuf                                         13
@@ -467,17 +467,17 @@
 /*
    Prototype (instance) slots for "CmdArgs" type 
  */
-#define ES_CmdArgs_Object_constructor                                  0
-#define ES_CmdArgs_Object_clone                                        1
-#define ES_CmdArgs_Object_iterator_get                                 2
-#define ES_CmdArgs_Object_iterator_getValues                           3
-#define ES_CmdArgs_Object_hasOwnProperty                               4
-#define ES_CmdArgs_Object_isPrototypeOf                                5
-#define ES_CmdArgs_Object_propertyIsEnumerable                         6
-#define ES_CmdArgs_Object_toJSON                                       7
-#define ES_CmdArgs_Object_toLocaleString                               8
-#define ES_CmdArgs_Object_toString                                     9
-#define ES_CmdArgs_Object_valueOf                                      10
+#define ES_CmdArgs_constructor                                         0
+#define ES_CmdArgs_clone                                               1
+#define ES_CmdArgs_iterator_get                                        2
+#define ES_CmdArgs_iterator_getValues                                  3
+#define ES_CmdArgs_hasOwnProperty                                      4
+#define ES_CmdArgs_isPrototypeOf                                       5
+#define ES_CmdArgs_propertyIsEnumerable                                6
+#define ES_CmdArgs_toJSON                                              7
+#define ES_CmdArgs_toLocaleString                                      8
+#define ES_CmdArgs_toString                                            9
+#define ES_CmdArgs_valueOf                                             10
 #define ES_CmdArgs_CmdArgs                                             11
 #define ES_CmdArgs_args                                                12
 #define ES_CmdArgs_options                                             13
@@ -606,17 +606,17 @@
 /*
    Prototype (instance) slots for "Emitter" type 
  */
-#define ES_Emitter_Object_constructor                                  0
-#define ES_Emitter_Object_clone                                        1
-#define ES_Emitter_Object_iterator_get                                 2
-#define ES_Emitter_Object_iterator_getValues                           3
-#define ES_Emitter_Object_hasOwnProperty                               4
-#define ES_Emitter_Object_isPrototypeOf                                5
-#define ES_Emitter_Object_propertyIsEnumerable                         6
-#define ES_Emitter_Object_toJSON                                       7
-#define ES_Emitter_Object_toLocaleString                               8
-#define ES_Emitter_Object_toString                                     9
-#define ES_Emitter_Object_valueOf                                      10
+#define ES_Emitter_constructor                                         0
+#define ES_Emitter_clone                                               1
+#define ES_Emitter_iterator_get                                        2
+#define ES_Emitter_iterator_getValues                                  3
+#define ES_Emitter_hasOwnProperty                                      4
+#define ES_Emitter_isPrototypeOf                                       5
+#define ES_Emitter_propertyIsEnumerable                                6
+#define ES_Emitter_toJSON                                              7
+#define ES_Emitter_toLocaleString                                      8
+#define ES_Emitter_toString                                            9
+#define ES_Emitter_valueOf                                             10
 #define ES_Emitter_Emitter                                             11
 #define ES_Emitter_endpoints                                           12
 #define ES_Emitter_addOneListener                                      13
@@ -634,17 +634,17 @@
 /*
    Prototype (instance) slots for "Endpoint" type 
  */
-#define ES_Endpoint_Object_constructor                                 0
-#define ES_Endpoint_Object_clone                                       1
-#define ES_Endpoint_Object_iterator_get                                2
-#define ES_Endpoint_Object_iterator_getValues                          3
-#define ES_Endpoint_Object_hasOwnProperty                              4
-#define ES_Endpoint_Object_isPrototypeOf                               5
-#define ES_Endpoint_Object_propertyIsEnumerable                        6
-#define ES_Endpoint_Object_toJSON                                      7
-#define ES_Endpoint_Object_toLocaleString                              8
-#define ES_Endpoint_Object_toString                                    9
-#define ES_Endpoint_Object_valueOf                                     10
+#define ES_Endpoint_constructor                                        0
+#define ES_Endpoint_clone                                              1
+#define ES_Endpoint_iterator_get                                       2
+#define ES_Endpoint_iterator_getValues                                 3
+#define ES_Endpoint_hasOwnProperty                                     4
+#define ES_Endpoint_isPrototypeOf                                      5
+#define ES_Endpoint_propertyIsEnumerable                               6
+#define ES_Endpoint_toJSON                                             7
+#define ES_Endpoint_toLocaleString                                     8
+#define ES_Endpoint_toString                                           9
+#define ES_Endpoint_valueOf                                            10
 #define ES_Endpoint_Endpoint                                           11
 #define ES_Endpoint_callback                                           12
 #define ES_Endpoint_name                                               13
@@ -657,21 +657,21 @@
 /*
    Prototype (instance) slots for "ArgError" type 
  */
-#define ES_ArgError_Error_constructor                                  0
-#define ES_ArgError_Error_clone                                        1
-#define ES_ArgError_Error_iterator_get                                 2
-#define ES_ArgError_Error_iterator_getValues                           3
-#define ES_ArgError_Error_hasOwnProperty                               4
-#define ES_ArgError_Error_isPrototypeOf                                5
-#define ES_ArgError_Error_propertyIsEnumerable                         6
-#define ES_ArgError_Error_toJSON                                       7
-#define ES_ArgError_Error_toLocaleString                               8
-#define ES_ArgError_Error_toString                                     9
-#define ES_ArgError_Error_valueOf                                      10
-#define ES_ArgError_Error_Error                                        11
-#define ES_ArgError_Error_message                                      12
-#define ES_ArgError_Error_code                                         13
-#define ES_ArgError_Error_stack                                        14
+#define ES_ArgError_constructor                                        0
+#define ES_ArgError_clone                                              1
+#define ES_ArgError_iterator_get                                       2
+#define ES_ArgError_iterator_getValues                                 3
+#define ES_ArgError_hasOwnProperty                                     4
+#define ES_ArgError_isPrototypeOf                                      5
+#define ES_ArgError_propertyIsEnumerable                               6
+#define ES_ArgError_toJSON                                             7
+#define ES_ArgError_toLocaleString                                     8
+#define ES_ArgError_toString                                           9
+#define ES_ArgError_valueOf                                            10
+#define ES_ArgError_Error                                              11
+#define ES_ArgError_message                                            12
+#define ES_ArgError_code                                               13
+#define ES_ArgError_stack                                              14
 #define ES_ArgError_ArgError                                           15
 #define ES_ArgError_NUM_INSTANCE_PROP                                  16
 
@@ -680,21 +680,21 @@
 /*
    Prototype (instance) slots for "ArithmeticError" type 
  */
-#define ES_ArithmeticError_Error_constructor                           0
-#define ES_ArithmeticError_Error_clone                                 1
-#define ES_ArithmeticError_Error_iterator_get                          2
-#define ES_ArithmeticError_Error_iterator_getValues                    3
-#define ES_ArithmeticError_Error_hasOwnProperty                        4
-#define ES_ArithmeticError_Error_isPrototypeOf                         5
-#define ES_ArithmeticError_Error_propertyIsEnumerable                  6
-#define ES_ArithmeticError_Error_toJSON                                7
-#define ES_ArithmeticError_Error_toLocaleString                        8
-#define ES_ArithmeticError_Error_toString                              9
-#define ES_ArithmeticError_Error_valueOf                               10
-#define ES_ArithmeticError_Error_Error                                 11
-#define ES_ArithmeticError_Error_message                               12
-#define ES_ArithmeticError_Error_code                                  13
-#define ES_ArithmeticError_Error_stack                                 14
+#define ES_ArithmeticError_constructor                                 0
+#define ES_ArithmeticError_clone                                       1
+#define ES_ArithmeticError_iterator_get                                2
+#define ES_ArithmeticError_iterator_getValues                          3
+#define ES_ArithmeticError_hasOwnProperty                              4
+#define ES_ArithmeticError_isPrototypeOf                               5
+#define ES_ArithmeticError_propertyIsEnumerable                        6
+#define ES_ArithmeticError_toJSON                                      7
+#define ES_ArithmeticError_toLocaleString                              8
+#define ES_ArithmeticError_toString                                    9
+#define ES_ArithmeticError_valueOf                                     10
+#define ES_ArithmeticError_Error                                       11
+#define ES_ArithmeticError_message                                     12
+#define ES_ArithmeticError_code                                        13
+#define ES_ArithmeticError_stack                                       14
 #define ES_ArithmeticError_ArithmeticError                             15
 #define ES_ArithmeticError_NUM_INSTANCE_PROP                           16
 
@@ -703,21 +703,21 @@
 /*
    Prototype (instance) slots for "AssertError" type 
  */
-#define ES_AssertError_Error_constructor                               0
-#define ES_AssertError_Error_clone                                     1
-#define ES_AssertError_Error_iterator_get                              2
-#define ES_AssertError_Error_iterator_getValues                        3
-#define ES_AssertError_Error_hasOwnProperty                            4
-#define ES_AssertError_Error_isPrototypeOf                             5
-#define ES_AssertError_Error_propertyIsEnumerable                      6
-#define ES_AssertError_Error_toJSON                                    7
-#define ES_AssertError_Error_toLocaleString                            8
-#define ES_AssertError_Error_toString                                  9
-#define ES_AssertError_Error_valueOf                                   10
-#define ES_AssertError_Error_Error                                     11
-#define ES_AssertError_Error_message                                   12
-#define ES_AssertError_Error_code                                      13
-#define ES_AssertError_Error_stack                                     14
+#define ES_AssertError_constructor                                     0
+#define ES_AssertError_clone                                           1
+#define ES_AssertError_iterator_get                                    2
+#define ES_AssertError_iterator_getValues                              3
+#define ES_AssertError_hasOwnProperty                                  4
+#define ES_AssertError_isPrototypeOf                                   5
+#define ES_AssertError_propertyIsEnumerable                            6
+#define ES_AssertError_toJSON                                          7
+#define ES_AssertError_toLocaleString                                  8
+#define ES_AssertError_toString                                        9
+#define ES_AssertError_valueOf                                         10
+#define ES_AssertError_Error                                           11
+#define ES_AssertError_message                                         12
+#define ES_AssertError_code                                            13
+#define ES_AssertError_stack                                           14
 #define ES_AssertError_AssertError                                     15
 #define ES_AssertError_NUM_INSTANCE_PROP                               16
 
@@ -726,21 +726,21 @@
 /*
    Prototype (instance) slots for "InstructionError" type 
  */
-#define ES_InstructionError_Error_constructor                          0
-#define ES_InstructionError_Error_clone                                1
-#define ES_InstructionError_Error_iterator_get                         2
-#define ES_InstructionError_Error_iterator_getValues                   3
-#define ES_InstructionError_Error_hasOwnProperty                       4
-#define ES_InstructionError_Error_isPrototypeOf                        5
-#define ES_InstructionError_Error_propertyIsEnumerable                 6
-#define ES_InstructionError_Error_toJSON                               7
-#define ES_InstructionError_Error_toLocaleString                       8
-#define ES_InstructionError_Error_toString                             9
-#define ES_InstructionError_Error_valueOf                              10
-#define ES_InstructionError_Error_Error                                11
-#define ES_InstructionError_Error_message                              12
-#define ES_InstructionError_Error_code                                 13
-#define ES_InstructionError_Error_stack                                14
+#define ES_InstructionError_constructor                                0
+#define ES_InstructionError_clone                                      1
+#define ES_InstructionError_iterator_get                               2
+#define ES_InstructionError_iterator_getValues                         3
+#define ES_InstructionError_hasOwnProperty                             4
+#define ES_InstructionError_isPrototypeOf                              5
+#define ES_InstructionError_propertyIsEnumerable                       6
+#define ES_InstructionError_toJSON                                     7
+#define ES_InstructionError_toLocaleString                             8
+#define ES_InstructionError_toString                                   9
+#define ES_InstructionError_valueOf                                    10
+#define ES_InstructionError_Error                                      11
+#define ES_InstructionError_message                                    12
+#define ES_InstructionError_code                                       13
+#define ES_InstructionError_stack                                      14
 #define ES_InstructionError_InstructionError                           15
 #define ES_InstructionError_NUM_INSTANCE_PROP                          16
 
@@ -749,17 +749,17 @@
 /*
    Prototype (instance) slots for "Error" type 
  */
-#define ES_Error_Object_constructor                                    0
-#define ES_Error_Object_clone                                          1
-#define ES_Error_Object_iterator_get                                   2
-#define ES_Error_Object_iterator_getValues                             3
-#define ES_Error_Object_hasOwnProperty                                 4
-#define ES_Error_Object_isPrototypeOf                                  5
-#define ES_Error_Object_propertyIsEnumerable                           6
-#define ES_Error_Object_toJSON                                         7
-#define ES_Error_Object_toLocaleString                                 8
-#define ES_Error_Object_toString                                       9
-#define ES_Error_Object_valueOf                                        10
+#define ES_Error_constructor                                           0
+#define ES_Error_clone                                                 1
+#define ES_Error_iterator_get                                          2
+#define ES_Error_iterator_getValues                                    3
+#define ES_Error_hasOwnProperty                                        4
+#define ES_Error_isPrototypeOf                                         5
+#define ES_Error_propertyIsEnumerable                                  6
+#define ES_Error_toJSON                                                7
+#define ES_Error_toLocaleString                                        8
+#define ES_Error_toString                                              9
+#define ES_Error_valueOf                                               10
 #define ES_Error_Error                                                 11
 #define ES_Error_message                                               12
 #define ES_Error_code                                                  13
@@ -771,21 +771,21 @@
 /*
    Prototype (instance) slots for "IOError" type 
  */
-#define ES_IOError_Error_constructor                                   0
-#define ES_IOError_Error_clone                                         1
-#define ES_IOError_Error_iterator_get                                  2
-#define ES_IOError_Error_iterator_getValues                            3
-#define ES_IOError_Error_hasOwnProperty                                4
-#define ES_IOError_Error_isPrototypeOf                                 5
-#define ES_IOError_Error_propertyIsEnumerable                          6
-#define ES_IOError_Error_toJSON                                        7
-#define ES_IOError_Error_toLocaleString                                8
-#define ES_IOError_Error_toString                                      9
-#define ES_IOError_Error_valueOf                                       10
-#define ES_IOError_Error_Error                                         11
-#define ES_IOError_Error_message                                       12
-#define ES_IOError_Error_code                                          13
-#define ES_IOError_Error_stack                                         14
+#define ES_IOError_constructor                                         0
+#define ES_IOError_clone                                               1
+#define ES_IOError_iterator_get                                        2
+#define ES_IOError_iterator_getValues                                  3
+#define ES_IOError_hasOwnProperty                                      4
+#define ES_IOError_isPrototypeOf                                       5
+#define ES_IOError_propertyIsEnumerable                                6
+#define ES_IOError_toJSON                                              7
+#define ES_IOError_toLocaleString                                      8
+#define ES_IOError_toString                                            9
+#define ES_IOError_valueOf                                             10
+#define ES_IOError_Error                                               11
+#define ES_IOError_message                                             12
+#define ES_IOError_code                                                13
+#define ES_IOError_stack                                               14
 #define ES_IOError_IOError                                             15
 #define ES_IOError_NUM_INSTANCE_PROP                                   16
 
@@ -794,21 +794,21 @@
 /*
    Prototype (instance) slots for "InternalError" type 
  */
-#define ES_InternalError_Error_constructor                             0
-#define ES_InternalError_Error_clone                                   1
-#define ES_InternalError_Error_iterator_get                            2
-#define ES_InternalError_Error_iterator_getValues                      3
-#define ES_InternalError_Error_hasOwnProperty                          4
-#define ES_InternalError_Error_isPrototypeOf                           5
-#define ES_InternalError_Error_propertyIsEnumerable                    6
-#define ES_InternalError_Error_toJSON                                  7
-#define ES_InternalError_Error_toLocaleString                          8
-#define ES_InternalError_Error_toString                                9
-#define ES_InternalError_Error_valueOf                                 10
-#define ES_InternalError_Error_Error                                   11
-#define ES_InternalError_Error_message                                 12
-#define ES_InternalError_Error_code                                    13
-#define ES_InternalError_Error_stack                                   14
+#define ES_InternalError_constructor                                   0
+#define ES_InternalError_clone                                         1
+#define ES_InternalError_iterator_get                                  2
+#define ES_InternalError_iterator_getValues                            3
+#define ES_InternalError_hasOwnProperty                                4
+#define ES_InternalError_isPrototypeOf                                 5
+#define ES_InternalError_propertyIsEnumerable                          6
+#define ES_InternalError_toJSON                                        7
+#define ES_InternalError_toLocaleString                                8
+#define ES_InternalError_toString                                      9
+#define ES_InternalError_valueOf                                       10
+#define ES_InternalError_Error                                         11
+#define ES_InternalError_message                                       12
+#define ES_InternalError_code                                          13
+#define ES_InternalError_stack                                         14
 #define ES_InternalError_InternalError                                 15
 #define ES_InternalError_NUM_INSTANCE_PROP                             16
 
@@ -817,21 +817,21 @@
 /*
    Prototype (instance) slots for "MemoryError" type 
  */
-#define ES_MemoryError_Error_constructor                               0
-#define ES_MemoryError_Error_clone                                     1
-#define ES_MemoryError_Error_iterator_get                              2
-#define ES_MemoryError_Error_iterator_getValues                        3
-#define ES_MemoryError_Error_hasOwnProperty                            4
-#define ES_MemoryError_Error_isPrototypeOf                             5
-#define ES_MemoryError_Error_propertyIsEnumerable                      6
-#define ES_MemoryError_Error_toJSON                                    7
-#define ES_MemoryError_Error_toLocaleString                            8
-#define ES_MemoryError_Error_toString                                  9
-#define ES_MemoryError_Error_valueOf                                   10
-#define ES_MemoryError_Error_Error                                     11
-#define ES_MemoryError_Error_message                                   12
-#define ES_MemoryError_Error_code                                      13
-#define ES_MemoryError_Error_stack                                     14
+#define ES_MemoryError_constructor                                     0
+#define ES_MemoryError_clone                                           1
+#define ES_MemoryError_iterator_get                                    2
+#define ES_MemoryError_iterator_getValues                              3
+#define ES_MemoryError_hasOwnProperty                                  4
+#define ES_MemoryError_isPrototypeOf                                   5
+#define ES_MemoryError_propertyIsEnumerable                            6
+#define ES_MemoryError_toJSON                                          7
+#define ES_MemoryError_toLocaleString                                  8
+#define ES_MemoryError_toString                                        9
+#define ES_MemoryError_valueOf                                         10
+#define ES_MemoryError_Error                                           11
+#define ES_MemoryError_message                                         12
+#define ES_MemoryError_code                                            13
+#define ES_MemoryError_stack                                           14
 #define ES_MemoryError_MemoryError                                     15
 #define ES_MemoryError_NUM_INSTANCE_PROP                               16
 
@@ -840,21 +840,21 @@
 /*
    Prototype (instance) slots for "OutOfBoundsError" type 
  */
-#define ES_OutOfBoundsError_Error_constructor                          0
-#define ES_OutOfBoundsError_Error_clone                                1
-#define ES_OutOfBoundsError_Error_iterator_get                         2
-#define ES_OutOfBoundsError_Error_iterator_getValues                   3
-#define ES_OutOfBoundsError_Error_hasOwnProperty                       4
-#define ES_OutOfBoundsError_Error_isPrototypeOf                        5
-#define ES_OutOfBoundsError_Error_propertyIsEnumerable                 6
-#define ES_OutOfBoundsError_Error_toJSON                               7
-#define ES_OutOfBoundsError_Error_toLocaleString                       8
-#define ES_OutOfBoundsError_Error_toString                             9
-#define ES_OutOfBoundsError_Error_valueOf                              10
-#define ES_OutOfBoundsError_Error_Error                                11
-#define ES_OutOfBoundsError_Error_message                              12
-#define ES_OutOfBoundsError_Error_code                                 13
-#define ES_OutOfBoundsError_Error_stack                                14
+#define ES_OutOfBoundsError_constructor                                0
+#define ES_OutOfBoundsError_clone                                      1
+#define ES_OutOfBoundsError_iterator_get                               2
+#define ES_OutOfBoundsError_iterator_getValues                         3
+#define ES_OutOfBoundsError_hasOwnProperty                             4
+#define ES_OutOfBoundsError_isPrototypeOf                              5
+#define ES_OutOfBoundsError_propertyIsEnumerable                       6
+#define ES_OutOfBoundsError_toJSON                                     7
+#define ES_OutOfBoundsError_toLocaleString                             8
+#define ES_OutOfBoundsError_toString                                   9
+#define ES_OutOfBoundsError_valueOf                                    10
+#define ES_OutOfBoundsError_Error                                      11
+#define ES_OutOfBoundsError_message                                    12
+#define ES_OutOfBoundsError_code                                       13
+#define ES_OutOfBoundsError_stack                                      14
 #define ES_OutOfBoundsError_OutOfBoundsError                           15
 #define ES_OutOfBoundsError_NUM_INSTANCE_PROP                          16
 
@@ -863,21 +863,21 @@
 /*
    Prototype (instance) slots for "ReferenceError" type 
  */
-#define ES_ReferenceError_Error_constructor                            0
-#define ES_ReferenceError_Error_clone                                  1
-#define ES_ReferenceError_Error_iterator_get                           2
-#define ES_ReferenceError_Error_iterator_getValues                     3
-#define ES_ReferenceError_Error_hasOwnProperty                         4
-#define ES_ReferenceError_Error_isPrototypeOf                          5
-#define ES_ReferenceError_Error_propertyIsEnumerable                   6
-#define ES_ReferenceError_Error_toJSON                                 7
-#define ES_ReferenceError_Error_toLocaleString                         8
-#define ES_ReferenceError_Error_toString                               9
-#define ES_ReferenceError_Error_valueOf                                10
-#define ES_ReferenceError_Error_Error                                  11
-#define ES_ReferenceError_Error_message                                12
-#define ES_ReferenceError_Error_code                                   13
-#define ES_ReferenceError_Error_stack                                  14
+#define ES_ReferenceError_constructor                                  0
+#define ES_ReferenceError_clone                                        1
+#define ES_ReferenceError_iterator_get                                 2
+#define ES_ReferenceError_iterator_getValues                           3
+#define ES_ReferenceError_hasOwnProperty                               4
+#define ES_ReferenceError_isPrototypeOf                                5
+#define ES_ReferenceError_propertyIsEnumerable                         6
+#define ES_ReferenceError_toJSON                                       7
+#define ES_ReferenceError_toLocaleString                               8
+#define ES_ReferenceError_toString                                     9
+#define ES_ReferenceError_valueOf                                      10
+#define ES_ReferenceError_Error                                        11
+#define ES_ReferenceError_message                                      12
+#define ES_ReferenceError_code                                         13
+#define ES_ReferenceError_stack                                        14
 #define ES_ReferenceError_ReferenceError                               15
 #define ES_ReferenceError_NUM_INSTANCE_PROP                            16
 
@@ -886,21 +886,21 @@
 /*
    Prototype (instance) slots for "ResourceError" type 
  */
-#define ES_ResourceError_Error_constructor                             0
-#define ES_ResourceError_Error_clone                                   1
-#define ES_ResourceError_Error_iterator_get                            2
-#define ES_ResourceError_Error_iterator_getValues                      3
-#define ES_ResourceError_Error_hasOwnProperty                          4
-#define ES_ResourceError_Error_isPrototypeOf                           5
-#define ES_ResourceError_Error_propertyIsEnumerable                    6
-#define ES_ResourceError_Error_toJSON                                  7
-#define ES_ResourceError_Error_toLocaleString                          8
-#define ES_ResourceError_Error_toString                                9
-#define ES_ResourceError_Error_valueOf                                 10
-#define ES_ResourceError_Error_Error                                   11
-#define ES_ResourceError_Error_message                                 12
-#define ES_ResourceError_Error_code                                    13
-#define ES_ResourceError_Error_stack                                   14
+#define ES_ResourceError_constructor                                   0
+#define ES_ResourceError_clone                                         1
+#define ES_ResourceError_iterator_get                                  2
+#define ES_ResourceError_iterator_getValues                            3
+#define ES_ResourceError_hasOwnProperty                                4
+#define ES_ResourceError_isPrototypeOf                                 5
+#define ES_ResourceError_propertyIsEnumerable                          6
+#define ES_ResourceError_toJSON                                        7
+#define ES_ResourceError_toLocaleString                                8
+#define ES_ResourceError_toString                                      9
+#define ES_ResourceError_valueOf                                       10
+#define ES_ResourceError_Error                                         11
+#define ES_ResourceError_message                                       12
+#define ES_ResourceError_code                                          13
+#define ES_ResourceError_stack                                         14
 #define ES_ResourceError_ResourceError                                 15
 #define ES_ResourceError_NUM_INSTANCE_PROP                             16
 
@@ -909,21 +909,21 @@
 /*
    Prototype (instance) slots for "SecurityError" type 
  */
-#define ES_SecurityError_Error_constructor                             0
-#define ES_SecurityError_Error_clone                                   1
-#define ES_SecurityError_Error_iterator_get                            2
-#define ES_SecurityError_Error_iterator_getValues                      3
-#define ES_SecurityError_Error_hasOwnProperty                          4
-#define ES_SecurityError_Error_isPrototypeOf                           5
-#define ES_SecurityError_Error_propertyIsEnumerable                    6
-#define ES_SecurityError_Error_toJSON                                  7
-#define ES_SecurityError_Error_toLocaleString                          8
-#define ES_SecurityError_Error_toString                                9
-#define ES_SecurityError_Error_valueOf                                 10
-#define ES_SecurityError_Error_Error                                   11
-#define ES_SecurityError_Error_message                                 12
-#define ES_SecurityError_Error_code                                    13
-#define ES_SecurityError_Error_stack                                   14
+#define ES_SecurityError_constructor                                   0
+#define ES_SecurityError_clone                                         1
+#define ES_SecurityError_iterator_get                                  2
+#define ES_SecurityError_iterator_getValues                            3
+#define ES_SecurityError_hasOwnProperty                                4
+#define ES_SecurityError_isPrototypeOf                                 5
+#define ES_SecurityError_propertyIsEnumerable                          6
+#define ES_SecurityError_toJSON                                        7
+#define ES_SecurityError_toLocaleString                                8
+#define ES_SecurityError_toString                                      9
+#define ES_SecurityError_valueOf                                       10
+#define ES_SecurityError_Error                                         11
+#define ES_SecurityError_message                                       12
+#define ES_SecurityError_code                                          13
+#define ES_SecurityError_stack                                         14
 #define ES_SecurityError_SecurityError                                 15
 #define ES_SecurityError_NUM_INSTANCE_PROP                             16
 
@@ -932,21 +932,21 @@
 /*
    Prototype (instance) slots for "StateError" type 
  */
-#define ES_StateError_Error_constructor                                0
-#define ES_StateError_Error_clone                                      1
-#define ES_StateError_Error_iterator_get                               2
-#define ES_StateError_Error_iterator_getValues                         3
-#define ES_StateError_Error_hasOwnProperty                             4
-#define ES_StateError_Error_isPrototypeOf                              5
-#define ES_StateError_Error_propertyIsEnumerable                       6
-#define ES_StateError_Error_toJSON                                     7
-#define ES_StateError_Error_toLocaleString                             8
-#define ES_StateError_Error_toString                                   9
-#define ES_StateError_Error_valueOf                                    10
-#define ES_StateError_Error_Error                                      11
-#define ES_StateError_Error_message                                    12
-#define ES_StateError_Error_code                                       13
-#define ES_StateError_Error_stack                                      14
+#define ES_StateError_constructor                                      0
+#define ES_StateError_clone                                            1
+#define ES_StateError_iterator_get                                     2
+#define ES_StateError_iterator_getValues                               3
+#define ES_StateError_hasOwnProperty                                   4
+#define ES_StateError_isPrototypeOf                                    5
+#define ES_StateError_propertyIsEnumerable                             6
+#define ES_StateError_toJSON                                           7
+#define ES_StateError_toLocaleString                                   8
+#define ES_StateError_toString                                         9
+#define ES_StateError_valueOf                                          10
+#define ES_StateError_Error                                            11
+#define ES_StateError_message                                          12
+#define ES_StateError_code                                             13
+#define ES_StateError_stack                                            14
 #define ES_StateError_StateError                                       15
 #define ES_StateError_NUM_INSTANCE_PROP                                16
 
@@ -955,21 +955,21 @@
 /*
    Prototype (instance) slots for "SyntaxError" type 
  */
-#define ES_SyntaxError_Error_constructor                               0
-#define ES_SyntaxError_Error_clone                                     1
-#define ES_SyntaxError_Error_iterator_get                              2
-#define ES_SyntaxError_Error_iterator_getValues                        3
-#define ES_SyntaxError_Error_hasOwnProperty                            4
-#define ES_SyntaxError_Error_isPrototypeOf                             5
-#define ES_SyntaxError_Error_propertyIsEnumerable                      6
-#define ES_SyntaxError_Error_toJSON                                    7
-#define ES_SyntaxError_Error_toLocaleString                            8
-#define ES_SyntaxError_Error_toString                                  9
-#define ES_SyntaxError_Error_valueOf                                   10
-#define ES_SyntaxError_Error_Error                                     11
-#define ES_SyntaxError_Error_message                                   12
-#define ES_SyntaxError_Error_code                                      13
-#define ES_SyntaxError_Error_stack                                     14
+#define ES_SyntaxError_constructor                                     0
+#define ES_SyntaxError_clone                                           1
+#define ES_SyntaxError_iterator_get                                    2
+#define ES_SyntaxError_iterator_getValues                              3
+#define ES_SyntaxError_hasOwnProperty                                  4
+#define ES_SyntaxError_isPrototypeOf                                   5
+#define ES_SyntaxError_propertyIsEnumerable                            6
+#define ES_SyntaxError_toJSON                                          7
+#define ES_SyntaxError_toLocaleString                                  8
+#define ES_SyntaxError_toString                                        9
+#define ES_SyntaxError_valueOf                                         10
+#define ES_SyntaxError_Error                                           11
+#define ES_SyntaxError_message                                         12
+#define ES_SyntaxError_code                                            13
+#define ES_SyntaxError_stack                                           14
 #define ES_SyntaxError_SyntaxError                                     15
 #define ES_SyntaxError_NUM_INSTANCE_PROP                               16
 
@@ -978,21 +978,21 @@
 /*
    Prototype (instance) slots for "TypeError" type 
  */
-#define ES_TypeError_Error_constructor                                 0
-#define ES_TypeError_Error_clone                                       1
-#define ES_TypeError_Error_iterator_get                                2
-#define ES_TypeError_Error_iterator_getValues                          3
-#define ES_TypeError_Error_hasOwnProperty                              4
-#define ES_TypeError_Error_isPrototypeOf                               5
-#define ES_TypeError_Error_propertyIsEnumerable                        6
-#define ES_TypeError_Error_toJSON                                      7
-#define ES_TypeError_Error_toLocaleString                              8
-#define ES_TypeError_Error_toString                                    9
-#define ES_TypeError_Error_valueOf                                     10
-#define ES_TypeError_Error_Error                                       11
-#define ES_TypeError_Error_message                                     12
-#define ES_TypeError_Error_code                                        13
-#define ES_TypeError_Error_stack                                       14
+#define ES_TypeError_constructor                                       0
+#define ES_TypeError_clone                                             1
+#define ES_TypeError_iterator_get                                      2
+#define ES_TypeError_iterator_getValues                                3
+#define ES_TypeError_hasOwnProperty                                    4
+#define ES_TypeError_isPrototypeOf                                     5
+#define ES_TypeError_propertyIsEnumerable                              6
+#define ES_TypeError_toJSON                                            7
+#define ES_TypeError_toLocaleString                                    8
+#define ES_TypeError_toString                                          9
+#define ES_TypeError_valueOf                                           10
+#define ES_TypeError_Error                                             11
+#define ES_TypeError_message                                           12
+#define ES_TypeError_code                                              13
+#define ES_TypeError_stack                                             14
 #define ES_TypeError_TypeError                                         15
 #define ES_TypeError_NUM_INSTANCE_PROP                                 16
 
@@ -1001,21 +1001,21 @@
 /*
    Prototype (instance) slots for "URIError" type 
  */
-#define ES_URIError_Error_constructor                                  0
-#define ES_URIError_Error_clone                                        1
-#define ES_URIError_Error_iterator_get                                 2
-#define ES_URIError_Error_iterator_getValues                           3
-#define ES_URIError_Error_hasOwnProperty                               4
-#define ES_URIError_Error_isPrototypeOf                                5
-#define ES_URIError_Error_propertyIsEnumerable                         6
-#define ES_URIError_Error_toJSON                                       7
-#define ES_URIError_Error_toLocaleString                               8
-#define ES_URIError_Error_toString                                     9
-#define ES_URIError_Error_valueOf                                      10
-#define ES_URIError_Error_Error                                        11
-#define ES_URIError_Error_message                                      12
-#define ES_URIError_Error_code                                         13
-#define ES_URIError_Error_stack                                        14
+#define ES_URIError_constructor                                        0
+#define ES_URIError_clone                                              1
+#define ES_URIError_iterator_get                                       2
+#define ES_URIError_iterator_getValues                                 3
+#define ES_URIError_hasOwnProperty                                     4
+#define ES_URIError_isPrototypeOf                                      5
+#define ES_URIError_propertyIsEnumerable                               6
+#define ES_URIError_toJSON                                             7
+#define ES_URIError_toLocaleString                                     8
+#define ES_URIError_toString                                           9
+#define ES_URIError_valueOf                                            10
+#define ES_URIError_Error                                              11
+#define ES_URIError_message                                            12
+#define ES_URIError_code                                               13
+#define ES_URIError_stack                                              14
 #define ES_URIError_URIError                                           15
 #define ES_URIError_NUM_INSTANCE_PROP                                  16
 
@@ -1024,17 +1024,17 @@
 /*
    Prototype (instance) slots for "Event" type 
  */
-#define ES_Event_Object_constructor                                    0
-#define ES_Event_Object_clone                                          1
-#define ES_Event_Object_iterator_get                                   2
-#define ES_Event_Object_iterator_getValues                             3
-#define ES_Event_Object_hasOwnProperty                                 4
-#define ES_Event_Object_isPrototypeOf                                  5
-#define ES_Event_Object_propertyIsEnumerable                           6
-#define ES_Event_Object_toJSON                                         7
-#define ES_Event_Object_toLocaleString                                 8
-#define ES_Event_Object_toString                                       9
-#define ES_Event_Object_valueOf                                        10
+#define ES_Event_constructor                                           0
+#define ES_Event_clone                                                 1
+#define ES_Event_iterator_get                                          2
+#define ES_Event_iterator_getValues                                    3
+#define ES_Event_hasOwnProperty                                        4
+#define ES_Event_isPrototypeOf                                         5
+#define ES_Event_propertyIsEnumerable                                  6
+#define ES_Event_toJSON                                                7
+#define ES_Event_toLocaleString                                        8
+#define ES_Event_toString                                              9
+#define ES_Event_valueOf                                               10
 #define ES_Event_Event                                                 11
 #define ES_Event_data                                                  12
 #define ES_Event_timestamp                                             13
@@ -1045,20 +1045,20 @@
 /*
    Prototype (instance) slots for "ErrorEvent" type 
  */
-#define ES_ErrorEvent_Event_constructor                                0
-#define ES_ErrorEvent_Event_clone                                      1
-#define ES_ErrorEvent_Event_iterator_get                               2
-#define ES_ErrorEvent_Event_iterator_getValues                         3
-#define ES_ErrorEvent_Event_hasOwnProperty                             4
-#define ES_ErrorEvent_Event_isPrototypeOf                              5
-#define ES_ErrorEvent_Event_propertyIsEnumerable                       6
-#define ES_ErrorEvent_Event_toJSON                                     7
-#define ES_ErrorEvent_Event_toLocaleString                             8
-#define ES_ErrorEvent_Event_toString                                   9
-#define ES_ErrorEvent_Event_valueOf                                    10
-#define ES_ErrorEvent_Event_Event                                      11
-#define ES_ErrorEvent_Event_data                                       12
-#define ES_ErrorEvent_Event_timestamp                                  13
+#define ES_ErrorEvent_constructor                                      0
+#define ES_ErrorEvent_clone                                            1
+#define ES_ErrorEvent_iterator_get                                     2
+#define ES_ErrorEvent_iterator_getValues                               3
+#define ES_ErrorEvent_hasOwnProperty                                   4
+#define ES_ErrorEvent_isPrototypeOf                                    5
+#define ES_ErrorEvent_propertyIsEnumerable                             6
+#define ES_ErrorEvent_toJSON                                           7
+#define ES_ErrorEvent_toLocaleString                                   8
+#define ES_ErrorEvent_toString                                         9
+#define ES_ErrorEvent_valueOf                                          10
+#define ES_ErrorEvent_Event                                            11
+#define ES_ErrorEvent_data                                             12
+#define ES_ErrorEvent_timestamp                                        13
 #define ES_ErrorEvent_ErrorEvent                                       14
 #define ES_ErrorEvent_message                                          15
 #define ES_ErrorEvent_filename                                         16
@@ -1196,17 +1196,17 @@
 /*
    Prototype (instance) slots for "Http" type 
  */
-#define ES_Http_Object_constructor                                     0
-#define ES_Http_Object_clone                                           1
-#define ES_Http_Object_iterator_get                                    2
-#define ES_Http_Object_iterator_getValues                              3
-#define ES_Http_Object_hasOwnProperty                                  4
-#define ES_Http_Object_isPrototypeOf                                   5
-#define ES_Http_Object_propertyIsEnumerable                            6
-#define ES_Http_Object_toJSON                                          7
-#define ES_Http_Object_toLocaleString                                  8
-#define ES_Http_Object_toString                                        9
-#define ES_Http_Object_valueOf                                         10
+#define ES_Http_constructor                                            0
+#define ES_Http_clone                                                  1
+#define ES_Http_iterator_get                                           2
+#define ES_Http_iterator_getValues                                     3
+#define ES_Http_hasOwnProperty                                         4
+#define ES_Http_isPrototypeOf                                          5
+#define ES_Http_propertyIsEnumerable                                   6
+#define ES_Http_toJSON                                                 7
+#define ES_Http_toLocaleString                                         8
+#define ES_Http_toString                                               9
+#define ES_Http_valueOf                                                10
 #define ES_Http_Http                                                   11
 #define ES_Http__response                                              12
 #define ES_Http_addListener                                            13
@@ -1352,17 +1352,17 @@
 /*
    Prototype (instance) slots for "Logger" type 
  */
-#define ES_Logger_Object_constructor                                   0
-#define ES_Logger_Object_clone                                         1
-#define ES_Logger_Object_iterator_get                                  2
-#define ES_Logger_Object_iterator_getValues                            3
-#define ES_Logger_Object_hasOwnProperty                                4
-#define ES_Logger_Object_isPrototypeOf                                 5
-#define ES_Logger_Object_propertyIsEnumerable                          6
-#define ES_Logger_Object_toJSON                                        7
-#define ES_Logger_Object_toLocaleString                                8
-#define ES_Logger_Object_toString                                      9
-#define ES_Logger_Object_valueOf                                       10
+#define ES_Logger_constructor                                          0
+#define ES_Logger_clone                                                1
+#define ES_Logger_iterator_get                                         2
+#define ES_Logger_iterator_getValues                                   3
+#define ES_Logger_hasOwnProperty                                       4
+#define ES_Logger_isPrototypeOf                                        5
+#define ES_Logger_propertyIsEnumerable                                 6
+#define ES_Logger_toJSON                                               7
+#define ES_Logger_toLocaleString                                       8
+#define ES_Logger_toString                                             9
+#define ES_Logger_valueOf                                              10
 #define ES_Logger_Logger                                               11
 #define ES_Logger__filter                                              12
 #define ES_Logger__level                                               13
@@ -1668,27 +1668,27 @@
 /*
    Prototype (instance) slots for "Promise" type 
  */
-#define ES_Promise_Emitter_constructor                                 0
-#define ES_Promise_Emitter_clone                                       1
-#define ES_Promise_Emitter_iterator_get                                2
-#define ES_Promise_Emitter_iterator_getValues                          3
-#define ES_Promise_Emitter_hasOwnProperty                              4
-#define ES_Promise_Emitter_isPrototypeOf                               5
-#define ES_Promise_Emitter_propertyIsEnumerable                        6
-#define ES_Promise_Emitter_toJSON                                      7
-#define ES_Promise_Emitter_toLocaleString                              8
-#define ES_Promise_Emitter_toString                                    9
-#define ES_Promise_Emitter_valueOf                                     10
-#define ES_Promise_Emitter_Emitter                                     11
-#define ES_Promise_Emitter_endpoints                                   12
-#define ES_Promise_Emitter_addOneListener                              13
-#define ES_Promise_Emitter_addListener                                 14
-#define ES_Promise_Emitter_clearListeners                              15
-#define ES_Promise_Emitter_hasListeners                                16
-#define ES_Promise_Emitter_listeners                                   17
-#define ES_Promise_Emitter_emit                                        18
-#define ES_Promise_Emitter_removeOneListener                           19
-#define ES_Promise_Emitter_removeListener                              20
+#define ES_Promise_constructor                                         0
+#define ES_Promise_clone                                               1
+#define ES_Promise_iterator_get                                        2
+#define ES_Promise_iterator_getValues                                  3
+#define ES_Promise_hasOwnProperty                                      4
+#define ES_Promise_isPrototypeOf                                       5
+#define ES_Promise_propertyIsEnumerable                                6
+#define ES_Promise_toJSON                                              7
+#define ES_Promise_toLocaleString                                      8
+#define ES_Promise_toString                                            9
+#define ES_Promise_valueOf                                             10
+#define ES_Promise_Emitter                                             11
+#define ES_Promise_endpoints                                           12
+#define ES_Promise_addOneListener                                      13
+#define ES_Promise_addListener                                         14
+#define ES_Promise_clearListeners                                      15
+#define ES_Promise_hasListeners                                        16
+#define ES_Promise_listeners                                           17
+#define ES_Promise_emit                                                18
+#define ES_Promise_removeOneListener                                   19
+#define ES_Promise_removeListener                                      20
 #define ES_Promise_Promise                                             21
 #define ES_Promise_timer                                               22
 #define ES_Promise_fired                                               23
@@ -1710,17 +1710,17 @@
 /*
    Prototype (instance) slots for "Reflect" type 
  */
-#define ES_Reflect_Object_constructor                                  0
-#define ES_Reflect_Object_clone                                        1
-#define ES_Reflect_Object_iterator_get                                 2
-#define ES_Reflect_Object_iterator_getValues                           3
-#define ES_Reflect_Object_hasOwnProperty                               4
-#define ES_Reflect_Object_isPrototypeOf                                5
-#define ES_Reflect_Object_propertyIsEnumerable                         6
-#define ES_Reflect_Object_toJSON                                       7
-#define ES_Reflect_Object_toLocaleString                               8
-#define ES_Reflect_Object_toString                                     9
-#define ES_Reflect_Object_valueOf                                      10
+#define ES_Reflect_constructor                                         0
+#define ES_Reflect_clone                                               1
+#define ES_Reflect_iterator_get                                        2
+#define ES_Reflect_iterator_getValues                                  3
+#define ES_Reflect_hasOwnProperty                                      4
+#define ES_Reflect_isPrototypeOf                                       5
+#define ES_Reflect_propertyIsEnumerable                                6
+#define ES_Reflect_toJSON                                              7
+#define ES_Reflect_toLocaleString                                      8
+#define ES_Reflect_toString                                            9
+#define ES_Reflect_valueOf                                             10
 #define ES_Reflect_Reflect                                             11
 #define ES_Reflect_obj                                                 12
 #define ES_Reflect_base                                                13
@@ -1894,17 +1894,17 @@
 /*
    Prototype (instance) slots for "TextStream" type 
  */
-#define ES_TextStream_Object_constructor                               0
-#define ES_TextStream_Object_clone                                     1
-#define ES_TextStream_Object_iterator_get                              2
-#define ES_TextStream_Object_iterator_getValues                        3
-#define ES_TextStream_Object_hasOwnProperty                            4
-#define ES_TextStream_Object_isPrototypeOf                             5
-#define ES_TextStream_Object_propertyIsEnumerable                      6
-#define ES_TextStream_Object_toJSON                                    7
-#define ES_TextStream_Object_toLocaleString                            8
-#define ES_TextStream_Object_toString                                  9
-#define ES_TextStream_Object_valueOf                                   10
+#define ES_TextStream_constructor                                      0
+#define ES_TextStream_clone                                            1
+#define ES_TextStream_iterator_get                                     2
+#define ES_TextStream_iterator_getValues                               3
+#define ES_TextStream_hasOwnProperty                                   4
+#define ES_TextStream_isPrototypeOf                                    5
+#define ES_TextStream_propertyIsEnumerable                             6
+#define ES_TextStream_toJSON                                           7
+#define ES_TextStream_toLocaleString                                   8
+#define ES_TextStream_toString                                         9
+#define ES_TextStream_valueOf                                          10
 #define ES_TextStream_TextStream                                       11
 #define ES_TextStream_newline                                          12
 #define ES_TextStream_inbuf                                            13
@@ -1943,20 +1943,20 @@
 /*
    Prototype (instance) slots for "TimerEvent" type 
  */
-#define ES_TimerEvent_Event_constructor                                0
-#define ES_TimerEvent_Event_clone                                      1
-#define ES_TimerEvent_Event_iterator_get                               2
-#define ES_TimerEvent_Event_iterator_getValues                         3
-#define ES_TimerEvent_Event_hasOwnProperty                             4
-#define ES_TimerEvent_Event_isPrototypeOf                              5
-#define ES_TimerEvent_Event_propertyIsEnumerable                       6
-#define ES_TimerEvent_Event_toJSON                                     7
-#define ES_TimerEvent_Event_toLocaleString                             8
-#define ES_TimerEvent_Event_toString                                   9
-#define ES_TimerEvent_Event_valueOf                                    10
-#define ES_TimerEvent_Event_Event                                      11
-#define ES_TimerEvent_Event_data                                       12
-#define ES_TimerEvent_Event_timestamp                                  13
+#define ES_TimerEvent_constructor                                      0
+#define ES_TimerEvent_clone                                            1
+#define ES_TimerEvent_iterator_get                                     2
+#define ES_TimerEvent_iterator_getValues                               3
+#define ES_TimerEvent_hasOwnProperty                                   4
+#define ES_TimerEvent_isPrototypeOf                                    5
+#define ES_TimerEvent_propertyIsEnumerable                             6
+#define ES_TimerEvent_toJSON                                           7
+#define ES_TimerEvent_toLocaleString                                   8
+#define ES_TimerEvent_toString                                         9
+#define ES_TimerEvent_valueOf                                          10
+#define ES_TimerEvent_Event                                            11
+#define ES_TimerEvent_data                                             12
+#define ES_TimerEvent_timestamp                                        13
 #define ES_TimerEvent_TimerEvent                                       14
 #define ES_TimerEvent_NUM_INSTANCE_PROP                                15
 
@@ -2051,17 +2051,17 @@
 /*
    Prototype (instance) slots for "Worker" type 
  */
-#define ES_Worker_Object_constructor                                   0
-#define ES_Worker_Object_clone                                         1
-#define ES_Worker_Object_iterator_get                                  2
-#define ES_Worker_Object_iterator_getValues                            3
-#define ES_Worker_Object_hasOwnProperty                                4
-#define ES_Worker_Object_isPrototypeOf                                 5
-#define ES_Worker_Object_propertyIsEnumerable                          6
-#define ES_Worker_Object_toJSON                                        7
-#define ES_Worker_Object_toLocaleString                                8
-#define ES_Worker_Object_toString                                      9
-#define ES_Worker_Object_valueOf                                       10
+#define ES_Worker_constructor                                          0
+#define ES_Worker_clone                                                1
+#define ES_Worker_iterator_get                                         2
+#define ES_Worker_iterator_getValues                                   3
+#define ES_Worker_hasOwnProperty                                       4
+#define ES_Worker_isPrototypeOf                                        5
+#define ES_Worker_propertyIsEnumerable                                 6
+#define ES_Worker_toJSON                                               7
+#define ES_Worker_toLocaleString                                       8
+#define ES_Worker_toString                                             9
+#define ES_Worker_valueOf                                              10
 #define ES_Worker_Worker                                               11
 #define ES_Worker_onclose                                              12
 #define ES_Worker_onmessage                                            13
@@ -2130,17 +2130,17 @@
 /*
    Prototype (instance) slots for "XMLHttp" type 
  */
-#define ES_XMLHttp_Object_constructor                                  0
-#define ES_XMLHttp_Object_clone                                        1
-#define ES_XMLHttp_Object_iterator_get                                 2
-#define ES_XMLHttp_Object_iterator_getValues                           3
-#define ES_XMLHttp_Object_hasOwnProperty                               4
-#define ES_XMLHttp_Object_isPrototypeOf                                5
-#define ES_XMLHttp_Object_propertyIsEnumerable                         6
-#define ES_XMLHttp_Object_toJSON                                       7
-#define ES_XMLHttp_Object_toLocaleString                               8
-#define ES_XMLHttp_Object_toString                                     9
-#define ES_XMLHttp_Object_valueOf                                      10
+#define ES_XMLHttp_constructor                                         0
+#define ES_XMLHttp_clone                                               1
+#define ES_XMLHttp_iterator_get                                        2
+#define ES_XMLHttp_iterator_getValues                                  3
+#define ES_XMLHttp_hasOwnProperty                                      4
+#define ES_XMLHttp_isPrototypeOf                                       5
+#define ES_XMLHttp_propertyIsEnumerable                                6
+#define ES_XMLHttp_toJSON                                              7
+#define ES_XMLHttp_toLocaleString                                      8
+#define ES_XMLHttp_toString                                            9
+#define ES_XMLHttp_valueOf                                             10
 #define ES_XMLHttp_XMLHttp                                             11
 #define ES_XMLHttp_hp                                                  12
 #define ES_XMLHttp_state                                               13

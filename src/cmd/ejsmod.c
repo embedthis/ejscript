@@ -197,7 +197,9 @@ MAIN(ejsmodMain, int argc, char **argv)
     if (mp->errorCount > 0) {
         err = -1;
     }
+#if MOB
     mprFree(mpr);
+#endif
     return err;
 }
 

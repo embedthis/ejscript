@@ -525,6 +525,9 @@ static int lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
          */
         index = ejsComputeHashCode(obj, qname);
         if (qname->space) {
+            mprAssert(obj->hash);
+            mprAssert(obj->hash->buckets);
+            mprAssert(index < obj->hash->size);
             for (slotNum = obj->hash->buckets[index]; slotNum >= 0; slotNum = slots[slotNum].hashChain) {
                 sp = &slots[slotNum];
                 if (CMP_QNAME(&sp->qname, qname)) {
@@ -973,7 +976,7 @@ static int hashProperty(EjsObj *obj, int slotNum, EjsName *qname)
 
     mprAssert(qname);
 
-    if (obj->hash == NULL || obj->hash->sizeHash < obj->numSlots) {
+    if (obj->hash == NULL || obj->hash->size < obj->numSlots) {
         /*  Remake the entire hash */
         return ejsMakeObjHash(obj);
     }
@@ -1033,19 +1036,19 @@ int ejsMakeObjHash(EjsObj *obj)
      */
     oldHash = obj->hash;
     newHashSize = ejsGetHashSize(obj->numSlots);
-    if (oldHash == NULL || oldHash->sizeHash < newHashSize) {
+    if (oldHash == NULL || oldHash->size < newHashSize) {
         mprFree(oldHash);
-        hp = (EjsHash*) mprAlloc(obj, sizeof(EjsHash) + newHashSize * sizeof(int));
+        hp = (EjsHash*) mprAlloc(obj, sizeof(EjsHash) + (newHashSize * sizeof(int)));
         if (hp == 0) {
             return EJS_ERR;
         }
-        hp->buckets = (int*) &hp[1];
-        hp->sizeHash = newHashSize;
+        hp->buckets = (int*) (((char*) hp) + sizeof(EjsHash));
+        hp->size = newHashSize;
         obj->hash = hp;
 
     }
     mprAssert(obj->hash);
-    memset(obj->hash->buckets, -1, newHashSize * sizeof(int));
+    memset(obj->hash->buckets, -1, obj->hash->size * sizeof(int));
 
     /*
         Clear out hash linkage
@@ -1075,7 +1078,7 @@ void ejsClearObjHash(EjsObj *obj)
     mprAssert(obj);
 
     if (obj->hash) {
-        memset(obj->hash, -1, obj->hash->sizeHash * sizeof(int));
+        memset(obj->hash, -1, obj->hash->size * sizeof(int));
         for (sp = obj->slots, i = 0; i < obj->numSlots; i++, sp++) {
             sp->hashChain = -1;
         }
@@ -1192,8 +1195,8 @@ int ejsComputeHashCode(EjsObj *obj, EjsName *qname)
     hash ^= hash << 25;
     hash += hash >> 6;
 
-    mprAssert(obj->hash->sizeHash);
-    return hash % obj->hash->sizeHash;
+    mprAssert(obj->hash->size);
+    return hash % obj->hash->size;
 }
 
 

@@ -41,17 +41,17 @@
 /*
    Prototype (instance) slots for "TemplateParser" type 
  */
-#define ES_TemplateParser_Object_constructor                           0
-#define ES_TemplateParser_Object_clone                                 1
-#define ES_TemplateParser_Object_iterator_get                          2
-#define ES_TemplateParser_Object_iterator_getValues                    3
-#define ES_TemplateParser_Object_hasOwnProperty                        4
-#define ES_TemplateParser_Object_isPrototypeOf                         5
-#define ES_TemplateParser_Object_propertyIsEnumerable                  6
-#define ES_TemplateParser_Object_toJSON                                7
-#define ES_TemplateParser_Object_toLocaleString                        8
-#define ES_TemplateParser_Object_toString                              9
-#define ES_TemplateParser_Object_valueOf                               10
+#define ES_TemplateParser_constructor                                  0
+#define ES_TemplateParser_clone                                        1
+#define ES_TemplateParser_iterator_get                                 2
+#define ES_TemplateParser_iterator_getValues                           3
+#define ES_TemplateParser_hasOwnProperty                               4
+#define ES_TemplateParser_isPrototypeOf                                5
+#define ES_TemplateParser_propertyIsEnumerable                         6
+#define ES_TemplateParser_toJSON                                       7
+#define ES_TemplateParser_toLocaleString                               8
+#define ES_TemplateParser_toString                                     9
+#define ES_TemplateParser_valueOf                                      10
 #define ES_TemplateParser_TemplateParser                               11
 #define ES_TemplateParser_ContentMarker                                12
 #define ES_TemplateParser_ContentPattern                               13

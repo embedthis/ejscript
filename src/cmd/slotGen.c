@@ -126,17 +126,22 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
 {
     Ejs     *ejs;
     char    nameBuf[MPR_MAX_STRING];
-    char    *funSep, *sp, *typeStr, *funStr, *nameStr, *subStr, *subSep;
+    char    *funSep, *sp, *typeStr, *funStr, *nameStr;
+#if UNUSED
+    , *subStr, *subSep;
+#endif
 
     ejs = bp->ejs;
 
     typeStr = mapFullName(file, &type->qname, 1);
+#if UNUSED
     if (slotNum < type->numInherited && obj == type->prototype) {
         subStr = mapFullName(file, &type->baseType->qname, 1);
         subSep = "_";
     } else {
         subSep = subStr = "";
     }
+#endif
     funStr = mapFullName(file, funName, 0);
     nameStr = mapFullName(file, name, 0);
 
@@ -146,8 +151,12 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
             mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s", nameStr);
         } else {
             if (!(nameStr[0] == '_' && nameStr[1] == '_')) {
+#if UNUSED
                 mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s%s%s%s%s_%s", typeStr, subSep, subStr, 
                     funSep, funStr, nameStr);
+#else
+                mprSprintf(nameBuf, sizeof(nameBuf), "#define ES_%s%s%s_%s", typeStr, funSep, funStr, nameStr);
+#endif
             } else {
                 nameBuf[0] = '\0';
             }

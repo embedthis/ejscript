@@ -749,7 +749,6 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (numSlots > 0) {
         fun->activation = ejsCreateActivation(ejs, fun, numSlots);
     }
-
     if (block == ejs->global && slotNum < 0) {
         //  MOB -- don't understand this. Why ejs->global and override?
         if (attributes & EJS_FUN_OVERRIDE) {

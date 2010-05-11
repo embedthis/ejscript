@@ -38,17 +38,17 @@
 /*
    Prototype (instance) slots for "Controller" type 
  */
-#define ES_ejs_web_Controller_Object_constructor                       0
-#define ES_ejs_web_Controller_Object_clone                             1
-#define ES_ejs_web_Controller_Object_iterator_get                      2
-#define ES_ejs_web_Controller_Object_iterator_getValues                3
-#define ES_ejs_web_Controller_Object_hasOwnProperty                    4
-#define ES_ejs_web_Controller_Object_isPrototypeOf                     5
-#define ES_ejs_web_Controller_Object_propertyIsEnumerable              6
-#define ES_ejs_web_Controller_Object_toJSON                            7
-#define ES_ejs_web_Controller_Object_toLocaleString                    8
-#define ES_ejs_web_Controller_Object_toString                          9
-#define ES_ejs_web_Controller_Object_valueOf                           10
+#define ES_ejs_web_Controller_constructor                              0
+#define ES_ejs_web_Controller_clone                                    1
+#define ES_ejs_web_Controller_iterator_get                             2
+#define ES_ejs_web_Controller_iterator_getValues                       3
+#define ES_ejs_web_Controller_hasOwnProperty                           4
+#define ES_ejs_web_Controller_isPrototypeOf                            5
+#define ES_ejs_web_Controller_propertyIsEnumerable                     6
+#define ES_ejs_web_Controller_toJSON                                   7
+#define ES_ejs_web_Controller_toLocaleString                           8
+#define ES_ejs_web_Controller_toString                                 9
+#define ES_ejs_web_Controller_valueOf                                  10
 #define ES_ejs_web_Controller_Controller                               11
 #define ES_ejs_web_Controller_ejs_web_actionName                       12
 #define ES_ejs_web_Controller_ejs_web_controllerName                   13
@@ -97,17 +97,17 @@
 /*
    Prototype (instance) slots for "HtmlConnector" type 
  */
-#define ES_HtmlConnector_Object_constructor                            0
-#define ES_HtmlConnector_Object_clone                                  1
-#define ES_HtmlConnector_Object_iterator_get                           2
-#define ES_HtmlConnector_Object_iterator_getValues                     3
-#define ES_HtmlConnector_Object_hasOwnProperty                         4
-#define ES_HtmlConnector_Object_isPrototypeOf                          5
-#define ES_HtmlConnector_Object_propertyIsEnumerable                   6
-#define ES_HtmlConnector_Object_toJSON                                 7
-#define ES_HtmlConnector_Object_toLocaleString                         8
-#define ES_HtmlConnector_Object_toString                               9
-#define ES_HtmlConnector_Object_valueOf                                10
+#define ES_HtmlConnector_constructor                                   0
+#define ES_HtmlConnector_clone                                         1
+#define ES_HtmlConnector_iterator_get                                  2
+#define ES_HtmlConnector_iterator_getValues                            3
+#define ES_HtmlConnector_hasOwnProperty                                4
+#define ES_HtmlConnector_isPrototypeOf                                 5
+#define ES_HtmlConnector_propertyIsEnumerable                          6
+#define ES_HtmlConnector_toJSON                                        7
+#define ES_HtmlConnector_toLocaleString                                8
+#define ES_HtmlConnector_toString                                      9
+#define ES_HtmlConnector_valueOf                                       10
 #define ES_HtmlConnector_HtmlConnector                                 11
 #define ES_HtmlConnector_nextId                                        12
 #define ES_HtmlConnector_request                                       13
@@ -150,17 +150,17 @@
 /*
    Prototype (instance) slots for "HttpServer" type 
  */
-#define ES_ejs_web_HttpServer_Object_constructor                       0
-#define ES_ejs_web_HttpServer_Object_clone                             1
-#define ES_ejs_web_HttpServer_Object_iterator_get                      2
-#define ES_ejs_web_HttpServer_Object_iterator_getValues                3
-#define ES_ejs_web_HttpServer_Object_hasOwnProperty                    4
-#define ES_ejs_web_HttpServer_Object_isPrototypeOf                     5
-#define ES_ejs_web_HttpServer_Object_propertyIsEnumerable              6
-#define ES_ejs_web_HttpServer_Object_toJSON                            7
-#define ES_ejs_web_HttpServer_Object_toLocaleString                    8
-#define ES_ejs_web_HttpServer_Object_toString                          9
-#define ES_ejs_web_HttpServer_Object_valueOf                           10
+#define ES_ejs_web_HttpServer_constructor                              0
+#define ES_ejs_web_HttpServer_clone                                    1
+#define ES_ejs_web_HttpServer_iterator_get                             2
+#define ES_ejs_web_HttpServer_iterator_getValues                       3
+#define ES_ejs_web_HttpServer_hasOwnProperty                           4
+#define ES_ejs_web_HttpServer_isPrototypeOf                            5
+#define ES_ejs_web_HttpServer_propertyIsEnumerable                     6
+#define ES_ejs_web_HttpServer_toJSON                                   7
+#define ES_ejs_web_HttpServer_toLocaleString                           8
+#define ES_ejs_web_HttpServer_toString                                 9
+#define ES_ejs_web_HttpServer_valueOf                                  10
 #define ES_ejs_web_HttpServer_HttpServer                               11
 #define ES_ejs_web_HttpServer_addListener                              12
 #define ES_ejs_web_HttpServer_address                                  13
@@ -217,17 +217,17 @@
 /*
    Prototype (instance) slots for "Request" type 
  */
-#define ES_ejs_web_Request_Object_constructor                          0
-#define ES_ejs_web_Request_Object_clone                                1
-#define ES_ejs_web_Request_Object_iterator_get                         2
-#define ES_ejs_web_Request_Object_iterator_getValues                   3
-#define ES_ejs_web_Request_Object_hasOwnProperty                       4
-#define ES_ejs_web_Request_Object_isPrototypeOf                        5
-#define ES_ejs_web_Request_Object_propertyIsEnumerable                 6
-#define ES_ejs_web_Request_Object_toJSON                               7
-#define ES_ejs_web_Request_Object_toLocaleString                       8
-#define ES_ejs_web_Request_Object_toString                             9
-#define ES_ejs_web_Request_Object_valueOf                              10
+#define ES_ejs_web_Request_constructor                                 0
+#define ES_ejs_web_Request_clone                                       1
+#define ES_ejs_web_Request_iterator_get                                2
+#define ES_ejs_web_Request_iterator_getValues                          3
+#define ES_ejs_web_Request_hasOwnProperty                              4
+#define ES_ejs_web_Request_isPrototypeOf                               5
+#define ES_ejs_web_Request_propertyIsEnumerable                        6
+#define ES_ejs_web_Request_toJSON                                      7
+#define ES_ejs_web_Request_toLocaleString                              8
+#define ES_ejs_web_Request_toString                                    9
+#define ES_ejs_web_Request_valueOf                                     10
 #define ES_ejs_web_Request_absHome                                     11
 #define ES_ejs_web_Request_authGroup                                   12
 #define ES_ejs_web_Request_authType                                    13
@@ -319,17 +319,17 @@
 /*
    Prototype (instance) slots for "Router" type 
  */
-#define ES_ejs_web_Router_Object_constructor                           0
-#define ES_ejs_web_Router_Object_clone                                 1
-#define ES_ejs_web_Router_Object_iterator_get                          2
-#define ES_ejs_web_Router_Object_iterator_getValues                    3
-#define ES_ejs_web_Router_Object_hasOwnProperty                        4
-#define ES_ejs_web_Router_Object_isPrototypeOf                         5
-#define ES_ejs_web_Router_Object_propertyIsEnumerable                  6
-#define ES_ejs_web_Router_Object_toJSON                                7
-#define ES_ejs_web_Router_Object_toLocaleString                        8
-#define ES_ejs_web_Router_Object_toString                              9
-#define ES_ejs_web_Router_Object_valueOf                               10
+#define ES_ejs_web_Router_constructor                                  0
+#define ES_ejs_web_Router_clone                                        1
+#define ES_ejs_web_Router_iterator_get                                 2
+#define ES_ejs_web_Router_iterator_getValues                           3
+#define ES_ejs_web_Router_hasOwnProperty                               4
+#define ES_ejs_web_Router_isPrototypeOf                                5
+#define ES_ejs_web_Router_propertyIsEnumerable                         6
+#define ES_ejs_web_Router_toJSON                                       7
+#define ES_ejs_web_Router_toLocaleString                               8
+#define ES_ejs_web_Router_toString                                     9
+#define ES_ejs_web_Router_valueOf                                      10
 #define ES_ejs_web_Router_Router                                       11
 #define ES_ejs_web_Router_routes                                       12
 #define ES_ejs_web_Router_addRestfulRoutes                             13
@@ -342,17 +342,17 @@
 /*
    Prototype (instance) slots for "Route" type 
  */
-#define ES_ejs_web_Route_Object_constructor                            0
-#define ES_ejs_web_Route_Object_clone                                  1
-#define ES_ejs_web_Route_Object_iterator_get                           2
-#define ES_ejs_web_Route_Object_iterator_getValues                     3
-#define ES_ejs_web_Route_Object_hasOwnProperty                         4
-#define ES_ejs_web_Route_Object_isPrototypeOf                          5
-#define ES_ejs_web_Route_Object_propertyIsEnumerable                   6
-#define ES_ejs_web_Route_Object_toJSON                                 7
-#define ES_ejs_web_Route_Object_toLocaleString                         8
-#define ES_ejs_web_Route_Object_toString                               9
-#define ES_ejs_web_Route_Object_valueOf                                10
+#define ES_ejs_web_Route_constructor                                   0
+#define ES_ejs_web_Route_clone                                         1
+#define ES_ejs_web_Route_iterator_get                                  2
+#define ES_ejs_web_Route_iterator_getValues                            3
+#define ES_ejs_web_Route_hasOwnProperty                                4
+#define ES_ejs_web_Route_isPrototypeOf                                 5
+#define ES_ejs_web_Route_propertyIsEnumerable                          6
+#define ES_ejs_web_Route_toJSON                                        7
+#define ES_ejs_web_Route_toLocaleString                                8
+#define ES_ejs_web_Route_toString                                      9
+#define ES_ejs_web_Route_valueOf                                       10
 #define ES_ejs_web_Route_Route                                         11
 #define ES_ejs_web_Route_dir                                           12
 #define ES_ejs_web_Route_match                                         13
@@ -401,17 +401,17 @@
 /*
    Prototype (instance) slots for "UploadFile" type 
  */
-#define ES_ejs_web_UploadFile_Object_constructor                       0
-#define ES_ejs_web_UploadFile_Object_clone                             1
-#define ES_ejs_web_UploadFile_Object_iterator_get                      2
-#define ES_ejs_web_UploadFile_Object_iterator_getValues                3
-#define ES_ejs_web_UploadFile_Object_hasOwnProperty                    4
-#define ES_ejs_web_UploadFile_Object_isPrototypeOf                     5
-#define ES_ejs_web_UploadFile_Object_propertyIsEnumerable              6
-#define ES_ejs_web_UploadFile_Object_toJSON                            7
-#define ES_ejs_web_UploadFile_Object_toLocaleString                    8
-#define ES_ejs_web_UploadFile_Object_toString                          9
-#define ES_ejs_web_UploadFile_Object_valueOf                           10
+#define ES_ejs_web_UploadFile_constructor                              0
+#define ES_ejs_web_UploadFile_clone                                    1
+#define ES_ejs_web_UploadFile_iterator_get                             2
+#define ES_ejs_web_UploadFile_iterator_getValues                       3
+#define ES_ejs_web_UploadFile_hasOwnProperty                           4
+#define ES_ejs_web_UploadFile_isPrototypeOf                            5
+#define ES_ejs_web_UploadFile_propertyIsEnumerable                     6
+#define ES_ejs_web_UploadFile_toJSON                                   7
+#define ES_ejs_web_UploadFile_toLocaleString                           8
+#define ES_ejs_web_UploadFile_toString                                 9
+#define ES_ejs_web_UploadFile_valueOf                                  10
 #define ES_ejs_web_UploadFile_clientFilename                           11
 #define ES_ejs_web_UploadFile_contentType                              12
 #define ES_ejs_web_UploadFile_filename                                 13
@@ -431,17 +431,17 @@
 /*
    Prototype (instance) slots for "View" type 
  */
-#define ES_ejs_web_View_Object_constructor                             0
-#define ES_ejs_web_View_Object_clone                                   1
-#define ES_ejs_web_View_Object_iterator_get                            2
-#define ES_ejs_web_View_Object_iterator_getValues                      3
-#define ES_ejs_web_View_Object_hasOwnProperty                          4
-#define ES_ejs_web_View_Object_isPrototypeOf                           5
-#define ES_ejs_web_View_Object_propertyIsEnumerable                    6
-#define ES_ejs_web_View_Object_toJSON                                  7
-#define ES_ejs_web_View_Object_toLocaleString                          8
-#define ES_ejs_web_View_Object_toString                                9
-#define ES_ejs_web_View_Object_valueOf                                 10
+#define ES_ejs_web_View_constructor                                    0
+#define ES_ejs_web_View_clone                                          1
+#define ES_ejs_web_View_iterator_get                                   2
+#define ES_ejs_web_View_iterator_getValues                             3
+#define ES_ejs_web_View_hasOwnProperty                                 4
+#define ES_ejs_web_View_isPrototypeOf                                  5
+#define ES_ejs_web_View_propertyIsEnumerable                           6
+#define ES_ejs_web_View_toJSON                                         7
+#define ES_ejs_web_View_toLocaleString                                 8
+#define ES_ejs_web_View_toString                                       9
+#define ES_ejs_web_View_valueOf                                        10
 #define ES_ejs_web_View_View                                           11
 #define ES_ejs_web_View_ejs_web_request                                12
 #define ES_ejs_web_View_currentRecord                                  13

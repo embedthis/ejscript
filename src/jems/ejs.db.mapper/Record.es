@@ -74,6 +74,14 @@ module ejs.db.mapper {
         // use namespace "ejs.db.mapper.int"
         use default namespace public
 
+        /*
+            Constructor for use when instantiating directly from Record. Typically, use models will implement this
+            class and will provdie their own constructor which calls initialize().
+         */
+        function Record(fields: Object? = null) {
+            initialize(fields)
+        }
+
         /**
             Construct a new record instance. This is really a constructor function, because the Record class is 
             implemented by user models, no constructor will be invoked when a new user model is instantiated. 
@@ -82,14 +90,7 @@ module ejs.db.mapper {
             one of the $find methods.
             @param fields An optional object set of field names and values may be supplied to initialize the record.
          */
-        function Record(fields: Object? = null) {
-print("CONSTRUCTOR")
-            initialize(fields)
-        }
-
-        /** @hide */
         function initialize(fields: Object? = null): Void {
-print("INITIALIZE")
             if (fields) for (let field in fields) {
                 this."public"::[field] = fields[field]
             }
@@ -249,12 +250,7 @@ print("INITIALIZE")
             Process a sql result and add properties for each field in the row
          */
         private static function createRecord(data: Object, options: Object = {}) {
-print("CLASS " + _className)
-print("VALUE " + global[_className])
-print("TYPE " + typeOf(global[_className]))
-breakpoint()
             let rec: Record = new global[_className]
-print('AFTER')
             rec.initialize(data)
             rec._keyValue = data[_keyName]
 
@@ -469,7 +465,6 @@ print('AFTER')
             Read the table schema and return the column hash
          */
         private static function getSchema(): Void {
-print("GS")
             if (!_db) {
                 _db = Database.defaultDatabase
                 if (!_db) {
@@ -477,7 +472,6 @@ print("GS")
                 }
             }
             let sql: String = 'PRAGMA table_info("' + _tableName + '");'
-print("QUERY " + sql)
             let grid: Array = _db.query(sql, "schema", _trace)
             _columns = {}
             for each (let row in grid) {
@@ -563,8 +557,6 @@ print("QUERY " + sql)
             let conditions: String
             let where: Boolean
 
-breakpoint()
-print("XCOLS " + _columns)
             if (!_columns) _model.getSchema()
             if (options == null) {
                 options = {}
