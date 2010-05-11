@@ -100,6 +100,7 @@ int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
     fun = (EjsFunction*) block;
     list = &block->namespaces;
 
+    //  TODO OPT need a routine or option to only add unique namespaces.   
 #if UNUSED
     EjsNamespace    *namespace;
     int             next;

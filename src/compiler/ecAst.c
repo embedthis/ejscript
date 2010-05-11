@@ -3500,6 +3500,9 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
     }
     type->block.obj.visited = 0;
 
+    /*
+        Determine if instances need to copy the prototype properties
+     */
     copyPrototype = 0;
     for (slotNum = 0; slotNum < prototype->numSlots; slotNum++) {
         obj = ejsGetProperty(ejs, prototype, slotNum);

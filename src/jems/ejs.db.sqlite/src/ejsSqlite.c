@@ -457,16 +457,18 @@ struct sqlite3_mutex_methods mut = {
 
 static int configureSqliteTypes(Ejs *ejs)
 {
-    EjsType         *type;
+    EjsType     *type;
+    EjsObj      *prototype;
     
     type = (EjsType*) ejsConfigureNativeType(ejs, "ejs.db", "Sqlite", sizeof(EjsSqlite));
     type->needFinalize = 1;
 
     type->helpers.destroy = (EjsDestroyHelper) destroySqliteDb;
 
-    ejsBindMethod(ejs, type, ES_ejs_db_Sqlite_Sqlite, (EjsProc) sqliteConstructor);
-    ejsBindMethod(ejs, type, ES_ejs_db_Sqlite_close, (EjsProc) sqliteClose);
-    ejsBindMethod(ejs, type, ES_ejs_db_Sqlite_sql, (EjsProc) sqliteSql);
+    prototype = type->prototype;
+    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_Sqlite, (EjsProc) sqliteConstructor);
+    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_close, (EjsProc) sqliteClose);
+    ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_sql, (EjsProc) sqliteSql);
 
 #if MAP_ALLOC
 #if USE_TLS

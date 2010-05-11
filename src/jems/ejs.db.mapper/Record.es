@@ -83,11 +83,13 @@ module ejs.db.mapper {
             @param fields An optional object set of field names and values may be supplied to initialize the record.
          */
         function Record(fields: Object? = null) {
+print("CONSTRUCTOR")
             initialize(fields)
         }
 
         /** @hide */
         function initialize(fields: Object? = null): Void {
+print("INITIALIZE")
             if (fields) for (let field in fields) {
                 this."public"::[field] = fields[field]
             }
@@ -247,7 +249,12 @@ module ejs.db.mapper {
             Process a sql result and add properties for each field in the row
          */
         private static function createRecord(data: Object, options: Object = {}) {
+print("CLASS " + _className)
+print("VALUE " + global[_className])
+print("TYPE " + typeOf(global[_className]))
+breakpoint()
             let rec: Record = new global[_className]
+print('AFTER')
             rec.initialize(data)
             rec._keyValue = data[_keyName]
 
@@ -462,6 +469,7 @@ module ejs.db.mapper {
             Read the table schema and return the column hash
          */
         private static function getSchema(): Void {
+print("GS")
             if (!_db) {
                 _db = Database.defaultDatabase
                 if (!_db) {
@@ -469,6 +477,7 @@ module ejs.db.mapper {
                 }
             }
             let sql: String = 'PRAGMA table_info("' + _tableName + '");'
+print("QUERY " + sql)
             let grid: Array = _db.query(sql, "schema", _trace)
             _columns = {}
             for each (let row in grid) {
@@ -554,6 +563,8 @@ module ejs.db.mapper {
             let conditions: String
             let where: Boolean
 
+breakpoint()
+print("XCOLS " + _columns)
             if (!_columns) _model.getSchema()
             if (options == null) {
                 options = {}

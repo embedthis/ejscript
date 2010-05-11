@@ -91,10 +91,6 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.constructor = fun->constructor;
     frame->function.fullScope = fun->fullScope;
     frame->function.hasReturn = fun->hasReturn;
-#if NOT_NEEDED && KEEP
-    frame->function.inCatch = fun->inCatch;
-    frame->function.inException = fun->inException;
-#endif
     frame->function.isInitializer = fun->isInitializer;
     frame->function.nativeProc = fun->nativeProc;
     frame->function.override = fun->override;

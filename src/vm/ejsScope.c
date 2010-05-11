@@ -45,7 +45,8 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
         }
         if (ejsIsFrame(bp)) {
             frame = (EjsFrame*) bp;
-            if (frame->function.thisObj == thisObj && thisObj != ejs->global && !frame->function.staticMethod && !frame->function.initializer) {
+            if (frame->function.thisObj == thisObj && thisObj != ejs->global && !frame->function.staticMethod && 
+                    !frame->function.initializer) {
                 /* Instance method only */
                 if ((slotNum = ejsLookupVarWithNamespaces(ejs, thisObj, name, lookup)) >= 0) {
                     return slotNum;

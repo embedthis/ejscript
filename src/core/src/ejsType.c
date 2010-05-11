@@ -15,7 +15,6 @@
 static void fixInstanceSize(Ejs *ejs, EjsType *type);
 static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom);
 static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom);
-static int inheritProperties(Ejs *ejs, EjsObj *obj, int offset, EjsObj *baseBlock, int count, bool implementing);
 static void setAttributes(EjsType *type, int64 attributes);
 
 /******************************************************************************/
@@ -445,9 +444,11 @@ EjsType *ejsGetTypeByName(Ejs *ejs, cchar *space, cchar *name)
 }
 
 
-static int inheritProperties(Ejs *ejs, EjsObj *obj, int offset, EjsObj *baseBlock, int count, bool implementing)
+static int inheritProperties(Ejs *ejs, EjsType *type, EjsObj *obj, int offset, EjsObj *baseBlock, int count, 
+        bool implementing)
 {
-    int     start;
+    EjsFunction     *fun;
+    int             start, i;
 
     mprAssert(obj);
     mprAssert(baseBlock);
@@ -458,6 +459,31 @@ static int inheritProperties(Ejs *ejs, EjsObj *obj, int offset, EjsObj *baseBloc
     }
     start = baseBlock->numSlots - count;
     ejsCopySlots(ejs, obj, &obj->slots[offset], &baseBlock->slots[start], count, 1);
+    
+    if (implementing) {
+        /*
+            Correct the scope and bound "this" for methods that are implemented from another class.
+         */
+        for (i = offset; i < count; i++) {
+            fun = (EjsFunction*) ejsGetProperty(ejs, obj, i);
+            if (ejsIsFunction(fun)) {
+                fun->thisObj = 0;
+                fun->block.scope = (EjsBlock*) type;
+            }
+        }
+#if UNSUSED
+        EjsBlock *b = (EjsBlock*) type;
+        printf("Type %s\n", type->qname.name);
+        for (i = 0; i < b->namespaces.length; i++) {
+            printf("%s\n", (cchar*) ((EjsNamespace*) b->namespaces.items[i])->uri);
+        }
+        b = (EjsBlock*) baseBlock;
+        printf("Base %s\n", baseBlock->name);
+        for (i = 0; i < b->namespaces.length; i++) {
+            printf("%s\n", (cchar*) ((EjsNamespace*) b->namespaces.items[i])->uri);
+        }
+#endif
+    }
     ejsMakeObjHash(obj);
     return 0;
 }
@@ -518,6 +544,7 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
 static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom)
 {
     EjsType         *iface;
+    EjsBlock        *bp;
     EjsNamespace    *nsp;
     int             next, offset, count, nextNsp;
 
@@ -539,14 +566,24 @@ static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom)
     for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
         if (!iface->isInterface) {
             count = iface->block.obj.numSlots;
-            if (inheritProperties(ejs, (EjsObj*) type, offset, (EjsObj*) iface, count, 1) < 0) {
+            if (inheritProperties(ejs, type, (EjsObj*) type, offset, (EjsObj*) iface, count, 1) < 0) {
                 return EJS_ERR;
             }
         }
         for (nextNsp = 0; (nsp = (EjsNamespace*) ejsGetNextItem(&iface->block.namespaces, &nextNsp)) != 0;) {
-            mprAssert(ejsIsBlock(type));
             ejsAddNamespaceToBlock(ejs, (EjsBlock*) type, nsp);
         }
+        for (bp = iface->block.scope; bp->scope; bp = bp->scope) {
+            for (nextNsp = 0; (nsp = (EjsNamespace*) ejsGetNextItem(&bp->namespaces, &nextNsp)) != 0;) {
+                ejsAddNamespaceToBlock(ejs, (EjsBlock*) type, nsp);
+            }
+        }
+        EjsBlock *b = (EjsBlock*) type;
+        printf("Type %s\n", type->qname.name);
+        for (int i = 0; i < b->namespaces.length; i++) {
+            printf("%s\n", (cchar*) ((EjsNamespace*) b->namespaces.items[i])->uri);
+        }
+        
     }
     return 0;
 }
@@ -582,7 +619,7 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
     offset = 0;
     if (!type->orphan) {
         mprAssert(type->prototype->numSlots >= basePrototype->numSlots);
-        if (inheritProperties(ejs, type->prototype, offset, basePrototype, basePrototype->numSlots, 0) < 0) {
+        if (inheritProperties(ejs, type, type->prototype, offset, basePrototype, basePrototype->numSlots, 0) < 0) {
             return EJS_ERR;
         }
         type->numInherited = basePrototype->numSlots;
@@ -599,7 +636,7 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
                 continue;
             }
             count = ip->numSlots;
-            if (inheritProperties(ejs, type->prototype, offset, ip, count, 1) < 0) {
+            if (inheritProperties(ejs, type, type->prototype, offset, ip, count, 1) < 0) {
                 return EJS_ERR;
             }
             offset += ip->numSlots;
