@@ -281,8 +281,12 @@ static void defineBlock(EcCompiler *cp, EcNode *np)
                 addGlobalProperty(cp, np, &np->qname);
             }
         }
+#if UNUSED
     } else {
         block->obj.hidden = 1;
+        //MOB ZZZ
+        block->obj.hidden = 0;
+#endif
     }
 }
 
@@ -308,7 +312,9 @@ static void bindBlock(EcCompiler *cp, EcNode *np)
             mprAssert(np->lookup.slotNum >= 0);
             ejsDeleteProperty(ejs, np->lookup.obj, np->lookup.slotNum);
             np->blockCreated = 0;
+#if UNUSED
             np->lookup.ref->hidden = 1;
+#endif
 
         } else {
             /*
@@ -2195,10 +2201,14 @@ static void astTry(EcCompiler *cp, EcNode *np)
             catch and finally blocks.
          */
         for (count = 0, block = ejs->state->bp->scope; block && !ejsIsFunction(block); block = block->scope) {
+#if UNUSED
+            mprAssert(!block->obj.hidden);
             if (!block->obj.hidden) {
-                mprAssert(!block->obj.hidden);
+#endif
                 count++;
+#if UNUSED
             }
+#endif
         }
         np->exception.numBlocks = count;
     }
@@ -3655,10 +3665,14 @@ static int resolveName(EcCompiler *cp, EcNode *np, EjsObj *vp, EjsName *qname)
                 break;
             }
         }
+#if UNUSED
         mprAssert(!block->obj.hidden);
         if (!block->obj.hidden) {
+#endif
             lookup->nthBlock++;
+#if UNUSED
         }
+#endif
     }
     if (block == 0) {
         lookup->nthBlock = 0;

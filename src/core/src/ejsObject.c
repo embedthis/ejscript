@@ -260,7 +260,9 @@ EjsObj *ejsCloneObject(Ejs *ejs, EjsObj *src, bool deep)
     //  MOB - OPT make a flags word
     dest->builtin = src->builtin;
     dest->dynamic = src->dynamic;
+#if UNUSED
     dest->hidden = src->hidden;
+#endif
     dest->isFunction = src->isFunction;
     dest->isPrototype = src->isPrototype;
     dest->isType = src->isType;

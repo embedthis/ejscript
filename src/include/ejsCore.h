@@ -618,7 +618,7 @@ typedef struct EjsObj {
             uint    shortScope        :  1;     /**< Don't follow type or base classes */
             uint    visited           :  1;     /**< Has been traversed */
 
-#if UNUSED || 1
+#if UNUSED
             uint    hidden            :  1;     /**< Block is hidden */
 #endif
 #if LEGACY || 1
