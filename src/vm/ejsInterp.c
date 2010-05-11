@@ -3500,6 +3500,7 @@ static EjsObj *getNthBlock(Ejs *ejs, int nth)
 
     for (block = ejs->state->bp; block && --nth >= 0; ) {
         /* TODO - this is done for loading scripts into ejs. Really the compiler should remove these blocks */
+        mprAssert(block->obj.hidden == 0);
         if (block->obj.hidden) nth++;
         block = block->scope;
     }

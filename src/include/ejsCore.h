@@ -608,8 +608,9 @@ typedef struct EjsObj {
             uint    isPrototype       :  1;     /**< Object is a type prototype object */
             uint    isType            :  1;     /**< Instance is a type object */
 
-            //  TODO - can this just use visited 
+#if UNUSED
             uint    jsonVisited       :  1;     /**< JSON traversal */
+#endif
             uint    marked            :  1;     /**< GC marked in use */
             uint    master            :  1;     /**< Allocated in the master interpreter */
             uint    permanent         :  1;     /**< Object is immune from GC */
@@ -617,8 +618,10 @@ typedef struct EjsObj {
             uint    shortScope        :  1;     /**< Don't follow type or base classes */
             uint    visited           :  1;     /**< Has been traversed */
 
-#if LEGACY || 1
+#if UNUSED || 1
             uint    hidden            :  1;     /**< Block is hidden */
+#endif
+#if LEGACY || 1
             uint    builtin           :  1;
 #endif
 #if BLD_HAS_UNNAMED_UNIONS

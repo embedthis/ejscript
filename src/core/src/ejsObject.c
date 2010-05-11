@@ -1894,7 +1894,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
             if (ejs->exception) {
                 return 0;
             }
-            if (pp == 0 || (pp->hidden && !hidden)) {
+            if (pp == 0 /* UNUSED || (pp->hidden && !hidden) */) {
                 continue;
             }
             if (isArray) {

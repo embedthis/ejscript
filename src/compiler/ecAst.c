@@ -325,29 +325,35 @@ static void bindBlock(EcCompiler *cp, EcNode *np)
 static void astBlock(EcCompiler *cp, EcNode *np)
 {
     EcNode      *child;
-    int         next;
+    int         next, needBlock;
 
     ENTER(cp);
     
-    if (cp->phase == EC_PHASE_BIND) {
+    needBlock = 0;
+    if (cp->phase < EC_PHASE_BIND) {
+        needBlock = 1;
+    } else if (cp->phase == EC_PHASE_BIND) {
         /*
             Bind the block here before processing the child nodes so we can mark the block as hidden if it will be expunged.
          */
         bindBlock(cp, np);
+        needBlock = np->blockCreated;
     }
 
     /*
         Open block will change state->letBlock which we need preserved in defineBlock. Use ENTER/LEAVE to save and restore.
      */
     ENTER(cp);
-    openBlock(cp, np, NULL);
-
+    if (needBlock) {
+        openBlock(cp, np, NULL);
+    }
     next = 0;
     while ((child = getNextAstNode(cp, np, &next))) {
         processAstNode(cp, child);
     }
-
-    closeBlock(cp);
+    if (needBlock) {
+        closeBlock(cp);
+    }
     LEAVE(cp);
 
     if (cp->phase == EC_PHASE_CONDITIONAL) {
@@ -357,9 +363,7 @@ static void astBlock(EcCompiler *cp, EcNode *np)
          */
         defineBlock(cp, np);
 
-        /*
-            Try to hoist the block object itself
-         */
+        /* Try to hoist the block object itself */
         if (np->blockCreated && !hoistBlockVar(cp, np)) {
             cp->state->letBlockNode->createBlockObject = 1;
         }
@@ -2192,6 +2196,7 @@ static void astTry(EcCompiler *cp, EcNode *np)
          */
         for (count = 0, block = ejs->state->bp->scope; block && !ejsIsFunction(block); block = block->scope) {
             if (!block->obj.hidden) {
+                mprAssert(!block->obj.hidden);
                 count++;
             }
         }
@@ -3650,6 +3655,7 @@ static int resolveName(EcCompiler *cp, EcNode *np, EjsObj *vp, EjsName *qname)
                 break;
             }
         }
+        mprAssert(!block->obj.hidden);
         if (!block->obj.hidden) {
             lookup->nthBlock++;
         }

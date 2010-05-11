@@ -418,10 +418,12 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *vp, EjsObj *options)
     if (vp == 0) {
         return ejsCreateString(ejs, "undefined");
     }
+#if UNUSED
     if (vp->jsonVisited) {
         return ejsCreateString(ejs, "this");
     }    
     vp->jsonVisited = 1;
+#endif
     
     fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) vp->type->prototype, ejsName(&qname, NULL, "toJSON"));
     if (fn == 0) {
@@ -439,7 +441,9 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *vp, EjsObj *options)
     } else {
         result = ejsToString(ejs, vp);
     }
+#if UNUSED
     vp->jsonVisited = 0;
+#endif
     return result;
 }
 
