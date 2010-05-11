@@ -72,7 +72,6 @@ struct EjsXML;
 /*
     Trait, type, function and property attributes. These are sometimes combined into a single attributes word.
  */
-//  MOB -- which of these are stored in trait->attributes
 #define EJS_TRAIT_BUILTIN               0x1         /**< Property can take a null value */
 #define EJS_TRAIT_CAST_NULLS            0x2         /**< Property casts nulls */
 #define EJS_TRAIT_DELETED               0x4         /**< Property has been deleted */
@@ -591,10 +590,6 @@ typedef struct EjsObj {
 #endif
             uint    dynamic           :  1;     /**< Object may add properties */
 
-            //  MOB -- shouldn't this be in EjsBlock
-
-            uint    hasScriptFunctions:  1;     /**< Block has non-native functions requiring namespaces */
-
             //  MOB -- these should be using ejsIsXXX(vp->type)
             uint    isFrame           :  1;     /**< Instance is a frame */
             uint    isFunction        :  1;     /**< Instance is a function */
@@ -612,8 +607,7 @@ typedef struct EjsObj {
             uint    shortScope        :  1;     /**< Don't follow type or base classes */
 
 #if LEGACY || 1
-            //  MOB -- cleanup and review
-            uint    hidden            :  1;
+            uint    hidden            :  1;     /**< Block is hidden */
             uint    builtin           :  1;
 #endif
 #if BLD_HAS_UNNAMED_UNIONS
@@ -624,11 +618,10 @@ typedef struct EjsObj {
     struct EjsType  *type;                      /**< Type of this object (not base type). ie. type for Object is EjsType  */
     struct EjsSlot  *slots;                     /**< Vector of slots containing property references */
 
-    //  MOB -- OPT. Remove sizeSlots and just use numSlots. Also scan for slots with name == NULL means free.
     int             sizeSlots;                  /**< Current size of traits[] and slots[] */
     int             numSlots;                   /**< Number of properties in traits/slots */
 
-    //  TODO - OPT Change this to a Hash type with size internal to the hash
+    //  TODO MOB - OPT Change this to a Hash type with size internal to the hash
     int             *hash;                      /**< Hash buckets and head of link chains */
     int             sizeHash;                   /**< Size of hash */
 } EjsObj;
@@ -2611,8 +2604,9 @@ typedef struct EjsType {
     uint            hasBaseConstructors     :  1;   /**< Base types has constructors */
     uint            hasBaseInitializers     :  1;   /**< Base types have initializers */
     uint            hasConstructor          :  1;   /**< Type has a constructor */
-    uint            hasMeta                 :  1;   /**< Type has meta methods */
     uint            hasInitializer          :  1;   /**< Type has static level initialization code */
+    uint            hasMeta                 :  1;   /**< Type has meta methods */
+    uint            hasScriptFunctions      :  1;   /**< Block has non-native functions requiring namespaces */
     uint            immutable               :  1;   /**< Instances are immutable */
     uint            initialized             :  1;   /**< Static initializer has run */
     uint            isInterface             :  1;   /**< Interface vs class */
@@ -2666,21 +2660,7 @@ typedef struct EjsType {
         For non-core types, set to -1.
     @param numTypeProp Number of type (class) properties for the type. These include static properties and methods.
     @param numInstanceProp Number of instance properties.
-    @param attributes Attribute mask to modify how the type is initialized. Valid values include:
-        MOB -- fix these
-        @li EJS_ATTR_BLOCK_HELPERS - Type uses EjsBlock helpers
-        @li EJS_TYPE_CALLS_SUPER - Type calls super()
-        @li EJS_TYPE_DYNAMIC_INSTANCE - Instance objects are dynamic
-        @li EJS_TYPE_FINAL - Type will be a final class
-        @li EJS_TYPE_INTERFACE - Type is an interface
-        @li EJS_TYPE_HAS_CONSTRUCTOR - Type has a constructor to call
-        @li EJS_TYPE_HAS_INITIALIZER - Type has an initializer
-        @li EJS_TYPE_HAS_STATIC_INITIALIZER - Type has a static initializer
-        @li EJS_ATTR_NO_BIND - Instruct the compiler to never bind any property references to slots
-        @li EJS_ATTR_OBJECT - Type instances are based on EjsObj
-        @li EJS_ATTR_OPER_OVERLOAD - Type uses operator overload
-        @li EJS_ATTR_OBJECT_HELPERS - Type uses EjsObj helpers
-        @li EJS_ATTR_SLOT_NEEDS_FIXUP - Slots will need fixup. Typically because the base type is unknown
+    @param attributes Attribute mask to modify how the type is initialized.
     @param data
     @ingroup EjsType EjsType
  */

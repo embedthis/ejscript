@@ -67,7 +67,7 @@ module ejs.web {
          */
         public function render(renderer: Function): Void {
             if (renderer) {
-                renderer.setScope(View)
+                // renderer.setScope(this)
                 renderer.call(this, request)
             }
             request.finalize()

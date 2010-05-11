@@ -35,6 +35,7 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
     slotNum = -1;
     
     memset(lookup, 0, sizeof(*lookup));
+    thisObj = state->fp->function.thisObj;
 
     //  MOB -- remove nthBlock. Not needed if not binding
     for (lookup->nthBlock = 0, bp = state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
@@ -42,11 +43,10 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
         if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) bp, name, lookup)) >= 0) {
             return slotNum;
         }
-        if (ejsIsFrame(bp) && ejsIsType(bp->scope)) {
+        if (ejsIsFrame(bp)) {
             frame = (EjsFrame*) bp;
-            if (!frame->function.staticMethod && !frame->function.initializer) {
+            if (frame->function.thisObj == thisObj && thisObj != ejs->global && !frame->function.staticMethod && !frame->function.initializer) {
                 /* Instance method only */
-                thisObj = ((EjsFrame*) bp)->function.thisObj;
                 if ((slotNum = ejsLookupVarWithNamespaces(ejs, thisObj, name, lookup)) >= 0) {
                     return slotNum;
                 }
@@ -61,6 +61,7 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
                         return slotNum;
                     }
                 }
+                thisObj = 0;
             }
         } else if (ejsIsType(bp)) {
             //  MOB -- remove nthBase. Not needed if not binding.
@@ -155,7 +156,9 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *
             Special lookup with space == NULL. Means lookup only match if there is only one property of this name 
          */
         if ((slotNum = ejsLookupProperty(ejs, obj, ejsName(&qname, NULL, name->name))) >= 0) {
-            if (!obj->type->virtualSlots) {
+            if (obj->type->virtualSlots) {
+                lookup->name = *name;
+            } else {
                 target = ejsGetPropertyName(ejs, obj, slotNum);
                 lookup->name = target;
                 if (name->space[0] && (name->space[0] != target.space[0] || strcmp(name->space, target.space) != 0)) {
@@ -170,6 +173,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *
                     //  MOB -- need a fast way to know if the space is a standard reserved namespace or not */
                     /* Verify namespace is open */
                     for (b = ejs->state->bp; b->scope; b = b->scope) {
+                        //  MOB - OPT. Doing some namespaces multiple times. Fix in compiler.
                         for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&b->namespaces, &next)) != 0; ) {
                             if (strcmp(nsp->uri, target.space) == 0) {
                                 goto done;

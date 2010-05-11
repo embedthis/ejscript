@@ -13,36 +13,6 @@
 static MprNumber parseNumber(Ejs *ejs, cchar *str);
 static bool      parseBoolean(Ejs *ejs, cchar *s);
 
-/*
-    Get the type owning a property
-    MOB -- remove this function when have tested script over native
- */
-static inline EjsType *getOwningType(EjsObj *vp, int slotNum)
-{
-    EjsType     *type;
-
-    type = vp->type;
-
-#if UNUSED && MOB
-    if (type->instanceSize != sizeof(EjsObject)) {
-        if (vp->isType) {
-            if (slotNum < type->numInherited) {
-                do {
-                    type = type->baseType;
-                } while (slotNum < type->numInherited);
-            }
-        } else if (type->prototype) {
-            if (slotNum < type->numInherited) {
-                do {
-                    type = type->baseType;
-                } while (slotNum < type->numInherited);
-            }
-        }
-    }
-#endif
-    return type;
-}
-
 /************************************* Code ***********************************/
 /**
     Cast the variable to a given target type.
@@ -135,7 +105,7 @@ int ejsDeleteProperty(Ejs *ejs, EjsObj *vp, int slotNum)
 
     mprAssert(slotNum >= 0);
     
-    type = getOwningType(vp, slotNum);
+    type = vp->type;
     mprAssert(type->helpers.deleteProperty);
     return (type->helpers.deleteProperty)(ejs, vp, slotNum);
 }
@@ -191,7 +161,7 @@ EjsObj *ejsGetProperty(Ejs *ejs, EjsObj *vp, int slotNum)
     mprAssert(vp);
     mprAssert(slotNum >= 0);
 
-    type = getOwningType(vp, slotNum);
+    type = vp->type;
     mprAssert(type->helpers.getProperty);
     return (type->helpers.getProperty)(ejs, vp, slotNum);
 }
@@ -245,7 +215,7 @@ EjsName ejsGetPropertyName(Ejs *ejs, EjsObj *vp, int slotNum)
 {
     EjsType     *type;
 
-    type = getOwningType(vp, slotNum);
+    type = vp->type;
     mprAssert(type->helpers.getPropertyName);
     return (type->helpers.getPropertyName)(ejs, vp, slotNum);
 }
@@ -259,7 +229,7 @@ EjsTrait *ejsGetPropertyTrait(Ejs *ejs, EjsObj *vp, int slotNum)
 {
     EjsType     *type;
 
-    type = getOwningType(vp, slotNum);
+    type = vp->type;
     mprAssert(type->helpers.getPropertyTrait);
     return (type->helpers.getPropertyTrait)(ejs, vp, slotNum);
 }

@@ -13,9 +13,9 @@ const HTTPS     = "https://" + LOCALHOST + ":" + SSL_PORT
 
 mkdir("web/tmp")
 
-let EJSWEB = App.exeDir.join("ejsweb")
+let EJSWEB: Path = App.exePath
 if (Config.OS == "WIN") {
-    EJSWEB += ".exe"
+    EJSWEB.joinExt("exe")
 }
 
 if (exists(PIDFILE)) {
@@ -28,13 +28,15 @@ if (exists(PIDFILE)) {
 if (exists(EJSWEB)) {
     if (!App.getenv("NOSERVER")) {
         /* Start a web server for testing */
-        pid = System.daemon(EJSWEB + " --name forEjsTest --config ejsweb.conf")
+        pid = System.daemon(EJSWEB + " server.es")
         Path(PIDFILE).write(pid)
         share("webPidFile", PIDFILE)
         http = new Http
-        for (i in 50) {
+        for (i in 10) {
             try { http.get(HTTP + "/alive.html"); } catch {}
-            if (http.status == 200) break
+            if (http.status == 200) {
+                break
+            }
             App.sleep(100)
             http.close()
         }
@@ -45,4 +47,6 @@ if (exists(EJSWEB)) {
     share("http", HTTP)
     share("https", HTTPS)
     share("port", PORT)
+} else {
+    throw "Can't find " + EJSWEB
 }

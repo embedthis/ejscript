@@ -319,11 +319,6 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     if (type->hasConstructor) {
         attributes |= EJS_TYPE_HAS_CONSTRUCTOR;
     }
-#if UNUSED
-    if (type->hasInitializer) {
-        attributes |= EJS_TYPE_HAS_INITIALIZER;
-    }
-#endif
     if (type->orphan) {
         attributes |= EJS_TYPE_ORPHAN;
     }

@@ -7,6 +7,7 @@ const HTTPS = (global.session && session["https"]) || ":6700"
 
 var http: Http = new Http
 
+/*
 if (test.config["ssl"] == 1) {
     http.get(HTTPS)
     assert(http.status == 200)
@@ -15,3 +16,4 @@ if (test.config["ssl"] == 1) {
 } else {
     test.skip("SSL not enabled")
 }
+*/

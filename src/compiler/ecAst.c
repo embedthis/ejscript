@@ -510,11 +510,6 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         return 0;
     }
     np->klass.ref = type;
-#if UNUSED
-    if (ejs->empty && mprStrcmp(np->qname.name, "Block") == 0 && strcmp(np->qname.space, "ejs") == 0) {
-        type->dontInherit = 1;
-    }
-#endif
 
     nsp = ejsDefineReservedNamespace(ejs, (EjsBlock*) type, &type->qname, EJS_PROTECTED_NAMESPACE);
     //  MOB -- these flags should be args to above()
@@ -556,10 +551,6 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         constructor = np->klass.constructor;
         if (constructor && !constructor->function.isDefaultConstructor) {
             type->hasConstructor = 1;
-#if UNUSED
-            //  MZZ
-            type->hasInitializer = 1;
-#endif
         }
     }
     return type;
@@ -646,9 +637,6 @@ static void bindClass(EcCompiler *cp, EcNode *np)
         np->klass.initializer = fun;
         //  MOB -- better to use DefineProperty and set traits for initializer
         ejsSetProperty(ejs, (EjsObj*) type, 0, (EjsObj*) fun);
-#if UNUSED
-        ejsSetFunctionLocation(fun, (EjsObj*) type, 0);
-#endif
     }
 
     modified = 0;
@@ -1240,14 +1228,6 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
         astError(cp, np, "Internal error. Can't bind function %s", np->qname.name);
     }
     if (np->lookup.slotNum >= 0) {
-#if UNUSED
-        ejsSetFunctionLocation(fun, block, np->lookup.slotNum);
-        if (np->function.getter) {
-            if (fun->setter) {
-                ejsSetFunctionLocation(fun->setter, block, np->lookup.slotNum);
-            }
-        }
-#endif
         setAstDocString(ejs, np, np->lookup.obj, np->lookup.slotNum);
     }
 
@@ -3299,9 +3279,6 @@ static void processAstNode(EcCompiler *cp, EcNode *np)
         if (state->inClass && !state->currentClass->isInterface) {
             if (instanceCode) {
                 state->currentClass->hasConstructor = 1;
-#if UNUSED
-                state->currentClass->hasInitializer = 1;
-#endif
             } else {
                 state->currentClass->hasInitializer = 1;
             }
@@ -3420,12 +3397,6 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         if (baseType->hasConstructor) {
             type->hasBaseConstructors = 1;
         }
-#if UNUSED
-        if (baseType->hasInitializer) {
-            type->hasBaseInitializers = 1;
-        }
-        mprAssert(type->hasBaseConstructors == type->hasBaseInitializers);
-#endif
         if (baseType->hasInitializer) {
             type->hasBaseInitializers = 1;
         }
@@ -3439,11 +3410,6 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
             if (iface->hasConstructor) {
                 type->hasBaseConstructors = 1;
             }
-#if UNUSED
-            if (iface->hasInitializer) {
-                type->hasBaseInitializers = 1;
-            }
-#endif
             if (iface->hasInitializer) {
                 type->hasBaseInitializers = 1;
             }
@@ -3466,10 +3432,6 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
          */
         if (type->hasBaseConstructors) {
             type->hasConstructor = 1;
-#if UNUSED
-            //  MZZ
-            type->hasInitializer = 1;
-#endif
         }
         if (!type->hasConstructor) {
             if (np && np->klass.constructor && np->klass.constructor->function.isDefaultConstructor) {
@@ -3530,9 +3492,6 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
                 astError(cp, 0, "Can't find method \"%s::%s\" in base type of \"%s\" to override", qname.space, qname.name, 
                     type->qname.name);
             } else {
-#if UNUSED
-                fun->slotNum = cp->lookup.slotNum;
-#endif
                 ejsSetProperty(ejs, prototype, cp->lookup.slotNum, (EjsObj*) fun);
                 trait = ejsGetTrait(prototype, cp->lookup.slotNum);
                 ejsSetTraitAttributes(trait, attributes);

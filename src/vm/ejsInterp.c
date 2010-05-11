@@ -23,15 +23,6 @@
 #define pop(ejs)                (*state.stack--)
 
 #define push(value)             (*(++(state.stack))) = ((EjsObj*) (value))
-#if UNUSED
-#define push(value) \
-    if (1) { \
-        EjsObj *v = (EjsObj*) (value); \
-        mprAssert(v) ; \
-        (*(++(state.stack))) = v; \
-    } else
-#endif
-
 #define popString(ejs)          ((EjsString*) pop(ejs))
 #define popOutside(ejs)         *(ejs->state->stack)--
 #define pushOutside(ejs, value) (*(++(ejs->state->stack))) = ((EjsObj*) (value))
@@ -1274,9 +1265,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_SCOPED_NAME):
             qname = GET_NAME();
             argc = GET_INT();
-#if UNUSED
-            lookup.storing = 0;
-#endif
             slotNum = ejsLookupScope(ejs, &qname, &lookup);
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Can't find method %s", qname.name);
@@ -1295,10 +1283,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                         vp = THIS;
                     } else if (lookup.obj->isPrototype && ejsIsA(ejs, THIS, lookup.type)) {
                         vp = THIS;
-#if UNUSED
-                    } else if (ejsIsA(ejs, THIS, (EjsType*) lookup.obj)) {
-                        vp = THIS;
-#endif
                     } else if (ejsIsType(lookup.obj)) {
                         vp = lookup.obj;
                     } else {
@@ -1399,6 +1383,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             vp = pop(ejs);
             blk = ejsCreateBlock(ejs, 0);
             ejsSetDebugName(blk, "with");
+            //  MOB -- looks bugged. Can overwrite block.
             memcpy((void*) blk, vp, vp->type->instanceSize);
             blk->prev = blk->scope = state.bp;
             state.bp = blk;
@@ -2153,7 +2138,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 qname.space = ejsToString(ejs, v1)->value;
             }
             vp = pop(ejs);
-#if OLD
             slotNum = ejsLookupVar(ejs, vp, &qname, &lookup);
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Property \"%s\" does not exist", qname.name);
@@ -2164,12 +2148,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 } else if (ejsHasTrait(lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
                     ejsThrowTypeError(ejs, "Property \"%s\" is not deletable", qname.name);
                 } else {
-                    ejsDeleteProperty(ejs, lookup.obj, slotNum);
+                    ejsDeletePropertyByName(ejs, lookup.obj, &lookup.name);
                 }
             }
-#else
-            ejsDeletePropertyByName(ejs, vp, &qname);
-#endif
             BREAK;
 
         /*
@@ -2567,7 +2548,6 @@ EjsObj *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, Ej
 }
 
 
-//  MOB TODO - reverse obj and slot
 //  MOB - can only be used to run instance methods -- rename to clarify
 
 EjsObj *ejsRunFunctionBySlot(Ejs *ejs, EjsObj *thisObj, int slotNum, int argc, EjsObj **argv)

@@ -42,10 +42,6 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
     dest->dontPool = src->dontPool;
     dest->final = src->final;
     dest->hasBaseConstructors = src->hasBaseConstructors;
-#if UNUSED
-    dest->hasBaseInitializers = src->hasBaseInitializers;
-    dest->hasInitializer = src->hasInitializer;
-#endif
     dest->hasBaseInitializers = src->hasBaseInitializers;
     dest->hasConstructor = src->hasConstructor;
     dest->hasMeta = src->hasMeta;
@@ -411,12 +407,6 @@ static void setAttributes(EjsType *type, int64 attributes)
     if (attributes & EJS_TYPE_HAS_CONSTRUCTOR) {
         type->hasConstructor = 1;
     }
-#if UNUSED
-    if (attributes & EJS_TYPE_HAS_INITIALIZER) {
-        type->hasInitializer = 1;
-    }
-mprAssert(type->hasConstructor == type->hasInitializer);
-#endif
     if (attributes & EJS_TYPE_IMMUTABLE) {
         type->immutable = 1;
     }
@@ -503,14 +493,7 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
         if (baseType->hasConstructor || baseType->hasBaseConstructors) {
             type->hasBaseConstructors = 1;
         }
-#if UNUSED
-        if (baseType->hasInitializer || baseType->hasBaseInitializers) {
-            type->hasBaseInitializers = 1;
-        }
-mprAssert(type->hasBaseConstructors == type->hasBaseInitializers);
-#endif
         //  MOB -- when compiling baseType is always != ejs->objectType
-        
         if (baseType != ejs->objectType && baseType->dynamicInstance) {
             type->dynamicInstance = 1;
         }

@@ -77,6 +77,7 @@ module ejs.web {
         /**
             Routes used in Ejscript 1.X
          */
+        //  MOB -- rename LegacyMvcRoutes
         public static var LegacyRoutes = [
           { name: "es",      type: "es",  match: /web\/.*\.es$/   },
           { name: "ejs",     type: "ejs", match: /web\/.*\.ejs$/  },

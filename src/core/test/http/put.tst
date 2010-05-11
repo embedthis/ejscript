@@ -2,6 +2,10 @@
     Put tests
  */
 
+
+test.skip("put")
+
+/*  MOB
 const HTTP = (global.session && session["http"]) || ":6700"
 var http: Http = new Http
 
@@ -19,3 +23,4 @@ while (file.read(buf) > 0) {
 http.finalize()
 assert(http.status == 201 || http.status == 204)
 http.close()
+*/

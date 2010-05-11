@@ -112,9 +112,6 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
     EjsType     *type;
 
     type = ejsCreateNativeType(ejs, "ejs", name, id, sizeof(EjsError));
-#if UNUSED
-    type->orphan = 1;
-#endif
     type->block.nobind = 1;
     type->helpers.cast = (EjsCastHelper) castError;
     type->helpers.getProperty = (EjsGetPropertyHelper) getErrorProperty;

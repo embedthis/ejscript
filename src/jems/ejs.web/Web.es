@@ -124,6 +124,8 @@ module ejs.web {
                 } else if (type == "static") {
                     exports = {
                         app: function (request) {
+                            //  MOB -- push into ejs.cjs
+                            //  MOB -- needs work
                             let path = request.dir.join(request.uri.filename)
                             if (path.isDir) {
                                 //  MOB -- should come from HttpServer.index[]
@@ -135,13 +137,18 @@ module ejs.web {
                                     }
                                 }
                             }
+                            let headers = {
+                                "Content-Type": Uri(request.uri).mimeType,
+                            }
+                            let body = ""
+                            if (request.method == "GET" || request.method == "POST") {
+                                headers["Content-Length"] = path.size
+                                body = path.readString()
+                            }
                             return {
                                 status: Http.Ok,
-                                headers: {
-                                    "Content-Type": Uri(request.uri).mimeType,
-                                    "Content-Length": path.size,
-                                },
-                                body: path.readString()
+                                headers: headers,
+                                body: body
                             }
                         }
                     }
@@ -208,7 +215,7 @@ module ejs.web {
                             }
                             request.finalize()
                         }
-                    } else if (body.forEach) {
+                    } else if (body && body.forEach) {
                         body.forEach(function(block) {
                             request.write(block)
                         })

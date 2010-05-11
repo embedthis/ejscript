@@ -23,10 +23,6 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numSlots)
     if (fun == 0) {
         return 0;
     }
-#if UNUSED
-    //  MOB -- get rid of owner+slotNum
-    fun->slotNum = -1;
-#endif
     fun->block.obj.isFunction = 1;
     fun->block.obj.dynamic = 1;
     return fun;
@@ -69,10 +65,6 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
     dest->body.code = src->body.code;
     dest->resultType = src->resultType;
     dest->thisObj = src->thisObj;
-#if UNUSED
-    dest->owner = src->owner;
-    dest->slotNum = src->slotNum;
-#endif
     dest->numArgs = src->numArgs;
     dest->numDefault = src->numDefault;
 
@@ -163,11 +155,6 @@ void ejsMarkFunction(Ejs *ejs, EjsFunction *fun)
     if (fun->creator) {
         ejsMark(ejs, (EjsObj*) fun->creator);
     }
-#if UNUSED
-    if (fun->owner) {
-        ejsMark(ejs, fun->owner);
-    }
-#endif
     if (fun->thisObj) {
         ejsMark(ejs, fun->thisObj);
     }
@@ -268,7 +255,7 @@ static EjsObj *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
     if (!ejsIsBlock(scope)) {
         scope = (EjsBlock*) scope->obj.type;
         if (!ejsIsBlock(scope)) {
-            ejsThrowArgError(ejs, "scope object must be a class or function");
+            ejsThrowArgError(ejs, "Scope object must be a class or function");
             return 0;
         }
     }
@@ -346,18 +333,6 @@ void ejsSetFunctionName(EjsFunction *fun, cchar *name)
 {
     fun->name = name;
 }
-
-
-#if UNUSED
-void ejsSetFunctionLocation(EjsFunction *fun, EjsObj *obj, int slotNum)
-{
-    mprAssert(fun);
-    mprAssert(obj);
-
-    fun->owner = obj;
-    fun->slotNum = slotNum;
-}
-#endif
 
 
 EjsEx *ejsAddException(EjsFunction *fun, uint tryStart, uint tryEnd, EjsType *catchType, uint handlerStart,

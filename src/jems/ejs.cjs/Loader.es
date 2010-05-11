@@ -69,14 +69,14 @@ module ejs.cjs {
                         code = path.readString()
                         code = wrap(code)
                     }
-                    App.log.debug(4, "Recompile module to: " + path)
+                    App.log.debug(4, "Recompile module to: " + cache)
                     initializer = eval(code, cache)
                 }
                 timestamps[path] = path.modified
             } else {
 //  MOB BUG - code doesn't exist
                 code = wrap(code)
-                initializer = eval(code)
+                initializer = eval(code, "mob.mod")
             }
             signatures[path] = exports = {}
             initializer(require, exports, {id: id, path: path}, null)

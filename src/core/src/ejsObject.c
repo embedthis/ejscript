@@ -353,14 +353,18 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
     if (ejsSetProperty(ejs, (EjsObj*) obj, slotNum, value ? value: ejs->nullValue) < 0) {
         return EJS_ERR;
     }
+
+    //  MOB -- reconsider this code
     if (ejsIsFunction(value)) {
         fun = ((EjsFunction*) value);
         if (attributes & EJS_FUN_CONSTRUCTOR) {
             fun->constructor = 1;
         }
-        if (!ejsIsNativeFunction(fun)) {
-            obj->hasScriptFunctions = 1;
+#if UNUSED
+        if (!ejsIsNativeFunction(fun) && ejsIsType(obj)) {
+            ((EjsType*) obj)->hasScriptFunctions = 1;
         }
+#endif
         if (fun->staticMethod && ejsIsType(obj)) {
             type = (EjsType*) obj;
             if (!type->isInterface) {
@@ -899,17 +903,6 @@ int ejsHasTrait(EjsObj *obj, int slotNum, int attributes)
     }
     return 0;
 }
-
-
-#if UNUSED
-EjsTrait *ejsGetAndMakeTrait(Ejs *ejs, EjsObj *obj, int slotNum)
-{
-    if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
-        return 0;
-    }
-    return &obj->slots[slotNum].trait;
-}
-#endif
 
 
 int ejsGetTraitAttributes(EjsObj *obj, int slotNum)
