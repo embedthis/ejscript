@@ -67,7 +67,6 @@ static ReservedWord keywords[] =
   { "native",           G_CONREV,           T_ATTRIBUTE,                T_NATIVE, },
   { "new",              G_RESERVED,         T_NEW,                      0, },
   { "null",             G_RESERVED,         T_NULL,                     0, },
-  { "orphan",           G_CONREV,           T_ATTRIBUTE,                T_ORPHAN, },
   { "override",         G_CONREV,           T_ATTRIBUTE,                T_OVERRIDE, },
   { "private",          G_CONREV,           T_RESERVED_NAMESPACE,       T_PRIVATE, },
   { "protected",        G_CONREV,           T_RESERVED_NAMESPACE,       T_PROTECTED, },

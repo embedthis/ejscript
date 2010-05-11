@@ -7023,6 +7023,7 @@ static EcNode *parseAttribute(EcCompiler *cp)
             np->attributes |= EJS_PROP_NATIVE;
             break;
 
+#if UNUSED
         case T_ORPHAN:
             if (inClass || inInterface) {
                 np = unexpected(cp);
@@ -7030,7 +7031,7 @@ static EcNode *parseAttribute(EcCompiler *cp)
                 np->attributes |= EJS_TYPE_ORPHAN;
             }
             break;
-
+#endif
         case T_OVERRIDE:
             if (inClass || inInterface) {
                 np->attributes |= EJS_FUN_OVERRIDE;

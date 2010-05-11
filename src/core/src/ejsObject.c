@@ -260,9 +260,6 @@ EjsObj *ejsCloneObject(Ejs *ejs, EjsObj *src, bool deep)
     //  MOB - OPT make a flags word
     dest->builtin = src->builtin;
     dest->dynamic = src->dynamic;
-#if UNUSED
-    dest->hidden = src->hidden;
-#endif
     dest->isFunction = src->isFunction;
     dest->isPrototype = src->isPrototype;
     dest->isType = src->isType;
@@ -362,11 +359,9 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
         if (attributes & EJS_FUN_CONSTRUCTOR) {
             fun->constructor = 1;
         }
-#if UNUSED
         if (!ejsIsNativeFunction(fun) && ejsIsType(obj)) {
             ((EjsType*) obj)->hasScriptFunctions = 1;
         }
-#endif
         if (fun->staticMethod && ejsIsType(obj)) {
             type = (EjsType*) obj;
             if (!type->isInterface) {
@@ -396,6 +391,8 @@ static int deleteObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum)
         ejsThrowReferenceError(ejs, "Invalid property slot to delete");
         return EJS_ERR;
     }
+#if UNUSED
+    //  MOB -- this should be in the VM and not here
     if (!obj->dynamic) {
         //  MOB -- probably can remove this and rely on fixed below as per ecma spec
         ejsThrowTypeError(ejs, "Can't delete properties in a non-dynamic object");
@@ -404,6 +401,7 @@ static int deleteObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum)
         ejsThrowTypeError(ejs, "Property \"%s\" is not deletable", qname.name);
         return EJS_ERR;
     }
+#endif
     qname = getObjectPropertyName(ejs, obj, slotNum);
     if (qname.name) {
         removeHashEntry(ejs, obj, &qname);

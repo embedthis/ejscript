@@ -507,9 +507,11 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     if (np->klass.isInterface) {
         attributes |= EJS_TYPE_INTERFACE;
     }
+#if UNUSED
     if (ejs->empty && !np->klass.extends) {
         attributes |= EJS_TYPE_ORPHAN;
     }
+#endif
     /*
         Create the class type object
      */

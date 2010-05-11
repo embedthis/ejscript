@@ -995,9 +995,11 @@ static char *getAttributeString(EjsMod *mp, int attributes)
     if (attributes & EJS_TYPE_DYNAMIC_INSTANCE) {
         strcat(attributeBuf, "dynamic ");
     }
+#if UNUSED
     if (attributes & EJS_TYPE_ORPHAN) {
         strcat(attributeBuf, "orphan ");
     }
+#endif
     if (attributes & EJS_TRAIT_GETTER) {
         strcat(attributeBuf, "get ");
     }

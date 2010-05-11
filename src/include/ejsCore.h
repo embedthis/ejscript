@@ -110,7 +110,10 @@ struct EjsXML;
 #define EJS_TYPE_HAS_TYPE_INITIALIZER   0x10000000  /**< Type has an initializer */
 #define EJS_TYPE_IMMUTABLE              0x20000000  /**< Instances are immutable */
 #define EJS_TYPE_INTERFACE              0x40000000  /**< Class is an interface */
+
+#if UNUSED
 #define EJS_TYPE_ORPHAN                 0x80000000  /**< Don't inherit properties from parent */
+#endif
 
 /*
     Interpreter flags
@@ -600,30 +603,18 @@ typedef struct EjsObj {
     union {
         struct {
 #endif
+            uint    builtin           :  1;     /**< Object is part of ejs-core */
             uint    dynamic           :  1;     /**< Object may add properties */
-
-            //  MOB -- these should be using ejsIsXXX(vp->type)
             uint    isFrame           :  1;     /**< Instance is a frame */
             uint    isFunction        :  1;     /**< Instance is a function */
             uint    isPrototype       :  1;     /**< Object is a type prototype object */
             uint    isType            :  1;     /**< Instance is a type object */
-
-#if UNUSED
-            uint    jsonVisited       :  1;     /**< JSON traversal */
-#endif
             uint    marked            :  1;     /**< GC marked in use */
             uint    master            :  1;     /**< Allocated in the master interpreter */
             uint    permanent         :  1;     /**< Object is immune from GC */
             uint    separateSlots     :  1;     /**< Object has separate slots[] memory */
             uint    shortScope        :  1;     /**< Don't follow type or base classes */
             uint    visited           :  1;     /**< Has been traversed */
-
-#if UNUSED
-            uint    hidden            :  1;     /**< Block is hidden */
-#endif
-#if LEGACY || 1
-            uint    builtin           :  1;
-#endif
 #if BLD_HAS_UNNAMED_UNIONS
         };
         int         bits;
@@ -971,9 +962,17 @@ extern EjsObj *ejsCreateSimpleObject(Ejs *ejs);
 extern EjsObj *ejsCreateObject(Ejs *ejs, struct EjsType *type, int size);
 
 extern int ejsGetOwnNames(Ejs *ejs, EjsObj *obj, int sizeNames);
-extern int ejsGetOwnTraits(Ejs *ejs, EjsObj *obj, int sizeTraits);
 extern int ejsMakeObjHash(EjsObj *obj);
 extern void ejsClearObjHash(EjsObj *obj);
+
+extern int ejsGetOwnTraits(Ejs *ejs, EjsObj *obj, int sizeTraits);
+extern void ejsSetTraitType(struct EjsTrait *trait, struct EjsType *type);
+extern void ejsSetTraitAttributes(struct EjsTrait *trait, int attributes);
+extern EjsTrait *ejsGetTrait(EjsObj *obj, int slotNum);
+extern int ejsHasTrait(EjsObj *obj, int slotNum, int attributes);
+extern int ejsGetTraitAttributes(EjsObj *obj, int slotNum);
+extern struct EjsType *ejsGetTraitType(EjsObj *obj, int slotNum);
+
 
 //  TODO - inconsistent naming vs ejsCloneVar (clone vs copy)
 //
@@ -1083,10 +1082,6 @@ typedef struct EjsBlock {
  */
 extern int ejsBindFunction(Ejs *ejs, void *obj, int slotNum, EjsProc fn);
 
-//  MOB -- group all trait APIs together
-extern void ejsSetTraitType(struct EjsTrait *trait, struct EjsType *type);
-extern void ejsSetTraitAttributes(struct EjsTrait *trait, int attributes);
-
 /*  
     This is all an internal API. Native types should probably not be using these routines. Speak up if you find
     you need these routines in your code.
@@ -1105,10 +1100,6 @@ extern int      ejsCopyScope(EjsBlock *block, EjsList *chain);
 extern int      ejsGetNamespaceCount(EjsBlock *block);
 
 extern EjsBlock *ejsGetTopScope(EjsBlock *block);
-extern EjsTrait *ejsGetTrait(EjsObj *obj, int slotNum);
-extern int      ejsHasTrait(EjsObj *obj, int slotNum, int attributes);
-extern int      ejsGetTraitAttributes(EjsObj *obj, int slotNum);
-extern struct EjsType *ejsGetTraitType(EjsObj *obj, int slotNum);
 extern int      ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int numSlots, int offset);
 extern void     ejsMarkBlock(Ejs *ejs, EjsBlock *block);
 extern void     ejsPopBlockNamespaces(EjsBlock *block, int count);
@@ -2472,7 +2463,8 @@ extern EjsXML *ejsConfigureXML(Ejs *ejs, EjsXML *xml, int kind, cchar *name, Ejs
 extern EjsXML *ejsDeepCopyXML(Ejs *ejs, EjsXML *xml);
 extern EjsXML *ejsXMLDescendants(Ejs *ejs, EjsXML *xml, EjsName *qname);
 
-/*  Xml private prototypes
+/*  
+    Xml private prototypes
  */
 extern void ejsMarkXML(Ejs *ejs, EjsXML *xml);
 extern MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename);
@@ -2483,8 +2475,6 @@ extern int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *node);
 extern EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName *targetProperty);
 
 
-/*  ejs.events prototypes
- */
 extern int ejsAddListener(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener);
 extern int ejsRemoveListener(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener);
 extern int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, int argc, EjsObj **argv);
@@ -2895,10 +2885,6 @@ typedef struct EjsState {
     struct EjsObj       **stack;            /* Top of stack (points to the last element pushed) */
     struct EjsObj       **stackBase;        /* Pointer to start of stack mem */
     struct EjsState     *prev;              /* Previous state */
-#if UNUSED
-    //  MOB -- not used
-    struct EjsObj       **stackEnd;         /* Only used on non-virtual memory systems */
-#endif
     int                 stackSize;          /* Stack size */
 } EjsState;
 
@@ -2908,7 +2894,6 @@ typedef struct EjsState {
     @description Location information returned when looking up properties.
     @ingroup EjsVm
  */
-//  MOB -- Some fields just for compiler
 typedef struct EjsLookup {
     EjsObj          *obj;                   /* Final object / Type containing the variable */
     int             slotNum;                /* Final slot in obj containing the variable reference */

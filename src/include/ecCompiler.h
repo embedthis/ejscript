@@ -692,7 +692,6 @@ typedef struct EcNode {
 #define T_REGEXP 170
 #define T_REQUIRE 171
 #define T_SHARED 172
-#define T_ORPHAN 173
 #define T_NOP 174
 #define T_ERR 175
 

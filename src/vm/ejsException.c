@@ -273,16 +273,8 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
     len = 0;
     level = 0;
 
-#if UNUSED
-    oldFlags = ejs->flags;
-#endif
     for (state = ejs->state; state; state = state->prev) {
         for (fp = state->fp; fp; fp = fp->caller) {
-#if UNUSED
-            typeName = "";
-            functionName = "global";
-#endif
-
             if (fp->currentLine == 0) {
                 line = "";
             } else {
@@ -290,22 +282,6 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
                     ;
                 }
             }
-            if (fp) {
-#if UNUSED
-                if (fp->owner && fp->slotNum >= 0 && fp->slotNum < fp->owner->numSlots) {
-                    functionName = ejsGetPropertyName(ejs, fp->owner, fp->slotNum).name;
-                }
-                if (ejsIsType(fp->owner)) {
-                    type = (EjsType*) fp->owner;
-                    if (type) {
-                        typeName = type->qname.name;
-                    }
-                }
-#endif
-            }
-#if UNSUSED
-            typeSep = (*typeName) ? "." : "";
-#endif
             codeSep = (*line) ? "->" : "";
 
             if (error && backtrace == 0) {
@@ -326,9 +302,6 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
             mprFree(traceLine);
         }
     }
-#if UNUSED
-    ejs->flags = oldFlags;
-#endif
     if (error) {
         error->stack = backtrace;
     }

@@ -895,7 +895,6 @@ static int loadPropertySection(Ejs *ejs, MprFile *file, EjsModule *mp, int secti
             current = (EjsObj*) ((EjsType*) current)->prototype;
         }
     }
-
     slotNum = ejsDefineProperty(ejs, current, slotNum, &qname, type, attributes, value);
     if (slotNum < 0) {
         return MPR_ERR_CANT_WRITE;
@@ -904,7 +903,6 @@ static int loadPropertySection(Ejs *ejs, MprFile *file, EjsModule *mp, int secti
         value = ejsGetProperty(ejs, current, slotNum);
         value->builtin = 1;
     }
-
     if (fixup) {
         if (ejsIsFunction(current)) {
             fixupKind = EJS_FIXUP_LOCAL;
