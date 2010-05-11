@@ -100,17 +100,17 @@
 /*
    Prototype (instance) slots for "Record" type 
  */
-#define ES_Record_constructor                                          0
-#define ES_Record_clone                                                1
-#define ES_Record_get                                                  2
-#define ES_Record_getValues                                            3
-#define ES_Record_hasOwnProperty                                       4
-#define ES_Record_isPrototypeOf                                        5
-#define ES_Record_propertyIsEnumerable                                 6
-#define ES_Record_toJSON                                               7
-#define ES_Record_toLocaleString                                       8
-#define ES_Record_toString                                             9
-#define ES_Record_valueOf                                              10
+#define ES_Record_Object_constructor                                   0
+#define ES_Record_Object_clone                                         1
+#define ES_Record_Object_iterator_get                                  2
+#define ES_Record_Object_iterator_getValues                            3
+#define ES_Record_Object_hasOwnProperty                                4
+#define ES_Record_Object_isPrototypeOf                                 5
+#define ES_Record_Object_propertyIsEnumerable                          6
+#define ES_Record_Object_toJSON                                        7
+#define ES_Record_Object_toLocaleString                                8
+#define ES_Record_Object_toString                                      9
+#define ES_Record_Object_valueOf                                       10
 #define ES_Record_Record                                               11
 #define ES_Record__keyValue                                            12
 #define ES_Record__errors                                              13
@@ -212,17 +212,17 @@
 /*
    Prototype (instance) slots for "Column" type 
  */
-#define ES_ejs_db_mapper_Column_constructor                            0
-#define ES_ejs_db_mapper_Column_clone                                  1
-#define ES_ejs_db_mapper_Column_get                                    2
-#define ES_ejs_db_mapper_Column_getValues                              3
-#define ES_ejs_db_mapper_Column_hasOwnProperty                         4
-#define ES_ejs_db_mapper_Column_isPrototypeOf                          5
-#define ES_ejs_db_mapper_Column_propertyIsEnumerable                   6
-#define ES_ejs_db_mapper_Column_toJSON                                 7
-#define ES_ejs_db_mapper_Column_toLocaleString                         8
-#define ES_ejs_db_mapper_Column_toString                               9
-#define ES_ejs_db_mapper_Column_valueOf                                10
+#define ES_ejs_db_mapper_Column_Object_constructor                     0
+#define ES_ejs_db_mapper_Column_Object_clone                           1
+#define ES_ejs_db_mapper_Column_Object_iterator_get                    2
+#define ES_ejs_db_mapper_Column_Object_iterator_getValues              3
+#define ES_ejs_db_mapper_Column_Object_hasOwnProperty                  4
+#define ES_ejs_db_mapper_Column_Object_isPrototypeOf                   5
+#define ES_ejs_db_mapper_Column_Object_propertyIsEnumerable            6
+#define ES_ejs_db_mapper_Column_Object_toJSON                          7
+#define ES_ejs_db_mapper_Column_Object_toLocaleString                  8
+#define ES_ejs_db_mapper_Column_Object_toString                        9
+#define ES_ejs_db_mapper_Column_Object_valueOf                         10
 #define ES_ejs_db_mapper_Column_Column                                 11
 #define ES_ejs_db_mapper_Column_ejsType                                12
 #define ES_ejs_db_mapper_Column_sqlType                                13

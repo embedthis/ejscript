@@ -30,23 +30,12 @@
 /*
    Prototype (instance) slots for "Cache" type 
  */
-#define ES_ejs_cache_Cache_constructor                                 0
-#define ES_ejs_cache_Cache_clone                                       1
-#define ES_ejs_cache_Cache_get                                         2
-#define ES_ejs_cache_Cache_getValues                                   3
-#define ES_ejs_cache_Cache_hasOwnProperty                              4
-#define ES_ejs_cache_Cache_isPrototypeOf                               5
-#define ES_ejs_cache_Cache_propertyIsEnumerable                        6
-#define ES_ejs_cache_Cache_toJSON                                      7
-#define ES_ejs_cache_Cache_toLocaleString                              8
-#define ES_ejs_cache_Cache_toString                                    9
-#define ES_ejs_cache_Cache_valueOf                                     10
-#define ES_ejs_cache_Cache_Cache                                       11
-#define ES_ejs_cache_Cache_read                                        12
-#define ES_ejs_cache_Cache_write                                       13
-#define ES_ejs_cache_Cache_remove                                      14
-#define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           15
+#define ES_ejs_cache_Cache_Cache                                       0
+#define ES_ejs_cache_Cache_read                                        1
+#define ES_ejs_cache_Cache_write                                       2
+#define ES_ejs_cache_Cache_remove                                      3
+#define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           4
 
-#define _ES_CHECKSUM_ejs_cache   11457
+#define _ES_CHECKSUM_ejs_cache   11391
 
 #endif

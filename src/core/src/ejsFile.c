@@ -882,7 +882,6 @@ void ejsConfigureFileType(Ejs *ejs)
 
     type = ejs->fileType = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "File", sizeof(EjsFile));
     type->numericIndicies = 1;
-    type->orphan = 1;
     type->virtualSlots = 1;
     prototype = type->prototype;
 
@@ -895,8 +894,8 @@ void ejsConfigureFileType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_File_canRead, (EjsProc) canReadFile);
     ejsBindMethod(ejs, prototype, ES_File_canWrite, (EjsProc) canWriteFile);
     ejsBindMethod(ejs, prototype, ES_File_close, (EjsProc) closeFile);
-    ejsBindMethod(ejs, prototype, ES_File_get, (EjsProc) getFileIterator);
-    ejsBindMethod(ejs, prototype, ES_File_getValues, (EjsProc) getFileValues);
+    ejsBindMethod(ejs, prototype, ES_File_iterator_get, (EjsProc) getFileIterator);
+    ejsBindMethod(ejs, prototype, ES_File_iterator_getValues, (EjsProc) getFileValues);
     ejsBindMethod(ejs, prototype, ES_File_isOpen, (EjsProc) isFileOpen);
     ejsBindMethod(ejs, prototype, ES_File_open, (EjsProc) openFile);
     ejsBindMethod(ejs, prototype, ES_File_options, (EjsProc) getFileOptions);

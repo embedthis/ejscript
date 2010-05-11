@@ -3333,7 +3333,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
     EjsName         qname;
     EjsTrait        *trait;
     EcNode          *np, *child;
-    int             rc, slotNum, attributes, next, copyPrototype;
+    int             rc, slotNum, attributes, next, hasInstanceVars;
 
     if (type->block.obj.visited || !type->needFixup) {
         return;
@@ -3448,7 +3448,22 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         }
     }
 
+    /*
+        Determine if instances need to copy the prototype properties
+     */
+    hasInstanceVars = 0;
+    prototype = type->prototype;
+    for (slotNum = 0; slotNum < prototype->numSlots; slotNum++) {
+        obj = ejsGetProperty(ejs, prototype, slotNum);
+        if (!ejsIsFunction(obj) && !ejsIsBlock(obj)) {
+            hasInstanceVars = 1;
+            break;
+        }
+    }
+    type->hasInstanceVars |= hasInstanceVars;
+
     if (baseType) {
+        type->hasInstanceVars |= baseType->hasInstanceVars;
         ejsFixupType(ejs, type, baseType, 1);
     }
     
@@ -3479,7 +3494,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
             continue;
         }
         attributes = trait->attributes;
-        if (attributes & EJS_FUN_OVERRIDE && !type->orphan) {
+        if (attributes & EJS_FUN_OVERRIDE && type->numInherited > 0) {
             /*
                 If the type is not an orphan, it must preserve the slot order dictated by the base class
              */
@@ -3500,19 +3515,6 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
     }
     type->block.obj.visited = 0;
 
-    /*
-        Determine if instances need to copy the prototype properties
-     */
-    copyPrototype = 0;
-    for (slotNum = 0; slotNum < prototype->numSlots; slotNum++) {
-        obj = ejsGetProperty(ejs, prototype, slotNum);
-        if (!ejsIsFunction(obj) && !ejsIsBlock(obj)) {
-            copyPrototype = 1;
-            break;
-        }
-    }
-    type->copyPrototype |= copyPrototype;
-    // MOB printf("%s orphan %d copyPrototype %d\n", type->qname.name, type->orphan, type->copyPrototype);
     LEAVE(cp);
 }
 

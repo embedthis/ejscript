@@ -205,7 +205,6 @@ void ejsCreateNamespaceType(Ejs *ejs)
     EjsType     *type;
 
     type = ejs->namespaceType = ejsCreateNativeType(ejs, "ejs", "Namespace", ES_Namespace, sizeof(EjsNamespace));
-    type->orphan = 1;
     type->helpers.cast = (EjsCastHelper) castNamespace;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeNamespaceOperator;
 }

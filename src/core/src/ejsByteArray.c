@@ -1395,7 +1395,6 @@ void ejsConfigureByteArrayType(Ejs *ejs)
 
     type = ejs->byteArrayType = ejsConfigureNativeType(ejs, "ejs", "ByteArray", sizeof(EjsByteArray));
     type->numericIndicies = 1;
-    type->orphan = 1;
     type->virtualSlots = 1;
     prototype = type->prototype;
 
@@ -1421,8 +1420,8 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ByteArray_flush, (EjsProc) ba_flush);
     ejsBindMethod(ejs, prototype, ES_ByteArray_growable, (EjsProc) ba_growable);
     ejsBindMethod(ejs, prototype, ES_ByteArray_length, (EjsProc) ba_getLength);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_get, (EjsProc) ba_get);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_getValues, (EjsProc) ba_getValues);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_iterator_get, (EjsProc) ba_get);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_iterator_getValues, (EjsProc) ba_getValues);
     ejsBindAccess(ejs, prototype, ES_ByteArray_endian, (EjsProc) endian, (EjsProc) setEndian);
     ejsBindMethod(ejs, prototype, ES_ByteArray_read, (EjsProc) ba_read);
     ejsBindMethod(ejs, prototype, ES_ByteArray_readBoolean, (EjsProc) ba_readBoolean);

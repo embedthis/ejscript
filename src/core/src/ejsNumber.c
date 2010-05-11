@@ -431,7 +431,6 @@ void ejsCreateNumberType(Ejs *ejs)
     static int  zero = 0;
 
     type = ejs->numberType = ejsCreateNativeType(ejs, "ejs", "Number", ES_Number, sizeof(EjsNumber));
-    type->orphan = 1;
     type->immutable = 1;
 
     type->helpers.cast = (EjsCastHelper) castNumber;
@@ -478,8 +477,8 @@ void ejsConfigureNumberType(Ejs *ejs)
     prototype = type->prototype;
 
     ejsBindMethod(ejs, prototype, ES_Number_Number, (EjsProc) numberConstructor);
-    ejsBindMethod(ejs, prototype, ES_Number_get, getNumberIterator);
-    ejsBindMethod(ejs, prototype, ES_Number_getValues, getNumberIterator);
+    ejsBindMethod(ejs, prototype, ES_Number_iterator_get, getNumberIterator);
+    ejsBindMethod(ejs, prototype, ES_Number_iterator_getValues, getNumberIterator);
     ejsBindMethod(ejs, prototype, ES_Number_integral, (EjsProc) integral);
     ejsBindMethod(ejs, prototype, ES_Number_isFinite, (EjsProc) isFinite);
     ejsBindMethod(ejs, prototype, ES_Number_isNaN, (EjsProc) isNaN);

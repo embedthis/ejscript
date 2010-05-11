@@ -31,17 +31,17 @@
 /*
    Prototype (instance) slots for "Database" type 
  */
-#define ES_ejs_db_Database_constructor                                 0
-#define ES_ejs_db_Database_clone                                       1
-#define ES_ejs_db_Database_get                                         2
-#define ES_ejs_db_Database_getValues                                   3
-#define ES_ejs_db_Database_hasOwnProperty                              4
-#define ES_ejs_db_Database_isPrototypeOf                               5
-#define ES_ejs_db_Database_propertyIsEnumerable                        6
-#define ES_ejs_db_Database_toJSON                                      7
-#define ES_ejs_db_Database_toLocaleString                              8
-#define ES_ejs_db_Database_toString                                    9
-#define ES_ejs_db_Database_valueOf                                     10
+#define ES_ejs_db_Database_Object_constructor                          0
+#define ES_ejs_db_Database_Object_clone                                1
+#define ES_ejs_db_Database_Object_iterator_get                         2
+#define ES_ejs_db_Database_Object_iterator_getValues                   3
+#define ES_ejs_db_Database_Object_hasOwnProperty                       4
+#define ES_ejs_db_Database_Object_isPrototypeOf                        5
+#define ES_ejs_db_Database_Object_propertyIsEnumerable                 6
+#define ES_ejs_db_Database_Object_toJSON                               7
+#define ES_ejs_db_Database_Object_toLocaleString                       8
+#define ES_ejs_db_Database_Object_toString                             9
+#define ES_ejs_db_Database_Object_valueOf                              10
 #define ES_ejs_db_Database_Database                                    11
 #define ES_ejs_db_Database__adapter                                    12
 #define ES_ejs_db_Database__connection                                 13

@@ -1561,7 +1561,6 @@ void ejsCreateArrayType(Ejs *ejs)
 
     type = ejs->arrayType = ejsCreateNativeType(ejs, "ejs", "Array", ES_Array, sizeof(EjsArray));
     type->numericIndicies = 1;
-    type->orphan = 1;
     type->virtualSlots = 1;
 
     helpers = &type->helpers;
@@ -1593,8 +1592,8 @@ void ejsConfigureArrayType(Ejs *ejs)
     /*
         We override some Object methods
      */
-    ejsBindMethod(ejs, prototype, ES_Array_get, getArrayIterator);
-    ejsBindMethod(ejs, prototype, ES_Array_getValues, getArrayValues);
+    ejsBindMethod(ejs, prototype, ES_Array_iterator_get, getArrayIterator);
+    ejsBindMethod(ejs, prototype, ES_Array_iterator_getValues, getArrayValues);
     ejsBindMethod(ejs, prototype, ES_Array_clone, (EjsProc) cloneArrayMethod);
     ejsBindMethod(ejs, prototype, ES_Array_toString, (EjsProc) arrayToString);
 

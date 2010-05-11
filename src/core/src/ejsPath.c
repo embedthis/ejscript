@@ -1305,8 +1305,8 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_exists, (EjsProc) getPathExists);
     ejsBindMethod(ejs, prototype, ES_Path_extension, (EjsProc) getPathExtension);
     ejsBindMethod(ejs, prototype, ES_Path_files, (EjsProc) getPathFiles);
-    ejsBindMethod(ejs, prototype, ES_Path_get, (EjsProc) getPathIterator);
-    ejsBindMethod(ejs, prototype, ES_Path_getValues, (EjsProc) getPathValues);
+    ejsBindMethod(ejs, prototype, ES_Path_iterator_get, (EjsProc) getPathIterator);
+    ejsBindMethod(ejs, prototype, ES_Path_iterator_getValues, (EjsProc) getPathValues);
     ejsBindMethod(ejs, prototype, ES_Path_hasDrive, (EjsProc) pathHasDrive);
     ejsBindMethod(ejs, prototype, ES_Path_isAbsolute, (EjsProc) isPathAbsolute);
     ejsBindMethod(ejs, prototype, ES_Path_isDir, (EjsProc) isPathDir);

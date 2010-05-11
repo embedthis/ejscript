@@ -1922,7 +1922,6 @@ void ejsCreateStringType(Ejs *ejs)
     EjsType     *type;
 
     type = ejs->stringType = ejsCreateNativeType(ejs, "ejs", "String", ES_String, sizeof(EjsString));
-    type->orphan = 1;
 
     type->helpers.cast = (EjsCastHelper) castString;
     type->helpers.clone = (EjsCloneHelper) cloneString;
@@ -1962,8 +1961,8 @@ void ejsConfigureStringType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_String_contains, (EjsProc) containsString);
     ejsBindMethod(ejs, prototype, ES_String_endsWith, (EjsProc) endsWith);
     ejsBindMethod(ejs, prototype, ES_String_format, (EjsProc) formatString);
-    ejsBindMethod(ejs, prototype, ES_String_get, (EjsProc) getStringIterator);
-    ejsBindMethod(ejs, prototype, ES_String_getValues, (EjsProc) getStringValues);
+    ejsBindMethod(ejs, prototype, ES_String_iterator_get, (EjsProc) getStringIterator);
+    ejsBindMethod(ejs, prototype, ES_String_iterator_getValues, (EjsProc) getStringValues);
     ejsBindMethod(ejs, prototype, ES_String_indexOf, (EjsProc) indexOf);
     ejsBindMethod(ejs, prototype, ES_String_isDigit, (EjsProc) isDigit);
     ejsBindMethod(ejs, prototype, ES_String_isAlpha, (EjsProc) isAlpha);

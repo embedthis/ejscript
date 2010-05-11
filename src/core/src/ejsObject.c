@@ -198,7 +198,7 @@ EjsObj *ejsCreateObject(Ejs *ejs, EjsType *type, int numSlots)
     mprAssert(type);
     
     prototype = type->prototype;
-    if (type->copyPrototype) {
+    if (type->hasInstanceVars) {
         numSlots = max(numSlots, prototype->numSlots);
     }
     if (type->dynamicInstance) {
@@ -223,7 +223,7 @@ EjsObj *ejsCreateObject(Ejs *ejs, EjsType *type, int numSlots)
     ejsSetDebugName(obj, type->qname.name);
 
     if (obj->sizeSlots > 0) {
-        if (type->copyPrototype) {
+        if (type->hasInstanceVars) {
             if (prototype->numSlots > 0) {
                 ejsCopySlots(ejs, obj, obj->slots, prototype->slots, prototype->numSlots, 0);
             }
@@ -525,14 +525,14 @@ static int lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
          */
         index = ejsComputeHashCode(obj, qname);
         if (qname->space) {
-            for (slotNum = obj->hash[index]; slotNum >= 0; slotNum = slots[slotNum].hashChain) {
+            for (slotNum = obj->hash->buckets[index]; slotNum >= 0; slotNum = slots[slotNum].hashChain) {
                 sp = &slots[slotNum];
                 if (CMP_QNAME(&sp->qname, qname)) {
                     return slotNum;
                 }
             }
         } else {
-            for (slotNum = obj->hash[index]; slotNum >= 0; slotNum = sp->hashChain) {
+            for (slotNum = obj->hash->buckets[index]; slotNum >= 0; slotNum = sp->hashChain) {
                 sp = &slots[slotNum];
                 if (CMP_NAME(&sp->qname, qname)) {
                     if (sp->hashChain < 0 || !CMP_NAME(&sp->qname, &slots[sp->hashChain].qname)) {
@@ -973,7 +973,7 @@ static int hashProperty(EjsObj *obj, int slotNum, EjsName *qname)
 
     mprAssert(qname);
 
-    if (obj->sizeHash < obj->numSlots) {
+    if (obj->hash == NULL || obj->hash->sizeHash < obj->numSlots) {
         /*  Remake the entire hash */
         return ejsMakeObjHash(obj);
     }
@@ -981,7 +981,7 @@ static int hashProperty(EjsObj *obj, int slotNum, EjsName *qname)
 
     /* Scan the collision chain */
     lastSlot = -1;
-    chainSlotNum = obj->hash[index];
+    chainSlotNum = obj->hash->buckets[index];
     mprAssert(chainSlotNum < obj->numSlots);
     mprAssert(chainSlotNum < obj->sizeSlots);
 
@@ -1003,7 +1003,7 @@ static int hashProperty(EjsObj *obj, int slotNum, EjsName *qname)
 
     } else {
         /* Start a new hash chain */
-        obj->hash[index] = slotNum;
+        obj->hash->buckets[index] = slotNum;
     }
     obj->slots[slotNum].hashChain = -2;
     obj->slots[slotNum].qname = *qname;
@@ -1019,7 +1019,8 @@ static int hashProperty(EjsObj *obj, int slotNum, EjsName *qname)
 int ejsMakeObjHash(EjsObj *obj)
 {
     EjsSlot         *sp;
-    int             i, newHashSize, *oldHash;
+    EjsHash         *oldHash, *hp;
+    int             i, newHashSize;
 
     mprAssert(obj);
 
@@ -1032,16 +1033,19 @@ int ejsMakeObjHash(EjsObj *obj)
      */
     oldHash = obj->hash;
     newHashSize = ejsGetHashSize(obj->numSlots);
-    if (obj->sizeHash < newHashSize) {
-        mprFree(obj->hash);
-        obj->hash = (int*) mprAlloc(obj, newHashSize * sizeof(int));
-        if (obj->hash == 0) {
+    if (oldHash == NULL || oldHash->sizeHash < newHashSize) {
+        mprFree(oldHash);
+        hp = (EjsHash*) mprAlloc(obj, sizeof(EjsHash) + newHashSize * sizeof(int));
+        if (hp == 0) {
             return EJS_ERR;
         }
-        obj->sizeHash = newHashSize;
+        hp->buckets = (int*) &hp[1];
+        hp->sizeHash = newHashSize;
+        obj->hash = hp;
+
     }
     mprAssert(obj->hash);
-    memset(obj->hash, -1, obj->sizeHash * sizeof(int));
+    memset(obj->hash->buckets, -1, newHashSize * sizeof(int));
 
     /*
         Clear out hash linkage
@@ -1071,7 +1075,7 @@ void ejsClearObjHash(EjsObj *obj)
     mprAssert(obj);
 
     if (obj->hash) {
-        memset(obj->hash, -1, obj->sizeHash * sizeof(int));
+        memset(obj->hash, -1, obj->hash->sizeHash * sizeof(int));
         for (sp = obj->slots, i = 0; i < obj->numSlots; i++, sp++) {
             sp->hashChain = -1;
         }
@@ -1083,7 +1087,7 @@ static void removeHashEntry(Ejs *ejs, EjsObj *obj, EjsName *qname)
 {
     EjsSlot     *sp;
     EjsName     *nextName;
-    int         index, slotNum, lastSlot;
+    int         index, slotNum, lastSlot, *buckets;
 
     if (obj->hash == 0) {
         /*
@@ -1102,8 +1106,9 @@ static void removeHashEntry(Ejs *ejs, EjsObj *obj, EjsName *qname)
         return;
     }
     index = ejsComputeHashCode(obj, qname);
-    slotNum = obj->hash[index];
+    slotNum = obj->hash->buckets[index];
     lastSlot = -1;
+    buckets = obj->hash->buckets;
     while (slotNum >= 0) {
         sp = &obj->slots[slotNum];
         nextName = &sp->qname;
@@ -1111,7 +1116,7 @@ static void removeHashEntry(Ejs *ejs, EjsObj *obj, EjsName *qname)
             if (lastSlot >= 0) {
                 obj->slots[lastSlot].hashChain = obj->slots[slotNum].hashChain;
             } else {
-                obj->hash[index] = obj->slots[slotNum].hashChain;
+                buckets[index] = obj->slots[slotNum].hashChain;
             }
             sp->qname.name = "";
             sp->qname.space = "";
@@ -1187,8 +1192,8 @@ int ejsComputeHashCode(EjsObj *obj, EjsName *qname)
     hash ^= hash << 25;
     hash += hash >> 6;
 
-    mprAssert(obj->sizeHash);
-    return hash % obj->sizeHash;
+    mprAssert(obj->hash->sizeHash);
+    return hash % obj->hash->sizeHash;
 }
 
 
@@ -2048,8 +2053,8 @@ void ejsConfigureObjectType(Ejs *ejs)
 
     ejsBindMethod(ejs, prototype, ES_Object_constructor, (EjsProc) obj_constructor);
     ejsBindMethod(ejs, prototype, ES_Object_clone, obj_clone);
-    ejsBindMethod(ejs, prototype, ES_Object_get, obj_get);
-    ejsBindMethod(ejs, prototype, ES_Object_getValues, obj_getValues);
+    ejsBindMethod(ejs, prototype, ES_Object_iterator_get, obj_get);
+    ejsBindMethod(ejs, prototype, ES_Object_iterator_getValues, obj_getValues);
     ejsBindMethod(ejs, prototype, ES_Object_hasOwnProperty, obj_hasOwnProperty);
     ejsBindMethod(ejs, prototype, ES_Object_isPrototypeOf, obj_isPrototypeOf);
     ejsBindMethod(ejs, prototype, ES_Object_propertyIsEnumerable, obj_propertyIsEnumerable);

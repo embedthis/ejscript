@@ -319,11 +319,8 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     if (type->hasConstructor) {
         attributes |= EJS_TYPE_HAS_CONSTRUCTOR;
     }
-    if (type->orphan) {
-        attributes |= EJS_TYPE_ORPHAN;
-    }
-    if (type->copyPrototype) {
-        attributes |= EJS_TYPE_COPY_PROTOTYPE;
+    if (type->hasInstanceVars) {
+        attributes |= EJS_TYPE_HAS_INSTANCE_VARS;
     }
     if (type->callsSuper) {
         attributes |= EJS_TYPE_CALLS_SUPER;

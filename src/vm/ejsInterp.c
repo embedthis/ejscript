@@ -1134,7 +1134,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             argc = GET_INT();
             vp = state.stack[-argc];
             if (vp == ejs->nullValue || vp == ejs->undefinedValue) {
-                if (vp && (slotNum == ES_Object_get || slotNum == ES_Object_getValues)) {
+                //  MOB -- refactor
+                if (vp && (slotNum == ES_Object_iterator_get || slotNum == ES_Object_iterator_getValues)) {
                     callProperty(ejs, (EjsObj*) vp->type, slotNum, vp, argc, 1);
                 } else {
                     ejsThrowReferenceError(ejs, "Object reference is null or undefined");
@@ -2381,7 +2382,8 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, EjsName *qname
             trait = ejsGetTrait(lookup.obj, slotNum);
             if (trait->attributes & EJS_TRAIT_SETTER) {
                 obj = lookup.obj;
-            } else if (obj->type->copyPrototype) {
+            } else if (obj->type->hasInstanceVars) {
+                /* The prototype properties have been inherited */
                 slotNum = ejsGetSlot(ejs, obj, slotNum);
                 obj->slots[slotNum].trait = lookup.obj->slots[slotNum].trait;
                 obj->slots[slotNum].value = lookup.obj->slots[slotNum].value;
@@ -2425,7 +2427,8 @@ static void storePropertyToScope(Ejs *ejs, EjsName *qname, EjsObj *value, bool d
             trait = ejsGetTrait(lookup.obj, slotNum);
             if (trait->attributes & EJS_TRAIT_SETTER) {
                 obj = lookup.obj;
-            } else if (obj->type->copyPrototype) {
+            } else if (obj->type->hasInstanceVars) {
+                /* The prototype properties have been inherited */
                 slotNum = ejsGetSlot(ejs, obj, slotNum);
                 obj->slots[slotNum].trait = lookup.obj->slots[slotNum].trait;
                 obj->slots[slotNum].value = lookup.obj->slots[slotNum].value;

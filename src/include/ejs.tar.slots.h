@@ -23,17 +23,17 @@
 /*
    Prototype (instance) slots for "Tar" type 
  */
-#define ES_ejs_tar_Tar_constructor                                     0
-#define ES_ejs_tar_Tar_clone                                           1
-#define ES_ejs_tar_Tar_get                                             2
-#define ES_ejs_tar_Tar_getValues                                       3
-#define ES_ejs_tar_Tar_hasOwnProperty                                  4
-#define ES_ejs_tar_Tar_isPrototypeOf                                   5
-#define ES_ejs_tar_Tar_propertyIsEnumerable                            6
-#define ES_ejs_tar_Tar_toJSON                                          7
-#define ES_ejs_tar_Tar_toLocaleString                                  8
-#define ES_ejs_tar_Tar_toString                                        9
-#define ES_ejs_tar_Tar_valueOf                                         10
+#define ES_ejs_tar_Tar_Object_constructor                              0
+#define ES_ejs_tar_Tar_Object_clone                                    1
+#define ES_ejs_tar_Tar_Object_iterator_get                             2
+#define ES_ejs_tar_Tar_Object_iterator_getValues                       3
+#define ES_ejs_tar_Tar_Object_hasOwnProperty                           4
+#define ES_ejs_tar_Tar_Object_isPrototypeOf                            5
+#define ES_ejs_tar_Tar_Object_propertyIsEnumerable                     6
+#define ES_ejs_tar_Tar_Object_toJSON                                   7
+#define ES_ejs_tar_Tar_Object_toLocaleString                           8
+#define ES_ejs_tar_Tar_Object_toString                                 9
+#define ES_ejs_tar_Tar_Object_valueOf                                  10
 #define ES_ejs_tar_Tar_Tar                                             11
 #define ES_ejs_tar_Tar_path                                            12
 #define ES_ejs_tar_Tar_files                                           13

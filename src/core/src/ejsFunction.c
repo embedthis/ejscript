@@ -473,7 +473,6 @@ void ejsCreateFunctionType(Ejs *ejs)
     EjsFunction     *nop;
 
     type = ejs->functionType = ejsCreateNativeType(ejs, "ejs", "Function", ES_Function, sizeof(EjsFunction));
-    type->orphan = 1;
 
     helpers = &type->helpers;
     helpers->create         = (EjsCreateHelper) createFunction;

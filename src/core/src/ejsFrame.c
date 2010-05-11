@@ -125,7 +125,6 @@ void ejsCreateFrameType(Ejs *ejs)
     EjsTypeHelpers  *helpers;
 
     type = ejs->frameType = ejsCreateNativeType(ejs, "ejs", "Frame", ES_Frame, sizeof(EjsFrame));
-    type->orphan = 1;
     type->block.obj.shortScope = 1;
 
     helpers = &type->helpers;

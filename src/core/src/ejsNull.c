@@ -187,7 +187,6 @@ void ejsCreateNullType(Ejs *ejs)
     EjsType     *type;
 
     type = ejs->nullType = ejsCreateNativeType(ejs, "ejs", "Null", ES_Null, sizeof(EjsNull));
-    type->orphan = 1;
 
     type->helpers.cast             = (EjsCastHelper) castNull;
     type->helpers.getProperty      = (EjsGetPropertyHelper) getNullProperty;
@@ -207,8 +206,8 @@ void ejsConfigureNullType(Ejs *ejs)
     prototype = type->prototype;
 
     ejsSetProperty(ejs, ejs->global, ES_null, ejs->nullValue);
-    ejsBindMethod(ejs, prototype, ES_Null_get, getNullIterator);
-    ejsBindMethod(ejs, prototype, ES_Null_getValues, getNullIterator);
+    ejsBindMethod(ejs, prototype, ES_Null_iterator_get, getNullIterator);
+    ejsBindMethod(ejs, prototype, ES_Null_iterator_getValues, getNullIterator);
 }
 
 

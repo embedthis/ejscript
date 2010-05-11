@@ -114,8 +114,8 @@
 #define ES_output                                                      93
 #define ES_Http                                                        94
 #define ES_Iterable                                                    95
-#define ES_Iterator                                                    96
-#define ES_StopIteration                                               97
+#define ES_iterator_Iterator                                                    96
+#define ES_iterator_StopIteration                                               97
 #define ES_JSON                                                        98
 #define ES_deserialize                                                 99
 #define ES_serialize                                                   100
@@ -288,8 +288,8 @@
 #define ES_Array_find                                                  9
 #define ES_Array_findAll                                               10
 #define ES_Array_forEach                                               11
-#define ES_Array_get                                                   12
-#define ES_Array_getValues                                             13
+#define ES_Array_iterator_get                                                   12
+#define ES_Array_iterator_getValues                                             13
 #define ES_Array_indexOf                                               14
 #define ES_Array_insert                                                15
 #define ES_Array_join                                                  16
@@ -395,8 +395,8 @@
 #define ES_ByteArray_endian                                            9
 #define ES_ByteArray_flush                                             10
 #define ES_ByteArray_growable                                          11
-#define ES_ByteArray_get                                               12
-#define ES_ByteArray_getValues                                         13
+#define ES_ByteArray_iterator_get                                               12
+#define ES_ByteArray_iterator_getValues                                         13
 #define ES_ByteArray_length                                            14
 #define ES_ByteArray_MD5                                               15
 #define ES_ByteArray_read                                              16
@@ -839,8 +839,8 @@
 #define ES_File_close                                                  5
 #define ES_File_encoding                                               6
 #define ES_File_flush                                                  7
-#define ES_File_get                                                    8
-#define ES_File_getValues                                              9
+#define ES_File_iterator_get                                                    8
+#define ES_File_iterator_getValues                                              9
 #define ES_File_isOpen                                                 10
 #define ES_File_open                                                   11
 #define ES_File_options                                                12
@@ -1030,8 +1030,8 @@
 /*
    Prototype (instance) slots for "Iterable" type 
  */
-#define ES_Iterable_get                                                0
-#define ES_Iterable_getValues                                          1
+#define ES_Iterable_iterator_get                                                0
+#define ES_Iterable_iterator_getValues                                          1
 #define ES_Iterable_NUM_INSTANCE_PROP                                  2
 
 #define ES_Iterator_NUM_CLASS_PROP                                     0
@@ -1039,10 +1039,10 @@
 /*
    Prototype (instance) slots for "Iterator" type 
  */
-#define ES_Iterator_next                                               0
+#define ES_iterator_Iterator_next                                               0
 #define ES_Iterator_NUM_INSTANCE_PROP                                  1
 
-#define ES_StopIteration_NUM_CLASS_PROP                                0
+#define ES_iterator_StopIteration_NUM_CLASS_PROP                                0
 
 /*
    Prototype (instance) slots for "StopIteration" type 
@@ -1233,8 +1233,8 @@
 /*
    Prototype (instance) slots for "Null" type 
  */
-#define ES_Null_get                                                    0
-#define ES_Null_getValues                                              1
+#define ES_Null_iterator_get                                                    0
+#define ES_Null_iterator_getValues                                              1
 #define ES_Null_NUM_INSTANCE_PROP                                      2
 
 
@@ -1267,8 +1267,8 @@
 #define ES_Number_toPrecision                                          9
 #define ES_Number_byte                                                 10
 #define ES_Number_integral                                             11
-#define ES_Number_get                                                  12
-#define ES_Number_getValues                                            13
+#define ES_Number_iterator_get                                                  12
+#define ES_Number_iterator_getValues                                            13
 #define ES_Number_max                                                  14
 #define ES_Number_min                                                  15
 #define ES_Number_power                                                16
@@ -1302,8 +1302,8 @@
  */
 #define ES_Object_constructor                                          0
 #define ES_Object_clone                                                1
-#define ES_Object_get                                                  2
-#define ES_Object_getValues                                            3
+#define ES_Object_iterator_get                                                  2
+#define ES_Object_iterator_getValues                                            3
 #define ES_Object_hasOwnProperty                                       4
 #define ES_Object_isPrototypeOf                                        5
 #define ES_Object_propertyIsEnumerable                                 6
@@ -1355,8 +1355,8 @@
 #define ES_Path_extension                                              11
 #define ES_Path_find                                                   12
 #define ES_Path_files                                                  13
-#define ES_Path_get                                                    14
-#define ES_Path_getValues                                              15
+#define ES_Path_iterator_get                                                    14
+#define ES_Path_iterator_getValues                                              15
 #define ES_Path_hasDrive                                               16
 #define ES_Path_isAbsolute                                             17
 #define ES_Path_isDir                                                  18
@@ -1535,8 +1535,8 @@
 #define ES_String_contains                                             6
 #define ES_String_endsWith                                             7
 #define ES_String_format                                               8
-#define ES_String_get                                                  9
-#define ES_String_getValues                                            10
+#define ES_String_iterator_get                                                  9
+#define ES_String_iterator_getValues                                            10
 #define ES_String_indexOf                                              11
 #define ES_String_isDigit                                              12
 #define ES_String_isAlpha                                              13
@@ -1734,8 +1734,8 @@
 /*
    Prototype (instance) slots for "Void" type 
  */
-#define ES_Void_get                                                    0
-#define ES_Void_getValues                                              1
+#define ES_Void_iterator_get                                                    0
+#define ES_Void_iterator_getValues                                              1
 #define ES_Void_NUM_INSTANCE_PROP                                      2
 
 
@@ -1790,8 +1790,8 @@
 #define ES_XML_copy                                                    10
 #define ES_XML_descendants                                             11
 #define ES_XML_elements                                                12
-#define ES_XML_get                                                     13
-#define ES_XML_getValues                                               14
+#define ES_XML_iterator_get                                                     13
+#define ES_XML_iterator_getValues                                               14
 #define ES_XML_hasComplexContent                                       15
 #define ES_XML_hasOwnProperty                                          16
 #define ES_XML_hasSimpleContent                                        17
@@ -1856,8 +1856,8 @@
 #define ES_XMLList_copy                                                7
 #define ES_XMLList_descendants                                         8
 #define ES_XMLList_elements                                            9
-#define ES_XMLList_get                                                 10
-#define ES_XMLList_getValues                                           11
+#define ES_XMLList_iterator_get                                                 10
+#define ES_XMLList_iterator_getValues                                           11
 #define ES_XMLList_hasComplexContent                                   12
 #define ES_XMLList_hasOwnProperty                                      13
 #define ES_XMLList_inScopeNamespaces                                   14

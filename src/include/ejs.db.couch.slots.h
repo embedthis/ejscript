@@ -23,17 +23,17 @@
 /*
    Prototype (instance) slots for "Couch" type 
  */
-#define ES_ejs_db_couch_Couch_constructor                              0
-#define ES_ejs_db_couch_Couch_clone                                    1
-#define ES_ejs_db_couch_Couch_get                                      2
-#define ES_ejs_db_couch_Couch_getValues                                3
-#define ES_ejs_db_couch_Couch_hasOwnProperty                           4
-#define ES_ejs_db_couch_Couch_isPrototypeOf                            5
-#define ES_ejs_db_couch_Couch_propertyIsEnumerable                     6
-#define ES_ejs_db_couch_Couch_toJSON                                   7
-#define ES_ejs_db_couch_Couch_toLocaleString                           8
-#define ES_ejs_db_couch_Couch_toString                                 9
-#define ES_ejs_db_couch_Couch_valueOf                                  10
+#define ES_ejs_db_couch_Couch_Object_constructor                       0
+#define ES_ejs_db_couch_Couch_Object_clone                             1
+#define ES_ejs_db_couch_Couch_Object_iterator_get                      2
+#define ES_ejs_db_couch_Couch_Object_iterator_getValues                3
+#define ES_ejs_db_couch_Couch_Object_hasOwnProperty                    4
+#define ES_ejs_db_couch_Couch_Object_isPrototypeOf                     5
+#define ES_ejs_db_couch_Couch_Object_propertyIsEnumerable              6
+#define ES_ejs_db_couch_Couch_Object_toJSON                            7
+#define ES_ejs_db_couch_Couch_Object_toLocaleString                    8
+#define ES_ejs_db_couch_Couch_Object_toString                          9
+#define ES_ejs_db_couch_Couch_Object_valueOf                           10
 #define ES_ejs_db_couch_Couch_Couch                                    11
 #define ES_ejs_db_couch_Couch_db                                       12
 #define ES_ejs_db_couch_Couch_uri                                      13

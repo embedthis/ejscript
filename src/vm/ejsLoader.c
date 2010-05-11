@@ -891,8 +891,10 @@ static int loadPropertySection(Ejs *ejs, MprFile *file, EjsModule *mp, int secti
             return MPR_ERR_CANT_CREATE;
         }
     }
-    if (ejsIsType(current) && !(attributes & EJS_PROP_STATIC) && current != ejs->global && ((EjsType*) current)->prototype){
-        current = (EjsObj*) ((EjsType*) current)->prototype;
+    if (ejsIsType(current)) {
+        if (!(attributes & EJS_PROP_STATIC) && current != ejs->global && ((EjsType*) current)->prototype){
+            current = (EjsObj*) ((EjsType*) current)->prototype;
+        }
     }
 
     slotNum = ejsDefineProperty(ejs, current, slotNum, &qname, type, attributes, value);

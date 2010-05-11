@@ -233,7 +233,6 @@ void ejsCreateBooleanType(Ejs *ejs)
     EjsBoolean  *vp;
 
     type = ejs->booleanType = ejsCreateNativeType(ejs, "ejs", "Boolean", ES_Boolean, sizeof(EjsBoolean));
-    type->orphan = 1;
     type->immutable = 1;
 
     type->helpers.cast = (EjsCastHelper) castBooleanVar;

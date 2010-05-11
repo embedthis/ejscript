@@ -29,18 +29,7 @@
 /*
    Prototype (instance) slots for "Template" type 
  */
-#define ES_Template_constructor                                        0
-#define ES_Template_clone                                              1
-#define ES_Template_get                                                2
-#define ES_Template_getValues                                          3
-#define ES_Template_hasOwnProperty                                     4
-#define ES_Template_isPrototypeOf                                      5
-#define ES_Template_propertyIsEnumerable                               6
-#define ES_Template_toJSON                                             7
-#define ES_Template_toLocaleString                                     8
-#define ES_Template_toString                                           9
-#define ES_Template_valueOf                                            10
-#define ES_Template_NUM_INSTANCE_PROP                                  11
+#define ES_Template_NUM_INSTANCE_PROP                                  0
 
 /*
     Local slots for methods in type "Template" 
@@ -52,17 +41,17 @@
 /*
    Prototype (instance) slots for "TemplateParser" type 
  */
-#define ES_TemplateParser_constructor                                  0
-#define ES_TemplateParser_clone                                        1
-#define ES_TemplateParser_get                                          2
-#define ES_TemplateParser_getValues                                    3
-#define ES_TemplateParser_hasOwnProperty                               4
-#define ES_TemplateParser_isPrototypeOf                                5
-#define ES_TemplateParser_propertyIsEnumerable                         6
-#define ES_TemplateParser_toJSON                                       7
-#define ES_TemplateParser_toLocaleString                               8
-#define ES_TemplateParser_toString                                     9
-#define ES_TemplateParser_valueOf                                      10
+#define ES_TemplateParser_Object_constructor                           0
+#define ES_TemplateParser_Object_clone                                 1
+#define ES_TemplateParser_Object_iterator_get                          2
+#define ES_TemplateParser_Object_iterator_getValues                    3
+#define ES_TemplateParser_Object_hasOwnProperty                        4
+#define ES_TemplateParser_Object_isPrototypeOf                         5
+#define ES_TemplateParser_Object_propertyIsEnumerable                  6
+#define ES_TemplateParser_Object_toJSON                                7
+#define ES_TemplateParser_Object_toLocaleString                        8
+#define ES_TemplateParser_Object_toString                              9
+#define ES_TemplateParser_Object_valueOf                               10
 #define ES_TemplateParser_TemplateParser                               11
 #define ES_TemplateParser_ContentMarker                                12
 #define ES_TemplateParser_ContentPattern                               13
@@ -98,19 +87,8 @@
 /*
    Prototype (instance) slots for "Token" type 
  */
-#define ES_ejs_web_template_Token_constructor                          0
-#define ES_ejs_web_template_Token_clone                                1
-#define ES_ejs_web_template_Token_get                                  2
-#define ES_ejs_web_template_Token_getValues                            3
-#define ES_ejs_web_template_Token_hasOwnProperty                       4
-#define ES_ejs_web_template_Token_isPrototypeOf                        5
-#define ES_ejs_web_template_Token_propertyIsEnumerable                 6
-#define ES_ejs_web_template_Token_toJSON                               7
-#define ES_ejs_web_template_Token_toLocaleString                       8
-#define ES_ejs_web_template_Token_toString                             9
-#define ES_ejs_web_template_Token_valueOf                              10
-#define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    11
+#define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    0
 
-#define _ES_CHECKSUM_ejs_web_template   41146
+#define _ES_CHECKSUM_ejs_web_template   41102
 
 #endif

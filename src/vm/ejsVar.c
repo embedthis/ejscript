@@ -460,7 +460,9 @@ EjsObj *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
         return 0;
     }
     if (type->hasConstructor) {
+        //  MOB -- is this right now?
         fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type->prototype, type->numInherited);
+        //  MOB -- should verify fun->isConstructor
         if (fun == 0 || !ejsIsFunction(fun)) {
             return 0;
         }

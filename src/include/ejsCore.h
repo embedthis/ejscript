@@ -82,7 +82,6 @@ struct EjsXML;
 #define EJS_TRAIT_READONLY              0x80        /**< !Writable */
 #define EJS_TRAIT_SETTER                0x100       /**< Property is a settter */
 #define EJS_TRAIT_THROW_NULLS           0x200       /**< Property rejects null */
-#define EJS_TRAIT_MASK                  0x3FF       /**< Mask of trait attributes */
 
 #define EJS_PROP_HAS_VALUE              0x400       /**< Property has a value record */
 #define EJS_PROP_NATIVE                 0x800       /**< Property is backed by native code */
@@ -97,12 +96,13 @@ struct EjsXML;
 #define EJS_FUN_OVERRIDE                0x80000     /**< Override base type */
 #define EJS_FUN_MODULE_INITIALIZER      0x100000    /**< Module initializer */
 #define EJS_FUN_REST_ARGS               0x200000    /**< Parameter is a "..." rest */
+#define EJS_TRAIT_MASK                  0x3FFFFF    /**< Mask of trait attributes */
 
 /*
     These attributes are never stored in EjsTrait but are often passed in "attributes"
  */
 #define EJS_TYPE_CALLS_SUPER            0x400000    /**< Constructor calls super() */
-#define EJS_TYPE_COPY_PROTOTYPE         0x800000    /**< Instance copies prototype properties */
+#define EJS_TYPE_HAS_INSTANCE_VARS      0x800000    /**< Type has non-method instance vars (state) */
 #define EJS_TYPE_DYNAMIC_INSTANCE       0x1000000   /**< Instances are not sealed */
 #define EJS_TYPE_FINAL                  0x2000000   /**< Type can't be subclassed */
 #define EJS_TYPE_FIXUP                  0x4000000   /**< Type needs to inherit base types properties */
@@ -557,6 +557,13 @@ typedef struct EjsSlot {
     } value;
 } EjsSlot;
 
+
+typedef struct EjsHash {
+    int             sizeHash;               /**< Size of hash */
+    int             *buckets;               /**< Hash buckets and head of link chains */
+} EjsHash;
+
+
 /** 
     Object Type. Base type for all objects.
     @description The EjsObj type is the foundation for all types, blocks, functions and scripted classes. 
@@ -601,10 +608,9 @@ typedef struct EjsObj {
             uint    marked            :  1;     /**< GC marked in use */
             uint    master            :  1;     /**< Allocated in the master interpreter */
             uint    permanent         :  1;     /**< Object is immune from GC */
-            uint    visited           :  1;     /**< Has been traversed */
-
             uint    separateSlots     :  1;     /**< Object has separate slots[] memory */
             uint    shortScope        :  1;     /**< Don't follow type or base classes */
+            uint    visited           :  1;     /**< Has been traversed */
 
 #if LEGACY || 1
             uint    hidden            :  1;     /**< Block is hidden */
@@ -620,10 +626,7 @@ typedef struct EjsObj {
 
     int             sizeSlots;                  /**< Current size of traits[] and slots[] */
     int             numSlots;                   /**< Number of properties in traits/slots */
-
-    //  TODO MOB - OPT Change this to a Hash type with size internal to the hash
-    int             *hash;                      /**< Hash buckets and head of link chains */
-    int             sizeHash;                   /**< Size of hash */
+    EjsHash         *hash;                      /**< Hash buckets and head of link chains */
 } EjsObj;
 
 //  LEGACY TODO
@@ -2597,7 +2600,6 @@ typedef struct EjsType {
     MprList         *implements;                    /**< List of implemented interfaces */
         
     uint            callsSuper              :  1;   /**< Constructor calls super() */
-    uint            copyPrototype           :  1;   /**< Instances copy prototype slots */
     uint            dontPool                :  1;   /**< Don't pool instances */
     uint            dynamicInstance         :  1;   /**< Object instances may add properties */
     uint            final                   :  1;   /**< Type is final */
@@ -2605,6 +2607,7 @@ typedef struct EjsType {
     uint            hasBaseInitializers     :  1;   /**< Base types have initializers */
     uint            hasConstructor          :  1;   /**< Type has a constructor */
     uint            hasInitializer          :  1;   /**< Type has static level initialization code */
+    uint            hasInstanceVars         :  1;   /**< Type has non-function instance vars (state) */
     uint            hasMeta                 :  1;   /**< Type has meta methods */
     uint            hasScriptFunctions      :  1;   /**< Block has non-native functions requiring namespaces */
     uint            immutable               :  1;   /**< Instances are immutable */
@@ -2613,16 +2616,14 @@ typedef struct EjsType {
     uint            needFinalize            :  1;   /**< Instances need finalization */
     uint            needFixup               :  1;   /**< Slots need fixup */
     uint            numericIndicies         :  1;   /**< Instances support direct numeric indicies */
-    uint            orphan                  :  1;   /**< Type should not inherit super-class prototype properties */
     uint            virtualSlots            :  1;   /**< Properties are not stored in slots[] */
     
-    int             numInherited;
+    int             numInherited;                   /**< Number of inherited prototype properties */
     short           id;                             /**< Unique type id */
     ushort          instanceSize;                   /**< Size of instances in bytes */
     EjsTypeHelpers  helpers;                        /**< Type helper methods */
     struct EjsModule *module;                       /**< Module owning the type - stores the constant pool */
     void            *typeData;                      /**< Type specific data */
-
 } EjsType;
 
 

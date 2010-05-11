@@ -334,7 +334,6 @@ void ejsCreateRegExpType(Ejs *ejs)
     EjsType     *type;
 
     type = ejs->regExpType = ejsCreateNativeType(ejs, "ejs", "RegExp", ES_RegExp, sizeof(EjsRegExp));
-    type->orphan = 1;
     type->needFinalize = 1;
     type->helpers.cast = (EjsCastHelper) castRegExp;
     type->helpers.destroy = (EjsDestroyHelper) destroyRegExp;
