@@ -108,6 +108,8 @@ static EjsObj *getFunctionProperty(Ejs *ejs, EjsObj *obj, int slotNum)
         return 0;
     }
     vp = obj->slots[slotNum].value.ref;
+
+    //  MOB -- is this used?
 #if ES_Function_prototype
     if (slotNum == ES_Function_prototype && vp == ejs->nullValue) {
         vp = ejsCreateObject(ejs, ejs->objectType, 0);
@@ -220,28 +222,15 @@ static EjsObj *fun_call(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED
 /*
-    function get prototype(): Object
+    Return the number of required args.
+
+    static function get length(): Number
  */
-static EjsObj *fun_prototype(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
+static EjsObj *fun_length(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
-    EjsObj      *prototype;
-    EjsTrait    *trait;
-
-    mprAssert(ejsIsFunction(fun));
-
-    if ((prototype = ejsCreateObject(ejs, ejs->objectType, 0)) == 0) {
-        return 0;
-    }
-    prototype->isPrototype = 1;
-    ejsSetProperty(ejs, (EjsObj*) fun, ES_Function_prototype, prototype);
-    if ((trait = ejsGetTrait((EjsObj*) fun, ES_Function_prototype)) != 0) {
-        trait->attributes &= ~(EJS_TRAIT_GETTER);
-    }
-    return prototype;
+    return (EjsObj*) ejsCreateNumber(ejs, fun->numArgs);
 }
-#endif
 
 
 /*
@@ -500,9 +489,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Function_apply, (EjsProc) fun_applyFunction);
     ejsBindMethod(ejs, prototype, ES_Function_bind, (EjsProc) fun_bindFunction);
     ejsBindMethod(ejs, prototype, ES_Function_boundThis, (EjsProc) fun_boundThis);
-#if UNUSED
-    ejsBindMethod(ejs, prototype, ES_Function_prototype, (EjsProc) fun_prototype);
-#endif
+    ejsBindMethod(ejs, prototype, ES_Function_length, (EjsProc) fun_length);
     ejsBindMethod(ejs, prototype, ES_Function_setScope, (EjsProc) fun_setScope);
     ejsBindMethod(ejs, prototype, ES_Function_call, (EjsProc) fun_call);
 }

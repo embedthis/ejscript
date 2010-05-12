@@ -185,13 +185,17 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
         mprFree(typeStr);
         typeStr = mprStrdup(file, EJS_GLOBAL);
     }
-    mprSprintf(name, sizeof(name), "#define ES_%s_NUM_%s_PROP", typeStr, suffix);
-    for (sp = name; *sp; sp++) {
+    for (sp = typeStr; *sp; sp++) {
         if (*sp == '.') {
             *sp = '_';
         }
     }
+    mprSprintf(name, sizeof(name), "#define ES_%s_NUM_%s_PROP", typeStr, suffix);
     mprFprintf(file, "%-70s %d\n", name, numSlots);
+    if (strcmp(suffix, "INSTANCE") == 0) {
+        mprSprintf(name, sizeof(name), "#define ES_%s_NUM_INHERITED_PROP", typeStr);
+        mprFprintf(file, "%-70s %d\n", name, type->numInherited);
+    }
     mprFree(typeStr);
 }
 

@@ -6,7 +6,7 @@
 module ejs {
 
     /** 
-        The Function type is used to represent closures, function expressions and class methods. It contains a 
+        The Function type is used to represent functions, function expressions, closures and class methods. It contains a 
         reference to the code to execute, the execution scope and possibly a bound "this" reference.
         @stability evolving
      */
@@ -14,25 +14,6 @@ module ejs {
 
         use default namespace public
 
-/* MOB
-ejs static function get name(): String { return Reflect(this).name; }
-native function get constructor(): Function
-ejs static native function get length(): Number
-        ejs native function get prototype(): Object
-        ejs var prototype: Object
-*/
-
-
-/*
-    MOB
-    Must have:
-    const length = // typical number of args expected by the function
-    const prototype
-
-    MDC:
-        var constructor: Array = []
-        var length: Number
-   */
         /** 
             Invoke the function on another object.
             @param thisObject The object to set as the "this" object when the function is called.
@@ -52,13 +33,14 @@ ejs static native function get length(): Number
          */
         native function call(thisObject: Object, ...args): Object 
 
+        //    MOB -- this could go into Reflect
         /** 
             The bound object representing the "this" object. Functions carry both a lexical scoping and the owning 
             "this" object. Set to "null" if "this" is not defined for the function.
          */
         native function get boundThis(): Object
 
-//  MOB -- ES5 usage is function bind(obj, ...args)
+        //  MOB -- ES5 usage is function bind(obj, ...args)
         /** 
             Bind the value of "this" for the function. This can set the value of "this" for the function. If
             $overwrite is false, it will only define the value of "this" if it is not already defined.
@@ -66,6 +48,10 @@ ejs static native function get length(): Number
             @param overwrite If true, overwrite the existing stored value of "this"
          */
         native function bind(thisObj: Object, overwrite: Boolean = true): Void
+
+//  MOB -- ECMA: this is a var on all functions and not a getter on the prototype
+        //  Number of arguments expected by the function
+        native function get length(): Number
 
         //  MOB -- DOC
         /** @hide */
@@ -76,6 +62,7 @@ ejs static native function get length(): Number
     /** @hide */
     native function makeGetter(fn: Function): Function
 
+    //  MOB -- move into Object   Object.
     /** @hide */
     native function clearBoundThis(fn: Function): Function
 }

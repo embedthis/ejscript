@@ -18,7 +18,13 @@
    Prototype (instance) slots for "global" type 
  */
 
-#define ES_ejs_db_couch_Couch_NUM_CLASS_PROP                           0
+
+/*
+    Class property slots for the "Couch" type 
+ */
+#define ES_ejs_db_couch_Couch_prototype                                0
+
+#define ES_ejs_db_couch_Couch_NUM_CLASS_PROP                           1
 
 /*
    Prototype (instance) slots for "Couch" type 
@@ -63,7 +69,8 @@
 #define ES_ejs_db_couch_Couch_tempView                                 37
 #define ES_ejs_db_couch_Couch_view                                     38
 #define ES_ejs_db_couch_Couch_NUM_INSTANCE_PROP                        39
+#define ES_ejs_db_couch_Couch_NUM_INHERITED_PROP                       11
 
-#define _ES_CHECKSUM_ejs_db_couch   41206
+#define _ES_CHECKSUM_ejs_db_couch   42221
 
 #endif

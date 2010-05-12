@@ -32,8 +32,9 @@
  */
 #define ES_ejs_web_Controller__initRequest                             0
 #define ES_ejs_web_Controller_ejs_web_create                           1
+#define ES_ejs_web_Controller_prototype                                2
 
-#define ES_ejs_web_Controller_NUM_CLASS_PROP                           2
+#define ES_ejs_web_Controller_NUM_CLASS_PROP                           3
 
 /*
    Prototype (instance) slots for "Controller" type 
@@ -86,13 +87,20 @@
 #define ES_ejs_web_Controller_ejs_web_makeUri                          45
 #define ES_ejs_web_Controller_action_missing                           46
 #define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        47
+#define ES_ejs_web_Controller_NUM_INHERITED_PROP                       11
 
 /*
     Local slots for methods in type "Controller" 
  */
 #define ES_ejs_web_Controller_ejs_web_create_request                   0
 
-#define ES_HtmlConnector_NUM_CLASS_PROP                                0
+
+/*
+    Class property slots for the "HtmlConnector" type 
+ */
+#define ES_HtmlConnector_prototype                                     0
+
+#define ES_HtmlConnector_NUM_CLASS_PROP                                1
 
 /*
    Prototype (instance) slots for "HtmlConnector" type 
@@ -144,8 +152,15 @@
 #define ES_HtmlConnector_write                                         44
 #define ES_HtmlConnector_getDataAttributes                             45
 #define ES_HtmlConnector_NUM_INSTANCE_PROP                             46
+#define ES_HtmlConnector_NUM_INHERITED_PROP                            11
 
-#define ES_ejs_web_HttpServer_NUM_CLASS_PROP                           0
+
+/*
+    Class property slots for the "HttpServer" type 
+ */
+#define ES_ejs_web_HttpServer_prototype                                0
+
+#define ES_ejs_web_HttpServer_NUM_CLASS_PROP                           1
 
 /*
    Prototype (instance) slots for "HttpServer" type 
@@ -175,6 +190,7 @@
 #define ES_ejs_web_HttpServer_serverRoot                               22
 #define ES_ejs_web_HttpServer_software                                 23
 #define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        24
+#define ES_ejs_web_HttpServer_NUM_INHERITED_PROP                       11
 
 
 /*
@@ -188,13 +204,15 @@
 #define ES_Mvc_load                                                    5
 #define ES_Mvc_init                                                    6
 #define ES_Mvc_loadComponent                                           7
+#define ES_Mvc_prototype                                               8
 
-#define ES_Mvc_NUM_CLASS_PROP                                          8
+#define ES_Mvc_NUM_CLASS_PROP                                          9
 
 /*
    Prototype (instance) slots for "Mvc" type 
  */
 #define ES_Mvc_NUM_INSTANCE_PROP                                       0
+#define ES_Mvc_NUM_INHERITED_PROP                                      0
 
 /*
     Local slots for methods in type "Mvc" 
@@ -211,8 +229,9 @@
  */
 #define ES_ejs_web_Request__initializer___Request_                     0
 #define ES_ejs_web_Request_jsgi                                        1
+#define ES_ejs_web_Request_prototype                                   2
 
-#define ES_ejs_web_Request_NUM_CLASS_PROP                              2
+#define ES_ejs_web_Request_NUM_CLASS_PROP                              3
 
 /*
    Prototype (instance) slots for "Request" type 
@@ -304,6 +323,7 @@
 #define ES_ejs_web_Request_url                                         84
 #define ES_ejs_web_Request_originalUri                                 85
 #define ES_ejs_web_Request_NUM_INSTANCE_PROP                           86
+#define ES_ejs_web_Request_NUM_INHERITED_PROP                          11
 
 
 /*
@@ -313,8 +333,9 @@
 #define ES_ejs_web_Router_TopRoutes                                    1
 #define ES_ejs_web_Router_RestfulRoutes                                2
 #define ES_ejs_web_Router_LegacyRoutes                                 3
+#define ES_ejs_web_Router_prototype                                    4
 
-#define ES_ejs_web_Router_NUM_CLASS_PROP                               4
+#define ES_ejs_web_Router_NUM_CLASS_PROP                               5
 
 /*
    Prototype (instance) slots for "Router" type 
@@ -336,8 +357,15 @@
 #define ES_ejs_web_Router_addRoutes                                    14
 #define ES_ejs_web_Router_route                                        15
 #define ES_ejs_web_Router_NUM_INSTANCE_PROP                            16
+#define ES_ejs_web_Router_NUM_INHERITED_PROP                           11
 
-#define ES_ejs_web_Route_NUM_CLASS_PROP                                0
+
+/*
+    Class property slots for the "Route" type 
+ */
+#define ES_ejs_web_Route_prototype                                     0
+
+#define ES_ejs_web_Route_NUM_CLASS_PROP                                1
 
 /*
    Prototype (instance) slots for "Route" type 
@@ -371,6 +399,7 @@
 #define ES_ejs_web_Route_show                                          26
 #define ES_ejs_web_Route_makeUri                                       27
 #define ES_ejs_web_Route_NUM_INSTANCE_PROP                             28
+#define ES_ejs_web_Route_NUM_INHERITED_PROP                            11
 
 
 /*
@@ -379,14 +408,16 @@
 #define ES_ejs_web_Session_addListener                                 0
 #define ES_ejs_web_Session_count                                       1
 #define ES_ejs_web_Session_removeListener                              2
+#define ES_ejs_web_Session_prototype                                   3
 
-#define ES_ejs_web_Session_NUM_CLASS_PROP                              3
+#define ES_ejs_web_Session_NUM_CLASS_PROP                              4
 
 /*
    Prototype (instance) slots for "Session" type 
  */
 #define ES_ejs_web_Session_setSessionTimeout                           0
 #define ES_ejs_web_Session_NUM_INSTANCE_PROP                           1
+#define ES_ejs_web_Session_NUM_INHERITED_PROP                          0
 
 /*
     Local slots for methods in type "Session" 
@@ -396,7 +427,13 @@
 #define ES_ejs_web_Session_removeListener_name                         0
 #define ES_ejs_web_Session_removeListener_listener                     1
 
-#define ES_ejs_web_UploadFile_NUM_CLASS_PROP                           0
+
+/*
+    Class property slots for the "UploadFile" type 
+ */
+#define ES_ejs_web_UploadFile_prototype                                0
+
+#define ES_ejs_web_UploadFile_NUM_CLASS_PROP                           1
 
 /*
    Prototype (instance) slots for "UploadFile" type 
@@ -418,6 +455,7 @@
 #define ES_ejs_web_UploadFile_name                                     14
 #define ES_ejs_web_UploadFile_size                                     15
 #define ES_ejs_web_UploadFile_NUM_INSTANCE_PROP                        16
+#define ES_ejs_web_UploadFile_NUM_INHERITED_PROP                       11
 
 
 /*
@@ -425,8 +463,9 @@
  */
 #define ES_ejs_web_View__initializer___View_                           0
 #define ES_ejs_web_View_htmlOptions                                    1
+#define ES_ejs_web_View_prototype                                      2
 
-#define ES_ejs_web_View_NUM_CLASS_PROP                                 2
+#define ES_ejs_web_View_NUM_CLASS_PROP                                 3
 
 /*
    Prototype (instance) slots for "View" type 
@@ -493,6 +532,7 @@
 #define ES_ejs_web_View_pivot                                          59
 #define ES_ejs_web_View_filter                                         60
 #define ES_ejs_web_View_NUM_INSTANCE_PROP                              61
+#define ES_ejs_web_View_NUM_INHERITED_PROP                             11
 
 
 /*
@@ -507,13 +547,15 @@
 #define ES_ejs_web_Web_workerHelper                                    6
 #define ES_ejs_web_Web_load                                            7
 #define ES_ejs_web_Web_start                                           8
+#define ES_ejs_web_Web_prototype                                       9
 
-#define ES_ejs_web_Web_NUM_CLASS_PROP                                  9
+#define ES_ejs_web_Web_NUM_CLASS_PROP                                  10
 
 /*
    Prototype (instance) slots for "Web" type 
  */
 #define ES_ejs_web_Web_NUM_INSTANCE_PROP                               0
+#define ES_ejs_web_Web_NUM_INHERITED_PROP                              0
 
 /*
     Local slots for methods in type "Web" 
@@ -526,6 +568,6 @@
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
 
-#define _ES_CHECKSUM_ejs_web   526221
+#define _ES_CHECKSUM_ejs_web   537416
 
 #endif

@@ -81,6 +81,9 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsObj *value, EjsObj *thisObj, Ejs
     if (ejsIsFunction(value)) {
         fun = (EjsFunction*) value;
         if (ejsHasTrait(obj, slotNum, EJS_TRAIT_GETTER)) {
+            if (fun->staticMethod) {
+                thisObj = obj;
+            }
             callFunction(ejs, fun, thisObj, 0, 0);
             if (ejsIsNativeFunction(fun)) {
                 pushOutside(ejs, ejs->result);
@@ -3387,15 +3390,14 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
             thisObj = state->fp->function.thisObj;
         } 
     } 
-    if (fun->staticMethod && !ejsIsType(thisObj)) {
-        mprAssert(0);
 #if UNUSED
+    if (fun->staticMethod && !ejsIsType(thisObj)) {
         /*
             Calling a static method via an instance object
          */
         thisObj = getStaticThis(ejs, thisObj->type, fun->slotNum);
-#endif
     }
+#endif
     /*
         Validate the args. Cast to the right type, handle rest args and return with argc adjusted.
      */

@@ -263,10 +263,10 @@ static void lstClass(EjsMod *mp, EjsModule *module, int slotNum, EjsType *klass,
         mprFprintf(mp->file, "CLASS:      %sclass %s\n", getAttributeString(mp, attributes), klass->qname.name);
     }
     leadin(mp, module, 1, 0);
-    mprFprintf(mp->file, "        #  Class Details: %d class traits, %d instance traits, requested slot %d\n",
+    mprFprintf(mp->file, "        #  Class Details: %d class traits, %d prototype (instance) traits, %s, requested slot %d\n",
         ejsGetPropertyCount(ejs, (EjsObj*) klass),
         klass->prototype ? ejsGetPropertyCount(ejs, klass->prototype) : 0, 
-        slotNum);
+        klass->hasInstanceVars ? "has-state": "", slotNum);
 }
 
 

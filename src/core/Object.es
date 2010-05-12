@@ -16,19 +16,6 @@ module ejs {
 
         native function get constructor(): Function
 
-        //  ejs so other types don't need to use override when defining "length"
-
-/*
-shared ejs static native function get length(): Number
-*/
-
-        /**
-            The prototype object for the type. The prototype object provides the template of instance properties 
-            shared by all Objects.
-         */
-        static native function get prototype(): Object
-
-
         /** 
             Clone the object
             @param deep If true, do a deep copy where all object references are also copied, and so on, recursively.
@@ -42,7 +29,7 @@ shared ejs static native function get length(): Number
             @param props Properties for the new object
             @return The created object
          */
-        static native function create(prototype, props: Object = undefined): Object 
+        static native function create(prototype: Object, props: Object = undefined): Object 
 
         /** 
             Define or redefine a property on the given object

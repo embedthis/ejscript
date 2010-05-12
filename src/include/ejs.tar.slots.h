@@ -18,7 +18,13 @@
    Prototype (instance) slots for "global" type 
  */
 
-#define ES_ejs_tar_Tar_NUM_CLASS_PROP                                  0
+
+/*
+    Class property slots for the "Tar" type 
+ */
+#define ES_ejs_tar_Tar_prototype                                       0
+
+#define ES_ejs_tar_Tar_NUM_CLASS_PROP                                  1
 
 /*
    Prototype (instance) slots for "Tar" type 
@@ -42,7 +48,8 @@
 #define ES_ejs_tar_Tar_extract                                         16
 #define ES_ejs_tar_Tar_cat                                             17
 #define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               18
+#define ES_ejs_tar_Tar_NUM_INHERITED_PROP                              11
 
-#define _ES_CHECKSUM_ejs_tar   8313
+#define _ES_CHECKSUM_ejs_tar   9328
 
 #endif

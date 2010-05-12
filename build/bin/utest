@@ -136,9 +136,6 @@ class Test {
                 App.exit()
                 break
             default:
-print(args.length);
-breakpoint()
-print(args.length);
                 if (args[i].startsWith("-")) {
                     usage()
                 }

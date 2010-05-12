@@ -56,11 +56,13 @@ static EjsObj *castObject(Ejs *ejs, EjsObj *obj, EjsType *type)
         return ejsParse(ejs, ejsGetString(ejs, result), ES_Number);
 
     case ES_String:
-        if (ejsLookupVar(ejs, obj, ejsName(&qname, "", "toString"), &lookup) >= 0 && 
-                lookup.obj != ejs->objectType->prototype) {
-            fun = (EjsFunction*) ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
-            if (fun && ejsIsFunction(fun)) {
-                return (EjsObj*) ejsRunFunction(ejs, fun, obj, 0, NULL);
+        if (!obj->isType && !obj->isPrototype) {
+            if (ejsLookupVar(ejs, obj, ejsName(&qname, "", "toString"), &lookup) >= 0 && 
+                    lookup.obj != ejs->objectType->prototype) {
+                fun = (EjsFunction*) ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
+                if (fun && ejsIsFunction(fun)) {
+                    return (EjsObj*) ejsRunFunction(ejs, fun, obj, 0, NULL);
+                }
             }
         }
         if (obj == ejs->global) {
@@ -720,6 +722,8 @@ int ejsGrowObject(Ejs *ejs, EjsObj *obj, int numSlots)
 }
 
 
+//  MOB -- inconsistent with growObject which takes numSlots. This takes incr.
+
 /*
     Grow the slots, traits, and names by the specified "incr". The new slots|traits|names are created at the "offset"
     Does not update numSlots or numTraits.
@@ -1232,12 +1236,7 @@ static int cmpQname(EjsName *a, EjsName *b)
 }
 
 /*********************************** Methods **********************************/
-/*
-    WARNING: All methods here may be invoked by Native classes that are based on EjsObj and not on EjsObj. Because 
-    all classes subclass Object, they need to be able to use these methods. They MUST NOT use EjsObj internals.
- */
-
-
+#if UNUSED
 /*
     static function get prototype(): Object
  */
@@ -1245,17 +1244,9 @@ static EjsObj *obj_prototype(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
 {
     mprAssert(ejsIsType(type));
 
-#if UNUSED
-    if (type->prototype == 0) {
-        if ((type->prototype = ejsCreatePrototype(ejs, type, 0)) == 0) {
-            return 0;
-        }
-        //  MOB -- rethink
-        ejsSetProperty(ejs, (EjsObj*) type, ES_Object, type->prototype);
-    }
-#endif
     return type->prototype;
 }
+#endif
 
 
 static EjsObj *obj_constructor(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
@@ -1266,7 +1257,7 @@ static EjsObj *obj_constructor(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
 
 
 /*
-    native function clone(deep: Boolean = true) : Object
+    function clone(deep: Boolean = true) : Object
  */
 static EjsObj *obj_clone(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
@@ -1278,23 +1269,31 @@ static EjsObj *obj_clone(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 
 
 /*
-    static function create(proto, props: Object = undefined): Void 
-*/
-static EjsObj *obj_create(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
+    static function create(proto: Object, props: Object = undefined): Void 
+ */
+static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    EjsObj      *obj, *properties, *options;
-    EjsType     *prototype;
+    EjsObj      *obj, *properties, *options, *prototype;
+    EjsType     *type;
+    EjsFunction *fun;
     EjsName     qname;
     int         count, slotNum;
 
-    prototype = (EjsType*) argv[0];
+    prototype = argv[0];
     properties = (argc >= 1) ? argv[1] : 0;
 
-    if (!ejsIsType(prototype)) {
-        ejsThrowArgError(ejs, "Prototype argument is not a prototype");
-        return 0;
+    if (ejsIsType(prototype)) {
+        type = (EjsType*) prototype;
+    } else {
+        type = ejs->objectType;
+        fun = (EjsFunction*) ejsGetPropertyByName(ejs, prototype, ejsName(&qname, EJS_EJS_NAMESPACE, "constructor"));
+        if (fun && ejsIsFunction(fun) && fun->creator) {
+            type = fun->creator;
+        } else {
+            ejsCreateTypeFromFunction(ejs, fun);
+        }
     }
-    obj = ejsCreateObject(ejs, prototype, 0);
+    obj = ejsCreateObject(ejs, type, 0);
     if (properties) {
         count = ejsGetPropertyCount(ejs, properties);
         for (slotNum = 0; slotNum < count; slotNum++) {
@@ -1303,7 +1302,7 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
             argv[0] = obj;
             argv[1] = (EjsObj*) ejsCreateString(ejs, qname.name);
             argv[2] = options;
-            obj_defineProperty(ejs, type, 3, argv);
+            obj_defineProperty(ejs, (EjsObj*) type, 3, argv);
         }
     }
     return (EjsObj*) obj;
@@ -1311,7 +1310,7 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 
 
 /*
-    static native function defineProperty(obj: Object, prop: String, options: Object): Void
+    static function defineProperty(obj: Object, prop: String, options: Object): Void
 */
 static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -1404,8 +1403,8 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
 
 
 /*
-    static native function freeze(obj: Object): Void
-*/
+    static function freeze(obj: Object): Void
+ */
 static EjsObj *obj_freeze(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 {
     EjsObj      *obj;
@@ -1459,7 +1458,7 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 /*
     Return the default iterator.
 
-    iterator native function get(options: Object = null): Iterator
+    iterator function get(options: Object = null): Iterator
  */
 static EjsObj *obj_get(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
@@ -1494,7 +1493,7 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 /*
     Return an iterator to return the next array element value.
 
-    iterator native function getValues(options: Object = null): Iterator
+    iterator function getValues(options: Object = null): Iterator
  */
 static EjsObj *obj_getValues(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
@@ -1514,7 +1513,7 @@ static EjsObj *obj_getOwnPropertyCount(Ejs *ejs, EjsObj *unused, int argc, EjsOb
 
 
 /*
-    static native function getOwnPropertyDescriptor(obj: Object, prop: String): Object
+    static function getOwnPropertyDescriptor(obj: Object, prop: String): Object
  */
 static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -1566,7 +1565,7 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
 /*
     Get all properties names including non-enumerable properties
 
-    static native function getOwnPropertyNames(obj: Object): Array
+    static function getOwnPropertyNames(obj: Object): Array
  */
 static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 {
@@ -1597,19 +1596,19 @@ static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *type, int argc, EjsObj 
 
 
 /*
-    static native function getOwnPrototypeOf(obj: Object): Type
+    static function getOwnPrototypeOf(obj: Object): Type
  */
 static EjsObj *obj_getOwnPrototypeOf(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 {
     EjsObj      *obj;
 
     obj = argv[0];
-    return (EjsObj*) obj->type;
+    return (EjsObj*) obj->type->prototype;
 }
 
 
 /*
-    native function hasOwnProperty(name: String): Boolean
+    function hasOwnProperty(name: String): Boolean
  */
 static EjsObj *obj_hasOwnProperty(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
@@ -1624,22 +1623,8 @@ static EjsObj *obj_hasOwnProperty(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv
 }
 
 
-#if FUTURE
-//  MOB -- object should not have a length
 /*
-    Get the length for the object.
-
-    function get length(): Number
- */
-static EjsObj *obj_length(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
-{
-    return (EjsObj*) ejsCreateNumber(ejs, ejsGetPropertyCount(ejs, vp));
-}
-#endif
-
-
-/*
-    static native function isExtensible(obj: Object): Boolean
+    static function isExtensible(obj: Object): Boolean
  */
 static EjsObj *obj_isExtensible(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 {
@@ -1651,7 +1636,7 @@ static EjsObj *obj_isExtensible(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 
 
 /*
-    static native function isFrozen(obj: Object): Boolean
+    static function isFrozen(obj: Object): Boolean
  */
 static EjsObj *obj_isFrozen(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 {
@@ -1681,19 +1666,22 @@ static EjsObj *obj_isFrozen(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 
 
 /*
-    static native function isPrototypeOf(obj: Object): Boolean
+    static function isPrototypeOf(obj: Object): Boolean
  */
 static EjsObj *obj_isPrototypeOf(Ejs *ejs, EjsObj *prototype, int argc, EjsObj **argv)
 {
     EjsObj  *obj;
     
     obj = argv[0];
+#if MOB
     return (EjsObj*) ejsCreateBoolean(ejs, ejsIsA(ejs, obj, (EjsType*) prototype));
+#endif
+    return prototype == obj->type->prototype ? ejs->trueValue : ejs->falseValue;
 }
 
 
 /*
-    static native function isSealed(obj: Object): Boolean
+    static function isSealed(obj: Object): Boolean
  */
 static EjsObj *obj_isSealed(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 {
@@ -1722,7 +1710,7 @@ static EjsObj *obj_isSealed(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 /*
     Get enumerable properties names
 
-    static native function keys(obj: Object): Array
+    static function keys(obj: Object): Array
  */
 static EjsObj *obj_keys(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 {
@@ -1752,7 +1740,7 @@ static EjsObj *obj_keys(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 
 
 /*
-    static native function preventExtensions(obj: Object): Object
+    static function preventExtensions(obj: Object): Object
  */
 static EjsObj *obj_preventExtensions(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 {
@@ -1765,7 +1753,7 @@ static EjsObj *obj_preventExtensions(Ejs *ejs, EjsObj *type, int argc, EjsObj **
 
 
 /*
-    static native function seal(obj: Object): Void
+    static function seal(obj: Object): Void
 */
 static EjsObj *obj_seal(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 {
@@ -1785,7 +1773,7 @@ static EjsObj *obj_seal(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 
 
 /*
-    native function propertyIsEnumerable(property: String, flag: Object = undefined): Boolean
+    function propertyIsEnumerable(property: String, flag: Object = undefined): Boolean
  */
 static EjsObj *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
@@ -2045,15 +2033,8 @@ void ejsConfigureObjectType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Object_isExtensible, obj_isExtensible);
     ejsBindMethod(ejs, type, ES_Object_isFrozen, obj_isFrozen);
     ejsBindMethod(ejs, type, ES_Object_isSealed, obj_isSealed);
-    ejsBindMethod(ejs, type, ES_Object_prototype, (EjsProc) obj_prototype);
     ejsBindMethod(ejs, type, ES_Object_preventExtensions, obj_preventExtensions);
     ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
-
-    //  MOB -- change back to public
-#if ES_Object_length
-    ejsBindMethod(ejs, type, ES_Object_length, obj_length);
-#endif
-
     ejsBindMethod(ejs, prototype, ES_Object_constructor, (EjsProc) obj_constructor);
     ejsBindMethod(ejs, prototype, ES_Object_clone, obj_clone);
     ejsBindMethod(ejs, prototype, ES_Object_iterator_get, obj_get);

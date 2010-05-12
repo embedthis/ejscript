@@ -23350,7 +23350,7 @@ static double private_mem[PRIVATE_mem], *pmem_next = private_mem;
 #endif
 
 #if !EMBEDTHIS
-#define strtod UNUSED_strtod
+#define strtod _unused_strtod
 #endif
 
 #ifdef __cplusplus

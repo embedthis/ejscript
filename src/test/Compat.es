@@ -1,3 +1,5 @@
+//  Script to load into v8 to make it more like ejs
+
 try {
     if (global.EJSCRIPT) { 
     }

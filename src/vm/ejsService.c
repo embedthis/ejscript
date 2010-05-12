@@ -201,6 +201,7 @@ static int configureEjs(Ejs *ejs)
         Order matters
      */
     ejsConfigureGlobalBlock(ejs);
+    ejsConfigureTypeType(ejs);
     ejsConfigureObjectType(ejs);
     ejsConfigureIteratorType(ejs);
     ejsConfigureErrorType(ejs);

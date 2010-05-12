@@ -25,8 +25,9 @@
 #define ES_ejs_db_Database_defaultDb                                   0
 #define ES_ejs_db_Database_defaultDatabase                             1
 #define ES_ejs_db_Database_quote                                       2
+#define ES_ejs_db_Database_prototype                                   3
 
-#define ES_ejs_db_Database_NUM_CLASS_PROP                              3
+#define ES_ejs_db_Database_NUM_CLASS_PROP                              4
 
 /*
    Prototype (instance) slots for "Database" type 
@@ -77,13 +78,20 @@
 #define ES_ejs_db_Database_trace                                       43
 #define ES_ejs_db_Database_transaction                                 44
 #define ES_ejs_db_Database_NUM_INSTANCE_PROP                           45
+#define ES_ejs_db_Database_NUM_INHERITED_PROP                          11
 
 /*
     Local slots for methods in type "Database" 
  */
 #define ES_ejs_db_Database_quote_str                                   0
 
-#define ES_ejs_db_DatabaseConnector_NUM_CLASS_PROP                     0
+
+/*
+    Class property slots for the "DatabaseConnector" type 
+ */
+#define ES_ejs_db_DatabaseConnector_prototype                          0
+
+#define ES_ejs_db_DatabaseConnector_NUM_CLASS_PROP                     1
 
 /*
    Prototype (instance) slots for "DatabaseConnector" type 
@@ -111,7 +119,8 @@
 #define ES_ejs_db_DatabaseConnector_sqlTypeToEjsType                   20
 #define ES_ejs_db_DatabaseConnector_startTransaction                   21
 #define ES_ejs_db_DatabaseConnector_NUM_INSTANCE_PROP                  22
+#define ES_ejs_db_DatabaseConnector_NUM_INHERITED_PROP                 0
 
-#define _ES_CHECKSUM_ejs_db   122469
+#define _ES_CHECKSUM_ejs_db   124502
 
 #endif

@@ -50,3 +50,4 @@ lib/www
 lib/startup.es
 src/test/web/junk
 lib/start.es
+*.swp

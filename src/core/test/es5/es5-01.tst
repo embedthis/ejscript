@@ -90,7 +90,6 @@ function MyShape(height, width) {
 s = new MyShape(100, 200)
 assert(Object.getOwnPrototypeOf(s) === Reflect(s).type)
 
-/* MOB PROTOTYPE
 assert(Object.getOwnPrototypeOf(s) === MyShape.prototype)
 assert(MyShape.prototype.isPrototypeOf(s))
 proto = MyShape.prototype
@@ -113,5 +112,3 @@ assert(s2.area() == 2)
 
 s3 = Object.create(MyShape.prototype, {height: {value: 5}, width: {value: 2}})
 assert(s3.area() == 10)
-
-*/

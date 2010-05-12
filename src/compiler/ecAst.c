@@ -1141,7 +1141,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
     Ejs             *ejs;
     EcNode          *resultTypeNode;
     EcState         *state;
-    EjsType         *iface;
+    EjsType         *iface, *currentClass;
     EjsFunction     *fun;
     EjsObj          *block;
     int             slotNum, next;
@@ -1153,6 +1153,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
     state = cp->state;
     ejs = cp->ejs;
     fun = np->function.functionVar;
+    currentClass = state->currentClass;
     mprAssert(fun);
 
     if (np->function.isMethod) {
@@ -1180,25 +1181,37 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
     /*
         Test for clashes with non-overridden methods in base classes.
      */
-    if (state->currentClass && state->currentClass->baseType) {
-        slotNum = ecLookupVar(cp, (EjsObj*) state->currentClass->baseType, &np->qname);
-        if (slotNum >= 0 && cp->lookup.obj == (EjsObj*) state->currentClass->baseType) {
-            if (!(np->attributes & EJS_FUN_OVERRIDE) && !state->currentClass->baseType->isInterface) {
-                astError(cp, np, 
-                    "Function \"%s\" is already defined in a base class. Try using \"override\" keyword.", np->qname.name);
-                return 0;
+    if (currentClass && currentClass->baseType) {
+        slotNum = ecLookupVar(cp, (EjsObj*) currentClass->baseType, &np->qname);
+#if UNUSED
+        if (slotNum >= 0 /* MOB - should allow in any base type && cp->lookup.obj == (EjsObj*) currentClass->baseType */) {
+#else
+        if (slotNum >= 0 && ejsIsA(ejs, np->lookup.ref, (EjsType*) cp->lookup.obj)) {
+#endif
+            if (!(np->attributes & EJS_FUN_OVERRIDE) && !currentClass->baseType->isInterface) {
+                if (strcmp(currentClass->qname.space, EJS_EJS_NAMESPACE) != 0 && 
+                    strcmp(currentClass->qname.name, "Type") != 0) {
+                    astError(cp, np, 
+                        "Function \"%s\" is already defined in a base class. Using \"override\" keyword.", np->qname.name);
+                    return 0;
+                }
             }
+
+            mprAssert(!ejsLookupProperty(ejs, (EjsObj*) currentClass, &np->qname));
+            slotNum = -1;
+#if MOB && BINDING_ONLY
             /*
                 Install the new function into the v-table by overwriting the method from the closest base class.
                 Must now define the name of the property and attributes.
              */
+#endif
             allocName(ejs, &np->qname);
             ejsDefineProperty(ejs, (EjsObj*) block, slotNum, &np->qname, 0, np->attributes, (EjsObj*) fun);
         }
     }
 
     /*
-        Test for clashes with non-overridden methods in base classes and implemented classes.
+        Test for clashes with non-overridden methods in implemented classes.
      */
     if (state->currentClass && state->currentClass->implements) {
         next = 0;
@@ -1697,8 +1710,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                 This is because in the first case, we must extract the type of an object, whereas in the 2nd case,
                 we already have the type via an explicit type reference.
              */
-            //  MOB -- is this right to use the IsPrototype on this?
-            if (left->lookup.ref && (ejsIsType(left->lookup.ref) || ejsIsPrototype(left->lookup.ref))) {
+            if (left->lookup.ref && (ejsIsType(left->lookup.ref) /* UNUSED || ejsIsPrototype(left->lookup.ref) */)) {
                 /*
                     Case 2. Type.property. We have resolved the type reference.
                  */
@@ -2930,7 +2942,7 @@ static EjsFunction *createModuleInitializer(EcCompiler *cp, EcNode *np, EjsModul
 
     ejs = cp->ejs;
     fun = ejsCreateFunction(ejs, mp->name, 0, -1, 0, 0, 0, ejs->voidType, EJS_FUN_MODULE_INITIALIZER, 
-            mp->constants, mp->scope, cp->state->strict);
+        mp->constants, mp->scope, cp->state->strict);
     if (fun == 0) {
         astError(cp, np, "Can't create initializer function");
         return 0;
@@ -2973,7 +2985,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
         }
     }
 
-    if (mp->initializer == 0) {
+    if (mp->initializer == 0 || mp->initializer->activation) {
         mp->initializer = createModuleInitializer(cp, np, mp);
     }
     np->module.ref = mp;
@@ -3344,7 +3356,7 @@ static void removeProperty(EcCompiler *cp, EjsObj *obj, EcNode *np)
 static void fixupClass(EcCompiler *cp, EjsType *type)
 {
     Ejs             *ejs;
-    EjsType         *baseType, *iface;
+    EjsType         *baseType, *iface, *typeType;
     EjsFunction     *fun;
     EjsObj          *prototype, *obj;
     EjsName         qname;
@@ -3478,12 +3490,27 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         }
     }
     type->hasInstanceVars |= hasInstanceVars;
-
     if (baseType) {
         type->hasInstanceVars |= baseType->hasInstanceVars;
-        ejsFixupType(ejs, type, baseType, 1);
     }
+
+    ejsFixupType(ejs, type, baseType, 1);
     
+    if (ejs->empty) {
+        typeType = (EjsType*) getTypeProperty(cp, ejs->global, ejsName(&qname, EJS_EJS_NAMESPACE, "Type"));
+    } else {
+        typeType = ejs->typeType;
+    }
+    if (typeType == 0) {
+        astError(cp, 0, "Can't find Type class");
+    }
+    if (typeType->needFixup) {
+        fixupClass(cp, typeType);
+    }
+    if (type != typeType) {
+        ejsBlendTypeProperties(ejs, type, typeType);
+    }
+
 #if NOT_NEEDED
     /*
         Mark all inherited methods implemented for interfaces as implicitly overridden

@@ -157,6 +157,7 @@ typedef BLD_FEATURE_NUM_TYPE MprNumber;
 #define EJS_META_NAMESPACE          "meta"
 #define EJS_PRIVATE_NAMESPACE       "private"
 #define EJS_PROTECTED_NAMESPACE     "protected"
+#define EJS_PROTOTYPE_NAMESPACE     "-prototype-"
 #define EJS_PUBLIC_NAMESPACE        "public"
 #define EJS_WORKER_NAMESPACE        "ejs.worker"
 
@@ -622,6 +623,7 @@ typedef struct EjsObj {
 #endif
     struct EjsType  *type;                      /**< Type of this object (not base type). ie. type for Object is EjsType  */
 
+    //  MOB -- convert to EjsSlots *properties;
     struct EjsSlot  *slots;                     /**< Vector of slots containing property references */
     int             sizeSlots;                  /**< Current size of traits[] and slots[] */
     int             numSlots;                   /**< Number of properties in traits/slots */
@@ -1159,12 +1161,13 @@ typedef struct EjsFunction {
         transfers them into the activation block when complete.
      */
     EjsBlock        block;                  /** Activation block for local vars */
-    cchar           *name;
-
     EjsObj          *activation;            /** Activation properties (parameters + locals) */
+    cchar           *name;                  /** Function name for debuggability */
 
     //  MOB -- these two could be a union - can't be both
     struct EjsFunction *setter;             /**< Setter function for this property */
+
+    //  MOB -- get a better name
     struct EjsType  *creator;               /**< Type to use to create instances */
 
     union {
@@ -2609,6 +2612,8 @@ typedef struct EjsType {
     uint            hasInstanceVars         :  1;   /**< Type has non-function instance vars (state) */
     uint            hasMeta                 :  1;   /**< Type has meta methods */
     uint            hasScriptFunctions      :  1;   /**< Block has non-native functions requiring namespaces */
+
+    //  MOB -- who uses this
     uint            immutable               :  1;   /**< Instances are immutable */
     uint            initialized             :  1;   /**< Static initializer has run */
     uint            isInterface             :  1;   /**< Interface vs class */
@@ -2669,6 +2674,7 @@ extern EjsType *ejsCreateType(Ejs *ejs, EjsName *name, struct EjsModule *up, Ejs
 
 extern EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, struct EjsModule *up, EjsType *baseType, 
     int numTypeProp, int numInstanceProp, int64 attributes);
+extern void ejsCompleteType(Ejs *ejs, EjsType *type);
 
 extern EjsObj *ejsCreatePrototype(Ejs *ejs, EjsType *type, int numProp);
 extern EjsType *ejsCreateTypeFromFunction(Ejs *ejs, struct EjsFunction *fun);
@@ -2762,8 +2768,8 @@ extern EjsType  *ejsGetTypeByName(Ejs *ejs, cchar *space, cchar *name);
 extern int      ejsCompactClass(Ejs *ejs, EjsType *type);
 extern int      ejsCopyBaseProperties(Ejs *ejs, EjsType *type, EjsType *baseType);
 extern void     ejsDefineTypeNamespaces(Ejs *ejs, EjsType *type);
-extern int      ejsFixupTypeBlock(Ejs *ejs, EjsType *type, EjsObj *obj, EjsObj *base, int makeRoom);
 extern int      ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom);
+extern int      ejsBlendTypeProperties(Ejs *ejs, EjsType *type, EjsType *typeType);
 extern int      ejsGetTypePropertyAttributes(Ejs *ejs, EjsObj *vp, int slot);
 extern void     ejsInitializeBlockHelpers(EjsTypeHelpers *helpers);
 
@@ -2835,6 +2841,7 @@ extern void     ejsConfigureSocketType(Ejs *ejs);
 extern void     ejsConfigureSystemType(Ejs *ejs);
 extern void     ejsConfigureTimerType(Ejs *ejs);
 extern void     ejsConfigureTypes(Ejs *ejs);
+extern void     ejsConfigureTypeType(Ejs *ejs);
 extern void     ejsConfigureUriType(Ejs *ejs);
 extern void     ejsConfigureVoidType(Ejs *ejs);
 extern void     ejsConfigureWorkerType(Ejs *ejs);

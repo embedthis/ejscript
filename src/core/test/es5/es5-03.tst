@@ -2,11 +2,18 @@
     Test own names and keys
  */
 
+print(Object.getOwnPropertyNames(Array.prototype).sort())
 
-/*  MOB
+/*
+print(Object.getOwnPropertyNames(Array).sort())
+print(Object.getOwnPropertyNames(Date).sort())
+print(Object.getOwnPropertyNames(Number).sort())
+print("----")
+print("----")
+print(Array.length)
+*/
 
-//  getOwnProperties for key types. This gets non-enumerable properties as well.
-
+/*
 assert(Object.getOwnPropertyNames(Array).sort() == "length,prototype")
 assert(Object.getOwnPropertyNames(Boolean).sort() == "length,prototype")
 assert(Object.getOwnPropertyNames(Date).sort() == "UTC,length,now,parse,parseDate,parseUTCDate,prototype")
@@ -27,5 +34,4 @@ assert(Object.keys(Function).sort() == "")
 assert(Object.keys(Number).sort() == "")
 assert(Object.keys(Object).sort() == "")
 assert(Object.keys(String).sort() == "")
-
 */

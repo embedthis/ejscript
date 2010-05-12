@@ -98,8 +98,7 @@ static EjsObj *ref_name(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
 
     type = (EjsType*) rp->subject;
     if (!ejsIsType(type)) {
-        ejsThrowArgError(ejs, "Object is not a type");
-        return 0;
+        return (EjsObj*) ejs->emptyStringValue;
     }
     return (EjsObj*) ejsCreateString(ejs, type->qname.name);
 }
@@ -178,6 +177,10 @@ void ejsConfigureReflectType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Reflect_base, (EjsProc) ref_base);
     ejsBindMethod(ejs, prototype, ES_Reflect_isType, (EjsProc) ref_isType);
     ejsBindMethod(ejs, prototype, ES_Reflect_name, (EjsProc) ref_name);
+#if 0
+    ejsBindMethod(ejs, prototype, ES_Reflect_isPrototype, (EjsProc) ref_isPrototype);
+    ejsBindMethod(ejs, prototype, ES_Reflect_prototype, (EjsProc) ref_prototype);
+#endif
     ejsBindMethod(ejs, prototype, ES_Reflect_type, (EjsProc) ref_type);
     ejsBindFunction(ejs, ejs->globalBlock, ES_typeOf, (EjsProc) ref_typeOf);
 }

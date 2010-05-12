@@ -648,6 +648,7 @@ static int loadEndClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (type->hasScriptFunctions && type->baseType) {
         ejsDefineTypeNamespaces(ejs, type);
     }
+    ejsCompleteType(ejs, type);
     mp->scope = mp->scope->scope;
     return 0;
 }
@@ -1305,7 +1306,6 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
     if (maxVersion <= 0) {
         maxVersion = MAXINT;
     }
-
     ctx = withDotMod = makeModuleName(ejs, moduleName);
     name = mprGetNormalizedPath(ctx, withDotMod);
 

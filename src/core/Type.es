@@ -7,11 +7,8 @@
 module ejs {
 
     /*
-        WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
-        WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
-        WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
-        WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING WARNING
-        Must not define properties and methods of this type. They cannot be inherited by types.
+        The Type class is unlike other class definitions. Rather than provide definitions that are accessed via
+        the prototype chain, these properties are copied directly into other types.
      */
 
     /**
@@ -21,67 +18,16 @@ module ejs {
      */
     native final class Type {
 
-        use default namespace public
+        use default namespace ejs
 
         /**
             The prototype object for the type. The prototype object provides the template of instance properties 
             shared by all Objects.
          */
-        # TODO
-        native function get prototype(): Type
-
-        /**
-            The base class for this type.
-            @spec ejs
-         */
-        # FUTURE
-        native function get baseClass(): Type
-
-        /**
-            Mix in a type into a dynamic type or object. This routine blends the functions and properties from 
-            a supplied mix-type into the specified target type. Mix-types that are blended in this manner are 
-            known as "mixins". Mixins are used to add horizontal functionality to types at run-time. The target 
-            type must be declared as dynamic.
-            @param type module The module to mix in.
-            @return Returns "this".
-            @throws StateError if the mixin fails due to the target type not being declared as dynamic.
-            @throws TypeError if the mixin fails due to a property clash between the mixin and target types.
-            @spec ejs
-         */ 
-        # FUTURE
-        native function mixin(mixType: Type): Object
-
-        /**
-            The type (class)  name
-            @spec ejs
-         */
-        # FUTURE
-        native function get name(): String
-
-        /**
-            Get the class name.
-            Same as name()
-            @returns the class name
-         */
-        # FUTURE
-        function getClass(): String
-            name()
-
-        /**
-            Seal a type. Once an type is sealed, further attempts to create or delete properties will fail, or calls 
-            to mixin will throw an exception. 
-            @spec ejs
-         */
-        # FUTURE
-        override native function seal() : void
+//ECMA: Type.prototype
+//MOB -- need a directive to force
+        static native function get prototype(): Object
     }
-
-
-    /*
-        TODO - should rename class Type into class Class
-     */
-    # FUTURE
-    var Class = Type
 }
 
 /*

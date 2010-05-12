@@ -40,13 +40,15 @@
 #define ES_Loader_wrap                                                 10
 #define ES_Loader_locate                                               11
 #define ES_Loader_setConfig                                            12
+#define ES_Loader_prototype                                            13
 
-#define ES_Loader_NUM_CLASS_PROP                                       13
+#define ES_Loader_NUM_CLASS_PROP                                       14
 
 /*
    Prototype (instance) slots for "Loader" type 
  */
 #define ES_Loader_NUM_INSTANCE_PROP                                    0
+#define ES_Loader_NUM_INHERITED_PROP                                   0
 
 /*
     Local slots for methods in type "Loader" 
@@ -62,6 +64,6 @@
 #define ES_Loader_locate_id                                            0
 #define ES_Loader_setConfig_newConfig                                  0
 
-#define _ES_CHECKSUM_ejs_cjs   25604
+#define _ES_CHECKSUM_ejs_cjs   26632
 
 #endif

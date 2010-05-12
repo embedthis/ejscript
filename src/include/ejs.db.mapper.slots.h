@@ -94,8 +94,9 @@
 #define ES_Record_keyName                                              62
 #define ES_Record_numRows                                              63
 #define ES_Record_tableName                                            64
+#define ES_Record_prototype                                            65
 
-#define ES_Record_NUM_CLASS_PROP                                       65
+#define ES_Record_NUM_CLASS_PROP                                       66
 
 /*
    Prototype (instance) slots for "Record" type 
@@ -126,6 +127,7 @@
 #define ES_Record_validateRecord                                       23
 #define ES_Record_constructorOLD                                       24
 #define ES_Record_NUM_INSTANCE_PROP                                    25
+#define ES_Record_NUM_INHERITED_PROP                                   11
 
 /*
     Local slots for methods in type "Record" 
@@ -207,7 +209,13 @@
 #define ES_Record_wrapFilter_fn                                        0
 #define ES_Record_wrapFilter_options                                   1
 
-#define ES_ejs_db_mapper_Column_NUM_CLASS_PROP                         0
+
+/*
+    Class property slots for the "Column" type 
+ */
+#define ES_ejs_db_mapper_Column_prototype                              0
+
+#define ES_ejs_db_mapper_Column_NUM_CLASS_PROP                         1
 
 /*
    Prototype (instance) slots for "Column" type 
@@ -227,7 +235,8 @@
 #define ES_ejs_db_mapper_Column_ejsType                                12
 #define ES_ejs_db_mapper_Column_sqlType                                13
 #define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      14
+#define ES_ejs_db_mapper_Column_NUM_INHERITED_PROP                     11
 
-#define _ES_CHECKSUM_ejs_db_mapper   186943
+#define _ES_CHECKSUM_ejs_db_mapper   189038
 
 #endif

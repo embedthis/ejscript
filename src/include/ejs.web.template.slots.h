@@ -23,20 +23,28 @@
     Class property slots for the "Template" type 
  */
 #define ES_Template_load                                               0
+#define ES_Template_prototype                                          1
 
-#define ES_Template_NUM_CLASS_PROP                                     1
+#define ES_Template_NUM_CLASS_PROP                                     2
 
 /*
    Prototype (instance) slots for "Template" type 
  */
 #define ES_Template_NUM_INSTANCE_PROP                                  0
+#define ES_Template_NUM_INHERITED_PROP                                 0
 
 /*
     Local slots for methods in type "Template" 
  */
 #define ES_Template_load_request                                       0
 
-#define ES_TemplateParser_NUM_CLASS_PROP                               0
+
+/*
+    Class property slots for the "TemplateParser" type 
+ */
+#define ES_TemplateParser_prototype                                    0
+
+#define ES_TemplateParser_NUM_CLASS_PROP                               1
 
 /*
    Prototype (instance) slots for "TemplateParser" type 
@@ -67,6 +75,7 @@
 #define ES_TemplateParser_getToken                                     23
 #define ES_TemplateParser_eatSpace                                     24
 #define ES_TemplateParser_NUM_INSTANCE_PROP                            25
+#define ES_TemplateParser_NUM_INHERITED_PROP                           11
 
 
 /*
@@ -81,14 +90,16 @@
 #define ES_ejs_web_template_Token_Equals                               6
 #define ES_ejs_web_template_Token_Control                              7
 #define ES_ejs_web_template_Token_tokens                               8
+#define ES_ejs_web_template_Token_prototype                            9
 
-#define ES_ejs_web_template_Token_NUM_CLASS_PROP                       9
+#define ES_ejs_web_template_Token_NUM_CLASS_PROP                       10
 
 /*
    Prototype (instance) slots for "Token" type 
  */
 #define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    0
+#define ES_ejs_web_template_Token_NUM_INHERITED_PROP                   0
 
-#define _ES_CHECKSUM_ejs_web_template   41102
+#define _ES_CHECKSUM_ejs_web_template   44157
 
 #endif

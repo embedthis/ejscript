@@ -162,6 +162,7 @@
    Prototype (instance) slots for "global" type 
  */
 #define ES_global_NUM_INSTANCE_PROP                                    0
+#define ES_global_NUM_INHERITED_PROP                                   0
 
 /*
     Local slots for global methods 
@@ -247,13 +248,15 @@
 #define ES_App_version                                                 26
 #define ES_App_searchPath                                              27
 #define ES_App_serviceEvents                                           28
+#define ES_App_prototype                                               29
 
-#define ES_App_NUM_CLASS_PROP                                          29
+#define ES_App_NUM_CLASS_PROP                                          30
 
 /*
    Prototype (instance) slots for "App" type 
  */
 #define ES_App_NUM_INSTANCE_PROP                                       0
+#define ES_App_NUM_INHERITED_PROP                                      0
 
 /*
     Local slots for methods in type "App" 
@@ -271,7 +274,13 @@
 #define ES_App_serviceEvents_count                                     0
 #define ES_App_serviceEvents_timeout                                   1
 
-#define ES_Array_NUM_CLASS_PROP                                        0
+
+/*
+    Class property slots for the "Array" type 
+ */
+#define ES_Array_prototype                                             0
+
+#define ES_Array_NUM_CLASS_PROP                                        1
 
 /*
    Prototype (instance) slots for "Array" type 
@@ -311,6 +320,7 @@
 #define ES_Array_unique                                                32
 #define ES_Array_unshift                                               33
 #define ES_Array_NUM_INSTANCE_PROP                                     34
+#define ES_Array_NUM_INHERITED_PROP                                    0
 
 
 /*
@@ -319,8 +329,9 @@
 #define ES_BinaryStream__initializer___BinaryStream_                   0
 #define ES_BinaryStream_BigEndian                                      1
 #define ES_BinaryStream_LittleEndian                                   2
+#define ES_BinaryStream_prototype                                      3
 
-#define ES_BinaryStream_NUM_CLASS_PROP                                 3
+#define ES_BinaryStream_NUM_CLASS_PROP                                 4
 
 /*
    Prototype (instance) slots for "BinaryStream" type 
@@ -365,21 +376,36 @@
 #define ES_BinaryStream_writeInteger                                   37
 #define ES_BinaryStream_writeLong                                      38
 #define ES_BinaryStream_NUM_INSTANCE_PROP                              39
+#define ES_BinaryStream_NUM_INHERITED_PROP                             11
 
-#define ES_Block_NUM_CLASS_PROP                                        0
+
+/*
+    Class property slots for the "Block" type 
+ */
+#define ES_Block_prototype                                             0
+
+#define ES_Block_NUM_CLASS_PROP                                        1
 
 /*
    Prototype (instance) slots for "Block" type 
  */
 #define ES_Block_NUM_INSTANCE_PROP                                     0
+#define ES_Block_NUM_INHERITED_PROP                                    0
 
-#define ES_Boolean_NUM_CLASS_PROP                                      0
+
+/*
+    Class property slots for the "Boolean" type 
+ */
+#define ES_Boolean_prototype                                           0
+
+#define ES_Boolean_NUM_CLASS_PROP                                      1
 
 /*
    Prototype (instance) slots for "Boolean" type 
  */
 #define ES_Boolean_Boolean                                             0
 #define ES_Boolean_NUM_INSTANCE_PROP                                   1
+#define ES_Boolean_NUM_INHERITED_PROP                                  0
 
 
 /*
@@ -388,8 +414,9 @@
 #define ES_ByteArray__initializer___ByteArray_                         0
 #define ES_ByteArray_LittleEndian                                      1
 #define ES_ByteArray_BigEndian                                         2
+#define ES_ByteArray_prototype                                         3
 
-#define ES_ByteArray_NUM_CLASS_PROP                                    3
+#define ES_ByteArray_NUM_CLASS_PROP                                    4
 
 /*
    Prototype (instance) slots for "ByteArray" type 
@@ -435,6 +462,7 @@
 #define ES_ByteArray_input                                             38
 #define ES_ByteArray_output                                            39
 #define ES_ByteArray_NUM_INSTANCE_PROP                                 40
+#define ES_ByteArray_NUM_INHERITED_PROP                                0
 
 
 /*
@@ -444,13 +472,15 @@
 #define ES_Cmd_run                                                     1
 #define ES_Cmd_daemon                                                  2
 #define ES_Cmd_runx                                                    3
+#define ES_Cmd_prototype                                               4
 
-#define ES_Cmd_NUM_CLASS_PROP                                          4
+#define ES_Cmd_NUM_CLASS_PROP                                          5
 
 /*
    Prototype (instance) slots for "Cmd" type 
  */
 #define ES_Cmd_NUM_INSTANCE_PROP                                       0
+#define ES_Cmd_NUM_INHERITED_PROP                                      0
 
 /*
     Local slots for methods in type "Cmd" 
@@ -462,7 +492,13 @@
 #define ES_Cmd_daemon_cmdline                                          0
 #define ES_Cmd_runx_cmdline                                            0
 
-#define ES_CmdArgs_NUM_CLASS_PROP                                      0
+
+/*
+    Class property slots for the "CmdArgs" type 
+ */
+#define ES_CmdArgs_prototype                                           0
+
+#define ES_CmdArgs_NUM_CLASS_PROP                                      1
 
 /*
    Prototype (instance) slots for "CmdArgs" type 
@@ -486,6 +522,7 @@
 #define ES_CmdArgs_parseTemplate                                       16
 #define ES_CmdArgs_validate                                            17
 #define ES_CmdArgs_NUM_INSTANCE_PROP                                   18
+#define ES_CmdArgs_NUM_INHERITED_PROP                                  11
 
 
 /*
@@ -500,13 +537,15 @@
 #define ES_Config_LibDir                                               6
 #define ES_Config_BinDir                                               7
 #define ES_Config_ModDir                                               8
+#define ES_Config_prototype                                            9
 
-#define ES_Config_NUM_CLASS_PROP                                       9
+#define ES_Config_NUM_CLASS_PROP                                       10
 
 /*
    Prototype (instance) slots for "Config" type 
  */
 #define ES_Config_NUM_INSTANCE_PROP                                    0
+#define ES_Config_NUM_INHERITED_PROP                                   0
 
 
 /*
@@ -517,8 +556,9 @@
 #define ES_Date_parseUTCDate                                           2
 #define ES_Date_parse                                                  3
 #define ES_Date_UTC                                                    4
+#define ES_Date_prototype                                              5
 
-#define ES_Date_NUM_CLASS_PROP                                         5
+#define ES_Date_NUM_CLASS_PROP                                         6
 
 /*
    Prototype (instance) slots for "Date" type 
@@ -584,6 +624,7 @@
 #define ES_Date_valueOf                                                58
 #define ES_Date_year                                                   59
 #define ES_Date_NUM_INSTANCE_PROP                                      60
+#define ES_Date_NUM_INHERITED_PROP                                     0
 
 /*
     Local slots for methods in type "Date" 
@@ -601,7 +642,13 @@
 #define ES_Date_UTC_seconds                                            5
 #define ES_Date_UTC_milliseconds                                       6
 
-#define ES_Emitter_NUM_CLASS_PROP                                      0
+
+/*
+    Class property slots for the "Emitter" type 
+ */
+#define ES_Emitter_prototype                                           0
+
+#define ES_Emitter_NUM_CLASS_PROP                                      1
 
 /*
    Prototype (instance) slots for "Emitter" type 
@@ -628,8 +675,15 @@
 #define ES_Emitter_removeOneListener                                   19
 #define ES_Emitter_removeListener                                      20
 #define ES_Emitter_NUM_INSTANCE_PROP                                   21
+#define ES_Emitter_NUM_INHERITED_PROP                                  11
 
-#define ES_Endpoint_NUM_CLASS_PROP                                     0
+
+/*
+    Class property slots for the "Endpoint" type 
+ */
+#define ES_Endpoint_prototype                                          0
+
+#define ES_Endpoint_NUM_CLASS_PROP                                     1
 
 /*
    Prototype (instance) slots for "Endpoint" type 
@@ -651,8 +705,15 @@
 #define ES_Endpoint_active                                             14
 #define ES_Endpoint_again                                              15
 #define ES_Endpoint_NUM_INSTANCE_PROP                                  16
+#define ES_Endpoint_NUM_INHERITED_PROP                                 11
 
-#define ES_ArgError_NUM_CLASS_PROP                                     0
+
+/*
+    Class property slots for the "ArgError" type 
+ */
+#define ES_ArgError_prototype                                          0
+
+#define ES_ArgError_NUM_CLASS_PROP                                     1
 
 /*
    Prototype (instance) slots for "ArgError" type 
@@ -674,8 +735,15 @@
 #define ES_ArgError_stack                                              14
 #define ES_ArgError_ArgError                                           15
 #define ES_ArgError_NUM_INSTANCE_PROP                                  16
+#define ES_ArgError_NUM_INHERITED_PROP                                 15
 
-#define ES_ArithmeticError_NUM_CLASS_PROP                              0
+
+/*
+    Class property slots for the "ArithmeticError" type 
+ */
+#define ES_ArithmeticError_prototype                                   0
+
+#define ES_ArithmeticError_NUM_CLASS_PROP                              1
 
 /*
    Prototype (instance) slots for "ArithmeticError" type 
@@ -697,8 +765,15 @@
 #define ES_ArithmeticError_stack                                       14
 #define ES_ArithmeticError_ArithmeticError                             15
 #define ES_ArithmeticError_NUM_INSTANCE_PROP                           16
+#define ES_ArithmeticError_NUM_INHERITED_PROP                          15
 
-#define ES_AssertError_NUM_CLASS_PROP                                  0
+
+/*
+    Class property slots for the "AssertError" type 
+ */
+#define ES_AssertError_prototype                                       0
+
+#define ES_AssertError_NUM_CLASS_PROP                                  1
 
 /*
    Prototype (instance) slots for "AssertError" type 
@@ -720,8 +795,15 @@
 #define ES_AssertError_stack                                           14
 #define ES_AssertError_AssertError                                     15
 #define ES_AssertError_NUM_INSTANCE_PROP                               16
+#define ES_AssertError_NUM_INHERITED_PROP                              15
 
-#define ES_InstructionError_NUM_CLASS_PROP                             0
+
+/*
+    Class property slots for the "InstructionError" type 
+ */
+#define ES_InstructionError_prototype                                  0
+
+#define ES_InstructionError_NUM_CLASS_PROP                             1
 
 /*
    Prototype (instance) slots for "InstructionError" type 
@@ -743,8 +825,15 @@
 #define ES_InstructionError_stack                                      14
 #define ES_InstructionError_InstructionError                           15
 #define ES_InstructionError_NUM_INSTANCE_PROP                          16
+#define ES_InstructionError_NUM_INHERITED_PROP                         15
 
-#define ES_Error_NUM_CLASS_PROP                                        0
+
+/*
+    Class property slots for the "Error" type 
+ */
+#define ES_Error_prototype                                             0
+
+#define ES_Error_NUM_CLASS_PROP                                        1
 
 /*
    Prototype (instance) slots for "Error" type 
@@ -765,8 +854,15 @@
 #define ES_Error_code                                                  13
 #define ES_Error_stack                                                 14
 #define ES_Error_NUM_INSTANCE_PROP                                     15
+#define ES_Error_NUM_INHERITED_PROP                                    11
 
-#define ES_IOError_NUM_CLASS_PROP                                      0
+
+/*
+    Class property slots for the "IOError" type 
+ */
+#define ES_IOError_prototype                                           0
+
+#define ES_IOError_NUM_CLASS_PROP                                      1
 
 /*
    Prototype (instance) slots for "IOError" type 
@@ -788,8 +884,15 @@
 #define ES_IOError_stack                                               14
 #define ES_IOError_IOError                                             15
 #define ES_IOError_NUM_INSTANCE_PROP                                   16
+#define ES_IOError_NUM_INHERITED_PROP                                  15
 
-#define ES_InternalError_NUM_CLASS_PROP                                0
+
+/*
+    Class property slots for the "InternalError" type 
+ */
+#define ES_InternalError_prototype                                     0
+
+#define ES_InternalError_NUM_CLASS_PROP                                1
 
 /*
    Prototype (instance) slots for "InternalError" type 
@@ -811,8 +914,15 @@
 #define ES_InternalError_stack                                         14
 #define ES_InternalError_InternalError                                 15
 #define ES_InternalError_NUM_INSTANCE_PROP                             16
+#define ES_InternalError_NUM_INHERITED_PROP                            15
 
-#define ES_MemoryError_NUM_CLASS_PROP                                  0
+
+/*
+    Class property slots for the "MemoryError" type 
+ */
+#define ES_MemoryError_prototype                                       0
+
+#define ES_MemoryError_NUM_CLASS_PROP                                  1
 
 /*
    Prototype (instance) slots for "MemoryError" type 
@@ -834,8 +944,15 @@
 #define ES_MemoryError_stack                                           14
 #define ES_MemoryError_MemoryError                                     15
 #define ES_MemoryError_NUM_INSTANCE_PROP                               16
+#define ES_MemoryError_NUM_INHERITED_PROP                              15
 
-#define ES_OutOfBoundsError_NUM_CLASS_PROP                             0
+
+/*
+    Class property slots for the "OutOfBoundsError" type 
+ */
+#define ES_OutOfBoundsError_prototype                                  0
+
+#define ES_OutOfBoundsError_NUM_CLASS_PROP                             1
 
 /*
    Prototype (instance) slots for "OutOfBoundsError" type 
@@ -857,8 +974,15 @@
 #define ES_OutOfBoundsError_stack                                      14
 #define ES_OutOfBoundsError_OutOfBoundsError                           15
 #define ES_OutOfBoundsError_NUM_INSTANCE_PROP                          16
+#define ES_OutOfBoundsError_NUM_INHERITED_PROP                         15
 
-#define ES_ReferenceError_NUM_CLASS_PROP                               0
+
+/*
+    Class property slots for the "ReferenceError" type 
+ */
+#define ES_ReferenceError_prototype                                    0
+
+#define ES_ReferenceError_NUM_CLASS_PROP                               1
 
 /*
    Prototype (instance) slots for "ReferenceError" type 
@@ -880,8 +1004,15 @@
 #define ES_ReferenceError_stack                                        14
 #define ES_ReferenceError_ReferenceError                               15
 #define ES_ReferenceError_NUM_INSTANCE_PROP                            16
+#define ES_ReferenceError_NUM_INHERITED_PROP                           15
 
-#define ES_ResourceError_NUM_CLASS_PROP                                0
+
+/*
+    Class property slots for the "ResourceError" type 
+ */
+#define ES_ResourceError_prototype                                     0
+
+#define ES_ResourceError_NUM_CLASS_PROP                                1
 
 /*
    Prototype (instance) slots for "ResourceError" type 
@@ -903,8 +1034,15 @@
 #define ES_ResourceError_stack                                         14
 #define ES_ResourceError_ResourceError                                 15
 #define ES_ResourceError_NUM_INSTANCE_PROP                             16
+#define ES_ResourceError_NUM_INHERITED_PROP                            15
 
-#define ES_SecurityError_NUM_CLASS_PROP                                0
+
+/*
+    Class property slots for the "SecurityError" type 
+ */
+#define ES_SecurityError_prototype                                     0
+
+#define ES_SecurityError_NUM_CLASS_PROP                                1
 
 /*
    Prototype (instance) slots for "SecurityError" type 
@@ -926,8 +1064,15 @@
 #define ES_SecurityError_stack                                         14
 #define ES_SecurityError_SecurityError                                 15
 #define ES_SecurityError_NUM_INSTANCE_PROP                             16
+#define ES_SecurityError_NUM_INHERITED_PROP                            15
 
-#define ES_StateError_NUM_CLASS_PROP                                   0
+
+/*
+    Class property slots for the "StateError" type 
+ */
+#define ES_StateError_prototype                                        0
+
+#define ES_StateError_NUM_CLASS_PROP                                   1
 
 /*
    Prototype (instance) slots for "StateError" type 
@@ -949,8 +1094,15 @@
 #define ES_StateError_stack                                            14
 #define ES_StateError_StateError                                       15
 #define ES_StateError_NUM_INSTANCE_PROP                                16
+#define ES_StateError_NUM_INHERITED_PROP                               15
 
-#define ES_SyntaxError_NUM_CLASS_PROP                                  0
+
+/*
+    Class property slots for the "SyntaxError" type 
+ */
+#define ES_SyntaxError_prototype                                       0
+
+#define ES_SyntaxError_NUM_CLASS_PROP                                  1
 
 /*
    Prototype (instance) slots for "SyntaxError" type 
@@ -972,8 +1124,15 @@
 #define ES_SyntaxError_stack                                           14
 #define ES_SyntaxError_SyntaxError                                     15
 #define ES_SyntaxError_NUM_INSTANCE_PROP                               16
+#define ES_SyntaxError_NUM_INHERITED_PROP                              15
 
-#define ES_TypeError_NUM_CLASS_PROP                                    0
+
+/*
+    Class property slots for the "TypeError" type 
+ */
+#define ES_TypeError_prototype                                         0
+
+#define ES_TypeError_NUM_CLASS_PROP                                    1
 
 /*
    Prototype (instance) slots for "TypeError" type 
@@ -995,8 +1154,15 @@
 #define ES_TypeError_stack                                             14
 #define ES_TypeError_TypeError                                         15
 #define ES_TypeError_NUM_INSTANCE_PROP                                 16
+#define ES_TypeError_NUM_INHERITED_PROP                                15
 
-#define ES_URIError_NUM_CLASS_PROP                                     0
+
+/*
+    Class property slots for the "URIError" type 
+ */
+#define ES_URIError_prototype                                          0
+
+#define ES_URIError_NUM_CLASS_PROP                                     1
 
 /*
    Prototype (instance) slots for "URIError" type 
@@ -1018,8 +1184,15 @@
 #define ES_URIError_stack                                              14
 #define ES_URIError_URIError                                           15
 #define ES_URIError_NUM_INSTANCE_PROP                                  16
+#define ES_URIError_NUM_INHERITED_PROP                                 15
 
-#define ES_Event_NUM_CLASS_PROP                                        0
+
+/*
+    Class property slots for the "Event" type 
+ */
+#define ES_Event_prototype                                             0
+
+#define ES_Event_NUM_CLASS_PROP                                        1
 
 /*
    Prototype (instance) slots for "Event" type 
@@ -1039,8 +1212,15 @@
 #define ES_Event_data                                                  12
 #define ES_Event_timestamp                                             13
 #define ES_Event_NUM_INSTANCE_PROP                                     14
+#define ES_Event_NUM_INHERITED_PROP                                    11
 
-#define ES_ErrorEvent_NUM_CLASS_PROP                                   0
+
+/*
+    Class property slots for the "ErrorEvent" type 
+ */
+#define ES_ErrorEvent_prototype                                        0
+
+#define ES_ErrorEvent_NUM_CLASS_PROP                                   1
 
 /*
    Prototype (instance) slots for "ErrorEvent" type 
@@ -1065,8 +1245,15 @@
 #define ES_ErrorEvent_lineno                                           17
 #define ES_ErrorEvent_stack                                            18
 #define ES_ErrorEvent_NUM_INSTANCE_PROP                                19
+#define ES_ErrorEvent_NUM_INHERITED_PROP                               14
 
-#define ES_File_NUM_CLASS_PROP                                         0
+
+/*
+    Class property slots for the "File" type 
+ */
+#define ES_File_prototype                                              0
+
+#define ES_File_NUM_CLASS_PROP                                         1
 
 /*
    Prototype (instance) slots for "File" type 
@@ -1095,8 +1282,15 @@
 #define ES_File_truncate                                               21
 #define ES_File_write                                                  22
 #define ES_File_NUM_INSTANCE_PROP                                      23
+#define ES_File_NUM_INHERITED_PROP                                     0
 
-#define ES_FileSystem_NUM_CLASS_PROP                                   0
+
+/*
+    Class property slots for the "FileSystem" type 
+ */
+#define ES_FileSystem_prototype                                        0
+
+#define ES_FileSystem_NUM_CLASS_PROP                                   1
 
 /*
    Prototype (instance) slots for "FileSystem" type 
@@ -1107,15 +1301,29 @@
 #define ES_FileSystem_root                                             3
 #define ES_FileSystem_separators                                       4
 #define ES_FileSystem_NUM_INSTANCE_PROP                                5
+#define ES_FileSystem_NUM_INHERITED_PROP                               0
 
-#define ES_Frame_NUM_CLASS_PROP                                        0
+
+/*
+    Class property slots for the "Frame" type 
+ */
+#define ES_Frame_prototype                                             0
+
+#define ES_Frame_NUM_CLASS_PROP                                        1
 
 /*
    Prototype (instance) slots for "Frame" type 
  */
 #define ES_Frame_NUM_INSTANCE_PROP                                     0
+#define ES_Frame_NUM_INHERITED_PROP                                    0
 
-#define ES_Function_NUM_CLASS_PROP                                     0
+
+/*
+    Class property slots for the "Function" type 
+ */
+#define ES_Function_prototype                                          0
+
+#define ES_Function_NUM_CLASS_PROP                                     1
 
 /*
    Prototype (instance) slots for "Function" type 
@@ -1124,8 +1332,10 @@
 #define ES_Function_call                                               1
 #define ES_Function_boundThis                                          2
 #define ES_Function_bind                                               3
-#define ES_Function_setScope                                           4
-#define ES_Function_NUM_INSTANCE_PROP                                  5
+#define ES_Function_length                                             4
+#define ES_Function_setScope                                           5
+#define ES_Function_NUM_INSTANCE_PROP                                  6
+#define ES_Function_NUM_INHERITED_PROP                                 0
 
 
 /*
@@ -1134,13 +1344,15 @@
 #define ES_GC_enabled                                                  0
 #define ES_GC_workQuota                                                1
 #define ES_GC_run                                                      2
+#define ES_GC_prototype                                                3
 
-#define ES_GC_NUM_CLASS_PROP                                           3
+#define ES_GC_NUM_CLASS_PROP                                           4
 
 /*
    Prototype (instance) slots for "GC" type 
  */
 #define ES_GC_NUM_INSTANCE_PROP                                        0
+#define ES_GC_NUM_INHERITED_PROP                                       0
 
 /*
     Local slots for methods in type "GC" 
@@ -1190,8 +1402,9 @@
 #define ES_Http_GatewayTimeout                                         36
 #define ES_Http_VersionNotSupported                                    37
 #define ES_Http_mimeType                                               38
+#define ES_Http_prototype                                              39
 
-#define ES_Http_NUM_CLASS_PROP                                         39
+#define ES_Http_NUM_CLASS_PROP                                         40
 
 /*
    Prototype (instance) slots for "Http" type 
@@ -1265,13 +1478,20 @@
 #define ES_Http_setCallback                                            66
 #define ES_Http_chunked                                                67
 #define ES_Http_NUM_INSTANCE_PROP                                      68
+#define ES_Http_NUM_INHERITED_PROP                                     11
 
 /*
     Local slots for methods in type "Http" 
  */
 #define ES_Http_mimeType_path                                          0
 
-#define ES_iterator_Iterable_NUM_CLASS_PROP                            0
+
+/*
+    Class property slots for the "Iterable" type 
+ */
+#define ES_iterator_Iterable_prototype                                 0
+
+#define ES_iterator_Iterable_NUM_CLASS_PROP                            1
 
 /*
    Prototype (instance) slots for "Iterable" type 
@@ -1279,21 +1499,36 @@
 #define ES_iterator_Iterable_iterator_get                              0
 #define ES_iterator_Iterable_iterator_getValues                        1
 #define ES_iterator_Iterable_NUM_INSTANCE_PROP                         2
+#define ES_iterator_Iterable_NUM_INHERITED_PROP                        0
 
-#define ES_iterator_Iterator_NUM_CLASS_PROP                            0
+
+/*
+    Class property slots for the "Iterator" type 
+ */
+#define ES_iterator_Iterator_prototype                                 0
+
+#define ES_iterator_Iterator_NUM_CLASS_PROP                            1
 
 /*
    Prototype (instance) slots for "Iterator" type 
  */
 #define ES_iterator_Iterator_next                                      0
 #define ES_iterator_Iterator_NUM_INSTANCE_PROP                         1
+#define ES_iterator_Iterator_NUM_INHERITED_PROP                        0
 
-#define ES_iterator_StopIteration_NUM_CLASS_PROP                       0
+
+/*
+    Class property slots for the "StopIteration" type 
+ */
+#define ES_iterator_StopIteration_prototype                            0
+
+#define ES_iterator_StopIteration_NUM_CLASS_PROP                       1
 
 /*
    Prototype (instance) slots for "StopIteration" type 
  */
 #define ES_iterator_StopIteration_NUM_INSTANCE_PROP                    0
+#define ES_iterator_StopIteration_NUM_INHERITED_PROP                   0
 
 
 /*
@@ -1301,13 +1536,15 @@
  */
 #define ES_JSON_parse                                                  0
 #define ES_JSON_stringify                                              1
+#define ES_JSON_prototype                                              2
 
-#define ES_JSON_NUM_CLASS_PROP                                         2
+#define ES_JSON_NUM_CLASS_PROP                                         3
 
 /*
    Prototype (instance) slots for "JSON" type 
  */
 #define ES_JSON_NUM_INSTANCE_PROP                                      0
+#define ES_JSON_NUM_INHERITED_PROP                                     0
 
 /*
     Local slots for methods in type "JSON" 
@@ -1324,14 +1561,16 @@
  */
 #define ES_Locale__initializer___Locale_                               0
 #define ES_Locale_textEncoding                                         1
+#define ES_Locale_prototype                                            2
 
-#define ES_Locale_NUM_CLASS_PROP                                       2
+#define ES_Locale_NUM_CLASS_PROP                                       3
 
 /*
    Prototype (instance) slots for "Locale" type 
  */
 #define ES_Locale_Locale                                               0
 #define ES_Locale_NUM_INSTANCE_PROP                                    1
+#define ES_Locale_NUM_INHERITED_PROP                                   0
 
 
 /*
@@ -1346,8 +1585,9 @@
 #define ES_Logger_All                                                  6
 #define ES_Logger_mprLevel                                             7
 #define ES_Logger_mprStream                                            8
+#define ES_Logger_prototype                                            9
 
-#define ES_Logger_NUM_CLASS_PROP                                       9
+#define ES_Logger_NUM_CLASS_PROP                                       10
 
 /*
    Prototype (instance) slots for "Logger" type 
@@ -1390,6 +1630,7 @@
 #define ES_Logger_warn                                                 35
 #define ES_Logger_emit                                                 36
 #define ES_Logger_NUM_INSTANCE_PROP                                    37
+#define ES_Logger_NUM_INHERITED_PROP                                   11
 
 
 /*
@@ -1423,13 +1664,15 @@
 #define ES_Math_sin                                                    25
 #define ES_Math_sqrt                                                   26
 #define ES_Math_tan                                                    27
+#define ES_Math_prototype                                              28
 
-#define ES_Math_NUM_CLASS_PROP                                         28
+#define ES_Math_NUM_CLASS_PROP                                         29
 
 /*
    Prototype (instance) slots for "Math" type 
  */
 #define ES_Math_NUM_INSTANCE_PROP                                      0
+#define ES_Math_NUM_INHERITED_PROP                                     0
 
 /*
     Local slots for methods in type "Math" 
@@ -1470,22 +1713,37 @@
 #define ES_Memory_stack                                                6
 #define ES_Memory_system                                               7
 #define ES_Memory_stats                                                8
+#define ES_Memory_prototype                                            9
 
-#define ES_Memory_NUM_CLASS_PROP                                       9
+#define ES_Memory_NUM_CLASS_PROP                                       10
 
 /*
    Prototype (instance) slots for "Memory" type 
  */
 #define ES_Memory_NUM_INSTANCE_PROP                                    0
+#define ES_Memory_NUM_INHERITED_PROP                                   0
 
-#define ES_Namespace_NUM_CLASS_PROP                                    0
+
+/*
+    Class property slots for the "Namespace" type 
+ */
+#define ES_Namespace_prototype                                         0
+
+#define ES_Namespace_NUM_CLASS_PROP                                    1
 
 /*
    Prototype (instance) slots for "Namespace" type 
  */
 #define ES_Namespace_NUM_INSTANCE_PROP                                 0
+#define ES_Namespace_NUM_INHERITED_PROP                                0
 
-#define ES_Null_NUM_CLASS_PROP                                         0
+
+/*
+    Class property slots for the "Null" type 
+ */
+#define ES_Null_prototype                                              0
+
+#define ES_Null_NUM_CLASS_PROP                                         1
 
 /*
    Prototype (instance) slots for "Null" type 
@@ -1493,6 +1751,7 @@
 #define ES_Null_iterator_get                                           0
 #define ES_Null_iterator_getValues                                     1
 #define ES_Null_NUM_INSTANCE_PROP                                      2
+#define ES_Null_NUM_INHERITED_PROP                                     0
 
 
 /*
@@ -1506,8 +1765,9 @@
 #define ES_Number_POSITIVE_INFINITY                                    5
 #define ES_Number_MaxValue                                             6
 #define ES_Number_MinValue                                             7
+#define ES_Number_prototype                                            8
 
-#define ES_Number_NUM_CLASS_PROP                                       8
+#define ES_Number_NUM_CLASS_PROP                                       9
 
 /*
    Prototype (instance) slots for "Number" type 
@@ -1531,26 +1791,27 @@
 #define ES_Number_power                                                16
 #define ES_Number_toString                                             17
 #define ES_Number_NUM_INSTANCE_PROP                                    18
+#define ES_Number_NUM_INHERITED_PROP                                   0
 
 
 /*
     Class property slots for the "Object" type 
  */
-#define ES_Object_prototype                                            0
-#define ES_Object_create                                               1
-#define ES_Object_defineProperty                                       2
-#define ES_Object_defineProperties                                     3
-#define ES_Object_freeze                                               4
-#define ES_Object_getOwnPropertyDescriptor                             5
-#define ES_Object_getOwnPropertyNames                                  6
-#define ES_Object_getOwnPropertyCount                                  7
-#define ES_Object_getOwnPrototypeOf                                    8
-#define ES_Object_isExtensible                                         9
-#define ES_Object_isFrozen                                             10
-#define ES_Object_isSealed                                             11
-#define ES_Object_keys                                                 12
-#define ES_Object_preventExtensions                                    13
-#define ES_Object_seal                                                 14
+#define ES_Object_create                                               0
+#define ES_Object_defineProperty                                       1
+#define ES_Object_defineProperties                                     2
+#define ES_Object_freeze                                               3
+#define ES_Object_getOwnPropertyDescriptor                             4
+#define ES_Object_getOwnPropertyNames                                  5
+#define ES_Object_getOwnPropertyCount                                  6
+#define ES_Object_getOwnPrototypeOf                                    7
+#define ES_Object_isExtensible                                         8
+#define ES_Object_isFrozen                                             9
+#define ES_Object_isSealed                                             10
+#define ES_Object_keys                                                 11
+#define ES_Object_preventExtensions                                    12
+#define ES_Object_seal                                                 13
+#define ES_Object_prototype                                            14
 
 #define ES_Object_NUM_CLASS_PROP                                       15
 
@@ -1569,6 +1830,7 @@
 #define ES_Object_toString                                             9
 #define ES_Object_valueOf                                              10
 #define ES_Object_NUM_INSTANCE_PROP                                    11
+#define ES_Object_NUM_INHERITED_PROP                                   0
 
 /*
     Local slots for methods in type "Object" 
@@ -1593,7 +1855,13 @@
 #define ES_Object_preventExtensions_obj                                0
 #define ES_Object_seal_obj                                             0
 
-#define ES_Path_NUM_CLASS_PROP                                         0
+
+/*
+    Class property slots for the "Path" type 
+ */
+#define ES_Path_prototype                                              0
+
+#define ES_Path_NUM_CLASS_PROP                                         1
 
 /*
    Prototype (instance) slots for "Path" type 
@@ -1662,8 +1930,15 @@
 #define ES_Path_truncate                                               61
 #define ES_Path_write                                                  62
 #define ES_Path_NUM_INSTANCE_PROP                                      63
+#define ES_Path_NUM_INHERITED_PROP                                     0
 
-#define ES_Promise_NUM_CLASS_PROP                                      0
+
+/*
+    Class property slots for the "Promise" type 
+ */
+#define ES_Promise_prototype                                           0
+
+#define ES_Promise_NUM_CLASS_PROP                                      1
 
 /*
    Prototype (instance) slots for "Promise" type 
@@ -1704,8 +1979,15 @@
 #define ES_Promise_wait                                                33
 #define ES_Promise_issue                                               34
 #define ES_Promise_NUM_INSTANCE_PROP                                   35
+#define ES_Promise_NUM_INHERITED_PROP                                  21
 
-#define ES_Reflect_NUM_CLASS_PROP                                      0
+
+/*
+    Class property slots for the "Reflect" type 
+ */
+#define ES_Reflect_prototype                                           0
+
+#define ES_Reflect_NUM_CLASS_PROP                                      1
 
 /*
    Prototype (instance) slots for "Reflect" type 
@@ -1725,11 +2007,20 @@
 #define ES_Reflect_obj                                                 12
 #define ES_Reflect_base                                                13
 #define ES_Reflect_isType                                              14
-#define ES_Reflect_type                                                15
-#define ES_Reflect_name                                                16
-#define ES_Reflect_NUM_INSTANCE_PROP                                   17
+#define ES_Reflect_isPrototype                                         15
+#define ES_Reflect_type                                                16
+#define ES_Reflect_proto                                               17
+#define ES_Reflect_name                                                18
+#define ES_Reflect_NUM_INSTANCE_PROP                                   19
+#define ES_Reflect_NUM_INHERITED_PROP                                  11
 
-#define ES_RegExp_NUM_CLASS_PROP                                       0
+
+/*
+    Class property slots for the "RegExp" type 
+ */
+#define ES_RegExp_prototype                                            0
+
+#define ES_RegExp_NUM_CLASS_PROP                                       1
 
 /*
    Prototype (instance) slots for "RegExp" type 
@@ -1749,8 +2040,15 @@
 #define ES_RegExp_test                                                 12
 #define ES_RegExp_toString                                             13
 #define ES_RegExp_NUM_INSTANCE_PROP                                    14
+#define ES_RegExp_NUM_INHERITED_PROP                                   0
 
-#define ES_Socket_NUM_CLASS_PROP                                       0
+
+/*
+    Class property slots for the "Socket" type 
+ */
+#define ES_Socket_prototype                                            0
+
+#define ES_Socket_NUM_CLASS_PROP                                       1
 
 /*
    Prototype (instance) slots for "Socket" type 
@@ -1771,6 +2069,7 @@
 #define ES_Socket_removeListener                                       13
 #define ES_Socket_write                                                14
 #define ES_Socket_NUM_INSTANCE_PROP                                    15
+#define ES_Socket_NUM_INHERITED_PROP                                   0
 
 
 /*
@@ -1779,8 +2078,9 @@
 #define ES_Stream_READ                                                 0
 #define ES_Stream_WRITE                                                1
 #define ES_Stream_BOTH                                                 2
+#define ES_Stream_prototype                                            3
 
-#define ES_Stream_NUM_CLASS_PROP                                       3
+#define ES_Stream_NUM_CLASS_PROP                                       4
 
 /*
    Prototype (instance) slots for "Stream" type 
@@ -1793,14 +2093,16 @@
 #define ES_Stream_removeListener                                       5
 #define ES_Stream_write                                                6
 #define ES_Stream_NUM_INSTANCE_PROP                                    7
+#define ES_Stream_NUM_INHERITED_PROP                                   0
 
 
 /*
     Class property slots for the "String" type 
  */
 #define ES_String_fromCharCode                                         0
+#define ES_String_prototype                                            1
 
-#define ES_String_NUM_CLASS_PROP                                       1
+#define ES_String_NUM_CLASS_PROP                                       2
 
 /*
    Prototype (instance) slots for "String" type 
@@ -1851,6 +2153,7 @@
 #define ES_String_MINUS                                                43
 #define ES_String_MOD                                                  44
 #define ES_String_NUM_INSTANCE_PROP                                    45
+#define ES_String_NUM_INHERITED_PROP                                   0
 
 /*
     Local slots for methods in type "String" 
@@ -1871,13 +2174,15 @@
 #define ES_System_sh                                                   7
 #define ES_System_cmd                                                  8
 #define ES_System_exec                                                 9
+#define ES_System_prototype                                            10
 
-#define ES_System_NUM_CLASS_PROP                                       10
+#define ES_System_NUM_CLASS_PROP                                       11
 
 /*
    Prototype (instance) slots for "System" type 
  */
 #define ES_System_NUM_INSTANCE_PROP                                    0
+#define ES_System_NUM_INHERITED_PROP                                   0
 
 /*
     Local slots for methods in type "System" 
@@ -1889,7 +2194,13 @@
 #define ES_System_cmd_args                                             0
 #define ES_System_exec_args                                            0
 
-#define ES_TextStream_NUM_CLASS_PROP                                   0
+
+/*
+    Class property slots for the "TextStream" type 
+ */
+#define ES_TextStream_prototype                                        0
+
+#define ES_TextStream_NUM_CLASS_PROP                                   1
 
 /*
    Prototype (instance) slots for "TextStream" type 
@@ -1925,8 +2236,15 @@
 #define ES_TextStream_write                                            28
 #define ES_TextStream_writeLine                                        29
 #define ES_TextStream_NUM_INSTANCE_PROP                                30
+#define ES_TextStream_NUM_INHERITED_PROP                               11
 
-#define ES_Timer_NUM_CLASS_PROP                                        0
+
+/*
+    Class property slots for the "Timer" type 
+ */
+#define ES_Timer_prototype                                             0
+
+#define ES_Timer_NUM_CLASS_PROP                                        1
 
 /*
    Prototype (instance) slots for "Timer" type 
@@ -1937,8 +2255,15 @@
 #define ES_Timer_restart                                               3
 #define ES_Timer_stop                                                  4
 #define ES_Timer_NUM_INSTANCE_PROP                                     5
+#define ES_Timer_NUM_INHERITED_PROP                                    0
 
-#define ES_TimerEvent_NUM_CLASS_PROP                                   0
+
+/*
+    Class property slots for the "TimerEvent" type 
+ */
+#define ES_TimerEvent_prototype                                        0
+
+#define ES_TimerEvent_NUM_CLASS_PROP                                   1
 
 /*
    Prototype (instance) slots for "TimerEvent" type 
@@ -1959,13 +2284,21 @@
 #define ES_TimerEvent_timestamp                                        13
 #define ES_TimerEvent_TimerEvent                                       14
 #define ES_TimerEvent_NUM_INSTANCE_PROP                                15
+#define ES_TimerEvent_NUM_INHERITED_PROP                               14
 
-#define ES_Type_NUM_CLASS_PROP                                         0
+
+/*
+    Class property slots for the "Type" type 
+ */
+#define ES_Type_prototype                                              0
+
+#define ES_Type_NUM_CLASS_PROP                                         1
 
 /*
    Prototype (instance) slots for "Type" type 
  */
 #define ES_Type_NUM_INSTANCE_PROP                                      0
+#define ES_Type_NUM_INHERITED_PROP                                     0
 
 
 /*
@@ -1975,8 +2308,9 @@
 #define ES_Uri_decodeComponent                                         1
 #define ES_Uri_encode                                                  2
 #define ES_Uri_encodeComponent                                         3
+#define ES_Uri_prototype                                               4
 
-#define ES_Uri_NUM_CLASS_PROP                                          4
+#define ES_Uri_NUM_CLASS_PROP                                          5
 
 /*
    Prototype (instance) slots for "Uri" type 
@@ -2020,6 +2354,7 @@
 #define ES_Uri_trimStart                                               36
 #define ES_Uri_uri                                                     37
 #define ES_Uri_NUM_INSTANCE_PROP                                       38
+#define ES_Uri_NUM_INHERITED_PROP                                      0
 
 /*
     Local slots for methods in type "Uri" 
@@ -2029,7 +2364,13 @@
 #define ES_Uri_encode_str                                              0
 #define ES_Uri_encodeComponent_str                                     0
 
-#define ES_Void_NUM_CLASS_PROP                                         0
+
+/*
+    Class property slots for the "Void" type 
+ */
+#define ES_Void_prototype                                              0
+
+#define ES_Void_NUM_CLASS_PROP                                         1
 
 /*
    Prototype (instance) slots for "Void" type 
@@ -2037,6 +2378,7 @@
 #define ES_Void_iterator_get                                           0
 #define ES_Void_iterator_getValues                                     1
 #define ES_Void_NUM_INSTANCE_PROP                                      2
+#define ES_Void_NUM_INHERITED_PROP                                     0
 
 
 /*
@@ -2045,8 +2387,9 @@
 #define ES_Worker_exit                                                 0
 #define ES_Worker_join                                                 1
 #define ES_Worker_lookup                                               2
+#define ES_Worker_prototype                                            3
 
-#define ES_Worker_NUM_CLASS_PROP                                       3
+#define ES_Worker_NUM_CLASS_PROP                                       4
 
 /*
    Prototype (instance) slots for "Worker" type 
@@ -2075,6 +2418,7 @@
 #define ES_Worker_terminate                                            21
 #define ES_Worker_waitForMessage                                       22
 #define ES_Worker_NUM_INSTANCE_PROP                                    23
+#define ES_Worker_NUM_INHERITED_PROP                                   11
 
 /*
     Local slots for methods in type "Worker" 
@@ -2083,7 +2427,13 @@
 #define ES_Worker_join_timeout                                         1
 #define ES_Worker_lookup_name                                          0
 
-#define ES_XML_NUM_CLASS_PROP                                          0
+
+/*
+    Class property slots for the "XML" type 
+ */
+#define ES_XML_prototype                                               0
+
+#define ES_XML_NUM_CLASS_PROP                                          1
 
 /*
    Prototype (instance) slots for "XML" type 
@@ -2113,6 +2463,7 @@
 #define ES_XML_toString                                                22
 #define ES_XML_valueOf                                                 23
 #define ES_XML_NUM_INSTANCE_PROP                                       24
+#define ES_XML_NUM_INHERITED_PROP                                      0
 
 
 /*
@@ -2124,8 +2475,9 @@
 #define ES_XMLHttp_Sent                                                3
 #define ES_XMLHttp_Receiving                                           4
 #define ES_XMLHttp_Loaded                                              5
+#define ES_XMLHttp_prototype                                           6
 
-#define ES_XMLHttp_NUM_CLASS_PROP                                      6
+#define ES_XMLHttp_NUM_CLASS_PROP                                      7
 
 /*
    Prototype (instance) slots for "XMLHttp" type 
@@ -2162,8 +2514,15 @@
 #define ES_XMLHttp_callback                                            29
 #define ES_XMLHttp_notify                                              30
 #define ES_XMLHttp_NUM_INSTANCE_PROP                                   31
+#define ES_XMLHttp_NUM_INHERITED_PROP                                  11
 
-#define ES_XMLList_NUM_CLASS_PROP                                      0
+
+/*
+    Class property slots for the "XMLList" type 
+ */
+#define ES_XMLList_prototype                                           0
+
+#define ES_XMLList_NUM_CLASS_PROP                                      1
 
 /*
    Prototype (instance) slots for "XMLList" type 
@@ -2190,7 +2549,8 @@
 #define ES_XMLList_toString                                            19
 #define ES_XMLList_valueOf                                             20
 #define ES_XMLList_NUM_INSTANCE_PROP                                   21
+#define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1279110
+#define _ES_CHECKSUM_ejs   1347719
 
 #endif

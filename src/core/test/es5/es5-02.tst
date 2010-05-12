@@ -2,7 +2,6 @@
     Test ES5 Object and property attributes
  */
 
-/*  MOB
 var o = {
     shape: "rectangle",
 }
@@ -97,5 +96,3 @@ assert(d.configurable)
 assert(d.namespace == "")
 assert(d.enumerable)
 assert(d.writable)
-
-*/

@@ -27,7 +27,7 @@ module ejs {
         native function Reflect(o: Object)
 
         /**
-            The base class of the object being examined
+            The base class of the object being examined. If the object is a type, this is the super class of the type.
          */
         native function get base(): Type
 
@@ -36,14 +36,17 @@ module ejs {
             @return True if the object is a type object
          */
         native function get isType(): Boolean
+        native function get isPrototype(): Boolean
 
         /**
-            The type (base class) of the object
+            The type of the object. If the object is an instance, this is the class type object. If the object is a
+            type, this value is "Type".
          */
         native function get type(): Type
+        native function get proto(): Object
 
         /**
-            The name of the object if it is a type object
+            The name of the object if it is a type object. Otherwise empty.
          */
         native function get name(): String
 
@@ -51,7 +54,7 @@ module ejs {
 
     /**
         Return the name of a type. This is a fixed version of the standard "typeof" operator. It returns the real
-        Ejscript underlying type. 
+        Ejscript underlying type name. 
         @param o Object or value to examine. 
         @return A string type name. 
         @spec ejs
