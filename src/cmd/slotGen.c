@@ -102,7 +102,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 
     ejsName(&qname, EJS_EJS_NAMESPACE, EJS_GLOBAL);
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
-    type = ejsCreateType(ejs, &qname, NULL, NULL, sizeof(EjsType), slotNum, ejs->global->numSlots, 0, 0, NULL);
+    type = ejsCreateType(ejs, &qname, NULL, NULL, NULL, sizeof(EjsType), slotNum, ejs->global->numSlots, 0, 0, NULL);
     type->block = *ejs->globalBlock;
     type->block.obj.type = ejs->typeType;
     type->block.obj.isType = 1;

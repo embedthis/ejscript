@@ -1261,6 +1261,7 @@ typedef struct EjsFunction {
 extern EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *code, int codeLen, int numArgs, int numDefault,
     int numExceptions, struct EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, 
     int strict);
+extern EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, cchar *name, int attributes);
 
 extern EjsObj *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numSlots);
 extern void ejsCompleteFunction(Ejs *ejs, EjsFunction *fun);
@@ -2669,15 +2670,15 @@ typedef struct EjsType {
     @param data
     @ingroup EjsType EjsType
  */
-extern EjsType *ejsCreateType(Ejs *ejs, EjsName *name, struct EjsModule *up, EjsType *baseType, int size, 
-    int slotNum, int numTypeProp, int numInstanceProp, int64 attributes, void *data);
+extern EjsType *ejsCreateType(Ejs *ejs, EjsName *name, struct EjsModule *up, EjsType *baseType, EjsObj *prototype,
+    int size, int slotNum, int numTypeProp, int numInstanceProp, int64 attributes, void *data);
 
 extern EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, struct EjsModule *up, EjsType *baseType, 
     int numTypeProp, int numInstanceProp, int64 attributes);
 extern void ejsCompleteType(Ejs *ejs, EjsType *type);
 
 extern EjsObj *ejsCreatePrototype(Ejs *ejs, EjsType *type, int numProp);
-extern EjsType *ejsCreateTypeFromFunction(Ejs *ejs, struct EjsFunction *fun);
+extern EjsType *ejsCreateTypeFromFunction(Ejs *ejs, struct EjsFunction *fun, EjsObj *prototype);
 
 /** 
     Define a global function

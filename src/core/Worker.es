@@ -149,19 +149,19 @@ module ejs {
 
     /**
         Reference to the Worker object for use inside a worker script
-        @returns a Worker object
+        This is only present inside Worker scripts.
      */
     var self: Worker
 
     /**
-        Exit the worker
+        Exit the worker. This is only valid inside Worker scripts.
         @spec ejs
      */
     function exit(): Void
         Worker.exit()
 
     /**
-        Post a message to the Worker's parent
+        Post a message to the Worker's parent. This is only valid inside Worker scripts.
         @param data Data to pass to the worker's onmessage callback.
         @param ports Not implemented
      */
@@ -169,14 +169,13 @@ module ejs {
         self.postMessage(data, ports)
 
     /**
-        The error callback function
+        The error callback function.  This is the callback function to receive incoming data from postMessage() calls.
+        This is only present inside Worker scripts.
      */
     function get onerror(): Function
         self.onerror
 
     /**
-        Set the error callback function
-        @param fun Callback function to receive incoming data from postMessage() calls.
      */
     function set onerror(fun: Function): Void {
         self.onerror = fun
@@ -184,18 +183,18 @@ module ejs {
 
     /**
         The callback function configured to receive incoming messages. 
+        This is the callback function to receive incoming data from postMessage() calls.
+        This is only present inside Worker scripts.
      */
     function get onmessage(): Function
         self.onmessage
 
     /**
-        Set the callback function to receive incoming messages. 
-        @param fun Callback function to receive incoming data from postMessage() calls.
      */
     function set onmessage(fun: Function): Void {
         self.onmessage = fun
     }
 
-    # WebWorker // Only relevant in browsers 
+    # WebWorker         // Only relevant in browsers 
     var location: WorkerLocation
 }

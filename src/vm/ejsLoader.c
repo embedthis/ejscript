@@ -559,7 +559,8 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
         slotNum = ejs->globalBlock->obj.numSlots;
     }
     if (type == 0) {
-        type = ejsCreateType(ejs, &qname, mp, baseType, sizeof(EjsObj), slotNum, numTypeProp, numInstanceProp, attributes,0);
+        type = ejsCreateType(ejs, &qname, mp, baseType, NULL, sizeof(EjsObj), slotNum, numTypeProp, 
+            numInstanceProp, attributes,0);
         if (type == 0) {
             ejsThrowInternalError(ejs, "Can't create class %s", qname.name);
             return MPR_ERR_BAD_STATE;

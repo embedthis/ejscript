@@ -2071,7 +2071,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 if (ejsIsFunction(v1)) {
                     fun = (EjsFunction*) v1;
                     if (fun->creator == 0) {
-                        fun->creator = ejsCreateTypeFromFunction(ejs, fun);
+                        fun->creator = ejsCreateTypeFromFunction(ejs, fun, NULL);
                     }
                     obj = ejsCreate(ejs, fun->creator, 0);
                 } else {
@@ -2405,7 +2405,9 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, EjsName *qname
         }
         slotNum = ejsSetPropertyName(ejs, obj, slotNum, qname);
     }
-    storePropertyToSlot(ejs, thisObj, obj, slotNum, value);
+    if (!ejs->exception) {
+        storePropertyToSlot(ejs, thisObj, obj, slotNum, value);
+    }
 }
 
 
@@ -2727,6 +2729,7 @@ static void callConstructor(Ejs *ejs, EjsFunction *vp, int argc, int stackAdjust
             /*
                 Constructor is always at slot 0, offset by inherited propertie
              */
+//ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
             slotNum = type->numInherited;
             fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
 

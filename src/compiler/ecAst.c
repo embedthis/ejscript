@@ -516,7 +516,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         Create the class type object
      */
     allocName(ejs, &np->qname);
-    type = ejsCreateType(ejs, &np->qname, state->currentModule, NULL, sizeof(EjsObj), slotNum, 0, 0, attributes, np);
+    type = ejsCreateType(ejs, &np->qname, state->currentModule, NULL, NULL, sizeof(EjsObj), slotNum, 0, 0, attributes, np);
     if (type == 0) {
         astError(cp, np, "Can't create type %s", type->qname.name);
         return 0;

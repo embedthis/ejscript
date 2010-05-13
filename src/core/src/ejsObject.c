@@ -581,6 +581,7 @@ int ejsGetSlot(Ejs *ejs, EjsObj *obj, int slotNum)
     mprAssert(obj->numSlots <= obj->sizeSlots);
 
     if (slotNum < 0) {
+        //  MOB - should this be here or only in the VM. probably only in the VM.
         if (!obj->dynamic) {
             if (obj == ejs->nullValue) {
                 ejsThrowReferenceError(ejs, "Object is null");
@@ -1082,7 +1083,7 @@ void ejsClearObjHash(EjsObj *obj)
     mprAssert(obj);
 
     if (obj->hash) {
-        memset(obj->hash, -1, obj->hash->size * sizeof(int));
+        memset(obj->hash->buckets, -1, obj->hash->size * sizeof(int));
         for (sp = obj->slots, i = 0; i < obj->numSlots; i++, sp++) {
             sp->hashChain = -1;
         }
@@ -1285,12 +1286,12 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (ejsIsType(prototype)) {
         type = (EjsType*) prototype;
     } else {
-        type = ejs->objectType;
         fun = (EjsFunction*) ejsGetPropertyByName(ejs, prototype, ejsName(&qname, EJS_EJS_NAMESPACE, "constructor"));
         if (fun && ejsIsFunction(fun) && fun->creator) {
             type = fun->creator;
         } else {
-            ejsCreateTypeFromFunction(ejs, fun);
+            fun = (EjsFunction*) ejsCreateSimpleFunction(ejs, "constructor", EJS_TRAIT_FIXED | EJS_TRAIT_HIDDEN);
+            type = ejsCreateTypeFromFunction(ejs, fun, prototype);
         }
     }
     obj = ejsCreateObject(ejs, type, 0);

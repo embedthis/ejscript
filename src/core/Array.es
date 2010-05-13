@@ -158,9 +158,10 @@ module ejs {
             The matching function is called with the following signature:
                 function match(element: Object, elementIndex: Number, arr: Array): Boolean
             @param callback Transforming function
-            @return Returns a new array of transformed elements.
+            @param thisObj Object to use for the "this" value when invoking the callback
+            @return Returns the original (transformed) array.
          */
-        function forEach(callback: Function, thisObj: Object? = null): Void {
+        function forEach(callback: Function, thisObj: Object? = null): Array {
             if (thisObj) {
                 for (let i: Number in this) {
                     callback.call(thisObj, this[i], i, this)
@@ -170,6 +171,7 @@ module ejs {
                     callback(this[i], i, this)
                 }
             }
+            return this
         }
 
         /**
@@ -226,7 +228,7 @@ module ejs {
                 whole array will be searched.
             @return The items index into the array if found, otherwise -1.
          */
-        native function lastIndexOf(element: Object, startIndex: Number = 0): Number
+        native function lastIndexOf(element: Object, startIndex: Number = -1): Number
 
         /**
             Length of an array.
@@ -349,12 +351,12 @@ module ejs {
         }
 
         /**
-            Sort the array using the supplied compare function
+            Sort the array. The array is sorted in lexical order. A compare function may be supplied.
             @param compare Function to use to compare. A null comparator will use a text compare. The compare signature is:
                 function comparator (array: Array, index1: Number, index2: Number): Number
                 The comparison function should return 0 if the items are equal, -1 if the item at index1 is less and should
                 return 1 otherwise.
-            @param order If order is >= 0, then an ascending order is used. Otherwise descending.
+            @param order If order is >= 0, then an ascending lexical order is used. Otherwise descending.
             @return the sorted array reference
             @spec ejs Added the order argument.
          */
@@ -417,8 +419,7 @@ module ejs {
             @param items to insert
             @return Returns the array reference
          */
-        function unshift(...items): Object
-            insert(0, items)
+        native function unshift(...items): Array
 
         /**
             Array intersection. Return the elements that appear in both arrays. 

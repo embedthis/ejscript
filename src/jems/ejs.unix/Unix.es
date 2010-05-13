@@ -27,7 +27,7 @@ module ejs.unix {
     /**
         Set the permissions of a file or directory
         @param path File or directory to modify
-        @param perms New Posix style permission mask
+        @param perms Posix style permission mask
      */
     function chmod(path: String, perms: Number): Void
         Path(path).perms = perms
@@ -69,10 +69,10 @@ module ejs.unix {
         Path(path).exists
 
     /**
-        Get the file extension portion of the file name. The file extension is the portion starting with the last "."
-        in the path. It thus includes "." as the first charcter.
+        Get the file extension portion of the file name. The file extension is the portion after the last "."
+        in the path.
         @param path Filename path to examine
-        @return String containing the file extension. It includes "." as the first character.
+        @return String containing the file extension. It excludes "." as the first character.
      */
     function extension(path: String): String
         Path(path).extension
@@ -159,12 +159,12 @@ module ejs.unix {
     /*  DEPRECATED
         Open or create a file
         @param path Filename path to open
-        @param mode optional file access mode with values ored from: Read, Write, Append, Create, Open, Truncate. 
+        @param mode optional file access mode with values values from: Read, Write, Append, Create, Open, Truncate. 
             Defaults to Read.
         @param permissions optional permissions. Defaults to App.permissions
         @return a File object which implements the Stream interface
         @throws IOError if the path or file cannot be opened or created.
-    function open(path: String, mode: Number = Read, permissions: Number = 0644): File
+    function open(path: String, mode: String = "r", permissions: Number = 0644): File
         new File(path, { mode: mode, permissions: permissions})
      */
 
@@ -218,7 +218,7 @@ module ejs.unix {
         @returns a closed File object after creating an empty temporary file.
      */
     function tempname(directory: String? = null): File
-        FileSystem.makeTemp(directory)
+        Path(directory).makeTemp()
 
     /*  DEPRECATED
         Write data to the file. If the stream is in sync mode, the write call blocks until the underlying stream or 

@@ -88,7 +88,7 @@ function MyShape(height, width) {
     return this
 }
 s = new MyShape(100, 200)
-assert(Object.getOwnPrototypeOf(s) === Reflect(s).type)
+// assert(Object.getOwnPrototypeOf(s) === Reflect(s).type)
 
 assert(Object.getOwnPrototypeOf(s) === MyShape.prototype)
 assert(MyShape.prototype.isPrototypeOf(s))

@@ -77,8 +77,8 @@ module ejs {
         native function close(): Void
 
         /** 
-            Compact available data down and adjust the read/write positions accordingly. This moves available room to
-            the end of the byte array.
+            Compact available data down and adjust the read/write positions accordingly. This sets the read pointer 
+            to the zero index and adjusts the write pointer by the corresponding amount.
          */
         native function compact(): Void
 
@@ -397,17 +397,16 @@ module ejs {
         }
 
         /**  
+            Output function to process (output) data. The output callback should read from the supplied buffer.
             LEGACY DEPRECATED 1.0.0B3
+            @param callback Function to invoke when the byte array is full or flush() is called.
+                function outputCallback(buffer: ByteArray): Number
             @hide
          */
         function get output(): Function { return null; } 
 
         //  LEGACY DEPRECATED 1.0.0B3
         /** 
-            Define an output function to process (output) data. The output callback should read from the supplied buffer.
-            @param callback Function to invoke when the byte array is full or flush() is called.
-                function outputCallback(buffer: ByteArray): Number
-            @hide
          */
         function set output(callback: Function): Void {
             addListener("readable", function(event: String, ba: ByteArray): Void {

@@ -193,7 +193,7 @@ module ejs.db {
             @returns the count of rows in a table in the currently opened database.
          */
         function getNumRows(table: String): Number
-            _adapter.getNumRows()
+            _adapter.getNumRows(table)
 
         /**
             The name of the database.

@@ -204,7 +204,7 @@ EjsType *ejsCreateCoreType(Ejs *ejs, EjsName *qname, EjsType *baseType, int inst
 {
     EjsType     *type;
 
-    type = ejsCreateType(ejs, qname, NULL, baseType, instanceSize, id, numTypeProp, numInstanceProp, attributes, 0);
+    type = ejsCreateType(ejs, qname, NULL, baseType, NULL, instanceSize, id, numTypeProp, numInstanceProp, attributes, 0);
     if (type == 0) {
         ejs->hasError = 1;
         return 0;
@@ -238,7 +238,7 @@ EjsType *ejsConfigureNativeType(Ejs *ejs, cchar *space, cchar *name, int instanc
 }
 
 
-EjsType *ejsCreateTypeFromFunction(Ejs *ejs, EjsFunction *fun)
+EjsType *ejsCreateTypeFromFunction(Ejs *ejs, EjsFunction *fun, EjsObj *prototype)
 {
     EjsName     qname;
     EjsType     *type;
@@ -247,7 +247,7 @@ EjsType *ejsCreateTypeFromFunction(Ejs *ejs, EjsFunction *fun)
 
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
 
-    type = ejsCreateType(ejs, ejsName(&qname, EJS_PROTOTYPE_NAMESPACE, fun->name), NULL, ejs->objectType, 
+    type = ejsCreateType(ejs, ejsName(&qname, EJS_PROTOTYPE_NAMESPACE, fun->name), NULL, ejs->objectType, prototype,
         ejs->objectType->instanceSize, slotNum, 0, 0, EJS_TYPE_DYNAMIC_INSTANCE | EJS_TYPE_HAS_CONSTRUCTOR, NULL);
     if (type == 0) {
         return 0;
@@ -334,8 +334,8 @@ int ejsBootstrapTypes(Ejs *ejs)
     returned EjsType will be an instance of EjsType. numTypeProp and  numInstanceProp should be set to the number
     of non-inherited properties.
  */
-EjsType *ejsCreateType(Ejs *ejs, EjsName *qname, EjsModule *up, EjsType *baseType, int instanceSize, int typeId, 
-        int numTypeProp, int numInstanceProp, int64 attributes, void *typeData)
+EjsType *ejsCreateType(Ejs *ejs, EjsName *qname, EjsModule *up, EjsType *baseType, EjsObj *prototype, 
+        int instanceSize, int typeId, int numTypeProp, int numInstanceProp, int64 attributes, void *typeData)
 {
     EjsType     *type;
     
@@ -358,10 +358,14 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName *qname, EjsModule *up, EjsType *baseTyp
 
     ejsCloneObjectHelpers(ejs, type);
 
-    if ((type->prototype = ejsCreateObject(ejs, ejs->objectType, numInstanceProp)) == 0) {
-        return 0;
+    if (prototype) {
+        type->prototype = prototype;
+    } else {
+        if ((type->prototype = ejsCreateObject(ejs, ejs->objectType, numInstanceProp)) == 0) {
+            return 0;
+        }
+        ejsSetDebugName(type->prototype, mprStrcat(type, -1, type->qname.name, "-Prototype", NULL));
     }
-    ejsSetDebugName(type->prototype, mprStrcat(type, -1, type->qname.name, "-Prototype", NULL));
     type->prototype->isPrototype = 1;
 
     if (baseType && ejsFixupType(ejs, type, baseType, 0) < 0) {

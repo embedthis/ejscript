@@ -264,12 +264,9 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *byteCode, int code
     EjsFunction     *fun;
     EjsCode         *code;
 
-    fun = (EjsFunction*) ejsCreate(ejs, ejs->functionType, 0);
-    if (fun == 0) {
+    if ((fun = ejsCreateSimpleFunction(ejs, name, attributes)) == 0) {
         return 0;
     }
-    fun->name = mprStrdup(fun, name);
-    ejsSetDebugName(fun, fun->name);
     if (scope) {
         fun->block.scope = scope;
     }
@@ -277,6 +274,25 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *byteCode, int code
     fun->numDefault = numDefault;
     fun->resultType = resultType;
     fun->strict = strict;
+    code = &fun->body.code;
+    code->codeLen = codeLen;
+    code->byteCode = (uchar*) byteCode;
+    code->numHandlers = numExceptions;
+    code->constants = constants;
+    return fun;
+}
+
+
+EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, cchar *name, int attributes)
+{
+    EjsFunction     *fun;
+
+    fun = (EjsFunction*) ejsCreate(ejs, ejs->functionType, 0);
+    if (fun == 0) {
+        return 0;
+    }
+    fun->name = mprStrdup(fun, name);
+    ejsSetDebugName(fun, fun->name);
 
     //  MOB -- convert these all back to a simple bit mask
     if (attributes & EJS_FUN_CONSTRUCTOR) {
@@ -309,11 +325,6 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *byteCode, int code
     if (attributes & EJS_TRAIT_THROW_NULLS) {
         fun->throwNulls = 1;
     }
-    code = &fun->body.code;
-    code->codeLen = codeLen;
-    code->byteCode = (uchar*) byteCode;
-    code->numHandlers = numExceptions;
-    code->constants = constants;
     return fun;
 }
 

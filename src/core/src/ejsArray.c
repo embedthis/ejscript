@@ -1018,7 +1018,9 @@ static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     mprAssert(ejsIsArray(ap));
 
     length = (int) ((EjsNumber*) argv[0])->value;
-
+    if (length < 0) {
+        length = 0;
+    }
     if (length > ap->length) {
         if (growArray(ejs, ap, length) < 0) {
             return 0;
@@ -1477,6 +1479,39 @@ static EjsObj *uniqueArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 }
 
 
+/*
+    function unshift(...args): Array
+ */
+static EjsVar *unshiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsVar **argv)
+{
+    EjsArray    *args;
+    EjsObj      **src, **dest;
+    int         i, delta, oldLen, endInsert;
+
+    mprAssert(argc == 1 && ejsIsArray(argv[0]));
+
+    args = (EjsArray*) argv[0];
+    if (args->length <= 0) {
+        return (EjsObj*) ap;
+    }
+    oldLen = ap->length;
+    if (growArray(ejs, ap, ap->length + args->length) < 0) {
+        return 0;
+    }
+    delta = args->length;
+    dest = ap->data;
+    src = args->data;
+
+    endInsert = delta;
+    for (i = ap->length - 1; i >= endInsert; i--) {
+        dest[i] = dest[i - delta];
+    }
+    for (i = 0; i < delta; i++) {
+        dest[i] = src[i];
+    }
+    return (EjsObj*) ap;
+}
+
 /*********************************** Support **********************************/
 
 static int growArray(Ejs *ejs, EjsArray *ap, int len)
@@ -1616,6 +1651,7 @@ void ejsConfigureArrayType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Array_sort, (EjsProc) sortArray);
     ejsBindMethod(ejs, prototype, ES_Array_splice, (EjsProc) spliceArray);
     ejsBindMethod(ejs, prototype, ES_Array_unique, (EjsProc) uniqueArray);
+    ejsBindMethod(ejs, prototype, ES_Array_unshift, (EjsProc) unshiftArray);
 
 #if FUTURE
     ejsBindMethod(ejs, prototype, ES_Array_toLocaleString, toLocaleString);

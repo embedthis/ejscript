@@ -752,7 +752,8 @@ static void generateClassPages(EjsMod *mp)
     }
 
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
-    type = ejsCreateType(ejs, &qname, NULL, NULL, sizeof(EjsType), slotNum, ejs->globalBlock->obj.numSlots, 0, 0, NULL);
+    type = ejsCreateType(ejs, &qname, NULL, NULL, NULL, sizeof(EjsType), slotNum, ejs->globalBlock->obj.numSlots, 
+        0, 0, NULL);
     type->block = *ejs->globalBlock;
     type->block.obj.type = ejs->typeType;
     type->block.obj.isType = 1;
