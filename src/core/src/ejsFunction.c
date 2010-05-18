@@ -99,6 +99,8 @@ static void destroyFunction(Ejs *ejs, EjsFunction *fun)
 }
 
 
+#if UNUSED
+//  MOB -- can this be deleted and just use the Object version
 static EjsObj *getFunctionProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 {
     EjsObj      *vp;
@@ -123,28 +125,44 @@ static EjsObj *getFunctionProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 #endif
     return vp;
 }
+#endif
 
 
 /*
     Lookup a property with a namespace qualifier in an object and return the slot if found. Return EJS_ERR if not found.
  */
-static int lookupFunctionProperty(struct Ejs *ejs, EjsFunction *fun, EjsName *qname)
+int ejsLookupFunctionProperty(Ejs *ejs, EjsFunction *fun, EjsName *qname)
 {
-#if UNUSED
-    EjsName     name;
+    EjsName     pname;
     EjsObj      *prototype;
-#endif
     int         slotNum;
 
     slotNum = (ejs->objectType->helpers.lookupProperty)(ejs, (EjsObj*) fun, qname);
 
-#if UNUSED
-    if (slotNum < 0 && qname->name[0] == 'p' && strcmp(qname->name, "prototype") == 0 && qname->space[0] == '\0') {
-        prototype = ejsCreatePrototype(ejs, type, 0);
-        ejsDefineProperty(ejs, (EjsObj*) fun, ES_Object_prototype, ejsName(&name, "", "prototype"),
-            ejs->objectType, 0, prototype);
+    if (slotNum < 0 && !ejs->compiling && qname->name[0] == 'p' && strcmp(qname->name, "prototype") == 0 && 
+            (qname->space == NULL || qname->space[0] == '\0')) {
+        prototype = 0;
+        if (ejsIsType(fun)) {
+            prototype = ((EjsType*) fun)->prototype;
+        } else {
+            /*
+                On-demand creation of the prototype object. Don't call ejsDefineProperty as it can go recursive.
+             */
+            if (prototype == 0) {
+                prototype = ejsCreateObject(ejs, ejs->objectType, 0);
+            }
+            mprAssert(prototype->dynamic);
+            if ((slotNum = ejsSetProperty(ejs, (EjsObj*) fun, -1, prototype)) < 0) {
+                return EJS_ERR;
+            }
+            if (ejsSetPropertyName(ejs, (EjsObj*) fun, slotNum, ejsName(&pname, "", qname->name)) < 0) {
+                return EJS_ERR;
+            }
+            if (ejsSetPropertyTrait(ejs, (EjsObj*) fun, slotNum, ejs->objectType, EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED) < 0) {
+                return EJS_ERR;
+            }
+        }
     }
-#endif
     return slotNum;
 }
 
@@ -158,8 +176,8 @@ void ejsMarkFunction(Ejs *ejs, EjsFunction *fun)
     if (fun->setter) {
         ejsMark(ejs, (EjsObj*) fun->setter);
     }
-    if (fun->creator) {
-        ejsMark(ejs, (EjsObj*) fun->creator);
+    if (fun->template) {
+        ejsMark(ejs, (EjsObj*) fun->template);
     }
     if (fun->thisObj) {
         ejsMark(ejs, fun->thisObj);
@@ -519,9 +537,11 @@ void ejsCreateFunctionType(Ejs *ejs)
     helpers->cast           = (EjsCastHelper) castFunction;
     helpers->clone          = (EjsCloneHelper) ejsCloneFunction;
     helpers->destroy        = (EjsDestroyHelper) destroyFunction;
+#if UNUSED
     helpers->getProperty    = (EjsGetPropertyHelper) getFunctionProperty;
+#endif
     helpers->mark           = (EjsMarkHelper) ejsMarkFunction;
-    helpers->lookupProperty = (EjsLookupPropertyHelper) lookupFunctionProperty;
+    helpers->lookupProperty = (EjsLookupPropertyHelper) ejsLookupFunctionProperty;
 
     nop = ejs->nopFunction = ejsCreateFunction(ejs, "nop", NULL, 0, -1, 0, 0, NULL, EJS_PROP_NATIVE, NULL, NULL, 0);
     nop->body.proc = nopFunction;

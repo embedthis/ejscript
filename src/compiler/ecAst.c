@@ -490,9 +490,6 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         attributes |= EJS_TYPE_INTERFACE;
     }
         
-    /*
-        Create the class type object
-     */
     allocName(ejs, &np->qname);
     type = ejsCreateType(ejs, &np->qname, state->currentModule, NULL, NULL, sizeof(EjsObj), slotNum, 0, 0, attributes, np);
     if (type == 0) {
@@ -517,7 +514,6 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         astError(cp, np, "Can't install type %s",  np->qname.name);
         return 0;
     }
-
     if (!type->isInterface) {
         /*
             Reserve one slot for the static initializer to ensure it is the first non-inherited slot.
@@ -532,6 +528,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         if (constructorNode && !constructorNode->function.isDefaultConstructor) {
             type->hasConstructor = 1;
         }
+        ejsDefineProperty(ejs, (EjsObj*) type, 1, ejsName(&qname, "", "prototype"), ejs->objectType, fatt, type->prototype);
     }
     return type;
 }

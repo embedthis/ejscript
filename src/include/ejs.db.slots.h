@@ -22,10 +22,10 @@
 /*
     Class property slots for the "Database" type 
  */
-#define ES_ejs_db_Database_defaultDb                                   0
-#define ES_ejs_db_Database_defaultDatabase                             1
-#define ES_ejs_db_Database_quote                                       2
-#define ES_ejs_db_Database_prototype                                   3
+#define ES_ejs_db_Database_prototype                                   0
+#define ES_ejs_db_Database_defaultDb                                   1
+#define ES_ejs_db_Database_defaultDatabase                             2
+#define ES_ejs_db_Database_quote                                       3
 
 #define ES_ejs_db_Database_NUM_CLASS_PROP                              4
 
@@ -84,13 +84,7 @@
  */
 #define ES_ejs_db_Database_quote_str                                   0
 
-
-/*
-    Class property slots for the "DatabaseConnector" type 
- */
-#define ES_ejs_db_DatabaseConnector_prototype                          0
-
-#define ES_ejs_db_DatabaseConnector_NUM_CLASS_PROP                     1
+#define ES_ejs_db_DatabaseConnector_NUM_CLASS_PROP                     0
 
 /*
    Prototype (instance) slots for "DatabaseConnector" type 
@@ -120,6 +114,6 @@
 #define ES_ejs_db_DatabaseConnector_NUM_INSTANCE_PROP                  22
 #define ES_ejs_db_DatabaseConnector_NUM_INHERITED_PROP                 0
 
-#define _ES_CHECKSUM_ejs_db   124596
+#define _ES_CHECKSUM_ejs_db   123582
 
 #endif

@@ -18,6 +18,10 @@ function Rectangle(h, w) {
 }
 Rectangle.prototype = new Shape()
 Rectangle.prototype.constructor = Rectangle
+
+
+//  Call a base class
+Shape.prototype.area.call(r, args)
     
 -------------------------------------------
 /*

@@ -80,7 +80,9 @@ let caught = false
 try { delete e.temporary; } catch { caught = true; }
 assert(caught)
 
+
 //  Test attributes 
+
 d = Object.getOwnPropertyDescriptor(e, "shape")
 assert(!d.configurable)
 assert(!d.enumerable)

@@ -7,8 +7,9 @@
 module ejs {
 
     /*
+        MOB - REVISE
         The Type class is unlike other class definitions. Rather than provide definitions that are accessed via
-        the prototype chain, these properties are copied directly into other types.
+        the base-class and prototype chain, these properties are cloned directly into all types.
      */
 
     /**
@@ -21,11 +22,12 @@ module ejs {
         use default namespace ejs
 
         /**
+MOB - UNUSED - DELETE
             The prototype object for the type. The prototype object provides the template of instance properties 
             shared by all Objects.
-         */
         static function get prototype(): Object
             null
+         */
     }
 }
 

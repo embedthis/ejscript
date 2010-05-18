@@ -22,8 +22,8 @@
 /*
     Class property slots for the "Template" type 
  */
-#define ES_Template_load                                               0
-#define ES_Template_prototype                                          1
+#define ES_Template_prototype                                          0
+#define ES_Template_load                                               1
 
 #define ES_Template_NUM_CLASS_PROP                                     2
 
@@ -81,15 +81,15 @@
     Class property slots for the "Token" type 
  */
 #define ES_ejs_web_template_Token__initializer___Token_                0
-#define ES_ejs_web_template_Token_Err                                  1
-#define ES_ejs_web_template_Token_Eof                                  2
-#define ES_ejs_web_template_Token_EjsTag                               3
-#define ES_ejs_web_template_Token_Var                                  4
-#define ES_ejs_web_template_Token_Literal                              5
-#define ES_ejs_web_template_Token_Equals                               6
-#define ES_ejs_web_template_Token_Control                              7
-#define ES_ejs_web_template_Token_tokens                               8
-#define ES_ejs_web_template_Token_prototype                            9
+#define ES_ejs_web_template_Token_prototype                            1
+#define ES_ejs_web_template_Token_Err                                  2
+#define ES_ejs_web_template_Token_Eof                                  3
+#define ES_ejs_web_template_Token_EjsTag                               4
+#define ES_ejs_web_template_Token_Var                                  5
+#define ES_ejs_web_template_Token_Literal                              6
+#define ES_ejs_web_template_Token_Equals                               7
+#define ES_ejs_web_template_Token_Control                              8
+#define ES_ejs_web_template_Token_tokens                               9
 
 #define ES_ejs_web_template_Token_NUM_CLASS_PROP                       10
 

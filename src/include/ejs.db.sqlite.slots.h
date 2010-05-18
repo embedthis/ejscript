@@ -23,10 +23,10 @@
     Class property slots for the "Sqlite" type 
  */
 #define ES_ejs_db_Sqlite__initializer___Sqlite_                        0
-#define ES_ejs_db_Sqlite_DataTypeToSqlType                             1
-#define ES_ejs_db_Sqlite_SqlTypeToDataType                             2
-#define ES_ejs_db_Sqlite_SqlTypeToEjsType                              3
-#define ES_ejs_db_Sqlite_prototype                                     4
+#define ES_ejs_db_Sqlite_prototype                                     1
+#define ES_ejs_db_Sqlite_DataTypeToSqlType                             2
+#define ES_ejs_db_Sqlite_SqlTypeToDataType                             3
+#define ES_ejs_db_Sqlite_SqlTypeToEjsType                              4
 
 #define ES_ejs_db_Sqlite_NUM_CLASS_PROP                                5
 

@@ -34,3 +34,13 @@ assert(Object.keys(Function) == "")
 assert(Object.keys(Number) == "")
 assert(Object.keys(Object) == "")
 assert(Object.keys(String) == "")
+
+
+//  Test constructor property
+
+o = {}
+assert(o.constructor == Object)
+i = 7
+assert(i.constructor == Number)
+assert(Date().constructor == Date)
+

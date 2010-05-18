@@ -2074,10 +2074,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (!ejsIsType(v1)) {
                 if (ejsIsFunction(v1)) {
                     fun = (EjsFunction*) v1;
-                    if (fun->creator == 0) {
-                        fun->creator = ejsCreateTypeFromFunction(ejs, fun, NULL);
+                    if (fun->template == 0) {
+                        fun->template = ejsCreateTypeFromFunction(ejs, fun, NULL);
                     }
-                    obj = ejsCreate(ejs, fun->creator, 0);
+                    obj = ejsCreate(ejs, fun->template, 0);
                 } else {
                     ejsThrowReferenceError(ejs, "Can't locate type");
                     BREAK;

@@ -358,11 +358,6 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
     //  MOB -- reconsider this code
     if (value && ejsIsFunction(value)) {
         fun = ((EjsFunction*) value);
-#if UNUSED
-        if (attributes & EJS_FUN_CONSTRUCTOR) {
-            fun->constructor = 1;
-        }
-#endif
         if (!ejsIsNativeFunction(fun) && ejsIsType(obj)) {
             ((EjsType*) obj)->hasScriptFunctions = 1;
         }
@@ -584,6 +579,7 @@ int ejsGetSlot(Ejs *ejs, EjsObj *obj, int slotNum)
 
     if (slotNum < 0) {
         //  MOB - should this be here or only in the VM. probably only in the VM.
+        //  MOB -- or move this routine to the VM
         if (!obj->dynamic) {
             if (obj == ejs->nullValue) {
                 ejsThrowReferenceError(ejs, "Object is null");
@@ -1239,23 +1235,10 @@ static int cmpQname(EjsName *a, EjsName *b)
 }
 
 /*********************************** Methods **********************************/
-#if UNUSED
-/*
-    static function get prototype(): Object
- */
-static EjsObj *obj_prototype(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
+
+static EjsObj *obj_constructor(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
-    mprAssert(ejsIsType(type));
-
-    return type->prototype;
-}
-#endif
-
-
-static EjsObj *obj_constructor(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
-{
-    //  MOB -- complete
-    return (EjsObj*) 0;
+    return (EjsObj*) obj->type;
 }
 
 
@@ -1278,7 +1261,6 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsObj      *obj, *properties, *options, *prototype;
     EjsType     *type;
-    EjsFunction *fun;
     EjsName     qname;
     int         count, slotNum;
 
@@ -1288,13 +1270,16 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (ejsIsType(prototype)) {
         type = (EjsType*) prototype;
     } else {
+#if UNUSED
         fun = (EjsFunction*) ejsGetPropertyByName(ejs, prototype, ejsName(&qname, EJS_EJS_NAMESPACE, "constructor"));
-        if (fun && ejsIsFunction(fun) && fun->creator) {
-            type = fun->creator;
+        if (fun && ejsIsFunction(fun) && fun->template) {
+            type = fun->template;
         } else {
             fun = (EjsFunction*) ejsCreateSimpleFunction(ejs, "constructor", EJS_TRAIT_FIXED | EJS_TRAIT_HIDDEN);
             type = ejsCreateTypeFromFunction(ejs, fun, prototype);
         }
+#endif
+        type = ejsCreateTypeFromFunction(ejs, NULL, prototype);
     }
     obj = ejsCreateObject(ejs, type, 0);
     if (properties) {

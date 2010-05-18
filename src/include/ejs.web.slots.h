@@ -30,9 +30,9 @@
 /*
     Class property slots for the "Controller" type 
  */
-#define ES_ejs_web_Controller__initRequest                             0
-#define ES_ejs_web_Controller_ejs_web_create                           1
-#define ES_ejs_web_Controller_prototype                                2
+#define ES_ejs_web_Controller_prototype                                0
+#define ES_ejs_web_Controller__initRequest                             1
+#define ES_ejs_web_Controller_ejs_web_create                           2
 
 #define ES_ejs_web_Controller_NUM_CLASS_PROP                           3
 
@@ -194,14 +194,14 @@
     Class property slots for the "Mvc" type 
  */
 #define ES_Mvc__initializer___Mvc_                                     0
-#define ES_Mvc_defaultConfig                                           1
-#define ES_Mvc_mvc                                                     2
-#define ES_Mvc_dirs                                                    3
-#define ES_Mvc_ext                                                     4
-#define ES_Mvc_load                                                    5
-#define ES_Mvc_init                                                    6
-#define ES_Mvc_loadComponent                                           7
-#define ES_Mvc_prototype                                               8
+#define ES_Mvc_prototype                                               1
+#define ES_Mvc_defaultConfig                                           2
+#define ES_Mvc_mvc                                                     3
+#define ES_Mvc_dirs                                                    4
+#define ES_Mvc_ext                                                     5
+#define ES_Mvc_load                                                    6
+#define ES_Mvc_init                                                    7
+#define ES_Mvc_loadComponent                                           8
 
 #define ES_Mvc_NUM_CLASS_PROP                                          9
 
@@ -225,8 +225,8 @@
     Class property slots for the "Request" type 
  */
 #define ES_ejs_web_Request__initializer___Request_                     0
-#define ES_ejs_web_Request_jsgi                                        1
-#define ES_ejs_web_Request_prototype                                   2
+#define ES_ejs_web_Request_prototype                                   1
+#define ES_ejs_web_Request_jsgi                                        2
 
 #define ES_ejs_web_Request_NUM_CLASS_PROP                              3
 
@@ -327,10 +327,10 @@
     Class property slots for the "Router" type 
  */
 #define ES_ejs_web_Router__initializer___Router_                       0
-#define ES_ejs_web_Router_TopRoutes                                    1
-#define ES_ejs_web_Router_RestfulRoutes                                2
-#define ES_ejs_web_Router_LegacyRoutes                                 3
-#define ES_ejs_web_Router_prototype                                    4
+#define ES_ejs_web_Router_prototype                                    1
+#define ES_ejs_web_Router_TopRoutes                                    2
+#define ES_ejs_web_Router_RestfulRoutes                                3
+#define ES_ejs_web_Router_LegacyRoutes                                 4
 
 #define ES_ejs_web_Router_NUM_CLASS_PROP                               5
 
@@ -400,10 +400,10 @@
 /*
     Class property slots for the "Session" type 
  */
-#define ES_ejs_web_Session_addListener                                 0
-#define ES_ejs_web_Session_count                                       1
-#define ES_ejs_web_Session_removeListener                              2
-#define ES_ejs_web_Session_prototype                                   3
+#define ES_ejs_web_Session_prototype                                   0
+#define ES_ejs_web_Session_addListener                                 1
+#define ES_ejs_web_Session_count                                       2
+#define ES_ejs_web_Session_removeListener                              3
 
 #define ES_ejs_web_Session_NUM_CLASS_PROP                              4
 
@@ -457,8 +457,8 @@
     Class property slots for the "View" type 
  */
 #define ES_ejs_web_View__initializer___View_                           0
-#define ES_ejs_web_View_htmlOptions                                    1
-#define ES_ejs_web_View_prototype                                      2
+#define ES_ejs_web_View_prototype                                      1
+#define ES_ejs_web_View_htmlOptions                                    2
 
 #define ES_ejs_web_View_NUM_CLASS_PROP                                 3
 
@@ -533,15 +533,15 @@
     Class property slots for the "Web" type 
  */
 #define ES_ejs_web_Web__initializer___Web_                             0
-#define ES_ejs_web_Web_config                                          1
-#define ES_ejs_web_Web_defaultConfig                                   2
-#define ES_ejs_web_Web_init                                            3
-#define ES_ejs_web_Web_serve                                           4
-#define ES_ejs_web_Web_worker                                          5
-#define ES_ejs_web_Web_workerHelper                                    6
-#define ES_ejs_web_Web_load                                            7
-#define ES_ejs_web_Web_start                                           8
-#define ES_ejs_web_Web_prototype                                       9
+#define ES_ejs_web_Web_prototype                                       1
+#define ES_ejs_web_Web_config                                          2
+#define ES_ejs_web_Web_defaultConfig                                   3
+#define ES_ejs_web_Web_init                                            4
+#define ES_ejs_web_Web_serve                                           5
+#define ES_ejs_web_Web_worker                                          6
+#define ES_ejs_web_Web_workerHelper                                    7
+#define ES_ejs_web_Web_load                                            8
+#define ES_ejs_web_Web_start                                           9
 
 #define ES_ejs_web_Web_NUM_CLASS_PROP                                  10
 

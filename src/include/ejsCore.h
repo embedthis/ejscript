@@ -1019,7 +1019,9 @@ extern int      ejsComputeHashCode(EjsObj *obj, EjsName *qname);
 extern int      ejsGetHashSize(int numProp);
 extern void     ejsCreateObjectHelpers(Ejs *ejs);
 extern int      ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int size, int offset);
+#if UNUSED
 extern int      ejsLookupSingleProperty(Ejs *ejs, EjsObj *obj, EjsName *qname);
+#endif
 extern void     ejsMakePropertyDontDelete(EjsObj *vp, int dontDelete);
 extern int      ejsMakePropertyEnumerable(EjsObj *vp, bool enumerable);
 extern void     ejsMakePropertyReadOnly(EjsObj *vp, int readonly);
@@ -1046,6 +1048,8 @@ typedef struct EjsBlock {
     EjsList         namespaces;                     /**< Current list of namespaces open in this block of properties */
     struct EjsBlock *scope;                         /**< Lexical scope chain for this block */
     struct EjsBlock *prev;                          /**< Previous block in activation chain */
+
+    //  MOB -- OPT and compress / eliminate some of these fields. Every function has these.
     EjsObj          *prevException;                 /**< Previous exception if nested exceptions */
     EjsVar          **stackBase;                    /**< Start of stack in this block */
     uint            breakCatch: 1;                  /**< Return, break or continue in a catch block */
@@ -1159,18 +1163,15 @@ typedef struct EjsFunction {
     EjsObj          *activation;            /** Activation properties (parameters + locals) */
     cchar           *name;                  /** Function name for debuggability */
 
-    //  MOB -- these two could be a union - can't be both
+    //  MOB -- these two could be a union with creator - can't be both
     struct EjsFunction *setter;             /**< Setter function for this property */
-
-    //  MOB -- get a better name
-    struct EjsType  *creator;               /**< Type to use to create instances */
+    struct EjsType  *template;              /**< Type to use to create instances */
 
     union {
         EjsCode     code;                   /**< Byte code */
         EjsProc     proc;                   /**< Native function pointer */
     } body;
 
-    //  MOB -- also need thisArgs
     EjsObj          *thisObj;               /**< Bound "this" for method extraction */
     struct EjsType  *resultType;            /**< Return type of method */
 
@@ -1316,6 +1317,7 @@ extern void ejsOffsetExceptions(EjsFunction *mp, int offset);
 extern int  ejsSetFunctionCode(EjsFunction *mp, uchar *byteCode, int len);
 extern void ejsMarkFunction(Ejs *ejs, EjsFunction *fun);
 extern void ejsShowOpFrequency(Ejs *ejs);
+extern int ejsLookupFunctionProperty(Ejs *ejs, EjsFunction *fun, EjsName *qname);
 
 typedef struct EjsFrame {
     EjsFunction     function;               /**< Activation frame for function calls. Stores local variables */

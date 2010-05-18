@@ -23,8 +23,8 @@
     Class property slots for the "Cache" type 
  */
 #define ES_ejs_cache_Cache__initializer___Cache_                       0
-#define ES_ejs_cache_Cache_cache                                       1
-#define ES_ejs_cache_Cache_prototype                                   2
+#define ES_ejs_cache_Cache_prototype                                   1
+#define ES_ejs_cache_Cache_cache                                       2
 
 #define ES_ejs_cache_Cache_NUM_CLASS_PROP                              3
 
