@@ -397,7 +397,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     type->helpers.mark = (EjsMarkHelper) markHttpServer;
 
     prototype = type->prototype;
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_HttpServer, (EjsProc) hs_HttpServer);
+    ejsBindConstructor(ejs, type, (EjsProc) hs_HttpServer);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_addListener, (EjsProc) hs_addListener);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_address, (EjsProc) hs_address);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_attach, (EjsProc) hs_attach);

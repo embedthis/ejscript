@@ -1627,17 +1627,15 @@ void ejsConfigureArrayType(Ejs *ejs)
     /*
         We override some Object methods
      */
+    ejsBindConstructor(ejs, type, (EjsProc) arrayConstructor);
     ejsBindMethod(ejs, prototype, ES_Array_iterator_get, getArrayIterator);
     ejsBindMethod(ejs, prototype, ES_Array_iterator_getValues, getArrayValues);
     ejsBindMethod(ejs, prototype, ES_Array_clone, (EjsProc) cloneArrayMethod);
     ejsBindMethod(ejs, prototype, ES_Array_toString, (EjsProc) arrayToString);
-
-    ejsBindMethod(ejs, prototype, ES_Array_Array, (EjsProc) arrayConstructor);
     ejsBindMethod(ejs, prototype, ES_Array_append, (EjsProc) appendArray);
     ejsBindMethod(ejs, prototype, ES_Array_clear, (EjsProc) clearArray);
     ejsBindMethod(ejs, prototype, ES_Array_compact, (EjsProc) compactArray);
     ejsBindMethod(ejs, prototype, ES_Array_concat, (EjsProc) concatArray);
-
     ejsBindMethod(ejs, prototype, ES_Array_indexOf, (EjsProc) indexOfArray);
     ejsBindMethod(ejs, prototype, ES_Array_insert, (EjsProc) insertArray);
     ejsBindMethod(ejs, prototype, ES_Array_join, (EjsProc) joinArray);

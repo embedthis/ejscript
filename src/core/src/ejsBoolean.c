@@ -262,11 +262,11 @@ void ejsConfigureBooleanType(Ejs *ejs)
     type = ejsGetTypeByName(ejs, "ejs", "Boolean");
     prototype = type->prototype;
 
+    ejsBindConstructor(ejs, type, (EjsProc) booleanConstructor);
     ejsSetProperty(ejs, ejs->global, ES_boolean, (EjsObj*) type);
     ejsSetProperty(ejs, ejs->global, ES_true, (EjsObj*) ejs->trueValue);
     ejsSetProperty(ejs, ejs->global, ES_false, (EjsObj*) ejs->falseValue);
 
-    ejsBindMethod(ejs, prototype, ES_Boolean_Boolean, (EjsProc) booleanConstructor);
 }
 
 

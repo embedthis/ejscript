@@ -292,7 +292,7 @@ static int interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv,
     ejs->argc = argc;
     ejs->argv = argv;
 
-    if (ecCompile(cp, files->length, (char**) files->items, 0) < 0) {
+    if (ecCompile(cp, files->length, (char**) files->items) < 0) {
         mprError(cp, "%s", cp->errorMsg);
         return EJS_ERR;
     }
@@ -336,7 +336,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
     while (!cp->lexer->input->stream->eof) {
         err = 0;
         cp->uid = 0;
-        if (ecCompile(cp, 1, tmpArgv, 0) < 0) {
+        if (ecCompile(cp, 1, tmpArgv) < 0) {
             mprError(cp, "%s", cp->errorMsg);
             ejs->result = ejs->undefinedValue;
             err++;

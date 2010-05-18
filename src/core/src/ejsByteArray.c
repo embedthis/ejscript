@@ -1409,7 +1409,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     helpers->lookupProperty = (EjsLookupPropertyHelper) lookupByteArrayProperty;
     helpers->setProperty = (EjsSetPropertyHelper) setByteArrayProperty;
     
-    ejsBindMethod(ejs, prototype, ES_ByteArray_ByteArray, (EjsProc) ba_ByteArray);
+    ejsBindConstructor(ejs, type, (EjsProc) ba_ByteArray);
     ejsBindMethod(ejs, prototype, ES_ByteArray_addListener, (EjsProc) ba_addListener);
     ejsBindMethod(ejs, prototype, ES_ByteArray_available, (EjsProc) ba_available);
     ejsBindAccess(ejs, prototype, ES_ByteArray_async, (EjsProc) ba_async, (EjsProc) ba_setAsync);

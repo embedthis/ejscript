@@ -453,43 +453,36 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *vp, EjsObj *options)
  */
 EjsObj *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, EjsObj **argv)
 {
-    EjsFunction     *fun;
-    EjsObj          *vp;
+    EjsObj      *obj;
 
     mprAssert(type);
 
-    vp = ejsCreate(ejs, type, 0);
-    if (vp == 0) {
+    obj = ejsCreate(ejs, type, 0);
+    if (obj == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    if (type->hasConstructor) {
-        //  MOB -- is this right now?
-        fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type->prototype, type->numInherited);
-        //  MOB -- should verify fun->isConstructor
-        if (fun == 0 || !ejsIsFunction(fun)) {
-            return 0;
-        }
-        vp->permanent = 1;
-        ejsRunFunction(ejs, fun, vp, argc, argv);
-        vp->permanent = 0;
+    if (type->constructor.block.obj.isFunction) {
+        obj->permanent = 1;
+        ejsRunFunction(ejs, (EjsFunction*) type, obj, argc, argv);
+        obj->permanent = 0;
     }
-    return vp;
+    return obj;
 }
 
 
 
-int _ejsIs(EjsObj *vp, int slot)
+int _ejsIs(EjsObj *obj, int slot)
 {
     EjsType     *tp;
 
-    if (vp == 0) {
+    if (obj == 0) {
         return 0;
     }
-    if (vp->type->id == slot) {
+    if (obj->type->id == slot) {
         return 1;
     }
-    for (tp = ((EjsObj*) vp)->type->baseType; tp; tp = tp->baseType) {
+    for (tp = ((EjsObj*) obj)->type->baseType; tp; tp = tp->baseType) {
         if (tp->id == slot) {
             return 1;
         }

@@ -46,7 +46,7 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
         if (ejsIsFrame(bp)) {
             frame = (EjsFrame*) bp;
             if (frame->function.thisObj == thisObj && thisObj != ejs->global && !frame->function.staticMethod && 
-                    !frame->function.initializer) {
+                    !frame->function.isInitializer) {
                 /* Instance method only */
                 if ((slotNum = ejsLookupVarWithNamespaces(ejs, thisObj, name, lookup)) >= 0) {
                     return slotNum;
@@ -62,13 +62,24 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
                         return slotNum;
                     }
                 }
+                if (frame->function.isConstructor) {
+                    for (nthBase = 1, type = (EjsType*) thisObj->type; type; type = type->baseType, nthBase++) {
+                        if (type->constructor.block.obj.shortScope) {
+                            break;
+                        }
+                        if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
+                            lookup->nthBase = nthBase;
+                            return slotNum;
+                        }
+                    }
+                }
                 thisObj = 0;
             }
         } else if (ejsIsType(bp)) {
             //  MOB -- remove nthBase. Not needed if not binding.
             /* Search base class chain */
             for (nthBase = 1, type = (EjsType*) bp; type; type = type->baseType, nthBase++) {
-                if (type->block.obj.shortScope) {
+                if (type->constructor.block.obj.shortScope) {
                     break;
                 }
                 if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) type, name, lookup)) >= 0) {
@@ -116,7 +127,7 @@ int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
     /* Lookup base-class chain */
     type = ejsIsType(obj) ? ((EjsType*) obj)->baseType : obj->type;
     for (nthBase = 1; type; type = type->baseType, nthBase++) {
-        if (type->block.obj.shortScope) {
+        if (type->constructor.block.obj.shortScope) {
             //  MOB -- continue or break?
             continue;
         }

@@ -40,16 +40,15 @@
 #define ES_ejs_tar_Tar_toLocaleString                                  8
 #define ES_ejs_tar_Tar_toString                                        9
 #define ES_ejs_tar_Tar_valueOf                                         10
-#define ES_ejs_tar_Tar_Tar                                             11
-#define ES_ejs_tar_Tar_path                                            12
-#define ES_ejs_tar_Tar_files                                           13
-#define ES_ejs_tar_Tar_add                                             14
-#define ES_ejs_tar_Tar_xcreate                                         15
-#define ES_ejs_tar_Tar_extract                                         16
-#define ES_ejs_tar_Tar_cat                                             17
-#define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               18
+#define ES_ejs_tar_Tar_path                                            11
+#define ES_ejs_tar_Tar_files                                           12
+#define ES_ejs_tar_Tar_add                                             13
+#define ES_ejs_tar_Tar_xcreate                                         14
+#define ES_ejs_tar_Tar_extract                                         15
+#define ES_ejs_tar_Tar_cat                                             16
+#define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               17
 #define ES_ejs_tar_Tar_NUM_INHERITED_PROP                              11
 
-#define _ES_CHECKSUM_ejs_tar   9328
+#define _ES_CHECKSUM_ejs_tar   9458
 
 #endif

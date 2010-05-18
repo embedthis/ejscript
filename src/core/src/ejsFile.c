@@ -890,7 +890,7 @@ void ejsConfigureFileType(Ejs *ejs)
     type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupFileProperty;
     type->helpers.setProperty = (EjsSetPropertyHelper) setFileProperty;
 
-    ejsBindMethod(ejs, prototype, ES_File_File, (EjsProc) fileConstructor);
+    ejsBindConstructor(ejs, type, (EjsProc) fileConstructor);
     ejsBindMethod(ejs, prototype, ES_File_canRead, (EjsProc) canReadFile);
     ejsBindMethod(ejs, prototype, ES_File_canWrite, (EjsProc) canWriteFile);
     ejsBindMethod(ejs, prototype, ES_File_close, (EjsProc) closeFile);

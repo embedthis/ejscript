@@ -424,7 +424,7 @@ void ejsConfigureSocketType(Ejs *ejs)
     type->helpers.mark = (EjsMarkHelper) markSocket;
     prototype = type->prototype;
 
-    ejsBindMethod(ejs, prototype, ES_Socket_Socket, (EjsProc) sock_Socket);
+    ejsBindConstructor(ejs, type, (EjsProc) sock_Socket);
     ejsBindMethod(ejs, prototype, ES_Socket_accept, (EjsProc) sock_accept);
     ejsBindMethod(ejs, prototype, ES_Socket_addListener, (EjsProc) sock_addListener);
     ejsBindMethod(ejs, prototype, ES_Socket_address, (EjsProc) sock_address);

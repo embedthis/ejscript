@@ -476,7 +476,7 @@ void ejsConfigureNumberType(Ejs *ejs)
     type = ejsGetTypeByName(ejs, "ejs", "Number");
     prototype = type->prototype;
 
-    ejsBindMethod(ejs, prototype, ES_Number_Number, (EjsProc) numberConstructor);
+    ejsBindConstructor(ejs, type, (EjsProc) numberConstructor);
     ejsBindMethod(ejs, prototype, ES_Number_iterator_get, getNumberIterator);
     ejsBindMethod(ejs, prototype, ES_Number_iterator_getValues, getNumberIterator);
     ejsBindMethod(ejs, prototype, ES_Number_integral, (EjsProc) integral);

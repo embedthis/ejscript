@@ -48,6 +48,28 @@ static EjsFrame *allocFrame(Ejs *ejs, int numSlots)
 }
 
 
+/*
+    Create a frame object just for the compiler
+ */
+EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
+{
+    EjsFrame    *fp;
+
+    fp = (EjsFrame*) ejsCreate(ejs, ejs->frameType, 0);
+    if (fp == 0) {
+        return 0;
+    }
+    fp->function.name = mprStrdup(fp, fun->name);
+    ejsSetDebugName(fp, fun->name);
+
+    fp->function.block.obj.isFrame = 1;
+    fp->function.isConstructor = fun->isConstructor;
+    fp->function.isInitializer = fun->isInitializer;
+    fp->function.staticMethod = fun->staticMethod;
+    return fp;
+}
+
+
 EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     EjsFrame    *frame;
@@ -88,7 +110,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.numArgs = fun->numArgs;
     frame->function.numDefault = fun->numDefault;
     frame->function.castNulls = fun->castNulls;
-    frame->function.constructor = fun->constructor;
+    frame->function.isConstructor = fun->isConstructor;
     frame->function.fullScope = fun->fullScope;
     frame->function.hasReturn = fun->hasReturn;
     frame->function.isInitializer = fun->isInitializer;
@@ -103,6 +125,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.resultType = fun->resultType;
     frame->function.body = fun->body;
     frame->pc = fun->body.code.byteCode;
+    mprAssert(frame->pc);
 
     if (argc > 0) {
         frame->argc = argc;
@@ -125,7 +148,7 @@ void ejsCreateFrameType(Ejs *ejs)
     EjsTypeHelpers  *helpers;
 
     type = ejs->frameType = ejsCreateNativeType(ejs, "ejs", "Frame", ES_Frame, sizeof(EjsFrame));
-    type->block.obj.shortScope = 1;
+    type->constructor.block.obj.shortScope = 1;
 
     helpers = &type->helpers;
     helpers->destroy = (EjsDestroyHelper) destroyFrame;

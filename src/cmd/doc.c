@@ -754,10 +754,10 @@ static void generateClassPages(EjsMod *mp)
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
     type = ejsCreateType(ejs, &qname, NULL, NULL, NULL, sizeof(EjsType), slotNum, ejs->globalBlock->obj.numSlots, 
         0, 0, NULL);
-    type->block = *ejs->globalBlock;
-    type->block.obj.type = ejs->typeType;
-    type->block.obj.isType = 1;
-    type->block.isGlobal = 1;
+    type->constructor.block = *ejs->globalBlock;
+    type->constructor.block.obj.type = ejs->typeType;
+    type->constructor.block.obj.isType = 1;
+    type->constructor.block.isGlobal = 1;
 
     generateClassPage(mp, type, &qname, trait, doc);
 
@@ -869,7 +869,7 @@ static void generateClassPageHeader(EjsMod *mp, EjsType *type, EjsTrait *trait, 
 
     qname = type->qname;
 
-    if (type->block.isGlobal) {
+    if (type->constructor.block.isGlobal) {
         generateContentHeader(mp, "Global Functions and Variables");
         out(mp, "<a name='top'></a>\n");
         out(mp, "<h1 class='className'>Global Functions and Variables</h1>\n");
@@ -880,7 +880,7 @@ static void generateClassPageHeader(EjsMod *mp, EjsType *type, EjsTrait *trait, 
     }
     out(mp, "<div class='classBlock'>\n");
 
-    if (!type->block.isGlobal) {
+    if (!type->constructor.block.isGlobal) {
         out(mp, "<table class='classHead' summary='%s'>\n", qname.name);
 
         module = (type && type->module) ? fmtModule(type->module->name) : "";

@@ -169,7 +169,7 @@ void ejsConfigureTimerType(Ejs *ejs)
     type->instanceSize = sizeof(EjsTimer);
     prototype = type->prototype;
 
-    ejsBindMethod(ejs, prototype, ES_Timer_Timer, (EjsProc) constructor);
+    ejsBindConstructor(ejs, type, (EjsProc) constructor);
     ejsBindMethod(ejs, prototype, ES_Timer_restart, (EjsProc) restart);
     ejsBindMethod(ejs, prototype, ES_Timer_stop, (EjsProc) stop);
     ejsBindAccess(ejs, prototype, ES_Timer_period, (EjsProc) getPeriod, (EjsProc) setPeriod);

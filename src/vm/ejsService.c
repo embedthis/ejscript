@@ -201,7 +201,6 @@ static int configureEjs(Ejs *ejs)
         Order matters
      */
     ejsConfigureGlobalBlock(ejs);
-    ejsConfigureTypeType(ejs);
     ejsConfigureObjectType(ejs);
     ejsConfigureIteratorType(ejs);
     ejsConfigureErrorType(ejs);
@@ -269,7 +268,7 @@ static int loadStandardModules(Ejs *ejs, MprList *require)
 
 /* 
    When cloning the master interpreter, the new interpreter references the master's core types. The core types MUST
-    be immutable for this to work.
+   be immutable for this to work.
  */
 static int cloneMaster(Ejs *ejs, Ejs *master)
 {

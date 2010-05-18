@@ -24,9 +24,8 @@ module ejs {
             The prototype object for the type. The prototype object provides the template of instance properties 
             shared by all Objects.
          */
-//ECMA: Type.prototype
-//MOB -- need a directive to force
-        static native function get prototype(): Object
+        static function get prototype(): Object
+            null
     }
 }
 

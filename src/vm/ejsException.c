@@ -59,7 +59,8 @@ void ejsClearException(Ejs *ejs)
 
 static EjsObj *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtArgs)
 {
-    EjsObj      *error, *argv[1];
+    EjsError    *error;
+    EjsObj      *argv[1];
     char        *msg;
 
     mprAssert(type);
@@ -76,12 +77,16 @@ static EjsObj *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
         } else {
             mprError(ejs, "Exception: %s", msg);
         }
-        error = ejsCreateObject(ejs, type, 0);
+        error = (EjsError*) ejsCreateObject(ejs, type, 0);
+        error->message = mprStrdup(error, ejsGetString(ejs, argv[0]));
+        ejsFormatStack(ejs, error);
+        return (EjsObj*) error;
+        
     } else {
-        error = (EjsObj*) ejsCreateInstance(ejs, type, 1, argv);
+        error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
     }
     mprFree(msg);
-    return error;
+    return (EjsObj*) error;
 }
 
 
@@ -318,9 +323,11 @@ char *ejsGetErrorMsg(Ejs *ejs, int withStack)
     cchar       *name;
     char        *buf;
 
+#if UNUSED
     if (!ejs->initialized) {
         return "";
     }
+#endif
     error = (EjsObj*) ejs->exception;
     message = stack = 0;
     name = 0;

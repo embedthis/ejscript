@@ -745,9 +745,8 @@ static void genClassName(EcCompiler *cp, EjsType *type)
         pushStack(cp, 1);
         return;
     }
-
     //  TODO - check
-    if (cp->bind || type->block.obj.builtin) {
+    if (cp->bind || type->constructor.block.obj.builtin) {
         slotNum = ejsLookupProperty(ejs, ejs->global, &type->qname);
         mprAssert(slotNum >= 0);
         genGlobalName(cp, slotNum);
@@ -841,7 +840,6 @@ static void genBoundName(EcCompiler *cp, EcNode *np)
                 Property being accessed via the current object "this" or an explicit object?
              */
             genPropertyViaThis(cp, lookup->slotNum);
-
         } else {
             genThisBaseClassPropertyName(cp, (EjsType*) lookup->obj, lookup->slotNum);
         }
@@ -1164,7 +1162,7 @@ static void genCall(EcCompiler *cp, EcNode *np)
         if (fun->resultType && fun->resultType != ejs->voidType) {
             hasResult = 1;
 
-        } else if (fun->hasReturn || fun->constructor) {
+        } else if (fun->hasReturn || ejsIsType(fun)) {
             /*
                 Untyped function, but it has a return stmt.
                 We don't do data flow to make sure all return cases have returns (sorry).
@@ -1201,8 +1199,8 @@ static void genClass(EcCompiler *cp, EcNode *np)
 {
     Ejs             *ejs;
     EjsType         *type, *baseType;
-    EjsFunction     *constructor;
     EjsEx           *ex;
+    EjsFunction     *constructor;
     EcCodeGen       *code;
     EcState         *state;
     EcNode          *constructorNode;
@@ -1251,7 +1249,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
      */
     state->code = state->staticCodeBuf = allocCodeBuffer(cp);
 
-    if (type->hasConstructor) {
+    if (type->constructor.block.obj.isFunction) {
         state->instanceCodeBuf = allocCodeBuffer(cp);
     }
 
@@ -1271,13 +1269,13 @@ static void genClass(EcCompiler *cp, EcNode *np)
         setFunctionCode(cp, np->klass.initializer, state->staticCodeBuf);
     }
 
-    if (type->hasConstructor) {
+    if (type->constructor.block.obj.isFunction) {
         mprAssert(constructorNode);
         mprAssert(state->instanceCodeBuf);
         code = state->code = state->instanceCodeBuf;
         codeBuf = code->buf;
 
-        constructor = state->currentFunction = constructorNode->function.functionVar;
+        constructor = state->currentFunction = (EjsFunction*) type;
         mprAssert(constructor);
         state->currentFunctionName = constructorNode->qname.name;
 
@@ -1288,22 +1286,18 @@ static void genClass(EcCompiler *cp, EcNode *np)
                 initialization.
              */
             baseType = type->baseType;
-            if (baseType && baseType->hasConstructor) {
+            if (baseType && baseType->constructor.block.obj.isFunction) {
                 ecEncodeOpcode(cp, EJS_OP_CALL_NEXT_CONSTRUCTOR);
-#if UNUSED
-                ejsName(&qname, EJS_CONSTRUCTOR_NAMESPACE, baseType->qname.name);
-                ecEncodeName(cp, &qname);
-#endif
                 ecEncodeName(cp, &baseType->qname);
                 ecEncodeNumber(cp, 0);
             }
-            ecEncodeOpcode(cp, EJS_OP_RETURN);
-            setFunctionCode(cp, constructor, code);
+            ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
+            ecEncodeOpcode(cp, EJS_OP_RETURN_VALUE);
+            setFunctionCode(cp, (EjsFunction*) type, code);
             ecAddConstant(cp, EJS_PUBLIC_NAMESPACE);
             ecAddConstant(cp, EJS_CONSTRUCTOR_NAMESPACE);
-            //MOB - was type->hasInitializer
 
-        } else if (type->hasConstructor) {
+        } else if (type->constructor.block.obj.isFunction) {
             /*
                 Inject instance initializer code into the pre-existing constructor code. 
                 It is injected before any constructor code.
@@ -1515,7 +1509,11 @@ static void genEndFunction(EcCompiler *cp, EcNode *np)
             Ensure code cannot run off the end of a method.
             TODO OPT - must do a better job of basic block analysis and check if all paths out of a function have a return.
          */
-        if (fun->resultType == 0) {
+        if (fun->isConstructor) {
+            ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
+            ecEncodeOpcode(cp, EJS_OP_RETURN_VALUE);
+
+        } else if (fun->resultType == 0) {
             if (fun->hasReturn) {
                 //  TODO - OPT. Should be able to avoid this somehow. We put it here now to ensure that all
                 //  paths out of the function terminate with a return.
@@ -1533,7 +1531,6 @@ static void genEndFunction(EcCompiler *cp, EcNode *np)
             ecEncodeOpcode(cp, EJS_OP_LOAD_NULL);
             ecEncodeOpcode(cp, EJS_OP_RETURN_VALUE);
         }
-
         addDebugInstructions(cp, np);
     }
     LEAVE(cp);
@@ -2123,13 +2120,9 @@ static void genFunction(EcCompiler *cp, EcNode *np)
          */
         mprAssert(state->currentClass);
         baseType = state->currentClass->baseType;
-        if (!state->currentClass->callsSuper && baseType && baseType->hasConstructor && 
+        if (!state->currentClass->callsSuper && baseType && baseType->constructor.block.obj.isFunction && 
                 !(np->attributes & EJS_PROP_NATIVE)) {
             ecEncodeOpcode(cp, EJS_OP_CALL_NEXT_CONSTRUCTOR);
-#if UNUSED
-            ejsName(&qname, EJS_CONSTRUCTOR_NAMESPACE, baseType->qname.name);
-            ecEncodeName(cp, &qname);
-#endif
             ecEncodeName(cp, &baseType->qname);
             ecEncodeNumber(cp, 0);
         }
@@ -2454,7 +2447,6 @@ static void genName(EcCompiler *cp, EcNode *np)
     }
     if (np->lookup.slotNum >= 0) {
         genBoundName(cp, np);
-
     } else {
         genUnboundName(cp, np);
     }
@@ -2639,7 +2631,12 @@ static void genReturn(EcCompiler *cp, EcNode *np)
         /*
             return;
          */
-        ecEncodeOpcode(cp, EJS_OP_RETURN);
+        if (fun->isConstructor) {
+            ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
+            ecEncodeOpcode(cp, EJS_OP_RETURN_VALUE);
+        } else {
+            ecEncodeOpcode(cp, EJS_OP_RETURN);
+        }
     }
     LEAVE(cp);
 }
@@ -3665,7 +3662,9 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
     if (fun) {
         setFunctionCode(cp, fun, code);
     }
+#if UNUSED
     ejsCompleteFunction(ejs, fun);
+#endif
     LEAVE(cp);
 }
 

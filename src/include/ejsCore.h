@@ -111,10 +111,6 @@ struct EjsXML;
 #define EJS_TYPE_IMMUTABLE              0x20000000  /**< Instances are immutable */
 #define EJS_TYPE_INTERFACE              0x40000000  /**< Class is an interface */
 
-#if UNUSED
-#define EJS_TYPE_ORPHAN                 0x80000000  /**< Don't inherit properties from parent */
-#endif
-
 /*
     Interpreter flags
  */
@@ -963,6 +959,8 @@ extern EjsObj *ejsCreateSimpleObject(Ejs *ejs);
  */
 extern EjsObj *ejsCreateObject(Ejs *ejs, struct EjsType *type, int size);
 
+extern int ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int numSlots, int offset);
+extern int ejsRemoveProperty(Ejs *ejs, EjsObj *obj, int slotNum);
 extern int ejsGetOwnNames(Ejs *ejs, EjsObj *obj, int sizeNames);
 extern int ejsMakeObjHash(EjsObj *obj);
 extern void ejsClearObjHash(EjsObj *obj);
@@ -1066,7 +1064,8 @@ typedef struct EjsBlock {
      */
     extern bool ejsIsBlock(EjsObj *vp);
 #else
-    #define ejsIsBlock(vp) (ejsIs(vp, ES_Block) || ejsIs(vp, ES_Function) || ejsIs(vp, ES_Type))
+    //  MOB -- very slot. Should have EjsObj.isBlock
+    #define ejsIsBlock(vp) (ejsIs(vp, ES_Block) || ejsIs(vp, ES_Function) || ejsIs(vp, ES_Type) || ejsIsFrame(vp))
 #endif
 
 /** 
@@ -1089,27 +1088,22 @@ extern int ejsBindFunction(Ejs *ejs, void *obj, int slotNum, EjsProc fn);
     you need these routines in your code.
  */
 
-//  MOB -- move non-block methods to EjsObj
 extern int      ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *blockRef, struct EjsNamespace *namespace);
 extern int      ejsAddScope(MprCtx ctx, EjsBlock *block, EjsBlock *scopeBlock);
 extern EjsBlock *ejsCreateBlock(Ejs *ejs, int numSlots);
+
 //  TODO - why do we have ejsCloneObject, ejsCloneBlock ... Surely ejsCloneVar is sufficient?
 extern EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep);
-//  TODO - this should be pushed into the helpers as ejsGrowVar. Then we need only one variant.
+
 extern int      ejsCaptureScope(Ejs *ejs, EjsBlock *block, EjsList *scopeChain);
 extern int      ejsCopyScope(EjsBlock *block, EjsList *chain);
-
 extern int      ejsGetNamespaceCount(EjsBlock *block);
 
 extern EjsBlock *ejsGetTopScope(EjsBlock *block);
-extern int      ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int numSlots, int offset);
 extern void     ejsMarkBlock(Ejs *ejs, EjsBlock *block);
 extern void     ejsPopBlockNamespaces(EjsBlock *block, int count);
-extern int      ejsRemoveProperty(Ejs *ejs, EjsObj *obj, int slotNum);
 extern EjsBlock *ejsRemoveScope(EjsBlock *block);
 extern void     ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block);
-
-// TODO - OPT. Should this be compressed via bit fields for flags Could use short for these offsets.
 
 /** 
     Exception Handler Record
@@ -1117,6 +1111,7 @@ extern void     ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block);
     @ingroup EjsFunction
  */
 typedef struct EjsEx {
+// TODO - OPT. Should this be compressed via bit fields for flags Could use short for these offsets.
     struct EjsType  *catchType;             /**< Type of error to catch */
     uint            flags;                  /**< Exception flags */
     uint            tryStart;               /**< Ptr to start of try block */
@@ -1186,14 +1181,14 @@ typedef struct EjsFunction {
             uint    numArgs: 8;             /**< Count of formal parameters */
             uint    numDefault: 8;          /**< Count of formal parameters with default initializers */
             uint    castNulls: 1;           /**< Cast return values of null */
-            uint    constructor: 1;         /**< Function is a constructor */
             uint    fullScope: 1;           /**< Closures must capture full scope */
             uint    hasReturn: 1;           /**< Function has a return stmt */
             uint    inCatch: 1;             /**< Executing catch block */
             uint    inException: 1;         /**< Executing catch/finally exception processing */
-            uint    initializer: 1;         /**< Function is a type initializer */
+            uint    isInitializer: 1;       /**< Function is a type initializer */
+            uint    isConstructor: 1;       /**< Function is a constructor */
+            uint    isNativeProc: 1;        /**< Function is native procedure */
             uint    moduleInitializer: 1;   /**< Function is a module initializer */
-            uint    nativeProc: 1;          /**< Function is native procedure */
             uint    rest: 1;                /**< Function has a "..." rest of args parameter */
             uint    staticMethod: 1;        /**< Function is a static method */
             uint    strict: 1;              /**< Language strict mode (vs standard) */
@@ -1234,8 +1229,8 @@ typedef struct EjsFunction {
      */
     extern bool ejsIsInitializer(EjsObj *vp);
 #else
-    #define ejsIsFunction(vp)       ejsIs(vp, ES_Function)
-    #define ejsIsNativeFunction(vp) (ejsIsFunction(vp) && (((EjsFunction*) (vp))->nativeProc))
+    #define ejsIsFunction(vp)       (vp && ((EjsObj*) vp)->isFunction)
+    #define ejsIsNativeFunction(vp) (ejsIsFunction(vp) && (((EjsFunction*) (vp))->isNativeProc))
     #define ejsIsInitializer(vp)    (ejsIsFunction(vp) && (((EjsFunction*) (vp))->isInitializer)
 #endif
 
@@ -1261,7 +1256,11 @@ typedef struct EjsFunction {
 extern EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *code, int codeLen, int numArgs, int numDefault,
     int numExceptions, struct EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, 
     int strict);
+extern void ejsInitFunction(Ejs *ejs, EjsFunction *fun, cchar *name, cuchar *code, int codeLen, int numArgs, int numDefault,
+    int numExceptions, struct EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, 
+    int strict);
 extern EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, cchar *name, int attributes);
+extern void ejsDisableFunction(Ejs *ejs, EjsFunction *fun);
 
 extern EjsObj *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numSlots);
 extern void ejsCompleteFunction(Ejs *ejs, EjsFunction *fun);
@@ -1347,6 +1346,7 @@ typedef struct EjsFrame {
 #endif
 
 extern EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *src, EjsObj *thisObj, int argc, EjsObj **argv);
+extern EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *src);
 extern EjsBlock *ejsPopBlock(Ejs *ejs);
 extern EjsBlock *ejsPushBlock(Ejs *ejs, EjsBlock *block);
 
@@ -2596,7 +2596,7 @@ typedef struct EjsTrait *(*EjsGetPropertyTraitHelper)(Ejs *ejs, EjsObj *vp, int 
         ejsBindMethod ejsDefineInstanceProperty ejsGetType
  */
 typedef struct EjsType {
-    EjsBlock        block;                          /**< Type properties (functions and static properties) */
+    EjsFunction     constructor;                    /**< Constructor function and type properties */
     EjsName         qname;                          /**< Qualified name of the type. Type name and namespace */
     EjsObj          *prototype;                     /**< Prototype for instances when using prototype inheritance (only) */
     struct EjsType  *baseType;                      /**< Base class */
@@ -2613,8 +2613,6 @@ typedef struct EjsType {
     uint            hasInstanceVars         :  1;   /**< Type has non-function instance vars (state) */
     uint            hasMeta                 :  1;   /**< Type has meta methods */
     uint            hasScriptFunctions      :  1;   /**< Block has non-native functions requiring namespaces */
-
-    //  MOB -- who uses this
     uint            immutable               :  1;   /**< Instances are immutable */
     uint            initialized             :  1;   /**< Static initializer has run */
     uint            isInterface             :  1;   /**< Interface vs class */
@@ -2649,7 +2647,7 @@ typedef struct EjsType {
      */
     extern bool ejsIsPrototype(EjsObj *vp);
 #else
-    #define ejsIsType(vp)           (vp && (((EjsObj*) (vp))->isType))
+    #define ejsIsType(vp)       (vp && (((EjsObj*) (vp))->isType))
     #define ejsIsPrototype(vp)  (vp && (((EjsObj*) (vp))->isPrototype))
 #endif
 
@@ -2727,6 +2725,7 @@ extern bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *baseType);
  */
 extern int ejsBindMethod(Ejs *ejs, void *obj, int slotNum, EjsProc fn);
 extern int ejsBindAccess(Ejs *ejs, void *obj, int slotNum, EjsProc getter, EjsProc setter);
+extern void ejsBindConstructor(Ejs *ejs, EjsType *type, EjsProc nativeProc);
 
 /** 
     Define an instance property
@@ -2842,7 +2841,6 @@ extern void     ejsConfigureSocketType(Ejs *ejs);
 extern void     ejsConfigureSystemType(Ejs *ejs);
 extern void     ejsConfigureTimerType(Ejs *ejs);
 extern void     ejsConfigureTypes(Ejs *ejs);
-extern void     ejsConfigureTypeType(Ejs *ejs);
 extern void     ejsConfigureUriType(Ejs *ejs);
 extern void     ejsConfigureVoidType(Ejs *ejs);
 extern void     ejsConfigureWorkerType(Ejs *ejs);
@@ -3133,10 +3131,6 @@ extern void ejsLog(Ejs *ejs, cchar *fmt, ...);
 extern int ejsLookupVar(Ejs *ejs, EjsObj *vp, EjsName *name, EjsLookup *lookup);
 extern int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *vp, EjsName *name, EjsLookup *lookup);
 
-//  MOB - move to module.h
-extern int ejsAddModule(Ejs *ejs, struct EjsModule *up);
-extern struct EjsModule *ejsLookupModule(Ejs *ejs, cchar *name, int minVersion, int maxVersion);
-extern int ejsRemoveModule(Ejs *ejs, struct EjsModule *up);
 extern int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup);
 extern void ejsMemoryFailure(MprCtx ctx, int64 size, int64 total, bool granted);
 extern int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName);

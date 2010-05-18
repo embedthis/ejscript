@@ -60,7 +60,7 @@ static EjsObj *castObject(Ejs *ejs, EjsObj *obj, EjsType *type)
             if (ejsLookupVar(ejs, obj, ejsName(&qname, "", "toString"), &lookup) >= 0 && 
                     lookup.obj != ejs->objectType->prototype) {
                 fun = (EjsFunction*) ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
-                if (fun && ejsIsFunction(fun)) {
+                if (fun && ejsIsFunction(fun) && fun->body.proc != obj_toString) {
                     return (EjsObj*) ejsRunFunction(ejs, fun, obj, 0, NULL);
                 }
             }
@@ -356,11 +356,13 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
     }
 
     //  MOB -- reconsider this code
-    if (ejsIsFunction(value)) {
+    if (value && ejsIsFunction(value)) {
         fun = ((EjsFunction*) value);
+#if UNUSED
         if (attributes & EJS_FUN_CONSTRUCTOR) {
             fun->constructor = 1;
         }
+#endif
         if (!ejsIsNativeFunction(fun) && ejsIsType(obj)) {
             ((EjsType*) obj)->hasScriptFunctions = 1;
         }

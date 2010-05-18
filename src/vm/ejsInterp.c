@@ -78,7 +78,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsObj *value, EjsObj *thisObj, Ejs
 {
     EjsFunction     *fun;
 
-    if (ejsIsFunction(value)) {
+    if (ejsIsFunction(value) && !ejsIsType(value)) {
         fun = (EjsFunction*) value;
         if (ejsHasTrait(obj, slotNum, EJS_TRAIT_GETTER)) {
             if (fun->staticMethod) {
@@ -155,7 +155,6 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsObj *value, EjsObj *thisObj, Ejs
 
 /******************************** Forward Declarations ************************/
 
-static void callConstructor(Ejs *ejs, EjsFunction *vp, int argc, int stackAdjust);
 static void callInterfaceInitializers(Ejs *ejs, EjsType *type);
 static void callProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *thisObj, int argc, int stackAdjust);
 static void checkExceptionHandlers(Ejs *ejs);
@@ -488,7 +487,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         /*
             Load the "global" value
                 LoadGlobal
-                Stack before (top)  []
+                Stack before (tp (op)  []
                 Stack after         [global]
          */
         CASE (EJS_OP_LOAD_GLOBAL):
@@ -1275,8 +1274,16 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 BREAK;
             }
             fun = (EjsFunction*) ejsGetProperty(ejs, lookup.obj, slotNum);
-            if (!ejsIsFunction(fun)) {
-                callConstructor(ejs, fun, argc, 0);
+            if (ejsIsType(fun)) {
+                type = (EjsType*) fun;
+                callFunction(ejs, fun, NULL, argc, 0);
+
+            } else if (!ejsIsFunction(fun)) {
+                if ((EjsObj*) vp == (EjsObj*) ejs->undefinedValue) {
+                    ejsThrowReferenceError(ejs, "Function is undefined");
+                } else {
+                    ejsThrowReferenceError(ejs, "Reference is not a function");
+                }
             } else {
                 /*
                     Calculate the "this" to use for the function. If required function is a method in the current 
@@ -1313,10 +1320,9 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             }
             type = vp->type;
             mprAssert(type);
-            if (type && type->hasConstructor) {
+            if (type && type->constructor.block.obj.isFunction) {
                 mprAssert(type->prototype);
-                fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, type->numInherited);
-                callFunction(ejs, fun, (EjsObj*) vp, argc, 0);
+                callFunction(ejs, (EjsFunction*) type, (EjsObj*) vp, argc, 0);
             }
             BREAK;
 
@@ -1333,10 +1339,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (type == 0) {
                 ejsThrowReferenceError(ejs, "Can't find constructor %s", qname.name);
             } else {
-                mprAssert(type->hasConstructor);
-                slotNum = type->numInherited;
-                fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
-                callFunction(ejs, fun, NULL, argc, 0);
+                mprAssert(type->constructor.block.obj.isFunction);
+                callFunction(ejs, (EjsFunction*) type, THIS, argc, 0);
             }
             BREAK;
 
@@ -1411,7 +1415,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (type == 0 || !ejsIsType(type)) {
                 ejsThrowReferenceError(ejs, "Reference is not a class");
             } else {
-                type->block.scope = state.bp;
+                type->constructor.block.scope = state.bp;
                 if (type && type->hasInitializer) {
                     fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, 0);
                     callFunction(ejs, fun, (EjsObj*) type, 0, 0);
@@ -2347,7 +2351,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, int slot
         if (trait->attributes & EJS_TRAIT_READONLY) {
             EjsName         qname;
             vp = ejsGetProperty(ejs, obj, slotNum);
-            if (vp != ejs->nullValue) {
+            if (vp != ejs->nullValue && vp != ejs->undefinedValue) {
                 qname = ejsGetPropertyName(ejs, obj, slotNum);
                 ejsThrowReferenceError(ejs, "Property \"%s\" is not writable", qname.name);
                 return;
@@ -2699,57 +2703,35 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*
     Call a type constructor function and create a new object.
  */
-static void callConstructor(Ejs *ejs, EjsFunction *vp, int argc, int stackAdjust)
+static void callConstructor(Ejs *ejs, EjsType *type, int argc, int stackAdjust)
 {
-    EjsFunction     *fun;
-    EjsType         *type;
-    EjsObj          *obj;
-    int             slotNum;
+    EjsObj      *obj;
 
-    mprAssert(!ejsIsFunction(vp));
+    mprAssert(ejsIsType(type));
     mprAssert(ejs->exception == 0);
     mprAssert(ejs->state->fp->attentionPc == 0);
 
-    if ((EjsObj*) vp == (EjsObj*) ejs->undefinedValue) {
-        ejsThrowReferenceError(ejs, "Function is undefined");
-        return;
-
-    } else if (ejsIsType(vp)) {
-        /* 
-            Handle calling a constructor to create a new instance 
-         */
-        type = (EjsType*) vp;
-        obj = ejsCreate(ejs, type, 0);
-        ejsClearAttention(ejs);
-        
-        if (type->hasConstructor) {
-            /*
-                Constructor is always at slot 0, offset by inherited propertie
-             */
-//ZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ
-            slotNum = type->numInherited;
-            fun = (EjsFunction*) ejsGetProperty(ejs, type->prototype, slotNum);
-
-            if (ejsIsNativeFunction(fun)) {
-                mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);    
-                callFunction(ejs, fun, obj, argc, stackAdjust);
-            } else {
-                VM(ejs, fun, obj, argc, stackAdjust);
-                ejs->state->stack -= (argc + stackAdjust);
-                if (ejs->exiting || mprIsExiting(ejs)) {
-                    ejsAttention(ejs);
-                }
-            }
-        }
-        ejs->result = obj;
-
+    obj = ejsCreate(ejs, type, 0);
+    ejsClearAttention(ejs);
+    
+    mprAssert(type->constructor.block.obj.isFunction);
+    if (ejsIsNativeFunction(type)) {
+        mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);    
+        callFunction(ejs, (EjsFunction*) type, obj, argc, stackAdjust);
     } else {
-        ejsThrowReferenceError(ejs, "Reference is not a function");
+        VM(ejs, (EjsFunction*) type, obj, argc, stackAdjust);
+        ejs->state->stack -= (argc + stackAdjust);
+        if (ejs->exiting || mprIsExiting(ejs)) {
+            ejsAttention(ejs);
+        }
     }
+    ejs->result = obj;
 }
+#endif
 
 
 #if UNUSED
@@ -2771,14 +2753,19 @@ static EjsObj *getStaticThis(Ejs *ejs, EjsType *type, int slotNum)
 
 static void callInterfaceInitializers(Ejs *ejs, EjsType *type)
 {
-    EjsType     *iface;
-    EjsFunction *fun;
-    int         next;
+    EjsType         *iface;
+    EjsFunction     *fun;
+    EjsName         qname;
+    int             next;
 
     for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
         if (iface->hasInitializer) {
-            fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) iface, 0);
-            callFunction(ejs, fun, (EjsObj*) type, 0, 0);
+            qname = ejsGetPropertyName(ejs, (EjsObj*) iface, 0);
+            //  TODO OPT. Could run all 
+            fun = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) type, &qname);
+            if (fun && ejsIsFunction(fun)) {
+                callFunction(ejs, fun, (EjsObj*) type, 0, 0);
+            }
         }
     }
 }
@@ -3064,7 +3051,7 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
         }
         count -= ex->numBlocks;
         mprAssert(count >= 0);
-        for (i = 0; i < count; i++) {
+        for (i = 0; i < count && count > 0; i++) {
             ejsPopBlock(ejs);
         }
         count = (state->stack - fp->stackReturn);
@@ -3376,6 +3363,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 {
     EjsState        *state;
     EjsFrame        *fp;
+    EjsType         *type;
     EjsObj          **argv;
 
     mprAssert(fun);
@@ -3384,9 +3372,43 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 
     state = ejs->state;
 
-    if (unlikely(!ejsIsFunction(fun))) {
-        callConstructor(ejs, fun, argc, stackAdjust);
+    if (unlikely(ejsIsType(fun))) {
+        type = (EjsType*) fun;
+#if OLD
+        //MOB callConstructor(ejs, (EjsType*) fun, argc, stackAdjust);
+        obj = ejsCreate(ejs, type, 0);
+        ejsClearAttention(ejs);
+        if (!ejsIsNativeFunction(type)) {
+            VM(ejs, (EjsFunction*) type, obj, argc, stackAdjust);
+            ejs->state->stack -= (argc + stackAdjust);
+            if (ejs->exiting || mprIsExiting(ejs)) {
+                ejsAttention(ejs);
+            }
+        }
+        ejs->result = obj;
         return;
+#else
+        if (thisObj == NULL) {
+            thisObj = ejsCreate(ejs, type, 0);
+        }
+        ejs->result = thisObj;
+        if (!type->hasConstructor) {
+            ejs->state->stack -= (argc + stackAdjust);
+            if (ejs->exiting || mprIsExiting(ejs)) {
+                ejsAttention(ejs);
+            }
+            return;
+        }
+#endif
+        
+    } else if (!ejsIsFunction(fun)) {
+        if ((EjsObj*) fun == (EjsObj*) ejs->undefinedValue) {
+            ejsThrowReferenceError(ejs, "Function is undefined");
+            return;
+        } else {
+            ejsThrowReferenceError(ejs, "Reference is not a function");
+            return;
+        }
     }
     if (thisObj == 0) {
         if ((thisObj = fun->thisObj) == 0) {

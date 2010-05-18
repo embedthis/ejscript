@@ -269,7 +269,7 @@ MAIN(ejscMain, int argc, char **argv)
             Compile the source files supplied on the command line. This will compile in-memory and
             optionally also save to module files.
          */
-        if (ecCompile(cp, argc - nextArg, &argv[nextArg], 0) < 0) {
+        if (ecCompile(cp, argc - nextArg, &argv[nextArg]) < 0) {
             mprError(cp, "%s", cp->errorMsg);
             err++;
         }

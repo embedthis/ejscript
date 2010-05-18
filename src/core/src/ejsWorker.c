@@ -771,11 +771,11 @@ void ejsConfigureWorkerType(Ejs *ejs)
     type->helpers.destroy = (EjsDestroyHelper) destroyWorker;
     type->helpers.mark = (EjsMarkHelper) markWorker;
 
+    ejsBindConstructor(ejs, type, (EjsProc) workerConstructor);
     ejsBindMethod(ejs, type, ES_Worker_exit, (EjsProc) workerExit);
     ejsBindMethod(ejs, type, ES_Worker_join, (EjsProc) workerJoin);
     ejsBindMethod(ejs, type, ES_Worker_lookup, (EjsProc) workerLookup);
 
-    ejsBindMethod(ejs, prototype, ES_Worker_Worker, (EjsProc) workerConstructor);
     ejsBindMethod(ejs, prototype, ES_Worker_eval, (EjsProc) workerEval);
     ejsBindMethod(ejs, prototype, ES_Worker_load, (EjsProc) workerLoad);
     ejsBindMethod(ejs, prototype, ES_Worker_preload, (EjsProc) workerPreload);

@@ -43,21 +43,21 @@ static EjsType *cloneTypeVar(Ejs *ejs, EjsType *src, bool deep)
     dest->callsSuper = src->callsSuper;
     dest->dontPool = src->dontPool;
     dest->final = src->final;
+    dest->hasConstructor = src->hasConstructor;
     dest->hasBaseConstructors = src->hasBaseConstructors;
     dest->hasBaseInitializers = src->hasBaseInitializers;
-    dest->hasConstructor = src->hasConstructor;
     dest->hasMeta = src->hasMeta;
     dest->hasInitializer = src->hasInitializer;
     dest->helpers = src->helpers;
     dest->id = src->id;
     dest->immutable = src->immutable;
     dest->initialized = src->initialized;
-    dest->prototype = src->prototype;
     dest->instanceSize = src->instanceSize;
     dest->isInterface = src->isInterface;
     dest->module = src->module;
     dest->numericIndicies = src->numericIndicies;
     dest->numInherited = src->numInherited;
+    dest->prototype = src->prototype;
     dest->qname = src->qname;
     dest->typeData = src->typeData;
     return dest;
@@ -105,13 +105,12 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numSlots)
     }
     obj = (EjsObj*) vp;
     type = (EjsType*) vp;
-
     vp->type = type;
     vp->master = (ejs->master == 0);
     vp->type = typeType;
     vp->isType = 1;
     vp->dynamic = dynamic;
-    ejsInitList(&type->block.namespaces);
+    ejsInitList(&type->constructor.block.namespaces);
 
     if (!dynamic) {
         /*
@@ -138,9 +137,7 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numSlots)
         mprAssert((start - (char*) type) <= typeSize);
     }
     ejsSetDebugName(vp, "type");
-#if BLD_DEBUG
     ejsAddToGcStats(ejs, vp, ES_Type);
-#endif
     return type;
 }
 
@@ -186,7 +183,7 @@ void markType(Ejs *ejs, EjsType *type)
 
 static int setTypeProperty(Ejs *ejs, EjsType *type, int slotNum, EjsObj *value)
 {
-    if (slotNum < 0 && !type->block.obj.dynamic) {
+    if (slotNum < 0 && !type->constructor.block.obj.dynamic) {
         ejsThrowTypeError(ejs, "Object is not dynamic");
         return EJS_ERR;
     }
@@ -243,6 +240,8 @@ EjsType *ejsCreateTypeFromFunction(Ejs *ejs, EjsFunction *fun, EjsObj *prototype
     EjsName     qname;
     EjsType     *type;
     EjsTrait    *trait;
+    EjsFunction *constructor;
+    EjsCode     *code;
     int         slotNum;
 
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
@@ -261,18 +260,28 @@ EjsType *ejsCreateTypeFromFunction(Ejs *ejs, EjsFunction *fun, EjsObj *prototype
     ejsSetPropertyTrait(ejs, ejs->global, slotNum, ejs->typeType, EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED);
 
     /*
-        Install the function as the constructor
+        Initialize the constructorf
+        MOB - but what about native functions
      */
+    constructor = (EjsFunction*) type;
     mprAssert(type->prototype);
-    fun->constructor = 1;
-    fun->thisObj = 0;
+
+#if UNUSED
     ejsDefineProperty(ejs, type->prototype, type->numInherited, ejsName(&qname, EJS_EJS_NAMESPACE, "constructor"), 
         ejs->functionType, EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED, (EjsObj*) fun);
+#else
+    code = &fun->body.code;
+    ejsInitFunction(ejs, constructor, type->qname.name, code->byteCode, code->codeLen, fun->numArgs, fun->numDefault, 
+        code->numHandlers, type, EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED, code->constants, NULL, fun->strict);
+    constructor->activation = ejsClone(ejs, fun->activation, 0);
+    constructor->thisObj = 0;
+#endif
 
-    /* Must install the prototype into the function constructor as well */
+    //  MOB - what about the constructor property
     ejsDefineProperty(ejs, (EjsObj*) fun, -1, ejsName(&qname, EJS_EJS_NAMESPACE, "prototype"), ejs->objectType, 
         EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED, (EjsObj*) type->prototype);
 
+    //  MOB -- this is currently only importing the "prototype" getter
     ejsBlendTypeProperties(ejs, type, ejs->typeType);
     return type;
 }
@@ -349,6 +358,7 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName *qname, EjsModule *up, EjsType *baseTyp
     type->id = typeId;
     type->qname.name = qname->name;
     type->qname.space = qname->space;
+    type->constructor.name = qname->name;
     type->module = up;
     type->typeData = typeData;
     type->baseType = baseType;
@@ -381,7 +391,7 @@ EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, EjsModule *up, EjsType *baseT
     type->module = up;
     setAttributes(type, attributes);
 
-    if (numTypeProp > 0 && ejsGrowObject(ejs, &type->block.obj, numTypeProp) < 0) {
+    if (numTypeProp > 0 && ejsGrowObject(ejs, &type->constructor.block.obj, numTypeProp) < 0) {
         return 0;
     }
     if (numInstanceProp > 0) {
@@ -473,6 +483,8 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsObj *obj, int destOffse
         for (i = destOffset; i < (destOffset + count); i++) {
             fun = (EjsFunction*) ejsGetProperty(ejs, obj, i);
             if (ejsIsFunction(fun)) {
+                fun = ejsCloneFunction(ejs, fun, 0);
+                ejsSetProperty(ejs, obj, i, (EjsObj*) fun);
                 fun->thisObj = 0;
                 fun->block.scope = (EjsBlock*) type;
             }
@@ -510,6 +522,7 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
     type->baseType = baseType;
     
     if (baseType) {
+        //  MOB -- should be able to remove the || baseType->hasBaseConstructors
         if (baseType->hasConstructor || baseType->hasBaseConstructors) {
             type->hasBaseConstructors = 1;
         }
@@ -551,7 +564,7 @@ int ejsBlendTypeProperties(Ejs *ejs, EjsType *type, EjsType *typeType)
         /*  Append properties to the end of the type so as to not mess up the first slot which may be an initializer */
         destOffset = ejsGetPropertyCount(ejs, (EjsObj*) type);
         srcOffset = 0;
-        if (ejsGrowObject(ejs, (EjsObj*) type, type->block.obj.numSlots + count) < 0) {
+        if (ejsGrowObject(ejs, (EjsObj*) type, type->constructor.block.obj.numSlots + count) < 0) {
             return EJS_ERR;
         }
         if (inheritProperties(ejs, type, (EjsObj*) type, destOffset, (EjsObj*) typeType, srcOffset, count, 0) < 0) {
@@ -586,11 +599,12 @@ static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom)
     mprAssert(type);
     mprAssert(type->implements);
 
+    offset = type->constructor.block.obj.numSlots;
     if (makeRoom) {
         count = 0;
         for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
             if (!iface->isInterface) {
-                count += iface->block.obj.numSlots;
+                count += iface->constructor.block.obj.numSlots;
                 type->hasInstanceVars |= iface->hasInstanceVars;
             }
         }
@@ -598,21 +612,20 @@ static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom)
             return EJS_ERR;
         }
     }
-    offset = 0;
     for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
         if (!iface->isInterface) {
-            count = iface->block.obj.numSlots;
+            count = iface->constructor.block.obj.numSlots;
             if (inheritProperties(ejs, type, (EjsObj*) type, offset, (EjsObj*) iface, 0, count, 1) < 0) {
                 return EJS_ERR;
             }
             offset += count;
-        }
-        for (nextNsp = 0; (nsp = (EjsNamespace*) ejsGetNextItem(&iface->block.namespaces, &nextNsp)) != 0;) {
-            ejsAddNamespaceToBlock(ejs, (EjsBlock*) type, nsp);
-        }
-        for (bp = iface->block.scope; bp->scope; bp = bp->scope) {
-            for (nextNsp = 0; (nsp = (EjsNamespace*) ejsGetNextItem(&bp->namespaces, &nextNsp)) != 0;) {
+            for (nextNsp = 0; (nsp = (EjsNamespace*) ejsGetNextItem(&iface->constructor.block.namespaces, &nextNsp)) != 0;) {
                 ejsAddNamespaceToBlock(ejs, (EjsBlock*) type, nsp);
+            }
+            for (bp = iface->constructor.block.scope; bp->scope; bp = bp->scope) {
+                for (nextNsp = 0; (nsp = (EjsNamespace*) ejsGetNextItem(&bp->namespaces, &nextNsp)) != 0;) {
+                    ejsAddNamespaceToBlock(ejs, (EjsBlock*) type, nsp);
+                }
             }
         }
     }
@@ -712,7 +725,7 @@ int ejsBindAccess(Ejs *ejs, void *obj, int slotNum, EjsProc getter, EjsProc sett
             ejs->hasError = 1;
         }
         fun->body.proc = setter;
-        fun->nativeProc = 1;
+        fun->isNativeProc = 1;
     }
     return 0;
 }
@@ -743,8 +756,19 @@ int ejsBindFunction(Ejs *ejs, void *obj, int slotNum, EjsProc nativeProc)
     }
     mprAssert(fun->body.proc == 0);
     fun->body.proc = nativeProc;
-    fun->nativeProc = 1;
+    fun->isNativeProc = 1;
     return 0;
+}
+
+
+void ejsBindConstructor(Ejs *ejs, EjsType *type, EjsProc nativeProc)
+{
+    mprAssert(type->hasConstructor);
+    mprAssert(type->constructor.isConstructor);
+    mprAssert(type->constructor.block.obj.isFunction);
+    mprAssert(type->constructor.body.proc == 0);
+    type->constructor.body.proc = nativeProc;
+    type->constructor.isNativeProc = 1;
 }
 
 
@@ -760,7 +784,7 @@ int ejsDefineGlobalFunction(Ejs *ejs, cchar *name, EjsProc fn)
         return MPR_ERR_NO_MEMORY;
     }
     fun->body.proc = fn;
-    fun->nativeProc = 1;
+    fun->isNativeProc = 1;
     ejsName(&qname, EJS_PUBLIC_NAMESPACE, name);
     return ejsSetPropertyByName(ejs, ejs->global, &qname, (EjsObj*) fun);
 }
@@ -944,30 +968,24 @@ void ejsCreateTypeType(Ejs *ejs)
         helpers via objectType->type->helpers. So we set it to the Type type. We keep objectType->baseType == 0
         because Object has no base type. Similarly for the Type type.
      */
-    ejs->objectType->block.obj.type = ejs->typeType;
-    ejs->blockType->block.obj.type = ejs->typeType;
-    ejs->typeType->block.obj.type = ejs->objectType;
-}
-
-//  MOB --remove
-void ejsConfigureTypeType(Ejs *ejs)
-{
-#if UNUSED
-    EjsType     *type;
-
-    type = ejsGetTypeByName(ejs, "ejs", "Type");
-    ejsBindMethod(ejs, type, ES_Type_prototype, (EjsProc) type_prototype);
-#endif
+    ejs->objectType->constructor.block.obj.type = ejs->typeType;
+    ejs->blockType->constructor.block.obj.type = ejs->typeType;
+    ejs->typeType->constructor.block.obj.type = ejs->objectType;
 }
 
 
 void ejsCompleteType(Ejs *ejs, EjsType *type)
 {
     EjsName     qname;
+    EjsFunction *fun;
     int         slotNum;
     
     slotNum = ejsLookupProperty(ejs, (EjsObj*) type, ejsName(&qname, EJS_EJS_NAMESPACE, "prototype"));
     if (slotNum >= 0) {
+        /* Prototype is not defined native so that modules don't get marked as requiring native libraries */
+        fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
+        fun->body.code.codeLen = 0;
+        fun->body.proc = 0;
         ejsBindMethod(ejs, type, slotNum, (EjsProc) type_prototype);
     }
 }

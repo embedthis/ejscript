@@ -171,13 +171,15 @@ static void cacheTimer(EjsWebControl *control, MprEvent *event)
 static int configureCacheType(Ejs *ejs)
 {
     EjsType     *type;
+    EjsObj      *prototype;
 
     type = ejsConfigureNativeType(ejs, "ejs.cache", "Cache", sizeof(EjsCache));
 
-    ejsBindMethod(ejs, type, ES_ejs_cache_Cache_Cache, (EjsProc) cacheConstructor);
-    ejsBindMethod(ejs, type, ES_ejs_cache_Cache_read, (EjsProc) readCache);
-    ejsBindMethod(ejs, type, ES_ejs_cache_Cache_write, (EjsProc) writeCache);
-    ejsBindMethod(ejs, type, ES_ejs_cache_Cache_remove, (EjsProc) removeCache);
+    ejsBindConstructor(ejs, type, (EjsProc) cacheConstructor);
+    prototype = type->prototype;
+    ejsBindMethod(ejs, prototype, ES_ejs_cache_Cache_read, (EjsProc) readCache);
+    ejsBindMethod(ejs, prototype, ES_ejs_cache_Cache_write, (EjsProc) writeCache);
+    ejsBindMethod(ejs, prototype, ES_ejs_cache_Cache_remove, (EjsProc) removeCache);
     return 0;
 }
 

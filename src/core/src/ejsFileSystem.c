@@ -185,7 +185,7 @@ void ejsConfigureFileSystemType(Ejs *ejs)
     type = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "FileSystem", sizeof(EjsFileSystem));
     prototype = type->prototype;
 
-    ejsBindMethod(ejs, prototype, ES_FileSystem_FileSystem, (EjsProc) fileSystemConstructor);
+    ejsBindConstructor(ejs, type, (EjsProc) fileSystemConstructor);
 #if ES_space
     ejsBindMethod(ejs, prototype, ES_FileSystem_space, (EjsProc) fileSystemSpace);
 #endif

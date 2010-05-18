@@ -34,7 +34,7 @@ static void     appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, E
 static EcNode   *appendNode(EcNode *top, EcNode *np);
 static void     applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributes, cchar *namespaceName);
 static void     copyDocString(EcCompiler *cp, EcNode *np, EcNode *from);
-static int      compileInner(EcCompiler *cp, int argc, char **argv, int flags);
+static int      compileInner(EcCompiler *cp, int argc, char **argv);
 static int      compileInput(EcCompiler *cp, EcNode **nodes, cchar *path);
 static EcNode   *createAssignNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode *parent);
 static EcNode   *createBinaryNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode *parent);
@@ -485,8 +485,7 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
 }
 
 
-//  MOB -- flags not used
-int ecCompile(EcCompiler *cp, int argc, char **argv, int flags)
+int ecCompile(EcCompiler *cp, int argc, char **argv)
 {
     Ejs     *ejs;
     int     rc, old, saveCompiling;
@@ -495,15 +494,14 @@ int ecCompile(EcCompiler *cp, int argc, char **argv, int flags)
     saveCompiling = ejs->compiling;
     ejs->compiling = 1;
     old = ejsEnableGC(ejs, 0);
-    rc = compileInner(cp, argc, argv, flags);
+    rc = compileInner(cp, argc, argv);
     ejsEnableGC(ejs, old);
     ejs->compiling = saveCompiling;
     return rc;
 }
 
 
-//  MOB -- flags not used
-static int compileInner(EcCompiler *cp, int argc, char **argv, int flags)
+static int compileInner(EcCompiler *cp, int argc, char **argv)
 {
     Ejs         *ejs;
     EjsModule   *mp;
@@ -8021,7 +8019,6 @@ static EcNode *parseConstructorSignature(EcCompiler *cp, EcNode *np)
     if (np == 0) {
         return np;
     }
-
     ENTER(cp);
 
     mprAssert(np->kind == N_FUNCTION);
@@ -8029,15 +8026,12 @@ static EcNode *parseConstructorSignature(EcCompiler *cp, EcNode *np)
     if (getToken(cp) != T_LPAREN) {
         return LEAVE(cp, parseError(cp, "Expecting \"(\""));
     }
-
     np->function.parameters = linkNode(np, createNode(cp, N_ARGS));
-    np->function.parameters =
-        linkNode(np, parseParameters(cp, np->function.parameters));
+    np->function.parameters = linkNode(np, parseParameters(cp, np->function.parameters));
 
     if (getToken(cp) != T_RPAREN) {
         return LEAVE(cp, parseError(cp, "Expecting \")\""));
     }
-
     if (np) {
         if (peekToken(cp) == T_COLON) {
             getToken(cp);
@@ -8045,7 +8039,6 @@ static EcNode *parseConstructorSignature(EcCompiler *cp, EcNode *np)
             // mprStealBlock(np, np->function.settings);
         }
     }
-
     return LEAVE(cp, np);
 }
 

@@ -244,6 +244,7 @@ typedef struct EjsModule {
     /*
         Used only while loading modules
      */
+    MprList         *current;               /* Current stack of open objects */
     EjsBlock        *scope;                 /* Lexical scope chain */
     EjsConst        *constants;             /* Constant pool */
     int             nameToken;              /* */
@@ -339,6 +340,10 @@ extern int          ejsEncodeWordAtPos(uchar *pos, int value);
 
 extern char         *ejsGetDocKey(struct Ejs *ejs, EjsBlock *block, int slotNum, char *buf, int bufsize);
 extern EjsDoc       *ejsCreateDoc(struct Ejs *ejs, EjsBlock *block, int slotNum, cchar *docString);
+
+extern int ejsAddModule(Ejs *ejs, struct EjsModule *up);
+extern struct EjsModule *ejsLookupModule(Ejs *ejs, cchar *name, int minVersion, int maxVersion);
+extern int ejsRemoveModule(Ejs *ejs, struct EjsModule *up);
 
 #ifdef __cplusplus
 }

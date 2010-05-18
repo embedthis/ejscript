@@ -549,7 +549,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 break;
 
             case 'X': case 'x':
-                buf = mprAsprintf(ejs, -1, fmt, (int) ejsGetNumber(ejs, value));
+                buf = mprAsprintf(ejs, -1, fmt, (int64) ejsGetNumber(ejs, value));
                 break;
 
             case 'n':
@@ -1952,7 +1952,7 @@ void ejsConfigureStringType(Ejs *ejs)
 
     ejsBindMethod(ejs, type, ES_String_fromCharCode, (EjsProc) fromCharCode);
 
-    ejsBindMethod(ejs, prototype, ES_String_String, (EjsProc) stringConstructor);
+    ejsBindConstructor(ejs, type, (EjsProc) stringConstructor);
     ejsBindMethod(ejs, prototype, ES_String_caseCompare, (EjsProc) caseCompare);
     ejsBindMethod(ejs, prototype, ES_String_caselessCompare, (EjsProc) caselessCompare);
     ejsBindMethod(ejs, prototype, ES_String_charAt, (EjsProc) charAt);

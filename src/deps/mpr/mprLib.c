@@ -9194,6 +9194,29 @@ void *mprGetPrevItem(MprList *lp, int *next)
 }
 
 
+int mprPushItem(MprList *lp, cvoid *item)
+{
+    return mprAddItem(lp, item);
+}
+
+
+cvoid *mprPopItem(MprList *lp)
+{
+    cvoid   *item;
+    int     index;
+
+    mprAssert(lp->length > 0);
+    item = 0;
+
+    if (lp->length > 0) {
+        index = lp->length - 1;
+        item = mprGetItem(lp, index);
+        mprRemoveItemAtPos(lp, index);
+    }
+    return item;
+}
+
+
 int mprGetListCount(MprList *lp)
 {
     if (lp == 0) {
@@ -12942,6 +12965,12 @@ static char *sprintfCore(MprCtx ctx, char *buf, int maxsize, cchar *spec, va_lis
 
             case 'X':
                 fmt.flags |= SPRINTF_UPPER_CASE;
+#if MPR_64_BIT
+                fmt.flags &= ~(SPRINTF_SHORT|SPRINTF_LONG);
+                fmt.flags |= SPRINTF_INT64;
+#else
+                fmt.flags &= ~(SPRINTF_INT64);
+#endif
                 /*  Fall through  */
             case 'o':
             case 'x':

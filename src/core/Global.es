@@ -346,7 +346,7 @@ public namespace ejs
         obj is target
 
     /**  
-        DEPREACTED - Use App.stderr.write() and App.stderr.writeLine()
+        DEPRECATED - Use App.stderr.write() and App.stderr.writeLine()
         Write to the standard error. This call writes the arguments to the standard error with a new line appended. 
         It evaluates the arguments, converts the result to strings and prints the result to the standard error. 
         Arguments are converted to strings by calling their toSource method.
@@ -357,7 +357,7 @@ public namespace ejs
     native function error(...args): void
 
     /**
-        DEPREACTED
+        DEPRECATED
         Read from the standard input. This call reads a line of input from the standard input
         @return A string containing the input. Returns null on EOF.
         @hide
@@ -365,7 +365,7 @@ public namespace ejs
     native function input(): String
 
     /**  
-        DEPREACATED - Use print(), App.stdout.write() and App.stdout.writeLine()
+        DEPRECATED - Use print(), App.stdout.write() and App.stdout.writeLine()
         Print the arguments to the standard output with a new line appended. This call evaluates the arguments, 
         converts the result to strings and prints the result to the standard output. Arguments are converted to 
         strings by calling their toString method.

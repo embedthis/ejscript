@@ -1294,7 +1294,7 @@ void ejsConfigurePathType(Ejs *ejs)
     type->helpers.destroy = (EjsDestroyHelper) destroyPath;
 
     //  TODO - rename all and use pa_ prefix
-    ejsBindMethod(ejs, prototype, ES_Path_Path, (EjsProc) pathConstructor);
+    ejsBindConstructor(ejs, type, (EjsProc) pathConstructor);
     ejsBindMethod(ejs, prototype, ES_Path_absolute, (EjsProc) absolutePath);
     ejsBindMethod(ejs, prototype, ES_Path_accessed, (EjsProc) getAccessedDate);
     ejsBindMethod(ejs, prototype, ES_Path_basename, (EjsProc) getPathBasename);

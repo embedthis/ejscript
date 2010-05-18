@@ -112,7 +112,7 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
     EjsType     *type;
 
     type = ejsCreateNativeType(ejs, "ejs", name, id, sizeof(EjsError));
-    type->block.nobind = 1;
+    type->constructor.block.nobind = 1;
     type->helpers.cast = (EjsCastHelper) castError;
     type->helpers.getProperty = (EjsGetPropertyHelper) getErrorProperty;
     type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupErrorProperty;
@@ -147,7 +147,7 @@ static void configureType(Ejs *ejs, cchar *name)
     EjsType     *type;
 
     type = ejsGetTypeByName(ejs, "ejs", name);
-    ejsBindMethod(ejs, type->prototype, type->numInherited, (EjsProc) errorConstructor);
+    ejsBindConstructor(ejs, type, (EjsProc) errorConstructor);
 }
 
 

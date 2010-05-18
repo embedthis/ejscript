@@ -820,7 +820,7 @@ void ejsCreateXMLListType(Ejs *ejs)
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
      */
-    type->block.nobind = 1;
+    type->constructor.block.nobind = 1;
 
     type->helpers.clone = (EjsCloneHelper) cloneXmlList;
     type->helpers.cast = (EjsCastHelper) xlCast;
@@ -843,7 +843,7 @@ void ejsConfigureXMLListType(Ejs *ejs)
     type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "XMLList");
     prototype = type->prototype;
 
-    ejsBindMethod(ejs, prototype, ES_XMLList_XMLList, (EjsProc) xmlListConstructor);
+    ejsBindConstructor(ejs, type, (EjsProc) xmlListConstructor);
     ejsBindMethod(ejs, prototype, ES_XMLList_length, (EjsProc) xlLength);
     ejsBindMethod(ejs, prototype, ES_XMLList_name, (EjsProc) getXmlListNodeName);
     ejsBindMethod(ejs, prototype, ES_XMLList_parent, (EjsNativeFunction) xl_parent);

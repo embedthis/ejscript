@@ -1158,7 +1158,7 @@ void ejsCreateXMLType(Ejs *ejs)
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
      */
-    type->block.nobind = 1;
+    type->constructor.block.nobind = 1;
 
     type->helpers.clone = (EjsCloneHelper) cloneXml;
     type->helpers.cast = (EjsCastHelper) castXml;
@@ -1181,10 +1181,7 @@ void ejsConfigureXMLType(Ejs *ejs)
     type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "XML");
     prototype = type->prototype;
 
-    /*
-        Define the XML class methods
-     */
-    ejsBindMethod(ejs, prototype, ES_XML_XML, (EjsProc) xmlConstructor);
+    ejsBindConstructor(ejs, type, (EjsProc) xmlConstructor);
     ejsBindMethod(ejs, prototype, ES_XML_length, (EjsProc) xmlLength);
     ejsBindMethod(ejs, prototype, ES_XML_load, (EjsProc) loadXml);
     ejsBindMethod(ejs, prototype, ES_XML_save, (EjsProc) saveXml);
@@ -1197,7 +1194,6 @@ void ejsConfigureXMLType(Ejs *ejs)
      */
     ejsBindMethod(ejs, prototype, ES_XML_toString, (EjsProc) xmlToString);
     ejsBindMethod(ejs, prototype, ES_XML_toJSON, (EjsProc) xmlToJson);
-
     ejsBindMethod(ejs, prototype, ES_XML_iterator_get, getXmlIterator);
     ejsBindMethod(ejs, prototype, ES_XML_iterator_getValues, getXmlValues);
 

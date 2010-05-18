@@ -135,10 +135,10 @@ void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
     EjsList         *baseNamespaces, oldNamespaces;
     int             next;
 
-    block = &type->block;
+    block = &type->constructor.block;
     oldNamespaces = block->namespaces;
     ejsInitList(&block->namespaces);
-    baseNamespaces = &baseType->block.namespaces;
+    baseNamespaces = &baseType->constructor.block.namespaces;
 
     if (baseNamespaces) {
         for (next = 0; ((nsp = (EjsNamespace*) ejsGetNextItem(baseNamespaces, &next)) != 0); ) {
@@ -163,7 +163,7 @@ void ejsCreateBlockType(Ejs *ejs)
     EjsType     *type;
 
     type = ejs->blockType = ejsCreateNativeType(ejs, "ejs", "Block", ES_Block, sizeof(EjsBlock));
-    type->block.obj.shortScope = 1;
+    type->constructor.block.obj.shortScope = 1;
     type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;
     type->helpers.mark = (EjsMarkHelper) ejsMarkBlock;
 }

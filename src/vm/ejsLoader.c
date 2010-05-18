@@ -15,7 +15,7 @@ static int  alreadyLoaded(Ejs *ejs, cchar *name, int minVersion, int maxVersion)
 static void createLoadState(Ejs *ejs, int flags);
 static EjsTypeFixup *createFixup(Ejs *ejs, EjsName *qname, int slotNum);
 static int  fixupTypes(Ejs *ejs, MprList *list);
-static EjsObj *getCurrentBlock(Ejs *ejs, EjsModule *mp);
+static EjsObj *getCurrentBlock(EjsModule *mp);
 static int  getVersion(cchar *name);
 static int  initializeModule(Ejs *ejs, EjsModule *mp, cchar *path);
 static int  loadBlockSection(Ejs *ejs, MprFile *file, EjsModule *mp);
@@ -33,6 +33,8 @@ static int  loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr
 static int  loadPropertySection(Ejs *ejs, MprFile *file, EjsModule *mp, int sectionType);
 static int  loadScriptModule(Ejs *ejs, MprFile *file, cchar *path, int flags);
 static char *makeModuleName(MprCtx ctx, cchar *name);
+static void popScope(EjsModule *mp, int keepScope);
+static void pushScope(EjsModule *mp, EjsBlock *block, EjsObj *obj);
 static int  readNumber(Ejs *ejs, MprFile *file, int *number);
 static int  readWord(Ejs *ejs, MprFile *file, int *number);
 static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion);
@@ -226,6 +228,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
             return EJS_ERR;
         }
         mprLog(ejs, 9, "Load section type %d", sectionType);
+        mprAssert(mp == NULL || mp->scope == NULL || mp->scope != mp->scope->scope);
 
         rc = 0;
         switch (sectionType) {
@@ -358,10 +361,11 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
         mprFree(pool);
         return 0;
     }
-    ejsSetModuleConstants(ejs, mp, pool, poolSize);
-    mp->scope = ejs->globalBlock;
+    mp->current = mprCreateList(mp);
+    pushScope(mp, ejs->globalBlock, ejs->global);
     mp->checksum = checksum;
     *created = 1;
+    ejsSetModuleConstants(ejs, mp, pool, poolSize);
 
     if (strcmp(name, EJS_DEFAULT_MODULE) != 0) {
         /*
@@ -388,6 +392,9 @@ static int loadEndModuleSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_MODULE_END, mp);
     }
+    mprAssert(mprGetListCount(mp->current) == 1);
+    mprFree(mp->current);
+    mp->current = 0;
     return 0;
 }
 
@@ -462,7 +469,7 @@ static int loadBlockSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     }
     bp = ejsCreateBlock(ejs, numSlot);
     ejsSetDebugName(bp, qname.name);
-    current = getCurrentBlock(ejs, mp);
+    current = getCurrentBlock(mp);
 
     /*
         TODO - replace this strict mode with dont-delete on a per property basis. Redefinition is then okay if the
@@ -481,8 +488,7 @@ static int loadBlockSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_BLOCK, mp, current, slotNum, qname.name, numSlot, bp);
     }
-    bp->scope = mp->scope;
-    mp->scope = bp;
+    pushScope(mp, bp, (EjsObj*) bp);
     return 0;
 }
 
@@ -494,7 +500,7 @@ static int loadEndBlockSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_BLOCK_END, mp);
     }
-    mp->scope = mp->scope->scope;
+    popScope(mp, 0);
     return 0;
 }
 
@@ -504,7 +510,6 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     EjsType         *type, *baseType, *iface, *nativeType;
     EjsTypeFixup    *fixup, *ifixup;
     EjsName         qname, baseClassName, ifaceClassName;
-    EjsBlock        *block;
     int             attributes, numTypeProp, numInstanceProp, slotNum, numInterfaces, i;
 
     fixup = 0;
@@ -605,7 +610,7 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
         }
     }
     if (mp->flags & EJS_LOADER_BUILTIN) {
-        type->block.obj.builtin = 1;
+        type->constructor.block.obj.builtin = 1;
     }
     slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, &qname, ejs->typeType, attributes, (EjsObj*) type);
     if (slotNum < 0) {
@@ -621,10 +626,7 @@ static int loadClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
         }
     }
     setDoc(ejs, mp, ejs->global, slotNum);
-
-    block = (EjsBlock*) type;
-    block->scope = mp->scope;
-    mp->scope = block;
+    pushScope(mp, (EjsBlock*) type, (EjsObj*) type);
 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS, mp, slotNum, qname, type, attributes);
@@ -650,7 +652,7 @@ static int loadEndClassSection(Ejs *ejs, MprFile *file, EjsModule *mp)
         ejsDefineTypeNamespaces(ejs, type);
     }
     ejsCompleteType(ejs, type);
-    mp->scope = mp->scope->scope;
+    popScope(mp, 0);
     return 0;
 }
 
@@ -683,11 +685,11 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (mp->hasError) {
         return MPR_ERR_CANT_READ;
     }
-    block = getCurrentBlock(ejs, mp);
+    block = getCurrentBlock(mp);
     currentType = 0;
     if (ejsIsType(block)) {
         currentType = (EjsType*) block;
-        if (!(attributes & EJS_PROP_STATIC)) {
+        if (!(attributes & (EJS_FUN_CONSTRUCTOR | EJS_PROP_STATIC))) {
             block = ((EjsType*) currentType)->prototype;
         }
     }
@@ -721,27 +723,38 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (attributes & EJS_FUN_MODULE_INITIALIZER) {
         mp->hasInitializer = 1;
     }
-    if (ejs->loadState->flags & EJS_LOADER_STRICT) {
-        if ((sn = ejsLookupProperty(ejs, block, &qname)) >= 0 && !(attributes & EJS_FUN_OVERRIDE)) {
-            if (!(attributes & EJS_TRAIT_SETTER && ejsHasTrait(block, sn, EJS_TRAIT_GETTER))) {
-                if (ejsIsType(block)) {
-                    ejsThrowReferenceError(ejs,
-                        "function \"%s\" already defined in type \"%s\". Add \"override\" to the function declaration.", 
-                        qname.name, ((EjsType*) block)->qname.name);
-                } else {
-                    ejsThrowReferenceError(ejs,
-                        "function \"%s\" already defined. Try adding \"override\" to the function declaration.", qname.name);
+    if (attributes & EJS_FUN_CONSTRUCTOR) {
+        fun = (EjsFunction*) block;
+        ejsInitFunction(ejs, fun, qname.name, code, codeLen, numArgs, numDefault, numExceptions, 
+            returnType, attributes, mp->constants, NULL, strict);
+        mprAssert(fun->isConstructor);
+
+    } else {
+        if (ejs->loadState->flags & EJS_LOADER_STRICT) {
+            if ((sn = ejsLookupProperty(ejs, block, &qname)) >= 0 && !(attributes & EJS_FUN_OVERRIDE)) {
+                if (!(attributes & EJS_TRAIT_SETTER && ejsHasTrait(block, sn, EJS_TRAIT_GETTER))) {
+                    if (ejsIsType(block)) {
+                        ejsThrowReferenceError(ejs,
+                            "function \"%s\" already defined in type \"%s\". Add \"override\" to the function declaration.", 
+                            qname.name, ((EjsType*) block)->qname.name);
+                    } else {
+                        ejsThrowReferenceError(ejs,
+                            "function \"%s\" already defined. Try adding \"override\" to the function declaration.", 
+                            qname.name);
+                    }
+                    return MPR_ERR_CANT_CREATE;
                 }
-                return MPR_ERR_CANT_CREATE;
             }
         }
+        fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, attributes, 
+            mp->constants, mp->scope, strict);
+        if (fun == 0) {
+            mprFree(code);
+            return MPR_ERR_NO_MEMORY;
+        }
     }
-    fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, attributes, 
-        mp->constants, mp->scope, strict);
-    if (fun == 0) {
-        mprFree(code);
-        return MPR_ERR_NO_MEMORY;
-    }
+    mprAssert(fun->block.obj.isFunction);
+
     if (mp->flags & EJS_LOADER_BUILTIN) {
         fun->block.obj.builtin = 1;
     }
@@ -764,13 +777,15 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
             slotNum = -1;
         }
     }
-    if (attributes & EJS_FUN_MODULE_INITIALIZER && block == ejs->global) {
-        mp->initializer = fun;
-        slotNum = -1;
-    } else {
-        slotNum = ejsDefineProperty(ejs, block, slotNum, &qname, ejs->functionType, attributes, (EjsObj*) fun);
-        if (slotNum < 0) {
-            return MPR_ERR_NO_MEMORY;
+    if (!(attributes & EJS_FUN_CONSTRUCTOR)) {
+        if (attributes & EJS_FUN_MODULE_INITIALIZER && block == ejs->global) {
+            mp->initializer = fun;
+            slotNum = -1;
+        } else {
+            slotNum = ejsDefineProperty(ejs, block, slotNum, &qname, ejs->functionType, attributes, (EjsObj*) fun);
+            if (slotNum < 0) {
+                return MPR_ERR_NO_MEMORY;
+            }
         }
     }
     if (fixup) {
@@ -783,9 +798,7 @@ static int loadFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     setDoc(ejs, mp, block, slotNum);
 
     mp->currentMethod = fun;
-    fun->block.scope = mp->scope;
-    mp->scope = (EjsBlock*) fun;
-
+    pushScope(mp, ejsIsType(fun) ? NULL : (EjsBlock*) fun, (EjsObj*) fun->activation);
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_FUNCTION, mp, block, slotNum, qname, fun, attributes);
     }
@@ -803,7 +816,7 @@ static int loadEndFunctionSection(Ejs *ejs, MprFile *file, EjsModule *mp)
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_FUNCTION_END, mp, fun);
     }
-    mp->scope = mp->scope->scope;
+    popScope(mp, ejsIsType(fun));
     return 0;
 }
 
@@ -863,7 +876,7 @@ static int loadPropertySection(Ejs *ejs, MprFile *file, EjsModule *mp, int secti
     int             slotNum, attributes, fixupKind;
 
     value = 0;
-    current = getCurrentBlock(ejs, mp);
+    current = getCurrentBlock(mp);
     qname.name = ejsModuleReadString(ejs, mp);
     qname.space = ejsModuleReadString(ejs, mp);
     
@@ -1040,24 +1053,6 @@ static int loadScriptModule(Ejs *ejs, MprFile *file, cchar *path, int flags)
 }
 
 
-static EjsObj *getCurrentBlock(Ejs *ejs, EjsModule *mp)
-{
-    EjsFunction     *fun;
-    EjsObj          *block;
-    
-    block = (EjsObj*) mp->scope;
-    mprAssert(block);
-
-    if (ejsIsFunction(block)) {
-        fun = (EjsFunction*) block;
-        if (fun->activation) {
-            return fun->activation;
-        }
-    }
-    return block;
-}
-
-
 static int fixupTypes(Ejs *ejs, MprList *list)
 {
     EjsTypeFixup    *fixup;
@@ -1103,7 +1098,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
             targetType = (EjsType*) fixup->target;
             targetType->needFixup = 1;
             ejsFixupType(ejs, targetType, type, 0);
-            if (targetType->block.namespaces.length == 0 && type->hasScriptFunctions) {
+            if (targetType->constructor.block.namespaces.length == 0 && type->hasScriptFunctions) {
                 ejsDefineTypeNamespaces(ejs, targetType);
             }
             break;
@@ -1960,6 +1955,35 @@ static int swapWord(Ejs *ejs, int word)
     }
     return ((word & 0xFF000000) >> 24) | ((word & 0xFF0000) >> 8) | ((word & 0xFF00) << 8) | ((word & 0xFF) << 24);
 }
+
+
+static EjsObj *getCurrentBlock(EjsModule *mp)
+{
+    return mprGetLastItem(mp->current);
+}
+
+
+static void pushScope(EjsModule *mp, EjsBlock *block, EjsObj *obj)
+{
+    mprAssert(block != mp->scope);
+    if (block) {
+        block->scope = mp->scope;
+        mp->scope = block;
+        mprAssert(mp->scope != mp->scope->scope);
+    }
+    mprPushItem(mp->current, obj);
+}
+
+
+static void popScope(EjsModule *mp, int keepScope)
+{
+    mprPopItem(mp->current);
+    if (!keepScope) {
+        mprAssert(mp->scope != mp->scope->scope);
+        mp->scope = mp->scope->scope;
+    }
+}
+
 
 /*
     @copy   default

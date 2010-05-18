@@ -1128,7 +1128,7 @@ void ejsConfigureDateType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Date_parse, (EjsProc) date_parse);
     ejsBindMethod(ejs, type, ES_Date_UTC, (EjsProc) date_UTC);
 
-    ejsBindMethod(ejs, prototype, ES_Date_Date, (EjsProc) date_Date);
+    ejsBindConstructor(ejs, type, (EjsProc) date_Date);
     ejsBindAccess(ejs, prototype, ES_Date_day, (EjsProc) date_day, (EjsProc) date_set_day);
     ejsBindAccess(ejs, prototype, ES_Date_dayOfYear, (EjsProc) date_dayOfYear, (EjsProc) date_set_dayOfYear);
     ejsBindAccess(ejs, prototype, ES_Date_date, (EjsProc) date_date, (EjsProc) date_set_date);

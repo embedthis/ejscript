@@ -2630,6 +2630,9 @@ typedef struct MprKeyValue {
  */
 extern MprKeyValue *mprCreateKeyPair(MprCtx ctx, cchar *key, cchar *value);
 
+extern cvoid *mprPopItem(MprList *lp);
+extern int mprPushItem(MprList *lp, cvoid *item);
+
 /**
     Logging Services
     @stability Evolving

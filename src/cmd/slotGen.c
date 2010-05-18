@@ -103,9 +103,9 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     ejsName(&qname, EJS_EJS_NAMESPACE, EJS_GLOBAL);
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
     type = ejsCreateType(ejs, &qname, NULL, NULL, NULL, sizeof(EjsType), slotNum, ejs->global->numSlots, 0, 0, NULL);
-    type->block = *ejs->globalBlock;
-    type->block.obj.type = ejs->typeType;
-    type->block.obj.isType = 1;
+    type->constructor.block = *ejs->globalBlock;
+    type->constructor.block.obj.type = ejs->typeType;
+    type->constructor.block.obj.isType = 1;
 
     if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
         mprError(bp, "Can't generate slot file for module %s", mp->name);

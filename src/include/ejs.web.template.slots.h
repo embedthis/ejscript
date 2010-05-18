@@ -60,21 +60,20 @@
 #define ES_TemplateParser_toLocaleString                               8
 #define ES_TemplateParser_toString                                     9
 #define ES_TemplateParser_valueOf                                      10
-#define ES_TemplateParser_TemplateParser                               11
-#define ES_TemplateParser_ContentMarker                                12
-#define ES_TemplateParser_ContentPattern                               13
-#define ES_TemplateParser_script                                       14
-#define ES_TemplateParser_pos                                          15
-#define ES_TemplateParser_lineNumber                                   16
-#define ES_TemplateParser_Header                                       17
-#define ES_TemplateParser_Footer                                       18
-#define ES_TemplateParser_MvcHeader                                    19
-#define ES_TemplateParser_build                                        20
-#define ES_TemplateParser_buildView                                    21
-#define ES_TemplateParser_parse                                        22
-#define ES_TemplateParser_getToken                                     23
-#define ES_TemplateParser_eatSpace                                     24
-#define ES_TemplateParser_NUM_INSTANCE_PROP                            25
+#define ES_TemplateParser_ContentMarker                                11
+#define ES_TemplateParser_ContentPattern                               12
+#define ES_TemplateParser_script                                       13
+#define ES_TemplateParser_pos                                          14
+#define ES_TemplateParser_lineNumber                                   15
+#define ES_TemplateParser_Header                                       16
+#define ES_TemplateParser_Footer                                       17
+#define ES_TemplateParser_MvcHeader                                    18
+#define ES_TemplateParser_build                                        19
+#define ES_TemplateParser_buildView                                    20
+#define ES_TemplateParser_parse                                        21
+#define ES_TemplateParser_getToken                                     22
+#define ES_TemplateParser_eatSpace                                     23
+#define ES_TemplateParser_NUM_INSTANCE_PROP                            24
 #define ES_TemplateParser_NUM_INHERITED_PROP                           11
 
 
@@ -100,6 +99,6 @@
 #define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    0
 #define ES_ejs_web_template_Token_NUM_INHERITED_PROP                   0
 
-#define _ES_CHECKSUM_ejs_web_template   44157
+#define _ES_CHECKSUM_ejs_web_template   44320
 
 #endif

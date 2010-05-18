@@ -1056,7 +1056,7 @@ extern int          ecAstFixup(EcCompiler *cp, struct EcNode *np);
 extern EcNode       *ecChangeNode(EcNode *np, EcNode *oldNode, EcNode *newNode);
 extern void         ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *up);
 extern int          ecCodeGen(EcCompiler *cp, int argc, struct EcNode **nodes);
-extern int          ecCompile(EcCompiler *cp, int argc, char **path, int flags);
+extern int          ecCompile(EcCompiler *cp, int argc, char **path);
 extern EcLexer      *ecCreateLexer(EcCompiler *cp);
 extern void         ecDestroyLexer(EcCompiler *cp);
 EcCompiler          *ecCreateCompiler(struct Ejs *ejs, int flags);

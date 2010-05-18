@@ -348,7 +348,7 @@ void ejsConfigureRegExpType(Ejs *ejs)
     type = ejsConfigureNativeType(ejs, "ejs", "RegExp", sizeof(EjsRegExp));
     prototype = type->prototype;
 
-    ejsBindMethod(ejs, prototype, ES_RegExp_RegExp, (EjsProc) regexConstructor);
+    ejsBindConstructor(ejs, type, (EjsProc) regexConstructor);
     ejsBindMethod(ejs, prototype, ES_RegExp_exec, (EjsProc) exec);
     ejsBindAccess(ejs, prototype, ES_RegExp_lastIndex, (EjsProc) getLastIndex, (EjsProc) setLastIndex);
     ejsBindMethod(ejs, prototype, ES_RegExp_global, (EjsProc) getGlobalFlag);

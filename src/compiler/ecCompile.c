@@ -64,7 +64,7 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
     } else {
         ec->noout = 1;
     }
-    if (ecCompile(ec, 1, (char**) &path, 0) < 0) {
+    if (ecCompile(ec, 1, (char**) &path) < 0) {
         if (flags & EC_FLAGS_THROW) {
             ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
         }
@@ -102,7 +102,7 @@ int ejsLoadScriptLiteral(Ejs *ejs, cchar *script, cchar *cache, int flags)
         return EJS_ERR;
     }
     path = "__script__";
-    if (ecCompile(ec, 1, (char**) &path, 0) < 0) {
+    if (ecCompile(ec, 1, (char**) &path) < 0) {
         if (flags & EC_FLAGS_THROW) {
             ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
         }

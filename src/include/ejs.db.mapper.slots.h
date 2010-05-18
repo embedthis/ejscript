@@ -112,21 +112,20 @@
 #define ES_Record_toLocaleString                                       8
 #define ES_Record_toString                                             9
 #define ES_Record_valueOf                                              10
-#define ES_Record_Record                                               11
-#define ES_Record__keyValue                                            12
-#define ES_Record__errors                                              13
-#define ES_Record__cacheAssoc                                          14
-#define ES_Record_initialize                                           15
-#define ES_Record_coerceToEjsTypes                                     16
-#define ES_Record_error                                                17
-#define ES_Record_getErrors                                            18
-#define ES_Record_hasError                                             19
-#define ES_Record_runFilters                                           20
-#define ES_Record_save                                                 21
-#define ES_Record_saveUpdate                                           22
-#define ES_Record_validateRecord                                       23
-#define ES_Record_constructorOLD                                       24
-#define ES_Record_NUM_INSTANCE_PROP                                    25
+#define ES_Record__keyValue                                            11
+#define ES_Record__errors                                              12
+#define ES_Record__cacheAssoc                                          13
+#define ES_Record_initialize                                           14
+#define ES_Record_coerceToEjsTypes                                     15
+#define ES_Record_error                                                16
+#define ES_Record_getErrors                                            17
+#define ES_Record_hasError                                             18
+#define ES_Record_runFilters                                           19
+#define ES_Record_save                                                 20
+#define ES_Record_saveUpdate                                           21
+#define ES_Record_validateRecord                                       22
+#define ES_Record_constructorOLD                                       23
+#define ES_Record_NUM_INSTANCE_PROP                                    24
 #define ES_Record_NUM_INHERITED_PROP                                   11
 
 /*
@@ -231,12 +230,11 @@
 #define ES_ejs_db_mapper_Column_toLocaleString                         8
 #define ES_ejs_db_mapper_Column_toString                               9
 #define ES_ejs_db_mapper_Column_valueOf                                10
-#define ES_ejs_db_mapper_Column_Column                                 11
-#define ES_ejs_db_mapper_Column_ejsType                                12
-#define ES_ejs_db_mapper_Column_sqlType                                13
-#define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      14
+#define ES_ejs_db_mapper_Column_ejsType                                11
+#define ES_ejs_db_mapper_Column_sqlType                                12
+#define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      13
 #define ES_ejs_db_mapper_Column_NUM_INHERITED_PROP                     11
 
-#define _ES_CHECKSUM_ejs_db_mapper   189038
+#define _ES_CHECKSUM_ejs_db_mapper   189284
 
 #endif

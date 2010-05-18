@@ -31,13 +31,12 @@
 /*
    Prototype (instance) slots for "Cache" type 
  */
-#define ES_ejs_cache_Cache_Cache                                       0
-#define ES_ejs_cache_Cache_read                                        1
-#define ES_ejs_cache_Cache_write                                       2
-#define ES_ejs_cache_Cache_remove                                      3
-#define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           4
+#define ES_ejs_cache_Cache_read                                        0
+#define ES_ejs_cache_Cache_write                                       1
+#define ES_ejs_cache_Cache_remove                                      2
+#define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           3
 #define ES_ejs_cache_Cache_NUM_INHERITED_PROP                          0
 
-#define _ES_CHECKSUM_ejs_cache   12408
+#define _ES_CHECKSUM_ejs_cache   12540
 
 #endif

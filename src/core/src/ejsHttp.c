@@ -1161,7 +1161,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     type->helpers.mark = (EjsMarkHelper) markHttp;
     type->helpers.destroy = (EjsDestroyHelper) destroyHttp;
 
-    ejsBindMethod(ejs, prototype, ES_Http_Http, (EjsProc) httpConstructor);
+    ejsBindConstructor(ejs, type, (EjsProc) httpConstructor);
     ejsBindMethod(ejs, prototype, ES_Http_addListener, (EjsProc) http_addListener);
     ejsBindAccess(ejs, prototype, ES_Http_async, (EjsProc) http_async, (EjsProc) http_set_async);
     ejsBindMethod(ejs, prototype, ES_Http_available, (EjsProc) http_available);

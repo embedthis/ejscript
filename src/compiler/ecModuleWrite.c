@@ -213,12 +213,12 @@ static int createGlobalType(EcCompiler *cp, EjsType *type)
     ejs = cp->ejs;
     mp = cp->state->currentModule;
 
-    if (type->block.obj.visited || type->module != mp) {
+    if (type->constructor.block.obj.visited || type->module != mp) {
         return 0;
     }
-    type->block.obj.visited = 1;
+    type->constructor.block.obj.visited = 1;
 
-    if (type->baseType && !type->baseType->block.obj.visited) {
+    if (type->baseType && !type->baseType->constructor.block.obj.visited) {
         createGlobalType(cp, type->baseType);
     }
     if (type->implements) {
@@ -300,7 +300,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     mprAssert(qname.name);
 
     mprLog(cp, 5, "    type section %s for module %s", qname.name, mp->name);
-
+    
     type = (EjsType*) ejsGetProperty(ejs, ejs->global, slotNum);
     mprAssert(type);
     mprAssert(ejsIsType(type));
@@ -313,11 +313,11 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     attributes = (trait) ? trait->attributes : 0;
     attributes &= ~EJS_TYPE_FIXUP;
 
-    if (type->hasInitializer) {
-        attributes |= EJS_TYPE_HAS_TYPE_INITIALIZER;
-    }
     if (type->hasConstructor) {
         attributes |= EJS_TYPE_HAS_CONSTRUCTOR;
+    }
+    if (type->hasInitializer) {
+        attributes |= EJS_TYPE_HAS_TYPE_INITIALIZER;
     }
     if (type->hasInstanceVars) {
         attributes |= EJS_TYPE_HAS_INSTANCE_VARS;
@@ -353,6 +353,13 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     }
     if (rc < 0) {
         return MPR_ERR_CANT_WRITE;
+    }    
+    if (type->hasConstructor) {
+        mprAssert(type->constructor.isConstructor);
+        mprAssert(type->constructor.block.obj.isFunction);
+        if (createFunctionSection(cp, block, slotNum, (EjsFunction*) type, 0) < 0) {
+            return EJS_ERR;
+        }
     }
 
     /*
@@ -424,7 +431,7 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
         createDocSection(cp, block, slotNum, trait);
         qname = ejsGetPropertyName(ejs, block, slotNum);
         attributes = trait->attributes;
-        if (fun->initializer) {
+        if (fun->isInitializer) {
             attributes |= EJS_FUN_INITIALIZER;
         }
         if (fun->moduleInitializer) {
@@ -443,11 +450,8 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
         qname.name = EJS_INITIALIZER_NAME;
         qname.space = EJS_EJS_NAMESPACE;
     }
-    rc += ecEncodeByte(cp, EJS_SECT_FUNCTION);
-    rc += ecEncodeString(cp, qname.name);
-    rc += ecEncodeString(cp, qname.space);
-
-    if (fun->constructor) {
+    if (fun->isConstructor) {
+        mprAssert(fun->block.obj.isFunction);
         attributes |= EJS_FUN_CONSTRUCTOR;
     }
     if (fun->rest) {
@@ -459,10 +463,13 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
     if (fun->hasReturn) {
         attributes |= EJS_FUN_HAS_RETURN;
     }
+    resultType = fun->resultType;
+
+    rc += ecEncodeByte(cp, EJS_SECT_FUNCTION);
+    rc += ecEncodeString(cp, qname.name);
+    rc += ecEncodeString(cp, qname.space);
     rc += ecEncodeNumber(cp, attributes);
     rc += ecEncodeByte(cp, fun->strict);
-
-    resultType = fun->resultType;
     rc += ecEncodeGlobal(cp, (EjsObj*) resultType, (resultType) ? &resultType->qname : 0);
     rc += ecEncodeNumber(cp, (cp->bind || (block != ejs->global)) ? slotNum: -1);
     rc += ecEncodeNumber(cp, numSlots);

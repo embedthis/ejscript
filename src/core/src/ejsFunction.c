@@ -8,7 +8,11 @@
 
 #include    "ejs.h"
 
-/******************************************************************************/
+/*********************************** Forwards *********************************/
+
+static void setFunctionAttributes(EjsFunction *fun, int attributes);
+
+/************************************* Code ***********************************/
 /*
     Create a function object.
  */
@@ -72,13 +76,13 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
         OPT
      */
     dest->staticMethod = src->staticMethod;
-    dest->constructor = src->constructor;
     dest->hasReturn = src->hasReturn;
-    dest->initializer = src->initializer;
+    dest->isConstructor = src->isConstructor;
+    dest->isInitializer = src->isInitializer;
+    dest->isNativeProc = src->isNativeProc;
     dest->moduleInitializer = src->moduleInitializer;
     dest->rest = src->rest;
     dest->fullScope = src->fullScope;
-    dest->nativeProc = src->nativeProc;
     dest->strict = src->strict;
 
     if (src->activation) {
@@ -262,14 +266,25 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *byteCode, int code
     int numExceptions, EjsType *resultType, int attributes, EjsConst *constants, EjsBlock *scope, int strict)
 {
     EjsFunction     *fun;
-    EjsCode         *code;
 
     if ((fun = ejsCreateSimpleFunction(ejs, name, attributes)) == 0) {
         return 0;
     }
+    ejsInitFunction(ejs, fun, name, byteCode, codeLen, numArgs, numDefault, numExceptions, resultType, 
+        attributes, constants, scope, strict);
+    return fun;
+}
+
+
+void ejsInitFunction(Ejs *ejs, EjsFunction *fun, cchar *name, cuchar *byteCode, int codeLen, int numArgs, int numDefault, 
+    int numExceptions, EjsType *resultType, int attributes, EjsConst *constants, EjsBlock *scope, int strict)
+{
+    EjsCode         *code;
+
     if (scope) {
         fun->block.scope = scope;
     }
+    fun->block.obj.isFunction = 1;
     fun->numArgs = numArgs;
     fun->numDefault = numDefault;
     fun->resultType = resultType;
@@ -279,7 +294,16 @@ EjsFunction *ejsCreateFunction(Ejs *ejs, cchar *name, cuchar *byteCode, int code
     code->byteCode = (uchar*) byteCode;
     code->numHandlers = numExceptions;
     code->constants = constants;
-    return fun;
+    setFunctionAttributes(fun, attributes);
+}
+
+
+void ejsDisableFunction(Ejs *ejs, EjsFunction *fun)
+{
+    fun->block.obj.isFunction = 0;
+    fun->isConstructor = 0;
+    fun->isInitializer = 0;
+    fun->activation = 0;
 }
 
 
@@ -293,25 +317,30 @@ EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, cchar *name, int attributes)
     }
     fun->name = mprStrdup(fun, name);
     ejsSetDebugName(fun, fun->name);
+    setFunctionAttributes(fun, attributes);
+    return fun;
+}
 
-    //  MOB -- convert these all back to a simple bit mask
+
+static void setFunctionAttributes(EjsFunction *fun, int attributes)
+{
     if (attributes & EJS_FUN_CONSTRUCTOR) {
-        fun->constructor = 1;
-    }
-    if (attributes & EJS_FUN_REST_ARGS) {
-        fun->rest = 1;
+        fun->isConstructor = 1;
     }
     if (attributes & EJS_FUN_INITIALIZER) {
-        fun->initializer = 1;
+        fun->isInitializer = 1;
+    }
+    if (attributes & EJS_PROP_NATIVE) {
+        fun->isNativeProc = 1;
     }
     if (attributes & EJS_FUN_MODULE_INITIALIZER) {
         fun->moduleInitializer = 1;
     }
+    if (attributes & EJS_FUN_REST_ARGS) {
+        fun->rest = 1;
+    }
     if (attributes & EJS_PROP_STATIC) {
         fun->staticMethod = 1;
-    }
-    if (attributes & EJS_PROP_NATIVE) {
-        fun->nativeProc = 1;
     }
     if (attributes & EJS_FUN_FULL_SCOPE) {
         fun->fullScope = 1;
@@ -325,7 +354,6 @@ EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, cchar *name, int attributes)
     if (attributes & EJS_TRAIT_THROW_NULLS) {
         fun->throwNulls = 1;
     }
-    return fun;
 }
 
 
@@ -422,11 +450,10 @@ static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 void ejsCompleteFunction(Ejs *ejs, EjsFunction *fun)
 {
-    int     numSlots;
-
-    numSlots = fun->block.obj.numSlots;
+    int numSlots = fun->block.obj.numSlots;
     if (numSlots > 0 && fun->activation == 0) {
         fun->activation = ejsCreateActivation(ejs, fun, numSlots);
         ejsCopySlots(ejs, (EjsObj*) fun, fun->activation->slots, fun->block.obj.slots, numSlots, 0);
@@ -434,9 +461,22 @@ void ejsCompleteFunction(Ejs *ejs, EjsFunction *fun)
         ejsClearObjHash((EjsObj*) fun);
         fun->block.obj.numSlots = 0;
     }
+#endif
+#if UNUSED
+    /*
+        Copy activation namespaces to the function block
+     */
+    if (ejsIsBlock(fun->activation)) {
+        block = (EjsBlock*) fun->activation;
+        for (next = 0; (namespace = ejsGetNextItem(&block->namespaces, &next)) != 0; ) {
+            ejsAddItemToSharedList(fun, &fun->block.namespaces, namespace);
+        }
+    }
 }
+#endif
 
 
+//  MOB -- who calls this?
 void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 {
     EjsObj  *activation;
@@ -485,7 +525,7 @@ void ejsCreateFunctionType(Ejs *ejs)
 
     nop = ejs->nopFunction = ejsCreateFunction(ejs, "nop", NULL, 0, -1, 0, 0, NULL, EJS_PROP_NATIVE, NULL, NULL, 0);
     nop->body.proc = nopFunction;
-    nop->nativeProc = 1;
+    nop->isNativeProc = 1;
 }
 
 
@@ -500,7 +540,9 @@ void ejsConfigureFunctionType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Function_apply, (EjsProc) fun_applyFunction);
     ejsBindMethod(ejs, prototype, ES_Function_bind, (EjsProc) fun_bindFunction);
     ejsBindMethod(ejs, prototype, ES_Function_boundThis, (EjsProc) fun_boundThis);
+#if ES_Function_length
     ejsBindMethod(ejs, prototype, ES_Function_length, (EjsProc) fun_length);
+#endif
     ejsBindMethod(ejs, prototype, ES_Function_setScope, (EjsProc) fun_setScope);
     ejsBindMethod(ejs, prototype, ES_Function_call, (EjsProc) fun_call);
 }
