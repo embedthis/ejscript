@@ -158,15 +158,14 @@ static EjsObj *eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     script = ejsGetString(ejs, argv[0]);
     if (argc < 2 || argv[1] == ejs->nullValue) {
-        cache = 0;
+        cache = NULL;
     } else {
         cache = ejsGetString(ejs, argv[1]);
     }
-    if (ejs->service->loadScriptLiteral) {
-        return (ejs->service->loadScriptLiteral)(ejs, script, cache);
+    if (ejsLoadScriptLiteral(ejs, script, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW | EC_FLAGS_VISIBLE) < 0) {
+        return 0;
     }
-    ejsThrowStateError(ejs, "Ability to compile scripts not available");
-    return 0;
+    return ejs->result;
 }
 
 

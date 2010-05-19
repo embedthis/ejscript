@@ -70,7 +70,9 @@ static ReservedWord keywords[] =
   { "override",         G_CONREV,           T_ATTRIBUTE,                T_OVERRIDE, },
   { "private",          G_CONREV,           T_RESERVED_NAMESPACE,       T_PRIVATE, },
   { "protected",        G_CONREV,           T_RESERVED_NAMESPACE,       T_PROTECTED, },
+#if UNUSED
   { "prototype",        G_CONREV,           T_ATTRIBUTE,                T_PROTOTYPE, },
+#endif
   { "public",           G_CONREV,           T_RESERVED_NAMESPACE,       T_PUBLIC, },
   { "require",          G_CONREV,           T_REQUIRE,                  0, },
   { "return",           G_RESERVED,         T_RETURN,                   0, },

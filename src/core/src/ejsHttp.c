@@ -1143,7 +1143,7 @@ static void destroyHttp(Ejs *ejs, EjsHttp *hp)
 
     mprFree(hp->conn);
     hp->conn = 0;
-    ejsFree(ejs, (EjsObj*) hp, -1);
+    ejsFreeVar(ejs, (EjsObj*) hp, -1);
 }
 
 

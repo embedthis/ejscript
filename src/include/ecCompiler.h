@@ -1014,6 +1014,7 @@ typedef struct EcCompiler {
     bool        merge;                      /* Merge all dependent modules */
     bool        bind;                       /* Don't bind properties to slots */
     bool        noout;                      /* Don't generate any module output files */
+    bool        visibleGlobals;             /* Make globals visible (no namespace) */
     int         optimizeLevel;              /* Optimization factor (0-9) */
     bool        shbang;                     /* Observe #!/path as the first line of a script */
     int         warnLevel;                  /* Warning level factor (0-9) */

@@ -1,5 +1,5 @@
 /*
-    Classical prototype inheritance
+    Object literal definition of methods
  */
 
 function Shape(height, width) {
@@ -7,9 +7,12 @@ function Shape(height, width) {
     this.width = width
     return this
 }
-Shape.prototype.marker = "Hello"
-Shape.prototype.area = function() {
-    return this.height * this.width
+
+Shape.prototype = {
+    marker: "Hello",
+    area: function () {
+        return this.height * this.width
+    },
 }
 
 //  Create new object

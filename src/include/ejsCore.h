@@ -667,7 +667,7 @@ typedef EjsObj EO;
         of the variable.
     @ingroup EjsObj
  */
-extern EjsObj *ejsAlloc(Ejs *ejs, struct EjsType *type, int size);
+extern EjsObj *ejsAllocVar(Ejs *ejs, struct EjsType *type, int size);
 extern EjsObj *ejsAllocPooled(Ejs *ejs, int id);
 
 /**
@@ -679,7 +679,7 @@ extern EjsObj *ejsAllocPooled(Ejs *ejs, int id);
     @param pool Optional pool id. Set to -1 for defaults.
     @ingroup EjsObj
  */
-extern void ejsFree(Ejs *ejs, EjsObj *vp, int pool);
+extern void ejsFreeVar(Ejs *ejs, EjsObj *vp, int pool);
 
 /** 
     Cast a variable to a new type
@@ -797,7 +797,7 @@ extern int ejsDeletePropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname);
     @return The variable property stored at the nominated slot.
     @ingroup EjsObj
  */
-extern EjsObj *ejsGetProperty(Ejs *ejs, EjsObj *vp, int slotNum);
+extern void *ejsGetProperty(Ejs *ejs, EjsObj *vp, int slotNum);
 
 /** 
     Get a count of properties in a variable
@@ -829,7 +829,7 @@ extern EjsName ejsGetPropertyName(Ejs *ejs, EjsObj *vp, int slotNum);
     @return The variable property stored at the nominated slot.
     @ingroup EjsObj
  */
-extern EjsObj *ejsGetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname);
+extern void *ejsGetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname);
 
 /** 
     Get a property's traits
@@ -901,7 +901,7 @@ extern int ejsSetProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsObj *value);
     @return The slot number of the property updated.
     @ingroup EjsObj
  */
-extern int ejsSetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname, EjsObj *value);
+extern int ejsSetPropertyByName(Ejs *ejs, void *vp, EjsName *qname, void *value);
 
 /** 
     Set a property's name 
@@ -1161,11 +1161,18 @@ typedef struct EjsFunction {
      */
     EjsBlock        block;                  /** Activation block for local vars */
     EjsObj          *activation;            /** Activation properties (parameters + locals) */
+
+    //  MOB -- should this be BLD_DEBUG?
     cchar           *name;                  /** Function name for debuggability */
 
-    //  MOB -- these two could be a union with creator - can't be both
-    struct EjsFunction *setter;             /**< Setter function for this property */
-    struct EjsType  *template;              /**< Type to use to create instances */
+#if FUTURE && MOB
+    union {
+#endif
+        struct EjsFunction *setter;         /**< Setter function for this property */
+        struct EjsType  *archetype;         /**< Type to use to create instances */
+#if FUTURE && MOB
+    } extra;
+#endif
 
     union {
         EjsCode     code;                   /**< Byte code */
@@ -1317,7 +1324,9 @@ extern void ejsOffsetExceptions(EjsFunction *mp, int offset);
 extern int  ejsSetFunctionCode(EjsFunction *mp, uchar *byteCode, int len);
 extern void ejsMarkFunction(Ejs *ejs, EjsFunction *fun);
 extern void ejsShowOpFrequency(Ejs *ejs);
+#if UNUSED
 extern int ejsLookupFunctionProperty(Ejs *ejs, EjsFunction *fun, EjsName *qname);
+#endif
 
 typedef struct EjsFrame {
     EjsFunction     function;               /**< Activation frame for function calls. Stores local variables */
@@ -2678,7 +2687,7 @@ extern EjsType *ejsConfigureType(Ejs *ejs, EjsType *type, struct EjsModule *up, 
 extern void ejsCompleteType(Ejs *ejs, EjsType *type);
 
 extern EjsObj *ejsCreatePrototype(Ejs *ejs, EjsType *type, int numProp);
-extern EjsType *ejsCreateTypeFromFunction(Ejs *ejs, struct EjsFunction *fun, EjsObj *prototype);
+extern EjsType *ejsCreateArchetype(Ejs *ejs, struct EjsFunction *fun, EjsObj *prototype);
 
 /** 
     Define a global function
@@ -3049,6 +3058,7 @@ extern int ejsEvalFile(cchar *path);
 #define EC_FLAGS_NO_OUT          0x10                   /* Don't generate any output file */
 #define EC_FLAGS_PARSE_ONLY      0x20                   /* Just parse source. Don't generate code */
 #define EC_FLAGS_THROW           0x40                   /* Throw errors when compiling. Used for eval() */
+#define EC_FLAGS_VISIBLE         0x80                   /* Make global vars visible to all */
 
 //  TODO - DOC
 extern int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags);

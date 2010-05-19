@@ -14,6 +14,9 @@ module ejs {
 
         use default namespace public
 
+        /**
+            The constructor function from which this object was created.
+         */
         native function get constructor(): Function
 
         /** 
@@ -184,6 +187,13 @@ module ejs {
             TODO - prototype property
          */
         native function propertyIsEnumerable(property: String): Boolean
+
+        /**
+            The prototype object for objects of this type. The prototype object provides the template for instance 
+            properties shared by all objects of a given type.
+         */
+        static native function get prototype(): Object
+        static native function set prototype(v: Object): Void
 
         /** 
             Seal an object. This prevents changing the configuration of any property. This includes prventing property 

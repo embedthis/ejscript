@@ -313,7 +313,7 @@ static void destroySqliteDb(Ejs *ejs, EjsSqlite *db)
     if (db->sdb) {
         sqliteClose(ejs, db, 0, 0);
     }
-    ejsFree(ejs, (EjsVar*) db, -1);
+    ejsFreeVar(ejs, (EjsVar*) db, -1);
 }
 
 /*********************************** Malloc ********************************/

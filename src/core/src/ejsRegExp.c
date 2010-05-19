@@ -51,7 +51,7 @@ static void destroyRegExp(Ejs *ejs, EjsRegExp *rp)
         free(rp->compiled);
         rp->compiled = 0;
     }
-    ejsFree(ejs, (EjsObj*) rp, -1);
+    ejsFreeVar(ejs, (EjsObj*) rp, -1);
 }
 
 

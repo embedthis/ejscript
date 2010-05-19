@@ -8,7 +8,6 @@ function contains(o, elements) {
     }
 }
 
-
 //  MOB BUG -- should contain "length"
 contains(Object.getOwnPropertyNames(Array), ["prototype"])
 

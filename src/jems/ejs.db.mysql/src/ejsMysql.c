@@ -350,7 +350,7 @@ static void *destroyDb(Ejs *ejs, EjsDb *db)
         closeDb(ejs, db, 0, 0);
         db->sdb = 0;
     }
-    ejsFree(ejs, (EjsVar*) db, -1);
+    ejsFreeVar(ejs, (EjsVar*) db, -1);
 }
 
 /*********************************** Factory *******************************/

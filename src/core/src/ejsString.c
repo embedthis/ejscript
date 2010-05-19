@@ -83,7 +83,7 @@ static void destroyString(Ejs *ejs, EjsString *sp)
 
     mprFree(sp->value);
     sp->value = 0;
-    ejsFree(ejs, (EjsObj*) sp, -1);
+    ejsFreeVar(ejs, (EjsObj*) sp, -1);
 }
 
 
@@ -491,7 +491,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         via the overloaded operator '%' which in turn invokes format()
      */
     if (args->length == 1) {
-        inner = (EjsArray*) ejsGetProperty(ejs, (EjsObj*) args, 0);
+        inner = ejsGetProperty(ejs, (EjsObj*) args, 0);
         if (ejsIsArray(inner)) {
             args = inner;
         }
@@ -592,7 +592,6 @@ static EjsObj *fromCharCode(Ejs *ejs, EjsString *unused, int argc, EjsObj **argv
     if (result == 0) {
         return 0;
     }
-
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, (EjsObj*) args, i);
         result->value[i] = ejsGetInt(ejs, ejsToNumber(ejs, vp));

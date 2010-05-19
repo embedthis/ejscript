@@ -1,22 +1,31 @@
 /*
-    Classical prototype inheritance
+    Closure based inheritance
  */
 
-function Shape(height, width) {
-    this.height = height
-    this.width = width
-    return this
-}
-Shape.prototype.marker = "Hello"
-Shape.prototype.area = function() {
-    return this.height * this.width
+function Shape(h, w) {
+    /* private vars */
+    var height = h,
+        width = w
+
+    /* Public vars */
+    this.marker = "Hello"
+
+    /* private method */
+    function calcArea() {
+        return width * height
+    }
+
+    /* public method */
+    this.area = function() {
+        return calcArea()
+    }
 }
 
 //  Create new object
 
 s = new Shape(100, 200)
 assert(Object.getOwnPrototypeOf(s) === Shape.prototype)
-assert(Object.getOwnPropertyNames(s) == "height,width")
+assert(Object.getOwnPropertyNames(s) == "marker,area")
 assert(Shape.prototype.isPrototypeOf(s))
 assert(s.marker == "Hello")
 assert(s.area() == 20000)
@@ -29,7 +38,7 @@ assert(s.area() == 20000)
 assert(s.prototype === s2.prototype)
 
 
-//  Subclassing
+//  Subclassing using classical prototype based inheritance
 
 function Cube(d) {
     this.depth = d
@@ -42,7 +51,5 @@ assert(Object.getOwnPropertyNames(c) == "depth")
 assert(Cube.prototype.isPrototypeOf(c))
 assert(c.marker == "Hello")
 assert(c.area() == 2)
-assert(c.height == 1)
-assert(c.width == 2)
 assert(c.depth == 3)
 

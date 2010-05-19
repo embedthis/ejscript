@@ -404,7 +404,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     worker->gotMessage = 1;
     ejs = worker->ejs;
 
-    callback = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) worker, msg->callbackSlot);
+    callback = ejsGetProperty(ejs, (EjsObj*) worker, msg->callbackSlot);
 
     switch (msg->callbackSlot) {
     case ES_Worker_onclose:
@@ -749,7 +749,7 @@ static void destroyWorker(Ejs *ejs, EjsWorker *worker)
         mprFree(worker->pair->ejs);
         worker->pair = 0;
     }
-    ejsFree(ejs, (EjsObj*) worker, -1);
+    ejsFreeVar(ejs, (EjsObj*) worker, -1);
 }
 
 

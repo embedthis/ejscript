@@ -122,7 +122,7 @@ static void sessionTimer(Ejs *ejs, MprEvent *event)
         count = ejsGetPropertyCount(master, (EjsVar*) sessions);
         deleted = 0;
         for (i = count - 1; i >= 0; i--) {
-            session = (EjsSession*) ejsGetProperty(master, (EjsVar*) sessions, i);
+            session = ejsGetProperty(master, (EjsVar*) sessions, i);
             if (session->obj.type == ejs->sessionType) {
                 if (session && session->expire <= now) {
                     ejsDeleteProperty(master, (EjsVar*) sessions, i);
@@ -177,7 +177,7 @@ void ejsParseWebSessionCookie(EjsRequest *req)
 
         if (ejs->master) {
             ejsName(&qname, "", id);
-            req->session = (EjsSession*) ejsGetPropertyByName(ejs->master, (EjsVar*) ejs->sessions, &qname);
+            req->session = ejsGetPropertyByName(ejs->master, (EjsVar*) ejs->sessions, &qname);
         }
         mprFree(id);
         cookie = value;

@@ -1,5 +1,5 @@
 /*
-    Object.create creation using classical inheritance
+    Inheritance using Object.create
  */
 
 function Shape(height, width) {

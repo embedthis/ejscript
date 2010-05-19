@@ -41,7 +41,7 @@ static void destroyFile(Ejs *ejs, EjsFile *fp)
 
     mprFree(fp->path);
     fp->path = 0;
-    ejsFree(ejs, (EjsObj*) fp, -1);
+    ejsFreeVar(ejs, (EjsObj*) fp, -1);
 }
 
 
@@ -657,7 +657,7 @@ static EjsObj *getFileSize(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 #if UNUSED
     if (fp->mode & FILE_OPEN) {
         /*
-         *  GetFileSize is not accurate
+            GetFileSize is not accurate
          */
         return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mprGetFileSize(fp->file));
     } else {

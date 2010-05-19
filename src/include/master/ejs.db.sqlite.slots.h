@@ -26,9 +26,7 @@
 #define ES_ejs_db_Sqlite_DataTypeToSqlType                             1
 #define ES_ejs_db_Sqlite_SqlTypeToDataType                             2
 #define ES_ejs_db_Sqlite_SqlTypeToEjsType                              3
-#define ES_ejs_db_Sqlite_prototype                                     4
-
-#define ES_ejs_db_Sqlite_NUM_CLASS_PROP                                5
+#define ES_ejs_db_Sqlite_NUM_CLASS_PROP                                4
 
 /*
    Prototype (instance) slots for "Sqlite" type 
@@ -61,6 +59,6 @@
 #define ES_ejs_db_Sqlite_NUM_INSTANCE_PROP                             25
 #define ES_ejs_db_Sqlite_NUM_INHERITED_PROP                            0
 
-#define _ES_CHECKSUM_ejs_db_sqlite   74173
+#define _ES_CHECKSUM_ejs_db_sqlite   73154
 
 #endif

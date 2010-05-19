@@ -300,7 +300,7 @@ static void generateNamespaceList(EjsMod *mp)
         if (trait == 0) {
             continue;
         }
-        type = (EjsType*) ejsGetProperty(ejs, ejs->global, slotNum);
+        type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
         if (type == 0 || !ejsIsType(type) || qname.name == 0 || strstr(qname.space, "internal-") != 0) {
             continue;
@@ -462,7 +462,7 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
         if (doc == 0 || doc->hide) {
             continue;
         }
-        type = (EjsType*) ejsGetProperty(ejs, ejs->global, slotNum);
+        type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
         if (type == 0 || !ejsIsType(type) || qname.name == 0) {
             continue;
@@ -709,7 +709,7 @@ static void generateClassPages(EjsMod *mp)
 
     count = ejsGetPropertyCount(ejs, ejs->global);
     for (slotNum = 0; slotNum < count; slotNum++) {
-        type = (EjsType*) ejsGetProperty(ejs, ejs->global, slotNum);
+        type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
         if (type == 0 || !ejsIsType(type) || qname.name == 0 || strstr(qname.space, "internal-") != 0) {
             continue;
@@ -817,7 +817,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName *qname, EjsTrait *ty
         }
 #if UNUSED
         if (slotNum < numInherited) {
-            fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
+            fun = ejsGetProperty(ejs, obj, slotNum);
             if (fun && ejsIsFunction(fun) && fun->owner != obj) {
                 /* Inherited function */
                 continue;

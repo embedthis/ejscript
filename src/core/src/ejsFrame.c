@@ -13,7 +13,7 @@
 static void destroyFrame(Ejs *ejs, EjsFrame *frame)
 {
     //  MOB -- does this now mean that the last arg can be deleted?
-    ejsFree(ejs, (EjsObj*) frame, ES_Frame);
+    ejsFreeVar(ejs, (EjsObj*) frame, ES_Frame);
 }
 
 

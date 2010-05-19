@@ -103,7 +103,7 @@ EjsObj *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
         return ejs->exception;
     }
     if (ejs->initialized) {
-        type = (EjsType*) ejsGetProperty(ejs, ejs->global, slot);
+        type = ejsGetProperty(ejs, ejs->global, slot);
     } else {
         type = 0;
     }

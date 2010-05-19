@@ -51,7 +51,7 @@ static MPR_INLINE void getPropertyFromSlot(Ejs *ejs, EjsObj *thisObj, EjsObj *ob
     EjsFunction     *fun, *value;
 
     if (ejsHasTrait(obj, slotNum, EJS_TRAIT_GETTER)) {
-        fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
+        fun = ejsGetProperty(ejs, obj, slotNum);
         callFunction(ejs, fun, thisObj, 0, 0);
         if (ejsIsNativeFunction(fun)) {
             pushOutside(ejs, ejs->result);
@@ -60,7 +60,7 @@ static MPR_INLINE void getPropertyFromSlot(Ejs *ejs, EjsObj *thisObj, EjsObj *ob
         }
         return;
     }
-    value = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
+    value = ejsGetProperty(ejs, obj, slotNum);
     if (ejsIsFunction(value)) {
         fun = (EjsFunction*) value;
         if (!fun->thisObj && thisObj) {
@@ -1273,7 +1273,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 ejsThrowReferenceError(ejs, "Can't find method %s", qname.name);
                 BREAK;
             }
-            fun = (EjsFunction*) ejsGetProperty(ejs, lookup.obj, slotNum);
+            fun = ejsGetProperty(ejs, lookup.obj, slotNum);
             if (ejsIsType(fun)) {
                 type = (EjsType*) fun;
                 callFunction(ejs, fun, NULL, argc, 0);
@@ -1335,7 +1335,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_NEXT_CONSTRUCTOR):
             qname = GET_NAME();
             argc = GET_INT();
-            type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, &qname);
+            type = ejsGetPropertyByName(ejs, ejs->global, &qname);
             if (type == 0) {
                 ejsThrowReferenceError(ejs, "Can't find constructor %s", qname.name);
             } else {
@@ -1417,7 +1417,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             } else {
                 type->constructor.block.scope = state.bp;
                 if (type && type->hasInitializer) {
-                    fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, 0);
+                    fun = ejsGetProperty(ejs, (EjsObj*) type, 0);
                     callFunction(ejs, fun, (EjsObj*) type, 0, 0);
                     if (type->implements && !ejs->exception) {
                         callInterfaceInitializers(ejs, type);
@@ -1435,7 +1435,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_DEFINE_FUNCTION):
             qname = GET_NAME();
             if ((slotNum = ejsLookupScope(ejs, &qname, &lookup)) >= 0) {
-                f1 = (EjsFunction*) ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
+                f1 = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
             }
             if (slotNum < 0 || !ejsIsFunction(f1)) {
                 ejsThrowReferenceError(ejs, "Reference is not a function");
@@ -2074,10 +2074,12 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (!ejsIsType(v1)) {
                 if (ejsIsFunction(v1)) {
                     fun = (EjsFunction*) v1;
-                    if (fun->template == 0) {
-                        fun->template = ejsCreateTypeFromFunction(ejs, fun, NULL);
+                    if (fun->archetype == 0) {
+                        if ((fun->archetype = ejsCreateArchetype(ejs, fun, NULL)) == 0) {
+                            BREAK;
+                        }
                     }
-                    obj = ejsCreate(ejs, fun->template, 0);
+                    obj = ejsCreate(ejs, fun->archetype, 0);
                 } else {
                     ejsThrowReferenceError(ejs, "Can't locate type");
                     BREAK;
@@ -2323,7 +2325,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, int slot
     if (trait) {
         if (trait->attributes & EJS_TRAIT_SETTER) {
             pushOutside(ejs, value);
-            fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
+            fun = ejsGetProperty(ejs, obj, slotNum);
             fun = fun->setter;
             callFunction(ejs, fun, thisObj, 1, 0);
             return;
@@ -2378,6 +2380,7 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, EjsName *qname
 
     //  MOB -- ONLY XML requires this.  NOTE: this bypasses ES5 traits
     //  Alternatively push this whole function down into ejsObject and have all go via setPropertyByName
+    
     if (obj->type->helpers.setPropertyByName) {
         slotNum = (*obj->type->helpers.setPropertyByName)(ejs, obj, qname, value);
         if (slotNum >= 0) {
@@ -2385,24 +2388,28 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, EjsName *qname
         }
     }
     if ((slotNum = ejsLookupVar(ejs, obj, qname, &lookup)) >= 0) {
-        if (lookup.obj->isPrototype) {
+        if (lookup.obj != obj) {
             trait = ejsGetTrait(lookup.obj, slotNum);
             if (trait->attributes & EJS_TRAIT_SETTER) {
                 obj = lookup.obj;
-            } else if (obj->type->hasInstanceVars) {
-                /* The prototype properties have been inherited */
-                slotNum = ejsGetSlot(ejs, obj, slotNum);
-                obj->slots[slotNum].trait = lookup.obj->slots[slotNum].trait;
-                obj->slots[slotNum].value = lookup.obj->slots[slotNum].value;
-                slotNum = ejsSetPropertyName(ejs, obj, slotNum, qname);
-            } else  {
-                slotNum = -1;
+                
+                //  MOB - REFACTOR. Just for prototype() getter in Object.prototype
+            } else if (lookup.obj->isPrototype || trait->attributes & EJS_TRAIT_GETTER) {
+                if (obj->type->hasInstanceVars) {
+                    /* The prototype properties have been inherited */
+                    slotNum = ejsGetSlot(ejs, obj, slotNum);
+                    obj->slots[slotNum].trait = lookup.obj->slots[slotNum].trait;
+                    obj->slots[slotNum].value = lookup.obj->slots[slotNum].value;
+                    slotNum = ejsSetPropertyName(ejs, obj, slotNum, qname);
+                } else  {
+                    slotNum = -1;
+                }
+            } else {
+                obj = lookup.obj;
             }
-        } else {
-            obj = lookup.obj;
         }
-
-    } else {
+    }
+    if (slotNum < 0) {
         if (dupName) {
             qname->name = mprStrdup(obj, qname->name);
             qname->space = mprStrdup(obj, qname->space);
@@ -2436,6 +2443,8 @@ static void storePropertyToScope(Ejs *ejs, EjsName *qname, EjsObj *value, bool d
             trait = ejsGetTrait(lookup.obj, slotNum);
             if (trait->attributes & EJS_TRAIT_SETTER) {
                 obj = lookup.obj;
+
+            //  MOB -- surely this should be done universally if found on a prototype?
             } else if (obj->type->hasInstanceVars) {
                 /* The prototype properties have been inherited */
                 slotNum = ejsGetSlot(ejs, obj, slotNum);
@@ -2570,11 +2579,11 @@ EjsObj *ejsRunFunctionBySlot(Ejs *ejs, EjsObj *thisObj, int slotNum, int argc, E
         thisObj = ejs->global;
     }
     if (thisObj == ejs->global) {
-        fun = (EjsFunction*) ejsGetProperty(ejs, thisObj, slotNum);
+        fun = ejsGetProperty(ejs, thisObj, slotNum);
     } else if (ejsIsType(thisObj)) {
-        fun = (EjsFunction*) ejsGetProperty(ejs, thisObj, slotNum);
+        fun = ejsGetProperty(ejs, thisObj, slotNum);
     } else {
-        fun = (EjsFunction*) ejsGetProperty(ejs, thisObj->type->prototype, slotNum);
+        fun = ejsGetProperty(ejs, thisObj->type->prototype, slotNum);
     }
     if (fun == 0) {
         ejsThrowReferenceError(ejs, "Can't find function at slot %d in %s::%s", slotNum, thisObj->type->qname.space, 
@@ -2592,7 +2601,7 @@ EjsObj *ejsRunFunctionByName(Ejs *ejs, EjsObj *container, EjsName *qname, EjsObj
     if (thisObj == 0) {
         thisObj = ejs->global;
     }
-    if ((fun = (EjsFunction*) ejsGetPropertyByName(ejs, container, qname)) == 0) {
+    if ((fun = ejsGetPropertyByName(ejs, container, qname)) == 0) {
         ejsThrowReferenceError(ejs, "Can't find function %s::%s", qname->space, qname->name);
         return 0;
     }
@@ -2762,7 +2771,7 @@ static void callInterfaceInitializers(Ejs *ejs, EjsType *type)
         if (iface->hasInitializer) {
             qname = ejsGetPropertyName(ejs, (EjsObj*) iface, 0);
             //  TODO OPT. Could run all 
-            fun = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) type, &qname);
+            fun = ejsGetPropertyByName(ejs, (EjsObj*) type, &qname);
             if (fun && ejsIsFunction(fun)) {
                 callFunction(ejs, fun, (EjsObj*) type, 0, 0);
             }
@@ -3343,7 +3352,7 @@ static void callProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *thisObj, in
     EjsFunction *fun;
 
     //  MOB -- rethink this.
-    fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
+    fun = ejsGetProperty(ejs, obj, slotNum);
     trait = ejsGetTrait(obj, slotNum);
     if (trait && trait->attributes & EJS_TRAIT_GETTER) {
         fun = (EjsFunction*) ejsRunFunction(ejs, fun, thisObj, 0, NULL);

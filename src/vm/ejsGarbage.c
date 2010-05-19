@@ -106,10 +106,46 @@ void ejsDestroyGCService(Ejs *ejs)
 }
 
 
+#if FUTURE
+
+- Move vp->marked down into MprBlk.flags
+
+- ?? How to move objects and /size
+    - Movable types?
+    - clone 
+#endif
+
+void *ejsAlloc(Ejs *ejs, int size)
+{
+    void        *ptr;
+
+    mprAssert(size >= 0);
+
+    if ((ptr = mprAllocZeroed(ejsGetAllocCtx(ejs), size)) == 0) {
+        ejsThrowMemoryError(ejs);
+        return 0;
+    }
+    //  MOB -- how to do this test less often?
+    if (++ejs->workDone >= ejs->workQuota && !ejs->gcRequired) {
+        ejs->gcRequired = 1;
+        ejsAttention(ejs);
+    }
+    //  MOB -- what kind of stats?
+    // ejsAddToGcStats(ejs, vp, type->id);
+    return ptr;
+}
+
+
+void ejsFree(Ejs *ejs, void *ptr)
+{
+    mprAssert(0);
+}
+
+
 /*
     Allocate a new variable. Size is set to the extra bytes for properties in addition to the type's instance size.
  */
-EjsObj *ejsAlloc(Ejs *ejs, EjsType *type, int extra)
+EjsObj *ejsAllocVar(Ejs *ejs, EjsType *type, int extra)
 {
     EjsObj      *vp;
     int         size;
@@ -128,6 +164,7 @@ EjsObj *ejsAlloc(Ejs *ejs, EjsType *type, int extra)
             ejsThrowMemoryError(ejs);
             return 0;
         }
+        //  MOB -- how to do this test less often?
         if (++ejs->workDone >= ejs->workQuota && !ejs->gcRequired) {
             ejs->gcRequired = 1;
             ejsAttention(ejs);
@@ -196,7 +233,7 @@ EjsObj *ejsAllocPooled(Ejs *ejs, int id)
     Free an object. This is should only ever be called by the destroy helpers to free a object or recycle the 
     object to a type specific free pool. 
  */
-void ejsFree(Ejs *ejs, EjsObj *vp, int id)
+void ejsFreeVar(Ejs *ejs, EjsObj *vp, int id)
 {
     EjsType     *type;
     EjsPool     *pool;

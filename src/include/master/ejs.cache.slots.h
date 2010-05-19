@@ -24,9 +24,7 @@
  */
 #define ES_ejs_cache_Cache__initializer___Cache_                       0
 #define ES_ejs_cache_Cache_cache                                       1
-#define ES_ejs_cache_Cache_prototype                                   2
-
-#define ES_ejs_cache_Cache_NUM_CLASS_PROP                              3
+#define ES_ejs_cache_Cache_NUM_CLASS_PROP                              2
 
 /*
    Prototype (instance) slots for "Cache" type 
@@ -37,6 +35,6 @@
 #define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           3
 #define ES_ejs_cache_Cache_NUM_INHERITED_PROP                          0
 
-#define _ES_CHECKSUM_ejs_cache   12540
+#define _ES_CHECKSUM_ejs_cache   11523
 
 #endif

@@ -95,75 +95,7 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
 
 static void destroyFunction(Ejs *ejs, EjsFunction *fun)
 {
-    ejsFree(ejs, (EjsObj*) fun, ES_Function);
-}
-
-
-#if UNUSED
-//  MOB -- can this be deleted and just use the Object version
-static EjsObj *getFunctionProperty(Ejs *ejs, EjsObj *obj, int slotNum)
-{
-    EjsObj      *vp;
-
-    mprAssert(obj);
-    mprAssert(obj->slots);
-    mprAssert(slotNum >= 0);
-
-    if (slotNum < 0 || slotNum >= obj->numSlots) {
-        ejsThrowReferenceError(ejs, "Property at slot \"%d\" is not found", slotNum);
-        return 0;
-    }
-    vp = obj->slots[slotNum].value.ref;
-
-    //  MOB -- is this used?
-#if ES_Function_prototype
-    if (slotNum == ES_Function_prototype && vp == ejs->nullValue) {
-        vp = ejsCreateObject(ejs, ejs->objectType, 0);
-        vp->isPrototype = 1;
-        ejsSetProperty(ejs, obj, ES_Function_prototype, vp);
-    }
-#endif
-    return vp;
-}
-#endif
-
-
-/*
-    Lookup a property with a namespace qualifier in an object and return the slot if found. Return EJS_ERR if not found.
- */
-int ejsLookupFunctionProperty(Ejs *ejs, EjsFunction *fun, EjsName *qname)
-{
-    EjsName     pname;
-    EjsObj      *prototype;
-    int         slotNum;
-
-    slotNum = (ejs->objectType->helpers.lookupProperty)(ejs, (EjsObj*) fun, qname);
-
-    if (slotNum < 0 && !ejs->compiling && qname->name[0] == 'p' && strcmp(qname->name, "prototype") == 0 && 
-            (qname->space == NULL || qname->space[0] == '\0')) {
-        prototype = 0;
-        if (ejsIsType(fun)) {
-            prototype = ((EjsType*) fun)->prototype;
-        } else {
-            /*
-                On-demand creation of the prototype object. Don't call ejsDefineProperty as it can go recursive.
-             */
-            if (prototype == 0) {
-                prototype = ejsCreateObject(ejs, ejs->objectType, 0);
-            }
-            mprAssert(prototype->dynamic);
-            if ((slotNum = ejsSetProperty(ejs, (EjsObj*) fun, -1, prototype)) < 0) {
-                return EJS_ERR;
-            }
-            if (ejsSetPropertyName(ejs, (EjsObj*) fun, slotNum, ejsName(&pname, "", qname->name)) < 0) {
-                return EJS_ERR;
-            }
-            if (ejsSetPropertyTrait(ejs, (EjsObj*) fun, slotNum, ejs->objectType, EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED) < 0) {
-                return EJS_ERR;
-            }
-        }
-    }
-    return slotNum;
+    ejsFreeVar(ejs, (EjsObj*) fun, ES_Function);
 }
 
 
@@ -176,8 +108,8 @@ void ejsMarkFunction(Ejs *ejs, EjsFunction *fun)
     if (fun->setter) {
         ejsMark(ejs, (EjsObj*) fun->setter);
     }
-    if (fun->template) {
-        ejsMark(ejs, (EjsObj*) fun->template);
+    if (fun->archetype) {
+        ejsMark(ejs, (EjsObj*) fun->archetype);
     }
     if (fun->thisObj) {
         ejsMark(ejs, fun->thisObj);
@@ -468,32 +400,6 @@ static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED
-void ejsCompleteFunction(Ejs *ejs, EjsFunction *fun)
-{
-    int numSlots = fun->block.obj.numSlots;
-    if (numSlots > 0 && fun->activation == 0) {
-        fun->activation = ejsCreateActivation(ejs, fun, numSlots);
-        ejsCopySlots(ejs, (EjsObj*) fun, fun->activation->slots, fun->block.obj.slots, numSlots, 0);
-        ejsZeroSlots(ejs, fun->block.obj.slots, numSlots);
-        ejsClearObjHash((EjsObj*) fun);
-        fun->block.obj.numSlots = 0;
-    }
-#endif
-#if UNUSED
-    /*
-        Copy activation namespaces to the function block
-     */
-    if (ejsIsBlock(fun->activation)) {
-        block = (EjsBlock*) fun->activation;
-        for (next = 0; (namespace = ejsGetNextItem(&block->namespaces, &next)) != 0; ) {
-            ejsAddItemToSharedList(fun, &fun->block.namespaces, namespace);
-        }
-    }
-}
-#endif
-
-
 //  MOB -- who calls this?
 void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 {
@@ -537,11 +443,7 @@ void ejsCreateFunctionType(Ejs *ejs)
     helpers->cast           = (EjsCastHelper) castFunction;
     helpers->clone          = (EjsCloneHelper) ejsCloneFunction;
     helpers->destroy        = (EjsDestroyHelper) destroyFunction;
-#if UNUSED
-    helpers->getProperty    = (EjsGetPropertyHelper) getFunctionProperty;
-#endif
     helpers->mark           = (EjsMarkHelper) ejsMarkFunction;
-    helpers->lookupProperty = (EjsLookupPropertyHelper) ejsLookupFunctionProperty;
 
     nop = ejs->nopFunction = ejsCreateFunction(ejs, "nop", NULL, 0, -1, 0, 0, NULL, EJS_PROP_NATIVE, NULL, NULL, 0);
     nop->body.proc = nopFunction;
@@ -560,9 +462,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Function_apply, (EjsProc) fun_applyFunction);
     ejsBindMethod(ejs, prototype, ES_Function_bind, (EjsProc) fun_bindFunction);
     ejsBindMethod(ejs, prototype, ES_Function_boundThis, (EjsProc) fun_boundThis);
-#if ES_Function_length
     ejsBindMethod(ejs, prototype, ES_Function_length, (EjsProc) fun_length);
-#endif
     ejsBindMethod(ejs, prototype, ES_Function_setScope, (EjsProc) fun_setScope);
     ejsBindMethod(ejs, prototype, ES_Function_call, (EjsProc) fun_call);
 }

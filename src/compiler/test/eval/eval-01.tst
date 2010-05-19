@@ -14,5 +14,4 @@ assert(x == 3)
 
 assert(eval("5 + 4") == 9)
 
-//  BUG
-//  assert(eval("x = 2") == 2)
+assert(eval("x = 2") == 2)

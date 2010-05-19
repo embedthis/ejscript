@@ -1067,11 +1067,11 @@ static int fixupTypes(Ejs *ejs, MprList *list)
         mp = 0;
         type = 0;
         if (fixup->typeSlotNum >= 0) {
-            type = (EjsType*) ejsGetProperty(ejs, ejs->global, fixup->typeSlotNum);
+            type = ejsGetProperty(ejs, ejs->global, fixup->typeSlotNum);
 
         } else if (fixup->typeName.name) {
             mprAssert(fixup->typeSlotNum < 0);
-            type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, &fixup->typeName);
+            type = ejsGetPropertyByName(ejs, ejs->global, &fixup->typeName);
             
         } else {
             continue;
@@ -1332,7 +1332,7 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
             3. Search for "a.b.c" in EJSPATH
          */
         for (i = 0; i < ejs->search->length; i++) {
-            dir = (EjsPath*) ejsGetProperty(ejs, (EjsVar*) ejs->search, i);
+            dir = ejsGetProperty(ejs, (EjsVar*) ejs->search, i);
             if (!ejsIsPath(ejs, dir)) {
                 continue;
             }
@@ -1346,7 +1346,7 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
             4. Search for "a/b/c" in EJSPATH
          */
         for (i = 0; i < ejs->search->length; i++) {
-            dir = (EjsPath*) ejsGetProperty(ejs, (EjsVar*) ejs->search, i);
+            dir = ejsGetProperty(ejs, (EjsVar*) ejs->search, i);
             if (!ejsIsPath(ejs, dir)) {
                 continue;
             }
@@ -1361,7 +1361,7 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
          */
         basename = mprGetPathBase(ctx, slash);
         for (i = 0; i < ejs->search->length; i++) {
-            dir = (EjsPath*) ejsGetProperty(ejs, (EjsVar*) ejs->search, i);
+            dir = ejsGetProperty(ejs, (EjsVar*) ejs->search, i);
             if (!ejsIsPath(ejs, dir)) {
                 continue;
             }
@@ -1548,7 +1548,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
          */
         slot = t >> 2;
         if (0 <= slot && slot < ejsGetPropertyCount(ejs, ejs->global)) {
-            type = (EjsType*) ejsGetProperty(ejs, ejs->global, slot);
+            type = ejsGetProperty(ejs, ejs->global, slot);
             if (type && (EjsObj*) type != ejs->nullValue) {
                 qname = type->qname;
             }
@@ -1573,7 +1573,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
         if (qname.name) {
             slot = ejsLookupProperty(ejs, ejs->global, &qname);
             if (slot >= 0) {
-                type = (EjsType*) ejsGetProperty(ejs, ejs->global, slot);
+                type = ejsGetProperty(ejs, ejs->global, slot);
             }
         }
         break;

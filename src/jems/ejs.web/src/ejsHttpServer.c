@@ -144,12 +144,12 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     }
     sp->server = server;
 
-    root = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
+    root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
     //  MOB -- why
     server->documentRoot = mprStrdup(server, root->path);
 
     //  MOB -- is this needed? -- remove
-    root = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
+    root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
     server->serverRoot = mprStrdup(server, root->path);
 
     //  MOB -- who make sure that the sp object is permanent?
@@ -300,7 +300,7 @@ static void runEjs(HttpQueue *q)
                 }
                 sp = (EjsHttpServer*) location->context;
                 ejs = sp->ejs;
-                dirPath = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
+                dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
                 dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : conn->documentRoot;
                 if (sp->server == 0) {
                     sp->server = conn->server;
@@ -312,7 +312,7 @@ static void runEjs(HttpQueue *q)
                 httpSetRequestNotifier(conn, (HttpNotifier) stateChangeNotifier);
             } else {
                 ejs = sp->ejs;
-                dirPath = (EjsPath*) ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
+                dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
                 dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : ".";
             }
             req = ejsCreateRequest(ejs, sp, conn, dir);

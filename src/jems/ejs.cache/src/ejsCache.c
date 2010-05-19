@@ -147,7 +147,7 @@ static void cacheTimer(EjsWebControl *control, MprEvent *event)
         count = ejsGetPropertyCount(master, (EjsVar*) caches);
         deleted = 0;
         for (i = count - 1; i >= 0; i--) {
-            cache = (EjsCache*) ejsGetProperty(master, (EjsVar*) caches, i);
+            cache = ejsGetProperty(master, (EjsVar*) caches, i);
             if (cache->obj.var.type == control->cacheType) {
                 if (cache && cache->expire <= now) {
                     ejsDeleteProperty(master, (EjsVar*) caches, i);

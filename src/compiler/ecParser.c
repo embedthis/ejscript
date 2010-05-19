@@ -466,11 +466,9 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
     if (flags & EC_FLAGS_NO_OUT) {
         cp->noout = 1;
     }
-#if UNUSED
-    if (flags & EC_FLAGS_NO_INIT) {
-        cp->noinit = 1;
+    if (flags & EC_FLAGS_VISIBLE) {
+        cp->visibleGlobals = 1;
     }
-#endif
     if (ecResetModuleList(cp) < 0) {
         mprFree(cp);
         return 0;
@@ -10385,7 +10383,9 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, c
         }
 
     } else {
-        if (strcmp(namespace, EJS_INTERNAL_NAMESPACE) == 0) {
+        if (cp->visibleGlobals) {
+            namespace = EJS_EMPTY_NAMESPACE;
+        } else if (strcmp(namespace, EJS_INTERNAL_NAMESPACE) == 0) {
             namespace = mprStrdup(np, cp->fileState->namespace);
         } else {
             namespace = (char*) mprStrdup(np, namespace);

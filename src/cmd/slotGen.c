@@ -242,7 +242,6 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
                 defineSlot(bp, file, mp, type, (EjsObj*) type, slotNum, NULL, &qname);
             }
         }
-        mprFprintf(file, "\n");
         defineSlotCount(bp, file, mp, type, "CLASS", lastClassSlot);
     }
 

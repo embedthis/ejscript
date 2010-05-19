@@ -109,7 +109,7 @@ static void destroyArray(Ejs *ejs, EjsArray *ap)
 
     mprFree(ap->data);
     ap->data = 0;
-    ejsFree(ejs, (EjsObj*) ap, -1);
+    ejsFreeVar(ejs, (EjsObj*) ap, -1);
 }
 
 

@@ -34,7 +34,7 @@ static EjsXML *createXml(Ejs *ejs, EjsType *type, int size)
 //  TODO - can remove this
 static void destroyXml(Ejs *ejs, EjsXML *xml)
 {
-    ejsFree(ejs, (EjsObj*) xml, -1);
+    ejsFreeVar(ejs, (EjsObj*) xml, -1);
 }
 
 
@@ -1096,7 +1096,7 @@ EjsXML *ejsCreateXML(Ejs *ejs, int kind, EjsName *qname, EjsXML *parent, cchar *
 {
     EjsXML      *xml;
 
-    xml = (EjsXML*) ejsAlloc(ejs, ejs->xmlType, 0);
+    xml = (EjsXML*) ejsAllocVar(ejs, ejs->xmlType, 0);
     if (xml == 0) {
         return 0;
     }

@@ -87,7 +87,10 @@ int ejsLoadScriptLiteral(Ejs *ejs, cchar *script, cchar *cache, int flags)
     EcCompiler      *ec;
     cchar           *path;
 
+#if MOB && WAS
     if ((ec = ecCreateCompiler(ejs, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG)) == 0) {
+#endif
+    if ((ec = ecCreateCompiler(ejs, flags)) == 0) {
         return MPR_ERR_NO_MEMORY;
     }
     if (cache) {

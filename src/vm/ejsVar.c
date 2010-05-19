@@ -153,7 +153,7 @@ void ejsDestroy(Ejs *ejs, EjsObj *vp)
     Get a property at a given slot in a variable.
     @return Returns the requested property varaible.
  */
-EjsObj *ejsGetProperty(Ejs *ejs, EjsObj *vp, int slotNum)
+void *ejsGetProperty(Ejs *ejs, EjsObj *vp, int slotNum)
 {
     EjsType     *type;
 
@@ -167,10 +167,7 @@ EjsObj *ejsGetProperty(Ejs *ejs, EjsObj *vp, int slotNum)
 }
 
 
-/*
-    Get a property given a name.
- */
-EjsObj *ejsGetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *name)
+void *ejsGetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *name)
 {
     int     slotNum;
 
@@ -179,7 +176,7 @@ EjsObj *ejsGetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *name)
     mprAssert(name);
 
     /*
-     *  WARNING: this is not implemented by most types
+        WARNING: this is not implemented by most types
      */
     if (vp->type->helpers.getPropertyByName) {
         return (vp->type->helpers.getPropertyByName)(ejs, vp, name);
@@ -289,7 +286,7 @@ int ejsSetProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsObj *value)
 /*
     Set a property given a name.
  */
-int ejsSetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname, EjsObj *value)
+int ejsSetPropertyByName(Ejs *ejs, void *vp, EjsName *qname, void *value)
 {
     int     slotNum;
 
@@ -300,8 +297,8 @@ int ejsSetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname, EjsObj *value)
     /*
      *  WARNING: Not all types implement this
      */
-    if (vp->type->helpers.setPropertyByName) {
-        return (vp->type->helpers.setPropertyByName)(ejs, vp, qname, value);
+    if (((EjsObj*) vp)->type->helpers.setPropertyByName) {
+        return (((EjsObj*) vp)->type->helpers.setPropertyByName)(ejs, vp, qname, value);
     }
 
     /*

@@ -22,6 +22,18 @@ module ejs {
         native function FileSystem(path: Object? = null)
 
         /** 
+            Are path names on this file system case sensitive. ie. are uppercase and lowercase path names equivalent
+         */
+        #FUTURE
+        native function get caseSensitive(): Boolean
+
+        /** 
+            Do path names on this file system preserve case
+         */
+        #FUTURE
+        native function get casePreserved(): Boolean
+
+        /** 
             Free space in the file system in 1M blocks (1024 * 1024 bytes).
          */
         #FUTURE

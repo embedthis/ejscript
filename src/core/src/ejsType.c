@@ -141,34 +141,6 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numSlots)
 }
 
 
-#if UNUSED
-/*
-    Lookup a property with a namespace qualifier in an object and return the slot if found. Return EJS_ERR if not found.
- */
-static int lookupTypeProperty(struct Ejs *ejs, EjsType *type, EjsName *qname)
-{
-    int         slotNum;
-
-    slotNum = (ejs->functionType->helpers.lookupProperty)(ejs, (EjsObj*) type, qname);
-#if UNUSED
-    if (slotNum < 0 && strcmp(qname->name, "prototype") == 0 && (qname->space == NULL || qname->space[0] == '\0')) {
-#if OLD
-        /*
-            On-demand creation of the Type.prototype. Replace Object.prototype getter for this type.
-         */
-        if (type->prototype == 0) {
-            type->prototype = ejsCreatePrototype(ejs, type, 0);
-        }
-#endif
-        ejsDefineProperty(ejs, (EjsObj*) type, ES_Object_prototype, ejsName(&name, type->qname.space, qname->name),
-            ejs->objectType, 0, (EjsObj*) type->prototype);
-    }
-#endif
-    return slotNum;
-}
-#endif
-
-
 void markType(Ejs *ejs, EjsType *type)
 {
     ejsMarkBlock(ejs, (EjsBlock*) type);
@@ -236,10 +208,10 @@ EjsType *ejsConfigureNativeType(Ejs *ejs, cchar *space, cchar *name, int instanc
 }
 
 
-EjsType *ejsCreateTypeFromFunction(Ejs *ejs, EjsFunction *fun, EjsObj *prototype)
+EjsType *ejsCreateArchetype(Ejs *ejs, EjsFunction *fun, EjsObj *prototype)
 {
     EjsName     qname;
-    EjsType     *type;
+    EjsType     *type, *baseType;
     EjsCode     *code;
     cchar       *name;
 
@@ -249,16 +221,18 @@ EjsType *ejsCreateTypeFromFunction(Ejs *ejs, EjsFunction *fun, EjsObj *prototype
     if (prototype == 0 && fun) {
         prototype = ejsGetPropertyByName(ejs, (EjsObj*) fun, ejsName(&qname, NULL, "prototype"));
     }
+    baseType = prototype ? prototype->type : ejs->objectType;
     name = fun ? fun->name : "-type-from-function-";
-    type = ejsCreateType(ejs, ejsName(&qname, EJS_PROTOTYPE_NAMESPACE, name), NULL, prototype->type, prototype,
+    type = ejsCreateType(ejs, ejsName(&qname, EJS_PROTOTYPE_NAMESPACE, name), NULL, baseType, prototype,
         ejs->objectType->instanceSize, id++, 0, 0, EJS_TYPE_DYNAMIC_INSTANCE, NULL);
     if (type == 0) {
         return 0;
     }
     if (fun) {
         code = &fun->body.code;
+        /*  MOB -- using ejs->objectType as the return type because the Yahoo module pattern returns {} in the constructor */
         ejsInitFunction(ejs, (EjsFunction*) type, type->qname.name, code->byteCode, code->codeLen, fun->numArgs, 
-            fun->numDefault, code->numHandlers, type, EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED, code->constants, NULL, 
+            fun->numDefault, code->numHandlers, ejs->objectType, EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED, code->constants, NULL, 
             fun->strict);
         type->constructor.activation = ejsClone(ejs, fun->activation, 0);
         type->constructor.thisObj = 0;
@@ -266,7 +240,7 @@ EjsType *ejsCreateTypeFromFunction(Ejs *ejs, EjsFunction *fun, EjsObj *prototype
         type->constructor.block.obj.isFunction = 1;
         type->hasConstructor = 1;
         type->constructor.block.scope = fun->block.scope;
-        fun->template = type;
+        fun->archetype = type;
     }
     return type;
 }
@@ -432,7 +406,7 @@ EjsType *ejsGetType(Ejs *ejs, int slotNum)
     if (slotNum < 0 || slotNum >= ejs->globalBlock->obj.numSlots) {
         return 0;
     }
-    type = (EjsType*) ejsGetProperty(ejs, ejs->global, slotNum);
+    type = ejsGetProperty(ejs, ejs->global, slotNum);
     if (type == 0 || !ejsIsType(type)) {
         return 0;
     }
@@ -444,7 +418,7 @@ EjsType *ejsGetTypeByName(Ejs *ejs, cchar *space, cchar *name)
 {
     EjsName     qname;
 
-    return (EjsType*) ejsGetPropertyByName(ejs, ejs->global, ejsName(&qname, space, name));
+    return ejsGetPropertyByName(ejs, ejs->global, ejsName(&qname, space, name));
 }
 
 
@@ -466,7 +440,7 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsObj *obj, int destOffse
     
     if (resetScope) {
         for (i = destOffset; i < (destOffset + count); i++) {
-            fun = (EjsFunction*) ejsGetProperty(ejs, obj, i);
+            fun = ejsGetProperty(ejs, obj, i);
             if (ejsIsFunction(fun)) {
                 fun = ejsCloneFunction(ejs, fun, 0);
                 ejsSetProperty(ejs, obj, i, (EjsObj*) fun);
@@ -539,7 +513,7 @@ int ejsFixupType(Ejs *ejs, EjsType *type, EjsType *baseType, int makeRoom)
  */
 int ejsBlendTypeProperties(Ejs *ejs, EjsType *type, EjsType *typeType)
 {
-#if UNUSED
+#if UNUSED && MOB
     int     count, destOffset, srcOffset;
 
     mprAssert(type);
@@ -639,7 +613,7 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
         count = 0;
         mprAssert(basePrototype);
         /* Must inherit if the type has instance vars */
-        if (basePrototype && type->hasInstanceVars) {
+        if (basePrototype && baseType->hasInstanceVars) {
             count = basePrototype->numSlots;
         }
         for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
@@ -652,7 +626,7 @@ static int fixupPrototypeProperties(Ejs *ejs, EjsType *type, EjsType *baseType, 
         }
     }
     offset = 0;
-    if (type->hasInstanceVars) {
+    if (baseType->hasInstanceVars) {
         mprAssert(type->prototype->numSlots >= basePrototype->numSlots);
         if (inheritProperties(ejs, type, type->prototype, offset, basePrototype, 0, basePrototype->numSlots, 0) < 0) {
             return EJS_ERR;
@@ -700,7 +674,7 @@ int ejsBindAccess(Ejs *ejs, void *obj, int slotNum, EjsProc getter, EjsProc sett
         }
     }
     if (setter) {
-        fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
+        fun = ejsGetProperty(ejs, obj, slotNum);
         if (fun == 0 || !ejsIsFunction(fun) || fun->setter == 0 || !ejsIsFunction(fun->setter)) {
             ejs->hasError = 1;
             mprError(ejs, "Attempt to bind non-existant setter function for slot %d in \"%s\"", slotNum, 
@@ -732,7 +706,7 @@ int ejsBindFunction(Ejs *ejs, void *obj, int slotNum, EjsProc nativeProc)
         mprError(ejs, "Attempt to bind non-existant function for slot %d in \"%s\"", slotNum, ejsGetDebugName(obj));
         return EJS_ERR;
     }
-    fun = (EjsFunction*) ejsGetProperty(ejs, obj, slotNum);
+    fun = ejsGetProperty(ejs, obj, slotNum);
     if (fun == 0 || !ejsIsFunction(fun)) {
         mprAssert(fun);
         ejs->hasError = 1;
@@ -936,7 +910,6 @@ void ejsCreateTypeType(Ejs *ejs)
 
     type->helpers.clone            = (EjsCloneHelper) cloneTypeVar;
     type->helpers.create           = (EjsCreateHelper) createTypeVar;
-    type->helpers.lookupProperty   = (EjsLookupPropertyHelper) ejsLookupFunctionProperty;
     type->helpers.setProperty      = (EjsSetPropertyHelper) setTypeProperty;
     type->helpers.mark             = (EjsMarkHelper) markType;
 
@@ -953,23 +926,7 @@ void ejsCreateTypeType(Ejs *ejs)
 
 void ejsCompleteType(Ejs *ejs, EjsType *type)
 {
-    EjsName     qname;
-    
-    if (!type->isInterface) {
-        ejsSetPropertyByName(ejs, (EjsObj*) type, ejsName(&qname, "", "prototype"), type->prototype);
-    }
-#if UNUSED
-    EjsFunction *fun;
-    int         slotNum;
-    slotNum = ejsLookupProperty(ejs, (EjsObj*) type, ejsName(&qname, EJS_EJS_NAMESPACE, "prototype"));
-    if (slotNum >= 0) {
-        /* Prototype is not defined native so that modules don't get marked as requiring native libraries */
-        fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
-        fun->body.code.codeLen = 0;
-        fun->body.proc = 0;
-        ejsBindMethod(ejs, type, slotNum, (EjsProc) type_prototype);
-    }
-#endif
+    //  MOB -- remove
 }
 
 /*

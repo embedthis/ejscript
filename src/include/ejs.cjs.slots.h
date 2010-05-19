@@ -28,21 +28,19 @@
     Class property slots for the "Loader" type 
  */
 #define ES_Loader__initializer___Loader_                               0
-#define ES_Loader_prototype                                            1
-#define ES_Loader_mainId                                               2
-#define ES_Loader_signatures                                           3
-#define ES_Loader_timestamps                                           4
-#define ES_Loader_defaultExtensions                                    5
-#define ES_Loader_config                                               6
-#define ES_Loader_init                                                 7
-#define ES_Loader_require                                              8
-#define ES_Loader_load                                                 9
-#define ES_Loader_cached                                               10
-#define ES_Loader_wrap                                                 11
-#define ES_Loader_locate                                               12
-#define ES_Loader_setConfig                                            13
-
-#define ES_Loader_NUM_CLASS_PROP                                       14
+#define ES_Loader_mainId                                               1
+#define ES_Loader_signatures                                           2
+#define ES_Loader_timestamps                                           3
+#define ES_Loader_defaultExtensions                                    4
+#define ES_Loader_config                                               5
+#define ES_Loader_init                                                 6
+#define ES_Loader_require                                              7
+#define ES_Loader_load                                                 8
+#define ES_Loader_cached                                               9
+#define ES_Loader_wrap                                                 10
+#define ES_Loader_locate                                               11
+#define ES_Loader_setConfig                                            12
+#define ES_Loader_NUM_CLASS_PROP                                       13
 
 /*
    Prototype (instance) slots for "Loader" type 
@@ -64,6 +62,6 @@
 #define ES_Loader_locate_id                                            0
 #define ES_Loader_setConfig_newConfig                                  0
 
-#define _ES_CHECKSUM_ejs_cjs   26632
+#define _ES_CHECKSUM_ejs_cjs   25604
 
 #endif

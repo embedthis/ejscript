@@ -47,7 +47,7 @@ static EjsXML *createXmlListVar(Ejs *ejs, EjsType *type, int size)
 //  TODO - can remove this
 static void destroyXmlList(Ejs *ejs, EjsXML *list)
 {
-    ejsFree(ejs, (EjsObj*) list, -1);
+    ejsFreeVar(ejs, (EjsObj*) list, -1);
 }
 
 
@@ -193,7 +193,7 @@ static EjsObj *getXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname)
      */
     for (nextItem = 0; (item = mprGetNextItem(list->elements, &nextItem)) != 0; ) {
         if (item->kind == EJS_XML_ELEMENT) {
-            subList = (EjsXML*) ejsGetPropertyByName(ejs, (EjsObj*) item, qname);
+            subList = ejsGetPropertyByName(ejs, (EjsObj*) item, qname);
             mprAssert(ejsIsXML(ejs, subList));
             ejsAppendToXML(ejs, result, subList);
 
@@ -395,7 +395,7 @@ static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsNa
 
     if (list->targetProperty.name && list->targetProperty.name[0] == '@') {
         elt->kind = EJS_XML_ATTRIBUTE;
-        attList = (EjsXML*) ejsGetPropertyByName(ejs, (EjsObj*) targetObject, &list->targetProperty);
+        attList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, &list->targetProperty);
         if (attList && mprGetListCount(attList->elements) > 0) {
             /* Spec says so. But this surely means you can't update an attribute? */
             return 0;
@@ -632,7 +632,7 @@ static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
         return 0;
     }
     //  TODO - OPT. targetPropertyList is also being created below.
-    targetPropertyList = (EjsXML*) ejsGetPropertyByName(ejs, (EjsObj*) targetObject, &xml->targetProperty);
+    targetPropertyList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, &xml->targetProperty);
     if (targetPropertyList == 0) {
         return 0;
     }
@@ -648,7 +648,7 @@ static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
             TODO - OPT. Need an empty string value in EjsFiber.
          */
         ejsSetPropertyByName(ejs, (EjsObj*) targetObject, &xml->targetProperty, (EjsObj*) ejsCreateString(ejs, ""));
-        targetPropertyList = (EjsXML*) ejsGetPropertyByName(ejs, (EjsObj*) targetObject, &xml->targetProperty);
+        targetPropertyList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, &xml->targetProperty);
     }
     return targetPropertyList;
 }
@@ -796,7 +796,7 @@ EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName *targetProperty
 
     type = ejs->xmlListType;
 
-    list = (EjsXML*) ejsAlloc(ejs, type, 0);
+    list = (EjsXML*) ejsAllocVar(ejs, type, 0);
     if (list == 0) {
         return 0;
     }

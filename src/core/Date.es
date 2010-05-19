@@ -87,6 +87,8 @@ module ejs {
         /**
             Format a date using a format specifier in local time. This routine is implemented by calling 
             the O/S strftime routine and so not all the format specifiers are available on all platforms.
+            Windows only supports the following formats: A, a, B, b, c, d, H, I, j, M, m, p, S, U, W, w, X, x, Y, y, Z.
+            For full details, consult your platform API manual for strftime.
 
             The format specifiers are:
             <ul>

@@ -528,7 +528,9 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         if (constructorNode && !constructorNode->function.isDefaultConstructor) {
             type->hasConstructor = 1;
         }
+#if MOB
         ejsDefineProperty(ejs, (EjsObj*) type, 1, ejsName(&qname, "", "prototype"), ejs->objectType, fatt, type->prototype);
+#endif
     }
     return type;
 }
@@ -564,7 +566,7 @@ static void validateClass(EcCompiler *cp, EcNode *np)
     for (next = 0; ((iface = (EjsType*) mprGetNextItem(type->implements, &next)) != 0); ) {
         count = ejsGetPropertyCount(ejs, (EjsObj*) iface);
         for (i = 0; i < count; i++) {
-            fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) iface, i);
+            fun = ejsGetProperty(ejs, (EjsObj*) iface, i);
             if (!ejsIsFunction(fun) || fun->isInitializer) {
                 continue;
             }
@@ -1074,7 +1076,7 @@ static void bindParameters(EcCompiler *cp, EcNode *np)
                     ejsName(&qname, EJS_EJS_NAMESPACE, "Array");
                     slotNum = ejsLookupProperty(ejs, ejs->global, &qname);
                     mprAssert(slotNum >= 0);
-                    ejsSetTraitType(trait, (EjsType*) ejsGetProperty(ejs, ejs->global, slotNum));
+                    ejsSetTraitType(trait, ejsGetProperty(ejs, ejs->global, slotNum));
                     fun->rest = 1;
                 }
 
@@ -3477,7 +3479,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
             /*
                 If the type is not an orphan, it must preserve the slot order dictated by the base class
              */
-            fun = (EjsFunction*) ejsGetProperty(ejs, prototype, slotNum);
+            fun = ejsGetProperty(ejs, prototype, slotNum);
             mprAssert(fun && ejsIsFunction(fun));
             qname = ejsGetPropertyName(ejs, prototype, slotNum);
             ejsRemoveProperty(ejs, prototype, slotNum);

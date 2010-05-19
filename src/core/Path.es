@@ -148,10 +148,19 @@ module ejs {
                         }
                     }
                 }
-                if (path.basename.toString().match(pattern)) {
-                    result.append(path)
+                if (Config.OS == "WIN") {
+                    if (path.basename.toString().toLower().match(pattern)) {
+                        result.append(path)
+                    }
+                } else {
+                    if (path.basename.toString().match(pattern)) {
+                        result.append(path)
+                    }
                 }
                 return result
+            }
+            if (Config.OS == "WIN") {
+                glob = glob.toLower()
             }
             pattern = RegExp("^" + glob.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$")
             return recursiveFind(this, pattern, recurse, 0)

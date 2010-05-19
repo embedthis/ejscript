@@ -22,10 +22,8 @@
 /*
     Class property slots for the "Template" type 
  */
-#define ES_Template_prototype                                          0
-#define ES_Template_load                                               1
-
-#define ES_Template_NUM_CLASS_PROP                                     2
+#define ES_Template_load                                               0
+#define ES_Template_NUM_CLASS_PROP                                     1
 
 /*
    Prototype (instance) slots for "Template" type 
@@ -37,61 +35,41 @@
     Local slots for methods in type "Template" 
  */
 #define ES_Template_load_request                                       0
-
-
-/*
-    Class property slots for the "TemplateParser" type 
- */
-#define ES_TemplateParser_prototype                                    0
-
-#define ES_TemplateParser_NUM_CLASS_PROP                               1
+#define ES_TemplateParser_NUM_CLASS_PROP                               0
 
 /*
    Prototype (instance) slots for "TemplateParser" type 
  */
-#define ES_TemplateParser_constructor                                  0
-#define ES_TemplateParser_clone                                        1
-#define ES_TemplateParser_iterator_get                                 2
-#define ES_TemplateParser_iterator_getValues                           3
-#define ES_TemplateParser_hasOwnProperty                               4
-#define ES_TemplateParser_isPrototypeOf                                5
-#define ES_TemplateParser_propertyIsEnumerable                         6
-#define ES_TemplateParser_toJSON                                       7
-#define ES_TemplateParser_toLocaleString                               8
-#define ES_TemplateParser_toString                                     9
-#define ES_TemplateParser_valueOf                                      10
-#define ES_TemplateParser_ContentMarker                                11
-#define ES_TemplateParser_ContentPattern                               12
-#define ES_TemplateParser_script                                       13
-#define ES_TemplateParser_pos                                          14
-#define ES_TemplateParser_lineNumber                                   15
-#define ES_TemplateParser_Header                                       16
-#define ES_TemplateParser_Footer                                       17
-#define ES_TemplateParser_MvcHeader                                    18
-#define ES_TemplateParser_build                                        19
-#define ES_TemplateParser_buildView                                    20
-#define ES_TemplateParser_parse                                        21
-#define ES_TemplateParser_getToken                                     22
-#define ES_TemplateParser_eatSpace                                     23
-#define ES_TemplateParser_NUM_INSTANCE_PROP                            24
-#define ES_TemplateParser_NUM_INHERITED_PROP                           11
+#define ES_TemplateParser_ContentMarker                                0
+#define ES_TemplateParser_ContentPattern                               1
+#define ES_TemplateParser_script                                       2
+#define ES_TemplateParser_pos                                          3
+#define ES_TemplateParser_lineNumber                                   4
+#define ES_TemplateParser_Header                                       5
+#define ES_TemplateParser_Footer                                       6
+#define ES_TemplateParser_MvcHeader                                    7
+#define ES_TemplateParser_build                                        8
+#define ES_TemplateParser_buildView                                    9
+#define ES_TemplateParser_parse                                        10
+#define ES_TemplateParser_getToken                                     11
+#define ES_TemplateParser_eatSpace                                     12
+#define ES_TemplateParser_NUM_INSTANCE_PROP                            13
+#define ES_TemplateParser_NUM_INHERITED_PROP                           0
 
 
 /*
     Class property slots for the "Token" type 
  */
 #define ES_ejs_web_template_Token__initializer___Token_                0
-#define ES_ejs_web_template_Token_prototype                            1
-#define ES_ejs_web_template_Token_Err                                  2
-#define ES_ejs_web_template_Token_Eof                                  3
-#define ES_ejs_web_template_Token_EjsTag                               4
-#define ES_ejs_web_template_Token_Var                                  5
-#define ES_ejs_web_template_Token_Literal                              6
-#define ES_ejs_web_template_Token_Equals                               7
-#define ES_ejs_web_template_Token_Control                              8
-#define ES_ejs_web_template_Token_tokens                               9
-
-#define ES_ejs_web_template_Token_NUM_CLASS_PROP                       10
+#define ES_ejs_web_template_Token_Err                                  1
+#define ES_ejs_web_template_Token_Eof                                  2
+#define ES_ejs_web_template_Token_EjsTag                               3
+#define ES_ejs_web_template_Token_Var                                  4
+#define ES_ejs_web_template_Token_Literal                              5
+#define ES_ejs_web_template_Token_Equals                               6
+#define ES_ejs_web_template_Token_Control                              7
+#define ES_ejs_web_template_Token_tokens                               8
+#define ES_ejs_web_template_Token_NUM_CLASS_PROP                       9
 
 /*
    Prototype (instance) slots for "Token" type 
@@ -99,6 +77,6 @@
 #define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    0
 #define ES_ejs_web_template_Token_NUM_INHERITED_PROP                   0
 
-#define _ES_CHECKSUM_ejs_web_template   44320
+#define _ES_CHECKSUM_ejs_web_template   41100
 
 #endif

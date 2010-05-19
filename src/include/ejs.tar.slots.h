@@ -17,38 +17,20 @@
 /*
    Prototype (instance) slots for "global" type 
  */
-
-
-/*
-    Class property slots for the "Tar" type 
- */
-#define ES_ejs_tar_Tar_prototype                                       0
-
-#define ES_ejs_tar_Tar_NUM_CLASS_PROP                                  1
+#define ES_ejs_tar_Tar_NUM_CLASS_PROP                                  0
 
 /*
    Prototype (instance) slots for "Tar" type 
  */
-#define ES_ejs_tar_Tar_constructor                                     0
-#define ES_ejs_tar_Tar_clone                                           1
-#define ES_ejs_tar_Tar_iterator_get                                    2
-#define ES_ejs_tar_Tar_iterator_getValues                              3
-#define ES_ejs_tar_Tar_hasOwnProperty                                  4
-#define ES_ejs_tar_Tar_isPrototypeOf                                   5
-#define ES_ejs_tar_Tar_propertyIsEnumerable                            6
-#define ES_ejs_tar_Tar_toJSON                                          7
-#define ES_ejs_tar_Tar_toLocaleString                                  8
-#define ES_ejs_tar_Tar_toString                                        9
-#define ES_ejs_tar_Tar_valueOf                                         10
-#define ES_ejs_tar_Tar_path                                            11
-#define ES_ejs_tar_Tar_files                                           12
-#define ES_ejs_tar_Tar_add                                             13
-#define ES_ejs_tar_Tar_xcreate                                         14
-#define ES_ejs_tar_Tar_extract                                         15
-#define ES_ejs_tar_Tar_cat                                             16
-#define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               17
-#define ES_ejs_tar_Tar_NUM_INHERITED_PROP                              11
+#define ES_ejs_tar_Tar_path                                            0
+#define ES_ejs_tar_Tar_files                                           1
+#define ES_ejs_tar_Tar_add                                             2
+#define ES_ejs_tar_Tar_xcreate                                         3
+#define ES_ejs_tar_Tar_extract                                         4
+#define ES_ejs_tar_Tar_cat                                             5
+#define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               6
+#define ES_ejs_tar_Tar_NUM_INHERITED_PROP                              0
 
-#define _ES_CHECKSUM_ejs_tar   9458
+#define _ES_CHECKSUM_ejs_tar   8355
 
 #endif

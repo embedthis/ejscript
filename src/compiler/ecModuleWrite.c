@@ -301,7 +301,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
 
     mprLog(cp, 5, "    type section %s for module %s", qname.name, mp->name);
     
-    type = (EjsType*) ejsGetProperty(ejs, ejs->global, slotNum);
+    type = ejsGetProperty(ejs, ejs->global, slotNum);
     mprAssert(type);
     mprAssert(ejsIsType(type));
 
@@ -700,7 +700,7 @@ void ecAddFunctionConstants(EcCompiler *cp, EjsObj *obj, int slotNum)
 {
     EjsFunction     *fun;
 
-    fun = (EjsFunction*) ejsGetProperty(cp->ejs, obj, slotNum);
+    fun = ejsGetProperty(cp->ejs, obj, slotNum);
     if (fun->resultType) {
         ecAddNameConstant(cp, &fun->resultType->qname);
     }

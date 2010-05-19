@@ -42,7 +42,7 @@ static void destroyPath(Ejs *ejs, EjsPath *pp)
 
     mprFree(pp->path);
     pp->path = 0;
-    ejsFree(ejs, (EjsObj*) pp, -1);
+    ejsFreeVar(ejs, (EjsObj*) pp, -1);
 }
 
 
