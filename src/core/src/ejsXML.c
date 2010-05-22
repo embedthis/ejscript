@@ -12,11 +12,10 @@
 /*
     XML methods
  */
-static EjsObj   *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv);
-static EjsObj   *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv);
-static EjsObj   *xmlToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
-
-static EjsVar   *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsVar **argv);
+static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv);
+static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv);
+static EjsObj *xmlToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
+static EjsVar *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsVar **argv);
 
 static bool allDigitsForXml(cchar *name);
 static bool deepCompare(EjsXML *lhs, EjsXML *rhs);
@@ -948,7 +947,7 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
  */
 static EjsVar *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsVar **argv)
 {
-    return xml->parent ? (EjsVar*) xml->parent : (EjsVar*) ejs->nullValue;
+    return (xml->parent && xml != xml->parent) ? (EjsVar*) xml->parent : (EjsVar*) ejs->nullValue;
 }
 
 /********************************** Support **********************************/
