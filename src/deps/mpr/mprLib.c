@@ -18706,7 +18706,6 @@ static int localTime(MprCtx ctx, struct tm *timep, MprTime time)
     return localtime_r(&when, timep) != 0;
 #else
     struct tm   *tp;
-    //  MOB -- thread safe?
     time_t when = (time_t) (time / MS_PER_SEC);
     if ((tp = localtime(&when)) == 0) {
         return MPR_ERR;

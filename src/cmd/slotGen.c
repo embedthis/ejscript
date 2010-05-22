@@ -19,7 +19,7 @@ static int  genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int
                 int isGlobal);
 static char *mapFullName(MprCtx ctx, EjsName *qname, int mapTypeName);
 static char *mapName(MprCtx ctx, cchar *name, int mapTypeName);
-static char *mapSpace(MprCtx ctx, cchar *space);
+static char *mapNamespace(MprCtx ctx, cchar *space);
 
 /*********************************** Code *************************************/
 
@@ -361,7 +361,7 @@ static char *mapFullName(MprCtx ctx, EjsName *qname, int mapTypeName)
         return mprStrdup(ctx, "");
     }
     name = mapName(ctx, qname->name, mapTypeName);
-    space = mapSpace(ctx, qname->space);
+    space = mapNamespace(ctx, qname->space);
 
     if (*space) {
         buf = mprStrcat(ctx, -1, space, "_", name, NULL);
@@ -453,7 +453,7 @@ static char *mapName(MprCtx ctx, cchar *name, int mapTypeName)
 }
 
 
-static char *mapSpace(MprCtx ctx, cchar *space)
+static char *mapNamespace(MprCtx ctx, cchar *space)
 {
     char    *cp, *value;
 

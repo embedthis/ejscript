@@ -2349,6 +2349,7 @@ MprTime mprMakeUniversalTime(MprCtx ctx, struct tm *tm);
     @returns Zero if successful
  */
 extern int mprParseTime(MprCtx ctx, MprTime *time, cchar *dateString, int timezone, struct tm *defaults);
+extern int mprGetTimeZoneOffset(MprCtx ctx, MprTime when);
 
 /**
     List Module.
