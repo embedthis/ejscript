@@ -500,6 +500,7 @@ static void genDelete(EcCompiler *cp, EcNode *np)
             genNameExpr(cp, lright);
             ecEncodeOpcode(cp, EJS_OP_DELETE_NAME_EXPR);
             popStack(cp, 3);
+            pushStack(cp, 1);
         } else {
             /* delete obj[expr] */
             ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
@@ -507,6 +508,7 @@ static void genDelete(EcCompiler *cp, EcNode *np)
             processNode(cp, lright);
             ecEncodeOpcode(cp, EJS_OP_DELETE_NAME_EXPR);
             popStack(cp, 2);
+            pushStack(cp, 1);
         }
         break;
 
@@ -515,6 +517,7 @@ static void genDelete(EcCompiler *cp, EcNode *np)
         genNameExpr(cp, left);
         ecEncodeOpcode(cp, EJS_OP_DELETE_SCOPED_NAME_EXPR);
         popStack(cp, 2);
+        pushStack(cp, 1);
         break;
 
     default:

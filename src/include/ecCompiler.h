@@ -247,6 +247,7 @@ typedef struct EcNode {
         struct {
             int         isDefault;          /* "use default" */
             int         isLiteral;          /* use namespace "literal" */
+            int         isInternal;         /* internal namespace */
         } useNamespace;
 
 

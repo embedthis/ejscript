@@ -8592,7 +8592,9 @@ static EcNode *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributeNode)
         Handle namespace definitions like:
             let NAME : Namespace = NAMESPACE_LITERAL
      */
-    nameNode = parseIdentifier(cp);
+    if ((nameNode = parseIdentifier(cp)) == 0) {
+        return LEAVE(cp, nameNode);
+    }
     nameNode->name.isNamespace = 1;
     setNodeDoc(cp, nameNode);
 
@@ -9269,14 +9271,16 @@ static EcNode *parseBlock(EcCompiler *cp)
  */
 static EcNode *parseProgram(EcCompiler *cp, cchar *path)
 {
+    Ejs         *ejs;
     EcState     *state;
-    EcNode      *np, *module, *block, *require;
+    EcNode      *np, *module, *block, *require, *namespace;
     cchar       *name;
     char        *md5, *apath;
     int         next;
 
     ENTER(cp);
 
+    ejs = cp->ejs;
     state = cp->state;
     np = createNode(cp, N_PROGRAM);
 
@@ -9287,7 +9291,9 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
         np->qname.name = EJS_PUBLIC_NAMESPACE;
     } else {
 #endif
-    if (path) {
+    if (cp->visibleGlobals && ejs->state->internal) {
+        np->qname.name = ejs->state->internal->uri;
+    } else if (path) {
         apath = mprGetAbsPath(cp, path);
         md5 = mprGetMD5Hash(cp, apath, strlen(apath), NULL);
         np->qname.name = mprAsprintf(np, -1, "%s-%s-%d", EJS_INTERNAL_NAMESPACE, md5, cp->uid++);
@@ -9310,7 +9316,9 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
         via --require switch
      */
     block = createNode(cp, N_BLOCK);
-    block = appendNode(block, createNamespaceNode(cp, cp->fileState->namespace, 0, 1));
+    namespace = createNamespaceNode(cp, cp->fileState->namespace, 0, 1);
+    namespace->useNamespace.isInternal = 1;
+    block = appendNode(block, namespace);
     for (next = 0; (name = mprGetNextItem(cp->require, &next)) != 0; ) {
         require = createNode(cp, N_USE_MODULE);
         require->qname.name = mprStrdup(require, name);
@@ -9319,7 +9327,6 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
         require = appendNode(require, createNamespaceNode(cp, name, 0, 1));
         block = appendNode(block, require);
     }
-
     block = appendNode(block, parseDirectives(cp));
     module = appendNode(module, block);
     np = appendNode(np, module);

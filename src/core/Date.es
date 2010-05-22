@@ -14,18 +14,6 @@ module ejs {
 
         use default namespace public
 
-        /**
-            Construct a new date object. Permissible constructor forms:
-            <ul>
-                <li>Date()</li>
-                <li>Date(milliseconds) where (seconds sincde 1 Jan 1970 00:00:00 UTC))</li>
-                <li>Date(dateString) where (In a format recognized by parse())</li>
-                <li>Date(year, month, date) where (Four digit year, month: 0-11, date: 1-31)</li>
-                <li>Date(year, month, date [, hour, minute, second, msec]) where (hour: 0-23, minute: 0-59, second: 0-59, msec: 0-999)</li>
-            </ul>
-         */
-        native function Date(...args)
-
 /* TODO 
             Better to convert Date to not have args, but rather default values
             @param milliseconds Integer representing milliseconds since 1 January 1970 00:00:00 UTC.
@@ -40,16 +28,22 @@ module ejs {
 */
 
         /**
+            Construct a new date object. Permissible constructor forms:
+            <ul>
+                <li>Date()</li>
+                <li>Date(milliseconds) where (seconds sincde 1 Jan 1970 00:00:00 UTC))</li>
+                <li>Date(dateString) where (In a format recognized by parse())</li>
+                <li>Date(year, month, date) where (Four digit year, month: 0-11, date: 1-31)</li>
+                <li>Date(year, month, date [, hour, minute, second, msec]) where (hour: 0-23, minute: 0-59, second: 0-59, msec: 0-999)</li>
+            </ul>
+         */
+        native function Date(...args)
+
+        /**
             The day of the week (0 - 6, where 0 is Sunday) in local time.
             @spec ejs
          */
         native function get day(): Number 
-
-        /**
-            The day of the week (0 - 6, where 0 is Sunday) in local time.
-            @param day The integer day of the week (0 - 6, where 0 is Sunday)
-            @spec ejs
-         */
         native function set day(day: Number): Void
 
         /**
@@ -57,12 +51,6 @@ module ejs {
             @spec ejs
          */
         native function get dayOfYear(): Number 
-
-        /**
-            The day of the year (0 - 365) in local time.
-            @param day The integer day of the year (0 - 365)
-            @spec ejs
-         */
         native function set dayOfYear(day: Number): Void
 
         /**
@@ -70,12 +58,6 @@ module ejs {
             @spec ejs
          */
         native function get date(): Number 
-
-        /**
-            The day of the month (1-31).
-            @param date integer day of the month (1-31)
-            @spec ejs
-         */
         native function set date(date: Number): Void
 
         /**
@@ -87,7 +69,6 @@ module ejs {
         /**
             Format a date using a format specifier in local time. This routine is implemented by calling 
             the O/S strftime routine and so not all the format specifiers are available on all platforms.
-            Windows only supports the following formats: A, a, B, b, c, d, H, I, j, M, m, p, S, U, W, w, X, x, Y, y, Z.
             For full details, consult your platform API manual for strftime.
 
             The format specifiers are:
@@ -96,44 +77,35 @@ module ejs {
             <li>%a    national representation of the abbreviated weekday name.</li>
             <li>%B    national representation of the full month name.</li>
             <li>%b    national representation of the abbreviated month name.</li>
-            <li>%C    (year / 100) as decimal number; single digits are preceded by a zero.</li>
+            <li>%C    (year / 100) as decimal number; single digits are preceded by a zero. Not supported on Windows.</li>
             <li>%c    national representation of time and date.</li>
             <li>%D    is equivalent to ``%m/%d/%y''.</li>
             <li>%d    the day of the month as a decimal number (01-31).</li>
-            <li>%E*   POSIX locale extensions. The sequences %Ec %EC %Ex %EX %Ey %EY are supposed to provide alternate 
-                      representations. NOTE: these are not available on some platforms.</li>
-            <li>%e    the day of month as a decimal number (1-31); single digits are preceded by a blank.</li>
+            <li>%e    the day of month as a decimal number (1-31); single digits are preceded by a blank. Not supported 
+                      on Windows</li>
             <li>%F    is equivalent to ``%Y-%m-%d''.</li>
-            <li>%G    a year as a decimal number with century. This year is the one that contains the greater part of
-                      the week (Monday as the first day of the week).</li>
-            <li>%g    the same year as in ``%G'', but as a decimal number without century (00-99).</li>
             <li>%H    the hour (24-hour clock) as a decimal number (00-23).</li>
             <li>%h    the same as %b.</li>
             <li>%I    the hour (12-hour clock) as a decimal number (01-12).</li>
             <li>%j    the day of the year as a decimal number (001-366). Note: this range is different to that of
                       the dayOfYear property which is 0-365.</li>
-            <li>%k    the hour (24-hour clock) as a decimal number (0-23); single digits are preceded by a blank.</li>
+            <li>%k    the hour (24-hour clock) as a decimal number (0-23); single digits are preceded by a blank. 
+                      Not supported on windows</li>
             <li>%l    the hour (12-hour clock) as a decimal number (1-12); single digits are preceded by a blank.</li>
             <li>%M    the minute as a decimal number (00-59).</li>
             <li>%m    the month as a decimal number (01-12).</li>
             <li>%n    a newline.</li>
-            <li>%O*   POSIX locale extensions. The sequences %Od %Oe %OH %OI %Om %OM %OS %Ou %OU %OV %Ow %OW %Oy are 
-                      supposed to provide alternate representations. Additionly %OB implemented to represent alternative 
-                      months names (used standalone, without day mentioned). NOTE: these are not available on some 
-                      platforms.</li>
-            <li>%P    Lower case national representation of either "ante meridiem" or "post meridiem" as appropriate.</li>
+            <li>%P    Lower case national representation of either "ante meridiem" or "post meridiem" as appropriate.
+                      Not supported on Windows or Mac</li>
             <li>%p    national representation of either "ante meridiem" or "post meridiem" as appropriate.</li>
             <li>%R    is equivalent to ``%H:%M''.</li>
             <li>%r    is equivalent to ``%I:%M:%S %p''.</li>
             <li>%S    the second as a decimal number (00-60).</li>
-            <li>%s    the number of seconds since the Epoch, UTC (see mktime(3)).</li>
+            <li>%s    the number of seconds since the Epoch, UTC (see mktime(3)). Not supported on Windows</li>
             <li>%T    is equivalent to ``%H:%M:%S''.</li>
             <li>%t    a tab.</li>
             <li>%U    the week number of the year (Sunday as the first day of the week) as a decimal number (00-53).</li>
             <li>%u    the weekday (Monday as the first day of the week) as a decimal number (1-7).</li>
-            <li>%V    the week number of the year (Monday as the first day of the week) as a decimal
-                      number (01-53).  If the week containing January 1 has four or more days in the new year, then it
-                      is week 1; otherwise it is the last week of the previous year, and the next week is week 1.</li>
             <li>%v    is equivalent to ``%e-%b-%Y''.</li>
             <li>%W    the week number of the year (Monday as the first day of the week) as a decimal number (00-53).</li>
             <li>%w    the weekday (Sunday as the first day of the week) as a decimal number (0-6).</li>
@@ -145,12 +117,26 @@ module ejs {
             <li>%z    the time zone offset from UTC; a leading plus sign stands for east of UTC, a minus
                       sign for west of UTC, hours and minutes follow with two digits each and no delimiter between them
                       (common form for RFC 822 date headers).</li>
-            <li>%+    national representation of the date and time (the format is similar to that produced by date(1)). 
+            <li>%+    national representation of the date and time (the format is similar to that produced by date(1)).
                       This format is platform dependent.</li>
             <li>%%    Literal percent.</li>
             </ul>
         
-            @param layout Format layout string using the above format specifiers. Similar to a C language printf() string.
+         Some platforms may also support the following format extensions:
+            <ul>
+            <li>%E*   POSIX locale extensions. Where "*" is one of the characters: c, C, x, X, y, Y.
+            <li>%G    a year as a decimal number with century. This year is the one that contains the greater part of
+                      the week (Monday as the first day of the week).</li>
+            <li>%g    the same year as in ``%G'', but as a decimal number without century (00-99).</li>
+            <li>%O*   POSIX locale extensions. Where "*" is one of the characters: d e H I m M S u U V w W y.
+                      supposed to provide alternate representations. Additionly %OB implemented to represent alternative 
+                      months names (used standalone, without day mentioned).
+            <li>%V    the week number of the year (Monday as the first day of the week) as a decimal
+                      number (01-53).  If the week containing January 1 has four or more days in the new year, then it
+                      is week 1; otherwise it is the last week of the previous year, and the next week is week 1.</li>
+            </ul>
+
+            @param layout Format layout string using the above format specifiers. See strftime(3) for more information.
             @return string representation of the date.
             @spec ejs
          */
@@ -171,12 +157,6 @@ module ejs {
             @spec ejs
          */
         native function get fullYear(): Number 
-
-        /**
-            Set the year as four digits in local time.
-            @param year Year to set.
-            @spec ejs
-         */
         native function set fullYear(year: Number): void
 
         /**
@@ -303,12 +283,6 @@ module ejs {
             @spec ejs
          */
         native function get hours(): Number 
-
-        /**
-            Set the current hour (0 - 23) in local time
-            @param hour The hour as an integer
-            @spec ejs
-         */
         native function set hours(hour: Number): void
 
         /**
@@ -316,12 +290,6 @@ module ejs {
             @spec ejs
          */
         native function get milliseconds(): Number 
-
-        /**
-            Set the current millisecond (0 - 999) in local time.
-            @param ms The millisecond as an integer
-            @spec ejs
-         */
         native function set milliseconds(ms: Number): void
 
         /**
@@ -329,12 +297,6 @@ module ejs {
             @spec ejs
          */
         native function get minutes(): Number 
-
-        /**
-            Set the current minute (0 - 59) in local time.
-            @param min The minute as an integer
-            @spec ejs
-         */
         native function set minutes(min: Number): void
 
         /**
@@ -342,12 +304,6 @@ module ejs {
             @spec ejs
          */
         native function get month(): Number 
-
-        /**
-            Set the current month (0 - 11) in local time.
-            @param month The month as an integer
-            @spec ejs
-         */
         native function set month(month: Number): void
 
         /**
@@ -376,6 +332,22 @@ module ejs {
                 the date string will be interpreted as a local date/time.  This is similar to parse() but it returns a
                 date object.
             @param dateString The date string to parse.
+            The date parsing logic uses heuristics and attempts to intelligently parse a range of dates. Some of the
+            possible formats are:
+            <ul>
+                <li>07/28/2010</li>
+                <li>07/28/08</li>
+                <li>Jan/28/2010</li>
+                <li>Jaunuary-28-2010</li>
+                <li>28-jan-2010</li>
+                <li>[29] Jan [15] [2010]</li>
+                <li>dd/mm/yy, dd.mm.yy, dd-mm-yy</li>
+                <li>mm/dd/yy, mm.dd.yy, mm-dd-yy</li>
+                <li>yyyy/mm/dd, yyyy.mm.dd, yyyy-mm-dd</li>
+                <li>10:52[:23]</li>
+                <li>2009-05-21t16:06:05.000z (ISO date)</li>
+                <li>[GMT|UTC][+-]NN[:]NN (timezone)</li>
+            </ul>
             @param defaultDate Default date to use to fill out missing items in the date string.
             @return Return a new Date.
             @spec ejs
@@ -385,7 +357,7 @@ module ejs {
         /**
             Parse a date string and Return a new Date object. If $dateString does not contain a timezone,
                 the date string will be interpreted as a UTC date/time.
-            @param dateString UTC date string to parse.
+            @param dateString UTC date string to parse. See $parseDate for supported formats.
             @param defaultDate Default date to use to fill out missing items in the date string.
             @return Return a new Date.
             @spec ejs
@@ -395,7 +367,7 @@ module ejs {
         /**
             Parse a date string and return the number of milliseconds since midnight, January 1st, 1970 UTC. 
             If $dateString does not contain a timezone, the date string will be interpreted as a local date/time.
-            @param dateString The string to parse
+            @param dateString The string to parse. See $parseDate for supported formats.
             @return Return a new date number.
          */
         static native function parse(dateString: String): Number
@@ -405,12 +377,6 @@ module ejs {
             @spec ejs
          */
         native function get seconds(): Number 
-
-        /**
-            Set the current second (0 - 59) in local time.
-            @param sec The second as an integer
-            @spec ejs
-         */
         native function set seconds(sec: Number): void
 
         /**
@@ -524,12 +490,6 @@ module ejs {
             @spec ejs
          */
         native function get time(): Number 
-
-        /**
-            Set the number of milliseconds since midnight, January 1st, 1970 UTC.
-            @param value The number of milliseconds as a number
-            @spec ejs
-         */
         native function set time(value: Number): Void 
 
         /**
@@ -636,16 +596,10 @@ module ejs {
             time
 
         /**
-            The current year as two digits.
+            The current year as two digits in local time.
             @spec ejs
          */
         native function get year(): Number 
-
-        /**
-            Set the current year as two digits in local time.
-            @param year Year to set.
-            @spec ejs
-         */
         native function set year(year: Number): void
 
         /**

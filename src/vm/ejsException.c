@@ -320,6 +320,7 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
 char *ejsGetErrorMsg(Ejs *ejs, int withStack)
 {
     EjsObj      *message, *stack, *error;
+    EjsString   *str;
     cchar       *name;
     char        *buf;
 
@@ -365,12 +366,14 @@ char *ejsGetErrorMsg(Ejs *ejs, int withStack)
     } else if (message && ejsIsNumber(message)){
         buf = mprAsprintf(ejs, -1, "%s: %d", name, ((EjsNumber*) message)->value);
         
+    } else if (error) {
+        EjsObj *saveException = ejs->exception;
+        ejs->exception = 0;
+        str = ejsToString(ejs, error);
+        buf = mprStrdup(ejs, ejsGetString(ejs, str));
+        ejs->exception = saveException;
     } else {
-        if (error) {
-            buf = mprStrdup(ejs, "Unknown exception object type");
-        } else {
-            buf = mprStrdup(ejs, "");
-        }
+        buf = mprStrdup(ejs, "");
     }
     mprFree(ejs->errorMsg);
     ejs->errorMsg = buf;

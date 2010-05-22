@@ -2902,6 +2902,7 @@ typedef struct EjsState {
     struct EjsObj       **stack;            /* Top of stack (points to the last element pushed) */
     struct EjsObj       **stackBase;        /* Pointer to start of stack mem */
     struct EjsState     *prev;              /* Previous state */
+    struct EjsNamespace *internal;          /* Current internal namespace */
     int                 stackSize;          /* Stack size */
 } EjsState;
 

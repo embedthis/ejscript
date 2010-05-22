@@ -260,7 +260,10 @@ int ecGetToken(EcInput *input)
             }
 
         case ' ':
+        case '\f':
         case '\t':
+        case '\v':
+        case 0xA0:      /* No break space */
             break;
 
         case '\r':
@@ -816,8 +819,13 @@ static int getQuotedToken(EcInput *input, EcToken *tp, int c)
                 c = '\t';
                 break;
             case 'u':
-            case 'x':
                 c = decodeNumber(input, 16, 4);
+                break;
+            case 'x':
+                c = decodeNumber(input, 16, 2);
+                break;
+            case 'v':
+                c = '\v';
                 break;
             case '0':
                 c = decodeNumber(input, 8, 3);
@@ -848,7 +856,7 @@ static int decodeNumber(EcInput *input, int radix, int length)
             }
         } else if (radix == 16) {
             lowerc = tolower(c);
-            if (!isdigit(c) && !('a' <= c && c <= 'f')) {
+            if (!isdigit(lowerc) && !('a' <= lowerc && lowerc <= 'f')) {
                 break;
             }
         }
@@ -887,7 +895,7 @@ static int getComment(EcInput *input, EcToken *tp, int c)
         }
 
         if (form == '/') {
-            if (c == '\n') {
+            if (c == '\n' || c == '\r') {
                 break;
             }
 

@@ -507,12 +507,11 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         Parse the format string and extract one specifier at a time.
      */
     last = 0;
-    for (i = 0, nextArg = 0; i < sp->length && nextArg < args->length; i++) {
+    for (i = 0, nextArg = 0; i < sp->length; i++) {
         c = sp->value[i];
         if (c != '%') {
             continue;
         }
-
         if (i > last) {
             catString(ejs, result, &sp->value[last], i - last);
         }
@@ -529,8 +528,11 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             mprMemcpy(fmt, sizeof(fmt), &sp->value[start], len);
             fmt[len] = '\0';
 
-            value = ejsGetProperty(ejs, (EjsObj*) args, nextArg);
-
+            if (nextArg < args->length) {
+                value = ejsGetProperty(ejs, (EjsObj*) args, nextArg);
+            } else {
+                value = ejs->nullValue;
+            }
             buf = 0;
             switch (kind) {
             case 'd': case 'i': case 'o': case 'u':
@@ -563,6 +565,9 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             mprFree(buf);
             last = i + 1;
             nextArg++;
+        } else if (kind == '%') {
+            catString(ejs, result, "%", 1);
+            last = i + 1;
         }
     }
     i = (int) strlen(sp->value);

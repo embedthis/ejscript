@@ -405,6 +405,21 @@ module ejs {
         }
 
         /**
+            Read the file containing a JSON string and return a deserialized object. 
+            This method opens the file, reads the contents, deserializes the object and closes the file.
+            @return An object.
+            @throws IOError if the file cannot be read
+            @example:
+                data = Path("/tmp/a.json").readJson()
+         */
+        function readJSON(): Object {
+            let file: File = open(this)
+            result = file.readString()
+            file.close()
+            return deserialize(result)
+        }
+
+        /**
             Read the file contents as an array of lines. Each line is a string. This method opens the file, reads the 
                 contents and closes the file.
             @return An array of strings.

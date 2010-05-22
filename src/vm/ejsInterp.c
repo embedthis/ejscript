@@ -194,6 +194,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
     EjsEx       *ex;
     EjsFrame    *newFrame;
     EjsFunction *f1, *f2;
+    EjsNamespace *nsp;
     char        *str;
     uchar       *mark;
     int         i, offset, count, opcode, attributes;
@@ -1350,7 +1351,11 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
          */
         CASE (EJS_OP_ADD_NAMESPACE):
             str = GET_STRING();
-            ejsAddNamespaceToBlock(ejs, state.bp, ejsCreateNamespace(ejs, str, str));
+            nsp = ejsCreateNamespace(ejs, str, str);
+            ejsAddNamespaceToBlock(ejs, state.bp, nsp);
+            if (strstr(str, "internal-")) {
+                state.internal = nsp;
+            }
             BREAK;
 
         /*
@@ -2137,7 +2142,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 Stack before (top)  [name]
                                     [space]
                                     [obj]
-                Stack after         []
+                Stack after         [true|false]
          */
         CASE (EJS_OP_DELETE_NAME_EXPR):
             qname.name = ejsToString(ejs, pop(ejs))->value;
@@ -2149,6 +2154,18 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             }
             vp = pop(ejs);
             slotNum = ejsLookupVar(ejs, vp, &qname, &lookup);
+#if ECMA || 1
+            if (slotNum < 0) {
+                push(ejs->trueValue);
+            } else {
+                if (!lookup.obj->dynamic || ejsHasTrait(lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
+                    push(ejs->falseValue);
+                } else {
+                    ejsDeletePropertyByName(ejs, lookup.obj, &lookup.name);
+                    push(ejs->trueValue);
+                }
+            }
+#else
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Property \"%s\" does not exist", qname.name);
             } else {
@@ -2161,6 +2178,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                     ejsDeletePropertyByName(ejs, lookup.obj, &lookup.name);
                 }
             }
+#endif
             BREAK;
 
         /*
@@ -2168,7 +2186,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 DeleteScopedNameExpr
                 Stack before (top)  [name]
                                     [space]
-                Stack after         []
+                Stack after         [true|false]
          */
         CASE (EJS_OP_DELETE_SCOPED_NAME_EXPR):
             qname.name = ejsToString(ejs, pop(ejs))->value;
@@ -2179,6 +2197,18 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 qname.space = ejsToString(ejs, v1)->value;
             }
             slotNum = ejsLookupScope(ejs, &qname, &lookup);
+#if ECMA || 1
+            if (slotNum < 0) {
+                push(ejs->trueValue);
+            } else {
+                if (!lookup.obj->dynamic || ejsHasTrait(lookup.obj, slotNum, EJS_TRAIT_FIXED)) {
+                    push(ejs->falseValue);
+                } else {
+                    ejsDeletePropertyByName(ejs, lookup.obj, &lookup.name);
+                    push(ejs->trueValue);
+                }
+            }
+#else
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Property \"%s\" does not exist", qname.name);
             } else {
@@ -2191,6 +2221,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                     ejsDeletePropertyByName(ejs, lookup.obj, &lookup.name);
                 }
             }
+#endif
             BREAK;
 
         /*

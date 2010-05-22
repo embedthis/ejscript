@@ -24,6 +24,7 @@ int ejsInitCompiler(EjsService *service)
 }
 
 
+//  MOB -- remove these
 /*
     Load a script file. This indirect routine is used by the core VM to compile a file when required.
  */
@@ -36,6 +37,7 @@ static EjsObj *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache)
 }
 
 
+//  MOB -- remove these
 /*
     Function for ejs->loadScriptLiteral. This indirect routine is used by the core VM to compile a script when required.
  */

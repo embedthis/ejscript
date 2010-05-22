@@ -1329,28 +1329,29 @@
 #define ES_Path_perms                                                  38
 #define ES_Path_portable                                               39
 #define ES_Path_readBytes                                              40
-#define ES_Path_readLines                                              41
-#define ES_Path_readString                                             42
-#define ES_Path_readXML                                                43
-#define ES_Path_relative                                               44
-#define ES_Path_remove                                                 45
-#define ES_Path_removeAll                                              46
-#define ES_Path_rename                                                 47
-#define ES_Path_replaceExt                                             48
-#define ES_Path_resolve                                                49
-#define ES_Path_same                                                   50
-#define ES_Path_separator                                              51
-#define ES_Path_size                                                   52
-#define ES_Path_startsWith                                             53
-#define ES_Path_toJSON                                                 54
-#define ES_Path_toLower                                                55
-#define ES_Path_toString                                               56
-#define ES_Path_trimEnd                                                57
-#define ES_Path_trimExt                                                58
-#define ES_Path_trimStart                                              59
-#define ES_Path_truncate                                               60
-#define ES_Path_write                                                  61
-#define ES_Path_NUM_INSTANCE_PROP                                      62
+#define ES_Path_readJSON                                               41
+#define ES_Path_readLines                                              42
+#define ES_Path_readString                                             43
+#define ES_Path_readXML                                                44
+#define ES_Path_relative                                               45
+#define ES_Path_remove                                                 46
+#define ES_Path_removeAll                                              47
+#define ES_Path_rename                                                 48
+#define ES_Path_replaceExt                                             49
+#define ES_Path_resolve                                                50
+#define ES_Path_same                                                   51
+#define ES_Path_separator                                              52
+#define ES_Path_size                                                   53
+#define ES_Path_startsWith                                             54
+#define ES_Path_toJSON                                                 55
+#define ES_Path_toLower                                                56
+#define ES_Path_toString                                               57
+#define ES_Path_trimEnd                                                58
+#define ES_Path_trimExt                                                59
+#define ES_Path_trimStart                                              60
+#define ES_Path_truncate                                               61
+#define ES_Path_write                                                  62
+#define ES_Path_NUM_INSTANCE_PROP                                      63
 #define ES_Path_NUM_INHERITED_PROP                                     0
 #define ES_Promise_NUM_CLASS_PROP                                      0
 
@@ -1803,6 +1804,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1281029
+#define _ES_CHECKSUM_ejs   1284208
 
 #endif

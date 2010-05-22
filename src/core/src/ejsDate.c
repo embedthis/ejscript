@@ -295,7 +295,7 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
         tm.tm_isdst = -1;
         vp = ejsGetProperty(ejs, (EjsObj*) args, 0);
         year = getNumber(ejs, vp);
-        if (year < 100) {
+        if (0 <= year && year < 100) {
             year += 1900;
         }
         tm.tm_year = year - 1900;
@@ -306,6 +306,8 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
         if (args->length > 2) {
             vp = ejsGetProperty(ejs, (EjsObj*) args, 2);
             tm.tm_mday = getNumber(ejs, vp);
+        } else {
+            tm.tm_mday = 1;
         }
         if (args->length > 3) {
             vp = ejsGetProperty(ejs, (EjsObj*) args, 3);
@@ -504,14 +506,14 @@ static EjsObj *date_set_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 /**
     Return the number of minutes between the local computer time and Coordinated Universal Time.
     @return Integer containing the number of minutes between UTC and local time. The offset is positive if
-    local time is behind UTC and negative if it is ahead. E.g. American PST is UTC-8 so 480 will be retured.
-    This value will vary if daylight savings time is in effect.
+    local time is behind UTC and negative if it is ahead. E.g. American PST is UTC-8 so 420/480 will be retured
+    depending on if daylight savings is in effect.
 
     function getTimezoneOffset(): Number
 */
 static EjsObj *date_getTimezoneOffset(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, -mprGetMpr(ejs)->timezone);
+    return (EjsObj*) ejsCreateNumber(ejs, -mprGetTimeZoneOffset(ejs, dp->value) / (MPR_TICKS_PER_SEC * 60));
 }
 
 

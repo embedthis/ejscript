@@ -122,6 +122,55 @@ void ejsMarkFunction(Ejs *ejs, EjsFunction *fun)
 
 /*************************************************************************************************************/
 /*
+    function Function(...[args], body)
+ */
+static EjsObj *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
+{
+#if UNUSED
+    EjsArray        *args;
+    EjsString       *str;
+    MprBuf          *buf;
+    cchar           *body, *param, *script;
+    int             i, count;
+    
+    mprAssert(argc > 1);
+    args = (EjsArray*) argv[1];
+    mprAssert(ejsIsArray(args));
+
+    if (args->length <= 0) {
+        ejsThrowArgError(ejs, "Missing function body");
+        return 0;
+    }
+    str = ejsToString(ejs, args->data[args->length - 1]);
+    body = ejsGetString(ejs, str);
+
+    buf = mprCreateBuf(ejs, -1, -1);
+    mprPutStringToBuf(buf, "function(");
+    count = args->length - 1;
+    for (i = 0; i < count; i++) {
+        str = ejsToString(ejs, args->data[i]);
+        param = ejsGetString(ejs, str);
+        mprPutStringToBuf(buf, param);
+        if (i < (count - 1)) {
+            mprPutCharToBuf(buf, ',');
+        }
+        mprPutStringToBuf(buf, "\n{");
+    }
+    mprPutStringToBuf(buf, body);
+    mprPutStringToBuf(buf, "\n}");
+
+    script = mprGetBufStart(buf);
+    if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW | EC_FLAGS_VISIBLE) < 0) {
+        //  MOB -- what happens to compiler errors
+        return 0;
+    }
+    fun->body.code = ;
+    fun->body.codeLen
+#endif
+    return (EjsObj*) fun;
+}
+
+/*
     function apply(thisObj: Object, args: Array)
  */
 static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
@@ -459,6 +508,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     type = ejs->functionType;
     prototype = type->prototype;
 
+    ejsBindConstructor(ejs, type, (EjsProc) fun_Function);
     ejsBindMethod(ejs, prototype, ES_Function_apply, (EjsProc) fun_applyFunction);
     ejsBindMethod(ejs, prototype, ES_Function_bind, (EjsProc) fun_bindFunction);
     ejsBindMethod(ejs, prototype, ES_Function_boundThis, (EjsProc) fun_boundThis);

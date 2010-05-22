@@ -222,7 +222,7 @@ EjsType *ejsCreateArchetype(Ejs *ejs, EjsFunction *fun, EjsObj *prototype)
         prototype = ejsGetPropertyByName(ejs, (EjsObj*) fun, ejsName(&qname, NULL, "prototype"));
     }
     baseType = prototype ? prototype->type : ejs->objectType;
-    name = fun ? fun->name : "-type-from-function-";
+    name = (fun && fun->name) ? fun->name : "-type-from-function-";
     type = ejsCreateType(ejs, ejsName(&qname, EJS_PROTOTYPE_NAMESPACE, name), NULL, baseType, prototype,
         ejs->objectType->instanceSize, id++, 0, 0, EJS_TYPE_DYNAMIC_INSTANCE, NULL);
     if (type == 0) {

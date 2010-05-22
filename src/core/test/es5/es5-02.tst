@@ -30,17 +30,14 @@ var s = new Shape
 //  must not be extensible via addition or deletion
 
 // assert(!Object.isExtensible(s))
-let caught = false
-try { delete s.shape; } catch { caught = true; }
-assert(caught == true)
-caught = false
-try { s.width = 10; } catch { caught = true; }
-assert(caught == true)
+assert(!(delete s.shape))
+
+//  ECMA says delete should return true for non-existant properties
+assert((delete s.missing))
 
 
 //  check property attributes
 
-assert(caught)
 d = Object.getOwnPropertyDescriptor(s, "shape")
 assert(!d.configurable)
 assert(!d.enumerable)
@@ -77,8 +74,7 @@ let caught = false
 
 //  Deleting class fixtures should still fail
 
-try { delete e.temporary; } catch { caught = true; }
-assert(caught)
+assert(!(delete e.temporary))
 
 
 //  Test attributes 

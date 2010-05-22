@@ -15,6 +15,8 @@ module ejs {
 
         use default namespace public
 
+        //  MOB -- SSL
+
         /** 
             Create a socket object
          */
@@ -40,19 +42,11 @@ module ejs {
          */
         native function get address(): String 
 
-        /** 
-            @duplicate Stream.async
-         */
+        /** @duplicate Stream.async */
         native function get async(): Boolean
-
-        /** 
-            @duplicate Stream.async
-         */
         native function set async(enable: Boolean): Void
 
-        /** 
-            @duplicate Stream.close 
-         */
+        /** @duplicate Stream.close */
         native function close(): Void
 
         /** 
@@ -72,17 +66,11 @@ module ejs {
         function get encoding(): String
             "utf-8"
 
-        /** 
-            Set the encoding scheme for serializing strings. The default encoding is UTF-8.
-            @param enc String representing the encoding scheme
-         */
         function set encoding(enc: String): Void {
             throw "Not yet implemented"
         }
 
-        /** 
-            @duplicate Stream.flush
-         */
+        /** @duplicate Stream.flush */
         function flush(dir: Number = Stream.BOTH): Void {}
 
         /** 
@@ -108,10 +96,10 @@ module ejs {
          */
         native function get port(): Number 
 
-        /** 
-            @duplicate Stream.read 
-         */
-        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Object 
+        /** @duplicate Stream.read */
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+
+        //  MOB - readString, readBytes, readXML
 
         /** 
             The remote address bound to this socket. Set to the remote address in dot notation or empty string if it 
@@ -119,15 +107,14 @@ module ejs {
          */
         native function get remoteAddress(): String 
 
-        /** 
-            @duplicate Stream.removeListener 
-         */
+        /** @duplicate Stream.removeListener */
         native function removeListener(name: Object, listener: Function): Void
 
         /** 
             @duplicate Stream.write 
          */
-        native function write(data: Object): Object
+        //  MOB -- or ...data
+        native function write(...items): Number
     }
 }
 

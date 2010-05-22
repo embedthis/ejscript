@@ -14,6 +14,21 @@ module ejs {
 
         use default namespace public
 
+        /**
+            Create a function from the supplied formal parameter names and function body expression.
+            @param args The parameters and body are suplied as discrete parameters to Function(), i.e. 
+                not as an array of args.
+            Function ([args, ...], body)
+         */
+        native function Function(...args)
+/*
+            let body = args.pop()
+            let code = "function(" + args.join(",") + ") {\n" + body + "\n}"
+            print("CODE " + code)
+            eval(code)
+        }
+*/
+
         /** 
             Invoke the function on another object.
             @param thisObject The object to set as the "this" object when the function is called.

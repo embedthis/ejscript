@@ -10,7 +10,9 @@
 /*********************************** Forwards *********************************/
 
 static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEvent *event));
+#if UNUSED
 static int socketConnectEvent(EjsSocket *sp, MprEvent *event);
+#endif
 static int socketIOEvent(EjsSocket *sp, MprEvent *event);
 static int socketListenEvent(EjsSocket *listen, MprEvent *event);
 
@@ -144,10 +146,11 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     }
     if (sp->async) {
         sp->mask |= MPR_READABLE;
-        enableSocketEvents(sp, socketConnectEvent);
+        enableSocketEvents(sp, socketIOEvent);
     } else {
         mprSetSocketBlockingMode(sp->sock, 1);
     }
+    ejsSendEvent(ejs, sp->emitter, "writable", (EjsObj*) sp);
     return 0;
 }
 
@@ -206,7 +209,7 @@ static EjsObj *sock_port(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 
 /*
-    function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Object
+    function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
  */
 static EjsObj *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
@@ -337,6 +340,8 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
 }
 
 
+#if UNUSED
+//  MOB -- when is this called?
 static int socketConnectEvent(EjsSocket *sp, MprEvent *event)
 {
     Ejs     *ejs;
@@ -349,6 +354,7 @@ static int socketConnectEvent(EjsSocket *sp, MprEvent *event)
     enableSocketEvents(sp, socketIOEvent);
     return 0;
 }
+#endif
 
 
 static int socketListenEvent(EjsSocket *listen, MprEvent *event)

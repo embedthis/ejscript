@@ -50,3 +50,12 @@ o."red"::["a" + "b"] = 77
 assert(o."red"::["a" + "b"] == 77)
 delete o."red"::["a" + "b"]
 assert(o."red"::["a" + "b"] == undefined)
+
+
+//  test return value from delete
+
+assert(!(delete Number.NaN))
+
+o = { color: "red" }
+assert(delete o.color)
+
