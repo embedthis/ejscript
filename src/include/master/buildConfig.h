@@ -240,7 +240,8 @@
 
 
     #define BLD_VERSION "1.1.0"
-    #define BLD_NUMBER "1"
+    #define BLD_NUMBER "1-repos"
+    #define BLD_NUMBER_ONLY "1"
     #define BLD_MAJOR_VERSION 1
     #define BLD_MINOR_VERSION 1
     #define BLD_PATCH_VERSION 0

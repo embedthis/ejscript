@@ -158,7 +158,8 @@ static EjsObj *printStats(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 
 void ejsConfigureMemoryType(Ejs *ejs)
 {
-    EjsType         *type;
+    EjsType     *type;
+    EjsObj      *prototype;
 
     if ((type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "Memory")) == 0) {
         mprError(ejs, "Can't find Memory type");
@@ -173,7 +174,6 @@ void ejsConfigureMemoryType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Memory_system, (EjsProc) getSystemRam);
     ejsBindMethod(ejs, type, ES_Memory_stats, (EjsProc) printStats);
 
-    EjsObj      *prototype;
     prototype = type->prototype;
     ejsBindAccess(ejs, type, ES_Memory_callback, NULL, (EjsProc) setRedlineCallback);
 }
