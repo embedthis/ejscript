@@ -77,31 +77,28 @@ module ejs {
             <li>%a    national representation of the abbreviated weekday name.</li>
             <li>%B    national representation of the full month name.</li>
             <li>%b    national representation of the abbreviated month name.</li>
-            <li>%C    (year / 100) as decimal number; single digits are preceded by a zero. Not supported on Windows.</li>
+            <li>%C    (year / 100) as decimal number; single digits are preceded by a zero..</li>
             <li>%c    national representation of time and date.</li>
             <li>%D    is equivalent to %m/%d/%y.</li>
             <li>%d    the day of the month as a decimal number (01-31).</li>
-            <li>%e    the day of month as a decimal number (1-31); single digits are preceded by a blank. Not supported 
-                      on Windows</li>
+            <li>%e    the day of month as a decimal number (1-31); single digits are preceded by a blank.</li>
             <li>%F    is equivalent to %Y-%m-%d.</li>
             <li>%H    the hour (24-hour clock) as a decimal number (00-23).</li>
             <li>%h    the same as %b.</li>
             <li>%I    the hour (12-hour clock) as a decimal number (01-12).</li>
             <li>%j    the day of the year as a decimal number (001-366). Note: this range is different to that of
                       the dayOfYear property which is 0-365.</li>
-            <li>%k    the hour (24-hour clock) as a decimal number (0-23); single digits are preceded by a blank. 
-                      Not supported on windows</li>
+            <li>%k    the hour (24-hour clock) as a decimal number (0-23); single digits are preceded by a blank.</li>
             <li>%l    the hour (12-hour clock) as a decimal number (1-12); single digits are preceded by a blank.</li>
             <li>%M    the minute as a decimal number (00-59).</li>
             <li>%m    the month as a decimal number (01-12).</li>
             <li>%n    a newline.</li>
-            <li>%P    Lower case national representation of either "ante meridiem" or "post meridiem" as appropriate.
-                      Not supported on Windows or Mac</li>
+            <li>%P    Lower case national representation of either "ante meridiem" or "post meridiem" as appropriate.</li>
             <li>%p    national representation of either "ante meridiem" or "post meridiem" as appropriate.</li>
             <li>%R    is equivalent to %H:%M.</li>
             <li>%r    is equivalent to %I:%M:%S %p.</li>
             <li>%S    the second as a decimal number (00-60).</li>
-            <li>%s    the number of seconds since the Epoch, UTC (see mktime(3)). Not supported on Windows</li>
+            <li>%s    the number of seconds since the January 1, 1970 UTC.</li>
             <li>%T    is equivalent to %H:%M:%S.</li>
             <li>%t    a tab.</li>
             <li>%U    the week number of the year (Sunday as the first day of the week) as a decimal number (00-53).</li>
@@ -390,9 +387,8 @@ module ejs {
             Set the current year as four digits in local time.
             @param y Current year
          */
-        function setFullYear(y: Number): void {
+        function setFullYear(y: Number): void
             year = y
-        }
 
         /**
             Set the current hour (0 - 59) in local time.
@@ -502,8 +498,9 @@ module ejs {
             format("%a %b %d %Y")
 
         /** 
-            Return a date in JSON encoding
-            @return This function returns a string ISO date
+            Convert a date to an equivalent JSON encoding.
+            @return This function returns a date in ISO format as a string.
+            @throws TypeError If the object could not be converted to a string.
          */ 
         native override function toJSON(): String
 
@@ -531,7 +528,7 @@ module ejs {
         /**
             Return a localized string containing the date. This formats the date using the operating system's locale
             conventions.
-            Sample:  "Fri 15 Dec 2006 23:45:09 GMT-0800 (PST)". (Note: Other platforms render as:
+            Sample:  "Fri 15 Dec 2006 23:45:09 GMT-0800 (PST)". (Note: Other JavaScript platforms render as:
             V8 format:  "Fri, 15 Dec 2006 23:45:09 GMT-0800 (PST)"
             JS format:  "Fri Jan 15 13:09:02 2010"
             JSC format: "January 15, 2010 1:09:06 PM PST"
