@@ -193,7 +193,7 @@ check(d.format('%z'), "-0700")
 
 //  %+    national representation of the date and time (the format is similar to that produced by date(1)).
 //        This format is platform dependent.
-check(d.format('%+').startsWith("Tue Jun  7 10:09:00")
+assert(d.format('%+').startsWith("Tue Jun  7 10:09:00"))
 
 //  %%    Literal percent.
 check(d.format('%%'), "%")
