@@ -38,6 +38,7 @@ static void pushScope(EjsModule *mp, EjsBlock *block, EjsObj *obj);
 static int  readNumber(Ejs *ejs, MprFile *file, int *number);
 static int  readWord(Ejs *ejs, MprFile *file, int *number);
 static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion);
+static double swapDoubleWord(Ejs *ejs, double a);
 static int  swapWord(Ejs *ejs, int word);
 static char *tokenToString(EjsModule *mp, int   token);
 static int  trimModule(Ejs *ejs, char *name);
@@ -1754,11 +1755,12 @@ static int readNumber(Ejs *ejs, MprFile *file, int *number)
 }
 
 
-double ejsDecodeDouble(uchar **pp)
+double ejsDecodeDouble(Ejs *ejs, uchar **pp)
 {
     double   value;
 
     memcpy(&value, *pp, sizeof(double));
+    value = swapDoubleWord(ejs, value);
     *pp += sizeof(double);
     return value;
 }
@@ -1843,8 +1845,9 @@ int ejsEncodeWord(uchar *pos, int number)
 }
 
 
-int ejsEncodeDouble(uchar *pos, double number)
+int ejsEncodeDouble(Ejs *ejs, uchar *pos, double number)
 {
+    number = swapDoubleWord(ejs, number);
     memcpy(pos, &number, sizeof(double));
     return sizeof(double);
 }
@@ -1955,6 +1958,21 @@ static int swapWord(Ejs *ejs, int word)
     }
     return ((word & 0xFF000000) >> 24) | ((word & 0xFF0000) >> 8) | ((word & 0xFF00) << 8) | ((word & 0xFF) << 24);
 }
+
+
+static double swapDoubleWord(Ejs *ejs, double a)
+{
+    int64   low, high;
+
+    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+        return a;
+    }
+    low = ((int64) a) & 0xFFFFFFFF;
+    high = (((int64) a) >> 32) & 0xFFFFFFFF;
+    return  (double) ((low & 0xFF) << 24 | (low & 0xFF00 << 8) | (low & 0xFF0000 >> 8) | (low & 0xFF000000 >> 16) |
+            ((high & 0xFF) << 24 | (high & 0xFF00 << 8) | (high & 0xFF0000 >> 8) | (high & 0xFF000000 >> 16)) << 32);
+}
+
 
 
 static EjsObj *getCurrentBlock(EjsModule *mp)

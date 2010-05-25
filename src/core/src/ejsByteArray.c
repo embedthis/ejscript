@@ -730,11 +730,13 @@ static EjsObj *ba_readDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
         }
         return (EjsObj*) ejs->nullValue;
     }
-
+#if OLD
     value = * (double*) &ap->value[ap->readPosition];
+#else
+    memcpy(&value, (char*) &ap->value[ap->readPosition], sizeof(double));
+#endif
     value = swapDouble(ap, value);
     adjustReadPosition(ap, sizeof(double));
-
     return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) value);
 }
 
@@ -1284,7 +1286,11 @@ static int putDouble(EjsByteArray *ap, double value)
 {
     value = swapDouble(ap, value);
 
+#if OLD
     *((double*) &ap->value[ap->writePosition]) = value;
+#else
+    memcpy((char*) &ap->value[ap->writePosition], &value, sizeof(double));
+#endif
     ap->writePosition += sizeof(double);
     return sizeof(double);
 }

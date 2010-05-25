@@ -124,7 +124,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsObj *value, EjsObj *thisObj, Ejs
     } else 
 
 #define GET_BYTE()      *(FRAME)->pc++
-#define GET_DOUBLE()    ejsDecodeDouble(&(FRAME)->pc)
+#define GET_DOUBLE()    ejsDecodeDouble(ejs, &(FRAME)->pc)
 #define GET_INT()       (int) ejsDecodeNum(&(FRAME)->pc)
 #define GET_NUM()       ejsDecodeNum(&(FRAME)->pc)
 #define GET_NAME()      getNameArg(FRAME)
