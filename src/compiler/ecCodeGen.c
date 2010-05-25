@@ -2635,7 +2635,6 @@ static void genReturn(EcCompiler *cp, EcNode *np)
             return;
          */
         fun = cp->state->currentFunction;
-        if (fun->resultType == NULL || fun->resultType != cp->ejs->voidType) {
         if (fun->isConstructor) {
             ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
             ecEncodeOpcode(cp, EJS_OP_RETURN_VALUE);
