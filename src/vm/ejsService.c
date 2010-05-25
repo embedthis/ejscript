@@ -123,7 +123,7 @@ static int destroyEjs(Ejs *ejs)
         mprMapFree(state->stackBase, state->stackSize);
     }
     mprFree(ejs->heap);
-	return 0;
+    return 0;
 }
 
 

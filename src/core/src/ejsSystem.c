@@ -116,7 +116,7 @@ static EjsObj *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 #if BLD_UNIX_LIKE || BLD_WIN_LIKE
     struct addrinfo *res, *reslist, hints;
     cchar           *ip;
-    char			ipaddr[MPR_MAX_STRING], service[MPR_MAX_STRING];
+    char            ipaddr[MPR_MAX_STRING], service[MPR_MAX_STRING];
 
     if ((ip = mprGetIpAddr(ejs)) != 0) {
         return (EjsObj*) ejsCreateString(ejs, mprGetIpAddr(ejs));
