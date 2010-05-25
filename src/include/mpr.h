@@ -577,6 +577,7 @@ extern "C" {
     #if _DIAB_TOOL
     #define inline __inline__
     #endif
+    extern int gettimeofday(struct timeval *tv, struct timezone *tz);
 
 #endif  /* VXWORKS */
 
@@ -805,6 +806,7 @@ extern "C" {
     extern int      getuid(void);
     extern int      geteuid(void);
 
+    extern int gettimeofday(struct timeval *tv, struct timezone *tz);
 #endif /* WIN_LIKE */
 
 

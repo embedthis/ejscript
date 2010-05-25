@@ -18573,7 +18573,7 @@ static MprTime makeTime(MprCtx ctx, struct tm *tp);
 static void validateTime(MprCtx ctx, struct tm *tm, struct tm *defaults);
 
 #if BLD_WIN_LIKE || VXWORKS
-static int gettimeofday(struct timeval *tv, struct timezone *tz);
+int gettimeofday(struct timeval *tv, struct timezone *tz);
 #endif
 
 /*
@@ -19988,7 +19988,7 @@ static void validateTime(MprCtx ctx, struct tm *tp, struct tm *defaults)
     Compatibility for windows and VxWorks
  */
 #if BLD_WIN_LIKE || VXWORKS
-static int gettimeofday(struct timeval *tv, struct timezone *tz)
+int gettimeofday(struct timeval *tv, struct timezone *tz)
 {
     #if BLD_WIN_LIKE
         FILETIME        fileTime;
@@ -27126,6 +27126,7 @@ dtoa
         }
 #endif
 
+    mlo = 0;
     u.d = dd;
     if (word0(&u) & Sign_bit) {
         /* set sign for everything, including 0's and NaNs */

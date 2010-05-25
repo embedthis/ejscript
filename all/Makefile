@@ -45,8 +45,10 @@ ejsLib.c: $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES)
 	all-in-one $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES) $(EC_SOURCES) | \
         csplit -s -f tmpEjsLib. - '/#include.*ejsByteGoto.h/'
 	(cat tmpEjsLib.00 ; cat ../src/include/ejsByteGoto.h ; \
-	 if [ "$(BLD_OS)" = MACOSX ] ; then tail +2 tmpEjsLib.01 ; else tail --lines=+2 tmpEjsLib.01 ; fi ) | \
-	 egrep -v '#inc.*ejs|#inc.*ec|#inc.*sqlConf' >>ejsLib.c
+	if [ "$(BLD_OS)" = MACOSX -o "$(BLD_OS)" = FREEBSD ] ; \
+		then tail +2 tmpEjsLib.01 ; \
+		else tail --lines=+2 tmpEjsLib.01 ; \
+	fi ) | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sqlConf' >>ejsLib.c
 	@rm -f tmpEjsLib.*
 
 ejsc.c: $(EJS_HEADERS) $(EC_HEADERS) ../src/cmd/ejsc.c

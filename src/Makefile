@@ -38,7 +38,7 @@ $(EJS_MOD): $(EJS_FILES)
 		diff $$f $(BLD_INC_DIR) >/dev/null 2>&1 || (printf "%12s %s\n" "[Install]" $$f ; cp $$f $(BLD_INC_DIR)) ; rm -f $$f;\
 	done
 	if [ "$(RETRY)" = "" ] ; then \
-		make TRACE=$(TRACE) RETRY=1 ; \
+		$(MAKE) TRACE=$(TRACE) RETRY=1 ; \
 	fi
 
 dependExtra:

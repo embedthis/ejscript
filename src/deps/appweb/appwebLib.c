@@ -884,8 +884,8 @@ static int processSetting(MaServer *server, char *key, char *value, MaConfigStat
     MprHash         *hp;
     char            ipAddrPort[MPR_MAX_IP_ADDR_PORT];
     char            *name, *path, *prefix, *cp, *tok, *ext, *mimeType, *url, *newUrl, *extensions, *codeStr, *hostName;
-    char            *names, *type;
-    int             len, port, rc, code, processed, num, flags, colonCount;
+    char            *names, *type, *items, *include, *exclude;
+    int             len, port, rc, code, processed, num, flags, colonCount, mask, level;
 
     mprAssert(state);
     mprAssert(key);
@@ -1415,6 +1415,41 @@ static int processSetting(MaServer *server, char *key, char *value, MaConfigStat
                 level = atoi(value);
                 mprSetLogLevel(server, level);
             }
+            return 1;
+
+        } else if (mprStrcmpAnyCase(key, "LogTrace") == 0) {
+            cp = mprStrTok(value, " \t", &tok);
+            level = atoi(cp);
+            if (level < 0 || level > 9) {
+                mprError(server, "Bad LogTrace level %d, must be 0-9", level);
+                return MPR_ERR_BAD_SYNTAX;
+            }
+            items = mprStrTok(0, "\n", &tok);
+            mprStrLower(items);
+            mask = 0;
+            if (strstr(items, "headers")) {
+                mask |= HTTP_TRACE_HEADERS;
+            }
+            if (strstr(items, "body")) {
+                mask |= HTTP_TRACE_BODY;
+            }
+            if (strstr(items, "request") || strstr(items, "transmit")) {
+                mask |= HTTP_TRACE_TRANSMIT;
+            }
+            if (strstr(items, "response") || strstr(items, "receive")) {
+                mask |= HTTP_TRACE_RECEIVE;
+            }
+            maSetHostTrace(host, level, mask);
+            return 1;
+
+        } else if (mprStrcmpAnyCase(key, "LogTraceFilter") == 0) {
+            cp = mprStrTok(value, " \t", &tok);
+            len = atoi(cp);
+            include = mprStrTok(0, " \t", &tok);
+            exclude = mprStrTok(0, " \t", &tok);
+            include = mprStrTrim(include, "\"");
+            exclude = mprStrTrim(exclude, "\"");
+            maSetHostTraceFilter(host, len, include, exclude);
             return 1;
 
         } else if (mprStrcmpAnyCase(key, "LoadModulePath") == 0) {
@@ -2674,6 +2709,7 @@ static void addPacketForSend(HttpQueue *q, HttpPacket *packet)
     HttpTransmitter *trans;
     HttpConn        *conn;
     MprIOVec        *iovec;
+    int             mask;
 
     conn = q->conn;
     trans = conn->transmitter;
@@ -2698,6 +2734,10 @@ static void addPacketForSend(HttpQueue *q, HttpPacket *packet)
             q->ioFileEntry = 1;
             q->ioFileOffset += httpGetPacketLength(packet);
         }
+    }
+    mask = HTTP_TRACE_TRANSMIT | ((packet->flags & HTTP_PACKET_HEADER) ? HTTP_TRACE_HEADERS : HTTP_TRACE_BODY);
+    if (httpShouldTrace(conn, mask)) {
+        httpTraceContent(conn, packet, 0, trans->bytesWritten, mask);
     }
 }
 
@@ -6256,6 +6296,10 @@ MaHost *maCreateHost(MaServer *server, cchar *ipAddrPort, HttpLocation *location
     host->flags = MA_HOST_NO_TRACE;
     host->httpVersion = 1;
 
+    host->traceMask = HTTP_TRACE_TRANSMIT | HTTP_TRACE_RECEIVE | HTTP_TRACE_HEADERS;
+    host->traceLevel = 3;
+    host->traceMaxLength = INT_MAX;
+
 #if UNUSED
     //  MOB -- is this used anymore 
     host->timeout = HTTP_SERVER_TIMEOUT;
@@ -6317,6 +6361,16 @@ MaHost *maCreateVirtualHost(MaServer *server, cchar *ipAddrPort, MaHost *parent)
 #if UNUSED
     host->mutex = mprCreateLock(host);
 #endif
+
+    host->traceMask = parent->traceMask;
+    host->traceLevel = parent->traceLevel;
+    host->traceMaxLength = parent->traceMaxLength;
+    if (parent->traceInclude) {
+        host->traceInclude = mprCopyHash(host, parent->traceInclude);
+    }
+    if (parent->traceExclude) {
+        host->traceExclude = mprCopyHash(host, parent->traceExclude);
+    }
     maAddLocation(host, host->location);
     return host;
 }
@@ -6825,6 +6879,64 @@ MaHost *maLookupVirtualHost(MaHostAddress *hostAddress, cchar *hostStr)
         }
     }
     return 0;
+}
+
+
+//  MOB -- order this file
+
+void maSetHostTrace(MaHost *host, int level, int mask)
+{
+    host->traceMask = mask;
+    host->traceLevel = level;
+}
+
+
+void maSetHostTraceFilter(MaHost *host, int len, cchar *include, cchar *exclude)
+{
+    char    *word, *tok, *line;
+
+    host->traceMaxLength = len;
+
+    if (include && strcmp(include, "*") != 0) {
+        host->traceInclude = mprCreateHash(host, 0);
+        line = mprStrdup(host, include);
+        word = mprStrTok(line, ", \t\r\n", &tok);
+        while (word) {
+            if (word[0] == '*' && word[1] == '.') {
+                word += 2;
+            }
+            mprAddHash(host->traceInclude, word, host);
+            word = mprStrTok(NULL, ", \t\r\n", &tok);
+        }
+        mprFree(line);
+    }
+    if (exclude) {
+        host->traceExclude = mprCreateHash(host, 0);
+        line = mprStrdup(host, exclude);
+        word = mprStrTok(line, ", \t\r\n", &tok);
+        while (word) {
+            if (word[0] == '*' && word[1] == '.') {
+                word += 2;
+            }
+            mprAddHash(host->traceExclude, word, host);
+            word = mprStrTok(NULL, ", \t\r\n", &tok);
+        }
+        mprFree(line);
+    }
+}
+
+
+int maSetupTrace(MaHost *host, cchar *ext)
+{
+    if (ext) {
+        if (host->traceInclude && !mprLookupHash(host->traceInclude, ext)) {
+            return 0;
+        }
+        if (host->traceExclude && mprLookupHash(host->traceExclude, ext)) {
+            return 0;
+        }
+    }
+    return host->traceMask;
 }
 
 
@@ -7432,7 +7544,7 @@ void maNotifyServerStateChange(HttpConn *conn, int state, int notifyFlags)
     mprAssert(conn);
 
     switch (state) {
-    case HTTP_STATE_PARSED:
+    case HTTP_STATE_FIRST:
         server = httpGetMetaServer(conn->server);
         listenSock = conn->sock->listenSock;
         address = (MaHostAddress*) maLookupHostAddress(server, listenSock->ip, listenSock->port);
@@ -7454,6 +7566,11 @@ void maNotifyServerStateChange(HttpConn *conn, int state, int notifyFlags)
             conn->receiver->location = host->location;
         }
         conn->transmitter->handler = matchHandler(conn);
+        conn->traceLevel = host->traceLevel;
+        conn->traceMaxLength = host->traceMaxLength;
+        conn->traceMask = host->traceMask;
+        conn->traceInclude = host->traceInclude;
+        conn->traceExclude = host->traceExclude;
         break;
     }
 }
@@ -7523,7 +7640,7 @@ static HttpStage *matchHandler(HttpConn *conn)
     location = rec->location;
     if (location && location->connector) {
         trans->connector = location->connector;
-    } else if (handler == http->fileHandler && !rec->ranges && !conn->secure && trans->chunkSize <= 0) {
+    } else if (handler == http->fileHandler && !rec->ranges && !conn->secure && trans->chunkSize <= 0 && !conn->traceMask) {
         trans->connector = http->sendConnector;
     } else {
         trans->connector = http->netConnector;

@@ -142,7 +142,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsObj *value, EjsObj *thisObj, Ejs
     #define traceCode(ejs, opcode) opcode
 #endif
 
-#if LINUX || MACOSX || LINUX || SOLARIS || VXWORKS
+#if BLD_UNIX_LIKE || VXWORKS
     #define CASE(opcode) opcode
     #define BREAK goto *opcodeJump[opcode = traceCode(ejs, GET_BYTE())]
 #else
@@ -199,7 +199,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
     uchar       *mark;
     int         i, offset, count, opcode, attributes;
 
-#if LINUX || MACOSX || LINUX || SOLARIS || VXWORKS 
+#if BLD_UNIX_LIKE || VXWORKS 
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -226,7 +226,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
 
     mprAssert(!FRAME->attentionPc);
 
-#if LINUX || MACOSX || LINUX || SOLARIS || VXWORKS 
+#if BLD_UNIX_LIKE || VXWORKS 
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -2318,7 +2318,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             mprAssert(0);
             BREAK;
 
-#if !LINUX && !MACOSX && !LINUX && !SOLARIS && !VXWORKS
+#if !BLD_UNIX_LIKE && !VXWORKS
         }
     }
 #endif
