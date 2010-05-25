@@ -107,15 +107,15 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 #if BLD_HAS_UNNAMED_UNIONS
     frame->function.bits = fun->bits;
 #else
+    //  MOB -- check these
     frame->function.numArgs = fun->numArgs;
     frame->function.numDefault = fun->numDefault;
     frame->function.castNulls = fun->castNulls;
-    frame->function.isConstructor = fun->isConstructor;
     frame->function.fullScope = fun->fullScope;
     frame->function.hasReturn = fun->hasReturn;
+    frame->function.isConstructor = fun->isConstructor;
     frame->function.isInitializer = fun->isInitializer;
-    frame->function.nativeProc = fun->nativeProc;
-    frame->function.override = fun->override;
+    frame->function.isNativeProc = fun->isNativeProc;
     frame->function.rest = fun->rest;
     frame->function.staticMethod = fun->staticMethod;
     frame->function.strict = fun->strict;

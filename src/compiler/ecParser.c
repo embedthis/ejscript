@@ -8756,6 +8756,7 @@ static EcNode *parseModuleDefinition(EcCompiler *cp)
         }
     } else {
         isDefault = 1;
+        namespace = cp->fileState->namespace;
     }
     
     if (isDefault) {
@@ -8763,7 +8764,6 @@ static EcNode *parseModuleDefinition(EcCompiler *cp)
             No module name. Set the namespace to the unique internal namespace name.
          */
         np->module.name = mprStrdup(np, EJS_DEFAULT_MODULE);
-        namespace = cp->fileState->namespace;
     }
     np->qname.name = np->module.name;
     np->module.version = version;
