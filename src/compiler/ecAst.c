@@ -1464,9 +1464,11 @@ static void astForIn(EcCompiler *cp, EcNode *np)
 #else
         ejsName(&np->forInLoop.iterNext->qname, "public", "next");
         rc = resolveName(cp, np->forInLoop.iterNext, (EjsObj*) ejs->iteratorType->prototype, &np->forInLoop.iterNext->qname);
+#if UNUSED
         if (rc < 0) {
             astError(cp, np, "Can't find Iterator.next method");
         }
+#endif
         //  MOB UNBIND
         np->forInLoop.iterNext->lookup.slotNum = -1;
 #endif
