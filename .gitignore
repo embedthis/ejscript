@@ -52,3 +52,15 @@ src/test/web/junk
 lib/start.es
 *.swp
 *.manifest
+src/core/test/d.es
+src/core/test/socket.es
+src/core/test/tt.es
+src/jems/ejs.mvc/sample/
+src/test/reserved.es
+src/test/web/controller.es
+src/test/web/custom.js
+src/test/web/hello.es
+src/test/web/index.ejs
+src/test/web/request.ejs
+src/test/web/request.es
+src/test/web/samples.es
