@@ -924,7 +924,7 @@ static EjsObj *printable(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         } else {
             result->value[j++] = '\\';
             result->value[j++] = 'u';
-            mprItoa(buf, 4, sp->value[i], 16);
+            mprItoa(buf, 4, (uchar) sp->value[i], 16);
             len = (int) strlen(buf);
             for (k = len; k < 4; k++) {
                 result->value[j++] = '0';
