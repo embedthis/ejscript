@@ -41,6 +41,7 @@ module ejs {
 
         /**
             The day of the week (0 - 6, where 0 is Sunday) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @spec ejs
          */
         native function get day(): Number 
@@ -48,6 +49,7 @@ module ejs {
 
         /**
             The day of the year (0 - 365) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @spec ejs
          */
         native function get dayOfYear(): Number 
@@ -55,6 +57,7 @@ module ejs {
 
         /**
             The day of the month (1-31).
+            If a value outside the range is given, the date is adjusted without error.
             @spec ejs
          */
         native function get date(): Number 
@@ -277,6 +280,7 @@ module ejs {
 
         /**
             The current hour (0 - 23) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @spec ejs
          */
         native function get hours(): Number 
@@ -284,6 +288,7 @@ module ejs {
 
         /**
             The current millisecond (0 - 999) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @spec ejs
          */
         native function get milliseconds(): Number 
@@ -291,6 +296,7 @@ module ejs {
 
         /**
             The current minute (0 - 59) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @spec ejs
          */
         native function get minutes(): Number 
@@ -298,6 +304,7 @@ module ejs {
 
         /**
             The current month (0 - 11) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @spec ejs
          */
         native function get month(): Number 
@@ -371,13 +378,14 @@ module ejs {
 
         /**
             The current second (0 - 59) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @spec ejs
          */
         native function get seconds(): Number 
         native function set seconds(sec: Number): void
 
         /**
-            Set the date of the month (0 - 31)
+            Set the date of the month (1 - 31)
             @param d Date of the month
          */
         function setDate(d: Number): void
@@ -391,7 +399,7 @@ module ejs {
             year = y
 
         /**
-            Set the current hour (0 - 59) in local time.
+            Set the current hour (0 - 23) in local time.
             @param h The hour as an integer
          */
         function setHours(h: Number): void
@@ -438,7 +446,7 @@ module ejs {
             time = value
 
         /**
-            Set the date of the month (0 - 31) in UTC time.
+            Set the date of the month (1 - 31) in UTC time.
             @param d The date to set
          */
         native function setUTCDate(d: Number): void
@@ -450,7 +458,7 @@ module ejs {
         native function setUTCFullYear(y: Number): void
 
         /**
-            Set the current hour (0 - 59) in UTC time.
+            Set the current hour (0 - 23) in UTC time.
             @param h The hour as an integer
          */
         native function setUTCHours(h: Number): void
@@ -572,7 +580,7 @@ module ejs {
             formatUTC("%a, %d %b %Y %T GMT")
 
         /**
-            Construct a new date object interpreting its arguments in UTC rather than local time.
+            Calculate the number of milliseconds since the epoch for a UTC time.
             Date(year, month, date [, hour, minute, second, msec])</li>
             @param year Year
             @param month Month of year
@@ -581,9 +589,10 @@ module ejs {
             @param minutes Minute of hour
             @param seconds Secods of minute
             @param milliseconds Milliseconds of second
+            @return The number of milliseconds since January 1, 1970 00:00:00 UTC.
          */
-        static native function UTC(year: Number, month: Number, day: Number, hours: Number = 0, 
-            minutes: Number = 0, seconds: Number = 0, milliseconds: Number = 0): Date
+        native static function UTC(year: Number, month: Number, day: Number, hours: Number = 0, 
+            minutes: Number = 0, seconds: Number = 0, milliseconds: Number = 0): Number
 
         /**
             Return the primitive value of the object
