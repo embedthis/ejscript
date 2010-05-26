@@ -1863,7 +1863,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName *qname)
         return doc;
     }
     prepText(str);
-    if (strstr(str, "@hide")) {
+    if (strstr(str, "@hide") || strstr(str, "@hidden")) {
         doc->hide = 1;
     } else if (strstr(str, "@deprecated")) {
         doc->deprecated = 1;
@@ -2007,7 +2007,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName *qname)
             doc->deprecated = 1;
             doc->stability = "deprecated";
 
-        } else if (match(token, "hide")) {
+        } else if (match(token, "hide") || match(token, "hidden")) {
             doc->hide = 1;
 
         } else if (match(token, "spec")) {
