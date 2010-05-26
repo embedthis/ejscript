@@ -114,7 +114,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
                 return 0;
             }
             if (next < vp->elements->length) {
-                mprPutStringToBuf(buf, ", ");
+                mprPutStringToBuf(buf, " ");
             }
         }
         result = (EjsObj*) ejsCreateString(ejs, (char*) buf->start);
