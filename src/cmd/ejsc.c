@@ -277,6 +277,7 @@ MAIN(ejscMain, int argc, char **argv)
     if (cp->errorCount > 0) {
         err++;
     }
+    mprStop(mpr);
     mprFree(mpr);
     return err;
 }
