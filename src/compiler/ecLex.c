@@ -998,7 +998,7 @@ static void setTokenCurrentLine(EcToken *tp)
     /*
         The column is less one because we have already consumed one character.
      */
-    tp->column = tp->stream->column - 1;
+    tp->column = max(tp->stream->column - 1, 0);
     tp->filename = tp->stream->name;
 }
 

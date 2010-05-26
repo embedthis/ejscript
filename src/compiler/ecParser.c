@@ -9697,12 +9697,13 @@ static char *makeHighlight(EcCompiler *cp, char *src, int col)
     /*
         Cover the case where the ^ must go after the end of the input
      */
-    dest[col] = '^';
-    if (p == &dest[col]) {
-        ++p;
+    if (col >= 0) {
+        dest[col] = '^';
+        if (p == &dest[col]) {
+            ++p;
+        }
+        *p = '\0';
     }
-    *p = '\0';
-
     return dest;
 }
 
