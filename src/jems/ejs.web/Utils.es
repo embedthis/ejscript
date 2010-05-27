@@ -62,7 +62,7 @@ UNUSED && KEEP
 
     /**
         Transform a string to be safe for output into an HTML web page. It does this by changing the
-        ">", "<" and '"' characters into their ampersand HTML equivalents.
+            "&", ">", "<" and '"' characters into their ampersand HTML equivalents.
         @param s input string
         @returns a transformed HTML escaped string
         @spec ejs

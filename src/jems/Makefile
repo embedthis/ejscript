@@ -1,48 +1,55 @@
 #
-#	Makefile for the Ejscript script code. 
+#	Makefile for the jems (Ejscript extension packages)
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
 #
 
-EXT			+= ejs.cache ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.sqlite ejs.tar ejs.unix ejs.web \
-			   ejs.web.jsgi ejs.web.template 
-APPS		+= ejs.jem ejs.web.cgi ejs.mvc
+#
+#	Stand-alone tool jems
+#
+TOOLS			+= ejs.jem ejs.web.cgi ejs.mvc
 
-PRE_DIRS 	+= core 
-POST_DIRS	+= ejs $(EXT) $(APPS)
-
-EXT_MODS	+= $(call mod, $(EXT))
-
-FILTER		 = '/sample/|/legacy/|^ejs.jem/|ejsmvc|Archive|\/test\/'
-EXT_FILES	+= $(shell for d in $(EXT); do echo $$d/*.es | sort; done)
-
-LISTING		+= --listing
-
-DOC_SRC		+= $(shell find $(JEMS) -name '*.es' | egrep -v "$(FILTER)")
-DOC_DIR		:= $(BLD_TOP)/doc/api/ejscript
-DOC			:= $(DOC_DIR)/index.html
+#
+#	Loadable module jems (usable with require)
+#
+LOADABLE		+= ejs.cache ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.sqlite ejs.tar ejs.unix ejs.web ejs.web.jsgi \
+			   		ejs.web.template 
+LOADABLE_FILES	+= $(shell for d in $(LOADABLE); do echo $$d/*.es | sort; done)
+MODULES			+= $(call mod, $(LOADABLE))
+JEMS			+= $(LOADABLE) $(TOOLS)
+FILTER		 	+= /sample/|/legacy/|^ejs.jem/|ejsmvc|Archive|\/test\/
+LISTING			+= --listing
+DOC_SRC			+= $(shell find ../core -name '*.es' | egrep -v "$(FILTER)")
+DOC_SRC			+= $(shell find $(LOADABLE) -name '*.es' | egrep -v "$(FILTER)")
+DOC_DIR			:= $(BLD_TOP)/doc/api/ejscript
+DOC				:= $(DOC_DIR)/index.html
+PRE_DIRS 		:= core 
+POST_DIRS		:= $(LOADABLE) $(TOOLS)
 
 include 	.makedep
 
-compileExtra: $(EXT_MODS) $(APPS)
+compileExtra: $(MODULES) $(TOOLS)
 
-$(EXT_MODS): $(EXT_FILES) $(call mod, ejs)
+$(MODULES): $(LOADABLE_FILES) $(call mod, ejs)
 	$(call log) [Compile] "Jems"
 	rm -f *.mod *.slots.h
-	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) $(EXT_FILES)
+	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) $(LOADABLE_FILES)
 	mv *.mod $(BLD_MOD_DIR)
 	$(call log) [Generate] "Jem listings and slot files"
-	$(BLD_BUILD_BIN_DIR)/ejsmod --showDebug $(LISTING) --cslots $(EXT_MODS)
+	$(BLD_BUILD_BIN_DIR)/ejsmod --showDebug $(LISTING) --cslots $(MODULES)
 	for f in *.slots.h ; do \
 		diff $$f $(BLD_INC_DIR) >/dev/null 2>&1 || (printf "%12s %s\n" "[Install]" $$f ; cp $$f $(BLD_INC_DIR)) ; rm -f $$f;\
 	done
 
 packageExtra: buildJems $(DOC)
 
+x:
+	echo $(DOC_SRC)
+
 #
 #	Move all doc under "doc" dir
 #
-$(DOC_DIR)/index.html: Makefile $(CORE_MODS) $(EXT_MODS)
+$(DOC_DIR)/index.html: Makefile $(MODULES)
 	$(call log) "[Generate]" documentation
 	$(call setlibpath) ; $(BLD_BUILD_BIN_DIR)/ejsc --doc --bind $(_ESFLAGS) --out .doc.mod --require "" $(DOC_SRC)
 	rm -rf $(DOC_DIR)/*.html $(DOC_DIR)/*.css $(DOC_DIR)/images/*
@@ -53,6 +60,7 @@ doc: $(DOC_DIR)/index.html
 
 buildJems:
 	set -e ; \
+	echo HERE ; \
 	mkdir -p "$(BLD_ABS_JEM_DIR)" ; \
 	for j in $(JEMS) ; do \
 		cd $$j >/dev/null ; \
