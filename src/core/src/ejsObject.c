@@ -628,7 +628,14 @@ static int setObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *value)
     mprAssert(obj->numSlots <= obj->sizeSlots);
 
     mprAssert(value);
+#if UNUSED && KEEP
+    /*
+        This makes anything stored in a global block permanent
+        NOTE: permanent objects are still traversed, they are just never swept. If that changes and permanent objects
+        are not marked, then this will be required.
+     */
     value->permanent |= obj->permanent;
+#endif
     obj->slots[slotNum].value.ref = value;
     return slotNum;
 }

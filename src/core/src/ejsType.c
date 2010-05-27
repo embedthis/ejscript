@@ -143,13 +143,20 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numSlots)
 
 void markType(Ejs *ejs, EjsType *type)
 {
-    ejsMarkBlock(ejs, (EjsBlock*) type);
+    EjsType     *iface;
+    int         next;
 
+    ejsMarkFunction(ejs, &type->constructor);
     if (type->prototype) {
         ejsMark(ejs, type->prototype);
     }
     if (type->baseType) {
-        ejsMark(ejs, (EjsObj*) type->baseType);
+        ejsMark(ejs, type->baseType);
+    }
+    if (type->implements) {
+        for (next = 0; (iface = mprGetNextItem(type->implements, &next)) != 0; ) {
+            ejsMark(ejs, iface);
+        }
     }
 }
 

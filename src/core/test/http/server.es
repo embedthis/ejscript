@@ -7,8 +7,11 @@ let server: HttpServer = new HttpServer(".", "web")
 
 var router = Router(Router.TopRoutes)
 server.addListener("readable", function (event, request) {
+    // print(request.method + " " + request.uri + " " + request.scheme)
     Web.serve(request, router)
 })
 
+// print("Listen on " + "127.0.0.1:6700")
 server.listen("127.0.0.1:6700")
+
 App.eventLoop()

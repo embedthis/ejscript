@@ -2436,7 +2436,17 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, EjsName *qname
                     slotNum = -1;
                 }
             } else {
+#if UNUSED
+                //  MOB -- this is allowing a obj.prop = x, where prop is in a static base type 
                 obj = lookup.obj;
+#else
+                /*
+                    This is the fundamental asymetry between load/store. We allow loading properties from static base 
+                    types, but do not allow stores. This is essential to stop bleeding of Object static properties into
+                    all objects. E.g. Object.create.
+                 */
+                slotNum = -1;
+#endif
             }
         }
     }

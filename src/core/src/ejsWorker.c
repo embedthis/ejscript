@@ -83,7 +83,9 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     self->ejs = wejs;
     self->inside = 1;
     self->pair = worker;
+    self->obj.permanent = 1;
     self->name = mprStrcat(self, -1, "inside-", worker->name, NULL);
+    
     mprEnableDispatcher(wejs->dispatcher);
 
     //  TODO - these should be don't delete
@@ -97,11 +99,6 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
      */
     ns = ejsDefineReservedNamespace(wejs, wejs->globalBlock, 0, EJS_WORKER_NAMESPACE);
 
-    /*
-        Make the inside worker permanent so we don't need to worry about whether worker->pair->ejs is valid
-     */
-    self->obj.permanent = 1;
-    
     if (argc > 0 && ejsIsPath(ejs, argv[0])) {
         addWorker(ejs, worker);
         worker->scriptFile = mprStrdup(worker, ((EjsPath*) argv[0])->path);

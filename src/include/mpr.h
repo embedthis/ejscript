@@ -981,7 +981,6 @@ extern "C" {
     #define PTHREAD_MUTEX_RECURSIVE_NP  PTHREAD_MUTEX_RECURSIVE
     #define LD_LIBRARY_PATH "LD_LIBRARY_PATH"
     #define MAX_FLOAT       MAXFLOAT
-
 #endif /* SOLARIS */
 
 #ifdef __cplusplus

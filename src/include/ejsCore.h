@@ -656,6 +656,9 @@ typedef EjsObj EO;
     #endif
 #endif
 
+extern void *ejsAlloc(Ejs *ejs, int size);
+extern void ejsFree(Ejs *ejs, void *ptr);
+
 /** 
     Allocate a new variable
     @description This will allocate space for a bare variable. This routine should only be called by type factories
@@ -873,11 +876,10 @@ extern int ejsLookupProperty(Ejs *ejs, EjsObj *vp, EjsName *qname);
     @description Mark a variables as currently active so the garbage collector will preserve it. This routine should
         be called by native types in their markVar helper.
     @param ejs Interpreter instance returned from #ejsCreate
-    @param parent Owning variable for the property
     @param vp Variable to mark as currently being used.
     @ingroup EjsObj
  */
-extern void ejsMark(Ejs *ejs, EjsObj *vp);
+extern void ejsMark(Ejs *ejs, void *vp);
 
 /** 
     Set a property's value
@@ -1007,7 +1009,6 @@ extern int ejsGrowObject(Ejs *ejs, EjsObj *obj, int numSlots);
     @description Mark an object as currently active so the garbage collector will preserve it. This routine should
         be called by native types that extend EjsObj in their markVar helper.
     @param ejs Interpreter instance returned from #ejsCreate
-    @param parent Owning variable for the property
     @param obj Object to mark as currently being used.
     @ingroup EjsObj
  */
@@ -1447,6 +1448,7 @@ extern EjsBoolean *ejsToBoolean(Ejs *ejs, EjsObj *vp);
 
     /** 
         Get the C boolean value from a boolean object
+        @param ejs Ejs reference returned from #ejsCreate
         @param vp Boolean variable to access
         @return True or false
         @ingroup EjsBoolean
@@ -2508,6 +2510,7 @@ extern int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsObj *arg);
 
     /** 
         Get the numeric value stored in a EjsNumber object
+        @param ejs Ejs reference returned from #ejsCreate
         @param vp Variable to examine
         @return A numeric value
         @ingroup EjsNumber
@@ -2516,6 +2519,7 @@ extern int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsObj *arg);
 
     /** 
         Get the numeric value stored in a EjsNumber object
+        @param ejs Ejs reference returned from #ejsCreate
         @param vp Variable to examine
         @return An integer value
         @ingroup EjsNumber
@@ -2524,6 +2528,7 @@ extern int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsObj *arg);
 
     /** 
         Get the numeric value stored in a EjsNumber object
+        @param ejs Ejs reference returned from #ejsCreate
         @param vp Variable to examine
         @return A double value
         @ingroup EjsNumber
@@ -2670,6 +2675,7 @@ typedef struct EjsType {
         This name is not used to define the type as a global property.
     @param up Reference to a module that will own the type. Set to null if not owned by any module.
     @param baseType Base type for this type.
+    @param prototype Prototype object instance properties of this type.
     @param size Size of instances. This is the size in bytes of an instance object.
     @param slotNum Slot number that the type will be installed at. This is used by core types to define a unique type ID. 
         For non-core types, set to -1.
@@ -2728,7 +2734,7 @@ extern bool ejsIsTypeSubType(Ejs *ejs, EjsType *target, EjsType *baseType);
         by compiling a script file of native method definitions into a mod file. When loaded, this mod file will create
         the method properties. This routine will then bind the specified C function to the method property.
     @param ejs Interpreter instance returned from #ejsCreate
-    @param type Type containing the function property to bind.
+    @param obj Type containing the function property to bind.
     @param slotNum Slot number of the method property
     @param fn Native C function to bind
     @return Zero if successful, otherwise a negative MPR error code.

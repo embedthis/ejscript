@@ -80,9 +80,16 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     numSlots = (activation) ? activation->numSlots : 0;
     sizeSlots = max(numSlots, EJS_MIN_FRAME_SLOTS);
 
+    /*
+        MOB OPT - need to pool frames
+     */
+#if UNUSED
     if (sizeSlots > EJS_MIN_FRAME_SLOTS || (frame = (EjsFrame*) ejsAllocPooled(ejs, ES_Frame)) == 0) {
         frame = allocFrame(ejs, sizeSlots);
     }
+#else
+    frame = allocFrame(ejs, sizeSlots);
+#endif
     obj = (EjsObj*) frame;
     obj->slots = (EjsSlot*) &(((char*) obj)[sizeof(EjsFrame)]);
     obj->sizeSlots = sizeSlots;

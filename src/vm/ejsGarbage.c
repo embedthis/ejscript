@@ -29,7 +29,7 @@ static void sweep(Ejs *ejs, int generation);
     Set ejsBreakSeq to the object sequence number to watch and set a breakpoint in the debugger below.
  */
 static void *ejsBreakAddr = (void*) 0;
-static int ejsBreakSeq = 538825;
+static int ejsBreakSeq = 0;
 static void checkAddr(EjsObj *addr) {
     if ((void*) addr == ejsBreakAddr) { 
         /* Set a breakpoint here */
@@ -63,7 +63,6 @@ int ejsCreateGCService(Ejs *ejs)
 
     gc = &ejs->gc;
     gc->enabled = 1;
-gc->enabled = 0;
     gc->firstGlobal = (ejs->empty) ? 0 : ES_global_NUM_CLASS_PROP;
     gc->numPools = EJS_MAX_TYPE;
     gc->allocGeneration = EJS_GEN_ETERNAL;
@@ -153,7 +152,8 @@ EjsObj *ejsAllocVar(Ejs *ejs, EjsType *type, int extra)
     mprAssert(type);
     mprAssert(extra >= 0);
 
-    if (!type->dontPool) {
+    //  MOB -- disable pooling
+    if (0 && !type->dontPool) {
         vp = ejsAllocPooled(ejs, type->id);
     } else {
         vp = 0;
@@ -186,6 +186,7 @@ EjsObj *ejsAllocPooled(Ejs *ejs, int id)
     if (0 < id && id < ejs->gc.numPools) {
         pool = ejs->gc.pools[id];
         if ((bp = mprGetFirstChild(pool)) != NULL) {
+            vp = MPR_GET_PTR(bp);
             /*
                 Transfer from the pool to the current generation. Inline for speed.
              */
@@ -206,7 +207,6 @@ EjsObj *ejsAllocPooled(Ejs *ejs, int id)
             gp->children = bp;
             bp->prev = 0;
 
-            vp = MPR_GET_PTR(bp);
             memset(vp, 0, pool->type->instanceSize);
             vp->type = pool->type;
             vp->master = (ejs->master == 0);
@@ -249,6 +249,9 @@ void ejsFreeVar(Ejs *ejs, EjsObj *vp, int id)
         id = type->id;
     }
     pool = gc->pools[id];
+
+    //  MOB -- disable pooling
+    type->dontPool = 1;
 
     if (!type->dontPool && 0 <= id && id < gc->numPools && pool->count < EJS_MAX_OBJ_POOL) {
         /*
@@ -361,16 +364,16 @@ static void mark(Ejs *ejs, int generation)
         ejsMark(ejs, (EjsObj*) ejs->memoryCallback);
     }
     if (ejs->search) {
-        ejsMark(ejs, (EjsObj*) ejs->search);
+        ejsMark(ejs, ejs->search);
     }
     if (ejs->emitter) {
-        ejsMark(ejs, (EjsObj*) ejs->emitter);
+        ejsMark(ejs, ejs->emitter);
     }
     if (ejs->sessions) {
-        ejsMark(ejs, (EjsObj*) ejs->sessions);
+        ejsMark(ejs, ejs->sessions);
     }
     if (ejs->applications) {
-        ejsMark(ejs, (EjsObj*) ejs->applications);
+        ejsMark(ejs, ejs->applications);
     }
     
     /*
@@ -378,7 +381,7 @@ static void mark(Ejs *ejs, int generation)
      */
     for (next = 0; (mp = (EjsModule*) mprGetNextItem(ejs->modules, &next)) != 0;) {
         if (mp->initializer) {
-            ejsMark(ejs, (EjsObj*) mp->initializer);
+            ejsMark(ejs, mp->initializer);
         }
     }
 
@@ -386,7 +389,7 @@ static void mark(Ejs *ejs, int generation)
         Mark blocks. This includes frames and blocks.
      */
     for (block = ejs->state->bp; block; block = block->prev) {
-        ejsMark(ejs, (EjsObj*) block);
+        ejsMark(ejs, block);
     }
 
     /*
@@ -493,17 +496,23 @@ static void markGlobal(Ejs *ejs, int generation)
             ejsMark(ejs, obj->slots[i].value.ref);
         }
         for (hp = 0; (hp = mprGetNextHash(ejs->standardSpaces, hp)) != 0; ) {
-            ejsMark(ejs, (EjsObj*) hp->data);
+            ejsMark(ejs, (void*) hp->data);
         }
 
     } else {
-        for (i = gc->firstGlobal; i < obj->numSlots; i++) {
+        /*
+            Current some global types are not immutable:
+            E.g. App.config
+         */
+        i = gc->firstGlobal;
+        i = 0;
+        for (; i < obj->numSlots; i++) {
             ejsMark(ejs, obj->slots[i].value.ref);
         }
     }
     block = ejs->globalBlock;
     if (block->prevException) {
-        ejsMark(ejs, (EjsObj*) block->prevException);
+        ejsMark(ejs, block->prevException);
     }
     if (block->namespaces.length > 0) {
         for (next = 0; ((item = (EjsObj*) ejsGetNextItem(&block->namespaces, &next)) != 0); ) {
@@ -517,8 +526,11 @@ static void markGlobal(Ejs *ejs, int generation)
     Mark a variable as used. All variable marking comes through here.
     NOTE: The container is not used by anyone (verified).
  */
-void ejsMark(Ejs *ejs, EjsObj *vp)
+void ejsMark(Ejs *ejs, void *ptr)
 {
+    EjsObj      *vp;
+
+    vp = (EjsObj*) ptr;
     if (vp && !vp->marked) {
         checkAddr(vp);
         vp->marked = 1;
@@ -647,7 +659,6 @@ int ejsEnableGC(Ejs *ejs, bool on)
 
     old = ejs->gc.enabled;
     ejs->gc.enabled = on;
-ejs->gc.enabled = 0;
     return old;
 }
 
