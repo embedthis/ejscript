@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4663" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4663" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4465" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4465" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_11b40630765ef082497c13841276e436b" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4665" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4665" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4467" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4467" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_152ba3116eb5145dc3bbbfd696e0bbfdc" prot="public" static="no" mutable="no">
         <type>cchar *</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4661" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4661" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4463" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4463" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_1787f61aafd0a9586cca3fe9cba52366c" prot="public" static="no" mutable="no">
         <type>Ejs *</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4659" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4659" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4461" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4461" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_11aea0626e24076795d1c5d71e4ceed5b" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4658" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4658" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4460" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4460" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_1855cfb5ef544bdbc2ad98b067846dc15" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4666" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4666" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4468" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4468" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_158b92959115df6f11548e69172a9e069" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -92,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4662" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4662" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4464" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4464" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_170f8bb92fc75172913d2fe2fe898b609" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
@@ -105,7 +105,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4657" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4657" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4459" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4459" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_1955cb722d3ad1f8bac7a752af6bc502e" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -118,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4667" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4667" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4469" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4469" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_1ae0cfca4f05dddad51b3470a7fdcb5e7" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -131,7 +131,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4664" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4664" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4466" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4466" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_1fe36e30c3e9afa1d8289c4f9d3448d9b" prot="public" static="no" mutable="no">
         <type>HttpServer *</type>
@@ -144,14 +144,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4660" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4660" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4462" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4462" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="4656" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4656" bodyend="4668"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="4458" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4458" bodyend="4470"/>
     <listofallmembers>
       <member refid="struct_ejs_http_server_12aa1ff4acd7762d40c389731999ac1cd" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>certFile</name></member>
       <member refid="struct_ejs_http_server_11b40630765ef082497c13841276e436b" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>ciphers</name></member>

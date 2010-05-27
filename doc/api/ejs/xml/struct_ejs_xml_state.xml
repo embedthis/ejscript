@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3832" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3832" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3200" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3200" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_xml_state_1b30fc2b7d19948451b82774ebf440c87" prot="public" static="no" mutable="no">
         <type>cchar *</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3839" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3839" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3207" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3207" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_xml_state_182971026bb358d04341a95cfb110bcd5" prot="public" static="no" mutable="no">
         <type>cchar *</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3838" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3838" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3206" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3206" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_xml_state_18727da0be58f5bab0eab74c77b8cdb12" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3837" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3837" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3205" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3205" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_xml_state_112bbbe94ae47103ccfbf3a15445c36aa" prot="public" static="no" mutable="no">
         <type>long</type>
@@ -66,12 +66,12 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3836" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3836" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3204" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3204" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_xml_state_1a032db2a9c6bc386629c9d8245d8ed13" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_xml_state_15bc03557973ee7c799888e1f9a43b3e0" prot="public" static="no" mutable="no">
         <type>EjsXmlTagState</type>
-        <definition>EjsXmlTagState EjsXmlState::nodeStack[E4X_MAX_NODE_DEPTH]</definition>
-        <argsstring>[E4X_MAX_NODE_DEPTH]</argsstring>
+        <definition>EjsXmlTagState EjsXmlState::nodeStack[EJS_XML_MAX_NODE_DEPTH]</definition>
+        <argsstring>[EJS_XML_MAX_NODE_DEPTH]</argsstring>
         <name>nodeStack</name>
         <briefdescription>
         </briefdescription>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3831" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3831" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3199" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3199" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_xml_state_1d833453781ca2edc51f608daf9bb6d73" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -92,11 +92,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3835" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3835" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3203" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3203" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_xml_state_12c6e39359d8a82666cac6427d4a5cfd7" prot="public" static="no" mutable="no">
-        <type>EjsType *</type>
-        <definition>EjsType* EjsXmlState::xmlListType</definition>
+      <memberdef kind="variable" id="struct_ejs_xml_state_13d2c9016f016b14b5e6b844f809ab2b9" prot="public" static="no" mutable="no">
+        <type>struct EjsType *</type>
+        <definition>struct EjsType* EjsXmlState::xmlListType</definition>
         <argsstring></argsstring>
         <name>xmlListType</name>
         <briefdescription>
@@ -105,11 +105,11 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3834" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3834" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3202" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3202" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_xml_state_1e17c4d2eb906b8cc446c684a1be1a50d" prot="public" static="no" mutable="no">
-        <type>EjsType *</type>
-        <definition>EjsType* EjsXmlState::xmlType</definition>
+      <memberdef kind="variable" id="struct_ejs_xml_state_15073184b08264c4ffd2c51cdc4e05a88" prot="public" static="no" mutable="no">
+        <type>struct EjsType *</type>
+        <definition>struct EjsType* EjsXmlState::xmlType</definition>
         <argsstring></argsstring>
         <name>xmlType</name>
         <briefdescription>
@@ -118,24 +118,24 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3833" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3833" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3201" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3201" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3830" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3830" bodyend="3840"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="3197" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3197" bodyend="3208"/>
     <listofallmembers>
       <member refid="struct_ejs_xml_state_190859fa5482478fc0ddcba095469f9f9" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>ejs</name></member>
       <member refid="struct_ejs_xml_state_1b30fc2b7d19948451b82774ebf440c87" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>filename</name></member>
       <member refid="struct_ejs_xml_state_182971026bb358d04341a95cfb110bcd5" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>inputBuf</name></member>
       <member refid="struct_ejs_xml_state_18727da0be58f5bab0eab74c77b8cdb12" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>inputPos</name></member>
       <member refid="struct_ejs_xml_state_112bbbe94ae47103ccfbf3a15445c36aa" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>inputSize</name></member>
-      <member refid="struct_ejs_xml_state_1a032db2a9c6bc386629c9d8245d8ed13" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>nodeStack</name></member>
+      <member refid="struct_ejs_xml_state_15bc03557973ee7c799888e1f9a43b3e0" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>nodeStack</name></member>
       <member refid="struct_ejs_xml_state_1d833453781ca2edc51f608daf9bb6d73" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>topOfStack</name></member>
-      <member refid="struct_ejs_xml_state_12c6e39359d8a82666cac6427d4a5cfd7" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>xmlListType</name></member>
-      <member refid="struct_ejs_xml_state_1e17c4d2eb906b8cc446c684a1be1a50d" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>xmlType</name></member>
+      <member refid="struct_ejs_xml_state_13d2c9016f016b14b5e6b844f809ab2b9" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>xmlListType</name></member>
+      <member refid="struct_ejs_xml_state_15073184b08264c4ffd2c51cdc4e05a88" prot="public" virt="non-virtual"><scope>EjsXmlState</scope><name>xmlType</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

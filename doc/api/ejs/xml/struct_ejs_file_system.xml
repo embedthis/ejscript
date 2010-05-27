@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3343" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3343" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2708" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2708" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_file_system_1352e365a28495b022f31473cf7b4ae4d" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3341" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3341" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2706" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2706" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_file_system_13ce9843f44721612050d89f292c70e66" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -40,14 +40,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3342" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3342" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2707" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2707" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3340" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3340" bodyend="3344"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="2705" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2705" bodyend="2709"/>
     <listofallmembers>
       <member refid="struct_ejs_file_system_105d6c4ce087975928414e4f114fa3cf4" prot="public" virt="non-virtual"><scope>EjsFileSystem</scope><name>fs</name></member>
       <member refid="struct_ejs_file_system_1352e365a28495b022f31473cf7b4ae4d" prot="public" virt="non-virtual"><scope>EjsFileSystem</scope><name>obj</name></member>

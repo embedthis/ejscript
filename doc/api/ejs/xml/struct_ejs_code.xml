@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2579" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2579" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1909" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1909" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_code_1b09c2c01aaed134f977f5b6441038936" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2580" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2580" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1910" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1910" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_code_1c7d843374ff7e8431f3a833b0554c6d4" prot="public" static="no" mutable="no">
         <type>struct EjsConst *</type>
@@ -41,7 +41,7 @@
 <para>Reference to module constant pool </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2581" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2581" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1911" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1911" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_code_1cfc7f15ba5b176c8d31770d7f55467e1" prot="public" static="no" mutable="no">
         <type>struct <ref refid="struct_ejs_ex" kindref="compound">EjsEx</ref> **</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2584" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2584" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1914" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1914" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_code_12b0bd63868d71736e564ff6f7978b379" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2582" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2582" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1912" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1912" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_code_142462a42fdd5fcc595f79d706b087167" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2583" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2583" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1913" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1913" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -89,19 +89,19 @@
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>This structure describes a sequence of byte code for a function. It also defines a set of execption handlers pertaining to this byte code. </para></simplesect>
 </para>    </detaileddescription>
     <collaborationgraph>
-      <node id="47">
+      <node id="44">
         <label>EjsEx</label>
         <link refid="struct_ejs_ex"/>
       </node>
-      <node id="46">
+      <node id="43">
         <label>EjsCode</label>
         <link refid="struct_ejs_code"/>
-        <childnode refid="47" relation="usage">
+        <childnode refid="44" relation="usage">
           <edgelabel>handlers</edgelabel>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="2578" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2578" bodyend="2585"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="1908" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1908" bodyend="1915"/>
     <listofallmembers>
       <member refid="struct_ejs_code_140d6a7a1679bbb1befa8bc5eefa0bad8" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>byteCode</name></member>
       <member refid="struct_ejs_code_1b09c2c01aaed134f977f5b6441038936" prot="public" virt="non-virtual"><scope>EjsCode</scope><name>codeLen</name></member>

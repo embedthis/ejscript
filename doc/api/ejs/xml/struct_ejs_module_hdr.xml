@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4376" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4376" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4185" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4185" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_module_hdr_1c6f23cfbfc949549382a82fe139bc23f" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4377" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4377" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4186" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4186" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_module_hdr_1a978414dd8da3ae3c4e549dcd1efa9a0" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -40,14 +40,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="4375" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4375" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="4184" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4184" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="4374" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="4374" bodyend="4378"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="4183" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="4183" bodyend="4187"/>
     <listofallmembers>
       <member refid="struct_ejs_module_hdr_1480d88b741e99abaa5f4fd2ed1b7509b" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>fileVersion</name></member>
       <member refid="struct_ejs_module_hdr_1c6f23cfbfc949549382a82fe139bc23f" prot="public" virt="non-virtual"><scope>EjsModuleHdr</scope><name>flags</name></member>

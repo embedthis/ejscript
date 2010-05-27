@@ -6,17 +6,21 @@
     <innerclass refid="struct_ejs_code" prot="public">EjsCode</innerclass>
     <innerclass refid="struct_ejs_ex" prot="public">EjsEx</innerclass>
       <sectiondef kind="func">
-      <memberdef kind="function" id="group___ejs_function_1gd3f3ea813b45f146a501078403f7ed27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_function_1g1b04a89fc17493abd5f3d95dedf036d2" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsFunction *</type>
         <definition>EjsFunction* ejsCreateFunction</definition>
-        <argsstring>(Ejs *ejs, const uchar *code, int codeLen, int numArgs, int numExceptions, EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, int strict)</argsstring>
+        <argsstring>(Ejs *ejs, cchar *name, cuchar *code, int codeLen, int numArgs, int numDefault, int numExceptions, struct EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, int strict)</argsstring>
         <name>ejsCreateFunction</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>const uchar *</type>
+          <type>cchar *</type>
+          <declname>name</declname>
+        </param>
+        <param>
+          <type>cuchar *</type>
           <declname>code</declname>
         </param>
         <param>
@@ -29,10 +33,14 @@
         </param>
         <param>
           <type>int</type>
+          <declname>numDefault</declname>
+        </param>
+        <param>
+          <type>int</type>
           <declname>numExceptions</declname>
         </param>
         <param>
-          <type>EjsType *</type>
+          <type>struct EjsType *</type>
           <declname>returnType</declname>
         </param>
         <param>
@@ -64,6 +72,13 @@
 </parameteritem>
 <parameteritem>
 <parameternamelist>
+<parametername>name</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Function name used in stack backtraces. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
 <parametername>code</parametername>
 </parameternamelist>
 <parameterdescription>
@@ -82,6 +97,13 @@
 </parameternamelist>
 <parameterdescription>
 <para>Number of formal arguments to the function. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>numDefault</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of default args to the function. </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -130,7 +152,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2708"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2037"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1g57f528868eed5536dde9dacccd059083" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -156,7 +178,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2661"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1991"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1g8e764d2fd382cc8f0d4bf34c227db88c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -182,7 +204,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2679"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2009"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1g461f8132dd432d5b27d253419c9a85c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -208,7 +230,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2670"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2000"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1gfc48c2ee73ed572e466a83f6903d29f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -279,7 +301,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2732"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2070"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1g07c05d4fe96ac9752069730ec21ef7ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -350,7 +372,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2748"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2086"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1g5a7d2ad5dd3cf09e90d6288ac2ba73fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -388,7 +410,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2718"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2056"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -396,7 +418,7 @@
     <detaileddescription>
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The Function type is used to represent closures, function expressions and class methods. It contains a reference to the code to execute, the execution scope and possibly a bound &quot;this&quot; reference. </para></simplesect>
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving</para></simplesect>
-<simplesect kind="see"><para><ref refid="group___ejs_function" kindref="compound">EjsFunction</ref> <ref refid="group___ejs_function_1g57f528868eed5536dde9dacccd059083" kindref="member">ejsIsFunction</ref> <ref refid="group___ejs_function_1g461f8132dd432d5b27d253419c9a85c8" kindref="member">ejsIsNativeFunction</ref> <ref refid="group___ejs_function_1g8e764d2fd382cc8f0d4bf34c227db88c" kindref="member">ejsIsInitializer</ref> <ref refid="group___ejs_function_1gd3f3ea813b45f146a501078403f7ed27" kindref="member">ejsCreateFunction</ref> ejsCopyFunction <ref refid="group___ejs_function_1g07c05d4fe96ac9752069730ec21ef7ee" kindref="member">ejsRunFunctionBySlot</ref> <ref refid="group___ejs_function_1gfc48c2ee73ed572e466a83f6903d29f9" kindref="member">ejsRunFunction</ref> <ref refid="group___ejs_function_1g5a7d2ad5dd3cf09e90d6288ac2ba73fc" kindref="member">ejsRunInitializer</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_function" kindref="compound">EjsFunction</ref> <ref refid="group___ejs_function_1g57f528868eed5536dde9dacccd059083" kindref="member">ejsIsFunction</ref> <ref refid="group___ejs_function_1g461f8132dd432d5b27d253419c9a85c8" kindref="member">ejsIsNativeFunction</ref> <ref refid="group___ejs_function_1g8e764d2fd382cc8f0d4bf34c227db88c" kindref="member">ejsIsInitializer</ref> <ref refid="group___ejs_function_1g1b04a89fc17493abd5f3d95dedf036d2" kindref="member">ejsCreateFunction</ref> ejsCloneFunction <ref refid="group___ejs_function_1g07c05d4fe96ac9752069730ec21ef7ee" kindref="member">ejsRunFunctionBySlot</ref> <ref refid="group___ejs_function_1gfc48c2ee73ed572e466a83f6903d29f9" kindref="member">ejsRunFunction</ref> <ref refid="group___ejs_function_1g5a7d2ad5dd3cf09e90d6288ac2ba73fc" kindref="member">ejsRunInitializer</ref> </para></simplesect>
 </para>    </detaileddescription>
   </compounddef>
 </doxygen>

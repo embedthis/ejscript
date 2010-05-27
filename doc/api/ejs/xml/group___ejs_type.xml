@@ -5,18 +5,18 @@
     <title>EjsType</title>
     <innerclass refid="struct_ejs_type_helpers" prot="public">EjsTypeHelpers</innerclass>
       <sectiondef kind="func">
-      <memberdef kind="function" id="group___ejs_type_1gddfe4f0956d4282149408c70fbdfaa6b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_type_1g2d265a2559f36be71d9948349f2fe9e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
         <definition>int ejsBindFunction</definition>
-        <argsstring>(Ejs *ejs, EjsBlock *block, int slotNum, EjsProc fn)</argsstring>
+        <argsstring>(Ejs *ejs, void *obj, int slotNum, EjsProc fn)</argsstring>
         <name>ejsBindFunction</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>EjsBlock *</type>
-          <declname>block</declname>
+          <type>void *</type>
+          <declname>obj</declname>
         </param>
         <param>
           <type>int</type>
@@ -39,10 +39,10 @@
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>block</parametername>
+<parametername>obj</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Block containing the function property to bind. </para></parameterdescription>
+<para>Object containing the function property to bind. </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -63,20 +63,20 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2306"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1859"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_type_1g14c14502eb4af924ed03c0ed068ef392" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_type_1gd1d108c8341a4f6ef3be935d4dc8a723" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
         <definition>int ejsBindMethod</definition>
-        <argsstring>(Ejs *ejs, EjsType *type, int slotNum, EjsProc fn)</argsstring>
+        <argsstring>(Ejs *ejs, void *obj, int slotNum, EjsProc fn)</argsstring>
         <name>ejsBindMethod</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>EjsType *</type>
-          <declname>type</declname>
+          <type>void *</type>
+          <declname>obj</declname>
         </param>
         <param>
           <type>int</type>
@@ -99,7 +99,7 @@
 </parameteritem>
 <parameteritem>
 <parameternamelist>
-<parametername>type</parametername>
+<parametername>obj</parametername>
 </parameternamelist>
 <parameterdescription>
 <para>Type containing the function property to bind. </para></parameterdescription>
@@ -123,12 +123,12 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2497"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3511"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_type_1g42b826f29420ccdb0b719740bf56b285" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_type_1g0d0ddf8d7e1d5f07f0398749cb2e574f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsType *</type>
         <definition>EjsType* ejsCreateType</definition>
-        <argsstring>(Ejs *ejs, EjsName *name, struct EjsModule *up, EjsType *baseType, int size, int slotNum, int numTypeProp, int numInstanceProp, int attributes, void *data)</argsstring>
+        <argsstring>(Ejs *ejs, EjsName *name, struct EjsModule *up, EjsType *baseType, EjsObj *prototype, int size, int slotNum, int numTypeProp, int numInstanceProp, int64 attributes, void *data)</argsstring>
         <name>ejsCreateType</name>
         <param>
           <type>Ejs *</type>
@@ -147,6 +147,10 @@
           <declname>baseType</declname>
         </param>
         <param>
+          <type>EjsObj *</type>
+          <declname>prototype</declname>
+        </param>
+        <param>
           <type>int</type>
           <declname>size</declname>
         </param>
@@ -163,7 +167,7 @@
           <declname>numInstanceProp</declname>
         </param>
         <param>
-          <type>int</type>
+          <type>int64</type>
           <declname>attributes</declname>
         </param>
         <param>
@@ -204,6 +208,13 @@
 </parameteritem>
 <parameteritem>
 <parameternamelist>
+<parametername>prototype</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Prototype object instance properties of this type. </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
 <parametername>size</parametername>
 </parameternamelist>
 <parameterdescription>
@@ -235,22 +246,7 @@
 <parametername>attributes</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Attribute mask to modify how the type is initialized. Valid values include: <itemizedlist>
-<listitem><para>EJS_ATTR_BLOCK_HELPERS - Type uses EjsBlock helpers </para></listitem>
-<listitem><para>EJS_ATTR_CALLS_SUPER - Type calls super() </para></listitem>
-<listitem><para>EJS_ATTR_DYNAMIC_INSTANCE - Instance objects are dynamic </para></listitem>
-<listitem><para>EJS_ATTR_FINAL - Type will be a final class </para></listitem>
-<listitem><para>EJS_ATTR_INTERFACE - Type is an interface </para></listitem>
-<listitem><para>EJS_ATTR_HAS_CONSTRUCTOR - Type has a constructor to call </para></listitem>
-<listitem><para>EJS_ATTR_HAS_INITIALIZER - Type has an initializer </para></listitem>
-<listitem><para>EJS_ATTR_HAS_STATIC_INITIALIZER - Type has a static initializer </para></listitem>
-<listitem><para>EJS_ATTR_NO_BIND - Instruct the compiler to never bind any property references to slots </para></listitem>
-<listitem><para>EJS_ATTR_OBJECT - Type instances are based on EjsObj </para></listitem>
-<listitem><para>EJS_ATTR_OPER_OVERLOAD - Type uses operator overload </para></listitem>
-<listitem><para>EJS_ATTR_OBJECT_HELPERS - Type uses EjsObj helpers </para></listitem>
-<listitem><para>EJS_ATTR_SLOT_NEEDS_FIXUP - Slots will need fixup. Typically because the base type is unknown </para></listitem>
-</itemizedlist>
-</para></parameterdescription>
+<para>Attribute mask to modify how the type is initialized. </para></parameterdescription>
 </parameteritem>
 <parameteritem>
 <parameternamelist>
@@ -263,7 +259,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2448"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3457"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_type_1g24a592f56804bb98240f21cea4288f01" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -285,11 +281,11 @@
         <briefdescription>
 <para>Define a global function. </para>        </briefdescription>
         <detaileddescription>
-<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Define a global public function and bind it to the C native function. This is a simple one liner to define a public global function. The more typical paradigm to define functions is to create a script file of native method definitions and and compile it. This results in a mod file that can be loaded which will create the function/method definitions. Then use <ref refid="group___ejs_type_1g14c14502eb4af924ed03c0ed068ef392" kindref="member">ejsBindMethod</ref> to associate a C function with a property. </para></simplesect>
+<para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Define a global public function and bind it to the C native function. This is a simple one liner to define a public global function. The more typical paradigm to define functions is to create a script file of native method definitions and and compile it. This results in a mod file that can be loaded which will create the function/method definitions. Then use <ref refid="group___ejs_type_1gd1d108c8341a4f6ef3be935d4dc8a723" kindref="member">ejsBindMethod</ref> to associate a C function with a property. </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2460"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3474"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_type_1g53d103cc075475c48e027d246a7f2398" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -382,7 +378,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2516"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3532"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_type_1gf41edbabce385e7cb73ed6526aa2cf22" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsType *</type>
@@ -421,7 +417,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2530"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3546"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_type_1gc3a3057b7806228b552a4acc82695a7d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -470,21 +466,21 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2472"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3486"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_type_1g1f888c5d62e7883944202ca8ca5cde78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_type_1g1b86509135212a079885a54454389eed" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
-        <definition>bool ejsIsInstanceBlock</definition>
+        <definition>bool ejsIsPrototype</definition>
         <argsstring>(EjsObj *vp)</argsstring>
-        <name>ejsIsInstanceBlock</name>
+        <name>ejsIsPrototype</name>
         <param>
           <type>EjsObj *</type>
           <declname>vp</declname>
         </param>
         <briefdescription>
-<para>Determine if a variable is an instance block. </para>        </briefdescription>
+<para>Determine if a variable is a prototype object. </para>        </briefdescription>
         <detaileddescription>
-<para>Types store the template for instance properties in an instance block object. <parameterlist kind="param"><parameteritem>
+<para>Types store the template for instance properties in a prototype object <parameterlist kind="param"><parameteritem>
 <parameternamelist>
 <parametername>vp</parametername>
 </parameternamelist>
@@ -492,11 +488,11 @@
 <para>Variable to test </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>True if the variable is an instance block object </para></simplesect>
+<simplesect kind="return"><para>True if the variable is a prototype object. </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2411"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3432"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_type_1ga7ededaf6f7ebf327861ea00ce62784a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -522,7 +518,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2402"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3424"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_type_1g1c07c5c5908c4a6db4b35f765efa31ca" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -571,7 +567,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2483"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3497"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -579,7 +575,7 @@
     <detaileddescription>
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>Classes in Ejscript are represented by instances of an EjsType. Types are templates for creating instances of the given type, but they are also are runtime accessible objects. Types contain the static properties and methods for objects and store these in their object slots array. They store the instance properties in the type-&gt;instance object. EjsType inherits from EjsBlock, EjsObj and EjsObj. </para></simplesect>
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving</para></simplesect>
-<simplesect kind="see"><para><ref refid="group___ejs_type" kindref="compound">EjsType</ref> <ref refid="group___ejs_type_1ga7ededaf6f7ebf327861ea00ce62784a" kindref="member">ejsIsType</ref> <ref refid="group___ejs_type_1g1f888c5d62e7883944202ca8ca5cde78" kindref="member">ejsIsInstanceBlock</ref> <ref refid="group___ejs_type_1g42b826f29420ccdb0b719740bf56b285" kindref="member">ejsCreateType</ref> ejsDefineFunction <ref refid="group___ejs_type_1gc3a3057b7806228b552a4acc82695a7d" kindref="member">ejsIsA</ref> <ref refid="group___ejs_type_1g1c07c5c5908c4a6db4b35f765efa31ca" kindref="member">ejsIsTypeSubType</ref> <ref refid="group___ejs_type_1g14c14502eb4af924ed03c0ed068ef392" kindref="member">ejsBindMethod</ref> <ref refid="group___ejs_type_1g53d103cc075475c48e027d246a7f2398" kindref="member">ejsDefineInstanceProperty</ref> <ref refid="group___ejs_type_1gf41edbabce385e7cb73ed6526aa2cf22" kindref="member">ejsGetType</ref> </para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_type" kindref="compound">EjsType</ref> <ref refid="group___ejs_type_1ga7ededaf6f7ebf327861ea00ce62784a" kindref="member">ejsIsType</ref> ejsIsProperty <ref refid="group___ejs_type_1g0d0ddf8d7e1d5f07f0398749cb2e574f" kindref="member">ejsCreateType</ref> ejsDefineFunction <ref refid="group___ejs_type_1gc3a3057b7806228b552a4acc82695a7d" kindref="member">ejsIsA</ref> <ref refid="group___ejs_type_1g1c07c5c5908c4a6db4b35f765efa31ca" kindref="member">ejsIsTypeSubType</ref> <ref refid="group___ejs_type_1gd1d108c8341a4f6ef3be935d4dc8a723" kindref="member">ejsBindMethod</ref> <ref refid="group___ejs_type_1g53d103cc075475c48e027d246a7f2398" kindref="member">ejsDefineInstanceProperty</ref> <ref refid="group___ejs_type_1gf41edbabce385e7cb73ed6526aa2cf22" kindref="member">ejsGetType</ref> </para></simplesect>
 </para>    </detaileddescription>
   </compounddef>
 </doxygen>

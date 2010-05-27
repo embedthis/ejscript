@@ -39,7 +39,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3006"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2371"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_date_1gb2a17520c72680a81dc8cb56d806c944" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -65,7 +65,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2994"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2359"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="935" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="935" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3674" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3674" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_state_1f2ad0dcd0563cb78cb9b255d3bd3e251" prot="public" static="no" mutable="no">
         <type>struct EjsFrame *</type>
@@ -28,7 +28,33 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="934" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="934" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3673" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3673" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_state_16fb164ef9b9ac014244344f7f0ccdcbc" prot="public" static="no" mutable="no">
+        <type>struct EjsNamespace *</type>
+        <definition>struct EjsNamespace* EjsState::internal</definition>
+        <argsstring></argsstring>
+        <name>internal</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3678" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3678" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_state_1b5ad299564ac02edc327ce5054d38d02" prot="public" static="no" mutable="no">
+        <type>struct <ref refid="struct_ejs_state" kindref="compound">EjsState</ref> *</type>
+        <definition>struct EjsState* EjsState::prev</definition>
+        <argsstring></argsstring>
+        <name>prev</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3677" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3677" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_state_12876064f510f1cd2aaa34458102a2e87" prot="public" static="no" mutable="no">
         <type>struct EjsObj **</type>
@@ -41,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="936" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="936" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3675" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3675" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_state_1e44d5a3fc8f4238ccf2cb0eb4f4206cc" prot="public" static="no" mutable="no">
         <type>struct EjsObj **</type>
@@ -54,20 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="937" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="937" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_state_1fddc3299763dfdedc2207a8ac0abe6fc" prot="public" static="no" mutable="no">
-        <type>struct EjsObj **</type>
-        <definition>struct EjsObj** EjsState::stackEnd</definition>
-        <argsstring></argsstring>
-        <name>stackEnd</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="938" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="938" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3676" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3676" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_state_1bfba6e08ce6117e11d170c7d04416ffc" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -80,20 +93,30 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="939" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="939" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3679" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3679" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
 <para>VM Evaluation state. </para>    </briefdescription>
     <detaileddescription>
 <para>The VM Stacks grow forward in memory. A push is done by incrementing first, then storing. ie. *++top = value A pop is done by extraction then decrement. ie. value = *top-- </para>    </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="933" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="933" bodyend="940"/>
+    <collaborationgraph>
+      <node id="123">
+        <label>EjsState</label>
+        <link refid="struct_ejs_state"/>
+        <childnode refid="123" relation="usage">
+          <edgelabel>prev</edgelabel>
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="3672" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3672" bodyend="3680"/>
     <listofallmembers>
       <member refid="struct_ejs_state_1ace9fda0d081b9174ea9dede15dc6415" prot="public" virt="non-virtual"><scope>EjsState</scope><name>bp</name></member>
       <member refid="struct_ejs_state_1f2ad0dcd0563cb78cb9b255d3bd3e251" prot="public" virt="non-virtual"><scope>EjsState</scope><name>fp</name></member>
+      <member refid="struct_ejs_state_16fb164ef9b9ac014244344f7f0ccdcbc" prot="public" virt="non-virtual"><scope>EjsState</scope><name>internal</name></member>
+      <member refid="struct_ejs_state_1b5ad299564ac02edc327ce5054d38d02" prot="public" virt="non-virtual"><scope>EjsState</scope><name>prev</name></member>
       <member refid="struct_ejs_state_12876064f510f1cd2aaa34458102a2e87" prot="public" virt="non-virtual"><scope>EjsState</scope><name>stack</name></member>
       <member refid="struct_ejs_state_1e44d5a3fc8f4238ccf2cb0eb4f4206cc" prot="public" virt="non-virtual"><scope>EjsState</scope><name>stackBase</name></member>
-      <member refid="struct_ejs_state_1fddc3299763dfdedc2207a8ac0abe6fc" prot="public" virt="non-virtual"><scope>EjsState</scope><name>stackEnd</name></member>
       <member refid="struct_ejs_state_1bfba6e08ce6117e11d170c7d04416ffc" prot="public" virt="non-virtual"><scope>EjsState</scope><name>stackSize</name></member>
     </listofallmembers>
   </compounddef>

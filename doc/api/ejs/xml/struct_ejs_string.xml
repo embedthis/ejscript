@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3671" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3671" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3037" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3037" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_string_110172a0557f21593181ce215ff2b75d5" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3670" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3670" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3036" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3036" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_string_18c8862bcc92d704ebda939928b76b3f4" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -40,14 +40,14 @@
 <para>Currently UTF-8. Will upgrade to UTF-16 soon </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3672" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3672" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3038" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3038" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3669" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3669" bodyend="3673"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="3035" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3035" bodyend="3039"/>
     <listofallmembers>
       <member refid="struct_ejs_string_1324977c4c34f41fb4dce23ba0738ef8d" prot="public" virt="non-virtual"><scope>EjsString</scope><name>length</name></member>
       <member refid="struct_ejs_string_110172a0557f21593181ce215ff2b75d5" prot="public" virt="non-virtual"><scope>EjsString</scope><name>obj</name></member>

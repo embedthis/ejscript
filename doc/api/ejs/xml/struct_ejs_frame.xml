@@ -14,7 +14,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2771" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2771" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2115" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_14fe42f710f7714843c6f491fb3b5c02c" prot="public" static="no" mutable="no">
+        <type>uchar *</type>
+        <definition>uchar* EjsFrame::attentionPc</definition>
+        <argsstring></argsstring>
+        <name>attentionPc</name>
+        <briefdescription>
+<para>Restoration PC value after attention. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2109" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2109" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_frame_1b7d532c9e17694a5d99a81ef61fcd89a" prot="public" static="no" mutable="no">
         <type>struct EjsFrame *</type>
@@ -27,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2765" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2765" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2104" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2104" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_frame_1a54674980f4e207efb5c0ef0e4f95ccc" prot="public" static="no" mutable="no">
         <type>cchar *</type>
@@ -40,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2768" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2768" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2112" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2112" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_frame_131a378fb4c5329a2534f964f7c529510" prot="public" static="no" mutable="no">
         <type>cchar *</type>
@@ -53,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2769" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2769" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2113" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2113" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_frame_12c7305c531cf6d9c588fff3de7417e9b" prot="public" static="no" mutable="no">
         <type>EjsFunction</type>
@@ -66,7 +79,33 @@
 <para>Stores local variables </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2764" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2764" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2103" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2103" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_1297d939044ace81e7e277037a4e594f1" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsFrame::getter</definition>
+        <argsstring></argsstring>
+        <name>getter</name>
+        <briefdescription>
+<para>Frame is a getter. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2114" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_1b37991125ac7f11971c339d2c76bfd7c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsFrame::ignoreAttention</definition>
+        <argsstring></argsstring>
+        <name>ignoreAttention</name>
+        <briefdescription>
+<para>Ignore attention commands. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2110" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2110" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_frame_12c3602f352df2147dc6cd0f0a462aed4" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -79,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2770" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2770" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2111" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2111" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_frame_1adb0dbdaad3c1605feb197a7d7dbff23" prot="public" static="no" mutable="no">
         <type>uchar *</type>
@@ -92,36 +131,67 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2767" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2767" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2108" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2108" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_frame_177bad679929af827df70ec481848ae08" prot="public" static="no" mutable="no">
-        <type>EjsObj **</type>
-        <definition>EjsObj** EjsFrame::stackBase</definition>
+      <memberdef kind="variable" id="struct_ejs_frame_1bd1cf700f7eccb43ef22e3a6ec88060c" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsFrame::slotNum</definition>
         <argsstring></argsstring>
-        <name>stackBase</name>
+        <name>slotNum</name>
         <briefdescription>
-<para>Start of the eval stack for this function. </para>        </briefdescription>
+<para>Slot in owner. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="2766" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2766" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2107" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_118a38765523b1b8610968587fcb8a618" prot="public" static="no" mutable="no">
+        <type>EjsVar **</type>
+        <definition>EjsVar** EjsFrame::stackBase</definition>
+        <argsstring></argsstring>
+        <name>stackBase</name>
+        <briefdescription>
+<para>Start of stack in this function. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2105" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2105" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_frame_1ff0f32ed3a3e49eec7b37d1d7f90ae9a" prot="public" static="no" mutable="no">
+        <type>EjsObj **</type>
+        <definition>EjsObj** EjsFrame::stackReturn</definition>
+        <argsstring></argsstring>
+        <name>stackReturn</name>
+        <briefdescription>
+<para>Top of stack to return to. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2106" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2106" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="2763" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="2763" bodyend="2772"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="2102" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2102" bodyend="2116"/>
     <listofallmembers>
       <member refid="struct_ejs_frame_12caff238172f19ed4f415ccbd7082ce3" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>argc</name></member>
+      <member refid="struct_ejs_frame_14fe42f710f7714843c6f491fb3b5c02c" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>attentionPc</name></member>
       <member refid="struct_ejs_frame_1b7d532c9e17694a5d99a81ef61fcd89a" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>caller</name></member>
       <member refid="struct_ejs_frame_1a54674980f4e207efb5c0ef0e4f95ccc" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>currentLine</name></member>
       <member refid="struct_ejs_frame_131a378fb4c5329a2534f964f7c529510" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>filename</name></member>
       <member refid="struct_ejs_frame_12c7305c531cf6d9c588fff3de7417e9b" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>function</name></member>
+      <member refid="struct_ejs_frame_1297d939044ace81e7e277037a4e594f1" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>getter</name></member>
+      <member refid="struct_ejs_frame_1b37991125ac7f11971c339d2c76bfd7c" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>ignoreAttention</name></member>
       <member refid="struct_ejs_frame_12c3602f352df2147dc6cd0f0a462aed4" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>lineNumber</name></member>
       <member refid="struct_ejs_frame_1adb0dbdaad3c1605feb197a7d7dbff23" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>pc</name></member>
-      <member refid="struct_ejs_frame_177bad679929af827df70ec481848ae08" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>stackBase</name></member>
+      <member refid="struct_ejs_frame_1bd1cf700f7eccb43ef22e3a6ec88060c" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>slotNum</name></member>
+      <member refid="struct_ejs_frame_118a38765523b1b8610968587fcb8a618" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>stackBase</name></member>
+      <member refid="struct_ejs_frame_1ff0f32ed3a3e49eec7b37d1d7f90ae9a" prot="public" virt="non-virtual"><scope>EjsFrame</scope><name>stackReturn</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

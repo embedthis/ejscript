@@ -19,9 +19,9 @@
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Exception Handler Record.  <a href="struct_ejs_ex.html#_details">More...</a><br></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">EjsFunction *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs_function.html#gd3f3ea813b45f146a501078403f7ed27">ejsCreateFunction</a> (Ejs *ejs, const uchar *code, int codeLen, int numArgs, int numExceptions, EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, int strict)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">EjsFunction *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs_function.html#g1b04a89fc17493abd5f3d95dedf036d2">ejsCreateFunction</a> (Ejs *ejs, cchar *name, cuchar *code, int codeLen, int numArgs, int numDefault, int numExceptions, struct EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, int strict)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a function object.  <a href="#gd3f3ea813b45f146a501078403f7ed27"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create a function object.  <a href="#g1b04a89fc17493abd5f3d95dedf036d2"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs_function.html#g57f528868eed5536dde9dacccd059083">ejsIsFunction</a> (EjsObj *vp)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Determine if a variable is a function.  <a href="#g57f528868eed5536dde9dacccd059083"></a><br></td></tr>
@@ -46,9 +46,9 @@ Function class.
 <p>
 <dl class="user" compact><dt><b><b>Description</b>:</b></dt><dd>The Function type is used to represent closures, function expressions and class methods. It contains a reference to the code to execute, the execution scope and possibly a bound "this" reference. </dd></dl>
 <dl class="user" compact><dt><b><b>API</b> Stability:</b></dt><dd>Evolving</dd></dl>
-<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="group___ejs_function.html" title="Function class.">EjsFunction</a> <a class="el" href="group___ejs_function.html#g57f528868eed5536dde9dacccd059083" title="Determine if a variable is a function.">ejsIsFunction</a> <a class="el" href="group___ejs_function.html#g461f8132dd432d5b27d253419c9a85c8" title="Determine if the function is a native function.">ejsIsNativeFunction</a> <a class="el" href="group___ejs_function.html#g8e764d2fd382cc8f0d4bf34c227db88c" title="Determine if the function is an initializer.">ejsIsInitializer</a> <a class="el" href="group___ejs_function.html#gd3f3ea813b45f146a501078403f7ed27" title="Create a function object.">ejsCreateFunction</a> ejsCopyFunction <a class="el" href="group___ejs_function.html#g07c05d4fe96ac9752069730ec21ef7ee" title="Run a function by slot number.">ejsRunFunctionBySlot</a> <a class="el" href="group___ejs_function.html#gfc48c2ee73ed572e466a83f6903d29f9" title="Run a function.">ejsRunFunction</a> <a class="el" href="group___ejs_function.html#g5a7d2ad5dd3cf09e90d6288ac2ba73fc" title="Run the initializer for a module.">ejsRunInitializer</a> </dd></dl>
+<dl class="see" compact><dt><b>See also:</b></dt><dd><a class="el" href="group___ejs_function.html" title="Function class.">EjsFunction</a> <a class="el" href="group___ejs_function.html#g57f528868eed5536dde9dacccd059083" title="Determine if a variable is a function.">ejsIsFunction</a> <a class="el" href="group___ejs_function.html#g461f8132dd432d5b27d253419c9a85c8" title="Determine if the function is a native function.">ejsIsNativeFunction</a> <a class="el" href="group___ejs_function.html#g8e764d2fd382cc8f0d4bf34c227db88c" title="Determine if the function is an initializer.">ejsIsInitializer</a> <a class="el" href="group___ejs_function.html#g1b04a89fc17493abd5f3d95dedf036d2" title="Create a function object.">ejsCreateFunction</a> ejsCloneFunction <a class="el" href="group___ejs_function.html#g07c05d4fe96ac9752069730ec21ef7ee" title="Run a function by slot number.">ejsRunFunctionBySlot</a> <a class="el" href="group___ejs_function.html#gfc48c2ee73ed572e466a83f6903d29f9" title="Run a function.">ejsRunFunction</a> <a class="el" href="group___ejs_function.html#g5a7d2ad5dd3cf09e90d6288ac2ba73fc" title="Run the initializer for a module.">ejsRunInitializer</a> </dd></dl>
 <hr><h2>Function Documentation</h2>
-<a class="anchor" name="gd3f3ea813b45f146a501078403f7ed27"></a><!-- doxytag: member="ejs.h::ejsCreateFunction" ref="gd3f3ea813b45f146a501078403f7ed27" args="(Ejs *ejs, const uchar *code, int codeLen, int numArgs, int numExceptions, EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, int strict)" -->
+<a class="anchor" name="g1b04a89fc17493abd5f3d95dedf036d2"></a><!-- doxytag: member="ejs.h::ejsCreateFunction" ref="g1b04a89fc17493abd5f3d95dedf036d2" args="(Ejs *ejs, cchar *name, cuchar *code, int codeLen, int numArgs, int numDefault, int numExceptions, struct EjsType *returnType, int attributes, struct EjsConst *constants, EjsBlock *scope, int strict)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -61,7 +61,13 @@ Function class.
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const uchar *&nbsp;</td>
+          <td class="paramtype">cchar *&nbsp;</td>
+          <td class="paramname"> <em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">cuchar *&nbsp;</td>
           <td class="paramname"> <em>code</em>, </td>
         </tr>
         <tr>
@@ -80,12 +86,18 @@ Function class.
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>numDefault</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
           <td class="paramname"> <em>numExceptions</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">EjsType *&nbsp;</td>
+          <td class="paramtype">struct EjsType *&nbsp;</td>
           <td class="paramname"> <em>returnType</em>, </td>
         </tr>
         <tr>
@@ -128,9 +140,11 @@ Create a function object.
 <dl compact><dt><b>Parameters:</b></dt><dd>
   <table border="0" cellspacing="2" cellpadding="0">
     <tr><td valign="top"></td><td valign="top"><em>ejs</em>&nbsp;</td><td>Ejs reference returned from <a class="el" href="group___ejs_obj.html#g50d9d774b3cddd1784d654326cddc237" title="Create a variable.">ejsCreate</a> </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>name</em>&nbsp;</td><td>Function name used in stack backtraces. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>code</em>&nbsp;</td><td>Pointer to the byte code. The byte code is not copied so this must be a persistent pointer. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>codeLen</em>&nbsp;</td><td>Length of the code. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>numArgs</em>&nbsp;</td><td>Number of formal arguments to the function. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>numDefault</em>&nbsp;</td><td>Number of default args to the function. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>numExceptions</em>&nbsp;</td><td>Number of exception handlers </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>returnType</em>&nbsp;</td><td>Return type of the function. Set to NULL for no defined type. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>attributes</em>&nbsp;</td><td>Integer mask of access attributes. </td></tr>
@@ -387,7 +401,7 @@ Run the initializer for a module.
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Sun Mar 7 15:10:46 2010 for ejs by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 27 09:59:33 2010 for ejs by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1706" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1706" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1022" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1022" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_list_1a894a430656e38c72f9fc892969bc8cf" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1707" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1707" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1023" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1023" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_list_127f8d1f67a9e9cbdd960941b6df3614a" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1708" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1708" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1024" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1024" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -51,7 +51,7 @@
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Prototype. </para></simplesect>
 <simplesect kind="see"><para><ref refid="struct_ejs_list" kindref="compound">EjsList</ref> mprCreateList mprFree MprBuf </para></simplesect>
 </para>    </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="1705" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1705" bodyend="1709"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="1021" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1021" bodyend="1025"/>
     <listofallmembers>
       <member refid="struct_ejs_list_1b562b1137c7f6f1fe5b0db3890b96fb7" prot="public" virt="non-virtual"><scope>EjsList</scope><name>items</name></member>
       <member refid="struct_ejs_list_1a894a430656e38c72f9fc892969bc8cf" prot="public" virt="non-virtual"><scope>EjsList</scope><name>length</name></member>

@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3437" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3437" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2803" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2803" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_iterator_1564c3295dd2a5c3d30c41a641d105f2c" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3442" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3442" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2805" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2805" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_iterator_1ab6e997c947b4a63ace4da54de38e1fd" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3443" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3443" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2806" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2806" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_iterator_104acd9c3b5d9a81d102d64103c99140f" prot="public" static="no" mutable="no">
         <type>EjsArray *</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3438" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3438" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2804" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2804" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_iterator_19267e373b1a57c653d2b99d09825b906" prot="public" static="no" mutable="no">
         <type>EjsProc</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3436" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3436" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2802" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2802" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_iterator_162e9adc19d327d65f230594b7079d612" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3435" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3435" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2801" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2801" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_iterator_167e46f813d0414e91457a275308a8530" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
@@ -87,19 +87,19 @@
         <argsstring></argsstring>
         <name>var</name>
         <briefdescription>
-<para>Extends Object - Property storage. </para>        </briefdescription>
+<para>Extends Object - Property storage (not used). </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3434" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3434" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2800" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2800" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3433" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3433" bodyend="3444"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="2799" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2799" bodyend="2807"/>
     <listofallmembers>
       <member refid="struct_ejs_iterator_1b7c93a9d646156616d8a018136463852" prot="public" virt="non-virtual"><scope>EjsIterator</scope><name>deep</name></member>
       <member refid="struct_ejs_iterator_1564c3295dd2a5c3d30c41a641d105f2c" prot="public" virt="non-virtual"><scope>EjsIterator</scope><name>index</name></member>

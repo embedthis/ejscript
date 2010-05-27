@@ -14,20 +14,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1065" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1065" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1103" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1103" bodyend="-1"/>
       </memberdef>
-      <memberdef kind="variable" id="struct_ejs_load_state_1dcc614753c60e92511391cf19e9da191" prot="public" static="no" mutable="no">
+      <memberdef kind="variable" id="struct_ejs_load_state_19ed3ca4160f3aa19875c6bae9535e951" prot="public" static="no" mutable="no">
         <type>int</type>
-        <definition>int EjsLoadState::strict</definition>
+        <definition>int EjsLoadState::flags</definition>
         <argsstring></argsstring>
-        <name>strict</name>
+        <name>flags</name>
         <briefdescription>
-<para>Load module in strict mode (standard permits redefinitions). </para>        </briefdescription>
+<para>Module load flags. </para>        </briefdescription>
         <detaileddescription>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1066" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1066" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1104" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1104" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_load_state_1ac6f5071a6360cff8d8657e1fa55e931" prot="public" static="no" mutable="no">
         <type>MprList *</type>
@@ -40,17 +40,17 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="1064" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1064" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1102" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1102" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="1063" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="1063" bodyend="1067"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="1101" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1101" bodyend="1105"/>
     <listofallmembers>
       <member refid="struct_ejs_load_state_1fe4e384ad24e94faf5b39f88205c00c2" prot="public" virt="non-virtual"><scope>EjsLoadState</scope><name>firstModule</name></member>
-      <member refid="struct_ejs_load_state_1dcc614753c60e92511391cf19e9da191" prot="public" virt="non-virtual"><scope>EjsLoadState</scope><name>strict</name></member>
+      <member refid="struct_ejs_load_state_19ed3ca4160f3aa19875c6bae9535e951" prot="public" virt="non-virtual"><scope>EjsLoadState</scope><name>flags</name></member>
       <member refid="struct_ejs_load_state_1ac6f5071a6360cff8d8657e1fa55e931" prot="public" virt="non-virtual"><scope>EjsLoadState</scope><name>typeFixups</name></member>
     </listofallmembers>
   </compounddef>

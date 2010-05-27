@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="992" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="992" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1049" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1049" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_gen_1eddcaaba20e09df6b356edf46a629080" prot="public" static="no" mutable="no">
         <type>uint</type>
@@ -27,14 +27,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="993" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="993" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="1050" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1050" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="991" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="990" bodyend="994"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="1048" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1047" bodyend="1051"/>
     <listofallmembers>
       <member refid="struct_ejs_gen_11186456af64c1da6120c404cb6a6a065" prot="public" virt="non-virtual"><scope>EjsGen</scope><name>totalReclaimed</name></member>
       <member refid="struct_ejs_gen_1eddcaaba20e09df6b356edf46a629080" prot="public" virt="non-virtual"><scope>EjsGen</scope><name>totalSweeps</name></member>

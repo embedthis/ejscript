@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3259" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3259" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2624" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2624" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_path_126dc6e3850293d15fb41ea3fa2dee122" prot="public" static="no" mutable="no">
         <type>MprPath</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3255" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3255" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2620" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2620" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_path_18a0ffeb59486a8079de590e838eb8082" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3254" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3254" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2619" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2619" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_path_157d9e8289aacc181652dea3ead88bc3c" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -53,14 +53,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3258" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3258" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2623" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2623" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="3253" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="3253" bodyend="3266"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="2618" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2618" bodyend="2631"/>
     <listofallmembers>
       <member refid="struct_ejs_path_1ae248807571cf51539ae0777e3bf561c" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>files</name></member>
       <member refid="struct_ejs_path_126dc6e3850293d15fb41ea3fa2dee122" prot="public" virt="non-virtual"><scope>EjsPath</scope><name>info</name></member>

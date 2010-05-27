@@ -3,6 +3,45 @@
   <compounddef id="struct_ec_code_gen" kind="struct" prot="public">
     <compoundname>EcCodeGen</compoundname>
       <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ec_code_gen_1420ef8799a90ad9ee28c51bd921bb30a" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcCodeGen::blockCount</definition>
+        <argsstring></argsstring>
+        <name>blockCount</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="5468" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5468" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_code_gen_19fc96c5a8b5ed6c5d97da3db24a36add" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcCodeGen::blockMark</definition>
+        <argsstring></argsstring>
+        <name>blockMark</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="5466" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5466" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ec_code_gen_1db6a00cd7b07f441d4c8335f4b8821a4" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EcCodeGen::breakMark</definition>
+        <argsstring></argsstring>
+        <name>breakMark</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="5465" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5465" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="struct_ec_code_gen_16fe9372eab4778c7abd091f17cf5dcfc" prot="public" static="no" mutable="no">
         <type>MprBuf *</type>
         <definition>MprBuf* EcCodeGen::buf</definition>
@@ -14,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5661" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5661" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="5461" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5461" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_code_gen_1e8b8bc5fa1ffd4133c870abb31a2aa1f" prot="public" static="no" mutable="no">
         <type>MprList *</type>
@@ -27,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5663" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5663" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="5463" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5463" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_code_gen_1441804457a106b30881a0ea6605e1847" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -40,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5664" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5664" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="5464" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5464" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_code_gen_130aca763eac354fa1cd70ce204f3bb05" prot="public" static="no" mutable="no">
         <type>MprList *</type>
@@ -53,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5662" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5662" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="5462" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5462" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_code_gen_1a82cd80366340c6a4d256e86b8a4a593" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -66,15 +105,18 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="5665" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5665" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="5467" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5467" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/hg/ejs/all/ejs.h" line="5660" bodyfile="/Users/mob/hg/ejs/all/ejs.h" bodystart="5660" bodyend="5666"/>
+    <location file="/Users/mob/git/ejs/all/ejs.h" line="5460" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5460" bodyend="5469"/>
     <listofallmembers>
+      <member refid="struct_ec_code_gen_1420ef8799a90ad9ee28c51bd921bb30a" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>blockCount</name></member>
+      <member refid="struct_ec_code_gen_19fc96c5a8b5ed6c5d97da3db24a36add" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>blockMark</name></member>
+      <member refid="struct_ec_code_gen_1db6a00cd7b07f441d4c8335f4b8821a4" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>breakMark</name></member>
       <member refid="struct_ec_code_gen_16fe9372eab4778c7abd091f17cf5dcfc" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>buf</name></member>
       <member refid="struct_ec_code_gen_1e8b8bc5fa1ffd4133c870abb31a2aa1f" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>exceptions</name></member>
       <member refid="struct_ec_code_gen_1441804457a106b30881a0ea6605e1847" prot="public" virt="non-virtual"><scope>EcCodeGen</scope><name>jumpKinds</name></member>

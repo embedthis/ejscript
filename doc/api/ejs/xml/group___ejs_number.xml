@@ -39,7 +39,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3543"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2906"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_number_1gae335f1dd005f157bc1ea3c936f91c72" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>double</type>
@@ -59,6 +59,13 @@
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
 <parametername>vp</parametername>
 </parameternamelist>
 <parameterdescription>
@@ -69,7 +76,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3935"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3305"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_number_1ge6b4ff8d014588ca4582ed211a67e11a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -89,6 +96,13 @@
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
 <parametername>vp</parametername>
 </parameternamelist>
 <parameterdescription>
@@ -99,7 +113,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3927"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3296"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_number_1g28517af3e15a4830ac4aef33c77ca443" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>MprNumber</type>
@@ -119,6 +133,13 @@
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
+<parametername>ejs</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Ejs reference returned from <ref refid="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" kindref="member">ejsCreate</ref> </para></parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
 <parametername>vp</parametername>
 </parameternamelist>
 <parameterdescription>
@@ -129,7 +150,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3919"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3287"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_number_1g359aca35bd4958b29d540500deea7621" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -155,7 +176,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3911"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="3278"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_number_1ge58a7214afe9bc9b439197ce04511214" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>struct EjsNumber *</type>
@@ -192,7 +213,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/hg/ejs/all/ejs.h" line="3552"/>
+        <location file="/Users/mob/git/ejs/all/ejs.h" line="2915"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
