@@ -1969,8 +1969,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -x\nmake -C $SRC && cp $TOP/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmkdir -p $BUILT_PRODUCTS_DIR/../lib\ncp $SRC/deps/appweb/ejsweb.conf $BUILT_PRODUCTS_DIR/../lib/ejsweb.conf\ncp $SRC/deps/appweb/start.es $BUILT_PRODUCTS_DIR/../lib/start.es\n\n";
-			showEnvVarsInLog = 0;
+			shellScript = "set -x\necho HERE\npwd\nmake -C $SRC TRACE=1 && cp $TOP/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmkdir -p $BUILT_PRODUCTS_DIR/../lib\ncp $SRC/deps/appweb/ejsweb.conf $BUILT_PRODUCTS_DIR/../lib/ejsweb.conf\ncp $SRC/deps/appweb/start.es $BUILT_PRODUCTS_DIR/../lib/start.es\n\n";
 		};
 		C99A33CD10C2F14000F6C7BC /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;

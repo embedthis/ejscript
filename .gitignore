@@ -64,3 +64,5 @@ src/test/web/index.ejs
 src/test/web/request.ejs
 src/test/web/request.es
 src/test/web/samples.es
+doc/api/ejs/xml
+doc/api/ejs/html
