@@ -345,7 +345,7 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
 
     for (i = 0; i < (int) fun->numArgs; ) {
         lname = ejsGetPropertyName(ejs, activation, i);
-        trait = ejsGetPropertyTrait(ejs, activation, i);
+        trait = ejsGetTrait(ejs, activation, i);
         if (trait->type) {
             mprFprintf(mp->file,  "%s: %s", lname.name, trait->type->qname.name);
         } else {
@@ -365,7 +365,7 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
      */
     for (i = 0; i < (int) fun->numArgs; i++) {
         lname = ejsGetPropertyName(ejs, activation, i);
-        trait = ejsGetPropertyTrait(ejs, activation, i);
+        trait = ejsGetTrait(ejs, activation, i);
         mprFprintf(mp->file,  "     ARG:   [arg-%02d]   %s %s", i, lname.space, lname.name);
         if (trait->type) {
             mprFprintf(mp->file,  " : %s", trait->type->qname.name);
@@ -376,7 +376,7 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
     numLocals = numSlots - fun->numArgs;
     for (i = 0; i < numLocals; i++) {
         lname = ejsGetPropertyName(ejs, activation, i + fun->numArgs);
-        trait = ejsGetPropertyTrait(ejs, activation, i + fun->numArgs);
+        trait = ejsGetTrait(ejs, activation, i + fun->numArgs);
         mprFprintf(mp->file,  "   LOCAL:   [local-%02d] var %s", i + fun->numArgs, lname.name);
         if (trait->type) {
             mprFprintf(mp->file,  " : %s", trait->type->qname.name);
@@ -820,7 +820,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
             List slots for global
          */
         for (i = module->firstGlobal; i < module->lastGlobal; i++) {
-            trait = ejsGetPropertyTrait(ejs, ejs->global, i);
+            trait = ejsGetTrait(ejs, ejs->global, i);
             qname = ejsGetPropertyName(ejs, ejs->global, i);
             if (qname.name == 0) {
                 continue;
@@ -839,7 +839,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
 
             count = ejsGetPropertyCount(ejs, (EjsObj*) fun);
             for (i = 0; i < count; i++) {
-                trait = ejsGetPropertyTrait(ejs, (EjsObj*) fun, i);
+                trait = ejsGetTrait(ejs, (EjsObj*) fun, i);
                 qname = ejsGetPropertyName(ejs, (EjsObj*) fun, i);
                 if (qname.name == 0) {
                     continue;
@@ -858,7 +858,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
                 "#\n", fun->name, count);
 
             for (i = 0; i < count; i++) {
-                trait = ejsGetPropertyTrait(ejs, obj, i);
+                trait = ejsGetTrait(ejs, obj, i);
                 mprAssert(trait);
                 qname = ejsGetPropertyName(ejs, obj, i);
                 lstVarSlot(mp, module, &qname, trait, i);
@@ -877,7 +877,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
 
         count = ejsGetPropertyCount(ejs, (EjsObj*) type);
         for (i = 0; i < count; i++) {
-            trait = ejsGetPropertyTrait(ejs, (EjsObj*) type, i);
+            trait = ejsGetTrait(ejs, (EjsObj*) type, i);
             mprAssert(trait);
             qname = ejsGetPropertyName(ejs, obj, i);
             lstVarSlot(mp, module, &qname, trait, i);
@@ -897,7 +897,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         if (prototype) {
             count = ejsGetPropertyCount(ejs, prototype);
             for (i = 0; i < count; i++) {
-                trait = ejsGetPropertyTrait(ejs, prototype, i);
+                trait = ejsGetTrait(ejs, prototype, i);
                 mprAssert(trait);
                 qname = ejsGetPropertyName(ejs, prototype, i);
                 if (qname.name) {
@@ -918,7 +918,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
             
             count = ejsGetPropertyCount(ejs, obj);
             for (i = 0; i < count; i++) {
-                trait = ejsGetPropertyTrait(ejs, obj, i);
+                trait = ejsGetTrait(ejs, obj, i);
                 mprAssert(trait);
                 qname = ejsGetPropertyName(ejs, obj, i);
                 lstVarSlot(mp, module, &qname, trait, i);
@@ -937,7 +937,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         count = ejsGetPropertyCount(ejs, obj);
     }
     for (; i < count; i++) {
-        trait = ejsGetPropertyTrait(ejs, obj, i);
+        trait = ejsGetTrait(ejs, obj, i);
         qname = ejsGetPropertyName(ejs, obj, i);
         vp = ejsGetProperty(ejs, obj, i);
         if (vp == 0) {

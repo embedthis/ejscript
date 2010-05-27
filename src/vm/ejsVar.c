@@ -18,22 +18,22 @@ static bool      parseBoolean(Ejs *ejs, cchar *s);
     Cast the variable to a given target type.
     @return Returns a variable with the result of the cast or null if an exception is thrown.
  */
-EjsObj *ejsCast(Ejs *ejs, EjsObj *vp, EjsType *type)
+EjsObj *ejsCast(Ejs *ejs, EjsObj *obj, EjsType *type)
 {
     mprAssert(ejs);
     mprAssert(type);
-    mprAssert(vp);
+    mprAssert(obj);
 
-    if (vp == 0) {
-        vp = ejs->undefinedValue;
+    if (obj == 0) {
+        obj = ejs->undefinedValue;
     }
-    if (vp->type == type) {
-        return vp;
+    if (obj->type == type) {
+        return obj;
     }
-    if (vp->type->helpers.cast) {
-        return (vp->type->helpers.cast)(ejs, vp, type);
+    if (obj->type->helpers.cast) {
+        return (obj->type->helpers.cast)(ejs, obj, type);
     }
-    ejsThrowInternalError(ejs, "Cast helper not defined for type \"%s\"", vp->type->qname.name);
+    ejsThrowInternalError(ejs, "Cast helper not defined for type \"%s\"", obj->type->qname.name);
     return 0;
 }
 
@@ -61,20 +61,20 @@ EjsObj *ejsCreate(Ejs *ejs, EjsType *type, int numSlots)
     See ejsDeepClone for a complete recursive copy of all reference contents.
     @return Returns a variable or null if an exception is thrown.
  */
-EjsObj *ejsClone(Ejs *ejs, EjsObj *vp, bool deep)
+EjsObj *ejsClone(Ejs *ejs, EjsObj *obj, bool deep)
 {
     EjsObj  *result;
     
-    if (vp == 0) {
+    if (obj == 0) {
         return 0;
     }
-    mprAssert(vp->type->helpers.clone);
-    if (vp->visited == 0) {
-        vp->visited = 1;
-        result = (vp->type->helpers.clone)(ejs, vp, deep);
-        vp->visited = 0;
+    mprAssert(obj->type->helpers.clone);
+    if (obj->visited == 0) {
+        obj->visited = 1;
+        result = (obj->type->helpers.clone)(ejs, obj, deep);
+        obj->visited = 0;
     } else {
-        result = vp;
+        result = obj;
     }
     return result;
 }
@@ -84,14 +84,14 @@ EjsObj *ejsClone(Ejs *ejs, EjsObj *vp, bool deep)
     Define a property and its traits.
     @return Return the slot number allocated for the property.
  */
-int ejsDefineProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *name, EjsType *propType, int64 attributes, EjsObj *value)
+int ejsDefineProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *name, EjsType *propType, int64 attributes, EjsObj *value)
 {
     mprAssert(name);
     mprAssert(name->name);
     mprAssert(name->space);
     
-    mprAssert(vp->type->helpers.defineProperty);
-    return (vp->type->helpers.defineProperty)(ejs, vp, slotNum, name, propType, attributes, value);
+    mprAssert(obj->type->helpers.defineProperty);
+    return (obj->type->helpers.defineProperty)(ejs, obj, slotNum, name, propType, attributes, value);
 }
 
 
@@ -99,15 +99,15 @@ int ejsDefineProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *name, EjsType 
     Delete a property in an object variable. The stack is unchanged.
     @return Returns a status code.
  */
-int ejsDeleteProperty(Ejs *ejs, EjsObj *vp, int slotNum)
+int ejsDeleteProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 {
     EjsType     *type;
 
     mprAssert(slotNum >= 0);
     
-    type = vp->type;
+    type = obj->type;
     mprAssert(type->helpers.deleteProperty);
-    return (type->helpers.deleteProperty)(ejs, vp, slotNum);
+    return (type->helpers.deleteProperty)(ejs, obj, slotNum);
 }
 
 
@@ -115,7 +115,7 @@ int ejsDeleteProperty(Ejs *ejs, EjsObj *vp, int slotNum)
     Delete a property in an object variable. The stack is unchanged.
     @return Returns a status code.
  */
-int ejsDeletePropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname)
+int ejsDeletePropertyByName(Ejs *ejs, EjsObj *obj, EjsName *qname)
 {
     EjsLookup   lookup;
     int         slotNum;
@@ -124,28 +124,28 @@ int ejsDeletePropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname)
     mprAssert(qname->name);
     mprAssert(qname->space);
     
-    if (vp->type->helpers.deletePropertyByName) {
-        return (vp->type->helpers.deletePropertyByName)(ejs, vp, qname);
+    if (obj->type->helpers.deletePropertyByName) {
+        return (obj->type->helpers.deletePropertyByName)(ejs, obj, qname);
     } else {
-        slotNum = ejsLookupVar(ejs, vp, qname, &lookup);
+        slotNum = ejsLookupVar(ejs, obj, qname, &lookup);
         if (slotNum < 0) {
             ejsThrowReferenceError(ejs, "Property \"%s\" does not exist", qname->name);
             return 0;
         }
-        return ejsDeleteProperty(ejs, vp, slotNum);
+        return ejsDeleteProperty(ejs, obj, slotNum);
     }
 }
 
 
-void ejsDestroy(Ejs *ejs, EjsObj *vp)
+void ejsDestroy(Ejs *ejs, EjsObj *obj)
 {
     EjsType     *type;
 
-    mprAssert(vp);
+    mprAssert(obj);
 
-    type = vp->type;
+    type = obj->type;
     mprAssert(type->helpers.destroy);
-    (type->helpers.destroy)(ejs, vp);
+    (type->helpers.destroy)(ejs, obj);
 }
 
 
@@ -153,43 +153,46 @@ void ejsDestroy(Ejs *ejs, EjsObj *vp)
     Get a property at a given slot in a variable.
     @return Returns the requested property varaible.
  */
-void *ejsGetProperty(Ejs *ejs, EjsObj *vp, int slotNum)
+void *ejsGetProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 {
     EjsType     *type;
 
     mprAssert(ejs);
-    mprAssert(vp);
+    mprAssert(obj);
     mprAssert(slotNum >= 0);
 
-    type = vp->type;
+    type = obj->type;
     mprAssert(type->helpers.getProperty);
-    return (type->helpers.getProperty)(ejs, vp, slotNum);
+    return (type->helpers.getProperty)(ejs, obj, slotNum);
 }
 
 
-void *ejsGetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *name)
+void *ejsGetPropertyByName(Ejs *ejs, void *vp, EjsName *name)
 {
+    EjsObj  *obj;
     int     slotNum;
 
     mprAssert(ejs);
     mprAssert(vp);
     mprAssert(name);
 
+    obj = (EjsObj*) vp;
+
     /*
         WARNING: this is not implemented by most types
      */
-    if (vp->type->helpers.getPropertyByName) {
-        return (vp->type->helpers.getPropertyByName)(ejs, vp, name);
+    if (obj->type->helpers.getPropertyByName) {
+        return (obj->type->helpers.getPropertyByName)(ejs, obj, name);
     }
 
     /*
      *  Fall back and use a two-step lookup and get
      */
-    slotNum = ejsLookupProperty(ejs, vp, name);
+    slotNum = ejsLookupProperty(ejs, obj, name);
     if (slotNum < 0) {
         return 0;
     }
-    return ejsGetProperty(ejs, vp, slotNum);
+    return ejsGetProperty(ejs, obj, slotNum);
 }
 
 
@@ -197,10 +200,10 @@ void *ejsGetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *name)
     Return the number of properties in the variable.
     @return Returns the number of properties.
  */
-int ejsGetPropertyCount(Ejs *ejs, EjsObj *vp)
+int ejsGetPropertyCount(Ejs *ejs, EjsObj *obj)
 {
-    mprAssert(vp->type->helpers.getPropertyCount);
-    return (vp->type->helpers.getPropertyCount)(ejs, vp);
+    mprAssert(obj->type->helpers.getPropertyCount);
+    return (obj->type->helpers.getPropertyCount)(ejs, obj);
 }
 
 
@@ -208,28 +211,33 @@ int ejsGetPropertyCount(Ejs *ejs, EjsObj *vp)
     Return the name of a property indexed by slotNum.
     @return Returns the property name.
  */
-EjsName ejsGetPropertyName(Ejs *ejs, EjsObj *vp, int slotNum)
+EjsName ejsGetPropertyName(Ejs *ejs, void *vp, int slotNum)
 {
     EjsType     *type;
+    EjsObj      *obj;
 
-    type = vp->type;
+    obj = (EjsObj*) vp;
+
+    type = obj->type;
     mprAssert(type->helpers.getPropertyName);
-    return (type->helpers.getPropertyName)(ejs, vp, slotNum);
+    return (type->helpers.getPropertyName)(ejs, obj, slotNum);
 }
 
 
+#if UNUSED
 /**
     Return the trait for the indexed by slotNum.
     @return Returns the property name.
  */
-EjsTrait *ejsGetPropertyTrait(Ejs *ejs, EjsObj *vp, int slotNum)
+EjsTrait *ejsGetPropertyTrait(Ejs *ejs, EjsObj *obj, int slotNum)
 {
     EjsType     *type;
 
-    type = vp->type;
+    type = obj->type;
     mprAssert(type->helpers.getPropertyTrait);
-    return (type->helpers.getPropertyTrait)(ejs, vp, slotNum);
+    return (type->helpers.getPropertyTrait)(ejs, obj, slotNum);
 }
+#endif
 
 
 /**
@@ -237,29 +245,29 @@ EjsTrait *ejsGetPropertyTrait(Ejs *ejs, EjsObj *vp, int slotNum)
     must be defined with the same namespace.
     @return Returns the slot number or -1 if it does not exist.
  */
-int ejsLookupProperty(Ejs *ejs, EjsObj *vp, EjsName *name)
+int ejsLookupProperty(Ejs *ejs, EjsObj *obj, EjsName *name)
 {
     mprAssert(ejs);
-    mprAssert(vp);
+    mprAssert(obj);
     mprAssert(name);
     mprAssert(name->name);
 
-    mprAssert(vp->type->helpers.lookupProperty);
-    return (vp->type->helpers.lookupProperty)(ejs, vp, name);
+    mprAssert(obj->type->helpers.lookupProperty);
+    return (obj->type->helpers.lookupProperty)(ejs, obj, name);
 }
 
 
 /*
     Invoke an operator.
-    vp is left-hand-side
+    obj is left-hand-side
     @return Return a variable with the result or null if an exception is thrown.
  */
-EjsObj *ejsInvokeOperator(Ejs *ejs, EjsObj *vp, int opCode, EjsObj *rhs)
+EjsObj *ejsInvokeOperator(Ejs *ejs, EjsObj *obj, int opCode, EjsObj *rhs)
 {
-    mprAssert(vp);
+    mprAssert(obj);
 
-    mprAssert(vp->type->helpers.invokeOperator);
-    return (vp->type->helpers.invokeOperator)(ejs, vp, opCode, rhs);
+    mprAssert(obj->type->helpers.invokeOperator);
+    return (obj->type->helpers.invokeOperator)(ejs, obj, opCode, rhs);
 }
 
 
@@ -271,15 +279,15 @@ EjsObj *ejsInvokeOperator(Ejs *ejs, EjsObj *vp, int opCode, EjsObj *rhs)
 /*
     Set a property and return the slot number. Incoming slot may be -1 to allocate a new slot.
  */
-int ejsSetProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsObj *value)
+int ejsSetProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *value)
 {
-    mprAssert(vp);
-    if (vp == 0) {
+    mprAssert(obj);
+    if (obj == 0) {
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
-    mprAssert(vp->type->helpers.setProperty);
-    return (vp->type->helpers.setProperty)(ejs, vp, slotNum, value);
+    mprAssert(obj->type->helpers.setProperty);
+    return (obj->type->helpers.setProperty)(ejs, obj, slotNum, value);
 }
 
 
@@ -288,79 +296,84 @@ int ejsSetProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsObj *value)
  */
 int ejsSetPropertyByName(Ejs *ejs, void *vp, EjsName *qname, void *value)
 {
+    EjsObj  *obj;
     int     slotNum;
 
     mprAssert(ejs);
     mprAssert(vp);
     mprAssert(qname);
 
+    obj = (EjsObj*) vp;
+
     /*
      *  WARNING: Not all types implement this
      */
-    if (((EjsObj*) vp)->type->helpers.setPropertyByName) {
-        return (((EjsObj*) vp)->type->helpers.setPropertyByName)(ejs, vp, qname, value);
+    if (obj->type->helpers.setPropertyByName) {
+        return (obj->type->helpers.setPropertyByName)(ejs, obj, qname, value);
     }
 
     /*
         Fall back and use a two-step lookup and get
      */
-    slotNum = ejsLookupProperty(ejs, vp, qname);
+    slotNum = ejsLookupProperty(ejs, obj, qname);
     if (slotNum < 0) {
-        slotNum = ejsSetProperty(ejs, vp, -1, value);
+        slotNum = ejsSetProperty(ejs, obj, -1, value);
         if (slotNum < 0) {
             return EJS_ERR;
         }
-        if (ejsSetPropertyName(ejs, vp, slotNum, qname) < 0) {
+        if (ejsSetPropertyName(ejs, obj, slotNum, qname) < 0) {
             return EJS_ERR;
         }
         return slotNum;
     }
-    return ejsSetProperty(ejs, vp, slotNum, value);
+    return ejsSetProperty(ejs, obj, slotNum, value);
 }
 
 
 /*
     Set the property name and return the slot number. Slot may be -1 to allocate a new slot.
  */
-int ejsSetPropertyName(Ejs *ejs, EjsObj *vp, int slot, EjsName *qname)
+int ejsSetPropertyName(Ejs *ejs, EjsObj *obj, int slot, EjsName *qname)
 {
-    mprAssert(vp->type->helpers.setPropertyName);
-    return (vp->type->helpers.setPropertyName)(ejs, vp, slot, qname);
+    mprAssert(obj->type->helpers.setPropertyName);
+    return (obj->type->helpers.setPropertyName)(ejs, obj, slot, qname);
 }
 
 
-int ejsSetPropertyTrait(Ejs *ejs, EjsObj *vp, int slot, EjsType *propType, int attributes)
+#if UNUSED
+int ejsSetPropertyTrait(Ejs *ejs, EjsObj *obj, int slot, EjsType *propType, int attributes)
 {
-    mprAssert(vp->type->helpers.setPropertyTrait);
-    return (vp->type->helpers.setPropertyTrait)(ejs, vp, slot, propType, attributes);
+    mprAssert(obj->type->helpers.setPropertyTrait);
+    return (obj->type->helpers.setPropertyTrait)(ejs, obj, slot, propType, attributes);
 }
+#endif
 
 
 /**
     Get a string representation of a variable.
     @return Returns a string variable or null if an exception is thrown.
  */
-EjsString *ejsToString(Ejs *ejs, EjsObj *vp)
+EjsString *ejsToString(Ejs *ejs, EjsObj *obj)
 {
-    return (EjsString*) ejsCast(ejs, vp, ejs->stringType);
+    return (EjsString*) ejsCast(ejs, obj, ejs->stringType);
 #if OLD
     EjsFunction     *fn;
 
-    if (vp == 0) {
+    if (obj == 0) {
         return ejsCreateString(ejs, "undefined");
-    } else if (ejsIsString(vp)) {
-        return (EjsString*) vp;
+    } else if (ejsIsString(obj)) {
+        return (EjsString*) obj;
     }
-    if (vp->type->block.obj.numSlots >= ES_Object_toString) {
-        fn = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) vp->type, ES_Object_toString);
+    if (obj->type->block.obj.numSlots >= ES_Object_toString) {
+        fn = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) obj->type, ES_Object_toString);
         if (ejsIsFunction(fn)) {
-            return (EjsString*) ejsRunFunction(ejs, fn, vp, 0, NULL);
+            return (EjsString*) ejsRunFunction(ejs, fn, obj, 0, NULL);
         }
     }
-    if (vp->type->helpers.cast) {
-        return (EjsString*) (vp->type->helpers.cast)(ejs, vp, ejs->stringType);
+    if (obj->type->helpers.cast) {
+        return (EjsString*) (obj->type->helpers.cast)(ejs, obj, ejs->stringType);
     }
-    ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%s\"", vp->type->qname.name);
+    ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%s\"", obj->type->qname.name);
     return 0;
 #endif
 }
@@ -370,15 +383,15 @@ EjsString *ejsToString(Ejs *ejs, EjsObj *vp)
     Get a numeric representation of a variable.
     @return Returns a number variable or null if an exception is thrown.
  */
-EjsNumber *ejsToNumber(Ejs *ejs, EjsObj *vp)
+EjsNumber *ejsToNumber(Ejs *ejs, EjsObj *obj)
 {
-    if (vp == 0 || ejsIsNumber(vp)) {
-        return (EjsNumber*) vp;
+    if (obj == 0 || ejsIsNumber(obj)) {
+        return (EjsNumber*) obj;
     }
-    if (vp->type->helpers.cast) {
-        return (EjsNumber*) (vp->type->helpers.cast)(ejs, vp, ejs->numberType);
+    if (obj->type->helpers.cast) {
+        return (EjsNumber*) (obj->type->helpers.cast)(ejs, obj, ejs->numberType);
     }
-    ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%s\"", vp->type->qname.name);
+    ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%s\"", obj->type->qname.name);
     return 0;
 }
 
@@ -387,15 +400,15 @@ EjsNumber *ejsToNumber(Ejs *ejs, EjsObj *vp)
     Get a boolean representation of a variable.
     @return Returns a number variable or null if an exception is thrown.
  */
-EjsBoolean *ejsToBoolean(Ejs *ejs, EjsObj *vp)
+EjsBoolean *ejsToBoolean(Ejs *ejs, EjsObj *obj)
 {
-    if (vp == 0 || ejsIsBoolean(vp)) {
-        return (EjsBoolean*) vp;
+    if (obj == 0 || ejsIsBoolean(obj)) {
+        return (EjsBoolean*) obj;
     }
-    if (vp->type->helpers.cast) {
-        return (EjsBoolean*) (vp->type->helpers.cast)(ejs, vp, ejs->booleanType);
+    if (obj->type->helpers.cast) {
+        return (EjsBoolean*) (obj->type->helpers.cast)(ejs, obj, ejs->booleanType);
     }
-    ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%s\"", vp->type->qname.name);
+    ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%s\"", obj->type->qname.name);
     return 0;
 }
 
@@ -404,7 +417,7 @@ EjsBoolean *ejsToBoolean(Ejs *ejs, EjsObj *vp)
     Get a serialized string representation of a variable using JSON encoding.
     @return Returns a string variable or null if an exception is thrown.
  */
-EjsString *ejsToJSON(Ejs *ejs, EjsObj *vp, EjsObj *options)
+EjsString *ejsToJSON(Ejs *ejs, EjsObj *obj, EjsObj *options)
 {
     EjsFunction     *fn;
     EjsString       *result;
@@ -412,17 +425,17 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *vp, EjsObj *options)
     EjsName         qname;
     int             argc;
 
-    if (vp == 0) {
+    if (obj == 0) {
         return ejsCreateString(ejs, "undefined");
     }
 #if UNUSED
-    if (vp->jsonVisited) {
+    if (obj->jsonVisited) {
         return ejsCreateString(ejs, "this");
     }    
-    vp->jsonVisited = 1;
+    obj->jsonVisited = 1;
 #endif
     
-    fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) vp->type->prototype, ejsName(&qname, NULL, "toJSON"));
+    fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) obj->type->prototype, ejsName(&qname, NULL, "toJSON"));
     if (fn == 0) {
         fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) ejs->objectType->prototype, &qname);        
     }
@@ -434,12 +447,12 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *vp, EjsObj *options)
             argc = 0;
             argv[0] = NULL;
         }
-        result = (EjsString*) ejsRunFunction(ejs, fn, vp, argc, argv);
+        result = (EjsString*) ejsRunFunction(ejs, fn, obj, argc, argv);
     } else {
-        result = ejsToString(ejs, vp);
+        result = ejsToString(ejs, obj);
     }
 #if UNUSED
-    vp->jsonVisited = 0;
+    obj->jsonVisited = 0;
 #endif
     return result;
 }
@@ -702,68 +715,68 @@ static MprNumber parseNumber(Ejs *ejs, cchar *str)
 }
 
 
-MprNumber _ejsGetNumber(Ejs *ejs, EjsObj *vp)
+MprNumber _ejsGetNumber(Ejs *ejs, EjsObj *obj)
 {
-    mprAssert(vp);
-    if (!ejsIsNumber(vp)) {
-        if ((vp = ejsCast(ejs, vp, ejs->numberType)) == 0) {
+    mprAssert(obj);
+    if (!ejsIsNumber(obj)) {
+        if ((obj = ejsCast(ejs, obj, ejs->numberType)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIsNumber(vp));
-    return (vp) ? ((EjsNumber*) (vp))->value: 0;
+    mprAssert(ejsIsNumber(obj));
+    return (obj) ? ((EjsNumber*) (obj))->value: 0;
 }
 
 
-int _ejsGetBoolean(Ejs *ejs, EjsObj *vp)
+int _ejsGetBoolean(Ejs *ejs, EjsObj *obj)
 {
-    mprAssert(vp);
-    if (!ejsIsBoolean(vp)) {
-        if ((vp = ejsCast(ejs, vp, ejs->booleanType)) == 0) {
+    mprAssert(obj);
+    if (!ejsIsBoolean(obj)) {
+        if ((obj = ejsCast(ejs, obj, ejs->booleanType)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIsBoolean(vp));
-    return (vp) ? ((EjsBoolean*) (vp))->value: 0;
+    mprAssert(ejsIsBoolean(obj));
+    return (obj) ? ((EjsBoolean*) (obj))->value: 0;
 }
 
 
-int _ejsGetInt(Ejs *ejs, EjsObj *vp)
+int _ejsGetInt(Ejs *ejs, EjsObj *obj)
 {
-    mprAssert(vp);
-    if (!ejsIsNumber(vp)) {
-        if ((vp = ejsCast(ejs, vp, ejs->numberType)) == 0) {
+    mprAssert(obj);
+    if (!ejsIsNumber(obj)) {
+        if ((obj = ejsCast(ejs, obj, ejs->numberType)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIsNumber(vp));
-    return (vp) ? ((int) (((EjsNumber*) (vp))->value)): 0;
+    mprAssert(ejsIsNumber(obj));
+    return (obj) ? ((int) (((EjsNumber*) (obj))->value)): 0;
 }
 
 
-double _ejsGetDouble(Ejs *ejs, EjsObj *vp)
+double _ejsGetDouble(Ejs *ejs, EjsObj *obj)
 {
-    mprAssert(vp);
-    if (!ejsIsNumber(vp)) {
-        if ((vp = ejsCast(ejs, vp, ejs->numberType)) == 0) {
+    mprAssert(obj);
+    if (!ejsIsNumber(obj)) {
+        if ((obj = ejsCast(ejs, obj, ejs->numberType)) == 0) {
             return 0;
         }
     }
-    mprAssert(ejsIsNumber(vp));
-    return (vp) ? ((double) (((EjsNumber*) (vp))->value)): 0;
+    mprAssert(ejsIsNumber(obj));
+    return (obj) ? ((double) (((EjsNumber*) (obj))->value)): 0;
 }
 
 
-cchar *_ejsGetString(Ejs *ejs, EjsObj *vp)
+cchar *_ejsGetString(Ejs *ejs, EjsObj *obj)
 {
-    mprAssert(vp);
-    if (!ejsIsString(vp)) {
-        if ((vp = ejsCast(ejs, vp, ejs->stringType)) == 0) {
+    mprAssert(obj);
+    if (!ejsIsString(obj)) {
+        if ((obj = ejsCast(ejs, obj, ejs->stringType)) == 0) {
             return "";
         }
     }
-    mprAssert(ejsIs(vp, ES_String));
-    return (vp) ? (((EjsString*) vp)->value): "";
+    mprAssert(ejsIs(obj, ES_String));
+    return (obj) ? (((EjsString*) obj)->value): "";
 }
 
 

@@ -247,7 +247,7 @@ static int createSection(EcCompiler *cp, EjsObj *block, int slotNum)
     ejs = cp->ejs;
     vp = ejsGetProperty(ejs, (EjsObj*) block, slotNum);
     qname = ejsGetPropertyName(ejs, block, slotNum);
-    trait = ejsGetPropertyTrait(ejs, block, slotNum);
+    trait = ejsGetTrait(ejs, block, slotNum);
 
     /*
         hoistBlockVar will delete hoisted properties but will not (yet) compact to reclaim the slot.
@@ -294,7 +294,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     ejs = cp->ejs;
     mp = cp->state->currentModule;
 
-    trait = ejsGetPropertyTrait(ejs, ejs->global, slotNum);
+    trait = ejsGetTrait(ejs, ejs->global, slotNum);
     createDocSection(cp, ejs->global, slotNum, trait);
     qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
     mprAssert(qname.name);
@@ -380,7 +380,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
         count = ejsGetPropertyCount(ejs, prototype);
         for (slotNum = 0; slotNum < count; slotNum++) {
             pname = ejsGetPropertyName(ejs, prototype, slotNum);
-            trait = ejsGetPropertyTrait(ejs, prototype, slotNum);
+            trait = ejsGetTrait(ejs, prototype, slotNum);
             if (slotNum < type->numInherited) {
                 if (trait && !(trait->attributes & EJS_FUN_OVERRIDE)) {
                     continue;
@@ -427,7 +427,7 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
     mprAssert(code);
 
     if (block && slotNum >= 0) {
-        trait = ejsGetPropertyTrait(ejs, block, slotNum);
+        trait = ejsGetTrait(ejs, block, slotNum);
         createDocSection(cp, block, slotNum, trait);
         qname = ejsGetPropertyName(ejs, block, slotNum);
         attributes = trait->attributes;
@@ -589,7 +589,7 @@ static int createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
     ejs = cp->ejs;
     mp = cp->state->currentModule;
 
-    trait = ejsGetPropertyTrait(ejs, block, slotNum);
+    trait = ejsGetTrait(ejs, block, slotNum);
     qname = ejsGetPropertyName(ejs, block, slotNum);
     
     mprAssert(qname.name[0] != '\0');
@@ -728,7 +728,7 @@ void ecAddConstants(EcCompiler *cp, EjsObj *block)
     for (i = 0; i < numTraits; i++) {
         qname = ejsGetPropertyName(ejs, block, i);
         ecAddNameConstant(cp, &qname);
-        trait = ejsGetPropertyTrait(ejs, block, i);
+        trait = ejsGetTrait(ejs, block, i);
         if (trait && trait->type) {
             ecAddNameConstant(cp, &trait->type->qname);
         }
@@ -758,7 +758,7 @@ int ecAddDocConstant(EcCompiler *cp, EjsTrait *trait, EjsObj *block, int slotNum
     mprAssert(slotNum >= 0);
 
     if (trait == 0 && slotNum >= 0) {
-        trait = ejsGetPropertyTrait(cp->ejs, block, slotNum);
+        trait = ejsGetTrait(ejs, block, slotNum);
     }
     if (trait) {
         if (ejs->doc == 0) {

@@ -1252,7 +1252,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Can't find function \"%s\"", qname.name);
             } else {
-                EjsTrait *trait = ejsGetTrait(lookup.obj, slotNum);
+                EjsTrait *trait = ejsGetTrait(ejs, lookup.obj, slotNum);
                 if (trait && trait->attributes & EJS_PROP_STATIC) {
                     vp = lookup.obj;
                 }
@@ -2352,7 +2352,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, int slot
         ejsThrowTypeError(ejs, "Object is not extendable");
         return;
     }
-    trait = ejsGetTrait(obj, slotNum);
+    trait = ejsGetTrait(ejs, obj, slotNum);
     if (trait) {
         if (trait->attributes & EJS_TRAIT_SETTER) {
             pushOutside(ejs, value);
@@ -2420,7 +2420,7 @@ static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, EjsName *qname
     }
     if ((slotNum = ejsLookupVar(ejs, obj, qname, &lookup)) >= 0) {
         if (lookup.obj != obj) {
-            trait = ejsGetTrait(lookup.obj, slotNum);
+            trait = ejsGetTrait(ejs, lookup.obj, slotNum);
             if (trait->attributes & EJS_TRAIT_SETTER) {
                 obj = lookup.obj;
                 
@@ -2481,7 +2481,7 @@ static void storePropertyToScope(Ejs *ejs, EjsName *qname, EjsObj *value, bool d
     if ((slotNum = ejsLookupScope(ejs, qname, &lookup)) >= 0) {
         if (lookup.obj->isPrototype) {
             thisObj = obj = (EjsObj*) fp->function.thisObj;
-            trait = ejsGetTrait(lookup.obj, slotNum);
+            trait = ejsGetTrait(ejs, lookup.obj, slotNum);
             if (trait->attributes & EJS_TRAIT_SETTER) {
                 obj = lookup.obj;
 
@@ -2725,7 +2725,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
      */
     limit = min((uint) argc, fun->numArgs);
     for (i = 0; i < limit; i++) {
-        if ((trait = ejsGetTrait(activation, i)) == 0 || trait->type == 0) {
+        if ((trait = ejsGetTrait(ejs, activation, i)) == 0 || trait->type == 0) {
             /* No trait - all to pass */
             continue;
         }
@@ -2810,9 +2810,9 @@ static void callInterfaceInitializers(Ejs *ejs, EjsType *type)
 
     for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
         if (iface->hasInitializer) {
-            qname = ejsGetPropertyName(ejs, (EjsObj*) iface, 0);
+            qname = ejsGetPropertyName(ejs, iface, 0);
             //  TODO OPT. Could run all 
-            fun = ejsGetPropertyByName(ejs, (EjsObj*) type, &qname);
+            fun = ejsGetPropertyByName(ejs, type, &qname);
             if (fun && ejsIsFunction(fun)) {
                 callFunction(ejs, fun, (EjsObj*) type, 0, 0);
             }
@@ -3394,7 +3394,7 @@ static void callProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *thisObj, in
 
     //  MOB -- rethink this.
     fun = ejsGetProperty(ejs, obj, slotNum);
-    trait = ejsGetTrait(obj, slotNum);
+    trait = ejsGetTrait(ejs, obj, slotNum);
     if (trait && trait->attributes & EJS_TRAIT_GETTER) {
         fun = (EjsFunction*) ejsRunFunction(ejs, fun, thisObj, 0, NULL);
         if (ejs->exception) {

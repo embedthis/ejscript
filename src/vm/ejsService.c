@@ -363,9 +363,9 @@ static int cloneMaster(Ejs *ejs, Ejs *master)
             }
             qname = ejsGetPropertyName(master, master->global, i);
             ejsSetPropertyName(ejs, ejs->global, i, &qname);
-            trait = ejsGetTrait(master->global, i);
+            trait = ejsGetTrait(ejs, master->global, i);
             if (trait) {
-                ejsSetPropertyTrait(ejs, ejs->global, i, trait->type, trait->attributes);
+                ejsSetTraitDetails(ejs, ejs->global, i, trait->type, trait->attributes);
             }
         }
     }
@@ -756,7 +756,7 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
                 continue;
             }
 
-            qname = ejsGetPropertyName(ejs, (EjsObj*) type, methodSlot);
+            qname = ejsGetPropertyName(ejs, type, methodSlot);
             if (qname.name && strcmp(qname.name, methodName) == 0) {
                 *typeReturn = type;
             }

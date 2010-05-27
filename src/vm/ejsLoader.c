@@ -1117,7 +1117,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
 
         case EJS_FIXUP_TYPE_PROPERTY:
             mprAssert(fixup->target);
-            trait = ejsGetPropertyTrait(ejs, fixup->target, fixup->slotNum);
+            trait = ejsGetTrait(ejs, fixup->target, fixup->slotNum);
             mprAssert(trait);
             if (trait) {
                 trait->type = type;
@@ -1128,7 +1128,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
             mprAssert(fixup->target);
             mprAssert(ejsIsBlock(fixup->target));
             mprAssert(fixup->target->isPrototype);
-            trait = ejsGetPropertyTrait(ejs, fixup->target, fixup->slotNum);
+            trait = ejsGetTrait(ejs, fixup->target, fixup->slotNum);
             mprAssert(trait);
             if (trait) {
                 trait->type = type;
@@ -1137,7 +1137,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
 
         case EJS_FIXUP_LOCAL:
             mprAssert(fixup->target);
-            trait = ejsGetPropertyTrait(ejs, fixup->target, fixup->slotNum);
+            trait = ejsGetTrait(ejs, fixup->target, fixup->slotNum);
             mprAssert(trait);
             if (trait) {
                 trait->type = type;

@@ -821,7 +821,7 @@ extern int ejsGetPropertyCount(Ejs *ejs, EjsObj *vp);
     @return The qualified property name including namespace and name. Caller must not free.
     @ingroup EjsObj
  */
-extern EjsName ejsGetPropertyName(Ejs *ejs, EjsObj *vp, int slotNum);
+extern EjsName ejsGetPropertyName(Ejs *ejs, void *vp, int slotNum);
 
 /** 
     Get a property by name
@@ -832,7 +832,7 @@ extern EjsName ejsGetPropertyName(Ejs *ejs, EjsObj *vp, int slotNum);
     @return The variable property stored at the nominated slot.
     @ingroup EjsObj
  */
-extern void *ejsGetPropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname);
+extern void *ejsGetPropertyByName(Ejs *ejs, void *vp, EjsName *qname);
 
 /** 
     Get a property's traits
@@ -970,7 +970,8 @@ extern void ejsClearObjHash(EjsObj *obj);
 extern int ejsGetOwnTraits(Ejs *ejs, EjsObj *obj, int sizeTraits);
 extern void ejsSetTraitType(struct EjsTrait *trait, struct EjsType *type);
 extern void ejsSetTraitAttributes(struct EjsTrait *trait, int attributes);
-extern EjsTrait *ejsGetTrait(EjsObj *obj, int slotNum);
+extern EjsTrait *ejsGetTrait(Ejs *ejs, void *obj, int slotNum);
+extern int ejsSetTraitDetails(Ejs *ejs, void *vp, int slotNum, struct EjsType *type, int attributes);
 extern int ejsHasTrait(EjsObj *obj, int slotNum, int attributes);
 extern int ejsGetTraitAttributes(EjsObj *obj, int slotNum);
 extern struct EjsType *ejsGetTraitType(EjsObj *obj, int slotNum);
@@ -2564,14 +2565,18 @@ typedef struct EjsTypeHelpers {
     EjsObj  *(*getPropertyByName)(Ejs *ejs, EjsObj *vp, EjsName *qname);
     int     (*getPropertyCount)(Ejs *ejs, EjsObj *vp);
     EjsName (*getPropertyName)(Ejs *ejs, EjsObj *vp, int slotNum);
+#if UNUSED
     struct EjsTrait *(*getPropertyTrait)(Ejs *ejs, EjsObj *vp, int slotNum);
+#endif
     EjsObj  *(*invokeOperator)(Ejs *ejs, EjsObj *vp, int opCode, EjsObj *rhs);
     int     (*lookupProperty)(Ejs *ejs, EjsObj *vp, EjsName *qname);
     void    (*mark)(Ejs *ejs, EjsObj *vp);
     int     (*setProperty)(Ejs *ejs, EjsObj *vp, int slotNum, EjsObj *value);
     int     (*setPropertyByName)(Ejs *ejs, EjsObj *vp, EjsName *qname, EjsObj *value);
     int     (*setPropertyName)(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *qname);
+#if UNUSED
     int     (*setPropertyTrait)(Ejs *ejs, EjsObj *vp, int slotNum, struct EjsType *propType, int attributes);
+#endif
 } EjsTypeHelpers;
 
 
@@ -2593,9 +2598,8 @@ typedef void    (*EjsMarkHelper)(Ejs *ejs, EjsObj *vp);
 typedef int     (*EjsSetPropertyByNameHelper)(Ejs *ejs, EjsObj *vp, EjsName *qname, EjsObj *value);
 typedef int     (*EjsSetPropertyHelper)(Ejs *ejs, EjsObj *vp, int slotNum, EjsObj *value);
 typedef int     (*EjsSetPropertyNameHelper)(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *qname);
+#if UNUSED
 typedef int     (*EjsSetPropertyTraitHelper)(Ejs *ejs, EjsObj *vp, int slotNum, struct EjsType *propType, int attributes);
-
-#if !DOXYGEN
 typedef struct EjsTrait *(*EjsGetPropertyTraitHelper)(Ejs *ejs, EjsObj *vp, int slotNum);
 #endif
 

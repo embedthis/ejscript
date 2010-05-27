@@ -2152,7 +2152,7 @@ static void genFunction(EcCompiler *cp, EcNode *np)
     for (i = 0; i < numSlots; i++) {
         qname = ejsGetPropertyName(ejs, activation, i);
         ecAddNameConstant(cp, &qname);
-        trait = ejsGetPropertyTrait(ejs, activation, i);
+        trait = ejsGetTrait(ejs, activation, i);
         if (trait && trait->type) {
             ecAddNameConstant(cp, &trait->type->qname);
         }
@@ -2160,7 +2160,7 @@ static void genFunction(EcCompiler *cp, EcNode *np)
     for (i = 0; i < fun->block.obj.numSlots; i++) {
         qname = ejsGetPropertyName(ejs, (EjsObj*) fun, i);
         ecAddNameConstant(cp, &qname);
-        trait = ejsGetPropertyTrait(ejs, (EjsObj*) fun, i);
+        trait = ejsGetTrait(ejs, fun, i);
         if (trait && trait->type) {
             ecAddNameConstant(cp, &trait->type->qname);
         }

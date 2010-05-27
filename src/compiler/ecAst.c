@@ -1012,7 +1012,7 @@ static int defineParameters(EcCompiler *cp, EcNode *np)
          */
         nameNode->lookup.slotNum = slotNum;
         nameNode->lookup.obj = (EjsObj*) fun;
-        nameNode->lookup.trait = ejsGetPropertyTrait(ejs, (EjsObj*) fun->activation, slotNum);
+        nameNode->lookup.trait = ejsGetTrait(ejs, fun->activation, slotNum);
         mprAssert(nameNode->lookup.trait);
         slotNum++;
     }
@@ -1047,7 +1047,7 @@ static void bindParameters(EcCompiler *cp, EcNode *np)
     if (parameters) {
         while ((child = getNextAstNode(cp, parameters, &next))) {
             mprAssert(child->kind == N_VAR_DEFINITION);
-            trait = ejsGetPropertyTrait(ejs, (EjsObj*) fun->activation, next - 1);
+            trait = ejsGetTrait(ejs, fun->activation, next - 1);
             attributes = trait->attributes;
             
             varNode = 0;
@@ -2709,7 +2709,7 @@ static void bindVariableDefinition(EcCompiler *cp, EcNode *np)
                 /*
                     Allow variable redefinitions providing they are compatible
                  */
-                trait = ejsGetPropertyTrait(ejs, np->lookup.obj, np->lookup.slotNum);
+                trait = ejsGetTrait(ejs, np->lookup.obj, np->lookup.slotNum);
                 if (!typeIsCompatible(cp, trait->type, (EjsType*) typeNode->lookup.ref)) {
                     astError(cp, np, "Redefinition of \"%s\" is not compatible with prior definition", np->qname.name);
                     LEAVE(cp);
@@ -3472,7 +3472,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
      */
     prototype = type->prototype;
     for (slotNum = type->numInherited; slotNum < prototype->numSlots; slotNum++) {
-        trait = ejsGetPropertyTrait(ejs, prototype, slotNum);
+        trait = ejsGetTrait(ejs, prototype, slotNum);
         if (trait == 0) {
             continue;
         }
@@ -3491,7 +3491,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
                     type->qname.name);
             } else {
                 ejsSetProperty(ejs, prototype, cp->lookup.slotNum, (EjsObj*) fun);
-                trait = ejsGetTrait(prototype, cp->lookup.slotNum);
+                trait = ejsGetTrait(ejs, prototype, cp->lookup.slotNum);
                 ejsSetTraitAttributes(trait, attributes);
             }
         }

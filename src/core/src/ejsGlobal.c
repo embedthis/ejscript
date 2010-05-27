@@ -429,7 +429,7 @@ void ejsFreezeGlobal(Ejs *ejs)
     int         i;
 
     for (i = 0; i < ES_global_NUM_CLASS_PROP; i++) {
-        if ((trait = ejsGetTrait(ejs->global, i)) != 0) {
+        if ((trait = ejsGetTrait(ejs, ejs->global, i)) != 0) {
             trait->attributes |= EJS_TRAIT_READONLY | EJS_TRAIT_FIXED;
         }
     }

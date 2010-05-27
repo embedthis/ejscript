@@ -214,7 +214,7 @@ done:
         lookup->ref = ejsGetProperty(ejs, obj, slotNum);
         lookup->obj = obj;
         lookup->slotNum = slotNum;
-        lookup->trait = ejsGetTrait(lookup->obj, lookup->slotNum);
+        lookup->trait = ejsGetTrait(ejs, lookup->obj, lookup->slotNum);
     }
     return slotNum;
 }

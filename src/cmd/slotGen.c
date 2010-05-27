@@ -234,7 +234,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
                 mprFprintf(file, "\n\n/*\n    Class property slots for the \"%s\" type \n */\n", typeName);
             }
             for (slotNum = firstClassSlot; slotNum < lastClassSlot; slotNum++) {
-                trait = ejsGetPropertyTrait(ejs, (EjsObj*) type, slotNum);
+                trait = ejsGetTrait(ejs, (EjsObj*) type, slotNum);
                 qname = ejsGetPropertyName(ejs, (EjsObj*) type, slotNum);
                 if (qname.name == 0) {
                     continue;
@@ -254,7 +254,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         count = ejsGetPropertyCount(ejs, prototype);
         offset = 0;
         for (slotNum = offset; slotNum < count; slotNum++) {
-            trait = ejsGetPropertyTrait(ejs, prototype, slotNum);
+            trait = ejsGetTrait(ejs, prototype, slotNum);
             qname = ejsGetPropertyName(ejs, prototype, slotNum);
             if (qname.name == 0) {
                 continue;
@@ -277,7 +277,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
      */
     methodHeader = 0;
     for (slotNum = firstClassSlot; slotNum < lastClassSlot; slotNum++) {
-        trait = ejsGetPropertyTrait(ejs, (EjsObj*) type, slotNum);
+        trait = ejsGetTrait(ejs, (EjsObj*) type, slotNum);
         qname = ejsGetPropertyName(ejs, (EjsObj*) type, slotNum);
         if (trait == 0 || qname.name == 0) {
             continue;
@@ -307,12 +307,12 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
             Output the arg names and local variable names.
          */
         for (i = 0; i < (int) fun->numArgs; i++) {
-            lp = ejsGetPropertyTrait(ejs, activation, i);
+            lp = ejsGetTrait(ejs, activation, i);
             lqname = ejsGetPropertyName(ejs, activation, i);
             defineSlot(bp, file, mp, type, activation, i, &qname, &lqname);
         }
         for (; i < fun->block.obj.numSlots; i++) {
-            lp = ejsGetPropertyTrait(ejs, activation, i);
+            lp = ejsGetTrait(ejs, activation, i);
             lqname = ejsGetPropertyName(ejs, activation, i);
             defineSlot(bp, file, mp, type, activation, i, &qname, &lqname);
         }
@@ -322,7 +322,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         Now process nested types.
      */
     for (slotNum = firstClassSlot; slotNum < lastClassSlot; slotNum++) {
-        trait = ejsGetPropertyTrait(ejs, (EjsObj*) type, slotNum);
+        trait = ejsGetTrait(ejs, (EjsObj*) type, slotNum);
         qname = ejsGetPropertyName(ejs, (EjsObj*) type, slotNum);
 
         if (qname.name == 0) {

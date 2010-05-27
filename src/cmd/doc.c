@@ -296,7 +296,7 @@ static void generateNamespaceList(EjsMod *mp)
 
     count = ejsGetPropertyCount(ejs, ejs->global);
     for (slotNum = 0; slotNum < count; slotNum++) {
-        trait = ejsGetTrait(ejs->global, slotNum);
+        trait = ejsGetTrait(ejs, ejs->global, slotNum);
         if (trait == 0) {
             continue;
         }
@@ -454,7 +454,7 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
 
     count = ejsGetPropertyCount(ejs, ejs->global);
     for (slotNum = 0; slotNum < count; slotNum++) {
-        trait = ejsGetTrait(ejs->global, slotNum);
+        trait = ejsGetTrait(ejs, ejs->global, slotNum);
         if (trait == 0) {
             continue;
         }
@@ -723,7 +723,7 @@ static void generateClassPages(EjsMod *mp)
         if (mp->path == 0) {
             return;
         }
-        trait = ejsGetTrait(ejs->global, slotNum);
+        trait = ejsGetTrait(ejs, ejs->global, slotNum);
         doc = getDoc(ejs, ejs->globalBlock, slotNum);
         if (doc && !doc->hide) {
             generateClassPage(mp, type, &qname, trait, doc);
@@ -811,7 +811,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName *qname, EjsTrait *ty
         Loop over all the static properties
      */
     for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
-        trait = ejsGetTrait(obj, slotNum);
+        trait = ejsGetTrait(ejs, obj, slotNum);
         if (trait == 0) {
             continue;
         }
@@ -841,7 +841,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName *qname, EjsTrait *ty
             numInherited = type->numInherited;
             if (ejsGetPropertyCount(ejs, prototype) > 0) {
                 for (slotNum = numInherited; slotNum < prototype->numSlots; slotNum++) {
-                    trait = ejsGetTrait(prototype, slotNum);
+                    trait = ejsGetTrait(ejs, prototype, slotNum);
                     if (trait == 0) {
                         continue;
                     }
@@ -947,7 +947,7 @@ static int getPropertyCount(Ejs *ejs, EjsType *type)
     for (slotNum = 0; slotNum < limit; slotNum++) {
         vp = ejsGetProperty(ejs, (EjsObj*) type, slotNum);
         if (vp) {
-            trait = ejsGetTrait((EjsObj*) type, slotNum);
+            trait = ejsGetTrait(ejs, type, slotNum);
             if (trait && trait->attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER)) {
                 count++;
             } else if (!ejsIsFunction(vp)) {
@@ -1031,7 +1031,7 @@ static MprList *buildPropertyList(EjsMod *mp, EjsObj *obj, int numInherited)
     }
     for (slotNum = start; slotNum < obj->numSlots; slotNum++) {
         vp = ejsGetProperty(ejs, obj, slotNum);
-        trait = ejsGetTrait(obj, slotNum);
+        trait = ejsGetTrait(ejs, obj, slotNum);
         if (trait) {
             doc = getDoc(ejs, obj, slotNum);
             if (doc && doc->hide) {
@@ -1086,7 +1086,7 @@ static MprList *buildGetterList(EjsMod *mp, EjsObj *obj, int numInherited)
         if (!ejsIsFunction(vp)) {
             continue;
         }
-        trait = ejsGetTrait(obj, slotNum);
+        trait = ejsGetTrait(ejs, obj, slotNum);
         if (trait) {
             if (!(trait->attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER))) {
                 continue;
@@ -1269,7 +1269,7 @@ static MprList *buildMethodList(EjsMod *mp, EjsType *type)
     count = 0;
     for (count = 0; slotNum < obj->numSlots; slotNum++) {
         vp = ejsGetProperty(ejs, obj, slotNum);
-        trait = ejsGetTrait(obj, slotNum);
+        trait = ejsGetTrait(ejs, obj, slotNum);
 
         fun = (EjsFunction*) vp;
         if (trait->attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER)) {
@@ -1362,7 +1362,7 @@ static int generateClassMethodTable(EjsMod *mp, EjsType *type)
 
         for (i = 0; i < (int) fun->numArgs; ) {
             argName = ejsGetPropertyName(ejs, (EjsObj*) fun, i);
-            argTrait = ejsGetPropertyTrait(ejs, (EjsObj*) fun, i);
+            argTrait = ejsGetTrait(ejs, fun, i);
             if (argTrait->type) {
                 out(mp, "%s: %s", fmtDeclaration(argName), fmtTypeReference(argTrait->type->qname));
             } else {
@@ -1519,7 +1519,7 @@ static void generateClassMethod(EjsMod *mp, EjsBlock *block, int slotNum)
     mprAssert(ejsIsFunction(fun));
 
     qname = ejsGetPropertyName(ejs, obj, slotNum);
-    trait = ejsGetTrait(obj, slotNum);
+    trait = ejsGetTrait(ejs, obj, slotNum);
     
     doc = getDoc(ejs, obj, slotNum);
     if (doc && doc->hide) {
@@ -1553,7 +1553,7 @@ static void generateClassMethod(EjsMod *mp, EjsBlock *block, int slotNum)
 
     for (i = 0; i < (int) fun->numArgs;) {
         argName = ejsGetPropertyName(ejs, (EjsObj*) fun, i);
-        argTrait = ejsGetPropertyTrait(ejs, (EjsObj*) fun, i);
+        argTrait = ejsGetTrait(ejs, (EjsObj*) fun, i);
         if (argTrait->type) {
             out(mp, "%s: %s", fmtDeclaration(argName), fmtTypeReference(argTrait->type->qname));
         } else {
@@ -1596,7 +1596,7 @@ static void generateClassMethod(EjsMod *mp, EjsBlock *block, int slotNum)
                         qname.name, (type) ? type->qname.name : "global");
                 } else {
                     argName = ejsGetPropertyName(ejs, (EjsObj*) fun, i);
-                    argTrait = ejsGetPropertyTrait(ejs, (EjsObj*) fun, i);
+                    argTrait = ejsGetTrait(ejs, (EjsObj*) fun, i);
                     out(mp, "<tr class='param'><td class='param'>");
                     if (argTrait->type) {
                         out(mp, "%s: %s ", fmtDeclaration(argName), fmtTypeReference(argTrait->type->qname));

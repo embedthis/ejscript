@@ -293,7 +293,7 @@ static EjsObj *prepareAccessors(Ejs *ejs, EjsObj *obj, int slotNum, int *attribu
         if (ejsIsFunction(fun)) {
             /* Existing getter, add a setter */
             fun->setter = (EjsFunction*) value;
-            if ((trait = ejsGetTrait(obj, slotNum)) != 0) {
+            if ((trait = ejsGetTrait(ejs, obj, slotNum)) != 0) {
                 *attributes |= trait->attributes;
             }
         } else {
@@ -348,10 +348,10 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
     if (attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER)) {
         value = prepareAccessors(ejs, obj, slotNum, &attributes, value);
     }
-    if (ejsSetPropertyTrait(ejs, (EjsObj*) obj, slotNum, propType, attributes) < 0) {
+    if (ejsSetProperty(ejs, (EjsObj*) obj, slotNum, value ? value: ejs->nullValue) < 0) {
         return EJS_ERR;
     }
-    if (ejsSetProperty(ejs, (EjsObj*) obj, slotNum, value ? value: ejs->nullValue) < 0) {
+    if (ejsSetTraitDetails(ejs, (EjsObj*) obj, slotNum, propType, attributes) < 0) {
         return EJS_ERR;
     }
 
@@ -471,10 +471,12 @@ static EjsName getObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum)
 }
 
 
+#if UNUSED
 static EjsTrait *getObjectPropertyTrait(Ejs *ejs, EjsObj *obj, int slotNum)
 {
-    return ejsGetTrait(obj, slotNum);
+    return ejsGetTrait(ejs, obj, slotNum);
 }
+#endif
 
 
 /*
@@ -693,6 +695,7 @@ static int setObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qn
 }
 
 
+#if UNUSED
 /*
     Set the property Trait. Grow traits if required.
  */
@@ -708,6 +711,7 @@ static int setObjectPropertyTrait(Ejs *ejs, EjsObj *obj, int slotNum, EjsType *t
     obj->slots[slotNum].trait.attributes = attributes;
     return slotNum;
 }
+#endif
 
 
 /******************************* Slot Routines ********************************/
@@ -895,26 +899,51 @@ void ejsSetTraitAttributes(EjsTrait *trait, int attributes)
 }
 
 
-EjsTrait *ejsGetTrait(EjsObj *obj, int slotNum)
+EjsTrait *ejsGetTrait(Ejs *ejs, void *vp, int slotNum)
 {
+    EjsObj      *obj;
+
+    obj = (EjsObj*) vp;
     mprAssert(obj);
 
     if (slotNum < 0 || slotNum >= obj->numSlots) {
+        //  MOB -- should this grow and allocate (probably)
         return 0;
     }
     return &obj->slots[slotNum].trait;
 }
 
 
+int ejsSetTraitDetails(Ejs *ejs, void *vp, int slotNum, EjsType *type, int attributes)
+{
+    EjsObj      *obj;
+
+    obj = (EjsObj*) vp;
+
+    mprAssert(obj);
+    mprAssert(slotNum >= 0);
+
+    if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
+        return EJS_ERR;
+    }
+    obj->slots[slotNum].trait.type = type;
+    obj->slots[slotNum].trait.attributes = attributes;
+    if (slotNum < 0 || slotNum >= obj->numSlots) {
+        return 0;
+    }
+    return slotNum;
+}
+
+
+
 int ejsHasTrait(EjsObj *obj, int slotNum, int attributes)
 {
-    EjsTrait    *trait;
-
     mprAssert((attributes & EJS_TRAIT_MASK) == attributes);
-    if ((trait = ejsGetTrait(obj, slotNum)) != 0) {
-        return (trait->attributes & attributes);
+
+    if (slotNum < 0 || slotNum >= obj->numSlots) {
+        return 0;
     }
-    return 0;
+    return obj->slots[slotNum].trait.attributes & attributes;
 }
 
 
@@ -1525,7 +1554,7 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         if (qname.name[0] == '\0') {
             continue;
         }
-        trait = ejsGetPropertyTrait(ejs, obj, ip->index);
+        trait = ejsGetTrait(ejs, obj, ip->index);
         if (trait && trait->attributes & 
                 (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
             continue;
@@ -1561,7 +1590,7 @@ static EjsObj *nextObjectValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
     obj = (EjsObj*) ip->target;
 
     for (; ip->index < obj->numSlots; ip->index++) {
-        trait = ejsGetPropertyTrait(ejs, obj, ip->index);
+        trait = ejsGetTrait(ejs, obj, ip->index);
         if (trait && trait->attributes & 
                 (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
             continue;
@@ -1617,7 +1646,7 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
     if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, EN(&qname, prop), &lookup)) < 0) {
         return (EjsObj*) ejs->falseValue;
     }
-    trait = ejsGetTrait(obj, slotNum);
+    trait = ejsGetTrait(ejs, obj, slotNum);
     result = ejsCreateSimpleObject(ejs);
     value = ejsGetVarByName(ejs, obj, EN(&qname, prop), &lookup);
     if (value == 0) {
@@ -1666,7 +1695,7 @@ static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, EjsOb
         return 0;
     }
     for (index = slotNum = obj->type->numInherited; slotNum < obj->numSlots; slotNum++) {
-        if ((trait = ejsGetTrait(obj, slotNum)) != 0) {
+        if ((trait = ejsGetTrait(ejs, obj, slotNum)) != 0) {
             if (trait->attributes & (EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
                 continue;
             }
@@ -1745,7 +1774,7 @@ static EjsObj *obj_isFrozen(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
     obj = argv[0];
     frozen = 1;
     for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
-        if ((trait = ejsGetTrait(obj, slotNum)) != 0) {
+        if ((trait = ejsGetTrait(ejs, obj, slotNum)) != 0) {
             if (!(trait->attributes & EJS_TRAIT_READONLY)) {
                 frozen = 0;
                 break;
@@ -1787,7 +1816,7 @@ static EjsObj *obj_isSealed(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     obj = argv[0];
     sealed = 1;
     for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
-        if ((trait = ejsGetTrait(obj, slotNum)) != 0) {
+        if ((trait = ejsGetTrait(ejs, obj, slotNum)) != 0) {
             if (!(trait->attributes & EJS_TRAIT_FIXED)) {
                 sealed = 0;
                 break;
@@ -1820,7 +1849,7 @@ static EjsObj *obj_keys(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         return 0;
     }
     for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
-        if ((trait = ejsGetTrait(obj, slotNum)) != 0) {
+        if ((trait = ejsGetTrait(ejs, obj, slotNum)) != 0) {
             if (trait->attributes & EJS_TRAIT_DELETED) {
                 continue;
             }
@@ -1859,7 +1888,7 @@ static EjsObj *obj_seal(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     obj = argv[0];
     for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
         //  MOB -- API confused
-        trait = ejsGetTrait(obj, slotNum);
+        trait = ejsGetTrait(ejs, obj, slotNum);
         trait->attributes |= EJS_TRAIT_FIXED;
     }
     obj->dynamic = 0;
@@ -1884,7 +1913,7 @@ static EjsObj *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, EjsObj 
     if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, EN(&qname, prop), &lookup)) < 0) {
         return (EjsObj*) ejs->falseValue;
     }
-    trait = ejsGetTrait(obj, slotNum);
+    trait = ejsGetTrait(ejs, obj, slotNum);
     return (EjsObj*) ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_HIDDEN));
 }
 
@@ -1968,7 +1997,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
     if (++ejs->serializeDepth <= depth) {
         for (slotNum = 0; slotNum < count && !ejs->exception; slotNum++) {
-            trait = ejsGetPropertyTrait(ejs, obj, slotNum);
+            trait = ejsGetTrait(ejs, obj, slotNum);
             if (trait && (trait->attributes & (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | 
                     EJS_FUN_MODULE_INITIALIZER)) && !hidden) {
                 continue;
@@ -2100,13 +2129,15 @@ void ejsCreateObjectHelpers(Ejs *ejs)
     helpers->getProperty            = (EjsGetPropertyHelper) getObjectProperty;
     helpers->getPropertyCount       = (EjsGetPropertyCountHelper) getObjectPropertyCount;
     helpers->getPropertyName        = (EjsGetPropertyNameHelper) getObjectPropertyName;
-    helpers->getPropertyTrait       = (EjsGetPropertyTraitHelper) getObjectPropertyTrait;
     helpers->lookupProperty         = (EjsLookupPropertyHelper) lookupObjectProperty;
     helpers->invokeOperator         = (EjsInvokeOperatorHelper) ejsObjectOperator;
     helpers->mark                   = (EjsMarkHelper) ejsMarkObject;
     helpers->setProperty            = (EjsSetPropertyHelper) setObjectProperty;
     helpers->setPropertyName        = (EjsSetPropertyNameHelper) setObjectPropertyName;
+#if UNUSED
+    helpers->getPropertyTrait       = (EjsGetPropertyTraitHelper) getObjectPropertyTrait;
     helpers->setPropertyTrait       = (EjsSetPropertyTraitHelper) setObjectPropertyTrait;
+#endif
 }
 
 
