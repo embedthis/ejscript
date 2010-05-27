@@ -20,9 +20,8 @@ var start: Date = new Date
 var mark: Date
 var count: Number
 
-//
 //	TEST: Traditional for loops
-//
+
 mark = new Date
 count = 10000000
 for (i = 0; i < count; i++) {
@@ -34,9 +33,8 @@ report("Traditional Loop", count, mark)
 // App.exit()
 
 
-//
 //	TEST: For/In loops
-//
+
 start = mark = new Date
 count = 20000000
 for (i in count) {
@@ -45,9 +43,8 @@ for (i in count) {
 report("For in loop", count, mark)
 
 
-//
 //	TEST: Function calls
-//
+
 count = 4000000
 function bench(a, b)
 {
@@ -59,9 +56,8 @@ for (i = 0; i < count; i++) {
 }
 report("Function calls", count, mark)
 
-//
 //	TEST: If / else creation
-//
+
 mark = new Date
 var j
 count = 3000000
@@ -83,9 +79,8 @@ for (i = 0; i < count; i++) {
 report("If/else", count, mark)
 
 
-//
 //	TEST: Dynamic Object creation
-//
+
 mark = new Date
 var x
 count = 6000000
@@ -95,9 +90,8 @@ for (i = 0; i < count; i++) {
 report("New Objects", count, mark)
 
 
-//
 //	TEST: Dynamic Property creation
-//
+
 var john = new Object
 mark = new Date
 count = 200000
@@ -114,9 +108,8 @@ for (i = 0; i < count; i++) {
 report("Dynamic Properties", count, mark)
 
 
-//
 //	Property access
-//
+
 var user = new Object
 user.peter = new Object
 user.peter.age = 32
@@ -135,9 +128,8 @@ class Shape {
 }
 
 
-//
 //	TEST: Class Object creation
-//
+
 mark = new Date
 count = 6000000
 for (i = 0; i < count; i++) {
@@ -146,9 +138,8 @@ for (i = 0; i < count; i++) {
 report("Instance creation", count, mark)
 
 
-//
 //	TEST: Class Property access
-//
+
 var s: Shape = new Shape
 mark = new Date
 count = 5000000
@@ -159,11 +150,11 @@ for (i = 0; i < count; i++) {
 report("Class property access", count, mark)
 report("Total", 0, start)
 
-//
+
 //  Sleep to allow ../Makefile to snapshot the memory size then print results.
-//
+
 print("\nTest Complete -- waiting for 10 secs")
-App.sleep(10000)
 print("\nForLoop, ForIn, Function, If, NewObject, NewProperty, GetProperty, NewClass, ClassAccess, Total")
 print(results)
 Memory.stats()
+App.sleep(60000)
