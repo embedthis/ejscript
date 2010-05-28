@@ -273,6 +273,7 @@ MAIN(ejsMain, int argc, char **argv)
         ejsPrintAllocReport(ejs);
     }
 #endif
+    mprFree(ejs);
     mprStop(mpr);
     mprFree(mpr);
     return err;
