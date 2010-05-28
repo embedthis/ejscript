@@ -24,7 +24,7 @@ typedef struct Message {
 
 static void addWorker(Ejs *ejs, EjsWorker *worker);
 static int join(Ejs *ejs, EjsObj *workers, int timeout);
-static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception);
+static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int throwOutside);
 static void loadFile(EjsWorker *insideWorker, cchar *filename);
 static void removeWorker(Ejs *ejs, EjsWorker *worker);
 static int workerMain(EjsWorker *worker, MprEvent *event);
@@ -487,7 +487,7 @@ static EjsObj *workerPreeval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
 
     (inside->service->loadScriptLiteral)(inside, ejsGetString(ejs, argv[0]), NULL);
     if (inside->exception) {
-        handleError(ejs, worker, inside->exception);
+        handleError(ejs, worker, inside->exception, 1);
         return 0;
     }
     //  MOB - first arg was "ejs"
@@ -522,7 +522,7 @@ static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **arg
 
     loadFile(worker->pair, ((EjsPath*) argv[0])->path);
     if (inside->exception) {
-        handleError(ejs, worker, inside->exception);
+        handleError(ejs, worker, inside->exception, 1);
         return 0;
     }
     //  MOB - first arg was "ejs"
@@ -609,7 +609,7 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
         Check for exceptions
      */
     if (inside->exception) {
-        handleError(outside, outsideWorker, inside->exception);
+        handleError(outside, outsideWorker, inside->exception, 0);
         inside->exception = 0;
     }
     if ((msg = mprAllocObjZeroed(outside, Message)) == 0) {
@@ -691,7 +691,7 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
 /*
     WARNING: the inside interpreter owns the exception object. Must fully extract all fields
  */
-static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception)
+static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int throwOutside)
 {
     EjsError        *error;
     MprDispatcher   *dispatcher;
@@ -725,6 +725,9 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception)
 
     } else {
         msg->message = mprStrdup(ejs, ejsGetString(ejs, (EjsObj*) ejsToString(ejs, exception)));
+    }
+    if (throwOutside) {
+        ejsThrowStateError(ejs, "%s", msg->message);
     }
     dispatcher = ejs->dispatcher;
     mprCreateEvent(dispatcher, "doMessage-error", 0, (MprEventProc) doMessage, msg, 0);
