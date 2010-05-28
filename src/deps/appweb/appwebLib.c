@@ -1330,15 +1330,13 @@ static int processSetting(MaServer *server, char *key, char *value, MaConfigStat
         } else if (mprStrcmpAnyCase(key, "Listen") == 0) {
             /*
                 Options:
-                    ipAddr:port
-                    ipAddr          default port MA_SERVER_DEFAULT_PORT_NUM
-                    port            All ip interfaces on this port
+                    ip:port
+                    ip          default port MA_SERVER_DEFAULT_PORT_NUM
+                    port        All ip interfaces on this port
             
                 Where ipAddr may be "::::::" for ipv6 addresses or may be enclosed in "[]" if appending a port.
              */
-
             value = mprStrTrim(value, "\"");
-
             if (isdigit((int) *value) && strchr(value, '.') == 0 && strchr(value, ':') == 0) {
                 /*
                     Port only, listen on all interfaces (ipv4 + ipv6)
@@ -2916,7 +2914,6 @@ int maOpenSendConnector(Http *http)
     This module provides simple, high-level APIs for creating servers.
     Copyright (c) All Rights Reserved. See copyright notice at the bottom of the file.
  */
-
 
 
 
@@ -6394,7 +6391,6 @@ MaHost *maCreateDefaultHost(MaServer *server, cchar *docRoot, cchar *ip, int por
         if (httpServer) {
             ip = httpServer->ip;
             port = httpServer->port;
-
         } else {
             ip = "localhost";
             if (port <= 0) {
@@ -7551,12 +7547,14 @@ void maNotifyServerStateChange(HttpConn *conn, int state, int notifyFlags)
         if (address == 0 || (host = mprGetFirstItem(address->vhosts)) == 0) {
             mprError(server, "No host configured for request %s:%d", listenSock->ip, listenSock->port);
             //  MOB TODO - should cancel request
+            //  MOB or should this be httpError as per below
             return;
         }
         if (maIsNamedVirtualHostAddress(address)) {
             rec = conn->receiver;
             if ((host = maLookupVirtualHost(address, rec->hostName)) == 0) {
                 httpError(conn, HTTP_CODE_NOT_FOUND, "No host to serve request. Searching for %s", rec->hostName);
+                return;
             }
         }
         httpSetConnHost(conn, host);
@@ -7566,11 +7564,14 @@ void maNotifyServerStateChange(HttpConn *conn, int state, int notifyFlags)
             conn->receiver->location = host->location;
         }
         conn->transmitter->handler = matchHandler(conn);
-        conn->traceLevel = host->traceLevel;
-        conn->traceMaxLength = host->traceMaxLength;
-        conn->traceMask = host->traceMask;
-        conn->traceInclude = host->traceInclude;
-        conn->traceExclude = host->traceExclude;
+            
+        if (mprGetLogLevel(conn) >= host->traceLevel) {
+            conn->traceLevel = host->traceLevel;
+            conn->traceMaxLength = host->traceMaxLength;
+            conn->traceMask = host->traceMask;
+            conn->traceInclude = host->traceInclude;
+            conn->traceExclude = host->traceExclude;
+        }
         break;
     }
 }
@@ -7892,6 +7893,8 @@ static void processDirectory(HttpConn *conn, bool *rescan)
     if (!mprPathExists(trans, path, R_OK)) {
         path = mprStrcat(trans, -1, rec->pathInfo, "/", NULL);
     }
+    //  MOB -- really need to have parsed the headers and should be using the Host header
+    rec->hostName = host->name;
     httpRedirect(conn, HTTP_CODE_MOVED_PERMANENTLY, path);
 }
 
