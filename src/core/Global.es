@@ -76,6 +76,7 @@ public namespace ejs
     /** 
         Conditional compilation constant. Used to deprecate elements.
         @hide
+        @deprecated
      */  
     const DEPRECATED: Boolean = false
 
@@ -365,6 +366,7 @@ public namespace ejs
         @param args Data to write
         @spec ejs
         @hide
+        @deprecated
      */
     native function error(...args): void
 
@@ -373,6 +375,7 @@ public namespace ejs
         Read from the standard input. This call reads a line of input from the standard input
         @return A string containing the input. Returns null on EOF.
         @hide
+        @deprecated
      */
     native function input(): String
 
@@ -384,6 +387,7 @@ public namespace ejs
         @param args Variables to print
         @spec ejs
         @hide
+        @deprecated
      */
     native function output(...args): void
 }

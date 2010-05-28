@@ -35,6 +35,8 @@ module ejs.unix {
     /*
         Close the file and free up all associated resources.
         @param file Open file object previously opened via $open or $File
+        @hide
+        @deprecated
     function close(file: File): Void
      */
 
@@ -96,6 +98,8 @@ module ejs.unix {
         Kill a process
         @param pid Process ID to kill
         @param signal Signal number to use when killing the process.
+        @hide
+        @deprecated
      */
     function kill(pid: Number, signal: Number = 2): Void {
         if (Config.OS == "WIN") {
@@ -164,6 +168,8 @@ module ejs.unix {
         @param permissions optional permissions. Defaults to App.permissions
         @return a File object which implements the Stream interface
         @throws IOError if the path or file cannot be opened or created.
+        @hide
+        @deprecated
     function open(path: String, mode: String = "r", permissions: Number = 0644): File
         new File(path, { mode: mode, permissions: permissions})
      */
@@ -181,6 +187,8 @@ module ejs.unix {
         @param count Number of bytes to read
         @return A byte array containing the read data
         @throws IOError if the file could not be read.
+        @hide
+        @deprecated
     function read(file: File, count: Number): ByteArray
         file.read(count)
      */
@@ -230,6 +238,8 @@ module ejs.unix {
         the BinaryStream class to write Numbers.
         @returns the number of bytes written.  
         @throws IOError if the file could not be written.
+        @hide
+        @deprecated
 
     function write(file: File, ...items): Number
         file.write(items)

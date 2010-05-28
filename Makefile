@@ -53,7 +53,7 @@ diff import sync:
 
 ifneq	($(BUILDING_CROSS),1)
 testExtra: 
-	$(BLD_BIN_DIR)/ejs $(BLD_TOOLS_DIR)/utest -v
+	cd src ; $(BLD_BIN_DIR)/ejs $(BLD_TOOLS_DIR)/utest -v
 endif
 	
 #
