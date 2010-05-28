@@ -1,8 +1,13 @@
 #!/usr/bin/env ejs
 
 /*
+    BUGS
+    - Inconsistent trace. Build does, publish doesnt
+ */
+
+/*
     Background
-        - Jem Repository contents are a hg repository
+        - Jem Repository contents are a git repository
         - Packages are a versioned directory containing package description file and *.jem
         - Catalogue
     - Web App
@@ -12,21 +17,18 @@
             - Download jem given a jem name 
             - Upload a new jem (have authorized publishers)
             - jemrc can have publishers key
-  
     - Doc
         - Package
             [Stability: prototype, evolving, development, production, stable, mature, deprecated]
         - Categories
             [samples, comms, databases, ...]
-
-    PUNCH
+    PUNCH LIST
     - Man page
     - Think through catalog
         - Don't keep local catalog
-        - Remote ops should download catalog every time
+        - Perhaps Remote ops should download catalog every time?
             install
             search
-
     - install from http
     - install to/from switches
     - Test install.es, uninstall.es, build.es
@@ -40,6 +42,7 @@
     - Test package with a native module
         - Create 2 sample jems (one native, one not)
         - copy doc to /usr/lib/ejs/???
+        - Test versioning
     - Consider creating a build.es (aka Jake)
     - Jem Commands
         - jem --from repository is the same as jem --repository
@@ -48,8 +51,7 @@
           jem --local search ...
         - jem --add repository URL
         - jem --remove repository URL
-        - jem orphans     # print a list of possibly redundant jems (rename stale)
-        - jem rebuild
+        - jem rebuild   # what does this do?
         - jem server    [ run a local jem web server]
         - jem reinstall
         - jem update        If updating a local catalog is required
@@ -85,56 +87,11 @@ require ejs.tar
 
 const MAX_VER: Number = 1000000000
 const VER_FACTOR: Number = 1000
+
 var dirs: Object
-
-/*
-    Store the best available information available about a jem
- */
-class Jem {
-    var name: String            //  Bare name without version information
-    var vername: String         //  Versioned name if a version supplied, otherwise == name
-    var local: Path             //  Path to physical local location (if known)
-    var remote: String          //  Remote repository location
-    var version: String         //  Actual version of the jem (if known)
-    var min: String             //  Minimum acceptable version (if seaching)
-    var max: String             //  Maximum acceptable version (if seaching)
-    var package: Object         //  Package description file
-
-    /*
-     *  Create a new jem object. The name may be a path, bare jem name or a versioned jem name
-     */
-    function Jem(pathname: String, min: Number = 0, max: Number = MAX_VER) {
-        pathname = Path(pathname).trimExt().toString()
-        if (pathname.contains("http://")) {
-            remote  = pathname
-        } else if (exists(pathname) || pathname.contains("/")) {
-            local = Path(pathname)
-        } else if (dirs.jems.join(pathname).exists) {
-            local = dirs.jems.join(pathname)
-        } else {
-            remote = pathname
-        }
-        let parts = basename(pathname).toString().split("-")
-        name = parts[0]
-        if (parts.length == 2) {
-            version = parts[1]
-            vername = name + "-" + version
-        } else {
-            vername = name
-        }
-        this.min = min
-        this.max = max
-    }
-
-    public override function toString(): String {
-        if (version) {
-            return name + "-" + version 
-        } else {
-            return name
-        }
-    }
-}
-
+var filenames: Object
+//  MOB -- should be extensions
+var ext: Object
 
 class JemCmd 
 {
@@ -144,8 +101,9 @@ class JemCmd
     private var appName: String = "jem"
     private var cmd: CmdArgs
     private var config: Object
-    private var ext: Object
+    //  MOB -- rename to extensions, move with dirs?
     private var libext: String
+    //  MOB -- should use logger
     private var logFile: String = "stdout"
     private var logLevel: Number = 1
     private var out: File = App.outputStream
@@ -156,12 +114,15 @@ class JemCmd
         "contributors", "keywords", "license", "name", "os", "patchable", 
         "location", "stability", "version",
     ]
-
-    let requiredDirs = [
+    private var requiredDirs = [
         "bin", "doc", "lib", "cache", "src", "test",
     ]
+    /* List of system dirs as added protection - must not remove */
+    private var sysdirs = [ "", "/", ".", "..", "/bin", "/usr/bin", "/tmp", "/etc", "/var", "/Program Files",
+    ]
 
-    /* This layers over App.defaultConfig */
+    /* This layers over App.config */
+//  MOB -- remove "."
     private var defaultConfig = {
         extensions: {
             es: ".es",
@@ -172,6 +133,7 @@ class JemCmd
             lib: ".so"
         },
         directories: {
+            //  MOB -- /usr/lib/ejs should come from a single constant
             _ejs: Path("/usr/lib/ejs"),
             _jems: Path("/usr/lib/ejs/jems"),
             _modules: Path("/usr/lib/ejs/modules"),
@@ -195,10 +157,11 @@ class JemCmd
 
     function JemCmd() {
         loadDefaults()
+        //  MOB -- should update App.config
         blend(config, defaultConfig, false)
-
         dirs = config.directories
         dirs.home = App.dir
+        //  MOB -- rename ext to extensions
         ext = config.extensions
         filenames = config.filenames
         for (d in dirs) {
@@ -209,7 +172,6 @@ class JemCmd
         for (d in dirs.repositories) {
             dirs.repositories[d] = Path(dirs.repositories[d])
         }
-
         //  MOB -- should not have "." prefix
         // TODO - should be in Config
         if (Config.OS == "MACOSX") {
@@ -221,6 +183,7 @@ class JemCmd
         }
     }
 
+//  MOB -- these options dont match usage below
     private var cmdOptions = [
         [ "all" ],
         [ "code", String ],
@@ -231,11 +194,12 @@ class JemCmd
         [ "from", String ],
         [ "log", /\w+(:\d)/, "stdout:1" ],
         [ "repository", String ],
-        [ ["verbose", "v"] ],
+        [ ["quiet", "q"] ],
         [ "to", String ],
         [ "user" ],
         [ "user", String ],
         [ "value", String ],
+        [ ["verbose", "v"] ],
         [ "version", String ],
         [ "versions" ],
     ]
@@ -243,6 +207,7 @@ class JemCmd
     function usage(): Void {
         print("\nUsage: " + appName + " [options] [commands] ...\n" +
             "  Commands:\n" + 
+    //MOB -- missing build
             "    create files ...     # Create a new jem package\n" +
             "    depend               # Display jem dependencies\n" +
             "    edit                 # Edit a package description file \n" +
@@ -259,8 +224,10 @@ class JemCmd
             "    --from repository\n" +
             "    --to repository\n" +
             "    --log file:level     # Send log output to a file at a given level\n" + 
+//  MOB - is this the same as --from repository?
             "    --repository path    # Use specified repository for all actions\n" +
-            "    --verbose            # Run in verbose mode\n" +
+            "    --quiet              # Run in quiet mode\n" +
+            "    --verbose            # Run in verbose mode (default)\n" +
             "  Edit options:\n" + 
             "    --field name         # Package field name to edit \n" +
             "    --value value        # Value to set field to\n" +
@@ -283,6 +250,7 @@ class JemCmd
     }
 
     function main() {
+        //  MOB -- refactor. Shouldn't need to use try with CmdArgs every time
         try {
             cmd = CmdArgs(cmdOptions)
         } catch (e) {
@@ -296,6 +264,7 @@ class JemCmd
             }
             process()
         } catch (e) {
+print(e)
             if (e is String) {
                 msg = e
                 error("jem: Error: " + msg + "\n")
@@ -312,9 +281,6 @@ class JemCmd
         }
     }
 
-    /*
-        Process the command line options
-     */
     function processOptions(cmd: CmdArgs) {
         let options = cmd.options
         if (options.version) {
@@ -325,6 +291,7 @@ class JemCmd
             searchPath = App.searchPath = options.search.split(Path.SearchSeparator)
         }
         if (options.log) {
+            //  MOB -- should use logger
             setLog(options.log)
         }
         if (options.quiet) {
@@ -350,6 +317,7 @@ class JemCmd
 
         switch (task) {
         case "build":
+            //  MOB -- what are build args?
             build(args)
             break
         case "catalog":
@@ -488,7 +456,8 @@ class JemCmd
 
     /*
         Build a jem file
-        @param path Path to the directory containing the jem. 
+        @param files Optional list of files to include in the package. Otherwise, build() discovers the files in the
+            current directory.
      */
     function build(files: Array): Void {
         //  TODO - should build dependency list from the "require" statements - ejsmod to create
@@ -515,13 +484,17 @@ class JemCmd
                 files += find("lib", "*", true)
                 files += find("test", "*", true)
                 for each (f in files) {
-                    addToTar(tar, f)
+                    if (f.isRegular) {
+                        addToTar(tar, f)
+                    }
                 }
                 addToTar(tar, "install.es")
                 addToTar(tar, "uninstall.es")
             }
             tar.create()
             log(1, "Building", path)
+        } catch (e) {
+print(e)
         }
     }
 
@@ -563,7 +536,7 @@ class JemCmd
         for each (path in ls(dirs.jems, true)) {
             jem = Jem(path)
             let package = loadPackageDescription(path)
-            file.write(serialize(package) + "\n")
+            file.write(serialize(package, {pretty: true}) + "\n")
         }
         file.close()
     }
@@ -614,7 +587,7 @@ class JemCmd
         }
         let package = loadPackageDescription(path)
         package[cmd.options.field] = cmd.options.value
-        path.join(filenames.package).write(serialize(package))
+        path.join(filenames.package).write(serialize(package, {pretty: true}))
     }
 
     private function fetchLocal(rep: Path, jem: Jem): Path {
@@ -650,6 +623,7 @@ class JemCmd
                 return null
             }
         } catch (e) {
+print(e)
             log(0, "WARN", "Can't retrieve " + url + "\n" + e.message)
             return null
         }
@@ -707,6 +681,7 @@ class JemCmd
                 try {
                     install(dep.name)
                 } catch (e) {
+print(e)
                     if (cmd.options.force) {
                         log(0, "WARN", "Can't install required dependency \"" + dep.name + "\"" )
                     } else {
@@ -812,7 +787,6 @@ class JemCmd
             installNativeModules(jem)
             installDocumentation(jem)
         }
-
         //  TODO build source
         //  TODO run tests
         log(1, "NOTE", "Jem \"" + jem + "\" successfully installed")
@@ -893,6 +867,7 @@ class JemCmd
     private function loadPackageDescription(path: Path): Object 
         deserialize(path.join(filenames.package).readString())
 
+    //  MOB -- should use logger
     function log(level: Number, tag: String, ...args): Void {
         if (level <= logLevel) {
             out.write("  [" + tag + "] " + args.join(" ") + "\n")
@@ -1010,16 +985,16 @@ class JemCmd
             repo = dirs.repositories[0]
         }
         if (repo.contains("http://")) {
+            //  MOB TODO
             publishRemote()
-            // path = fetchRemote(rep, jem)
+            // MOB path = fetchRemote(rep, jem)
         } else {
             //  TODO - really need to update the catalog
-            let dir = repo.join(jem.vername)
-            makeDir(dir)
-            let from = jem.local.join(jem.vername + ext.jem)
-            let target = dir.join(jem.vername + ext.jem)
+            let from = jem.path
+            let target = repo.join(jem.vername).join(jem.path.basename)
+            makeDir(target.dirname)
             cp(from, target)
-            publishLocal()
+            //  MOB publishLocal()
         }
     }
 
@@ -1121,7 +1096,7 @@ class JemCmd
         }
         package.dependencies = deps
         // TODO - need safe rewrite with a move and backup
-        filenames.package.write(serialize(package))
+        filenames.package.write(serialize(package, {pretty: true}))
     }
 
     function setLog(logSpec: String): Void {
@@ -1242,6 +1217,7 @@ class JemCmd
 
     function loadDefaults(): Void {
         let home = Path(App.getenv("HOME"))
+        //  MOB -- should come from App.confg
         config = {}
         loadConfig(RC) || loadConfig(home.join(RC))
     }
@@ -1253,10 +1229,6 @@ class JemCmd
         mkdir(path, DIR_PERMS)
     }
 
-    /* List of system dirs as added protection - must not remove */
-    private var sysdirs = [ "", "/", ".", "..", "/bin", "/usr/bin", "/tmp", "/etc", "/var", "/Program Files",
-    ]
-
     function removeDir(path: Path, contents: Boolean = false) {
         for each (d in sysdirs) {
             if (d == path) {
@@ -1267,16 +1239,16 @@ class JemCmd
     }
 
     /*
-     *  Templates
+        Templates
      */
     private var PackageTemplate = {
       "name": "NAME",
-      "description": "Package Description",
       "version": "1.0.0",
-      "categories": [ "Put categories here" ],
+      "description": "Package Description",
       "keywords": [
         "Put keywords here",
       ],
+      "categories": [ "Put categories here" ],
       "author": "NAME (URL) <MAIL>",
       "contributors": [
         "NAME (URL) <MAIL>",
@@ -1287,15 +1259,87 @@ class JemCmd
       ],
       "location": "http://hg.embedthis.com/ejs",
       "dependencies": [
-        [ "ejs", "1.0.0", "1.0.0", ],
+
+        [ "ejs", "== 1.0.0" ],
       ],
-      "stability": "prototype",
+      "stability": "evolving",
       "os": "*",
       "cpu": "*",
       "patchable": false,
-      "builtin": true,
+
+/*
+OS: []
+CPU: []
+MAINTAINERS: [{ name, email, web}]
+CONTRIBUTORS: [{ name, email, web}]
+LICENSES: [{ type, url }]
+REPOSITORIES [{type, url, path }]
+HOMEPAGE
+ENGINE: []
+DIRECTORIES: { lib: , src:, doc:, test:, bin:, }
+IMPLEMENTS:  ["CommonJS/Modules/1.1", "CommonJS/JSGI/1.0"]
+SCRIPTS: {
+    install:
+    uninstall
+    build
+    doc
+    test
+}
+*/
+
     }
 }
+
+/*
+    Hold the best available information available about a jem
+ */
+class Jem {
+    use default namespace internal
+    var name: String            //  Bare name without version information
+    var vername: String         //  Versioned name if a version supplied, otherwise == name
+    var local: Path             //  Path to local location in local repository (if known)
+    var path: Path              //  Path to Jem outside a repository (if installing)
+    var remote: String          //  Remote repository location MOB - does this include name
+    var version: String         //  Actual version of the jem (if known)
+    var min: String             //  Minimum acceptable version (if searching)
+    var max: String             //  Maximum acceptable version (if searching)
+    var package: Object         //  Package description file data
+
+    /*
+     *  Create a new jem object. Pathname may be a path, bare jem name or a versioned jem name
+     */
+    function Jem(pathname: String, min: Number = 0, max: Number = MAX_VER) {
+        path = Path(pathname.trimEnd(ext.jem) + ext.jem)
+        if (pathname.contains("http://")) {
+            remote  = pathname
+        } else if (exists(pathname) || pathname.contains("/")) {
+            local = Path(pathname)
+        } else if (dirs.jems.join(pathname).exists) {
+            local = dirs.jems.join(pathname)
+        } else {
+            remote = pathname
+        }
+        let parts = basename(pathname).toString().split("-")
+        name = parts[0]
+        if (parts.length == 2) {
+            version = parts[1]
+            vername = name + "-" + version
+        } else {
+            vername = name
+        }
+        this.min = min
+        this.max = max
+    }
+
+    public override function toString(): String {
+        if (version) {
+            return name + "-" + version 
+        } else {
+            return name
+        }
+    }
+}
+
 
 JemCmd().main()
 

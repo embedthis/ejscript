@@ -133,6 +133,7 @@ module ejs.web {
         /** 
             Load a component. This will load a module and optionally recompile if the given dependency paths are
             more recent than the module itself. If recompilation occurs, the result will be cached in the supplied module.
+            @param request Request object
             @param mod Path to the module to load
             @param deps Module dependencies
          */

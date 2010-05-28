@@ -2940,7 +2940,7 @@ typedef struct EjsLookup {
     struct EjsObj   *ref;                   /* Actual property reference */
     struct EjsTrait *trait;                 /* Property trait describing the property */
     struct EjsName  name;                   /* Name and namespace used to find the property */
-
+    int             bind;                   /* Whether to bind to this lookup */
 } EjsLookup;
 
 

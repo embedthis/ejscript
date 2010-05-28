@@ -66,3 +66,13 @@ src/test/web/request.es
 src/test/web/samples.es
 doc/api/ejs/xml
 doc/api/ejs/html
+staging
+src/jems/tmp
+*.jem
+releases/*.gz
+releases/*.gz.txt
+releases/*.dmg
+releases/*.zip
+releases/*.zip.txt
+releases/*.dmg.txt
+jlocal

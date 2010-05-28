@@ -24,7 +24,7 @@ static int  reserveRoom(EcCompiler *cp, int room);
 static int  sum(cchar *name, int value);
 static int  swapWordField(EcCompiler *cp, int word);
 
-static int  createDocSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsTrait *trait);
+static int  createDocSection(EcCompiler *cp, EjsObj *block, int slotNum);
 
 /*********************************** Code *************************************/
 /*
@@ -294,8 +294,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     ejs = cp->ejs;
     mp = cp->state->currentModule;
 
-    trait = ejsGetTrait(ejs, ejs->global, slotNum);
-    createDocSection(cp, ejs->global, slotNum, trait);
+    createDocSection(cp, ejs->global, slotNum);
     qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
     mprAssert(qname.name);
 
@@ -310,6 +309,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     rc += ecEncodeString(cp, qname.name);
     rc += ecEncodeString(cp, qname.space);
 
+    trait = ejsGetTrait(ejs, ejs->global, slotNum);
     attributes = (trait) ? trait->attributes : 0;
     attributes &= ~EJS_TYPE_FIXUP;
 
@@ -427,9 +427,9 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
     mprAssert(code);
 
     if (block && slotNum >= 0) {
-        trait = ejsGetTrait(ejs, block, slotNum);
-        createDocSection(cp, block, slotNum, trait);
         qname = ejsGetPropertyName(ejs, block, slotNum);
+        createDocSection(cp, block, slotNum);
+        trait = ejsGetTrait(ejs, block, slotNum);
         attributes = trait->attributes;
         if (fun->isInitializer) {
             attributes |= EJS_FUN_INITIALIZER;
@@ -588,14 +588,13 @@ static int createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
 
     ejs = cp->ejs;
     mp = cp->state->currentModule;
-
-    trait = ejsGetTrait(ejs, block, slotNum);
     qname = ejsGetPropertyName(ejs, block, slotNum);
     
-    mprAssert(qname.name[0] != '\0');
-    attributes = trait->attributes;
+    createDocSection(cp, block, slotNum);
 
-    createDocSection(cp, block, slotNum, trait);
+    mprAssert(qname.name[0] != '\0');
+    trait = ejsGetTrait(ejs, block, slotNum);
+    attributes = trait->attributes;
 
     mprLog(cp, 5, "    global property section %s", qname.name);
 
@@ -624,7 +623,7 @@ static int createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
 }
 
 
-static int createDocSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsTrait *trait)
+static int createDocSection(EcCompiler *cp, EjsObj *block, int slotNum)
 {
     Ejs         *ejs;
     EjsName     qname;
@@ -634,13 +633,12 @@ static int createDocSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsTrait
     ejs = cp->ejs;
     mprAssert(slotNum >= 0);
     
-    if (trait == 0 || !(ejs->flags & EJS_FLAG_DOC)) {
+    if (!(ejs->flags & EJS_FLAG_DOC)) {
         return 0;
     }
     if (ejs->doc == 0) {
         ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE);
     }
-    mprAssert(slotNum >= 0);
     mprSprintf(key, sizeof(key), "%Lx %d", PTOL(block), slotNum);
     doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
     if (doc == 0) {
@@ -705,7 +703,7 @@ void ecAddFunctionConstants(EcCompiler *cp, EjsObj *obj, int slotNum)
         ecAddNameConstant(cp, &fun->resultType->qname);
     }
     if (cp->ejs->flags & EJS_FLAG_DOC) {
-        ecAddDocConstant(cp, NULL, obj, slotNum);
+        ecAddDocConstant(cp, obj, slotNum);
     }
     ecAddConstants(cp, (EjsObj*) fun);
     if (fun->activation) {
@@ -744,10 +742,7 @@ void ecAddConstants(EcCompiler *cp, EjsObj *block)
 }
 
 
-/*
-    Allow 2 methods to get the doc string: by trait and by block:slotNum
- */
-int ecAddDocConstant(EcCompiler *cp, EjsTrait *trait, EjsObj *block, int slotNum)
+int ecAddDocConstant(EcCompiler *cp, void *vp, int slotNum)
 {
     Ejs         *ejs;
     EjsDoc      *doc;
@@ -755,22 +750,16 @@ int ecAddDocConstant(EcCompiler *cp, EjsTrait *trait, EjsObj *block, int slotNum
 
     ejs = cp->ejs;
 
+    mprAssert(ejs->doc);
+    mprAssert(vp);
     mprAssert(slotNum >= 0);
 
-    if (trait == 0 && slotNum >= 0) {
-        trait = ejsGetTrait(ejs, block, slotNum);
-    }
-    if (trait) {
-        if (ejs->doc == 0) {
-            ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE);
-        }
-        mprAssert(slotNum >= 0);
-        mprSprintf(key, sizeof(key), "%Lx %d", PTOL(block), slotNum);
-        doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
-        if (doc && doc->docString) {
-            if (ecAddConstant(cp, doc->docString) < 0) {
-                return EJS_ERR;
-            }
+    mprSprintf(key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
+    doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
+    if (doc && doc->docString) {
+        if (ecAddConstant(cp, doc->docString) < 0) {
+            mprAssert(0);
+            return EJS_ERR;
         }
     }
     return 0;
@@ -796,6 +785,9 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
     ejs = cp->ejs;
     mprAssert(ejs);
     constants = mp->constants;
+    if (constants->table == 0) {
+        constants->table = mprCreateHash(constants, EJS_DOC_HASH_SIZE);
+    }
 
     /*
         Maintain a symbol table for quick location

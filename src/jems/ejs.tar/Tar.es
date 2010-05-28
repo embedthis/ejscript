@@ -5,6 +5,8 @@
 
 module ejs.tar {
 
+    //  MOB -- need some ability to trace commands  (tar tvf)
+
     /** @hide */
     class Tar {
         private var path: Path
@@ -20,7 +22,7 @@ module ejs.tar {
                 files.append(path)
             }
         }
-        function xcreate(): Void {
+        function create(): Void {
             Cmd.sh("tar czf " + path + " " + files.join(" "))
         }
         function extract(...files): Void {

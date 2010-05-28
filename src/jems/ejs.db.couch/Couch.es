@@ -132,14 +132,14 @@ module ejs.db.couch {
             200 <= hp.status && hp.status < 300
 
         /** 
-            @duplicate ejs.io::Http.read
+            @duplicate Http.read
             @hide
          */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
             hp.read(buffer, offset, count)
 
         /** 
-            @duplicate ejs.io::Http.write
+            @duplicate Http.write
          */
         function write(...data): Void
             hp.write(data)

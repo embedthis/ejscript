@@ -28,12 +28,13 @@ EjsModule *ejsCreateModule(Ejs *ejs, cchar *name, int version)
     } else {
         mp->vname = mp->name;
     }
-
     mp->constants = mprAllocZeroed(mp, sizeof(EjsConst));
     if (mp->constants == 0) {
         return 0;
     }
+#if UNUSED
     mp->constants->table = mprCreateHash(mp->constants, 0);
+#endif
     return mp;
 }
 

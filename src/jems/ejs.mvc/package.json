@@ -1,56 +1,56 @@
 {
   "name": "ejs.mvc",
   "description": "Ejscript MVC Generator",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "categories": [
     "ejs",
-    "web",
+    "web"
   ],
   "author": "Embedthis (http://www.embedthis.com) <dev@embedthis.com>",
   "contributors": [
-    "Embedthis (http://www.embedthis.com) <dev@embedthis.com>",
+    "Embedthis (http://www.embedthis.com) <dev@embedthis.com>"
   ],
   "bugReports": "dev@embedthis.com",
   "license": [
-    "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)",
+    "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)"
   ],
   "stability": "prototype",
   "location": "http://hg.embedthis.com/ejs",
   "keywords": [
-    "web",
+    "web"
   ],
   "dependencies": [
     [
       "ejs",
-      "== 1.0.0",
+      "== 1.0.0"
     ],
     [
       "ejs.io",
-      "== 1.0.0",
+      "== 1.0.0"
     ],
     [
       "ejs.xml",
-      "== 1.0.0",
+      "== 1.0.0"
     ],
     [
       "ejs.cjs",
-      "== 1.0.0",
+      "== 1.0.0"
     ],
     [
       "ejs.web",
-      "== 1.0.0",
+      "== 1.0.0"
     ],
     [
       "ejs.web.router",
-      "== 1.0.0",
+      "== 1.0.0"
     ],
     [
       "ejs.web.template",
-      "== 1.0.0",
-    ],
+      "== 1.0.0"
+    ]
   ],
   "os": "*",
   "cpu": "*",
   "patchable": false,
-  "builtin": true,
+  "builtin": true
 }

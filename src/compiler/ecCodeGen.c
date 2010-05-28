@@ -404,6 +404,7 @@ static void genBlock(EcCompiler *cp, EcNode *np)
 
         lookup = &np->lookup;
         if (lookup->slotNum >= 0) {
+            mprAssert(lookup->bind);
             ecEncodeOpcode(cp, EJS_OP_OPEN_BLOCK);
             ecEncodeNumber(cp, lookup->slotNum);
             ecEncodeNumber(cp, lookup->nthBlock);
@@ -427,6 +428,7 @@ static void genBlock(EcCompiler *cp, EcNode *np)
             processNode(cp, child);
         }
         if (lookup->slotNum >= 0) {
+            mprAssert(lookup->bind);
             ecEncodeOpcode(cp, EJS_OP_CLOSE_BLOCK);
             state->code->blockCount--;
         }
@@ -536,6 +538,7 @@ static void genGlobalName(EcCompiler *cp, int slotNum)
 
     mprAssert(slotNum >= 0);
 
+    //  MOB - TEMP warning if being called.
     mprAssert(0);
     code = (!cp->state->onLeft) ?  EJS_OP_GET_GLOBAL_SLOT :  EJS_OP_PUT_GLOBAL_SLOT;
     ecEncodeOpcode(cp, code);
@@ -748,8 +751,7 @@ static void genClassName(EcCompiler *cp, EjsType *type)
         pushStack(cp, 1);
         return;
     }
-    //  TODO - check
-    if (cp->bind || type->constructor.block.obj.builtin) {
+    if (cp->bind && type->constructor.block.obj.builtin) {
         slotNum = ejsLookupProperty(ejs, ejs->global, &type->qname);
         mprAssert(slotNum >= 0);
         genGlobalName(cp, slotNum);
@@ -812,6 +814,7 @@ static void genBoundName(EcCompiler *cp, EcNode *np)
     lookup = &np->lookup;
 
     mprAssert(lookup->slotNum >= 0);
+    mprAssert(lookup->bind);
 
     if (lookup->obj == ejs->global) {
         /*
@@ -819,7 +822,7 @@ static void genBoundName(EcCompiler *cp, EcNode *np)
          */
         //  TODO -- this logic looks strange
         if (lookup->slotNum < 0 || (!cp->bind && (lookup->ref == 0 || !lookup->ref->builtin))) {
-            lookup->slotNum = -1;
+            lookup->bind = 0;
             genUnboundName(cp, np);
 
         } else {
@@ -928,7 +931,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
     lookup = &np->left->lookup;
     argc = 0;
     
-    if (lookup->slotNum < 0) {
+    if (!lookup->bind || lookup->slotNum < 0) {
         /*
             Unbound or Function expression or instance variable containing a function. Can't use fast path op codes below.
          */
@@ -1259,10 +1262,15 @@ static void genClass(EcCompiler *cp, EcNode *np)
     /*
         The current code buffer is the static initializer buffer. genVar will redirect to the instanceCodeBuf as required.
      */
+#if UNUSED
     if (!type->isInterface) {
         mprAssert(np->left->kind == N_DIRECTIVES);
+        mprAssert(strcmp(np->qname.name, "Stream") != 0);
+#endif
         processNode(cp, np->left);
+#if UNUSED
     }
+#endif
 
     if (type->hasInitializer) {
         /*
@@ -1341,10 +1349,6 @@ static void genClass(EcCompiler *cp, EcNode *np)
             }
         }
     }
-
-    /*
-        Add extra constants
-     */
     ecAddNameConstant(cp, &np->qname);
 
     if (type->hasInitializer) {
@@ -1363,7 +1367,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
         ecAddConstants(cp, type->prototype);
     }
     if (cp->ejs->flags & EJS_FLAG_DOC) {
-        ecAddDocConstant(cp, np->lookup.trait, ejs->global, np->lookup.slotNum);
+        ecAddDocConstant(cp, np->lookup.obj, np->lookup.slotNum);
     }
     LEAVE(cp);
 }
@@ -1893,7 +1897,7 @@ static void genForIn(EcCompiler *cp, EcNode *np)
      */
     tryStart = getCodeLength(cp, np->forInLoop.bodyCode);
 
-    if (np->forInLoop.iterNext->lookup.slotNum >= 0) {
+    if (np->forInLoop.iterNext->lookup.bind && np->forInLoop.iterNext->lookup.slotNum >= 0) {
         mprAssert(0);
         ecEncodeOpcode(cp, EJS_OP_CALL_OBJ_SLOT);
         ecEncodeNumber(cp, np->forInLoop.iterNext->lookup.slotNum);
@@ -2143,10 +2147,6 @@ static void genFunction(EcCompiler *cp, EcNode *np)
         return;
     }
     setFunctionCode(cp, fun, code);
-
-    /*
-        Add string constants
-     */
     ecAddNameConstant(cp, &np->qname);
 
     for (i = 0; i < numSlots; i++) {
@@ -2175,8 +2175,7 @@ static void genFunction(EcCompiler *cp, EcNode *np)
         }
     }
     if (cp->ejs->flags & EJS_FLAG_DOC) {
-        //  MOB -- could move outside to avoid using owner
-        ecAddDocConstant(cp, NULL, np->lookup.obj, np->lookup.slotNum);
+        ecAddDocConstant(cp, np->lookup.obj, np->lookup.slotNum);
     }
     LEAVE(cp);
 }
@@ -2448,7 +2447,7 @@ static void genName(EcCompiler *cp, EcNode *np)
         pushStack(cp, 1);
         np->needThis = 0;
     }
-    if (np->lookup.slotNum >= 0) {
+    if (np->lookup.bind && np->lookup.slotNum >= 0) {
         genBoundName(cp, np);
     } else {
         genUnboundName(cp, np);
@@ -3169,7 +3168,7 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
     ejs = cp->ejs;
     state = cp->state;
 
-    mprAssert(np->lookup.slotNum < 0 || !cp->bind);
+    mprAssert(!np->lookup.bind || !cp->bind);
 
     lookup = &np->lookup;
     owner = lookup->obj;
@@ -3213,10 +3212,8 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
             pushStack(cp, 1);
             np->needThis = 0;
         }
-
         ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
         pushStack(cp, 1);
-
         code = (!state->onLeft) ?  EJS_OP_GET_OBJ_NAME :  EJS_OP_PUT_OBJ_NAME;
         ecEncodeOpcode(cp, code);
         ecEncodeName(cp, &np->qname);
@@ -3348,22 +3345,17 @@ static void genVar(EcCompiler *cp, EcNode *np)
 {
     EcState     *state;
 
-    ENTER(cp);
-
     mprAssert(np->kind == N_QNAME);
 
+    ENTER(cp);
     state = cp->state;
 
-    /*
-        Add string constants
-     */
     ecAddNameConstant(cp, &np->qname);
-
     if (np->lookup.trait && np->lookup.trait->type) {
         ecAddConstant(cp, np->lookup.trait->type->qname.name);
     }
     if (cp->ejs->flags & EJS_FLAG_DOC) {
-        ecAddDocConstant(cp, np->lookup.trait, np->lookup.obj, np->lookup.slotNum);
+        ecAddDocConstant(cp, np->lookup.obj, np->lookup.slotNum);
     }
     LEAVE(cp);
 }

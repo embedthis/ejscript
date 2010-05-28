@@ -166,7 +166,7 @@ module ejs {
 
         /**
             Round this number down to the closes integral value.
-            @param Number to round
+            @param num Number to round
             @return A rounded number
          */
         native static function round(num: Number): Number

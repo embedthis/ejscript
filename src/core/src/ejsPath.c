@@ -576,6 +576,7 @@ static EjsObj *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     cchar   *ext;
 
+    //  MOB -- but if the path has "." in the path, then can't easily join an extension
     if (mprGetPathExtension(ejs, fp->path)) {
         return (EjsObj*) fp;
     }

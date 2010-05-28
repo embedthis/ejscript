@@ -8,7 +8,6 @@ LISTING			+= --listing
 PRE_DIRS		+= include deps vm compiler core
 POST_DIRS		+= jems
 EJS_MOD			+= $(call mod, ejs)
-FILTER		 	= '/sample/|/legacy/|ejsmvc|Archive|\/test\/'
 EJS_FILES		+= $(shell echo core/*.es | sort)
 EJS_LIB			+= $(BLD_LIB_DIR)/libejs$(BLD_LIB)
 EJS_SOURCES		+= $(shell find core/src vm compiler -name '*.c') 
@@ -43,9 +42,6 @@ $(EJS_MOD): $(EJS_FILES)
 
 dependExtra:
 	@+T=depend ; D="cmd" ; $(DO_RECURSE) 
-	mkdir -p "$(BLD_JEM_DIR)"
-
-packageExtra: buildJems $(DOC)
 
 cleanExtra:
 	find . -name '*.lst' -o -name '*.mod' -o -name '*.jem' -type f | xargs rm -f

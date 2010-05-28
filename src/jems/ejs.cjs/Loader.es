@@ -1,4 +1,4 @@
-/*
+/**
     Loader.es - CommonJS module loader with require() support.
  */
 

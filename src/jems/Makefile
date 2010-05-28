@@ -21,12 +21,13 @@ FILTER		 	+= /sample/|/legacy/|^ejs.jem/|ejsmvc|Archive|\/test\/
 LISTING			+= --listing
 DOC_SRC			+= $(shell find ../core -name '*.es' | egrep -v "$(FILTER)")
 DOC_SRC			+= $(shell find $(LOADABLE) -name '*.es' | egrep -v "$(FILTER)")
-DOC_DIR			:= $(BLD_TOP)/doc/api/ejscript
-DOC				:= $(DOC_DIR)/index.html
 PRE_DIRS 		:= core 
 POST_DIRS		:= $(LOADABLE) $(TOOLS)
 
-include 	.makedep
+include 		.makedep
+
+DOC_DIR			:= $(BLD_TOP)/doc/api/ejscript
+DOC				:= $(DOC_DIR)/index.html
 
 compileExtra: $(MODULES) $(TOOLS)
 
@@ -43,9 +44,6 @@ $(MODULES): $(LOADABLE_FILES) $(call mod, ejs)
 
 packageExtra: buildJems $(DOC)
 
-x:
-	echo $(DOC_SRC)
-
 #
 #	Move all doc under "doc" dir
 #
@@ -60,7 +58,6 @@ doc: $(DOC_DIR)/index.html
 
 buildJems:
 	set -e ; \
-	echo HERE ; \
 	mkdir -p "$(BLD_ABS_JEM_DIR)" ; \
 	for j in $(JEMS) ; do \
 		cd $$j >/dev/null ; \
@@ -69,9 +66,9 @@ buildJems:
 		jem --field version --value $(BLD_VERSION) edit ; \
 		[ -f $(BLD_ABS_MOD_DIR)/$$vj.mod ] && jem setdeps $(BLD_ABS_MOD_DIR)/$$vj.mod ; \
 		jem build ; \
-		mkdir -p $$dest ; \
-		cp $$vj.jem $$dest ; \
-		true jem --to $(BLD_ABS_JEM_DIR) publish $$j ; \
+		$(call log) "[Publish]" "jem --to $(BLD_ABS_JEM_DIR) publish $$vj" ; \
+		jem --to $(BLD_ABS_JEM_DIR) publish $$vj ; \
+		cd - >/dev/null ; \
 		cd $$dest >/dev/null ; \
 		tar xfz $$vj.jem package.json ; \
 		cd - >/dev/null ; \

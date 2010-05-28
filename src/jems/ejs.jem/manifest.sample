@@ -6,11 +6,11 @@
         "package",
         "example",
     ],
-    maintainuer: {
+    maintainers: [{
         name: "Bill Smith", 
         email: "bills@example.com",
         web: "http://www.example.com", 
-    ],
+    }],
     contributors: [
         {
             name: "Mary Brown",
@@ -19,30 +19,32 @@
         },
     ],
     bugs: {
+        //  MOB -- CommonJS issue: should be hash with a type for consistency
         mail: "dev@example.com",
         web: "http://www.example.com/bugs",
     }
-    license: [
+    licenses: [
         {
-            kind: "GPLv2", 
+            type: "GPLv2", 
             url: "http://www.example.org/licenses/gpl.html"
         },
-    },
+    ],
     location: [
         {
-            kind: "git", 
+            type: "git", 
             url: "http://hg.example.com/mypackage.git"
         },
-    ]
+    ],
     signature: {
         md5: "719ea61444a0bd34c9cf7454227a2e5c",
     },
     dependencies: [
+        //  MOB -- or "ejs", "== 1.0.0"
         [ "ejs", "1.0.0", "2.0" ],
     ],
-    implements: ["cjs-module-0.3", "cjs-jsgi-0.1"],
+    implements: ["CommonJS/Modules/1.1", "CommonJS/JSGI/1.0"],
     os: ["linux", "macos", "win"]
-    cpu: "*",
+    cpu: [],
     engines: ["v8", "ejs", "node", "rhino"],
     scripts: {
         install: "install.es",
@@ -53,38 +55,6 @@
     directories: {
         lib: "src/lib",
         bin: "local/binaries",
+        test: "test",
     },
 }
-
-- Author array
-- versions can omit upperkk
-
-
-====
-
-- author/contributors converted to hash: name, email, web
-- Checksums => signatures. Converted to hash
-- bugs converted to hash
-- removed builtin
-- remove categories
-- rename conforms to implements
-- licenses converted to hash
-- Consider hash for versions
-
------
-maintainer
-
-Reserved: using, build, imports
-Scripts: add test
-checksum: only when package.json is outside package 
-change "kind" to "type" in license.
-
------
-
-soup, ham, loaf multi-oat bread
-
-[ "ejs", "1.0.0", "2.0" ],
-
-"name", "1"         2
-"name", "1.0"       2
-"name", "1.0.1"     2

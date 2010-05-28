@@ -279,12 +279,10 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
     EjsModule   *module;
     int         next;
 
-    module = 0;
-
     if (mprLookupItem(list, mp) < 0) {
         mprAddItem(list, mp);
     }
-    for (next = 0; (module = mprGetNextItem(module->dependencies, &next)) != 0; ) {
+    for (next = 0; (module = mprGetNextItem(mp->dependencies, &next)) != 0; ) {
         if (mprLookupItem(list, module) < 0) {
             mprAddItem(list, module);
         }

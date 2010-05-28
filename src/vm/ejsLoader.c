@@ -48,7 +48,7 @@ static int  loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *path);
 #endif
 
 static int  loadDocSection(Ejs *ejs, MprFile *file, EjsModule *mp);
-static void setDoc(Ejs *ejs, EjsModule *mp, EjsObj *block, int slotNum);
+static void setDoc(Ejs *ejs, EjsModule *mp, void *vp, int slotNum);
 
 /******************************************************************************/
 /**
@@ -1907,16 +1907,16 @@ int ejsModuleReadByte(Ejs *ejs, EjsModule *mp, int *number)
 }
 
 
-static void setDoc(Ejs *ejs, EjsModule *mp, EjsObj *block, int slotNum)
+static void setDoc(Ejs *ejs, EjsModule *mp, void *vp, int slotNum)
 {
-    if (mp->doc && ejsIsBlock(block)) {
-        ejsCreateDoc(ejs, (EjsBlock*) block, slotNum, mp->doc);
+    if (mp->doc) {
+        ejsCreateDoc(ejs, vp, slotNum, mp->doc);
         mp->doc = 0;
     }
 }
 
 
-EjsDoc *ejsCreateDoc(Ejs *ejs, EjsBlock *block, int slotNum, cchar *docString)
+EjsDoc *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, cchar *docString)
 {
     EjsDoc      *doc;
     char        key[32];
@@ -1929,11 +1929,7 @@ EjsDoc *ejsCreateDoc(Ejs *ejs, EjsBlock *block, int slotNum, cchar *docString)
     if (ejs->doc == 0) {
         ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE);
     }
-
-    /*
-        This is slow, but not critical path
-     */
-    mprSprintf(key, sizeof(key), "%Lx %d", PTOL(block), slotNum);
+    mprSprintf(key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
     mprAddHash(ejs->doc, key, doc);
     return doc;
 }

@@ -1,43 +1,43 @@
 {
   "name": "ejs.web.template",
   "description": "Ejscript web page templating engine (ejstem)",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "categories": [
     "ejs",
     "web",
-    "template",
+    "template"
   ],
   "author": "Embedthis (http://www.embedthis.com) <dev@embedthis.com>",
   "contributors": [
-    "Embedthis (http://www.embedthis.com) <dev@embedthis.com>",
+    "Embedthis (http://www.embedthis.com) <dev@embedthis.com>"
   ],
   "bugReports": "dev@embedthis.com",
   "license": [
-    "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)",
+    "GPLv2 (http://www.ejscript.org/products/ejs/doc/licenses/gpl.html)"
   ],
   "stability": "prototype",
   "location": "http://hg.embedthis.com/ejs",
   "keywords": [
     "web",
     "esp",
-    "template",
+    "template"
   ],
   "dependencies": [
     [
       "ejs",
-      "== 1.0.0",
+      "== 1.0.0"
     ],
     [
       "ejs.io",
-      "== 1.0.0",
+      "== 1.0.0"
     ],
     [
       "ejs.xml",
-      "== 1.0.0",
-    ],
+      "== 1.0.0"
+    ]
   ],
   "os": "*",
   "cpu": "*",
   "patchable": false,
-  "builtin": true,
+  "builtin": true
 }

@@ -88,12 +88,8 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsObj *block,
 static void     removeScope(EcCompiler *cp);
 static int      resolveName(EcCompiler *cp, EcNode *node, EjsObj *vp,  EjsName *name);
 static int      resolveProperty(EcCompiler *cp, EcNode *node, EjsType *type, EjsName *name);
-static void     setAstDocString(Ejs *ejs, EcNode *np, EjsObj *block616G, int slotNum);
+static void     setAstDocString(Ejs *ejs, EcNode *np, void *vp, int slotNum);
 static EjsNamespace *ejsLookupNamespace(Ejs *ejs, cchar *namespace);
-
-#if UNUSED
-static int      ecLookupVarWithNamespaces(Ejs *ejs, EjsObj *originalObj, EjsObj *vp, EjsName *name, EjsLookup *lookup);
-#endif
 
 /*********************************************** Code ***********************************************/
 /*
@@ -291,7 +287,6 @@ static void bindBlock(EcCompiler *cp, EcNode *np)
     mprAssert(block);
 
     rc = resolveName(cp, np, NULL, &np->qname);
-
     if (np->blockCreated) {
         if (! np->createBlockObject) {
             mprAssert(cp->lookup.obj);
@@ -645,7 +640,7 @@ static void bindClass(EcCompiler *cp, EcNode *np)
             ejsMakePermanent(ejs, (EjsObj*) type->prototype);
         }
     }
-     setAstDocString(ejs, np, np->lookup.obj, np->lookup.slotNum);
+    setAstDocString(ejs, np, ejs->global, np->lookup.slotNum);
 }
 
 
@@ -1105,6 +1100,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
     EjsType         *iface, *currentClass;
     EjsFunction     *fun;
     EjsObj          *block;
+    EjsName         qname;
     int             slotNum, next;
 
     mprAssert(cp->phase >= EC_PHASE_BIND);
@@ -1212,7 +1208,16 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
 
     if (!np->function.isConstructor) {
         if (resolveName(cp, np, block, &np->qname) < 0) {
-            astError(cp, np, "Internal error. Can't bind function %s", np->qname.name);
+            astError(cp, np, "Internal error. Can't resolve function %s", np->qname.name);
+        }
+        if (np->lookup.slotNum >= 0) {
+            setAstDocString(ejs, np, np->lookup.obj, np->lookup.slotNum);
+        }
+    } else {
+        if (resolveName(cp, np, ejs->global, ejsName(&qname, NULL, np->qname.name)) < 0) {
+            if (resolveName(cp, np, ejs->global, &np->qname) < 0) {
+                astError(cp, np, "Internal error. Can't resolve constructor %s", np->qname.name);
+            }
         }
         if (np->lookup.slotNum >= 0) {
             setAstDocString(ejs, np, np->lookup.obj, np->lookup.slotNum);
@@ -1469,8 +1474,12 @@ static void astForIn(EcCompiler *cp, EcNode *np)
             astError(cp, np, "Can't find Iterator.next method");
         }
 #endif
+#if UNUSED
         //  MOB UNBIND
         np->forInLoop.iterNext->lookup.slotNum = -1;
+#else
+        np->forInLoop.iterNext->lookup.bind = 0;
+#endif
 #endif
     }
     if (np->forInLoop.body) {
@@ -1786,9 +1795,14 @@ static void astBindName(EcCompiler *cp, EcNode *np)
 
 #if MOB || BINDING || DISABLE_ALL_BINDING || 1
     if (lookup->obj != (EjsObj*) state->currentFunction || ejsIsType(lookup->obj)) {
+#if UNUSED
         lookup->slotNum = -1;
         lookup->obj = 0;
         lookup->useThis = 0;
+#else
+        lookup->bind = 0;
+        lookup->useThis = 0;
+#endif
     }
 #endif
 
@@ -1798,7 +1812,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
             require one byte slot numbers.
          */
         if (lookup->slotNum >= 256) {
-            lookup->slotNum = -1;
+            lookup->bind = 0;
         }
 
         if (lookup->obj == ejs->global && !cp->bind) {
@@ -1806,7 +1820,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                 Unbind non-core globals
              */
             if ((lookup->slotNum >= ES_global_NUM_CLASS_PROP) && !(lookup->ref && lookup->ref->builtin)) {
-                lookup->slotNum = -1;
+                lookup->bind = 0;
             }
         }
 
@@ -1816,13 +1830,13 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                 /*
                     Type requires non-bound access. Types that implement interfaces will have different slots.
                  */
-                lookup->slotNum = -1;
+                lookup->bind = 0;
 
             } else if (type->dynamicInstance && !type->constructor.block.obj.builtin) {
                 /*
                     Don't bind non-core dynamic properties
                  */
-                lookup->slotNum = -1;
+                lookup->bind = 0;
 
             } else {
                 /*
@@ -1831,18 +1845,18 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                  */
                 if (type == ejs->xmlType || type == ejs->xmlListType) {
                     if (np->parent == 0 || np->parent->parent == 0 || np->parent->parent->kind != N_CALL) {
-                        lookup->slotNum = -1;
+                        lookup->bind = 0;
                     }
                 }
             }
 
         } else if (ejsIsPrototype(np->lookup.obj)) {
             if (!np->lookup.obj->builtin) {
-                lookup->slotNum = -1;
+                lookup->bind = 0;
             }
         }
         if (lookup->trait && lookup->trait->attributes & EJS_TRAIT_GETTER) {
-            lookup->slotNum = -1;
+            lookup->bind = 0;
         }
     }
 
@@ -2351,7 +2365,7 @@ static void astUseNamespace(EcCompiler *cp, EcNode *np)
 
             } else {
                 //  MOB -- UN BIND
-                np->lookup.slotNum = -1;
+                np->lookup.bind = 0;
                 namespace = (EjsNamespace*) np->lookup.ref;
                 np->namespaceRef->uri = namespace->uri;
 
@@ -2720,9 +2734,12 @@ static void bindVariableDefinition(EcCompiler *cp, EcNode *np)
         }
     }
     setAstDocString(ejs, np, np->lookup.obj, np->lookup.slotNum);
+
+    np->lookup.bind = 0;
+#if UNUSED
     //  MOB UN BIND
     np->lookup.slotNum = -1;
-    
+#endif
     LEAVE(cp);
 }
 
@@ -3606,6 +3623,8 @@ static int resolveName(EcCompiler *cp, EcNode *np, EjsObj *vp, EjsName *qname)
     state = cp->state;
     lookup = &cp->lookup;
 
+    cp->lookup.bind = 0;
+
     if (vp) {
         //  MOB -- was anyspace
         if (ecLookupVar(cp, vp, qname) < 0) {
@@ -3617,6 +3636,7 @@ static int resolveName(EcCompiler *cp, EcNode *np, EjsObj *vp, EjsName *qname)
             return EJS_ERR;
         }
     }
+    cp->lookup.bind = 1;
 
     /*
         Revise the nth block to account for blocks that will be erased
@@ -3717,12 +3737,13 @@ static void addGlobalProperty(EcCompiler *cp, EcNode *np, EjsName *qname)
 }
 
 
-static void setAstDocString(Ejs *ejs, EcNode *np, EjsObj *block, int slotNum)
+static void setAstDocString(Ejs *ejs, EcNode *np, void *vp, int slotNum)
 {
-    mprAssert(block);
+    mprAssert(vp);
+    mprAssert(slotNum >= 0);
 
-    if (np->doc && slotNum >= 0 && ejsIsBlock(block)) {
-        ejsCreateDoc(ejs, (EjsBlock*) block, slotNum, np->doc);
+    if (np->doc && vp && slotNum >= 0) {
+        ejsCreateDoc(ejs, vp, slotNum, np->doc);
     }
 }
 

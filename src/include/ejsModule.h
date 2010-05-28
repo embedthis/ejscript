@@ -339,11 +339,11 @@ extern int          ejsEncodeUint(uchar *pos, uint number);
 extern int          ejsEncodeWordAtPos(uchar *pos, int value);
 
 extern char         *ejsGetDocKey(struct Ejs *ejs, EjsBlock *block, int slotNum, char *buf, int bufsize);
-extern EjsDoc       *ejsCreateDoc(struct Ejs *ejs, EjsBlock *block, int slotNum, cchar *docString);
+extern EjsDoc       *ejsCreateDoc(struct Ejs *ejs, void *vp, int slotNum, cchar *docString);
 
-extern int ejsAddModule(Ejs *ejs, struct EjsModule *up);
+extern int          ejsAddModule(Ejs *ejs, struct EjsModule *up);
 extern struct EjsModule *ejsLookupModule(Ejs *ejs, cchar *name, int minVersion, int maxVersion);
-extern int ejsRemoveModule(Ejs *ejs, struct EjsModule *up);
+extern int          ejsRemoveModule(Ejs *ejs, struct EjsModule *up);
 
 #ifdef __cplusplus
 }
