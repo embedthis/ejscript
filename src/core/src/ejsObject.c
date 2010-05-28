@@ -487,7 +487,7 @@ static EjsTrait *getObjectPropertyTrait(Ejs *ejs, EjsObj *obj, int slotNum)
  */
 static int lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
 {
-    EjsSlot     *slots, *sp;
+    EjsSlot     *slots, *sp, *np;
     int         slotNum, index, prior;
 
     mprAssert(qname);
@@ -539,11 +539,15 @@ static int lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
             for (slotNum = obj->hash->buckets[index]; slotNum >= 0; slotNum = sp->hashChain) {
                 sp = &slots[slotNum];
                 if (CMP_NAME(&sp->qname, qname)) {
-                    if (sp->hashChain < 0 || !CMP_NAME(&sp->qname, &slots[sp->hashChain].qname)) {
-                        return slotNum;
+                    /* Now ensure there are no more matching names - must be unique in the "name" only */
+                    for (np = sp; np->hashChain >= 0; ) {
+                        np = &slots[np->hashChain];
+                        if (CMP_NAME(&sp->qname, &np->qname)) {
+                            /* Multiple properties with the same name */
+                            return -1;
+                        }
                     }
-                    /* Multiple properties with the same name */
-                    break;
+                    return slotNum;
                 }
             }
         }
