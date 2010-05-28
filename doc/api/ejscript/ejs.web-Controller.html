@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Controller</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Controller</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Controller'>
+   <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Controller</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Controller <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a>       </td></tr>
+</table>
+
+<p class='classBrief'>Create and initialize a controller.</p>
+
+<p class='classDescription'></p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='actionName'></a>
+   <tr><td nowrap align='center'>ejs.web </td><td>actionName</td><td><a href='ejs-String.html'>String</a></td><td>Name of the action being run. </td></tr>
+<a name='controllerName'></a>
+   <tr><td nowrap align='center'>ejs.web </td><td>controllerName</td><td><a href='ejs-String.html'>String</a></td><td>Lower case controller name. </td></tr>
+<a name='deploymentMode'></a>
+   <tr><td nowrap align='center'>ejs.web </td><td>deploymentMode</td><td><a href='ejs-String.html'>String</a></td><td>Deployment mode: debug, test, production. </td></tr>
+<a name='flash'></a>
+   <tr><td nowrap align='center'>public </td><td>flash</td><td><a href='ejs-Object.html'>Object</a></td><td>Flash messages to display on the next screen
+"error"         Negative errors (Warnings and errors)
+"inform"        Informational / postitive feedback (note)
+"warn"          Negative feedback (Warnings and errors)
+"*""             Other feedback (reminders, suggestions...). </td></tr>
+<a name='log'></a>
+   <tr><td nowrap align='center'>ejs.web </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Logger channel. </td></tr>
+<a name='params'></a>
+   <tr><td nowrap align='center'>ejs.web </td><td>params</td><td><a href='ejs-Object.html'>Object</a></td><td>Reference to the Request.params object. This stores the request query and form parameters.</td></tr>
+<a name='request'></a>
+   <tr><td nowrap align='center'>ejs.web </td><td>request</td><td><a href='ejs.web-Request.html'>Request</a></td><td>Reference to the current Request. </td></tr>
+<a name='view'></a>
+   <tr><td nowrap align='center'>ejs.web </td><td>view</td><td><a href='ejs.web-View.html'>View</a></td><td>Reference to the current view. </td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Controller Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#create'><b>create</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs.web-Controller.html'>Controller</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Factory method to create and initialize a controller.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='create'></a>
+<div class='api'>
+<div class='apiSig'>static const  create(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs.web-Controller.html'>Controller</a>
+</div>
+<div class='apiDetail'>
+<p>Factory method to create and initialize a controller.</p>
+<dl><dt>Description</dt><dd>The controller class is specified by 
+params["controlller"] which should be set to the controller name without the "Controller" suffix. 
+This call expects the controller class to be loaded.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

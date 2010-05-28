@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Route</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Route</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Route'>
+   <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
+   <tr><td><strong>Definition</strong></td><td>dynamic  class Route</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Route <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a>       </td></tr>
+</table>
+
+<p class='classBrief'>Route class.</p>
+
+<p class='classDescription'>A Route describes a mapping from a set of resources to a URI. The Router uses tables of 
+Routes to serve and route requests to web scripts.<br/><br/>If the URL pattern is a regular expression, it is used to match against the request pathInfo. If it matches,
+the pathInfo is matched and sub-expressions may be referenced in the override parameters by using and
+so on. e.g. { priority: "}<br/><br/>If the URL pattern is a function, it is run to test for a request match. It should return true to 
+accept the request. The function can set parameters in request.params.<br/><br/>The optional override hash provides parameters which will be defined in params[] overriding any tokenized 
+parameters previously set.<br/><br/>Routes are tested in-order from first to last. Inner routes are tested before their outer parent.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='dir'></a>
+   <tr><td nowrap align='center'>public </td><td>dir</td><td><a href='ejs-Path.html'>Path</a></td><td>Directory for the application serving the route. This directory path will be assigned to Request.dir.</td></tr>
+<a name='match'></a>
+   <tr><td nowrap align='center'>public </td><td>match</td><td><a href='ejs-Object.html'>Object</a></td><td>Matching pattern for URIs. The pattern is used to match the request in general and pathInfo specifically. 
+The pattern can be a token string, a regular expression or a function. If it is a string of tokens separated
+by ":", it is converted to a regular expression and the positional tokens (:NAME) are extracted for web
+requests and mapped to items in the params collection. ie. params[NAME]. <br/><br/>If the match pattern is a regular expression, it is used to match against the request pathInfo. If it matches
+the pathInfo, then sub-expressions may be referenced in the <a href='#params'>params</a> values by using and
+so on. e.g. params: { priority: "}<br/><br/>If the match pattern is a function, it is run to test for a request match. The function should return true to 
+match the request. The function can set parameters in request.params.</td></tr>
+<a name='method'></a>
+   <tr><td nowrap align='center'>public </td><td>method</td><td><a href='ejs-String.html'>String</a></td><td>HTTP method to match. If null, all methods are matched.</td></tr>
+<a name='name'></a>
+   <tr><td nowrap align='center'>public </td><td>name</td><td><a href='ejs-String.html'>String</a></td><td>Optional route name. </td></tr>
+<a name='params'></a>
+   <tr><td nowrap align='center'>public </td><td>params</td><td><a href='ejs-Object.html'>Object</a></td><td>Request parameters to add to the Request.params. This optional override hash provides parameters which will 
+be defined in Request.params[].</td></tr>
+<a name='rewrite'></a>
+   <tr><td nowrap align='center'>public </td><td>rewrite</td><td><a href='ejs-Function.html'>Function</a></td><td>Rewrite function. If present, this function is invoked with the Request as an argument. It may rewrite
+the request scriptName, pathInfo and other Request properties.</td></tr>
+<a name='subroute'></a>
+   <tr><td nowrap align='center'>public </td><td>subroute</td><td><a href='ejs.web-Route.html'>Route</a></td><td>Nested route. A nested route prepends the match patter of the outer route to its "match" pattern. 
+The param set of the outer route are appended to the inner route.</td></tr>
+<a name='threaded'></a>
+   <tr><td nowrap align='center'>public </td><td>threaded</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Threaded request indicator. If true, the request should be run in a worker thread if possible. This thread
+will not be dedicated, but will be assigned as the request requires CPU resources.</td></tr>
+<a name='type'></a>
+   <tr><td nowrap align='center'>public </td><td>type</td><td><a href='ejs-String.html'>String</a></td><td>&nbsp;</td></tr>
+<a name='urimaker'></a>
+   <tr><td nowrap align='center'>public </td><td>urimaker</td><td><a href='ejs-Function.html'>Function</a></td><td>Function to make URIs according to the route format. </td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Route Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr><td colspan='2'>No methods defined</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Uri</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Uri</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Uri'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Uri</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Uri <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a>       </td></tr>
+</table>
+
+<p class='classBrief'>Create and parse a Uri object.</p>
+
+<p class='classDescription'></p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='basename'></a>
+   <tr><td nowrap align='left'>public const get </td><td>basename</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The base of portion of the Uri. The base portion is the trailing portion of the path without any 
+directory elements.</td></tr>
+<a name='complete'></a>
+   <tr><td nowrap align='left'>public const get </td><td>complete</td><td><a href='ejs-Uri.html'>Uri</a></td><td>A completed Uri including scheme, host. The Uri path will be normalized and completed with default values 
+for missing components.</td></tr>
+<a name='dirname'></a>
+   <tr><td nowrap align='left'>public const get </td><td>dirname</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The directory portion of a Uri path. The directory portion is the leading portion including all directory 
+elements of the Uri path excluding the base name. On some systems, it will include a drive specifier.</td></tr>
+<a name='filename'></a>
+   <tr><td nowrap align='left'>public const get </td><td>filename</td><td><a href='ejs-Path.html'>Path</a></td><td>&nbsp;</td></tr>
+<a name='hasExtension'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasExtension</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri has an explicit extension. </td></tr>
+<a name='hasHost'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasHost</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit host component. For example: "www.example.com".</td></tr>
+<a name='hasPort'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasPort</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit port number. </td></tr>
+<a name='hasQuery'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasQuery</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit query component. </td></tr>
+<a name='hasReference'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasReference</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit reference component. </td></tr>
+<a name='hasScheme'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasScheme</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit scheme (protocol) specifier. For example: "http://".</td></tr>
+<a name='isAbsolute'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isAbsolute</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the Uri is absolute. Set to true if the Uri is an absolute path with the path component beginning with "/".</td></tr>
+<a name='isDir'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isDir</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the Uri is a directory Uri. Set to true if the Uri ends with "/". NOTE: this only tests the Uri and 
+not any physical resource associated with the Uri.</td></tr>
+<a name='isRegular'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isRegular</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the Uri is a regular resource and not a directory. Set to true if the Uri does not end with "/". 
+NOTE: this only tests the Uri and not any physical resource associated with the Uri.</td></tr>
+<a name='isRelative'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isRelative</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is if the Uri is relative. Set to true if the Uri's path component does not begin with "/".</td></tr>
+<a name='mimeType'></a>
+   <tr><td nowrap align='left'>public const get </td><td>mimeType</td><td><a href='ejs-String.html'>String</a></td><td>The mime type of the Uri. This is set to a mime type string by examining the Uri extension. Set to null if
+the Uri has no extension.</td></tr>
+<a name='normalize'></a>
+   <tr><td nowrap align='left'>public const get </td><td>normalize</td><td><a href='ejs-Uri.html'>Uri</a></td><td>Normalized Uri by removing all redundant and invalid Uri components. Set to a Uri with "segment/.." 
+and "./" components removed. The value will not be converted to an absolute Uri nor will it map character case.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Uri Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decode'><b>decode</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a Uri encoded string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decodeComponent'><b>decodeComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a Uri encoded component.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#encode'><b>encode</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a Uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#encodeComponent'><b>encodeComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a Uri component.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='decode'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  decode(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Decode a Uri encoded string.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A decoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='decodeComponent'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  decodeComponent(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Decode a Uri encoded component.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A decoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='encode'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  encode(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Encode a Uri.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An encoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='encodeComponent'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  encodeComponent(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Encode a Uri component.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An encoded string.</dd></dl>
+</div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Path</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Path</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Path'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td>final  class Path</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Path <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a>       </td></tr>
+</table>
+
+<p class='classBrief'>Create a new Path object and set the path's location.</p>
+
+<p class='classDescription'></p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='absolute'></a>
+   <tr><td nowrap align='left'>public const get </td><td>absolute</td><td><a href='ejs-Path.html'>Path</a></td><td>An equivalent absolute path equivalent for the current path. The path is normalized.</td></tr>
+<a name='accessed'></a>
+   <tr><td nowrap align='left'>public const get </td><td>accessed</td><td><a href='ejs-Date.html'>Date</a></td><td>When the file represented by the path was last accessed. Set to null if the file does not exist.</td></tr>
+<a name='basename'></a>
+   <tr><td nowrap align='left'>public const get </td><td>basename</td><td><a href='ejs-Path.html'>Path</a></td><td>The base of portion of the path. The base portion is the trailing portion without any directory elements.</td></tr>
+<a name='components'></a>
+   <tr><td nowrap align='left'>public const get </td><td>components</td><td><a href='ejs-Array.html'>Array</a></td><td>Path components. This is the path converted to an absolute path and then broken into components for each
+directory level. It is set to an array object with an element for each segment of the path. The first 
+element represents the file system root and will be the empty string or drive spec on a windows 
+like systems. Array.join("/") can be used to put components back into a complete path.</td></tr>
+<a name='created'></a>
+   <tr><td nowrap align='left'>public const get </td><td>created</td><td><a href='ejs-Date.html'>Date</a></td><td>When the file represented by the path was created. Set to null if the file does not exist.</td></tr>
+<a name='dirname'></a>
+   <tr><td nowrap align='left'>public const get </td><td>dirname</td><td><a href='ejs-Path.html'>Path</a></td><td>The directory portion of a file. The directory portion is the leading portion including all 
+directory elements and excluding the base name. On some systems, it will include a drive specifier.
+See also <a href='#parent'>parent</a> which will determine the parent directory of relative paths.</td></tr>
+<a name='exists'></a>
+   <tr><td nowrap align='left'>public const get </td><td>exists</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does a file exist for this path. </td></tr>
+<a name='extension'></a>
+   <tr><td nowrap align='left'>public const get </td><td>extension</td><td><a href='ejs-String.html'>String</a></td><td>File extension portion of the path. The file extension is the portion after (and not including) the last ".".</td></tr>
+<a name='hasDrive'></a>
+   <tr><td nowrap align='left'>public const get </td><td>hasDrive</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the file path have a drive spec (C:) in it's name. Only relevant on Windows like systems.</td></tr>
+<a name='isAbsolute'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isAbsolute</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the path absolute, i.e. Beginning at the file system's root.</td></tr>
+<a name='isDir'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isDir</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the path a directory. </td></tr>
+<a name='isLink'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isLink</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the path is a symbolic link file. Not available on some platforms such as Windows and VxWorks.</td></tr>
+<a name='isRegular'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isRegular</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the path a regular file. </td></tr>
+<a name='isRelative'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isRelative</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the path is relative and not absolute. </td></tr>
+<a name='length'></a>
+   <tr><td nowrap align='left'>public const get </td><td>length</td><td><a href='ejs-Number.html'>Number</a></td><td>The length of the path name in bytes. Note: this is not the file size. For that, use Path.size.</td></tr>
+<a name='linkTarget'></a>
+   <tr><td nowrap align='left'>public const get </td><td>linkTarget</td><td><a href='ejs-Path.html'>Path</a></td><td>The target pointed to if this path is a symbolic link. Not available on some platforms such as Windows and 
+VxWorks. If the path is not a symbolic link, it is set to null.</td></tr>
+<a name='mimeType'></a>
+   <tr><td nowrap align='left'>public const get </td><td>mimeType</td><td><a href='ejs-String.html'>String</a></td><td>Get the mime type for a path or extension string. The path's extension is used to lookup the corresponding
+mime type.</td></tr>
+<a name='modified'></a>
+   <tr><td nowrap align='left'>public const get </td><td>modified</td><td><a href='ejs-Date.html'>Date</a></td><td>When the file represented by the path was last modified. Set to null if the file does not exist.</td></tr>
+<a name='name'></a>
+   <tr><td nowrap align='left'>public const get </td><td>name</td><td><a href='ejs-String.html'>String</a></td><td>Name of the Path as a string. This is the same as <a href='#toString()'>toString()</a>. </td></tr>
+<a name='natural'></a>
+   <tr><td nowrap align='left'>public const get </td><td>natural</td><td><a href='ejs-Path.html'>Path</a></td><td>Natural (native) respresentation of the path. This uses the default O/S file system path separator, 
+this is "\" on windows and "/" on unix and is normalized.</td></tr>
+<a name='normalize'></a>
+   <tr><td nowrap align='left'>public const get </td><td>normalize</td><td><a href='ejs-Path.html'>Path</a></td><td>Normalized representation of the path. This removes "segment/.." and "./" components. Separators are made 
+uniform by converting all separators to be the same as the first separator found in the path. Note: the 
+result is not converted to an absolute path.</td></tr>
+<a name='parent'></a>
+   <tr><td nowrap align='left'>public const get </td><td>parent</td><td><a href='ejs-Path.html'>Path</a></td><td>The parent directory of path. This may be an absolute path if there are no parent directories in the path.</td></tr>
+<a name='portable'></a>
+   <tr><td nowrap align='left'>public const get </td><td>portable</td><td><a href='ejs-Path.html'>Path</a></td><td>The path in a portable (like Unix) representation. This uses "/" separators. The value is is normalized and 
+the separators are mapped to "/".</td></tr>
+<a name='relative'></a>
+   <tr><td nowrap align='left'>public const get </td><td>relative</td><td><a href='ejs-Path.html'>Path</a></td><td>That path in a form relative to the application's current working directory. The value is normalized.</td></tr>
+<a name='separator'></a>
+   <tr><td nowrap align='left'>public const get </td><td>separator</td><td><a href='ejs-String.html'>String</a></td><td>The path separator for this path. This will return the first valid path separator used by the path
+or the default file system path separator if the path has no separators. On Windows, a path may contain
+"/" and "\" separators.  This will be set to a string containing the first separator found in the path.
+Will typically be either "/" or "/\\" depending on the path, platform and file system.
+Use <a href='#natural'>natural</a> or <a href='#portable'>portable</a> to create a new path with different path separators.</td></tr>
+<a name='size'></a>
+   <tr><td nowrap align='left'>public const get </td><td>size</td><td><a href='ejs-Number.html'>Number</a></td><td>Size of the file associated with this Path object. Set to the number of bytes in the file or -1 if the
+size determination failed.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Path Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr><td colspan='2'>No methods defined</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

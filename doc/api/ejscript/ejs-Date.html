@@ -1,0 +1,149 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Date</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Date</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Date'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td>final  class Date</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Date <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a>       </td></tr>
+</table>
+
+<p class='classBrief'>Construct a new date object.</p>
+
+<p class='classDescription'>Permissible constructor forms:
+<ul>
+<li>Date() This is the default and it constructs a date instance for the current time.</li>
+<li>Date(milliseconds) where (seconds sincde 1 Jan 1970 00:00:00 UTC))</li>
+<li>Date(dateString) where (In a format recognized by parse())</li>
+<li>Date(year, month, date) where (Four digit year, month: 0-11, date: 1-31)</li>
+<li>Date(year, month, date [, hour, minute, second, msec]) where (hour: 0-23, minute: 0-59, second: 0-59, msec: 0-999)</li>
+</ul></p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='elapsed'></a>
+   <tr><td nowrap align='left'>public const get </td><td>elapsed</td><td><a href='ejs-Number.html'>Number</a></td><td>Time in milliseconds since the date object was constructed. </td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Date Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#now'><b>now</b></a>(): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the current time as milliseconds since Jan 1 1970.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#parse'><b>parse</b></a>(dateString: <a href='ejs-String.html'>String</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Parse a date string and return the number of milliseconds since midnight, January 1st, 1970 UTC.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#parseDate'><b>parseDate</b></a>(dateString: <a href='ejs-String.html'>String</a>, defaultDate: <a href='ejs-Date.html'>Date</a> = null): <a href='ejs-Date.html'>Date</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Parse a date string and Return a new Date object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#parseUTCDate'><b>parseUTCDate</b></a>(dateString: <a href='ejs-String.html'>String</a>, defaultDate: <a href='ejs-Date.html'>Date</a> = null): <a href='ejs-Date.html'>Date</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Parse a date string and Return a new Date object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#UTC'><b>UTC</b></a>(year: <a href='ejs-Number.html'>Number</a>, month: <a href='ejs-Number.html'>Number</a>, day: <a href='ejs-Number.html'>Number</a>, hours: <a href='ejs-Number.html'>Number</a> = 0 , minutes: <a href='ejs-Number.html'>Number</a> = 0 , seconds: <a href='ejs-Number.html'>Number</a> = 0 , milliseconds: <a href='ejs-Number.html'>Number</a> = 0): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Calculate the number of milliseconds since the epoch for a UTC time.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='now'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  now(): <a href='ejs-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Return the current time as milliseconds since Jan 1 1970.</p>
+<dl><dt>Specified</dt>
+<dd>mozilla</dd></dl>
+</div>
+</div>
+<hr />
+<a name='parse'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  parse(dateString: <a href='ejs-String.html'>String</a>): <a href='ejs-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Parse a date string and return the number of milliseconds since midnight, January 1st, 1970 UTC.</p>
+<dl><dt>Description</dt><dd>If <a href='#dateString'>dateString</a> does not contain a timezone, the date string will be interpreted as a local date/time.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>dateString: <a href='ejs-String.html'>String</a> </td><td>The string to parse. See <a href='#parseDate'>parseDate</a> for supported formats.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Return a new date number.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='parseDate'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  parseDate(dateString: <a href='ejs-String.html'>String</a>, defaultDate: <a href='ejs-Date.html'>Date</a> = null): <a href='ejs-Date.html'>Date</a>
+</div>
+<div class='apiDetail'>
+<p>Parse a date string and Return a new Date object.</p>
+<dl><dt>Description</dt><dd>If <a href='#dateString'>dateString</a> does not contain a timezone,
+the date string will be interpreted as a local date/time.  This is similar to parse() but it returns a
+date object.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>dateString: <a href='ejs-String.html'>String</a> </td><td>The date string to parse. The date parsing logic uses heuristics and attempts to intelligently parse a range of dates. Some of the possible formats are: <ul> <li>07/28/2010</li> <li>07/28/08</li> <li>Jan/28/2010</li> <li>Jaunuary-28-2010</li> <li>28-jan-2010</li> <li>[29] Jan [15] [2010]</li> <li>dd/mm/yy, dd.mm.yy, dd-mm-yy</li> <li>mm/dd/yy, mm.dd.yy, mm-dd-yy</li> <li>yyyy/mm/dd, yyyy.mm.dd, yyyy-mm-dd</li> <li>10:52[:23]</li> <li>2009-05-21t16:06:05.000z (ISO date)</li> <li>[GMT|UTC][+-]NN[:]NN (timezone)</li> </ul></td></tr><tr class='param'><td class='param'>defaultDate: <a href='ejs-Date.html'>Date</a> </td><td>Default date to use to fill out missing items in the date string. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Return a new Date.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='parseUTCDate'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  parseUTCDate(dateString: <a href='ejs-String.html'>String</a>, defaultDate: <a href='ejs-Date.html'>Date</a> = null): <a href='ejs-Date.html'>Date</a>
+</div>
+<div class='apiDetail'>
+<p>Parse a date string and Return a new Date object.</p>
+<dl><dt>Description</dt><dd>If <a href='#dateString'>dateString</a> does not contain a timezone,
+the date string will be interpreted as a UTC date/time.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>dateString: <a href='ejs-String.html'>String</a> </td><td>UTC date string to parse. See <a href='#parseDate'>parseDate</a> for supported formats.</td></tr><tr class='param'><td class='param'>defaultDate: <a href='ejs-Date.html'>Date</a> </td><td>Default date to use to fill out missing items in the date string. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Return a new Date.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='UTC'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  UTC(year: <a href='ejs-Number.html'>Number</a>, month: <a href='ejs-Number.html'>Number</a>, day: <a href='ejs-Number.html'>Number</a>, hours: <a href='ejs-Number.html'>Number</a> = 0 , minutes: <a href='ejs-Number.html'>Number</a> = 0 , seconds: <a href='ejs-Number.html'>Number</a> = 0 , milliseconds: <a href='ejs-Number.html'>Number</a> = 0): <a href='ejs-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Calculate the number of milliseconds since the epoch for a UTC time.</p>
+<dl><dt>Description</dt><dd>Date(year, month, date [, hour, minute, second, msec])</li></dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>year: <a href='ejs-Number.html'>Number</a> </td><td>Year.</td></tr><tr class='param'><td class='param'>month: <a href='ejs-Number.html'>Number</a> </td><td>Month of year.</td></tr><tr class='param'><td class='param'>day: <a href='ejs-Number.html'>Number</a> </td><td>Day of month.</td></tr><tr class='param'><td class='param'>hours: <a href='ejs-Number.html'>Number</a> </td><td>Hour of day. [default: 0 ]</td></tr><tr class='param'><td class='param'>minutes: <a href='ejs-Number.html'>Number</a> </td><td>Minute of hour. [default: 0 ]</td></tr><tr class='param'><td class='param'>seconds: <a href='ejs-Number.html'>Number</a> </td><td>Secods of minute. [default: 0 ]</td></tr><tr class='param'><td class='param'>milliseconds: <a href='ejs-Number.html'>Number</a> </td><td>Milliseconds of second. [default: 0]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The number of milliseconds since January 1, 1970 00:00:00 UTC.</dd></dl>
+</div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

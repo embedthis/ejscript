@@ -1,0 +1,113 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Worker</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Worker</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Worker'>
+   <tr><td><strong>Module</strong></td><td>ejs</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Worker</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Worker <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>webworker and ejs-11</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>Create a new Worker instance.</p>
+
+<p class='classDescription'>This call returns an outside worker object for using in the calling interpreter.
+Inside the worker interpreter, a corresponding "insdie" worker object is created that is paired to the
+outside worker.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='name'></a>
+   <tr><td nowrap align='center'>public </td><td>name</td><td><a href='ejs-String.html'>String</a></td><td>Worker name. This name is initialized but workers can update as required.</td></tr>
+<a name='onclose'></a>
+   <tr><td nowrap align='center'>public </td><td>onclose</td><td><a href='ejs-Function.html'>Function</a></td><td>Callback function invoked when the worker exits. The "this" object is set to the worker object.</td></tr>
+<a name='onerror'></a>
+   <tr><td nowrap align='center'>public </td><td>onerror</td><td><a href='ejs-Function.html'>Function</a></td><td>Callback function to receive incoming error events. This is invoked when the Worker thows an exception. 
+The "this" object is set to the worker object.</td></tr>
+<a name='onmessage'></a>
+   <tr><td nowrap align='center'>public </td><td>onmessage</td><td><a href='ejs-Function.html'>Function</a></td><td>Callback function to receive incoming messages. This is invoked when postMessage is called in another Worker. 
+The "this" object is set to the worker object.
+This is invoked as: function (event) { }.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Worker Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#exit'><b>exit</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Exit the worker.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#join'><b>join</b></a>(workers: <a href='ejs-Object.html'>Object</a> = null , timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for Workers to exit.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#lookup'><b>lookup</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Worker.html'>Worker</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Lookup a Worker by name.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<h2>Method Detail</h2>
+<a name='exit'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  exit(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Exit the worker.</p>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='join'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  join(workers: <a href='ejs-Object.html'>Object</a> = null , timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Wait for Workers to exit.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>workers: <a href='ejs-Object.html'>Object</a> </td><td>Set of Workers to wait for. Can be a single Worker object or an array of Workers. If null or  if the array is empty, then all workers are waited for. [default: null ]</td></tr><tr class='param'><td class='param'>timeout: <a href='ejs-Number.html'>Number</a> </td><td>Timeout to wait in milliseconds. The value -1 disables the timeout. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='lookup'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  lookup(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Worker.html'>Worker</a>
+</div>
+<div class='apiDetail'>
+<p>Lookup a Worker by name.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Lookup a Worker.</td></tr></table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>

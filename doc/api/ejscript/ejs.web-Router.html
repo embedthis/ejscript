@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <title>Class Router</title>
+
+   <link rel="stylesheet" type="text/css" href="doc.css" />
+</head>
+
+<body>
+<div class='body'>
+
+<div class="content">
+
+<a name='top'></a>
+<h1 class='className'>Router</h1>
+<div class='classBlock'>
+<table class='classHead' summary='Router'>
+   <tr><td><strong>Module</strong></td><td>ejs.web</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Router</td></tr>
+   <tr><td><strong>Inheritance</strong></td><td>Router <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a><tr><td><strong>Specified</strong></td><td>ejscript-2.0</td></tr>
+<tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
+       </td></tr>
+</table>
+
+<p class='classBrief'>Web router class.</p>
+
+<p class='classDescription'>Routes incomding HTTP requests to the appropriate location. The Route class supports 
+configurable user-defined route tables. It parses the route table at startup and matches request URIs and other 
+request parameters to determine the matching application and target for the request.</p>
+
+</div>
+
+
+<hr />
+<a name='Properties'></a>
+<h2 class='classSection'>Properties</h2>
+<table class='itemTable' summary='properties'>
+   <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='LegacyRoutes'></a>
+   <tr><td nowrap align='center'>public static </td><td>LegacyRoutes</td><td>&nbsp;</td><td>Routes used in Ejscript 1.X. </td></tr>
+<a name='RestfulRoutes'></a>
+   <tr><td nowrap align='center'>public static </td><td>RestfulRoutes</td><td>&nbsp;</td><td>Restful routes. Supports CRUD actions: index, show, create, update, destroy. The restful routes defined are:
+<pre>
+Method  URL                     Action
+GET		/controller             index
+POST	/controller/new         new         NEED new name
+POST	/controller             create      Create new 
+GET		/controller/1           show        Get and display data (not editable)
+GET		/controller/1/edit      edit        Get and display a form
+PUT		/controller/1           update      Update 
+DELETE	/controller/1           destroy     
+</pre></td></tr>
+<a name='TopRoutes'></a>
+   <tr><td nowrap align='center'>public static </td><td>TopRoutes</td><td>&nbsp;</td><td>Simple top level route table for "es" and "ejs" scripts. Matches simply by script extension.</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
+
+<hr />
+<a name='Methods'></a>
+<h2 class='classSection'>Router Methods</h2>
+<table class='apiIndex' summary='methods'>
+   <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr><td colspan='2'>No methods defined</td></tr>
+</table>
+
+<p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
+
+<hr />
+<div class="terms">
+   <p class="terms">
+       <a href="http://www.embedthis.com/">       Embedthis Software LLC, 2003-2010. All rights reserved. Embedthis is a trademark of Embedthis Software LLC.</a>
+   </p>
+</div></div>
+</div>
+</body>
+</html>
