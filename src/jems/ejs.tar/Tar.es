@@ -15,7 +15,7 @@ module ejs.tar {
         use default namespace public
 
         function Tar(path: Path) {
-            this.path = path
+            this.path = path.absolute
         }
         function add(path: Path): Void {
             if (!files.contains(path)) {

@@ -76,3 +76,4 @@ releases/*.zip
 releases/*.zip.txt
 releases/*.dmg.txt
 jlocal
+bin/x86_64*

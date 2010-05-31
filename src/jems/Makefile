@@ -69,9 +69,6 @@ buildJems:
 		$(call log) "[Publish]" "jem --to $(BLD_ABS_JEM_DIR) publish $$vj" ; \
 		jem --to $(BLD_ABS_JEM_DIR) publish $$vj ; \
 		cd - >/dev/null ; \
-		cd $$dest >/dev/null ; \
-		tar xfz $$vj.jem package.json ; \
-		cd - >/dev/null ; \
 	done
 
 cleanExtra:

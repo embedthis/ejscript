@@ -68,7 +68,7 @@ release:
 	./configure --defaults=release --tune=size
 
 cross64:
-	./configure --host=x86_64-apple-darwin --without-ssl --enable-complete-cross
+	./configure --build=i386-apple-darwin --host=x86_64-apple-darwin --without-ssl --enable-complete-cross
 
 cross-ppc:
 	./configure --host=ppc-apple-darwin --without-ssl

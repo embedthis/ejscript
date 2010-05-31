@@ -991,9 +991,19 @@ print(e)
         } else {
             //  TODO - really need to update the catalog
             let from = jem.path
-            let target = repo.join(jem.vername).join(jem.path.basename)
+            let dir = repo.join(jem.vername)
+            let target = dir.join(jem.path.basename)
+            //  MOB -- must cleanup if cp or makedir fails
             makeDir(target.dirname)
             cp(from, target)
+            tar = new Tar(target)
+            let home = App.dir
+            try {
+                chdir(dir)
+                tar.extract("package.json")
+            } finally {
+                chdir(home)
+            }
             //  MOB publishLocal()
         }
     }
