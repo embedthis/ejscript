@@ -7,7 +7,7 @@ DIR="${BLD_SRC_PREFIX}"
 
 usePrefixes SRC
 
-makeDir "${DIR}/src" "${DIR}/build/bin" "${DIR}/obj" "${DIR}/bin" "${DIR}/lib" "${DIR}/modules" "${DIR}/all"
+makeDir "${DIR}/src/include" "${DIR}/build/bin" "${DIR}/obj" "${DIR}/bin" "${DIR}/lib" "${DIR}/modules" "${DIR}/all"
 
 cpy -e                    Makefile "${DIR}"
 cpy -w -e                 "*.TXT" "${DIR}"

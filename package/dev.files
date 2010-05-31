@@ -23,6 +23,6 @@ do
     [ ${TASK} = Install ] && gzip $f
 done
 
-if [ ${TASK} = Install -a ${BLD_HOST_OS} != "WIN" ] ; then
-    ${BLD_BIN_PREFIX}/linkup
+if [ ${TASK} = Install -a ${BLD_HOST_OS} != "WIN" -a -f "${BLD_BIN_PREFIX}/linkup" ] ; then
+    "${BLD_BIN_PREFIX}/linkup" $TASK
 fi
