@@ -214,7 +214,7 @@ postClean() {
         rmdir "$BLD_INC_PREFIX" >/dev/null 2>&1
         rmdir "$BLD_PRD_PREFIX" >/dev/null 2>&1
     fi
-    /tmp/linkup$$ Remove
+    /tmp/linkup$$ Remove /
     rm -f /tmp/linkup$$
 }
 

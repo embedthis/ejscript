@@ -1,8 +1,9 @@
 /*
-    Ejs script to serve web requests on port
+    Test http server
 */
 require ejs.web
 
+let address = App.args[1]
 let server: HttpServer = new HttpServer(".", "web")
 
 var router = Router(Router.TopRoutes)
@@ -11,7 +12,7 @@ server.addListener("readable", function (event, request) {
     Web.serve(request, router)
 })
 
-// print("Listen on " + "127.0.0.1:6700")
-server.listen("127.0.0.1:6700")
+// print("Listen on " + address)
+server.listen(address)
 
 App.eventLoop()

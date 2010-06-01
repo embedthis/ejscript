@@ -1,12 +1,5 @@
-require ejs.unix
-
 /*
-     Stop the web server
+    Test cleanup
  */
-pidfile = session["webPidFile"]
-if (pidfile && exists(pidfile)) {
-    path = Path(pidfile)
-    pid = path.readString()
-    kill(pid)
-    path.remove()
-}
+
+stopService()
