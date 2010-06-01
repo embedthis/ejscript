@@ -51,6 +51,7 @@ while (line = s.readLine()) {
     data2 += line + "\n"
 }
 s.close()
+file.remove()
 
 assert(data.length == data2.length)
 assert(data == data2)
