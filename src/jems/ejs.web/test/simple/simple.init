@@ -1,0 +1,5 @@
+require ejs.unix
+
+const ENDPOINT  = "127.0.0.1:" + test.config["http_port"]
+
+startService("server.es", ENDPOINT, "/index.html")

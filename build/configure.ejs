@@ -57,6 +57,12 @@ BLD_FEATURE_AUTH_FILE=$BLD_FEATURE_AUTH_FILE
 BLD_FEATURE_AUTH_PAM=$BLD_FEATURE_AUTH_PAM
 BLD_FEATURE_EJS_CROSS_COMPILER=$BLD_FEATURE_EJS_CROSS_COMPILER
 
+#
+#   Test port configuration
+#
+BLD_HTTP_PORT=$BLD_HTTP_PORT
+BLD_SSL_PORT=$BLD_SSL_PORT
+
 !EOF_FEATURE_CONFIG1
 }
 
@@ -68,6 +74,8 @@ help()
 Additional Ejscript Features:
   --auth=[pam|file]            Build with file or PAM-based http authorization support.
   --enable-cross-compiler      Include the compiler when cross-compiling.
+  --port=PORT                  Set the HTTP test port.
+  --sslPort=PORT               Set the SSL test port.
   
 Optional Components: appweb, matrixssl, openssl, regexp, sqlite
 
@@ -110,6 +118,12 @@ parseArg()
 	enable-cross-compiler)
 		BLD_FEATURE_EJS_CROSS_COMPILER=1
 		;;
+    port=*)
+        BLD_HTTP_PORT=${ARG}
+        ;;
+    sslport=*)
+        BLD_SSL_PORT=${ARG}
+        ;;
 	*)	
 		return 1
 		;;

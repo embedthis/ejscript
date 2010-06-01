@@ -11,24 +11,20 @@ if [ "${TASK}" = Remove -a -f "${BLD_BIN_PREFIX}/linkup" ] ; then
 fi
 
 cpy -t -w -e doc/licenses/LICENSE.TXT doc/product/README.TXT COPYRIGHT.TXT "${BLD_VER_PREFIX}"
-cpy -e -m 0755 package/uninstall.sh "${BLD_VER_PREFIX}/uninstall"
+cpy -e -m 0755 package/uninstall.sh "${BLD_BIN_PREFIX}/uninstall"
 cpy -e -m 0755 package/linkup "${BLD_BIN_PREFIX}/linkup"
 
 cpy -m 755 -s -d ${BLD_BIN_DIR} ejs${BLD_EXE} "${BLD_BIN_PREFIX}"
 
 if [ "$BLD_CROSS" = 0 -o "$BLD_FEATURE_COMPLETE_CROSS" = 1 ] ; then
     cpy -m 755 -s -d ${BLD_BIN_DIR} ejsc${BLD_EXE} ejsmod${BLD_EXE} "${BLD_BIN_PREFIX}"
-    if [ "$BLD_FEATURE_EJS_DB" = 1 ] ; then
-        cpy -m 755 -s -d ${BLD_BIN_DIR} ejssql${BLD_EXE} "${BLD_BIN_PREFIX}"
-    fi
-    if [ "$BLD_FEATURE_EJS_WEB" = 1 ] ; then
-        cpy -m 755 -s -d ${BLD_BIN_DIR} ejscgi${BLD_EXE} "${BLD_BIN_PREFIX}"
-        cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_VER_PREFIX}/web"
-        cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_LIB_PREFIX}/www"
-        cpy -m 755 -d ${BLD_BIN_DIR} ejsmvc ejspage jem "${BLD_BIN_PREFIX}"
-        if [ $BLD_HOST_OS = WIN ] ; then
-            cpy -m 755 -d ${BLD_BIN_DIR} ejsmvc.cmd ejspage.cmd "${BLD_BIN_PREFIX}"
-        fi
+    cpy -m 755 -s -d ${BLD_BIN_DIR} ejssql${BLD_EXE} "${BLD_BIN_PREFIX}"
+    cpy -m 755 -s -d ${BLD_BIN_DIR} ejscgi${BLD_EXE} "${BLD_BIN_PREFIX}"
+    cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_VER_PREFIX}/web"
+    cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_LIB_PREFIX}/www"
+    cpy -m 755 -d ${BLD_BIN_DIR} ejsmvc ejspage jem "${BLD_BIN_PREFIX}"
+    if [ $BLD_HOST_OS = WIN ] ; then
+        cpy -m 755 -d ${BLD_BIN_DIR} ejsmvc.cmd ejspage.cmd jem.cmd "${BLD_BIN_PREFIX}"
     fi
 fi
 
@@ -60,6 +56,7 @@ fi
 if [ "${TASK}" = Install ] ; then
     bash "${BLD_BIN_PREFIX}/linkup" $TASK
 elif [ -f /tmp/linkup$$ ] ; then
-    bash /tmp/linkup$$ $TASK
+    echo RUN LINKUP
+    bash -x /tmp/linkup$$ $TASK
     rm -f /tmp/linkup$$
 fi

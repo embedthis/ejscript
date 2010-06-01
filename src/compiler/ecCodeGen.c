@@ -2094,7 +2094,7 @@ static void genFunction(EcCompiler *cp, EcNode *np)
 
     /*
         Capture the scope chain by the defineFunction op code. Emit this into the existing code buffer. 
-        Don't do if a method as they get scope via other means.. Native methods also don't use this as an optimization.
+        Don't do if a method as they get scope via other means. Native methods also don't use this as an optimization.
         Native methods must handle scope explicitly.
       
         We only need to define the function if it needs full scope (unbound property access) or it is a nested function.
@@ -4010,7 +4010,6 @@ static void processNode(EcCompiler *cp, EcNode *np)
         mprAssert(0);
         badNode(cp, np);
     }
-
     mprAssert(state == cp->state);
     LEAVE(cp);
 }

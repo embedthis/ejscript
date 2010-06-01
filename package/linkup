@@ -4,6 +4,7 @@
 #   Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
 #
 
+TASK=$1
 PRODUCT=ejs
 EXE=
 INC=/usr/include
@@ -17,7 +18,15 @@ else
 fi
 
 prefix=/usr/lib/${PRODUCT}
-version=`ls $prefix | egrep -v '[a-zA-Z@!_\-]' | sort -n -r | head -1`
+version=
+for v in `ls $prefix | egrep -v '[a-zA-Z@!_\-]' | sort -n -r`
+do
+    if [ -x "$prefix/$v/bin/ejs" ] ; then
+        version=$v
+        break
+    fi
+done
+
 if [ "$version" = "" ] ; then
     for name in $PROGRAMS
     do
@@ -34,8 +43,8 @@ else
     for name in $PROGRAMS
     do
         name=${name}${EXE}
+        rm -f "${BIN}/${name}"
         if [ -f "${bin}/${name}" ] ; then
-            rm -f "${BIN}/${name}"
             ln -s "${bin}/${name}" "${BIN}/${name}"
         fi
     done

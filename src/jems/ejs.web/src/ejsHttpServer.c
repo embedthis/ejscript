@@ -112,7 +112,7 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
 /*  
     function listen(address): Void
-    Address Can be either a "ip", "ip:port" or port
+    Address Can be either an "ip", "ip:port" or port
  */
 static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
