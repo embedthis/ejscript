@@ -61,11 +61,116 @@ log.debug(2, "message")
 <h2 class='classSection'>Logger Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr><td colspan='2'>No methods defined</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the logger.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#config'><b>config</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a configuration message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#debug'><b>debug</b></a>(level: <a href='ejs-Number.html'>Number</a>, msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a debug message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#error'><b>error</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an error message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#info'><b>info</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an informational message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#warn'><b>warn</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a warning message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write informational data to logger.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
+<hr />
+<h2>Method Detail</h2>
+<a name='close'></a>
+<div class='api'>
+<div class='apiSig'>const   public  close(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Close the logger.</p>
+</div>
+</div>
+<hr />
+<a name='config'></a>
+<div class='api'>
+<div class='apiSig'>const   public  config(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Emit a configuration message.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='ejs-Array.html'>Array</a> </td><td>Strings to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='debug'></a>
+<div class='api'>
+<div class='apiSig'>const   public  debug(level: <a href='ejs-Number.html'>Number</a>, msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Emit a debug message.</p>
+<dl><dt>Description</dt><dd>The message level will be compared to the logger setting to determine 
+whether it will be output to the devices or not. Also, if the logger has a filter function set that 
+may filter the message out before logging.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>The level of the message.</td></tr><tr class='param'><td class='param'>msgs: <a href='ejs-Array.html'>Array</a> </td><td>The string message to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='error'></a>
+<div class='api'>
+<div class='apiSig'>const   public  error(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Emit an error message.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='ejs-Array.html'>Array</a> </td><td>Strings to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='info'></a>
+<div class='api'>
+<div class='apiSig'>const   public  info(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Emit an informational message.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='ejs-Array.html'>Array</a> </td><td>Strings to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='warn'></a>
+<div class='api'>
+<div class='apiSig'>const   public  warn(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Emit a warning message.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msgs: <a href='ejs-Array.html'>Array</a> </td><td>The strings to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='write'></a>
+<div class='api'>
+<div class='apiSig'>const   public  write(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Write data to the stream.Write informational data to logger.</p>
+<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of elements written. 
+If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
+If writing more data than the stream can absorb in async mode, the call will not block and will return 
+immediately. A "writable" event will be issued when all the data has been written.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when data is written and a consumer can read without blocking.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty and it is ready to be written to.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually written.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-IOError.html'>IOError</a>: if there is an I/O error. 
+</dd>
+</dl></div>
+</div>
 <hr />
 <div class="terms">
    <p class="terms">

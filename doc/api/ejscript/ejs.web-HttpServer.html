@@ -74,11 +74,85 @@ MOB -- is this needed?.</td></tr>
 <h2 class='classSection'>HttpServer Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr><td colspan='2'>No methods defined</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addListener'><b>addListener</b></a>(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a listener to the server.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#attach'><b>attach</b></a>(): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(address): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeListener'><b>removeListener</b></a>(name: <a href='ejs-Object.html'>Object</a>, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a listener from the server.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
+<hr />
+<h2>Method Detail</h2>
+<a name='addListener'></a>
+<div class='api'>
+<div class='apiSig'>const   public  addListener(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Add a listener to the server.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='ejs-Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function listener(event: String, ...args): Void.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when there is a new request available.</td></tr>
+<td class='param'>close</td><td>Issued when server is being closed.</td></tr>
+<td class='param'>closed</td><td>Issued when server has been closed.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='close'></a>
+<div class='api'>
+<div class='apiSig'>const   public  close(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Close the stream.</p>
+<dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>close</td><td>Issued before closing the stream.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='listen'></a>
+<div class='api'>
+<div class='apiSig'>const   public  listen(address): <a href='ejs.web-Request.html'>Request</a>
+</div>
+<div class='apiDetail'>
+<p>Listen for client connections.</p>
+<dl><dt>Description</dt><dd>This creates a listening HTTP server. 
+If the server is in sync mode, the listen call will block until a client connection is received and
+the call will return a request object.
+If a the socket is in async mode, the listen call will return immediately and client connections
+will be notified via "accept" events. In this case when a client connection is received, the <a href='#accept'>accept</a> function 
+must be called to receive the Request object.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>address </td><td>The endpoint address on which to listen. The address can be either a port number, an IP address string or a composite "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>Issues</td><td>A "accept" event when there is a new connection available. In response, the <a href='#accept'>accept</a> method should be called.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A Request object if in sync mode. No return value if in async mode.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-ArgError.html'>ArgError</a>: if the specified listen address is not valid, and IOError for network errors. 
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='removeListener'></a>
+<div class='api'>
+<div class='apiSig'>const   public  removeListener(name: <a href='ejs-Object.html'>Object</a>, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Remove a listener from the server.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name previously used with addListener. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='ejs-Function.html'>Function</a> </td><td>Listener function previously used with addListener.</td></tr></table></dd>
+</dl></div>
+</div>
 <hr />
 <div class="terms">
    <p class="terms">

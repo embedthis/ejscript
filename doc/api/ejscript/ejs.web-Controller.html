@@ -62,6 +62,19 @@
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#create'><b>create</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs.web-Controller.html'>Controller</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Factory method to create and initialize a controller.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#error'><b>error</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send an error notification to the user.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#inform'><b>inform</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a positive notification to the user.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#loadView'><b>loadView</b></a>(path: <a href='ejs-Path.html'>Path</a>, name: <a href='ejs-String.html'>String</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load the view.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#makeUri'><b>makeUri</b></a>(parts: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a URI suitable for invoking actions.</td></tr>
+   <tr class='apiDef'><td class='apiType'>action const </td><td><a href='#missing'><b>missing</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Missing action method.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#redirect'><b>redirect</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect to the given action.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#render'><b>render</b></a>(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render the raw arguments back to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderError'><b>renderError</b></a>(msg: <a href='ejs-String.html'>String</a> = , status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render an error message as the response.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderFile'><b>renderFile</b></a>(filename: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a file's contents.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderPartial'><b>renderPartial</b></a>(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a partial ejs template.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderView'><b>renderView</b></a>(viewName: <a href='ejs-String.html'>String</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a view template.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#run'><b>run</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the controller action.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#warn'><b>warn</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a warning message back to the client for display in the flash area.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
@@ -80,6 +93,165 @@ This call expects the controller class to be loaded.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='error'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  error(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Send an error notification to the user.</p>
+<dl><dt>Description</dt><dd>This is just a convenience instead of setting flash["error"].</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msg: <a href='ejs-String.html'>String</a> </td><td>Message to display.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='inform'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  inform(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Send a positive notification to the user.</p>
+<dl><dt>Description</dt><dd>This is just a convenience instead of setting flash["inform"].</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msg: <a href='ejs-String.html'>String</a> </td><td>Message to display.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='loadView'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  loadView(path: <a href='ejs-Path.html'>Path</a>, name: <a href='ejs-String.html'>String</a>)
+</div>
+<div class='apiDetail'>
+<p>Load the view.</p>
+</div>
+</div>
+<hr />
+<a name='makeUri'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  makeUri(parts: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<p>Make a URI suitable for invoking actions.</p>
+<dl><dt>Description</dt><dd>This routine will construct a URL Based on a supplied action name, 
+model id and options that may contain an optional controller name. This is a convenience routine to remove from 
+applications the burden of building URLs that correctly use action and controller names.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>parts: <a href='ejs-Object.html'>Object</a> </td><td></td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>url</td><td>An override url to use. All other args are ignored.</td></tr>
+<td class='param'>query</td><td>Query string to append to the URL. Overridden by the query arg.</td></tr>
+<td class='param'>controller</td><td>The name of the controller to use in the URL.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A string URL.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='missing'></a>
+<div class='api'>
+<div class='apiSig'>const   action  missing(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Missing action method.</p>
+<dl><dt>Description</dt><dd>This method will be called if the requested action routine does not exist.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='redirect'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  redirect(uri: <a href='ejs-Uri.html'>Uri</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Redirect to the given action.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>uri: <a href='ejs-Uri.html'>Uri</a> </td><td>Uri to redirect to.</td></tr><tr class='param'><td class='param'>status: <a href='ejs-Number.html'>Number</a> </td><td>Http status code to use in the redirection response. Defaults to 302. [default: expression]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='render'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  render(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Render the raw arguments back to the client.</p>
+<dl><dt>Description</dt><dd>The args are converted to strings.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='renderError'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  renderError(msg: <a href='ejs-String.html'>String</a> = , status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Render an error message as the response.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msg: <a href='ejs-String.html'>String</a> </td><td> [default: ]</td></tr><tr class='param'><td class='param'>status: <a href='ejs-Number.html'>Number</a> </td><td> [default: expression]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='renderFile'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  renderFile(filename: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Render a file's contents.</p>
+</div>
+</div>
+<hr />
+<a name='renderPartial'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  renderPartial(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Render a partial ejs template.</p>
+<dl><dt>Description</dt><dd>Does not set "rendered" to true.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='renderView'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  renderView(viewName: <a href='ejs-String.html'>String</a> = null): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Render a view template.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>viewName: <a href='ejs-String.html'>String</a> </td><td> [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='run'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  run(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Run the controller action.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='warn'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  warn(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Send a warning message back to the client for display in the flash area.</p>
+<dl><dt>Description</dt><dd>This is just a convenience instead of
+setting flash["warn"].</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msg: <a href='ejs-String.html'>String</a> </td><td>Message to display.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

@@ -61,11 +61,49 @@ DELETE	/controller/1           destroy
 <h2 class='classSection'>Router Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr><td colspan='2'>No methods defined</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addRestfulRoutes'><b>addRestfulRoutes</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add the restful routes to the routing table.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addRoutes'><b>addRoutes</b></a>(routeSet: <a href='ejs-Array.html'>Array</a>, outer: <a href='ejs.web-Route.html'>Route</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a set of routes to the routing table.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#route'><b>route</b></a>(request): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Route a request.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
+<hr />
+<h2>Method Detail</h2>
+<a name='addRestfulRoutes'></a>
+<div class='api'>
+<div class='apiSig'>const   public  addRestfulRoutes(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Add the restful routes to the routing table.</p>
+</div>
+</div>
+<hr />
+<a name='addRoutes'></a>
+<div class='api'>
+<div class='apiSig'>const   public  addRoutes(routeSet: <a href='ejs-Array.html'>Array</a>, outer: <a href='ejs.web-Route.html'>Route</a> = null): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Add a set of routes to the routing table.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>routeSet: <a href='ejs-Array.html'>Array</a> </td><td>Set of routes to add. This must be an array of Route instances.</td></tr><tr class='param'><td class='param'>outer: <a href='ejs.web-Route.html'>Route</a> </td><td>Outer route. [default: null]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='route'></a>
+<div class='api'>
+<div class='apiSig'>const   public  route(request): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Route a request.</p>
+<dl><dt>Description</dt><dd>The request is matched against the user-configured route table. If no route table is defined,
+the restfulRoutes are used.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>request </td><td>The current request object.</td></tr></table></dd>
+</dl></div>
+</div>
 <hr />
 <div class="terms">
    <p class="terms">

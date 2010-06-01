@@ -46,11 +46,64 @@
 <h2 class='classSection'>Function Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr><td colspan='2'>No methods defined</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#apply'><b>apply</b></a>(thisObject: <a href='ejs-Object.html'>Object</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Invoke the function on another object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#bind'><b>bind</b></a>(thisObj: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Bind the value of "this" for the function.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#call'><b>call</b></a>(thisObject: <a href='ejs-Object.html'>Object</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Invoke the function on another object.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
+<hr />
+<h2>Method Detail</h2>
+<a name='apply'></a>
+<div class='api'>
+<div class='apiSig'>const   public  apply(thisObject: <a href='ejs-Object.html'>Object</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<p>Invoke the function on another object.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>thisObject: <a href='ejs-Object.html'>Object</a> </td><td>The object to set as the "this" object when the function is called.</td></tr><tr class='param'><td class='param'>args: <a href='ejs-Array.html'>Array</a> </td><td>Array of actual parameters to the function.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Any object returned as a result of applying the function.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-ReferenceError.html'>ReferenceError</a>: If the function cannot be applied to this object. 
+</dd>
+</dl></div>
+</div>
+<hr />
+<a name='bind'></a>
+<div class='api'>
+<div class='apiSig'>const   public  bind(thisObj: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Bind the value of "this" for the function.</p>
+<dl><dt>Description</dt><dd>This can set the value of "this" for the function. If
+<a href='#overwrite'>overwrite</a> is false, it will only define the value of "this" if it is not already defined.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>thisObj: <a href='ejs-Object.html'>Object</a> </td><td>Value of "this" to define.</td></tr><tr class='param'><td class='param'>overwrite: <a href='ejs-Boolean.html'>Boolean</a> </td><td>If true, overwrite the existing stored value of "this". [default: true]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='call'></a>
+<div class='api'>
+<div class='apiSig'>const   public  call(thisObject: <a href='ejs-Object.html'>Object</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<p>Invoke the function on another object.</p>
+<dl><dt>Description</dt><dd>This function takes the "this" parameter and then a variable 
+number of actual parameters to pass to the function.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>thisObject: <a href='ejs-Object.html'>Object</a> </td><td>The object to set as the "this" object when the function is called.</td></tr><tr class='param'><td class='param'>args: <a href='ejs-Array.html'>Array</a> </td><td>Actual parameters to the function.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Any object returned as a result of applying the function.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-ReferenceError.html'>ReferenceError</a>: If the function cannot be applied to this object. 
+</dd>
+</dl></div>
+</div>
 <hr />
 <div class="terms">
    <p class="terms">

@@ -55,15 +55,43 @@ This is invoked as: function (event) { }.</td></tr>
 <h2 class='classSection'>Worker Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#eval'><b>eval</b></a>(script: <a href='ejs-String.html'>String</a>, timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load the script.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#exit'><b>exit</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Exit the worker.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#join'><b>join</b></a>(workers: <a href='ejs-Object.html'>Object</a> = null , timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for Workers to exit.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#load'><b>load</b></a>(script: <a href='ejs-Path.html'>Path</a>, timeout: <a href='ejs-Number.html'>Number</a> = 0): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load and run a script in a dedicated worker thread.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#lookup'><b>lookup</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Worker.html'>Worker</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Lookup a Worker by name.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#postMessage'><b>postMessage</b></a>(data: <a href='ejs-Object.html'>Object</a>, ports: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Post a message to the Worker's parent.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#preload'><b>preload</b></a>(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Preload the specified script or module file to initialize the worker.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#terminate'><b>terminate</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Terminate the worker.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#waitForMessage'><b>waitForMessage</b></a>(timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for receipt of a message.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
 <hr />
 <h2>Method Detail</h2>
+<a name='eval'></a>
+<div class='api'>
+<div class='apiSig'>const   public  eval(script: <a href='ejs-String.html'>String</a>, timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Load the script.</p>
+<dl><dt>Description</dt><dd>The literal script is compiled as a JavaScript program and loaded and run.
+This is similar to the global eval() command but the script is run in its own interpreter and does not
+share any data the the invoking interpreter. The result is serialized in the worker and then deserialized
+(using JSON) in the current interpreter. The call returns undefined if the timeout expires.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>script: <a href='ejs-String.html'>String</a> </td><td>Literal JavaScript program string.</td></tr><tr class='param'><td class='param'>timeout: <a href='ejs-Number.html'>Number</a> </td><td>If the timeout is non-zero, this call blocks and will return the value of the last expression in the script. Otherwise, this call will not block and join() can be used to wait for completion. Set the timeout to -1 to block until the script completes. The default is -1. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The value of the last expression evaluated in the script. Returns undefined if the timeout  expires before the script completes.</dd></dl>
+<dl><dt>Throws</dt><dd>
+</dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
 <a name='exit'></a>
 <div class='api'>
 <div class='apiSig'>static const   public  exit(): <a href='ejs-Void.html'>Void</a>
@@ -89,6 +117,20 @@ This is invoked as: function (event) { }.</td></tr>
 </div>
 </div>
 <hr />
+<a name='load'></a>
+<div class='api'>
+<div class='apiSig'>const   public  load(script: <a href='ejs-Path.html'>Path</a>, timeout: <a href='ejs-Number.html'>Number</a> = 0): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Load and run a script in a dedicated worker thread.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>script: <a href='ejs-Path.html'>Path</a> </td><td>Filename of a script or module to load and run.</td></tr><tr class='param'><td class='param'>timeout: <a href='ejs-Number.html'>Number</a> </td><td>If the timeout is non-zero, this call blocks and will return the value of the last expression in the script. Otherwise, this call will not block and join() can be used to wait for completion. Set the timeout to -1 to block until the script completes. The default is to not block. [default: 0]</td></tr></table></dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
 <a name='lookup'></a>
 <div class='api'>
 <div class='apiSig'>static const   public  lookup(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Worker.html'>Worker</a>
@@ -100,6 +142,65 @@ This is invoked as: function (event) { }.</td></tr>
 <tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Lookup a Worker.</td></tr></table></dd>
 </dl><dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='postMessage'></a>
+<div class='api'>
+<div class='apiSig'>const   public  postMessage(data: <a href='ejs-Object.html'>Object</a>, ports: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Post a message to the Worker's parent.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>data: <a href='ejs-Object.html'>Object</a> </td><td>Data to pass to the worker's onmessage callback.</td></tr><tr class='param'><td class='param'>ports: <a href='ejs-Array.html'>Array</a> </td><td>Not implemented.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='preload'></a>
+<div class='api'>
+<div class='apiSig'>const   public  preload(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Preload the specified script or module file to initialize the worker.</p>
+<dl><dt>Description</dt><dd>This will run a script using the current
+thread and will block. To run a worker using its own thread, use load() or Worker(script).
+This call will load the script/module and initialize and run global code. The call will block until 
+all global code has completed and the script/module is initialized.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>path: <a href='ejs-Path.html'>Path</a> </td><td>Filename path for the module or script to load. This should include the file extension.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The value of the last expression in the script or module.</dd></dl>
+<dl><dt>Throws</dt><dd>
+</dd>
+</dl><dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='terminate'></a>
+<div class='api'>
+<div class='apiSig'>const   public  terminate(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Terminate the worker.</p>
+</div>
+</div>
+<hr />
+<a name='waitForMessage'></a>
+<div class='api'>
+<div class='apiSig'>const   public  waitForMessage(timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Wait for receipt of a message.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>timeout: <a href='ejs-Number.html'>Number</a> </td><td>Timeout to wait in milliseconds. [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if a message was received.</dd></dl>
+<dl><dt>Stability</dt>
+<dd>Prototype.</dd></dl>
 </div>
 </div>
 <hr />

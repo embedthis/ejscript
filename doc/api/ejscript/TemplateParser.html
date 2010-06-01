@@ -54,11 +54,50 @@ Directives for use outside of &lt;% %&gt;
 <h2 class='classSection'>TemplateParser Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr><td colspan='2'>No methods defined</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#build'><b>build</b></a>(script: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Build a templated page using JSGI.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#parse'><b>parse</b></a>(script: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Template parser.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
+<hr />
+<h2>Method Detail</h2>
+<a name='build'></a>
+<div class='api'>
+<div class='apiSig'>const   public  build(script: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Build a templated page using JSGI.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>script: <a href='ejs-String.html'>String</a> </td><td>String containing the script to parse.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Object hash with options to control parsing. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>layout</td><td>Path Layout file.</td></tr>
+<td class='param'>dir</td><td>Path Base directory to use for including files and for resolving layout directives.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='parse'></a>
+<div class='api'>
+<div class='apiSig'>const   public  parse(script: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Template parser.</p>
+<dl><dt>Description</dt><dd>Parse the given script and return the compiled (Ejscript) result.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>script: <a href='ejs-String.html'>String</a> </td><td>String containing the script to parse.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Object hash with options to control parsing. [default: expression]</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>layout</td><td>Path Layout file.</td></tr>
+<td class='param'>dir</td><td>Path Base directory to use for including files and for resolving layout directives.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>The parsed and expanded template.</dd></dl>
+</div>
+</div>
 <hr />
 <div class="terms">
    <p class="terms">
