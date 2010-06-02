@@ -274,8 +274,9 @@ MAIN(ejsMain, int argc, char **argv)
     }
 #endif
     mprFree(ejs);
-    mprStop(mpr);
-    mprFree(mpr);
+    if (mprStop(mpr)) {
+        mprFree(mpr);
+    }
     return err;
 }
 

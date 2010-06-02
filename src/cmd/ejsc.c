@@ -278,8 +278,9 @@ MAIN(ejscMain, int argc, char **argv)
         err++;
     }
     mprFree(ejs);
-    mprStop(mpr);
-    mprFree(mpr);
+    if (mprStop(mpr)) {
+        mprFree(mpr);
+    }
     return err;
 }
 
