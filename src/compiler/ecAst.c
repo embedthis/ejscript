@@ -26,7 +26,7 @@
 
 static void     addGlobalProperty(EcCompiler *cp, EcNode *np, EjsName *qname);
 static void     addScope(EcCompiler *cp, EjsBlock *block);
-static void     allocName(Ejs *ejs, EjsName *qname);
+static EjsName  *allocName(Ejs *ejs, EjsName *qname);
 static void     astBinaryOp(EcCompiler *cp, EcNode *np);
 static void     astBindName(EcCompiler *cp, EcNode *np);
 static void     astBlock(EcCompiler *cp, EcNode *np);
@@ -3866,9 +3866,7 @@ static EjsNamespace *createHoistNamespace(EcCompiler *cp, EjsObj *obj)
     char            *spaceName;
 
     ejs = cp->ejs;
-
-    //  MOB - is this the right context
-    spaceName = mprAsprintf(cp, -1, "-hoisted-%d", ejsGetPropertyCount(ejs, obj));
+    spaceName = mprAsprintf(ejs, -1, "-hoisted-%d", ejsGetPropertyCount(ejs, obj));
     namespace = ejsCreateNamespace(ejs, spaceName, spaceName);
 
     letBlockNode = cp->state->letBlockNode;
@@ -4084,10 +4082,11 @@ int ecLookupVar(EcCompiler *cp, EjsObj *obj, EjsName *name)
 }
 
 
-static void allocName(Ejs *ejs, EjsName *qname)
+static EjsName *allocName(Ejs *ejs, EjsName *qname)
 {
     qname->space = mprStrdup(ejs, qname->space);
     qname->name = mprStrdup(ejs, qname->name);
+    return qname;
 }
 
 /*
