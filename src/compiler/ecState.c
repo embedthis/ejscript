@@ -61,6 +61,7 @@ int ecPushState(EcCompiler *cp, EcState *newState)
         newState->namespace = prev->namespace;
         newState->defaultNamespace = prev->defaultNamespace;
         newState->breakState = prev->breakState;
+        newState->classState = prev->classState;
         newState->inInterface = prev->inInterface;
 
     } else {

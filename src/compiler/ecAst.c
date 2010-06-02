@@ -661,7 +661,7 @@ static void astClass(EcCompiler *cp, EcNode *np)
 
     ejs = cp->ejs;
     state = cp->state;
-    cp->classState = state;
+    state->classState = state;
     type = np->klass.ref;
     
     if (np->klass.implements) {
@@ -2768,7 +2768,7 @@ static void astVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
     if (state->inClass && !(np->attributes & EJS_PROP_STATIC)) {
         if (state->inMethod) {
             state->instanceCode = 1;
-        } else if (cp->classState->blockNestCount == (cp->state->blockNestCount - 1)) {
+        } else if (state->classState->blockNestCount == (state->blockNestCount - 1)) {
             /*
                 Top level var declaration without a static attribute
              */
@@ -3891,7 +3891,7 @@ static EjsObj *getBlockForDefinition(EcCompiler *cp, EcNode *np, EjsObj *block, 
 
     if (ejsIsType(block) && state->inClass) {
         if (!(attributes & EJS_PROP_STATIC) && !state->inFunction &&
-                cp->state->blockNestCount <= (cp->classState->blockNestCount + 1)) {
+                state->blockNestCount <= (state->classState->blockNestCount + 1)) {
             /*
                 Use the prototype object if not static, outside a function and in the top level block.
              */

@@ -7506,8 +7506,7 @@ static EcNode *parseFunctionDefinition(EcCompiler *cp, EcNode *attributeNode)
                         return LEAVE(cp, 0);
                     }
                 }
-                if (state->inClass && !state->inFunction && 
-                        cp->classState->blockNestCount == (cp->state->blockNestCount - 1)) {
+                if (state->inClass && !state->inFunction && state->classState->blockNestCount == (state->blockNestCount - 1)) {
                     np->function.isMethod = 1;
                 }
             }
@@ -8238,14 +8237,13 @@ static EcNode *parseClassDefinition(EcCompiler *cp, EcNode *attributeNode)
     np = createNode(cp, N_CLASS);
     state->currentClassNode = np;
     state->topVarBlockNode = np;
-    cp->classState = state;
+    state->classState = state;
     state->defaultNamespace = NULL;
 
     classNameNode = parseClassName(cp);
     if (classNameNode == 0) {
         return LEAVE(cp, 0);
     }
-
     applyAttributes(cp, np, attributeNode, 0);
     setNodeDoc(cp, np);
 
@@ -8264,7 +8262,6 @@ static EcNode *parseClassDefinition(EcCompiler *cp, EcNode *attributeNode)
             mprStealBlock(np, np->klass.implements);
         }
     }
-
     if (peekToken(cp) != T_LBRACE) {
         getToken(cp);
         return LEAVE(cp, expected(cp, "{"));
@@ -8477,7 +8474,7 @@ static EcNode *parseInterfaceDefinition(EcCompiler *cp, EcNode *attributeNode)
     np = createNode(cp, N_CLASS);
     state->currentClassNode = np;
     state->topVarBlockNode = np;
-    cp->classState = state;
+    state->classState = state;
     state->defaultNamespace = NULL;
     
     classNameNode = parseClassName(cp);

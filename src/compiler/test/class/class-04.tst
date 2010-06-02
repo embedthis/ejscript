@@ -7,6 +7,7 @@ class Outer {
             static var a = 1
             public var b = 2
             function Shape() {
+print(a)
                 assert(a == 1)
                 assert(b == 2)
                 b = 3
