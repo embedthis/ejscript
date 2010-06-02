@@ -77,3 +77,4 @@ releases/*.zip.txt
 releases/*.dmg.txt
 jlocal
 bin/x86_64*
+src/jems/sample
