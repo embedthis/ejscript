@@ -692,7 +692,13 @@ static void astClass(EcCompiler *cp, EcNode *np)
     state->currentClassNode = np;
     state->currentClassName = type->qname;
     state->inClass = 1;
+    
+    //  MOB -- need a way to zero things that should not be inherited
     state->inFunction = 0;
+    state->inMethod = 0;
+    state->blockIsMethod = 0;
+    state->currentFunction = 0;
+    state->currentFunctionNode = 0;
 
     /*
         Add the type to the scope chain and the static initializer if present. Use push frame to make it eaiser to
