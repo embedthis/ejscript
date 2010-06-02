@@ -1196,7 +1196,7 @@ static EjsObj *searchString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 static EjsObj *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString       *result;
-    int             start, end, step, i, j;
+    int             start, end, step, i, j, size;
 
     mprAssert(1 <= argc && argc <= 3);
 
@@ -1232,7 +1232,8 @@ static EjsObj *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     if (step == 0) {
         step = 1;
     }
-    result = ejsCreateBareString(ejs, (end - start) / abs(step));
+    size = (start < end) ? end - start : start - end;
+    result = ejsCreateBareString(ejs, size / abs(step) + 1);
     if (result == 0) {
         return 0;
     }
@@ -1242,7 +1243,7 @@ static EjsObj *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         }
 
     } else {
-        for (i = end - 1, j = 0; i >= start; i += step) {
+        for (i = start, j = 0; i > end; i += step) {
             result->value[j++] = sp->value[i];
         }
     }

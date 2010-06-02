@@ -1140,7 +1140,7 @@ static EjsObj *sliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsArray    *result;
     EjsObj      **src, **dest;
-    int         start, end, step, i, j, len;
+    int         start, end, step, i, j, len, size;
 
     mprAssert(1 <= argc && argc <= 3);
 
@@ -1158,7 +1158,6 @@ static EjsObj *sliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     if (step == 0) {
         step = 1;
     }
-
     if (start < 0) {
         start += ap->length;
     }
@@ -1167,7 +1166,6 @@ static EjsObj *sliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     } else if (start >= ap->length) {
         start = ap->length;
     }
-
     if (end < 0) {
         end += ap->length;
     }
@@ -1176,11 +1174,12 @@ static EjsObj *sliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     } else if (end >= ap->length) {
         end = ap->length;
     }
+    size = (start < end) ? end - start : start - end;
 
     /*
-        This may allocate too many elements if step is > 0, but length will still be correct.
+        This may allocate too many elements if abs(step) is > 1, but length will still be correct.
      */
-    result = ejsCreateArray(ejs, end - start);
+    result = ejsCreateArray(ejs, size);
     if (result == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
