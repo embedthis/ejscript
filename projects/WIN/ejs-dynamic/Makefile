@@ -57,7 +57,7 @@ libejs.vcproj: Makefile buildConfig.override
 	@makeVsProj --project libejs.vcproj --library ejs --dflags "$(DFLAGS)" \
 		--def libejs.def --libs "libmpr.lib libhttp.lib libsqlite3.lib $(LIBS)" $(MPR_HDR) \
 	    $(shell find $(SRC)/include -name 'ejs*.h') \
-	    $(shell find $(JEMS)/ejs/src $(SRC)/vm $(SRC)/compiler)
+	    $(shell find $(SRC)/core $(SRC)/vm $(SRC)/compiler)
 	
 ejsc.vcproj: Makefile buildConfig.override
 	@makeVsProj --project ejsc.vcproj --exe ejsc.exe --search "$(BLD_EJS_LIBPATHS)" --dflags "$(DFLAGS)" \
@@ -86,23 +86,8 @@ ejs.db.sqlite.vcproj: Makefile buildConfig.override
 		--def ejs.db.sqlite.def --libs "libmpr.lib libhttp.lib libejs.lib libsqlite3.lib $(LIBS)" $(MPR_HDR) \
 	    $(JEMS)/ejs.db.sqlite/src/ejsSqlite.c
 
-ejs.io.vcproj: Makefile buildConfig.override
-	@makeVsProj --project ejs.io.vcproj --library ec --dflags "$(DFLAGS)" \
-		--def ejs.io.def --libs "libmpr.lib libhttp.lib libejs.lib $(LIBS)" $(MPR_HDR) \
-	    $(shell find $(JEMS)/ejs.io/src/ -name '*.c')
-
-ejs.sys.vcproj: Makefile buildConfig.override
-	@makeVsProj --project ejs.sys.vcproj --library ec --dflags "$(DFLAGS)" \
-		--def ejs.sys.def --libs "libmpr.lib libhttp.lib libejs.lib $(LIBS)" $(MPR_HDR) \
-	    $(shell find $(JEMS)/ejs.sys/src/ -name '*.c')
-
 ejs.web.vcproj: Makefile buildConfig.override
 	@makeVsProj --project ejs.web.vcproj --library ec --dflags "$(DFLAGS)" \
 		--def ejs.web.def --libs "libmpr.lib libhttp.lib libejs.lib $(LIBS)" $(MPR_HDR) \
 	    $(shell find $(JEMS)/ejs.web/src/ -name '*.c')
-
-ejs.xml.vcproj: Makefile buildConfig.override
-	@makeVsProj --project ejs.xml.vcproj --library ec --dflags "$(DFLAGS)" \
-		--def ejs.xml.def --libs "libmpr.lib libhttp.lib libejs.lib $(LIBS)" $(MPR_HDR) \
-	    $(shell find $(JEMS)/ejs.xml/src/ -name '*.c')
 
