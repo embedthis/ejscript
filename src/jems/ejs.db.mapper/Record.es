@@ -768,11 +768,10 @@ module ejs.db.mapper {
                 return value
 
             case Date:
-                return "%Ld".format((new Date(value)).time)
+                return "%d".format((new Date(value)).time)
 
             case Number:
                 return value cast Number
-                // return "%Ld".format(value cast Number)
              
             case String:
                 return Database.quote(value)
@@ -1096,9 +1095,9 @@ module ejs.db.mapper {
      */
     function mapType(value: Object): String {
         if (value is Date) {
-            return "%Ld".format((new Date(value)).time)
+            return "%d".format((new Date(value)).time)
         } else if (value is Number) {
-            return "%Ld".format(value)
+            return "%d".format(value)
         }
         return value
     }
