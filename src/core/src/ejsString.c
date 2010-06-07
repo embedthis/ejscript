@@ -471,7 +471,8 @@ static EjsObj *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     function format(...args): String
 
-    Format:         %[modifier][width][precision][bits][type]
+    Format:         %[modifier][width][precision][type]
+    Modifiers:      +- #,
  */
 static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
@@ -479,7 +480,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsString   *result;
     EjsObj      *value;
     char        *buf;
-    char        fmt[16];
+    char        fmt[32];
     int         c, i, len, nextArg, start, kind, last;
 
     mprAssert(argc == 1 && ejsIsArray(argv[0]));
@@ -525,7 +526,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
         if (strchr("cdefginopsSuxX", kind)) {
             len = i - start + 1;
-            mprMemcpy(fmt, sizeof(fmt), &sp->value[start], len);
+            mprMemcpy(fmt, sizeof(fmt) - 4, &sp->value[start], len);
             fmt[len] = '\0';
 
             if (nextArg < args->length) {
@@ -537,7 +538,8 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             switch (kind) {
             case 'd': case 'i': case 'o': case 'u':
                 value = (EjsObj*) ejsToNumber(ejs, value);
-                buf = mprAsprintf(ejs, -1, fmt, (int) ejsGetNumber(ejs, value));
+                strcpy(&fmt[len - 1], ".0f");
+                buf = mprAsprintf(ejs, -1, fmt, ejsGetNumber(ejs, value));
                 break;
 
             case 'e': case 'g': case 'f':

@@ -972,7 +972,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
         if (vp == 0) {
             continue;
         }
-        if (ejsGetPropertyCount(ejs, vp) > 0) {
+        if (ejsGetPropertyCount(ejs, vp) > 0 && !ejsIsArray(vp)) {
             if (prefix) {
                 newPrefix = mprAsprintf(hp, -1, "%s.%s", prefix, qname.name);
                 prepForm(ejs, hp, newPrefix, vp);
@@ -981,7 +981,11 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
                 prepForm(ejs, hp, (char*) qname.name, vp);
             }
         } else {
-            value = ejsToString(ejs, vp);
+            if (ejsIsArray(vp)) {
+                value = ejsToJSON(ejs, vp, NULL);
+            } else {
+                value = ejsToString(ejs, vp);
+            }
             sep = (mprGetBufLength(hp->requestContent) > 0) ? "&" : "";
             if (prefix) {
                 newKey = mprStrcat(hp, -1, prefix, ".", key, NULL);
