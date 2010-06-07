@@ -16,21 +16,27 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *value);
 
 /************************************* Code ***********************************/
  
-static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *value)
+static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
 {
     EjsName     qname;
-    EjsObj      *vp;
+    EjsObj      *vp, *value;
     char        *subkey, *end;
     int         slotNum;
 
     mprAssert(params);
+
+    if (*svalue == '[') {
+        value = ejsDeserialize(ejs, ejsCreateString(ejs, svalue));
+    } else {
+        value = (EjsVar*) ejsCreateString(ejs, svalue);
+    }
 
     /*  
         name.name.name
      */
     if (strchr(key, '.') == 0) {
         ejsName(&qname, "", key);
-        ejsSetPropertyByName(ejs, params, &qname, (EjsObj*) ejsCreateString(ejs, value));
+        ejsSetPropertyByName(ejs, params, &qname, value);
 
     } else {
         subkey = mprStrdup(ejs, key);
@@ -46,7 +52,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *value)
         }
         mprAssert(params);
         ejsName(&qname, "", subkey);
-        ejsSetPropertyByName(ejs, params, &qname, (EjsObj*) ejsCreateString(ejs, value));
+        ejsSetPropertyByName(ejs, params, &qname, value);
     }
 }
 
