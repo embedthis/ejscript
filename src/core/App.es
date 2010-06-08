@@ -63,7 +63,7 @@ module ejs {
              */
             log: {
                 enable: true,
-                where: "stdout",
+                where: "stderr",
                 level: 2,
                 /* match: null, */
             },
@@ -332,7 +332,7 @@ module ejs {
                 try {
                     App.config = deserialize(path.readString())
                 } catch (e) {
-                    error("Can't parse " + path + ": " + e)
+                    App.errorStream.write(App.exePath.basename +  " Can't parse " + path + ": " + e + "\n")
                 }
             }
         }

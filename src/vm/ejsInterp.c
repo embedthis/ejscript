@@ -3598,9 +3598,8 @@ void ejsLog(Ejs *ejs, const char *fmt, ...)
     char        buf[MPR_MAX_LOG_STRING];
 
     va_start(args, fmt);
-    mprVsprintf(buf, sizeof(buf) - 1, fmt, args);
+    mprVsprintf(ejs, buf, sizeof(buf) - 1, fmt, args);
     va_end(args);
-
     mprLog(ejs, 0, "%s", buf);
 }
 

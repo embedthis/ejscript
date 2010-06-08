@@ -621,7 +621,7 @@ int maParseConfig(MaServer *server, cchar *configFile)
             cchar *hostName = mprGetServerName(server);
             mprLog(server, 0, "WARNING: Missing ServerName directive, doing DNS lookup.");
             httpServer = mprGetFirstItem(server->httpServers);
-            mprSprintf(ipAddrPort, sizeof(ipAddrPort), "%s:%d", hostName, httpServer->port);
+            mprSprintf(server, ipAddrPort, sizeof(ipAddrPort), "%s:%d", hostName, httpServer->port);
             maSetHostName(defaultHost, hostName);
 
         } else {
@@ -788,7 +788,7 @@ int maValidateConfiguration(MaServer *server)
             cchar *hostName = mprGetServerName(server);
             mprLog(server, 0, "WARNING: Missing ServerName directive, doing DNS lookup.");
             httpServer = mprGetFirstItem(server->httpServers);
-            mprSprintf(ipAddrPort, sizeof(ipAddrPort), "%s:%d", hostName, httpServer->port);
+            mprSprintf(server, ipAddrPort, sizeof(ipAddrPort), "%s:%d", hostName, httpServer->port);
             maSetHostName(defaultHost, hostName);
 
         } else {
@@ -1319,7 +1319,7 @@ static int processSetting(MaServer *server, char *key, char *value, MaConfigStat
                 }
                 server.insert(new HttpServer(ip->ip, port));
                 if (host->ipAddrPort == 0) {
-                    mprSprintf(ipAddrPort, sizeof(ipAddrPort), "%s:%d", ip->ip, port);
+                    mprSprintf(server, ipAddrPort, sizeof(ipAddrPort), "%s:%d", ip->ip, port);
                     maSetIpAddrPort(host, ipAddrPort);
                 }
                 break;
@@ -1395,7 +1395,7 @@ static int processSetting(MaServer *server, char *key, char *value, MaConfigStat
                 Set the host ip spec if not already set
              */
             if (host->ipAddrPort == 0) {
-                mprSprintf(ipAddrPort, sizeof(ipAddrPort), "%s:%d", hostName, port);
+                mprSprintf(server, ipAddrPort, sizeof(ipAddrPort), "%s:%d", hostName, port);
                 maSetHostIpAddrPort(host, ipAddrPort);
             }
             return 1;
@@ -4630,7 +4630,7 @@ static void outputHeader(HttpQueue *q, cchar *path, int nameSize)
 }
 
 
-static void fmtNum(char *buf, int bufsize, int num, int divisor, char *suffix)
+static void fmtNum(MprCtx ctx, char *buf, int bufsize, int num, int divisor, char *suffix)
 {
     int     whole, point;
 
@@ -4638,9 +4638,9 @@ static void fmtNum(char *buf, int bufsize, int num, int divisor, char *suffix)
     point = (num % divisor) / (divisor / 10);
 
     if (point == 0) {
-        mprSprintf(buf, bufsize, "%6d%s", whole, suffix);
+        mprSprintf(ctx, buf, bufsize, "%6d%s", whole, suffix);
     } else {
-        mprSprintf(buf, bufsize, "%4d.%d%s", whole, point, suffix);
+        mprSprintf(ctx, buf, bufsize, "%4d.%d%s", whole, point, suffix);
     }
 }
 
@@ -4664,16 +4664,16 @@ static void outputLine(HttpQueue *q, MprDirEntry *ep, cchar *path, int nameSize)
 
     dir = q->stage->stageData;
     if (ep->size >= (1024*1024*1024)) {
-        fmtNum(sizeBuf, sizeof(sizeBuf), (int) ep->size, 1024 * 1024 * 1024, "G");
+        fmtNum(q, sizeBuf, sizeof(sizeBuf), (int) ep->size, 1024 * 1024 * 1024, "G");
 
     } else if (ep->size >= (1024*1024)) {
-        fmtNum(sizeBuf, sizeof(sizeBuf), (int) ep->size, 1024 * 1024, "M");
+        fmtNum(q, sizeBuf, sizeof(sizeBuf), (int) ep->size, 1024 * 1024, "M");
 
     } else if (ep->size >= 1024) {
-        fmtNum(sizeBuf, sizeof(sizeBuf), (int) ep->size, 1024, "K");
+        fmtNum(q, sizeBuf, sizeof(sizeBuf), (int) ep->size, 1024, "K");
 
     } else {
-        mprSprintf(sizeBuf, sizeof(sizeBuf), "%6d", (int) ep->size);
+        mprSprintf(q, sizeBuf, sizeof(sizeBuf), "%6d", (int) ep->size);
     }
     newPath = mprJoinPath(q, path, ep->name);
 
@@ -4708,7 +4708,7 @@ static void outputLine(HttpQueue *q, MprDirEntry *ep, cchar *path, int nameSize)
     }
     mprDecodeLocalTime(q, &tm, when);
 
-    mprSprintf(timeBuf, sizeof(timeBuf), "%02d-%3s-%4d %02d:%02d",
+    mprSprintf(q, timeBuf, sizeof(timeBuf), "%02d-%3s-%4d %02d:%02d",
         tm.tm_mday, months[tm.tm_mon], tm.tm_year + 1900, tm.tm_hour,  tm.tm_min);
     len = (int) strlen(ep->name) + (int) strlen(dirSuffix);
 
@@ -7123,7 +7123,7 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
         mprFprintf(file, "%s: %d: %s\n", prefix, level, msg);
 
     } else if (flags & MPR_ERROR_SRC) {
-        mprSprintf(buf, sizeof(buf), "%s: Error: %s\n", prefix, msg);
+        mprSprintf(ctx, buf, sizeof(buf), "%s: Error: %s\n", prefix, msg);
         mprWriteToOsLog(ctx, buf, flags, level);
 
         /*
@@ -7137,7 +7137,7 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
         }
 
     } else if (flags & MPR_FATAL_SRC) {
-        mprSprintf(buf, sizeof(buf), "%s: Fatal: %s\n", prefix, msg);
+        mprSprintf(ctx, buf, sizeof(buf), "%s: Fatal: %s\n", prefix, msg);
         mprWriteString(file, buf);
         mprWriteToOsLog(ctx, buf, flags, level);
         
@@ -7313,7 +7313,7 @@ void maRotateAccessLog(MaHost *host)
         when = mprGetTime(host);
         mprDecodeUniversalTime(host, &tm, when);
 
-        mprSprintf(bak, sizeof(bak), "%s-%02d-%02d-%02d-%02d:%02d:%02d", host->logPath, 
+        mprSprintf(host, bak, sizeof(bak), "%s-%02d-%02d-%02d-%02d:%02d:%02d", host->logPath, 
             tm.tm_mon, tm.tm_mday, tm.tm_year, tm.tm_hour, tm.tm_min, tm.tm_sec);
 
         mprFree(host->accessLog);
@@ -8481,7 +8481,7 @@ int maLoadModule(MaAppweb *appweb, cchar *name, cchar *libname)
         mprFree(path);
         return 0;
     }
-    mprSprintf(entryPoint, sizeof(entryPoint), "ma%sInit", name);
+    mprSprintf(appweb, entryPoint, sizeof(entryPoint), "ma%sInit", name);
     entryPoint[2] = toupper((int) entryPoint[2]);
 
     if (mprLoadModule(appweb->http, path, entryPoint, NULL) == 0) {
@@ -9089,9 +9089,9 @@ int maCreateHostAddresses(MaServer *server, MaHost *host, cchar *configValue)
             } else {
                 maInsertVirtualHost(address, host);
                 if (httpServer->ip[0] != '\0') {
-                    mprSprintf(addrBuf, sizeof(addrBuf), "%s:%d", httpServer->ip, httpServer->port);
+                    mprSprintf(server, addrBuf, sizeof(addrBuf), "%s:%d", httpServer->ip, httpServer->port);
                 } else {
-                    mprSprintf(addrBuf, sizeof(addrBuf), "%s:%d", ip, httpServer->port);
+                    mprSprintf(server, addrBuf, sizeof(addrBuf), "%s:%d", ip, httpServer->port);
                 }
                 maSetHostName(host, addrBuf);
             }
@@ -9165,7 +9165,7 @@ void maSetIpAddr(MaServer *server, cchar *ip, int port)
     char        ipAddrPort[MPR_MAX_IP_ADDR_PORT];
     int         next;
 
-    mprSprintf(ipAddrPort, sizeof(ipAddrPort), "%s:%d", ip ? ip : "*", port > 0 ? port : HTTP_DEFAULT_PORT);
+    mprSprintf(server, ipAddrPort, sizeof(ipAddrPort), "%s:%d", ip ? ip : "*", port > 0 ? port : HTTP_DEFAULT_PORT);
 
     for (next = 0; ((httpServer = mprGetNextItem(server->httpServers, &next)) != 0); ) {
         httpSetIpAddr(httpServer, ip, port);

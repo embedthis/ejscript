@@ -639,7 +639,7 @@ static int createDocSection(EcCompiler *cp, EjsObj *block, int slotNum)
     if (ejs->doc == 0) {
         ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE);
     }
-    mprSprintf(key, sizeof(key), "%Lx %d", PTOL(block), slotNum);
+    mprSprintf(cp, key, sizeof(key), "%Lx %d", PTOL(block), slotNum);
     doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
     if (doc == 0) {
         return 0;
@@ -754,7 +754,7 @@ int ecAddDocConstant(EcCompiler *cp, void *vp, int slotNum)
     mprAssert(vp);
     mprAssert(slotNum >= 0);
 
-    mprSprintf(key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
+    mprSprintf(cp, key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
     doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
     if (doc && doc->docString) {
         if (ecAddConstant(cp, doc->docString) < 0) {

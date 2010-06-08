@@ -395,13 +395,13 @@ static void allocFailure(Ejs *ejs, uint size, uint total, bool granted)
             ejsRunFunction(ejs, ejs->memoryCallback, thisObj, 2, argv);
         }
         if (!ejs->exception) {
-            mprSprintf(msg, sizeof(msg), "Low memory condition. Total mem: %d. Request for %d bytes granted.", 
+            mprSprintf(ejs, msg, sizeof(msg), "Low memory condition. Total mem: %d. Request for %d bytes granted.", 
                 total, size);
             ejsCreateException(ejs, ES_MemoryError, msg, dummy);
         }
     } else {
         if (!ejs->exception) {
-            mprSprintf(msg, sizeof(msg), "Memory depleted. Total mem: %d. Request for %d bytes denied.", total, size);
+            mprSprintf(ejs, msg, sizeof(msg), "Memory depleted. Total mem: %d. Request for %d bytes denied.", total, size);
             ejsCreateException(ejs, ES_MemoryError, msg, dummy);
         }
     }

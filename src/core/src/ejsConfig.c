@@ -24,7 +24,7 @@ void ejsConfigureConfigType(Ejs *ejs)
     ejsSetProperty(ejs, vp, ES_Config_Product, (EjsObj*) ejsCreateString(ejs, BLD_PRODUCT));
 
     ejsSetProperty(ejs, vp, ES_Config_Title, (EjsObj*) ejsCreateString(ejs, BLD_NAME));
-    mprSprintf(version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
+    mprSprintf(ejs, version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
     ejsSetProperty(ejs, vp, ES_Config_Version, (EjsObj*) ejsCreateString(ejs, version));
 
 #if BLD_WIN_LIKE

@@ -221,7 +221,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, int timeout, bool secure)
         Use an MD5 prefix of "x" to avoid the hash being interpreted as a numeric index.
      */
     next = ejs->nextSession++;
-    mprSprintf(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + + PTOI(expire), (int) now, next);
+    mprSprintf(ejs, idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + + PTOI(expire), (int) now, next);
     id = mprGetMD5Hash(session, idBuf, sizeof(idBuf), "x");
     if (id == 0) {
         mprFree(session);

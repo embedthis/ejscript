@@ -511,69 +511,69 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
 
         case EBC_BYTE:
             ival = getByte(mp);
-            mprSprintf(bufp, buflen,  "<%d> ", ival);
+            mprSprintf(mp, bufp, buflen,  "<%d> ", ival);
             break;
 
         case EBC_DOUBLE:
             dval = getDouble(mp);
-            mprSprintf(bufp, buflen,  "<%f> ", dval);
+            mprSprintf(mp, bufp, buflen,  "<%f> ", dval);
             break;
 
         case EBC_ARGC:
         case EBC_ARGC2:
             ival = (int) getNum(mp);
-            mprSprintf(bufp, buflen,  "<argc: %d> ", ival);
+            mprSprintf(mp, bufp, buflen,  "<argc: %d> ", ival);
             break;
 
         case EBC_ARGC3:
             ival = (int) getNum(mp);
-            mprSprintf(bufp, buflen,  "<argc: %d> ", ival);
+            mprSprintf(mp, bufp, buflen,  "<argc: %d> ", ival);
             break;
 
         case EBC_NEW_OBJECT:
             ival = (int) getNum(mp);
-            mprSprintf(bufp, buflen,  "<argc: %d> <att: ", ival);
+            mprSprintf(mp, bufp, buflen,  "<argc: %d> <att: ", ival);
             bufp += strlen(bufp);
             for (j = 0; j < ival; j++) {
                 att = (int) getNum(mp);
-                mprSprintf(bufp, buflen,  "%d ", ival);
+                mprSprintf(mp, bufp, buflen,  "%d ", ival);
                 len = strlen(bufp);
                 bufp += len;
                 buflen -= len;
             }
-            mprSprintf(bufp, buflen,  ">", ival);
+            mprSprintf(mp, bufp, buflen,  ">", ival);
             *stackEffect -= (ival * 3);
             break;
 
         case EBC_SLOT:
             ival = (int) getNum(mp);
-            mprSprintf(bufp, buflen,  "<slot: %d> ", ival);
+            mprSprintf(mp, bufp, buflen,  "<slot: %d> ", ival);
             break;
 
         case EBC_NUM:
             ival = (int) getNum(mp);
-            mprSprintf(bufp, buflen,  "<%d> ", ival);
+            mprSprintf(mp, bufp, buflen,  "<%d> ", ival);
             break;
 
         case EBC_JMP8:
             ival = getByte(mp);
-            mprSprintf(bufp, buflen,  "<addr: %d> ", ((char) ival) + address + 1);
+            mprSprintf(mp, bufp, buflen,  "<addr: %d> ", ((char) ival) + address + 1);
             break;
 
         case EBC_JMP:
             ival = getWord(mp);
-            mprSprintf(bufp, buflen,  "<addr: %d> ", ival + address + 4);
+            mprSprintf(mp, bufp, buflen,  "<addr: %d> ", ival + address + 4);
             break;
 
         case EBC_INIT_DEFAULT8:
             numEntries = getByte(mp);
-            mprSprintf(bufp, buflen,  "<%d> ", numEntries);
+            mprSprintf(mp, bufp, buflen,  "<%d> ", numEntries);
             len = strlen(bufp);
             bufp += len;
             buflen -= len;
             for (j = 0; j < numEntries; j++) {
                 ival = getByte(mp);
-                mprSprintf(bufp, buflen,  "<%d> ", ival + 2);
+                mprSprintf(mp, bufp, buflen,  "<%d> ", ival + 2);
                 len = strlen(bufp);
                 bufp += len;
                 buflen -= len;
@@ -582,13 +582,13 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
 
         case EBC_INIT_DEFAULT:
             numEntries = getByte(mp);
-            mprSprintf(bufp, buflen,  "<%d> ", numEntries);
+            mprSprintf(mp, bufp, buflen,  "<%d> ", numEntries);
             len = strlen(bufp);
             bufp += len;
             buflen -= len;
             for (j = 0; j < numEntries; j++) {
                 ival = getWord(mp);
-                mprSprintf(bufp, buflen,  "<%d> ", ival + 2);
+                mprSprintf(mp, bufp, buflen,  "<%d> ", ival + 2);
                 len = strlen(bufp);
                 bufp += len;
                 buflen -= len;
@@ -597,7 +597,7 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
 
         case EBC_STRING:
             sval = getString(mp);
-            mprSprintf(bufp, buflen,  "<%s> ", sval);
+            mprSprintf(mp, bufp, buflen,  "<%s> ", sval);
             break;
 
         case EBC_GLOBAL:
@@ -745,7 +745,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
             if (!lastDebug) {
                 mprFprintf(mp->file, "\n");
             }
-            mprSprintf(lineInfo, sizeof(lineInfo), "%s:%d", currentFile, lineNumber);
+            mprSprintf(mp, lineInfo, sizeof(lineInfo), "%s:%d", currentFile, lineNumber);
             mprFprintf(mp->file, "    # %-25s %s\n", lineInfo, currentLine);
             lastDebug = 1;
         }
@@ -1103,7 +1103,7 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
     vp = 0;
 
     if ((t = (int) getNum(mp)) < 0) {
-        mprSprintf(buf, buflen,  "<can't read code>");
+        mprSprintf(mp, buf, buflen,  "<can't read code>");
         return;
     }
 
@@ -1124,7 +1124,8 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
             vp = ejsGetProperty(ejs, ejs->global, slotNum);
         }
         if (vp && ejsIsType(vp)) {
-            mprSprintf(buf, buflen, "<type: 0x%x,  %s::%s> ", t, ((EjsType*) vp)->qname.space, ((EjsType*) vp)->qname.name);
+            mprSprintf(mp, buf, buflen, "<type: 0x%x,  %s::%s> ", t, ((EjsType*) vp)->qname.space, 
+                ((EjsType*) vp)->qname.name);
         }
         break;
 
@@ -1135,22 +1136,22 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
         qname.name = &mp->module->constants->pool[t >> 2];
         if (qname.name == 0) {
             mprAssert(0);
-            mprSprintf(buf, buflen,  "<var: 0x%x,  missing name> ", t);
+            mprSprintf(mp, buf, buflen,  "<var: 0x%x,  missing name> ", t);
             return;
         }
         if ((qname.space = getString(mp)) == 0) {
-            mprSprintf(buf, buflen,  "<var: 0x%x,  missing namespace> ", t);
+            mprSprintf(mp, buf, buflen,  "<var: 0x%x,  missing namespace> ", t);
             return;
         }
         if (qname.name) {
             vp = ejsGetPropertyByName(ejs, ejs->global, &qname);
         }
-        mprSprintf(buf, buflen, "<var: 0x%x,  %s::%s> ", t, qname.space, qname.name);
+        mprSprintf(mp, buf, buflen, "<var: 0x%x,  %s::%s> ", t, qname.space, qname.name);
         break;
     }
 
     if (vp == 0) {
-        mprSprintf(buf, buflen, "<var: %d,  cannot resolve var/typ at slot e> ", t);
+        mprSprintf(mp, buf, buflen, "<var: %d,  cannot resolve var/typ at slot e> ", t);
     }
 }
 

@@ -995,7 +995,7 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
      */
     mprStrcpy(moduleName, sizeof(moduleName), mp->name);
     moduleName[0] = tolower((int) moduleName[0]);
-    mprSprintf(initName, sizeof(initName), "%s_Init", moduleName);
+    mprSprintf(ejs, initName, sizeof(initName), "%s_Init", moduleName);
     for (cp = initName; *cp; cp++) {
         if (*cp == '.') {
             *cp = '_';
@@ -1929,7 +1929,7 @@ EjsDoc *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, cchar *docString)
     if (ejs->doc == 0) {
         ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE);
     }
-    mprSprintf(key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
+    mprSprintf(ejs, key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
     mprAddHash(ejs->doc, key, doc);
     return doc;
 }

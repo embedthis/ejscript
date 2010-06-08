@@ -278,7 +278,7 @@ module ejs {
             Write informational data to logger
          */
         function write(...data): Number
-            info(data)
+            _outStream.write(data.join(" "))
 
         /** 
             Emit a warning message.

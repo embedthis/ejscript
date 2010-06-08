@@ -10010,11 +10010,11 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
 
     if (np->doc) {
         found = 0;
-        mprSprintf(arg, sizeof(arg), "@param %s ", parameter->qname.name);
+        mprSprintf(cp, arg, sizeof(arg), "@param %s ", parameter->qname.name);
         if (strstr(np->doc, arg) != 0) {
             found++;
         } else {
-            mprSprintf(arg, sizeof(arg), "@params %s ", parameter->qname.name);
+            mprSprintf(cp, arg, sizeof(arg), "@params %s ", parameter->qname.name);
             if (strstr(np->doc, arg) != 0) {
                 found++;
             }
