@@ -29,7 +29,9 @@ if [ "$BLD_CROSS" = 0 -o "$BLD_FEATURE_COMPLETE_CROSS" = 1 ] ; then
     fi
 fi
 
-cpy -d ${BLD_JEM_DIR} "*" "${BLD_JEM_PREFIX}"
+if [ -x "${BLD_JEM_DIR}" ] ; then
+    cpy -d ${BLD_JEM_DIR} "*" "${BLD_JEM_PREFIX}"
+fi
 cpy -d ${BLD_MOD_DIR} "*.mod" "${BLD_MOD_PREFIX}"
 
 if `ls ${BLD_MOD_DIR}/*${BLD_SHOBJ} >/dev/null 2>&1` ; then
