@@ -1798,17 +1798,18 @@ static void astBindName(EcCompiler *cp, EcNode *np)
         Disable binding of names in certain cases.
      */
     lookup = &np->lookup;
-
-#if MOB || BINDING || DISABLE_ALL_BINDING || 1
-    if (lookup->obj != (EjsObj*) state->currentFunction || ejsIsType(lookup->obj)) {
-#if UNUSED
-        lookup->slotNum = -1;
-        lookup->obj = 0;
-        lookup->useThis = 0;
-#else
+    
+    if (ejsIsFrame(lookup->obj) && lookup->nthBlock == 0) {
+        ;
+    } else {
         lookup->bind = 0;
         lookup->useThis = 0;
-#endif
+    }
+
+#if UNUSED
+    if (lookup->obj != (EjsObj*) state->currentFunction || ejsIsType(lookup->obj)) {
+        lookup->bind = 0;
+        lookup->useThis = 0;
     }
 #endif
 
