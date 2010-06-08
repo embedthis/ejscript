@@ -577,7 +577,7 @@ module ejs {
             @return A string representing the date.
          */
         function toUTCString(): String 
-            formatUTC("%a, %d %b %Y %T GMT")
+            formatUTC("%a %b %d %Y %T GMT")
 
         /**
             Calculate the number of milliseconds since the epoch for a UTC time.
