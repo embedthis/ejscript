@@ -18,13 +18,13 @@ else
 	PRIV		:= priv
 endif
 
-install install-%: prep
+install install-%:
 	packs=$* ; [ "$$packs" = "" ] && packs="binary dev" ; \
 	[ "$$packs" = "binary dev" ] && BROWSER=--browser ; \
 	priv OPTIONS=$(OPTIONS) QUIET=$(QUIET) TRACE=$(TRACE) \
 		$(BLD_TOP)/build/bin/makeInstall $$BROWSER --root=$(ROOT_DIR) --install $$packs post
 
-uninstall uninstall-%: prep
+uninstall uninstall-%:
 	packs=$* ; [ "$$packs" = "" ] && packs="binary dev" ; \
 	priv OPTIONS=$(OPTIONS) QUIET=$(QUIET) TRACE=$(TRACE) \
 		$(BLD_TOP)/build/bin/makeInstall --root=$(ROOT_DIR) --remove $$packs post
@@ -37,17 +37,17 @@ packageExtra:
 packageOnly:
 	fakePriv $(BLD_TOOLS_DIR)/makePackage --root=$(PKG_DIR) $(PACKS)
 
-install-package: prep
-    name="$(BASE_NAME).tar.tar.gz" ; \
-    cd $(BLD_TOP); top=`pwd` ; cd /tmp ; tar xvfz $$top/releases/$$name ; \
-    priv "$(BLD_PRODUCT)_HEADLESS=1 ./install" ; \
+test-install-package:
+	name="$(BASE_NAME).tar.tar.gz" ; \
+	cd $(BLD_TOP); top=`pwd` ; cd /tmp ; tar xvfz $$top/releases/$$name ; \
+	priv "$(BLD_PRODUCT)_HEADLESS=1 ./install" ; \
 
-uninstall-package: prep
-    name="$(BASE_NAME).tar.tar.gz" ; \
-    cd $(BLD_TOP); top=`pwd` ; cd /tmp ; tar xvfz $$top/releases/$$name ; \
-    priv "$(BLD_PRODUCT)_HEADLESS=1 ./uninstall" ; \
+test-uninstall-package:
+	name="$(BASE_NAME).tar.tar.gz" ; \
+	cd $(BLD_TOP); top=`pwd` ; cd /tmp ; tar xvfz $$top/releases/$$name ; \
+	priv "$(BLD_PRODUCT)_HEADLESS=1 ./uninstall" ; \
 
-install-native-package: prep
+test-install-native-package:
 	if [ $(BLD_HOST_OS) = WIN ] ; then \
 		rm -fr "$(INS_DIR)" ; mkdir -p "$(INS_DIR)" ; \
 		name="$(BASE_NAME).exe.zip" ; \
@@ -66,7 +66,7 @@ install-native-package: prep
 		priv $(BLD_PRODUCT)_HEADLESS=1 ./install ; \
 	fi
 
-uninstall-native-package: prep
+test-uninstall-native-package:
 	if [ $(BLD_HOST_OS) = WIN ] ; then \
 		if [ ! -x "$(INS_DIR)/unins000.exe" ] ; then \
 			echo "Can't find $(INS_DIR)/unins000.exe to uninstall" ; \
@@ -80,11 +80,31 @@ uninstall-native-package: prep
 		priv "$(BLD_PRODUCT)_HEADLESS=1 ./uninstall" ; \
 	fi
 
+# SAM SRC
+test-installed:
+	complete=1 ; \
+	for dir in $(BLD_CFG_PREFIX) $(BLD_BIN_PREFIX) $(BLD_DOC_PREFIX) $(BLD_INC_PREFIX) $(BLD_JEM_PREFIX) $(BLD_LIB_PREFIX) $(BLD_LOG_PREFIX) $(BLD_MAN_PREFIX) $(BLD_MOD_PREFIX) $(BLD_PRD_PREFIX) $(BLD_VER_PREFIX) $(BLD_WEB_PREFIX) ; \
+	do \
+		if [ ! -x $$dir ] ; then \
+			echo Missing directory: $$dir ; \
+			complete=0 ; \
+		fi ; \
+	done ; \
+	[ $$complete = 0 ] && exit 255 ; \
+	$(BLD_BIN_PREFIX)/ejs --cmd ""
 
-prep:
-	if [ ! -x $(BLD_TOOLS_DIR)/edep$(BLD_BUILD_EXE) -a "$(BUILDING_CROSS)" != 1 ] ; then \
-		$(MAKE) -S --no-print-directory _RECURSIVE_=1 -C $(BLD_TOP)/build/src compile ; \
-	fi
+test-removed:
+	partial=0 ; \
+	for dir in $(BLD_CFG_PREFIX) $(BLD_BIN_PREFIX) $(BLD_DOC_PREFIX) $(BLD_INC_PREFIX) $(BLD_JEM_PREFIX) $(BLD_LIB_PREFIX) $(BLD_LOG_PREFIX) $(BLD_MAN_PREFIX) $(BLD_MOD_PREFIX) $(BLD_PRD_PREFIX) $(BLD_VER_PREFIX) $(BLD_WEB_PREFIX) ; \
+	do \
+		if [ -x $$dir ] ; then \
+			partial=1 ; \
+			echo Directory present: $$dir ; \
+		fi ; \
+	done ; \
+	[ $$partial = 1 ] && exit 255 ; \
+	echo Removed
+
 
 checkInstalled:
 	( \

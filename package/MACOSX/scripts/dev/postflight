@@ -13,7 +13,9 @@ path="${INS_DIR}${NAME}"
 
 ${BIN}/linkup Install
 
-if [ -f "$path/index.html" ] ; then
-	open "$path/index.html"
+if [ -z "$COMMAND_LINE_INSTALL" ] ; then
+    if [ -f "$path/index.html" ] ; then
+        open "$path/index.html"
+    fi
 fi
 exit 0
