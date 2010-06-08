@@ -573,11 +573,12 @@ module ejs {
 
         /**
             Return a string containing the date in UTC time.
-            Sample: "Sat 16 Dec 2006 08:06:21 GMT"
+            Sample: "Sat, 16 Dec 2006 08:06:21 GMT"
             @return A string representing the date.
          */
         function toUTCString(): String 
-            formatUTC("%a %b %d %Y %T GMT")
+            formatUTC("%a, %d %b %Y %T GMT")
+
 
         /**
             Calculate the number of milliseconds since the epoch for a UTC time.
