@@ -7034,7 +7034,7 @@ static void serviceIO(MprWaitService *ws, int count)
 {
     MprWaitHandler      *wp;
     struct epoll_event  *ev;
-    int                 fd, i, mask;
+    int                 fd, i, mask, rc;
 
     lock(ws);
     for (i = 0; i < count; i++) {
@@ -7044,7 +7044,7 @@ static void serviceIO(MprWaitService *ws, int count)
         if ((wp = ws->handlerMap[fd]) == 0) {
             char    buf[128];
             if ((ev->events & (EPOLLIN | EPOLLERR | EPOLLHUP)) && (fd == ws->breakPipe[MPR_READ_PIPE])) {
-                read(fd, buf, sizeof(buf));
+                rc = read(fd, buf, sizeof(buf));
             }
             continue;
         }
@@ -7074,13 +7074,13 @@ static void serviceIO(MprWaitService *ws, int count)
 void mprWakeNotifier(MprCtx ctx)
 {
     MprWaitService  *ws;
-    int             c;
+    int             c, rc;
 
     ws = mprGetMpr(ctx)->waitService;
     if (!ws->wakeRequested) {
         ws->wakeRequested = 1;
         c = 0;
-        write(ws->breakPipe[MPR_WRITE_PIPE], (char*) &c, 1);
+        rc = write(ws->breakPipe[MPR_WRITE_PIPE], (char*) &c, 1);
     }
 }
 
@@ -8708,7 +8708,7 @@ static void serviceIO(MprWaitService *ws, int count)
 {
     MprWaitHandler      *wp;
     struct kevent       *kev;
-    int                 fd, i, mask, err;
+    int                 fd, i, mask, err, rc;
 
     lock(ws);
     for (i = 0; i < count; i++) {
@@ -8718,7 +8718,7 @@ static void serviceIO(MprWaitService *ws, int count)
         if ((wp = ws->handlerMap[fd]) == 0) {
             char    buf[128];
             if (kev->filter == EVFILT_READ && fd == ws->breakPipe[MPR_READ_PIPE]) {
-                read(fd, buf, sizeof(buf));
+                rc = read(fd, buf, sizeof(buf));
             }
             continue;
         }
@@ -8760,13 +8760,13 @@ static void serviceIO(MprWaitService *ws, int count)
 void mprWakeNotifier(MprCtx ctx)
 {
     MprWaitService  *ws;
-    int             c;
+    int             c, rc;
 
     ws = mprGetMpr(ctx)->waitService;
     if (!ws->wakeRequested) {
         ws->wakeRequested = 1;
         c = 0;
-        write(ws->breakPipe[MPR_WRITE_PIPE], (char*) &c, 1);
+        rc = write(ws->breakPipe[MPR_WRITE_PIPE], (char*) &c, 1);
     }
 }
 
@@ -12404,13 +12404,13 @@ static void serviceIO(MprWaitService *ws, struct poll *fds, int count)
 void mprWakeNotifier(MprCtx ctx)
 {
     MprWaitService  *ws;
-    int             c;
+    int             c, rc;
 
     ws = mprGetMpr(ctx)->waitService;
     if (!ws->wakeRequested) {
         ws->wakeRequested = 1;
         c = 0;
-        write(ws->breakPipe[MPR_WRITE_PIPE], (char*) &c, 1);
+        rc = write(ws->breakPipe[MPR_WRITE_PIPE], (char*) &c, 1);
     }
 }
 

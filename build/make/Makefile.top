@@ -136,7 +136,6 @@ package-only:
 packageExtra:
 	if [ -d package ] ; then \
 		if [ "$(BUILD_DEPTH)" -ge 2 ] ; then \
-			set -x ; \
 			mkdir -p $(BLD_TOP)/releases ; \
 			export OPTIONS=$(OPTIONS) TRACE=$(TRACE) ; \
 			fakePriv "$(BLD_TOP)/build/bin/makeInstall --root=$(PKG_DIR) $(INS_WITH) --package $(PACKS) && \
