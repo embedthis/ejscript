@@ -63,7 +63,6 @@ int ejsCreateGCService(Ejs *ejs)
 
     gc = &ejs->gc;
     gc->enabled = 1;
-gc->enabled = 0;
     gc->firstGlobal = (ejs->empty) ? 0 : ES_global_NUM_CLASS_PROP;
     gc->numPools = EJS_MAX_TYPE;
     gc->allocGeneration = EJS_GEN_ETERNAL;
@@ -660,7 +659,6 @@ int ejsEnableGC(Ejs *ejs, bool on)
 
     old = ejs->gc.enabled;
     ejs->gc.enabled = on;
-ejs->gc.enabled = 0;
     return old;
 }
 
