@@ -21,11 +21,11 @@
 /************************************************************************/
 
 /**
- *  angel.c -- Angel monitor program for Unix
+    angel.c -- Angel monitor program for Unix
  *
- *  The angel starts, monitors and restarts daemon programs.
+    The angel starts, monitors and restarts daemon programs.
  *
- *  Copyright (c) All Rights Reserved. See copyright notice at the bottom of the file.
+    Copyright (c) All Rights Reserved. See copyright notice at the bottom of the file.
  */
 
 #include    "mpr.h"
@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 
         if (strcmp(argp, "--args") == 0) {
             /*
-             *  Args to pass to service
+                Args to pass to service
              */
             if (nextArg >= argc) {
                 err++;
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 #if UNUSED
         } else if (strcmp(argp, "--heartBeat") == 0) {
             /*
-             *  Set the frequency to check on the program.
+                Set the frequency to check on the program.
              */
             if (nextArg >= argc) {
                 err++;
@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 
         } else if (strcmp(argp, "--home") == 0) {
             /*
-             *  Change to this directory before starting the service
+                Change to this directory before starting the service
              */
             if (nextArg >= argc) {
                 err++;
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
 
         } else if (strcmp(argp, "--log") == 0) {
             /*
-             *  Pass the log directive through to the service
+                Pass the log directive through to the service
              */
             if (nextArg >= argc) {
                 err++;
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
 
         } else if (strcmp(argp, "--stop") == 0) {
             /*
-             *  Stop a currently running angel
+                Stop a currently running angel
              */
             stopService(10 * 1000);
             return 0;
@@ -223,7 +223,7 @@ static void angel()
 {
     MprTime     mark;
     char        **av, *env[3], **argv;
-    int         err, i, restartWarned, status, ac, next;
+    int         err, i, restartWarned, status, ac, next, rc;
 
     servicePid = 0;
     restartWarned = 0;
@@ -261,7 +261,7 @@ static void angel()
             }
 
             /*
-             *  Create the child
+                Create the child
              */
             servicePid = vfork();
             if (servicePid < 0) {
@@ -270,7 +270,7 @@ static void angel()
 
             } else if (servicePid == 0) {
                 /*
-                 *  Child
+                    Child
                  */
                 umask(022);
                 setsid();
@@ -278,7 +278,7 @@ static void angel()
                 if (verbose) {
                     mprPrintf(mpr, "%s: Change dir to %s\n", appName, homeDir);
                 }
-                chdir(homeDir);
+                rc = chdir(homeDir);
 
                 for (i = 3; i < 128; i++) {
                     close(i);
@@ -322,7 +322,7 @@ static void angel()
             }
 
             /*
-             *  Parent
+                Parent
              */
             if (verbose) {
                 mprPrintf(mpr, "%s: create child %s at pid %d\n", appName, serviceProgram, servicePid);
@@ -341,7 +341,7 @@ static void angel()
 
 
 /*
- *  Stop an another instance of the angel
+    Stop an another instance of the angel
  */
 static void stopService(int timeout)
 {
@@ -382,7 +382,7 @@ static int setupUnixSignals()
 
 
 /*
- *  Catch signals and kill the service
+    Catch signals and kill the service
  */
 static void catchSignal(int signo, siginfo_t *info, void *arg)
 {
@@ -404,7 +404,7 @@ static void cleanup()
 
 
 /*
- *  Get the pid for the current running angel service
+    Get the pid for the current running angel service
  */
 static int readAngelPid()
 {
@@ -423,7 +423,7 @@ static int readAngelPid()
 
 
 /*
- *  Write the pid so the angel and service can be killed via --stop
+    Write the pid so the angel and service can be killed via --stop
  */ 
 static int writeAngelPid(int pid)
 {
@@ -443,7 +443,7 @@ static int writeAngelPid(int pid)
 
 
 /*
- *  Conver this Angel to a Deaemon
+    Conver this Angel to a Deaemon
  */
 static int makeDaemon()
 {
@@ -451,7 +451,7 @@ static int makeDaemon()
     int                 pid, status;
 
     /*
-     *  Handle child death
+        Handle child death
      */
     memset(&act, 0, sizeof(act));
     act.sa_sigaction = (void (*)(int, siginfo_t*, void*)) SIG_DFL;
@@ -464,7 +464,7 @@ static int makeDaemon()
     }
 
     /*
-     *  Fork twice to get a free child with no parent
+        Fork twice to get a free child with no parent
      */
     if ((pid = fork()) < 0) {
         mprError(mpr, "Fork failed for background operation");
@@ -481,7 +481,7 @@ static int makeDaemon()
         }
 
         /*
-         *  This is the real child that will continue as a daemon
+            This is the real child that will continue as a daemon
          */
         setsid();
         if (sigaction(SIGCHLD, &old, 0) < 0) {
@@ -493,7 +493,7 @@ static int makeDaemon()
     }
 
     /*
-     *  Original process waits for first child here. Must get child death notification with a successful exit status
+        Original process waits for first child here. Must get child death notification with a successful exit status
      */
     while (waitpid(pid, &status, 0) != pid) {
         if (errno == EINTR) {
@@ -516,7 +516,7 @@ static int makeDaemon()
 
 
 /*
- *  Global memory allocation handler
+    Global memory allocation handler
  */
 static void memoryFailure(MprCtx ctx, int64 size, int64 total, bool granted)
 {
@@ -536,33 +536,33 @@ void __dummyAngel() {
 }
 #endif /* BLD_HOST_UNIX */
 /*
- *  @copy   default
- *  
- *  Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
- *  Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.
- *  
- *  This software is distributed under commercial and open source licenses.
- *  You may use the GPL open source license described below or you may acquire 
- *  a commercial license from Embedthis Software. You agree to be fully bound 
- *  by the terms of either license. Consult the LICENSE.TXT distributed with 
- *  this software for full details.
- *  
- *  This software is open source; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the 
- *  Free Software Foundation; either version 2 of the License, or (at your 
- *  option) any later version. See the GNU General Public License for more 
- *  details at: http://www.embedthis.com/downloads/gplLicense.html
- *  
- *  This program is distributed WITHOUT ANY WARRANTY; without even the 
- *  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- *  
- *  This GPL license does NOT permit incorporating this software into 
- *  proprietary programs. If you are unable to comply with the GPL, you must
- *  acquire a commercial license to use this software. Commercial licenses 
- *  for this software and support services are available from Embedthis 
- *  Software at http://www.embedthis.com 
- *  
- *  @end
+    @copy   default
+    
+    Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.
+    
+    This software is distributed under commercial and open source licenses.
+    You may use the GPL open source license described below or you may acquire 
+    a commercial license from Embedthis Software. You agree to be fully bound 
+    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    this software for full details.
+    
+    This software is open source; you can redistribute it and/or modify it 
+    under the terms of the GNU General Public License as published by the 
+    Free Software Foundation; either version 2 of the License, or (at your 
+    option) any later version. See the GNU General Public License for more 
+    details at: http://www.embedthis.com/downloads/gplLicense.html
+    
+    This program is distributed WITHOUT ANY WARRANTY; without even the 
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+    
+    This GPL license does NOT permit incorporating this software into 
+    proprietary programs. If you are unable to comply with the GPL, you must
+    acquire a commercial license to use this software. Commercial licenses 
+    for this software and support services are available from Embedthis 
+    Software at http://www.embedthis.com 
+    
+    @end
  */
 /************************************************************************/
 /*
