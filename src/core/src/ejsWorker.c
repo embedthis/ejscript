@@ -436,7 +436,11 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
             mprLog(ejs, 1, "Discard message as no onmessage handler defined for worker");
             
         } else if (msg->callbackSlot == ES_Worker_onerror) {
-            ejsThrowError(ejs, "Exception in Worker: %s", ejsGetErrorMsg(worker->pair->ejs, 1));
+            if (msg->message) {
+                ejsThrowError(ejs, "Exception in Worker: %s", msg->message);
+            } else {
+                ejsThrowError(ejs, "Exception in Worker: %s", ejsGetErrorMsg(worker->pair->ejs, 1));
+            }
 
         } else {
             /* Ignore onclose message */

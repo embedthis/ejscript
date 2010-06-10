@@ -449,8 +449,6 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
     }
 #if VXWORKS
     ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePathAndFree(ejs, mprGetCurrentPath(ejs)));
-#elif WIN
-    ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePathAndFree(ejs, mprGetAppDir(ejs)));
 #else
 {
     /*
@@ -460,6 +458,7 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
     char *relModDir;
     relModDir = mprAsprintf(ejs, -1, "%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
     ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePath(ejs, "."));
+    ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePathAndFree(ejs, mprGetAppDir(ejs)));
     ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePathAndFree(ejs, mprGetAbsPath(ejs, relModDir)));
     ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePath(ejs, BLD_MOD_PREFIX));
     mprFree(relModDir);

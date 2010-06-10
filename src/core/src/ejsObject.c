@@ -1998,7 +1998,6 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     if (pretty || indent) {
         mprPutCharToBuf(buf, '\n');
     }
-
     if (++ejs->serializeDepth <= depth) {
         for (slotNum = 0; slotNum < count && !ejs->exception; slotNum++) {
             trait = ejsGetTrait(ejs, obj, slotNum);
@@ -2056,6 +2055,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
                     mprPutCharToBuf(buf, ' ');
                 }
             }
+//  MOB GC - Can this be collected?
             sv = (EjsString*) ejsToJSON(ejs, pp, options);
             if (sv == 0 || !ejsIsString(sv)) {
                 if (!ejs->exception) {
@@ -2064,6 +2064,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
                 return 0;
             } else {
                 if (replacer) {
+//  MOB GC - Can this be collected?
                     replacerArgs[0] = (EjsObj*) ejsCreateString(ejs, qname.name); 
                     replacerArgs[1] = (EjsObj*) sv; 
                     pp = ejsRunFunction(ejs, replacer, obj, 2, replacerArgs);
@@ -2086,6 +2087,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     }
     mprPutCharToBuf(buf, isArray ? ']' : '}');
     mprAddNullToBuf(buf);
+//  MOB GC
     result = (EjsObj*) ejsCreateString(ejs, mprGetBufStart(buf));
     mprFree(buf);
     return result;
