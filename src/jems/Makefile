@@ -56,6 +56,9 @@ $(DOC_DIR)/index.html: Makefile $(MODULES)
 
 doc: $(DOC_DIR)/index.html
 
+#
+#	MOB - need to do this only when inputs change. Should then do at compile time
+#
 buildJems:
 	set -e ; \
 	mkdir -p "$(BLD_ABS_JEM_DIR)" ; \
