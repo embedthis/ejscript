@@ -82,3 +82,9 @@ releases/*.deb
 all/*.gz
 all/pack
 releases/*.tgz
+*.user
+*.ncb
+*.suo
+Win32
+bin/www
+bin/start.es

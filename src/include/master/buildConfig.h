@@ -239,10 +239,10 @@
     #define BLD_EJS_WITHLIBS "mprssl libeay32 ssleay32 libmatrixssl mpr http pcre"
 
 
-    #define BLD_VERSION "1.1.0"
+    #define BLD_VERSION "2.0.0"
     #define BLD_NUMBER "1-repos"
     #define BLD_NUMBER_ONLY "1"
-    #define BLD_MAJOR_VERSION 1
-    #define BLD_MINOR_VERSION 1
+    #define BLD_MAJOR_VERSION 2
+    #define BLD_MINOR_VERSION 0
     #define BLD_PATCH_VERSION 0
-    #define BLD_VNUM "1001000"
+    #define BLD_VNUM "2000000"

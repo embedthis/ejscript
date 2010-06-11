@@ -41,3 +41,12 @@ diff import sync:
 	import.sh --$@ ../mpr/releases/mpr-all.tgz
 	import.sh --$@ ../pcre/releases/pcre-all.tgz
 	import.sh --$@ ../http/releases/http-all.tgz
+
+testExtra: test-projects
+
+test-projects:
+ifeq    ($(BLD_HOST_OS),WIN)
+	if [ "$(BUILD_DEPTH)" -ge 3 ] ; then \
+		$(BLD_TOOLS_DIR)/nativeBuild ; \
+	fi
+endif
