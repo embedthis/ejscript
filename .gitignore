@@ -79,3 +79,6 @@ jlocal
 bin/x86_64*
 src/jems/sample
 releases/*.deb
+all/*.gz
+all/pack
+releases/*.tgz
