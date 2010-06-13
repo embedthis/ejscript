@@ -22,7 +22,7 @@ cpy -p -d build/src Makefile "*.c" "*.h" "${DIR}"
 cpy -p -d build/components "*" "${DIR}"
 cpy -p -d package Makefile "*.files" "${DIR}"
 cpy -m 0755 -p -d package "*.sh" makeInstall.ejs linkup "${DIR}"
-cpy -p -d package LINUX MACOSX WIN "${DIR}"
+cpy -p -d package all LINUX MACOSX WIN "${DIR}"
 
 #
 #   Source for mpr, ejs, server, http
@@ -31,8 +31,6 @@ srcFilter="/\.log$"
 cpy -f "${srcFilter}" -p -d src Makefile cmd compiler deps vm include jems utils "${DIR}"
 
 # cpy -p -d test Makefile cmd db lang lib misc regress ssl stress web *.db *.conf test.* "${DIR}"
-
-cpy -p -d all Makefile.all Makefile "${DIR}"
 
 docFilter="api/ejs/xml/|api/ejs/html/|Archive"
 cpy -f "${docFilter}" doc "${DIR}"
