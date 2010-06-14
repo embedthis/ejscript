@@ -6,14 +6,22 @@
 
 include 	.makedep
 
-TARGET		+= $(BLD_BIN_DIR)/jem
+TARGETS		+= $(BLD_BIN_DIR)/jem
+ifeq ($(BLD_OS),WIN)
+	TARGETS	+= $(BLD_BIN_DIR)/jem.cmd
+endif
 
-compileExtra: $(TARGET)
+compileExtra: $(TARGETS)
 
-$(TARGET): jem
-	$(call log) "[Generate]" $(TARGET)
-	cp jem $(TARGET)
-	chmod 755 $(TARGET)
+$(BLD_BIN_DIR)/jem: jem
+	$(call log) "[Generate]" $(BLD_BIN_DIR)/jem
+	cp jem $(BLD_BIN_DIR)/jem
+	chmod 755 $(BLD_BIN_DIR)/jem
+
+$(BLD_BIN_DIR)/jem.cmd: jem.cmd
+	$(call log) "[Generate]" "jem.cmd"
+	cp jem.cmd $(BLD_BIN_DIR)/jem.cmd
+	chmod 755 $(BLD_BIN_DIR)/jem.cmd
 
 build:
 	jem build .

@@ -1,5 +1,5 @@
 /**
-    Tar.es -- Tar class
+    Zip.es -- Zip class
     @hide
  */
 
@@ -8,18 +8,14 @@ module ejs.tar {
     //  MOB -- need some ability to trace commands  (tar tvf)
 
     /** @hide */
-    class Tar {
+    class Zip {
         private var path: Path
         private var files = []
 
         use default namespace public
 
-        function Tar(path: Path) {
+        function Zip(path: Path) {
             this.path = path.portable
-            if (this.path.hasDrive) {
-                //  MOB - temp hack until we have proper zip class
-                this.path = this.path.toString().slice(2)
-            }
         }
         function add(path: Path): Void {
             path = path.portable
@@ -28,15 +24,17 @@ module ejs.tar {
             }
         }
         function create(): Void {
-            let cmd = "tar czf " + path + " " + files.join(" ")
+            let cmd = "zip -q " + path + " " + files.join(" ")
             cmd = cmd.replace(/\\/g, "\\\\")
             Cmd.sh(cmd)
         }
         function extract(...files): Void {
-            let cmd = "tar xzf " + path + " " + files.join(" ")
+            let cmd = "unzip " + path + " " + files.join(" ")
             cmd = cmd.replace(/\\/g, "\\\\")
             Cmd.sh(cmd)
         }
+
+		//	MOB -- incomplete
         function cat(...files): String {
             let cmd = "tar xOzf " + path + " " + files.join(" ")
             cmd = cmd.replace(/\\/g, "\\\\")
