@@ -1240,6 +1240,9 @@ print(e)
             //  MOB -- should come from App.confg
             config = {}
             loadConfig(RC) || loadConfig(home.join(RC))
+        } else {
+            //  MOB -- should come from App.confg
+            config = {}
         }
     }
 
