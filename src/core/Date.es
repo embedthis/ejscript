@@ -386,6 +386,7 @@ module ejs {
 
         /**
             Set the date of the month (1 - 31)
+            If a value outside the range is given, the date is adjusted without error.
             @param d Date of the month
          */
         function setDate(d: Number): void
@@ -400,6 +401,7 @@ module ejs {
 
         /**
             Set the current hour (0 - 23) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @param h The hour as an integer
          */
         function setHours(h: Number): void
@@ -407,6 +409,7 @@ module ejs {
 
         /**
             Set the current millisecond (0 - 999) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @param ms The millisecond as an integer
          */
         function setMilliseconds(ms: Number): void
@@ -414,6 +417,7 @@ module ejs {
 
         /**
             Set the current minute (0 - 59) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @param min The minute as an integer
          */
         function setMinutes(min: Number): void
@@ -421,6 +425,7 @@ module ejs {
 
         /**
             Set the current month (0 - 11) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @param mon The month as an integer
          */
         function setMonth(mon: Number): void
@@ -428,6 +433,7 @@ module ejs {
 
         /**
             Set the current second (0 - 59) in local time.
+            If a value outside the range is given, the date is adjusted without error.
             @param sec The second as an integer
             @param msec Optional milliseconds as an integer
          */
@@ -447,6 +453,7 @@ module ejs {
 
         /**
             Set the date of the month (1 - 31) in UTC time.
+            If a value outside the range is given, the date is adjusted without error.
             @param d The date to set
          */
         native function setUTCDate(d: Number): void
@@ -459,30 +466,35 @@ module ejs {
 
         /**
             Set the current hour (0 - 23) in UTC time.
+            If a value outside the range is given, the date is adjusted without error.
             @param h The hour as an integer
          */
         native function setUTCHours(h: Number): void
 
         /**
             Set the current millisecond (0 - 999) in UTC time.
+            If a value outside the range is given, the date is adjusted without error.
             @param ms The millisecond as an integer
          */
         native function setUTCMilliseconds(ms: Number): void
 
         /**
             Set the current minute (0 - 59) in UTC time.
+            If a value outside the range is given, the date is adjusted without error.
             @param min The minute as an integer
          */
         native function setUTCMinutes(min: Number): void
 
         /**
             Set the current month (0 - 11) in UTC time.
+            If a value outside the range is given, the date is adjusted without error.
             @param mon The month as an integer
          */
         native function setUTCMonth(mon: Number): void
 
         /**
             Set the current second (0 - 59) in UTC time.
+            If a value outside the range is given, the date is adjusted without error.
             @param sec The second as an integer
             @param msec Optional milliseconds as an integer
          */
