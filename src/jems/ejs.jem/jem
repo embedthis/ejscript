@@ -1236,7 +1236,7 @@ print(e)
     function loadDefaults(): Void {
         let homeEnv = App.getenv("HOME")
         if (homeEnv) {
-            let home = Path(App.getenv("HOME"))
+            let home = Path(homeEnv)
             //  MOB -- should come from App.confg
             config = {}
             loadConfig(RC) || loadConfig(home.join(RC))
