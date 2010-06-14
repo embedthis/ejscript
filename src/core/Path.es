@@ -77,6 +77,7 @@ module ejs {
          */
         native function get basename(): Path
         
+//  MOB -- perhaps should be split()
         /**
             Path components. This is the path converted to an absolute path and then broken into components for each
             directory level. It is set to an array object with an element for each segment of the path. The first 

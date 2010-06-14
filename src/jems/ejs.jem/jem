@@ -158,13 +158,11 @@ class JemCmd
 
     function JemCmd() {
         loadDefaults()
-        //  MOB -- should update App.config
-print("CONFIG " + config)
-print("DEFAULT_CONFIG " + defaultConfig)
+//  MOB -- should update App.config
         blend(config, defaultConfig, false)
         dirs = config.directories
         dirs.home = App.dir
-        //  MOB -- rename ext to extensions
+//  MOB -- rename ext to extensions
         ext = config.extensions
         filenames = config.filenames
         for (d in dirs) {
@@ -502,7 +500,7 @@ print(e)
             tar.create()
             log(1, "Building", path)
         } catch (e) {
-print(e)
+            print(e)
         }
     }
 
