@@ -1226,6 +1226,7 @@ print(e)
     }
 
     function loadDefaults(): Void {
+        print("HOME IS " + App.getenv("HOME"))
         let home = Path(App.getenv("HOME"))
         //  MOB -- should come from App.confg
         config = {}
