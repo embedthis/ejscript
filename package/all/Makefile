@@ -86,6 +86,9 @@ $(ARCHIVE): Makefile $(TARGETS)
 	cp $(BLD_TOP)/doc/man/*.1 $(STAGING)/doc/man
 	cp -r $(BLD_LIB_DIR)/www $(DEST)
 	cp Makefile.all $(DEST)/Makefile
+ifeq ($(BLD_HOST_OS),WIN)
+	cp -r $(BLD_BIN_DIR)/*.cmd $(DEST)
+endif
 	@$(call log) "[Generate]" "tar cfz $(ARCHIVE) -C $(STAGING) ."
 	rm -f $(ARCHIVE)
 	tar cfz $(ARCHIVE) -C $(STAGING) .
