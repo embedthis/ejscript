@@ -4,6 +4,7 @@
     BUGS
     - Inconsistent trace. Build does, publish doesnt
  */
+GC.enabled = false
 
 /*
     Background
@@ -158,6 +159,8 @@ class JemCmd
     function JemCmd() {
         loadDefaults()
         //  MOB -- should update App.config
+print("CONFIG " + config)
+print("DEFAULT_CONFIG " + defaultConfig)
         blend(config, defaultConfig, false)
         dirs = config.directories
         dirs.home = App.dir
@@ -189,6 +192,7 @@ class JemCmd
         [ "code", String ],
         [ "debug" ],
         [ "details" ],
+        [ "dir", String ],
         [ "field", String ],
         [ "force" ],
         [ "from", String ],
@@ -220,6 +224,7 @@ class JemCmd
             "    uninstall            # Uninstall a jem on the local system\n" +
             "    upgrade              # Upgrade all installed jems\n" +
             "  General options:\n" + 
+            "    --dir                # Change to directory before running\n" +
             "    --force              # Ignore dependencies and continue\n" +
             "    --from repository\n" +
             "    --to repository\n" +
@@ -333,6 +338,9 @@ print(e)
             } else for each (jem in args) {
                 depend(Jem(jem))
             }
+            break
+        case "dir":
+            App.dir = args[0]
             break
         case "edit":
             if (args.length == 0) {

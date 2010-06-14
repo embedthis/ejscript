@@ -17,6 +17,7 @@ LOADABLE		+= ejs.cache ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.sqlite e
 LOADABLE_FILES	+= $(shell for d in $(LOADABLE); do echo $$d/*.es | sort; done)
 MODULES			+= $(call mod, $(LOADABLE))
 JEMS			+= $(LOADABLE) $(TOOLS)
+AJEMS			+= $(patsubst %, %.jem, $(LOADABLE) $(TOOLS))
 FILTER		 	+= /sample/|/legacy/|^ejs.jem/|ejsmvc|Archive|\/test\/
 LISTING			+= --listing
 DOC_SRC			+= $(shell find ../core -name '*.es' | egrep -v "$(FILTER)")
@@ -56,22 +57,22 @@ $(DOC_DIR)/index.html: Makefile $(MODULES)
 
 doc: $(DOC_DIR)/index.html
 
-#
-#	MOB - need to do this only when inputs change. Should then do at compile time
-#
 buildJems:
 	set -e ; \
 	mkdir -p "$(BLD_ABS_JEM_DIR)" ; \
 	for j in $(JEMS) ; do \
-		cd $$j >/dev/null ; \
 		vj="$$j-$(BLD_VERSION)" ; \
-		dest="$(BLD_ABS_JEM_DIR)/$$vj" ; \
-		jem --field version --value $(BLD_VERSION) edit ; \
-		[ -f $(BLD_ABS_MOD_DIR)/$$vj.mod ] && jem setdeps $(BLD_ABS_MOD_DIR)/$$vj.mod ; \
-		jem build ; \
-		$(call log) "[Publish]" "jem --to $(BLD_ABS_JEM_DIR) publish $$vj" ; \
-		jem --to $(BLD_ABS_JEM_DIR) publish $$vj ; \
-		cd - >/dev/null ; \
+		target="$(BLD_ABS_JEM_DIR)/$$vj/$$vj.jem" ; \
+		[ ! -f $$target ] && echo missing ; \
+		if [ ! -f $$target -o $(BLD_ABS_MOD_DIR)/$$j.mod -nt $$target ] ; then \
+			cd $$j >/dev/null ; \
+			jem --field version --value $(BLD_VERSION) edit ; \
+			[ -f $(BLD_ABS_MOD_DIR)/$$vj.mod ] && jem setdeps $(BLD_ABS_MOD_DIR)/$$vj.mod ; \
+			jem build ; \
+			$(call log) "[Publish]" "jem --to $(BLD_ABS_JEM_DIR) publish $$vj" ; \
+			jem --to $(BLD_ABS_JEM_DIR) publish $$vj ; \
+			cd - >/dev/null ; \
+		fi ; \
 	done
 
 cleanExtra:

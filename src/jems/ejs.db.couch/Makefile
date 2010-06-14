@@ -6,5 +6,3 @@
 
 include 	.makedep
 
-PRE_DIRS	+= src
-
