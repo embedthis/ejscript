@@ -89,3 +89,4 @@ Win32
 bin/www
 bin/start.es
 bin/jem.cmd
+src/include/buildConfig.save
