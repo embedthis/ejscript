@@ -41,6 +41,8 @@ diff import sync:
 	import.sh --$@ ../mpr/releases/mpr-all.tgz
 	import.sh --$@ ../pcre/releases/pcre-all.tgz
 	import.sh --$@ ../http/releases/http-all.tgz
+	import.sh --$@ ../appweb/releases/appweb-all.tgz
+	rm -f src/deps/appweb/appweb.c doc/man/appweb.1 doc/man/appwebMonitor.1 doc/man/httpPassword.1
 
 testExtra: test-projects
 

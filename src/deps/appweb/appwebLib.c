@@ -16,7 +16,7 @@
 
 /************************************************************************/
 /*
- *  Start of file "../src/alias.c"
+ *  Start of file "../../src/alias.c"
  */
 /************************************************************************/
 
@@ -107,7 +107,7 @@ MaAlias *maCreateAlias(MprCtx ctx, cchar *prefix, cchar *target, int code)
  */
 /************************************************************************/
 /*
- *  End of file "../src/alias.c"
+ *  End of file "../../src/alias.c"
  */
 /************************************************************************/
 
@@ -115,7 +115,7 @@ MaAlias *maCreateAlias(MprCtx ctx, cchar *prefix, cchar *target, int code)
 
 /************************************************************************/
 /*
- *  Start of file "../src/config.c"
+ *  Start of file "../../src/config.c"
  */
 /************************************************************************/
 
@@ -2511,7 +2511,7 @@ static void tabs(int fd, int indent)
  */
 /************************************************************************/
 /*
- *  End of file "../src/config.c"
+ *  End of file "../../src/config.c"
  */
 /************************************************************************/
 
@@ -2519,7 +2519,7 @@ static void tabs(int fd, int indent)
 
 /************************************************************************/
 /*
- *  Start of file "../src/connectors/sendConnector.c"
+ *  Start of file "../../src/connectors/sendConnector.c"
  */
 /************************************************************************/
 
@@ -2897,7 +2897,7 @@ int maOpenSendConnector(Http *http)
  */
 /************************************************************************/
 /*
- *  End of file "../src/connectors/sendConnector.c"
+ *  End of file "../../src/connectors/sendConnector.c"
  */
 /************************************************************************/
 
@@ -2905,7 +2905,7 @@ int maOpenSendConnector(Http *http)
 
 /************************************************************************/
 /*
- *  Start of file "../src/convenience.c"
+ *  Start of file "../../src/convenience.c"
  */
 /************************************************************************/
 
@@ -3058,7 +3058,7 @@ int maRunSimpleWebServer(cchar *ip, int port, cchar *docRoot)
  */
 /************************************************************************/
 /*
- *  End of file "../src/convenience.c"
+ *  End of file "../../src/convenience.c"
  */
 /************************************************************************/
 
@@ -3066,7 +3066,7 @@ int maRunSimpleWebServer(cchar *ip, int port, cchar *docRoot)
 
 /************************************************************************/
 /*
- *  Start of file "../src/dir.c"
+ *  Start of file "../../src/dir.c"
  */
 /************************************************************************/
 
@@ -3184,7 +3184,7 @@ void maSetDirIndex(MaDir *dir, cchar *name)
  */
 /************************************************************************/
 /*
- *  End of file "../src/dir.c"
+ *  End of file "../../src/dir.c"
  */
 /************************************************************************/
 
@@ -3192,7 +3192,7 @@ void maSetDirIndex(MaDir *dir, cchar *name)
 
 /************************************************************************/
 /*
- *  Start of file "../src/handlers/cgiHandler.c"
+ *  Start of file "../../src/handlers/cgiHandler.c"
  */
 /************************************************************************/
 
@@ -3915,7 +3915,7 @@ static void buildArgs(HttpConn *conn, MprCmd *cmd, int *argcp, char ***argvp)
 
         len = (int) strlen(cmdScript) + 2 + 1;
         cmdBuf = (char*) mprAlloc(cmd, len);
-        mprSprintf(cmdBuf, len, "\"%s\"", cmdScript);
+        mprSprintf(conn, cmdBuf, len, "\"%s\"", cmdScript);
         argv[argind++] = cmdBuf;
 
         mprSetCmdDir(cmd, cmdScript);
@@ -4287,7 +4287,7 @@ int maCgiHandlerInit(Http *http, MprModule *mp)
  */
 /************************************************************************/
 /*
- *  End of file "../src/handlers/cgiHandler.c"
+ *  End of file "../../src/handlers/cgiHandler.c"
  */
 /************************************************************************/
 
@@ -4295,7 +4295,7 @@ int maCgiHandlerInit(Http *http, MprModule *mp)
 
 /************************************************************************/
 /*
- *  Start of file "../src/handlers/dirHandler.c"
+ *  Start of file "../../src/handlers/dirHandler.c"
  */
 /************************************************************************/
 
@@ -4965,7 +4965,7 @@ int maOpenDirHandler(Http *http)
  */
 /************************************************************************/
 /*
- *  End of file "../src/handlers/dirHandler.c"
+ *  End of file "../../src/handlers/dirHandler.c"
  */
 /************************************************************************/
 
@@ -4973,7 +4973,7 @@ int maOpenDirHandler(Http *http)
 
 /************************************************************************/
 /*
- *  Start of file "../src/handlers/egiHandler.c"
+ *  Start of file "../../src/handlers/egiHandler.c"
  */
 /************************************************************************/
 
@@ -5114,7 +5114,7 @@ int maOpenEgiHandler(Http *http)
  */
 /************************************************************************/
 /*
- *  End of file "../src/handlers/egiHandler.c"
+ *  End of file "../../src/handlers/egiHandler.c"
  */
 /************************************************************************/
 
@@ -5122,7 +5122,7 @@ int maOpenEgiHandler(Http *http)
 
 /************************************************************************/
 /*
- *  Start of file "../src/handlers/ejsHandler.c"
+ *  Start of file "../../src/handlers/ejsHandler.c"
  */
 /************************************************************************/
 
@@ -5334,7 +5334,7 @@ int maEjsHandlerInit(Http *http, MprModule *mp)
  */
 /************************************************************************/
 /*
- *  End of file "../src/handlers/ejsHandler.c"
+ *  End of file "../../src/handlers/ejsHandler.c"
  */
 /************************************************************************/
 
@@ -5342,7 +5342,7 @@ int maEjsHandlerInit(Http *http, MprModule *mp)
 
 /************************************************************************/
 /*
- *  Start of file "../src/handlers/fileHandler.c"
+ *  Start of file "../../src/handlers/fileHandler.c"
  */
 /************************************************************************/
 
@@ -5727,7 +5727,7 @@ int maOpenFileHandler(Http *http)
  */
 /************************************************************************/
 /*
- *  End of file "../src/handlers/fileHandler.c"
+ *  End of file "../../src/handlers/fileHandler.c"
  */
 /************************************************************************/
 
@@ -5735,7 +5735,7 @@ int maOpenFileHandler(Http *http)
 
 /************************************************************************/
 /*
- *  Start of file "../src/handlers/phpHandler.c"
+ *  Start of file "../../src/handlers/phpHandler.c"
  */
 /************************************************************************/
 
@@ -6245,7 +6245,7 @@ int maPhpHandlerInit(Http *http, MprModule *mp)
  */
 /************************************************************************/
 /*
- *  End of file "../src/handlers/phpHandler.c"
+ *  End of file "../../src/handlers/phpHandler.c"
  */
 /************************************************************************/
 
@@ -6253,7 +6253,7 @@ int maPhpHandlerInit(Http *http, MprModule *mp)
 
 /************************************************************************/
 /*
- *  Start of file "../src/host.c"
+ *  Start of file "../../src/host.c"
  */
 /************************************************************************/
 
@@ -6967,7 +6967,7 @@ int maSetupTrace(MaHost *host, cchar *ext)
  */
 /************************************************************************/
 /*
- *  End of file "../src/host.c"
+ *  End of file "../../src/host.c"
  */
 /************************************************************************/
 
@@ -6975,7 +6975,7 @@ int maSetupTrace(MaHost *host, cchar *ext)
 
 /************************************************************************/
 /*
- *  Start of file "../src/link.c"
+ *  Start of file "../../src/link.c"
  */
 /************************************************************************/
 
@@ -7078,7 +7078,7 @@ void maUnloadStaticModules(MaAppweb *appweb) {}
  */
 /************************************************************************/
 /*
- *  End of file "../src/link.c"
+ *  End of file "../../src/link.c"
  */
 /************************************************************************/
 
@@ -7086,7 +7086,7 @@ void maUnloadStaticModules(MaAppweb *appweb) {}
 
 /************************************************************************/
 /*
- *  Start of file "../src/log.c"
+ *  Start of file "../../src/log.c"
  */
 /************************************************************************/
 
@@ -7490,7 +7490,7 @@ void maLogRequest(HttpConn *conn)
  */
 /************************************************************************/
 /*
- *  End of file "../src/log.c"
+ *  End of file "../../src/log.c"
  */
 /************************************************************************/
 
@@ -7498,7 +7498,7 @@ void maLogRequest(HttpConn *conn)
 
 /************************************************************************/
 /*
- *  Start of file "../src/match.c"
+ *  Start of file "../../src/match.c"
  */
 /************************************************************************/
 
@@ -8097,7 +8097,7 @@ int maRewriteUri(HttpConn *conn) { return 0; }
  */
 /************************************************************************/
 /*
- *  End of file "../src/match.c"
+ *  End of file "../../src/match.c"
  */
 /************************************************************************/
 
@@ -8105,7 +8105,7 @@ int maRewriteUri(HttpConn *conn) { return 0; }
 
 /************************************************************************/
 /*
- *  Start of file "../src/mime.c"
+ *  Start of file "../../src/mime.c"
  */
 /************************************************************************/
 
@@ -8316,7 +8316,7 @@ void maAddStandardMimeTypes(MaHost *host)
  */
 /************************************************************************/
 /*
- *  End of file "../src/mime.c"
+ *  End of file "../../src/mime.c"
  */
 /************************************************************************/
 
@@ -8324,7 +8324,7 @@ void maAddStandardMimeTypes(MaHost *host)
 
 /************************************************************************/
 /*
- *  Start of file "../src/misc.c"
+ *  Start of file "../../src/misc.c"
  */
 /************************************************************************/
 
@@ -8533,7 +8533,7 @@ static int allDigits(cchar *s)
  */
 /************************************************************************/
 /*
- *  End of file "../src/misc.c"
+ *  End of file "../../src/misc.c"
  */
 /************************************************************************/
 
@@ -8541,7 +8541,7 @@ static int allDigits(cchar *s)
 
 /************************************************************************/
 /*
- *  Start of file "../src/modules/sslModule.c"
+ *  Start of file "../../src/modules/sslModule.c"
  */
 /************************************************************************/
 
@@ -8727,7 +8727,7 @@ int maSslModuleInit(Http *http, MprModule *mp)
  */
 /************************************************************************/
 /*
- *  End of file "../src/modules/sslModule.c"
+ *  End of file "../../src/modules/sslModule.c"
  */
 /************************************************************************/
 
@@ -8735,7 +8735,7 @@ int maSslModuleInit(Http *http, MprModule *mp)
 
 /************************************************************************/
 /*
- *  Start of file "../src/server.c"
+ *  Start of file "../../src/server.c"
  */
 /************************************************************************/
 
@@ -9233,7 +9233,7 @@ void maSetTimeout(MaAppweb *appweb, int timeout)
  */
 /************************************************************************/
 /*
- *  End of file "../src/server.c"
+ *  End of file "../../src/server.c"
  */
 /************************************************************************/
 
