@@ -357,14 +357,15 @@ module ejs.web {
             connector.extlink(text, options)
         }
 
+
         /**
             Emit a selection list. 
             @param field Name of the field to display. This is used to create a HTML "name" and "id" attribute for the 
                 input element. If used inside a model form, it is the field name in the model containing the list item to
                 select. If used without a model, the value to select should be passed via options.value. 
             @param choices Choices to select from. This can be an array list where each element is displayed and the value 
-                returned is an element index (origin zero). It can also be an array of array tuples where the first 
-                tuple entry is the value to display and the second is the value to send to the app. Or it can be an 
+                returned is an element index (origin zero). It can also be an array of array tuples where the 
+                first is the value to send to the app, and the second tuple entry is the value to display. Or it can be an 
                 array of objects such as those returned from a table lookup. If choices is null, the $field value is 
                 used to construct a model class name to use to return a data grid containing an array of row objects. 
                 The first non-id field is used as the value to display.
@@ -372,7 +373,7 @@ module ejs.web {
             @example
                 list("stockId", Stock.stockList) 
                 list("low", ["low", "med", "high"])
-                list("low", [["low", "3"], ["med", "5"], ["high", "9"]])
+                list("low", [["3", "low"], ["5", "med"], ["9", "high"]])
                 list("low", [{low: 3{, {med: 5}, {high: 9}])
                 list("Stock Type")  // Will invoke StockType.findAll() to do a table lookup
          */
