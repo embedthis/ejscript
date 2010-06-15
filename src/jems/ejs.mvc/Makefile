@@ -7,9 +7,7 @@
 include 	.makedep
 
 TARGETS		+= $(BLD_BIN_DIR)/ejsmvc
-ifeq ($(BLD_OS),WIN)
-	TARGETS	+= $(BLD_BIN_DIR)/ejsmvc.cmd
-endif
+TARGETS		+= $(BLD_BIN_DIR)/ejsmvc.cmd
 TARGETS		+= $(BLD_LIB_DIR)/www
 
 compileExtra: $(TARGETS)

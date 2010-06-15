@@ -8,9 +8,7 @@ include 	.makedep
 
 FILES		+= TemplateParser.es
 TARGETS		+= $(BLD_BIN_DIR)/ejspage
-ifeq ($(BLD_OS),WIN)
-	TARGETS	+= $(BLD_BIN_DIR)/ejspage.cmd
-endif
+TARGETS		+= $(BLD_BIN_DIR)/ejspage.cmd
 
 compileExtra: $(TARGETS)
 
