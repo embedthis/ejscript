@@ -76,7 +76,8 @@
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#parse'><b>parse</b></a>(dateString: <a href='ejs-String.html'>String</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Parse a date string and return the number of milliseconds since midnight, January 1st, 1970 UTC.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#parseDate'><b>parseDate</b></a>(dateString: <a href='ejs-String.html'>String</a>, defaultDate: <a href='ejs-Date.html'>Date</a> = null): <a href='ejs-Date.html'>Date</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Parse a date string and Return a new Date object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#parseUTCDate'><b>parseUTCDate</b></a>(dateString: <a href='ejs-String.html'>String</a>, defaultDate: <a href='ejs-Date.html'>Date</a> = null): <a href='ejs-Date.html'>Date</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Parse a date string and Return a new Date object.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setDate'><b>setDate</b></a>(d: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the date of the month (1 - 31).</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setDate'><b>setDate</b></a>(d: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the date of the month (1 - 31)
+If a value outside the range is given, the date is adjusted without error.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setFullYear'><b>setFullYear</b></a>(y: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the current year as four digits in local time.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHours'><b>setHours</b></a>(h: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the current hour (0 - 23) in local time.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setMilliseconds'><b>setMilliseconds</b></a>(ms: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the current millisecond (0 - 999) in local time.</td></tr>
@@ -496,7 +497,8 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 <div class='apiSig'>const   public  setDate(d: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Set the date of the month (1 - 31).</p>
+<p>Set the date of the month (1 - 31)
+If a value outside the range is given, the date is adjusted without error.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>d: <a href='ejs-Number.html'>Number</a> </td><td>Date of the month.</td></tr></table></dd>
@@ -521,6 +523,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the current hour (0 - 23) in local time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>h: <a href='ejs-Number.html'>Number</a> </td><td>The hour as an integer.</td></tr></table></dd>
@@ -533,6 +536,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the current millisecond (0 - 999) in local time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>ms: <a href='ejs-Number.html'>Number</a> </td><td>The millisecond as an integer.</td></tr></table></dd>
@@ -545,6 +549,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the current minute (0 - 59) in local time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>min: <a href='ejs-Number.html'>Number</a> </td><td>The minute as an integer.</td></tr></table></dd>
@@ -557,6 +562,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the current month (0 - 11) in local time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>mon: <a href='ejs-Number.html'>Number</a> </td><td>The month as an integer.</td></tr></table></dd>
@@ -569,6 +575,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the current second (0 - 59) in local time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>sec: <a href='ejs-Number.html'>Number</a> </td><td>The second as an integer.</td></tr><tr class='param'><td class='param'>msec: <a href='ejs-Number.html'>Number</a> </td><td>Optional milliseconds as an integer. [default: null]</td></tr></table></dd>
@@ -593,6 +600,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the date of the month (1 - 31) in UTC time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>d: <a href='ejs-Number.html'>Number</a> </td><td>The date to set.</td></tr></table></dd>
@@ -617,6 +625,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the current hour (0 - 23) in UTC time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>h: <a href='ejs-Number.html'>Number</a> </td><td>The hour as an integer.</td></tr></table></dd>
@@ -629,6 +638,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the current millisecond (0 - 999) in UTC time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>ms: <a href='ejs-Number.html'>Number</a> </td><td>The millisecond as an integer.</td></tr></table></dd>
@@ -641,6 +651,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the current minute (0 - 59) in UTC time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>min: <a href='ejs-Number.html'>Number</a> </td><td>The minute as an integer.</td></tr></table></dd>
@@ -653,6 +664,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the current month (0 - 11) in UTC time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>mon: <a href='ejs-Number.html'>Number</a> </td><td>The month as an integer.</td></tr></table></dd>
@@ -665,6 +677,7 @@ the date string will be interpreted as a UTC date/time.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the current second (0 - 59) in UTC time.</p>
+<dl><dt>Description</dt><dd>If a value outside the range is given, the date is adjusted without error.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>sec: <a href='ejs-Number.html'>Number</a> </td><td>The second as an integer.</td></tr><tr class='param'><td class='param'>msec: <a href='ejs-Number.html'>Number</a> </td><td>Optional milliseconds as an integer. [default: null]</td></tr></table></dd>

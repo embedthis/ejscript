@@ -12,15 +12,14 @@ TOOLS			+= ejs.jem ejs.web.cgi ejs.mvc
 #
 #	Loadable module jems (usable with require)
 #
-LOADABLE		+= ejs.cache ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.sqlite ejs.tar ejs.unix ejs.web ejs.web.jsgi \
+LOADABLE		= ejs.cache ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.sqlite ejs.tar ejs.unix ejs.web ejs.web.jsgi \
 			   		ejs.web.template 
-LOADABLE_FILES	+= $(shell for d in $(LOADABLE); do echo $$d/*.es | sort; done)
-MODULES			+= $(call mod, $(LOADABLE))
-JEMS			+= $(LOADABLE) $(TOOLS)
-AJEMS			+= $(patsubst %, %.jem, $(LOADABLE) $(TOOLS))
-FILTER		 	+= /sample/|/legacy/|^ejs.jem/|ejsmvc|Archive|\/test\/
-LISTING			+= --listing
-DOC_SRC			+= $(shell find ../core -name '*.es' | egrep -v "$(FILTER)")
+LOADABLE_FILES	= $(shell for d in $(LOADABLE); do echo $$d/*.es | sort; done)
+MODULES			= $(call mod, $(LOADABLE))
+JEMS			= $(LOADABLE) $(TOOLS)
+FILTER		 	= /sample/|/legacy/|^ejs.jem/|ejsmvc|Archive|\/test\/
+LISTING			= --listing
+DOC_SRC			= $(shell find ../core -name '*.es' | egrep -v "$(FILTER)")
 DOC_SRC			+= $(shell find $(LOADABLE) -name '*.es' | egrep -v "$(FILTER)")
 PRE_DIRS 		:= core 
 POST_DIRS		:= $(LOADABLE) $(TOOLS)

@@ -50,8 +50,8 @@
 			);
 			dependencies = (
 				C97627E70FD0788C009C78E1 /* PBXTargetDependency */,
-				C97627E90FD0788C009C78E1 /* PBXTargetDependency */,
 				C903091D10A35FA0003FF2AB /* PBXTargetDependency */,
+				C97627E90FD0788C009C78E1 /* PBXTargetDependency */,
 				C95E4FEC10EBFE5C00982610 /* PBXTargetDependency */,
 				C90184D3111BAAD600BA410F /* PBXTargetDependency */,
 				C97627F10FD0788C009C78E1 /* PBXTargetDependency */,
@@ -137,6 +137,8 @@
 		C92F848810F2B80300CA953D /* ejsHttpServer.c in Sources */ = {isa = PBXBuildFile; fileRef = C92F848610F2B80300CA953D /* ejsHttpServer.c */; };
 		C92F848910F2B80300CA953D /* ejsWeb.c in Sources */ = {isa = PBXBuildFile; fileRef = C92F848710F2B80300CA953D /* ejsWeb.c */; };
 		C92F849B10F2B93200CA953D /* libhttp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C95E4FDB10EBFD9300982610 /* libhttp.dylib */; };
+		C94D085511C724C9001B151C /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
+		C94D085611C724CD001B151C /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
 		C953B94D113DE3FD00869FBE /* ecAst.c in Sources */ = {isa = PBXBuildFile; fileRef = C97624260FD06F8B009C78E1 /* ecAst.c */; };
 		C953B94E113DE3FD00869FBE /* ecCompile.c in Sources */ = {isa = PBXBuildFile; fileRef = C9A11ACF10790A9300B35E6B /* ecCompile.c */; };
 		C953B94F113DE3FD00869FBE /* ecCodeGen.c in Sources */ = {isa = PBXBuildFile; fileRef = C97624270FD06F8B009C78E1 /* ecCodeGen.c */; };
@@ -148,8 +150,6 @@
 		C95E4FD010EBFD7800982610 /* mprSsl.c in Sources */ = {isa = PBXBuildFile; fileRef = C95E4FBB10EBFD2B00982610 /* mprSsl.c */; };
 		C95E4FE610EBFE1400982610 /* httpLib.c in Sources */ = {isa = PBXBuildFile; fileRef = C95E4FE510EBFE1400982610 /* httpLib.c */; };
 		C95E4FE810EBFE4100982610 /* pcre.c in Sources */ = {isa = PBXBuildFile; fileRef = C95E4FE710EBFE4100982610 /* pcre.c */; };
-		C95E4FEF10EBFE9F00982610 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
-		C95E4FF010EBFEA400982610 /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
 		C95E4FF310EBFEB200982610 /* libhttp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C95E4FDB10EBFD9300982610 /* libhttp.dylib */; };
 		C95E500510EBFFD300982610 /* libmatrixsslstatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C928EF3C10741AE800A81F4D /* libmatrixsslstatic.a */; };
 		C97625440FD071CF009C78E1 /* ejsc.c in Sources */ = {isa = PBXBuildFile; fileRef = C97624200FD06F8B009C78E1 /* ejsc.c */; };
@@ -271,6 +271,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = C95E4FD310EBFD9300982610;
 			remoteInfo = libhttp;
+		};
+		C94D089411C72A4B001B151C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627A50FD077A7009C78E1 /* libmpr */;
+			remoteInfo = libmpr;
+		};
+		C94D089611C72A52001B151C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C97627B50FD077E7009C78E1 /* libmprssl */;
+			remoteInfo = libmprssl;
 		};
 		C955217410840494005CC19C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -823,8 +837,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C95E4FEF10EBFE9F00982610 /* libmpr.dylib in Frameworks */,
-				C95E4FF010EBFEA400982610 /* libmprssl.dylib in Frameworks */,
+				C94D085511C724C9001B151C /* libmpr.dylib in Frameworks */,
+				C94D085611C724CD001B151C /* libmprssl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1780,6 +1794,8 @@
 				C901403810A8A0C100FCF0BC /* PBXTargetDependency */,
 				C90BD5B610CC56C700C50CA5 /* PBXTargetDependency */,
 				C92F849D10F2B93900CA953D /* PBXTargetDependency */,
+				C94D089511C72A4B001B151C /* PBXTargetDependency */,
+				C94D089711C72A52001B151C /* PBXTargetDependency */,
 			);
 			name = ejs.web;
 			productName = libejsweb;
@@ -1969,7 +1985,8 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -x\necho HERE\npwd\nmake -C $SRC TRACE=1 && cp $TOP/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmkdir -p $BUILT_PRODUCTS_DIR/../lib\ncp $SRC/deps/appweb/ejsweb.conf $BUILT_PRODUCTS_DIR/../lib/ejsweb.conf\ncp $SRC/deps/appweb/start.es $BUILT_PRODUCTS_DIR/../lib/start.es\n\n";
+			shellScript = "set -x\nmake -C $SRC TRACE=1 && cp $TOP/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmkdir -p $BUILT_PRODUCTS_DIR/../lib\ncp $SRC/deps/appweb/start.es $BUILT_PRODUCTS_DIR/../lib/start.es\n\n";
+			showEnvVarsInLog = 0;
 		};
 		C99A33CD10C2F14000F6C7BC /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2206,6 +2223,16 @@
 			isa = PBXTargetDependency;
 			target = C95E4FD310EBFD9300982610 /* libhttp */;
 			targetProxy = C92F849C10F2B93900CA953D /* PBXContainerItemProxy */;
+		};
+		C94D089511C72A4B001B151C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627A50FD077A7009C78E1 /* libmpr */;
+			targetProxy = C94D089411C72A4B001B151C /* PBXContainerItemProxy */;
+		};
+		C94D089711C72A52001B151C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C97627B50FD077E7009C78E1 /* libmprssl */;
+			targetProxy = C94D089611C72A52001B151C /* PBXContainerItemProxy */;
 		};
 		C955217510840494005CC19C /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2469,9 +2496,15 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = (
+					../../../extensions/matrixssl/latest,
+					../../../extensions/openssl/latest,
+					../../../src/include,
+					../../..,
+				);
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = libmpr;
+				PRODUCT_NAME = libappweb;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2564,7 +2597,7 @@
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
-				PRODUCT_NAME = libmpr;
+				PRODUCT_NAME = libhttp;
 				ZERO_LINK = NO;
 			};
 			name = Release;
@@ -2601,12 +2634,17 @@
 				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = YES;
+				HEADER_SEARCH_PATHS = (
+					../../../src/include,
+					../../..,
+				);
 				JEMS = $SRCROOT/../../../src/jems;
 				MOD = $BUILT_PRODUCTS_DIR;
 				OTHER_LDFLAGS = (
 					"-lcrypto",
 					"-lssl",
 				);
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
 				SRC = $SRCROOT/../../../src;
 				TOP = $SRCROOT/../../..;
 			};
@@ -2644,6 +2682,14 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
 				INSTALL_PATH = /usr/local/bin;
+				OTHER_LDFLAGS = (
+					"-Wl,-stack_size",
+					"-Wl,10000000",
+					"-lcrypto",
+					"-lssl",
+					"-ledit",
+					"-lcurses",
+				);
 				PREBINDING = NO;
 				PRODUCT_NAME = ejs;
 				ZERO_LINK = NO;
@@ -2784,7 +2830,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
+				INSTALL_PATH = /usr/lib/ejs;
 				PREBINDING = NO;
 				PRODUCT_NAME = libmpr;
 				ZERO_LINK = NO;
@@ -2867,7 +2913,13 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
+				HEADER_SEARCH_PATHS = (
+					../../../extensions/openssl/latest,
+					../../../extensions/matrixssl/latest,
+					../../../src/include,
+					../../..,
+				);
+				INSTALL_PATH = /usr/lib/ejs;
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
