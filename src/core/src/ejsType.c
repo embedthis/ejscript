@@ -565,31 +565,33 @@ static int fixupTypeImplements(Ejs *ejs, EjsType *type, int makeRoom)
     EjsType         *iface;
     EjsBlock        *bp;
     EjsNamespace    *nsp;
-    int             next, offset, count, nextNsp;
+    int             next, offset, itotal, icount, nextNsp;
 
     mprAssert(type);
     mprAssert(type->implements);
 
-    offset = type->constructor.block.obj.numSlots;
-    if (makeRoom) {
-        count = 0;
-        for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
-            if (!iface->isInterface) {
-                count += iface->constructor.block.obj.numSlots;
-                type->hasInstanceVars |= iface->hasInstanceVars;
-            }
+    itotal = 0;
+    for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
+        if (!iface->isInterface) {
+            itotal += iface->constructor.block.obj.numSlots;
+            type->hasInstanceVars |= iface->hasInstanceVars;
         }
-        if (count > 0 && ejsInsertGrowObject(ejs, (EjsObj*) type, count, 0) < 0) {
+    }
+    if (makeRoom) {
+        offset = type->constructor.block.obj.numSlots;
+        if (itotal > 0 && ejsGrowObject(ejs, (EjsObj*) type, offset + itotal) < 0) {
             return EJS_ERR;
         }
+    } else {
+        offset = type->constructor.block.obj.numSlots - itotal;
     }
     for (next = 0; ((iface = mprGetNextItem(type->implements, &next)) != 0); ) {
         if (!iface->isInterface) {
-            count = iface->constructor.block.obj.numSlots;
-            if (inheritProperties(ejs, type, (EjsObj*) type, offset, (EjsObj*) iface, 0, count, 1) < 0) {
+            icount = iface->constructor.block.obj.numSlots;
+            if (inheritProperties(ejs, type, (EjsObj*) type, offset, (EjsObj*) iface, 0, icount, 1) < 0) {
                 return EJS_ERR;
             }
-            offset += count;
+            offset += icount;
             for (nextNsp = 0; (nsp = (EjsNamespace*) ejsGetNextItem(&iface->constructor.block.namespaces, &nextNsp)) != 0;) {
                 ejsAddNamespaceToBlock(ejs, (EjsBlock*) type, nsp);
             }

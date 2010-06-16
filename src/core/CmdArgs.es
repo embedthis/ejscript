@@ -15,6 +15,7 @@ module ejs {
         @stability prototype
         @example 
         cmd = CmdArgs({
+            [ "depth", Number ]
             [ "quiet", null, false ]
             [ [ "verbose", "v", ], true ]
             [ "log", /\w+(:\d)/, "stdout:4" ],
@@ -74,14 +75,20 @@ module ejs {
                     continue
                 }
                 if (range === Number) {
-                    if (! value.match(/^\d+$/)) {
-                       throw new ArgError("Option \"" + key + "\" must be a number")
+                    if (value) {
+                        if (! value.match(/^\d+$/)) {
+                           throw new ArgError("Option \"" + key + "\" must be a number")
+                        }
+                    } else {
+                        value = 0
                     }
                 } else if (range === Boolean) {
                     if (value is Boolean) {
                         value = value.toString()
-                    } else {
+                    } else if (value is String) {
                         value = value.toLower()
+                    } else {
+                        value = false
                     }
                     if (value != "true" && value != "false") {
                        throw new ArgError("Option \"" + key + "\" must be true or false")

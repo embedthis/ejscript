@@ -2,6 +2,9 @@
     Cmd.es - Cmd class
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
+
+    MOB
+        - How to capture stderr
  */
 
 module ejs {
@@ -15,16 +18,6 @@ module ejs {
         use default namespace public
 
         /**
-            Callback event mask for readable events
-         */
-        static const Read: Number  = 2
-
-        /**
-            Callback event mask for writeable events
-         */
-        static const Write: Number = 4
-
-        /**
             Cached command output
          */
         private var _response: String
@@ -35,77 +28,64 @@ module ejs {
                 or command cmdline methods.
             @param options. Command options hash. Supported options are:
             @options detach Boolean If true, run the command in the background. Do not capture the command's stdout or
-                stderr nor collect status. Defaults to false.
+                stderr, nor collect status. Defaults to false.
             @options dir Path or String. Directory to set as the current working directory for the command.
             @options exception Boolean If true, throw exceptions on errors. Defaults to true.
             @throws IOError if the command line is malformed.
          */
         native function Cmd(cmdline: String = null, options: Object = null)
 
-//  MOB -- remove
-        /**
-            Get the number of command output bytes that are currently available for reading from the command.
-            This API is not supported and is provided only for compliance with the Stream interface.
-            @returns The number of available bytes.
-            @hide
+        /** 
+            @duplicate Stream.addListener
+            @event readable Issued when output data to read.
+            @event writable Issued when the connection to the command is writable to accept data.
+            @event complete Issued when the command completes
+            @event error Issued if the request does not complete successfully.
+            All events are called with the signature:
+            function (event: String, cmd: Cmd): Void
+         */
+        native function addListener(name, listener: Function): Void
+
+        /** 
+            @duplicate Stream.available
          */
         native function get available(): Number 
 
         /**
-            Close the connection to the server and free up all associated resources. It is not normally required to call 
-            $close. But it can be useful to force a disconnect.
-            @param graceful if true, then close the socket gracefully after writing all pending data.
+            Close the connection to the command and free up all associated resources. It is not normally required to call 
+            $close. But it can be useful to force a command termination.
          */
-        native function close(graceful: Boolean = true): Void 
+        native function close(): Void 
 
         /**
-            Get the command line for this Cmd object.
-            @return The current cmdline string.
+            The command line for this Cmd object.
          */
         native function get cmdline(): String
-
-        /**
-            Set or reset the Cmd object's command line.
-            @param cmdline The command line as a string.
-            @throws IOError if the command line is malformed.
-         */
         native function set cmdline(cmdlineString: String): Void
 
         /**
-            Return a stream object for the command's stderr output 
-            @returns A stream channel opened for reading 
+            The error stream object for the command's stderr output 
          */
         native function get error(): Stream
 
         /**
-            Get the current array of environment strings the command will use when it is started.
-            @returns An object hash of environment strings if an environment has been defined. Otherwise null will be
-                returned.
+            Hash of environment strings for the command.
          */
         native function get env(): Object
-
-        /**
-            Set the current environment for the command
-            @param values Object hash of environment strings to pass to the command when it is started.
-         */
         native function set env(values: Object): Void
 
-        /**
-            Flush any buffered write data to the command
-            @param graceful If true, then write all pending data.
+        /** 
+            Signals the end of write data. Finalize() must be called to properly signify the end of write data.
          */
-        native function flush(graceful: Boolean = true): Void
+        native function finalize(): Void 
 
         /**
-            Read a block of output data from the command. This reads from the command's standard output. Use the $error
-            stream to read from the command's standard error channel.
-            @param buffer Destination byte array for the read data.
-            @param offset Offset in the byte array to place the data. If offset is not supplied, data is appended at the 
-                current byte array write position.
-            @param count Number of bytes to read. 
-            @returns a count of the bytes actually read. Returns zero if no data is available. Returns -1 when the end of 
-                the output data has been reached.
-            @throws IOError if an I/O error occurs.
+            @duplicate Stream.flush
+         */
+        native function flush(dir: Number = Stream.BOTH): Void
+
+        /**
+            @duplicate Stream.read
          */
         native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
 
@@ -130,7 +110,13 @@ module ejs {
             @returns the output content as an XML object 
             @throws IOError if an I/O error occurs.
          */
-        native function readXml(): XML
+        function readXml(): XML
+            XML(readString())
+
+        /** 
+            @duplicate Stream.removeListener
+         */
+        native function removeListener(name, listener: Function): Void
 
         /**
             Return the command output data as a string. This is an alias for $readString() but it will cache the 
@@ -146,26 +132,8 @@ module ejs {
         }
 
         /**
-            Define a callback to be invoked for readable and/or writable events. Callbacks are used when writing event
-            based programs that must not block. When a callback is defined, the $read and $write routines will not block. 
-            WARNING: this feature is experimental and is not supported.
-            @param eventMask Mask of events of interest. Select from Read, Write.
-            @param cb Callback function to invoke in response to I/O events.
-            <pre>
-                function callback(e: Event): Void
-            </pre>
-            Where e.data == http. The event arg may be either a CmdDataEvent or a HtttpErrorEvent. The callback is
-            invoked when there is an error, response data to read  or on end of request where $available == 0 and a read
-                will return null). It may also invoked to signal that the underlying socket can accept write data. 
-            The CmdError event will be passed  on any request processing errors. Does not include remote server errors.
-         */
-        native function setCallback(eventMask: Number, cb: Function): Void
-
-        /**
-            Issue a HTTP request for the current method and cmdline. The HTTP method should be defined via the $method 
-            property and cmdline via the $cmdline property. This routine is typically not used. Rather $get, $head, 
-            $post or $put are used instead.
-            @param cmdline New cmdline to use. This overrides any previously defined cmdline for the Cmd object.
+            Start the command.
+            @param cmdline Command line to use. This overrides any previously defined cmdline for the Cmd object.
             @param options Command options. Sames as options in $Cmd
             @throws IOError if the request was cannot be issued to the remote server.
          */
@@ -175,42 +143,28 @@ module ejs {
         native function get status(): Number
 
         /**
-            Get the request timeout. 
-            @returns Number of milliseconds for requests to block while attempting the request.
+            Command timeout before the command is forcibly killed and a completion event issued. 
+            This is the number of milliseconds for the command to complete.
          */
         native function get timeout(): Number
-
-        /**
-            Set the request timeout.
-            @param timeout Number of milliseconds to block while attempting requests. -1 means no timeout.
-         */
         native function set timeout(timeout: Number): Void
 
-//  TODO - could this return the exit status
         /**
-            Wait for a request to complete.
-            @param timeout Time in seconds to wait for the request to complete
+            Wait for a command to complete.
+            @param timeout Time in seconds to wait for the command to complete. If unspecified the $timeout propoperty
+                value is used instead
             @return True if the request successfully completes.
          */
         native function wait(timeout: Number = -1): Boolean
 
         /**
-            Write body data to the request stream. The write call blocks while writing data. The Cmd.contentLength should 
-            normally be set prior to writing any data to ensure that the request "Content-length" header is properly 
-            defined. If the body length has not been defined, the data will be transferred using chunked transfers. In
-            this case, you should call write() with no data to signify the end of the write stream.
-            the Content-Length header will not be defined and the remote server will have to close the underling 
-            HTTP connection at the completion of the request. This will prevent HTTP keep-alive for subsequent 
-            requests.
-            @param data Data objects to write to the request stream. Data is written raw and is not encoded or converted. 
-                However, write intelligently handles arrays such that, each element of the array will be written. 
-                If encoding of write data is required, use the BinaryStream filter. 
-            @throws StateError if the Cmd method is not set to POST.
-            @throws IOError if more post data is written than specified via the contentLength property.
+            @duplicate Stream.write
+            Call finalize to signify the end of write data.
          */
         native function write(...data): Void
 
-        /* STATIC METHODS */
+
+        /* Static Helper Methods */
 
         /*
             Run a command using the system command shell and wait for completion. This supports pipelines.
@@ -219,7 +173,7 @@ module ejs {
             run(("/bin/sh -c \"" + cmdline + "\"").trim('\n'), data)
 
         /**
-            Execute a command/program.
+            Execute a command/program. The call blocks while executing the command.
             @param command Command or program to execute
             @param data Optional data to write to the command on it's standard input.
             @returns The command output from it's standard output.
@@ -227,40 +181,26 @@ module ejs {
                 standard error output. 
          */
         native static function run(cmdline: String, data: String = null): String {
-            let cmd = new Cmd(cmdline)
-            cmd.start()
+            let cmd = new Cmd
+            cmd.start(cmdline)
             if (data) {
                 cmd.write(data)
+                cmd.finalize()
             }
             if (cmd.status != 0) {
+                //  MOB -- should capture stderr somehow?
                 throw new IOError(cmd.error.readString())
             }
             return cmd.readString()
         }
 
         static function daemon(cmdline: String): Number {
-            let  = new Cmd(cmdline)
-            cmd.detach = true
+            let cmd = new Cmd
+            cmd.start(cmdline, {detach: true})
             cmd.start()
+            //  MOB -- return value
         }
     }
-
-    /**
-        Data event issued to the callback function.
-     */
-    class CmdDataEvent extends Event {
-        /**
-            Mask of pending events. Set to include $Read and/or $Write values.
-         */
-        public var eventMask: Number
-    }
-
-    /**
-        Error event issued to the callback function if any errors occur dcmdlineng an Cmd request.
-     */
-    class CmdErrorEvent extends Event {
-    }
-
 }
 
 

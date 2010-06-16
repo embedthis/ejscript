@@ -276,14 +276,14 @@
 			isa = PBXContainerItemProxy;
 			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C97627A50FD077A7009C78E1 /* libmpr */;
+			remoteGlobalIDString = C97627A50FD077A7009C78E1;
 			remoteInfo = libmpr;
 		};
 		C94D089611C72A52001B151C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = C97627B50FD077E7009C78E1 /* libmprssl */;
+			remoteGlobalIDString = C97627B50FD077E7009C78E1;
 			remoteInfo = libmprssl;
 		};
 		C955217410840494005CC19C /* PBXContainerItemProxy */ = {
@@ -1985,7 +1985,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "set -x\nmake -C $SRC TRACE=1 && cp $TOP/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\nmkdir -p $BUILT_PRODUCTS_DIR/../lib\ncp $SRC/deps/appweb/start.es $BUILT_PRODUCTS_DIR/../lib/start.es\n\n";
+			shellScript = "set -x\nmake -C $SRC TRACE=1 && cp $TOP/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\n";
 			showEnvVarsInLog = 0;
 		};
 		C99A33CD10C2F14000F6C7BC /* ShellScript */ = {

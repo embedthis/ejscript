@@ -40,7 +40,7 @@ module ejs {
         use default namespace public
 
         /** 
-            Configuration environment specified in the .ejsrc configuration files.
+            Configuration environment specified in the .ejsrc/ejsrc configuration files.
          */
         static var config: Object
 
@@ -315,6 +315,16 @@ module ejs {
                 }
             }
         }
+
+        static function loadrc(path: Path) {
+            if (path.exists) {
+                try {
+                    blend(App.config, path.readJSON(), false)
+                } catch {
+                    errorStream.write(App.exePath.basename +  " Can't parse " + path + ": " + e + "\n")
+                }
+            }
+        }
     }
 
     /**  
@@ -323,22 +333,14 @@ module ejs {
      */
     function appInit(): Void {
         /*  
-            Load ~/.ejsrc
+            Load ~/.ejsrc and ejsrc
          */
+        let config = App.config = {}
         let dir = App.getenv("HOME")
         if (dir) {
-            let path = Path(dir).join(".ejsrc")
-            if (path.exists) {
-                try {
-                    App.config = deserialize(path.readString())
-                } catch (e) {
-                    App.errorStream.write(App.exePath.basename +  " Can't parse " + path + ": " + e + "\n")
-                }
-            }
+            App.loadrc(Path(dir).join(".ejsrc"))
         }
-        let config = App.config || {}
-        App.config = config
-
+        App.loadrc("ejsrc")
         blend(config, App.defaultConfig, false)
 
         stdout = TextStream(App.outputStream)

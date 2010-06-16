@@ -64,6 +64,9 @@ int ejsCreateGCService(Ejs *ejs)
     gc = &ejs->gc;
     gc->enabled = 1;
     gc->firstGlobal = (ejs->empty) ? 0 : ES_global_NUM_CLASS_PROP;
+
+//  MOB -- Some types are immutable App.config
+gc->firstGlobal = 0;
     gc->numPools = EJS_MAX_TYPE;
     gc->allocGeneration = EJS_GEN_ETERNAL;
     ejs->workQuota = EJS_WORK_QUOTA;
@@ -474,9 +477,6 @@ static void resetMarks(Ejs *ejs)
 }
 
     
-/*
-    Mark the global object
- */
 static void markGlobal(Ejs *ejs, int generation)
 {
     EjsGC       *gc;
@@ -500,12 +500,7 @@ static void markGlobal(Ejs *ejs, int generation)
         }
 
     } else {
-        /*
-            Current some global types are not immutable:
-            E.g. App.config
-         */
         i = gc->firstGlobal;
-        i = 0;
         for (; i < obj->numSlots; i++) {
             ejsMark(ejs, obj->slots[i].value.ref);
         }

@@ -509,9 +509,7 @@ module ejs {
             XML(response)
 
         /** 
-            Remove a listener to the stream. If there are no listeners on the stream, the stream is put back into sync mode.
-            @param name Event name previously used with addListener. The name may be an array of events.
-            @param listener Listener function previously used with addListener.
+            @duplicate Stream.removeListener
          */
         native function removeListener(name, listener: Function): Void
 

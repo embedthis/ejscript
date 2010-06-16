@@ -268,6 +268,8 @@ EjsObj *ejsCloneObject(Ejs *ejs, EjsObj *src, bool deep)
     dest->permanent = src->permanent;
     dest->shortScope = src->shortScope;
 
+    //  MOB - OPT name copying
+#if UNUSED
     dp = dest->slots;
     sp = src->slots;
     for (i = 0; i < numSlots; i++, sp++, dp++) {
@@ -277,6 +279,24 @@ EjsObj *ejsCloneObject(Ejs *ejs, EjsObj *src, bool deep)
             dp->value.ref = ejsClone(ejs, sp->value.ref, deep);
         }
     }
+#else
+    dp = dest->slots;
+    sp = src->slots;
+    for (i = 0; i < numSlots; i++, sp++, dp++) {
+        *dp = *sp;
+        dp->trait = sp->trait;
+        //  MOB - OPT name copying
+        dp->qname.space = mprStrdup(dest, sp->qname.space);
+        dp->qname.name = mprStrdup(dest, sp->qname.name);
+        dp->hashChain = -1;
+        if (deep && !sp->value.ref->type->immutable) {
+            dp->value.ref = ejsClone(ejs, sp->value.ref, deep);
+        }
+    }
+    if (dest->numSlots > EJS_HASH_MIN_PROP) {
+        ejsMakeObjHash(dest);
+    }
+#endif
     ejsSetDebugName(dest, mprGetName(src));
     return dest;
 }
@@ -564,11 +584,12 @@ void ejsMarkObject(Ejs *ejs, EjsObj *obj)
     EjsSlot     *sp;
     int         i;
 
+    //  MOB -- put test if marked here
     ejsMark(ejs, (EjsObj*) obj->type);
 
     sp = obj->slots;
     for (i = 0; i < obj->numSlots; i++, sp++) {
-        if (sp->value.ref != ejs->nullValue) {
+        if (sp->value.ref != ejs->nullValue) {      //  MOB test permanent
             ejsMark(ejs, sp->value.ref);
         }
     }

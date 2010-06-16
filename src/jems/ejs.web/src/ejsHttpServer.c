@@ -21,21 +21,14 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
  */
 static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
+    EjsObj      *serverRoot, *documentRoot;
+
     sp->ejs = ejs;
-    if (argc >= 1) {
-        ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot, (EjsObj*) argv[0]);
-#if UNUSED
-    } else {
-        ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot, (EjsObj*) ejsCreatePath(ejs, "."));
-#endif
-    }
-    if (argc >= 2) {
-        ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot, (EjsObj*) argv[1]);
-#if UNUSED
-    } else {
-        ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot, (EjsObj*) ejsCreatePath(ejs, "."));
-#endif
-    }
+    serverRoot = (argc >= 1) ? argv[0] : (EjsObj*) ejsCreatePath(ejs, ".");
+    ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot, serverRoot);
+
+    documentRoot = (argc >= 1) ? argv[1] : (EjsObj*) ejsCreatePath(ejs, ".");
+    ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot, documentRoot);
     return (EjsObj*) sp;
 }
 
@@ -145,12 +138,16 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     sp->server = server;
 
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-    //  MOB -- why
-    server->documentRoot = mprStrdup(server, root->path);
+    if (ejsIsPath(ejs, root)) {
+        //  MOB -- why is this needed? remove?
+        server->documentRoot = mprStrdup(server, root->path);
+    }
 
     //  MOB -- is this needed? -- remove
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
-    server->serverRoot = mprStrdup(server, root->path);
+    if (ejsIsPath(ejs, root)) {
+        server->serverRoot = mprStrdup(server, root->path);
+    }
 
     //  MOB -- who make sure that the sp object is permanent?
 

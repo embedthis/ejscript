@@ -11,7 +11,7 @@
         views/layouts/default.ejs
  */
 
-GC.enabled = false
+// GC.enabled = false
 
 require ejs.web
 require ejs.web.template
@@ -254,9 +254,7 @@ class EjsMvc {
             break
 
         case "generate":
-print("GEN1")
             checkApp(task, rest)
-print("GEN2")
             generate(rest)
             break
 
@@ -741,8 +739,6 @@ print("GEN2")
             usage()
             return
         }
-print("GEN2")
-
         switch (kind) {
         case "app":
             generateApp(rest)
@@ -1046,7 +1042,7 @@ print("GEN2")
                 require ejs.db.mapper
                 public dynamic class _EjsMigration implements Record {
                     function _EjsMigration(fields: Object = null) {
-                        constructor(fields)
+                        initialize(fields)
                     }
                 }
             ")
@@ -1662,7 +1658,7 @@ require ejs.db.mapper
 public dynamic class ${NAME} implements Record {
 
     function ${NAME}(fields: Object? = null) {
-        constructor(fields)
+        initialize(fields)
     }
 }
 '
@@ -1760,17 +1756,18 @@ public dynamic class ${CONTROLLER}${VIEW}View extends View {
 '
 require ejs.web
     
-let server: HttpServer = new HttpServer
+let server: HttpServer = new HttpServer(".", "web")
 var router = Router(Router.TopRoutes)
 
 server.addListener("readable", function (event, request) {
+    App.log.info(request.method, request.uri, request.scheme)
     Web.serve(request, router)
 })
 
 //  See ejsrc to modify the endpoint
 //  Use server.attach() instead of listen if using inside Appweb
+App.log.info("Listen on", App.config.mvc.endpoint)
 server.listen(App.config.mvc.endpoint)
-
 App.eventLoop()
 '
 

@@ -721,6 +721,11 @@ void ecAddConstants(EcCompiler *cp, EjsObj *block)
     int         i, numTraits;
 
     ejs = cp->ejs;
+    
+    if (block->visited) {
+        return;
+    }
+    block->visited = 1;
 
     numTraits = ejsGetPropertyCount(ejs, block);
     for (i = 0; i < numTraits; i++) {
@@ -739,6 +744,7 @@ void ecAddConstants(EcCompiler *cp, EjsObj *block)
             }
         }
     }
+    block->visited = 0;
 }
 
 

@@ -247,7 +247,8 @@
 #define ES_App_version                                                 26
 #define ES_App_searchPath                                              27
 #define ES_App_serviceEvents                                           28
-#define ES_App_NUM_CLASS_PROP                                          29
+#define ES_App_loadrc                                                  29
+#define ES_App_NUM_CLASS_PROP                                          30
 
 /*
    Prototype (instance) slots for "App" type 
@@ -270,6 +271,7 @@
 #define ES_App_sleep_delay                                             0
 #define ES_App_serviceEvents_count                                     0
 #define ES_App_serviceEvents_timeout                                   1
+#define ES_App_loadrc_path                                             0
 #define ES_Array_NUM_CLASS_PROP                                        0
 
 /*
@@ -1806,6 +1808,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1288993
+#define _ES_CHECKSUM_ejs   1289551
 
 #endif
