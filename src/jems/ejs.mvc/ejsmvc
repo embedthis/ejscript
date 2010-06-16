@@ -1,6 +1,6 @@
 #!/usr/bin/env ejs
 /*
-    ejsmvc.es -- Ejscript web framework generator. This generates, compiles, cleans and packages Ejscript web applications. 
+    ejsmvc -- Ejscript web framework generator. This generates, compiles, cleans and packages Ejscript web applications. 
     For windows, this will be invoked via ejsmvc.cmd.
  */
 
@@ -31,7 +31,6 @@ class EjsMvc {
     private var cmd: CmdArgs
     private var database: String = "sqlite"
     private var dirs: Object
-    private var command: String 
     private var config: Object = {}
     private var db: Database
     private var debug: Boolean = false
@@ -217,7 +216,6 @@ class EjsMvc {
         let task = cmd.args.shift()
         let rest = cmd.args
 
-print("HERE " + task)
         switch (task) {
         case "browse":
             checkApp(task, rest)
@@ -459,7 +457,7 @@ print("GEN2")
         cmd = getCompilerPath() + " --out " + out + " --search \"" + search + "\" " + dirs.cache.join(mvc.appmod) + 
             " " + file
         trace("[BUILD]", (verbose > 1) ? cmd : file)
-        let results = command(cmd)
+        let results = runCommand(cmd)
         if (!out) {
             throw "Compilation failed for " + out + "\n" + results
         }
@@ -523,7 +521,7 @@ print("GEN2")
             } else {
                 trace("[BUILD]", file)
             }
-            command(cmd)
+            runCommand(cmd)
 
             if (!exists(out)) {
                 throw "Compilation failed for " + out + "\n" + results
@@ -562,7 +560,7 @@ print("GEN2")
             let search = App.search.join(App.SearchSeparator)
             cmd += " --out " + out + " --search \"" + search + "\" " + intermediate
             trace("[BUILD]", (verbose > 1) ? cmd : file)
-            command(cmd)
+            runCommand(cmd)
             if (!out.exists) {
                 throw "Compilation failed for " + out + "\n" + results
             }
@@ -597,7 +595,7 @@ print("GEN2")
         } else {
             trace("[BUILD]", files.join(" "))
         }
-        let results = command(cmd)
+        let results = runCommand(cmd)
         if (!exists(out)) {
             throw "Compilation failed for " + out + "\n" + results
         }
@@ -939,7 +937,6 @@ print("GEN2")
             makeDir("logs")
             makeDir("messages")
             makeDir("test")
-            makeDir("utils")
         }
 
         //  MOB - all these should come from dirs?
@@ -1386,7 +1383,7 @@ print("GEN2")
         return segments[nth]
     }
 
-    function command(command: String): String {
+    function runCommand(command: String): String {
         let results
         try {
             results = System.run(command)
@@ -1713,11 +1710,8 @@ These Directories are created via command "ejsmvc generate app"
     db/migrations             SQL database migration scripts
     doc                       Documentation for the application
     ejsrc                     Primary configuration file
-    logs                      Log files
-    messages                  Internationalization messages
     models                    Database models
     src                       Extra application source
-    test                      Test files
     views                     View source files
     views/layouts             View layout files
     web                       Public web directory
@@ -1733,6 +1727,11 @@ These files are also created:
     web/images/banner.jpg     Default UI banner
 '
 
+/*  FUTURE
+    logs                      Log files
+    messages                  Internationalization messages
+    test                      Test files
+*/
 
     /*
      ***************************  View header and footer templates ******************
@@ -1762,7 +1761,7 @@ public dynamic class ${CONTROLLER}${VIEW}View extends View {
 require ejs.web
     
 let server: HttpServer = new HttpServer
-var router = Router(Router.LegacyRoutes)
+var router = Router(Router.TopRoutes)
 
 server.addListener("readable", function (event, request) {
     Web.serve(request, router)
