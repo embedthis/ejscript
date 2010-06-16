@@ -367,8 +367,10 @@ static void genBreak(EcCompiler *cp, EcNode *np)
 
     state = cp->state;
     discardBlockItems(cp, state->code->blockMark);
-    if (state->captureBreak) {
+    if (state->captureFinally) {
         ecEncodeOpcode(cp, EJS_OP_FINALLY);
+    } else if (cp->state->captureBreak) {
+        ecEncodeOpcode(cp, EJS_OP_END_EXCEPTION);
     }
     if (state->code->jumps == 0 || !(state->code->jumpKinds & EC_JUMP_BREAK)) {
         genError(cp, np, "Illegal break statement");
@@ -468,8 +470,10 @@ static void genContinue(EcCompiler *cp, EcNode *np)
     ENTER(cp);
 
     discardBlockItems(cp, cp->state->code->blockMark);
-    if (cp->state->captureBreak) {
+    if (cp->state->captureFinally) {
         ecEncodeOpcode(cp, EJS_OP_FINALLY);
+    } else if (cp->state->captureBreak) {
+        ecEncodeOpcode(cp, EJS_OP_END_EXCEPTION);
     }
     if (cp->state->code->jumps == 0 || !(cp->state->code->jumpKinds & EC_JUMP_CONTINUE)) {
         genError(cp, np, "Illegal continue statement");
@@ -1583,12 +1587,11 @@ static void genDo(EcCompiler *cp, EcNode *np)
     int         condLen, bodyLen, len, condShortJump, continueLabel, breakLabel, mark;
 
     ENTER(cp);
-
-    state = cp->state;
-    state->captureBreak = 0;
-
     mprAssert(np->kind == N_DO);
 
+    state = cp->state;
+    state->captureFinally = 0;
+    state->captureBreak = 0;
     outerBlock = state->code;
     code = state->code = allocCodeBuffer(cp);
 
@@ -1704,6 +1707,7 @@ static void genFor(EcCompiler *cp, EcNode *np)
     outerBlock = state->code;
     code = state->code = allocCodeBuffer(cp);
     startMark = getStackCount(cp);
+    state->captureFinally = 0;
     state->captureBreak = 0;
 
     /*
@@ -1859,10 +1863,10 @@ static void genForIn(EcCompiler *cp, EcNode *np)
     outerBlock = state->code;
     code = state->code = allocCodeBuffer(cp);
     startMark = getStackCount(cp);
+    state->captureFinally = 0;
     state->captureBreak = 0;
 
     ecStartBreakableStatement(cp, EC_JUMP_BREAK | EC_JUMP_CONTINUE);
-
     processNode(cp, np->forInLoop.iterVar);
 
     /*
@@ -2610,7 +2614,7 @@ static void genReturn(EcCompiler *cp, EcNode *np)
 
     ENTER(cp);
 
-    if (cp->state->captureBreak) {
+    if (cp->state->captureFinally) {
         ecEncodeOpcode(cp, EJS_OP_FINALLY);
     }
     if (np->left) {
@@ -2686,6 +2690,7 @@ static void genSwitch(EcCompiler *cp, EcNode *np)
     ENTER(cp);
 
     state = cp->state;
+    state->captureFinally = 0;
     state->captureBreak = 0;
 
     outerBlock = state->code;
@@ -2930,11 +2935,12 @@ static void genTry(EcCompiler *cp, EcNode *np)
     processNode(cp, np->exception.tryBlock);
 
     if (np->exception.catchClauses) {
-        next = 0;
         /*
             If there is a finally block it must be invoked before acting on any break/continue and return statements 
          */
-        state->captureBreak = np->exception.finallyBlock ? 1 : 0;
+        next = 0;
+        state->captureFinally = np->exception.finallyBlock ? 1 : 0;
+        state->captureBreak = 1;
         while ((child = getNextNode(cp, np->exception.catchClauses, &next)) && !cp->error) {
             child->code = state->code = allocCodeBuffer(cp);
             mprAssert(child->left);
@@ -2944,16 +2950,19 @@ static void genTry(EcCompiler *cp, EcNode *np)
             }
             /* Add jumps below */
         }
+        state->captureFinally = 0;
         state->captureBreak = 0;
     }
 
     if (np->exception.finallyBlock) {
+        state->captureBreak = 1;
         np->exception.finallyBlock->code = state->code = allocCodeBuffer(cp);
         /* Finally pushes the original PC */
         pushStack(cp, 1);
         processNode(cp, np->exception.finallyBlock);
         ecEncodeOpcode(cp, EJS_OP_END_EXCEPTION);
         popStack(cp, 1);
+        state->captureBreak = 0;
     }
 
     /*

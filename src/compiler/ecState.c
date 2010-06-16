@@ -26,6 +26,7 @@ int ecPushState(EcCompiler *cp, EcState *newState)
         newState->inClass = prev->inClass;
         newState->inFunction = prev->inFunction;
         newState->captureBreak = prev->captureBreak;
+        newState->captureFinally = prev->captureFinally;
         newState->inMethod = prev->inMethod;
         newState->blockIsMethod = prev->blockIsMethod;
 
