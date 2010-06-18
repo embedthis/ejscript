@@ -2,6 +2,7 @@
   	Unit test for ejs.db.mapper
  */
 
+/*
 require ejs.db
 require ejs.db.mapper
 require ejs.db.sqlite
@@ -64,7 +65,7 @@ rec.save()
 assert(Trade.getNumRows() == 4)
 
 //	TODO - need some way to get the ID of rec
-/* Get the ID of the row just added */
+// Get the ID of the row just added
 grid = Trade.findAll()
 id = grid[grid.length - 1].id
 
@@ -97,19 +98,18 @@ assert(trade.id == 1)
 trades = db.query("SELECT * FROM Trades WHERE id >= 1;")
 assert(trades.length == 3)
 
-/*
-    TODO
-rec = new Trade({ stockId: 2, date: "10/10/06", quantity: 1, price: 10.50})
-rec = Trade.find("MSFT", "RHAT")
-
-dynamic class Stock extends Record
-{
-	hasOne("Invoice");
-	belongsTo("Invoice");
-	hasAndBelongsToMany("Categories");
-
-	belongsTo({ className: "Order", foreignKey: "order_id", });
-}
-*/
+//	    TODO
+//	rec = new Trade({ stockId: 2, date: "10/10/06", quantity: 1, price: 10.50})
+//	rec = Trade.find("MSFT", "RHAT")
+//	
+//	dynamic class Stock extends Record
+//	{
+//		hasOne("Invoice");
+//		belongsTo("Invoice");
+//		hasAndBelongsToMany("Categories");
+//	
+//		belongsTo({ className: "Order", foreignKey: "order_id", });
+//	}
 
 db.close()
+*/
