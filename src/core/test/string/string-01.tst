@@ -199,10 +199,17 @@ a = "abc"
 assert(a.split("") == "a,b,c")
 assert(a.split(" ") == "abc")
 a = "a b  c"
-assert(a.split(" ") == "a,b, c")
+assert(a.split(" ") == "a,b,,c")
 
 a = "/a/b/c"
 assert(a.split("/") == ",a,b,c")
+
+assert("abc".split("/") == "abc")
+assert("/abc".split("/") == ",abc")
+assert("//abc".split("/") == ",,abc")
+assert("abc/".split("/") == "abc,")
+assert("abc//".split("/") == "abc,,")
+assert("abc//def".split("/") == "abc,,def")
 
 
 // startsWith

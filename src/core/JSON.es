@@ -59,12 +59,14 @@ module ejs {
      */
     native function deserialize(str: String): Object
 
+    //    MOB -- change pretty to format: "pretty" | "compact"
     /** 
         Encode an object as a string. This function returns a literal string for the object and all its properties. 
         If $maxDepth is sufficiently large (or zero for infinite depth), each property will be processed recursively 
         until all properties are rendered.  NOTE: the maxDepth, all and base properties are not yet supported.
         @param obj Object to serialize. If options is null, each option takes the defaults described.
         @param options Serialization options
+        MOB - change to includeBases (deprecated baseClasses)
         @option baseClasses Boolean determining if base class properties will be serialized. Defaults to false.
         @option depth Number indiciating the depth to recurse when converting properties to literals. If set to zero, 
             the depth is infinite. Defaults to zero.

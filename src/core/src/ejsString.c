@@ -1289,16 +1289,11 @@ static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                     elt = ejsCreateStringWithLength(ejs, cp, (int) (mark - cp));
                     ejsSetProperty(ejs, (EjsObj*) results, -1, (EjsObj*) elt);
                     cp = mark + delimLen;
-                    mark = cp;
-                    if (mark >= end) {
-                        break;
-                    }
+                    mark = cp - 1;
                 }
             }
-            if (mark > cp) {
-                elt = ejsCreateStringWithLength(ejs, cp, (int) (mark - cp));
-                ejsSetProperty(ejs, (EjsObj*) results, -1, (EjsObj*) elt);
-            }
+            elt = ejsCreateStringWithLength(ejs, cp, (int) (mark - cp));
+            ejsSetProperty(ejs, (EjsObj*) results, -1, (EjsObj*) elt);
         }
         return (EjsObj*) results;
 

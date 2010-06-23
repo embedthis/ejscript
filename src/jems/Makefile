@@ -29,7 +29,9 @@ include 		.makedep
 DOC_DIR			:= $(BLD_TOP)/doc/api/ejscript
 DOC				:= $(DOC_DIR)/index.html
 
-compileExtra: $(MODULES) $(TOOLS) buildJems
+compileExtra: $(MODULES) $(TOOLS)
+
+mods: $(MODULES) $(TOOLS)
 
 $(MODULES): $(LOADABLE_FILES) $(call mod, ejs)
 	$(call log) [Compile] "Jems"

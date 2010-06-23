@@ -19,6 +19,9 @@ module ejs.web {
          */
         use default namespace module
 
+        /** Optional controller object */
+        var controller
+
         /** Current request object */
         var request: Request
 
@@ -119,7 +122,7 @@ module ejs.web {
                 whether the field has been previously saved.
             @option uri String Use a URL rather than action and controller for the target uri.
          */
-        function aform(record: Object, options: Object = {}): Void {
+        function aform(record: Object, options: Object = {action: "update"}): Void {
             currentRecord = record
             emitFormErrors(record)
             options = setOptions("aform", options)
@@ -212,7 +215,7 @@ module ejs.web {
             options = setOptions(field, options)
             let value = getValue(currentRecord, field, options)
             let connector = getConnector("checkbox", options)
-            connector.checkbox(options.fieldName, value, choice, options)
+            connector.checkbox(options.fieldName, choice, value, options)
         }
 
         /**
@@ -236,6 +239,7 @@ module ejs.web {
 //  MOB -- COMPAT was form(action, record, options)
         function form(record: Object, options: Object = {}): Void {
             currentRecord = record
+            log.debug(5, serialize(record, {pretty: true}))
             emitFormErrors(record)
             options = setOptions("form", options)
             options.method ||= "POST"
@@ -341,8 +345,8 @@ module ejs.web {
             @option uri String Use a URL rather than action and controller for the target uri.
          */
         function link(text: String, options: Object = {}): Void {
-            options.action ||= text.split(" ")[0].toLower()
             options = setOptions("link", options)
+            options.action ||= text.split(" ")[0].toLower()
             let connector = getConnector("link", options)
             connector.link(text, options)
         }
@@ -356,7 +360,6 @@ module ejs.web {
             let connector = getConnector("extlink", options)
             connector.extlink(text, options)
         }
-
 
         /**
             Emit a selection list. 
@@ -374,7 +377,7 @@ module ejs.web {
                 list("stockId", Stock.stockList) 
                 list("low", ["low", "med", "high"])
                 list("low", [["3", "low"], ["5", "med"], ["9", "high"]])
-                list("low", [{low: 3{, {med: 5}, {high: 9}])
+                list("low", [{low: 3}, {med: 5}, {high: 9}])
                 list("Stock Type")  // Will invoke StockType.findAll() to do a table lookup
          */
         function list(field: String, choices: Object? = null, options: Object = {}): Void {
@@ -438,7 +441,7 @@ module ejs.web {
             options = setOptions(field, options)
             let value = getValue(currentRecord, field, options)
             let connector = getConnector("radio", options)
-            connector.radio(options.fieldName, value, choices, options)
+            connector.radio(options.fieldName, choices, value, options)
         }
 
         /** 
@@ -729,7 +732,9 @@ module ejs.web {
                 if (currentRecord.hasError(field)) {
                     options.style += " -ejs-fieldError"
                 }
-                options.fieldName ||= Reflect(currentRecord).name.toCamel() + '.' + field
+                //  MOB -- not portable to other ORM
+                // options.fieldName ||= Reflect(currentRecord).name.toCamel() + '.' + field
+                options.fieldName ||= field
             } else {
                 options.fieldName ||= field
             }
@@ -913,6 +918,19 @@ module ejs.web {
             }
             return data
         }
+
+        //  LEGACY - move these into compat?
+
+        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
+            //  MOB - should call the controller.makeUrl
+            return makeUri({ path: action })
+        }
+
+        function get appUrl()
+            request.home.toString().trimEnd("/")
+
+        function redirect(url)
+            request.redirect(url)
     }
 }
 

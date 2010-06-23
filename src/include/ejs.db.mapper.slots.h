@@ -102,16 +102,16 @@
 #define ES_Record__keyValue                                            0
 #define ES_Record__errors                                              1
 #define ES_Record__cacheAssoc                                          2
-#define ES_Record_initialize                                           3
-#define ES_Record_coerceToEjsTypes                                     4
-#define ES_Record_error                                                5
-#define ES_Record_getErrors                                            6
-#define ES_Record_hasError                                             7
-#define ES_Record_runFilters                                           8
-#define ES_Record_save                                                 9
-#define ES_Record_saveUpdate                                           10
-#define ES_Record_validateRecord                                       11
-#define ES_Record_constructorOLD                                       12
+#define ES_Record__imodel                                              3
+#define ES_Record_initialize                                           4
+#define ES_Record_coerceToEjsTypes                                     5
+#define ES_Record_error                                                6
+#define ES_Record_getErrors                                            7
+#define ES_Record_hasError                                             8
+#define ES_Record_runFilters                                           9
+#define ES_Record_save                                                 10
+#define ES_Record_saveUpdate                                           11
+#define ES_Record_validateRecord                                       12
 #define ES_Record_NUM_INSTANCE_PROP                                    13
 #define ES_Record_NUM_INHERITED_PROP                                   0
 
@@ -204,6 +204,6 @@
 #define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      2
 #define ES_ejs_db_mapper_Column_NUM_INHERITED_PROP                     0
 
-#define _ES_CHECKSUM_ejs_db_mapper   186980
+#define _ES_CHECKSUM_ejs_db_mapper   187534
 
 #endif

@@ -475,14 +475,19 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             push(ejs->undefinedValue);
             BREAK;
 
-        /*
-            Load the "this" value
-                LoadThis
-                Stack before (top)  []
-                Stack after         [this]
-         */
         CASE (EJS_OP_LOAD_THIS):
             push(THIS);
+            BREAK;
+
+        /*
+            Load the nth base class of "this"
+                LoadThis
+                Stack before (top)  []
+                Stack after         [baseClass]
+         */
+        CASE (EJS_OP_LOAD_THIS_BASE):
+            vp = getNthBase(ejs, (EjsObj*) THIS, GET_INT());
+            push(vp);
             BREAK;
 
         /*

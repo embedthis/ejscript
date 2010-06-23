@@ -197,7 +197,7 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
         }
         *cp = '\0';
     } else {
-        strcpy(home, ".");
+        strcpy(home, "./");
     }
     return home;
 }

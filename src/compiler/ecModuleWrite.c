@@ -60,7 +60,7 @@ int ecCreateModuleSection(EcCompiler *cp)
     buf = state->code->buf;
     mp = state->currentModule;
 
-    mprLog(cp, 5, "Create module section %s", mp->name);
+    mprLog(cp, 7, "Create module section %s", mp->name);
 
     ejs = cp->ejs;
     constants = mp->constants;
@@ -147,7 +147,7 @@ static int createDependencySection(EcCompiler *cp)
                 return MPR_ERR_CANT_WRITE;
             }
             mp->checksum += sum(module->name, 0);
-            mprLog(cp, 5, "    dependency section for %s from module %s", module->name, mp->name);
+            mprLog(cp, 7, "    dependency section for %s from module %s", module->name, mp->name);
         }
     }
     return 0;
@@ -298,7 +298,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
     mprAssert(qname.name);
 
-    mprLog(cp, 5, "    type section %s for module %s", qname.name, mp->name);
+    mprLog(cp, 7, "    type section %s for module %s", qname.name, mp->name);
     
     type = ejsGetProperty(ejs, ejs->global, slotNum);
     mprAssert(type);
@@ -596,7 +596,7 @@ static int createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
     trait = ejsGetTrait(ejs, block, slotNum);
     attributes = trait->attributes;
 
-    mprLog(cp, 5, "    global property section %s", qname.name);
+    mprLog(cp, 7, "    global property section %s", qname.name);
 
     if (trait->type) {
         if (trait->type == ejs->namespaceType || (!ejs->initialized && (strcmp(trait->type->qname.name, "Namespace") == 0))){
@@ -647,7 +647,7 @@ static int createDocSection(EcCompiler *cp, EjsObj *block, int slotNum)
     qname = ejsGetPropertyName(ejs, block, slotNum);
     mprAssert(qname.name);
 
-    mprLog(cp, 5, "Create doc section for %s::%s", qname.space, qname.name);
+    mprLog(cp, 7, "Create doc section for %s::%s", qname.space, qname.name);
 
     if (ecEncodeByte(cp, EJS_SECT_DOC) < 0) {
         return MPR_ERR_CANT_WRITE;

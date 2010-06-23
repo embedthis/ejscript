@@ -79,9 +79,11 @@ module ejs.web {
          */
         //  MOB -- rename LegacyMvcRoutes
         public static var LegacyRoutes = [
-          { name: "es",      type: "es",  match: /web\/.*\.es$/   },
-          { name: "ejs",     type: "ejs", match: /web\/.*\.ejs$/  },
-          { name: "web",     type: "static", match: /web\//  },
+          { name: "es",      type: "es",  match: /^\/web\/.*\.es$/   },
+          { name: "ejs",     type: "ejs", match: /^\/web\/.*\.ejs$/  },
+          { name: "web",     type: "static", match: /^\/web\//  },
+          { name: "home",    type: "static", match: /^\/$/, redirect: "/web/index.ejs" },
+          { name: "ico",     type: "static", match: /^\/favicon.ico$/, redirect: "/web/favicon.ico" },
           { name: "list",    type: "mvc", method: "GET",  match: "/:controller/list",        params: { action: "list" } },
           { name: "create",  type: "mvc", method: "POST", match: "/:controller/create",      params: { action: "create" } },
           { name: "edit",    type: "mvc", method: "GET",  match: "/:controller/edit",        params: { action: "edit" } },
@@ -89,7 +91,6 @@ module ejs.web {
           { name: "destroy", type: "mvc", method: "POST", match: "/:controller/destroy",     params: { action: "destroy" } },
           { name: "default", type: "mvc", method: "GET",  match: "/:controller/:action",     params: {} },
           { name: "index",   type: "mvc", method: "GET",  match: "/:controller",             params: { action: "index" } },
-          { name: "home",    type: "static", match: /^\/$/, redirect: "/Base/home" },
           { name: "static",  type: "static", },
         ]
 
@@ -137,7 +138,7 @@ module ejs.web {
                     for (i in tokens) {
                         tokens[i] = tokens[i].trim(":")
                     }
-                    let template = route.match.replace(/:([^:\W]+)/g, "([^\W]+)").replace(/\//g, "\\/")
+                    let template = route.match.replace(/:([^:\W]+)/g, "([^\W]*)").replace(/\//g, "\\/")
                     route.matcher = RegExp("^" + template)
                     /*  Splitter ends up looking like "$1$2$3$4..." */
                     count = 1
@@ -167,7 +168,11 @@ module ejs.web {
         public function route(request): Void {
             let params = request.params
             let pathInfo = request.pathInfo
+            let log = request.log
+            log.debug(5, "Routing " + request.pathInfo)
+
             for each (r in routes) {
+                log.debug(6, "Route test " + r.name)
                 if (r.method && request.method != r.method) {
                     continue
                 }
@@ -214,22 +219,24 @@ module ejs.web {
                     }
                 }
                 if (r.rewrite && !r.rewrite(request)) {
+                    log.debug(5, "Request rewritten as " + request.pathInfo)
                     route(request)
                     return
                 }
                 if (r.redirect) {
                     request.pathInfo = r.redirect;
+                    log.debug(5, "Route redirected to " + request.pathInfo)
                     this.route(request)
                     return
+                }
+                if (log.level >= 5) {
+                    log.debug(5, "Matched route " + r.name)
+                    log.debug(5, "  Route params " + serialize(params))
                 }
                 request.route = r
                 let location = r.location
                 if (location && location.prefix && location.dir) {
                     request.setLocation(location.prefix, location.dir)
-                }
-                let log = request.log
-                if (log.level >= 5) {
-                    show(request.log)
                 }
                 return
             }
@@ -333,16 +340,6 @@ module ejs.web {
             this.router = router
         }
 
-        public function show(log: Logger, msg) {
-            log.debug(5, msg + " \"" + name + "\":")
-            for each (f in Object.getOwnPropertyNames(this)) {
-                if (f != "params" && f != "router") {
-                    log.debug(5, "    " + f + " = " + this[f])
-                }
-            }
-            log.debug(5, "    params = " + serialize(params))
-        }
-
         /**
             Make a URI provided parts of a URI. The URI is completed using the current request and route. 
             @param where MOB
@@ -351,15 +348,27 @@ module ejs.web {
             if (urimaker) {
                 return urimaker(request, where)
             }
+            let path = where.path
+            let target
             if (request) {
+                let base = blend(request.absHome.components, request.params)
+                delete base.id
+                delete base.query
                 if (where is String) {
-                    where = blend(request.absHome.components(), { path: where })
+                    target = blend(base, { path: where })
                 } else {
-                    where = blend(request.absHome.components(), where)
+                    target = blend(base, where)
                 }
             }
-            let result = Uri(where)
-            let routeName = where.route || "default"
+            if (target.id != undefined) {
+                if (target.query) {
+                    target.query += "&" + "id=" + target.id
+                } else {
+                    target.query = "id=" + target.id
+                }
+            }
+            let result = Uri(target)
+            let routeName = target.route || "default"
             let route = this
             if (routeName != this.name) {
                 for each (r in router.routes) {
@@ -369,12 +378,15 @@ module ejs.web {
                     }
                 }
             }
-            let path = ""
-            for each (token in route.tokens) {
-                if (!where[token]) {
-                    throw "Missing URI token " + token
+            if (!path) {
+                path = ""
+                for each (token in route.tokens) {
+                    if (!target[token]) {
+                        dump("WHERE", target)
+                        throw new ArgError("Missing URI token \"" + token + "\"")
+                    }
+                    path += "/" + target[token]
                 }
-                path += "/" + where[token]
             }
             result.path = path
             return result

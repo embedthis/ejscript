@@ -448,7 +448,9 @@ typedef struct Ejs {
     MprDispatcher       *dispatcher;        /**< Event dispatcher */
     MprList             *workers;           /**< Worker interpreters */
     MprList             *modules;           /**< Loaded modules */
+#if UNUSED
     EjsLoadState        *loadState;         /**< State while loading modules */
+#endif
 
     void                (*loaderCallback)(struct Ejs *ejs, int kind, ...);
     void                *userData;          /**< User data */

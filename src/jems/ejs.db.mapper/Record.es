@@ -21,6 +21,8 @@ module ejs.db.mapper {
      */
     public class Record {
         
+        //  MOB -- these should be private. Also need a default namesapce
+
         static var  _assocName: String        //  Name for use in associations. Lower case class name
         static var  _belongsTo: Array         //  List of belonging associations
         static var  _className: String        //  Model class name
@@ -43,6 +45,7 @@ module ejs.db.mapper {
         var _keyValue: Object                 //  Record key column value
         var _errors: Object                   //  Error message aggregation
         var _cacheAssoc: Object               //  Cached association data
+        var _imodel: Type                     //  Model class
 
         static var ErrorMessages = {
             accepted: "must be accepted",
@@ -65,8 +68,13 @@ module ejs.db.mapper {
          */
         _keyName = "id"
         _className = Reflect(this).name
-        //  BUG - should be able to use this _model = Reflect(this).type
+
+/*
         _model = global[_className]
+printHash("MODEL", _model)
+printHash("THIS", this)
+*/
+        _model = this
         _assocName = _className.toCamel()
         _foreignId = _className.toCamel() + _keyName.toPascal()
         _tableName = plural(_className).toPascal()
@@ -91,6 +99,7 @@ module ejs.db.mapper {
             @param fields An optional object set of field names and values may be supplied to initialize the record.
          */
         function initialize(fields: Object? = null): Void {
+            _imodel = Reflect(this).type
             if (fields) for (let field in fields) {
                 this."public"::[field] = fields[field]
             }
@@ -179,7 +188,7 @@ module ejs.db.mapper {
          */
         private function coerceToEjsTypes(): Void {
             for (let field: String in this) {
-                let col: Column = _columns[field]
+                let col: Column = _imodel._columns[field]
                 if (col == undefined) {
                     continue
                 }
@@ -233,7 +242,8 @@ module ejs.db.mapper {
                     rec[model._assocName] = model.createRecord(association, options)
 
                 } else {
-                    rec[model._assocName] = makeLazyReader(rec, model._assocName, model, rec[model._foreignId])
+                    let reader = makeLazyReader(rec, model._assocName, model, rec[model._foreignId])
+                    Object.defineProperty(rec, model._assocName, { get: reader })
                     if (!model._columns) model.getSchema()
                     for (let field: String  in model._columns) {
                         let f: String = "_" + model._className + field.toPascal()
@@ -270,16 +280,18 @@ module ejs.db.mapper {
                 if (_hasOne) {
                     for each (model in _hasOne) {
                         if (!rec[model._assocName]) {
-                            rec[model._assocName] = makeLazyReader(rec, model._assocName, model, null,
+                            let reader = makeLazyReader(rec, model._assocName, model, null,
                                 {conditions: rec._foreignId + " = " + data[_keyName] + " LIMIT 1"})
+                            Object.defineProperty(rec, model._assocName, { get: reader })
                         }
                     }
                 }
                 if (_hasMany) {
                     for each (model in _hasMany) {
                         if (!rec[model._assocName]) {
-                            rec[model._assocName] = makeLazyReader(rec, model._assocName, model, null,
+                            let reader = makeLazyReader(rec, model._assocName, model, null,
                                 {conditions: rec._foreignId + " = " + data[_keyName]})
+                            Object.defineProperty(rec, model._assocName, { get: reader })
                         }
                     }
                 }
@@ -722,6 +734,7 @@ module ejs.db.mapper {
 
         /*
             Make a getter function to lazily (on-demand) read associated records (belongsTo)
+            MOB - OPT should reuse these and not create a new reader for each cell
          */
         private static function makeLazyReader(rec: Record, field: String, model, key: String, 
                 options: Object = {}): Function {
@@ -730,7 +743,7 @@ module ejs.db.mapper {
                 // print("Run reader for " + _tableName + "[" + field + "] for " + model._tableName + "[" + key + "]")
                 return cachedRead(rec, field, model, key, options)
             }
-            return makeGetter(lazyReader)
+            return lazyReader
         }
 
         private static function mapSqlTypeToEjs(sqlType: String): Type {
@@ -845,23 +858,24 @@ module ejs.db.mapper {
          */
         function save(): Boolean {
             var sql: String
-            if (!_columns) _model.getSchema()
+            _imodel ||= Reflect(this).type
+            if (!_imodel._columns) _imodel.getSchema()
             if (!validateRecord()) {
                 return false
             }
-            runFilters(_beforeFilters)
+            runFilters(_imodel._beforeFilters)
             
             if (_keyValue == null) {
-                sql = "INSERT INTO " + _tableName + " ("
+                sql = "INSERT INTO " + _imodel._tableName + " ("
                 for (let field: String in this) {
-                    if (_columns[field]) {
+                    if (_imodel._columns[field]) {
                         sql += field + ", "
                     }
                 }
                 sql = sql.trim(', ')
                 sql += ") VALUES("
                 for (let field: String in this) {
-                    if (_columns[field]) {
+                    if (_imodel._columns[field]) {
                         sql += "'" + prepareValue(field, this[field]) + "', "
                     }
                 }
@@ -869,14 +883,14 @@ module ejs.db.mapper {
                 sql += ")"
 
             } else {
-                sql = "UPDATE " + _tableName + " SET "
+                sql = "UPDATE " + _imodel._tableName + " SET "
                 for (let field: String in this) {
-                    if (_columns[field]) {
+                    if (_imodel._columns[field]) {
                         sql += field + " = '" + prepareValue(field, this[field]) + "', "
                     }
                 }
                 sql = sql.trim(', ')
-                sql += " WHERE " + _keyName + " = " +  _keyValue
+                sql += " WHERE " + _imodel._keyName + " = " +  _keyValue
             }
             if (!_keyValue) {
                 sql += "; SELECT last_insert_rowid();"
@@ -884,11 +898,11 @@ module ejs.db.mapper {
                 sql += ";"
             }
 
-            let result: Array = _db.query(sql, "save", _trace)
+            let result: Array = _imodel._db.query(sql, "save", _imodel._trace)
             if (!_keyValue) {
                 _keyValue = this["id"] = result[0]["last_insert_rowid()"] cast Number
             }
-            runFilters(_afterFilters)
+            runFilters(_imodel._afterFilters)
             return true
         }
 
@@ -983,10 +997,11 @@ module ejs.db.mapper {
             @returns True if the record has no errors.
          */
         function validateRecord(): Boolean {
-            if (!_columns) _model.getSchema()
+            _imodel ||= Reflect(this).type
+            if (!_imodel._columns) _imodel.getSchema()
             _errors = {}
-            if (_validations) {
-                for each (let validation: String in _validations) {
+            if (_imodel._validations) {
+                for each (let validation: String in _imodel._validations) {
                     let check = validation[0]
                     let fields = validation[1]
                     let options = validation[2]
@@ -1048,10 +1063,6 @@ module ejs.db.mapper {
         /** @hide */
         static function get tableName(): String {
             return getTableName()
-        }
-        /** @hide */
-        function constructorOLD(fields: Object? = null): Void {
-            initialize(fields)
         }
     }
 

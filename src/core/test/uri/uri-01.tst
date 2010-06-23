@@ -2,6 +2,7 @@
     Unit tests for Uri 
  */
 
+//  MOB -- split into separate files
 
 //  Constructor from string
 p = Path("/")
@@ -26,11 +27,11 @@ assert(u.extension == "gif")
 u = Uri({host: "www.example.com", query: "ab=cd&ef=gh"})
 assert(!u.hasScheme)
 assert(u.scheme == "http")
-parts = u.components()
+parts = u.components
 assert(parts.host == "www.example.com")
 assert(parts.query == "ab=cd&ef=gh")
 
-parts = Uri("http://www.example.com/path/to/resource.gif#fragment?abc=def&ghi=jkl").components()
+parts = Uri("http://www.example.com/path/to/resource.gif#fragment?abc=def&ghi=jkl").components
 assert(parts.scheme == "http")
 assert(parts.host == "www.example.com")
 assert(parts.port == null)
@@ -69,35 +70,6 @@ assert(u == "../")
 u = new Uri("/a/b/c")
 assert(u.basename == "c")
 assert(u.dirname == "/a/b")
-
-
-//  Join
-u = Uri("/a/b").join("c")
-assert(u.toString() == "/a/b/c")
-assert(u == "/a/b/c")
-
-u = Uri("/a/b").join("/c")
-assert(u == "/c")
-
-u = Uri("/a/b").join("../c")
-assert(u == "/a/b/../c")
-
-
-//  Normalize
-u = Uri("/a/b").join("../c").normalize
-assert(u == "/a/c")
-
-u = Uri(".").normalize
-assert(u == ".")
-u = Uri("..").normalize
-assert(u == "..")
-u = Uri("../").normalize
-assert(u == "..")
-u = Uri("../abc").normalize
-assert(u == "../abc")
-u = Uri("/top/mid/../file").normalize
-assert(u == "/top/file")
-
 
 //  Basename
 u = Uri("/")
@@ -237,7 +209,7 @@ function readXML(): XML
     Various corner cases
  */
 u = Uri("www.example.com:7000")
-o = u.components()
+o = u.components
 assert(o.host = "www.example.com")
 assert(o.port = 7000)
 assert(o.path = "/")

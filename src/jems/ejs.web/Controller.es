@@ -25,6 +25,9 @@ module ejs.web {
         /** Name of the action being run */
         var actionName:  String 
 
+        //* Alias for request.config */
+        var config: Object 
+
 //  MOB -- rename to "name"
         /** Lower case controller name */
         var controllerName: String
@@ -73,7 +76,8 @@ module ejs.web {
                 log = request.log
                 params = request.params
                 controllerName = typeOf(this).trim("Controller") || "-Controller-"
-                if (request.config.database) {
+                config = request.config
+                if (config.database) {
                     openDatabase(request)
                 }
             }
@@ -110,8 +114,8 @@ module ejs.web {
             }
          */
         private function openDatabase(request: Request) {
-            let deploymentMode = request.config.mode
-            let dbconfig = request.config.database
+            let deploymentMode = config.mode
+            let dbconfig = config.database
             let klass = dbconfig["class"]
             let adapter = dbconfig.adapter
             let profile = dbconfig[deploymentMode]
@@ -248,7 +252,7 @@ module ejs.web {
             Load the view
          */
         function loadView(path: Path, name: String) {
-            let dirs = request.config.directories
+            let dirs = config.directories
             let cached = Loader.cached(path, request.dir.join(dirs.cache))
             if (cached && cached.exists && cached.modified >= path.modified) {
                 log.debug(4, "Load view \"" + name + "\" from cache: " + cached);
@@ -329,16 +333,16 @@ module ejs.web {
             viewName ||= actionName
             let viewClass = controllerName + "_" + viewName + "View"
             if (!global[viewClass]) {
-                let path = request.dir.join("views", controllerName, viewName).joinExt(request.config.extensions.ejs)
+                let path = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
                 loadView(path, controllerName + "_" + viewName)
             }
             view = new global[viewClass](request)
+            view.controller = this
             //  MOB -- slow. Native method for this?
-            for each (let n: String in Object.getOwnPropertyNames(this)) {
-                if (this.public::[n]) {
-                    view.public::[n] = this[n]
-                }
+            for each (let n: String in Object.getOwnPropertyNames(this, {includeBases: true, excludeFunctions: true})) {
+                view.public::[n] = this[n]
             }
+print("VIEW HAS " + Object.getOwnPropertyNames(view))
             log.debug(4, "render view: \"" + controllerName + "/" + viewName + "\"")
             view.render(request)
         }
@@ -385,6 +389,15 @@ module ejs.web {
         action function missing(): Void {
             rendered = true
             throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
+        }
+
+        //  LEGACY 1.0.2
+
+        function get appUrl()
+            request.home.toString().trimEnd("/")
+
+        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
+            return makeUri({ path: action })
         }
     }
 }

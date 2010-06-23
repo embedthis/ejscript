@@ -744,11 +744,13 @@ static void genThisBaseClassPropertyName(EcCompiler *cp, EjsType *type, int slot
 static void genClassName(EcCompiler *cp, EjsType *type)
 {
     Ejs         *ejs;
+    EcState     *state;
     int         slotNum;
 
     mprAssert(type);
 
     ejs = cp->ejs;
+    state = cp->state;
 
     if (type == (EjsType*) ejs->global) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
@@ -759,6 +761,19 @@ static void genClassName(EcCompiler *cp, EjsType *type)
         slotNum = ejsLookupProperty(ejs, ejs->global, &type->qname);
         mprAssert(slotNum >= 0);
         genGlobalName(cp, slotNum);
+
+    } else if (type == state->currentClass &&
+                (!state->inFunction || (state->currentFunction && state->currentFunction->staticMethod))) {
+        ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
+        pushStack(cp, 1);
+#if UNUSED
+            /*
+                This is broken. When calling a subclass method, this refers to the outer class and so the base
+                is not right
+             */
+            ecEncodeOpcode(cp, EJS_OP_LOAD_THIS_BASE);
+            ecEncodeNumber(cp, 0);
+#endif
 
     } else {
         ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);

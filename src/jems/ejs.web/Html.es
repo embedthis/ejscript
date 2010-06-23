@@ -147,6 +147,7 @@ module ejs.web {
 
 		function checkbox(field: String, choice: String, submitValue: String, options: Object): Void {
             let checked = (choice == submitValue) ? ' checked="yes" ' : ''
+            //  MOB -- should these have \r\n at the end of each line?
             write('<input name="' + field + '" type="checkbox" "' + getOptions(options) + checked + 
                 '" value="' + submitValue + '" />')
             write('<input name="' + field + '" type="hidden" "' + getOptions(options) + '" value="" />')
@@ -166,7 +167,9 @@ module ejs.web {
 		}
 
 		function form(record: Object, options: Object): Void {
+dump("OOO ", options)
             options.uri ||= request.makeUri(options)
+dump("O2", options)
             write('<form method="post" action="' + options.uri + '"' + getOptions(options) + 
                 ' xonsubmit="ejs.fixCheckboxes();">')
         }
@@ -230,7 +233,7 @@ module ejs.web {
             write('<p>' + initialData + '%</p>')
 		}
 
-        function radio(name: String, selected: String, choices: Object, options: Object): Void {
+        function radio(name: String, choices: Object, selected: String, options: Object): Void {
             let checked: String
             if (choices is Array) {
                 for each (v in choices) {
@@ -258,20 +261,6 @@ module ejs.web {
 		function stylesheet(uri: String, options: Object): Void {
             write('<link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
 		}
-
-		function tabs(initialData: Array, options: Object): Void {
-            write('<div class="-ejs-tabs">\r\n')
-            write('   <ul>\r\n')
-            for each (t in initialData) {
-                for (name in t) {
-                    let uri = t[name]
-                    write('      <li onclick="window.location=\'' + uri + '\'"><a href="' + uri + '" rel="nofollow">' + 
-                        name + '</a></li>\r\n')
-                }
-            }
-            write('    </ul>')
-            write('</div>')
-        }
 
 		function table(data, options: Object? = null): Void {
             let originalOptions = options
@@ -358,7 +347,8 @@ module ejs.web {
 
 			for each (let r: Object in data) {
                 let uri = null
-                let uriOptions = { controller: options.controller, query: options.query }
+                // let uriOptions = { controller: options.controller, query: options.query }
+                let uriOptions = options.clone()
                 if (options.click) {
                     uriOptions.query = (options.query is Array) ? options.query[row] : options.query
                     if (options.click is Array) {
@@ -434,6 +424,20 @@ module ejs.web {
 			}
 			write('    </tbody>\r\n  </table>\r\n')
 		}
+
+		function tabs(initialData: Array, options: Object): Void {
+            write('<div class="-ejs-tabs">\r\n')
+            write('   <ul>\r\n')
+            for each (t in initialData) {
+                for (name in t) {
+                    let uri = t[name]
+                    write('      <li onclick="window.location=\'' + uri + '\'"><a href="' + uri + '" rel="nofollow">' + 
+                        name + '</a></li>\r\n')
+                }
+            }
+            write('    </ul>')
+            write('</div>')
+        }
 
         function text(field: String, value: String, options: Object): Void {
             write('<input name="' + field + '" ' + getOptions(options) + ' type="' + getTextKind(options) + 

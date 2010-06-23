@@ -35,7 +35,7 @@ module ejs.web {
          */
         private static function init(): Void {
             let path = Path("ejsrc")
-            let config = App.config
+            config = App.config
             if (path.exists) {
                 let webConfig = deserialize(path.readString())
                 blend(config, webConfig, true)
@@ -53,6 +53,8 @@ module ejs.web {
          */
         static function serve(request: Request, router: Router = Router(Router.TopRoutes)): Void {
             try {
+//  MOB -- should the router be setting this?
+request.config = config
                 router.route(request)
                 if (request.route.threaded) {
                     worker(request)
@@ -126,7 +128,7 @@ module ejs.web {
                         app: function (request) {
                             //  MOB -- push into ejs.cjs
                             //  MOB -- needs work
-                            let path = request.dir.join(request.uri.filename)
+                            let path = request.dir.join(request.pathInfo.trimStart('/'))
                             if (path.isDir) {
                                 //  MOB -- should come from HttpServer.index[]
                                 for each (index in ["index.ejs", "index.html"]) {
@@ -224,8 +226,8 @@ module ejs.web {
                 }
 
             } catch (e) {
-                print("URI " + request.uri)
-                print("Web.start(): CATCH " + e)
+                // print("Web.start(): CATCH " + e)
+                // print("URI " + request.uri)
                 request.writeError(e)
                 request.finalize()
             }

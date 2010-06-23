@@ -11,13 +11,14 @@ module ejs.web {
         @spec ejs
         @stability prototype
      */
-    var session: Object
+    var session: Object = {}
 
     /** 
         Session state storage class. The Session class provides management over sessions supporting listeners that
         trigger when sessions are created or destroyed.
         @spec ejs
      */
+//  MOB bad name - merge into HttpServer?
     class Session { 
         /** 
             Add a listener to session state store.

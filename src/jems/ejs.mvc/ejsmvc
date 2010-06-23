@@ -283,9 +283,11 @@ class EjsMvc {
 
     function clean(args: Array): Void {
         let files: Array = find(".", "*." + ext.mod)
-        trace("[CLEAN]", files)
-        for each (f in files) {
-            rm(f)
+        if (files.length > 0) {
+            trace("[CLEAN]", verbose > 1 ? files : "module files")
+            for each (f in files) {
+                rm(f)
+            }
         }
     }
 
@@ -865,7 +867,6 @@ class EjsMvc {
                     return
                 }
             }
-
             if (!found) {
                 try { delete Migration; } catch {}
                 load(f)
@@ -1068,9 +1069,13 @@ class EjsMvc {
     function openDatabase(): Void {
         loadMapper()
         let name = config.database[mode].name
-        db = new Database(database, name)
-        if (debug) {
-            db.trace(true)
+        if (!exists(name)) {
+            generateDatabase()
+        } else {
+            db = new Database(database, name)
+            if (debug) {
+                db.trace(true)
+            }
         }
     }
 
@@ -1652,7 +1657,6 @@ public class ${NAME}Controller extends BaseController {
     ${NAME}.es - ${NAME} Model Class
  */
 
-require ejs.db
 require ejs.db.mapper
 
 public dynamic class ${NAME} implements Record {
@@ -1792,10 +1796,6 @@ exports.app = function(request: Request) {
      */
     public static const AppSrc = 
 '
-require ejs.db
-require ejs.db.mapper
-require ejs.web
-
 module App {
 }
 '

@@ -231,13 +231,14 @@ typedef struct EjsModule {
     int             maxVersion;             /* Maximum version when used as a dependency */
     int             checksum;               /* Checksum of slots and names */
 
+    EjsLoadState    *loadState;             /* State while loading */
     MprList         *dependencies;          /* Module file dependencies. List of EjsModules */
+    MprFile         *file;                  /* File handle for loading and code generation */
 
     /*
         Used during code generation
      */
     struct EcCodeGen *code;                 /* Code generation buffer */
-    MprFile         *file;                  /* File handle */
     MprList         *globalProperties;      /* List of global properties */
     EjsFunction     *initializer;           /* Initializer method */
 

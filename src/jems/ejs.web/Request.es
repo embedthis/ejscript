@@ -266,6 +266,7 @@ module ejs.web {
             }
         }
 
+//  MOB -- missing create session
         /** 
             Destroy a session. This call destroys the session state store that is being used for the current client. 
             If no session exists, this call has no effect.
@@ -316,15 +317,11 @@ module ejs.web {
             @param url Url to redirect the client to
             @param status Optional HTTP redirection status
          */
-        function redirect(url: String, status: Number = Http.MovedTemporarily): Void {
-            if (!url.contains("://")) {
-                if (url[0] == '/') {
-                    uri = Url({ scheme: scheme, host: serverName, port: port, path: url})
-                } else {
-                    url = Url({ scheme: scheme, host: serverName, port: port, path: scriptName + pathInfo + url})
-                }
-                url = uri.normalize.toString()
-            }
+        function redirect(url: Uri, status: Number = Http.MovedTemporarily): Void {
+            /*
+                This permits urls like: ".." or "/" or "http://..."
+             */
+            url = makeUri(uri.join(url).normalize.components)
             this.status = status
             setHeader("Location", url)
             write("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n" +
@@ -351,7 +348,7 @@ module ejs.web {
                     return route.makeUri(this, blend(params.clone(), where))
                 }
             }
-            let comoponents = request.absHome.components()
+            let comoponents = request.absHome.components
             if (where is String) {
                 return Uri(components).join(where)
             } else {
@@ -476,7 +473,7 @@ module ejs.web {
                 write(text)
             } catch {}
             finalize()
-            log.error(status + ". " + msg)
+            log.error("Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 
         /** 

@@ -59,6 +59,6 @@
 #define ES_ejs_db_Sqlite_NUM_INSTANCE_PROP                             25
 #define ES_ejs_db_Sqlite_NUM_INHERITED_PROP                            0
 
-#define _ES_CHECKSUM_ejs_db_sqlite   73154
+#define _ES_CHECKSUM_ejs_db_sqlite   73159
 
 #endif

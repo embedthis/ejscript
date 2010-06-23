@@ -68,6 +68,9 @@ static EjsObj *castObject(Ejs *ejs, EjsObj *obj, EjsType *type)
         if (obj == ejs->global) {
             return (EjsObj*) ejsCreateString(ejs, "[object global]");
         } else {
+            if (obj->type->helpers.cast && obj->type->helpers.cast != castObject) {
+                return (obj->type->helpers.cast)(ejs, obj, type);
+            }
             return (EjsObj*) ejsCreateStringAndFree(ejs, mprStrcat(ejs, -1, "[object ", obj->type->qname.name, "]", NULL));
         }
 
@@ -1705,21 +1708,34 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
 /*
     Get all properties names including non-enumerable properties
 
-    static function getOwnPropertyNames(obj: Object): Array
+    static function getOwnPropertyNames(obj: Object, options: Object): Array
  */
 static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    EjsObj      *obj;
+    EjsObj      *obj, *options, *arg;
     EjsArray    *result;
     EjsTrait    *trait;
     EjsName     qname;
-    int         slotNum, index;
+    int         slotNum, index, includeBases, excludeFunctions;
 
     obj = argv[0];
+    includeBases = 0;
+    excludeFunctions = 0;
+    if (argc > 0) {
+        options = argv[1];
+        if ((arg = ejsGetPropertyByName(ejs, options, EN(&qname, "includeBases"))) != 0) {
+            includeBases = (arg == (EjsObj*) ejs->trueValue);
+        }
+        if ((arg = ejsGetPropertyByName(ejs, options, EN(&qname, "excludeFunctions"))) != 0) {
+            excludeFunctions = (arg == (EjsObj*) ejs->trueValue);
+        }
+    }
     if ((result = ejsCreateArray(ejs, 0)) == 0) {
         return 0;
     }
-    for (index = slotNum = obj->type->numInherited; slotNum < obj->numSlots; slotNum++) {
+    index = 0;
+    slotNum = (includeBases) ? 0 : obj->type->numInherited;
+    for (; slotNum < obj->numSlots; slotNum++) {
         if ((trait = ejsGetTrait(ejs, obj, slotNum)) != 0) {
             if (trait->attributes & (EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
                 continue;
@@ -1727,6 +1743,9 @@ static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, EjsOb
         }
         qname = ejsGetPropertyName(ejs, obj, slotNum);
         if (qname.name[0] == '\0') {
+            continue;
+        }
+        if (excludeFunctions && ejsIsFunction(ejsGetProperty(ejs, obj, slotNum))) {
             continue;
         }
         ejsSetProperty(ejs, (EjsObj*) result, index++, (EjsObj*) ejsCreateString(ejs, qname.name));

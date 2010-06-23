@@ -37,6 +37,7 @@ module ejs.web {
                 mod: "mod",
             },
             mvc: {
+                //  MOB -- what is this?
                 app: "",
                 appmod: "App.mod",
                 views: {
@@ -58,6 +59,7 @@ module ejs.web {
             @returns The exports object
          */
         public static function load(request: Request): Object {
+            request.dir = request.server.serverRoot
             let dir = request.dir
             let path = dir.join("ejsrc")
             let config = request.config
@@ -82,8 +84,10 @@ module ejs.web {
             ext = config.extensions
             //  MOB temp
             App.log.level = config.log.level
+
             let exports
             if (mvc.app) {
+    //  MOB -- what is this?
                 let app = dir.join(mvc.app)
                 if (app.exists) {
                     exports = Loader.load(app, app)
@@ -113,9 +117,9 @@ module ejs.web {
             let deps
             if (config.mode == "debug") {
                 deps = []
-                deps.append(dir.join(dirs.models).find("*" + ext.es))
-                deps.append(dir.join(dirs.src).find("*" + ext.es))
-                deps.append(dir.join(dirs.controllers, "Base").joinExt(ext.es))
+                deps += dir.join(dirs.models).find("*" + ext.es)
+                deps += dir.join(dirs.src).find("*" + ext.es)
+                deps += [dir.join(dirs.controllers, "Base").joinExt(ext.es)]
             }
             loadComponent(request, mod, deps)
 
@@ -152,6 +156,7 @@ module ejs.web {
             }
             if (rebuild) {
                 let code = ""
+                request.log.debug(4, "ejs.mvc: Check dependencies:", deps)
                 for each (dep in deps) {
                     let path = Path(dep)
                     if (!path.exists) {

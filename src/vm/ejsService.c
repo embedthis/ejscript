@@ -250,17 +250,20 @@ static int configureEjs(Ejs *ejs)
 static int loadStandardModules(Ejs *ejs, MprList *require)
 {
     char    *name;
-    int     rc, next, ver;
+    int     rc, next, ver, flags;
 
     rc = 0;
-
     ver = 0;
     if (require) {
         for (next = 0; rc == 0 && (name = mprGetNextItem(require, &next)) != 0; ) {
-            rc += ejsLoadModule(ejs, name, ver, ver, EJS_LOADER_STRICT);
+            flags = EJS_LOADER_STRICT;
+            if (strcmp(name, "ejs") == 0) {
+                flags |= EJS_LOADER_BUILTIN;
+            }
+            rc += ejsLoadModule(ejs, name, ver, ver, flags);
         }
     } else {
-        rc += ejsLoadModule(ejs, "ejs", ver, ver, EJS_LOADER_STRICT);
+        rc += ejsLoadModule(ejs, "ejs", ver, ver, EJS_LOADER_STRICT | EJS_LOADER_BUILTIN);
     }
     return rc;
 }

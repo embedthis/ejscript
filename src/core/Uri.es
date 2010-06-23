@@ -5,6 +5,8 @@
 
 module ejs {
 
+    //  MOB -- should this be URI or Uri
+
     /**
         Uri class to manage Uris
         @stability evolving
@@ -51,7 +53,7 @@ module ejs {
             @option query: String
             @option reference: String
          */
-        native function components(): Object 
+        native function get components(): Object 
 
         /** 
             Decode a Uri encoded string
@@ -176,9 +178,11 @@ module ejs {
             isAbsolute == false
 
         /** 
-            Join Uris. Joins Uris together. If a Uris is absolute, replace the join with it and continue. If a Uri is
-            relative add a separator and continue joining.
-            @return A joined Uri.
+            Join Uris. Joins Uris together. If a Uri is absolute, replace the join with it and continue. If a Uri is
+            relative, replace the basename portion of the existing Uri with the next joining uri and continue. For 
+            example:  Uri("/admin/login").join("logout") will replace "login" with "logout" whereas 
+            Uri("/admin/").join("login") will append login.
+            @return A joined, normalized Uri.
          */
         native function join(...other): Uri
 
@@ -280,12 +284,10 @@ module ejs {
                     }
                 }
                 results = "../".times(parts.length - common - 1)
-
                 if (targetParts.length > 1) {
                     results += targetParts.slice(common).join("/")
-                } else {
-                    results = results.trimEnd("/")
                 }
+                results = results.trimEnd("/")
                 return Uri(results)
             }
         }

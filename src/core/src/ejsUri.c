@@ -470,37 +470,46 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *np;
     EjsArray    *args;
-    HttpUri     *uri, *nuri;
-    char        *other;
-    char        *result, *prior;
-    int         i;
+    EjsObj      *vp;
+    char        *other, *cp, *result, *prior;
+    int         i, abs;
 
     args = (EjsArray*) argv[0];
-    uri = up->uri;
-    result = uri->path;
     np = cloneUri(ejs, up, 0);
-    nuri = np->uri;
+    result = mprStrdup(np, np->uri->path);
 
     for (i = 0; i < args->length; i++) {
-        if ((other = getUriString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i))) == NULL) {
+        vp = ejsGetProperty(ejs, (EjsObj*) args, i);
+        if ((other = getUriString(ejs, vp)) == NULL) {
             return 0;
         }
         prior = result;
-        if (other[0] == '/') {
-            result = mprStrdup(nuri, other);
+        abs = (other[0] == '/' || strncmp(other, "http://", 7) == 0 || strncmp(other, "https://", 8) == 0);
+        if (abs) {
+            mprFree(np->uri);
+            np->uri = httpCreateUri(np, other, 0);
+            mprFree(result);
+            result = mprStrdup(np, np->uri->path);
+            prior = 0;
+        } else if (*prior == '\0') {
+            result = mprStrdup(np->uri, other);
         } else {
             if (prior[strlen(prior) - 1] == '/') {
-                result = mprStrcat(nuri, -1, prior, other, NULL);
+                result = mprStrcat(np->uri, -1, prior, other, NULL);
             } else {
-                result = mprStrcat(nuri, -1, prior, "/", other, NULL);
+                if ((cp = strrchr(prior, '/')) != NULL) {
+                    cp[1] = '\0';
+                }
+                result = mprStrcat(np->uri, -1, prior, other, NULL);
             }
         }
-        mprFree(other);
-        if (prior != uri->path) {
+        if (prior != np->uri->path) {
             mprFree(prior);
         }
+        mprFree(other);
     }
-    np->uri->path = result;
+    np->uri->path = httpNormalizeUriPath(np, result);
+    mprFree(result);
     np->uri->ext = (char*) mprGetPathExtension(np->uri, np->uri->path);
     return (EjsObj*) np;
 }
@@ -546,7 +555,7 @@ static EjsObj *uri_normalize(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     EjsUri      *np;
 
     np = cloneUri(ejs, up, 0);
-    np->uri->path = mprGetNormalizedPath(ejs, up->uri->path);
+    np->uri->path = httpNormalizeUriPath(np, up->uri->path);
     return (EjsObj*) np;
 }
 
@@ -567,7 +576,7 @@ static EjsObj *uri_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_set_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    up->uri->path = mprStrdup(up, ejsGetString(ejs, argv[0]));
+    up->uri->path = httpNormalizeUriPath(up, ejsGetString(ejs, argv[0]));
     up->uri->ext = (char*) mprGetPathExtension(up->uri, up->uri->path);
     return 0;
 }
