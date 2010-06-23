@@ -154,11 +154,18 @@ static EjsObj *math_min(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *math_pow(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    MprNumber   x, y;
+    MprNumber   x, y, result;
     
     x = ejsGetNumber(ejs, argv[0]);
     y = ejsGetNumber(ejs, argv[1]);
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) pow(x,y));
+    result = pow(x, y);
+#if CYGWIN
+    /* Cygwin computes (0.0 / -1) == -Infinity */
+    if (result < 0 && x == 0.0) {
+        result = -result;
+    }
+#endif
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) result);
 }
 
 

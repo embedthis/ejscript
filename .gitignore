@@ -91,3 +91,4 @@ bin/start.es
 bin/jem.cmd
 src/include/buildConfig.save
 tmp
+src/core/test/http/ejs.log
