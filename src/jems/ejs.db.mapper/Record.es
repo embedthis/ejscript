@@ -69,11 +69,6 @@ module ejs.db.mapper {
         _keyName = "id"
         _className = Reflect(this).name
 
-/*
-        _model = global[_className]
-printHash("MODEL", _model)
-printHash("THIS", this)
-*/
         _model = this
         _assocName = _className.toCamel()
         _foreignId = _className.toCamel() + _keyName.toPascal()

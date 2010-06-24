@@ -176,22 +176,21 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
     HttpReceiver    *rec;
     cchar           *path, *end, *sp;
     char            *home, *cp;
-    int             slashes;
+    int             levels;
 
     rec = req->conn->receiver;
     mprAssert(rec->pathInfo);
 
     path = rec->pathInfo;
     end = &path[strlen(path)];
-    slashes = 0;
-    for (slashes = 0, sp = &path[1]; sp < end; sp++) {
+    for (levels = 1, sp = &path[1]; sp < end; sp++) {
         if (*sp == '/' && sp[-1] != '/') {
-            slashes++;
+            levels++;
         }
     }
-    home = mprAlloc(req, slashes * 3 + 2);
-    if (slashes) {
-        for (cp = home; slashes > 0; slashes--) {
+    home = mprAlloc(req, levels * 3 + 2);
+    if (levels) {
+        for (cp = home; levels > 0; levels--) {
             strcpy(cp, "../");
             cp += 3;
         }

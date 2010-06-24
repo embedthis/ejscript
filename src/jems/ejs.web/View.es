@@ -38,7 +38,7 @@ module ejs.web {
         private var nextId: Number = 0
 
         /** @hide */
-        function getNextId(): Number {
+        function getNextId(): String {
             return "id_" + nextId++
         }
 
@@ -244,7 +244,9 @@ module ejs.web {
             options = setOptions("form", options)
             options.method ||= "POST"
             options.action ||= "update"
-            options.id ||= record.id
+            if (record) {
+                options.id ||= record.id
+            }
             let connector = getConnector("form", options)
             connector.form(record, options)
         }
@@ -728,13 +730,12 @@ module ejs.web {
             if (options is String)
                 options = {action: options}
             if (currentRecord && currentRecord.id) {
-                options.id ||= field + '_' + currentRecord.id
+                options.domid ||= field + '_' + currentRecord.id
                 if (currentRecord.hasError(field)) {
                     options.style += " -ejs-fieldError"
                 }
                 //  MOB -- not portable to other ORM
-                // options.fieldName ||= Reflect(currentRecord).name.toCamel() + '.' + field
-                options.fieldName ||= field
+                options.fieldName ||= typeOf(currentRecord).toCamel() + '.' + field
             } else {
                 options.fieldName ||= field
             }
@@ -828,8 +829,8 @@ module ejs.web {
             Mapping of helper options to HTML attributes ("" value means don't map the name)
          */
         private static const htmlOptions: Object = { 
-            background: "", color: "", id: "", height: "", method: "", size: "", style: "class", visible: "", width: "",
-            remote: "data-remote",
+            background: "", color: "", domid: "id", height: "", method: "", size: "", style: "class", visible: "", 
+            width: "", remote: "data-remote",
         }
 
         /**
@@ -929,8 +930,8 @@ module ejs.web {
         function get appUrl()
             request.home.toString().trimEnd("/")
 
-        function redirect(url)
-            request.redirect(url)
+        function redirect(url: Object)
+            controller.redirect(url)
     }
 }
 

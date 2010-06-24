@@ -38,6 +38,7 @@ module ejs.cjs {
                 resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.
          */
         public static function require(id: String): Object {
+print("REQUIRE " + id)
             let path: Path = locate(id)
             let exports = signatures[path]
             if (!exports || path.modified > timestamps[path]) {
@@ -59,7 +60,9 @@ module ejs.cjs {
             let initializer, code
             if (path) {
                 let cache: Path = cached(path)
+print("CJS.LOAD CACHE " + cache)
                 if (cache && cache.exists && cache.modified >= path.modified) {
+print("USE CACHE")
                     App.log.debug(4, "Use cache for: " + path)
                     initializer = global.load(cache)
                 } else {
@@ -70,12 +73,14 @@ module ejs.cjs {
                         code = wrap(code)
                     }
                     App.log.debug(4, "Recompile module to: " + cache)
+print("EVAL TO COMPILE " + code)
                     initializer = eval(code, cache)
                 }
                 timestamps[path] = path.modified
             } else {
 //  MOB BUG - code doesn't exist
                 code = wrap(code)
+//  MOB -- Fix this
                 initializer = eval(code, "mob.mod")
             }
             signatures[path] = exports = {}

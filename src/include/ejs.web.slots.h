@@ -64,18 +64,19 @@
 #define ES_ejs_web_Controller_ejs_web_loadView                         24
 #define ES_ejs_web_Controller_ejs_web_renderError                      25
 #define ES_ejs_web_Controller_ejs_web_redirect                         26
-#define ES_ejs_web_Controller_ejs_web_render                           27
-#define ES_ejs_web_Controller_ejs_web_renderFile                       28
-#define ES_ejs_web_Controller_ejs_web_renderPartial                    29
-#define ES_ejs_web_Controller_ejs_web_renderView                       30
-#define ES_ejs_web_Controller_ejs_web_error                            31
-#define ES_ejs_web_Controller_ejs_web_inform                           32
-#define ES_ejs_web_Controller_ejs_web_warn                             33
-#define ES_ejs_web_Controller_ejs_web_makeUri                          34
-#define ES_ejs_web_Controller_action_missing                           35
-#define ES_ejs_web_Controller_ejs_web_appUrl                           36
-#define ES_ejs_web_Controller_ejs_web_makeUrl                          37
-#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        38
+#define ES_ejs_web_Controller_ejs_web_redirectAction                   27
+#define ES_ejs_web_Controller_ejs_web_render                           28
+#define ES_ejs_web_Controller_ejs_web_renderFile                       29
+#define ES_ejs_web_Controller_ejs_web_renderPartial                    30
+#define ES_ejs_web_Controller_ejs_web_renderView                       31
+#define ES_ejs_web_Controller_ejs_web_error                            32
+#define ES_ejs_web_Controller_ejs_web_inform                           33
+#define ES_ejs_web_Controller_ejs_web_warn                             34
+#define ES_ejs_web_Controller_ejs_web_makeUri                          35
+#define ES_ejs_web_Controller_action_missing                           36
+#define ES_ejs_web_Controller_ejs_web_appUrl                           37
+#define ES_ejs_web_Controller_ejs_web_makeUrl                          38
+#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        39
 #define ES_ejs_web_Controller_NUM_INHERITED_PROP                       0
 
 /*
@@ -87,41 +88,40 @@
 /*
    Prototype (instance) slots for "HtmlConnector" type 
  */
-#define ES_HtmlConnector_nextId                                        0
-#define ES_HtmlConnector_request                                       1
-#define ES_HtmlConnector_view                                          2
-#define ES_HtmlConnector_ejs_web_aform                                 3
-#define ES_HtmlConnector_ejs_web_alink                                 4
-#define ES_HtmlConnector_ejs_web_button                                5
-#define ES_HtmlConnector_ejs_web_buttonLink                            6
-#define ES_HtmlConnector_ejs_web_chart                                 7
-#define ES_HtmlConnector_ejs_web_checkbox                              8
-#define ES_HtmlConnector_ejs_web_endform                               9
-#define ES_HtmlConnector_ejs_web_flash                                 10
-#define ES_HtmlConnector_ejs_web_form                                  11
-#define ES_HtmlConnector_ejs_web_image                                 12
-#define ES_HtmlConnector_ejs_web_imageLink                             13
-#define ES_HtmlConnector_ejs_web_label                                 14
-#define ES_HtmlConnector_ejs_web_link                                  15
-#define ES_HtmlConnector_ejs_web_extlink                               16
-#define ES_HtmlConnector_ejs_web_list                                  17
-#define ES_HtmlConnector_ejs_web_mail                                  18
-#define ES_HtmlConnector_ejs_web_progress                              19
-#define ES_HtmlConnector_ejs_web_radio                                 20
-#define ES_HtmlConnector_ejs_web_script                                21
-#define ES_HtmlConnector_ejs_web_status                                22
-#define ES_HtmlConnector_ejs_web_stylesheet                            23
-#define ES_HtmlConnector_ejs_web_table                                 24
-#define ES_HtmlConnector_ejs_web_tabs                                  25
-#define ES_HtmlConnector_ejs_web_text                                  26
-#define ES_HtmlConnector_ejs_web_textarea                              27
-#define ES_HtmlConnector_ejs_web_tree                                  28
-#define ES_HtmlConnector_getColumns                                    29
-#define ES_HtmlConnector_getTextKind                                   30
-#define ES_HtmlConnector_getOptions                                    31
-#define ES_HtmlConnector_write                                         32
-#define ES_HtmlConnector_getDataAttributes                             33
-#define ES_HtmlConnector_NUM_INSTANCE_PROP                             34
+#define ES_HtmlConnector_request                                       0
+#define ES_HtmlConnector_view                                          1
+#define ES_HtmlConnector_ejs_web_aform                                 2
+#define ES_HtmlConnector_ejs_web_alink                                 3
+#define ES_HtmlConnector_ejs_web_button                                4
+#define ES_HtmlConnector_ejs_web_buttonLink                            5
+#define ES_HtmlConnector_ejs_web_chart                                 6
+#define ES_HtmlConnector_ejs_web_checkbox                              7
+#define ES_HtmlConnector_ejs_web_endform                               8
+#define ES_HtmlConnector_ejs_web_flash                                 9
+#define ES_HtmlConnector_ejs_web_form                                  10
+#define ES_HtmlConnector_ejs_web_image                                 11
+#define ES_HtmlConnector_ejs_web_imageLink                             12
+#define ES_HtmlConnector_ejs_web_label                                 13
+#define ES_HtmlConnector_ejs_web_link                                  14
+#define ES_HtmlConnector_ejs_web_extlink                               15
+#define ES_HtmlConnector_ejs_web_list                                  16
+#define ES_HtmlConnector_ejs_web_mail                                  17
+#define ES_HtmlConnector_ejs_web_progress                              18
+#define ES_HtmlConnector_ejs_web_radio                                 19
+#define ES_HtmlConnector_ejs_web_script                                20
+#define ES_HtmlConnector_ejs_web_status                                21
+#define ES_HtmlConnector_ejs_web_stylesheet                            22
+#define ES_HtmlConnector_ejs_web_table                                 23
+#define ES_HtmlConnector_ejs_web_tabs                                  24
+#define ES_HtmlConnector_ejs_web_text                                  25
+#define ES_HtmlConnector_ejs_web_textarea                              26
+#define ES_HtmlConnector_ejs_web_tree                                  27
+#define ES_HtmlConnector_getColumns                                    28
+#define ES_HtmlConnector_getTextKind                                   29
+#define ES_HtmlConnector_getOptions                                    30
+#define ES_HtmlConnector_write                                         31
+#define ES_HtmlConnector_getDataAttributes                             32
+#define ES_HtmlConnector_NUM_INSTANCE_PROP                             33
 #define ES_HtmlConnector_NUM_INHERITED_PROP                            0
 #define ES_ejs_web_HttpServer_NUM_CLASS_PROP                           0
 
@@ -152,10 +152,11 @@
 #define ES_Mvc_mvc                                                     2
 #define ES_Mvc_dirs                                                    3
 #define ES_Mvc_ext                                                     4
-#define ES_Mvc_load                                                    5
-#define ES_Mvc_init                                                    6
-#define ES_Mvc_loadComponent                                           7
-#define ES_Mvc_NUM_CLASS_PROP                                          8
+#define ES_Mvc_loaded                                                  5
+#define ES_Mvc_load                                                    6
+#define ES_Mvc_init                                                    7
+#define ES_Mvc_loadComponent                                           8
+#define ES_Mvc_NUM_CLASS_PROP                                          9
 
 /*
    Prototype (instance) slots for "Mvc" type 
@@ -438,6 +439,6 @@
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
 
-#define _ES_CHECKSUM_ejs_web   533912
+#define _ES_CHECKSUM_ejs_web   536651
 
 #endif

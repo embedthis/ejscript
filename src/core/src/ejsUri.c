@@ -466,17 +466,18 @@ static EjsObj *uri_isDir(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Join uri segments
     function join(...others): Uri
  */
+#if OLD && UNUSED
 static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *np;
     EjsArray    *args;
     EjsObj      *vp;
     char        *other, *cp, *result, *prior;
-    int         i, abs;
+    int         i;
 
     args = (EjsArray*) argv[0];
     np = cloneUri(ejs, up, 0);
-    result = mprStrdup(np, np->uri->path);
+    result = mprStrdup(np->uri, np->uri->path);
 
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, (EjsObj*) args, i);
@@ -484,12 +485,13 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
             return 0;
         }
         prior = result;
-        abs = (other[0] == '/' || strncmp(other, "http://", 7) == 0 || strncmp(other, "https://", 8) == 0);
-        if (abs) {
+        if (strncmp(other, "http://", 7) == 0 || strncmp(other, "https://", 8) == 0) {
             mprFree(np->uri);
             np->uri = httpCreateUri(np, other, 0);
-            mprFree(result);
-            result = mprStrdup(np, np->uri->path);
+            result = mprStrdup(np->uri, np->uri->path);
+            prior = 0;
+        } else if (other[0] == '/') {
+            result = mprStrdup(np->uri, other);
             prior = 0;
         } else if (*prior == '\0') {
             result = mprStrdup(np->uri, other);
@@ -508,11 +510,66 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
         mprFree(other);
     }
-    np->uri->path = httpNormalizeUriPath(np, result);
-    mprFree(result);
+    np->uri->path = result;
     np->uri->ext = (char*) mprGetPathExtension(np->uri, np->uri->path);
+    //  MOB -- what about reference?
     return (EjsObj*) np;
 }
+
+#else
+
+static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    EjsUri      *np;
+    EjsArray    *args;
+    EjsObj      *vp;
+    char        *other, *result, *prior, *cp;
+    int         i;
+
+    args = (EjsArray*) argv[0];
+    np = cloneUri(ejs, up, 0);
+    result = mprStrdup(np->uri, np->uri->path);
+
+    for (i = 0; i < args->length; i++) {
+        vp = ejsGetProperty(ejs, (EjsObj*) args, i);
+        if ((other = getUriString(ejs, vp)) == NULL) {
+            return 0;
+        }
+        prior = result;
+        if (strncmp(other, "http://", 7) == 0 || strncmp(other, "https://", 8) == 0) {
+            mprFree(np->uri);
+            np->uri = httpCreateUri(np, other, 0);
+            result = mprStrdup(np->uri, np->uri->path);
+            prior = 0;
+        } else if (other[0] == '/') {
+            result = mprStrdup(np->uri, other);
+            prior = 0;
+        } else if (*prior == '\0') {
+            result = mprStrdup(np->uri, other);
+        } else {
+            if (prior[strlen(prior) - 1] == '/') {
+                prior[strlen(prior) - 1] = '\0';
+            }
+            if (other[0] == '/') {
+                result = mprStrcat(np->uri, -1, prior, other, NULL);
+            } else {
+                result = mprStrcat(np->uri, -1, prior, "/", other, NULL);
+            }
+        }
+        if (prior != np->uri->path) {
+            mprFree(prior);
+        }
+        mprFree(other);
+    }
+    np->uri->path = result;
+    np->uri->ext = (char*) mprGetPathExtension(np->uri, np->uri->path);
+    if ((cp = strchr(result, '#')) != NULL) {
+        *cp++ = '\0';
+        np->uri->reference = cp;
+    }
+    return (EjsObj*) np;
+}
+#endif
 
 
 /*  
@@ -676,7 +733,10 @@ static EjsObj *uri_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_set_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    up->uri->query = mprStrdup(up, ejsGetString(ejs, argv[0]));
+    cchar    *value;
+
+    value = (argv[0] == ejs->nullValue) ? "" : ejsGetString(ejs, argv[0]);
+    up->uri->query = mprStrdup(up, value);
     return 0;
 }
 
@@ -697,7 +757,10 @@ static EjsObj *uri_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_set_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    up->uri->reference = mprStrdup(up, ejsGetString(ejs, argv[0]));
+    cchar    *value;
+
+    value = (argv[0] == ejs->nullValue) ? "" : ejsGetString(ejs, argv[0]);
+    up->uri->reference = mprStrdup(up, value);
     return 0;
 }
 

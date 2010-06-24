@@ -182,7 +182,7 @@ module ejs {
             relative, replace the basename portion of the existing Uri with the next joining uri and continue. For 
             example:  Uri("/admin/login").join("logout") will replace "login" with "logout" whereas 
             Uri("/admin/").join("login") will append login.
-            @return A joined, normalized Uri.
+            @return A new joined Uri.
          */
         native function join(...other): Uri
 

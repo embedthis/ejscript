@@ -15,7 +15,6 @@ module ejs.web {
 
         use default namespace module
 
-        private var nextId: Number = 0
         private var request: Request
         private var view: View
 
@@ -45,7 +44,7 @@ module ejs.web {
          */
 
         function aform(record: Object, options: Object = {}): Void {
-            options.id ||= "form"
+            options.domid ||= "form"
             onsubmit = ""
             if (options.condition) {
                 onsubmit += options.condition + ' && '
@@ -60,9 +59,8 @@ module ejs.web {
             if (options.query) {
                 onsubmit += 'data: ' + options.query + ', '
             } else {
-                onsubmit += 'data: $("#' + options.id + '").serialize(), '
+                onsubmit += 'data: $("#' + options.domid + '").serialize(), '
             }
-
             if (options.update) {
                 if (options.success) {
                     onsubmit += 'success: function(data) { $("#' + options.update + '").html(data).hide("slow"); ' + 
@@ -91,7 +89,7 @@ module ejs.web {
                 query
          */
 		function alink(text: String, options: Object): Void {
-            options.id ||= "alink"
+            options.domid ||= "alink"
             onclick = ""
             if (options.condition) {
                 onclick += options.condition + ' && '
@@ -167,9 +165,7 @@ module ejs.web {
 		}
 
 		function form(record: Object, options: Object): Void {
-dump("OOO ", options)
             options.uri ||= request.makeUri(options)
-dump("O2", options)
             write('<form method="post" action="' + options.uri + '"' + getOptions(options) + 
                 ' xonsubmit="ejs.fixCheckboxes();">')
         }

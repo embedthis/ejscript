@@ -86,7 +86,7 @@ module ejs.web {
         /** 
             Factory method to create and initialize a controller. The controller class is specified by 
             params["controlller"] which should be set to the controller name without the "Controller" suffix. 
-            This call expects the controller class to be loaded. 
+            This call expects the controller class to be loaded. Called by Mvc.load().
             @param request Web request object
          */
         static function create(request: Request): Controller {
@@ -96,7 +96,8 @@ module ejs.web {
             }
             _initRequest = request
             let uname = cname.toPascal() + "Controller"
-            let c = new global[uname](request)
+            let c: Controller = new global[uname](request)
+            c.request = request
             _initRequest = null
             return c
         }
@@ -145,7 +146,7 @@ module ejs.web {
             if (!redirected) {
                 /* Run the action */
                 this[actionName]()
-                if (!rendered)
+                if (!rendered && !redirected)
                     renderView()
                 runFilters(_afterFilters)
             }
@@ -281,10 +282,13 @@ module ejs.web {
             @param uri Uri to redirect to 
             @param status Http status code to use in the redirection response. Defaults to 302.
          */
-        function redirect(uri: Uri, status: Number = Http.MovedTemporarily): Void {
+        function redirect(uri: Object, status: Number = Http.MovedTemporarily): Void {
             request.redirect(uri, status)
             redirected = true
         }
+
+        function redirectAction(action: String): Void
+            redirect({action: action})
 
         /** 
             Render the raw arguments back to the client. The args are converted to strings.
@@ -342,7 +346,6 @@ module ejs.web {
             for each (let n: String in Object.getOwnPropertyNames(this, {includeBases: true, excludeFunctions: true})) {
                 view.public::[n] = this[n]
             }
-print("VIEW HAS " + Object.getOwnPropertyNames(view))
             log.debug(4, "render view: \"" + controllerName + "/" + viewName + "\"")
             view.render(request)
         }

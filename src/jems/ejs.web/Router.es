@@ -47,15 +47,20 @@ module ejs.web {
             </pre>
         */
         public static var RestfulRoutes = [
+          { name: "es",      type: "es",                    match: /^\/web\/.*\.es$/   },
+          { name: "ejs",     type: "ejs",                   match: /^\/web\/.*\.ejs$/  },
+          { name: "web",     type: "static",                match: /^\/web\//  },
+          { name: "home",    type: "static",                match: /^\/$/, redirect: "/web/index.ejs" },
+          { name: "ico",     type: "static",                match: /^\/favicon.ico$/, redirect: "/web/favicon.ico" },
           { name: "new",     type: "mvc", method: "GET",    match: "/:controller/new",       params: { action: "new" } },
           { name: "edit",    type: "mvc", method: "GET",    match: "/:controller/:id/edit",  params: { action: "edit" } },
           { name: "show",    type: "mvc", method: "GET",    match: "/:controller/:id",       params: { action: "show" } },
           { name: "update",  type: "mvc", method: "PUT",    match: "/:controller/:id",       params: { action: "update" } },
           { name: "delete",  type: "mvc", method: "DELETE", match: "/:controller/:id",       params: { action: "delete" } },
-          { name: "default", type: "mvc", method: "GET",  match: "/:controller/:action",     params: {} },
+          { name: "default", type: "mvc",                   match: "/:controller/:action",     params: {} },
           { name: "create",  type: "mvc", method: "POST",   match: "/:controller",           params: { action: "create" } },
           { name: "index",   type: "mvc", method: "GET",    match: "/:controller",           params: { action: "index" } },
-          { name: "home",    type: "static", match: /^\/$/, redirect: "/web/index.ejs" },
+          { name: "home",    type: "static",                match: /^\/$/, redirect: "/web/index.ejs" },
           { name: "static",  type: "static", },
         ]
 
@@ -67,9 +72,9 @@ module ejs.web {
           { name: "edit",    type: "mvc", method: "GET",  match: "/:controller/:id",         params: { action: "edit" } },
           { name: "update",  type: "mvc", method: "POST", match: "/:controller/:id",         params: { action: "update" } },
           { name: "destroy", type: "mvc", method: "POST", match: "/:controller/destroy/:id", params: { action: "destroy" }},
-          { name: "default", type: "mvc", method: "GET",  match: "/:controller/:action",     params: {} },
+          { name: "default", type: "mvc",                 match: "/:controller/:action",     params: {} },
           { name: "index",   type: "mvc", method: "GET",  match: "/:controller",             params: { action: "index" } },
-          { name: "home",    type: "static", match: /^\/$/, redirect: "/web/index.ejs" },
+          { name: "home",    type: "static",              match: /^\/$/, redirect: "/web/index.ejs" },
           { name: "static",  type: "static", },
         ]
          */
@@ -79,17 +84,17 @@ module ejs.web {
          */
         //  MOB -- rename LegacyMvcRoutes
         public static var LegacyRoutes = [
-          { name: "es",      type: "es",  match: /^\/web\/.*\.es$/   },
-          { name: "ejs",     type: "ejs", match: /^\/web\/.*\.ejs$/  },
-          { name: "web",     type: "static", match: /^\/web\//  },
-          { name: "home",    type: "static", match: /^\/$/, redirect: "/web/index.ejs" },
-          { name: "ico",     type: "static", match: /^\/favicon.ico$/, redirect: "/web/favicon.ico" },
+          { name: "es",      type: "es",                  match: /^\/web\/.*\.es$/   },
+          { name: "ejs",     type: "ejs",                 match: /^\/web\/.*\.ejs$/  },
+          { name: "web",     type: "static",              match: /^\/web\//  },
+          { name: "home",    type: "static",              match: /^\/$/, redirect: "/web/index.ejs" },
+          { name: "ico",     type: "static",              match: /^\/favicon.ico$/, redirect: "/web/favicon.ico" },
           { name: "list",    type: "mvc", method: "GET",  match: "/:controller/list",        params: { action: "list" } },
           { name: "create",  type: "mvc", method: "POST", match: "/:controller/create",      params: { action: "create" } },
           { name: "edit",    type: "mvc", method: "GET",  match: "/:controller/edit",        params: { action: "edit" } },
           { name: "update",  type: "mvc", method: "POST", match: "/:controller/update",      params: { action: "update" } },
           { name: "destroy", type: "mvc", method: "POST", match: "/:controller/destroy",     params: { action: "destroy" } },
-          { name: "default", type: "mvc", method: "GET",  match: "/:controller/:action",     params: {} },
+          { name: "default", type: "mvc",                 match: "/:controller/:action",     params: {} },
           { name: "index",   type: "mvc", method: "GET",  match: "/:controller",             params: { action: "index" } },
           { name: "static",  type: "static", },
         ]
@@ -171,8 +176,10 @@ module ejs.web {
             let log = request.log
             log.debug(5, "Routing " + request.pathInfo)
 
+            //  MOB - need better way to turn on debug trace without slowing down the router
             for each (r in routes) {
-                log.debug(6, "Route test " + r.name)
+                log.debug(6, "Test route \"" + r.name + "\"")
+
                 if (r.method && request.method != r.method) {
                     continue
                 }
@@ -340,35 +347,38 @@ module ejs.web {
             this.router = router
         }
 
+        //  MOB - OPT
         /**
             Make a URI provided parts of a URI. The URI is completed using the current request and route. 
-            @param where MOB
+            @param components MOB
          */
-        public function makeUri(request: Request, where: Object): Uri {
+        public function makeUri(request: Request, components: Object): Uri {
             if (urimaker) {
-                return urimaker(request, where)
+                return urimaker(request, components)
             }
-            let path = where.path
-            let target
+            let where
             if (request) {
+                //  Base the URI on the current application home uri
                 let base = blend(request.absHome.components, request.params)
                 delete base.id
                 delete base.query
-                if (where is String) {
-                    target = blend(base, { path: where })
+                if (components is String) {
+                    where = blend(base, { path: components })
                 } else {
-                    target = blend(base, where)
+                    where = blend(base, components)
+                }
+            } else {
+                where = components.clone()
+            }
+            if (where.id != undefined) {
+                if (where.query) {
+                    where.query += "&" + "id=" + where.id
+                } else {
+                    where.query = "id=" + where.id
                 }
             }
-            if (target.id != undefined) {
-                if (target.query) {
-                    target.query += "&" + "id=" + target.id
-                } else {
-                    target.query = "id=" + target.id
-                }
-            }
-            let result = Uri(target)
-            let routeName = target.route || "default"
+            let uri = Uri(where)
+            let routeName = where.route || "default"
             let route = this
             if (routeName != this.name) {
                 for each (r in router.routes) {
@@ -378,18 +388,16 @@ module ejs.web {
                     }
                 }
             }
-            if (!path) {
-                path = ""
+            if (!components.path) {
                 for each (token in route.tokens) {
-                    if (!target[token]) {
-                        dump("WHERE", target)
+                    if (!where[token]) {
+                        dump("WHERE", where)
                         throw new ArgError("Missing URI token \"" + token + "\"")
                     }
-                    path += "/" + target[token]
+                    uri = uri.join(where[token])
                 }
             }
-            result.path = path
-            return result
+            return uri
         }
     }
 }

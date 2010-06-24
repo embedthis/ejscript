@@ -317,11 +317,19 @@ module ejs.web {
             @param url Url to redirect the client to
             @param status Optional HTTP redirection status
          */
-        function redirect(url: Uri, status: Number = Http.MovedTemporarily): Void {
+        function redirect(where: Object, status: Number = Http.MovedTemporarily): Void {
             /*
                 This permits urls like: ".." or "/" or "http://..."
              */
-            url = makeUri(uri.join(url).normalize.components)
+            let base = uri.clone()
+            base.query = ""
+            base.reference = ""
+            let url
+            if (where is String) {
+                url = makeUri(base.join(where).normalize.components)
+            } else {
+                url = makeUri(where)
+            }
             this.status = status
             setHeader("Location", url)
             write("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n" +

@@ -51,6 +51,7 @@ module ejs.web {
         private static var mvc: Object
         private static var dirs: Object
         private static var ext: Object
+        private static var loaded: Object = {}
 
         /** 
             Load an MVC application. This is typically called by the Router to load an application after routing
@@ -86,6 +87,7 @@ module ejs.web {
             App.log.level = config.log.level
 
             let exports
+print("MVC.app " + mvc.app)
             if (mvc.app) {
     //  MOB -- what is this?
                 let app = dir.join(mvc.app)
@@ -164,11 +166,16 @@ module ejs.web {
                     }
                     code += path.readString()
                 }
-                request.log.debug(4, "Rebuild component " + mod)
+                request.log.debug(4, "Rebuild component: " + mod)
                 eval(code, mod)
-            } else {
-                request.log.debug(4, "Load component from cache " + mod)
+
+            } else if (!loaded[mod]) {
+                request.log.debug(4, "Reload component : " + mod)
                 global.load(mod)
+                loaded[mod] = new Date
+
+            } else {
+                request.log.debug(4, "Use fresh component: " + mod)
             }
         }
     }
