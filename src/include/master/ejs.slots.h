@@ -1279,6 +1279,7 @@
 #define ES_Object_getOwnPropertyDescriptor_obj                         0
 #define ES_Object_getOwnPropertyDescriptor_prop                        1
 #define ES_Object_getOwnPropertyNames_obj                              0
+#define ES_Object_getOwnPropertyNames_options                          1
 #define ES_Object_getOwnPropertyCount_obj                              0
 #define ES_Object_getOwnPrototypeOf_obj                                0
 #define ES_Object_isExtensible_obj                                     0
@@ -1808,6 +1809,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1289551
+#define _ES_CHECKSUM_ejs   1290333
 
 #endif
