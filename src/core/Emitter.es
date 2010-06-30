@@ -93,6 +93,7 @@ module ejs {
         function listeners(name: String): Array
             endpoints[name].clone(true)
        
+        //  MOB -- rename send() or fire()
         /** 
             Emit an event to the registered listeners.
             @param name Event name to send to the listeners.

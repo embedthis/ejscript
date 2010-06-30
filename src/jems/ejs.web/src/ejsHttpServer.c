@@ -220,8 +220,10 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
         break;
 
     case HTTP_STATE_COMPLETE:
-        if (req && req->emitter) {
-            ejsSendEvent(ejs, req->emitter, "complete", (EjsObj*) req);
+        if (req) {
+            if (req->emitter) {
+                ejsSendEvent(ejs, req->emitter, "close", (EjsObj*) req);
+            }
         }
         break;
 

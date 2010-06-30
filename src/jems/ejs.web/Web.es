@@ -21,6 +21,7 @@ module ejs.web {
                 showClient: true,
                 //  where: "file" - defaults to web server log
             },
+            // MOB -- not yet implemented
             session: {
                 //  MOB -- do we need enable
                 enable: true,
@@ -139,8 +140,12 @@ request.config = config
                                     }
                                 }
                             }
+                            //  MOB -- work out a better way to do this. perhaps from ejsrc? (cache?)
+                            let expires = Date() 
+                            expires.date += 2
                             let headers = {
                                 "Content-Type": Uri(request.uri).mimeType,
+                                "Expires": expires.toUTCString()
                             }
                             let body = ""
                             if (request.method == "GET" || request.method == "POST") {

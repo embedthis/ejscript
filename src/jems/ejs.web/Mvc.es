@@ -53,6 +53,9 @@ module ejs.web {
         private static var ext: Object
         private static var loaded: Object = {}
 
+        //  MOB -- where should this come from?
+        private static const EJSRC = "ejsrc"
+
         /** 
             Load an MVC application. This is typically called by the Router to load an application after routing
             the request to determine the appropriate controller
@@ -62,7 +65,8 @@ module ejs.web {
         public static function load(request: Request): Object {
             request.dir = request.server.serverRoot
             let dir = request.dir
-            let path = dir.join("ejsrc")
+            //  MOB -- should be in filenames in config
+            let path = dir.join(EJSRC)
             let config = request.config
             if (path.exists) {
                 let appConfig = deserialize(path.readString())
@@ -87,7 +91,6 @@ module ejs.web {
             App.log.level = config.log.level
 
             let exports
-print("MVC.app " + mvc.app)
             if (mvc.app) {
     //  MOB -- what is this?
                 let app = dir.join(mvc.app)
@@ -114,23 +117,26 @@ print("MVC.app " + mvc.app)
             let config = request.config
             let dir = request.dir
 
+            //  MOB -- good to have a single reload-app file 
             /* Load App */
-            let mod = dir.join(dirs.cache, mvc.appmod)
-            let deps
-            if (config.mode == "debug") {
-                deps = []
-                deps += dir.join(dirs.models).find("*" + ext.es)
-                deps += dir.join(dirs.src).find("*" + ext.es)
-                deps += [dir.join(dirs.controllers, "Base").joinExt(ext.es)]
+            let appmod = dir.join(dirs.cache, mvc.appmod)
+            let files, deps
+            if (config.cache.reload) {
+                deps = [dir.join(EJSRC)]
+                files = dir.join(dirs.models).find("*" + ext.es)
+                files += dir.join(dirs.src).find("*" + ext.es)
+                files += [dir.join(dirs.controllers, "Base").joinExt(ext.es)]
             }
-            loadComponent(request, mod, deps)
+            loadComponent(request, appmod, files, deps)
 
             /* Load controller */
             let controller = request.params.controller
             let ucontroller = controller.toPascal()
-            mod = dir.join(dirs.cache, ucontroller).joinExt(ext.mod)
+            let mod = dir.join(dirs.cache, ucontroller).joinExt(ext.mod)
             if (!mod.exists || config.cache.reload) {
-                loadComponent(request, mod, [dir.join(dirs.controllers, ucontroller).joinExt(ext.es)])
+                files = [dir.join(dirs.controllers, ucontroller).joinExt(ext.es)]
+                deps = [dir.join(dirs.controllers, "Base").joinExt(ext.es)]
+                loadComponent(request, mod, files, deps)
             } else {
                 loadComponent(request, mod)
             }
@@ -141,32 +147,34 @@ print("MVC.app " + mvc.app)
             more recent than the module itself. If recompilation occurs, the result will be cached in the supplied module.
             @param request Request object
             @param mod Path to the module to load
-            @param deps Module dependencies
+            @param files Files to compile into the module
+            @param deps Extra file dependencies
          */
-        public static function loadComponent(request: Request, mod: Path, deps: Array? = null) {
+        public static function loadComponent(request: Request, mod: Path, files: Array? = null, deps: Array? = null) {
             let rebuild
             if (mod.exists) {
                 rebuild = false
-                let when = mod.modified
-                for each (dep in deps) {
-                    if (dep.exists && dep.modified > when) {
-                        rebuild = true
+                if (request.config.cache.reload) {
+                    let when = mod.modified
+                    for each (file in (files + deps)) {
+                        if (file.exists && file.modified > when) {
+                            rebuild = true
+                        }
                     }
                 }
             } else {
                 rebuild = true
             }
             if (rebuild) {
-                let code = ""
-                request.log.debug(4, "ejs.mvc: Check dependencies:", deps)
-                for each (dep in deps) {
-                    let path = Path(dep)
+                let code = "require ejs.web\n"
+                for each (file in files) {
+                    let path = Path(file)
                     if (!path.exists) {
                         throw "Can't find required component: \"" + path + "\""
                     }
                     code += path.readString()
                 }
-                request.log.debug(4, "Rebuild component: " + mod)
+                request.log.debug(4, "Rebuild component: " + mod + " files: " + files)
                 eval(code, mod)
 
             } else if (!loaded[mod]) {
@@ -175,7 +183,7 @@ print("MVC.app " + mvc.app)
                 loaded[mod] = new Date
 
             } else {
-                request.log.debug(4, "Use fresh component: " + mod)
+                request.log.debug(4, "Use existing component: " + mod)
             }
         }
     }

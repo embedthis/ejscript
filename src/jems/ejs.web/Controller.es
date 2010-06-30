@@ -21,6 +21,7 @@ module ejs.web {
          */
         use default namespace module
 
+//  MOB -- some should be private
 //  MOB -- can this be renamed "action" without clashing with "action" namespace?
         /** Name of the action being run */
         var actionName:  String 
@@ -56,7 +57,8 @@ module ejs.web {
         */
         public var flash:       Object
 
-        private var rendered:   Boolean
+        private var noFinalize: Boolean
+        private var rendered: Boolean
         private var redirected: Boolean
         private var _afterFilters: Array
         private var _beforeFilters: Array
@@ -138,37 +140,47 @@ module ejs.web {
             actionName = params.action || "index"
             params.action = actionName
             use namespace action
-            if (!this[actionName]) {
-                actionName = "missing"
+            if (request.sessionID) {
+                flashBefore()
             }
-            flashBefore()
             runFilters(_beforeFilters)
             if (!redirected) {
-                /* Run the action */
-                this[actionName]()
-                if (!rendered && !redirected)
+                if (!this[actionName]) {
+                    if (!viewExists(actionName)) {
+                        actionName = "missing"
+                        this[actionName]()
+                    }
+                } else {
+                    this[actionName]()
+                }
+                if (!rendered && !redirected && !noFinalize) {
                     renderView()
+                }
                 runFilters(_afterFilters)
             }
-            flashAfter()
-            //  MOB -- but what if you don't want a controller to finalize?
-            request.finalize()
+            if (flash) {
+                flashAfter()
+            }
+            if (!noFinalize) {
+                request.finalize()
+            }
         }
+
+        /*
+            Don't finalize the request. If called, the action routine must explicitly call Request.finalize. Note that
+            a default view will not be rendered if dontFinalize is called.
+         */
+        function dontFinalize(): Void
+            noFinalize = true
 
         /* 
             Prepare the flash message. This extracts any flash message from the session state store
          */
         private function flashBefore() {
             lastFlash = null
-            if (session) {
-                flash = session["__flash__"]
-            }
-            if (!flash) {
-                flash = {}
-            } else {
-                if (session) {
-                    session["__flash__"] = undefined
-                }
+            flash = request.session["__flash__"]
+            if (flash) {
+                request.session["__flash__"] = undefined
                 lastFlash = flash.clone()
             }
         }
@@ -186,10 +198,9 @@ module ejs.web {
                     }
                 }
             }
-            if (flash && flash.length > 0) {
-                if (session) {
-                    session["__flash__"] = flash
-                }
+//  MOB -- obj.length was so much easier!
+            if (Object.getOwnPropertyCount(flash) > 0) {
+                request.session["__flash__"] = flash
             }
         }
 
@@ -250,21 +261,37 @@ module ejs.web {
         }
 
         /**
-            Load the view
+            Load the view. 
+            @param viewName Bare view name
+            @hide
          */
-        function loadView(path: Path, name: String) {
+        private function loadView(viewName: String) {
             let dirs = config.directories
+            let cvname = controllerName + "_" + viewName
+            let path = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
             let cached = Loader.cached(path, request.dir.join(dirs.cache))
+            let viewClass = cvname + "View"
+
+            //  TODO - OPT. Could keep a cache of cached.modified
+            if (global[viewClass] && cached.modified >= path.modified) {
+                log.debug(4, "Use loaded view: \"" + controllerName + "/" + viewName + "\"")
+                return
+            } else if (!path.exists) {
+                throw "Missing view: \"" + path+ "\""
+            }
             if (cached && cached.exists && cached.modified >= path.modified) {
-                log.debug(4, "Load view \"" + name + "\" from cache: " + cached);
+                log.debug(4, "Load view \"" + controllerName + "/" + viewName + "\" from: " + cached);
                 load(cached)
             } else {
                 if (!global.TemplateParser) {
                     load("ejs.web.template.mod")
                 }
                 let layouts = request.dir.join(dirs.layouts)
-                log.debug(4, "Rebuild and template \"" + name + "\" from cache: " + cached);
-                let code = TemplateParser().buildView(name, path.readString(), { layouts: layouts })
+                log.debug(4, "Rebuild view \"" + controllerName + "/" + viewName + "\" and save to: " + cached);
+                if (!path.exists) {
+                    throw "Can't find view: \"" + path + "\""
+                }
+                let code = TemplateParser().buildView(cvname, path.readString(), { layouts: layouts })
                 eval(code, cached)
             }
         }
@@ -279,11 +306,13 @@ module ejs.web {
 
         /** 
             Redirect to the given action
-            @param uri Uri to redirect to 
+            @param where Url to redirect the client toward. This can be a relative or absolute string URL or it can be
+                a hash of URL components. For example, the following are valid inputs: "../index.ejs", 
+                "http://www.example.com/home.html", {action: "list"}.
             @param status Http status code to use in the redirection response. Defaults to 302.
          */
-        function redirect(uri: Object, status: Number = Http.MovedTemporarily): Void {
-            request.redirect(uri, status)
+        function redirect(where: Object, status: Number = Http.MovedTemporarily): Void {
+            request.redirect(where, status)
             redirected = true
         }
 
@@ -325,6 +354,18 @@ module ejs.web {
             //  MOB -- todo
         }
 
+        private function viewExists(name: String): Boolean {
+            let viewClass = controllerName + "_" + actionName + "View"
+            if (global[viewClass]) {
+                return true
+            }
+            let path = request.dir.join("views", controllerName, name).joinExt(config.extensions.ejs)
+            if (path.exists) {
+                return true
+            }
+            return null
+        }
+
         /** 
             Render a view template
          */
@@ -333,13 +374,9 @@ module ejs.web {
                 throw new Error("renderView invoked but render has already been called")
                 return
             }
-            rendered = true
             viewName ||= actionName
             let viewClass = controllerName + "_" + viewName + "View"
-            if (!global[viewClass]) {
-                let path = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
-                loadView(path, controllerName + "_" + viewName)
-            }
+            loadView(viewName)
             view = new global[viewClass](request)
             view.controller = this
             //  MOB -- slow. Native method for this?
@@ -347,6 +384,7 @@ module ejs.web {
                 view.public::[n] = this[n]
             }
             log.debug(4, "render view: \"" + controllerName + "/" + viewName + "\"")
+            rendered = true
             view.render(request)
         }
 
@@ -354,23 +392,29 @@ module ejs.web {
             Send an error notification to the user. This is just a convenience instead of setting flash["error"]
             @param msg Message to display
          */
-        function error(msg: String): Void
+        function error(msg: String): Void {
+            flash ||= {}
             flash["error"] = msg
+        }
 
         /** 
             Send a positive notification to the user. This is just a convenience instead of setting flash["inform"]
             @param msg Message to display
          */
-        function inform(msg: String): Void
+        function inform(msg: String): Void {
+            flash ||= {}
             flash["inform"] = msg
+        }
 
         /** 
             Send a warning message back to the client for display in the flash area. This is just a convenience instead of
             setting flash["warn"]
             @param msg Message to display
          */
-        function warn(msg: String): Void
+        function warn(msg: String): Void {
+            flash ||= {}
             flash["warn"] = msg
+        }
 
 //  MOB -- revise doc
         /** 
@@ -385,6 +429,16 @@ module ejs.web {
          */
         function makeUri(parts: Object): Uri
             request.makeUri(parts)
+
+        /** 
+            Session state object. The session state object can be used to share state between requests.
+            If a session has not already been created, this call creates a session and sets the $sessionID property. 
+            A cookie containing a session ID is automatically created and sent to the client on the first response 
+            after creating the session. Objects are stored the session state by JSON serialization.
+            This getter property is a wrapper and returns the Request.session object.
+         */
+        function get session(): Session
+            request.session
 
         /** 
             Missing action method. This method will be called if the requested action routine does not exist.

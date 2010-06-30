@@ -181,11 +181,12 @@ module ejs.web {
 
         /** 
             Session state object. The session state object can be used to share state between requests.
-            If a session has not already been created, this call creates a session and sets the $sessionID property. 
-            A cookie containing a session ID is automatically created and sent to the client on the first 
-            response after creating the session. Objects stored in the session state must be serializable using JSON.
+            If a session has not already been created, accessing this property automatically creates a new session 
+            and sets the $sessionID property and a cookie containing a session ID sent to the client.
+            To test if a session has been created, test the sessionID property which will not auto-create a session.
+            Objects are stored the session state by JSON serialization.
          */
-        native var session: Object 
+        native var session: Session 
 
         /** 
             Current session ID. Index into the $sessions object. Set to null if no session is defined.
@@ -220,7 +221,7 @@ module ejs.web {
             @duplicate Stream.addListener
             @event readable Issued when some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
-            @event complete Issued when the request completes
+            @event close Issued when the request completes
             @event error Issued if the request does not complete
             All events are called with the signature:
             function (event: String, http: Http): Void
@@ -312,9 +313,11 @@ module ejs.web {
 
         /** 
             Redirect the client to a new URL. This call redirects the client's browser to a new location specified 
-            by the @url.  Optionally, a redirection code may be provided. Normally this code is set to be the HTTP 
+            by the $url.  Optionally, a redirection code may be provided. Normally this code is set to be the HTTP 
             code 302 which means a temporary redirect. A 301, permanent redirect code may be explicitly set.
-            @param url Url to redirect the client to
+            @param where Url to redirect the client toward. This can be a relative or absolute string URL or it can be
+                a hash of URL components. For example, the following are valid inputs: "../index.ejs", 
+                "http://www.example.com/home.html", {action: "list"}.
             @param status Optional HTTP redirection status
          */
         function redirect(where: Object, status: Number = Http.MovedTemporarily): Void {

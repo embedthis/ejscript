@@ -45,41 +45,6 @@ typedef struct EjsHttpServer {
 
 
 /** 
-    Session Class
-    @description
-        Session objects represent a shared session state object into which Http Requests and store and retrieve data
-        that persists beyond a single request.
-    @stability Prototype
-    @defgroup EjsSession EjsSession
-    @see EjsSession ejsCreateSession ejsDestroySession
- */
-typedef struct EjsSession
-{
-    EjsObj      obj;
-    MprTime     expire;             /* When the session should expire */
-    cchar       *id;                /* Session ID */
-    int         timeout;            /* Session inactivity lifespan */
-    int         index;              /* Index in sesssions[] */
-} EjsSession;
-
-/** 
-    Create a session object
-    @param ejs Ejs interpreter handle returned from $ejsCreate
-    @param timeout Timeout in milliseconds
-    @param secure If the session is to be given a cookie that is designated as only for secure sessions (SSL)
-    @returns A new session object.
-*/
-extern EjsSession *ejsCreateSession(Ejs *ejs, int timeout, bool secure);
-
-/** 
-    Destroy as session. This destroys the session object so that subsequent requests will need to establish a new session.
-    @param ejs Ejs interpreter handle returned from $ejsCreate
-    @param session Session object created via ejsCreateSession()
-*/
-extern int ejsDestroySession(Ejs *ejs, EjsSession *session);
-
-
-/** 
     Request Class
     @description
         Request objects represent a single Http request.
@@ -93,7 +58,7 @@ typedef struct EjsRequest {
     HttpConn        *conn;          /**< Underlying Http connection object */
     EjsHttpServer   *server;        /**< Owning server */
     EjsObj          *emitter;       /**< Event emitter */
-    EjsSession      *session;       /**< Current session */
+    struct EjsSession *session;     /**< Current session */
     EjsObj          *files;         /**< Cached files object */
     EjsObj          *headers;       /**< Cached headers object */
     EjsObj          *params;        /**< Form variables */
@@ -103,6 +68,7 @@ typedef struct EjsRequest {
     cchar           *home;          /**< Relative URI to the home of the application from this request */
     cchar           *absHome;       /**< Absolute URI to the home of the application from this request */
     int             running;        /**< Request has started */
+    int             probedSession;  /**< Determined if a session exists */
 } EjsRequest;
 
 
@@ -124,6 +90,43 @@ extern EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *c
     @return A new request object.
 */
 extern EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep);
+
+/** 
+    Session Class
+    @description
+        Session objects represent a shared session state object into which Http Requests and store and retrieve data
+        that persists beyond a single request.
+    @stability Prototype
+    @defgroup EjsSession EjsSession
+    @see EjsSession ejsCreateSession ejsDestroySession
+ */
+typedef struct EjsSession
+{
+    EjsObj      obj;
+    MprTime     expire;             /* When the session should expire */
+    cchar       *id;                /* Session ID */
+    int         timeout;            /* Session inactivity lifespan */
+    int         index;              /* Index in sesssions[] */
+} EjsSession;
+
+/** 
+    Create a session object
+    @param ejs Ejs interpreter handle returned from $ejsCreate
+    @param server Server object owning the session.
+    @param timeout Timeout in milliseconds
+    @param secure If the session is to be given a cookie that is designated as only for secure sessions (SSL)
+    @returns A new session object.
+*/
+extern EjsSession *ejsCreateSession(Ejs *ejs, struct EjsRequest *req, int timeout, bool secure);
+extern EjsSession *ejsGetSession(Ejs *ejs, struct EjsRequest *req);
+
+/** 
+    Destroy as session. This destroys the session object so that subsequent requests will need to establish a new session.
+    @param ejs Ejs interpreter handle returned from $ejsCreate
+    @param server Server object owning the session.
+    @param session Session object created via ejsCreateSession()
+*/
+extern int ejsDestroySession(Ejs *ejs, EjsHttpServer *server, EjsSession *session);
 
 /******************************* Internal APIs ********************************/
 

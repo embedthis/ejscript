@@ -369,9 +369,11 @@ static void mark(Ejs *ejs, int generation)
     if (ejs->search) {
         ejsMark(ejs, ejs->search);
     }
+#if UNUSED
     if (ejs->emitter) {
         ejsMark(ejs, ejs->emitter);
     }
+#endif
     if (ejs->sessions) {
         ejsMark(ejs, ejs->sessions);
     }

@@ -105,12 +105,21 @@ static EjsObj *createEnv(Ejs *ejs, EjsRequest *req)
 }
 
 
-static EjsObj *createSession(Ejs *ejs, EjsRequest *req)
+/*
+    This will get the current session or create a new session if required
+ */
+static EjsObj *getSession(Ejs *ejs, EjsRequest *req, int create)
 {
     if (req->session) {
         return (EjsObj*) req->session;
     }
-    req->session = ejsCreateSession(ejs, 0, 0);
+    if ((req->session = ejsGetSession(ejs, req)) == NULL && create) {
+        req->session = ejsCreateSession(ejs, req, 0, 0);
+    }
+    if (req->session) {
+        //  TODO - SECURE (last arg) ?
+        httpSetCookie(req->conn, EJS_SESSION, req->session->id, "/", NULL, 0, 0);
+    }
     return (EjsObj*) req->session;
 }
 
@@ -298,9 +307,13 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return (EjsObj*) req->server;
 
     case ES_ejs_web_Request_session:
-        return createSession(ejs, req);
+        return getSession(ejs, req, 1);
 
     case ES_ejs_web_Request_sessionID:
+        if (!req->probedSession) {
+            getSession(ejs, req, 0);
+            req->probedSession = 1;
+        }
         if (req->session) {
             return createString(ejs, req->session->id);
         } else return ejs->nullValue;
@@ -508,7 +521,7 @@ static EjsObj *req_getResponseHeaders(Ejs *ejs, EjsRequest *req, int argc, EjsOb
  */
 static EjsObj *req_destroySession(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    ejsDestroySession(ejs, req->session);
+    ejsDestroySession(ejs, req->server, req->session);
     return 0;
 }
 
@@ -694,7 +707,15 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     req->ejs = ejs;
     req->server = server;
     rec = conn->receiver;
+#if UNUSED
     req->dir = mprGetAbsPath(req, dir);
+#else
+    if (mprIsRelPath(req, dir)) {
+        req->dir = mprStrdup(req, dir);
+    } else {
+        req->dir = mprGetRelPath(req, dir);
+    }
+#endif
     req->home = makeRelativeHome(ejs, req);
     scheme = conn->secure ? "https" : "http";
     ip = conn->sock ? conn->sock->acceptIp : server->ip;

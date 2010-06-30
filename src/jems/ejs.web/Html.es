@@ -427,8 +427,12 @@ module ejs.web {
             for each (t in initialData) {
                 for (name in t) {
                     let uri = t[name]
-                    write('      <li onclick="window.location=\'' + uri + '\'"><a href="' + uri + '" rel="nofollow">' + 
-                        name + '</a></li>\r\n')
+                    if (options["data-remote"]) {
+                        write('      <li data-remote="' + uri + '">' + name + '</a></li>\r\n')
+                    } else {
+                        write('      <li onclick="window.location=\'' + uri + '\'"><a href="' + uri + '" rel="nofollow">' + 
+                            name + '</a></li>\r\n')
+                    }
                 }
             }
             write('    </ul>')
@@ -504,6 +508,7 @@ module ejs.web {
 
         private function getDataAttributes(options): String {
             let attributes = ""
+            //  MOB -- would it be better to have data-remote == uri?
             if (options["data-remote"]) {
                 attributes += ' data-remote="' + options["data-remote"] + '"'
             }

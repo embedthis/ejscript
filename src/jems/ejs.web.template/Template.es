@@ -29,7 +29,8 @@ module ejs.web.template  {
     public class Template {
         use default namespace public
 
-        /** Load a templated web page.
+        /** 
+            Load a templated web page.
             @param request Web Request object
             @returns An exports object with a function "app" property representing the web page
          */

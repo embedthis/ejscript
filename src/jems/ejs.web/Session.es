@@ -4,31 +4,10 @@
 
 module ejs.web {
     /** 
-        Stores session state information. The session array will be created automatically if SessionAutoCreate 
-        is defined or if a session is started via the useSession() or createSession() functions. Sessions are 
-        shared among requests that come from a single client. This may mean that multiple requests access the 
-        same session concurrently. Ejscript ensures that such accesses are serialized. The elements are user defined.
-        @spec ejs
-        @stability prototype
-     */
-    var session: Object = {}
-
-    /** 
-        Session state storage class. The Session class provides management over sessions supporting listeners that
-        trigger when sessions are created or destroyed.
+        Session state storage class. 
         @spec ejs
      */
-//  MOB bad name - merge into HttpServer?
-    class Session { 
-        /** 
-            Add a listener to session state store.
-            @param name Name of the event to listen for. The name may be an array of events.
-            @param listener Callback listening function. The function is called with the following signature:
-                function listener(event: String, ...args): Void
-            @event createSession Issued when a new session is created
-            @event destroySession Issued when a session is destroyed
-         */
-        native static function addListener(name, listener: Function): Void
+    dynamic class Session { 
 
         /** 
             Get the count of active sessions
@@ -36,20 +15,11 @@ module ejs.web {
          */
         native static function get count(): Number
 
-        /** 
-            Remove a listener
-            @param name Event name previously used with addListener. The name may be an array of events.
-            @param listener Listener function previously used with addListener.
+        /*
+            Session inactivity timeout in milliseconds. Setting the timeout resets the inactivity counter.
          */
-        native static function removeListener(name, listener: Function): Void
-
-//  MOB -- how to identify the session
-        /** 
-            Set a session timeout
-            @param timeout Timeout for the session in seconds. 
-            A value of -1 means no timeout.
-         */
-        native function setSessionTimeout(timeout: Number): Object 
+        native function get timeout(): Number
+        native function set timeout(value: Number): Void
     }
 }
 

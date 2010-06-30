@@ -112,7 +112,8 @@
 #define ES_Record_save                                                 10
 #define ES_Record_saveUpdate                                           11
 #define ES_Record_validateRecord                                       12
-#define ES_Record_NUM_INSTANCE_PROP                                    13
+#define ES_Record_constructor                                          13
+#define ES_Record_NUM_INSTANCE_PROP                                    14
 #define ES_Record_NUM_INHERITED_PROP                                   0
 
 /*
@@ -204,6 +205,6 @@
 #define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      2
 #define ES_ejs_db_mapper_Column_NUM_INHERITED_PROP                     0
 
-#define _ES_CHECKSUM_ejs_db_mapper   187534
+#define _ES_CHECKSUM_ejs_db_mapper   189403
 
 #endif

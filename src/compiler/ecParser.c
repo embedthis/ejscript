@@ -9597,7 +9597,6 @@ EcNode *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput)
         }
     }
 
-
     /*
         Try to resync by eating input up to the next statement / directive
      */
@@ -9612,7 +9611,6 @@ EcNode *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput)
         }
         getToken(cp);
     }
-
     return np;
 }
 

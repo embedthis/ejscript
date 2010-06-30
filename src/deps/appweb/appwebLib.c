@@ -7298,7 +7298,7 @@ void maWriteAccessLogEntry(MaHost *host, cchar *buf, int len)
 /*
     Called to rotate the access log
  */
-void maRotateAccessLog(MaHost *host)
+static void rotateAccessLog(MaHost *host)
 {
     MprPath         info;
     struct tm       tm;
@@ -7456,6 +7456,8 @@ void maLogRequest(HttpConn *conn)
     mprPutCharToBuf(buf, '\n');
     mprAddNullToBuf(buf);
     mprWrite(logHost->accessLog, mprGetBufStart(buf), mprGetBufLength(buf));
+
+    rotateAccessLog(host);
 }
 
 

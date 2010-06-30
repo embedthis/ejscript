@@ -149,9 +149,9 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
     }
     arg = (EjsVar*) event;
     ejsRunFunction(tp->ejs, tp->callback, NULL, 1, &arg);
-    if (tp->ejs->exception) {
+    if (ejs->exception) {
         //  TODO must have way that users can catch these
-        mprError(tp, 0, "Exception in timer: %s", ejsGetErrorMsg(tp->ejs, 1));
+        mprError(tp, "Exception in timer: %s", ejsGetErrorMsg(ejs, 1));
     }
     return 0;
 }

@@ -47,7 +47,9 @@ module ejs.web {
                 function listener(event: String, ...args): Void
             @event readable Issued when there is a new request available
             @event close Issued when server is being closed.
-            @event closed Issued when server has been closed.
+            @event createSession Issued when a new session store object is created for a client. The request object is
+                passed.
+            @event destroySession Issued when a session is destroyed. The request object is passed.
          */
         native function addListener(name, listener: Function): Void
 
@@ -127,6 +129,12 @@ module ejs.web {
             @return A string containing the name and version of the web server software
          */
         native function get software(): String
+
+        /** 
+            Get the count of active sessions
+            @return The number of active sessionss
+         */
+        native static function get sessionCount(): Number
     }
 }
 

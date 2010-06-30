@@ -461,7 +461,9 @@ typedef struct Ejs {
 
     Http                *http;              /**< Http service object (copy of EjsService.http) */
     HttpLocation        *location;          /**< Current HttpLocation object for web start scripts */
+#if UNUSED
     struct EjsObj       *emitter;           /**< Event emitter */
+#endif
 
     struct EjsObj       *sessions;          /**< Session cache */
     struct EjsType      *sessionType;       /**< Session type object */

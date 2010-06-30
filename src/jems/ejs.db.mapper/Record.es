@@ -1059,6 +1059,10 @@ module ejs.db.mapper {
         static function get tableName(): String {
             return getTableName()
         }
+        /** @hide */
+        function constructor(fields: Object = null): Void {
+            initialize(fields)
+        }
     }
 
 

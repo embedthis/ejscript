@@ -39,7 +39,7 @@ module ejs.web.template  {
 
         private const Header = "require ejs.web\n\nexports.app = function (request: Request) {\n" + 
             "    View(request).render(function(request: Request) {\n"
-        private const Footer = "\n})\n}\n"
+        private const Footer = "\n    })\n}\n"
 
         private const MvcHeader = "require ejs.web\n"
 
@@ -140,10 +140,12 @@ module ejs.web.template  {
                         if (path == "" || path == '""') {
                             layoutPage = undefined
                         } else {
-                            path = args[1].trim("'").trim('"').trim('.ejs') + ".ejs"
-                            layoutPage = Path(layouts).join(path)
+                            layoutPage = Path(args[1].trim("'").trim('"').trim('.ejs') + ".ejs")
                             if (!layoutPage.exists) {
-                                throw "Can't find layout page " + layoutPage
+                                layoutPage = Path(layouts).join(layoutPage)
+                                if (!layoutPage.exists) {
+                                    throw "Can't find layout page " + layoutPage
+                                }
                             }
                         }
                         break

@@ -659,7 +659,8 @@ module ejs.web {
         function flash(kinds: Object? = null, options: Object = {}): Void {
             options = setOptions("flash", options)
 //  MOB - move flash to Request?
-            let cflash = request.flash
+//            let cflash = request.flash
+            let cflash = controller ? controller.flash : null
             if (cflash == null || cflash.length == 0) {
                 return
             }
@@ -727,10 +728,13 @@ module ejs.web {
             Update the options based on the model and field being considered
          */
         private function setOptions(field: String, options: Object): Object {
-            if (options is String)
+            if (options is String) {
                 options = {action: options}
-            if (currentRecord && currentRecord.id) {
-                options.domid ||= field + '_' + currentRecord.id
+            }
+            if (currentRecord) {
+                if (currentRecord.id) {
+                    options.domid ||= field + '_' + currentRecord.id
+                }
                 if (currentRecord.hasError(field)) {
                     options.style += " -ejs-fieldError"
                 }
@@ -930,8 +934,13 @@ module ejs.web {
         function get appUrl()
             request.home.toString().trimEnd("/")
 
-        function redirect(url: Object)
-            controller.redirect(url)
+        function redirect(url: Object) {
+            if (controller) {
+                controller.redirect(url)
+            } else {
+                request.redirect(url)
+            }
+        }
     }
 }
 
