@@ -2,27 +2,21 @@
     Timer
  */
 
-var gotTimer = undefined
+var fired
 
-//  Timer callback. Stop timer after one event
+var timer = Timer(100, function (a, b, c) {
+    assert(a == 1)
+    assert(b == 2)
+    assert(c == 3)
+    fired = true
+}, 1, 2, 3)
 
-function callback(e: TimerEvent): Void {
-	gotTimer = e
-	e.data.stop()
-}
-
-//	Set timer for 1/10 sec
-
-var t: Timer  = new Timer(100, callback)
-
-//	Wait for timer
+timer.start()
 
 for (let i in 100) {
-	if (gotTimer) {
+	if (fired) {
 		break
 	}
 	App.sleep(100)
 }
-
-assert(gotTimer)
-assert(gotTimer is TimerEvent)
+assert(fired)

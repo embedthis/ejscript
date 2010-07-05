@@ -50,6 +50,7 @@ static const char *getExt(const char *path);
 static EcNode   *parseAnnotatableDirective(EcCompiler *cp, EcNode *attributes);
 static EcNode   *parseArgumentList(EcCompiler *cp);
 static EcNode   *parseArguments(EcCompiler *cp);
+static EcNode   *parseArrayPattern(EcCompiler *cp);
 static EcNode   *parseArrayType(EcCompiler *cp);
 static EcNode   *parseAssignmentExpression(EcCompiler *cp);
 static EcNode   *parseAttribute(EcCompiler *cp);
@@ -74,12 +75,15 @@ static EcNode   *parseDirectives(EcCompiler *cp);
 static EcNode   *parseDoStatement(EcCompiler *cp);
 static EcNode   *parseDirectivesPrefix(EcCompiler *cp);
 static EcNode   *parseElementList(EcCompiler *cp, EcNode *newNode);
+static EcNode   *parseElementListPattern(EcCompiler *cp);
 static EcNode   *parseElements(EcCompiler *cp, EcNode *newNode);
 static EcNode   *parseElementTypeList(EcCompiler *cp);
 static EcNode   *parseFieldList(EcCompiler *cp, EcNode *np);
 static EcNode   *parseEmptyStatement(EcCompiler *cp);
 static EcNode   *parseError(EcCompiler *cp, char *fmt, ...);
 static EcNode   *parseExpressionStatement(EcCompiler *cp);
+static EcNode   *parseFieldListPattern(EcCompiler *cp);
+static EcNode   *parseFieldPattern(EcCompiler *cp);
 static EcNode   *parseFieldName(EcCompiler *cp);
 static int      parseFile(EcCompiler *cp, char *path, EcNode **nodes);
 static EcNode   *parseForStatement(EcCompiler *cp);
@@ -113,6 +117,7 @@ static EcNode   *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributes);
 static EcNode   *parseNamespaceInitialisation(EcCompiler *cp, EcNode *nameNode);
 static EcNode   *parseNonemptyParameters(EcCompiler *cp, EcNode *list);
 static EcNode   *parseNullableTypeExpression(EcCompiler *cp);
+static EcNode   *parseObjectPattern(EcCompiler *cp);
 static EcNode   *parseOptionalExpression(EcCompiler *cp);
 static EcNode   *parseOverloadedOperator(EcCompiler *cp);
 static EcNode   *parseParenListExpression(EcCompiler *cp);
@@ -134,6 +139,7 @@ static EcNode   *parseRegularExpression(EcCompiler *cp);
 static EcNode   *parseRequireItem(EcCompiler *cp);
 static EcNode   *parseRequireItems(EcCompiler *cp, EcNode *np);
 static EcNode   *parseReservedNamespace(EcCompiler *cp);
+static EcNode   *parseRestArgument(EcCompiler *cp);
 static EcNode   *parseRestParameter(EcCompiler *cp);
 static EcNode   *parseResultType(EcCompiler *cp);
 static EcNode   *parseReturnStatement(EcCompiler *cp);
@@ -427,6 +433,8 @@ char *nodes[] = {
     "n_array_literal",
     "n_catch_arg",
     "n_with",
+    "n_spread",
+    "n_dassign",
     0,
 };
 
@@ -1605,11 +1613,7 @@ static EcNode *parseFunctionExpression(EcCompiler *cp)
     if (np->qname.name == 0) {
         np->qname.name = mprAsprintf(np, -1, "--fun_%d-%d--", np->seqno, (int) mprGetTime(np));
     }
-#if CHANGE && MOB
-    np->qname.space = mprStrdup(np, state->inFunction ? EJS_PRIVATE_NAMESPACE: cp->fileState->namespace);
-#else
     np->qname.space = mprStrdup(np, state->inFunction ? EJS_EMPTY_NAMESPACE: cp->fileState->namespace);
-#endif
 
     np = parseFunctionSignature(cp, np);
     if (np == 0) {
@@ -1664,16 +1668,13 @@ static EcNode *parseFunctionExpressionBody(EcCompiler *cp)
         if (np) {
             np = np->left;
         }
-
     } else {
         np = parseAssignmentExpression(cp);
     }
     if (np) {
         mprAssert(np->kind == N_DIRECTIVES);
     }
-
     np = appendNode(np, createNode(cp, N_END_FUNCTION));
-
     return LEAVE(cp, np);
 }
 
@@ -1699,21 +1700,18 @@ static EcNode *parseObjectLiteral(EcCompiler *cp)
     if (getToken(cp) != T_LBRACE) {
         return LEAVE(cp, unexpected(cp));
     }
-    np = parseFieldList(cp, np);
-    if (np == 0) {
+    if ((np = parseFieldList(cp, np)) == 0) {
         return LEAVE(cp, 0);
     }
     if (peekToken(cp) == T_COLON) {
         getToken(cp);
         typeNode = parseNullableTypeExpression(cp);
     } else {
-        /*
-            Defaults to Object type
-         */
         typeNode = createNode(cp, N_QNAME);
         setId(typeNode, (char*) cp->ejs->objectType->qname.name);
     }
     np->objectLiteral.typeNode = linkNode(np, typeNode);
+    np->objectLiteral.isArray = 0;
 
     if (getToken(cp) != T_RBRACE) {
         return LEAVE(cp, unexpected(cp));
@@ -1947,7 +1945,6 @@ static EcNode *parseArrayLiteral(EcCompiler *cp)
                 }
             }
         }
-
         if (np) {
             elementsNode = np;
 
@@ -2040,11 +2037,9 @@ static EcNode *parseElementList(EcCompiler *cp, EcNode *newNode)
             getToken(cp);
             index++;
             continue;
-
         } else if (cp->peekToken->tokenId == T_RBRACKET) {
             break;
         }
-
         valueNode = parseLiteralElement(cp);
         if (valueNode) {
             /*
@@ -2067,11 +2062,9 @@ static EcNode *parseElementList(EcCompiler *cp, EcNode *newNode)
             mprAssert(left->left->kind == N_REF);
             left->left->ref.node = newNode;
             np = appendNode(np, valueNode);
-
         } else {
             np = 0;
         }
-
     } while (np);
 
     return LEAVE(cp, np);
@@ -2861,11 +2854,47 @@ static EcNode *parseArgumentList(EcCompiler *cp)
     ENTER(cp);
 
     np = createNode(cp, N_ARGS);
-    np = appendNode(np, parseAssignmentExpression(cp));
 
+    if (np && peekToken(cp) == T_ELIPSIS) {
+        np = appendNode(np, parseRestArgument(cp));
+    } else {
+        np = appendNode(np, parseAssignmentExpression(cp));
+    }
     while (np && peekToken(cp) == T_COMMA) {
         getToken(cp);
-        np = appendNode(np, parseAssignmentExpression(cp));
+        if (np && peekToken(cp) == T_ELIPSIS) {
+            np = appendNode(np, parseRestArgument(cp));
+        } else {
+            np = appendNode(np, parseAssignmentExpression(cp));
+        }
+    }
+    return LEAVE(cp, np);
+}
+
+
+/*
+    RestArgument (NEW)
+        ...
+        ... Parameter
+
+    Input
+
+    AST
+ */
+static EcNode *parseRestArgument(EcCompiler *cp)
+{
+    EcNode      *np, *spreadArg;
+
+    ENTER(cp);
+
+    if (getToken(cp) == T_ELIPSIS) {
+        spreadArg = createNode(cp, N_SPREAD);
+        np = appendNode(spreadArg, parseAssignmentExpression(cp));
+        if (peekToken(cp) == T_COMMA) {
+            np = unexpected(cp);
+        }
+    } else {
+        np = unexpected(cp);
     }
     return LEAVE(cp, np);
 }
@@ -3133,7 +3162,6 @@ static EcNode *parseMemberExpression(EcCompiler *cp)
         np = parsePrimaryExpression(cp);
         break;
     }
-
     while (np && (peekToken(cp) == T_DOT || cp->peekToken->tokenId == T_DOT_DOT ||
             cp->peekToken->tokenId == T_LBRACKET)) {
 #if OLD && UNUSED
@@ -3349,7 +3377,6 @@ static EcNode *parseLeftHandSideExpression(EcCompiler *cp)
     } else {
         np = parseMemberExpression(cp);
     }
-
     if (np) {
         /*
             Refactored CallExpression processing
@@ -3359,7 +3386,6 @@ static EcNode *parseLeftHandSideExpression(EcCompiler *cp)
         case T_DOT:
         case T_DOT_DOT:
         case T_LBRACKET:
-            /* CHANGE: was np->lineNumber */
             if (cp->token->lineNumber == cp->peekToken->lineNumber) {
                 /*
                     May have multiline function expression: x = (function ..... multiple lines)() 
@@ -4236,15 +4262,30 @@ static EcNode *rewriteCompoundAssignment(EcCompiler *cp, int subId, EcNode *lhs,
 static EcNode *parseAssignmentExpression(EcCompiler *cp)
 {
     EcNode      *np, *parent;
+    EcState     *state;
     int         subId;
 
     ENTER(cp);
+    state = cp->state;
 
-    /*
-        A LeftHandSideExpression is allowed in both ConditionalExpression and in a SimplePattern. So allow the longest
-        matching production to have first  crack at the input.
-     */
+#if UNUSED
+    if (!state->onRight) {
+        switch (peekToken(cp)) {
+        case T_LBRACE:
+        case T_LBRACKET:
+            np = parsePattern(cp);
+            break;
+        default:
+            np = parseConditionalExpression(cp);
+        }
+    } else {
+        state->onRight = 0;
+        np = parseConditionalExpression(cp);
+    }
+#else
     np = parseConditionalExpression(cp);
+#endif
+    state->onRight = 1;
     if (np) {
         if (peekToken(cp) == T_ASSIGN) {
             getToken(cp);
@@ -4346,7 +4387,6 @@ static EcNode *parsePattern(EcCompiler *cp)
     ENTER(cp);
 
     switch (peekToken(cp)) {
-#if TODO
     case T_LBRACKET:
         np = parseArrayPattern(cp);
         break;
@@ -4354,13 +4394,11 @@ static EcNode *parsePattern(EcCompiler *cp)
     case T_LBRACE:
         np = parseObjectPattern(cp);
         break;
-#endif
 
     default:
         np = parseSimplePattern(cp);
         break;
     }
-
     return LEAVE(cp, np);
 }
 
@@ -4383,20 +4421,20 @@ static EcNode *parseSimplePattern(EcCompiler *cp)
     EcNode      *np;
 
     ENTER(cp);
+    
+    //  MOB -- should peek and call parseIdentifier if T_ID
 
     np = parseLeftHandSideExpression(cp);
     if (np == 0 && peekToken(cp) == T_ID) {
         np = parseIdentifier(cp);
     }
-
     return LEAVE(cp, np);
 }
 
 
-#if UNUSED
 /*
     ObjectPattern -g- (234)
-        { DestructuringFieldList }
+        { FieldListPattern }
 
     Input
 
@@ -4407,47 +4445,69 @@ static EcNode *parseObjectPattern(EcCompiler *cp)
     EcNode      *np;
 
     ENTER(cp);
-    np = 0;
-    mprAssert(0);
+    if (getToken(cp) != T_LBRACE) {
+        return LEAVE(cp, expected(cp, "{"));
+    }
+    np = parseFieldListPattern(cp);
+    if (getToken(cp) != T_LBRACE) {
+        return LEAVE(cp, expected(cp, "}"));
+    }
     return LEAVE(cp, np);
 }
 
 
 /*
-    DestructuringFieldList -g- (248)
+    FieldListPattern -g- (248)
         EMPTY
-        DestructuringField
-        DestructuringField , DestructuringField
+        FieldPattern
+        FieldPattern , FieldPattern
 
     Input
 
     AST
  */
-static EcNode *parseDestructuringFieldList(EcCompiler *cp)
+static EcNode *parseFieldListPattern(EcCompiler *cp)
 {
     EcNode      *np;
 
     ENTER(cp);
-    np = 0;
-    mprAssert(0);
+
+    np = createNode(cp, N_DASSIGN);
+    while (1) {
+        np = appendNode(np, parseFieldPattern(cp));
+        if (peekToken(cp) == T_COMMA) {
+            getToken(cp);
+        } else {
+            break;
+        }
+    }
     return LEAVE(cp, np);
 }
 
 
 /*
-    DestructuringField -g- (251)
+    FieldPattern -g- (251)
+        FieldName
         FieldName : Pattern -noList,allowin,g-
 
     Input
 
     AST
  */
-static EcNode *parseDestructuringField(EcCompiler *cp)
+static EcNode *parseFieldPattern(EcCompiler *cp)
 {
-    EcNode      *np;
+    EcNode      *np, *typeNode;
 
     ENTER(cp);
-    np = 0;
+    np = createNode(cp, N_EXPRESSIONS);
+    np = appendNode(np, parseFieldName(cp));
+    if (peekToken(cp) == ':') {
+        getToken(cp);
+        typeNode = parsePattern(cp);
+        if (typeNode) {
+            np->typeNode = linkNode(np, typeNode);
+        }
+    }
     mprAssert(0);
     return LEAVE(cp, np);
 }
@@ -4455,7 +4515,7 @@ static EcNode *parseDestructuringField(EcCompiler *cp)
 
 /*
     ArrayPattern (240)
-        [ DestructuringElementList ]
+        [ ElementListPattern ]
 
     Input
 
@@ -4466,33 +4526,51 @@ static EcNode *parseArrayPattern(EcCompiler *cp)
     EcNode      *np;
 
     ENTER(cp);
-    np = 0;
-    mprAssert(0);
+    if (getToken(cp) != T_LBRACKET) {
+        return LEAVE(cp, expected(cp, "["));
+    }
+    np = parseElementListPattern(cp);
+    if (getToken(cp) != T_RBRACKET) {
+        return LEAVE(cp, expected(cp, "]"));
+    }
     return LEAVE(cp, np);
 }
 
 
 /*
-    DestructuringElementList -g- (253)
+    ElementListPattern -g- (253)
         EMPTY
-        DestructuringElement
-        , DestructuringElementList
-        DestructuringElement , DestructuringElementList
+        ElementPattern
+        , ElementListPattern
+        ElementPattern , ElementListPattern
 
     Input
 
     AST
  */
-static EcNode *parseDestructuringElement(EcCompiler *cp)
+static EcNode *parseElementListPattern(EcCompiler *cp)
 {
-    EcNode      *np;
+    EcNode      *np, *elt;
+    int         index;
 
     ENTER(cp);
-    np = 0;
-    mprAssert(0);
+    
+    np = createNode(cp, N_DASSIGN);
+    for (index = 0; ; index++) {
+        if (peekToken(cp) != T_COMMA) {
+            elt = parsePattern(cp);
+            mprAssert(elt->kind == N_QNAME);
+            elt->name.index = index;
+            np = appendNode(np, elt);
+        }
+        if (peekToken(cp) == T_COMMA) {
+            getToken(cp);
+        } else {
+            break;
+        }
+    }
     return LEAVE(cp, np);
 }
-#endif
 
 
 /*
@@ -8171,11 +8249,7 @@ static EcNode *parseFunctionBody(EcCompiler *cp, EcNode *fun)
     ENTER(cp);
 
     cp->state->inFunction = 1;
-#if CHANGE && UNUSED
-    cp->state->namespace = EJS_PRIVATE_NAMESPACE;
-#else
     cp->state->namespace = EJS_EMPTY_NAMESPACE;
-#endif
 
     if (peekToken(cp) == T_LBRACE) {
         np = parseBlock(cp);

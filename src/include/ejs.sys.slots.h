@@ -27,12 +27,9 @@
 #define ES_clearBoundThis_fn                                           0
 #define ES_assert_condition                                            0
 #define ES_cloneBase_klass                                             0
-#define ES_decodeURI_str                                               0
 #define ES_dump_args                                                   0
 #define ES_dumpAll_args                                                0
 #define ES_dumpDef_args                                                0
-#define ES_encodeURI_str                                               0
-#define ES_escape_str                                                  0
 #define ES_md5_str                                                     0
 #define ES_blend_dest                                                  0
 #define ES_blend_src                                                   1
@@ -62,10 +59,16 @@
 #define ES_typeOf_o                                                    0
 #define ES_setInterval_callback                                        0
 #define ES_setInterval_delay                                           1
+#define ES_setInterval_args                                            2
+#define ES_clearInterval_timer                                         0
 #define ES_setTimeout_callback                                         0
 #define ES_setTimeout_delay                                            1
-#define ES_decodeUri_str                                               0
-#define ES_decodeUriComponent_str                                      0
+#define ES_setTimeout_args                                             2
+#define ES_clearTimeout_timer                                          0
+#define ES_decodeURI_str                                               0
+#define ES_decodeURIComponent_str                                      0
+#define ES_encodeURI_str                                               0
+#define ES_encodeURIComponent_str                                      0
 #define ES_ejs_worker_postMessage_data                                 0
 #define ES_ejs_worker_postMessage_ports                                1
 

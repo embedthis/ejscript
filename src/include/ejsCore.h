@@ -386,7 +386,9 @@ typedef struct Ejs {
     struct EjsType      *requestType;       /**< Request type */
     struct EjsType      *stringType;        /**< String type */
     struct EjsType      *stopIterationType; /**< StopIteration type */
+#if UNUSED
     struct EjsType      *timerEventType;    /**< TimerEvent type */
+#endif
     struct EjsType      *typeType;          /**< Type type */
     struct EjsType      *uriType;           /**< URI type */
     struct EjsType      *voidType;          /**< Void type */
@@ -432,6 +434,7 @@ typedef struct Ejs {
     int                 exitStatus;         /**< Status to exit() */
     int                 serializeDepth;     /**< Serialization depth */
     int                 joining;            /**< In Worker.join */
+    int                 spreadArgs;         /**< Count of spread args */
 
     int                 workQuota;          /* Quota of work before GC */
     int                 workDone;           /**< Count of allocations to determining if GC needed */
@@ -2367,9 +2370,10 @@ typedef struct EjsTimer {
     Ejs             *ejs;                           /**< Need interpreter reference in callback */
     MprEvent        *event;                         /**< MPR event for the timer */
     int             drift;                          /**< Timer event is allowed to drift if system conditions requrie */
-    int             oneShot;                        /**< Timer fires just once */
+    int             repeat;                         /**< Timer repeatedly fires */
     int             period;                         /**< Time in msec between invocations */          
     EjsFunction     *callback;                      /**< Callback function */
+    EjsArray        *args;                          /**< Callback args */
 } EjsTimer;
 
 

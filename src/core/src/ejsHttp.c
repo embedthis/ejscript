@@ -1145,8 +1145,12 @@ static void destroyHttp(Ejs *ejs, EjsHttp *hp)
 {
     mprAssert(hp);
 
-    mprFree(hp->conn);
-    hp->conn = 0;
+    if (hp->conn) {
+        ejsSendEvent(ejs, hp->emitter, "close", (EjsObj*) hp);
+        httpCloseConn(hp->conn);
+        mprFree(hp->conn);
+        hp->conn = 0;
+    }
     ejsFreeVar(ejs, (EjsObj*) hp, -1);
 }
 

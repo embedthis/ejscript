@@ -338,7 +338,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
 
         /*
             Push the function call result
-                PushResult
+                 PushResult
                 Stack before (top)  []
                 Stack after         [result]
          */
@@ -1640,6 +1640,24 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             FRAME->pc += FRAME->pc[offset];
             BREAK;
         }
+
+        /*
+            Spread array/object as individual args
+                Pop
+                Stack before (top)  [value]
+                Stack after         []
+         */
+        CASE (EJS_OP_SPREAD):
+            vp = *state.stack;
+            count = ejsGetPropertyCount(ejs, vp);
+            if (count > 0) {
+                vp = pop(ejs);
+                for (i = 0; i < count; i++) {
+                    push(ejsGetProperty(ejs, vp, i));
+                }
+                ejs->spreadArgs = count - 1;
+            }
+            BREAK;
 
         /*
             Unconditional branch to a new location
@@ -3419,36 +3437,25 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     EjsState        *state;
     EjsFrame        *fp;
     EjsType         *type;
-    EjsObj          **argv;
+    EjsObj          **argv, *result;
 
     mprAssert(fun);
     mprAssert(ejs->exception == 0);
     mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);    
 
     state = ejs->state;
+    result = 0;
+    argc += ejs->spreadArgs;
+    ejs->spreadArgs = 0;
 
     if (unlikely(ejsIsType(fun))) {
         type = (EjsType*) fun;
-#if OLD
-        //MOB callConstructor(ejs, (EjsType*) fun, argc, stackAdjust);
-        obj = ejsCreate(ejs, type, 0);
-        ejsClearAttention(ejs);
-        if (!ejsIsNativeFunction(type)) {
-            VM(ejs, (EjsFunction*) type, obj, argc, stackAdjust);
-            ejs->state->stack -= (argc + stackAdjust);
-            if (ejs->exiting || mprIsExiting(ejs)) {
-                ejsAttention(ejs);
-            }
-        }
-        ejs->result = obj;
-        return;
-#else
         if (thisObj == NULL) {
             ejs->state->fp->ignoreAttention = 1;
             thisObj = ejsCreate(ejs, type, 0);
             ejs->state->fp->ignoreAttention = 0;
         }
-        ejs->result = thisObj;
+        result = thisObj;
         if (!type->hasConstructor) {
             ejs->state->stack -= (argc + stackAdjust);
             if (ejs->exiting || mprIsExiting(ejs)) {
@@ -3456,7 +3463,6 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
             }
             return;
         }
-#endif
         
     } else if (!ejsIsFunction(fun)) {
         if ((EjsObj*) fun == (EjsObj*) ejs->undefinedValue) {
@@ -3472,14 +3478,6 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
             thisObj = state->fp->function.thisObj;
         } 
     } 
-#if UNUSED
-    if (fun->staticMethod && !ejsIsType(thisObj)) {
-        /*
-            Calling a static method via an instance object
-         */
-        thisObj = getStaticThis(ejs, thisObj->type, fun->slotNum);
-    }
-#endif
     /*
         Validate the args. Cast to the right type, handle rest args and return with argc adjusted.
      */
@@ -3514,6 +3512,9 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
         state->fp = fp;
         state->bp = (EjsBlock*) fp;
         ejsClearAttention(ejs);
+    }
+    if (result) {
+        ejs->result = result;
     }
 }
 

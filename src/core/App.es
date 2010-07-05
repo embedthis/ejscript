@@ -93,6 +93,11 @@ module ejs {
          */
         native static function chdir(value: Object): Void
 
+        /**
+            Default event Emitter for the application
+         */
+        static var emitter: Emitter = new Emitter
+
         /** 
             The directory containing the application executable
          */

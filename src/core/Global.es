@@ -179,13 +179,6 @@ public namespace ejs
      */
     native function cloneBase(klass: Type): Void
 
-    /**
-        Reverse www-url encoding on a string
-        @param str URL encoded string
-        @returns a decoded string
-     */
-    native function decodeURI(str: String): String
-
     //  TODO - consider renaming to debug()
     /** 
         Dump the contents of objects. Used for debugging, this routine serializes the objects and prints to the standard
@@ -214,23 +207,6 @@ public namespace ejs
             }
         }
     }
-
-
-    /**
-        Encode a string using  www-url encoding
-        @param str URL encoded string
-        @returns an encoded string
-     */
-    native function encodeURI(str: String): String
-
-    /** 
-        HTML escape a string. This quotes characters which would otherwise be interpreted as HTML directives.
-        This function is prototype and may be renamed in a future release.
-        @param str String to html escape
-        @returns a HTML escaped string
-        @spec ejs
-     */
-    native function escape(str: String): String
 
     //  TODO - move to Crypt
     /** 

@@ -62,14 +62,19 @@ UNUSED && KEEP
 
     /**
         Transform a string to be safe for output into an HTML web page. It does this by changing the
-            "&", ">", "<" and '"' characters into their ampersand HTML equivalents.
-        @param s input string
+            & > < " ' characters into their ampersand HTML equivalents.
+        @param str input string
         @returns a transformed HTML escaped string
         @spec ejs
         @stability prototype
      */
+    native function escapeHtml(str: String): String
+/*
+    UNUSED
     function escapeHtml(s: String): String
-        s.replace(/&/g,'&amp;').replace(/\>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;')
+        s.replace(/&/g,'&amp;').replace(/\>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
+*/
+
 
     /** 
         HTML encode the arguments. This escapes HTML directives to be safe for inclusion in a web page.

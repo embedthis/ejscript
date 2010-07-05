@@ -921,6 +921,47 @@ static void setUriFromHash(Ejs *ejs, EjsUri *up, EjsObj *arg)
 }
 
 
+/*  
+    Decode a Uri (ECMA Standard)
+
+    function decodeURI(str: String): String
+ */
+static EjsObj *decodeURI(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateStringAndFree(ejs, mprUriDecode(ejs, ejsGetString(ejs, argv[0])));
+}
+
+
+/*  
+    Decode a Uri component (ECMA Standard)
+    function decodeURIComponent(str: String): String
+ */
+static EjsObj *decodeURIComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateStringAndFree(ejs, mprUriDecode(ejs, ejsGetString(ejs, argv[0])));
+}
+
+
+/*  
+    Uri Encode a string (ECMA Standard)
+    function encodeURI(str: String): String
+ */
+static EjsObj *encodeURI(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateStringAndFree(ejs, mprUriEncode(ejs, ejsGetString(ejs, argv[0]), MPR_ENCODE_JS_URI));
+}
+
+
+/*  
+    Encode a Uri component (ECMA Standard)
+    static function encodeComponent(str: String): String
+ */
+static EjsObj *encodeURIComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateStringAndFree(ejs, mprUriEncode(ejs, ejsGetString(ejs, argv[0]), MPR_ENCODE_JS_URI_COMPONENT));
+}
+
+
 /*********************************** Factory **********************************/
 
 EjsUri *ejsCreateUri(Ejs *ejs, cchar *path)
@@ -993,6 +1034,11 @@ void ejsConfigureUriType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Uri_toString, (EjsProc) uri_toString);
     ejsBindMethod(ejs, prototype, ES_Uri_trimExt, (EjsProc) uri_trimExt);
     ejsBindAccess(ejs, prototype, ES_Uri_uri, (EjsProc) uri_toString, (EjsProc) uri_set_uri);
+
+    ejsBindMethod(ejs, ejs->global, ES_decodeURI, (EjsProc) decodeURI);
+    ejsBindMethod(ejs, ejs->global, ES_decodeURIComponent, (EjsProc) decodeURIComponent);
+    ejsBindMethod(ejs, ejs->global, ES_encodeURI, (EjsProc) encodeURI);
+    ejsBindMethod(ejs, ejs->global, ES_encodeURIComponent, (EjsProc) encodeURIComponent);
 }
 
 /*

@@ -205,6 +205,7 @@ typedef enum EjsOpCode {
     EJS_OP_SAVE_RESULT,
     EJS_OP_SHL,
     EJS_OP_SHR,
+    EJS_OP_SPREAD,
     EJS_OP_SUB,
     EJS_OP_SUPER,
     EJS_OP_SWAP,

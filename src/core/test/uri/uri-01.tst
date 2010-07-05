@@ -116,13 +116,6 @@ u = Uri({ host: "www.example.com", path: "/a/b/c", reference: "extra", query: "p
 assert(u.complete == "http://www.example.com/a/b/c#extra?priority=high")
 
 
-//  Encode
-s = Uri.encode("http://www.example.com/a/b/c#extra?priority=high&urgency=extreme")
-assert(s == "http%3a%2f%2fwww.example.com%2fa%2fb%2fc%23extra%3fpriority%3dhigh%26urgency%3dextreme")
-s = Uri.decode("http%3a%2f%2fwww.example.com%2fa%2fb%2fc%23extra%3fpriority%3dhigh%26urgency%3dextreme")
-assert(s == "http://www.example.com/a/b/c#extra?priority=high&urgency=extreme")
-
-
 //  Setters
 u = Uri("http://www.example.com/path#ref?pri=high")
 u.path = "short/path"

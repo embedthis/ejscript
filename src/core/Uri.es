@@ -5,8 +5,6 @@
 
 module ejs {
 
-    //  MOB -- should this be URI or Uri
-
     /**
         Uri class to manage Uris
         @stability evolving
@@ -18,8 +16,8 @@ module ejs {
 
         /** 
             Create and parse a Uri object. 
-            @param uri A string or object hash that describes the Uri. The $uri specify a complete absolute Uri string or
-            it may specify a partial Uri where missing elements take the normal defaults. The $uri argument may also be 
+            @param uri A string or object hash that describes the URI. The $uri specify a complete absolute URI string or
+            it may specify a partial URI where missing elements take the normal defaults. The $uri argument may also be 
             an object hash with the following properties.
             @option scheme: String
             @option host: String
@@ -31,19 +29,19 @@ module ejs {
         native function Uri(uri: Object)
 
         /** 
-            The base of portion of the Uri. The base portion is the trailing portion of the path without any 
+            The base of portion of the URI. The base portion is the trailing portion of the path without any 
                 directory elements.
          */
         native function get basename(): Uri
         
         /** 
-            A completed Uri including scheme, host. The Uri path will be normalized and completed with default values 
+            A completed URI including scheme, host. The URI path will be normalized and completed with default values 
             for missing components. 
          */
         native function get complete(): Uri
 
         /** 
-            Break a Uri into its components by converting the Uri to an absolute Uri and breaking into components.
+            Break a URI into its components by converting the URI to an absolute URI and breaking into components.
             The components are: scheme, host, port, path, reference and query.
             @return an object hash defining the following fields:
             @option scheme: String
@@ -56,217 +54,213 @@ module ejs {
         native function get components(): Object 
 
         /** 
-            Decode a Uri encoded string
+            Decode a URI encoded strin using www-url encoding
             @param str string to decode
             @returns a decoded string
          */
         native static function decode(str: String): String
 
         /** 
-            Decode a Uri encoded component 
+            Decode a URI encoded component using www-url encoding
             @param str string to decode
             @returns a decoded string
          */
         native static function decodeComponent(str: String): String
 
         /** 
-            The directory portion of a Uri path. The directory portion is the leading portion including all directory 
-            elements of the Uri path excluding the base name. On some systems, it will include a drive specifier.
+            The directory portion of a URI path. The directory portion is the leading portion including all directory 
+            elements of the URI path excluding the base name. On some systems, it will include a drive specifier.
          */
         native function get dirname(): Uri
 
+        /*
+            URI encoding notes: (RFC3986). See http://labs.apache.org/webarch/uri/rfc/rfc3986.html.
+            Reserved characters (and should be encoded):   : / ? # [ ] @    ! $ & ' ( ) * + , ; =
+            Unreserved characters (and must not be encoded): Alpha Digits - . _ ~
+
+            NOTE: ! , ( ) * do not yet have a formalized URI delimiting role.
+
+            encodeComponent preserves:  ! * ' ( )
+            encode preserves:           ! * ' ( ) # ; , / ? : @ 
+
+
+            NOTE: encodeComponent is encoding [] which is hard for IPv6
+
+
+            TODO:
+                Don't encode [] for IPv6
+                Encode ! ' ( ) *
+         */
+
         /** 
-            Encode a Uri
+            Encode a URI using www-url encoding. This replaces special characters with encoded alternative sequence.
+            The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", 
+            "*", "'", "(", ")", "#", ";", ",", "/", "?", ":", "@", "&", "=", "+", "$". Note that encocdeURI does not encode
+            "&", "+" and "=". If you require these to be encoded, use encodeComponents. 
+            NOTE: This routine encodes "!", "'", "(", ")" and "*", whereas the $encodeURI routine does not. It does not
+            encode "[" and "]" which may be used in IPv6 numeric hostnames.
             @param str string to encode
             @returns an encoded string
          */
         native static function encode(str: String): String
 
         /** 
-            Encode a Uri component
+            Encode a URI component suitable for the "application/x-www-form-urlencoded" mime type. This replaces 
+            special characters with encoded alternative sequence. The encode call replaces all characters 
+            except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*", "'", "(", ")". It also maps spaces to "+".
+            Compared with the $encode call, encodeComponent additionally encodes: "#", ";", ",", "/", "?", ":", "@", 
+            "&", "=", "+", "$".  Note that this call encodes "=" and "&" which are used to separate and delimit 
+            data form name/value pairs.
+            NOTE: This routine encodes "!", "'", "(", ")" and "*", whereas the $encodeURIComponent routine does not.
+            @note See http://labs.apache.org/webarch/uri/rfc/rfc3986.html for details.
             @param str string to encode
             @returns an encoded string
          */
         native static function encodeComponent(str: String): String
 
         /** 
-            Return true if the Uri path ends with the given suffix
-            @param suffix Uri or String suffix to compare with the path.
+            Return true if the URI path ends with the given suffix
+            @param suffix URI or String suffix to compare with the path.
             @return true if the path does begin with the suffix
          */
         function endsWith(suffix: Object): Boolean
             path.toString().endsWith(suffix.toString())
 
         /** 
-            The Uri extension portion of the path. Set to a String containing the Uri extension without the "." or set
+            The URI extension portion of the path. Set to a String containing the URI extension without the "." or set
             to null if there is no extension.
          */
         native function get extension(): String
-
-        /** 
-            Set the Uri extension portion
-            @param value String containing the new extension. 
-         */
         native function set extension(value: String): Void
 
         function get filename(): Path
             Path(path.slice(1))
 
         /** 
-            Does the Uri has an explicit extension
+            Does the URI has an explicit extension
          */
         native function get hasExtension(): Boolean 
 
         /** 
-            Does the Uri have an explicit host component. For example: "www.example.com"
+            Does the URI have an explicit host component. For example: "www.example.com"
          */
         native function get hasHost(): Boolean 
 
         /** 
-            Does the Uri have an explicit port number.
+            Does the URI have an explicit port number.
          */
         native function get hasPort(): Boolean 
 
         /** 
-            Does the Uri have an explicit query component
+            Does the URI have an explicit query component
          */
         native function get hasQuery(): Boolean 
 
         /** 
-            Does the Uri have an explicit reference component
+            Does the URI have an explicit reference component
          */
         native function get hasReference(): Boolean 
 
         /** 
-            Does the Uri have an explicit scheme (protocol) specifier. For example: "http://"
+            Does the URI have an explicit scheme (protocol) specifier. For example: "http://"
          */
         native function get hasScheme(): Boolean 
 
         /** 
-            The host portion of the Uri. Set to null if there is no host component.
+            The host portion of the URI. Set to null if there is no host component.
          */
         native function get host(): String
-
-        /** 
-            @duplicate Uri.host
-            @param value A string containing the new host portion
-         */
         native function set host(value: String): Void
 
         /** 
-            Is the Uri is absolute. Set to true if the Uri is an absolute path with the path component beginning with "/"
+            Is the URI is absolute. Set to true if the URI is an absolute path with the path component beginning with "/"
          */
         native function get isAbsolute(): Boolean
 
         /** 
-            Is the Uri is a directory Uri. Set to true if the Uri ends with "/". NOTE: this only tests the Uri and 
-            not any physical resource associated with the Uri.
+            Is the URI is a directory URI. Set to true if the URI ends with "/". NOTE: this only tests the URI and 
+            not any physical resource associated with the URI.
          */
         native function get isDir(): Boolean
 
         /** 
-            Is the Uri is a regular resource and not a directory. Set to true if the Uri does not end with "/". 
-            NOTE: this only tests the Uri and not any physical resource associated with the Uri.
+            Is the URI is a regular resource and not a directory. Set to true if the URI does not end with "/". 
+            NOTE: this only tests the URI and not any physical resource associated with the URI.
          */
         function get isRegular(): Boolean
             isDir == false
 
         /** 
-            Is if the Uri is relative. Set to true if the Uri's path component does not begin with "/"
+            Is if the URI is relative. Set to true if the URI's path component does not begin with "/"
          */
         function get isRelative(): Boolean
             isAbsolute == false
 
         /** 
-            Join Uris. Joins Uris together. If a Uri is absolute, replace the join with it and continue. If a Uri is
-            relative, replace the basename portion of the existing Uri with the next joining uri and continue. For 
+            Join URIs. If a URI is absolute, replace the join with it and continue. If a URI is
+            relative, replace the basename portion of the existing URI with the next joining uri and continue. For 
             example:  Uri("/admin/login").join("logout") will replace "login" with "logout" whereas 
             Uri("/admin/").join("login") will append login.
-            @return A new joined Uri.
+            @return A new joined URI.
          */
         native function join(...other): Uri
 
         /** 
-            Join an extension to a Uri. If the basename of the Uri already has an extension, this call does nothing.
-            @return A Uri with an extension.
+            Join an extension to a URI. If the basename of the URI already has an extension, this call does nothing.
+            @return A URI with an extension.
          */
         native function joinExt(ext: String): Uri
 
         /** 
-            The mime type of the Uri. This is set to a mime type string by examining the Uri extension. Set to null if
-            the Uri has no extension.
+            The mime type of the URI. This is set to a mime type string by examining the URI extension. Set to null if
+            the URI has no extension.
          */
         native function get mimeType(): String
 
         /** 
-            Normalized Uri by removing all redundant and invalid Uri components. Set to a Uri with "segment/.." 
-            and "./" components removed. The value will not be converted to an absolute Uri nor will it map character case.
+            Normalized URI by removing all redundant and invalid URI components. Set to a URI with "segment/.." 
+            and "./" components removed. The value will not be converted to an absolute URI nor will it map character case.
          */
         native function get normalize(): Uri
 
         /** 
-            The Uri path portion after the hostname
+            The URI path portion after the hostname
          */
         native function get path(): String
-
-        /** 
-            @duplicate Uri.path
-            @param value String containing the new path portion
-         */
         native function set path(value: String): Void
 
 //  MOB -- inconsistent - should this return null?
         /** 
-            The port number of the Uri. Set ot 80 if the Uri does not have an explicit port.
+            The port number of the URI. Set ot 80 if the URI does not have an explicit port.
          */
         native function get port(): Number
-
-        /** 
-            @duplicate Uri.port
-            @param value Number of the port
-         */
         native function set port(value: Number): Void
 
         /** 
-            The Uri protocol scheme. Set to "http" by default.
+            The URI protocol scheme. Set to "http" by default.
          */
         native function get scheme(): String
-
-        /** 
-            @duplicate Uri.scheme
-            @param value String containing the new protocol scheme. For example, to select FTP, use "ftp"
-         */
         native function set scheme(value: String): Void
 
 //  MOB -- are all these null or some other default values?
         /** 
-            The Uri query string. The query string is the fragment after a "?" character in the Uri.
+            The URI query string. The query string is the fragment after a "?" character in the URI.
          */
         native function get query(): String
-
-        /** 
-            @duplicate Uri.query
-            @param value A string containing the new query string portion. 
-         */
         native function set query(value: String): Void
 
         /** 
-            The Uri reference portion. The reference portion is sometimes called the "anchor" and is the the fragment 
-            after a "#" character in the Uri.
+            The URI reference portion. The reference portion is sometimes called the "anchor" and is the the fragment 
+            after a "#" character in the URI.
          */
         native function get reference(): String
-
-        /** 
-            @duplicate Uri.reference
-            @param value A string containing the new reference string portion. 
-         */
         native function set reference(value: String): Void
 
         /** 
-            Create a Uri with a releative path from the current Uri to a given Uri. This call computes the relative
-            path from this Uri to the $target Uri argument.
-            @param target Uri Target Uri to locate.
-            @return a new Uri object for the target Uri
+            Create a URI with a releative path from the current URI to a given URI. This call computes the relative
+            path from this URI to the $target URI argument.
+            @param target Uri Target URI to locate.
+            @return a new URI object for the target URI
          */
         function relative(target: Uri): Uri {
             let parts = this.normalize.path.toString().split("/")
@@ -293,45 +287,45 @@ module ejs {
         }
 
         /** 
-            Replace the extension and return a new Uri.
+            Replace the extension and return a new URI.
             @return A path with extension.
          */
         native function replaceExt(ext: String): Uri
 
         /** 
-            Compare two Uris test if they represent the same resource
-            @param other Other Uri to compare with
+            Compare two URIs test if they represent the same resource
+            @param other Other URI to compare with
             @param exact If exact is true, then the query and reference portions must match
-            @return True if the Uris represent the same underlying resource
+            @return True if the URIs represent the same underlying resource
          */
         native function same(other: Object, exact: Boolean = false): Boolean
 
         /** 
-            Return true if the Uri path starts with the given prefix. This skips the scheme, host and port portions
-            and examines the Uri path only.
-            @param prefix Uri or String prefix to compare with the Uri.
+            Return true if the URI path starts with the given prefix. This skips the scheme, host and port portions
+            and examines the URI path only.
+            @param prefix URI or String prefix to compare with the URI.
             @return true if the path does begin with the prefix
          */
         function startsWith(prefix: Object): Boolean
             path.toString().startsWith(prefix.toString()) 
 
         /** 
-            Convert the Uri to a JSON string. 
-            @return a JSON string representing the Uri.
+            Convert the URI to a JSON string. 
+            @return a JSON string representing the URI.
          */
         override function toJSON(): String
             JSON.stringify(this.toString())
 
         /** 
-            Convert the Uri to a string. The format of the string will depend on the defined $representation format.
-            @return a string representing the Uri.
+            Convert the URI to a string. The format of the string will depend on the defined $representation format.
+            @return a string representing the URI.
          */
         native override function toString(): String
 
         /** 
-            Trim a pattern from the end of the Uri path
+            Trim a pattern from the end of the URI path
             NOTE: this does a case-sensitive match. MOB - is this right?
-            @return a new Uri containing the trimmed Uri
+            @return a new URI containing the trimmed URI
             TODO - should support reg expressions
          */
         function trimEnd(pat: String): Uri {
@@ -341,15 +335,15 @@ module ejs {
         }
 
         /** 
-            Trim the extension portion off the Uri path
-            @return a Uri with no extension
+            Trim the extension portion off the URI path
+            @return a URI with no extension
          */
         native function trimExt(): Uri
 
         /** 
             Trim a pattern from the start of the path
             NOTE: this does a case-sensitive match. MOB - is this right?
-            @return a Uri containing the trimmed path name
+            @return a URI containing the trimmed path name
             TODO - should support reg expressions
          */
         function trimStart(pat: String): Uri {
@@ -359,33 +353,46 @@ module ejs {
         }
 
         /** 
-            The full Uri as a string.
+            The full URI as a string.
          */
         native function get uri(): String
-
-        /** 
-            Set the Uri 
-            @param value String containing the new Uri
-         */
         native function set uri(value: String): Void
     }
 
     /** 
-        Decode an encoded Uri.
+        Decode an encoded URI using www-url encoding
         @param str encoded string
         @returns a decoded string
      */
-    function decodeUri(str: String): String
-        Uri.decode(str)
+    native function decodeURI(str: String): String
 
     /** 
-        Decode an encoded Uri component.
+        Decode an encoded URI component.
         @param str encoded string
         @returns a decoded string
      */
-    function decodeUriComponent(str: String): String
-        Uri.decodeUriComponent(str)
+    native function decodeURIComponent(str: String): String
 
+    /** 
+        Encode a URI using www-url encoding. This replaces special characters with encoded alternative sequence.
+        The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*", 
+        "'", "(", ")", "#",";", ",", "/", "?", ":", "@", "&", "=", "+", "$". Note that encocdeURI does not encode
+        "&", "+" and "=". If you require these to be encoded, use encodeComponents. 
+        @see Uri.encode for RFC3986 compliant encoding.
+        @param str String to encode
+        @returns an encoded string
+     */
+    native function encodeURI(str: String): String
+
+    /** 
+        Encode a URI component using www-url encoding. This replaces special characters with encoded alternative sequence.
+        The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*", 
+        "'", "(", ")". Note that this call encodes "=" and "&" which are often used in URL query name/key pairs.
+        @see Uri.encodeComponent for RFC3986 compliant encoding.
+        @param str String to encode
+        @returns an encoded string
+     */
+    native function encodeURIComponent(str: String): String
 }
 
 

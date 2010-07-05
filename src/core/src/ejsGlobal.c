@@ -135,20 +135,6 @@ static EjsObj *error(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-//  MOB -- move
-/*  
-    HTML escape a string
-    function escape(str: String): String
- */
-static EjsObj *escape(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
-{
-    EjsString   *str;
-
-    str = (EjsString*) argv[0];
-    return (EjsObj*) ejsCreateStringAndFree(ejs, mprEscapeHtml(ejs, str->value));
-}
-
-
 /*  
     function eval(script: String, cache: String = null): String
  */
@@ -378,7 +364,6 @@ static EjsObj *printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsString   *s;
     EjsObj      *args, *vp;
-    char        *cp;
     int         i, count, rc;
 
     mprAssert(argc == 1 && ejsIsArray(argv[0]));
@@ -386,25 +371,27 @@ static EjsObj *printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     args = argv[0];
     count = ejsGetPropertyCount(ejs, args);
 
-    for (i = 0; i < count; i++) {
+    for (i = 0; i < count; ) {
         if ((vp = ejsGetProperty(ejs, args, i)) != 0) {
-            if (ejsIsString(vp)) {
-                s = (EjsString*) vp;
-            } else {
-                s  = (EjsString*) ejsToString(ejs, vp);
-            }
+            s  = (ejsIsString(vp)) ? (EjsString*) vp : (EjsString*) ejsToString(ejs, vp);
             if (ejs->exception) {
                 return 0;
             }
+#if OLD
             if (vp && s) {
+                char        *cp;
                 if (s->length > 0 && s->value[0] == '"') {
                     cp = mprStrdup(ejs, s->value);
-                    // cp = mprStrTrim(tmp, "\"");
                     rc = write(1, cp, strlen(cp));
                     mprFree(cp);
                 } else {
                     rc = write(1, s->value, s->length);
                 }
+            }
+#endif
+            rc = write(1, s->value, s->length);
+            if (++i < count) {
+                rc = write(1, " ", 1);
             }
         }
     }
@@ -474,7 +461,6 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     ejsBindFunction(ejs, block, ES_assert, assertMethod);
     ejsBindFunction(ejs, block, ES_breakpoint, breakpoint);
     ejsBindFunction(ejs, block, ES_cloneBase, (EjsProc) cloneBase);
-    ejsBindFunction(ejs, block, ES_escape, escape);
     ejsBindFunction(ejs, block, ES_eval, eval);
     ejsBindFunction(ejs, block, ES_formatStack, formatStackMethod);
     ejsBindFunction(ejs, block, ES_hashcode, hashcode);

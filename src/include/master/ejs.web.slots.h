@@ -22,7 +22,7 @@
     Local slots for global methods 
  */
 #define ES_ejs_web_parseCookies_cookieHeader                           0
-#define ES_ejs_web_escapeHtml_s                                        0
+#define ES_ejs_web_escapeHtml_str                                      0
 #define ES_ejs_web_html_args                                           0
 #define ES_ejs_web_unescapeHtml_s                                      0
 
@@ -46,37 +46,41 @@
 #define ES_ejs_web_Controller_ejs_web_request                          6
 #define ES_ejs_web_Controller_ejs_web_view                             7
 #define ES_ejs_web_Controller_flash                                    8
-#define ES_ejs_web_Controller_rendered                                 9
-#define ES_ejs_web_Controller_redirected                               10
-#define ES_ejs_web_Controller__afterFilters                            11
-#define ES_ejs_web_Controller__beforeFilters                           12
-#define ES_ejs_web_Controller__wrapFilters                             13
-#define ES_ejs_web_Controller_lastFlash                                14
-#define ES_ejs_web_Controller_openDatabase                             15
-#define ES_ejs_web_Controller_ejs_web_run                              16
-#define ES_ejs_web_Controller_flashBefore                              17
-#define ES_ejs_web_Controller_flashAfter                               18
-#define ES_ejs_web_Controller_ejs_web_resetFilters                     19
-#define ES_ejs_web_Controller_ejs_web_beforeFilter                     20
-#define ES_ejs_web_Controller_ejs_web_afterFilter                      21
-#define ES_ejs_web_Controller_ejs_web_wrapFilter                       22
-#define ES_ejs_web_Controller_runFilters                               23
-#define ES_ejs_web_Controller_ejs_web_loadView                         24
-#define ES_ejs_web_Controller_ejs_web_renderError                      25
-#define ES_ejs_web_Controller_ejs_web_redirect                         26
-#define ES_ejs_web_Controller_ejs_web_redirectAction                   27
-#define ES_ejs_web_Controller_ejs_web_render                           28
-#define ES_ejs_web_Controller_ejs_web_renderFile                       29
-#define ES_ejs_web_Controller_ejs_web_renderPartial                    30
-#define ES_ejs_web_Controller_ejs_web_renderView                       31
-#define ES_ejs_web_Controller_ejs_web_error                            32
-#define ES_ejs_web_Controller_ejs_web_inform                           33
-#define ES_ejs_web_Controller_ejs_web_warn                             34
-#define ES_ejs_web_Controller_ejs_web_makeUri                          35
-#define ES_ejs_web_Controller_action_missing                           36
-#define ES_ejs_web_Controller_ejs_web_appUrl                           37
-#define ES_ejs_web_Controller_ejs_web_makeUrl                          38
-#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        39
+#define ES_ejs_web_Controller_noFinalize                               9
+#define ES_ejs_web_Controller_rendered                                 10
+#define ES_ejs_web_Controller_redirected                               11
+#define ES_ejs_web_Controller__afterFilters                            12
+#define ES_ejs_web_Controller__beforeFilters                           13
+#define ES_ejs_web_Controller__wrapFilters                             14
+#define ES_ejs_web_Controller_lastFlash                                15
+#define ES_ejs_web_Controller_openDatabase                             16
+#define ES_ejs_web_Controller_ejs_web_run                              17
+#define ES_ejs_web_Controller_ejs_web_dontFinalize                     18
+#define ES_ejs_web_Controller_flashBefore                              19
+#define ES_ejs_web_Controller_flashAfter                               20
+#define ES_ejs_web_Controller_ejs_web_resetFilters                     21
+#define ES_ejs_web_Controller_ejs_web_beforeFilter                     22
+#define ES_ejs_web_Controller_ejs_web_afterFilter                      23
+#define ES_ejs_web_Controller_ejs_web_wrapFilter                       24
+#define ES_ejs_web_Controller_runFilters                               25
+#define ES_ejs_web_Controller_loadView                                 26
+#define ES_ejs_web_Controller_ejs_web_renderError                      27
+#define ES_ejs_web_Controller_ejs_web_redirect                         28
+#define ES_ejs_web_Controller_ejs_web_redirectAction                   29
+#define ES_ejs_web_Controller_ejs_web_render                           30
+#define ES_ejs_web_Controller_ejs_web_renderFile                       31
+#define ES_ejs_web_Controller_ejs_web_renderPartial                    32
+#define ES_ejs_web_Controller_viewExists                               33
+#define ES_ejs_web_Controller_ejs_web_renderView                       34
+#define ES_ejs_web_Controller_ejs_web_error                            35
+#define ES_ejs_web_Controller_ejs_web_inform                           36
+#define ES_ejs_web_Controller_ejs_web_warn                             37
+#define ES_ejs_web_Controller_ejs_web_makeUri                          38
+#define ES_ejs_web_Controller_ejs_web_session                          39
+#define ES_ejs_web_Controller_action_missing                           40
+#define ES_ejs_web_Controller_ejs_web_appUrl                           41
+#define ES_ejs_web_Controller_ejs_web_makeUrl                          42
+#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        43
 #define ES_ejs_web_Controller_NUM_INHERITED_PROP                       0
 
 /*
@@ -123,7 +127,13 @@
 #define ES_HtmlConnector_getDataAttributes                             32
 #define ES_HtmlConnector_NUM_INSTANCE_PROP                             33
 #define ES_HtmlConnector_NUM_INHERITED_PROP                            0
-#define ES_ejs_web_HttpServer_NUM_CLASS_PROP                           0
+
+
+/*
+    Class property slots for the "HttpServer" type 
+ */
+#define ES_ejs_web_HttpServer_sessionCount                             0
+#define ES_ejs_web_HttpServer_NUM_CLASS_PROP                           1
 
 /*
    Prototype (instance) slots for "HttpServer" type 
@@ -153,10 +163,11 @@
 #define ES_Mvc_dirs                                                    3
 #define ES_Mvc_ext                                                     4
 #define ES_Mvc_loaded                                                  5
-#define ES_Mvc_load                                                    6
-#define ES_Mvc_init                                                    7
-#define ES_Mvc_loadComponent                                           8
-#define ES_Mvc_NUM_CLASS_PROP                                          9
+#define ES_Mvc_EJSRC                                                   6
+#define ES_Mvc_load                                                    7
+#define ES_Mvc_init                                                    8
+#define ES_Mvc_loadComponent                                           9
+#define ES_Mvc_NUM_CLASS_PROP                                          10
 
 /*
    Prototype (instance) slots for "Mvc" type 
@@ -171,7 +182,8 @@
 #define ES_Mvc_init_request                                            0
 #define ES_Mvc_loadComponent_request                                   0
 #define ES_Mvc_loadComponent_mod                                       1
-#define ES_Mvc_loadComponent_deps                                      2
+#define ES_Mvc_loadComponent_files                                     2
+#define ES_Mvc_loadComponent_deps                                      3
 
 
 /*
@@ -308,25 +320,15 @@
 /*
     Class property slots for the "Session" type 
  */
-#define ES_ejs_web_Session_addListener                                 0
-#define ES_ejs_web_Session_count                                       1
-#define ES_ejs_web_Session_removeListener                              2
-#define ES_ejs_web_Session_NUM_CLASS_PROP                              3
+#define ES_ejs_web_Session_count                                       0
+#define ES_ejs_web_Session_NUM_CLASS_PROP                              1
 
 /*
    Prototype (instance) slots for "Session" type 
  */
-#define ES_ejs_web_Session_setSessionTimeout                           0
+#define ES_ejs_web_Session_timeout                                     0
 #define ES_ejs_web_Session_NUM_INSTANCE_PROP                           1
 #define ES_ejs_web_Session_NUM_INHERITED_PROP                          0
-
-/*
-    Local slots for methods in type "Session" 
- */
-#define ES_ejs_web_Session_addListener_name                            0
-#define ES_ejs_web_Session_addListener_listener                        1
-#define ES_ejs_web_Session_removeListener_name                         0
-#define ES_ejs_web_Session_removeListener_listener                     1
 #define ES_ejs_web_UploadFile_NUM_CLASS_PROP                           0
 
 /*
@@ -439,6 +441,6 @@
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
 
-#define _ES_CHECKSUM_ejs_web   536651
+#define _ES_CHECKSUM_ejs_web   542485
 
 #endif

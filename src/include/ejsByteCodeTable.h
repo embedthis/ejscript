@@ -242,6 +242,7 @@ EjsOptable ejsOptable[] = {
     {   "SAVE_RESULT",              -1,         { EBC_NONE,                               },},
     {   "SHL",                      -1,         { EBC_NONE,                               },},
     {   "SHR",                      -1,         { EBC_NONE,                               },},
+    {   "SPREAD",                    0,         { EBC_NONE,                               },},
     {   "SUB",                      -1,         { EBC_NONE,                               },},
     {   "SUPER",                     0,         { EBC_NONE,                               },},
     {   "SWAP",                      0,         { EBC_NONE,                               },},

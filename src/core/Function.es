@@ -22,10 +22,11 @@ module ejs {
          */
         native function Function(...args)
 /*
+    MOB -- todo
             let body = args.pop()
             let code = "function(" + args.join(",") + ") {\n" + body + "\n}"
             print("CODE " + code)
-            eval(code)
+            return eval(code)
         }
 */
 
@@ -50,12 +51,14 @@ module ejs {
 
         //    MOB -- this could go into Reflect
         /** 
-            The bound object representing the "this" object. Functions carry both a lexical scoping and the owning 
-            "this" object. Set to "null" if "this" is not defined for the function.
+            The bound object representing the "this" object for the function. Functions carry both a lexical scoping 
+            and an owning "this" object. Can be set to null.
          */
         native function get boundThis(): Object
 
-        //  MOB -- ES5 usage is function bind(obj, ...args)
+        //  MOB -- ES5 usage is function bind(obj, ...args) -- args prepend
+        //  MOB -- ES5 returns a new function and does not modify the existing function
+
         /** 
             Bind the value of "this" for the function. This can set the value of "this" for the function. If
             $overwrite is false, it will only define the value of "this" if it is not already defined.

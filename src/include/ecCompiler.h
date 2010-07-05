@@ -89,11 +89,11 @@ typedef struct EcNode {
     int                 subId;              /* Sub token */
 
     /*
-        TODO - order in most useful order: name, type, function, binary
-        TODO - rename all with a Node suffix. ie. nameNode, importNode
+        MOB TODO - order in most useful order: name, type, function, binary
+        MOB TODO - rename all with a Node suffix. ie. nameNode, importNode
      */
 
-    //  TODO - disable for now
+    //  MOB TODO - disable for now
 #if !BLD_DEBUG && 0
     union {
 #endif
@@ -108,14 +108,14 @@ typedef struct EcNode {
         struct {
             Node        nameExpr;           /* Name expression */
             Node        qualifierExpr;      /* Qualifier expression */
-            //  OPT - bit field
             int         isAttribute;        /* Attribute identifier "@" */
             int         isType;             /* Name is a type */
             int         isNamespace;        /* Name is a namespace */
             int         letScope;           /* Variable is defined in let block scope */
             int         instanceVar;        /* Instance or static var (if defined in class) */
             int         isRest;             /* ... rest style args */
-            EjsObj   *value;             /* Initialization value */
+            int         index;              /* Index for Dassign */
+            EjsObj      *value;             /* Initialization value */
         } name;
 
         /*
@@ -363,6 +363,7 @@ typedef struct EcNode {
 
         #define N_BLOCK 25
 
+        //  MOB -- what does this actually do? - why not just use children?
         #define N_REF 42
         struct {
             Node        node;               /* Actual node reference */
@@ -408,13 +409,14 @@ typedef struct EcNode {
             MprBuf              *data;      /* XML data */
         } literal;
 
-        #define N_OBJECT_LITERAL    56
+        #define N_OBJECT_LITERAL    56      /* Array or object literal */
         struct {
             Node                typeNode;   /* Type of object */
+            int                 isArray;    /* Array literal */
         } objectLiteral;
 
         /*
-            Object literal field
+            Object (and Array) literal field
          */
         #define FIELD_KIND_VALUE        0x1
         #define FIELD_KIND_FUNCTION     0x2
@@ -423,8 +425,9 @@ typedef struct EcNode {
         struct {
             int                 fieldKind;  /* value or function */
             int                 varKind;    /* Variable definition kind (const) */
-            Node                fieldName;  /* Field element name */
             Node                expr;       /* Field expression */
+            Node                fieldName;  /* Field element name for objects */
+            int                 index;      /* Array index */
         } field;
 
         #define N_WITH 60
@@ -498,6 +501,8 @@ typedef struct EcNode {
 #define N_ARRAY_LITERAL 58
 #define N_CATCH_ARG 59
 #define N_WITH 60
+#define N_SPREAD 61
+#define N_DASSIGN 62
 
 #define EC_NUM_NODES                    8
 #define EC_TAB_WIDTH                    4
@@ -933,7 +938,11 @@ typedef struct EcState {
     int             preserveStackCount;     /* If reset needed, preserve this count of elements */
     int             needsStackReset;        /* Stack must be reset before jumping */
     int             needsValue;             /* Express must yield a value */
+
+    //  MOB -- should rationalize and have only one of these. Parser needs onRight.
     int             onLeft;                 /* On the left of an assignment */
+    int             onRight;                /* On the right of an assignment */
+
     int             saveOnLeft;             /* Saved left of an assignment */
     int             conditional;            /* In branching conditional */
     int             strict;                 /* Compiler checking mode: Strict, standard*/

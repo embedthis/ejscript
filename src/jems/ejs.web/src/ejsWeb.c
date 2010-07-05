@@ -66,11 +66,27 @@ static EjsObj *req_worker(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     return 0;
 }
 
+
+/*  
+    HTML escape a string
+    function escapeHtml(str: String): String
+ */
+static EjsObj *web_escapeHtml(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    EjsString   *str;
+
+    str = (EjsString*) argv[0];
+    return (EjsObj*) ejsCreateStringAndFree(ejs, mprEscapeHtml(ejs, str->value));
+}
+
+
 /******************************************************************************/
 
 static int configureWebTypes(Ejs *ejs)
 {
     EjsType     *type;
+    EjsName     qname;
+    int         slotNum;
 
     type = ejsGetTypeByName(ejs, "ejs.web", "Web");
     if (type == 0) {
@@ -82,6 +98,9 @@ static int configureWebTypes(Ejs *ejs)
 
     ejsBindMethod(ejs, type, ES_ejs_web_Web_worker, (EjsProc) req_worker);
 
+    if ((slotNum = ejsLookupProperty(ejs, ejs->global, ejsName(&qname, "ejs.web", "escapeHtml"))) != 0) {
+        ejsBindFunction(ejs, ejs->global, slotNum, web_escapeHtml);
+    }
     ejsConfigureHttpServerType(ejs);
     ejsConfigureRequestType(ejs);
     ejsConfigureSessionType(ejs);

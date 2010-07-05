@@ -1,22 +1,20 @@
 /*
     Timer.es -- Timer Services
- *
+
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
 module ejs {
 
     /**
-        Timers manage the execution of functions at some point in the future. Timers run repeatedly until stopped by 
-        calling the stop() method. Timers are scheduled with a granularity of 1 millisecond. However, many systems are not 
-        capable of supporting this granularity and make only best efforts to schedule events at the desired time.
-        To use timers, the application must call Dispatcher.serviceEvents.
+        Timers manage the execution of functions at some point in the future. Timers may run once, or they can be 
+        scheduled to run repeatedly, until stopped by calling the stop() method. Timers are scheduled with a granularity 
+        of 1 millisecond. However, many systems are not capable of supporting this granularity and make only best efforts 
+        to schedule events at the desired time.
         @Example
-            function callback(e: Event) {
-            }
-            new Timer(200, callback)
-        or
-            new Timer(200, function (e) { print(e); })
+            timer = Timer(200, function (args) { })
+            timer.repeat = true
+            timer.start()
         @stability prototype
      */
     class Timer {
@@ -24,13 +22,12 @@ module ejs {
         use default namespace public
 
         /**
-            Constructor for Timer. The timer is will not be called until @start is called.
+            Constructor for Timer. The timer is will not be called until $start is called.
             @param callback Function to invoke when the timer is due.
-            @param oneShot If true, Timer fires just once. Otherwise, it fires every period till cancelled.
-            @param period Time period in milliseconds between invocations of the callback
-            @param drift Set the timers drift setting. See @drift.
+            @param period Delay in milliseconds before the timer will run
+            @param args Callback arguments
          */
-        native function Timer(period: Number, callback: Function, oneShot: Boolean = true, drift: Boolean = true)
+        native function Timer(period: Number, callback: Function, ...args)
 
         /**
             The current drift setting. If drift is true, the timer is allowed to drift its execution time due to 
@@ -42,60 +39,72 @@ module ejs {
             end of the callback and the start of the next callback invocation is equal to the period. 
          */
         native function get drift(): Boolean
-
-        /**
-            @duplicate Timer.drift
-            @param enable If true, allow the timer to drift
-         */
         native function set drift(enable: Boolean): Void
 
         /**
-            Timer interval period in milliseconds.
+            Timer delay period in milliseconds
          */
         native function get period(): Number
-
-        /**
-            Set the timer period and reschedule the timer.
-            @param period New time in milliseconds between timer invocations.
-         */
         native function set period(period: Number): Void
 
         /**
-            Restart a stopped timer. Once running, the callback function will be invoked every @period milliseconds 
-            according to the @drift setting. If the timer is already stopped, this function has no effect.
+            Timer repeatability. If true, the timer will be repeated invoked every $period milliseconds
          */
-        native function restart(): Void
+        native function get repeat(): Boolean
+        native function set repeat(enable: Boolean): Void
 
         /**
-            Stop a timer running. Once stopped a timer can be restarted by calling @start.
+            Start a timer running. The timer will be repeatedly invoked if the $repeat property is true, otherwise it 
+            will be invoked once.
+         */
+        native function start(): Void
+
+        /**
+            Stop a timer running. Once stopped a timer can be restarted by calling $start.
          */
         native function stop(): Void
     }
 
 
     /**
-        Constructor for Timer. The timer is will not be called until @start is called.
+        Create an interval timer. This will invoke the callback every $delay milliseconds.
         @param callback Function to invoke when the timer is due.
         @param delay Time period in milliseconds between invocations of the callback
+        @return Timer ID that can be used with $clearInterval
      */
-    function setInterval(callback: Function, delay: Number)
-        Timer(delay, callback, true)
+    function setInterval(callback: Function, delay: Number, ...args): Timer {
+        let timer = new Timer(delay, callback, /* SPREAD */ args)
+        timer.repeat = true
+        timer.start()
+        return timer
+    }
 
-    //  MOB -- should support args and pass them to the callback (MDC)
-    //  MOB -- what is the spec return value
+    /*
+        Clear and dispose of an interval timer
+        @param timer Interval timer returned from $setInterval
+     */
+    function clearInterval(timer: Timer): Void
+        timer.stop()
+
     /**
         Create a timeout
         @param callback Function to invoke when the timer expires
         @param delay Time in milliseconds until the timer expires and the callback is invoked
+        @param args Function arguments
+        @return Timer that can be used with $clearTimeout
       */
-    function setTimeout(callback: Function, delay: Number): Void {
-        Timer(delay, callback)
+    function setTimeout(callback: Function, delay: Number, ...args): Number {
+        let timer = new Timer(delay, callback, /* SPREAD */ args)
+        timer.start()
+        return timer
     }
 
-    /**
-        Timer event
+    /*
+        Clear and dispose of a timeout
+        @param timer Timeout timer returned from $setTimeout
      */
-    class TimerEvent extends Event { }
+    function clearTimeout(timer: Timer): Void 
+        timer.stop()
 }
 
 

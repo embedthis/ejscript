@@ -41,6 +41,7 @@ int ecPushState(EcCompiler *cp, EcState *newState)
         newState->topVarBlockNode = prev->topVarBlockNode;
         newState->currentObjectNode = prev->currentObjectNode;
         newState->onLeft = prev->onLeft;
+        newState->onRight = prev->onRight;
         newState->needsValue = prev->needsValue;
         newState->needsStackReset = prev->needsStackReset;
         newState->code = prev->code;

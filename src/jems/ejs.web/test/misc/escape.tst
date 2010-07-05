@@ -10,3 +10,8 @@ assert(s == "&amp;head;")
 
 s = unescapeHtml(s)
 assert(s == "&head;")
+
+s = "\"'"
+s = escapeHtml(s)
+assert(s == "&quot;&#39;")
+

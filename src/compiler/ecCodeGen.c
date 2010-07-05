@@ -55,6 +55,7 @@ static void     genCatchArg(EcCompiler *cp, EcNode *np);
 static void     genClass(EcCompiler *cp, EcNode *child);
 static void     genClassName(EcCompiler *cp, EjsType *type);
 static void     genContinue(EcCompiler *cp, EcNode *np);
+static void     genDassign(EcCompiler *cp, EcNode *np);
 static void     genDirectives(EcCompiler *cp, EcNode *np, bool saveResult);
 static void     genDo(EcCompiler *cp, EcNode *np);
 static void     genDot(EcCompiler *cp, EcNode *np, EcNode **rightMost);
@@ -242,6 +243,28 @@ static void genArgs(EcCompiler *cp, EcNode *np)
         processNode(cp, child);
         child->needDup = 0;
     }
+    LEAVE(cp);
+}
+
+
+static void genSpread(EcCompiler *cp, EcNode *np)
+{
+    EcNode      *child;
+    int         next;
+
+    ENTER(cp);
+
+    mprAssert(np->kind == N_SPREAD);
+
+    next = 0;
+    while ((child = getNextNode(cp, np, &next)) && !cp->error) {
+        if (child->kind == N_ASSIGN_OP) {
+            child->needDup = 1;
+        }
+        processNode(cp, child);
+        child->needDup = 0;
+    }
+    ecEncodeOpcode(cp, EJS_OP_SPREAD);
     LEAVE(cp);
 }
 
@@ -1392,6 +1415,37 @@ static void genClass(EcCompiler *cp, EcNode *np)
 }
 
 
+static void genDassign(EcCompiler *cp, EcNode *np)
+{
+    EcNode      *child;
+    int         count, next;
+
+    mprAssert(np->kind == N_DASSIGN);
+
+    ENTER(cp);
+
+    count = mprGetListCount(np->children);
+    next = 0;
+    while ((child = getNextNode(cp, np, &next)) != 0) {
+        mprAssert(child->kind == N_QNAME);
+        if (next < count) {
+            ecEncodeOpcode(cp, EJS_OP_DUP);
+            pushStack(cp, 1);
+        }
+        if (1) {
+            //  TODO OPT
+            ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
+            ecEncodeString(cp, EJS_EMPTY_NAMESPACE);
+            ecEncodeOpcode(cp, EJS_OP_LOAD_INT);
+            ecEncodeNumber(cp, child->name.index);
+            ecEncodeOpcode(cp, EJS_OP_GET_OBJ_NAME_EXPR);
+        }
+        processNode(cp, child);
+    }
+    LEAVE(cp);
+}
+
+
 static void genDirectives(EcCompiler *cp, EcNode *np, bool saveResult)
 {
     EcState     *lastDirectiveState;
@@ -2333,6 +2387,7 @@ static void genLeftHandSide(EcCompiler *cp, EcNode *np)
     cp->state->onLeft = 1;
 
     switch (np->kind) {
+    case N_DASSIGN:
     case N_DOT:
     case N_QNAME:
     case N_SUPER:
@@ -2549,10 +2604,10 @@ static void genField(EcCompiler *cp, EcNode *np)
         genLiteral(cp, fieldName);
 
     } else {
+        //  MOB
         mprAssert(0);
         processNode(cp, fieldName);
     }
-
     if (np->field.fieldKind == FIELD_KIND_VALUE || np->field.fieldKind == FIELD_KIND_FUNCTION) {
         processNode(cp, np->field.expr);
     } else {
@@ -3901,6 +3956,10 @@ static void processNode(EcCompiler *cp, EcNode *np)
         genContinue(cp, np);
         break;
 
+    case N_DASSIGN:
+        genDassign(cp, np);
+        break;
+
     case N_DIRECTIVES:
         genDirectives(cp, np, 0);
         break;
@@ -3984,6 +4043,10 @@ static void processNode(EcCompiler *cp, EcNode *np)
 
     case N_RETURN:
         genReturn(cp, np);
+        break;
+
+    case N_SPREAD:
+        genSpread(cp, np);
         break;
 
     case N_SUPER:

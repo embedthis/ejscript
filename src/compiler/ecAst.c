@@ -188,6 +188,22 @@ static void astArgs(EcCompiler *cp, EcNode *np)
 }
 
 
+static void astSpread(EcCompiler *cp, EcNode *np)
+{
+    EcNode      *child;
+    int         next;
+
+    ENTER(cp);
+
+    mprAssert(np->kind == N_SPREAD);
+    next = 0;
+    while ((child = getNextAstNode(cp, np, &next))) {
+        processAstNode(cp, child);
+    }
+    LEAVE(cp);
+}
+
+
 /*
     Generate an assignment expression
  */
@@ -738,6 +754,41 @@ static void astClass(EcCompiler *cp, EcNode *np)
         astFunction(cp, constructor);
     }
     removeScope(cp);
+    LEAVE(cp);
+}
+
+
+static void astDassign(EcCompiler *cp, EcNode *np)
+{
+    EcNode      *child;
+    int         next;
+
+    mprAssert(np->kind == N_DASSIGN);
+
+    ENTER(cp);
+
+    /*
+        No current object when computing an expression. E.g. obj[a + b]
+        We don't want obj set as the context object for a or b.
+     */
+    cp->state->currentObjectNode = 0;
+
+    next = 0;
+    while ((child = getNextAstNode(cp, np, &next)) != 0) {
+        processAstNode(cp, child);
+    }
+#if UNUSED
+    /*
+        Propagate up the right side qname and lookup.
+     */
+    if (cp->phase >= EC_PHASE_BIND) {
+        child = mprGetLastItem(np->children);
+        if (child) {
+            np->lookup = child->lookup;
+            np->qname = child->qname;
+        }
+    }
+#endif
     LEAVE(cp);
 }
 
@@ -3115,6 +3166,10 @@ static void processAstNode(EcCompiler *cp, EcNode *np)
     case N_CONTINUE:
         break;
 
+    case N_DASSIGN:
+        astDassign(cp, np);
+        break;
+
     case N_DIRECTIVES:
         astDirectives(cp, np);
         break;
@@ -3166,7 +3221,6 @@ static void processAstNode(EcCompiler *cp, EcNode *np)
 
     case N_QNAME:
         astName(cp, np);
-        // codeRequired++;
         break;
 
     case N_NEW:
@@ -3200,6 +3254,11 @@ static void processAstNode(EcCompiler *cp, EcNode *np)
 
     case N_RETURN:
         astReturn(cp, np);
+        codeRequired++;
+        break;
+
+    case N_SPREAD:
+        astSpread(cp, np);
         codeRequired++;
         break;
 
@@ -3251,9 +3310,6 @@ static void processAstNode(EcCompiler *cp, EcNode *np)
 
     case N_USE_NAMESPACE:
         astUseNamespace(cp, np);
-        /*
-            Namespaces by themselves don't required code. Need something to use the namespace.
-         */
         break;
 
     case N_USE_MODULE:

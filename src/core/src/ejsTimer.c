@@ -8,57 +8,43 @@
 
 #include    "ejs.h"
 
-/****************************** Forward Declarations **************************/
-
-static int timerCallback(EjsTimer *tp, MprEvent *e);
-
 /*********************************** Methods **********************************/
 /*
     Create a new timer
 
-    function Timer(period: Number, callback: Function, oneShot: Boolean = true, drift: Boolean = true)
+    function Timer(period: Number, callback: Function, ...args)
  */
-static EjsVar *constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsVar **argv)
+static EjsObj *constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    int     flags;
-
     mprAssert(argc >= 2);
     mprAssert(ejsIsNumber(argv[0]));
     mprAssert(ejsIsFunction(argv[1]));
+    mprAssert(ejsIsArray(argv[2]));
 
     tp->ejs = ejs;
     tp->period = ejsGetInt(ejs, argv[0]);
     tp->callback = (EjsFunction*) argv[1];
-    tp->oneShot = (argc >= 3) ? ejsGetInt(ejs, argv[2]) : 1;
-    tp->drift = (argc >= 4) ? ejsGetInt(ejs, argv[3]) : 1;
-
-    flags = tp->oneShot ? 0 : MPR_EVENT_CONTINUOUS;
-    if ((tp->event = mprCreateEvent(ejs->dispatcher, "timer", tp->period, (MprEventProc) timerCallback, tp, flags)) == 0) {
-        ejsThrowMemoryError(ejs);
-        return 0;
-    }
+    tp->args = (EjsArray*) argv[2];
+    tp->repeat = 0;
+    tp->drift = 1;
     return 0;
 }
 
 
 /*
-    Get the timer drift setting
-
     function get drift(): Boolean
  */
-static EjsVar *getDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsVar **argv)
+static EjsObj *getDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
-    return (EjsVar*) ejsCreateBoolean(ejs, tp->drift);
+    return (EjsObj*) ejsCreateBoolean(ejs, tp->drift);
 }
 
 
 /*
-    Set the timer drift setting
-
     function set drift(period: Boolean): Void
  */
-static EjsVar *setDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsVar **argv)
+static EjsObj *setDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsBoolean(argv[0]));
     tp->drift = ejsGetBoolean(ejs, argv[0]);
@@ -67,57 +53,107 @@ static EjsVar *setDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsVar **argv)
 
 
 /*
-    Get the timer period
-
     function get period(): Number
  */
-static EjsVar *getPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsVar **argv)
+static EjsObj *getPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
-    return (EjsVar*) ejsCreateNumber(ejs, tp->period);
+    return (EjsObj*) ejsCreateNumber(ejs, tp->period);
 }
 
 
 /*
-    Set the timer period and restart the timer
-
     function set period(period: Number): Void
  */
-static EjsVar *setPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsVar **argv)
+static EjsObj *setPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsNumber(argv[0]));
 
     tp->period = ejsGetInt(ejs, argv[0]);
-    mprRescheduleEvent(tp->event, tp->period);
     return 0;
 }
 
 
 /*
-    Restart a timer
-
-    function restart(); Void
+    function get repeat(): Boolean
  */
-static EjsVar *restart(Ejs *ejs, EjsTimer *tp, int argc, EjsVar **argv)
+static EjsObj *getRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
-    mprRestartContinuousEvent(tp->event);
+    return (EjsObj*) ejsCreateBoolean(ejs, tp->repeat);
+}
+
+
+/*
+    function set repeat(enable: Boolean): Void
+ */
+static EjsObj *setRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+{
+    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+
+    tp->repeat = ejsGetBoolean(ejs, argv[0]);
+    if (tp->event) {
+        mprEnableContinuousEvent(tp->event, tp->repeat);
+    }
+    return 0;
+}
+
+
+static int timerCallback(EjsTimer *tp, MprEvent *e)
+{
+    Ejs         *ejs;
+
+    mprAssert(tp);
+    mprAssert(tp->args);
+
+    ejs = tp->ejs;
+    //  MOB -- this obj
+    ejsRunFunction(tp->ejs, tp->callback, NULL, tp->args->length, tp->args->data);
+    if (ejs->exception) {
+#if FUTURE
+        if (tp->onerror) {
+            EjsString   *msg;
+            msg = ejsCreateString(ejs, ejsGetErrorMsg(ejs, 1));
+            ejsRunFunction(tp->ejs, tp->onerror, NULL, 1, &msg);
+        } else
+#endif
+        mprError(tp, "Exception in timer: %s", ejsGetErrorMsg(ejs, 1));
+    }
     return 0;
 }
 
 
 /*
-    Stop a timer
+    function start(): Void
+ */
+static EjsObj *start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+{
+    int     flags;
 
+    if (tp->event == 0) {
+        flags = tp->repeat ? MPR_EVENT_CONTINUOUS : 0;
+        tp->event = mprCreateEvent(ejs->dispatcher, "timer", tp->period, (MprEventProc) timerCallback, tp, flags);
+        if (tp->event == 0) {
+            ejsThrowMemoryError(ejs);
+            return 0;
+        }
+    }
+    return 0;
+}
+
+
+/*
     function stop(): Void
  */
-static EjsVar *stop(Ejs *ejs, EjsTimer *tp, int argc, EjsVar **argv)
+static EjsObj *stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 0);
-    mprRemoveEvent(tp->event);
+    if (tp->event) {
+        mprRemoveEvent(tp->event);
+    }
     return 0;
 }
 
+#if UNUSED
 /*********************************** Support **********************************/
 /*
     This creates a timer event object, but does not schedule it.
@@ -129,33 +165,12 @@ EjsObj *ejsCreateTimerEvent(Ejs *ejs, EjsTimer *tp)
     if ((event = ejsCreateObject(ejs, ejs->timerEventType, 0)) == 0) {
         return 0;
     }
-    ejsSetProperty(ejs, (EjsVar*) event, ES_Event_data, (EjsVar*) tp);
-    ejsSetProperty(ejs, (EjsVar*) event, ES_Event_timestamp, (EjsVar*) ejsCreateDate(ejs, 0));
+    ejsSetProperty(ejs, (EjsObj*) event, ES_Event_data, (EjsObj*) tp);
+    ejsSetProperty(ejs, (EjsObj*) event, ES_Event_timestamp, (EjsObj*) ejsCreateDate(ejs, 0));
     return event;
 }
 
-
-static int timerCallback(EjsTimer *tp, MprEvent *e)
-{
-    Ejs         *ejs;
-    EjsObj      *event;
-    EjsVar      *arg;
-
-    mprAssert(tp);
-
-    ejs = tp->ejs;
-    if ((event = ejsCreateTimerEvent(ejs, tp)) == 0) {
-        return 0;
-    }
-    arg = (EjsVar*) event;
-    ejsRunFunction(tp->ejs, tp->callback, NULL, 1, &arg);
-    if (ejs->exception) {
-        //  TODO must have way that users can catch these
-        mprError(tp, "Exception in timer: %s", ejsGetErrorMsg(ejs, 1));
-    }
-    return 0;
-}
-
+#endif /* UNUSED */
 
 /*********************************** Factory **********************************/
 
@@ -164,16 +179,21 @@ void ejsConfigureTimerType(Ejs *ejs)
     EjsType     *type;
     EjsObj      *prototype;
 
-    ejs->timerEventType = ejsGetTypeByName(ejs, "ejs", "TimerEvent");
     type = ejsGetTypeByName(ejs, "ejs", "Timer");
     type->instanceSize = sizeof(EjsTimer);
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) constructor);
-    ejsBindMethod(ejs, prototype, ES_Timer_restart, (EjsProc) restart);
+#if ES_Timer_start
+    ejsBindMethod(ejs, prototype, ES_Timer_start, (EjsProc) start);
+#endif
     ejsBindMethod(ejs, prototype, ES_Timer_stop, (EjsProc) stop);
-    ejsBindAccess(ejs, prototype, ES_Timer_period, (EjsProc) getPeriod, (EjsProc) setPeriod);
+
     ejsBindAccess(ejs, prototype, ES_Timer_drift, (EjsProc) getDrift, (EjsProc) setDrift);
+    ejsBindAccess(ejs, prototype, ES_Timer_period, (EjsProc) getPeriod, (EjsProc) setPeriod);
+#if ES_Timer_repeat
+    ejsBindAccess(ejs, prototype, ES_Timer_repeat, (EjsProc) getRepeat, (EjsProc) setRepeat);
+#endif
 }
 
 /*

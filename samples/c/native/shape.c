@@ -1,18 +1,18 @@
 /*
- *  shape.c - Native class implementation for the Shape class. 
- *
- *  This sample provides the implementation for the Shape class. It defines the native class itsself and defines storage
- *  for its properties and methods. It thus uses a native C structure for Shape instance state and native C language types
- *  for properties. 
- *
- *  The Shape properties are NOT stored as discreate JavaScript properties. Rather they are stored as native C data
- *  types in the instance state structure. This provides the most compact memory organization and is much smaller
- *  than using Script classes or standard native classes. The trade-off, however, is more code, so if you are only 
- *  going to create a small number of object instances, then scripted classes or normal native classes are a probably
- *  a better choice. But if you will be creating lots of instances or if your class has a very large number of 
- *  properties, then composite classes are ideal.
- *
- *  Copyright (c) All Rights Reserved. See details at the end of the file.
+    shape.c - Native class implementation for the Shape class. 
+
+    This sample provides the implementation for the Shape class. It defines the native class itsself and defines storage
+    for its properties and methods. It thus uses a native C structure for Shape instance state and native C language types
+    for properties. 
+
+    The Shape properties are NOT stored as discreate JavaScript properties. Rather they are stored as native C data
+    types in the instance state structure. This provides the most compact memory organization and is much smaller
+    than using Script classes or standard native classes. The trade-off, however, is more code, so if you are only 
+    going to create a small number of object instances, then scripted classes or normal native classes are a probably
+    a better choice. But if you will be creating lots of instances or if your class has a very large number of 
+    properties, then composite classes are ideal.
+
+    Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
 /********************************** Includes **********************************/
@@ -20,19 +20,19 @@
 #include    "ejs.h"
 
 /*
- *  If you would like to use this sample in a static program, remove this test
- *  and manually invoke the SampleModuleInit function in your main program.
+    If you would like to use this sample in a static program, remove this test
+    and manually invoke the SampleModuleInit function in your main program.
  */
 #if !BLD_FEATURE_STATIC
 
 /*
- *  Indent so that genDepend won't warn first time when this file doesn't exist
+    Indent so that genDepend won't warn first time when this file doesn't exist
  */
  #include   "sample.slots.h"
 
 /*********************************** Locals ***********************************/
 /*
- *  Native class for the Shape instance state.
+    Native class for the Shape instance state.
  */
 
 typedef struct Shape {
@@ -45,11 +45,11 @@ typedef struct Shape {
 
 /*********************************** Helpers **********************************/
 /*
- *  Create a new Shape instance. Use by the VM to create instances.
- *
- *  @param ejs VM handle.
- *  @param type Shape type class object from which to create an instance.
- *  @param size Number of extra slots to allocate (ignored).
+    Create a new Shape instance. Use by the VM to create instances.
+
+    @param ejs VM handle.
+    @param type Shape type class object from which to create an instance.
+    @param size Number of extra slots to allocate (ignored).
  */
 Shape *create(Ejs *ejs, EjsType *type, int size)
 {
@@ -57,12 +57,12 @@ Shape *create(Ejs *ejs, EjsType *type, int size)
 }
 
 /*
- *  Copy all properties of the instance including all references. If deep is true and if some properties are 
- *  reference types, then recursively copy all their properties and so on.
- *
- *  @param ejs VM handle.
- *  @param sp is set to the object instance to clone. 
- *  @return The newly copied object
+    Copy all properties of the instance including all references. If deep is true and if some properties are 
+    reference types, then recursively copy all their properties and so on.
+
+    @param ejs VM handle.
+    @param sp is set to the object instance to clone. 
+    @return The newly copied object
  */
 static EjsVar *cloneShape(Ejs *ejs, Shape *sp, bool deep)
 {
@@ -83,12 +83,12 @@ static EjsVar *cloneShape(Ejs *ejs, Shape *sp, bool deep)
 }
 
 /*
- *  Get a property from the object
- *
- *  @param ejs VM handle.
- *  @param sp is set to the object instance.
- *  @param slotNum Slot number of the property to retrieve. The VM maps the property names to slots.
- *  @return the property value
+    Get a property from the object
+
+    @param ejs VM handle.
+    @param sp is set to the object instance.
+    @param slotNum Slot number of the property to retrieve. The VM maps the property names to slots.
+    @return the property value
  */
 static EjsVar *getProperty(Ejs *ejs, Shape *sp, int slotNum)
 {
@@ -114,32 +114,32 @@ static EjsVar *getProperty(Ejs *ejs, Shape *sp, int slotNum)
 }
 
 /*
- *  Return the number of instance properties.
- *
- *  @param ejs VM handle.
- *  @param sp is set to the object instance.
- *  @return The number of properties
+    Return the number of instance properties.
+
+    @param ejs VM handle.
+    @param sp is set to the object instance.
+    @return The number of properties
  */
 static int getPropertyCount(Ejs *ejs, Shape *sp)
 {
     /*
-     *  The slot file computes this for us
+        The slot file computes this for us
      */
     return ES_sample_Shape_NUM_INSTANCE_PROP;
 }
 
 /*
- *  Get a property name
- *
- *  @param ejs VM handle.
- *  @param sp is set to the object instance. 
- *  @param slotNum Slot number of the property to retrieve. The VM maps the property names to slots.
- *  @return The qualified property name.
+    Get a property name
+
+    @param ejs VM handle.
+    @param sp is set to the object instance. 
+    @param slotNum Slot number of the property to retrieve. The VM maps the property names to slots.
+    @return The qualified property name.
  */
 static EjsName getPropertyName(Ejs *ejs, Shape *sp, int slotNum)
 {
     /*
-     *  To be thread-safe, we must have a different qname structure for each property name.
+        To be thread-safe, we must have a different qname structure for each property name.
      */
     switch (slotNum) {
         case ES_sample_Shape_x: {
@@ -180,13 +180,13 @@ static EjsName getPropertyName(Ejs *ejs, Shape *sp, int slotNum)
 }
 
 /*
- *  Lookup a property by name. This is optionally implemented by native types and could be further optimized by 
- *  hashing these properties. Note: the compiler binds most references to typed properties, so this routine
- *  should not be called often.
- *
- *  @param ejs VM handle.
- *  @param sp is set to the object instance. 
- *  @param name Property name to look for.
+    Lookup a property by name. This is optionally implemented by native types and could be further optimized by 
+    hashing these properties. Note: the compiler binds most references to typed properties, so this routine
+    should not be called often.
+
+    @param ejs VM handle.
+    @param sp is set to the object instance. 
+    @param name Property name to look for.
  */
 static int lookupProperty(Ejs *ejs, Shape *sp, EjsName *qname)
 {
@@ -209,12 +209,12 @@ static int lookupProperty(Ejs *ejs, Shape *sp, EjsName *qname)
 }
 
 /*
- *  Update the value of the property at slotNum with the given value
- *
- *  @param ejs VM handle.
- *  @param lhs Left hand side object.
- *  @param slotNum Slot number of the property to update. The VM maps the property names to slots.
- *  @param value Value to write to the property.
+    Update the value of the property at slotNum with the given value
+
+    @param ejs VM handle.
+    @param lhs Left hand side object.
+    @param slotNum Slot number of the property to update. The VM maps the property names to slots.
+    @param value Value to write to the property.
  */ 
 static int setProperty(Ejs *ejs, Shape *sp, int slotNum, EjsVar *value)
 {
@@ -246,15 +246,15 @@ static int setProperty(Ejs *ejs, Shape *sp, int slotNum, EjsVar *value)
 
 #if UNUSED
 /*
- *  These methods are not required for this sample, but are included to demonstrate their use.
+    These methods are not required for this sample, but are included to demonstrate their use.
  */
 
 /*
- *  Cast the instance to another type. 
- *
- *  @param ejs VM handle.
- *  @param sp is set to the object instance.
- *  @returns the function result or 0 if an exception is thrown.
+    Cast the instance to another type. 
+
+    @param ejs VM handle.
+    @param sp is set to the object instance.
+    @returns the function result or 0 if an exception is thrown.
  */
 static EjsVar *castVar(Ejs *ejs, Shape *sp, EjsType *type)
 {
@@ -262,11 +262,11 @@ static EjsVar *castVar(Ejs *ejs, Shape *sp, EjsType *type)
 }
 
 /*
- *  Delete the property at the specified slot.
- *
- *  @param ejs VM handle.
- *  @param sp is set to the object instance.
- *  @returns 0 if the delete is successful. Otherwise a negative error code.
+    Delete the property at the specified slot.
+
+    @param ejs VM handle.
+    @param sp is set to the object instance.
+    @returns 0 if the delete is successful. Otherwise a negative error code.
  */
 static int deleteProperty(Ejs *ejs, Shape *sp, const char *prop)
 {
@@ -275,7 +275,7 @@ static int deleteProperty(Ejs *ejs, Shape *sp, const char *prop)
 }
 
 /*
- *  Delete an instance property by name.
+    Delete an instance property by name.
  */
 static int deletePropertyByName(Ejs *ejs, EjsObject *obj, EjsName *qname)
 {
@@ -284,10 +284,10 @@ static int deletePropertyByName(Ejs *ejs, EjsObject *obj, EjsName *qname)
 }
 
 /*
- *  Free allocated memory before returning the object to the pool. 
- *
- *  @param ejs VM handle.
- *  @param sp is set to the object instance.
+    Free allocated memory before returning the object to the pool. 
+
+    @param ejs VM handle.
+    @param sp is set to the object instance.
  */
 static int finalizeVar(Ejs *ejs, Shape *sp)
 {
@@ -296,8 +296,8 @@ static int finalizeVar(Ejs *ejs, Shape *sp)
 }
 
 /*
- *  Destroy the instance. The default implementation is to just call the GC ejsFreeVar routine which will 
- *  either free the memory or return it to a type specific pool, ready for reuse
+    Destroy the instance. The default implementation is to just call the GC ejsFreeVar routine which will 
+    either free the memory or return it to a type specific pool, ready for reuse
  */
 static void destroyVar(Ejs *ejs, EjsVar *obj)
 {
@@ -311,12 +311,12 @@ int defineProperty(Ejs *ejs, EjsVar *vp, int slotNum, EjsName *name, EjsType *pr
 }
 
 /*
- *  Implement byte code operators.
- *
- *  @param ejs VM handle.
- *  @param lhs Left hand side object.
- *  @param opCode Bytecode opcode to invoke.
- *  @param rhs Right hand side object.
+    Implement byte code operators.
+
+    @param ejs VM handle.
+    @param lhs Left hand side object.
+    @param opCode Bytecode opcode to invoke.
+    @param rhs Right hand side object.
  */
 static EjsVar *invokeOperator(Ejs *ejs, Shape *lhs, int opCode, Shape *rhs)
 {
@@ -332,7 +332,7 @@ static EjsVar *invokeOperator(Ejs *ejs, Shape *lhs, int opCode, Shape *rhs)
 
     default:
         /*
-         *  Pass to the standard Object helpers to implement other op codes
+            Pass to the standard Object helpers to implement other op codes
          */
         return (ejs->defaultHelpers->invokeOperator)(ejs, (EjsVar*) lhs, opCode, (EjsVar*) rhs);
     }
@@ -340,22 +340,22 @@ static EjsVar *invokeOperator(Ejs *ejs, Shape *lhs, int opCode, Shape *rhs)
 }
 
 /*
- *  Mark the non-native properties for the garbage collector
+    Mark the non-native properties for the garbage collector
  */
 static void markVar(Ejs *ejs, EjsVar *parent, EjsVar *sp)
 {
     /*
-     *  Call ejsMarkVar on all contained Ejscript properties or objects.
+        Call ejsMarkVar on all contained Ejscript properties or objects.
      */
 }
 
 /*
- *  Update a property's name (hash name)
- *
- *  @param ejs VM handle.
- *  @param sp is set to the object instance. 
- *  @param sloNum Property slot number to set.
- *  @param name Property name to set.
+    Update a property's name (hash name)
+
+    @param ejs VM handle.
+    @param sp is set to the object instance. 
+    @param sloNum Property slot number to set.
+    @param name Property name to set.
  */
 static EjsVar *setPropertyName(Ejs *ejs, Shape *sp, int slotNum, EjsName *name)
 {
@@ -366,9 +366,9 @@ static EjsVar *setPropertyName(Ejs *ejs, Shape *sp, int slotNum, EjsName *name)
 
 /******************************************************************************/
 /*
- *  The constructor's job is to initialize a bare object instance
- *
- *  function Constructor(height: num, width: num
+    The constructor's job is to initialize a bare object instance
+
+    function Constructor(height: num, width: num
  */
 static EjsVar *constructor(Ejs *ejs, Shape *sp, int argc, EjsVar **argv)
 {
@@ -386,9 +386,9 @@ static EjsVar *constructor(Ejs *ejs, Shape *sp, int argc, EjsVar **argv)
 }
 
 /*
- *  Compute the area of the shape
- *
- *  function area() num
+    Compute the area of the shape
+
+    function area() num
  */
 static EjsVar *area(Ejs *ejs, Shape *sp, int argc, EjsVar **argv)
 {
@@ -397,7 +397,7 @@ static EjsVar *area(Ejs *ejs, Shape *sp, int argc, EjsVar **argv)
 
 /******************************************************************************/
 /*
- *  Create the Shape class
+    Create the Shape class
  */
 
 EjsType *ejsDefineShapeType(Ejs *ejs)
@@ -407,8 +407,8 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
     EjsName         qname;
 
     /*
-     *  Get the Shape class object. This will be created from the mod file for us. But we need to set the object
-     *  instance size.
+        Get the Shape class object. This will be created from the mod file for us. But we need to set the object
+        instance size.
      */
     type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, ejsName(&qname, EJS_PUBLIC_NAMESPACE, "Shape"));
     if (type == 0) {
@@ -418,7 +418,7 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
     type->instanceSize = sizeof(Shape);
 
     /*
-     *  Define the helper functions.
+        Define the helper functions.
      */
     helpers = type->helpers;
     helpers->clone                  = (EjsCloneHelper) cloneShape;
@@ -431,8 +431,8 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
 
 #if UNUSED
     /*
-     *  Other possible helpers. For this sample, the default helpers are sufficient. Override these if required 
-     *  in your native class.
+        Other possible helpers. For this sample, the default helpers are sufficient. Override these if required 
+        in your native class.
      */
     helpers->castVar                = (EjsCastHelper) castVar;
     helpers->defineProperty         = (EjsDefinePropertyHelper) defineProperty;
@@ -446,8 +446,8 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
 #endif
 
     /*
-     *  Bind the C functions to the JavaScript functions. We use the slot definitions generated
-     *  by ejsmod from Shape.es.
+        Bind the C functions to the JavaScript functions. We use the slot definitions generated
+        by ejsmod from Shape.es.
      */
     ejsBindMethod(ejs, type, ES_sample_Shape_Shape,  (EjsProc) constructor);
     ejsBindMethod(ejs, type, ES_sample_Shape_area, (EjsProc) area);
@@ -457,12 +457,12 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
 
 /******************************************************************************/
 /*
- *  Shape loadable module entry point. This will be called by the Ejscript loader 
- *  after the Shape.mod file is loaded and before Shape initializers are run. 
- *
- *  Module entry points be named [NAME]ModuleInit where "[NAME]" is the name of 
- *  the module starting with a lower case letter and  with any "." characters 
- *  converted to underscores.
+    Shape loadable module entry point. This will be called by the Ejscript loader 
+    after the Shape.mod file is loaded and before Shape initializers are run. 
+
+    Module entry points be named [NAME]ModuleInit where "[NAME]" is the name of 
+    the module starting with a lower case letter and  with any "." characters 
+    converted to underscores.
  */
 int configureSampleTypes(Ejs *ejs)
 {
@@ -471,7 +471,7 @@ int configureSampleTypes(Ejs *ejs)
     mprLog(ejs, 1, "Loading Sample module");
 
     /*
-     *  Get the Shape class object. This will be created from the mod file for us.
+        Get the Shape class object. This will be created from the mod file for us.
      */
     type = ejsGetTypeByName(ejs, "sample", "Shape");
     if (type == 0) {
@@ -480,8 +480,8 @@ int configureSampleTypes(Ejs *ejs)
     }
 
     /*
-     *  Bind the C functions to the JavaScript functions. We use the slot definitions generated
-     *  by ejsmod from Shape.es.
+        Bind the C functions to the JavaScript functions. We use the slot definitions generated
+        by ejsmod from Shape.es.
      */
     ejsBindMethod(ejs, type, ES_sample_Shape_Shape, (EjsProc) constructor);
     ejsBindMethod(ejs, type, ES_sample_Shape_area, (EjsProc) area);
@@ -497,31 +497,31 @@ int sample_Init(MprCtx ctx)
 #endif /* !BLD_FEATURE_STATIC */
 
 /*
- *  @copy   default
- *  
- *  Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
- *  Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.
- *  
- *  This software is distributed under commercial and open source licenses.
- *  You may use the GPL open source license described below or you may acquire 
- *  a commercial license from Embedthis Software. You agree to be fully bound 
- *  by the terms of either license. Consult the LICENSE.TXT distributed with 
- *  this software for full details.
- *  
- *  This software is open source; you can redistribute it and/or modify it 
- *  under the terms of the GNU General Public License as published by the 
- *  Free Software Foundation; either version 2 of the License, or (at your 
- *  option) any later version. See the GNU General Public License for more 
- *  details at: http://www.embedthis.com/downloads/gplLicense.html
- *  
- *  This program is distributed WITHOUT ANY WARRANTY; without even the 
- *  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
- *  
- *  This GPL license does NOT permit incorporating this software into 
- *  proprietary programs. If you are unable to comply with the GPL, you must
- *  acquire a commercial license to use this software. Commercial licenses 
- *  for this software and support services are available from Embedthis 
- *  Software at http://www.embedthis.com 
- *  
- *  @end
+    @copy   default
+    
+    Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.
+    
+    This software is distributed under commercial and open source licenses.
+    You may use the GPL open source license described below or you may acquire 
+    a commercial license from Embedthis Software. You agree to be fully bound 
+    by the terms of either license. Consult the LICENSE.TXT distributed with 
+    this software for full details.
+    
+    This software is open source; you can redistribute it and/or modify it 
+    under the terms of the GNU General Public License as published by the 
+    Free Software Foundation; either version 2 of the License, or (at your 
+    option) any later version. See the GNU General Public License for more 
+    details at: http://www.embedthis.com/downloads/gplLicense.html
+    
+    This program is distributed WITHOUT ANY WARRANTY; without even the 
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+    
+    This GPL license does NOT permit incorporating this software into 
+    proprietary programs. If you are unable to comply with the GPL, you must
+    acquire a commercial license to use this software. Commercial licenses 
+    for this software and support services are available from Embedthis 
+    Software at http://www.embedthis.com 
+    
+    @end
  */
