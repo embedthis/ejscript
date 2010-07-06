@@ -118,14 +118,13 @@ module ejs {
             The matching function is called with the following signature:
                 function match(element: Object, elementIndex: Number, arr: Array): Boolean
             @param match Matching function
-            @return The items index into the array if found, otherwise -1.
+            @return The matched item
             @spec ejs
          */
         function find(match: Function): Object {
-            var result: Array = new Array
             for (let i: Number in this) {
                 if (match(this[i], i, this)) {
-                    return i
+                    return this[i]
                 }
             }
             return null

@@ -1116,6 +1116,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
          */
         CASE (EJS_OP_CALL):
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             vp = state.stack[-argc - 1];
             callFunction(ejs, (EjsFunction*) state.stack[-argc], vp, argc, 2);
             BREAK;
@@ -1129,6 +1131,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_GLOBAL_SLOT):
             slotNum = GET_INT();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             callProperty(ejs, global, slotNum, NULL, argc, 0);
             BREAK;
 
@@ -1142,6 +1146,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_OBJ_SLOT):
             slotNum = GET_INT();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             vp = state.stack[-argc];
             if (vp == ejs->nullValue || vp == ejs->undefinedValue) {
                 //  MOB -- refactor
@@ -1165,6 +1171,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_THIS_SLOT):
             slotNum = GET_INT();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             obj = (EjsObj*) THIS->type->prototype;
             callProperty(ejs, obj, slotNum, NULL, argc, 0);
             BREAK;
@@ -1179,6 +1187,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             slotNum = GET_INT();
             obj = (EjsObj*) getNthBlock(ejs, GET_INT());
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             callProperty(ejs, obj, slotNum, NULL, argc, 0);
             BREAK;
 
@@ -1192,6 +1202,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_OBJ_INSTANCE_SLOT):
             slotNum = GET_INT();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             vp = state.stack[-argc];
             if (vp == 0 || vp == ejs->nullValue || vp == ejs->undefinedValue) {
                 ejsThrowReferenceError(ejs, "Object reference is null");
@@ -1211,6 +1223,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             slotNum = GET_INT();
             nthBase = GET_INT();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             vp = state.stack[-argc];
             if (vp == ejs->nullValue || vp == ejs->undefinedValue) {
                 throwNull(ejs);
@@ -1230,6 +1244,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             slotNum = GET_INT();
             nthBase = GET_INT();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             type = (EjsType*) getNthBase(ejs, THIS, nthBase);
             if (type == ejs->objectType) {
                 //  TODO - remove
@@ -1249,6 +1265,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_OBJ_NAME):
             qname = GET_NAME();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             vp = state.stack[-argc];
             if (vp == 0) {
                 ejsThrowReferenceError(ejs, "%s is not defined", qname.name);
@@ -1276,6 +1294,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_SCOPED_NAME):
             qname = GET_NAME();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             slotNum = ejsLookupScope(ejs, &qname, &lookup);
             if (slotNum < 0) {
                 ejsThrowReferenceError(ejs, "Can't find method %s", qname.name);
@@ -1321,6 +1341,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
          */
         CASE (EJS_OP_CALL_CONSTRUCTOR):
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             vp = state.stack[-argc];
             if (vp == 0 || vp == ejs->nullValue || vp == ejs->undefinedValue) {
                 throwNull(ejs);
@@ -1343,6 +1365,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_CALL_NEXT_CONSTRUCTOR):
             qname = GET_NAME();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             type = ejsGetPropertyByName(ejs, ejs->global, &qname);
             if (type == 0) {
                 ejsThrowReferenceError(ejs, "Can't find constructor %s", qname.name);
@@ -2148,6 +2172,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             FRAME->ignoreAttention = 1;
             type = GET_TYPE();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             vp = (EjsObj*) ejsCreateObject(ejs, type, 0);
             for (i = 1 - (argc * 2); i <= 0; ) {
                 indexVar = ejsToNumber(ejs, state.stack[i++]);
@@ -2173,6 +2199,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             FRAME->ignoreAttention = 1;
             type = GET_TYPE();
             argc = GET_INT();
+            argc += ejs->spreadArgs;
+            ejs->spreadArgs = 0;
             vp = (EjsObj*) ejsCreateObject(ejs, type, 0);
             for (i = 1 - (argc * 3); i <= 0; ) {
                 spaceVar = ejsToString(ejs, state.stack[i++]);
@@ -3489,6 +3517,9 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 
     state = ejs->state;
     result = 0;
+
+    //  MOB -- should already be factored in.
+    mprAssert(ejs->spreadArgs == 0);
     argc += ejs->spreadArgs;
     ejs->spreadArgs = 0;
 

@@ -23,8 +23,8 @@ module ejs {
 
         /**
             Constructor for Timer. The timer is will not be called until $start is called.
-            @param callback Function to invoke when the timer is due.
             @param period Delay in milliseconds before the timer will run
+            @param callback Function to invoke when the timer is due.
             @param args Callback arguments
          */
         native function Timer(period: Number, callback: Function, ...args)
@@ -73,6 +73,7 @@ module ejs {
         @return Timer ID that can be used with $clearInterval
      */
     function setInterval(callback: Function, delay: Number, ...args): Timer {
+        breakpoint()
         let timer = new Timer(delay, callback, ...args)
         timer.repeat = true
         timer.start()

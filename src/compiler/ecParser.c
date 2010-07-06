@@ -50,6 +50,7 @@ static const char *getExt(const char *path);
 static EcNode   *parseAnnotatableDirective(EcCompiler *cp, EcNode *attributes);
 static EcNode   *parseArgumentList(EcCompiler *cp);
 static EcNode   *parseArguments(EcCompiler *cp);
+static EcNode   *parseArrayComprehension(EcCompiler *cp, EcNode *literalElement);
 static EcNode   *parseArrayPattern(EcCompiler *cp);
 static EcNode   *parseArrayType(EcCompiler *cp);
 static EcNode   *parseAssignmentExpression(EcCompiler *cp);
@@ -67,6 +68,7 @@ static EcNode   *parseClassBody(EcCompiler *cp);
 static EcNode   *parseClassDefinition(EcCompiler *cp, EcNode *attributes);
 static EcNode   *parseClassInheritance(EcCompiler *cp);
 static EcNode   *parseClassName(EcCompiler *cp);
+static EcNode   *parseComprehensionExpression(EcCompiler *cp, EcNode *literalElement);
 static EcNode   *parseConstructorSignature(EcCompiler *cp, EcNode *np);
 static EcNode   *parseConstructorInitializer(EcCompiler *cp);
 static EcNode   *parseContinueStatement(EcCompiler *cp);
@@ -1967,7 +1969,7 @@ static EcNode *parseArrayLiteral(EcCompiler *cp)
 /*
     Elements (54)
         ElementList
-        ElementComprehension
+        ArrayComprehension
 
     Input sequence
 
@@ -1983,12 +1985,11 @@ static EcNode *parseElements(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
-    np = parseElementList(cp, np);
-#if FUTURE
-    if (peekToken(cp) == T_FOR) {
-        np = parseElementComprehension(cp, np);
+    if (peekToken(cp) == T_FOR || cp->peekToken->tokenId == T_LET || cp->peekToken->tokenId == T_IF) {
+        np = parseArrayComprehension(cp, np);
+    } else {
+        np = parseElementList(cp, np);
     }
-#endif
     return LEAVE(cp, np);
 }
 
@@ -2063,35 +2064,40 @@ static EcNode *parseLiteralElement(EcCompiler *cp)
 }
 
 
-#if UNUSED
 /*
-    ElementComprehension (61)
-        LiteralElement ForExpression OptionalIfExpression
-
-    parseElements will parse the LiteralElement, so refactored to be:
-
-    ElementComprehension
-        ForExpression IfExpression
-
-    Input sequence
-        for
-
-    AST
+    ArrayComprehension (42)
+        AssignmentExpression ComprehensionExpression
  */
-static EcNode *parseElementComprehension(EcCompiler *cp, EcNode *literalElement)
+static EcNode *parseArrayComprehension(EcCompiler *cp, EcNode *literalElement)
 {
     EcNode      *np;
 
     ENTER(cp);
 
-#if FUTURE
-    np = parseForExpression(cp);
-    np = parseIfExpression(cp);
-#endif
+    np = parseAssignmentExpression(cp);
+    np = parseComprehensionExpression(cp, np);
     return LEAVE(cp, np);
 }
 
 
+/*
+    ComprehensionExpression (43)
+        for (TypedPattern in CommaExpression) ComprehensionClause
+        for each (TypedPattern in CommaExpression) ComprehensionClause
+        let ParenExpression ComprehensionClause
+        if ParenExpression ComprehensionClause
+ */
+static EcNode *parseComprehensionExpression(EcCompiler *cp, EcNode *literalElement)
+{
+    EcNode      *np;
+
+    ENTER(cp);
+    //  MOB
+    return LEAVE(cp, np);
+}
+
+
+#if UNUSED && MOB
 /*
     ForInExpressionList (62)
         ForExpression
