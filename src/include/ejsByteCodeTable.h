@@ -33,7 +33,8 @@ extern "C" {
 #define EBC_ARGC            0x20000         /* Argument count */
 #define EBC_ARGC2           0x40000         /* Argument count * 2 */
 #define EBC_ARGC3           0x80000         /* Argument count * 3 */
-#define EBC_NEW_OBJECT      0x100000        /* New Object: Argument count * 3, byte code: attributes * 3 */
+#define EBC_NEW_ARRAY       0x100000        /* New Array: Argument count * 2, byte code */
+#define EBC_NEW_OBJECT      0x200000        /* New Object: Argument count * 3, byte code: attributes * 3 */
 
 typedef struct EjsOptable {
     char    *name;
@@ -105,6 +106,7 @@ EjsOptable ejsOptable[] = {
     {   "DIV",                      -1,         { EBC_NONE,                               },},
     {   "DUP",                       1,         { EBC_NONE,                               },},
     {   "DUP2",                      2,         { EBC_NONE,                               },},
+    {   "DUP_STACK",                 1,         { EBC_BYTE,                               },},
     {   "END_CODE",                  0,         { EBC_NONE,                               },},
     {   "END_EXCEPTION",             0,         { EBC_NONE,                               },},
     {   "GOTO",                      0,         { EBC_JMP,                                },},
@@ -185,6 +187,7 @@ EjsOptable ejsOptable[] = {
     {   "MUL",                      -1,         { EBC_NONE,                               },},
     {   "NEG",                       0,         { EBC_NONE,                               },},
     {   "NEW",                       0,         { EBC_NONE,                               },},
+    {   "NEW_ARRAY",                 1,         { EBC_GLOBAL, EBC_NEW_ARRAY,              },},
     {   "NEW_OBJECT",                1,         { EBC_GLOBAL, EBC_NEW_OBJECT,             },},
     {   "NOP",                       0,         { EBC_NONE,                               },},
     {   "NOT",                       0,         { EBC_NONE,                               },},

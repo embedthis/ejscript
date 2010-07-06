@@ -61,6 +61,10 @@ module ejs {
             }
         }
 
+        //  MOB
+        function observe(name: Object, callback: Function): Void
+            addListener(name, callback)
+
         /** 
             Clear listeners for a given event name. 
             @param name Event name to clear. The name can be a string or an array of event strings. If null, listeners 
@@ -122,6 +126,8 @@ module ejs {
                 }
             }
         }
+        function fire(name: String, ...args): Void
+            emit(name, ...args)
 
         private function removeOneListener(name: String, callback: Function): Void {
             var listeners: Array? = endpoints[name]

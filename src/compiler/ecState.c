@@ -65,6 +65,7 @@ int ecPushState(EcCompiler *cp, EcState *newState)
         newState->breakState = prev->breakState;
         newState->classState = prev->classState;
         newState->inInterface = prev->inInterface;
+        newState->dupLeft = prev->dupLeft;
 
     } else {
         newState->strict = cp->strict;

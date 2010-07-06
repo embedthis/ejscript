@@ -46,19 +46,23 @@ module ejs {
          */
         private function parseTemplate(template: Object): Void {
             for each (item in template) {
+/*
+            UNUSED
                 let key = item[0]
                 let range = item[1] || null
                 let defaultValue = item[2]
+*/
+                let [key, range, defaultValue] = item
                 if (key is Array) {
                     for each (k in key) {
-                        ranges[k] = range
+                        ranges[k] = range || null
                         options[k] = defaultValue
                         if (k != key[0]) {
                             aliases[k] = key[0]
                         }
                     } 
                 } else {
-                    ranges[key] = range
+                    ranges[key] = range || null
                     options[key] = defaultValue
                 }
             }

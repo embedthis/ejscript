@@ -100,7 +100,6 @@ module ejs {
             return true
         }
 
-         // TODO - how does this compare with JS1.8 reduce?
         /**
             Find all matching elements.
             Iterate over all elements in the object and find all elements for which the matching function is true.
@@ -113,24 +112,23 @@ module ejs {
         function filter(match: Function): Array
             findAll(match)
 
-         // TODO - should this return the index rather than the element?
         /**
             Find the first matching element.
-            Iterate over elements in the object and select the first element for which the matching function is true.
+            Iterate over elements in the object and select the first element for which the matching function returns true.
             The matching function is called with the following signature:
                 function match(element: Object, elementIndex: Number, arr: Array): Boolean
             @param match Matching function
-            @return True when the match function returns true.
+            @return The items index into the array if found, otherwise -1.
             @spec ejs
          */
         function find(match: Function): Object {
             var result: Array = new Array
             for (let i: Number in this) {
                 if (match(this[i], i, this)) {
-                    return this[i]
+                    return i
                 }
             }
-            return result
+            return null
         }
 
         /**
@@ -207,7 +205,6 @@ module ejs {
          */
         native function insert(pos: Number, ...args): Array
 
-//  MOB -- should this be = undefined or null
         /**
             Convert the array into a string.
             Joins the elements in the array into a single string by converting each element to a string and then 
@@ -215,7 +212,7 @@ module ejs {
             @param sep Element separator.
             @return A string.
          */
-        native function join(sep: String = undefined): String
+        native function join(sep: String = ""): String
 
         /**
             Find an item searching from the end of the arry.
@@ -270,11 +267,63 @@ module ejs {
         native function push(...items): Number 
 
         /**
+            Reduce array elements.
+            Apply a callback function against two values of the array and reduce to a single value. Traversal is from
+            left to right. The first time the callback is called, previous will be set to the first value and current
+            will be set to the second value. If an $initial parameter is provided, then previous will be set to initial
+            and current will be set to the first value.
+            The callback is called with the following signature:
+                function callback(previous, current, index: Number, array: Array): Object
+            @param callback Callback function
+            @param initial Initial value to use in the reduction
+            @return Returns a new array containing all matching elements.
+         */
+        function reduce(callback: Function, initial = null): Object {
+            let previous
+            if (length > 0) {
+                let i = 0
+                if (initial) {
+                    previous = callback(initial, this[i++], 0, this)
+                }
+                for (; i < length; i++) {
+                    previous = callback(previous, this[i], i, this)
+                }
+            }
+            return previous
+        }
+
+        /**
+            Reduce array elements.
+            Apply a callback function against two values of the array and reduce to a single value. Traversal is from
+            right to left. The first time the callback is called, previous will be set to the first value and current
+            will be set to the second value. If an $initial parameter is provided, then previous will be set to initial
+            and current will be set to the first value.
+            The callback is called with the following signature:
+                function callback(previous, current, index: Number, array: Array): Object
+            @param callback Callback function
+            @param initial Initial value to use in the reduction
+            @return Returns a new array containing all matching elements.
+         */
+        function reduceRight(callback: Function, initial = null): Object {
+            let previous
+            if (length > 0) {
+                let i = length - 1
+                if (initial) {
+                    previous = callback(initial, this[i--], 0, this)
+                }
+                for (; i >= 0; i--) {
+                    previous = callback(previous, this[i], i, this)
+                }
+            }
+            return previous
+        }
+
+        /**
             Find non-matching elements. Iterate over all elements in the array and select all elements for which 
             the filter function returns false. The matching function is called with the following signature:
-         *
+          
                 function match(element: Object, elementIndex: Number, arr: Array): Boolean
-         *
+          
             @param match Matching function
             @return A new array of non-matching elements.
             @spec ejs

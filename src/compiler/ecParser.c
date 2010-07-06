@@ -83,7 +83,7 @@ static EcNode   *parseEmptyStatement(EcCompiler *cp);
 static EcNode   *parseError(EcCompiler *cp, char *fmt, ...);
 static EcNode   *parseExpressionStatement(EcCompiler *cp);
 static EcNode   *parseFieldListPattern(EcCompiler *cp);
-static EcNode   *parseFieldPattern(EcCompiler *cp);
+static EcNode   *parseFieldPattern(EcCompiler *cp, EcNode *np);
 static EcNode   *parseFieldName(EcCompiler *cp);
 static int      parseFile(EcCompiler *cp, char *path, EcNode **nodes);
 static EcNode   *parseForStatement(EcCompiler *cp);
@@ -110,7 +110,7 @@ static EcNode   *parseLetBindingList(EcCompiler *cp);
 static EcNode   *parseLetExpression(EcCompiler *cp);
 static EcNode   *parseLetStatement(EcCompiler *cp);
 static EcNode   *parseLiteralElement(EcCompiler *cp);
-static EcNode   *parseLiteralField(EcCompiler *cp, EcNode *on);
+static EcNode   *parseLiteralField(EcCompiler *cp);
 static EcNode   *parseListExpression(EcCompiler *cp);
 static EcNode   *parseNamespaceAttribute(EcCompiler *cp);
 static EcNode   *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributes);
@@ -159,7 +159,7 @@ static EcNode   *parseModuleBody(EcCompiler *cp);
 static EcNode   *parseModuleName(EcCompiler *cp);
 static EcNode   *parseModuleDefinition(EcCompiler *cp);
 static EcNode   *parseUsePragma(EcCompiler *cp, EcNode *np);
-static EcNode   *parseVariableBinding(EcCompiler *cp, EcNode *varList, EcNode *attributes);
+static EcNode   *parseVariableBinding(EcCompiler *cp, EcNode *np, EcNode *attributes);
 static EcNode   *parseVariableBindingList(EcCompiler *cp, EcNode *list, EcNode *attributes);
 static EcNode   *parseVariableDefinition(EcCompiler *cp, EcNode *attributes);
 static EcNode   *parseVariableDefinitionKind(EcCompiler *cp, EcNode *attributes);
@@ -435,6 +435,7 @@ char *nodes[] = {
     "n_with",
     "n_spread",
     "n_dassign",
+    "n_var",
     0,
 };
 
@@ -1659,7 +1660,7 @@ static EcNode *parseFunctionExpression(EcCompiler *cp)
  */
 static EcNode *parseFunctionExpressionBody(EcCompiler *cp)
 {
-    EcNode      *np;
+    EcNode      *np, *ret;
 
     ENTER(cp);
 
@@ -1669,7 +1670,11 @@ static EcNode *parseFunctionExpressionBody(EcCompiler *cp)
             np = np->left;
         }
     } else {
-        np = parseAssignmentExpression(cp);
+        np = createNode(cp, N_DIRECTIVES);
+        ret = createNode(cp, N_RETURN);
+        ret->ret.blockLess = 1;
+        ret = appendNode(ret, parseAssignmentExpression(cp));
+        np = appendNode(np, ret);
     }
     if (np) {
         mprAssert(np->kind == N_DIRECTIVES);
@@ -1733,19 +1738,13 @@ static EcNode *parseObjectLiteral(EcCompiler *cp)
  */
 static EcNode *parseFieldList(EcCompiler *cp, EcNode *np)
 {
-    EcNode      *elt;
-
     ENTER(cp);
-
     while (peekToken(cp) != T_RBRACE) {
-        elt = parseLiteralField(cp, np);
-        if (elt) {
-            np = appendNode(np, elt);
-        }
         if (peekToken(cp) != T_COMMA) {
-            break;
+            np = appendNode(np, parseLiteralField(cp));
+        } else {
+            getToken(cp);
         }
-        getToken(cp);
     }
     return LEAVE(cp, np);
 }
@@ -1761,7 +1760,7 @@ static EcNode *parseFieldList(EcCompiler *cp, EcNode *np)
 
     AST
  */
-static EcNode *parseLiteralField(EcCompiler *cp, EcNode *on)
+static EcNode *parseLiteralField(EcCompiler *cp)
 {
     EcNode  *fp, *np, *id, *funRef, *fieldName;
     int     getterSetter;
@@ -1796,6 +1795,7 @@ static EcNode *parseLiteralField(EcCompiler *cp, EcNode *on)
 
         np = createNode(cp, N_FIELD);
         np->field.fieldKind = FIELD_KIND_FUNCTION;
+        np->field.index = -1;
         np->attributes = fp->attributes;
         /*
             The function must get linked into the current var block. It must not get processed inline at
@@ -1830,12 +1830,21 @@ static EcNode *parseLiteralField(EcCompiler *cp, EcNode *on)
             putToken(cp);
             np = createNode(cp, N_FIELD);
         }
+        np->field.index = -1;
         np->field.fieldKind = FIELD_KIND_VALUE;
-        np->field.fieldName = linkNode(np, parseFieldName(cp));
-        if (getToken(cp) != T_COLON) {
-            return LEAVE(cp, expected(cp, ":"));
+        if ((np->field.fieldName = linkNode(np, parseFieldName(cp))) != 0) {
+            if (peekToken(cp) == T_COLON) {
+                getToken(cp);
+                np->field.expr = linkNode(np, parseAssignmentExpression(cp));
+                
+            } else if (np->field.fieldName->kind == N_QNAME) {
+                np->field.expr = linkNode(np, createNode(cp, N_QNAME));
+                setId(np->field.expr, (char*) np->field.fieldName->qname.name);
+
+            } else if (np->field.fieldName->kind != N_LITERAL) {
+                np = expected(cp, ": value");
+            }
         }
-        np->field.expr = linkNode(np, parseAssignmentExpression(cp));
     }
     return LEAVE(cp, np);
 }
@@ -1921,22 +1930,20 @@ static EcNode *parseFieldName(EcCompiler *cp)
  */
 static EcNode *parseArrayLiteral(EcCompiler *cp)
 {
-    EjsType     *type;
-    EcNode      *np, *typeNode, *elementsNode, *newNode, *lit;
+    EcNode      *np, *typeNode;
 
     ENTER(cp);
 
-    typeNode = 0;
-    newNode = createNode(cp, N_NEW);
+    np = createNode(cp, N_OBJECT_LITERAL);
+    np->objectLiteral.isArray = 1;
 
     if (getToken(cp) != T_LBRACKET) {
         np = parseError(cp, "Expecting \"[\"");
-
     } else {
-        np = parseElements(cp, newNode);
+        np = parseElements(cp, np);
+        typeNode = 0;
         if (getToken(cp) != T_RBRACKET) {
             np = parseError(cp, "Expecting \"[\"");
-
         } else {
             if (peekToken(cp) == T_COLON) {
                 typeNode = parseArrayType(cp);
@@ -1946,27 +1953,13 @@ static EcNode *parseArrayLiteral(EcCompiler *cp)
             }
         }
         if (np) {
-            elementsNode = np;
-
             if (typeNode == 0) {
-                /*
-                    Defaults to Array type
-                 */
-                type = (EjsType*) cp->ejs->arrayType;
-                mprAssert(type);
                 typeNode = createNode(cp, N_QNAME);
-                mprAssert(typeNode);
-                setId(typeNode, (char*) type->qname.name);
+                setId(typeNode, (char*) cp->ejs->arrayType->qname.name);
             }
-
-            newNode = appendNode(newNode, typeNode);
-            np = createNode(cp, N_EXPRESSIONS);
-            np = appendNode(np, newNode);
-            np = appendNode(np, elementsNode);
+            np->objectLiteral.typeNode = linkNode(np, typeNode);
         }
     }
-    lit = createNode(cp, N_ARRAY_LITERAL);
-    np = appendNode(lit, np);
     return LEAVE(cp, np);
 }
 
@@ -1986,13 +1979,11 @@ static EcNode *parseArrayLiteral(EcCompiler *cp)
                     N_LITERAL
                 ANY
  */
-static EcNode *parseElements(EcCompiler *cp, EcNode *newNode)
+static EcNode *parseElements(EcCompiler *cp, EcNode *np)
 {
-    EcNode      *np;
-
     ENTER(cp);
 
-    np = parseElementList(cp, newNode);
+    np = parseElementList(cp, np);
 #if FUTURE
     if (peekToken(cp) == T_FOR) {
         np = parseElementComprehension(cp, np);
@@ -2019,54 +2010,28 @@ static EcNode *parseElements(EcCompiler *cp, EcNode *newNode)
                     N_LITERAL
                 ANY
  */
-static EcNode *parseElementList(EcCompiler *cp, EcNode *newNode)
+static EcNode *parseElementList(EcCompiler *cp, EcNode *np)
 {
-    EcNode      *np, *valueNode, *left;
+    EcNode      *elt;
     int         index;
 
     ENTER(cp);
 
-    np = createNode(cp, N_EXPRESSIONS);
     index = 0;
-
-    do {
-        /*
-            Leading comma, or dual commas means a gap in the indicies
-         */
+    for (index = 0; np; ) {
         if (peekToken(cp) == T_COMMA) {
             getToken(cp);
             index++;
-            continue;
         } else if (cp->peekToken->tokenId == T_RBRACKET) {
             break;
-        }
-        valueNode = parseLiteralElement(cp);
-        if (valueNode) {
-            /*
-                Update the array index
-             */
-            mprAssert(valueNode->kind == N_ASSIGN_OP);
-
-            left = valueNode->left;
-            mprAssert(left->kind == N_DOT);
-
-            /*
-                Set the array index
-             */
-            mprAssert(left->right->kind == N_LITERAL);
-            left->right->literal.var = (EjsObj*) ejsCreateNumber(cp->ejs, index);
-
-            /*
-                Update the reference (array) node reference. This refers to the actual array object.
-             */
-            mprAssert(left->left->kind == N_REF);
-            left->left->ref.node = newNode;
-            np = appendNode(np, valueNode);
         } else {
-            np = 0;
+            if ((elt = parseLiteralElement(cp)) != 0) {
+                mprAssert(elt->kind == N_FIELD);
+                elt->field.index = index;
+            }
+            np = appendNode(np, elt);
         }
-    } while (np);
-
+    }
     return LEAVE(cp, np);
 }
 
@@ -2086,28 +2051,14 @@ static EcNode *parseElementList(EcCompiler *cp, EcNode *newNode)
  */
 static EcNode *parseLiteralElement(EcCompiler *cp)
 {
-    EcNode      *np, *parent;
+    EcNode      *np;
 
     ENTER(cp);
-
-    np = createNode(cp, N_DOT);
-
-    np = appendNode(np, createNode(cp, N_REF));
-    np = appendNode(np, createNode(cp, N_LITERAL));
-
-    parent = createNode(cp, N_ASSIGN_OP);
-    np = createAssignNode(cp, np, parseAssignmentExpression(cp), parent);
-    if (np == 0) {
-        return LEAVE(cp, np);
-    }
-
-    /*
-        To allow multiple literal elements, we must not consume the object on the stack.
-     */
-    mprAssert(np->kind == N_ASSIGN_OP);
-
-    //  TOD - bad name. Only used by literals
-    np->needDupObj = 1;
+    np = createNode(cp, N_FIELD);
+    np->field.varKind = KIND_CONST;
+    np->attributes |= EJS_TRAIT_READONLY;
+    np->field.fieldKind = FIELD_KIND_VALUE;
+    np->field.expr = linkNode(np, parseAssignmentExpression(cp));
     return LEAVE(cp, np);
 }
 
@@ -2605,7 +2556,6 @@ static EcNode *parsePrimaryExpression(EcCompiler *cp)
     if (cp->peekToken->groupMask & G_CONREV) {
         tid = T_ID;
     }
-
     np = 0;
     switch (tid) {
     case T_STRING:
@@ -2616,6 +2566,7 @@ static EcNode *parsePrimaryExpression(EcCompiler *cp)
             vp = (EjsObj*) ejsCreateString(cp->ejs, (char*) cp->token->text);
             np = createNode(cp, N_LITERAL);
             np->literal.var = vp;
+            setId(np, (char*) cp->token->text);
         }
         break;
 
@@ -3164,7 +3115,7 @@ static EcNode *parseMemberExpression(EcCompiler *cp)
     }
     while (np && (peekToken(cp) == T_DOT || cp->peekToken->tokenId == T_DOT_DOT ||
             cp->peekToken->tokenId == T_LBRACKET)) {
-#if OLD && UNUSED
+#if 1
         if (np->lineNumber == cp->peekToken->lineNumber) {
             np = insertNode(parsePropertyOperator(cp), np, 0);
         } else {
@@ -3373,7 +3324,6 @@ static EcNode *parseLeftHandSideExpression(EcCompiler *cp)
 
     if (peekToken(cp) == T_NEW) {
         np = parseNewExpression(cp);
-
     } else {
         np = parseMemberExpression(cp);
     }
@@ -3602,6 +3552,7 @@ static EcNode *parseMultiplicativeExpression(EcCompiler *cp)
     EcNode      *np, *parent;
 
     ENTER(cp);
+    
     np = parseUnaryExpression(cp);
     while (np) {
         switch (peekToken(cp)) {
@@ -4206,6 +4157,25 @@ static EcNode *rewriteCompoundAssignment(EcCompiler *cp, int subId, EcNode *lhs,
 }
 
 
+static void fixDassign(EcCompiler *cp, EcNode *np)
+{
+    EcNode      *elt;
+    int         next;
+    
+    for (next = 0; (elt = mprGetNextItem(np->children, &next)) != 0 && !cp->error; ) {
+        fixDassign(cp, elt);
+    }
+    if (np->kind == N_OBJECT_LITERAL) {
+        np->kind = N_DASSIGN;
+        np->kindName = "n_dassign";
+    } else if (np->kind == N_FIELD) {
+        if (np->field.expr) {
+            fixDassign(cp, np->field.expr);
+        }
+    }
+}
+
+
 /*
     AssignmentExpression (211)
         ConditionalExpression
@@ -4259,6 +4229,7 @@ static EcNode *rewriteCompoundAssignment(EcCompiler *cp, int subId, EcNode *lhs,
         N_THIS
         N_DELETE
  */
+
 static EcNode *parseAssignmentExpression(EcCompiler *cp)
 {
     EcNode      *np, *parent;
@@ -4268,27 +4239,13 @@ static EcNode *parseAssignmentExpression(EcCompiler *cp)
     ENTER(cp);
     state = cp->state;
 
-#if UNUSED
-    if (!state->onRight) {
-        switch (peekToken(cp)) {
-        case T_LBRACE:
-        case T_LBRACKET:
-            np = parsePattern(cp);
-            break;
-        default:
-            np = parseConditionalExpression(cp);
-        }
-    } else {
-        state->onRight = 0;
-        np = parseConditionalExpression(cp);
-    }
-#else
     np = parseConditionalExpression(cp);
-#endif
-    state->onRight = 1;
     if (np) {
         if (peekToken(cp) == T_ASSIGN) {
             getToken(cp);
+            if (np->kind == N_OBJECT_LITERAL || np->kind == N_EXPRESSIONS) {
+                fixDassign(cp, np );
+            }
             subId = cp->token->subId;
             if (cp->token->groupMask & G_COMPOUND_ASSIGN) {
                 np = rewriteCompoundAssignment(cp, subId, np, parseAssignmentExpression(cp));
@@ -4421,9 +4378,6 @@ static EcNode *parseSimplePattern(EcCompiler *cp)
     EcNode      *np;
 
     ENTER(cp);
-    
-    //  MOB -- should peek and call parseIdentifier if T_ID
-
     np = parseLeftHandSideExpression(cp);
     if (np == 0 && peekToken(cp) == T_ID) {
         np = parseIdentifier(cp);
@@ -4474,7 +4428,7 @@ static EcNode *parseFieldListPattern(EcCompiler *cp)
 
     np = createNode(cp, N_DASSIGN);
     while (1) {
-        np = appendNode(np, parseFieldPattern(cp));
+        np = appendNode(np, parseFieldPattern(cp, np));
         if (peekToken(cp) == T_COMMA) {
             getToken(cp);
         } else {
@@ -4494,21 +4448,20 @@ static EcNode *parseFieldListPattern(EcCompiler *cp)
 
     AST
  */
-static EcNode *parseFieldPattern(EcCompiler *cp)
+static EcNode *parseFieldPattern(EcCompiler *cp, EcNode *np)
 {
-    EcNode      *np, *typeNode;
+    EcNode      *typeNode, *elt;
 
     ENTER(cp);
-    np = createNode(cp, N_EXPRESSIONS);
-    np = appendNode(np, parseFieldName(cp));
+    elt = parseFieldName(cp);
+    np = appendNode(np, elt);
     if (peekToken(cp) == ':') {
         getToken(cp);
         typeNode = parsePattern(cp);
         if (typeNode) {
-            np->typeNode = linkNode(np, typeNode);
+            elt->typeNode = linkNode(np, typeNode);
         }
     }
-    mprAssert(0);
     return LEAVE(cp, np);
 }
 
@@ -4556,11 +4509,17 @@ static EcNode *parseElementListPattern(EcCompiler *cp)
     ENTER(cp);
     
     np = createNode(cp, N_DASSIGN);
-    for (index = 0; ; index++) {
+    np->objectLiteral.isArray = 1;
+    
+    for (index = 0; np; index++) {
         if (peekToken(cp) != T_COMMA) {
-            elt = parsePattern(cp);
-            mprAssert(elt->kind == N_QNAME);
-            elt->name.index = index;
+            elt = createNode(cp, N_FIELD);
+            elt->attributes |= EJS_TRAIT_READONLY;
+            elt->field.varKind = KIND_CONST;
+            elt->field.fieldKind = FIELD_KIND_VALUE;
+            elt->field.expr = linkNode(np, parsePattern(cp));
+            setId(elt, (char*) elt->field.expr->qname.name);
+            elt->field.index = index;
             np = appendNode(np, elt);
         }
         if (peekToken(cp) == T_COMMA) {
@@ -5921,16 +5880,13 @@ static EcNode *parseForStatement(EcCompiler *cp)
     if (getToken(cp) != T_FOR) {
         return LEAVE(cp, parseError(cp, "Expecting \"for\""));
     }
-
     if (peekToken(cp) == T_EACH) {
         each++;
         getToken(cp);
     }
-
     if (getToken(cp) != T_LPAREN) {
         return LEAVE(cp, parseError(cp, "Expecting \"(\""));
     }
-
     if (peekToken(cp) == T_ID && peekAheadToken(cp, 2) == T_IN) {
         /*
             For in forces the variable to be a let scoped var
@@ -5951,7 +5907,9 @@ static EcNode *parseForStatement(EcCompiler *cp)
     if (initializer == 0 && cp->error) {
         return LEAVE(cp, 0);
     }
-
+    if (initializer && mprGetListCount(initializer->children) > 2) {
+        return LEAVE(cp, parseError(cp, "Too many iteration variables"));
+    }
     if (getToken(cp) == T_SEMICOLON) {
         forIn = 0;
         np = createNode(cp, N_FOR);
@@ -5994,11 +5952,9 @@ static EcNode *parseForStatement(EcCompiler *cp)
     } else {
         return LEAVE(cp, unexpected(cp));
     }
-
     if (getToken(cp) != T_RPAREN) {
         np = parseError(cp, "Expecting \")\"");
     }
-
     body = linkNode(np, parseSubstatement(cp));
     if (body == 0) {
         return LEAVE(cp, body);
@@ -6010,15 +5966,12 @@ static EcNode *parseForStatement(EcCompiler *cp)
     if (body->kind == N_BLOCK) {
         block = body;
         body = removeNode(block, block->left);
-
     } else {
         block = createNode(cp, N_BLOCK);
     }
-
     if (forIn) {
         np->forInLoop.body = linkNode(np, body);
         np->forInLoop.each = each;
-
     } else {
         if (each) {
             return LEAVE(cp, parseError(cp, "\"for each\" can only be used with \"for .. in\""));
@@ -6358,7 +6311,7 @@ static EcNode *parseCatchClauses(EcCompiler *cp)
  */
 static EcNode *parseCatchClause(EcCompiler *cp)
 {
-    EcNode      *np, *block, *arg, *varDef, *parent;
+    EcNode      *np, *block, *arg, *varDef, *assign, *name;
 
     ENTER(cp);
 
@@ -6377,24 +6330,32 @@ static EcNode *parseCatchClause(EcCompiler *cp)
     if (peekToken(cp) == T_LPAREN) {
         getToken(cp);
         varDef = parseParameter(cp, 0);
+        if (getToken(cp) != T_RPAREN) {
+            return LEAVE(cp, unexpected(cp));
+        }
         if (varDef) {
             mprAssert(varDef->kind == N_VAR_DEFINITION);
             varDef->def.varKind = KIND_LET;
             arg = varDef->left;
-            mprAssert(arg->kind == N_QNAME);
             removeNode(varDef, arg);
+            mprAssert(arg->kind == N_QNAME);
+            arg->kind = N_VAR;
+            arg->name.varKind = KIND_LET;
+            arg->kindName = "n_var";
             arg->qname.space = cp->state->namespace;
-        }
-        if (getToken(cp) != T_RPAREN) {
-            return LEAVE(cp, unexpected(cp));
-        }
-        /*
-            Insert an assign node and value
-         */
-        if (varDef) {
+
+            /* Create assignment node */
+            name = createNode(cp, N_QNAME);
+            setId(name, (char*) arg->qname.name);
+            assign = appendNode(createNode(cp, N_ASSIGN_OP), name);
+            assign = appendNode(assign, createNode(cp, N_CATCH_ARG));
+            arg = appendNode(arg, assign);
+            varDef = appendNode(varDef, arg);
+#if UNUSED
             parent = createNode(cp, N_ASSIGN_OP);
             arg = createAssignNode(cp, arg, createNode(cp, N_CATCH_ARG), parent);
             varDef = appendNode(varDef, arg);
+#endif
         }
     }
     np->catchBlock.arg = varDef;
@@ -6979,7 +6940,6 @@ static EcNode *parseAnnotatableDirective(EcCompiler *cp, EcNode *attributes)
         getToken(cp);
         np = parseError(cp, "Unknown directive \"%s\"", cp->token->text);
     }
-
     if (np && expectSemi) {
         if (getToken(cp) != T_SEMICOLON) {
             if (np->lineNumber < cp->token->lineNumber || cp->token->tokenId == T_EOF) {
@@ -7330,11 +7290,10 @@ static EcNode *parseVariableBindingList(EcCompiler *cp, EcNode *varList, EcNode 
 {
     ENTER(cp);
 
-    varList = appendNode(varList, parseVariableBinding(cp, varList, attributes));
-
-    while (peekToken(cp) == T_COMMA) {
+    varList = parseVariableBinding(cp, varList, attributes);
+    while (varList && peekToken(cp) == T_COMMA) {
         getToken(cp);
-        varList = appendNode(varList, parseVariableBinding(cp, varList, attributes));
+        varList = parseVariableBinding(cp, varList, attributes);
     }
     return LEAVE(cp, varList);
 }
@@ -7366,49 +7325,65 @@ static EcNode *parseVariableBindingList(EcCompiler *cp, EcNode *varList, EcNode 
             right: N_LITERAL
 
  */
-static EcNode *parseVariableBinding(EcCompiler *cp, EcNode *varList, EcNode *attributes)
+static EcNode *parseVariableBinding(EcCompiler *cp, EcNode *np, EcNode *attributes)
 {
-    EcNode      *np, *parent;
+    EcNode      *var, *assign, *elt, *initialize, *name;
+    int         next;
 
     ENTER(cp);
 
-    np = 0;
-
     switch (peekToken(cp)) {
     case T_LBRACKET:
-        getToken(cp);
-        unexpected(cp);
-        break;
-
     case T_LBRACE:
-        getToken(cp);
-        unexpected(cp);
+        initialize = parsePattern(cp);
+        for (next = 0; (elt = mprGetNextItem(initialize->children, &next)) != 0 && !cp->error; ) {
+            var = createNode(cp, N_VAR);
+            mprAssert(elt->field.expr->kind == N_QNAME);
+            var->qname = ejsCopyName(var, &elt->field.expr->qname);
+            var->name.varKind = np->def.varKind;
+            var->attributes |= np->attributes;
+            applyAttributes(cp, var, attributes, 0); 
+            copyDocString(cp, var, np);
+            np = appendNode(np, var);
+        }
+        if (peekToken(cp) == T_ASSIGN) {
+            getToken(cp);
+            assign = createNode(cp, N_ASSIGN_OP);
+            assign = createAssignNode(cp, initialize, parseAssignmentExpression(cp), assign);
+            np = appendNode(np, assign);
+        }
         break;
 
     default:
-        np = parseTypedIdentifier(cp);
-        if (np == 0) {
-            return LEAVE(cp, np);
+        var = parseTypedIdentifier(cp);
+        if (var == 0) {
+            return LEAVE(cp, var);
         }
-        if (np->kind != N_QNAME) {
+        if (var->kind != N_QNAME) {
             return LEAVE(cp, parseError(cp, "Bad variable name"));
         }
-        //  Accumulate CONST attributes
-        np->attributes |= varList->attributes;
-        applyAttributes(cp, np, attributes, 0);
-        copyDocString(cp, np, varList);
-
         if (STRICT_MODE(cp)) {
-            if (np->typeNode == 0) {
+            if (var->typeNode == 0) {
                 parseError(cp, "Variable untyped. Variables must be typed when declared in strict mode");
-                np = ecResetError(cp, np, 0);
+                var = ecResetError(cp, var, 0);
                 /* Keep parsing */
             }
         }
+        var->kind = N_VAR;
+        var->kindName = "n_var";
+        var->name.varKind = np->def.varKind;
+        var->attributes |= np->attributes;
+        applyAttributes(cp, var, attributes, 0);
+        copyDocString(cp, var, np);
+
         if (peekToken(cp) == T_ASSIGN) {
-            parent = createNode(cp, N_ASSIGN_OP);
-            np = createAssignNode(cp, np, parseVariableInitialisation(cp), parent);
+            name = createNode(cp, N_QNAME);
+            name->qname = ejsCopyName(var, &var->qname);
+            assign = appendNode(createNode(cp, N_ASSIGN_OP), name);
+            assign = appendNode(assign, parseVariableInitialisation(cp));
+            var = appendNode(var, assign);
         }
+        np = appendNode(np, var);
         break;
     }
     return LEAVE(cp, np);
@@ -7790,7 +7765,6 @@ static EcNode *parseFunctionSignature(EcCompiler *cp, EcNode *np)
     if (getToken(cp) != T_RPAREN) {
         return LEAVE(cp, parseError(cp, "Expecting \")\""));
     }
-
     if (np) {
         if (peekToken(cp) == T_COLON) {
             np->function.resultType = linkNode(np, parseResultType(cp));
@@ -8650,7 +8624,7 @@ static EcNode *parseInterfaceBody(EcCompiler *cp)
  */
 static EcNode *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributeNode)
 {
-    EcNode      *varDefNode, *assignNode, *nameNode, *typeNode, *namespaceNode, *parent;
+    EcNode      *varDefNode, *assignNode, *varNode, *typeNode, *namespaceNode, *nameNode;
     EjsObj      *vp;
 
     ENTER(cp);
@@ -8663,40 +8637,48 @@ static EcNode *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributeNode)
         Handle namespace definitions like:
             let NAME : Namespace = NAMESPACE_LITERAL
      */
-    if ((nameNode = parseIdentifier(cp)) == 0) {
-        return LEAVE(cp, nameNode);
+    if ((varNode = parseIdentifier(cp)) == 0) {
+        return LEAVE(cp, varNode);
     }
-    nameNode->name.isNamespace = 1;
-    setNodeDoc(cp, nameNode);
+    mprAssert(varNode->kind == N_QNAME);
+    varNode->kind = N_VAR;
+    varNode->kindName = "n_var";
+    varNode->name.varKind = KIND_VAR;
+    varNode->name.isNamespace = 1;
+    setNodeDoc(cp, varNode);
 
     /*
         Hand-craft a "Namespace" type node
      */
     typeNode = createNode(cp, N_QNAME);
     typeNode->qname.name = "Namespace";
-    nameNode->typeNode = linkNode(nameNode, typeNode);
-    applyAttributes(cp, nameNode, attributeNode, 0);
+    varNode->typeNode = linkNode(varNode, typeNode);
+    applyAttributes(cp, varNode, attributeNode, 0);
 
     if (peekToken(cp) == T_ASSIGN) {
-        namespaceNode = parseNamespaceInitialisation(cp, nameNode);
+        namespaceNode = parseNamespaceInitialisation(cp, varNode);
 
     } else {
         /*
             Create a namespace literal node from which to assign.
          */
         namespaceNode = createNode(cp, N_LITERAL);
-        vp = (EjsObj*) ejsCreateNamespace(cp->ejs, nameNode->qname.name, nameNode->qname.name);
+        vp = (EjsObj*) ejsCreateNamespace(cp->ejs, varNode->qname.name, varNode->qname.name);
         namespaceNode->literal.var = vp;
-        nameNode->name.value = vp;
+        varNode->name.nsvalue = vp;
     }
-
-    parent = createNode(cp, N_ASSIGN_OP);
-    assignNode = createAssignNode(cp, nameNode, namespaceNode, parent);
+    /*
+        Create an assignment node
+     */
+    nameNode = createNode(cp, N_QNAME);
+    nameNode->qname = ejsCopyName(varNode, &varNode->qname);
+    assignNode = appendNode(createNode(cp, N_ASSIGN_OP), nameNode);
+    assignNode = appendNode(assignNode, namespaceNode);
+    varNode = appendNode(varNode, assignNode);
 
     varDefNode = createNode(cp, N_VAR_DEFINITION);
     varDefNode->def.varKind = KIND_VAR;
-
-    varDefNode = appendNode(varDefNode, assignNode);
+    varDefNode = appendNode(varDefNode, varNode);
 
     return LEAVE(cp, varDefNode);
 }
@@ -9813,9 +9795,6 @@ void ecReportError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNum
     }
 #endif
     cp->errorMsg = mprReallocStrcat(cp, -1, cp->errorMsg, errorMsg, NULL);
-#if UNUSED
-    mprPrintfError(cp, "%s", cp->errorMsg);
-#endif
     mprBreakpoint();
 }
 
@@ -9986,7 +9965,6 @@ static EcNode *createNode(EcCompiler *cp, int kind)
 #if BLD_DEBUG
     np->kindName = nodes[kind];
 #endif
-
     np->lookup.slotNum = -1;
 
     /*
@@ -10187,21 +10165,13 @@ static EcNode *createBinaryNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode
 }
 
 
-/*
-    Create an assignment op node.
- */
 static EcNode *createAssignNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode *parent)
 {
     mprAssert(cp);
     mprAssert(lhs);
     mprAssert(parent);
 
-    /*
-        appendNode will return the parent if no error
-     */
-    parent = appendNode(parent, lhs);
-    parent = appendNode(parent, rhs);
-    return parent;
+    return appendNode(appendNode(parent, lhs), rhs);
 }
 
 
@@ -10209,6 +10179,7 @@ static EcNode *createAssignNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode
     Add a child node. If an allocation error, return 0, otherwise return the
     parent node.
  */
+//  MOB -- should have an appendNodes( ....)
 static EcNode *appendNode(EcNode *np, EcNode *child)
 {
     EcCompiler      *cp;
@@ -10353,13 +10324,9 @@ static EcNode *removeNode(EcNode *np, EcNode *child)
 }
 
 
-/* XXX */
-
 static void setId(EcNode *np, char *name)
 {
     mprAssert(np);
-    mprAssert(np->kind == N_QNAME || np->kind == N_VOID);
-    mprAssert(name);
 
     if (np->qname.name != name) {
         mprFree((char*) np->qname.name);

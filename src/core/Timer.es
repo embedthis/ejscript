@@ -73,7 +73,7 @@ module ejs {
         @return Timer ID that can be used with $clearInterval
      */
     function setInterval(callback: Function, delay: Number, ...args): Timer {
-        let timer = new Timer(delay, callback, /* SPREAD */ args)
+        let timer = new Timer(delay, callback, ...args)
         timer.repeat = true
         timer.start()
         return timer
@@ -94,7 +94,7 @@ module ejs {
         @return Timer that can be used with $clearTimeout
       */
     function setTimeout(callback: Function, delay: Number, ...args): Number {
-        let timer = new Timer(delay, callback, /* SPREAD */ args)
+        let timer = new Timer(delay, callback, ...args)
         timer.start()
         return timer
     }

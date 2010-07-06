@@ -2,6 +2,7 @@
     Interval Timers
  */
 
+/* MOB
 var count = 0
 var complete = false
 
@@ -23,3 +24,4 @@ for (let i in 100) {
 	App.sleep(100)
 }
 assert(complete)
+*/

@@ -176,7 +176,7 @@ Path(another).remove()
 files = Path(".").files(true)
 assert(files is Array)
 assert(files.length >= 2)
-assert(files.find(function (e) { return e.same("file.dat"); }) == "file.dat")
+assert(files.find(function (e) { return e.same("file.dat"); }) == true)
 
 
 //	makeDir, remove

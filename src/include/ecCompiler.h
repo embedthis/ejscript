@@ -73,7 +73,6 @@ typedef struct EcNode {
     int                 attributes;         /* Attributes applying to this node */
     bool                specialNamespace;   /* Using a public|private|protected|internal namespace */
     Node                typeNode;           /* Type of name */
-    int                 index;              /* Used for array literal indicies */
     Node                parent;             /* Parent node */
     EjsNamespace        *namespaceRef;      /* Namespace reference */
     MprList             *namespaces;        /* Namespaces for hoisted variables */
@@ -105,6 +104,7 @@ typedef struct EcNode {
             Name nodes hold a fully qualified name.
          */
         #define N_QNAME  3
+        #define N_VAR 63
         struct {
             Node        nameExpr;           /* Name expression */
             Node        qualifierExpr;      /* Qualifier expression */
@@ -114,8 +114,8 @@ typedef struct EcNode {
             int         letScope;           /* Variable is defined in let block scope */
             int         instanceVar;        /* Instance or static var (if defined in class) */
             int         isRest;             /* ... rest style args */
-            int         index;              /* Index for Dassign */
-            EjsObj      *value;             /* Initialization value */
+            int         varKind;            /* Variable definition kind */
+            EjsObj      *nsvalue;           /* Initialization value (MOB - remove) */
         } name;
 
         /*
@@ -410,6 +410,7 @@ typedef struct EcNode {
         } literal;
 
         #define N_OBJECT_LITERAL    56      /* Array or object literal */
+        #define N_DASSIGN 62                /* Destructuring assignment */
         struct {
             Node                typeNode;   /* Type of object */
             int                 isArray;    /* Array literal */
@@ -427,7 +428,7 @@ typedef struct EcNode {
             int                 varKind;    /* Variable definition kind (const) */
             Node                expr;       /* Field expression */
             Node                fieldName;  /* Field element name for objects */
-            int                 index;      /* Array index */
+            int                 index;      /* Array index, set to -1 for objects */
         } field;
 
         #define N_WITH 60
@@ -498,11 +499,12 @@ typedef struct EcNode {
 /* N_HASH 55 */
 /* N_OBJECT_LITERAL 56 */
 /* N_FIELD 57 */
-#define N_ARRAY_LITERAL 58
+#define N_ARRAY_LITERAL_UNUSED 58
 #define N_CATCH_ARG 59
 #define N_WITH 60
 #define N_SPREAD 61
-#define N_DASSIGN 62
+/* N_DASSIGN 62 */
+/* N_VAR 63 */
 
 #define EC_NUM_NODES                    8
 #define EC_TAB_WIDTH                    4
@@ -796,6 +798,7 @@ typedef struct EcToken {
     int         subId;
     int         groupMask;
 
+    //  MOB -- convert from uchar
     uchar       *text;                          /* Token text */
     int         textLen;                        /* Length of text */
     int         textBufSize;                    /* Size of text buffer */
@@ -941,7 +944,10 @@ typedef struct EcState {
 
     //  MOB -- should rationalize and have only one of these. Parser needs onRight.
     int             onLeft;                 /* On the left of an assignment */
+
+    //  MOB -- unused
     int             onRight;                /* On the right of an assignment */
+    int             dupLeft;                /* Dup left side */
 
     int             saveOnLeft;             /* Saved left of an assignment */
     int             conditional;            /* In branching conditional */

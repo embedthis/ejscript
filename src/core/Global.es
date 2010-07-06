@@ -15,8 +15,8 @@ module ejs {
     /** @hide */
     public var ECMA: Boolean = false
 
-//MOB
-public namespace ejs
+    //MOB - is this required? - remove
+    public namespace ejs
 
     /** 
         The public namespace used to make entities visible accross modules.
@@ -30,7 +30,8 @@ public namespace ejs
     public namespace internal
 
     /** 
-        The iterator namespace used to defined iterators.
+        The iterator namespace used to define iterators.
+        MOB - do we really need this?
      */
     public namespace iterator
 

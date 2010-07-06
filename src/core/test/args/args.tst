@@ -13,6 +13,7 @@ let caught
 cmd = CmdArgs(template, [])
 assert(cmd.args == "")
 assert(cmd.options.verbose == undefined)
+
 assert(cmd.options.quiet == false)
 assert(cmd.options.log == "stdout:4")
 assert(cmd.options.mode == "high")

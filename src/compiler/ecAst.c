@@ -765,31 +765,12 @@ static void astDassign(EcCompiler *cp, EcNode *np)
 
     mprAssert(np->kind == N_DASSIGN);
 
-    ENTER(cp);
-
-    /*
-        No current object when computing an expression. E.g. obj[a + b]
-        We don't want obj set as the context object for a or b.
-     */
-    cp->state->currentObjectNode = 0;
-
-    next = 0;
-    while ((child = getNextAstNode(cp, np, &next)) != 0) {
+    if (np->objectLiteral.typeNode) {
+        processAstNode(cp, np->objectLiteral.typeNode);
+    }
+    for (next = 0; (child = getNextAstNode(cp, np, &next)) != 0; ) {
         processAstNode(cp, child);
     }
-#if UNUSED
-    /*
-        Propagate up the right side qname and lookup.
-     */
-    if (cp->phase >= EC_PHASE_BIND) {
-        child = mprGetLastItem(np->children);
-        if (child) {
-            np->lookup = child->lookup;
-            np->qname = child->qname;
-        }
-    }
-#endif
-    LEAVE(cp);
 }
 
 
@@ -1984,8 +1965,7 @@ static void astObjectLiteral(EcCompiler *cp, EcNode *np)
     mprAssert(np->kind == N_OBJECT_LITERAL);
 
     processAstNode(cp, np->objectLiteral.typeNode);
-    next = 0;
-    while ((child = getNextAstNode(cp, np, &next)) != 0) {
+    for (next = 0; (child = getNextAstNode(cp, np, &next)) != 0; ) {
         processAstNode(cp, child);
     }
 }
@@ -1993,7 +1973,7 @@ static void astObjectLiteral(EcCompiler *cp, EcNode *np)
 
 static void astField(EcCompiler *cp, EcNode *np)
 {
-    if (np->field.fieldKind == FIELD_KIND_VALUE) {
+    if (np->field.fieldKind == FIELD_KIND_VALUE && np->field.expr) {
         processAstNode(cp, np->field.expr);
     }
 }
@@ -2391,12 +2371,11 @@ static void astUseNamespace(EcCompiler *cp, EcNode *np)
     EjsNamespace    *namespace;
     EcState         *state, *s;
 
+    mprAssert(np->kind == N_USE_NAMESPACE);
+    
     ENTER(cp);
 
     state = cp->state;
-
-    mprAssert(np->kind == N_USE_NAMESPACE);
-
     ejs = cp->ejs;
     namespace = 0;
 
@@ -2803,8 +2782,45 @@ static void bindVariableDefinition(EcCompiler *cp, EcNode *np)
 
 
 /*
-    Define a variable
+    Initialize constants here so they can be used for conditional compilation and "use namespace"
  */
+static void astInitVar(EcCompiler *cp, EcNode *np)
+{
+    Ejs         *ejs;
+    EcState     *state;
+    EcNode      *right;
+    int         slotNum;
+
+    ejs = cp->ejs;
+    state = cp->state;
+
+    mprAssert(np->left);
+    mprAssert(np->left->kind == N_ASSIGN_OP);
+
+    right = np->left->right;
+    mprAssert(right);
+
+    if (right->kind == N_LITERAL && !(np->name.varKind & KIND_LET) && !(np->attributes & EJS_PROP_NATIVE)) {
+        mprAssert(np->kind == N_VAR);
+        mprAssert(right->literal.var);
+
+        /* Exclude class instance variables */
+        if (! (state->inClass && !(np->attributes & EJS_PROP_STATIC))) {
+            slotNum = ejsLookupProperty(ejs, state->varBlock, &np->qname);
+            if (cp->phase == EC_PHASE_DEFINE) {
+                ejsSetProperty(ejs, state->varBlock, slotNum, right->literal.var);
+
+            } else if (cp->phase >= EC_PHASE_BIND && !np->name.isNamespace && slotNum >= 0) {
+                /*
+                    Erase the value incase being run in the ejs shell. Must not prematurely define values.
+                 */
+                ejsSetProperty(ejs, state->varBlock, slotNum, ejs->undefinedValue);
+            }
+        }
+    }
+}
+
+
 static void astVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
 {
     EcState     *state;
@@ -2863,73 +2879,35 @@ static void astVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
         }
         bindVariableDefinition(cp, np);
     }
+    if (!state->disabled && np->left) {
+        astAssignOp(cp, np->left);
+        astInitVar(cp, np);
+    }
 }
 
 
-/*
-    Define variables
- */
 static void astVarDefinition(EcCompiler *cp, EcNode *np, int *codeRequired, int *instanceCode)
 {
     Ejs         *ejs;
-    EcNode      *child, *var, *right;
+    EcNode      *var;
     EcState     *state;
-    int         next, varKind, slotNum;
+    int         next;
 
     mprAssert(np->kind == N_VAR_DEFINITION);
 
     ENTER(cp);
-
     ejs = cp->ejs;
     state = cp->state;
-    mprAssert(state);
 
-    varKind = np->def.varKind;
-
-    next = 0;
-    while ((child = getNextAstNode(cp, np, &next))) {
-        if (child->kind == N_ASSIGN_OP) {
-            var = child->left;
-        } else {
-            var = child;
-        }
-        //  MOBXX - could open block for constructor
-        astVar(cp, var, np->def.varKind, var->name.value);
-        
-        if (state->disabled) {
-            continue;
-        }
-        if (child->kind == N_ASSIGN_OP) {
-            *instanceCode = state->instanceCode;
-            *codeRequired = 1;
-        }
-        if (child->kind == N_ASSIGN_OP) {
-            astAssignOp(cp, child);
-
-            right = child->right;
-            mprAssert(right);
-
-            /*
-                Define constants here so they can be used for conditional compilation and "use namespace". We erase after the
-                conditional phase.
-             */
-            if (right->kind == N_LITERAL && !(np->def.varKind & KIND_LET) && !(var->attributes & EJS_PROP_NATIVE)) {
-                mprAssert(var->kind == N_QNAME);
-                mprAssert(right->literal.var);
-                /* Exclude class instance variables */
-                if (! (state->inClass && !(var->attributes & EJS_PROP_STATIC))) {
-                    slotNum = ejsLookupProperty(ejs, state->varBlock, &var->qname);
-                    if (cp->phase == EC_PHASE_DEFINE) {
-                        ejsSetProperty(ejs, state->varBlock, slotNum, right->literal.var);
-
-                    } else if (cp->phase >= EC_PHASE_BIND && !var->name.isNamespace && slotNum >= 0) {
-                        /*
-                            Erase the value incase being run in the ejs shell. Must not prematurely define values.
-                         */
-                        ejsSetProperty(ejs, state->varBlock, slotNum, ejs->undefinedValue);
-                    }
-                }
+    for (next = 0; (var = getNextAstNode(cp, np, &next)); ) {
+        if (var->kind == N_VAR) {
+            astVar(cp, var, var->name.varKind, var->name.nsvalue);
+            if (var->left && !state->disabled) {
+                *codeRequired = 1;
+                *instanceCode = state->instanceCode;
             }
+        } else {
+            processAstNode(cp, var);
         }
     }
     LEAVE(cp);
@@ -3107,11 +3085,6 @@ static void processAstNode(EcCompiler *cp, EcNode *np)
     switch (np->kind) {
     case N_ARGS:
         astArgs(cp, np);
-        codeRequired++;
-        break;
-
-    case N_ARRAY_LITERAL:
-        processAstNode(cp, np->left);
         codeRequired++;
         break;
 
@@ -3962,7 +3935,7 @@ static EjsObj *getBlockForDefinition(EcCompiler *cp, EcNode *np, EjsObj *block, 
             if (!(np->kind == N_FUNCTION && np->function.isConstructor)) {
                 block = (EjsObj*) type->prototype;
             }
-            if (np->kind == N_QNAME) {
+            if (np->kind == N_QNAME || np->kind == N_VAR) {
                 np->name.instanceVar = 1;
             }
         }

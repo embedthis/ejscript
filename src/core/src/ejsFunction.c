@@ -84,6 +84,7 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
     dest->rest = src->rest;
     dest->fullScope = src->fullScope;
     dest->strict = src->strict;
+    dest->name = src->name;
 
     if (src->activation) {
         dest->activation = ejsCloneObject(ejs, src->activation, 0);
@@ -228,12 +229,26 @@ static EjsObj *fun_call(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 /*
     Return the number of required args.
 
-    static function get length(): Number
+    function get length(): Number
  */
 static EjsObj *fun_length(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateNumber(ejs, fun->numArgs);
 }
+
+
+#if ES_Function_name
+/*
+    function get name(): Number
+ */
+static EjsObj *fun_name(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
+{
+    if (fun->name && *fun->name == '-') {
+        return (EjsObj*) ejs->emptyStringValue;
+    }
+    return (EjsObj*) ejsCreateString(ejs, fun->name);
+}
+#endif
 
 
 /*
@@ -512,9 +527,12 @@ void ejsConfigureFunctionType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Function_apply, (EjsProc) fun_applyFunction);
     ejsBindMethod(ejs, prototype, ES_Function_bind, (EjsProc) fun_bindFunction);
     ejsBindMethod(ejs, prototype, ES_Function_boundThis, (EjsProc) fun_boundThis);
-    ejsBindMethod(ejs, prototype, ES_Function_length, (EjsProc) fun_length);
-    ejsBindMethod(ejs, prototype, ES_Function_setScope, (EjsProc) fun_setScope);
     ejsBindMethod(ejs, prototype, ES_Function_call, (EjsProc) fun_call);
+    ejsBindMethod(ejs, prototype, ES_Function_length, (EjsProc) fun_length);
+#if ES_Function_name
+    ejsBindMethod(ejs, prototype, ES_Function_name, (EjsProc) fun_name);
+#endif
+    ejsBindMethod(ejs, prototype, ES_Function_setScope, (EjsProc) fun_setScope);
 }
 
 

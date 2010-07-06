@@ -189,6 +189,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
     EjsBlock    *blk;
     EjsObj      *vobj, *global, *thisObj;
     EjsString   *nameVar, *spaceVar;
+    EjsNumber   *indexVar;
     EjsType     *type;
     EjsLookup   lookup;
     EjsEx       *ex;
@@ -844,6 +845,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 push(vp == 0 ? ejs->nullValue : vp);
                 BREAK;
             } else {
+                
                 qname.name = ejsToString(ejs, v1)->value;
                 if (ejsIsNamespace(v2)) {
                     qname.space = ((EjsNamespace*) v2)->uri;
@@ -1593,6 +1595,22 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             BREAK;
 
         /*
+            Duplicate one item on the stack
+                Stack before (top)  [value]
+                Stack after         [value]
+                                    [value]
+         */
+        CASE (EJS_OP_DUP_STACK):
+            i = GET_BYTE();
+            if (i < 0 || i > 32) {
+                ejsThrowTypeError(ejs, "Bad stack index");
+            } else {
+                vp = state.stack[-i];
+                push(vp);
+            }
+            BREAK;
+
+        /*
             Swap the top two items on the stack
                 Swap
                 Stack before (top)  [value1]
@@ -2118,6 +2136,31 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             push(obj);
             ejs->result = obj;
             BREAK;
+                
+            /*
+             Create a new array literal
+             NewArray            <type> <argc>
+             Stack before (top)  [<index><value>]
+             [<index><value>]
+             Stack after         []
+             */
+        CASE (EJS_OP_NEW_ARRAY):
+            FRAME->ignoreAttention = 1;
+            type = GET_TYPE();
+            argc = GET_INT();
+            vp = (EjsObj*) ejsCreateObject(ejs, type, 0);
+            for (i = 1 - (argc * 2); i <= 0; ) {
+                indexVar = ejsToNumber(ejs, state.stack[i++]);
+                if (ejs->exception) BREAK;
+                v1 = state.stack[i++];
+                if (v1 && indexVar) {
+                    ejsSetProperty(ejs, vp, ejsGetInt(ejs, indexVar), v1);
+                }
+            }
+            state.stack -= (argc * 2);
+            push(vp);
+            FRAME->ignoreAttention = 0;
+            BREAK;
 
         /*
             Create a new object literal
@@ -2148,6 +2191,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             push(vp);
             FRAME->ignoreAttention = 0;
             BREAK;
+
 
         /*
             Reference the super class

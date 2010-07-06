@@ -62,6 +62,7 @@ static void     genDot(EcCompiler *cp, EcNode *np, EcNode **rightMost);
 static void     genError(EcCompiler *cp, EcNode *np, char *fmt, ...);
 static void     genEndFunction(EcCompiler *cp, EcNode *np);
 static void     genExpressions(EcCompiler *cp, EcNode *np);
+static void     genField(EcCompiler *cp, EcNode *np);
 static void     genFor(EcCompiler *cp, EcNode *np);
 static void     genForIn(EcCompiler *cp, EcNode *np);
 static void     genFunction(EcCompiler *cp, EcNode *np);
@@ -74,6 +75,7 @@ static void     genModule(EcCompiler *cp, EcNode *np);
 static void     genName(EcCompiler *cp, EcNode *np);
 static void     genNameExpr(EcCompiler *cp, EcNode *np);
 static void     genNew(EcCompiler *cp, EcNode *np);
+static void     genArrayLiteral(EcCompiler *cp, EcNode *np);
 static void     genObjectLiteral(EcCompiler *cp, EcNode *np);
 static void     genProgram(EcCompiler *cp, EcNode *np);
 static void     genPragmas(EcCompiler *cp, EcNode *np);
@@ -269,6 +271,7 @@ static void genSpread(EcCompiler *cp, EcNode *np)
 }
 
 
+#if UNUSED
 static void genArrayLiteral(EcCompiler *cp, EcNode *np)
 {
     EcNode      *child;
@@ -284,6 +287,7 @@ static void genArrayLiteral(EcCompiler *cp, EcNode *np)
     }
     LEAVE(cp);
 }
+#endif
 
 
 /*
@@ -984,6 +988,11 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             
         } else if (left->kind == N_DOT && left->right->kind == N_QNAME) {
             processNodeGetValue(cp, left->left);
+            if (state->dupLeft) {
+                ecEncodeOpcode(cp, EJS_OP_DUP);
+                pushStack(cp, 1);
+                state->dupLeft = 0;
+            }
             argc = genCallArgs(cp, right);
             ecEncodeOpcode(cp, EJS_OP_CALL_OBJ_NAME);
             ecEncodeName(cp, &np->qname);
@@ -1189,7 +1198,6 @@ static void genCall(EcCompiler *cp, EcNode *np)
         LEAVE(cp);
         return;
     }
-
     if (left->kind == N_NEW) {
         processNode(cp, left);
         argc = genCallArgs(cp, right);
@@ -1199,7 +1207,6 @@ static void genCall(EcCompiler *cp, EcNode *np)
         LEAVE(cp);
         return;
     }
-    
     genCallSequence(cp, np);
 
     /*
@@ -1221,7 +1228,6 @@ static void genCall(EcCompiler *cp, EcNode *np)
             genError(cp, np, "Function call does not return a value.");
         }
     }
-
     /*
         If calling a type as a constructor (Date()), must push result
      */
@@ -1417,7 +1423,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
 
 static void genDassign(EcCompiler *cp, EcNode *np)
 {
-    EcNode      *child;
+    EcNode      *field;
     int         count, next;
 
     mprAssert(np->kind == N_DASSIGN);
@@ -1425,22 +1431,21 @@ static void genDassign(EcCompiler *cp, EcNode *np)
     ENTER(cp);
 
     count = mprGetListCount(np->children);
-    next = 0;
-    while ((child = getNextNode(cp, np, &next)) != 0) {
-        mprAssert(child->kind == N_QNAME);
+    for (next = 0; (field = getNextNode(cp, np, &next)) != 0; ) {
+        mprAssert(field->kind == N_FIELD);
         if (next < count) {
             ecEncodeOpcode(cp, EJS_OP_DUP);
             pushStack(cp, 1);
         }
-        if (1) {
-            //  TODO OPT
-            ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
-            ecEncodeString(cp, EJS_EMPTY_NAMESPACE);
-            ecEncodeOpcode(cp, EJS_OP_LOAD_INT);
-            ecEncodeNumber(cp, child->name.index);
-            ecEncodeOpcode(cp, EJS_OP_GET_OBJ_NAME_EXPR);
+        if (np->objectLiteral.isArray) {
+            ecEncodeOpcode(cp, EJS_OP_GET_OBJ_SLOT);
+            ecEncodeNumber(cp, field->field.index);
+        } else {
+            ecEncodeOpcode(cp, EJS_OP_GET_OBJ_NAME);
+            ecEncodeName(cp, &field->field.fieldName->qname);
         }
-        processNode(cp, child);
+        mprAssert(field->field.expr);
+        processNode(cp, field->field.expr);
     }
     LEAVE(cp);
 }
@@ -1509,22 +1514,17 @@ static void genDot(EcCompiler *cp, EcNode *np, EcNode **rightMost)
         state->needsValue = state->prev->needsValue;
         break;
 
-    case N_ARRAY_LITERAL:
-        processNode(cp, left);
-        break;
-
     default:
         mprAssert(0);
     }
-
     state->currentObjectNode = np->left;
 
-    if (np->needThis) {
+    if (np->needThis || state->dupLeft) {
         ecEncodeOpcode(cp, EJS_OP_DUP);
         pushStack(cp, 1);
         np->needThis = 0;
+        state->dupLeft = 0;
     }
-
     put = state->prev->onLeft;
 
     /*
@@ -1566,7 +1566,6 @@ static void genDot(EcCompiler *cp, EcNode *np, EcNode **rightMost)
         popStack(cp, (put) ? 4 : 2);
         break;
     }
-
     if (rightMost) {
         *rightMost = right;
     }
@@ -1919,9 +1918,10 @@ static void genFor(EcCompiler *cp, EcNode *np)
  */
 static void genForIn(EcCompiler *cp, EcNode *np)
 {
+    EcNode      *iterVar, *iterGet;
     EcCodeGen   *outerBlock, *code;
     EcState     *state;
-    int         len, breakLabel, tryStart, tryEnd, handlerStart, mark, startMark;
+    int         len, breakLabel, tryStart, tryEnd, handlerStart, mark, startMark, varCount;
 
     ENTER(cp);
 
@@ -1934,9 +1934,12 @@ static void genForIn(EcCompiler *cp, EcNode *np)
     startMark = getStackCount(cp);
     state->captureFinally = 0;
     state->captureBreak = 0;
+    iterVar = np->forInLoop.iterVar;
+    iterGet = np->forInLoop.iterGet;
+    varCount = mprGetListCount(iterVar->children);
 
     ecStartBreakableStatement(cp, EC_JUMP_BREAK | EC_JUMP_CONTINUE);
-    processNode(cp, np->forInLoop.iterVar);
+    processNode(cp, iterVar);
 
     /*
         Consider:
@@ -1947,11 +1950,16 @@ static void genForIn(EcCompiler *cp, EcNode *np)
      */
     np->forInLoop.initCode = state->code = allocCodeBuffer(cp);
 
-    processNode(cp, np->forInLoop.iterGet);
+    if (varCount == 2) {
+        state->dupLeft = 1;
+        processNode(cp, iterGet);
+        state->dupLeft = 0;
+    } else {
+        processNode(cp, iterGet);
+    }
     ecEncodeOpcode(cp, EJS_OP_PUSH_RESULT);
     pushStack(cp, 1);
-
-    mprAssert(cp->state->code->stackCount >= 1);
+    mprAssert(state->code->stackCount >= 1);
 
     /*
         Process the iter.next()
@@ -1983,27 +1991,52 @@ static void genForIn(EcCompiler *cp, EcNode *np)
     
     tryEnd = getCodeLength(cp, np->forInLoop.bodyCode);
 
+    if (varCount == 2) {
+        /* Dup original object being iterated */
+        ecEncodeOpcode(cp, EJS_OP_DUP_STACK);
+        ecEncodeByte(cp, 1);
+        pushStack(cp, 1);
+        //  TODO space is not used with numericIndicies
+        ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
+        ecEncodeString(cp, EJS_EMPTY_NAMESPACE);
+        pushStack(cp, 1);
+    }
+
     /*
         Save the result of the iter.next() call
      */
     ecEncodeOpcode(cp, EJS_OP_PUSH_RESULT);
     pushStack(cp, 1);
-    genLeftHandSide(cp, np->forInLoop.iterVar->left);
 
-    if (np->forInLoop.iterVar->kind == N_VAR_DEFINITION && np->forInLoop.iterVar->def.varKind == KIND_LET) {
-        ecAddConstant(cp, np->forInLoop.iterVar->left->qname.name);
-        ecAddConstant(cp, np->forInLoop.iterVar->left->qname.space);
+    if (varCount == 2) {
+        ecEncodeOpcode(cp, EJS_OP_DUP);
+        pushStack(cp, 1);
     }
-
-    /*
-        Now the loop body. Must hide the pushed iterator on the stack as genDirectives will clear the stack.
-     */
+    
+#if UNUSED
+    //  MOB -- MUST CLEANUP this so we can use genLeftHandSide. But genVar() can't call genName??
+    genLeftHandSide(cp, iterVar->left);
+#else
+    state->onLeft = 1;
+    genName(cp, iterVar->left);
+    state->onLeft = 0;
+#endif
+    if (iterVar->kind == N_VAR_DEFINITION && iterVar->def.varKind == KIND_LET) {
+        ecAddConstant(cp, iterVar->left->qname.name);
+        ecAddConstant(cp, iterVar->left->qname.space);
+    }
     mark = getStackCount(cp);
     if (np->forInLoop.body) {
+        if (varCount == 2) {
+            ecEncodeOpcode(cp, EJS_OP_GET_OBJ_NAME_EXPR);
+            popStack(cp, 2);
+            state->onLeft = 1;
+            genName(cp, iterVar->right);
+            state->onLeft = 0;
+        }
         processNode(cp, np->forInLoop.body);
         discardStackItems(cp, mark);
     }
-
     len = getCodeLength(cp, np->forInLoop.bodyCode);
     if (len < (0x7f - 5)) {
         ecEncodeOpcode(cp, EJS_OP_GOTO_8);
@@ -2026,19 +2059,20 @@ static void genForIn(EcCompiler *cp, EcNode *np)
     /*
         Patch break/continue statements
      */
+#if UNUSED
+    if (varCount == 2) {
+        ecEncodeOpcode(cp, EJS_OP_POP);
+    }
+#endif
     discardStackItems(cp, startMark);
     breakLabel = mprGetBufLength(state->code->buf);
 
     patchJumps(cp, EC_JUMP_BREAK, breakLabel);
     patchJumps(cp, EC_JUMP_CONTINUE, 0);
 
-    /*
-        Copy the code fragments to the outer code buffer
-     */
     setCodeBuffer(cp, code);
     copyCodeBuffer(cp, state->code, np->forInLoop.initCode);
     copyCodeBuffer(cp, state->code, np->forInLoop.bodyCode);
-
     copyCodeBuffer(cp, outerBlock, state->code);
     LEAVE(cp);
 }
@@ -2392,6 +2426,8 @@ static void genLeftHandSide(EcCompiler *cp, EcNode *np)
     case N_QNAME:
     case N_SUPER:
     case N_EXPRESSIONS:
+    case N_OBJECT_LITERAL:
+    case N_VAR:
         processNode(cp, np);
         break;
 
@@ -2500,7 +2536,7 @@ static void genName(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
-    mprAssert(np->kind == N_QNAME || np->kind == N_USE_NAMESPACE);
+    mprAssert(np->kind == N_QNAME || np->kind == N_USE_NAMESPACE || np->kind == N_VAR);
 
     if (np->needThis) {
         if (np->lookup.useThis) {
@@ -2532,23 +2568,34 @@ static void genName(EcCompiler *cp, EcNode *np)
 
 static void genNew(EcCompiler *cp, EcNode *np)
 {
-    EcState     *state;
-    int         argc;
-
     ENTER(cp);
-
     mprAssert(np->kind == N_NEW);
-
-    state = cp->state;
-    argc = 0;
-
-    /*
-        Process the type reference to instantiate
-     */
     processNode(cp, np->left);
     ecEncodeOpcode(cp, EJS_OP_NEW);
     popStack(cp, 1);
     pushStack(cp, 1);
+    LEAVE(cp);
+}
+
+
+static void genArrayLiteral(EcCompiler *cp, EcNode *np)
+{
+    EcNode      *child, *typeNode;
+    EjsType     *type;
+    int         next, argc;
+
+    ENTER(cp);
+    for (next = 0; (child = getNextNode(cp, np, &next)) != 0; ) {
+        processNode(cp, child);
+    }
+    argc = next;
+    ecEncodeOpcode(cp, EJS_OP_NEW_ARRAY);
+    typeNode = np->objectLiteral.typeNode;
+    type = (EjsType*) typeNode->lookup.ref;
+    ecEncodeGlobal(cp, (EjsObj*) type, (type) ? &type->qname: 0);
+    ecEncodeNumber(cp, argc);
+    pushStack(cp, 1);
+    popStack(cp, argc * 2);
     LEAVE(cp);
 }
 
@@ -2559,8 +2606,10 @@ static void genObjectLiteral(EcCompiler *cp, EcNode *np)
     EjsType     *type;
     int         next, argc;
 
+    if (np->objectLiteral.isArray) {
+        return genArrayLiteral(cp, np);
+    }
     ENTER(cp);
-
     /*
         Push all the literal args
      */
@@ -2574,8 +2623,7 @@ static void genObjectLiteral(EcCompiler *cp, EcNode *np)
     type = (EjsType*) typeNode->lookup.ref;
     ecEncodeGlobal(cp, (EjsObj*) type, (type) ? &type->qname: 0);
     ecEncodeNumber(cp, argc);
-    next = 0;
-    while ((child = getNextNode(cp, np, &next)) != 0) {
+    for (next = 0; (child = getNextNode(cp, np, &next)) != 0; ) {
         ecEncodeNumber(cp, child->attributes);
     }
     pushStack(cp, 1);
@@ -2590,7 +2638,13 @@ static void genField(EcCompiler *cp, EcNode *np)
 
     fieldName = np->field.fieldName;
 
-    if (fieldName->kind == N_QNAME) {
+    if (np->field.index >= 0) {
+        //  TODO OPT use LOAD_INT_NN instructions
+        ecEncodeOpcode(cp, EJS_OP_LOAD_INT);
+        ecEncodeNumber(cp, np->field.index);
+        pushStack(cp, 1);
+
+    } else if (fieldName->kind == N_QNAME) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
         ecEncodeString(cp, np->field.fieldName->qname.space);
         ecEncodeOpcode(cp, EJS_OP_LOAD_STRING);
@@ -2609,9 +2663,17 @@ static void genField(EcCompiler *cp, EcNode *np)
         processNode(cp, fieldName);
     }
     if (np->field.fieldKind == FIELD_KIND_VALUE || np->field.fieldKind == FIELD_KIND_FUNCTION) {
-        processNode(cp, np->field.expr);
+        if (np->field.expr) {
+            processNode(cp, np->field.expr);
+        } else {
+            ecEncodeOpcode(cp, EJS_OP_LOAD_NULL);
+            pushStack(cp, 1);            
+        }
     } else {
+        mprAssert(0);
+#if UNUSED
         processNode(cp, np->field.fieldName);
+#endif
     }
 }
 
@@ -2975,7 +3037,7 @@ static void genThrow(EcCompiler *cp, EcNode *np)
 static void genTry(EcCompiler *cp, EcNode *np)
 {
     EjsFunction *fun;
-    EcNode      *child, *arg, *assignOp;
+    EcNode      *child, *arg;
     EcCodeGen   *saveCode;
     EcState     *state;
     EjsType     *catchType;
@@ -3105,8 +3167,7 @@ static void genTry(EcCompiler *cp, EcNode *np)
             catchType = 0;
             arg = 0;
             if (child->catchBlock.arg && child->catchBlock.arg->left) {
-                assignOp = child->catchBlock.arg->left;
-                arg = assignOp->left;
+                arg = child->catchBlock.arg->left;
             }
             if (arg && arg->typeNode && ejsIsType(arg->typeNode->lookup.ref)) {
                 catchType = (EjsType*) arg->typeNode->lookup.ref;
@@ -3424,7 +3485,7 @@ static void genVar(EcCompiler *cp, EcNode *np)
 {
     EcState     *state;
 
-    mprAssert(np->kind == N_QNAME);
+    mprAssert(np->kind == N_VAR);
 
     ENTER(cp);
     state = cp->state;
@@ -3436,6 +3497,9 @@ static void genVar(EcCompiler *cp, EcNode *np)
     if (cp->ejs->flags & EJS_FLAG_DOC) {
         ecAddDocConstant(cp, np->lookup.obj, np->lookup.slotNum);
     }
+    if (np->left) {
+        processNode(cp, np->left);
+    }
     LEAVE(cp);
 }
 
@@ -3443,36 +3507,31 @@ static void genVar(EcCompiler *cp, EcNode *np)
 static void genVarDefinition(EcCompiler *cp, EcNode *np)
 {
     EcState     *state;
-    EcNode      *child, *var;
-    int         next, varKind;
-
-    ENTER(cp);
+    EcNode      *var;
+    int         next;
 
     mprAssert(np->kind == N_VAR_DEFINITION);
 
+    ENTER(cp);
     state = cp->state;
-    varKind = np->def.varKind;
 
-    for (next = 0; (child = getNextNode(cp, np, &next)) != 0; ) {
-
-        var = (child->kind == N_ASSIGN_OP) ? child->left : child;
-        mprAssert(var->kind == N_QNAME);
-
-        genVar(cp, var);
-
-        if (child->kind == N_ASSIGN_OP) {
-            /*
-                Class level variable initializations must go into the instance code buffer.
-             */
-            if (var->name.instanceVar) {
-                state->instanceCode = 1;
-                mprAssert(state->instanceCodeBuf);
-                state->code = state->instanceCodeBuf;
+    for (next = 0; (var = getNextNode(cp, np, &next)) != 0; ) {
+        if (var->kind == N_VAR) {
+            if (var->left) {
+                /*
+                    Class level variable initializations must go into the instance code buffer.
+                 */
+                if (var->name.instanceVar) {
+                    state->instanceCode = 1;
+                    mprAssert(state->instanceCodeBuf);
+                    state->code = state->instanceCodeBuf;
+                }
+            } else {
+                addDebugInstructions(cp, var);
             }
-            genAssignOp(cp, child);
-
+            genVar(cp, var);
         } else {
-            addDebugInstructions(cp, var);
+            processNode(cp, var);
         }
     }
     LEAVE(cp);
@@ -3920,10 +3979,6 @@ static void processNode(EcCompiler *cp, EcNode *np)
         genArgs(cp, np);
         break;
 
-    case N_ARRAY_LITERAL:
-        genArrayLiteral(cp, np);
-        break;
-
     case N_ASSIGN_OP:
         genAssignOp(cp, np);
         break;
@@ -4075,6 +4130,10 @@ static void processNode(EcCompiler *cp, EcNode *np)
 
     case N_USE_NAMESPACE:
         genUseNamespace(cp, np);
+        break;
+
+    case N_VAR:
+        genVar(cp, np);
         break;
 
     case N_VAR_DEFINITION:

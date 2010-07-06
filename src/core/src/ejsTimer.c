@@ -89,7 +89,7 @@ static EjsObj *getRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsObj *setRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+    mprAssert(argc == 1 && ejsIsBoolean(argv[0]));
 
     tp->repeat = ejsGetBoolean(ejs, argv[0]);
     if (tp->event) {

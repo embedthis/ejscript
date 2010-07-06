@@ -1,5 +1,5 @@
 /*
-    Test various scenarios which test bound and unbound accesse
+    Test various scenarios which test bound and unbound accesses
  */
 
 class Shape {

@@ -67,6 +67,11 @@ module ejs {
          */
         native function bind(thisObj: Object, overwrite: Boolean = true): Void
 
+        /**
+            The name of the function. Function expressions do not have a name and set the name property to the empty string.
+         */
+        native function get name(): String
+
 //  MOB -- ECMA: this is a var on all functions and not a getter on the prototype
         //  Number of arguments expected by the function
         native function get length(): Number

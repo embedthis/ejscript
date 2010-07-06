@@ -631,7 +631,6 @@ int ecPutToken(EcInput *input)
 {
     ecPutSpecificToken(input, input->token);
     input->token = 0;
-
     return 0;
 }
 
@@ -650,7 +649,6 @@ int ecPutSpecificToken(EcInput *input, EcToken *tp)
      */
     tp->next = input->putBack;
     input->putBack = tp;
-
     return 0;
 }
 
@@ -981,10 +979,15 @@ static void initializeToken(EcToken *tp, EcStream *stream)
 {
     tp->textLen = 0;
     tp->stream = stream;
-
     if (tp->lineNumber != stream->lineNumber) {
         tp->currentLine = 0;
     }
+#if UNUSED
+    if (tp->text == 0) {
+        tp->text = (uchar*) mprRealloc(tp, tp->text, tp->textBufSize += EC_TOKEN_INCR);
+    }
+    tp->text[0] = '\0';
+#endif
 }
 
 
@@ -1022,6 +1025,8 @@ static int finishToken(EcToken *tp, int tokenId, int subId, int groupMask)
 
     if (tp->currentLine == 0) {
         setTokenCurrentLine(tp);
+    }
+    if (tp->text == 0) {
     }
     if (tp->currentLine) {
         end = strchr(tp->currentLine, '\n');
