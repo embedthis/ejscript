@@ -302,19 +302,21 @@
 #define ES_Array_map                                                   18
 #define ES_Array_pop                                                   19
 #define ES_Array_push                                                  20
-#define ES_Array_reject                                                21
-#define ES_Array_remove                                                22
-#define ES_Array_reverse                                               23
-#define ES_Array_shift                                                 24
-#define ES_Array_slice                                                 25
-#define ES_Array_some                                                  26
-#define ES_Array_sort                                                  27
-#define ES_Array_splice                                                28
-#define ES_Array_toString                                              29
-#define ES_Array_transform                                             30
-#define ES_Array_unique                                                31
-#define ES_Array_unshift                                               32
-#define ES_Array_NUM_INSTANCE_PROP                                     33
+#define ES_Array_reduce                                                21
+#define ES_Array_reduceRight                                           22
+#define ES_Array_reject                                                23
+#define ES_Array_remove                                                24
+#define ES_Array_reverse                                               25
+#define ES_Array_shift                                                 26
+#define ES_Array_slice                                                 27
+#define ES_Array_some                                                  28
+#define ES_Array_sort                                                  29
+#define ES_Array_splice                                                30
+#define ES_Array_toString                                              31
+#define ES_Array_transform                                             32
+#define ES_Array_unique                                                33
+#define ES_Array_unshift                                               34
+#define ES_Array_NUM_INSTANCE_PROP                                     35
 #define ES_Array_NUM_INHERITED_PROP                                    0
 
 
@@ -586,13 +588,15 @@
 #define ES_Emitter_endpoints                                           0
 #define ES_Emitter_addOneListener                                      1
 #define ES_Emitter_addListener                                         2
-#define ES_Emitter_clearListeners                                      3
-#define ES_Emitter_hasListeners                                        4
-#define ES_Emitter_listeners                                           5
-#define ES_Emitter_emit                                                6
-#define ES_Emitter_removeOneListener                                   7
-#define ES_Emitter_removeListener                                      8
-#define ES_Emitter_NUM_INSTANCE_PROP                                   9
+#define ES_Emitter_observe                                             3
+#define ES_Emitter_clearListeners                                      4
+#define ES_Emitter_hasListeners                                        5
+#define ES_Emitter_listeners                                           6
+#define ES_Emitter_emit                                                7
+#define ES_Emitter_fire                                                8
+#define ES_Emitter_removeOneListener                                   9
+#define ES_Emitter_removeListener                                      10
+#define ES_Emitter_NUM_INSTANCE_PROP                                   11
 #define ES_Emitter_NUM_INHERITED_PROP                                  0
 #define ES_Endpoint_NUM_CLASS_PROP                                     0
 
@@ -1371,27 +1375,29 @@
 #define ES_Promise_endpoints                                           0
 #define ES_Promise_addOneListener                                      1
 #define ES_Promise_addListener                                         2
-#define ES_Promise_clearListeners                                      3
-#define ES_Promise_hasListeners                                        4
-#define ES_Promise_listeners                                           5
-#define ES_Promise_emit                                                6
-#define ES_Promise_removeOneListener                                   7
-#define ES_Promise_removeListener                                      8
-#define ES_Promise_timer                                               9
-#define ES_Promise_fired                                               10
-#define ES_Promise_addCallback                                         11
-#define ES_Promise_addCancelback                                       12
-#define ES_Promise_addErrback                                          13
-#define ES_Promise_emitSuccess                                         14
-#define ES_Promise_emitError                                           15
-#define ES_Promise_emitCancel                                          16
-#define ES_Promise_cancel                                              17
-#define ES_Promise_then                                                18
-#define ES_Promise_timeout                                             19
-#define ES_Promise_wait                                                20
-#define ES_Promise_issue                                               21
-#define ES_Promise_NUM_INSTANCE_PROP                                   22
-#define ES_Promise_NUM_INHERITED_PROP                                  9
+#define ES_Promise_observe                                             3
+#define ES_Promise_clearListeners                                      4
+#define ES_Promise_hasListeners                                        5
+#define ES_Promise_listeners                                           6
+#define ES_Promise_emit                                                7
+#define ES_Promise_fire                                                8
+#define ES_Promise_removeOneListener                                   9
+#define ES_Promise_removeListener                                      10
+#define ES_Promise_timer                                               11
+#define ES_Promise_fired                                               12
+#define ES_Promise_addCallback                                         13
+#define ES_Promise_addCancelback                                       14
+#define ES_Promise_addErrback                                          15
+#define ES_Promise_emitSuccess                                         16
+#define ES_Promise_emitError                                           17
+#define ES_Promise_emitCancel                                          18
+#define ES_Promise_cancel                                              19
+#define ES_Promise_then                                                20
+#define ES_Promise_timeout                                             21
+#define ES_Promise_wait                                                22
+#define ES_Promise_issue                                               23
+#define ES_Promise_NUM_INSTANCE_PROP                                   24
+#define ES_Promise_NUM_INHERITED_PROP                                  11
 #define ES_Reflect_NUM_CLASS_PROP                                      0
 
 /*
@@ -1805,6 +1811,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1294521
+#define _ES_CHECKSUM_ejs   1305332
 
 #endif
