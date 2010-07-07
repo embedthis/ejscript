@@ -45,11 +45,11 @@ module ejs {
             inbuf = new ByteArray
             outbuf = new ByteArray
 
-            inbuf.addListener("writable", function (event: String, buffer: ByteArray) {
+            inbuf.observe("writable", function (event: String, buffer: ByteArray) {
                 nextStream.read(buffer)
             })
 
-            outbuf.addListener("readable", function (event: String, buffer: ByteArray) {
+            outbuf.observe("readable", function (event: String, buffer: ByteArray) {
                 count = nextStream.write(buffer)
                 buffer.readPosition += count
                 buffer.reset()
@@ -57,9 +57,9 @@ module ejs {
         }
 
         /** 
-            @duplicate Stream.addListener 
+            @duplicate Stream.observe 
          */
-        native function addListener(name, listener: Function): Void
+        native function observe(name, listener: Function): Void
 
         /** 
             @duplicate Stream.async 
@@ -226,9 +226,9 @@ module ejs {
         }
 
         /** 
-            @duplicate Stream.addListener 
+            @duplicate Stream.observe 
          */
-        native function removeListener(name, listener: Function): Void
+        native function removeObserver(name, listener: Function): Void
 
         /** 
             Return the space available for write data. This call can be used to prevent write from blocking or 

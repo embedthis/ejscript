@@ -1,24 +1,6 @@
-
 /*
- *	Tests for the App class
+  	Tests for the App class
  */
-
-/*
-    stream = App.outputStream()
-    stream.write("Hello World\n")
-
-    stream = App.errorStream()
-    stream.write("Error\n")
-
-
-    ip = new TextStream(App.inputStream())
-    while (s = ip.readLine()) {
-        print("GOT \"" + s + "\"")
-    }
-    print(s)
-    App.exit(1)
-*/
-
 
 // exeDir 
 

@@ -218,7 +218,7 @@ module ejs.web {
         /* ************************************* Methods ******************************************/
 
         /** 
-            @duplicate Stream.addListener
+            @duplicate Stream.observe
             @event readable Issued when some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
             @event close Issued when the request completes
@@ -226,7 +226,7 @@ module ejs.web {
             All events are called with the signature:
             function (event: String, http: Http): Void
          */
-        native function addListener(name, listener: Function): Void
+        native function observe(name, listener: Function): Void
 
         /** 
             @duplicate Stream.async
@@ -345,9 +345,9 @@ module ejs.web {
         }
 
         /** 
-            @duplicate Stream.removeListener 
+            @duplicate Stream.removeObserve 
          */
-        native function removeListener(name, listener: Function): Void
+        native function removeObserve(name, listener: Function): Void
 
         //    MOB - doc
         /** @hide */

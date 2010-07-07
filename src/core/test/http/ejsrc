@@ -1,7 +1,7 @@
 {
     cache: {
-        enable: true,
-        reload: true,
+        enable: false,
+        reload: false,
     },
     log: {
         enable: true,

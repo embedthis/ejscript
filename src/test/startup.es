@@ -5,7 +5,7 @@ require ejs.web
 
 let server: HttpServer = new HttpServer(".", "web")
 
-server.addListener("readable", function (event, request) {
+server.observe("readable", function (event, request) {
     Web.serve(request)
 })
 server.attach()

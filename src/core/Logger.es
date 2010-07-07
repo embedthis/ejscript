@@ -19,6 +19,8 @@ module ejs {
  
         Loggers may define a filter function that returns true or false depending on whether a specific message 
         should be logged or not. A matching pattern can alternatively be used to filter messages based on the logger name.
+
+        Loggers are themselves Streams and Stream filters can be stacked atop Loggers.
         @spec ejs
         @stability prototype
      */
@@ -60,15 +62,15 @@ module ejs {
         private var _level: Number = 0
         private var _pattern: RegExp
         private var _name: String
+
         private var _outStream: Stream
-        private var _parent: Logger
 
         /** 
             Logger constructor.
             The Logger constructor can create different types of loggers based on the three (optional) arguments. 
             @param name Unique name of the logger. Loggers are typically named after the module, class or subsystem they 
             are associated with.
-            @param where Optional output device or Logger to send messages to. If a parent Logger instance is provided for
+            @param location Optional output stream or Logger to send messages to. If a parent Logger instance is provided for
                 the output parameter, messages are sent to the parent for rendering.
             @param level Optional integer verbosity level. Messages with a message level less than or equal to the defined
                 logger level will be emitted. Range is 0 (least verbose) to 9.
@@ -77,117 +79,106 @@ module ejs {
                 var log = new Logger("name", file, 5)
                 log.debug(2, "message")
          */
-        function Logger(name: String, where = null, level: Number? = 0) {
-            _name = name
-            if (where && where is Logger) {
-                _level = where.level
-                _parent = where
-            } else if (where && where is Stream) {
-                _outStream = where
-                _level = level
-            } else {
-                redirect(where)
-            }
+        function Logger(name: String, location, level: Number? = 0) {
+            _level = level
+            redirect(location)
+            _name = (_outStream is Logger) ? (_outStream.name + "." + name) : name 
         }
 
-        function redirect(where: String) {
-            let parts = where.split(":")
-            let path = parts[0], level = parts[1]
-            _level ||= level
-            if (path == "stdout") {
-                _outStream = App.outputStream
-            } else if (path == "stderr") {
-                _outStream = App.errorStream
+        function redirect(location) {
+            if (location is Stream) {
+                _outStream = location
             } else {
-                _outStream = File(path).open("w")
+                location = location.toString()
+                let [path, level] = location.split(":")
+                if (level) {
+                    _level = level
+                }
+                if (path == "stdout") {
+                    _outStream = App.outputStream
+                } else if (path == "stderr") {
+                    _outStream = App.errorStream
+                } else {
+                    _outStream = File(path).open("w")
+                }
             }
         }
 
         /** 
             @hide
          */
-        function addListener(name, listener: Function): Void {
-            throw "addListener is not supported"
+        function observe(name, listener: Function): Void {
+            throw "observe is not supported"
         }
 
         /** 
-            The current sync/async mode.
+            Sync/async mode. Not supported for Loggers.
             @hide
          */
         function get async(): Boolean
             false
 
-        /** 
-            Set the current sync/async mode. The async mode affects the blocking APIs: close, read and write.
-            If in async mode, all Stream calls will not block. If listeners have been registered, they can be used to
-            respond to events to interface with the stream.
-            @param enable If true, set the stream into async mode
-         */
         function set async(enable: Boolean): Void {
-            if (enable) {
-                throw "Async mode not supported"
-            }
+            throw "Async mode not supported"
         }
 
         /** 
             Close the logger 
          */
-        function close(): Void {
+        function close(): Void
             _outStream = null
-        }
 
         /** 
-            The filter function in use by the logger.
+            Filter function for this logger. The filter function is called with the following signature:
+            with "this" set to the Logger instance. The $log parameter is set to the original logger that created the
+            message.
+            function filter(log: Logger, name: String, level: Number, kind: String, msg: String): Boolean
+            @param fn The filter function must return true or false.
          */
         function get filter(): Function
             _filter
 
-        /** 
-            Set the filter function for this logger. The filter function is called with the following signature:
-            with "this" set to the Logger instance. The $log parameter is set to the original logger that created the
-            message.
-            function filter(log: Logger, level: Number, msg: String): Boolean
-            @param fn The filter function must return true or false.
-         */
-        function set filter(fn: Function): void {
+        function set filter(fn: Function): void
             _filter = fn
-        }
 
         /**
             @hide
          */
-        function flush(dir: Number = Stream.BOTH): Void {}
+        function flush(dir: Number = Stream.BOTH): Void {
+            if (_outStream_) {
+                _outStream.flush(dir)
+            }
+        }
 
         /** 
-            The numeric verbosity setting (0-9) of this logger.
+            The numeric verbosity setting (0-9) of this logger. Zero is least verbose, nine is the most verbose.
          */
         function get level(): Number
             _level
 
-        /** 
-            Set the output level of this logger. (And all child loggers who have their logging level set to Inherit.)
-            @param level The next logging level (verbosity).
-         */
-        function set level(level: Number): void {
+        function set level(level: Number): void
             _level = level
-        }
 
         /** 
-            The match pattern for the logger.
+            Matching expression to filter log messages. The match regular expression is used to match 
+            against the Logger names.
          */
         function get match(): RegExp
             _pattern
 
-        /** 
-            Set a matching expression. The match expression is used to match against the Logger names.
-            @param pattern Regular expression.
-         */
-        function set match(pattern: RegExp): void {
+        function set match(pattern: RegExp): void 
             _pattern = pattern
-        }
 
-        //  MOB
-        static native function get mprLevel(): Stream
+        /**
+            Get the MPR log level via a command line "--log spec" switch
+            @hide
+         */
+        static native function get mprLevel(): Number
+
+        /**
+            Get the MPR log stream defined via a command line "--log spec" switch
+            @hide
+         */
         static native function get mprStream(): Stream
 
         /** 
@@ -196,13 +187,8 @@ module ejs {
         function get name(): String
             _name
 
-        /** 
-            Set the name for this logger.
-            @param name An optional string name.
-         */
-        function set name(name: String): void {
+        function set name(name: String): void
             _name = name
-        }
 
         /** 
             The output stream used by the logger.
@@ -210,27 +196,8 @@ module ejs {
         function get outStream(): Stream
             _outStream
 
-        /** 
-            Set the output stream device for this logger.
-            @param stream New output stream for the logger
-         */
-        function set outStream(stream: Stream): void {
+        function set outStream(stream: Stream): void
             _outStream = stream
-        }
-
-        /** 
-            The parent of this logger.
-         */
-        function get parent(): Logger
-            _parent
-
-        /** 
-            Set the parent logger for this logger.
-            @param parent A logger.
-         */
-        function set parent(parent: Logger): void {
-            _parent = parent
-        }
 
         /** 
             Emit a debug message. The message level will be compared to the logger setting to determine 
@@ -240,30 +207,34 @@ module ejs {
             @param msgs The string message to log.
          */
         function debug(level: Number, ...msgs): void 
-            emit(this, level, "", "", msgs.join(" ") + "\n")
+            emit("", level, "", msgs.join(" ") + "\n")
 
         /** 
             Emit a configuration message.
-            @param msgs Strings to log.
+            @param msgs Data to log.
          */
         function config(...msgs): void
-            emit(this, Config, "", "CONFIG", msgs.join(" ") + "\n")
+            emit("", Config, "CONFIG", msgs.join(" ") + "\n")
 
         /** 
             Emit an error message.
-            @param msgs Strings to log.
+            @param msgs Data to log.
          */
         function error(...msgs): void
-            emit(this, Error, "", "ERROR", msgs.join(" ") + "\n")
+            emit("", Error, "ERROR", msgs.join(" ") + "\n")
 
         /** 
             Emit an informational message.
-            @param msgs Strings to log.
+            @param msgs Data to log.
          */
         function info(...msgs): void
-            emit(this, Info, "", "INFO", msgs.join(" ") + "\n")
+            emit("", Info, "INFO", msgs.join(" ") + "\n")
 
-        /** @hide
+        /** 
+            Emit an activity message
+            @param tag Activity tag to prefix the message. The tag string is wraped in "[]".
+            @param args Output string to log
+            @hide
             @stability prototype
          */
         function activity(tag: String, ...args): Void {
@@ -285,50 +256,49 @@ module ejs {
         /** 
             @hide
          */
-        function removeListener(name, listener: Function): Void {
-            throw "addListener is not supported"
+        function removeObserver(name, listener: Function): Void {
+            throw "observe is not supported"
         }
 
         /** 
+            Write raw data to the logger stream
             @duplicate Stream.write
             Write informational data to logger
          */
         function write(...data): Number
-            _outStream.write(data.join(" "))
+            (_outStream) ? _outStream.write(data.join(" ")) : 0
 
         /** 
             Emit a warning message.
-            @param msgs The strings to log.
+            @param msgs The data to log.
          */
         function warn(...msgs): void
-            emit(this, Warn, "", "WARN", msgs.join(" ") + "\n")
+            emit("", Warn, "WARN", msgs.join(" ") + "\n")
 
         /* 
             Emit a message. The message level will be compared to the logger setting to determine whether it will be 
             output to the devices or not. Also, if the logger has a filter function set that may filter the message 
             out before logging.
-            @param log Logger to write to
+            @param origin Name of the logger that originated the message
             @param level The level of the message.
-            @param name Name tag to append to the message
             @param kind Message kind (debug, info, warn, error)
             @param msg The string message to emit
          */
-        private function emit(log: Logger, level: Number, name: String, kind: String, msg: String): Void {
+        private function emit(origin: String, level: Number, kind: String, msg: String): Void {
+            origin ||= _name
             if (level > _level || !_outStream)
                 return
-            if (name)
-                name = _name + "." + name
-            else name = _name
-            if (_pattern && !name.match(_pattern))
+            if (_pattern && !origin.match(_pattern)) {
                 return
-            if (_filter && !filter.call(this, log, level, msg))
+            }
+            if (_filter && !filter(this, origin, level, kind, msg))
                 return
-            if (_parent) {
-                _parent.emit(log, level, name, kind, msg)
+            if (_outStream is Logger) {
+                _outStream.emit(origin, level, kind, msg)
             } else {
                 if (kind)
-                    _outStream.write(name + ": " + kind + ": " + msg)
-                else _outStream.write(name + ": " + level + ": " + msg)
+                    _outStream.write(origin + ": " + kind + ": " + msg)
+                else _outStream.write(origin + ": " + level + ": " + msg)
             }
         }
     }

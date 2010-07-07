@@ -22,16 +22,16 @@ module ejs.web {
 
             let server: HttpServer = new HttpServer(".", "web")
             let router = Router(Router.RestfulRoutes)
-            server.addListener("readable", function (event: String, request: Request) {
+            server.observe("readable", function (event: String, request: Request) {
                 request.status = 200
                 request.setHeaders({"Content-Type": "text/plain"})
-                request.addListener("readable", function (event, request) {
+                request.observe("readable", function (event, request) {
                     let data = new ByteArray
                     if (request.read(data) == null) {
                         print("EOF")
                     }
                 })
-                request.addListener("writable", function (event) {
+                request.observe("writable", function (event) {
                     request.write("Hello World")
                     request.finalize()
                 })
@@ -51,7 +51,7 @@ module ejs.web {
                 passed.
             @event destroySession Issued when a session is destroyed. The request object is passed.
          */
-        native function addListener(name, listener: Function): Void
+        native function observe(name, listener: Function): Void
 
         /** 
             Get the local IP address bound to this socket.
@@ -113,10 +113,10 @@ module ejs.web {
 
         /** 
             Remove a listener from the server. 
-            @param name Event name previously used with addListener. The name may be an array of events.
-            @param listener Listener function previously used with addListener.
+            @param name Event name previously used with observe. The name may be an array of events.
+            @param listener Listener function previously used with observe.
          */
-        native function removeListener(name: Object, listener: Function): Void
+        native function removeObserve(name: Object, listener: Function): Void
 
         /** 
             Default root directory for the server. The app does not change its current directory to this path.

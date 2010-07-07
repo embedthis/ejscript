@@ -29,8 +29,9 @@ module ejs {
         which can be set to either LittleEndian or BigEndian.  If strings values are read or written, they will 
         be encoded according to the value of the character set $encoding property.
         
-        When used as loop-back streams, ByteArrays can be run in sync or async mode. ByteArrays will issue events
-        for key state transitions such as close, eof, readable and writable events. All event listeners are called with the 
+        When used as loop-back streams, data written to ByteArrays is immediately available for reading. 
+        ByteArrays can be run in sync or async mode. ByteArrays will issue events for key state transitions such as 
+        close, eof, readable and writable events. All event listeners are called with the 
         following signature:
             function callback(event: String, ba: ByteArray): Void
         @spec ejs
@@ -58,8 +59,8 @@ module ejs {
          */
         native function ByteArray(size: Number = -1, growable: Boolean = true)
 
-        /** @duplicate Stream.addListener */
-        native function addListener(name: Object, listener: Function): Void
+        /** @duplicate Stream.observe */
+        native function observe(name: Object, listener: Function): Void
 
         /** 
             Number of bytes that are currently available for reading. This consists of the bytes available
@@ -138,10 +139,10 @@ module ejs {
         native function set endian(value: Number): Void
 
         /** 
-            Flush (discard) the data in the byte array and reset the read and write positions.
+            Flush (discard) the data in the byte array and reset the read and write positions. 
             This call may block if the stream is in sync mode.
-            @param dir Direction in which to flush. Set to a mask containing: Stream.READ, Stream.WRITE or Stream.BOTH.
-                A read flush will discard read data. A write flush will attempt to write buffered write data.
+            @param dir The dir parameter is Ignored. Flushing a ByteArray in either direction the same effect of 
+                discarding all buffered data and resetting the read and write positions -- so this argument is ignored. 
          */
         native function flush(dir: Number = Stream.BOTH): Void
 
@@ -284,10 +285,10 @@ module ejs {
 
         /** 
             Remove a listener to the stream. If there are no listeners on the stream, the stream is put back into sync mode.
-            @param name Event name previously used with addListener. The name may be an array of events.
-            @param listener Listener function previously used with addListener.
+            @param name Event name previously used with observe. The name may be an array of events.
+            @param listener Observer function previously used with observe.
          */
-        native function removeListener(name: Object, listener: Function): Void
+        native function removeObserver(name: Object, listener: Function): Void
 
         /** 
             Reset the read and $writePosition pointers if there is no available data.
@@ -391,7 +392,7 @@ module ejs {
             @hide
          */
         function set input(callback: Function): Void {
-            addListener("writable", function(event: String, ba: ByteArray): Void {
+            observe("writable", function(event: String, ba: ByteArray): Void {
                 callback(ba)
             })
         }
@@ -409,7 +410,7 @@ module ejs {
         /** 
          */
         function set output(callback: Function): Void {
-            addListener("readable", function(event: String, ba: ByteArray): Void {
+            observe("readable", function(event: String, ba: ByteArray): Void {
                 callback(ba)
             })
         }

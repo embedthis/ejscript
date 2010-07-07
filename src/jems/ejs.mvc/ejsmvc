@@ -1443,7 +1443,7 @@ class Templates {
     
     log: {
         enable: true,
-        where: "stdout",
+        location: "stdout",
         level: 1,
     },
 

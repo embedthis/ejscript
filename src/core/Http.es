@@ -213,7 +213,7 @@ module ejs {
         native function Http(uri: Uri? = null)
 
         /** 
-            @duplicate Stream.addListener
+            @duplicate Stream.observe
             @event headers Issued when the response headers have been fully received.
             @event readable Issued when some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
@@ -222,7 +222,7 @@ module ejs {
             All events are called with the signature:
             function (event: String, http: Http): Void
          */
-        native function addListener(name, listener: Function): Void
+        native function observe(name, listener: Function): Void
 
         /** 
             @duplicate Stream.async
@@ -509,9 +509,9 @@ module ejs {
             XML(response)
 
         /** 
-            @duplicate Stream.removeListener
+            @duplicate Stream.removeObserver
          */
-        native function removeListener(name, listener: Function): Void
+        native function removeObserver(name, listener: Function): Void
 
         /** 
             Response body content. The first time this property is read, the response content will be read and buffered.
@@ -614,7 +614,7 @@ module ejs {
             let boundary = "<<Upload Boundary>>"
             let buf = new ByteArray(4096)
             let http = this
-            buf.addListener("readable", function (event, buf) {
+            buf.observe("readable", function (event, buf) {
                 http.write(buf)
                 buf.flush(Stream.WRITE)
             })
@@ -737,7 +737,7 @@ module ejs {
         //  DEPRECATED
         /** @hide */
         function setCallback(eventMask: Number, cb: Function): Void {
-            addListener("" + eventMask, cb);
+            observe("" + eventMask, cb);
         }
 
         //  DEPRECATED

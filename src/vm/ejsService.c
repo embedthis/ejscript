@@ -646,12 +646,12 @@ int ejsAddListener(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener
             name = ejsGetProperty(ejs, (EjsObj*) list, i);
             if (!ejsIsNull(name)) {
                 argv[0] = name;
-                ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_addListener, 2, argv);
+                ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_observe, 2, argv);
             }
         }
     } else {
         argv[0] = name;
-        ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_addListener, 2, argv);
+        ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_observe, 2, argv);
     }
     return 0;
 }
@@ -682,12 +682,12 @@ int ejsRemoveListener(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
                 name = ejsGetProperty(ejs, (EjsObj*) list, i);
                 if (!ejsIsNull(name)) {
                     argv[0] = name;
-                    ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_removeListener, 2, argv);
+                    ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_removeObserver, 2, argv);
                 }
             }
         } else {
             argv[0] = name;
-            ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_removeListener, 2, argv);
+            ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_removeObserver, 2, argv);
         }
     }
     return 0;

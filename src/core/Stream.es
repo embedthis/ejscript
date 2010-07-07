@@ -38,7 +38,7 @@ module ejs {
             @event writable Issued when the stream becomes writable.
             @event close Issued when stream is being closed.
          */
-        function addListener(name, listener: Function): Void
+        function observe(name, listener: Function): Void
 
         /** 
             The current async mode. Set to true if the stream is in async mode.
@@ -89,10 +89,10 @@ module ejs {
 
         /** 
             Remove a listener from the stream. 
-            @param name Event name previously used with addListener. The name may be an array of events.
-            @param listener Listener function previously used with addListener.
+            @param name Event name previously used with observe. The name may be an array of events.
+            @param listener Observer function previously used with observe.
          */
-        function removeListener(name, listener: Function): Void
+        function removeObserver(name, listener: Function): Void
 
         /** 
             Write data to the stream. 

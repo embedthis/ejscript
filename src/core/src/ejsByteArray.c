@@ -12,7 +12,7 @@
 static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
 static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
 
-static int  flushByteArray(Ejs *ejs, EjsByteArray *ap, int dir);
+static int  flushByteArray(Ejs *ejs, EjsByteArray *ap);
 static int  getInput(Ejs *ejs, EjsByteArray *ap, int required);
 static int  lookupByteArrayProperty(Ejs *ejs, EjsByteArray *ap, EjsName *qname);
  static bool makeRoom(Ejs *ejs, EjsByteArray *ap, int require);
@@ -310,9 +310,9 @@ static EjsObj *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 
 
 /**
-    function get addListener(name, listener: Function): Void
+    function get observe(name, listener: Function): Void
  */
-static EjsObj *ba_addListener(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsObj *ba_observe(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     ejsAddListener(ejs, &ap->emitter, argv[0], argv[1]);
     return 0;
@@ -552,16 +552,11 @@ static EjsObj *ba_getValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 
 /*  
     Flush the data in the byte array and reset the read and write position pointers
-    function flush(dir: Number): Void
+    function flush(ignored: Number): Void
  */
 static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    int     dir;
-
-    dir = ejsGetInt(ejs, argv[0]);
-    if (argc == 0 || argv[0] == (EjsObj*) ejs->trueValue) {
-        flushByteArray(ejs, ap, dir);
-    }
+    flushByteArray(ejs, ap);
     ap->writePosition = ap->readPosition = 0;
     return 0;
 }
@@ -880,9 +875,9 @@ static EjsObj *ba_reset(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 
 
 /**
-    function get removeListener(name, listener: Function): Number
+    function get removeObserver(name, listener: Function): Number
  */
-static EjsObj *ba_removeListener(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsObj *ba_removeObserver(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     ejsRemoveListener(ejs, ap->emitter, argv[0], argv[1]);
     return 0;
@@ -1126,13 +1121,13 @@ static EjsObj *ba_setWritePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj 
 /*
     Flush the array. Issue a "flush" event. Flushing attempts to write pending data before resetting the array.
  */
-static int flushByteArray(Ejs *ejs, EjsByteArray *ap, int dir)
+static int flushByteArray(Ejs *ejs, EjsByteArray *ap)
 {
-    if ((dir & EJS_STREAM_WRITE) && ap->emitter && availableBytes(ap) && !ejs->exception) {
+    if (ap->emitter && availableBytes(ap) && !ejs->exception) {
         ejsSendEvent(ejs, ap->emitter, "flush", (EjsObj*) ap);
     }
     ap->writePosition = ap->readPosition = 0;
-    if ((dir & EJS_STREAM_WRITE) && ap->emitter) {
+    if (ap->emitter) {
         ejsSendEvent(ejs, ap->emitter, "writable", (EjsObj*) ap);
     }
     return 0;
@@ -1416,7 +1411,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     helpers->setProperty = (EjsSetPropertyHelper) setByteArrayProperty;
     
     ejsBindConstructor(ejs, type, (EjsProc) ba_ByteArray);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_addListener, (EjsProc) ba_addListener);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_observe, (EjsProc) ba_observe);
     ejsBindMethod(ejs, prototype, ES_ByteArray_available, (EjsProc) ba_available);
     ejsBindAccess(ejs, prototype, ES_ByteArray_async, (EjsProc) ba_async, (EjsProc) ba_setAsync);
     ejsBindMethod(ejs, prototype, ES_ByteArray_close, (EjsProc) ba_close);
@@ -1439,7 +1434,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_ByteArray_readPosition, (EjsProc) ba_readPosition,(EjsProc) ba_setReadPosition);
     ejsBindMethod(ejs, prototype, ES_ByteArray_readShort, (EjsProc) ba_readShort);
     ejsBindMethod(ejs, prototype, ES_ByteArray_readString, (EjsProc) ba_readString);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_removeListener, (EjsProc) ba_removeListener);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_removeObserver, (EjsProc) ba_removeObserver);
     ejsBindMethod(ejs, prototype, ES_ByteArray_reset, (EjsProc) ba_reset);
     ejsBindMethod(ejs, prototype, ES_ByteArray_room, (EjsProc) ba_room);
     ejsBindMethod(ejs, prototype, ES_ByteArray_toString, (EjsProc) ba_toString);

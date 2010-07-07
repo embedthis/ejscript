@@ -9,6 +9,7 @@
 
 /*********************************** Methods **********************************/
 /*  
+
  */
 static EjsObj *logger_mprLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -16,6 +17,7 @@ static EjsObj *logger_mprLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
 }
 
 /*  
+
  */
 static EjsObj *logger_mprStream(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {

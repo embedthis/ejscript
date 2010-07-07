@@ -1,7 +1,6 @@
-
 /*
- *  Test comparisons with null and undefined
- *  TODO add tests for <, >, <=, >=, ===
+    Test comparisons with null and undefined
+    TODO add tests for <, >, <=, >=, ===
  */
 
 x = 0

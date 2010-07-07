@@ -45,7 +45,7 @@ module ejs {
             inbuf = new ByteArray
 /* UNUSED
             let self = this
-            inbuf.addListener("writable", function (event, ba) {
+            inbuf.observe("writable", function (event, ba) {
                 self.fill()
             });
 */
@@ -54,10 +54,10 @@ module ejs {
         }
 
         /** 
-            @duplicate Stream.addListener 
+            @duplicate Stream.observe 
          */
-        function addListener(name, listener: Function): Void {
-            throw new ArgError("Listeners are not supported")
+        function observe(name, listener: Function): Void {
+            throw new ArgError("Observers are not supported")
         }
 
         /** 
@@ -243,10 +243,10 @@ module ejs {
             inbuf.readString(count)
 
         /** 
-            @duplicate Stream.removeListener
+            @duplicate Stream.removeObserver
          */
-        function removeListener(name, listener: Function): Void {
-            throw new ArgError("Listeners are not supported")
+        function removeObserver(name, listener: Function): Void {
+            throw new ArgError("Observers are not supported")
         }
 
         /** 

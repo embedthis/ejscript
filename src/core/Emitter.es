@@ -6,12 +6,13 @@
 module ejs {
 
     /** 
-        The emitter class supports the registration of listeners who want notification of events of interest.
+        The emitter class provides a publish/subscribe model of communication. It supports the registration of observers
+        who want to subscribe to events of interest. 
         @example
-            events.addListener(event, function (event, ...args) {
+            events.observe(event, function (event, ...args) {
                 //  Do something
             }
-            events.emit("topic", 1, 2, 3)
+            events.fire("topic", 1, 2, 3)
         @stability prototype
      */
     class Emitter {
@@ -25,88 +26,82 @@ module ejs {
         function Emitter()
             endpoints = new Object
 
-        private function addOneListener(name: String, callback: Function): Void {
-            let listeners : Array? = endpoints[name]
-            if (listeners) {
-                for each (var e: Endpoint in listeners) {
+        private function addOneObserver(name: String, callback: Function): Void {
+            let observers : Array? = endpoints[name]
+            if (observers) {
+                for each (var e: Endpoint in observers) {
                     if (e.callback == callback && e.name == name) {
                         return
                     }
                 }
             } else {
-                listeners = endpoints[name] = new Array
+                observers = endpoints[name] = new Array
             }
             if (callback) {
-//MOB           callback.bind(this)
-                listeners.append(new Endpoint(callback, name))
-                emit("addListener", name, callback)
+                observers.append(new Endpoint(callback, name))
+                fire("observe", name, callback)
             }
         }
 
         /** 
-            Add a listener function for events.
-            @param name Event name to listen for. The listener will receive events of this event class or any of its 
-            subclasses.  The name can be a string or an array of event strings.
+            Add an observer for a set of events.
+            @param name Event name to observe. The observer will receive events of this event class or any of its subclasses.
+            The name can be a string or an array of event strings.
             @param callback Function to call when the event is received.
          */
-        function addListener(name: Object, callback: Function): Void {
+        function observe(name: Object, callback: Function): Void {
             if (name is String) {
-                addOneListener(name, callback)
+                addOneObserver(name, callback)
             } else if (name is Array) {
                 for each (n in name) {
-                    addOneListener(n, callback)
+                    addOneObserver(n, callback)
                 }
             } else {
-                throw new Error("Bad name type for addListener")
+                throw new Error("Bad name type for observe")
             }
         }
 
-        //  MOB
-        function observe(name: Object, callback: Function): Void
-            addListener(name, callback)
-
         /** 
-            Clear listeners for a given event name. 
-            @param name Event name to clear. The name can be a string or an array of event strings. If null, listeners 
+            Clear observers for a given event name. 
+            @param name Event name to clear. The name can be a string or an array of event strings. If null, observers 
             for all event names are cleared.
          */
-        function clearListeners(name: Object? = null): Void {
+        function clearObservers(name: Object? = null): Void {
             if (name == null) {
                 endpoints = new Object
             } else if (name is Array) {
                 for each (n in name) {
-                    listeners = endpoints[n] = new Array
+                    observers = endpoints[n] = new Array
                 }
             } else {
-                listeners = endpoints[name] = new Array
+                observers = endpoints[name] = new Array
             }
         }
 
         /** 
-            Determine if the emitter has any listeners.
-            @return True if there are currently registered listeners
+            Determine if the emitter has any observers.
+            @return True if there are currently registered observers
         */
-        function hasListeners(): Boolean 
+        function hasObservers(): Boolean 
             endpoints.length > 0
 
         /** 
-            Return the listeners for this emitter. 
-            @param name Event name to send to the listeners.
-            @return An array of listener endpoints. These are cloned and not the actual listener objects.
+            Return the observers for this emitter. 
+            @param name Event name to fire to the observers.
+            @return An array of observer endpoints. These are cloned and not the actual observer objects.
          */
-        function listeners(name: String): Array
+        function getObservers(name: String): Array
             endpoints[name].clone(true)
        
-        //  MOB -- rename send() or fire()
         /** 
-            Emit an event to the registered listeners.
-            @param name Event name to send to the listeners.
-            @param args Args to pass to the listener callback
+            Emit an event to the registered observers.
+            @param name Event name to fire to the observers.
+            @param args Args to pass to the observer callback
          */
-        function emit(name: String, ...args): Void {
-            let listeners: Array? = endpoints[name]
-            if (listeners) {
-                for each (var e: Endpoint in listeners) {
+        function fire(name: String, ...args): Void {
+            let observers: Array? = endpoints[name]
+            if (observers) {
+                for each (var e: Endpoint in observers) {
                     if (name == e.name) {
                         if (!e.active) {
                             e.active = true
@@ -115,7 +110,7 @@ module ejs {
                                 try {
                                     e.callback.apply(null, [name] + args)
                                 } catch (e) {
-                                    App.errorStream.write("Exception in event on listener: " + name  + "\n" + e)
+                                    App.errorStream.write("Exception in event on observer: " + name  + "\n" + e)
                                 }
                             } while (e.again)
                             e.active = false
@@ -126,40 +121,51 @@ module ejs {
                 }
             }
         }
-        function fire(name: String, ...args): Void
-            emit(name, ...args)
 
-        private function removeOneListener(name: String, callback: Function): Void {
-            var listeners: Array? = endpoints[name]
-            for (let i in listeners) {
-                var e: Endpoint = listeners[i]
+        function delayedFire(name: String, delay: Number, ...args): Void {
+            Timer(delay, function() {
+                fire(name, /* SPREAD */ args)
+            })
+        }
+
+        private function removeOneObserver(name: String, callback: Function): Void {
+            var observers: Array? = endpoints[name]
+            for (let i in observers) {
+                var e: Endpoint = observers[i]
                 if (e.callback == callback && e.name == name) {
-                    emit("removeListener", name, callback)
-                    listeners.splice(i, 1)
+                    fire("removeObserver", name, callback)
+                    observers.splice(i, 1)
                 }
             }
         }
 
         /** 
-            Remove a registered listener.
-            @param name Event name used when adding the listener.
-            @param callback Listener callback function used when adding the listener.
+            Remove a registered observer.
+            @param name Event name used when the observer was added.
+            @param callback Callback function used when the observer was added.
          */
-        function removeListener(name: Object, callback: Function): Void {
+        function removeObserver(name: Object, callback: Function): Void {
             if (name is String) {
-                removeOneListener(name, callback)
+                removeOneObserver(name, callback)
             } else if (name is Array) {
                 for each (n in name) {
-                    removeOneListener(n, callback)
+                    removeOneObserver(n, callback)
                 }
             } else {
-                throw new Error("Bad name type for removeListener")
+                throw new Error("Bad name type for removeObserver")
             }
         }
+
+        //  LEGACY
+        function addListener(name: Object, callback: Function): Void
+            observe(name, callback)
+
+        function emit(name: String, ...args): Void 
+            fire(name, ...args)
     }
 
 
-    /* Listening endpoints */
+    /* Observing endpoints */
     internal class Endpoint {
         public var callback: Function
         public var name: String

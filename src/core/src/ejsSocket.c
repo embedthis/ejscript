@@ -35,9 +35,9 @@ static EjsObj *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 
 /*
-    function addListener(name: [String|Array], listener: Function): Void
+    function observe(name: [String|Array], listener: Function): Void
  */
-EjsObj *sock_addListener(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+EjsObj *sock_observe(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     ejsAddListener(ejs, &sp->emitter, argv[0], argv[1]);
     return 0;
@@ -262,9 +262,9 @@ static EjsObj *sock_remoteAddress(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **ar
 
 
 /*
-    function removeListener(name, listener: Function): Void
+    function removeObserver(name, listener: Function): Void
  */
-static EjsObj *sock_removeListener(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+static EjsObj *sock_removeObserver(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     ejsRemoveListener(ejs, sp->emitter, argv[0], argv[1]);
     return 0;
@@ -437,7 +437,7 @@ void ejsConfigureSocketType(Ejs *ejs)
 
     ejsBindConstructor(ejs, type, (EjsProc) sock_Socket);
     ejsBindMethod(ejs, prototype, ES_Socket_accept, (EjsProc) sock_accept);
-    ejsBindMethod(ejs, prototype, ES_Socket_addListener, (EjsProc) sock_addListener);
+    ejsBindMethod(ejs, prototype, ES_Socket_observe, (EjsProc) sock_observe);
     ejsBindMethod(ejs, prototype, ES_Socket_address, (EjsProc) sock_address);
     ejsBindAccess(ejs, prototype, ES_Socket_async, (EjsProc) sock_async, (EjsProc) sock_set_async);
     ejsBindMethod(ejs, prototype, ES_Socket_close, (EjsProc) sock_close);
@@ -446,7 +446,7 @@ void ejsConfigureSocketType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Socket_port, (EjsProc) sock_port);
     ejsBindMethod(ejs, prototype, ES_Socket_read, (EjsProc) sock_read);
     ejsBindMethod(ejs, prototype, ES_Socket_remoteAddress, (EjsProc) sock_remoteAddress);
-    ejsBindMethod(ejs, prototype, ES_Socket_removeListener, (EjsProc) sock_removeListener);
+    ejsBindMethod(ejs, prototype, ES_Socket_removeObserver, (EjsProc) sock_removeObserver);
     ejsBindMethod(ejs, prototype, ES_Socket_write, (EjsProc) sock_write);
 }
 

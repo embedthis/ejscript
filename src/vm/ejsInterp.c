@@ -225,8 +225,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
     FRAME->filename = 0;
     FRAME->lineNumber = 0;
 
-    mprAssert(!FRAME->attentionPc);
-
 #if BLD_UNIX_LIKE || VXWORKS 
     /*
         Direct threading computed goto processing. Include computed goto jump table.

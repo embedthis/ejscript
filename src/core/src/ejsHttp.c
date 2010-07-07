@@ -44,9 +44,9 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function addListener(name, listener: function): Void
+    function observe(name, listener: function): Void
  */
-EjsObj *http_addListener(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+EjsObj *http_observe(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     ejsAddListener(ejs, &hp->emitter, argv[0], argv[1]);
     return 0;
@@ -515,9 +515,9 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function removeListener(name, listener: function): Void
+    function removeObserver(name, listener: function): Void
  */
-EjsObj *http_removeListener(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+EjsObj *http_removeObserver(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     ejsRemoveListener(ejs, hp->emitter, argv[0], argv[1]);
     return 0;
@@ -1170,7 +1170,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     type->helpers.destroy = (EjsDestroyHelper) destroyHttp;
 
     ejsBindConstructor(ejs, type, (EjsProc) httpConstructor);
-    ejsBindMethod(ejs, prototype, ES_Http_addListener, (EjsProc) http_addListener);
+    ejsBindMethod(ejs, prototype, ES_Http_observe, (EjsProc) http_observe);
     ejsBindAccess(ejs, prototype, ES_Http_async, (EjsProc) http_async, (EjsProc) http_set_async);
     ejsBindMethod(ejs, prototype, ES_Http_available, (EjsProc) http_available);
     ejsBindAccess(ejs, prototype, ES_Http_chunkSize, (EjsProc) http_chunkSize, (EjsProc) http_set_chunkSize);
@@ -1199,7 +1199,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_put, (EjsProc) http_put);
     ejsBindMethod(ejs, prototype, ES_Http_read, (EjsProc) http_read);
     ejsBindMethod(ejs, prototype, ES_Http_readString, (EjsProc) http_readString);
-    ejsBindMethod(ejs, prototype, ES_Http_removeListener, (EjsProc) http_removeListener);
+    ejsBindMethod(ejs, prototype, ES_Http_removeObserver, (EjsProc) http_removeObserver);
     ejsBindMethod(ejs, prototype, ES_Http_response, (EjsProc) http_response);
     ejsBindMethod(ejs, prototype, ES_Http_options, (EjsProc) http_options);
     ejsBindMethod(ejs, prototype, ES_Http_setCredentials, (EjsProc) http_setCredentials);

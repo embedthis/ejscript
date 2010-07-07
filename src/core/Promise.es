@@ -22,7 +22,7 @@ module ejs {
             @return Returns this promise
          */
         function addCallback(listener: Function): Promise {
-            addListener("success", listener)
+            observe("success", listener)
             return this
         }
 
@@ -32,7 +32,7 @@ module ejs {
             @return Returns this promise
          */
         function addCancelback(listener: Function): Promise {
-            addListener("cancel", listener)
+            observe("cancel", listener)
             return this
         }
 
@@ -42,7 +42,7 @@ module ejs {
             @return Returns this promise
          */
         function addErrback(listener: Function): Promise {
-            addListener("error", listener)
+            observe("error", listener)
             return this
         }
 
@@ -100,7 +100,7 @@ module ejs {
             if (timer) {
                 timer.stop()
             }
-            clearListeners(["success", "error"])
+            clearObservers(["success", "error"])
             issue("cancel", args)
         }
 
@@ -113,12 +113,12 @@ module ejs {
             @return this promise
          */
         function then(success: Function, error: Function? = null, progress: Function? = null): Promise {
-            addListener("success", success)
+            observe("success", success)
             if (error) {
-                addListener("error", error)
+                observe("error", error)
             }
             if (progress) {
-                addListener("progress", progress)
+                observe("progress", progress)
             }
             return this
         }
@@ -140,9 +140,9 @@ module ejs {
                     timer.stop()
                 }
             }
-            addListener("success", awake)
-            addListener("error", awake)
-            addListener("cancel", awake)
+            observe("success", awake)
+            observe("error", awake)
+            observe("cancel", awake)
             timer = new Timer(msec, function() {
                 if (fired || done) {
                     return;
@@ -168,9 +168,9 @@ module ejs {
                 done = true
                 result = args.slice(1)
             }
-            addListener("success", awake)
-            addListener("error", awake)
-            addListener("cancel", awake)
+            observe("success", awake)
+            observe("error", awake)
+            observe("cancel", awake)
             new Timer(timeout, awake)
             while (!done && !fired) {
                 App.serviceEvents(timeout, true)
@@ -183,9 +183,9 @@ module ejs {
                 timer.stop()
             }
             if (args) {
-                emit.apply(null, [name] + args)
+                fire.apply(null, [name] + args)
             } else {
-                emit(name)
+                fire(name)
             }
         }
     }

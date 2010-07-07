@@ -18,7 +18,7 @@ module ejs.debugger {
 
         function Debugger() {
             emitter = new Emitter
-            emitter.addListener("breakpoint, process)
+            emitter.observe("breakpoint, process)
         }
 
         native function breakpoint(spec): String

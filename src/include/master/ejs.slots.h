@@ -334,7 +334,7 @@
 #define ES_BinaryStream_inbuf                                          0
 #define ES_BinaryStream_outbuf                                         1
 #define ES_BinaryStream_nextStream                                     2
-#define ES_BinaryStream_addListener                                    3
+#define ES_BinaryStream_observe                                        3
 #define ES_BinaryStream_async                                          4
 #define ES_BinaryStream_available                                      5
 #define ES_BinaryStream_close                                          6
@@ -350,7 +350,7 @@
 #define ES_BinaryStream_readLong                                       16
 #define ES_BinaryStream_readString                                     17
 #define ES_BinaryStream_readXML                                        18
-#define ES_BinaryStream_removeListener                                 19
+#define ES_BinaryStream_removeObserver                                 19
 #define ES_BinaryStream_room                                           20
 #define ES_BinaryStream_write                                          21
 #define ES_BinaryStream_writeByte                                      22
@@ -387,7 +387,7 @@
 /*
    Prototype (instance) slots for "ByteArray" type 
  */
-#define ES_ByteArray_addListener                                       0
+#define ES_ByteArray_observe                                           0
 #define ES_ByteArray_available                                         1
 #define ES_ByteArray_async                                             2
 #define ES_ByteArray_close                                             3
@@ -413,7 +413,7 @@
 #define ES_ByteArray_readShort                                         23
 #define ES_ByteArray_readString                                        24
 #define ES_ByteArray_readXML                                           25
-#define ES_ByteArray_removeListener                                    26
+#define ES_ByteArray_removeObserver                                    26
 #define ES_ByteArray_reset                                             27
 #define ES_ByteArray_room                                              28
 #define ES_ByteArray_toString                                          29
@@ -586,17 +586,18 @@
    Prototype (instance) slots for "Emitter" type 
  */
 #define ES_Emitter_endpoints                                           0
-#define ES_Emitter_addOneListener                                      1
-#define ES_Emitter_addListener                                         2
-#define ES_Emitter_observe                                             3
-#define ES_Emitter_clearListeners                                      4
-#define ES_Emitter_hasListeners                                        5
-#define ES_Emitter_listeners                                           6
-#define ES_Emitter_emit                                                7
-#define ES_Emitter_fire                                                8
-#define ES_Emitter_removeOneListener                                   9
-#define ES_Emitter_removeListener                                      10
-#define ES_Emitter_NUM_INSTANCE_PROP                                   11
+#define ES_Emitter_addOneObserver                                      1
+#define ES_Emitter_observe                                             2
+#define ES_Emitter_clearObservers                                      3
+#define ES_Emitter_hasObservers                                        4
+#define ES_Emitter_observers                                           5
+#define ES_Emitter_fire                                                6
+#define ES_Emitter_delayedFire                                         7
+#define ES_Emitter_removeOneObserver                                   8
+#define ES_Emitter_removeObserver                                      9
+#define ES_Emitter_addListener                                         10
+#define ES_Emitter_emit                                                11
+#define ES_Emitter_NUM_INSTANCE_PROP                                   12
 #define ES_Emitter_NUM_INHERITED_PROP                                  0
 #define ES_Endpoint_NUM_CLASS_PROP                                     0
 
@@ -798,7 +799,7 @@
 /*
    Prototype (instance) slots for "File" type 
  */
-#define ES_File_addListener                                            0
+#define ES_File_observe                                                0
 #define ES_File_async                                                  1
 #define ES_File_canRead                                                2
 #define ES_File_canWrite                                               3
@@ -816,7 +817,7 @@
 #define ES_File_readBytes                                              15
 #define ES_File_readString                                             16
 #define ES_File_remove                                                 17
-#define ES_File_removeListener                                         18
+#define ES_File_removeObserver                                         18
 #define ES_File_size                                                   19
 #define ES_File_truncate                                               20
 #define ES_File_write                                                  21
@@ -924,7 +925,7 @@
    Prototype (instance) slots for "Http" type 
  */
 #define ES_Http__response                                              0
-#define ES_Http_addListener                                            1
+#define ES_Http_observe                                                1
 #define ES_Http_async                                                  2
 #define ES_Http_chunkSize                                              3
 #define ES_Http_close                                                  4
@@ -956,7 +957,7 @@
 #define ES_Http_readString                                             30
 #define ES_Http_readLines                                              31
 #define ES_Http_readXml                                                32
-#define ES_Http_removeListener                                         33
+#define ES_Http_removeObserver                                         33
 #define ES_Http_response                                               34
 #define ES_Http_retries                                                35
 #define ES_Http_setCredentials                                         36
@@ -1071,29 +1072,27 @@
 #define ES_Logger__pattern                                             2
 #define ES_Logger__name                                                3
 #define ES_Logger__outStream                                           4
-#define ES_Logger__parent                                              5
-#define ES_Logger_redirect                                             6
-#define ES_Logger_addListener                                          7
-#define ES_Logger_async                                                8
-#define ES_Logger_close                                                9
-#define ES_Logger_filter                                               10
-#define ES_Logger_flush                                                11
-#define ES_Logger_level                                                12
-#define ES_Logger_match                                                13
-#define ES_Logger_name                                                 14
-#define ES_Logger_outStream                                            15
-#define ES_Logger_parent                                               16
-#define ES_Logger_debug                                                17
-#define ES_Logger_config                                               18
-#define ES_Logger_error                                                19
-#define ES_Logger_info                                                 20
-#define ES_Logger_activity                                             21
-#define ES_Logger_read                                                 22
-#define ES_Logger_removeListener                                       23
-#define ES_Logger_write                                                24
-#define ES_Logger_warn                                                 25
-#define ES_Logger_emit                                                 26
-#define ES_Logger_NUM_INSTANCE_PROP                                    27
+#define ES_Logger_redirect                                             5
+#define ES_Logger_observe                                              6
+#define ES_Logger_async                                                7
+#define ES_Logger_close                                                8
+#define ES_Logger_filter                                               9
+#define ES_Logger_flush                                                10
+#define ES_Logger_level                                                11
+#define ES_Logger_match                                                12
+#define ES_Logger_name                                                 13
+#define ES_Logger_outStream                                            14
+#define ES_Logger_debug                                                15
+#define ES_Logger_config                                               16
+#define ES_Logger_error                                                17
+#define ES_Logger_info                                                 18
+#define ES_Logger_activity                                             19
+#define ES_Logger_read                                                 20
+#define ES_Logger_removeObserver                                       21
+#define ES_Logger_write                                                22
+#define ES_Logger_warn                                                 23
+#define ES_Logger_emit                                                 24
+#define ES_Logger_NUM_INSTANCE_PROP                                    25
 #define ES_Logger_NUM_INHERITED_PROP                                   0
 
 
@@ -1329,7 +1328,7 @@
 #define ES_Path_linkTarget                                             24
 #define ES_Path_makeDir                                                25
 #define ES_Path_makeLink                                               26
-#define ES_Path_makeTemp                                               27
+#define ES_Path_temp                                                   27
 #define ES_Path_map                                                    28
 #define ES_Path_mimeType                                               29
 #define ES_Path_modified                                               30
@@ -1365,7 +1364,8 @@
 #define ES_Path_trimStart                                              60
 #define ES_Path_truncate                                               61
 #define ES_Path_write                                                  62
-#define ES_Path_NUM_INSTANCE_PROP                                      63
+#define ES_Path_makeTemp                                               63
+#define ES_Path_NUM_INSTANCE_PROP                                      64
 #define ES_Path_NUM_INHERITED_PROP                                     0
 #define ES_Promise_NUM_CLASS_PROP                                      0
 
@@ -1373,31 +1373,32 @@
    Prototype (instance) slots for "Promise" type 
  */
 #define ES_Promise_endpoints                                           0
-#define ES_Promise_addOneListener                                      1
-#define ES_Promise_addListener                                         2
-#define ES_Promise_observe                                             3
-#define ES_Promise_clearListeners                                      4
-#define ES_Promise_hasListeners                                        5
-#define ES_Promise_listeners                                           6
-#define ES_Promise_emit                                                7
-#define ES_Promise_fire                                                8
-#define ES_Promise_removeOneListener                                   9
-#define ES_Promise_removeListener                                      10
-#define ES_Promise_timer                                               11
-#define ES_Promise_fired                                               12
-#define ES_Promise_addCallback                                         13
-#define ES_Promise_addCancelback                                       14
-#define ES_Promise_addErrback                                          15
-#define ES_Promise_emitSuccess                                         16
-#define ES_Promise_emitError                                           17
-#define ES_Promise_emitCancel                                          18
-#define ES_Promise_cancel                                              19
-#define ES_Promise_then                                                20
-#define ES_Promise_timeout                                             21
-#define ES_Promise_wait                                                22
-#define ES_Promise_issue                                               23
-#define ES_Promise_NUM_INSTANCE_PROP                                   24
-#define ES_Promise_NUM_INHERITED_PROP                                  11
+#define ES_Promise_addOneObserver                                      1
+#define ES_Promise_observe                                             2
+#define ES_Promise_clearObservers                                      3
+#define ES_Promise_hasObservers                                        4
+#define ES_Promise_observers                                           5
+#define ES_Promise_fire                                                6
+#define ES_Promise_delayedFire                                         7
+#define ES_Promise_removeOneObserver                                   8
+#define ES_Promise_removeObserver                                      9
+#define ES_Promise_addListener                                         10
+#define ES_Promise_emit                                                11
+#define ES_Promise_timer                                               12
+#define ES_Promise_fired                                               13
+#define ES_Promise_addCallback                                         14
+#define ES_Promise_addCancelback                                       15
+#define ES_Promise_addErrback                                          16
+#define ES_Promise_emitSuccess                                         17
+#define ES_Promise_emitError                                           18
+#define ES_Promise_emitCancel                                          19
+#define ES_Promise_cancel                                              20
+#define ES_Promise_then                                                21
+#define ES_Promise_timeout                                             22
+#define ES_Promise_wait                                                23
+#define ES_Promise_issue                                               24
+#define ES_Promise_NUM_INSTANCE_PROP                                   25
+#define ES_Promise_NUM_INHERITED_PROP                                  12
 #define ES_Reflect_NUM_CLASS_PROP                                      0
 
 /*
@@ -1437,7 +1438,7 @@
 /*
    Prototype (instance) slots for "Socket" type 
  */
-#define ES_Socket_addListener                                          0
+#define ES_Socket_observe                                              0
 #define ES_Socket_accept                                               1
 #define ES_Socket_address                                              2
 #define ES_Socket_async                                                3
@@ -1449,7 +1450,7 @@
 #define ES_Socket_port                                                 9
 #define ES_Socket_read                                                 10
 #define ES_Socket_remoteAddress                                        11
-#define ES_Socket_removeListener                                       12
+#define ES_Socket_removeObserver                                       12
 #define ES_Socket_write                                                13
 #define ES_Socket_NUM_INSTANCE_PROP                                    14
 #define ES_Socket_NUM_INHERITED_PROP                                   0
@@ -1466,12 +1467,12 @@
 /*
    Prototype (instance) slots for "Stream" type 
  */
-#define ES_Stream_addListener                                          0
+#define ES_Stream_observe                                              0
 #define ES_Stream_async                                                1
 #define ES_Stream_close                                                2
 #define ES_Stream_flush                                                3
 #define ES_Stream_read                                                 4
-#define ES_Stream_removeListener                                       5
+#define ES_Stream_removeObserver                                       5
 #define ES_Stream_write                                                6
 #define ES_Stream_NUM_INSTANCE_PROP                                    7
 #define ES_Stream_NUM_INHERITED_PROP                                   0
@@ -1578,7 +1579,7 @@
 #define ES_TextStream_inbuf                                            1
 #define ES_TextStream_format                                           2
 #define ES_TextStream_nextStream                                       3
-#define ES_TextStream_addListener                                      4
+#define ES_TextStream_observe                                          4
 #define ES_TextStream_async                                            5
 #define ES_TextStream_available                                        6
 #define ES_TextStream_close                                            7
@@ -1589,7 +1590,7 @@
 #define ES_TextStream_readLine                                         12
 #define ES_TextStream_readLines                                        13
 #define ES_TextStream_readString                                       14
-#define ES_TextStream_removeListener                                   15
+#define ES_TextStream_removeObserver                                   15
 #define ES_TextStream_write                                            16
 #define ES_TextStream_writeLine                                        17
 #define ES_TextStream_NUM_INSTANCE_PROP                                18
@@ -1811,6 +1812,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1304659
+#define _ES_CHECKSUM_ejs   1301915
 
 #endif

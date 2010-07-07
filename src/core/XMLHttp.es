@@ -17,8 +17,7 @@ module ejs {
 
         use default namespace public
 
-        //  TODO - rename http
-        private var hp: Http = new Http
+        private var http: Http = new Http
         private var state: Number = 0
         private var response: ByteArray
 
@@ -51,14 +50,14 @@ module ejs {
             Abort the connection
          */
         function abort(): void
-            hp.close
+            http.close
 
         /**
             The underlying Http object
             @spec ejs
          */
-        function get http() : Http
-            hp
+        function get httpObject() : Http
+            http
 
         /**
             The readystate value. This value can be compared with the XMLHttp constants: Uninitialized, Open, Sent,
@@ -71,14 +70,14 @@ module ejs {
             HTTP response body as a string.
          */
         function get responseText(): String
-            hp.response
+            http.response
 
         /**
             HTTP response payload as an XML document. Set to an XML object that is the root of the HTTP request 
             response data.
          */
         function get responseXML(): XML
-            XML(hp.response)
+            XML(http.response)
 
         /**
             Not implemented. Only for ActiveX on IE
@@ -93,13 +92,13 @@ module ejs {
             The HTTP status code. Set to an integer Http status code between 100 and 600.
          */
         function get status(): Number
-            hp.status
+            http.status
 
         /**
             Return the HTTP status code message
          */
         function get statusText() : String
-            hp.statusMessage
+            http.statusMessage
 
         /**
             Return the response headers
@@ -107,8 +106,8 @@ module ejs {
          */
         function getAllResponseHeaders(): String {
             let result: String = ""
-            for (key in hp.headers) {
-                result = result.concat(key + ": " + hp.headers[key] + '\n')
+            for (key in http.headers) {
+                result = result.concat(key + ": " + http.headers[key] + '\n')
             }
             return result
         }
@@ -132,15 +131,24 @@ module ejs {
          */
         function open(method: String, url: String, async: Boolean = false, user: String? = null, 
                 password: String = null): Void {
-            hp.method = method
-            hp.uri = url
-            if (user && password) {
-                hp.setCredentials(user, password)
-            }
-            hp.callback = callback
             response = new ByteArray(System.Bufsize, 1)
+            http.async = true
+            http.method = method
+            http.uri = url
+            if (user && password) {
+                http.setCredentials(user, password)
+            }
+            http.observe("readable", function (event, ...args) {
+                let http: Http = e.data
+                let count = http.read(response)
+                state = (count == 0) ? Loaded : Receiving
+                notify()
+            })
+            http.observe("error", function (event, ...args) {
+                notify()
+            })
 
-            hp.connect()
+            http.connect()
             state = Open
             notify()
 
@@ -159,12 +167,10 @@ module ejs {
             @param content Data to send with the request.
          */
         function send(content: String): Void {
-/*
-            if (hp.callback == null) {
+            if (!http.async) {
                 throw new IOError("Can't call send in sync mode")
             }
-*/
-            hp.write(content)
+            http.write(content)
         }
 
         /**
@@ -175,18 +181,18 @@ module ejs {
                 setRequestHeader("Keep-Alive", "none")
          */
         function setRequestHeader(key: String, value: String): Void
-            hp.addHeader(key, value, 1)
+            http.addHeader(key, value, 1)
 
         /*
             Http callback function
          */
-        private function callback (e: Event) {
+        private function callback (event, ...args) {
             if (e is HttpError) {
                 notify()
                 return
             }
-            let hp: Http = e.data
-            let count = hp.read(response)
+            let http: Http = e.data
+            let count = http.read(response)
             state = (count == 0) ? Loaded : Receiving
             notify()
         }

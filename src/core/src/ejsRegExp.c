@@ -62,7 +62,7 @@ static void destroyRegExp(Ejs *ejs, EjsRegExp *rp)
     RegExp(pattern: String, flags: String = null)
  */
 
-static EjsObj *regexConstructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     cchar       *errMsg, *pattern, *flags;
     int         column, errCode;
@@ -86,7 +86,7 @@ static EjsObj *regexConstructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv
 }
 
 
-static EjsObj *getLastIndex(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_getLastIndex(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateNumber(ejs, rp->endLastMatch);
 }
@@ -95,7 +95,7 @@ static EjsObj *getLastIndex(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 /*
     function set lastIndex(value: Number): Void
  */
-static EjsObj *setLastIndex(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_setLastIndex(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     rp->endLastMatch = (int) ejsGetNumber(ejs, argv[0]);
     return 0;
@@ -105,7 +105,7 @@ static EjsObj *setLastIndex(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 /*
     function exec(str: String, start: Number = 0): Array
  */
-static EjsObj *exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     EjsArray    *results;
     EjsString   *match;
@@ -144,31 +144,31 @@ static EjsObj *exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 }
 
 
-static EjsObj *getGlobalFlag(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_getGlobalFlag(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateBoolean(ejs, rp->global);
 }
 
 
-static EjsObj *getIgnoreCase(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_getIgnoreCase(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateBoolean(ejs, rp->ignoreCase);
 }
 
 
-static EjsObj *getMultiline(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_getMultiline(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateBoolean(ejs, rp->multiline);
 }
 
 
-static EjsObj *getSource(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_getSource(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateString(ejs, rp->pattern);
 }
 
 
-static EjsObj *matched(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_matched(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     if (rp->matched == 0) {
         return (EjsObj*) ejs->nullValue;
@@ -177,19 +177,19 @@ static EjsObj *matched(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 }
 
 
-static EjsObj *start(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_start(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateNumber(ejs, rp->startLastMatch);
 }
 
 
-static EjsObj *sticky(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_sticky(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateBoolean(ejs, rp->sticky);
 }
 
 
-static EjsObj *test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
+static EjsObj *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     cchar       *str;
     int         count;
@@ -348,17 +348,17 @@ void ejsConfigureRegExpType(Ejs *ejs)
     type = ejsConfigureNativeType(ejs, "ejs", "RegExp", sizeof(EjsRegExp));
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) regexConstructor);
-    ejsBindMethod(ejs, prototype, ES_RegExp_exec, (EjsProc) exec);
-    ejsBindAccess(ejs, prototype, ES_RegExp_lastIndex, (EjsProc) getLastIndex, (EjsProc) setLastIndex);
-    ejsBindMethod(ejs, prototype, ES_RegExp_global, (EjsProc) getGlobalFlag);
-    ejsBindMethod(ejs, prototype, ES_RegExp_ignoreCase, (EjsProc) getIgnoreCase);
-    ejsBindMethod(ejs, prototype, ES_RegExp_multiline, (EjsProc) getMultiline);
-    ejsBindMethod(ejs, prototype, ES_RegExp_source, (EjsProc) getSource);
-    ejsBindMethod(ejs, prototype, ES_RegExp_matched, (EjsProc) matched);
-    ejsBindMethod(ejs, prototype, ES_RegExp_start, (EjsProc) start);
-    ejsBindMethod(ejs, prototype, ES_RegExp_sticky, (EjsProc) sticky);
-    ejsBindMethod(ejs, prototype, ES_RegExp_test, (EjsProc) test);
+    ejsBindConstructor(ejs, type, (EjsProc) regex_Constructor);
+    ejsBindMethod(ejs, prototype, ES_RegExp_exec, (EjsProc) regex_exec);
+    ejsBindAccess(ejs, prototype, ES_RegExp_lastIndex, (EjsProc) regex_getLastIndex, (EjsProc) regex_setLastIndex);
+    ejsBindMethod(ejs, prototype, ES_RegExp_global, (EjsProc) regex_getGlobalFlag);
+    ejsBindMethod(ejs, prototype, ES_RegExp_ignoreCase, (EjsProc) regex_getIgnoreCase);
+    ejsBindMethod(ejs, prototype, ES_RegExp_multiline, (EjsProc) regex_getMultiline);
+    ejsBindMethod(ejs, prototype, ES_RegExp_source, (EjsProc) regex_getSource);
+    ejsBindMethod(ejs, prototype, ES_RegExp_matched, (EjsProc) regex_matched);
+    ejsBindMethod(ejs, prototype, ES_RegExp_start, (EjsProc) regex_start);
+    ejsBindMethod(ejs, prototype, ES_RegExp_sticky, (EjsProc) regex_sticky);
+    ejsBindMethod(ejs, prototype, ES_RegExp_test, (EjsProc) regex_test);
     ejsBindMethod(ejs, prototype, ES_RegExp_toString, (EjsProc) ejsRegExpToString);
 }
 

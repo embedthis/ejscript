@@ -443,7 +443,6 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
             } else {
                 attributes &= ~EJS_TRAIT_SETTER;
             }
-            mprAssert(attributes);
         }
     } else {
         attributes = EJS_FUN_MODULE_INITIALIZER;

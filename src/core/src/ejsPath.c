@@ -680,9 +680,9 @@ static EjsObj *makePathLink(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     Make a temporary file. Creates a new, uniquely named temporary file.
     NOTE: Still the callers responsibility to remove the temp file
   
-    function makeTemp(): Path
+    function temp(): Path
  */
-static EjsObj *makePathTemp(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
+static EjsObj *pathTemp(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     char    *path;
 
@@ -1320,7 +1320,9 @@ void ejsConfigurePathType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Path_linkTarget, (EjsProc) pathLinkTarget);
     ejsBindMethod(ejs, prototype, ES_Path_makeDir, (EjsProc) makePathDir);
     ejsBindMethod(ejs, prototype, ES_Path_makeLink, (EjsProc) makePathLink);
-    ejsBindMethod(ejs, prototype, ES_Path_makeTemp, (EjsProc) makePathTemp);
+#if ES_Path_temp
+    ejsBindMethod(ejs, prototype, ES_Path_temp, (EjsProc) pathTemp);
+#endif
     ejsBindMethod(ejs, prototype, ES_Path_map, (EjsProc) pa_map);
     ejsBindAccess(ejs, prototype, ES_Path_mimeType, (EjsProc) getMimeType, NULL);
     ejsBindMethod(ejs, prototype, ES_Path_modified, (EjsProc) getModifiedDate);

@@ -8,8 +8,7 @@ module ejs {
 
     /** 
         The Event class encapsulates information pertaining to a system or application event. Applications typically
-        subclass Event to add custom event data if required. Events are initiated via the EventTarget class and are
-        routed to listening functions via a system event queue.
+        subclass Event to add custom event data if required. 
         @stability prototype
         @example 
             class UpdateEvent extends Event { }
@@ -49,6 +48,7 @@ module ejs {
     class ErrorEvent extends Event {
         use default namespace public
 
+        //  MOB -- should have methods to capture the call stack
         /** 
             Event message
          */

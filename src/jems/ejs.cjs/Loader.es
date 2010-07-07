@@ -69,7 +69,9 @@ module ejs.cjs {
                         code = path.readString()
                         code = wrap(code)
                     }
-                    App.log.debug(4, "Recompile module to: " + cache)
+                    if (cache) {
+                        App.log.debug(4, "Recompile module to: " + cache)
+                    }
                     initializer = eval(code, cache)
                 }
                 timestamps[path] = path.modified
@@ -91,6 +93,8 @@ module ejs.cjs {
                 let dir = cachedir || Path(config.directories.cache) || Path("cache")
                 if (dir.exists) {
                     return Path(dir).join(md5(path)).joinExt('.mod')
+                } else {
+                    App.log.error("Can't find cache directory: " + dir)
                 }
             }
             return null

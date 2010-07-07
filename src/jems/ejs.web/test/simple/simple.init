@@ -1,8 +1,0 @@
-/*
-    Test initialization
- */
-require ejs.unix
-
-const HTTP  = "127.0.0.1:" + test.config["http_port"]
-
-startService("server.es", HTTP, "/index.html")

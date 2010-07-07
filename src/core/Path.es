@@ -281,12 +281,11 @@ module ejs {
         native function makeLink(target: Path, hard: Boolean = false): Void
 
         //  TODO - make an auto cleanup temporary. ie. remove automatically somehow
-        //      temp = Path("dir").makeTemp
         /**
-            Create a temporary file in the path directory. Creates a new, uniquely named temporary file.
+            Create a new temporary file. The temp file is located in the directory specified by the Path object. 
             @returns a new Path object for the temp file.
          */
-        native function makeTemp(): Path
+        native function temp(): Path
 
         /**
             Get a path after mapping the path directory separator
@@ -639,6 +638,17 @@ module ejs {
                 file.close()
             }
         }
+
+        /** 
+            Create a new temporary file. The temp file is located in the directory specified by the Path object. 
+            @returns a new Path object for the temp file.
+            DEPRECATED
+            @hide
+         */
+        //  LEGACY
+        function makeTemp(): Path
+            temp()
+
     }
 }
 

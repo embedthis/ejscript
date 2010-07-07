@@ -56,6 +56,10 @@ module ejs {
         private static var _inputStream: Stream
         private static var _outputStream: Stream
 
+        /**
+            Default ejsrc configuration for the application
+            @hide
+         */
         static internal var defaultConfig = {
             /*
                 search: null,
@@ -63,7 +67,7 @@ module ejs {
              */
             log: {
                 enable: true,
-                where: "stderr",
+                location: "stderr",
                 level: 2,
                 /* match: null, */
             },
@@ -357,12 +361,12 @@ module ejs {
             let stream = Logger.mprStream
             if (stream) {
                 log.level = Logger.mprLevel
-            } else if (log.where == "stdout") {
+            } else if (log.location == "stdout") {
                 stream = App.outputStream
-            } else if (log.where == "stderr") {
+            } else if (log.location == "stderr") {
                 stream = App.errorStream
             } else {
-                stream = File(log.where, "w")
+                stream = File(log.location, "w")
             }
             App.log = new Logger(App.name, stream, log.level)
             if (log.match) {

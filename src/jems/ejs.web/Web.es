@@ -211,7 +211,7 @@ request.config = config
                             request.async = true
                             //  Should we wait on request being writable or on the body stream being readable?
                             //  Must detect eof and do a finalize()
-                            request.addListener("", function(event, body) {
+                            request.observe("", function(event, body) {
                                 request.write(body)
                             })
                             //  TODO - what about async reading of read data?

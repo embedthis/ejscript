@@ -14,7 +14,7 @@
 
     function Timer(period: Number, callback: Function, ...args)
  */
-static EjsObj *constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc >= 2);
     mprAssert(ejsIsNumber(argv[0]));
@@ -34,7 +34,7 @@ static EjsObj *constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function get drift(): Boolean
  */
-static EjsObj *getDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_getDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
     return (EjsObj*) ejsCreateBoolean(ejs, tp->drift);
@@ -44,7 +44,7 @@ static EjsObj *getDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function set drift(period: Boolean): Void
  */
-static EjsObj *setDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_setDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsBoolean(argv[0]));
     tp->drift = ejsGetBoolean(ejs, argv[0]);
@@ -55,7 +55,7 @@ static EjsObj *setDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function get period(): Number
  */
-static EjsObj *getPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_getPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
     return (EjsObj*) ejsCreateNumber(ejs, tp->period);
@@ -65,7 +65,7 @@ static EjsObj *getPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function set period(period: Number): Void
  */
-static EjsObj *setPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_setPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsNumber(argv[0]));
 
@@ -77,7 +77,7 @@ static EjsObj *setPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function get repeat(): Boolean
  */
-static EjsObj *getRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_getRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
     return (EjsObj*) ejsCreateBoolean(ejs, tp->repeat);
@@ -87,7 +87,7 @@ static EjsObj *getRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function set repeat(enable: Boolean): Void
  */
-static EjsObj *setRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_setRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsBoolean(argv[0]));
 
@@ -126,7 +126,7 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
 /*
     function start(): Void
  */
-static EjsObj *start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     int     flags;
 
@@ -145,32 +145,13 @@ static EjsObj *start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function stop(): Void
  */
-static EjsObj *stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     if (tp->event) {
         mprRemoveEvent(tp->event);
     }
     return 0;
 }
-
-#if UNUSED
-/*********************************** Support **********************************/
-/*
-    This creates a timer event object, but does not schedule it.
- */
-EjsObj *ejsCreateTimerEvent(Ejs *ejs, EjsTimer *tp)
-{
-    EjsObj       *event;
-
-    if ((event = ejsCreateObject(ejs, ejs->timerEventType, 0)) == 0) {
-        return 0;
-    }
-    ejsSetProperty(ejs, (EjsObj*) event, ES_Event_data, (EjsObj*) tp);
-    ejsSetProperty(ejs, (EjsObj*) event, ES_Event_timestamp, (EjsObj*) ejsCreateDate(ejs, 0));
-    return event;
-}
-
-#endif /* UNUSED */
 
 /*********************************** Factory **********************************/
 
@@ -183,16 +164,16 @@ void ejsConfigureTimerType(Ejs *ejs)
     type->instanceSize = sizeof(EjsTimer);
     prototype = type->prototype;
 
-    ejsBindConstructor(ejs, type, (EjsProc) constructor);
+    ejsBindConstructor(ejs, type, (EjsProc) timer_constructor);
 #if ES_Timer_start
-    ejsBindMethod(ejs, prototype, ES_Timer_start, (EjsProc) start);
+    ejsBindMethod(ejs, prototype, ES_Timer_start, (EjsProc) timer_start);
 #endif
-    ejsBindMethod(ejs, prototype, ES_Timer_stop, (EjsProc) stop);
+    ejsBindMethod(ejs, prototype, ES_Timer_stop, (EjsProc) timer_stop);
 
-    ejsBindAccess(ejs, prototype, ES_Timer_drift, (EjsProc) getDrift, (EjsProc) setDrift);
-    ejsBindAccess(ejs, prototype, ES_Timer_period, (EjsProc) getPeriod, (EjsProc) setPeriod);
+    ejsBindAccess(ejs, prototype, ES_Timer_drift, (EjsProc) timer_getDrift, (EjsProc) timer_setDrift);
+    ejsBindAccess(ejs, prototype, ES_Timer_period, (EjsProc) timer_getPeriod, (EjsProc) timer_setPeriod);
 #if ES_Timer_repeat
-    ejsBindAccess(ejs, prototype, ES_Timer_repeat, (EjsProc) getRepeat, (EjsProc) setRepeat);
+    ejsBindAccess(ejs, prototype, ES_Timer_repeat, (EjsProc) timer_getRepeat, (EjsProc) timer_setRepeat);
 #endif
 }
 

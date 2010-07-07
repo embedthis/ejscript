@@ -26,7 +26,7 @@ var routes = [
 ]
 
 var router = Router(routes)
-server.addListener("readable", function (event, request) {
+server.observe("readable", function (event, request) {
     Web.serve(request, router)
 })
 
@@ -118,7 +118,7 @@ var TestRoutes = [
 require ejs.web.template
 require ejs.cjs
 
-server.addListener("readable", function (event, request) {
+server.observe("readable", function (event, request) {
     print("NEW REQUEST scriptName" + request.scriptName)
 
     //  TODO
@@ -129,7 +129,7 @@ server.addListener("readable", function (event, request) {
     request.contentLength = 11
     request.setHeaders({"Content-Type": "text/plain"})
 
-    request.addListener("readable", function (event, request) {
+    request.observe("readable", function (event, request) {
         print("READABLE EVENT")
         assert(request.contentLength > 0)
         let data = new ByteArray
@@ -139,19 +139,19 @@ server.addListener("readable", function (event, request) {
         print("READ " + data.available)
     })
 
-    request.addListener("writable", function (event, request) {
+    request.observe("writable", function (event, request) {
         print("WRITABLE EVENT")
         request.write("Some Data\r\n")
         request.finalize()
     })
 
     //  TODO - should this be close or complete
-    request.addListener("complete", function (event, request) {
+    request.observe("complete", function (event, request) {
         print("COMPLETE EVENT")
     })
 
     //  TODO - should add an error event
-    request.addListener("error", function (event, request) {
+    request.observe("error", function (event, request) {
         print("ERROR EVENT")
     })
     print("DONE - accept")
