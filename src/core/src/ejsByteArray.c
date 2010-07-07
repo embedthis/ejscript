@@ -96,7 +96,7 @@ static int deleteByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slot)
             ap->writePosition = ap->length - 1;
         }
     }
-    if (ejsSetProperty(ejs, (EjsObj*) ap, slot, (EjsObj*) ejs->undefinedValue) < 0) {
+    if (ejsSetProperty(ejs, ap, slot, ejs->undefinedValue) < 0) {
         return EJS_ERR;
     }
     return 0;

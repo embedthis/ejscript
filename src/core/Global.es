@@ -240,13 +240,6 @@ module ejs {
      */
     native function eval(script: String, cache: String? = null): Object
 
-    //  TODO - move this to System/App/Debug and use "platform" (internal use only) namespace
-    /**
-        Format the current call stack. Used for debugging and when creating exception objects.
-        @spec ejs
-     */
-    native function formatStack(): String
-
     /** 
         Get the object's Unique hash id. All objects have a unique object hash. 
         @return This property accessor returns a long containing the object's unique hash identifier. 

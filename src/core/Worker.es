@@ -141,6 +141,22 @@ module ejs {
         native function waitForMessage(timeout: Number = -1): Boolean
     }
 
+    /** 
+        Event for Web Workers
+        @spec WebWorker
+     */
+    class Event extends Error { 
+        function Event() {
+            super("Event")
+        }
+    }
+
+    /** 
+        Error event for Web Workers
+        @spec WebWorker
+     */
+    class ErrorEvent extends Error { }
+
 
     /*
         Globals for inside workers.
@@ -177,9 +193,8 @@ module ejs {
 
     /**
      */
-    function set onerror(fun: Function): Void {
+    function set onerror(fun: Function): Void
         self.onerror = fun
-    }
 
     /**
         The callback function configured to receive incoming messages. 

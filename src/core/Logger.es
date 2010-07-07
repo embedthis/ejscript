@@ -107,7 +107,7 @@ module ejs {
         /** 
             @hide
          */
-        function observe(name, listener: Function): Void {
+        function observe(name, observer: Function): Void {
             throw "observe is not supported"
         }
 
@@ -256,7 +256,7 @@ module ejs {
         /** 
             @hide
          */
-        function removeObserver(name, listener: Function): Void {
+        function removeObserver(name, observer: Function): Void {
             throw "observe is not supported"
         }
 

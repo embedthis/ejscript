@@ -153,14 +153,16 @@ void ejsDestroy(Ejs *ejs, EjsObj *obj)
     Get a property at a given slot in a variable.
     @return Returns the requested property varaible.
  */
-void *ejsGetProperty(Ejs *ejs, EjsObj *obj, int slotNum)
+void *ejsGetProperty(Ejs *ejs, void *vp, int slotNum)
 {
     EjsType     *type;
+    EjsObj      *obj;
 
     mprAssert(ejs);
-    mprAssert(obj);
+    mprAssert(vp);
     mprAssert(slotNum >= 0);
 
+    obj = (EjsObj*) vp;
     type = obj->type;
     mprAssert(type->helpers.getProperty);
     return (type->helpers.getProperty)(ejs, obj, slotNum);
@@ -279,9 +281,13 @@ EjsObj *ejsInvokeOperator(Ejs *ejs, EjsObj *obj, int opCode, EjsObj *rhs)
 /*
     Set a property and return the slot number. Incoming slot may be -1 to allocate a new slot.
  */
-int ejsSetProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *value)
+int ejsSetProperty(Ejs *ejs, void *vp, int slotNum, void *value)
 {
-    mprAssert(obj);
+    EjsObj      *obj;
+
+    mprAssert(vp);
+    obj = (EjsObj*) vp;
+
     if (obj == 0) {
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
@@ -340,15 +346,6 @@ int ejsSetPropertyName(Ejs *ejs, EjsObj *obj, int slot, EjsName *qname)
 }
 
 
-#if UNUSED
-int ejsSetPropertyTrait(Ejs *ejs, EjsObj *obj, int slot, EjsType *propType, int attributes)
-{
-    mprAssert(obj->type->helpers.setPropertyTrait);
-    return (obj->type->helpers.setPropertyTrait)(ejs, obj, slot, propType, attributes);
-}
-#endif
-
-
 /**
     Get a string representation of a variable.
     @return Returns a string variable or null if an exception is thrown.
@@ -356,26 +353,6 @@ int ejsSetPropertyTrait(Ejs *ejs, EjsObj *obj, int slot, EjsType *propType, int 
 EjsString *ejsToString(Ejs *ejs, EjsObj *obj)
 {
     return (EjsString*) ejsCast(ejs, obj, ejs->stringType);
-#if OLD
-    EjsFunction     *fn;
-
-    if (obj == 0) {
-        return ejsCreateString(ejs, "undefined");
-    } else if (ejsIsString(obj)) {
-        return (EjsString*) obj;
-    }
-    if (obj->type->block.obj.numSlots >= ES_Object_toString) {
-        fn = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) obj->type, ES_Object_toString);
-        if (ejsIsFunction(fn)) {
-            return (EjsString*) ejsRunFunction(ejs, fn, obj, 0, NULL);
-        }
-    }
-    if (obj->type->helpers.cast) {
-        return (EjsString*) (obj->type->helpers.cast)(ejs, obj, ejs->stringType);
-    }
-    ejsThrowInternalError(ejs, "CastVar helper not defined for type \"%s\"", obj->type->qname.name);
-    return 0;
-#endif
 }
 
 

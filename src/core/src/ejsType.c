@@ -450,7 +450,7 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsObj *obj, int destOffse
             fun = ejsGetProperty(ejs, obj, i);
             if (ejsIsFunction(fun)) {
                 fun = ejsCloneFunction(ejs, fun, 0);
-                ejsSetProperty(ejs, obj, i, (EjsObj*) fun);
+                ejsSetProperty(ejs, obj, i, fun);
                 fun->thisObj = 0;
                 fun->block.scope = (EjsBlock*) type;
             }
@@ -758,7 +758,7 @@ int ejsDefineGlobalFunction(Ejs *ejs, cchar *name, EjsProc fn)
     fun->body.proc = fn;
     fun->isNativeProc = 1;
     ejsName(&qname, EJS_PUBLIC_NAMESPACE, name);
-    return ejsSetPropertyByName(ejs, ejs->global, &qname, (EjsObj*) fun);
+    return ejsSetPropertyByName(ejs, ejs->global, &qname, fun);
 }
 
 

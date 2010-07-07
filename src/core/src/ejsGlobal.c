@@ -155,6 +155,7 @@ static EjsObj *eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*
     Format the stack
     function formatStack(): String
@@ -163,6 +164,7 @@ static EjsObj *formatStackMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateString(ejs, ejsFormatStack(ejs, NULL));
 }
+#endif
 
 
 #if ES_hashcode
@@ -278,7 +280,7 @@ static int blendObjects(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
             if ((dp = ejsGetPropertyByName(ejs, dest, &name)) == 0 || ejsGetPropertyCount(ejs, dp) == 0) {
                 name.name = mprStrdup(dest, name.name);
                 name.space = mprStrdup(dest, name.space);
-                ejsSetPropertyByName(ejs, dest, &name, (EjsObj*) ejsCloneObject(ejs, (EjsObj*) vp, 1));
+                ejsSetPropertyByName(ejs, dest, &name, ejsCloneObject(ejs, (EjsObj*) vp, 1));
             } else {
                 blendObjects(ejs, dp, vp, overwrite);
             }
@@ -462,7 +464,9 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     ejsBindFunction(ejs, block, ES_breakpoint, breakpoint);
     ejsBindFunction(ejs, block, ES_cloneBase, (EjsProc) cloneBase);
     ejsBindFunction(ejs, block, ES_eval, eval);
+#if UNUSED
     ejsBindFunction(ejs, block, ES_formatStack, formatStackMethod);
+#endif
     ejsBindFunction(ejs, block, ES_hashcode, hashcode);
     ejsBindFunction(ejs, block, ES_load, load);
     ejsBindFunction(ejs, block, ES_md5, md5);

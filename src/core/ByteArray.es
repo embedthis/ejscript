@@ -31,8 +31,7 @@ module ejs {
         
         When used as loop-back streams, data written to ByteArrays is immediately available for reading. 
         ByteArrays can be run in sync or async mode. ByteArrays will issue events for key state transitions such as 
-        close, eof, readable and writable events. All event listeners are called with the 
-        following signature:
+        close, eof, readable and writable events. All event observers are called with the following signature:
             function callback(event: String, ba: ByteArray): Void
         @spec ejs
         @stability evolving
@@ -60,7 +59,7 @@ module ejs {
         native function ByteArray(size: Number = -1, growable: Boolean = true)
 
         /** @duplicate Stream.observe */
-        native function observe(name: Object, listener: Function): Void
+        native function observe(name: Object, observer: Function): Void
 
         /** 
             Number of bytes that are currently available for reading. This consists of the bytes available
@@ -187,7 +186,7 @@ module ejs {
         /** 
             Read a boolean from the array. Data is read from the current read $position pointer.
             If insufficient data, a "writable" event will be issued indicating that the byte array is writable. This enables 
-            listeners to write data into the byte array.  If there is no data available, the call 
+            observers to write data into the byte array.  If there is no data available, the call 
             will return return null indicating eof.
             @returns a boolean or null on eof.
             @throws IOError if an I/O error occurs or premature eof.
@@ -197,7 +196,7 @@ module ejs {
         /** 
             Read a byte from the array. Data is read from the current read $position pointer.
             If insufficient data, a "write" event will be issued indicating that the byte array is 
-            writable.  This enables listeners to write data into the byte array.  If there is no data available, the call 
+            writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
             will return return null indicating eof.
             @throws IOError if an I/O error occurs or premature eof.
          */
@@ -206,7 +205,7 @@ module ejs {
         /** 
             Read a date from the array. Data is read from the current read $position pointer.
             If insufficient data, a "write" event will be issued indicating that the byte array is 
-            writable.  This enables listeners to write data into the byte array.  If there is no data available, the call 
+            writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
             will return return null indicating eof.
             @throws IOError if an I/O error occurs or premature eof.
          */
@@ -215,7 +214,7 @@ module ejs {
         /** 
             Read a double from the array. The data will be decoded according to the endian property. Data is read 
             from the current read $position pointer. If insufficient data, a "write" event will be issued indicating 
-            that the byte array is writable. This enables listeners to write data into the byte array. If there is 
+            that the byte array is writable. This enables observers to write data into the byte array. If there is 
             no data available, the call will return return null indicating eof.
             @returns a double or null on eof.
             @throws IOError if an I/O error occurs or premature eof.
@@ -226,7 +225,7 @@ module ejs {
             Read an 32-bit integer from the array. The data will be decoded according to the endian property.
             Data is read from the current read $position pointer.
             If insufficient data, a "write" event will be issued indicating that the byte array is 
-            writable.  This enables listeners to write data into the byte array.  If there is no data available, the call 
+            writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
             will return return null indicating eof.
             @throws IOError if an I/O error occurs or premature eof.
          */
@@ -236,7 +235,7 @@ module ejs {
             Read a 64-bit long from the array.The data will be decoded according to the endian property.
             Data is read from the current read $position pointer.
             If insufficient data, a "write" event will be issued indicating that the byte array is 
-            writable.  This enables listeners to write data into the byte array.  If there is no data available, the call 
+            writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
             will return return null indicating eof.
             @throws IOError if an I/O error occurs or premature eof.
          */
@@ -257,7 +256,7 @@ module ejs {
             Read a 16-bit short integer from the array.The data will be decoded according to the endian property.
             Data is read from the current read $position pointer.
             If insufficient data, a "write" event will be issued indicating that the byte array is 
-            writable.  This enables listeners to write data into the byte array.  If there is no data available, the call 
+            writable.  This enables observers to write data into the byte array.  If there is no data available, the call 
             will return return null indicating eof. If there is insufficient data 
             @returns a short int or null on eof.
             @throws IOError if an I/O error occurs or premature eof.
@@ -267,7 +266,7 @@ module ejs {
         /** 
             Read a data from the array as a string. Read data from the $readPosition to a string up to the $writePosition,
             but not more than count characters. If insufficient data, a "writable" event will be issued indicating that 
-            the byte array is writable. This enables listeners to write data into the byte array.  If there is no data 
+            the byte array is writable. This enables observers to write data into the byte array.  If there is no data 
             available, the call will return return null indicating eof. If there is insufficient data @param count of bytes 
             to read. If -1, convert the data up to the $writePosition.
             @returns a string or null on eof.
@@ -284,11 +283,11 @@ module ejs {
             XML(readString())
 
         /** 
-            Remove a listener to the stream. If there are no listeners on the stream, the stream is put back into sync mode.
+            Remove an observer from the stream
             @param name Event name previously used with observe. The name may be an array of events.
-            @param listener Observer function previously used with observe.
+            @param observer Observer function previously used with observe.
          */
-        native function removeObserver(name: Object, listener: Function): Void
+        native function removeObserver(name: Object, observer: Function): Void
 
         /** 
             Reset the read and $writePosition pointers if there is no available data.

@@ -59,8 +59,8 @@ module ejs.db.couch {
         /**
             @hide
          */
-        function observe(event: String, listener: Function): Void
-            hp.observe(event, listener)
+        function observe(event: String, observer: Function): Void
+            hp.observe(event, observer)
 
         /**
             @hide
@@ -118,8 +118,8 @@ module ejs.db.couch {
         /**
             @hide
          */
-        function removeObserve(event: String, listener: Function): Void
-            hp.removeObserve(event, listener)
+        function removeObserver(event: String, observer: Function): Void
+            hp.removeObserver(event, observer)
 
         /**
             @hide

@@ -196,7 +196,7 @@ EjsObj *ejsObjectOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
     arg is the number of property slots to pre-allocate. It is typically zero and slots are allocated on-demand. If the 
     type creates dynamic instances, then the property slots are allocated separately and can grow. 
  */
-EjsObj *ejsCreateObject(Ejs *ejs, EjsType *type, int numSlots)
+void *ejsCreateObject(Ejs *ejs, EjsType *type, int numSlots)
 {
     EjsObj      *obj, *prototype;
 
@@ -250,12 +250,13 @@ EjsObj *ejsCreateSimpleObject(Ejs *ejs)
 }
 
 
-EjsObj *ejsCloneObject(Ejs *ejs, EjsObj *src, bool deep)
+void *ejsCloneObject(Ejs *ejs, void *vp, bool deep)
 {
-    EjsObj          *dest;
+    EjsObj          *dest, *src;
     EjsSlot         *dp, *sp;
     int             numSlots, i;
 
+    src = (EjsObj*) vp;
     numSlots = src->numSlots;
     dest = ejsCreateObject(ejs, src->type, numSlots);
     if (dest == 0) {
@@ -365,13 +366,13 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
             slotNum = priorSlot;
         }
     }
-    if (priorSlot < 0 && ejsSetPropertyName(ejs, (EjsObj*) obj, slotNum, qname) < 0) {
+    if (priorSlot < 0 && ejsSetPropertyName(ejs, obj, slotNum, qname) < 0) {
         return EJS_ERR;
     }
     if (attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER)) {
         value = prepareAccessors(ejs, obj, slotNum, &attributes, value);
     }
-    if (ejsSetProperty(ejs, (EjsObj*) obj, slotNum, value ? value: ejs->nullValue) < 0) {
+    if (ejsSetProperty(ejs, obj, slotNum, value ? value: ejs->nullValue) < 0) {
         return EJS_ERR;
     }
     if (ejsSetTraitDetails(ejs, (EjsObj*) obj, slotNum, propType, (int) attributes) < 0) {
@@ -1686,20 +1687,20 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
     } else if (trait && trait->attributes & EJS_TRAIT_SETTER) {
         fun = (EjsFunction*) value;
         if (ejsIsFunction(fun)) {
-            ejsSetPropertyByName(ejs, result, EN(&qname, "set"), (EjsObj*) fun->setter);
+            ejsSetPropertyByName(ejs, result, EN(&qname, "set"), fun->setter);
         }
     } else if (value) {
         ejsSetPropertyByName(ejs, result, EN(&qname, "value"), value);
     }
-    ejsSetPropertyByName(ejs, result, EN(&qname, "configurable"), (EjsObj*) 
+    ejsSetPropertyByName(ejs, result, EN(&qname, "configurable"), 
         ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_FIXED)));
-    ejsSetPropertyByName(ejs, result, EN(&qname, "enumerable"), (EjsObj*) 
+    ejsSetPropertyByName(ejs, result, EN(&qname, "enumerable"), 
         ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_HIDDEN)));
     qn = ejsGetPropertyName(ejs, obj, slotNum);
-    ejsSetPropertyByName(ejs, result, EN(&qname, "namespace"), (EjsObj*) ejsCreateString(ejs, qn.space));
+    ejsSetPropertyByName(ejs, result, EN(&qname, "namespace"), ejsCreateString(ejs, qn.space));
     ejsSetPropertyByName(ejs, result, EN(&qname, "type"), 
          type ? (EjsObj*) type : ejs->nullValue);
-    ejsSetPropertyByName(ejs, result, EN(&qname, "writable"), (EjsObj*) 
+    ejsSetPropertyByName(ejs, result, EN(&qname, "writable"), 
         ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_READONLY)));
     return result;
 }
@@ -1748,18 +1749,18 @@ static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, EjsOb
         if (excludeFunctions && ejsIsFunction(ejsGetProperty(ejs, obj, slotNum))) {
             continue;
         }
-        ejsSetProperty(ejs, (EjsObj*) result, index++, (EjsObj*) ejsCreateString(ejs, qname.name));
+        ejsSetProperty(ejs, result, index++, ejsCreateString(ejs, qname.name));
     }
     if (ejsIsType(obj) || ejsIsFunction(obj)) {
         if (ejsLookupProperty(ejs, obj, ejsName(&qname, "", "prototype")) < 0) {
-            ejsSetProperty(ejs, (EjsObj*) result, index++, (EjsObj*) ejsCreateString(ejs, "prototype"));
+            ejsSetProperty(ejs, result, index++, ejsCreateString(ejs, "prototype"));
         }
         if (ejsLookupProperty(ejs, obj, ejsName(&qname, "", "length")) < 0) {
-            ejsSetProperty(ejs, (EjsObj*) result, index++, (EjsObj*) ejsCreateString(ejs, "length"));
+            ejsSetProperty(ejs, result, index++, ejsCreateString(ejs, "length"));
         }
     } else if (obj->isPrototype) {
         if (ejsLookupProperty(ejs, obj, ejsName(&qname, "", "constructor")) < 0) {
-            ejsSetProperty(ejs, (EjsObj*) result, index++, (EjsObj*) ejsCreateString(ejs, "constructor"));
+            ejsSetProperty(ejs, result, index++, ejsCreateString(ejs, "constructor"));
         }
     }
     return (EjsObj*) result;
@@ -1900,7 +1901,7 @@ static EjsObj *obj_keys(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         }
         vp = ejsGetProperty(ejs, obj, slotNum);
         qname = ejsGetPropertyName(ejs, obj, slotNum);
-        ejsSetProperty(ejs, (EjsObj*) result, slotNum, (EjsObj*) ejsCreateString(ejs, qname.name));
+        ejsSetProperty(ejs, result, slotNum, ejsCreateString(ejs, qname.name));
     }
     return (EjsObj*) result;
 }

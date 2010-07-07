@@ -365,7 +365,7 @@ static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname, EjsObj
     mprAssert(ejsGetPropertyCount(ejs, (EjsObj*) list) == 1);
     elt = mprGetItem(list->elements, 0);                        //  TODO OPT - GetFirstItem
     mprAssert(elt);
-    ejsSetPropertyByName(ejs, (EjsObj*) elt, qname, value);
+    ejsSetPropertyByName(ejs, elt, qname, value);
     return 0;
 }
 
@@ -475,7 +475,7 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
         mprAssert(i >= 0);
         ejsSetXML(ejs, elt->parent, i, elt);
         //  TODO - why do this. Doesn't above do this?
-        ejsSetPropertyByName(ejs, (EjsObj*) elt->parent, &elt->qname, value);
+        ejsSetPropertyByName(ejs, elt->parent, &elt->qname, value);
         mprFree(elt->value);
         elt->value = mprStrdup(elt, ((EjsString*) value)->value);
     }
@@ -506,7 +506,7 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
 
     } else {
         ejsName(&name, 0, "*");
-        ejsSetPropertyByName(ejs, (EjsObj*) elt, &name, value);
+        ejsSetPropertyByName(ejs, elt, &name, value);
     }
     return index;
 }
@@ -654,7 +654,7 @@ static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
             Create the property as an element (The text value will be optimized away).
             TODO - OPT. Need an empty string value in EjsFiber.
          */
-        ejsSetPropertyByName(ejs, (EjsObj*) targetObject, &xml->targetProperty, (EjsObj*) ejsCreateString(ejs, ""));
+        ejsSetPropertyByName(ejs, targetObject, &xml->targetProperty, ejsCreateString(ejs, ""));
         targetPropertyList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, &xml->targetProperty);
     }
     return targetPropertyList;
@@ -774,14 +774,14 @@ static EjsObj *setLength(Ejs *ejs, EjsXMLList *xml, int argc, EjsObj **argv)
 #if KEEP
     if (length < ap->length) {
         for (i = length; i < ap->length; i++) {
-            if (ejsSetProperty(ejs, (EjsObj*) ap, i, (EjsObj*) ejs->undefinedValue) < 0) {
+            if (ejsSetProperty(ejs, ap, i, ejs->undefinedValue) < 0) {
                 //  TODO - DIAG
                 return 0;
             }
         }
 
     } else if (length > ap->length) {
-        if (ejsSetProperty(ejs, (EjsObj*) ap, length - 1,  (EjsObj*) ejs->undefinedValue) < 0) {
+        if (ejsSetProperty(ejs, ap, length - 1, ejs->undefinedValue) < 0) {
             //  TODO - DIAG
             return 0;
         }

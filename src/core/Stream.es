@@ -12,7 +12,7 @@ module ejs {
         as filters or data mutators. Example endpoints are the File, Socket, and Http classes. The TextStream is an 
         example of a filter stream. The data elements passed by streams may be any series of objects including: bytes, 
         lines of text, numbers or objects. Streams may buffer the incoming data or not. Streams may issue events to 
-        registered listeners for topics of interest. Streams may offer synchronous and asynchronous APIs. 
+        registered observers for topics of interest. Streams may offer synchronous and asynchronous APIs. 
         @spec ejs
         @spec evolving
      */
@@ -30,15 +30,15 @@ module ejs {
         static const BOTH = 0x3
 
         /** 
-            Add a listener to the stream. 
+            Add an observer to the stream. 
             @param name Name of the event to listen for. The name may be an array of events.
-            @param listener Callback listening function. The function is called with the following signature:
-                function listener(event: String, ...args): Void
+            @param observer Callback observer function. The function is called with the following signature:
+                function observer(event: String, ...args): Void
             @event readable Issued when the stream becomes readable. 
             @event writable Issued when the stream becomes writable.
             @event close Issued when stream is being closed.
          */
-        function observe(name, listener: Function): Void
+        function observe(name, observer: Function): Void
 
         /** 
             The current async mode. Set to true if the stream is in async mode.
@@ -47,7 +47,7 @@ module ejs {
 
         /** 
             Set the current sync/async mode. The async mode affects the blocking APIs: close, read and write.
-            If in async mode, all Stream calls will not block. If listeners have been registered, they can be used to
+            If in async mode, all Stream calls will not block. If observers have been registered, they can be used to
             respond to events to interface with the stream.
             @param enable If true, set the stream into async mode
          */
@@ -88,11 +88,11 @@ module ejs {
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
         /** 
-            Remove a listener from the stream. 
+            Remove an observer from the stream. 
             @param name Event name previously used with observe. The name may be an array of events.
-            @param listener Observer function previously used with observe.
+            @param observer Observer function previously used with observe.
          */
-        function removeObserver(name, listener: Function): Void
+        function removeObserver(name, observer: Function): Void
 
         /** 
             Write data to the stream. 

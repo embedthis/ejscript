@@ -22,7 +22,7 @@ module ejs {
          */
         native static function get allocated(): Number
 
-        //  MOB -- should use listeners not callbacks
+        //  MOB -- should use observers not callbacks
         /**
             Memory redline callback. When the memory redline limit is exceeded, the callback will be invoked. 
             If no callback is defined and the redline limit is exceeded, a MemoryError exception is thrown. This callback

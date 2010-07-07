@@ -226,7 +226,7 @@ module ejs.web {
             All events are called with the signature:
             function (event: String, http: Http): Void
          */
-        native function observe(name, listener: Function): Void
+        native function observe(name, observer: Function): Void
 
         /** 
             @duplicate Stream.async
@@ -345,9 +345,9 @@ module ejs.web {
         }
 
         /** 
-            @duplicate Stream.removeObserve 
+            @duplicate Stream.removeObserver 
          */
-        native function removeObserve(name, listener: Function): Void
+        native function removeObserver(name, observer: Function): Void
 
         //    MOB - doc
         /** @hide */

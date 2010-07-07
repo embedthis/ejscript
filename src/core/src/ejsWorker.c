@@ -13,10 +13,12 @@ typedef struct Message {
     EjsWorker   *worker;
     cchar       *callback;
     char        *data;
-    char        *message;
+    EjsObj      *message;
+#if UNUSED
     char        *filename;
-    char        *stack;
     int         lineNumber;
+#endif
+    EjsObj      *stack;
     int         callbackSlot;
 } Message;
 
@@ -89,10 +91,10 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     mprEnableDispatcher(wejs->dispatcher);
 
     //  TODO - these should be don't delete
-    ejsSetProperty(ejs,  (EjsObj*) worker, ES_Worker_name, (EjsObj*) ejsCreateString(ejs, self->name));
-    ejsSetProperty(wejs, (EjsObj*) self,   ES_Worker_name, (EjsObj*) ejsCreateString(wejs, self->name));
+    ejsSetProperty(ejs, worker, ES_Worker_name, ejsCreateString(ejs, self->name));
+    ejsSetProperty(wejs, self,  ES_Worker_name, ejsCreateString(wejs, self->name));
 
-    ejsSetPropertyByName(wejs, wejs->global, ejsName(&qname, EJS_WORKER_NAMESPACE, "self"), (EjsObj*) self);
+    ejsSetPropertyByName(wejs, wejs->global, ejsName(&qname, EJS_WORKER_NAMESPACE, "self"), self);
 
     /*
         Workers have a dedicated namespace to enable viewing of the worker globals (self, onmessage, postMessage...)
@@ -391,10 +393,11 @@ static EjsObj *workerLookup(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 static int doMessage(Message *msg, MprEvent *mprEvent)
 {
     Ejs         *ejs;
-    EjsObj      *event;
+    EjsObj      *event, *frame;
     EjsWorker   *worker;
     EjsFunction *callback;
     EjsObj      *argv[1];
+    EjsName     qname;
 
     worker = msg->worker;
     worker->gotMessage = 1;
@@ -418,17 +421,22 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
         return 0;
     }
     if (msg->data) {
-        ejsSetProperty(ejs, event, ES_Event_data, (EjsObj*) ejsCreateStringAndFree(ejs, msg->data));
+#if ES_Event_data
+        ejsSetProperty(ejs, event, ES_Event_data, ejsCreateStringAndFree(ejs, msg->data));
+#endif
     }
     if (msg->message) {
-        ejsSetProperty(ejs, event, ES_ErrorEvent_message, (EjsObj*) ejsCreateStringAndFree(ejs, msg->message));
-    }
-    if (msg->filename) {
-        ejsSetProperty(ejs, event, ES_ErrorEvent_filename, (EjsObj*) ejsCreateStringAndFree(ejs, msg->filename));
-        ejsSetProperty(ejs, event, ES_ErrorEvent_lineno, (EjsObj*) ejsCreateNumber(ejs, msg->lineNumber));
+        ejsSetProperty(ejs, event, ES_ErrorEvent_message, msg->message);
+        msg->message->permanent = 0;
     }
     if (msg->stack) {
-        ejsSetProperty(ejs, event, ES_ErrorEvent_stack, (EjsObj*) ejsCreateStringAndFree(ejs, msg->stack));
+        ejsSetProperty(ejs, event, ES_ErrorEvent_stack, msg->stack);
+        if ((frame = ejsGetProperty(ejs, msg->stack, 0)) != 0) {
+            ejsSetProperty(ejs, event, ES_ErrorEvent_filename, 
+                ejsGetPropertyByName(ejs, frame, ejsName(&qname, "", "filename")));
+            ejsSetProperty(ejs, event, ES_ErrorEvent_lineno, 
+                ejsGetPropertyByName(ejs, frame, ejsName(&qname, "", "lineno")));
+        }
     }
 
     if (callback == 0 || (EjsObj*) callback == ejs->nullValue) {
@@ -436,12 +444,11 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
             mprLog(ejs, 1, "Discard message as no onmessage handler defined for worker");
             
         } else if (msg->callbackSlot == ES_Worker_onerror) {
-            if (msg->message) {
-                ejsThrowError(ejs, "Exception in Worker: %s", msg->message);
+            if (msg->message && ejsIsString(msg->message)) {
+                ejsThrowError(ejs, "Exception in Worker: %s", ejsGetString(ejs, msg->message));
             } else {
                 ejsThrowError(ejs, "Exception in Worker: %s", ejsGetErrorMsg(worker->pair->ejs, 1));
             }
-
         } else {
             /* Ignore onclose message */
         }
@@ -719,19 +726,23 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
      */
     if (ejsIsError(exception)) {
         error = (EjsError*) exception;
-        msg->message = mprStrdup(ejs, error->message);
-        msg->filename = mprStrdup(ejs, error->filename ? error->filename : "script");
-        msg->lineNumber = error->lineNumber;
-        msg->stack = mprStrdup(ejs, error->stack);
+        if ((msg->message = ejsGetProperty(ejs, error, ES_Error_message)) != 0) {
+            msg->message->permanent = 0;
+        }
+        if ((msg->stack = ejsGetProperty(ejs, error, ES_Error_stack)) != 0) {
+            msg->stack->permanent = 0;
+        }
 
     } else if (ejsIsString(exception)) {
-        msg->message = mprStrdup(ejs, ejsGetString(ejs, exception));
+        msg->message = exception;
+        msg->message->permanent = 0;
 
     } else {
-        msg->message = mprStrdup(ejs, ejsGetString(ejs, (EjsObj*) ejsToString(ejs, exception)));
+        msg->message = (EjsObj*) ejsToString(ejs, exception);
+        msg->message->permanent = 0;
     }
     if (throwOutside) {
-        ejsThrowStateError(ejs, "%s", msg->message);
+        ejsThrowStateError(ejs, "%s", ejsGetString(ejs, msg->message));
     }
     dispatcher = ejs->dispatcher;
     mprCreateEvent(dispatcher, "doMessage-error", 0, (MprEventProc) doMessage, msg, 0);
@@ -791,6 +802,9 @@ void ejsConfigureWorkerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Worker_postMessage, (EjsProc) workerPostMessage);
     ejsBindMethod(ejs, prototype, ES_Worker_terminate, (EjsProc) workerTerminate);
     ejsBindMethod(ejs, prototype, ES_Worker_waitForMessage, (EjsProc) workerWaitForMessage);
+
+    ejs->eventType = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "Event");
+    ejs->errorEventType = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "ErrorEvent");
 }
 
 /*

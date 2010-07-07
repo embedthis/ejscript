@@ -74,32 +74,73 @@ module ejs {
 
         use default namespace public
 
-        /**
-            Exception error message.
+        /** 
+            Source filename of the script that created the error
          */
-        native var message: String
+        function get filename(): String
+            stack[0].filename
+
+        /** 
+            Source line number in the script that created the error
+         */
+        function get lineno(): String
+            stack[0].lineno
+
+        /**
+            Supplemental error data
+         */
+        var data: Object
+
+        /**
+            Error message
+         */
+        var message: String
+
+        private var _stack: Array
+
+        /**
+            Execution call stack. Contains the execution stack backtrace at the point the Error object was created.
+            The stack is an array of stack frame records. Each record consists of the following properties: 
+                {file: String, line: Number, functionName: String, code: String}
+         */
+        function get stack(): Array {
+            if (!_stack) {
+                _stack = capture()
+            }
+            return _stack
+        }
+
+        /** 
+            Time the event was created. The Context constructor will automatically set the timestamp to the current time.  
+         */
+        var timestamp: Date
 
         /**
             Optional error code
          */
-        native function get code(): Number
-
-        /**
-            Set an optional error code
-            @param value Error code to set
-         */
-        native function set code(value: Number): Void
-
-        /**
-            Execution stack backtrace. Contains the execution stack backtrace at the time the exception was thrown.  
-         */
-        native var stack: String 
+        var code: Number
 
         /**
             Construct a new Error object.
-            @params message Message to use when defining the Error.message property
+            @params message Message to use when defining the Error.message property. Typically a string but can be an
+                object of any type.
          */
         native function Error(message: String? = null)
+
+        /**
+            Capture the stack. This call re-captures the stack and updates the stack property.
+            @param uplevels Skip a given count of stack frames from the stop of the call stack.
+         */
+        native function capture(uplevels: Number): Array
+
+        function formatStack(): String {
+            let result = ""
+            let i = 0
+            for each (frame in stack) {
+                result += " [%02d] %s, line %d, %s(), %s\n".format(i++, ...frame)
+            }
+            return result
+        }
     }
 
     /**

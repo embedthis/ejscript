@@ -238,22 +238,22 @@ static EjsObj *uri_components(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     obj = ejsCreateSimpleObject(ejs);
 
     if (uri->scheme) {
-        ejsSetPropertyByName(ejs, obj, EN(&qname, "scheme"), (EjsObj*) ejsCreateString(ejs, uri->scheme));
+        ejsSetPropertyByName(ejs, obj, EN(&qname, "scheme"), ejsCreateString(ejs, uri->scheme));
     }
     if (uri->host) {
-        ejsSetPropertyByName(ejs, obj, EN(&qname, "host"), (EjsObj*) ejsCreateString(ejs, uri->host));
+        ejsSetPropertyByName(ejs, obj, EN(&qname, "host"), ejsCreateString(ejs, uri->host));
     }
     if (uri->port > 0) {
-        ejsSetPropertyByName(ejs, obj, EN(&qname, "port"), (EjsObj*) ejsCreateNumber(ejs, uri->port));
+        ejsSetPropertyByName(ejs, obj, EN(&qname, "port"), ejsCreateNumber(ejs, uri->port));
     }
     if (uri->path) {
-        ejsSetPropertyByName(ejs, obj, EN(&qname, "path"), (EjsObj*) ejsCreateString(ejs, uri->path));
+        ejsSetPropertyByName(ejs, obj, EN(&qname, "path"), ejsCreateString(ejs, uri->path));
     }
     if (uri->reference) {
-        ejsSetPropertyByName(ejs, obj, EN(&qname, "reference"), (EjsObj*) ejsCreateString(ejs, uri->reference));
+        ejsSetPropertyByName(ejs, obj, EN(&qname, "reference"), ejsCreateString(ejs, uri->reference));
     }
     if (uri->query) {
-        ejsSetPropertyByName(ejs, obj, EN(&qname, "query"), (EjsObj*) ejsCreateString(ejs, uri->query));
+        ejsSetPropertyByName(ejs, obj, EN(&qname, "query"), ejsCreateString(ejs, uri->query));
     }
     return (EjsObj*) obj;
 }

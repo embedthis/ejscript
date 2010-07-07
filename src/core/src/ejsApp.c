@@ -19,7 +19,7 @@ static EjsObj *getArgs(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     args = ejsCreateArray(ejs, ejs->argc);
     for (i = 0; i < ejs->argc; i++) {
-        ejsSetProperty(ejs, (EjsObj*) args, i, (EjsObj*) ejsCreateString(ejs, ejs->argv[i]));
+        ejsSetProperty(ejs, args, i, ejsCreateString(ejs, ejs->argv[i]));
     }
     return (EjsObj*) args;
 }
@@ -246,9 +246,9 @@ void ejsConfigureAppType(Ejs *ejs)
     type = ejs->appType = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "App");
     mprAssert(type);
 
-    ejsSetProperty(ejs, (EjsObj*) type, ES_App__inputStream, (EjsObj*) ejsCreateFileFromFd(ejs, 0, "stdin", O_RDONLY));
-    ejsSetProperty(ejs, (EjsObj*) type, ES_App__outputStream, (EjsObj*) ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));
-    ejsSetProperty(ejs, (EjsObj*) type, ES_App__errorStream, (EjsObj*) ejsCreateFileFromFd(ejs, 2, "stderr", O_WRONLY));
+    ejsSetProperty(ejs, type, ES_App__inputStream, ejsCreateFileFromFd(ejs, 0, "stdin", O_RDONLY));
+    ejsSetProperty(ejs, type, ES_App__outputStream, ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));
+    ejsSetProperty(ejs, type, ES_App__errorStream, ejsCreateFileFromFd(ejs, 2, "stderr", O_WRONLY));
 
     ejsBindMethod(ejs, type, ES_App_args, (EjsProc) getArgs);
     ejsBindMethod(ejs, type, ES_App_dir, (EjsProc) currentDir);

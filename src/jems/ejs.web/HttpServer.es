@@ -41,17 +41,17 @@ module ejs.web {
         native function HttpServer(serverRoot: Path = ".", documentRoot: Path = ".")
 
         /** 
-            Add a listener to the server. 
+            Add an observer for server events. 
             @param name Name of the event to listen for. The name may be an array of events.
-            @param listener Callback listening function. The function is called with the following signature:
-                function listener(event: String, ...args): Void
+            @param observer Callback listening function. The function is called with the following signature:
+                function observer(event: String, ...args): Void
             @event readable Issued when there is a new request available
             @event close Issued when server is being closed.
             @event createSession Issued when a new session store object is created for a client. The request object is
                 passed.
             @event destroySession Issued when a session is destroyed. The request object is passed.
          */
-        native function observe(name, listener: Function): Void
+        native function observe(name, observer: Function): Void
 
         /** 
             Get the local IP address bound to this socket.
@@ -112,11 +112,11 @@ module ejs.web {
         native function get port(): Number 
 
         /** 
-            Remove a listener from the server. 
+            Remove an observer from the server. 
             @param name Event name previously used with observe. The name may be an array of events.
-            @param listener Listener function previously used with observe.
+            @param observer Observer function previously used with observe.
          */
-        native function removeObserve(name: Object, listener: Function): Void
+        native function removeObserver(name: Object, observer: Function): Void
 
         /** 
             Default root directory for the server. The app does not change its current directory to this path.

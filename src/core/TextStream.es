@@ -56,7 +56,7 @@ module ejs {
         /** 
             @duplicate Stream.observe 
          */
-        function observe(name, listener: Function): Void {
+        function observe(name, observer: Function): Void {
             throw new ArgError("Observers are not supported")
         }
 
@@ -245,7 +245,7 @@ module ejs {
         /** 
             @duplicate Stream.removeObserver
          */
-        function removeObserver(name, listener: Function): Void {
+        function removeObserver(name, observer: Function): Void {
             throw new ArgError("Observers are not supported")
         }
 

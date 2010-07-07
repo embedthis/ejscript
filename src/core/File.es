@@ -19,7 +19,7 @@ module ejs {
         use default namespace public
 
         /** @duplicate Stream.observe */
-        native function observe(name, listener: Function): Void
+        native function observe(name, observer: Function): Void
 
         /** @duplicate Stream.async */
         function get async(): Boolean
@@ -171,7 +171,7 @@ module ejs {
         }
 
         /** @duplicate Stream.removeObserver */
-        native function removeObserver(name, listener: Function): Void
+        native function removeObserver(name, observer: Function): Void
 
         /** 
             The size of the file in bytes.

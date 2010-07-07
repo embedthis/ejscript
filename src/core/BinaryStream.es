@@ -59,7 +59,7 @@ module ejs {
         /** 
             @duplicate Stream.observe 
          */
-        native function observe(name, listener: Function): Void
+        native function observe(name, observer: Function): Void
 
         /** 
             @duplicate Stream.async 
@@ -228,7 +228,7 @@ module ejs {
         /** 
             @duplicate Stream.observe 
          */
-        native function removeObserver(name, listener: Function): Void
+        native function removeObserver(name, observer: Function): Void
 
         /** 
             Return the space available for write data. This call can be used to prevent write from blocking or 

@@ -147,7 +147,7 @@
 #define ES_ejs_web_HttpServer_attach                                   6
 #define ES_ejs_web_HttpServer_secureListen                             7
 #define ES_ejs_web_HttpServer_port                                     8
-#define ES_ejs_web_HttpServer_removeObserve                            9
+#define ES_ejs_web_HttpServer_removeObserver                           9
 #define ES_ejs_web_HttpServer_serverRoot                               10
 #define ES_ejs_web_HttpServer_software                                 11
 #define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        12
@@ -242,7 +242,7 @@
 #define ES_ejs_web_Request_header                                      43
 #define ES_ejs_web_Request_read                                        44
 #define ES_ejs_web_Request_redirect                                    45
-#define ES_ejs_web_Request_removeObserve                               46
+#define ES_ejs_web_Request_removeObserver                              46
 #define ES_ejs_web_Request_makeUri                                     47
 #define ES_ejs_web_Request_setLocation                                 48
 #define ES_ejs_web_Request_sendResponse                                49
@@ -441,6 +441,6 @@
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
 
-#define _ES_CHECKSUM_ejs_web   541507
+#define _ES_CHECKSUM_ejs_web   541732
 
 #endif

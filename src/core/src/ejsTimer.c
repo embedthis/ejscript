@@ -34,7 +34,7 @@ static EjsObj *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv
 /*
     function get drift(): Boolean
  */
-static EjsObj *timer_getDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_get_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
     return (EjsObj*) ejsCreateBoolean(ejs, tp->drift);
@@ -44,7 +44,7 @@ static EjsObj *timer_getDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function set drift(period: Boolean): Void
  */
-static EjsObj *timer_setDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_set_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsBoolean(argv[0]));
     tp->drift = ejsGetBoolean(ejs, argv[0]);
@@ -53,9 +53,29 @@ static EjsObj *timer_setDrift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 
 
 /*
+    function get onerror(): Function
+ */
+static EjsObj *timer_get_onerror(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+{
+    mprAssert(argc == 0);
+    return (EjsObj*) tp->onerror;
+}
+
+
+/*
+    function set onerror(callback: Function): Void
+ */
+static EjsObj *timer_set_onerror(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+{
+    tp->onerror = (EjsFunction*) argv[0];
+    return 0;
+}
+
+
+/*
     function get period(): Number
  */
-static EjsObj *timer_getPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_get_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
     return (EjsObj*) ejsCreateNumber(ejs, tp->period);
@@ -65,7 +85,7 @@ static EjsObj *timer_getPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function set period(period: Number): Void
  */
-static EjsObj *timer_setPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_set_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsNumber(argv[0]));
 
@@ -77,7 +97,7 @@ static EjsObj *timer_setPeriod(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function get repeat(): Boolean
  */
-static EjsObj *timer_getRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_get_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 0);
     return (EjsObj*) ejsCreateBoolean(ejs, tp->repeat);
@@ -87,7 +107,7 @@ static EjsObj *timer_getRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 /*
     function set repeat(enable: Boolean): Void
  */
-static EjsObj *timer_setRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EjsObj *timer_set_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsBoolean(argv[0]));
 
@@ -102,6 +122,7 @@ static EjsObj *timer_setRepeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 static int timerCallback(EjsTimer *tp, MprEvent *e)
 {
     Ejs         *ejs;
+    EjsString   *msg;
 
     mprAssert(tp);
     mprAssert(tp->args);
@@ -110,14 +131,11 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
     //  MOB -- this obj
     ejsRunFunction(tp->ejs, tp->callback, NULL, tp->args->length, tp->args->data);
     if (ejs->exception) {
-#if FUTURE
         if (tp->onerror) {
-            EjsString   *msg;
             msg = ejsCreateString(ejs, ejsGetErrorMsg(ejs, 1));
-            ejsRunFunction(tp->ejs, tp->onerror, NULL, 1, &msg);
-        } else
-#endif
-        mprError(tp, "Exception in timer: %s", ejsGetErrorMsg(ejs, 1));
+            ejsClearException(ejs);
+            ejsRunFunction(tp->ejs, tp->onerror, NULL, 1, (EjsObj**) &msg);
+        }
     }
     return 0;
 }
@@ -170,10 +188,13 @@ void ejsConfigureTimerType(Ejs *ejs)
 #endif
     ejsBindMethod(ejs, prototype, ES_Timer_stop, (EjsProc) timer_stop);
 
-    ejsBindAccess(ejs, prototype, ES_Timer_drift, (EjsProc) timer_getDrift, (EjsProc) timer_setDrift);
-    ejsBindAccess(ejs, prototype, ES_Timer_period, (EjsProc) timer_getPeriod, (EjsProc) timer_setPeriod);
+    ejsBindAccess(ejs, prototype, ES_Timer_drift, (EjsProc) timer_get_drift, (EjsProc) timer_set_drift);
+    ejsBindAccess(ejs, prototype, ES_Timer_period, (EjsProc) timer_get_period, (EjsProc) timer_set_period);
+#if ES_Timer_onerror
+    ejsBindAccess(ejs, prototype, ES_Timer_onerror, (EjsProc) timer_get_onerror, (EjsProc) timer_set_onerror);
+#endif
 #if ES_Timer_repeat
-    ejsBindAccess(ejs, prototype, ES_Timer_repeat, (EjsProc) timer_getRepeat, (EjsProc) timer_setRepeat);
+    ejsBindAccess(ejs, prototype, ES_Timer_repeat, (EjsProc) timer_get_repeat, (EjsProc) timer_set_repeat);
 #endif
 }
 

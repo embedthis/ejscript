@@ -886,7 +886,7 @@ static EjsObj *match(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         for (i = 0; i < count * 2; i += 2) {
             len = matches[i + 1] - matches[i];
             match = ejsCreateStringWithLength(ejs, &sp->value[matches[i]], len);
-            ejsSetProperty(ejs, (EjsObj*) results, resultCount++, (EjsObj*) match);
+            ejsSetProperty(ejs, results, resultCount++, match);
             rp->endLastMatch = matches[i + 1];
             if (rp->global) {
                 break;
@@ -1279,7 +1279,7 @@ static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
         if (delimLen == 0) {
             for (cp = sp->value; (--limit != -1) && *cp; cp++) {
-                ejsSetProperty(ejs, (EjsObj*) results, -1, (EjsObj*) ejsCreateStringWithLength(ejs, cp, 1));
+                ejsSetProperty(ejs, results, -1, ejsCreateStringWithLength(ejs, cp, 1));
             }
 
         } else {
@@ -1287,13 +1287,13 @@ static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             for (mark = cp = sp->value; (--limit != -1) && mark < end; mark++) {
                 if (strncmp(mark, delim, delimLen) == 0) {
                     elt = ejsCreateStringWithLength(ejs, cp, (int) (mark - cp));
-                    ejsSetProperty(ejs, (EjsObj*) results, -1, (EjsObj*) elt);
+                    ejsSetProperty(ejs, results, -1, elt);
                     cp = mark + delimLen;
                     mark = cp - 1;
                 }
             }
             elt = ejsCreateStringWithLength(ejs, cp, (int) (mark - cp));
-            ejsSetProperty(ejs, (EjsObj*) results, -1, (EjsObj*) elt);
+            ejsSetProperty(ejs, results, -1, elt);
         }
         return (EjsObj*) results;
 
@@ -1313,14 +1313,14 @@ static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             }
             if (rp->endLastMatch < matches[0]) {
                 match = ejsCreateStringWithLength(ejs, &sp->value[rp->endLastMatch], matches[0] - rp->endLastMatch);
-                ejsSetProperty(ejs, (EjsObj*) results, resultCount++, (EjsObj*) match);
+                ejsSetProperty(ejs, results, resultCount++, match);
             }
             rp->endLastMatch = matches[1];
         } while (rp->global);
 
         if (rp->endLastMatch < sp->length) {
             match = ejsCreateStringWithLength(ejs, &sp->value[rp->endLastMatch], sp->length - rp->endLastMatch);
-            ejsSetProperty(ejs, (EjsObj*) results, resultCount++, (EjsObj*) match);
+            ejsSetProperty(ejs, results, resultCount++, match);
         }
         return (EjsObj*) results;
     }
@@ -1539,12 +1539,12 @@ static EjsObj *tokenize(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                     break;
                 }
             }
-            ejsSetProperty(ejs, (EjsObj*) result, -1, (EjsObj*) ejsCreateStringWithLength(ejs, buf, (int) (end - buf)));
+            ejsSetProperty(ejs, result, -1, ejsCreateStringWithLength(ejs, buf, (int) (end - buf)));
             buf = end;
             break;
 
         case 'd':
-            ejsSetProperty(ejs, (EjsObj*) result, -1, ejsParse(ejs, buf, ES_Number));
+            ejsSetProperty(ejs, result, -1, ejsParse(ejs, buf, ES_Number));
             while (*buf && !isspace((int) *buf)) {
                 buf++;
             }
@@ -1950,7 +1950,7 @@ void ejsConfigureStringType(Ejs *ejs)
     type = ejsGetTypeByName(ejs, "ejs", "String");
     prototype = type->prototype;
 
-    ejsSetProperty(ejs, ejs->global, ES_string, (EjsObj*) type);
+    ejsSetProperty(ejs, ejs->global, ES_string, type);
 
     ejsBindMethod(ejs, type, ES_String_fromCharCode, (EjsProc) fromCharCode);
 

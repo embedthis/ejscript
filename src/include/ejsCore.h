@@ -386,9 +386,6 @@ typedef struct Ejs {
     struct EjsType      *requestType;       /**< Request type */
     struct EjsType      *stringType;        /**< String type */
     struct EjsType      *stopIterationType; /**< StopIteration type */
-#if UNUSED
-    struct EjsType      *timerEventType;    /**< TimerEvent type */
-#endif
     struct EjsType      *typeType;          /**< Type type */
     struct EjsType      *uriType;           /**< URI type */
     struct EjsType      *voidType;          /**< Void type */
@@ -807,7 +804,7 @@ extern int ejsDeletePropertyByName(Ejs *ejs, EjsObj *vp, EjsName *qname);
     @return The variable property stored at the nominated slot.
     @ingroup EjsObj
  */
-extern void *ejsGetProperty(Ejs *ejs, EjsObj *vp, int slotNum);
+extern void *ejsGetProperty(Ejs *ejs, void *vp, int slotNum);
 
 /** 
     Get a count of properties in a variable
@@ -898,7 +895,7 @@ extern void ejsMark(Ejs *ejs, void *vp);
     @return The slot number of the property updated.
     @ingroup EjsObj
  */
-extern int ejsSetProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsObj *value);
+extern int ejsSetProperty(Ejs *ejs, void *vp, int slotNum, void *value);
 
 /** 
     Set a property's value 
@@ -966,7 +963,7 @@ extern EjsObj *ejsCreateSimpleObject(Ejs *ejs);
     @return A new object instance
     @ingroup EjsObj
  */
-extern EjsObj *ejsCreateObject(Ejs *ejs, struct EjsType *type, int size);
+extern void *ejsCreateObject(Ejs *ejs, struct EjsType *type, int size);
 
 extern int ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int numSlots, int offset);
 extern int ejsRemoveProperty(Ejs *ejs, EjsObj *obj, int slotNum);
@@ -997,7 +994,7 @@ extern struct EjsType *ejsGetTraitType(EjsObj *obj, int slotNum);
     @return A newly allocated object. Caller must not free as the GC will manage the lifecycle of the variable.
     @ingroup EjsObj
  */
-extern EjsObj *ejsCloneObject(Ejs *ejs, EjsObj *src, bool deep);
+extern void *ejsCloneObject(Ejs *ejs, void *src, bool deep);
 
 /** 
     Grow an object
@@ -1623,34 +1620,41 @@ extern EjsDate *ejsCreateDate(Ejs *ejs, MprTime value);
  */
 typedef struct EjsError {
     EjsObj          obj;                /**< Extends Object */
+#if UNUSED
+    EjsObj          *data;              /**< Error data message */
     char            *message;           /**< Exception message */
     char            *stack;             /**< Execution stack back trace */
     char            *filename;          /**< Source code file name */
     int             lineNumber;         /**< Source code line number */
     int             code;               /**< Unique error lookup code */
+#endif
 } EjsError;
 
 #define ejsIsError(vp) ejsIs(vp, ES_Error)
 
-/** 
+extern EjsError *ejsCreateError(Ejs *ejs, struct EjsType *type, EjsObj *message);
+extern EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels);
+
+/* 
+    DEPRECATED MOB
     Format the stack backtrace
     @description Return a string containing the current interpreter stack backtrace
     @param ejs Ejs reference returned from #ejsCreate
     @param error Error exception object to analyseo analyseo analyseo analyse
     @return A string containing the stack backtrace. The caller must free.
     @ingroup EjsError
- */
 extern char *ejsFormatStack(Ejs *ejs, EjsError *error);
+ */
 
 /** 
     Get the interpreter error message
     @description Return a string containing the current interpreter error message
     @param ejs Ejs reference returned from #ejsCreate
     @param withStack Set to 1 to include a stack backtrace in the error message
-    @return A string containing the error message. The caller must free.
+    @return A string containing the error message. The caller must not free.
     @ingroup EjsError
  */
-extern char *ejsGetErrorMsg(Ejs *ejs, int withStack);
+extern cchar *ejsGetErrorMsg(Ejs *ejs, int withStack);
 
 /** 
     Determine if an exception has been thrown
@@ -2373,6 +2377,7 @@ typedef struct EjsTimer {
     int             repeat;                         /**< Timer repeatedly fires */
     int             period;                         /**< Time in msec between invocations */          
     EjsFunction     *callback;                      /**< Callback function */
+    EjsFunction     *onerror;                       /**< onerror function */
     EjsArray        *args;                          /**< Callback args */
 } EjsTimer;
 

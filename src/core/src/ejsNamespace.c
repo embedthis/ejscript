@@ -212,10 +212,10 @@ void ejsCreateNamespaceType(Ejs *ejs)
 
 void ejsConfigureNamespaceType(Ejs *ejs)
 {
-    ejsSetProperty(ejs, ejs->global, ES_iterator, (EjsObj*) ejs->iteratorSpace);
-    ejsSetProperty(ejs, ejs->global, ES_public, (EjsObj*) ejs->publicSpace);
+    ejsSetProperty(ejs, ejs->global, ES_iterator, ejs->iteratorSpace);
+    ejsSetProperty(ejs, ejs->global, ES_public, ejs->publicSpace);
 #if ES_ejs
-    ejsSetProperty(ejs, ejs->global, ES_ejs, (EjsObj*) ejs->ejsSpace);
+    ejsSetProperty(ejs, ejs->global, ES_ejs, ejs->ejsSpace);
 #endif
 }
 

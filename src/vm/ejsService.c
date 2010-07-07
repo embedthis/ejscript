@@ -217,7 +217,6 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureByteArrayType(ejs);
     ejsConfigureConfigType(ejs);
     ejsConfigureDateType(ejs);
-    ejsConfigureEventType(ejs);
     ejsConfigureFunctionType(ejs);
     ejsConfigureGCType(ejs);
     ejsConfigureHttpType(ejs);
@@ -269,6 +268,7 @@ static int loadStandardModules(Ejs *ejs, MprList *require)
 }
 
 
+//  MOB -- remove if not used anymore
 /* 
    When cloning the master interpreter, the new interpreter references the master's core types. The core types MUST
    be immutable for this to work.
@@ -294,8 +294,9 @@ static int cloneMaster(Ejs *ejs, Ejs *master)
     ejs->byteArrayType = master->byteArrayType;
     ejs->dateType = master->dateType;
     ejs->errorType = master->errorType;
+#if UNUSED
     ejs->eventType = master->eventType;
-    ejs->errorEventType = master->errorEventType;
+#endif
     ejs->functionType = master->functionType;
     ejs->iteratorType = master->iteratorType;
     ejs->namespaceType = master->namespaceType;
@@ -444,14 +445,14 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
         next = mprStrdup(ejs, search);
         dir = mprStrTok(next, MPR_SEARCH_SEP, &tok);
         while (dir && *dir) {
-            ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePath(ejs, dir));
+            ejsSetProperty(ejs, ap, -1, ejsCreatePath(ejs, dir));
             dir = mprStrTok(NULL, MPR_SEARCH_SEP, &tok);
         }
         mprFree(next);
         return (EjsArray*) ap;
     }
 #if VXWORKS
-    ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePathAndFree(ejs, mprGetCurrentPath(ejs)));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathAndFree(ejs, mprGetCurrentPath(ejs)));
 #else
 {
     /*
@@ -460,10 +461,10 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
      */
     char *relModDir;
     relModDir = mprAsprintf(ejs, -1, "%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
-    ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePath(ejs, "."));
-    ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePathAndFree(ejs, mprGetAppDir(ejs)));
-    ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePathAndFree(ejs, mprGetAbsPath(ejs, relModDir)));
-    ejsSetProperty(ejs, ap, -1, (EjsObj*) ejsCreatePath(ejs, BLD_MOD_PREFIX));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePath(ejs, "."));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathAndFree(ejs, mprGetAppDir(ejs)));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathAndFree(ejs, mprGetAbsPath(ejs, relModDir)));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePath(ejs, BLD_MOD_PREFIX));
     mprFree(relModDir);
 }
 #endif
@@ -555,7 +556,7 @@ int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
         mprServiceEvents(ejs, ejs->dispatcher, -1, 0);
     }
     if (ejs->exception) {
-        return -1;
+        return EJS_ERR;
     }
     return 0;
 }
@@ -616,7 +617,7 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
     }
     args = (EjsObj*) ejsCreateArray(ejs, ejs->argc);
     for (i = 0; i < ejs->argc; i++) {
-        ejsSetProperty(ejs, args, i, (EjsObj*) ejsCreateString(ejs, ejs->argv[i]));
+        ejsSetProperty(ejs, args, i, ejsCreateString(ejs, ejs->argv[i]));
     }
     if (ejsRunFunction(ejs, fun, 0, 1, &args) == 0) {
         return EJS_ERR;
@@ -856,8 +857,8 @@ void ejsMemoryFailure(MprCtx ctx, int64 size, int64 total, bool granted)
 void ejsReportError(Ejs *ejs, char *fmt, ...)
 {
     va_list     arg;
-    const char  *msg;
-    char        *buf;
+    const char  *emsg;
+    char        *msg, *buf;
 
     va_start(arg, fmt);
     
@@ -867,10 +868,18 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
         Where program is either "ec" or "ejs"
         Where SEVERITY is either "error" or "warn"
      */
-    buf = mprVasprintf(ejs, 0, fmt, arg);
-    msg = ejsGetErrorMsg(ejs, 1);
+    if ((emsg = ejsGetErrorMsg(ejs, 1)) != 0) {
+        msg = (char*) emsg;
+        buf = 0;
+    } else {
+        msg = buf = mprVasprintf(ejs, 0, fmt, arg);
+    }
     
-    mprError(ejs, "%s", (msg && *msg) ? msg: buf);
+    if (ejs->exception) {
+        mprRawLog(ejs, 0, "%s: %s\n", mprGetMpr(ejs)->name, msg);
+    } else {
+        mprError(ejs, "%s", msg);
+    }
     mprFree(buf);
     va_end(arg);
 }

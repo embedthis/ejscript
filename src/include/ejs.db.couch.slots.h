@@ -31,7 +31,7 @@
 #define ES_ejs_db_couch_Couch_cmd                                      6
 #define ES_ejs_db_couch_Couch_flush                                    7
 #define ES_ejs_db_couch_Couch_http                                     8
-#define ES_ejs_db_couch_Couch_removeObserve                            9
+#define ES_ejs_db_couch_Couch_removeObserver                           9
 #define ES_ejs_db_couch_Couch_status                                   10
 #define ES_ejs_db_couch_Couch_success                                  11
 #define ES_ejs_db_couch_Couch_read                                     12
@@ -52,6 +52,6 @@
 #define ES_ejs_db_couch_Couch_NUM_INSTANCE_PROP                        27
 #define ES_ejs_db_couch_Couch_NUM_INHERITED_PROP                       0
 
-#define _ES_CHECKSUM_ejs_db_couch   40488
+#define _ES_CHECKSUM_ejs_db_couch   40605
 
 #endif

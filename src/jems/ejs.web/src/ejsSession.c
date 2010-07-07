@@ -227,7 +227,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     }
     session->id = mprStrdup(session, id);
 
-    slotNum = ejsSetPropertyByName(master, (EjsObj*) ejs->sessions, EN(&qname, session->id), (EjsObj*) session);
+    slotNum = ejsSetPropertyByName(master, ejs->sessions, EN(&qname, session->id), session);
     if (slotNum < 0) {
         mprFree(session);
         ejsUnlockVm(master);

@@ -480,8 +480,8 @@ static EjsObj *getFileOptions(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     EjsObj      *options;
 
     options = (EjsObj*) ejsCreateSimpleObject(ejs);
-    ejsSetPropertyByName(ejs, options, ejsName(&qname, "", "mode"), (EjsObj*) ejsCreateString(ejs, fp->modeString));
-    ejsSetPropertyByName(ejs, options, ejsName(&qname, "", "permissions"), (EjsObj*) ejsCreateNumber(ejs, fp->perms));
+    ejsSetPropertyByName(ejs, options, ejsName(&qname, "", "mode"), ejsCreateString(ejs, fp->modeString));
+    ejsSetPropertyByName(ejs, options, ejsName(&qname, "", "permissions"), ejsCreateNumber(ejs, fp->perms));
     return options;
 }
 

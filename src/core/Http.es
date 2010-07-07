@@ -222,7 +222,7 @@ module ejs {
             All events are called with the signature:
             function (event: String, http: Http): Void
          */
-        native function observe(name, listener: Function): Void
+        native function observe(name, observer: Function): Void
 
         /** 
             @duplicate Stream.async
@@ -511,7 +511,7 @@ module ejs {
         /** 
             @duplicate Stream.removeObserver
          */
-        native function removeObserver(name, listener: Function): Void
+        native function removeObserver(name, observer: Function): Void
 
         /** 
             Response body content. The first time this property is read, the response content will be read and buffered.

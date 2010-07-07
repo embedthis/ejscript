@@ -122,7 +122,7 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
         mprAssert(0);
         return EJS_ERR;
     }
-    if (ejsSetProperty(ejs, (EjsObj*) ap, slot, (EjsObj*) ejs->undefinedValue) < 0) {
+    if (ejsSetProperty(ejs, ap, slot, ejs->undefinedValue) < 0) {
         return EJS_ERR;
     }
     if ((slot + 1) == ap->length) {

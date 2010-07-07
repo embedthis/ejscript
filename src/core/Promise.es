@@ -9,8 +9,10 @@ module ejs {
         The Promise class permits deferred processing for async APIs. A Promise encapsulates callbacks and state for an API
         that will take some time to execute. The API can return the promise and the caller can register callbacks for events
         of interest.
+        WARNING: The CommonJS spec for promises is still changing 
         @spec commonjs
         @stability prototype
+        @hide
      */
     dynamic class Promise extends Emitter {
         private var timer: Timer
@@ -57,9 +59,9 @@ module ejs {
             }
             fired = true
             try {
-                issue("success", args)
+                issue("success", ...args)
             } catch (e) {
-                p("CATCH", e)
+print("CATCH", e)
                 emitError(e)
             }
         }
@@ -75,9 +77,10 @@ module ejs {
             }
             fired = true
             try {
-                issue("error", args)
+                issue("error", ...args)
             } catch (e) {
-                p("EmitError CATCH", e)
+                //  MOB -- use logging
+                print("EmitError CATCH", e)
             }
         }
 
@@ -86,9 +89,8 @@ module ejs {
             emitError or emitCancel, the Promise in completed and will not emit further events.
             @param args Args to pass to the listener
          */
-        function emitCancel(...args): Void {
-            issue("cancel", args)
-        }
+        function emitCancel(...args): Void
+            issue("cancel", ...args)
 
         /** 
             Cancels the promise and removes "success" and "error" and listeners then issues a cancel event.
@@ -101,7 +103,7 @@ module ejs {
                 timer.stop()
             }
             clearObservers(["success", "error"])
-            issue("cancel", args)
+            issue("cancel", ...args)
         }
 
         /** 
@@ -150,7 +152,7 @@ module ejs {
                 done = true
                 timer = null
                 issue("timeout")
-                issue("error", ["timeout"])
+                issue("error")
             })
             return this
         }
@@ -159,31 +161,30 @@ module ejs {
             Wait for the promise to complete for a given period. This blocks execution until the promise completes or 
             is cancelled.
             @param timeout Time to wait in milliseconds
-            @return The arguments provided to emitSuccess. If multiple arguments, they are returned as an array.
+            @return The arguments array provided to emitSuccess
          */
         function wait(timeout: Number = -1): Object {
             let done = false
             let result
-            function awake(...args) {
+            function awake(event, ...args) {
                 done = true
-                result = args.slice(1)
+                result = args
             }
-            observe("success", awake)
-            observe("error", awake)
-            observe("cancel", awake)
-            new Timer(timeout, awake)
+            observe(["cancel", "error", "success"], awake)
+            timer = new Timer(timeout, awake)
+            timer.start()
             while (!done && !fired) {
                 App.serviceEvents(timeout, true)
             }
             return result
         }
 
-        private function issue(name: String, args: Array? = null): Void {
+        private function issue(name: String, ...args): Void {
             if (timer) {
                 timer.stop()
             }
             if (args) {
-                fire.apply(null, [name] + args)
+                fire(name, ...args)
             } else {
                 fire(name)
             }

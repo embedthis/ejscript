@@ -923,14 +923,14 @@ static EjsObj *setLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 
     if (length < ap->length) {
         for (i = length; i < ap->length; i++) {
-            if (ejsSetProperty(ejs, (EjsObj*) ap, i, (EjsObj*) ejs->undefinedValue) < 0) {
+            if (ejsSetProperty(ejs, ap, i, ejs->undefinedValue) < 0) {
                 //  TODO - DIAG
                 return 0;
             }
         }
 
     } else if (length > ap->length) {
-        if (ejsSetProperty(ejs, (EjsObj*) ap, length - 1,  (EjsObj*) ejs->undefinedValue) < 0) {
+        if (ejsSetProperty(ejs, ap, length - 1, ejs->undefinedValue) < 0) {
             //  TODO - DIAG
             return 0;
         }

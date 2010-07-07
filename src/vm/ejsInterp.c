@@ -1482,7 +1482,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 f2->block.scope = state.bp;
                 f2->thisObj = FRAME->function.thisObj;
                 mprAssert(!lookup.obj->isPrototype);
-                ejsSetProperty(ejs, lookup.obj, lookup.slotNum, (EjsObj*) f2);
+                ejsSetProperty(ejs, lookup.obj, lookup.slotNum, f2);
             }
             BREAK;
 
@@ -2484,7 +2484,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, int slot
             }
         }
     }
-    ejsSetProperty(ejs, (EjsObj*) obj, slotNum, (EjsObj*) value);
+    ejsSetProperty(ejs, obj, slotNum, value);
     ejs->result = value;
 }
 
@@ -2807,7 +2807,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
             return EJS_ERR;
         }
         for (i = numRest - 1; i >= 0; i--) {
-            ejsSetProperty(ejs, (EjsObj*) rest, i, popOutside(ejs));
+            ejsSetProperty(ejs, rest, i, popOutside(ejs));
         }
         argc = argc - numRest + 1;
         pushOutside(ejs, rest);
@@ -3683,6 +3683,7 @@ void ejsLog(Ejs *ejs, const char *fmt, ...)
 }
 
 
+#if UNUSED
 void ejsShowStack(Ejs *ejs, EjsFunction *fp)
 {
     char    *stack;
@@ -3691,7 +3692,7 @@ void ejsShowStack(Ejs *ejs, EjsFunction *fp)
     mprLog(ejs, 7, "Stack\n%s", stack);
     mprFree(stack);
 }
-
+#endif
 
 #if FUTURE
 

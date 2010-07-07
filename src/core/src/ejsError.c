@@ -15,60 +15,43 @@
     function cast(type: Type) : Object
  */
 
-static EjsObj *castError(Ejs *ejs, EjsError *vp, EjsType *type)
+static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
 {
+#if UNUSED
     EjsObj      *sp;
+    EjsFunction *fun;
     char        *buf;
+#endif
 
     switch (type->id) {
-
     case ES_Boolean:
         return (EjsObj*) ejsCreateBoolean(ejs, 1);
 
     case ES_String:
-        if ((buf = mprAsprintf(ejs, -1,
-                "%s Exception: %s\nStack:\n%s\n", vp->obj.type->qname.name, vp->message, vp->stack)) == NULL) {
-            ejsThrowMemoryError(ejs);
+#if ES_Error_formatStack
+        return (EjsObj*) ejsRunFunctionBySlot(ejs, (EjsObj*) error, ES_Error_formatStack, 0, NULL);
+#endif
+#if UNUSED
+        fun = ejsGetProperty(ejs, error, ES_Error_formatStack);
+        return (EjsObj*) ejsRunFunction(ejs, fun, obj, 0, NULL);
+        if (fun && ejsIsFunction(fun) && fun->body.proc != obj_toString) {
+            return (EjsObj*) ejsRunFunction(ejs, fun, obj, 0, NULL);
+        } else {
+            if ((buf = mprAsprintf(ejs, -1,
+                    "%s Exception: %s\nStack:\n%s\n", error->obj.type->qname.name, error->message, error->stack)) == NULL) {
+                ejsThrowMemoryError(ejs);
+            }
+            sp = (EjsObj*) ejsCreateString(ejs, buf);
+            mprFree(buf);
+            return sp;
         }
-        sp = (EjsObj*) ejsCreateString(ejs, buf);
-        mprFree(buf);
-        return sp;
+#endif
+        break;
 
     default:
         ejsThrowTypeError(ejs, "Unknown type");
-        return 0;
     }
-}
-
-
-/*
-    Get a property.
- */
-static EjsObj *getErrorProperty(Ejs *ejs, EjsError *error, int slotNum)
-{
-    switch (slotNum) {
-    case ES_Error_stack:
-        return (EjsObj*) ejsCreateString(ejs, error->stack);
-
-    case ES_Error_message:
-        return (EjsObj*) ejsCreateString(ejs, error->message);
-    }
-    return (ejs->objectType->helpers.getProperty)(ejs, (EjsObj*) error, slotNum);
-}
-
-
-/*
-    Lookup a property.
- */
-static int lookupErrorProperty(Ejs *ejs, EjsError *error, EjsName *qname)
-{
-    if (strcmp(qname->name, "message") == 0) {
-        return ES_Error_message;
-    }
-    if (strcmp(qname->name, "stack") == 0) {
-        return ES_Error_stack;
-    }
-    return -1;
+    return 0;
 }
 
 
@@ -78,44 +61,52 @@ static int lookupErrorProperty(Ejs *ejs, EjsError *error, EjsName *qname)
 
     public function Error(message: String = null)
  */
-static EjsObj *errorConstructor(Ejs *ejs, EjsError *error, int argc,  EjsObj **argv)
+static EjsObj *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **argv)
 {
-    mprFree(error->message);
-    if (argc == 0) {
-        error->message = mprStrdup(error, "");
-    } else {
-        error->message = mprStrdup(error, ejsGetString(ejs, argv[0]));
-    }
-    mprFree(error->stack);
-    ejsFormatStack(ejs, error);
+    ejsSetProperty(ejs, error, ES_Error_message, ejsToString(ejs, argv[0]));
+#if ES_Error_timestamp
+    ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime(ejs)));
+#endif
+    ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, 0));
     return (EjsObj*) error;
 }
 
 
-static EjsObj *getCode(Ejs *ejs, EjsError *vp, int argc,  EjsObj **argv)
+/*
+    function capture(uplevels: Number): Void
+ */
+static EjsObj *error_capture(Ejs *ejs, EjsError *error, int argc,  EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, vp->code);
-}
-
-
-static EjsObj *setCode(Ejs *ejs, EjsError *vp, int argc,  EjsObj **argv)
-{
-    vp->code = ejsGetInt(ejs, argv[0]);
+    ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, ejsGetInt(ejs, argv[0])));
     return 0;
 }
 
-
 /************************************ Factory *********************************/
+
+EjsError *ejsCreateError(Ejs *ejs, EjsType *type, EjsObj *msg) 
+{
+    EjsError    *error;
+
+    error = (EjsError*) ejsCreateObject(ejs, type, 0);
+    if (error) {
+        ejsSetProperty(ejs, error, ES_Error_message, msg);
+#if ES_Error_timestamp
+        ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime(ejs)));
+#endif
+        ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, 0));
+    }
+    return error;
+}
 
 static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 {
     EjsType     *type;
 
     type = ejsCreateNativeType(ejs, "ejs", name, id, sizeof(EjsError));
+
+    //  MOB -- why?
     type->constructor.block.nobind = 1;
     type->helpers.cast = (EjsCastHelper) castError;
-    type->helpers.getProperty = (EjsGetPropertyHelper) getErrorProperty;
-    type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupErrorProperty;
     return type;
 }
 
@@ -153,6 +144,7 @@ static void configureType(Ejs *ejs, cchar *name)
 
 void ejsConfigureErrorType(Ejs *ejs)
 {
+    //  TODO MOB OPT simplify
     configureType(ejs, "Error");
     configureType(ejs, "ArgError");
     configureType(ejs, "ArithmeticError");
@@ -170,7 +162,9 @@ void ejsConfigureErrorType(Ejs *ejs)
     configureType(ejs, "TypeError");
     configureType(ejs, "URIError");
 
-    ejsBindAccess(ejs, ejs->errorType->prototype, ES_Error_code, (EjsProc) getCode, (EjsProc) setCode);
+#if ES_Error_capture
+    ejsBindMethod(ejs, ejs->errorType->prototype, ES_Error_capture, (EjsProc) error_capture);
+#endif
 }
 
 

@@ -99,7 +99,6 @@
 		C9188B5F115DAC060018846C /* ejsDate.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B37115DAC060018846C /* ejsDate.c */; };
 		C9188B60115DAC060018846C /* ejsDebug.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B38115DAC060018846C /* ejsDebug.c */; };
 		C9188B61115DAC060018846C /* ejsError.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B39115DAC060018846C /* ejsError.c */; };
-		C9188B62115DAC060018846C /* ejsEvent.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B3A115DAC060018846C /* ejsEvent.c */; };
 		C9188B63115DAC060018846C /* ejsFile.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B3B115DAC060018846C /* ejsFile.c */; };
 		C9188B64115DAC060018846C /* ejsFileSystem.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B3C115DAC060018846C /* ejsFileSystem.c */; };
 		C9188B65115DAC060018846C /* ejsFunction.c in Sources */ = {isa = PBXBuildFile; fileRef = C9188B3D115DAC060018846C /* ejsFunction.c */; };
@@ -680,7 +679,6 @@
 		C9188B37115DAC060018846C /* ejsDate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsDate.c; path = ../../../src/core/src/ejsDate.c; sourceTree = SOURCE_ROOT; };
 		C9188B38115DAC060018846C /* ejsDebug.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsDebug.c; path = ../../../src/core/src/ejsDebug.c; sourceTree = SOURCE_ROOT; };
 		C9188B39115DAC060018846C /* ejsError.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsError.c; path = ../../../src/core/src/ejsError.c; sourceTree = SOURCE_ROOT; };
-		C9188B3A115DAC060018846C /* ejsEvent.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsEvent.c; path = ../../../src/core/src/ejsEvent.c; sourceTree = SOURCE_ROOT; };
 		C9188B3B115DAC060018846C /* ejsFile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsFile.c; path = ../../../src/core/src/ejsFile.c; sourceTree = SOURCE_ROOT; };
 		C9188B3C115DAC060018846C /* ejsFileSystem.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsFileSystem.c; path = ../../../src/core/src/ejsFileSystem.c; sourceTree = SOURCE_ROOT; };
 		C9188B3D115DAC060018846C /* ejsFunction.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsFunction.c; path = ../../../src/core/src/ejsFunction.c; sourceTree = SOURCE_ROOT; };
@@ -974,7 +972,6 @@
 				C9188B37115DAC060018846C /* ejsDate.c */,
 				C9188B38115DAC060018846C /* ejsDebug.c */,
 				C9188B39115DAC060018846C /* ejsError.c */,
-				C9188B3A115DAC060018846C /* ejsEvent.c */,
 				C9188B3B115DAC060018846C /* ejsFile.c */,
 				C9188B3C115DAC060018846C /* ejsFileSystem.c */,
 				C9902A681161776B00473F37 /* ejsFrame.c */,
@@ -2102,7 +2099,6 @@
 				C9188B5F115DAC060018846C /* ejsDate.c in Sources */,
 				C9188B60115DAC060018846C /* ejsDebug.c in Sources */,
 				C9188B61115DAC060018846C /* ejsError.c in Sources */,
-				C9188B62115DAC060018846C /* ejsEvent.c in Sources */,
 				C9188B63115DAC060018846C /* ejsFile.c in Sources */,
 				C9188B64115DAC060018846C /* ejsFileSystem.c in Sources */,
 				C9188B65115DAC060018846C /* ejsFunction.c in Sources */,

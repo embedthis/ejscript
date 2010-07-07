@@ -130,7 +130,7 @@ static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     for (index = 0, i = 0; i < count; i++, index += 2) {
         len = matches[index + 1] - matches[index];
         match = ejsCreateStringWithLength(ejs, &str[matches[index]], len);
-        ejsSetProperty(ejs, (EjsObj*) results, i, (EjsObj*) match);
+        ejsSetProperty(ejs, results, i, match);
         if (index == 0) {
             rp->matched = match;
         }

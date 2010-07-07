@@ -45,7 +45,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
             ejsName(&qname, "", subkey);
             vp = ejsGetPropertyByName(ejs, params, &qname);
             if (vp == 0) {
-                slotNum = ejsSetPropertyByName(ejs, params, &qname, (EjsObj*) ejsCreateSimpleObject(ejs));
+                slotNum = ejsSetPropertyByName(ejs, params, &qname, ejsCreateSimpleObject(ejs));
                 vp = ejsGetProperty(ejs, params, slotNum);
             }
             params = vp;
@@ -143,7 +143,7 @@ static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
     if (req->headers == 0) {
         req->headers = (EjsObj*) ejsCreateSimpleObject(ejs);
         for (hp = 0; (hp = mprGetNextHash(conn->receiver->headers, hp)) != 0; ) {
-            ejsSetPropertyByName(ejs, req->headers, EN(&n, hp->key), (EjsObj*) ejsCreateString(ejs, hp->data));
+            ejsSetPropertyByName(ejs, req->headers, EN(&n, hp->key), ejsCreateString(ejs, hp->data));
         }
     }
     return (EjsObj*) req->headers;
@@ -168,11 +168,11 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
         for (index = 0, hp = 0; (hp = mprGetNextHash(conn->receiver->files, hp)) != 0; index++) {
             up = (HttpUploadFile*) hp->data;
             file = (EjsObj*) ejsCreateSimpleObject(ejs);
-            ejsSetPropertyByName(ejs, file, EN(&n, "filename"), (EjsObj*) ejsCreateString(ejs, up->filename));
-            ejsSetPropertyByName(ejs, file, EN(&n, "clientFilename"), (EjsObj*) ejsCreateString(ejs, up->clientFilename));
-            ejsSetPropertyByName(ejs, file, EN(&n, "contentType"), (EjsObj*) ejsCreateString(ejs, up->contentType));
-            ejsSetPropertyByName(ejs, file, EN(&n, "name"), (EjsObj*) ejsCreateString(ejs, hp->key));
-            ejsSetPropertyByName(ejs, file, EN(&n, "size"), (EjsObj*) ejsCreateNumber(ejs, up->size));
+            ejsSetPropertyByName(ejs, file, EN(&n, "filename"), ejsCreateString(ejs, up->filename));
+            ejsSetPropertyByName(ejs, file, EN(&n, "clientFilename"), ejsCreateString(ejs, up->clientFilename));
+            ejsSetPropertyByName(ejs, file, EN(&n, "contentType"), ejsCreateString(ejs, up->contentType));
+            ejsSetPropertyByName(ejs, file, EN(&n, "name"), ejsCreateString(ejs, hp->key));
+            ejsSetPropertyByName(ejs, file, EN(&n, "size"), ejsCreateNumber(ejs, up->size));
             ejsSetPropertyByName(ejs, files, EN(&n, hp->key), file);
         }
     }
@@ -510,7 +510,7 @@ static EjsObj *req_getResponseHeaders(Ejs *ejs, EjsRequest *req, int argc, EjsOb
     conn = req->conn;
     headers = (EjsObj*) ejsCreateSimpleObject(ejs);
     for (hp = 0; (hp = mprGetNextHash(conn->transmitter->headers, hp)) != 0; ) {
-        ejsSetPropertyByName(ejs, headers, EN(&n, hp->key), (EjsObj*) ejsCreateString(ejs, hp->data));
+        ejsSetPropertyByName(ejs, headers, EN(&n, hp->key), ejsCreateString(ejs, hp->data));
     }
     return (EjsObj*) headers;
 }

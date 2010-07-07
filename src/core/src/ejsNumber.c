@@ -487,17 +487,17 @@ void ejsConfigureNumberType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Number_toPrecision, (EjsProc) toPrecision);
     ejsBindMethod(ejs, prototype, ES_Number_toString, numberToString);
 
-    ejsSetProperty(ejs, (EjsObj*) type, ES_Number_MaxValue, (EjsObj*) ejs->maxValue);
-    ejsSetProperty(ejs, (EjsObj*) type, ES_Number_MinValue, (EjsObj*) ejs->minValue);
-    ejsSetProperty(ejs, (EjsObj*) type, ES_Number_NEGATIVE_INFINITY, (EjsObj*) ejs->negativeInfinityValue);
-    ejsSetProperty(ejs, (EjsObj*) type, ES_Number_POSITIVE_INFINITY, (EjsObj*) ejs->infinityValue);
-    ejsSetProperty(ejs, (EjsObj*) type, ES_Number_NaN, (EjsObj*) ejs->nanValue);
+    ejsSetProperty(ejs, type, ES_Number_MaxValue, ejs->maxValue);
+    ejsSetProperty(ejs, type, ES_Number_MinValue, ejs->minValue);
+    ejsSetProperty(ejs, type, ES_Number_NEGATIVE_INFINITY, ejs->negativeInfinityValue);
+    ejsSetProperty(ejs, type, ES_Number_POSITIVE_INFINITY, ejs->infinityValue);
+    ejsSetProperty(ejs, type, ES_Number_NaN, ejs->nanValue);
 
-    ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, (EjsObj*) ejs->negativeInfinityValue);
-    ejsSetProperty(ejs, ejs->global, ES_Infinity, (EjsObj*) ejs->infinityValue);
-    ejsSetProperty(ejs, ejs->global, ES_NaN, (EjsObj*) ejs->nanValue);
-    ejsSetProperty(ejs, ejs->global, ES_double, (EjsObj*) type);
-    ejsSetProperty(ejs, ejs->global, ES_num, (EjsObj*) type);
+    ejsSetProperty(ejs, ejs->global, ES_NegativeInfinity, ejs->negativeInfinityValue);
+    ejsSetProperty(ejs, ejs->global, ES_Infinity, ejs->infinityValue);
+    ejsSetProperty(ejs, ejs->global, ES_NaN, ejs->nanValue);
+    ejsSetProperty(ejs, ejs->global, ES_double, type);
+    ejsSetProperty(ejs, ejs->global, ES_num, type);
 }
 
 /*

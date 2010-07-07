@@ -48,6 +48,12 @@ module ejs {
         native function set period(period: Number): Void
 
         /**
+            Error callback function for exceptions inside the Timer callback
+         */
+        native function get onerror(): Function
+        native function set onerror(callback: Function): Void
+
+        /**
             Timer repeatability. If true, the timer will be repeated invoked every $period milliseconds
          */
         native function get repeat(): Boolean

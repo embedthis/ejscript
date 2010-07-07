@@ -27,7 +27,7 @@ module ejs {
             @event readable Issued when the response headers have been fully received and some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
          */
-        native function observe(name, listener: Function): Void
+        native function observe(name, observer: Function): Void
 
 //  MOB - or would it be better to have the accepted socket passed in as a callback parameter?
         /** 
@@ -108,7 +108,7 @@ module ejs {
         native function get remoteAddress(): String 
 
         /** @duplicate Stream.removeObserver */
-        native function removeObserver(name: Object, listener: Function): Void
+        native function removeObserver(name: Object, observer: Function): Void
 
         /** 
             @duplicate Stream.write 

@@ -288,7 +288,7 @@ static EjsObj *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
     conn = hp->conn;
     headers = (EjsObj*) ejsCreateSimpleObject(ejs);
     for (p = 0; (p = mprGetNextHash(conn->transmitter->headers, p)) != 0; ) {
-        ejsSetPropertyByName(ejs, headers, EN(&n, p->key), (EjsObj*) ejsCreateString(ejs, p->data));
+        ejsSetPropertyByName(ejs, headers, EN(&n, p->key), ejsCreateString(ejs, p->data));
     }
     return (EjsObj*) headers;
 }
@@ -344,7 +344,7 @@ static EjsObj *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     }
     for (i = 0, p = mprGetFirstHash(hash); p; p = mprGetNextHash(hash, p), i++) {
         ejsName(&qname, "", p->key);
-        ejsSetPropertyByName(ejs, (EjsObj*) results, &qname, (EjsObj*) ejsCreateString(ejs, p->data));
+        ejsSetPropertyByName(ejs, results, &qname, ejsCreateString(ejs, p->data));
     }
     return (EjsObj*) results;
 }

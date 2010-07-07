@@ -199,7 +199,7 @@ void ejsConfigureVoidType(Ejs *ejs)
     type = ejsGetTypeByName(ejs, "ejs", "Void");
     prototype = type->prototype;
 
-    ejsSetProperty(ejs, ejs->global, ES_void, (EjsObj*) type);
+    ejsSetProperty(ejs, ejs->global, ES_void, type);
     ejsSetProperty(ejs, ejs->global, ES_undefined, ejs->undefinedValue);
     ejsBindMethod(ejs, prototype, ES_Void_iterator_get, getVoidIterator);
     ejsBindMethod(ejs, prototype, ES_Void_iterator_getValues, getVoidIterator);

@@ -25,10 +25,10 @@ static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
 
     sp->ejs = ejs;
     serverRoot = (argc >= 1) ? argv[0] : (EjsObj*) ejsCreatePath(ejs, ".");
-    ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot, serverRoot);
+    ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_serverRoot, serverRoot);
 
     documentRoot = (argc >= 1) ? argv[1] : (EjsObj*) ejsCreatePath(ejs, ".");
-    ejsSetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot, documentRoot);
+    ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_documentRoot, documentRoot);
     return (EjsObj*) sp;
 }
 

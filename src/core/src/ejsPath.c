@@ -226,12 +226,12 @@ static EjsObj *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     for (last = cp = mprGetAbsPath(fp, fp->path); *cp; cp++) {
         if (*cp == fs->separators[0] || *cp == fs->separators[1]) {
             *cp++ = '\0';
-            ejsSetProperty(ejs, (EjsObj*) ap, index++, (EjsObj*) ejsCreateString(ejs, last));
+            ejsSetProperty(ejs, ap, index++, ejsCreateString(ejs, last));
             last = cp;
         }
     }
     if (cp > last) {
-        ejsSetProperty(ejs, (EjsObj*) ap, index++, (EjsObj*) ejsCreateString(ejs, last));
+        ejsSetProperty(ejs, ap, index++, ejsCreateString(ejs, last));
     }
     return (EjsObj*) ap;
 }
@@ -447,13 +447,13 @@ static EjsObj *getPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         }
         if (enumDirs || !(dp->isDir)) {
             if (noPath) {
-                ejsSetProperty(ejs, (EjsObj*) array, -1, (EjsObj*) ejsCreatePath(ejs, dp->name));
+                ejsSetProperty(ejs, array, -1, ejsCreatePath(ejs, dp->name));
             } else {
                 /*
                     Prepend the directory name
                  */
                 path = mprJoinPath(ejs, fp->path, dp->name);
-                ejsSetProperty(ejs, (EjsObj*) array, -1, (EjsObj*) ejsCreatePathAndFree(ejs, path));
+                ejsSetProperty(ejs, array, -1, ejsCreatePathAndFree(ejs, path));
             }
         }
     }
@@ -929,8 +929,8 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     end = mprGetBufEnd(data);
     for (lineno = 0, cp = start; cp < end; cp++) {
         if (*cp == '\n') {
-            if (ejsSetProperty(ejs, (EjsObj*) result, lineno++, 
-                    (EjsObj*) ejsCreateStringWithLength(ejs, start, (int) (cp - start))) < 0) {
+            if (ejsSetProperty(ejs, result, lineno++, 
+                    ejsCreateStringWithLength(ejs, start, (int) (cp - start))) < 0) {
                 break;
             }
             start = cp + 1;
@@ -939,7 +939,7 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         }
     }
     if (cp > start) {
-        ejsSetProperty(ejs, (EjsObj*) result, lineno++, (EjsObj*) ejsCreateStringWithLength(ejs, start, (int) (cp - start)));
+        ejsSetProperty(ejs, result, lineno++, ejsCreateStringWithLength(ejs, start, (int) (cp - start)));
     }
 
     mprFree(file);

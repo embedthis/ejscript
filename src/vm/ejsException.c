@@ -71,20 +71,27 @@ static EjsObj *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
         mprAssert(argv[0]);
         return 0;
     }
+#if UNUSED
     if (!ejs->initialized) {
         if (ejs->empty || ejs->flags & EJS_FLAG_NO_INIT) {
             mprLog(ejs, 5, "Exception: %s", msg);
         } else {
             mprError(ejs, "Exception: %s", msg);
         }
+        error = ejsCreateError(ejs, type, argv[0]);
+#if OLD
         error = (EjsError*) ejsCreateObject(ejs, type, 0);
         error->message = mprStrdup(error, ejsGetString(ejs, argv[0]));
         ejsFormatStack(ejs, error);
+#endif
         return (EjsObj*) error;
         
     } else {
         error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
     }
+#else
+    error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
+#endif
     mprFree(msg);
     return (EjsObj*) error;
 }
@@ -261,9 +268,43 @@ EjsObj *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-/*
-    Format the stack backtrace
- */
+EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
+{
+    EjsFrame        *fp;
+    EjsState        *state;
+    EjsArray        *stack;
+    EjsObj          *frame;
+    EjsName         qname;
+    cchar           *line;
+    int             index;
+
+    mprAssert(ejs);
+
+    stack = ejsCreateArray(ejs, 0);
+    index = 0;
+    for (state = ejs->state; state; state = state->prev) {
+        for (fp = state->fp; fp; fp = fp->caller) {
+            if (uplevels-- <= 0) {
+                if (fp->currentLine == 0) {
+                    line = "";
+                } else {
+                    for (line = fp->currentLine; *line && isspace((int) *line); line++) {
+                        ;
+                    }
+                }
+                frame = ejsCreateSimpleObject(ejs);
+                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "filename"), ejsCreateString(ejs, fp->filename));
+                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "lineno"), ejsCreateNumber(ejs, fp->lineNumber));
+                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "function"), ejsCreateString(ejs, fp->function.name));
+                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "code"), ejsCreateString(ejs, line));
+                ejsSetProperty(ejs, stack, index++, frame);
+            }
+        }
+    }
+    return stack;
+}
+
+#if UNUSED
 char *ejsFormatStack(Ejs *ejs, EjsError *error)
 {
     EjsFrame        *fp;
@@ -312,59 +353,59 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
     }
     return backtrace;
 }
+#endif
 
 
 /*
-    Public routine to set the error message. Caller MUST NOT free.
+    Get the current exception error. May be an Error object or may be any other object that is thrown.
+    Caller must NOT free.
  */
-char *ejsGetErrorMsg(Ejs *ejs, int withStack)
+cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
 {
-    EjsObj      *message, *stack, *error;
+    EjsObj      *message, *stack, *error, *vp;
     EjsString   *str;
-    cchar       *name;
+    EjsObj      *saveException;
+    cchar       *tag;
     char        *buf;
 
-#if UNUSED
-    if (!ejs->initialized) {
-        return "";
-    }
-#endif
     error = (EjsObj*) ejs->exception;
     message = stack = 0;
-    name = 0;
+    tag = 0;
 
     if (error) {
-        name = error->type->qname.name;
+        tag = error->type->qname.name;
         if (ejsIsA(ejs, error, ejs->errorType)) {
             message = ejsGetProperty(ejs, error, ES_Error_message);
-            stack = ejsGetProperty(ejs, error, ES_Error_stack);
+            if (withStack) {
+                saveException = ejs->exception;
+                ejsClearException(ejs);
+                stack = ejsRunFunctionBySlot(ejs, error, ES_Error_formatStack, 0, NULL);
+                ejs->exception = saveException;
+            }
 
         } else if (ejsIsString(error)) {
-            name = "Error";
+            tag = "Error";
             message = error;
 
         } else if (ejsIsNumber(error)) {
-            name = "Error";
+            tag = "Error";
             message = error;
             
         } else if (error == (EjsObj*) ejs->stopIterationType) {
-            name = "StopIteration";
+            //  MOB -- should never happen
+            tag = "StopIteration";
             message = (EjsObj*) ejsCreateString(ejs, "Uncaught StopIteration exception");
         }
     }
-    if (!withStack) {
-        stack = 0;
-    }
-
-    if (stack && ejsIsString(stack) && message && ejsIsString(message)){
-        buf = mprAsprintf(ejs, -1, "%s Exception: %s\nStack:\n%s", name, ((EjsString*) message)->value, 
-            ((EjsString*) stack)->value);
+    if (ejsIsA(ejs, error, ejs->errorType)) {
+        buf = mprAsprintf(ejs, -1, "%s: %s\nStack:\n%s", tag, ((EjsString*) message)->value,
+            (stack) ? ejsGetString(ejs, stack) : "");
 
     } else if (message && ejsIsString(message)){
-        buf = mprAsprintf(ejs, -1, "%s: %s", name, ((EjsString*) message)->value);
+        buf = mprAsprintf(ejs, -1, "%s: %s", tag, ((EjsString*) message)->value);
 
     } else if (message && ejsIsNumber(message)){
-        buf = mprAsprintf(ejs, -1, "%s: %d", name, ((EjsNumber*) message)->value);
+        buf = mprAsprintf(ejs, -1, "%s: %g", tag, ((EjsNumber*) message)->value);
         
     } else if (error) {
         EjsObj *saveException = ejs->exception;
@@ -372,6 +413,7 @@ char *ejsGetErrorMsg(Ejs *ejs, int withStack)
         str = ejsToString(ejs, error);
         buf = mprStrdup(ejs, ejsGetString(ejs, str));
         ejs->exception = saveException;
+
     } else {
         buf = mprStrdup(ejs, "");
     }
