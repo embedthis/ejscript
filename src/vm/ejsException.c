@@ -362,7 +362,7 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
  */
 cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
 {
-    EjsObj      *message, *stack, *error, *vp;
+    EjsObj      *message, *stack, *error;
     EjsString   *str;
     EjsObj      *saveException;
     cchar       *tag;

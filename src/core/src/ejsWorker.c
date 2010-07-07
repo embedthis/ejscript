@@ -406,12 +406,10 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     callback = ejsGetProperty(ejs, (EjsObj*) worker, msg->callbackSlot);
 
     switch (msg->callbackSlot) {
-    case ES_Worker_onclose:
-        event = ejsCreate(ejs, ejs->eventType, 0);
-        break;
     case ES_Worker_onerror:
         event = ejsCreate(ejs, ejs->errorEventType, 0);
         break;
+    case ES_Worker_onclose:
     case ES_Worker_onmessage:
         event = ejsCreate(ejs, ejs->eventType, 0);
         break;
@@ -420,6 +418,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
         mprFree(mprEvent);
         return 0;
     }
+    worker->event = event;
     if (msg->data) {
 #if ES_Event_data
         ejsSetProperty(ejs, event, ES_Event_data, ejsCreateStringAndFree(ejs, msg->data));
@@ -438,7 +437,6 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
                 ejsGetPropertyByName(ejs, frame, ejsName(&qname, "", "lineno")));
         }
     }
-
     if (callback == 0 || (EjsObj*) callback == ejs->nullValue) {
         if (msg->callbackSlot == ES_Worker_onmessage) {
             mprLog(ejs, 1, "Discard message as no onmessage handler defined for worker");
@@ -470,6 +468,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
          */
         worker->obj.permanent = 0;
     }
+    worker->event = 0;
     mprFree(msg);
     mprFree(mprEvent);
     return 0;
@@ -775,6 +774,9 @@ static void destroyWorker(Ejs *ejs, EjsWorker *worker)
 static void markWorker(Ejs *ejs, EjsWorker *worker)
 {
     ejsMarkObject(ejs, (EjsObj*) worker);
+    if (worker->event) {
+        ejsMarkObject(ejs, (EjsObj*) worker->event);
+    }
 }
 
 

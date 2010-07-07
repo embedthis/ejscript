@@ -63,7 +63,9 @@ static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
  */
 static EjsObj *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **argv)
 {
-    ejsSetProperty(ejs, error, ES_Error_message, ejsToString(ejs, argv[0]));
+    if (argc > 0) {
+        ejsSetProperty(ejs, error, ES_Error_message, ejsToString(ejs, argv[0]));
+    }
 #if ES_Error_timestamp
     ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime(ejs)));
 #endif

@@ -1017,7 +1017,7 @@ extern int ejsGrowObject(Ejs *ejs, EjsObj *obj, int numSlots);
     @param obj Object to mark as currently being used.
     @ingroup EjsObj
  */
-extern void     ejsMarkObject(Ejs *ejs, EjsObj *obj);
+extern void     ejsMarkObject(Ejs *ejs, void *obj);
 
 extern int      ejsGetSlot(Ejs *ejs, EjsObj *obj, int slotNum);
 extern EjsObj   *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs);
@@ -2398,6 +2398,7 @@ typedef struct EjsWorker {
     EjsObj          obj;                            /**< Logically extentends Object */
     char            *name;                          /**< Optional worker name */
     Ejs             *ejs;                           /**< Interpreter */
+    EjsObj          *event;                         /**< Current event object */
     struct EjsWorker *pair;                         /**< Corresponding worker object in other thread */
     char            *scriptFile;                    /**< Script or module to run */
     char            *scriptLiteral;                 /**< Literal script string to run */

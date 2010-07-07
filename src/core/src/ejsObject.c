@@ -583,14 +583,17 @@ static int lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
 /*
     Mark the object properties for the garbage collector
  */
-void ejsMarkObject(Ejs *ejs, EjsObj *obj)
+void ejsMarkObject(Ejs *ejs, void *vp)
 {
     EjsSlot     *sp;
+    EjsObj      *obj;
     int         i;
 
-    //  MOB -- put test if marked here
-    ejsMark(ejs, (EjsObj*) obj->type);
+    obj = (EjsObj*) vp;
 
+    if (!obj->type->constructor.block.obj.marked) {
+        ejsMark(ejs, (EjsObj*) obj->type);
+    }
     sp = obj->slots;
     for (i = 0; i < obj->numSlots; i++, sp++) {
         if (sp->value.ref != ejs->nullValue) {      //  MOB test permanent

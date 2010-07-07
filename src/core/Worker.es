@@ -145,11 +145,7 @@ module ejs {
         Event for Web Workers
         @spec WebWorker
      */
-    class Event extends Error { 
-        function Event() {
-            super("Event")
-        }
-    }
+    class Event extends Error {}
 
     /** 
         Error event for Web Workers
