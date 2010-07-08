@@ -7,6 +7,88 @@
 module ejs {
 
     /**
+        Base class for error exception objects. Exception objects are created by the system as part of changing 
+        the normal flow of execution when some error condition occurs. 
+
+        When an exception is created and acted upon ("thrown"), the system transfers the flow of control to a 
+        pre-defined instruction stream (the handler or "catch" code). The handler may return processing to the 
+        point at which the exception was thrown or not. It may re-throw the exception or pass control up the call stack.
+        @stability evolving
+     */
+    native dynamic class Error {
+
+        use default namespace public
+
+        /** 
+            Source filename of the script that created the error
+         */
+        function get filename(): Path
+            Path(stack[0].filename)
+
+        /** 
+            Source line number in the script that created the error
+         */
+        function get lineno(): Number
+            stack[0].lineno
+
+        /**
+            Supplemental error data
+         */
+        enumerable var data: Object
+
+        /**
+            Error message
+         */
+        enumerable var message: String
+
+        private var _stack: Array
+
+        /**
+            Execution call stack. Contains the execution stack backtrace at the point the Error object was created.
+            The stack is an array of stack frame records. Each record consists of the following properties: 
+                {file: String, lineno: Number, func: String, code: String}
+         */
+        function get stack(): Array {
+            if (!_stack) {
+                _stack = capture()
+            }
+            return _stack
+        }
+
+        /** 
+            Time the event was created. The Context constructor will automatically set the timestamp to the current time.  
+         */
+        enumerable var timestamp: Date
+
+        /**
+            Optional error code
+         */
+        enumerable var code: Number
+
+        /**
+            Construct a new Error object.
+            @params message Message to use when defining the Error.message property. Typically a string but can be an
+                object of any type.
+         */
+        native function Error(message: String? = null)
+
+        /**
+            Capture the stack. This call re-captures the stack and updates the stack property.
+            @param uplevels Skip a given count of stack frames from the stop of the call stack.
+         */
+        native function capture(uplevels: Number): Array
+
+        function formatStack(): String {
+            let result = ""
+            let i = 0
+            for each (frame in stack) {
+                result += " [%02d] %s, line %d, %s, %s\n".format(i++, ...frame)
+            }
+            return result
+        }
+    }
+
+    /**
         Arguments error exception class. 
         Thrown the arguments cannot be cast to the required type or in strict mode if there are too few or too 
         many arguments.
@@ -59,88 +141,6 @@ module ejs {
             @params message Message to use when defining the Error.message property
          */
         native function InstructionError(message: String? = null) 
-    }
-
-    /**
-        Base class for error exception objects. Exception objects are created by the system as part of changing 
-        the normal flow of execution when some error condition occurs. 
-
-        When an exception is created and acted upon ("thrown"), the system transfers the flow of control to a 
-        pre-defined instruction stream (the handler or "catch" code). The handler may return processing to the 
-        point at which the exception was thrown or not. It may re-throw the exception or pass control up the call stack.
-        @stability evolving
-     */
-    native dynamic class Error {
-
-        use default namespace public
-
-        /** 
-            Source filename of the script that created the error
-         */
-        function get filename(): String
-            stack[0].filename
-
-        /** 
-            Source line number in the script that created the error
-         */
-        function get lineno(): String
-            stack[0].lineno
-
-        /**
-            Supplemental error data
-         */
-        var data: Object
-
-        /**
-            Error message
-         */
-        var message: String
-
-        private var _stack: Array
-
-        /**
-            Execution call stack. Contains the execution stack backtrace at the point the Error object was created.
-            The stack is an array of stack frame records. Each record consists of the following properties: 
-                {file: String, line: Number, functionName: String, code: String}
-         */
-        function get stack(): Array {
-            if (!_stack) {
-                _stack = capture()
-            }
-            return _stack
-        }
-
-        /** 
-            Time the event was created. The Context constructor will automatically set the timestamp to the current time.  
-         */
-        var timestamp: Date
-
-        /**
-            Optional error code
-         */
-        var code: Number
-
-        /**
-            Construct a new Error object.
-            @params message Message to use when defining the Error.message property. Typically a string but can be an
-                object of any type.
-         */
-        native function Error(message: String? = null)
-
-        /**
-            Capture the stack. This call re-captures the stack and updates the stack property.
-            @param uplevels Skip a given count of stack frames from the stop of the call stack.
-         */
-        native function capture(uplevels: Number): Array
-
-        function formatStack(): String {
-            let result = ""
-            let i = 0
-            for each (frame in stack) {
-                result += " [%02d] %s, line %d, %s(), %s\n".format(i++, ...frame)
-            }
-            return result
-        }
     }
 
     /**

@@ -52,6 +52,6 @@
 #define ES_ejs_db_couch_Couch_NUM_INSTANCE_PROP                        27
 #define ES_ejs_db_couch_Couch_NUM_INHERITED_PROP                       0
 
-#define _ES_CHECKSUM_ejs_db_couch   40605
+#define _ES_CHECKSUM_ejs_db_couch   40602
 
 #endif

@@ -294,9 +294,9 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
                 }
                 frame = ejsCreateSimpleObject(ejs);
                 ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "filename"), 
-                    ejsCreateString(ejs, fp->filename ? fp->filename : "undefined"));
+                    ejsCreatePath(ejs, fp->filename ? fp->filename : "undefined"));
                 ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "lineno"), ejsCreateNumber(ejs, fp->lineNumber));
-                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "function"), ejsCreateString(ejs, fp->function.name));
+                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "func"), ejsCreateString(ejs, fp->function.name));
                 ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "code"), ejsCreateString(ejs, line));
                 ejsSetProperty(ejs, stack, index++, frame);
             }

@@ -329,6 +329,7 @@ module ejs {
         obj is target
 
     /**  
+MOB - removed because such a common global name is dangerous
         DEPRECATED - Use App.stderr.write() and App.stderr.writeLine()
         Write to the standard error. This call writes the arguments to the standard error with a new line appended. 
         It evaluates the arguments, converts the result to strings and prints the result to the standard error. 
@@ -337,19 +338,21 @@ module ejs {
         @spec ejs
         @hide
         @deprecated
-     */
     native function error(...args): void
+     */
 
     /**
+MOB - removed because such a common global name is dangerous
         DEPRECATED
         Read from the standard input. This call reads a line of input from the standard input
         @return A string containing the input. Returns null on EOF.
         @hide
         @deprecated
-     */
     native function input(): String
+     */
 
     /**  
+MOB - removed because such a common global name is dangerous
         DEPRECATED - Use print(), App.stdout.write() and App.stdout.writeLine()
         Print the arguments to the standard output with a new line appended. This call evaluates the arguments, 
         converts the result to strings and prints the result to the standard output. Arguments are converted to 
@@ -358,8 +361,8 @@ module ejs {
         @spec ejs
         @hide
         @deprecated
-     */
     native function output(...args): void
+     */
 }
 
 

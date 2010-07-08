@@ -51,8 +51,6 @@
 #define ES_printHash_o                                                 1
 #define ES_instanceOf_obj                                              0
 #define ES_instanceOf_target                                           1
-#define ES_error_args                                                  0
-#define ES_output_args                                                 0
 #define ES_deserialize_str                                             0
 #define ES_serialize_obj                                               0
 #define ES_serialize_options                                           1

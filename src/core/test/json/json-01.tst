@@ -1,6 +1,5 @@
-
 /*
- *  JSON tests
+    JSON tests
  */
 
 s = "a"

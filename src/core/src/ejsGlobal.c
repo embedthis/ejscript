@@ -101,10 +101,9 @@ static EjsObj *cloneBase(Ejs *ejs, EjsObj *ignored, int argc, EjsObj **argv)
 
 
 /** DEPRECATED
-    
+    MOB - remove
     Print the arguments to the standard error with a new line.
     static function error(...args): void
- */
 static EjsObj *error(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsString   *s;
@@ -133,6 +132,7 @@ static EjsObj *error(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     rc = write(2, "\n", 1);
     return 0;
 }
+ */
 
 
 /*  
@@ -181,10 +181,10 @@ static EjsObj *hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
 
 /** 
+    MOB REMOVE
     DEPREACATED
     Read a line of input
     static function input(): String
- */
 static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprFileSystem   *fs;
@@ -217,6 +217,7 @@ static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mprFree(buf);
     return result;
 }
+ */
 
 
 /*  
@@ -475,11 +476,12 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     ejsBindFunction(ejs, block, ES_parseInt, parseInt);
     ejsBindFunction(ejs, block, ES_print, printLine);
 
+#if UNUSED
     /* DEPRECATED */
     ejsBindFunction(ejs, block, ES_error, error);
     ejsBindFunction(ejs, block, ES_input, input);
     ejsBindFunction(ejs, block, ES_output, printLine);
-
+#endif
     ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
 }
 
