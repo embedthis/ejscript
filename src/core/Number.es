@@ -59,6 +59,9 @@ module ejs {
          */
         native static const MaxValue: Number
 
+        /** @hide */
+        static const MaxInt32: Number = 2147483647
+
         /**
             Return the minimum value this number type can assume.
             @return A number with its value set to the minimum value allowed.

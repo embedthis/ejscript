@@ -193,7 +193,7 @@ module ejs {
             @param timeout Time to wait in milliseconds
             @return The arguments array provided to emitSuccess
          */
-        function wait(timeout: Number = 86400000): Object {
+        function wait(timeout: Number = Number.MaxInt32): Object {
             let waitComplete = false
             let result
             function wakeup(event, ...args) {

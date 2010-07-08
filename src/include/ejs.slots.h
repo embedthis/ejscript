@@ -1291,8 +1291,9 @@
 #define ES_Number_NEGATIVE_INFINITY                                    4
 #define ES_Number_POSITIVE_INFINITY                                    5
 #define ES_Number_MaxValue                                             6
-#define ES_Number_MinValue                                             7
-#define ES_Number_NUM_CLASS_PROP                                       8
+#define ES_Number_MaxInt32                                             7
+#define ES_Number_MinValue                                             8
+#define ES_Number_NUM_CLASS_PROP                                       9
 
 /*
    Prototype (instance) slots for "Number" type 
@@ -1931,6 +1932,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1311657
+#define _ES_CHECKSUM_ejs   1312360
 
 #endif
