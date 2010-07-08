@@ -1,0 +1,15 @@
+/*
+    Creating a class before its declaration causes DEFINE_CLASS to run after NEW
+    This means the class and class methods have not captured the scope when they are invoked and globals are not visible.
+ */
+
+var ss = new Shape
+assert(ss)
+ss.ifun()
+
+class Shape {
+    function ifun() {
+        assert(this == ss)
+    }
+}   
+    
