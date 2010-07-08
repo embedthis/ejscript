@@ -27,6 +27,6 @@
 #define ES_ejs_web_jsgi_Static_app                                     0
 #define ES_ejs_web_jsgi_Static_options                                 1
 
-#define _ES_CHECKSUM_ejs_web_jsgi   13585
+#define _ES_CHECKSUM_ejs_web_jsgi   13012
 
 #endif

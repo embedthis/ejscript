@@ -31,6 +31,6 @@
 #define ES_ejs_tar_Tar_NUM_INSTANCE_PROP                               6
 #define ES_ejs_tar_Tar_NUM_INHERITED_PROP                              0
 
-#define _ES_CHECKSUM_ejs_tar   9165
+#define _ES_CHECKSUM_ejs_tar   8993
 
 #endif

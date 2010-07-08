@@ -82,7 +82,6 @@ int ecCreateModuleSection(EcCompiler *cp)
     mp->constants->locked = 1;
     rc += ecEncodeNumber(cp, constants->len);
     rc += ecEncodeBlock(cp, (uchar*) constants->pool, constants->len);
-    mprAssert(strcmp(mp->name, "ejs.tar") != 0);
     if (createDependencySection(cp) < 0) {
         return EJS_ERR;
     }
