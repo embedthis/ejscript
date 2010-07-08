@@ -52,7 +52,7 @@ void ejsClearException(Ejs *ejs)
 {
     ejs->exception = 0;
     if (ejs->state->fp) {
-        ejs->state->fp->attentionPc = 0;
+        ejsClearAttention(ejs);
     }
 }
 

@@ -1467,19 +1467,21 @@
 #define ES_Promise_addListener                                         10
 #define ES_Promise_emit                                                11
 #define ES_Promise_timer                                               12
-#define ES_Promise_fired                                               13
-#define ES_Promise_addCallback                                         14
-#define ES_Promise_addCancelback                                       15
-#define ES_Promise_addErrback                                          16
-#define ES_Promise_emitSuccess                                         17
-#define ES_Promise_emitError                                           18
-#define ES_Promise_emitCancel                                          19
-#define ES_Promise_cancel                                              20
-#define ES_Promise_then                                                21
-#define ES_Promise_timeout                                             22
-#define ES_Promise_wait                                                23
-#define ES_Promise_issue                                               24
-#define ES_Promise_NUM_INSTANCE_PROP                                   25
+#define ES_Promise_complete                                            13
+#define ES_Promise_onSuccess                                           14
+#define ES_Promise_onCancel                                            15
+#define ES_Promise_onError                                             16
+#define ES_Promise_onProgress                                          17
+#define ES_Promise_onTimeout                                           18
+#define ES_Promise_emitSuccess                                         19
+#define ES_Promise_emitError                                           20
+#define ES_Promise_emitCancel                                          21
+#define ES_Promise_cancel                                              22
+#define ES_Promise_then                                                23
+#define ES_Promise_timeout                                             24
+#define ES_Promise_wait                                                25
+#define ES_Promise_issue                                               26
+#define ES_Promise_NUM_INSTANCE_PROP                                   27
 #define ES_Promise_NUM_INHERITED_PROP                                  12
 #define ES_Reflect_NUM_CLASS_PROP                                      0
 
@@ -1929,6 +1931,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1305444
+#define _ES_CHECKSUM_ejs   1311657
 
 #endif

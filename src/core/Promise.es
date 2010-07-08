@@ -16,14 +16,16 @@ module ejs {
      */
     dynamic class Promise extends Emitter {
         private var timer: Timer
-        private var fired: Boolean
+        private var complete: Boolean
+
+        use default namespace public 
 
         /** 
             Add a callback listener for the "success" event. Returns this promise object.
             @param listener Callback function
             @return Returns this promise
          */
-        function addCallback(listener: Function): Promise {
+        function onSuccess(listener: Function): Promise {
             observe("success", listener)
             return this
         }
@@ -33,7 +35,7 @@ module ejs {
             @param listener Callback function
             @return Returns this promise
          */
-        function addCancelback(listener: Function): Promise {
+        function onCancel(listener: Function): Promise {
             observe("cancel", listener)
             return this
         }
@@ -43,8 +45,28 @@ module ejs {
             @param listener Callback function
             @return Returns this promise
          */
-        function addErrback(listener: Function): Promise {
+        function onError(listener: Function): Promise {
             observe("error", listener)
+            return this
+        }
+
+        /** 
+            Add a progress callback listener for the "progress" event. Returns this promise object.
+            @param listener Callback function
+            @return Returns this promise
+         */
+        function onProgress(listener: Function): Promise {
+            observe("progress", listener)
+            return this
+        }
+
+        /** 
+            Add a timeout callback listener for the "timeout" event. Returns this promise object.
+            @param listener Callback function
+            @return Returns this promise
+         */
+        function onTimeout(listener: Function): Promise {
+            observe("timeout", listener)
             return this
         }
 
@@ -54,14 +76,15 @@ module ejs {
             @param args Args to pass to the listener
          */
         function emitSuccess(...args): Void {
-            if (fired) {
+            if (complete) {
                 return
             }
-            fired = true
+            complete = true
             try {
                 issue("success", ...args)
             } catch (e) {
-print("CATCH", e)
+                //  MOB
+                print("CATCH", e)
                 emitError(e)
             }
         }
@@ -72,10 +95,10 @@ print("CATCH", e)
             @param args Args to pass to the listener
          */
         function emitError(...args): Void {
-            if (fired) {
+            if (complete) {
                 return
             }
-            fired = true
+            complete = true
             try {
                 issue("error", ...args)
             } catch (e) {
@@ -92,13 +115,13 @@ print("CATCH", e)
         function emitCancel(...args): Void
             issue("cancel", ...args)
 
+//  MOB -- why have cancel and emitCancel
         /** 
             Cancels the promise and removes "success" and "error" and listeners then issues a cancel event.
             @param args Args to pass to the "cancel" event listener
          */
         function cancel(...args): Void {
-            cancel = true
-            fired = true
+            complete = true
             if (timer) {
                 timer.stop()
             }
@@ -106,18 +129,23 @@ print("CATCH", e)
             issue("cancel", ...args)
         }
 
+//  MOB -- what about cancel?
         /** 
             Convenience function to register callbacks. 
-            @param success Success callback passed to addCallback
-            @param error error callback passed to addErrback
-            @param success Success callback passed to addCallback
-            @param progress Currently ignored
+            @param success Success callback passed to onSuccess
+            @param error error callback passed to onError
+            @param cancel Cancel callback passed to onCancel
+            @param progress Progress callback passed to onProgress
             @return this promise
          */
-        function then(success: Function, error: Function? = null, progress: Function? = null): Promise {
+        function then(success: Function, error: Function? = null, cancel: Function? = null, 
+                progress: Function? = null): Promise {
             observe("success", success)
             if (error) {
                 observe("error", error)
+            }
+            if (cancel) {
+                observe("cancel", cancel)
             }
             if (progress) {
                 observe("progress", progress)
@@ -135,46 +163,48 @@ print("CATCH", e)
             if (timer) {
                 timer.stop()
             }
-            let done
-            function awake(arg) {
-                done = true
+            let timeoutComplete
+            function wakeup(arg) {
+                timeoutComplete = true
                 if (timer) {
                     timer.stop()
                 }
             }
-            observe("success", awake)
-            observe("error", awake)
-            observe("cancel", awake)
+            observe("success", wakeup)
+            observe("error", wakeup)
+            observe("cancel", wakeup)
             timer = new Timer(msec, function() {
-                if (fired || done) {
+                if (complete || timeoutComplete) {
                     return;
                 }
-                done = true
+                timeoutComplete = true
                 timer = null
                 issue("timeout")
                 issue("error")
             })
+            timer.start()
             return this
         }
         
+        //  MOB - fix MaxInt
         /** 
             Wait for the promise to complete for a given period. This blocks execution until the promise completes or 
             is cancelled.
             @param timeout Time to wait in milliseconds
             @return The arguments array provided to emitSuccess
          */
-        function wait(timeout: Number = -1): Object {
-            let done = false
+        function wait(timeout: Number = 86400000): Object {
+            let waitComplete = false
             let result
-            function awake(event, ...args) {
-                done = true
+            function wakeup(event, ...args) {
+                waitComplete = true
                 result = args
             }
-            observe(["cancel", "error", "success"], awake)
-            timer = new Timer(timeout, awake)
+            observe(["cancel", "error", "success"], wakeup)
+            timer = new Timer(timeout, wakeup)
             timer.start()
-            while (!done && !fired) {
-                App.serviceEvents(timeout, true)
+            while (!waitComplete && !complete) {
+                App.serviceEvents(1, timeout)
             }
             return result
         }

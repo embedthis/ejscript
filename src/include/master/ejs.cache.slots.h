@@ -35,6 +35,6 @@
 #define ES_ejs_cache_Cache_NUM_INSTANCE_PROP                           3
 #define ES_ejs_cache_Cache_NUM_INHERITED_PROP                          0
 
-#define _ES_CHECKSUM_ejs_cache   11523
+#define _ES_CHECKSUM_ejs_cache   11519
 
 #endif

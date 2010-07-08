@@ -26,7 +26,8 @@ module ejs {
             When the callback is invoked, it will be invoked with the value of "this" set to the timer unless the
                 function has bound a "this" value via Function.bind.
             @param period Delay in milliseconds before the timer will run
-            @param callback Function to invoke when the timer is due.
+            @param callback Function to invoke when the timer is due. The callback is invoked with the following signature:
+                function callback(error: Error): Void
             @param args Callback arguments
          */
         native function Timer(period: Number, callback: Function, ...args)
@@ -51,6 +52,8 @@ module ejs {
 
         /**
             Error callback function for exceptions inside the Timer callback
+            The callback is invoked with the following signature:
+                function callback(error: Error): Void
          */
         native function get onerror(): Function
         native function set onerror(callback: Function): Void

@@ -1550,9 +1550,12 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
          */
         CASE (EJS_OP_ATTENTION):
             mprAssert(FRAME->attentionPc);
-            FRAME->pc = FRAME->attentionPc;
-            mprAssert(FRAME->pc);
-            FRAME->attentionPc = 0;
+            //  MOB SAFETY
+            if (FRAME->attentionPc) {
+                FRAME->pc = FRAME->attentionPc;
+                mprAssert(FRAME->pc);
+                FRAME->attentionPc = 0;
+            }
             if (mprHasAllocError(ejs) && !ejs->exception) {
                 mprResetAllocError(ejs);
                 ejsThrowMemoryError(ejs);

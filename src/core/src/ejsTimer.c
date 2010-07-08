@@ -122,8 +122,7 @@ static EjsObj *timer_set_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 static int timerCallback(EjsTimer *tp, MprEvent *e)
 {
     Ejs         *ejs;
-    EjsString   *msg;
-    EjsObj      *thisObj;
+    EjsObj      *thisObj, *error;
 
     mprAssert(tp);
     mprAssert(tp->args);
@@ -134,9 +133,9 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
     ejsRunFunction(tp->ejs, tp->callback, thisObj, tp->args->length, tp->args->data);
     if (ejs->exception) {
         if (tp->onerror) {
-            msg = ejsCreateString(ejs, ejsGetErrorMsg(ejs, 1));
+            error = ejs->exception;
             ejsClearException(ejs);
-            ejsRunFunction(tp->ejs, tp->onerror, thisObj, 1, (EjsObj**) &msg);
+            ejsRunFunction(tp->ejs, tp->onerror, thisObj, 1, (EjsObj**) &error);
         }
     }
     return 0;
