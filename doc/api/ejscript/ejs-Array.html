@@ -56,12 +56,14 @@
    <tr class='apiDef'><td class='apiType'>iterator const override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Iterator for this array to be used by "for each (v in array)".</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#indexOf'><b>indexOf</b></a>(element: <a href='ejs-Object.html'>Object</a>, startIndex: <a href='ejs-Number.html'>Number</a> = 0): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Search for an item using strict equality "===".</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#insert'><b>insert</b></a>(pos: <a href='ejs-Number.html'>Number</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Insert elements.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#join'><b>join</b></a>(sep: <a href='ejs-String.html'>String</a> = undefined): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the array into a string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#join'><b>join</b></a>(sep: <a href='ejs-String.html'>String</a> = ): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the array into a string.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#lastIndexOf'><b>lastIndexOf</b></a>(element: <a href='ejs-Object.html'>Object</a>, startIndex: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find an item searching from the end of the arry.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#map'><b>map</b></a>(mapper: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Call the mapper on each array element in increasing index order and return a new array with the values returned 
 from the mapper.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#pop'><b>pop</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove and return the last value in the array.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#push'><b>push</b></a>(items: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Append items to the end of the array.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reduce'><b>reduce</b></a>(callback: <a href='ejs-Function.html'>Function</a>, initial = null): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reduce array elements.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reduceRight'><b>reduceRight</b></a>(callback: <a href='ejs-Function.html'>Function</a>, initial = null): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reduce array elements.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reject'><b>reject</b></a>(match: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find non-matching elements.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#remove'><b>remove</b></a>(start: <a href='ejs-Number.html'>Number</a>, end: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove elements.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reverse'><b>reverse</b></a>(): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reverse the order of the objects in the array.</td></tr>
@@ -211,14 +213,14 @@ This method is identical to the.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Find the first matching element.</p>
-<dl><dt>Description</dt><dd>Iterate over elements in the object and select the first element for which the matching function is true.
+<dl><dt>Description</dt><dd>Iterate over elements in the object and select the first element for which the matching function returns true.
 The matching function is called with the following signature:
 function match(element: Object, elementIndex: Number, arr: Array): Boolean.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>match: <a href='ejs-Function.html'>Function</a> </td><td>Matching function.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>True when the match function returns true.</dd></dl>
+<dd>The matched item.</dd></dl>
 <dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
 </div>
@@ -316,7 +318,7 @@ insert at the start.</dd></dl>
 <hr />
 <a name='join'></a>
 <div class='api'>
-<div class='apiSig'>const   public  join(sep: <a href='ejs-String.html'>String</a> = undefined): <a href='ejs-String.html'>String</a>
+<div class='apiSig'>const   public  join(sep: <a href='ejs-String.html'>String</a> = ): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
 <p>Convert the array into a string.</p>
@@ -324,7 +326,7 @@ insert at the start.</dd></dl>
 concatenating the strings inserting a separator between each.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>sep: <a href='ejs-String.html'>String</a> </td><td>Element separator. [default: undefined]</td></tr></table></dd>
+<tr class='param'><td class='param'>sep: <a href='ejs-String.html'>String</a> </td><td>Element separator. [default: ]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A string.</dd></dl>
 </div>
@@ -386,6 +388,46 @@ function mapper(element: Object, elementIndex: Number, arr: Array): Object.</dd>
 </div>
 </div>
 <hr />
+<a name='reduce'></a>
+<div class='api'>
+<div class='apiSig'>const   public  reduce(callback: <a href='ejs-Function.html'>Function</a>, initial = null): <a href='ejs-Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<p>Reduce array elements.</p>
+<dl><dt>Description</dt><dd>Apply a callback function against two values of the array and reduce to a single value. Traversal is from
+left to right. The first time the callback is called, previous will be set to the first value and current
+will be set to the second value. If an <a href='#initial'>initial</a> parameter is provided, then previous will be set to initial
+and current will be set to the first value.
+The callback is called with the following signature:
+function callback(previous, current, index: Number, array: Array): Object.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Callback function.</td></tr><tr class='param'><td class='param'>initial </td><td>Initial value to use in the reduction. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Returns a new array containing all matching elements.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='reduceRight'></a>
+<div class='api'>
+<div class='apiSig'>const   public  reduceRight(callback: <a href='ejs-Function.html'>Function</a>, initial = null): <a href='ejs-Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<p>Reduce array elements.</p>
+<dl><dt>Description</dt><dd>Apply a callback function against two values of the array and reduce to a single value. Traversal is from
+right to left. The first time the callback is called, previous will be set to the first value and current
+will be set to the second value. If an <a href='#initial'>initial</a> parameter is provided, then previous will be set to initial
+and current will be set to the first value.
+The callback is called with the following signature:
+function callback(previous, current, index: Number, array: Array): Object.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Callback function.</td></tr><tr class='param'><td class='param'>initial </td><td>Initial value to use in the reduction. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Returns a new array containing all matching elements.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='reject'></a>
 <div class='api'>
 <div class='apiSig'>const   public  reject(match: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Array.html'>Array</a>
@@ -393,8 +435,7 @@ function mapper(element: Object, elementIndex: Number, arr: Array): Object.</dd>
 <div class='apiDetail'>
 <p>Find non-matching elements.</p>
 <dl><dt>Description</dt><dd>Iterate over all elements in the array and select all elements for which 
-the filter function returns false. The matching function is called with the following signature:<br/><br/>
-function match(element: Object, elementIndex: Number, arr: Array): Boolean.</dd></dl>
+the filter function returns false. The matching function is called with the following signature:<br/><br/>function match(element: Object, elementIndex: Number, arr: Array): Boolean.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>match: <a href='ejs-Function.html'>Function</a> </td><td>Matching function.</td></tr></table></dd>

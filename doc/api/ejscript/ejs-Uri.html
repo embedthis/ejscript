@@ -33,44 +33,46 @@
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='basename'></a>
-   <tr><td nowrap align='left'>public const get </td><td>basename</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The base of portion of the Uri. The base portion is the trailing portion of the path without any 
+   <tr><td nowrap align='left'>public const get </td><td>basename</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The base of portion of the URI. The base portion is the trailing portion of the path without any 
 directory elements.</td></tr>
 <a name='complete'></a>
-   <tr><td nowrap align='left'>public const get </td><td>complete</td><td><a href='ejs-Uri.html'>Uri</a></td><td>A completed Uri including scheme, host. The Uri path will be normalized and completed with default values 
+   <tr><td nowrap align='left'>public const get </td><td>complete</td><td><a href='ejs-Uri.html'>Uri</a></td><td>A completed URI including scheme, host. The URI path will be normalized and completed with default values 
 for missing components.</td></tr>
+<a name='components'></a>
+   <tr><td nowrap align='left'>public const get </td><td>components</td><td><a href='ejs-Object.html'>Object</a></td><td>Break a URI into its components by converting the URI to an absolute URI and breaking into components. The components are: scheme, host, port, path, reference and query.</td></tr>
 <a name='dirname'></a>
-   <tr><td nowrap align='left'>public const get </td><td>dirname</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The directory portion of a Uri path. The directory portion is the leading portion including all directory 
-elements of the Uri path excluding the base name. On some systems, it will include a drive specifier.</td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>dirname</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The directory portion of a URI path. The directory portion is the leading portion including all directory 
+elements of the URI path excluding the base name. On some systems, it will include a drive specifier.</td></tr>
 <a name='filename'></a>
    <tr><td nowrap align='left'>public const get </td><td>filename</td><td><a href='ejs-Path.html'>Path</a></td><td>&nbsp;</td></tr>
 <a name='hasExtension'></a>
-   <tr><td nowrap align='left'>public const get </td><td>hasExtension</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri has an explicit extension. </td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>hasExtension</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the URI has an explicit extension. </td></tr>
 <a name='hasHost'></a>
-   <tr><td nowrap align='left'>public const get </td><td>hasHost</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit host component. For example: "www.example.com".</td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>hasHost</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the URI have an explicit host component. For example: "www.example.com".</td></tr>
 <a name='hasPort'></a>
-   <tr><td nowrap align='left'>public const get </td><td>hasPort</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit port number. </td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>hasPort</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the URI have an explicit port number. </td></tr>
 <a name='hasQuery'></a>
-   <tr><td nowrap align='left'>public const get </td><td>hasQuery</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit query component. </td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>hasQuery</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the URI have an explicit query component. </td></tr>
 <a name='hasReference'></a>
-   <tr><td nowrap align='left'>public const get </td><td>hasReference</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit reference component. </td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>hasReference</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the URI have an explicit reference component. </td></tr>
 <a name='hasScheme'></a>
-   <tr><td nowrap align='left'>public const get </td><td>hasScheme</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the Uri have an explicit scheme (protocol) specifier. For example: "http://".</td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>hasScheme</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Does the URI have an explicit scheme (protocol) specifier. For example: "http://".</td></tr>
 <a name='isAbsolute'></a>
-   <tr><td nowrap align='left'>public const get </td><td>isAbsolute</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the Uri is absolute. Set to true if the Uri is an absolute path with the path component beginning with "/".</td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>isAbsolute</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the URI is absolute. Set to true if the URI is an absolute path with the path component beginning with "/".</td></tr>
 <a name='isDir'></a>
-   <tr><td nowrap align='left'>public const get </td><td>isDir</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the Uri is a directory Uri. Set to true if the Uri ends with "/". NOTE: this only tests the Uri and 
-not any physical resource associated with the Uri.</td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>isDir</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the URI is a directory URI. Set to true if the URI ends with "/". NOTE: this only tests the URI and 
+not any physical resource associated with the URI.</td></tr>
 <a name='isRegular'></a>
-   <tr><td nowrap align='left'>public const get </td><td>isRegular</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the Uri is a regular resource and not a directory. Set to true if the Uri does not end with "/". 
-NOTE: this only tests the Uri and not any physical resource associated with the Uri.</td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>isRegular</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is the URI is a regular resource and not a directory. Set to true if the URI does not end with "/". 
+NOTE: this only tests the URI and not any physical resource associated with the URI.</td></tr>
 <a name='isRelative'></a>
-   <tr><td nowrap align='left'>public const get </td><td>isRelative</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is if the Uri is relative. Set to true if the Uri's path component does not begin with "/".</td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>isRelative</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Is if the URI is relative. Set to true if the URI's path component does not begin with "/".</td></tr>
 <a name='mimeType'></a>
-   <tr><td nowrap align='left'>public const get </td><td>mimeType</td><td><a href='ejs-String.html'>String</a></td><td>The mime type of the Uri. This is set to a mime type string by examining the Uri extension. Set to null if
-the Uri has no extension.</td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>mimeType</td><td><a href='ejs-String.html'>String</a></td><td>The mime type of the URI. This is set to a mime type string by examining the URI extension. Set to null if
+the URI has no extension.</td></tr>
 <a name='normalize'></a>
-   <tr><td nowrap align='left'>public const get </td><td>normalize</td><td><a href='ejs-Uri.html'>Uri</a></td><td>Normalized Uri by removing all redundant and invalid Uri components. Set to a Uri with "segment/.." 
-and "./" components removed. The value will not be converted to an absolute Uri nor will it map character case.</td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>normalize</td><td><a href='ejs-Uri.html'>Uri</a></td><td>Normalized URI by removing all redundant and invalid URI components. Set to a URI with "segment/.." 
+and "./" components removed. The value will not be converted to an absolute URI nor will it map character case.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -80,23 +82,22 @@ and "./" components removed. The value will not be converted to an absolute Uri 
 <h2 class='classSection'>Uri Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#components'><b>components</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Break a Uri into its components by converting the Uri to an absolute Uri and breaking into components.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decode'><b>decode</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a Uri encoded string.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decodeComponent'><b>decodeComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a Uri encoded component.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#encode'><b>encode</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a Uri.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#encodeComponent'><b>encodeComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a Uri component.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#endsWith'><b>endsWith</b></a>(suffix: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the Uri path ends with the given suffix.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#join'><b>join</b></a>(other: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join Uris.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#joinExt'><b>joinExt</b></a>(ext: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join an extension to a Uri.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#relative'><b>relative</b></a>(target: <a href='ejs-Uri.html'>Uri</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a Uri with a releative path from the current Uri to a given Uri.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#replaceExt'><b>replaceExt</b></a>(ext: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace the extension and return a new Uri.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#same'><b>same</b></a>(other: <a href='ejs-Object.html'>Object</a>, exact: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two Uris test if they represent the same resource.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#startsWith'><b>startsWith</b></a>(prefix: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the Uri path starts with the given prefix.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const override </td><td><a href='#toJSON'><b>toJSON</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the Uri to a JSON string.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const override </td><td><a href='#toString'><b>toString</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the Uri to a string.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trimEnd'><b>trimEnd</b></a>(pat: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a pattern from the end of the Uri path
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decode'><b>decode</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a URI encoded strin using www-url encoding.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decodeComponent'><b>decodeComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a URI encoded component using www-url encoding.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#encode'><b>encode</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a URI using www-url encoding.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#encodeComponent'><b>encodeComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a URI component suitable for the "application/x-www-form-urlencoded" mime type.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#endsWith'><b>endsWith</b></a>(suffix: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the URI path ends with the given suffix.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#join'><b>join</b></a>(other: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join URIs.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#joinExt'><b>joinExt</b></a>(ext: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join an extension to a URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#relative'><b>relative</b></a>(target: <a href='ejs-Uri.html'>Uri</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a URI with a releative path from the current URI to a given URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#replaceExt'><b>replaceExt</b></a>(ext: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Replace the extension and return a new URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#same'><b>same</b></a>(other: <a href='ejs-Object.html'>Object</a>, exact: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two URIs test if they represent the same resource.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#startsWith'><b>startsWith</b></a>(prefix: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the URI path starts with the given prefix.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const override </td><td><a href='#toJSON'><b>toJSON</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the URI to a JSON string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const override </td><td><a href='#toString'><b>toString</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the URI to a string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trimEnd'><b>trimEnd</b></a>(pat: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a pattern from the end of the URI path
 NOTE: this does a case-sensitive match.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trimExt'><b>trimExt</b></a>(): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim the extension portion off the Uri path.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trimExt'><b>trimExt</b></a>(): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim the extension portion off the URI path.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trimStart'><b>trimStart</b></a>(pat: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Trim a pattern from the start of the path
 NOTE: this does a case-sensitive match.</td></tr>
 </table>
@@ -105,33 +106,12 @@ NOTE: this does a case-sensitive match.</td></tr>
 
 <hr />
 <h2>Method Detail</h2>
-<a name='components'></a>
-<div class='api'>
-<div class='apiSig'>const   public  components(): <a href='ejs-Object.html'>Object</a>
-</div>
-<div class='apiDetail'>
-<p>Break a Uri into its components by converting the Uri to an absolute Uri and breaking into components.</p>
-<dl><dt>Description</dt><dd>The components are: scheme, host, port, path, reference and query.</dd></dl>
-<dl><dt>Options</dt>
-<dd><table class='parameters' summary ='options'>
-<td class='param'>scheme:</td><td>String.</td></tr>
-<td class='param'>host:</td><td>String.</td></tr>
-<td class='param'>port:</td><td>Number.</td></tr>
-<td class='param'>path:</td><td>String.</td></tr>
-<td class='param'>query:</td><td>String.</td></tr>
-<td class='param'>reference:</td><td>String.</td></tr>
-</table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>An object hash defining the following fields:.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='decode'></a>
 <div class='api'>
 <div class='apiSig'>static const   public  decode(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Decode a Uri encoded string.</p>
+<p>Decode a URI encoded strin using www-url encoding.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
@@ -145,7 +125,7 @@ NOTE: this does a case-sensitive match.</td></tr>
 <div class='apiSig'>static const   public  decodeComponent(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Decode a Uri encoded component.</p>
+<p>Decode a URI encoded component using www-url encoding.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
@@ -159,7 +139,10 @@ NOTE: this does a case-sensitive match.</td></tr>
 <div class='apiSig'>static const   public  encode(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Encode a Uri.</p>
+<p>Encode a URI using www-url encoding.</p>
+<dl><dt>Description</dt><dd>This replaces special characters with encoded alternative sequence.
+The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", 
+"*"", "'", "(", ")", "#", ";", ",", "/", "?", ":", ".</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
@@ -173,7 +156,11 @@ NOTE: this does a case-sensitive match.</td></tr>
 <div class='apiSig'>static const   public  encodeComponent(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Encode a Uri component.</p>
+<p>Encode a URI component suitable for the "application/x-www-form-urlencoded" mime type.</p>
+<dl><dt>Description</dt><dd>This replaces 
+special characters with encoded alternative sequence. The encode call replaces all characters 
+except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*"", "'", "(", ")". It also maps spaces to "+".
+Compared with the <a href='#encode'>encode</a> call, encodeComponent additionally encodes: "#", ";", ",", "/", "?", ":", ".</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
@@ -187,10 +174,10 @@ NOTE: this does a case-sensitive match.</td></tr>
 <div class='apiSig'>const   public  endsWith(suffix: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
-<p>Return true if the Uri path ends with the given suffix.</p>
+<p>Return true if the URI path ends with the given suffix.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>suffix: <a href='ejs-Object.html'>Object</a> </td><td>Uri or String suffix to compare with the path.</td></tr></table></dd>
+<tr class='param'><td class='param'>suffix: <a href='ejs-Object.html'>Object</a> </td><td>URI or String suffix to compare with the path.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the path does begin with the suffix.</dd></dl>
 </div>
@@ -201,11 +188,13 @@ NOTE: this does a case-sensitive match.</td></tr>
 <div class='apiSig'>const   public  join(other: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Uri.html'>Uri</a>
 </div>
 <div class='apiDetail'>
-<p>Join Uris.</p>
-<dl><dt>Description</dt><dd>Joins Uris together. If a Uris is absolute, replace the join with it and continue. If a Uri is
-relative add a separator and continue joining.</dd></dl>
+<p>Join URIs.</p>
+<dl><dt>Description</dt><dd>If a URI is absolute, replace the join with it and continue. If a URI is
+relative, replace the basename portion of the existing URI with the next joining uri and continue. For 
+example:  Uri("/admin/login").join("logout") will replace "login" with "logout" whereas 
+Uri("/admin/").join("login") will append login.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A joined Uri.</dd></dl>
+<dd>A new joined URI.</dd></dl>
 </div>
 </div>
 <hr />
@@ -214,10 +203,10 @@ relative add a separator and continue joining.</dd></dl>
 <div class='apiSig'>const   public  joinExt(ext: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a>
 </div>
 <div class='apiDetail'>
-<p>Join an extension to a Uri.</p>
-<dl><dt>Description</dt><dd>If the basename of the Uri already has an extension, this call does nothing.</dd></dl>
+<p>Join an extension to a URI.</p>
+<dl><dt>Description</dt><dd>If the basename of the URI already has an extension, this call does nothing.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A Uri with an extension.</dd></dl>
+<dd>A URI with an extension.</dd></dl>
 </div>
 </div>
 <hr />
@@ -226,14 +215,14 @@ relative add a separator and continue joining.</dd></dl>
 <div class='apiSig'>const   public  relative(target: <a href='ejs-Uri.html'>Uri</a>): <a href='ejs-Uri.html'>Uri</a>
 </div>
 <div class='apiDetail'>
-<p>Create a Uri with a releative path from the current Uri to a given Uri.</p>
+<p>Create a URI with a releative path from the current URI to a given URI.</p>
 <dl><dt>Description</dt><dd>This call computes the relative
-path from this Uri to the <a href='#target'>target</a> Uri argument.</dd></dl>
+path from this URI to the <a href='#target'>target</a> URI argument.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>target: <a href='ejs-Uri.html'>Uri</a> </td><td>Uri Target Uri to locate.</td></tr></table></dd>
+<tr class='param'><td class='param'>target: <a href='ejs-Uri.html'>Uri</a> </td><td>Uri Target URI to locate.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A new Uri object for the target Uri.</dd></dl>
+<dd>A new URI object for the target URI.</dd></dl>
 </div>
 </div>
 <hr />
@@ -242,7 +231,7 @@ path from this Uri to the <a href='#target'>target</a> Uri argument.</dd></dl>
 <div class='apiSig'>const   public  replaceExt(ext: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a>
 </div>
 <div class='apiDetail'>
-<p>Replace the extension and return a new Uri.</p>
+<p>Replace the extension and return a new URI.</p>
 <dl><dt>Returns</dt>
 <dd>A path with extension.</dd></dl>
 </div>
@@ -253,12 +242,12 @@ path from this Uri to the <a href='#target'>target</a> Uri argument.</dd></dl>
 <div class='apiSig'>const   public  same(other: <a href='ejs-Object.html'>Object</a>, exact: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
-<p>Compare two Uris test if they represent the same resource.</p>
+<p>Compare two URIs test if they represent the same resource.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>other: <a href='ejs-Object.html'>Object</a> </td><td>Other Uri to compare with.</td></tr><tr class='param'><td class='param'>exact: <a href='ejs-Boolean.html'>Boolean</a> </td><td>If exact is true, then the query and reference portions must match. [default: false]</td></tr></table></dd>
+<tr class='param'><td class='param'>other: <a href='ejs-Object.html'>Object</a> </td><td>Other URI to compare with.</td></tr><tr class='param'><td class='param'>exact: <a href='ejs-Boolean.html'>Boolean</a> </td><td>If exact is true, then the query and reference portions must match. [default: false]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>True if the Uris represent the same underlying resource.</dd></dl>
+<dd>True if the URIs represent the same underlying resource.</dd></dl>
 </div>
 </div>
 <hr />
@@ -267,12 +256,12 @@ path from this Uri to the <a href='#target'>target</a> Uri argument.</dd></dl>
 <div class='apiSig'>const   public  startsWith(prefix: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
-<p>Return true if the Uri path starts with the given prefix.</p>
+<p>Return true if the URI path starts with the given prefix.</p>
 <dl><dt>Description</dt><dd>This skips the scheme, host and port portions
-and examines the Uri path only.</dd></dl>
+and examines the URI path only.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>prefix: <a href='ejs-Object.html'>Object</a> </td><td>Uri or String prefix to compare with the Uri.</td></tr></table></dd>
+<tr class='param'><td class='param'>prefix: <a href='ejs-Object.html'>Object</a> </td><td>URI or String prefix to compare with the URI.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the path does begin with the prefix.</dd></dl>
 </div>
@@ -283,9 +272,9 @@ and examines the Uri path only.</dd></dl>
 <div class='apiSig'>const override   public  toJSON(): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Convert the Uri to a JSON string.</p>
+<p>Convert the URI to a JSON string.</p>
 <dl><dt>Returns</dt>
-<dd>A JSON string representing the Uri.</dd></dl>
+<dd>A JSON string representing the URI.</dd></dl>
 </div>
 </div>
 <hr />
@@ -294,10 +283,10 @@ and examines the Uri path only.</dd></dl>
 <div class='apiSig'>const override   public  toString(): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Convert the Uri to a string.</p>
+<p>Convert the URI to a string.</p>
 <dl><dt>Description</dt><dd>The format of the string will depend on the defined <a href='#representation'>representation</a> format.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A string representing the Uri.</dd></dl>
+<dd>A string representing the URI.</dd></dl>
 </div>
 </div>
 <hr />
@@ -306,11 +295,11 @@ and examines the Uri path only.</dd></dl>
 <div class='apiSig'>const   public  trimEnd(pat: <a href='ejs-String.html'>String</a>): <a href='ejs-Uri.html'>Uri</a>
 </div>
 <div class='apiDetail'>
-<p>Trim a pattern from the end of the Uri path
+<p>Trim a pattern from the end of the URI path
 NOTE: this does a case-sensitive match.</p>
 <dl><dt>Description</dt><dd>MOB - is this right?.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A new Uri containing the trimmed Uri TODO - should support reg expressions.</dd></dl>
+<dd>A new URI containing the trimmed URI TODO - should support reg expressions.</dd></dl>
 </div>
 </div>
 <hr />
@@ -319,9 +308,9 @@ NOTE: this does a case-sensitive match.</p>
 <div class='apiSig'>const   public  trimExt(): <a href='ejs-Uri.html'>Uri</a>
 </div>
 <div class='apiDetail'>
-<p>Trim the extension portion off the Uri path.</p>
+<p>Trim the extension portion off the URI path.</p>
 <dl><dt>Returns</dt>
-<dd>A Uri with no extension.</dd></dl>
+<dd>A URI with no extension.</dd></dl>
 </div>
 </div>
 <hr />
@@ -334,7 +323,7 @@ NOTE: this does a case-sensitive match.</p>
 NOTE: this does a case-sensitive match.</p>
 <dl><dt>Description</dt><dd>MOB - is this right?.</dd></dl>
 <dl><dt>Returns</dt>
-<dd>A Uri containing the trimmed path name TODO - should support reg expressions.</dd></dl>
+<dd>A URI containing the trimmed path name TODO - should support reg expressions.</dd></dl>
 </div>
 </div>
 <hr />

@@ -41,88 +41,92 @@
 <h2 class='classSection'>Emitter Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addListener'><b>addListener</b></a>(name: <a href='ejs-Object.html'>Object</a>, callback: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a listener function for events.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#clearListeners'><b>clearListeners</b></a>(name: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear listeners for a given event name.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#emit'><b>emit</b></a>(name: <a href='ejs-String.html'>String</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an event to the registered listeners.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#hasListeners'><b>hasListeners</b></a>(): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Determine if the emitter has any listeners.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listeners'><b>listeners</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the listeners for this emitter.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeListener'><b>removeListener</b></a>(name: <a href='ejs-Object.html'>Object</a>, callback: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a registered listener.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addListener'><b>addListener</b></a>(name: <a href='ejs-Object.html'>Object</a>, callback: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#clearObservers'><b>clearObservers</b></a>(name: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear observers for a given event name.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#delayedFire'><b>delayedFire</b></a>(name: <a href='ejs-String.html'>String</a>, delay: <a href='ejs-Number.html'>Number</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#emit'><b>emit</b></a>(name: <a href='ejs-String.html'>String</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#fire'><b>fire</b></a>(name: <a href='ejs-String.html'>String</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an event to the registered observers.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getObservers'><b>getObservers</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the observers for this emitter.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#hasObservers'><b>hasObservers</b></a>(): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Determine if the emitter has any observers.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name: <a href='ejs-Object.html'>Object</a>, callback: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for a set of events.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, callback: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a registered observer.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
 <hr />
 <h2>Method Detail</h2>
-<a name='addListener'></a>
+<a name='clearObservers'></a>
 <div class='api'>
-<div class='apiSig'>const   public  addListener(name: <a href='ejs-Object.html'>Object</a>, callback: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  clearObservers(name: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add a listener function for events.</p>
+<p>Clear observers for a given event name.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name to listen for. The listener will receive events of this event class or any of its  subclasses.  The name can be a string or an array of event strings.</td></tr><tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Function to call when the event is received.</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name to clear. The name can be a string or an array of event strings. If null, observers  for all event names are cleared. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
-<a name='clearListeners'></a>
+<a name='fire'></a>
 <div class='api'>
-<div class='apiSig'>const   public  clearListeners(name: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  fire(name: <a href='ejs-String.html'>String</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Clear listeners for a given event name.</p>
+<p>Emit an event to the registered observers.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name to clear. The name can be a string or an array of event strings. If null, listeners  for all event names are cleared. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Event name to fire to the observers.</td></tr><tr class='param'><td class='param'>args: <a href='ejs-Array.html'>Array</a> </td><td>Args to pass to the observer callback.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
-<a name='emit'></a>
+<a name='getObservers'></a>
 <div class='api'>
-<div class='apiSig'>const   public  emit(name: <a href='ejs-String.html'>String</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  getObservers(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
-<p>Emit an event to the registered listeners.</p>
+<p>Return the observers for this emitter.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Event name to send to the listeners.</td></tr><tr class='param'><td class='param'>args: <a href='ejs-Array.html'>Array</a> </td><td>Args to pass to the listener callback.</td></tr></table></dd>
-</dl></div>
-</div>
-<hr />
-<a name='hasListeners'></a>
-<div class='api'>
-<div class='apiSig'>const   public  hasListeners(): <a href='ejs-Boolean.html'>Boolean</a>
-</div>
-<div class='apiDetail'>
-<p>Determine if the emitter has any listeners.</p>
-<dl><dt>Returns</dt>
-<dd>True if there are currently registered listeners.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='listeners'></a>
-<div class='api'>
-<div class='apiSig'>const   public  listeners(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Array.html'>Array</a>
-</div>
-<div class='apiDetail'>
-<p>Return the listeners for this emitter.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Event name to send to the listeners.</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Event name to fire to the observers.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>An array of listener endpoints. These are cloned and not the actual listener objects.</dd></dl>
+<dd>An array of observer endpoints. These are cloned and not the actual observer objects.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='removeListener'></a>
+<a name='hasObservers'></a>
 <div class='api'>
-<div class='apiSig'>const   public  removeListener(name: <a href='ejs-Object.html'>Object</a>, callback: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  hasObservers(): <a href='ejs-Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
-<p>Remove a registered listener.</p>
+<p>Determine if the emitter has any observers.</p>
+<dl><dt>Returns</dt>
+<dd>True if there are currently registered observers.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='observe'></a>
+<div class='api'>
+<div class='apiSig'>const   public  observe(name: <a href='ejs-Object.html'>Object</a>, callback: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Add an observer for a set of events.</p>
+<dl><dt>Description</dt><dd>The callback will be invoked when the requested event is fired by calling Emitter.fire. When the callback 
+runs, it will be invoked with the value of "this" relevant to the context of the callback. If the callback
+is a class method, the value of "this" will be the object instance. Global functions will have "this" set to
+the global object. Use Function.bind to override the bound "this" value.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name used when adding the listener.</td></tr><tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Listener callback function used when adding the listener.</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name to observe. The observer will receive events of this event class or any of its subclasses. The name can be a string or an array of event strings.</td></tr><tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Function to call when the event is received.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='removeObserver'></a>
+<div class='api'>
+<div class='apiSig'>const   public  removeObserver(name: <a href='ejs-Object.html'>Object</a>, callback: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Remove a registered observer.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name used when the observer was added.</td></tr><tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Callback function used when the observer was added.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

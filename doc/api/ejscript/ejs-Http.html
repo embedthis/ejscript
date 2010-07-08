@@ -139,7 +139,6 @@ line or from a local error message if the response fails to parse.</td></tr>
 <h2 class='classSection'>Http Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addListener'><b>addListener</b></a>(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a listener to the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This closes any open network connection and resets the http object to be ready for another connection.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#connect'><b>connect</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HTTP request for the current method and uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#del'><b>del</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a DELETE request for the current uri.</td></tr>
@@ -150,6 +149,7 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getRequestHeaders'><b>getRequestHeaders</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) request headers to send with the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#head'><b>head</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HEAD request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the value of a response header.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#options'><b>options</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence an OPTIONS request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#post'><b>post</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Initiate a POST request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#put'><b>put</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a PUT request for the current uri.</td></tr>
@@ -157,7 +157,7 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readLines'><b>readLines</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the request response as an array of lines.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readString'><b>readString</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the response as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readXml'><b>readXml</b></a>(): <a href='ejs-XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the request response as an XML document.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeListener'><b>removeListener</b></a>(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a listener to the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setCredentials'><b>setCredentials</b></a>(username: <a href='ejs-String.html'>String</a>, password: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the user credentials to use if the request requires authentication.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a request header.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set request headers.</td></tr>
@@ -172,29 +172,6 @@ line or from a local error message if the response fails to parse.</td></tr>
 
 <hr />
 <h2>Method Detail</h2>
-<a name='addListener'></a>
-<div class='api'>
-<div class='apiSig'>const   public  addListener(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Add a listener to the stream.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='ejs-Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function listener(event: String, ...args): Void.</td></tr></table></dd>
-</dl><dl><dt>Events</dt>
-<dd><table class='parameters' summary ='events'>
-<td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
-<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
-<td class='param'>headers</td><td>Issued when the response headers have been fully received.</td></tr>
-<td class='param'>readable</td><td>Issued when some body content is available.</td></tr>
-<td class='param'>writable</td><td>Issued when the connection is writable to accept body data (PUT, POST).</td></tr>
-<td class='param'>complete</td><td>Issued when the request completes.</td></tr>
-<td class='param'>error</td><td>Issued if the request does not complete successfully. All events are called with the signature: function (event: String, http: Http): Void.</td></tr>
-</table></dd>
-</dl></div>
-</div>
-<hr />
 <a name='close'></a>
 <div class='api'>
 <div class='apiSig'>const   public  close(): <a href='ejs-Void.html'>Void</a>
@@ -356,6 +333,29 @@ response data.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='observe'></a>
+<div class='api'>
+<div class='apiSig'>const   public  observe(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Add an observer to the stream.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Callback observer function. The function is called with the following signature: function observer(event: String, ...args): Void.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+<td class='param'>headers</td><td>Issued when the response headers have been fully received.</td></tr>
+<td class='param'>readable</td><td>Issued when some body content is available.</td></tr>
+<td class='param'>writable</td><td>Issued when the connection is writable to accept body data (PUT, POST).</td></tr>
+<td class='param'>complete</td><td>Issued when the request completes.</td></tr>
+<td class='param'>error</td><td>Issued if the request does not complete successfully. All events are called with the signature: function (event: String, http: Http): Void.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='options'></a>
 <div class='api'>
 <div class='apiSig'>const   public  options(uri: <a href='ejs-Uri.html'>Uri</a> = null): <a href='ejs-Void.html'>Void</a>
@@ -482,16 +482,15 @@ In this case a "readable" event will be issued when data is available for readin
 </dl></div>
 </div>
 <hr />
-<a name='removeListener'></a>
+<a name='removeObserver'></a>
 <div class='api'>
-<div class='apiSig'>const   public  removeListener(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  removeObserver(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Remove a listener to the stream.</p>
-<dl><dt>Description</dt><dd>If there are no listeners on the stream, the stream is put back into sync mode.</dd></dl>
+<p>Remove an observer from the stream.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name </td><td>Event name previously used with addListener. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='ejs-Function.html'>Function</a> </td><td>Listener function previously used with addListener.</td></tr></table></dd>
+<tr class='param'><td class='param'>name </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

@@ -32,10 +32,14 @@
 <h2 class='classSection'>Properties</h2>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='controller'></a>
+   <tr><td nowrap align='center'>ejs.web </td><td>controller</td><td>&nbsp;</td><td>Optional controller object. </td></tr>
 <a name='log'></a>
    <tr><td nowrap align='center'>ejs.web </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Logger channel. </td></tr>
 <a name='request'></a>
    <tr><td nowrap align='center'>ejs.web </td><td>request</td><td><a href='ejs.web-Request.html'>Request</a></td><td>Current request object. </td></tr>
+<a name='appUrl'></a>
+   <tr><td nowrap align='left'>ejs.web const get </td><td>appUrl</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -64,9 +68,9 @@
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#list'><b>list</b></a>(field: <a href='ejs-String.html'>String</a>, choices: <a href='ejs-Object.html'>Object</a> = null , options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a selection list.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#mail'><b>mail</b></a>(name: <a href='ejs-String.html'>String</a>, address: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a mail link.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#makeUri'><b>makeUri</b></a>(parts: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a uri from parts.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#progress'><b>progress</b></a>(initialData: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a progress bar.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#makeUrl'><b>makeUrl</b></a>(action: <a href='ejs-String.html'>String</a>, id: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a>, query: <a href='ejs-Object.html'>Object</a>): <a href='ejs-String.html'>String</a></tr>   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#progress'><b>progress</b></a>(initialData: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a progress bar.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#radio'><b>radio</b></a>(field: <a href='ejs-String.html'>String</a>, choices: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a radio autton.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#render'><b>render</b></a>(renderer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Process and emit a view to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#redirect'><b>redirect</b></a>(url: <a href='ejs-Object.html'>Object</a>)</tr>   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#render'><b>render</b></a>(renderer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Process and emit a view to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#script'><b>script</b></a>(uri: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a script link.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a header.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the HTTP response headers.</td></tr>
@@ -384,7 +388,7 @@ may be overridden by setting the controller option.</dd></dl>
 <dd><pre>list("stockId", Stock.stockList) 
 list("low", ["low", "med", "high"])
 list("low", [["3", "low"], ["5", "med"], ["9", "high"]])
-list("low", [{low: 3{, {med: 5}, {high: 9}])
+list("low", [{low: 3}, {med: 5}, {high: 9}])
 list("Stock Type")  // Will invoke StockType.findAll() to do a table lookup
 </pre></dd></dl>
 </div>

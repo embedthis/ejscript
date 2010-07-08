@@ -22,7 +22,9 @@
 
 <p class='classBrief'>Constructor for Timer.</p>
 
-<p class='classDescription'>The timer is will not be called until.</p>
+<p class='classDescription'>The timer is will not be called until <a href='#start'>start</a> is called.
+When the callback is invoked, it will be invoked with the value of "this" set to the timer unless the
+function has bound a "this" value via Function.bind.</p>
 
 </div>
 
@@ -41,7 +43,7 @@
 <h2 class='classSection'>Timer Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#restart'><b>restart</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Restart a stopped timer.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#start'><b>start</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Start a timer running.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#stop'><b>stop</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop a timer running.</td></tr>
 </table>
 
@@ -49,13 +51,14 @@
 
 <hr />
 <h2>Method Detail</h2>
-<a name='restart'></a>
+<a name='start'></a>
 <div class='api'>
-<div class='apiSig'>const   public  restart(): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  start(): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Restart a stopped timer.</p>
-<dl><dt>Description</dt><dd>Once running, the callback function will be invoked every.</dd></dl>
+<p>Start a timer running.</p>
+<dl><dt>Description</dt><dd>The timer will be repeatedly invoked if the <a href='#repeat'>repeat</a> property is true, otherwise it 
+will be invoked once.</dd></dl>
 </div>
 </div>
 <hr />
@@ -65,7 +68,7 @@
 </div>
 <div class='apiDetail'>
 <p>Stop a timer running.</p>
-<dl><dt>Description</dt><dd>Once stopped a timer can be restarted by calling.</dd></dl>
+<dl><dt>Description</dt><dd>Once stopped a timer can be restarted by calling <a href='#start'>start</a>. </dd></dl>
 </div>
 </div>
 <hr />

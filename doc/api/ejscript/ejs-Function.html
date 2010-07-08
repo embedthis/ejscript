@@ -32,11 +32,12 @@
 <h2 class='classSection'>Properties</h2>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
-<a name='boundThis'></a>
-   <tr><td nowrap align='left'>public const get </td><td>boundThis</td><td><a href='ejs-Object.html'>Object</a></td><td>The bound object representing the "this" object. Functions carry both a lexical scoping and the owning 
-"this" object. Set to "null" if "this" is not defined for the function.</td></tr>
+<a name='bound'></a>
+   <tr><td nowrap align='left'>public const get </td><td>bound</td><td><a href='ejs-Object.html'>Object</a></td><td>The bound object representing the "this" object for the function. Will be set to null if no object is bound.</td></tr>
 <a name='length'></a>
    <tr><td nowrap align='left'>public const get </td><td>length</td><td><a href='ejs-Number.html'>Number</a></td><td>&nbsp;</td></tr>
+<a name='name'></a>
+   <tr><td nowrap align='left'>public const get </td><td>name</td><td><a href='ejs-String.html'>String</a></td><td>The name of the function. Function expressions do not have a name and set the name property to the empty string.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -47,7 +48,7 @@
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#apply'><b>apply</b></a>(thisObject: <a href='ejs-Object.html'>Object</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Invoke the function on another object.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#bind'><b>bind</b></a>(thisObj: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Bind the value of "this" for the function.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#bind'><b>bind</b></a>(thisObj: <a href='ejs-Object.html'>Object</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Bind the value of "this" for the function.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#call'><b>call</b></a>(thisObject: <a href='ejs-Object.html'>Object</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Invoke the function on another object.</td></tr>
 </table>
 
@@ -74,7 +75,7 @@
 <hr />
 <a name='bind'></a>
 <div class='api'>
-<div class='apiSig'>const   public  bind(thisObj: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  bind(thisObj: <a href='ejs-Object.html'>Object</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Bind the value of "this" for the function.</p>
@@ -82,7 +83,7 @@
 <a href='#overwrite'>overwrite</a> is false, it will only define the value of "this" if it is not already defined.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>thisObj: <a href='ejs-Object.html'>Object</a> </td><td>Value of "this" to define.</td></tr><tr class='param'><td class='param'>overwrite: <a href='ejs-Boolean.html'>Boolean</a> </td><td>If true, overwrite the existing stored value of "this". [default: true]</td></tr></table></dd>
+<tr class='param'><td class='param'>thisObj: <a href='ejs-Object.html'>Object</a> </td><td>Value of "this" to define.</td></tr><tr class='param'><td class='param'>args: <a href='ejs-Array.html'>Array</a> </td><td>Function arguments to supply to the function. These arguments preceed any caller supplied arguments when the function is actually invoked.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

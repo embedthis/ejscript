@@ -38,7 +38,9 @@ input and output streams.</p>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='config'></a>
-   <tr><td nowrap align='center'>public static </td><td>config</td><td><a href='ejs-Object.html'>Object</a></td><td>Configuration environment specified in the .ejsrc configuration files. </td></tr>
+   <tr><td nowrap align='center'>public static </td><td>config</td><td><a href='ejs-Object.html'>Object</a></td><td>Configuration environment specified in the .ejsrc/ejsrc configuration files. </td></tr>
+<a name='emitter'></a>
+   <tr><td nowrap align='center'>public static </td><td>emitter</td><td><a href='ejs-Emitter.html'>Emitter</a></td><td>Default event Emitter for the application. </td></tr>
 <a name='log'></a>
    <tr><td nowrap align='center'>public static </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Set the current logger. </td></tr>
 <a name='SearchSeparator'></a>
@@ -72,7 +74,7 @@ is invoked as "ejs script arg1 arg2", then args[0] will be "script", args[1] wil
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#eventLoop'><b>eventLoop</b></a>(timeout: <a href='ejs-Number.html'>Number</a> = -1 , oneEvent: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the event loop.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#exit'><b>exit</b></a>(status: <a href='ejs-Number.html'>Number</a> = 0): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop the program and exit.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getenv'><b>getenv</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an environment variable.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#noexit'><b>noexit</b></a>(exit: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Control whether an application will exit when global scripts have completed.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#loadrc'><b>loadrc</b></a>(path: <a href='ejs-Path.html'>Path</a>)</tr>   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#noexit'><b>noexit</b></a>(exit: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Control whether an application will exit when global scripts have completed.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#putenv'><b>putenv</b></a>(name: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update an environment variable.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#sleep'><b>sleep</b></a>(delay: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Sleep the application for the given number of milliseconds.</td></tr>
 </table>

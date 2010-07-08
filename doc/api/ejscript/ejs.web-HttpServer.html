@@ -22,16 +22,16 @@
 <tr><td><strong>Example</strong></td><td><pre>
             let server: HttpServer = new HttpServer(".", "web")
             let router = Router(Router.RestfulRoutes)
-            server.addListener("readable", function (event: String, request: Request) {
+            server.observe("readable", function (event: String, request: Request) {
                 request.status = 200
                 request.setHeaders({"Content-Type": "text/plain"})
-                request.addListener("readable", function (event, request) {
+                request.observe("readable", function (event, request) {
                     let data = new ByteArray
                     if (request.read(data) == null) {
                         print("EOF")
                     }
                 })
-                request.addListener("writable", function (event) {
+                request.observe("writable", function (event) {
                     request.write("Hello World")
                     request.finalize()
                 })
@@ -54,6 +54,8 @@
 <h2 class='classSection'>Properties</h2>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='sessionCount'></a>
+   <tr><td nowrap align='left'>public static const get </td><td>sessionCount</td><td><a href='ejs-Number.html'>Number</a></td><td>Get the count of active sessions. </td></tr>
 <a name='documentRoot'></a>
    <tr><td nowrap align='center'>public </td><td>documentRoot</td><td><a href='ejs-Path.html'>Path</a></td><td>Default local directory for web documents to serve. This is used as the default Request.dir value.</td></tr>
 <a name='serverRoot'></a>
@@ -74,34 +76,16 @@ MOB -- is this needed?.</td></tr>
 <h2 class='classSection'>HttpServer Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addListener'><b>addListener</b></a>(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a listener to the server.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#attach'><b>attach</b></a>(): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(address): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeListener'><b>removeListener</b></a>(name: <a href='ejs-Object.html'>Object</a>, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a listener from the server.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
 <hr />
 <h2>Method Detail</h2>
-<a name='addListener'></a>
-<div class='api'>
-<div class='apiSig'>const   public  addListener(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Add a listener to the server.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='ejs-Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function listener(event: String, ...args): Void.</td></tr></table></dd>
-</dl><dl><dt>Events</dt>
-<dd><table class='parameters' summary ='events'>
-<td class='param'>readable</td><td>Issued when there is a new request available.</td></tr>
-<td class='param'>close</td><td>Issued when server is being closed.</td></tr>
-<td class='param'>closed</td><td>Issued when server has been closed.</td></tr>
-</table></dd>
-</dl></div>
-</div>
-<hr />
 <a name='close'></a>
 <div class='api'>
 <div class='apiSig'>const   public  close(): <a href='ejs-Void.html'>Void</a>
@@ -142,15 +126,34 @@ must be called to receive the Request object.</dd></dl>
 </dl></div>
 </div>
 <hr />
-<a name='removeListener'></a>
+<a name='observe'></a>
 <div class='api'>
-<div class='apiSig'>const   public  removeListener(name: <a href='ejs-Object.html'>Object</a>, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  observe(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Remove a listener from the server.</p>
+<p>Add an observer for server events.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name previously used with addListener. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='ejs-Function.html'>Function</a> </td><td>Listener function previously used with addListener.</td></tr></table></dd>
+<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function observer(event: String, ...args): Void.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when there is a new request available.</td></tr>
+<td class='param'>close</td><td>Issued when server is being closed.</td></tr>
+<td class='param'>createSession</td><td>Issued when a new session store object is created for a client. The request object is passed.</td></tr>
+<td class='param'>destroySession</td><td>Issued when a session is destroyed. The request object is passed.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='removeObserver'></a>
+<div class='api'>
+<div class='apiSig'>const   public  removeObserver(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Remove an observer from the server.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

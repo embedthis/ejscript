@@ -53,17 +53,17 @@
 <h2 class='classSection'>File Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addListener'><b>addListener</b></a>(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a listener to the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the input stream and free up all associated resources.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Iterate over the positions in a file.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this file to be used by "for each (v in obj)".</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#open'><b>open</b></a>(options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a block of data from a file into a byte array.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readBytes'><b>readBytes</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-ByteArray.html'>ByteArray</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read data bytes from a file and return a byte array containing the data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readString'><b>readString</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read data from a file as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#remove'><b>remove</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a file.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeListener'><b>removeListener</b></a>(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove a listener from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#truncate'><b>truncate</b></a>(value: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Truncate the file.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(items: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the file.</td></tr>
 </table>
@@ -72,24 +72,6 @@
 
 <hr />
 <h2>Method Detail</h2>
-<a name='addListener'></a>
-<div class='api'>
-<div class='apiSig'>const   public  addListener(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Add a listener to the stream.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='ejs-Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function listener(event: String, ...args): Void.</td></tr></table></dd>
-</dl><dl><dt>Events</dt>
-<dd><table class='parameters' summary ='events'>
-<td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
-<td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
-<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
-</table></dd>
-</dl></div>
-</div>
-<hr />
 <a name='close'></a>
 <div class='api'>
 <div class='apiSig'>const   public  close(): <a href='ejs-Void.html'>Void</a>
@@ -139,6 +121,24 @@ to write all data but will return immediately</dd></dl>
 <dl><dt>Returns</dt>
 <dd>An iterator object that will return the bytes of the file.</dd></dl>
 </div>
+</div>
+<hr />
+<a name='observe'></a>
+<div class='api'>
+<div class='apiSig'>const   public  observe(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Add an observer to the stream.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Callback observer function. The function is called with the following signature: function observer(event: String, ...args): Void.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when the stream becomes readable.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes writable.</td></tr>
+<td class='param'>close</td><td>Issued when stream is being closed.</td></tr>
+</table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='open'></a>
@@ -230,15 +230,15 @@ to write all data but will return immediately</dd></dl>
 </dl></div>
 </div>
 <hr />
-<a name='removeListener'></a>
+<a name='removeObserver'></a>
 <div class='api'>
-<div class='apiSig'>const   public  removeListener(name, listener: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  removeObserver(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Remove a listener from the stream.</p>
+<p>Remove an observer from the stream.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name </td><td>Event name previously used with addListener. The name may be an array of events.</td></tr><tr class='param'><td class='param'>listener: <a href='ejs-Function.html'>Function</a> </td><td>Listener function previously used with addListener.</td></tr></table></dd>
+<tr class='param'><td class='param'>name </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

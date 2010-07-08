@@ -120,7 +120,6 @@ size determination failed.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#joinExt'><b>joinExt</b></a>(ext: <a href='ejs-String.html'>String</a>): <a href='ejs-Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Join an extension to a path.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#makeDir'><b>makeDir</b></a>(options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a new directory and all required intervening directories.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#makeLink'><b>makeLink</b></a>(target: <a href='ejs-Path.html'>Path</a>, hard: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a link to a file.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#makeTemp'><b>makeTemp</b></a>(): <a href='ejs-Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a temporary file in the path directory.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#map'><b>map</b></a>(sep: <a href='ejs-String.html'>String</a> = separator): <a href='ejs-Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a path after mapping the path directory separator.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#open'><b>open</b></a>(options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a path and return a File object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#openBinaryStream'><b>openBinaryStream</b></a>(options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-BinaryStream.html'>BinaryStream</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file and return a BinaryStream object.</td></tr>
@@ -139,6 +138,7 @@ directory itself.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#resolve'><b>resolve</b></a>(otherPaths: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Resolve paths in the neighborhood of this path.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#same'><b>same</b></a>(other: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Compare two paths test if they represent the same file.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#startsWith'><b>startsWith</b></a>(prefix: <a href='ejs-String.html'>String</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return true if the path starts with the given prefix.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#temp'><b>temp</b></a>(): <a href='ejs-Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new temporary file.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const override </td><td><a href='#toJSON'><b>toJSON</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the path to a JSON string.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#toLower'><b>toLower</b></a>(): <a href='ejs-Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the path to lower case.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const override </td><td><a href='#toString'><b>toString</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the path as a string.</td></tr>
@@ -323,18 +323,6 @@ the function returns without throwing an exception.</dd></dl>
 <tr class='param'><td class='param'>target: <a href='ejs-Path.html'>Path</a> </td><td>Path to an existing file to link to.</td></tr><tr class='param'><td class='param'>hard: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Set to true to create a hard link. Otherwise the default is to create a symbolic link. [default: false]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>This path.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='makeTemp'></a>
-<div class='api'>
-<div class='apiSig'>const   public  makeTemp(): <a href='ejs-Path.html'>Path</a>
-</div>
-<div class='apiDetail'>
-<p>Create a temporary file in the path directory.</p>
-<dl><dt>Description</dt><dd>Creates a new, uniquely named temporary file.</dd></dl>
-<dl><dt>Returns</dt>
-<dd>A new Path object for the temp file.</dd></dl>
 </div>
 </div>
 <hr />
@@ -613,6 +601,18 @@ absolute and relative path segments.</dd></dl>
 <tr class='param'><td class='param'>prefix: <a href='ejs-String.html'>String</a> </td><td>String prefix to compare with the path.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the path does begin with the prefix.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='temp'></a>
+<div class='api'>
+<div class='apiSig'>const   public  temp(): <a href='ejs-Path.html'>Path</a>
+</div>
+<div class='apiDetail'>
+<p>Create a new temporary file.</p>
+<dl><dt>Description</dt><dd>The temp file is located in the directory specified by the Path object.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A new Path object for the temp file.</dd></dl>
 </div>
 </div>
 <hr />

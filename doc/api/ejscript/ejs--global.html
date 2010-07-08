@@ -46,7 +46,7 @@ This is useful when guaranteed access to a global variable is required. e.g. glo
 <a name='internal'></a>
    <tr><td nowrap align='center'>public </td><td>internal</td><td><a href='ejs-Namespace.html'>Namespace</a></td><td>The internal namespace used to make entities visible within a single module only. </td></tr>
 <a name='iterator'></a>
-   <tr><td nowrap align='center'>public </td><td>iterator</td><td><a href='ejs-Namespace.html'>Namespace</a></td><td>The iterator namespace used to defined iterators. </td></tr>
+   <tr><td nowrap align='center'>public </td><td>iterator</td><td><a href='ejs-Namespace.html'>Namespace</a></td><td>The iterator namespace used to define iterators. MOB - do we really need this?.</td></tr>
 <a name='NaN'></a>
    <tr><td nowrap align='center'>ejs const </td><td>NaN</td><td><a href='ejs-Number.html'>Number</a></td><td>Invalid numeric value. If the numeric type is set to an integral type, the value is zero.</td></tr>
 <a name='NegativeInfinity'></a>
@@ -57,11 +57,6 @@ value assigned or one that has had null explicitly assigned.</td></tr>
 <a name='self'></a>
    <tr><td nowrap align='center'>ejs.worker </td><td>self</td><td><a href='ejs-Worker.html'>Worker</a></td><td>Reference to the Worker object for use inside a worker script
 This is only present inside Worker scripts. </td></tr>
-<a name='session'></a>
-   <tr><td nowrap align='center'>ejs.web </td><td>session</td><td><a href='ejs-Object.html'>Object</a></td><td>Stores session state information. The session array will be created automatically if SessionAutoCreate 
-is defined or if a session is started via the useSession() or createSession() functions. Sessions are 
-shared among requests that come from a single client. This may mean that multiple requests access the 
-same session concurrently. Ejscript ensures that such accesses are serialized. The elements are user defined.</td></tr>
 <a name='stderr'></a>
    <tr><td nowrap align='center'>public </td><td>stderr</td><td><a href='ejs-TextStream.html'>TextStream</a></td><td>Standard error text stream. Use write(), writeLine() and other TextStream methods.</td></tr>
 <a name='stdin'></a>
@@ -96,31 +91,29 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs final </td><td><a href='#ByteArray'><b>ByteArray</b></a>(size: <a href='ejs-Number.html'>Number</a> = -1 , growable: <a href='ejs-Boolean.html'>Boolean</a> = true)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new array.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#chdir'><b>chdir</b></a>(dir: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Change the current working directory.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#chmod'><b>chmod</b></a>(path: <a href='ejs-String.html'>String</a>, perms: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the permissions of a file or directory.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#CmdArgs'><b>CmdArgs</b></a>(template: <a href='ejs-Object.html'>Object</a>, argv: <a href='ejs-Array.html'>Array</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>The CmdArgs constructor creates a new instance of the CmdArgs.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#clearInterval'><b>clearInterval</b></a>(timer: <a href='ejs-Timer.html'>Timer</a>): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#clearTimeout'><b>clearTimeout</b></a>(timer: <a href='ejs-Timer.html'>Timer</a>): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#CmdArgs'><b>CmdArgs</b></a>(template: <a href='ejs-Object.html'>Object</a>, argv: <a href='ejs-Array.html'>Array</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>The CmdArgs constructor creates a new instance of the CmdArgs.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Controller'><b>Controller</b></a>(r: <a href='ejs.web-Request.html'>Request</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and initialize a controller.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#cp'><b>cp</b></a>(fromPath: <a href='ejs-String.html'>String</a>, toPath: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy a file.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.db </td><td><a href='#Database'><b>Database</b></a>(adapter: <a href='ejs-String.html'>String</a>, connectionString: <a href='ejs-String.html'>String</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Initialize a database connection using the supplied database connection string.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs final </td><td><a href='#Date'><b>Date</b></a>(args: <a href='ejs-Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new date object.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#decodeURI'><b>decodeURI</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reverse www-url encoding on a string.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#decodeUri'><b>decodeUri</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode an encoded Uri.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#decodeUriComponent'><b>decodeUriComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode an encoded Uri component.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#decodeURI'><b>decodeURI</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode an encoded URI using www-url encoding.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#decodeURIComponent'><b>decodeURIComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode an encoded URI component.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#deserialize'><b>deserialize</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert a string into an object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#dirname'><b>dirname</b></a>(path: <a href='ejs-String.html'>String</a>): <a href='ejs-Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the directory name portion of a file.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Emitter'><b>Emitter</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new event Emitter object.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#encodeURI'><b>encodeURI</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a string using  www-url encoding.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#encodeURI'><b>encodeURI</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a URI using www-url encoding.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#encodeURIComponent'><b>encodeURIComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a URI component using www-url encoding.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs dynamic </td><td><a href='#Error'><b>Error</b></a>(message: <a href='ejs-String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Construct a new Error object.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#ErrorEvent'><b>ErrorEvent</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Event for exceptions.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#escape'><b>escape</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>HTML escape a string.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#escapeHtml'><b>escapeHtml</b></a>(s: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Transform a string to be safe for output into an HTML web page.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#ErrorEvent'><b>ErrorEvent</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Error event for Web Workers.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#escapeHtml'><b>escapeHtml</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Transform a string to be safe for output into an HTML web page.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#eval'><b>eval</b></a>(script: <a href='ejs-String.html'>String</a>, cache: <a href='ejs-String.html'>String</a> = null): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Evaluate a script.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Event'><b>Event</b></a>(data: <a href='ejs-Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor for Event.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Event'><b>Event</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Event for Web Workers.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#exists'><b>exists</b></a>(path: <a href='ejs-String.html'>String</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Does a file exist.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.worker </td><td><a href='#exit'><b>exit</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Exit the worker.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#extension'><b>extension</b></a>(path: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the file extension portion of the file name.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs final </td><td><a href='#File'><b>File</b></a>(path: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a File object and open the requested path.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#FileSystem'><b>FileSystem</b></a>(path: <a href='ejs-Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new FileSystem object based on the given path.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#find'><b>find</b></a>(path: <a href='ejs-Object.html'>Object</a>, glob: <a href='ejs-String.html'>String</a> = * , recurse: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Find matching files.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#formatStack'><b>formatStack</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Format the current call stack.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs final </td><td><a href='#Frame'><b>Frame</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>The Frame type is used for activation call frames.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#freeSpace'><b>freeSpace</b></a>(path: <a href='ejs-String.html'>String</a> = null): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the free space in the file system.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Function'><b>Function</b></a>(args: <a href='ejs-Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a function from the supplied formal parameter names and function body expression.</td></tr>
@@ -136,7 +129,7 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#isNaN'><b>isNaN</b></a>(arg: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Evaluate an argument to determine if it is a number.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#load'><b>load</b></a>(file: <a href='ejs-String.html'>String</a>, cache: <a href='ejs-String.html'>String</a> = null): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a script or module.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Locale'><b>Locale</b></a>(language: <a href='ejs-String.html'>String</a>, country: <a href='ejs-String.html'>String</a>, variant: <a href='ejs-String.html'>String</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Locale information.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Logger'><b>Logger</b></a>(name: <a href='ejs-String.html'>String</a>, output = null , level: <a href='ejs-Number.html'>Number</a> = 0)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Logger constructor.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Logger'><b>Logger</b></a>(name: <a href='ejs-String.html'>String</a>, location, level: <a href='ejs-Number.html'>Number</a> = 0)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Logger constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#ls'><b>ls</b></a>(path: <a href='ejs-String.html'>String</a> = . , enumDirs: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a list of files in a directory.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#md5'><b>md5</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Computed an MD5 sum of a string
 This function is prototype and may be renamed in a future release.</td></tr>
@@ -152,7 +145,6 @@ This function is prototype and may be renamed in a future release.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs final </td><td><a href='#Path'><b>Path</b></a>(path: <a href='ejs-String.html'>String</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Path object and set the path's location.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.worker </td><td><a href='#postMessage'><b>postMessage</b></a>(data: <a href='ejs-Object.html'>Object</a>, ports: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Post a message to the Worker's parent.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#print'><b>print</b></a>(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Print the arguments to the standard output with a new line appended.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs dynamic </td><td><a href='#Promise'><b>Promise</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>The Promise class permits deferred processing for async APIs.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#pwd'><b>pwd</b></a>(): <a href='ejs-Path.html'>Path</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the current working directory.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#Record'><b>Record</b></a>(fields: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Database record class.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs dynamic </td><td><a href='#ReferenceError'><b>ReferenceError</b></a>(message: <a href='ejs-String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>ReferenceError constructor.</td></tr>
@@ -166,8 +158,8 @@ This function is prototype and may be renamed in a future release.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Router'><b>Router</b></a>(set: <a href='ejs-Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Web router class.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs dynamic </td><td><a href='#SecurityError'><b>SecurityError</b></a>(message: <a href='ejs-String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>SecurityError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#serialize'><b>serialize</b></a>(obj: <a href='ejs-Object.html'>Object</a>, options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode an object as a string.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#setInterval'><b>setInterval</b></a>(callback: <a href='ejs-Function.html'>Function</a>, delay: <a href='ejs-Number.html'>Number</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor for Timer.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#setTimeout'><b>setTimeout</b></a>(callback: <a href='ejs-Function.html'>Function</a>, delay: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a timeout.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#setInterval'><b>setInterval</b></a>(callback: <a href='ejs-Function.html'>Function</a>, delay: <a href='ejs-Number.html'>Number</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Timer.html'>Timer</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create an interval timer.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#setTimeout'><b>setTimeout</b></a>(callback: <a href='ejs-Function.html'>Function</a>, delay: <a href='ejs-Number.html'>Number</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a timeout.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Socket'><b>Socket</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a socket object.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.db </td><td><a href='#Sqlite'><b>Sqlite</b></a>(connectionString: <a href='ejs-String.html'>String</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Initialize a database connection using the supplied database connection string.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs dynamic </td><td><a href='#StateError'><b>StateError</b></a>(message: <a href='ejs-String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>StateError constructor.</td></tr>
@@ -176,8 +168,7 @@ This function is prototype and may be renamed in a future release.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#TemplateParser'><b>TemplateParser</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Web Page Template Parser - Parse an ejs web page and emit an Ejscript source file (.es).</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#tempname'><b>tempname</b></a>(directory: <a href='ejs-String.html'>String</a> = null): <a href='ejs-File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a temporary file.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#TextStream'><b>TextStream</b></a>(stream: <a href='ejs-Stream.html'>Stream</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a text filter stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Timer'><b>Timer</b></a>(period: <a href='ejs-Number.html'>Number</a>, callback: <a href='ejs-Function.html'>Function</a>, oneShot: <a href='ejs-Boolean.html'>Boolean</a> = true , drift: <a href='ejs-Boolean.html'>Boolean</a> = true)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor for Timer.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#TimerEvent'><b>TimerEvent</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Timer event.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Timer'><b>Timer</b></a>(period: <a href='ejs-Number.html'>Number</a>, callback: <a href='ejs-Function.html'>Function</a>, args: <a href='ejs-Array.html'>Array</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor for Timer.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs dynamic </td><td><a href='#TypeError'><b>TypeError</b></a>(message: <a href='ejs-String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>TypeError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#typeOf'><b>typeOf</b></a>(o): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the name of a type.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#unescapeHtml'><b>unescapeHtml</b></a>(s: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Transform an escaped string into its original contents.</td></tr>
@@ -429,21 +420,7 @@ CmdArgs supports command options that begin with "-" or "--" and parses option a
 <div class='apiSig'>  ejs  decodeURI(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Reverse www-url encoding on a string.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>URL encoded string.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A decoded string.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='decodeUri'></a>
-<div class='api'>
-<div class='apiSig'>  ejs  decodeUri(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
-</div>
-<div class='apiDetail'>
-<p>Decode an encoded Uri.</p>
+<p>Decode an encoded URI using www-url encoding.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>Encoded string.</td></tr></table></dd>
@@ -452,12 +429,12 @@ CmdArgs supports command options that begin with "-" or "--" and parses option a
 </div>
 </div>
 <hr />
-<a name='decodeUriComponent'></a>
+<a name='decodeURIComponent'></a>
 <div class='api'>
-<div class='apiSig'>  ejs  decodeUriComponent(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
+<div class='apiSig'>  ejs  decodeURIComponent(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Decode an encoded Uri component.</p>
+<p>Decode an encoded URI component.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>Encoded string.</td></tr></table></dd>
@@ -514,12 +491,48 @@ directory elements and excluding the base name. On some systems, it will include
 <div class='apiSig'>  ejs  encodeURI(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Encode a string using  www-url encoding.</p>
+<p>Encode a URI using www-url encoding.</p>
+<dl><dt>Description</dt><dd>This replaces special characters with encoded alternative sequence.
+The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*"", 
+"'", "(", ")", "#",";", ",", "/", "?", ":", ".</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>URL encoded string.</td></tr></table></dd>
+<tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>An encoded string.</dd></dl>
+<dl><dt>See Also</dt>
+<dd>
+<a href='Uri.encode.html'>Uri.encode</a>, 
+<a href='for.html'>for</a>, 
+<a href='RFC3986.html'>RFC3986</a>, 
+<a href='compliant.html'>compliant</a>, 
+<a href='encoding..html'>encoding.</a>
+</dd></dl>
+</div>
+</div>
+<hr />
+<a name='encodeURIComponent'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  encodeURIComponent(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Encode a URI component using www-url encoding.</p>
+<dl><dt>Description</dt><dd>This replaces special characters with encoded alternative sequence.
+The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", "*"", 
+"'", "(", ")". Note that this call encodes "=" and "&" which are often used in URL query name/key pairs.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to encode.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>An encoded string.</dd></dl>
+<dl><dt>See Also</dt>
+<dd>
+<a href='Uri.encodeComponent.html'>Uri.encodeComponent</a>, 
+<a href='for.html'>for</a>, 
+<a href='RFC3986.html'>RFC3986</a>, 
+<a href='compliant.html'>compliant</a>, 
+<a href='encoding..html'>encoding.</a>
+</dd></dl>
 </div>
 </div>
 <hr />
@@ -531,7 +544,7 @@ directory elements and excluding the base name. On some systems, it will include
 <p>Construct a new Error object.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>message: <a href='ejs-String.html'>String</a> </td><td>Message to use when defining the Error.message property. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>message: <a href='ejs-String.html'>String</a> </td><td>Message to use when defining the Error.message property. Typically a string but can be an object of any type. [default: null]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -540,41 +553,23 @@ directory elements and excluding the base name. On some systems, it will include
 <div class='apiSig'>  ejs  ErrorEvent()
 </div>
 <div class='apiDetail'>
-<p>Event for exceptions.</p>
+<p>Error event for Web Workers.</p>
 <dl><dt>Specified</dt>
 <dd>webworker</dd></dl>
 </div>
 </div>
 <hr />
-<a name='escape'></a>
-<div class='api'>
-<div class='apiSig'>  ejs  escape(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
-</div>
-<div class='apiDetail'>
-<p>HTML escape a string.</p>
-<dl><dt>Description</dt><dd>This quotes characters which would otherwise be interpreted as HTML directives.
-This function is prototype and may be renamed in a future release.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to html escape.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A HTML escaped string.</dd></dl>
-<dl><dt>Specified</dt>
-<dd>ejscript-2.0</dd></dl>
-</div>
-</div>
-<hr />
 <a name='escapeHtml'></a>
 <div class='api'>
-<div class='apiSig'>  ejs.web  escapeHtml(s: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
+<div class='apiSig'>  ejs.web  escapeHtml(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
 <p>Transform a string to be safe for output into an HTML web page.</p>
 <dl><dt>Description</dt><dd>It does this by changing the
-"&", ">", "<" and '"' characters into their ampersand HTML equivalents.</dd></dl>
+& > < " ' characters into their ampersand HTML equivalents.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>s: <a href='ejs-String.html'>String</a> </td><td>Input string.</td></tr></table></dd>
+<tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>Input string.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A transformed HTML escaped string.</dd></dl>
 <dl><dt>Specified</dt>
@@ -601,15 +596,13 @@ This function is prototype and may be renamed in a future release.</dd></dl>
 <hr />
 <a name='Event'></a>
 <div class='api'>
-<div class='apiSig'>  ejs  Event(data: <a href='ejs-Object.html'>Object</a> = null)
+<div class='apiSig'>  ejs  Event()
 </div>
 <div class='apiDetail'>
-<p>Constructor for Event.</p>
-<dl><dt>Description</dt><dd>Create a new Event object.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>data: <a href='ejs-Object.html'>Object</a> </td><td>Arbitrary object to associate with the event. [default: null]</td></tr></table></dd>
-</dl></div>
+<p>Event for Web Workers.</p>
+<dl><dt>Specified</dt>
+<dd>webworker</dd></dl>
+</div>
 </div>
 <hr />
 <a name='exists'></a>
@@ -691,18 +684,6 @@ in the path.</dd></dl>
 <tr class='param'><td class='param'>path: <a href='ejs-Object.html'>Object</a> </td><td>Starting path from which to find matching files.</td></tr><tr class='param'><td class='param'>glob: <a href='ejs-String.html'>String</a> </td><td>Glob style Pattern that files must match. This is similar to a ls() style pattern. [default: * ]</td></tr><tr class='param'><td class='param'>recurse: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Set to true to examine sub-directories. [default: true]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Return a list of matching files.</dd></dl>
-</div>
-</div>
-<hr />
-<a name='formatStack'></a>
-<div class='api'>
-<div class='apiSig'>  ejs  formatStack(): <a href='ejs-String.html'>String</a>
-</div>
-<div class='apiDetail'>
-<p>Format the current call stack.</p>
-<dl><dt>Description</dt><dd>Used for debugging and when creating exception objects.</dd></dl>
-<dl><dt>Specified</dt>
-<dd>ejscript-2.0</dd></dl>
 </div>
 </div>
 <hr />
@@ -808,16 +789,16 @@ in the path.</dd></dl>
 <dd><pre>
             let server: HttpServer = new HttpServer(".", "web")
             let router = Router(Router.RestfulRoutes)
-            server.addListener("readable", function (event: String, request: Request) {
+            server.observe("readable", function (event: String, request: Request) {
                 request.status = 200
                 request.setHeaders({"Content-Type": "text/plain"})
-                request.addListener("readable", function (event, request) {
+                request.observe("readable", function (event, request) {
                     let data = new ByteArray
                     if (request.read(data) == null) {
                         print("EOF")
                     }
                 })
-                request.addListener("writable", function (event) {
+                request.observe("writable", function (event) {
                     request.write("Hello World")
                     request.finalize()
                 })
@@ -934,14 +915,14 @@ in the path.</dd></dl>
 <hr />
 <a name='Logger'></a>
 <div class='api'>
-<div class='apiSig'>  ejs  Logger(name: <a href='ejs-String.html'>String</a>, output = null , level: <a href='ejs-Number.html'>Number</a> = 0)
+<div class='apiSig'>  ejs  Logger(name: <a href='ejs-String.html'>String</a>, location, level: <a href='ejs-Number.html'>Number</a> = 0)
 </div>
 <div class='apiDetail'>
 <p>Logger constructor.</p>
 <dl><dt>Description</dt><dd>The Logger constructor can create different types of loggers based on the three (optional) arguments.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Unique name of the logger. Loggers are typically named after the module, class or subsystem they  are associated with.</td></tr><tr class='param'><td class='param'>output </td><td>Optional output device or Logger to send messages to. If a parent Logger instance is provided for the output parameter, messages are sent to the parent for rendering. The default output device is defined  by the application, typically via a "--log" command line switch. [default: null ]</td></tr><tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>Optional integer verbosity level. Messages with a message level less than or equal to the defined logger level will be emitted. Range is 0 (least verbose) to 9. [default: 0]</td></tr></table></dd>
+<tr class='param'><td class='param'>name: <a href='ejs-String.html'>String</a> </td><td>Unique name of the logger. Loggers are typically named after the module, class or subsystem they  are associated with.</td></tr><tr class='param'><td class='param'>location </td><td>Optional output stream or Logger to send messages to. If a parent Logger instance is provided for the output parameter, messages are sent to the parent for rendering.</td></tr><tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>Optional integer verbosity level. Messages with a message level less than or equal to the defined logger level will be emitted. Range is 0 (least verbose) to 9. [default: 0]</td></tr></table></dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>var file = File("progress.log", "w")
 var log = new Logger("name", file, 5)
@@ -1150,22 +1131,6 @@ strings by calling their toString method. This method invokes <a href='#output'>
 </div>
 </div>
 <hr />
-<a name='Promise'></a>
-<div class='api'>
-<div class='apiSig'>dynamic   ejs  Promise()
-</div>
-<div class='apiDetail'>
-<p>The Promise class permits deferred processing for async APIs.</p>
-<dl><dt>Description</dt><dd>A Promise encapsulates callbacks and state for an API
-that will take some time to execute. The API can return the promise and the caller can register callbacks for events
-of interest.</dd></dl>
-<dl><dt>Specified</dt>
-<dd>commonjs</dd></dl>
-<dl><dt>Stability</dt>
-<dd>Prototype.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='pwd'></a>
 <div class='api'>
 <div class='apiSig'>  public  pwd(): <a href='ejs-Path.html'>Path</a>
@@ -1347,7 +1312,7 @@ If <a href='#maxDepth'>maxDepth</a> is sufficiently large (or zero for infinite 
 until all properties are rendered.  NOTE: the maxDepth, all and base properties are not yet supported.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>obj: <a href='ejs-Object.html'>Object</a> </td><td>Object to serialize. If options is null, each option takes the defaults described.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Serialization options. [default: null]</td></tr></table></dd>
+<tr class='param'><td class='param'>obj: <a href='ejs-Object.html'>Object</a> </td><td>Object to serialize. If options is null, each option takes the defaults described.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Serialization options MOB - change to includeBases (deprecated baseClasses). [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>baseClasses</td><td>Boolean determining if base class properties will be serialized. Defaults to false.</td></tr>
@@ -1370,27 +1335,31 @@ until all properties are rendered.  NOTE: the maxDepth, all and base properties 
 <hr />
 <a name='setInterval'></a>
 <div class='api'>
-<div class='apiSig'>  ejs  setInterval(callback: <a href='ejs-Function.html'>Function</a>, delay: <a href='ejs-Number.html'>Number</a>)
+<div class='apiSig'>  ejs  setInterval(callback: <a href='ejs-Function.html'>Function</a>, delay: <a href='ejs-Number.html'>Number</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Timer.html'>Timer</a>
 </div>
 <div class='apiDetail'>
-<p>Constructor for Timer.</p>
-<dl><dt>Description</dt><dd>The timer is will not be called until.</dd></dl>
+<p>Create an interval timer.</p>
+<dl><dt>Description</dt><dd>This will invoke the callback every <a href='#delay'>delay</a> milliseconds.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Function to invoke when the timer is due.</td></tr><tr class='param'><td class='param'>delay: <a href='ejs-Number.html'>Number</a> </td><td>Time period in milliseconds between invocations of the callback.</td></tr></table></dd>
-</dl></div>
+</dl><dl><dt>Returns</dt>
+<dd>Timer ID that can be used with <a href='#clearInterval'>clearInterval</a>. </dd></dl>
+</div>
 </div>
 <hr />
 <a name='setTimeout'></a>
 <div class='api'>
-<div class='apiSig'>  ejs  setTimeout(callback: <a href='ejs-Function.html'>Function</a>, delay: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>  ejs  setTimeout(callback: <a href='ejs-Function.html'>Function</a>, delay: <a href='ejs-Number.html'>Number</a>, args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
 <p>Create a timeout.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Function to invoke when the timer expires.</td></tr><tr class='param'><td class='param'>delay: <a href='ejs-Number.html'>Number</a> </td><td>Time in milliseconds until the timer expires and the callback is invoked.</td></tr></table></dd>
-</dl></div>
+<tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Function to invoke when the timer expires.</td></tr><tr class='param'><td class='param'>delay: <a href='ejs-Number.html'>Number</a> </td><td>Time in milliseconds until the timer expires and the callback is invoked.</td></tr><tr class='param'><td class='param'>args: <a href='ejs-Array.html'>Array</a> </td><td>Function arguments.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>Timer that can be used with <a href='#clearTimeout'>clearTimeout</a>. </dd></dl>
+</div>
 </div>
 <hr />
 <a name='Socket'></a>
@@ -1510,24 +1479,17 @@ Directives for use outside of &lt;% %&gt;
 <hr />
 <a name='Timer'></a>
 <div class='api'>
-<div class='apiSig'>  ejs  Timer(period: <a href='ejs-Number.html'>Number</a>, callback: <a href='ejs-Function.html'>Function</a>, oneShot: <a href='ejs-Boolean.html'>Boolean</a> = true , drift: <a href='ejs-Boolean.html'>Boolean</a> = true)
+<div class='apiSig'>  ejs  Timer(period: <a href='ejs-Number.html'>Number</a>, callback: <a href='ejs-Function.html'>Function</a>, args: <a href='ejs-Array.html'>Array</a>)
 </div>
 <div class='apiDetail'>
 <p>Constructor for Timer.</p>
-<dl><dt>Description</dt><dd>The timer is will not be called until.</dd></dl>
+<dl><dt>Description</dt><dd>The timer is will not be called until <a href='#start'>start</a> is called.
+When the callback is invoked, it will be invoked with the value of "this" set to the timer unless the
+function has bound a "this" value via Function.bind.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Function to invoke when the timer is due.</td></tr><tr class='param'><td class='param'>oneShot: <a href='ejs-Boolean.html'>Boolean</a> </td><td>If true, Timer fires just once. Otherwise, it fires every period till cancelled. [default: true ]</td></tr><tr class='param'><td class='param'>period: <a href='ejs-Number.html'>Number</a> </td><td>Time period in milliseconds between invocations of the callback.</td></tr><tr class='param'><td class='param'>drift: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Set the timers drift setting. See. [default: true]</td></tr></table></dd>
+<tr class='param'><td class='param'>period: <a href='ejs-Number.html'>Number</a> </td><td>Delay in milliseconds before the timer will run.</td></tr><tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Function to invoke when the timer is due. The callback is invoked with the following signature: function callback(error: Error): Void.</td></tr><tr class='param'><td class='param'>args: <a href='ejs-Array.html'>Array</a> </td><td>Callback arguments.</td></tr></table></dd>
 </dl></div>
-</div>
-<hr />
-<a name='TimerEvent'></a>
-<div class='api'>
-<div class='apiSig'>  ejs  TimerEvent()
-</div>
-<div class='apiDetail'>
-<p>Timer event.</p>
-</div>
 </div>
 <hr />
 <a name='TypeError'></a>
@@ -1587,7 +1549,7 @@ Ejscript underlying type name.</dd></dl>
 <p>Create and parse a Uri object.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>uri: <a href='ejs-Object.html'>Object</a> </td><td>A string or object hash that describes the Uri. The <a href='#uri'>uri</a> specify a complete absolute Uri string or it may specify a partial Uri where missing elements take the normal defaults. The <a href='#uri'>uri</a> argument may also be  an object hash with the following properties.</td></tr></table></dd>
+<tr class='param'><td class='param'>uri: <a href='ejs-Object.html'>Object</a> </td><td>A string or object hash that describes the URI. The <a href='#uri'>uri</a> specify a complete absolute URI string or it may specify a partial URI where missing elements take the normal defaults. The <a href='#uri'>uri</a> argument may also be  an object hash with the following properties.</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>scheme:</td><td>String.</td></tr>
