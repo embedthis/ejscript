@@ -8,4 +8,5 @@ EXPORTS
   ejsCreateRequest
   ejsCreateSession
   ejsDestroySession
+  ejsGetSession
   ejs_web_Init

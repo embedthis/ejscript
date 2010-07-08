@@ -130,6 +130,7 @@ EXPORTS
   httpMatchEtag
   httpMatchModified
   httpNeedRetry
+  httpNormalizeUriPath
   httpOmitBody
   httpOpenAuthFilter
   httpOpenChunkFilter
@@ -233,7 +234,6 @@ EXPORTS
   httpUpdateUserAcls
   httpUriToString
   httpValidateNativeCredentials
-  httpValidateUri
   httpWait
   httpWillNextQueueAcceptPacket
   httpWritable

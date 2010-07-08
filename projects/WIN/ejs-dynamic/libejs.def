@@ -65,12 +65,12 @@ EXPORTS
   ecPutSpecificToken
   ecPutToken
   ecRemoveModule
-  ecReportError
   ecResetError
   ecResetInput
   ecResetModuleList
   ecResetParser
   ecSetCertFile
+  ecSetError
   ecSetOptimizeLevel
   ecSetOutputFile
   ecSetStrictMode
@@ -100,6 +100,7 @@ EXPORTS
   ejsBindMethod
   ejsBlendTypeProperties
   ejsBootstrapTypes
+  ejsCaptureStack
   ejsCast
   ejsClearAttention
   ejsClearException
@@ -122,7 +123,6 @@ EXPORTS
   ejsConfigureConfigType
   ejsConfigureDateType
   ejsConfigureErrorType
-  ejsConfigureEventType
   ejsConfigureFileSystemType
   ejsConfigureFileType
   ejsConfigureFunctionType
@@ -172,6 +172,7 @@ EXPORTS
   ejsCreateCoreType
   ejsCreateDate
   ejsCreateDoc
+  ejsCreateError
   ejsCreateErrorType
   ejsCreateException
   ejsCreateFile
@@ -210,7 +211,6 @@ EXPORTS
   ejsCreateStringAndFree
   ejsCreateStringType
   ejsCreateStringWithLength
-  ejsCreateTimerEvent
   ejsCreateType
   ejsCreateTypeType
   ejsCreateUndefined
@@ -253,7 +253,6 @@ EXPORTS
   ejsExit
   ejsFixupType
   ejsFormatReservedNamespace
-  ejsFormatStack
   ejsFree
   ejsFreeVar
   ejsFreezeGlobal
@@ -293,7 +292,6 @@ EXPORTS
   ejsGrowByteArray
   ejsGrowObject
   ejsHasException
-  ejsHasListeners
   ejsHasTrait
   ejsInheritBaseClassNamespaces
   ejsInitCompiler
@@ -379,7 +377,6 @@ EXPORTS
   ejsSetXML
   ejsShowBlockScope
   ejsShowCurrentScope
-  ejsShowStack
   ejsStartLogging
   ejsStrcat
   ejsStrdup
@@ -411,10 +408,10 @@ EXPORTS
   ejsZeroSlots
   getMimeType
   getNextJsonToken
-  http_addListener
   http_async
   http_available
-  http_removeListener
+  http_observe
+  http_removeObserver
   http_setHeader
   http_set_async
   markHttp
@@ -429,9 +426,9 @@ EXPORTS
   peekNextJsonToken
   quickSort
   sock_accept
-  sock_addListener
   sock_address
   sock_async
+  sock_observe
   sock_set_async
   truncateFile
   writeFile

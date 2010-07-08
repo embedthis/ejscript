@@ -98,6 +98,7 @@ EXPORTS
   mprDtoa
   mprDupList
   mprEnableCmdEvents
+  mprEnableContinuousEvent
   mprEnableDispatcher
   mprEnableFileBuffering
   mprEnableWaitEvents
