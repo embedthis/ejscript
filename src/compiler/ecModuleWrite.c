@@ -82,7 +82,7 @@ int ecCreateModuleSection(EcCompiler *cp)
     mp->constants->locked = 1;
     rc += ecEncodeNumber(cp, constants->len);
     rc += ecEncodeBlock(cp, (uchar*) constants->pool, constants->len);
-
+    mprAssert(strcmp(mp->name, "ejs.tar") != 0);
     if (createDependencySection(cp) < 0) {
         return EJS_ERR;
     }
@@ -391,8 +391,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
             }
         }
     }
-    mp->checksum += sum(type->qname.name, slotNum + ejsGetPropertyCount(ejs, (EjsObj*) type) + 
-        instanceTraits + interfaceCount);
+    mp->checksum += sum(type->qname.name, ejsGetPropertyCount(ejs, (EjsObj*) type) + instanceTraits + interfaceCount);
     if (ecEncodeByte(cp, EJS_SECT_CLASS_END) < 0) {
         return EJS_ERR;
     }
@@ -499,9 +498,9 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
     }
     if (strstr(qname.name, "--fun_")) {
         /* Don't sum the name for dynamic functions */
-        mp->checksum += sum(NULL, slotNum + fun->numArgs + numSlots - fun->numArgs + code->numHandlers);
+        mp->checksum += sum(NULL, fun->numArgs + numSlots - fun->numArgs + code->numHandlers);
     } else {
-        mp->checksum += sum(qname.name, slotNum + fun->numArgs + numSlots - fun->numArgs + code->numHandlers);
+        mp->checksum += sum(qname.name, fun->numArgs + numSlots - fun->numArgs + code->numHandlers);
     }
     return rc;
 }
@@ -617,7 +616,7 @@ static int createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
             rc += ecEncodeString(cp, 0);
         }
     }
-    mp->checksum += sum(qname.name, slotNum);
+    mp->checksum += sum(qname.name, 0);
     return rc;
 }
 
