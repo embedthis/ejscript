@@ -395,7 +395,7 @@ static void allocFailure(Ejs *ejs, uint size, uint total, bool granted)
         if (ejs->memoryCallback) {
             argv[0] = (EjsObj*) ejsCreateNumber(ejs, size);
             argv[1] = (EjsObj*) ejsCreateNumber(ejs, total);
-            thisObj = ejs->memoryCallback->thisObj ? ejs->memoryCallback->thisObj : ejs->global; 
+            thisObj = ejs->memoryCallback->boundThis ? ejs->memoryCallback->boundThis : ejs->global; 
             ejsRunFunction(ejs, ejs->memoryCallback, thisObj, 2, argv);
         }
         if (!ejs->exception) {
@@ -864,8 +864,8 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
     
     /*  
         Compiler error format is:
-            program:line:errorCode:SEVERITY: message
-        Where program is either "ec" or "ejs"
+        program:SEVERITY:line:errorCode:message
+        Where program is either "ejsc" or "ejs"
         Where SEVERITY is either "error" or "warn"
      */
     if ((emsg = ejsGetErrorMsg(ejs, 1)) != 0) {
@@ -874,7 +874,6 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
     } else {
         msg = buf = mprVasprintf(ejs, 0, fmt, arg);
     }
-    
     if (ejs->exception) {
         mprRawLog(ejs, 0, "%s: %s\n", mprGetMpr(ejs)->name, msg);
     } else {

@@ -152,7 +152,7 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
             if (!ejs->exception) {
                 ejsThrowIOError(ejs, "Initialization error for %s (%d, %d)", mp->path, ejs->hasError, mprHasAllocError(ejs));
             }
-            return MPR_ERR;
+            return MPR_ERR_CANT_INITIALIZE;
         }
     }
     mp->configured = 1;
@@ -200,7 +200,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
     while ((sectionType = mprGetc(file)) >= 0) {
         if (sectionType < 0 || sectionType >= EJS_SECT_MAX) {
             mprError(ejs, "Bad section type %d in %s", sectionType, mp->name);
-            return EJS_ERR;
+            return MPR_ERR_CANT_LOAD;
         }
         mprLog(ejs, 9, "Load section type %d", sectionType);
         mprAssert(mp == NULL || mp->scope == NULL || mp->scope != mp->scope->scope);
@@ -243,7 +243,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
 
         case EJS_SECT_MODULE:
             if ((mp = loadModuleSection(ejs, file, hdr, &created, flags)) == 0) {
-                return EJS_ERR;
+                return MPR_ERR_CANT_LOAD;
             }
             ejsAddModule(ejs, mp);
             mp->path = mprStrdup(mp, path);
@@ -265,8 +265,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
             break;
 
         default:
-            mprAssert(0);
-            return EJS_ERR;
+            return MPR_ERR_CANT_LOAD;
         }
         if (rc < 0) {
             if (mp && mp->name && created) {
@@ -280,7 +279,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
     for (next = firstModule; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
         if (mp->loadState) {
             if (fixupTypes(ejs, mp->loadState->typeFixups) < 0) {
-                return EJS_ERR;
+                return MPR_ERR_CANT_LOAD;
             }
             mprFree(mp->loadState);
             mp->loadState = 0;
@@ -288,7 +287,9 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
         //  MOB rationalize down to just ejs flag
         if (!ejs->empty && !(flags & EJS_LOADER_NO_INIT) && !(ejs->flags & EJS_FLAG_NO_INIT)) {
             if (!mp->initialized) {
-                status += initializeModule(ejs, mp);
+                if ((status = initializeModule(ejs, mp)) < 0) {
+                    break;
+                }
             }
         }
         mp->file = 0;
@@ -1007,6 +1008,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
     int             status;
 
     mprAssert(filename && *filename);
+    mprAssert(ejs->exception == 0);
 
     if ((path = search(ejs, filename, minVersion, maxVersion)) == 0) {
         return MPR_ERR_CANT_ACCESS;
@@ -1022,14 +1024,18 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
     /*
         Read module file header
      */
+    status = 0;
     if ((mprRead(file, &hdr, sizeof(hdr))) != sizeof(hdr)) {
         ejsThrowIOError(ejs, "Error reading module file %s, corrupt header", path);
+        status = MPR_ERR_CANT_LOAD;
 
     } else if ((int) swapWord(ejs, hdr.magic) != EJS_MODULE_MAGIC) {
         ejsThrowIOError(ejs, "Bad module file format in %s", path);
+        status = MPR_ERR_CANT_LOAD;
 
     } if (swapWord(ejs, hdr.fileVersion) != EJS_MODULE_VERSION) {
         ejsThrowIOError(ejs, "Incompatible module file format in %s", path);
+        status = MPR_ERR_CANT_LOAD;
 
     } else {
         if (ejs->loaderCallback) {
@@ -1038,12 +1044,13 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
         if ((status = loadSections(ejs, file, path, &hdr, flags)) < 0) {
             if (ejs->exception == 0) {
                 ejsThrowReferenceError(ejs, "Can't load module file %s", path);
+                status = MPR_ERR_CANT_LOAD;
             }
         }
     }
     mprFree(file);
     mprFree(path);
-    return ejs->exception ? EJS_ERR : 0;
+    return status;
 }
 
 
@@ -1083,7 +1090,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
                     fixup->typeName.name, fixup->kind);
 #endif
             }
-            return EJS_ERR;
+            return MPR_ERR_CANT_LOAD;
         }
 
         switch (fixup->kind) {
@@ -1498,8 +1505,8 @@ char *ejsModuleReadString(Ejs *ejs, EjsModule *mp)
 /*
     Read a type reference. Types are stored as either global property slot numbers or as strings (token offsets into the 
     constant pool). The lowest bit is set if the reference is a string. The type and name arguments are optional and may 
-    be set to null. Return EJS_ERR for errors, otherwise 0. Return the 0 if successful, otherwise return EJS_ERR. If the 
-    type could not be resolved, allocate a fixup record and return in *fixup. The caller should then call addFixup.
+    be set to null. Return the 0 if successful, otherwise return < 0. If the type could not be resolved, allocate a 
+    fixup record and return in *fixup. The caller should then call addFixup.
  */
 int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup **fixup, EjsName *typeName, int *slotNum)
 {
@@ -1519,8 +1526,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
         typeName->space = 0;
     }
     if (ejsModuleReadNumber(ejs, mp, &t) < 0) {
-        mprAssert(0);
-        return EJS_ERR;
+        return MPR_ERR_CANT_LOAD;
     }
 
     slot = -1;
@@ -1531,8 +1537,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
     switch (t & EJS_ENCODE_GLOBAL_MASK) {
     default:
         mp->hasError = 1;
-        mprAssert(0);
-        return EJS_ERR;
+        return MPR_ERR_CANT_LOAD;
 
     case EJS_ENCODE_GLOBAL_NOREF:
         return 0;
@@ -1557,13 +1562,11 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
         qname.name = tokenToString(mp, t >> 2);
         if (qname.name == 0) {
             mp->hasError = 1;
-            mprAssert(0);
-            return EJS_ERR;
+            return MPR_ERR_CANT_LOAD;
         }
         if ((qname.space = ejsModuleReadString(ejs, mp)) == 0) {
             mp->hasError = 1;
-            mprAssert(0);
-            return EJS_ERR;
+            return MPR_ERR_CANT_LOAD;
         }
         if (qname.name) {
             slot = ejsLookupProperty(ejs, ejs->global, &qname);
@@ -1579,8 +1582,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
     if (type) {
         if (!ejsIsType(type)) {
             mp->hasError = 1;
-            mprAssert(0);
-            return EJS_ERR;
+            return MPR_ERR_CANT_LOAD;
         }
         *typeRef = type;
 
@@ -1627,8 +1629,7 @@ static int addFixup(Ejs *ejs, EjsModule *mp, int kind, EjsObj *target, int slotN
 
     index = mprAddItem(mp->loadState->typeFixups, fixup);
     if (index < 0) {
-        mprAssert(0);
-        return EJS_ERR;
+        return MPR_ERR_CANT_LOAD;
     }
     return 0;
 }

@@ -3819,9 +3819,9 @@ static void genError(EcCompiler *cp, EcNode *np, char *fmt, ...)
     cp->noout = 1;
 
     if (np) {
-        ecReportError(cp, "error", np->filename, np->lineNumber, np->currentLine, np->column, msg);
+        ecSetError(cp, "Error", np->filename, np->lineNumber, np->currentLine, np->column, msg);
     } else {
-        ecReportError(cp, "error", 0, 0, 0, 0, msg);
+        ecSetError(cp, "Error", 0, 0, 0, 0, msg);
     }
     mprFree(msg);
     va_end(arg);

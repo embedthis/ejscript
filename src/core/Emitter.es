@@ -45,6 +45,10 @@ module ejs {
 
         /** 
             Add an observer for a set of events.
+            The callback will be invoked when the requested event is fired by calling Emitter.fire. When the callback 
+            runs, it will be invoked with the value of "this" relevant to the context of the callback. If the callback
+            is a class method, the value of "this" will be the object instance. Global functions will have "this" set to
+            the global object. Use Function.bind to override the bound "this" value.
             @param name Event name to observe. The observer will receive events of this event class or any of its subclasses.
             The name can be a string or an array of event strings.
             @param callback Function to call when the event is received.
@@ -108,6 +112,7 @@ module ejs {
                             do {
                                 e.again = false
                                 try {
+                                    /* This forces to use the bound this value */
                                     e.callback.apply(null, [name] + args)
                                 } catch (e) {
                                     App.errorStream.write("Exception in event on observer: " + name  + "\n" + e)
@@ -124,7 +129,7 @@ module ejs {
 
         function delayedFire(name: String, delay: Number, ...args): Void {
             Timer(delay, function() {
-                fire(name, /* SPREAD */ args)
+                fire(name, ...args)
             })
         }
 

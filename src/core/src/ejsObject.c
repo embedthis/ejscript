@@ -389,7 +389,7 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
             type = (EjsType*) obj;
             if (!type->isInterface) {
                 /* For static methods, find the right base class and set thisObj to speed up later invocations */
-                fun->thisObj = obj;
+                fun->boundThis = obj;
             }
         }
     }

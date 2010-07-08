@@ -686,7 +686,7 @@ extern EjsObj *ejsAllocPooled(Ejs *ejs, int id);
     @param pool Optional pool id. Set to -1 for defaults.
     @ingroup EjsObj
  */
-extern void ejsFreeVar(Ejs *ejs, EjsObj *vp, int pool);
+extern void ejsFreeVar(Ejs *ejs, void *vp, int pool);
 
 /** 
     Cast a variable to a new type
@@ -1185,7 +1185,8 @@ typedef struct EjsFunction {
         EjsProc     proc;                   /**< Native function pointer */
     } body;
 
-    EjsObj          *thisObj;               /**< Bound "this" for method extraction */
+    struct EjsArray *boundArgs;             /**< Bound "args" */
+    EjsObj          *boundThis;             /**< Bound "this" object value */
     struct EjsType  *resultType;            /**< Return type of method */
 
 #if BLD_HAS_UNNAMED_UNIONS

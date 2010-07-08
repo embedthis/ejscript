@@ -49,23 +49,20 @@ module ejs {
          */
         native function call(thisObject: Object, ...args): Object 
 
-        //    MOB -- this could go into Reflect
-        /** 
-            The bound object representing the "this" object for the function. Functions carry both a lexical scoping 
-            and an owning "this" object. Can be set to null.
-         */
-        native function get boundThis(): Object
-
-        //  MOB -- ES5 usage is function bind(obj, ...args) -- args prepend
-        //  MOB -- ES5 returns a new function and does not modify the existing function
-
         /** 
             Bind the value of "this" for the function. This can set the value of "this" for the function. If
             $overwrite is false, it will only define the value of "this" if it is not already defined.
             @param thisObj Value of "this" to define
-            @param overwrite If true, overwrite the existing stored value of "this"
+            @param args Function arguments to supply to the function. These arguments preceed any caller supplied
+                arguments when the function is actually invoked.
          */
-        native function bind(thisObj: Object, overwrite: Boolean = true): Void
+        native function bind(thisObj: Object, ...args): Void
+
+        /** 
+            The bound object representing the "this" object for the function. Will be set to null if no object is bound.
+            @see bind
+         */
+        native function get bound(): Object
 
         /**
             The name of the function. Function expressions do not have a name and set the name property to the empty string.

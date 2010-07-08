@@ -296,7 +296,7 @@ static int interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv,
     ejs->argv = argv;
 
     if (ecCompile(cp, files->length, (char**) files->items) < 0) {
-        mprError(cp, "%s", cp->errorMsg);
+        mprRawLog(cp, 0, "%s", cp->errorMsg);
         return EJS_ERR;
     }
     if (cp->errorCount == 0) {
@@ -340,7 +340,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
         err = 0;
         cp->uid = 0;
         if (ecCompile(cp, 1, tmpArgv) < 0) {
-            mprError(cp, "%s", cp->errorMsg);
+            mprRawLog(cp, 0, "%s", cp->errorMsg);
             ejs->result = ejs->undefinedValue;
             err++;
         }

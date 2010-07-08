@@ -123,18 +123,20 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
 {
     Ejs         *ejs;
     EjsString   *msg;
+    EjsObj      *thisObj;
 
     mprAssert(tp);
     mprAssert(tp->args);
+    mprAssert(tp->callback);
 
     ejs = tp->ejs;
-    //  MOB -- this obj
-    ejsRunFunction(tp->ejs, tp->callback, NULL, tp->args->length, tp->args->data);
+    thisObj = (tp->callback->boundThis) ? tp->callback->boundThis : (EjsObj*) tp;
+    ejsRunFunction(tp->ejs, tp->callback, thisObj, tp->args->length, tp->args->data);
     if (ejs->exception) {
         if (tp->onerror) {
             msg = ejsCreateString(ejs, ejsGetErrorMsg(ejs, 1));
             ejsClearException(ejs);
-            ejsRunFunction(tp->ejs, tp->onerror, NULL, 1, (EjsObj**) &msg);
+            ejsRunFunction(tp->ejs, tp->onerror, thisObj, 1, (EjsObj**) &msg);
         }
     }
     return 0;

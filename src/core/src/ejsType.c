@@ -242,7 +242,8 @@ EjsType *ejsCreateArchetype(Ejs *ejs, EjsFunction *fun, EjsObj *prototype)
             fun->numDefault, code->numHandlers, ejs->objectType, EJS_TRAIT_HIDDEN | EJS_TRAIT_FIXED, code->constants, NULL, 
             fun->strict);
         type->constructor.activation = ejsClone(ejs, fun->activation, 0);
-        type->constructor.thisObj = 0;
+        type->constructor.boundThis = 0;
+        type->constructor.boundArgs = 0;
         type->constructor.isConstructor = 1;
         type->constructor.block.obj.isFunction = 1;
         type->hasConstructor = 1;
@@ -451,7 +452,8 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsObj *obj, int destOffse
             if (ejsIsFunction(fun)) {
                 fun = ejsCloneFunction(ejs, fun, 0);
                 ejsSetProperty(ejs, obj, i, fun);
-                fun->thisObj = 0;
+                fun->boundThis = 0;
+                fun->boundArgs = 0;
                 fun->block.scope = (EjsBlock*) type;
             }
         }

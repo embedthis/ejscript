@@ -34,8 +34,8 @@ static EjsObj *assertMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     if (b == 0 || !b->value) {
         fp = ejs->state->fp;
         if (fp->currentLine) {
-            mprLog(ejs, 0, "Assertion error: %s", fp->currentLine);
-            ejsThrowAssertError(ejs, "Assertion error: %s", fp->currentLine);
+            // mprLog(ejs, 0, "Assertion error: %s", fp->currentLine);
+            ejsThrowAssertError(ejs, "%s", fp->currentLine);
         } else {
             ejsThrowAssertError(ejs, "Assertion error");
         }
@@ -373,7 +373,7 @@ static EjsObj *printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     args = argv[0];
     count = ejsGetPropertyCount(ejs, args);
 
-    for (i = 0; i < count; ) {
+    for (i = 0; i < count; i++) {
         if ((vp = ejsGetProperty(ejs, args, i)) != 0) {
             s  = (ejsIsString(vp)) ? (EjsString*) vp : (EjsString*) ejsToString(ejs, vp);
             if (ejs->exception) {
@@ -392,7 +392,7 @@ static EjsObj *printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             }
 #endif
             rc = write(1, s->value, s->length);
-            if (++i < count) {
+            if ((i+1) < count) {
                 rc = write(1, " ", 1);
             }
         }

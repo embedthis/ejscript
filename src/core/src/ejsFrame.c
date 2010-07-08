@@ -128,7 +128,11 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.strict = fun->strict;
     frame->function.throwNulls = fun->throwNulls;
 #endif
-    frame->function.thisObj = thisObj;
+    frame->function.boundArgs = fun->boundArgs;
+    frame->function.boundThis = fun->boundThis;
+    if (thisObj) {
+        frame->function.boundThis = thisObj;
+    }
     frame->function.resultType = fun->resultType;
     frame->function.body = fun->body;
     frame->pc = fun->body.code.byteCode;

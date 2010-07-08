@@ -517,7 +517,8 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     EcNode      **nodes;
     EjsBlock    *block;
     cchar       *ext;
-    int         i, j, next, nextModule, lflags;
+    char        *msg;
+    int         i, j, next, nextModule, lflags, rc;
 
     ejs = cp->ejs;
     nodes = (EcNode**) mprAllocZeroed(cp, sizeof(EcNode*) * argc);
@@ -553,8 +554,14 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         if (mprStrcmpAnyCase(ext, EJS_MODULE_EXT) == 0 || mprStrcmpAnyCase(ext, BLD_SHOBJ) == 0) {
             nextModule = mprGetListCount(ejs->modules);
             lflags = cp->strict ? EJS_LOADER_STRICT : 0;
-            if ((ejsLoadModule(cp->ejs, argv[i], -1, -1, lflags)) < 0) {
-                parseError(cp, "Can't load module file %s\n%s", argv[i], ejsGetErrorMsg(cp->ejs, 0));
+            if ((rc = ejsLoadModule(cp->ejs, argv[i], -1, -1, lflags)) < 0) {
+                msg = mprAsprintf(cp, -1, "Error initializing module %s\n%s", argv[i], ejsGetErrorMsg(cp->ejs, 1));
+                if (rc == MPR_ERR_CANT_INITIALIZE) {
+                    ecSetError(cp, "Error", argv[i], -1, NULL, -1, msg);
+                } else {
+                    ecSetError(cp, "Error", argv[i], -1, NULL, -1, msg);
+                }
+                mprFree(msg);
                 return EJS_ERR;
             }
             if (cp->merge) {
@@ -9609,9 +9616,9 @@ static EcNode *parseError(EcCompiler *cp, char *fmt, ...)
     cp->error = 1;
     tp = cp->token;
     if (tp) {
-        ecReportError(cp, "error", tp->filename, tp->lineNumber, tp->currentLine, tp->column, msg);
+        ecSetError(cp, "Error", tp->filename, tp->lineNumber, tp->currentLine, tp->column, msg);
     } else {
-        ecReportError(cp, "error", 0, 0, 0, 0, msg);
+        ecSetError(cp, "Error", 0, 0, 0, 0, msg);
     }
     mprFree(msg);
     va_end(arg);
@@ -9630,15 +9637,11 @@ EcNode *ecParseWarning(EcCompiler *cp, char *fmt, ...)
     if ((msg = mprVasprintf(cp, 0, fmt, arg)) == NULL) {
         msg = "Memory allocation error";
     }
-
     cp->warningCount++;
-
     tp = cp->token;
-    ecReportError(cp, "warning", tp->filename, tp->lineNumber, tp->currentLine, tp->column, msg);
-
+    ecSetError(cp, "Warning", tp->filename, tp->lineNumber, tp->currentLine, tp->column, msg);
     mprFree(msg);
     va_end(arg);
-
     return 0;
 }
 
@@ -9765,8 +9768,8 @@ static char *makeHighlight(EcCompiler *cp, char *src, int col)
 }
 
 
-
-void ecReportError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNumber, char *currentLine, int column, char *msg)
+void ecSetError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNumber, char *currentLine, 
+    int column, char *msg)
 {
     cchar   *appName;
     char    *highlightPtr, *errorMsg;
@@ -9778,28 +9781,15 @@ void ecReportError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNum
     if (filename == 0 || *filename == '\0') {
         filename = "stdin";
     }
-
-#if FUTURE_WITH_ERROR_CODES
     if (currentLine) {
         highlightPtr = makeHighlight(cp, (char*) currentLine, column);
-        errorMsg = mprAsprintf(cp, -1, "%s: %s: %d: %d: %s: %s\n  %s  \n  %s\n", appName, filename, lineNumber, 
-            errCode, severity, msg, currentLine, highlightPtr);
-    } else if (lineNumber >= 0) {
-        errorMsg = mprAsprintf(cp, -1, "%s: %s: %d: %d: %s: %s\n", appName, filename, lineNumber, errCode, severity, msg);
-    } else {
-        errorMsg = mprAsprintf(cp, -1, "%s: %s: 0: %d: %s: %s\n", appName, filename, errCode, severity, msg);
-    }
-#else
-    if (currentLine) {
-        highlightPtr = makeHighlight(cp, (char*) currentLine, column);
-        errorMsg = mprAsprintf(cp, -1, "%s: %s: %d: %s: %s\n  %s  \n  %s\n", appName, filename, lineNumber, severity,
+        errorMsg = mprAsprintf(cp, -1, "%s: %s: %s: %d: %s\n  %s  \n  %s\n", appName, severity, filename, lineNumber, 
             msg, currentLine, highlightPtr);
     } else if (lineNumber >= 0) {
-        errorMsg = mprAsprintf(cp, -1, "%s: %s: %d: %s: %s\n", appName, filename, lineNumber, severity, msg);
+        errorMsg = mprAsprintf(cp, -1, "%s: %s: %s: %d: %s\n", appName, severity, filename, lineNumber, msg);
     } else {
-        errorMsg = mprAsprintf(cp, -1, "%s: %s: 0: %s: %s\n", appName, filename, severity, msg);
+        errorMsg = mprAsprintf(cp, -1, "%s: %s: %s: 0: %s\n", appName, severity, filename, msg);
     }
-#endif
     cp->errorMsg = mprReallocStrcat(cp, -1, cp->errorMsg, errorMsg, NULL);
     mprBreakpoint();
 }

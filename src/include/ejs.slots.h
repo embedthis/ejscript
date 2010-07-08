@@ -935,8 +935,8 @@
  */
 #define ES_Function_apply                                              0
 #define ES_Function_call                                               1
-#define ES_Function_boundThis                                          2
-#define ES_Function_bind                                               3
+#define ES_Function_bind                                               2
+#define ES_Function_bound                                              3
 #define ES_Function_name                                               4
 #define ES_Function_length                                             5
 #define ES_Function_setScope                                           6
@@ -1934,6 +1934,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1309454
+#define _ES_CHECKSUM_ejs   1308476
 
 #endif

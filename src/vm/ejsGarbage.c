@@ -236,18 +236,20 @@ EjsObj *ejsAllocPooled(Ejs *ejs, int id)
     Free an object. This is should only ever be called by the destroy helpers to free a object or recycle the 
     object to a type specific free pool. 
  */
-void ejsFreeVar(Ejs *ejs, EjsObj *vp, int id)
+void ejsFreeVar(Ejs *ejs, void *vp, int id)
 {
     EjsType     *type;
     EjsPool     *pool;
     EjsGC       *gc;
+    EjsObj      *obj;
     MprBlk      *bp, *pp;
 
     mprAssert(vp);
     checkAddr(vp);
 
+    obj = (EjsObj*) vp;
     gc = &ejs->gc;
-    type = vp->type;
+    type = obj->type;
     if (id < 0) {
         id = type->id;
     }
@@ -260,9 +262,9 @@ void ejsFreeVar(Ejs *ejs, EjsObj *vp, int id)
         /*
             Transfer from the current generation back to the pool. Inline for speed.
          */
-        pool->type = vp->type; 
+        pool->type = obj->type; 
         pp = MPR_GET_BLK(pool);
-        bp = MPR_GET_BLK(vp);
+        bp = MPR_GET_BLK(obj);
         if (bp->prev) {
             bp->prev->next = bp->next;
         } else {
@@ -273,7 +275,7 @@ void ejsFreeVar(Ejs *ejs, EjsObj *vp, int id)
         }
         if (bp->children) {
             /* Frees any allocated slots, names or traits */
-            mprFreeChildren(vp);
+            mprFreeChildren(obj);
         }
         /*
             Add to the pool
@@ -287,7 +289,7 @@ void ejsFreeVar(Ejs *ejs, EjsObj *vp, int id)
         bp->prev = 0;
 
 #if BLD_DEBUG
-        vp->type = (void*) -1;
+        obj->type = (void*) -1;
         pool->allocated--;
         mprAssert(pool->allocated >= 0);
         pool->count++;
@@ -297,14 +299,14 @@ void ejsFreeVar(Ejs *ejs, EjsObj *vp, int id)
 #endif
     } else {
 #if BLD_DEBUG
-        vp->type = (void*) -1;
+        obj->type = (void*) -1;
         if (0 <= id && id < gc->numPools) {
             pool = gc->pools[id];
             pool->allocated--;
             mprAssert(pool->allocated >= 0);
         }
 #endif
-        mprFree(vp);
+        mprFree(obj);
     }
 }
 

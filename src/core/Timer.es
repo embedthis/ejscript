@@ -23,6 +23,8 @@ module ejs {
 
         /**
             Constructor for Timer. The timer is will not be called until $start is called.
+            When the callback is invoked, it will be invoked with the value of "this" set to the timer unless the
+                function has bound a "this" value via Function.bind.
             @param period Delay in milliseconds before the timer will run
             @param callback Function to invoke when the timer is due.
             @param args Callback arguments

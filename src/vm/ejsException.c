@@ -293,7 +293,8 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
                     }
                 }
                 frame = ejsCreateSimpleObject(ejs);
-                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "filename"), ejsCreateString(ejs, fp->filename));
+                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "filename"), 
+                    ejsCreateString(ejs, fp->filename ? fp->filename : "undefined"));
                 ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "lineno"), ejsCreateNumber(ejs, fp->lineNumber));
                 ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "function"), ejsCreateString(ejs, fp->function.name));
                 ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "code"), ejsCreateString(ejs, line));
@@ -365,7 +366,7 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
     EjsObj      *message, *stack, *error;
     EjsString   *str;
     EjsObj      *saveException;
-    cchar       *tag;
+    cchar       *tag, *msg;
     char        *buf;
 
     error = (EjsObj*) ejs->exception;
@@ -397,15 +398,19 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
             message = (EjsObj*) ejsCreateString(ejs, "Uncaught StopIteration exception");
         }
     }
+    if (message == ejs->nullValue) {
+        msg = "Exception";
+    } else{
+        msg = ejsToString(ejs, message)->value;
+    }
     if (ejsIsA(ejs, error, ejs->errorType)) {
-        buf = mprAsprintf(ejs, -1, "%s: %s\nStack:\n%s", tag, ((EjsString*) message)->value,
-            (stack) ? ejsGetString(ejs, stack) : "");
+        buf = mprAsprintf(ejs, -1, "%s: %s\nStack:\n%s", tag, msg, (stack) ? ejsGetString(ejs, stack) : "");
 
     } else if (message && ejsIsString(message)){
-        buf = mprAsprintf(ejs, -1, "%s: %s", tag, ((EjsString*) message)->value);
+        buf = mprAsprintf(ejs, -1, "%s: %s", tag, msg);
 
     } else if (message && ejsIsNumber(message)){
-        buf = mprAsprintf(ejs, -1, "%s: %g", tag, ((EjsNumber*) message)->value);
+        buf = mprAsprintf(ejs, -1, "%s: %g", tag, msg);
         
     } else if (error) {
         EjsObj *saveException = ejs->exception;

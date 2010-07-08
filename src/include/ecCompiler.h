@@ -1096,7 +1096,7 @@ extern EcNode       *ecParseWarning(EcCompiler *cp, char *fmt, ...);
 extern int          ecPeekToken(EcCompiler *cp);
 extern int          ecPutSpecificToken(EcInput *input, EcToken *token);
 extern int          ecPutToken(EcInput *input);
-extern void         ecReportError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNumber,
+extern void         ecSetError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNumber,
                         char *currentLine, int column, char *msg);
 extern void         ecResetInput(EcCompiler *cp);
 extern EcNode       *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput);

@@ -13,7 +13,5 @@ var fun = function run() : Number {
 	return localVar
 }
 
-
 assert(fun() == 1)
-
 assert(global.localVar == undefined)

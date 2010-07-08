@@ -68,7 +68,8 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
     }
     dest->body.code = src->body.code;
     dest->resultType = src->resultType;
-    dest->thisObj = src->thisObj;
+    dest->boundArgs = src->boundArgs;
+    dest->boundThis = src->boundThis;
     dest->numArgs = src->numArgs;
     dest->numDefault = src->numDefault;
 
@@ -96,7 +97,7 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
 
 static void destroyFunction(Ejs *ejs, EjsFunction *fun)
 {
-    ejsFreeVar(ejs, (EjsObj*) fun, ES_Function);
+    ejsFreeVar(ejs, fun, ES_Function);
 }
 
 
@@ -104,19 +105,22 @@ void ejsMarkFunction(Ejs *ejs, EjsFunction *fun)
 {
     ejsMarkBlock(ejs, (EjsBlock*) fun);
     if (fun->activation) {
-        ejsMark(ejs, (EjsObj*) fun->activation);
+        ejsMark(ejs, fun->activation);
     }
     if (fun->setter) {
-        ejsMark(ejs, (EjsObj*) fun->setter);
+        ejsMark(ejs, fun->setter);
     }
     if (fun->archetype) {
-        ejsMark(ejs, (EjsObj*) fun->archetype);
-    }
-    if (fun->thisObj) {
-        ejsMark(ejs, fun->thisObj);
+        ejsMark(ejs, fun->archetype);
     }
     if (fun->resultType) {
-        ejsMark(ejs, (EjsObj*) fun->resultType);
+        ejsMark(ejs, fun->resultType);
+    }
+    if (fun->boundThis) {
+        ejsMark(ejs, fun->boundThis);
+    }
+    if (fun->boundArgs) {
+        ejsMark(ejs, fun->boundArgs);
     }
 }
 
@@ -183,36 +187,36 @@ static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **
     args = (EjsArray*) argv[1];
     mprAssert(ejsIsArray(args));
 
-    save = fun->thisObj;
-    thisObj = (argv[0] == ejs->nullValue) ? fun->thisObj: argv[0];
+    save = fun->boundThis;
+    thisObj = (argv[0] == ejs->nullValue) ? fun->boundThis: argv[0];
     result =  ejsRunFunction(ejs, fun, thisObj, args->length, args->data);
-    fun->thisObj = save;
+    fun->boundThis = save;
     return result;
 }
 
 
 /*
-    function bind(thisObj: Object, overwrite: Boolean = true): Void
+    function bind(thisObj: Object, ...args): Void
  */
 static EjsObj *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
-    int     overwrite;
-    
     mprAssert(argc >= 1);
-    overwrite = (argc < 2 || (argv[1] == (EjsObj*) ejs->trueValue));
-    if (overwrite || !fun->thisObj) {
-        fun->thisObj = argv[0];
+
+    fun->boundThis = argv[0];
+    if (argc == 2) {
+        fun->boundArgs = (EjsArray*) argv[1];
+        mprAssert(ejsIsArray(fun->boundArgs));
     }
     return 0;
 }
 
 
 /*
-    function boundThis(): Function
+    function bound(): Function
  */
-static EjsObj *fun_boundThis(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
+static EjsObj *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
-    return fun->thisObj;
+    return fun->boundThis;
 }
 
 
@@ -526,7 +530,7 @@ void ejsConfigureFunctionType(Ejs *ejs)
     ejsBindConstructor(ejs, type, (EjsProc) fun_Function);
     ejsBindMethod(ejs, prototype, ES_Function_apply, (EjsProc) fun_applyFunction);
     ejsBindMethod(ejs, prototype, ES_Function_bind, (EjsProc) fun_bindFunction);
-    ejsBindMethod(ejs, prototype, ES_Function_boundThis, (EjsProc) fun_boundThis);
+    ejsBindMethod(ejs, prototype, ES_Function_bound, (EjsProc) fun_bound);
     ejsBindMethod(ejs, prototype, ES_Function_call, (EjsProc) fun_call);
     ejsBindMethod(ejs, prototype, ES_Function_length, (EjsProc) fun_length);
 #if ES_Function_name

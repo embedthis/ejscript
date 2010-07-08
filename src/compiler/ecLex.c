@@ -603,7 +603,7 @@ int ecGetRegExpToken(EcInput *input)
         case '\\':
             c = getNextChar(stream);
             if (c == '\r' || c == '\n' || c == 0) {
-                ecReportError(input->compiler, "warning", stream->name, stream->lineNumber, 0, stream->column,
+                ecSetError(input->compiler, "Warning", stream->name, stream->lineNumber, 0, stream->column,
                     "Illegal newline in regular expression");
                 return makeToken(tp, 0, T_ERR, 0);
             }
@@ -613,7 +613,7 @@ int ecGetRegExpToken(EcInput *input)
 
         case '\r':
         case '\n':
-            ecReportError(input->compiler, "warning", stream->name, stream->lineNumber, 0, stream->column,
+            ecSetError(input->compiler, "Warning", stream->name, stream->lineNumber, 0, stream->column,
                 "Illegal newline in regular expression");
             return makeToken(tp, 0, T_ERR, 0);
 
@@ -913,8 +913,8 @@ static int getComment(EcInput *input, EcToken *tp, int c)
                         Nested comment
                      */
                     if (input->compiler->warnLevel > 0) {
-                        ecReportError(input->compiler, "warning", stream->name, stream->lineNumber, 0,
-                                stream->column, "Possible nested comment");
+                        ecSetError(input->compiler, "Warning", stream->name, stream->lineNumber, 0,
+                            stream->column, "Possible nested comment");
                     }
                 }
                 addCharToToken(tp, '/');

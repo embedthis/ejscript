@@ -2,8 +2,6 @@
   	Test scope of function argument lookups.
  */
 
-
-/*  MOB DISABLED
 var a = 1
 
 function fun(a = a)
@@ -14,4 +12,3 @@ function fun(a = a)
 
 fun()
 assert(a == 1)
-*/

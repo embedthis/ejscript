@@ -35,7 +35,7 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
     slotNum = -1;
     
     memset(lookup, 0, sizeof(*lookup));
-    thisObj = state->fp->function.thisObj;
+    thisObj = state->fp->function.boundThis;
 
     //  MOB -- remove nthBlock. Not needed if not binding
     for (lookup->nthBlock = 0, bp = state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
@@ -45,7 +45,8 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
         }
         if (ejsIsFrame(bp)) {
             frame = (EjsFrame*) bp;
-            if (frame->function.thisObj == thisObj && thisObj != ejs->global && !frame->function.staticMethod && 
+            if (thisObj && frame->function.boundThis == thisObj && 
+                    thisObj != ejs->global && !frame->function.staticMethod && 
                     !frame->function.isInitializer) {
                 /* Instance method only */
                 if ((slotNum = ejsLookupVarWithNamespaces(ejs, thisObj, name, lookup)) >= 0) {
