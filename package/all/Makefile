@@ -1,5 +1,5 @@
 #
-#	Makefile to build the all-in-one Ejscript distribution
+#	Makefile to build the all-in-one combined Ejscript distribution
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
 #
@@ -31,7 +31,7 @@ WEB_SOURCES		+= $(shell find $(JEMS)/ejs.web -name '*.c' | egrep -v 'SAVE|save|l
 TARGETS			+= $(patsubst %,$(INC_DEST)/%, ejs.h ejs.slots.h sqlite3.h)
 TARGETS			+= $(patsubst %,$(DEST)/%, ejsLib.c ejs.c ejsc.c ejsmod.c ejssql.c sqlite3.c ejs.es)
 
-packageExtra:	prep $(TARGETS) $(ARCHIVE)
+combo packageExtra:	prep $(TARGETS) $(ARCHIVE)
 	
 prep:
 	rm -fr $(STAGING)
