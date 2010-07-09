@@ -5,4 +5,4 @@
 onmessage = function (e) {
     exit()
 }
-App.serviceEvents()
+App.eventLoop()

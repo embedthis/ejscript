@@ -6,7 +6,7 @@
 
 include		.makedep
 
-compileExtra: index.html
+gen compileExtra: index.html
 
 index.html: $(BLD_TOP)/buildConfig.make Makefile
 	cp version.html version.new

@@ -3,58 +3,6 @@
   <compounddef id="struct_ejs_error" kind="struct" prot="public">
     <compoundname>EjsError</compoundname>
       <sectiondef kind="public-attrib">
-      <memberdef kind="variable" id="struct_ejs_error_10027a41905b2db88f2946ebfccceba8f" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EjsError::code</definition>
-        <argsstring></argsstring>
-        <name>code</name>
-        <briefdescription>
-<para>Unique error lookup code. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2392" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2392" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_error_1fe522cd1a33d7026b061f9917dad4e1d" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsError::filename</definition>
-        <argsstring></argsstring>
-        <name>filename</name>
-        <briefdescription>
-<para>Source code file name. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2390" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2390" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_error_1f9f53811a3b011acf433880f4d5943cf" prot="public" static="no" mutable="no">
-        <type>int</type>
-        <definition>int EjsError::lineNumber</definition>
-        <argsstring></argsstring>
-        <name>lineNumber</name>
-        <briefdescription>
-<para>Source code line number. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2391" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2391" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_error_1d7390a85d5b037df11ac8ef6ba1ab817" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsError::message</definition>
-        <argsstring></argsstring>
-        <name>message</name>
-        <briefdescription>
-<para>Exception message. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2388" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2388" bodyend="-1"/>
-      </memberdef>
       <memberdef kind="variable" id="struct_ejs_error_1681505708a19179e072f9a5927ae5048" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
         <definition>EjsObj EjsError::obj</definition>
@@ -66,34 +14,16 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2387" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2387" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ejs_error_1d956958a78c032c9607cdacbb1a684d7" prot="public" static="no" mutable="no">
-        <type>char *</type>
-        <definition>char* EjsError::stack</definition>
-        <argsstring></argsstring>
-        <name>stack</name>
-        <briefdescription>
-<para>Execution stack back trace. </para>        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2389" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2389" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2402" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2402" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/all/ejs.h" line="2386" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2386" bodyend="2393"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2401" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2401" bodyend="2411"/>
     <listofallmembers>
-      <member refid="struct_ejs_error_10027a41905b2db88f2946ebfccceba8f" prot="public" virt="non-virtual"><scope>EjsError</scope><name>code</name></member>
-      <member refid="struct_ejs_error_1fe522cd1a33d7026b061f9917dad4e1d" prot="public" virt="non-virtual"><scope>EjsError</scope><name>filename</name></member>
-      <member refid="struct_ejs_error_1f9f53811a3b011acf433880f4d5943cf" prot="public" virt="non-virtual"><scope>EjsError</scope><name>lineNumber</name></member>
-      <member refid="struct_ejs_error_1d7390a85d5b037df11ac8ef6ba1ab817" prot="public" virt="non-virtual"><scope>EjsError</scope><name>message</name></member>
       <member refid="struct_ejs_error_1681505708a19179e072f9a5927ae5048" prot="public" virt="non-virtual"><scope>EjsError</scope><name>obj</name></member>
-      <member refid="struct_ejs_error_1d956958a78c032c9607cdacbb1a684d7" prot="public" virt="non-virtual"><scope>EjsError</scope><name>stack</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>

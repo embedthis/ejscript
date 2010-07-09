@@ -31,7 +31,7 @@ server.observe("readable", function (event, request) {
 })
 
 server.listen("127.0.0.1:7000")
-print("Listening on port 127.0.0.1:7000")
+App.log.info("Listening on port 127.0.0.1:7000")
 App.eventLoop()
 
 

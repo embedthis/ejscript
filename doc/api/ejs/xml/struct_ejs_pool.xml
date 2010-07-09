@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1060" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1060" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1069" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1069" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_pool_1000807605c48d1155336ea7eddb8bb7e" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1062" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1062" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1071" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1071" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_pool_1973214807e70922bceabe1ec487de03b" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1061" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1061" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1070" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1070" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_pool_1a5ee2ced2e8a85cdf5fb66d08d0cffb1" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1063" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1063" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1072" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1072" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_pool_1fc2429af6c28ad533b62702dbd49df26" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1064" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1064" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1073" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1073" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_pool_1295fa13146f9dc2e657d1032b2af7286" prot="public" static="no" mutable="no">
         <type>struct EjsType *</type>
@@ -79,14 +79,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1059" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1059" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1068" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1068" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/all/ejs.h" line="1058" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1057" bodyend="1065"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1067" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1066" bodyend="1074"/>
     <listofallmembers>
       <member refid="struct_ejs_pool_193ef210ddf0b18cc0482e3ede0c9ed4c" prot="public" virt="non-virtual"><scope>EjsPool</scope><name>allocated</name></member>
       <member refid="struct_ejs_pool_1000807605c48d1155336ea7eddb8bb7e" prot="public" virt="non-virtual"><scope>EjsPool</scope><name>count</name></member>

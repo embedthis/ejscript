@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1103" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1103" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1112" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1112" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_load_state_19ed3ca4160f3aa19875c6bae9535e951" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1104" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1104" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1113" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1113" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_load_state_1ac6f5071a6360cff8d8657e1fa55e931" prot="public" static="no" mutable="no">
         <type>MprList *</type>
@@ -40,14 +40,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1102" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1102" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1111" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1111" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/all/ejs.h" line="1101" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="1101" bodyend="1105"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1110" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="1110" bodyend="1114"/>
     <listofallmembers>
       <member refid="struct_ejs_load_state_1fe4e384ad24e94faf5b39f88205c00c2" prot="public" virt="non-virtual"><scope>EjsLoadState</scope><name>firstModule</name></member>
       <member refid="struct_ejs_load_state_19ed3ca4160f3aa19875c6bae9535e951" prot="public" virt="non-virtual"><scope>EjsLoadState</scope><name>flags</name></member>

@@ -39,7 +39,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2198"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2213"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_boolean_1ge09d9685c6dfe8b6f09054afbccc87d5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -76,7 +76,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2226"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2241"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_boolean_1g829a6197515e48a50b7ee0393e30c662" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -102,7 +102,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2217"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2232"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_boolean_1gc8ccf50072bb45f10d7799b0c168efd8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsBoolean *</type>
@@ -140,7 +140,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2208"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2223"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

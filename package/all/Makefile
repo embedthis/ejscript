@@ -34,6 +34,7 @@ TARGETS			+= $(patsubst %,$(DEST)/%, ejsLib.c ejs.c ejsc.c ejsmod.c ejssql.c sql
 combo packageExtra:	prep $(TARGETS) $(ARCHIVE)
 	
 prep:
+	@$(call log) "[Prepare]" "All-in-one combo package"
 	rm -fr $(STAGING)
 	mkdir -p $(STAGING)/src/include $(STAGING)/src/deps/ejs $(STAGING)/doc/api $(STAGING)/doc/man
 

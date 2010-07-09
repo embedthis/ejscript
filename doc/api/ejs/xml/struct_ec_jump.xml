@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5451" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5451" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5491" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5491" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_jump_1ee89486a7ee987e9c79d40980378e835" prot="public" static="no" mutable="no">
         <type>EcNode *</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5453" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5453" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5493" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5493" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_jump_1089a06fb32c9cd3a1e6a367ff408f7d9" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -40,14 +40,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5452" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5452" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5492" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5492" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/all/ejs.h" line="5450" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5450" bodyend="5454"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5490" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5490" bodyend="5494"/>
     <listofallmembers>
       <member refid="struct_ec_jump_12f9a92df3821e4067a7ffb987ade954e" prot="public" virt="non-virtual"><scope>EcJump</scope><name>kind</name></member>
       <member refid="struct_ec_jump_1ee89486a7ee987e9c79d40980378e835" prot="public" virt="non-virtual"><scope>EcJump</scope><name>node</name></member>

@@ -12,12 +12,9 @@
 <table border="0" cellpadding="0" cellspacing="0">
 <tr><td></td></tr>
 <tr><td colspan="2"><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs_error.html#g35da8eaaba0bdd967e5a88b885aed0f5">ejsFormatStack</a> (Ejs *ejs, EjsError *error)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">cchar *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs_error.html#g26516321557d20655ded73648c787e46">ejsGetErrorMsg</a> (Ejs *ejs, int withStack)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Format the stack backtrace.  <a href="#g35da8eaaba0bdd967e5a88b885aed0f5"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">char *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs_error.html#geb4b7e379abf1ffa3778b1d74dea6243">ejsGetErrorMsg</a> (Ejs *ejs, int withStack)</td></tr>
-
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the interpreter error message.  <a href="#geb4b7e379abf1ffa3778b1d74dea6243"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Get the interpreter error message.  <a href="#g26516321557d20655ded73648c787e46"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">bool&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs_error.html#gba0d6e967d7b71217b76f8166baf7183">ejsHasException</a> (Ejs *ejs)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Determine if an exception has been thrown.  <a href="#gba0d6e967d7b71217b76f8166baf7183"></a><br></td></tr>
@@ -73,51 +70,12 @@ Error classes.
 <dl class="user" compact><dt><b><b>Description</b>:</b></dt><dd>Base class for error exception objects. Exception objects are created by programs and by the system as part of changing the normal flow of execution when some error condition occurs. When an exception is created and acted upon ("thrown"), the system transfers the flow of control to a pre-defined instruction stream (the handler or "catch" code). The handler may return processing to the point at which the exception was thrown or not. It may re-throw the exception or pass control up the call stack. </dd></dl>
 <dl class="user" compact><dt><b><b>API</b> Stability:</b></dt><dd>Evolving.</dd></dl>
 ejsThrowArithmeticError ejsThrowInstructionError ejsThrowError ejsThrowInternalError ejsThrowIOError ejsThrowMemoryError ejsThrowOutOfBoundsError ejsThrowReferenceError ejsThrowResourceError ejsThrowStateError ejsThrowStopIteration ejsThrowSyntaxError ejsThrowTypeError <hr><h2>Function Documentation</h2>
-<a class="anchor" name="g35da8eaaba0bdd967e5a88b885aed0f5"></a><!-- doxytag: member="ejs.h::ejsFormatStack" ref="g35da8eaaba0bdd967e5a88b885aed0f5" args="(Ejs *ejs, EjsError *error)" -->
+<a class="anchor" name="g26516321557d20655ded73648c787e46"></a><!-- doxytag: member="ejs.h::ejsGetErrorMsg" ref="g26516321557d20655ded73648c787e46" args="(Ejs *ejs, int withStack)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">char* ejsFormatStack           </td>
-          <td>(</td>
-          <td class="paramtype">Ejs *&nbsp;</td>
-          <td class="paramname"> <em>ejs</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">EjsError *&nbsp;</td>
-          <td class="paramname"> <em>error</em></td><td>&nbsp;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td><td></td>
-        </tr>
-      </table>
-</div>
-<div class="memdoc">
-
-<p>
-Format the stack backtrace. 
-<p>
-<dl class="user" compact><dt><b><b>Description</b>:</b></dt><dd>Return a string containing the current interpreter stack backtrace </dd></dl>
-<dl compact><dt><b>Parameters:</b></dt><dd>
-  <table border="0" cellspacing="2" cellpadding="0">
-    <tr><td valign="top"></td><td valign="top"><em>ejs</em>&nbsp;</td><td>Ejs reference returned from <a class="el" href="group___ejs_obj.html#g50d9d774b3cddd1784d654326cddc237" title="Create a variable.">ejsCreate</a> </td></tr>
-    <tr><td valign="top"></td><td valign="top"><em>error</em>&nbsp;</td><td>Error exception object to analyseo analyseo analyseo analyse </td></tr>
-  </table>
-</dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>A string containing the stack backtrace. The caller must free. </dd></dl>
-
-</div>
-</div><p>
-<a class="anchor" name="geb4b7e379abf1ffa3778b1d74dea6243"></a><!-- doxytag: member="ejs.h::ejsGetErrorMsg" ref="geb4b7e379abf1ffa3778b1d74dea6243" args="(Ejs *ejs, int withStack)" -->
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">char* ejsGetErrorMsg           </td>
+          <td class="memname">cchar* ejsGetErrorMsg           </td>
           <td>(</td>
           <td class="paramtype">Ejs *&nbsp;</td>
           <td class="paramname"> <em>ejs</em>, </td>
@@ -147,7 +105,7 @@ Get the interpreter error message.
     <tr><td valign="top"></td><td valign="top"><em>withStack</em>&nbsp;</td><td>Set to 1 to include a stack backtrace in the error message </td></tr>
   </table>
 </dl>
-<dl class="return" compact><dt><b>Returns:</b></dt><dd>A string containing the error message. The caller must free. </dd></dl>
+<dl class="return" compact><dt><b>Returns:</b></dt><dd>A string containing the error message. The caller must not free. </dd></dl>
 
 </div>
 </div><p>
@@ -806,7 +764,7 @@ Throw an type error exception.
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Thu May 27 09:59:33 2010 for ejs by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 9 10:40:04 2010 for ejs by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

@@ -204,7 +204,7 @@ module ejs {
             timer = new Timer(timeout, wakeup)
             timer.start()
             while (!waitComplete && !complete) {
-                App.serviceEvents(1, timeout)
+                App.eventLoop(timeout, true)
             }
             return result
         }

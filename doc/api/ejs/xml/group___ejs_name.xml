@@ -51,7 +51,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1300"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1313"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_name_1geecb8458a156bed35038acffae182cf4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsName *</type>
@@ -100,7 +100,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1287"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1300"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

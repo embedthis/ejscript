@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5345" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5345" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5384" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5384" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_105475b638811108059a8d114ad6669f1" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5337" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5337" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5376" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5376" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_10d4866f6d56c5472e837b7ee3f3d745a" prot="public" static="no" mutable="no">
         <type>struct EcCompiler *</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5354" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5354" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5393" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5393" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_1b0f0f7265280604abefcd3cb3cfdbfa9" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5335" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5335" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5374" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5374" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_1c16e906b444c72d3c2978ddb687467a3" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5347" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5347" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5386" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5386" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_1d990fa2ae7b2cfb2a472bbad43d8d993" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5349" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5349" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5388" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5388" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_1a855f9a5f87b219929b4ab0af16ee0af" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -92,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5351" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5351" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5390" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5390" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_1eababdee9bf4c74bd806ae1307fa9f13" prot="public" static="no" mutable="no">
         <type>EcStreamGet</type>
@@ -105,7 +105,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5352" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5352" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5391" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5391" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_1439721cdd3e741e55275a7c758a0117a" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -118,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5340" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5340" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5379" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5379" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_11ee407d6e13d9a3abd5ca624a85fe1e1" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -131,7 +131,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5339" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5339" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5378" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5378" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_157caed9b5d7b67b8bcb4f93f14d1b009" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -144,7 +144,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5336" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5336" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5375" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5375" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_11aa12a77be922a9eda379a9b2e5f31c1" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -157,7 +157,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5333" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5333" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5372" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5372" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_stream_1395261e2fef457989c53e52cfcd3fb2d" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -170,14 +170,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5346" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5346" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5385" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5385" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/all/ejs.h" line="5332" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5332" bodyend="5356"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5371" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5371" bodyend="5395"/>
     <listofallmembers>
       <member refid="struct_ec_stream_15f28b711d81489e3aae9aeb626bb12ea" prot="public" virt="non-virtual"><scope>EcStream</scope><name>buf</name></member>
       <member refid="struct_ec_stream_105475b638811108059a8d114ad6669f1" prot="public" virt="non-virtual"><scope>EcStream</scope><name>column</name></member>

@@ -72,7 +72,7 @@ module ejs {
                 /* match: null, */
             },
             cache: {
-                enable: true,
+                enable: false,
             },
             directories: {
                 cache: "cache",
@@ -329,7 +329,7 @@ module ejs {
             if (path.exists) {
                 try {
                     blend(App.config, path.readJSON(), false)
-                } catch {
+                } catch (e) {
                     errorStream.write(App.exePath.basename +  " Can't parse " + path + ": " + e + "\n")
                 }
             }

@@ -1441,6 +1441,10 @@ class Templates {
         },
     },
     
+    directories: {
+        cache: Path("cache"),
+    },
+
     log: {
         enable: true,
         location: "stdout",

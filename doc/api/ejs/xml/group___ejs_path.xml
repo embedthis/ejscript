@@ -40,7 +40,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2720"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2742"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_path_1ga846f8814b3aee5e8aebbd66a9cb945e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsPath *</type>
@@ -78,7 +78,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2642"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2664"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_path_1g0d08757d7915410db9de0c35c815e124" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -115,7 +115,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2654"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2676"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

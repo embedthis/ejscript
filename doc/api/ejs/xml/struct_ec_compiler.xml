@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5618" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5618" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5670" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5670" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1ce61ef9655c71e48d57e3f23bd28cd21" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5645" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5645" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5697" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5697" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_117ab71b800d9f561d7d6b1018ec62bcb" prot="public" static="no" mutable="no">
         <type>EcState *</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5596" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5596" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5648" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5648" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1b7fec5ecb71f03668362388d93e9ceeb" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -53,20 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5611" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5611" bodyend="-1"/>
-      </memberdef>
-      <memberdef kind="variable" id="struct_ec_compiler_1e8adc5b977f775d912680ba4f510be02" prot="public" static="no" mutable="no">
-        <type>EcState *</type>
-        <definition>EcState* EcCompiler::classState</definition>
-        <argsstring></argsstring>
-        <name>classState</name>
-        <briefdescription>
-        </briefdescription>
-        <detaileddescription>
-        </detaileddescription>
-        <inbodydescription>
-        </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5594" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5594" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5663" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5663" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_17e76b04931dcb7ef493ff76f28ab0436" prot="public" static="no" mutable="no">
         <type>cchar *</type>
@@ -79,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5601" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5601" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5653" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5653" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_147401bb238a03ed29e0f9be8a044c910" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -92,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5582" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5582" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5631" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5631" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1c326982c05ff3859c0f59d48b4e9fabb" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -105,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5600" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5600" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5652" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5652" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_11d672cdb3a8926a6910d9afbbd73275a" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -118,7 +105,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5612" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5612" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5664" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5664" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1faff9b70b4ebb1b8cac60787f214acdd" prot="public" static="no" mutable="no">
         <type>EcState *</type>
@@ -131,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5595" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5595" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5647" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5647" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1fd09abf8876c310c58b3fe060906d521" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -144,7 +131,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5613" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5613" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5665" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5665" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_146ae4a3bec1b04d1865f818545f3d9df" prot="public" static="no" mutable="no">
         <type>Ejs *</type>
@@ -157,7 +144,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5606" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5606" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5658" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5658" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1d32b13314b1294349d9b0c1c88eef22b" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -170,7 +157,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5639" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5639" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5691" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5691" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1c78deb7004b9420418b7df00c0645f75" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -183,7 +170,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5642" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5642" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5694" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5694" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_109cafcad1f7b716dc512b2cf18c2ce47" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -196,7 +183,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5638" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5638" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5690" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5690" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1711ddd1a82ff9008bda55106e13eb7d2" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -209,7 +196,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5614" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5614" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5666" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5666" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1346750f53b9c10448a73cfb0ce3f50c5" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -222,7 +209,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5640" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5640" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5692" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5692" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_141cc697f9180d9e8c45ebc556f3c24c4" prot="public" static="no" mutable="no">
         <type>MprFile *</type>
@@ -235,7 +222,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5628" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5628" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5680" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5680" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1730907cc9e8ad755c23caa1747ec9a33" prot="public" static="no" mutable="no">
         <type>EcState *</type>
@@ -248,7 +235,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5593" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5593" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5642" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5642" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1652ba3008bea24ae6552a1381eed14a2" prot="public" static="no" mutable="no">
         <type>MprList *</type>
@@ -261,7 +248,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5636" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5636" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5688" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5688" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1d090d7b1cd71755e5f0734df97e1893a" prot="public" static="no" mutable="no">
         <type>EcInput *</type>
@@ -274,7 +261,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5604" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5604" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5656" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5656" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_188c78076dfccfc15dc832da627967e44" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -287,7 +274,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5616" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5616" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5668" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5668" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1aec12508357d47c439d0aa7add6b680d" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -300,7 +287,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5626" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5626" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5678" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5678" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1c983cac43de6e45696262461a87016e8" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -313,7 +300,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5651" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5651" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5703" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5703" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1d118b95c27aefd0b9fa4037645afaae7" prot="public" static="no" mutable="no">
         <type>EcLexer *</type>
@@ -326,7 +313,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5603" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5603" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5655" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5655" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_15526ec4bcbfaafbdd2853d4d9cb729a0" prot="public" static="no" mutable="no">
         <type><ref refid="struct_ejs_lookup" kindref="compound">EjsLookup</ref></type>
@@ -339,7 +326,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5598" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5598" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5650" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5650" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1f826bfc1775f1462bc6aa2591fd71dbe" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -352,7 +339,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5641" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5641" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5693" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5693" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1783ef670f888824251fcc2863016663c" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -365,7 +352,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5617" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5617" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5669" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5669" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1909c115bc86cdaf9a5ca7dccc5c983cf" prot="public" static="no" mutable="no">
         <type>MprList *</type>
@@ -378,7 +365,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5635" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5635" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5687" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5687" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_16c3220e2ca541a513ea9547e31138908" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -391,7 +378,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5630" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5630" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5682" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5682" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_15cbd39d1f6a11da518e3810895c6f961" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -404,7 +391,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5644" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5644" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5696" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5696" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1b6f2665a473a806df0a49f6ff0821a65" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -417,7 +404,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5619" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5619" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5671" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5671" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1a8d3859998817573c095a73a9b38c0c8" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -430,7 +417,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5621" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5621" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5673" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5673" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1c5bbab9698a71c1db5fce06c33d36fab" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -443,7 +430,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5627" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5627" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5679" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5679" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1a292ad6ce0fd4bfb8fcdaebe2d885999" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -456,7 +443,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5631" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5631" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5683" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5683" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_14d20a3c6c4c639176609a58b539c7b78" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -469,7 +456,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5650" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5650" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5702" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5702" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1ee76c4cf93cb4f7e03120316d845b93a" prot="public" static="no" mutable="no">
         <type>EcToken *</type>
@@ -482,7 +469,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5585" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5585" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5634" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5634" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1e0a9c353dfcfa1bc493b1f2a75113b32" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -495,7 +482,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5590" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5590" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5639" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5639" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_11f90f2a5972bbdcaed444439bb57cff6" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -508,7 +495,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5578" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5578" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5627" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5627" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1489d4b0a98b79d30bc7df2cdd4e169b8" prot="public" static="no" mutable="no">
         <type>MprList *</type>
@@ -521,7 +508,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5615" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5615" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5667" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5667" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_154a189d996f9fb4181dd0b3b56a50cc8" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -534,7 +521,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5622" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5622" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5674" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5674" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_174bf7de01c279f3249666cac1405b267" prot="public" static="no" mutable="no">
         <type>EcState *</type>
@@ -547,7 +534,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5579" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5579" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5628" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5628" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1842d6be979cfd4369d227c32a16e8e96" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -560,7 +547,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5625" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5625" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5677" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5677" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1c88ec30bad4f86cdf2ce3801df736593" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -573,7 +560,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5632" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5632" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5684" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5684" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1b48d7f9730f7bda3e84ea915e3d81199" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -586,7 +573,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5633" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5633" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5685" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5685" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_106d8549fc75ef81be2502c6adcf80220" prot="public" static="no" mutable="no">
         <type>EcToken *</type>
@@ -599,7 +586,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5586" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5586" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5635" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5635" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1630dd79e1225b373ec9eed0294699a3e" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -612,7 +599,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5589" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5589" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5638" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5638" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_12103ec62cce28bcdb1c50fcfab53d692" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -625,7 +612,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5652" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5652" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5704" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5704" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_18f2425de9b2f7de42adcf4a2529df050" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -638,7 +625,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5620" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5620" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5672" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5672" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1af1cdfae91ad783ceffd84a0072cef8d" prot="public" static="no" mutable="no">
         <type><ref refid="struct_ejs_service" kindref="compound">EjsService</ref> *</type>
@@ -651,7 +638,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5605" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5605" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5657" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5657" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_16c84b49daa52b12675d093a78fd52716" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -664,7 +651,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5643" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5643" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5695" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5695" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_compiler_1b26a9550608a8013535f110b4fa83bc1" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -677,7 +664,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5623" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5623" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5675" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5675" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -710,13 +697,12 @@
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/Users/mob/git/ejs/all/ejs.h" line="5574" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5574" bodyend="5653"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5623" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5623" bodyend="5705"/>
     <listofallmembers>
       <member refid="struct_ec_compiler_183dad801555cdff87ea67dced805daef" prot="public" virt="non-virtual"><scope>EcCompiler</scope><name>bind</name></member>
       <member refid="struct_ec_compiler_1ce61ef9655c71e48d57e3f23bd28cd21" prot="public" virt="non-virtual"><scope>EcCompiler</scope><name>blockLevel</name></member>
       <member refid="struct_ec_compiler_117ab71b800d9f561d7d6b1018ec62bcb" prot="public" virt="non-virtual"><scope>EcCompiler</scope><name>blockState</name></member>
       <member refid="struct_ec_compiler_1b7fec5ecb71f03668362388d93e9ceeb" prot="public" virt="non-virtual"><scope>EcCompiler</scope><name>certFile</name></member>
-      <member refid="struct_ec_compiler_1e8adc5b977f775d912680ba4f510be02" prot="public" virt="non-virtual"><scope>EcCompiler</scope><name>classState</name></member>
       <member refid="struct_ec_compiler_17e76b04931dcb7ef493ff76f28ab0436" prot="public" virt="non-virtual"><scope>EcCompiler</scope><name>currentFilename</name></member>
       <member refid="struct_ec_compiler_147401bb238a03ed29e0f9be8a044c910" prot="public" virt="non-virtual"><scope>EcCompiler</scope><name>currentLine</name></member>
       <member refid="struct_ec_compiler_1c326982c05ff3859c0f59d48b4e9fabb" prot="public" virt="non-virtual"><scope>EcCompiler</scope><name>currentLineNumber</name></member>

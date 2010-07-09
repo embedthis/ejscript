@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2272" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2272" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2287" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2287" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_12726b5683842d750c82be0d73f0033ad" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2270" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2270" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2285" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2285" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_173264bfd149b2ecf99d9e9de34f67b01" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2273" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2273" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2288" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2288" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_1d0666c26ea644d492784ce29ed378d45" prot="public" static="no" mutable="no">
         <type>bool</type>
@@ -53,7 +53,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2279" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2279" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2294" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2294" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_1ad2577f9623ff202c87d3c54c0c45a7c" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -66,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2275" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2275" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2290" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2290" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_135df4a3bf416977a78906833935874d0" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -79,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2274" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2274" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2289" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2289" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_1fbcbdf8ca36b06823b224c05e9a583a0" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
@@ -92,7 +92,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2280" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2280" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2295" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2295" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_1f0b20276855492554558fb5175e63363" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
@@ -105,7 +105,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2269" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2269" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2284" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2284" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_1aa06c82f020a92e05b8d91bf6c0154f7" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -118,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2277" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2277" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2292" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2292" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_1e7888d719484c26bac5f66ab57210748" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -131,7 +131,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2276" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2276" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2291" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2291" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_1ca374103530189fe5409dafca458bebd" prot="public" static="no" mutable="no">
         <type>uchar *</type>
@@ -144,7 +144,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2271" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2271" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2286" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2286" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_byte_array_1df7060fd4fccee16f7da447fb07cf5cb" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -157,14 +157,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2278" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2278" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2293" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2293" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/all/ejs.h" line="2268" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2268" bodyend="2281"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2283" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2283" bodyend="2296"/>
     <listofallmembers>
       <member refid="struct_ejs_byte_array_19e272123e0724a7c5e5942199ff14799" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>async</name></member>
       <member refid="struct_ejs_byte_array_12726b5683842d750c82be0d73f0033ad" prot="public" virt="non-virtual"><scope>EjsByteArray</scope><name>emitter</name></member>

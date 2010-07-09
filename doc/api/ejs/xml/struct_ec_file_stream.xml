@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5364" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5364" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5403" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5403" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ec_file_stream_10c0b7ecd005dd4f25292f780d4ec56e9" prot="public" static="no" mutable="no">
         <type>EcStream</type>
@@ -27,14 +27,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="5363" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5363" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5402" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5402" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/all/ejs.h" line="5362" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="5362" bodyend="5365"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="5401" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="5401" bodyend="5404"/>
     <listofallmembers>
       <member refid="struct_ec_file_stream_1c91aeb288666a4b9e4479c154a154c67" prot="public" virt="non-virtual"><scope>EcFileStream</scope><name>file</name></member>
       <member refid="struct_ec_file_stream_10c0b7ecd005dd4f25292f780d4ec56e9" prot="public" virt="non-virtual"><scope>EcFileStream</scope><name>stream</name></member>

@@ -51,7 +51,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1443"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1456"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1ge967dfd860839bcd524474c111081306" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -100,7 +100,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1467"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1480"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g082697e0e380a6c98c35f6affb4abd03" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -149,19 +149,19 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1481"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1494"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_obj_1g60908225632a114f203ac70a017c5a42" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsCloneObject</definition>
-        <argsstring>(Ejs *ejs, EjsObj *src, bool deep)</argsstring>
+      <memberdef kind="function" id="group___ejs_obj_1g040d0590c1b16279cfad10c173f44fa7" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* ejsCloneObject</definition>
+        <argsstring>(Ejs *ejs, void *src, bool deep)</argsstring>
         <name>ejsCloneObject</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>EjsObj *</type>
+          <type>void *</type>
           <declname>src</declname>
         </param>
         <param>
@@ -198,7 +198,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1762"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1776"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g50d9d774b3cddd1784d654326cddc237" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -247,7 +247,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1506"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1519"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g7bb8763a6168fed21e045e1508ef10e9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -307,11 +307,11 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1494"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1507"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_obj_1g400b8ab5c3245413957adfb54a79efd5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
-        <type>EjsObj *</type>
-        <definition>EjsObj* ejsCreateObject</definition>
+      <memberdef kind="function" id="group___ejs_obj_1g1fd05d0bb2afdf48e757d752148bbe71" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void* ejsCreateObject</definition>
         <argsstring>(Ejs *ejs, struct EjsType *type, int size)</argsstring>
         <name>ejsCreateObject</name>
         <param>
@@ -356,7 +356,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1732"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1745"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1gea80a8028f9d83f0acb4b350904cb40e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -383,7 +383,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1720"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1733"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1ge98ad7a01f5fb0da7801d81aa6df7e27" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -481,7 +481,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1537"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1550"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1gb2ce5c61164fab3e4537b096c2643002" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -530,7 +530,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1549"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1562"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g1618c62932d871e10abf445cb4f2cad5" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -579,7 +579,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1562"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1575"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g28cf08bc202cd514555e701ebfd7a4af" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -616,19 +616,19 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1517"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1530"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_obj_1ge7ede30497a9b6fff35802afd6e30348" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_obj_1g45836119edb7c2a21778603750c175bd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void ejsFreeVar</definition>
-        <argsstring>(Ejs *ejs, EjsObj *vp, int pool)</argsstring>
+        <argsstring>(Ejs *ejs, void *vp, int pool)</argsstring>
         <name>ejsFreeVar</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>EjsObj *</type>
+          <type>void *</type>
           <declname>vp</declname>
         </param>
         <param>
@@ -664,19 +664,19 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1455"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1468"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_obj_1g178c57c1c126ab25e3e90138e4033486" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_obj_1g44ca44b0a510cfd2b7f787787897351a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void *</type>
         <definition>void* ejsGetProperty</definition>
-        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum)</argsstring>
+        <argsstring>(Ejs *ejs, void *vp, int slotNum)</argsstring>
         <name>ejsGetProperty</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>EjsObj *</type>
+          <type>void *</type>
           <declname>vp</declname>
         </param>
         <param>
@@ -713,19 +713,19 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1573"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1586"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_obj_1g98ae6914fae405b48c02f3da63b83317" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_obj_1g6c0984c8b243e7cc891c7a5b89791fa4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void *</type>
         <definition>void* ejsGetPropertyByName</definition>
-        <argsstring>(Ejs *ejs, EjsObj *vp, EjsName *qname)</argsstring>
+        <argsstring>(Ejs *ejs, void *vp, EjsName *qname)</argsstring>
         <name>ejsGetPropertyByName</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>EjsObj *</type>
+          <type>void *</type>
           <declname>vp</declname>
         </param>
         <param>
@@ -762,7 +762,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1605"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1618"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1gcc5c8bebf6c9d7876ea0761423013051" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -800,19 +800,19 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1583"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1596"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_obj_1g5a2d5f21d02464c7a69afd16b58bdb6f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_obj_1g645e369fd09511af07380601b749ee0c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsName</type>
         <definition>EjsName ejsGetPropertyName</definition>
-        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum)</argsstring>
+        <argsstring>(Ejs *ejs, void *vp, int slotNum)</argsstring>
         <name>ejsGetPropertyName</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>EjsObj *</type>
+          <type>void *</type>
           <declname>vp</declname>
         </param>
         <param>
@@ -849,7 +849,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1594"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1607"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1ga0f26761cb72cc7387a88a011c90a419" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>struct <ref refid="struct_ejs_trait" kindref="compound">EjsTrait</ref> *</type>
@@ -898,7 +898,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1617"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1630"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g5cb5fc3dcebf49849eec312e5a9c6de6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsType *</type>
@@ -925,7 +925,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1412"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1425"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g66e600a6e63671a159956c0fd72cfa24" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -974,7 +974,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1775"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1789"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g6c73cc22a93ad0d05f14e75d753ea164" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -1034,7 +1034,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1630"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1643"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1gdf491fc04a99f00ed31ec30979a87470" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1079,11 +1079,11 @@
 <para>Qualified name of the property to search for. </para></parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>The slot number containing the property. Then use <ref refid="group___ejs_obj_1g178c57c1c126ab25e3e90138e4033486" kindref="member">ejsGetProperty</ref> to retrieve the property or alternatively use ejsGetPropertyByName to lookup and retrieve in one step. </para></simplesect>
+<simplesect kind="return"><para>The slot number containing the property. Then use <ref refid="group___ejs_obj_1g44ca44b0a510cfd2b7f787787897351a" kindref="member">ejsGetProperty</ref> to retrieve the property or alternatively use ejsGetPropertyByName to lookup and retrieve in one step. </para></simplesect>
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1642"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1655"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1gff79cc2e067b27b90618c0c5711577b6" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
@@ -1120,19 +1120,19 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1652"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1665"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_obj_1gaf72ffaa44381c171fca414b10c845c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_obj_1g4ff5e12635615b2dbcb5ddd6fe3c90cf" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>void</type>
         <definition>void ejsMarkObject</definition>
-        <argsstring>(Ejs *ejs, EjsObj *obj)</argsstring>
+        <argsstring>(Ejs *ejs, void *obj)</argsstring>
         <name>ejsMarkObject</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>EjsObj *</type>
+          <type>void *</type>
           <declname>obj</declname>
         </param>
         <briefdescription>
@@ -1157,19 +1157,19 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1785"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1799"/>
       </memberdef>
-      <memberdef kind="function" id="group___ejs_obj_1g1620c1da1b80901a0cef2138c8d4be99" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+      <memberdef kind="function" id="group___ejs_obj_1g1663e9f2141f201540d1b85e5b7d710e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
         <definition>int ejsSetProperty</definition>
-        <argsstring>(Ejs *ejs, EjsObj *vp, int slotNum, EjsObj *value)</argsstring>
+        <argsstring>(Ejs *ejs, void *vp, int slotNum, void *value)</argsstring>
         <name>ejsSetProperty</name>
         <param>
           <type>Ejs *</type>
           <declname>ejs</declname>
         </param>
         <param>
-          <type>EjsObj *</type>
+          <type>void *</type>
           <declname>vp</declname>
         </param>
         <param>
@@ -1177,7 +1177,7 @@
           <declname>slotNum</declname>
         </param>
         <param>
-          <type>EjsObj *</type>
+          <type>void *</type>
           <declname>value</declname>
         </param>
         <briefdescription>
@@ -1217,7 +1217,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1664"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1677"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g46bc13dc919529d20160d3e4278db49d" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1277,7 +1277,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1676"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1689"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g7fabfe8aff123c995c670685fff11a9b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1337,7 +1337,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1690"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1703"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g8e22dcbfaea2e1d8805f363d88eef455" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>int</type>
@@ -1408,7 +1408,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="1703"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="1716"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1gd6ac7066a19ea6e2cda258a5192e8329" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsString *</type>
@@ -1456,7 +1456,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="3059"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3081"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_obj_1g3bf38c71fac27819c73611bcf78ca2dd" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsString *</type>
@@ -1493,7 +1493,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="3049"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3071"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -1505,7 +1505,7 @@
 <linebreak/>
  EjsObjs may be either dynamic or sealed. Dynamic objects can grow the number of properties. Sealed objects cannot. Sealed objects will store the slot array as part of the EjsObj memory chunk. Dynamic objects will perform a separate allocation for the slot array so that it can grow. </para></simplesect>
 <simplesect kind="par"><title><bold>API</bold> Stability:</title><para>Evolving.</para></simplesect>
-<simplesect kind="see"><para><ref refid="group___ejs_obj" kindref="compound">EjsObj</ref> ejsIsObject <ref refid="group___ejs_obj_1gea80a8028f9d83f0acb4b350904cb40e" kindref="member">ejsCreateSimpleObject</ref> <ref refid="group___ejs_obj_1g400b8ab5c3245413957adfb54a79efd5" kindref="member">ejsCreateObject</ref> <ref refid="group___ejs_obj_1g60908225632a114f203ac70a017c5a42" kindref="member">ejsCloneObject</ref> <ref refid="group___ejs_obj_1g66e600a6e63671a159956c0fd72cfa24" kindref="member">ejsGrowObject</ref> <ref refid="group___ejs_obj_1gaf72ffaa44381c171fca414b10c845c8" kindref="member">ejsMarkObject</ref> TODO - change these From Var <ref refid="group___ejs_obj_1g5cb5fc3dcebf49849eec312e5a9c6de6" kindref="member">ejsGetVarType</ref> ejsAllocObj ejsFreeObj <ref refid="group___ejs_obj_1ge967dfd860839bcd524474c111081306" kindref="member">ejsCast</ref> <ref refid="group___ejs_obj_1g082697e0e380a6c98c35f6affb4abd03" kindref="member">ejsClone</ref> <ref refid="group___ejs_obj_1g7bb8763a6168fed21e045e1508ef10e9" kindref="member">ejsCreateInstance</ref> ejsCreateVar ejsDestroyVar <ref refid="group___ejs_obj_1ge98ad7a01f5fb0da7801d81aa6df7e27" kindref="member">ejsDefineProperty</ref> <ref refid="group___ejs_obj_1gb2ce5c61164fab3e4537b096c2643002" kindref="member">ejsDeleteProperty</ref> <ref refid="group___ejs_obj_1g1618c62932d871e10abf445cb4f2cad5" kindref="member">ejsDeletePropertyByName</ref> <ref refid="group___ejs_obj_1g178c57c1c126ab25e3e90138e4033486" kindref="member">ejsGetProperty</ref> <ref refid="group___ejs_obj_1gdf491fc04a99f00ed31ec30979a87470" kindref="member">ejsLookupProperty</ref> <ref refid="group___ejs_obj_1g1620c1da1b80901a0cef2138c8d4be99" kindref="member">ejsSetProperty</ref> <ref refid="group___ejs_obj_1g46bc13dc919529d20160d3e4278db49d" kindref="member">ejsSetPropertyByName</ref> <ref refid="group___ejs_obj_1g7fabfe8aff123c995c670685fff11a9b" kindref="member">ejsSetPropertyName</ref> <ref refid="group___ejs_obj_1g8e22dcbfaea2e1d8805f363d88eef455" kindref="member">ejsSetPropertyTrait</ref> ejsDeserialize ejsParseVar </para></simplesect>
+<simplesect kind="see"><para><ref refid="group___ejs_obj" kindref="compound">EjsObj</ref> ejsIsObject <ref refid="group___ejs_obj_1gea80a8028f9d83f0acb4b350904cb40e" kindref="member">ejsCreateSimpleObject</ref> <ref refid="group___ejs_obj_1g1fd05d0bb2afdf48e757d752148bbe71" kindref="member">ejsCreateObject</ref> <ref refid="group___ejs_obj_1g040d0590c1b16279cfad10c173f44fa7" kindref="member">ejsCloneObject</ref> <ref refid="group___ejs_obj_1g66e600a6e63671a159956c0fd72cfa24" kindref="member">ejsGrowObject</ref> <ref refid="group___ejs_obj_1g4ff5e12635615b2dbcb5ddd6fe3c90cf" kindref="member">ejsMarkObject</ref> TODO - change these From Var <ref refid="group___ejs_obj_1g5cb5fc3dcebf49849eec312e5a9c6de6" kindref="member">ejsGetVarType</ref> ejsAllocObj ejsFreeObj <ref refid="group___ejs_obj_1ge967dfd860839bcd524474c111081306" kindref="member">ejsCast</ref> <ref refid="group___ejs_obj_1g082697e0e380a6c98c35f6affb4abd03" kindref="member">ejsClone</ref> <ref refid="group___ejs_obj_1g7bb8763a6168fed21e045e1508ef10e9" kindref="member">ejsCreateInstance</ref> ejsCreateVar ejsDestroyVar <ref refid="group___ejs_obj_1ge98ad7a01f5fb0da7801d81aa6df7e27" kindref="member">ejsDefineProperty</ref> <ref refid="group___ejs_obj_1gb2ce5c61164fab3e4537b096c2643002" kindref="member">ejsDeleteProperty</ref> <ref refid="group___ejs_obj_1g1618c62932d871e10abf445cb4f2cad5" kindref="member">ejsDeletePropertyByName</ref> <ref refid="group___ejs_obj_1g44ca44b0a510cfd2b7f787787897351a" kindref="member">ejsGetProperty</ref> <ref refid="group___ejs_obj_1gdf491fc04a99f00ed31ec30979a87470" kindref="member">ejsLookupProperty</ref> <ref refid="group___ejs_obj_1g1663e9f2141f201540d1b85e5b7d710e" kindref="member">ejsSetProperty</ref> <ref refid="group___ejs_obj_1g46bc13dc919529d20160d3e4278db49d" kindref="member">ejsSetPropertyByName</ref> <ref refid="group___ejs_obj_1g7fabfe8aff123c995c670685fff11a9b" kindref="member">ejsSetPropertyName</ref> <ref refid="group___ejs_obj_1g8e22dcbfaea2e1d8805f363d88eef455" kindref="member">ejsSetPropertyTrait</ref> ejsDeserialize ejsParseVar </para></simplesect>
 </para>    </detaileddescription>
   </compounddef>
 </doxygen>

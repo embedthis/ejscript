@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="3189" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3189" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3214" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3214" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_xml_tag_state_11ee515ee13089908a5cd9d12b76bc5ef" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="3190" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3190" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3215" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3215" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_xml_tag_state_132f313083e2200f3fe69160d10c39b9c" prot="public" static="no" mutable="no">
         <type>struct EjsXML *</type>
@@ -40,14 +40,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="3187" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3187" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3212" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3212" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/all/ejs.h" line="3186" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="3186" bodyend="3191"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3211" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3211" bodyend="3216"/>
     <listofallmembers>
       <member refid="struct_ejs_xml_tag_state_1e8efcd8d23344191f7aff2f4c0901fbd" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>attributes</name></member>
       <member refid="struct_ejs_xml_tag_state_11ee515ee13089908a5cd9d12b76bc5ef" prot="public" virt="non-virtual"><scope>EjsXmlTagState</scope><name>comments</name></member>

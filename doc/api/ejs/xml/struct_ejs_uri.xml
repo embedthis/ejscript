@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2668" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2668" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2690" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2690" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_uri_15d7ba417bb0c7e5a47a6a7d9cf2de815" prot="public" static="no" mutable="no">
         <type>HttpUri *</type>
@@ -27,14 +27,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/all/ejs.h" line="2669" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2669" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2691" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2691" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/all/ejs.h" line="2667" bodyfile="/Users/mob/git/ejs/all/ejs.h" bodystart="2667" bodyend="2670"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2689" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="2689" bodyend="2692"/>
     <listofallmembers>
       <member refid="struct_ejs_uri_1486fffeb0b328b592b13292db11e9ead" prot="public" virt="non-virtual"><scope>EjsUri</scope><name>obj</name></member>
       <member refid="struct_ejs_uri_15d7ba417bb0c7e5a47a6a7d9cf2de815" prot="public" virt="non-virtual"><scope>EjsUri</scope><name>uri</name></member>
