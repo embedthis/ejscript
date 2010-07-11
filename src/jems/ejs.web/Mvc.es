@@ -39,6 +39,7 @@ module ejs.web {
             mvc: {
                 //  MOB -- what is this?
                 app: "",
+                //  MOB - should be moved to files
                 appmod: "App.mod",
                 views: {
                     connectors: { },

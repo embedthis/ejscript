@@ -7,6 +7,17 @@
         enable: true,
         reload: true,
     },
+    directories: {
+        bin: Path("bin"),
+        db: Path("db"),
+        cache: Path("cache"),
+        controllers: Path("controllers"),
+        layouts: Path("views/layouts"),
+        models: Path("models"),
+        views: Path("views"),
+        src: Path("src"),
+        web: Path("web"),
+    },
     log: {
         enable: true,
         where: "stdout",
@@ -45,25 +56,12 @@
         test: { },
         production: { },
     },
-    directories: {
-        bin: Path("bin"),
-        db: Path("db"),
-        cache: Path("cache"),
-        controllers: Path("controllers"),
-        layouts: Path("views/layouts"),
-        models: Path("models"),
-        views: Path("views"),
-        src: Path("src"),
-        web: Path("web"),
-    },
     extensions: {
         es: "es",
         ejs: "ejs",
-        mod: "mod",
     },
     mvc: {
         appmod: "App.mod",
-        compiler: "ejsc --debug --optimize 9 --web",
         start: "start.es",
         views: {
             connectors: {
@@ -76,13 +74,11 @@
                 Date: "%a %e %b %H:%M",
             },
         },
-        webserver: 'ejsweb --ejs "/" --log stdout:2',
     },
     session: {
         enable: true,
         timeout: 1800,
     },
-
 
     /* ejs.jem::jem.es */
     extensions: {

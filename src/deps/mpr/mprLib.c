@@ -6582,7 +6582,7 @@ char *mprUriEncode(MprCtx ctx, cchar *inbuf, int map)
     mprAssert(inbuf);
 
     for (len = 1, ip = inbuf; *ip; ip++, len++) {
-        if (charMatch[(int) *ip] & map) {
+        if (charMatch[(int) (uchar) *ip] & map) {
             len += 2;
         }
     }
@@ -6666,7 +6666,7 @@ char *mprEscapeCmd(MprCtx ctx, cchar *cmd, int escChar)
     mprAssert(cmd);
 
     for (len = 1, ip = cmd; *ip; ip++, len++) {
-        if (charMatch[(int) *ip] & MPR_ENCODE_SHELL) {
+        if (charMatch[(int) (uchar) *ip] & MPR_ENCODE_SHELL) {
             len++;
         }
     }
@@ -6707,7 +6707,7 @@ char *mprEscapeHtml(MprCtx ctx, cchar *html)
     int     len;
 
     for (len = 1, ip = html; *ip; ip++, len++) {
-        if (charMatch[(int) *ip] & MPR_ENCODE_HTML) {
+        if (charMatch[(int) (uchar) *ip] & MPR_ENCODE_HTML) {
             len += 5;
         }
     }
