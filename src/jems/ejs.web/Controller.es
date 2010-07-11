@@ -166,7 +166,7 @@ module ejs.web {
             }
         }
 
-        /*
+        /**
             Don't finalize the request. If called, the action routine must explicitly call Request.finalize. Note that
             a default view will not be rendered if dontFinalize is called.
          */
@@ -305,7 +305,7 @@ module ejs.web {
         }
 
         /** 
-            Redirect to the given action
+            Redirect the client to the given URL
             @param where Url to redirect the client toward. This can be a relative or absolute string URL or it can be
                 a hash of URL components. For example, the following are valid inputs: "../index.ejs", 
                 "http://www.example.com/home.html", {action: "list"}.
@@ -316,6 +316,10 @@ module ejs.web {
             redirected = true
         }
 
+        /** 
+            Redirect the client to the given action
+            @param action Controller action name to which to redirect the client.
+         */
         function redirectAction(action: String): Void
             redirect({action: action})
 
@@ -450,9 +454,15 @@ module ejs.web {
 
         //  LEGACY 1.0.2
 
+        /** @hide
+            @deprecated
+         */
         function get appUrl()
             request.home.toString().trimEnd("/")
 
+        /** @hide
+            @deprecated
+         */
         function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
             return makeUri({ path: action })
         }

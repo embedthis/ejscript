@@ -2160,6 +2160,142 @@ static EjsObj *obj_toString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 }
 
 
+/************************************************** Reflection **********************************************/
+/*
+    Get the base class of the object.
+
+    function getBaseType(obj: Type): Type
+ */
+static EjsObj *obj_getBaseType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    EjsObj      *vp;
+
+    vp = argv[0];
+    if (ejsIsType(vp)) {
+        return (EjsObj*) (((EjsType*) vp)->baseType);
+    }
+    return (EjsObj*) ejs->nullValue;
+}
+
+
+/*
+    function isPrototype(obj: Object): Boolean
+ */
+static EjsObj *obj_isPrototype(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateBoolean(ejs, ejsIsPrototype(argv[0]));
+}
+
+
+/*
+    function isType(obj: Object): Boolean
+ */
+static EjsObj *obj_isType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateBoolean(ejs, ejsIsType(argv[0]));
+}
+
+
+/*
+    Get the type of the object.
+
+    function getType(obj: Object): Type
+ */
+static EjsObj *obj_getType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    EjsObj      *vp;
+
+    vp = argv[0];
+    if (vp->type == 0) {
+        return ejs->nullValue;
+    }
+    return (EjsObj*) vp->type;
+}
+
+
+/*
+    Return the type name of a var as a string. If the var is a type, get the base type.
+ */
+EjsObj *ejsGetTypeName(Ejs *ejs, EjsObj *vp)
+{
+    EjsType     *type;
+
+    if (vp == 0) {
+        return ejs->undefinedValue;
+    }
+    type = (EjsType*) vp->type;
+    if (type == 0) {
+        return ejs->nullValue;
+    }
+    return (EjsObj*) ejsCreateString(ejs, type->qname.name);
+}
+
+
+/*
+    Get the name of a function or type object
+
+    function getName(obj: Object): String
+ */
+static EjsObj *obj_getName(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    EjsObj      *obj;
+
+    obj = argv[0];
+
+    if (ejsIsType(obj)) {
+        return (EjsObj*) ejsCreateString(ejs, ((EjsType*) obj)->qname.name);
+    } else if (ejsIsFunction(obj)) {
+        return (EjsObj*) ejsCreateString(ejs, ((EjsFunction*) obj)->name);
+    }
+    return (EjsObj*) ejs->emptyStringValue;
+}
+
+/*********************************** Globals **********************************/
+
+/*
+    function typeOf(obj): String
+ */
+static EjsObj *obj_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
+{
+    mprAssert(argc >= 1);
+    return (EjsObj*) ejsGetTypeName(ejs, argv[0]);
+}
+
+
+/*
+    Get the ecma "typeof" value for an object. Unfortunately, typeof is pretty lame.
+ */
+EjsObj *ejsGetTypeOf(Ejs *ejs, EjsObj *vp)
+{
+    if (vp == ejs->undefinedValue) {
+        return (EjsObj*) ejsCreateString(ejs, "undefined");
+
+    } else if (vp == ejs->nullValue) {
+        /* Yea - I know, ECMAScript is broken */
+        return (EjsObj*) ejsCreateString(ejs, "object");
+
+    } if (ejsIsBoolean(vp)) {
+        return (EjsObj*) ejsCreateString(ejs, "boolean");
+
+    } else if (ejsIsNumber(vp)) {
+        return (EjsObj*) ejsCreateString(ejs, "number");
+
+    } else if (ejsIsString(vp)) {
+        return (EjsObj*) ejsCreateString(ejs, "string");
+
+    } else if (ejsIsFunction(vp)) {
+        return (EjsObj*) ejsCreateString(ejs, "function");
+               
+    } else if (ejsIsType(vp)) {
+        /* Pretend it is a constructor function */
+        return (EjsObj*) ejsCreateString(ejs, "function");
+               
+    } else {
+        return (EjsObj*) ejsCreateString(ejs, "object");
+    }
+}
+
+
 /************************************ Factory *********************************/
 
 void ejsCreateObjectHelpers(Ejs *ejs)
@@ -2214,6 +2350,13 @@ void ejsConfigureObjectType(Ejs *ejs)
     ejsBindAccess(ejs, type, ES_Object_prototype, (EjsProc) obj_prototype, obj_set_prototype);
     ejsBindMethod(ejs, type, ES_Object_seal, obj_seal);
 
+    /* Reflection */
+    ejsBindMethod(ejs, type, ES_Object_getBaseType, obj_getBaseType);
+    ejsBindMethod(ejs, type, ES_Object_getType, obj_getType);
+    ejsBindMethod(ejs, type, ES_Object_getName, obj_getName);
+    ejsBindMethod(ejs, type, ES_Object_isType, obj_isType);
+    ejsBindMethod(ejs, type, ES_Object_isPrototype, obj_isPrototype);
+
     ejsBindMethod(ejs, prototype, ES_Object_constructor, (EjsProc) obj_constructor);
     ejsBindMethod(ejs, prototype, ES_Object_clone, obj_clone);
     ejsBindMethod(ejs, prototype, ES_Object_iterator_get, obj_get);
@@ -2224,6 +2367,8 @@ void ejsConfigureObjectType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Object_toLocaleString, toLocaleString);
     ejsBindMethod(ejs, prototype, ES_Object_toString, obj_toString);
     ejsBindMethod(ejs, prototype, ES_Object_toJSON, obj_toJSON);
+
+    ejsBindFunction(ejs, ejs->globalBlock, ES_typeOf, (EjsProc) obj_typeOf);
 
     /*
         The prototype method is special. It is declared as static so it is generated in the type slots, but it is

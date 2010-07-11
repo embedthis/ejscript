@@ -1128,7 +1128,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             
         } else if (lookup->obj == ejs->global) {
             /*
-                Instance function or type being invoked as a constructor (e.g. Reflect(obj))
+                Instance function or type being invoked as a constructor (e.g. Date(obj))
              */
             argc = genCallArgs(cp, right);
             mprAssert(0);

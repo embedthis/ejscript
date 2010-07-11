@@ -81,6 +81,7 @@ module ejs {
         Create an interval timer. This will invoke the callback every $delay milliseconds.
         @param callback Function to invoke when the timer is due.
         @param delay Time period in milliseconds between invocations of the callback
+        @param args Function arguments to provide to the callback
         @return Timer ID that can be used with $clearInterval
      */
     function setInterval(callback: Function, delay: Number, ...args): Timer {
@@ -91,7 +92,7 @@ module ejs {
         return timer
     }
 
-    /*
+    /**
         Clear and dispose of an interval timer
         @param timer Interval timer returned from $setInterval
      */
@@ -111,7 +112,7 @@ module ejs {
         return timer
     }
 
-    /*
+    /**
         Clear and dispose of a timeout
         @param timer Timeout timer returned from $setTimeout
      */

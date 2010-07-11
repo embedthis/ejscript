@@ -62,7 +62,8 @@ log.debug(2, "message")
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#debug'><b>debug</b></a>(level: <a href='ejs-Number.html'>Number</a>, msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a debug message.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#error'><b>error</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an error message.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#info'><b>info</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit an informational message.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#redirect'><b>redirect</b></a>(location)</tr>   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#warn'><b>warn</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a warning message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#redirect'><b>redirect</b></a>(location): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect log output.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#warn'><b>warn</b></a>(msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Emit a warning message.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write raw data to the logger stream
 Write informational data to logger.</td></tr>
 </table>
@@ -128,6 +129,18 @@ may filter the message out before logging.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>msgs: <a href='ejs-Array.html'>Array</a> </td><td>Data to log.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='redirect'></a>
+<div class='api'>
+<div class='apiSig'>const   public  redirect(location): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Redirect log output.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>location </td><td>Optional output stream or Logger to send messages to. If a parent Logger instance is provided for the output parameter, messages are sent to the parent for rendering.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

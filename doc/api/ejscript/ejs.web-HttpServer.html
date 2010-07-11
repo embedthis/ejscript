@@ -76,7 +76,8 @@ MOB -- is this needed?.</td></tr>
 <h2 class='classSection'>HttpServer Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#attach'><b>attach</b></a>(): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#attach'><b>attach</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Attach the HttpServer to the web server.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(address): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
@@ -86,6 +87,19 @@ MOB -- is this needed?.</td></tr>
 
 <hr />
 <h2>Method Detail</h2>
+<a name='attach'></a>
+<div class='api'>
+<div class='apiSig'>const   public  attach(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Attach the HttpServer to the web server.</p>
+<dl><dt>Description</dt><dd>Should only be used when Ejscript is running inside a web server.
+The web server embedding is responsible for defining a location context and loading the EjsStartup script.
+When the startup script calls attach, the HttpServer object is connected to the relevant virtual server
+and location block context.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='close'></a>
 <div class='api'>
 <div class='apiSig'>const   public  close(): <a href='ejs-Void.html'>Void</a>

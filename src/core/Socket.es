@@ -113,8 +113,7 @@ module ejs {
         /** 
             @duplicate Stream.write 
          */
-        //  MOB -- or ...data
-        native function write(...items): Number
+        native function write(...data): Number
     }
 }
 

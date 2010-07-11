@@ -315,6 +315,10 @@ module ejs {
             @li $Function "function"
             @li Number "number"
             @li String "string"
+        Note that JavaScript has many other types that are not accurately represented by the typeof call. Such types
+        and values include: Array, String, Function, Math, Date, RegExp, Error and null and undefined values. 
+        Consequently, typeof() is unable to correctly identify object data types. Use the fixed $typeOf() function
+        instead.
         @remarks Note that lower case names are returned for class names.
         @spec ejs
     native function typeof(o: Object): String

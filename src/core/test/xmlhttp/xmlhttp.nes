@@ -18,7 +18,7 @@ assert(xp.readyState == XMLHttp.Loaded)
 assert(xp.status == 200)
 assert(xp.statusText == "OK")
 assert(xp.responseText.length > 100)
-assert(Reflect(xp.responseXML).type == XML)
+assert(Object.getType(xp.responseXML) == XML)
 assert(xp.responseXML.length() == 2)
 assert(xp.getAllResponseHeaders().contains("DATE"))
 

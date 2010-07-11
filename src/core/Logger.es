@@ -85,7 +85,12 @@ module ejs {
             _name = (_outStream is Logger) ? (_outStream.name + "." + name) : name 
         }
 
-        function redirect(location) {
+        /** 
+            Redirect log output.
+            @param location Optional output stream or Logger to send messages to. If a parent Logger instance is provided for
+                the output parameter, messages are sent to the parent for rendering.
+         */
+        function redirect(location): Void {
             if (location is Stream) {
                 _outStream = location
             } else {
@@ -173,13 +178,15 @@ module ejs {
             Get the MPR log level via a command line "--log spec" switch
             @hide
          */
-        static native function get mprLevel(): Number
+        static native function get mprLogLevel(): Number
+//      static native function set mprLogLevel(value: Number): Void
 
         /**
-            Get the MPR log stream defined via a command line "--log spec" switch
+            MPR log file defined via a command line "--log spec" switch
             @hide
          */
-        static native function get mprStream(): Stream
+        static native function get mprLogFile(): Stream
+//      static native function set mprLogFile(stream: Stream): Void
 
         /** 
             The name of this logger.
@@ -286,8 +293,9 @@ module ejs {
          */
         private function emit(origin: String, level: Number, kind: String, msg: String): Void {
             origin ||= _name
-            if (level > _level || !_outStream)
+            if (level > _level || !_outStream) {
                 return
+            }
             if (_pattern && !origin.match(_pattern)) {
                 return
             }

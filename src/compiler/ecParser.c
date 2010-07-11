@@ -683,7 +683,7 @@ static int compileInput(EcCompiler *cp, EcNode **nodes, cchar *path)
  */
 static int parseFile(EcCompiler *cp, char *path, EcNode **nodes)
 {
-    int         rc, opened;
+    int     rc, opened;
 
     mprAssert(path);
     mprAssert(nodes);
@@ -982,7 +982,6 @@ static EcNode *parseXMLAttributeValue(EcCompiler *cp, EcNode *np)
             name
                 id
  */
-
 static EcNode *parseIdentifier(EcCompiler *cp)
 {
     EcNode      *np;
@@ -996,8 +995,8 @@ static EcNode *parseIdentifier(EcCompiler *cp)
     }
 
     switch (tid) {
-    case T_ID:
     case T_MUL:
+    case T_ID:
         np = createNode(cp, N_QNAME);
         setId(np, (char*) cp->token->text);
         break;
@@ -1222,7 +1221,6 @@ static EcNode *parseSimpleQualifiedName(EcCompiler *cp)
     ENTER(cp);
 
     if (peekToken(cp) == T_MUL || cp->peekToken->tokenId == T_STRING) {
-
         if (peekAheadToken(cp, 2) == T_COLON_COLON) {
             qualifier = parseQualifier(cp);
             getToken(cp);
@@ -1466,13 +1464,11 @@ static EcNode *parsePrimaryName(EcCompiler *cp)
             getToken(cp);
         }
     }
-
     if (np) {
         np = appendNode(np, parsePropertyName(cp));
     } else {
         np = parsePropertyName(cp);
     }
-
     return LEAVE(cp, np);
 }
 
@@ -4722,9 +4718,15 @@ static EcNode *parseTypeExpression(EcCompiler *cp)
         break;
 #endif
 
+    case T_MUL:
+        getToken(cp);
+        np = createNode(cp, N_QNAME);
+        setId(np, (char*) "Object");
+        np->name.isType = 1;
+        break;
+
     case T_STRING:
     case T_ID:
-    case T_MUL:
         np = parsePrimaryName(cp);
         if (np) {
             np->name.isType = 1;
@@ -8722,7 +8724,6 @@ static EcNode *parseNamespaceInitialisation(EcCompiler *cp, EcNode *nameNode)
     if (getToken(cp) != T_ASSIGN) {
         return LEAVE(cp, unexpected(cp));
     }
-
     if (peekToken(cp) == T_STRING) {
         getToken(cp);
         np = createNode(cp, N_LITERAL);
@@ -8732,7 +8733,6 @@ static EcNode *parseNamespaceInitialisation(EcCompiler *cp, EcNode *nameNode)
     } else {
         np = parsePrimaryName(cp);
     }
-
     return LEAVE(cp, np);
 }
 
@@ -9104,8 +9104,9 @@ static EcNode *parseRequireItem(EcCompiler *cp)
     np->useModule.minVersion = 0;
     np->useModule.maxVersion = EJS_MAX_VERSION;
 
-    moduleName = parseModuleName(cp);
-    np->qname.name = mprStrdup(np, moduleName->qname.name);
+    if ((moduleName = parseModuleName(cp)) != 0) {
+        np->qname.name = mprStrdup(np, moduleName->qname.name);
+    }
 
     /*
         Optional [version:version]
@@ -9619,7 +9620,7 @@ static EcNode *parseError(EcCompiler *cp, char *fmt, ...)
     if (tp) {
         ecSetError(cp, "Error", tp->filename, tp->lineNumber, tp->currentLine, tp->column, msg);
     } else {
-        ecSetError(cp, "Error", 0, 0, 0, 0, msg);
+        ecSetError(cp, "Error", NULL, 0, NULL, 0, msg);
     }
     mprFree(msg);
     va_end(arg);
@@ -9782,7 +9783,9 @@ void ecSetError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNumber
     if (filename == 0 || *filename == '\0') {
         filename = "stdin";
     }
-    if (currentLine) {
+    if (cp->lexer->input->stream == 0) {
+        errorMsg = mprAsprintf(cp, -1, "%s: %s: %s\n", appName, severity, msg);
+    } else if (currentLine) {
         highlightPtr = makeHighlight(cp, (char*) currentLine, column);
         errorMsg = mprAsprintf(cp, -1, "%s: %s: %s: %d: %s\n  %s  \n  %s\n", appName, severity, filename, lineNumber, 
             msg, currentLine, highlightPtr);

@@ -127,6 +127,9 @@ module ejs {
             }
         }
 
+        /** @hide
+            MOB -- complete
+         */
         function delayedFire(name: String, delay: Number, ...args): Void {
             Timer(delay, function() {
                 fire(name, ...args)
@@ -162,9 +165,15 @@ module ejs {
         }
 
         //  LEGACY
+        /** @deprecated
+            @hide 
+         */
         function addListener(name: Object, callback: Function): Void
             observe(name, callback)
 
+        /** @deprecated
+            @hide 
+         */
         function emit(name: String, ...args): Void 
             fire(name, ...args)
     }

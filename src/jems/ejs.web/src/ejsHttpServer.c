@@ -72,6 +72,7 @@ static EjsObj *hs_set_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
 }
 
 
+#if UNUSED
 /*  
     function attach(): Void
  */
@@ -86,6 +87,7 @@ static EjsObj *hs_attach(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     }
     return 0;
 }
+#endif
 
 
 /*  
@@ -104,32 +106,45 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
 
 /*  
-    function listen(address): Void
-    Address Can be either an "ip", "ip:port" or port
+    function listen(endpoint): Void
+    An endpoint can be either a "port", "ip:port", or null
  */
 static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     HttpServer  *server;
     EjsString   *address;
+    EjsObj      *endpoint;
     EjsPath     *root;
 
-    if (ejs->location) {
-        /* Being called hosted */
-        sp->obj.permanent = 1;
-        ejs->location->context = sp;
-        return 0;
-    }
+    endpoint = argv[0];
 
     if (sp->server) {
         mprFree(sp->server);
         sp->server = 0;
     }
-    address = (EjsString*) argv[0];
+    
+    if (endpoint == ejs->nullValue) {
+        sp->obj.permanent = 1;
+        if (ejs->location) {
+            ejs->location->context = sp;
+        } else {
+            ejsThrowStateError(ejs, "Can't find web server context for Ejscript. Check EjsStartup directive");
+            return 0;
+        }
+        return (EjsObj*) ejs->nullValue;
+    }
+    if (ejs->location) {
+        /* Being called hosted - ignore endpoint value */
+        sp->obj.permanent = 1;
+        ejs->location->context = sp;
+        return 0;
+    }
+    address = ejsToString(ejs, endpoint);
     mprParseIp(ejs, address->value, &sp->ip, &sp->port, 80);
 
     /*
         The server uses the ejsDispatcher. This is VERY important. All connections will inherit this also.
-        This serializes all activity on the one dispatcher.
+        This serializes all activity on one dispatcher.
      */
     if ((server = httpCreateServer(ejs->http, sp->ip, sp->port, ejs->dispatcher)) == 0) {
         ejsThrowIOError(ejs, "Can't create server object");
@@ -401,7 +416,9 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindConstructor(ejs, type, (EjsProc) hs_HttpServer);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_observe, (EjsProc) hs_observe);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_address, (EjsProc) hs_address);
+#if UNUSED
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_attach, (EjsProc) hs_attach);
+#endif
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_async, (EjsProc) hs_async, (EjsProc) hs_set_async);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_close, (EjsProc) hs_close);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_listen, (EjsProc) hs_listen);

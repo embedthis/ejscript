@@ -23,6 +23,7 @@ DOC_SRC			= $(shell find ../core -name '*.es' | egrep -v "$(FILTER)")
 DOC_SRC			+= $(shell find $(LOADABLE) -name '*.es' | egrep -v "$(FILTER)")
 PRE_DIRS 		:= core 
 POST_DIRS		:= $(LOADABLE) $(TOOLS)
+BIN_DIR			?= $(BLD_BUILD_BIN_DIR)
 
 include 		.makedep
 
@@ -31,15 +32,15 @@ DOC				:= $(DOC_DIR)/index.html
 
 compileExtra: $(MODULES) $(TOOLS)
 
-mods: $(MODULES) $(TOOLS)
+modules: $(MODULES) $(TOOLS)
 
 $(MODULES): $(LOADABLE_FILES) $(call mod, ejs)
 	$(call log) [Compile] "Jems"
 	rm -f *.mod *.slots.h
-	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) $(LOADABLE_FILES)
+	$(BIN_DIR)/ejsc $(_ESFLAGS) $(LOADABLE_FILES)
 	mv *.mod $(BLD_MOD_DIR)
 	$(call log) [Generate] "Jem listings and slot files"
-	$(BLD_BUILD_BIN_DIR)/ejsmod --showDebug $(LISTING) --cslots $(MODULES)
+	$(BIN_DIR)/ejsmod --showDebug $(LISTING) --cslots $(MODULES)
 	for f in *.slots.h ; do \
 		diff $$f $(BLD_INC_DIR) >/dev/null 2>&1 || (printf "%12s %s\n" "[Install]" $$f ; cp $$f $(BLD_INC_DIR)) ; rm -f $$f;\
 	done
@@ -49,11 +50,11 @@ packageExtra: buildJems $(DOC)
 #
 #	Move all doc under "doc" dir
 #
-$(DOC_DIR)/index.html: Makefile $(MODULES)
+$(DOC_DIR)/index.html: Makefile $(MODULES) $(DOC_SRC)
 	$(call log) "[Generate]" documentation
-	$(call setlibpath) ; $(BLD_BUILD_BIN_DIR)/ejsc --doc --bind $(_ESFLAGS) --out .doc.mod --require "" $(DOC_SRC)
+	$(call setlibpath) ; $(BIN_DIR)/ejsc --doc --bind $(_ESFLAGS) --out .doc.mod --require "" $(DOC_SRC)
 	rm -rf $(DOC_DIR)/*.html $(DOC_DIR)/*.css $(DOC_DIR)/images/*
-	$(call setlibpath) ; $(BLD_BUILD_BIN_DIR)/ejsmod --warn --html $(DOC_DIR) --require "" .doc.mod
+	$(call setlibpath) ; $(BIN_DIR)/ejsmod --warn --html $(DOC_DIR) --require "" .doc.mod
 	rm -f .doc.mod
 
 doc: $(DOC_DIR)/index.html

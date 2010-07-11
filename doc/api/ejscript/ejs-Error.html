@@ -58,7 +58,8 @@ The stack is an array of stack frame records. Each record consists of the follow
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#capture'><b>capture</b></a>(uplevels: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Capture the stack.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#formatStack'><b>formatStack</b></a>(): <a href='ejs-String.html'>String</a></tr></table>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#formatStack'><b>formatStack</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Format the captured stack.</td></tr>
+</table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
@@ -75,6 +76,17 @@ The stack is an array of stack frame records. Each record consists of the follow
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>uplevels: <a href='ejs-Number.html'>Number</a> </td><td>Skip a given count of stack frames from the stop of the call stack.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='formatStack'></a>
+<div class='api'>
+<div class='apiSig'>const   public  formatStack(): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Format the captured stack.</p>
+<dl><dt>Returns</dt>
+<dd>A string containing the formatted stack backtrace. Format is: [INDEX FILENAME, line LINENO, FUNCTION, CODE_LINE.</dd></dl>
+</div>
 </div>
 <hr />
 <div class="terms">

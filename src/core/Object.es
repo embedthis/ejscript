@@ -234,7 +234,48 @@ module ejs {
          */ 
         function valueOf(): String
             this
+
+
+        /**
+            Get the base type of a type object.
+            @return A type object
+         */
+        native static function getBaseType(obj: Type): Type
+  
+        /**
+            Get the type for an object. If the object is an instance, this is the class type object. If the object is a
+            type, this value is "Type".
+            @return A type object
+         */
+        native static function getType(obj: Object): Type
+  
+        /**
+            Test if the object is a type object
+            @return True if the object is a type object
+         */
+        native static function isType(obj: Object): Boolean
+  
+        /**
+            Test if the object is a prototype object
+            @return True if the object is being used as a prototype object
+         */
+        native static function isPrototype(obj: Object): Boolean
+  
+        /**
+            Get the name of the object if it is a function or type.
+            @return The string name of the function or type
+         */
+        native static function getName(obj: Object): String
     }
+  
+    /**
+        Return the name of a type. This is a fixed version of the standard "typeof" operator. It returns the real
+        Ejscript underlying type name. 
+        @param o Object or value to examine. 
+        @return A string type name. 
+        @spec ejs
+     */
+    native function typeOf(o): String
 }
 
 

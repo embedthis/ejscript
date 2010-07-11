@@ -188,7 +188,7 @@ void *ejsGetPropertyByName(Ejs *ejs, void *vp, EjsName *name)
     }
 
     /*
-     *  Fall back and use a two-step lookup and get
+        Fall back and use a two-step lookup and get
      */
     slotNum = ejsLookupProperty(ejs, obj, name);
     if (slotNum < 0) {

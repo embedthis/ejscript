@@ -67,7 +67,7 @@ module ejs.db.mapper {
             Initialize the model. This should be called by the model as its very first call.
          */
         _keyName = "id"
-        _className = Reflect(this).name
+        _className = Object.getName(this)
 
         _model = this
         _assocName = _className.toCamel()
@@ -94,7 +94,7 @@ module ejs.db.mapper {
             @param fields An optional object set of field names and values may be supplied to initialize the record.
          */
         function initialize(fields: Object? = null): Void {
-            _imodel = Reflect(this).type
+            _imodel = Object.getType(this)
             if (fields) for (let field in fields) {
                 this."public"::[field] = fields[field]
             }
@@ -187,7 +187,7 @@ module ejs.db.mapper {
                 if (col == undefined) {
                     continue
                 }
-                if (col.ejsType == Reflect(this[field]).type) {
+                if (col.ejsType == Object.getType(this[field])) {
                     continue
                 }
                 let value: String = this[field]
@@ -626,7 +626,7 @@ module ejs.db.mapper {
                         from += " INNER JOIN " + owner._tableName
                     }
                     for each (let owner in _belongsTo) {
-                        let tname: String = Reflect(owner).name
+                        let tname: String = Object.getName(owner)
                         tname = tname[0].toLower() + tname.slice(1) + "Id"
                         conditions += _tableName + "." + tname + " = " + owner._tableName + "." + owner._keyName + " AND "
                     }
@@ -853,7 +853,7 @@ module ejs.db.mapper {
          */
         function save(): Boolean {
             var sql: String
-            _imodel ||= Reflect(this).type
+            _imodel ||= Object.getType(this)
             if (!_imodel._columns) _imodel.getSchema()
             if (!validateRecord()) {
                 return false
@@ -992,7 +992,7 @@ module ejs.db.mapper {
             @returns True if the record has no errors.
          */
         function validateRecord(): Boolean {
-            _imodel ||= Reflect(this).type
+            _imodel ||= Object.getType(this)
             if (!_imodel._columns) _imodel.getSchema()
             _errors = {}
             if (_imodel._validations) {
@@ -1012,7 +1012,7 @@ module ejs.db.mapper {
                     }
                 }
             }
-            let thisType = Reflect(this).type
+            let thisType = Object.getType(this)
             if (thisType["validate"]) {
                 thisType["validate"].call(this)
             }

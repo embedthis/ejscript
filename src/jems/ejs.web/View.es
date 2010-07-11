@@ -291,7 +291,7 @@ module ejs.web {
          */
         function input(field: String, options: Object = {}): Void {
             try {
-                datatype = Reflect(currentRecord).type.getColumnType(field)
+                datatype = Object.getType(currentRecord).getColumnType(field)
 
                 //  TODO - needs fleshing out for each type
                 switch (datatype) {
@@ -693,7 +693,7 @@ module ejs.web {
             }
             let errors = record.getErrors()
             if (errors) {
-                write('<div class="-ejs-formError"><h2>The ' + Reflect(record).name.toLower() + ' has ' + 
+                write('<div class="-ejs-formError"><h2>The ' + Object.getName(record).toLower() + ' has ' + 
                     errors.length + (errors.length > 1 ? ' errors' : ' error') + ' that ' +
                     ((errors.length > 1) ? 'prevent' : 'prevents') + '  it being saved.</h2>\r\n')
                 write('    <p>There were problems with the following fields:</p>\r\n')
@@ -773,7 +773,7 @@ module ejs.web {
             if (options.formatter != undefined && options.formatter is Function) {
                 return options.formatter(value).toString()
             }
-            let typeName = Reflect(value).typeName
+            let typeName = typeOf(value)
 
             //  TODO OPT
             let fmt
@@ -925,15 +925,23 @@ module ejs.web {
         }
 
         //  LEGACY - move these into compat?
-
+        /** @hide
+            @deprecated
+         */
         function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
             //  MOB - should call the controller.makeUrl
             return makeUri({ path: action })
         }
 
+        /** @hide
+            @deprecated
+         */
         function get appUrl()
             request.home.toString().trimEnd("/")
 
+        /** @hide
+            @deprecated
+         */
         function redirect(url: Object) {
             if (controller) {
                 controller.redirect(url)

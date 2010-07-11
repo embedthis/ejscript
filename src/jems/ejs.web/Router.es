@@ -350,6 +350,7 @@ module ejs.web {
         //  MOB - OPT
         /**
             Make a URI provided parts of a URI. The URI is completed using the current request and route. 
+            @param request Request object
             @param components MOB
          */
         public function makeUri(request: Request, components: Object): Uri {

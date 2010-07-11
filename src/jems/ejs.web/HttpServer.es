@@ -82,28 +82,73 @@ module ejs.web {
 //  MOB - how to do SSL?
 //  MOB -- not right for sync mode. Never returns a request
         /** 
-            Listen for client connections. This creates a listening HTTP server. 
-            If the server is in sync mode, the listen call will block until a client connection is received and
-            the call will return a request object.
-            If a the socket is in async mode, the listen call will return immediately and client connections
-            will be notified via "accept" events. In this case when a client connection is received, the $accept function 
-            must be called to receive the Request object.
-            @return A Request object if in sync mode. No return value if in async mode. 
-            @param address The endpoint address on which to listen. The address can be either a port number, an IP address
-                string or a composite "IP:PORT" string. If only a port number is provided, the socket will listen on
-                all interfaces.
-            @throws ArgError if the specified listen address is not valid, and IOError for network errors.
-            @event Issues a "accept" event when there is a new connection available. In response, the $accept method
-                should be called.
-         */
-        native function listen(address): Request
+            Listen for client connections. This creates a HTTP server listening on a single socket endpoint. It can
+            also be used to attach to an existing listening connection if embedded in a web server. 
+            
+            When used inside a web server, the web server should define the listening endpoints and ensure the 
+            EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
+            the web server's listening connection. In this case, the endpoint argument is ignored.
 
-//  MOB
-        native function attach(): Void
+            HttpServer supports both sync and async modes of operation. If the server is in sync mode, the listen call 
+            will block until a client connection is received and the call will return a request object. If a the socket 
+            is in async mode, the listen call will return immediately and client connections will be notified via 
+            "accept" events. 
+
+            @return A Request object if in sync mode. No return value if in async mode. 
+            @param address The endpoint address on which to listen. An endoint is a port number or a composite 
+            "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port. 
+            If null is provided for an endpoint value, an existing web server listening connection will be used. In this
+            case, the web server will typically be the virtual host that specifies the EjsStartup script. See the
+            hosting web server documentation for specifics.
+            @throws ArgError if the specified endpoint address is not valid or available for binding.
+            @event Issues a "accept" event when there is a new connection available.
+            @example:
+                server = new Http(".", "./web")
+                server.observe("readable", function (event, request) {
+                    Web.serve(request)
+                })
+                server.listen("80")
+         */
+        native function listen(endpoint: String?): Request
 
 // MOB
         /** @hide */
-        native function secureListen(address, keyFile, certFile, protocols: String, ciphers: String): Void
+        /** 
+            Listen for client connections using the Secure Sockets Layer (SSL)protocol. This creates a HTTP server 
+            listening on a single socket endpoint for SSL connections. It can also be used to attach to an existing 
+            listening connection if embedded in a web server. 
+            
+            When used inside a web server, the web server should define the listening endpoints and ensure the 
+            EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
+            the web server's listening connection. In this case, the listen arguments are ignored.
+
+            HttpServer supports both sync and async modes of operation. If the server is in sync mode, the secureListen call 
+            will block until a client connection is received and the call will return a request object. If a the socket 
+            is in async mode, the secureListen call will return immediately and client connections will be notified via 
+            "accept" events. 
+
+            @return A Request object if in sync mode. No return value if in async mode. 
+            @param address The endpoint address on which to listen. An endoint is a port number or a composite 
+            "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port. 
+            If null is provided for an endpoint value, an existing web server listening connection will be used. In this
+            case, the web server will typically be the virtual host that specifies the EjsStartup script. See the
+            hosting web server documentation for specifics.
+            @param keyFile Path of the file containing the server's private key
+            @param certFile Path of the file containing the server's SSL certificate
+            @param protocols Arary of SSL protocols to support. Select from: SSLv2, SSLv3, TLSv1, ALL. For example:
+                ["SSLv3", "TLSv1"] or "[ALL]"
+            @param ciphers Array of ciphers to use when negotiating the SSL connection. Not yet supported.
+            @throws ArgError if the specified endpoint address is not valid or available for binding.
+            @event Issues a "accept" event when there is a new connection available.
+            @example:
+                server = new Http(".", "./web")
+                server.observe("readable", function (event, request) {
+                    Web.serve(request)
+                })
+                server.secureListen("443")
+         */
+        native function secureListen(endpoint: String?, keyFile: Path, certFile: Path, protocols: Array, 
+            ciphers: Array): Void
 
         /** 
             Get the port bound to this Http endpoint.

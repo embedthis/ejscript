@@ -7,12 +7,13 @@
 module ejs {
 
     /**
-        Base class for error exception objects. Exception objects are created by the system as part of changing 
+        Error exception object and base class. Exception objects are created by the system as part of changing 
         the normal flow of execution when some error condition occurs. 
 
-        When an exception is created and acted upon ("thrown"), the system transfers the flow of control to a 
+        When an exception is triggered and acted upon ("thrown"), the system transfers the flow of control to a 
         pre-defined instruction stream (the handler or "catch" code). The handler may return processing to the 
-        point at which the exception was thrown or not. It may re-throw the exception or pass control up the call stack.
+        point execution block where the exception was thrown. It may re-throw the exception or pass control up 
+        the call stack for an outer handler to process.
         @stability evolving
      */
     native dynamic class Error {
@@ -78,6 +79,11 @@ module ejs {
          */
         native function capture(uplevels: Number): Array
 
+        /**
+            Format the captured stack
+            @return A string containing the formatted stack backtrace. Format is:
+                [INDEX FILENAME, line LINENO, FUNCTION, CODE_LINE
+         */
         function formatStack(): String {
             let result = ""
             let i = 0

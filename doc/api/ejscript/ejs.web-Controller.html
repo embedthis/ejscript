@@ -54,8 +54,6 @@
    <tr><td nowrap align='center'>ejs.web </td><td>request</td><td><a href='ejs.web-Request.html'>Request</a></td><td>Reference to the current Request. </td></tr>
 <a name='view'></a>
    <tr><td nowrap align='center'>ejs.web </td><td>view</td><td><a href='ejs.web-View.html'>View</a></td><td>Reference to the current view. </td></tr>
-<a name='appUrl'></a>
-   <tr><td nowrap align='left'>ejs.web const get </td><td>appUrl</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 <a name='session'></a>
    <tr><td nowrap align='left'>ejs.web const get </td><td>session</td><td><a href='ejs.web-Session.html'>Session</a></td><td>Session state object. The session state object can be used to share state between requests.
 If a session has not already been created, this call creates a session and sets the <a href='#sessionID'>sessionID</a> property. 
@@ -72,12 +70,14 @@ This getter property is a wrapper and returns the Request.session object.</td></
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#create'><b>create</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs.web-Controller.html'>Controller</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Factory method to create and initialize a controller.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#dontFinalize'><b>dontFinalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#error'><b>error</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send an error notification to the user.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#dontFinalize'><b>dontFinalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Don't finalize the request.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#error'><b>error</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send an error notification to the user.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#inform'><b>inform</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a positive notification to the user.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#makeUri'><b>makeUri</b></a>(parts: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a URI suitable for invoking actions.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#makeUrl'><b>makeUrl</b></a>(action: <a href='ejs-String.html'>String</a>, id: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a>, query: <a href='ejs-Object.html'>Object</a>): <a href='ejs-String.html'>String</a></tr>   <tr class='apiDef'><td class='apiType'>action const </td><td><a href='#missing'><b>missing</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Missing action method.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#redirect'><b>redirect</b></a>(where: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect to the given action.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#redirectAction'><b>redirectAction</b></a>(action: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#render'><b>render</b></a>(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render the raw arguments back to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'>action const </td><td><a href='#missing'><b>missing</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Missing action method.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#redirect'><b>redirect</b></a>(where: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to the given URL.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#redirectAction'><b>redirectAction</b></a>(action: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to the given action.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#render'><b>render</b></a>(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render the raw arguments back to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderError'><b>renderError</b></a>(msg: <a href='ejs-String.html'>String</a> = , status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render an error message as the response.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderFile'><b>renderFile</b></a>(filename: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a file's contents.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderPartial'><b>renderPartial</b></a>(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a partial ejs template.</td></tr>
@@ -103,6 +103,17 @@ This call expects the controller class to be loaded. Called by Mvc.load().</dd><
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='dontFinalize'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  dontFinalize(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Don't finalize the request.</p>
+<dl><dt>Description</dt><dd>If called, the action routine must explicitly call Request.finalize. Note that
+a default view will not be rendered if dontFinalize is called.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='error'></a>
@@ -169,10 +180,22 @@ applications the burden of building URLs that correctly use action and controlle
 <div class='apiSig'>const   ejs.web  redirect(where: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Redirect to the given action.</p>
+<p>Redirect the client to the given URL.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>where: <a href='ejs-Object.html'>Object</a> </td><td>Url to redirect the client toward. This can be a relative or absolute string URL or it can be a hash of URL components. For example, the following are valid inputs: "../index.ejs",  "http://www.example.com/home.html", {action: "list"}.</td></tr><tr class='param'><td class='param'>status: <a href='ejs-Number.html'>Number</a> </td><td>Http status code to use in the redirection response. Defaults to 302. [default: expression]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='redirectAction'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  redirectAction(action: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Redirect the client to the given action.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>action: <a href='ejs-String.html'>String</a> </td><td>Controller action name to which to redirect the client.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

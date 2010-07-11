@@ -9,17 +9,30 @@
 
 /*********************************** Methods **********************************/
 /*  
-
+    function get mprLogLevel(): Number
  */
-static EjsObj *logger_mprLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *logger_mprLogLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateNumber(ejs, mprGetLogLevel(ejs));
 }
 
-/*  
 
+#if UNUSED
+/*  
+    function set mprLogLevel(value: Number): Void
  */
-static EjsObj *logger_mprStream(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *logger_set_mprLogLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    mprSetLogLevel(ejs, ejsGetInt(ejs, argv[0]));
+    return 0;
+}
+#endif
+
+
+/*  
+    function get mprLogFile(): Stream
+ */
+static EjsObj *logger_mprLogFile(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int     fd;
 
@@ -28,6 +41,23 @@ static EjsObj *logger_mprStream(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
     }
     return (EjsObj*) ejs->nullValue;
 }
+
+
+#if UNUSED
+/*  
+    function set mprLogFile(log: Stream): Void
+ */
+static EjsObj *logger_set_mprLogFile(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    EjsFile     *fp;
+    int         fd;
+
+    if ((fd = mprGetLogFd(ejs)) >= 0) {
+        return (EjsObj*) ejsCreateFileFromFd(ejs, fd, "mpr-logger", O_WRONLY);
+    }
+    return (EjsObj*) ejs->nullValue;
+}
+#endif /* UNUSED */
 
 /*********************************** Factory **********************************/
 
@@ -38,11 +68,11 @@ void ejsConfigureLoggerType(Ejs *ejs)
     type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "Logger");
     mprAssert(type);
 
-#if ES_Logger_mprLevel
-    ejsBindMethod(ejs, type, ES_Logger_mprLevel, (EjsProc) logger_mprLevel);
+#if ES_Logger_mprLogLevel
+    ejsBindMethod(ejs, type, ES_Logger_mprLogLevel, (EjsProc) logger_mprLogLevel);
 #endif
-#if ES_Logger_mprStream
-    ejsBindMethod(ejs, type, ES_Logger_mprStream, (EjsProc) logger_mprStream);
+#if ES_Logger_mprLogFile
+    ejsBindMethod(ejs, type, ES_Logger_mprLogFile, (EjsProc) logger_mprLogFile);
 #endif
 }
 

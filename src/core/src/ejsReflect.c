@@ -8,6 +8,7 @@
 
 #include    "ejs.h"
 
+#if UNUSED
 /*********************************** Methods **********************************/
 /*
     Constructor
@@ -177,13 +178,17 @@ void ejsConfigureReflectType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Reflect_base, (EjsProc) ref_base);
     ejsBindMethod(ejs, prototype, ES_Reflect_isType, (EjsProc) ref_isType);
     ejsBindMethod(ejs, prototype, ES_Reflect_name, (EjsProc) ref_name);
-#if 0
+#if UNUSED
     ejsBindMethod(ejs, prototype, ES_Reflect_isPrototype, (EjsProc) ref_isPrototype);
     ejsBindMethod(ejs, prototype, ES_Reflect_prototype, (EjsProc) ref_prototype);
 #endif
     ejsBindMethod(ejs, prototype, ES_Reflect_type, (EjsProc) ref_type);
     ejsBindFunction(ejs, ejs->globalBlock, ES_typeOf, (EjsProc) ref_typeOf);
 }
+
+#else
+void dummy_Reflection() {}
+#endif
 
 
 /*

@@ -14,12 +14,13 @@ s = new String
 assert(s == "")
 assert(s.length == 0)
 assert(s is String)
-assert(Reflect(s).base == String)
+assert(Object.getType(s) == String)
 
 s = new String(97);
 assert(s == "97")
 assert(s.length == 2)
-assert(Reflect(s).base == String)
+assert(s is String)
+assert(Object.getType(s) == String)
 
 
 // Cast to boolean

@@ -194,7 +194,7 @@ module ejs {
 
         /**
             Determine whether this object has its own property of the given name.
-            @param prop The property to look for.
+            @param name The property to look for.
             @return True if this object does have that property.
          */
         override function hasOwnProperty(name: String): Boolean

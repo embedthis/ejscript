@@ -1,6 +1,5 @@
-
 /*
- *	Multiple catch blocks
+  	Multiple catch blocks
  */
 
 state = 0

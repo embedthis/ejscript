@@ -6,122 +6,141 @@
 
 module ejs {
 
+    //  DEPRECATED
     /**
         Simple reflection class
+        @deprecated 
         @spec ejs
         @stability evolving 
-        @example
-        base      = Reflect(obj).base
-        type      = Reflect(Reflect(obj).base).type
-        name      = Reflect(obj).name
      */
     final class Reflect {
-        use default namespace public
 
-        native private var obj: Object
+        private var obj: Object
+
+        use default namespace public
 
         /**
             Create a new reflection object.
             @param o to reflect upon
+            @deprecated
          */
-        native function Reflect(o: Object)
+        function Reflect(o: *) {
+            obj = o
+        }
 
         /**
             The base class of the object being examined. If the object is a type, this is the super class of the type.
+            @deprecated
          */
-        native function get base(): Type
+        function get base(): Type
+            Object.getBaseType(obj)
 
         /**
             Test if the object is a type object
             @return True if the object is a type object
+            @deprecated
          */
-        native function get isType(): Boolean
-        native function get isPrototype(): Boolean
+        function get isType(): Boolean
+            Object.isType(obj)
+
+        /**
+            Test if the object is a prototype object
+            @return True if the object is a prototype object
+            @deprecated
+         */
+        function get isPrototype(): Boolean
+            Object.isPrototype(obj)
 
         /**
             The type of the object. If the object is an instance, this is the class type object. If the object is a
             type, this value is "Type".
          */
-        native function get type(): Type
-        native function get proto(): Object
+        function get type(): Type
+            Object.getType(obj)
+
+        /**
+            The prototype of the object
+            @deprecated
+         */
+        function get proto(): Object
+            Object.getOwnPrototypeOf(obj)
 
         /**
             The name of the object if it is a type object. Otherwise empty.
+            @deprecated
          */
-        native function get name(): String
+        function get name(): String {
+            if (obj is Type) {
+                return Object.getName(obj)
+            }
+            return null
+        }
 
     }
-
-    /**
-        Return the name of a type. This is a fixed version of the standard "typeof" operator. It returns the real
-        Ejscript underlying type name. 
-        @param o Object or value to examine. 
-        @return A string type name. 
-        @spec ejs
-     */
-    native function typeOf(o): String
 
 /*
-    ES4 reflection proposal
+    FUTURE reflection proposal
  
-    function typeOf(e: *): Type
+    final class Reflect {
+        native function Reflect(o: Object)
 
-    interface Type {
-        function canConvertTo(t: Type): Boolean
+        //  MOB -- rethink
+        function getInfo() {
+        }
+    }
+
+    enumerable class FieldInfo {
+        var name: Name
+        var type: Type
+        var enumerable: Boolean
+        var configurable: Boolean
+        var writable: Boolean
+        var getter: Boolean
+        var setter: Boolean
+
+        //  MOB -- bit ugly
+        var isFunction: Boolean
+        var isPrototype: Boolean
+        var isType: Boolean
+        var isFrame: Boolean
+        var isBuiltin: Boolean
+        var isDynamic: Boolean
+    }
+
+    enumerable class TypeInfo {
+        var name: Name
+        function get superTypes: Iterator
+        function get prototypes: Iterator
+        function get implements: Iterator
+        function get instanceMembers: Iterator
+        function get staticMembers: Iterator
+        function get constructor: Function
+
+        var isDynamic: Boolean
+        var isFinal: Boolean
+        var isFinal: Boolean
+
         function isSubtypeOf(t: Type): Boolean
+        function canConvertTo(t: Type): Boolean
     }
 
-    interface Field {
-        function namespace() : String
-        function name(): String
-        function type(): Type
+    enumerable class ParameterInfo {
+        var name: Name
+        var type: Type
+        var isRest: Boolean
+        var defaultValue: Object
     }
 
-    type FieldIterator = iterator::IteratorType.<Field>
-
-    interface NominalType extends Type {
-        function name(): String
-        function namespace(): String
-        function superTypes(): IteratorType.<ClassType>
-        function publicMembers(): FieldIterator
-        function publicStaticMembers(): FieldIterator
+    enumerable class FunctionInfo {
+        var parameters: Array   //  of Parameters
+        var returnType: Type
+        var boundThis: Object
+        var boundArgs: Array
+        var isMethod: Boolean
+        var isInitializer: Boolean
     }
-
-    interface InterfaceType extends NominalType {
-        function implementedBy():IteratorType.<ClassType>
-    }
-
-    type TypeIterator = iterator::IteratorType.<Type>
-    type ValueIterator = iterator::IteratorType.<*>
-
-    interface ClassType extends NominalType {
-        function construct(typeArgs: TypeIterator, valArgs: ValueIterator): Object
-    }
-
-    interface UnionType extends Type {
-        function members(): TypeIterator
-        function construct(typeArgs: TypeIterator, valArgs: ValueIterator): *
-    }
-
-    interface FieldValue {
-        function namespace() : String
-        function name(): String
-        function value(): *
-    }
-
-    type FieldValueIterator = iterator::IteratorType.<FieldValue>
-
-    interface RecordType extends Type {
-        function fields(): FieldIterator
-        function construct(typeArgs: TypeIterator, valArgs: FieldValueIterator): Object
-    }
-
-    interface FunctionType extends Type {
-        function hasBoundThis(): Boolean
-        function returnType(): Type
-        function argTypes(): TypeIterator
-        function construct(typeArgs: TypeIterator, valArgs: ValueIterator): *
-        function apply(typeArgs: TypeIterator, thisArg: Object?, valArgs: ValueIterator): *
+    
+    enumerable class ModuleInfo {
     }
 */
 }

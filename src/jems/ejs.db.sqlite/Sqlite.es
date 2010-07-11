@@ -158,7 +158,7 @@ module ejs.db.sqlite {
 
         /** @duplicate ejs.db::Database.dataTypeToSqlType */
         function dataTypeToSqlType(dataType:String): String
-            Reflect(this).type.DataTypeToSqlType[dataType]
+            Object.getType(this).DataTypeToSqlType[dataType]
 
         /** @duplicate ejs.db::Database.destroyDatabase */
         function destroyDatabase(name: String): Void

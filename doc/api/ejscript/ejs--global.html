@@ -91,7 +91,9 @@ for a property that has not been defined.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs final </td><td><a href='#ByteArray'><b>ByteArray</b></a>(size: <a href='ejs-Number.html'>Number</a> = -1 , growable: <a href='ejs-Boolean.html'>Boolean</a> = true)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new array.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#chdir'><b>chdir</b></a>(dir: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Change the current working directory.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#chmod'><b>chmod</b></a>(path: <a href='ejs-String.html'>String</a>, perms: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the permissions of a file or directory.</td></tr>
-   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#clearInterval'><b>clearInterval</b></a>(timer: <a href='ejs-Timer.html'>Timer</a>): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#clearTimeout'><b>clearTimeout</b></a>(timer: <a href='ejs-Timer.html'>Timer</a>): <a href='ejs-Void.html'>Void</a></tr>   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#CmdArgs'><b>CmdArgs</b></a>(template: <a href='ejs-Object.html'>Object</a>, argv: <a href='ejs-Array.html'>Array</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>The CmdArgs constructor creates a new instance of the CmdArgs.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#clearInterval'><b>clearInterval</b></a>(timer: <a href='ejs-Timer.html'>Timer</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear and dispose of an interval timer.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#clearTimeout'><b>clearTimeout</b></a>(timer: <a href='ejs-Timer.html'>Timer</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Clear and dispose of a timeout.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#CmdArgs'><b>CmdArgs</b></a>(template: <a href='ejs-Object.html'>Object</a>, argv: <a href='ejs-Array.html'>Array</a> = expression)</tr><tr class='apiBrief'><td>&nbsp;</td><td>The CmdArgs constructor creates a new instance of the CmdArgs.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Controller'><b>Controller</b></a>(r: <a href='ejs.web-Request.html'>Request</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and initialize a controller.</td></tr>
    <tr class='apiDef'><td class='apiType'>public </td><td><a href='#cp'><b>cp</b></a>(fromPath: <a href='ejs-String.html'>String</a>, toPath: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Copy a file.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.db </td><td><a href='#Database'><b>Database</b></a>(adapter: <a href='ejs-String.html'>String</a>, connectionString: <a href='ejs-String.html'>String</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Initialize a database connection using the supplied database connection string.</td></tr>
@@ -330,6 +332,30 @@ immutable, this constructor will return a reference to either the "true" or "fal
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>path: <a href='ejs-String.html'>String</a> </td><td>File or directory to modify.</td></tr><tr class='param'><td class='param'>perms: <a href='ejs-Number.html'>Number</a> </td><td>Posix style permission mask.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='clearInterval'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  clearInterval(timer: <a href='ejs-Timer.html'>Timer</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Clear and dispose of an interval timer.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>timer: <a href='ejs-Timer.html'>Timer</a> </td><td>Interval timer returned from <a href='#setInterval'>setInterval</a>. </td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='clearTimeout'></a>
+<div class='api'>
+<div class='apiSig'>  ejs  clearTimeout(timer: <a href='ejs-Timer.html'>Timer</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Clear and dispose of a timeout.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>timer: <a href='ejs-Timer.html'>Timer</a> </td><td>Timeout timer returned from <a href='#setTimeout'>setTimeout</a>. </td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -1342,7 +1368,7 @@ until all properties are rendered.  NOTE: the maxDepth, all and base properties 
 <dl><dt>Description</dt><dd>This will invoke the callback every <a href='#delay'>delay</a> milliseconds.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Function to invoke when the timer is due.</td></tr><tr class='param'><td class='param'>delay: <a href='ejs-Number.html'>Number</a> </td><td>Time period in milliseconds between invocations of the callback.</td></tr></table></dd>
+<tr class='param'><td class='param'>callback: <a href='ejs-Function.html'>Function</a> </td><td>Function to invoke when the timer is due.</td></tr><tr class='param'><td class='param'>delay: <a href='ejs-Number.html'>Number</a> </td><td>Time period in milliseconds between invocations of the callback.</td></tr><tr class='param'><td class='param'>args: <a href='ejs-Array.html'>Array</a> </td><td>Function arguments to provide to the callback.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>Timer ID that can be used with <a href='#clearInterval'>clearInterval</a>. </dd></dl>
 </div>

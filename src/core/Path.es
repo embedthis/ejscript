@@ -289,7 +289,7 @@ module ejs {
 
         /**
             Get a path after mapping the path directory separator
-            @param separator Path directory separator to use. Defaults to the separator of for this path.
+            @param sep Path directory separator to use. Defaults to the separator for this path.
             @return a new Path after mapping separators
          */
         native function map(sep: String = separator): Path

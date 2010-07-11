@@ -18,6 +18,7 @@ static int  destroyEjs(Ejs *ejs);
 static int  loadStandardModules(Ejs *ejs, MprList *require);
 static int  runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName);
 static int  searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn);
+static int  startLogging(Ejs *ejs);
 
 /************************************* Code ***********************************/
 /*  
@@ -101,6 +102,7 @@ Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, i
     }
     ejsFreezeGlobal(ejs);
     ejsMakeEternalPermanent(ejs);
+    startLogging(ejs);
 
     if (mprHasAllocError(ejs)) {
         mprError(ejs, "Memory allocation error during initialization");
@@ -225,7 +227,9 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureMathType(ejs);
     ejsConfigureMemoryType(ejs);
     ejsConfigureNamespaceType(ejs);
+#if UNUSED
     ejsConfigureReflectType(ejs);
+#endif
     ejsConfigureRegExpType(ejs);
     ejsConfigureSocketType(ejs);
     ejsConfigureStringType(ejs);
@@ -294,9 +298,7 @@ static int cloneMaster(Ejs *ejs, Ejs *master)
     ejs->byteArrayType = master->byteArrayType;
     ejs->dateType = master->dateType;
     ejs->errorType = master->errorType;
-#if UNUSED
     ejs->eventType = master->eventType;
-#endif
     ejs->functionType = master->functionType;
     ejs->iteratorType = master->iteratorType;
     ejs->namespaceType = master->namespaceType;
@@ -421,9 +423,7 @@ void ejsInitSearchPath(Ejs *ejs)
     }
 }
 
-/*
-    Set the module search path
- */
+
 void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 {
     mprAssert(ejs);
@@ -491,9 +491,6 @@ void ejsSetServiceLocks(EjsService *sp, EjsLockFn lock, EjsUnlockFn unlock, void
 #endif
 
 
-/*  
-    Evaluate a module file
- */
 int ejsEvalModule(cchar *path)
 {
     EjsService      *service;   
@@ -522,9 +519,6 @@ int ejsEvalModule(cchar *path)
 }
 
 
-/*  
-    Run a program. This is called from the dispatcher event loop.
- */
 static int runProgram(Ejs *ejs, MprEvent *event)
 {
     /*
@@ -626,9 +620,6 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
 }
 
 
-/*  
-    Add the listener function. The event emitter is created on-demand.
- */
 int ejsAddListener(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener)
 {
     EjsObj      *emitter, *argv[2];
@@ -769,42 +760,90 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
 }
 
 
-static void logHandler(MprCtx ctx, int flags, int level, const char *msg)
+typedef struct EjsLogData {
+    Ejs         *ejs;
+    EjsObj      *log;
+    EjsFunction *loggerWrite;
+    int         writeSlot;
+} EjsLogData;
+
+
+static int startLogging(Ejs *ejs)
 {
     Mpr         *mpr;
-    MprFile     *file;
-    char        *prefix;
+    EjsLogData  *ld;
+    EjsObj      *app;
+    EjsName     qname;
 
-    mpr = mprGetMpr(ctx);
-    file = (MprFile*) mpr->logHandlerData;
-    prefix = mpr->name;
-
-    while (*msg == '\n') {
-        mprFprintf(file, "\n");
-        msg++;
+    if ((ld = mprAllocObjZeroed(ejs, EjsLogData))  == 0) {
+        return MPR_ERR_NO_MEMORY;
     }
-    if (flags & MPR_LOG_SRC) {
-        mprFprintf(file, "%s: %d: %s\n", prefix, level, msg);
+    ld->ejs = ejs;
 
-    } else if (flags & MPR_ERROR_SRC) {
-        /*  
-            Use static printing to avoid malloc when the messages are small.
-            This is important for memory allocation errors.
-         */
-        if (strlen(msg) < (MPR_MAX_STRING - 32)) {
-            mprStaticPrintfError(file, "%s: Error: %s\n", prefix, msg);
-        } else {
-            mprFprintf(file, "%s: Error: %s\n", prefix, msg);
-        }
-    } else if (flags & MPR_FATAL_SRC) {
-        mprFprintf(file, "%s: Fatal: %s\n", prefix, msg);
-    } else if (flags & MPR_RAW) {
-        mprFprintf(file, "%s", msg);
+    if ((app = ejsGetPropertyByName(ejs, ejs->global, ejsName(&qname, EJS_EJS_NAMESPACE, "App"))) == 0) {
+        return MPR_ERR_CANT_READ;
     }
+    if ((ld->log = ejsGetPropertyByName(ejs, app, ejsName(&qname, EJS_PUBLIC_NAMESPACE, "log"))) == 0) {
+        return MPR_ERR_CANT_READ;
+    }
+    if ((ld->loggerWrite = ejsGetPropertyByName(ejs, ld->log->type->prototype, 
+            ejsName(&qname, EJS_PUBLIC_NAMESPACE, "write"))) < 0) {
+        return MPR_ERR_CANT_READ;
+    }
+    mpr = mprGetMpr(ejs);
+    mpr->altLogData = ld;
+    return 0;
 }
 
 
-int ejsStartLogging(Mpr *mpr, char *logSpec)
+static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
+{
+    Mpr         *mpr;
+    MprFile     *file;
+    Ejs         *ejs;
+    EjsLogData  *ld;
+    EjsObj      *str, *saveException;
+    char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
+
+    mpr = mprGetMpr(ctx);
+    prefix = mpr->name;
+    amsg = NULL;
+
+    if (flags & MPR_ERROR_SRC) {
+        tag = "Error";
+    } else if (flags & MPR_FATAL_SRC) {
+        tag = "Fatal";
+    } else if (flags & MPR_RAW) {
+        tag = NULL;
+    } else {
+        tag = mprItoa(lbuf, sizeof(lbuf), level, 10);
+    }
+    if (tag) {
+        if (strlen(msg) < (MPR_MAX_STRING - 32)) {
+            /* Avoid allocation if possible */
+            mprSprintf(ctx, buf, sizeof(buf), "%s: %s: %s\n", prefix, tag, msg);
+            msg = buf;
+        } else {
+            msg = amsg = mprAsprintf(ctx, -1, "%s: %s: %s\n", prefix, tag, msg);
+        }
+    }
+    if (mpr->altLogData) {
+        ld = (EjsLogData*) mpr->altLogData;
+        ejs = ld->ejs;
+        str = (EjsObj*) ejsCreateString(ejs, msg);
+        saveException = ejs->exception;
+        ejsClearException(ejs);
+        ejsRunFunction(ejs, ld->loggerWrite, ld->log, 1, &str);
+        ejs->exception = saveException;
+    } else {
+        file = (MprFile*) mpr->logData;
+        mprFprintf(file, "%s", msg);
+    }
+    mprFree(amsg);
+}
+
+
+int ejsStartMprLogging(Mpr *mpr, char *logSpec)
 {
     MprFile     *file;
     char        *levelSpec;
@@ -857,7 +896,7 @@ void ejsMemoryFailure(MprCtx ctx, int64 size, int64 total, bool granted)
 void ejsReportError(Ejs *ejs, char *fmt, ...)
 {
     va_list     arg;
-    const char  *emsg;
+    cchar       *emsg;
     char        *msg, *buf;
 
     va_start(arg, fmt);

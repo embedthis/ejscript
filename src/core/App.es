@@ -178,7 +178,8 @@ module ejs {
         native static function set locale(locale: String): Void
 
         /** 
-            Set the current logger
+            Default application logger. This is set to stderr unless the program specifies an output log via the --log 
+            command line switch.
          */
         public static var log: Logger
 
@@ -188,7 +189,7 @@ module ejs {
         static function get name(): String
             Config.Product
 
-        //  TODO need a better name than noexit, TODO could add a max delay option.
+        //  MOB TODO need a better name than noexit, TODO could add a max delay option.
         /** 
             Control whether an application will exit when global scripts have completed. Setting this to true will cause
             the application to continue servicing events until the $exit method is explicitly called. The default 
@@ -325,10 +326,16 @@ module ejs {
             }
         }
 
-        static function loadrc(path: Path) {
+        /**
+            Load an "ejsrc" configuration file
+            This loads an Ejscript configuration file and blends the contents with App.config. 
+            @param path Path name of the file to load
+            @param overwrite If true, then new configuration values overwrite existing values in App.config.
+         */
+        static function loadrc(path: Path, overwrite: Boolean = true) {
             if (path.exists) {
                 try {
-                    blend(App.config, path.readJSON(), false)
+                    blend(App.config, path.readJSON(), overwrite)
                 } catch (e) {
                     errorStream.write(App.exePath.basename +  " Can't parse " + path + ": " + e + "\n")
                 }
@@ -358,9 +365,9 @@ module ejs {
 
         let log = config.log
         if (log.enable) {
-            let stream = Logger.mprStream
+            let stream = Logger.mprLogFile
             if (stream) {
-                log.level = Logger.mprLevel
+                log.level = Logger.mprLogLevel
             } else if (log.location == "stdout") {
                 stream = App.outputStream
             } else if (log.location == "stderr") {
