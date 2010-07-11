@@ -118,10 +118,10 @@
 #define ES_Null                                                        97
 #define ES_Number                                                      98
 #define ES_Object                                                      99
-#define ES_Path                                                        100
-#define ES_Promise                                                     101
-#define ES_Reflect                                                     102
-#define ES_typeOf                                                      103
+#define ES_typeOf                                                      100
+#define ES_Path                                                        101
+#define ES_Promise                                                     102
+#define ES_Reflect                                                     103
 #define ES_RegExp                                                      104
 #define ES_Socket                                                      105
 #define ES_Stream                                                      106
@@ -270,6 +270,7 @@
 #define ES_App_serviceEvents_count                                     0
 #define ES_App_serviceEvents_timeout                                   1
 #define ES_App_loadrc_path                                             0
+#define ES_App_loadrc_overwrite                                        1
 #define ES_Array_NUM_CLASS_PROP                                        0
 
 /*
@@ -1142,8 +1143,8 @@
 #define ES_Logger_Info                                                 4
 #define ES_Logger_Config                                               5
 #define ES_Logger_All                                                  6
-#define ES_Logger_mprLevel                                             7
-#define ES_Logger_mprStream                                            8
+#define ES_Logger_mprLogLevel                                          7
+#define ES_Logger_mprLogFile                                           8
 #define ES_Logger_NUM_CLASS_PROP                                       9
 
 /*
@@ -1337,7 +1338,12 @@
 #define ES_Object_preventExtensions                                    12
 #define ES_Object_prototype                                            13
 #define ES_Object_seal                                                 14
-#define ES_Object_NUM_CLASS_PROP                                       15
+#define ES_Object_getBaseType                                          15
+#define ES_Object_getType                                              16
+#define ES_Object_isType                                               17
+#define ES_Object_isPrototype                                          18
+#define ES_Object_getName                                              19
+#define ES_Object_NUM_CLASS_PROP                                       20
 
 /*
    Prototype (instance) slots for "Object" type 
@@ -1379,6 +1385,11 @@
 #define ES_Object_keys_obj                                             0
 #define ES_Object_preventExtensions_obj                                0
 #define ES_Object_seal_obj                                             0
+#define ES_Object_getBaseType_obj                                      0
+#define ES_Object_getType_obj                                          0
+#define ES_Object_isType_obj                                           0
+#define ES_Object_isPrototype_obj                                      0
+#define ES_Object_getName_obj                                          0
 #define ES_Path_NUM_CLASS_PROP                                         0
 
 /*
@@ -1932,6 +1943,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1289568
+#define _ES_CHECKSUM_ejs   1296863
 
 #endif
