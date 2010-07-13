@@ -28,6 +28,20 @@ module ejs.web {
                 //  MOB -- is this being used?
                 timeout: 1800,
             },
+            web: {
+                endpoint: "127.0.0.1:4000",
+                views: {
+                    connectors: {
+                        table: "html",
+                        chart: "google",
+                        rest: "html",
+                    },
+                    formats: {
+                        currency:   "$%10f",
+                        Date:       "%a %e %b %H:%M",
+                    },
+                },
+            },
         }
 
         /*  

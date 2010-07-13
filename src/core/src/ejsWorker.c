@@ -72,7 +72,7 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
         Create a new interpreter and an "inside" worker object and pair it with the current "outside" worker.
      */
     //  TODO - must change NULL to ejs to get a master clone
-    wejs = ejsCreateVm(ejs->service, NULL, NULL, NULL, 0);
+    wejs = ejsCreateVm(ejs->service, NULL, NULL, NULL, 0, NULL, 0);
     if (wejs == 0) {
         ejsThrowMemoryError(ejs);
         return 0;

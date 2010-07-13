@@ -220,7 +220,7 @@ module ejs {
             @event complete Issued when the request completes
             @event error Issued if the request does not complete successfully.
             All events are called with the signature:
-            function (event: String, http: Http): Void
+                function (event: String, http: Http): Void
          */
         native function observe(name, observer: Function): Void
 

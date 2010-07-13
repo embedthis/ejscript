@@ -38,9 +38,8 @@ module ejs.web {
         private var nextId: Number = 0
 
         /** @hide */
-        function getNextId(): String {
-            return "id_" + nextId++
-        }
+        function getNextId(): String
+            "id_" + nextId++
 
         /**
             Constructor method to initialize a new View
@@ -711,11 +710,11 @@ module ejs.web {
             Get the view connector to render a control
          */
         private function getConnector(kind: String, options: Object) {
-            let views = request.config.mvc.views
+            let vc = request.config.web.view
             //  TODO OPT
-            let connectorName = (options && options["connector"]) || views.connectors[kind] ||
-                views.connectors["rest"] || "html"
-            views.connectors[kind] = connectorName
+            let connectorName = (options && options["connector"]) || vc.connectors[kind] ||
+                vc.connectors["rest"] || "html"
+            vc.connectors[kind] = connectorName
             let name = (connectorName + "Connector").toPascal()
             try {
                 return new global[name](request, this)
@@ -777,9 +776,9 @@ module ejs.web {
 
             //  TODO OPT
             let fmt
-            let mvc = request.config.mvc
-            if (mvc.views && mvc.views.formats) {
-                fmt = mvc.views.formats[typeName]
+            let web = request.config.web
+            if (web.view && web.view.formats) {
+                fmt = web.view.formats[typeName]
             }
             if (fmt == undefined || fmt == null || fmt == "") {
                 return value.toString()

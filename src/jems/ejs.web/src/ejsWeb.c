@@ -35,14 +35,14 @@ static EjsObj *req_worker(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     HttpConn    *conn;
 
 #if TRY
-    if ((nejs = ejsCreateVm(ejsService, ejs, NULL, NULL, 0)) == 0) {
+    if ((nejs = ejsCreateVm(ejsService, ejs, NULL, NULL, 0, NULL, 0)) == 0) {
         //  THROW
         return 0;
     }
 #else
     //  Cloning ejs would be faster
     //  MOB -- need to pick up service
-    if ((nejs = ejsCreateVm(ejsGetService(req), NULL, NULL, NULL, EJS_FLAG_MASTER)) == 0) {
+    if ((nejs = ejsCreateVm(ejsGetService(req), NULL, NULL, NULL, 0, NULL, EJS_FLAG_MASTER)) == 0) {
         //  THROW
         return 0;
     }

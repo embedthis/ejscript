@@ -24,6 +24,7 @@ static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     EjsObj      *serverRoot, *documentRoot;
 
     sp->ejs = ejs;
+    sp->async = 1;
     serverRoot = (argc >= 1) ? argv[0] : (EjsObj*) ejsCreatePath(ejs, ".");
     ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_serverRoot, serverRoot);
 
@@ -58,7 +59,7 @@ static EjsObj *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    return httpGetServerAsync(sp->server) ? (EjsObj*) ejs->trueValue : (EjsObj*) ejs->falseValue;
+    return (sp->async) ? (EjsObj*) ejs->trueValue : (EjsObj*) ejs->falseValue;
 }
 
 
@@ -67,7 +68,10 @@ static EjsObj *hs_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_set_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    httpSetServerAsync(sp->server, (argv[0] == (EjsObj*) ejs->trueValue));
+    sp->async = ejsGetBoolean(ejs, argv[0]);
+    if (sp->server) {
+        httpSetServerAsync(sp->server, sp->async);
+    }
     return 0;
 }
 
@@ -122,7 +126,6 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         mprFree(sp->server);
         sp->server = 0;
     }
-    
     if (endpoint == ejs->nullValue) {
         sp->obj.permanent = 1;
         if (ejs->location) {
@@ -151,6 +154,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         return 0;
     }
     sp->server = server;
+    httpSetServerAsync(server, sp->async);
 
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
     if (ejsIsPath(ejs, root)) {
@@ -204,7 +208,7 @@ static EjsObj *hs_removeObserver(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj *
  */
 static EjsObj *hs_software(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, HTTP_NAME);
+    return (EjsObj*) ejsCreateString(ejs, EJS_HTTPSERVER_NAME);
 }
 
 

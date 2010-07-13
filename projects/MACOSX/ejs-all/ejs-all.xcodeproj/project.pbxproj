@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 44;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXAggregateTarget section */
@@ -67,6 +67,7 @@
 				C9E750B410A367E1004E03DD /* PBXTargetDependency */,
 				C99A33D210C2F15E00F6C7BC /* PBXTargetDependency */,
 				C99A346910C2FCA100F6C7BC /* PBXTargetDependency */,
+				C9D4529011ECDA6600F029C8 /* PBXTargetDependency */,
 			);
 			name = All;
 			productName = Untitled;
@@ -207,6 +208,10 @@
 		C9902A691161776B00473F37 /* ejsFrame.c in Sources */ = {isa = PBXBuildFile; fileRef = C9902A681161776B00473F37 /* ejsFrame.c */; };
 		C9A0708010A3573C00F48512 /* ejsSqlite.c in Sources */ = {isa = PBXBuildFile; fileRef = C9A0707F10A3573C00F48512 /* ejsSqlite.c */; };
 		C9AD61531147661B003567F6 /* ejs.web.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627D90FD07850009C78E1 /* ejs.web.dylib */; };
+		C9D452B511ECDBA300F029C8 /* http.c in Sources */ = {isa = PBXBuildFile; fileRef = C9D452B411ECDBA300F029C8 /* http.c */; };
+		C9D452C711ECDC0600F029C8 /* libhttp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C95E4FDB10EBFD9300982610 /* libhttp.dylib */; };
+		C9D452C811ECDC0600F029C8 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
+		C9D452CB11ECDC1000F029C8 /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
 		C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C9F4C61F10B5D7B80046EFF4 /* ejsRequest.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */; };
 		C9F4C62110B5D7B80046EFF4 /* ejsSession.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */; };
@@ -457,6 +462,20 @@
 			proxyType = 1;
 			remoteGlobalIDString = C9222E520FD5813F00AFA5A4;
 			remoteInfo = ejs.mod;
+		};
+		C9D4528F11ECDA6600F029C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9D4528611ECDA4300F029C8 /* http */;
+			remoteInfo = http;
+		};
+		C9D4529311ECDA7500F029C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C97623C10FD06EC4009C78E1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C9D4528611ECDA4300F029C8 /* http */;
+			remoteInfo = http;
 		};
 		C9E750B310A367E1004E03DD /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -825,6 +844,8 @@
 		C9A070B410A3594A00F48512 /* package.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = package.json; path = ../../../src/jems/ejs.web.cgi/package.json; sourceTree = SOURCE_ROOT; };
 		C9A070B610A3596700F48512 /* ejsCgiHandler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsCgiHandler.c; path = ../../../src/jems/ejs.web.cgi/src/ejsCgiHandler.c; sourceTree = SOURCE_ROOT; };
 		C9A11ACF10790A9300B35E6B /* ecCompile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ecCompile.c; sourceTree = "<group>"; };
+		C9D4528711ECDA4300F029C8 /* http */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = http; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9D452B411ECDBA300F029C8 /* http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = http.c; path = ../../../src/deps/http/http.c; sourceTree = SOURCE_ROOT; };
 		C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRequest.c; path = ../../../src/jems/ejs.web/src/ejsRequest.c; sourceTree = SOURCE_ROOT; };
 		C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSession.c; path = ../../../src/jems/ejs.web/src/ejsSession.c; sourceTree = SOURCE_ROOT; };
 		C9FB52EF0FD9E92700882CC3 /* ejs.db.sqlite.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ejs.db.sqlite.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -957,6 +978,16 @@
 				C987613A0FD87DA200311B7A /* libmprssl.dylib in Frameworks */,
 				C987613B0FD87DA200311B7A /* libejs.dylib in Frameworks */,
 				C987613C0FD87DA200311B7A /* libsqlite.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C9D4528511ECDA4300F029C8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9D452C711ECDC0600F029C8 /* libhttp.dylib in Frameworks */,
+				C9D452C811ECDC0600F029C8 /* libmpr.dylib in Frameworks */,
+				C9D452CB11ECDC1000F029C8 /* libmprssl.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1142,6 +1173,7 @@
 		C95E4FE410EBFDE900982610 /* http */ = {
 			isa = PBXGroup;
 			children = (
+				C9D452B411ECDBA300F029C8 /* http.c */,
 				C95E4FE510EBFE1400982610 /* httpLib.c */,
 			);
 			name = http;
@@ -1216,6 +1248,7 @@
 				C9FB52EF0FD9E92700882CC3 /* ejs.db.sqlite.dylib */,
 				C90184CE111BAA8E00BA410F /* libappweb.dylib */,
 				C98D7153110FBEEA00F2ED80 /* ejssql */,
+				C9D4528711ECDA4300F029C8 /* http */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1689,6 +1722,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				C9D4529411ECDA7500F029C8 /* PBXTargetDependency */,
 				C9EA941A0FD4FB2F00870DB0 /* PBXTargetDependency */,
 				C9EA941C0FD4FB2F00870DB0 /* PBXTargetDependency */,
 				C9EA941E0FD4FB2F00870DB0 /* PBXTargetDependency */,
@@ -1832,13 +1866,29 @@
 			productReference = C9FB52EF0FD9E92700882CC3 /* ejs.db.sqlite.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
+		C9D4528611ECDA4300F029C8 /* http */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C9D4529511ECDAA800F029C8 /* Build configuration list for PBXNativeTarget "http" */;
+			buildPhases = (
+				C9D4528411ECDA4300F029C8 /* Sources */,
+				C9D4528511ECDA4300F029C8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = http;
+			productName = http;
+			productReference = C9D4528711ECDA4300F029C8 /* http */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		C97623C10FD06EC4009C78E1 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C97623C40FD06EC4009C78E1 /* Build configuration list for PBXProject "ejs-all" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
 			mainGroup = C97623BF0FD06EC4009C78E1;
 			productRefGroup = C97623D30FD06EE7009C78E1 /* Products */;
@@ -1851,6 +1901,7 @@
 				C97623DA0FD06EF4009C78E1 /* ejsc */,
 				C97623E10FD06EFC009C78E1 /* ejsmod */,
 				C97623E80FD06F04009C78E1 /* ejssql */,
+				C9D4528611ECDA4300F029C8 /* http */,
 				C99A33CA10C2F14000F6C7BC /* ejspage */,
 				C903098210A366CA003FF2AB /* ejsmvc */,
 				C903098610A366F0003FF2AB /* jem */,
@@ -2194,6 +2245,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C9D4528411ECDA4300F029C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C9D452B511ECDBA300F029C8 /* http.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -2371,6 +2430,16 @@
 			isa = PBXTargetDependency;
 			target = C9222E520FD5813F00AFA5A4 /* modules */;
 			targetProxy = C9C59E7510A34BF5002D7049 /* PBXContainerItemProxy */;
+		};
+		C9D4529011ECDA6600F029C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9D4528611ECDA4300F029C8 /* http */;
+			targetProxy = C9D4528F11ECDA6600F029C8 /* PBXContainerItemProxy */;
+		};
+		C9D4529411ECDA7500F029C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C9D4528611ECDA4300F029C8 /* http */;
+			targetProxy = C9D4529311ECDA7500F029C8 /* PBXContainerItemProxy */;
 		};
 		C9E750B410A367E1004E03DD /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2633,8 +2702,7 @@
 		C97623C20FD06EC4009C78E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2649,7 +2717,7 @@
 					"-lcrypto",
 					"-lssl",
 				);
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = macosx10.6;
 				SRC = $SRCROOT/../../../src;
 				TOP = $SRCROOT/../../..;
 			};
@@ -2658,8 +2726,7 @@
 		C97623C30FD06EC4009C78E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_64_BIT_PRE_XCODE_3_1 = x86_64;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = YES;
 				HEADER_SEARCH_PATHS = (
@@ -2672,7 +2739,7 @@
 					"-lcrypto",
 					"-lssl",
 				);
-				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.6.sdk";
+				SDKROOT = macosx10.6;
 				SRC = $SRCROOT/../../../src;
 				TOP = $SRCROOT/../../..;
 			};
@@ -3157,6 +3224,36 @@
 			};
 			name = Release;
 		};
+		C9D4528911ECDA4400F029C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = http;
+			};
+			name = Debug;
+		};
+		C9D4528A11ECDA4400F029C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = /usr/local/bin;
+				PREBINDING = NO;
+				PRODUCT_NAME = http;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -3345,6 +3442,15 @@
 			buildConfigurations = (
 				C99A346610C2FC5B00F6C7BC /* Debug */,
 				C99A346710C2FC5B00F6C7BC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C9D4529511ECDAA800F029C8 /* Build configuration list for PBXNativeTarget "http" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C9D4528911ECDA4400F029C8 /* Debug */,
+				C9D4528A11ECDA4400F029C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

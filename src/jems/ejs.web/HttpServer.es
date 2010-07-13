@@ -174,12 +174,6 @@ module ejs.web {
             @return A string containing the name and version of the web server software
          */
         native function get software(): String
-
-        /** 
-            Get the count of active sessions
-            @return The number of active sessionss
-         */
-        native static function get sessionCount(): Number
     }
 }
 

@@ -1,5 +1,5 @@
 /*
-    Test http server
+    Start http server
 */
 require ejs.web
 
@@ -12,7 +12,6 @@ server.observe("readable", function (event, request) {
     Web.serve(request, router)
 })
 
-// print("Listen on " + address)
+// App.log.info("Listen on " + address)
 server.listen(address)
-
 App.eventLoop()

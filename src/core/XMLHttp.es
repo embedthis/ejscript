@@ -90,7 +90,7 @@ module ejs {
 
         /**
             The HTTP status code. Set to an integer Http status code between 100 and 600.
-         */
+        */
         function get status(): Number
             http.status
 

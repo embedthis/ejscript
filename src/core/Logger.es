@@ -179,14 +179,12 @@ module ejs {
             @hide
          */
         static native function get mprLogLevel(): Number
-//      static native function set mprLogLevel(value: Number): Void
 
         /**
             MPR log file defined via a command line "--log spec" switch
             @hide
          */
         static native function get mprLogFile(): Stream
-//      static native function set mprLogFile(stream: Stream): Void
 
         /** 
             The name of this logger.

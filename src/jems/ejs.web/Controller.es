@@ -14,7 +14,7 @@ module ejs.web {
         @stability prototype
         @spec ejs
      */
-    class Controller {
+    enumerable class Controller {
         /*  
             Define properties and functions in the ejs.web namespace so that user controller variables don't clash. 
             Override with "public" the specific properties that must be copied to views.
@@ -87,7 +87,7 @@ module ejs.web {
 
         /** 
             Factory method to create and initialize a controller. The controller class is specified by 
-            params["controlller"] which should be set to the controller name without the "Controller" suffix. 
+            params["controller"] which should be set by the router to the controller name without the "Controller" suffix. 
             This call expects the controller class to be loaded. Called by Mvc.load().
             @param request Web request object
          */

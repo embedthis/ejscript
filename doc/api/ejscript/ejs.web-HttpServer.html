@@ -54,8 +54,6 @@
 <h2 class='classSection'>Properties</h2>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
-<a name='sessionCount'></a>
-   <tr><td nowrap align='left'>public static const get </td><td>sessionCount</td><td><a href='ejs-Number.html'>Number</a></td><td>Get the count of active sessions. </td></tr>
 <a name='documentRoot'></a>
    <tr><td nowrap align='center'>public </td><td>documentRoot</td><td><a href='ejs-Path.html'>Path</a></td><td>Default local directory for web documents to serve. This is used as the default Request.dir value.</td></tr>
 <a name='serverRoot'></a>
@@ -76,30 +74,17 @@ MOB -- is this needed?.</td></tr>
 <h2 class='classSection'>HttpServer Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#attach'><b>attach</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Attach the HttpServer to the web server.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(address): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#secureListen'><b>secureListen</b></a>(endpoint: <a href='ejs-String.html'>String</a>, keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a>, ciphers: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections using the Secure Sockets Layer (SSL)protocol.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
 <hr />
 <h2>Method Detail</h2>
-<a name='attach'></a>
-<div class='api'>
-<div class='apiSig'>const   public  attach(): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Attach the HttpServer to the web server.</p>
-<dl><dt>Description</dt><dd>Should only be used when Ejscript is running inside a web server.
-The web server embedding is responsible for defining a location context and loading the EjsStartup script.
-When the startup script calls attach, the HttpServer object is connected to the relevant virtual server
-and location block context.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='close'></a>
 <div class='api'>
 <div class='apiSig'>const   public  close(): <a href='ejs-Void.html'>Void</a>
@@ -115,29 +100,37 @@ and location block context.</dd></dl>
 <hr />
 <a name='listen'></a>
 <div class='api'>
-<div class='apiSig'>const   public  listen(address): <a href='ejs.web-Request.html'>Request</a>
+<div class='apiSig'>const   public  listen(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs.web-Request.html'>Request</a>
 </div>
 <div class='apiDetail'>
 <p>Listen for client connections.</p>
-<dl><dt>Description</dt><dd>This creates a listening HTTP server. 
-If the server is in sync mode, the listen call will block until a client connection is received and
-the call will return a request object.
-If a the socket is in async mode, the listen call will return immediately and client connections
-will be notified via "accept" events. In this case when a client connection is received, the <a href='#accept'>accept</a> function 
-must be called to receive the Request object.</dd></dl>
+<dl><dt>Description</dt><dd>This creates a HTTP server listening on a single socket endpoint. It can
+also be used to attach to an existing listening connection if embedded in a web server. <br/><br/>When used inside a web server, the web server should define the listening endpoints and ensure the 
+EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
+the web server's listening connection. In this case, the endpoint argument is ignored.<br/><br/>HttpServer supports both sync and async modes of operation. If the server is in sync mode, the listen call 
+will block until a client connection is received and the call will return a request object. If a the socket 
+is in async mode, the listen call will return immediately and client connections will be notified via 
+"accept" events.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>address </td><td>The endpoint address on which to listen. The address can be either a port number, an IP address string or a composite "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces.</td></tr></table></dd>
+</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
-<td class='param'>Issues</td><td>A "accept" event when there is a new connection available. In response, the <a href='#accept'>accept</a> method should be called.</td></tr>
+<td class='param'>Issues</td><td>A "accept" event when there is a new connection available.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>A Request object if in sync mode. No return value if in async mode.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='ejs-ArgError.html'>ArgError</a>: if the specified listen address is not valid, and IOError for network errors. 
+<a href='ejs-ArgError.html'>ArgError</a>: if the specified endpoint address is not valid or available for binding. 
 </dd>
-</dl></div>
+</dl><dl><dt>Example</dt>
+<dd><pre>server = new Http(".", "./web")
+server.observe("readable", function (event, request) {
+    Web.serve(request)
+})
+server.listen("80")
+</pre></dd></dl>
+</div>
 </div>
 <hr />
 <a name='observe'></a>
@@ -169,6 +162,42 @@ must be called to receive the Request object.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='secureListen'></a>
+<div class='api'>
+<div class='apiSig'>const   public  secureListen(endpoint: <a href='ejs-String.html'>String</a>, keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a>, ciphers: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Listen for client connections using the Secure Sockets Layer (SSL)protocol.</p>
+<dl><dt>Description</dt><dd>This creates a HTTP server 
+listening on a single socket endpoint for SSL connections. It can also be used to attach to an existing 
+listening connection if embedded in a web server. <br/><br/>When used inside a web server, the web server should define the listening endpoints and ensure the 
+EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
+the web server's listening connection. In this case, the listen arguments are ignored.<br/><br/>HttpServer supports both sync and async modes of operation. If the server is in sync mode, the secureListen call 
+will block until a client connection is received and the call will return a request object. If a the socket 
+is in async mode, the secureListen call will return immediately and client connections will be notified via 
+"accept" events.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+</td></tr><tr class='param'><td class='param'>keyFile: <a href='ejs-Path.html'>Path</a> </td><td>Path of the file containing the server's private key.</td></tr><tr class='param'><td class='param'>certFile: <a href='ejs-Path.html'>Path</a> </td><td>Path of the file containing the server's SSL certificate.</td></tr><tr class='param'><td class='param'>protocols: <a href='ejs-Array.html'>Array</a> </td><td>Arary of SSL protocols to support. Select from: SSLv2, SSLv3, TLSv1, ALL. For example: ["SSLv3", "TLSv1"] or "[ALL]".</td></tr><tr class='param'><td class='param'>ciphers: <a href='ejs-Array.html'>Array</a> </td><td>Array of ciphers to use when negotiating the SSL connection. Not yet supported.</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>Issues</td><td>A "accept" event when there is a new connection available.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A Request object if in sync mode. No return value if in async mode.</dd></dl>
+<dl><dt>Throws</dt><dd>
+<a href='ejs-ArgError.html'>ArgError</a>: if the specified endpoint address is not valid or available for binding. 
+</dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>server = new Http(".", "./web")
+server.observe("readable", function (event, request) {
+    Web.serve(request)
+})
+server.secureListen("443")
+</pre></dd></dl>
+</div>
 </div>
 <hr />
 <div class="terms">

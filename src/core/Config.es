@@ -1,6 +1,6 @@
 /*
     Config.es - Configuration settings from ./configure
- *
+ 
     Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
  */
 
@@ -61,4 +61,3 @@ module ejs {
         static const ModDir: String
     }
 }
-

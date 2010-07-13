@@ -37,15 +37,19 @@
         showClient: true,
     },
     mvc: {
+        compiler: "ejsc --debug --web",
         start: "start.es",
-        views: {
-            connectors: { },
-            formats: { },
-        },
     },
     session: {
         enable: true,
         timeout: 1800,
+    },
+    web: {
+        endpoint: "127.0.0.1:4000",
+        views: {
+            connectors: { },
+            formats: { },
+        },
     },
 
     /* ejs.mvc:ejsmvc.es */
@@ -63,6 +67,12 @@
     mvc: {
         appmod: "App.mod",
         start: "start.es",
+    },
+    session: {
+        enable: true,
+        timeout: 1800,
+    },
+    web: {
         views: {
             connectors: {
                 table: "html",
@@ -74,10 +84,6 @@
                 Date: "%a %e %b %H:%M",
             },
         },
-    },
-    session: {
-        enable: true,
-        timeout: 1800,
     },
 
     /* ejs.jem::jem.es */

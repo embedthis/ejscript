@@ -894,6 +894,7 @@ class EjsMvc {
         }
     }
 
+//  MOB -- add optional endpoint arg:   ejsmvc run [endpoint]
     function run(args: Array): Void {
         let start = config.mvc.start
         trace("[RUN]", start)
@@ -1452,9 +1453,17 @@ class Templates {
     },
 
     mvc: {
-        compiler: "ejsc --debug --optimize 9 --web",
-        endpoint: "127.0.0.1:4000",
+        compiler: "ejsc --debug --web",
         start: "start.es",
+    },
+
+    session: {
+        enable: true,
+        timeout: 1800,
+    },
+
+    web: {
+        endpoint: "127.0.0.1:4000",
         views: {
             connectors: {
                 table: "html",
@@ -1466,11 +1475,6 @@ class Templates {
                 Date:       "%a %e %b %H:%M",
             },
         },
-    },
-
-    session: {
-        enable: true,
-        timeout: 1800,
     },
 
 }
@@ -1767,8 +1771,8 @@ server.addListener("readable", function (event, request) {
 
 //  See ejsrc to modify the endpoint
 //  Use server.attach() instead of listen if using inside Appweb
-App.log.info("Listen on", App.config.mvc.endpoint)
-server.listen(App.config.mvc.endpoint)
+App.log.info("Listen on", App.config.web.endpoint)
+server.listen(App.config.web.endpoint)
 App.eventLoop()
 '
 

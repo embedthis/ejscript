@@ -1,7 +1,6 @@
 /*
     Test initialization
  */
-require ejs.unix
 
 const PORT  = test.config["http_port"]
 const HTTP  = "127.0.0.1:" + PORT

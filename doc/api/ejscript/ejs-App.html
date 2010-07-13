@@ -42,9 +42,16 @@ input and output streams.</p>
 <a name='emitter'></a>
    <tr><td nowrap align='center'>public static </td><td>emitter</td><td><a href='ejs-Emitter.html'>Emitter</a></td><td>Default event Emitter for the application. </td></tr>
 <a name='log'></a>
-   <tr><td nowrap align='center'>public static </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Set the current logger. </td></tr>
+   <tr><td nowrap align='center'>public static </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Default application logger. This is set to stderr unless the program specifies an output log via the --log 
+command line switch.</td></tr>
+<a name='name'></a>
+   <tr><td nowrap align='center'>public static </td><td>name</td><td><a href='ejs-String.html'>String</a></td><td>Application name. Set to a single word, lower-case name for the application.</td></tr>
 <a name='SearchSeparator'></a>
    <tr><td nowrap align='center'>public static </td><td>SearchSeparator</td><td><a href='ejs-String.html'>String</a></td><td>Separator string to use when constructing PATH style search strings. </td></tr>
+<a name='title'></a>
+   <tr><td nowrap align='center'>public static </td><td>title</td><td><a href='ejs-String.html'>String</a></td><td>Application title name. Multi-word, Camel Case name for the application suitable for display.</td></tr>
+<a name='version'></a>
+   <tr><td nowrap align='center'>public static </td><td>version</td><td><a href='ejs-String.html'>String</a></td><td>Application version string. Set to a version string of the format Major.Minor.Patch-Build. For example: 1.1.2-3.</td></tr>
 <a name='args'></a>
    <tr><td nowrap align='left'>public static const get </td><td>args</td><td><a href='ejs-Array.html'>Array</a></td><td>Application command line arguments. Set to an array containing each of the arguments. If the ejs command 
 is invoked as "ejs script arg1 arg2", then args[0] will be "script", args[1] will be "arg1" etc.</td></tr>
@@ -54,12 +61,6 @@ is invoked as "ejs script arg1 arg2", then args[0] will be "script", args[1] wil
    <tr><td nowrap align='left'>public static const get </td><td>exeDir</td><td><a href='ejs-Path.html'>Path</a></td><td>The directory containing the application executable. </td></tr>
 <a name='exePath'></a>
    <tr><td nowrap align='left'>public static const get </td><td>exePath</td><td><a href='ejs-Path.html'>Path</a></td><td>The application executable path. </td></tr>
-<a name='name'></a>
-   <tr><td nowrap align='left'>public static const get </td><td>name</td><td><a href='ejs-String.html'>String</a></td><td>Application name. Set to a single word, lower-case name for the application.</td></tr>
-<a name='title'></a>
-   <tr><td nowrap align='left'>public static const get </td><td>title</td><td><a href='ejs-String.html'>String</a></td><td>Application title name. Multi-word, Camel Case name for the application suitable for display.</td></tr>
-<a name='version'></a>
-   <tr><td nowrap align='left'>public static const get </td><td>version</td><td><a href='ejs-String.html'>String</a></td><td>Application version string. Set to a version string of the format Major.Minor.Patch-Build. For example: 1.1.2-3.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>

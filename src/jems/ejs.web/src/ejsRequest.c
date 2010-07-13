@@ -139,6 +139,8 @@ static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
     HttpConn    *conn;
     EjsName     n;
     
+    mprAssert(req->conn);
+
     conn = req->conn;
     if (req->headers == 0) {
         req->headers = (EjsObj*) ejsCreateSimpleObject(ejs);
@@ -158,6 +160,8 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
     EjsName         n;
     MprHash         *hp;
     int             index;
+
+    mprAssert(req->conn);
 
     if (req->files == 0) {
         conn = req->conn;
@@ -221,6 +225,9 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     EjsName         n;
     EjsObj          *value;
 
+    if (req->conn == 0 || req->conn->receiver == 0) {
+        return (EjsObj*) ejs->nullValue;
+    }
     conn = req->conn;
     rec = conn->receiver;
 
@@ -380,6 +387,10 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     HttpConn        *conn;
     HttpReceiver    *rec;
 
+    if (req->conn == 0 || req->conn->receiver == 0) {
+        ejsThrowStateError(ejs, "Request does not have a valid connection");
+        return 0;
+    }
     conn = req->conn;
     rec = conn->receiver;
 
@@ -671,6 +682,7 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     EjsRequest  *newReq;
     HttpConn    *conn;
 
+    mprAssert(0);
     newReq = (EjsRequest*) ejsCloneObject(ejs, (EjsObj*) req, deep);
     if (newReq == 0) {
         ejsThrowMemoryError(ejs);
@@ -709,21 +721,15 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     req->ejs = ejs;
     req->server = server;
     rec = conn->receiver;
-#if UNUSED
-    req->dir = mprGetAbsPath(req, dir);
-#else
     if (mprIsRelPath(req, dir)) {
         req->dir = mprStrdup(req, dir);
     } else {
         req->dir = mprGetRelPath(req, dir);
     }
-#endif
     req->home = makeRelativeHome(ejs, req);
     scheme = conn->secure ? "https" : "http";
     ip = conn->sock ? conn->sock->acceptIp : server->ip;
     port = conn->sock ? conn->sock->acceptPort : server->port;
-    
-    //  MOB -- should really use a symbolic server name from appweb.conf
     req->absHome = mprAsprintf(req, -1, "%s://%s:%d%s/", scheme, conn->sock->ip, server->port, rec->scriptName);
     return req;
 }

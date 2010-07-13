@@ -50,16 +50,21 @@ objects, providing information about base classes, serialization and deserializa
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#defineProperty'><b>defineProperty</b></a>(obj: <a href='ejs-Object.html'>Object</a>, name: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define or redefine a property on the given object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#freeze'><b>freeze</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Freeze an object.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const </td><td><a href='#get'><b>get</b></a>(options: <a href='ejs-Object.html'>Object</a> = null): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this object to be used by "for (v in obj)".</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getBaseType'><b>getBaseType</b></a>(obj: <a href='ejs-Type.html'>Type</a>): <a href='ejs-Type.html'>Type</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the base type of a type object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getName'><b>getName</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the name of the object if it is a function or type.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getOwnPropertyCount'><b>getOwnPropertyCount</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>The number of properties in the of the object including non-enumerable properties.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getOwnPropertyDescriptor'><b>getOwnPropertyDescriptor</b></a>(obj: <a href='ejs-Object.html'>Object</a>, prop: <a href='ejs-String.html'>String</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the prototype property descriptor.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getOwnPropertyNames'><b>getOwnPropertyNames</b></a>(obj: <a href='ejs-Object.html'>Object</a>, options): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an array of all property names including non-enumerable properties.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getOwnPrototypeOf'><b>getOwnPrototypeOf</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Type.html'>Type</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the prototype object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getType'><b>getType</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Type.html'>Type</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the type for an object.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this object to be used by "for each (v in obj)".</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#hasOwnProperty'><b>hasOwnProperty</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Check if an object has a property.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#isExtensible'><b>isExtensible</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if an object is extensible.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#isFrozen'><b>isFrozen</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if an object is frozen.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#isPrototype'><b>isPrototype</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the object is a prototype object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#isPrototypeOf'><b>isPrototypeOf</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Is this object a prototype of the nominated argument object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#isSealed'><b>isSealed</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if an object is sealed.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#isType'><b>isType</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the object is a type object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#keys'><b>keys</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an array of enumerable property names.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#preventExtensions'><b>preventExtensions</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Prevent extensions to object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#propertyIsEnumerable'><b>propertyIsEnumerable</b></a>(property: <a href='ejs-String.html'>String</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if the property is enumerable and visible in for/in traversals.</td></tr>
@@ -165,6 +170,28 @@ the ultimate lock-down for objects.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='getBaseType'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  getBaseType(obj: <a href='ejs-Type.html'>Type</a>): <a href='ejs-Type.html'>Type</a>
+</div>
+<div class='apiDetail'>
+<p>Get the base type of a type object.</p>
+<dl><dt>Returns</dt>
+<dd>A type object.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='getName'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  getName(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Get the name of the object if it is a function or type.</p>
+<dl><dt>Returns</dt>
+<dd>The string name of the function or type.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='getOwnPropertyCount'></a>
 <div class='api'>
 <div class='apiSig'>static const   public  getOwnPropertyCount(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Number.html'>Number</a>
@@ -226,6 +253,19 @@ namespace values.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='getType'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  getType(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Type.html'>Type</a>
+</div>
+<div class='apiDetail'>
+<p>Get the type for an object.</p>
+<dl><dt>Description</dt><dd>If the object is an instance, this is the class type object. If the object is a
+type, this value is "Type".</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A type object.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='getValues'></a>
 <div class='api'>
 <div class='apiSig'>const   iterator  getValues(): <a href='iterator-Iterator.html'>Iterator</a>
@@ -280,6 +320,17 @@ currently open namespaces.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='isPrototype'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  isPrototype(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Test if the object is a prototype object.</p>
+<dl><dt>Returns</dt>
+<dd>True if the object is being used as a prototype object.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='isPrototypeOf'></a>
 <div class='api'>
 <div class='apiSig'>const   public  isPrototypeOf(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a>
@@ -305,6 +356,17 @@ currently open namespaces.</dd></dl>
 <tr class='param'><td class='param'>obj: <a href='ejs-Object.html'>Object</a> </td><td>Object to inspect.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the object is sealed.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='isType'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  isType(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Test if the object is a type object.</p>
+<dl><dt>Returns</dt>
+<dd>True if the object is a type object.</dd></dl>
 </div>
 </div>
 <hr />

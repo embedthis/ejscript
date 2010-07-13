@@ -425,7 +425,7 @@ typedef struct Ejs {
 
     char                *castTemp;          /**< Temporary string for casting */
     char                *errorMsg;          /**< Error message */
-    char                **argv;             /**< Command line args */
+    cchar               **argv;             /**< Command line args */
     int                 argc;               /**< Count of command line args */
     int                 flags;              /**< Execution flags */
     int                 exitStatus;         /**< Status to exit() */
@@ -3024,6 +3024,8 @@ extern EjsService *ejsCreateService(MprCtx ctx);
     @param search Module search path to use. Set to NULL for the default search path.
     @param require Optional list of required modules to load. If NULL, the following modules will be loaded:
         ejs, ejs.io, ejs.events, ejs.xml, ejs.sys and ejs.unix.
+    @param argc Count of command line argumements in argv
+    @param argv Command line arguments
     @param flags Optional flags to modify the interpreter behavior. Valid flags are:
         @li    EJS_FLAG_COMPILER       - Interpreter will compile code from source
         @li    EJS_FLAG_NO_EXE         - Don't execute any code. Just compile.
@@ -3033,7 +3035,7 @@ extern EjsService *ejsCreateService(MprCtx ctx);
     @return A new interpreter
     @ingroup Ejs
  */
-extern Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *search, MprList *require, int flags);
+extern Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *search, MprList *require, int argc, cchar **argv, int flags);
 
 /**
     Create a search path array. This can be used in ejsCreateVm.

@@ -2017,6 +2017,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
                 } else {
                     indent = mprAlloc(arg, i + 1);
                     memset(indent, ' ', i);
+                    indent[i] = '\0';
                 }
             }
         }
