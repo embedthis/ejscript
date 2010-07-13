@@ -138,7 +138,7 @@ int ejsEvalFile(cchar *path)
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
-    if ((ejs = ejsCreateVm(service, NULL, NULL, NULL, 0)) == 0) {
+    if ((ejs = ejsCreateVm(service, NULL, NULL, NULL, 0, NULL, 0)) == 0) {
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
@@ -166,7 +166,7 @@ int ejsEvalScript(cchar *script)
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
-    if ((ejs = ejsCreateVm(service, NULL, NULL, NULL, 0)) == 0) {
+    if ((ejs = ejsCreateVm(service, NULL, NULL, NULL, 0, NULL, 0)) == 0) {
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
