@@ -1,0 +1,6 @@
+/* This should parse */
+
+function fun() 
+    (throw "ABC")
+
+fun()
