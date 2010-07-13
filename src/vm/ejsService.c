@@ -119,6 +119,7 @@ static int destroyEjs(Ejs *ejs)
 {
     EjsState    *state;
 
+    ejsClearException(ejs);
     ejsDestroyGCService(ejs);
     state = ejs->masterState;
     if (state->stackBase) {
