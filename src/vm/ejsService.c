@@ -50,13 +50,10 @@ EjsService *ejsGetService(MprCtx ctx)
     @param searchPath Array of paths to search for modules. Must be persistent.
     @param require List of modules to pre-load
  */
-Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, int flags)
+Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
 {
     Ejs     *ejs;
 
-    /*  
-        Create interpreter structure
-     */
     ejs = mprAllocObjWithDestructorZeroed(ctx, Ejs, destroyEjs);
     if (ejs == 0) {
         return 0;
@@ -70,6 +67,8 @@ Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, i
         ejs->service->http = httpCreate(ejs->service);
     }
     ejs->http = ejs->service->http;
+    ejs->argc = argc;
+    ejs->argv = argv;
 
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC));
     ejs->dispatcher = mprCreateDispatcher(ejs, "ejsDispatcher", 1);
@@ -212,13 +211,13 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureVoidType(ejs);
     ejsConfigureNumberType(ejs);
 
+    ejsConfigureConfigType(ejs);
     ejsConfigurePathType(ejs);
     ejsConfigureFileSystemType(ejs);
     ejsConfigureFileType(ejs);
     ejsConfigureAppType(ejs);
     ejsConfigureArrayType(ejs);
     ejsConfigureByteArrayType(ejs);
-    ejsConfigureConfigType(ejs);
     ejsConfigureDateType(ejs);
     ejsConfigureFunctionType(ejs);
     ejsConfigureGCType(ejs);
@@ -228,9 +227,6 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureMathType(ejs);
     ejsConfigureMemoryType(ejs);
     ejsConfigureNamespaceType(ejs);
-#if UNUSED
-    ejsConfigureReflectType(ejs);
-#endif
     ejsConfigureRegExpType(ejs);
     ejsConfigureSocketType(ejs);
     ejsConfigureStringType(ejs);
@@ -503,7 +499,7 @@ int ejsEvalModule(cchar *path)
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
-    if ((ejs = ejsCreateVm(service, NULL, NULL, NULL, 0)) == 0) {
+    if ((ejs = ejsCreateVm(service, NULL, NULL, NULL, 0, NULL, 0)) == 0) {
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }

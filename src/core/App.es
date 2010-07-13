@@ -35,7 +35,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    class App {
+    enumerable class App {
 
         use default namespace public
 
@@ -186,8 +186,7 @@ module ejs {
         /** 
             Application name. Set to a single word, lower-case name for the application.
          */
-        static function get name(): String
-            Config.Product
+        static var name: String
 
         //  MOB TODO need a better name than noexit, TODO could add a max delay option.
         /** 
@@ -269,15 +268,12 @@ module ejs {
         /** 
             Application title name. Multi-word, Camel Case name for the application suitable for display.
          */
-        static static function get title(): String
-            Config.Title
+        static var title: String
 
         /** 
             Application version string. Set to a version string of the format Major.Minor.Patch-Build. For example: 1.1.2-3.
          */
-        static static function get version(): String
-            Config.Version
-
+        static var version: String
 
         //  DEPRECATED
         /** 
@@ -348,6 +344,9 @@ module ejs {
         @hide
      */
     function appInit(): Void {
+        App.name = App.args[0] || Config.Product
+        App.title = App.args[0] || Config.Title
+
         /*  
             Load ~/.ejsrc and ejsrc
          */

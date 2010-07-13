@@ -3,7 +3,7 @@
 /******************************************************************************/
 /* 
  *  This file is an amalgamation of all the individual source code files for
- *  Embedthis Appweb 3.3.0.
+ *  Embedthis Appweb 4.0.0.
  *
  *  Catenating all the source into a single file makes embedding simpler and
  *  the resulting application faster, as many compilers can do whole file
@@ -5233,7 +5233,7 @@ static int loadStartupScript(Http *http, HttpLocation *location)
     char        *script;
     int         ver;
 
-    ejs = ejsCreateVm(http, NULL, NULL, NULL, EJS_FLAG_MASTER);
+    ejs = ejsCreateVm(http, NULL, NULL, NULL, 0, NULL, EJS_FLAG_MASTER);
     if (ejs == 0) {
         return 0;
     }

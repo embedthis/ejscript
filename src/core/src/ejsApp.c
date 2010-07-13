@@ -12,7 +12,7 @@
     Get the application command line arguments
     static function get args(): String
  */
-static EjsObj *getArgs(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsArray    *args;
     int         i;
@@ -29,7 +29,7 @@ static EjsObj *getArgs(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get the current working directory
     function get dir(): Path
  */
-static EjsObj *currentDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *app_dir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreatePathAndFree(ejs, mprGetCurrentPath(ejs));
 }
@@ -39,7 +39,7 @@ static EjsObj *currentDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Set the current working directory
     function chdir(value: String|Path): void
  */
-static EjsObj *changeCurrentDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     cchar   *path;
 
@@ -64,7 +64,7 @@ static EjsObj *changeCurrentDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
     Get an environment var
     function getenv(key: String): String
  */
-static EjsObj *getEnvVar(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+static EjsObj *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
     cchar   *value;
 
@@ -80,7 +80,7 @@ static EjsObj *getEnvVar(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
     Put an environment var
     function putenv(key: String, value: String): void
  */
-static EjsObj *putEnvVar(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
 #if !WINCE
 #if BLD_UNIX_LIKE
@@ -104,7 +104,7 @@ static EjsObj *putEnvVar(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
     Get the directory containing the application's executable file.
     static function get exeDir(): Path
  */
-static EjsObj *exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreatePath(ejs, mprGetAppDir(ejs));
 }
@@ -114,7 +114,7 @@ static EjsObj *exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Get the application's executable filename.
     static function get exePath(): Path
  */
-static EjsObj *exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreatePath(ejs, mprGetAppPath(ejs));
 }
@@ -124,7 +124,7 @@ static EjsObj *exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Exit the application
     static function exit(status: Number): void
  */
-static EjsObj *exitApp(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int     status;
 
@@ -145,18 +145,42 @@ static EjsObj *exitApp(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Control if the application will exit when the last script completes.
     static function noexit(exit: Boolean): void
  */
-static EjsObj *noexit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *app_noexit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     ejs->flags |= EJS_FLAG_NOEXIT;
     return 0;
 }
 
 
+#if UNUSED
+/*  
+    static function name(): String
+ */
+static EjsObj *app_name(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateString(ejs, mprGetAppName(ejs));
+}
+
+
+/*  
+    static function set name(str: String): Void
+ */
+static EjsObj *app_set_name(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    cchar   *name;
+
+    name = ejsGetString(argv[0]);
+    mprSetAppName(ejs, name, name, NULL);
+    return 0;
+}
+#endif
+
+
 /*  
     Get the ejs module search path. Does not actually read the environment.
     function get search(): Array
  */
-static EjsObj *getSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+static EjsObj *app_search(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejs->search;
 }
@@ -166,7 +190,7 @@ static EjsObj *getSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
     Set the ejs module search path. Does not actually update the environment.
     function set search(path: Array): Void
  */
-static EjsObj *setSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+static EjsObj *app_set_search(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
     ejsSetSearchPath(ejs, (EjsArray*) argv[0]);
     return 0;
@@ -177,7 +201,7 @@ static EjsObj *setSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
     Get a default search path. NOTE: this does not modify ejs->search.
     function get createSearch(searchPaths: String): Void
  */
-static EjsObj *createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
+static EjsObj *app_createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
     cchar   *searchPath;
 
@@ -212,7 +236,7 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
 /*  
     static function eventLoop(timeout: Number = -1, oneEvent: Boolean = false): void
  */
-static EjsObj *eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *app_eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int     timeout, oneEvent;
 
@@ -227,7 +251,7 @@ static EjsObj *eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Pause the application
     static function sleep(delay: Number = -1): void
  */
-static EjsObj *sleepProc(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int         timeout;
 
@@ -250,19 +274,22 @@ void ejsConfigureAppType(Ejs *ejs)
     ejsSetProperty(ejs, type, ES_App__outputStream, ejsCreateFileFromFd(ejs, 1, "stdout", O_WRONLY));
     ejsSetProperty(ejs, type, ES_App__errorStream, ejsCreateFileFromFd(ejs, 2, "stderr", O_WRONLY));
 
-    ejsBindMethod(ejs, type, ES_App_args, (EjsProc) getArgs);
-    ejsBindMethod(ejs, type, ES_App_dir, (EjsProc) currentDir);
-    ejsBindMethod(ejs, type, ES_App_chdir, (EjsProc) changeCurrentDir);
-    ejsBindMethod(ejs, type, ES_App_exeDir, (EjsProc) exeDir);
-    ejsBindMethod(ejs, type, ES_App_exePath, (EjsProc) exePath);
-    ejsBindMethod(ejs, type, ES_App_exit, (EjsProc) exitApp);
-    ejsBindMethod(ejs, type, ES_App_getenv, (EjsProc) getEnvVar);
-    ejsBindMethod(ejs, type, ES_App_putenv, (EjsProc) putEnvVar);
-    ejsBindMethod(ejs, type, ES_App_noexit, (EjsProc) noexit);
-    ejsBindMethod(ejs, type, ES_App_createSearch, (EjsProc) createSearch);
-    ejsBindAccess(ejs, type, ES_App_search, (EjsProc) getSearch, (EjsProc) setSearch);
-    ejsBindMethod(ejs, type, ES_App_eventLoop, (EjsProc) eventLoop);
-    ejsBindMethod(ejs, type, ES_App_sleep, (EjsProc) sleepProc);
+    ejsBindMethod(ejs, type, ES_App_args, (EjsProc) app_args);
+    ejsBindMethod(ejs, type, ES_App_dir, (EjsProc) app_dir);
+    ejsBindMethod(ejs, type, ES_App_chdir, (EjsProc) app_chdir);
+    ejsBindMethod(ejs, type, ES_App_exeDir, (EjsProc) app_exeDir);
+    ejsBindMethod(ejs, type, ES_App_exePath, (EjsProc) app_exePath);
+    ejsBindMethod(ejs, type, ES_App_exit, (EjsProc) app_exit);
+    ejsBindMethod(ejs, type, ES_App_getenv, (EjsProc) app_getenv);
+    ejsBindMethod(ejs, type, ES_App_putenv, (EjsProc) app_putenv);
+#if ES_App_name && UNUSED
+    ejsBindAccess(ejs, type, ES_App_name, (EjsProc) app_name, (EjsProc) app_set_name);
+#endif
+    ejsBindMethod(ejs, type, ES_App_noexit, (EjsProc) app_noexit);
+    ejsBindMethod(ejs, type, ES_App_createSearch, (EjsProc) app_createSearch);
+    ejsBindAccess(ejs, type, ES_App_search, (EjsProc) app_search, (EjsProc) app_set_search);
+    ejsBindMethod(ejs, type, ES_App_eventLoop, (EjsProc) app_eventLoop);
+    ejsBindMethod(ejs, type, ES_App_sleep, (EjsProc) app_sleep);
 
 #if FUTURE
     (ejs, type, ES_App_permissions, (EjsProc) getPermissions,

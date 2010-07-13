@@ -1,7 +1,7 @@
 /**
- *  ejsModule.c - Ejscript module management
- *
- *  Copyright (c) All Rights Reserved. See details at the end of the file.
+    ejsModule.c - Ejscript module management
+
+    Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
 /********************************** Includes **********************************/
@@ -40,8 +40,8 @@ EjsModule *ejsCreateModule(Ejs *ejs, cchar *name, int version)
 
 
 /*
- *  Register a native module callback to be invoked when it it time to configure the module. This is used by loadable modules
- *  when they are built statically.
+    Register a native module callback to be invoked when it it time to configure the module. This is used by loadable modules
+    when they are built statically.
  */
 int ejsAddNativeModule(MprCtx ctx, cchar *name, EjsNativeCallback callback, int checksum, int flags)
 {
@@ -80,12 +80,12 @@ int ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, cchar *pool, int poolSize)
 
 
 /*
- *  Lookup a module name in the set of loaded modules
- *  If minVersion is <= 0, then any version up to, but not including maxVersion is acceptable.
- *  If maxVersion is < 0, then any version greater than minVersion is acceptable.
- *  If both are zero, then match the name itself and ignore minVersion and maxVersion
- *  If both are -1, then any version is acceptable.
- *  If both are equal, then only that version is acceptable.
+    Lookup a module name in the set of loaded modules
+    If minVersion is <= 0, then any version up to, but not including maxVersion is acceptable.
+    If maxVersion is < 0, then any version greater than minVersion is acceptable.
+    If both are zero, then match the name itself and ignore minVersion and maxVersion
+    If both are -1, then any version is acceptable.
+    If both are equal, then only that version is acceptable.
  */
 EjsModule *ejsLookupModule(Ejs *ejs, cchar *name, int minVersion, int maxVersion)
 {
@@ -130,31 +130,31 @@ MprList *ejsGetModuleList(Ejs *ejs)
 
 
 /*
- *  @copy   default
- *
- *  Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
- *  Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.
- *
- *  This software is distributed under commercial and open source licenses.
- *  You may use the GPL open source license described below or you may acquire
- *  a commercial license from Embedthis Software. You agree to be fully bound
- *  by the terms of either license. Consult the LICENSE.TXT distributed with
- *  this software for full details.
- *
- *  This software is open source; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the
- *  Free Software Foundation; either version 2 of the License, or (at your
- *  option) any later version. See the GNU General Public License for more
- *  details at: http://www.embedthis.com/downloads/gplLicense.html
- *
- *  This program is distributed WITHOUT ANY WARRANTY; without even the
- *  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- *  This GPL license does NOT permit incorporating this software into
- *  proprietary programs. If you are unable to comply with the GPL, you must
- *  acquire a commercial license to use this software. Commercial licenses
- *  for this software and support services are available from Embedthis
- *  Software at http://www.embedthis.com
- *
- *  @end
+    @copy   default
+
+    Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.
+
+    This software is distributed under commercial and open source licenses.
+    You may use the GPL open source license described below or you may acquire
+    a commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.TXT distributed with
+    this software for full details.
+
+    This software is open source; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version. See the GNU General Public License for more
+    details at: http://www.embedthis.com/downloads/gplLicense.html
+
+    This program is distributed WITHOUT ANY WARRANTY; without even the
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    This GPL license does NOT permit incorporating this software into
+    proprietary programs. If you are unable to comply with the GPL, you must
+    acquire a commercial license to use this software. Commercial licenses
+    for this software and support services are available from Embedthis
+    Software at http://www.embedthis.com
+
+    @end
  */
