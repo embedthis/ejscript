@@ -53,7 +53,7 @@ module ejs {
             The name can be a string or an array of event strings.
             @param callback Function to call when the event is received.
          */
-        function observe(name: Object, callback: Function): Void {
+        function observe(name: Object!, callback: Function!): Void {
             if (name is String) {
                 addOneObserver(name, callback)
             } else if (name is Array) {
@@ -61,7 +61,7 @@ module ejs {
                     addOneObserver(n, callback)
                 }
             } else {
-                throw new Error("Bad name type for observe")
+                throw new Error("Bad name type for observe: " + typeOf(name))
             }
         }
 
@@ -102,7 +102,7 @@ module ejs {
             @param name Event name to fire to the observers.
             @param args Args to pass to the observer callback
          */
-        function fire(name: String, ...args): Void {
+        function fire(name: String!, ...args): Void {
             let observers: Array? = endpoints[name]
             if (observers) {
                 for each (var e: Endpoint in observers) {
