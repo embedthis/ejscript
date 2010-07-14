@@ -1935,11 +1935,13 @@ static HttpConn *openConnection(HttpConn *conn, cchar *url)
 /*  
     Define headers and create an empty header packet that will be filled later by the pipeline.
  */
-static HttpPacket *createHeaderPacket(HttpConn *conn)
+static int setClientHeaders(HttpConn *conn)
 {
     Http                *http;
     HttpTransmitter     *trans;
+#if UNUSED
     HttpPacket          *packet;
+#endif
     HttpUri             *parsedUri;
     char                *encoded;
     int                 len, rc;
@@ -1950,9 +1952,9 @@ static HttpPacket *createHeaderPacket(HttpConn *conn)
     http = conn->http;
     trans = conn->transmitter;
     parsedUri = trans->parsedUri;
-
+#if UNUSED
     packet = httpCreateHeaderPacket(trans);
-
+#endif
     if (conn->authType && strcmp(conn->authType, "basic") == 0) {
         char    abuf[MPR_MAX_STRING];
         mprSprintf(conn, abuf, sizeof(abuf), "%s:%s", conn->authUser, conn->authPassword);
@@ -1968,7 +1970,7 @@ static HttpPacket *createHeaderPacket(HttpConn *conn)
             mprLog(trans, MPR_ERROR, "Http: Can't create secret for digest authentication");
             mprFree(trans);
             conn->transmitter = 0;
-            return 0;
+            return MPR_ERR_CANT_CREATE;
         }
         mprFree(conn->authCnonce);
         conn->authCnonce = mprAsprintf(conn, -1, "%s:%s:%x", http->secret, conn->authRealm, (uint) mprGetTime(conn)); 
@@ -2042,7 +2044,7 @@ static HttpPacket *createHeaderPacket(HttpConn *conn)
         conn->keepAliveCount = 0;
         httpSetSimpleHeader(conn, "Connection", "close");
     }
-    return packet;
+    return 0;
 }
 
 
@@ -2050,8 +2052,9 @@ int httpConnect(HttpConn *conn, cchar *method, cchar *url)
 {
     Http                *http;
     HttpTransmitter     *trans;
+#if UNUSED
     HttpPacket          *headers;
-
+#endif
     mprAssert(conn);
     mprAssert(method && *method);
     mprAssert(url && *url);
@@ -2085,13 +2088,15 @@ int httpConnect(HttpConn *conn, cchar *method, cchar *url)
         httpSetState(conn, HTTP_STATE_COMPLETE);
         return MPR_ERR_CANT_OPEN;
     }
-    if ((headers = createHeaderPacket(conn)) == 0) {
+    if (setClientHeaders(conn) < 0) {
         httpSetState(conn, HTTP_STATE_ERROR);
         httpSetState(conn, HTTP_STATE_COMPLETE);
         return MPR_ERR_CANT_INITIALIZE;
     }
+#if UNUSED
     mprAssert(conn->writeq);
     httpPutForService(conn->writeq, headers, 0);
+#endif
     return 0;
 }
 
@@ -2279,6 +2284,11 @@ HttpConn *httpCreateConn(Http *http, HttpServer *server)
     conn->expire = conn->time + http->keepAliveTimeout;
     conn->callback = (HttpCallback) httpEvent;
     conn->callbackArg = conn;
+
+    conn->traceMask = HTTP_TRACE_TRANSMIT | HTTP_TRACE_RECEIVE | HTTP_TRACE_HEADERS;
+    conn->traceLevel = HTTP_TRACE_LEVEL;
+    conn->traceMaxLength = INT_MAX;
+
     httpInitSchedulerQueue(&conn->serviceq);
     if (server) {
         conn->dispatcher = server->dispatcher;
@@ -5022,8 +5032,10 @@ void httpCreatePipeline(HttpConn *conn, HttpLocation *location, HttpStage *propo
     }
 
     setEnvironment(conn);
+
     conn->writeq = conn->transmitter->queue[HTTP_QUEUE_TRANS].nextQ;
     conn->readq = conn->transmitter->queue[HTTP_QUEUE_RECEIVE].prevQ;
+
     httpPutForService(conn->writeq, httpCreateHeaderPacket(conn->writeq), 0);
 
     /*  
@@ -7633,7 +7645,7 @@ static void traceBuf(HttpConn *conn, cchar *buf, int len, int mask)
         *dp = '\0';
         mprRawLog(conn, level, "%s", data);
     }
-    mprRawLog(conn, level, "<<<<<<<<<< %s packet end, conn %d\n\n", tag, conn->seqno);
+    mprRawLog(conn, level, "<<<<<<<<<< %s packet, conn %d\n\n", tag, conn->seqno);
 }
 
 
@@ -8626,7 +8638,6 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
             (handlerFlags & HTTP_STAGE_DELETE) ? ",DELETE" : "");
         trans->length = 0;
     }
-
     httpAddSimpleHeader(conn, "Date", conn->http->currentDate);
 
     if (trans->flags & HTTP_TRANS_DONT_CACHE) {
@@ -8645,7 +8656,6 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
     } else if (trans->length > 0) {
         httpSetHeader(conn, "Content-Length", "%d", trans->length);
     }
-
     if (rec->ranges) {
         if (rec->ranges->next == 0) {
             range = rec->ranges;
@@ -8673,7 +8683,6 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
             httpAddSimpleHeader(conn, "Content-Type", mimeType);
         }
     }
-
 #if BLD_DEBUG && UNUSED
     //  TODO - finish this
     if (strncmp(trans->mimeType, "image/", 6) == 0 || strcmp(trans->mimeType, "text/css") == 0) {
@@ -8790,8 +8799,9 @@ void httpWriteHeaders(HttpConn *conn, HttpPacket *packet)
     }
     trans->headerSize = mprGetBufLength(buf);
     trans->flags |= HTTP_TRANS_HEADERS_CREATED;
-
+#if UNUSED
     mprLog(conn, 3, "\n@@@ Transmission => \n%s", mprGetBufStart(buf));
+#endif
 }
 
 

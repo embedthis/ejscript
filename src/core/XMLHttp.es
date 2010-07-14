@@ -17,9 +17,9 @@ module ejs {
 
         use default namespace public
 
-        private var hp: Http = new Http
+        private var hp: Http
         private var state: Number = 0
-        private var response: ByteArray
+        private var responseBuf: ByteArray
 
         //  TODO spec UNSENT
         /** readyState values */
@@ -75,14 +75,14 @@ module ejs {
             HTTP response body as a string.
          */
         function get responseText(): String
-            response.toString()
+            responseBuf.toString()
 
         /**
             HTTP response payload as an XML document. Set to an XML object that is the root of the HTTP request 
             response data.
          */
         function get responseXML(): XML
-            XML(response)
+            XML(responseBuf)
 
         /**
             Not implemented. Only for ActiveX on IE
@@ -136,7 +136,7 @@ module ejs {
          */
         function open(method: String, uri: String, async: Boolean = true, user: String? = null, 
                 password: String = null): Void {
-            response = new ByteArray(System.Bufsize)
+            responseBuf = new ByteArray(System.Bufsize)
             hp.async = async
             hp.method = method
             hp.uri = uri
@@ -148,7 +148,7 @@ module ejs {
                 notify()
             })
             hp.observe("readable", function (event, ...args) {
-                let count = hp.read(response, -1)
+                let count = hp.read(responseBuf, -1)
                 state = Receiving
                 notify()
             })

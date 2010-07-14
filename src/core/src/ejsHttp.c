@@ -531,7 +531,7 @@ EjsObj *http_removeObserver(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function response(): Stream
+    function get response(): String
  */
 static EjsObj *http_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
@@ -540,6 +540,16 @@ static EjsObj *http_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     }
     hp->responseCache = http_readString(ejs, hp, argc, argv);
     return (EjsObj*) hp->responseCache;
+}
+
+
+/*  
+    function set response(data: String): Void
+ */
+static EjsObj *http_set_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    hp->responseCache = argv[0];
+    return 0;
 }
 
 
@@ -1206,7 +1216,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_read, (EjsProc) http_read);
     ejsBindMethod(ejs, prototype, ES_Http_readString, (EjsProc) http_readString);
     ejsBindMethod(ejs, prototype, ES_Http_removeObserver, (EjsProc) http_removeObserver);
-    ejsBindMethod(ejs, prototype, ES_Http_response, (EjsProc) http_response);
+    ejsBindAccess(ejs, prototype, ES_Http_response, (EjsProc) http_response, (EjsProc) http_set_response);
     ejsBindMethod(ejs, prototype, ES_Http_options, (EjsProc) http_options);
     ejsBindMethod(ejs, prototype, ES_Http_setCredentials, (EjsProc) http_setCredentials);
     ejsBindMethod(ejs, prototype, ES_Http_setHeader, (EjsProc) http_setHeader);

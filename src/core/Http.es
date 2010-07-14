@@ -202,9 +202,6 @@ module ejs {
          */     
         static const VersionNotSupported: Number = 505
 
-        /* Cached response data */
-        private var _response: String
-
         /** 
             Create an Http object. The object is initialized with the Uri
             @param uri The (optional) Uri to initialize with.
@@ -330,8 +327,16 @@ module ejs {
             xh = XMLHttp(this)
             xh.open(method, uri)
             xh.send(null)
-            xh.onreadystatechange = callback
-            _response = xh.response
+            xh.onreadystatechange = function () {
+                if (xh.readyState == XMLHttp.Loaded) {
+                    response = xh.responseText
+                    if (callback.bound == global) {
+                        callback.call(this)
+                    } else {
+                        callback()
+                    }
+                }
+            }
         }
 
         /** 
@@ -512,6 +517,7 @@ module ejs {
             @throws IOError if an I/O error occurs.
          */
         native function get response(): String
+        native function set response(data: String): Void
 
         //  TODO - implement
         /** 

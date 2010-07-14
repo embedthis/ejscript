@@ -800,8 +800,12 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
     Ejs         *ejs;
     EjsLogData  *ld;
     EjsObj      *str, *saveException;
+    static int  solo = 0;
     char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
 
+    if (solo++ > 0) {
+        return;
+    }
     mpr = mprGetMpr(ctx);
     prefix = mpr->name;
     amsg = NULL;
@@ -837,6 +841,7 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
         mprFprintf(file, "%s", msg);
     }
     mprFree(amsg);
+    solo--;
 }
 
 
