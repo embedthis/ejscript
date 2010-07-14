@@ -127,13 +127,7 @@
 #define ES_HtmlConnector_getDataAttributes                             32
 #define ES_HtmlConnector_NUM_INSTANCE_PROP                             33
 #define ES_HtmlConnector_NUM_INHERITED_PROP                            0
-
-
-/*
-    Class property slots for the "HttpServer" type 
- */
-#define ES_ejs_web_HttpServer_sessionCount                             0
-#define ES_ejs_web_HttpServer_NUM_CLASS_PROP                           1
+#define ES_ejs_web_HttpServer_NUM_CLASS_PROP                           0
 
 /*
    Prototype (instance) slots for "HttpServer" type 
@@ -440,6 +434,6 @@
 #define ES_ejs_web_Web_start_request                                   0
 #define ES_ejs_web_Web_start_app                                       1
 
-#define _ES_CHECKSUM_ejs_web   532707
+#define _ES_CHECKSUM_ejs_web   531064
 
 #endif
