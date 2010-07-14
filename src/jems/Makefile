@@ -65,7 +65,6 @@ buildJems:
 	for j in $(JEMS) ; do \
 		vj="$$j-$(BLD_VERSION)" ; \
 		target="$(BLD_ABS_JEM_DIR)/$$vj/$$vj.jem" ; \
-		[ ! -f $$target ] && echo missing ; \
 		if [ ! -f $$target -o $(BLD_ABS_MOD_DIR)/$$j.mod -nt $$target ] ; then \
 			cd $$j >/dev/null ; \
 			jem --field version --value $(BLD_VERSION) edit ; \
