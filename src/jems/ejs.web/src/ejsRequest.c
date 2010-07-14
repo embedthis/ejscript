@@ -473,7 +473,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 static EjsObj *req_observe(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     //  MOB - must issue writable + readable if data available
-    ejsAddListener(ejs, &req->emitter, argv[0], argv[1]);
+    ejsAddObserver(ejs, &req->emitter, argv[0], argv[1]);
     return 0;
 }
 
@@ -590,7 +590,7 @@ static EjsObj *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_removeObserver(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    ejsRemoveListener(ejs, req->emitter, argv[0], argv[1]);
+    ejsRemoveObserver(ejs, req->emitter, argv[0], argv[1]);
     return 0;
 }
 #endif

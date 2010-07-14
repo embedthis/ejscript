@@ -40,7 +40,7 @@ static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
 static EjsObj *hs_observe(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     //  TODO -- should fire if currently readable / writable (also socket etc)
-    ejsAddListener(ejs, &sp->emitter, argv[0], argv[1]);
+    ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
     return 0;
 }
 
@@ -197,7 +197,7 @@ static EjsObj *hs_port(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_removeObserver(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    ejsRemoveListener(ejs, sp->emitter, argv[0], argv[1]);
+    ejsRemoveObserver(ejs, sp->emitter, argv[0], argv[1]);
     return 0;
 }
 #endif
