@@ -314,7 +314,7 @@ static EjsObj *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_observe(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    ejsAddListener(ejs, &ap->emitter, argv[0], argv[1]);
+    ejsAddObserver(ejs, &ap->emitter, argv[0], argv[1]);
     return 0;
 }
 
@@ -879,7 +879,7 @@ static EjsObj *ba_reset(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_removeObserver(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    ejsRemoveListener(ejs, ap->emitter, argv[0], argv[1]);
+    ejsRemoveObserver(ejs, ap->emitter, argv[0], argv[1]);
     return 0;
 }
 

@@ -39,7 +39,7 @@ static EjsObj *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
  */
 EjsObj *sock_observe(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    ejsAddListener(ejs, &sp->emitter, argv[0], argv[1]);
+    ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
     return 0;
 }
 
@@ -266,7 +266,7 @@ static EjsObj *sock_remoteAddress(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **ar
  */
 static EjsObj *sock_removeObserver(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    ejsRemoveListener(ejs, sp->emitter, argv[0], argv[1]);
+    ejsRemoveObserver(ejs, sp->emitter, argv[0], argv[1]);
     return 0;
 }
 

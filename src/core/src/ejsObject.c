@@ -482,9 +482,7 @@ static EjsName getObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum)
     EjsName     qname;
 
     mprAssert(obj);
-    mprAssert(obj->slots);
     mprAssert(slotNum >= 0);
-    mprAssert(slotNum < obj->numSlots);
 
     if (slotNum < 0 || slotNum >= obj->numSlots) {
         qname.name = 0;
