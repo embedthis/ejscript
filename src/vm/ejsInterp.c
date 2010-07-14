@@ -1680,7 +1680,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
         CASE (EJS_OP_INIT_DEFAULT_ARGS_8): {
             int tableSize, numNonDefault;
             tableSize = (schar) GET_BYTE();
-            numNonDefault = FRAME->function.numArgs - FRAME->function.numDefault;
+            numNonDefault = FRAME->function.numArgs - FRAME->function.numDefault - FRAME->function.rest;
             offset = FRAME->argc - numNonDefault;
             if (offset < 0 || offset > tableSize) {
                 offset = tableSize;
@@ -2776,8 +2776,8 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
     mprAssert(ejs->exception == 0);
     mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);
 
-    nonDefault = fun->numArgs - fun->numDefault;
     activation = fun->activation;
+    nonDefault = fun->numArgs - fun->numDefault - fun->rest;
 
     if (argc < nonDefault) {
         if (!fun->rest || argc != (fun->numArgs - 1)) {
@@ -2793,7 +2793,6 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
             }
         }
     }
-
     if ((uint) argc > fun->numArgs && !fun->rest) {
         /*
             Discard excess arguments for scripted functions. No need to discard for native procs. This allows
@@ -2808,7 +2807,7 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
     /*
         Handle rest "..." args
      */
-    if (fun->rest) {
+    if (fun->rest && (argc > nonDefault || fun->numDefault == 0)) {
         numRest = argc - fun->numArgs + 1;
         rest = ejsCreateArray(ejs, numRest);
         if (rest == 0) {
@@ -3205,7 +3204,11 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
         for (i = 0; i < count && count > 0; i++) {
             ejsPopBlock(ejs);
         }
+#if OLD
         count = (state->stack - fp->stackReturn - fp->argc);
+#else
+        count = state->stack - fp->stackBase;
+#endif
         state->stack -= (count - ex->numStack);
         mprAssert(state->stack >= fp->stackReturn);
     }

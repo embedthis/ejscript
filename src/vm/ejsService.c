@@ -617,7 +617,7 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
 }
 
 
-int ejsAddListener(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener)
+int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener)
 {
     EjsObj      *emitter, *argv[2];
     EjsArray    *list;
@@ -646,18 +646,18 @@ int ejsAddListener(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener
 }
 
 
-#if ES_Emitter_hasListeners
-int ejsHasListeners(Ejs *ejs, EjsObj *emitter)
+#if ES_Emitter_hasObservers
+int ejsHasObservers(Ejs *ejs, EjsObj *emitter)
 {
     if (emitter) {
-        ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_hasListeners, 0, NULL);
+        ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_hasObservers, 0, NULL);
     }
     return 0;
 }
 #endif
 
 
-int ejsRemoveListener(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
+int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
 {
     EjsObj      *argv[2];
     EjsArray    *list;
