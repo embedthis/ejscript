@@ -878,7 +878,7 @@ static void genBoundName(EcCompiler *cp, EcNode *np)
     } else if (ejsIsFunction(lookup->obj) && lookup->nthBlock == 0) {
         genLocalName(cp, lookup->slotNum);
 #else
-    } else if (lookup->obj == (EjsObj*) state->currentFunction) {
+    } else if (lookup->obj == (EjsObj*) state->currentFunction->activation) {
         genLocalName(cp, lookup->slotNum);
 #endif
 
@@ -2084,11 +2084,13 @@ static void genForIn(EcCompiler *cp, EcNode *np)
  */
 static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun)
 {
+    Ejs             *ejs;
     EcNode          *parameters, *child;
     EcState         *state;
     EcCodeGen       **buffers, *saveCode;
     int             next, len, needLongJump, count, firstDefault;
 
+    ejs = cp->ejs;
     state = cp->state;
     saveCode = state->code;
 
@@ -2105,7 +2107,21 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
             genAssignOp(cp, child->left);
         }
     }
-    firstDefault = fun->numArgs - fun->numDefault;
+    if (fun->rest) {
+        buffers[count - 1] = state->code = allocCodeBuffer(cp);
+        ecEncodeOpcode(cp, EJS_OP_NEW_ARRAY);
+        ecEncodeGlobal(cp, (EjsObj*) ejs->arrayType, &ejs->arrayType->qname);
+        ecEncodeNumber(cp, 0);
+        pushStack(cp, 1);
+        //  MOB -- convenience routine
+        if (fun->numArgs < 10) {
+            ecEncodeOpcode(cp, EJS_OP_PUT_LOCAL_SLOT_0 + fun->numArgs - 1);
+        } else {
+            ecEncodeOpcode(cp, EJS_OP_PUT_LOCAL_SLOT);
+            ecEncodeNumber(cp, fun->numArgs - 1);
+        }
+    }
+    firstDefault = fun->numArgs - fun->numDefault - fun->rest;
     mprAssert(firstDefault >= 0);
     needLongJump = cp->optimizeLevel > 0 ? 0 : 1;
 
@@ -2130,9 +2146,9 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
         We have one more entry in the table to jump over the entire computed jump section.
      */
     ecEncodeOpcode(cp, (needLongJump) ? EJS_OP_INIT_DEFAULT_ARGS: EJS_OP_INIT_DEFAULT_ARGS_8);
-    ecEncodeByte(cp, fun->numDefault + 1);
+    ecEncodeByte(cp, fun->numDefault + fun->rest + 1);
 
-    len = (fun->numDefault + 1) * ((needLongJump) ? 4 : 1);
+    len = (fun->numDefault + fun->rest + 1) * ((needLongJump) ? 4 : 1);
 
     for (next = firstDefault; next < count; next++) {
         if (buffers[next] == 0) {
