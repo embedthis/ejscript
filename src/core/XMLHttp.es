@@ -22,23 +22,19 @@ module ejs {
         private var responseBuf: ByteArray
 
         //  TODO spec UNSENT
-        /** readyState values */
+        /** readyState value (UNSENT) */
         static const Uninitialized = 0              
 
-        //  TODO spec OPENED
-        /** readyState values */
+        /** readyState value (OPENED) */
         static const Open = 1
 
-        //  TODO spec HEADERS_RECEIVED
-        /** readyState values */
+        /** readyState value (SENT) */
         static const Sent = 2
 
-        //  TODO spec LOADING
-        /** readyState values */
+        /** readyState value (LOADING) */
         static const Receiving = 3
 
-        //  TODO spec DONE
-        /** readyState values */
+        /** readyState value (DONE) */
         static const Loaded = 4
 
         /**

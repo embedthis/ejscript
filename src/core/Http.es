@@ -319,14 +319,14 @@ module ejs {
 
 //  MOB -- should there be an arg for body?
         /** @hide
-            Fetch a URL asynchronously. This is a convenience method to invoke an Http method without waiting. 
+            Fetch a URL. This is a convenience method to asynchronously invoke an Http method without waiting. 
             @param method Http method. This is typically "GET" or "POST"
             @param callback Function to invoke
           */
-        function fetch(method: String, uri: Uri, callback: Function) {
+        function fetch(method: String, uri: Uri, data: *, callback: Function) {
             xh = XMLHttp(this)
             xh.open(method, uri)
-            xh.send(null)
+            xh.send(data)
             xh.onreadystatechange = function () {
                 if (xh.readyState == XMLHttp.Loaded) {
                     response = xh.responseText

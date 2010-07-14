@@ -9780,12 +9780,14 @@ void ecSetError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNumber
     errCode = 0;
 
     appName = mprGetAppName(cp);
+#if UNUSED
     if (filename == 0 || *filename == '\0') {
         filename = "stdin";
     }
-    if (cp->lexer->input->stream == 0) {
+    if (cp->lexer->input->stream == 0)
         errorMsg = mprAsprintf(cp, -1, "%s: %s: %s\n", appName, severity, msg);
-    } else if (currentLine) {
+#endif
+    if (currentLine) {
         highlightPtr = makeHighlight(cp, (char*) currentLine, column);
         errorMsg = mprAsprintf(cp, -1, "%s: %s: %s: %d: %s\n  %s  \n  %s\n", appName, severity, filename, lineNumber, 
             msg, currentLine, highlightPtr);
