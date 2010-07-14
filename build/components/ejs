@@ -13,7 +13,10 @@ defineComponent() {
         builtin=--builtin
     elif [ -d src/deps/ejs ] ; then
         builtin=--builtin
+echo HERE 
+set -x
         path=`probe --path "src/deps/ejs" --partial "ejsLib.c" $name`
+set +x
     else
         path=`probe --path "$path" --partial "ejs" $name`
     fi
