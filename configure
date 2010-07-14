@@ -1074,19 +1074,16 @@ probe()
         exit 255
     fi
 
-echo PATH $path partial $partial >&2
     if [ "$path" != "" ] ; then
         if [ -f "$path" -o -x "$path" -o -d "$path" ] ; then
             if [ "$emitdir" = 1 ] ; then
                 found=${found#${partial}}
             fi
             found=`canonPath "${path}"`
-echo here found $found >&2
             [ "$trace" != 0 -a "$found" != "" ] && echo "    probe: found $name at $found" 1>&2
         fi
     fi
 
-echo there found $found >&2
     if [ "$found" = "" ] ; then
         #
         #   Fast search using "type". Works for executables only.
