@@ -214,13 +214,16 @@ module ejs {
 
         /** 
             @duplicate Stream.observe
+            All events are called with the following signature.  The "this" object will be set to the instance object
+            if the callback is a method. Otherwise, "this" will be set to the Http instance. If Function.bind may also
+            be used to define the "this" object and to inject additional callback arguments. 
+                function (event: String, http: Http): Void
             @event headers Issued when the response headers have been fully received.
             @event readable Issued when some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
-            @event complete Issued when the request completes
-            @event error Issued if the request does not complete successfully.
-            All events are called with the signature:
-                function (event: String, http: Http): Void
+            @event complete Issued when the request completes. Complete is always issued whether the request errors or not.
+            @event error Issued if the request does not complete successfully. This is not issued if the request 
+                ompletes successfully but with a non 200 Http status code.
          */
         native function observe(name, observer: Function): Void
 
@@ -259,8 +262,8 @@ module ejs {
             @param uri New uri to use. This overrides any previously defined uri for the Http object.
             @param data Data objects to send with the request. Data is written raw and is not encoded or converted. 
                 However, the routine intelligently handles arrays such that, each element of the array will be written. 
-            @throws IOError if the request cannot be issued to the remote server.
-            @event connect Issued a "connect" event when the connection is complete.
+            @throws IOError if the request cannot be issued to the remote server. Once the connection has been made, 
+                exceptions will not be thrown and $status must be consulted for request status.
          */
         native function connect(uri: Uri? = null, ...data): Void
 
@@ -270,12 +273,6 @@ module ejs {
             @hide
          */
         native function get certificate(): Path
-
-        /** 
-            @duplicate Http.certificate
-            @param certFile The name of the certificate file.
-            @throws IOError if the file does not exist.
-         */
         native function set certificate(certFile: Path): Void
 
         /** 
@@ -310,11 +307,6 @@ module ejs {
         function get encoding(): String
             "utf-8"
 
-        /** 
-            @duplicate Http.encoding
-            @param enc String representing the encoding scheme
-            @hide
-         */
         function set encoding(enc: String): Void {
             throw "Not yet implemented"
         }
@@ -324,6 +316,23 @@ module ejs {
             When the response content expires. This is derrived from the response Http Expires header.
          */
         native function get expires(): Date
+
+        //  MOB -- Is this required to stop xh being GC'd
+        private var xh: XMLHttp
+
+//  MOB -- should there be an arg for body?
+        /** @hide
+            Fetch a URL asynchronously. This is a convenience method to invoke an Http method without waiting. 
+            @param method Http method. This is typically "GET" or "POST"
+            @param callback Function to invoke
+          */
+        function fetch(method: String, uri: Uri, callback: Function) {
+            xh = XMLHttp(this)
+            xh.open(method, uri)
+            xh.send(null)
+            xh.onreadystatechange = callback
+            _response = xh.response
+        }
 
         /** 
             Signals the end of write data. If using chunked writes (no content length specified), finalize() must
@@ -339,15 +348,9 @@ module ejs {
         function flush(dir: Number = Stream.BOTH): Void {}
 
         /** 
-            Get whether redirects should be automatically followed by this Http object.
-            @return True if redirects are automatically followed.
+            Control whether redirects should be automatically followed by this Http object. Default is true.
          */
         native function get followRedirects(): Boolean
-
-        /** 
-            Eanble or disable following redirects from the connection remove server. Default is true.
-            @param flag Set to true to follow redirects.
-         */
         native function set followRedirects(flag: Boolean): Void
 
         /** 
@@ -369,7 +372,8 @@ module ejs {
                 a previously defined uri.
             @param data Data objects to send with the request. Data is written raw and is not encoded or converted. 
                 However, the routine intelligently handles arrays such that, each element of the array will be written. 
-            @throws IOError if the request cannot be issued to the remote server.
+            @throws IOError if the request cannot be issued to the remote server. Once the connection has been made, 
+                exceptions will not be thrown and $status must be consulted for request status.
          */
         native function get(uri: Uri? = null, ...data): Void
 
@@ -412,13 +416,6 @@ module ejs {
             @hide
          */
         native function get key(): Path
-
-        /** 
-            @duplicate Http.key
-            @param keyFile The name of the key file.
-            @throws IOError if the file does not exist.
-            @hide
-         */
         native function set key(keyFile: Path): Void
 
         /** 
@@ -428,15 +425,10 @@ module ejs {
         native function get lastModified(): Date
 
         /** 
-            Http request method for this Http object.
+            Http request method for this Http object. Default is "GET". Typical methods are: GET, POST, HEAD, OPTIONS, 
+            PUT, DELETE and TRACE.
          */
         native function get method(): String
-
-        /** 
-            Set or reset the Http object's request method. Default method is GET.
-            @param name The method name as a string.
-            @throws IOError if the request is not GET, POST, HEAD, OPTIONS, PUT, DELETE or TRACE.
-         */
         native function set method(name: String)
 
         /** 
@@ -528,13 +520,6 @@ module ejs {
             @hide
          */
         native function get retries(): Number
-
-        /** 
-            Define the number of retries of a request. Retries are essential as the HTTP protocol permits a server or
-            network to be unreliable. The default retries is 2.
-            @param count Number of retries. A retry count of 1 will retry a failed request once.
-            @hide
-         */
         native function set retries(count: Number): Void
 
         /** 
@@ -584,11 +569,6 @@ module ejs {
             this time period, it will be retried or aborted.
          */
         native function get timeout(): Number
-
-        /** 
-            Set the request timeout.
-            @param timeout Number of milliseconds to complete while attempting requests. -1 means no timeout.
-         */
         native function set timeout(timeout: Number): Void
 
         /** 
@@ -651,13 +631,6 @@ module ejs {
             The current Uri for this Http object. The Uri is used for the request URL when making a $connect call.
          */
         native function get uri(): Uri
-
-        /** 
-            Set the Http object's Uri. The Uri is used for the request URL when making a $connect call.
-            @param newUri The new Uri as a Uri object. If a string is supplied it will automatically be cast to a Uri
-                object before making the call.
-            @throws IOError if the Uri is malformed.
-         */
         native function set uri(newUri: Uri): Void
 
         /** 
@@ -691,7 +664,6 @@ module ejs {
         function get bodyLength(): Void
             contentLength
 
-        //  DEPRECATED
         function set contentLength(value: Number): Void {
             setHeader("content-length", value)
         }

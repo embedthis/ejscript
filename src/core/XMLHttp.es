@@ -17,7 +17,7 @@ module ejs {
 
         use default namespace public
 
-        private var http: Http = new Http
+        private var hp: Http = new Http
         private var state: Number = 0
         private var response: ByteArray
 
@@ -46,18 +46,23 @@ module ejs {
          */
         public var onreadystatechange: Function
 
+        function XMLHttp(http: Http? = null) {
+            hp = http || (new Http)
+            hp.async = true
+        }
+
         /**
             Abort the connection
          */
         function abort(): void
-            http.close
+            hp.close
 
         /**
             The underlying Http object
             @spec ejs
          */
-        function get httpObject() : Http
-            http
+        function get http() : Http
+            hp
 
         /**
             The readystate value. This value can be compared with the XMLHttp constants: Uninitialized, Open, Sent,
@@ -70,14 +75,14 @@ module ejs {
             HTTP response body as a string.
          */
         function get responseText(): String
-            http.response
+            response.toString()
 
         /**
             HTTP response payload as an XML document. Set to an XML object that is the root of the HTTP request 
             response data.
          */
         function get responseXML(): XML
-            XML(http.response)
+            XML(response)
 
         /**
             Not implemented. Only for ActiveX on IE
@@ -92,13 +97,13 @@ module ejs {
             The HTTP status code. Set to an integer Http status code between 100 and 600.
         */
         function get status(): Number
-            http.status
+            hp.status
 
         /**
             Return the HTTP status code message
          */
         function get statusText() : String
-            http.statusMessage
+            hp.statusMessage
 
         /**
             Return the response headers
@@ -106,8 +111,8 @@ module ejs {
          */
         function getAllResponseHeaders(): String {
             let result: String = ""
-            for (key in http.headers) {
-                result = result.concat(key + ": " + http.headers[key] + '\n')
+            for (key in hp.headers) {
+                result = result.concat(key + ": " + hp.headers[key] + '\n')
             }
             return result
         }
@@ -123,42 +128,36 @@ module ejs {
         /**
             Open a connection to the web server using the supplied URL and method.
             @param method HTTP method to use. Valid methods include "GET", "POST", "PUT", "DELETE", "OPTIONS" and "TRACE"
-            @param url URL to invoke
+            @param uri URL to retrieve
             @param async If true, don't block after issuing the requeset. By defining an $onreadystatuschange callback 
                 function, the request progress can be monitored. NOTE: async mode is not supported. All calls will block.
             @param user Optional user name if authentication is required.
             @param password Optional password if authentication is required.
          */
-        function open(method: String, url: String, async: Boolean = false, user: String? = null, 
+        function open(method: String, uri: String, async: Boolean = true, user: String? = null, 
                 password: String = null): Void {
-            response = new ByteArray(System.Bufsize, 1)
-            http.async = true
-            http.method = method
-            http.uri = url
+            response = new ByteArray(System.Bufsize)
+            hp.async = async
+            hp.method = method
+            hp.uri = uri
             if (user && password) {
-                http.setCredentials(user, password)
+                hp.setCredentials(user, password)
             }
-            http.observe("readable", function (event, ...args) {
-                let http: Http = e.data
-                let count = http.read(response)
-                state = (count == 0) ? Loaded : Receiving
+            hp.observe(["complete", "error"], function (event, ...args) {
+                state = Loaded
                 notify()
             })
-            http.observe("error", function (event, ...args) {
+            hp.observe("readable", function (event, ...args) {
+                let count = hp.read(response, -1)
+                state = Receiving
                 notify()
             })
-
-            http.connect()
+            hp.connect()
             state = Open
             notify()
-
-            //  TODO - ASYNC mode is not supported. This requires the ejs event mechanism
-            if (!async || 1) {
-                let timeout = 5 * 1000
-                let when: Date = new Date
-                while (state != Loaded && when.elapsed < timeout) {
-                    App.eventLoop(timeout, true)
-                }
+            if (!async) {
+                hp.finalize()
+                App.waitForEvent(hp, "complete", hp.timeout)
             }
         }
 
@@ -166,11 +165,15 @@ module ejs {
             Send data with the request.
             @param content Data to send with the request.
          */
-        function send(content: String): Void {
-            if (!http.async) {
+        function send(content: String? = null): Void {
+            if (!hp.async) {
                 throw new IOError("Can't call send in sync mode")
             }
-            http.write(content)
+            if (content == null) {
+                hp.finalize()
+            } else {
+                hp.write(content)
+            }
         }
 
         /**
@@ -181,28 +184,18 @@ module ejs {
                 setRequestHeader("Keep-Alive", "none")
          */
         function setRequestHeader(key: String, value: String): Void
-            http.addHeader(key, value, 1)
-
-        /*
-            Http callback function
-         */
-        private function callback (event, ...args) {
-            if (e is HttpError) {
-                notify()
-                return
-            }
-            let http: Http = e.data
-            let count = http.read(response)
-            state = (count == 0) ? Loaded : Receiving
-            notify()
-        }
+            hp.addHeader(key, value, 1)
 
         /*
             Invoke the user's state change handler
          */
         private function notify() {
             if (onreadystatechange) {
-                onreadystatechange()
+                if (onreadystatechange.bound == global) {
+                    onreadystatechange.call(this, this)
+                } else {
+                    onreadystatechange(this)
+                }
             }
         }
     }

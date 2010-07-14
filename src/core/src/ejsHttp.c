@@ -44,11 +44,17 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function observe(name, listener: function): Void
+    function observe(name, observer: function): Void
  */
 EjsObj *http_observe(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    ejsAddListener(ejs, &hp->emitter, argv[0], argv[1]);
+    EjsFunction     *observer;
+
+    observer = (EjsFunction*) argv[1];
+    if (observer->boundThis == 0 || observer->boundThis == ejs->global) {
+        observer->boundThis = (EjsObj*) hp;
+    }
+    ejsAddObserver(ejs, &hp->emitter, argv[0], argv[1]);
     return 0;
 }
 
@@ -515,11 +521,11 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function removeObserver(name, listener: function): Void
+    function removeObserver(name, observer: function): Void
  */
 EjsObj *http_removeObserver(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    ejsRemoveListener(ejs, hp->emitter, argv[0], argv[1]);
+    ejsRemoveObserver(ejs, hp->emitter, argv[0], argv[1]);
     return 0;
 }
 
