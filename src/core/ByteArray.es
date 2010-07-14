@@ -178,8 +178,9 @@ module ejs {
             @duplicate Stream.read
             Data is read from the current read $position pointer toward the current $writePosition. 
             This byte array's $readPosition is updated. If offset is < 0, then data is copied to the destination buffer's 
-            $writePosition and the destination buffer's $writePosition is also updated. If the offset is >= 0, the read 
-            and write positions of the destination buffer are updated.
+            $writePosition and the destination buffer's $writePosition is also updated. If the offset is >= 0, the 
+            read position is set to the specified offset and data is stored at this offset. The write position is set to
+            one past the last byte read.
          */
         native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
 
