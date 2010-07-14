@@ -15,7 +15,7 @@ module ejs {
         @spec ejs
         @stability prototype
      */
-    class System {
+    enumerable class System {
 
         use default namespace public
 
