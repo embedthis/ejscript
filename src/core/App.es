@@ -79,6 +79,32 @@ module ejs {
             }
         }
 
+        /**
+            Default event Emitter for the application
+         */
+        static var emitter: Emitter = new Emitter
+
+        /** 
+            Default application logger. This is set to stderr unless the program specifies an output log via the --log 
+            command line switch.
+         */
+        public static var log: Logger
+
+        /** 
+            Application name. Set to a single word, lower-case name for the application.
+         */
+        static var name: String
+
+        /** 
+            Application title name. Multi-word, Camel Case name for the application suitable for display.
+         */
+        static var title: String
+
+        /** 
+            Application version string. Set to a version string of the format Major.Minor.Patch-Build. For example: 1.1.2-3.
+         */
+        static var version: String
+
         /** 
             Application command line arguments. Set to an array containing each of the arguments. If the ejs command 
                 is invoked as "ejs script arg1 arg2", then args[0] will be "script", args[1] will be "arg1" etc.
@@ -86,10 +112,21 @@ module ejs {
         native static function get args(): Array
 
         /** 
-            The application's current directory
-            @return the path to the current directory
+            Create a search path array.
+            @param searchPath String containing a colon separated (or semi-colon on Windows) set of paths.
+                If search path is null, the default system search paths are returned
+            @return An array of search paths.
          */
-        native static function get dir(): Path
+        native static function createSearch(searchPath: String? = null): Array
+
+        /** 
+            Run the event loop. This is typically done automatically by the hosting program and is not normally required
+            in user programs.
+            @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
+                call returns immediately.
+            @param oneEvent If true, return immediately after servicing one event.
+         */
+        native static function eventLoop(timeout: Number = -1, oneEvent: Boolean = false): Void
 
         /** 
             Change the application's Working directory
@@ -97,10 +134,12 @@ module ejs {
          */
         native static function chdir(value: Object): Void
 
-        /**
-            Default event Emitter for the application
+        /** 
+            The application's current directory
+            @return the path to the current directory
          */
-        static var emitter: Emitter = new Emitter
+        native static function get dir(): Path
+
 
         /** 
             The directory containing the application executable
@@ -114,14 +153,11 @@ module ejs {
 
         /** 
             The application's standard error file stream
+            Set the standard error stream. Changing the error stream will close and reopen stderr.
          */
         static function get errorStream(): Stream
             _errorStream
 
-        /** 
-            Set the standard error stream. Changing the error stream will close and reopen stderr.
-            @param stream The output stream.
-         */
         static function set errorStream(stream: Stream): Void {
             _errorStream = stream
             if (stderr) {
@@ -145,15 +181,11 @@ module ejs {
         native static function getenv(name: String): String
 
         /** 
-            The application's standard input file stream
+            Set the standard input stream. Changing the input stream will close and reopen stdin.
          */
         static function get inputStream(): Stream
             _inputStream
 
-        /** 
-            Set the standard input stream. Changing the input stream will close and reopen stdin.
-            @param stream The input stream.
-         */
        static function set inputStream(stream: Stream): Void {
             _inputStream = stream
             if (stdin) {
@@ -162,31 +194,31 @@ module ejs {
             stdin = TextStream(_inputStream)
         }
         
-        //  TODO - move to locale
+        /**
+            Load an "ejsrc" configuration file
+            This loads an Ejscript configuration file and blends the contents with App.config. 
+            @param path Path name of the file to load
+            @param overwrite If true, then new configuration values overwrite existing values in App.config.
+         */
+        static function loadrc(path: Path, overwrite: Boolean = true) {
+            if (path.exists) {
+                try {
+                    blend(App.config, path.readJSON(), overwrite)
+                } catch (e) {
+                    errorStream.write(App.exePath.basename +  " Can't parse " + path + ": " + e + "\n")
+                }
+            }
+        }
+
+        //  MOB TODO - move to locale
         /** 
             Get the current language locale for this application
             @hide
          */
         # FUTURE
         native static function get locale(): String
-
-        //  TODO - move to a Locale class
-        /** 
-            Set the current language locale
-         */
         # FUTURE
         native static function set locale(locale: String): Void
-
-        /** 
-            Default application logger. This is set to stderr unless the program specifies an output log via the --log 
-            command line switch.
-         */
-        public static var log: Logger
-
-        /** 
-            Application name. Set to a single word, lower-case name for the application.
-         */
-        static var name: String
 
         //  MOB TODO need a better name than noexit, TODO could add a max delay option.
         /** 
@@ -198,15 +230,11 @@ module ejs {
         native static function noexit(exit: Boolean = true): Void
 
         /** 
-            The application's standard output file stream
+            The standard output stream. Changing the output stream will close and reopen stdout.
          */
         static function get outputStream(): Stream
             _outputStream
 
-        /** 
-            Set the standard output stream. Changing the output stream will close and reopen stdout.
-            @param stream The output stream.
-         */
         static function set outputStream(stream: Stream): Void {
             _outputStream = stream
             if (stdout) {
@@ -226,29 +254,7 @@ module ejs {
             The current module search path. Set to an array of Paths.
          */
         native static function get search(): Array
-
-        /** 
-            Set the current module search path
-            @param paths An array of paths
-         */
         native static function set search(paths: Array): Void
-
-        /** 
-            Create a search path array.
-            @param searchPath String containing a colon separated (or semi-colon on Windows) set of paths.
-                If search path is null, the default system search paths are returned
-            @return An array of search paths.
-         */
-        native static function createSearch(searchPath: String? = null): Array
-
-        /** 
-            Run the event loop. This is typically done automatically by the hosting program and is not normally required
-            in user programs.
-            @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
-                call returns immediately.
-            @param oneEvent If true, return immediately after servicing one event.
-         */
-        native static function eventLoop(timeout: Number = -1, oneEvent: Boolean = false): Void
 
         /** 
             Set an environment variable.
@@ -265,21 +271,12 @@ module ejs {
          */
         native static function sleep(delay: Number = -1): Void
 
-        /** 
-            Application title name. Multi-word, Camel Case name for the application suitable for display.
-         */
-        static var title: String
-
-        /** 
-            Application version string. Set to a version string of the format Major.Minor.Patch-Build. For example: 1.1.2-3.
-         */
-        static var version: String
-
         //  DEPRECATED
         /** 
             The current module search path . Set to a delimited searchPath string. Warning: This will be changed to an
             array of paths in a future release.
             @stability deprecated.
+            @deprecate
             @hide
          */
         static function get searchPath(): String {
@@ -289,12 +286,6 @@ module ejs {
                 return search.join(":")
             }
         }
-
-        //  DEPRECATED
-        /** 
-            @stability deprecated.
-            @hide
-         */
         static function set searchPath(path: String): Void {
             if (Config.OS == "WIN") {
                 search = path.split(";")
@@ -322,20 +313,20 @@ module ejs {
             }
         }
 
-        /**
-            Load an "ejsrc" configuration file
-            This loads an Ejscript configuration file and blends the contents with App.config. 
-            @param path Path name of the file to load
-            @param overwrite If true, then new configuration values overwrite existing values in App.config.
+        /** @hide
+            Wait for an event
+            @param Observable object
+            @param events Events to consider
+            @param timeout Timeout in milliseconds
          */
-        static function loadrc(path: Path, overwrite: Boolean = true) {
-            if (path.exists) {
-                try {
-                    blend(App.config, path.readJSON(), overwrite)
-                } catch (e) {
-                    errorStream.write(App.exePath.basename +  " Can't parse " + path + ": " + e + "\n")
-                }
-            }
+        static function waitForEvent(obj: *, events: Object, timeout: Number = Number.MaxInt32): Boolean {
+            let done
+            function callback(event) done = true
+            obj.observe(events, callback)
+            for (let mark = new Date; !done && mark.elapsed < timeout; )
+                App.eventLoop(timeout - mark.elapsed, 1)
+            obj.removeObserver(events, callback)
+            return done
         }
     }
 
