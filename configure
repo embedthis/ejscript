@@ -1088,14 +1088,10 @@ probe()
         #
         #   Fast search using "type". Works for executables only.
         #
-echo HERE search $search >&2
-echo @@@@ >&2
         [ "$search" = "" ] && search="$SEARCH_PATH"
         OLD_PATH="$PATH"
         PATH="$search"
-echo PATH set to $PATH >&2
         found=`type -P "$partial" 2>/dev/null`
-echo FOUND $found >&2
         PATH=$OLD_PATH
         if [ "$emitdir" = "1" ] ; then
             found=${found%${partial}}
