@@ -302,13 +302,12 @@ doing partial writes. If it cannot be determined how much room is available, thi
 <p>Write data to the stream.</p>
 <dl><dt>Description</dt><dd>Write intelligently encodes various data types onto the stream and will encode 
 data in a portable cross-platform manner according to the setting of the <a href='#endian'>endian</a> property. If data is an 
-array, each element of the array will be written. The write call blocks until the underlying stream or 
-endpoint absorbes all the data.</dd></dl>
+array, each element of the array will be written.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>items: <a href='ejs-Array.html'>Array</a> </td><td>Data items to write. The ByteStream class intelligently encodes various data types according  to the current setting of the <a href='#endian'>endian</a> property.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>The total number of elements that were written.</dd></dl>
+<dd>The total number of bytes that were written.</dd></dl>
 <dl><dt>Throws</dt><dd>
 <a href='ejs-IOError.html'>IOError</a>: if there is an I/O error. 
 </dd>

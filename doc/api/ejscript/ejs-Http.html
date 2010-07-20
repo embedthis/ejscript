@@ -110,8 +110,6 @@
    <tr><td nowrap align='left'>public const get </td><td>contentType</td><td><a href='ejs-String.html'>String</a></td><td>Response content type derrived from the response Http Content-Type header. To set the request body Content-Type, use setHeader("Content-Type", MimeType).</td></tr>
 <a name='date'></a>
    <tr><td nowrap align='left'>public const get </td><td>date</td><td><a href='ejs-Date.html'>Date</a></td><td>When the response was generated. Response date derrived from the response Http Date header.</td></tr>
-<a name='expires'></a>
-   <tr><td nowrap align='left'>public const get </td><td>expires</td><td><a href='ejs-Date.html'>Date</a></td><td>When the response content expires. This is derrived from the response Http Expires header.</td></tr>
 <a name='headers'></a>
    <tr><td nowrap align='left'>public const get </td><td>headers</td><td><a href='ejs-Object.html'>Object</a></td><td>Response headers. Use header() to retrieve a single header value.
 Set to an object filled with all the response headers. If multiple headers of the same key value are
@@ -138,8 +136,8 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This closes any open network connection and resets the http object to be ready for another connection.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#connect'><b>connect</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HTTP request for the current method and uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#del'><b>del</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a DELETE request for the current uri.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of write data.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of write data and flushes any buffered write data.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#form'><b>form</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, postData: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a POST request with form data the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#get'><b>get</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a GET request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getRequestHeaders'><b>getRequestHeaders</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) request headers that will be sent with the request.</td></tr>
@@ -161,8 +159,7 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trace'><b>trace</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a TRACE request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#upload'><b>upload</b></a>(uri: <a href='ejs-String.html'>String</a>, files: <a href='ejs-Object.html'>Object</a>, fields: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Upload files using multipart/mime.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#wait'><b>wait</b></a>(timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for a request to complete.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.The Http.contentLength should normally be set prior to writing any data to ensure that the request 
-"Content-length" header is properly defined.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write body data to the server.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
@@ -227,11 +224,7 @@ the request headers.</dd></dl>
 <div class='apiSig'>const   public  finalize(): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Signals the end of write data.</p>
-<dl><dt>Description</dt><dd>If using chunked writes (no content length specified), finalize() must
-be called to properly signify the end of write data. This causes the chunk filter to write a chunk trailer.
-It is good practice to call finalize() at the end of writing regardless of whether chunked transfer is used 
-or not.</dd></dl>
+<p>Signals the end of write data and flushes any buffered write data.</p>
 </div>
 </div>
 <hr />
@@ -240,12 +233,12 @@ or not.</dd></dl>
 <div class='apiSig'>const   public  flush(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Flush the stream and underlying streams.</p>
+<p>Flush the stream and underlying streams.Flush request data.</p>
 <dl><dt>Description</dt><dd>A supplied flush <a href='#direction'>direction</a> argument modifies the effect of this call.
 If direction is set to Stream.READ, then all read data is discarded. If direction is set to Stream.WRITE, 
 any buffered data is written. Stream.BOTH will cause both directions to be flushed.  If the stream is in 
 sync mode, this call will block until all data is written. If the stream is in async mode, it will attempt 
-to write all data but will return immediately</dd></dl>
+to write all data but will return immediately.Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent to the server</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>dir: <a href='ejs-Number.html'>Number</a> </td><td> [default: expression]</td></tr></table></dd>
@@ -593,16 +586,14 @@ http.upload(URL, files, fields)
 <div class='apiSig'>const   public  write(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Write data to the stream.The Http.contentLength should normally be set prior to writing any data to ensure that the request 
-"Content-length" header is properly defined.</p>
-<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of elements written. 
+<p>Write data to the stream.Write body data to the server.</p>
+<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of bytes written. 
 If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
-If writing more data than the stream can absorb in async mode, the call will not block and will return 
-immediately. A "writable" event will be issued when all the data has been written.If the body length has not been defined, the data will be 
-transferred using chunked transfers. In this case, you should call close() with no data to signify the 
-end of the write stream. Failure to define the Content-Length header will cause the remote server to have 
-to close the underling HTTP connection at the completion of the request. This will erode performance by 
-preventing  HTTP keep-alive for subsequent requests.</dd></dl>
+If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
+data and return immediately. Some streams will require a flush() call to actually send the data.
+A "writable" event will be issued when the stream can again absorb more data.This will buffer the written data until either flush() or finalize() is called. 
+The Http "Content-Length" header should normally be set prior to writing any data for optimial data transfter.
+If the Content-Length header has not been defined, the data will be transferred using chunked transfers.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>
@@ -614,8 +605,7 @@ preventing  HTTP keep-alive for subsequent requests.</dd></dl>
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually written.</dd></dl>
 <dl><dt>Throws</dt><dd>
-<a href='ejs-IOError.html'>IOError</a>: if there is an I/O error. , 
-<a href='ejs-StateError.html'>StateError</a>: if the Http method is not set to POST or if more post data is written than specified via  the contentLength property. 
+<a href='ejs-IOError.html'>IOError</a>: if there is an I/O error. 
 </dd>
 </dl></div>
 </div>

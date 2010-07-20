@@ -58,8 +58,8 @@ enabled if the chunkFilter is configured and a contentLength has not been define
    <tr><td nowrap align='center'>public </td><td>config</td><td><a href='ejs-Object.html'>Object</a></td><td>Request configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
 Middleware may modify to refer to a request local configuration object.</td></tr>
 <a name='contentLength'></a>
-   <tr><td nowrap align='center'>public </td><td>contentLength</td><td><a href='ejs-Number.html'>Number</a></td><td>Get the request content length. This property is readonly and is set to the length of the request content 
-body in bytes or -1 if not known.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>contentLength</td><td><a href='ejs-Number.html'>Number</a></td><td>Get the request content length. This is the length of body data sent by the client with the request. 
+This property is readonly and is set to the length of the request content body in bytes or -1 if not known.</td></tr>
 <a name='contentType'></a>
    <tr><td nowrap align='center'>public </td><td>contentType</td><td><a href='ejs-String.html'>String</a></td><td>The request content type as specified by the "Content-Type" Http request header. This is set to null 
 if not defined.</td></tr>
@@ -72,8 +72,8 @@ sent to and from the browser with each request.</td></tr>
 application. For MVC applications, this is set to the base directory of the application. For non-MVC apps, 
 it is set to the directory containing the application startup script.</td></tr>
 <a name='dontFinalize'></a>
-   <tr><td nowrap align='center'>public </td><td>dontFinalize</td><td>&nbsp;</td><td>Don't auto-finalize the request. If dontFinalize is true, web frameworks should not auto-finalize requests. 
-Rather, callers must explicitly invoke <a href='#finalize'>finalize</a>. </td></tr>
+   <tr><td nowrap align='center'>public </td><td>dontFinalize</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Don't auto-finalize the request. If dontFinalize is true, web frameworks should not auto-finalize requests. 
+Rather, callers must explicitly invoke <a href='#finalize'>finalize</a> with force set to true.</td></tr>
 <a name='encoding'></a>
    <tr><td nowrap align='center'>public </td><td>encoding</td><td><a href='ejs-String.html'>String</a></td><td>Get the encoding scheme for serializing strings. Not yet implemented.
 MOB -- should this not be in the headers?.</td></tr>
@@ -83,9 +83,9 @@ MOB -- should this not be in the headers?.</td></tr>
    <tr><td nowrap align='center'>public </td><td>files</td><td><a href='ejs-Object.html'>Object</a></td><td>Files uploaded as part of the request. For each uploaded file, an instance of UploadFile is created in files. 
 Each element is named by the file upload HTML input element ID in the HTML page form.</td></tr>
 <a name='headers'></a>
-   <tr><td nowrap align='center'>public </td><td>headers</td><td><a href='ejs-Object.html'>Object</a></td><td>Request Http headers. This is an object hash filled with the Http request headers. If multiple headers of 
-the same key value are defined, their contents will be catenated with a ", " separator as per the HTTP/1.1 
-specification. Use the header() method if you want to retrieve a single header.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>headers</td><td><a href='ejs-Object.html'>Object</a></td><td>Request Http headers. This is an object hash filled with the request headers from the client.  If multiple 
+headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
+HTTP/1.1 specification. Use the header() method if you want to retrieve a single header.</td></tr>
 <a name='home'></a>
    <tr><td nowrap align='center'>public </td><td>home</td><td><a href='ejs-Uri.html'>Uri</a></td><td>Relative Uri for the top-level of the application. This returns a relative Uri from the current request
 up to the top most application Uri.</td></tr>
@@ -93,6 +93,10 @@ up to the top most application Uri.</td></tr>
    <tr><td nowrap align='center'>public </td><td>host</td><td><a href='ejs-String.html'>String</a></td><td>Server host name. This is set to the authorized server name (HttpServer.name) if one is configured. 
 Otherwise it will be set to the <a href='#localAddress'>localAddress</a> value which is either the "Host" header value if supplied 
 by the client or is the server IP address of the accepting interface.</td></tr>
+<a name='inactivityTimeout'></a>
+   <tr><td nowrap align='center'>public </td><td>inactivityTimeout</td><td><a href='ejs-Number.html'>Number</a></td><td>Request inactivity timeout. Maximum number of seconds the request connection can be idle before the request is
+terminated.
+A value of 0 means no timeout.</td></tr>
 <a name='isSecure'></a>
    <tr><td nowrap align='center'>public </td><td>isSecure</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
 protocol scheme.</td></tr>
@@ -137,8 +141,8 @@ Objects are stored the session state by JSON serialization.</td></tr>
 <a name='status'></a>
    <tr><td nowrap align='center'>public </td><td>status</td><td><a href='ejs-Number.html'>Number</a></td><td>Set to the (proposed) Http response status code. </td></tr>
 <a name='timeout'></a>
-   <tr><td nowrap align='center'>public </td><td>timeout</td><td><a href='ejs-Number.html'>Number</a></td><td>Request timeout. Number of milliseconds for requests to block while processing the request.
-A value of -1 means no timeout.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>timeout</td><td><a href='ejs-Number.html'>Number</a></td><td>Request timeout. Maximum number of seconds for the request to complete.
+A value of 0 means no timeout.</td></tr>
 <a name='uri'></a>
    <tr><td nowrap align='center'>public </td><td>uri</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The request URL path as a parsed Uri. This is the original Uri path combined with the HttpServer scheme, host
 and port components. It will not reflect changes to pathInfo or scriptName.</td></tr>
@@ -151,6 +155,8 @@ input content. Added for JSGI compliance.</td></tr>
    <tr><td nowrap align='left'>public const get </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.</td></tr>
 <a name='queryString'></a>
    <tr><td nowrap align='left'>public const get </td><td>queryString</td><td><a href='ejs-String.html'>String</a></td><td>Decoded query string (URL query string). Eqivalent to the <a href='#query'>query</a> property. Added for JSGI compliance.</td></tr>
+<a name='responseHeaders'></a>
+   <tr><td nowrap align='left'>public const get </td><td>responseHeaders</td><td><a href='ejs-Object.html'>Object</a></td><td>Get the (proposed) response headers. </td></tr>
 <a name='serverName'></a>
    <tr><td nowrap align='left'>public const get </td><td>serverName</td><td><a href='ejs-String.html'>String</a></td><td>Name of the server responding to the request. This is the portion of the URL that follows the scheme.
 If a "Host" header is provided, it is used in preference.</td></tr>
@@ -168,8 +174,8 @@ If a "Host" header is provided, it is used in preference.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#cachable'><b>cachable</b></a>(enable: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Control the caching of the response content.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This closes the current request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#destroySession'><b>destroySession</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Destroy a session.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getResponseHeaders'><b>getResponseHeaders</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) response headers.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(force: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data and flushes any buffered write data to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a request header by keyword.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
@@ -182,7 +188,6 @@ If a "Host" header is provided, it is used in preference.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the HTTP response headers.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLocation'><b>setLocation</b></a>(prefix: <a href='ejs-String.html'>String</a>, location: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to define an application at a given Uri prefix and directory location.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setStatus'><b>setStatus</b></a>(status: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set to the (proposed) Http response status code.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#show'><b>show</b></a>(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Dump objects for debugging.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write data to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#writeError'><b>writeError</b></a>(msg: <a href='ejs-String.html'>String</a>, code: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write an error message back to the user.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#writeHtml'><b>writeHtml</b></a>(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send text back to the client which is first HTML escaped.</td></tr>
@@ -232,24 +237,32 @@ If no session exists, this call has no effect.</dd></dl>
 <hr />
 <a name='finalize'></a>
 <div class='api'>
-<div class='apiSig'>const   public  finalize(): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  finalize(force: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Signals the end of any write data.</p>
-<dl><dt>Description</dt><dd>If using chunked writes (no content length specified), finalize() must
-be called to properly signify the end of write data. This causes the chunk filter to write a chunk trailer.</dd></dl>
-</div>
+<p>Signals the end of any write data and flushes any buffered write data to the client.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>force: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Do finalization even if <a href='#dontFinalize'>dontFinalize</a> is true. [default: false]</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
-<a name='getResponseHeaders'></a>
+<a name='flush'></a>
 <div class='api'>
-<div class='apiSig'>const   public  getResponseHeaders(): <a href='ejs-Object.html'>Object</a>
+<div class='apiSig'>const   public  flush(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Get the (proposed) response headers.</p>
-<dl><dt>Returns</dt>
-<dd>The set of response headers that will be used when the response is sent.</dd></dl>
-</div>
+<p>Flush the stream and underlying streams.Flush request data.</p>
+<dl><dt>Description</dt><dd>A supplied flush <a href='#direction'>direction</a> argument modifies the effect of this call.
+If direction is set to Stream.READ, then all read data is discarded. If direction is set to Stream.WRITE, 
+any buffered data is written. Stream.BOTH will cause both directions to be flushed.  If the stream is in 
+sync mode, this call will block until all data is written. If the stream is in async mode, it will attempt 
+to write all data but will return immediately.Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent to the client.
+Flushing the read direction is ignored</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>dir: <a href='ejs-Number.html'>Number</a> </td><td> [default: expression]</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='header'></a>
@@ -413,7 +426,7 @@ NOTE: case does not matter in the header keyword.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Set the HTTP response headers.</p>
-<dl><dt>Description</dt><dd>Use getHeaders to inspect the response headers.</dd></dl>
+<dl><dt>Description</dt><dd>Use getResponseHeaders to inspect the proposed response header set.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>headers: <a href='ejs-Object.html'>Object</a> </td><td>Set of headers to use.</td></tr><tr class='param'><td class='param'>overwrite: <a href='ejs-Boolean.html'>Boolean</a> </td><td>If the header is already defined and overwrite is true, then the new value will overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", " separator. [default: true]</td></tr></table></dd>
@@ -444,28 +457,17 @@ called from routing tables.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='show'></a>
-<div class='api'>
-<div class='apiSig'>const   public  show(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Dump objects for debugging.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>args: <a href='ejs-Array.html'>Array</a> </td><td>List of arguments to print.</td></tr></table></dd>
-</dl></div>
-</div>
-<hr />
 <a name='write'></a>
 <div class='api'>
 <div class='apiSig'>const   public  write(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
 <p>Write data to the stream.Write data to the client.</p>
-<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of elements written. 
+<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of bytes written. 
 If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
-If writing more data than the stream can absorb in async mode, the call will not block and will return 
-immediately. A "writable" event will be issued when all the data has been written.</dd></dl>
+If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
+data and return immediately. Some streams will require a flush() call to actually send the data.
+A "writable" event will be issued when the stream can again absorb more data.This will buffer the written data until either flush() or finalize() is called.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>

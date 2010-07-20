@@ -54,7 +54,6 @@
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the input stream and free up all associated resources.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Iterate over the positions in a file.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this file to be used by "for each (v in obj)".</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream.</td></tr>
@@ -79,23 +78,6 @@
 <div class='apiDetail'>
 <p>Close the input stream and free up all associated resources.</p>
 </div>
-</div>
-<hr />
-<a name='flush'></a>
-<div class='api'>
-<div class='apiSig'>const   public  flush(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Flush the stream and underlying streams.</p>
-<dl><dt>Description</dt><dd>A supplied flush <a href='#direction'>direction</a> argument modifies the effect of this call.
-If direction is set to Stream.READ, then all read data is discarded. If direction is set to Stream.WRITE, 
-any buffered data is written. Stream.BOTH will cause both directions to be flushed.  If the stream is in 
-sync mode, this call will block until all data is written. If the stream is in async mode, it will attempt 
-to write all data but will return immediately</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>dir: <a href='ejs-Number.html'>Number</a> </td><td> [default: expression]</td></tr></table></dd>
-</dl></div>
 </div>
 <hr />
 <a name='get'></a>
@@ -263,9 +245,7 @@ to write all data but will return immediately</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Write data to the file.</p>
-<dl><dt>Description</dt><dd>If the stream is in sync mode, the write call blocks until the underlying stream or 
-endpoint absorbes all the data. If in async-mode, the call accepts whatever data can be accepted immediately 
-and returns a count of the elements that have been written.</dd></dl>
+<dl><dt>Description</dt><dd>All I/O is unbuffered and synchronous.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>items: <a href='ejs-Array.html'>Array</a> </td><td>The data argument can be ByteArrays, strings or Numbers. All other types will call serialize first before writing. Note that numbers will not be written in a cross platform manner. If that is required, use the BinaryStream class to control the byte ordering when writing numbers.</td></tr></table></dd>

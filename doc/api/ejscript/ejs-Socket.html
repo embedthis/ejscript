@@ -216,10 +216,11 @@ In this case a "readable" event will be issued when data is available for readin
 </div>
 <div class='apiDetail'>
 <p>Write data to the stream.</p>
-<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of elements written. 
+<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of bytes written. 
 If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
-If writing more data than the stream can absorb in async mode, the call will not block and will return 
-immediately. A "writable" event will be issued when all the data has been written.</dd></dl>
+If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
+data and return immediately. Some streams will require a flush() call to actually send the data.
+A "writable" event will be issued when the stream can again absorb more data.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>

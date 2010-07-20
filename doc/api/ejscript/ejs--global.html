@@ -176,6 +176,7 @@ This function is prototype and may be renamed in a future release.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Uri'><b>Uri</b></a>(uri: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create and parse a Uri object.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs dynamic </td><td><a href='#URIError'><b>URIError</b></a>(message: <a href='ejs-String.html'>String</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>URIError constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs.web dynamic </td><td><a href='#View'><b>View</b></a>(request: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Constructor method to initialize a new View.</td></tr>
+   <tr class='apiDef'><td class='apiType'>ejs.web </td><td><a href='#Web'><b>Web</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>Web class manages web applications.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs </td><td><a href='#Worker'><b>Worker</b></a>(script: <a href='ejs-Path.html'>Path</a> = null , options: <a href='ejs-Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a new Worker instance.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs final </td><td><a href='#XML'><b>XML</b></a>(value: <a href='ejs-Object.html'>Object</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>XML Constructor.</td></tr>
    <tr class='apiDef'><td class='apiType'>ejs final </td><td><a href='#XMLList'><b>XMLList</b></a>()</tr><tr class='apiBrief'><td>&nbsp;</td><td>XML Constructor.</td></tr>
@@ -1597,6 +1598,21 @@ Ejscript underlying type name.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request: <a href='ejs-Object.html'>Object</a> </td><td>Request object.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='Web'></a>
+<div class='api'>
+<div class='apiSig'>  ejs.web  Web()
+</div>
+<div class='apiDetail'>
+<p>Web class manages web applications.</p>
+<dl><dt>Description</dt><dd>This class initializes the web framework and loads web applications. 
+Apps may be JSGI apps with a *..es extension, template apps with a ".ejs" extension or MVC applications.</dd></dl>
+<dl><dt>Specified</dt>
+<dd>ejscript-2.0</dd></dl>
+<dl><dt>Stability</dt>
+<dd>Prototype.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='Worker'></a>

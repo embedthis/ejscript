@@ -15,14 +15,10 @@ module ejs.web {
         /*
             Master Route Table. Routes are processed from first to last. Inner routes are tested before their outer parent.
          */
+//MOB - should not need internal here
 		internal var routes: Array = []
 		
-        //  MOB -- finish
-        //  MOB - need ajax support to do non-get / non-post methods in a client
-        //  MOB -- should have default MVC route in here
-        //  MOB -- should this be the default route and not RestfulRoutes?
-        //  MOB -- can a route do a Uri rewrite
-        //  MOB -- how normal static content be served?
+        private function isDir(request) request.filename.isDir
 
         /**
             Simple top level route table for "es" and "ejs" scripts. Matches simply by script extension.
@@ -30,8 +26,13 @@ module ejs.web {
         public static var TopRoutes = [
           { name: "es",      type: "es",     match: /\.es$/   },
           { name: "ejs",     type: "ejs",    match: /\.ejs$/  },
-          { name: "default", type: "static", },
+          { name: "dir",     type: "dir",    match: isDir(request) },
+          { name: "default", type: "static", provider: Static},
         ]
+
+/*
+    MOB - Add App() to run to serve the route
+*/
 
         /** 
             Restful routes. Supports CRUD actions: index, show, create, update, destroy. The restful routes defined are:
@@ -52,49 +53,15 @@ module ejs.web {
           { name: "web",     type: "static",                match: /^\/web\//  },
           { name: "home",    type: "static",                match: /^\/$/, redirect: "/web/index.ejs" },
           { name: "ico",     type: "static",                match: /^\/favicon.ico$/, redirect: "/web/favicon.ico" },
+          { name: "dir",     type: "dir",                   match: isDir(request) },
           { name: "new",     type: "mvc", method: "GET",    match: "/:controller/new",       params: { action: "new" } },
           { name: "edit",    type: "mvc", method: "GET",    match: "/:controller/:id/edit",  params: { action: "edit" } },
           { name: "show",    type: "mvc", method: "GET",    match: "/:controller/:id",       params: { action: "show" } },
           { name: "update",  type: "mvc", method: "PUT",    match: "/:controller/:id",       params: { action: "update" } },
           { name: "delete",  type: "mvc", method: "DELETE", match: "/:controller/:id",       params: { action: "delete" } },
-          { name: "default", type: "mvc",                   match: "/:controller/:action",     params: {} },
+          { name: "default", type: "mvc",                   match: "/:controller/:action",   params: {} },
           { name: "create",  type: "mvc", method: "POST",   match: "/:controller",           params: { action: "create" } },
           { name: "index",   type: "mvc", method: "GET",    match: "/:controller",           params: { action: "index" } },
-        ]
-
-        /**
-            Simple routes  - Not used
-        public static var SimpleRoutes = [
-          { name: "list",    type: "mvc", method: "GET",  match: "/:controller/list",        params: { action: "list" } },
-          { name: "create",  type: "mvc", method: "POST", match: "/:controller/create",      params: { action: "create" } },
-          { name: "edit",    type: "mvc", method: "GET",  match: "/:controller/:id",         params: { action: "edit" } },
-          { name: "update",  type: "mvc", method: "POST", match: "/:controller/:id",         params: { action: "update" } },
-          { name: "destroy", type: "mvc", method: "POST", match: "/:controller/destroy/:id", params: { action: "destroy" }},
-          { name: "default", type: "mvc",                 match: "/:controller/:action",     params: {} },
-          { name: "index",   type: "mvc", method: "GET",  match: "/:controller",             params: { action: "index" } },
-          { name: "home",    type: "static",              match: /^\/$/, redirect: "/web/index.ejs" },
-          { name: "static",  type: "static", },
-        ]
-         */
-
-        /**
-            Routes used in Ejscript 1.X
-         */
-        //  MOB -- rename LegacyMvcRoutes
-        public static var LegacyRoutes = [
-          { name: "es",      type: "es",                  match: /^\/web\/.*\.es$/   },
-          { name: "ejs",     type: "ejs",                 match: /^\/web\/.*\.ejs$/  },
-          { name: "web",     type: "static",              match: /^\/web\//  },
-          { name: "home",    type: "static",              match: /^\/$/, redirect: "/web/index.ejs" },
-          { name: "ico",     type: "static",              match: /^\/favicon.ico$/, redirect: "/web/favicon.ico" },
-          { name: "list",    type: "mvc", method: "GET",  match: "/:controller/list",        params: { action: "list" } },
-          { name: "create",  type: "mvc", method: "POST", match: "/:controller/create",      params: { action: "create" } },
-          { name: "edit",    type: "mvc", method: "GET",  match: "/:controller/edit",        params: { action: "edit" } },
-          { name: "update",  type: "mvc", method: "POST", match: "/:controller/update",      params: { action: "update" } },
-          { name: "destroy", type: "mvc", method: "POST", match: "/:controller/destroy",     params: { action: "destroy" } },
-          { name: "default", type: "mvc",                 match: "/:controller/:action",     params: {} },
-          { name: "index",   type: "mvc", method: "GET",  match: "/:controller",             params: { action: "index" } },
-          { name: "static",  type: "static", },
         ]
 
         function Router(set: Array = RestfulRoutes) {
@@ -169,6 +136,8 @@ module ejs.web {
             @param request The current request object
          */
         public function route(request): Void {
+            //  MOB -- where should this be really?
+            request.filename = request.dir.join(request.pathInfo.trimStart('/'))
             let params = request.params
             let pathInfo = request.pathInfo
             let log = request.log
@@ -242,12 +211,15 @@ module ejs.web {
                 let location = r.location
                 if (location && location.prefix && location.dir) {
                     request.setLocation(location.prefix, location.dir)
+                    //  MOB -- think where this should best be?
+                    request.filename = request.dir.join(request.pathInfo.trimStart('/'))
                 }
                 return
             }
             throw "No route for " + pathInfo
         }
     }
+
 
     /** 
         Route class. A Route describes a mapping from a set of resources to a URI. The Router uses tables of 

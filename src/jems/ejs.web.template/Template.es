@@ -6,9 +6,9 @@ module ejs.web.template  {
     require ejs.cjs
     require ejs.web
 
-    /** Web Page Template. This parses an web page with embedded Ejscript directives.
-      
-        The template engine provides  embedded Ejscript using <% %> directives. It supports:
+    /** 
+        Web Page Template. This parses an web page with embedded Ejscript directives.
+        The template engine provides  embedded Ejscript using <% %> directives. It supports the following directives:
       
           <%                    Begin an ejs directive section containing statements
           <%=                   Begin an ejs directive section that contains an expression to evaluate and substitute
@@ -36,6 +36,9 @@ module ejs.web.template  {
          */
         static function load(request: Request): Object {
             let path = request.dir.join(request.pathInfo.slice(1))
+            if (!path.exists) {
+                throw "Cannot find \"" + path + "\""
+            }
             Loader.setConfig(request.config)
             return Loader.load(path, path, function (path) {
                 let data = TemplateParser().build(path.readString())

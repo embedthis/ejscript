@@ -252,8 +252,7 @@ module ejs {
         /** 
             Write characters to the stream.
             @param data String to write. 
-            @returns The total number of elements that were written.
-            @throws IOError if there is an I/O error.
+            @returns The total number of bytes that were written.
          */
         function write(...data): Number
             nextStream.write(data)
@@ -262,7 +261,6 @@ module ejs {
             Write text lines to the stream. The text line is written after appending the system text newline character(s).
             @param lines Text lines to write.
             @return The number of characters written or -1 if unsuccessful.
-            @throws IOError if the file could not be written.
          */
         function writeLine(...lines): Number {
             let written = 0

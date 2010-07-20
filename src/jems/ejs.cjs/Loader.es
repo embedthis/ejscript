@@ -36,6 +36,7 @@ module ejs.cjs {
             Load a CommonJS module. The module is loaded only once unless it is modified.
             @param id Name of the module to load. The id may be an absolute path, relative path or a path fragment that is
                 resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.
+            @param return a hash of exported properties
          */
         public static function require(id: String): Object {
             let path: Path = locate(id)
@@ -54,6 +55,7 @@ module ejs.cjs {
             @param path Optional path to the physical file corresponding to the module. If the module source code has
                 changed, it will be re-compiled and then cached.
             @param codeReader Optional function to provide script code to use instead of reading from the path. 
+            @param return a hash of exported properties
          */
         public static function load(id: String, path: Path, codeReader: Function? = null): Object {
             let initializer, code
@@ -63,6 +65,9 @@ module ejs.cjs {
                     App.log.debug(4, "Use cache for: " + path)
                     initializer = global.load(cache)
                 } else {
+                    if (!path.exists) {
+                        throw "Cannot find \"" + path + "\"."
+                    }
                     if (codeReader) {
                         code = codeReader(path)
                     } else {
@@ -78,7 +83,7 @@ module ejs.cjs {
             } else {
 //  MOB BUG - code doesn't exist
                 code = wrap(code)
-//  MOB -- Fix this
+//  MOB -- Fix this mob.mod
                 initializer = eval(code, "mob.mod")
             }
             signatures[path] = exports = {}
@@ -107,6 +112,8 @@ module ejs.cjs {
         /*  
             Locate a CommonJS module. The id can be an absolute path, a path with/without a "es" or "js" extension. 
             It will also search for the id relative to the App search path.
+            @param id Path fragment to the module
+            @return A full path to the module
          */
         private static function locate(id: Path) {
             if (id.exists) {

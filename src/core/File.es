@@ -18,11 +18,17 @@ module ejs {
 
         use default namespace public
 
-        /** @duplicate Stream.async */
+        /**
+          Async mode is not yet supported
+          @hide 
+          */
         function get async(): Boolean
             false
 
-        /** @duplicate Stream.async */
+        /** 
+          Async mode is not yet supported
+          @hide 
+         */
         function set async(enable: Boolean): Void {
             if (enable) {
                 throw new ArgError("File class does not support async I/O")
@@ -54,9 +60,8 @@ module ejs {
         /** 
             Current encoding schem for serializing strings. Defaults to "utf-8".
          */
-        function get encoding(): String {
-            return "utf-8"
-        }
+        function get encoding(): String
+            "utf-8"
 
         /** 
             Set the encoding scheme for serializing strings. The default encoding is UTF-8.
@@ -67,7 +72,8 @@ module ejs {
         }
 
         /** 
-            @duplicate Stream.flush
+            File I/O is currently unbuffered
+            @hide
          */
         function flush(dir: Number = Stream.BOTH): Void {}
 
@@ -186,9 +192,7 @@ module ejs {
         native function truncate(value: Number): Void 
 
         /** 
-            Write data to the file. If the stream is in sync mode, the write call blocks until the underlying stream or 
-            endpoint absorbes all the data. If in async-mode, the call accepts whatever data can be accepted immediately 
-            and returns a count of the bytes that have been written.
+            Write data to the file. All I/O is unbuffered and synchronous. 
             @param items The data argument can be ByteArrays, strings or Numbers. All other types will call serialize
             first before writing. Note that numbers will not be written in a cross platform manner. If that is required, use
             the BinaryStream class to control the byte ordering when writing numbers.

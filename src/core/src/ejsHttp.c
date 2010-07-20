@@ -600,6 +600,25 @@ static EjsObj *http_set_response(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
+    function get retries(): Number
+ */
+static EjsObj *http_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->retries);
+}
+
+
+/*  
+    function set retries(count: Number): Void
+ */
+static EjsObj *http_set_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    httpSetRetries(hp->conn, ejsGetInt(ejs, argv[0]));
+    return 0;
+}
+
+
+/*  
     function setCredentials(username: String, password: String): Void
  */
 static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -1271,6 +1290,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_removeObserver, (EjsProc) http_removeObserver);
     ejsBindMethod(ejs, prototype, ES_Http_reset, (EjsProc) http_reset);
     ejsBindAccess(ejs, prototype, ES_Http_response, (EjsProc) http_response, (EjsProc) http_set_response);
+    ejsBindAccess(ejs, prototype, ES_Http_retries, (EjsProc) http_retries, (EjsProc) http_set_retries);
     ejsBindMethod(ejs, prototype, ES_Http_options, (EjsProc) http_options);
     ejsBindMethod(ejs, prototype, ES_Http_setCredentials, (EjsProc) http_setCredentials);
     ejsBindMethod(ejs, prototype, ES_Http_setHeader, (EjsProc) http_setHeader);

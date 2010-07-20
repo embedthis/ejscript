@@ -95,12 +95,12 @@ module ejs {
         function removeObserver(name, observer: Function): Void
 
         /** 
-            Write data to the stream. 
-            If the stream can accept all the write data, the call returns immediately with the number of elements written. 
+            Write data to the stream.
+            If the stream can accept all the write data, the call returns immediately with the number of bytes written. 
             If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
             If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
-            data and return immediately. Some streams will buffer data and require a flush() call to actually send the data.
-            A "writable" event will be issued when the stream can absorb more data.
+            data and return immediately. Some streams will require a flush() call to actually send the data.
+            A "writable" event will be issued when the stream can again absorb more data.
             @param data Data to write. 
             @returns a count of the bytes actually written.
             @throws IOError if there is an I/O error.

@@ -314,14 +314,16 @@ module ejs {
         native function uncompress(): Void
 
         /** 
-            @duplicate Stream.write
+            Write data to the ByteArray.
             Data is written to the current $writePosition. If the data argument is itself a ByteArray, the available data 
             from the byte array will be copied, ie. the $data byte array will not have its readPosition adjusted. If the 
             byte array is growable, the underlying data storage will grow to accomodate written data. If the data will not
             fit in the ByteArray, the call may return having only written a portion of the data.
+            @duplicate Stream.write
          */
         native function write(...data): Number
 
+//  MOB -- should these routines return the number of bytes written?
         /** 
             Write a byte to the array. Data is written to the current write $position pointer which is then incremented.
 //  MOB -- no such details exist

@@ -59,8 +59,7 @@
 <a name='documentRoot'></a>
    <tr><td nowrap align='center'>public </td><td>documentRoot</td><td><a href='ejs-Path.html'>Path</a></td><td>Default local directory for web documents to serve. This is used as the default Request.dir value.</td></tr>
 <a name='serverRoot'></a>
-   <tr><td nowrap align='center'>public </td><td>serverRoot</td><td><a href='ejs-Path.html'>Path</a></td><td>Default root directory for the server. The app does not change its current directory to this path.
-MOB -- is this needed?.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>serverRoot</td><td><a href='ejs-Path.html'>Path</a></td><td>Default root directory for the server. The app does not change its current directory to this path.</td></tr>
 <a name='address'></a>
    <tr><td nowrap align='left'>public const get </td><td>address</td><td><a href='ejs-String.html'>String</a></td><td>Get the local IP address bound to this socket. </td></tr>
 <a name='isSecure'></a>
@@ -81,10 +80,17 @@ protocol scheme.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#accept'><b>accept</b></a>(): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Accept a for client connection.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getLimits'><b>getLimits</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an object hash with the current server resource limits.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getOptions'><b>getOptions</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an object hash with the current server options.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#secure'><b>secure</b></a>(keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a> = null , ciphers: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the Secure Sockets Layer (SSL) protocol credentials.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define resource limits for the server.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setOptions'><b>setOptions</b></a>(options: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the operation options for the server.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setPipeline'><b>setPipeline</b></a>(incoming: <a href='ejs-Array.html'>Array</a> = expression , outgoing: <a href='ejs-Array.html'>Array</a> = expression , connector: <a href='ejs-String.html'>String</a> = net): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td></td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trace'><b>trace</b></a>(level: <a href='ejs-Number.html'>Number</a>, options: <a href='ejs-Object.html'>Object</a> = expression , size: <a href='ejs-Number.html'>Number</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure request tracing for the server.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#traceFilter'><b>traceFilter</b></a>(include: <a href='ejs-Array.html'>Array</a> = expression , exclude: <a href='ejs-Array.html'>Array</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure trace filters for request tracing.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#verifyClients'><b>verifyClients</b></a>(caCertPath: <a href='ejs-Path.html'>Path</a>, caCertFile: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Verify client certificates.</td></tr>
 </table>
 
@@ -130,20 +136,37 @@ while (request = server.accept()) {
 </dl></div>
 </div>
 <hr />
+<a name='getLimits'></a>
+<div class='api'>
+<div class='apiSig'>const   public  getLimits(): <a href='ejs-Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<p>Return an object hash with the current server resource limits.</p>
+</div>
+</div>
+<hr />
+<a name='getOptions'></a>
+<div class='api'>
+<div class='apiSig'>const   public  getOptions(): <a href='ejs-Object.html'>Object</a>
+</div>
+<div class='apiDetail'>
+<p>Return an object hash with the current server options.</p>
+</div>
+</div>
+<hr />
 <a name='listen'></a>
 <div class='api'>
-<div class='apiSig'>const   public  listen(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs.web-Request.html'>Request</a>
+<div class='apiSig'>const   public  listen(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Listen for client connections.</p>
 <dl><dt>Description</dt><dd>This creates a HTTP server listening on a single socket endpoint. It can
 also be used to attach to an existing listening connection if embedded in a web server. <br/><br/>When used inside a web server, the web server should define the listening endpoints and ensure the 
 EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
-the web server's listening connection. In this case, the endpoint argument is ignored.<br/><br/>HttpServer supports both sync and async modes of operation. 
-In async mode, the listen call will return immediately and Request objects for client connections will 
-be created automatically and passed to registered observers via "readable" events.
-In sync mode, after listen call is made, <a href='#accept'>accept</a> must be called to wait for and receive client connections.
-The <a href='#accept'>accept</a> call will then create the Request object.</dd></dl>
+the web server's listening connection. In this case, the endpoint argument is ignored.<br/><br/>HttpServer supports both sync and async modes of operation.  In sync mode, after listen call is made, 
+<a href='#accept'>accept</a> must be called to wait for and receive client connections. The <a href='#accept'>accept</a> call will create the 
+Request object.  In async mode, Request objects will be created automatically and passed to registered 
+observers via "readable" events.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>endpoint: <a href='ejs-String.html'>String</a> </td><td>The endpoint address on which to listen. An endoint is a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics.</td></tr></table></dd>
@@ -151,9 +174,7 @@ The <a href='#accept'>accept</a> call will then create the Request object.</dd><
 <dd><table class='parameters' summary ='events'>
 <td class='param'>Issues</td><td>A "accept" event when there is a new connection available.</td></tr>
 </table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A Request object if in sync mode. No return value if in async mode.</dd></dl>
-<dl><dt>Throws</dt><dd>
+</dl><dl><dt>Throws</dt><dd>
 <a href='ejs-ArgError.html'>ArgError</a>: if the specified endpoint address is not valid or available for binding. 
 </dd>
 </dl><dl><dt>Example</dt>
@@ -210,6 +231,77 @@ server.listen("80")
 </dl><dl><dt>Throws</dt><dd>
 <a href='ejs-ArgError.html'>ArgError</a>: for invalid arguments  
 </dd>
+</dl></div>
+</div>
+<hr />
+<a name='setLimits'></a>
+<div class='api'>
+<div class='apiSig'>const   public  setLimits(limits: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Define resource limits for the server.</p>
+<dl><dt>Description</dt><dd>Some of these limit values are also used for requests.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>limits: <a href='ejs-Object.html'>Object</a> </td><td>Limits is an object hash with the following properties:.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>chunkSize</td><td>Maximum size of a chunk when using chunked transfer encoding.</td></tr>
+<td class='param'>headerCount</td><td>Maximum number of headers in a request.</td></tr>
+<td class='param'>headerSize</td><td>Maximum size of headers.</td></tr>
+<td class='param'>receiveBodySize</td><td>Maximum size of incoming body data.</td></tr>
+<td class='param'>stageBufferSize</td><td>Maximum stage buffer size for each direction.</td></tr>
+<td class='param'>transmissionBodySize</td><td>Maximum size of outgoing body data.</td></tr>
+<td class='param'>uploadSize</td><td>Maximum size of uploaded files.</td></tr>
+<td class='param'>uriSize</td><td>Maximum size of URLs.</td></tr>
+<td class='param'>clientCount</td><td>Maximum number of simultaneous clients.</td></tr>
+<td class='param'>keepAliveCount</td><td>Maximum number of times to reuse a connection for requests.</td></tr>
+<td class='param'>requestCount</td><td>Maximum number of simultaneous requests.</td></tr>
+<td class='param'>sessionCount</td><td>Maximum number of simultaneous sessions.</td></tr>
+<td class='param'>inactivityTimeout</td><td>Maximum time in seconds to keep a connection open if idle.</td></tr>
+<td class='param'>requestTimeout</td><td>Maximum time in seconds for a request to complete.</td></tr>
+<td class='param'>sessionTimeout</td><td>Maximum time to preserve session state.</td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='setOptions'></a>
+<div class='api'>
+<div class='apiSig'>const   public  setOptions(options: <a href='ejs-Object.html'>Object</a>)
+</div>
+<div class='apiDetail'>
+<p>Define the operation options for the server.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Options is an object hash with the following properties:.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>directoryListings</td><td></td></tr>
+</table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='trace'></a>
+<div class='api'>
+<div class='apiSig'>const   public  trace(level: <a href='ejs-Number.html'>Number</a>, options: <a href='ejs-Object.html'>Object</a> = expression , size: <a href='ejs-Number.html'>Number</a> = null): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Configure request tracing for the server.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>Level at which request tracing will occurr.</td></tr><tr class='param'><td class='param'>size: <a href='ejs-Number.html'>Number</a> </td><td>Maximum request body size to trace. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td> [default: expression ]</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='traceFilter'></a>
+<div class='api'>
+<div class='apiSig'>const   public  traceFilter(include: <a href='ejs-Array.html'>Array</a> = expression , exclude: <a href='ejs-Array.html'>Array</a> = expression): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Configure trace filters for request tracing.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>include: <a href='ejs-Array.html'>Array</a> </td><td> [default: expression ]</td></tr><tr class='param'><td class='param'>exclude: <a href='ejs-Array.html'>Array</a> </td><td> [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

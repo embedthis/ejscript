@@ -78,7 +78,7 @@ array storage.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reset'><b>reset</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reset the read and <a href='#writePosition'>writePosition</a> pointers if there is no available data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const override </td><td><a href='#toString'><b>toString</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the data in the byte array between the <a href='#readPosition'>readPosition</a> and writePosition.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Data is written to the current <a href='#writePosition'>writePosition</a>. </td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write data to the ByteArray.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#writeByte'><b>writeByte</b></a>(data: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write a byte to the array.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#writeDouble'><b>writeDouble</b></a>(data: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write a double to the array.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#writeInteger'><b>writeInteger</b></a>(data: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write a 32-bit integer to the array.</td></tr>
@@ -416,13 +416,12 @@ available, the call will return return null indicating eof. If there is insuffic
 <div class='apiSig'>const   public  write(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a>
 </div>
 <div class='apiDetail'>
-<p>Write data to the stream.Data is written to the current <a href='#writePosition'>writePosition</a>. </p>
-<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of elements written. 
+<p>Write data to the stream.Write data to the ByteArray.</p>
+<dl><dt>Description</dt><dd>If the stream can accept all the write data, the call returns immediately with the number of bytes written. 
 If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
-If writing more data than the stream can absorb in async mode, the call will not block and will return 
-immediately. A "writable" event will be issued when all the data has been written.If the data argument is itself a ByteArray, the available data 
-from the byte array will be copied, ie. the <a href='#data'>data</a> byte array will not have its readPosition adjusted. If the 
-byte array is growable, the underlying data storage will grow to accomodate written data.</dd></dl>
+If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
+data and return immediately. Some streams will require a flush() call to actually send the data.
+A "writable" event will be issued when the stream can again absorb more data.Data is written to the current <a href='#writePosition'>writePosition</a>. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data to write.</td></tr></table></dd>

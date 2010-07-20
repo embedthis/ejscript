@@ -84,7 +84,7 @@ request.config = config
                 } else {
                     let exports = load(request)
                     if (exports) {
-                        start(request, exports.app)
+                        process(request, exports.app)
                     }
                 }
             } catch (e) {
@@ -102,7 +102,7 @@ request.config = config
             try {
                 let exports = load(request)
                 if (exports) {
-                    start(request, exports.app)
+                    process(request, exports.app)
                 }
             } catch (e) {
                 request.writeError(e)
@@ -129,10 +129,12 @@ request.config = config
                     }
                     type = request.route.type
                 }
+                //  MOB -- convert to switch
                 if (type == "static") {
                     return Static.load(request)
 
                 } else if (type == "es") {
+                    //  MOB - replace with top level require ejs.cjs
                     if (!global.Loader) {
                         global.load("ejs.cjs.mod")
                     }
@@ -195,11 +197,11 @@ request.config = config
         }
 
         /** 
-            Start running a loaded application.
+            Process a web request
             @param request Request object
-            @param app Application function exported by the JSGI slice
+            @param app JSGI application function 
          */
-        static function start(request: Request, app: Function): Void {
+        static function process(request: Request, app: Function): Void {
 //  WARNING: this may block in write?? - is request in async mode?
             try {
                 let result = app.call(request, request)

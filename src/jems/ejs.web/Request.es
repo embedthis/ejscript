@@ -92,6 +92,12 @@ module ejs.web {
          */
         native var files: Object
 
+        /**
+            Physical filename for the resource supplying the response content for the request. Virtual requests where
+            the Request $uri does not correspond to any physical resource may not define this property.
+         */
+        var filename: Path
+
         /** 
             Request Http headers. This is an object hash filled with the request headers from the client.  If multiple 
             headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 

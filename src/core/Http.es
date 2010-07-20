@@ -528,7 +528,6 @@ module ejs {
         native function get response(): String
         native function set response(data: String): Void
 
-        //  TODO - implement
         /** 
             The maximum number of retries for a request. Retries are essential as the HTTP protocol permits a 
             server or network to be unreliable. The default retries is 2.
@@ -647,10 +646,10 @@ module ejs {
         native function wait(timeout: Number = -1): Boolean
 
         /** 
-            @duplicate Stream.write
             Write body data to the server. This will buffer the written data until either flush() or finalize() is called. 
             The Http "Content-Length" header should normally be set prior to writing any data for optimial data transfter.
             If the Content-Length header has not been defined, the data will be transferred using chunked transfers. 
+            @duplicate Stream.write
          */
         native function write(...data): Void
 
