@@ -6,5 +6,4 @@
 
 include 		.makedep
 
-PRE_DIRS		+= mpr pcre http appweb
-	
+PRE_DIRS		+= mpr pcre http

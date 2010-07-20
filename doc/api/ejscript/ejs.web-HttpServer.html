@@ -54,6 +54,8 @@
 <h2 class='classSection'>Properties</h2>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='indicies'></a>
+   <tr><td nowrap align='center'>public static </td><td>indicies</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 <a name='documentRoot'></a>
    <tr><td nowrap align='center'>public </td><td>documentRoot</td><td><a href='ejs-Path.html'>Path</a></td><td>Default local directory for web documents to serve. This is used as the default Request.dir value.</td></tr>
 <a name='serverRoot'></a>
@@ -61,6 +63,9 @@
 MOB -- is this needed?.</td></tr>
 <a name='address'></a>
    <tr><td nowrap align='left'>public const get </td><td>address</td><td><a href='ejs-String.html'>String</a></td><td>Get the local IP address bound to this socket. </td></tr>
+<a name='isSecure'></a>
+   <tr><td nowrap align='left'>public const get </td><td>isSecure</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Flag indicating if the server is using secure communications. This means that TLS/SSL is the underlying
+protocol scheme.</td></tr>
 <a name='port'></a>
    <tr><td nowrap align='left'>public const get </td><td>port</td><td><a href='ejs-Number.html'>Number</a></td><td>Get the port bound to this Http endpoint. </td></tr>
 <a name='software'></a>
@@ -74,17 +79,44 @@ MOB -- is this needed?.</td></tr>
 <h2 class='classSection'>HttpServer Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#accept'><b>accept</b></a>(): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Accept a for client connection.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#secureListen'><b>secureListen</b></a>(endpoint: <a href='ejs-String.html'>String</a>, keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a>, ciphers: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections using the Secure Sockets Layer (SSL)protocol.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#secure'><b>secure</b></a>(keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a> = null , ciphers: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the Secure Sockets Layer (SSL) protocol credentials.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#verifyClients'><b>verifyClients</b></a>(caCertPath: <a href='ejs-Path.html'>Path</a>, caCertFile: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Verify client certificates.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
 
 <hr />
 <h2>Method Detail</h2>
+<a name='accept'></a>
+<div class='api'>
+<div class='apiSig'>const   public  accept(): <a href='ejs.web-Request.html'>Request</a>
+</div>
+<div class='apiDetail'>
+<p>Accept a for client connection.</p>
+<dl><dt>Description</dt><dd>This creates a request object in response to an incoming client connection
+on the current HttpServer object. This call is only required in sync mode. 
+In async mode, the HttpServer automatically creates the Request object and passes it on "readable" events.</dd></dl>
+<dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>Issues</td><td>A "accept" event when there is a new connection available.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A Request object if in sync mode. No return value if in async mode.</dd></dl>
+<dl><dt>Example</dt>
+<dd><pre>server = new Http(".", "./web")
+server.listen("80")
+while (request = server.accept()) {
+    Web.serve(request)
+}
+</pre></dd></dl>
+</div>
+</div>
+<hr />
 <a name='close'></a>
 <div class='api'>
 <div class='apiSig'>const   public  close(): <a href='ejs-Void.html'>Void</a>
@@ -107,13 +139,14 @@ MOB -- is this needed?.</td></tr>
 <dl><dt>Description</dt><dd>This creates a HTTP server listening on a single socket endpoint. It can
 also be used to attach to an existing listening connection if embedded in a web server. <br/><br/>When used inside a web server, the web server should define the listening endpoints and ensure the 
 EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
-the web server's listening connection. In this case, the endpoint argument is ignored.<br/><br/>HttpServer supports both sync and async modes of operation. If the server is in sync mode, the listen call 
-will block until a client connection is received and the call will return a request object. If a the socket 
-is in async mode, the listen call will return immediately and client connections will be notified via 
-"accept" events.</dd></dl>
+the web server's listening connection. In this case, the endpoint argument is ignored.<br/><br/>HttpServer supports both sync and async modes of operation. 
+In async mode, the listen call will return immediately and Request objects for client connections will 
+be created automatically and passed to registered observers via "readable" events.
+In sync mode, after listen call is made, <a href='#accept'>accept</a> must be called to wait for and receive client connections.
+The <a href='#accept'>accept</a> call will then create the Request object.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-</td></tr></table></dd>
+<tr class='param'><td class='param'>endpoint: <a href='ejs-String.html'>String</a> </td><td>The endpoint address on which to listen. An endoint is a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics.</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>Issues</td><td>A "accept" event when there is a new connection available.</td></tr>
@@ -164,40 +197,35 @@ server.listen("80")
 </dl></div>
 </div>
 <hr />
-<a name='secureListen'></a>
+<a name='secure'></a>
 <div class='api'>
-<div class='apiSig'>const   public  secureListen(endpoint: <a href='ejs-String.html'>String</a>, keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a>, ciphers: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  secure(keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a> = null , ciphers: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Listen for client connections using the Secure Sockets Layer (SSL)protocol.</p>
-<dl><dt>Description</dt><dd>This creates a HTTP server 
-listening on a single socket endpoint for SSL connections. It can also be used to attach to an existing 
-listening connection if embedded in a web server. <br/><br/>When used inside a web server, the web server should define the listening endpoints and ensure the 
-EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
-the web server's listening connection. In this case, the listen arguments are ignored.<br/><br/>HttpServer supports both sync and async modes of operation. If the server is in sync mode, the secureListen call 
-will block until a client connection is received and the call will return a request object. If a the socket 
-is in async mode, the secureListen call will return immediately and client connections will be notified via 
-"accept" events.</dd></dl>
+<p>Define the Secure Sockets Layer (SSL) protocol credentials.</p>
+<dl><dt>Description</dt><dd>This must be done before calling <a href='#listen'>listen</a>. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-</td></tr><tr class='param'><td class='param'>keyFile: <a href='ejs-Path.html'>Path</a> </td><td>Path of the file containing the server's private key.</td></tr><tr class='param'><td class='param'>certFile: <a href='ejs-Path.html'>Path</a> </td><td>Path of the file containing the server's SSL certificate.</td></tr><tr class='param'><td class='param'>protocols: <a href='ejs-Array.html'>Array</a> </td><td>Arary of SSL protocols to support. Select from: SSLv2, SSLv3, TLSv1, ALL. For example: ["SSLv3", "TLSv1"] or "[ALL]".</td></tr><tr class='param'><td class='param'>ciphers: <a href='ejs-Array.html'>Array</a> </td><td>Array of ciphers to use when negotiating the SSL connection. Not yet supported.</td></tr></table></dd>
-</dl><dl><dt>Events</dt>
-<dd><table class='parameters' summary ='events'>
-<td class='param'>Issues</td><td>A "accept" event when there is a new connection available.</td></tr>
-</table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A Request object if in sync mode. No return value if in async mode.</dd></dl>
-<dl><dt>Throws</dt><dd>
-<a href='ejs-ArgError.html'>ArgError</a>: if the specified endpoint address is not valid or available for binding. 
+<tr class='param'><td class='param'>keyFile: <a href='ejs-Path.html'>Path</a> </td><td>Path of the file containing the server's private key. This file contains the PEM encoded private key file for the server. Set to null if the private key is combined with  the certificate file. If the private key is encrypted, you will be prompted at the console to enter the  pass-phrase to decript the private key on system reboot. There is a delima here. If you use a crypted  private key, the server will pause until you enter the pass-phrase which makes headless operation impossible.  If you do not encrypt the private key, your private key is more vulnerable should the server be compromised.  Which option you choose depends on whether headless operation is essential or not.</td></tr><tr class='param'><td class='param'>certFile: <a href='ejs-Path.html'>Path</a> </td><td>Path of the file containing the SSL certificate The certificate file contains the PEM encoded X.509 certificate for the server. The file may also contain  the private key in which case you should set the key parameter to null. The path may be an absolute path or it may be relative to the ServerRoot.</td></tr><tr class='param'><td class='param'>protocols: <a href='ejs-Array.html'>Array</a> </td><td>Optional arary of SSL protocols to support. Select from: SSLv2, SSLv3, TLSv1, ALL.  Each protocol can be prefixed by "+" or "-" to add or subtract from the prior set. For example: ["ALL", "-SSLv2"], or ["SSLv3", "TLSv1"] or "[ALL]". [default: null ]</td></tr><tr class='param'><td class='param'>ciphers: <a href='ejs-Array.html'>Array</a> </td><td>Optional array of ciphers to use when negotiating the SSL connection. Not yet supported. [default: null]</td></tr></table></dd>
+</dl><dl><dt>Throws</dt><dd>
+<a href='ejs-ArgError.html'>ArgError</a>: for invalid arguments  
 </dd>
-</dl><dl><dt>Example</dt>
-<dd><pre>server = new Http(".", "./web")
-server.observe("readable", function (event, request) {
-    Web.serve(request)
-})
-server.secureListen("443")
-</pre></dd></dl>
+</dl></div>
 </div>
+<hr />
+<a name='verifyClients'></a>
+<div class='api'>
+<div class='apiSig'>const   public  verifyClients(caCertPath: <a href='ejs-Path.html'>Path</a>, caCertFile: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Verify client certificates.</p>
+<dl><dt>Description</dt><dd>This ensures that the clients must provide a client certificate for to verify 
+the their identity. You can choose to use either the caCertPath or caCertFile argument. If both are provided
+caCertPath takes precedence.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>caCertPath: <a href='ejs-Path.html'>Path</a> </td><td>Defines the directory containing the certificates to use for client authentication. The path may be an absolute path or it may be relative to the ServerRoot. Set to null if you are using <a href='#caCertFile'>caCertFile</a>. </td></tr><tr class='param'><td class='param'>caCertFile: <a href='ejs-Path.html'>Path</a> </td><td>Defines the location of the certificate file or bundle to use for client authentication. Use this if you have a single certificate or a bundle of certificates. Set to null if you are using <a href='#caCertPath'>caCertPath</a>. </td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <div class="terms">

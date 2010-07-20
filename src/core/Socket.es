@@ -22,13 +22,6 @@ module ejs {
          */
         native function Socket()
 
-        /** 
-            @duplicate Stream.observe 
-            @event readable Issued when the response headers have been fully received and some body content is available.
-            @event writable Issued when the connection is writable to accept body data (PUT, POST).
-         */
-        native function observe(name, observer: Function): Void
-
 //  MOB - or would it be better to have the accepted socket passed in as a callback parameter?
         /** 
             Receive a client socket in response to a "connect" event. The accept call must be called after invoking
@@ -90,6 +83,13 @@ module ejs {
                 should be called.
          */
         native function listen(address): Socket
+
+        /** 
+            @duplicate Stream.observe 
+            @event readable Issued when the response headers have been fully received and some body content is available.
+            @event writable Issued when the connection is writable to accept body data (PUT, POST).
+         */
+        native function observe(name, observer: Function): Void
 
         /** 
             The port bound to this socket. Set to the integer port number or zero if not bound.

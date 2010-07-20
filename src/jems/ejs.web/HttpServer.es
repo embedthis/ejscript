@@ -6,10 +6,9 @@
 
 module ejs.web {
 
-    dynamic class HttpServer {
+    enumerable dynamic class HttpServer {
         use default namespace public
 
-//  MOB -- remove serverRoot completely
         /** 
             Create a HttpServer object. The server is created in async mode by default.
             @param serverRoot Base directory for the server configuration. If set to null and the HttpServer is hosted,
@@ -41,17 +40,19 @@ module ejs.web {
         native function HttpServer(serverRoot: Path = ".", documentRoot: Path = ".")
 
         /** 
-            Add an observer for server events. 
-            @param name Name of the event to listen for. The name may be an array of events.
-            @param observer Callback listening function. The function is called with the following signature:
-                function observer(event: String, ...args): Void
-            @event readable Issued when there is a new request available
-            @event close Issued when server is being closed.
-            @event createSession Issued when a new session store object is created for a client. The request object is
-                passed.
-            @event destroySession Issued when a session is destroyed. The request object is passed.
+            Accept a for client connection. This creates a request object in response to an incoming client connection
+            on the current HttpServer object. This call is only required in sync mode. 
+            In async mode, the HttpServer automatically creates the Request object and passes it on "readable" events.
+            @return A Request object if in sync mode. No return value if in async mode. 
+            @event Issues a "accept" event when there is a new connection available.
+            @example:
+                server = new Http(".", "./web")
+                server.listen("80")
+                while (request = server.accept()) {
+                    Web.serve(request)
+                }
          */
-        native function observe(name, observer: Function): Void
+        native function accept(): Request
 
         /** 
             Get the local IP address bound to this socket.
@@ -59,7 +60,6 @@ module ejs.web {
          */
         native function get address(): String 
 
-//  MOB - does sync mode make any sense? Maybe in threaded-appweb?
         /** 
             @duplicate Stream.async
          */
@@ -79,8 +79,14 @@ module ejs.web {
          */
         var documentRoot: Path
 
-//  MOB - how to do SSL?
-//  MOB -- not right for sync mode. Never returns a request
+        static var indicies = ["index.ejs", "index.html"]
+
+        /** 
+            Flag indicating if the server is using secure communications. This means that TLS/SSL is the underlying
+            protocol scheme.
+         */
+        native function get isSecure(): Boolean
+
         /** 
             Listen for client connections. This creates a HTTP server listening on a single socket endpoint. It can
             also be used to attach to an existing listening connection if embedded in a web server. 
@@ -89,13 +95,12 @@ module ejs.web {
             EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
             the web server's listening connection. In this case, the endpoint argument is ignored.
 
-            HttpServer supports both sync and async modes of operation. If the server is in sync mode, the listen call 
-            will block until a client connection is received and the call will return a request object. If a the socket 
-            is in async mode, the listen call will return immediately and client connections will be notified via 
-            "accept" events. 
+            HttpServer supports both sync and async modes of operation.  In sync mode, after listen call is made, 
+            $accept must be called to wait for and receive client connections. The $accept call will create the 
+            Request object.  In async mode, Request objects will be created automatically and passed to registered 
+            observers via "readable" events.
 
-            @return A Request object if in sync mode. No return value if in async mode. 
-            @param address The endpoint address on which to listen. An endoint is a port number or a composite 
+            @param endpoint The endpoint address on which to listen. An endoint is a port number or a composite 
             "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port. 
             If null is provided for an endpoint value, an existing web server listening connection will be used. In this
             case, the web server will typically be the virtual host that specifies the EjsStartup script. See the
@@ -109,52 +114,33 @@ module ejs.web {
                 })
                 server.listen("80")
          */
-        native function listen(endpoint: String?): Request
+        native function listen(endpoint: String?): Void
 
-// MOB
-        /** @hide */
-        /** 
-            Listen for client connections using the Secure Sockets Layer (SSL)protocol. This creates a HTTP server 
-            listening on a single socket endpoint for SSL connections. It can also be used to attach to an existing 
-            listening connection if embedded in a web server. 
-            
-            When used inside a web server, the web server should define the listening endpoints and ensure the 
-            EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
-            the web server's listening connection. In this case, the listen arguments are ignored.
-
-            HttpServer supports both sync and async modes of operation. If the server is in sync mode, the secureListen call 
-            will block until a client connection is received and the call will return a request object. If a the socket 
-            is in async mode, the secureListen call will return immediately and client connections will be notified via 
-            "accept" events. 
-
-            @return A Request object if in sync mode. No return value if in async mode. 
-            @param address The endpoint address on which to listen. An endoint is a port number or a composite 
-            "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port. 
-            If null is provided for an endpoint value, an existing web server listening connection will be used. In this
-            case, the web server will typically be the virtual host that specifies the EjsStartup script. See the
-            hosting web server documentation for specifics.
-            @param keyFile Path of the file containing the server's private key
-            @param certFile Path of the file containing the server's SSL certificate
-            @param protocols Arary of SSL protocols to support. Select from: SSLv2, SSLv3, TLSv1, ALL. For example:
-                ["SSLv3", "TLSv1"] or "[ALL]"
-            @param ciphers Array of ciphers to use when negotiating the SSL connection. Not yet supported.
-            @throws ArgError if the specified endpoint address is not valid or available for binding.
-            @event Issues a "accept" event when there is a new connection available.
-            @example:
-                server = new Http(".", "./web")
-                server.observe("readable", function (event, request) {
-                    Web.serve(request)
-                })
-                server.secureListen("443")
+        /**
+            The authorized public host name for the server. If defined, this name will be used in preference for 
+            request redirections. Defaults to the listening IP address if specified.
          */
-        native function secureListen(endpoint: String?, keyFile: Path, certFile: Path, protocols: Array, 
-            ciphers: Array): Void
+        native function get name(): String 
+        native function set name(hostname: String): Void
 
         /** 
             Get the port bound to this Http endpoint.
             @return The port number or 0 if it is not bound.
          */
         native function get port(): Number 
+
+        /** 
+            Add an observer for server events. 
+            @param name Name of the event to listen for. The name may be an array of events.
+            @param observer Callback listening function. The function is called with the following signature:
+                function observer(event: String, ...args): Void
+            @event readable Issued when there is a new request available
+            @event close Issued when server is being closed.
+            @event createSession Issued when a new session store object is created for a client. The request object is
+                passed.
+            @event destroySession Issued when a session is destroyed. The request object is passed.
+         */
+        native function observe(name, observer: Function): Void
 
         /** 
             Remove an observer from the server. 
@@ -164,8 +150,101 @@ module ejs.web {
         native function removeObserver(name: Object, observer: Function): Void
 
         /** 
+            Define the Secure Sockets Layer (SSL) protocol credentials. This must be done before calling $listen.
+            @param keyFile Path of the file containing the server's private key. This file
+            contains the PEM encoded private key file for the server. Set to null if the private key is combined with 
+            the certificate file. If the private key is encrypted, you will be prompted at the console to enter the 
+            pass-phrase to decript the private key on system reboot. There is a delima here. If you use a crypted 
+            private key, the server will pause until you enter the pass-phrase which makes headless operation impossible. 
+            If you do not encrypt the private key, your private key is more vulnerable should the server be compromised. 
+            Which option you choose depends on whether headless operation is essential or not.
+            @param certFile Path of the file containing the SSL certificate
+            The certificate file contains the PEM encoded X.509 certificate for the server. The file may also contain 
+            the private key in which case you should set the key parameter to null.
+            The path may be an absolute path or it may be relative to the ServerRoot.
+            @param protocols Optional arary of SSL protocols to support. Select from: SSLv2, SSLv3, TLSv1, ALL. 
+                Each protocol can be prefixed by "+" or "-" to add or subtract from the prior set.
+                For example: ["ALL", "-SSLv2"], or ["SSLv3", "TLSv1"] or "[ALL]"
+            @param ciphers Optional array of ciphers to use when negotiating the SSL connection. Not yet supported.
+            @throws ArgError for invalid arguments
+         */
+        native function secure(keyFile: Path, certFile: Path!, protocols: Array = null, ciphers: Array = null): Void
+
+        /**
+            Define resource limits for the server. Some of these limit values are also used for requests.
+            @param limits. Limits is an object hash with the following properties:
+            @option chunkSize Maximum size of a chunk when using chunked transfer encoding
+            @option headerCount Maximum number of headers in a request
+            @option headerSize Maximum size of headers
+            @option receiveBodySize Maximum size of incoming body data
+            @option stageBufferSize Maximum stage buffer size for each direction
+            @option transmissionBodySize Maximum size of outgoing body data
+            @option uploadSize Maximum size of uploaded files
+            @option uriSize Maximum size of URLs
+            @option clientCount Maximum number of simultaneous clients
+            @option keepAliveCount Maximum number of times to reuse a connection for requests
+            @option requestCount Maximum number of simultaneous requests
+            @option sessionCount Maximum number of simultaneous sessions
+            @option inactivityTimeout Maximum time in seconds to keep a connection open if idle
+            @option requestTimeout Maximum time in seconds for a request to complete
+            @option sessionTimeout Maximum time to preserve session state
+          */
+        native function setLimits(limits: Object): Void
+
+        /**
+            Return an object hash with the current server resource limits
+          */
+        native function getLimits(): Object
+
+        /**
+            Define the operation options for the server.
+            @param options. Options is an object hash with the following properties:
+            @option directoryListings
+          */
+        native function setOptions(options: Object)
+
+        /**
+            Return an object hash with the current server options
+          */
+        native function getOptions(): Object
+
+        /**
+            Configure request tracing for the server
+            @param level Level at which request tracing will occurr
+            @param size Maximum request body size to trace
+          */
+        native function trace(level: Number, options: Object = ["headers", "request", "response"], size: Number = null): Void
+
+        /**
+            Configure trace filters for request tracing
+          */
+        native function traceFilter(include: Array = ["*"], exclude: Array = ["gif", "ico", "jpg", "png"]): Void
+
+        /**
+            @param incoming Array of stages for the incoming pipeline: default: ["chunk", "range", "upload"]
+            @param outgoing Array of stages for the outgoing pipeline: default: ["auth", "range", "chunk"]
+            @param connector Network connector to use for I/O. Defaults to the network connector "net". This connector
+                transparently upgrades to the sendfile connector if transmitting static data and not using SSL, ranged or 
+                chunked transfers.
+         */
+        native function setPipeline(incoming: Array = ["chunk", "range", "upload"], 
+                outgoing: Array = ["auth", "range", "chunk"], connector: String = "net"): Void
+
+        /**
+            Verify client certificates. This ensures that the clients must provide a client certificate for to verify 
+            the their identity. You can choose to use either the caCertPath or caCertFile argument. If both are provided
+            caCertPath takes precedence.
+            @param caCertPath Defines the directory containing the certificates to use for client authentication.
+            The path may be an absolute path or it may be relative to the ServerRoot.
+            Set to null if you are using $caCertFile.
+            @param caCertFile Defines the location of the certificate file or bundle to use for client authentication.
+                Use this if you have a single certificate or a bundle of certificates.
+                Set to null if you are using $caCertPath.
+         */
+        native function verifyClients(caCertPath: Path, caCertFile: Path): Void
+
+        /** 
             Default root directory for the server. The app does not change its current directory to this path.
-            MOB -- is this needed?
          */
         var serverRoot: Path
 

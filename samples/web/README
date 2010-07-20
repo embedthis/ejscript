@@ -1,0 +1,18 @@
+README -- Web Samples
+--------------------------------------------------------------------------------
+
+This directory contains sample web framework servers and applications.
+
+The key files and directories are:
+
+jsgi    JSGI applications
+async   Async server
+routing Routing server
+
+--------------------------------------------------------------------------------
+Copyright (c) 2003-2010 Embedthis Software, LLC. All Rights Reserved.
+Embedthis and Ejscript are trademarks of Embedthis Software, LLC. Other 
+brands and their products are trademarks of their respective holders.
+
+See LICENSE.TXT for software license details.
+

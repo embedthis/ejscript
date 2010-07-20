@@ -449,9 +449,13 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 Stack after         [RegExp]
          */
         CASE (EJS_OP_LOAD_REGEXP):
+#if BLD_FEATURE_REGEXP
             str = GET_STRING();
             v1 = (EjsObj*) ejsCreateRegExp(ejs, str);
             push(v1);
+#else
+            ejsThrowReferenceError(ejs, "RegularExpression support was not included in the build");
+#endif
             BREAK;
 
         /*

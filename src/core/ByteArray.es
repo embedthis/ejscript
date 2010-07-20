@@ -58,9 +58,6 @@ module ejs {
          */
         native function ByteArray(size: Number = -1, growable: Boolean = true)
 
-        /** @duplicate Stream.observe */
-        native function observe(name: Object, observer: Function): Void
-
         /** 
             Number of bytes that are currently available for reading. This consists of the bytes available
             from the current $readPosition up to the current $writePosition.
@@ -173,6 +170,9 @@ module ejs {
             let buf: ByteArray = this.clone()
             return md5(buf.readString())
         }
+
+        /** @duplicate Stream.observe */
+        native function observe(name: Object, observer: Function): Void
 
         /** 
             @duplicate Stream.read
@@ -317,7 +317,8 @@ module ejs {
             @duplicate Stream.write
             Data is written to the current $writePosition. If the data argument is itself a ByteArray, the available data 
             from the byte array will be copied, ie. the $data byte array will not have its readPosition adjusted. If the 
-            byte array is growable, the underlying data storage will grow to accomodate written data.
+            byte array is growable, the underlying data storage will grow to accomodate written data. If the data will not
+            fit in the ByteArray, the call may return having only written a portion of the data.
          */
         native function write(...data): Number
 

@@ -70,7 +70,6 @@ This getter property is a wrapper and returns the Request.session object.</td></
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#create'><b>create</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs.web-Controller.html'>Controller</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Factory method to create and initialize a controller.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#dontFinalize'><b>dontFinalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Don't finalize the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#error'><b>error</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send an error notification to the user.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#inform'><b>inform</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a positive notification to the user.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#makeUri'><b>makeUri</b></a>(parts: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a URI suitable for invoking actions.</td></tr>
@@ -103,17 +102,6 @@ This call expects the controller class to be loaded. Called by Mvc.load().</dd><
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Web request object.</td></tr></table></dd>
 </dl></div>
-</div>
-<hr />
-<a name='dontFinalize'></a>
-<div class='api'>
-<div class='apiSig'>const   ejs.web  dontFinalize(): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Don't finalize the request.</p>
-<dl><dt>Description</dt><dd>If called, the action routine must explicitly call Request.finalize. Note that
-a default view will not be rendered if dontFinalize is called.</dd></dl>
-</div>
 </div>
 <hr />
 <a name='error'></a>

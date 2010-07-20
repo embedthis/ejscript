@@ -57,7 +57,6 @@ module ejs.web {
         */
         public var flash:       Object
 
-        private var noFinalize: Boolean
         private var rendered: Boolean
         private var redirected: Boolean
         private var _afterFilters: Array
@@ -153,7 +152,7 @@ module ejs.web {
                 } else {
                     this[actionName]()
                 }
-                if (!rendered && !redirected && !noFinalize) {
+                if (!rendered && !redirected && !request.dontFinalize) {
                     renderView()
                 }
                 runFilters(_afterFilters)
@@ -161,17 +160,8 @@ module ejs.web {
             if (flash) {
                 flashAfter()
             }
-            if (!noFinalize) {
-                request.finalize()
-            }
+            request.finalize()
         }
-
-        /**
-            Don't finalize the request. If called, the action routine must explicitly call Request.finalize. Note that
-            a default view will not be rendered if dontFinalize is called.
-         */
-        function dontFinalize(): Void
-            noFinalize = true
 
         /* 
             Prepare the flash message. This extracts any flash message from the session state store

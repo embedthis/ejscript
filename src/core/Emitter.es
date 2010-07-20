@@ -44,28 +44,6 @@ module ejs {
         }
 
         /** 
-            Add an observer for a set of events.
-            The callback will be invoked when the requested event is fired by calling Emitter.fire. When the callback 
-            runs, it will be invoked with the value of "this" relevant to the context of the callback. If the callback
-            is a class method, the value of "this" will be the object instance. Global functions will have "this" set to
-            the global object. Use Function.bind to override the bound "this" value.
-            @param name Event name to observe. The observer will receive events of this event class or any of its subclasses.
-            The name can be a string or an array of event strings.
-            @param callback Function to call when the event is received.
-         */
-        function observe(name: Object!, callback: Function!): Void {
-            if (name is String) {
-                addOneObserver(name, callback)
-            } else if (name is Array) {
-                for each (n in name) {
-                    addOneObserver(n, callback)
-                }
-            } else {
-                throw new Error("Bad name type for observe: " + typeOf(name))
-            }
-        }
-
-        /** 
             Clear observers for a given event name. 
             @param name Event name to clear. The name can be a string or an array of event strings. If null, observers 
             for all event names are cleared.
@@ -80,6 +58,15 @@ module ejs {
             } else {
                 observers = endpoints[name] = new Array
             }
+        }
+
+        /** @hide
+            MOB -- complete or remove
+         */
+        function delayedFire(name: String, delay: Number, ...args): Void {
+            Timer(delay, function() {
+                fire(name, ...args)
+            })
         }
 
         /** 
@@ -102,38 +89,57 @@ module ejs {
             @param name Event name to fire to the observers.
             @param args Args to pass to the observer callback
          */
-        function fire(name: String!, ...args): Void {
+        function fire(name: String, ...args): Void {
             let observers: Array? = endpoints[name]
             if (observers) {
                 for each (var e: Endpoint in observers) {
                     if (name == e.name) {
-                        if (!e.active) {
+                        if (e.active) {
+                            e.pending ||= []
+                            e.pending.append([name, args])
+                        } else {
                             e.active = true
-                            do {
-                                e.again = false
+                            for (;;) {
                                 try {
                                     /* This forces to use the bound this value */
                                     e.callback.apply(null, [name] + args)
                                 } catch (e) {
                                     App.errorStream.write("Exception in event on observer: " + name  + "\n" + e)
                                 }
-                            } while (e.again)
+                                if (e.pending && e.pending.length > 0) {
+                                    [name, args] = e.pending.shift()
+                                } else {
+                                    break
+                                }
+                            }
+                            e.pending = null
                             e.active = false
-                        } else {
-                            e.again = true
                         }
                     }
                 }
             }
         }
 
-        /** @hide
-            MOB -- complete
+        /** 
+            Add an observer for a set of events.
+            The callback will be invoked when the requested event is fired by calling Emitter.fire. When the callback 
+            runs, it will be invoked with the value of "this" relevant to the context of the callback. If the callback
+            is a class method, the value of "this" will be the object instance. Global functions will have "this" set to
+            the global object. Use Function.bind to override the bound "this" value.
+            @param name Event name to observe. The observer will receive events of this event class or any of its subclasses.
+            The name can be a string or an array of event strings.
+            @param callback Function to call when the event is received.
          */
-        function delayedFire(name: String, delay: Number, ...args): Void {
-            Timer(delay, function() {
-                fire(name, ...args)
-            })
+        function observe(name: Object!, callback: Function!): Void {
+            if (name is String) {
+                addOneObserver(name, callback)
+            } else if (name is Array) {
+                for each (n in name) {
+                    addOneObserver(n, callback)
+                }
+            } else {
+                throw new Error("Bad name type for observe: " + typeOf(name))
+            }
         }
 
         private function removeOneObserver(name: String, callback: Function): Void {
@@ -184,7 +190,7 @@ module ejs {
         public var callback: Function
         public var name: String
         public var active: Boolean
-        public var again: Boolean
+        public var pending: Array
         function Endpoint(callback: Function, name: String) {
             this.callback = callback
             this.name = name

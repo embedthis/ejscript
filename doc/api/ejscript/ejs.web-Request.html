@@ -71,6 +71,9 @@ sent to and from the browser with each request.</td></tr>
    <tr><td nowrap align='center'>public </td><td>dir</td><td><a href='ejs-Path.html'>Path</a></td><td>Application web document directory on the local file system. This is set to the directory containing the
 application. For MVC applications, this is set to the base directory of the application. For non-MVC apps, 
 it is set to the directory containing the application startup script.</td></tr>
+<a name='dontFinalize'></a>
+   <tr><td nowrap align='center'>public </td><td>dontFinalize</td><td>&nbsp;</td><td>Don't auto-finalize the request. If dontFinalize is true, web frameworks should not auto-finalize requests. 
+Rather, callers must explicitly invoke <a href='#finalize'>finalize</a>. </td></tr>
 <a name='encoding'></a>
    <tr><td nowrap align='center'>public </td><td>encoding</td><td><a href='ejs-String.html'>String</a></td><td>Get the encoding scheme for serializing strings. Not yet implemented.
 MOB -- should this not be in the headers?.</td></tr>
@@ -87,13 +90,22 @@ specification. Use the header() method if you want to retrieve a single header.<
    <tr><td nowrap align='center'>public </td><td>home</td><td><a href='ejs-Uri.html'>Uri</a></td><td>Relative Uri for the top-level of the application. This returns a relative Uri from the current request
 up to the top most application Uri.</td></tr>
 <a name='host'></a>
-   <tr><td nowrap align='center'>public </td><td>host</td><td><a href='ejs-String.html'>String</a></td><td>Client requested Host. This is the Http request "Host" header value.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>host</td><td><a href='ejs-String.html'>String</a></td><td>Server host name. This is set to the authorized server name (HttpServer.name) if one is configured. 
+Otherwise it will be set to the <a href='#localAddress'>localAddress</a> value which is either the "Host" header value if supplied 
+by the client or is the server IP address of the accepting interface.</td></tr>
+<a name='isSecure'></a>
+   <tr><td nowrap align='center'>public </td><td>isSecure</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
+protocol scheme.</td></tr>
+<a name='localAddress'></a>
+   <tr><td nowrap align='center'>public </td><td>localAddress</td><td><a href='ejs-String.html'>String</a></td><td>Server IP address of the accepting interface. </td></tr>
 <a name='method'></a>
    <tr><td nowrap align='center'>public </td><td>method</td><td><a href='ejs-String.html'>String</a></td><td>Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE).</td></tr>
 <a name='params'></a>
    <tr><td nowrap align='center'>public </td><td>params</td><td><a href='ejs-Object.html'>Object</a></td><td>The request form parameters. Object hash of user url-encoded post data parameters.</td></tr>
 <a name='pathInfo'></a>
    <tr><td nowrap align='center'>public </td><td>pathInfo</td><td><a href='ejs-String.html'>String</a></td><td>Portion of the request URL after the scriptName. This is the location of the request within the application.</td></tr>
+<a name='protocol'></a>
+   <tr><td nowrap align='center'>public </td><td>protocol</td><td><a href='ejs-String.html'>String</a></td><td>Http request protocol (HTTP/1.0 | HTTP/1.1). </td></tr>
 <a name='query'></a>
    <tr><td nowrap align='center'>public </td><td>query</td><td><a href='ejs-String.html'>String</a></td><td>Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.</td></tr>
 <a name='referrer'></a>
@@ -106,15 +118,12 @@ no defined referrer.</td></tr>
 The route has properties two properties of particular interest: "name" which is the name of the route and
 and "type" which classifies the type of request.</td></tr>
 <a name='scheme'></a>
-   <tr><td nowrap align='center'>public </td><td>scheme</td><td><a href='ejs-String.html'>String</a></td><td>Http request protocol scheme (http | https). </td></tr>
+   <tr><td nowrap align='center'>public </td><td>scheme</td><td><a href='ejs-String.html'>String</a></td><td>Http request scheme (http | https). </td></tr>
 <a name='scriptName'></a>
    <tr><td nowrap align='center'>public </td><td>scriptName</td><td><a href='ejs-String.html'>String</a></td><td>Script name for the current application serving the request. This is typically the leading Uri portion 
 corresponding to the application, but middleware may modify this to be an arbitrary string representing 
 the application.  The script name is typically determined by the Router as it parses the request using 
 the routing tables.</td></tr>
-<a name='secure'></a>
-   <tr><td nowrap align='center'>public </td><td>secure</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
-protocol scheme.</td></tr>
 <a name='server'></a>
    <tr><td nowrap align='center'>public </td><td>server</td><td><a href='ejs.web-HttpServer.html'>HttpServer</a></td><td>Owning server for the request. This is the HttpServer object that created this request.</td></tr>
 <a name='session'></a>
@@ -131,8 +140,8 @@ Objects are stored the session state by JSON serialization.</td></tr>
    <tr><td nowrap align='center'>public </td><td>timeout</td><td><a href='ejs-Number.html'>Number</a></td><td>Request timeout. Number of milliseconds for requests to block while processing the request.
 A value of -1 means no timeout.</td></tr>
 <a name='uri'></a>
-   <tr><td nowrap align='center'>public </td><td>uri</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The request URL as a parsed Uri. This is the original Uri and may not reflect changes to pathInfo or
-scriptName.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>uri</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The request URL path as a parsed Uri. This is the original Uri path combined with the HttpServer scheme, host
+and port components. It will not reflect changes to pathInfo or scriptName.</td></tr>
 <a name='userAgent'></a>
    <tr><td nowrap align='center'>public </td><td>userAgent</td><td><a href='ejs-String.html'>String</a></td><td>Get the name of the client browser software set in the "User-Agent" Http header. </td></tr>
 <a name='input'></a>
@@ -166,6 +175,7 @@ If a "Host" header is provided, it is used in preference.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#redirect'><b>redirect</b></a>(where: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to a new URL.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#sendfile'><b>sendfile</b></a>(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a static file back to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#sendResponse'><b>sendResponse</b></a>(response: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a response to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setCookie'><b>setCookie</b></a>(name: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a cookie header to send with the response.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a header.</td></tr>
@@ -324,6 +334,23 @@ by the <a href='#url'>url</a>. </dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>name </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='sendfile'></a>
+<div class='api'>
+<div class='apiSig'>const   public  sendfile(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Boolean.html'>Boolean</a>
+</div>
+<div class='apiDetail'>
+<p>Send a static file back to the client.</p>
+<dl><dt>Description</dt><dd>This is a high performance way to send static content to the client.
+This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
+and the slower netConnector will be used instead.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>path: <a href='ejs-Path.html'>Path</a> </td><td>Path to the file to send back to the client.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if the Send connector can successfully be used.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='sendResponse'></a>

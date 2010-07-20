@@ -60,8 +60,6 @@ module ejs.web {
           { name: "default", type: "mvc",                   match: "/:controller/:action",     params: {} },
           { name: "create",  type: "mvc", method: "POST",   match: "/:controller",           params: { action: "create" } },
           { name: "index",   type: "mvc", method: "GET",    match: "/:controller",           params: { action: "index" } },
-          { name: "home",    type: "static",                match: /^\/$/, redirect: "/web/index.ejs" },
-          { name: "static",  type: "static", },
         ]
 
         /**
@@ -313,6 +311,11 @@ module ejs.web {
          */
         var rewrite: Function
 
+        /** @hide 
+            MOB used by Web.load to re-route directory redirections
+         */
+        var router: Router
+
         /**
             Nested route. A nested route prepends the match patter of the outer route to its "match" pattern. 
             The param set of the outer route are appended to the inner route.
@@ -338,7 +341,6 @@ module ejs.web {
         internal var matcher: RegExp
         internal var splitter: String
         internal var tokens: Array
-        internal var router: Router
 
         function Route(route: Object, router: Router) {
             for (field in route) {
@@ -392,7 +394,6 @@ module ejs.web {
             if (!components.path) {
                 for each (token in route.tokens) {
                     if (!where[token]) {
-                        dump("WHERE", where)
                         throw new ArgError("Missing URI token \"" + token + "\"")
                     }
                     uri = uri.join(where[token])

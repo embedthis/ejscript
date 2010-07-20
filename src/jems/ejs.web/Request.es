@@ -55,8 +55,8 @@ module ejs.web {
         var config: Object
 
         /** 
-            Get the request content length. This property is readonly and is set to the length of the request content 
-            body in bytes or -1 if not known.
+            Get the request content length. This is the length of body data sent by the client with the request. 
+            This property is readonly and is set to the length of the request content body in bytes or -1 if not known.
          */
         native var contentLength: Number
 
@@ -93,9 +93,9 @@ module ejs.web {
         native var files: Object
 
         /** 
-            Request Http headers. This is an object hash filled with the Http request headers. If multiple headers of 
-            the same key value are defined, their contents will be catenated with a ", " separator as per the HTTP/1.1 
-            specification. Use the header() method if you want to retrieve a single header.
+            Request Http headers. This is an object hash filled with the request headers from the client.  If multiple 
+            headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
+            HTTP/1.1 specification. Use the header() method if you want to retrieve a single header.
          */
         native var headers: Object
 
@@ -107,9 +107,29 @@ module ejs.web {
         native var home: Uri
 
         /** 
-            Client requested Host. This is the Http request "Host" header value.
+            Server host name. This is set to the authorized server name (HttpServer.name) if one is configured. 
+            Otherwise it will be set to the $localAddress value which is either the "Host" header value if supplied 
+            by the client or is the server IP address of the accepting interface.
          */
         native var host: String
+
+        /** 
+            Request inactivity timeout. Maximum number of seconds the request connection can be idle before the request is
+                terminated.
+            A value of 0 means no timeout.
+         */
+        native var inactivityTimeout: Number
+
+        /** 
+            Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
+            protocol scheme.
+         */
+        native var isSecure: Boolean
+
+        /** 
+            Server IP address of the accepting interface
+         */
+        native var localAddress: String
 
         /** 
             Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.
@@ -131,6 +151,11 @@ module ejs.web {
             Portion of the request URL after the scriptName. This is the location of the request within the application.
          */
         native var pathInfo: String
+
+        /** 
+            Http request protocol (HTTP/1.0 | HTTP/1.1)
+         */
+        native var protocol: String
 
         /** 
             Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.
@@ -156,7 +181,7 @@ module ejs.web {
         var route: Route
 
         /** 
-            Http request protocol scheme (http | https)
+            Http request scheme (http | https)
          */
         native var scheme: String
 
@@ -167,12 +192,6 @@ module ejs.web {
             the routing tables.
          */
         native var scriptName: String
-
-        /** 
-            Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
-            protocol scheme.
-         */
-        native var secure: Boolean
 
         /** 
             Owning server for the request. This is the HttpServer object that created this request.
@@ -199,14 +218,14 @@ module ejs.web {
         native var status: Number
 
         /** 
-            Request timeout. Number of milliseconds for requests to block while processing the request.
-            A value of -1 means no timeout.
+            Request timeout. Maximum number of seconds for the request to complete.
+            A value of 0 means no timeout.
          */
         native var timeout: Number
 
         /**
-            The request URL as a parsed Uri. This is the original Uri and may not reflect changes to pathInfo or
-            scriptName.
+            The request URL path as a parsed Uri. This is the original Uri path combined with the HttpServer scheme, host
+            and port components. It will not reflect changes to pathInfo or scriptName.
          */
         native var uri: Uri
 
@@ -218,24 +237,9 @@ module ejs.web {
         /* ************************************* Methods ******************************************/
 
         /** 
-            @duplicate Stream.observe
-            @event readable Issued when some body content is available.
-            @event writable Issued when the connection is writable to accept body data (PUT, POST).
-            @event close Issued when the request completes
-            @event error Issued if the request does not complete
-            All events are called with the signature:
-            function (event: String, http: Http): Void
-         */
-        native function observe(name, observer: Function): Void
-
-        /** 
             @duplicate Stream.async
          */
         native function get async(): Boolean
-
-        /** 
-            @duplicate Stream.async
-         */
         native function set async(enable: Boolean): Void
 
         /**
@@ -256,10 +260,17 @@ module ejs.web {
          */
         native function close(): Void
 
+        /**
+            Don't auto-finalize the request. If dontFinalize is true, web frameworks should not auto-finalize requests. 
+            Rather, callers must explicitly invoke $finalize with force set to true.
+         */
+        native var dontFinalize: Boolean
+
         //  MOB - unique name to not conflict with global.dump()
         /** 
             Dump objects for debugging
             @param args List of arguments to print.
+            @hide
          */
         function show(...args): Void {
             for each (var e: Object in args) {
@@ -281,22 +292,23 @@ module ejs.web {
             Path(pathInfo).extension
 
         /** 
-            Signals the end of any write data. If using chunked writes (no content length specified), finalize() must
-            be called to properly signify the end of write data. This causes the chunk filter to write a chunk trailer.
+            Signals the end of any write data and flushes any buffered write data to the client. 
+            @param force Do finalization even if $dontFinalize is true
          */
-        native function finalize(): Void 
+        native function finalize(force: Boolean = false): Void 
 
         /** 
+            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent to the client.
+            Flushing the read direction is ignored
             @duplicate Stream.flush
-            @hide 
          */
-        function flush(dir: Number = Stream.BOTH): Void {}
+        native function flush(dir: Number = Stream.WRITE): Void
 
         /** 
             Get the (proposed) response headers
             @return The set of response headers that will be used when the response is sent.
          */
-        native function getResponseHeaders(): Object
+        native function get responseHeaders(): Object
 
 //  MOB -- will this work case insensitive?
         /** 
@@ -305,6 +317,17 @@ module ejs.web {
             @return The header value
          */
         native function header(key: String): String
+
+        /** 
+            @duplicate Stream.observe
+            @event readable Issued when some body content is available.
+            @event writable Issued when the connection is writable to accept body data (PUT, POST).
+            @event close Issued when the request completes
+            @event error Issued if the request does not complete
+            All events are called with the signature:
+            function (event: String, http: Http): Void
+         */
+        native function observe(name, observer: Function): Void
 
         /** 
             @duplicate Stream.read
@@ -327,17 +350,12 @@ module ejs.web {
             let base = uri.clone()
             base.query = ""
             base.reference = ""
-            let url
-            if (where is String) {
-                url = makeUri(base.join(where).normalize.components)
-            } else {
-                url = makeUri(where)
-            }
+            let url = (where is String) ? makeUri(base.join(where).normalize.components) : makeUri(where)
             this.status = status
             setHeader("Location", url)
-            write("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\r\n" +
+            write("<!DOCTYPE html>\r\n" +
                    "<html><head><title>Redirect (" + status + ")</title></head>\r\n" +
-                    "<body><h1>Redirect (" + status + ")</h1>\r\n</H1>\r\n" + 
+                    "<body><h1>Redirect (" + status + ")</h1>\r\n" + 
                     "<p>The document has moved <a href=\"" + url + 
                     "\">here</a>.</p>\r\n" +
                     "<address>" + server.software + " at " + serverName + " Port " + server.port + 
@@ -348,6 +366,15 @@ module ejs.web {
             @duplicate Stream.removeObserver 
          */
         native function removeObserver(name, observer: Function): Void
+
+        /**
+            Send a static file back to the client. This is a high performance way to send static content to the client.
+            This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
+            and the slower netConnector will be used instead.
+            @param path Path to the file to send back to the client
+            @return True if the Send connector can successfully be used. 
+         */
+        native function sendfile(path: Path): Boolean
 
         //    MOB - doc
         /** @hide */
@@ -436,28 +463,27 @@ module ejs.web {
         native function setHeader(key: String, value: String, overwrite: Boolean = true): Void
 
         /**
-            Set the HTTP response headers. Use getHeaders to inspect the response headers.
+            Set the HTTP response headers. Use getResponseHeaders to inspect the proposed response header set.
             @param headers Set of headers to use
             @param overwrite If the header is already defined and overwrite is true, then the new value will
                 overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", "
                 separator.
          */
         function setHeaders(headers: Object, overwrite: Boolean = true): Void {
-            for (key in headers) {
-                setHeader(key, headers[key], overwrite)
+            for (let [key,value] in headers) {
+                setHeader(key, value, overwrite)
             }
         }
 
         /** 
             Set to the (proposed) Http response status code. This is equivalent to assigning to the $status property.
          */
-        function setStatus(status: Number): Void {
+        function setStatus(status: Number): Void
             this.status = status
-        }
 
         /** 
+            Write data to the client. This will buffer the written data until either flush() or finalize() is called. 
             @duplicate Stream.write
-            Write data to the client
          */
         native function write(...data): Number
 
@@ -476,14 +502,14 @@ module ejs.web {
                 text = "<h1>Request error for \"" + pathInfo + "\"</h1>\r\n"
                 text += "<pre>" + escapeHtml(msg) + "</pre>\r\n"
                 text += '<p>To prevent errors being displayed in the "browser, ' + 
-                    'set <b>errors.showClient</b> to false in the ejsrc file.</p>\r\n'
+                    'set <b>log.showClient</b> to false in the ejsrc file.</p>\r\n'
             } else {
                 text = "<h1>Request error for \"" + pathInfo + "\"</h1>\r\n"
             }
             try {
                 write(text)
             } catch {}
-            finalize()
+            finalize(true)
             log.error("Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 
@@ -536,9 +562,8 @@ module ejs.web {
             If a "Host" header is provided, it is used in preference.
             @returns A string containing the server name.
          */
-        function get serverName(): String {
-            return (host) ? host : uri.host
-        }
+        function get serverName(): String 
+            (host) ? host : uri.host
 
         /**
             Listening port number for the server

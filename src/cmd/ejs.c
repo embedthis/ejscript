@@ -35,7 +35,7 @@ MAIN(ejsMain, int argc, char **argv)
     MprList         *requiredModules, *files;
     cchar           *cmd, *className, *method;
     char            *argp, *searchPath, *modules, *name, *tok, *extraFiles;
-    int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, optimizeLevel, warnLevel, strict;
+    int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, debugger, optimizeLevel, warnLevel, strict;
 
     /*  
         Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
@@ -59,6 +59,7 @@ MAIN(ejsMain, int argc, char **argv)
     bind = 1;
     noout = 1;
     debug = 1;
+    debugger = 0;
     warnLevel = 1;
     optimizeLevel = 9;
     requiredModules = 0;
@@ -91,6 +92,9 @@ MAIN(ejsMain, int argc, char **argv)
 
         } else if (strcmp(argp, "--debug") == 0) {
             debug = 1;
+
+        } else if (strcmp(argp, "--debugger") == 0) {
+            debugger = 1;
 
         } else if (strcmp(argp, "--files") == 0 || strcmp(argp, "-f") == 0) {
             /* Compatibility with mozilla shell */
@@ -202,6 +206,7 @@ MAIN(ejsMain, int argc, char **argv)
             "  --class className        # Name of class containing method to run\n"
             "  --cmd ejscriptCode       # Literal ejscript statements to execute\n"
             "  --debug                  # Use symbolic debugging information (default)\n"
+            "  --debugger               # Disable timeouts to make using a debugger easier\n"
             "  --files \"files..\"        # Extra source to compile\n"
             "  --log logSpec            # Internal compiler diagnostics logging\n"
             "  --method methodName      # Name of method to run. Defaults to main\n"
@@ -218,7 +223,7 @@ MAIN(ejsMain, int argc, char **argv)
             mpr->name);
         return -1;
     }
-    mprSetDebugMode(mpr, debug);
+    mprSetDebugMode(mpr, debugger);
 
     ejsService = ejsCreateService(mpr);
     if (ejsService == 0) {

@@ -16,7 +16,7 @@
 <div class='classBlock'>
 <table class='classHead' summary='Http'>
    <tr><td><strong>Module</strong></td><td>ejs</td></tr>
-   <tr><td><strong>Definition</strong></td><td>dynamic  class Http</td></tr>
+   <tr><td><strong>Definition</strong></td><td> class Http</td></tr>
    <tr><td><strong>Inheritance</strong></td><td>Http <img src='images/inherit.gif' alt='inherit'/> <a href='ejs-Object.html'>Object</a>       </td></tr>
 </table>
 
@@ -107,7 +107,7 @@
 <a name='VersionNotSupported'></a>
    <tr><td nowrap align='center'>public static const </td><td>VersionNotSupported</td><td><a href='ejs-Number.html'>Number</a></td><td>HTTP Http Version Not Supported Status (505). </td></tr>
 <a name='contentType'></a>
-   <tr><td nowrap align='left'>public const get </td><td>contentType</td><td><a href='ejs-String.html'>String</a></td><td>Response content type derrived from the response Http Content-Type header. </td></tr>
+   <tr><td nowrap align='left'>public const get </td><td>contentType</td><td><a href='ejs-String.html'>String</a></td><td>Response content type derrived from the response Http Content-Type header. To set the request body Content-Type, use setHeader("Content-Type", MimeType).</td></tr>
 <a name='date'></a>
    <tr><td nowrap align='left'>public const get </td><td>date</td><td><a href='ejs-Date.html'>Date</a></td><td>When the response was generated. Response date derrived from the response Http Date header.</td></tr>
 <a name='expires'></a>
@@ -121,10 +121,6 @@ defined, their contents will be catenated with a ", " separator as per the HTTP/
 <a name='lastModified'></a>
    <tr><td nowrap align='left'>public const get </td><td>lastModified</td><td><a href='ejs-Date.html'>Date</a></td><td>When the response content was last modified. Set to the the value of the response Http Last-Modified header.
 Set to null if not known.</td></tr>
-<a name='response'></a>
-   <tr><td nowrap align='left'>public const get </td><td>response</td><td><a href='ejs-String.html'>String</a></td><td>Response body content. The first time this property is read, the response content will be read and buffered.
-Don't use this property in async mode as it will block. Set to the response as a string of characters. If 
-the response has no body content, the empty string will be returned.</td></tr>
 <a name='status'></a>
    <tr><td nowrap align='left'>public const get </td><td>status</td><td><a href='ejs-Number.html'>Number</a></td><td>Http response status code from the Http response status line, e.g. 200. Set to null if unknown.</td></tr>
 <a name='statusMessage'></a>
@@ -146,10 +142,10 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#form'><b>form</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, postData: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a POST request with form data the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#get'><b>get</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a GET request for the current uri.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getRequestHeaders'><b>getRequestHeaders</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) request headers to send with the request.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getRequestHeaders'><b>getRequestHeaders</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) request headers that will be sent with the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#head'><b>head</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HEAD request for the current uri.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the value of a response header.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the value of a single response header.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream.All events are called with the following signature.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#options'><b>options</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence an OPTIONS request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#post'><b>post</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Initiate a POST request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#put'><b>put</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a PUT request for the current uri.</td></tr>
@@ -158,6 +154,7 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readString'><b>readString</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the response as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readXml'><b>readXml</b></a>(): <a href='ejs-XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the request response as an XML document.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reset'><b>reset</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reset the Http object to prepare for a new request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setCredentials'><b>setCredentials</b></a>(username: <a href='ejs-String.html'>String</a>, password: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the user credentials to use if the request requires authentication.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a request header.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set request headers.</td></tr>
@@ -203,12 +200,8 @@ the request headers.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>uri: <a href='ejs-Uri.html'>Uri</a> </td><td>New uri to use. This overrides any previously defined uri for the Http object. [default: null]</td></tr><tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data objects to send with the request. Data is written raw and is not encoded or converted.  However, the routine intelligently handles arrays such that, each element of the array will be written.</td></tr></table></dd>
-</dl><dl><dt>Events</dt>
-<dd><table class='parameters' summary ='events'>
-<td class='param'>connect</td><td>Issued a "connect" event when the connection is complete.</td></tr>
-</table></dd>
 </dl><dl><dt>Throws</dt><dd>
-<a href='ejs-IOError.html'>IOError</a>: if the request cannot be issued to the remote server. 
+<a href='ejs-IOError.html'>IOError</a>: if the request cannot be issued to the remote server. Once the connection has been made,  exceptions will not be thrown and $status must be consulted for request status.  
 </dd>
 </dl></div>
 </div>
@@ -289,7 +282,7 @@ response data.</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>uri: <a href='ejs-Uri.html'>Uri</a> </td><td>The uri to get. This overrides any previously defined uri for the Http object. If null, use a previously defined uri. [default: null]</td></tr><tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data objects to send with the request. Data is written raw and is not encoded or converted.  However, the routine intelligently handles arrays such that, each element of the array will be written.</td></tr></table></dd>
 </dl><dl><dt>Throws</dt><dd>
-<a href='ejs-IOError.html'>IOError</a>: if the request cannot be issued to the remote server.  
+<a href='ejs-IOError.html'>IOError</a>: if the request cannot be issued to the remote server. Once the connection has been made,  exceptions will not be thrown and $status must be consulted for request status.  
 </dd>
 </dl></div>
 </div>
@@ -299,7 +292,9 @@ response data.</dd></dl>
 <div class='apiSig'>const   public  getRequestHeaders(): <a href='ejs-Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
-<p>Get the (proposed) request headers to send with the request.</p>
+<p>Get the (proposed) request headers that will be sent with the request.</p>
+<dl><dt>Description</dt><dd>Use <a href='#headers'>headers</a> to get the response
+headers or header(key) to get a single response header.</dd></dl>
 <dl><dt>Returns</dt>
 <dd>The set of request headers that will be used when the request is sent.</dd></dl>
 </div>
@@ -326,7 +321,7 @@ response data.</dd></dl>
 <div class='apiSig'>const   public  header(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Get the value of a response header.</p>
+<p>Get the value of a single response header.</p>
 <dl><dt>Description</dt><dd>This is a higher performance API than using response.headers["key"].</dd></dl>
 <dl><dt>Returns</dt>
 <dd>The header field value as a string or null if not known.</dd></dl>
@@ -338,7 +333,11 @@ response data.</dd></dl>
 <div class='apiSig'>const   public  observe(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add an observer to the stream.</p>
+<p>Add an observer to the stream.All events are called with the following signature.</p>
+<dl><dt>Description</dt><dd>The "this" object will be set to the instance object
+if the callback is a method. Otherwise, "this" will be set to the Http instance. If Function.bind may also
+be used to define the "this" object and to inject additional callback arguments. 
+function (event: String, http: Http): Void.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Callback observer function. The function is called with the following signature: function observer(event: String, ...args): Void.</td></tr></table></dd>
@@ -350,8 +349,8 @@ response data.</dd></dl>
 <td class='param'>headers</td><td>Issued when the response headers have been fully received.</td></tr>
 <td class='param'>readable</td><td>Issued when some body content is available.</td></tr>
 <td class='param'>writable</td><td>Issued when the connection is writable to accept body data (PUT, POST).</td></tr>
-<td class='param'>complete</td><td>Issued when the request completes.</td></tr>
-<td class='param'>error</td><td>Issued if the request does not complete successfully. All events are called with the signature: function (event: String, http: Http): Void.</td></tr>
+<td class='param'>complete</td><td>Issued when the request completes. Complete is always issued whether the request errors or not.</td></tr>
+<td class='param'>error</td><td>Issued if the request does not complete successfully. This is not issued if the request  ompletes successfully but with a non 200 Http status code.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -492,6 +491,15 @@ In this case a "readable" event will be issued when data is available for readin
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>name </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='reset'></a>
+<div class='api'>
+<div class='apiSig'>const   public  reset(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Reset the Http object to prepare for a new request.</p>
+</div>
 </div>
 <hr />
 <a name='setCredentials'></a>

@@ -30,17 +30,6 @@ module ejs {
         static const BOTH = 0x3
 
         /** 
-            Add an observer to the stream. 
-            @param name Name of the event to listen for. The name may be an array of events.
-            @param observer Callback observer function. The function is called with the following signature:
-                function observer(event: String, ...args): Void
-            @event readable Issued when the stream becomes readable. 
-            @event writable Issued when the stream becomes writable.
-            @event close Issued when stream is being closed.
-         */
-        function observe(name, observer: Function): Void
-
-        /** 
             The current async mode. Set to true if the stream is in async mode.
          */
         function get async(): Boolean
@@ -68,6 +57,17 @@ module ejs {
             @param
          */
         function flush(dir: Number): Void 
+
+        /** 
+            Add an observer to the stream. 
+            @param name Name of the event to listen for. The name may be an array of events.
+            @param observer Callback observer function. The function is called with the following signature:
+                function observer(event: String, ...args): Void
+            @event readable Issued when the stream becomes readable. 
+            @event writable Issued when the stream becomes writable.
+            @event close Issued when stream is being closed.
+         */
+        function observe(name, observer: Function): Void
 
         /** 
             Read a data from the stream. 
@@ -98,8 +98,9 @@ module ejs {
             Write data to the stream. 
             If the stream can accept all the write data, the call returns immediately with the number of elements written. 
             If writing more data than the stream can absorb in sync mode, the call will block until the data is written.
-            If writing more data than the stream can absorb in async mode, the call will not block and will return 
-            immediately. A "writable" event will be issued when all the data has been written.
+            If writing more data than the stream can absorb in async mode, the call will not block and will buffer the
+            data and return immediately. Some streams will buffer data and require a flush() call to actually send the data.
+            A "writable" event will be issued when the stream can absorb more data.
             @param data Data to write. 
             @returns a count of the bytes actually written.
             @throws IOError if there is an I/O error.

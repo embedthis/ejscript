@@ -5,7 +5,6 @@
 
 module ejs {
 
-    //  MOB -- do we really want this to be dynamic?
     /** 
         The Http object represents a Hypertext Transfer Protocol version 1/1 client connection. It is used to issue 
         HTTP requests and capture responses. It supports the HTTP/1.1 standard including methods for GET, POST, 
@@ -13,10 +12,11 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    dynamic class Http implements Stream {
+    class Http implements Stream {
 
         use default namespace public
 
+//  MOB -- should these all be upper CASE
         /** 
           HTTP Continue Status (100)
          */     
@@ -210,21 +210,6 @@ module ejs {
         native function Http(uri: Uri? = null)
 
         /** 
-            @duplicate Stream.observe
-            All events are called with the following signature.  The "this" object will be set to the instance object
-            if the callback is a method. Otherwise, "this" will be set to the Http instance. If Function.bind may also
-            be used to define the "this" object and to inject additional callback arguments. 
-                function (event: String, http: Http): Void
-            @event headers Issued when the response headers have been fully received.
-            @event readable Issued when some body content is available.
-            @event writable Issued when the connection is writable to accept body data (PUT, POST).
-            @event complete Issued when the request completes. Complete is always issued whether the request errors or not.
-            @event error Issued if the request does not complete successfully. This is not issued if the request 
-                ompletes successfully but with a non 200 Http status code.
-         */
-        native function observe(name, observer: Function): Void
-
-        /** 
             @duplicate Stream.async
          */
         native function get async(): Boolean
@@ -274,11 +259,13 @@ module ejs {
 
         /** 
             Response content body length. Set to the length of the response body in bytes or -1 if no body or not known.
+            To set the request body Content-Length, use setHeader("Content-Length", Length)
          */
         native function get contentLength(): Number
 
         /** 
             Response content type derrived from the response Http Content-Type header.
+            To set the request body Content-Type, use setHeader("Content-Type", MimeType)
          */
         native function get contentType(): String
 
@@ -308,20 +295,15 @@ module ejs {
             throw "Not yet implemented"
         }
 
-        //  MOB -- should this be script and not native
-        /** 
-            When the response content expires. This is derrived from the response Http Expires header.
-         */
-        native function get expires(): Date
-
         //  MOB -- Is this required to stop xh being GC'd
         private var xh: XMLHttp
 
-//  MOB -- should there be an arg for body?
         /** @hide
             Fetch a URL. This is a convenience method to asynchronously invoke an Http method without waiting. 
             @param method Http method. This is typically "GET" or "POST"
-            @param callback Function to invoke
+            @param uri URL to fetch
+            @param data Body data to send with the request. Set to null for no data.
+            @param callback Function to invoke on completion of the request
           */
         function fetch(method: String, uri: Uri, data: *, callback: Function) {
             xh = XMLHttp(this)
@@ -340,17 +322,15 @@ module ejs {
         }
 
         /** 
-            Signals the end of write data. If using chunked writes (no content length specified), finalize() must
-            be called to properly signify the end of write data. This causes the chunk filter to write a chunk trailer.
-            It is good practice to call finalize() at the end of writing regardless of whether chunked transfer is used 
-            or not.
+            Signals the end of write data and flushes any buffered write data.
          */
         native function finalize(): Void 
 
         /** 
+            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent to the server.
             @duplicate Stream.flush
          */
-        function flush(dir: Number = Stream.BOTH): Void {}
+        native function flush(dir: Number = Stream.WRITE): Void
 
         /** 
             Control whether redirects should be automatically followed by this Http object. Default is true.
@@ -383,7 +363,8 @@ module ejs {
         native function get(uri: Uri? = null, ...data): Void
 
         /** 
-            Get the (proposed) request headers to send with the request
+            Get the (proposed) request headers that will be sent with the request. Use $headers to get the response
+            headers or header(key) to get a single response header.
             @return The set of request headers that will be used when the request is sent.
          */
         native function getRequestHeaders(): Object
@@ -397,7 +378,7 @@ module ejs {
         native function head(uri: Uri? = null): Void
 
         /** 
-            Get the value of a response header. This is a higher performance API than using response.headers["key"].
+            Get the value of a single response header. This is a higher performance API than using response.headers["key"].
             @return The header field value as a string or null if not known.
          */
         native function header(key: String): String
@@ -408,6 +389,14 @@ module ejs {
                 defined, their contents will be catenated with a ", " separator as per the HTTP/1.1 specification.
          */
         native function get headers(): Object
+
+        /** 
+            Request inactivity timeout. Maximum number of seconds the request connection can be idle before the request is
+                terminated.
+            A value of 0 means no timeout.
+         */
+        native function get inactivityTimeout(): Number
+        native function set inactivityTimeout(timeout: Number): Void
 
         /** 
             Is the connection is utilizing SSL.
@@ -435,6 +424,21 @@ module ejs {
          */
         native function get method(): String
         native function set method(name: String)
+
+        /** 
+            @duplicate Stream.observe
+            All events are called with the following signature.  The "this" object will be set to the instance object
+            if the callback is a method. Otherwise, "this" will be set to the Http instance. If Function.bind may also
+            be used to define the "this" object and to inject additional callback arguments. 
+                function (event: String, http: Http): Void
+            @event headers Issued when the response headers have been fully received.
+            @event readable Issued when some body content is available.
+            @event writable Issued when the connection is writable to accept body data (PUT, POST).
+            @event complete Issued when the request completes. Complete is always issued whether the request errors or not.
+            @event error Issued if the request does not complete successfully. This is not issued if the request 
+                ompletes successfully but with a non 200 Http status code.
+         */
+        native function observe(name, observer: Function): Void
 
         /** 
             Commence an OPTIONS request for the current uri. See connect() for connection details.
@@ -510,6 +514,11 @@ module ejs {
          */
         native function removeObserver(name, observer: Function): Void
 
+        /**
+            Reset the Http object to prepare for a new request
+         */
+        native function reset(): Void
+
         /** 
             Response body content. The first time this property is read, the response content will be read and buffered.
             Don't use this property in async mode as it will block. Set to the response as a string of characters. If 
@@ -571,8 +580,7 @@ module ejs {
             200 <= status && status < 300
 
         /** 
-            Request timeout in milliseconds. This is the idle timeout value. If the request has no I/O activity for 
-            this time period, it will be retried or aborted.
+            Request timeout in seconds. Maximum number of seconds for the request to complete. 
          */
         native function get timeout(): Number
         native function set timeout(timeout: Number): Void
@@ -597,40 +605,32 @@ module ejs {
                 http.upload(URL, files, fields)
          */
         function upload(uri: String, files: Object, fields: Object? = null): Void {
-            let boundary = "<<Upload Boundary>>"
-            let buf = new ByteArray(4096)
-            let http = this
-            buf.observe("readable", function (event, buf) {
-                http.write(buf)
-                buf.flush(Stream.WRITE)
-            })
+            let boundary = "<<Upload Boundary - " + md5(Date.now()) + ">>"
             setHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
             post(uri)
             if (fields) {
-                for (key in fields) {
-                    buf.write('--' + boundary + "\r\n")
-                    buf.write('Content-Disposition: form-data; name=' + Uri.encode(key) + "\r\n")
-                    buf.write('Content-Type: application/x-www-form-urlencoded\r\n\r\n')
-                    buf.write(Uri.encode(fields[key]) + "\r\n")
+                for (let [key,value] in fields) {
+                    write('--' + boundary + "\r\n")
+                    write('Content-Disposition: form-data; name=' + Uri.encode(key) + "\r\n")
+                    write('Content-Type: application/x-www-form-urlencoded\r\n\r\n')
+                    write(Uri.encode(value) + "\r\n")
                 }
             }
-            for (key in files) {
-                file = files[key]
-                buf.write('--' + boundary + "\r\n")
-                buf.write('Content-Disposition: form-data; name=' + key + '; filename=' + Path(file).basename + "\r\n")
-                buf.write('Content-Type: ' + Uri(file).mimeType + "\r\n\r\n")
+            for (let [key,file] in files) {
+                write('--' + boundary + "\r\n")
+                write('Content-Disposition: form-data; name=' + key + '; filename=' + Path(file).basename + "\r\n")
+                write('Content-Type: ' + Uri(file).mimeType + "\r\n\r\n")
 
-                f = File(file).open()
-                data = new ByteArray
-                while (f.read(data)) {
-                    buf.write(data)
+                let f = File(file, "r")
+                let data = new ByteArray
+                while (f.read(data) > 0) {
+                    write(data)
                 }
                 f.close()
-                buf.write("\r\n")
+                write("\r\n")
             }
-            buf.write('--' + boundary + "--\r\n\r\n")
-            http.finalize()
-            http.wait()
+            write('--' + boundary + "--\r\n\r\n")
+            finalize()
         }
 
         /** 
@@ -648,14 +648,9 @@ module ejs {
 
         /** 
             @duplicate Stream.write
-            The Http.contentLength should normally be set prior to writing any data to ensure that the request 
-            "Content-length" header is properly defined. If the body length has not been defined, the data will be 
-            transferred using chunked transfers. In this case, you should call close() with no data to signify the 
-            end of the write stream. Failure to define the Content-Length header will cause the remote server to have 
-            to close the underling HTTP connection at the completion of the request. This will erode performance by 
-            preventing  HTTP keep-alive for subsequent requests.
-            @throws StateError if the Http method is not set to POST or if more post data is written than specified via 
-                the contentLength property.
+            Write body data to the server. This will buffer the written data until either flush() or finalize() is called. 
+            The Http "Content-Length" header should normally be set prior to writing any data for optimial data transfter.
+            If the Content-Length header has not been defined, the data will be transferred using chunked transfers. 
          */
         native function write(...data): Void
 
@@ -706,6 +701,14 @@ module ejs {
          */
         function get contentEncoding(): String
             header("content-encoding")
+
+        //  DEPRECATED
+        /** 
+            When the response content expires. This is derrived from the response Http Expires header.
+            @hide
+         */
+        function get expires(): Date
+            Date.parseUTCDate(header("expires"))
 
         //  DEPRECATED
         /** @hide */

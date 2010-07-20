@@ -59,12 +59,6 @@ module ejs.db.couch {
         /**
             @hide
          */
-        function observe(event: String, observer: Function): Void
-            hp.observe(event, observer)
-
-        /**
-            @hide
-         */
         function get async(): Boolean
             hp.async
 
@@ -114,6 +108,12 @@ module ejs.db.couch {
          */
         function get http(): Http
             hp
+
+        /**
+            @hide
+         */
+        function observe(event: String, observer: Function): Void
+            hp.observe(event, observer)
 
         /**
             @hide

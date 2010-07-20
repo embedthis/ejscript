@@ -966,7 +966,7 @@ static EjsObj *encodeURIComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
 
 EjsUri *ejsCreateUri(Ejs *ejs, cchar *path)
 {
-    EjsUri     *up;
+    EjsUri      *up;
     EjsObj      *arg;
 
     up = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
@@ -975,6 +975,19 @@ EjsUri *ejsCreateUri(Ejs *ejs, cchar *path)
     }
     arg = (EjsObj*) ejsCreateString(ejs, path);
     uri_constructor(ejs, up, 1, (EjsObj**) &arg);
+    return up;
+}
+
+
+EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference)
+{
+    EjsUri      *up;
+
+    up = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    if (up == 0) {
+        return 0;
+    }
+    up->uri = httpCreateUriFromParts(up, scheme, host, port, path, reference, query);
     return up;
 }
 

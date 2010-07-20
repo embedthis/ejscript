@@ -129,7 +129,7 @@ size determination failed.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readLines'><b>readLines</b></a>(): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as an array of lines.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readString'><b>readString</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readXML'><b>readXML</b></a>(): <a href='ejs-XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the file contents as an XML object.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#remove'><b>remove</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Delete the file associated with the Path object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#remove'><b>remove</b></a>(): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Delete the file associated with the Path object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeAll'><b>removeAll</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Removes a directory and its contents
 If the path is a directory, this call will remove all subdirectories and their contents and finally the
 directory itself.</td></tr>
@@ -504,11 +504,13 @@ contents and closes the file.</dd></dl>
 <hr />
 <a name='remove'></a>
 <div class='api'>
-<div class='apiSig'>const   public  remove(): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  remove(): <a href='ejs-Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
 <p>Delete the file associated with the Path object.</p>
 <dl><dt>Description</dt><dd>If this is a directory without contents it will be removed.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>True if the file is sucessfully deleted.</dd></dl>
 <dl><dt>Throws</dt><dd>
 <a href='ejs-IOError.html'>IOError</a>: if the file exists and could not be deleted. 
 </dd>

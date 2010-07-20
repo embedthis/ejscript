@@ -18,9 +18,6 @@ module ejs {
 
         use default namespace public
 
-        /** @duplicate Stream.observe */
-        native function observe(name, observer: Function): Void
-
         /** @duplicate Stream.async */
         function get async(): Boolean
             false
@@ -91,6 +88,9 @@ module ejs {
             Is the file open.
          */
         native function get isOpen(): Boolean
+
+        /** @duplicate Stream.observe */
+        native function observe(name, observer: Function): Void
 
         /**  
             Open a file. This opens the file designated when the File constructor was called.
@@ -188,7 +188,7 @@ module ejs {
         /** 
             Write data to the file. If the stream is in sync mode, the write call blocks until the underlying stream or 
             endpoint absorbes all the data. If in async-mode, the call accepts whatever data can be accepted immediately 
-            and returns a count of the elements that have been written.
+            and returns a count of the bytes that have been written.
             @param items The data argument can be ByteArrays, strings or Numbers. All other types will call serialize
             first before writing. Note that numbers will not be written in a cross platform manner. If that is required, use
             the BinaryStream class to control the byte ordering when writing numbers.

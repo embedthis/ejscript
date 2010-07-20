@@ -215,6 +215,7 @@ static EjsObj *http_del(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*  
     function get expires(): Date
  */
@@ -222,6 +223,7 @@ static EjsObj *http_expires(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     return getDateHeader(ejs, hp, "EXPIRES");
 }
+#endif
 
 
 /*  
@@ -230,6 +232,21 @@ static EjsObj *http_expires(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     httpFinalize(hp->conn);
+    return 0;
+}
+
+
+/*  
+    function flush(dir: Number = Stream.WRITE): Void
+ */
+static EjsObj *http_flush(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    int     dir;
+
+    dir = (argc == 1) ? ejsGetInt(ejs, argv[0]) : EJS_STREAM_WRITE;
+    if (dir & EJS_STREAM_WRITE) {
+        httpFlush(hp->conn);
+    }
     return 0;
 }
 
@@ -353,6 +370,25 @@ static EjsObj *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         ejsSetPropertyByName(ejs, results, &qname, ejsCreateString(ejs, p->data));
     }
     return (EjsObj*) results;
+}
+
+
+/*  
+    function get inactivityTimeout(): Number
+ */
+static EjsObj *http_inactivityTimeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->inactivityTimeout);
+}
+
+
+/*  
+    function set inactivityTimeout(value: Number): Void
+ */
+static EjsObj *http_set_inactivityTimeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    httpSetTimeout(hp->conn, -1, (int) ejsGetNumber(ejs, argv[0]));
+    return 0;
 }
 
 
@@ -508,7 +544,7 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
     conn = hp->conn;
 
-    if (!waitForState(hp, HTTP_STATE_CONTENT, conn->async ? 0 : conn->timeout, 0)) {
+    if (!waitForState(hp, HTTP_STATE_CONTENT, conn->async ? 0 : conn->inactivityTimeout, 0)) {
         return 0;
     }
     if ((count = readTransfer(ejs, hp, count)) < 0) {
@@ -526,6 +562,16 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 EjsObj *http_removeObserver(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     ejsRemoveObserver(ejs, hp->emitter, argv[0], argv[1]);
+    return 0;
+}
+
+
+/*  
+    function reset(): Void
+ */
+static EjsObj *http_reset(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    httpPrepClientConn(hp->conn, HTTP_NEW_REQUEST);
     return 0;
 }
 
@@ -568,13 +614,17 @@ static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **arg
  */
 EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    cchar   *key, *value;
-    bool    overwrite;
+    HttpConn    *conn;
+    cchar       *key, *value;
+    bool        overwrite;
 
     mprAssert(argc >= 2);
 
-    httpPrepClientConn(hp->conn, HTTP_NEW_REQUEST);
-
+    conn = hp->conn;
+    if (conn->state >= HTTP_STATE_STARTED) {
+        ejsThrowArgError(ejs, "Can't update request headers once the request has started");
+        return 0;
+    }
     key = ejsGetString(ejs, argv[0]);
     value = ejsGetString(ejs, argv[1]);
     overwrite = (argc == 3) ? ejsGetBoolean(ejs, argv[2]) : 1;
@@ -592,7 +642,7 @@ EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_timeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->timeout);
+    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->requestTimeout);
 }
 
 
@@ -601,7 +651,7 @@ static EjsObj *http_timeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_set_timeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    httpSetTimeout(hp->conn, (int) ejsGetNumber(ejs, argv[0]));
+    httpSetTimeout(hp->conn, (int) ejsGetNumber(ejs, argv[0]), -1);
     return 0;
 }
 
@@ -643,12 +693,10 @@ static EjsObj *http_status(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     int     code;
 
     if (!waitForResponseHeaders(hp, -1)) {
-// MOB print("STATUS WAIT RESPONSE FAILED");
         return 0;
     }
     code = httpGetStatus(hp->conn);
     if (code <= 0) {
-// MOB print("STATUS CODE %d, state %d", code, hp->conn->state);
         return ejs->nullValue;
     }
     return (EjsObj*) ejsCreateNumber(ejs, code);
@@ -683,7 +731,7 @@ static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     MprTime     mark;
     int         timeout;
 
-    timeout = (argc == 1) ? ejsGetInt(ejs, argv[0]) : hp->conn->timeout;
+    timeout = (argc == 1) ? ejsGetInt(ejs, argv[0]) : hp->conn->requestTimeout;
     if (timeout < 0) {
         timeout = MAXINT;
     }
@@ -767,8 +815,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         return 0;
     }
     if (mprGetBufLength(hp->requestContent) > 0) {
-        nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent),
-            conn->async ? 0 : 1); 
+        nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent));
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Can't write request data for \"%s\"", hp->uri);
             return 0;
@@ -776,6 +823,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
             mprAdjustBufStart(hp->requestContent, nbytes);
             hp->requestContentCount += nbytes;
         }
+        httpFlush(conn);
     }
     length = hp->conn->transmitter->length;
     ejsSendEvent(ejs, hp->emitter, "writable", (EjsObj*) hp);
@@ -872,7 +920,7 @@ static int readTransfer(Ejs *ejs, EjsHttp *hp, int count)
 
 
 /* 
-    Write another block of write data
+    Write another block of data
  */
 static int writeHttpData(Ejs *ejs, EjsHttp *hp)
 {
@@ -888,7 +936,7 @@ static int writeHttpData(Ejs *ejs, EjsHttp *hp)
     ba = hp->data;
     nbytes = 0;
     if (ba && (count = ejsGetByteArrayAvailable(ba)) > 0) {
-        nbytes = httpWriteBlock(conn->writeq, (cchar*) &ba->value[ba->readPosition], count, 0);
+        nbytes = httpWriteBlock(conn->writeq, (cchar*) &ba->value[ba->readPosition], count);
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;
@@ -920,6 +968,7 @@ static int httpCallback(EjsHttp *hp, MprEvent *event)
             writeHttpData(ejs, hp);
         }
     }
+#if UNUSED
     if (event->mask & MPR_READABLE) {
         if (conn->state >= HTTP_STATE_COMPLETE || 
                 (conn->state >= HTTP_STATE_CONTENT && mprGetBufLength(hp->responseContent) > 0)) {
@@ -927,6 +976,7 @@ static int httpCallback(EjsHttp *hp, MprEvent *event)
             ejsSendEvent(ejs, hp->emitter, "MOBreadable", (EjsObj*) hp);
         }
     } 
+#endif
     return 0;
 }
 
@@ -1134,20 +1184,16 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
  */
 static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
 {
-    mprAssert(hp->conn->state >= HTTP_STATE_STARTED);
-
     if (hp->conn->async) {
         timeout = 0;
     }
     if (timeout < 0) {
-        timeout = hp->conn->timeout;
+        timeout = hp->conn->requestTimeout;
     }
     if (hp->conn->state < HTTP_STATE_STARTED) {
-// MOB print("WFR state %d, return zero", hp->conn->state);
         return 0;
     }
     if (hp->conn->state < HTTP_STATE_PARSED && !waitForState(hp, HTTP_STATE_PARSED, timeout, 1)) {
-// MOB print("WFR2 state %d, return zero", hp->conn->state);
         return 0;
     }
     return 1;
@@ -1197,8 +1243,11 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_contentType, (EjsProc) http_contentType);
     ejsBindMethod(ejs, prototype, ES_Http_date, (EjsProc) http_date);
     ejsBindMethod(ejs, prototype, ES_Http_del, (EjsProc) http_del);
+#if UNUSED
     ejsBindMethod(ejs, prototype, ES_Http_expires, (EjsProc) http_expires);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_finalize, (EjsProc) http_finalize);
+    ejsBindMethod(ejs, prototype, ES_Http_flush, (EjsProc) http_flush);
     ejsBindAccess(ejs, prototype, ES_Http_followRedirects, (EjsProc) http_followRedirects, 
         (EjsProc) http_set_followRedirects);
     ejsBindMethod(ejs, prototype, ES_Http_form, (EjsProc) http_form);
@@ -1207,6 +1256,10 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_head, (EjsProc) http_head);
     ejsBindMethod(ejs, prototype, ES_Http_header, (EjsProc) http_header);
     ejsBindMethod(ejs, prototype, ES_Http_headers, (EjsProc) http_headers);
+#if ES_Http_inactivityTimeout
+    ejsBindAccess(ejs, prototype, ES_Http_inactivityTimeout, (EjsProc) http_inactivityTimeout, 
+            (EjsProc) http_set_inactivityTimeout);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_isSecure, (EjsProc) http_isSecure);
     ejsBindAccess(ejs, prototype, ES_Http_key, (EjsProc) http_key, (EjsProc) http_set_key);
     ejsBindMethod(ejs, prototype, ES_Http_lastModified, (EjsProc) http_lastModified);
@@ -1216,6 +1269,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_read, (EjsProc) http_read);
     ejsBindMethod(ejs, prototype, ES_Http_readString, (EjsProc) http_readString);
     ejsBindMethod(ejs, prototype, ES_Http_removeObserver, (EjsProc) http_removeObserver);
+    ejsBindMethod(ejs, prototype, ES_Http_reset, (EjsProc) http_reset);
     ejsBindAccess(ejs, prototype, ES_Http_response, (EjsProc) http_response, (EjsProc) http_set_response);
     ejsBindMethod(ejs, prototype, ES_Http_options, (EjsProc) http_options);
     ejsBindMethod(ejs, prototype, ES_Http_setCredentials, (EjsProc) http_setCredentials);

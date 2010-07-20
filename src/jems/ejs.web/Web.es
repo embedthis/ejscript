@@ -29,6 +29,14 @@ module ejs.web {
                 timeout: 1800,
             },
             web: {
+                expires: {
+                    /*
+                        "html": 86400,
+                        "ejs": 86400,
+                        "es": 86400,
+                        "": 86400,
+                     */
+                },
                 endpoint: "127.0.0.1:4000",
                 views: {
                     connectors: {
@@ -110,9 +118,21 @@ request.config = config
          */
         static function load(request: Request): Object {
             try {
-                let type = request.route.type
                 let exports
-                if (type == "es") {
+                let type = request.route.type
+
+                let path = request.dir.join(request.pathInfo.trimStart('/'))
+                if (path.isDir) {
+                    exports = Dir.load(request)
+                    if (exports) {
+                        return exports
+                    }
+                    type = request.route.type
+                }
+                if (type == "static") {
+                    return Static.load(request)
+
+                } else if (type == "es") {
                     if (!global.Loader) {
                         global.load("ejs.cjs.mod")
                     }
@@ -138,42 +158,6 @@ request.config = config
                 } else if (type == "mvc") {
                     exports = Mvc.load(request)
 
-                } else if (type == "static") {
-                    exports = {
-                        app: function (request) {
-                            //  MOB -- push into ejs.cjs
-                            //  MOB -- needs work
-                            let path = request.dir.join(request.pathInfo.trimStart('/'))
-                            if (path.isDir) {
-                                //  MOB -- should come from HttpServer.index[]
-                                for each (index in ["index.ejs", "index.html"]) {
-                                    let p = path.join(index)
-                                    if (p.exists) {
-                                        path = p
-                                        break
-                                    }
-                                }
-                            }
-                            //  MOB -- work out a better way to do this. perhaps from ejsrc? (cache?)
-                            let expires = Date() 
-                            expires.date += 2
-                            let headers = {
-                                "Content-Type": Uri(request.uri).mimeType,
-                                "Expires": expires.toUTCString()
-                            }
-                            let body = ""
-                            if (request.method == "GET" || request.method == "POST") {
-                                headers["Content-Length"] = path.size
-                                body = path.readString()
-                            }
-                            return {
-                                status: Http.Ok,
-                                headers: headers,
-                                body: body
-                            }
-                        }
-                    }
-
                 } else {
                     throw "Request type: " + type + " is not supported by Web.load"
                 }
@@ -181,10 +165,33 @@ request.config = config
                     throw "Can't load application. No \"app\" object exported by application"
                 }
                 return exports
+
             } catch (e) {
                 request.writeError(e)
             }
             return null
+        }
+
+
+        private var clients = {}
+        private var requestCount: Number
+
+        function monitoredLoad(request: Request) {
+            if (Object.getOwnPropertyCount(clients) >= HttpServer.limit("clients")) {
+                request.writeError("Too many requests. Please try again later")
+                return
+            }
+            if (requestCount >= HttpServer.limit("requests")) {
+                request.writeError("Too many requests. Please try again later")
+                return
+            }
+            requestCount++
+            try {
+                clients[request.remoteAddress] = true
+                Object.getOwnPropertyCount(clients)
+                delete clients[request.remoteAddress]
+            } catch {}
+            requestCount--
         }
 
         /** 
@@ -196,26 +203,28 @@ request.config = config
 //  WARNING: this may block in write?? - is request in async mode?
             try {
                 let result = app.call(request, request)
-                if (!result) {
-                    if (request.route.type == "ejs") {
-                        request.finalize()
-                    }
 
-                } else if (result is Function) {
-                    /* The callback is responsible for calling finalize() */
+                if (result is Function) {
+                    /* Functions don't auto finalize. The user is responsible for calling finalize() */
                     result.call(request, request)
 
-                } else {
-                    request.status = result.status || 200
-                    let headers = result.headers || { "content-type": "text/html" }
-                    request.setHeaders(headers)
+                } else if (result) {
                     let body = result.body
-                    if (body is String) {
-                        request.write(body)
-                        request.finalize()
+                    request.status = result.status || 200
+                    let headers = result.headers || { "Content-Type": "text/html" }
+                    request.setHeaders(headers)
+                    if (body is Path) {
+                        if (request.isSecure) {
+                            body = File(body, "r")
+                        } else {
+                            request.sendfile(body)
+                            return
+                        }
+                    }
 
-                    } else if (body is Array) {
+                    if (body is Array) {
                         for each (let item in body) {
+//  MOB -- what about async? what if can't accept all the data?
                             request.write(item)
                         }
                         request.finalize()
@@ -224,11 +233,20 @@ request.config = config
                         if (body.async) {
                             request.async = true
                             //  Should we wait on request being writable or on the body stream being readable?
-                            //  Must detect eof and do a finalize()
-                            request.observe("", function(event, body) {
-                                request.write(body)
+//  MOB Must detect eof and do a finalize()
+                            request.observe("readable", function(event, request) {
+                                let data = new ByteArray
+                                if (request.read(data)) {
+//  MOB -- what about async? what if can't accept all the data?
+                                    request.write(body)
+                                } else {
+                                    request.finalize()
+                                }
                             })
-                            //  TODO - what about async reading of read data?
+                            //  MOB -- or this? but what about error events
+                            request.observe("complete", function(event, body) {
+                                request.finalize()
+                            })
                         } else {
                             ba = new ByteArray
                             while (body.read(ba)) {
@@ -241,14 +259,30 @@ request.config = config
                             request.write(block)
                         })
                         request.finalize()
+
+                    } else if (body) {
+                        request.write(body)
+                        request.finalize()
+
+                    } else {
+                        let file = request.responseHeaders["X-Sendfile"]
+                        if (file && !request.isSecure) {
+                            request.sendfile(file)
+                        } else {
+                            request.finalize()
+                        }
+                    }
+                } else {
+                    let file = request.responseHeaders["X-Sendfile"]
+                    if (file && !request.isSecure) {
+                        request.sendfile(file)
                     }
                 }
 
             } catch (e) {
-                // print("Web.start(): CATCH " + e)
                 // print("URI " + request.uri)
                 request.writeError(e)
-                request.finalize()
+                request.finalize(true)
             }
         }
     }

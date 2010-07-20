@@ -54,13 +54,6 @@ module ejs {
         }
 
         /** 
-            @duplicate Stream.observe 
-         */
-        function observe(name, observer: Function): Void {
-            throw new ArgError("Observers are not supported")
-        }
-
-        /** 
             @duplicate Stream.async 
          */
         function get async(): Boolean
@@ -127,6 +120,13 @@ module ejs {
             if (!(nextStream is ByteArray)) {
                 nextStream.flush(dir)
             }
+        }
+
+        /** 
+            @duplicate Stream.observe 
+         */
+        function observe(name, observer: Function): Void {
+            throw new ArgError("Observers are not supported")
         }
 
         /** 

@@ -2,25 +2,32 @@
     Put tests
  */
 
+const HTTP = "http://127.0.0.1:" + ((global.test && test.config.http_port) || 6700)
 
-test.skip("put")
-
-/*  MOB
-const HTTP = (global.session && session["http"]) || ":6700"
 var http: Http = new Http
 
-data = Path("file.dat").readString()
-http.put(HTTP + "/tmp/file.dat", data)
+//  Test put with data
+let path = Path("file.dat")
+data = path.readString()
+http.put(HTTP + "/file.dat", data)
+http.finalize()
 assert(http.status == 201 || http.status == 204)
+assert(path.size == Path("../web/file.dat").size)
+Path("../web/file.dat").remove()
+http.close()
 
-http.bodyLength = Path("file.dat").size
-http.put(HTTP + "/tmp/file.dat")
-file = Path("file.dat").open()
+
+//  Test put with a stream of data
+let path = Path("file.dat")
+http.setHeader("Content-Length", path.size)
+http.put(HTTP + "/file.dat")
+let file = File(path, "r")
 buf = new ByteArray
-while (file.read(buf) > 0) {
+while (file.read(buf)) {
     http.write(buf)
 }
 http.finalize()
 assert(http.status == 201 || http.status == 204)
 http.close()
-*/
+assert(path.size == Path("../web/file.dat").size)
+Path("../web/file.dat").remove()

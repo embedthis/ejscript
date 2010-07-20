@@ -181,6 +181,7 @@ class EjsMvc {
             }
             process()
         } catch (e) {
+print(e)
             if (e is String) {
                 msg = e
                 error("ejsmvc: Error: " + msg + "\n")
@@ -977,6 +978,10 @@ class EjsMvc {
         makeConfigFile("ejsrc", data)
         /* Reload */
         loadConfig("ejsrc", true)
+        assert(dirs == config.directories)
+        for (d in dirs) {
+            dirs[d] = Path(dirs[d])
+        }
     }
 
     function generateLayouts(): Void {
@@ -1443,7 +1448,7 @@ class Templates {
     },
     
     directories: {
-        cache: Path("cache"),
+        cache: "cache",
     },
 
     log: {
@@ -1764,13 +1769,12 @@ require ejs.web
 let server: HttpServer = new HttpServer(".", "web")
 var router = Router(Router.TopRoutes)
 
-server.addListener("readable", function (event, request) {
+server.observe("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
     Web.serve(request, router)
 })
 
 //  See ejsrc to modify the endpoint
-//  Use server.attach() instead of listen if using inside Appweb
 App.log.info("Listen on", App.config.web.endpoint)
 server.listen(App.config.web.endpoint)
 App.eventLoop()

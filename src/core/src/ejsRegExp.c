@@ -7,7 +7,6 @@
 /********************************** Includes **********************************/
 
 #include    "ejs.h"
-
 #include    "pcre.h"
 
 /***************************** Forward Declarations ***************************/
@@ -361,7 +360,6 @@ void ejsConfigureRegExpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_RegExp_test, (EjsProc) regex_test);
     ejsBindMethod(ejs, prototype, ES_RegExp_toString, (EjsProc) ejsRegExpToString);
 }
-
 
 /*
     @copy   default

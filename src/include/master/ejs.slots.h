@@ -333,13 +333,13 @@
 #define ES_BinaryStream_inbuf                                          0
 #define ES_BinaryStream_outbuf                                         1
 #define ES_BinaryStream_nextStream                                     2
-#define ES_BinaryStream_observe                                        3
-#define ES_BinaryStream_async                                          4
-#define ES_BinaryStream_available                                      5
-#define ES_BinaryStream_close                                          6
-#define ES_BinaryStream_encoding                                       7
-#define ES_BinaryStream_endian                                         8
-#define ES_BinaryStream_flush                                          9
+#define ES_BinaryStream_async                                          3
+#define ES_BinaryStream_available                                      4
+#define ES_BinaryStream_close                                          5
+#define ES_BinaryStream_encoding                                       6
+#define ES_BinaryStream_endian                                         7
+#define ES_BinaryStream_flush                                          8
+#define ES_BinaryStream_observe                                        9
 #define ES_BinaryStream_read                                           10
 #define ES_BinaryStream_readBoolean                                    11
 #define ES_BinaryStream_readByte                                       12
@@ -386,21 +386,21 @@
 /*
    Prototype (instance) slots for "ByteArray" type 
  */
-#define ES_ByteArray_observe                                           0
-#define ES_ByteArray_available                                         1
-#define ES_ByteArray_async                                             2
-#define ES_ByteArray_close                                             3
-#define ES_ByteArray_compact                                           4
-#define ES_ByteArray_copyIn                                            5
-#define ES_ByteArray_copyOut                                           6
-#define ES_ByteArray_encoding                                          7
-#define ES_ByteArray_endian                                            8
-#define ES_ByteArray_flush                                             9
-#define ES_ByteArray_growable                                          10
-#define ES_ByteArray_iterator_get                                      11
-#define ES_ByteArray_iterator_getValues                                12
-#define ES_ByteArray_length                                            13
-#define ES_ByteArray_MD5                                               14
+#define ES_ByteArray_available                                         0
+#define ES_ByteArray_async                                             1
+#define ES_ByteArray_close                                             2
+#define ES_ByteArray_compact                                           3
+#define ES_ByteArray_copyIn                                            4
+#define ES_ByteArray_copyOut                                           5
+#define ES_ByteArray_encoding                                          6
+#define ES_ByteArray_endian                                            7
+#define ES_ByteArray_flush                                             8
+#define ES_ByteArray_growable                                          9
+#define ES_ByteArray_iterator_get                                      10
+#define ES_ByteArray_iterator_getValues                                11
+#define ES_ByteArray_length                                            12
+#define ES_ByteArray_MD5                                               13
+#define ES_ByteArray_observe                                           14
 #define ES_ByteArray_read                                              15
 #define ES_ByteArray_readBoolean                                       16
 #define ES_ByteArray_readByte                                          17
@@ -586,12 +586,12 @@
  */
 #define ES_Emitter_endpoints                                           0
 #define ES_Emitter_addOneObserver                                      1
-#define ES_Emitter_observe                                             2
-#define ES_Emitter_clearObservers                                      3
+#define ES_Emitter_clearObservers                                      2
+#define ES_Emitter_delayedFire                                         3
 #define ES_Emitter_hasObservers                                        4
 #define ES_Emitter_getObservers                                        5
 #define ES_Emitter_fire                                                6
-#define ES_Emitter_delayedFire                                         7
+#define ES_Emitter_observe                                             7
 #define ES_Emitter_removeOneObserver                                   8
 #define ES_Emitter_removeObserver                                      9
 #define ES_Emitter_addListener                                         10
@@ -606,7 +606,7 @@
 #define ES_Endpoint_callback                                           0
 #define ES_Endpoint_name                                               1
 #define ES_Endpoint_active                                             2
-#define ES_Endpoint_again                                              3
+#define ES_Endpoint_pending                                            3
 #define ES_Endpoint_NUM_INSTANCE_PROP                                  4
 #define ES_Endpoint_NUM_INHERITED_PROP                                 0
 #define ES_Error_NUM_CLASS_PROP                                        0
@@ -886,16 +886,16 @@
 /*
    Prototype (instance) slots for "File" type 
  */
-#define ES_File_observe                                                0
-#define ES_File_async                                                  1
-#define ES_File_canRead                                                2
-#define ES_File_canWrite                                               3
-#define ES_File_close                                                  4
-#define ES_File_encoding                                               5
-#define ES_File_flush                                                  6
-#define ES_File_iterator_get                                           7
-#define ES_File_iterator_getValues                                     8
-#define ES_File_isOpen                                                 9
+#define ES_File_async                                                  0
+#define ES_File_canRead                                                1
+#define ES_File_canWrite                                               2
+#define ES_File_close                                                  3
+#define ES_File_encoding                                               4
+#define ES_File_flush                                                  5
+#define ES_File_iterator_get                                           6
+#define ES_File_iterator_getValues                                     7
+#define ES_File_isOpen                                                 8
+#define ES_File_observe                                                9
 #define ES_File_open                                                   10
 #define ES_File_options                                                11
 #define ES_File_path                                                   12
@@ -1011,42 +1011,42 @@
 /*
    Prototype (instance) slots for "Http" type 
  */
-#define ES_Http__response                                              0
-#define ES_Http_observe                                                1
-#define ES_Http_async                                                  2
-#define ES_Http_chunkSize                                              3
-#define ES_Http_close                                                  4
-#define ES_Http_connect                                                5
-#define ES_Http_certificate                                            6
-#define ES_Http_contentLength                                          7
-#define ES_Http_contentType                                            8
-#define ES_Http_date                                                   9
-#define ES_Http_del                                                    10
-#define ES_Http_encoding                                               11
-#define ES_Http_expires                                                12
-#define ES_Http_xh                                                     13
-#define ES_Http_fetch                                                  14
-#define ES_Http_finalize                                               15
-#define ES_Http_flush                                                  16
-#define ES_Http_followRedirects                                        17
-#define ES_Http_form                                                   18
-#define ES_Http_get                                                    19
-#define ES_Http_getRequestHeaders                                      20
-#define ES_Http_head                                                   21
-#define ES_Http_header                                                 22
-#define ES_Http_headers                                                23
-#define ES_Http_isSecure                                               24
-#define ES_Http_key                                                    25
-#define ES_Http_lastModified                                           26
-#define ES_Http_method                                                 27
-#define ES_Http_options                                                28
-#define ES_Http_post                                                   29
-#define ES_Http_put                                                    30
-#define ES_Http_read                                                   31
-#define ES_Http_readString                                             32
-#define ES_Http_readLines                                              33
-#define ES_Http_readXml                                                34
-#define ES_Http_removeObserver                                         35
+#define ES_Http_async                                                  0
+#define ES_Http_chunkSize                                              1
+#define ES_Http_close                                                  2
+#define ES_Http_connect                                                3
+#define ES_Http_certificate                                            4
+#define ES_Http_contentLength                                          5
+#define ES_Http_contentType                                            6
+#define ES_Http_date                                                   7
+#define ES_Http_del                                                    8
+#define ES_Http_encoding                                               9
+#define ES_Http_expires                                                10
+#define ES_Http_xh                                                     11
+#define ES_Http_fetch                                                  12
+#define ES_Http_finalize                                               13
+#define ES_Http_flush                                                  14
+#define ES_Http_followRedirects                                        15
+#define ES_Http_form                                                   16
+#define ES_Http_get                                                    17
+#define ES_Http_getRequestHeaders                                      18
+#define ES_Http_head                                                   19
+#define ES_Http_header                                                 20
+#define ES_Http_headers                                                21
+#define ES_Http_isSecure                                               22
+#define ES_Http_key                                                    23
+#define ES_Http_lastModified                                           24
+#define ES_Http_method                                                 25
+#define ES_Http_observe                                                26
+#define ES_Http_options                                                27
+#define ES_Http_post                                                   28
+#define ES_Http_put                                                    29
+#define ES_Http_read                                                   30
+#define ES_Http_readString                                             31
+#define ES_Http_readLines                                              32
+#define ES_Http_readXml                                                33
+#define ES_Http_removeObserver                                         34
+#define ES_Http_reset                                                  35
 #define ES_Http_response                                               36
 #define ES_Http_retries                                                37
 #define ES_Http_setCredentials                                         38
@@ -1162,20 +1162,20 @@
 #define ES_Logger__name                                                3
 #define ES_Logger__outStream                                           4
 #define ES_Logger_redirect                                             5
-#define ES_Logger_observe                                              6
-#define ES_Logger_async                                                7
-#define ES_Logger_close                                                8
-#define ES_Logger_filter                                               9
-#define ES_Logger_flush                                                10
-#define ES_Logger_level                                                11
-#define ES_Logger_match                                                12
-#define ES_Logger_name                                                 13
-#define ES_Logger_outStream                                            14
-#define ES_Logger_debug                                                15
-#define ES_Logger_config                                               16
-#define ES_Logger_error                                                17
-#define ES_Logger_info                                                 18
-#define ES_Logger_activity                                             19
+#define ES_Logger_async                                                6
+#define ES_Logger_close                                                7
+#define ES_Logger_filter                                               8
+#define ES_Logger_flush                                                9
+#define ES_Logger_level                                                10
+#define ES_Logger_match                                                11
+#define ES_Logger_name                                                 12
+#define ES_Logger_outStream                                            13
+#define ES_Logger_debug                                                14
+#define ES_Logger_config                                               15
+#define ES_Logger_error                                                16
+#define ES_Logger_info                                                 17
+#define ES_Logger_activity                                             18
+#define ES_Logger_observe                                              19
 #define ES_Logger_read                                                 20
 #define ES_Logger_removeObserver                                       21
 #define ES_Logger_write                                                22
@@ -1474,12 +1474,12 @@
  */
 #define ES_Promise_endpoints                                           0
 #define ES_Promise_addOneObserver                                      1
-#define ES_Promise_observe                                             2
-#define ES_Promise_clearObservers                                      3
+#define ES_Promise_clearObservers                                      2
+#define ES_Promise_delayedFire                                         3
 #define ES_Promise_hasObservers                                        4
 #define ES_Promise_getObservers                                        5
 #define ES_Promise_fire                                                6
-#define ES_Promise_delayedFire                                         7
+#define ES_Promise_observe                                             7
 #define ES_Promise_removeOneObserver                                   8
 #define ES_Promise_removeObserver                                      9
 #define ES_Promise_addListener                                         10
@@ -1540,15 +1540,15 @@
 /*
    Prototype (instance) slots for "Socket" type 
  */
-#define ES_Socket_observe                                              0
-#define ES_Socket_accept                                               1
-#define ES_Socket_address                                              2
-#define ES_Socket_async                                                3
-#define ES_Socket_close                                                4
-#define ES_Socket_connect                                              5
-#define ES_Socket_encoding                                             6
-#define ES_Socket_flush                                                7
-#define ES_Socket_listen                                               8
+#define ES_Socket_accept                                               0
+#define ES_Socket_address                                              1
+#define ES_Socket_async                                                2
+#define ES_Socket_close                                                3
+#define ES_Socket_connect                                              4
+#define ES_Socket_encoding                                             5
+#define ES_Socket_flush                                                6
+#define ES_Socket_listen                                               7
+#define ES_Socket_observe                                              8
 #define ES_Socket_port                                                 9
 #define ES_Socket_read                                                 10
 #define ES_Socket_remoteAddress                                        11
@@ -1569,10 +1569,10 @@
 /*
    Prototype (instance) slots for "Stream" type 
  */
-#define ES_Stream_observe                                              0
-#define ES_Stream_async                                                1
-#define ES_Stream_close                                                2
-#define ES_Stream_flush                                                3
+#define ES_Stream_async                                                0
+#define ES_Stream_close                                                1
+#define ES_Stream_flush                                                2
+#define ES_Stream_observe                                              3
 #define ES_Stream_read                                                 4
 #define ES_Stream_removeObserver                                       5
 #define ES_Stream_write                                                6
@@ -1681,13 +1681,13 @@
 #define ES_TextStream_inbuf                                            1
 #define ES_TextStream_format                                           2
 #define ES_TextStream_nextStream                                       3
-#define ES_TextStream_observe                                          4
-#define ES_TextStream_async                                            5
-#define ES_TextStream_available                                        6
-#define ES_TextStream_close                                            7
-#define ES_TextStream_encoding                                         8
-#define ES_TextStream_fill                                             9
-#define ES_TextStream_flush                                            10
+#define ES_TextStream_async                                            4
+#define ES_TextStream_available                                        5
+#define ES_TextStream_close                                            6
+#define ES_TextStream_encoding                                         7
+#define ES_TextStream_fill                                             8
+#define ES_TextStream_flush                                            9
+#define ES_TextStream_observe                                          10
 #define ES_TextStream_read                                             11
 #define ES_TextStream_readLine                                         12
 #define ES_TextStream_readLines                                        13
@@ -1902,7 +1902,7 @@
  */
 #define ES_XMLHttp_hp                                                  0
 #define ES_XMLHttp_state                                               1
-#define ES_XMLHttp_response                                            2
+#define ES_XMLHttp_responseBuf                                         2
 #define ES_XMLHttp_onreadystatechange                                  3
 #define ES_XMLHttp_abort                                               4
 #define ES_XMLHttp_http                                                5
@@ -1948,6 +1948,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1299779
+#define _ES_CHECKSUM_ejs   1301568
 
 #endif

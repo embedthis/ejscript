@@ -110,13 +110,6 @@ module ejs {
         }
 
         /** 
-            @hide
-         */
-        function observe(name, observer: Function): Void {
-            throw "observe is not supported"
-        }
-
-        /** 
             Sync/async mode. Not supported for Loggers.
             @hide
          */
@@ -253,6 +246,13 @@ module ejs {
         /** 
             @hide
          */
+        function observe(name, observer: Function): Void {
+            throw "observe is not supported"
+        }
+
+        /** 
+            @hide
+         */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number  {
             throw "Read not supported"
             return null
@@ -266,9 +266,8 @@ module ejs {
         }
 
         /** 
-            Write raw data to the logger stream
+            Write raw data to the logger stream.
             @duplicate Stream.write
-            Write informational data to logger
          */
         function write(...data): Number
             (_outStream) ? _outStream.write(data.join(" ")) : 0

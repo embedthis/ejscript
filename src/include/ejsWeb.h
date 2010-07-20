@@ -39,12 +39,14 @@ typedef struct EjsHttpServer {
     EjsObj          *emitter;                   /**< Event emitter */
     Ejs             *ejs;                       /**< Ejscript interpreter handle */
     HttpServer      *server;                    /**< Http server object */
+    struct MprSsl   *ssl;                       /**< SSL configuration */
     cchar           *dir;                       /**< Directory containing web documents */
     char            *keyFile;                   /**< SSL key file */
     char            *certFile;                  /**< SSL certificate file */
     char            *protocols;                 /**< SSL protocols */
     char            *ciphers;                   /**< SSL ciphers */
     char            *ip;                        /**< Listening address */
+    char            *name;                      /**< Server name */
     int             port;                       /**< Listening port */
     int             async;                      /**< Async mode */
 } EjsHttpServer;
@@ -69,12 +71,14 @@ typedef struct EjsRequest {
     EjsObj          *headers;       /**< Cached headers object */
     EjsObj          *params;        /**< Form variables */
     EjsObj          *env;           /**< Request.env */
+    EjsUri          *fullUri;       /**< Cached full uri */
     Ejs             *ejs;           /**< Ejscript interpreter handle */
     cchar           *dir;           /**< Home directory containing the application */
     cchar           *home;          /**< Relative URI to the home of the application from this request */
     cchar           *absHome;       /**< Absolute URI to the home of the application from this request */
-    int             running;        /**< Request has started */
+    int             dontFinalize;   /**< Don't auto-finalize. Must call finalize(force) */
     int             probedSession;  /**< Determined if a session exists */
+    int             running;        /**< Request has started */
 } EjsRequest;
 
 

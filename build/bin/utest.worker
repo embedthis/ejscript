@@ -157,21 +157,20 @@ public function stopService() {
     if (Path(PIDFILE).exists) {
         pid = Path(PIDFILE).readString()
         Path(PIDFILE).remove()
-        try { kill(pid); } catch (e) { print("CATCH " + e) }
+        try { kill(pid); } catch (e) { }
     }
 }
 
 
-public function startService(script: String, address: String, url: String): Void {
+public function startService(cmd: String, url: String): Void {
     stopService()
     if (!App.getenv("NOSERVER")) {
-        let pid = System.daemon(App.exePath + " " + script + " "  + address)
+        let pid = System.daemon(App.exePath + " " + cmd)
         Path(PIDFILE).write(pid)
     }
-    let url = "http://" + address + url
     for (i in 10) {
         http = new Http
-        try { http.get(url); } catch {}
+        try { http.get(url); } catch (e) { }
         if (http.status == 200) {
             break
         }
@@ -181,5 +180,4 @@ public function startService(script: String, address: String, url: String): Void
     if (http.status != 200) {
         throw "Can't start web server"
     }
-    share("http", address)
 }

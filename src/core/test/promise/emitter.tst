@@ -4,10 +4,11 @@
 
 //  Use base emitter
 var events = []
-promise = Promise().onSuccess(function (event) {
+promise = Promise()
+promise.onSuccess(function osc(event) {
     events += [event]
 })
-promise.observe("success", function(event) {
+promise.observe("success", function obs(event) {
     events += [event]
 })
 promise.emitSuccess()

@@ -57,11 +57,6 @@ module ejs {
         }
 
         /** 
-            @duplicate Stream.observe 
-         */
-        native function observe(name, observer: Function): Void
-
-        /** 
             @duplicate Stream.async 
          */
         native function get async(): Boolean
@@ -132,6 +127,11 @@ module ejs {
                 nextStream.flush(dir)
             }
         }
+
+        /** 
+            @duplicate Stream.observe 
+         */
+        native function observe(name, observer: Function): Void
 
         /** 
             @duplicate Stream.read
@@ -241,11 +241,10 @@ module ejs {
         /** 
             Write data to the stream. Write intelligently encodes various data types onto the stream and will encode 
             data in a portable cross-platform manner according to the setting of the $endian property. If data is an 
-            array, each element of the array will be written. The write call blocks until the underlying stream or 
-            endpoint absorbes all the data. 
+            array, each element of the array will be written. 
             @param items Data items to write. The ByteStream class intelligently encodes various data types according 
             to the current setting of the $endian property. 
-            @returns The total number of elements that were written.
+            @returns The total number of bytes that were written.
             @throws IOError if there is an I/O error.
             @event 
          */

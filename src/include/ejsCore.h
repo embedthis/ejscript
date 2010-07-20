@@ -1613,6 +1613,7 @@ extern EjsDate *ejsCreateDate(Ejs *ejs, MprTime value);
         ejsThrowMemoryError ejsThrowOutOfBoundsError ejsThrowReferenceError ejsThrowResourceError ejsThrowStateError
         ejsThrowStopIteration ejsThrowSyntaxError ejsThrowTypeError
  */
+//  MOB -- perhaps remove and just use EjsObj. Ie. no longer native
 typedef struct EjsError {
     EjsObj          obj;                /**< Extends Object */
 #if UNUSED
@@ -1917,6 +1918,7 @@ typedef struct EjsUri {
  */
 extern EjsUri *ejsCreateUri(Ejs *ejs, cchar *uri);
 extern EjsUri *ejsCreateUriAndFree(Ejs *ejs, char *uri);
+extern EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference);
 
 #if DOXYGEN
     /** 

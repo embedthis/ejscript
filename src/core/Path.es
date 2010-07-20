@@ -469,11 +469,13 @@ module ejs {
          */
         native function get relative(): Path
 
+//  MOB - better not to throw
         /**
             Delete the file associated with the Path object. If this is a directory without contents it will be removed.
+            @return True if the file is sucessfully deleted
             @throws IOError if the file exists and could not be deleted.
          */
-        native function remove(): Void 
+        native function remove(): Boolean 
 
         /**
             Removes a directory and its contents

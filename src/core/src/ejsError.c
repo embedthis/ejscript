@@ -17,35 +17,23 @@
 
 static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
 {
-#if UNUSED
-    EjsObj      *sp;
-    EjsFunction *fun;
+    EjsString   *stack, *msg;
+    cchar       *str;
     char        *buf;
-#endif
 
     switch (type->id) {
     case ES_Boolean:
         return (EjsObj*) ejsCreateBoolean(ejs, 1);
 
     case ES_String:
-#if ES_Error_formatStack
-        return (EjsObj*) ejsRunFunctionBySlot(ejs, (EjsObj*) error, ES_Error_formatStack, 0, NULL);
-#endif
-#if UNUSED
-        fun = ejsGetProperty(ejs, error, ES_Error_formatStack);
-        return (EjsObj*) ejsRunFunction(ejs, fun, obj, 0, NULL);
-        if (fun && ejsIsFunction(fun) && fun->body.proc != obj_toString) {
-            return (EjsObj*) ejsRunFunction(ejs, fun, obj, 0, NULL);
-        } else {
-            if ((buf = mprAsprintf(ejs, -1,
-                    "%s Exception: %s\nStack:\n%s\n", error->obj.type->qname.name, error->message, error->stack)) == NULL) {
-                ejsThrowMemoryError(ejs);
-            }
-            sp = (EjsObj*) ejsCreateString(ejs, buf);
-            mprFree(buf);
-            return sp;
+        stack = (EjsString*) ejsRunFunctionBySlot(ejs, (EjsObj*) error, ES_Error_formatStack, 0, NULL);
+        str = ejsIsString(stack) ? stack->value : "";
+        msg = ejsGetProperty(ejs, error, ES_Error_message);
+        if ((buf = mprAsprintf(ejs, -1,
+                "%s Exception: %s\nStack:\n%s\n", error->obj.type->qname.name, msg->value, str)) == NULL) {
+            ejsThrowMemoryError(ejs);
         }
-#endif
+        return (EjsObj*) ejsCreateStringAndFree(ejs, buf);
         break;
 
     default:

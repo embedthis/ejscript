@@ -561,8 +561,10 @@ EjsObj *ejsParse(Ejs *ejs, cchar *buf, int preferredType)
     case ES_Boolean:
         return (EjsObj*) ejsCreateBoolean(ejs, parseBoolean(ejs, buf));
 
+#if BLD_FEATURE_REGEXP
     case ES_RegExp:
         return (EjsObj*) ejsCreateRegExp(ejs, buf);
+#endif
 
     case ES_String:
         if (strcmp(buf, "null") == 0) {

@@ -2,8 +2,9 @@
     Async tests
  */
 
-const HTTP = (global.session && session["http"]) || ":6700"
-const TIMEOUT = (global.session && session["timeout"]) || 30000
+const HTTP = "http://127.0.0.1:" + ((global.test && test.config.http_port) || 6700)
+const TIMEOUT = 10000
+
 var http: Http = new Http
 http.async = true
 var buf = new ByteArray
@@ -16,7 +17,6 @@ http.observe("readable", function (event, http) {
 http.observe("complete", function (event, http) {
     complete = true
 })
-
 http.get(HTTP + "/index.html")
 http.finalize()
 

@@ -21,59 +21,59 @@ module ejs {
         use default namespace public 
 
         /** 
-            Add a callback listener for the "success" event. Returns this promise object.
-            @param listener Callback function
+            Add a callback observer for the "success" event. Returns this promise object.
+            @param observer Callback function
             @return Returns this promise
          */
-        function onSuccess(listener: Function): Promise {
-            observe("success", listener)
+        function onSuccess(observer: Function): Promise {
+            observe("success", observer)
             return this
         }
 
         /** 
-            Add a cancel callback listener for the "cancel" event. Returns this promise object.
-            @param listener Callback function
+            Add a cancel callback observer for the "cancel" event. Returns this promise object.
+            @param observer Callback function
             @return Returns this promise
          */
-        function onCancel(listener: Function): Promise {
-            observe("cancel", listener)
+        function onCancel(observer: Function): Promise {
+            observe("cancel", observer)
             return this
         }
 
         /** 
-            Add an error callback listener for the "error" event. Returns this promise object.
-            @param listener Callback function
+            Add an error callback observer for the "error" event. Returns this promise object.
+            @param observer Callback function
             @return Returns this promise
          */
-        function onError(listener: Function): Promise {
-            observe("error", listener)
+        function onError(observer: Function): Promise {
+            observe("error", observer)
             return this
         }
 
         /** 
-            Add a progress callback listener for the "progress" event. Returns this promise object.
-            @param listener Callback function
+            Add a progress callback observer for the "progress" event. Returns this promise object.
+            @param observer Callback function
             @return Returns this promise
          */
-        function onProgress(listener: Function): Promise {
-            observe("progress", listener)
+        function onProgress(observer: Function): Promise {
+            observe("progress", observer)
             return this
         }
 
         /** 
-            Add a timeout callback listener for the "timeout" event. Returns this promise object.
-            @param listener Callback function
+            Add a timeout callback observer for the "timeout" event. Returns this promise object.
+            @param observer Callback function
             @return Returns this promise
          */
-        function onTimeout(listener: Function): Promise {
-            observe("timeout", listener)
+        function onTimeout(observer: Function): Promise {
+            observe("timeout", observer)
             return this
         }
 
         /** 
             Issue a "success" event with the given arguments. Once a result for the promise has been emitted via emitSucces,
             emitError or emitCancel, the Promise in completed and will not emit further events.
-            @param args Args to pass to the listener
+            @param args Args to pass to the observer
          */
         function emitSuccess(...args): Void {
             if (complete) {
@@ -92,7 +92,7 @@ module ejs {
         /** 
             Issue an "error" event with the given arguments. Once a result for the promise has been emitted via emitSucces,
             emitError or emitCancel, the Promise in completed and will not emit further events.
-            @param args Args to pass to the listener
+            @param args Args to pass to the observer
          */
         function emitError(...args): Void {
             if (complete) {
@@ -110,15 +110,15 @@ module ejs {
         /** 
             Issue an "cancel" event with the given arguments. Once a result for the promise has been emitted via emitSucces,
             emitError or emitCancel, the Promise in completed and will not emit further events.
-            @param args Args to pass to the listener
+            @param args Args to pass to the observer
          */
         function emitCancel(...args): Void
             issue("cancel", ...args)
 
 //  MOB -- why have cancel and emitCancel
         /** 
-            Cancels the promise and removes "success" and "error" and listeners then issues a cancel event.
-            @param args Args to pass to the "cancel" event listener
+            Cancels the promise and removes "success" and "error" observers then issues a cancel event.
+            @param args Args to pass to the "cancel" event observer
          */
         function cancel(...args): Void {
             complete = true

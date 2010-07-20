@@ -12,4 +12,4 @@ TARGET			:= $(BLD_MOD_DIR)/$(JEM)$(BLD_LIB)
 compileExtra:	$(TARGET)
 
 $(TARGET): $(OBJECTS) $(call lib, mpr) $(call vlib, ejs) $(call mod, ejs, ejs.web)
-	bld --library $(TARGET) --libs "ejs http $(BLD_MPR_LIBS)" $(OBJECTS)
+	bld --library $(TARGET) --libs "ejs http $(BLD_SSL_LIBS) $(BLD_MPR_LIBS)" $(OBJECTS)

@@ -2,12 +2,7 @@
     Test initialization
  */
 
-const PORT  = test.config["http_port"]
-const HTTP  = "127.0.0.1:" + PORT
-const HTTPS  = "127.0.0.1:" + test.config["ssl_port"]
+const HTTP = "http://127.0.0.1:" + ((global.test && test.config.http_port) || 6700)
 
-startService("server.es", HTTP, "/index.html")
+startService("server.es  " + HTTP, HTTP + "/index.html")
 
-share("http", HTTP)
-share("port", PORT)
-share("https", HTTPS)
