@@ -1301,7 +1301,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             ejs->spreadArgs = 0;
             slotNum = ejsLookupScope(ejs, &qname, &lookup);
             if (slotNum < 0) {
-                ejsThrowReferenceError(ejs, "Can't find method %s", qname.name);
+                ejsThrowReferenceError(ejs, "Can't find function %s", qname.name);
                 BREAK;
             }
             fun = ejsGetProperty(ejs, lookup.obj, slotNum);

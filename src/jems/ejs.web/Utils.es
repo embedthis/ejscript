@@ -5,11 +5,12 @@
 module ejs.web {
 
     /** @hide */
-    function errorBody(title: String, msg: String): String
-        '<!DOCTYPE html>\r\n<html>\r\n<head><title>' + title + '</title></head>\r\n' + 
+    function errorBody(title: String, msg: String): String {
+        return '<!DOCTYPE html>\r\n<html>\r\n<head><title>' + title + '</title></head>\r\n' + 
            '<body>\r\n<h1>' + msg + '</h1>\r\n' +
            '    <p>' + msg + '</p>\r\n' +
            '</body>\r\n</html>\r\n'
+    }
 
     /**
         Return the parsed cookie headers. Cookies are used to specify the session state. If sessions are being used, 
@@ -76,6 +77,7 @@ UNUSED && KEEP
         @stability prototype
      */
     native function escapeHtml(str: String): String
+
 /*
     UNUSED
     function escapeHtml(s: String): String

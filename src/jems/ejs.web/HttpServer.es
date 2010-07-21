@@ -11,10 +11,10 @@ module ejs.web {
 
         /** 
             Create a HttpServer object. The server is created in async mode by default.
-            @param serverRoot Base directory for the server configuration. If set to null and the HttpServer is hosted,
-                the serverRoot will be defined by the web server.
             @param documentRoot Directory containing web documents to serve. If set to null and the HttpServer is hosted,
                 the documentRoot will be defined by the web server.
+            @param serverRoot Base directory for the server configuration. If set to null and the HttpServer is hosted,
+                the serverRoot will be defined by the web server.
             @spec ejs
             @stability prototype
             @example: This is a fully async server:
@@ -37,7 +37,7 @@ module ejs.web {
             }
             server.listen("127.0.0.1:7777")
          */
-        native function HttpServer(serverRoot: Path = ".", documentRoot: Path = ".")
+        native function HttpServer(documentRoot: Path = ".", serverRoot: Path = ".")
 
         /** 
             Accept a for client connection. This creates a request object in response to an incoming client connection

@@ -15,24 +15,19 @@ module ejs.web {
         /*
             Master Route Table. Routes are processed from first to last. Inner routes are tested before their outer parent.
          */
-//MOB - should not need internal here
-		internal var routes: Array = []
+		var routes: Array = []
 		
-        private function isDir(request) request.filename.isDir
+        public static function isDir(request) request.filename.isDir
 
         /**
             Simple top level route table for "es" and "ejs" scripts. Matches simply by script extension.
          */
         public static var TopRoutes = [
-          { name: "es",      type: "es",     match: /\.es$/   },
-          { name: "ejs",     type: "ejs",    match: /\.ejs$/  },
-          { name: "dir",     type: "dir",    match: isDir(request) },
-          { name: "default", type: "static", provider: Static},
+          { name: "es",      builder: ScriptBuilder,    match: /\.es$/ },
+          { name: "ejs",     builder: TemplateBuilder,  match: /\.ejs$/, module: "ejs.web.template" },
+          { name: "dir",     builder: DirBuilder,       match: isDir },
+          { name: "default", builder: StaticBuilder },
         ]
-
-/*
-    MOB - Add App() to run to serve the route
-*/
 
         /** 
             Restful routes. Supports CRUD actions: index, show, create, update, destroy. The restful routes defined are:
@@ -48,20 +43,36 @@ module ejs.web {
             </pre>
         */
         public static var RestfulRoutes = [
-          { name: "es",      type: "es",                    match: /^\/web\/.*\.es$/   },
-          { name: "ejs",     type: "ejs",                   match: /^\/web\/.*\.ejs$/  },
-          { name: "web",     type: "static",                match: /^\/web\//  },
-          { name: "home",    type: "static",                match: /^\/$/, redirect: "/web/index.ejs" },
-          { name: "ico",     type: "static",                match: /^\/favicon.ico$/, redirect: "/web/favicon.ico" },
-          { name: "dir",     type: "dir",                   match: isDir(request) },
-          { name: "new",     type: "mvc", method: "GET",    match: "/:controller/new",       params: { action: "new" } },
-          { name: "edit",    type: "mvc", method: "GET",    match: "/:controller/:id/edit",  params: { action: "edit" } },
-          { name: "show",    type: "mvc", method: "GET",    match: "/:controller/:id",       params: { action: "show" } },
-          { name: "update",  type: "mvc", method: "PUT",    match: "/:controller/:id",       params: { action: "update" } },
-          { name: "delete",  type: "mvc", method: "DELETE", match: "/:controller/:id",       params: { action: "delete" } },
-          { name: "default", type: "mvc",                   match: "/:controller/:action",   params: {} },
-          { name: "create",  type: "mvc", method: "POST",   match: "/:controller",           params: { action: "create" } },
-          { name: "index",   type: "mvc", method: "GET",    match: "/:controller",           params: { action: "index" } },
+  { name: "es",      builder: ScriptBuilder,                match: /^\/web\/.*\.es$/   },
+  { name: "ejs",     builder: TemplateBuilder,              match: /^\/web\/.*\.ejs$/,      module: "ejs.web.template" },
+  { name: "web",     builder: StaticBuilder,                match: /^\/web\//  },
+  { name: "home",    builder: StaticBuilder,                match: /^\/$/,                  redirect: "/web/index.ejs" },
+  { name: "ico",     builder: StaticBuilder,                match: /^\/favicon.ico$/,       redirect: "/web/favicon.ico" },
+  { name: "dir",     builder: DirBuilder,                   match: isDir },
+  { name: "new",     builder: MvcBuilder, method: "GET",    match: "/:controller/new",      params: { action: "new" } },
+  { name: "edit",    builder: MvcBuilder, method: "GET",    match: "/:controller/:id/edit", params: { action: "edit" } },
+  { name: "show",    builder: MvcBuilder, method: "GET",    match: "/:controller/:id",      params: { action: "show" } },
+  { name: "update",  builder: MvcBuilder, method: "PUT",    match: "/:controller/:id",      params: { action: "update" } },
+  { name: "delete",  builder: MvcBuilder, method: "DELETE", match: "/:controller/:id",      params: { action: "delete" } },
+  { name: "default", builder: MvcBuilder,                   match: "/:controller/:action",  params: {} },
+  { name: "create",  builder: MvcBuilder, method: "POST",   match: "/:controller",          params: { action: "create" } },
+  { name: "index",   builder: MvcBuilder, method: "GET",    match: "/:controller",          params: { action: "index" } },
+        ]
+
+        public static var LegacyRoutes = [
+  { name: "es",      builder: ScriptBuilder,                match: /^\/web\/.*\.es$/   },
+  { name: "ejs",     builder: TemplateBuilder,              match: /^\/web\/.*\.ejs$/,      module: "ejs.web.template"  },
+  { name: "web",     builder: StaticBuilder,                match: /^\/web\//  },
+  { name: "home",    builder: StaticBuilder,                match: /^\/$/,                  redirect: "/web/index.ejs" },
+  { name: "ico",     builder: StaticBuilder,                match: /^\/favicon.ico$/,       redirect: "/web/favicon.ico" },
+  { name: "list",    builder: MvcBuilder, method: "GET",    match: "/:controller/list",     params: { action: "list" } },
+  { name: "create",  builder: MvcBuilder, method: "POST",   match: "/:controller/create",   params: { action: "create" } },
+  { name: "edit",    builder: MvcBuilder, method: "GET",    match: "/:controller/edit",     params: { action: "edit" } },
+  { name: "update",  builder: MvcBuilder, method: "POST",   match: "/:controller/update",   params: { action: "update" } },
+  { name: "destroy", builder: MvcBuilder, method: "POST",   match: "/:controller/destroy",  params: { action: "destroy" } },
+  { name: "default", builder: MvcBuilder,                   match: "/:controller/:action",  params: {} },
+  { name: "index",   builder: MvcBuilder, method: "GET",    match: "/:controller",          params: { action: "index" } },
+  { name: "static",  builder: StaticBuilder, },
         ]
 
         function Router(set: Array = RestfulRoutes) {
@@ -119,6 +130,9 @@ module ejs.web {
                     route.splitter = splitter.trim(":")
                     route.tokens = tokens
                 }
+                if (route.middleware) {
+                    route.middleware = route.middleware.reverse()
+                }
                 route = new Route(route, this)
                 if (route.subroute) {
                     /* Must process nested routes first before appending the parent route to the routes table */
@@ -132,12 +146,12 @@ module ejs.web {
 
         /** 
             Route a request. The request is matched against the user-configured route table. If no route table is defined,
-            the restfulRoutes are used. 
+            the restfulRoutes are used. The call returns the web application to execute.
             @param request The current request object
+            @return The web application function of the signature: 
+                function app(request: Request): Object
          */
-        public function route(request): Void {
-            //  MOB -- where should this be really?
-            request.filename = request.dir.join(request.pathInfo.trimStart('/'))
+        public function route(request): Function {
             let params = request.params
             let pathInfo = request.pathInfo
             let log = request.log
@@ -193,33 +207,61 @@ module ejs.web {
                     }
                 }
                 if (r.rewrite && !r.rewrite(request)) {
-                    log.debug(5, "Request rewritten as " + request.pathInfo)
-                    route(request)
-                    return
+                    log.debug(5, "Request rewritten as \"" + request.pathInfo + "\" (reroute)")
+                    return route(request)
                 }
                 if (r.redirect) {
                     request.pathInfo = r.redirect;
-                    log.debug(5, "Route redirected to " + request.pathInfo)
-                    this.route(request)
-                    return
-                }
-                if (log.level >= 5) {
-                    log.debug(5, "Matched route " + r.name)
-                    log.debug(5, "  Route params " + serialize(params))
+                    log.debug(5, "Route redirected to \"" + request.pathInfo + "\" (reroute)")
+                    return route(request)
                 }
                 request.route = r
                 let location = r.location
                 if (location && location.prefix && location.dir) {
                     request.setLocation(location.prefix, location.dir)
-                    //  MOB -- think where this should best be?
-                    request.filename = request.dir.join(request.pathInfo.trimStart('/'))
+                    log.debug(4, "Set location prefix \"" + location.prefix + "\" dir \"" + location.dir + "\" (reroute)")
+                    return route(request)
                 }
-                return
+                if (r.module && !r.initialized) {
+                    global.load(r.module + ".mod")
+                    r.initialized = true
+                }
+                if (log.level >= 4) {
+                    log.debug(4, "Matched route \"" + r.name + "\"")
+                    log.debug(5, "  Route params " + serialize(params, {pretty: true}))
+                    log.debug(6, "  Route " + serialize(r, {pretty: true}))
+                    log.debug(6, "  REQUEST\n" + serialize(request, {pretty: true}))
+                }
+                let app = r.builder(request)
+                if (app == null) {
+                    return function(request) {}
+                }
+                return app
             }
             throw "No route for " + pathInfo
         }
     }
 
+    /**
+        Builder function to load JSGI scripts.
+        @return JSGI application function 
+      */
+    function ScriptBuilder(request: Request): Function {
+        if (!request.filename.exists) {
+            request.error(Http.NotFound, "Cannot find " + request.pathInfo) 
+            return null
+        }
+        return Loader.require(request.filename, request.config).app
+    }
+
+    function TemplateBuilder(request: Request): Function {
+        let route = request.route
+        if (route.module && !route.initialized) {
+            global.load(route.module + ".mod")
+            route.initialized = true
+        }
+        return "ejs.web"::TemplateApp
+    }
 
     /** 
         Route class. A Route describes a mapping from a set of resources to a URI. The Router uses tables of 
@@ -237,8 +279,14 @@ module ejs.web {
       
         Routes are tested in-order from first to last. Inner routes are tested before their outer parent.
      */
-    dynamic class Route {
+    enumerable dynamic class Route {
         use default namespace public
+
+        /**
+            Builder function to create the Provider function that represents the web application for requests matching 
+            this route.
+         */
+        var builder: Function
 
         /**
             Directory for the application serving the route. This directory path will be assigned to Request.dir.
@@ -267,6 +315,17 @@ module ejs.web {
         var method: String
 
         /**
+            Middleware to run on requests for this route. Middleware wraps the application function filtering and 
+            modifying its inputs and outputs.
+         */
+        var middleware: Array
+
+        /**
+            Module containing code to serve the route.  
+         */
+        var module: String
+
+        /**
             Optional route name.
          */
         var name: String
@@ -278,13 +337,18 @@ module ejs.web {
         var params: Object
 
         /**
+            Provider function that represents the web application for requests matching this route
+         */
+        var provider: Function
+
+        /**
             Rewrite function. If present, this function is invoked with the Request as an argument. It may rewrite
             the request scriptName, pathInfo and other Request properties.
          */
         var rewrite: Function
 
-        /** @hide 
-            MOB used by Web.load to re-route directory redirections
+        /** 
+          Router instance reference
          */
         var router: Router
 
@@ -310,7 +374,7 @@ module ejs.web {
          */
         var urimaker: Function
 
-        internal var matcher: RegExp
+        internal var matcher: Object
         internal var splitter: String
         internal var tokens: Array
 

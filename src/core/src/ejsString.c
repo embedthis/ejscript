@@ -1597,7 +1597,7 @@ static EjsObj *trim(Ejs *ejs, EjsString *sp, cchar *pattern, int where)
         }
         mark = sp->value;
         if (where & TRIM_START) {
-            for (; &mark[patternLength] < &sp->value[sp->length]; mark += patternLength) {
+            for (; &mark[patternLength] <= &sp->value[sp->length]; mark += patternLength) {
                 index = indexof(mark, patternLength, pattern, patternLength, 1);
                 if (index != 0) {
                     break;

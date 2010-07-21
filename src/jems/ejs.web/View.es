@@ -712,8 +712,7 @@ module ejs.web {
         private function getConnector(kind: String, options: Object) {
             let vc = request.config.web.view
             //  TODO OPT
-            let connectorName = (options && options["connector"]) || vc.connectors[kind] ||
-                vc.connectors["rest"] || "html"
+            let connectorName = (options && options["connector"]) || vc.connectors[kind] || vc.connectors["rest"] || "html"
             vc.connectors[kind] = connectorName
             let name = (connectorName + "Connector").toPascal()
             try {

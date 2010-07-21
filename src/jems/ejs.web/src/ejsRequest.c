@@ -242,6 +242,7 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     EjsObj          *value;
     EjsName         n;
     cchar           *scheme;
+    char            *filename;
 
     if (req->conn == 0 || req->conn->receiver == 0) {
         return (EjsObj*) ejs->nullValue;
@@ -284,13 +285,22 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return createCookies(ejs, req);
 
     case ES_ejs_web_Request_dir:
-        return (EjsObj*) ejsCreatePath(ejs, req->dir);
+        return (EjsObj*) req->dir;
 
     case ES_ejs_web_Request_dontFinalize:
         return (EjsObj*) ejsCreateBoolean(ejs, req->dontFinalize);
 
     case ES_ejs_web_Request_env:
         return createEnv(ejs, req);
+
+#if ES_ejs_web_Request_filename
+    case ES_ejs_web_Request_filename:
+        if (req->filename == 0) {
+            filename = mprJoinPath(ejs, req->dir->path, &rec->pathInfo[1]);
+            req->filename = ejsCreatePathAndFree(ejs, filename);
+        }
+        return (EjsObj*) req->filename;
+#endif
 
     case ES_ejs_web_Request_files:
         return createFiles(ejs, req);
@@ -363,11 +373,11 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return (EjsObj*) ejsCreateNumber(ejs, conn->requestTimeout);
 
     case ES_ejs_web_Request_uri:
-        if (req->fullUri == 0) {
+        if (req->uri == 0) {
             scheme = (conn->secure) ? "https" : "http";
-            req->fullUri = ejsCreateFullUri(ejs, scheme, getHostName(conn, req), req->server->port, rec->uri, NULL, NULL);
+            req->uri = ejsCreateFullUri(ejs, scheme, getHostName(conn, req), req->server->port, rec->uri, NULL, NULL);
         }
-        return (EjsObj*) req->fullUri;
+        return (EjsObj*) req->uri;
 
     case ES_ejs_web_Request_userAgent:
         return createString(ejs, rec->userAgent);
@@ -439,11 +449,16 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_dir:
-        req->dir = mprStrdup(req, getString(ejs, value));
+        req->dir = (EjsPath*) value;
+        req->filename = 0;
         break;
 
     case ES_ejs_web_Request_dontFinalize:
         req->dontFinalize = ejsGetInt(ejs, value);
+        break;
+
+    case ES_ejs_web_Request_filename:
+        req->filename = (EjsPath*) value;
         break;
 
     case ES_ejs_web_Request_home:
@@ -457,6 +472,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     case ES_ejs_web_Request_pathInfo:
         mprFree(rec->pathInfo);
         rec->pathInfo = mprStrdup(rec, getString(ejs, value));
+        req->filename = 0;
         break;
 
     case ES_ejs_web_Request_scriptName:
@@ -795,11 +811,9 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     conn = req->conn;
     newReq->conn = conn;
     newReq->ejs = req->ejs;
-#if UNUSED
-    newReq->pathInfo = conn->receiver->pathInfo;
-    newReq->scriptName = conn->receiver->scriptName;
-#endif
-    newReq->dir = mprStrdup(newReq, req->dir);
+    newReq->dir = ejsCreatePath(ejs, req->dir->path);
+
+    //  MOB -- should these two be EjsPath
     newReq->home = mprStrdup(newReq, req->home);
     newReq->absHome = mprStrdup(newReq, req->absHome);
 
@@ -826,9 +840,9 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     req->server = server;
     rec = conn->receiver;
     if (mprIsRelPath(req, dir)) {
-        req->dir = mprStrdup(req, dir);
+        req->dir = ejsCreatePath(ejs, dir);
     } else {
-        req->dir = mprGetRelPath(req, dir);
+        req->dir = ejsCreatePathAndFree(ejs, mprGetRelPath(req, dir));
     }
     req->home = makeRelativeHome(ejs, req);
     scheme = conn->secure ? "https" : "http";
@@ -848,11 +862,17 @@ static void markRequest(Ejs *ejs, EjsRequest *req)
     if (req->cookies) {
         ejsMark(ejs, (EjsObj*) req->cookies);
     }
+    if (req->dir) {
+        ejsMark(ejs, (EjsObj*) req->dir);
+    }
     if (req->emitter) {
         ejsMark(ejs, (EjsObj*) req->emitter);
     }
     if (req->env) {
         ejsMark(ejs, (EjsObj*) req->env);
+    }
+    if (req->filename) {
+        ejsMark(ejs, (EjsObj*) req->filename);
     }
     if (req->files) {
         ejsMark(ejs, (EjsObj*) req->files);
@@ -869,8 +889,8 @@ static void markRequest(Ejs *ejs, EjsRequest *req)
     if (req->session) {
         ejsMark(ejs, (EjsObj*) req->session);
     }
-    if (req->fullUri) {
-        ejsMark(ejs, (EjsObj*) req->fullUri);
+    if (req->uri) {
+        ejsMark(ejs, (EjsObj*) req->uri);
     }
 }
 

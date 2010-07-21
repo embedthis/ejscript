@@ -215,14 +215,18 @@ static void orderModule(EcCompiler *cp, MprList *list, EjsModule *mp)
     EjsModule   *dp;
     int         next;
     
+    mp->visited = 1;
     for (next = 0; (dp = mprGetNextItem(mp->dependencies, &next)) != 0; ) {
         if (mprLookupItem(list, dp) < 0 && mprLookupItem(cp->modules, dp) >= 0) {
-            orderModule(cp, list, dp);
+            if (!dp->visited) {
+                orderModule(cp, list, dp);
+            }
         }
     }
     if (mprLookupItem(list, mp) < 0) {
         mprAddItem(list, mp);
     }
+    mp->visited = 0;
 }
 
 

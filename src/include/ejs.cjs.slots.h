@@ -21,7 +21,7 @@
 /*
     Local slots for global methods 
  */
-#define ES_ejs_cjs_require_id                                          0
+#define ES_require_id                                                  0
 
 
 /*
@@ -32,15 +32,14 @@
 #define ES_Loader_signatures                                           2
 #define ES_Loader_timestamps                                           3
 #define ES_Loader_defaultExtensions                                    4
-#define ES_Loader_config                                               5
-#define ES_Loader_init                                                 6
-#define ES_Loader_require                                              7
-#define ES_Loader_load                                                 8
-#define ES_Loader_cached                                               9
-#define ES_Loader_wrap                                                 10
-#define ES_Loader_locate                                               11
-#define ES_Loader_setConfig                                            12
-#define ES_Loader_NUM_CLASS_PROP                                       13
+#define ES_Loader_init                                                 5
+#define ES_Loader_require                                              6
+#define ES_Loader_load                                                 7
+#define ES_Loader_cached                                               8
+#define ES_Loader_wrap                                                 9
+#define ES_Loader_locate                                               10
+#define ES_Loader_setConfig                                            11
+#define ES_Loader_NUM_CLASS_PROP                                       12
 
 /*
    Prototype (instance) slots for "Loader" type 
@@ -53,15 +52,19 @@
  */
 #define ES_Loader_init_mainId                                          0
 #define ES_Loader_require_id                                           0
+#define ES_Loader_require_config                                       1
 #define ES_Loader_load_id                                              0
 #define ES_Loader_load_path                                            1
-#define ES_Loader_load_codeReader                                      2
-#define ES_Loader_cached_path                                          0
-#define ES_Loader_cached_cachedir                                      1
+#define ES_Loader_load_config                                          2
+#define ES_Loader_load_codeReader                                      3
+#define ES_Loader_cached_id                                            0
+#define ES_Loader_cached_config                                        1
+#define ES_Loader_cached_cachedir                                      2
 #define ES_Loader_wrap_code                                            0
 #define ES_Loader_locate_id                                            0
+#define ES_Loader_locate_config                                        1
 #define ES_Loader_setConfig_newConfig                                  0
 
-#define _ES_CHECKSUM_ejs_cjs   25373
+#define _ES_CHECKSUM_ejs_cjs   27042
 
 #endif

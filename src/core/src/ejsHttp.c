@@ -1262,9 +1262,6 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_contentType, (EjsProc) http_contentType);
     ejsBindMethod(ejs, prototype, ES_Http_date, (EjsProc) http_date);
     ejsBindMethod(ejs, prototype, ES_Http_del, (EjsProc) http_del);
-#if UNUSED
-    ejsBindMethod(ejs, prototype, ES_Http_expires, (EjsProc) http_expires);
-#endif
     ejsBindMethod(ejs, prototype, ES_Http_finalize, (EjsProc) http_finalize);
     ejsBindMethod(ejs, prototype, ES_Http_flush, (EjsProc) http_flush);
     ejsBindAccess(ejs, prototype, ES_Http_followRedirects, (EjsProc) http_followRedirects, 
@@ -1275,10 +1272,8 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_head, (EjsProc) http_head);
     ejsBindMethod(ejs, prototype, ES_Http_header, (EjsProc) http_header);
     ejsBindMethod(ejs, prototype, ES_Http_headers, (EjsProc) http_headers);
-#if ES_Http_inactivityTimeout
     ejsBindAccess(ejs, prototype, ES_Http_inactivityTimeout, (EjsProc) http_inactivityTimeout, 
             (EjsProc) http_set_inactivityTimeout);
-#endif
     ejsBindMethod(ejs, prototype, ES_Http_isSecure, (EjsProc) http_isSecure);
     ejsBindAccess(ejs, prototype, ES_Http_key, (EjsProc) http_key, (EjsProc) http_set_key);
     ejsBindMethod(ejs, prototype, ES_Http_lastModified, (EjsProc) http_lastModified);

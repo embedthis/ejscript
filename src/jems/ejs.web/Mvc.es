@@ -7,11 +7,14 @@ module ejs.web {
     require ejs.cjs
 
     /** 
-        The Mvc manages the loading of MVC applications
+        The Mvc class manages the loading and initialization of MVC web applications
         @stability prototype
         @spec ejs
      */
     public class Mvc {
+
+        static var apps = {}
+
         /*  
             Default configuration for MVC apps. This layers over App.defaultConfig and ejs.web::defaultConfig.
          */
@@ -48,65 +51,36 @@ module ejs.web {
             },
         }
 
-        /* References into the config state */
-        private static var mvc: Object
-        private static var dirs: Object
-        private static var ext: Object
         private static var loaded: Object = {}
-
-        //  MOB -- where should this come from?
         private static const EJSRC = "ejsrc"
 
-        /** 
-            Load an MVC application. This is typically called by the Router to load an application after routing
-            the request to determine the appropriate controller
-            @param request Request object
-            @returns The exports object
+        /*
+            Load the app/ejsrc and defaultConfig
+            @return The configuration object
          */
-        public static function load(request: Request): Object {
-            request.dir = request.server.serverRoot
-            let dir = request.dir
-            //  MOB -- should be in filenames in config
-            let path = dir.join(EJSRC)
+        private function loadConfig(request: Request): Object {
             let config = request.config
+            let path = request.dir.join(EJSRC)
             if (path.exists) {
-                let appConfig = deserialize(path.readString())
-                /* Clone to get a request private copy of the configuration */
-                /* MOB - why do this? */
+                let appConfig = path.readJSON()
+                /* Clone to get a request private copy of the configuration before blending "app/ejsrc" */
                 config = request.config = request.config.clone()
                 blend(config, appConfig, true)
-/* MOB - future create a new logger
-                if (app.config.log) {
-                    request.logger = new Logger("request", App.log, log.level)
-                    if (log.match) {
-                        App.log.match = log.match
-                    }
-                }
- */
             }
             blend(config, defaultConfig, false)
-            mvc = config.mvc
-            dirs = config.directories
-            ext = config.extensions
-            //  MOB temp
-            App.log.level = config.log.level
-
-            let exports
-            if (mvc.app) {
-    //  MOB -- what is this?
-                let app = dir.join(mvc.app)
-                if (app.exists) {
-                    exports = Loader.load(app, app)
+/* FUTURE
+            if (config.log) {
+                logger = new Logger("request", App.log, config.log.level)
+            }
+            if (config.mvc.app) {
+                // Load custom MVC app script and use it 
+                let script = request.dir.join(config.mvc.app)
+                if (script.exists) {
+                    startup = Loader.load(script, script, config).app
                 }
             }
-            return exports || { 
-                app: function (request: Request): Object {
-                    //  BUG - can't use Mvc.init as "this" has been modified from Mvc to request
-                    global["Mvc"].init(request)
-                    let controller = Controller.create(request)
-                    return controller.run(request)
-                }
-            }
+*/
+            return config
         }
 
         /** 
@@ -114,13 +88,16 @@ module ejs.web {
             the request to determine the appropriate controller
             @param request Request object
          */
-        public static function init(request: Request): Void {
-            let config = request.config
+        public function init(request: Request): Void {
+            let config = loadConfig(request)
+            let ext = config.extensions
+            let dirs = config.directories
             let dir = request.dir
 
-            //  MOB -- good to have a single reload-app file 
-            /* Load App */
-            let appmod = dir.join(dirs.cache, mvc.appmod)
+            request.log.debug(4, "MVC init at \"" + dir + "\"")
+
+            /* Load App. Touch ejsrc triggers a complete reload */
+            let appmod = dir.join(dirs.cache, config.mvc.appmod)
             let files, deps
             if (config.cache.reload) {
                 deps = [dir.join(EJSRC)]
@@ -141,6 +118,9 @@ module ejs.web {
             } else {
                 loadComponent(request, mod)
             }
+/* MOB -- implement
+            request.logger = logger
+*/
         }
 
         /** 
@@ -151,7 +131,7 @@ module ejs.web {
             @param files Files to compile into the module
             @param deps Extra file dependencies
          */
-        public static function loadComponent(request: Request, mod: Path, files: Array? = null, deps: Array? = null) {
+        public function loadComponent(request: Request, mod: Path, files: Array? = null, deps: Array? = null) {
             let rebuild
             if (mod.exists) {
                 rebuild = false
@@ -187,6 +167,23 @@ module ejs.web {
                 request.log.debug(4, "Use existing component: " + mod)
             }
         }
+    }
+
+    /**
+        MVC request handler.  
+        @param request Request object
+        @return A response hash (empty). MVC apps use Request methods directly to set status, headers and response body.
+     */
+    function MvcApp(request: Request): Object {
+        let app = MvcBuilder(request)
+        return app(request)
+    }
+
+    function MvcBuilder(request: Request): Function {
+        //  MOB OPT - Currently Mvc has no state so really don't need an Mvc instance
+        let mvc: Mvc = Mvc.apps[request.dir] || (Mvc.apps[request.dir] = new Mvc(request))
+        mvc.init(request)
+        return Controller.create(request).run
     }
 }
 

@@ -2,6 +2,8 @@
     TemplateParser.es -- Ejscript web templating parser. 
  */
 
+//  MOB -- make ejs.template
+
 module ejs.web.template  {
 
     /*

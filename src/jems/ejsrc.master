@@ -62,7 +62,7 @@
             "": 86400,
         },
         endpoint: "127.0.0.1:4000",             // ejsmvc only
-        views: {
+        view: {
             connectors: {
                 table: "html",
                 chart: "google",

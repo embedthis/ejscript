@@ -4,5 +4,5 @@
 
 const HTTP = "http://127.0.0.1:" + ((global.test && test.config.http_port) || 6700)
 
-startService("server.es  " + HTTP, HTTP + "/index.html")
+startService("start.es  " + HTTP, HTTP + "/index.html")
 

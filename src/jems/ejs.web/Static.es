@@ -7,79 +7,69 @@ module ejs.web {
     /** 
         Static content handler. This supports DELETE, GET, POST and PUT methods. It handles directory redirection
         and will use X-SendFile for efficient transmission of static content.
+        @param request Request objects
+        @returns A response hash object
         @spec ejs
         @stability prototype
      */
-    class Static {
-        use default namespace public
-
-//  MOB -- push into ejs.cjs
-        /** 
-            Serve static content. This creates a "loaded" exports app ready to serve the content.
-            @param request Request object
-            @returns An exports object with an "app" property representing the application.
-         */
-        static function load(request: Request): Object {
-            let path = request.dir.join(request.pathInfo.trimStart('/'))
-            let status = Http.Ok, headers, body
-            if (!path.exists && request.method != "PUT") {
-                status = Http.NotFound, 
-                body = errorBody("Not Found", "Can't locate " + escapeHtml(request.pathInfo))
-            } else {
-                headers = {
-                    "Content-Type": Uri(request.uri).mimeType,
+breakpoint()
+    function StaticApp(request: Request): Object {
+        let filename = request.filename
+        let status = Http.Ok, headers, body
+        if (!filename.exists && request.method != "PUT") {
+            status = Http.NotFound, 
+breakpoint()
+            body = errorBody("Not Found", "Cannot find " + escapeHtml(request.pathInfo))
+        } else {
+            headers = {
+                "Content-Type": Uri(request.uri).mimeType,
+            }
+            let expires = request.config.web.expires
+            if (expires) {
+                let lifetime = expires[request.extension] || expires[""]
+                if (lifetime) {
+                    let when = new Date
+                    when.time += (lifetime * 1000)
+                    headers["Expires"] = when.toUTCString()
                 }
-                let expires = request.config.web.expires
-                if (expires) {
-                    let lifetime = expires[request.extension] || expires[""]
-                    if (lifetime) {
-                        let when = new Date
-                        when.time += (lifetime * 1000)
-                        headers["Expires"] = when.toUTCString()
-                    }
-                }
-                if (request.method == "GET" || request.method == "POST") {
-                    headers["Content-Length"] = path.size
-                    // headers["X-Sendfile"] = path
-                    body = path
-                    // body = File(path, "r")
+            }
+            if (request.method == "GET" || request.method == "POST") {
+                headers["Content-Length"] = filename.size
+                body = filename
+                // headers["X-Sendfile"] = filename
+                // body = File(filename, "r")
 
-                } else if (request.method == "DELETE") {
-                    status = Http.NoContent
-                    //  MOB -- remove try when not needed
-                    try {
-                        if (!path.remove()) {
-                            status = Http.NotFound
-                        }
-                    } catch {
+            } else if (request.method == "DELETE") {
+                status = Http.NoContent
+                //  MOB -- remove try when not needed
+                try {
+                    if (!filename.remove()) {
                         status = Http.NotFound
                     }
-
-                } else if (request.method == "PUT") {
-                    return { app: put }
-
-                } else if (request.method == "HEAD") {
-                    /* No need to calculate the content */
-                    headers["Content-Length"] = path.size
-
-                } else {
-                    status = Http.BadMethod
-                    body = errorBody("Unsupported method ", "Method " + escapeHtml(request.method) + " is not supported")
+                } catch {
+                    status = Http.NotFound
                 }
-            }
-            let results = {
-                status: status,
-                headers: headers,
-                body: body
-            }
-            return {
-                app: function (request) {
-                     return results
-                }
+
+            } else if (request.method == "PUT") {
+                return { body: put }
+
+            } else if (request.method == "HEAD") {
+                /* No need to calculate the content */
+                headers["Content-Length"] = filename.size
+
+            } else {
+                status = Http.BadMethod
+                body = errorBody("Unsupported method ", "Method " + escapeHtml(request.method) + " is not supported")
             }
         }
+        return {
+            status: status,
+            headers: headers,
+            body: body
+        }
 
-        private static function put(request: Request) {
+//  MOB -- complete
+        function put(request: Request) {
             //  MOB -- how to handle ranges?
             let path = request.dir.join(request.pathInfo.trimStart('/'))
             request.status = path.exists ? Http.NoContent : Http.Created
@@ -104,6 +94,11 @@ module ejs.web {
                 }
             })
         }
+    }
+
+    function StaticBuilder(request: Request): Function {
+        //  MOB -- BUG should not need "ejs.web"
+        return "ejs.web"::StaticApp
     }
 }
 

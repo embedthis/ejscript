@@ -420,7 +420,7 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     nextModule = mprGetListCount(ejs->modules);
     ejs->loaderCallback = NULL;
 
-    mprLog(ejs, 5, "    Load dependency section %s", name);
+    mprLog(ejs, 6, "    Load dependency section %s", name);
     rc = loadScriptModule(ejs, name, minVersion, maxVersion, mp->flags | EJS_LOADER_DEP);
     ejs->loaderCallback = saveCallback;
     if (rc < 0) {
@@ -992,7 +992,7 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
             *cp = '_';
         }
     }
-    mprLog(ejs, 4, "Loading native module %s", path);
+    mprLog(ejs, 5, "Loading native module %s", path);
     mm = mprLoadModule(ejs, path, initName, mp);
     mprFree(path);
     return (mm == 0) ? MPR_ERR_CANT_OPEN : 1;
@@ -1018,7 +1018,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
         mprFree(path);
         return MPR_ERR_CANT_OPEN;
     }
-    mprLog(ejs, 4, "Loading module %s", path);
+    mprLog(ejs, 5, "Loading module %s", path);
     mprEnableFileBuffering(file, 0, 0);
 
     /*
@@ -1306,7 +1306,7 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
     ctx = withDotMod = makeModuleName(ejs, moduleName);
     name = mprGetNormalizedPath(ctx, withDotMod);
 
-    mprLog(ejs, 5, "Search for module \"%s\"", name);
+    mprLog(ejs, 6, "Search for module \"%s\"", name);
 
     /*
         1. Search for path directly
@@ -1434,10 +1434,10 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
     ctx = withDotMod = makeModuleName(ejs, moduleName);
     name = mprGetNormalizedPath(ctx, withDotMod);
 
-    mprLog(ejs, 5, "Search for module \"%s\"", name);
+    mprLog(ejs, 6, "Search for module \"%s\"", name);
     path = searchForModule(ejs, ctx, name, minVersion, maxVersion);
     if (path) {
-        mprLog(ctx, 5, "Found %s at %s", name, path);
+        mprLog(ctx, 6, "Found %s at %s", name, path);
     }
     mprFree(ctx);
     return path;

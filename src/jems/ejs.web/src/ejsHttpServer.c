@@ -17,7 +17,7 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
 
 /************************************ Code ************************************/
 /*  
-    function HttpServer(serverRoot: Path = ".", documentRoot: Path = ".")
+    function HttpServer(documentRoot: Path = ".", serverRoot: Path = ".")
     Constructor function
  */
 static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -26,11 +26,12 @@ static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
 
     sp->ejs = ejs;
     sp->async = 1;
-    serverRoot = (argc >= 1) ? argv[0] : (EjsObj*) ejsCreatePath(ejs, ".");
-    ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_serverRoot, serverRoot);
 
-    documentRoot = (argc >= 1) ? argv[1] : (EjsObj*) ejsCreatePath(ejs, ".");
+    documentRoot = (argc >= 1) ? argv[0] : (EjsObj*) ejsCreatePath(ejs, ".");
     ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_documentRoot, documentRoot);
+
+    serverRoot = (argc >= 2) ? argv[1] : (EjsObj*) ejsCreatePath(ejs, ".");
+    ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_serverRoot, serverRoot);
     return (EjsObj*) sp;
 }
 

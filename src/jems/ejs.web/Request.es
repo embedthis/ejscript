@@ -411,6 +411,7 @@ module ejs.web {
         */
         function setLocation(prefix: String, location: Path): Void {
             dir = location
+            prefix = prefix.trimEnd("/")
             pathInfo = pathInfo.trimStart(prefix)
             scriptName = prefix.trimStart("/")
         }
@@ -493,16 +494,17 @@ module ejs.web {
          */
         native function write(...data): Number
 
-//  MOB -- was Controller.reportError
         /** 
-            Write an error message back to the user. The status is set to Http.ServerError (500) and the content type
-            is set to text/html. The output is html escaped for security. Output is finalized.
+            Write an error message back to the user and finalize the request. 
+            The output is html escaped for security.
+            @param status Http status code
             @param msg Message to send. The message may be modified for readability if it contains an exception backtrace.
+            @deprecated
          */
-        function writeError(msg: String, code: Number = Http.ServerError): Void {
+        function error(code: Number, ...msgs): Void {
             let text
             status = code
-            msg = msg.replace(/.*Error Exception: /, "")
+            let msg = msgs.join(" ").replace(/.*Error Exception: /, "")
             if (config.log.showClient) {
                 setHeader("Content-Type", "text/html")
                 text = "<h1>Request error for \"" + pathInfo + "\"</h1>\r\n"
@@ -552,6 +554,7 @@ module ejs.web {
             @returns Stream object equal to the value of "this" request instance.
         */
         function get input(): Stream {
+            //  MOB -- BUG - need {}
             return this
         }
 
@@ -679,6 +682,12 @@ module ejs.web {
           */
         function get originalUri(): String
             pathInfo
+
+        /** @deprecated
+            @hide
+          */
+        function writeError(msg: String, code: Number = Http.ServerError): Void 
+            error(code, msg)
     }
 }
 

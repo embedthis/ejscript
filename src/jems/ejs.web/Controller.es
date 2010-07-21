@@ -134,8 +134,9 @@ module ejs.web {
         /** 
             Run the controller action. 
             @param request Request object
+            @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
-        function run(request: Request): Void {
+        function run(request: Request): Object {
             actionName = params.action || "index"
             params.action = actionName
             use namespace action
@@ -143,16 +144,17 @@ module ejs.web {
                 flashBefore()
             }
             runFilters(_beforeFilters)
+            let result
             if (!redirected) {
                 if (!this[actionName]) {
                     if (!viewExists(actionName)) {
                         actionName = "missing"
-                        this[actionName]()
+                        result = this[actionName]()
                     }
                 } else {
-                    this[actionName]()
+                    result = this[actionName]()
                 }
-                if (!rendered && !redirected && !request.dontFinalize) {
+                if (!result && !rendered && !redirected && !request.dontFinalize) {
                     renderView()
                 }
                 runFilters(_afterFilters)
@@ -160,7 +162,10 @@ module ejs.web {
             if (flash) {
                 flashAfter()
             }
-            request.finalize()
+            if (!result) {
+                request.finalize()
+            }
+            return result
         }
 
         /* 
@@ -259,7 +264,7 @@ module ejs.web {
             let dirs = config.directories
             let cvname = controllerName + "_" + viewName
             let path = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
-            let cached = Loader.cached(path, request.dir.join(dirs.cache))
+            let cached = Loader.cached(path, request.config, request.dir.join(dirs.cache))
             let viewClass = cvname + "View"
 
             //  TODO - OPT. Could keep a cache of cached.modified
@@ -289,8 +294,8 @@ module ejs.web {
         /**
             Render an error message as the response
          */
-        function renderError(msg: String = "", status: Number = Http.ServerError): Void {
-            request.writeError(msg, status)
+        function renderError(status: Number, ...msgs): Void {
+            request.error(status, ...msgs)
             rendered = true
         }
 

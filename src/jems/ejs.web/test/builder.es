@@ -4,60 +4,39 @@
 require ejs.web
 
 let address = App.args[1] || ":6700"
+
+//  Start single JSGI app
 Web.run(address, "web")
 
-
-//  Convenience routine to start a routing server that will serve a variety of content
-
-function Web.start(address: String, documentRoot: Path = ".", serverRoot: Path = ".", routes = Router.TopRoutes): Void {
-    let server: HttpServer = new HttpServer(documentRoot, serverRoot)
-    var router = Router(routes)
-    server.observe("readable", function (event, request) {
-
-        serve(request, router)
-
-        // or
-        router.route(request)
-        let app = load(app, request)
-        if (app) {
-            //  MOB -- process JSGI apps and results
-            process(request, app)
-        }
-    })
-    server.listen(address)
-    App.eventLoop()
-}
-
-
-//  Run a single JSGI app
-
-function Web.run(address: String, documentRoot: Path = ".", serverRoot: Path = "."): Void {
-    require ejs.cjs
-    let server: HttpServer = new HttpServer(documentRoot, serverRoot)
-    server.observe("readable", function (event, request) {
-        let path = request.dir.join(request.pathInfo.slice(1))
-        process(Loader.require(path).app)
-    })
-    server.listen(address)
-    App.eventLoop()
-}
-
+//  Start web server
+Web.start(address, "web", ".", Router.TopRoutes)
 
 /*
+   Applications
+       is a JavaScript function. It takes exactly one argument, the request, and returns a JavaScript Object 
+       containing three properties: the status, the headers, and the body.
+   Middleware
+       is a function that takes at least one other web application and returns another function which is also a 
+       web application.
 
-   Mutators
-        ** don't set "app", set name in exports
+   Middleware - Mutators
+        exports.Name = function(app) {}
         Template
         Gzip
         Log
         Trace
         Router
 
-   Generators
+   Apps - Generators
+        exports.app = function(request) {}
         Static
         Script
         Mvc
         Dir
+
+    Builders
+        exports.app = Name(request)
+        TemplateBuilder 
 
     exports.app = function (request) {
         return {
@@ -67,7 +46,7 @@ function Web.run(address: String, documentRoot: Path = ".", serverRoot: Path = "
 
         }
     }
-    exports.app = Log(Route(Trace(Head(app)))
+    exports.app = Log(Route(Trace(Monitor(Head(app))))
 
         Template, Mvc, Dir, Static, JSGI
 

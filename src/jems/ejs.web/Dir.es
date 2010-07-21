@@ -5,51 +5,40 @@
 module ejs.web {
 
     /** 
-        Directory content handler. This redirects requests for directories and appends configured index files.
+        Directory content handler. This redirects requests for directories and serves directory index files.
+        If the request pathInfo ends with "/", the request is transparently redirected to an index file if one is present.
+        The set of index files is defined by HttpServer.indicies. If the request is a directory but does not end in "/",
+        the client is redirected to a URL equal to the pathInfo with a "/" appended.
+        @param request Request object
+        @returns A response hash object
         @spec ejs
         @stability prototype
      */
-    class Dir {
-        use default namespace public
-
-        /** 
-            Load a directory request. If the request ends with "/", the request is transparently redirected to an index.
-            @param request Request object
-            @returns An exports object with an "app" property representing the application, or returns null if the
-                request has been redirected and must be re-routed.
-         */
-        static function load(request: Request): Object {
-            let results
-            if (request.pathInfo.endsWith("/")) {
-                let path = request.dir.join(request.pathInfo.trimStart('/'))
-                for each (index in request.server.indicies) {
-                    let p = path.join(index)
-                    if (p.exists) {
-                        /* Return a String containing the new pathInfo to serve */
-                        request.pathInfo += index 
-                        requst.route.router.route(request)
-                        return null
-                    }
-                }
-                results = { 
-                    status: Http.NotFound, 
-                    body: errorBody("Not Found", "Can't locate " + escapeHtml(request.pathInfo))
-                }
-            } else {
-                results = { 
-                    status: Http.MovedPermanently,
-                    headers: { location: request.uri + "/" }
-                    body: errorBody("Moved Permanently", 
-                        'The document has moved <a href="' + request.pathInfo + "/" + '">here</a>.')
+    function DirApp(request: Request): Object {
+        if (request.pathInfo.endsWith("/")) {
+            for each (index in request.server.indicies) {
+                let path = request.filename.join(index)
+                if (path.exists) {
+                    /* Return a String containing the new pathInfo to serve */
+                    request.pathInfo += index 
+                    app = request.route.router.route(request)
+                    //  MOB -- some form of recursion protection? Add request.counter?
+                    return Web.process(app, request)
                 }
             }
             return { 
-                app: function (request) {
-                    return results
-                }
+                status: Http.NotFound, 
+                body: errorBody("Not Found", "Can't locate " + escapeHtml(request.pathInfo))
             }
         }
+        return { 
+            status: Http.MovedPermanently,
+            headers: { location: request.uri + "/" }
+            body: errorBody("Moved Permanently", 'The document has moved <a href="' + request.pathInfo + "/" + '">here</a>.')
+        }
     }
+
+    function DirBuilder(request: Request): Function DirApp
 }
 
 /*

@@ -261,6 +261,7 @@ typedef struct EjsModule {
     uint            hasInitializer  : 1;    /* Has initializer function */
     uint            initialized     : 1;    /* Initializer has run */
     uint            hasError        : 1;    /* Module has a loader error */
+    uint            visited         : 1;    /* Module has been traversed */
     int             flags;                  /* Loading flags */
     char            *doc;                   /* Current doc string */
 } EjsModule;

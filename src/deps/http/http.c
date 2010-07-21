@@ -213,7 +213,7 @@ static bool parseArgs(Mpr *mpr, int argc, char **argv)
                 mprPutStringToBuf(bodyData, argv[++nextArg]);
             }
 
-        } else if (strcmp(argp, "--debugger") == 0) {
+        } else if (strcmp(argp, "--debugger") == 0 || strcmp(argp, "-D") == 0) {
             mprSetDebugMode(mpr, 1);
             retries = 0;
             timeout = -1;
@@ -337,7 +337,7 @@ static bool parseArgs(Mpr *mpr, int argc, char **argv)
         } else if (strcmp(argp, "--sequence") == 0) {
             sequence++;
 
-        } else if (strcmp(argp, "--showHeaders") == 0) {
+        } else if (strcmp(argp, "--showHeaders") == 0 || strcmp(argp, "--show") == 0) {
             showHeaders++;
 
         } else if (strcmp(argp, "--showStatus") == 0 || strcmp(argp, "--showCode") == 0) {

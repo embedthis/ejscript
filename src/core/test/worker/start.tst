@@ -3,7 +3,7 @@
  */
 
 w = new Worker
-w.load("start.es")
+w.load("worker.es")
 let exitCount = 0
 w.onclose = function (e) {
     exitCount++
@@ -15,7 +15,7 @@ assert(exitCount == 1)
 
 w = new Worker(null, { name: "funny-worker" })
 exitCount = 0
-w.load("start.es")
+w.load("worker.es")
 w.onclose = function (e) {
     exitCount++
     assert(this.name == "inside-funny-worker")
@@ -25,7 +25,7 @@ assert(exitCount == 1)
 
 //  Test receiving a message from the started script
 
-w = new Worker("start.es")
+w = new Worker("worker.es")
 w.onmessage = function (e) {
     let o = deserialize(e.data)
     assert(o.name == "Mary")

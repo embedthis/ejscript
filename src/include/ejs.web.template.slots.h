@@ -17,24 +17,6 @@
 /*
    Prototype (instance) slots for "global" type 
  */
-
-
-/*
-    Class property slots for the "Template" type 
- */
-#define ES_Template_load                                               0
-#define ES_Template_NUM_CLASS_PROP                                     1
-
-/*
-   Prototype (instance) slots for "Template" type 
- */
-#define ES_Template_NUM_INSTANCE_PROP                                  0
-#define ES_Template_NUM_INHERITED_PROP                                 0
-
-/*
-    Local slots for methods in type "Template" 
- */
-#define ES_Template_load_request                                       0
 #define ES_TemplateParser_NUM_CLASS_PROP                               0
 
 /*
@@ -77,6 +59,6 @@
 #define ES_ejs_web_template_Token_NUM_INSTANCE_PROP                    0
 #define ES_ejs_web_template_Token_NUM_INHERITED_PROP                   0
 
-#define _ES_CHECKSUM_ejs_web_template   40737
+#define _ES_CHECKSUM_ejs_web_template   36067
 
 #endif

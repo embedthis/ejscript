@@ -1,5 +1,6 @@
 require ejs.web
 
+//MOB Rename
 /*
     Pure script View
 class MyView extends View {

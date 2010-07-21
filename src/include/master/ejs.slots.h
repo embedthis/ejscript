@@ -1021,18 +1021,18 @@
 #define ES_Http_date                                                   7
 #define ES_Http_del                                                    8
 #define ES_Http_encoding                                               9
-#define ES_Http_expires                                                10
-#define ES_Http_xh                                                     11
-#define ES_Http_fetch                                                  12
-#define ES_Http_finalize                                               13
-#define ES_Http_flush                                                  14
-#define ES_Http_followRedirects                                        15
-#define ES_Http_form                                                   16
-#define ES_Http_get                                                    17
-#define ES_Http_getRequestHeaders                                      18
-#define ES_Http_head                                                   19
-#define ES_Http_header                                                 20
-#define ES_Http_headers                                                21
+#define ES_Http_xh                                                     10
+#define ES_Http_fetch                                                  11
+#define ES_Http_finalize                                               12
+#define ES_Http_flush                                                  13
+#define ES_Http_followRedirects                                        14
+#define ES_Http_form                                                   15
+#define ES_Http_get                                                    16
+#define ES_Http_getRequestHeaders                                      17
+#define ES_Http_head                                                   18
+#define ES_Http_header                                                 19
+#define ES_Http_headers                                                20
+#define ES_Http_inactivityTimeout                                      21
 #define ES_Http_isSecure                                               22
 #define ES_Http_key                                                    23
 #define ES_Http_lastModified                                           24
@@ -1067,9 +1067,10 @@
 #define ES_Http_codeString                                             53
 #define ES_Http_available                                              54
 #define ES_Http_contentEncoding                                        55
-#define ES_Http_setCallback                                            56
-#define ES_Http_chunked                                                57
-#define ES_Http_NUM_INSTANCE_PROP                                      58
+#define ES_Http_expires                                                56
+#define ES_Http_setCallback                                            57
+#define ES_Http_chunked                                                58
+#define ES_Http_NUM_INSTANCE_PROP                                      59
 #define ES_Http_NUM_INHERITED_PROP                                     0
 
 /*
@@ -1948,6 +1949,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1301568
+#define _ES_CHECKSUM_ejs   1305861
 
 #endif

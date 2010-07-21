@@ -11,7 +11,7 @@ module ejs.cjs {
         @spec ejs
         @stability prototype
      */
-    function require(id: String): Object
+    public function require(id: String): Object
         Loader.require(id)
 
     /** 
@@ -25,7 +25,6 @@ module ejs.cjs {
         private static var signatures = {}
         private static var timestamps = {}
         private static const defaultExtensions = [".es", ".js"]
-        private static var config
 
         //  UNUSED - not yet used
         static function init(mainId: String? = null) {
@@ -38,11 +37,13 @@ module ejs.cjs {
                 resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.
             @param return a hash of exported properties
          */
-        public static function require(id: String): Object {
-            let path: Path = locate(id)
-            let exports = signatures[path]
-            if (!exports || path.modified > timestamps[path]) {
-                return load(id, path)
+        public static function require(id: String, config: Object = App.config): Object {
+            let exports = signatures[id]
+            if (!exports || config.cache.reload) {
+                let path: Path = locate(id, config)
+                if (path.modified > timestamps[path]) {
+                    return load(id, path, config)
+                }
             }
             return exports
         }
@@ -50,29 +51,29 @@ module ejs.cjs {
         /** 
             Load a CommonJS module and return the exports object. After the first load, the CJS module will be compile
             and cached as a byte-code module.
-            @param id Name of the module to load. The id may be an absolute path, relative path or a path fragment that is
-                resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.
+            @param id Unique name of the module to load. The id may be a unique ID, an absolute path, relative path or a 
+                path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or 
+                ".js" extension.
             @param path Optional path to the physical file corresponding to the module. If the module source code has
                 changed, it will be re-compiled and then cached.
             @param codeReader Optional function to provide script code to use instead of reading from the path. 
             @param return a hash of exported properties
          */
-        public static function load(id: String, path: Path, codeReader: Function? = null): Object {
+        public static function load(id: String, path: Path, config = App.config, codeReader: Function = null): Object {
             let initializer, code
+            let cache: Path = cached(id, config)
             if (path) {
-                let cache: Path = cached(path)
                 if (cache && cache.exists && cache.modified >= path.modified) {
                     App.log.debug(4, "Use cache for: " + path)
                     initializer = global.load(cache)
                 } else {
-                    if (!path.exists) {
-                        throw "Cannot find \"" + path + "\"."
-                    }
                     if (codeReader) {
-                        code = codeReader(path)
+                        code = codeReader(id, path)
                     } else {
-                        code = path.readString()
-                        code = wrap(code)
+                        if (!path.exists) {
+                            throw "Cannot find \"" + path + "\"."
+                        }
+                        code = wrap(path.readString())
                     }
                     if (cache) {
                         App.log.debug(4, "Recompile module to: " + cache)
@@ -81,23 +82,27 @@ module ejs.cjs {
                 }
                 timestamps[path] = path.modified
             } else {
-//  MOB BUG - code doesn't exist
-                code = wrap(code)
-//  MOB -- Fix this mob.mod
-                initializer = eval(code, "mob.mod")
+                if (codeReader) {
+                    code = codeReader(id, path)
+                } else {
+                    throw "Must provide a codeReader if path is not specified"
+                }
+                initializer = eval(code, cache)
             }
             signatures[path] = exports = {}
+            //  MOB -- implement system?
+            //  function initializer(require, exports, module, system)
             initializer(require, exports, {id: id, path: path}, null)
             return exports
         }
 
         /** @hide */
-        public static function cached(path: Path, cachedir: Path? = null): Path {
+        public static function cached(id: Path, config = App.config, cachedir: Path = null): Path {
             config ||= App.config
-            if (path && config.cache.enable) {
+            if (id && config.cache.enable) {
                 let dir = cachedir || Path(config.directories.cache) || Path("cache")
                 if (dir.exists) {
-                    return Path(dir).join(md5(path)).joinExt('.mod')
+                    return Path(dir).join(md5(id)).joinExt('.mod')
                 } else {
                     App.log.error("Can't find cache directory: " + dir)
                 }
@@ -115,11 +120,10 @@ module ejs.cjs {
             @param id Path fragment to the module
             @return A full path to the module
          */
-        private static function locate(id: Path) {
+        private static function locate(id: Path, config = App.config) {
             if (id.exists) {
                 return id
             } 
-            config ||= App.config
             //  TODO - need logging here
             let extensions = config.extensions || defaultExtensions
             for each (let dir: Path in App.search) {
@@ -132,7 +136,7 @@ module ejs.cjs {
                     }
                 }
             }
-            throw new IOError("Can't find module \"" + id + "\"")
+            throw "Can't find \"" + id + "\""
         }
 
         /** 

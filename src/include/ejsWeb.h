@@ -66,16 +66,20 @@ typedef struct EjsRequest {
     HttpConn        *conn;          /**< Underlying Http connection object */
     EjsHttpServer   *server;        /**< Owning server */
     EjsObj          *emitter;       /**< Event emitter */
-    struct EjsSession *session;     /**< Current session */
-    EjsObj          *files;         /**< Cached files object */
-    EjsObj          *headers;       /**< Cached headers object */
-    EjsObj          *params;        /**< Form variables */
+    EjsPath         *dir;           /**< Home directory containing the application */
     EjsObj          *env;           /**< Request.env */
-    EjsUri          *fullUri;       /**< Cached full uri */
+    EjsPath         *filename;      /**< Physical resource filename */
+    EjsObj          *files;         /**< Files object */
+    EjsObj          *headers;       /**< Headers object */
+    EjsObj          *params;        /**< Form variables */
+    EjsUri          *uri;           /**< Complete uri */
     Ejs             *ejs;           /**< Ejscript interpreter handle */
-    cchar           *dir;           /**< Home directory containing the application */
+    struct EjsSession *session;     /**< Current session */
+
+    //  MOB -- should these two be stored as EjsObj?
     cchar           *home;          /**< Relative URI to the home of the application from this request */
     cchar           *absHome;       /**< Absolute URI to the home of the application from this request */
+
     int             dontFinalize;   /**< Don't auto-finalize. Must call finalize(force) */
     int             probedSession;  /**< Determined if a session exists */
     int             running;        /**< Request has started */

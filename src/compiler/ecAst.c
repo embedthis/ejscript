@@ -2758,6 +2758,11 @@ static void bindVariableDefinition(EcCompiler *cp, EcNode *np)
     typeNode = np->typeNode;
     if (typeNode && np->lookup.trait) {
         if (typeNode->lookup.ref) {
+            if (!ejsIsType(typeNode->lookup.ref)) {
+                astError(cp, np, "Type is not a type object");
+                LEAVE(cp);
+                return;
+            }
             if (!cp->fileState->strict) {
                 /*
                     Allow variable redefinitions providing they are compatible

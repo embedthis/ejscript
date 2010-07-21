@@ -4,6 +4,7 @@
  */
 
 module ejs.web {
+    require ejs.cjs
 
     /** 
         Web class manages web applications. This class initializes the web framework and loads web applications. 
@@ -76,19 +77,14 @@ module ejs.web {
          */
         static function serve(request: Request, router: Router = Router(Router.TopRoutes)): Void {
             try {
-//  MOB -- should the router be setting this?
-request.config = config
-                router.route(request)
+                let app = router.route(request)
                 if (request.route.threaded) {
-                    worker(request)
+                    worker(app, request)
                 } else {
-                    let exports = load(request)
-                    if (exports) {
-                        process(request, exports.app)
-                    }
+                    process(app, request)
                 }
             } catch (e) {
-                request.writeError(e)
+                request.error(Http.ServerError, e)
             }
         }
 
@@ -96,115 +92,33 @@ request.config = config
             Run the request via a separate worker thread
             @param request Request object
          */
-        static native function worker(request: Request): Void
-
-        private static function workerHelper(request: Request): Void {
+        static native function worker(app: Function, request: Request): Void
+        private static function workerHelper(app: Function, request: Request): Void {
             try {
-                let exports = load(request)
-                if (exports) {
-                    process(request, exports.app)
-                }
+                process(app, request)
             } catch (e) {
-                request.writeError(e)
+                request.error(Http.ServerError, e)
             }
         }
 
-        /** 
-            Load a web app. This routine will load JSGI apps with a ".es" extension, template apps with a ".ejs" extension
-            and MVC applications. This call expects that the request has been routed and that request.route.type is 
-            set to the type of the request (es|ejs|mvc).
-            @param request Request object
-            @returns An exports object with an "app" property representing the application.
-         */
-        static function load(request: Request): Object {
-            try {
-                let exports
-                let type = request.route.type
-
-                let path = request.dir.join(request.pathInfo.trimStart('/'))
-                if (path.isDir) {
-                    exports = Dir.load(request)
-                    if (exports) {
-                        return exports
-                    }
-                    type = request.route.type
-                }
-                //  MOB -- convert to switch
-                if (type == "static") {
-                    return Static.load(request)
-
-                } else if (type == "es") {
-                    //  MOB - replace with top level require ejs.cjs
-                    if (!global.Loader) {
-                        global.load("ejs.cjs.mod")
-                    }
-                    let path = request.dir.join(request.pathInfo.slice(1))
-                    if (!path.exists) {
-                        throw "Request resource \"" + path + "\" does not exist"
-                    }
-                    exports = Loader.require(path)
-
-                } else if (type == "ejs") {
-                    if (!global.Template) {
-                        global.load("ejs.web.template.mod")
-                    }
-                    let path = request.dir.join(request.pathInfo.slice(1))
-                    if (!path.exists) {
-                        request.writeError("Can't find \"" + path + "\".", Http.NotFound)
-                        return null;
-                    } else {
-                        exports = Template.load(request)
-                        request.setHeader("Content-Type", "text/html")
-                    }
-
-                } else if (type == "mvc") {
-                    exports = Mvc.load(request)
-
-                } else {
-                    throw "Request type: " + type + " is not supported by Web.load"
-                }
-                if (!exports || !exports.app) {
-                    throw "Can't load application. No \"app\" object exported by application"
-                }
-                return exports
-
-            } catch (e) {
-                request.writeError(e)
-            }
-            return null
-        }
-
-
-        private var clients = {}
-        private var requestCount: Number
-
-        function monitoredLoad(request: Request) {
-            if (Object.getOwnPropertyCount(clients) >= HttpServer.limit("clients")) {
-                request.writeError("Too many requests. Please try again later")
-                return
-            }
-            if (requestCount >= HttpServer.limit("requests")) {
-                request.writeError("Too many requests. Please try again later")
-                return
-            }
-            requestCount++
-            try {
-                clients[request.remoteAddress] = true
-                Object.getOwnPropertyCount(clients)
-                delete clients[request.remoteAddress]
-            } catch {}
-            requestCount--
-        }
-
+//  WARNING: this may block in write?? - is request in async mode?
         /** 
             Process a web request
             @param request Request object
             @param app JSGI application function 
          */
-        static function process(request: Request, app: Function): Void {
-//  WARNING: this may block in write?? - is request in async mode?
+        static function process(app: Function, request: Request): Void {
+            request.config = config
             try {
-                let result = app.call(request, request)
+                if (request.route.middleware) {
+                    app = Middleware(app, request.route.middleware)
+                }
+                let result
+                if (app.bound != global) {
+                    result = app(request)
+                } else {
+                    result = app.call(request, request)
+                }
 
                 if (result is Function) {
                     /* Functions don't auto finalize. The user is responsible for calling finalize() */
@@ -280,12 +194,43 @@ request.config = config
                         request.sendfile(file)
                     }
                 }
-
             } catch (e) {
                 // print("URI " + request.uri)
-                request.writeError(e)
-                request.finalize(true)
+                request.error(Http.ServerError, e)
             }
+        }
+
+        /**
+            Convenience routine to start a routing web server that will serve a variety of content
+         */
+        static function start(address: String, documentRoot: Path = ".", serverRoot: Path = ".", 
+                routes = Router.TopRoutes): Void {
+            let server: HttpServer = new HttpServer(documentRoot, serverRoot)
+            var router = Router(routes)
+            server.observe("readable", function (event, request) {
+                serve(request, router)
+            })
+            server.listen(address)
+            App.eventLoop()
+        }
+
+        /**
+            Convenience routine to run a single web app script. The script must be of the form:
+
+            exports.app = function (request) {
+                return { 
+                    status: Http.Ok,
+                    body: "Hello World\r\n"
+                }
+            }
+         */
+        static function run(address: String, documentRoot: Path = ".", serverRoot: Path = "."): Void {
+            let server: HttpServer = new HttpServer(documentRoot, serverRoot)
+            server.observe("readable", function (event, request) {
+                process(Loader.require(request.filename).app)
+            })
+            server.listen(address)
+            App.eventLoop()
         }
     }
 }
