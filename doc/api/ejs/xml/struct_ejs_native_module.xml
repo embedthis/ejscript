@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4279" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4279" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4283" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4283" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_native_module_1aa43fe8bcefb86a79de675cfefbdd217" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4281" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4281" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4285" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4285" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_native_module_129e908cb0f7eb712e7ea1d6e160630b0" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -40,7 +40,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4282" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4282" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4286" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4286" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_native_module_1a8d54e024451bee0e508602eb3de73fe" prot="public" static="no" mutable="no">
         <type>cchar *</type>
@@ -53,14 +53,14 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4280" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4280" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4284" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4284" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4278" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4278" bodyend="4283"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4282" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4282" bodyend="4287"/>
     <listofallmembers>
       <member refid="struct_ejs_native_module_1e5e965d852294ab316729e93c7fd71c9" prot="public" virt="non-virtual"><scope>EjsNativeModule</scope><name>callback</name></member>
       <member refid="struct_ejs_native_module_1aa43fe8bcefb86a79de675cfefbdd217" prot="public" virt="non-virtual"><scope>EjsNativeModule</scope><name>checksum</name></member>

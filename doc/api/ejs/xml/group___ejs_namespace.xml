@@ -50,7 +50,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2870"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2871"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_namespace_1g50dc0c3d60b577aed11b1da9e3864b8a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -68,7 +68,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2883"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2884"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

@@ -152,7 +152,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2052"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2047"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1g57f528868eed5536dde9dacccd059083" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -178,7 +178,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2006"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2001"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1g8e764d2fd382cc8f0d4bf34c227db88c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -204,7 +204,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2024"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2019"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1g461f8132dd432d5b27d253419c9a85c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -230,7 +230,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2015"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2010"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1gfc48c2ee73ed572e466a83f6903d29f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -301,7 +301,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2085"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2080"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1g07c05d4fe96ac9752069730ec21ef7ee" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -372,7 +372,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2101"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2096"/>
       </memberdef>
       <memberdef kind="function" id="group___ejs_function_1g5a7d2ad5dd3cf09e90d6288ac2ba73fc" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>EjsObj *</type>
@@ -410,7 +410,7 @@
 </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2071"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="2066"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

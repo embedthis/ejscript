@@ -18,9 +18,9 @@
 <tr><td class="memItemLeft" nowrap align="right" valign="top"><a class="el" href="struct_ejs_service.html">EjsService</a> *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs.html#g78fb0ad5d9f4998a0b64914370aacd24">ejsCreateService</a> (MprCtx ctx)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Open the Ejscript service.  <a href="#g78fb0ad5d9f4998a0b64914370aacd24"></a><br></td></tr>
-<tr><td class="memItemLeft" nowrap align="right" valign="top">Ejs *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs.html#gad511190a29fb6ad99a5dc9af42e8504">ejsCreateVm</a> (MprCtx ctx, Ejs *master, cchar *search, MprList *require, int flags)</td></tr>
+<tr><td class="memItemLeft" nowrap align="right" valign="top">Ejs *&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs.html#ga00af6ecbf1d316061aa7524935ac22f">ejsCreateVm</a> (MprCtx ctx, Ejs *master, cchar *search, MprList *require, int argc, cchar **argv, int flags)</td></tr>
 
-<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create an ejs virtual machine.  <a href="#gad511190a29fb6ad99a5dc9af42e8504"></a><br></td></tr>
+<tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Create an ejs virtual machine.  <a href="#ga00af6ecbf1d316061aa7524935ac22f"></a><br></td></tr>
 <tr><td class="memItemLeft" nowrap align="right" valign="top">int&nbsp;</td><td class="memItemRight" valign="bottom"><a class="el" href="group___ejs.html#g2dd387ab6e232ecbe44b901cd5b01e58">ejsEvalFile</a> (cchar *path)</td></tr>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Evaluate a file.  <a href="#g2dd387ab6e232ecbe44b901cd5b01e58"></a><br></td></tr>
@@ -121,7 +121,7 @@ Open the Ejscript service.
 
 </div>
 </div><p>
-<a class="anchor" name="gad511190a29fb6ad99a5dc9af42e8504"></a><!-- doxytag: member="ejs.h::ejsCreateVm" ref="gad511190a29fb6ad99a5dc9af42e8504" args="(MprCtx ctx, Ejs *master, cchar *search, MprList *require, int flags)" -->
+<a class="anchor" name="ga00af6ecbf1d316061aa7524935ac22f"></a><!-- doxytag: member="ejs.h::ejsCreateVm" ref="ga00af6ecbf1d316061aa7524935ac22f" args="(MprCtx ctx, Ejs *master, cchar *search, MprList *require, int argc, cchar **argv, int flags)" -->
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -153,6 +153,18 @@ Open the Ejscript service.
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&nbsp;</td>
+          <td class="paramname"> <em>argc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">cchar **&nbsp;</td>
+          <td class="paramname"> <em>argv</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&nbsp;</td>
           <td class="paramname"> <em>flags</em></td><td>&nbsp;</td>
         </tr>
         <tr>
@@ -174,6 +186,8 @@ Create an ejs virtual machine.
     <tr><td valign="top"></td><td valign="top"><em>master</em>&nbsp;</td><td>Optional master interpreter to clone. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>search</em>&nbsp;</td><td>Module search path to use. Set to NULL for the default search path. </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>require</em>&nbsp;</td><td>Optional list of required modules to load. If NULL, the following modules will be loaded: ejs, ejs.io, ejs.events, ejs.xml, ejs.sys and ejs.unix. </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>argc</em>&nbsp;</td><td>Count of command line argumements in argv </td></tr>
+    <tr><td valign="top"></td><td valign="top"><em>argv</em>&nbsp;</td><td>Command line arguments </td></tr>
     <tr><td valign="top"></td><td valign="top"><em>flags</em>&nbsp;</td><td>Optional flags to modify the interpreter behavior. Valid flags are: <ul>
 <li>EJS_FLAG_COMPILER - Interpreter will compile code from source </li>
 <li>EJS_FLAG_NO_EXE - Don't execute any code. Just compile. </li>
@@ -475,7 +489,7 @@ Throw an exception.
 </div>
 </div><p>
 </div>
-<hr size="1"><address style="text-align: right;"><small>Generated on Fri Jul 9 10:40:04 2010 for ejs by&nbsp;
+<hr size="1"><address style="text-align: right;"><small>Generated on Mon Jul 26 08:37:06 2010 for ejs by&nbsp;
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border="0"></a> 1.5.8 </small></address>
 </body>

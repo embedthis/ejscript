@@ -14,7 +14,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3059" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3059" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3060" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3060" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_string_110172a0557f21593181ce215ff2b75d5" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
@@ -27,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3058" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3058" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3059" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3059" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_string_18c8862bcc92d704ebda939928b76b3f4" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -40,14 +40,14 @@
 <para>Currently UTF-8. Will upgrade to UTF-16 soon </para>        </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3060" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3060" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3061" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3061" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3057" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3057" bodyend="3061"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3058" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3058" bodyend="3062"/>
     <listofallmembers>
       <member refid="struct_ejs_string_1324977c4c34f41fb4dce23ba0738ef8d" prot="public" virt="non-virtual"><scope>EjsString</scope><name>length</name></member>
       <member refid="struct_ejs_string_110172a0557f21593181ce215ff2b75d5" prot="public" virt="non-virtual"><scope>EjsString</scope><name>obj</name></member>

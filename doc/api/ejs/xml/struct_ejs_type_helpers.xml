@@ -15,7 +15,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3348"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3349"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_1068d57e44f322ebbaccc900b4151b8bf" prot="public" static="no" mutable="no">
         <type>EjsObj *(*</type>
@@ -28,7 +28,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3349"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3350"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_1c4d1540f54ef0d23d37b745c6288d7d7" prot="public" static="no" mutable="no">
         <type>EjsObj *(*</type>
@@ -41,7 +41,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3350"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3351"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_1eb38e94ef07521301c11b18b2259496c" prot="public" static="no" mutable="no">
         <type>int(*</type>
@@ -54,7 +54,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3352"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3353"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_1ba19dd9009cde3b080737db1aa6194f4" prot="public" static="no" mutable="no">
         <type>int(*</type>
@@ -67,7 +67,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3354"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3355"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_1bfe15330cd3aad1935fb2106cb8ad5ee" prot="public" static="no" mutable="no">
         <type>int(*</type>
@@ -80,7 +80,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3355"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3356"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_155ee66814586c465b3e0b831f3b179bd" prot="public" static="no" mutable="no">
         <type>void(*</type>
@@ -93,7 +93,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3353"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3354"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_1ffde44f84b0f2f4b98f474fb31bf5f4a" prot="public" static="no" mutable="no">
         <type>EjsObj *(*</type>
@@ -106,7 +106,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3356"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3357"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_1a9680a93d3349a4b544251150cbc383d" prot="public" static="no" mutable="no">
         <type>EjsObj *(*</type>
@@ -119,7 +119,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3357"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3358"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_1061141d179b73ebc7fab305b97f0cd5b" prot="public" static="no" mutable="no">
         <type>int(*</type>
@@ -132,7 +132,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3358"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3359"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_185451a285ba67271c9aba449b6ad7c18" prot="public" static="no" mutable="no">
         <type>EjsName(*</type>
@@ -145,7 +145,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3359"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3360"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_14e22ae3693b8e3895c3958122ceb7681" prot="public" static="no" mutable="no">
         <type>EjsObj *(*</type>
@@ -158,7 +158,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3363"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3364"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_190d67a2fb8a63d5abf6a98f4c8c23d44" prot="public" static="no" mutable="no">
         <type>int(*</type>
@@ -171,7 +171,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3364"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3365"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_11f3245a0f881b7c6c702ffd8bd106844" prot="public" static="no" mutable="no">
         <type>void(*</type>
@@ -184,7 +184,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3365"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3366"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_1ea182bc3a79ec709f4d431192c1cac32" prot="public" static="no" mutable="no">
         <type>int(*</type>
@@ -197,7 +197,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3366"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3367"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_11a83dc3ac4b73a1a42815627f3b661ae" prot="public" static="no" mutable="no">
         <type>int(*</type>
@@ -210,7 +210,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3367"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3368"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_type_helpers_1e6e022fb1e857c703717026a4d60bac1" prot="public" static="no" mutable="no">
         <type>int(*</type>
@@ -223,7 +223,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3368"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3369"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -231,7 +231,7 @@
     <detaileddescription>
 <para><simplesect kind="par"><title><bold>Description</bold>:</title><para>The type helpers interface defines the set of primitive operations a type must support to interact with the virtual machine. </para></simplesect>
 </para>    </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3347" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3347" bodyend="3372"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="3348" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="3348" bodyend="3373"/>
     <listofallmembers>
       <member refid="struct_ejs_type_helpers_17a710ba8c9aa7f9582c938df2ec17c90" prot="public" virt="non-virtual"><scope>EjsTypeHelpers</scope><name>cast</name></member>
       <member refid="struct_ejs_type_helpers_1068d57e44f322ebbaccc900b4151b8bf" prot="public" virt="non-virtual"><scope>EjsTypeHelpers</scope><name>clone</name></member>

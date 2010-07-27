@@ -347,7 +347,7 @@
     <member refid="struct_ejs_1703e8184cb6ba7efbc87c488ffd3ceea" kind="variable"><name>applications</name></member>
     <member refid="struct_ejs_19633f3f06dfe705956fb5932d068d37c" kind="variable"><name>appType</name></member>
     <member refid="struct_ejs_1d37f4023f48db35c4303f700d311c45f" kind="variable"><name>argc</name></member>
-    <member refid="struct_ejs_14eb1f927797200671fea4035ac6c23d6" kind="variable"><name>argv</name></member>
+    <member refid="struct_ejs_19138ca2aca900577d64623ec8d778642" kind="variable"><name>argv</name></member>
     <member refid="struct_ejs_16769bf0e25753fc4f8d7dc1c9f4c9973" kind="variable"><name>arrayType</name></member>
     <member refid="struct_ejs_1c2843f0628ff8ce45faaaca72d212294" kind="variable"><name>blockType</name></member>
     <member refid="struct_ejs_12bce3bc7c5d861174b10213a0e56d5ff" kind="variable"><name>booleanType</name></member>
@@ -628,9 +628,11 @@
     <member refid="struct_ejs_http_177d4512edef737f6ac0adadc10910366" kind="variable"><name>certFile</name></member>
     <member refid="struct_ejs_http_1226910c9b47c8557be8561b931a9676a" kind="variable"><name>conn</name></member>
     <member refid="struct_ejs_http_1ba88793fa4f2e119c2c1848591d194e4" kind="variable"><name>data</name></member>
+    <member refid="struct_ejs_http_154a5068af6be3f5d0edc4efdaebc77b5" kind="variable"><name>dontFinalize</name></member>
     <member refid="struct_ejs_http_1d16c20ca4c9fcd018fa9afdf91f34430" kind="variable"><name>ejs</name></member>
     <member refid="struct_ejs_http_1f0dc799f7c7467d9d3e7680db8db5119" kind="variable"><name>emitter</name></member>
     <member refid="struct_ejs_http_1988210a9fb6266f423961a06783bac60" kind="variable"><name>keyFile</name></member>
+    <member refid="struct_ejs_http_17fc617b0445762c42eb20a455491ff2c" kind="variable"><name>limits</name></member>
     <member refid="struct_ejs_http_1ed0c91d0fc9d88375f2f3274075b571b" kind="variable"><name>method</name></member>
     <member refid="struct_ejs_http_1f27f33f36c5beedecb329af236d9bd9d" kind="variable"><name>obj</name></member>
     <member refid="struct_ejs_http_138f75b2cfa8270ad37e7e7f956fd1e85" kind="variable"><name>readCount</name></member>
@@ -642,17 +644,29 @@
     <member refid="struct_ejs_http_100a18371cc2a05c3fd045399b7fb7568" kind="variable"><name>writeCount</name></member>
   </compound>
   <compound refid="struct_ejs_http_server" kind="struct"><name>EjsHttpServer</name>
+    <member refid="struct_ejs_http_server_171659704e582c08e543ebb2570ce1dc2" kind="variable"><name>async</name></member>
     <member refid="struct_ejs_http_server_12aa1ff4acd7762d40c389731999ac1cd" kind="variable"><name>certFile</name></member>
     <member refid="struct_ejs_http_server_11b40630765ef082497c13841276e436b" kind="variable"><name>ciphers</name></member>
+    <member refid="struct_ejs_http_server_1445fea14734fbcc95f469b61ba6731b3" kind="variable"><name>connector</name></member>
     <member refid="struct_ejs_http_server_152ba3116eb5145dc3bbbfd696e0bbfdc" kind="variable"><name>dir</name></member>
     <member refid="struct_ejs_http_server_1787f61aafd0a9586cca3fe9cba52366c" kind="variable"><name>ejs</name></member>
     <member refid="struct_ejs_http_server_11aea0626e24076795d1c5d71e4ceed5b" kind="variable"><name>emitter</name></member>
+    <member refid="struct_ejs_http_server_1421c7e455de5eb6732320460abc76196" kind="variable"><name>incomingStages</name></member>
     <member refid="struct_ejs_http_server_1855cfb5ef544bdbc2ad98b067846dc15" kind="variable"><name>ip</name></member>
     <member refid="struct_ejs_http_server_158b92959115df6f11548e69172a9e069" kind="variable"><name>keyFile</name></member>
+    <member refid="struct_ejs_http_server_10a64f15fe332ae63261830359b2cd7d0" kind="variable"><name>limits</name></member>
+    <member refid="struct_ejs_http_server_1454ab5e382ac304e59bc99bc7be8f507" kind="variable"><name>name</name></member>
     <member refid="struct_ejs_http_server_170f8bb92fc75172913d2fe2fe898b609" kind="variable"><name>obj</name></member>
+    <member refid="struct_ejs_http_server_1cae37b9dd9228c8982a5fa614ab83eed" kind="variable"><name>outgoingStages</name></member>
     <member refid="struct_ejs_http_server_1955cb722d3ad1f8bac7a752af6bc502e" kind="variable"><name>port</name></member>
     <member refid="struct_ejs_http_server_1ae0cfca4f05dddad51b3470a7fdcb5e7" kind="variable"><name>protocols</name></member>
     <member refid="struct_ejs_http_server_1fe36e30c3e9afa1d8289c4f9d3448d9b" kind="variable"><name>server</name></member>
+    <member refid="struct_ejs_http_server_1187835d965ba94baed68ba5eb7dd02fe" kind="variable"><name>ssl</name></member>
+    <member refid="struct_ejs_http_server_190a0be0b95cff9acbfb289aa91957fb8" kind="variable"><name>traceExclude</name></member>
+    <member refid="struct_ejs_http_server_199b89cee1d5b4b0ee0cae01024403ed7" kind="variable"><name>traceInclude</name></member>
+    <member refid="struct_ejs_http_server_1948637b10b3cdf29e3d6598d186eb3c8" kind="variable"><name>traceLevel</name></member>
+    <member refid="struct_ejs_http_server_11839d9bf99530b528cf908b8d6782d7e" kind="variable"><name>traceMask</name></member>
+    <member refid="struct_ejs_http_server_134a74c9257986f18683be0c240700ded" kind="variable"><name>traceMaxLength</name></member>
   </compound>
   <compound refid="struct_ejs_iterator" kind="struct"><name>EjsIterator</name>
     <member refid="struct_ejs_iterator_1b7c93a9d646156616d8a018136463852" kind="variable"><name>deep</name></member>
@@ -718,6 +732,7 @@
     <member refid="struct_ejs_module_1a9ef54f52922a4f517e6c3301191cf0a" kind="variable"><name>path</name></member>
     <member refid="struct_ejs_module_126e311e01b8074fe8d68eb2009e97a77" kind="variable"><name>scope</name></member>
     <member refid="struct_ejs_module_1a3fa2e8386124d5eafcc9bb408b3ed99" kind="variable"><name>version</name></member>
+    <member refid="struct_ejs_module_1d1ad967e80af8b644003e13bb1a9a4d5" kind="variable"><name>visited</name></member>
     <member refid="struct_ejs_module_1887aac4b4aec6de40b41b412c31ddda9" kind="variable"><name>vname</name></member>
   </compound>
   <compound refid="struct_ejs_module_hdr" kind="struct"><name>EjsModuleHdr</name>
@@ -805,21 +820,27 @@
   </compound>
   <compound refid="struct_ejs_request" kind="struct"><name>EjsRequest</name>
     <member refid="struct_ejs_request_161eab3eab4bb8d92bcf48703fd07b49b" kind="variable"><name>absHome</name></member>
+    <member refid="struct_ejs_request_1510614f1d986e3d88896396293699f97" kind="variable"><name>closed</name></member>
     <member refid="struct_ejs_request_15aef4cf67425e097cc8e19258a09ba4b" kind="variable"><name>conn</name></member>
     <member refid="struct_ejs_request_122c41376596a1ebaf384e1ff7923c763" kind="variable"><name>cookies</name></member>
-    <member refid="struct_ejs_request_106d1c5321298049a88d90bd802d2a7db" kind="variable"><name>dir</name></member>
+    <member refid="struct_ejs_request_19dfc892d40218693126e23edf4ca7913" kind="variable"><name>dir</name></member>
+    <member refid="struct_ejs_request_168c4d90d181efda0f50b7d4b2efc1d03" kind="variable"><name>dontFinalize</name></member>
     <member refid="struct_ejs_request_1b24a55a52ed417fbc49470c612b5b667" kind="variable"><name>ejs</name></member>
     <member refid="struct_ejs_request_1016606ae349c15af272ae4c7b957decc" kind="variable"><name>emitter</name></member>
     <member refid="struct_ejs_request_10e15a484cfae0363afd09a3bef1e7e9f" kind="variable"><name>env</name></member>
+    <member refid="struct_ejs_request_1390f7a81b6e8df3f0823820c54305f8f" kind="variable"><name>error</name></member>
+    <member refid="struct_ejs_request_1ab19bf9b8b2d8ae212f9679799bb117b" kind="variable"><name>filename</name></member>
     <member refid="struct_ejs_request_118547da60942e764ef28e585384f9e10" kind="variable"><name>files</name></member>
     <member refid="struct_ejs_request_10a9da01d67c147fae67d97b604f2a7c1" kind="variable"><name>headers</name></member>
     <member refid="struct_ejs_request_178945a6d8bf290e431e5e4d1963dbbfe" kind="variable"><name>home</name></member>
+    <member refid="struct_ejs_request_17329f170699271e810649adbc4380fed" kind="variable"><name>limits</name></member>
     <member refid="struct_ejs_request_1a6df737b20a5cb02ae18591fa000b1d6" kind="variable"><name>obj</name></member>
     <member refid="struct_ejs_request_127b1d5e3a383f5f692af42ae30e5ed2d" kind="variable"><name>params</name></member>
     <member refid="struct_ejs_request_16d7d92808ecbf33c8b04ea86ffb54d7f" kind="variable"><name>probedSession</name></member>
     <member refid="struct_ejs_request_10a03a7ad8079da6160bd71f9a3ab74fc" kind="variable"><name>running</name></member>
     <member refid="struct_ejs_request_13a6eba9953cc0f2cae9569d8cc36a6a3" kind="variable"><name>server</name></member>
     <member refid="struct_ejs_request_1e9224c31a7ad34e4d5a91c05060547ee" kind="variable"><name>session</name></member>
+    <member refid="struct_ejs_request_1a46ae1e5de828ec84e9e63ee5a551371" kind="variable"><name>uri</name></member>
   </compound>
   <compound refid="struct_ejs_service" kind="struct"><name>EjsService</name>
     <member refid="struct_ejs_service_127e70fcc40460b32d5bec29827a292d9" kind="variable"><name>http</name></member>
@@ -1122,6 +1143,7 @@
     <member refid="ejs_8h_154d04d227c927848056412e975a5c888" kind="define"><name>EJS_GLOBAL</name></member>
     <member refid="ejs_8h_1658d832030e8413052b0376a52235e26" kind="define"><name>EJS_HASH_MIN_PROP</name></member>
     <member refid="ejs_8h_1d3e651be0748809d1af62543e3cda43b" kind="define"><name>EJS_HDR_ALIGN</name></member>
+    <member refid="ejs_8h_141f245a58913f6958ab7ab6a2983a898" kind="define"><name>EJS_HTTPSERVER_NAME</name></member>
     <member refid="ejs_8h_1c7ee2162240d04bb6dd65941799c8520" kind="define"><name>EJS_INC_ARGS</name></member>
     <member refid="ejs_8h_1220a440049d0f33e235bd5475b70acee" kind="define"><name>EJS_INIT_NAMESPACE</name></member>
     <member refid="ejs_8h_1dbeb5fe8475b86dbd70b677544e19052" kind="define"><name>EJS_INITIALIZER_NAME</name></member>
@@ -1817,10 +1839,10 @@
     <member refid="ejs_8h_18a862092be92b6337e036db51f7ed3df" kind="function"><name>ejsAddException</name></member>
     <member refid="ejs_8h_1fdf0531ca598131aff7160304ce34c57" kind="function"><name>ejsAddItem</name></member>
     <member refid="ejs_8h_120f30865c945848860a00e0ddd84c253" kind="function"><name>ejsAddItemToSharedList</name></member>
-    <member refid="ejs_8h_11244deffc1c475844c0a9ddfb26bbc74" kind="function"><name>ejsAddListener</name></member>
     <member refid="ejs_8h_1f225ba60c2fd597f195c345516cec0bb" kind="function"><name>ejsAddModule</name></member>
     <member refid="ejs_8h_1737509c9533d6d70c3b37dfdc6e935ca" kind="function"><name>ejsAddNamespaceToBlock</name></member>
     <member refid="ejs_8h_1cb8bde56c2c2999083fd7c40980b29d5" kind="function"><name>ejsAddNativeModule</name></member>
+    <member refid="ejs_8h_1df31de55f119eab11d9f84e90ef5c654" kind="function"><name>ejsAddObserver</name></member>
     <member refid="ejs_8h_189d8763e2ebb47af912cc5b3514856a8" kind="function"><name>ejsAddScope</name></member>
     <member refid="ejs_8h_13625f61d9f825c722d91e9bc739c1372" kind="function"><name>ejsAddToGcStats</name></member>
     <member refid="ejs_8h_1fefb0dc73f4e212ab741eb5e85b334ca" kind="function"><name>ejsAddWebHandler</name></member>
@@ -1837,6 +1859,7 @@
     <member refid="ejs_8h_1c42e9903b25cbc2e4fa409f4bd12044f" kind="function"><name>ejsBindConstructor</name></member>
     <member refid="group___ejs_type_1g2d265a2559f36be71d9948349f2fe9e7" kind="function"><name>ejsBindFunction</name></member>
     <member refid="group___ejs_type_1gd1d108c8341a4f6ef3be935d4dc8a723" kind="function"><name>ejsBindMethod</name></member>
+    <member refid="ejs_8h_19a1450a5bccf8302a6ca2b6fe982e9aa" kind="function"><name>ejsBlendObject</name></member>
     <member refid="ejs_8h_1613405d176a285d18771075ba656e9dd" kind="function"><name>ejsBlendTypeProperties</name></member>
     <member refid="ejs_8h_1c09ddb351fe68dec12640ae77b11226a" kind="function"><name>ejsBootstrapTypes</name></member>
     <member refid="ejs_8h_1209491ef4cdbc29bbd21e7de51f7a203" kind="function"><name>ejsCaptureScope</name></member>
@@ -1939,6 +1962,7 @@
     <member refid="group___ejs_path_1g50234ab8d65dd433fea18ff170f62f15" kind="function"><name>ejsCreateFileSystem</name></member>
     <member refid="ejs_8h_1c405e28aa3de04cafb94fcff405d0656" kind="function"><name>ejsCreateFrame</name></member>
     <member refid="ejs_8h_1966bd035ee714c5d845182de084e5920" kind="function"><name>ejsCreateFrameType</name></member>
+    <member refid="ejs_8h_1269a070e92fa1679bb86647058ff3140" kind="function"><name>ejsCreateFullUri</name></member>
     <member refid="group___ejs_function_1g1b04a89fc17493abd5f3d95dedf036d2" kind="function"><name>ejsCreateFunction</name></member>
     <member refid="ejs_8h_10a713893df5f2ce755fadc68d5a499c2" kind="function"><name>ejsCreateFunctionType</name></member>
     <member refid="ejs_8h_1b06bd71a70f4c90b1861350018bb4c52" kind="function"><name>ejsCreateGCService</name></member>
@@ -1981,7 +2005,7 @@
     <member refid="ejs_8h_166be69faabddaa5aa401e0b1037cadd4" kind="function"><name>ejsCreateUndefined</name></member>
     <member refid="group___ejs_uri_1gc27bb05f2a8b6c1cc0301a5d66cff42b" kind="function"><name>ejsCreateUri</name></member>
     <member refid="ejs_8h_11131717373f246a83dbb501950b964fd" kind="function"><name>ejsCreateUriAndFree</name></member>
-    <member refid="group___ejs_1gad511190a29fb6ad99a5dc9af42e8504" kind="function"><name>ejsCreateVm</name></member>
+    <member refid="group___ejs_1ga00af6ecbf1d316061aa7524935ac22f" kind="function"><name>ejsCreateVm</name></member>
     <member refid="ejs_8h_159fed116493426262512fc9e506d0771" kind="function"><name>ejsCreateVoidType</name></member>
     <member refid="ejs_8h_16fe839d13cc75c1b934ea042241cf5bf" kind="function"><name>ejsCreateWorker</name></member>
     <member refid="ejs_8h_1bff089a13c17c405ff8a7832874cb567" kind="function"><name>ejsCreateXML</name></member>
@@ -2034,6 +2058,7 @@
     <member refid="ejs_8h_158fdca3d3629fd2020c15a20edb9d26e" kind="function"><name>ejsGetException</name></member>
     <member refid="group___ejs_1g219502088780c6399a9a49241c477dbe" kind="function"><name>ejsGetHandle</name></member>
     <member refid="ejs_8h_1776811ffc1eb6671836a70da2d911ddc" kind="function"><name>ejsGetHashSize</name></member>
+    <member refid="ejs_8h_174a8ebab39a600d0f45ca0babeaa1d84" kind="function"><name>ejsGetHttpLimits</name></member>
     <member refid="group___ejs_number_1ge6b4ff8d014588ca4582ed211a67e11a" kind="function"><name>ejsGetInt</name></member>
     <member refid="ejs_8h_19943ff408b404206ee398244b8c30f45" kind="function"><name>ejsGetItem</name></member>
     <member refid="ejs_8h_122446aae78ea1061cf9d77e0a69e6ff0" kind="function"><name>ejsGetLastItem</name></member>
@@ -2154,8 +2179,8 @@
     <member refid="ejs_8h_115bf08871cd24a2598dc7cc60b6113b0" kind="function"><name>ejsRegExpToString</name></member>
     <member refid="ejs_8h_1446686d23d0a412be454e61345615c19" kind="function"><name>ejsRemoveItemAtPos</name></member>
     <member refid="ejs_8h_1d1a7e5497527d832f16f44d6e0fa6196" kind="function"><name>ejsRemoveLastItem</name></member>
-    <member refid="ejs_8h_1b0a18ed5421821cca19914283f927843" kind="function"><name>ejsRemoveListener</name></member>
     <member refid="ejs_8h_1b1f2e3552d9557a14a68b0841bcde3e1" kind="function"><name>ejsRemoveModule</name></member>
+    <member refid="ejs_8h_16b93653f1083d73baa32583aec92ea7e" kind="function"><name>ejsRemoveObserver</name></member>
     <member refid="ejs_8h_1cbc8c6d8bdc2c144ee84577f8a267889" kind="function"><name>ejsRemoveProperty</name></member>
     <member refid="ejs_8h_1fb0edd1155120a214cd07fcac7f715f4" kind="function"><name>ejsRemoveScope</name></member>
     <member refid="ejs_8h_1600a5fb8a091972c1970ae64c905fb61" kind="function"><name>ejsRemoveSlot</name></member>
@@ -2172,12 +2197,15 @@
     <member refid="ejs_8h_1bc0fbad25c55fca2b65754050f462eff" kind="function"><name>ejsSearchForModule</name></member>
     <member refid="ejs_8h_1e7a22dd8e4d1ab35e82a2f7bd313ca4e" kind="function"><name>ejsSendEvent</name></member>
     <member refid="ejs_8h_1694ef9d80f31829100defbaa7e225189" kind="function"><name>ejsSendEventv</name></member>
+    <member refid="ejs_8h_1f553e779bb6370c7ffd5119870f7dcd7" kind="function"><name>ejsSendRequestCloseEvent</name></member>
+    <member refid="ejs_8h_14367edd1ed43c6f9136457c9e442e96a" kind="function"><name>ejsSendRequestErrorEvent</name></member>
     <member refid="ejs_8h_158fa24a2e2f7ceb30ed9dcaff3f3ad68" kind="function"><name>ejsServiceEvents</name></member>
     <member refid="ejs_8h_1689507735eb143982b79450838feefe9" kind="function"><name>ejsSetAllocIncrement</name></member>
     <member refid="group___ejs_byte_array_1gb8ca386fac3fe62e25d296a15da3e80e" kind="function"><name>ejsSetByteArrayPositions</name></member>
     <member refid="ejs_8h_191d0b3db7f5033631526150e56313554" kind="function"><name>ejsSetFunctionCode</name></member>
     <member refid="ejs_8h_1e1f7245e7e9d51988661d38eeeeaa5a5" kind="function"><name>ejsSetGeneration</name></member>
     <member refid="ejs_8h_132c5abcb0968c1b19dbd19f71ad3d0e1" kind="function"><name>ejsSetHandle</name></member>
+    <member refid="ejs_8h_13615a9e00548afbae40a027edb956be1" kind="function"><name>ejsSetHttpLimits</name></member>
     <member refid="ejs_8h_19e704afcf4acabcceceaff2366f62070" kind="function"><name>ejsSetListDetails</name></member>
     <member refid="ejs_8h_178e921df478360f2617a2115ba4e33b7" kind="function"><name>ejsSetModuleConstants</name></member>
     <member refid="group___ejs_obj_1g1663e9f2141f201540d1b85e5b7d710e" kind="function"><name>ejsSetProperty</name></member>
@@ -2196,7 +2224,7 @@
     <member refid="ejs_8h_1419ca00e5b272e0e65df3d2203f2308d" kind="function"><name>ejsShowCurrentScope</name></member>
     <member refid="ejs_8h_153b8987d2200b9872f9eb169c03b63e0" kind="function"><name>ejsShowOpFrequency</name></member>
     <member refid="ejs_8h_1e2104b0ccab98392ce8db6a2151eff89" kind="function"><name>ejsShowStack</name></member>
-    <member refid="ejs_8h_10bae47a323c75c00ad58d9904b79c701" kind="function"><name>ejsStartLogging</name></member>
+    <member refid="ejs_8h_16e56863cec01b9e530955c9a185876db" kind="function"><name>ejsStartMprLogging</name></member>
     <member refid="ejs_8h_14231a7ef451c4fc9f3539d8f5f36871f" kind="function"><name>ejsStrcat</name></member>
     <member refid="ejs_8h_176e5aee230cf1b0d89529323f98eb589" kind="function"><name>ejsStrdup</name></member>
     <member refid="group___ejs_error_1g728c0c3c7353c5ece9d9c8a7252eca57" kind="function"><name>ejsThrowArgError</name></member>
@@ -2232,7 +2260,7 @@
   <compound refid="group___ejs" kind="group"><name>Ejs</name>
     <member refid="group___ejs_1g2074536c4ebc6f82689d783ec5cde5bf" kind="function"><name>ejsCreateSearchPath</name></member>
     <member refid="group___ejs_1g78fb0ad5d9f4998a0b64914370aacd24" kind="function"><name>ejsCreateService</name></member>
-    <member refid="group___ejs_1gad511190a29fb6ad99a5dc9af42e8504" kind="function"><name>ejsCreateVm</name></member>
+    <member refid="group___ejs_1ga00af6ecbf1d316061aa7524935ac22f" kind="function"><name>ejsCreateVm</name></member>
     <member refid="group___ejs_1g2dd387ab6e232ecbe44b901cd5b01e58" kind="function"><name>ejsEvalFile</name></member>
     <member refid="group___ejs_1g9ab6a1f6c32ecbadc72d1f09495b85b8" kind="function"><name>ejsEvalModule</name></member>
     <member refid="group___ejs_1gc9d73946c6d81f299103daa26fcbc7f1" kind="function"><name>ejsEvalScript</name></member>

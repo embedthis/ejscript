@@ -3,6 +3,19 @@
   <compounddef id="struct_ejs_http_server" kind="struct" prot="public">
     <compoundname>EjsHttpServer</compoundname>
       <sectiondef kind="public-attrib">
+      <memberdef kind="variable" id="struct_ejs_http_server_171659704e582c08e543ebb2570ce1dc2" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsHttpServer::async</definition>
+        <argsstring></argsstring>
+        <name>async</name>
+        <briefdescription>
+<para>Async mode. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4514" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4514" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_12aa1ff4acd7762d40c389731999ac1cd" prot="public" static="no" mutable="no">
         <type>char *</type>
         <definition>char* EjsHttpServer::certFile</definition>
@@ -14,7 +27,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4494" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4494" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4508" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4508" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_11b40630765ef082497c13841276e436b" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -27,7 +40,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4496" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4496" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4510" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4510" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1445fea14734fbcc95f469b61ba6731b3" prot="public" static="no" mutable="no">
+        <type>cchar *</type>
+        <definition>cchar* EjsHttpServer::connector</definition>
+        <argsstring></argsstring>
+        <name>connector</name>
+        <briefdescription>
+<para>Pipeline connector. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4505" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4505" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_152ba3116eb5145dc3bbbfd696e0bbfdc" prot="public" static="no" mutable="no">
         <type>cchar *</type>
@@ -40,7 +66,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4492" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4492" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4506" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4506" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_1787f61aafd0a9586cca3fe9cba52366c" prot="public" static="no" mutable="no">
         <type>Ejs *</type>
@@ -53,7 +79,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4490" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4490" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4498" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4498" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_11aea0626e24076795d1c5d71e4ceed5b" prot="public" static="no" mutable="no">
         <type>EjsObj *</type>
@@ -66,7 +92,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4489" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4489" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4499" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4499" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1421c7e455de5eb6732320460abc76196" prot="public" static="no" mutable="no">
+        <type>EjsArray *</type>
+        <definition>EjsArray* EjsHttpServer::incomingStages</definition>
+        <argsstring></argsstring>
+        <name>incomingStages</name>
+        <briefdescription>
+<para>Incoming Http pipeline stages. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4503" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4503" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_1855cfb5ef544bdbc2ad98b067846dc15" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -79,7 +118,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4497" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4497" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4511" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4511" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_158b92959115df6f11548e69172a9e069" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -92,7 +131,33 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4493" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4493" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4507" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4507" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_10a64f15fe332ae63261830359b2cd7d0" prot="public" static="no" mutable="no">
+        <type>EjsObj *</type>
+        <definition>EjsObj* EjsHttpServer::limits</definition>
+        <argsstring></argsstring>
+        <name>limits</name>
+        <briefdescription>
+<para>Limits object. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4500" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4500" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1454ab5e382ac304e59bc99bc7be8f507" prot="public" static="no" mutable="no">
+        <type>char *</type>
+        <definition>char* EjsHttpServer::name</definition>
+        <argsstring></argsstring>
+        <name>name</name>
+        <briefdescription>
+<para>Server name. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4512" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4512" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_170f8bb92fc75172913d2fe2fe898b609" prot="public" static="no" mutable="no">
         <type>EjsObj</type>
@@ -105,7 +170,20 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4488" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4488" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4497" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4497" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1cae37b9dd9228c8982a5fa614ab83eed" prot="public" static="no" mutable="no">
+        <type>EjsArray *</type>
+        <definition>EjsArray* EjsHttpServer::outgoingStages</definition>
+        <argsstring></argsstring>
+        <name>outgoingStages</name>
+        <briefdescription>
+<para>Outgoing Http pipeline stages. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4504" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4504" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_1955cb722d3ad1f8bac7a752af6bc502e" prot="public" static="no" mutable="no">
         <type>int</type>
@@ -118,7 +196,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4498" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4498" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4513" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4513" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_1ae0cfca4f05dddad51b3470a7fdcb5e7" prot="public" static="no" mutable="no">
         <type>char *</type>
@@ -131,7 +209,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4495" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4495" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4509" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4509" bodyend="-1"/>
       </memberdef>
       <memberdef kind="variable" id="struct_ejs_http_server_1fe36e30c3e9afa1d8289c4f9d3448d9b" prot="public" static="no" mutable="no">
         <type>HttpServer *</type>
@@ -144,26 +222,116 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4491" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4491" bodyend="-1"/>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4501" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4501" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1187835d965ba94baed68ba5eb7dd02fe" prot="public" static="no" mutable="no">
+        <type>struct MprSsl *</type>
+        <definition>struct MprSsl* EjsHttpServer::ssl</definition>
+        <argsstring></argsstring>
+        <name>ssl</name>
+        <briefdescription>
+<para>SSL configuration. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4502" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4502" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_190a0be0b95cff9acbfb289aa91957fb8" prot="public" static="no" mutable="no">
+        <type>MprHashTable *</type>
+        <definition>MprHashTable* EjsHttpServer::traceExclude</definition>
+        <argsstring></argsstring>
+        <name>traceExclude</name>
+        <briefdescription>
+<para>Extensions to exclude from trace. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4520" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4520" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_199b89cee1d5b4b0ee0cae01024403ed7" prot="public" static="no" mutable="no">
+        <type>MprHashTable *</type>
+        <definition>MprHashTable* EjsHttpServer::traceInclude</definition>
+        <argsstring></argsstring>
+        <name>traceInclude</name>
+        <briefdescription>
+<para>Extensions to include in trace. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4519" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4519" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_1948637b10b3cdf29e3d6598d186eb3c8" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsHttpServer::traceLevel</definition>
+        <argsstring></argsstring>
+        <name>traceLevel</name>
+        <briefdescription>
+<para>Trace activation level. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4516" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4516" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_11839d9bf99530b528cf908b8d6782d7e" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsHttpServer::traceMask</definition>
+        <argsstring></argsstring>
+        <name>traceMask</name>
+        <briefdescription>
+<para>Request/response trace mask. </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4518" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4518" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="struct_ejs_http_server_134a74c9257986f18683be0c240700ded" prot="public" static="no" mutable="no">
+        <type>int</type>
+        <definition>int EjsHttpServer::traceMaxLength</definition>
+        <argsstring></argsstring>
+        <name>traceMaxLength</name>
+        <briefdescription>
+<para>Maximum trace file length (if known). </para>        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4517" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4517" bodyend="-1"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4487" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4487" bodyend="4499"/>
+    <location file="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" line="4496" bodyfile="/Users/mob/git/ejs/doc/api/ejs/staging/src/include/ejs.h" bodystart="4496" bodyend="4521"/>
     <listofallmembers>
+      <member refid="struct_ejs_http_server_171659704e582c08e543ebb2570ce1dc2" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>async</name></member>
       <member refid="struct_ejs_http_server_12aa1ff4acd7762d40c389731999ac1cd" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>certFile</name></member>
       <member refid="struct_ejs_http_server_11b40630765ef082497c13841276e436b" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>ciphers</name></member>
+      <member refid="struct_ejs_http_server_1445fea14734fbcc95f469b61ba6731b3" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>connector</name></member>
       <member refid="struct_ejs_http_server_152ba3116eb5145dc3bbbfd696e0bbfdc" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>dir</name></member>
       <member refid="struct_ejs_http_server_1787f61aafd0a9586cca3fe9cba52366c" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>ejs</name></member>
       <member refid="struct_ejs_http_server_11aea0626e24076795d1c5d71e4ceed5b" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>emitter</name></member>
+      <member refid="struct_ejs_http_server_1421c7e455de5eb6732320460abc76196" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>incomingStages</name></member>
       <member refid="struct_ejs_http_server_1855cfb5ef544bdbc2ad98b067846dc15" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>ip</name></member>
       <member refid="struct_ejs_http_server_158b92959115df6f11548e69172a9e069" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>keyFile</name></member>
+      <member refid="struct_ejs_http_server_10a64f15fe332ae63261830359b2cd7d0" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>limits</name></member>
+      <member refid="struct_ejs_http_server_1454ab5e382ac304e59bc99bc7be8f507" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>name</name></member>
       <member refid="struct_ejs_http_server_170f8bb92fc75172913d2fe2fe898b609" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>obj</name></member>
+      <member refid="struct_ejs_http_server_1cae37b9dd9228c8982a5fa614ab83eed" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>outgoingStages</name></member>
       <member refid="struct_ejs_http_server_1955cb722d3ad1f8bac7a752af6bc502e" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>port</name></member>
       <member refid="struct_ejs_http_server_1ae0cfca4f05dddad51b3470a7fdcb5e7" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>protocols</name></member>
       <member refid="struct_ejs_http_server_1fe36e30c3e9afa1d8289c4f9d3448d9b" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>server</name></member>
+      <member refid="struct_ejs_http_server_1187835d965ba94baed68ba5eb7dd02fe" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>ssl</name></member>
+      <member refid="struct_ejs_http_server_190a0be0b95cff9acbfb289aa91957fb8" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>traceExclude</name></member>
+      <member refid="struct_ejs_http_server_199b89cee1d5b4b0ee0cae01024403ed7" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>traceInclude</name></member>
+      <member refid="struct_ejs_http_server_1948637b10b3cdf29e3d6598d186eb3c8" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>traceLevel</name></member>
+      <member refid="struct_ejs_http_server_11839d9bf99530b528cf908b8d6782d7e" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>traceMask</name></member>
+      <member refid="struct_ejs_http_server_134a74c9257986f18683be0c240700ded" prot="public" virt="non-virtual"><scope>EjsHttpServer</scope><name>traceMaxLength</name></member>
     </listofallmembers>
   </compounddef>
 </doxygen>
