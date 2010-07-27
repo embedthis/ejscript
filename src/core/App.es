@@ -359,9 +359,9 @@ module ejs {
 
         let log = config.log
         if (log.enable) {
-            let stream = Logger.mprLogFile
+            let stream = Logger.nativeStream
             if (stream) {
-                log.level = Logger.mprLogLevel
+                log.level = Logger.nativeLevel
             } else if (log.location == "stdout") {
                 stream = App.outputStream
             } else if (log.location == "stderr") {
@@ -373,6 +373,7 @@ module ejs {
             if (log.match) {
                 App.log.match = log.match
             }
+            Logger.nativeLevel = log.level
         }
 
         /*  Append search paths */

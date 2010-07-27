@@ -520,6 +520,7 @@ typedef struct HttpPacket {
     @ingroup HttpPacket
  */
 extern HttpPacket *httpCreatePacket(MprCtx ctx, int size);
+extern HttpPacket *httpDup(MprCtx ctx, HttpPacket *orig);
 
 /**
     Create a connection packet packet
@@ -1922,7 +1923,9 @@ typedef struct HttpReceiver {
     char            *pathInfo;              /**< Extra path information (Decoded) */
     char            *pathTranslated;        /**< Mapped pathInfo to storage (Decoded) */
 
+#if FUTURE
     MprHeap         *arena;                 /**< Memory arena */
+#endif
     HttpConn        *conn;                  /**< Connection object */
     HttpPacket      *freePackets;           /**< Free list of packets */
     HttpPacket      *headerPacket;          /**< HTTP headers */

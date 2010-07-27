@@ -1931,7 +1931,7 @@ static HttpConn *openConnection(HttpConn *conn, cchar *url)
     conn->traceMask = httpSetupTrace(conn, 0);
     if (conn->traceMask) {
         if (httpShouldTrace(conn, HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN)) {
-            mprLog(conn, conn->traceLevel, "\n### New Connection from %s:%d to %s:%d", 
+            mprLog(conn, conn->traceLevel, "### New Connection from %s:%d to %s:%d", 
                 conn->ip, conn->port, conn->sock->ip, conn->sock->port);
         }
     }
@@ -2322,11 +2322,15 @@ static int connectionDestructor(HttpConn *conn)
     if (conn->server) {
         httpValidateLimits(conn->server, HTTP_VALIDATE_CLOSE_CONN, conn);
     }
+    if (HTTP_STATE_PARSED <= conn->state && conn->state < HTTP_STATE_COMPLETE) {
+        HTTP_NOTIFY(conn, HTTP_STATE_COMPLETE, 0);
+    }
     HTTP_NOTIFY(conn, -1, 0);
     httpRemoveConn(conn->http, conn);
     if (conn->sock) {
         httpCloseConn(conn);
     }
+    conn->input = 0;
     httpDestroyReceiver(conn);
     return 0;
 }
@@ -2349,7 +2353,7 @@ void httpCloseConn(HttpConn *conn)
     mprAssert(conn);
 
     if (conn->sock) {
-        mprLog(conn, 4, "Closing connection");
+        mprLog(conn, 6, "Closing connection");
         if (conn->waitHandler.fd >= 0) {
             mprRemoveWaitHandler(&conn->waitHandler);
         }
@@ -2395,6 +2399,7 @@ void httpPrepClientConn(HttpConn *conn, int retry)
     headers = 0;
     if (conn->state != HTTP_STATE_BEGIN) {
         if (conn->keepAliveCount >= 0) {
+            /* Eat remaining input incase last request did not consume all data */
             httpConsumeLastRequest(conn);
         }
         if (retry && (trans = conn->transmitter) != 0) {
@@ -2418,6 +2423,8 @@ void httpPrepClientConn(HttpConn *conn, int retry)
         conn->receiver = httpCreateReceiver(conn);
         conn->transmitter = httpCreateTransmitter(conn, headers);
         httpCreatePipeline(conn, NULL, NULL);
+
+        mprAssert(conn->input == 0 || mprIsValid(conn->input));
     }
 }
 
@@ -2513,7 +2520,7 @@ static void readEvent(HttpConn *conn)
             } else if (conn->state > HTTP_STATE_WAIT && conn->state < HTTP_STATE_COMPLETE) {
                 httpAdvanceReceiver(conn, packet);
                 if (!conn->error && conn->state < HTTP_STATE_COMPLETE) {
-                    httpConnError(conn, HTTP_CODE_COMMS_ERROR, "Communications read error. State %d", conn->state);
+                    httpConnError(conn, HTTP_CODE_COMMS_ERROR, "Connection lost");
                     break;
                 }
             }
@@ -2833,6 +2840,7 @@ static char *notifyState[] = {
 
 void httpSetState(HttpConn *conn, int state)
 {
+    mprAssert(state != HTTP_STATE_WAIT);
     if (state == conn->state) {
         return;
     }
@@ -3616,10 +3624,8 @@ cchar *httpLookupStatus(Http *http, int status)
 static void startTimer(Http *http)
 {
     updateCurrentDate(http);
-#if 0
     http->timer = mprCreateTimerEvent(mprGetDispatcher(http), "httpTimer", HTTP_TIMER_PERIOD, (MprEventProc) httpTimer, 
         http, MPR_EVENT_CONTINUOUS);
-#endif
 }
 
 
@@ -3662,9 +3668,9 @@ static int httpTimer(Http *http, MprEvent *event)
             if (conn->receiver) {
                 if (inactivity) {
                     mprLog(http, 4, "Inactive request timed out %s, exceeded inactivity timeout %d", 
-                        conn->receiver->uri, inactivityTimeout);
+                        conn->receiver->uri, inactivityTimeout / 1000);
                 } else {
-                    mprLog(http, 4, "Request timed out %s, exceeded timeout %d", conn->receiver->uri, requestTimeout);
+                    mprLog(http, 4, "Request timed out %s, exceeded timeout %d", conn->receiver->uri, requestTimeout / 1000);
                 }
             } else {
                 mprLog(http, 4, "Idle connection timed out");
@@ -3681,10 +3687,10 @@ static int httpTimer(Http *http, MprEvent *event)
             if (conn->receiver) {
                 if (inactivity) {
                     httpConnError(conn, HTTP_CODE_REQUEST_TIMEOUT,
-                        "Inactive request timed out, exceeded inactivity timeout %d", inactivityTimeout);
+                        "Inactive request timed out, exceeded inactivity timeout %d sec", inactivityTimeout / 1000);
                 } else {
                     httpConnError(conn, HTTP_CODE_REQUEST_TIMEOUT, 
-                        "Request timed out, exceeded timeout %d", requestTimeout);
+                        "Request timed out, exceeded timeout %d sec", requestTimeout / 1000);
                 }
             } else {
                 mprLog(http, 4, "Idle connection timed out");
@@ -4678,6 +4684,7 @@ HttpPacket *httpCreateConnPacket(HttpConn *conn, int size)
         if ((packet = rec->freePackets) != NULL && size <= packet->content->buflen) {
             rec->freePackets = packet->next; 
             packet->next = 0;
+            mprStealBlock(conn, packet);
             return packet;
         }
     }
@@ -4687,6 +4694,7 @@ HttpPacket *httpCreateConnPacket(HttpConn *conn, int size)
 
 void httpFreePacket(HttpQueue *q, HttpPacket *packet)
 {
+#if FUTURE
     HttpConn        *conn;
     HttpReceiver    *rec;
 
@@ -4715,6 +4723,9 @@ void httpFreePacket(HttpQueue *q, HttpPacket *packet)
     packet->flags = 0;
     packet->next = rec->freePackets;
     rec->freePackets = packet;
+#else
+    mprFree(packet);
+#endif
 } 
 
 
@@ -4952,6 +4963,33 @@ int httpResizePacket(HttpQueue *q, HttpPacket *packet, int size)
     }
     httpPutBackPacket(q, tail);
     return 0;
+}
+
+
+HttpPacket *httpDupPacket(MprCtx ctx, HttpPacket *orig)
+{
+    HttpPacket  *packet;
+    int         count, size;
+
+    count = httpGetPacketLength(orig);
+    size = max(count, HTTP_BUFSIZE);
+    size = HTTP_PACKET_ALIGN(size);
+
+    if ((packet = httpCreatePacket(ctx, 0)) == 0) {
+        return 0;
+    }
+    if (orig->content) {
+        packet->content = mprDupBuf(packet, orig->content);
+    }
+    if (orig->prefix) {
+        packet->prefix = mprDupBuf(packet, orig->prefix);
+    }
+    if (orig->suffix) {
+        packet->suffix = mprDupBuf(packet, orig->suffix);
+    }
+    packet->flags = orig->flags;
+    packet->entityLength = orig->entityLength;
+    return packet;
 }
 
 
@@ -6400,8 +6438,9 @@ static bool processRunning(HttpConn *conn);
 HttpReceiver *httpCreateReceiver(HttpConn *conn)
 {
     HttpReceiver    *rec;
-    MprHeap         *arena;
 
+#if FUTURE
+    MprHeap         *arena;
     /*  
         Create a request memory arena. From this arena, are all allocations made for this entire request.
         Arenas are scalable, non-thread-safe virtual memory blocks.
@@ -6411,11 +6450,17 @@ HttpReceiver *httpCreateReceiver(HttpConn *conn)
         return 0;
     }
     rec = mprAllocObjZeroed(arena, HttpReceiver);
+    rec->arena = arena;
     if (rec == 0) {
         return 0;
     }
+#else
+    rec = mprAllocObjZeroed(conn, HttpReceiver);
+    if (rec == 0) {
+        return 0;
+    }
+#endif
     rec->conn = conn;
-    rec->arena = arena;
     rec->length = -1;
     rec->ifMatch = 1;
     rec->ifModified = 1;
@@ -6436,16 +6481,21 @@ HttpReceiver *httpCreateReceiver(HttpConn *conn)
 void httpDestroyReceiver(HttpConn *conn)
 {
     if (conn->input) {
-        /* Left over packet */
-        if (mprGetParent(conn->input) != conn) {
+        if (mprGetParent(conn->input) != conn && httpGetPacketLength(conn->input) > 0) {
             conn->input = httpSplitPacket(conn, conn->input, 0);
+        } else {
+            conn->input = 0;
         }
     }
     if (conn->receiver) {
         if (conn->server) {
             httpValidateLimits(conn->server, HTTP_VALIDATE_CLOSE_REQUEST, conn);
         }
+#if FUTURE
         mprFree(conn->receiver->arena);
+#else
+        mprFree(conn->receiver);
+#endif
         conn->receiver = 0;
     }
     if (conn->server) {
@@ -7382,8 +7432,10 @@ static bool processCompletion(HttpConn *conn)
     trans = conn->transmitter;
     mpr = mprGetMpr(conn);
 
+#if FUTURE
     mprLog(rec, 4, "Request complete used %,d K, mpr usage %,d K, page usage %,d K",
         rec->arena->allocBytes / 1024, mpr->heap.allocBytes / 1024, mpr->pageHeap.allocBytes / 1024);
+#endif
 
     packet = conn->input;
     more = packet && (mprGetBufLength(packet->content) > 0);
@@ -7678,6 +7730,8 @@ int httpWait(HttpConn *conn, int state, int inactivityTimeout)
         return MPR_ERR_CONNECTION;
     }
     if (conn->state < state) {
+        httpConnError(conn, HTTP_CODE_REQUEST_TIMEOUT,
+            "Inactive request timed out, exceeded inactivity timeout %d", inactivityTimeout);
         return MPR_ERR_TIMEOUT;
     }
     return 0;
@@ -7896,10 +7950,10 @@ static void traceBuf(HttpConn *conn, cchar *buf, int len, int mask)
         data = mprAlloc(conn, len + 1);
         memcpy(data, buf, len);
         data[len] = '\0';
-        mprRawLog(conn, level, "\n%s packet, conn %d, len %d >>>>>>>>>>\n%s", tag, conn->seqno, len, data);
+        mprRawLog(conn, level, "\n>>>>>>>>>> %s packet, conn %d, len %d >>>>>>>>>>\n%s", tag, conn->seqno, len, data);
         mprFree(data);
     } else {
-        mprRawLog(conn, level, "\n%s packet, conn %d, len %d >>>>>>>>>> (binary)\n", tag, conn->seqno, len);
+        mprRawLog(conn, level, "\n>>>>>>>>>> %s packet, conn %d, len %d >>>>>>>>>> (binary)\n", tag, conn->seqno, len);
         data = mprAlloc(conn, len * 3 + ((len / 16) + 1) + 1);
         digits = "0123456789ABCDEF";
         for (i = 0, cp = buf, dp = data; cp < &buf[len]; cp++) {
@@ -8491,7 +8545,8 @@ int httpValidateLimits(HttpServer *server, int event, HttpConn *conn)
             mprRemoveHash(server->clients, conn->ip);
         }
         server->clientCount = mprGetHashCount(server->clients);
-        mprLog(server, 4, "Close conn. Active requests %d, active clients %d", server->requestCount, server->clientCount);
+        mprLog(server, 4, "Close connection. Active requests %d, active clients %d", 
+            server->requestCount, server->clientCount);
         break;
     
     case HTTP_VALIDATE_OPEN_REQUEST:
@@ -8537,7 +8592,7 @@ HttpConn *httpAcceptConn(HttpServer *server)
     if (sock == 0) {
         return 0;
     }
-    mprLog(server, 4, "New connection from %s:%d for %s:%d %s",
+    mprLog(server, 4, "New connection from %s:%d to %s:%d %s",
         sock->ip, sock->port, sock->acceptIp, sock->acceptPort, server->sock->sslSocket ? "(secure)" : "");
 
     if ((conn = httpCreateConn(server->http, server)) == 0) {
@@ -8563,7 +8618,7 @@ HttpConn *httpAcceptConn(HttpServer *server)
     conn->traceMask = httpSetupTrace(conn, 0);
     if (conn->traceMask) {
         if (httpShouldTrace(conn, HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN)) {
-            mprLog(conn, conn->traceLevel, "\n### New Connection from %s:%d to %s:%d", 
+            mprLog(conn, conn->traceLevel, "### New Connection from %s:%d to %s:%d", 
                 conn->ip, conn->port, conn->sock->ip, conn->sock->port);
         }
     }
@@ -8939,7 +8994,11 @@ HttpTransmitter *httpCreateTransmitter(HttpConn *conn, MprHashTable *headers)
     /*  
         Use the receivers arena so that freeing the receiver will also free the transmitter 
      */
+#if FUTURE
     trans = mprAllocObjWithDestructorZeroed(conn->receiver->arena, HttpTransmitter, destroyTransmitter);
+#else
+    trans = mprAllocObjWithDestructorZeroed(conn->receiver, HttpTransmitter, destroyTransmitter);
+#endif
     if (trans == 0) {
         return 0;
     }

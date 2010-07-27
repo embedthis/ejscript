@@ -89,6 +89,12 @@ UNUSED
         native var encoding: String
 
         /** 
+            Descriptive error message for the request. This message is defined internally by the Request if a request
+            times out or has a communications error.
+         */
+        native enumerable var errorMessage: String
+
+        /** 
             Files uploaded as part of the request. For each uploaded file, an instance of UploadFile is created in files. 
             Each element is named by the file upload HTML input element ID in the HTML page form. 
          */

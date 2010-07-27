@@ -16,6 +16,7 @@ static int  configureEjs(Ejs *ejs);
 static int  defineTypes(Ejs *ejs);
 static int  destroyEjs(Ejs *ejs);
 static int  loadStandardModules(Ejs *ejs, MprList *require);
+static void logHandler(MprCtx ctx, int flags, int level, cchar *msg);
 static int  runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName);
 static int  searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn);
 static int  startLogging(Ejs *ejs);
@@ -34,6 +35,7 @@ EjsService *ejsCreateService(MprCtx ctx)
     }
     mprGetMpr(ctx)->ejsService = sp;
     sp->nativeModules = mprCreateHash(sp, -1);
+    mprSetLogHandler(ctx, logHandler, NULL);
     return sp;
 }
 
@@ -836,9 +838,12 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
         ejsClearException(ejs);
         ejsRunFunction(ejs, ld->loggerWrite, ld->log, 1, &str);
         ejs->exception = saveException;
-    } else {
+    } else if (mpr->logData) {
         file = (MprFile*) mpr->logData;
         mprFprintf(file, "%s", msg);
+    } else {
+        file = (MprFile*) mpr->logData;
+        mprPrintfError(ctx, "%s", msg);
     }
     mprFree(amsg);
     solo--;

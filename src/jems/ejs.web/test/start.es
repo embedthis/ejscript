@@ -13,8 +13,8 @@ MyRoutes = [
                                                             location: { prefix: "/blog/", dir: "mvc-blog" }, },
 
   { name: "es",      builder: ScriptBuilder,                match: /\.es$/,
-        trace: { level: 1, options: ["conn", "first", "request"], size: 4096 },
-        limits: { inactivityTimeout: 30 },
+        xtrace: { level: 1, options: ["conn", "first", "request"], size: 4096 },
+        xlimits: { inactivityTimeout: 30 },
   },
   { name: "ejs",     builder: TemplateBuilder,              match: /\.ejs$/,      module: "ejs.template",  },
   { name: "dir",     builder: DirBuilder,                   match: Router.isDir, },
@@ -41,6 +41,7 @@ server.observe("readable", function (event, request) {
 
     // dump(request.limits)
     // request.setLimits({timeout: 120, inactivityTimeout: 60})
+    request.setLimits({timeout: 0, inactivityTimeout: 60})
 
     // App.log.info(request.method, request.uri)
     Web.serve(request, router)
@@ -51,8 +52,8 @@ server.listen(address)
 
 server.setLimits({clients: 2, requests: 1})
 // server.setLimits({transmission: 1024, upload: 10 * 1024})
-// server.setLimits({timeout: 0, inactivityTimeout: 0})
+server.setLimits({timeout: 0, inactivityTimeout: 0})
 
-server.trace(1, ["request", "response", "first", "headers"])
+server.trace(2, ["request", "response", "first", "headers"])
 // dump(server.limits)
 App.eventLoop()

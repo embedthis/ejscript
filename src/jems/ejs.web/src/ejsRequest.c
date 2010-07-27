@@ -301,6 +301,9 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_env:
         return createEnv(ejs, req);
 
+    case ES_ejs_web_Request_errorMessage:
+        return createString(ejs, conn->errorMsg);
+
     case ES_ejs_web_Request_filename:
         if (req->filename == 0) {
             filename = mprJoinPath(ejs, req->dir->path, &rec->pathInfo[1]);
@@ -492,6 +495,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     case ES_ejs_web_Request_contentType:
     case ES_ejs_web_Request_cookies:
     case ES_ejs_web_Request_env:
+    case ES_ejs_web_Request_errorMessage:
     case ES_ejs_web_Request_files:
     case ES_ejs_web_Request_headers:
     case ES_ejs_web_Request_host:

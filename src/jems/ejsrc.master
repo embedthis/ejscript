@@ -33,7 +33,7 @@
     },
     log: {
         enable: true,
-        where: "stdout",
+        location: "stdout",
         level: 2,
         match: null,
         showClient: true,                       // ejs.web 

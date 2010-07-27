@@ -154,8 +154,12 @@ module ejs {
         function get level(): Number
             _level
 
-        function set level(level: Number): void
+        function set level(level: Number): void {
             _level = level
+            if (this == App.log) {
+                nativeLogLevel = level
+            }
+        }
 
         /** 
             Matching expression to filter log messages. The match regular expression is used to match 
@@ -168,16 +172,17 @@ module ejs {
             _pattern = pattern
 
         /**
-            Get the MPR log level via a command line "--log spec" switch
+            The native code log level. This controls logging from C code.
             @hide
          */
-        static native function get mprLogLevel(): Number
+        static native function get nativeLevel(): Number
+        static native function set nativeLevel(level: Number): Void
 
         /**
-            MPR log file defined via a command line "--log spec" switch
+            Initial native log file defined via a command line "--log spec" switch
             @hide
          */
-        static native function get mprLogFile(): Stream
+        static native function get nativeStream(): Stream
 
         /** 
             The name of this logger.

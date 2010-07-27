@@ -257,7 +257,7 @@ static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     int     force;
 
     force = (argc == 1 && argv[0] == ejs->trueValue);
-    if (hp->dontFinalize || force) {
+    if (!hp->dontFinalize || force) {
         httpFinalize(hp->conn);
     }
     return 0;
@@ -1262,7 +1262,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
     conn = hp->conn;
     mprAssert(conn->state >= HTTP_STATE_STARTED);
 
-    if  (conn->state >= state) {
+    if (conn->state >= state) {
         return 1;
     }
     if (conn->state < HTTP_STATE_STARTED) {
@@ -1270,6 +1270,8 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
     }
     if (timeout < 0) {
         timeout = conn->limits->inactivityTimeout;
+    } else if (timeout == 0) {
+        timeout = INT_MAX;
     }
     mark = mprGetTime(hp);
     redirectCount = 0;
@@ -1344,9 +1346,6 @@ static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
 {
     if (hp->conn->async) {
         timeout = 0;
-    }
-    if (timeout < 0) {
-        timeout = hp->conn->limits->requestTimeout;
     }
     if (hp->conn->state < HTTP_STATE_STARTED) {
         return 0;

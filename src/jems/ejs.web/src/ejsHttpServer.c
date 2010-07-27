@@ -649,7 +649,6 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
 
     case -1:
         if (req) {
-            ejsSendRequestCloseEvent(ejs, req);
             req->conn = 0;
         }
         break;

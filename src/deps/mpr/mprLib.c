@@ -1190,6 +1190,9 @@ int mprStealBlock(MprCtx ctx, cvoid *ptr)
     mprAssert(VALID_CTX(ctx));
     mprAssert(VALID_CTX(ptr));
     bp = GET_BLK(ptr);
+    if (bp->parent == ctx) {
+        return 0;
+    }
 
 #if BLD_FEATURE_MEMORY_VERIFY
     /*
@@ -2743,6 +2746,23 @@ MprBuf *mprCreateBuf(MprCtx ctx, int initialSize, int maxSize)
     }
     bp->growBy = MPR_BUFSIZE;
     mprSetBufSize(bp, initialSize, maxSize);
+    return bp;
+}
+
+
+MprBuf *mprDupBuf(MprCtx ctx, MprBuf *orig)
+{
+    MprBuf      *bp;
+    int         len;
+
+    if ((bp = mprCreateBuf(ctx, orig->growBy, orig->maxsize)) == 0) {
+        return 0;
+    }
+    bp->refillProc = orig->refillProc;
+    bp->refillArg = orig->refillArg;
+    if ((len = mprGetBufLength(orig)) > 0) {
+        memcpy(bp->data, orig->data, len);
+    }
     return bp;
 }
 
@@ -12462,10 +12482,10 @@ void __mprDummyPollWait() {}
 
 /**
     mprPrintf.c - Printf routines safe for embedded programming
- *
+
     This module provides safe replacements for the standard printf formatting routines. Most routines in this file 
     are not thread-safe. It is the callers responsibility to perform all thread synchronization.
- *
+
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
 
@@ -12496,7 +12516,7 @@ void __mprDummyPollWait() {}
 
 /*
     Format:         %[modifier][width][precision][bits][type]
- *
+
     [-+ #,]         Modifiers
     [hlL]           Length bits
  */

@@ -1196,8 +1196,8 @@
 #define ES_Logger_Info                                                 4
 #define ES_Logger_Config                                               5
 #define ES_Logger_All                                                  6
-#define ES_Logger_mprLogLevel                                          7
-#define ES_Logger_mprLogFile                                           8
+#define ES_Logger_nativeLevel                                          7
+#define ES_Logger_nativeStream                                         8
 #define ES_Logger_NUM_CLASS_PROP                                       9
 
 /*
@@ -1995,6 +1995,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1329483
+#define _ES_CHECKSUM_ejs   1331451
 
 #endif

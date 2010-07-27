@@ -94,3 +94,4 @@ tmp
 src/core/test/http/ejs.log
 mvc
 projects/eclipse
+bin/mvc.cmd

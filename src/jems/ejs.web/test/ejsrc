@@ -6,8 +6,8 @@
     },
     log: {
         enable: true,
-        where: "ejs.log",
-        level: 2,
+        location: "stdout",
+        level: 4,
         match: null,
         showClient: true,
     },
