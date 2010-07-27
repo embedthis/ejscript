@@ -2,9 +2,7 @@
     Template.es -- Ejscript web templating loader. 
  */
 
-module ejs.web.template  {
-    require ejs.cjs
-    require ejs.web
+module ejs.ctemplate  {
 
     /** Web Page Template. This parses an web page with embedded Ejscript directives.
       

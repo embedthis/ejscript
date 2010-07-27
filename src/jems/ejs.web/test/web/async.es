@@ -1,13 +1,17 @@
 require ejs.web
-require ejs.web.jsgi
 
-exports.app = function (request: Request) { 
-    return function(r: Request) {
-        r.setStatus(200)
-        r.setHeaders({"Content-Type": "text/html"})
-        Timer(5000, function() {
-            r.write("Now done\n")
-            r.finalize()
-        })
-    } 
+exports.app = function (r: Request) { 
+    setStatus(200)
+    setHeaders({"Content-Type": "text/html"})
+
+    // dump(r.server.limits)
+    // r.setLimits({ transmission: 1024 })
+    // dump(r.limits)
+
+    Timer(1000, function() {
+        for each (i in 800) {
+            write(" Line: %05d %s".format(i, "aaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbccccccccccccccccccddddddd<br/>\r\n"))
+        } 
+        finalize()
+    }).start()
 }

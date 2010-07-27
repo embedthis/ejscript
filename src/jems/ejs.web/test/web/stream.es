@@ -2,14 +2,14 @@ require ejs.web
 require ejs.web.jsgi
 
 exports.app = function (r: Request) { 
-
-    r.setStatus(200)
-    r.setHeaders({"Content-Type": "text/plain"})
-    let input = r.input
+    print("HERE")
+    setStatus(200)
+    setHeaders({"Content-Type": "text/plain"})
     let data = new ByteArray
-    /* Echo input */
-    while (input.read(data)) {
-        r.write(data)
+    /* Echo input -- not only works for forms with URL encoding because data must be buffered first */
+    while (read(data)) {
+        print("WRITE " + data)
+        write(data)
     }
-    r.finalize()
+    finalize()
 }

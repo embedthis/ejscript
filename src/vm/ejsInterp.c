@@ -1310,10 +1310,12 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 callFunction(ejs, fun, NULL, argc, 0);
 
             } else if (!ejsIsFunction(fun)) {
-                if ((EjsObj*) vp == (EjsObj*) ejs->undefinedValue) {
-                    ejsThrowReferenceError(ejs, "Function is undefined");
-                } else {
-                    ejsThrowReferenceError(ejs, "Reference is not a function");
+                if (!ejs->exception) {
+                    if ((EjsObj*) vp == (EjsObj*) ejs->undefinedValue) {
+                        ejsThrowReferenceError(ejs, "Function is undefined");
+                    } else {
+                        ejsThrowReferenceError(ejs, "Reference is not a function");
+                    }
                 }
             } else {
                 /*

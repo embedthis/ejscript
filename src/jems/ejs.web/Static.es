@@ -12,13 +12,13 @@ module ejs.web {
         @spec ejs
         @stability prototype
      */
-breakpoint()
+// breakpoint()
     function StaticApp(request: Request): Object {
         let filename = request.filename
         let status = Http.Ok, headers, body
         if (!filename.exists && request.method != "PUT") {
             status = Http.NotFound, 
-breakpoint()
+// breakpoint()
             body = errorBody("Not Found", "Cannot find " + escapeHtml(request.pathInfo))
         } else {
             headers = {
@@ -51,6 +51,7 @@ breakpoint()
                 }
 
             } else if (request.method == "PUT") {
+print("MATCH PUT")
                 return { body: put }
 
             } else if (request.method == "HEAD") {
@@ -70,6 +71,7 @@ breakpoint()
 
 //  MOB -- complete
         function put(request: Request) {
+print("IN PUT")
             //  MOB -- how to handle ranges?
             let path = request.dir.join(request.pathInfo.trimStart('/'))
             request.status = path.exists ? Http.NoContent : Http.Created

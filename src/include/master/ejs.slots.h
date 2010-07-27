@@ -110,48 +110,50 @@
 #define ES_JSON                                                        89
 #define ES_deserialize                                                 90
 #define ES_serialize                                                   91
-#define ES_Locale                                                      92
-#define ES_Logger                                                      93
-#define ES_Math                                                        94
-#define ES_Memory                                                      95
-#define ES_Namespace                                                   96
-#define ES_Null                                                        97
-#define ES_Number                                                      98
-#define ES_Object                                                      99
-#define ES_typeOf                                                      100
-#define ES_Path                                                        101
-#define ES_Promise                                                     102
-#define ES_Reflect                                                     103
-#define ES_RegExp                                                      104
-#define ES_Socket                                                      105
-#define ES_Stream                                                      106
-#define ES_String                                                      107
-#define ES_System                                                      108
-#define ES_TextStream                                                  109
-#define ES_Timer                                                       110
-#define ES_setInterval                                                 111
-#define ES_clearInterval                                               112
-#define ES_setTimeout                                                  113
-#define ES_clearTimeout                                                114
-#define ES_Type                                                        115
-#define ES_Uri                                                         116
-#define ES_decodeURI                                                   117
-#define ES_decodeURIComponent                                          118
-#define ES_encodeURI                                                   119
-#define ES_encodeURIComponent                                          120
-#define ES_Void                                                        121
-#define ES_Worker                                                      122
-#define ES_Event                                                       123
-#define ES_ErrorEvent                                                  124
-#define ES_ejs_worker_self                                             125
-#define ES_ejs_worker_exit                                             126
-#define ES_ejs_worker_postMessage                                      127
-#define ES_ejs_worker_onerror                                          128
-#define ES_ejs_worker_onmessage                                        129
-#define ES_XML                                                         130
-#define ES_XMLHttp                                                     131
-#define ES_XMLList                                                     132
-#define ES_global_NUM_CLASS_PROP                                       133
+#define ES_require                                                     92
+#define ES_Loader                                                      93
+#define ES_Locale                                                      94
+#define ES_Logger                                                      95
+#define ES_Math                                                        96
+#define ES_Memory                                                      97
+#define ES_Namespace                                                   98
+#define ES_Null                                                        99
+#define ES_Number                                                      100
+#define ES_Object                                                      101
+#define ES_typeOf                                                      102
+#define ES_Path                                                        103
+#define ES_Promise                                                     104
+#define ES_Reflect                                                     105
+#define ES_RegExp                                                      106
+#define ES_Socket                                                      107
+#define ES_Stream                                                      108
+#define ES_String                                                      109
+#define ES_System                                                      110
+#define ES_TextStream                                                  111
+#define ES_Timer                                                       112
+#define ES_setInterval                                                 113
+#define ES_clearInterval                                               114
+#define ES_setTimeout                                                  115
+#define ES_clearTimeout                                                116
+#define ES_Type                                                        117
+#define ES_Uri                                                         118
+#define ES_decodeURI                                                   119
+#define ES_decodeURIComponent                                          120
+#define ES_encodeURI                                                   121
+#define ES_encodeURIComponent                                          122
+#define ES_Void                                                        123
+#define ES_Worker                                                      124
+#define ES_Event                                                       125
+#define ES_ErrorEvent                                                  126
+#define ES_ejs_worker_self                                             127
+#define ES_ejs_worker_exit                                             128
+#define ES_ejs_worker_postMessage                                      129
+#define ES_ejs_worker_onerror                                          130
+#define ES_ejs_worker_onmessage                                        131
+#define ES_XML                                                         132
+#define ES_XMLHttp                                                     133
+#define ES_XMLList                                                     134
+#define ES_global_NUM_CLASS_PROP                                       135
 
 /*
    Prototype (instance) slots for "global" type 
@@ -195,6 +197,7 @@
 #define ES_deserialize_str                                             0
 #define ES_serialize_obj                                               0
 #define ES_serialize_options                                           1
+#define ES_require_id                                                  0
 #define ES_typeOf_o                                                    0
 #define ES_setInterval_callback                                        0
 #define ES_setInterval_delay                                           1
@@ -1032,10 +1035,10 @@
 #define ES_Http_head                                                   18
 #define ES_Http_header                                                 19
 #define ES_Http_headers                                                20
-#define ES_Http_inactivityTimeout                                      21
-#define ES_Http_isSecure                                               22
-#define ES_Http_key                                                    23
-#define ES_Http_lastModified                                           24
+#define ES_Http_isSecure                                               21
+#define ES_Http_key                                                    22
+#define ES_Http_lastModified                                           23
+#define ES_Http_limits                                                 24
 #define ES_Http_method                                                 25
 #define ES_Http_observe                                                26
 #define ES_Http_options                                                27
@@ -1052,10 +1055,10 @@
 #define ES_Http_setCredentials                                         38
 #define ES_Http_setHeader                                              39
 #define ES_Http_setHeaders                                             40
-#define ES_Http_status                                                 41
-#define ES_Http_statusMessage                                          42
-#define ES_Http_success                                                43
-#define ES_Http_timeout                                                44
+#define ES_Http_setLimits                                              41
+#define ES_Http_status                                                 42
+#define ES_Http_statusMessage                                          43
+#define ES_Http_success                                                44
 #define ES_Http_trace                                                  45
 #define ES_Http_upload                                                 46
 #define ES_Http_uri                                                    47
@@ -1124,6 +1127,48 @@
 #define ES_JSON_stringify_obj                                          0
 #define ES_JSON_stringify_replacer                                     1
 #define ES_JSON_stringify_indent                                       2
+
+
+/*
+    Class property slots for the "Loader" type 
+ */
+#define ES_Loader__initializer___Loader_                               0
+#define ES_Loader_mainId                                               1
+#define ES_Loader_signatures                                           2
+#define ES_Loader_timestamps                                           3
+#define ES_Loader_defaultExtensions                                    4
+#define ES_Loader_init                                                 5
+#define ES_Loader_require                                              6
+#define ES_Loader_load                                                 7
+#define ES_Loader_cached                                               8
+#define ES_Loader_wrap                                                 9
+#define ES_Loader_locate                                               10
+#define ES_Loader_setConfig                                            11
+#define ES_Loader_NUM_CLASS_PROP                                       12
+
+/*
+   Prototype (instance) slots for "Loader" type 
+ */
+#define ES_Loader_NUM_INSTANCE_PROP                                    0
+#define ES_Loader_NUM_INHERITED_PROP                                   0
+
+/*
+    Local slots for methods in type "Loader" 
+ */
+#define ES_Loader_init_mainId                                          0
+#define ES_Loader_require_id                                           0
+#define ES_Loader_require_config                                       1
+#define ES_Loader_load_id                                              0
+#define ES_Loader_load_path                                            1
+#define ES_Loader_load_config                                          2
+#define ES_Loader_load_codeReader                                      3
+#define ES_Loader_cached_id                                            0
+#define ES_Loader_cached_config                                        1
+#define ES_Loader_cached_cachedir                                      2
+#define ES_Loader_wrap_code                                            0
+#define ES_Loader_locate_id                                            0
+#define ES_Loader_locate_config                                        1
+#define ES_Loader_setConfig_newConfig                                  0
 
 
 /*
@@ -1949,6 +1994,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1305861
+#define _ES_CHECKSUM_ejs   1325828
 
 #endif

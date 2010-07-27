@@ -8,10 +8,6 @@
 
 #include    "ejs.h"
 
-/********************************** Forwards **********************************/
-
-static int blendObjects(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite);
-
 /*********************************** Locals ***********************************/
 /*  
     Assert a condition is true.
@@ -79,7 +75,7 @@ static EjsObj *blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     overwrite = (argc == 3) ? (argv[2] == (EjsObj*) ejs->trueValue) : 1;
     dest = argv[0];
     src = argv[1];
-    blendObjects(ejs, dest, src, overwrite);
+    ejsBlendObject(ejs, dest, src, overwrite);
     return dest;
 }
 
@@ -260,10 +256,10 @@ static EjsObj *md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 /*  
     Merge one object into another. This is useful for inheriting and optionally overwriting option hashes (among other
-    things). The blendObjects is done at the primitive property level. If overwrite is true, the property is replaced. If
+    things). The blending is done at the primitive property level. If overwrite is true, the property is replaced. If
     overwrite is false, the property will be added if it does not already exist
  */
-static int blendObjects(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
+int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
 {
     EjsObj      *vp, *dp;
     EjsName     name;
@@ -283,7 +279,7 @@ static int blendObjects(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
                 name.space = mprStrdup(dest, name.space);
                 ejsSetPropertyByName(ejs, dest, &name, ejsCloneObject(ejs, (EjsObj*) vp, 1));
             } else {
-                blendObjects(ejs, dp, vp, overwrite);
+                ejsBlendObject(ejs, dp, vp, overwrite);
             }
 
         } else {

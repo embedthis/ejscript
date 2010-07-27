@@ -21,6 +21,21 @@
 /*
     Local slots for global methods 
  */
+#define ES_ejs_web_DirApp_request                                      0
+#define ES_ejs_web_DirBuilder_request                                  0
+#define ES_ejs_web_Middleware_app                                      0
+#define ES_ejs_web_Middleware_middleware                               1
+#define ES_ejs_web_Monitor_app                                         0
+#define ES_ejs_web_MvcApp_request                                      0
+#define ES_ejs_web_MvcBuilder_request                                  0
+#define ES_ejs_web_ScriptBuilder_request                               0
+#define ES_ejs_web_TemplateBuilder_request                             0
+#define ES_ejs_web_StaticApp_request                                   0
+#define ES_ejs_web_StaticBuilder_request                               0
+#define ES_ejs_web_TemplateFilter_app                                  0
+#define ES_ejs_web_TemplateApp_request                                 0
+#define ES_ejs_web_errorBody_title                                     0
+#define ES_ejs_web_errorBody_msg                                       1
 #define ES_ejs_web_parseCookies_cookieHeader                           0
 #define ES_ejs_web_escapeHtml_str                                      0
 #define ES_ejs_web_html_args                                           0
@@ -46,41 +61,39 @@
 #define ES_ejs_web_Controller_ejs_web_request                          6
 #define ES_ejs_web_Controller_ejs_web_view                             7
 #define ES_ejs_web_Controller_flash                                    8
-#define ES_ejs_web_Controller_noFinalize                               9
-#define ES_ejs_web_Controller_rendered                                 10
-#define ES_ejs_web_Controller_redirected                               11
-#define ES_ejs_web_Controller__afterFilters                            12
-#define ES_ejs_web_Controller__beforeFilters                           13
-#define ES_ejs_web_Controller__wrapFilters                             14
-#define ES_ejs_web_Controller_lastFlash                                15
-#define ES_ejs_web_Controller_openDatabase                             16
-#define ES_ejs_web_Controller_ejs_web_run                              17
-#define ES_ejs_web_Controller_ejs_web_dontFinalize                     18
-#define ES_ejs_web_Controller_flashBefore                              19
-#define ES_ejs_web_Controller_flashAfter                               20
-#define ES_ejs_web_Controller_ejs_web_resetFilters                     21
-#define ES_ejs_web_Controller_ejs_web_beforeFilter                     22
-#define ES_ejs_web_Controller_ejs_web_afterFilter                      23
-#define ES_ejs_web_Controller_ejs_web_wrapFilter                       24
-#define ES_ejs_web_Controller_runFilters                               25
-#define ES_ejs_web_Controller_loadView                                 26
-#define ES_ejs_web_Controller_ejs_web_renderError                      27
-#define ES_ejs_web_Controller_ejs_web_redirect                         28
-#define ES_ejs_web_Controller_ejs_web_redirectAction                   29
-#define ES_ejs_web_Controller_ejs_web_render                           30
-#define ES_ejs_web_Controller_ejs_web_renderFile                       31
-#define ES_ejs_web_Controller_ejs_web_renderPartial                    32
-#define ES_ejs_web_Controller_viewExists                               33
-#define ES_ejs_web_Controller_ejs_web_renderView                       34
-#define ES_ejs_web_Controller_ejs_web_error                            35
-#define ES_ejs_web_Controller_ejs_web_inform                           36
-#define ES_ejs_web_Controller_ejs_web_warn                             37
-#define ES_ejs_web_Controller_ejs_web_makeUri                          38
-#define ES_ejs_web_Controller_ejs_web_session                          39
-#define ES_ejs_web_Controller_action_missing                           40
-#define ES_ejs_web_Controller_ejs_web_appUrl                           41
-#define ES_ejs_web_Controller_ejs_web_makeUrl                          42
-#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        43
+#define ES_ejs_web_Controller_rendered                                 9
+#define ES_ejs_web_Controller_redirected                               10
+#define ES_ejs_web_Controller__afterFilters                            11
+#define ES_ejs_web_Controller__beforeFilters                           12
+#define ES_ejs_web_Controller__wrapFilters                             13
+#define ES_ejs_web_Controller_lastFlash                                14
+#define ES_ejs_web_Controller_openDatabase                             15
+#define ES_ejs_web_Controller_ejs_web_run                              16
+#define ES_ejs_web_Controller_flashBefore                              17
+#define ES_ejs_web_Controller_flashAfter                               18
+#define ES_ejs_web_Controller_ejs_web_resetFilters                     19
+#define ES_ejs_web_Controller_ejs_web_beforeFilter                     20
+#define ES_ejs_web_Controller_ejs_web_afterFilter                      21
+#define ES_ejs_web_Controller_ejs_web_wrapFilter                       22
+#define ES_ejs_web_Controller_runFilters                               23
+#define ES_ejs_web_Controller_loadView                                 24
+#define ES_ejs_web_Controller_ejs_web_renderError                      25
+#define ES_ejs_web_Controller_ejs_web_redirect                         26
+#define ES_ejs_web_Controller_ejs_web_redirectAction                   27
+#define ES_ejs_web_Controller_ejs_web_render                           28
+#define ES_ejs_web_Controller_ejs_web_renderFile                       29
+#define ES_ejs_web_Controller_ejs_web_renderPartial                    30
+#define ES_ejs_web_Controller_viewExists                               31
+#define ES_ejs_web_Controller_ejs_web_renderView                       32
+#define ES_ejs_web_Controller_ejs_web_error                            33
+#define ES_ejs_web_Controller_ejs_web_inform                           34
+#define ES_ejs_web_Controller_ejs_web_warn                             35
+#define ES_ejs_web_Controller_ejs_web_makeUri                          36
+#define ES_ejs_web_Controller_ejs_web_session                          37
+#define ES_ejs_web_Controller_action_missing                           38
+#define ES_ejs_web_Controller_ejs_web_appUrl                           39
+#define ES_ejs_web_Controller_ejs_web_makeUrl                          40
+#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        41
 #define ES_ejs_web_Controller_NUM_INHERITED_PROP                       0
 
 /*
@@ -133,7 +146,7 @@
     Class property slots for the "HttpServer" type 
  */
 #define ES_ejs_web_HttpServer__initializer___HttpServer_               0
-#define ES_ejs_web_HttpServer_indexes                                  1
+#define ES_ejs_web_HttpServer_indicies                                 1
 #define ES_ejs_web_HttpServer_NUM_CLASS_PROP                           2
 
 /*
@@ -144,17 +157,22 @@
 #define ES_ejs_web_HttpServer_async                                    2
 #define ES_ejs_web_HttpServer_close                                    3
 #define ES_ejs_web_HttpServer_documentRoot                             4
-#define ES_ejs_web_HttpServer_isSecure                                 5
-#define ES_ejs_web_HttpServer_listen                                   6
-#define ES_ejs_web_HttpServer_name                                     7
-#define ES_ejs_web_HttpServer_port                                     8
-#define ES_ejs_web_HttpServer_observe                                  9
-#define ES_ejs_web_HttpServer_removeObserver                           10
-#define ES_ejs_web_HttpServer_secure                                   11
-#define ES_ejs_web_HttpServer_verifyClients                            12
-#define ES_ejs_web_HttpServer_serverRoot                               13
-#define ES_ejs_web_HttpServer_software                                 14
-#define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        15
+#define ES_ejs_web_HttpServer_limits                                   5
+#define ES_ejs_web_HttpServer_isSecure                                 6
+#define ES_ejs_web_HttpServer_listen                                   7
+#define ES_ejs_web_HttpServer_name                                     8
+#define ES_ejs_web_HttpServer_port                                     9
+#define ES_ejs_web_HttpServer_observe                                  10
+#define ES_ejs_web_HttpServer_removeObserver                           11
+#define ES_ejs_web_HttpServer_secure                                   12
+#define ES_ejs_web_HttpServer_setPipeline                              13
+#define ES_ejs_web_HttpServer_setLimits                                14
+#define ES_ejs_web_HttpServer_trace                                    15
+#define ES_ejs_web_HttpServer_traceFilter                              16
+#define ES_ejs_web_HttpServer_verifyClients                            17
+#define ES_ejs_web_HttpServer_serverRoot                               18
+#define ES_ejs_web_HttpServer_software                                 19
+#define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        20
 #define ES_ejs_web_HttpServer_NUM_INHERITED_PROP                       0
 
 
@@ -162,32 +180,20 @@
     Class property slots for the "Mvc" type 
  */
 #define ES_Mvc__initializer___Mvc_                                     0
-#define ES_Mvc_defaultConfig                                           1
-#define ES_Mvc_mvc                                                     2
-#define ES_Mvc_dirs                                                    3
-#define ES_Mvc_ext                                                     4
-#define ES_Mvc_loaded                                                  5
-#define ES_Mvc_EJSRC                                                   6
-#define ES_Mvc_load                                                    7
-#define ES_Mvc_init                                                    8
-#define ES_Mvc_loadComponent                                           9
-#define ES_Mvc_NUM_CLASS_PROP                                          10
+#define ES_Mvc_apps                                                    1
+#define ES_Mvc_defaultConfig                                           2
+#define ES_Mvc_loaded                                                  3
+#define ES_Mvc_EJSRC                                                   4
+#define ES_Mvc_NUM_CLASS_PROP                                          5
 
 /*
    Prototype (instance) slots for "Mvc" type 
  */
-#define ES_Mvc_NUM_INSTANCE_PROP                                       0
+#define ES_Mvc_loadConfig                                              0
+#define ES_Mvc_init                                                    1
+#define ES_Mvc_loadComponent                                           2
+#define ES_Mvc_NUM_INSTANCE_PROP                                       3
 #define ES_Mvc_NUM_INHERITED_PROP                                      0
-
-/*
-    Local slots for methods in type "Mvc" 
- */
-#define ES_Mvc_load_request                                            0
-#define ES_Mvc_init_request                                            0
-#define ES_Mvc_loadComponent_request                                   0
-#define ES_Mvc_loadComponent_mod                                       1
-#define ES_Mvc_loadComponent_files                                     2
-#define ES_Mvc_loadComponent_deps                                      3
 
 
 /*
@@ -212,72 +218,78 @@
 #define ES_ejs_web_Request_dir                                         9
 #define ES_ejs_web_Request_encoding                                    10
 #define ES_ejs_web_Request_files                                       11
-#define ES_ejs_web_Request_headers                                     12
-#define ES_ejs_web_Request_home                                        13
-#define ES_ejs_web_Request_host                                        14
-#define ES_ejs_web_Request_isSecure                                    15
-#define ES_ejs_web_Request_localAddress                                16
-#define ES_ejs_web_Request_log                                         17
-#define ES_ejs_web_Request_method                                      18
-#define ES_ejs_web_Request_params                                      19
-#define ES_ejs_web_Request_pathInfo                                    20
-#define ES_ejs_web_Request_protocol                                    21
-#define ES_ejs_web_Request_query                                       22
-#define ES_ejs_web_Request_referrer                                    23
-#define ES_ejs_web_Request_remoteAddress                               24
-#define ES_ejs_web_Request_route                                       25
-#define ES_ejs_web_Request_scheme                                      26
-#define ES_ejs_web_Request_scriptName                                  27
-#define ES_ejs_web_Request_server                                      28
-#define ES_ejs_web_Request_session                                     29
-#define ES_ejs_web_Request_sessionID                                   30
-#define ES_ejs_web_Request_status                                      31
-#define ES_ejs_web_Request_timeout                                     32
-#define ES_ejs_web_Request_uri                                         33
-#define ES_ejs_web_Request_userAgent                                   34
-#define ES_ejs_web_Request_async                                       35
-#define ES_ejs_web_Request_cachable                                    36
-#define ES_ejs_web_Request_close                                       37
-#define ES_ejs_web_Request_show                                        38
-#define ES_ejs_web_Request_destroySession                              39
-#define ES_ejs_web_Request_extension                                   40
-#define ES_ejs_web_Request_finalize                                    41
-#define ES_ejs_web_Request_flush                                       42
-#define ES_ejs_web_Request_getResponseHeaders                          43
-#define ES_ejs_web_Request_header                                      44
-#define ES_ejs_web_Request_observe                                     45
-#define ES_ejs_web_Request_read                                        46
-#define ES_ejs_web_Request_redirect                                    47
-#define ES_ejs_web_Request_removeObserver                              48
-#define ES_ejs_web_Request_makeUri                                     49
-#define ES_ejs_web_Request_setLocation                                 50
-#define ES_ejs_web_Request_sendResponse                                51
-#define ES_ejs_web_Request_setCookie                                   52
-#define ES_ejs_web_Request_setHeader                                   53
-#define ES_ejs_web_Request_setHeaders                                  54
-#define ES_ejs_web_Request_setStatus                                   55
-#define ES_ejs_web_Request_write                                       56
-#define ES_ejs_web_Request_writeError                                  57
-#define ES_ejs_web_Request_writeHtml                                   58
-#define ES_ejs_web_Request_env                                         59
-#define ES_ejs_web_Request_input                                       60
-#define ES_ejs_web_Request_queryString                                 61
-#define ES_ejs_web_Request_serverName                                  62
-#define ES_ejs_web_Request_serverPort                                  63
-#define ES_ejs_web_Request_accept                                      64
-#define ES_ejs_web_Request_acceptCharset                               65
-#define ES_ejs_web_Request_acceptEncoding                              66
-#define ES_ejs_web_Request_authAcl                                     67
-#define ES_ejs_web_Request_body                                        68
-#define ES_ejs_web_Request_connection                                  69
-#define ES_ejs_web_Request_hostName                                    70
-#define ES_ejs_web_Request_mimeType                                    71
-#define ES_ejs_web_Request_pathTranslated                              72
-#define ES_ejs_web_Request_pragma                                      73
-#define ES_ejs_web_Request_remoteHost                                  74
-#define ES_ejs_web_Request_url                                         75
-#define ES_ejs_web_Request_originalUri                                 76
-#define ES_ejs_web_Request_NUM_INSTANCE_PROP                           77
+#define ES_ejs_web_Request_filename                                    12
+#define ES_ejs_web_Request_headers                                     13
+#define ES_ejs_web_Request_home                                        14
+#define ES_ejs_web_Request_host                                        15
+#define ES_ejs_web_Request_isSecure                                    16
+#define ES_ejs_web_Request_limits                                      17
+#define ES_ejs_web_Request_localAddress                                18
+#define ES_ejs_web_Request_log                                         19
+#define ES_ejs_web_Request_method                                      20
+#define ES_ejs_web_Request_params                                      21
+#define ES_ejs_web_Request_pathInfo                                    22
+#define ES_ejs_web_Request_protocol                                    23
+#define ES_ejs_web_Request_query                                       24
+#define ES_ejs_web_Request_referrer                                    25
+#define ES_ejs_web_Request_remoteAddress                               26
+#define ES_ejs_web_Request_route                                       27
+#define ES_ejs_web_Request_scheme                                      28
+#define ES_ejs_web_Request_scriptName                                  29
+#define ES_ejs_web_Request_server                                      30
+#define ES_ejs_web_Request_session                                     31
+#define ES_ejs_web_Request_sessionID                                   32
+#define ES_ejs_web_Request_status                                      33
+#define ES_ejs_web_Request_uri                                         34
+#define ES_ejs_web_Request_userAgent                                   35
+#define ES_ejs_web_Request_async                                       36
+#define ES_ejs_web_Request_cachable                                    37
+#define ES_ejs_web_Request_close                                       38
+#define ES_ejs_web_Request_dontFinalize                                39
+#define ES_ejs_web_Request_show                                        40
+#define ES_ejs_web_Request_destroySession                              41
+#define ES_ejs_web_Request_extension                                   42
+#define ES_ejs_web_Request_finalize                                    43
+#define ES_ejs_web_Request_flush                                       44
+#define ES_ejs_web_Request_responseHeaders                             45
+#define ES_ejs_web_Request_header                                      46
+#define ES_ejs_web_Request_observe                                     47
+#define ES_ejs_web_Request_read                                        48
+#define ES_ejs_web_Request_redirect                                    49
+#define ES_ejs_web_Request_removeObserver                              50
+#define ES_ejs_web_Request_sendfile                                    51
+#define ES_ejs_web_Request_makeUri                                     52
+#define ES_ejs_web_Request_setLimits                                   53
+#define ES_ejs_web_Request_setLocation                                 54
+#define ES_ejs_web_Request_sendResponse                                55
+#define ES_ejs_web_Request_setCookie                                   56
+#define ES_ejs_web_Request_setHeader                                   57
+#define ES_ejs_web_Request_setHeaders                                  58
+#define ES_ejs_web_Request_setStatus                                   59
+#define ES_ejs_web_Request_trace                                       60
+#define ES_ejs_web_Request_write                                       61
+#define ES_ejs_web_Request_error                                       62
+#define ES_ejs_web_Request_writeHtml                                   63
+#define ES_ejs_web_Request_env                                         64
+#define ES_ejs_web_Request_input                                       65
+#define ES_ejs_web_Request_queryString                                 66
+#define ES_ejs_web_Request_serverName                                  67
+#define ES_ejs_web_Request_serverPort                                  68
+#define ES_ejs_web_Request_accept                                      69
+#define ES_ejs_web_Request_acceptCharset                               70
+#define ES_ejs_web_Request_acceptEncoding                              71
+#define ES_ejs_web_Request_authAcl                                     72
+#define ES_ejs_web_Request_body                                        73
+#define ES_ejs_web_Request_connection                                  74
+#define ES_ejs_web_Request_hostName                                    75
+#define ES_ejs_web_Request_mimeType                                    76
+#define ES_ejs_web_Request_pathTranslated                              77
+#define ES_ejs_web_Request_pragma                                      78
+#define ES_ejs_web_Request_remoteHost                                  79
+#define ES_ejs_web_Request_url                                         80
+#define ES_ejs_web_Request_originalUri                                 81
+#define ES_ejs_web_Request_writeError                                  82
+#define ES_ejs_web_Request_NUM_INSTANCE_PROP                           83
 #define ES_ejs_web_Request_NUM_INHERITED_PROP                          0
 
 
@@ -285,10 +297,11 @@
     Class property slots for the "Router" type 
  */
 #define ES_ejs_web_Router__initializer___Router_                       0
-#define ES_ejs_web_Router_TopRoutes                                    1
-#define ES_ejs_web_Router_RestfulRoutes                                2
-#define ES_ejs_web_Router_LegacyRoutes                                 3
-#define ES_ejs_web_Router_NUM_CLASS_PROP                               4
+#define ES_ejs_web_Router_isDir                                        1
+#define ES_ejs_web_Router_TopRoutes                                    2
+#define ES_ejs_web_Router_RestfulRoutes                                3
+#define ES_ejs_web_Router_LegacyRoutes                                 4
+#define ES_ejs_web_Router_NUM_CLASS_PROP                               5
 
 /*
    Prototype (instance) slots for "Router" type 
@@ -299,27 +312,37 @@
 #define ES_ejs_web_Router_route                                        3
 #define ES_ejs_web_Router_NUM_INSTANCE_PROP                            4
 #define ES_ejs_web_Router_NUM_INHERITED_PROP                           0
+
+/*
+    Local slots for methods in type "Router" 
+ */
+#define ES_ejs_web_Router_isDir_request                                0
 #define ES_ejs_web_Route_NUM_CLASS_PROP                                0
 
 /*
    Prototype (instance) slots for "Route" type 
  */
-#define ES_ejs_web_Route_dir                                           0
-#define ES_ejs_web_Route_match                                         1
-#define ES_ejs_web_Route_method                                        2
-#define ES_ejs_web_Route_name                                          3
-#define ES_ejs_web_Route_params                                        4
-#define ES_ejs_web_Route_rewrite                                       5
-#define ES_ejs_web_Route_subroute                                      6
-#define ES_ejs_web_Route_threaded                                      7
-#define ES_ejs_web_Route_type                                          8
-#define ES_ejs_web_Route_urimaker                                      9
-#define ES_ejs_web_Route_matcher                                       10
-#define ES_ejs_web_Route_splitter                                      11
-#define ES_ejs_web_Route_tokens                                        12
-#define ES_ejs_web_Route_router                                        13
-#define ES_ejs_web_Route_makeUri                                       14
-#define ES_ejs_web_Route_NUM_INSTANCE_PROP                             15
+#define ES_ejs_web_Route_builder                                       0
+#define ES_ejs_web_Route_dir                                           1
+#define ES_ejs_web_Route_limits                                        2
+#define ES_ejs_web_Route_match                                         3
+#define ES_ejs_web_Route_method                                        4
+#define ES_ejs_web_Route_middleware                                    5
+#define ES_ejs_web_Route_module                                        6
+#define ES_ejs_web_Route_name                                          7
+#define ES_ejs_web_Route_params                                        8
+#define ES_ejs_web_Route_provider                                      9
+#define ES_ejs_web_Route_rewrite                                       10
+#define ES_ejs_web_Route_router                                        11
+#define ES_ejs_web_Route_subroute                                      12
+#define ES_ejs_web_Route_threaded                                      13
+#define ES_ejs_web_Route_type                                          14
+#define ES_ejs_web_Route_urimaker                                      15
+#define ES_ejs_web_Route_matcher                                       16
+#define ES_ejs_web_Route_splitter                                      17
+#define ES_ejs_web_Route_tokens                                        18
+#define ES_ejs_web_Route_makeUri                                       19
+#define ES_ejs_web_Route_NUM_INSTANCE_PROP                             20
 #define ES_ejs_web_Route_NUM_INHERITED_PROP                            0
 
 
@@ -335,29 +358,6 @@
 #define ES_ejs_web_Session_timeout                                     0
 #define ES_ejs_web_Session_NUM_INSTANCE_PROP                           1
 #define ES_ejs_web_Session_NUM_INHERITED_PROP                          0
-
-
-/*
-    Class property slots for the "Static" type 
- */
-#define ES_ejs_web_Static_serve                                        0
-#define ES_ejs_web_Static_put                                          1
-#define ES_ejs_web_Static_error                                        2
-#define ES_ejs_web_Static_NUM_CLASS_PROP                               3
-
-/*
-   Prototype (instance) slots for "Static" type 
- */
-#define ES_ejs_web_Static_NUM_INSTANCE_PROP                            0
-#define ES_ejs_web_Static_NUM_INHERITED_PROP                           0
-
-/*
-    Local slots for methods in type "Static" 
- */
-#define ES_ejs_web_Static_serve_request                                0
-#define ES_ejs_web_Static_put_request                                  0
-#define ES_ejs_web_Static_error_title                                  0
-#define ES_ejs_web_Static_error_msg                                    1
 #define ES_ejs_web_UploadFile_NUM_CLASS_PROP                           0
 
 /*
@@ -394,48 +394,49 @@
 #define ES_ejs_web_View_setHeader                                      9
 #define ES_ejs_web_View_setHeaders                                     10
 #define ES_ejs_web_View_setStatus                                      11
-#define ES_ejs_web_View_write                                          12
-#define ES_ejs_web_View_ejs_web_aform                                  13
-#define ES_ejs_web_View_ejs_web_alink                                  14
-#define ES_ejs_web_View_ejs_web_button                                 15
-#define ES_ejs_web_View_ejs_web_buttonLink                             16
-#define ES_ejs_web_View_ejs_web_chart                                  17
-#define ES_ejs_web_View_ejs_web_checkbox                               18
-#define ES_ejs_web_View_ejs_web_endform                                19
-#define ES_ejs_web_View_ejs_web_form                                   20
-#define ES_ejs_web_View_ejs_web_image                                  21
-#define ES_ejs_web_View_ejs_web_imageLink                              22
-#define ES_ejs_web_View_ejs_web_input                                  23
-#define ES_ejs_web_View_ejs_web_label                                  24
-#define ES_ejs_web_View_ejs_web_link                                   25
-#define ES_ejs_web_View_ejs_web_extlink                                26
-#define ES_ejs_web_View_ejs_web_list                                   27
-#define ES_ejs_web_View_ejs_web_mail                                   28
-#define ES_ejs_web_View_ejs_web_progress                               29
-#define ES_ejs_web_View_ejs_web_radio                                  30
-#define ES_ejs_web_View_ejs_web_script                                 31
-#define ES_ejs_web_View_ejs_web_status                                 32
-#define ES_ejs_web_View_ejs_web_stylesheet                             33
-#define ES_ejs_web_View_ejs_web_table                                  34
-#define ES_ejs_web_View_ejs_web_tabs                                   35
-#define ES_ejs_web_View_ejs_web_text                                   36
-#define ES_ejs_web_View_ejs_web_textarea                               37
-#define ES_ejs_web_View_ejs_web_tree                                   38
-#define ES_ejs_web_View_ejs_web_flash                                  39
-#define ES_ejs_web_View_emitFormErrors                                 40
-#define ES_ejs_web_View_getConnector                                   41
-#define ES_ejs_web_View_setOptions                                     42
-#define ES_ejs_web_View_ejs_web_getValue                               43
-#define ES_ejs_web_View_ejs_web_date                                   44
-#define ES_ejs_web_View_ejs_web_currency                               45
-#define ES_ejs_web_View_ejs_web_number                                 46
-#define ES_ejs_web_View_ejs_web_getOptions                             47
-#define ES_ejs_web_View_pivot                                          48
-#define ES_ejs_web_View_filter                                         49
-#define ES_ejs_web_View_ejs_web_makeUrl                                50
-#define ES_ejs_web_View_ejs_web_appUrl                                 51
-#define ES_ejs_web_View_ejs_web_redirect                               52
-#define ES_ejs_web_View_NUM_INSTANCE_PROP                              53
+#define ES_ejs_web_View_show                                           12
+#define ES_ejs_web_View_write                                          13
+#define ES_ejs_web_View_ejs_web_aform                                  14
+#define ES_ejs_web_View_ejs_web_alink                                  15
+#define ES_ejs_web_View_ejs_web_button                                 16
+#define ES_ejs_web_View_ejs_web_buttonLink                             17
+#define ES_ejs_web_View_ejs_web_chart                                  18
+#define ES_ejs_web_View_ejs_web_checkbox                               19
+#define ES_ejs_web_View_ejs_web_endform                                20
+#define ES_ejs_web_View_ejs_web_form                                   21
+#define ES_ejs_web_View_ejs_web_image                                  22
+#define ES_ejs_web_View_ejs_web_imageLink                              23
+#define ES_ejs_web_View_ejs_web_input                                  24
+#define ES_ejs_web_View_ejs_web_label                                  25
+#define ES_ejs_web_View_ejs_web_link                                   26
+#define ES_ejs_web_View_ejs_web_extlink                                27
+#define ES_ejs_web_View_ejs_web_list                                   28
+#define ES_ejs_web_View_ejs_web_mail                                   29
+#define ES_ejs_web_View_ejs_web_progress                               30
+#define ES_ejs_web_View_ejs_web_radio                                  31
+#define ES_ejs_web_View_ejs_web_script                                 32
+#define ES_ejs_web_View_ejs_web_status                                 33
+#define ES_ejs_web_View_ejs_web_stylesheet                             34
+#define ES_ejs_web_View_ejs_web_table                                  35
+#define ES_ejs_web_View_ejs_web_tabs                                   36
+#define ES_ejs_web_View_ejs_web_text                                   37
+#define ES_ejs_web_View_ejs_web_textarea                               38
+#define ES_ejs_web_View_ejs_web_tree                                   39
+#define ES_ejs_web_View_ejs_web_flash                                  40
+#define ES_ejs_web_View_emitFormErrors                                 41
+#define ES_ejs_web_View_getConnector                                   42
+#define ES_ejs_web_View_setOptions                                     43
+#define ES_ejs_web_View_ejs_web_getValue                               44
+#define ES_ejs_web_View_ejs_web_date                                   45
+#define ES_ejs_web_View_ejs_web_currency                               46
+#define ES_ejs_web_View_ejs_web_number                                 47
+#define ES_ejs_web_View_ejs_web_getOptions                             48
+#define ES_ejs_web_View_pivot                                          49
+#define ES_ejs_web_View_filter                                         50
+#define ES_ejs_web_View_ejs_web_makeUrl                                51
+#define ES_ejs_web_View_ejs_web_appUrl                                 52
+#define ES_ejs_web_View_ejs_web_redirect                               53
+#define ES_ejs_web_View_NUM_INSTANCE_PROP                              54
 #define ES_ejs_web_View_NUM_INHERITED_PROP                             0
 
 
@@ -449,9 +450,10 @@
 #define ES_ejs_web_Web_serve                                           4
 #define ES_ejs_web_Web_worker                                          5
 #define ES_ejs_web_Web_workerHelper                                    6
-#define ES_ejs_web_Web_load                                            7
+#define ES_ejs_web_Web_process                                         7
 #define ES_ejs_web_Web_start                                           8
-#define ES_ejs_web_Web_NUM_CLASS_PROP                                  9
+#define ES_ejs_web_Web_run                                             9
+#define ES_ejs_web_Web_NUM_CLASS_PROP                                  10
 
 /*
    Prototype (instance) slots for "Web" type 
@@ -464,12 +466,20 @@
  */
 #define ES_ejs_web_Web_serve_request                                   0
 #define ES_ejs_web_Web_serve_router                                    1
-#define ES_ejs_web_Web_worker_request                                  0
-#define ES_ejs_web_Web_workerHelper_request                            0
-#define ES_ejs_web_Web_load_request                                    0
-#define ES_ejs_web_Web_start_request                                   0
-#define ES_ejs_web_Web_start_app                                       1
+#define ES_ejs_web_Web_worker_app                                      0
+#define ES_ejs_web_Web_worker_request                                  1
+#define ES_ejs_web_Web_workerHelper_app                                0
+#define ES_ejs_web_Web_workerHelper_request                            1
+#define ES_ejs_web_Web_process_app                                     0
+#define ES_ejs_web_Web_process_request                                 1
+#define ES_ejs_web_Web_start_address                                   0
+#define ES_ejs_web_Web_start_documentRoot                              1
+#define ES_ejs_web_Web_start_serverRoot                                2
+#define ES_ejs_web_Web_start_routes                                    3
+#define ES_ejs_web_Web_run_address                                     0
+#define ES_ejs_web_Web_run_documentRoot                                1
+#define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   548544
+#define _ES_CHECKSUM_ejs_web   615304
 
 #endif

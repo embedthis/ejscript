@@ -229,7 +229,10 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
             break;
         }
         remaining = (int) (expires - mprGetTime(ejs));
-    } while (remaining >= 0 && !mprIsExiting(ejs) && !ejs->exiting);
+        if (ejs->exception) {
+            ejsClearException(ejs);
+        }
+    } while (remaining >= 0 && !mprIsExiting(ejs) && !ejs->exiting && !ejs->exception);
 }
 
 

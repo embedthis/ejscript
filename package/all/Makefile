@@ -20,7 +20,7 @@ EJS_SOURCES		+= $(shell find $(SRC)/vm $(SRC)/core -name '*.c')
 EC_SOURCES		+= $(shell find $(SRC)/compiler -name '*.c') 
 ES_SOURCES		+= $(shell find $(SRC)/core $(JEMS)/ejs.cjs \
 				    $(JEMS)/ejs.unix $(JEMS)/ejs.db $(JEMS)/ejs.db.mapper \
-					$(JEMS)/ejs.db.sqlite $(JEMS)/ejs.web $(JEMS)/ejs.web.template -name '*.es' | \
+					$(JEMS)/ejs.db.sqlite $(JEMS)/ejs.web $(JEMS)/ejs.template -name '*.es' | \
 					egrep -v 'SAVE|save|legacy|Archive|old|sample.es|XmlGlobal.es|ejsmvc.es|Jsdb.es|Mysql.es|ejspage.es|\/test\/') 
 EJSMOD_HEADERS	+= $(SRC)/cmd/ejsmod.h
 EJSMOD_SOURCES	+= $(patsubst %,$(SRC)/cmd/%.c, doc docFiles ejsmod listing slotGen)

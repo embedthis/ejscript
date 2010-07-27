@@ -216,16 +216,6 @@ module ejs {
         native function set async(enable: Boolean): Void
 
         /** 
-            The preferred chunk size to use if transfer chunk encoding is employed. Chunked encoding will be used when 
-            an explicit request body content length is unknown at the time the request headers must be emitted. Chunked 
-            encoding is automatically enabled if $post, $put or $upload is called and a contentLength has not been 
-            previously set. The chunk size is normally automatically determined but can be explicitly specified by updating
-            the $chunkSize. It will be set to zero if a chunk size size has not yet been defined.
-         */
-        native function get chunkSize(): Boolean
-        native function set chunkSize(value: Boolean): Void
-
-        /** 
             @duplicate Stream.close 
             This closes any open network connection and resets the http object to be ready for another connection. 
             Connections should be explicitly closed rather than relying on the garbage collector to dispose of the 
@@ -274,15 +264,12 @@ module ejs {
          */
         native function get date(): Date
 
-        /** 
-            Commence a DELETE request for the current uri. See connect() for connection details.
-            @param uri The uri to delete. This overrides any previously defined uri for the Http object.
-                If null, use a previously defined uri.
-            @param data Data objects to send with the request. Data is written raw and is not encoded or converted. 
-                However, the routine intelligently handles arrays such that, each element of the array will be written. 
-            @throws IOError if the request cannot be issued to the remote server.
+        /**
+            Don't auto-finalize the request. If dontFinalize is true, web frameworks should not auto-finalize requests. 
+            Rather, callers must explicitly invoke $finalize with force set to true.
          */
-        native function del(uri: Uri? = null, ...data): Void
+        native function get dontFinalize(): Boolean
+        native function set dontFinalize(value: Boolean): Void
 
         /** 
             Encoding scheme for serializing strings. The default encoding is UTF-8. Not yet implemented.
@@ -322,12 +309,15 @@ module ejs {
         }
 
         /** 
-            Signals the end of write data and flushes any buffered write data.
+            Signals the end of any write data and flushes any buffered write data to the client. 
+            If $dontFinalize is true, this call will have no effect unless $force is true.
+            @param force Do finalization even if $dontFinalize is true
          */
-        native function finalize(): Void 
+        native function finalize(force: Boolean = false): Void 
 
         /** 
-            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent to the server.
+            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent to 
+            the server.
             @duplicate Stream.flush
          */
         native function flush(dir: Number = Stream.WRITE): Void
@@ -391,14 +381,6 @@ module ejs {
         native function get headers(): Object
 
         /** 
-            Request inactivity timeout. Maximum number of seconds the request connection can be idle before the request is
-                terminated.
-            A value of 0 means no timeout.
-         */
-        native function get inactivityTimeout(): Number
-        native function set inactivityTimeout(timeout: Number): Void
-
-        /** 
             Is the connection is utilizing SSL.
             @return True if the connection is using SSL.
          */
@@ -417,6 +399,25 @@ module ejs {
             Set to null if not known.
          */
         native function get lastModified(): Date
+
+        /**
+            Resource limits for requests.
+            @param limits. Limits is an object hash with the following properties:
+            @option chunk Maximum size of a chunk when using chunked transfer encoding.
+            Chunked encoding will be used if the total body content length is unknown at the time the request headers 
+            must be emitted. The Http class will typically buffer output until $flush is called and will often be able 
+            to determine the content length even if a Content-Length header has not been explicitly defined. 
+            @option headers Maximum number of headers in a response.
+            @option header Maximum size of response headers.
+            @option inactivityTimeout Maximum time in seconds to keep a connection open if idle. Set to zero for no timeout.
+            @option receive Maximum size of incoming body data.
+            @option requestTimeout Maximum time in seconds for a request to complete. Set to zero for no timeout.
+            @option reuse Maximum number of times to reuse a connection for requests (KeepAlive count).
+            @option stageBuffer Maximum stage buffer size for each direction.
+            @option transmission Maximum size of outgoing body data.
+            @see setLimits
+          */
+        native function get limits(): Object
 
         /** 
             Http request method for this Http object. Default is "GET". Typical methods are: GET, POST, HEAD, OPTIONS, 
@@ -439,14 +440,6 @@ module ejs {
                 ompletes successfully but with a non 200 Http status code.
          */
         native function observe(name, observer: Function): Void
-
-        /** 
-            Commence an OPTIONS request for the current uri. See connect() for connection details.
-            @param uri New uri to use. This overrides any previously defined uri for the Http object.
-                If null, use a previously defined uri.
-            @throws IOError if the request cannot be issued to the remote server.
-         */
-        native function options(uri: Uri? = null): Void
 
         /** 
             Initiate a POST request for the current uri. This call initiates a POST request. It does not wait for the 
@@ -561,6 +554,14 @@ module ejs {
          */
         native function setHeaders(headers: Object, overwrite: Boolean = true): Void
 
+        /**
+            Update the request resource limits. The supplied limit fields are updated.
+            See $limit for limit field details.
+            @param limits Object hash of limit fields and values
+            @see limits
+         */
+        native function setLimits(limits: Object): Void
+
         /** 
             Http response status code from the Http response status line, e.g. 200. Set to null if unknown.
          */
@@ -578,19 +579,18 @@ module ejs {
         function get success(): Boolean
             200 <= status && status < 300
 
-        /** 
-            Request timeout in seconds. Maximum number of seconds for the request to complete. 
-         */
-        native function get timeout(): Number
-        native function set timeout(timeout: Number): Void
+        /**
+            Configure tracing for the request. The default is to trace the first line of requests and responses 
+            at level 2 and headers at level 3.
+            @param level Level at which request tracing will occurr
+            @param options. Set of trace options. Select from: "request" to trace requests, "response" to trace responses,
+            "conn" to trace new connections", "first" to trace the first line of requsts or responses, "headers" to 
+            trace headers, and "body" to trace body content. Or use "all" to trace everything.
+            @param size Maximum request body size to trace
+          */
+        native function trace(level: Number, options: Object = ["conn", "first", "headers", "request", "response"], 
+            size: Number = null): Void
 
-        /** 
-            Commence a TRACE request for the current uri. See connect() for connection details.
-            @param uri New uri to use. This overrides any previously defined uri for the Http object.
-                If null, use a previously defined uri.
-            @throws IOError if the request cannot be issued to the remote server.
-         */
-        native function trace(uri: Uri? = null): Void
 
         /** 
             Upload files using multipart/mime. This routine initiates a POST request and sends the specified files
@@ -653,26 +653,36 @@ module ejs {
          */
         native function write(...data): Void
 
-//  TODO - Cleanup and remove
+        /* ***************************************** Legacy *******************************************/
+
+//  MOB TODO - Cleanup and remove
+
         //  LEGACY 11/23/2010 1.0.0
         /** @hide */
         function addHeader(key: String, value: String, overwrite: Boolean = true): Void
             setHeader(key, value, overwrite)
 
+        // DEPRECATED
+        /** 
+            The number of response data bytes that are currently available for reading.
+            @returns The number of available bytes.
+            @hide
+         */
+        native function get available(): Number 
+
         //  DEPRECATED
         /** @hide */
         function get bodyLength(): Void
             contentLength
-
-        function set contentLength(value: Number): Void {
+        function set bodyLength(value: Number): Void
             setHeader("content-length", value)
-        }
 
         //  DEPRECATED
         /** @hide */
-        function set bodyLength(value: Number): Void {
-            setHeader("content-length", value)
-        }
+        function get chunked(): Boolean
+            chunksize != 0
+        function set chunked(enable: Boolean): Void
+            chunkSize = (enable) ? 8192 : 0
 
         //  DEPRECATED
         /** @hide */
@@ -684,14 +694,6 @@ module ejs {
         function get codeString(): String
             statusMessage
 
-        // DEPRECATED
-        /** 
-            The number of response data bytes that are currently available for reading.
-            @returns The number of available bytes.
-            @hide
-         */
-        native function get available(): Number 
-
         //  DEPRECATED
         /**
             Get the value of the content encoding of the response.
@@ -700,6 +702,25 @@ module ejs {
          */
         function get contentEncoding(): String
             header("content-encoding")
+
+        /**
+            @hide
+            @deprecated
+         */
+        function set contentLength(value: Number): Void
+            setHeader("content-length", value)
+
+        /** 
+            Commence a DELETE request for the current uri. See connect() for connection details.
+            @param uri The uri to delete. This overrides any previously defined uri for the Http object.
+                If null, use a previously defined uri.
+            @param data Data objects to send with the request. Data is written raw and is not encoded or converted. 
+                However, the routine intelligently handles arrays such that, each element of the array will be written. 
+            @throws IOError if the request cannot be issued to the remote server.
+            @deprecated
+            @hide
+         */
+        native function del(uri: Uri? = null, ...data): Void
 
         //  DEPRECATED
         /** 
@@ -714,20 +735,32 @@ module ejs {
         static function mimeType(path: String): String
             Uri(path)..mimeType
 
+        /** 
+            Commence an OPTIONS request for the current uri. See connect() for connection details.
+            @param uri New uri to use. This overrides any previously defined uri for the Http object.
+                If null, use a previously defined uri.
+            @throws IOError if the request cannot be issued to the remote server.
+            @deprecated
+            @hide
+         */
+        native function options(uri: Uri? = null): Void
+
         //  DEPRECATED
         /** @hide */
         function setCallback(eventMask: Number, cb: Function): Void {
             observe("" + eventMask, cb);
         }
 
-        //  DEPRECATED
-        /** @hide */
-        function get chunked(): Boolean {
-            return chunksize != 0
-        }
-        function set chunked(enable: Boolean): Void {
-            chunkSize = (enable) ? 8192 : 0
-        }
+        /** 
+            Commence a TRACE request for the current uri. See connect() for connection details.
+            @param uri New uri to use. This overrides any previously defined uri for the Http object.
+                If null, use a previously defined uri.
+            @throws IOError if the request cannot be issued to the remote server.
+            @deprecated
+            @hide
+         */
+        native function OLDtrace(uri: Uri? = null): Void
+
     }
 }
 

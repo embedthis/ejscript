@@ -2,12 +2,12 @@
 {
     cache: {
         enable: false,
-        reload: false,
+        reload: true,
     },
     log: {
         enable: true,
         where: "ejs.log",
-        level: 4,
+        level: 2,
         match: null,
         showClient: true,
     },

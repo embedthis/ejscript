@@ -16,69 +16,71 @@ module ejs.web {
         @spec ejs
         @stability prototype
      */
-    dynamic enumerable class Request implements Stream {
+    dynamic class Request implements Stream {
         use default namespace public
 
         /** 
             Absolute Uri for the top-level of the application. This returns an absolute Uri (includes scheme and host) 
             for the top most application Uri. See $home to get a relative Uri.
          */ 
-        native var absHome: Uri
+        native enumerable var absHome: Uri
 
         /** 
             Authentication group. This property is set to the value of the authentication group header. 
          */
-        native var authGroup: String
+        native enumerable var authGroup: String
 
         /** 
             Authentication method if authorization is being used (basic or digest). Set to null if not using authentication. 
          */
-        native var authType: String
+        native enumerable var authType: String
 
         /** 
             Authentication user name. This property is set to the value of the authentication user header. Set to null if
             not yet defined.
          */
-        native var authUser: String
+        native enumerable var authUser: String
 
-        /** 
+        /**
+UNUSED
             Preferred response chunk size for transfer chunk encoding. Chunked encoding is used when an explicit request 
             content length is unknown at the time the response headers must be emitted.  Chunked encoding is automatically 
             enabled if the chunkFilter is configured and a contentLength has not been defined.
+        native enumerable var chunkSize: Number
          */
-        native var chunkSize: Number
 
         /** 
             Request configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
             Middleware may modify to refer to a request local configuration object.
          */
-        var config: Object
+        enumerable var config: Object
 
         /** 
             Get the request content length. This is the length of body data sent by the client with the request. 
             This property is readonly and is set to the length of the request content body in bytes or -1 if not known.
+            Body data is readable by using $read() or by using the request object as a stream.
          */
-        native var contentLength: Number
+        native enumerable var contentLength: Number
 
         /** 
             The request content type as specified by the "Content-Type" Http request header. This is set to null 
             if not defined.
          */
-        native var contentType: String
+        native enumerable var contentType: String
 
         /** 
             Cookie headers. Cookies are sent by the client browser via the Set-Cookie Http header. They are typically 
             used used to specify the session state. If sessions are being used, an Ejscript session cookie will be 
             sent to and from the browser with each request. 
          */
-        native var cookies: Object
+        native enumerable var cookies: Object
 
         /** 
             Application web document directory on the local file system. This is set to the directory containing the
             application. For MVC applications, this is set to the base directory of the application. For non-MVC apps, 
             it is set to the directory containing the application startup script.
          */
-        native var dir: Path
+        native enumerable var dir: Path
 
         /** 
             Get the encoding scheme for serializing strings. Not yet implemented.
@@ -90,52 +92,63 @@ module ejs.web {
             Files uploaded as part of the request. For each uploaded file, an instance of UploadFile is created in files. 
             Each element is named by the file upload HTML input element ID in the HTML page form. 
          */
-        native var files: Object
+        native enumerable var files: Object
 
         /**
             Physical filename for the resource supplying the response content for the request. Virtual requests where
             the Request $uri does not correspond to any physical resource may not define this property.
          */
-        var filename: Path
+        enumerable var filename: Path
 
         /** 
             Request Http headers. This is an object hash filled with the request headers from the client.  If multiple 
             headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
             HTTP/1.1 specification. Use the header() method if you want to retrieve a single header.
+            Header property names are lower case. ie. "content_length". Use $headers() if you want to match headers
+            using a mixed case key. E.g. headers("Content-Length")
          */
-        native var headers: Object
+        native enumerable var headers: Object
 
 //  MOB -- bad name
         /** 
             Relative Uri for the top-level of the application. This returns a relative Uri from the current request
             up to the top most application Uri.
          */ 
-        native var home: Uri
+        native enumerable var home: Uri
 
+//  MOB -- bad name
         /** 
             Server host name. This is set to the authorized server name (HttpServer.name) if one is configured. 
             Otherwise it will be set to the $localAddress value which is either the "Host" header value if supplied 
             by the client or is the server IP address of the accepting interface.
          */
-        native var host: String
-
-        /** 
-            Request inactivity timeout. Maximum number of seconds the request connection can be idle before the request is
-                terminated.
-            A value of 0 means no timeout.
-         */
-        native var inactivityTimeout: Number
+        native enumerable var host: String
 
         /** 
             Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
             protocol scheme.
          */
-        native var isSecure: Boolean
+        native enumerable var isSecure: Boolean
+
+        /**
+            Resource limits for the request. The limits have initial default values defined by the owning HttpServer.
+            @param limits. Limits is an object hash with the following properties:
+            @option chunk Maximum size of a chunk when using chunked transfer encoding.
+            @option inactivityTimeout Maximum time in seconds to keep a connection open if idle. Set to zero for no timeout.
+            @option receive Maximum size of incoming body data.
+            @option requestTimeout Maximum time in seconds for a request to complete. Set to zero for no timeout.
+            @option reuse Maximum number of times to reuse a connection for requests (KeepAlive count).
+            @option sessionTimeout Maximum time to preserve session state. Set to zero for no timeout.
+            @option transmission Maximum size of outgoing body data.
+            @option upload Maximum size of uploaded files.
+            @see setLimits
+          */
+        native function get limits(): Object
 
         /** 
             Server IP address of the accepting interface
          */
-        native var localAddress: String
+        native enumerable var localAddress: String
 
         /** 
             Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.
@@ -146,50 +159,50 @@ module ejs.web {
         /** 
             Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE)
          */
-        native var method: String
+        native enumerable var method: String
 
         /** 
             The request form parameters. Object hash of user url-encoded post data parameters.
          */
-        native var params: Object
+        native enumerable var params: Object
 
         /** 
             Portion of the request URL after the scriptName. This is the location of the request within the application.
          */
-        native var pathInfo: String
+        native enumerable var pathInfo: String
 
         /** 
             Http request protocol (HTTP/1.0 | HTTP/1.1)
          */
-        native var protocol: String
+        native enumerable var protocol: String
 
         /** 
             Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.
          */
-        native var query: String
+        native enumerable var query: String
 
         /** 
             Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
             no defined referrer.
          */
-        native var referrer: String
+        native enumerable var referrer: String
 
         /** 
             IP address of the client issuing the request. 
          */
-        native var remoteAddress: String
+        native enumerable var remoteAddress: String
 
         /** 
             Route used for the request. The route is the matching entry in the route table for the request.
             The route has properties two properties of particular interest: "name" which is the name of the route and
             and "type" which classifies the type of request. 
          */
-        var route: Route
+        enumerable var route: Route
 
         /** 
             Http request scheme (http | https)
          */
-        native var scheme: String
+        native enumerable var scheme: String
 
         /** 
             Script name for the current application serving the request. This is typically the leading Uri portion 
@@ -197,7 +210,7 @@ module ejs.web {
             the application.  The script name is typically determined by the Router as it parses the request using 
             the routing tables.
          */
-        native var scriptName: String
+        native enumerable var scriptName: String
 
         /** 
             Owning server for the request. This is the HttpServer object that created this request.
@@ -216,29 +229,23 @@ module ejs.web {
         /** 
             Current session ID. Index into the $sessions object. Set to null if no session is defined.
          */
-        native var sessionID: String
+        native enumerable var sessionID: String
 
         /** 
             Set to the (proposed) Http response status code.
          */
-        native var status: Number
-
-        /** 
-            Request timeout. Maximum number of seconds for the request to complete.
-            A value of 0 means no timeout.
-         */
-        native var timeout: Number
+        native enumerable var status: Number
 
         /**
             The request URL path as a parsed Uri. This is the original Uri path combined with the HttpServer scheme, host
             and port components. It will not reflect changes to pathInfo or scriptName.
          */
-        native var uri: Uri
+        native enumerable var uri: Uri
 
         /** 
             Get the name of the client browser software set in the "User-Agent" Http header 
          */
-        native var userAgent: String
+        native enumerable var userAgent: String
 
         /* ************************************* Methods ******************************************/
 
@@ -262,7 +269,8 @@ module ejs.web {
 
         /** 
             @duplicate Stream.close
-            This closes the current request.
+            This closes the current request. It may not close the actually socket connection so that it can be reused
+                for future requests.
          */
         native function close(): Void
 
@@ -270,7 +278,7 @@ module ejs.web {
             Don't auto-finalize the request. If dontFinalize is true, web frameworks should not auto-finalize requests. 
             Rather, callers must explicitly invoke $finalize with force set to true.
          */
-        native var dontFinalize: Boolean
+        native enumerable var dontFinalize: Boolean
 
         //  MOB - unique name to not conflict with global.dump()
         /** 
@@ -299,13 +307,14 @@ module ejs.web {
 
         /** 
             Signals the end of any write data and flushes any buffered write data to the client. 
+            If $dontFinalize is true, this call will have no effect unless $force is true.
             @param force Do finalization even if $dontFinalize is true
          */
         native function finalize(force: Boolean = false): Void 
 
         /** 
-            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent to the client.
-            Flushing the read direction is ignored
+            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent 
+            to the client. Flushing the read direction is ignored
             @duplicate Stream.flush
          */
         native function flush(dir: Number = Stream.WRITE): Void
@@ -316,10 +325,8 @@ module ejs.web {
          */
         native function get responseHeaders(): Object
 
-//  MOB -- will this work case insensitive?
         /** 
-            Get a request header by keyword. Header properties are lower case. ie. "content_length". This is higher 
-            performance than using request.headers["key"].
+            Get a request header by keyword. The key match is case insensitive. 
             @return The header value
          */
         native function header(key: String): String
@@ -329,7 +336,7 @@ module ejs.web {
             @event readable Issued when some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
             @event close Issued when the request completes
-            @event error Issued if the request does not complete
+            @event error Issued if the request does not complete or the connection disconnects
             All events are called with the signature:
             function (event: String, http: Http): Void
          */
@@ -401,21 +408,6 @@ module ejs.web {
             return Uri(components)
         }
 
-        /**
-            Convenience routine to define an application at a given Uri prefix and directory location. This is typically
-                called from routing tables.
-            @param prefix The leading Uri prefix for the application. This prefix is removed from the pathInfo and the
-                $scriptName property is set to the prefix after removing the leading "/".
-            @param location Path to where the application home directory is. This sets the $dir property to the $location
-                argument.
-        */
-        function setLocation(prefix: String, location: Path): Void {
-            dir = location
-            prefix = prefix.trimEnd("/")
-            pathInfo = pathInfo.trimStart(prefix)
-            scriptName = prefix.trimStart("/")
-        }
-
         /** 
             Send a response to the client. This can be used instead of setting status and calling setHeaders() and write(). 
             The $response argument is an object hash containing status, headers and
@@ -431,6 +423,29 @@ module ejs.web {
             if (response.body)
                 write(body)
             finalize()
+        }
+
+        /**
+            Update the request resource limits. The supplied limit fields are updated.
+            See $limit for limit field details.
+            @param limits Object hash of limit fields and values
+            @see limits
+         */
+        native function setLimits(limits: Object): Void
+
+        /**
+            Convenience routine to define an application at a given Uri prefix and directory location. This is typically
+                called from routing tables.
+            @param prefix The leading Uri prefix for the application. This prefix is removed from the pathInfo and the
+                $scriptName property is set to the prefix after removing the leading "/".
+            @param location Path to where the application home directory is. This sets the $dir property to the $location
+                argument.
+        */
+        function setLocation(prefix: String, location: Path): Void {
+            dir = location
+            prefix = prefix.trimEnd("/")
+            pathInfo = pathInfo.trimStart(prefix)
+            scriptName = prefix.trimStart("/")
         }
 
         /** 
@@ -487,6 +502,17 @@ module ejs.web {
          */
         function setStatus(status: Number): Void
             this.status = status
+
+        /**
+            Configure tracing for this request. The default tracing is defined by the owning HttpServer and is typically
+            to trace the first line of responses and headers at level 3. As the Request first line and headers are
+            already parsed and traced before the Request object is created, Modifying the request trace level via trace()
+            will only impact the tracing of body content.
+            @param level Level at which request tracing will occurr
+            @param options. Set of trace options. Select from: "body" to body content.,
+            @param size Maximum request body size to trace
+          */
+        native function trace(level: Number, options: Object = ["body"], size: Number = null): Void
 
         /** 
             Write data to the client. This will buffer the written data until either flush() or finalize() is called. 

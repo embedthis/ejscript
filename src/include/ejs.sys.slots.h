@@ -54,6 +54,7 @@
 #define ES_deserialize_str                                             0
 #define ES_serialize_obj                                               0
 #define ES_serialize_options                                           1
+#define ES_require_id                                                  0
 #define ES_typeOf_o                                                    0
 #define ES_setInterval_callback                                        0
 #define ES_setInterval_delay                                           1

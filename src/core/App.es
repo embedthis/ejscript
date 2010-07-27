@@ -73,10 +73,13 @@ module ejs {
             },
             cache: {
                 enable: false,
+                reload: true,
             },
             directories: {
                 cache: "cache",
             }
+            test: {
+            },
         }
 
         /**
@@ -173,6 +176,7 @@ module ejs {
          */
         native static function exit(status: Number = 0): Void
 
+//  MOB -- need get env()
         /** 
             Get an environment variable.
             @param name The name of the environment variable to retrieve.

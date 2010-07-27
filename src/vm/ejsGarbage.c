@@ -346,8 +346,10 @@ static void mark(Ejs *ejs, int generation)
 {
     EjsModule       *mp;
     EjsGC           *gc;
+    EjsGen          *gen;
     EjsBlock        *block;
     EjsObj          *vp, **sp, **top;
+    MprBlk          *bp, *nextBp;
     int             next;
 
     gc = &ejs->gc;
@@ -371,11 +373,6 @@ static void mark(Ejs *ejs, int generation)
     if (ejs->search) {
         ejsMark(ejs, ejs->search);
     }
-#if UNUSED
-    if (ejs->emitter) {
-        ejsMark(ejs, ejs->emitter);
-    }
-#endif
     if (ejs->sessions) {
         ejsMark(ejs, ejs->sessions);
     }
@@ -406,6 +403,21 @@ static void mark(Ejs *ejs, int generation)
     for (sp = ejs->state->stackBase; sp <= top; sp++) {
         if ((vp = *sp) != NULL) {
             ejsMark(ejs, vp);
+        }
+    }
+
+    /*
+        Mark all permanent
+     */
+    for (generation = EJS_MAX_GEN - 1; generation >= 0; generation--) {
+        ejs->gc.collectGeneration = generation;
+        gen = ejs->gc.generations[generation];
+        for (bp = mprGetFirstChild(gen); bp; bp = nextBp) {
+            nextBp = bp->next;
+            vp = MPR_GET_PTR(bp);
+            if (!vp->marked && vp->permanent) {
+                ejsMark(ejs, vp);
+            }
         }
     }
 }

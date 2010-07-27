@@ -721,6 +721,18 @@
 		C9188B56115DAC060018846C /* ejsXML.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsXML.c; path = ../../../src/core/src/ejsXML.c; sourceTree = SOURCE_ROOT; };
 		C9188B57115DAC060018846C /* ejsXMLList.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsXMLList.c; path = ../../../src/core/src/ejsXMLList.c; sourceTree = SOURCE_ROOT; };
 		C9188B58115DAC060018846C /* ejsXMLLoader.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsXMLLoader.c; path = ../../../src/core/src/ejsXMLLoader.c; sourceTree = SOURCE_ROOT; };
+		C91A68B611F7A4D10051551E /* Loader.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Loader.es; path = ../../../src/jems/ejs.cjs/Loader.es; sourceTree = SOURCE_ROOT; };
+		C91A68B711F7A5130051551E /* Controller.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Controller.es; path = ../../../src/jems/ejs.web/Controller.es; sourceTree = SOURCE_ROOT; };
+		C91A68B811F7A5130051551E /* Dir.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Dir.es; path = ../../../src/jems/ejs.web/Dir.es; sourceTree = SOURCE_ROOT; };
+		C91A68B911F7A5130051551E /* Google.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Google.es; path = ../../../src/jems/ejs.web/Google.es; sourceTree = SOURCE_ROOT; };
+		C91A68BA11F7A5130051551E /* Html.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Html.es; path = ../../../src/jems/ejs.web/Html.es; sourceTree = SOURCE_ROOT; };
+		C91A68BB11F7A5130051551E /* Middleware.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Middleware.es; path = ../../../src/jems/ejs.web/Middleware.es; sourceTree = SOURCE_ROOT; };
+		C91A68BC11F7A5130051551E /* Monitor.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Monitor.es; path = ../../../src/jems/ejs.web/Monitor.es; sourceTree = SOURCE_ROOT; };
+		C91A68BD11F7A5130051551E /* Mvc.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Mvc.es; path = ../../../src/jems/ejs.web/Mvc.es; sourceTree = SOURCE_ROOT; };
+		C91A68BE11F7A5130051551E /* Router.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Router.es; path = ../../../src/jems/ejs.web/Router.es; sourceTree = SOURCE_ROOT; };
+		C91A68BF11F7A5130051551E /* Static.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Static.es; path = ../../../src/jems/ejs.web/Static.es; sourceTree = SOURCE_ROOT; };
+		C91A68C011F7A5130051551E /* Template.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Template.es; path = ../../../src/jems/ejs.web/Template.es; sourceTree = SOURCE_ROOT; };
+		C91A68C111F7A5130051551E /* View.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = View.es; path = ../../../src/jems/ejs.web/View.es; sourceTree = SOURCE_ROOT; };
 		C9248E5810A4933400B29BDD /* doc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = doc.c; sourceTree = "<group>"; };
 		C9248E5910A4933400B29BDD /* docFiles.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = docFiles.c; sourceTree = "<group>"; };
 		C9248E5A10A4933400B29BDD /* ejsmod.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ejsmod.c; sourceTree = "<group>"; };
@@ -739,9 +751,6 @@
 		C95E4FDB10EBFD9300982610 /* libhttp.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libhttp.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C95E4FE510EBFE1400982610 /* httpLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = httpLib.c; path = ../../../src/deps/http/httpLib.c; sourceTree = SOURCE_ROOT; };
 		C95E4FE710EBFE4100982610 /* pcre.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = pcre.c; path = ../../../src/deps/pcre/pcre.c; sourceTree = SOURCE_ROOT; };
-		C965D64B10BCB34900409B48 /* Cascade.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Cascade.es; path = ../../../src/jems/ejs.web.jsgi/Cascade.es; sourceTree = SOURCE_ROOT; };
-		C965D64C10BCB34900409B48 /* Head.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Head.es; path = ../../../src/jems/ejs.web.jsgi/Head.es; sourceTree = SOURCE_ROOT; };
-		C965D64D10BCB34900409B48 /* Static.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Static.es; path = ../../../src/jems/ejs.web.jsgi/Static.es; sourceTree = SOURCE_ROOT; };
 		C97623D20FD06EE7009C78E1 /* ejs */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejs; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97623DB0FD06EF4009C78E1 /* ejsc */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsc; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97623E20FD06EFC009C78E1 /* ejsmod */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejsmod; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -817,8 +826,6 @@
 		C9A0708C10A3583000F48512 /* package.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = package.json; path = ../../../src/jems/ejs.web/package.json; sourceTree = SOURCE_ROOT; };
 		C9A070A310A3586E00F48512 /* Request.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Request.es; path = ../../../src/jems/ejs.web/Request.es; sourceTree = SOURCE_ROOT; };
 		C9A070A510A3586E00F48512 /* Session.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Session.es; path = ../../../src/jems/ejs.web/Session.es; sourceTree = SOURCE_ROOT; };
-		C9A070B410A3594A00F48512 /* package.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = package.json; path = ../../../src/jems/ejs.web.cgi/package.json; sourceTree = SOURCE_ROOT; };
-		C9A070B610A3596700F48512 /* ejsCgiHandler.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsCgiHandler.c; path = ../../../src/jems/ejs.web.cgi/src/ejsCgiHandler.c; sourceTree = SOURCE_ROOT; };
 		C9A11ACF10790A9300B35E6B /* ecCompile.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = ecCompile.c; sourceTree = "<group>"; };
 		C9D4528711ECDA4300F029C8 /* http */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = http; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D452B411ECDBA300F029C8 /* http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = http.c; path = ../../../src/deps/http/http.c; sourceTree = SOURCE_ROOT; };
@@ -1076,23 +1083,24 @@
 			name = es;
 			sourceTree = "<group>";
 		};
+		C91A68B411F7A4980051551E /* ejs.template */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = ejs.template;
+			sourceTree = "<group>";
+		};
 		C9566A4010A16EB200AF4E04 /* jems */ = {
 			isa = PBXGroup;
 			children = (
-				C9F4C5EB10B5D5E60046EFF4 /* ejs.cache */,
 				C965D64610BCB2F600409B48 /* ejs.cjs */,
 				C9A0706D10A3564800F48512 /* ejs.db */,
-				C9A070FC10A35AC300F48512 /* ejs.db.js */,
 				C9A0702710A351EC00F48512 /* ejs.db.mapper */,
-				C9A070FB10A35AB700F48512 /* ejs.db.mysql */,
 				C9A0707710A356CA00F48512 /* ejs.db.sqlite */,
 				C903097C10A36659003FF2AB /* ejs.jem */,
+				C91A68B411F7A4980051551E /* ejs.template */,
 				C9A0708510A357AC00F48512 /* ejs.unix */,
 				C9A0708910A357FC00F48512 /* ejs.web */,
-				C9A070B310A3591200F48512 /* ejs.web.cgi */,
-				C965D64710BCB2FD00409B48 /* ejs.web.jsgi */,
-				C9A070F910A35AA400F48512 /* ejs.web.mvc */,
-				C9C59E9F10A34C59002D7049 /* ejs.xml */,
 			);
 			name = jems;
 			sourceTree = "<group>";
@@ -1137,42 +1145,10 @@
 		C965D64610BCB2F600409B48 /* ejs.cjs */ = {
 			isa = PBXGroup;
 			children = (
+				C91A68B611F7A4D10051551E /* Loader.es */,
 				C99A33DF10C2F1FF00F6C7BC /* package.json */,
 			);
 			name = ejs.cjs;
-			sourceTree = "<group>";
-		};
-		C965D64710BCB2FD00409B48 /* ejs.web.jsgi */ = {
-			isa = PBXGroup;
-			children = (
-				C965D64B10BCB34900409B48 /* Cascade.es */,
-				C965D64C10BCB34900409B48 /* Head.es */,
-				C965D64D10BCB34900409B48 /* Static.es */,
-			);
-			name = ejs.web.jsgi;
-			sourceTree = "<group>";
-		};
-		C96681A4113EF53200BB83C9 /* es */ = {
-			isa = PBXGroup;
-			children = (
-				C9A0707210A3567200F48512 /* Database.es */,
-				C9A0707310A3567200F48512 /* DatabaseConnector.es */,
-			);
-			name = es;
-			sourceTree = "<group>";
-		};
-		C9723AAA111361E2002B2B3B /* es */ = {
-			isa = PBXGroup;
-			children = (
-				C92F848510F2B7DE00CA953D /* HttpServer.es */,
-				C9A0708C10A3583000F48512 /* package.json */,
-				C9A070A310A3586E00F48512 /* Request.es */,
-				C9A070A510A3586E00F48512 /* Session.es */,
-				C99A33E110C2F29C00F6C7BC /* Utils.es */,
-				C9073BC610BA01370039F6A1 /* UploadFile.es */,
-				C99A33E210C2F29C00F6C7BC /* Web.es */,
-			);
-			name = es;
 			sourceTree = "<group>";
 		};
 		C97623BF0FD06EC4009C78E1 = {
@@ -1307,38 +1283,6 @@
 			name = Configurations;
 			sourceTree = "<group>";
 		};
-		C99A33E710C2F2F400F6C7BC /* www */ = {
-			isa = PBXGroup;
-			children = (
-				C99A33E910C2F2F400F6C7BC /* images */,
-				C99A33ED10C2F2F400F6C7BC /* js */,
-				C99A33F310C2F2F400F6C7BC /* themes */,
-			);
-			name = www;
-			path = ../../../src/jems/ejs.web.mvc/www;
-			sourceTree = SOURCE_ROOT;
-		};
-		C99A33E910C2F2F400F6C7BC /* images */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = images;
-			sourceTree = "<group>";
-		};
-		C99A33ED10C2F2F400F6C7BC /* js */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = js;
-			sourceTree = "<group>";
-		};
-		C99A33F310C2F2F400F6C7BC /* themes */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = themes;
-			sourceTree = "<group>";
-		};
 		C9A0702710A351EC00F48512 /* ejs.db.mapper */ = {
 			isa = PBXGroup;
 			children = (
@@ -1351,7 +1295,8 @@
 		C9A0706D10A3564800F48512 /* ejs.db */ = {
 			isa = PBXGroup;
 			children = (
-				C96681A4113EF53200BB83C9 /* es */,
+				C9A0707210A3567200F48512 /* Database.es */,
+				C9A0707310A3567200F48512 /* DatabaseConnector.es */,
 				C9A0707410A3568900F48512 /* package.json */,
 			);
 			name = ejs.db;
@@ -1363,7 +1308,7 @@
 				C9818105110EBD4E00F241EF /* ejssql.c */,
 				C9818106110EBD4E00F241EF /* sqlite3.c */,
 				C9A0707F10A3573C00F48512 /* ejsSqlite.c */,
-				C9CDBCE7113E35AF00B28804 /* es */,
+				C9A0707B10A3570F00F48512 /* Sqlite.es */,
 				C9A0708110A3575000F48512 /* package.json */,
 			);
 			name = ejs.db.sqlite;
@@ -1385,48 +1330,26 @@
 				C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */,
 				C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */,
 				C92F848710F2B80300CA953D /* ejsWeb.c */,
-				C9723AAA111361E2002B2B3B /* es */,
+				C91A68B711F7A5130051551E /* Controller.es */,
+				C91A68B811F7A5130051551E /* Dir.es */,
+				C91A68B911F7A5130051551E /* Google.es */,
+				C91A68BA11F7A5130051551E /* Html.es */,
+				C91A68BB11F7A5130051551E /* Middleware.es */,
+				C91A68BC11F7A5130051551E /* Monitor.es */,
+				C91A68BD11F7A5130051551E /* Mvc.es */,
+				C91A68BE11F7A5130051551E /* Router.es */,
+				C91A68BF11F7A5130051551E /* Static.es */,
+				C91A68C011F7A5130051551E /* Template.es */,
+				C91A68C111F7A5130051551E /* View.es */,
+				C92F848510F2B7DE00CA953D /* HttpServer.es */,
+				C9A0708C10A3583000F48512 /* package.json */,
+				C9A070A310A3586E00F48512 /* Request.es */,
+				C9A070A510A3586E00F48512 /* Session.es */,
+				C99A33E110C2F29C00F6C7BC /* Utils.es */,
+				C9073BC610BA01370039F6A1 /* UploadFile.es */,
+				C99A33E210C2F29C00F6C7BC /* Web.es */,
 			);
 			name = ejs.web;
-			sourceTree = "<group>";
-		};
-		C9A070B310A3591200F48512 /* ejs.web.cgi */ = {
-			isa = PBXGroup;
-			children = (
-				C9A070B410A3594A00F48512 /* package.json */,
-				C9A070B510A3594F00F48512 /* src */,
-			);
-			name = ejs.web.cgi;
-			sourceTree = "<group>";
-		};
-		C9A070B510A3594F00F48512 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				C9A070B610A3596700F48512 /* ejsCgiHandler.c */,
-			);
-			name = src;
-			sourceTree = "<group>";
-		};
-		C9A070F910A35AA400F48512 /* ejs.web.mvc */ = {
-			isa = PBXGroup;
-			children = (
-				C99A33E710C2F2F400F6C7BC /* www */,
-			);
-			name = ejs.web.mvc;
-			sourceTree = "<group>";
-		};
-		C9A070FB10A35AB700F48512 /* ejs.db.mysql */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = ejs.db.mysql;
-			sourceTree = "<group>";
-		};
-		C9A070FC10A35AC300F48512 /* ejs.db.js */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = ejs.db.js;
 			sourceTree = "<group>";
 		};
 		C9B4339810A28A6600A1BA02 /* ejsmod */ = {
@@ -1441,42 +1364,12 @@
 			name = ejsmod;
 			sourceTree = "<group>";
 		};
-		C9C59E9F10A34C59002D7049 /* ejs.xml */ = {
-			isa = PBXGroup;
-			children = (
-				C9C59EA110A34C95002D7049 /* src */,
-			);
-			name = ejs.xml;
-			sourceTree = "<group>";
-		};
-		C9C59EA110A34C95002D7049 /* src */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = src;
-			sourceTree = "<group>";
-		};
-		C9CDBCE7113E35AF00B28804 /* es */ = {
-			isa = PBXGroup;
-			children = (
-				C9A0707B10A3570F00F48512 /* Sqlite.es */,
-			);
-			name = es;
-			sourceTree = "<group>";
-		};
 		C9D84A2F1051B5BA0022DB20 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
 				C928EF3C10741AE800A81F4D /* libmatrixsslstatic.a */,
 			);
 			name = Libraries;
-			sourceTree = "<group>";
-		};
-		C9F4C5EB10B5D5E60046EFF4 /* ejs.cache */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = ejs.cache;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

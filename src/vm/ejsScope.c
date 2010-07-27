@@ -213,9 +213,13 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *
 done:
     if (slotNum >= 0) {
         lookup->ref = ejsGetProperty(ejs, obj, slotNum);
-        lookup->obj = obj;
-        lookup->slotNum = slotNum;
-        lookup->trait = ejsGetTrait(ejs, lookup->obj, lookup->slotNum);
+        if (ejs->exception) {
+            slotNum = -1;
+        } else {
+            lookup->obj = obj;
+            lookup->slotNum = slotNum;
+            lookup->trait = ejsGetTrait(ejs, lookup->obj, lookup->slotNum);
+        }
     }
     return slotNum;
 }

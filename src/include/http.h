@@ -64,9 +64,6 @@ struct MaDir;
         Tune for size
      */
     #define HTTP_BUFSIZE               (4 * 1024)            /**< Default I/O buffer size */
-#if UNUSED
-    #define HTTP_CONN_MEM              ((16 * 1024) - MPR_HEAP_OVERHEAD) /**< Virt memory per connection */
-#endif
     #define HTTP_REC_MEM               ((1 * 1024 * 1024) - MPR_HEAP_OVERHEAD) /**< Initial virt memory arena size */
     #define HTTP_MAX_CHUNK             (8 * 1024)            /**< Max chunk size for transfer chunk encoding */
     #define HTTP_MAX_HEADERS           2048                  /**< Max size of the headers */
@@ -77,15 +74,13 @@ struct MaDir;
     #define HTTP_MAX_CLIENTS           10                    /**< Max concurrent client endpoints */
     #define HTTP_MAX_SESSIONS          100                   /**< Max concurrent sessions */
     #define HTTP_MAX_STAGE_BUFFER      (16 * 1024)           /**< Max buffer for any stage */
+    #define HTTP_CLIENTS_HASH          (131)                 /**< Hash table for client IP addresses */
 
 #elif BLD_TUNE == MPR_TUNE_BALANCED
     /*  
         Tune balancing speed and size
      */
     #define HTTP_BUFSIZE               (8 * 1024)
-#if UNUSED
-    #define HTTP_CONN_MEM              ((32 * 1024) - MPR_HEAP_OVERHEAD)
-#endif
     #define HTTP_REC_MEM               ((2 * 1024 * 1024) - MPR_HEAP_OVERHEAD)
     #define HTTP_MAX_CHUNK             (8 * 1024)
     #define HTTP_MAX_HEADERS           (8 * 1024)
@@ -96,15 +91,13 @@ struct MaDir;
     #define HTTP_MAX_CLIENTS           25
     #define HTTP_MAX_SESSIONS          500
     #define HTTP_MAX_STAGE_BUFFER      (32 * 1024)
+    #define HTTP_CLIENTS_HASH          (257)
 
 #else
     /*  
         Tune for speed
      */
     #define HTTP_BUFSIZE               (16 * 1024)
-#if UNUSED
-    #define HTTP_CONN_MEM              ((64 * 1024) - MPR_HEAP_OVERHEAD)
-#endif
     #define HTTP_REC_MEM               ((4 * 1024 * 1024) - MPR_HEAP_OVERHEAD)
     #define HTTP_MAX_CHUNK             (16 * 1024) 
     #define HTTP_MAX_HEADERS           (8 * 1024)
@@ -115,6 +108,7 @@ struct MaDir;
     #define HTTP_MAX_CLIENTS           500
     #define HTTP_MAX_SESSIONS          5000
     #define HTTP_MAX_STAGE_BUFFER      (64 * 1024)
+    #define HTTP_CLIENTS_HASH          (1009)
 #endif
 
 #define HTTP_MAX_TRANSMISSION_BODY (INT_MAX)             /**< Max buffer for response data */
@@ -137,7 +131,7 @@ struct MaDir;
 #define HTTP_SESSION_TIMEOUT      (3600 * 1000)     /**< One hour */
 
 #define HTTP_DATE_FORMAT          "%a, %d %b %Y %T GMT"
-#define HTTP_TRACE_LEVEL          3                 /**< Trace level at which requests are traced */
+#define HTTP_TRACE_LEVEL          2                 /**< Trace level at which requests are traced */
 
 /*  
     Hash sizes (primes work best)
@@ -169,7 +163,7 @@ struct MaDir;
 #define HTTP_CODE_NOT_FOUND                 404
 #define HTTP_CODE_BAD_METHOD                405
 #define HTTP_CODE_NOT_ACCEPTABLE            406
-#define HTTP_CODE_REQUEST_TIME_OUT          408
+#define HTTP_CODE_REQUEST_TIMEOUT           408
 #define HTTP_CODE_CONFLICT                  409
 #define HTTP_CODE_GONE                      410
 #define HTTP_CODE_LENGTH_REQUIRED           411
@@ -182,7 +176,7 @@ struct MaDir;
 #define HTTP_CODE_NOT_IMPLEMENTED           501
 #define HTTP_CODE_BAD_GATEWAY               502
 #define HTTP_CODE_SERVICE_UNAVAILABLE       503
-#define HTTP_CODE_GATEWAY_TIME_OUT          504
+#define HTTP_CODE_GATEWAY_TIMEOUT           504
 #define HTTP_CODE_BAD_VERSION               505
 #define HTTP_CODE_INSUFFICIENT_STORAGE      507
 
@@ -208,7 +202,6 @@ typedef void (*HttpNotifier)(struct HttpConn *conn, int state, int flags);
     httpSetDefaultHost httpSetDefaultPort httpSetProxy
  */
 typedef struct Http {
-    struct HttpLimits *limits;              /**< Pointer to http->limits */
     MprList         *connections;           /**< Currently open connection requests */
     MprHashTable    *stages;                /**< Possible stages in connection pipelines */
     MprHashTable    *mimeTypes;             /**< Mime Types */
@@ -229,7 +222,9 @@ typedef struct Http {
     struct HttpStage *passHandler;          /**< Pass through handler */
     struct HttpStage *uploadFilter;         /**< Upload filter */
 
-    struct HttpLocation *location;          /**< Default location block */
+    struct HttpLimits *clientLimits;        /**< Client resource limits */
+    struct HttpLimits *serverLimits;        /**< Server resource limits */
+    struct HttpLocation *clientLocation;    /**< Default location block for clients */
 
     MprEvent        *timer;                 /**< Admin service timer */
     MprTime         now;                    /**< When was the currentDate last computed */
@@ -244,6 +239,7 @@ typedef struct Http {
     char            *secret;                /**< Random bytes for authentication */
     char            *defaultHost;           /**< Default ip address */
     int             defaultPort;            /**< Default port */
+    char            *protocol;              /**< HTTP/1.0 or HTTP/1.1 */
     char            *proxyHost;             /**< Proxy ip address */
     int             proxyPort;              /**< Proxy port */
     int             sslLoaded;              /**< True when the SSL provider has been loaded */
@@ -283,7 +279,7 @@ extern int httpCreateSecret(Http *http);
     @param http Http service object.
     @param on Set to 1 to enable
  */
-extern void httpEnableTraceMethod(Http *http, bool on);
+extern void httpEnableTraceMethod(struct HttpLimits *limits, bool on);
 
 /**
     Get the http context object
@@ -367,8 +363,9 @@ typedef struct HttpLimits {
     int     sessionTimeout;         /**< Default time a session can persist (msec) */
 
     int     enableTraceMethod;      /**< Trace method enabled */
-
 } HttpLimits;
+
+extern HttpLimits *httpInitLimits(MprCtx ctx, int serverSide);
 
 /** 
     URI management
@@ -772,6 +769,7 @@ typedef struct HttpQueue {
     int                 max;                    /**< Maxiumum queue size */
     int                 low;                    /**< Low water mark for flow control */
     int                 flags;                  /**< Queue flags */
+    int                 servicing;              /**< Currently being serviced */
     int                 packetSize;             /**< Maximum acceptable packet size */
     int                 direction;              /**< Flow direction */
     void                *queueData;             /**< Stage instance data */
@@ -1229,28 +1227,46 @@ extern void httpSendOutgoingService(HttpQueue *q);
  */
 #define HTTP_NOTIFY_READABLE        0x1     /**< The request has data available for reading */
 #define HTTP_NOTIFY_WRITABLE        0x2     /**< The request is now writable (post / put data) */
+#define HTTP_NOTIFY_CLOSED          0x4     /**< The request is now closed */
+#define HTTP_NOTIFY_ERROR           0x8     /**< The request has an error */
 
 /*  
     Connection / Request states
  */
+//  MOB - make origin zero
 #define HTTP_STATE_BEGIN            1       /**< Ready for a new request */
 #define HTTP_STATE_STARTED          2       /**< A new request has started */
 #define HTTP_STATE_WAIT             3       /**< Waiting for the response */
 #define HTTP_STATE_FIRST            4       /**< First request line has been parsed */
 #define HTTP_STATE_PARSED           5       /**< Headers have been parsed, handler can start */
 #define HTTP_STATE_CONTENT          6       /**< Reading posted content */
+#if UNUSED
 #define HTTP_STATE_PROCESS          7       /**< Content received, handler can process */
-#define HTTP_STATE_RUNNING          8       /**< Handler running */
+#endif
+#define HTTP_STATE_RUNNING          7       /**< Handler running */
+#if UNUSED
 #define HTTP_STATE_ERROR            9       /**< Request in error */
-#define HTTP_STATE_COMPLETE         10      /**< Request complete */
+#endif
+#define HTTP_STATE_COMPLETE         8       /**< Request complete */
+
+
+/*
+    Limit validation events
+ */
+#define HTTP_VALIDATE_OPEN_CONN     1       /**< Open a new connection */
+#define HTTP_VALIDATE_CLOSE_CONN    2       /**< Close a connection */
+#define HTTP_VALIDATE_OPEN_REQUEST  3       /**< Open a new request */
+#define HTTP_VALIDATE_CLOSE_REQUEST 4       /**< Close a request */
 
 /*
     Request tracing
  */
 #define HTTP_TRACE_TRANSMIT         0x1     /**< Trace transmission */
 #define HTTP_TRACE_RECEIVE          0x2     /**< Trace reception */
-#define HTTP_TRACE_HEADERS          0x4     /**< Trace headers */
-#define HTTP_TRACE_BODY             0x8     /**< Trace body */
+#define HTTP_TRACE_CONN             0x4     /**< Trace new connections */
+#define HTTP_TRACE_FIRST            0x8     /**< Trace first line of transmit / reception */
+#define HTTP_TRACE_HEADERS          0x10    /**< Trace headers */
+#define HTTP_TRACE_BODY             0x20    /**< Trace body */
 
 /** 
     Notifier and event callbacks.
@@ -1265,7 +1281,7 @@ typedef MprEventProc HttpCallback;
     @stability Evolving
     @defgroup HttpConn HttpConn
     @see HttpConn HttpReceiver HttpReceiver HttpTransmitter HttpQueue HttpStage
-        httpCreateConn httpCloseConn httpCompleteRequest httpCreatePipeline httpDestroyPipeline httpDiscardPipeline
+        httpCreateConn httpCloseConn httpCompleteRequest httpCreatePipeline httpDestroyPipeline httpDiscardTransmitData
         httpError httpGetAsync httpGetConnContext httpGetError httpGetKeepAliveCount httpPrepConn httpProcessPipeline
         httpServiceQueues httpSetAsync httpSetCredentials httpSetCallback httpSetConnContext
         httpSetConnNotifier httpSetKeepAliveCount httpSetProtocol httpSetRetries httpSetState httpSetTimeout
@@ -1276,7 +1292,12 @@ typedef struct HttpConn {
 
     int             state;                  /**< Connection state */
     int             flags;                  /**< Connection flags */
+    int             abortPipeline;          /**< Connection errors (not proto errors) abort the pipeline */
+    int             complete;               /**< The current request is now complete */
+    int             writeComplete;          /**< All write data has been sent for the current request */
     int             error;                  /**< A request error has occurred */
+    int             connError;              /**< A connection error has occurred */
+    int             protoError;             /**< A protocol error has occurred - try to respond */
     int             threaded;               /**< Request running in a thread */
 
     Http            *http;                  /**< Http service object  */
@@ -1313,18 +1334,21 @@ typedef struct HttpConn {
     cchar           *protocol;              /**< HTTP protocol */
     int             async;                  /**< Connection is in async mode (non-blocking) */
     int             canProceed;             /**< State machine should continue to process the request */
-    int             connError;              /**< A connection error has occurred */
     int             followRedirects;        /**< Follow redirects for client requests */
+#if UNUSED
     int             inactivityTimeout;      /**< Connection inactivity timeout period in msec */
+    int             requestTimeout;         /**< Request timeout period in msec */
+#endif
     int             keepAliveCount;         /**< Count of remaining keep alive requests for this connection */
-    int             legacy;                 /**< Using legacy HTTP/1.0 */
+    int             http10;                 /**< Using legacy HTTP/1.0 */
     int             startingThread;         /**< Need to allocate worker thread */
     int             port;                   /**< Remote port */
     int             retries;                /**< Client request retries */
     int             secure;                 /**< Using https */
     int             seqno;                  /**< Unique connection sequence number */
+#if UNUSED
     int             status;                 /**< Request status */
-    int             requestTimeout;         /**< Request timeout period in msec */
+#endif
     int             writeBlocked;           /**< Transmission writing is blocked */
 
     int             traceLevel;             /**< Trace activation level */
@@ -1373,6 +1397,7 @@ extern void httpEvent(HttpConn *conn, MprEvent *event);
     @param conn HttpConn object created via $httpCreateConn
  */
 extern void httpCloseConn(HttpConn *conn);
+extern void httpCloseClientConn(HttpConn *conn);
 
 /**
     Signal writing transmission body is complete. This is called by connectors when writing data is complete.
@@ -1411,10 +1436,10 @@ extern void httpCreatePipeline(HttpConn *conn, struct HttpLocation *location, Ht
 extern void httpDestroyPipeline(HttpConn *conn);
 
 /**
-    Discard buffered pipeline data
+    Discard buffered transmit pipeline data
     @param conn HttpConn object created via $httpCreateConn
  */
-extern void httpDiscardPipeData(HttpConn *conn);
+extern void httpDiscardTransmitData(HttpConn *conn);
 
 /** 
     Error handling for the connection.
@@ -1426,6 +1451,7 @@ extern void httpDiscardPipeData(HttpConn *conn);
     @ingroup HttpTransmitter
  */
 extern void httpError(HttpConn *conn, int status, cchar *fmt, ...);
+extern void httpLimitError(HttpConn *conn, int status, cchar *fmt, ...);
 
 /**
     Get the async mode value for the connection
@@ -1636,6 +1662,7 @@ extern void httpSetSendConnector(HttpConn *conn, cchar *path);
 #define httpShouldTrace(conn, mask) ((conn->traceMask & (mask)) == (mask))
 extern int httpSetupTrace(HttpConn *conn, cchar *ext);
 extern void httpTraceContent(HttpConn *conn, HttpPacket *packet, int size, int offset, int mask);
+extern HttpLimits *httpSetUniqueConnLimits(HttpConn *conn);
 
 /*  
     Deny/Allow order. TODO - this is not yet implemented.
@@ -1785,15 +1812,6 @@ extern bool     httpValidatePamCredentials(HttpAuth *auth, cchar *realm, cchar *
 #endif /* AUTH_PAM */
 
 
-#if UNUSED
-/*
-    Location flags
- */
-#define HTTP_LOC_APP              0x2       /**< Location defines an application */
-#define HTTP_LOC_APP_DIR          0x4       /**< Location defines a directory of applications */
-#define HTTP_LOC_AUTO_SESSION     0x8       /**< Auto create sessions in this location */
-#define HTTP_LOC_BROWSER          0x10      /**< Send errors back to the browser for this location */
-#endif
 #define HTTP_LOC_PUT_DELETE       0x20      /**< Support PUT|DELETE */
 
 /**
@@ -1826,6 +1844,7 @@ typedef struct HttpLocation {
     struct MprSsl   *ssl;                   /**< SSL configuration */
 } HttpLocation;
 
+extern HttpLocation *httpInitLocation(Http *http, MprCtx ctx, int serverSide);
 extern void httpAddErrorDocument(HttpLocation *location, cchar *code, cchar *url);
 
 extern void httpFinalizeLocation(HttpLocation *location);
@@ -1845,6 +1864,7 @@ extern HttpLocation *httpCreateLocation(Http *http);
 extern HttpLocation *httpCreateInheritedLocation(Http *http, HttpLocation *location);
 extern int httpSetHandler(HttpLocation *location, cchar *name);
 extern int httpAddFilter(HttpLocation *location, cchar *name, cchar *extensions, int direction);
+extern void httpClearStages(HttpLocation *location, int direction);
 
 /**
     Upload File
@@ -2079,6 +2099,7 @@ extern void httpDestroyReceiver(HttpConn *conn);
 extern bool httpContentNotModified(HttpConn *conn);
 extern HttpRange *httpCreateRange(HttpConn *conn, int start, int end);
 extern void  httpConnError(struct HttpConn *conn, int status, cchar *fmt, ...);
+extern void  httpProtocolError(struct HttpConn *conn, int status, cchar *fmt, ...);
 extern void  httpAdvanceReceiver(HttpConn *conn, HttpPacket *packet);
 extern void  httpProcessWriteEvent(HttpConn *conn);
 extern bool  httpProcessCompletion(HttpConn *conn);
@@ -2228,9 +2249,8 @@ typedef struct HttpTransmitter {
     int             finalized;              /**< Finalization done */
     int             length;                 /**< Transmission content length */
     int             pos;                    /**< Current I/O position */
-    int             status;                 /**< HTTP response status */
+    int             status;                 /**< HTTP request status */
     int             traceMethods;           /**< Handler methods supported */
-    int             writeComplete;          /**< All write data has been sent */
 
     /* File information for file based handlers */
     MprFile         *file;                  /**< File to be served */
@@ -2490,7 +2510,7 @@ extern void httpSetResponseBody(HttpConn *conn, int status, cchar *msg);
     @param status Http status code.
     @ingroup HttpTransmitter
  */
-extern void httpSetStatus(HttpConn *conn, int status);
+extern void httpSetTransStatus(HttpConn *conn, int status);
 
 /** 
     Set the transmission (response)  mime type
@@ -2558,13 +2578,18 @@ extern void httpWriteBlocked(HttpConn *conn);
  */
 typedef struct  HttpServer {
     Http            *http;                  /**< Http service object */
+    HttpLocation    *location;              /**< Default location block */
+    HttpLimits      *limits;                /**< Server resource limits */
     MprWaitHandler  waitHandler;            /**< I/O wait handler */
+    MprHashTable    *clients;               /**< Table of active client IPs */
     char            *serverRoot;            /**< Directory for server configuration */
     char            *documentRoot;          /**< Directory for documents */
     char            *name;                  /**< Published name of the server (ServerName directive) */
     char            *ip;                    /**< Listen IP address */
     int             port;                   /**< Listen port */
     int             async;                  /**< Listening is in async mode (non-blocking) */
+    int             clientCount;            /**< Count of current active clients */
+    int             requestCount;           /**< Count of current active requests */
     void            *context;               /**< Embedding context */
     void            *meta;                  /**< Meta server object */
     char            *software;              /**< Server software name and version */
@@ -2597,6 +2622,7 @@ typedef struct  HttpServer {
 extern HttpServer *httpCreateServer(Http *http, cchar *ip, int port, MprDispatcher *dispatcher);
 
 extern HttpConn *httpAcceptConn(HttpServer *server);
+extern int httpValidateLimits(HttpServer *server, int event, HttpConn *conn);
 
 /**
     Get the meta server object

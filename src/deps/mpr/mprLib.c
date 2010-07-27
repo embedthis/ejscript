@@ -14848,8 +14848,7 @@ static MprSocket *acceptSocket(MprSocket *listen)
 
 
 /*  
-    Read data. Return zero for EOF or no data if in non-blocking mode. Return -1 for errors. On success,
-    return the number of bytes read. Use getEof to tell if we are EOF or just no data (in non-blocking mode).
+    Read data. Return -1 for EOF and errors. On success, return the number of bytes read
  */
 int mprReadSocket(MprSocket *sp, void *buf, int bufsize)
 {
@@ -14891,7 +14890,6 @@ again:
     } else {
         bytes = recv(sp->fd, buf, bufsize, MSG_NOSIGNAL);
     }
-
     if (bytes < 0) {
         errCode = mprGetSocketError(sp);
         if (errCode == EINTR) {

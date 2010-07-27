@@ -24,7 +24,7 @@ module ejs.web {
          */
         public static var TopRoutes = [
           { name: "es",      builder: ScriptBuilder,    match: /\.es$/ },
-          { name: "ejs",     builder: TemplateBuilder,  match: /\.ejs$/, module: "ejs.web.template" },
+          { name: "ejs",     builder: TemplateBuilder,  match: /\.ejs$/, module: "ejs.template" },
           { name: "dir",     builder: DirBuilder,       match: isDir },
           { name: "default", builder: StaticBuilder },
         ]
@@ -44,7 +44,7 @@ module ejs.web {
         */
         public static var RestfulRoutes = [
   { name: "es",      builder: ScriptBuilder,                match: /^\/web\/.*\.es$/   },
-  { name: "ejs",     builder: TemplateBuilder,              match: /^\/web\/.*\.ejs$/,      module: "ejs.web.template" },
+  { name: "ejs",     builder: TemplateBuilder,              match: /^\/web\/.*\.ejs$/,      module: "ejs.template" },
   { name: "web",     builder: StaticBuilder,                match: /^\/web\//  },
   { name: "home",    builder: StaticBuilder,                match: /^\/$/,                  redirect: "/web/index.ejs" },
   { name: "ico",     builder: StaticBuilder,                match: /^\/favicon.ico$/,       redirect: "/web/favicon.ico" },
@@ -61,7 +61,7 @@ module ejs.web {
 
         public static var LegacyRoutes = [
   { name: "es",      builder: ScriptBuilder,                match: /^\/web\/.*\.es$/   },
-  { name: "ejs",     builder: TemplateBuilder,              match: /^\/web\/.*\.ejs$/,      module: "ejs.web.template"  },
+  { name: "ejs",     builder: TemplateBuilder,              match: /^\/web\/.*\.ejs$/,      module: "ejs.template"  },
   { name: "web",     builder: StaticBuilder,                match: /^\/web\//  },
   { name: "home",    builder: StaticBuilder,                match: /^\/$/,                  redirect: "/web/index.ejs" },
   { name: "ico",     builder: StaticBuilder,                match: /^\/favicon.ico$/,       redirect: "/web/favicon.ico" },
@@ -232,6 +232,17 @@ module ejs.web {
                     log.debug(6, "  Route " + serialize(r, {pretty: true}))
                     log.debug(6, "  REQUEST\n" + serialize(request, {pretty: true}))
                 }
+                if (r.limits) {
+                    request.setLimits(r.limits)
+                }
+                if (r.trace) {
+                    if (r.trace.include && (!r.trace.include.contains(request.extension)) ||
+                        r.trace.exclude && r.trace.exclude.contains(request.extension)) {
+                        request.trace(99)
+                    } else {
+                        request.trace(r.trace.level || 0, r.trace.options, r.trace.size)
+                    }
+                }
                 let app = r.builder(request)
                 if (app == null) {
                     return function(request) {}
@@ -251,7 +262,11 @@ module ejs.web {
             request.error(Http.NotFound, "Cannot find " + request.pathInfo) 
             return null
         }
-        return Loader.require(request.filename, request.config).app
+        try {
+            return Loader.require(request.filename, request.config).app
+        } catch (e) {
+            request.error(Http.ServerError, e)
+        }
     }
 
     function TemplateBuilder(request: Request): Function {
@@ -292,6 +307,11 @@ module ejs.web {
             Directory for the application serving the route. This directory path will be assigned to Request.dir.
          */
         var dir: Path
+
+        /**
+            Resource limits for the request. See HttpServer.limits for details.
+          */
+        var limits: Object
 
         /**
             Matching pattern for URIs. The pattern is used to match the request in general and pathInfo specifically. 
@@ -363,6 +383,18 @@ module ejs.web {
             will not be dedicated, but will be assigned as the request requires CPU resources.
          */
         var threaded: Boolean
+
+        /**
+            Trace options for the request. Note: the route is created after the Request object is created so 
+            the tracing of the connections and request headers will be controlled by the owning server. See
+            HttpServer.trace. Fields are:
+            @option level Level at which request tracing will occurr for the request.
+            @option options Set of trace options. Select from: "body" to trace body content.
+            @option size Maximum request body size to trace
+            @option include Set of extensions to include when tracing
+            @option exclude Set of extensions to exclude when tracing
+          */
+        var trace: Object
 
         /*
             Type of requests matched by this route. Typical types: "es", "ejs", "mvc"

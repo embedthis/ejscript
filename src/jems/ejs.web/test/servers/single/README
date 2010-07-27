@@ -1,0 +1,4 @@
+Single
+======
+
+Non-routing web server to run a single JSGI application.

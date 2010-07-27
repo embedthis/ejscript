@@ -104,6 +104,9 @@ module ejs.web {
         public function setStatus(status: Number): Void
             request.setStatus(status)
 
+        public function show(...args): Void
+            request.show(...args)
+
         /**
             Write data to the client
             @param data Data to write

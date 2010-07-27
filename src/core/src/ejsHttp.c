@@ -153,6 +153,7 @@ static EjsObj *http_set_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **ar
 }
 
 
+#if UNUSED
 /*  
     function get chunkSize(): Boolean
  */
@@ -171,6 +172,7 @@ static EjsObj *http_set_chunkSize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
     httpSetChunkSize(hp->conn, ejsGetInt(ejs, argv[0]));
     return 0;
 }
+#endif
 
 
 /*  
@@ -206,12 +208,33 @@ static EjsObj *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*  
     function del(uri: String = null): Void
  */
 static EjsObj *http_del(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     return startHttpRequest(ejs, hp, "DELETE", argc, argv);
+}
+#endif
+
+
+/*  
+    function get dontFinalize(): Boolean
+ */
+static EjsObj *http_dontFinalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateNumber(ejs, hp->dontFinalize);
+}
+
+
+/*  
+    function set dontFinalize(value: Boolean): Void
+ */
+static EjsObj *http_set_dontFinalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    hp->dontFinalize = ejsGetInt(ejs, argv[0]);
+    return 0;
 }
 
 
@@ -227,11 +250,16 @@ static EjsObj *http_expires(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function finalize(): Void
+    function finalize(force: Boolean = false): Void
  */
 static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    httpFinalize(hp->conn);
+    int     force;
+
+    force = (argc == 1 && argv[0] == ejs->trueValue);
+    if (hp->dontFinalize || force) {
+        httpFinalize(hp->conn);
+    }
     return 0;
 }
 
@@ -373,12 +401,13 @@ static EjsObj *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*  
     function get inactivityTimeout(): Number
  */
 static EjsObj *http_inactivityTimeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->inactivityTimeout);
+    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->limits->inactivityTimeout);
 }
 
 
@@ -390,6 +419,7 @@ static EjsObj *http_set_inactivityTimeout(Ejs *ejs, EjsHttp *hp, int argc, EjsOb
     httpSetTimeout(hp->conn, -1, (int) ejsGetNumber(ejs, argv[0]));
     return 0;
 }
+#endif
 
 
 /*  
@@ -433,6 +463,19 @@ static EjsObj *http_lastModified(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
+/*
+    function get limits(): Object
+ */
+static EjsObj *http_limits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    if (hp->limits == 0) {
+        hp->limits = ejsCreateSimpleObject(ejs);
+        ejsGetHttpLimits(ejs, hp->limits, hp->conn->limits, 0);
+    }
+    return hp->limits;
+}
+
+
 /*  
     function get method(): String
  */
@@ -462,6 +505,7 @@ static EjsObj *http_set_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*  
     function options(uri: String = null, ...data): Void
  */
@@ -469,6 +513,7 @@ static EjsObj *http_options(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     return startHttpRequest(ejs, hp, "OPTIONS", argc, argv);
 }
+#endif
 
 
 /*  
@@ -544,7 +589,7 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
     conn = hp->conn;
 
-    if (!waitForState(hp, HTTP_STATE_CONTENT, conn->async ? 0 : conn->inactivityTimeout, 0)) {
+    if (!waitForState(hp, HTTP_STATE_CONTENT, conn->async ? 0 : conn->limits->inactivityTimeout, 0)) {
         return 0;
     }
     if ((count = readTransfer(ejs, hp, count)) < 0) {
@@ -657,11 +702,30 @@ EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
+    function set limits(limits: Object): Void
+ */
+static EjsObj *http_setLimits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    if (hp->conn->limits == ejs->http->clientLimits) {
+        httpSetUniqueConnLimits(hp->conn);
+    }
+    if (hp->limits == 0) {
+        hp->limits = ejsCreateSimpleObject(ejs);
+        ejsGetHttpLimits(ejs, hp->limits, hp->conn->limits, 0);
+    }
+    ejsBlendObject(ejs, hp->limits, argv[0], true);
+    ejsSetHttpLimits(ejs, hp->conn->limits, hp->limits, 0);
+    return 0;
+}
+
+
+#if UNUSED
+/*  
     function get timeout(): Number
  */
 static EjsObj *http_timeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->requestTimeout);
+    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->limits->requestTimeout);
 }
 
 
@@ -673,14 +737,54 @@ static EjsObj *http_set_timeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     httpSetTimeout(hp->conn, (int) ejsGetNumber(ejs, argv[0]), -1);
     return 0;
 }
+#endif
 
 
 /*  
-    function trace(uri: String = null, ...data): Void
+    function trace(level: Number, options: Object = ["headers", "request", "response"], size: Number = null): Void
  */
 static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return startHttpRequest(ejs, hp, "TRACE", argc, argv);
+    EjsArray    *options;
+    EjsObj      *item;
+    EjsString   *name;
+    HttpConn    *conn;
+    int         mask, i;
+
+    conn = hp->conn;
+    conn->traceLevel = ejsGetInt(ejs, argv[0]);
+
+    if (argc >= 2) {
+        mask = 0;
+        options = (EjsArray*) argv[1];
+        for (i = 0; i < options->length; i++) {
+            if ((item = options->data[i]) == 0) {
+                continue;
+            }
+            name = ejsToString(ejs, item);
+            if (strcmp(name->value, "all") == 0) {
+                mask |= HTTP_TRACE_RECEIVE | HTTP_TRACE_TRANSMIT;
+                mask |= HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS | HTTP_TRACE_BODY;
+            } else if (strcmp(name->value, "request") == 0) {
+                mask |= HTTP_TRACE_TRANSMIT;
+            } else if (strcmp(name->value, "response") == 0) {
+                mask |= HTTP_TRACE_RECEIVE;
+            } else if (strcmp(name->value, "conn") == 0) {
+                mask |= HTTP_TRACE_CONN;
+            } else if (strcmp(name->value, "first") == 0) {
+                mask |= HTTP_TRACE_FIRST;
+            } else if (strcmp(name->value, "headers") == 0) {
+                mask |= HTTP_TRACE_HEADERS;
+            } else if (strcmp(name->value, "body") == 0) {
+                mask |= HTTP_TRACE_BODY;
+            }
+        }
+        conn->traceMask = mask;
+    }
+    if (argc >= 3) {
+        conn->traceMaxLength = ejsGetInt(ejs, argv[2]);
+    }
+    return 0;
 }
 
 
@@ -750,7 +854,7 @@ static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     MprTime     mark;
     int         timeout;
 
-    timeout = (argc == 1) ? ejsGetInt(ejs, argv[0]) : hp->conn->requestTimeout;
+    timeout = (argc == 1) ? ejsGetInt(ejs, argv[0]) : hp->conn->limits->requestTimeout;
     if (timeout < 0) {
         timeout = MAXINT;
     }
@@ -855,8 +959,8 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
 
 static void httpNotify(HttpConn *conn, int state, int notifyFlags)
 {
-    Ejs             *ejs;
-    EjsHttp         *hp;
+    Ejs         *ejs;
+    EjsHttp     *hp;
 
     hp = httpGetConnContext(conn);
     ejs = hp->ejs;
@@ -872,18 +976,15 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
         break;
 
     case HTTP_STATE_CONTENT:
-    case HTTP_STATE_PROCESS:
     case HTTP_STATE_RUNNING:
-        break;
-
-    case HTTP_STATE_ERROR:
-        if (hp->emitter) {
-            ejsSendEvent(ejs, hp->emitter, "error", (EjsObj*) hp);
-        }
         break;
 
     case HTTP_STATE_COMPLETE:
         if (hp->emitter) {
+            if (conn->error) {
+                //  MOB -- should send conn->errorMsg
+                ejsSendEvent(ejs, hp->emitter, "error", (EjsObj*) hp);
+            }
             ejsSendEvent(ejs, hp->emitter, "complete", (EjsObj*) hp);
         }
         break;
@@ -1105,8 +1206,43 @@ void markHttp(Ejs *ejs, EjsHttp *http)
     if (http->data) {
         ejsMark(ejs, (EjsObj*) http->data);
     }
+    if (http->limits) {
+        ejsMark(ejs, (EjsObj*) http->limits);
+    }
 }
 
+
+#if FUTURE
+static bool expired(EjsHttp *hp)
+{
+    int     requestTimeout, inactivityTimeout, diff, inactivity;
+
+    requestTimeout = conn->limits->requestTimeout ? conn->limits->requestTimeout : INT_MAX;
+    inactivityTimeout = conn->limits->inactivityTimeout ? conn->limits->inactivityTimeout : INT_MAX;
+
+    /* 
+        Workaround for a GCC bug when comparing two 64bit numerics directly. Need a temporary.
+     */
+    diff = (conn->lastActivity + inactivityTimeout) - http->now;
+    inactivity = 1;
+    if (diff > 0 && conn->receiver) {
+        diff = (conn->started + requestTimeout) - http->now;
+        inactivity = 0;
+    }
+    if (diff < 0) {
+        if (conn->receiver) {
+            if (inactivity) {
+                mprLog(http, 4, "Inactive request timed out %s, exceeded inactivity timeout %d", 
+                    conn->receiver->uri, inactivityTimeout);
+            } else {
+                mprLog(http, 4, "Request timed out %s, exceeded timeout %d", conn->receiver->uri, requestTimeout);
+            }
+        } else {
+            mprLog(http, 4, "Idle connection timed out");
+        }
+    }
+}
+#endif
 
 /*  
     Wait for the connection to acheive a requested state
@@ -1133,7 +1269,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
         return 0;
     }
     if (timeout < 0) {
-        timeout = MAXINT;
+        timeout = conn->limits->inactivityTimeout;
     }
     mark = mprGetTime(hp);
     redirectCount = 0;
@@ -1161,15 +1297,18 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
             if (rc == MPR_ERR_CONNECTION) {
                 httpFormatError(conn, HTTP_CODE_COMMS_ERROR, "Connection error");
             } else if (rc == MPR_ERR_TIMEOUT) {
-                httpFormatError(conn, HTTP_CODE_REQUEST_TIME_OUT, "Request timed out");
+                httpFormatError(conn, HTTP_CODE_REQUEST_TIMEOUT, "Request timed out");
             } else {
                 httpFormatError(conn, HTTP_CODE_CLIENT_ERROR, "Client request error");
             }
             break;
         }
-        if (conn->status == HTTP_CODE_REQUEST_TOO_LARGE || conn->status == HTTP_CODE_REQUEST_URL_TOO_LARGE) {
-            /* No point retrying */
-            break;
+        if (conn->receiver) {
+            if (conn->receiver->status == HTTP_CODE_REQUEST_TOO_LARGE || 
+                    conn->receiver->status == HTTP_CODE_REQUEST_URL_TOO_LARGE) {
+                /* No point retrying */
+                break;
+            }
         }
         if (hp->writeCount > 0) {
             /* Can't auto-retry with manual writes */
@@ -1207,7 +1346,7 @@ static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
         timeout = 0;
     }
     if (timeout < 0) {
-        timeout = hp->conn->requestTimeout;
+        timeout = hp->conn->limits->requestTimeout;
     }
     if (hp->conn->state < HTTP_STATE_STARTED) {
         return 0;
@@ -1236,6 +1375,74 @@ static void destroyHttp(Ejs *ejs, EjsHttp *hp)
 }
 
 
+/*
+    Get limits:  obj[*] = limits
+ */
+void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server) 
+{
+    EjsName     qname;
+
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "chunk"), ejsCreateNumber(ejs, limits->chunkSize));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "receive"), ejsCreateNumber(ejs, limits->receiveBodySize));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "reuse"), ejsCreateNumber(ejs, limits->keepAliveCount));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "transmission"), ejsCreateNumber(ejs, limits->transmissionBodySize));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "upload"), ejsCreateNumber(ejs, limits->uploadSize));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "inactivityTimeout"), 
+        ejsCreateNumber(ejs, limits->inactivityTimeout / MPR_TICKS_PER_SEC));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "requestTimeout"), 
+        ejsCreateNumber(ejs, limits->requestTimeout / MPR_TICKS_PER_SEC));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "sessionTimeout"), 
+        ejsCreateNumber(ejs, limits->sessionTimeout / MPR_TICKS_PER_SEC));
+
+    if (server) {
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "clients"), ejsCreateNumber(ejs, limits->clientCount));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "header"), ejsCreateNumber(ejs, limits->headerSize));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "headers"), ejsCreateNumber(ejs, limits->headerCount));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "requests"), ejsCreateNumber(ejs, limits->requestCount));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "sessions"), ejsCreateNumber(ejs, limits->sessionCount));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "stageBuffer"), ejsCreateNumber(ejs, limits->stageBufferSize));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "uri"), ejsCreateNumber(ejs, limits->uriSize));
+    }
+}
+
+
+/*
+    Set the limit field:    *limit = obj[field]
+ */
+static void setLimit(Ejs *ejs, EjsObj *obj, cchar *field, int *limit, int factor)
+{
+    EjsObj      *vp;
+    EjsName     qname;
+
+    if ((vp = ejsGetPropertyByName(ejs, obj, ejsName(&qname, "", field))) != 0) {
+        *limit = ejsGetInt(ejs, ejsToNumber(ejs, vp)) * factor;
+    }
+}
+
+
+void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server) 
+{
+    setLimit(ejs, obj, "chunk", &limits->chunkSize, 1);
+    setLimit(ejs, obj, "inactivityTimeout", &limits->inactivityTimeout, MPR_TICKS_PER_SEC);
+    setLimit(ejs, obj, "receive", &limits->receiveBodySize, 1);
+    setLimit(ejs, obj, "reuse", &limits->keepAliveCount, 1);
+    setLimit(ejs, obj, "requestTimeout", &limits->requestTimeout, MPR_TICKS_PER_SEC);
+    setLimit(ejs, obj, "sessionTimeout", &limits->sessionTimeout, MPR_TICKS_PER_SEC);
+    setLimit(ejs, obj, "transmission", &limits->transmissionBodySize, 1);
+    setLimit(ejs, obj, "upload", &limits->uploadSize, 1);
+
+    if (server) {
+        setLimit(ejs, obj, "clients", &limits->clientCount, 1);
+        setLimit(ejs, obj, "requests", &limits->requestCount, 1);
+        setLimit(ejs, obj, "sessions", &limits->sessionCount, 1);
+        setLimit(ejs, obj, "stageBuffer", &limits->stageBufferSize, 1);
+        setLimit(ejs, obj, "uri", &limits->uriSize, 1);
+        setLimit(ejs, obj, "headers", &limits->headerCount, 1);
+        setLimit(ejs, obj, "header", &limits->headerSize, 1);
+    }
+}
+
+
 /*********************************** Factory **********************************/
 
 void ejsConfigureHttpType(Ejs *ejs)
@@ -1251,17 +1458,20 @@ void ejsConfigureHttpType(Ejs *ejs)
     type->helpers.destroy = (EjsDestroyHelper) destroyHttp;
 
     ejsBindConstructor(ejs, type, (EjsProc) httpConstructor);
-    ejsBindMethod(ejs, prototype, ES_Http_observe, (EjsProc) http_observe);
     ejsBindAccess(ejs, prototype, ES_Http_async, (EjsProc) http_async, (EjsProc) http_set_async);
     ejsBindMethod(ejs, prototype, ES_Http_available, (EjsProc) http_available);
+#if UNUSED
     ejsBindAccess(ejs, prototype, ES_Http_chunkSize, (EjsProc) http_chunkSize, (EjsProc) http_set_chunkSize);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_close, (EjsProc) http_close);
     ejsBindMethod(ejs, prototype, ES_Http_connect, (EjsProc) http_connect);
     ejsBindAccess(ejs, prototype, ES_Http_certificate, (EjsProc) http_certificate, (EjsProc) http_set_certificate);
     ejsBindMethod(ejs, prototype, ES_Http_contentLength, (EjsProc) http_contentLength);
     ejsBindMethod(ejs, prototype, ES_Http_contentType, (EjsProc) http_contentType);
     ejsBindMethod(ejs, prototype, ES_Http_date, (EjsProc) http_date);
-    ejsBindMethod(ejs, prototype, ES_Http_del, (EjsProc) http_del);
+#if ES_Http_dontFinalize
+    ejsBindAccess(ejs, prototype, ES_Http_dontFinalize, (EjsProc) http_dontFinalize, (EjsProc) http_set_dontFinalize);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_finalize, (EjsProc) http_finalize);
     ejsBindMethod(ejs, prototype, ES_Http_flush, (EjsProc) http_flush);
     ejsBindAccess(ejs, prototype, ES_Http_followRedirects, (EjsProc) http_followRedirects, 
@@ -1272,12 +1482,16 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_head, (EjsProc) http_head);
     ejsBindMethod(ejs, prototype, ES_Http_header, (EjsProc) http_header);
     ejsBindMethod(ejs, prototype, ES_Http_headers, (EjsProc) http_headers);
+#if UNUSED
     ejsBindAccess(ejs, prototype, ES_Http_inactivityTimeout, (EjsProc) http_inactivityTimeout, 
             (EjsProc) http_set_inactivityTimeout);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_isSecure, (EjsProc) http_isSecure);
     ejsBindAccess(ejs, prototype, ES_Http_key, (EjsProc) http_key, (EjsProc) http_set_key);
     ejsBindMethod(ejs, prototype, ES_Http_lastModified, (EjsProc) http_lastModified);
+    ejsBindMethod(ejs, prototype, ES_Http_limits, (EjsProc) http_limits);
     ejsBindAccess(ejs, prototype, ES_Http_method, (EjsProc) http_method, (EjsProc) http_set_method);
+    ejsBindMethod(ejs, prototype, ES_Http_observe, (EjsProc) http_observe);
     ejsBindMethod(ejs, prototype, ES_Http_post, (EjsProc) http_post);
     ejsBindMethod(ejs, prototype, ES_Http_put, (EjsProc) http_put);
     ejsBindMethod(ejs, prototype, ES_Http_read, (EjsProc) http_read);
@@ -1286,12 +1500,14 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_reset, (EjsProc) http_reset);
     ejsBindAccess(ejs, prototype, ES_Http_response, (EjsProc) http_response, (EjsProc) http_set_response);
     ejsBindAccess(ejs, prototype, ES_Http_retries, (EjsProc) http_retries, (EjsProc) http_set_retries);
-    ejsBindMethod(ejs, prototype, ES_Http_options, (EjsProc) http_options);
     ejsBindMethod(ejs, prototype, ES_Http_setCredentials, (EjsProc) http_setCredentials);
     ejsBindMethod(ejs, prototype, ES_Http_setHeader, (EjsProc) http_setHeader);
+    ejsBindMethod(ejs, prototype, ES_Http_setLimits, (EjsProc) http_setLimits);
     ejsBindMethod(ejs, prototype, ES_Http_status, (EjsProc) http_status);
     ejsBindMethod(ejs, prototype, ES_Http_statusMessage, (EjsProc) http_statusMessage);
+#if UNUSED
     ejsBindAccess(ejs, prototype, ES_Http_timeout, (EjsProc) http_timeout, (EjsProc) http_set_timeout);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_trace, (EjsProc) http_trace);
     ejsBindAccess(ejs, prototype, ES_Http_uri, (EjsProc) http_uri, (EjsProc) http_set_uri);
     ejsBindMethod(ejs, prototype, ES_Http_write, (EjsProc) http_write);

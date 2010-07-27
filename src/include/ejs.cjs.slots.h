@@ -18,53 +18,26 @@
    Prototype (instance) slots for "global" type 
  */
 
-/*
-    Local slots for global methods 
- */
-#define ES_require_id                                                  0
-
 
 /*
-    Class property slots for the "Loader" type 
+    Class property slots for the "System" type 
  */
-#define ES_Loader__initializer___Loader_                               0
-#define ES_Loader_mainId                                               1
-#define ES_Loader_signatures                                           2
-#define ES_Loader_timestamps                                           3
-#define ES_Loader_defaultExtensions                                    4
-#define ES_Loader_init                                                 5
-#define ES_Loader_require                                              6
-#define ES_Loader_load                                                 7
-#define ES_Loader_cached                                               8
-#define ES_Loader_wrap                                                 9
-#define ES_Loader_locate                                               10
-#define ES_Loader_setConfig                                            11
-#define ES_Loader_NUM_CLASS_PROP                                       12
+#define ES_ejs_cjs_System_stdin                                        0
+#define ES_ejs_cjs_System_stdout                                       1
+#define ES_ejs_cjs_System_stderr                                       2
+#define ES_ejs_cjs_System_args                                         3
+#define ES_ejs_cjs_System_env                                          4
+#define ES_ejs_cjs_System_fs                                           5
+#define ES_ejs_cjs_System_platform                                     6
+#define ES_ejs_cjs_System_NUM_CLASS_PROP                               7
 
 /*
-   Prototype (instance) slots for "Loader" type 
+   Prototype (instance) slots for "System" type 
  */
-#define ES_Loader_NUM_INSTANCE_PROP                                    0
-#define ES_Loader_NUM_INHERITED_PROP                                   0
+#define ES_ejs_cjs_System_log                                          0
+#define ES_ejs_cjs_System_NUM_INSTANCE_PROP                            1
+#define ES_ejs_cjs_System_NUM_INHERITED_PROP                           0
 
-/*
-    Local slots for methods in type "Loader" 
- */
-#define ES_Loader_init_mainId                                          0
-#define ES_Loader_require_id                                           0
-#define ES_Loader_require_config                                       1
-#define ES_Loader_load_id                                              0
-#define ES_Loader_load_path                                            1
-#define ES_Loader_load_config                                          2
-#define ES_Loader_load_codeReader                                      3
-#define ES_Loader_cached_id                                            0
-#define ES_Loader_cached_config                                        1
-#define ES_Loader_cached_cachedir                                      2
-#define ES_Loader_wrap_code                                            0
-#define ES_Loader_locate_id                                            0
-#define ES_Loader_locate_config                                        1
-#define ES_Loader_setConfig_newConfig                                  0
-
-#define _ES_CHECKSUM_ejs_cjs   27042
+#define _ES_CHECKSUM_ejs_cjs   9044
 
 #endif

@@ -1,0 +1,60 @@
+
+{
+    mode: "debug",
+
+    cache: {
+        enable: true,
+        reload: true,
+    },
+
+    database: {
+        class: "Database",
+        adapter: "sqlite3",
+        timeout: 5000,
+        debug: {
+            name: "db/mvc-blog.sdb", username: "", password: "", trace: false,
+        },
+        test: {
+            name: "db/mvc-blog.sdb", username: "", password: "", trace: false,
+        },
+        production: {
+            name: "db/mvc-blog.sdb", username: "", password: "", trace: false,
+        },
+    },
+    
+    directories: {
+        cache: "cache",
+    },
+
+    log: {
+        enable: true,
+        location: "stdout",
+        level: 1,
+    },
+
+    mvc: {
+        compiler: "ejsc --debug --web",
+        start: "start.es",
+    },
+
+    session: {
+        enable: true,
+        timeout: 1800,
+    },
+
+    web: {
+        endpoint: "127.0.0.1:4000",
+        view: {
+            connectors: {
+                table: "html",
+                chart: "google",
+                rest: "html",
+            },
+            formats: {
+                currency:   "$%10f",
+                Date:       "%a %e %b %H:%M",
+            },
+        },
+    },
+
+}

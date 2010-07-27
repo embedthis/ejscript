@@ -64,10 +64,6 @@ module ejs.web {
             @duplicate Stream.async
          */
         native function get async(): Boolean
-
-        /** 
-            @duplicate Stream.async
-         */
         native function set async(enable: Boolean): Void
 
         /** 
@@ -78,6 +74,32 @@ module ejs.web {
             Default local directory for web documents to serve. This is used as the default Request.dir value.
          */
         var documentRoot: Path
+
+        /**
+            Resource limits for the server and for initial resource limits for requests.
+            @param limits. Limits is an object hash with the following properties:
+            @option chunk Maximum size of a chunk when using chunked transfer encoding.
+            @option clients Maximum number of simultaneous clients.
+            @option headers Maximum number of headers in a request.
+            @option header Maximum size of headers.
+            @option inactivityTimeout Maximum time in seconds to keep a connection open if idle. Set to zero for no timeout.
+            @option receive Maximum size of incoming body data.
+            @option requests Maximum number of simultaneous requests.
+            @option requestTimeout Maximum time in seconds for a request to complete. Set to zero for no timeout.
+            @option reuse Maximum number of times to reuse a connection for requests (KeepAlive count).
+            @option sessions Maximum number of simultaneous sessions.
+            @option sessionTimeout Maximum time to preserve session state. Set to zero for no timeout.
+            @option stageBuffer Maximum stage buffer size for each direction.
+            @option transmission Maximum size of outgoing body data.
+            @option upload Maximum size of uploaded files.
+            @option uri Maximum size of URIs.
+            @see setLimits
+          */
+        native function get limits(): Object
+
+        /**
+            Return an object hash with the current server resource limits
+          */
 
         static var indicies = ["index.ejs", "index.html"]
 
@@ -171,64 +193,41 @@ module ejs.web {
         native function secure(keyFile: Path, certFile: Path!, protocols: Array = null, ciphers: Array = null): Void
 
         /**
-            Define resource limits for the server. Some of these limit values are also used for requests.
-            @param limits. Limits is an object hash with the following properties:
-            @option chunkSize Maximum size of a chunk when using chunked transfer encoding
-            @option headerCount Maximum number of headers in a request
-            @option headerSize Maximum size of headers
-            @option receiveBodySize Maximum size of incoming body data
-            @option stageBufferSize Maximum stage buffer size for each direction
-            @option transmissionBodySize Maximum size of outgoing body data
-            @option uploadSize Maximum size of uploaded files
-            @option uriSize Maximum size of URLs
-            @option clientCount Maximum number of simultaneous clients
-            @option keepAliveCount Maximum number of times to reuse a connection for requests
-            @option requestCount Maximum number of simultaneous requests
-            @option sessionCount Maximum number of simultaneous sessions
-            @option inactivityTimeout Maximum time in seconds to keep a connection open if idle
-            @option requestTimeout Maximum time in seconds for a request to complete
-            @option sessionTimeout Maximum time to preserve session state
-          */
+            @param incoming Array of stages for the incoming pipeline: default: ["chunk", "range", "upload"]
+            @param outgoing Array of stages for the outgoing pipeline: default: ["auth", "range", "chunk"]
+            @param connector Network connector to use for I/O. Defaults to the network connector "net". Other values: "send".
+                The "net" connector transparently upgrades to the "send" connector if transmitting static data and 
+                not using SSL, ranged or chunked transfers.
+         */
+        native function setPipeline(incoming: Array, outgoing: Array, connector: String): Void
+
+        /**
+            Update the server resource limits. The supplied limit fields are updated.
+            See $limit for limit field details.
+            @param limits Object hash of limit fields and values
+            @see limits
+         */
         native function setLimits(limits: Object): Void
 
         /**
-            Return an object hash with the current server resource limits
-          */
-        native function getLimits(): Object
-
-        /**
-            Define the operation options for the server.
-            @param options. Options is an object hash with the following properties:
-            @option directoryListings
-          */
-        native function setOptions(options: Object)
-
-        /**
-            Return an object hash with the current server options
-          */
-        native function getOptions(): Object
-
-        /**
-            Configure request tracing for the server
+            Configure request tracing for the server. The default is to trace the first line of requests and responses 
+            and headers at level 3.
             @param level Level at which request tracing will occurr
+            @param options. Set of trace options. Select from: "request" to trace requests, "response" to trace responses,
+            "conn" to trace new connections, "first" to trace the first line of requests or responses, "headers" to 
+            trace headers, and "body" to trace body content. Or use "all" to trace everything.
             @param size Maximum request body size to trace
           */
-        native function trace(level: Number, options: Object = ["headers", "request", "response"], size: Number = null): Void
+        native function trace(level: Number, options: Object = ["conn", "first", "headers", "request", "response"], 
+            size: Number = null): Void
+
 
         /**
             Configure trace filters for request tracing
+            @param include Set of extensions to include when tracing
+            @param exclude Set of extensions to exclude when tracing
           */
-        native function traceFilter(include: Array = ["*"], exclude: Array = ["gif", "ico", "jpg", "png"]): Void
-
-        /**
-            @param incoming Array of stages for the incoming pipeline: default: ["chunk", "range", "upload"]
-            @param outgoing Array of stages for the outgoing pipeline: default: ["auth", "range", "chunk"]
-            @param connector Network connector to use for I/O. Defaults to the network connector "net". This connector
-                transparently upgrades to the sendfile connector if transmitting static data and not using SSL, ranged or 
-                chunked transfers.
-         */
-        native function setPipeline(incoming: Array = ["chunk", "range", "upload"], 
-                outgoing: Array = ["auth", "range", "chunk"], connector: String = "net"): Void
+        native function traceFilter(include: Array, exclude: Array = ["gif", "ico", "jpg", "png"]): Void
 
         /**
             Verify client certificates. This ensures that the clients must provide a client certificate for to verify 

@@ -8,7 +8,7 @@
 
 #include    "ejs.h"
 
-/*********************************** Methods **********************************/
+/************************************ Code ************************************/
 /*
     Create a new timer
 
@@ -136,7 +136,13 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
             error = ejs->exception;
             ejsClearException(ejs);
             ejsRunFunction(tp->ejs, tp->onerror, thisObj, 1, (EjsObj**) &error);
+        } else {
+            mprError(tp, "Uncaught exception in timer\n%s", ejsGetErrorMsg(ejs, 1));
+            ejsClearException(ejs);
         }
+    }
+    if (!tp->repeat) {
+        tp->obj.permanent = 0;
     }
     return 0;
 }
@@ -151,6 +157,7 @@ static EjsObj *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 
     if (tp->event == 0) {
         flags = tp->repeat ? MPR_EVENT_CONTINUOUS : 0;
+        tp->obj.permanent = 1;
         tp->event = mprCreateEvent(ejs->dispatcher, "timer", tp->period, (MprEventProc) timerCallback, tp, flags);
         if (tp->event == 0) {
             ejsThrowMemoryError(ejs);
@@ -168,9 +175,27 @@ static EjsObj *timer_stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     if (tp->event) {
         mprRemoveEvent(tp->event);
+        tp->obj.permanent = 0;
     }
     return 0;
 }
+
+/*********************************** Helpers **********************************/
+
+static void markTimer(Ejs *ejs, EjsTimer *tp)
+{
+    ejsMarkObject(ejs, (EjsObj*) tp);
+    if (tp->callback) {
+        ejsMark(ejs, tp->callback);
+    }
+    if (tp->args) {
+        ejsMark(ejs, tp->args);
+    }
+    if (tp->onerror) {
+        ejsMark(ejs, tp->onerror);
+    }
+}
+
 
 /*********************************** Factory **********************************/
 
@@ -181,22 +206,18 @@ void ejsConfigureTimerType(Ejs *ejs)
 
     type = ejsGetTypeByName(ejs, "ejs", "Timer");
     type->instanceSize = sizeof(EjsTimer);
-    prototype = type->prototype;
 
+    type->helpers.mark = (EjsMarkHelper) markTimer;
+
+    prototype = type->prototype;
     ejsBindConstructor(ejs, type, (EjsProc) timer_constructor);
-#if ES_Timer_start
     ejsBindMethod(ejs, prototype, ES_Timer_start, (EjsProc) timer_start);
-#endif
     ejsBindMethod(ejs, prototype, ES_Timer_stop, (EjsProc) timer_stop);
 
     ejsBindAccess(ejs, prototype, ES_Timer_drift, (EjsProc) timer_get_drift, (EjsProc) timer_set_drift);
     ejsBindAccess(ejs, prototype, ES_Timer_period, (EjsProc) timer_get_period, (EjsProc) timer_set_period);
-#if ES_Timer_onerror
     ejsBindAccess(ejs, prototype, ES_Timer_onerror, (EjsProc) timer_get_onerror, (EjsProc) timer_set_onerror);
-#endif
-#if ES_Timer_repeat
     ejsBindAccess(ejs, prototype, ES_Timer_repeat, (EjsProc) timer_get_repeat, (EjsProc) timer_set_repeat);
-#endif
 }
 
 /*

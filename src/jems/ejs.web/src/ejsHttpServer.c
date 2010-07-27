@@ -13,6 +13,8 @@
 /********************************** Forwards **********************************/
 
 static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn);
+static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp);
+static void setupTrace(HttpConn *conn);
 static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
 
 /************************************ Code ************************************/
@@ -32,6 +34,10 @@ static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
 
     serverRoot = (argc >= 2) ? argv[1] : (EjsObj*) ejsCreatePath(ejs, ".");
     ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_serverRoot, serverRoot);
+
+    sp->traceLevel = HTTP_TRACE_LEVEL;
+    sp->traceMask = HTTP_TRACE_TRANSMIT | HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS;
+    sp->traceMaxLength = INT_MAX;
     return (EjsObj*) sp;
 }
 
@@ -128,6 +134,44 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
 
 /*  
+    function get limits(): Object
+ */
+static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    HttpLimits  *limits;
+
+    if (sp->limits == 0) {
+        sp->limits = ejsCreateSimpleObject(ejs);
+        limits = (sp->server) ? sp->server->limits : ejs->http->serverLimits;
+        mprAssert(limits);
+        ejsGetHttpLimits(ejs, sp->limits, limits, 1);
+    }
+    return sp->limits;
+}
+
+
+/*  
+    function setLimits(limits: Object): Void
+ */
+static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    HttpLimits  *limits;
+    
+    if (sp->limits == 0) {
+        sp->limits = ejsCreateSimpleObject(ejs);
+        limits = (sp->server) ? sp->server->limits : ejs->http->serverLimits;
+        mprAssert(limits);
+        ejsGetHttpLimits(ejs, sp->limits, limits, 1);
+    }
+    ejsBlendObject(ejs, sp->limits, argv[0], true);
+    if (sp->server) {
+        ejsSetHttpLimits(ejs, sp->server->limits, sp->limits, 1);
+    }
+    return 0;
+}
+
+
+/*  
     function get isSecure(): Void
  */
 static EjsObj *hs_isSecure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -181,6 +225,12 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         return 0;
     }
     sp->server = server;
+    if (sp->limits) {
+        ejsSetHttpLimits(ejs, sp->server->limits, sp->limits, 1);
+    }
+    if (sp->incomingStages || sp->outgoingStages || sp->connector) {
+        setHttpPipeline(ejs, sp);
+    }
     if (sp->ssl) {
         httpSetServerSsl(server, sp->ssl);
     }
@@ -330,6 +380,100 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
 
 /*  
+    function setPipeline(incoming: Array, outgoing: Array, connector: String): Void
+ */
+static EjsObj *hs_setPipeline(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    sp->incomingStages = (EjsArray*) argv[0];
+    sp->outgoingStages = (EjsArray*) argv[1];
+    sp->connector = ejsGetString(ejs, argv[2]);
+
+    if (sp->server) {
+        /* NOTE: this will only impact future requests */
+        setHttpPipeline(ejs, sp);
+    }
+    return 0;
+}
+
+
+/*  
+    function trace(level: Number, options: Object = ["headers", "request", "response"], size: Number = null): Void
+ */
+static EjsObj *hs_trace(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    EjsArray    *options;
+    EjsObj      *item;
+    EjsString   *name;
+    int         mask, i;
+
+    sp->traceLevel = ejsGetInt(ejs, argv[0]);
+
+    if (argc >= 2) {
+        mask = 0;
+        options = (EjsArray*) argv[1];
+        for (i = 0; i < options->length; i++) {
+            if ((item = options->data[i]) == 0) {
+                continue;
+            }
+            name = ejsToString(ejs, item);
+            if (strcmp(name->value, "all") == 0) {
+                mask |= HTTP_TRACE_RECEIVE | HTTP_TRACE_TRANSMIT;
+                mask |= HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS | HTTP_TRACE_BODY;
+            } else if (strcmp(name->value, "request") == 0) {
+                mask |= HTTP_TRACE_RECEIVE;
+            } else if (strcmp(name->value, "response") == 0) {
+                mask |= HTTP_TRACE_TRANSMIT;
+            } else if (strcmp(name->value, "conn") == 0) {
+                mask |= HTTP_TRACE_CONN;
+            } else if (strcmp(name->value, "first") == 0) {
+                mask |= HTTP_TRACE_FIRST;
+            } else if (strcmp(name->value, "headers") == 0) {
+                mask |= HTTP_TRACE_HEADERS;
+            } else if (strcmp(name->value, "body") == 0) {
+                mask |= HTTP_TRACE_BODY;
+            }
+        }
+        sp->traceMask = mask;
+    }
+    if (argc >= 3) {
+        sp->traceMaxLength = ejsGetInt(ejs, argv[2]);
+    }
+    return 0;
+}
+
+
+/*  
+    function traceFilter(include: Array = ["*"], exclude: Array = ["gif", "ico", "jpg", "png"]): Void
+ */
+static EjsObj *hs_traceFilter(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    EjsObj          *obj;
+    EjsArray        *includeObj, *excludeObj;
+    MprHashTable    *include, *exclude;
+    int             i;
+    
+    include = mprCreateHash(sp, 0);
+    exclude = mprCreateHash(sp, 0);
+    if (include == 0 || exclude == 0) {
+        return 0;
+    }
+    includeObj = (EjsArray*) argv[0];
+    for (i = 0; i < includeObj->length; i++) {
+        if ((obj = ejsGetProperty(ejs, includeObj, i)) != 0) {
+            mprAddHash(include, mprStrdup(include, ejsGetString(ejs, ejsToString(ejs, obj))), "");
+        }
+    }
+    excludeObj = (EjsArray*) argv[0];
+    for (i = 0; i < excludeObj->length; i++) {
+        if ((obj = ejsGetProperty(ejs, excludeObj, i)) != 0) {
+            mprAddHash(exclude, mprStrdup(exclude, ejsGetString(ejs, ejsToString(ejs, obj))), "");
+        }
+    }
+    return 0;
+}
+
+
+/*  
     function get software(headers: Object = null): Void
  */
 static EjsObj *hs_software(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -349,6 +493,127 @@ static EjsObj *hs_verifyClients(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **
 
 
 /************************************ Helpers *************************************/
+#if UNUSED
+/*
+    Get limits:  obj[*] = limits
+ */
+void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server) 
+{
+    EjsName     qname;
+
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "chunk"), ejsCreateNumber(ejs, limits->chunkSize));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "receive"), ejsCreateNumber(ejs, limits->receiveBodySize));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "reuse"), ejsCreateNumber(ejs, limits->keepAliveCount));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "transmission"), ejsCreateNumber(ejs, limits->transmissionBodySize));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "upload"), ejsCreateNumber(ejs, limits->uploadSize));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "inactivityTimeout"), 
+        ejsCreateNumber(ejs, limits->inactivityTimeout / MPR_TICKS_PER_SEC));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "requestTimeout"), 
+        ejsCreateNumber(ejs, limits->requestTimeout / MPR_TICKS_PER_SEC));
+    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "sessionTimeout"), 
+        ejsCreateNumber(ejs, limits->sessionTimeout / MPR_TICKS_PER_SEC));
+
+    if (server) {
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "clients"), ejsCreateNumber(ejs, limits->clientCount));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "header"), ejsCreateNumber(ejs, limits->headerSize));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "headers"), ejsCreateNumber(ejs, limits->headerCount));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "requests"), ejsCreateNumber(ejs, limits->requestCount));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "sessions"), ejsCreateNumber(ejs, limits->sessionCount));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "stageBuffer"), ejsCreateNumber(ejs, limits->stageBufferSize));
+        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "uri"), ejsCreateNumber(ejs, limits->uriSize));
+    }
+}
+
+
+/*
+    Set the limit field:    *limit = obj[field]
+ */
+static void setLimit(Ejs *ejs, EjsObj *obj, cchar *field, int *limit, int factor)
+{
+    EjsObj      *vp;
+    EjsName     qname;
+
+    if ((vp = ejsGetPropertyByName(ejs, obj, ejsName(&qname, "", field))) != 0) {
+        *limit = ejsGetInt(ejs, ejsToNumber(ejs, vp)) * factor;
+    }
+}
+
+
+void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server) 
+{
+    setLimit(ejs, obj, "chunk", &limits->chunkSize, 1);
+    setLimit(ejs, obj, "inactivityTimeout", &limits->inactivityTimeout, MPR_TICKS_PER_SEC);
+    setLimit(ejs, obj, "receive", &limits->receiveBodySize, 1);
+    setLimit(ejs, obj, "reuse", &limits->keepAliveCount, 1);
+    setLimit(ejs, obj, "requestTimeout", &limits->requestTimeout, MPR_TICKS_PER_SEC);
+    setLimit(ejs, obj, "sessionTimeout", &limits->sessionTimeout, MPR_TICKS_PER_SEC);
+    setLimit(ejs, obj, "transmission", &limits->transmissionBodySize, 1);
+    setLimit(ejs, obj, "upload", &limits->uploadSize, 1);
+
+    if (server) {
+        setLimit(ejs, obj, "clients", &limits->clientCount, 1);
+        setLimit(ejs, obj, "requests", &limits->requestCount, 1);
+        setLimit(ejs, obj, "sessions", &limits->sessionCount, 1);
+        setLimit(ejs, obj, "stageBuffer", &limits->stageBufferSize, 1);
+        setLimit(ejs, obj, "uri", &limits->uriSize, 1);
+        setLimit(ejs, obj, "headers", &limits->headerCount, 1);
+        setLimit(ejs, obj, "header", &limits->headerSize, 1);
+    }
+}
+#endif
+
+
+static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp) 
+{
+    EjsString       *vs;
+    HttpLocation    *location;
+    Http            *http;
+    HttpStage       *stage;
+    cchar           *name;
+    int             i;
+
+    mprAssert(sp->server);
+    http = sp->server->http;
+    location = sp->server->location;
+
+    if (sp->outgoingStages) {
+        httpClearStages(location, HTTP_STAGE_OUTGOING);
+        for (i = 0; i < sp->outgoingStages->length; i++) {
+            vs = ejsGetProperty(ejs, sp->outgoingStages, i);
+            if (vs && ejsIsString(vs)) {
+                name = vs->value;
+                if ((stage = httpLookupStage(http, name)) == 0) {
+                    ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
+                    return;
+                }
+                httpAddFilter(location, name, NULL, HTTP_STAGE_OUTGOING);
+            }
+        }
+    }
+    if (sp->incomingStages) {
+        httpClearStages(location, HTTP_STAGE_INCOMING);
+        for (i = 0; i < sp->incomingStages->length; i++) {
+            vs = ejsGetProperty(ejs, sp->incomingStages, i);
+            if (vs && ejsIsString(vs)) {
+                name = vs->value;
+                if ((stage = httpLookupStage(http, name)) == 0) {
+                    ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
+                    return;
+                }
+                httpAddFilter(location, name, NULL, HTTP_STAGE_INCOMING);
+            }
+        }
+    }
+    if (sp->connector) {
+        if ((stage = httpLookupStage(http, sp->connector)) == 0) {
+            ejsThrowArgError(ejs, "Can't find pipeline stage name %s", sp->connector);
+            return;
+        }
+        location->connector = stage;
+    }
+}
+
+
 /*
     Notification callback. This routine is called from the Http pipeline on connection state changes. 
     Readable/writable events come with state == 0 and notifyFlags set accordingly.
@@ -364,23 +629,28 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
     if ((req = httpGetConnContext(conn)) != 0) {
         ejs = req->ejs;
     }
-
     switch (state) {
-    case HTTP_STATE_PARSED:
-        conn->transmitter->handler = conn->http->ejsHandler;
+    case HTTP_STATE_BEGIN:
+        setupTrace(conn);
         break;
 
-    case HTTP_STATE_ERROR:
-        if (req && req->emitter) {
-            ejsSendEvent(ejs, req->emitter, "error", (EjsObj*) req);
-        }
+    case HTTP_STATE_PARSED:
+        conn->transmitter->handler = (conn->error) ? conn->http->passHandler : conn->http->ejsHandler;
         break;
 
     case HTTP_STATE_COMPLETE:
         if (req) {
-            if (req->emitter) {
-                ejsSendEvent(ejs, req->emitter, "close", (EjsObj*) req);
+            if (conn->error) {
+                ejsSendRequestErrorEvent(ejs, req);
             }
+            ejsSendRequestCloseEvent(ejs, req);
+        }
+        break;
+
+    case -1:
+        if (req) {
+            ejsSendRequestCloseEvent(ejs, req);
+            req->conn = 0;
         }
         break;
 
@@ -401,6 +671,12 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
 
 static void closeEjs(HttpQueue *q)
 {
+    EjsRequest  *req;
+
+    if ((req = httpGetConnContext(q->conn)) != 0) {
+        ejsSendRequestCloseEvent(req->ejs, req);
+        req->conn = 0;
+    }
     httpSetConnContext(q->conn, 0);
     httpSetRequestNotifier(q->conn, 0);
 }
@@ -426,13 +702,28 @@ static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
         }
         HTTP_NOTIFY(q->conn, 0, HTTP_NOTIFY_READABLE);
 
-    } else if (trans->writeComplete) {
+    } else if (conn->writeComplete) {
         httpFreePacket(q, packet);
 
     } else {
         httpJoinPacketForService(q, packet, 0);
         HTTP_NOTIFY(q->conn, 0, HTTP_NOTIFY_READABLE);
     }
+}
+
+
+static void setupTrace(HttpConn *conn)
+{
+    EjsHttpServer   *sp;
+
+    sp = httpGetServerContext(conn->server);
+    mprAssert(sp);
+
+    conn->traceLevel = sp->traceLevel;
+    conn->traceMaxLength = sp->traceMaxLength;
+    conn->traceMask = sp->traceMask;
+    conn->traceInclude = sp->traceInclude;
+    conn->traceExclude = sp->traceExclude;
 }
 
 
@@ -458,6 +749,7 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
         dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
         dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : conn->documentRoot;
         if (sp->server == 0) {
+            /* Don't set limits or pipeline. That will come from the embedding server */
             sp->server = conn->server;
             sp->server->ssl = location->ssl;
             sp->ip = mprStrdup(sp, conn->server->ip);
@@ -476,6 +768,9 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
     conn->dispatcher = ejs->dispatcher;
     conn->documentRoot = conn->server->documentRoot;
     conn->transmitter->handler = ejs->http->ejsHandler;
+#if UNUSED
+    setTrace(sp, conn);
+#endif
     return req;
 }
 
@@ -487,7 +782,7 @@ static void runEjs(HttpQueue *q)
     HttpConn        *conn;
 
     conn = q->conn;
-    if (!conn->error) {
+    if (!conn->abortPipeline) {
         sp = httpGetServerContext(conn->server);
         if ((req = httpGetConnContext(conn)) == 0) {
             if ((req = createRequest(sp, conn)) == 0) {
@@ -552,12 +847,27 @@ HttpStage *ejsAddWebHandler(Http *http)
  */
 static void markHttpServer(Ejs *ejs, EjsHttpServer *sp)
 {
-    //  MOB -- not needed
     ejsMarkObject(ejs, (EjsObj*) sp);
-
     if (sp->emitter) {
         ejsMark(ejs, (EjsObj*) sp->emitter);
     }
+    if (sp->limits) {
+        ejsMark(ejs, (EjsObj*) sp->limits);
+    }
+    if (sp->outgoingStages) {
+        ejsMark(ejs, (EjsObj*) sp->outgoingStages);
+    }
+    if (sp->incomingStages) {
+        ejsMark(ejs, (EjsObj*) sp->incomingStages);
+    }
+}
+
+
+static void destroyHttpServer(Ejs *ejs, EjsHttpServer *sp)
+{
+    ejsSendEvent(ejs, sp->emitter, "close", (EjsObj*) sp);
+    mprFree(sp->server);
+    sp->server = 0;
 }
 
 
@@ -568,7 +878,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
 
     type = ejsConfigureNativeType(ejs, "ejs.web", "HttpServer", sizeof(EjsHttpServer));
     type->helpers.mark = (EjsMarkHelper) markHttpServer;
-    //  MOB -- need destructor to shutdown properly
+    type->helpers.destroy = (EjsDestroyHelper) destroyHttpServer;
 
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, (EjsProc) hs_HttpServer);
@@ -576,17 +886,18 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_address, (EjsProc) hs_address);
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_async, (EjsProc) hs_async, (EjsProc) hs_set_async);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_close, (EjsProc) hs_close);
-#if ES_ejs_web_HttpServer_isSecure
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_limits, (EjsProc) hs_limits);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_isSecure, (EjsProc) hs_isSecure);
-#endif
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_listen, (EjsProc) hs_listen);
-#if ES_ejs_web_HttpServer_name
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_name, (EjsProc) hs_name, (EjsProc) hs_set_name);
-#endif
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_port, (EjsProc) hs_port);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_observe, (EjsProc) hs_observe);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_removeObserver, (EjsProc) hs_removeObserver);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_secure, (EjsProc) hs_secure);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setLimits, (EjsProc) hs_setLimits);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setPipeline, (EjsProc) hs_setPipeline);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_trace, (EjsProc) hs_trace);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_traceFilter, (EjsProc) hs_traceFilter);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_verifyClients, (EjsProc) hs_verifyClients);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_software, (EjsProc) hs_software);
     ejsAddWebHandler(ejs->http);

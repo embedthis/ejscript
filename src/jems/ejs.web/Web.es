@@ -4,8 +4,6 @@
  */
 
 module ejs.web {
-    require ejs.cjs
-
     /** 
         Web class manages web applications. This class initializes the web framework and loads web applications. 
         Apps may be JSGI apps with a *.es extension, template apps with a ".ejs" extension or MVC applications.
@@ -84,6 +82,7 @@ module ejs.web {
                     process(app, request)
                 }
             } catch (e) {
+print("CATCH in WEB " + e)
                 request.error(Http.ServerError, e)
             }
         }
@@ -119,7 +118,6 @@ module ejs.web {
                 } else {
                     result = app.call(request, request)
                 }
-
                 if (result is Function) {
                     /* Functions don't auto finalize. The user is responsible for calling finalize() */
                     result.call(request, request)
@@ -175,6 +173,10 @@ module ejs.web {
                             request.write(block)
                         })
                         request.finalize()
+
+                    } else if (body is Function) {
+                        /* Functions don't auto finalize. The user is responsible for calling finalize() */
+                        body.call(request, request)
 
                     } else if (body) {
                         request.write(body)

@@ -4,8 +4,6 @@
 
 module ejs.web {
 
-    require ejs.cjs
-
     /** 
         The Mvc class manages the loading and initialization of MVC web applications
         @stability prototype

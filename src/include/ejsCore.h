@@ -973,6 +973,7 @@ extern int ejsSetTraitDetails(Ejs *ejs, void *vp, int slotNum, struct EjsType *t
 extern int ejsHasTrait(EjsObj *obj, int slotNum, int attributes);
 extern int ejsGetTraitAttributes(EjsObj *obj, int slotNum);
 extern struct EjsType *ejsGetTraitType(EjsObj *obj, int slotNum);
+extern int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite);
 
 
 //  TODO - inconsistent naming vs ejsCloneVar (clone vs copy)
@@ -1999,6 +2000,7 @@ typedef struct EjsHttp {
     Ejs             *ejs;                       /**< Convenience access to ejs interpreter instance */
     EjsObj          *emitter;                   /**< Event emitter */
     EjsByteArray    *data;                      /**< Buffered write data */
+    EjsObj          *limits;                    /**< Limits object */
     EjsObj          *responseCache;             /**< Cached response (only used if response() is used) */
     HttpConn        *conn;                      /**< Http connection object */
     MprBuf          *requestContent;            /**< Request body data supplied */
@@ -2007,6 +2009,7 @@ typedef struct EjsHttp {
     char            *method;                    /**< HTTP method */
     char            *keyFile;                   /**< SSL key file */
     char            *certFile;                  /**< SSL certificate file */
+    int             dontFinalize;               /**< Suppress finalization */
     int             readCount;                  /**< Count of body bytes read */
     int             requestContentCount;        /**< Count of bytes written from requestContent */
     int             writeCount;                 /**< Count of bytes written via write() */
@@ -2026,6 +2029,8 @@ extern EjsHttp *ejsCreateHttp(Ejs *ejs);
 #else
     #define ejsIsHttp(vp) ejsIs(vp, ES_ejs_io_Http)
 #endif
+extern void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server);
+extern void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server);
 
 
 /** 

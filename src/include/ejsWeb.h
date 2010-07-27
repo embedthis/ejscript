@@ -36,10 +36,14 @@ extern "C" {
  */
 typedef struct EjsHttpServer {
     EjsObj          obj;                        /**< Extends Object */
-    EjsObj          *emitter;                   /**< Event emitter */
     Ejs             *ejs;                       /**< Ejscript interpreter handle */
+    EjsObj          *emitter;                   /**< Event emitter */
+    EjsObj          *limits;                    /**< Limits object */
     HttpServer      *server;                    /**< Http server object */
     struct MprSsl   *ssl;                       /**< SSL configuration */
+    EjsArray        *incomingStages;            /**< Incoming Http pipeline stages */
+    EjsArray        *outgoingStages;            /**< Outgoing Http pipeline stages */
+    cchar           *connector;                 /**< Pipeline connector */
     cchar           *dir;                       /**< Directory containing web documents */
     char            *keyFile;                   /**< SSL key file */
     char            *certFile;                  /**< SSL certificate file */
@@ -49,6 +53,12 @@ typedef struct EjsHttpServer {
     char            *name;                      /**< Server name */
     int             port;                       /**< Listening port */
     int             async;                      /**< Async mode */
+
+    int             traceLevel;                 /**< Trace activation level */
+    int             traceMaxLength;             /**< Maximum trace file length (if known) */
+    int             traceMask;                  /**< Request/response trace mask */
+    MprHashTable    *traceInclude;              /**< Extensions to include in trace */
+    MprHashTable    *traceExclude;              /**< Extensions to exclude from trace */
 } EjsHttpServer;
 
 
@@ -71,6 +81,7 @@ typedef struct EjsRequest {
     EjsPath         *filename;      /**< Physical resource filename */
     EjsObj          *files;         /**< Files object */
     EjsObj          *headers;       /**< Headers object */
+    EjsObj          *limits;        /**< Limits object */
     EjsObj          *params;        /**< Form variables */
     EjsUri          *uri;           /**< Complete uri */
     Ejs             *ejs;           /**< Ejscript interpreter handle */
@@ -82,6 +93,8 @@ typedef struct EjsRequest {
 
     int             dontFinalize;   /**< Don't auto-finalize. Must call finalize(force) */
     int             probedSession;  /**< Determined if a session exists */
+    int             closed;         /**< Request closed and "close" event has been issued */
+    int             error;          /**< Request errored and "error" event has been issued */
     int             running;        /**< Request has started */
 } EjsRequest;
 
@@ -141,6 +154,9 @@ extern EjsSession *ejsGetSession(Ejs *ejs, struct EjsRequest *req);
     @param session Session object created via ejsCreateSession()
 */
 extern int ejsDestroySession(Ejs *ejs, EjsHttpServer *server, EjsSession *session);
+
+extern void ejsSendRequestCloseEvent(Ejs *ejs, EjsRequest *req);
+extern void ejsSendRequestErrorEvent(Ejs *ejs, EjsRequest *req);
 
 /******************************* Internal APIs ********************************/
 

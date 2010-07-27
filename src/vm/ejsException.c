@@ -101,12 +101,14 @@ EjsObj *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
 {
     EjsType     *type;
     EjsObj      *error;
-    char        *buf;
 
     if (ejs->exception) {
+#if UNUSED
+        char        *buf;
         buf = mprVasprintf(ejs, 0, fmt, fmtArgs);
         mprError(ejs, "Double exception: %s", buf);
         mprFree(buf);
+#endif
         return ejs->exception;
     }
     if (ejs->initialized) {
