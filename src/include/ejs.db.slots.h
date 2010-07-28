@@ -17,35 +17,6 @@
 /*
    Prototype (instance) slots for "global" type 
  */
-#define ES_ejs_db_DatabaseConnector_NUM_CLASS_PROP                     0
-
-/*
-   Prototype (instance) slots for "DatabaseConnector" type 
- */
-#define ES_ejs_db_DatabaseConnector_addColumn                          0
-#define ES_ejs_db_DatabaseConnector_addIndex                           1
-#define ES_ejs_db_DatabaseConnector_changeColumn                       2
-#define ES_ejs_db_DatabaseConnector_close                              3
-#define ES_ejs_db_DatabaseConnector_commit                             4
-#define ES_ejs_db_DatabaseConnector_connect                            5
-#define ES_ejs_db_DatabaseConnector_createDatabase                     6
-#define ES_ejs_db_DatabaseConnector_createTable                        7
-#define ES_ejs_db_DatabaseConnector_dataTypeToSqlType                  8
-#define ES_ejs_db_DatabaseConnector_destroyDatabase                    9
-#define ES_ejs_db_DatabaseConnector_destroyTable                       10
-#define ES_ejs_db_DatabaseConnector_getColumns                         11
-#define ES_ejs_db_DatabaseConnector_getTables                          12
-#define ES_ejs_db_DatabaseConnector_removeColumns                      13
-#define ES_ejs_db_DatabaseConnector_removeIndex                        14
-#define ES_ejs_db_DatabaseConnector_renameColumn                       15
-#define ES_ejs_db_DatabaseConnector_renameTable                        16
-#define ES_ejs_db_DatabaseConnector_rollback                           17
-#define ES_ejs_db_DatabaseConnector_sql                                18
-#define ES_ejs_db_DatabaseConnector_sqlTypeToDataType                  19
-#define ES_ejs_db_DatabaseConnector_sqlTypeToEjsType                   20
-#define ES_ejs_db_DatabaseConnector_startTransaction                   21
-#define ES_ejs_db_DatabaseConnector_NUM_INSTANCE_PROP                  22
-#define ES_ejs_db_DatabaseConnector_NUM_INHERITED_PROP                 0
 
 
 /*
@@ -99,6 +70,35 @@
     Local slots for methods in type "Database" 
  */
 #define ES_ejs_db_Database_quote_str                                   0
+#define ES_ejs_db_DatabaseConnector_NUM_CLASS_PROP                     0
+
+/*
+   Prototype (instance) slots for "DatabaseConnector" type 
+ */
+#define ES_ejs_db_DatabaseConnector_addColumn                          0
+#define ES_ejs_db_DatabaseConnector_addIndex                           1
+#define ES_ejs_db_DatabaseConnector_changeColumn                       2
+#define ES_ejs_db_DatabaseConnector_close                              3
+#define ES_ejs_db_DatabaseConnector_commit                             4
+#define ES_ejs_db_DatabaseConnector_connect                            5
+#define ES_ejs_db_DatabaseConnector_createDatabase                     6
+#define ES_ejs_db_DatabaseConnector_createTable                        7
+#define ES_ejs_db_DatabaseConnector_dataTypeToSqlType                  8
+#define ES_ejs_db_DatabaseConnector_destroyDatabase                    9
+#define ES_ejs_db_DatabaseConnector_destroyTable                       10
+#define ES_ejs_db_DatabaseConnector_getColumns                         11
+#define ES_ejs_db_DatabaseConnector_getTables                          12
+#define ES_ejs_db_DatabaseConnector_removeColumns                      13
+#define ES_ejs_db_DatabaseConnector_removeIndex                        14
+#define ES_ejs_db_DatabaseConnector_renameColumn                       15
+#define ES_ejs_db_DatabaseConnector_renameTable                        16
+#define ES_ejs_db_DatabaseConnector_rollback                           17
+#define ES_ejs_db_DatabaseConnector_sql                                18
+#define ES_ejs_db_DatabaseConnector_sqlTypeToDataType                  19
+#define ES_ejs_db_DatabaseConnector_sqlTypeToEjsType                   20
+#define ES_ejs_db_DatabaseConnector_startTransaction                   21
+#define ES_ejs_db_DatabaseConnector_NUM_INSTANCE_PROP                  22
+#define ES_ejs_db_DatabaseConnector_NUM_INHERITED_PROP                 0
 
 #define _ES_CHECKSUM_ejs_db   121169
 

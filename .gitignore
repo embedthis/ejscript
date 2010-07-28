@@ -96,3 +96,6 @@ mvc
 projects/eclipse
 bin/mvc.cmd
 ejs.log
+projects/MACOSX/*/*/xcuserdata
+projects/MACOSX/*/*/project.xcworkspace
+src/jems/ejs.db.mapper/Model.nes
