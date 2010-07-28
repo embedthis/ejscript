@@ -273,10 +273,6 @@ startBrowser() {
     if [ "$!!BLD_PRODUCT!!_HEADLESS" = 1 ] ; then
         return
     fi
-    #
-    #   Conservative delay to allow appweb to start and initialize
-    #
-    sleep 5
     echo -e "\nStarting browser to view the $BLD_NAME Home Page."
     url=$BLD_DOC_PREFIX/index.html
     if [ $BLD_HOST_OS = WIN ] ; then

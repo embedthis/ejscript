@@ -48,10 +48,3 @@ if [ $BLD_HOST_OS = WIN ] ; then
         cpy -d "lib/msvcrt/$BLD_CC_CL_VERSION" msvcr90.dll Microsoft.VC90.CRT.manifest "${ROOT_DIR}"
     fi
 fi
-
-if [ $BLD_FEATURE_APPWEB = 1 ] ; then
-    cpy -m 755 -s ${BLD_BIN_DIR}/ejswebserver${BLD_EXE} "${ROOT_DIR}"
-    makeDir "${ROOT_DIR}/default-web"
-    cpy -d "${BLD_LIB_DIR}" ejswebserver.conf mime.types "${ROOT_DIR}"
-    cpy -d src/appweb/default-web '*.html' '*.ico' "${ROOT_DIR}/default-web"
-fi

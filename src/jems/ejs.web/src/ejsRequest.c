@@ -485,7 +485,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_status:
-        httpSetTransStatus(conn, getNum(ejs, value));
+        httpSetStatus(conn, getNum(ejs, value));
         break;
 
     case ES_ejs_web_Request_authGroup:
