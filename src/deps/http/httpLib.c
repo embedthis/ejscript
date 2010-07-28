@@ -1946,9 +1946,6 @@ static int setClientHeaders(HttpConn *conn)
 {
     Http                *http;
     HttpTransmitter     *trans;
-#if UNUSED
-    HttpPacket          *packet;
-#endif
     HttpUri             *parsedUri;
     char                *encoded;
     int                 len, rc;
@@ -1959,9 +1956,6 @@ static int setClientHeaders(HttpConn *conn)
     http = conn->http;
     trans = conn->transmitter;
     parsedUri = trans->parsedUri;
-#if UNUSED
-    packet = httpCreateHeaderPacket(trans);
-#endif
     if (conn->authType && strcmp(conn->authType, "basic") == 0) {
         char    abuf[MPR_MAX_STRING];
         mprSprintf(conn, abuf, sizeof(abuf), "%s:%s", conn->authUser, conn->authPassword);
@@ -2032,19 +2026,6 @@ static int setClientHeaders(HttpConn *conn)
         } else {
             httpSetSimpleHeader(conn, "Connection", "close");
         }
-#if UNUSED
-        /*
-            This code assumes the chunkFilter is always in the outgoing pipeline
-         */
-        if ((trans->length <= 0) && (strcmp(trans->method, "POST") == 0 || strcmp(trans->method, "PUT") == 0)) {
-            if (conn->chunked != 0) {
-                httpSetSimpleHeader(conn, "Transfer-Encoding", "chunked");
-                conn->chunked = 1;
-            }
-        } else {
-            conn->chunked = 0;
-        }
-#endif
 
     } else {
         /* Set to zero to let the client initiate the close */
@@ -2065,10 +2046,6 @@ int httpConnect(HttpConn *conn, cchar *method, cchar *url)
 
     if (conn->server) {
         httpError(conn, HTTP_CODE_BAD_GATEWAY, "Can't call connect in a server");
-#if UNUSED
-        httpSetState(conn, HTTP_STATE_ERROR);
-        httpSetState(conn, HTTP_STATE_COMPLETE);
-#endif
         return MPR_ERR_BAD_STATE;
     }
     mprLog(conn, 4, "Http: client request: %s %s", method, url);
@@ -2082,7 +2059,7 @@ int httpConnect(HttpConn *conn, cchar *method, cchar *url)
     http = conn->http;
     trans = conn->transmitter;
     mprAssert(conn->state == HTTP_STATE_BEGIN);
-    httpSetState(conn, HTTP_STATE_STARTED);
+    httpSetState(conn, HTTP_STATE_CONNECTED);
     conn->sentCredentials = 0;
 
     mprFree(trans->method);
@@ -2092,17 +2069,9 @@ int httpConnect(HttpConn *conn, cchar *method, cchar *url)
     trans->parsedUri = httpCreateUri(trans, url, 0);
 
     if (openConnection(conn, url) == 0) {
-#if UNUSED
-        httpSetState(conn, HTTP_STATE_ERROR);
-        httpSetState(conn, HTTP_STATE_COMPLETE);
-#endif
         return MPR_ERR_CANT_OPEN;
     }
     if (setClientHeaders(conn) < 0) {
-#if UNUSED
-        httpSetState(conn, HTTP_STATE_ERROR);
-        httpSetState(conn, HTTP_STATE_COMPLETE);
-#endif
         return MPR_ERR_CANT_INITIALIZE;
     }
     return 0;
@@ -2118,13 +2087,12 @@ bool httpNeedRetry(HttpConn *conn, char **url)
     HttpTransmitter *trans;
 
     mprAssert(conn->receiver);
-    mprAssert(conn->state > HTTP_STATE_WAIT);
 
+    *url = 0;
     rec = conn->receiver;
     trans = conn->transmitter;
-    *url = 0;
 
-    if (conn->state < HTTP_STATE_WAIT) {
+    if (conn->state < HTTP_STATE_FIRST) {
         return 0;
     }
     if (rec->status == HTTP_CODE_UNAUTHORIZED) {
@@ -2435,7 +2403,7 @@ void httpConsumeLastRequest(HttpConn *conn)
     char        junk[4096];
     int         requestTimeout, rc;
 
-    if (!conn->sock || conn->state < HTTP_STATE_WAIT) {
+    if (!conn->sock || conn->state < HTTP_STATE_FIRST) {
         return;
     }
     mark = mprGetTime(conn);
@@ -2445,7 +2413,7 @@ void httpConsumeLastRequest(HttpConn *conn)
             break;
         }
     }
-    if (HTTP_STATE_STARTED <= conn->state && conn->state < HTTP_STATE_COMPLETE) {
+    if (HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE) {
         conn->keepAliveCount = -1;
     }
 }
@@ -2514,10 +2482,10 @@ static void readEvent(HttpConn *conn)
             httpAdvanceReceiver(conn, packet);
 
         } else if (nbytes < 0) {
-            if (conn->state <= HTTP_STATE_WAIT) {
+            if (conn->state <= HTTP_STATE_CONNECTED) {
                 conn->connError = conn->error = 1;
                 break;
-            } else if (conn->state > HTTP_STATE_WAIT && conn->state < HTTP_STATE_COMPLETE) {
+            } else if (conn->state < HTTP_STATE_COMPLETE) {
                 httpAdvanceReceiver(conn, packet);
                 if (!conn->error && conn->state < HTTP_STATE_COMPLETE) {
                     httpConnError(conn, HTTP_CODE_COMMS_ERROR, "Connection lost");
@@ -2715,7 +2683,7 @@ cchar *httpGetError(HttpConn *conn)
 {
     if (conn->errorMsg) {
         return conn->errorMsg;
-    } else if (conn->state > HTTP_STATE_WAIT) {
+    } else if (conn->state >= HTTP_STATE_FIRST) {
         return httpLookupStatus(conn->http, conn->receiver->status);
     } else {
         return "";
@@ -2814,11 +2782,11 @@ void httpSetConnHost(HttpConn *conn, void *host)
 
 
 /*  
-    Protocol must be persistent 
+    Set the protocol to use for outbound requests. Protocol must be persistent .
  */
 void httpSetProtocol(HttpConn *conn, cchar *protocol)
 {
-    if (conn->state < HTTP_STATE_WAIT) {
+    if (conn->state < HTTP_STATE_CONNECTED) {
         conn->protocol = protocol;
         if (strcmp(protocol, "HTTP/1.0") == 0) {
             conn->keepAliveCount = -1;
@@ -2834,13 +2802,12 @@ void httpSetRetries(HttpConn *conn, int count)
 
 
 static char *notifyState[] = {
-    "IO_EVENT", "BEGIN", "STARTED", "WAIT", "FIRST", "PARSED", "CONTENT", "PROCESS", "RUNNING", "ERROR", "COMPLETE",
+    "IO_EVENT", "BEGIN", "STARTED", "FIRST", "PARSED", "CONTENT", "RUNNING", "COMPLETE",
 };
 
 
 void httpSetState(HttpConn *conn, int state)
 {
-    mprAssert(state != HTTP_STATE_WAIT);
     if (state == conn->state) {
         return;
     }
@@ -2930,25 +2897,6 @@ static void httpErrorV(HttpConn *conn, int status, cchar *fmt, va_list args)
             mprLog(conn, 2, "Error: \"%s\", status %d for URI \"%s\": %s.",
                 httpLookupStatus(conn->http, status), status, rec->uri ? rec->uri : "", conn->errorMsg);
         }
-#if OLD && UNUSED
-        if (trans && trans->flags & HTTP_TRANS_HEADERS_CREATED) {
-            if (conn->server) {
-                /* Headers and status have been sent, so must let the client know the request has failed */
-                mprDisconnectSocket(conn->sock);
-            } else {
-                httpCloseConn(conn);
-            }
-        } else {
-            if (conn->server) {
-                if (trans) {
-                    httpSetResponseBody(conn, status, conn->errorMsg);
-                    httpFinalize(conn);
-                }
-            } else {
-                //  MOB -- should this do a httpCloseConn(conn)
-            }
-        }
-#endif
         trans = conn->transmitter;
         if (trans) {
             if (conn->server) {
@@ -3664,25 +3612,6 @@ static int httpTimer(Http *http, MprEvent *event)
             inactivity = 0;
         }
         if (diff < 0) {
-#if UNUSED
-            if (conn->receiver) {
-                if (inactivity) {
-                    mprLog(http, 4, "Inactive request timed out %s, exceeded inactivity timeout %d", 
-                        conn->receiver->uri, inactivityTimeout / 1000);
-                } else {
-                    mprLog(http, 4, "Request timed out %s, exceeded timeout %d", conn->receiver->uri, requestTimeout / 1000);
-                }
-            } else {
-                mprLog(http, 4, "Idle connection timed out");
-            }
-            conn->error = 1;
-            conn->connError = 1;
-            httpRemoveConn(http, conn);
-            if (conn->sock) {
-                /* This will force an EOF read event */
-                mprDisconnectSocket(conn->sock);
-            }
-#else
             httpRemoveConn(http, conn);
             if (conn->receiver) {
                 if (inactivity) {
@@ -3695,7 +3624,6 @@ static int httpTimer(Http *http, MprEvent *event)
             } else {
                 mprLog(http, 4, "Idle connection timed out");
             }
-#endif
         }
     }
     if (connCount == 0) {
@@ -6523,8 +6451,7 @@ void httpAdvanceReceiver(HttpConn *conn, HttpPacket *packet)
 
         switch (conn->state) {
         case HTTP_STATE_BEGIN:
-        case HTTP_STATE_STARTED:
-        case HTTP_STATE_WAIT:
+        case HTTP_STATE_CONNECTED:
             conn->canProceed = parseIncoming(conn, packet);
             break;
 
@@ -6768,10 +6695,6 @@ static void parseResponseLine(HttpConn *conn, HttpPacket *packet)
         httpTraceContent(conn, packet, len, 0, HTTP_TRACE_RECEIVE | HTTP_TRACE_HEADERS);
     } else if (httpShouldTrace(conn, HTTP_TRACE_RECEIVE | HTTP_TRACE_FIRST)) {
         mprLog(rec, conn->traceLevel, "%s %d %s", protocol, rec->status, rec->statusMessage);
-#if UNUSED
-    } else {
-        mprLog(rec, 6, "Response from %s:%d to %s:%d", conn->ip, conn->port, conn->sock->ip, conn->sock->port);
-#endif
     }
 }
 
@@ -7344,13 +7267,6 @@ static bool analyseContent(HttpConn *conn, HttpPacket *packet)
             mprFree(packet);
         }
         conn->input = 0;
-#if UNUSED
-        if (rec->remainingContent > 0 && !conn->http10) {
-            httpConnError(conn, HTTP_CODE_COMMS_ERROR, "Insufficient content data sent with request");
-        } else {
-            conn->canProceed = 0;
-        }
-#endif
     }
     return 1;
 }
@@ -8622,7 +8538,7 @@ HttpConn *httpAcceptConn(HttpServer *server)
         return 0;
     }
     mprAssert(conn->state == HTTP_STATE_BEGIN);
-    httpSetState(conn, HTTP_STATE_STARTED);
+    httpSetState(conn, HTTP_STATE_CONNECTED);
 
     conn->traceMask = httpSetupTrace(conn, 0);
     if (conn->traceMask) {
@@ -8634,13 +8550,6 @@ HttpConn *httpAcceptConn(HttpServer *server)
     e.mask = MPR_READABLE;
     e.timestamp = mprGetTime(server);
     (conn->callback)(conn->callbackArg, &e);
-
-#if UNUSED
-    if (!conn->async && httpWait(conn, HTTP_STATE_PARSED, -1) < 0) {
-        mprError(server, "Timeout while accepting.");
-        return 0;
-    }
-#endif
     return conn;
 }
 
@@ -9171,7 +9080,7 @@ void httpFinalize(HttpConn *conn)
     HttpTransmitter   *trans;
 
     trans = conn->transmitter;
-    if (trans->finalized || conn->state < HTTP_STATE_STARTED || conn->writeq == 0 || conn->sock == 0) {
+    if (trans->finalized || conn->state < HTTP_STATE_CONNECTED || conn->writeq == 0 || conn->sock == 0) {
         return;
     }
     trans->finalized = 1;

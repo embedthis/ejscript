@@ -613,7 +613,7 @@ EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     mprAssert(argc >= 2);
 
     conn = hp->conn;
-    if (conn->state >= HTTP_STATE_STARTED) {
+    if (conn->state >= HTTP_STATE_CONNECTED) {
         ejsThrowArgError(ejs, "Can't update request headers once the request has started");
         return 0;
     }
@@ -1157,12 +1157,12 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
 
     ejs = hp->ejs;
     conn = hp->conn;
-    mprAssert(conn->state >= HTTP_STATE_STARTED);
+    mprAssert(conn->state >= HTTP_STATE_CONNECTED);
 
     if (conn->state >= state) {
         return 1;
     }
-    if (conn->state < HTTP_STATE_STARTED) {
+    if (conn->state < HTTP_STATE_CONNECTED) {
         return 0;
     }
     if (timeout < 0) {
@@ -1244,7 +1244,7 @@ static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
     if (hp->conn->async) {
         timeout = 0;
     }
-    if (hp->conn->state < HTTP_STATE_STARTED) {
+    if (hp->conn->state < HTTP_STATE_CONNECTED) {
         return 0;
     }
     if (hp->conn->state < HTTP_STATE_PARSED && !waitForState(hp, HTTP_STATE_PARSED, timeout, 1)) {
