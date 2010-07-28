@@ -1,0 +1,11 @@
+<% 
+    /*
+        Async wait for 5 seconds
+     */
+    request.dontFinalize = true
+    Timer(5000, function () {
+        try {
+            request.finalize()
+        } catch {}
+    }, request).start()
+%>
