@@ -191,20 +191,11 @@ static EjsObj *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function get dontFinalize(): Boolean
+    function dontFinalize(): Void
  */
 static EjsObj *http_dontFinalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, hp->dontFinalize);
-}
-
-
-/*  
-    function set dontFinalize(value: Boolean): Void
- */
-static EjsObj *http_set_dontFinalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    hp->dontFinalize = ejsGetInt(ejs, argv[0]);
+    hp->dontFinalize = 1;
     return 0;
 }
 
@@ -1384,7 +1375,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_contentLength, (EjsProc) http_contentLength);
     ejsBindMethod(ejs, prototype, ES_Http_contentType, (EjsProc) http_contentType);
     ejsBindMethod(ejs, prototype, ES_Http_date, (EjsProc) http_date);
-    ejsBindAccess(ejs, prototype, ES_Http_dontFinalize, (EjsProc) http_dontFinalize, (EjsProc) http_set_dontFinalize);
+    ejsBindMethod(ejs, prototype, ES_Http_dontFinalize, (EjsProc) http_dontFinalize);
     ejsBindMethod(ejs, prototype, ES_Http_finalize, (EjsProc) http_finalize);
     ejsBindMethod(ejs, prototype, ES_Http_flush, (EjsProc) http_flush);
     ejsBindAccess(ejs, prototype, ES_Http_followRedirects, (EjsProc) http_followRedirects, 

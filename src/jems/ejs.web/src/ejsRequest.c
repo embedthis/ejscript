@@ -269,10 +269,8 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_authUser:
         return createString(ejs, conn->authUser);
 
-#if UNUSED
-    case ES_ejs_web_Request_chunkSize:
-        return (EjsObj*) ejsCreateBoolean(ejs, httpGetChunkSize(conn));
-#endif
+    case ES_ejs_web_Request_autoFinalize:
+        return (EjsObj*) ejsCreateBoolean(ejs, !req->dontFinalize);
 
     case ES_ejs_web_Request_config:
         value = ejs->objectType->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
@@ -294,9 +292,6 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     case ES_ejs_web_Request_dir:
         return (EjsObj*) req->dir;
-
-    case ES_ejs_web_Request_dontFinalize:
-        return (EjsObj*) ejsCreateBoolean(ejs, req->dontFinalize);
 
     case ES_ejs_web_Request_env:
         return createEnv(ejs, req);
@@ -456,10 +451,6 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         req->filename = 0;
         break;
 
-    case ES_ejs_web_Request_dontFinalize:
-        req->dontFinalize = ejsGetInt(ejs, value);
-        break;
-
     case ES_ejs_web_Request_filename:
         req->filename = (EjsPath*) value;
         break;
@@ -599,6 +590,15 @@ static EjsObj *req_destroySession(Ejs *ejs, EjsRequest *req, int argc, EjsObj **
     return 0;
 }
 
+
+/*  
+    function dontFinalize(): Void
+ */
+static EjsObj *req_dontFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+{
+    req->dontFinalize = 1;
+    return 0;
+}
 
 /*  
     function finalize(force: Boolean = false): Void
@@ -1067,6 +1067,7 @@ void ejsConfigureRequestType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_ejs_web_Request_async, (EjsProc) req_async, (EjsProc) req_set_async);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_close, (EjsProc) req_close);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_destroySession, (EjsProc) req_destroySession);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_dontFinalize, (EjsProc) req_dontFinalize);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalize, (EjsProc) req_finalize);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_flush, (EjsProc) req_flush);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_header, (EjsProc) req_header);

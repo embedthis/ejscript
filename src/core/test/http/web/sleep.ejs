@@ -2,7 +2,7 @@
     /*
         Async wait for 5 seconds
      */
-    request.dontFinalize = true
+    request.dontFinalize()
     Timer(5000, function () {
         try {
             request.finalize()

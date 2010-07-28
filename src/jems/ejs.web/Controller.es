@@ -154,7 +154,8 @@ module ejs.web {
                 } else {
                     result = this[actionName]()
                 }
-                if (!result && !rendered && !redirected && !request.dontFinalize) {
+                if (!result && !rendered && !redirected && request.autoFinalize) {
+                    /* Run a default view */
                     renderView()
                 }
                 runFilters(_afterFilters)

@@ -41,6 +41,12 @@ module ejs.web {
          */
         native enumerable var authUser: String
 
+        /** 
+            Will the request auto-finalize. Templated pages and controllers will auto-finalize, i.e. calling finalize() 
+            is not required unless dontFinalize() has been called.
+         */
+        native enumerable var autoFinalize: Boolean
+
         /**
 UNUSED
             Preferred response chunk size for transfer chunk encoding. Chunked encoding is used when an explicit request 
@@ -281,10 +287,10 @@ UNUSED
         native function close(): Void
 
         /**
-            Don't auto-finalize the request. If dontFinalize is true, web frameworks should not auto-finalize requests. 
-            Rather, callers must explicitly invoke $finalize with force set to true.
+            Stop auto-finalizing the request. Calling dontFinalize will keep the request open until a forced finalize is
+            made via "finalize(true). 
          */
-        native enumerable var dontFinalize: Boolean
+        native function dontFinalize(): Void
 
         //  MOB - unique name to not conflict with global.dump()
         /** 
@@ -313,8 +319,8 @@ UNUSED
 
         /** 
             Signals the end of any write data and flushes any buffered write data to the client. 
-            If $dontFinalize is true, this call will have no effect unless $force is true.
-            @param force Do finalization even if $dontFinalize is true
+            If dontFinalize() has been called, this call will have no effect unless $force is true.
+            @param force Do finalization even if dontFinalize has been called.
          */
         native function finalize(force: Boolean = false): Void 
 

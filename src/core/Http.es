@@ -266,11 +266,11 @@ module ejs {
         native function get date(): Date
 
         /**
-            Don't auto-finalize the request. If dontFinalize is true, web frameworks should not auto-finalize requests. 
-            Rather, callers must explicitly invoke $finalize with force set to true.
+            Stop auto-finalizing the request. Calling dontFinalize will keep the request open until a forced finalize is
+            made via "finalize(true). 
          */
-        native function get dontFinalize(): Boolean
-        native function set dontFinalize(value: Boolean): Void
+        native function dontFinalize(): Void
+
 
         /** 
             Encoding scheme for serializing strings. The default encoding is UTF-8. Not yet implemented.
@@ -311,8 +311,8 @@ module ejs {
 
         /** 
             Signals the end of any write data and flushes any buffered write data to the client. 
-            If $dontFinalize is true, this call will have no effect unless $force is true.
-            @param force Do finalization even if $dontFinalize is true
+            If dontFinalize() has been called, this call will have no effect unless $force is true.
+            @param force Do finalization even if dontFinalize() has been called.
          */
         native function finalize(force: Boolean = false): Void 
 

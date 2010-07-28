@@ -1580,7 +1580,7 @@ static EcNode *parseParenListExpression(EcCompiler *cp)
         return LEAVE(cp, expected(cp, "("));
     }
     np = parseListExpression(cp);
-    if (getToken(cp) != T_RPAREN) {
+    if (np && getToken(cp) != T_RPAREN) {
         np = expected(cp, ")");
     }
     return LEAVE(cp, np);
@@ -4066,6 +4066,8 @@ static EcNode *parseLetExpression(EcCompiler *cp)
 {
     EcNode  *np;
 
+    ENTER(cp);
+    
     if (getToken(cp) != T_LET) {
         return LEAVE(cp, expected(cp, "let"));
     }
@@ -5537,8 +5539,12 @@ static EcNode *parseIfStatement(EcCompiler *cp)
     }
 
     np = createNode(cp, N_IF);
-    np->tenary.cond = linkNode(np, parseParenListExpression(cp));
-    np->tenary.thenBlock = linkNode(np, parseSubstatement(cp));
+    if ((np->tenary.cond = linkNode(np, parseParenListExpression(cp))) == 0) {
+        return LEAVE(cp, 0);
+    }
+    if ((np->tenary.thenBlock = linkNode(np, parseSubstatement(cp))) == 0) {
+        return LEAVE(cp, 0);
+    }
 
     if (peekToken(cp) == T_ELSE) {
         getToken(cp);
