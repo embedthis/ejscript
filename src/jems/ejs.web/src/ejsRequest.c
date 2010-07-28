@@ -788,7 +788,7 @@ static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         req->limits = ejsCreateSimpleObject(ejs);
         ejsGetHttpLimits(ejs, req->limits, req->conn->limits, 0);
     }
-    ejsBlendObject(ejs, req->limits, argv[0], true);
+    ejsBlendObject(ejs, req->limits, argv[0], 1);
     ejsSetHttpLimits(ejs, req->conn->limits, req->limits, 0);
     return 0;
 }

@@ -23,8 +23,6 @@
  */
 #define ES_ejs_web_DirApp_request                                      0
 #define ES_ejs_web_DirBuilder_request                                  0
-#define ES_ejs_web_Middleware_app                                      0
-#define ES_ejs_web_Middleware_middleware                               1
 #define ES_ejs_web_Monitor_app                                         0
 #define ES_ejs_web_MvcApp_request                                      0
 #define ES_ejs_web_MvcBuilder_request                                  0
@@ -32,8 +30,6 @@
 #define ES_ejs_web_TemplateBuilder_request                             0
 #define ES_ejs_web_StaticApp_request                                   0
 #define ES_ejs_web_StaticBuilder_request                               0
-#define ES_ejs_web_TemplateFilter_app                                  0
-#define ES_ejs_web_TemplateApp_request                                 0
 #define ES_ejs_web_errorBody_title                                     0
 #define ES_ejs_web_errorBody_msg                                       1
 #define ES_ejs_web_parseCookies_cookieHeader                           0
@@ -481,6 +477,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   616148
+#define _ES_CHECKSUM_ejs_web   604840
 
 #endif
