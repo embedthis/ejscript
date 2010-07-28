@@ -39,7 +39,7 @@ if [ "$BLD_FEATURE_EJS_WEB" = 1 ] ; then
         cpy -m 755 -s -d ${BLD_BIN_DIR} ejsweb${BLD_EXE} "${ROOT_DIR}"
         cpy -m 644 -d "${BLD_LIB_DIR}/default-web" "*" "${ROOT_DIR}/default-web"
     fi
-    cpy -m 755 -s ${BLD_BIN_DIR}/ejscgi${BLD_EXE} "${ROOT_DIR}"
+#   cpy -m 755 -s ${BLD_BIN_DIR}/ejscgi${BLD_EXE} "${ROOT_DIR}"
 fi
 
 if [ $BLD_HOST_OS = WIN ] ; then
