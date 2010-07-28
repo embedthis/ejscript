@@ -55,7 +55,7 @@
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='indicies'></a>
-   <tr><td nowrap align='center'>public static </td><td>indicies</td><td>&nbsp;</td><td>&nbsp;</td></tr>
+   <tr><td nowrap align='center'>public static </td><td>indicies</td><td>&nbsp;</td><td>Return an object hash with the current server resource limits. </td></tr>
 <a name='documentRoot'></a>
    <tr><td nowrap align='center'>public </td><td>documentRoot</td><td><a href='ejs-Path.html'>Path</a></td><td>Default local directory for web documents to serve. This is used as the default Request.dir value.</td></tr>
 <a name='serverRoot'></a>
@@ -65,6 +65,8 @@
 <a name='isSecure'></a>
    <tr><td nowrap align='left'>public const get </td><td>isSecure</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Flag indicating if the server is using secure communications. This means that TLS/SSL is the underlying
 protocol scheme.</td></tr>
+<a name='limits'></a>
+   <tr><td nowrap align='left'>public const get </td><td>limits</td><td><a href='ejs-Object.html'>Object</a></td><td>Resource limits for the server and for initial resource limits for requests. </td></tr>
 <a name='port'></a>
    <tr><td nowrap align='left'>public const get </td><td>port</td><td><a href='ejs-Number.html'>Number</a></td><td>Get the port bound to this Http endpoint. </td></tr>
 <a name='software'></a>
@@ -80,17 +82,14 @@ protocol scheme.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#accept'><b>accept</b></a>(): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Accept a for client connection.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getLimits'><b>getLimits</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an object hash with the current server resource limits.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getOptions'><b>getOptions</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an object hash with the current server options.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#secure'><b>secure</b></a>(keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a> = null , ciphers: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the Secure Sockets Layer (SSL) protocol credentials.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define resource limits for the server.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setOptions'><b>setOptions</b></a>(options: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the operation options for the server.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setPipeline'><b>setPipeline</b></a>(incoming: <a href='ejs-Array.html'>Array</a> = expression , outgoing: <a href='ejs-Array.html'>Array</a> = expression , connector: <a href='ejs-String.html'>String</a> = net): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td></td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the server resource limits.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setPipeline'><b>setPipeline</b></a>(incoming: <a href='ejs-Array.html'>Array</a>, outgoing: <a href='ejs-Array.html'>Array</a>, connector: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the stages of the Http processing pipeline.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trace'><b>trace</b></a>(level: <a href='ejs-Number.html'>Number</a>, options: <a href='ejs-Object.html'>Object</a> = expression , size: <a href='ejs-Number.html'>Number</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure request tracing for the server.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#traceFilter'><b>traceFilter</b></a>(include: <a href='ejs-Array.html'>Array</a> = expression , exclude: <a href='ejs-Array.html'>Array</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure trace filters for request tracing.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#traceFilter'><b>traceFilter</b></a>(include: <a href='ejs-Array.html'>Array</a>, exclude: <a href='ejs-Array.html'>Array</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure trace filters for request tracing.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#verifyClients'><b>verifyClients</b></a>(caCertPath: <a href='ejs-Path.html'>Path</a>, caCertFile: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Verify client certificates.</td></tr>
 </table>
 
@@ -136,24 +135,6 @@ while (request = server.accept()) {
 </dl></div>
 </div>
 <hr />
-<a name='getLimits'></a>
-<div class='api'>
-<div class='apiSig'>const   public  getLimits(): <a href='ejs-Object.html'>Object</a>
-</div>
-<div class='apiDetail'>
-<p>Return an object hash with the current server resource limits.</p>
-</div>
-</div>
-<hr />
-<a name='getOptions'></a>
-<div class='api'>
-<div class='apiSig'>const   public  getOptions(): <a href='ejs-Object.html'>Object</a>
-</div>
-<div class='apiDetail'>
-<p>Return an object hash with the current server options.</p>
-</div>
-</div>
-<hr />
 <a name='listen'></a>
 <div class='api'>
 <div class='apiSig'>const   public  listen(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
@@ -169,7 +150,7 @@ Request object.  In async mode, Request objects will be created automatically an
 observers via "readable" events.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>endpoint: <a href='ejs-String.html'>String</a> </td><td>The endpoint address on which to listen. An endoint is a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics.</td></tr></table></dd>
+<tr class='param'><td class='param'>endpoint: <a href='ejs-String.html'>String</a> </td><td>The endpoint address on which to listen. An endoint may be a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics.</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>Issues</td><td>A "accept" event when there is a new connection available.</td></tr>
@@ -239,45 +220,31 @@ server.listen("80")
 <div class='apiSig'>const   public  setLimits(limits: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Define resource limits for the server.</p>
-<dl><dt>Description</dt><dd>Some of these limit values are also used for requests.</dd></dl>
+<p>Update the server resource limits.</p>
+<dl><dt>Description</dt><dd>The supplied limit fields are updated.
+See <a href='#limit'>limit</a> for limit field details.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>limits: <a href='ejs-Object.html'>Object</a> </td><td>Limits is an object hash with the following properties:.</td></tr></table></dd>
-</dl><dl><dt>Options</dt>
-<dd><table class='parameters' summary ='options'>
-<td class='param'>chunkSize</td><td>Maximum size of a chunk when using chunked transfer encoding.</td></tr>
-<td class='param'>headerCount</td><td>Maximum number of headers in a request.</td></tr>
-<td class='param'>headerSize</td><td>Maximum size of headers.</td></tr>
-<td class='param'>receiveBodySize</td><td>Maximum size of incoming body data.</td></tr>
-<td class='param'>stageBufferSize</td><td>Maximum stage buffer size for each direction.</td></tr>
-<td class='param'>transmissionBodySize</td><td>Maximum size of outgoing body data.</td></tr>
-<td class='param'>uploadSize</td><td>Maximum size of uploaded files.</td></tr>
-<td class='param'>uriSize</td><td>Maximum size of URLs.</td></tr>
-<td class='param'>clientCount</td><td>Maximum number of simultaneous clients.</td></tr>
-<td class='param'>keepAliveCount</td><td>Maximum number of times to reuse a connection for requests.</td></tr>
-<td class='param'>requestCount</td><td>Maximum number of simultaneous requests.</td></tr>
-<td class='param'>sessionCount</td><td>Maximum number of simultaneous sessions.</td></tr>
-<td class='param'>inactivityTimeout</td><td>Maximum time in seconds to keep a connection open if idle.</td></tr>
-<td class='param'>requestTimeout</td><td>Maximum time in seconds for a request to complete.</td></tr>
-<td class='param'>sessionTimeout</td><td>Maximum time to preserve session state.</td></tr>
-</table></dd>
-</dl></div>
+<tr class='param'><td class='param'>limits: <a href='ejs-Object.html'>Object</a> </td><td>Object hash of limit fields and values.</td></tr></table></dd>
+</dl><dl><dt>See Also</dt>
+<dd>
+<a href='limits.html'>limits</a>
+</dd></dl>
+</div>
 </div>
 <hr />
-<a name='setOptions'></a>
+<a name='setPipeline'></a>
 <div class='api'>
-<div class='apiSig'>const   public  setOptions(options: <a href='ejs-Object.html'>Object</a>)
+<div class='apiSig'>const   public  setPipeline(incoming: <a href='ejs-Array.html'>Array</a>, outgoing: <a href='ejs-Array.html'>Array</a>, connector: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Define the operation options for the server.</p>
+<p>Define the stages of the Http processing pipeline.</p>
+<dl><dt>Description</dt><dd>Data flows through the processing pipeline and is
+filtered or transmuted by filter stages. A communications connector is responsible for transmitting to 
+the network.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Options is an object hash with the following properties:.</td></tr></table></dd>
-</dl><dl><dt>Options</dt>
-<dd><table class='parameters' summary ='options'>
-<td class='param'>directoryListings</td><td></td></tr>
-</table></dd>
+<tr class='param'><td class='param'>incoming: <a href='ejs-Array.html'>Array</a> </td><td>Array of stages for the incoming pipeline: default: ["chunk", "range", "upload"].</td></tr><tr class='param'><td class='param'>outgoing: <a href='ejs-Array.html'>Array</a> </td><td>Array of stages for the outgoing pipeline: default: ["auth", "range", "chunk"].</td></tr><tr class='param'><td class='param'>connector: <a href='ejs-String.html'>String</a> </td><td>Network connector to use for I/O. Defaults to the network connector "net". Other values: "send". The "net" connector transparently upgrades to the "send" connector if transmitting static data and  not using SSL, ranged or chunked transfers.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -287,21 +254,23 @@ server.listen("80")
 </div>
 <div class='apiDetail'>
 <p>Configure request tracing for the server.</p>
+<dl><dt>Description</dt><dd>The default is to trace the first line of requests and responses 
+and headers at level 3.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>Level at which request tracing will occurr.</td></tr><tr class='param'><td class='param'>size: <a href='ejs-Number.html'>Number</a> </td><td>Maximum request body size to trace. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td> [default: expression ]</td></tr></table></dd>
+<tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>Level at which request tracing will occurr.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Set of trace options. Select from: "request" to trace requests, "response" to trace responses, "conn" to trace new connections, "first" to trace the first line of requests or responses, "headers" to  trace headers, and "body" to trace body content. Or use "all" to trace everything. [default: expression ]</td></tr><tr class='param'><td class='param'>size: <a href='ejs-Number.html'>Number</a> </td><td>Maximum request body size to trace. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td> [default: expression ]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
 <a name='traceFilter'></a>
 <div class='api'>
-<div class='apiSig'>const   public  traceFilter(include: <a href='ejs-Array.html'>Array</a> = expression , exclude: <a href='ejs-Array.html'>Array</a> = expression): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  traceFilter(include: <a href='ejs-Array.html'>Array</a>, exclude: <a href='ejs-Array.html'>Array</a> = expression): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Configure trace filters for request tracing.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>include: <a href='ejs-Array.html'>Array</a> </td><td> [default: expression ]</td></tr><tr class='param'><td class='param'>exclude: <a href='ejs-Array.html'>Array</a> </td><td> [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>include: <a href='ejs-Array.html'>Array</a> </td><td>Set of extensions to include when tracing.</td></tr><tr class='param'><td class='param'>exclude: <a href='ejs-Array.html'>Array</a> </td><td>Set of extensions to exclude when tracing. [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

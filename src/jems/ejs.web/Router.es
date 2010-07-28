@@ -17,6 +17,11 @@ module ejs.web {
          */
 		var routes: Array = []
 		
+        /**
+            Function to test if the Request.filename is a directory.
+            @param request Request object to consider
+            @return True if request.filename is a directory
+         */
         public static function isDir(request) request.filename.isDir
 
         /**
@@ -271,6 +276,7 @@ module ejs.web {
         }
     }
 
+    /** @hide */
     function TemplateBuilder(request: Request): Function {
         let route = request.route
         if (route.module && !route.initialized) {

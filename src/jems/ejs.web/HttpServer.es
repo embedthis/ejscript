@@ -122,7 +122,7 @@ module ejs.web {
             Request object.  In async mode, Request objects will be created automatically and passed to registered 
             observers via "readable" events.
 
-            @param endpoint The endpoint address on which to listen. An endoint is a port number or a composite 
+            @param endpoint The endpoint address on which to listen. An endoint may be a port number or a composite 
             "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port. 
             If null is provided for an endpoint value, an existing web server listening connection will be used. In this
             case, the web server will typically be the virtual host that specifies the EjsStartup script. See the
@@ -193,6 +193,9 @@ module ejs.web {
         native function secure(keyFile: Path, certFile: Path!, protocols: Array = null, ciphers: Array = null): Void
 
         /**
+            Define the stages of the Http processing pipeline. Data flows through the processing pipeline and is
+            filtered or transmuted by filter stages. A communications connector is responsible for transmitting to 
+            the network.
             @param incoming Array of stages for the incoming pipeline: default: ["chunk", "range", "upload"]
             @param outgoing Array of stages for the outgoing pipeline: default: ["auth", "range", "chunk"]
             @param connector Network connector to use for I/O. Defaults to the network connector "net". Other values: "send".

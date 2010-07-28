@@ -38,16 +38,14 @@
    <tr><td nowrap align='center'>public </td><td>data</td><td><a href='ejs-Object.html'>Object</a></td><td>Supplemental error data. </td></tr>
 <a name='message'></a>
    <tr><td nowrap align='center'>public </td><td>message</td><td><a href='ejs-String.html'>String</a></td><td>Error message. </td></tr>
+<a name='stack'></a>
+   <tr><td nowrap align='center'>public </td><td>stack</td><td><a href='ejs-Array.html'>Array</a></td><td>&nbsp;</td></tr>
 <a name='timestamp'></a>
    <tr><td nowrap align='center'>public </td><td>timestamp</td><td><a href='ejs-Date.html'>Date</a></td><td>Time the event was created. The Context constructor will automatically set the timestamp to the current time.</td></tr>
 <a name='filename'></a>
    <tr><td nowrap align='left'>public const get </td><td>filename</td><td><a href='ejs-Path.html'>Path</a></td><td>Source filename of the script that created the error. </td></tr>
 <a name='lineno'></a>
    <tr><td nowrap align='left'>public const get </td><td>lineno</td><td><a href='ejs-Number.html'>Number</a></td><td>Source line number in the script that created the error. </td></tr>
-<a name='stack'></a>
-   <tr><td nowrap align='left'>public const get </td><td>stack</td><td><a href='ejs-Array.html'>Array</a></td><td>Execution call stack. Contains the execution stack backtrace at the point the Error object was created.
-The stack is an array of stack frame records. Each record consists of the following properties: 
-{file: String, lineno: Number, func: String, code: String}.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -57,7 +55,7 @@ The stack is an array of stack frame records. Each record consists of the follow
 <h2 class='classSection'>Error Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#capture'><b>capture</b></a>(uplevels: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Capture the stack.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#capture'><b>capture</b></a>(uplevels: <a href='ejs-Number.html'>Number</a> = 0): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Capture the stack.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#formatStack'><b>formatStack</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Format the captured stack.</td></tr>
 </table>
 
@@ -67,14 +65,14 @@ The stack is an array of stack frame records. Each record consists of the follow
 <h2>Method Detail</h2>
 <a name='capture'></a>
 <div class='api'>
-<div class='apiSig'>const   public  capture(uplevels: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Array.html'>Array</a>
+<div class='apiSig'>static const   public  capture(uplevels: <a href='ejs-Number.html'>Number</a> = 0): <a href='ejs-Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
 <p>Capture the stack.</p>
-<dl><dt>Description</dt><dd>This call re-captures the stack and updates the stack property.</dd></dl>
+<dl><dt>Description</dt><dd>This call captures the stack and returns an Array describing the current stack frame.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>uplevels: <a href='ejs-Number.html'>Number</a> </td><td>Skip a given count of stack frames from the stop of the call stack.</td></tr></table></dd>
+<tr class='param'><td class='param'>uplevels: <a href='ejs-Number.html'>Number</a> </td><td>Skip a given count of stack frames from the stop of the call stack. [default: 0]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

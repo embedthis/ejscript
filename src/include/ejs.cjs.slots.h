@@ -20,24 +20,24 @@
 
 
 /*
-    Class property slots for the "System" type 
+    Class property slots for the "CommonJS" type 
  */
-#define ES_ejs_cjs_System_stdin                                        0
-#define ES_ejs_cjs_System_stdout                                       1
-#define ES_ejs_cjs_System_stderr                                       2
-#define ES_ejs_cjs_System_args                                         3
-#define ES_ejs_cjs_System_env                                          4
-#define ES_ejs_cjs_System_fs                                           5
-#define ES_ejs_cjs_System_platform                                     6
-#define ES_ejs_cjs_System_NUM_CLASS_PROP                               7
+#define ES_ejs_cjs_CommonJS_stdin                                      0
+#define ES_ejs_cjs_CommonJS_stdout                                     1
+#define ES_ejs_cjs_CommonJS_stderr                                     2
+#define ES_ejs_cjs_CommonJS_args                                       3
+#define ES_ejs_cjs_CommonJS_env                                        4
+#define ES_ejs_cjs_CommonJS_fs                                         5
+#define ES_ejs_cjs_CommonJS_platform                                   6
+#define ES_ejs_cjs_CommonJS_NUM_CLASS_PROP                             7
 
 /*
-   Prototype (instance) slots for "System" type 
+   Prototype (instance) slots for "CommonJS" type 
  */
-#define ES_ejs_cjs_System_log                                          0
-#define ES_ejs_cjs_System_NUM_INSTANCE_PROP                            1
-#define ES_ejs_cjs_System_NUM_INHERITED_PROP                           0
+#define ES_ejs_cjs_CommonJS_log                                        0
+#define ES_ejs_cjs_CommonJS_NUM_INSTANCE_PROP                          1
+#define ES_ejs_cjs_CommonJS_NUM_INHERITED_PROP                         0
 
-#define _ES_CHECKSUM_ejs_cjs   9044
+#define _ES_CHECKSUM_ejs_cjs   9302
 
 #endif

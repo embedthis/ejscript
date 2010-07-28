@@ -104,6 +104,11 @@ module ejs.web {
         public function setStatus(status: Number): Void
             request.setStatus(status)
 
+        /** 
+            Dump objects for debugging
+            @param args List of arguments to print.
+            @hide
+         */
         public function show(...args): Void
             request.show(...args)
 

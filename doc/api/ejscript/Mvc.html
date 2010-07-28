@@ -22,7 +22,7 @@
        </td></tr>
 </table>
 
-<p class='classBrief'>The Mvc manages the loading of MVC applications.</p>
+<p class='classBrief'>The Mvc class manages the loading and initialization of MVC web applications.</p>
 
 <p class='classDescription'></p>
 
@@ -43,9 +43,8 @@
 <h2 class='classSection'>Mvc Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#init'><b>init</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an MVC application.</td></tr>
-   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#load'><b>load</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an MVC application.</td></tr>
-   <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#loadComponent'><b>loadComponent</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, mod: <a href='ejs-Path.html'>Path</a>, files: <a href='ejs-Array.html'>Array</a> = null , deps: <a href='ejs-Array.html'>Array</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a component.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#init'><b>init</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Load an MVC application.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#loadComponent'><b>loadComponent</b></a>(request: <a href='ejs.web-Request.html'>Request</a>, mod: <a href='ejs-Path.html'>Path</a>, files: <a href='ejs-Array.html'>Array</a> = null , deps: <a href='ejs-Array.html'>Array</a> = null)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Load a component.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
@@ -54,7 +53,7 @@
 <h2>Method Detail</h2>
 <a name='init'></a>
 <div class='api'>
-<div class='apiSig'>static const  init(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  init(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Load an MVC application.</p>
@@ -66,25 +65,9 @@ the request to determine the appropriate controller.</dd></dl>
 </dl></div>
 </div>
 <hr />
-<a name='load'></a>
-<div class='api'>
-<div class='apiSig'>static const  load(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Object.html'>Object</a>
-</div>
-<div class='apiDetail'>
-<p>Load an MVC application.</p>
-<dl><dt>Description</dt><dd>This is typically called by the Router to load an application after routing
-the request to determine the appropriate controller.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>The exports object.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='loadComponent'></a>
 <div class='api'>
-<div class='apiSig'>static const  loadComponent(request: <a href='ejs.web-Request.html'>Request</a>, mod: <a href='ejs-Path.html'>Path</a>, files: <a href='ejs-Array.html'>Array</a> = null , deps: <a href='ejs-Array.html'>Array</a> = null)
+<div class='apiSig'>const   public  loadComponent(request: <a href='ejs.web-Request.html'>Request</a>, mod: <a href='ejs-Path.html'>Path</a>, files: <a href='ejs-Array.html'>Array</a> = null , deps: <a href='ejs-Array.html'>Array</a> = null)
 </div>
 <div class='apiDetail'>
 <p>Load a component.</p>

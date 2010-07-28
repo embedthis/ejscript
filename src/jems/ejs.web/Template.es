@@ -5,10 +5,10 @@
 module ejs.web {
     /** 
         Template middleware filter. This interprets the output of an inner web app as a template page which is processed.
-        @param request Web Request object
+        @param app Application function object
         @returns A response object hash
      */
-    function TemplateFilter(app): Object {
+    function TemplateFilter(app: Function): Object {
         return function(request) {
             let response = app(request)
             let id = md5(request.id)
@@ -28,12 +28,18 @@ module ejs.web {
         @param request Request object
         @return A web application function
      */
-    function TemplateApp(request): Function {
+    function TemplateApp(request: Request): Function {
         let app = TemplateBuilder(request)
         return app(request)
     }
 
-    function TemplateBuilder(request): Function {
+    /**
+        Builder function for templates to use with JSGI applications
+            a web application script created.
+        @param request Request object
+        @return A web application function
+     */
+    function TemplateBuilder(request: Request): Function {
         let path = request.filename
         if (!path.exists) {
             request.error(Http.NotFound, "Cannot find " + path)

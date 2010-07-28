@@ -96,6 +96,7 @@ module ejs.web {
         }
     }
 
+    /** @hide */
     function StaticBuilder(request: Request): Function {
         //  MOB -- BUG should not need "ejs.web"
         return "ejs.web"::StaticApp

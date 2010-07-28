@@ -37,7 +37,7 @@ request parameters to determine the matching application and target for the requ
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='LegacyRoutes'></a>
-   <tr><td nowrap align='center'>public static </td><td>LegacyRoutes</td><td>&nbsp;</td><td>Routes used in Ejscript 1.X. </td></tr>
+   <tr><td nowrap align='center'>public static </td><td>LegacyRoutes</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 <a name='RestfulRoutes'></a>
    <tr><td nowrap align='center'>public static </td><td>RestfulRoutes</td><td>&nbsp;</td><td>Restful routes. Supports CRUD actions: index, show, create, update, destroy. The restful routes defined are:
 <pre>
@@ -63,7 +63,8 @@ DELETE	/controller/1           destroy
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addRestfulRoutes'><b>addRestfulRoutes</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add the restful routes to the routing table.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#addRoutes'><b>addRoutes</b></a>(routeSet: <a href='ejs-Array.html'>Array</a>, outer: <a href='ejs.web-Route.html'>Route</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add a set of routes to the routing table.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#route'><b>route</b></a>(request): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Route a request.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#isDir'><b>isDir</b></a>(request)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Function to test if the Request.filename is a directory.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#route'><b>route</b></a>(request): <a href='ejs-Function.html'>Function</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Route a request.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
@@ -91,18 +92,34 @@ DELETE	/controller/1           destroy
 </dl></div>
 </div>
 <hr />
+<a name='isDir'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  isDir(request)
+</div>
+<div class='apiDetail'>
+<p>Function to test if the Request.filename is a directory.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>request </td><td>Request object to consider.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>True if request.filename is a directory.</dd></dl>
+</div>
+</div>
+<hr />
 <a name='route'></a>
 <div class='api'>
-<div class='apiSig'>const   public  route(request): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  route(request): <a href='ejs-Function.html'>Function</a>
 </div>
 <div class='apiDetail'>
 <p>Route a request.</p>
 <dl><dt>Description</dt><dd>The request is matched against the user-configured route table. If no route table is defined,
-the restfulRoutes are used.</dd></dl>
+the restfulRoutes are used. The call returns the web application to execute.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request </td><td>The current request object.</td></tr></table></dd>
-</dl></div>
+</dl><dl><dt>Returns</dt>
+<dd>The web application function of the signature:  function app(request: Request): Object.</dd></dl>
+</div>
 </div>
 <hr />
 <div class="terms">

@@ -38,6 +38,7 @@ module ejs.web {
         }
     }
 
+    /** @hide */
     function DirBuilder(request: Request): Function DirApp
 }
 

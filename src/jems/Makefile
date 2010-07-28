@@ -7,7 +7,7 @@
 #
 #	Stand-alone tool jems
 #
-TOOLS			+= ejs.jem ejs.cgi ejs.mvc
+TOOLS			+= ejs.jem ejs.mvc
 
 #
 #	Loadable module jems (usable with require)

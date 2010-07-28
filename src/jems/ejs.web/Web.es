@@ -89,6 +89,7 @@ print("CATCH in WEB " + e)
 
         /**
             Run the request via a separate worker thread
+            @param app Application function to run
             @param request Request object
          */
         static native function worker(app: Function, request: Request): Void
@@ -203,7 +204,18 @@ print("CATCH in WEB " + e)
         }
 
         /**
-            Convenience routine to start a routing web server that will serve a variety of content
+            Convenience routine to start a routing web server that will serve a variety of content. This routines
+            sets up a web server using the specified route tables.
+            @param address The IP endpoint address on which to listen. The address may be a port number or a composite 
+            "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port. 
+            If null is provided for an endpoint value, an existing web server listening connection will be used. In this
+            case, the web server will typically be the virtual host that specifies the EjsStartup script. See the
+            hosting web server documentation for specifics.
+            @param documentRoot Directory containing web documents to serve. If set to null and the HttpServer is hosted,
+                the documentRoot will be defined by the web server.
+            @param serverRoot Base directory for the server configuration. If set to null and the HttpServer is hosted,
+                the serverRoot will be defined by the web server.
+            @param routes Route table to use. Defaults to Router.TopRoutes
          */
         static function start(address: String, documentRoot: Path = ".", serverRoot: Path = ".", 
                 routes = Router.TopRoutes): Void {
@@ -217,8 +229,17 @@ print("CATCH in WEB " + e)
         }
 
         /**
-            Convenience routine to run a single web app script. The script must be of the form:
-
+            Convenience routine to run a single web app script. 
+            @param address The IP endpoint address on which to listen. The address may be a port number or a composite 
+            "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port. 
+            If null is provided for an endpoint value, an existing web server listening connection will be used. In this
+            case, the web server will typically be the virtual host that specifies the EjsStartup script. See the
+            hosting web server documentation for specifics.
+            @param documentRoot Directory containing web documents to serve. If set to null and the HttpServer is hosted,
+                the documentRoot will be defined by the web server.
+            @param serverRoot Base directory for the server configuration. If set to null and the HttpServer is hosted,
+                the serverRoot will be defined by the web server.
+            @example The script must be of the form:
             exports.app = function (request) {
                 return { 
                     status: Http.Ok,

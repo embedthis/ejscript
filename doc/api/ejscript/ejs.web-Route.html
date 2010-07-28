@@ -37,8 +37,13 @@ parameters previously set.<br/><br/>Routes are tested in-order from first to las
 <h2 class='classSection'>Properties</h2>
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
+<a name='builder'></a>
+   <tr><td nowrap align='center'>public </td><td>builder</td><td><a href='ejs-Function.html'>Function</a></td><td>Builder function to create the Provider function that represents the web application for requests matching 
+this route. </td></tr>
 <a name='dir'></a>
    <tr><td nowrap align='center'>public </td><td>dir</td><td><a href='ejs-Path.html'>Path</a></td><td>Directory for the application serving the route. This directory path will be assigned to Request.dir.</td></tr>
+<a name='limits'></a>
+   <tr><td nowrap align='center'>public </td><td>limits</td><td><a href='ejs-Object.html'>Object</a></td><td>Resource limits for the request. See HttpServer.limits for details.</td></tr>
 <a name='match'></a>
    <tr><td nowrap align='center'>public </td><td>match</td><td><a href='ejs-Object.html'>Object</a></td><td>Matching pattern for URIs. The pattern is used to match the request in general and pathInfo specifically. 
 The pattern can be a token string, a regular expression or a function. If it is a string of tokens separated
@@ -49,20 +54,33 @@ so on. e.g. params: { priority: "}<br/><br/>If the match pattern is a function, 
 match the request. The function can set parameters in request.params.</td></tr>
 <a name='method'></a>
    <tr><td nowrap align='center'>public </td><td>method</td><td><a href='ejs-String.html'>String</a></td><td>HTTP method to match. If null, all methods are matched.</td></tr>
+<a name='middleware'></a>
+   <tr><td nowrap align='center'>public </td><td>middleware</td><td><a href='ejs-Array.html'>Array</a></td><td>Middleware to run on requests for this route. Middleware wraps the application function filtering and 
+modifying its inputs and outputs.</td></tr>
+<a name='module'></a>
+   <tr><td nowrap align='center'>public </td><td>module</td><td><a href='ejs-String.html'>String</a></td><td>Module containing code to serve the route. </td></tr>
 <a name='name'></a>
    <tr><td nowrap align='center'>public </td><td>name</td><td><a href='ejs-String.html'>String</a></td><td>Optional route name. </td></tr>
 <a name='params'></a>
    <tr><td nowrap align='center'>public </td><td>params</td><td><a href='ejs-Object.html'>Object</a></td><td>Request parameters to add to the Request.params. This optional override hash provides parameters which will 
 be defined in Request.params[].</td></tr>
+<a name='provider'></a>
+   <tr><td nowrap align='center'>public </td><td>provider</td><td><a href='ejs-Function.html'>Function</a></td><td>Provider function that represents the web application for requests matching this route. </td></tr>
 <a name='rewrite'></a>
    <tr><td nowrap align='center'>public </td><td>rewrite</td><td><a href='ejs-Function.html'>Function</a></td><td>Rewrite function. If present, this function is invoked with the Request as an argument. It may rewrite
 the request scriptName, pathInfo and other Request properties.</td></tr>
+<a name='router'></a>
+   <tr><td nowrap align='center'>public </td><td>router</td><td><a href='ejs.web-Router.html'>Router</a></td><td>Router instance reference. </td></tr>
 <a name='subroute'></a>
    <tr><td nowrap align='center'>public </td><td>subroute</td><td><a href='ejs.web-Route.html'>Route</a></td><td>Nested route. A nested route prepends the match patter of the outer route to its "match" pattern. 
 The param set of the outer route are appended to the inner route.</td></tr>
 <a name='threaded'></a>
    <tr><td nowrap align='center'>public </td><td>threaded</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Threaded request indicator. If true, the request should be run in a worker thread if possible. This thread
 will not be dedicated, but will be assigned as the request requires CPU resources.</td></tr>
+<a name='trace'></a>
+   <tr><td nowrap align='center'>public </td><td>trace</td><td><a href='ejs-Object.html'>Object</a></td><td>Trace options for the request. Note: the route is created after the Request object is created so 
+the tracing of the connections and request headers will be controlled by the owning server. See
+HttpServer.trace. Fields are:.</td></tr>
 <a name='type'></a>
    <tr><td nowrap align='center'>public </td><td>type</td><td><a href='ejs-String.html'>String</a></td><td>&nbsp;</td></tr>
 <a name='urimaker'></a>

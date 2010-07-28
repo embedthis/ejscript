@@ -177,6 +177,7 @@ module ejs.web {
         return app(request)
     }
 
+    /** @hide */
     function MvcBuilder(request: Request): Function {
         //  MOB OPT - Currently Mvc has no state so really don't need an Mvc instance
         let mvc: Mvc = Mvc.apps[request.dir] || (Mvc.apps[request.dir] = new Mvc(request))

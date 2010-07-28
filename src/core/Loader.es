@@ -35,7 +35,7 @@ module ejs {
             Load a CommonJS module. The module is loaded only once unless it is modified.
             @param id Name of the module to load. The id may be an absolute path, relative path or a path fragment that is
                 resolved relative to the App search path. Ids may or may not include a ".es" or ".js" extension.
-            @param return a hash of exported properties
+            @return a hash of exported properties
          */
         public static function require(id: String, config: Object = App.config): Object {
             let exports = signatures[id]
@@ -57,7 +57,7 @@ module ejs {
             @param path Optional path to the physical file corresponding to the module. If the module source code has
                 changed, it will be re-compiled and then cached.
             @param codeReader Optional function to provide script code to use instead of reading from the path. 
-            @param return a hash of exported properties
+            @return a hash of exported properties
          */
         public static function load(id: String, path: Path, config = App.config, codeReader: Function = null): Object {
             let initializer, code

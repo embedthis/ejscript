@@ -1260,6 +1260,10 @@ print(e)
         rmdir(path, contents)
     }
 
+    function error(msg) {
+        App.log.error(msg)
+    }
+
     /*
         Templates
      */
@@ -1359,10 +1363,6 @@ class Jem {
         } else {
             return name
         }
-    }
-
-    function error(msg) {
-        App.log.error(msg)
     }
 }
 

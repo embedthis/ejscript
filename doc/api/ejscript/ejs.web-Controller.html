@@ -77,11 +77,11 @@ This getter property is a wrapper and returns the Request.session object.</td></
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#redirect'><b>redirect</b></a>(where: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to the given URL.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#redirectAction'><b>redirectAction</b></a>(action: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to the given action.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#render'><b>render</b></a>(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render the raw arguments back to the client.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderError'><b>renderError</b></a>(msg: <a href='ejs-String.html'>String</a> = , status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render an error message as the response.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderError'><b>renderError</b></a>(status: <a href='ejs-Number.html'>Number</a>, msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render an error message as the response.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderFile'><b>renderFile</b></a>(filename: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a file's contents.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderPartial'><b>renderPartial</b></a>(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a partial ejs template.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderView'><b>renderView</b></a>(viewName: <a href='ejs-String.html'>String</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a view template.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#run'><b>run</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the controller action.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#run'><b>run</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the controller action.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#warn'><b>warn</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a warning message back to the client for display in the flash area.</td></tr>
 </table>
 
@@ -199,14 +199,11 @@ applications the burden of building URLs that correctly use action and controlle
 <hr />
 <a name='renderError'></a>
 <div class='api'>
-<div class='apiSig'>const   ejs.web  renderError(msg: <a href='ejs-String.html'>String</a> = , status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   ejs.web  renderError(status: <a href='ejs-Number.html'>Number</a>, msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Render an error message as the response.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>msg: <a href='ejs-String.html'>String</a> </td><td> [default: ]</td></tr><tr class='param'><td class='param'>status: <a href='ejs-Number.html'>Number</a> </td><td> [default: expression]</td></tr></table></dd>
-</dl></div>
+</div>
 </div>
 <hr />
 <a name='renderFile'></a>
@@ -242,14 +239,16 @@ applications the burden of building URLs that correctly use action and controlle
 <hr />
 <a name='run'></a>
 <div class='api'>
-<div class='apiSig'>const   ejs.web  run(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   ejs.web  run(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Object.html'>Object</a>
 </div>
 <div class='apiDetail'>
 <p>Run the controller action.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr></table></dd>
-</dl></div>
+</dl><dl><dt>Returns</dt>
+<dd>A response object hash {status, headers, body} or null if writing directly using the request object.</dd></dl>
+</div>
 </div>
 <hr />
 <a name='warn'></a>
