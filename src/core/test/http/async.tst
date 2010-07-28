@@ -2,21 +2,22 @@
     Async tests
  */
 
-const HTTP = "http://127.0.0.1:" + ((global.test && test.config.http_port) || 6700)
+const HTTP = ":" + (App.config.test.http_port || "6700")
 const TIMEOUT = 10000
 
 var http: Http = new Http
 http.async = true
-var buf = new ByteArray
+
 var complete
 
+var buf = new ByteArray
 http.observe("readable", function (event, http) {
-    assert(http.status == 200)
-    http.read(buf)
+    http.read(buf, -1)
 })
-http.observe("complete", function (event, http) {
+http.observe("close", function (event, http) {
     complete = true
 })
+
 http.get(HTTP + "/index.html")
 http.finalize()
 
@@ -27,5 +28,5 @@ while (!complete && mark.elapsed < TIMEOUT) {
 
 assert(buf.readString(6) == "<html>")
 assert(complete)
-
+assert(http.status == 200)
 http.close()

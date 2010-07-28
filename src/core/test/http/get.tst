@@ -2,7 +2,7 @@
     Get tests
  */
 
-const HTTP = "http://127.0.0.1:" + ((global.test && test.config.http_port) || 6700)
+const HTTP = ":" + (App.config.test.http_port || "6700")
 
 var http: Http = new Http
 http.get(HTTP + "/index.html")
@@ -13,6 +13,5 @@ assert(!http.isSecure)
 http.get(HTTP + "/index.html")
 assert(http.readString(6) == "<html>")
 assert(http.readString(6) == "<head>")
-
 http.close()
 
