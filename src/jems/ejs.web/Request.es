@@ -550,7 +550,7 @@ UNUSED
                 write(text)
             } catch {}
             finalize(true)
-            log.error("Request error (" + status + ") for: \"" + uri + "\". " + msg)
+            log.warn("Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 
         /** 

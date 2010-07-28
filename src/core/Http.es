@@ -231,13 +231,14 @@ module ejs {
             implicitly reading $status or response content. This enables the request content length to be determined 
             automatically for smaller requests where the request body data can be buffered and measured before sending 
             the request headers.  
+            @param method Http method. This is typically "GET" or "POST"
             @param uri New uri to use. This overrides any previously defined uri for the Http object.
             @param data Data objects to send with the request. Data is written raw and is not encoded or converted. 
                 However, the routine intelligently handles arrays such that, each element of the array will be written. 
             @throws IOError if the request cannot be issued to the remote server. Once the connection has been made, 
                 exceptions will not be thrown and $status must be consulted for request status.
          */
-        native function connect(uri: Uri? = null, ...data): Void
+        native function connect(method: String, uri: Uri? = null, ...data): Void
 
         /** 
             Filename of the certificate file for this HTTP object. The certificate is only used if secure

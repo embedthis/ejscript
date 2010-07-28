@@ -2010,6 +2010,8 @@ typedef struct EjsHttp {
     char            *keyFile;                   /**< SSL key file */
     char            *certFile;                  /**< SSL certificate file */
     int             dontFinalize;               /**< Suppress finalization */
+    int             closed;                     /**< Http is closed and "close" event has been issued */
+    int             error;                      /**< Http errored and "error" event has been issued */
     int             readCount;                  /**< Count of body bytes read */
     int             requestContentCount;        /**< Count of bytes written from requestContent */
     int             writeCount;                 /**< Count of bytes written via write() */

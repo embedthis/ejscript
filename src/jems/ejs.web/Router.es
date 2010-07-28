@@ -229,8 +229,10 @@ module ejs.web {
                 if (log.level >= 4) {
                     log.debug(4, "Matched route \"" + r.name + "\"")
                     log.debug(5, "  Route params " + serialize(params, {pretty: true}))
-                    log.debug(6, "  Route " + serialize(r, {pretty: true}))
-                    log.debug(6, "  REQUEST\n" + serialize(request, {pretty: true}))
+                    if (log.level >= 6) {
+                        log.debug(6, "  Route " + serialize(r, {pretty: true}))
+                        log.debug(6, "  REQUEST\n" + serialize(request, {pretty: true}))
+                    }
                 }
                 if (r.limits) {
                     request.setLimits(r.limits)

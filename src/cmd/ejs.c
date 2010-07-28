@@ -123,6 +123,10 @@ MAIN(ejsMain, int argc, char **argv)
                 method = argv[++nextArg];
             }
 
+        } else if (strcmp(argp, "--name") == 0) {
+            /* Just ignore. Used to tag commands with a unique command line */ 
+            nextArg++;
+
         } else if (strcmp(argp, "--nobind") == 0) {
             bind = 0;
 

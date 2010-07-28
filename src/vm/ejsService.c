@@ -15,6 +15,7 @@ static int  cloneMaster(Ejs *ejs, Ejs *master);
 static int  configureEjs(Ejs *ejs);
 static int  defineTypes(Ejs *ejs);
 static int  destroyEjs(Ejs *ejs);
+static int  destroyEjsService(EjsService *service);
 static int  loadStandardModules(Ejs *ejs, MprList *require);
 static void logHandler(MprCtx ctx, int flags, int level, cchar *msg);
 static int  runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName);
@@ -23,13 +24,13 @@ static int  startLogging(Ejs *ejs);
 
 /************************************* Code ***********************************/
 /*  
-    Initialize the EJS subsystem
+    Initialize the ejs subsystem
  */
 EjsService *ejsCreateService(MprCtx ctx)
 {
     EjsService  *sp;
 
-    sp = mprAllocObjZeroed(ctx, EjsService);
+    sp = mprAllocObjWithDestructorZeroed(ctx, EjsService, destroyEjsService);
     if (sp == 0) {
         return 0;
     }
@@ -37,6 +38,12 @@ EjsService *ejsCreateService(MprCtx ctx)
     sp->nativeModules = mprCreateHash(sp, -1);
     mprSetLogHandler(ctx, logHandler, NULL);
     return sp;
+}
+
+
+static int destroyEjsService(EjsService *service)
+{
+    return 0;
 }
 
 
@@ -127,6 +134,8 @@ static int destroyEjs(Ejs *ejs)
         mprMapFree(state->stackBase, state->stackSize);
     }
     mprFree(ejs->heap);
+    mprSetAltLogData(ejs, NULL);
+    mprSetLogHandler(ejs, NULL, NULL);
     return 0;
 }
 
@@ -769,7 +778,6 @@ typedef struct EjsLogData {
 
 static int startLogging(Ejs *ejs)
 {
-    Mpr         *mpr;
     EjsLogData  *ld;
     EjsObj      *app;
     EjsName     qname;
@@ -785,12 +793,11 @@ static int startLogging(Ejs *ejs)
     if ((ld->log = ejsGetPropertyByName(ejs, app, ejsName(&qname, EJS_PUBLIC_NAMESPACE, "log"))) == 0) {
         return MPR_ERR_CANT_READ;
     }
-    if ((ld->loggerWrite = ejsGetPropertyByName(ejs, ld->log->type->prototype, 
-            ejsName(&qname, EJS_PUBLIC_NAMESPACE, "write"))) < 0) {
+    ejsName(&qname, EJS_PUBLIC_NAMESPACE, "write");
+    if ((ld->loggerWrite = ejsGetPropertyByName(ejs, ld->log->type->prototype, &qname)) < 0) {
         return MPR_ERR_CANT_READ;
     }
-    mpr = mprGetMpr(ejs);
-    mpr->altLogData = ld;
+    mprSetAltLogData(ejs, ld);
     return 0;
 }
 
@@ -805,6 +812,7 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
     static int  solo = 0;
     char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
 
+    //  MOB - not thread safe
     if (solo++ > 0) {
         return;
     }
@@ -838,9 +846,11 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
         ejsClearException(ejs);
         ejsRunFunction(ejs, ld->loggerWrite, ld->log, 1, &str);
         ejs->exception = saveException;
+
     } else if (mpr->logData) {
         file = (MprFile*) mpr->logData;
         mprFprintf(file, "%s", msg);
+
     } else {
         file = (MprFile*) mpr->logData;
         mprPrintfError(ctx, "%s", msg);

@@ -3,13 +3,13 @@
 */
 require ejs.web
 
-let HTTP = App.args[1] || ":6700"
-let HTTPS = App.args[2] || ":6743"
+let HTTP = ":" + (App.config.test.http_port || "6700")
+let HTTPS = ":" + (App.config.test.ssl_port || "6743")
 
 var router = Router(Router.TopRoutes)
 
 //  Start regular server
-let server: HttpServer = new HttpServer("../web")
+let server: HttpServer = new HttpServer("web")
 
 server.observe("readable", function (event, request) {
     // App.log.info(request.method, request.uri, request.scheme)
@@ -19,7 +19,7 @@ server.observe("readable", function (event, request) {
 server.listen(HTTP)
 
 //  Start secure server
-let secureServer: HttpServer = new HttpServer("../web")
+let secureServer: HttpServer = new HttpServer("web")
 secureServer.observe("readable", function (event, request) {
     // App.log.info(request.method, request.uri, request.scheme)
     Web.serve(request, router)

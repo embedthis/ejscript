@@ -612,7 +612,13 @@
 #define ES_Endpoint_pending                                            3
 #define ES_Endpoint_NUM_INSTANCE_PROP                                  4
 #define ES_Endpoint_NUM_INHERITED_PROP                                 0
-#define ES_Error_NUM_CLASS_PROP                                        0
+
+
+/*
+    Class property slots for the "Error" type 
+ */
+#define ES_Error_capture                                               0
+#define ES_Error_NUM_CLASS_PROP                                        1
 
 /*
    Prototype (instance) slots for "Error" type 
@@ -621,14 +627,17 @@
 #define ES_Error_lineno                                                1
 #define ES_Error_data                                                  2
 #define ES_Error_message                                               3
-#define ES_Error__stack                                                4
-#define ES_Error_stack                                                 5
-#define ES_Error_timestamp                                             6
-#define ES_Error_code                                                  7
-#define ES_Error_capture                                               8
-#define ES_Error_formatStack                                           9
-#define ES_Error_NUM_INSTANCE_PROP                                     10
+#define ES_Error_stack                                                 4
+#define ES_Error_timestamp                                             5
+#define ES_Error_code                                                  6
+#define ES_Error_formatStack                                           7
+#define ES_Error_NUM_INSTANCE_PROP                                     8
 #define ES_Error_NUM_INHERITED_PROP                                    0
+
+/*
+    Local slots for methods in type "Error" 
+ */
+#define ES_Error_capture_uplevels                                      0
 #define ES_ArgError_NUM_CLASS_PROP                                     0
 
 /*
@@ -638,14 +647,12 @@
 #define ES_ArgError_lineno                                             1
 #define ES_ArgError_data                                               2
 #define ES_ArgError_message                                            3
-#define ES_ArgError__stack                                             4
-#define ES_ArgError_stack                                              5
-#define ES_ArgError_timestamp                                          6
-#define ES_ArgError_code                                               7
-#define ES_ArgError_capture                                            8
-#define ES_ArgError_formatStack                                        9
-#define ES_ArgError_NUM_INSTANCE_PROP                                  10
-#define ES_ArgError_NUM_INHERITED_PROP                                 10
+#define ES_ArgError_stack                                              4
+#define ES_ArgError_timestamp                                          5
+#define ES_ArgError_code                                               6
+#define ES_ArgError_formatStack                                        7
+#define ES_ArgError_NUM_INSTANCE_PROP                                  8
+#define ES_ArgError_NUM_INHERITED_PROP                                 8
 #define ES_ArithmeticError_NUM_CLASS_PROP                              0
 
 /*
@@ -655,14 +662,12 @@
 #define ES_ArithmeticError_lineno                                      1
 #define ES_ArithmeticError_data                                        2
 #define ES_ArithmeticError_message                                     3
-#define ES_ArithmeticError__stack                                      4
-#define ES_ArithmeticError_stack                                       5
-#define ES_ArithmeticError_timestamp                                   6
-#define ES_ArithmeticError_code                                        7
-#define ES_ArithmeticError_capture                                     8
-#define ES_ArithmeticError_formatStack                                 9
-#define ES_ArithmeticError_NUM_INSTANCE_PROP                           10
-#define ES_ArithmeticError_NUM_INHERITED_PROP                          10
+#define ES_ArithmeticError_stack                                       4
+#define ES_ArithmeticError_timestamp                                   5
+#define ES_ArithmeticError_code                                        6
+#define ES_ArithmeticError_formatStack                                 7
+#define ES_ArithmeticError_NUM_INSTANCE_PROP                           8
+#define ES_ArithmeticError_NUM_INHERITED_PROP                          8
 #define ES_AssertError_NUM_CLASS_PROP                                  0
 
 /*
@@ -672,14 +677,12 @@
 #define ES_AssertError_lineno                                          1
 #define ES_AssertError_data                                            2
 #define ES_AssertError_message                                         3
-#define ES_AssertError__stack                                          4
-#define ES_AssertError_stack                                           5
-#define ES_AssertError_timestamp                                       6
-#define ES_AssertError_code                                            7
-#define ES_AssertError_capture                                         8
-#define ES_AssertError_formatStack                                     9
-#define ES_AssertError_NUM_INSTANCE_PROP                               10
-#define ES_AssertError_NUM_INHERITED_PROP                              10
+#define ES_AssertError_stack                                           4
+#define ES_AssertError_timestamp                                       5
+#define ES_AssertError_code                                            6
+#define ES_AssertError_formatStack                                     7
+#define ES_AssertError_NUM_INSTANCE_PROP                               8
+#define ES_AssertError_NUM_INHERITED_PROP                              8
 #define ES_InstructionError_NUM_CLASS_PROP                             0
 
 /*
@@ -689,14 +692,12 @@
 #define ES_InstructionError_lineno                                     1
 #define ES_InstructionError_data                                       2
 #define ES_InstructionError_message                                    3
-#define ES_InstructionError__stack                                     4
-#define ES_InstructionError_stack                                      5
-#define ES_InstructionError_timestamp                                  6
-#define ES_InstructionError_code                                       7
-#define ES_InstructionError_capture                                    8
-#define ES_InstructionError_formatStack                                9
-#define ES_InstructionError_NUM_INSTANCE_PROP                          10
-#define ES_InstructionError_NUM_INHERITED_PROP                         10
+#define ES_InstructionError_stack                                      4
+#define ES_InstructionError_timestamp                                  5
+#define ES_InstructionError_code                                       6
+#define ES_InstructionError_formatStack                                7
+#define ES_InstructionError_NUM_INSTANCE_PROP                          8
+#define ES_InstructionError_NUM_INHERITED_PROP                         8
 #define ES_IOError_NUM_CLASS_PROP                                      0
 
 /*
@@ -706,14 +707,12 @@
 #define ES_IOError_lineno                                              1
 #define ES_IOError_data                                                2
 #define ES_IOError_message                                             3
-#define ES_IOError__stack                                              4
-#define ES_IOError_stack                                               5
-#define ES_IOError_timestamp                                           6
-#define ES_IOError_code                                                7
-#define ES_IOError_capture                                             8
-#define ES_IOError_formatStack                                         9
-#define ES_IOError_NUM_INSTANCE_PROP                                   10
-#define ES_IOError_NUM_INHERITED_PROP                                  10
+#define ES_IOError_stack                                               4
+#define ES_IOError_timestamp                                           5
+#define ES_IOError_code                                                6
+#define ES_IOError_formatStack                                         7
+#define ES_IOError_NUM_INSTANCE_PROP                                   8
+#define ES_IOError_NUM_INHERITED_PROP                                  8
 #define ES_InternalError_NUM_CLASS_PROP                                0
 
 /*
@@ -723,14 +722,12 @@
 #define ES_InternalError_lineno                                        1
 #define ES_InternalError_data                                          2
 #define ES_InternalError_message                                       3
-#define ES_InternalError__stack                                        4
-#define ES_InternalError_stack                                         5
-#define ES_InternalError_timestamp                                     6
-#define ES_InternalError_code                                          7
-#define ES_InternalError_capture                                       8
-#define ES_InternalError_formatStack                                   9
-#define ES_InternalError_NUM_INSTANCE_PROP                             10
-#define ES_InternalError_NUM_INHERITED_PROP                            10
+#define ES_InternalError_stack                                         4
+#define ES_InternalError_timestamp                                     5
+#define ES_InternalError_code                                          6
+#define ES_InternalError_formatStack                                   7
+#define ES_InternalError_NUM_INSTANCE_PROP                             8
+#define ES_InternalError_NUM_INHERITED_PROP                            8
 #define ES_MemoryError_NUM_CLASS_PROP                                  0
 
 /*
@@ -740,14 +737,12 @@
 #define ES_MemoryError_lineno                                          1
 #define ES_MemoryError_data                                            2
 #define ES_MemoryError_message                                         3
-#define ES_MemoryError__stack                                          4
-#define ES_MemoryError_stack                                           5
-#define ES_MemoryError_timestamp                                       6
-#define ES_MemoryError_code                                            7
-#define ES_MemoryError_capture                                         8
-#define ES_MemoryError_formatStack                                     9
-#define ES_MemoryError_NUM_INSTANCE_PROP                               10
-#define ES_MemoryError_NUM_INHERITED_PROP                              10
+#define ES_MemoryError_stack                                           4
+#define ES_MemoryError_timestamp                                       5
+#define ES_MemoryError_code                                            6
+#define ES_MemoryError_formatStack                                     7
+#define ES_MemoryError_NUM_INSTANCE_PROP                               8
+#define ES_MemoryError_NUM_INHERITED_PROP                              8
 #define ES_OutOfBoundsError_NUM_CLASS_PROP                             0
 
 /*
@@ -757,14 +752,12 @@
 #define ES_OutOfBoundsError_lineno                                     1
 #define ES_OutOfBoundsError_data                                       2
 #define ES_OutOfBoundsError_message                                    3
-#define ES_OutOfBoundsError__stack                                     4
-#define ES_OutOfBoundsError_stack                                      5
-#define ES_OutOfBoundsError_timestamp                                  6
-#define ES_OutOfBoundsError_code                                       7
-#define ES_OutOfBoundsError_capture                                    8
-#define ES_OutOfBoundsError_formatStack                                9
-#define ES_OutOfBoundsError_NUM_INSTANCE_PROP                          10
-#define ES_OutOfBoundsError_NUM_INHERITED_PROP                         10
+#define ES_OutOfBoundsError_stack                                      4
+#define ES_OutOfBoundsError_timestamp                                  5
+#define ES_OutOfBoundsError_code                                       6
+#define ES_OutOfBoundsError_formatStack                                7
+#define ES_OutOfBoundsError_NUM_INSTANCE_PROP                          8
+#define ES_OutOfBoundsError_NUM_INHERITED_PROP                         8
 #define ES_ReferenceError_NUM_CLASS_PROP                               0
 
 /*
@@ -774,14 +767,12 @@
 #define ES_ReferenceError_lineno                                       1
 #define ES_ReferenceError_data                                         2
 #define ES_ReferenceError_message                                      3
-#define ES_ReferenceError__stack                                       4
-#define ES_ReferenceError_stack                                        5
-#define ES_ReferenceError_timestamp                                    6
-#define ES_ReferenceError_code                                         7
-#define ES_ReferenceError_capture                                      8
-#define ES_ReferenceError_formatStack                                  9
-#define ES_ReferenceError_NUM_INSTANCE_PROP                            10
-#define ES_ReferenceError_NUM_INHERITED_PROP                           10
+#define ES_ReferenceError_stack                                        4
+#define ES_ReferenceError_timestamp                                    5
+#define ES_ReferenceError_code                                         6
+#define ES_ReferenceError_formatStack                                  7
+#define ES_ReferenceError_NUM_INSTANCE_PROP                            8
+#define ES_ReferenceError_NUM_INHERITED_PROP                           8
 #define ES_ResourceError_NUM_CLASS_PROP                                0
 
 /*
@@ -791,14 +782,12 @@
 #define ES_ResourceError_lineno                                        1
 #define ES_ResourceError_data                                          2
 #define ES_ResourceError_message                                       3
-#define ES_ResourceError__stack                                        4
-#define ES_ResourceError_stack                                         5
-#define ES_ResourceError_timestamp                                     6
-#define ES_ResourceError_code                                          7
-#define ES_ResourceError_capture                                       8
-#define ES_ResourceError_formatStack                                   9
-#define ES_ResourceError_NUM_INSTANCE_PROP                             10
-#define ES_ResourceError_NUM_INHERITED_PROP                            10
+#define ES_ResourceError_stack                                         4
+#define ES_ResourceError_timestamp                                     5
+#define ES_ResourceError_code                                          6
+#define ES_ResourceError_formatStack                                   7
+#define ES_ResourceError_NUM_INSTANCE_PROP                             8
+#define ES_ResourceError_NUM_INHERITED_PROP                            8
 #define ES_SecurityError_NUM_CLASS_PROP                                0
 
 /*
@@ -808,14 +797,12 @@
 #define ES_SecurityError_lineno                                        1
 #define ES_SecurityError_data                                          2
 #define ES_SecurityError_message                                       3
-#define ES_SecurityError__stack                                        4
-#define ES_SecurityError_stack                                         5
-#define ES_SecurityError_timestamp                                     6
-#define ES_SecurityError_code                                          7
-#define ES_SecurityError_capture                                       8
-#define ES_SecurityError_formatStack                                   9
-#define ES_SecurityError_NUM_INSTANCE_PROP                             10
-#define ES_SecurityError_NUM_INHERITED_PROP                            10
+#define ES_SecurityError_stack                                         4
+#define ES_SecurityError_timestamp                                     5
+#define ES_SecurityError_code                                          6
+#define ES_SecurityError_formatStack                                   7
+#define ES_SecurityError_NUM_INSTANCE_PROP                             8
+#define ES_SecurityError_NUM_INHERITED_PROP                            8
 #define ES_StateError_NUM_CLASS_PROP                                   0
 
 /*
@@ -825,14 +812,12 @@
 #define ES_StateError_lineno                                           1
 #define ES_StateError_data                                             2
 #define ES_StateError_message                                          3
-#define ES_StateError__stack                                           4
-#define ES_StateError_stack                                            5
-#define ES_StateError_timestamp                                        6
-#define ES_StateError_code                                             7
-#define ES_StateError_capture                                          8
-#define ES_StateError_formatStack                                      9
-#define ES_StateError_NUM_INSTANCE_PROP                                10
-#define ES_StateError_NUM_INHERITED_PROP                               10
+#define ES_StateError_stack                                            4
+#define ES_StateError_timestamp                                        5
+#define ES_StateError_code                                             6
+#define ES_StateError_formatStack                                      7
+#define ES_StateError_NUM_INSTANCE_PROP                                8
+#define ES_StateError_NUM_INHERITED_PROP                               8
 #define ES_SyntaxError_NUM_CLASS_PROP                                  0
 
 /*
@@ -842,14 +827,12 @@
 #define ES_SyntaxError_lineno                                          1
 #define ES_SyntaxError_data                                            2
 #define ES_SyntaxError_message                                         3
-#define ES_SyntaxError__stack                                          4
-#define ES_SyntaxError_stack                                           5
-#define ES_SyntaxError_timestamp                                       6
-#define ES_SyntaxError_code                                            7
-#define ES_SyntaxError_capture                                         8
-#define ES_SyntaxError_formatStack                                     9
-#define ES_SyntaxError_NUM_INSTANCE_PROP                               10
-#define ES_SyntaxError_NUM_INHERITED_PROP                              10
+#define ES_SyntaxError_stack                                           4
+#define ES_SyntaxError_timestamp                                       5
+#define ES_SyntaxError_code                                            6
+#define ES_SyntaxError_formatStack                                     7
+#define ES_SyntaxError_NUM_INSTANCE_PROP                               8
+#define ES_SyntaxError_NUM_INHERITED_PROP                              8
 #define ES_TypeError_NUM_CLASS_PROP                                    0
 
 /*
@@ -859,14 +842,12 @@
 #define ES_TypeError_lineno                                            1
 #define ES_TypeError_data                                              2
 #define ES_TypeError_message                                           3
-#define ES_TypeError__stack                                            4
-#define ES_TypeError_stack                                             5
-#define ES_TypeError_timestamp                                         6
-#define ES_TypeError_code                                              7
-#define ES_TypeError_capture                                           8
-#define ES_TypeError_formatStack                                       9
-#define ES_TypeError_NUM_INSTANCE_PROP                                 10
-#define ES_TypeError_NUM_INHERITED_PROP                                10
+#define ES_TypeError_stack                                             4
+#define ES_TypeError_timestamp                                         5
+#define ES_TypeError_code                                              6
+#define ES_TypeError_formatStack                                       7
+#define ES_TypeError_NUM_INSTANCE_PROP                                 8
+#define ES_TypeError_NUM_INHERITED_PROP                                8
 #define ES_URIError_NUM_CLASS_PROP                                     0
 
 /*
@@ -876,14 +857,12 @@
 #define ES_URIError_lineno                                             1
 #define ES_URIError_data                                               2
 #define ES_URIError_message                                            3
-#define ES_URIError__stack                                             4
-#define ES_URIError_stack                                              5
-#define ES_URIError_timestamp                                          6
-#define ES_URIError_code                                               7
-#define ES_URIError_capture                                            8
-#define ES_URIError_formatStack                                        9
-#define ES_URIError_NUM_INSTANCE_PROP                                  10
-#define ES_URIError_NUM_INHERITED_PROP                                 10
+#define ES_URIError_stack                                              4
+#define ES_URIError_timestamp                                          5
+#define ES_URIError_code                                               6
+#define ES_URIError_formatStack                                        7
+#define ES_URIError_NUM_INSTANCE_PROP                                  8
+#define ES_URIError_NUM_INHERITED_PROP                                 8
 #define ES_File_NUM_CLASS_PROP                                         0
 
 /*
@@ -1876,14 +1855,12 @@
 #define ES_Event_lineno                                                1
 #define ES_Event_data                                                  2
 #define ES_Event_message                                               3
-#define ES_Event__stack                                                4
-#define ES_Event_stack                                                 5
-#define ES_Event_timestamp                                             6
-#define ES_Event_code                                                  7
-#define ES_Event_capture                                               8
-#define ES_Event_formatStack                                           9
-#define ES_Event_NUM_INSTANCE_PROP                                     10
-#define ES_Event_NUM_INHERITED_PROP                                    10
+#define ES_Event_stack                                                 4
+#define ES_Event_timestamp                                             5
+#define ES_Event_code                                                  6
+#define ES_Event_formatStack                                           7
+#define ES_Event_NUM_INSTANCE_PROP                                     8
+#define ES_Event_NUM_INHERITED_PROP                                    8
 #define ES_ErrorEvent_NUM_CLASS_PROP                                   0
 
 /*
@@ -1893,14 +1870,12 @@
 #define ES_ErrorEvent_lineno                                           1
 #define ES_ErrorEvent_data                                             2
 #define ES_ErrorEvent_message                                          3
-#define ES_ErrorEvent__stack                                           4
-#define ES_ErrorEvent_stack                                            5
-#define ES_ErrorEvent_timestamp                                        6
-#define ES_ErrorEvent_code                                             7
-#define ES_ErrorEvent_capture                                          8
-#define ES_ErrorEvent_formatStack                                      9
-#define ES_ErrorEvent_NUM_INSTANCE_PROP                                10
-#define ES_ErrorEvent_NUM_INHERITED_PROP                               10
+#define ES_ErrorEvent_stack                                            4
+#define ES_ErrorEvent_timestamp                                        5
+#define ES_ErrorEvent_code                                             6
+#define ES_ErrorEvent_formatStack                                      7
+#define ES_ErrorEvent_NUM_INSTANCE_PROP                                8
+#define ES_ErrorEvent_NUM_INHERITED_PROP                               8
 #define ES_XML_NUM_CLASS_PROP                                          0
 
 /*
@@ -1995,6 +1970,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1331451
+#define _ES_CHECKSUM_ejs   1330787
 
 #endif

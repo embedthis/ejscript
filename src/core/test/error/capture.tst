@@ -7,7 +7,7 @@ function fun() {
         try {
             error = new Error("Boom")
             /* Strip off two levels of stack (nested, fun) */
-            error.capture(2)
+            error.stack = Error.capture(2)
             throw error
         } catch (e) {
 

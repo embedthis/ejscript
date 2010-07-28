@@ -134,12 +134,10 @@ module ejs {
                 password: String = null): Void {
             responseBuf = new ByteArray(System.Bufsize)
             hp.async = async
-            hp.method = method
-            hp.uri = uri
             if (user && password) {
                 hp.setCredentials(user, password)
             }
-            hp.observe(["complete", "error"], function (event, ...args) {
+            hp.observe(["close", "error"], function (event, ...args) {
                 state = Loaded
                 notify()
             })
@@ -148,12 +146,12 @@ module ejs {
                 state = Receiving
                 notify()
             })
-            hp.connect()
+            hp.connect(method, uri)
             state = Open
             notify()
             if (!async) {
                 hp.finalize()
-                App.waitForEvent(hp, "complete", hp.timeout)
+                App.waitForEvent(hp, "close", hp.timeout)
             }
         }
 

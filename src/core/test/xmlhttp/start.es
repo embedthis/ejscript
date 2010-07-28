@@ -3,8 +3,8 @@
 */
 require ejs.web
 
-let address = App.args[1] || ":6700"
-let server: HttpServer = new HttpServer("../web")
+let address = ":" + (App.config.test.http_port || "6700")
+let server: HttpServer = new HttpServer
 
 var router = Router(Router.TopRoutes)
 server.observe("readable", function (event, request) {

@@ -68,7 +68,7 @@ module ejs {
             log: {
                 enable: true,
                 location: "stderr",
-                level: 2,
+                level: 0,
                 /* match: null, */
             },
             cache: {

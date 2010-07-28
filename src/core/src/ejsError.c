@@ -54,21 +54,25 @@ static EjsObj *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **ar
     if (argc > 0) {
         ejsSetProperty(ejs, error, ES_Error_message, ejsToString(ejs, argv[0]));
     }
-#if ES_Error_timestamp
     ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime(ejs)));
-#endif
     ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, 0));
     return (EjsObj*) error;
 }
 
 
 /*
-    function capture(uplevels: Number): Void
+    static function capture(uplevels: Number): Void
  */
 static EjsObj *error_capture(Ejs *ejs, EjsError *error, int argc,  EjsObj **argv)
 {
-    ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, ejsGetInt(ejs, argv[0])));
+    int     uplevels;
+    
+    uplevels = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
+#if UNUSED
+    ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, uplevels));
     return 0;
+#endif
+    return (EjsObj*) ejsCaptureStack(ejs, uplevels);
 }
 
 /************************************ Factory *********************************/
@@ -80,9 +84,7 @@ EjsError *ejsCreateError(Ejs *ejs, EjsType *type, EjsObj *msg)
     error = (EjsError*) ejsCreateObject(ejs, type, 0);
     if (error) {
         ejsSetProperty(ejs, error, ES_Error_message, msg);
-#if ES_Error_timestamp
         ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime(ejs)));
-#endif
         ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, 0));
     }
     return error;
@@ -152,9 +154,7 @@ void ejsConfigureErrorType(Ejs *ejs)
     configureType(ejs, "TypeError");
     configureType(ejs, "URIError");
 
-#if ES_Error_capture
-    ejsBindMethod(ejs, ejs->errorType->prototype, ES_Error_capture, (EjsProc) error_capture);
-#endif
+    ejsBindMethod(ejs, ejs->errorType, ES_Error_capture, (EjsProc) error_capture);
 }
 
 

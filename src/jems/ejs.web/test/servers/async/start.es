@@ -3,12 +3,12 @@
  */
 require ejs.web
 
-let address = App.args[1] || App.config.test.http_port || ":6700"
+let address = ":" + (App.config.test.http_port || "6700")
 let server: HttpServer = new HttpServer("../../web")
-server.listen(address)
 
 server.observe("readable", function (event, request) {
-
+    Web.serve(request)
+/*
     switch (request.pathInfo) {
     case "/test1":
         break
@@ -37,10 +37,8 @@ server.observe("readable", function (event, request) {
         }
     })
     request.observe("writable", function (event, request) {
-    /*
-        request.write("Some Data\r\n")
-        request.finalize()
-    */
+        // request.write("Some Data\r\n")
+        //  request.finalize()
     })
     request.observe("close", function (event, request) {
         print("CLOSE EVENT")
@@ -48,8 +46,8 @@ server.observe("readable", function (event, request) {
     request.observe("error", function (event, request) {
         print("ERROR EVENT")
     })
+*/
 })
-
 
 server.listen(address)
 App.log.info("Listen on " + address)

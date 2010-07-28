@@ -6,8 +6,10 @@ var ENDPOINT = (global.session && session["http"]) || ":6700"
 var TIMEOUT = (global.session && session["timeout"]) || 30000
 
 xh = new XMLHttp
+// xh.http.trace(1, ["conn", "first", "headers", "request", "response", "body"])
 xh.open("GET", ENDPOINT + "/test.xml")
 xh.send(null)
+
 xh.onreadystatechange = function () {
     if (xh.readyState == XMLHttp.Loaded) {
         App.emitter.fire("complete")

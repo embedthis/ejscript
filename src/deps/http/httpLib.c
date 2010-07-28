@@ -2297,7 +2297,7 @@ HttpConn *httpCreateConn(Http *http, HttpServer *server)
     conn->callback = (HttpCallback) httpEvent;
     conn->callbackArg = conn;
 
-    conn->traceMask = HTTP_TRACE_TRANSMIT | HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN | HTTP_TRACE_FIRST;
+    conn->traceMask = HTTP_TRACE_TRANSMIT | HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS;
     conn->traceLevel = HTTP_TRACE_LEVEL;
     conn->traceMaxLength = INT_MAX;
 
@@ -4349,6 +4349,10 @@ static void netOutgoingService(HttpQueue *q)
     trans = conn->transmitter;
     conn->lastActivity = conn->http->now;
     
+    //  MOB -- just for safety
+    if (conn->sock == 0) {
+        return;
+    }
     if (trans->flags & HTTP_TRANS_NO_BODY || conn->writeComplete) {
         httpDiscardData(q, 1);
     }
@@ -6715,11 +6719,9 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
             len = (endp) ? (endp - mprGetBufStart(content) + 4) : 0;
             httpTraceContent(conn, packet, len, 0, mask);
         }
-#if UNUSED
     } else {
         mprLog(rec, 6, "Request from %s:%d to %s:%d", conn->ip, conn->port, conn->sock->ip, conn->sock->port);
-        mprLog(rec, 2, "%s %s %s", method, uri, protocol);
-#endif
+        mprLog(rec, conn->traceLevel, "%s %s %s", method, uri, protocol);
     }
 }
 
@@ -7342,9 +7344,13 @@ static bool analyseContent(HttpConn *conn, HttpPacket *packet)
             mprFree(packet);
         }
         conn->input = 0;
+#if UNUSED
         if (rec->remainingContent > 0 && !conn->http10) {
-            httpProtocolError(conn, HTTP_CODE_COMMS_ERROR, "Insufficient content data sent with request");
+            httpConnError(conn, HTTP_CODE_COMMS_ERROR, "Insufficient content data sent with request");
+        } else {
+            conn->canProceed = 0;
         }
+#endif
     }
     return 1;
 }
@@ -7357,8 +7363,6 @@ static bool processContent(HttpConn *conn, HttpPacket *packet)
     HttpReceiver    *rec;
     HttpQueue       *q;
 
-    mprAssert(packet);
-
     rec = conn->receiver;
     q = &conn->transmitter->queue[HTTP_QUEUE_RECEIVE];
 
@@ -7366,6 +7370,7 @@ static bool processContent(HttpConn *conn, HttpPacket *packet)
         httpSetState(conn, HTTP_STATE_RUNNING);
         return 1;
     }
+    mprAssert(packet);
     if (!analyseContent(conn, packet)) {
         if (conn->connError) {
             httpSetState(conn, HTTP_STATE_RUNNING);
@@ -8122,6 +8127,10 @@ void httpSendOutgoingService(HttpQueue *q)
     trans = conn->transmitter;
     conn->lastActivity = conn->http->now;
 
+    //  MOB -- just for safety
+    if (conn->sock == 0) {
+        return;
+    }
     if (trans->flags & HTTP_TRANS_NO_BODY || conn->writeComplete) {
         httpDiscardData(q, 1);
     }
@@ -9026,7 +9035,6 @@ HttpTransmitter *httpCreateTransmitter(HttpConn *conn, MprHashTable *headers)
 
 static int destroyTransmitter(HttpTransmitter *trans)
 {
-    LOG(trans, 5, "destroyTrans");
     httpDestroyPipeline(trans->conn);
     trans->conn->transmitter = 0;
     return 0;
@@ -9163,7 +9171,7 @@ void httpFinalize(HttpConn *conn)
     HttpTransmitter   *trans;
 
     trans = conn->transmitter;
-    if (trans->finalized || conn->state < HTTP_STATE_STARTED || conn->writeq == 0) {
+    if (trans->finalized || conn->state < HTTP_STATE_STARTED || conn->writeq == 0 || conn->sock == 0) {
         return;
     }
     trans->finalized = 1;

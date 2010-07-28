@@ -42,19 +42,22 @@ module ejs {
          */
         enumerable var message: String
 
-        private var _stack: Array
+        enumerable var stack: Array
 
-        /**
+        /*
+UNUSED MOB
             Execution call stack. Contains the execution stack backtrace at the point the Error object was created.
             The stack is an array of stack frame records. Each record consists of the following properties: 
                 {file: String, lineno: Number, func: String, code: String}
-         */
         function get stack(): Array {
+print("_STACK " + _stack)
             if (!_stack) {
+print("CAPTURE")
                 _stack = capture()
             }
             return _stack
         }
+*/
 
         /** 
             Time the event was created. The Context constructor will automatically set the timestamp to the current time.  
@@ -74,10 +77,10 @@ module ejs {
         native function Error(message: String? = null)
 
         /**
-            Capture the stack. This call re-captures the stack and updates the stack property.
+            Capture the stack. This call captures the stack and returns an Array describing the current stack frame.
             @param uplevels Skip a given count of stack frames from the stop of the call stack.
          */
-        native function capture(uplevels: Number): Array
+        native static function capture(uplevels: Number = 0): Array
 
         /**
             Format the captured stack

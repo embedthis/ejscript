@@ -229,7 +229,15 @@ print("CATCH in WEB " + e)
         static function run(address: String, documentRoot: Path = ".", serverRoot: Path = "."): Void {
             let server: HttpServer = new HttpServer(documentRoot, serverRoot)
             server.observe("readable", function (event, request) {
-                process(Loader.require(request.filename).app)
+                try {
+                    if (!request.filename.exists) {
+                        request.error(Http.NotFound, "Cannot find " + request.uri)
+                    } else {
+                        process(Loader.require(request.filename).app)
+                    }
+                } catch {
+                    request.error(Http.ServerError, "Exception serving " + request.uri)
+                }
             })
             server.listen(address)
             App.eventLoop()

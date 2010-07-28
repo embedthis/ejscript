@@ -30,7 +30,6 @@ static EjsObj *assertMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     if (b == 0 || !b->value) {
         fp = ejs->state->fp;
         if (fp->currentLine) {
-            // mprLog(ejs, 0, "Assertion error: %s", fp->currentLine);
             ejsThrowAssertError(ejs, "%s", fp->currentLine);
         } else {
             ejsThrowAssertError(ejs, "Assertion error");

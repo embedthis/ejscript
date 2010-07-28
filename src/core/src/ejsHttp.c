@@ -15,6 +15,8 @@ static int      httpCallback(EjsHttp *hp, MprEvent *event);
 static void     httpNotify(HttpConn *conn, int state, int notifyFlags);
 static void     prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data);
 static int      readTransfer(Ejs *ejs, EjsHttp *hp, int count);
+static void     sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp);
+static void     sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp);
 static EjsObj   *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EjsObj **argv);
 static bool     waitForResponseHeaders(EjsHttp *hp, int timeout);
 static bool     waitForState(EjsHttp *hp, int state, int timeout, int throw);
@@ -108,8 +110,8 @@ EjsObj *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    ejsSendEvent(ejs, hp->emitter, "close", (EjsObj*) hp);
     if (hp->conn) {
+        sendHttpCloseEvent(ejs, hp);
         httpCloseConn(hp->conn);
         mprFree(hp->conn);
         hp->conn = httpCreateClient(ejs->http, ejs->dispatcher);
@@ -121,11 +123,13 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function connect(url = null, data ...): Void
+    function connect(method: String, url = null, data ...): Void
  */
 static EjsObj *http_connect(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return startHttpRequest(ejs, hp, NULL, argc, argv);
+    mprFree(hp->method);
+    hp->method = mprStrdup(hp, ejsGetString(ejs, argv[0]));
+    return startHttpRequest(ejs, hp, NULL, argc - 1, &argv[1]);
 }
 
 
@@ -151,28 +155,6 @@ static EjsObj *http_set_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **ar
     hp->certFile = mprStrdup(hp, ejsGetString(ejs, argv[0]));
     return 0;
 }
-
-
-#if UNUSED
-/*  
-    function get chunkSize(): Boolean
- */
-static EjsObj *http_chunkSize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    return (EjsObj*) ejsCreateNumber(ejs, httpGetChunkSize(hp->conn));
-}
-
-
-/*  
-    function set chunkSize(size: Number): Void
- */
-static EjsObj *http_set_chunkSize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    mprAssert(hp->conn);
-    httpSetChunkSize(hp->conn, ejsGetInt(ejs, argv[0]));
-    return 0;
-}
-#endif
 
 
 /*  
@@ -208,17 +190,6 @@ static EjsObj *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED
-/*  
-    function del(uri: String = null): Void
- */
-static EjsObj *http_del(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    return startHttpRequest(ejs, hp, "DELETE", argc, argv);
-}
-#endif
-
-
 /*  
     function get dontFinalize(): Boolean
  */
@@ -236,17 +207,6 @@ static EjsObj *http_set_dontFinalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **a
     hp->dontFinalize = ejsGetInt(ejs, argv[0]);
     return 0;
 }
-
-
-#if UNUSED
-/*  
-    function get expires(): Date
- */
-static EjsObj *http_expires(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    return getDateHeader(ejs, hp, "EXPIRES");
-}
-#endif
 
 
 /*  
@@ -401,27 +361,6 @@ static EjsObj *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED
-/*  
-    function get inactivityTimeout(): Number
- */
-static EjsObj *http_inactivityTimeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->limits->inactivityTimeout);
-}
-
-
-/*  
-    function set inactivityTimeout(value: Number): Void
- */
-static EjsObj *http_set_inactivityTimeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    httpSetTimeout(hp->conn, -1, (int) ejsGetNumber(ejs, argv[0]));
-    return 0;
-}
-#endif
-
-
 /*  
     function get isSecure(): Boolean
  */
@@ -503,17 +442,6 @@ static EjsObj *http_set_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     hp->method = mprStrdup(hp, ejsGetString(ejs, argv[0]));
     return 0;
 }
-
-
-#if UNUSED
-/*  
-    function options(uri: String = null, ...data): Void
- */
-static EjsObj *http_options(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    return startHttpRequest(ejs, hp, "OPTIONS", argc, argv);
-}
-#endif
 
 
 /*  
@@ -717,27 +645,6 @@ static EjsObj *http_setLimits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     ejsSetHttpLimits(ejs, hp->conn->limits, hp->limits, 0);
     return 0;
 }
-
-
-#if UNUSED
-/*  
-    function get timeout(): Number
- */
-static EjsObj *http_timeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    return (EjsObj*) ejsCreateNumber(ejs, hp->conn->limits->requestTimeout);
-}
-
-
-/*  
-    function set timeout(value: Number): Void
- */
-static EjsObj *http_set_timeout(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    httpSetTimeout(hp->conn, (int) ejsGetNumber(ejs, argv[0]), -1);
-    return 0;
-}
-#endif
 
 
 /*  
@@ -982,10 +889,9 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
     case HTTP_STATE_COMPLETE:
         if (hp->emitter) {
             if (conn->error) {
-                //  MOB -- should send conn->errorMsg
-                ejsSendEvent(ejs, hp->emitter, "error", (EjsObj*) hp);
+                sendHttpErrorEvent(ejs, hp);
             }
-            ejsSendEvent(ejs, hp->emitter, "complete", (EjsObj*) hp);
+            sendHttpCloseEvent(ejs, hp);
         }
         break;
 
@@ -1088,15 +994,6 @@ static int httpCallback(EjsHttp *hp, MprEvent *event)
             writeHttpData(ejs, hp);
         }
     }
-#if UNUSED
-    if (event->mask & MPR_READABLE) {
-        if (conn->state >= HTTP_STATE_COMPLETE || 
-                (conn->state >= HTTP_STATE_CONTENT && mprGetBufLength(hp->responseContent) > 0)) {
-            //  MOB -- remove if notifier works better
-            ejsSendEvent(ejs, hp->emitter, "MOBreadable", (EjsObj*) hp);
-        }
-    } 
-#endif
     return 0;
 }
 
@@ -1365,7 +1262,7 @@ static void destroyHttp(Ejs *ejs, EjsHttp *hp)
     mprAssert(hp);
 
     if (hp->conn) {
-        ejsSendEvent(ejs, hp->emitter, "close", (EjsObj*) hp);
+        sendHttpCloseEvent(ejs, hp);
         httpCloseConn(hp->conn);
         mprFree(hp->conn);
         hp->conn = 0;
@@ -1442,6 +1339,28 @@ void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server)
 }
 
 
+static void sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp)
+{
+    if (!hp->closed) {
+        hp->closed = 1;
+        if (hp->emitter) {
+            ejsSendEvent(ejs, hp->emitter, "close", (EjsObj*) hp);
+        }
+    }
+}
+
+
+static void sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp)
+{
+    if (!hp->error) {
+        hp->error = 1;
+        if (hp->emitter) {
+            ejsSendEvent(ejs, hp->emitter, "error", (EjsObj*) hp);
+        }
+    }
+}
+
+
 /*********************************** Factory **********************************/
 
 void ejsConfigureHttpType(Ejs *ejs)
@@ -1459,18 +1378,13 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindConstructor(ejs, type, (EjsProc) httpConstructor);
     ejsBindAccess(ejs, prototype, ES_Http_async, (EjsProc) http_async, (EjsProc) http_set_async);
     ejsBindMethod(ejs, prototype, ES_Http_available, (EjsProc) http_available);
-#if UNUSED
-    ejsBindAccess(ejs, prototype, ES_Http_chunkSize, (EjsProc) http_chunkSize, (EjsProc) http_set_chunkSize);
-#endif
     ejsBindMethod(ejs, prototype, ES_Http_close, (EjsProc) http_close);
     ejsBindMethod(ejs, prototype, ES_Http_connect, (EjsProc) http_connect);
     ejsBindAccess(ejs, prototype, ES_Http_certificate, (EjsProc) http_certificate, (EjsProc) http_set_certificate);
     ejsBindMethod(ejs, prototype, ES_Http_contentLength, (EjsProc) http_contentLength);
     ejsBindMethod(ejs, prototype, ES_Http_contentType, (EjsProc) http_contentType);
     ejsBindMethod(ejs, prototype, ES_Http_date, (EjsProc) http_date);
-#if ES_Http_dontFinalize
     ejsBindAccess(ejs, prototype, ES_Http_dontFinalize, (EjsProc) http_dontFinalize, (EjsProc) http_set_dontFinalize);
-#endif
     ejsBindMethod(ejs, prototype, ES_Http_finalize, (EjsProc) http_finalize);
     ejsBindMethod(ejs, prototype, ES_Http_flush, (EjsProc) http_flush);
     ejsBindAccess(ejs, prototype, ES_Http_followRedirects, (EjsProc) http_followRedirects, 
@@ -1481,10 +1395,6 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_head, (EjsProc) http_head);
     ejsBindMethod(ejs, prototype, ES_Http_header, (EjsProc) http_header);
     ejsBindMethod(ejs, prototype, ES_Http_headers, (EjsProc) http_headers);
-#if UNUSED
-    ejsBindAccess(ejs, prototype, ES_Http_inactivityTimeout, (EjsProc) http_inactivityTimeout, 
-            (EjsProc) http_set_inactivityTimeout);
-#endif
     ejsBindMethod(ejs, prototype, ES_Http_isSecure, (EjsProc) http_isSecure);
     ejsBindAccess(ejs, prototype, ES_Http_key, (EjsProc) http_key, (EjsProc) http_set_key);
     ejsBindMethod(ejs, prototype, ES_Http_lastModified, (EjsProc) http_lastModified);
@@ -1504,9 +1414,6 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_setLimits, (EjsProc) http_setLimits);
     ejsBindMethod(ejs, prototype, ES_Http_status, (EjsProc) http_status);
     ejsBindMethod(ejs, prototype, ES_Http_statusMessage, (EjsProc) http_statusMessage);
-#if UNUSED
-    ejsBindAccess(ejs, prototype, ES_Http_timeout, (EjsProc) http_timeout, (EjsProc) http_set_timeout);
-#endif
     ejsBindMethod(ejs, prototype, ES_Http_trace, (EjsProc) http_trace);
     ejsBindAccess(ejs, prototype, ES_Http_uri, (EjsProc) http_uri, (EjsProc) http_set_uri);
     ejsBindMethod(ejs, prototype, ES_Http_write, (EjsProc) http_write);

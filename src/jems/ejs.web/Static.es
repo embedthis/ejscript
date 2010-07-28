@@ -51,7 +51,6 @@ module ejs.web {
                 }
 
             } else if (request.method == "PUT") {
-print("MATCH PUT")
                 return { body: put }
 
             } else if (request.method == "HEAD") {
@@ -71,7 +70,6 @@ print("MATCH PUT")
 
 //  MOB -- complete
         function put(request: Request) {
-print("IN PUT")
             //  MOB -- how to handle ranges?
             let path = request.dir.join(request.pathInfo.trimStart('/'))
             request.status = path.exists ? Http.NoContent : Http.Created
