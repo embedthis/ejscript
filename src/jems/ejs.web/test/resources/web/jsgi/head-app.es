@@ -1,6 +1,4 @@
-//  MOB -- what requires are really needed
 require ejs.web
-require ejs.web.jsgi
 
 exports.app = Head(function (request) {
     return {

@@ -39,7 +39,7 @@ module ejs.template  {
 
         private const Header = "require ejs.web\n\nexports.app = function (request: Request) {\n" + 
             "    View(request).render(function(request: Request) {\n"
-        private const Footer = "\n        request.finalize()\n    })\n}\n"
+        private const Footer = "\n    })\n}\n"
 
         private const MvcHeader = "require ejs.web\n"
 

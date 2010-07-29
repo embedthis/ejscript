@@ -1,16 +1,17 @@
+/*
+    Create a controller with action methods
+ */
 require ejs.web
 
 class MyController extends Controller {
-    function MyController(request) {
-        super(request)
-    }
     use namespace action
 
+    //  MOB -- how is the index selected?
     action function index() {
-        render("IN INDEX\r\n")
+        render("Hello Index\r\n")
     }
 }
 
 exports.app = function(request: Request) {
-    MyController(request).run(request)
+    MyController.create(request).run(request)
 }

@@ -119,10 +119,10 @@ static EjsObj *createEnv(Ejs *ejs, EjsRequest *req)
 /*
     This will get the current session or create a new session if required
  */
-static EjsObj *getSession(Ejs *ejs, EjsRequest *req, int create)
+static EjsSession *getSession(Ejs *ejs, EjsRequest *req, int create)
 {
     if (req->session) {
-        return (EjsObj*) req->session;
+        return req->session;
     }
     if ((req->session = ejsGetSession(ejs, req)) == NULL && create) {
         req->session = ejsCreateSession(ejs, req, 0, 0);
@@ -131,7 +131,7 @@ static EjsObj *getSession(Ejs *ejs, EjsRequest *req, int create)
         //  TODO - SECURE (last arg) ?
         httpSetCookie(req->conn, EJS_SESSION, req->session->id, "/", NULL, 0, 0);
     }
-    return (EjsObj*) req->session;
+    return req->session;
 }
 
 
@@ -356,7 +356,7 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return (EjsObj*) req->server;
 
     case ES_ejs_web_Request_session:
-        return getSession(ejs, req, 1);
+        return (EjsObj*) getSession(ejs, req, 1);
 
     case ES_ejs_web_Request_sessionID:
         if (!req->probedSession) {
@@ -586,7 +586,9 @@ static EjsObj *req_responseHeaders(Ejs *ejs, EjsRequest *req, int argc, EjsObj *
  */
 static EjsObj *req_destroySession(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    ejsDestroySession(ejs, req->server, req->session);
+    ejsDestroySession(ejs, req->server, getSession(ejs, req, 0));
+    req->probedSession = 0;
+    req->session = 0;
     return 0;
 }
 
@@ -639,16 +641,22 @@ static EjsObj *req_flush(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    EjsObj   *result;
-    char     *str;
+    EjsObj  *result;
+    cchar   *value;
+    char    *str;
 
     if (!connOk(ejs, req)) return 0;
 
     str = (char*) ejsGetString(ejs, argv[0]);
     str = mprStrdup(ejs, str);
     mprStrLower(str);
-    result = (EjsObj*) ejsCreateString(ejs, httpGetHeader(req->conn, str));
+    value = httpGetHeader(req->conn, str);
     mprFree(str);
+    if (value) {
+        result = (EjsObj*) ejsCreateString(ejs, value);
+    } else {
+        result = (EjsObj*) ejs->nullValue;
+    }
     return result;
 }
 

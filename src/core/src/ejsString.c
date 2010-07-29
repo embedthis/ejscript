@@ -1733,7 +1733,7 @@ int ejsStrcat(Ejs *ejs, EjsString *dest, EjsObj *src)
     mprAssert(dest);
 
     castSrc = 0;
-
+    
     if (ejsIsString(dest)) {
         if (! ejsIsString(src)) {
             castSrc = (EjsString*) ejsToString(ejs, src);
@@ -1747,11 +1747,9 @@ int ejsStrcat(Ejs *ejs, EjsString *dest, EjsObj *src)
             str = ((EjsString*) src)->value;
             len = ((EjsString*) src)->length;
         }
-
         if (catString(ejs, dest, str, len) < 0) {
             return -1;
         }
-
     } else {
         /*
             Convert the source to a string and then steal the rusult buffer and assign to the destination

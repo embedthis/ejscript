@@ -7,7 +7,6 @@ exports.app = function (request) {
         r.setHeaders({"Content-Type": "text/html"})
         Timer(5000, function() {
             r.write("Now done\n")
-            r.finish()
             r.finalize()
         })
     } 

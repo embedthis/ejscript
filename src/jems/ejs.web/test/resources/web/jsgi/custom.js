@@ -1,5 +1,5 @@
 /*
-    Custom Header - JSGI middleware to add a custom date header
+    Custom Header - JSGI middleware module to add a custom date header
  */
 exports.CustomHeader = function(app) {
     return function(request) {

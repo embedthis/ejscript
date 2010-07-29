@@ -942,8 +942,8 @@ static EjsObj *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     } else {
         sep = 0;
     }
-
     result = ejsCreateString(ejs, "");
+    result->obj.permanent = 1;
     for (i = 0; i < ap->length; i++) {
         vp = ap->data[i];
         if (vp == 0 || ejsIsUndefined(vp) || ejsIsNull(vp)) {
@@ -954,6 +954,7 @@ static EjsObj *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         }
         ejsStrcat(ejs, result, vp);
     }
+    result->obj.permanent = 1;
     return (EjsObj*) result;
 }
 

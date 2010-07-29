@@ -310,8 +310,9 @@ static EjsObj *http_head(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    EjsObj   *result;
-    char     *str;
+    EjsObj  *result;
+    cchar   *value;
+    char    *str;
 
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
@@ -319,8 +320,13 @@ static EjsObj *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     str = (char*) ejsGetString(ejs, argv[0]);
     str = mprStrdup(ejs, str);
     mprStrLower(str);
-    result = (EjsObj*) ejsCreateString(ejs, httpGetHeader(hp->conn, str));
+    value = httpGetHeader(hp->conn, str);
     mprFree(str);
+    if (value) {
+        result = (EjsObj*) ejsCreateString(ejs, value);
+    } else {
+        result = (EjsObj*) ejs->nullValue;
+    }
     return result;
 }
 

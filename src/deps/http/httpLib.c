@@ -2494,7 +2494,7 @@ static void readEvent(HttpConn *conn)
             }
             break;
         }
-        if (conn->connError || conn->state >= HTTP_STATE_RUNNING || conn->startingThread) {
+        if (nbytes == 0 || conn->connError || conn->state >= HTTP_STATE_RUNNING || conn->startingThread) {
             break;
         }
     }
@@ -7658,8 +7658,10 @@ int httpWait(HttpConn *conn, int state, int inactivityTimeout)
         return MPR_ERR_CONNECTION;
     }
     if (conn->state < state) {
+#if UNUSED
         httpConnError(conn, HTTP_CODE_REQUEST_TIMEOUT,
             "Inactive request timed out, exceeded inactivity timeout %d", inactivityTimeout);
+#endif
         return MPR_ERR_TIMEOUT;
     }
     return 0;

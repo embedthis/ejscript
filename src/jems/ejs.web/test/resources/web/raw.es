@@ -1,9 +1,9 @@
+/*
+    Lowest level raw I/O directly to the request object
+ */
 require ejs.web
 
-exports.app = function(r: Request) {
-    /*
-        Raw access to the request API. "this" set to request
-     */
+exports.app = function() {
     write("Hello World\r\n")
     finalize()
 }

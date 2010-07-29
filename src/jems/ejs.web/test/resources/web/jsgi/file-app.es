@@ -1,3 +1,4 @@
+require ejs.web
 
 exports.app = function (request) { 
     return {

@@ -1,10 +1,6 @@
 require ejs.web
 
-
-//  MOB -- this not being used?
 class MyView extends View {
-
-    //  MOB -- is this required
     function MyView(request) {
         super(request)
     }
@@ -12,7 +8,9 @@ class MyView extends View {
 }
 
 exports.app = function(request: Request) {
-    View(request).render(function(request: Request) {
+    MyView(request).render(function(request: Request) {
+            //  MOB - put controls here
+        image("logo.png")
         write("Hello World\r\n")
         write("URI " + makeUri("/logout.es") + "\r\n")
     })

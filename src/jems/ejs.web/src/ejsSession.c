@@ -254,18 +254,27 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
  */
 int ejsDestroySession(Ejs *ejs, EjsHttpServer *server, EjsSession *session)
 {
+    Ejs         *master;
     EjsName     qname;
-    MprTime     now;
+    int         slotNum;
 
     if (session) {
+        master = ejs->master ? ejs->master : ejs;
         if (server) {
             ejsSendEvent(ejs, server->emitter, "destroySession", (EjsObj*) ejsCreateString(ejs, session->id));
         }
-        now = mprGetTime(ejs);
-        if (session->expire <= now) {
-            ejsDeletePropertyByName(ejs->master, (EjsObj*) ejs->sessions, EN(&qname, session->id));
+        if ((slotNum = ejsLookupProperty(master, (EjsObj*) ejs->sessions, EN(&qname, session->id))) >= 0) {
+            ejsDeleteProperty(master, (EjsObj*) ejs->sessions, slotNum);
             return 1;
         }
+#if OLD
+        MprTime     now;
+        now = mprGetTime(ejs);
+        if (session->expire <= now) {
+            ejsDeletePropertyByName(master, (EjsObj*) ejs->sessions, EN(&qname, session->id));
+            return 1;
+        }
+#endif
     }
     return 0;
 }

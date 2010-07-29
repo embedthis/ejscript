@@ -1,13 +1,16 @@
+/*
+    Non-blocking async request. Pauses for 5 seconds before completing
+ */
+
 require ejs.web
-require ejs.web.jsgi
 
 exports.app = function (request: Request) { 
-    return function(r: Request) {
-        r.setStatus(200)
-        r.setHeaders({"Content-Type": "text/html"})
+    return function(request: Request) {
+        request.setStatus(200)
+        request.setHeaders({"Content-Type": "text/html"})
         Timer(5000, function() {
-            r.write("Now done\n")
-            r.finalize()
+            request.write("Now done\n")
+            request.finalize()
         })
     } 
 }

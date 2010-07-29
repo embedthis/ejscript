@@ -67,12 +67,13 @@ module ejs.web {
         private static var _initRequest: Request
 
         /** 
-            Create and initialize a controller
+            Create and initialize a controller. This may be called directly by class constructors or via 
+            the Controller.create factory method.
             @param r Web request object
          */
         function Controller(r: Request) {
+            //  initRequest may be set by create() to allow subclasses to omit constructors
             request = r || _initRequest
-            log = request.log
             if (request) {
                 log = request.log
                 params = request.params
