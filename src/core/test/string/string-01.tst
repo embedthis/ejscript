@@ -237,8 +237,8 @@ assert(s.substring(1, -1) == "bcdef")
 assert(s.substring(1,-2) == "bcdef")
 
 
-// toLower
-assert("ABcdEF".toLower() == "abcdef")
+// toLowerCase
+assert("ABcdEF".toLowerCase() == "abcdef")
 
 
 // toPascal
@@ -246,8 +246,8 @@ assert("sunnyDay".toPascal() == "SunnyDay")
 assert("SunnyDay".toPascal() == "SunnyDay")
 
 
-// toUpper
-assert("ABcdEF".toUpper() == "ABCDEF")
+// toUpperCase
+assert("ABcdEF".toUpperCase() == "ABCDEF")
 
 
 // tokenize

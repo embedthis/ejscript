@@ -26,7 +26,7 @@ module ejs.web {
          */
         for each (c in cookieHeader.split(";")) {
             parts = c.split("=")
-            key = parts[0].toLower().trim("$")
+            key = parts[0].toLowerCase().trim("$")
             if (key == "version") {
                 continue
             }

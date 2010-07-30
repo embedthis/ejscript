@@ -1,5 +1,5 @@
 /*
- *  Test String regular expressions methods
+    Test String regular expressions methods
  */
 
 if (Config.RegularExpressions) {
@@ -18,6 +18,10 @@ if (Config.RegularExpressions) {
     assert("abc def ABC DEF".replace(/([a-z ]+) ([A-Z ]+)/g, '$2 $1') == "ABC DEF abc def")
     assert("abc def ghi ABC DEF GHI".replace(/([a-c]+) ([d-f]+)/g, '_$2 $1_') == "_def abc_ ghi ABC DEF GHI")
     assert("abc".replace(/b/,"$$") == "a$c")
+    // Replace that matches the empty string
+    str = "a b".replace(/([ \t]*)/g,"<p>")
+    assert(str == "<p>a<p><p>b<p>")
+
 
     // Search
     assert("hello world".search(/[w]/) == 6)

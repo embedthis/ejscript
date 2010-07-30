@@ -90,7 +90,7 @@ module ejs {
                     if (value is Boolean) {
                         value = value.toString()
                     } else if (value is String) {
-                        value = value.toLower()
+                        value = value.toLowerCase()
                     } else {
                         value = false
                     }

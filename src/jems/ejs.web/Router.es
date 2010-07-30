@@ -260,10 +260,13 @@ module ejs.web {
         }
     }
 
-    /**
-        Builder function to load JSGI scripts.
-        @return JSGI application function 
-      */
+    /** 
+        Script builder for use in routing tables to load pure script files (*.es).
+        @param request Request object. 
+        @return A web script function that services a web request.
+        @example:
+          { name: "index", builder: ScriptBuilder, match: "\.es$" }
+     */
     function ScriptBuilder(request: Request): Function {
         if (!request.filename.exists) {
             request.error(Http.NotFound, "Cannot find " + request.pathInfo) 
@@ -276,7 +279,7 @@ module ejs.web {
         }
     }
 
-    /** @hide */
+/* UNUSED MOB
     function TemplateBuilder(request: Request): Function {
         let route = request.route
         if (route.module && !route.initialized) {
@@ -285,6 +288,7 @@ module ejs.web {
         }
         return "ejs.web"::TemplateApp
     }
+*/
 
     /** 
         Route class. A Route describes a mapping from a set of resources to a URI. The Router uses tables of 

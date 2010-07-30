@@ -20,24 +20,36 @@
 
 
 /*
-    Class property slots for the "CommonJS" type 
+    Class property slots for the "CommonSystem" type 
  */
-#define ES_ejs_cjs_CommonJS_stdin                                      0
-#define ES_ejs_cjs_CommonJS_stdout                                     1
-#define ES_ejs_cjs_CommonJS_stderr                                     2
-#define ES_ejs_cjs_CommonJS_args                                       3
-#define ES_ejs_cjs_CommonJS_env                                        4
-#define ES_ejs_cjs_CommonJS_fs                                         5
-#define ES_ejs_cjs_CommonJS_platform                                   6
-#define ES_ejs_cjs_CommonJS_NUM_CLASS_PROP                             7
+#define ES_ejs_cjs_CommonSystem_stdin                                  0
+#define ES_ejs_cjs_CommonSystem_stdout                                 1
+#define ES_ejs_cjs_CommonSystem_stderr                                 2
+#define ES_ejs_cjs_CommonSystem_args                                   3
+#define ES_ejs_cjs_CommonSystem_env                                    4
+#define ES_ejs_cjs_CommonSystem_fs                                     5
+#define ES_ejs_cjs_CommonSystem_platform                               6
+#define ES_ejs_cjs_CommonSystem_system                                 7
+#define ES_ejs_cjs_CommonSystem_NUM_CLASS_PROP                         8
 
 /*
-   Prototype (instance) slots for "CommonJS" type 
+   Prototype (instance) slots for "CommonSystem" type 
  */
-#define ES_ejs_cjs_CommonJS_log                                        0
-#define ES_ejs_cjs_CommonJS_NUM_INSTANCE_PROP                          1
-#define ES_ejs_cjs_CommonJS_NUM_INHERITED_PROP                         0
+#define ES_ejs_cjs_CommonSystem_log                                    0
+#define ES_ejs_cjs_CommonSystem_NUM_INSTANCE_PROP                      1
+#define ES_ejs_cjs_CommonSystem_NUM_INHERITED_PROP                     0
+#define ES_ejs_cjs_CommonFile_NUM_CLASS_PROP                           0
 
-#define _ES_CHECKSUM_ejs_cjs   9302
+/*
+   Prototype (instance) slots for "CommonFile" type 
+ */
+#define ES_ejs_cjs_CommonFile_open                                     0
+#define ES_ejs_cjs_CommonFile_read                                     1
+#define ES_ejs_cjs_CommonFile_basename                                 2
+#define ES_ejs_cjs_CommonFile_write                                    3
+#define ES_ejs_cjs_CommonFile_NUM_INSTANCE_PROP                        4
+#define ES_ejs_cjs_CommonFile_NUM_INHERITED_PROP                       0
+
+#define _ES_CHECKSUM_ejs_cjs   18196
 
 #endif

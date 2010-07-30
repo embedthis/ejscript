@@ -242,7 +242,7 @@ module ejs {
          */
         function activity(tag: String, ...args): Void {
             let msg = args.join(" ")
-            let msg = "%12s %s" % (["[" + tag.toUpper() + "]"] + [msg]) + "\n"
+            let msg = "%12s %s" % (["[" + tag.toUpperCase() + "]"] + [msg]) + "\n"
             if (_level > 0) {
                 write(msg)
             }

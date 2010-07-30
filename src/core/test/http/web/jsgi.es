@@ -1,5 +1,4 @@
 require ejs.web
-require ejs.web.jsgi
 
 /*OK
 exports.app = function (request) { 

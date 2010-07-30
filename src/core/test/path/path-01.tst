@@ -62,7 +62,7 @@ assert(Path("/tmp/a.b").absolute.isAbsolute)
 
 assert(p.portable == "file.dat")
 p = Path("\\dir\\ABCdef.txt")
-assert(p.portable.toLower() == "/dir/abcdef.txt")
+assert(p.portable.toLowerCase() == "/dir/abcdef.txt")
 if (Config.OS == "WIN") {
     assert(Path("c:\\a\\b\\c").portable == "c:/a/b/c")
     assert(Path("\\a\\b\\c").portable == "/a/b/c")

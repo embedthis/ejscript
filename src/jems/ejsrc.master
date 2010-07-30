@@ -42,6 +42,9 @@
         //  MOB -- is this used?
         timeout: 60,
     },
+    init: {
+        load: [],
+    },
     mode: "debug",                              // ejsmvc
     mvc: {
         appmod: "App.mod",

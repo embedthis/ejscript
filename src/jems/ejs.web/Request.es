@@ -1,6 +1,6 @@
 /**
     Request.es -- Ejscript web request object. Request objects support the JSGI protocol specification. They can manage
-    JSGI apps with a ".es" extension, templated web pages with a ".ejs" extension and are used as a foundation for
+    script apps with a ".es" extension, templated web pages with a ".ejs" extension and are used as a foundation for
     MVC web applications.
  */
 module ejs.web {

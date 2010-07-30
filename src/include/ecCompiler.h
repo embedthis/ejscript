@@ -1087,7 +1087,7 @@ extern void         ecFreeToken(EcInput *input, EcToken *token);
 extern char         *ecGetErrorMessage(EcCompiler *cp);
 extern char         *ecGetInputStreamName(EcLexer *lp);
 extern int          ecGetToken(EcInput *input);
-extern int          ecGetRegExpToken(EcInput *input);
+extern int          ecGetRegExpToken(EcInput *input, cchar *prefix);
 extern EcNode       *ecLinkNode(EcNode *np, EcNode *child);
 extern EjsModule    *ecLookupModule(EcCompiler *cp, cchar *name, int minVersion, int maxVersion);
 extern int          ecLookupScope(EcCompiler *cp, EjsName *name);

@@ -38,7 +38,13 @@ module ejs.web {
         }
     }
 
-    /** @hide */
+    /** 
+        Directory builder for use in routing tables to service requests for directories. 
+        @param request Request object. 
+        @return A web script function that services a web request.
+        @example:
+          { name: "index", builder: DirBuilder, match: Router.isDir }
+     */
     function DirBuilder(request: Request): Function DirApp
 }
 

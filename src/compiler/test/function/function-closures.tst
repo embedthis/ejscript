@@ -24,7 +24,7 @@ class View {
         assert(fmt == "fmt")
         return function (data: String) {
             assert(fmt == "fmt")
-            return data.toUpper()
+            return data.toUpperCase()
         }
     }
 }

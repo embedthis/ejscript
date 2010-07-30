@@ -33,11 +33,12 @@ module ejs.web {
         return app(request)
     }
 
-    /**
-        Builder function for templates to use with JSGI applications
-            a web application script created.
-        @param request Request object
-        @return A web application function
+    /** 
+        Template builder for use in routing tables to serve requests for template files (*.ejs).
+        @param request Request object. 
+        @return A web script function that services a web request.
+        @example:
+          { name: "index", builder: TemplateBuilder, match: "\.ejs$" }
      */
     function TemplateBuilder(request: Request): Function {
         let path = request.filename

@@ -20,6 +20,9 @@ static int indexof(cchar *str, int len, cchar *pattern, int patlen, int dir);
  */
 static EjsObj *castString(Ejs *ejs, EjsString *sp, EjsType *type)
 {
+    EjsObj  *result;
+    char    *buf;
+
     mprAssert(sp);
     mprAssert(type);
 
@@ -45,8 +48,6 @@ static EjsObj *castString(Ejs *ejs, EjsString *sp, EjsType *type)
         if (sp->value && sp->value[0] == '/') {
             return (EjsObj*) ejsCreateRegExp(ejs, sp->value);
         } else {
-            EjsObj      *result;
-            char        *buf;
             buf = mprStrcat(ejs, -1, "/", sp->value, "/", NULL);
             result = (EjsObj*) ejsCreateRegExp(ejs, buf);
             mprFree(buf);
@@ -1008,20 +1009,51 @@ static EjsObj *removeCharsFromString(Ejs *ejs, EjsString *sp, int argc, EjsObj *
 }
 
 
-/*
-    Search and replace.
+static EjsString *getReplacementText(Ejs *ejs, EjsFunction *fn, int count, int *matches, EjsString *sp)
+{
+    EjsObj  *result, *argv[EJS_MAX_REGEX_MATCHES * 3];
+    int     i, offset, argc;
 
-    function replace(pattern: (String|Regexp), replacement: String): String
+    mprAssert(fn);
+    
+    argc = 0;
+    argv[argc++] = (EjsObj*) ejsCreateStringWithLength(ejs, &sp->value[matches[0]], matches[1] - matches[0]);
+    for (i = 1; i < count; i++) {
+        offset = i * 2;
+        argv[argc++] = (EjsObj*) ejsCreateStringWithLength(ejs, 
+            &sp->value[matches[offset]], matches[offset + 1] - matches[offset]);
+    }
+    argv[argc++] = (EjsObj*) ejsCreateNumber(ejs, matches[0]);
+    argv[argc++] = (EjsObj*) sp;
+    if ((result = ejsRunFunction(ejs, fn, ejs->global, argc, argv)) == 0) {
+        return 0;
+    }
+    return (EjsString*) ejsToString(ejs, result);
+}
+
+
+/*
+    Search and replace
+
+    function replace(pattern: (String|Regexp), replacement: (String|Function)): String
 
  */
 static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString   *result, *replacement;
+    EjsFunction *replacementFunction;
     cchar       *pattern;
+    int         matches[EJS_MAX_REGEX_MATCHES * 3];
     int         index, patternLength;
 
     result = 0;
-    replacement = (EjsString*) argv[1];
+    if (ejsIsFunction(argv[1])) {
+        replacementFunction = (EjsFunction*) argv[1];
+        replacement = 0;
+    } else {
+        replacement = (EjsString*) ejsToString(ejs, argv[1]);
+        replacementFunction = 0;
+    }
 
     if (ejsIsString(argv[0])) {
         pattern = ejsGetString(ejs, argv[0]);
@@ -1033,7 +1065,13 @@ static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             if (result == 0) {
                 return 0;
             }
+            result->obj.permanent = 1;
             catString(ejs, result, sp->value, index);
+            if (replacementFunction) {
+                matches[0] = matches[2] = index;
+                matches[1] = matches[3] = index + patternLength;
+                replacement = getReplacementText(ejs, replacementFunction, 2, matches, sp);
+            }
             catString(ejs, result, replacement->value, replacement->length);
 
             index += patternLength;
@@ -1048,15 +1086,18 @@ static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     } else if (ejsIsRegExp(argv[0])) {
         EjsRegExp   *rp;
         char        *cp, *lastReplace, *end;
-        int         matches[EJS_MAX_REGEX_MATCHES * 3];
-        int         count, endLastMatch, submatch;
+        int         count, endLastMatch, startNextMatch, submatch;
 
         rp = (EjsRegExp*) argv[0];
         result = ejsCreateString(ejs, 0);
-        endLastMatch = 0;
+        result->obj.permanent = 1;
+        startNextMatch = endLastMatch = 0;
 
         do {
-            count = pcre_exec(rp->compiled, NULL, sp->value, sp->length, endLastMatch, 0, matches, 
+            if (startNextMatch > sp->length) {
+                break;
+            }
+            count = pcre_exec(rp->compiled, NULL, sp->value, sp->length, startNextMatch, 0, matches, 
                     sizeof(matches) / sizeof(int));
             if (count <= 0) {
                 break;
@@ -1065,10 +1106,12 @@ static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 /* Append prior string text */
                 catString(ejs, result, &sp->value[endLastMatch], matches[0] - endLastMatch);
             }
-
             /*
                 Process the replacement template
              */
+            if (replacementFunction) {
+                replacement = getReplacementText(ejs, replacementFunction, count, matches, sp);
+            }
             end = &replacement->value[replacement->length];
             lastReplace = replacement->value;
 
@@ -1108,6 +1151,7 @@ static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
                         } else {
                             ejsThrowArgError(ejs, "Bad replacement $ specification");
+                            result->obj.permanent = 0;
                             return 0;
                         }
                     }
@@ -1119,7 +1163,7 @@ static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 catString(ejs, result, lastReplace, (int) (cp - lastReplace));
             }
             endLastMatch = matches[1];
-
+            startNextMatch = (startNextMatch == endLastMatch) ? startNextMatch + 1 : endLastMatch;
         } while (rp->global);
 
         if (endLastMatch < sp->length) {
@@ -1129,8 +1173,10 @@ static EjsObj *replace(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     } else {
         ejsThrowTypeError(ejs, "Wrong argument type");
+        result->obj.permanent = 0;
         return 0;
     }
+    result->obj.permanent = 0;
     return (EjsObj*) result;
 }
 
@@ -1440,9 +1486,9 @@ static EjsObj *stringToJSON(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 /*
     Convert the string to lower case.
 
-    function toLower(locale: String = null): String
+    function toLowerCase(locale: String = null): String
  */
-static EjsObj *toLower(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsObj *toLowerCase(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     EjsString       *result;
     int             i;
@@ -1493,9 +1539,9 @@ static EjsObj *stringToString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     @return Returns a new upper case version of the string.
     @spec ejs-11
 
-    function toUpper(locale: String = null): String
+    function toUpperCase(locale: String = null): String
  */
-static EjsObj *toUpper(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
+static EjsObj *toUpperCase(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
 {
     EjsString       *result;
     int             i;
@@ -1985,10 +2031,10 @@ void ejsConfigureStringType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_String_substring, (EjsProc) substring);
     ejsBindMethod(ejs, prototype, ES_String_toCamel, (EjsProc) toCamel);
     ejsBindMethod(ejs, prototype, ES_String_toJSON, (EjsProc) stringToJSON);
-    ejsBindMethod(ejs, prototype, ES_String_toLower, (EjsProc) toLower);
+    ejsBindMethod(ejs, prototype, ES_String_toLowerCase, (EjsProc) toLowerCase);
     ejsBindMethod(ejs, prototype, ES_String_toPascal, (EjsProc) toPascal);
     ejsBindMethod(ejs, prototype, ES_String_toString, (EjsProc) stringToString);
-    ejsBindMethod(ejs, prototype, ES_String_toUpper, (EjsProc) toUpper);
+    ejsBindMethod(ejs, prototype, ES_String_toUpperCase, (EjsProc) toUpperCase);
     ejsBindMethod(ejs, prototype, ES_String_tokenize, (EjsProc) tokenize);
     ejsBindMethod(ejs, prototype, ES_String_trim, (EjsProc) trimString);
     ejsBindMethod(ejs, prototype, ES_String_trimStart, (EjsProc) trimStartString);

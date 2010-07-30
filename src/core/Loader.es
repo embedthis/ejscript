@@ -27,7 +27,7 @@ module ejs {
         private static const defaultExtensions = [".es", ".js"]
 
         //  UNUSED - not yet used
-        static function init(mainId: String? = null) {
+        public static function init(mainId: String? = null) {
             require.main = mainId
         }
 
@@ -42,6 +42,10 @@ module ejs {
             if (!exports || config.cache.reload) {
                 let path: Path = locate(id, config)
                 if (path.modified > timestamps[path]) {
+                    if (!global."ejs.cjs"::CommonSystem) {
+                        /* On-demand loading of CommonJS modules */
+                        global.load("ejs.cjs.mod")
+                    }
                     return load(id, path, config)
                 }
             }
@@ -85,7 +89,7 @@ module ejs {
                 if (codeReader) {
                     code = codeReader(id, path)
                 } else {
-                    throw "Must provide a codeReader if path is not specified"
+                    throw new StateError("Cannot load " + id + " Must provide a codeReader if path is not specified")
                 }
                 initializer = eval(code, cache)
             }

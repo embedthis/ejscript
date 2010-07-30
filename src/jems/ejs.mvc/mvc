@@ -296,7 +296,7 @@ print(e)
         if (args.length == 0) {
             args.append("everything")
         }
-        let kind: String = args[0].toLower()
+        let kind: String = args[0].toLowerCase()
         let rest: Array = args.slice(1)
 
         switch (kind) {
@@ -376,7 +376,7 @@ print(e)
                 }
             } else {
                 for each (name in rest) {
-                    buildController(dirs.controllers.join(name.toUpper()).joinExt(ext.es))
+                    buildController(dirs.controllers.join(name.toUpperCase()).joinExt(ext.es))
                 }
             }
             break
@@ -729,7 +729,7 @@ print(e)
         if (args.length == 0) {
             args.append("all")
         }
-        let kind: String = args[0].toLower()
+        let kind: String = args[0].toLowerCase()
         let rest: Array = args.slice(1)
 
         if (rest.length == 0) {
@@ -801,7 +801,7 @@ print(e)
         let command
 
         if (args && args.length > 0) {
-            command = args.slice(0).toString().toLower()
+            command = args.slice(0).toString().toLowerCase()
         } else {
             command = ""
         }
@@ -817,7 +817,7 @@ print(e)
             targetSeq = command
             let found = false
             for each (f in files) {
-                let base = f.basename.toString().toLower()
+                let base = f.basename.toString().toLowerCase()
                 if (Path(targetSeq).basename == base) {
                     targetSeq = base.replace(/^([0-9]*)_.*es/, "$1")
                     found = true
@@ -919,7 +919,7 @@ print(e)
         mvc generate app appName
      */
     function generateApp(args: Array): Void {
-        appName = args[0].toLower()
+        appName = args[0].toLowerCase()
         // let f: File = new Path(appName)
 
         //  TODO - convert all paths to use dirs.name 
@@ -1098,7 +1098,7 @@ print(e)
         }
         data = data.replace(/NEXT_ACTION/, "")
         data = data.replace(/\${MODEL}/g, name.toPascal())
-        data = data.replace(/\${LOWER_MODEL}/g, name.toLower())
+        data = data.replace(/\${LOWER_MODEL}/g, name.toLowerCase())
         makeFile(path, data, "Controller")
     }
 
@@ -1235,7 +1235,7 @@ print(e)
         let data: String = Templates.ScaffoldController.replace(/\${APP}/g, appName.toPascal())
         data = data.replace(/\${NAME}/g, name)
         data = data.replace(/\${MODEL}/g, model.toPascal())
-        data = data.replace(/\${LOWER_MODEL}/g, model.toLower())
+        data = data.replace(/\${LOWER_MODEL}/g, model.toLowerCase())
 
         for each (action in actions) {
             let actionData = Templates.Action.replace(/\${NAME}/g, action)
@@ -1267,14 +1267,14 @@ print(e)
             switch (view) {
             case "edit":
                 data = Templates.ScaffoldEditView.replace(/\${MODEL}/g, model)
-                data = data.replace(/\${LOWER_MODEL}/g, model.toLower())
+                data = data.replace(/\${LOWER_MODEL}/g, model.toLowerCase())
                 break
             case "list":
                 data = Templates.ScaffoldListView.replace(/\${MODEL}/g, model)
                 break
             default:
                 data = Templates.ScaffoldView.replace(/\${MODEL}/g, model)
-                data = data.replace(/\${LOWER_MODEL}/g, model.toLower())
+                data = data.replace(/\${LOWER_MODEL}/g, model.toLowerCase())
                 data = data.replace(/\${CONTROLLER}/g, controller)
                 data = data.replace(/\${VIEW}/g, view)
                 break
@@ -1295,7 +1295,7 @@ print(e)
                 App.exit()
             }
         }
-        appName = App.dir.basename.toString().toLower()
+        appName = App.dir.basename.toString().toLowerCase()
         if (!dirs.cache.exists || !isDir(dirs.cache) || !exists("ejsrc")) {
             upgradeApp()
         }

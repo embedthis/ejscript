@@ -563,10 +563,11 @@ int ecGetToken(EcInput *input)
 }
 
 
-int ecGetRegExpToken(EcInput *input)
+int ecGetRegExpToken(EcInput *input, cchar *prefix)
 {
     EcToken     *token, *tp;
     EcStream    *stream;
+    cchar       *cp;
     int         c;
 
     stream = input->stream;
@@ -574,7 +575,10 @@ int ecGetRegExpToken(EcInput *input)
     mprAssert(tp != 0);
 
     initializeToken(tp, stream);
-    addCharToToken(tp, '/');
+
+    for (cp = prefix; cp && *cp; cp++) {
+        addCharToToken(tp, *cp);
+    }
 
     while (1) {
         c = getNextChar(stream);

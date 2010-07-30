@@ -150,7 +150,7 @@ module ejs {
                     }
                 }
                 if (Config.OS == "WIN") {
-                    if (path.basename.toString().toLower().match(pattern)) {
+                    if (path.basename.toString().toLowerCase().match(pattern)) {
                         result.append(path)
                     }
                 } else {
@@ -161,7 +161,7 @@ module ejs {
                 return result
             }
             if (Config.OS == "WIN") {
-                glob = glob.toLower()
+                glob = glob.toLowerCase()
             }
             pattern = RegExp("^" + glob.replace(/\./g, "\\.").replace(/\*/g, ".*") + "$")
             return recursiveFind(this, pattern, recurse, 0)
@@ -564,8 +564,8 @@ module ejs {
             Convert the path to lower case
             @return a new Path mapped to lower case
          */
-        function toLower(): Path
-            new Path(name.toString().toLower())
+        function toLowerCase(): Path
+            new Path(name.toString().toLowerCase())
 
         /**
             Return the path as a string. The path is not translated.

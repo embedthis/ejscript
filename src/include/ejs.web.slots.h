@@ -21,25 +21,48 @@
 /*
     Local slots for global methods 
  */
+#define ES_ejs_web_Cascade_apps                                        0
+#define ES_ejs_web_Cascade_status                                      1
+#define ES___fun_8355_608128135___app                                  0
+#define ES___fun_8355_608128135___logger                               1
+#define ES_ejs_web_ContentType_app                                     0
+#define ES_ejs_web_ContentType_options                                 1
 #define ES_ejs_web_DirApp_request                                      0
 #define ES_ejs_web_DirBuilder_request                                  0
+#define ES_ejs_web_Head_app                                            0
+#define ES_ejs_web_MethodOverride_app                                  0
 #define ES_ejs_web_Middleware_app                                      0
 #define ES_ejs_web_Middleware_middleware                               1
 #define ES_ejs_web_Monitor_app                                         0
 #define ES_ejs_web_MvcApp_request                                      0
 #define ES_ejs_web_MvcBuilder_request                                  0
 #define ES_ejs_web_ScriptBuilder_request                               0
-#define ES_ejs_web_TemplateBuilder_request                             0
+#define ES_ejs_web_ShowExceptions_app                                  0
 #define ES_ejs_web_StaticApp_request                                   0
 #define ES_ejs_web_StaticBuilder_request                               0
 #define ES_ejs_web_TemplateFilter_app                                  0
 #define ES_ejs_web_TemplateApp_request                                 0
+#define ES_ejs_web_TemplateBuilder_request                             0
 #define ES_ejs_web_errorBody_title                                     0
 #define ES_ejs_web_errorBody_msg                                       1
 #define ES_ejs_web_parseCookies_cookieHeader                           0
 #define ES_ejs_web_escapeHtml_str                                      0
 #define ES_ejs_web_html_args                                           0
 #define ES_ejs_web_unescapeHtml_s                                      0
+#define ES_ejs_web_CommonLoggerContext_NUM_CLASS_PROP                  0
+
+/*
+   Prototype (instance) slots for "CommonLoggerContext" type 
+ */
+#define ES_ejs_web_CommonLoggerContext_app                             0
+#define ES_ejs_web_CommonLoggerContext_logger                          1
+#define ES_ejs_web_CommonLoggerContext_request                         2
+#define ES_ejs_web_CommonLoggerContext_start                           3
+#define ES_ejs_web_CommonLoggerContext_run                             4
+#define ES_ejs_web_CommonLoggerContext_log                             5
+#define ES_ejs_web_CommonLoggerContext_forEach                         6
+#define ES_ejs_web_CommonLoggerContext_NUM_INSTANCE_PROP               7
+#define ES_ejs_web_CommonLoggerContext_NUM_INHERITED_PROP              0
 
 
 /*
@@ -482,6 +505,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   617408
+#define _ES_CHECKSUM_ejs_web   648779
 
 #endif

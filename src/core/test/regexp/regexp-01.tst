@@ -5,21 +5,20 @@
 re = new RegExp("def")
 assert(re is RegExp)
 
-/*
- *  "test" method
- */
+
+//  "test" method
+
 assert(re.test("abcdef"))
 assert(!re.test("xyz"))
 
-/*
- *  Basic exec
- */
+//  Basic exec
+
 assert(re.exec("abcdef") == "def")
 assert(re.exec("xyz") == null)
 
-/*
- *  With global flag
- */
+
+//  With global flag
+
 re = /def/g
 assert(re.exec("abcdef") == "def")
 assert(re.exec("xyz") == null)
@@ -28,16 +27,14 @@ re = /(a)(b)(c)/g
 assert((re.exec("abc def abc")).length == 4)
 assert(re.exec("abc def abc") == "abc,a,b,c")
 
-/*
- *  Case insensitive matching
- */
+//  Case insensitive matching
+
 assert(/def/.test("def"))
 assert(!/def/.test("DEF"))
 assert(/def/i.test("DEF"))
 
-/*
- *  toString
- */
+//  toString
+
 assert(/def/ == "/def/")
 assert(/def/g == "/def/g")
 

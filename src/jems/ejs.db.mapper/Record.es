@@ -194,7 +194,7 @@ module ejs.db.mapper {
                 switch (col.ejsType) {
                 case Boolean:
                     if (value is String) {
-                        this[field] = (value.trim().toLower() == "true")
+                        this[field] = (value.trim().toLowerCase() == "true")
                     } else if (value is Number) {
                         this[field] = (value == 1)
                     } else {
@@ -483,7 +483,7 @@ module ejs.db.mapper {
             _columns = {}
             for each (let row in grid) {
                 let name = row["name"]
-                let sqlType = row["type"].toLower()
+                let sqlType = row["type"].toLowerCase()
                 let ejsType = mapSqlTypeToEjs(sqlType)
                 _columns[name] = new Column(name, false, ejsType, sqlType)
             }
@@ -627,7 +627,7 @@ module ejs.db.mapper {
                     }
                     for each (let owner in _belongsTo) {
                         let tname: String = Object.getName(owner)
-                        tname = tname[0].toLower() + tname.slice(1) + "Id"
+                        tname = tname[0].toLowerCase() + tname.slice(1) + "Id"
                         conditions += _tableName + "." + tname + " = " + owner._tableName + "." + owner._keyName + " AND "
                     }
                     if (conditions == " ON ") {
@@ -767,7 +767,7 @@ module ejs.db.mapper {
             switch (col.ejsType) {
             case Boolean:
                 if (value is String) {
-                    value = (value.toLower() == "true")
+                    value = (value.toLowerCase() == "true")
                 } else if (value is Number) {
                     value = (value == 1)
                 } else {

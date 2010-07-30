@@ -190,8 +190,8 @@ module ejs {
 
         //  TODO - should this allow a string?
         /**
-            Match the a regular expression pattern against a string.
-            @param pattern The regular expression to search for
+            Match a pattern using a regular expression
+            @param pattern The regular expression pattern to search for
             @return Returns an array of matching substrings.
          */
         native function match(pattern: RegExp): Array
@@ -245,6 +245,7 @@ module ejs {
          */
         native function remove(start: Number, end: Number = -1): String
 
+//  MOB firefox replace(pattern, replacement, flags)
         /**
             Search and replace. Search for the given pattern which can be either a string or a regular expression 
             and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.
@@ -253,10 +254,15 @@ module ejs {
                 replacement string can contain special replacement patterns: "$$" inserts a "$", "$&" inserts the
                 matched substring, "$`" inserts the portion that preceeds the matched substring, "$'" inserts the
                 portion that follows the matched substring, and "$N" inserts the Nth parenthesized substring.
+                The replacement parameter can also be a function which will be invoked and the function return value will
+                be used as the resplacement text. The function will be invoked multiple times for each match to be 
+                replaced if the regular expression is global. The function will be invoked with the signature:
+
+                function (matched, submatch_1, submatch_2, ..., matched_offset, original_string)
             @return Returns a new string.
             @spec ejs
          */
-        native function replace(pattern: Object, replacement: String): String
+        native function replace(pattern: Object, replacement: Object): String
 
         /**
             Reverse a string. 
@@ -345,7 +351,7 @@ module ejs {
             @return Returns a new lower case version of the string.
             @spec ejs
          */
-        native function toLower(): String
+        native function toLowerCase(): String
 
 
         /**
@@ -373,13 +379,12 @@ module ejs {
          */ 
         override native function toString(): String
 
-//  MOB -- should be toUpperCase, toLowerCase
         /**
             Convert the string to upper case.
             @return Returns a new upper case version of the string.
             @spec ejs
          */
-        native function toUpper(): String
+        native function toUpperCase(): String
 
         /**
             Convert the string to localized upper case string
@@ -388,7 +393,7 @@ module ejs {
         # FUTURE
         function toLocaleUpperCase(): String
             //  TODO should be getting from App.Locale not from date
-            toUpper(Date.LOCAL)
+            toUpperCase(Date.LOCAL)
 
 
         //  TODO - great if this could take a regexp
@@ -484,9 +489,20 @@ module ejs {
                 "Arg1 %d, arg2 %d" % [1, 2]
             @spec ejs
          */
-        function % (arg: Object): String {
-            return format(arg)
-        }
+        function % (arg: Object): String
+            format(arg)
+
+        /** @hide 
+            @deprecated 
+         */
+        function toLower(): String
+            toLowerCase()
+
+        /** @hide 
+            @deprecated 
+         */
+        function toUpper(): String
+            toUpperCase()
     }
 }
 

@@ -352,6 +352,9 @@ int ejsSetPropertyName(Ejs *ejs, EjsObj *obj, int slot, EjsName *qname)
  */
 EjsString *ejsToString(Ejs *ejs, EjsObj *obj)
 {
+    if (obj == 0 || ejsIsString(obj)) {
+        return (EjsString*) obj;
+    }
     return (EjsString*) ejsCast(ejs, obj, ejs->stringType);
 }
 

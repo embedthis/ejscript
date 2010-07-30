@@ -77,7 +77,10 @@ module ejs {
             },
             directories: {
                 cache: "cache",
-            }
+            },
+            init: {
+                /* load: [] */
+            },
             test: {
             },
         }
@@ -385,9 +388,9 @@ module ejs {
             }
         }
 
-        /*  Run load scripts */
-        if (config.scripts) {
-            for each (m in config.scripts) {
+        /*  Pre-load modules and scripts */
+        if (config.init.load) {
+            for each (m in config.init.load) {
                 load(m)
             }
         }

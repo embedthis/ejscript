@@ -153,7 +153,7 @@ module ejs.web {
          */
         function alink(text: String, options: Object = {}): Void {
             options = setOptions("alink", options)
-            options.action ||= text.split(" ")[0].toLower()
+            options.action ||= text.split(" ")[0].toLowerCase()
             options.method ||= "POST"
             let connector = getConnector("alink", options)
             connector.alink(text, options)
@@ -170,7 +170,7 @@ module ejs.web {
          */
         function button(value: String, buttonName: String? = null, options: Object = {}): Void {
             options = setOptions("button", options)
-            buttonName ||= value.toLower()
+            buttonName ||= value.toLowerCase()
             let connector = getConnector("button", options)
             connector.button(value, buttonName, options)
         }
@@ -355,7 +355,7 @@ module ejs.web {
          */
         function link(text: String, options: Object = {}): Void {
             options = setOptions("link", options)
-            options.action ||= text.split(" ")[0].toLower()
+            options.action ||= text.split(" ")[0].toLowerCase()
             let connector = getConnector("link", options)
             connector.link(text, options)
         }
@@ -700,7 +700,7 @@ module ejs.web {
             }
             let errors = record.getErrors()
             if (errors) {
-                write('<div class="-ejs-formError"><h2>The ' + Object.getName(record).toLower() + ' has ' + 
+                write('<div class="-ejs-formError"><h2>The ' + Object.getName(record).toLowerCase() + ' has ' + 
                     errors.length + (errors.length > 1 ? ' errors' : ' error') + ' that ' +
                     ((errors.length > 1) ? 'prevent' : 'prevents') + '  it being saved.</h2>\r\n')
                 write('    <p>There were problems with the following fields:</p>\r\n')
@@ -914,11 +914,11 @@ module ejs.web {
         //  TODO - this actually modifies the grid. Need to doc this.
         private function filter(data: Array): Array {
             data = data.clone()
-            pattern = request.params.filter.toLower()
+            pattern = request.params.filter.toLowerCase()
             for (let i = 0; i < data.length; i++) {
                 let found: Boolean = false
                 for each (f in data[i]) {
-                    if (f.toString().toLower().indexOf(pattern) >= 0) {
+                    if (f.toString().toLowerCase().indexOf(pattern) >= 0) {
                         found = true
                     }
                 }

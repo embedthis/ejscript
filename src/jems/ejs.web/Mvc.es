@@ -177,7 +177,13 @@ module ejs.web {
         return app(request)
     }
 
-    /** @hide */
+    /** 
+        MVC builder for use in routing tables. The MVC builder function can be included directly in Route table entries.
+        @param request Request object. 
+        @return A web script function that services a web request.
+        @example:
+          { name: "index", builder: MvcBuilder, match: "/" }
+     */
     function MvcBuilder(request: Request): Function {
         //  MOB OPT - Currently Mvc has no state so really don't need an Mvc instance
         let mvc: Mvc = Mvc.apps[request.dir] || (Mvc.apps[request.dir] = new Mvc(request))

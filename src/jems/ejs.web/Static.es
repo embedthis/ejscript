@@ -12,13 +12,11 @@ module ejs.web {
         @spec ejs
         @stability prototype
      */
-// breakpoint()
     function StaticApp(request: Request): Object {
         let filename = request.filename
         let status = Http.Ok, headers, body
         if (!filename.exists && request.method != "PUT") {
             status = Http.NotFound, 
-// breakpoint()
             body = errorBody("Not Found", "Cannot find " + escapeHtml(request.pathInfo))
         } else {
             headers = {
@@ -96,7 +94,13 @@ module ejs.web {
         }
     }
 
-    /** @hide */
+    /** 
+        Static builder for use in routing tables to serve static file content.
+        @param request Request object. 
+        @return A web script function that services a web request for static content
+        @example:
+          { name: "index", builder: StaticBuilder, }
+     */
     function StaticBuilder(request: Request): Function {
         //  MOB -- BUG should not need "ejs.web"
         return "ejs.web"::StaticApp

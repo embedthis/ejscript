@@ -4,7 +4,7 @@
     NOTE: This is typically done by good web servers anyway
   
     Usage:
-        require ejs.web.jsgi
+        require ejs.web
         exports.app = Head(app)
  */
 

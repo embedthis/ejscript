@@ -169,8 +169,8 @@ assert(a.sort() == "0,1,2,3,4,5,6")
 assert(a.sort(null, -1) == "6,5,4,3,2,1,0")
 
 function caseless(a, i, j) {
-    let first = a[i].toLower()
-    let second = a[j].toLower()
+    let first = a[i].toLowerCase()
+    let second = a[j].toLowerCase()
     if (first < second) {
         return -1
     } else if (first > second) {

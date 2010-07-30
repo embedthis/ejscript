@@ -1483,7 +1483,7 @@
 #define ES_Path_size                                                   53
 #define ES_Path_startsWith                                             54
 #define ES_Path_toJSON                                                 55
-#define ES_Path_toLower                                                56
+#define ES_Path_toLowerCase                                            56
 #define ES_Path_toString                                               57
 #define ES_Path_trimEnd                                                58
 #define ES_Path_trimExt                                                59
@@ -1651,15 +1651,17 @@
 #define ES_String_times                                                33
 #define ES_String_tokenize                                             34
 #define ES_String_toJSON                                               35
-#define ES_String_toLower                                              36
+#define ES_String_toLowerCase                                          36
 #define ES_String_toString                                             37
-#define ES_String_toUpper                                              38
+#define ES_String_toUpperCase                                          38
 #define ES_String_trim                                                 39
 #define ES_String_trimStart                                            40
 #define ES_String_trimEnd                                              41
 #define ES_String_MINUS                                                42
 #define ES_String_MOD                                                  43
-#define ES_String_NUM_INSTANCE_PROP                                    44
+#define ES_String_toLower                                              44
+#define ES_String_toUpper                                              45
+#define ES_String_NUM_INSTANCE_PROP                                    46
 #define ES_String_NUM_INHERITED_PROP                                   0
 
 /*
@@ -1970,6 +1972,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1330312
+#define _ES_CHECKSUM_ejs   1332953
 
 #endif

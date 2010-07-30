@@ -88,7 +88,7 @@ module ejs.db.jsdb {
 
         /** @duplicate Database */
         function addColumn(table: String, column: String, datatype: String, options: Object = null): Void {
-            datatype = DataTypeToSqlType[datatype.toLower()]
+            datatype = DataTypeToSqlType[datatype.toLowerCase()]
             if (datatype == undefined) {
                 throw "Bad Ejscript column type: " + datatype
             }
@@ -101,7 +101,7 @@ module ejs.db.jsdb {
 
         /** @duplicate Database */
         function changeColumn(table: String, column: String, datatype: String, options: Object = null): Void {
-            datatype = datatype.toLower()
+            datatype = datatype.toLowerCase()
             if (DataTypeToSqlType[datatype] == undefined) {
                 throw "Bad column type: " + datatype
             }

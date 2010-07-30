@@ -2306,7 +2306,6 @@ struct EcNode *parseXMLElement(EcCompiler *cp, EcNode *np)
     if (np == 0) {
         return LEAVE(cp, np);
     }
-
     if (getToken(cp) == T_SLASH_GT) {
         addTokenToBuf(cp, np);
         return LEAVE(cp, np);
@@ -2413,7 +2412,6 @@ struct EcNode *parseXMLAttributes(EcCompiler *cp, EcNode *np)
         if (peekToken(cp) == T_RBRACE) {
             return LEAVE(cp, expected(cp, "}"));
         }
-
     } else {
         while (tid != T_GT && tid != T_SLASH_GT) {
             if ((np = parseXMLAttribute(cp, np)) == 0) {
@@ -2681,6 +2679,7 @@ static EcNode *parsePrimaryExpression(EcCompiler *cp)
         break;
 
     case T_DIV:
+    case T_SLASH_GT:
         np = parseRegularExpression(cp);
         break;
 
@@ -2698,6 +2697,7 @@ static EcNode *parseRegularExpression(EcCompiler *cp)
 {
     EcNode      *np;
     EjsObj      *vp;
+    char        *prefix;
     int         id;
 
     ENTER(cp);
@@ -2708,8 +2708,9 @@ static EcNode *parseRegularExpression(EcCompiler *cp)
     while (cp->input->putBack) {
         getToken(cp);
     }
-
-    id = ecGetRegExpToken(cp->input);
+    prefix = mprStrdup(cp, (char*) cp->token->text);
+    id = ecGetRegExpToken(cp->input, prefix);
+    mprFree(prefix);
     updateTokenInfo(cp);
     cp->peekToken = 0;
 #if BLD_DEBUG
@@ -6586,7 +6587,6 @@ static EcNode *parseDirectivesPrefix(EcCompiler *cp)
     ENTER(cp);
 
     np = createNode(cp, N_PRAGMAS);
-
     do {
         switch (peekToken(cp)) {
         case T_ERR:
@@ -6603,7 +6603,9 @@ static EcNode *parseDirectivesPrefix(EcCompiler *cp)
         default:
             return LEAVE(cp, np);
         }
-
+        if (!(peekToken(cp) == T_REQUIRE && (peekAheadToken(cp, 2) == T_ID || peekAheadToken(cp, 2) == T_STRING))) {
+            break;
+        }
     } while (np);
     return LEAVE(cp, np);
 }
@@ -8972,6 +8974,7 @@ static EcNode *parsePragma(EcCompiler *cp, EcNode *np)
 
     Input
         use ...
+        require
         import
 
     AST
@@ -8983,6 +8986,7 @@ static EcNode *parsePragmas(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
 
+#if OLD
     while (peekToken(cp) == T_USE || cp->peekToken->tokenId == T_REQUIRE) {
         np = parsePragma(cp, np);
         if (np == 0) {
@@ -8990,6 +8994,9 @@ static EcNode *parsePragmas(EcCompiler *cp, EcNode *np)
         }
     }
     return LEAVE(cp, np);
+#else
+    return LEAVE(cp, parsePragma(cp, np));
+#endif
 }
 
 
@@ -9804,6 +9811,7 @@ void ecSetError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNumber
     }
     cp->errorMsg = mprReallocStrcat(cp, -1, cp->errorMsg, errorMsg, NULL);
     mprBreakpoint();
+
 }
 
 

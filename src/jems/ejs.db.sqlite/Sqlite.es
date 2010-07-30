@@ -92,7 +92,7 @@ module ejs.db.sqlite {
 
         /** @duplicate ejs.db::Database.addColumn */
         function addColumn(table: String, column: String, datatype: String, options = null): Void {
-            datatype = DataTypeToSqlType[datatype.toLower()]
+            datatype = DataTypeToSqlType[datatype.toLowerCase()]
             if (datatype == undefined) {
                 throw "Bad Ejscript column type: " + datatype
             }
@@ -109,7 +109,7 @@ module ejs.db.sqlite {
             SQLite cannot change or rename columns.
          */
         function changeColumn(table: String, column: String, datatype: String, options = null): Void {
-            datatype = datatype.toLower()
+            datatype = datatype.toLowerCase()
             if (DataTypeToSqlType[datatype] == undefined) {
                 throw "Bad column type: " + datatype
             }
