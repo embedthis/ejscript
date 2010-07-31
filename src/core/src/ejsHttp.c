@@ -1082,6 +1082,36 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
     }
 }
 
+#if FUTURE && KEEP
+/*  
+    Prepare form data using json encoding. The objects are json encoded then URI encoded to be safe. 
+ */
+static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
+{
+    EjsName     qname;
+    EjsObj      *vp;
+    EjsString   *value;
+    cchar       *key, *sep;
+    char        *encodedKey, *encodedValue, *newPrefix, *newKey;
+    int         i, count;
+
+    jdata = ejsToJSON(ejs, data, NULL);
+            if (prefix) {
+                newKey = mprStrcat(hp, -1, prefix, ".", key, NULL);
+                encodedKey = mprUriEncode(hp, newKey, MPR_ENCODE_URI_COMPONENT); 
+                mprFree(newKey);
+            } else {
+                encodedKey = mprUriEncode(hp, key, MPR_ENCODE_URI_COMPONENT);
+            }
+            encodedValue = mprUriEncode(hp, value->value, MPR_ENCODE_URI_COMPONENT);
+            mprPutFmtToBuf(hp->requestContent, "%s%s=%s", sep, encodedKey, encodedValue);
+            mprFree(encodedKey);
+            mprFree(encodedValue);
+        }
+    }
+}
+#endif
+
 
 /*  
     Mark the object properties for the garbage collector

@@ -2481,29 +2481,31 @@ static EcNode *parseThisExpression(EcCompiler *cp)
     if (getToken(cp) != T_THIS) {
         return LEAVE(cp, unexpected(cp));
     }
-
     np = createNode(cp, N_THIS);
+    peekToken(cp);
+    
+    if (cp->token->lineNumber == cp->peekToken->lineNumber) {
+        switch (peekToken(cp)) {
+        case T_TYPE:
+            getToken(cp);
+            np->thisNode.thisKind = N_THIS_TYPE;
+            break;
 
-    switch (peekToken(cp)) {
-    case T_TYPE:
-        getToken(cp);
-        np->thisNode.thisKind = N_THIS_TYPE;
-        break;
+        case T_FUNCTION:
+            getToken(cp);
+            np->thisNode.thisKind = N_THIS_FUNCTION;
+            break;
 
-    case T_FUNCTION:
-        getToken(cp);
-        np->thisNode.thisKind = N_THIS_FUNCTION;
-        break;
+        case T_CALLEE:
+            getToken(cp);
+            np->thisNode.thisKind = N_THIS_CALLEE;
+            break;
 
-    case T_CALLEE:
-        getToken(cp);
-        np->thisNode.thisKind = N_THIS_CALLEE;
-        break;
-
-    case T_GENERATOR:
-        getToken(cp);
-        np->thisNode.thisKind = N_THIS_GENERATOR;
-        break;
+        case T_GENERATOR:
+            getToken(cp);
+            np->thisNode.thisKind = N_THIS_GENERATOR;
+            break;
+        }
     }
     return LEAVE(cp, np);
 }

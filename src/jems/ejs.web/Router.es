@@ -31,6 +31,7 @@ module ejs.web {
           { name: "es",      builder: ScriptBuilder,    match: /\.es$/ },
           { name: "ejs",     builder: TemplateBuilder,  match: /\.ejs$/, module: "ejs.template" },
           { name: "dir",     builder: DirBuilder,       match: isDir },
+          { name: "markdown",builder: TemplateBuilder,  match: /\.md$/, module: "ejs.markdown" },
           { name: "default", builder: StaticBuilder },
         ]
 
@@ -166,6 +167,13 @@ module ejs.web {
             for each (r in routes) {
                 log.debug(6, "Test route \"" + r.name + "\"")
 
+                if (request.method == "POST") {
+                    let method = request.params["__method__"] || request.header("X-HTTP-METHOD-OVERRIDE")
+                    if (method) {
+                        request.originalMethod ||= request.method
+                        request.method = method
+                    }
+                }
                 if (r.method && request.method != r.method) {
                     continue
                 }

@@ -2477,7 +2477,7 @@ static void astRequire(EcCompiler *cp, EcNode *np)
             if (mp == 0) {
                 flags = cp->fileState->strict ? EJS_LOADER_STRICT : 0;
                 if (ejsLoadModule(ejs, np->qname.name, np->useModule.minVersion, np->useModule.maxVersion, flags) < 0) {
-                    astError(cp, np, "Error loading module \"%s\"\n%s", np->qname.name, ejsGetErrorMsg(ejs, 0));
+                    astError(cp, np, "Error loading module \"%s\"\n%s", np->qname.name, ejsGetErrorMsg(ejs, 1));
                     cp->fatalError = 1;
                     LEAVE(cp);
                     return;

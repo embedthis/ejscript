@@ -1,9 +1,22 @@
 /*
-    ContentType.es -- Add a ContenType header 
+    ContentType.es -- Define Content-Type headers
  */
 
 module ejs.web {
 
+    /**
+        ContentType wrapper middleware. This defines a Content-Type Http header for the content based on an inferred
+        mime type from the Request.pathInfo extension.
+        @param app Application generating the response. 
+        @param options Options providing an optional mimeTypes lookup table and default mime type value.
+        @option mimeTypes Hash table of extension keys with mime type values. If not provided, the Uri.mimeType lookup
+            table is used.
+        @option defaultType Default mime type to use if no matching type is found
+        @return A web application function that services a web request and when invoked with the request object will 
+        yield a response object.
+        @example:
+            export.app = ContentType(app, { mimeTypes: { "md": "text/x-markdown" }})
+     */
     function ContentType (app, options) {
         options ||= {}
         return function(request: Request) {
@@ -12,7 +25,7 @@ module ejs.web {
             if (options.mimeTypes) {
                 response.headers["content-type"] ||= options.mimeTypes[request.extension]
             } else {
-                response.headers["content-type"] ||= Uri.mimeType(request.extension)
+                response.headers["content-type"] ||= pathInfo.mimeType
             }
             response.headers["content-type"] ||= options.defaultType
             return response

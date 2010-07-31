@@ -440,12 +440,6 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         req->absHome = mprStrdup(req, getString(ejs, value));
         break;
 
-#if UNUSED
-    case ES_ejs_web_Request_chunkSize:
-        httpSetChunkSize(conn, getNum(ejs, value));
-        break;
-#endif
-
     case ES_ejs_web_Request_dir:
         req->dir = (EjsPath*) value;
         req->filename = 0;
@@ -457,6 +451,10 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 
     case ES_ejs_web_Request_home:
         req->home = mprStrdup(req, getString(ejs, value));
+        break;
+
+    case ES_ejs_web_Request_method:
+        rec->method = mprStrdup(req, getString(ejs, value));
         break;
 
     case ES_ejs_web_Request_pathInfo:
@@ -492,7 +490,6 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     case ES_ejs_web_Request_host:
     case ES_ejs_web_Request_isSecure:
     case ES_ejs_web_Request_localAddress:
-    case ES_ejs_web_Request_method:
     case ES_ejs_web_Request_params:
     case ES_ejs_web_Request_query:
     case ES_ejs_web_Request_protocol:

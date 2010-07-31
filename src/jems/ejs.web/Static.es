@@ -66,7 +66,6 @@ module ejs.web {
             body: body
         }
 
-//  MOB -- complete
         function put(request: Request) {
             //  MOB -- how to handle ranges?
             let path = request.dir.join(request.pathInfo.trimStart('/'))
@@ -84,11 +83,9 @@ module ejs.web {
                 }
             })
             request.input.observe(["complete", "error"], function (event, request) {
-                print(event)
                 file.close()
                 if (event == "error") {
                     file.remove()
-                    //  MOB -- what should be the status now?
                 }
             })
         }

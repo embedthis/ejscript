@@ -54,14 +54,15 @@ module ejs {
         native function get components(): Object 
 
         /** 
-            Decode a URI encoded strin using www-url encoding
+            Decode a URI encoded string using www-url encoding. See encode for details about the character mappings.
             @param str string to decode
             @returns a decoded string
          */
         native static function decode(str: String): String
 
         /** 
-            Decode a URI encoded component using www-url encoding
+            Decode a URI encoded component using www-url encoding. 
+            See encodeComponent for details about the character mappings.
             @param str string to decode
             @returns a decoded string
          */
@@ -390,6 +391,22 @@ module ejs {
         @returns an encoded string
      */
     native function encodeURIComponent(str: String): String
+
+    /** 
+        Encode objects using using www-url encoding. Each object is encoded as a "key=value" pair. Each pair is separated
+        by a "&" character. 
+        @param str String to encode
+        @returns an encoded string
+     */
+    function encodeObjects(...items) {
+        let result = ""
+        for each (item in items) {
+            for (let [key, value] in item) {
+                if (result) result += "&"
+                result += encodeUriComponent(key) + "=" + encodeUriCompnent(value)
+            }
+        }
+    }
 }
 
 

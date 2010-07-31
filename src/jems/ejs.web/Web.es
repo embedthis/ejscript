@@ -82,7 +82,6 @@ module ejs.web {
                     process(app, request)
                 }
             } catch (e) {
-print("CATCH in WEB " + e)
                 request.error(Http.ServerError, e)
             }
         }
@@ -101,7 +100,73 @@ print("CATCH in WEB " + e)
             }
         }
 
-//  WARNING: this may block in write?? - is request in async mode?
+
+        private static function processBody(request: Request, body: Object): Void {
+            if (body is Path) {
+                if (request.isSecure) {
+                    body = File(body, "r")
+                } else {
+                    request.sendfile(body)
+                    return
+                }
+            }
+            if (body is Array) {
+                for each (let item in body) {
+//  MOB -- what about async? what if can't accept all the data?
+                    request.write(item)
+                }
+                request.finalize()
+
+            } else if (body is Stream) {
+                if (body.async) {
+                    request.async = true
+                    //  Should we wait on request being writable or on the body stream being readable?
+//  MOB Must detect eof and do a finalize()
+                    request.observe("readable", function(event, request) {
+                        let data = new ByteArray
+                        if (request.read(data)) {
+//  MOB -- what about async? what if can't accept all the data?
+                            request.write(body)
+                        } else {
+                            request.finalize()
+                        }
+                    })
+                    //  MOB -- or this? but what about error events
+                    request.observe("complete", function(event, body) {
+                        request.finalize()
+                    })
+                } else {
+                    ba = new ByteArray
+                    while (body.read(ba)) {
+                        request.write(ba)
+                    }
+                    request.finalize()
+                }
+            } else if (body && body.forEach) {
+                body.forEach(function(block) {
+                    request.write(block)
+                })
+                request.finalize()
+
+            } else if (body is Function) {
+                /* Functions don't auto finalize. The user is responsible for calling finalize() */
+                body.call(request, request)
+
+            } else if (body) {
+                request.write(body)
+                request.finalize()
+
+            } else {
+                let file = request.responseHeaders["X-Sendfile"]
+                if (file && !request.isSecure) {
+                    request.sendfile(file)
+                } else {
+                    request.finalize()
+                }
+            }
+        }
+
+//  MOB WARNING: this may block in write?? - is request in async mode?
         /** 
             Process a web request
             @param request Request object
@@ -110,87 +175,24 @@ print("CATCH in WEB " + e)
         static function process(app: Function, request: Request): Void {
             request.config = config
             try {
-                if (request.route.middleware) {
+                if (request.route && request.route.middleware) {
                     app = Middleware(app, request.route.middleware)
                 }
-                let result
+                let response
                 if (app.bound != global) {
-                    result = app(request)
+                    response = app(request)
                 } else {
-                    result = app.call(request, request)
+                    response = app.call(request, request)
                 }
-                if (result is Function) {
+                if (response is Function) {
                     /* Functions don't auto finalize. The user is responsible for calling finalize() */
-                    result.call(request, request)
+                    response.call(request, request)
 
-                } else if (result) {
-                    let body = result.body
-                    request.status = result.status || 200
-                    let headers = result.headers || { "Content-Type": "text/html" }
+                } else if (response) {
+                    request.status = response.status || 200
+                    let headers = response.headers || { "Content-Type": "text/html" }
                     request.setHeaders(headers)
-                    if (body is Path) {
-                        if (request.isSecure) {
-                            body = File(body, "r")
-                        } else {
-                            request.sendfile(body)
-                            return
-                        }
-                    }
-
-                    if (body is Array) {
-                        for each (let item in body) {
-//  MOB -- what about async? what if can't accept all the data?
-                            request.write(item)
-                        }
-                        request.finalize()
-
-                    } else if (body is Stream) {
-                        if (body.async) {
-                            request.async = true
-                            //  Should we wait on request being writable or on the body stream being readable?
-//  MOB Must detect eof and do a finalize()
-                            request.observe("readable", function(event, request) {
-                                let data = new ByteArray
-                                if (request.read(data)) {
-//  MOB -- what about async? what if can't accept all the data?
-                                    request.write(body)
-                                } else {
-                                    request.finalize()
-                                }
-                            })
-                            //  MOB -- or this? but what about error events
-                            request.observe("complete", function(event, body) {
-                                request.finalize()
-                            })
-                        } else {
-                            ba = new ByteArray
-                            while (body.read(ba)) {
-                                request.write(ba)
-                            }
-                            request.finalize()
-                        }
-                    } else if (body && body.forEach) {
-                        body.forEach(function(block) {
-                            request.write(block)
-                        })
-                        request.finalize()
-
-                    } else if (body is Function) {
-                        /* Functions don't auto finalize. The user is responsible for calling finalize() */
-                        body.call(request, request)
-
-                    } else if (body) {
-                        request.write(body)
-                        request.finalize()
-
-                    } else {
-                        let file = request.responseHeaders["X-Sendfile"]
-                        if (file && !request.isSecure) {
-                            request.sendfile(file)
-                        } else {
-                            request.finalize()
-                        }
-                    }
+                    processBody(request, response.body)
                 } else {
                     let file = request.responseHeaders["X-Sendfile"]
                     if (file && !request.isSecure) {
@@ -198,7 +200,6 @@ print("CATCH in WEB " + e)
                     }
                 }
             } catch (e) {
-                // print("URI " + request.uri)
                 request.error(Http.ServerError, e)
             }
         }

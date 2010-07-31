@@ -145,17 +145,17 @@ module ejs.web {
                 flashBefore()
             }
             runFilters(_beforeFilters)
-            let result
+            let response
             if (!redirected) {
                 if (!this[actionName]) {
                     if (!viewExists(actionName)) {
                         actionName = "missing"
-                        result = this[actionName]()
+                        response = this[actionName]()
                     }
                 } else {
-                    result = this[actionName]()
+                    response = this[actionName]()
                 }
-                if (!result && !rendered && !redirected && request.autoFinalize) {
+                if (!response && !rendered && !redirected && request.autoFinalize) {
                     /* Run a default view */
                     renderView()
                 }
@@ -164,10 +164,10 @@ module ejs.web {
             if (flash) {
                 flashAfter()
             }
-            if (!result) {
+            if (!response) {
                 request.finalize()
             }
-            return result
+            return response
         }
 
         /* 

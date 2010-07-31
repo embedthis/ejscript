@@ -5,9 +5,9 @@
 module ejs.web {
 
     /** 
-        Upload file class. Instances of UploadFile are created for each uploaded file
-        when multi-part mime requests are received. They are accessed via the request.files property.
-        Users should not create instances manually.
+        Upload file class. Instances of UploadFile are created for each uploaded file when POST requests using
+        multi-part mime body content are received. The UploadFile instances are stored in the request.files property.
+        Users should not create instances of UploadFile manually.
         @spec ejs
         @stability evolving
      */

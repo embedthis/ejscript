@@ -817,6 +817,7 @@ static int mapMode(cchar *mode)
     }
     if (strchr(mode, 'a')) {
         omode |= O_WRONLY | O_APPEND;
+        omode &= ~O_TRUNC;
     }
     if (strchr(mode, '+')) {
         omode &= ~O_TRUNC;

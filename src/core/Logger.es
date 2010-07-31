@@ -104,7 +104,7 @@ module ejs {
                 } else if (path == "stderr") {
                     _outStream = App.errorStream
                 } else {
-                    _outStream = File(path).open("w")
+                    _outStream = File(path).open("wa+")
                 }
             }
         }

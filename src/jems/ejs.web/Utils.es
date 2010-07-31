@@ -7,7 +7,7 @@ module ejs.web {
     /** @hide */
     function errorBody(title: String, msg: String): String {
         return '<!DOCTYPE html>\r\n<html>\r\n<head><title>' + title + '</title></head>\r\n' + 
-           '<body>\r\n<h1>' + msg + '</h1>\r\n' +
+           '<body>\r\n<h1>' + title + '</h1>\r\n' +
            '    <p>' + msg + '</p>\r\n' +
            '</body>\r\n</html>\r\n'
     }
@@ -79,7 +79,7 @@ UNUSED && KEEP
     native function escapeHtml(str: String): String
 
 /*
-    UNUSED
+    MOB UNUSED
     function escapeHtml(s: String): String
         s.replace(/&/g,'&amp;').replace(/\>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;')
 */

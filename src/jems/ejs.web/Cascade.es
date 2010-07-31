@@ -8,17 +8,18 @@
 module ejs.web {
     /** 
         Cascade middleware script for web apps.
-        @param apps Array of applications to try in turn. The first app to return a valid status will conclude the request.
-        @param status Failure status. If an app returns this status, the next app will be tried.
-        @return A response function
+        @param apps Array of applications to try in turn. The first app to return a valid status (!= Http.NotFound) 
+        will conclude the request.
+        @return A web application function that services a web request and when invoked with the request object will 
+            yield a response object.
         @example:
-            export.app = Cascade(app1, app2, app3, 404)
+            export.app = Cascade(app1, app2, app3)
      */
-    function Cascade(apps: Array, status: Number = 404): Object {
+    function Cascade(...apps): Object {
         return function(request) {
             for each (app in apps) {
                 let response = app(request)
-                if (response.status != status) {
+                if (response.status != Http.NotFound) {
                     return response
                 }
             }

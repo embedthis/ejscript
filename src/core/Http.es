@@ -271,7 +271,6 @@ module ejs {
          */
         native function dontFinalize(): Void
 
-
         /** 
             Encoding scheme for serializing strings. The default encoding is UTF-8. Not yet implemented.
             @hide
@@ -330,14 +329,29 @@ module ejs {
         native function set followRedirects(flag: Boolean): Void
 
         /** 
-            Commence a POST request with form data the current uri. See connect() for connection details.
+            Commence a POST request with www-url encoded key=value data. See connect() for connection details.
+            This will encode each data objects as a string of "key=value" pairs separated by "&" characters.
             @param uri Optional request uri. If non-null, this overrides any previously defined uri for the Http object.
                 If null, use a previously defined uri.
-            @param postData Optional object hash of key value pairs to use as the post data. These are www-url-encoded and
+            @param data Optional object hash of key value pairs to use as the post data. These are www-url-encoded and
                 the content mime type is set to "application/x-www-form-urlencoded".
             @throws IOError if the request cannot be issued to the remote server.
          */
-        native function form(uri: Uri, postData: Object): Void
+        native function form(uri: Uri, data: Object): Void
+
+        /*
+FUTURE & KEEP
+            Commence a POST request with form data the current uri. See connect() for connection details.
+            @param uri Optional request uri. If non-null, this overrides any previously defined uri for the Http object.
+                If null, use the previously defined uri.
+            @param data Data objects to pass with the POST request. The objects are json encoded and the Content-Type is
+            set to "application/json". If you require "application/x-www-form-urlencoded" encoding, use publicForm().
+            @throws IOError if the request cannot be issued to the remote server.
+
+            function publicForm(uri: Uri, ...data): Void
+                connect("POST", uri, Uri.encodeObjects(data))
+         */
+        native function jsonForm(uri: Uri, ...data): Void
 
         /** 
             Commence a GET request for the current uri. See connect() for connection details.
@@ -443,8 +457,8 @@ module ejs {
         native function observe(name, observer: Function): Void
 
         /** 
-            Initiate a POST request for the current uri. This call initiates a POST request. It does not wait for the 
-            request to complete. Posted data is NOT URL encoded. If you want to post data to a form, consider using 
+            Initiate a POST request. This call initiates a POST request. It does not wait for the request to complete. 
+            Posted data is NOT URL encoded. If you want to post data to a form, consider using 
             the $form method instead which automatically URL encodes the data. Post data may be supplied may alternatively 
             be supplied via $write.  If a contentLength has not been previously defined for this request, chunked transfer 
             encoding will be enabled.

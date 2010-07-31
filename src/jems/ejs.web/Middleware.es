@@ -7,18 +7,17 @@ module ejs.web {
     /** 
         Define middleware for a web app. This wrapps the web application function with defined middleware filters.
         @param app Base web app function object
-        @param middleware Array of middleware applications
+        @param middleware Array of middleware wrapper applications
         @returns A top level web application function object
         @spec ejs
         @stability prototype
      */
-    function Middleware(app, middleware: Array = null): Function {
+    function Middleware(app: Function, middleware: Array = null): Function {
         for each (mid in middleware) {
             app = mid[i](app)
         }
-        return function (request: Request): Object {
-            return app(request)
-        }
+        return function (request: Request)
+            app(request)
     }
 }
 

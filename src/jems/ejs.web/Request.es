@@ -47,14 +47,6 @@ module ejs.web {
          */
         native enumerable var autoFinalize: Boolean
 
-        /**
-UNUSED
-            Preferred response chunk size for transfer chunk encoding. Chunked encoding is used when an explicit request 
-            content length is unknown at the time the response headers must be emitted.  Chunked encoding is automatically 
-            enabled if the chunkFilter is configured and a contentLength has not been defined.
-        native enumerable var chunkSize: Number
-         */
-
         /** 
             Request configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
             Middleware may modify to refer to a request local configuration object.
@@ -121,18 +113,19 @@ UNUSED
          */
         native enumerable var headers: Object
 
-//  MOB -- bad name
+//  MOB -- bad name - change to homeUri?
         /** 
             Relative Uri for the top-level of the application. This returns a relative Uri from the current request
             up to the top most application Uri.
          */ 
         native enumerable var home: Uri
 
-//  MOB -- bad name
+//  MOB -- bad name - change to hostName
         /** 
             Server host name. This is set to the authorized server name (HttpServer.name) if one is configured. 
-            Otherwise it will be set to the $localAddress value which is either the "Host" header value if supplied 
-            by the client or is the server IP address of the accepting interface.
+            Otherwise it will be set to the $localAddress value. This values is derrived from the Http "Host" header 
+            value if supplied by the client or if there is no "Host" header, from the server IP address of the 
+            accepting interface.
          */
         native enumerable var host: String
 
@@ -172,6 +165,12 @@ UNUSED
             Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE)
          */
         native enumerable var method: String
+
+        /** 
+            Original HTTP requeset method if the method is overridden via the "__method__" parameter or via the
+            X-HTTP-METHOD-OVERRIDE Http header.
+         */
+        enumerable var originalMethod: String
 
         /** 
             The request form parameters. Object hash of user url-encoded post data parameters.
@@ -304,18 +303,18 @@ UNUSED
             }
         }
 
-//  MOB -- missing create session
         /** 
             Destroy a session. This call destroys the session state store that is being used for the current client. 
-            If no session exists, this call has no effect.
+            If no session exists, this call has no effect. Sessions are created by reading or writing to the $session 
+            property.
          */
         native function destroySession(): Void
 
         /** 
             Get the file extension of the script corresponding to the request 
          */
-        function get extension() 
-            Path(pathInfo).extension
+        function get extension(): String
+            Uri(pathInfo).extension
 
         /** 
             Signals the end of any write data and flushes any buffered write data to the client. 
@@ -591,10 +590,8 @@ UNUSED
             @spec jsgi-0.3
             @returns Stream object equal to the value of "this" request instance.
         */
-        function get input(): Stream {
-            //  MOB -- BUG - need {}
-            return this
-        }
+        function get input(): Stream
+            this
 
         /** 
             Decoded query string (URL query string). Eqivalent to the $query property. Added for JSGI compliance
@@ -664,13 +661,6 @@ UNUSED
           */
         function get connection(): String
             header("connection")
-
-        /** 
-            @stability deprecated
-            @hide
-          */
-        function get extension(): String
-            Uri(pathInfo.extension)
 
         /** 
             @stability deprecated

@@ -22,7 +22,6 @@ module ejs.web {
                     /* Return a String containing the new pathInfo to serve */
                     request.pathInfo += index 
                     app = request.route.router.route(request)
-                    //  MOB -- some form of recursion protection? Add request.counter?
                     return Web.process(app, request)
                 }
             }
@@ -41,7 +40,8 @@ module ejs.web {
     /** 
         Directory builder for use in routing tables to service requests for directories. 
         @param request Request object. 
-        @return A web script function that services a web request.
+        @return A web application function that services a web request and when invoked with the request object will 
+        yield a response object.
         @example:
           { name: "index", builder: DirBuilder, match: Router.isDir }
      */

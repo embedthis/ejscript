@@ -1,7 +1,6 @@
 /**
     Head.es - Respond to HEAD requesets and Return just the headers and omit the body.
-    NOTE: This is typically done by good web servers anyway
-  
+    NOTE: This is typically done by good web servers anyway.
     Usage:
         require ejs.web
         exports.app = Head(app)
@@ -9,9 +8,11 @@
 
 module ejs.web {
     /** 
-        Head middleware script for web apps. Return the headers and omit the body for HTTP HEAD requests.
+        Head wrapper middleware. Return the headers and omit the body for HTTP HEAD requests. HEAD requests should still
+        preserve the original Content-Length header value even though they transmit no body content.
+        This version is limited, in that it will only define a Content-Length if the response body is a string. 
         @param app Application servicing the request and generating the response.
-        @return A response function
+        @return A web application function that when invoked with the request will yield a response object.
         @example:
             export.app = Head(app)
      */
@@ -19,6 +20,11 @@ module ejs.web {
         return function(request) {
             var response = app(request)
             if (request.method == "HEAD") {
+                if (response.body is String) {
+                    let length = response.body.length
+                    response.headers ||= {}
+                    blend(response.headers, {"Content-Length": length}, true)
+                }
                 response.body = null
             }
             return response

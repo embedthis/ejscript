@@ -2218,6 +2218,7 @@ static void genFunction(EcCompiler *cp, EcNode *np)
     state->blockIsMethod = np->function.isMethod;
     state->currentFunctionName = np->qname.name;
     state->currentFunction = fun;
+    state->currentFunctionNode = np;
 
     /*
         Capture the scope chain by the defineFunction op code. Emit this into the existing code buffer. 

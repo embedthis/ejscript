@@ -28,8 +28,7 @@ MyRoutes = [
   { name: "destroy", builder: MvcBuilder, method: "POST",   match: "/:controller/destroy",  params: { action: "destroy", } },
   { name: "default", builder: MvcBuilder,                   match: "/:controller/:action",  params: {}, },
   { name: "index",   builder: MvcBuilder, method: "GET",    match: "/:controller",          params: { action: "index", } },
-  { name: "static",  builder: StaticBuilder, 
-  },
+  { name: "static",  builder: StaticBuilder, },
 ]
 
 // var router = Router(Router.TopRoutes)

@@ -1,57 +1,44 @@
 /*
-    CommonLog.es -- Common Log Format logger
+    CommonLog.es -- Common Log Format logger.
  */
 
 module ejs.web {
     /** 
-        CommonLogger middleware script. This logs each request to a file in the Common Log format defined 
+        CommonLog middleware script. This logs each request to a file in the Common Log format defined 
         by the Apache web server.
         @param app Application servicing the request and generating the response.
-        @param logger Logger stream
-        @return A response function
+        @param logger Stream to use for writing access log information
+        @return A web application function that services a web request and when invoked with the request object will 
+            yield a response object.
         @example:
             export.app = CommonLog(app)
      */
-    var CommonLogger = function(app, logger) {
-        return function(request) {
-            return (new CommonLoggerContext(app, logger)).run(request);
-        }
-    }
 
-    class CommonLoggerContext {
+    function CommonLog(app, logger: Stream = App.log): Object
+        (new CommonLogBuilder(app, logger)).run
+
+    class CommonLogBuilder {
         var app: Function
-        var logger
-        var request: Request
-        var start: Date
+        var logger: Stream
 
-        function CommonLoggerContext(app, logger) {
+        function CommonLogBuilder(app, logger: Stream = App.log) {
             this.app = app
-            this.logger = logger || App.log
+            this.logger = logger
         }
 
-        function run(request: Request) {
-            this.request = request
-            start = new Date
-            var result = this.app(request)
-            return result
-        }
-
-        function log(string) {
-            this.request["jsgi.errors"].print(string)
-            this.request["jsgi.errors"].flush()
-        }
-
-        function forEach(block) {
-            var length = 0
-            
-            this.body.forEach(function(part) {
-                length += part.toByteString().length
-                block(part)
-            })
-            logger.write(request.remoteAddress + ' - ' + request.authUser + '[' + Date().format("%d/%b/%Y %T") + 
-                ']"' + request.method + ' ' + request.uri + ' ' + request.protocol + ' ' + status + ' ' + 
-                size + ' ' + start.elapsed())
-            }
+        function run(request: Request): Object {
+            let start = new Date
+            let response = app.call(request, request)
+            let size = (response.body is String) ? response.body.length : 0
+            /*
+                Sample:  10.0.0.5 - - [16/Mar/2010:15:40:36 -0700] "GET /index.html HTTP/1.1" 200 44
+             */
+            let user = request.authUser || "-"
+            let uri = request.pathInfo + (request.query ? ("?" + request.query) : "")
+            logger.write(request.remoteAddress + ' - ' + user + ' [' + Date().format("%d/%b/%Y %T %Z") + 
+                '] "' + request.method + ' ' + uri + ' ' + request.protocol + '" ' + response.status + ' ' + 
+                size + ' ' + start.elapsed + "\n")
+            return response
         }
     }
 }

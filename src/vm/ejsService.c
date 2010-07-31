@@ -838,8 +838,8 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
             msg = amsg = mprAsprintf(ctx, -1, "%s: %s: %s\n", prefix, tag, msg);
         }
     }
-    if (mpr->altLogData) {
-        ld = (EjsLogData*) mpr->altLogData;
+    ld = (EjsLogData*) mpr->altLogData;
+    if (ld && ld->loggerWrite) {
         ejs = ld->ejs;
         str = (EjsObj*) ejsCreateString(ejs, msg);
         saveException = ejs->exception;

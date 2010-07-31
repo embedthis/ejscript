@@ -31,10 +31,12 @@ static void     removeHashEntry(Ejs *ejs, EjsObj  *obj, EjsName *qname);
  */
 static EjsObj *castObject(Ejs *ejs, EjsObj *obj, EjsType *type)
 {
-    EjsString   *result;
-    EjsLookup   lookup;
-    EjsFunction *fun;
-    EjsName     qname;
+    EjsString       *str;
+    EjsFunction     *fun;
+    EjsObj          *result;
+    EjsLookup       lookup;
+    EjsName         qname;
+    int             enabled;
     
     mprAssert(ejsIsType(type));
 
@@ -48,12 +50,12 @@ static EjsObj *castObject(Ejs *ejs, EjsObj *obj, EjsType *type)
         return (EjsObj*) ejsCreateBoolean(ejs, 1);
 
     case ES_Number:
-        result = ejsToString(ejs, (EjsObj*) obj);
-        if (result == 0) {
+        str = ejsToString(ejs, (EjsObj*) obj);
+        if (str == 0) {
             ejsThrowMemoryError(ejs);
             return 0;
         }
-        return ejsParse(ejs, ejsGetString(ejs, result), ES_Number);
+        return ejsParse(ejs, ejsGetString(ejs, str), ES_Number);
 
     case ES_String:
         if (!obj->isType && !obj->isPrototype) {
@@ -61,7 +63,12 @@ static EjsObj *castObject(Ejs *ejs, EjsObj *obj, EjsType *type)
                     lookup.obj != ejs->objectType->prototype) {
                 fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
                 if (fun && ejsIsFunction(fun) && fun->body.proc != obj_toString) {
-                    return (EjsObj*) ejsRunFunction(ejs, fun, obj, 0, NULL);
+                    /* Disable GC because toString is used pervasively in native code */
+                    enabled = ejs->gc.enabled;
+                    ejs->gc.enabled = 0;
+                    result = (EjsObj*) ejsRunFunction(ejs, fun, obj, 0, NULL);
+                    ejs->gc.enabled = enabled;
+                    return result;
                 }
             }
         }

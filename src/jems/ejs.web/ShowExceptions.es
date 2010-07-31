@@ -3,14 +3,20 @@
  */
 
 module ejs.web {
-    function ShowExceptions(app) {
-        return function(request) {
+    /** 
+        ShowExceptions middleware wrapper. This catches exceptions and formats the result back to the client.
+        @param app Application servicing the request and generating the response.
+        @return A web application function that services a web request and when invoked with the request object will 
+            yield a response object.
+     */
+    function ShowExceptions(app: Function): Function {
+        return function(request: Request) {
             try {
-                return app(request);
+                return app(request)
             } catch (e) {
                 return {
-                    status: Http.ServerError
-                    body: errorBody(e.name, e.message + "\r\n" + e.formatStack())
+                    status: Http.ServerError,
+                    body: errorBody(typeOf(e), e.message + "\r\n" + e.formatStack()),
                 }
             }
         }

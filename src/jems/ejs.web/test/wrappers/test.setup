@@ -1,0 +1,6 @@
+
+if (!App.getenv("NOSERVER")) {
+    Path("access.log").remove()
+}
+
+httpService("start.es")

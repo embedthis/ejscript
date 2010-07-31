@@ -5,16 +5,21 @@
 module ejs.web {
 
     /**
-     * Provides Rails-style HTTP method overriding via the _method parameter or X-HTTP-METHOD-OVERRIDE header
-     * http://code.google.com/apis/gdata/docs/2.0/basics.html#UpdatingEntry
+        Method override wrapper middleware. Provides HTTP method overriding via a "__method__" POST parameter or via
+            a X-HTTP-METHOD-OVERRIDE Http header.
+        @param app Application generating the response. 
+        @return A web application function that services a web request and when invoked with the request object will 
+            yield a response object.
+        @example:
+            export.app = MethodOverride(app)
      */
-    function MethodOverride(app) {
-        return function(request) {
+    function MethodOverride(app: Function): Function {
+        return function(request: Request) {
             if (request.method == "POST") {
-                let override = request.header("X-HTTP-METHOD-OVERRIDE")
-                if (override) {
-                    request.originalMethod = request.method
-                    request.method = request.header("X-HTTP-METHOD-OVERRIDE").toUpperCase()
+                let method = request.params["__method__"] || request.header("X-HTTP-METHOD-OVERRIDE")
+                if (method) {
+                    request.originalMethod ||= request.method
+                    request.method = method
                 }
             }
             return app(request)

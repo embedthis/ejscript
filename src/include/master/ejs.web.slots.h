@@ -22,9 +22,9 @@
     Local slots for global methods 
  */
 #define ES_ejs_web_Cascade_apps                                        0
-#define ES_ejs_web_Cascade_status                                      1
-#define ES___fun_8359_607598372___app                                  0
-#define ES___fun_8359_607598372___logger                               1
+#define ES_ejs_web_CommonLog_app                                       0
+#define ES___fun_8381_629449537___app                                  0
+#define ES___fun_8381_629449537___logger                               1
 #define ES_ejs_web_ContentType_app                                     0
 #define ES_ejs_web_ContentType_options                                 1
 #define ES_ejs_web_DirApp_request                                      0
@@ -33,7 +33,6 @@
 #define ES_ejs_web_MethodOverride_app                                  0
 #define ES_ejs_web_Middleware_app                                      0
 #define ES_ejs_web_Middleware_middleware                               1
-#define ES_ejs_web_Monitor_app                                         0
 #define ES_ejs_web_MvcApp_request                                      0
 #define ES_ejs_web_MvcBuilder_request                                  0
 #define ES_ejs_web_ScriptBuilder_request                               0
@@ -43,6 +42,8 @@
 #define ES_ejs_web_TemplateFilter_app                                  0
 #define ES_ejs_web_TemplateApp_request                                 0
 #define ES_ejs_web_TemplateBuilder_request                             0
+#define ES_ejs_web_UrlMap_map                                          0
+#define ES_ejs_web_UrlMap_options                                      1
 #define ES_ejs_web_errorBody_title                                     0
 #define ES_ejs_web_errorBody_msg                                       1
 #define ES_ejs_web_parseCookies_cookieHeader                           0
@@ -475,10 +476,11 @@
 #define ES_ejs_web_Web_serve                                           4
 #define ES_ejs_web_Web_worker                                          5
 #define ES_ejs_web_Web_workerHelper                                    6
-#define ES_ejs_web_Web_process                                         7
-#define ES_ejs_web_Web_start                                           8
-#define ES_ejs_web_Web_run                                             9
-#define ES_ejs_web_Web_NUM_CLASS_PROP                                  10
+#define ES_ejs_web_Web_processBody                                     7
+#define ES_ejs_web_Web_process                                         8
+#define ES_ejs_web_Web_start                                           9
+#define ES_ejs_web_Web_run                                             10
+#define ES_ejs_web_Web_NUM_CLASS_PROP                                  11
 
 /*
    Prototype (instance) slots for "Web" type 
@@ -495,6 +497,8 @@
 #define ES_ejs_web_Web_worker_request                                  1
 #define ES_ejs_web_Web_workerHelper_app                                0
 #define ES_ejs_web_Web_workerHelper_request                            1
+#define ES_ejs_web_Web_processBody_request                             0
+#define ES_ejs_web_Web_processBody_body                                1
 #define ES_ejs_web_Web_process_app                                     0
 #define ES_ejs_web_Web_process_request                                 1
 #define ES_ejs_web_Web_start_address                                   0
@@ -505,6 +509,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   648779
+#define _ES_CHECKSUM_ejs_web   655708
 
 #endif

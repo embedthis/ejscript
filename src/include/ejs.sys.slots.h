@@ -68,6 +68,7 @@
 #define ES_decodeURIComponent_str                                      0
 #define ES_encodeURI_str                                               0
 #define ES_encodeURIComponent_str                                      0
+#define ES_encodeObjects_items                                         0
 #define ES_ejs_worker_postMessage_data                                 0
 #define ES_ejs_worker_postMessage_ports                                1
 
