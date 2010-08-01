@@ -29,5 +29,6 @@ while (file.read(buf)) {
 http.finalize()
 assert(http.status == 201 || http.status == 204)
 http.close()
+print(path.size, Path("web/file.dat").size)
 assert(path.size == Path("web/file.dat").size)
 Path("web/file.dat").remove()
