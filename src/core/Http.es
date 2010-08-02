@@ -16,7 +16,6 @@ module ejs {
 
         use default namespace public
 
-//  MOB -- should these all be upper CASE
         /** 
           HTTP Continue Status (100)
          */     
@@ -655,7 +654,8 @@ FUTURE & KEEP
 
         /** 
             Wait for a request to complete.
-            @param timeout Time in seconds to wait for the request to complete
+            @param timeout Time in seconds to wait for the request to complete. A timeout of zero means no timeout, ie.
+            wait forever. A timeout of < 0, means don't wait.
             @return True if the request successfully completes.
          */
         native function wait(timeout: Number = -1): Boolean

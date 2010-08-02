@@ -759,9 +759,13 @@ static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     int         timeout;
 
     timeout = (argc == 1) ? ejsGetInt(ejs, argv[0]) : hp->conn->limits->requestTimeout;
+#if UNUSED
     if (timeout < 0) {
         timeout = MAXINT;
+    } else if (timeout == 0) {
+        timeout = -1;
     }
+#endif
     mark = mprGetTime(ejs);
 
     if (!waitForState(hp, HTTP_STATE_COMPLETE, timeout, 0)) {
@@ -1170,6 +1174,7 @@ static bool expired(EjsHttp *hp)
 
 /*  
     Wait for the connection to acheive a requested state
+    A timeout of zero means no timeout (ie. wait forever). A timeout of < 0 means don't wait.
  */
 static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
 {
@@ -1178,7 +1183,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
     HttpConn        *conn;
     HttpUri         *uri;
     char            *url;
-    int             count, redirectCount, success, rc;
+    int             count, redirectCount, success, rc, remaining;
 
     mprAssert(state >= HTTP_STATE_PARSED);
 
@@ -1193,19 +1198,20 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
         return 0;
     }
     if (timeout < 0) {
+        timeout = 0;
+#if UNUSED
         timeout = conn->limits->inactivityTimeout;
-    } else if (timeout == 0) {
-        timeout = INT_MAX;
+#endif
     }
+    remaining = timeout;
     mark = mprGetTime(hp);
     redirectCount = 0;
     success = count = 0;
     httpFinalize(conn);
 
-    while (conn->state < state && count < conn->retries && redirectCount < 16 && !ejs->exiting && !mprIsExiting(conn) && 
-            mprGetElapsedTime(hp, mark) < timeout) {
+    while (conn->state < state && count < conn->retries && redirectCount < 16 && !ejs->exiting && !mprIsExiting(conn)) {
         count++;
-        if ((rc = httpWait(conn, HTTP_STATE_PARSED, timeout)) == 0) {
+        if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
                     mprFree(hp->uri);
@@ -1215,7 +1221,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
                 }
                 count--; 
                 redirectCount++;
-            } else if (httpWait(conn, state, timeout) == 0) {
+            } else if (httpWait(conn, state, remaining) == 0) {
                 success = 1;
                 break;
             }
@@ -1238,6 +1244,10 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
         }
         if (hp->writeCount > 0) {
             /* Can't auto-retry with manual writes */
+            break;
+        }
+        remaining = (int) (mark + timeout - mprGetTime(conn));
+        if (remaining <= 0) {
             break;
         }
         if (hp->requestContentCount > 0) {
@@ -1273,6 +1283,9 @@ static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
     }
     if (hp->conn->state < HTTP_STATE_CONNECTED) {
         return 0;
+    }
+    if (timeout < 0) {
+        timeout = hp->conn->limits->inactivityTimeout;
     }
     if (hp->conn->state < HTTP_STATE_PARSED && !waitForState(hp, HTTP_STATE_PARSED, timeout, 1)) {
         return 0;

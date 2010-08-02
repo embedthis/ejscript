@@ -125,9 +125,10 @@ module ejs {
          */
         native static function createSearch(searchPath: String? = null): Array
 
+//  MOB -- have 2 routines; doEvents, doOneEvent
         /** 
             Run the event loop. This is typically done automatically by the hosting program and is not normally required
-            in user programs.
+                in user programs.
             @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
                 call returns immediately.
             @param oneEvent If true, return immediately after servicing one event.
