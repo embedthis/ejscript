@@ -2761,6 +2761,13 @@ void httpSetCallback(HttpConn *conn, HttpCallback callback, void *arg)
 }
 
 
+void httpSetFillHeaders(HttpConn *conn, HttpFillHeadersProc fn, void *arg)
+{
+    conn->fillHeaders = fn;
+    conn->fillHeadersArg = arg;
+}
+
+
 void httpSetChunkSize(HttpConn *conn, int size)
 {
     if (conn->transmitter) {
@@ -8907,7 +8914,6 @@ HttpStage *httpCreateConnector(Http *http, cchar *name, int flags)
 
 
 static int destroyTransmitter(HttpTransmitter *trans);
-static void putHeader(HttpConn *conn, HttpPacket *packet, cchar *key, cchar *value);
 static void setDefaultHeaders(HttpConn *conn);
 
 
@@ -8959,28 +8965,15 @@ static int destroyTransmitter(HttpTransmitter *trans)
 }
 
 
-//  MOB -- rationalize all these header names
-
+/*
+    Add key/value to the header hash. If already present, update the value
+*/
 static void addHeader(HttpConn *conn, cchar *key, cchar *value)
 {
     if (mprStrcmpAnyCase(key, "content-length") == 0) {
         conn->transmitter->length = (int) mprAtoi(value, 10);
     }
     mprAddHash(conn->transmitter->headers, key, value);
-}
-
-
-static void putHeader(HttpConn *conn, HttpPacket *packet, cchar *key, cchar *value)
-{
-    MprBuf      *buf;
-
-    buf = packet->content;
-    mprPutStringToBuf(buf, key);
-    mprPutStringToBuf(buf, ": ");
-    if (value) {
-        mprPutStringToBuf(buf, value);
-    }
-    mprPutStringToBuf(buf, "\r\n");
 }
 
 
@@ -9016,6 +9009,9 @@ void httpAddHeader(HttpConn *conn, cchar *key, cchar *fmt, ...)
 }
 
 
+/*
+    Add a simple (non-formatted) header if not already defined
+ */
 void httpAddSimpleHeader(HttpConn *conn, cchar *key, cchar *value)
 {
     HttpTransmitter      *trans;
@@ -9058,8 +9054,8 @@ void httpAppendHeader(HttpConn *conn, cchar *key, cchar *fmt, ...)
 void httpSetHeader(HttpConn *conn, cchar *key, cchar *fmt, ...)
 {
     HttpTransmitter      *trans;
-    char            *value;
-    va_list         vargs;
+    char                *value;
+    va_list             vargs;
 
     trans = conn->transmitter;
     va_start(vargs, fmt);
@@ -9075,6 +9071,18 @@ void httpSetSimpleHeader(HttpConn *conn, cchar *key, cchar *value)
 
     trans = conn->transmitter;
     addHeader(conn, key, mprStrdup(trans, value));
+}
+
+
+void httpClearHeaders(HttpConn *conn) 
+{
+    HttpTransmitter     *trans;
+
+    trans = conn->transmitter;
+    mprFree(trans->headers);
+    trans->headers = mprCreateHash(trans, HTTP_SMALL_HASH_SIZE);
+    mprSetHashCase(trans->headers, 0);
+    setDefaultHeaders(conn);
 }
 
 
@@ -9468,6 +9476,9 @@ void httpWriteHeaders(HttpConn *conn, HttpPacket *packet)
     if (trans->flags & HTTP_TRANS_HEADERS_CREATED) {
         return;
     }    
+    if (conn->fillHeaders) {
+        (conn->fillHeaders)(conn->fillHeadersArg);
+    }
     setHeaders(conn, packet);
 
     if (conn->server) {
@@ -9506,7 +9517,12 @@ void httpWriteHeaders(HttpConn *conn, HttpPacket *packet)
      */
     hp = mprGetFirstHash(trans->headers);
     while (hp) {
-        putHeader(conn, packet, hp->key, hp->data);
+        mprPutStringToBuf(packet->content, hp->key);
+        mprPutStringToBuf(packet->content, ": ");
+        if (hp->data) {
+            mprPutStringToBuf(packet->content, hp->data);
+        }
+        mprPutStringToBuf(packet->content, "\r\n");
         hp = mprGetNextHash(trans->headers, hp);
     }
 

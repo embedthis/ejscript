@@ -116,51 +116,6 @@ static EjsObj *createEnv(Ejs *ejs, EjsRequest *req)
 }
 
 
-/*
-    This will get the current session or create a new session if required
- */
-static EjsSession *getSession(Ejs *ejs, EjsRequest *req, int create)
-{
-    if (req->session) {
-        return req->session;
-    }
-    if ((req->session = ejsGetSession(ejs, req)) == NULL && create) {
-        req->session = ejsCreateSession(ejs, req, 0, 0);
-    }
-    if (req->session) {
-        //  TODO - SECURE (last arg) ?
-        httpSetCookie(req->conn, EJS_SESSION, req->session->id, "/", NULL, 0, 0);
-    }
-    return req->session;
-}
-
-
-static EjsObj *createString(Ejs *ejs, cchar *value)
-{
-    if (value == 0) {
-        return ejs->nullValue;
-    }
-    return (EjsObj*) ejsCreateString(ejs, value);
-}
-
-
-static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
-{
-    MprHash     *hp;
-    HttpConn    *conn;
-    EjsName     n;
-    
-    if (req->headers == 0) {
-        req->headers = (EjsObj*) ejsCreateSimpleObject(ejs);
-        conn = req->conn;
-        for (hp = 0; (hp = mprGetNextHash(conn->receiver->headers, hp)) != 0; ) {
-            ejsSetPropertyByName(ejs, req->headers, EN(&n, hp->key), ejsCreateString(ejs, hp->data));
-        }
-    }
-    return (EjsObj*) req->headers;
-}
-
-
 static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
 {
     HttpUploadFile  *up;
@@ -188,6 +143,102 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
         }
     }
     return (EjsObj*) req->files;
+}
+
+
+static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
+{
+    MprHash     *hp;
+    HttpConn    *conn;
+    EjsName     n;
+    
+    if (req->headers == 0) {
+        req->headers = (EjsObj*) ejsCreateSimpleObject(ejs);
+        conn = req->conn;
+        for (hp = 0; (hp = mprGetNextHash(conn->receiver->headers, hp)) != 0; ) {
+            ejsSetPropertyByName(ejs, req->headers, EN(&n, hp->key), ejsCreateString(ejs, hp->data));
+        }
+    }
+    return (EjsObj*) req->headers;
+}
+
+
+/*
+    Callback invoked by Http to fill the http header set just before transmitting headers
+ */
+static int fillResponseHeaders(EjsRequest *req) 
+{
+    Ejs         *ejs;
+    EjsObj      *vp;
+    EjsTrait    *trait;
+    EjsName     n;
+    int         i, count;
+    
+    if (req->responseHeaders) {
+        ejs = req->ejs;
+        count = ejsGetPropertyCount(ejs, req->responseHeaders);
+        for (i = 0; i < count; i++) {
+            trait = ejsGetTrait(ejs, req->responseHeaders, i);
+            if (trait && trait->attributes & 
+                    (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
+                continue;
+            }
+            n = ejsGetPropertyName(ejs, req->responseHeaders, i);
+            vp = ejsGetProperty(ejs, req->responseHeaders, i);
+            if (n.name && vp) {
+                httpSetSimpleHeader(req->conn, n.name, ejsGetString(ejs, vp));
+            }
+        }
+    }
+    return 0;
+}
+
+
+static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
+{
+    MprHash     *hp;
+    HttpConn    *conn;
+    EjsName     n;
+    
+    if (req->responseHeaders == 0) {
+        req->responseHeaders = (EjsObj*) ejsCreateSimpleObject(ejs);
+        conn = req->conn;
+        /* Get default headers */
+        for (hp = 0; (hp = mprGetNextHash(conn->transmitter->headers, hp)) != 0; ) {
+            ejsSetPropertyByName(ejs, req->responseHeaders, EN(&n, hp->key), ejsCreateString(ejs, hp->data));
+        }
+        conn->fillHeaders = (HttpFillHeadersProc) fillResponseHeaders;
+        conn->fillHeadersArg = req;
+    }
+    return (EjsObj*) req->responseHeaders;
+}
+
+
+/*
+    This will get the current session or create a new session if required
+ */
+static EjsSession *getSession(Ejs *ejs, EjsRequest *req, int create)
+{
+    if (req->session) {
+        return req->session;
+    }
+    if ((req->session = ejsGetSession(ejs, req)) == NULL && create) {
+        req->session = ejsCreateSession(ejs, req, 0, 0);
+    }
+    if (req->session) {
+        //  TODO - SECURE (last arg) ?
+        httpSetCookie(req->conn, EJS_SESSION, req->session->id, "/", NULL, 0, 0);
+    }
+    return req->session;
+}
+
+
+static EjsObj *createString(Ejs *ejs, cchar *value)
+{
+    if (value == 0) {
+        return ejs->nullValue;
+    }
+    return (EjsObj*) ejsCreateString(ejs, value);
 }
 
 
@@ -345,6 +396,9 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_remoteAddress:
         return createString(ejs, conn->ip);
 
+    case ES_ejs_web_Request_responseHeaders:
+        return createResponseHeaders(ejs, req);
+
     case ES_ejs_web_Request_scheme:
         scheme = (conn->secure) ? "https" : "http";
         return createString(ejs, scheme);
@@ -377,6 +431,7 @@ static EjsObj *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         }
         return (EjsObj*) req->uri;
 
+//  MOB -- push back to script
     case ES_ejs_web_Request_userAgent:
         return createString(ejs, rec->userAgent);
 
@@ -436,6 +491,11 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     rec = conn->receiver;
 
     switch (slotNum) {
+
+    default:
+    case ES_ejs_web_Request_config:
+        return ejs->objectType->helpers.setProperty(ejs, (EjsObj*) req, slotNum, value);
+
     case ES_ejs_web_Request_absHome:
         req->absHome = mprStrdup(req, getString(ejs, value));
         break;
@@ -447,6 +507,13 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 
     case ES_ejs_web_Request_filename:
         req->filename = (EjsPath*) value;
+        break;
+
+    case ES_ejs_web_Request_headers:
+        /*
+            This updates the cached header set only. The original headers in the http module are unchanged.
+         */
+        req->headers = value;
         break;
 
     case ES_ejs_web_Request_home:
@@ -463,6 +530,10 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         req->filename = 0;
         break;
 
+    case ES_ejs_web_Request_responseHeaders:
+        req->responseHeaders = value;
+        break;
+
     case ES_ejs_web_Request_scriptName:
         mprFree(rec->scriptName);
         rec->scriptName = mprStrdup(rec, getString(ejs, value));
@@ -477,35 +548,36 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         httpSetStatus(conn, getNum(ejs, value));
         break;
 
+
+    //  MOB -- these fields should not be read-only
+    case ES_ejs_web_Request_contentLength:
+    case ES_ejs_web_Request_cookies:
+    case ES_ejs_web_Request_env:
+    case ES_ejs_web_Request_files:
+    case ES_ejs_web_Request_host:       //  Must cache get value.
+    case ES_ejs_web_Request_params:
+    case ES_ejs_web_Request_query:
+    case ES_ejs_web_Request_referrer:
+    case ES_ejs_web_Request_uri:
+    case ES_ejs_web_Request_protocol:
+    case ES_ejs_web_Request_scheme:
+
+    case ES_ejs_web_Request_userAgent:
+
+    /*
+        Read-only fields
+     */
     case ES_ejs_web_Request_authGroup:
     case ES_ejs_web_Request_authType:
     case ES_ejs_web_Request_authUser:
-    case ES_ejs_web_Request_contentLength:
-    case ES_ejs_web_Request_contentType:
-    case ES_ejs_web_Request_cookies:
-    case ES_ejs_web_Request_env:
     case ES_ejs_web_Request_errorMessage:
-    case ES_ejs_web_Request_files:
-    case ES_ejs_web_Request_headers:
-    case ES_ejs_web_Request_host:
     case ES_ejs_web_Request_isSecure:
     case ES_ejs_web_Request_localAddress:
-    case ES_ejs_web_Request_params:
-    case ES_ejs_web_Request_query:
-    case ES_ejs_web_Request_protocol:
-    case ES_ejs_web_Request_referrer:
     case ES_ejs_web_Request_remoteAddress:
-    case ES_ejs_web_Request_scheme:
     case ES_ejs_web_Request_session:
     case ES_ejs_web_Request_sessionID:
-    case ES_ejs_web_Request_uri:
-    case ES_ejs_web_Request_userAgent:
         ejsThrowReferenceError(ejs, "Property is readonly");
         break;
-
-    case ES_ejs_web_Request_config:
-    default:
-        return ejs->objectType->helpers.setProperty(ejs, (EjsObj*) req, slotNum, value);
     }
     return 0;
 }
@@ -554,27 +626,6 @@ static EjsObj *req_close(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     ejsSendRequestCloseEvent(ejs, req);
     return 0;
-}
-
-
-/*  
-    function get responseHeaders(): Object
- */
-static EjsObj *req_responseHeaders(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
-{
-    MprHash     *hp;
-    HttpConn    *conn;
-    EjsObj      *headers;
-    EjsName     n;
-    
-    if (!connOk(ejs, req)) return 0;
-
-    conn = req->conn;
-    headers = (EjsObj*) ejsCreateSimpleObject(ejs);
-    for (hp = 0; (hp = mprGetNextHash(conn->transmitter->headers, hp)) != 0; ) {
-        ejsSetPropertyByName(ejs, headers, EN(&n, hp->key), ejsCreateString(ejs, hp->data));
-    }
-    return (EjsObj*) headers;
 }
 
 
@@ -764,17 +815,16 @@ static EjsObj *req_sendfile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    cchar   *key, *value;
-    int     overwrite;
+    EjsName     n;
+    cchar       *key;
+    int         overwrite;
 
     if (!connOk(ejs, req)) return 0;
     key = ejsGetString(ejs, argv[0]);
-    value = ejsGetString(ejs, argv[1]);
     overwrite = argc < 3 || argv[2] == (EjsObj*) ejs->trueValue;
-    if (overwrite) {
-        httpSetSimpleHeader(req->conn, key, value);
-    } else {
-        httpAppendHeader(req->conn, key, "%s", value);
+    createResponseHeaders(ejs, req);
+    if (overwrite || ejsLookupProperty(ejs, req->responseHeaders, ejsName(&n, "", key)) < 0) {
+        ejsSetPropertyByName(ejs, req->responseHeaders, ejsName(&n, "", key), argv[1]);
     }
     return 0;
 }
@@ -1037,6 +1087,9 @@ static void markRequest(Ejs *ejs, EjsRequest *req)
     if (req->params) {
         ejsMark(ejs, (EjsObj*) req->params);
     }
+    if (req->responseHeaders) {
+        ejsMark(ejs, (EjsObj*) req->responseHeaders);
+    }
     if (req->server) {
         ejsMark(ejs, (EjsObj*) req->server);
     }
@@ -1077,7 +1130,6 @@ void ejsConfigureRequestType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_flush, (EjsProc) req_flush);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_header, (EjsProc) req_header);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_limits, (EjsProc) req_limits);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_responseHeaders, (EjsProc) req_responseHeaders);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_read, (EjsProc) req_read);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_removeObserver, (EjsProc) req_removeObserver);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_sendfile, (EjsProc) req_sendfile);

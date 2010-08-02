@@ -27,17 +27,20 @@ module ejs.web {
 
         /** 
             Authentication group. This property is set to the value of the authentication group header. 
+            This field is read-only.
          */
         native enumerable var authGroup: String
 
         /** 
             Authentication method if authorization is being used (basic or digest). Set to null if not using authentication. 
+            This field is read-only.
          */
         native enumerable var authType: String
 
         /** 
             Authentication user name. This property is set to the value of the authentication user header. Set to null if
             not yet defined.
+            This field is read-only.
          */
         native enumerable var authUser: String
 
@@ -204,6 +207,11 @@ module ejs.web {
         native enumerable var remoteAddress: String
 
         /** 
+            Http response headers. This is the proposed set of headers to send with the response.
+         */
+        native var responseHeaders: Object
+
+        /** 
             Route used for the request. The route is the matching entry in the route table for the request.
             The route has properties two properties of particular interest: "name" which is the name of the route and
             and "type" which classifies the type of request. 
@@ -329,12 +337,6 @@ module ejs.web {
             @duplicate Stream.flush
          */
         native function flush(dir: Number = Stream.WRITE): Void
-
-        /** 
-            Get the (proposed) response headers
-            @return The set of response headers that will be used when the response is sent.
-         */
-        native function get responseHeaders(): Object
 
         /** 
             Get a request header by keyword. The key match is case insensitive. 
@@ -485,8 +487,9 @@ module ejs.web {
         }
 
         /** 
-            Set a header. If a header has already been defined and $overwrite is true, the header will be overwritten.
-            NOTE: case does not matter in the header keyword.
+            Convenience routine to set a Http response header in $responseHeaders. If a header has already been 
+            defined and $overwrite is true, the header will be overwritten. NOTE: case is ignored in the header keyword.
+            Access $responseHeaders to inspect the proposed response header set.
             @param key The header keyword for the request, e.g. "accept".
             @param value The value to associate with the header, e.g. "yes"
             @param overwrite If the header is already defined and overwrite is true, then the new value will
@@ -496,7 +499,8 @@ module ejs.web {
         native function setHeader(key: String, value: String, overwrite: Boolean = true): Void
 
         /**
-            Set the HTTP response headers. Use getResponseHeaders to inspect the proposed response header set.
+            Convenience routine to set multiple Http response headers in $responseHeaders. Access $responseHeaders to 
+            inspect the proposed response header set.
             @param headers Set of headers to use
             @param overwrite If the header is already defined and overwrite is true, then the new value will
                 overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", "
@@ -509,7 +513,8 @@ module ejs.web {
         }
 
         /** 
-            Set to the (proposed) Http response status code. This is equivalent to assigning to the $status property.
+            Convenience routine to set the (proposed) Http response status code. This is equivalent to assigning 
+            to the $status property.
          */
         function setStatus(status: Number): Void
             this.status = status

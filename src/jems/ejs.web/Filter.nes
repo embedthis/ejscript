@@ -14,80 +14,56 @@ module ejs {
 
     /** 
      */
-    class Filter implements Stream {
+    class Filter {
 
         use default namespace public
 
-        private emitter: Emitter
-        private next: Stream
+        protected emitter: Emitter
+        protected next: Filter
 
-        function Filter(stream: Stream) {
-            next = stream
-            observe("readable", readable)
-            observe("writable", writable)
+        function Filter(next: Filter) {
+            this.next = next
+            observe("writable", function() {
+                service()
+            })
         }
 
-        private function readable(event: String) {
-            emitter.emit(event, next)
-        }
+        native function canWrite(data, count: Number = null): Boolean
 
-        private function writable(event: String) {
-            emitter.emit(event, next)
-        }
-
-        /** 
-            @duplicate Stream.observe
-         */
-        function observe(name, listener: Function): Void {
-            if (!emitter) {
-                emitter = new Emitter
-            }
+        function observe(name: String, listener: Function): Void {
+            emitter ||= new Emitter
             emitter.observe(name, listener)
         }
 
-//  TODO - should this be async always (yes)
-        /** 
-            @duplicate Stream.async
-         */
-        function get async(): Boolean
-
-        /** 
-            @duplicate Stream.async
-         */
-        function set async(enable: Boolean): Void
-
-        /** 
-            @duplicate Stream
-         */
-        function close(graceful: Boolean = false): Void
-            next.close()
-
-        /** 
-            @duplicate Stream
-         */
-        function flush(): Void 
-            next.flush()
-
-        /** 
-            @duplicate Stream
-         */
-        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
-            next.read(buffer, offset, count)
-
-        /** 
-            @duplicate Stream
-         */
         function removeObserver(name, listener: Function): Void {
             if (emitter) {
                 emitter.removeObserver(name, listener)
             }
         }
 
-        /** 
-            @duplicate Stream
-         */
-        function write(...data): Number
-            next.write(data)
+        function put(data): Void {}
+        function service(): Void {}
+
+        //  Write to this filter
+        //  MOB -- make this native
+        function write(data): Number {
+            let count = room()
+            if (data.available < count)
+                count = data.available
+            }
+            if (count == 0) {
+                disable()
+            } else {
+                put(data, count)
+
+                emitter.fire("readable", this)
+                //  MOB - how to fire a writable event on the writing 
+                emitter.fire("writable", this)
+
+                return count
+            }
+            return 0
+        }
     }
 }
 

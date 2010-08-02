@@ -70,8 +70,8 @@ static EjsObj *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     HttpConn    *conn;
 
     if ((conn = httpAcceptConn(sp->server)) == 0) {
-        //  MOB -- or should this just be ignored?
-        ejsThrowStateError(ejs, "Can't accept connection");
+        /* Just ignore */
+        mprError(ejs, "Can't accept connection");
         return 0;
     }
     return (EjsObj*) createRequest(sp, conn);
@@ -98,24 +98,6 @@ static EjsObj *hs_set_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
     }
     return 0;
 }
-
-
-#if UNUSED
-/*  
-    function attach(): Void
- */
-static EjsObj *hs_attach(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
-{
-    //  MOB -- would be great if users did not have to call attach
-    sp->obj.permanent = 1;
-    if (ejs->location) {
-        ejs->location->context = sp;
-    } else {
-        ejsThrowStateError(ejs, "attach can only be called when hosted inside a supported web server");
-    }
-    return 0;
-}
-#endif
 
 
 /*  
@@ -245,14 +227,13 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         //  MOB -- why is this needed? remove?
         server->documentRoot = mprStrdup(server, root->path);
     }
-
-    //  MOB -- is this needed? -- remove
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
     if (ejsIsPath(ejs, root)) {
         server->serverRoot = mprStrdup(server, root->path);
     }
 
     //  MOB -- who make sure that the sp object is permanent?
+    //      or (better) have  a destructor that closes the entire connection (and all requests) if goes out of scope
 
     httpSetServerContext(server, sp);
     httpSetServerNotifier(server, (HttpNotifier) stateChangeNotifier);
@@ -767,8 +748,28 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
     conn->dispatcher = ejs->dispatcher;
     conn->documentRoot = conn->server->documentRoot;
     conn->transmitter->handler = ejs->http->ejsHandler;
-#if UNUSED
-    setTrace(sp, conn);
+
+#if FUTURE
+    if (sp->pipe) {
+        def = ejsRunFunction(ejs, sp->createPipeline, 
+        if ((vp = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "handler"))) != 0) { 
+            handler = ejsGetString(ejs, vp);
+        }
+        if ((incoming = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "incoming"))) != 0) { 
+            count = ejsGetProperty(ejs, incoming)
+            for (i = 0; i < count; i++) {
+                mprAddItem(ilist, 
+            }
+        }
+        if ((outgoing = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "outgoing"))) != 0) { 
+            count = ejsGetProperty(ejs, incoming)
+        }
+        if ((connector = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "connector"))) != 0) { 
+            connector = ejsGetString(ejs, vp);
+        }
+        httpSetPipeline(conn, ejsGetString(ejs, Handler), 
+            ejsGetString(ejs, connector), 
+    }
 #endif
     return req;
 }

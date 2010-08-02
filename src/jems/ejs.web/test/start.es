@@ -42,6 +42,18 @@ server.observe("readable", function (event, request) {
     // request.setLimits({timeout: 120, inactivityTimeout: 60})
     request.setLimits({timeout: 0, inactivityTimeout: 60})
 
+    print("BEFORE SERVE")
+
+    dump("HEADERS", request.headers)
+    request.headers["Custom"] = "Mob"
+    dump("HEADERS", request.headers)
+
+    dump("RESPONSE HEADERS", request.responseHeaders)
+    // request.responseHeaders["Send-Custom"] = "Park Ave"
+    // request.setHeader("Send-Custom", "Park Ave")
+    // request.setHeader("Send-Custom", "Park Ave 2", false)
+    dump("RESPONSE HEADERS", request.responseHeaders)
+
     // App.log.info(request.method, request.uri)
     Web.serve(request, router)
 })

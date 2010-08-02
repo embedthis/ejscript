@@ -500,7 +500,7 @@ typedef struct HttpRange {
     @see HttpPacket HttpQueue httpCreatePacket, httpCreateConnPacket httpCreateDataPacket httpCreateEndPacket 
         httpFreePacket httpJoinPacket httpSplitPacket httpGetPacketLength httpCreateHeaderPacket httpGetPacket
         httpJoinPacketForService httpPutForService httpIsPacketTooBig httpSendPacket httpPutBackPacket 
-        httpPutForService httpSendPacketToNext httpResizePacket
+        httpSendPacketToNext httpResizePacket
  */
 typedef struct HttpPacket {
     MprBuf          *prefix;                /**< Prefix message to be emitted before the content */
@@ -633,17 +633,6 @@ extern HttpPacket *httpGetPacket(struct HttpQueue *q);
 extern void httpJoinPacketForService(struct HttpQueue *q, HttpPacket *packet, bool serviceQ);
 
 /** 
-    Put a packet onto the service queue
-    @description Add a packet to the service queue. If serviceQ is true, the queue will be scheduled for service.
-    @param q Queue reference
-    @param packet Packet to join to the queue
-    @param serviceQ If true, schedule the queue for service
-    @ingroup HttpQueue
- */
-extern void httpPutForService(struct HttpQueue *q, HttpPacket *packet, bool serviceQ);
-
-
-/** 
     Test if a packet is too big 
     @description Test if a packet is too big to fit downstream. If the packet content exceeds the downstream queue's 
         maximum or exceeds the downstream queue's requested packet size -- then this routine will return true.
@@ -654,6 +643,7 @@ extern void httpPutForService(struct HttpQueue *q, HttpPacket *packet, bool serv
  */
 extern bool httpIsPacketTooBig(struct HttpQueue *q, HttpPacket *packet);
 
+//  MOB -- why called SendPacket, rename back to PutPacket
 /** 
     Put a packet onto a queue
     @description Put the packet onto the end of queue by calling the queue's put() method. 
@@ -674,13 +664,15 @@ extern void httpSendPacket(struct HttpQueue *q, HttpPacket *packet);
 extern void httpPutBackPacket(struct HttpQueue *q, HttpPacket *packet);
 
 /** 
-    Put a packet onto a service queue
-    @description Put the packet onto the service queue and optionally schedule the queue for service.
+    Put a packet onto the service queue
+    @description Add a packet to the service queue. If serviceQ is true, the queue will be scheduled for service.
     @param q Queue reference
-    @param packet Packet to put
+    @param packet Packet to join to the queue
+    @param serviceQ If true, schedule the queue for service
     @ingroup HttpQueue
  */
 extern void httpPutForService(struct HttpQueue *q, HttpPacket *packet, bool serviceQ);
+
 
 /** 
     Put a packet onto the next queue
@@ -748,7 +740,7 @@ typedef void (*HttpQueueService)(struct HttpQueue *q);
     @defgroup HttpQueue HttpQueue
     @see HttpQueue HttpPacket HttpConn httpDiscardData httpGet httpJoinPacketForService httpPutForService httpDefaultPut 
         httpDisableQueue httpEnableQueue httpGetQueueRoom httpIsQueueEmpty httpIsPacketTooBig httpPut httpPutBack 
-        httpPutForService httpPutNext httpRemoveQueue httpResizePacket httpScheduleQueue httpSendPacket httpSendPackets 
+        httpPutForService httpRemoveQueue httpResizePacket httpScheduleQueue httpSendPacket httpSendPackets 
         httpSendEndPacket httpServiceQueue httpWillNextQueueAccept httpWrite httpWriteBlock httpWriteBody httpWriteString
  */
 typedef struct HttpQueue {
@@ -1268,6 +1260,8 @@ extern void httpSendOutgoingService(HttpQueue *q);
  */
 typedef MprEventProc HttpCallback;
 
+typedef int (*HttpFillHeadersProc)(void *data);
+
 /** 
     Http Connections
     @description The HttpConn object represents a TCP/IP connection to the client. A connection object is created for
@@ -1295,10 +1289,12 @@ typedef struct HttpConn {
     int             protoError;             /**< A protocol error has occurred - try to respond */
     int             threaded;               /**< Request running in a thread */
 
-    Http            *http;                  /**< Http service object  */
     HttpCallback    callback;               /**< Http I/O event callback */
-    void            *callbackArg;
+    void            *callbackArg;           /**< Arg to callback */
+    HttpFillHeadersProc fillHeaders;        /**< Callback to fill headers */
+    void            *fillHeadersArg;        /**< Arg to fillHeaders */
     HttpLimits      *limits;                /**< Service limits */
+    Http            *http;                  /**< Http service object  */
     MprHashTable    *stages;                /**< Stages in pipeline */
     MprDispatcher   *dispatcher;            /**< Event dispatcher */
     HttpNotifier    notifier;               /**< Connection Http state change notification callback */
