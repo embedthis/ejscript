@@ -1677,14 +1677,14 @@ static void genDo(EcCompiler *cp, EcNode *np)
     }
     if (np->forLoop.cond) {
         np->forLoop.condCode = state->code = allocCodeBuffer(cp);
+        state->needsValue = 1;
         processNode(cp, np->forLoop.cond);
+        state->needsValue = 0;
     }
-
     /*
         Get the lengths of code blocks
      */
     condLen = bodyLen = 0;
-
     if (np->forLoop.condCode) {
         condLen = mprGetBufLength(np->forLoop.condCode->buf);
     }
@@ -1701,7 +1701,6 @@ static void genDo(EcCompiler *cp, EcNode *np)
         if (len < 0x7f && cp->optimizeLevel > 0) {
             condShortJump = 1;
             condLen += 2;
-
         } else {
             condLen += 5;
         }
@@ -1719,7 +1718,6 @@ static void genDo(EcCompiler *cp, EcNode *np)
     if (np->forLoop.bodyCode) {
         copyCodeBuffer(cp, state->code, np->forLoop.bodyCode);
     }
-
 
     /*
         Copy the conditional code and add condition jump to the end of the for loop, then copy the body code.
