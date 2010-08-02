@@ -110,7 +110,8 @@ module ejs {
         native function copyOut(srcOffset: Number, dest: ByteArray, destOffset: Number = 0, count: Number = -1): Number
 
         /** 
-            Current encoding scheme for serializing strings. The default encoding is UTF-8.
+            Current encoding scheme for serializing strings. The default encoding is "utf-8". Set to "" for no encoding.
+            If no encoding, string character points are stored as a pairs of two byte in little-endian format.
          */
         function get encoding(): String 
             "utf-8"
@@ -264,6 +265,7 @@ module ejs {
          */
         native function readShort(): Number
 
+//  MOB -- 
         /** 
             Read a data from the array as a string. Read data from the $readPosition to a string up to the $writePosition,
             but not more than count characters. If insufficient data, a "writable" event will be issued indicating that 
@@ -276,9 +278,9 @@ module ejs {
         native function readString(count: Number = -1): String
 
         /**
-         *  Read an XML document from the array. Data is read from the current read $position pointer.
-         *  @returns an XML document
-         *  @throws IOError if an I/O error occurs or a premature end of file.
+            Read an XML document from the array. Data is read from the current read $position pointer.
+            @returns an XML document
+            @throws IOError if an I/O error occurs or a premature end of file.
          */
         function readXML(): XML
             XML(readString())
@@ -387,12 +389,14 @@ module ejs {
         /** 
             Input callback function when read data is required. The input callback should write to the supplied buffer.
             @hide
+            @deprecated
         */
         function get input(): Function { return null; }
 
         /**  
             LEGACY DEPRECATED 1.0.0B3
             @hide
+            @deprecated
          */
         function set input(callback: Function): Void {
             observe("writable", function(event: String, ba: ByteArray): Void {
@@ -406,11 +410,14 @@ module ejs {
             @param callback Function to invoke when the byte array is full or flush() is called.
                 function outputCallback(buffer: ByteArray): Number
             @hide
+            @deprecated
          */
         function get output(): Function { return null; } 
 
         //  LEGACY DEPRECATED 1.0.0B3
         /** 
+            @hide
+            @deprecated
          */
         function set output(callback: Function): Void {
             observe("readable", function(event: String, ba: ByteArray): Void {

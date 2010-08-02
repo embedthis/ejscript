@@ -1593,6 +1593,7 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         }
         trait = ejsGetTrait(ejs, obj, ip->index);
         if (trait && trait->attributes & 
+            /* MOB OPT - make initializers and deleted items always hidden */
                 (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
             continue;
         }
