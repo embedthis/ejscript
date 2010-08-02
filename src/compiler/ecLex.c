@@ -370,7 +370,11 @@ int ecGetToken(EcInput *input)
                 if (getComment(input, tp, c) < 0) {
                     return tp->tokenId;
                 }
-                if (tp->text && tp->text[0] == '*') {
+                /*
+                    Doc comments are: [slash]**. The second "*' becomes the first char of the comment.
+                    Don't regard: [slash]*** (three stars) as a comment.
+                 */
+                if (tp->text && tp->text[0] == '*' && tp->text[1] != '*') {
                     mprFree(input->doc);
                     input->doc = mprStrdup(input, (char*) tp->text);
                 }
