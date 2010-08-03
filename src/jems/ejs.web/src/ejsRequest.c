@@ -172,6 +172,7 @@ static int fillResponseHeaders(EjsRequest *req)
     EjsObj      *vp;
     EjsTrait    *trait;
     EjsName     n;
+    char        *name, *value;
     int         i, count;
     
     if (req->responseHeaders) {
@@ -186,7 +187,11 @@ static int fillResponseHeaders(EjsRequest *req)
             n = ejsGetPropertyName(ejs, req->responseHeaders, i);
             vp = ejsGetProperty(ejs, req->responseHeaders, i);
             if (n.name && vp) {
-                httpSetSimpleHeader(req->conn, n.name, ejsGetString(ejs, vp));
+                mprAssert(vp != ejs->nullValue);
+                mprAssert(ejsIsString(vp));
+                name = mprStrdup(req->conn, n.name);
+                value = mprStrdup(req->conn, ejsGetString(ejs, vp));
+                httpSetSimpleHeader(req->conn, name, value);
             }
         }
     }
@@ -205,7 +210,8 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
         conn = req->conn;
         /* Get default headers */
         for (hp = 0; (hp = mprGetNextHash(conn->transmitter->headers, hp)) != 0; ) {
-            ejsSetPropertyByName(ejs, req->responseHeaders, EN(&n, hp->key), ejsCreateString(ejs, hp->data));
+            ejsSetPropertyByName(ejs, req->responseHeaders, EN(&n, mprStrdup(req->responseHeaders, hp->key)), 
+                ejsCreateString(ejs, hp->data));
         }
         conn->fillHeaders = (HttpFillHeadersProc) fillResponseHeaders;
         conn->fillHeadersArg = req;
@@ -899,7 +905,7 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     overwrite = argc < 3 || argv[2] == (EjsObj*) ejs->trueValue;
     createResponseHeaders(ejs, req);
     if (overwrite || ejsLookupProperty(ejs, req->responseHeaders, ejsName(&n, "", key)) < 0) {
-        ejsSetPropertyByName(ejs, req->responseHeaders, ejsName(&n, "", key), argv[1]);
+        ejsSetPropertyByName(ejs, req->responseHeaders, ejsName(&n, "", mprStrdup(req->responseHeaders, key)), argv[1]);
     }
     return 0;
 }
