@@ -53,7 +53,9 @@ static EjsObj *req_worker(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
 #endif
     conn = req->conn;
+#if FUTURE
     nreq = ejsCloneRequest(ejs, req, 1);
+#endif
     httpSetConnContext(req->conn, nreq);
     conn->dispatcher = nejs->dispatcher;
 
