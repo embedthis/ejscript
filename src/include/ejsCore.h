@@ -457,7 +457,7 @@ typedef struct Ejs {
     void                *sqlite;            /**< Sqlite context information */
 
     Http                *http;              /**< Http service object (copy of EjsService.http) */
-    HttpLocation        *location;          /**< Current HttpLocation object for web start scripts */
+    HttpLoc             *loc;               /**< Current HttpLocation object for web start scripts */
 
     struct EjsObj       *sessions;          /**< Session cache */
     struct EjsType      *sessionType;       /**< Session type object */
@@ -1564,6 +1564,7 @@ extern int ejsGetByteArrayRoom(EjsByteArray *ba);
 extern int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, int size);
 
 extern struct EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
+extern bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, int require);
 
 
 /** 

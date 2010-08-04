@@ -299,7 +299,7 @@ static EjsObj *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
 
     conn = hp->conn;
     headers = (EjsObj*) ejsCreateSimpleObject(ejs);
-    for (p = 0; (p = mprGetNextHash(conn->transmitter->headers, p)) != 0; ) {
+    for (p = 0; (p = mprGetNextHash(conn->tx->headers, p)) != 0; ) {
         ejsSetPropertyByName(ejs, headers, EN(&n, p->key), ejsCreateString(ejs, p->data));
     }
     return (EjsObj*) headers;
@@ -904,7 +904,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         }
         httpFinalize(conn);
     }
-    length = hp->conn->transmitter->length;
+    length = hp->conn->tx->length;
     ejsSendEvent(ejs, hp->emitter, "writable", NULL, (EjsObj*) hp);
     if (conn->async) {
         httpEnableConnEvents(hp->conn);
@@ -1004,7 +1004,7 @@ static int writeHttpData(Ejs *ejs, EjsHttp *hp)
     int             count, nbytes;
 
     conn = hp->conn;
-    if (conn->transmitter->finalized) {
+    if (conn->tx->finalized) {
         ejsThrowIOError(ejs, "Can't write to socket");
         return 0;
     }
@@ -1201,17 +1201,17 @@ static bool expired(EjsHttp *hp)
      */
     diff = (conn->lastActivity + inactivityTimeout) - http->now;
     inactivity = 1;
-    if (diff > 0 && conn->receiver) {
+    if (diff > 0 && conn->rx) {
         diff = (conn->started + requestTimeout) - http->now;
         inactivity = 0;
     }
     if (diff < 0) {
-        if (conn->receiver) {
+        if (conn->rx) {
             if (inactivity) {
                 mprLog(http, 4, "Inactive request timed out %s, exceeded inactivity timeout %d", 
-                    conn->receiver->uri, inactivityTimeout);
+                    conn->rx->uri, inactivityTimeout);
             } else {
-                mprLog(http, 4, "Request timed out %s, exceeded timeout %d", conn->receiver->uri, requestTimeout);
+                mprLog(http, 4, "Request timed out %s, exceeded timeout %d", conn->rx->uri, requestTimeout);
             }
         } else {
             mprLog(http, 4, "Idle connection timed out");
@@ -1283,9 +1283,9 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
             }
             break;
         }
-        if (conn->receiver) {
-            if (conn->receiver->status == HTTP_CODE_REQUEST_TOO_LARGE || 
-                    conn->receiver->status == HTTP_CODE_REQUEST_URL_TOO_LARGE) {
+        if (conn->rx) {
+            if (conn->rx->status == HTTP_CODE_REQUEST_TOO_LARGE || 
+                    conn->rx->status == HTTP_CODE_REQUEST_URL_TOO_LARGE) {
                 /* No point retrying */
                 break;
             }
@@ -1302,7 +1302,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
             mprAdjustBufStart(hp->requestContent, -hp->requestContentCount);
         }
         /* Force a new connection */
-        if (conn->receiver == 0 || conn->receiver->status != HTTP_CODE_UNAUTHORIZED) {
+        if (conn->rx == 0 || conn->rx->status != HTTP_CODE_UNAUTHORIZED) {
             httpSetKeepAliveCount(conn, -1);
         }
         httpPrepClientConn(conn, HTTP_RETRY_REQUEST);

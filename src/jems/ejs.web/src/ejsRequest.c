@@ -18,7 +18,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *value);
  
 static int connOk(Ejs *ejs, EjsRequest *req)
 {
-    if (!req->conn || req->conn->receiver == 0) {
+    if (!req->conn || req->conn->rx == 0) {
         if (!ejs->exception) {
             ejsThrowIOError(ejs, "Connection lost or not established");
         }
@@ -77,7 +77,7 @@ static EjsObj *createParams(Ejs *ejs, EjsRequest *req)
 
     if ((params = req->params) == 0) {
         params = (EjsObj*) ejsCreateSimpleObject(ejs);
-        if ((formVars = req->conn->receiver->formVars) != 0) {
+        if ((formVars = req->conn->rx->formVars) != 0) {
             hp = 0;
             while ((hp = mprGetNextHash(formVars, hp)) != NULL) {
                 defineParam(ejs, params, hp->key, hp->data);
@@ -97,7 +97,7 @@ static EjsObj *createCookies(Ejs *ejs, EjsRequest *req)
     if (req->cookies) {
         return (EjsObj*) req->cookies;
     }
-    if ((cookieHeader = mprLookupHash(req->conn->receiver->headers, "cookie")) == 0) {
+    if ((cookieHeader = mprLookupHash(req->conn->rx->headers, "cookie")) == 0) {
         req->cookies = (EjsObj*) ejs->nullValue;
     } else {
         argv[0] = (EjsObj*) ejsCreateString(ejs, cookieHeader);
@@ -127,11 +127,11 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
 
     if (req->files == 0) {
         conn = req->conn;
-        if (conn->receiver->files == 0) {
+        if (conn->rx->files == 0) {
             return ejs->nullValue;
         }
         req->files = files = (EjsObj*) ejsCreateSimpleObject(ejs);
-        for (index = 0, hp = 0; (hp = mprGetNextHash(conn->receiver->files, hp)) != 0; index++) {
+        for (index = 0, hp = 0; (hp = mprGetNextHash(conn->rx->files, hp)) != 0; index++) {
             up = (HttpUploadFile*) hp->data;
             file = (EjsObj*) ejsCreateSimpleObject(ejs);
             ejsSetPropertyByName(ejs, file, EN(&n, "filename"), ejsCreateString(ejs, up->filename));
@@ -155,7 +155,7 @@ static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
     if (req->headers == 0) {
         req->headers = (EjsObj*) ejsCreateSimpleObject(ejs);
         conn = req->conn;
-        for (hp = 0; (hp = mprGetNextHash(conn->receiver->headers, hp)) != 0; ) {
+        for (hp = 0; (hp = mprGetNextHash(conn->rx->headers, hp)) != 0; ) {
             ejsSetPropertyByName(ejs, req->headers, EN(&n, hp->key), ejsCreateString(ejs, hp->data));
         }
     }
@@ -209,7 +209,7 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
         req->responseHeaders = (EjsObj*) ejsCreateSimpleObject(ejs);
         conn = req->conn;
         /* Get default headers */
-        for (hp = 0; (hp = mprGetNextHash(conn->transmitter->headers, hp)) != 0; ) {
+        for (hp = 0; (hp = mprGetNextHash(conn->tx->headers, hp)) != 0; ) {
             ejsSetPropertyByName(ejs, req->responseHeaders, EN(&n, mprStrdup(req->responseHeaders, hp->key)), 
                 ejsCreateString(ejs, hp->data));
         }
@@ -293,8 +293,8 @@ static cchar *getHost(HttpConn *conn, EjsRequest *req)
 
     if (req->server && req->server->name && *req->server->name) {
         hostName = req->server->name;
-    } else if (conn->receiver->hostName && conn->receiver->hostName) {
-        hostName = conn->receiver->hostName;
+    } else if (conn->rx->hostName && conn->rx->hostName) {
+        hostName = conn->rx->hostName;
     } else if (conn->sock) {
         hostName = conn->sock->acceptIp;
     } else {
@@ -316,15 +316,15 @@ static EjsObj *getLimits(Ejs *ejs, EjsRequest *req)
 
 static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
 {
-    HttpReceiver    *rec;
-    cchar           *path, *end, *sp;
-    char            *home, *cp;
-    int             levels;
+    HttpRx      *rx;
+    cchar       *path, *end, *sp;
+    char        *home, *cp;
+    int         levels;
 
-    rec = req->conn->receiver;
-    mprAssert(rec->pathInfo);
+    rx = req->conn->rx;
+    mprAssert(rx->pathInfo);
 
-    path = rec->pathInfo;
+    path = rx->pathInfo;
     end = &path[strlen(path)];
     for (levels = 1, sp = &path[1]; sp < end; sp++) {
         if (*sp == '/' && sp[-1] != '/') {
@@ -350,18 +350,19 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
  */
 static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 {
-    HttpConn        *conn;
-    HttpReceiver    *rec;
-    EjsObj          *value;
-    EjsName         n;
-    char            *path, *filename, *uri, *ip, *scheme;
-    int             port;
+    HttpConn    *conn;
+    HttpRx      *rx;
+    EjsObj      *value;
+    EjsName     n;
+    cchar       *pathInfo;
+    char        *path, *filename, *uri, *ip, *scheme;
+    int         port;
 
     if (!connOk(ejs, req)) {
         return (ejs->exception) ? 0 : ejs->nullValue;
     }
     conn = req->conn;
-    rec = conn->receiver;
+    rx = conn->rx;
 
     switch (slotNum) {
     case ES_ejs_web_Request_absHome:
@@ -369,7 +370,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
             scheme = conn->secure ? "https" : "http";
             ip = conn->sock ? conn->sock->acceptIp : req->server->ip;
             port = conn->sock ? conn->sock->acceptPort : req->server->port;
-            uri = mprAsprintf(req, -1, "%s://%s:%d%s/", scheme, conn->sock->ip, req->server->port, rec->scriptName);
+            uri = mprAsprintf(req, -1, "%s://%s:%d%s/", scheme, conn->sock->ip, req->server->port, rx->scriptName);
             req->absHome = (EjsObj*) ejsCreateUriAndFree(ejs, uri);
         }
         return req->absHome;
@@ -395,7 +396,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return mapNull(ejs, value);
 
     case ES_ejs_web_Request_contentLength:
-        return ejsCreateNumber(ejs, rec->length);
+        return ejsCreateNumber(ejs, rx->length);
 
     case ES_ejs_web_Request_contentType:
         createHeaders(ejs, req);
@@ -415,7 +416,8 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     case ES_ejs_web_Request_filename:
         if (req->filename == 0) {
-            filename = mprJoinPath(ejs, req->dir->path, &rec->pathInfo[1]);
+            pathInfo = ejsGetString(ejs, req->pathInfo);
+            filename = mprJoinPath(ejs, req->dir->path, &pathInfo[1]);
             req->filename = ejsCreatePathAndFree(ejs, filename);
         }
         return req->filename;
@@ -454,7 +456,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return req->log;
 
     case ES_ejs_web_Request_method:
-        return createString(ejs, rec->method);
+        return createString(ejs, rx->method);
 
     case ES_ejs_web_Request_originalMethod:
         return mapNull(ejs, req->originalMethod);
@@ -462,9 +464,9 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_originalUri:
         if (req->originalUri == 0) {
             scheme = (conn->secure) ? "https" : "http";
-            /* NOTE: rec->uri is not normalized or decoded */
-            req->originalUri = (EjsObj*) ejsCreateFullUri(ejs, scheme, getHost(conn, req), req->server->port, rec->uri, 
-                rec->parsedUri->query, rec->parsedUri->reference);
+            /* NOTE: rx->uri is not normalized or decoded */
+            req->originalUri = (EjsObj*) ejsCreateFullUri(ejs, scheme, getHost(conn, req), req->server->port, rx->uri, 
+                rx->parsedUri->query, rx->parsedUri->reference);
         }
         return req->originalUri;
 
@@ -485,18 +487,18 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     case ES_ejs_web_Request_query:
         if (req->query == 0) {
-            req->query = createString(ejs, rec->parsedUri->query);
+            req->query = createString(ejs, rx->parsedUri->query);
         }
         return req->query;
 
     case ES_ejs_web_Request_reference:
         if (req->reference == 0) {
-            req->reference = createString(ejs, rec->parsedUri->reference);
+            req->reference = createString(ejs, rx->parsedUri->reference);
         } 
         return req->reference;
 
     case ES_ejs_web_Request_referrer:
-        return createString(ejs, rec->referer);
+        return createString(ejs, rx->referer);
 
     case ES_ejs_web_Request_remoteAddress:
         return createString(ejs, conn->ip);
@@ -529,20 +531,20 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         } else return ejs->nullValue;
 
     case ES_ejs_web_Request_status:
-        return ejsCreateNumber(ejs, conn->transmitter->status);
+        return ejsCreateNumber(ejs, conn->tx->status);
 
     case ES_ejs_web_Request_uri:
         if (req->uri == 0) {
             scheme = (conn->secure) ? "https" : "http";
             path = mprStrcat(req, -1, getDefaultString(ejs, req->scriptName, ""),
-                getDefaultString(ejs, req->pathInfo, rec->uri), NULL);
+                getDefaultString(ejs, req->pathInfo, rx->uri), NULL);
             req->uri = (EjsObj*) ejsCreateFullUri(ejs, 
                 getDefaultString(ejs, req->scheme, scheme),
                 getDefaultString(ejs, req->host, getHost(conn, req)),
                 getDefaultInt(ejs, req->port, req->server->port),
                 path,
-                getDefaultString(ejs, req->query, rec->parsedUri->query),
-                getDefaultString(ejs, req->reference, rec->parsedUri->reference));
+                getDefaultString(ejs, req->query, rx->parsedUri->query),
+                getDefaultString(ejs, req->reference, rx->parsedUri->reference));
         }
         return req->uri;
 
@@ -584,13 +586,13 @@ static int getNum(Ejs *ejs, EjsObj *vp)
 
 static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *value)
 {
-    HttpConn        *conn;
-    HttpReceiver    *rec;
+    HttpConn    *conn;
+    HttpRx      *rx;
 
     if (!connOk(ejs, req)) return 0;
 
     conn = req->conn;
-    rec = conn->receiver;
+    rx = conn->rx;
 
     switch (slotNum) {
 
@@ -637,9 +639,9 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 
     case ES_ejs_web_Request_method:
         if (req->originalMethod == 0) {
-            req->originalMethod = (EjsObj*) ejsCreateString(ejs, rec->method);
+            req->originalMethod = (EjsObj*) ejsCreateString(ejs, rx->method);
         }
-        rec->method = mprStrdup(req, getString(ejs, value));
+        rx->method = mprStrdup(req, getString(ejs, value));
         break;
 
     case ES_ejs_web_Request_pathInfo:
@@ -689,6 +691,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 
     case ES_ejs_web_Request_uri:
         req->uri = value;
+        req->filename = 0;
         break;
 
     /*
@@ -879,6 +882,9 @@ static EjsObj *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     offset = (argc >= 1) ? ejsGetInt(ejs, argv[1]) : 0;
     count = (argc >= 2) ? ejsGetInt(ejs, argv[2]) : -1;
 
+    if (!ejsMakeRoomInByteArray(ejs, ba, count >= 0 ? count : MPR_BUFSIZE)) {
+        return 0;
+    }
     if (offset < 0) {
         offset = ba->writePosition;
     }
@@ -889,6 +895,7 @@ static EjsObj *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "Read count is negative");
         return 0;
     }
+    mprAssert(count > 0);
     nbytes = httpRead(req->conn, (char*) &ba->value[offset], count);
     if (nbytes < 0) {
         ejsThrowIOError(ejs, "Can't read from socket");
@@ -922,17 +929,17 @@ static EjsObj *req_sendfile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     EjsPath         *path;
     HttpConn        *conn;
-    HttpReceiver    *rec;
-    HttpTransmitter *trans;
+    HttpRx          *rx;
+    HttpTx          *trans;
     HttpPacket      *packet;
     MprPath         info;
 
     if (!connOk(ejs, req)) return 0;
     conn = req->conn;
-    rec = conn->receiver;
-    trans = conn->transmitter;
+    rx = conn->rx;
+    trans = conn->tx;
 
-    if (rec->ranges || conn->secure || trans->chunkSize > 0) {
+    if (rx->ranges || conn->secure || trans->chunkSize > 0) {
         return ejs->falseValue;
     }
     path = (EjsPath*) argv[0];
@@ -1094,7 +1101,7 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
 {
     EjsRequest      *req;
     EjsType         *type;
-    HttpReceiver    *rec;
+    HttpRx          *rx;
 
     mprAssert(server);
     mprAssert(conn);
@@ -1108,14 +1115,14 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     req->conn = conn;
     req->ejs = ejs;
     req->server = server;
-    rec = conn->receiver;
+    rx = conn->rx;
     if (mprIsRelPath(req, dir)) {
         req->dir = ejsCreatePath(ejs, dir);
     } else {
         req->dir = ejsCreatePathAndFree(ejs, mprGetRelPath(req, dir));
     }
-    req->pathInfo = (EjsObj*) ejsCreateString(ejs, rec->pathInfo);
-    req->scriptName = (EjsObj*) ejsCreateString(ejs, rec->scriptName);
+    req->pathInfo = (EjsObj*) ejsCreateString(ejs, rx->pathInfo);
+    req->scriptName = (EjsObj*) ejsCreateString(ejs, rx->scriptName);
     return req;
 }
 

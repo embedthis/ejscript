@@ -15,7 +15,6 @@ static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
 static int  flushByteArray(Ejs *ejs, EjsByteArray *ap);
 static int  getInput(Ejs *ejs, EjsByteArray *ap, int required);
 static int  lookupByteArrayProperty(Ejs *ejs, EjsByteArray *ap, EjsName *qname);
- static bool makeRoom(Ejs *ejs, EjsByteArray *ap, int require);
 
 static MPR_INLINE int swap16(EjsByteArray *ap, int a);
 static MPR_INLINE int swap32(EjsByteArray *ap, int a);
@@ -406,7 +405,7 @@ static EjsObj *ba_copyIn(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     count = min(src->length - srcOffset, count);
 
-    makeRoom(ejs, ap, destOffset + count);
+    ejsMakeRoomInByteArray(ejs, ap, destOffset + count);
     if ((destOffset + count) > src->length) {
         ejsThrowOutOfBoundsError(ejs, "Insufficient room for data");
         return 0;
@@ -438,7 +437,7 @@ static EjsObj *ba_copyOut(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
         return 0;
     }
     count = min(ap->length - srcOffset, count);
-    makeRoom(ejs, dest, destOffset + count);
+    ejsMakeRoomInByteArray(ejs, dest, destOffset + count);
     if ((destOffset + count) > dest->length) {
         ejsThrowOutOfBoundsError(ejs, "Insufficient room for data");
         return 0;
@@ -942,28 +941,28 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
         }
         switch (vp->type->id) {
         case ES_Boolean:
-            if (!makeRoom(ejs, ap, EJS_SIZE_BOOLEAN)) {
+            if (!ejsMakeRoomInByteArray(ejs, ap, EJS_SIZE_BOOLEAN)) {
                 return 0;
             }
             wrote += putByte(ap, ejsGetBoolean(ejs, vp));
             break;
 
         case ES_Date:
-            if (!makeRoom(ejs, ap, EJS_SIZE_DOUBLE)) {
+            if (!ejsMakeRoomInByteArray(ejs, ap, EJS_SIZE_DOUBLE)) {
                 return 0;
             }
             wrote += putNumber(ap, (MprNumber) ((EjsDate*) vp)->value);
             break;
 
         case ES_Number:
-            if (!makeRoom(ejs, ap, EJS_SIZE_DOUBLE)) {
+            if (!ejsMakeRoomInByteArray(ejs, ap, EJS_SIZE_DOUBLE)) {
                 return 0;
             }
             wrote += putNumber(ap, ejsGetNumber(ejs, vp));
             break;
 
         case ES_String:
-            if (!makeRoom(ejs, ap, ((EjsString*) vp)->length)) {
+            if (!ejsMakeRoomInByteArray(ejs, ap, ((EjsString*) vp)->length)) {
                 return 0;
             }
             sp = (EjsString*) vp;
@@ -978,7 +977,7 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
         case ES_ByteArray:
             bp = (EjsByteArray*) vp;
             len = availableBytes(bp);
-            if (!makeRoom(ejs, ap, len)) {
+            if (!ejsMakeRoomInByteArray(ejs, ap, len)) {
                 return 0;
             }
             /*
@@ -1003,7 +1002,7 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
  */
 static EjsObj *ba_writeByte(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    if (!makeRoom(ejs, ap, 1)) {
+    if (!ejsMakeRoomInByteArray(ejs, ap, 1)) {
         return 0;
     }
     putByte(ap, ejsGetInt(ejs, argv[0]));
@@ -1020,7 +1019,7 @@ static EjsObj *ba_writeByte(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_writeShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    if (!makeRoom(ejs, ap, sizeof(short))) {
+    if (!ejsMakeRoomInByteArray(ejs, ap, sizeof(short))) {
         return 0;
     }
     putShort(ap, ejsGetInt(ejs, argv[0]));
@@ -1037,7 +1036,7 @@ static EjsObj *ba_writeShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
  */
 static EjsObj *ba_writeDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    if (!makeRoom(ejs, ap, sizeof(double))) {
+    if (!ejsMakeRoomInByteArray(ejs, ap, sizeof(double))) {
         return 0;
     }
     putDouble(ap, ejsGetDouble(ejs, argv[0]));
@@ -1055,7 +1054,7 @@ static EjsObj *ba_writeDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
 
 static EjsObj *ba_writeInteger(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    if (!makeRoom(ejs, ap, sizeof(int))) {
+    if (!ejsMakeRoomInByteArray(ejs, ap, sizeof(int))) {
         return 0;
     }
     putInteger(ap, ejsGetInt(ejs, argv[0]));
@@ -1072,7 +1071,7 @@ static EjsObj *ba_writeInteger(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
  */
 static EjsObj *ba_writeLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    if (!makeRoom(ejs, ap, sizeof(int))) {
+    if (!ejsMakeRoomInByteArray(ejs, ap, sizeof(int))) {
         return 0;
     }
     putLong(ap, ejsGetInt(ejs, argv[0]));
@@ -1172,19 +1171,19 @@ static int getInput(Ejs *ejs, EjsByteArray *ap, int required)
 }
 
 
-static bool makeRoom(Ejs *ejs, EjsByteArray *ap, int require)
+bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, int require)
 {
     int     newLen;
 
     if (room(ap) < require) {
-        if (ap->emitter) {
+        if (ap->emitter && availableBytes(ap)) {
             ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
         }
         if (room(ap) < require) {
             newLen = max(ap->length + require, ap->length + ap->growInc);
             if (!ap->growable || ejsGrowByteArray(ejs, ap, newLen) < 0) {
                 if (!ejs->exception) {
-                    ejsThrowResourceError(ejs, "Byte array is too small");
+                    ejsThrowResourceError(ejs, "Byte array is too small. Need room for %d bytes", require);
                 }
                 return 0;
             }
@@ -1335,7 +1334,7 @@ int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, int offset, char *data, int l
     mprAssert(ba);
     mprAssert(data);
 
-    if (!makeRoom(ejs, ba, offset + length)) {
+    if (!ejsMakeRoomInByteArray(ejs, ba, offset + length)) {
         return EJS_ERR;
     }
     if (ba->length < (offset + length)) {

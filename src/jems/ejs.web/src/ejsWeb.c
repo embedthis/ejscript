@@ -46,7 +46,7 @@ static EjsObj *req_worker(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         //  THROW
         return 0;
     }
-    nejs->location = ejs->location;
+    nejs->loc = ejs->loc;
     if (ejsLoadModule(ejs, "ejs.web", -1, -1, 0) < 0) {
         mprError(ejs, "Can't load ejs.web.mod: %s", ejsGetErrorMsg(ejs, 1));
         return 0;

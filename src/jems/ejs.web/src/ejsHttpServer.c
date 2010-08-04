@@ -184,18 +184,18 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     }
     if (endpoint == ejs->nullValue) {
         sp->obj.permanent = 1;
-        if (ejs->location) {
-            ejs->location->context = sp;
+        if (ejs->loc) {
+            ejs->loc->context = sp;
         } else {
             ejsThrowStateError(ejs, "Can't find web server context for Ejscript. Check EjsStartup directive");
             return 0;
         }
         return (EjsObj*) ejs->nullValue;
     }
-    if (ejs->location) {
+    if (ejs->loc) {
         /* Being called hosted - ignore endpoint value */
         sp->obj.permanent = 1;
-        ejs->location->context = sp;
+        ejs->loc->context = sp;
         return (EjsObj*) ejs->nullValue;
     }
     address = ejsToString(ejs, endpoint);
@@ -483,7 +483,7 @@ void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server)
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp) 
 {
     EjsString       *vs;
-    HttpLocation    *location;
+    HttpLoc         *loc;
     Http            *http;
     HttpStage       *stage;
     cchar           *name;
@@ -491,10 +491,10 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
 
     mprAssert(sp->server);
     http = sp->server->http;
-    location = sp->server->location;
+    loc = sp->server->loc;
 
     if (sp->outgoingStages) {
-        httpClearStages(location, HTTP_STAGE_OUTGOING);
+        httpClearStages(loc, HTTP_STAGE_OUTGOING);
         for (i = 0; i < sp->outgoingStages->length; i++) {
             vs = ejsGetProperty(ejs, sp->outgoingStages, i);
             if (vs && ejsIsString(vs)) {
@@ -503,12 +503,12 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
                     return;
                 }
-                httpAddFilter(location, name, NULL, HTTP_STAGE_OUTGOING);
+                httpAddFilter(loc, name, NULL, HTTP_STAGE_OUTGOING);
             }
         }
     }
     if (sp->incomingStages) {
-        httpClearStages(location, HTTP_STAGE_INCOMING);
+        httpClearStages(loc, HTTP_STAGE_INCOMING);
         for (i = 0; i < sp->incomingStages->length; i++) {
             vs = ejsGetProperty(ejs, sp->incomingStages, i);
             if (vs && ejsIsString(vs)) {
@@ -517,7 +517,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
                     return;
                 }
-                httpAddFilter(location, name, NULL, HTTP_STAGE_INCOMING);
+                httpAddFilter(loc, name, NULL, HTTP_STAGE_INCOMING);
             }
         }
     }
@@ -526,7 +526,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
             ejsThrowArgError(ejs, "Can't find pipeline stage name %s", sp->connector);
             return;
         }
-        location->connector = stage;
+        loc->connector = stage;
     }
 }
 
@@ -552,7 +552,7 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
         break;
 
     case HTTP_STATE_PARSED:
-        conn->transmitter->handler = (conn->error) ? conn->http->passHandler : conn->http->ejsHandler;
+        conn->tx->handler = (conn->error) ? conn->http->passHandler : conn->http->ejsHandler;
         break;
 
     case HTTP_STATE_COMPLETE:
@@ -603,19 +603,19 @@ static void closeEjs(HttpQueue *q)
 static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
 {
     HttpConn        *conn;
-    HttpTransmitter *trans;
-    HttpReceiver    *rec;
+    HttpTx          *trans;
+    HttpRx          *rx;
 
     conn = q->conn;
-    trans = conn->transmitter;
-    rec = conn->receiver;
+    trans = conn->tx;
+    rx = conn->rx;
 
     if (httpGetPacketLength(packet) == 0) {
-        if (rec->remainingContent > 0) {
+        if (rx->remainingContent > 0) {
             httpError(conn, HTTP_CODE_BAD_REQUEST, "Client supplied insufficient body data");
         }
         httpPutForService(q, packet, 0);
-        if (rec->form) {
+        if (rx->form) {
             httpAddVarsFromQueue(q);
         }
         HTTP_NOTIFY(q->conn, 0, HTTP_NOTIFY_READABLE);
@@ -649,26 +649,26 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
     Ejs             *ejs;
     EjsRequest      *req;
     EjsPath         *dirPath;
-    HttpLocation    *location;
+    HttpLoc         *loc;
     cchar           *dir;
 
-    if (conn->transmitter->handler->match) {
+    if (conn->tx->handler->match) {
         /*
             Hosted handler. Must supply a location block which defines the HttpServer instance.
          */
-        location = conn->receiver->location;
-        if (location == 0 || location->context == 0) {
+        loc = conn->rx->loc;
+        if (loc == 0 || loc->context == 0) {
             mprError(sp, "Location block is not defined for request");
             return 0;
         }
-        sp = (EjsHttpServer*) location->context;
+        sp = (EjsHttpServer*) loc->context;
         ejs = sp->ejs;
         dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
         dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : conn->documentRoot;
         if (sp->server == 0) {
             /* Don't set limits or pipeline. That will come from the embedding server */
             sp->server = conn->server;
-            sp->server->ssl = location->ssl;
+            sp->server->ssl = loc->ssl;
             sp->ip = mprStrdup(sp, conn->server->ip);
             sp->port = conn->server->port;
             sp->dir = mprStrdup(sp, dir);
@@ -684,7 +684,7 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
     httpSetConnContext(conn, req);
     conn->dispatcher = ejs->dispatcher;
     conn->documentRoot = conn->server->documentRoot;
-    conn->transmitter->handler = ejs->http->ejsHandler;
+    conn->tx->handler = ejs->http->ejsHandler;
 
 #if FUTURE
     if (sp->pipe) {
@@ -736,10 +736,10 @@ static void runEjs(HttpQueue *q)
 
 static void startEjs(HttpQueue *q)
 {
-    HttpReceiver    *rec;
+    HttpRx      *rx;
 
-    rec = q->conn->receiver;
-    if (!rec->form && !rec->upload) {
+    rx = q->conn->rx;
+    if (!rx->form && !rx->upload) {
         runEjs(q);
     }
 }
@@ -747,10 +747,10 @@ static void startEjs(HttpQueue *q)
 
 static void processEjs(HttpQueue *q)
 {
-    HttpReceiver    *rec;
+    HttpRx      *rx;
 
-    rec = q->conn->receiver;
-    if (rec->form || rec->upload) {
+    rx = q->conn->rx;
+    if (rx->form || rx->upload) {
         runEjs(q);
     }
 }

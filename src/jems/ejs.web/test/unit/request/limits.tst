@@ -33,20 +33,24 @@ server.observe("readable", function (event, request: Request) {
         assert(l.transmission == 10)
         write("Too much data to receive")
         finalize()
+        break
 
     case "/receive":
         //  Test the max receive
         setLimits({receive: 10})
         assert(l.receive == 10)
+        break
 
     case "/inactivity":
         //  Test the inactivity timeout
         setLimits({inactivityTimeout: 1})
         assert(l.inactivityTimeout == 1)
         /* No finalize to provoke timeout */
+        break
 
     default:
         writeError(Http.ServerError, "Bad test URI")
+        break
     }
 })
 
@@ -68,7 +72,7 @@ http.post(HTTP + "/receive", "Too much receive data")
 http.finalize()
 do { App.eventLoop(10, true) } while(!http.wait())
 assert(http.status == Http.EntityTooLarge)
-assert(http.response.contains("Request content body of 27 bytes is too big. Limit 10."))
+assert(http.response.contains("Request content body of 21 bytes is too big. Limit 10."))
 http.close()
 
 //  Test inactivityTimeout

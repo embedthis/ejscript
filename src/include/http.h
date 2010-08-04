@@ -40,14 +40,14 @@ extern "C" {
 struct Http;
 struct HttpAuth;
 struct HttpConn;
-struct HttpLocation;
+struct HttpLoc;
 struct HttpPacket;
 struct HttpLimits;
 struct HttpQueue;
-struct HttpReceiver;
+struct HttpRx;
 struct HttpServer;
 struct HttpStage;
-struct HttpTransmitter;
+struct HttpTx;
 struct MaAlias;
 struct MaDir;
 #endif
@@ -132,10 +132,6 @@ struct MaDir;
 
 #define HTTP_DATE_FORMAT          "%a, %d %b %Y %T GMT"
 
-#if UNUSED
-#define HTTP_TRACE_LEVEL          2                 /**< Trace level at which requests are traced */
-#endif
-
 /*  
     Hash sizes (primes work best)
  */
@@ -184,7 +180,7 @@ struct MaDir;
 #define HTTP_CODE_INSUFFICIENT_STORAGE      507
 
 /*
-    Proprietary HTTP status codes.
+    Proprietary HTTP status codes
  */
 #define HTTP_CODE_START_LOCAL_ERRORS        550
 #define HTTP_CODE_COMMS_ERROR               550
@@ -227,7 +223,7 @@ typedef struct Http {
 
     struct HttpLimits *clientLimits;        /**< Client resource limits */
     struct HttpLimits *serverLimits;        /**< Server resource limits */
-    struct HttpLocation *clientLocation;    /**< Default location block for clients */
+    struct HttpLoc *clientLocation;    /**< Default location block for clients */
 
     MprEvent        *timer;                 /**< Admin service timer */
     MprTime         now;                    /**< When was the currentDate last computed */
@@ -1286,7 +1282,7 @@ typedef int (*HttpFillHeadersProc)(void *data);
         HTTP/1.1 keep-alive.
     @stability Evolving
     @defgroup HttpConn HttpConn
-    @see HttpConn HttpReceiver HttpReceiver HttpTransmitter HttpQueue HttpStage
+    @see HttpConn HttpRx HttpRx HttpTx HttpQueue HttpStage
         httpCreateConn httpCloseConn httpCompleteRequest httpCreatePipeline httpDestroyPipeline httpDiscardTransmitData
         httpError httpGetAsync httpGetConnContext httpGetError httpGetKeepAliveCount httpPrepConn httpProcessPipeline
         httpServiceQueues httpSetAsync httpSetCredentials httpSetCallback httpSetConnContext
@@ -1299,7 +1295,7 @@ typedef struct HttpConn {
     int             state;                  /**< Connection state */
     int             flags;                  /**< Connection flags */
     int             abortPipeline;          /**< Connection errors (not proto errors) abort the pipeline */
-    int             advancing;              /**< In httpAdvanceReceiver (mutex) */
+    int             advancing;              /**< In httpAdvanceRx (mutex) */
     int             complete;               /**< Request is complete and should step through all remaining states */
     int             writeComplete;          /**< All write data has been sent for the current request */
     int             error;                  /**< A request error has occurred */
@@ -1324,8 +1320,8 @@ typedef struct HttpConn {
     /* NOTE: documentRoot may be different for virtual hosts, so can't use server->documentRoot */
     char            *documentRoot;          /**< Directory for documents */
 
-    struct HttpReceiver *receiver;          /**< Receiver object */
-    struct HttpTransmitter *transmitter;    /**< Transmitter object */
+    struct HttpRx *rx;                      /**< Rx object */
+    struct HttpTx *tx;                      /**< Tx object */
     struct HttpQueue serviceq;              /**< List of queues that require service for request pipeline */
 
     HttpPacket      *input;                 /**< Header packet */
@@ -1354,13 +1350,6 @@ typedef struct HttpConn {
     int             writeBlocked;           /**< Transmission writing is blocked */
 
     HttpTrace       trace[2];               /**< Tracing for [rx|tx] */
-#if OLD && UNUSED
-    int             traceLevel;             /**< Trace activation level */
-    int             traceMaxLength;         /**< Maximum trace file length (if known) */
-    int             traceMask;              /**< Request/response trace mask */
-    MprHashTable    *traceInclude;          /**< Extensions to include in trace */
-    MprHashTable    *traceExclude;          /**< Extensions to exclude from trace */
-#endif
 
     /*  
         Authentication for client requests
@@ -1380,7 +1369,7 @@ typedef struct HttpConn {
 } HttpConn;
 
 
-//  MOB -- all APIS need ingroup
+//  MOB -- all APIs need ingroup
 
 /**
     Call httpEvent with the given event mask
@@ -1432,7 +1421,7 @@ extern HttpConn *httpCreateConn(Http *http, struct HttpServer *server);
     @param location Location object controlling how the pipeline is configured for the request
     @param handler Handler to process the request for server side requests
  */
-extern void httpCreatePipeline(HttpConn *conn, struct HttpLocation *location, HttpStage *handler);
+extern void httpCreatePipeline(HttpConn *conn, struct HttpLoc *location, HttpStage *handler);
 
 /**
     Destroy the pipeline
@@ -1453,7 +1442,7 @@ extern void httpDiscardTransmitData(HttpConn *conn);
     @param status Http status code
     @param fmt Printf style formatted string
     @param ... Arguments for fmt
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpError(HttpConn *conn, int status, cchar *fmt, ...);
 extern void httpLimitError(HttpConn *conn, int status, cchar *fmt, ...);
@@ -1699,7 +1688,7 @@ typedef long HttpAcl;                       /* Access control mask */
 
 /** 
     Authorization
-    HttpAuth is the foundation authorization object and is used as base class by HttpDirectory and HttpLocation.
+    HttpAuth is the foundation authorization object and is used as base class by HttpDirectory and HttpLoc.
     It stores the authorization configuration information required to determine if a client request should be permitted 
     access to a given resource.
     @stability Evolving
@@ -1822,10 +1811,10 @@ extern bool     httpValidatePamCredentials(HttpAuth *auth, cchar *realm, cchar *
 /**
     Location Control
     @stability Evolving
-    @defgroup HttpLocation HttpLocation
-    @see HttpLocation
+    @defgroup HttpLoc HttpLoc
+    @see HttpLoc
  */
-typedef struct HttpLocation {
+typedef struct HttpLoc {
     HttpAuth        *auth;                  /**< Per location block authentication */
     Http            *http;                  /**< Http service object (copy of appweb->http) */
     int             flags;                  /**< Location flags */
@@ -1840,36 +1829,36 @@ typedef struct HttpLocation {
     MprList         *inputStages;           /**< Input stages */
     MprList         *outputStages;          /**< Output stages */
     MprHashTable    *errorDocuments;        /**< Set of error documents to use on errors */
-    struct HttpLocation *parent;            /**< Parent location */
+    struct HttpLoc *parent;            /**< Parent location */
     void            *context;               /**< Hosting context */
     char            *uploadDir;             /**< Upload directory */
     int             autoDelete;             /**< Auto delete uploaded files */
     char            *searchPath;            /**< Search path */
     char            *script;                /**< Startup script */
     struct MprSsl   *ssl;                   /**< SSL configuration */
-} HttpLocation;
+} HttpLoc;
 
-extern HttpLocation *httpInitLocation(Http *http, MprCtx ctx, int serverSide);
-extern void httpAddErrorDocument(HttpLocation *location, cchar *code, cchar *url);
+extern HttpLoc *httpInitLocation(Http *http, MprCtx ctx, int serverSide);
+extern void httpAddErrorDocument(HttpLoc *location, cchar *code, cchar *url);
 
-extern void httpFinalizeLocation(HttpLocation *location);
-extern struct HttpStage *httpGetHandlerByExtension(HttpLocation *location, cchar *ext);
-extern cchar *httpLookupErrorDocument(HttpLocation *location, int code);
-extern void httpResetPipeline(HttpLocation *location);
-extern void httpSetLocationAuth(HttpLocation *location, HttpAuth *auth);
-extern void httpSetLocationAutoDelete(HttpLocation *location, int enable);
-extern void httpSetLocationFlags(HttpLocation *location, int flags);
-extern void httpSetLocationHandler(HttpLocation *location, cchar *name);
-extern void httpSetLocationPrefix(HttpLocation *location, cchar *uri);
-extern void httpSetLocationScript(HttpLocation *location, cchar *script);
-extern int httpSetConnector(HttpLocation *location, cchar *name);
-extern int httpAddHandler(HttpLocation *location, cchar *name, cchar *extensions);
+extern void httpFinalizeLocation(HttpLoc *location);
+extern struct HttpStage *httpGetHandlerByExtension(HttpLoc *location, cchar *ext);
+extern cchar *httpLookupErrorDocument(HttpLoc *location, int code);
+extern void httpResetPipeline(HttpLoc *location);
+extern void httpSetLocationAuth(HttpLoc *location, HttpAuth *auth);
+extern void httpSetLocationAutoDelete(HttpLoc *location, int enable);
+extern void httpSetLocationFlags(HttpLoc *location, int flags);
+extern void httpSetLocationHandler(HttpLoc *location, cchar *name);
+extern void httpSetLocationPrefix(HttpLoc *location, cchar *uri);
+extern void httpSetLocationScript(HttpLoc *location, cchar *script);
+extern int httpSetConnector(HttpLoc *location, cchar *name);
+extern int httpAddHandler(HttpLoc *location, cchar *name, cchar *extensions);
 
-extern HttpLocation *httpCreateLocation(Http *http);
-extern HttpLocation *httpCreateInheritedLocation(Http *http, HttpLocation *location);
-extern int httpSetHandler(HttpLocation *location, cchar *name);
-extern int httpAddFilter(HttpLocation *location, cchar *name, cchar *extensions, int direction);
-extern void httpClearStages(HttpLocation *location, int direction);
+extern HttpLoc *httpCreateLocation(Http *http);
+extern HttpLoc *httpCreateInheritedLocation(Http *http, HttpLoc *location);
+extern int httpSetHandler(HttpLoc *location, cchar *name);
+extern int httpAddFilter(HttpLoc *location, cchar *name, cchar *extensions, int direction);
+extern void httpClearStages(HttpLoc *location, int direction);
 
 /**
     Upload File
@@ -1890,7 +1879,7 @@ extern void httpRemoveAllUploadedFiles(HttpConn *conn);
 extern void httpRemoveUploadFile(HttpConn *conn, cchar *id);
 
 /* 
-    Receiver flags
+    Rx flags
  */
 #define HTTP_DELETE             0x1         /**< DELETE method  */
 #define HTTP_GET                0x2         /**< GET method  */
@@ -1912,14 +1901,14 @@ extern void httpRemoveUploadFile(HttpConn *conn, cchar *id);
 #define HTTP_CHUNK_EOF        3             /**< End of last chunk */
 
 /** 
-    Http Receiver
-    @description Most of the APIs in the receiver group still take a HttpConn object as their first parameter. This is
-        to make the API easier to remember - APIs take a connection object rather than a receiver or transmitter object.
+    Http Rx
+    @description Most of the APIs in the rx group still take a HttpConn object as their first parameter. This is
+        to make the API easier to remember - APIs take a connection object rather than a rx or tx object.
     @stability Evolving
-    @defgroup HttpReceiver HttpReceiver
-    @see HttpReceiver HttpConn HttpTransmitter httpWriteBlocked httpGetCookies httpGetQueryString
+    @defgroup HttpRx HttpRx
+    @see HttpRx HttpConn HttpTx httpWriteBlocked httpGetCookies httpGetQueryString
  */
-typedef struct HttpReceiver {
+typedef struct HttpRx {
 
     char            *method;                /**< Request method */
     char            *uri;                   /**< Original URI (alias for parsedUri->uri) (not decoded) */
@@ -1933,7 +1922,7 @@ typedef struct HttpReceiver {
     HttpPacket      *freePackets;           /**< Free list of packets */
     HttpPacket      *headerPacket;          /**< HTTP headers */
     HttpUri         *parsedUri;             /**< Parsed request uri */
-    HttpLocation    *location;              /**< Location block */
+    HttpLoc         *loc;                   /**< Location block */
     MprList         *inputPipeline;         /**< Input processing */
     MprHashTable    *headers;               /**< Header variables */
     MprList         *etags;                 /**< Document etag to uniquely identify the document version */
@@ -1943,7 +1932,7 @@ typedef struct HttpReceiver {
     int             chunkState;             /**< Chunk encoding state */
     int             chunkSize;              /**< Size of the next chunk */
     int             chunkRemainingData;     /**< Remaining chunk data to read */
-    int             flags;                  /**< Receiver modifiers */
+    int             flags;                  /**< Rx modifiers */
     int             needInputPipeline;      /**< Input pipeline required to process received data */
     int             remainingContent;       /**< Remaining content data to read (in next chunk if chunked) */
     int             receivedContent;        /**< Length of content actually received */
@@ -1970,7 +1959,7 @@ typedef struct HttpReceiver {
     char            *contentLength;         /**< Content length string value */
     char            *hostName;              /**< Client supplied host name */
 
-    //  MOB -- is this needed if Transmitter.filename is pathInfo => storage */ 
+    //  MOB -- is this needed if Tx.filename is pathInfo => storage */ 
     char            *pathTranslated;        /**< Mapped pathInfo to storage. Set by handlers if required. (Decoded) */
     char            *pragma;                /**< Pragma header */
     char            *mimeType;              /**< Mime type of the request payload (ENV: CONTENT_TYPE) */
@@ -2005,16 +1994,16 @@ typedef struct HttpReceiver {
      */
     struct MaAlias  *alias;                 /**< Matching alias */
     struct MaDir    *dir;                   /**< Best matching dir (PTR only) */
-} HttpReceiver;
+} HttpRx;
 
 
 /** 
-    Get a receiver content length
-    @description Get the length of the receiver body content (if any). This is used in servers to get the length of posted
+    Get a rx content length
+    @description Get the length of the rx body content (if any). This is used in servers to get the length of posted
         data and in clients to get the response body length.
     @param conn HttpConn connection object created via $httpCreateConn
     @return A count of the response content data in bytes.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern int httpGetContentLength(HttpConn *conn);
 
@@ -2023,36 +2012,36 @@ extern int httpGetContentLength(HttpConn *conn);
     @description Get the cookies defined in the current requeset
     @param conn HttpConn connection object created via $httpCreateConn
     @return Return a string containing the cookies sent in the Http header of the last request
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern cchar *httpGetCookies(HttpConn *conn);
 
 /** 
-    Get a receiver http header.
+    Get a rx http header.
     @description Get a http response header for a given header key.
     @param conn HttpConn connection object created via $httpCreateConn
     @param key Name of the header to retrieve. This should be a lower case header name. For example: "Connection"
     @return Value associated with the header key or null if the key did not exist in the response.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern cchar *httpGetHeader(HttpConn *conn, cchar *key);
 
 /** 
     Get all the response http headers.
-    @description Get all the receiver headers. The returned string formats all the headers in the form:
+    @description Get all the rx headers. The returned string formats all the headers in the form:
         key: value\\nkey2: value2\\n...
     @param conn HttpConn connection object created via $httpCreateConn
     @return String containing all the headers. The caller must free this returned string.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern char *httpGetHeaders(HttpConn *conn);
 
 /** 
-    Get the hash table of receiver Http headers
-    @description Get the internal hash table of receiver headers
+    Get the hash table of rx Http headers
+    @description Get the internal hash table of rx headers
     @param conn HttpConn connection object created via $httpCreateConn
     @return Hash table. See MprHash for how to access the hash table.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern MprHashTable *httpGetHeaderHash(HttpConn *conn);
 
@@ -2061,7 +2050,7 @@ extern MprHashTable *httpGetHeaderHash(HttpConn *conn);
     @description Get query string sent with the current request.
     @param conn HttpConn connection object
     @return String containing the request query string. Caller should not free.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern cchar *httpGetQueryString(HttpConn *conn);
 
@@ -2069,7 +2058,7 @@ extern cchar *httpGetQueryString(HttpConn *conn);
     Get a status associated with a response to a client request.
     @param conn HttpConn connection object created via $httpCreateConn
     @return An integer Http response code. Typically 200 is success.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern int httpGetStatus(HttpConn *conn);
 
@@ -2078,38 +2067,38 @@ extern int httpGetStatus(HttpConn *conn);
     on the first line of the Http response.
     @param conn HttpConn connection object created via $httpCreateConn
     @returns A Http status message. Caller must not free.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern char *httpGetStatusMessage(HttpConn *conn);
 
 /** 
-    Read receiver body data. This will read available body data. If in sync mode, this call may block. If in async
+    Read rx body data. This will read available body data. If in sync mode, this call may block. If in async
     mode, the call will not block and will return with whatever data is available.
     @param conn HttpConn connection object created via $httpCreateConn
     @param buffer Buffer to receive read data
     @param size Size of buffer. 
     @return The number of bytes read
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern int httpRead(HttpConn *conn, char *buffer, int size);
 
 /** 
-    Read response data as a string. This will read all receiver body and return a string that the caller should free. 
+    Read response data as a string. This will read all rx body and return a string that the caller should free. 
     This will block and should not be used in async mode.
     @param conn HttpConn connection object created via $httpCreateConn
-    @returns A string containing the receiver body. Caller should free.
-    @ingroup HttpReceiver
+    @returns A string containing the rx body. Caller should free.
+    @ingroup HttpRx
  */
 extern char *httpReadString(HttpConn *conn);
 
 /* Internal */
-extern HttpReceiver *httpCreateReceiver(HttpConn *conn);
-extern void httpDestroyReceiver(HttpConn *conn);
+extern HttpRx *httpCreateRx(HttpConn *conn);
+extern void httpDestroyRx(HttpConn *conn);
 extern bool httpContentNotModified(HttpConn *conn);
 extern HttpRange *httpCreateRange(HttpConn *conn, int start, int end);
 extern void  httpConnError(struct HttpConn *conn, int status, cchar *fmt, ...);
 extern void  httpProtocolError(struct HttpConn *conn, int status, cchar *fmt, ...);
-extern void  httpAdvanceReceiver(HttpConn *conn, HttpPacket *packet);
+extern void  httpAdvanceRx(HttpConn *conn, HttpPacket *packet);
 extern void  httpProcessWriteEvent(HttpConn *conn);
 extern bool  httpProcessCompletion(HttpConn *conn);
 extern int   httpSetUri(HttpConn *conn, cchar *newUri);
@@ -2123,7 +2112,7 @@ extern bool httpMatchModified(HttpConn *conn, MprTime time);
     @param conn HttpConn connection object
     @param buf Buffer containing www-urlencoded data
     @param len Length of buf
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern void httpAddVars(HttpConn *conn, cchar *buf, int len);
 
@@ -2140,7 +2129,7 @@ extern void httpAddVarsFromQueue(HttpQueue *q);
     @param var Name of the form variable 
     @param value Value to compare
     @return True if the value matches
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern int httpCompareFormVar(HttpConn *conn, cchar *var, cchar *value);
 
@@ -2149,7 +2138,7 @@ extern int httpCompareFormVar(HttpConn *conn, cchar *var, cchar *value);
     @description Get the cookies defined in the current requeset
     @param conn HttpConn connection object
     @return Return a string containing the cookies sent in the Http header of the last request
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern cchar *httpGetCookies(HttpConn *conn);
 
@@ -2161,7 +2150,7 @@ extern cchar *httpGetCookies(HttpConn *conn);
     @param var Name of the form variable to retrieve
     @param defaultValue Default value to return if the variable is not defined. Can be null.
     @return String containing the form variable's value. Caller should not free.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern cchar *httpGetFormVar(HttpConn *conn, cchar *var, cchar *defaultValue);
 
@@ -2173,7 +2162,7 @@ extern cchar *httpGetFormVar(HttpConn *conn, cchar *var, cchar *defaultValue);
     @param var Name of the form variable to retrieve
     @param defaultValue Default value to return if the variable is not defined. Can be null.
     @return Integer containing the form variable's value
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern int httpGetIntFormVar(HttpConn *conn, cchar *var, int defaultValue);
 
@@ -2182,7 +2171,7 @@ extern int httpGetIntFormVar(HttpConn *conn, cchar *var, int defaultValue);
     @description Get query string sent with the current request.
     @param conn HttpConn connection object
     @return String containing the request query string. Caller should not free.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern cchar *httpGetQueryString(HttpConn *conn);
 
@@ -2193,7 +2182,7 @@ extern cchar *httpGetQueryString(HttpConn *conn);
     @param conn HttpConn connection object
     @param var Name of the form variable to retrieve
     @param value Default value to return if the variable is not defined. Can be null.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern void httpSetIntFormVar(HttpConn *conn, cchar *var, int value);
 
@@ -2204,7 +2193,7 @@ extern void httpSetIntFormVar(HttpConn *conn, cchar *var, int value);
     @param conn HttpConn connection object
     @param var Name of the form variable to retrieve
     @param value Default value to return if the variable is not defined. Can be null.
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern void httpSetFormVar(HttpConn *conn, cchar *var, cchar *value);
 
@@ -2213,7 +2202,7 @@ extern void httpSetFormVar(HttpConn *conn, cchar *var, cchar *value);
     @param conn HttpConn connection object
     @param var Name of the form variable to retrieve
     @return True if the form variable is defined
-    @ingroup HttpReceiver
+    @ingroup HttpRx
  */
 extern int httpTestFormVar(HttpConn *conn, cchar *var);
 
@@ -2221,24 +2210,24 @@ extern int httpTestFormVar(HttpConn *conn, cchar *var);
 extern void httpCreateEnvVars(HttpConn *conn);
 
 /*  
-    Transmitter flags
+    Tx flags
  */
-#define HTTP_TRANS_DONT_CACHE          0x1     /**< Add no-cache to the transmission */
-#define HTTP_TRANS_NO_BODY             0x2     /**< No transmission body, only sent headers */
-#define HTTP_TRANS_HEADERS_CREATED     0x4     /**< Response headers have been created */
-#define HTTP_TRANS_SENDFILE            0x8     /**< Relay output via Send connector */
+#define HTTP_TX_DONT_CACHE          0x1     /**< Add no-cache to the transmission */
+#define HTTP_TX_NO_BODY             0x2     /**< No transmission body, only sent headers */
+#define HTTP_TX_HEADERS_CREATED     0x4     /**< Response headers have been created */
+#define HTTP_TX_SENDFILE            0x8     /**< Relay output via Send connector */
 
 /** 
-    Http Transmitter
-    @description The transmitter object controls the transmission of data. This may be client requests or responses to
+    Http Tx
+    @description The tx object controls the transmission of data. This may be client requests or responses to
         client requests. Most of the APIs in the Response group still take a HttpConn object as their first parameter. 
-        This is to make the API easier to remember - APIs take a connection object rather than a receiver or 
+        This is to make the API easier to remember - APIs take a connection object rather than a rx or 
         transmission object.
     @stability Evolving
-    @defgroup HttpTransmitter HttpTransmitter
-    @see HttpTransmitter HttpReceiver HttpConn httpSetCookie httpError httpFormatBody
+    @defgroup HttpTx HttpTx
+    @see HttpTx HttpRx HttpConn httpSetCookie httpError httpFormatBody
  */
-typedef struct HttpTransmitter {
+typedef struct HttpTx {
     struct HttpConn *conn;                  /**< Current connection object */
     MprList         *outputPipeline;        /**< Output processing */
     HttpStage       *handler;               /**< Server-side request handler stage */
@@ -2269,7 +2258,7 @@ typedef struct HttpTransmitter {
     int             entityLength;           /**< Original content length before range subsetting */
     int             bytesWritten;           /**< Bytes written including headers */
     int             headerSize;             /**< Size of the header written */
-} HttpTransmitter;
+} HttpTx;
 
 /** 
     Add a header to the transmission using a format string.
@@ -2280,7 +2269,7 @@ typedef struct HttpTransmitter {
     @param ... Arguments for fmt
     @return Zero if successful, otherwise a negative MPR error code. Returns MPR_ERR_ALREADY_EXISTS if the header already
         exists.
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpAddHeader(HttpConn *conn, cchar *key, cchar *fmt, ...);
 
@@ -2292,7 +2281,7 @@ extern void httpAddHeader(HttpConn *conn, cchar *key, cchar *fmt, ...);
     @param value Key value to use
     @return Zero if successful, otherwise a negative MPR error code. Returns MPR_ERR_ALREADY_EXISTS if the header already
         exists.
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpAddSimpleHeader(HttpConn *conn, cchar *key, cchar *value);
 
@@ -2303,7 +2292,7 @@ extern void httpAddSimpleHeader(HttpConn *conn, cchar *key, cchar *value);
     @param key Http response header key
     @param fmt Printf style formatted string to use as the header key value
     @param ... Arguments for fmt
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpAppendHeader(HttpConn *conn, cchar *key, cchar *fmt, ...);
 
@@ -2316,24 +2305,24 @@ extern void httpAppendHeader(HttpConn *conn, cchar *key, cchar *fmt, ...);
     @param method Http method to use. Valid methods include: "GET", "POST", "PUT", "DELETE", "OPTIONS" and "TRACE" 
     @param uri URI to fetch
     @return Zero if the request was successfully sent to the server. Otherwise a negative MPR error code is returned.
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern int httpConnect(HttpConn *conn, cchar *method, cchar *uri);
 
 /** 
-    Create the transmitter object. This is used internally by the http library.
+    Create the tx object. This is used internally by the http library.
     @param conn HttpConn connection object created via $httpCreateConn
     @param headers Hash table of Http headers. Used to preserve headers from one request to another.
-    @returns A transmitter object
+    @returns A tx object
  */
-extern HttpTransmitter *httpCreateTransmitter(HttpConn *conn, MprHashTable *headers);
+extern HttpTx *httpCreateTx(HttpConn *conn, MprHashTable *headers);
 
 /** 
     Dont cache the transmission 
     @description Instruct the client not to cache the transmission body. This is done by setting the Cache-control Http
         header.
     @param conn HttpConn connection object
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpDontCache(HttpConn *conn);
 
@@ -2350,7 +2339,7 @@ extern void httpEnableUpload(HttpConn *conn);
     @description Finalize writing Http data by writing the final chunk trailer if required. If using chunked transfers, 
     a null chunk trailer is required to signify the end of write data. 
     @param conn HttpConn connection object
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpFinalize(HttpConn *conn);
 
@@ -2358,7 +2347,7 @@ extern void httpFinalize(HttpConn *conn);
 extern int httpIsFinalized(HttpConn *conn);
 
 /**
-    Flush transmitter data. This writes any buffered data. 
+    Flush tx data. This writes any buffered data. 
     @param conn HttpConn connection object created via $httpCreateConn
  */
 void httpFlush(HttpConn *conn);
@@ -2369,7 +2358,7 @@ void httpFlush(HttpConn *conn);
         and fetch the redirected URI.
     @param conn HttpConn connection object created via $httpCreateConn
     @param follow Set to true to enable transparent redirections
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpFollowRedirects(HttpConn *conn, bool follow);
 
@@ -2383,7 +2372,7 @@ extern void httpFollowRedirects(HttpConn *conn, bool follow);
         large security holes.
     @param ... Arguments for fmt
     @return A count of the number of bytes in the transmission body.
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern int httpFormatBody(HttpConn *conn, cchar *title, cchar *fmt, ...);
 
@@ -2398,7 +2387,7 @@ extern int httpFormatBody(HttpConn *conn, cchar *title, cchar *fmt, ...);
         large security holes.
     @param ... Arguments for fmt
     @return A count of the number of bytes in the transmission body.
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpFormatError(HttpConn *conn, int status, cchar *fmt, ...);
 
@@ -2412,7 +2401,7 @@ extern void httpFormatError(HttpConn *conn, int status, cchar *fmt, ...);
         sending to the user. NOTE: Do not send user input back to the client using this method. Otherwise you open
         large security holes.
     @param args Arguments for fmt
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpFormatErrorV(HttpConn *conn, int status, cchar *fmt, va_list args);
 
@@ -2427,7 +2416,7 @@ extern void *httpGetQueueData(HttpConn *conn);
     Return whether transfer chunked encoding will be used on this request
     @param conn HttpConn connection object created via $httpCreateConn
     @returns true if chunk encoding will be used
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */ 
 extern int httpIsChunked(HttpConn *conn);
 
@@ -2438,12 +2427,12 @@ extern int httpIsChunked(HttpConn *conn);
     @param conn HttpConn connection object created via $httpCreateConn
     @param url Reference to a string to receive a redirection URL. Set to NULL if not redirection is required.
     @return true if the request needs to be retried.
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern bool httpNeedRetry(HttpConn *conn, char **url);
 
 /**
-    Tell the transmitter to omit sending any body
+    Tell the tx to omit sending any body
     @param conn HttpConn connection object created via $httpCreateConn
  */
 extern void httpOmitBody(HttpConn *conn);
@@ -2454,7 +2443,7 @@ extern void httpOmitBody(HttpConn *conn);
     @param conn HttpConn connection object created via $httpCreateConn
     @param status Http status code to send with the response
     @param uri New uri for the client
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpRedirect(HttpConn *conn, int status, cchar *uri);
 
@@ -2464,7 +2453,7 @@ extern void httpRedirect(HttpConn *conn, int status, cchar *uri);
     @param conn HttpConn connection object created via $httpCreateConn
     @param key Http response header key
     @return Zero if successful, otherwise a negative MPR error code.
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern int httpRemoveHeader(HttpConn *conn, cchar *key);
 
@@ -2486,7 +2475,7 @@ extern void httpSetContentLength(HttpConn *conn, int length);
     @param domain Domain in which the cookie applies. Must have 2-3 dots.
     @param lifetime Duration for the cookie to persist in seconds
     @param secure Set to true if the cookie only applies for SSL based connections
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpSetCookie(HttpConn *conn, cchar *name, cchar *value, cchar *path, cchar *domain, int lifetime, bool secure);
 
@@ -2505,7 +2494,7 @@ extern void httpSetEntityLength(HttpConn *conn, int len);
     @param key Http response header key
     @param fmt Printf style formatted string to use as the header key value
     @param ... Arguments for fmt
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpSetHeader(HttpConn *conn, cchar *key, cchar *fmt, ...);
 
@@ -2517,7 +2506,7 @@ extern void httpSetResponseBody(HttpConn *conn, int status, cchar *msg);
     @description Set the Http response status for the request. This defaults to 200 (OK).
     @param conn HttpConn connection object created via $httpCreateConn
     @param status Http status code.
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpSetStatus(HttpConn *conn, int status);
 
@@ -2526,7 +2515,7 @@ extern void httpSetStatus(HttpConn *conn, int status);
     @description Set the mime type Http header in the transmission
     @param conn HttpConn connection object created via $httpCreateConn
     @param mimeType Mime type string
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpSetMimeType(HttpConn *conn, cchar *mimeType);
 
@@ -2536,7 +2525,7 @@ extern void httpSetMimeType(HttpConn *conn, cchar *mimeType);
     @param conn HttpConn connection object created via $httpCreateConn
     @param key Http response header key
     @param value String value for the key
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpSetSimpleHeader(HttpConn *conn, cchar *key, cchar *value);
 
@@ -2545,7 +2534,7 @@ extern void httpSetSimpleHeader(HttpConn *conn, cchar *key, cchar *value);
     @param conn HttpConn connection object created via $httpCreateConn
     @param state HTTP_STATE_XXX to wait for.
     @param timeout Timeout in milliseconds to wait 
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern int httpWait(HttpConn *conn, int state, int timeout);
 
@@ -2557,7 +2546,7 @@ extern int httpWait(HttpConn *conn, int state, int timeout);
         transmission can be sent with a content-length header. This is the fastest HTTP transmission.
     @param conn HttpConn connection object created via $httpCreateConn
     @param packet Packet into which to place the headers
-    @ingroup HttpTransmitter
+    @ingroup HttpTx
  */
 extern void httpWriteHeaders(HttpConn *conn, HttpPacket *packet);
 
@@ -2587,7 +2576,7 @@ extern void httpWriteBlocked(HttpConn *conn);
  */
 typedef struct  HttpServer {
     Http            *http;                  /**< Http service object */
-    HttpLocation    *location;              /**< Default location block */
+    HttpLoc         *loc;                   /**< Default location block */
     HttpLimits      *limits;                /**< Server resource limits */
     MprWaitHandler  waitHandler;            /**< I/O wait handler */
     MprHashTable    *clients;               /**< Table of active client IPs */

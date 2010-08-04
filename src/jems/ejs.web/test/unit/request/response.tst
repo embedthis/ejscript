@@ -73,14 +73,16 @@ assert(cookie.contains("; expires="))
 assert(cookie.contains("secure"))
 http.close()
 
+
 //  sendfile
 let http = fetch(HTTP + "/sendfile")
 assert(http.status == 200)
 assert(http.response == Path("utils.es").readString())
 http.close()
 
+
 // no response
-server.setLimits({inactivityTimeout: 5})
+server.setLimits({inactivityTimeout: 1})
 let http = fetch(HTTP + "/hang", Http.RequestTimeout)
 http.close()
 
