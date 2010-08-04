@@ -32,7 +32,8 @@ server.observe("readable", function (event, request: Request) {
         break
 
     case "/error":
-        Timer(200, function() { print("TIMER"); finalize() }).start()
+        //  The finalize will fail due to a lost connection 
+        Timer(200, function() { try { finalize(); } catch {}; }).start()
         break
 
     default:
@@ -55,6 +56,7 @@ let http = fetch(HTTP + "/delayed-finalize")
 for (i = 0; i < 1000 && !events.close; i++) App.eventLoop(10, 1)
 assert(events.close && events.writable)
 assert(!(events.error && events.readable))
+http.close()
 
 
 //  Post

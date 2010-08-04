@@ -8281,6 +8281,9 @@ static void adjustSendVec(HttpQueue *q, int written)
 
 
 
+
+static int destroyServer(HttpServer *server);
+
 /*
     Create a server listening on ip:port. NOTE: ip may be empty which means bind to all addresses.
  */
@@ -8291,7 +8294,7 @@ HttpServer *httpCreateServer(Http *http, cchar *ip, int port, MprDispatcher *dis
     mprAssert(ip);
     mprAssert(port > 0);
 
-    server = mprAllocObjZeroed(http, HttpServer);
+    server = mprAllocObjWithDestructorZeroed(http, HttpServer, destroyServer);
     if (server == 0) {
         return 0;
     }
@@ -8309,6 +8312,16 @@ HttpServer *httpCreateServer(Http *http, cchar *ip, int port, MprDispatcher *dis
     server->limits = httpCreateLimits(server, 1);
     server->loc = httpInitLocation(http, server, 1);
     return server;
+}
+
+
+static int destroyServer(HttpServer *server)
+{
+    if (server->waitHandler.fd >= 0) {
+        mprRemoveWaitHandler(&server->waitHandler);
+    }
+    mprFree(server->sock);
+    return 0;
 }
 
 
