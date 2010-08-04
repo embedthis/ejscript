@@ -22,12 +22,15 @@ module ejs.web {
         return function(request: Request) {
             var response = app(request)
             response.headers ||= {}
+            let mimeType
             if (options.mimeTypes) {
-                response.headers["content-type"] ||= options.mimeTypes[request.extension]
+                mimeType = options.mimeTypes[request.extension]
             } else {
-                response.headers["content-type"] ||= pathInfo.mimeType
+                mimeType pathInfo.mimeType
             }
-            response.headers["content-type"] ||= options.defaultType
+            if (mimeType) {
+                response.headers["content-type"] ||= mimeType
+            }
             return response
         }
     }

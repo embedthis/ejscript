@@ -187,11 +187,11 @@ static int fillResponseHeaders(EjsRequest *req)
             n = ejsGetPropertyName(ejs, req->responseHeaders, i);
             vp = ejsGetProperty(ejs, req->responseHeaders, i);
             if (n.name && vp) {
-                mprAssert(vp != ejs->nullValue);
-                mprAssert(ejsIsString(vp));
-                name = mprStrdup(req->conn, n.name);
-                value = mprStrdup(req->conn, ejsGetString(ejs, vp));
-                httpSetSimpleHeader(req->conn, name, value);
+                if (vp != ejs->nullValue && vp != ejs->undefinedValue) {
+                    name = mprStrdup(req->conn, n.name);
+                    value = mprStrdup(req->conn, ejsGetString(ejs, vp));
+                    httpSetSimpleHeader(req->conn, name, value);
+                }
             }
         }
     }

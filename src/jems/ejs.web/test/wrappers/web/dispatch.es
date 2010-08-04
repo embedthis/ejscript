@@ -111,7 +111,7 @@ function QueryRoute(map) {
 /*
     Normal style declaration of the form below. QueryRoute dynamically selects a route based on the params.route field..
 
-    exports.app = ShowExceptions(Head(CommonLog(ContentType(MethodOverride(Cascade(app1, app2, app3))))))
+    exports.app = ShowExceptions(Head(CommonLog(ContentType(MethodOverride(Cascade(app1, app2, app))))))
 */
 
 exports.app = QueryRoute(map)
