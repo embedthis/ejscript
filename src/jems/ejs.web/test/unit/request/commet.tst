@@ -49,12 +49,10 @@ let done = false
 
 
 http.observe("writable", function (event, h) {
-print("CLIENT " + count)
     if (count < 3) {
         http.write("%05d abcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxyz\r\n".format(count++))
-        http.flush()
+        // http.flush()
     } else {
-print("@@@@@@@ DONE is true")
         done = true
         http.finalize()
     }
@@ -62,13 +60,12 @@ print("@@@@@@@ DONE is true")
 
 http.post(HTTP + "/commet")
 
-print("HERE")
 while (!done) {
     App.eventLoop(10, true)
 }
-print("WAITING")
 do { App.eventLoop(10, true) } while(!http.wait())
 assert(http.status == 200)
+
 print(http.response)
 print(commetData)
 
