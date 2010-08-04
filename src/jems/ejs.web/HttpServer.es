@@ -132,6 +132,7 @@ module ejs.web {
             @example:
                 server = new Http(".", "./web")
                 server.observe("readable", function (event, request) {
+                    //  NOTE: this is set to the request
                     Web.serve(request)
                 })
                 server.listen("80")
@@ -156,7 +157,8 @@ module ejs.web {
             @param name Name of the event to listen for. The name may be an array of events.
             @param observer Callback listening function. The function is called with the following signature:
                 function observer(event: String, ...args): Void
-            @event readable Issued when there is a new request available
+            @event readable Issued when there is a new request available. This readable event will explicitlyl set the
+                value of "this" to the request regardless of whether the function has a bound "this" value.
             @event close Issued when server is being closed.
             @event createSession Issued when a new session store object is created for a client. The request object is
                 passed.
@@ -213,24 +215,29 @@ module ejs.web {
         native function setLimits(limits: Object): Void
 
         /**
-            Configure request tracing for the server. The default is to trace the first line of requests and responses 
-            and headers at level 3.
-            @param level Level at which request tracing will occurr
-            @param options. Set of trace options. Select from: "request" to trace requests, "response" to trace responses,
-            "conn" to trace new connections, "first" to trace the first line of requests or responses, "headers" to 
-            trace headers, and "body" to trace body content. Or use "all" to trace everything.
-            @param size Maximum request body size to trace
+            Configure request tracing for the server. The default is to trace the first line of requests and responses at
+            level 2 and to trace headers at level 3. The options argument contains optional properties: rx and tx 
+            (for receive and transmit tracing). The rx and tx properties may contain an object hash which describes 
+            the tracing for that direction and includes any of the following fields:
+            @param options. Set of trace options with properties "rx" and "tx" for receive and transmit direction tracing.
+                The include property is an array of file extensions to include in tracing.
+                The include property is an array of file extensions to exclude from tracing.
+                The all property specifies that everything for this direction should be traced.
+                The conn property specifies that new connections should be traced.
+                The first property specifies that the first line of the request should be traced.
+                The headers property specifies that the headers (including first line) of the request should be traced.
+                The body property specifies that the body content of the request should be traced.
+                The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit 
+                    will not be traced.
+            @option transmit. Object hash with optional properties: include, exclude, first, headers, body, size.
+            @option receive. Object hash with optional properties: include, exclude, conn, first, headers, body, size.
+            @example:
+                trace({
+                    transmit: { exclude: ["gif", "png"], "headers": 3, "body": 4, size: 1000000 }
+                    receive:  { "conn": 1, "headers": 2 , "body": 4, size: 1024 }
+                })
           */
-        native function trace(level: Number, options: Object = ["conn", "first", "headers", "request", "response"], 
-            size: Number = null): Void
-
-
-        /**
-            Configure trace filters for request tracing
-            @param include Set of extensions to include when tracing
-            @param exclude Set of extensions to exclude when tracing
-          */
-        native function traceFilter(include: Array, exclude: Array = ["gif", "ico", "jpg", "png"]): Void
+        native function trace(options: Object): Void
 
         /**
             Verify client certificates. This ensures that the clients must provide a client certificate for to verify 

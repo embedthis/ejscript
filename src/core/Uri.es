@@ -19,12 +19,12 @@ module ejs {
             @param uri A string or object hash that describes the URI. The $uri specify a complete absolute URI string or
             it may specify a partial URI where missing elements take the normal defaults. The $uri argument may also be 
             an object hash with the following properties.
-            @option scheme: String
-            @option host: String
-            @option port: Number
-            @option path: String
-            @option query: String
-            @option reference: String
+            @option scheme String URI protocol scheme (http or https)
+            @option host String URI host name or IP address.
+            @option port Number TCP/IP port number for communications
+            @option path String URI path 
+            @option query String URI query parameters. Does not include "?"
+            @option reference String URI path reference. Does not include "#"
          */
         native function Uri(uri: Object)
 
@@ -44,12 +44,12 @@ module ejs {
             Break a URI into its components by converting the URI to an absolute URI and breaking into components.
             The components are: scheme, host, port, path, reference and query.
             @return an object hash defining the following fields:
-            @option scheme: String
-            @option host: String
-            @option port: Number
-            @option path: String
-            @option query: String
-            @option reference: String
+            @option scheme String URI protocol scheme (http or https)
+            @option host String URI host name or IP address.
+            @option port Number TCP/IP port number for communications
+            @option path String URI path 
+            @option query String URI query parameters. Does not include "?"
+            @option reference String URI path reference. Does not include "#"
          */
         native function get components(): Object 
 
@@ -403,7 +403,7 @@ module ejs {
         for each (item in items) {
             for (let [key, value] in item) {
                 if (result) result += "&"
-                result += encodeUriComponent(key) + "=" + encodeUriCompnent(value)
+                result += encodeURIComponent(key) + "=" + encodeURICompnent(value)
             }
         }
     }

@@ -43,7 +43,7 @@ module ejs.web {
     function TemplateBuilder(request: Request): Function {
         let path = request.filename
         if (!path.exists) {
-            request.error(Http.NotFound, "Cannot find " + path)
+            request.writeError(Http.NotFound, "Cannot find " + path)
             return null
         }
         return Loader.load(path, path, request.config, function (id, path) {

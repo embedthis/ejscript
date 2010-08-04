@@ -43,6 +43,7 @@ typedef struct EjsHttpServer {
     struct MprSsl   *ssl;                       /**< SSL configuration */
     EjsArray        *incomingStages;            /**< Incoming Http pipeline stages */
     EjsArray        *outgoingStages;            /**< Outgoing Http pipeline stages */
+    HttpTrace       trace[2];                   /**< Default tracing for requests */
     cchar           *connector;                 /**< Pipeline connector */
     cchar           *dir;                       /**< Directory containing web documents */
     char            *keyFile;                   /**< SSL key file */
@@ -53,12 +54,6 @@ typedef struct EjsHttpServer {
     char            *name;                      /**< Server name */
     int             port;                       /**< Listening port */
     int             async;                      /**< Async mode */
-
-    int             traceLevel;                 /**< Trace activation level */
-    int             traceMaxLength;             /**< Maximum trace file length (if known) */
-    int             traceMask;                  /**< Request/response trace mask */
-    MprHashTable    *traceInclude;              /**< Extensions to include in trace */
-    MprHashTable    *traceExclude;              /**< Extensions to exclude from trace */
 } EjsHttpServer;
 
 
@@ -75,23 +70,34 @@ typedef struct EjsRequest {
     EjsObj          *cookies;           /**< Cached cookies */
     HttpConn        *conn;              /**< Underlying Http connection object */
     EjsHttpServer   *server;            /**< Owning server */
+
+    EjsObj          *absHome;           /**< Absolute URI to the home of the application from this request */
     EjsObj          *emitter;           /**< Event emitter */
     EjsPath         *dir;               /**< Home directory containing the application */
     EjsObj          *env;               /**< Request.env */
     EjsPath         *filename;          /**< Physical resource filename */
     EjsObj          *files;             /**< Files object */
     EjsObj          *headers;           /**< Headers object */
-    EjsObj          *responseHeaders;   /**< Headers object */
+    EjsUri          *home;              /**< Relative URI to the home of the application from this request */
+    EjsObj          *host;              /**< Host property */
     EjsObj          *limits;            /**< Limits object */
+    EjsObj          *log;               /**< Log object */
+    EjsObj          *originalMethod;    /**< Saved original method */
+    EjsObj          *originalUri;       /**< Saved original URI */
     EjsObj          *params;            /**< Form variables */
-    EjsUri          *uri;               /**< Complete uri */
+    EjsObj          *pathInfo;          /**< PathInfo property */
+    EjsObj          *port;              /**< Port property */
+    EjsObj          *query;             /**< Query property */
+    EjsObj          *reference;         /**< Reference property */
+    EjsObj          *responseHeaders;   /**< Headers object */
+    EjsObj          *scheme;            /**< Scheme property */
+    EjsObj          *scriptName;        /**< ScriptName property */
+    EjsObj          *uri;               /**< Complete uri */
+
     Ejs             *ejs;               /**< Ejscript interpreter handle */
     struct EjsSession *session;         /**< Current session */
 
-    //  MOB -- should these two be stored as EjsObj?
-    cchar           *home;              /**< Relative URI to the home of the application from this request */
-    cchar           *absHome;           /**< Absolute URI to the home of the application from this request */
-
+    int             accepted;           /**< Request has been accepted from the HttpServer */
     int             dontFinalize;       /**< Don't auto-finalize. Must call finalize(force) */
     int             probedSession;      /**< Determined if a session exists */
     int             closed;             /**< Request closed and "close" event has been issued */

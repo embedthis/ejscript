@@ -82,7 +82,7 @@ module ejs.web {
                     process(app, request)
                 }
             } catch (e) {
-                request.error(Http.ServerError, e)
+                request.writeError(Http.ServerError, e)
             }
         }
 
@@ -96,7 +96,7 @@ module ejs.web {
             try {
                 process(app, request)
             } catch (e) {
-                request.error(Http.ServerError, e)
+                request.writeError(Http.ServerError, e)
             }
         }
 
@@ -200,7 +200,7 @@ module ejs.web {
                     }
                 }
             } catch (e) {
-                request.error(Http.ServerError, e)
+                request.writeError(Http.ServerError, e)
             }
         }
 
@@ -253,12 +253,12 @@ module ejs.web {
             server.observe("readable", function (event, request) {
                 try {
                     if (!request.filename.exists) {
-                        request.error(Http.NotFound, "Cannot find " + request.uri)
+                        request.writeError(Http.NotFound, "Cannot find " + request.uri)
                     } else {
                         process(Loader.require(request.filename).app)
                     }
                 } catch {
-                    request.error(Http.ServerError, "Exception serving " + request.uri)
+                    request.writeError(Http.ServerError, "Exception serving " + request.uri)
                 }
             })
             server.listen(address)

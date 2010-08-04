@@ -1837,7 +1837,9 @@ static EcNode *parseLiteralField(EcCompiler *cp)
         }
         np->field.index = -1;
         np->field.fieldKind = FIELD_KIND_VALUE;
-        if ((np->field.fieldName = linkNode(np, parseFieldName(cp))) != 0) {
+        if ((np->field.fieldName = linkNode(np, parseFieldName(cp))) == 0) {
+            np = 0;
+        } else {
             if (peekToken(cp) == T_COLON) {
                 getToken(cp);
                 np->field.expr = linkNode(np, parseAssignmentExpression(cp));
@@ -4625,13 +4627,9 @@ static EcNode *parseTypedPattern(EcCompiler *cp)
         }
         break;
     }
-    mprAssert(np == 0 || np->kind == N_QNAME);
-
-#if UNUSED
-    if (np) {
-        np->name.isType = 1;
+    if (np && np->kind != N_QNAME) {
+        return LEAVE(cp, unexpected(cp));
     }
-#endif
     return LEAVE(cp, np);
 }
 
@@ -10204,13 +10202,12 @@ static EcNode *appendNode(EcNode *np, EcNode *child)
     MprList         *list;
     int             index;
 
-    mprAssert(np != child);
-
     if (child == 0 || np == 0) {
         return 0;
     }
+    mprAssert(np != child);
+    
     list = np->children;
-
     cp = np->cp;
 
     index = mprAddItem(list, child);

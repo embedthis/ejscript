@@ -277,13 +277,13 @@ module ejs.web {
      */
     function ScriptBuilder(request: Request): Function {
         if (!request.filename.exists) {
-            request.error(Http.NotFound, "Cannot find " + request.pathInfo) 
+            request.writeError(Http.NotFound, "Cannot find " + request.pathInfo) 
             return null
         }
         try {
             return Loader.require(request.filename, request.config).app
         } catch (e) {
-            request.error(Http.ServerError, e)
+            request.writeError(Http.ServerError, e)
         }
     }
 
@@ -441,7 +441,13 @@ module ejs.web {
         /**
             Make a URI provided parts of a URI. The URI is completed using the current request and route. 
             @param request Request object
-            @param components MOB
+            @param components Object hash of URI component properties.
+            @option scheme String URI protocol scheme (http or https)
+            @option host String URI host name or IP address.
+            @option port Number TCP/IP port number for communications
+            @option path String URI path 
+            @option query String URI query parameters. Does not include "?"
+            @option reference String URI path reference. Does not include "#"
          */
         public function makeUri(request: Request, components: Object): Uri {
             if (urimaker) {

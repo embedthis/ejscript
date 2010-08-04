@@ -297,7 +297,7 @@ module ejs.web {
             Render an error message as the response
          */
         function renderError(status: Number, ...msgs): Void {
-            request.error(status, ...msgs)
+            request.writeError(status, ...msgs)
             rendered = true
         }
 
@@ -424,9 +424,15 @@ module ejs.web {
             applications the burden of building URLs that correctly use action and controller names.
             @params parts 
             @return A string URL.
-            @options url An override url to use. All other args are ignored.
+            @options url An override url to use. All other options are ignored.
             @options query Query string to append to the URL. Overridden by the query arg.
             @options controller The name of the controller to use in the URL.
+            @option scheme String URI protocol scheme (http or https)
+            @option host String URI host name or IP address.
+            @option port Number TCP/IP port number for communications
+            @option path String URI path 
+            @option query String URI query parameters. Does not include "?"
+            @option reference String URI path reference. Does not include "#"
          */
         function makeUri(parts: Object): Uri
             request.makeUri(parts)

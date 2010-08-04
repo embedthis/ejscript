@@ -14,7 +14,7 @@
 
 static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn);
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp);
-static void setupTrace(HttpConn *conn);
+static void setupConnTrace(HttpConn *conn);
 static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
 
 /************************************ Code ************************************/
@@ -35,15 +35,18 @@ static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     serverRoot = (argc >= 2) ? argv[1] : (EjsObj*) ejsCreatePath(ejs, ".");
     ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_serverRoot, serverRoot);
 
+#if UNUSED
     sp->traceLevel = HTTP_TRACE_LEVEL;
     sp->traceMask = HTTP_TRACE_TRANSMIT | HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS;
     sp->traceMaxLength = INT_MAX;
+#endif
+    httpInitTrace(sp->trace);
     return (EjsObj*) sp;
 }
 
 
 /*  
-    function observe(name: [String|Array], listener: Function): Void
+    function observe(name: [String|Array], observer: Function): Void
  */
 static EjsObj *hs_observe(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
@@ -107,7 +110,7 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     if (sp->server) {
         //  MOB -- who make sure that the server object is permanent?
-        ejsSendEvent(ejs, sp->emitter, "close", (EjsObj*) sp);
+        ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
         mprFree(sp->server);
         sp->server = 0;
     }
@@ -284,7 +287,7 @@ static EjsObj *hs_port(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
 #if ES_ejs_web_HttpServer_removeObserver
 /*  
-    function removeObserver(name: [String|Array], listener: Function): Void
+    function removeObserver(name: [String|Array], observer: Function): Void
  */
 static EjsObj *hs_removeObserver(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
@@ -378,78 +381,11 @@ static EjsObj *hs_setPipeline(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
 
 
 /*  
-    function trace(level: Number, options: Object = ["headers", "request", "response"], size: Number = null): Void
+    function trace(options): Void
  */
 static EjsObj *hs_trace(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    EjsArray    *options;
-    EjsObj      *item;
-    EjsString   *name;
-    int         mask, i;
-
-    sp->traceLevel = ejsGetInt(ejs, argv[0]);
-
-    if (argc >= 2) {
-        mask = 0;
-        options = (EjsArray*) argv[1];
-        for (i = 0; i < options->length; i++) {
-            if ((item = options->data[i]) == 0) {
-                continue;
-            }
-            name = ejsToString(ejs, item);
-            if (strcmp(name->value, "all") == 0) {
-                mask |= HTTP_TRACE_RECEIVE | HTTP_TRACE_TRANSMIT;
-                mask |= HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS | HTTP_TRACE_BODY;
-            } else if (strcmp(name->value, "request") == 0) {
-                mask |= HTTP_TRACE_RECEIVE;
-            } else if (strcmp(name->value, "response") == 0) {
-                mask |= HTTP_TRACE_TRANSMIT;
-            } else if (strcmp(name->value, "conn") == 0) {
-                mask |= HTTP_TRACE_CONN;
-            } else if (strcmp(name->value, "first") == 0) {
-                mask |= HTTP_TRACE_FIRST;
-            } else if (strcmp(name->value, "headers") == 0) {
-                mask |= HTTP_TRACE_HEADERS;
-            } else if (strcmp(name->value, "body") == 0) {
-                mask |= HTTP_TRACE_BODY;
-            }
-        }
-        sp->traceMask = mask;
-    }
-    if (argc >= 3) {
-        sp->traceMaxLength = ejsGetInt(ejs, argv[2]);
-    }
-    return 0;
-}
-
-
-/*  
-    function traceFilter(include: Array = ["*"], exclude: Array = ["gif", "ico", "jpg", "png"]): Void
- */
-static EjsObj *hs_traceFilter(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
-{
-    EjsObj          *obj;
-    EjsArray        *includeObj, *excludeObj;
-    MprHashTable    *include, *exclude;
-    int             i;
-    
-    include = mprCreateHash(sp, 0);
-    exclude = mprCreateHash(sp, 0);
-    if (include == 0 || exclude == 0) {
-        return 0;
-    }
-    includeObj = (EjsArray*) argv[0];
-    for (i = 0; i < includeObj->length; i++) {
-        if ((obj = ejsGetProperty(ejs, includeObj, i)) != 0) {
-            mprAddHash(include, mprStrdup(include, ejsGetString(ejs, ejsToString(ejs, obj))), "");
-        }
-    }
-    excludeObj = (EjsArray*) argv[0];
-    for (i = 0; i < excludeObj->length; i++) {
-        if ((obj = ejsGetProperty(ejs, excludeObj, i)) != 0) {
-            mprAddHash(exclude, mprStrdup(exclude, ejsGetString(ejs, ejsToString(ejs, obj))), "");
-        }
-    }
+    ejsSetupTrace(ejs, sp, sp->trace, argv[0]);
     return 0;
 }
 
@@ -612,7 +548,7 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
     }
     switch (state) {
     case HTTP_STATE_BEGIN:
-        setupTrace(conn);
+        setupConnTrace(conn);
         break;
 
     case HTTP_STATE_PARSED:
@@ -638,10 +574,10 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
         /*  IO event notification for the request.  */
         if (req && req->emitter) {
             if (notifyFlags & HTTP_NOTIFY_READABLE) {
-                ejsSendEvent(ejs, req->emitter, "readable", (EjsObj*) req);
+                ejsSendEvent(ejs, req->emitter, "readable", NULL, (EjsObj*) req);
             } 
             if (notifyFlags & HTTP_NOTIFY_WRITABLE) {
-                ejsSendEvent(ejs, req->emitter, "writable", (EjsObj*) req);
+                ejsSendEvent(ejs, req->emitter, "writable", NULL, (EjsObj*) req);
             }
         }
         break;
@@ -654,7 +590,9 @@ static void closeEjs(HttpQueue *q)
     EjsRequest  *req;
 
     if ((req = httpGetConnContext(q->conn)) != 0) {
-        ejsSendRequestCloseEvent(req->ejs, req);
+        if (!req->closed) {
+            ejsSendRequestCloseEvent(req->ejs, req);
+        }
         req->conn = 0;
     }
     httpSetConnContext(q->conn, 0);
@@ -692,18 +630,17 @@ static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
 }
 
 
-static void setupTrace(HttpConn *conn)
+static void setupConnTrace(HttpConn *conn)
 {
     EjsHttpServer   *sp;
+    int             i;
 
     sp = httpGetServerContext(conn->server);
     mprAssert(sp);
 
-    conn->traceLevel = sp->traceLevel;
-    conn->traceMaxLength = sp->traceMaxLength;
-    conn->traceMask = sp->traceMask;
-    conn->traceInclude = sp->traceInclude;
-    conn->traceExclude = sp->traceExclude;
+    for (i = 0; i < HTTP_TRACE_MAX_DIR; i++) {
+        conn->trace[i] = sp->trace[i];
+    }
 }
 
 
@@ -784,12 +721,15 @@ static void runEjs(HttpQueue *q)
     conn = q->conn;
     if (!conn->abortPipeline) {
         sp = httpGetServerContext(conn->server);
-        if ((req = httpGetConnContext(conn)) == 0) {
-            if ((req = createRequest(sp, conn)) == 0) {
-                return;
-            }
+        mprAssert(sp);
+        if ((req = httpGetConnContext(conn)) == 0 && (req = createRequest(sp, conn)) == 0) {
+            return;
         }
-        ejsSendEvent(sp->ejs, sp->emitter, "readable", (EjsObj*) req);
+        if (!req->accepted) {
+            /* Server accept event */
+            req->accepted = 1;
+            ejsSendEvent(sp->ejs, sp->emitter, "readable", (EjsObj*) req, (EjsObj*) req);
+        }
     }
 }
 
@@ -865,7 +805,7 @@ static void markHttpServer(Ejs *ejs, EjsHttpServer *sp)
 
 static void destroyHttpServer(Ejs *ejs, EjsHttpServer *sp)
 {
-    ejsSendEvent(ejs, sp->emitter, "close", (EjsObj*) sp);
+    ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
     mprFree(sp->server);
     sp->server = 0;
 }
@@ -897,7 +837,6 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setLimits, (EjsProc) hs_setLimits);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setPipeline, (EjsProc) hs_setPipeline);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_trace, (EjsProc) hs_trace);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_traceFilter, (EjsProc) hs_traceFilter);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_verifyClients, (EjsProc) hs_verifyClients);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_software, (EjsProc) hs_software);
     ejsAddWebHandler(ejs->http);

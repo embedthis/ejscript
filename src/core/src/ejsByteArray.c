@@ -356,7 +356,7 @@ static EjsObj *ba_available(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 static EjsObj *ba_close(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "close", (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "close", NULL, (EjsObj*) ap);
     }
     ap->writePosition = ap->readPosition = 0;
     return 0;
@@ -646,7 +646,7 @@ static EjsObj *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     buffer->writePosition += count;
     if (ap->emitter && availableBytes(ap) && !ejs->exception) {
-        ejsSendEvent(ejs, ap->emitter, "writable", (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "writable", NULL, (EjsObj*) ap);
     }
     return (EjsObj*) ejsCreateNumber(ejs, count);
 }
@@ -991,7 +991,7 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
         }
     }
     if (ap->emitter && wrote > 0 && availableBytes(ap) > 0) {
-        ejsSendEvent(ejs, ap->emitter, "readable", (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
     }
     return ejsCreateNumber(ejs, wrote);
 }
@@ -1008,7 +1008,7 @@ static EjsObj *ba_writeByte(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     putByte(ap, ejsGetInt(ejs, argv[0]));
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "readable", (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
     }
     return 0;
 }
@@ -1025,7 +1025,7 @@ static EjsObj *ba_writeShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
     }
     putShort(ap, ejsGetInt(ejs, argv[0]));
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "readable", (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
     }
     return 0;
 }
@@ -1042,7 +1042,7 @@ static EjsObj *ba_writeDouble(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **arg
     }
     putDouble(ap, ejsGetDouble(ejs, argv[0]));
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "readable", (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
     }
     return 0;
 }
@@ -1060,7 +1060,7 @@ static EjsObj *ba_writeInteger(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
     }
     putInteger(ap, ejsGetInt(ejs, argv[0]));
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "readable", (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
     }
     return 0;
 }
@@ -1077,7 +1077,7 @@ static EjsObj *ba_writeLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     }
     putLong(ap, ejsGetInt(ejs, argv[0]));
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "readable", (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
     }
     return 0;
 }
@@ -1124,11 +1124,11 @@ static EjsObj *ba_setWritePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj 
 static int flushByteArray(Ejs *ejs, EjsByteArray *ap)
 {
     if (ap->emitter && availableBytes(ap) && !ejs->exception) {
-        ejsSendEvent(ejs, ap->emitter, "flush", (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "flush", NULL, (EjsObj*) ap);
     }
     ap->writePosition = ap->readPosition = 0;
     if (ap->emitter) {
-        ejsSendEvent(ejs, ap->emitter, "writable", (EjsObj*) ap);
+        ejsSendEvent(ejs, ap->emitter, "writable", NULL, (EjsObj*) ap);
     }
     return 0;
 }
@@ -1162,7 +1162,7 @@ static int getInput(Ejs *ejs, EjsByteArray *ap, int required)
     }
     if (availableBytes(ap) < required && !ejs->exception) {
         if (ap->emitter) {
-            ejsSendEvent(ejs, ap->emitter, "writable", (EjsObj*) ap);
+            ejsSendEvent(ejs, ap->emitter, "writable", NULL, (EjsObj*) ap);
         }
     }
     if (availableBytes(ap) < required) {
@@ -1178,7 +1178,7 @@ static bool makeRoom(Ejs *ejs, EjsByteArray *ap, int require)
 
     if (room(ap) < require) {
         if (ap->emitter) {
-            ejsSendEvent(ejs, ap->emitter, "readable", (EjsObj*) ap);
+            ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
         }
         if (room(ap) < require) {
             newLen = max(ap->length + require, ap->length + ap->growInc);

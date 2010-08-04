@@ -503,6 +503,18 @@ static EjsObj *date_set_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 }
 
 
+/*
+    function future(msec: Number): Date
+ */
+static EjsObj *date_future(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
+{
+    MprTime     inc;
+
+    inc = ejsGetNumber(ejs, argv[0]);
+    return (EjsObj*) ejsCreateDate(ejs, dp->value + inc);
+}
+
+
 /**
     Return the number of minutes between the local computer time and Coordinated Universal Time.
     @return Integer containing the number of minutes between UTC and local time. The offset is positive if
@@ -1110,6 +1122,7 @@ void ejsConfigureDateType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Date_format, (EjsProc) date_format);
     ejsBindMethod(ejs, prototype, ES_Date_formatUTC, (EjsProc) date_formatUTC);
     ejsBindAccess(ejs, prototype, ES_Date_fullYear, (EjsProc) date_fullYear, (EjsProc) date_set_fullYear);
+    ejsBindMethod(ejs, prototype, ES_Date_future, (EjsProc) date_future);
     ejsBindMethod(ejs, prototype, ES_Date_getTimezoneOffset, (EjsProc) date_getTimezoneOffset); 
     ejsBindMethod(ejs, prototype, ES_Date_getUTCDate, (EjsProc) date_getUTCDate);
     ejsBindMethod(ejs, prototype, ES_Date_getUTCDay, (EjsProc) date_getUTCDay);

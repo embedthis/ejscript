@@ -5,7 +5,8 @@
 module ejs.web {
 
     /** @hide */
-    function errorBody(title: String, msg: String): String {
+    function errorBody(title: String, msg: String = ""): String {
+        msg ||= ""
         return '<!DOCTYPE html>\r\n<html>\r\n<head><title>' + title + '</title></head>\r\n' + 
            '<body>\r\n<h1>' + title + '</h1>\r\n' +
            '    <p>' + msg + '</p>\r\n' +

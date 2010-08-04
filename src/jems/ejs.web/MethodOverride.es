@@ -18,7 +18,7 @@ module ejs.web {
             if (request.method == "POST") {
                 let method = request.params["__method__"] || request.header("X-HTTP-METHOD-OVERRIDE")
                 if (method) {
-                    request.originalMethod ||= request.method
+                    //MOB request.originalMethod ||= request.method
                     request.method = method
                 }
             }

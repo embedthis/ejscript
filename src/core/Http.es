@@ -330,6 +330,7 @@ module ejs {
         /** 
             Commence a POST request with www-url encoded key=value data. See connect() for connection details.
             This will encode each data objects as a string of "key=value" pairs separated by "&" characters.
+            After writing data, form() will call finalize().
             @param uri Optional request uri. If non-null, this overrides any previously defined uri for the Http object.
                 If null, use a previously defined uri.
             @param data Optional object hash of key value pairs to use as the post data. These are www-url-encoded and
@@ -457,14 +458,12 @@ FUTURE & KEEP
 
         /** 
             Initiate a POST request. This call initiates a POST request. It does not wait for the request to complete. 
-            Posted data is NOT URL encoded. If you want to post data to a form, consider using 
-            the $form method instead which automatically URL encodes the data. Post data may be supplied may alternatively 
-            be supplied via $write.  If a contentLength has not been previously defined for this request, chunked transfer 
-            encoding will be enabled.
+            Posted data is NOT URL encoded. If you want to post data to a form, consider using the $form method instead 
+            which automatically URL encodes the data. After writing data, post() will call finalize(). Post data may be 
+            supplied may alternatively via $write. 
             @param uri Optional request uri. If non-null, this overrides any previously defined uri for the Http object. 
                 If null, use a previously defined uri.
             @param data Data objects to send with the post request. Data is written raw and is not encoded or converted. 
-                However, this routine intelligently handles arrays such that, each element of the array will be written. 
             @throws IOError if the request cannot be issued to the remote server.
          */
         native function post(uri: Uri, ...data): Void
@@ -594,17 +593,29 @@ FUTURE & KEEP
             200 <= status && status < 300
 
         /**
-            Configure tracing for the request. The default is to trace the first line of requests and responses 
-            at level 2 and headers at level 3.
-            @param level Level at which request tracing will occurr
-            @param options. Set of trace options. Select from: "request" to trace requests, "response" to trace responses,
-            "conn" to trace new connections", "first" to trace the first line of requsts or responses, "headers" to 
-            trace headers, and "body" to trace body content. Or use "all" to trace everything.
-            @param size Maximum request body size to trace
+            Configure request tracing for the request. The default is to trace the first line of requests and responses at
+            level 2 and to trace headers at level 3. The options argument contains optional properties: rx and tx 
+            (for receive and transmit tracing). The rx and tx properties may contain an object hash which describes 
+            the tracing for that direction and includes any of the following fields:
+            @param options. Set of trace options with properties "rx" and "tx" for receive and transmit direction tracing.
+                The include property is an array of file extensions to include in tracing.
+                The include property is an array of file extensions to exclude from tracing.
+                The all property specifies that everything for this direction should be traced.
+                The conn property specifies that new connections should be traced.
+                The first property specifies that the first line of the request should be traced.
+                The headers property specifies that the headers (including first line) of the request should be traced.
+                The body property specifies that the body content of the request should be traced.
+                The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit 
+                    will not be traced.
+            @option transmit. Object hash with optional properties: include, exclude, first, headers, body, size.
+            @option receive. Object hash with optional properties: include, exclude, conn, first, headers, body, size.
+            @example:
+                trace({
+                    transmit: { exclude: ["gif", "png"], "headers": 3, "body": 4, size: 1000000 }
+                    receive:  { "conn": 1, "headers": 2 , "body": 4, size: 1024 }
+                })
           */
-        native function trace(level: Number, options: Object = ["conn", "first", "headers", "request", "response"], 
-            size: Number = null): Void
-
+        native function trace(options: Object): Void
 
         /** 
             Upload files using multipart/mime. This routine initiates a POST request and sends the specified files

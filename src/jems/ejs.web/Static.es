@@ -29,6 +29,7 @@ module ejs.web {
                     let when = new Date
                     when.time += (lifetime * 1000)
                     headers["Expires"] = when.toUTCString()
+                    // headers["Cache-Control"] = "max-age=" + lifetime
                 }
             }
             if (request.method == "GET" || request.method == "POST") {
@@ -79,12 +80,13 @@ module ejs.web {
                 if (request.read(buf)) {
                     file.write(buf)
                 } else {
+                    file.close()
                     request.finalize()
                 }
             })
             request.input.observe(["complete", "error"], function (event, request) {
-                file.close()
                 if (event == "error") {
+                    file.close()
                     file.remove()
                 }
             })

@@ -102,7 +102,7 @@ EjsObj *sock_set_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
  */
 static EjsObj *sock_close(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    ejsSendEvent(ejs, sp->emitter, "close", (EjsObj*) sp);
+    ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
     if (sp->sock) {
         mprFree(sp->sock);
         sp->sock = 0;
@@ -150,7 +150,7 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     } else {
         mprSetSocketBlockingMode(sp->sock, 1);
     }
-    ejsSendEvent(ejs, sp->emitter, "writable", (EjsObj*) sp);
+    ejsSendEvent(ejs, sp->emitter, "writable", NULL, (EjsObj*) sp);
     return 0;
 }
 
@@ -235,13 +235,15 @@ static EjsObj *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't read from socket");
         return 0;
 #endif
-        ejsSendEvent(ejs, sp->emitter, "eof", (EjsObj*) sp);
+        //  MOB -- should not be using EOF event
+        ejsSendEvent(ejs, sp->emitter, "eof", NULL, (EjsObj*) sp);
         //  TODO - do we need to set the mask here?
         return (EjsObj*) ejs->nullValue;
     }
     if (nbytes == 0) {
         //  TODO - but in async, this does not mean eof. See mpr for how to tell eof
-        ejsSendEvent(ejs, sp->emitter, "eof", (EjsObj*) sp);
+        //  MOB -- should not be using EOF event
+        ejsSendEvent(ejs, sp->emitter, "eof", NULL, (EjsObj*) sp);
         //  TODO - do we need to set the mask here?
         return (EjsObj*) ejs->nullValue;
     }
@@ -289,7 +291,7 @@ static int writeSocketData(Ejs *ejs, EjsSocket *sp)
     }
     if (ejsGetByteArrayAvailable(ba) == 0) {
         if (sp->emitter) {
-            ejsSendEvent(ejs, sp->emitter, "writable", (EjsObj*) sp);
+            ejsSendEvent(ejs, sp->emitter, "writable", NULL, (EjsObj*) sp);
         }
         if (sp->async) {
             sp->mask &= ~MPR_WRITABLE;
@@ -353,8 +355,8 @@ static int socketConnectEvent(EjsSocket *sp, MprEvent *event)
 
     ejs = sp->ejs;
     if (sp->emitter) {
-        ejsSendEvent(ejs, sp->emitter, "connect", (EjsObj*) sp);
-        ejsSendEvent(ejs, sp->emitter, "writable", (EjsObj*) sp);
+        ejsSendEvent(ejs, sp->emitter, "connect", NULL, (EjsObj*) sp);
+        ejsSendEvent(ejs, sp->emitter, "writable", NULL, (EjsObj*) sp);
     }
     enableSocketEvents(sp, socketIOEvent);
     return 0;
@@ -368,7 +370,7 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event)
 
     ejs = listen->ejs;
     if (listen->emitter) {
-        ejsSendEvent(ejs, listen->emitter, "accept", (EjsObj*) listen);
+        ejsSendEvent(ejs, listen->emitter, "accept", NULL, (EjsObj*) listen);
     }
     enableSocketEvents(listen, socketListenEvent);
     return 0;
@@ -382,7 +384,7 @@ static int socketIOEvent(EjsSocket *sp, MprEvent *event)
     ejs = sp->ejs;
     if (event->mask & MPR_READABLE) {
         if (sp->emitter) {
-            ejsSendEvent(ejs, sp->emitter, "readable", (EjsObj*) sp);
+            ejsSendEvent(ejs, sp->emitter, "readable", NULL, (EjsObj*) sp);
         }
         sp->mask |= MPR_READABLE;
     } 

@@ -92,7 +92,9 @@ module ejs {
 
         /** 
             Default application logger. This is set to stderr unless the program specifies an output log via the --log 
-            command line switch.
+            command line switch. At startup, the ejsrc log.location field is used to initialize the App.log property,
+            and the native code logging stream (Logger.nativeStream) is set to this location. Once initialized, changes to
+            App.log will not update the native logging stream which must be explicitly updated.
          */
         public static var log: Logger
 

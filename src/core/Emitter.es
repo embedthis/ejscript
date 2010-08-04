@@ -89,7 +89,16 @@ module ejs {
             @param name Event name to fire to the observers.
             @param args Args to pass to the observer callback
          */
-        function fire(name: String, ...args): Void {
+        function fire(name: String, ...args): Void
+            fireThis(name, null, ...args)
+
+        /** 
+            Emit an event to the registered observers using an explict value for the "this" object.
+            @param name Event name to fire to the observers.
+            @param thisObj Object to use for "this" when running the callback. This overrides any bound values for "this"
+            @param args Args to pass to the observer callback
+         */
+        function fireThis(name: String, thisObj: Object, ...args): Void {
             let observers: Array? = endpoints[name]
             if (observers) {
                 for each (var e: Endpoint in observers) {
@@ -102,7 +111,7 @@ module ejs {
                             for (;;) {
                                 try {
                                     /* This forces to use the bound this value */
-                                    e.callback.apply(null, [name] + args)
+                                    e.callback.apply(thisObj, [name] + args)
                                 } catch (e) {
                                     App.errorStream.write("Exception in event on observer: " + name  + "\n" + e)
                                 }

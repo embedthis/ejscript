@@ -172,15 +172,16 @@ module ejs {
             _pattern = pattern
 
         /**
-            The native code log level. This controls logging from C code.
-            @hide
+            Logging level for native code instrumentation. 
+            This controls logging from C code.
          */
         static native function get nativeLevel(): Number
         static native function set nativeLevel(level: Number): Void
 
         /**
-            Initial native log file defined via a command line "--log spec" switch
-            @hide
+            Logging stream for native code logging instrumentation.  This controls logging from C code.
+            This is initialized at startup via a command line "--log spec" switch and/or the ejsrc "log.location" field.
+            Thereafter, this field is readonly.
          */
         static native function get nativeStream(): Stream
 

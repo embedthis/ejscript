@@ -1,15 +1,16 @@
 /**
-    Request.es -- Ejscript web request object. Request objects support the JSGI protocol specification. They can manage
-    script apps with a ".es" extension, templated web pages with a ".ejs" extension and are used as a foundation for
-    MVC web applications.
+    Request.es -- Ejscript web request object. The Request object respresents a single HTTP request and provides
+    low-level properties and methods to inspect and control the request. Request objects support the CommonJS JSGI 
+    protocol specification. 
  */
 module ejs.web {
 
     /**
         Web request class. Request objects manage the state and execution of a web request. The HttpServer class creates
         instances of Request in response to incoming client requests. The Request object holds the client request state
-        including the request URL and headers. It is also a Stream and by calling the read() method, request body 
-        content can be read.
+        including the request URL and headers. It provides low-level properties and methods to inspect and control the
+        request. The Request object is a Stream and by calling the read() and write() methods, request body 
+        content can be read and written.
 
         The response to send back to the client can be defined by setting status and calling setHeaders() and write() to 
         set the response status, headers and body content respectively.
@@ -21,7 +22,7 @@ module ejs.web {
 
         /** 
             Absolute Uri for the top-level of the application. This returns an absolute Uri (includes scheme and host) 
-            for the top most application Uri. See $home to get a relative Uri.
+            for the top-most application Uri. See $home to get a relative Uri.
          */ 
         native enumerable var absHome: Uri
 
@@ -45,8 +46,8 @@ module ejs.web {
         native enumerable var authUser: String
 
         /** 
-            Will the request auto-finalize. Templated pages and controllers will auto-finalize, i.e. calling finalize() 
-            is not required unless dontFinalize() has been called.
+            Will the request auto-finalize. Set to false if dontFinalize() is called. Templated pages and controllers 
+            will auto-finalize, i.e. calling finalize() is not required unless dontFinalize() has been called.
          */
         native enumerable var autoFinalize: Boolean
 
@@ -58,7 +59,7 @@ module ejs.web {
 
         /** 
             Get the request content length. This is the length of body data sent by the client with the request. 
-            This property is readonly and is set to the length of the request content body in bytes or -1 if not known.
+            This property is read-only and is set to the length of the request content body in bytes or -1 if not known.
             Body data is readable by using $read() or by using the request object as a stream.
          */
         native enumerable var contentLength: Number
@@ -84,8 +85,8 @@ module ejs.web {
         native enumerable var dir: Path
 
         /** 
-            Get the encoding scheme for serializing strings. Not yet implemented.
-            MOB -- should this not be in the headers?
+            Get the encoding scheme for serializing strings. The default encoding is "utf-8".
+            @hide
          */
         native var encoding: String
 
@@ -108,27 +109,24 @@ module ejs.web {
         enumerable var filename: Path
 
         /** 
-            Request Http headers. This is an object hash filled with the request headers from the client.  If multiple 
+            Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
             headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
             HTTP/1.1 specification. Use the header() method if you want to retrieve a single header.
-            Header property names are lower case. ie. "content_length". Use $headers() if you want to match headers
-            using a mixed case key. E.g. headers("Content-Length")
+            Headers defined on the server-side by creating new header entries in $headers will preserve case. 
+            Use $headers() if you want to match headers using a mixed case key. e.g. headers("Content-Length").
          */
         native enumerable var headers: Object
 
-//  MOB -- bad name - change to homeUri?
         /** 
-            Relative Uri for the top-level of the application. This returns a relative Uri from the current request
-            up to the top most application Uri.
+            Home URI for the application. This is a relative Uri for the top-most level of the application. 
          */ 
         native enumerable var home: Uri
 
-//  MOB -- bad name - change to hostName
         /** 
-            Server host name. This is set to the authorized server name (HttpServer.name) if one is configured. 
-            Otherwise it will be set to the $localAddress value. This values is derrived from the Http "Host" header 
-            value if supplied by the client or if there is no "Host" header, from the server IP address of the 
-            accepting interface.
+            Host serving the request. This is initialized to the authorized server hostname (HttpServer.name) if one is 
+            configured.  Otherwise it will use Http "Host" header value if supplied by the client else the server IP 
+            address of the accepting interface. This algorithm attempts to use the most public address available for 
+            the server.
          */
         native enumerable var host: String
 
@@ -151,7 +149,7 @@ module ejs.web {
             @option upload Maximum size of uploaded files.
             @see setLimits
           */
-        native function get limits(): Object
+        native enumerable var limits: Object
 
         /** 
             Server IP address of the accepting interface
@@ -161,8 +159,7 @@ module ejs.web {
         /** 
             Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.
          */
-        function get log(): Logger 
-            App.log
+        native var log: Logger 
 
         /** 
             Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE)
@@ -170,20 +167,36 @@ module ejs.web {
         native enumerable var method: String
 
         /** 
-            Original HTTP requeset method if the method is overridden via the "__method__" parameter or via the
-            X-HTTP-METHOD-OVERRIDE Http header.
+            Original HTTP request method used by the client. If the method is overridden by including a "__method__" 
+            parameter in a POST request or by defining an X-HTTP-METHOD-OVERRIDE Http header, the original method used by
+            the client is stored in this property and the method property reflects the newly defined value.
          */
         enumerable var originalMethod: String
 
+        /**
+            The original request URI supplied by the client. This is the Uri path supplied by the client on the first
+            line of the Http request. It is combined with the HttpServer scheme, host and port components to yield a 
+            fully qualified URI. The "uri" property has fields for: scheme, host, port, path, query and reference.
+            The "uri" property is read-only.
+         */
+        native enumerable var originalUri: Uri
+
         /** 
-            The request form parameters. Object hash of user url-encoded post data parameters.
+            The request form parameters. This parameters are www-url decoded from the POST request body data. 
          */
         native enumerable var params: Object
 
         /** 
             Portion of the request URL after the scriptName. This is the location of the request within the application.
+            The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the 
+            uri or scriptName properties will not affect the pathInfo property.
          */
         native enumerable var pathInfo: String
+
+        /** 
+            TCP/IP port number for the server of this request.
+         */
+        native enumerable var port: Number
 
         /** 
             Http request protocol (HTTP/1.0 | HTTP/1.1)
@@ -194,6 +207,11 @@ module ejs.web {
             Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.
          */
         native enumerable var query: String
+
+        /** 
+            Request reference string. This is the portion of the Uri after the "#". Set to null if there is no reference.
+         */
+        native enumerable var reference: String
 
         /** 
             Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
@@ -208,8 +226,9 @@ module ejs.web {
 
         /** 
             Http response headers. This is the proposed set of headers to send with the response.
+            The case of header keys is preserved.
          */
-        native var responseHeaders: Object
+        native enumerable var responseHeaders: Object
 
         /** 
             Route used for the request. The route is the matching entry in the route table for the request.
@@ -226,15 +245,15 @@ module ejs.web {
         /** 
             Script name for the current application serving the request. This is typically the leading Uri portion 
             corresponding to the application, but middleware may modify this to be an arbitrary string representing 
-            the application.  The script name is typically determined by the Router as it parses the request using 
-            the routing tables.
+            the application.  The script name is often determined by the Router as it parses the request using 
+            the routing tables. The scriptName will be set to the empty string if not defined.
          */
         native enumerable var scriptName: String
 
         /** 
             Owning server for the request. This is the HttpServer object that created this request.
          */
-        native var server: HttpServer
+        native enumerable var server: HttpServer
 
         /** 
             Session state object. The session state object can be used to share state between requests.
@@ -256,40 +275,25 @@ module ejs.web {
         native enumerable var status: Number
 
         /**
-            The request URL path as a parsed Uri. This is the original Uri path combined with the HttpServer scheme, host
-            and port components. It will not reflect changes to pathInfo or scriptName.
+            The current request URI. This property is read-only and is dynamically computed from the originalUri combined
+            with the current scheme, host, port, scriptName, pathInfo, query and reference property values. 
+            The "uri" property has fields for: scheme, host, port, path, query and reference.
          */
         native enumerable var uri: Uri
 
-        /** 
-            Get the name of the client browser software set in the "User-Agent" Http header 
-         */
-        native enumerable var userAgent: String
-
-        /* ************************************* Methods ******************************************/
+        /*************************************** Methods ******************************************/
 
         /** 
             @duplicate Stream.async
+            Request does not support sync mode and only supports async mode.
          */
         native function get async(): Boolean
         native function set async(enable: Boolean): Void
 
-        /**
-            Control the caching of the response content. Setting cacheable to false will add a Cache-Control: no-cache
-            header to the output
-            @param enable Set to false (default) to disable caching of the response content.
-         */
-        function cachable(enable: Boolean = false): Void {
-            //  MOB -- need more control over this. Consult the spec
-            if (!cache) {
-                setHeader("Cache-Control", "no-cache", false)
-            }
-        }
-
         /** 
             @duplicate Stream.close
-            This closes the current request. It may not close the actually socket connection so that it can be reused
-                for future requests.
+            This closes the current request by finalizing all transmission data and sending a "close" event. It may 
+            not close the actually socket connection so that it can be reused for future requests.
          */
         native function close(): Void
 
@@ -299,18 +303,6 @@ module ejs.web {
          */
         native function dontFinalize(): Void
 
-        //  MOB - unique name to not conflict with global.dump()
-        /** 
-            Dump objects for debugging
-            @param args List of arguments to print.
-            @hide
-         */
-        function show(...args): Void {
-            for each (var e: Object in args) {
-                write(serialize(e, {pretty: true}) + "\r\n")
-            }
-        }
-
         /** 
             Destroy a session. This call destroys the session state store that is being used for the current client. 
             If no session exists, this call has no effect. Sessions are created by reading or writing to the $session 
@@ -319,7 +311,7 @@ module ejs.web {
         native function destroySession(): Void
 
         /** 
-            Get the file extension of the script corresponding to the request 
+            The request pathInfo file extension
          */
         function get extension(): String
             Uri(pathInfo).extension
@@ -339,17 +331,55 @@ module ejs.web {
         native function flush(dir: Number = Stream.WRITE): Void
 
         /** 
-            Get a request header by keyword. The key match is case insensitive. 
+            Get a request header by keyword. Headers supplied by the remote client are stored in lower-case. 
+            Headers defined on the server-side preserve case. This routine supports both by doing a case-insensitive lookup.
+            @param key Header key value to retrieve. The key match is case insensitive.
             @return The header value
          */
         native function header(key: String): String
+
+        /** 
+            Make a URI, provided parts of the URI. The URI is completed using the current request and route state.
+            @params location The location parameter can be a URI string or object hash of components. If the URI is a
+               string, it is may be an absolute or relative URI. It is joined using Uri.join() to a base URI fromed from
+               the current request parameters. If the URI is an object hash, the following properties are examined
+               and used to augment parameters from the existing request: scheme, host, port, path, query, reference. 
+               Properties that are relevant to the current request route, such as "controller", or "action" are also
+               consulted.
+            @option scheme String URI protocol scheme (http or https)
+            @option host String URI host name or IP address.
+            @option port Number TCP/IP port number for communications
+            @option path String URI path 
+            @option query String URI query parameters. Does not include "?"
+            @option reference String URI path reference. Does not include "#"
+            @option controller String Controller name if using an MVC route
+            @option action String Action name if using an MVC route
+         */
+        function makeUri(location: Object): Uri {
+            if (route) {
+                if (location is String) {
+                    return route.makeUri(this, params).join(location)
+                } else {
+                    return route.makeUri(this, blend(params.clone(), location))
+                }
+            }
+            let components = absHome.components
+            if (location is String) {
+                return Uri(components).join(location)
+            } else {
+                blend(components, location)
+            }
+            return Uri(components)
+        }
 
         /** 
             @duplicate Stream.observe
             @event readable Issued when some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
             @event close Issued when the request completes
-            @event error Issued if the request does not complete or the connection disconnects
+            @event error Issued if the request does not complete or the connection disconnects. An error event is not 
+                caused by non-200 status codes, these are regarded as valid return results. Rather, an error event will
+                be issued when the request cannot return a complete, valid Http response to the client.
             All events are called with the signature:
             function (event: String, http: Http): Void
          */
@@ -364,19 +394,19 @@ module ejs.web {
             Redirect the client to a new URL. This call redirects the client's browser to a new location specified 
             by the $url.  Optionally, a redirection code may be provided. Normally this code is set to be the HTTP 
             code 302 which means a temporary redirect. A 301, permanent redirect code may be explicitly set.
-            @param where Url to redirect the client toward. This can be a relative or absolute string URL or it can be
+            @param location Url to redirect the client toward. This can be a relative or absolute string URL or it can be
                 a hash of URL components. For example, the following are valid inputs: "../index.ejs", 
                 "http://www.example.com/home.html", {action: "list"}.
             @param status Optional HTTP redirection status
          */
-        function redirect(where: Object, status: Number = Http.MovedTemporarily): Void {
+        function redirect(location: Object, status: Number = Http.MovedTemporarily): Void {
             /*
                 This permits urls like: ".." or "/" or "http://..."
              */
             let base = uri.clone()
             base.query = ""
             base.reference = ""
-            let url = (where is String) ? makeUri(base.join(where).normalize.components) : makeUri(where)
+            let url = (location is String) ? makeUri(base.join(location).normalize.components) : makeUri(location)
             this.status = status
             setHeader("Location", url)
             write("<!DOCTYPE html>\r\n" +
@@ -384,7 +414,7 @@ module ejs.web {
                     "<body><h1>Redirect (" + status + ")</h1>\r\n" + 
                     "<p>The document has moved <a href=\"" + url + 
                     "\">here</a>.</p>\r\n" +
-                    "<address>" + server.software + " at " + serverName + " Port " + server.port + 
+                    "<address>" + server.software + " at " + host + " Port " + server.port + 
                     "</address></body>\r\n</html>\r\n")
         }
 
@@ -397,29 +427,10 @@ module ejs.web {
             Send a static file back to the client. This is a high performance way to send static content to the client.
             This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
             and the slower netConnector will be used instead.
-            @param path Path to the file to send back to the client
+            @param file Path to the file to send back to the client
             @return True if the Send connector can successfully be used. 
          */
-        native function sendfile(path: Path): Boolean
-
-        //    MOB - doc
-        /** @hide */
-        function makeUri(where: Object): Uri {
-            if (route) {
-                if (where is String) {
-                    return route.makeUri(this, params).join(where)
-                } else {
-                    return route.makeUri(this, blend(params.clone(), where))
-                }
-            }
-            let comoponents = request.absHome.components
-            if (where is String) {
-                return Uri(components).join(where)
-            } else {
-                blend(components, where)
-            }
-            return Uri(components)
-        }
+        native function sendfile(file: Path): Boolean
 
         /** 
             Send a response to the client. This can be used instead of setting status and calling setHeaders() and write(). 
@@ -434,31 +445,8 @@ module ejs.web {
             if (response.headers)
                 setHeaders(response.headers)
             if (response.body)
-                write(body)
+                write(response.body)
             finalize()
-        }
-
-        /**
-            Update the request resource limits. The supplied limit fields are updated.
-            See $limit for limit field details.
-            @param limits Object hash of limit fields and values
-            @see limits
-         */
-        native function setLimits(limits: Object): Void
-
-        /**
-            Convenience routine to define an application at a given Uri prefix and directory location. This is typically
-                called from routing tables.
-            @param prefix The leading Uri prefix for the application. This prefix is removed from the pathInfo and the
-                $scriptName property is set to the prefix after removing the leading "/".
-            @param location Path to where the application home directory is. This sets the $dir property to the $location
-                argument.
-        */
-        function setLocation(prefix: String, location: Path): Void {
-            dir = location
-            prefix = prefix.trimEnd("/")
-            pathInfo = pathInfo.trimStart(prefix)
-            scriptName = prefix.trimStart("/")
         }
 
         /** 
@@ -468,21 +456,22 @@ module ejs.web {
             @param options Cookie field options
             @options value Cookie value
             @options path Uri path to which the cookie applies
-            @options domain Domain in which the cookie applies. Must have 2-3 dots.
-            @options lifetime Duration for the cookie to persist in seconds
-            @options secure Set to true if the cookie only applies for SSL based connections
+            @options domain String Domain in which the cookie applies. Must have 2-3 "." and begin with a leading ".". 
+                For example: domain: .example.com
+            @options expires Date When the cookie expires
+            @options secure Boolean Set to true if the cookie only applies for SSL based connections
          */
         function setCookie(name: String, options: Object) {
             options.path ||= "/"
-            let value = encodeUri(name) + "="
-            value += "; path=" + options.path
+            let cookie = Uri.encodeComponent(name) + "=" + options.value
+            cookie += "; path=" + options.path
             if (options.domain)
-                value += "domain=" + options.domain
+                cookie += "; domain=" + options.domain
             if (options.expires)
-                value += "; expires= " + options.expires.toUTCString()
+                cookie += "; expires= " + options.expires.toUTCString()
             if (options.secure)
-                value += "; secure"
-            setHeader("Set-Cookie", value)
+                cookie += "; secure"
+            setHeader("Set-Cookie", cookie)
             setHeader("Cache-control", "no-cache=\"set-cookie\"")
         }
 
@@ -512,6 +501,29 @@ module ejs.web {
             }
         }
 
+        /**
+            Update the request resource limits. The supplied limit fields are updated.
+            See $limit for limit field details.
+            @param limits Object hash of limit fields and values
+            @see limits
+         */
+        native function setLimits(limits: Object): Void
+
+        /**
+            Convenience routine to define an application at a given Uri prefix and directory location. This is typically
+                called from routing tables.
+            @param prefix The leading Uri prefix for the application. This prefix is removed from the pathInfo and the
+                $scriptName property is set to the prefix.
+            @param location Path to where the application home directory is. This sets the $dir property to the $location
+                argument.
+        */
+        function setLocation(prefix: String, location: Path): Void {
+            prefix = prefix.trimEnd("/")
+            pathInfo = pathInfo.trimStart(prefix)
+            scriptName = prefix     //MOB .trimStart("/")
+            dir = location
+        }
+
         /** 
             Convenience routine to set the (proposed) Http response status code. This is equivalent to assigning 
             to the $status property.
@@ -519,16 +531,47 @@ module ejs.web {
         function setStatus(status: Number): Void
             this.status = status
 
+        /** 
+            Dump objects for debugging
+            @param args List of arguments to print.
+            @hide
+         */
+        function show(...args): Void {
+            for each (var e: Object in args) {
+                write(serialize(e, {pretty: true}) + "\r\n")
+            }
+        }
+
         /**
-            Configure tracing for this request. The default tracing is defined by the owning HttpServer and is typically
-            to trace the first line of responses and headers at level 3. As the Request first line and headers are
-            already parsed and traced before the Request object is created, Modifying the request trace level via trace()
-            will only impact the tracing of body content.
-            @param level Level at which request tracing will occurr
-            @param options. Set of trace options. Select from: "body" to body content.,
-            @param size Maximum request body size to trace
+            Configure tracing for this request. Tracing is initialized by the owning HttpServer and is typically
+            defined to trace the first line of requests and responses at level 2, headers at level 3 and body content
+            at level 4. Once the request has been created however, the first line and headers of the request are 
+            already parsed and traced by the HttpServer, so modifying the trace level via trace() on the request object
+            will only impact the tracing of response body content.
+            
+            The options argument contains optional properties: rx and tx 
+            (for receive and transmit tracing). The rx and tx properties may contain an object hash which describes 
+            the tracing for that direction and includes any of the following fields:
+            @param options. Set of trace options with properties "rx" and "tx" for receive and transmit direction tracing.
+                The include property is an array of file extensions to include in tracing.
+                The include property is an array of file extensions to exclude from tracing.
+                The all property specifies that everything for this direction should be traced.
+                The conn property specifies that new connections should be traced.
+                The first property specifies that the first line of the request should be traced.
+                The headers property specifies that the headers (including first line) of the request should be traced.
+                The body property specifies that the body content of the request should be traced.
+                The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit 
+                    will not be traced.
+            @option transmit. Object hash with optional properties: include, exclude, first, headers, body, size.
+            @option receive. Object hash with optional properties: include, exclude, conn, first, headers, body, size.
+            @example:
+                trace({
+                    transmit: { exclude: ["gif", "png"], "headers": 3, "body": 4, size: 1000000 }
+                    receive:  { "conn": 1, "headers": 2 , "body": 4, size: 1024 }
+                })
           */
-        native function trace(level: Number, options: Object = ["body"], size: Number = null): Void
+        native function trace(options: Object): Void
+
 
         /** 
             Write data to the client. This will buffer the written data until either flush() or finalize() is called. 
@@ -543,21 +586,20 @@ module ejs.web {
             @param msg Message to send. The message may be modified for readability if it contains an exception backtrace.
             @deprecated
          */
-        function error(code: Number, ...msgs): Void {
+        function writeError(code: Number, ...msgs): Void {
             let text
             status = code
             let msg = msgs.join(" ").replace(/.*Error Exception: /, "")
+            let title = "Request Error for \"" + pathInfo + "\""
+            let text
             if (config.log.showClient) {
-                setHeader("Content-Type", "text/html")
-                text = "<h1>Request error for \"" + pathInfo + "\"</h1>\r\n"
-                text += "<pre>" + escapeHtml(msg) + "</pre>\r\n"
-                text += '<p>To prevent errors being displayed in the "browser, ' + 
+                text = "<pre>" + escapeHtml(msg) + "</pre>\r\n" +
+                    '<p>To prevent errors being displayed in the "browser, ' + 
                     'set <b>log.showClient</b> to false in the ejsrc file.</p>\r\n'
-            } else {
-                text = "<h1>Request error for \"" + pathInfo + "\"</h1>\r\n"
             }
             try {
-                write(text)
+                setHeader("Content-Type", "text/html")
+                write(errorBody(title, text))
             } catch {}
             finalize(true)
             log.warn("Request error (" + status + ") for: \"" + uri + "\". " + msg)
@@ -568,9 +610,9 @@ module ejs.web {
             @param args Objects to emit
          */
         function writeHtml(...args): Void
-            write(html(args))
+            write(html(...args))
 
-        /* ******************************************** JSGI  ********************************************************/
+        /********************************************** JSGI  ********************************************************/
         /** 
             JSGI specification configuration object.
             @spec jsgi-0.3
@@ -587,7 +629,7 @@ module ejs.web {
             Storage for middleware specific state. Added for JSGI compliance.
             @spec jsgi-0.3
          */
-        native var env: Object
+        native enumerable var env: Object
 
         /**
             Request content stream. This is equivalent to using "this" as Request objects are streams connected to the
@@ -607,45 +649,33 @@ module ejs.web {
             query
 
         /**
-            Name of the server responding to the request. This is the portion of the URL that follows the scheme.
-            If a "Host" header is provided, it is used in preference.
-            @returns A string containing the server name.
-         */
-        function get serverName(): String 
-            (host) ? host : uri.host
-
-        /**
             Listening port number for the server
             @returns A number set to the TCP/IP port for the listening socket.
          */
         function get serverPort(): Number
             server.port
 
-        //  DEPRECATED
+        /*************************************** Deprecated ***************************************/
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get accept(): String
             header("accept")
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get acceptCharset(): String
             header("accept-charset")
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get acceptEncoding(): String
             header("accept-encoding")
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get authAcl(): String {
@@ -653,74 +683,74 @@ module ejs.web {
             return null
         }
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get body(): String
             input.readString()
 
-        /** 
-            @stability deprecated
+        /** @deprecated
+            @hide
+            Control the caching of the response content. Setting cacheable to false will add a Cache-Control: no-cache
+            header to the output
+            @param enable Set to false (default) to disable caching of the response content.
+         */
+        function cachable(enable: Boolean = false): Void {
+            if (!cache) {
+                setHeader("Cache-Control", "no-cache", false)
+            }
+        }
+
+        /** @deprecated
             @hide
           */
         function get connection(): String
             header("connection")
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get hostName(): String
             host
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get mimeType(): String
             header("content-type")
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get pathTranslated(): String
             dir.join(pathInfo)
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get pragma(): String
             header("pragma")
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get remoteHost(): String
             header("host")
 
-        /** 
-            @stability deprecated
+        /** @deprecated
             @hide
           */
         function get url(): String
             pathInfo
 
         /** 
-            @stability deprecated
+            Get the name of the client browser software set in the "User-Agent" Http header 
+            @deprecated
             @hide
-          */
-        function get originalUri(): String
-            pathInfo
+         */
+        function get userAgent(): String
+            header("user-agent")
 
-        /** @deprecated
-            @hide
-          */
-        function writeError(msg: String, code: Number = Http.ServerError): Void 
-            error(code, msg)
     }
 }
 

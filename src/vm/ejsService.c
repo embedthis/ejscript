@@ -694,31 +694,31 @@ int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
 }
 
 
-int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, int argc, EjsObj **argv)
+int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     EjsObj      **av;
     int         i;
 
     if (emitter) {
-        av = (EjsObj**) mprAlloc(emitter, (argc + 1) * sizeof(EjsObj*));
+        av = (EjsObj**) mprAlloc(emitter, (argc + 2) * sizeof(EjsObj*));
         av[0] = (EjsObj*) ejsCreateString(ejs, name);
+        av[1] = thisObj ? thisObj : ejs->nullValue;
         for (i = 0; i < argc; i++) {
-            av[i + 1] = argv[i];
+            av[i + 2] = argv[i];
         }
-        //  TODO - rename fire or send()
-        ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_emit, argc + 1, av);
+        ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_fireThis, argc + 2, av);
         mprFree(av);
     }
     return 0;
 }
 
 
-int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsObj *arg)
+int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsObj *thisObj, EjsObj *arg)
 {
     EjsObj      **argv;
 
     argv = &arg;
-    return ejsSendEventv(ejs, emitter, name, 1, argv);
+    return ejsSendEventv(ejs, emitter, name, thisObj, 1, argv);
 }
 
 

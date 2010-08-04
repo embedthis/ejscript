@@ -243,7 +243,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
 
     mprLog(ejs, 3, "Created new session %s", id);
     if (req->server->emitter) {
-        ejsSendEvent(ejs, req->server->emitter, "createSession", (EjsObj*) ejsCreateString(ejs, id));
+        ejsSendEvent(ejs, req->server->emitter, "createSession", NULL, (EjsObj*) ejsCreateString(ejs, id));
     }
     return session;
 }
@@ -261,7 +261,7 @@ int ejsDestroySession(Ejs *ejs, EjsHttpServer *server, EjsSession *session)
     if (session) {
         master = ejs->master ? ejs->master : ejs;
         if (server) {
-            ejsSendEvent(ejs, server->emitter, "destroySession", (EjsObj*) ejsCreateString(ejs, session->id));
+            ejsSendEvent(ejs, server->emitter, "destroySession", NULL, (EjsObj*) ejsCreateString(ejs, session->id));
         }
         if ((slotNum = ejsLookupProperty(master, (EjsObj*) ejs->sessions, EN(&qname, session->id))) >= 0) {
             ejsDeleteProperty(master, (EjsObj*) ejs->sessions, slotNum);

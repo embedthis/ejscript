@@ -1725,6 +1725,9 @@
 			buildConfigurationList = C97623C40FD06EC4009C78E1 /* Build configuration list for PBXProject "ejs-all" */;
 			compatibilityVersion = "Xcode 3.2";
 			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
 			mainGroup = C97623BF0FD06EC4009C78E1;
 			productRefGroup = C97623D30FD06EE7009C78E1 /* Products */;
 			projectDirPath = "";

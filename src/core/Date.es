@@ -160,6 +160,11 @@ module ejs {
         native function set fullYear(year: Number): void
 
         /**
+            @hide
+         */
+        native function future(msec: Number): Date
+
+        /**
             Return the day of the month in local time
             @return Returns the day of the year (1-31)
          */

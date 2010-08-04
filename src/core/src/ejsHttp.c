@@ -479,6 +479,7 @@ static EjsObj *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     }
     contentLength = httpGetContentLength(conn);
     if (conn->state >= HTTP_STATE_PARSED && contentLength == hp->readCount) {
+        /* End of input */
         return (EjsObj*) ejs->nullValue;
     }
     if (offset < 0) {
@@ -644,50 +645,87 @@ static EjsObj *http_setLimits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
+static int getNum(Ejs *ejs, EjsObj *options, cchar *field)
+{
+    EjsObj      *obj;
+    EjsName     n;
+
+    if ((obj = ejsGetPropertyByName(ejs, options, EN(&n, field))) != 0) {
+        return ejsGetInt(ejs, obj);
+    }
+    return -1;
+}
+
+
+static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *options)
+{
+    EjsArray    *extensions;
+    EjsObj      *ext;
+    EjsName     n;
+    HttpTrace   *tp;
+    int         i, level, *levels;
+
+    tp = &trace[dir];
+    levels = tp->levels;
+    if ((level = getNum(ejs, options, "all")) >= 0) {
+        for (i = 0; i < HTTP_TRACE_MAX_ITEM; i++) {
+            levels[i] = level;
+        }
+    } else {
+        levels[HTTP_TRACE_CONN] = getNum(ejs, options, "conn");
+        levels[HTTP_TRACE_FIRST] = getNum(ejs, options, "first");
+        levels[HTTP_TRACE_HEADER] = getNum(ejs, options, "headers");
+        levels[HTTP_TRACE_BODY] = getNum(ejs, options, "body");
+    }
+    tp->size = getNum(ejs, options, "size");
+    if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN(&n, "include"))) != 0) {
+        if (!ejsIsArray(extensions)) {
+            ejsThrowArgError(ejs, "include is not an array");
+            return;
+        }
+        tp->include = mprCreateHash(ctx, 0);
+        for (i = 0; i < extensions->length; i++) {
+            if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
+                mprAddHash(tp->include, mprStrdup(tp->include, ejsGetString(ejs, ejsToString(ejs, ext))), "");
+            }
+        }
+    }
+    if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN(&n, "exclude"))) != 0) {
+        if (!ejsIsArray(extensions)) {
+            ejsThrowArgError(ejs, "exclude is not an array");
+            return;
+        }
+        tp->exclude = mprCreateHash(ctx, 0);
+        for (i = 0; i < extensions->length; i++) {
+            if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
+                mprAddHash(tp->exclude, mprStrdup(tp->exclude, ejsGetString(ejs, ejsToString(ejs, ext))), "");
+            }
+        }
+    }
+}
+
+
+int ejsSetupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, EjsObj *options)
+{
+    EjsObj      *rx, *tx;
+    EjsName     n;
+
+    if ((rx = ejsGetPropertyByName(ejs, options, EN(&n, "rx"))) != 0) {
+        setupTrace(ejs, ctx, trace, HTTP_TRACE_RX, rx);
+    }
+    if ((tx = ejsGetPropertyByName(ejs, options, EN(&n, "tx"))) != 0) {
+        setupTrace(ejs, ctx, trace, HTTP_TRACE_TX, tx);
+    }
+    return 0;
+}
+
+
 /*  
-    function trace(level: Number, options: Object = ["headers", "request", "response"], size: Number = null): Void
+    function trace(options): Void
  */
 static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    EjsArray    *options;
-    EjsObj      *item;
-    EjsString   *name;
-    HttpConn    *conn;
-    int         mask, i;
-
-    conn = hp->conn;
-    conn->traceLevel = ejsGetInt(ejs, argv[0]);
-
-    if (argc >= 2) {
-        mask = 0;
-        options = (EjsArray*) argv[1];
-        for (i = 0; i < options->length; i++) {
-            if ((item = options->data[i]) == 0) {
-                continue;
-            }
-            name = ejsToString(ejs, item);
-            if (strcmp(name->value, "all") == 0) {
-                mask |= HTTP_TRACE_RECEIVE | HTTP_TRACE_TRANSMIT;
-                mask |= HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS | HTTP_TRACE_BODY;
-            } else if (strcmp(name->value, "request") == 0) {
-                mask |= HTTP_TRACE_TRANSMIT;
-            } else if (strcmp(name->value, "response") == 0) {
-                mask |= HTTP_TRACE_RECEIVE;
-            } else if (strcmp(name->value, "conn") == 0) {
-                mask |= HTTP_TRACE_CONN;
-            } else if (strcmp(name->value, "first") == 0) {
-                mask |= HTTP_TRACE_FIRST;
-            } else if (strcmp(name->value, "headers") == 0) {
-                mask |= HTTP_TRACE_HEADERS;
-            } else if (strcmp(name->value, "body") == 0) {
-                mask |= HTTP_TRACE_BODY;
-            }
-        }
-        conn->traceMask = mask;
-    }
-    if (argc >= 3) {
-        conn->traceMaxLength = ejsGetInt(ejs, argv[2]);
-    }
+    ejsSetupTrace(ejs, hp->conn, hp->conn->trace, argv[0]);
     return 0;
 }
 
@@ -854,10 +892,10 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
             mprAdjustBufStart(hp->requestContent, nbytes);
             hp->requestContentCount += nbytes;
         }
-        httpFlush(conn);
+        httpFinalize(conn);
     }
     length = hp->conn->transmitter->length;
-    ejsSendEvent(ejs, hp->emitter, "writable", (EjsObj*) hp);
+    ejsSendEvent(ejs, hp->emitter, "writable", NULL, (EjsObj*) hp);
     if (conn->async) {
         httpEnableConnEvents(hp->conn);
     }
@@ -879,7 +917,7 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
 
     case HTTP_STATE_PARSED:
         if (hp->emitter) {
-            ejsSendEvent(ejs, hp->emitter, "headers", (EjsObj*) hp);
+            ejsSendEvent(ejs, hp->emitter, "headers", NULL, (EjsObj*) hp);
         }
         break;
 
@@ -899,10 +937,10 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
     case 0:
         if (hp && hp->emitter) {
             if (notifyFlags & HTTP_NOTIFY_READABLE) {
-                ejsSendEvent(ejs, hp->emitter, "readable", (EjsObj*) hp);
+                ejsSendEvent(ejs, hp->emitter, "readable", NULL, (EjsObj*) hp);
             } 
             if (notifyFlags & HTTP_NOTIFY_WRITABLE) {
-                ejsSendEvent(ejs, hp->emitter, "writable", (EjsObj*) hp);
+                ejsSendEvent(ejs, hp->emitter, "writable", NULL, (EjsObj*) hp);
             }
         }
         break;
@@ -1384,7 +1422,7 @@ static void sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp)
     if (!hp->closed) {
         hp->closed = 1;
         if (hp->emitter) {
-            ejsSendEvent(ejs, hp->emitter, "close", (EjsObj*) hp);
+            ejsSendEvent(ejs, hp->emitter, "close", NULL, (EjsObj*) hp);
         }
     }
 }
@@ -1395,7 +1433,7 @@ static void sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp)
     if (!hp->error) {
         hp->error = 1;
         if (hp->emitter) {
-            ejsSendEvent(ejs, hp->emitter, "error", (EjsObj*) hp);
+            ejsSendEvent(ejs, hp->emitter, "error", NULL, (EjsObj*) hp);
         }
     }
 }

@@ -1870,7 +1870,7 @@ static HttpConn *openConnection(HttpConn *conn, cchar *url)
     HttpUri     *uri;
     MprSocket   *sp;
     char        *ip;
-    int         port, rc;
+    int         port, rc, level;
 
     mprAssert(conn);
 
@@ -1928,12 +1928,9 @@ static HttpConn *openConnection(HttpConn *conn, cchar *url)
     conn->secure = uri->secure;
     conn->keepAliveCount = (conn->limits->keepAliveCount) ? conn->limits->keepAliveCount : -1;
 
-    conn->traceMask = httpSetupTrace(conn, 0);
-    if (conn->traceMask) {
-        if (httpShouldTrace(conn, HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN)) {
-            mprLog(conn, conn->traceLevel, "### New Connection from %s:%d to %s:%d", 
-                conn->ip, conn->port, conn->sock->ip, conn->sock->port);
-        }
+    if ((level = httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_CONN, NULL)) >= 0) {
+        mprLog(conn, level, "### New Connection from %s:%d to %s:%d", 
+            conn->ip, conn->port, conn->sock->ip, conn->sock->port);
     }
     return conn;
 }
@@ -2244,7 +2241,7 @@ static void writeEvent(HttpConn *conn);
  */
 HttpConn *httpCreateConn(Http *http, HttpServer *server)
 {
-    HttpConn        *conn;
+    HttpConn    *conn;
 
     conn = mprAllocObjWithDestructorZeroed(http, HttpConn, connectionDestructor);
     if (conn == 0) {
@@ -2265,10 +2262,7 @@ HttpConn *httpCreateConn(Http *http, HttpServer *server)
     conn->callback = (HttpCallback) httpEvent;
     conn->callbackArg = conn;
 
-    conn->traceMask = HTTP_TRACE_TRANSMIT | HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS;
-    conn->traceLevel = HTTP_TRACE_LEVEL;
-    conn->traceMaxLength = INT_MAX;
-
+    httpInitTrace(conn->trace);
     httpInitSchedulerQueue(&conn->serviceq);
     if (server) {
         conn->dispatcher = server->dispatcher;
@@ -2451,7 +2445,7 @@ void httpEvent(HttpConn *conn, MprEvent *event)
         readEvent(conn);
     }
     if (conn->server) {
-        if (mprIsSocketEof(conn->sock) || (!conn->receiver && conn->keepAliveCount < 0)) {
+        if (conn->connError || mprIsSocketEof(conn->sock) || (!conn->receiver && conn->keepAliveCount < 0)) {
             /*  
                 NOTE: compare keepAliveCount with "< 0" so that the client can have one more keep alive request. 
                 It should respond to the "Connection: close" and thus initiate a client-led close. 
@@ -2858,13 +2852,20 @@ void httpWritable(HttpConn *conn)
 
 void httpFormatErrorV(HttpConn *conn, int status, cchar *fmt, va_list args)
 {
+    /*
+        Lock as this may be called by httpTimer
+     */
+    mprLock(conn->http->mutex);
     mprFree(conn->errorMsg);
     conn->errorMsg = mprVasprintf(conn, HTTP_BUFSIZE, fmt, args);
-    if (conn->server && conn->transmitter) {
-        conn->transmitter->status = status;
-    } else if (conn->receiver) {
-        conn->receiver->status = status;
+    if (status) {
+        if (conn->server && conn->transmitter) {
+            conn->transmitter->status = status;
+        } else if (conn->receiver) {
+            conn->receiver->status = status;
+        }
     }
+    mprUnlock(conn->http->mutex);
 }
 
 
@@ -2934,6 +2935,10 @@ void httpError(HttpConn *conn, int status, cchar *fmt, ...)
 }
 
 
+/*
+    A resource limit error has occurred. For servers: best to stop future requests on the current connection, but 
+    try to send a meaningful response back to the client. For clients, just close the connection.
+ */
 void httpLimitError(HttpConn *conn, int status, cchar *fmt, ...)
 {
     va_list     args;
@@ -2941,6 +2946,12 @@ void httpLimitError(HttpConn *conn, int status, cchar *fmt, ...)
     va_start(args, fmt);
     httpErrorV(conn, status, fmt, args);
     va_end(args);
+    conn->complete = 1;
+    conn->connError = 1;
+    if (!conn->server) {
+        /* Handlers must not call CloseConn as it disables wait events */
+        httpCloseConn(conn);
+    }
 }
 
 
@@ -2989,24 +3000,6 @@ void httpConnError(HttpConn *conn, int status, cchar *fmt, ...)
         }
     }
 }
-
-
-int httpSetupTrace(HttpConn *conn, cchar *ext)
-{
-    if (conn->traceLevel > mprGetLogLevel(conn)) {
-        return 0;
-    }
-    if (ext) {
-        if (conn->traceInclude && !mprLookupHash(conn->traceInclude, ext)) {
-            return 0;
-        }
-        if (conn->traceExclude && mprLookupHash(conn->traceExclude, ext)) {
-            return 0;
-        }
-    }
-    return conn->traceMask;
-}
-
 
 /*
     @copy   default
@@ -3610,7 +3603,7 @@ static int httpTimer(Http *http, MprEvent *event)
     }
 
     /* 
-       Check for any inactive connections
+       Check for any inactive or expired connections (inactivityTimeout and requestTimeout)
      */
     lock(http);
     for (connCount = 0, next = 0; (conn = mprGetNextItem(http->connections, &next)) != 0; connCount++) {
@@ -4430,7 +4423,7 @@ static void addPacketForNet(HttpQueue *q, HttpPacket *packet)
     HttpTransmitter     *trans;
     HttpConn            *conn;
     MprIOVec            *iovec;
-    int                 index, mask;
+    int                 index, item;
 
     conn = q->conn;
     trans = conn->transmitter;
@@ -4446,9 +4439,9 @@ static void addPacketForNet(HttpQueue *q, HttpPacket *packet)
     if (httpGetPacketLength(packet) > 0) {
         addToNetVector(q, mprGetBufStart(packet->content), mprGetBufLength(packet->content));
     }
-    mask = HTTP_TRACE_TRANSMIT | ((packet->flags & HTTP_PACKET_HEADER) ? HTTP_TRACE_HEADERS : HTTP_TRACE_BODY);
-    if (httpShouldTrace(conn, mask)) {
-        httpTraceContent(conn, packet, 0, trans->bytesWritten, mask);
+    item = (packet->flags & HTTP_PACKET_HEADER) ? HTTP_TRACE_HEADER : HTTP_TRACE_BODY;
+    if (httpShouldTrace(conn, HTTP_TRACE_TX, item, NULL) >= 0) {
+        httpTraceContent(conn, HTTP_TRACE_TX, item, packet, 0, trans->bytesWritten);
     }
 }
 
@@ -4597,7 +4590,7 @@ static void adjustNetVec(HttpQueue *q, int written)
  */
 HttpPacket *httpCreatePacket(MprCtx ctx, int size)
 {
-    HttpPacket    *packet;
+    HttpPacket  *packet;
 
     packet = mprAllocObjZeroed(ctx, HttpPacket);
     if (packet == 0) {
@@ -5201,7 +5194,8 @@ void httpCreatePipeline(HttpConn *conn, HttpLocation *location, HttpStage *propo
     if (trans->connector == 0) {
         if (location && location->connector) {
             trans->connector = location->connector;
-        } else if (trans->handler == http->fileHandler && !rec->ranges && !conn->secure && trans->chunkSize <= 0 && !conn->traceMask) {
+        } else if (trans->handler == http->fileHandler && !rec->ranges && !conn->secure && 
+                trans->chunkSize <= 0 && !conn->traceMask) {
             trans->connector = http->sendConnector;
         } else {
             trans->connector = http->netConnector;
@@ -5794,13 +5788,20 @@ int httpIsEof(HttpConn *conn)
     HttpReceiver    *rec;
 
     rec = conn->receiver;
+    return rec == 0 || rec->readComplete;
+#if UNUSED
     if (rec == 0) {
         return 1;
     }
     if (rec->length >= 0) {
         return rec->readContent >= rec->length;
+    } else if (rec->remainingContent == 0) {
+        if (rec->flags & HTTP_REC_CHUNKED && rec->chunkState == HTTP_CHUNK_EOF) {
+            return 1;
+        }
     }
     return 0;
+#endif
 }
 
 
@@ -6459,6 +6460,7 @@ void httpAdvanceReceiver(HttpConn *conn, HttpPacket *packet)
     mprAssert(conn);
 
     conn->canProceed = 1;
+    conn->advancing = 1;
 
     while (conn->canProceed) {
         LOG(conn, 7, "httpAdvanceReceiver, state %d, error %d", conn->state, conn->error);
@@ -6487,6 +6489,7 @@ void httpAdvanceReceiver(HttpConn *conn, HttpPacket *packet)
         }
         packet = conn->input;
     }
+    conn->advancing = 0;
 }
 
 
@@ -6552,6 +6555,23 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
 }
 
 
+static int traceRequest(HttpConn *conn, HttpPacket *packet)
+{
+    MprBuf  *content;
+    cchar   *endp;
+    int     len;
+
+    mprLog(conn, 6, "Request from %s:%d to %s:%d", conn->ip, conn->port, conn->sock->ip, conn->sock->port);
+    if (httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_HEADER, conn->transmitter->extension) >= 0) {
+        content = packet->content;
+        endp = strstr((char*) content->start, "\r\n\r\n");
+        len = (endp) ? (endp - mprGetBufStart(content) + 4) : 0;
+        httpTraceContent(conn, HTTP_TRACE_RX, HTTP_TRACE_HEADER, packet, len, 0);
+        return 1;
+    }
+    return 0;
+}
+
 /*  
     Parse the first line of a http request. Return true if the first line parsed. This is only called once all the headers
     have been read and buffered. Requests look like: METHOD URL HTTP/1.X.
@@ -6560,10 +6580,8 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
 {
     HttpReceiver        *rec;
     HttpTransmitter     *trans;
-    MprBuf              *content;
-    cchar               *endp;
     char                *method, *uri, *protocol;
-    int                 methodFlags, mask, len;
+    int                 methodFlags, traced, level;
 
     mprLog(conn, 4, "New request from %s:%d to %s:%d", conn->ip, conn->port, conn->sock->ip, conn->sock->port);
 
@@ -6571,8 +6589,9 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
     trans = conn->transmitter;
     protocol = uri = 0;
     methodFlags = 0;
-    method = getToken(conn, " ");
+    traced = traceRequest(conn, packet);
 
+    method = getToken(conn, " ");
     switch (method[0]) {
     case 'D':
         if (strcmp(method, "DELETE") == 0) {
@@ -6648,21 +6667,8 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
     }
     httpSetState(conn, HTTP_STATE_FIRST);
 
-    conn->traceMask = httpSetupTrace(conn, conn->transmitter->extension);
-    if (conn->traceMask) {
-        if (httpShouldTrace(conn, HTTP_TRACE_RECEIVE | HTTP_TRACE_FIRST)) {
-            mprLog(conn, conn->traceLevel, "%s %s %s", method, uri, protocol);
-        }
-        mask = HTTP_TRACE_RECEIVE | HTTP_TRACE_HEADERS;
-        if (httpShouldTrace(conn, mask)) {
-            content = packet->content;
-            endp = strstr((char*) content->start, "\r\n\r\n");
-            len = (endp) ? (endp - mprGetBufStart(content) + 4) : 0;
-            httpTraceContent(conn, packet, len, 0, mask);
-        }
-    } else {
-        mprLog(rec, 6, "Request from %s:%d to %s:%d", conn->ip, conn->port, conn->sock->ip, conn->sock->port);
-        mprLog(rec, conn->traceLevel, "%s %s %s", method, uri, protocol);
+    if (!traced && (level = httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_FIRST, NULL)) >= 0) {
+        mprLog(conn, level, "%s %s %s", method, uri, protocol);
     }
 }
 
@@ -6678,7 +6684,7 @@ static void parseResponseLine(HttpConn *conn, HttpPacket *packet)
     MprBuf          *content;
     cchar           *endp;
     char            *protocol, *status;
-    int             len;
+    int             len, level;
 
     rec = conn->receiver;
     trans = conn->transmitter;
@@ -6702,13 +6708,14 @@ static void parseResponseLine(HttpConn *conn, HttpPacket *packet)
     if ((int) strlen(rec->statusMessage) >= conn->limits->uriSize) {
         httpError(conn, HTTP_CODE_REQUEST_URL_TOO_LARGE, "Bad response. Status message too long");
     }
-    if (httpShouldTrace(conn, HTTP_TRACE_RECEIVE | HTTP_TRACE_HEADERS)) {
+    if (httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_HEADER, conn->transmitter->extension) >= 0) {
         content = packet->content;
         endp = strstr((char*) content->start, "\r\n\r\n");
         len = (endp) ? (endp - mprGetBufStart(content) + 4) : 0;
-        httpTraceContent(conn, packet, len, 0, HTTP_TRACE_RECEIVE | HTTP_TRACE_HEADERS);
-    } else if (httpShouldTrace(conn, HTTP_TRACE_RECEIVE | HTTP_TRACE_FIRST)) {
-        mprLog(rec, conn->traceLevel, "%s %d %s", protocol, rec->status, rec->statusMessage);
+        httpTraceContent(conn, HTTP_TRACE_RX, HTTP_TRACE_HEADER, packet, len, 0);
+
+    } else if ((level = httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_FIRST, conn->transmitter->extension)) >= 0) {
+        mprLog(rec, level, "%s %d %s", protocol, rec->status, rec->statusMessage);
     }
 }
 
@@ -6792,7 +6799,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
                 }
                 if (rec->length >= conn->limits->receiveBodySize) {
                     httpLimitError(conn, HTTP_CODE_REQUEST_TOO_LARGE,
-                        "Request content length %d is too big. Limit %d", rec->length, conn->limits->receiveBodySize);
+                        "Request content length %d bytes is too big. Limit %d.", rec->length, conn->limits->receiveBodySize);
                     break;
                 }
                 rec->contentLength = value;
@@ -7197,8 +7204,9 @@ static bool processParsed(HttpConn *conn)
 
     if (!conn->abortPipeline) {
         httpStartPipeline(conn);
-        if (!conn->error && !conn->writeComplete) {
-            HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_WRITABLE);
+        if (!conn->error && !conn->writeComplete && rec->remainingContent > 0) {
+            /* If no remaining content, wait till the processing stage to avoid duplicate writable events */
+            httpWritable(conn);
         }
     }
     httpSetState(conn, HTTP_STATE_CONTENT);
@@ -7212,7 +7220,7 @@ static bool analyseContent(HttpConn *conn, HttpPacket *packet)
     HttpTransmitter *trans;
     HttpQueue       *q;
     MprBuf          *content;
-    int             nbytes, remaining, mask;
+    int             nbytes, remaining;
 
     rec = conn->receiver;
     trans = conn->transmitter;
@@ -7233,9 +7241,8 @@ static bool analyseContent(HttpConn *conn, HttpPacket *packet)
     nbytes = min(remaining, mprGetBufLength(content));
     mprAssert(nbytes >= 0);
 
-    mask = HTTP_TRACE_BODY | HTTP_TRACE_RECEIVE;
-    if (httpShouldTrace(conn, mask)) {
-        httpTraceContent(conn, packet, 0, 0, mask);
+    if (httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_BODY, NULL) >= 0) {
+        httpTraceContent(conn, HTTP_TRACE_RX, HTTP_TRACE_BODY, packet, nbytes, 0);
     }
     LOG(conn, 7, "processContent: packet of %d bytes, remaining %d", mprGetBufLength(content), remaining);
 
@@ -7246,7 +7253,7 @@ static bool analyseContent(HttpConn *conn, HttpPacket *packet)
         rec->receivedContent += nbytes;
 
         if (rec->receivedContent >= conn->limits->receiveBodySize) {
-            httpLimitError(conn, HTTP_CODE_REQUEST_TOO_LARGE, "Request content body is too big %d vs limit %d",
+            httpLimitError(conn, HTTP_CODE_REQUEST_TOO_LARGE, "Request content body of %d bytes is too big. Limit %d.",
                 rec->receivedContent, conn->limits->receiveBodySize);
             return 0;
         }
@@ -7303,6 +7310,7 @@ static bool processContent(HttpConn *conn, HttpPacket *packet)
     mprAssert(packet);
     if (!analyseContent(conn, packet)) {
         if (conn->connError) {
+            /* Abort the content state if there is a connection oriented error */
             httpSetState(conn, HTTP_STATE_RUNNING);
         }
         return conn->error;
@@ -7333,16 +7341,16 @@ static bool processRunning(HttpConn *conn)
         if (conn->server) {
             httpProcessPipeline(conn);
         }
-        canProceed = httpServiceQueues(conn);
         if (conn->server) {
             if (conn->complete || conn->writeComplete || conn->error) {
                 httpSetState(conn, HTTP_STATE_COMPLETE);
                 canProceed = 1;
             } else {
-                HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_WRITABLE);
+                httpWritable(conn);
                 canProceed = httpServiceQueues(conn);
             }
         } else {
+            canProceed = httpServiceQueues(conn);
             httpFinalize(conn);
             conn->complete = 1;
             httpSetState(conn, HTTP_STATE_COMPLETE);
@@ -7373,7 +7381,7 @@ static bool processCompletion(HttpConn *conn)
 #endif
 
     packet = conn->input;
-    more = packet && (mprGetBufLength(packet->content) > 0);
+    more = packet && !conn->connError && (mprGetBufLength(packet->content) > 0);
     if (mprGetParent(packet) != conn) {
         if (more) {
             conn->input = httpSplitPacket(conn, packet, 0);
@@ -7448,9 +7456,10 @@ static int getChunkPacketSize(HttpConn *conn, MprBuf *buf)
 
 bool httpContentNotModified(HttpConn *conn)
 {
-    HttpReceiver    *rec;
-    HttpTransmitter       *trans;
-    bool            same;
+    HttpReceiver        *rec;
+    HttpTransmitter     *trans;
+    MprTime             modified;
+    bool                same;
 
     rec = conn->receiver;
     trans = conn->transmitter;
@@ -7460,7 +7469,8 @@ bool httpContentNotModified(HttpConn *conn)
             If both checks, the last modification time and etag, claim that the request doesn't need to be
             performed, skip the transfer. TODO - need to check if fileInfo is actually set.
          */
-        same = httpMatchModified(conn, trans->fileInfo.mtime) && httpMatchEtag(conn, trans->etag);
+        modified = (MprTime) trans->fileInfo.mtime * MPR_TICKS_PER_SEC;
+        same = httpMatchModified(conn, modified) && httpMatchEtag(conn, trans->etag);
         if (rec->ranges && !same) {
             /*
                 Need to transfer the entire resource
@@ -7614,33 +7624,38 @@ int httpSetUri(HttpConn *conn, cchar *uri)
 
 
 /*  
-    Wait for the Http object to achieve a given state.
-    NOTE: timeout is an inactivity timeout
+    Wait for the Http object to achieve a given state. Timeout is total wait time in msec. If <= 0, then dont wait.
  */
-int httpWait(HttpConn *conn, int state, int inactivityTimeout)
+int httpWait(HttpConn *conn, int state, int timeout)
 {
     Http            *http;
     HttpTransmitter *trans;
     MprTime         expire;
-    int             events, remainingTime, fd;
+    int             events, fd, remainingTime;
 
     http = conn->http;
     trans = conn->transmitter;
 
-    if (inactivityTimeout < 0) {
-        inactivityTimeout = conn->limits->inactivityTimeout;
+#if UNUSED
+    if (timeout < 0) {
+        timeout = conn->limits->requestTimeout;
     }
-    if (inactivityTimeout <= 0) {
-        inactivityTimeout = MAXINT;
+    if (timeout <= 0) {
+        timeout = MAXINT;
     }
+#else
+    if (timeout <= 0) {
+        timeout = 0;
+    }
+#endif
     if (conn->state <= HTTP_STATE_BEGIN) {
         mprAssert(conn->state >= HTTP_STATE_BEGIN);
         return MPR_ERR_BAD_STATE;
     } 
     http->now = mprGetTime(conn);
-    expire = http->now + inactivityTimeout;
-    remainingTime = inactivityTimeout;
-    while (conn->state < state && conn->sock && !mprIsSocketEof(conn->sock) && remainingTime >= 0) {
+    expire = http->now + timeout;
+    remainingTime = timeout;
+    while (conn->state < state && conn->sock && !mprIsSocketEof(conn->sock)) {
         fd = conn->sock->fd;
         if (!conn->writeComplete) {
             events = mprWaitForSingleIO(conn, fd, MPR_WRITABLE, remainingTime);
@@ -7652,23 +7667,21 @@ int httpWait(HttpConn *conn, int state, int inactivityTimeout)
             }
         }
         http->now = mprGetTime(conn);
-        remainingTime = (int) (expire - http->now);
         if (events) {
-            expire = http->now + inactivityTimeout;
             httpCallEvent(conn, events);
         }
         if (conn->error) {
             return MPR_ERR_BAD_STATE;
+        }
+        remainingTime = (int) (expire - http->now);
+        if (remainingTime <= 0) {
+            break;
         }
     }
     if (conn->sock == 0 || conn->error) {
         return MPR_ERR_CONNECTION;
     }
     if (conn->state < state) {
-#if UNUSED
-        httpConnError(conn, HTTP_CODE_REQUEST_TIMEOUT,
-            "Inactive request timed out, exceeded inactivity timeout %d", inactivityTimeout);
-#endif
         return MPR_ERR_TIMEOUT;
     }
     return 0;
@@ -7867,74 +7880,6 @@ static bool parseRange(HttpConn *conn, char *value)
     trans->currentRange = rec->ranges;
     return (last) ? 1: 0;
 }
-
-
-static void traceBuf(HttpConn *conn, cchar *buf, int len, int mask)
-{
-    cchar   *cp, *tag, *digits;
-    char    *data, *dp;
-    int     level, i, printable;
-
-    level = conn->traceLevel;
-
-    for (printable = 1, i = 0; i < len; i++) {
-        if (!isascii(buf[i])) {
-            printable = 0;
-        }
-    }
-    tag = (mask & HTTP_TRACE_TRANSMIT) ? "Transmit" : "Receive";
-    if (printable) {
-        data = mprAlloc(conn, len + 1);
-        memcpy(data, buf, len);
-        data[len] = '\0';
-        mprRawLog(conn, level, "\n>>>>>>>>>> %s packet, conn %d, len %d >>>>>>>>>>\n%s", tag, conn->seqno, len, data);
-        mprFree(data);
-    } else {
-        mprRawLog(conn, level, "\n>>>>>>>>>> %s packet, conn %d, len %d >>>>>>>>>> (binary)\n", tag, conn->seqno, len);
-        data = mprAlloc(conn, len * 3 + ((len / 16) + 1) + 1);
-        digits = "0123456789ABCDEF";
-        for (i = 0, cp = buf, dp = data; cp < &buf[len]; cp++) {
-            *dp++ = digits[(*cp >> 4) & 0x0f];
-            *dp++ = digits[*cp++ & 0x0f];
-            *dp++ = ' ';
-            if ((++i % 16) == 0) {
-                *dp++ = '\n';
-            }
-        }
-        *dp++ = '\n';
-        *dp = '\0';
-        mprRawLog(conn, level, "%s", data);
-    }
-    mprRawLog(conn, level, "<<<<<<<<<< %s packet, conn %d\n\n", tag, conn->seqno);
-}
-
-
-void httpTraceContent(HttpConn *conn, HttpPacket *packet, int size, int offset, int mask)
-{
-    int     len;
-
-    mprAssert(conn->traceMask);
-
-    if (offset >= conn->traceMaxLength) {
-        mprLog(conn, conn->traceLevel, "Abbreviating response trace for conn %d", conn->seqno);
-        conn->traceMask = 0;
-        return;
-    }
-    if (size <= 0) {
-        size = INT_MAX;
-    }
-    if (packet->prefix) {
-        len = mprGetBufLength(packet->prefix);
-        len = min(len, size);
-        traceBuf(conn, mprGetBufStart(packet->prefix), len, mask);
-    }
-    if (packet->content) {
-        len = mprGetBufLength(packet->content);
-        len = min(len, size);
-        traceBuf(conn, mprGetBufStart(packet->content), len, mask);
-    }
-}
-
 
 /*
     @copy   default
@@ -8193,7 +8138,7 @@ static void addPacketForSend(HttpQueue *q, HttpPacket *packet)
     HttpTransmitter *trans;
     HttpConn        *conn;
     MprIOVec        *iovec;
-    int             mask;
+    int             item;
 
     conn = q->conn;
     trans = conn->transmitter;
@@ -8219,9 +8164,9 @@ static void addPacketForSend(HttpQueue *q, HttpPacket *packet)
             q->ioFileOffset += httpGetPacketLength(packet);
         }
     }
-    mask = HTTP_TRACE_TRANSMIT | ((packet->flags & HTTP_PACKET_HEADER) ? HTTP_TRACE_HEADERS : HTTP_TRACE_BODY);
-    if (httpShouldTrace(conn, mask)) {
-        httpTraceContent(conn, packet, 0, trans->bytesWritten, mask);
+    item = (packet->flags & HTTP_PACKET_HEADER) ? HTTP_TRACE_HEADER : HTTP_TRACE_BODY;
+    if (httpShouldTrace(conn, HTTP_TRACE_TX, item, NULL) >= 0) {
+        httpTraceContent(conn, HTTP_TRACE_TX, item, packet, 0, trans->bytesWritten);
     }
 }
 
@@ -8520,6 +8465,7 @@ HttpConn *httpAcceptConn(HttpServer *server)
     HttpConn        *conn;
     MprSocket       *sock;
     MprEvent        e;
+    int             level;
 
     mprAssert(server);
 
@@ -8556,12 +8502,9 @@ HttpConn *httpAcceptConn(HttpServer *server)
     mprAssert(conn->state == HTTP_STATE_BEGIN);
     httpSetState(conn, HTTP_STATE_CONNECTED);
 
-    conn->traceMask = httpSetupTrace(conn, 0);
-    if (conn->traceMask) {
-        if (httpShouldTrace(conn, HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN)) {
-            mprLog(conn, conn->traceLevel, "### New Connection from %s:%d to %s:%d", 
-                conn->ip, conn->port, conn->sock->ip, conn->sock->port);
-        }
+    if ((level = httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_CONN, NULL)) >= 0) {
+        mprLog(conn, level, "### New Connection from %s:%d to %s:%d", 
+            conn->ip, conn->port, conn->sock->ip, conn->sock->port);
     }
     e.mask = MPR_READABLE;
     e.timestamp = mprGetTime(server);
@@ -8901,6 +8844,183 @@ HttpStage *httpCreateConnector(Http *http, cchar *name, int flags)
 
 /************************************************************************/
 /*
+ *  Start of file "../src/trace.c"
+ */
+/************************************************************************/
+
+/*
+    trace.c -- Trace data
+    Copyright (c) All Rights Reserved. See copyright notice at the bottom of the file.
+ */
+
+
+
+
+void httpInitTrace(HttpTrace *trace)
+{
+    int     dir;
+
+    mprAssert(trace);
+
+    for (dir = 0; dir < HTTP_TRACE_MAX_DIR; dir++) {
+        trace[dir].levels[HTTP_TRACE_CONN] = 2;
+        trace[dir].levels[HTTP_TRACE_FIRST] = 2;
+        trace[dir].levels[HTTP_TRACE_HEADER] = 3;
+        trace[dir].levels[HTTP_TRACE_BODY] = 4;
+        trace[dir].size = -1;
+    }
+}
+
+
+/*
+    Return the level at which tracing should occur
+ */
+int httpShouldTrace(HttpConn *conn, int dir, int item, cchar *ext)
+{
+    HttpTrace   *trace;
+    int         mprLevel;
+
+    mprAssert(0 <= dir && dir < HTTP_TRACE_MAX_DIR);
+    mprAssert(0 <= item && item < HTTP_TRACE_MAX_ITEM);
+
+    trace = &conn->trace[dir];
+    if (trace->disable) {
+        return -1;
+    }
+    if (ext) {
+        if (trace->include && !mprLookupHash(trace->include, ext)) {
+            trace->disable = 1;
+            return -1;
+        }
+        if (trace->exclude && mprLookupHash(trace->exclude, ext)) {
+            trace->disable = 1;
+            return -1;
+        }
+    }
+    mprLevel = mprGetLogLevel(conn);
+    if (trace->levels[item] <= mprLevel) {
+        return trace->levels[item];
+    }
+    return -1;
+}
+
+
+static void traceBuf(HttpConn *conn, int dir, int level, cchar *msg, cchar *buf, int len)
+{
+    cchar       *cp, *tag, *digits;
+    char        *data, *dp;
+    static int  txSeq = 0;
+    static int  rxSeq = 0;
+    int         seqno, i, printable;
+
+    for (printable = 1, i = 0; i < len; i++) {
+        if (!isascii(buf[i])) {
+            printable = 0;
+        }
+    }
+    if (dir == HTTP_TRACE_TX) {
+        tag = "Transmit";
+        seqno = txSeq++;
+    } else {
+        tag = "Receive";
+        seqno = rxSeq++;
+    }
+    if (printable) {
+        data = mprAlloc(conn, len + 1);
+        memcpy(data, buf, len);
+        data[len] = '\0';
+        mprRawLog(conn, level, "\n>>>>>>>>>> %s %s packet %d, len %d (conn %d) >>>>>>>>>>\n%s", tag, msg, seqno, 
+            len, conn->seqno, data);
+        mprFree(data);
+    } else {
+        mprRawLog(conn, level, "\n>>>>>>>>>> %s %s packet %d, len %d (conn %d) >>>>>>>>>> (binary)\n", tag, msg, seqno, 
+            len, conn->seqno);
+        data = mprAlloc(conn, len * 3 + ((len / 16) + 1) + 1);
+        digits = "0123456789ABCDEF";
+        for (i = 0, cp = buf, dp = data; cp < &buf[len]; cp++) {
+            *dp++ = digits[(*cp >> 4) & 0x0f];
+            *dp++ = digits[*cp++ & 0x0f];
+            *dp++ = ' ';
+            if ((++i % 16) == 0) {
+                *dp++ = '\n';
+            }
+        }
+        *dp++ = '\n';
+        *dp = '\0';
+        mprRawLog(conn, level, "%s", data);
+    }
+    mprRawLog(conn, level, "<<<<<<<<<< %s packet, conn %d\n\n", tag, conn->seqno);
+}
+
+
+void httpTraceContent(HttpConn *conn, int dir, int item, HttpPacket *packet, int len, int total)
+{
+    HttpTrace   *trace;
+    int         size, level;
+
+    trace = &conn->trace[dir];
+    level = trace->levels[item];
+
+    if (trace->size >= 0 && total >= trace->size) {
+        mprLog(conn, level, "Abbreviating response trace for conn %d", conn->seqno);
+        trace->disable = 1;
+        return;
+    }
+    if (len <= 0) {
+        len = INT_MAX;
+    }
+    if (packet->prefix) {
+        size = mprGetBufLength(packet->prefix);
+        size = min(size, len);
+        traceBuf(conn, dir, level, "prefix", mprGetBufStart(packet->prefix), size);
+    }
+    if (packet->content) {
+        size = mprGetBufLength(packet->content);
+        size = min(size, len);
+        traceBuf(conn, dir, level, "content", mprGetBufStart(packet->content), size);
+    }
+}
+
+
+/*
+    @copy   default
+
+    Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.
+
+    This software is distributed under commercial and open source licenses.
+    You may use the GPL open source license described below or you may acquire
+    a commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.TXT distributed with
+    this software for full details.
+
+    This software is open source; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version. See the GNU General Public License for more
+    details at: http://www.embedthis.com/downloads/gplLicense.html
+
+    This program is distributed WITHOUT ANY WARRANTY; without even the
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    This GPL license does NOT permit incorporating this software into
+    proprietary programs. If you are unable to comply with the GPL, you must
+    acquire a commercial license to use this software. Commercial licenses
+    for this software and support services are available from Embedthis
+    Software at http://www.embedthis.com
+ 
+    @end
+ */
+/************************************************************************/
+/*
+ *  End of file "../src/trace.c"
+ */
+/************************************************************************/
+
+
+
+/************************************************************************/
+/*
  *  Start of file "../src/transmitter.c"
  */
 /************************************************************************/
@@ -8970,6 +9090,9 @@ static int destroyTransmitter(HttpTransmitter *trans)
 */
 static void addHeader(HttpConn *conn, cchar *key, cchar *value)
 {
+    mprAssert(key && *key);
+    mprAssert(value && *value);
+
     if (mprStrcmpAnyCase(key, "content-length") == 0) {
         conn->transmitter->length = (int) mprAtoi(value, 10);
     }
@@ -8980,6 +9103,8 @@ static void addHeader(HttpConn *conn, cchar *key, cchar *value)
 int httpRemoveHeader(HttpConn *conn, cchar *key)
 {
     HttpTransmitter      *trans;
+
+    mprAssert(key && *key);
 
     trans = conn->transmitter;
     if (trans) {
@@ -8997,6 +9122,9 @@ void httpAddHeader(HttpConn *conn, cchar *key, cchar *fmt, ...)
     HttpTransmitter *trans;
     char            *value;
     va_list         vargs;
+
+    mprAssert(key && *key);
+    mprAssert(fmt && *fmt);
 
     trans = conn->transmitter;
     va_start(vargs, fmt);
@@ -9016,6 +9144,9 @@ void httpAddSimpleHeader(HttpConn *conn, cchar *key, cchar *value)
 {
     HttpTransmitter      *trans;
 
+    mprAssert(key && *key);
+    mprAssert(value && *value);
+
     trans = conn->transmitter;
     if (!mprLookupHash(trans->headers, key)) {
         addHeader(conn, key, value);
@@ -9033,6 +9164,9 @@ void httpAppendHeader(HttpConn *conn, cchar *key, cchar *fmt, ...)
     va_list         vargs;
     char            *value;
     cchar           *oldValue;
+
+    mprAssert(key && *key);
+    mprAssert(fmt && *fmt);
 
     trans = conn->transmitter;
     va_start(vargs, fmt);
@@ -9057,6 +9191,9 @@ void httpSetHeader(HttpConn *conn, cchar *key, cchar *fmt, ...)
     char                *value;
     va_list             vargs;
 
+    mprAssert(key && *key);
+    mprAssert(fmt && *fmt);
+
     trans = conn->transmitter;
     va_start(vargs, fmt);
     value = mprVasprintf(trans, HTTP_MAX_HEADERS, fmt, vargs);
@@ -9068,6 +9205,9 @@ void httpSetHeader(HttpConn *conn, cchar *key, cchar *fmt, ...)
 void httpSetSimpleHeader(HttpConn *conn, cchar *key, cchar *value)
 {
     HttpTransmitter      *trans;
+
+    mprAssert(key && *key);
+    mprAssert(value && *value);
 
     trans = conn->transmitter;
     addHeader(conn, key, mprStrdup(trans, value));
@@ -9094,7 +9234,7 @@ void httpDontCache(HttpConn *conn)
 
 void httpFinalize(HttpConn *conn)
 {
-    HttpTransmitter   *trans;
+    HttpTransmitter     *trans;
 
     trans = conn->transmitter;
     if (trans->finalized || conn->state < HTTP_STATE_CONNECTED || conn->writeq == 0 || conn->sock == 0) {
@@ -9103,6 +9243,9 @@ void httpFinalize(HttpConn *conn)
     trans->finalized = 1;
     httpPutForService(conn->writeq, httpCreateEndPacket(trans), 1);
     httpServiceQueues(conn);
+    if (conn->state == HTTP_STATE_RUNNING && conn->writeComplete && !conn->advancing) {
+        httpAdvanceReceiver(conn, NULL);
+    }
 }
 
 
