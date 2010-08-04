@@ -51,12 +51,22 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 EjsObj *http_observe(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsFunction     *observer;
+    HttpConn        *conn;
 
     observer = (EjsFunction*) argv[1];
     if (observer->boundThis == 0 || observer->boundThis == ejs->global) {
         observer->boundThis = (EjsObj*) hp;
     }
     ejsAddObserver(ejs, &hp->emitter, argv[0], argv[1]);
+
+    conn = hp->conn;
+    if (conn->readq->count > 0) {
+        ejsSendEvent(ejs, hp->emitter, "readable", NULL, (EjsObj*) hp);
+    }
+    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
+            conn->writeq->ioCount == 0) {
+        ejsSendEvent(ejs, hp->emitter, "writable", NULL, (EjsObj*) hp);
+    }
     return 0;
 }
 

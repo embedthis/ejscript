@@ -730,10 +730,10 @@ static EjsObj *req_observe(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     conn = req->conn;
     ejsAddObserver(ejs, &req->emitter, argv[0], argv[1]);
 
-    if  (conn->readq->count > 0) {
+    if (conn->readq->count > 0) {
         ejsSendEvent(ejs, req->emitter, "readable", NULL, (EjsObj*) req);
     }
-    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED < conn->state && conn->state <= HTTP_STATE_COMPLETE &&
+    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
             conn->writeq->ioCount == 0) {
         ejsSendEvent(ejs, req->emitter, "writable", NULL, (EjsObj*) req);
     }

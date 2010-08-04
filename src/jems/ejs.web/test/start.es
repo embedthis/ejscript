@@ -34,26 +34,7 @@ MyRoutes = [
 // var router = Router(Router.TopRoutes)
 var router = Router(MyRoutes)
 server.observe("readable", function (event, request) {
-    // request.trace(1, ["headers", "request", "response", "body"])
-    // request.trace(1, ["headers", "request", "response"])
-    // request.trace(1, ["first", "request", "response"])
-
-    // dump(request.limits)
-    // request.setLimits({timeout: 120, inactivityTimeout: 60})
-    request.setLimits({timeout: 0, inactivityTimeout: 60})
-
-    print("BEFORE SERVE")
-
-    dump("HEADERS", request.headers)
-    request.headers["Custom"] = "Mob"
-    dump("HEADERS", request.headers)
-
-    dump("RESPONSE HEADERS", request.responseHeaders)
-    // request.responseHeaders["Send-Custom"] = "Park Ave"
-    // request.setHeader("Send-Custom", "Park Ave")
-    // request.setHeader("Send-Custom", "Park Ave 2", false)
-    dump("RESPONSE HEADERS", request.responseHeaders)
-
+    // request.setLimits({timeout: 0, inactivityTimeout: 60})
     // App.log.info(request.method, request.uri)
     Web.serve(request, router)
 })
@@ -61,10 +42,14 @@ server.observe("readable", function (event, request) {
 App.log.info("Listen on " + address)
 server.listen(address)
 
-server.setLimits({clients: 2, requests: 1})
-// server.setLimits({transmission: 1024, upload: 10 * 1024})
-server.setLimits({timeout: 0, inactivityTimeout: 0})
+/*
+    server.setLimits({clients: 2, requests: 1})
+    server.setLimits({transmission: 1024, upload: 10 * 1024})
+    server.setLimits({timeout: 0, inactivityTimeout: 0})
 
-server.trace(2, ["request", "response", "first", "headers"])
-// dump(server.limits)
+    server.trace({ 
+        rx: { conn: 1, first: 2, headers: 3, body: 5, size: 4096 }
+        tx: { conn: 1, first: 2, headers: 3, body: 4, size: 4096, exclude: ["png", "gif"], all: 9 }
+    })
+*/
 App.eventLoop()

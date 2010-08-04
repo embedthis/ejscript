@@ -8,13 +8,6 @@ const HTTP = ":" + (App.config.test.http_port || "6700")
 server = new HttpServer
 server.listen(HTTP)
 
-/*
-server.trace({ 
-    rx: { conn: 1, first: 2, headers: 3, body: 5, size: 4096 }
-    tx: { conn: 1, first: 2, headers: 3, body: 4, size: 4096, exclude: ["png", "gif"], all: 9 }
-})
-*/
-
 load("utils.es")
 
 var events
@@ -50,17 +43,11 @@ print("RR FINALIZE")
 var commetData = new ByteArray
 let http = new Http
 
-/*
-http.trace({ rx: { all: 9 }, tx: { all: 9}})
-http.trace({ 
-    rx: { conn: 1, first: 2, headers: 3, body: 4, size: 4096 }
-    tx: { conn: 1, first: 2, headers: 3, body: 4, size: 4096, exclude: ["png", "gif"] }
-})
-*/
-
 //  MOB - established too late. Should still work
 let count = 0
 let done = false
+
+
 http.observe("writable", function (event, h) {
 print("CLIENT " + count)
     if (count < 3) {
@@ -74,6 +61,7 @@ print("@@@@@@@ DONE is true")
 })
 
 http.post(HTTP + "/commet")
+
 print("HERE")
 while (!done) {
     App.eventLoop(10, true)
