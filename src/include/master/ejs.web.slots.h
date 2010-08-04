@@ -187,11 +187,10 @@
 #define ES_ejs_web_HttpServer_setPipeline                              13
 #define ES_ejs_web_HttpServer_setLimits                                14
 #define ES_ejs_web_HttpServer_trace                                    15
-#define ES_ejs_web_HttpServer_traceFilter                              16
-#define ES_ejs_web_HttpServer_verifyClients                            17
-#define ES_ejs_web_HttpServer_serverRoot                               18
-#define ES_ejs_web_HttpServer_software                                 19
-#define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        20
+#define ES_ejs_web_HttpServer_verifyClients                            16
+#define ES_ejs_web_HttpServer_serverRoot                               17
+#define ES_ejs_web_HttpServer_software                                 18
+#define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        19
 #define ES_ejs_web_HttpServer_NUM_INHERITED_PROP                       0
 
 
@@ -505,6 +504,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   651347
+#define _ES_CHECKSUM_ejs_web   647598
 
 #endif
