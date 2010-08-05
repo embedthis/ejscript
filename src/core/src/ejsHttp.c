@@ -655,7 +655,7 @@ static EjsObj *http_setLimits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-static int getNum(Ejs *ejs, EjsObj *options, cchar *field)
+static int getNumOption(Ejs *ejs, EjsObj *options, cchar *field)
 {
     EjsObj      *obj;
     EjsName     n;
@@ -677,17 +677,17 @@ static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *
 
     tp = &trace[dir];
     levels = tp->levels;
-    if ((level = getNum(ejs, options, "all")) >= 0) {
+    if ((level = getNumOption(ejs, options, "all")) >= 0) {
         for (i = 0; i < HTTP_TRACE_MAX_ITEM; i++) {
             levels[i] = level;
         }
     } else {
-        levels[HTTP_TRACE_CONN] = getNum(ejs, options, "conn");
-        levels[HTTP_TRACE_FIRST] = getNum(ejs, options, "first");
-        levels[HTTP_TRACE_HEADER] = getNum(ejs, options, "headers");
-        levels[HTTP_TRACE_BODY] = getNum(ejs, options, "body");
+        levels[HTTP_TRACE_CONN] = getNumOption(ejs, options, "conn");
+        levels[HTTP_TRACE_FIRST] = getNumOption(ejs, options, "first");
+        levels[HTTP_TRACE_HEADER] = getNumOption(ejs, options, "headers");
+        levels[HTTP_TRACE_BODY] = getNumOption(ejs, options, "body");
     }
-    tp->size = getNum(ejs, options, "size");
+    tp->size = getNumOption(ejs, options, "size");
     if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN(&n, "include"))) != 0) {
         if (!ejsIsArray(extensions)) {
             ejsThrowArgError(ejs, "include is not an array");

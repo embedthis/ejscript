@@ -280,7 +280,6 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
             } else {
                 ejsBlendObject(ejs, dp, vp, overwrite);
             }
-
         } else {
             /* Primitive type (including arrays) */
             if (overwrite) {

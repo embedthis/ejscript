@@ -9,17 +9,19 @@ module ejs.web {
      */
     dynamic class Session { 
 
-        /** 
+        /*
+UNUSED
             Get the count of active sessions
             @return The number of active sessionss
-         */
         native static function get count(): Number
+        */
 
         /*
+UNUSED
             Session inactivity timeout in milliseconds. Setting the timeout resets the inactivity counter.
-         */
         native function get timeout(): Number
         native function set timeout(value: Number): Void
+        */
     }
 }
 

@@ -7,7 +7,7 @@ const HTTP = ":" + (App.config.test.http_port || "6700")
 
 server = new HttpServer
 server.listen(HTTP)
-load("utils.es")
+load("../utils.es")
 
 server.observe("readable", function (event, request: Request) {
     switch (pathInfo) {

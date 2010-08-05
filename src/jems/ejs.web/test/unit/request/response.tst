@@ -7,12 +7,12 @@ const HTTP = ":" + (App.config.test.http_port || "6700")
 
 server = new HttpServer
 server.listen(HTTP)
-load("utils.es")
+load("../utils.es")
 
 server.observe("readable", function (event, request: Request) {
     switch (pathInfo) {
     case "/sendfile":
-        sendfile("utils.es")
+        sendfile("../utils.es")
         finalize()
         break
 
@@ -77,7 +77,7 @@ http.close()
 //  sendfile
 let http = fetch(HTTP + "/sendfile")
 assert(http.status == 200)
-assert(http.response == Path("utils.es").readString())
+assert(http.response == Path("../utils.es").readString())
 http.close()
 
 

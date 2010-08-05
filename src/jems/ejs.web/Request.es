@@ -258,9 +258,9 @@ module ejs.web {
         /** 
             Session state object. The session state object can be used to share state between requests.
             If a session has not already been created, accessing this property automatically creates a new session 
-            and sets the $sessionID property and a cookie containing a session ID sent to the client.
+            and sets the $sessionID property and a cookie containing a session ID sent to the client with the response.
             To test if a session has been created, test the sessionID property which will not auto-create a session.
-            Objects are stored the session state by JSON serialization.
+            Objects are stored in the session state using JSON serialization.
          */
         native var session: Session 
 
@@ -296,6 +296,23 @@ module ejs.web {
             not close the actually socket connection so that it can be reused for future requests.
          */
         native function close(): Void
+
+//  MOB -- have a default timeout value
+        /**
+            Create a session state object. The session state object can be used to share state between requests.
+            If a session has not already been created, this call will create a new session and initialize the 
+            $session property with the new session. It will also set the $sessionID property and a cookie containing 
+            a session ID will be sent to the client with the response. Sessions can also be used/created by simply
+            accessing the session property.  Objects are stored in the session state using JSON serialization.
+            @param timeout Session state timeout in seconds. After the timeout has expired, the session will be deleted.
+         */
+        function createSession(timeout: Number = -1): Session {
+            this.session
+            if (timeout < 0) {
+                setLimits({ sessionTimeout: timeout })
+            }
+            return session
+        }
 
         /**
             Stop auto-finalizing the request. Calling dontFinalize will keep the request open until a forced finalize is
@@ -503,7 +520,7 @@ module ejs.web {
 
         /**
             Update the request resource limits. The supplied limit fields are updated.
-            See $limit for limit field details.
+            See the $limits property for limit field details.
             @param limits Object hash of limit fields and values
             @see limits
          */

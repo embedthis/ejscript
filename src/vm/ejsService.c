@@ -813,9 +813,10 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
     char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
 
     //  MOB - not thread safe
-    if (solo++ > 0) {
+    if (solo > 0) {
         return;
     }
+    solo++;
     mpr = mprGetMpr(ctx);
     prefix = mpr->name;
     amsg = NULL;

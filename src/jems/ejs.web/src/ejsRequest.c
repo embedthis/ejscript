@@ -225,6 +225,9 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
  */
 static EjsSession *getSession(Ejs *ejs, EjsRequest *req, int create)
 {
+    HttpConn    *conn;
+
+    conn = req->conn;
     if (req->session) {
         return req->session;
     }
@@ -232,8 +235,7 @@ static EjsSession *getSession(Ejs *ejs, EjsRequest *req, int create)
         req->session = ejsCreateSession(ejs, req, 0, 0);
     }
     if (req->session) {
-        //  TODO - SECURE (last arg) ?
-        httpSetCookie(req->conn, EJS_SESSION, req->session->id, "/", NULL, 0, 0);
+        httpSetCookie(req->conn, EJS_SESSION, req->session->id, "/", NULL, 0, conn->secure);
     }
     return req->session;
 }
@@ -528,7 +530,9 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         }
         if (req->session) {
             return createString(ejs, req->session->id);
-        } else return ejs->nullValue;
+        } else {
+            return ejs->nullValue;
+        }
 
     case ES_ejs_web_Request_status:
         return ejsCreateNumber(ejs, conn->tx->status);
@@ -999,6 +1003,7 @@ static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     ejsBlendObject(ejs, req->limits, argv[0], 1);
     ejsSetHttpLimits(ejs, req->conn->limits, req->limits, 0);
+    ejsSetSessionTimeout(ejs, req->session, req->conn->limits->sessionTimeout);
     return 0;
 }
 

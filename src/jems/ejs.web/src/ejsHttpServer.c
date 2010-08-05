@@ -150,7 +150,9 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
     }
     ejsBlendObject(ejs, sp->limits, argv[0], 1);
     if (sp->server) {
-        ejsSetHttpLimits(ejs, sp->server->limits, sp->limits, 1);
+        limits = sp->server->limits;
+        ejsSetHttpLimits(ejs, limits, sp->limits, 1);
+        ejsUpdateSessionLimits(ejs, sp);
     }
     return 0;
 }
@@ -799,6 +801,9 @@ static void markHttpServer(Ejs *ejs, EjsHttpServer *sp)
     }
     if (sp->incomingStages) {
         ejsMark(ejs, (EjsObj*) sp->incomingStages);
+    }
+    if (sp->sessions) {
+        ejsMark(ejs, (EjsObj*) sp->sessions);
     }
 }
 

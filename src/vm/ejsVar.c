@@ -268,7 +268,7 @@ EjsObj *ejsInvokeOperator(Ejs *ejs, EjsObj *obj, int opCode, EjsObj *rhs)
 {
     mprAssert(obj);
 
-    mprAssert(obj->type->helpers.invokeOperator);
+     mprAssert(obj->type->helpers.invokeOperator);
     return (obj->type->helpers.invokeOperator)(ejs, obj, opCode, rhs);
 }
 

@@ -208,7 +208,7 @@ module ejs.web {
 
         /**
             Update the server resource limits. The supplied limit fields are updated.
-            See $limit for limit field details.
+            See the $limits property for limit field details.
             @param limits Object hash of limit fields and values
             @see limits
          */

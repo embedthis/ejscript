@@ -1307,6 +1307,26 @@ static int cmpQname(EjsName *a, EjsName *b)
     return 0;
 }
 
+
+int ejsCompactObject(Ejs *ejs, EjsObj *obj)
+{
+    EjsSlot     *slots, *src, *dest;
+    int         i, removed;
+
+    src = dest = slots = obj->slots;
+    for (removed = i = 0; i < obj->numSlots; i++, src++) {
+        if (src->value.ref == 0 || src->value.ref == ejs->undefinedValue || src->value.ref == ejs->nullValue) {
+            removed++;
+            continue;
+        }
+        *dest++ = *src;
+    }
+    obj->numSlots -= removed;
+    ejsMakeObjHash(obj);
+    return obj->numSlots;
+}
+
+
 /*********************************** Methods **********************************/
 /*
     function get constructor(): Object

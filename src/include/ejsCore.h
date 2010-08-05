@@ -459,11 +459,14 @@ typedef struct Ejs {
     Http                *http;              /**< Http service object (copy of EjsService.http) */
     HttpLoc             *loc;               /**< Current HttpLocation object for web start scripts */
 
+#if UNUSED
     struct EjsObj       *sessions;          /**< Session cache */
+    int                 sessionTimeout;     /**< Default session timeout */
+    MprEvent            *sessionTimer;      /**< Session expiry timer */
+#endif
+
     struct EjsType      *sessionType;       /**< Session type object */
     struct EjsObj       *applications;      /**< Application cache */
-    MprEvent            *sessionTimer;      /**< Session expiry timer */
-    int                 sessionTimeout;     /**< Default session timeout */
     int                 nextSession;        /**< Session ID counter */
     MprMutex            *mutex;             /**< Multithread locking */
 } Ejs;
@@ -974,6 +977,7 @@ extern int ejsHasTrait(EjsObj *obj, int slotNum, int attributes);
 extern int ejsGetTraitAttributes(EjsObj *obj, int slotNum);
 extern struct EjsType *ejsGetTraitType(EjsObj *obj, int slotNum);
 extern int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite);
+extern int ejsCompactObject(Ejs *ejs, EjsObj *obj);
 
 
 //  TODO - inconsistent naming vs ejsCloneVar (clone vs copy)

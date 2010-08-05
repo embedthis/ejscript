@@ -373,9 +373,11 @@ static void mark(Ejs *ejs, int generation)
     if (ejs->search) {
         ejsMark(ejs, ejs->search);
     }
+#if UNUSED
     if (ejs->sessions) {
         ejsMark(ejs, ejs->sessions);
     }
+#endif
     if (ejs->applications) {
         ejsMark(ejs, ejs->applications);
     }
