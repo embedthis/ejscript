@@ -25,6 +25,7 @@ typedef struct Message {
 /*********************************** Forwards *********************************/
 
 static void addWorker(Ejs *ejs, EjsWorker *worker);
+static void destroyWorkerEjs(Ejs *ejs, EjsWorker *worker);
 static int join(Ejs *ejs, EjsObj *workers, int timeout);
 static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int throwOutside);
 static void loadFile(EjsWorker *insideWorker, cchar *filename);
@@ -247,6 +248,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
             worker = mprGetItem(ejs->workers, i);
             if (worker->state >= EJS_WORKER_COMPLETE) {
                 worker->obj.permanent = 0;
+                destroyWorkerEjs(ejs, worker);
                 completed++;
             }
         }
@@ -260,6 +262,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
             worker = (EjsWorker*) set->data[i];
             if (worker->state >= EJS_WORKER_COMPLETE) {
                 worker->obj.permanent = 0;
+                destroyWorkerEjs(ejs, worker);
                 completed++;
             }
         }
@@ -271,6 +274,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
         worker = (EjsWorker*) workers;
         if (worker->state >= EJS_WORKER_COMPLETE) {
             worker->obj.permanent = 0;
+            destroyWorkerEjs(ejs, worker);
             joined = 1;
         }
     }
@@ -757,6 +761,14 @@ EjsWorker *ejsCreateWorker(Ejs *ejs)
     return (EjsWorker*) ejsCreate(ejs, ejs->workerType, 0);
 }
 
+
+static void destroyWorkerEjs(Ejs *ejs, EjsWorker *worker)
+{
+    if (worker->pair) {
+        mprFree(worker->pair->ejs);
+        worker->pair = 0;
+    }
+}
 
 static void destroyWorker(Ejs *ejs, EjsWorker *worker)
 {

@@ -58,11 +58,11 @@ static EjsObj *hs_observe(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
 
 /*  
-    function get address(): Void
+    function get address(): String
  */
 static EjsObj *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    if (sp->ip) {
+    if (sp->ip && *sp->ip) {
         return (EjsObj*) ejsCreateString(ejs, sp->ip);
     } 
     return ejs->nullValue;
