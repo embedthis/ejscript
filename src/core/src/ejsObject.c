@@ -466,10 +466,9 @@ static void destroyObject(Ejs *ejs, EjsObj *vp)
 static EjsObj *getObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 {
     mprAssert(obj);
-    mprAssert(obj->slots);
     mprAssert(slotNum >= 0);
 
-    if (slotNum < 0 || slotNum >= obj->numSlots) {
+    if (obj->slots == 0 || slotNum < 0 || slotNum >= obj->numSlots) {
         ejsThrowReferenceError(ejs, "Property at slot \"%d\" is not found", slotNum);
         return 0;
     }

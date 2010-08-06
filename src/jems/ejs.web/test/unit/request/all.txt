@@ -1,0 +1,9 @@
+/*
+SESSION session.txt
+        - Test sessionID, session creation
+        function destroySession(): Void
+
+misc.tst
+        function close(): Void
+*/
+

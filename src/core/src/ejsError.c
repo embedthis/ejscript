@@ -54,8 +54,10 @@ static EjsObj *errorConstructor(Ejs *ejs, EjsError *error, int argc, EjsObj **ar
     if (argc > 0) {
         ejsSetProperty(ejs, error, ES_Error_message, ejsToString(ejs, argv[0]));
     }
-    ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime(ejs)));
-    ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, 0));
+    if (ejs->dateType) {
+        ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime(ejs)));
+        ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, 0));
+    }
     return (EjsObj*) error;
 }
 

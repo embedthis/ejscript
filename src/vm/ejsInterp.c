@@ -821,7 +821,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
                 uint *ui = (uint*) FRAME->pc;
                 *ui = ejsEncodeUint(mark, lookup.slotNum);
             }
-
             FILL(mark);
             BREAK;
 #endif

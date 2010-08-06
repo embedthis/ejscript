@@ -1033,7 +1033,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
         ejsThrowIOError(ejs, "Bad module file format in %s", path);
         status = MPR_ERR_CANT_LOAD;
 
-    } if (swapWord(ejs, hdr.fileVersion) != EJS_MODULE_VERSION) {
+    } else if (swapWord(ejs, hdr.fileVersion) != EJS_MODULE_VERSION) {
         ejsThrowIOError(ejs, "Incompatible module file format in %s", path);
         status = MPR_ERR_CANT_LOAD;
 
