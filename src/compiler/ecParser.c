@@ -3541,7 +3541,7 @@ static EcNode *parseUnaryExpression(EcCompiler *cp)
     case T_VOID:
         getToken(cp);
         np = createNode(cp, N_UNARY_OP);
-        np = appendNode(np, parsePostfixExpression(cp));
+        np = appendNode(np, parseUnaryExpression(cp));
         break;
 
     default:
@@ -5131,6 +5131,7 @@ static EcNode *parseStatement(EcCompiler *cp)
     case T_FALSE:
     case T_FUNCTION:
     case T_LBRACKET:
+    case T_LOGICAL_NOT:
     case T_LPAREN:
     case T_MINUS_MINUS:
     case T_NEW:
@@ -6514,6 +6515,7 @@ static EcNode *parseDirectives(EcCompiler *cp)
         case T_NAMESPACE:
         case T_NATIVE:
         case T_NEW:
+        case T_LOGICAL_NOT:
         case T_NUMBER:
         case T_RESERVED_NAMESPACE:
         case T_RETURN:
