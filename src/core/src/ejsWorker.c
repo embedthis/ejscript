@@ -235,45 +235,47 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
 {
     EjsWorker   *worker;
     EjsArray    *set;
-    int         i, completed;
+    int         i, completed, joined;
 
     lock(ejs);
+    completed = 0;
+    joined = 0;
+
     if (workers == 0 || workers == ejs->nullValue) {
         /* Join all */
-        completed = 0;
         for (i = 0; i < mprGetListCount(ejs->workers); i++) {
             worker = mprGetItem(ejs->workers, i);
             if (worker->state >= EJS_WORKER_COMPLETE) {
+                worker->obj.permanent = 0;
                 completed++;
             }
         }
         if (completed == mprGetListCount(ejs->workers)) {
-            unlock(ejs);
-            return 1;
+            joined = 1;
         }
     } else if (ejsIsArray(workers)) {
         /* Join a set */
         set = (EjsArray*) workers;
         for (i = 0; i < set->length; i++) {
             worker = (EjsWorker*) set->data[i];
-            if (worker->state < EJS_WORKER_COMPLETE) {
-                break;
+            if (worker->state >= EJS_WORKER_COMPLETE) {
+                worker->obj.permanent = 0;
+                completed++;
             }
         }
-        if (i >= set->length) {
-            unlock(ejs);
-            return 1;
+        if (completed == set->length) {
+            joined = 1;
         }
     } else if (workers->type == ejs->workerType) {
         /* Join one worker */
         worker = (EjsWorker*) workers;
         if (worker->state >= EJS_WORKER_COMPLETE) {
-            unlock(ejs);
-            return 1;
+            worker->obj.permanent = 0;
+            joined = 1;
         }
     }
     unlock(ejs);
-    return 0;
+    return joined;
 }
 
 
@@ -463,10 +465,12 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
         worker->state = EJS_WORKER_COMPLETE;
         LOG(ejs, 5, "Worker.doMessage: complete");
         removeWorker(ejs, worker);
+#if UNUSED
         /*
             Now that the inside worker is complete, the outside worker does not need to be protected from GC
          */
         worker->obj.permanent = 0;
+#endif
     }
     worker->event = 0;
     mprFree(msg);
