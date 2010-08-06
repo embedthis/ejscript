@@ -17,12 +17,14 @@ module ejs.web {
 
         /** 
             Get the local IP address bound to this socket.
-            @returns the address in dot notation or empty string if it is not bound.
+            @returns A string containing the address in dot notation. Returns the empty string if listening on all
+            interfaces and returns null if the server is not bound (listening) to any address.
          */
         native function get address(): String 
 
         /** 
             @duplicate Stream.async
+            If the server is put into sync mode, it must be done before calling listen.
          */
         native function get async(): Boolean
         native function set async(enable: Boolean): Void
@@ -115,14 +117,14 @@ module ejs.web {
         native function HttpServer(documentRoot: Path = ".", serverRoot: Path = ".")
 
         /** 
-            Accept a for client connection. This creates a request object in response to an incoming client connection
-            on the current HttpServer object. This call is only required in sync mode. 
-            In async mode, the HttpServer automatically creates the Request object and passes it on "readable" events.
+            Accept a new incoming for sync servers.  This call creates a request object in response to an 
+            incoming client connection on the current HttpServer object.  In async mode, the accept() call is not needed
+            as the HttpServer automatically creates the Request object and passes it on "readable" events.
             @return A Request object if in sync mode. No return value if in async mode. 
             @event Issues a "accept" event when there is a new connection available.
             @example:
-                server = new Http(".", "./web")
-                server.listen("80")
+                server = new HttpServer
+                server.listen("8080")
                 while (request = server.accept()) {
                     Web.serve(request)
                 }

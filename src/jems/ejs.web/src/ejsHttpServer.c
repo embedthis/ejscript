@@ -62,7 +62,7 @@ static EjsObj *hs_observe(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    if (sp->ip && *sp->ip) {
+    if (sp->ip) {
         return (EjsObj*) ejsCreateString(ejs, sp->ip);
     } 
     return ejs->nullValue;

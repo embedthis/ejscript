@@ -25,7 +25,6 @@ typedef struct Message {
 /*********************************** Forwards *********************************/
 
 static void addWorker(Ejs *ejs, EjsWorker *worker);
-static void destroyWorkerEjs(Ejs *ejs, EjsWorker *worker);
 static int join(Ejs *ejs, EjsObj *workers, int timeout);
 static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int throwOutside);
 static void loadFile(EjsWorker *insideWorker, cchar *filename);
@@ -194,7 +193,6 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     if (join(ejs, (EjsObj*) outsideWorker, timeout) < 0) {
         return ejs->undefinedValue;
     }
-    //  MOB was "ejs"
     result = (EjsObj*) ejsToJSON(inside, inside->result, NULL);
     if (result == 0) {
         return ejs->nullValue;
@@ -247,8 +245,8 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
         for (i = 0; i < mprGetListCount(ejs->workers); i++) {
             worker = mprGetItem(ejs->workers, i);
             if (worker->state >= EJS_WORKER_COMPLETE) {
-                worker->obj.permanent = 0;
-                destroyWorkerEjs(ejs, worker);
+                // worker->obj.permanent = 0;
+                // destroyWorkerEjs(ejs, worker);
                 completed++;
             }
         }
@@ -261,8 +259,8 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
         for (i = 0; i < set->length; i++) {
             worker = (EjsWorker*) set->data[i];
             if (worker->state >= EJS_WORKER_COMPLETE) {
-                worker->obj.permanent = 0;
-                destroyWorkerEjs(ejs, worker);
+                // worker->obj.permanent = 0;
+                // destroyWorkerEjs(ejs, worker);
                 completed++;
             }
         }
@@ -273,8 +271,8 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
         /* Join one worker */
         worker = (EjsWorker*) workers;
         if (worker->state >= EJS_WORKER_COMPLETE) {
-            worker->obj.permanent = 0;
-            destroyWorkerEjs(ejs, worker);
+            // worker->obj.permanent = 0;
+            // destroyWorkerEjs(ejs, worker);
             joined = 1;
         }
     }
@@ -469,12 +467,10 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
         worker->state = EJS_WORKER_COMPLETE;
         LOG(ejs, 5, "Worker.doMessage: complete");
         removeWorker(ejs, worker);
-#if UNUSED
         /*
             Now that the inside worker is complete, the outside worker does not need to be protected from GC
          */
         worker->obj.permanent = 0;
-#endif
     }
     worker->event = 0;
     mprFree(msg);
@@ -762,6 +758,7 @@ EjsWorker *ejsCreateWorker(Ejs *ejs)
 }
 
 
+#if UNUSED
 static void destroyWorkerEjs(Ejs *ejs, EjsWorker *worker)
 {
     if (worker->pair) {
@@ -769,6 +766,7 @@ static void destroyWorkerEjs(Ejs *ejs, EjsWorker *worker)
         worker->pair = 0;
     }
 }
+#endif
 
 static void destroyWorker(Ejs *ejs, EjsWorker *worker)
 {
