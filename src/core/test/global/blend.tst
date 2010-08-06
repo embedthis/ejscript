@@ -1,4 +1,6 @@
-
+/*
+    Test blending objects
+ */
 
 dest = {
     session : {
