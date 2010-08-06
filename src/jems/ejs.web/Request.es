@@ -619,7 +619,7 @@ module ejs.web {
                 write(errorBody(title, text))
             } catch {}
             finalize(true)
-            log.warn("Request error (" + status + ") for: \"" + uri + "\". " + msg)
+            log.debug(4, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 
         /** 

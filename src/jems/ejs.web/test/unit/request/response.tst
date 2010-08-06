@@ -44,7 +44,6 @@ server.observe("readable", function (event, request: Request) {
     }
 })
 
-
 //  sendResponse
 let http = fetch(HTTP + "/sendResponse", 201)
 assert(http.status == 201)

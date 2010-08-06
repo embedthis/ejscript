@@ -18,7 +18,7 @@ server.observe("readable", function (event, request: Request) {
         setLimits({inactivityTimeout: 1})
         dontFinalize()
         finalize()
-        /* Should timeout */
+        // Should timeout
         break;
 
     case "/force":
@@ -26,7 +26,7 @@ server.observe("readable", function (event, request: Request) {
         setLimits({inactivityTimeout: 1})
         dontFinalize()
         finalize(true)
-        /* Should NOT timeout */
+        // Should NOT timeout
         break;
 
     default:

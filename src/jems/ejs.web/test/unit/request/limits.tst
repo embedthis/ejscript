@@ -45,7 +45,7 @@ server.observe("readable", function (event, request: Request) {
         //  Test the inactivity timeout
         setLimits({inactivityTimeout: 1})
         assert(l.inactivityTimeout == 1)
-        /* No finalize to provoke timeout */
+        // No finalize to provoke timeout
         break
 
     default:

@@ -811,8 +811,10 @@ static void markHttpServer(Ejs *ejs, EjsHttpServer *sp)
 static void destroyHttpServer(Ejs *ejs, EjsHttpServer *sp)
 {
     ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
-    mprFree(sp->server);
-    sp->server = 0;
+    if (sp->server) {
+        mprFree(sp->server);
+        sp->server = 0;
+    }
 }
 
 

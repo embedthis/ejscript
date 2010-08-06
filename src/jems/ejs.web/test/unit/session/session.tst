@@ -64,13 +64,8 @@ do { App.eventLoop(10, true) } while(!http.wait())
 assert(http.status == 200)
 http.close()
 
+//  destroySession
 http = fetch(HTTP + "/destroy")
+http.close()
 
 server.close()
-
-/*
-    Tests
-
-    - 
-    - session access to create 
- */

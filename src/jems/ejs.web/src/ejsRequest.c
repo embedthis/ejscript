@@ -1003,7 +1003,9 @@ static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     ejsBlendObject(ejs, req->limits, argv[0], 1);
     ejsSetHttpLimits(ejs, req->conn->limits, req->limits, 0);
-    ejsSetSessionTimeout(ejs, req->session, req->conn->limits->sessionTimeout);
+    if (req->session) {
+        ejsSetSessionTimeout(ejs, req->session, req->conn->limits->sessionTimeout);
+    }
     return 0;
 }
 
