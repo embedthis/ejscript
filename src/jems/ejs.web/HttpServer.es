@@ -9,6 +9,81 @@ module ejs.web {
     enumerable dynamic class HttpServer {
         use default namespace public
 
+        /**
+            Index files list. Index files are used by various handlers when requests to directories are made. The 
+            indicies are tried in turn for the first valid index file.
+          */
+        static var indicies = ["index.ejs", "index.html"]
+
+        /** 
+            Get the local IP address bound to this socket.
+            @returns the address in dot notation or empty string if it is not bound.
+         */
+        native function get address(): String 
+
+        /** 
+            @duplicate Stream.async
+         */
+        native function get async(): Boolean
+        native function set async(enable: Boolean): Void
+
+        /** 
+            Default local directory for web documents to serve. This is used as the default Request.dir value.
+         */
+        var documentRoot: Path
+
+        /** 
+            Flag indicating if the server is using secure communications. This means that TLS/SSL is the underlying
+            protocol scheme.
+         */
+        native function get isSecure(): Boolean
+
+        /**
+            Resource limits for the server and for initial resource limits for requests.
+            @param limits. Limits is an object hash with the following properties:
+            @option chunk Maximum size of a chunk when using chunked transfer encoding.
+            @option clients Maximum number of simultaneous clients.
+            @option headers Maximum number of headers in a request.
+            @option header Maximum size of headers.
+            @option inactivityTimeout Maximum time in seconds to keep a connection open if idle. Set to zero for no timeout.
+            @option receive Maximum size of incoming body data.
+            @option requests Maximum number of simultaneous requests.
+            @option requestTimeout Maximum time in seconds for a request to complete. Set to zero for no timeout.
+            @option reuse Maximum number of times to reuse a connection for requests (KeepAlive count).
+            @option sessions Maximum number of simultaneous sessions.
+            @option sessionTimeout Maximum time to preserve session state. Set to zero for no timeout.
+            @option stageBuffer Maximum stage buffer size for each direction.
+            @option transmission Maximum size of outgoing body data.
+            @option upload Maximum size of uploaded files.
+            @option uri Maximum size of URIs.
+            @see setLimits
+          */
+        native function get limits(): Object
+
+        /**
+            The authorized public host name for the server. If defined, this name will be used in preference for 
+            request redirections. Defaults to the listening IP address if specified.
+         */
+        native function get name(): String 
+        native function set name(hostname: String): Void
+
+        /** 
+            Get the port bound to this Http endpoint.
+            @return The port number or 0 if it is not bound.
+         */
+        native function get port(): Number 
+
+
+        /** 
+            Default root directory for the server. The app does not change its current directory to this path.
+         */
+        var serverRoot: Path
+
+        /** 
+            Software details for the web server
+            @return A string containing the name and version of the web server software
+         */
+        native function get software(): String
         /** 
             Create a HttpServer object. The server is created in async mode by default.
             @param documentRoot Directory containing web documents to serve. If set to null and the HttpServer is hosted,
@@ -55,59 +130,8 @@ module ejs.web {
         native function accept(): Request
 
         /** 
-            Get the local IP address bound to this socket.
-            @returns the address in dot notation or empty string if it is not bound.
-         */
-        native function get address(): String 
-
-        /** 
-            @duplicate Stream.async
-         */
-        native function get async(): Boolean
-        native function set async(enable: Boolean): Void
-
-        /** 
             @duplicate Stream.close */
         native function close(): Void
-
-        /** 
-            Default local directory for web documents to serve. This is used as the default Request.dir value.
-         */
-        var documentRoot: Path
-
-        /**
-            Resource limits for the server and for initial resource limits for requests.
-            @param limits. Limits is an object hash with the following properties:
-            @option chunk Maximum size of a chunk when using chunked transfer encoding.
-            @option clients Maximum number of simultaneous clients.
-            @option headers Maximum number of headers in a request.
-            @option header Maximum size of headers.
-            @option inactivityTimeout Maximum time in seconds to keep a connection open if idle. Set to zero for no timeout.
-            @option receive Maximum size of incoming body data.
-            @option requests Maximum number of simultaneous requests.
-            @option requestTimeout Maximum time in seconds for a request to complete. Set to zero for no timeout.
-            @option reuse Maximum number of times to reuse a connection for requests (KeepAlive count).
-            @option sessions Maximum number of simultaneous sessions.
-            @option sessionTimeout Maximum time to preserve session state. Set to zero for no timeout.
-            @option stageBuffer Maximum stage buffer size for each direction.
-            @option transmission Maximum size of outgoing body data.
-            @option upload Maximum size of uploaded files.
-            @option uri Maximum size of URIs.
-            @see setLimits
-          */
-        native function get limits(): Object
-
-        /**
-            Return an object hash with the current server resource limits
-          */
-
-        static var indicies = ["index.ejs", "index.html"]
-
-        /** 
-            Flag indicating if the server is using secure communications. This means that TLS/SSL is the underlying
-            protocol scheme.
-         */
-        native function get isSecure(): Boolean
 
         /** 
             Listen for client connections. This creates a HTTP server listening on a single socket endpoint. It can
@@ -138,19 +162,6 @@ module ejs.web {
                 server.listen("80")
          */
         native function listen(endpoint: String?): Void
-
-        /**
-            The authorized public host name for the server. If defined, this name will be used in preference for 
-            request redirections. Defaults to the listening IP address if specified.
-         */
-        native function get name(): String 
-        native function set name(hostname: String): Void
-
-        /** 
-            Get the port bound to this Http endpoint.
-            @return The port number or 0 if it is not bound.
-         */
-        native function get port(): Number 
 
         /** 
             Add an observer for server events. 
@@ -251,17 +262,6 @@ module ejs.web {
                 Set to null if you are using $caCertPath.
          */
         native function verifyClients(caCertPath: Path, caCertFile: Path): Void
-
-        /** 
-            Default root directory for the server. The app does not change its current directory to this path.
-         */
-        var serverRoot: Path
-
-        /** 
-            Software details for the web server
-            @return A string containing the name and version of the web server software
-         */
-        native function get software(): String
     }
 }
 

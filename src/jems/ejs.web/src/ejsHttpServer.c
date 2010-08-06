@@ -52,6 +52,7 @@ static EjsObj *hs_observe(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     //  TODO -- should fire if currently readable / writable (also socket etc)
     ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
+    sp->emitter->permanent = 1;
     return 0;
 }
 
@@ -61,7 +62,10 @@ static EjsObj *hs_observe(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, sp->ip);
+    if (sp->ip) {
+        return (EjsObj*) ejsCreateString(ejs, sp->ip);
+    } 
+    return ejs->nullValue;
 }
 
 
@@ -789,10 +793,10 @@ HttpStage *ejsAddWebHandler(Http *http)
  */
 static void markHttpServer(Ejs *ejs, EjsHttpServer *sp)
 {
+    /*
+        sp->emitter is permanent
+     */
     ejsMarkObject(ejs, (EjsObj*) sp);
-    if (sp->emitter) {
-        ejsMark(ejs, (EjsObj*) sp->emitter);
-    }
     if (sp->limits) {
         ejsMark(ejs, (EjsObj*) sp->limits);
     }
@@ -814,6 +818,9 @@ static void destroyHttpServer(Ejs *ejs, EjsHttpServer *sp)
     if (sp->server) {
         mprFree(sp->server);
         sp->server = 0;
+    }
+    if (sp->emitter) {
+        sp->emitter->permanent = 0;
     }
 }
 

@@ -12,21 +12,21 @@ var router = Router(Router.TopRoutes)
 let server: HttpServer = new HttpServer("web")
 
 server.observe("readable", function (event, request) {
-    // App.log.info(request.method, request.uri, request.scheme)
+    App.log.info(request.method, request.uri, request.scheme)
     Web.serve(request, router)
 })
 // App.log.info("Listen on ", HTTP)
 server.listen(HTTP)
 
 //  Start secure server
-if (App.config.test.ssl) {
-    let secureServer: HttpServer = new HttpServer("web")
+if (Config.SSL) {
+    var secureServer: HttpServer = new HttpServer("web")
     secureServer.observe("readable", function (event, request) {
         // App.log.info(request.method, request.uri, request.scheme)
         Web.serve(request, router)
     })
     secureServer.secure("ssl/server.key.pem", "ssl/server.crt")
-    // App.log.info("Secure listen on ", HTTPS)
+    App.log.info("Secure listen on ", HTTPS)
     secureServer.listen(HTTPS)
 }
 App.eventLoop()

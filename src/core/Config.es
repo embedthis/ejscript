@@ -59,5 +59,10 @@ module ejs {
             Modules directory
          */
         static const ModDir: String
+
+        /** @hide */
+        static const SSL: Boolean
+        /** @hide */
+        static const SQLITE: Boolean
     }
 }

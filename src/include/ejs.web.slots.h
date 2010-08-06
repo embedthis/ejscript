@@ -171,25 +171,25 @@
 /*
    Prototype (instance) slots for "HttpServer" type 
  */
-#define ES_ejs_web_HttpServer_accept                                   0
-#define ES_ejs_web_HttpServer_address                                  1
-#define ES_ejs_web_HttpServer_async                                    2
-#define ES_ejs_web_HttpServer_close                                    3
-#define ES_ejs_web_HttpServer_documentRoot                             4
-#define ES_ejs_web_HttpServer_limits                                   5
-#define ES_ejs_web_HttpServer_isSecure                                 6
-#define ES_ejs_web_HttpServer_listen                                   7
-#define ES_ejs_web_HttpServer_name                                     8
-#define ES_ejs_web_HttpServer_port                                     9
-#define ES_ejs_web_HttpServer_observe                                  10
-#define ES_ejs_web_HttpServer_removeObserver                           11
-#define ES_ejs_web_HttpServer_secure                                   12
-#define ES_ejs_web_HttpServer_setPipeline                              13
-#define ES_ejs_web_HttpServer_setLimits                                14
-#define ES_ejs_web_HttpServer_trace                                    15
-#define ES_ejs_web_HttpServer_verifyClients                            16
-#define ES_ejs_web_HttpServer_serverRoot                               17
-#define ES_ejs_web_HttpServer_software                                 18
+#define ES_ejs_web_HttpServer_address                                  0
+#define ES_ejs_web_HttpServer_async                                    1
+#define ES_ejs_web_HttpServer_documentRoot                             2
+#define ES_ejs_web_HttpServer_isSecure                                 3
+#define ES_ejs_web_HttpServer_limits                                   4
+#define ES_ejs_web_HttpServer_name                                     5
+#define ES_ejs_web_HttpServer_port                                     6
+#define ES_ejs_web_HttpServer_serverRoot                               7
+#define ES_ejs_web_HttpServer_software                                 8
+#define ES_ejs_web_HttpServer_accept                                   9
+#define ES_ejs_web_HttpServer_close                                    10
+#define ES_ejs_web_HttpServer_listen                                   11
+#define ES_ejs_web_HttpServer_observe                                  12
+#define ES_ejs_web_HttpServer_removeObserver                           13
+#define ES_ejs_web_HttpServer_secure                                   14
+#define ES_ejs_web_HttpServer_setPipeline                              15
+#define ES_ejs_web_HttpServer_setLimits                                16
+#define ES_ejs_web_HttpServer_trace                                    17
+#define ES_ejs_web_HttpServer_verifyClients                            18
 #define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        19
 #define ES_ejs_web_HttpServer_NUM_INHERITED_PROP                       0
 

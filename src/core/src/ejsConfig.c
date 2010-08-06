@@ -27,6 +27,9 @@ void ejsConfigureConfigType(Ejs *ejs)
     mprSprintf(ejs, version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
     ejsSetProperty(ejs, vp, ES_Config_Version, ejsCreateString(ejs, version));
 
+    ejsSetProperty(ejs, vp, ES_Config_SSL, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
+    ejsSetProperty(ejs, vp, ES_Config_SQLITE, ejsCreateBoolean(ejs, BLD_FEATURE_SQLITE));
+
 #if BLD_WIN_LIKE
 {
     char    *path;
