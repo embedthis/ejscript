@@ -3364,7 +3364,9 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
         popStack(cp, 1);
         pushStack(cp, (state->onLeft) ? -1 : 1);
 
+#if UNUSED
     } else if (owner == ejs->global) {
+        /* Can't do early binding. Using Function.call/apply may change scope chain and invalidate the early-bound global */
         if (np->needThis) {
             mprAssert(0);
             ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
@@ -3382,6 +3384,7 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
          */
         popStack(cp, 1);
         pushStack(cp, (state->onLeft) ? -1 : 1);
+#endif
 
     } else if (lookup->useThis) {
         ecEncodeOpcode(cp, EJS_OP_LOAD_THIS);
