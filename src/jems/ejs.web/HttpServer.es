@@ -82,6 +82,11 @@ module ejs.web {
         var serverRoot: Path
 
         /** 
+            Hash of session objects. This is created on demand as requests require session state storage.
+         */
+        var sessions: Object
+
+        /** 
             Software details for the web server
             @return A string containing the name and version of the web server software
          */

@@ -806,9 +806,11 @@ static void markHttpServer(Ejs *ejs, EjsHttpServer *sp)
     if (sp->incomingStages) {
         ejsMark(ejs, (EjsObj*) sp->incomingStages);
     }
+#if UNUSED
     if (sp->sessions) {
         ejsMark(ejs, (EjsObj*) sp->sessions);
     }
+#endif
 }
 
 

@@ -108,7 +108,7 @@ void ejsUpdateSessionLimits(Ejs *ejs, EjsHttpServer *server)
     MprTime     now;
     int         i, count, timeout;
 
-    if (server->sessions) {
+    if (server->sessions && server->server) {
         timeout = server->server->limits->sessionTimeout;
         now = mprGetTime(ejs);
         count = ejsGetPropertyCount(ejs, (EjsObj*) server->sessions);
@@ -216,6 +216,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
 
     if (server->sessions == 0) {
         server->sessions = ejsCreateSimpleObject(ejs);
+        ejsSetProperty(ejs, server, ES_ejs_web_HttpServer_sessions, server->sessions);
     }
     count = ejsGetPropertyCount(ejs, (EjsObj*) server->sessions);
     if (count >= limits->sessionCount) {
@@ -298,7 +299,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
     /*  
         This could be on the primary event thread. Can't block long.  MOB -- is this lock really needed
      */
-    if (sessions && mprTryLock(ejs->mutex)) {
+    if (sessions && server->server && mprTryLock(ejs->mutex)) {
         limits = server->server->limits;
         count = ejsGetPropertyCount(ejs, (EjsObj*) sessions);
         mprLog(ejs, 6, "Check for sessions count %d/%d", count, limits->sessionCount);

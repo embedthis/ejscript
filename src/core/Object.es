@@ -109,7 +109,7 @@ module ejs {
         static native function getOwnPropertyNames(obj: Object, options): Array
 
         /** 
-            The number of properties in the of the object including non-enumerable properties.
+            The number of properties in the object including non-enumerable properties.
          */
         static native function getOwnPropertyCount(obj: Object): Number
 
