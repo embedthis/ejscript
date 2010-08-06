@@ -19,13 +19,14 @@ server.observe("readable", function (event, request) {
 server.listen(HTTP)
 
 //  Start secure server
-let secureServer: HttpServer = new HttpServer("web")
-secureServer.observe("readable", function (event, request) {
-    // App.log.info(request.method, request.uri, request.scheme)
-    Web.serve(request, router)
-})
-
-secureServer.secure("ssl/server.key.pem", "ssl/server.crt")
-// App.log.info("Secure listen on ", HTTPS)
-secureServer.listen(HTTPS)
+if (App.config.test.ssl) {
+    let secureServer: HttpServer = new HttpServer("web")
+    secureServer.observe("readable", function (event, request) {
+        // App.log.info(request.method, request.uri, request.scheme)
+        Web.serve(request, router)
+    })
+    secureServer.secure("ssl/server.key.pem", "ssl/server.crt")
+    // App.log.info("Secure listen on ", HTTPS)
+    secureServer.listen(HTTPS)
+}
 App.eventLoop()
