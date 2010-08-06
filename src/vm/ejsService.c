@@ -105,10 +105,12 @@ Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, i
             mprFree(ejs);
             return 0;
         }
+#if UNUSED
         if (ejs->flags & EJS_FLAG_NO_INIT) {
             /* Always need the Error type */
             ejsConfigureErrorType(ejs);
         }
+#endif
     } else {
         cloneMaster(ejs, master);
     }

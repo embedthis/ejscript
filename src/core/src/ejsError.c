@@ -132,6 +132,7 @@ static void configureType(Ejs *ejs, cchar *name)
     EjsType     *type;
 
     type = ejsGetTypeByName(ejs, "ejs", name);
+    mprAssert(type);
     ejsBindConstructor(ejs, type, (EjsProc) errorConstructor);
 }
 

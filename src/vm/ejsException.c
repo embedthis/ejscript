@@ -90,7 +90,11 @@ static EjsObj *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
         error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
     }
 #else
-    error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
+    if (ejs->errorType->constructor.body.proc) {
+        error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
+    } else {
+        error = ejsCreateObject(ejs, type, 0);
+    }
 #endif
     mprFree(msg);
     return (EjsObj*) error;
