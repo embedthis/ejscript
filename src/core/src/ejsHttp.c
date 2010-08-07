@@ -811,13 +811,6 @@ static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     int         timeout;
 
     timeout = (argc == 1) ? ejsGetInt(ejs, argv[0]) : hp->conn->limits->requestTimeout;
-#if UNUSED
-    if (timeout < 0) {
-        timeout = MAXINT;
-    } else if (timeout == 0) {
-        timeout = -1;
-    }
-#endif
     mark = mprGetTime(ejs);
 
     if (!waitForState(hp, HTTP_STATE_COMPLETE, timeout, 0)) {
@@ -1012,13 +1005,13 @@ static int writeHttpData(Ejs *ejs, EjsHttp *hp)
     int             count, nbytes;
 
     conn = hp->conn;
-    if (conn->tx->finalized) {
-        ejsThrowIOError(ejs, "Can't write to socket");
-        return 0;
-    }
     ba = hp->data;
     nbytes = 0;
     if (ba && (count = ejsGetByteArrayAvailable(ba)) > 0) {
+        if (conn->tx->finalized) {
+            ejsThrowIOError(ejs, "Can't write to socket");
+            return 0;
+        }
         nbytes = httpWriteBlock(conn->writeq, (cchar*) &ba->value[ba->readPosition], count);
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Can't write to socket");
@@ -1255,15 +1248,15 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
     }
     if (timeout < 0) {
         timeout = 0;
-#if UNUSED
-        timeout = conn->limits->inactivityTimeout;
-#endif
     }
     remaining = timeout;
     mark = mprGetTime(hp);
     redirectCount = 0;
     success = count = 0;
-    httpFinalize(conn);
+
+    if (!conn->async) {
+        httpFinalize(conn);
+    }
 
     while (conn->state < state && count < conn->retries && redirectCount < 16 && !ejs->exiting && !mprIsExiting(conn)) {
         count++;
@@ -1317,7 +1310,9 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
         if (startHttpRequest(ejs, hp, NULL, 0, NULL) < 0) {
             return 0;
         }
-        httpFinalize(conn);
+        if (!conn->async) {
+            httpFinalize(conn);
+        }
     }
     if (!success) {
         if (throw && ejs->exception == 0) {
