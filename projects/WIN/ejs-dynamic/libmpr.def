@@ -96,6 +96,7 @@ EXPORTS
   mprDisconnectSocket
   mprDoWaitRecall
   mprDtoa
+  mprDupBuf
   mprDupList
   mprEnableCmdEvents
   mprEnableContinuousEvent
@@ -340,6 +341,7 @@ EXPORTS
   mprSetAllocError
   mprSetAllocLimits
   mprSetAllocPolicy
+  mprSetAltLogData
   mprSetAppName
   mprSetBufMax
   mprSetBufRefillProc
@@ -382,6 +384,7 @@ EXPORTS
   mprSetWorkerStackSize
   mprSignalCond
   mprSignalExit
+  mprSignalMultiCond
   mprSignalTestComplete
   mprSleep
   mprSocketHasPendingData
@@ -444,6 +447,7 @@ EXPORTS
   mprWaitForCmd
   mprWaitForCond
   mprWaitForIO
+  mprWaitForMultiCond
   mprWaitForSingleIO
   mprWaitForTestToComplete
   mprWakeNotifier
