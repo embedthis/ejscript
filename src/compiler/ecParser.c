@@ -1520,7 +1520,6 @@ static EcNode *parsePath(EcCompiler *cp, EcNode *lhs)
             }
         }
     }
-
     return LEAVE(cp, np);
 }
 
@@ -2904,6 +2903,8 @@ static EcNode *parsePropertyOperator(EcCompiler *cp)
         /* TODO - should handle all contextually reserved identifiers here */
         case T_TYPE:
         case T_ID:
+        case T_GET:
+        case T_SET:
         case T_STRING:
         case T_REQUIRE:
         case T_RESERVED_NAMESPACE:
