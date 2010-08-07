@@ -31,6 +31,7 @@ server.observe("readable", function (event, request: Request) {
 var commetData = new ByteArray
 let http = new Http
 let done = 0
+http.async = true
 http.observe("writable", function (event, h) {
     if (done < 1000) {
         http.write("%05d abcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxyz\r\n".format(done++))
@@ -40,7 +41,9 @@ http.observe("writable", function (event, h) {
     }
 })
 http.post(HTTP + "/commet")
+
 do { App.eventLoop(10, true) } while(!http.wait())
+
 assert(http.status == 200)
 assert(http.response == "Hello World")
 assert(commetData.toString().contains("0001 abc"))
