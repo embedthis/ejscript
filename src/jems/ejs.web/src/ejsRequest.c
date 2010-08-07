@@ -902,8 +902,8 @@ static EjsObj *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     if (!connOk(ejs, req, 1)) return 0;
 
     ba = (EjsByteArray*) argv[0];
-    offset = (argc >= 1) ? ejsGetInt(ejs, argv[1]) : 0;
-    count = (argc >= 2) ? ejsGetInt(ejs, argv[2]) : -1;
+    offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
+    count = (argc >= 3) ? ejsGetInt(ejs, argv[2]) : -1;
 
     if (!ejsMakeRoomInByteArray(ejs, ba, count >= 0 ? count : MPR_BUFSIZE)) {
         return 0;
