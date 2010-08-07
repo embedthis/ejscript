@@ -16,10 +16,12 @@ server.observe("readable", function (event, request) {
     request.destroySession()
     request.finalize()
 })
-server.observe(["close", "createSession", "destroySession", "readable"], function (event, request) {
+
+function watch(event, request) {
     //  Respond to request and trigger session events. Save record of events.
     events[event] = true
-})
+}
+server.observe(["close", "createSession", "destroySession", "readable"], watch)
 
 //  Run server and fetch one request
 assert(server.sessions == null)
@@ -32,8 +34,9 @@ assert(Object.getOwnPropertyCount(server.sessions) == 1)
 
 //  Close server and verify all events received
 server.close()
-assert(events.readable)
+server.removeObserver(["close", "createSession", "destroySession", "readable"], watch)
 assert(events.close)
+assert(events.readable)
 assert(events.createSession)
 assert(events.destroySession)
 
