@@ -27,7 +27,7 @@ http = fetch(HTTP)
 assert(Object.getOwnPropertyCount(server.sessions) == 2)
 
 //  Wait for old sessions to be pruned 
-App.sleep(1010)
+App.sleep(1100)
 assert(Object.getOwnPropertyCount(server.sessions) == 0)
 
 server.close()
