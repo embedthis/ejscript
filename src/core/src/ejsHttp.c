@@ -282,7 +282,11 @@ static EjsObj *http_set_followRedirects(Ejs *ejs, EjsHttp *hp, int argc, EjsObj 
  */
 static EjsObj *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return startHttpRequest(ejs, hp, "GET", argc, argv);
+    startHttpRequest(ejs, hp, "GET", argc, argv);
+    if (hp->conn) {
+        httpFinalize(hp->conn);
+    }
+    return 0;
 }
 
 
