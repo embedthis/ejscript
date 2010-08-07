@@ -14,22 +14,20 @@ server.observe("readable", function (event, request) {
     }).start()
 })
 
-server.setLimits({ clients: 10, requests: 1 })
+server.setLimits({ requests: 1 })
 
 server.listen(HTTP)
-var http = new Http
-http.get(HTTP)
-http.finalize()
+Http().get(HTTP)
 
 //  This request should be rejected
-var http2 = new Http
-http2.get(HTTP)
-http2.finalize()
+http = new Http
+http.get(HTTP)
 
 //  Pump events to allow rhe requests to be serviced
 App.eventLoop(250)
 try {
-    http2.status
+    //  This should throw because the request limit will prevent the connection from succeeding.
+    http.status
     assert(0)
 } catch { }
 
