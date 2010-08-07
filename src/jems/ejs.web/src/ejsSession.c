@@ -92,7 +92,7 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsObj *val
  */
 static void noteSessionActivity(Ejs *ejs, EjsSession *sp)
 {
-    sp->expire = mprGetTime(ejs) + sp->timeout * MPR_TICKS_PER_SEC;
+    sp->expire = mprGetTime(ejs) + sp->timeout;
 }
 
 
@@ -171,7 +171,7 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
 
 /*  
     Create a new session object. This is created in the master interpreter and will persist past the life 
-    of the current request. This will allocate a new session ID. Timeout is in seconds.
+    of the current request. This will allocate a new session ID. Timeout is in msec.
  */
 EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure)
 {
@@ -220,7 +220,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     }
     count = ejsGetPropertyCount(ejs, (EjsObj*) server->sessions);
     if (count >= limits->sessionCount) {
-        ejsThrowResourceError(ejs, "Too many sessions: %d", count);
+        ejsThrowResourceError(ejs, "Too many sessions: %d, limit %d", count, limits->sessionCount);
         mprFree(session);
         ejsUnlockVm(master);
         return 0;
@@ -315,11 +315,10 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
                 One quick swipe to find sessions that are 80% expired
              */
             soon = limits->sessionTimeout / 5;
-            for (i = count - 1; i >= 0; i--) {
+            for (i = count - 1; soon > 0 && i >= 0; i--) {
                 if ((session = ejsGetProperty(ejs, (EjsObj*) sessions, i)) == 0) {
                     continue;
                 }
-                printf("CMP %d with %d\n", (int) ((session->expire - now) / 1000), ((int) soon / 1000));
                 if ((session->expire - now) < soon) {
                     mprLog(ejs, 3, "Too many sessions. Pruning session %s", session->id);
                     ejsDeleteProperty(ejs, (EjsObj*) sessions, i);
