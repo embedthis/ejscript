@@ -134,7 +134,7 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
     server = req->server;
     session = 0;
 
-    if (server->sessions) {
+    if (server && server->sessions) {
         cookies = httpGetCookies(req->conn);
         for (cookie = cookies; cookie && (value = strstr(cookie, EJS_SESSION)) != 0; cookie = value) {
             value += strlen(EJS_SESSION);
@@ -185,7 +185,9 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     int             count, slotNum, next;
 
     master = ejs->master ? ejs->master : ejs;
-    server = req->server;
+    if ((server = req->server) == 0) {
+        return 0;
+    }
     limits = server->server->limits;
 
     if (timeout <= 0) {
