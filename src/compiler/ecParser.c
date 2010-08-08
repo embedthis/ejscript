@@ -8303,12 +8303,10 @@ static EcNode *parseClassDefinition(EcCompiler *cp, EcNode *attributeNode)
     if (getToken(cp) != T_CLASS) {
         return LEAVE(cp, expected(cp, "class"));
     }
-
     if (peekToken(cp) != T_ID) {
         getToken(cp);
         return LEAVE(cp, expected(cp, "identifier"));
     }
-
     np = createNode(cp, N_CLASS);
     state->currentClassNode = np;
     state->topVarBlockNode = np;
@@ -10428,12 +10426,7 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, c
         /*
             Functions don't need qualification of private properties.
          */
-        if (strcmp(namespace, EJS_PRIVATE_NAMESPACE) == 0) {
-            //  MOB -- this code is the same in both cases
-            namespace = (char*) mprStrdup(np, namespace);
-        } else {
-            namespace = (char*) mprStrdup(np, namespace);
-        }
+        namespace = (char*) mprStrdup(np, namespace);
 
     } else if (state->inClass) {
         if (strcmp(namespace, EJS_INTERNAL_NAMESPACE) == 0) {

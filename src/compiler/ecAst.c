@@ -2577,6 +2577,10 @@ static void defineVar(EcCompiler *cp, EcNode *np, int varKind, EjsObj *value)
         if (!(np->attributes & EJS_PROP_ENUMERABLE) && !(state->currentClassNode->attributes & EJS_PROP_ENUMERABLE)) {
             np->attributes |= EJS_TRAIT_HIDDEN;
         }
+        if (strstr(np->qname.space, ",private")) {
+            //  MOB -- TEMP only. Need a reliable flag in attributes for private
+            np->attributes |= EJS_TRAIT_HIDDEN;
+        }
     }
     attributes = np->attributes;
 
