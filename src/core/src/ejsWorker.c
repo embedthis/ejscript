@@ -424,9 +424,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     worker->event = event;
     if (msg->data) {
-#if ES_Event_data
         ejsSetProperty(ejs, event, ES_Event_data, ejsCreateStringAndFree(ejs, msg->data));
-#endif
     }
     if (msg->message) {
         ejsSetProperty(ejs, event, ES_ErrorEvent_message, msg->message);

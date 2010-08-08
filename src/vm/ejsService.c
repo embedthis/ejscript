@@ -62,6 +62,8 @@ EjsService *ejsGetService(MprCtx ctx)
 Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
 {
     Ejs     *ejs;
+    cchar   *name;
+    static int seqno = 0;
 
     ejs = mprAllocObjWithDestructorZeroed(ctx, Ejs, destroyEjs);
     if (ejs == 0) {
@@ -80,7 +82,8 @@ Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, i
     ejs->argv = argv;
 
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC));
-    ejs->dispatcher = mprCreateDispatcher(ejs, "ejsDispatcher", 1);
+    name = mprAsprintf(ejs, -1, "ejsDispatcher-%d", seqno++);
+    ejs->dispatcher = mprCreateDispatcher(ejs, name, 1);
 
     if ((ejs->bootSearch = searchPath) == 0) {
         ejs->bootSearch = getenv("EJSPATH");

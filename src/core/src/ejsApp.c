@@ -232,7 +232,7 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
         if (ejs->exception) {
             ejsClearException(ejs);
         }
-    } while (remaining >= 0 && !mprIsExiting(ejs) && !ejs->exiting && !ejs->exception);
+    } while (remaining > 0 && !mprIsExiting(ejs) && !ejs->exiting && !ejs->exception);
 }
 
 
