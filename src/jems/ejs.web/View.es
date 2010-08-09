@@ -930,24 +930,27 @@ module ejs.web {
             return data
         }
 
-        //  LEGACY - move these into compat?
-        /** @hide
-            @deprecated
+        /** 
+            @hide
+            @deprecated 2.0.0
          */
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
-            //  MOB - should call the controller.makeUrl
-            return makeUri({ path: action })
-        }
+        # Config.Legacy
+        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String 
+            makeUri({ path: action })
 
-        /** @hide
-            @deprecated
+        /** 
+            @hide
+            @deprecated 2.0.0
          */
+        # Config.Legacy
         function get appUrl()
             request.home.toString().trimEnd("/")
 
-        /** @hide
-            @deprecated
+        /** 
+            @hide
+            @deprecated 2.0.0
          */
+        # Config.Legacy
         function redirect(url: Object) {
             if (controller) {
                 controller.redirect(url)

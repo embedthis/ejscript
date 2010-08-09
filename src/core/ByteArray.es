@@ -385,19 +385,19 @@ module ejs {
          */
         native function set writePosition(position: Number): Void
 
-        //  LEGACY DEPRECATED 1.0.0B3
         /** 
             Input callback function when read data is required. The input callback should write to the supplied buffer.
             @hide
-            @deprecated
+            @deprecated 1.0.0B3
         */
+        # Config.Legacy
         function get input(): Function { return null; }
 
         /**  
-            LEGACY DEPRECATED 1.0.0B3
             @hide
-            @deprecated
+            @deprecated 1.0.0B3
          */
+        # Config.Legacy
         function set input(callback: Function): Void {
             observe("writable", function(event: String, ba: ByteArray): Void {
                 callback(ba)
@@ -406,19 +406,15 @@ module ejs {
 
         /**  
             Output function to process (output) data. The output callback should read from the supplied buffer.
-            LEGACY DEPRECATED 1.0.0B3
             @param callback Function to invoke when the byte array is full or flush() is called.
                 function outputCallback(buffer: ByteArray): Number
             @hide
-            @deprecated
+            @deprecated 1.0.0B3
          */
+        # Config.Legacy
         function get output(): Function { return null; } 
 
-        //  LEGACY DEPRECATED 1.0.0B3
-        /** 
-            @hide
-            @deprecated
-         */
+        # Config.Legacy
         function set output(callback: Function): Void {
             observe("readable", function(event: String, ba: ByteArray): Void {
                 callback(ba)

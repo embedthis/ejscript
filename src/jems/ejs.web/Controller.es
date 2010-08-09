@@ -488,15 +488,19 @@ module ejs.web {
 
         /********************************************  LEGACY 1.0.2 ****************************************/
 
-        /** @hide
-            @deprecated
+        /** 
+            @hide
+            @deprecated 2.0.0
          */
+        # Config.Legacy
         function get appUrl()
             request.home.toString().trimEnd("/")
 
-        /** @hide
-            @deprecated
+        /** 
+            @hide
+            @deprecated 2.0.0
          */
+        # Config.Legacy
         function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String
             makeUri({ path: action })
     }

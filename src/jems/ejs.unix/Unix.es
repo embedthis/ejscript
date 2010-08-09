@@ -36,7 +36,7 @@ module ejs.unix {
         Close the file and free up all associated resources.
         @param file Open file object previously opened via $open or $File
         @hide
-        @deprecated
+        @deprecated 2.0.0
     function close(file: File): Void
      */
 
@@ -99,7 +99,7 @@ module ejs.unix {
         @param pid Process ID to kill
         @param signal Signal number to use when killing the process.
         @hide
-        @deprecated
+        @deprecated 2.0.0
      */
     function kill(pid: Number, signal: Number = 2): Void {
         if (Config.OS == "WIN" || Config.OS == "CYGWIN") {
@@ -160,7 +160,7 @@ module ejs.unix {
     function mv(fromFile: String, toFile: String): void
         Path(fromFile).rename(toFile)
 
-    /*  DEPRECATED
+    /**  
         Open or create a file
         @param path Filename path to open
         @param mode optional file access mode with values values from: Read, Write, Append, Create, Open, Truncate. 
@@ -169,10 +169,11 @@ module ejs.unix {
         @return a File object which implements the Stream interface
         @throws IOError if the path or file cannot be opened or created.
         @hide
-        @deprecated
+        @deprecated 2.0.0
+     */
+    # Config.Legacy
     function open(path: String, mode: String = "r", permissions: Number = 0644): File
         new File(path, { mode: mode, permissions: permissions})
-     */
 
     /**
         Get the current working directory
@@ -181,17 +182,18 @@ module ejs.unix {
     function pwd(): Path
         App.dir
 
-    /*  DEPRECATED
+    /**  
         Read data bytes from a file and return a byte array containing the data.
         @param file Open file object previously opened via $open or $File
         @param count Number of bytes to read
         @return A byte array containing the read data
         @throws IOError if the file could not be read.
         @hide
-        @deprecated
+        @deprecated 2.0.0
+     */
+    # Config.Legacy
     function read(file: File, count: Number): ByteArray
         file.read(count)
-     */
 
     //  TODO - nice to allow wild cards for the path. Also allow ... for more files
     /**
@@ -228,7 +230,7 @@ module ejs.unix {
     function tempname(directory: String? = null): File
         Path(directory).makeTemp()
 
-    /*  DEPRECATED
+    /**
         Write data to the file. If the stream is in sync mode, the write call blocks until the underlying stream or 
         endpoint absorbes all the data. If in async-mode, the call accepts whatever data can be accepted immediately 
         and returns a count of the elements that have been written.
@@ -239,11 +241,11 @@ module ejs.unix {
         @returns the number of bytes written.  
         @throws IOError if the file could not be written.
         @hide
-        @deprecated
-
+        @deprecated 2.0.0
+     */
+    # Config.Legacy
     function write(file: File, ...items): Number
         file.write(items)
-     */
 }
 
 /*

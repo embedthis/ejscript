@@ -1034,32 +1034,65 @@ module ejs.db.mapper {
             _wrapFilters.append([fn, options])
         }
 
-        //  LEGACY DEPRECATED in 1.0.0-B2
-        /** @hide */
+        /** 
+            @hide 
+            @deprecated 1.0.0B2
+         */
+        # Config.Legacy
         static function get columnNames(): Array {
             return getColumnNames()
         }
-        /** @hide */
+
+        /** 
+            @hide 
+            @deprecated 1.0.0B2
+         */
+        # Config.Legacy
         static function get columnTitles(): Array {
             return getColumnTitles()
         }
-        /** @hide */
+
+        /** 
+            @hide 
+            @deprecated 1.0.0B2
+         */
+        # Config.Legacy
         static function get db(): Datbase {
             return getDb()
         }
-        /** @hide */
+
+        /** 
+            @hide 
+            @deprecated 1.0.0B2
+         */
+        # Config.Legacy
         static function get keyName(): String {
             return getKeyName()
         }
-        /** @hide */
+
+        /** 
+            @hide 
+            @deprecated 1.0.0B2
+         */
+        # Config.Legacy
         static function get numRows(): String {
             return getNumRows()
         }
-        /** @hide */
+
+        /** 
+            @hide 
+            @deprecated 1.0.0B2
+         */
+        # Config.Legacy
         static function get tableName(): String {
             return getTableName()
         }
-        /** @hide */
+
+        /** 
+            @hide 
+            @deprecated 1.0.0B2
+         */
+        # Config.Legacy
         function constructor(fields: Object = null): Void {
             initialize(fields)
         }

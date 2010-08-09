@@ -600,7 +600,6 @@ module ejs.web {
             The output is html escaped for security.
             @param status Http status code
             @param msg Message to send. The message may be modified for readability if it contains an exception backtrace.
-            @deprecated
          */
         function writeError(code: Number, ...msgs): Void {
             let text
@@ -673,97 +672,124 @@ module ejs.web {
 
         /*************************************** Deprecated ***************************************/
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get accept(): String
             header("accept")
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get acceptCharset(): String
             header("accept-charset")
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get acceptEncoding(): String
             header("accept-encoding")
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get authAcl(): String {
             throw new Error("Not supported")
             return null
         }
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get body(): String
             input.readString()
 
-        /** @deprecated
-            @hide
+        /** 
             Control the caching of the response content. Setting cacheable to false will add a Cache-Control: no-cache
             header to the output
             @param enable Set to false (default) to disable caching of the response content.
+            @hide
+            @deprecated 2.0.0
          */
+        # Config.Legacy
         function cachable(enable: Boolean = false): Void {
             if (!cache) {
                 setHeader("Cache-Control", "no-cache", false)
             }
         }
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get connection(): String
             header("connection")
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get hostName(): String
             host
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get mimeType(): String
             header("content-type")
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get pathTranslated(): String
             dir.join(pathInfo)
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get pragma(): String
             header("pragma")
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get remoteHost(): String
             header("host")
 
-        /** @deprecated
+        /** 
             @hide
+            @deprecated 2.0.0
           */
+        # Config.Legacy
         function get url(): String
             pathInfo
 
         /** 
             Get the name of the client browser software set in the "User-Agent" Http header 
-            @deprecated
             @hide
+            @deprecated 2.0.0
          */
+        # Config.Legacy
         function get userAgent(): String
             header("user-agent")
     }

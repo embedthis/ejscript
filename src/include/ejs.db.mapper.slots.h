@@ -88,13 +88,7 @@
 #define ES_Record_validatePresence                                     56
 #define ES_Record_validateUnique                                       57
 #define ES_Record_wrapFilter                                           58
-#define ES_Record_columnNames                                          59
-#define ES_Record_columnTitles                                         60
-#define ES_Record_db                                                   61
-#define ES_Record_keyName                                              62
-#define ES_Record_numRows                                              63
-#define ES_Record_tableName                                            64
-#define ES_Record_NUM_CLASS_PROP                                       65
+#define ES_Record_NUM_CLASS_PROP                                       59
 
 /*
    Prototype (instance) slots for "Record" type 
@@ -112,8 +106,7 @@
 #define ES_Record_save                                                 10
 #define ES_Record_saveUpdate                                           11
 #define ES_Record_validateRecord                                       12
-#define ES_Record_constructor                                          13
-#define ES_Record_NUM_INSTANCE_PROP                                    14
+#define ES_Record_NUM_INSTANCE_PROP                                    13
 #define ES_Record_NUM_INHERITED_PROP                                   0
 
 /*
@@ -205,6 +198,6 @@
 #define ES_ejs_db_mapper_Column_NUM_INSTANCE_PROP                      2
 #define ES_ejs_db_mapper_Column_NUM_INHERITED_PROP                     0
 
-#define _ES_CHECKSUM_ejs_db_mapper   186303
+#define _ES_CHECKSUM_ejs_db_mapper   179425
 
 #endif
