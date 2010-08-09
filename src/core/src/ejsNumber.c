@@ -497,7 +497,9 @@ void ejsConfigureNumberType(Ejs *ejs)
     ejsSetProperty(ejs, ejs->global, ES_Infinity, ejs->infinityValue);
     ejsSetProperty(ejs, ejs->global, ES_NaN, ejs->nanValue);
     ejsSetProperty(ejs, ejs->global, ES_double, type);
+#if ES_num
     ejsSetProperty(ejs, ejs->global, ES_num, type);
+#endif
 }
 
 /*

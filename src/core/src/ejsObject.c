@@ -379,8 +379,10 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
     if (attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER)) {
         value = prepareAccessors(ejs, obj, slotNum, &attributes, value);
     }
-    if (ejsSetProperty(ejs, obj, slotNum, value ? value: ejs->nullValue) < 0) {
-        return EJS_ERR;
+    if (value) {
+        if (ejsSetProperty(ejs, obj, slotNum, value ? value: ejs->nullValue) < 0) {
+            return EJS_ERR;
+        }
     }
     if (ejsSetTraitDetails(ejs, (EjsObj*) obj, slotNum, propType, (int) attributes) < 0) {
         return EJS_ERR;

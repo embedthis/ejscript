@@ -220,15 +220,6 @@ assert(!s.startsWith("defg"))
 assert(!s.startsWith("def"))
 
 
-// substr - Deprecated
-if (ECMA) {
-	s = "abcdef"
-	assert(s.substr(1) == "bcdef")
-	assert(s.substr(1,2) == "bc")
-	assert(s.substr(1,4) == "bcde")
-}
-
-
 // substring
 s = "abcdef"
 assert(s.substring(1) == "bcdef")

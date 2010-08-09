@@ -644,10 +644,9 @@ module ejs {
         /** 
             Create a new temporary file. The temp file is located in the directory specified by the Path object. 
             @returns a new Path object for the temp file.
-            DEPRECATED
             @hide
+            @deprecated 1.0.0
          */
-        //  LEGACY
         function makeTemp(): Path
             temp()
 

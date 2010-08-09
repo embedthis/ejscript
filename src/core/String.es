@@ -492,15 +492,19 @@ module ejs {
         function % (arg: Object): String
             format(arg)
 
-        /** @hide 
-            @deprecated 
+        /** 
+            @hide 
+            @deprecated 2.0.0
          */
+        # Config.Legacy
         function toLower(): String
             toLowerCase()
 
-        /** @hide 
-            @deprecated 
+        /** 
+            @hide 
+            @deprecated 2.0.0
          */
+        # Config.Legacy
         function toUpper(): String
             toUpperCase()
     }

@@ -1468,7 +1468,9 @@ void ejsConfigureHttpType(Ejs *ejs)
 
     ejsBindConstructor(ejs, type, (EjsProc) httpConstructor);
     ejsBindAccess(ejs, prototype, ES_Http_async, (EjsProc) http_async, (EjsProc) http_set_async);
+#if ES_Http_available
     ejsBindMethod(ejs, prototype, ES_Http_available, (EjsProc) http_available);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_close, (EjsProc) http_close);
     ejsBindMethod(ejs, prototype, ES_Http_connect, (EjsProc) http_connect);
     ejsBindAccess(ejs, prototype, ES_Http_certificate, (EjsProc) http_certificate, (EjsProc) http_set_certificate);

@@ -281,14 +281,14 @@ module ejs {
          */
         native static function sleep(delay: Number = -1): Void
 
-        //  DEPRECATED
         /** 
             The current module search path . Set to a delimited searchPath string. Warning: This will be changed to an
             array of paths in a future release.
             @stability deprecated.
-            @deprecate
+            @deprecate 1.0.0
             @hide
          */
+        # Config.Legacy
         static function get searchPath(): String {
             if (Config.OS == "WIN") {
                 return search.join(";")
@@ -296,6 +296,8 @@ module ejs {
                 return search.join(":")
             }
         }
+
+        # Config.Legacy
         static function set searchPath(path: String): Void {
             if (Config.OS == "WIN") {
                 search = path.split(";")
@@ -304,7 +306,6 @@ module ejs {
             }
         }
 
-        //  DEPRECATED
         /**
             Service events
             @param count Count of events to service. Defaults to unlimited.
@@ -313,6 +314,7 @@ module ejs {
             @stability deprecated
             @hide
          */
+        # Config.Legacy
         static function serviceEvents(count: Number = -1, timeout: Number = -1): Void {
             if (count < 0) {
                 eventLoop(timeout, false)

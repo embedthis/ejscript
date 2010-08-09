@@ -11,58 +11,62 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    enumerable class Config {
+    enumerable native class Config {
 
         use default namespace public
 
         /**
             True if a debug build
          */
-        static const Debug: Boolean
+        native static const Debug: Boolean
 
         /**
             CPU type (eg. i386, ppc, arm)
          */
-        shared static const CPU: String
+        shared native static const CPU: String
 
         /**
             Operating system version. One of: WIN, LINUX, MACOSX, FREEBSD, SOLARIS
          */
-        static const OS: String
+        native static const OS: String
 
         /**
             Ejscript product name. Single word name.
          */
-        static const Product: String
+        native static const Product: String
 
         /**
             Ejscript product title. Multiword title.
          */
-        static const Title: String
+        native static const Title: String
 
         /**
             Ejscript version. Multiword title. Format is Major.Minor.Patch-Build For example: 1.1.2-1
          */
-        static const Version: String
+        native static const Version: String
 
         /**
             Installation library directory
          */
-        static const LibDir: String
+        native static const LibDir: String
 
         /**
             Binaries directory
          */
-        static const BinDir: String
+        native static const BinDir: String
 
         /**
             Modules directory
          */
-        static const ModDir: String
+        native static const ModDir: String
 
         /** @hide */
-        static const SSL: Boolean
+        native static const Legacy: Boolean
+
         /** @hide */
-        static const SQLITE: Boolean
+        native static const SSL: Boolean
+
+        /** @hide */
+        native static const SQLITE: Boolean
     }
 }

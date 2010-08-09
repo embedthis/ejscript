@@ -6,13 +6,13 @@
 
 module ejs {
 
-    //  DEPRECATED
     /**
         Simple reflection class
-        @deprecated 
         @spec ejs
         @stability evolving 
+        @deprecated 2.0.0
      */
+    # Config.Legacy
     final class Reflect {
 
         private var obj: Object
@@ -22,7 +22,7 @@ module ejs {
         /**
             Create a new reflection object.
             @param o to reflect upon
-            @deprecated
+            @deprecated 2.0.0
          */
         function Reflect(o: *) {
             obj = o
@@ -30,7 +30,7 @@ module ejs {
 
         /**
             The base class of the object being examined. If the object is a type, this is the super class of the type.
-            @deprecated
+            @deprecated 2.0.0
          */
         function get base(): Type
             Object.getBaseType(obj)
@@ -38,7 +38,7 @@ module ejs {
         /**
             Test if the object is a type object
             @return True if the object is a type object
-            @deprecated
+            @deprecated 2.0.0
          */
         function get isType(): Boolean
             Object.isType(obj)
@@ -46,7 +46,7 @@ module ejs {
         /**
             Test if the object is a prototype object
             @return True if the object is a prototype object
-            @deprecated
+            @deprecated 2.0.0
          */
         function get isPrototype(): Boolean
             Object.isPrototype(obj)
@@ -60,14 +60,14 @@ module ejs {
 
         /**
             The prototype of the object
-            @deprecated
+            @deprecated 2.0.0
          */
         function get proto(): Object
             Object.getOwnPrototypeOf(obj)
 
         /**
             The name of the object if it is a type object. Otherwise empty.
-            @deprecated
+            @deprecated 2.0.0
          */
         function get name(): String {
             if (obj is Type) {

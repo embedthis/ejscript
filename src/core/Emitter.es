@@ -179,16 +179,19 @@ module ejs {
             }
         }
 
-        //  LEGACY
-        /** @deprecated
+        /** 
             @hide 
+            @deprecated 1.0.0
          */
+        # Config.Legacy
         function addListener(name: Object, callback: Function): Void
             observe(name, callback)
 
-        /** @deprecated
+        /** 
             @hide 
+            @deprecated 1.0.0
          */
+        # Config.Legacy
         function emit(name: String, ...args): Void 
             fire(name, ...args)
     }

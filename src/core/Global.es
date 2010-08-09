@@ -8,14 +8,14 @@ module ejs {
 
     /**
         Constant set to true in all Ejscript interpreters
+        @spec ejs
       */
     public var EJSCRIPT: Boolean = true
 
-    //  TODO - remove
-    /** @hide */
-    public var ECMA: Boolean = false
-
-    //MOB - is this required? - remove
+    /** 
+        The "ejs" namespace used for the core library
+        @spec ejs
+     */
     public namespace ejs
 
     /** 
@@ -26,80 +26,30 @@ module ejs {
 
     /** 
         The internal namespace used to make entities visible within a single module only.
+        @spec ejs
      */
     public namespace internal
 
     /** 
         The iterator namespace used to define iterators.
-        MOB - do we really need this?
+        @spec ejs
      */
     public namespace iterator
 
-//  MOB -- is this needed
-    /** 
-        The CONFIG namespace used to defined conditional compilation directives.
-        @hide
-     */
-    public namespace CONFIG
-
-    //  MOB -- is this needed?
-    use namespace iterator
-
-    //  TODO - refactor and reduce these
-   
-//  MOB -- rationalize all this
-    /** 
-        Conditional compilation constant. Used to disable compilation of certain elements.
-        @hide
-     */  
-    const TODO: Boolean = false
-
-    /** 
-        Conditional compilation constant. Used to disable compilation of certain elements.
-        @hide
-     */  
-    const FUTURE: Boolean = false
-
-    /** 
-        Conditional compilation constant. Used to disable compilation of certain elements.
-        @hide
-        MOB - remove
-     */  
-    const ASC: Boolean = false
-
-    /** 
-        Conditional compilation constant. Used to enable the compilation of elements only for creating the API documentation.
-        @hide
-        MOB - remove
-     */  
-    const DOC_ONLY: Boolean = false
-
-    /** 
-        Conditional compilation constant. Used to deprecate elements.
-        @hide
-        @deprecated
-     */  
-    const DEPRECATED: Boolean = false
-
-    //  TODO - remove. Should be using Config.RegularExpressions
-   
     /** 
         Alias for the Boolean type
+       @spec ejs
      */
     native const boolean: Type
 
-//  TODO - rationalize these aliases
     /** 
         Alias for the Number type
      */
     native const double: Type
 
-//  TODO - rationalize these aliases
     /** 
-        Alias for the Number type
-        @hide
-        @spec ejs
-        MOB - remove
+       Alias for the Number type
+       @spec ejs
      */
     native const num: Type
 
@@ -116,6 +66,7 @@ module ejs {
     /** 
         Global variable space reference. The global variable references an object which is the global variable space. 
         This is useful when guaranteed access to a global variable is required. e.g. global.someName.
+        @spec ejs
      */
     native var global: Object
 
@@ -180,7 +131,6 @@ module ejs {
      */
     native function cloneBase(klass: Type): Void
 
-    //  TODO - consider renaming to debug()
     /** 
         Dump the contents of objects. Used for debugging, this routine serializes the objects and prints to the standard
         output.
@@ -262,7 +212,7 @@ module ejs {
     function isFinite(arg: Number): Boolean
         arg.isFinite
 
-    //  TODO - should file and cache be paths?
+    //  TODO MOB - should file and cache be paths?
     /** 
         Load a script or module
         @param file path name to load. File will be interpreted relative to EJSPATH if it is not found as an absolute or
@@ -331,42 +281,6 @@ module ejs {
     /**  @hide TODO - doc */
     function instanceOf(obj: Object, target: Object): Boolean
         obj is target
-
-    /**  
-MOB - removed because such a common global name is dangerous
-        DEPRECATED - Use App.stderr.write() and App.stderr.writeLine()
-        Write to the standard error. This call writes the arguments to the standard error with a new line appended. 
-        It evaluates the arguments, converts the result to strings and prints the result to the standard error. 
-        Arguments are converted to strings by calling their toSource method.
-        @param args Data to write
-        @spec ejs
-        @hide
-        @deprecated
-    native function error(...args): void
-     */
-
-    /**
-MOB - removed because such a common global name is dangerous
-        DEPRECATED
-        Read from the standard input. This call reads a line of input from the standard input
-        @return A string containing the input. Returns null on EOF.
-        @hide
-        @deprecated
-    native function input(): String
-     */
-
-    /**  
-MOB - removed because such a common global name is dangerous
-        DEPRECATED - Use print(), App.stdout.write() and App.stdout.writeLine()
-        Print the arguments to the standard output with a new line appended. This call evaluates the arguments, 
-        converts the result to strings and prints the result to the standard output. Arguments are converted to 
-        strings by calling their toString method.
-        @param args Variables to print
-        @spec ejs
-        @hide
-        @deprecated
-    native function output(...args): void
-     */
 }
 
 

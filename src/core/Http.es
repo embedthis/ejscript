@@ -664,7 +664,7 @@ FUTURE & KEEP
         native function set uri(newUri: Uri): Void
 
         /** 
-            Wait for a request to complete.
+            Wait for a request to complete. This will auto-finalize if in sync mode if the request is not already finalized.
             @param timeout Time in seconds to wait for the request to complete. A timeout of zero means no timeout, ie.
             wait forever. A timeout of < 0, means don't wait.
             @return True if the request successfully completes.
@@ -681,57 +681,77 @@ FUTURE & KEEP
 
         /* ***************************************** Legacy *******************************************/
 
-//  MOB TODO - Cleanup and remove
-
-        //  LEGACY 11/23/2010 1.0.0
-        /** @hide */
+        /** 
+            @hide 
+            @deprecated 1.0.0
+         */
+        # Config.Legacy
         function addHeader(key: String, value: String, overwrite: Boolean = true): Void
             setHeader(key, value, overwrite)
 
-        // DEPRECATED
         /** 
             The number of response data bytes that are currently available for reading.
             @returns The number of available bytes.
             @hide
+            @deprecated 1.0.0
          */
+        # Config.Legacy
         native function get available(): Number 
 
-        //  DEPRECATED
-        /** @hide */
+        /** 
+            @hide 
+            @deprecated 1.0.0
+         */
+        # Config.Legacy
         function get bodyLength(): Void
             contentLength
+
+        # Config.Legacy
         function set bodyLength(value: Number): Void
             setHeader("content-length", value)
 
-        //  DEPRECATED
-        /** @hide */
+        /** 
+            @hide 
+            @deprecated 1.0.0
+         */
+        # Config.Legacy
         function get chunked(): Boolean
             chunksize != 0
+
+        # Config.Legacy
         function set chunked(enable: Boolean): Void
             chunkSize = (enable) ? 8192 : 0
 
-        //  DEPRECATED
-        /** @hide */
+        /** 
+            @hide 
+            @deprecated 1.0.0
+         */
+        # Config.Legacy
         function get code(): Number
             status
 
-        //  DEPRECATED
-        /** @hide */
+        /** 
+            @hide 
+            @deprecated 1.0.0
+         */
+        # Config.Legacy
         function get codeString(): String
             statusMessage
 
-        //  DEPRECATED
         /**
             Get the value of the content encoding of the response.
             @return A string with the content type or null if not known.
             @hide
+            @deprecated 1.0.0
          */
+        # Config.Legacy
         function get contentEncoding(): String
             header("content-encoding")
 
         /**
             @hide
-            @deprecated
+            @deprecated 1.0.0
+            //  TODO - can't use conditional compilation to remove as it will disable the getter which remains
          */
         function set contentLength(value: Number): Void
             setHeader("content-length", value)
@@ -743,21 +763,26 @@ FUTURE & KEEP
             @param data Data objects to send with the request. Data is written raw and is not encoded or converted. 
                 However, the routine intelligently handles arrays such that, each element of the array will be written. 
             @throws IOError if the request cannot be issued to the remote server.
-            @deprecated
+            @deprecated 1.0.0
             @hide
          */
+        # Config.Legacy
         native function del(uri: Uri? = null, ...data): Void
 
-        //  DEPRECATED
         /** 
             When the response content expires. This is derrived from the response Http Expires header.
             @hide
+            @deprecated 1.0.0
          */
+        # Config.Legacy
         function get expires(): Date
             Date.parseUTCDate(header("expires"))
 
-        //  DEPRECATED
-        /** @hide */
+        /**
+            @hide
+            @deprecated 1.0.0
+         */
+        # Config.Legacy
         static function mimeType(path: String): String
             Uri(path)..mimeType
 
@@ -766,13 +791,17 @@ FUTURE & KEEP
             @param uri New uri to use. This overrides any previously defined uri for the Http object.
                 If null, use a previously defined uri.
             @throws IOError if the request cannot be issued to the remote server.
-            @deprecated
             @hide
+            @deprecated 1.0.0
          */
+        # Config.Legacy
         native function options(uri: Uri? = null): Void
 
-        //  DEPRECATED
-        /** @hide */
+        /**
+            @hide
+            @deprecated 1.0.0
+         */
+        # Config.Legacy
         function setCallback(eventMask: Number, cb: Function): Void {
             observe("" + eventMask, cb);
         }
@@ -782,10 +811,11 @@ FUTURE & KEEP
             @param uri New uri to use. This overrides any previously defined uri for the Http object.
                 If null, use a previously defined uri.
             @throws IOError if the request cannot be issued to the remote server.
-            @deprecated
             @hide
+            @deprecated 1.0.0
          */
-        native function OLDtrace(uri: Uri? = null): Void
+        # Config.Legacy
+        native function trace_old(uri: Uri? = null): Void
 
     }
 }

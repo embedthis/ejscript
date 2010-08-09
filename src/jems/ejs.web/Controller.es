@@ -21,31 +21,39 @@ module ejs.web {
          */
         use default namespace module
 
-//  MOB -- some should be private
-//  MOB -- can this be renamed "action" without clashing with "action" namespace?
+        private static var _initRequest: Request
+
+        private var redirected: Boolean
+        private var _afterFilters: Array
+        private var _beforeFilters: Array
+        private var _wrapFilters: Array
+        private var lastFlash: Object
+
         /** Name of the action being run */
         var actionName:  String 
 
-        //* Alias for request.config */
+        /** Configuration settings - reference to Request.config */
         var config: Object 
 
-//  MOB -- rename to "name"
         /** Lower case controller name */
         var controllerName: String
 
         /** Deployment mode: debug, test, production */
         var deploymentMode: String
 
-        /** Logger channel */
+        /** Logger stream - reference to Request.log */
         var log: Logger
 
-        /** Reference to the Request.params object. This stores the request query and form parameters */
+        /** Form and query parameters - reference to the Request.params object. */
         var params: Object
 
-        /** Reference to the current Request */
+        /** The response has been rendered. If an action does not render a response, then a default view will be rendered */
+        var rendered: Boolean
+
+        /** Reference to the current Request object */
         var request: Request
 
-        /** Reference to the current view */
+        /** Reference to the current View object */
         var view: View
 
         /** 
@@ -57,32 +65,58 @@ module ejs.web {
         */
         public var flash: Object
 
-        private var rendered: Boolean
-        private var redirected: Boolean
-        private var _afterFilters: Array
-        private var _beforeFilters: Array
-        private var _wrapFilters: Array
-        private var lastFlash
+        /***************************************** Convenience Getters  ***************************************/
 
-        private static var _initRequest: Request
+        /** @duplicate Request.absHome */
+        function get absHome(): Uri 
+            request ? request.absHome : null
 
+        /** @duplicate Request.home */
+        function get home(): Uri 
+            request ? request.home : null
+
+        /** @duplicate Request.pathInfo */
+        function get pathInfo(): String 
+            request ? request.pathInfo : null
+
+        /** @duplicate Request.session */
+        function get session(): Session 
+            request ? request.session : null
+
+        /** @duplicate Request.uri */
+        function get uri(): Uri 
+            request ? request.uri : null
+
+        /********************************************* Methods *******************************************/
         /** 
             Create and initialize a controller. This may be called directly by class constructors or via 
             the Controller.create factory method.
-            @param r Web request object
+            @param req Web request object
          */
-        function Controller(r: Request) {
+        function Controller(req: Request) {
             //  initRequest may be set by create() to allow subclasses to omit constructors
-            request = r || _initRequest
+            request = req || _initRequest
             if (request) {
                 log = request.log
                 params = request.params
-                controllerName = typeOf(this).trim("Controller") || "-Controller-"
+                controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
                 config = request.config
                 if (config.database) {
                     openDatabase(request)
                 }
             }
+        }
+
+        /** MOB */
+        function afterFilter(fn, options: Object? = null): Void {
+            _afterFilters ||= []
+            _afterFilters.append([fn, options])
+        }
+
+        /** MOB */
+        function beforeFilter(fn, options: Object? = null): Void {
+            _beforeFilters ||= []
+            _beforeFilters.append([fn, options])
         }
 
         /** 
@@ -104,32 +138,134 @@ module ejs.web {
             return c
         }
 
-        /*
-            Generic open of a database. Expects and ejscr configuration like:
-
-            mode: "debug"
-            database: {
-                class: "Database",
-                adapter: "sqlite3",
-                debug: {
-                    name: "db/blog.sdb", trace: true, 
-                }
-            }
+        /** 
+            Send an error notification to the user. This is just a convenience instead of setting flash["error"]
+            @param msg Message to display
          */
-        private function openDatabase(request: Request) {
-            let deploymentMode = config.mode
-            let dbconfig = config.database
-            let klass = dbconfig["class"]
-            let adapter = dbconfig.adapter
-            let profile = dbconfig[deploymentMode]
-            if (klass && dbconfig.adapter && profile.name) {
-                //  MOB -- should NS be here
-                use namespace "ejs.db"
-                let db = new global[klass](dbconfig.adapter, request.dir.join(profile.name))
-                if (profile.trace) {
-                    db.trace(true)
-                }
+        function error(msg: String): Void {
+            flash ||= {}
+            flash["error"] = msg
+        }
+
+        /** 
+            @duplicate Rquest.header
+         */
+        function header(key: String): String
+            request.header(key)
+
+        /** 
+            Send a positive notification to the user. This is just a convenience instead of setting flash["inform"]
+            @param msg Message to display
+         */
+        function inform(msg: String): Void {
+            flash ||= {}
+            flash["inform"] = msg
+        }
+
+        /** 
+            @duplicate Request.makeUri
+            @option controller The name of the controller to use in the URI.
+            @option action The name of the action method to use in the URI.
+         */
+        function makeUri(location: Object): Uri
+            request.makeUri(location)
+
+//  MOB - could this use a general meta facility
+        /** 
+            Missing action method. This method will be called if the requested action routine does not exist.
+         */
+        action function missing(): Void {
+            rendered = true
+            throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
+        }
+
+//  MOB -- are there any controller events?
+        /** 
+            @duplicate Request.observe
+         */
+        function observe(name, observer: Function): Void
+            request.observer(name, observer)
+
+        /** 
+            @duplicate Stream.read
+         */
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+            request.read(buffer, offset, count)
+
+        /** 
+            Redirect the client to the given URL
+            @param where Url to redirect the client toward. This can be a relative or absolute string URL or it can be
+                a hash of URL components. For example, the following are valid inputs: "../index.ejs", 
+                "http://www.example.com/home.html", {action: "list"}.
+            @param status Http status code to use in the redirection response. Defaults to 302.
+         */
+        function redirect(where: Object, status: Number = Http.MovedTemporarily): Void {
+            request.redirect(where, status)
+            redirected = true
+        }
+
+        /** 
+            Redirect the client to the given action
+            @param action Controller action name to which to redirect the client.
+         */
+        function redirectAction(action: String): Void
+            redirect({action: action})
+
+        /** 
+            Render the raw arguments back to the client. The args are converted to strings.
+            @param args Arguments to write to the client
+         */
+        function render(...args): Void { 
+            rendered = true
+            request.write(args)
+            request.finalize()
+        }
+
+        /**
+            Render an error message as the response
+         */
+        function renderError(status: Number, ...msgs): Void {
+            rendered = true
+            request.writeError(status, ...msgs)
+        }
+
+        /** 
+            Render a file's contents. 
+            @param filename Path to the filename to send to the client
+         */
+        function renderFile(filename: Path): Void { 
+            rendered = true
+            request.sendFile(filename)
+            request.finalize()
+        }
+
+        /** 
+            Render a partial ejs template. Does not set "rendered" to true.
+         */
+        function renderPartial(path: Path): void { 
+            //  MOB -- todo
+        }
+
+        /** 
+            Render a view template
+         */
+        function renderView(viewName: String? = null): Void {
+            if (rendered) {
+                throw new Error("renderView invoked but render has already been called")
+                return
             }
+            viewName ||= actionName
+            let viewClass = controllerName + "_" + viewName + "View"
+            loadView(viewName)
+            view = new global[viewClass](request)
+            view.controller = this
+            //  MOB -- slow. Native method for this?
+            for each (let n: String in Object.getOwnPropertyNames(this, {includeBases: true, excludeFunctions: true})) {
+                view.public::[n] = this[n]
+            }
+            log.debug(4, "render view: \"" + controllerName + "/" + viewName + "\"")
+            rendered = true
+            view.render(request)
         }
 
         /** 
@@ -137,6 +273,7 @@ module ejs.web {
             @param request Request object
             @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
+//  MOB -- is this a builder or what?
         function run(request: Request): Object {
             actionName = params.action || "index"
             params.action = actionName
@@ -170,18 +307,46 @@ module ejs.web {
             return response
         }
 
-        /* 
-            Prepare the flash message. This extracts any flash message from the session state store
-         */
-        private function flashBefore() {
-            lastFlash = null
-            flash = request.session["__flash__"]
-            if (flash) {
-                request.session["__flash__"] = undefined
-                lastFlash = flash.clone()
-            }
+        /** MOB */
+        function resetFilters(): Void {
+            _beforeFilters = null
+            _afterFilters = null
+            _wrapFilters = null
         }
 
+        /** @duplicate Request.setHeader */
+        function setHeader(key: String, value: String, overwrite: Boolean = true): Void
+            request.setHeader(key, value, overwrite)
+
+        /** @duplicate Request.setStatus */
+        function setStatus(status: Number): Void
+            request.status = status
+
+        /** 
+            Send a warning message back to the client for display in the flash area. This is just a convenience instead of
+            setting flash["warn"]
+            @param msg Message to display
+         */
+        function warn(msg: String): Void {
+            flash ||= {}
+            flash["warn"] = msg
+        }
+
+        /** MOB */
+        function wrapFilter(fn, options: Object? = null): Void {
+            _wrapFilters ||= []
+            _wrapFilters.append([fn, options])
+        }
+
+        /** 
+            Low-level write data to the client. This will buffer the written data until either flush() or 
+            finalize() is called.  This will not set the $rendered property.
+            @duplicate Request.write
+         */
+        function write(...data): Number
+            request.write(...data)
+
+        /**************************************** Private ******************************************/
         /* 
             Save the flash message for the next request. Delete old flash messages
          */
@@ -201,29 +366,81 @@ module ejs.web {
             }
         }
 
-        /** @hide TODO */
-        function resetFilters(): Void {
-            _beforeFilters = null
-            _afterFilters = null
-            _wrapFilters = null
+        /* 
+            Prepare the flash message. This extracts any flash message from the session state store
+         */
+        private function flashBefore() {
+            lastFlash = null
+            flash = request.session["__flash__"]
+            if (flash) {
+                request.session["__flash__"] = undefined
+                lastFlash = flash.clone()
+            }
         }
 
-        /** @hide TODO */
-        function beforeFilter(fn, options: Object? = null): Void {
-            _beforeFilters ||= []
-            _beforeFilters.append([fn, options])
+        /**
+            Load the view. 
+            @param viewName Bare view name
+            @hide
+         */
+        private function loadView(viewName: String) {
+            let dirs = config.directories
+            let cvname = controllerName + "_" + viewName
+            let path = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
+            let cached = Loader.cached(path, request.config, request.dir.join(dirs.cache))
+            let viewClass = cvname + "View"
+
+//  MOB -- can this be generalized and use the Web.serve code?
+            //  TODO - OPT. Could keep a cache of cached.modified
+            if (global[viewClass] && cached.modified >= path.modified) {
+                log.debug(4, "Use loaded view: \"" + controllerName + "/" + viewName + "\"")
+                return
+            } else if (!path.exists) {
+                throw "Missing view: \"" + path+ "\""
+            }
+            if (cached && cached.exists && cached.modified >= path.modified) {
+                log.debug(4, "Load view \"" + controllerName + "/" + viewName + "\" from: " + cached);
+                load(cached)
+            } else {
+                if (!global.TemplateParser) {
+                    load("ejs.web.template.mod")
+                }
+                let layouts = request.dir.join(dirs.layouts)
+                log.debug(4, "Rebuild view \"" + controllerName + "/" + viewName + "\" and save to: " + cached);
+                if (!path.exists) {
+                    throw "Can't find view: \"" + path + "\""
+                }
+                let code = TemplateParser().buildView(cvname, path.readString(), { layouts: layouts })
+                eval(code, cached)
+            }
         }
 
-        /** @hide TODO */
-        function afterFilter(fn, options: Object? = null): Void {
-            _afterFilters ||= []
-            _afterFilters.append([fn, options])
-        }
+        /*
+            Generic open of a database. Expects and ejscr configuration like:
 
-        /** @hide TODO */
-        function wrapFilter(fn, options: Object? = null): Void {
-            _wrapFilters ||= []
-            _wrapFilters.append([fn, options])
+            mode: "debug"
+            database: {
+                class: "Database",
+                adapter: "sqlite3",
+                debug: {
+                    name: "db/blog.sdb", trace: true, 
+                }
+            }
+         */
+        private function openDatabase(request: Request) {
+            let deploymentMode = config.mode
+            let dbconfig = config.database
+            let klass = dbconfig["class"]
+            let adapter = dbconfig.adapter
+            let profile = dbconfig[deploymentMode]
+            if (klass && dbconfig.adapter && profile.name) {
+                //  MOB -- should NS be here
+                use namespace "ejs.db"
+                let db = new global[klass](dbconfig.adapter, request.dir.join(profile.name))
+                if (profile.trace) {
+                    db.trace(true)
+                }
+            }
         }
 
         /* 
@@ -257,104 +474,6 @@ module ejs.web {
             }
         }
 
-        /**
-            Load the view. 
-            @param viewName Bare view name
-            @hide
-         */
-        private function loadView(viewName: String) {
-            let dirs = config.directories
-            let cvname = controllerName + "_" + viewName
-            let path = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
-            let cached = Loader.cached(path, request.config, request.dir.join(dirs.cache))
-            let viewClass = cvname + "View"
-
-            //  TODO - OPT. Could keep a cache of cached.modified
-            if (global[viewClass] && cached.modified >= path.modified) {
-                log.debug(4, "Use loaded view: \"" + controllerName + "/" + viewName + "\"")
-                return
-            } else if (!path.exists) {
-                throw "Missing view: \"" + path+ "\""
-            }
-            if (cached && cached.exists && cached.modified >= path.modified) {
-                log.debug(4, "Load view \"" + controllerName + "/" + viewName + "\" from: " + cached);
-                load(cached)
-            } else {
-                if (!global.TemplateParser) {
-                    load("ejs.web.template.mod")
-                }
-                let layouts = request.dir.join(dirs.layouts)
-                log.debug(4, "Rebuild view \"" + controllerName + "/" + viewName + "\" and save to: " + cached);
-                if (!path.exists) {
-                    throw "Can't find view: \"" + path + "\""
-                }
-                let code = TemplateParser().buildView(cvname, path.readString(), { layouts: layouts })
-                eval(code, cached)
-            }
-        }
-
-        /**
-            Render an error message as the response
-         */
-        function renderError(status: Number, ...msgs): Void {
-            request.writeError(status, ...msgs)
-            rendered = true
-        }
-
-        /** 
-            Redirect the client to the given URL
-            @param where Url to redirect the client toward. This can be a relative or absolute string URL or it can be
-                a hash of URL components. For example, the following are valid inputs: "../index.ejs", 
-                "http://www.example.com/home.html", {action: "list"}.
-            @param status Http status code to use in the redirection response. Defaults to 302.
-         */
-        function redirect(where: Object, status: Number = Http.MovedTemporarily): Void {
-            request.redirect(where, status)
-            redirected = true
-        }
-
-        /** 
-            Redirect the client to the given action
-            @param action Controller action name to which to redirect the client.
-         */
-        function redirectAction(action: String): Void
-            redirect({action: action})
-
-        /** 
-            Render the raw arguments back to the client. The args are converted to strings.
-         */
-        function render(...args): Void { 
-            rendered = true
-            request.write(args)
-            request.finalize()
-        }
-
-        /** 
-            Render a file's contents. 
-         */
-        function renderFile(filename: String): Void { 
-            rendered = true
-            let file: File = new File(filename)
-            try {
-                //  MOB -- should use SENDFILE
-                file.open()
-                while (data = file.read(4096)) {
-                    request.write(data)
-                }
-                file.close()
-                request.finalize()
-            } catch (e: Error) {
-                reportError(Http.ServerError, "Can't read file: " + filename, e)
-            }
-        }
-
-        /** 
-            Render a partial ejs template. Does not set "rendered" to true.
-         */
-        function renderPartial(path: Path): void { 
-            //  MOB -- todo
-        }
-
         private function viewExists(name: String): Boolean {
             let viewClass = controllerName + "_" + actionName + "View"
             if (global[viewClass]) {
@@ -367,108 +486,23 @@ module ejs.web {
             return null
         }
 
-        /** 
-            Render a view template
-         */
-        function renderView(viewName: String? = null): Void {
-            if (rendered) {
-                throw new Error("renderView invoked but render has already been called")
-                return
-            }
-            viewName ||= actionName
-            let viewClass = controllerName + "_" + viewName + "View"
-            loadView(viewName)
-            view = new global[viewClass](request)
-            view.controller = this
-            //  MOB -- slow. Native method for this?
-            for each (let n: String in Object.getOwnPropertyNames(this, {includeBases: true, excludeFunctions: true})) {
-                view.public::[n] = this[n]
-            }
-            log.debug(4, "render view: \"" + controllerName + "/" + viewName + "\"")
-            rendered = true
-            view.render(request)
-        }
+        /********************************************  LEGACY 1.0.2 ****************************************/
 
         /** 
-            Send an error notification to the user. This is just a convenience instead of setting flash["error"]
-            @param msg Message to display
+            @hide
+            @deprecated 2.0.0
          */
-        function error(msg: String): Void {
-            flash ||= {}
-            flash["error"] = msg
-        }
-
-        /** 
-            Send a positive notification to the user. This is just a convenience instead of setting flash["inform"]
-            @param msg Message to display
-         */
-        function inform(msg: String): Void {
-            flash ||= {}
-            flash["inform"] = msg
-        }
-
-        /** 
-            Send a warning message back to the client for display in the flash area. This is just a convenience instead of
-            setting flash["warn"]
-            @param msg Message to display
-         */
-        function warn(msg: String): Void {
-            flash ||= {}
-            flash["warn"] = msg
-        }
-
-//  MOB -- revise doc
-        /** 
-            Make a URI suitable for invoking actions. This routine will construct a URL Based on a supplied action name, 
-            model id and options that may contain an optional controller name. This is a convenience routine to remove from 
-            applications the burden of building URLs that correctly use action and controller names.
-            @params parts 
-            @return A string URL.
-            @options url An override url to use. All other options are ignored.
-            @options query Query string to append to the URL. Overridden by the query arg.
-            @options controller The name of the controller to use in the URL.
-            @option scheme String URI protocol scheme (http or https)
-            @option host String URI host name or IP address.
-            @option port Number TCP/IP port number for communications
-            @option path String URI path 
-            @option query String URI query parameters. Does not include "?"
-            @option reference String URI path reference. Does not include "#"
-         */
-        function makeUri(parts: Object): Uri
-            request.makeUri(parts)
-
-        /** 
-            Session state object. The session state object can be used to share state between requests.
-            If a session has not already been created, this call creates a session and sets the $sessionID property. 
-            A cookie containing a session ID is automatically created and sent to the client on the first response 
-            after creating the session. Objects are stored the session state by JSON serialization.
-            This getter property is a wrapper and returns the Request.session object.
-         */
-        function get session(): Session 
-            request ? request.session : null
-
-        /** 
-            Missing action method. This method will be called if the requested action routine does not exist.
-         */
-        action function missing(): Void {
-            rendered = true
-            throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
-        }
-
-        //  LEGACY 1.0.2
-
-        /** @hide
-            @deprecated
-         */
+        # Config.Legacy
         function get appUrl()
             request.home.toString().trimEnd("/")
 
-        /** @hide
-            @deprecated
+        /** 
+            @hide
+            @deprecated 2.0.0
          */
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
-            return makeUri({ path: action })
-        }
+        # Config.Legacy
+        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String
+            makeUri({ path: action })
     }
 }
 

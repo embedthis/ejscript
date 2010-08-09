@@ -1534,6 +1534,7 @@ static EjsObj *evalNode(EcCompiler *cp, EcNode *np)
     Ejs         *ejs;
     EjsModule   *mp;
     EjsObj      *result;
+    EjsName     n;
 
     ejs = cp->ejs;
     mprAssert(ejs->exception == 0);
@@ -1554,6 +1555,9 @@ static EjsObj *evalNode(EcCompiler *cp, EcNode *np)
     if (cp->errorCount > 0) {
         return 0;
     }
+    /*  Install the Config object as a local variable in the initializer function */
+    ejsDefineProperty(ejs, mp->initializer->activation, 0, EN(&n, "Config"), ejs->typeType, 0, (EjsObj*) ejs->configType);
+    ejsSetPropertyName(ejs, (EjsObj*) ejs->configType, ES_Config_Legacy, EN(&n, "Legacy"));
     result = ejsRunInitializer(ejs, mp);
     if (result == 0) {
         ejsClearException(ejs);
