@@ -71,48 +71,58 @@
 /*
    Prototype (instance) slots for "Controller" type 
  */
-#define ES_ejs_web_Controller_ejs_web_actionName                       0
-#define ES_ejs_web_Controller_ejs_web_config                           1
-#define ES_ejs_web_Controller_ejs_web_controllerName                   2
-#define ES_ejs_web_Controller_ejs_web_deploymentMode                   3
-#define ES_ejs_web_Controller_ejs_web_log                              4
-#define ES_ejs_web_Controller_ejs_web_params                           5
-#define ES_ejs_web_Controller_ejs_web_request                          6
-#define ES_ejs_web_Controller_ejs_web_view                             7
-#define ES_ejs_web_Controller_flash                                    8
-#define ES_ejs_web_Controller_rendered                                 9
-#define ES_ejs_web_Controller_redirected                               10
-#define ES_ejs_web_Controller__afterFilters                            11
-#define ES_ejs_web_Controller__beforeFilters                           12
-#define ES_ejs_web_Controller__wrapFilters                             13
-#define ES_ejs_web_Controller_lastFlash                                14
-#define ES_ejs_web_Controller_openDatabase                             15
-#define ES_ejs_web_Controller_ejs_web_run                              16
-#define ES_ejs_web_Controller_flashBefore                              17
-#define ES_ejs_web_Controller_flashAfter                               18
-#define ES_ejs_web_Controller_ejs_web_resetFilters                     19
-#define ES_ejs_web_Controller_ejs_web_beforeFilter                     20
-#define ES_ejs_web_Controller_ejs_web_afterFilter                      21
-#define ES_ejs_web_Controller_ejs_web_wrapFilter                       22
-#define ES_ejs_web_Controller_runFilters                               23
-#define ES_ejs_web_Controller_loadView                                 24
-#define ES_ejs_web_Controller_ejs_web_renderError                      25
-#define ES_ejs_web_Controller_ejs_web_redirect                         26
-#define ES_ejs_web_Controller_ejs_web_redirectAction                   27
-#define ES_ejs_web_Controller_ejs_web_render                           28
-#define ES_ejs_web_Controller_ejs_web_renderFile                       29
-#define ES_ejs_web_Controller_ejs_web_renderPartial                    30
-#define ES_ejs_web_Controller_viewExists                               31
-#define ES_ejs_web_Controller_ejs_web_renderView                       32
-#define ES_ejs_web_Controller_ejs_web_error                            33
-#define ES_ejs_web_Controller_ejs_web_inform                           34
-#define ES_ejs_web_Controller_ejs_web_warn                             35
-#define ES_ejs_web_Controller_ejs_web_makeUri                          36
-#define ES_ejs_web_Controller_ejs_web_session                          37
-#define ES_ejs_web_Controller_action_missing                           38
-#define ES_ejs_web_Controller_ejs_web_appUrl                           39
-#define ES_ejs_web_Controller_ejs_web_makeUrl                          40
-#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        41
+#define ES_ejs_web_Controller_redirected                               0
+#define ES_ejs_web_Controller__afterFilters                            1
+#define ES_ejs_web_Controller__beforeFilters                           2
+#define ES_ejs_web_Controller__wrapFilters                             3
+#define ES_ejs_web_Controller_lastFlash                                4
+#define ES_ejs_web_Controller_ejs_web_actionName                       5
+#define ES_ejs_web_Controller_ejs_web_config                           6
+#define ES_ejs_web_Controller_ejs_web_controllerName                   7
+#define ES_ejs_web_Controller_ejs_web_deploymentMode                   8
+#define ES_ejs_web_Controller_ejs_web_log                              9
+#define ES_ejs_web_Controller_ejs_web_params                           10
+#define ES_ejs_web_Controller_ejs_web_rendered                         11
+#define ES_ejs_web_Controller_ejs_web_request                          12
+#define ES_ejs_web_Controller_ejs_web_view                             13
+#define ES_ejs_web_Controller_flash                                    14
+#define ES_ejs_web_Controller_ejs_web_absHome                          15
+#define ES_ejs_web_Controller_ejs_web_home                             16
+#define ES_ejs_web_Controller_ejs_web_pathInfo                         17
+#define ES_ejs_web_Controller_ejs_web_session                          18
+#define ES_ejs_web_Controller_ejs_web_uri                              19
+#define ES_ejs_web_Controller_ejs_web_afterFilter                      20
+#define ES_ejs_web_Controller_ejs_web_beforeFilter                     21
+#define ES_ejs_web_Controller_ejs_web_error                            22
+#define ES_ejs_web_Controller_ejs_web_header                           23
+#define ES_ejs_web_Controller_ejs_web_inform                           24
+#define ES_ejs_web_Controller_ejs_web_makeUri                          25
+#define ES_ejs_web_Controller_action_missing                           26
+#define ES_ejs_web_Controller_ejs_web_observe                          27
+#define ES_ejs_web_Controller_ejs_web_read                             28
+#define ES_ejs_web_Controller_ejs_web_redirect                         29
+#define ES_ejs_web_Controller_ejs_web_redirectAction                   30
+#define ES_ejs_web_Controller_ejs_web_render                           31
+#define ES_ejs_web_Controller_ejs_web_renderError                      32
+#define ES_ejs_web_Controller_ejs_web_renderFile                       33
+#define ES_ejs_web_Controller_ejs_web_renderPartial                    34
+#define ES_ejs_web_Controller_ejs_web_renderView                       35
+#define ES_ejs_web_Controller_ejs_web_run                              36
+#define ES_ejs_web_Controller_ejs_web_resetFilters                     37
+#define ES_ejs_web_Controller_ejs_web_setHeader                        38
+#define ES_ejs_web_Controller_ejs_web_setStatus                        39
+#define ES_ejs_web_Controller_ejs_web_warn                             40
+#define ES_ejs_web_Controller_ejs_web_wrapFilter                       41
+#define ES_ejs_web_Controller_ejs_web_write                            42
+#define ES_ejs_web_Controller_flashAfter                               43
+#define ES_ejs_web_Controller_flashBefore                              44
+#define ES_ejs_web_Controller_loadView                                 45
+#define ES_ejs_web_Controller_openDatabase                             46
+#define ES_ejs_web_Controller_runFilters                               47
+#define ES_ejs_web_Controller_viewExists                               48
+#define ES_ejs_web_Controller_ejs_web_appUrl                           49
+#define ES_ejs_web_Controller_ejs_web_makeUrl                          50
+#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        51
 #define ES_ejs_web_Controller_NUM_INHERITED_PROP                       0
 
 /*
@@ -280,7 +290,7 @@
 #define ES_ejs_web_Request_read                                        52
 #define ES_ejs_web_Request_redirect                                    53
 #define ES_ejs_web_Request_removeObserver                              54
-#define ES_ejs_web_Request_sendfile                                    55
+#define ES_ejs_web_Request_sendFile                                    55
 #define ES_ejs_web_Request_sendResponse                                56
 #define ES_ejs_web_Request_setCookie                                   57
 #define ES_ejs_web_Request_setHeader                                   58
@@ -499,6 +509,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   647984
+#define _ES_CHECKSUM_ejs_web   660901
 
 #endif
