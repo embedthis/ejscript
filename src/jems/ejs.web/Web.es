@@ -106,7 +106,7 @@ module ejs.web {
                 if (request.isSecure) {
                     body = File(body, "r")
                 } else {
-                    request.sendfile(body)
+                    request.sendFile(body)
                     return
                 }
             }
@@ -159,7 +159,7 @@ module ejs.web {
             } else {
                 let file = request.responseHeaders["X-Sendfile"]
                 if (file && !request.isSecure) {
-                    request.sendfile(file)
+                    request.sendFile(file)
                 } else {
                     request.finalize()
                 }
@@ -196,7 +196,7 @@ module ejs.web {
                 } else {
                     let file = request.responseHeaders["X-Sendfile"]
                     if (file && !request.isSecure) {
-                        request.sendfile(file)
+                        request.sendFile(file)
                     }
                 }
             } catch (e) {

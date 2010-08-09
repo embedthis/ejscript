@@ -307,10 +307,7 @@ module ejs.web {
             @param timeout Session state timeout in seconds. After the timeout has expired, the session will be deleted.
          */
         function createSession(timeout: Number = -1): Session {
-            this.session
-            if (timeout < 0) {
-                setLimits({ sessionTimeout: timeout })
-            }
+            setLimits({ sessionTimeout: timeout })
             return session
         }
 
@@ -371,6 +368,7 @@ module ejs.web {
             @option reference String URI path reference. Does not include "#"
             @option controller String Controller name if using an MVC route
             @option action String Action name if using an MVC route
+            @return A Uri object
          */
         function makeUri(location: Object): Uri {
             if (route) {
@@ -440,6 +438,7 @@ module ejs.web {
          */
         native function removeObserver(name, observer: Function): Void
 
+//  MOB -- should this be sendFile - YES
         /**
             Send a static file back to the client. This is a high performance way to send static content to the client.
             This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
@@ -447,7 +446,7 @@ module ejs.web {
             @param file Path to the file to send back to the client
             @return True if the Send connector can successfully be used. 
          */
-        native function sendfile(file: Path): Boolean
+        native function sendFile(file: Path): Boolean
 
         /** 
             Send a response to the client. This can be used instead of setting status and calling setHeaders() and write(). 
@@ -767,7 +766,6 @@ module ejs.web {
          */
         function get userAgent(): String
             header("user-agent")
-
     }
 }
 
