@@ -3818,9 +3818,6 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
     if (fun) {
         setFunctionCode(cp, fun, code);
     }
-#if UNUSED
-    ejsCompleteFunction(ejs, fun);
-#endif
     LEAVE(cp);
 }
 
