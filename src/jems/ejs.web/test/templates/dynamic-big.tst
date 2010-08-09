@@ -19,4 +19,5 @@ assert(http.header("Transfer-Encoding"))
 //  Should not be a transfer-encoding header
 assert(http.headers["transfer-encoding"])
 assert(http.headers.connection == "keep-alive")
+assert(http.response)
 http.close()
