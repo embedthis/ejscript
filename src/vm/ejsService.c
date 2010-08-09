@@ -193,6 +193,7 @@ static int defineTypes(Ejs *ejs)
     ejsCreateStringType(ejs);
     ejsCreateXMLType(ejs);
     ejsCreateXMLListType(ejs);
+    ejsCreateConfigType(ejs);
 
     /*  
         Define the native module configuration routines.
@@ -231,7 +232,6 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureVoidType(ejs);
     ejsConfigureNumberType(ejs);
 
-    ejsConfigureConfigType(ejs);
     ejsConfigurePathType(ejs);
     ejsConfigureFileSystemType(ejs);
     ejsConfigureFileType(ejs);
