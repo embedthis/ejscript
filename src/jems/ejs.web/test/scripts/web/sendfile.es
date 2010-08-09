@@ -1,5 +1,5 @@
 require ejs.web
 
 exports.app = function() {
-    sendfile("web/sendfile.txt")
+    sendFile("web/sendfile.txt")
 }

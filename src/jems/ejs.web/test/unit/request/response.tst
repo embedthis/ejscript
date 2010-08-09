@@ -12,7 +12,7 @@ load("../utils.es")
 server.observe("readable", function (event, request: Request) {
     switch (pathInfo) {
     case "/sendfile":
-        sendfile("../utils.es")
+        sendFile("../utils.es")
         finalize()
         break
 
@@ -73,7 +73,7 @@ assert(cookie.contains("secure"))
 http.close()
 
 
-//  sendfile
+//  sendFile
 let http = fetch(HTTP + "/sendfile")
 assert(http.status == 200)
 assert(http.response == Path("../utils.es").readString())

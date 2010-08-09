@@ -946,9 +946,9 @@ static EjsObj *req_removeObserver(Ejs *ejs, EjsRequest *req, int argc, EjsObj **
 
 
 /*  
-    function sendfile(path: Path): Boolean
+    function sendFile(path: Path): Boolean
  */
-static EjsObj *req_sendfile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+static EjsObj *req_sendFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     EjsPath         *path;
     HttpConn        *conn;
@@ -1253,7 +1253,7 @@ void ejsConfigureRequestType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_observe, (EjsProc) req_observe);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_read, (EjsProc) req_read);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_removeObserver, (EjsProc) req_removeObserver);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_sendfile, (EjsProc) req_sendfile);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_sendFile, (EjsProc) req_sendFile);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setLimits, (EjsProc) req_setLimits);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setHeader, (EjsProc) req_setHeader);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_trace, (EjsProc) req_trace);

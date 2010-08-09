@@ -455,7 +455,7 @@ enumerable class Test {
         }
         if (step) {
             out.write(fullName + ", press <ENTER>: ")
-            if (step) input()
+            if (step) stdin.readLine()
         } else if (verbosity > 0) {
             out.write(fullName)
             if (verbosity == 1 && threads == 1) {
