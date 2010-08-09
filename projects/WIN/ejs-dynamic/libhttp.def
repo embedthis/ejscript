@@ -2,6 +2,7 @@ LIBRARY libhttp.dll
 EXPORTS
 
   __pamAuth
+  httpAcceptConn
   httpAddConn
   httpAddErrorDocument
   httpAddFilter
@@ -15,11 +16,14 @@ EXPORTS
   httpAddUsersToGroup
   httpAddVars
   httpAddVarsFromQueue
-  httpAdvanceReceiver
+  httpAdvanceRx
   httpAppendHeader
   httpAppendQueue
   httpCallEvent
+  httpClearHeaders
+  httpClearStages
   httpCloneStage
+  httpCloseClientConn
   httpCloseConn
   httpCompareFormVar
   httpCompleteRequest
@@ -42,29 +46,30 @@ EXPORTS
   httpCreateHandler
   httpCreateHeaderPacket
   httpCreateInheritedLocation
+  httpCreateLimits
   httpCreateLocation
   httpCreatePacket
   httpCreatePipeline
   httpCreateQueue
   httpCreateRange
-  httpCreateReceiver
+  httpCreateRx
   httpCreateSecret
   httpCreateServer
   httpCreateStage
-  httpCreateTransmitter
+  httpCreateTx
   httpCreateUri
   httpCreateUriFromParts
   httpCreateUser
   httpDefaultOutgoingServiceStage
   httpDestroyPipeline
-  httpDestroyReceiver
+  httpDestroyRx
   httpDisableGroup
   httpDisableQueue
   httpDisableUser
   httpDiscardData
-  httpDiscardPipeData
+  httpDiscardTransmitData
   httpDontCache
-  httpDrainQueue
+  httpDupPacket
   httpEnableConnEvents
   httpEnableGroup
   httpEnableQueue
@@ -77,6 +82,7 @@ EXPORTS
   httpFinalizeLocation
   httpFindPreviousQueue
   httpFlush
+  httpFlushQueue
   httpFollowRedirects
   httpFormatBody
   httpFormatError
@@ -113,8 +119,11 @@ EXPORTS
   httpGetStatus
   httpGetStatusMessage
   httpInitAuth
+  httpInitLimits
+  httpInitLocation
   httpInitQueue
   httpInitSchedulerQueue
+  httpInitTrace
   httpInsertQueue
   httpIsEof
   httpIsFinalized
@@ -124,6 +133,9 @@ EXPORTS
   httpIsUserEnabled
   httpJoinPacket
   httpJoinPacketForService
+  httpJoinPackets
+  httpLimitError
+  httpLoadSsl
   httpLookupErrorDocument
   httpLookupStage
   httpLookupStatus
@@ -138,11 +150,13 @@ EXPORTS
   httpOpenPassHandler
   httpOpenQueue
   httpOpenRangeFilter
+  httpOpenSendConnector
   httpOpenUploadFilter
   httpParseAcl
   httpPrepClientConn
   httpPrepServerConn
   httpProcessPipeline
+  httpProtocolError
   httpPutBackPacket
   httpPutForService
   httpRead
@@ -164,6 +178,8 @@ EXPORTS
   httpResetPipeline
   httpResizePacket
   httpScheduleQueue
+  httpSendOpen
+  httpSendOutgoingService
   httpSendPacket
   httpSendPacketToNext
   httpSendPackets
@@ -194,6 +210,7 @@ EXPORTS
   httpSetDefaultPort
   httpSetDocumentRoot
   httpSetEntityLength
+  httpSetFillHeaders
   httpSetFormVar
   httpSetGroupAcl
   httpSetHandler
@@ -215,16 +232,22 @@ EXPORTS
   httpSetRequiredAcl
   httpSetResponseBody
   httpSetRetries
+  httpSetSendConnector
   httpSetServerAsync
   httpSetServerContext
+  httpSetServerLocation
+  httpSetServerName
   httpSetServerNotifier
   httpSetServerRoot
+  httpSetServerSoftware
+  httpSetServerSsl
   httpSetSimpleHeader
   httpSetState
   httpSetStatus
   httpSetTimeout
+  httpSetUniqueConnLimits
   httpSetUri
-  httpSetupTrace
+  httpShouldTrace
   httpSplitPacket
   httpStartPipeline
   httpStartServer
@@ -233,6 +256,7 @@ EXPORTS
   httpTraceContent
   httpUpdateUserAcls
   httpUriToString
+  httpValidateLimits
   httpValidateNativeCredentials
   httpWait
   httpWillNextQueueAcceptPacket

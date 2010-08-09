@@ -9,6 +9,7 @@ EXPORTS
   _ejsGetString
   _ejsIs
   deserialize
+  dummy_Reflection
   ecAddConstant
   ecAddConstants
   ecAddDocConstant
@@ -81,10 +82,10 @@ EXPORTS
   ejsAddException
   ejsAddItem
   ejsAddItemToSharedList
-  ejsAddListener
   ejsAddModule
   ejsAddNamespaceToBlock
   ejsAddNativeModule
+  ejsAddObserver
   ejsAddToGcStats
   ejsAlloc
   ejsAllocName
@@ -98,6 +99,7 @@ EXPORTS
   ejsBindConstructor
   ejsBindFunction
   ejsBindMethod
+  ejsBlendObject
   ejsBlendTypeProperties
   ejsBootstrapTypes
   ejsCaptureStack
@@ -114,6 +116,7 @@ EXPORTS
   ejsCloneObjectHelpers
   ejsCoerceOperands
   ejsCollectGarbage
+  ejsCompactObject
   ejsCompleteType
   ejsComputeHashCode
   ejsConfigureAppType
@@ -140,7 +143,6 @@ EXPORTS
   ejsConfigureNumberType
   ejsConfigureObjectType
   ejsConfigurePathType
-  ejsConfigureReflectType
   ejsConfigureRegExpType
   ejsConfigureSocketType
   ejsConfigureStringType
@@ -180,6 +182,7 @@ EXPORTS
   ejsCreateFileSystem
   ejsCreateFrame
   ejsCreateFrameType
+  ejsCreateFullUri
   ejsCreateFunction
   ejsCreateFunctionType
   ejsCreateGCService
@@ -262,6 +265,7 @@ EXPORTS
   ejsGetException
   ejsGetGlobalObject
   ejsGetHashSize
+  ejsGetHttpLimits
   ejsGetItem
   ejsGetLastItem
   ejsGetListCount
@@ -292,6 +296,7 @@ EXPORTS
   ejsGrowByteArray
   ejsGrowObject
   ejsHasException
+  ejsHasObservers
   ejsHasTrait
   ejsInheritBaseClassNamespaces
   ejsInitCompiler
@@ -321,6 +326,7 @@ EXPORTS
   ejsMakeEternalPermanent
   ejsMakeObjHash
   ejsMakePermanent
+  ejsMakeRoomInByteArray
   ejsMakeTransient
   ejsMark
   ejsMarkBlock
@@ -344,8 +350,8 @@ EXPORTS
   ejsRegExpToString
   ejsRemoveItemAtPos
   ejsRemoveLastItem
-  ejsRemoveListener
   ejsRemoveModule
+  ejsRemoveObserver
   ejsRemoveProperty
   ejsReportError
   ejsResetBlockNamespaces
@@ -364,6 +370,7 @@ EXPORTS
   ejsSetFunctionCode
   ejsSetFunctionName
   ejsSetGeneration
+  ejsSetHttpLimits
   ejsSetListLimits
   ejsSetModuleConstants
   ejsSetProperty
@@ -375,9 +382,10 @@ EXPORTS
   ejsSetTraitType
   ejsSetTypeName
   ejsSetXML
+  ejsSetupTrace
   ejsShowBlockScope
   ejsShowCurrentScope
-  ejsStartLogging
+  ejsStartMprLogging
   ejsStrcat
   ejsStrdup
   ejsThrowArgError
