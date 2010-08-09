@@ -11,6 +11,9 @@ var priorLength = LOG.size
 http.get(HTTP + "/dispatch.es?route=log")
 assert(http.contentLength > 0)
 assert(http.status == Http.Ok)
+if (LOG.size <= priorLength) {
+    print("SIZES ", LOG.size, priorLength)
+}
 assert(LOG.size > priorLength)
 http.close()
 
