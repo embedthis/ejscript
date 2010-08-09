@@ -8,16 +8,16 @@ public class Btest
 	private var 	txtResults: String;
 
 
-	var scriptCounter: num = 1;
-	var totalTests: num = 9;
+	var scriptCounter: Number = 1;
+	var totalTests: Number = 9;
 	var results:string = "";
 	var desc:string = "";
-	var tpass: num = 0;
-	var tfail: num = 0;
+	var tpass: Number = 0;
+	var tfail: Number = 0;
 	
-	var a: num = 0;
-	var b: num = 0;
-	var c: num=0;
+	var a: Number = 0;
+	var b: Number = 0;
+	var c: Number=0;
 	var LastName;
 	var Soc_Sec_No;
 	var is_morning;
