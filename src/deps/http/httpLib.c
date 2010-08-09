@@ -2644,6 +2644,9 @@ void httpCompleteRequest(HttpConn *conn)
 void httpCompleteWriting(HttpConn *conn)
 {
     conn->writeComplete = 1;
+    if (conn->tx) {
+        conn->tx->finalized = 1;
+    }
     httpDiscardTransmitData(conn);
 }
 
@@ -4290,8 +4293,7 @@ static void netOutgoingService(HttpQueue *q)
     trans = conn->tx;
     conn->lastActivity = conn->http->now;
     
-    //  MOB -- just for safety
-    if (conn->sock == 0) {
+    if (conn->sock == 0 || conn->writeComplete) {
         return;
     }
     if (trans->flags & HTTP_TX_NO_BODY || conn->writeComplete) {
@@ -5599,6 +5601,9 @@ void httpDiscardData(HttpQueue *q, bool removePackets)
                     prev->next = next;
                 } else {
                     q->first = next;
+                }
+                if (packet == q->last) {
+                    q->last = prev;
                 }
                 q->count -= httpGetPacketLength(packet);
                 mprAssert(q->count >= 0);
@@ -7959,8 +7964,7 @@ void httpSendOutgoingService(HttpQueue *q)
     trans = conn->tx;
     conn->lastActivity = conn->http->now;
 
-    //  MOB -- just for safety
-    if (conn->sock == 0) {
+    if (conn->sock == 0 || conn->writeComplete) {
         return;
     }
     if (trans->flags & HTTP_TX_NO_BODY || conn->writeComplete) {
