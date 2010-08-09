@@ -23,7 +23,6 @@ module ejs.web {
 
         private static var _initRequest: Request
 
-        private var rendered: Boolean
         private var redirected: Boolean
         private var _afterFilters: Array
         private var _beforeFilters: Array
@@ -47,6 +46,9 @@ module ejs.web {
 
         /** Form and query parameters - reference to the Request.params object. */
         var params: Object
+
+        /** The response has been rendered. If an action does not render a response, then a default view will be rendered */
+        var rendered: Boolean
 
         /** Reference to the current Request object */
         var request: Request
@@ -146,6 +148,12 @@ module ejs.web {
         }
 
         /** 
+            @duplicate Rquest.header
+         */
+        function header(key: String): String
+            request.header(key)
+
+        /** 
             Send a positive notification to the user. This is just a convenience instead of setting flash["inform"]
             @param msg Message to display
          */
@@ -170,6 +178,19 @@ module ejs.web {
             rendered = true
             throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
         }
+
+//  MOB -- are there any controller events?
+        /** 
+            @duplicate Request.observe
+         */
+        function observe(name, observer: Function): Void
+            request.observer(name, observer)
+
+        /** 
+            @duplicate Stream.read
+         */
+        function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+            request.read(buffer, offset, count)
 
         /** 
             Redirect the client to the given URL
@@ -316,6 +337,14 @@ module ejs.web {
             _wrapFilters ||= []
             _wrapFilters.append([fn, options])
         }
+
+        /** 
+            Low-level write data to the client. This will buffer the written data until either flush() or 
+            finalize() is called.  This will not set the $rendered property.
+            @duplicate Request.write
+         */
+        function write(...data): Number
+            request.write(...data)
 
         /**************************************** Private ******************************************/
         /* 
