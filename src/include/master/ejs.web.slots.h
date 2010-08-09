@@ -120,9 +120,7 @@
 #define ES_ejs_web_Controller_openDatabase                             46
 #define ES_ejs_web_Controller_runFilters                               47
 #define ES_ejs_web_Controller_viewExists                               48
-#define ES_ejs_web_Controller_ejs_web_appUrl                           49
-#define ES_ejs_web_Controller_ejs_web_makeUrl                          50
-#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        51
+#define ES_ejs_web_Controller_NUM_INSTANCE_PROP                        49
 #define ES_ejs_web_Controller_NUM_INHERITED_PROP                       0
 
 /*
@@ -307,21 +305,7 @@
 #define ES_ejs_web_Request_input                                       69
 #define ES_ejs_web_Request_queryString                                 70
 #define ES_ejs_web_Request_serverPort                                  71
-#define ES_ejs_web_Request_accept                                      72
-#define ES_ejs_web_Request_acceptCharset                               73
-#define ES_ejs_web_Request_acceptEncoding                              74
-#define ES_ejs_web_Request_authAcl                                     75
-#define ES_ejs_web_Request_body                                        76
-#define ES_ejs_web_Request_cachable                                    77
-#define ES_ejs_web_Request_connection                                  78
-#define ES_ejs_web_Request_hostName                                    79
-#define ES_ejs_web_Request_mimeType                                    80
-#define ES_ejs_web_Request_pathTranslated                              81
-#define ES_ejs_web_Request_pragma                                      82
-#define ES_ejs_web_Request_remoteHost                                  83
-#define ES_ejs_web_Request_url                                         84
-#define ES_ejs_web_Request_userAgent                                   85
-#define ES_ejs_web_Request_NUM_INSTANCE_PROP                           86
+#define ES_ejs_web_Request_NUM_INSTANCE_PROP                           72
 #define ES_ejs_web_Request_NUM_INHERITED_PROP                          0
 
 
@@ -459,10 +443,7 @@
 #define ES_ejs_web_View_ejs_web_getOptions                             48
 #define ES_ejs_web_View_pivot                                          49
 #define ES_ejs_web_View_filter                                         50
-#define ES_ejs_web_View_ejs_web_makeUrl                                51
-#define ES_ejs_web_View_ejs_web_appUrl                                 52
-#define ES_ejs_web_View_ejs_web_redirect                               53
-#define ES_ejs_web_View_NUM_INSTANCE_PROP                              54
+#define ES_ejs_web_View_NUM_INSTANCE_PROP                              51
 #define ES_ejs_web_View_NUM_INHERITED_PROP                             0
 
 
@@ -509,6 +490,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   660901
+#define _ES_CHECKSUM_ejs_web   639465
 
 #endif
