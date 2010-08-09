@@ -10,7 +10,7 @@ dependExtra:
 	mkdir -p $(BLD_BIN_DIR)
 
 cleanExtra:
-	rm -f ejs* *.exe *.lib *.dylib *.a *.so *.mod  jem
+	rm -f ejs* *.exe *.lib *.dylib *.a *.so *.mod jem *.dll *.exp *.manifest *.pdb
 	rm -f $(BLD_BIN_DIR)/ejs* 
 	rm -f $(BLD_BIN_DIR)/*.def $(BLD_BIN_DIR)/*.out $(BLD_BIN_DIR)/*.exe $(BLD_BIN_DIR)/*.lib 
 	rm -f $(BLD_BIN_DIR)/*.lib $(BLD_BIN_DIR)/*.dylib $(BLD_BIN_DIR)/*.a $(BLD_BIN_DIR)/*.so $(BLD_BIN_DIR)/*.mod
