@@ -17,7 +17,9 @@ server.observe("readable", function (event, request) {
 server.setLimits({ requests: 1 })
 
 server.listen(HTTP)
-Http().get(HTTP)
+let http = new Http
+http.get(HTTP)
+http.close()
 
 //  This request should be rejected
 http = new Http
@@ -31,5 +33,5 @@ try {
     assert(0)
 } catch { }
 
+http.close()
 server.close()
-
