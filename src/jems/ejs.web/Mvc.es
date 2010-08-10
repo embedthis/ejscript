@@ -17,10 +17,6 @@ module ejs.web {
             Default configuration for MVC apps. This layers over App.defaultConfig and ejs.web::defaultConfig.
          */
         private static var defaultConfig = {
-            cache: {
-                enable: true,
-                reload: true,
-            },
             directories: {
                 bin: Path("bin"),
                 db: Path("db"),
@@ -31,11 +27,6 @@ module ejs.web {
                 views: Path("views"),
                 src: Path("src"),
                 web: Path("web"),
-            },
-            extensions: {
-                es: "es",
-                ejs: "ejs",
-                mod: "mod",
             },
             mvc: {
                 //  MOB -- what is this?
@@ -81,6 +72,8 @@ module ejs.web {
             return config
         }
 
+
+//  MOB -- rename to load?
         /** 
             Load an MVC application. This is typically called by the Router to load an application after routing
             the request to determine the appropriate controller
@@ -167,6 +160,7 @@ module ejs.web {
         }
     }
 
+//  MOB - is this right? who calls this?
     /**
         MVC request handler.  
         @param request Request object
@@ -187,8 +181,10 @@ module ejs.web {
     function MvcBuilder(request: Request): Function {
         //  MOB OPT - Currently Mvc has no state so really don't need an Mvc instance
         let mvc: Mvc = Mvc.apps[request.dir] || (Mvc.apps[request.dir] = new Mvc(request))
+        //  MOB -- rename to load?
         mvc.init(request)
-        return Controller.create(request).run
+        let cname: String = request.params["controller"].toPascal() + "Controller"
+        return Controller.create(request, cname).app
     }
 }
 

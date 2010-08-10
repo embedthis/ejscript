@@ -446,10 +446,12 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return createHeaders(ejs, req);
 
     case ES_ejs_web_Request_home:
-        if (req->home == 0) {
-            req->home = ejsCreateUriAndFree(ejs, makeRelativeHome(ejs, req));
-        }
-        return req->home;
+        if (conn) {
+            if (req->home == 0) {
+                req->home = ejsCreateUriAndFree(ejs, makeRelativeHome(ejs, req));
+            }
+            return req->home;
+        } else return ejs->nullValue;
 
     case ES_ejs_web_Request_host:
         if (req->host == 0) {

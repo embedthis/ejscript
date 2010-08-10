@@ -287,17 +287,6 @@ module ejs.web {
         }
     }
 
-/* UNUSED MOB
-    function TemplateBuilder(request: Request): Function {
-        let route = request.route
-        if (route.module && !route.initialized) {
-            global.load(route.module + ".mod")
-            route.initialized = true
-        }
-        return "ejs.web"::TemplateApp
-    }
-*/
-
     /** 
         Route class. A Route describes a mapping from a set of resources to a URI. The Router uses tables of 
         Routes to serve and route requests to web scripts.

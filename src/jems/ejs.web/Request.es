@@ -58,6 +58,11 @@ module ejs.web {
         enumerable var config: Object
 
         /** 
+            Associated Controller object. Set to null if no associated controller
+         */
+        enumerable var controller: Controller
+
+        /** 
             Get the request content length. This is the length of body data sent by the client with the request. 
             This property is read-only and is set to the length of the request content body in bytes or -1 if not known.
             Body data is readable by using $read() or by using the request object as a stream.
@@ -598,8 +603,9 @@ module ejs.web {
         /** 
             Write an error message back to the user and finalize the request. 
             The output is html escaped for security.
-            @param status Http status code
-            @param msg Message to send. The message may be modified for readability if it contains an exception backtrace.
+            @param code Http status code
+            @param msgs Messages to send with the response. The messages may be modified for readability if it 
+                contains an exception backtrace.
          */
         function writeError(code: Number, ...msgs): Void {
             let text

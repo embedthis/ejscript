@@ -1435,6 +1435,7 @@ class Templates {
 
     database: {
         class: "Database",
+        module: "",
         adapter: "sqlite3",
         timeout: 5000,
         debug: {

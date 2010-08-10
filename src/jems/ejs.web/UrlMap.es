@@ -9,7 +9,8 @@ module ejs.web {
         If the request pathInfo ends with "/", the request is transparently redirected to an index file if one is present.
         The set of index files is defined by HttpServer.indicies. If the request is a directory but does not end in "/",
         the client is redirected to a URL equal to the pathInfo with a "/" appended.
-        @param request Request object
+        @param map Map of URLs to use for routing. TODO
+        @param options TODO
         @returns A response hash object
         @spec ejs
         @stability prototype

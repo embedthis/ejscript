@@ -13,10 +13,12 @@ module ejs.web {
         @example:
             export.app = CommonLog(app)
      */
-
     function CommonLog(app, logger: Stream = App.log): Object
         (new CommonLogBuilder(app, logger)).run
 
+    /**
+        TODO MOB
+     */
     class CommonLogBuilder {
         var app: Function
         var logger: Stream

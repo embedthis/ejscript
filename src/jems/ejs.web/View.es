@@ -37,7 +37,10 @@ module ejs.web {
         /* Sequential DOM ID generator */
         private var nextId: Number = 0
 
-        /** @hide */
+        /** 
+            @hide 
+         */
+//  MOB - private?
         function getNextId(): String
             "id_" + nextId++
 
@@ -50,6 +53,18 @@ module ejs.web {
             this.config = request.config
             this.log = request.log
             view = this
+
+            controller = request.controller
+            if (controller) {
+                blend(this, controller)
+            }
+        /*
+            //  MOB -- slow. Native method for this?
+            for each (let n: String in Object.getOwnPropertyNames(this, {includeBases: true, excludeFunctions: true})) {
+                //  MOB - can we remove public::
+                this.public::[n] = controller[n]
+            }
+         */
         }
 
         /**
@@ -69,7 +84,7 @@ module ejs.web {
          */
         public function render(renderer: Function): Void {
             if (renderer) {
-                // renderer.setScope(this)
+                // MOB renderer.setScope(this)
                 renderer.call(this, request)
             }
             request.finalize()
@@ -118,7 +133,7 @@ module ejs.web {
             @return The number of bytes written
          */
         public function write(...data): Number
-            request.write(data)
+            request.write(...data)
 
         /************************************************ View Helpers ****************************************************/
         /**

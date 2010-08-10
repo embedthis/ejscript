@@ -16,6 +16,15 @@ module ejs.web {
         static var config
 
         private static var defaultConfig = {
+            cache: {
+                enable: true,
+                reload: true,
+            },
+            extensions: {
+                es:  "es",
+                ejs: "ejs",
+                mod: "mod",
+            },
             log: {
                 showClient: true,
                 //  where: "file" - defaults to web server log
@@ -100,7 +109,6 @@ module ejs.web {
             }
         }
 
-
         private static function processBody(request: Request, body: Object): Void {
             if (body is Path) {
                 if (request.isSecure) {
@@ -167,6 +175,7 @@ module ejs.web {
         }
 
 //  MOB WARNING: this may block in write?? - is request in async mode?
+//  MOB -- is this the best name?
         /** 
             Process a web request
             @param request Request object
@@ -200,6 +209,7 @@ module ejs.web {
                     }
                 }
             } catch (e) {
+print("CATCH: " + e)
                 request.writeError(Http.ServerError, e)
             }
         }

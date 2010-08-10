@@ -3,14 +3,15 @@
  */
 
 module ejs.web {
-
-    /* 
+    /**
         Namespace for all action methods 
      */
     namespace action = "action"
 
     /** 
-        Web framework controller class.
+        Web framework controller class. The controller classes can accept web requests and direct them to action methods
+        which generate the response. Controllers are responsible for either generating output for the client or invoking
+        a View which will create the response.
         @stability prototype
         @spec ejs
      */
@@ -37,9 +38,6 @@ module ejs.web {
 
         /** Lower case controller name */
         var controllerName: String
-
-        /** Deployment mode: debug, test, production */
-        var deploymentMode: String
 
         /** Logger stream - reference to Request.log */
         var log: Logger
@@ -89,17 +87,34 @@ module ejs.web {
 
         /********************************************* Methods *******************************************/
         /** 
+            Static factory method to create and initialize a controller. The controller class is specified by 
+            params["controller"] which should be set to the controller name without the "Controller" suffix. 
+            This call expects the controller class to be loaded. Called by Mvc.load().
+            @param request Web request object
+            @param cname Controller class name
+         */
+        static function create(request: Request, cname: String = null): Controller {
+            cname ||= (request.params.controller.toPascal() + "Controller")
+            _initRequest = request
+            let c: Controller = new global[cname](request)
+            c.request = request
+            _initRequest = null
+            return c
+        }
+
+        /** 
             Create and initialize a controller. This may be called directly by class constructors or via 
             the Controller.create factory method.
             @param req Web request object
          */
         function Controller(req: Request) {
-            //  initRequest may be set by create() to allow subclasses to omit constructors
+            /*  _initRequest may be set by create() to allow subclasses to omit constructors */
+            controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
             request = req || _initRequest
             if (request) {
+                request.controller = this
                 log = request.log
                 params = request.params
-                controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
                 config = request.config
                 if (config.database) {
                     openDatabase(request)
@@ -107,35 +122,28 @@ module ejs.web {
             }
         }
 
-        /** MOB */
+        /** 
+            Run a filter function after running the action
+            @param fn Function callback to invoke
+            @param options Filter options. 
+            @option only Only run the filter for this action name
+            @option except Run the filter for actions except this name
+         */
         function afterFilter(fn, options: Object? = null): Void {
             _afterFilters ||= []
             _afterFilters.append([fn, options])
         }
 
-        /** MOB */
+        /** 
+            Run a filter function before running the action
+            @param fn Function callback to invoke
+            @param options Filter options. 
+            @option only Only run the filter for this action name
+            @option except Run the filter for actions except this name
+         */
         function beforeFilter(fn, options: Object? = null): Void {
             _beforeFilters ||= []
             _beforeFilters.append([fn, options])
-        }
-
-        /** 
-            Factory method to create and initialize a controller. The controller class is specified by 
-            params["controller"] which should be set by the router to the controller name without the "Controller" suffix. 
-            This call expects the controller class to be loaded. Called by Mvc.load().
-            @param request Web request object
-         */
-        static function create(request: Request): Controller {
-            let cname: String = request.params["controller"]
-            if (!cname) {
-                throw "Can't run app, controller " + cname + " is not loaded"
-            }
-            _initRequest = request
-            let uname = cname.toPascal() + "Controller"
-            let c: Controller = new global[uname](request)
-            c.request = request
-            _initRequest = null
-            return c
         }
 
         /** 
@@ -148,7 +156,7 @@ module ejs.web {
         }
 
         /** 
-            @duplicate Rquest.header
+            @duplicate Request.header
          */
         function header(key: String): String
             request.header(key)
@@ -170,7 +178,6 @@ module ejs.web {
         function makeUri(location: Object): Uri
             request.makeUri(location)
 
-//  MOB - could this use a general meta facility
         /** 
             Missing action method. This method will be called if the requested action routine does not exist.
          */
@@ -179,7 +186,6 @@ module ejs.web {
             throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
         }
 
-//  MOB -- are there any controller events?
         /** 
             @duplicate Request.observe
          */
@@ -187,7 +193,7 @@ module ejs.web {
             request.observer(name, observer)
 
         /** 
-            @duplicate Stream.read
+            @duplicate Request.read
          */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
             request.read(buffer, offset, count)
@@ -223,6 +229,8 @@ module ejs.web {
 
         /**
             Render an error message as the response
+            @param status Http status code to use
+            @param msgs Error messages to send with the response
          */
         function renderError(status: Number, ...msgs): Void {
             rendered = true
@@ -240,23 +248,33 @@ module ejs.web {
         }
 
         /** 
-            Render a partial ejs template. Does not set "rendered" to true.
+            Render a partial response based on an ejs template. Does not set "rendered" to true.
+            @param path Path to the template to render
          */
-        function renderPartial(path: Path): void { 
-            //  MOB -- todo
+        function renderPartial(path: Path): Void { 
+            request.filename = path
+            let app = TemplateBuilder(request)
+            log.debug(4, "renderPartial: \"" + path + "\"")
+            Web.process(app, request)
         }
 
         /** 
             Render a view template
+            @param viewName Name of the view to render
          */
         function renderView(viewName: String? = null): Void {
             if (rendered) {
-                throw new Error("renderView invoked but render has already been called")
-                return
+                throw new Error("Render called twice")
             }
             viewName ||= actionName
+            request.filename = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
+            let app = TemplateBuilder(request)
+            log.debug(4, "renderView: \"" + controllerName + "/" + viewName + "\"")
+            Web.process(app, request)
+            rendered = true
+/*
+            let app = loadView(viewName)
             let viewClass = controllerName + "_" + viewName + "View"
-            loadView(viewName)
             view = new global[viewClass](request)
             view.controller = this
             //  MOB -- slow. Native method for this?
@@ -264,17 +282,16 @@ module ejs.web {
                 view.public::[n] = this[n]
             }
             log.debug(4, "render view: \"" + controllerName + "/" + viewName + "\"")
-            rendered = true
             view.render(request)
+*/
         }
 
         /** 
-            Run the controller action. 
+            Controller web application. This will run the controller action and return a response object. 
             @param request Request object
             @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
-//  MOB -- is this a builder or what?
-        function run(request: Request): Object {
+        function app(request: Request): Object {
             actionName = params.action || "index"
             params.action = actionName
             use namespace action
@@ -307,8 +324,10 @@ module ejs.web {
             return response
         }
 
-        /** MOB */
-        function resetFilters(): Void {
+        /** 
+            Remove all defined filters on the Controller.
+         */
+        function removeFilters(): Void {
             _beforeFilters = null
             _afterFilters = null
             _wrapFilters = null
@@ -332,7 +351,13 @@ module ejs.web {
             flash["warn"] = msg
         }
 
-        /** MOB */
+        /** 
+            Run a filter function wrapping the action
+            @param fn Function callback to invoke
+            @param options Filter options. 
+            @option only Only run the filter for this action name
+            @option except Run the filter for actions except this name
+         */
         function wrapFilter(fn, options: Object? = null): Void {
             _wrapFilters ||= []
             _wrapFilters.append([fn, options])
@@ -378,19 +403,18 @@ module ejs.web {
             }
         }
 
-        /**
+/*****
             Load the view. 
             @param viewName Bare view name
-            @hide
-         */
-        private function loadView(viewName: String) {
+
+        private function loadView(viewName: String): Function {
+            request.filename = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
+            return TemplateBuilder(request)
+
             let dirs = config.directories
             let cvname = controllerName + "_" + viewName
-            let path = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
             let cached = Loader.cached(path, request.config, request.dir.join(dirs.cache))
             let viewClass = cvname + "View"
-
-//  MOB -- can this be generalized and use the Web.serve code?
             //  TODO - OPT. Could keep a cache of cached.modified
             if (global[viewClass] && cached.modified >= path.modified) {
                 log.debug(4, "Use loaded view: \"" + controllerName + "/" + viewName + "\"")
@@ -414,32 +438,30 @@ module ejs.web {
                 eval(code, cached)
             }
         }
+*/
 
         /*
-            Generic open of a database. Expects and ejscr configuration like:
+            Open database. Expects ejsrc configuration:
 
-            mode: "debug"
+            mode: "debug",
             database: {
                 class: "Database",
                 adapter: "sqlite3",
-                debug: {
-                    name: "db/blog.sdb", trace: true, 
-                }
+                debug: { name: "db/blog.sdb", trace: true },
+                test: { name: "db/blog.sdb", trace: true },
+                production: { name: "db/blog.sdb", trace: true },
             }
          */
         private function openDatabase(request: Request) {
-            let deploymentMode = config.mode
             let dbconfig = config.database
             let klass = dbconfig["class"]
-            let adapter = dbconfig.adapter
-            let profile = dbconfig[deploymentMode]
+            let profile = dbconfig[config.mode]
             if (klass && dbconfig.adapter && profile.name) {
-                //  MOB -- should NS be here
-                use namespace "ejs.db"
-                let db = new global[klass](dbconfig.adapter, request.dir.join(profile.name))
-                if (profile.trace) {
-                    db.trace(true)
+                if (dbconfig.module && !global[klass]) {
+                    global.load(dbconfig.module + ".mod")
                 }
+                //  MOB use namespace "ejs.db"
+                new global[klass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
             }
         }
 
@@ -448,8 +470,7 @@ module ejs.web {
          */
         private function runFilters(filters: Array): Void {
             for each (filter in filters) {
-                let fn = filter[0]
-                let options = filter[1]
+                let [fn, options] = filter
                 if (options) {
                     only = options.only
                     if (only) {
@@ -489,6 +510,7 @@ module ejs.web {
         /********************************************  LEGACY 1.0.2 ****************************************/
 
         /** 
+            Old appUrl routine
             @hide
             @deprecated 2.0.0
          */
@@ -497,12 +519,21 @@ module ejs.web {
             request.home.toString().trimEnd("/")
 
         /** 
+            Old makeUrl routine
             @hide
             @deprecated 2.0.0
          */
         # Config.Legacy
         function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String
             makeUri({ path: action })
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function resetFilters(): Void
+            removeFilters()
     }
 }
 

@@ -37,12 +37,6 @@ module ejs.template  {
         private var pos: Number = 0
         private var lineNumber: Number = 0
 
-        private const Header = "require ejs.web\n\nexports.app = function (request: Request) {\n" + 
-            "    View(request).render(function(request: Request) {\n"
-        private const Footer = "\n    })\n}\n"
-
-        private const MvcHeader = "require ejs.web\n"
-
         /**
             Build a templated page using JSGI
             @param script String containing the script to parse
@@ -50,10 +44,16 @@ module ejs.template  {
             @options layout Path Layout file
             @options dir Path Base directory to use for including files and for resolving layout directives
          */
-        public function build(script: String, options: Object = {}): String
-            Header + parse(script, options) + Footer
+        public function build(script: String, options: Object = {}): String {
+            return "require ejs.web\n\n" + 
+                "exports.app = function (request: Request) {\n" + 
+                "    View(request).render(function(request: Request) {\n" +
+                parse(script, options) + 
+                "\n    })\n}\n"
+        }
 
-        /** 
+        /*
+UNUSED
             Build an MVC view.
             @param name Name of the view to build
             @param script View web page script
@@ -61,16 +61,17 @@ module ejs.template  {
             @options layout Path Layout file
             @options dir Path Base directory to use for including files and for resolving layout directives
             @hide 
-         */
         public function buildView(name: String, script: String, options: Object = {}): String {
-            return MvcHeader + "public dynamic class " + name + "View extends View {\n\n" +
+            return "require ejs.web\n\n" + 
+                "public dynamic class " + name + "View extends View {\n\n" +
                 "    function " + name + "View(request: Request) {\n" +
                 "        super(request)\n" +
                 "    }\n\n" + 
                 "    public override function render(request: Request) {\n" + 
-                parse(script, options) + "\n    }\n}\n"
+                parse(script, options) + 
+                "\n    }\n}\n"
         }
-
+         */
 
         /**
             Template parser. Parse the given script and return the compiled (Ejscript) result
