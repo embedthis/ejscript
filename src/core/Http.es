@@ -339,7 +339,7 @@ module ejs {
          */
         native function form(uri: Uri, data: Object): Void
 
-        /*
+        /**
 FUTURE & KEEP
             Commence a POST request with form data the current uri. See connect() for connection details.
             @param uri Optional request uri. If non-null, this overrides any previously defined uri for the Http object.
@@ -347,6 +347,7 @@ FUTURE & KEEP
             @param data Data objects to pass with the POST request. The objects are json encoded and the Content-Type is
             set to "application/json". If you require "application/x-www-form-urlencoded" encoding, use publicForm().
             @throws IOError if the request cannot be issued to the remote server.
+            @hide
 
             function publicForm(uri: Uri, ...data): Void
                 connect("POST", uri, Uri.encodeObjects(data))

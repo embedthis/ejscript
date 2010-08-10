@@ -395,7 +395,7 @@ module ejs {
     /** 
         Encode objects using using www-url encoding. Each object is encoded as a "key=value" pair. Each pair is separated
         by a "&" character. 
-        @param str String to encode
+        @param items Strings to encode
         @returns an encoded string
      */
     function encodeObjects(...items) {

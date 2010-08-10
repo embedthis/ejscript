@@ -23,7 +23,7 @@ module ejs {
         /**
             CPU type (eg. i386, ppc, arm)
          */
-        shared native static const CPU: String
+        native static const CPU: String
 
         /**
             Operating system version. One of: WIN, LINUX, MACOSX, FREEBSD, SOLARIS

@@ -26,7 +26,10 @@ module ejs {
         private static var timestamps = {}
         private static const defaultExtensions = [".es", ".js"]
 
-        //  UNUSED - not yet used
+        /**
+            UNUSED - not yet used
+            @hide
+         */
         public static function init(mainId: String? = null) {
             require.main = mainId
         }
