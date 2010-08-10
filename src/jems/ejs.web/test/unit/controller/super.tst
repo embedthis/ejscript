@@ -19,22 +19,14 @@ public class TestController extends Controller {
 
 server = new HttpServer
 server.observe("readable", function (event, request: Request) {
-    switch (pathInfo) {
-    case "/test/echo":
-        //  Split the url and 
-        let [,params.controller, params.action] = pathInfo.toString().split("/")
-        assert(params.controller == "test")
-        assert(params.action == "echo")
+    let [,params.controller, params.action] = pathInfo.toString().split("/")
+    assert(params.controller == "test")
+    assert(params.action == "echo")
 
-        //  Use constructor form instead of create form
-        let app = TestController(request).app
-        assert(app is Function)
-        Web.process(app, request)
-        break
-
-    default:
-        writeError(Http.ServerError, "Bad test URI")
-    }
+    //  Use constructor form instead of create form
+    let app = TestController(request).app
+    assert(app is Function)
+    Web.process(app, request)
 })
 
 server.listen(HTTP)

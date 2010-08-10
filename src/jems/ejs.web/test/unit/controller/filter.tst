@@ -32,12 +32,19 @@ public class TestController extends Controller {
 
 server = new HttpServer
 server.observe("readable", function (event, request: Request) {
-    let [,params.controller, params.action] = pathInfo.toString().split("/")
-    assert(params.controller == "test")
-    assert(params.action == "echo")
-    let app = Controller.create(request).app
-    assert(app is Function)
-    Web.process(app, request)
+    switch (pathInfo) {
+    case "/test/echo":
+        let [,params.controller, params.action] = pathInfo.toString().split("/")
+        assert(params.controller == "test")
+        assert(params.action == "echo")
+        let app = Controller.create(request).app
+        assert(app is Function)
+        Web.process(app, request)
+        break
+
+    default:
+        writeError(Http.ServerError, "Bad test URI")
+    }
 })
 
 server.listen(HTTP)
