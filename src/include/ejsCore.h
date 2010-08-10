@@ -86,7 +86,9 @@ struct EjsXML;
 #define EJS_PROP_HAS_VALUE              0x400       /**< Property has a value record */
 #define EJS_PROP_NATIVE                 0x800       /**< Property is backed by native code */
 #define EJS_PROP_STATIC                 0x1000      /**< Class static property */
+#if UNUSED
 #define EJS_PROP_SHARED                 0x2000      /**< Share static method with all subclasses */
+#endif
 #define EJS_PROP_ENUMERABLE             0x4000      /**< Property will be enumerable (compiler use only) */
 
 #define EJS_FUN_CONSTRUCTOR             0x8000      /**< Method is a constructor */
