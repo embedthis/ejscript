@@ -110,7 +110,16 @@ HttpServer.trace. Fields are:.</td></tr>
 <dl><dt>Description</dt><dd>The URI is completed using the current request and route.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>components: <a href='ejs-Object.html'>Object</a> </td><td>MOB.</td></tr></table></dd>
+<tr class='param'><td class='param'>request: <a href='ejs.web-Request.html'>Request</a> </td><td>Request object.</td></tr><tr class='param'><td class='param'>components: <a href='ejs-Object.html'>Object</a> </td><td>Object hash of URI component properties.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>scheme</td><td>String URI protocol scheme (http or https).</td></tr>
+<td class='param'>host</td><td>String URI host name or IP address.</td></tr>
+<td class='param'>port</td><td>Number TCP/IP port number for communications.</td></tr>
+<td class='param'>path</td><td>String URI path.</td></tr>
+<td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
+</table></dd>
 </dl></div>
 </div>
 <hr />

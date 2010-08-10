@@ -137,15 +137,16 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This closes any open network connection and resets the http object to be ready for another connection.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#connect'><b>connect</b></a>(method: <a href='ejs-String.html'>String</a>, uri: <a href='ejs-Uri.html'>Uri</a> = null, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HTTP request for the current method and uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#dontFinalize'><b>dontFinalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop auto-finalizing the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(force: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data and flushes any buffered write data to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#form'><b>form</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, postData: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a POST request with form data the current uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#form'><b>form</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a POST request with www-url encoded key=value data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#get'><b>get</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a GET request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getRequestHeaders'><b>getRequestHeaders</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) request headers that will be sent with the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#head'><b>head</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HEAD request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the value of a single response header.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream.All events are called with the following signature.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#post'><b>post</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Initiate a POST request for the current uri.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#post'><b>post</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Initiate a POST request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#put'><b>put</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a PUT request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readLines'><b>readLines</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the request response as an array of lines.</td></tr>
@@ -157,7 +158,7 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a request header.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set request headers.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the request resource limits.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trace'><b>trace</b></a>(level: <a href='ejs-Number.html'>Number</a>, options: <a href='ejs-Object.html'>Object</a> = expression , size: <a href='ejs-Number.html'>Number</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure tracing for the request.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trace'><b>trace</b></a>(options: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure request tracing for the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#upload'><b>upload</b></a>(uri: <a href='ejs-String.html'>String</a>, files: <a href='ejs-Object.html'>Object</a>, fields: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Upload files using multipart/mime.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#wait'><b>wait</b></a>(timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Wait for a request to complete.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write body data to the server.</td></tr>
@@ -204,16 +205,27 @@ the request headers.</dd></dl>
 </dl></div>
 </div>
 <hr />
+<a name='dontFinalize'></a>
+<div class='api'>
+<div class='apiSig'>const   public  dontFinalize(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Stop auto-finalizing the request.</p>
+<dl><dt>Description</dt><dd>Calling dontFinalize will keep the request open until a forced finalize is
+made via "finalize(true).</dd></dl>
+</div>
+</div>
+<hr />
 <a name='finalize'></a>
 <div class='api'>
 <div class='apiSig'>const   public  finalize(force: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Signals the end of any write data and flushes any buffered write data to the client.</p>
-<dl><dt>Description</dt><dd>If <a href='#dontFinalize'>dontFinalize</a> is true, this call will have no effect unless <a href='#force'>force</a> is true.</dd></dl>
+<dl><dt>Description</dt><dd>If dontFinalize() has been called, this call will have no effect unless <a href='#force'>force</a> is true.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>force: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Do finalization even if <a href='#dontFinalize'>dontFinalize</a> is true. [default: false]</td></tr></table></dd>
+<tr class='param'><td class='param'>force: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Do finalization even if dontFinalize() has been called. [default: false]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -237,14 +249,16 @@ the server</dd></dl>
 <hr />
 <a name='form'></a>
 <div class='api'>
-<div class='apiSig'>const   public  form(uri: <a href='ejs-Uri.html'>Uri</a>, postData: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  form(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Commence a POST request with form data the current uri.</p>
-<dl><dt>Description</dt><dd>See connect() for connection details.</dd></dl>
+<p>Commence a POST request with www-url encoded key=value data.</p>
+<dl><dt>Description</dt><dd>See connect() for connection details.
+This will encode each data objects as a string of "key=value" pairs separated by "&" characters.
+After writing data, form() will call finalize().</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>uri: <a href='ejs-Uri.html'>Uri</a> </td><td>Optional request uri. If non-null, this overrides any previously defined uri for the Http object. If null, use a previously defined uri.</td></tr><tr class='param'><td class='param'>postData: <a href='ejs-Object.html'>Object</a> </td><td>Optional object hash of key value pairs to use as the post data. These are www-url-encoded and the content mime type is set to "application/x-www-form-urlencoded".</td></tr></table></dd>
+<tr class='param'><td class='param'>uri: <a href='ejs-Uri.html'>Uri</a> </td><td>Optional request uri. If non-null, this overrides any previously defined uri for the Http object. If null, use a previously defined uri.</td></tr><tr class='param'><td class='param'>data: <a href='ejs-Object.html'>Object</a> </td><td>Optional object hash of key value pairs to use as the post data. These are www-url-encoded and the content mime type is set to "application/x-www-form-urlencoded".</td></tr></table></dd>
 </dl><dl><dt>Throws</dt><dd>
 <a href='ejs-IOError.html'>IOError</a>: if the request cannot be issued to the remote server. 
 </dd>
@@ -259,8 +273,8 @@ the server</dd></dl>
 <p>Commence a GET request for the current uri.</p>
 <dl><dt>Description</dt><dd>See connect() for connection details.
 This call initiates a GET request. It does not wait for the request to complete. 
-Once initiated, one of the <a href='#read'>read</a> or response routines  may be used to receive the 
-response data.</dd></dl>
+The get() call will auto-finalize. If you need to send body content with a get request, use connect(). 
+Once initiated, one of the <a href='#read'>read</a> or response routines  may be used to receive the response data.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>uri: <a href='ejs-Uri.html'>Uri</a> </td><td>The uri to get. This overrides any previously defined uri for the Http object. If null, use a previously defined uri. [default: null]</td></tr><tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data objects to send with the request. Data is written raw and is not encoded or converted.  However, the routine intelligently handles arrays such that, each element of the array will be written.</td></tr></table></dd>
@@ -343,14 +357,14 @@ function (event: String, http: Http): Void.</dd></dl>
 <div class='apiSig'>const   public  post(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Initiate a POST request for the current uri.</p>
-<dl><dt>Description</dt><dd>This call initiates a POST request. It does not wait for the 
-request to complete. Posted data is NOT URL encoded. If you want to post data to a form, consider using 
-the <a href='#form'>form</a> method instead which automatically URL encodes the data. Post data may be supplied may alternatively 
-be supplied via <a href='#write'>write</a>. </dd></dl>
+<p>Initiate a POST request.</p>
+<dl><dt>Description</dt><dd>This call initiates a POST request. It does not wait for the request to complete. 
+Posted data is NOT URL encoded. If you want to post data to a form, consider using the <a href='#form'>form</a> method instead 
+which automatically URL encodes the data. After writing data, post() will call finalize(). Post data may be 
+supplied may alternatively via <a href='#write'>write</a>. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>uri: <a href='ejs-Uri.html'>Uri</a> </td><td>Optional request uri. If non-null, this overrides any previously defined uri for the Http object.  If null, use a previously defined uri.</td></tr><tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data objects to send with the post request. Data is written raw and is not encoded or converted.  However, this routine intelligently handles arrays such that, each element of the array will be written.</td></tr></table></dd>
+<tr class='param'><td class='param'>uri: <a href='ejs-Uri.html'>Uri</a> </td><td>Optional request uri. If non-null, this overrides any previously defined uri for the Http object.  If null, use a previously defined uri.</td></tr><tr class='param'><td class='param'>data: <a href='ejs-Array.html'>Array</a> </td><td>Data objects to send with the post request. Data is written raw and is not encoded or converted.</td></tr></table></dd>
 </dl><dl><dt>Throws</dt><dd>
 <a href='ejs-IOError.html'>IOError</a>: if the request cannot be issued to the remote server. 
 </dd>
@@ -526,16 +540,29 @@ See <a href='#limit'>limit</a> for limit field details.</dd></dl>
 <hr />
 <a name='trace'></a>
 <div class='api'>
-<div class='apiSig'>const   public  trace(level: <a href='ejs-Number.html'>Number</a>, options: <a href='ejs-Object.html'>Object</a> = expression , size: <a href='ejs-Number.html'>Number</a> = null): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  trace(options: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Configure tracing for the request.</p>
-<dl><dt>Description</dt><dd>The default is to trace the first line of requests and responses 
-at level 2 and headers at level 3.</dd></dl>
+<p>Configure request tracing for the request.</p>
+<dl><dt>Description</dt><dd>The default is to trace the first line of requests and responses at
+level 2 and to trace headers at level 3. The options argument contains optional properties: rx and tx 
+(for receive and transmit tracing). The rx and tx properties may contain an object hash which describes 
+the tracing for that direction and includes any of the following fields:.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>Level at which request tracing will occurr.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Set of trace options. Select from: "request" to trace requests, "response" to trace responses, "conn" to trace new connections", "first" to trace the first line of requsts or responses, "headers" to  trace headers, and "body" to trace body content. Or use "all" to trace everything. [default: expression ]</td></tr><tr class='param'><td class='param'>size: <a href='ejs-Number.html'>Number</a> </td><td>Maximum request body size to trace. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td> [default: expression ]</td></tr></table></dd>
-</dl></div>
+<tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Set of trace options with properties "rx" and "tx" for receive and transmit direction tracing. The include property is an array of file extensions to include in tracing. The include property is an array of file extensions to exclude from tracing. The all property specifies that everything for this direction should be traced. The conn property specifies that new connections should be traced. The first property specifies that the first line of the request should be traced. The headers property specifies that the headers (including first line) of the request should be traced. The body property specifies that the body content of the request should be traced. The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit  will not be traced.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>transmit.</td><td>Object hash with optional properties: include, exclude, first, headers, body, size.</td></tr>
+<td class='param'>receive.</td><td>Object hash with optional properties: include, exclude, conn, first, headers, body, size.</td></tr>
+</table></dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>trace({
+    transmit: { exclude: ["gif", "png"], "headers": 3, "body": 4, size: 1000000 }
+    receive:  { "conn": 1, "headers": 2 , "body": 4, size: 1024 }
+})
+</pre></dd></dl>
+</div>
 </div>
 <hr />
 <a name='upload'></a>
@@ -563,9 +590,10 @@ http.upload(URL, files, fields)
 </div>
 <div class='apiDetail'>
 <p>Wait for a request to complete.</p>
+<dl><dt>Description</dt><dd>This will auto-finalize if in sync mode if the request is not already finalized.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>timeout: <a href='ejs-Number.html'>Number</a> </td><td>Time in seconds to wait for the request to complete. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>timeout: <a href='ejs-Number.html'>Number</a> </td><td>Time in seconds to wait for the request to complete. A timeout of zero means no timeout, ie. wait forever. A timeout of < 0, means don't wait. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the request successfully completes.</dd></dl>
 </div>

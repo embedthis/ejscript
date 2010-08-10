@@ -43,7 +43,9 @@ input and output streams.</p>
    <tr><td nowrap align='center'>public static </td><td>emitter</td><td><a href='ejs-Emitter.html'>Emitter</a></td><td>Default event Emitter for the application. </td></tr>
 <a name='log'></a>
    <tr><td nowrap align='center'>public static </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Default application logger. This is set to stderr unless the program specifies an output log via the --log 
-command line switch.</td></tr>
+command line switch. At startup, the ejsrc log.location field is used to initialize the App.log property,
+and the native code logging stream (Logger.nativeStream) is set to this location. Once initialized, changes to
+App.log will not update the native logging stream which must be explicitly updated.</td></tr>
 <a name='name'></a>
    <tr><td nowrap align='center'>public static </td><td>name</td><td><a href='ejs-String.html'>String</a></td><td>Application name. Set to a single word, lower-case name for the application.</td></tr>
 <a name='SearchSeparator'></a>
