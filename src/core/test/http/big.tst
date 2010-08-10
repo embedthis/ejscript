@@ -7,7 +7,6 @@ const BIG = HTTP + "/big.ejs"
 var http: Http = new Http
 
 http.get(BIG)
-http.finalize()
 buf = new ByteArray
 while (http.read(buf) > 0) {
     assert(buf.available > 0)
@@ -17,7 +16,6 @@ http.close()
 
 /*  MOB - a bit slow
 http.get(BIG)
-http.finalize()
 ts = new TextStream(http)
 lines = ts.readLines()
 assert(lines.length == 801)

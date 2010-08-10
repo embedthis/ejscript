@@ -9,7 +9,7 @@ module ejs.web {
         Base class for web framework views. This class provides the core functionality for all Ejscript view web pages.
         Ejscript web pages are compiled to create a new View class which extends the View base class. In addition to
         the properties defined by this class, user view classes will typically inherit at runtime all public properites 
-        of the current controller object.
+        of any associated controller object defined in Request.controller.
         @spec ejs
         @stability prototype
      */
@@ -19,53 +19,50 @@ module ejs.web {
          */
         use default namespace module
 
-        /** Optional controller object */
-        var controller
-
-        /** Current request object */
-        var request: Request
-
         /* Current record being used inside a form */
         private var currentRecord: Object
-
-        /* Configuration from the applications ejsrc files */
-        private var config: Object
-
-        /** Logger channel */
-        var log: Logger
 
         /* Sequential DOM ID generator */
         private var nextId: Number = 0
 
-        /** 
-            @hide 
-         */
-//  MOB - private?
-        function getNextId(): String
-            "id_" + nextId++
+        /* Configuration from the applications ejsrc files */
+        public var config: Object
+
+        /** Optional controller object */
+        public var controller
+
+        /** Current request object */
+        public var request: Request
+
+        /** Logger channel */
+        public var log: Logger
 
         /**
             Constructor method to initialize a new View
             @param request Request object
          */
         function View(request: Object) {
+/*
+            view = this
+*/
+            controller = request.controller
+
+            //  MOB -- replace all this with blend
             this.request = request
             this.config = request.config
             this.log = request.log
-            view = this
-
-            controller = request.controller
-            if (controller) {
-                blend(this, controller)
-            }
-        /*
-            //  MOB -- slow. Native method for this?
-            for each (let n: String in Object.getOwnPropertyNames(this, {includeBases: true, excludeFunctions: true})) {
+            for each (let n: String in Object.getOwnPropertyNames(controller, {includeBases: true, excludeFunctions: true})){
+                if (n.startsWith("_")) continue
                 //  MOB - can we remove public::
                 this.public::[n] = controller[n]
             }
-         */
         }
+
+        /** 
+            Get the next usable DOM ID for view controls
+         */
+        function getNextId(): String
+            "id_" + nextId++
 
         /**
             Make a uri from parts. The parts may include http properties for: scheme, host, port, path, reference and query.
@@ -74,7 +71,7 @@ module ejs.web {
             @param parts Uri components fields 
             @return a Uri
          */
-        public function makeUri(parts: Object): Uri
+        function makeUri(parts: Object): Uri
             request.makeUri(parts)
 
         /**
@@ -82,12 +79,11 @@ module ejs.web {
             @param renderer Rendering function. This may be any external function. The function will have its scope
                 modified so that it executes as if it were a member method of the View class.
          */
-        public function render(renderer: Function): Void {
+        function render(renderer: Function): Void {
             if (renderer) {
                 // MOB renderer.setScope(this)
                 renderer.call(this, request)
             }
-            request.finalize()
         }
 
         /** 
@@ -99,7 +95,7 @@ module ejs.web {
                 overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", "
                 separator.
          */
-        public function setHeader(key: String, value: String, overwrite: Boolean = true): Void
+        function setHeader(key: String, value: String, overwrite: Boolean = true): Void
             request.setHeader(key, value, overwrite)
 
         /**
@@ -109,14 +105,14 @@ module ejs.web {
                 overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", "
                 separator.
          */
-        public function setHeaders(headers: Object, overwrite: Boolean = true): Void
+        function setHeaders(headers: Object, overwrite: Boolean = true): Void
             request.setHeader(headers, overwrite)
 
         /**
             Set the Http response status
             @param status Http status code
          */
-        public function setStatus(status: Number): Void
+        function setStatus(status: Number): Void
             request.setStatus(status)
 
         /** 
@@ -124,7 +120,7 @@ module ejs.web {
             @param args List of arguments to print.
             @hide
          */
-        public function show(...args): Void
+        function show(...args): Void
             request.show(...args)
 
         /**
@@ -132,7 +128,7 @@ module ejs.web {
             @param data Data to write
             @return The number of bytes written
          */
-        public function write(...data): Number
+        function write(...data): Number
             request.write(...data)
 
         /************************************************ View Helpers ****************************************************/

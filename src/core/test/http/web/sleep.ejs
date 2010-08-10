@@ -5,7 +5,7 @@
     request.dontFinalize()
     Timer(5000, function () {
         try {
-            request.finalize()
+            request.finalize(true)
         } catch {}
     }, request).start()
 %>

@@ -315,6 +315,12 @@ module ejs {
         native function finalize(force: Boolean = false): Void 
 
         /** 
+            Has the request output been finalized. 
+            @return True if the all the output has been written.
+         */
+        native function get finalized(): Boolean 
+
+        /** 
             Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent to 
             the server.
             @duplicate Stream.flush
@@ -322,7 +328,8 @@ module ejs {
         native function flush(dir: Number = Stream.WRITE): Void
 
         /** 
-            Control whether redirects should be automatically followed by this Http object. Default is true.
+            Control whether redirects should be automatically followed by this Http object. When true, a redirected
+            response will be followed and the redirected URL will be transparently re-fetched.  Default is false.
          */
         native function get followRedirects(): Boolean
         native function set followRedirects(flag: Boolean): Void
@@ -542,6 +549,22 @@ FUTURE & KEEP
          */
         native function get retries(): Number
         native function set retries(count: Number): Void
+
+        /** 
+            Get the ejs session cookie. This call extracts the ejs session cookie from the Http response headers.
+            Ejscript sessions are identified by a client cookie which when transmitted with subsequent requests will 
+            permit the server to locate the relevant session state store for the server-side application. 
+            Use: setCookie("Cookie", cookie) to transmit the cookie on subsquent requests.
+         */
+        function get sessionCookie()
+            header("Set-Cookie").match(/(-ejs-session-=.*);/)[1]
+
+        /**
+            Set a "Cookie" header in the request headers. This is used to send a cookie to the server.
+            @param cookie Cookie header value
+         */
+        function setCookie(cookie: String): Void
+            setHeader("Cookie", cookie)
 
         /** 
             Set the user credentials to use if the request requires authentication.

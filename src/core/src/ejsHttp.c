@@ -226,6 +226,18 @@ static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
+    function get finalized(): Boolean
+ */
+static EjsObj *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    if (hp->conn && hp->conn->tx) {
+        return (EjsObj*) ejsCreateBoolean(ejs, hp->conn->tx->finalized);
+    }
+    return ejs->falseValue;
+}
+
+
+/*  
     function flush(dir: Number = Stream.WRITE): Void
  */
 static EjsObj *http_flush(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
@@ -1278,7 +1290,9 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
             if (rc == MPR_ERR_CONNECTION) {
                 httpFormatError(conn, HTTP_CODE_COMMS_ERROR, "Connection error");
             } else if (rc == MPR_ERR_TIMEOUT) {
-                httpFormatError(conn, HTTP_CODE_REQUEST_TIMEOUT, "Request timed out");
+                if (timeout > 0) {
+                    httpFormatError(conn, HTTP_CODE_REQUEST_TIMEOUT, "Request timed out");
+                }
             } else {
                 httpFormatError(conn, HTTP_CODE_CLIENT_ERROR, "Client request error");
             }
@@ -1296,7 +1310,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
             break;
         }
         remaining = (int) (mark + timeout - mprGetTime(conn));
-        if (remaining <= 0) {
+        if (count > 0 && remaining <= 0) {
             break;
         }
         if (hp->requestContentCount > 0) {
@@ -1479,6 +1493,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_date, (EjsProc) http_date);
     ejsBindMethod(ejs, prototype, ES_Http_dontFinalize, (EjsProc) http_dontFinalize);
     ejsBindMethod(ejs, prototype, ES_Http_finalize, (EjsProc) http_finalize);
+    ejsBindMethod(ejs, prototype, ES_Http_finalized, (EjsProc) http_finalized);
     ejsBindMethod(ejs, prototype, ES_Http_flush, (EjsProc) http_flush);
     ejsBindAccess(ejs, prototype, ES_Http_followRedirects, (EjsProc) http_followRedirects, 
         (EjsProc) http_set_followRedirects);

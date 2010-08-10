@@ -57,7 +57,7 @@ http.close()
 
 
 //  Use the same cookie to test access to the session
-http.setHeader("Cookie", cookie)
+http.setCookie(cookie)
 http.get(HTTP + "/reuse-cookie")
 http.finalize()
 do { App.eventLoop(10, true) } while(!http.wait())

@@ -28,7 +28,6 @@ module ejs.web {
         private var _afterFilters: Array
         private var _beforeFilters: Array
         private var _wrapFilters: Array
-        private var lastFlash: Object
 
         /** Name of the action being run */
         var actionName:  String 
@@ -51,17 +50,10 @@ module ejs.web {
         /** Reference to the current Request object */
         var request: Request
 
-        /** Reference to the current View object */
+        /** Reference to the current View object 
+UNUSED - MOB -- better to set in Request
         var view: View
-
-        /** 
-            Flash messages to display on the next screen
-                "error"         Negative errors (Warnings and errors)
-                "inform"        Informational / postitive feedback (note)
-                "warn"          Negative feedback (Warnings and errors)
-                "*"             Other feedback (reminders, suggestions...)
-        */
-        public var flash: Object
+         */
 
         /***************************************** Convenience Getters  ***************************************/
 
@@ -86,12 +78,15 @@ module ejs.web {
             request ? request.uri : null
 
         /********************************************* Methods *******************************************/
+
+// MOB -- must controllers have a "Controller suffix"?
         /** 
             Static factory method to create and initialize a controller. The controller class is specified by 
             params["controller"] which should be set to the controller name without the "Controller" suffix. 
             This call expects the controller class to be loaded. Called by Mvc.load().
             @param request Web request object
-            @param cname Controller class name
+            @param cname Controller class name. This should be the name of the Controller class without the "Controller"
+                suffix.
          */
         static function create(request: Request, cname: String = null): Controller {
             cname ||= (request.params.controller.toPascal() + "Controller")
@@ -135,6 +130,38 @@ module ejs.web {
         }
 
         /** 
+            Controller web application. This function will run the controller action method and return a response object. 
+            The action method may be specified by the $aname parameter or it may be supplied via params.action.
+            @param request Request object
+            @param aname Optional action method name. If not supplied, params.action is consulted. If that is absent too, 
+                "index" is used as the action method name.
+            @return A response object hash {status, headers, body} or null if writing directly using the request object.
+         */
+        function app(request: Request, aname: String = null): Object {
+            use namespace action
+            actionName ||= aname || params.action || "index"
+            params.action = actionName
+            runFilters(_beforeFilters)
+            let response
+            if (!redirected && !rendered) {
+                if (!this[actionName]) {
+                    if (!viewExists(actionName)) {
+                        response = this[actionName = "missing"]()
+                    }
+                } else {
+                    response = this[actionName]()
+                }
+                if (!response && !rendered && !redirected && request.autoFinalize) {
+                    /* Run a default view */
+                    renderView()
+                }
+                runFilters(_afterFilters)
+            }
+            request.finalize()
+            return response
+        }
+
+        /** 
             Run a filter function before running the action
             @param fn Function callback to invoke
             @param options Filter options. 
@@ -147,13 +174,16 @@ module ejs.web {
         }
 
         /** 
-            Send an error notification to the user. This is just a convenience instead of setting flash["error"]
-            @param msg Message to display
+            @duplicate Request.error
          */
-        function error(msg: String): Void {
-            flash ||= {}
-            flash["error"] = msg
-        }
+        function error(msg: String): Void
+            request.error(msg)
+
+        /** 
+            @duplicate Request.flash
+         */
+        function flash(key: String, msg: String): Void
+            request.flash(key, msg)
 
         /** 
             @duplicate Request.header
@@ -162,13 +192,10 @@ module ejs.web {
             request.header(key)
 
         /** 
-            Send a positive notification to the user. This is just a convenience instead of setting flash["inform"]
-            @param msg Message to display
+            @duplicate Request.inform
          */
-        function inform(msg: String): Void {
-            flash ||= {}
-            flash["inform"] = msg
-        }
+        function inform(msg: String): Void
+            request.inform(msg)
 
         /** 
             @duplicate Request.makeUri
@@ -222,9 +249,10 @@ module ejs.web {
             @param args Arguments to write to the client
          */
         function render(...args): Void { 
-            rendered = true
-            request.write(args)
-            request.finalize()
+            if (!rendered) {
+                rendered = true
+                request.write(...args)
+            }
         }
 
         /**
@@ -233,8 +261,10 @@ module ejs.web {
             @param msgs Error messages to send with the response
          */
         function renderError(status: Number, ...msgs): Void {
-            rendered = true
-            request.writeError(status, ...msgs)
+            if (!rendered) {
+                rendered = true
+                request.writeError(status, ...msgs)
+            }
         }
 
         /** 
@@ -242,86 +272,50 @@ module ejs.web {
             @param filename Path to the filename to send to the client
          */
         function renderFile(filename: Path): Void { 
-            rendered = true
-            request.sendFile(filename)
-            request.finalize()
+            if (!rendered) {
+                rendered = true
+                request.sendFile(filename)
+            }
         }
 
         /** 
-            Render a partial response based on an ejs template. Does not set "rendered" to true.
+            Render a partial response using template file. Does not set "rendered" to true.
             @param path Path to the template to render
+            @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
          */
-        function renderPartial(path: Path): Void { 
+        function renderPartialTemplate(path: Path, layouts: Path = null): Void { 
             request.filename = path
-            let app = TemplateBuilder(request)
+            layouts ||= config.directories.layouts
+            let app = TemplateBuilder(request, { layouts: layouts } )
             log.debug(4, "renderPartial: \"" + path + "\"")
             Web.process(app, request)
         }
 
         /** 
             Render a view template
-            @param viewName Name of the view to render
+            @param viewName Name of the view to render. The view template filename will be constructed by joining
+                the views directory with the controller name and view name. E.g. views/Controller/list.ejs
          */
-        function renderView(viewName: String? = null): Void {
-            if (rendered) {
-                throw new Error("Render called twice")
-            }
+        function renderView(viewName: String = null): Void {
             viewName ||= actionName
-            request.filename = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
-            let app = TemplateBuilder(request)
-            log.debug(4, "renderView: \"" + controllerName + "/" + viewName + "\"")
-            Web.process(app, request)
-            rendered = true
-/*
-            let app = loadView(viewName)
-            let viewClass = controllerName + "_" + viewName + "View"
-            view = new global[viewClass](request)
-            view.controller = this
-            //  MOB -- slow. Native method for this?
-            for each (let n: String in Object.getOwnPropertyNames(this, {includeBases: true, excludeFunctions: true})) {
-                view.public::[n] = this[n]
-            }
-            log.debug(4, "render view: \"" + controllerName + "/" + viewName + "\"")
-            view.render(request)
-*/
+            renderTemplate(request.dir.join(config.directories.views, controllerName, viewName).
+                joinExt(config.extensions.ejs))
         }
 
         /** 
-            Controller web application. This will run the controller action and return a response object. 
-            @param request Request object
-            @return A response object hash {status, headers, body} or null if writing directly using the request object.
+            Render a view template from a path.
+            @param path Path to the view template to render
+            @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
          */
-        function app(request: Request): Object {
-            actionName = params.action || "index"
-            params.action = actionName
-            use namespace action
-            if (request.sessionID) {
-                flashBefore()
+        function renderTemplate(path: Path, layouts: Path = null): Void {
+            if (!rendered) {
+                rendered = true
+                log.debug(4, "renderTemplate: \"" + path + "\"")
+                request.filename = path
+                layouts ||= config.directories.layouts
+                let app = TemplateBuilder(request, { layouts: layouts } )
+                Web.process(app, request)
             }
-            runFilters(_beforeFilters)
-            let response
-            if (!redirected) {
-                if (!this[actionName]) {
-                    if (!viewExists(actionName)) {
-                        actionName = "missing"
-                        response = this[actionName]()
-                    }
-                } else {
-                    response = this[actionName]()
-                }
-                if (!response && !rendered && !redirected && request.autoFinalize) {
-                    /* Run a default view */
-                    renderView()
-                }
-                runFilters(_afterFilters)
-            }
-            if (flash) {
-                flashAfter()
-            }
-            if (!response) {
-                request.finalize()
-            }
-            return response
         }
 
         /** 
@@ -342,15 +336,12 @@ module ejs.web {
             request.status = status
 
         /** 
-            Send a warning message back to the client for display in the flash area. This is just a convenience instead of
-            setting flash["warn"]
-            @param msg Message to display
+            @duplicate Request.warn
          */
-        function warn(msg: String): Void {
-            flash ||= {}
-            flash["warn"] = msg
-        }
+        function warn(msg: String): Void
+            request.warn(msg)
 
+//  MOB -- these are not being used
         /** 
             Run a filter function wrapping the action
             @param fn Function callback to invoke
@@ -364,82 +355,14 @@ module ejs.web {
         }
 
         /** 
-            Low-level write data to the client. This will buffer the written data until either flush() or 
-            finalize() is called.  This will not set the $rendered property.
+            Low-level write data to the client. This will buffer the written data until either flush() or finalize() 
+            is called.  This will not set the $rendered property.
             @duplicate Request.write
          */
         function write(...data): Number
             request.write(...data)
 
         /**************************************** Private ******************************************/
-        /* 
-            Save the flash message for the next request. Delete old flash messages
-         */
-        private function flashAfter() {
-            if (lastFlash) {
-                for (item in flash) {
-                    for each (old in lastFlash) {
-                        if (hashcode(flash[item]) == hashcode(old)) {
-                            delete flash[item]
-                        }
-                    }
-                }
-            }
-//  MOB -- obj.length was so much easier!
-            if (Object.getOwnPropertyCount(flash) > 0) {
-                request.session["__flash__"] = flash
-            }
-        }
-
-        /* 
-            Prepare the flash message. This extracts any flash message from the session state store
-         */
-        private function flashBefore() {
-            lastFlash = null
-            flash = request.session["__flash__"]
-            if (flash) {
-                request.session["__flash__"] = undefined
-                lastFlash = flash.clone()
-            }
-        }
-
-/*****
-            Load the view. 
-            @param viewName Bare view name
-
-        private function loadView(viewName: String): Function {
-            request.filename = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
-            return TemplateBuilder(request)
-
-            let dirs = config.directories
-            let cvname = controllerName + "_" + viewName
-            let cached = Loader.cached(path, request.config, request.dir.join(dirs.cache))
-            let viewClass = cvname + "View"
-            //  TODO - OPT. Could keep a cache of cached.modified
-            if (global[viewClass] && cached.modified >= path.modified) {
-                log.debug(4, "Use loaded view: \"" + controllerName + "/" + viewName + "\"")
-                return
-            } else if (!path.exists) {
-                throw "Missing view: \"" + path+ "\""
-            }
-            if (cached && cached.exists && cached.modified >= path.modified) {
-                log.debug(4, "Load view \"" + controllerName + "/" + viewName + "\" from: " + cached);
-                load(cached)
-            } else {
-                if (!global.TemplateParser) {
-                    load("ejs.web.template.mod")
-                }
-                let layouts = request.dir.join(dirs.layouts)
-                log.debug(4, "Rebuild view \"" + controllerName + "/" + viewName + "\" and save to: " + cached);
-                if (!path.exists) {
-                    throw "Can't find view: \"" + path + "\""
-                }
-                let code = TemplateParser().buildView(cvname, path.readString(), { layouts: layouts })
-                eval(code, cached)
-            }
-        }
-*/
-
         /*
             Open database. Expects ejsrc configuration:
 
@@ -454,14 +377,13 @@ module ejs.web {
          */
         private function openDatabase(request: Request) {
             let dbconfig = config.database
-            let klass = dbconfig["class"]
+            let dbclass = dbconfig["class"]
             let profile = dbconfig[config.mode]
-            if (klass && dbconfig.adapter && profile.name) {
-                if (dbconfig.module && !global[klass]) {
+            if (dbclass && dbconfig.adapter && profile.name) {
+                if (dbconfig.module && !global[dbclass]) {
                     global.load(dbconfig.module + ".mod")
                 }
-                //  MOB use namespace "ejs.db"
-                new global[klass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
+                new global[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
             }
         }
 
@@ -500,7 +422,7 @@ module ejs.web {
             if (global[viewClass]) {
                 return true
             }
-            let path = request.dir.join("views", controllerName, name).joinExt(config.extensions.ejs)
+            let path = request.dir.join(config.directories.views, controllerName, name).joinExt(config.extensions.ejs)
             if (path.exists) {
                 return true
             }

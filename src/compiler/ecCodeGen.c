@@ -148,13 +148,16 @@ int ecCodeGen(EcCompiler *cp, int argc, EcNode **nodes)
     if (ecEnterState(cp) < 0) {
         return EJS_ERR;
     }
-    for (i = 0; i < argc; i++) {
+    for (i = 0; i < argc && !cp->error; i++) {
         np = nodes[i];
         cp->fileState = cp->state;
         cp->fileState->strict = cp->strict;
         if (np) {
             processNode(cp, np);
         }
+    }
+    if (cp->error) {
+        return EJS_ERR;
     }
 
     /*

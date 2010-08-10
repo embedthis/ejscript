@@ -832,6 +832,7 @@ static EjsObj *req_dontFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **ar
     return 0;
 }
 
+
 /*  
     function finalize(force: Boolean = false): Void
  */
@@ -846,6 +847,18 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         }
     }
     return 0;
+}
+
+
+/*  
+    function get finalized(): Boolean
+ */
+static EjsObj *req_finalized(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+{
+    if (req->conn && req->conn->tx) {
+        return (EjsObj*) ejsCreateBoolean(ejs, req->conn->tx->finalized);
+    }
+    return ejs->falseValue;
 }
 
 
@@ -1250,6 +1263,7 @@ void ejsConfigureRequestType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_destroySession, (EjsProc) req_destroySession);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_dontFinalize, (EjsProc) req_dontFinalize);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalize, (EjsProc) req_finalize);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalized, (EjsProc) req_finalized);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_flush, (EjsProc) req_flush);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_header, (EjsProc) req_header);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_observe, (EjsProc) req_observe);

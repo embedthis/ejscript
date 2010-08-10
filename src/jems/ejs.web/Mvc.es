@@ -20,11 +20,8 @@ module ejs.web {
             directories: {
                 bin: Path("bin"),
                 db: Path("db"),
-                cache: Path("cache"),
                 controllers: Path("controllers"),
-                layouts: Path("views/layouts"),
                 models: Path("models"),
-                views: Path("views"),
                 src: Path("src"),
                 web: Path("web"),
             },

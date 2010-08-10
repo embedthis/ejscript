@@ -40,14 +40,14 @@ http.close()
 
 //  Second page - test flash message from first page and clear flash
 let http = new Http
-http.setHeader("Cookie", cookie)
+http.setCookie(cookie)
 http.get(HTTP + "/second")
 do { App.eventLoop(10, true) } while(!http.wait())
 http.close()
 
 //  Third page - verify flash is empty
 let http = new Http
-http.setHeader("Cookie", cookie)
+http.setCookie(cookie)
 http.get(HTTP + "/third")
 do { App.eventLoop(10, true) } while(!http.wait())
 http.close()

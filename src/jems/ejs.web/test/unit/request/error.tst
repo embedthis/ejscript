@@ -34,6 +34,7 @@ assert(http.response.contains("<head>"))
 assert(http.response.contains("<body>"))
 assert(!http.response.contains("Test Error Message"))
 assert(!http.response.contains("showClient"))
+http.close()
 
 //  With full client message
 let http = fetch(HTTP + "/show-client", Http.ServerError)
@@ -43,4 +44,5 @@ assert(http.response.contains("<head>"))
 assert(http.response.contains("<body>"))
 assert(http.response.contains("Test Error Message"))
 assert(http.response.contains("showClient"))
+http.close()
 server.close()

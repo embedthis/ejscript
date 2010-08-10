@@ -20,6 +20,11 @@ module ejs.web {
                 enable: true,
                 reload: true,
             },
+            directories: {
+                cache: Path("cache"),
+                layouts: Path("layouts"),
+                views: Path("views"),
+            },
             extensions: {
                 es:  "es",
                 ejs: "ejs",
@@ -39,10 +44,11 @@ module ejs.web {
             web: {
                 expires: {
                     /*
-                        "html": 86400,
-                        "ejs": 86400,
-                        "es": 86400,
-                        "": 86400,
+                        MOB -- can we have some of this be the default?
+                        html:   86400,
+                        ejs:    86400,
+                        es:     86400,
+                        "":     86400,
                      */
                 },
                 endpoint: "127.0.0.1:4000",
@@ -179,7 +185,7 @@ module ejs.web {
         /** 
             Process a web request
             @param request Request object
-            @param app JSGI application function 
+            @param app Web application function 
          */
         static function process(app: Function, request: Request): Void {
             request.config = config
@@ -187,6 +193,7 @@ module ejs.web {
                 if (request.route && request.route.middleware) {
                     app = Middleware(app, request.route.middleware)
                 }
+                request.setupFlash()
                 let response
                 if (app.bound != global) {
                     response = app(request)
@@ -208,8 +215,10 @@ module ejs.web {
                         request.sendFile(file)
                     }
                 }
+                request.finalizeFlash()
+                request.finalize()
             } catch (e) {
-print("CATCH: " + e)
+                App.log.debug(3, e)
                 request.writeError(Http.ServerError, e)
             }
         }

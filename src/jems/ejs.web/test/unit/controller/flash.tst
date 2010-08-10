@@ -32,7 +32,6 @@ public class TestController extends Controller {
 server = new HttpServer
 server.observe("readable", function (event, request: Request) {
     let [,params.controller, params.action] = pathInfo.toString().split("/")
-dump(params)
     let app = Controller.create(request).app
     Web.process(app, request)
 })
