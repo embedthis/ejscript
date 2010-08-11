@@ -129,7 +129,7 @@ module ejs.web {
 //  MOB -- what about async? what if can't accept all the data?
                     request.write(item)
                 }
-                request.finalize()
+                request.autoFinalize()
 
             } else if (body is Stream) {
                 if (body.async) {
@@ -142,25 +142,25 @@ module ejs.web {
 //  MOB -- what about async? what if can't accept all the data?
                             request.write(body)
                         } else {
-                            request.finalize()
+                            request.autoFinalize()
                         }
                     })
                     //  MOB -- or this? but what about error events
                     request.observe("complete", function(event, body) {
-                        request.finalize()
+                        request.autoFinalize()
                     })
                 } else {
                     ba = new ByteArray
                     while (body.read(ba)) {
                         request.write(ba)
                     }
-                    request.finalize()
+                    request.autoFinalize()
                 }
             } else if (body && body.forEach) {
                 body.forEach(function(block) {
                     request.write(block)
                 })
-                request.finalize()
+                request.autoFinalize()
 
             } else if (body is Function) {
                 /* Functions don't auto finalize. The user is responsible for calling finalize() */
@@ -168,14 +168,14 @@ module ejs.web {
 
             } else if (body) {
                 request.write(body)
-                request.finalize()
+                request.autoFinalize()
 
             } else {
                 let file = request.responseHeaders["X-Sendfile"]
                 if (file && !request.isSecure) {
                     request.sendFile(file)
                 } else {
-                    request.finalize()
+                    request.autoFinalize()
                 }
             }
         }
@@ -216,7 +216,7 @@ module ejs.web {
                     }
                 }
                 request.finalizeFlash()
-                request.finalize()
+                request.autoFinalize()
             } catch (e) {
                 App.log.debug(3, e)
                 request.writeError(Http.ServerError, e)

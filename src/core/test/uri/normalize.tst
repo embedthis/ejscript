@@ -1,5 +1,5 @@
 /*
-    Uri normalize tests
+    Uri.normalize
  */
 
 function check(s, expected) {

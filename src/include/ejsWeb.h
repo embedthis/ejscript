@@ -100,7 +100,7 @@ typedef struct EjsRequest {
     struct EjsSession *session;         /**< Current session */
 
     int             accepted;           /**< Request has been accepted from the HttpServer */
-    int             dontFinalize;       /**< Don't auto-finalize. Must call finalize(force) */
+    int             dontAutoFinalize;   /**< Suppress auto-finalization */
     int             probedSession;      /**< Determined if a session exists */
     int             closed;             /**< Request closed and "close" event has been issued */
     int             error;              /**< Request errored and "error" event has been issued */

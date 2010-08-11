@@ -1197,6 +1197,7 @@ typedef struct EjsFunction {
 #endif
             uint    numArgs: 8;             /**< Count of formal parameters */
             uint    numDefault: 8;          /**< Count of formal parameters with default initializers */
+            uint    allowMissingArgs: 1;    /**< Allow unsufficient args for native functions */
             uint    castNulls: 1;           /**< Cast return values of null */
             uint    fullScope: 1;           /**< Closures must capture full scope */
             uint    hasReturn: 1;           /**< Function has a return stmt */
@@ -1938,10 +1939,13 @@ extern EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, 
         @ingroup EjsUri
      */
     extern bool ejsIsUri(Ejs *ejs, EjsObj *vp);
+    extern cchar *ejsGetUri(Ejs *ejs, EjsObj *vp);
 #else
     #define ejsIsUri(ejs, vp) (vp && ((EjsObj*) vp)->type == ejs->uriType)
+    #define ejsGetUri(ejs, vp) _ejsGetUri(ejs, (EjsObj*) (vp))
+    extern cchar *_ejsGetUri(Ejs *ejs, EjsObj *vp);
 #endif
-
+extern EjsUri *ejsToUri(Ejs *ejs, EjsObj *obj);
 
 /** 
     FileSystem class
@@ -2017,7 +2021,6 @@ typedef struct EjsHttp {
     char            *method;                    /**< HTTP method */
     char            *keyFile;                   /**< SSL key file */
     char            *certFile;                  /**< SSL certificate file */
-    int             dontFinalize;               /**< Suppress finalization */
     int             closed;                     /**< Http is closed and "close" event has been issued */
     int             error;                      /**< Http errored and "error" event has been issued */
     int             readCount;                  /**< Count of body bytes read */

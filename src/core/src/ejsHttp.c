@@ -200,6 +200,7 @@ static EjsObj *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*  
     function dontFinalize(): Void
  */
@@ -208,19 +209,26 @@ static EjsObj *http_dontFinalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     hp->dontFinalize = 1;
     return 0;
 }
+#endif
 
 
 /*  
-    function finalize(force: Boolean = false): Void
+    function finalize(): Void
  */
 static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+#if UNUSED
     int     force;
 
     force = (argc == 1 && argv[0] == ejs->trueValue);
     if (!hp->dontFinalize || force) {
         httpFinalize(hp->conn);
     }
+#else
+    if (hp->conn) {
+        httpFinalize(hp->conn);
+    }
+#endif
     return 0;
 }
 
@@ -1491,7 +1499,9 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_contentLength, (EjsProc) http_contentLength);
     ejsBindMethod(ejs, prototype, ES_Http_contentType, (EjsProc) http_contentType);
     ejsBindMethod(ejs, prototype, ES_Http_date, (EjsProc) http_date);
+#if UNUSED
     ejsBindMethod(ejs, prototype, ES_Http_dontFinalize, (EjsProc) http_dontFinalize);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_finalize, (EjsProc) http_finalize);
     ejsBindMethod(ejs, prototype, ES_Http_finalized, (EjsProc) http_finalized);
     ejsBindMethod(ejs, prototype, ES_Http_flush, (EjsProc) http_flush);

@@ -101,7 +101,7 @@ module ejs {
             namespace values.
             @param obj Object to inspect
             @param options Property selection options
-            MOB -- inconsistent with JSON.baseClasses
+MOB -- inconsistent with JSON.baseClasses
             @option includeBases Boolean determining if base class properties will included. Defaults to false.
             @option excludeFunctions Boolean determining if function properties will included. Defaults to false.
             @return Array of enumerable property names

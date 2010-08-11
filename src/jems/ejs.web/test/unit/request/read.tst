@@ -22,6 +22,7 @@ server.observe("readable", function (event, request: Request) {
         break
 
     case "/post-sync":
+        dontAutoFinalize()
         observe("readable", function (event) {
             let ba = new ByteArray
             if (read(ba)) {

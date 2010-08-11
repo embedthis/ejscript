@@ -264,11 +264,12 @@ module ejs {
          */
         native function get date(): Date
 
-        /**
+        /*
+UNUSED
             Stop auto-finalizing the request. Calling dontFinalize will keep the request open until a forced finalize is
             made via "finalize(true). 
-         */
         native function dontFinalize(): Void
+         */
 
         /** 
             Encoding scheme for serializing strings. The default encoding is UTF-8. Not yet implemented.
@@ -309,10 +310,8 @@ module ejs {
 
         /** 
             Signals the end of any write data and flushes any buffered write data to the client. 
-            If dontFinalize() has been called, this call will have no effect unless $force is true.
-            @param force Do finalization even if dontFinalize() has been called.
          */
-        native function finalize(force: Boolean = false): Void 
+        native function finalize(): Void 
 
         /** 
             Has the request output been finalized. 
@@ -364,7 +363,7 @@ FUTURE & KEEP
         /** 
             Commence a GET request for the current uri. See connect() for connection details.
             This call initiates a GET request. It does not wait for the request to complete. 
-            The get() call will auto-finalize. If you need to send body content with a get request, use connect(). 
+            The get() method will call finalize. If you need to send body content with a get request, use connect(). 
             Once initiated, one of the $read or response routines  may be used to receive the response data.
             @param uri The uri to get. This overrides any previously defined uri for the Http object. If null, use
                 a previously defined uri.
@@ -688,7 +687,8 @@ FUTURE & KEEP
         native function set uri(newUri: Uri): Void
 
         /** 
-            Wait for a request to complete. This will auto-finalize if in sync mode if the request is not already finalized.
+            Wait for a request to complete. This will call finalize() if in sync mode if the request is not 
+            already finalized.
             @param timeout Time in seconds to wait for the request to complete. A timeout of zero means no timeout, ie.
             wait forever. A timeout of < 0, means don't wait.
             @return True if the request successfully completes.

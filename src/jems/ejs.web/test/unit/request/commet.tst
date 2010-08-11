@@ -13,6 +13,7 @@ load("../utils.es")
 server.observe("readable", function (event, request: Request) {
     switch (pathInfo) {
     case "/commet":
+        dontAutoFinalize()
         observe("readable", function (event) {
             if (read(commetData, -1) == null) {
                 write("Hello World")

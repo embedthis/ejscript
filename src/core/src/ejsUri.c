@@ -10,24 +10,54 @@
 
 /************************************ Forwards ********************************/
 
-static char *getUriString(Ejs *ejs, EjsObj *vp);
+static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQuery);
 static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact);
-static void setUriFromHash(Ejs *ejs, EjsUri *up, EjsObj *arg);
+static HttpUri *createHttpUriFromHash(Ejs *ejs, MprCtx ctx, EjsObj *arg, int complete);
+static HttpUri *toHttpUri(Ejs *ejs, MprCtx ctx, EjsObj *arg, int dup);
 static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv);
-static char *uriToString(Ejs *ejs, EjsUri *up);
 
 /************************************ Helpers *********************************/
+
+#if UNUSED && KEEP
+//  MOB -- keep this for when the cast helper is reversed
+/*
+    Convert an arg to a URI. Can handle strings, paths, URIs and object hashes. Will cast all else to strings and then
+    parse.
+ */
+static EjsUri *castToUri(Ejs *ejs, EjsObj *arg)
+{
+    EjsUri  *up;
+
+    up = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    if (ejsIsString(arg)) {
+        up->uri = httpCreateUri(up, ejsGetString(ejs, arg), 0);
+
+    } else if (ejsIsUri(ejs, arg)) {
+        up->uri = httpCloneUri(up, ((EjsUri*) arg)->uri, 0);
+
+    } else if (ejsIsPath(ejs, arg)) {
+        ustr = ((EjsPath*) arg)->path;
+        up->uri = httpCreateUri(up, ustr, 0);
+
+    } else if (ejsGetPropertyCount(ejs, arg) > 0) {
+        up->uri = createHttpUriFromHash(ejs, up, arg, 0);
+
+    } else {
+        arg = (EjsObj) ejsToString(ejs, arg);
+        up->uri = httpCreateUri(up, ejsGetString(ejs, arg), 0);
+    }
+    return up;
+}
+#endif
+
 
 static EjsUri *cloneUri(Ejs *ejs, EjsUri *src, bool deep)
 {
     EjsUri     *dest;
-    char        *uri;
 
-    /*  Deep copy will complete the uri */
-    uri = httpUriToString(src, src->uri, deep);
     dest = (EjsUri*) ejsCloneObject(ejs, (EjsObj*) src, deep);
-    dest->uri = httpCreateUri(ejs, uri, 0);
-    mprFree(uri);
+    /*  Deep copy will complete the uri */
+    dest->uri = httpCloneUri(dest, src->uri, deep);
     return dest;
 }
 
@@ -159,31 +189,38 @@ static EjsObj *invokeUriOperator(Ejs *ejs, EjsUri *lhs, int opcode,  EjsUri *rhs
  */
 static EjsObj *uri_constructor(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    EjsObj      *arg;
-    char        *ustr;
-
-    mprAssert(argc == 1);
-    arg = argv[0];
-    if (ejsIsString(arg)) {
-        if ((ustr = getUriString(ejs, arg)) == 0) {
-            return 0;
-        }
-        up->uri = httpCreateUri(up, ustr, 0);
-        mprFree(ustr);
-
-    } else if (ejsIsUri(ejs, arg)) {
-        ustr = httpUriToString(up, ((EjsUri*) arg)->uri, 0);
-        up->uri = httpCreateUri(up, ustr, 0);
-        mprFree(ustr);
-
-    } else if (ejsIsPath(ejs, arg)) {
-        ustr = ((EjsPath*) arg)->path;
-        up->uri = httpCreateUri(up, ustr, 0);
-
-    } else {
-        setUriFromHash(ejs, up, arg);
+    if (argc >= 0) {
+        up->uri = toHttpUri(ejs, up, argv[0], 1);
     }
     return (EjsObj*) up;
+}
+
+
+/*  
+    Make an absolute reference for "this" URI.
+
+    function absolute(base): Uri
+ */
+static EjsObj *uri_absolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    EjsUri      *result;
+    HttpUri     *uri, *baseUri;
+
+    if (argc >= 1) {
+        baseUri = toHttpUri(ejs, ejs, argv[0], 1);
+        result = cloneUri(ejs, up, 0);
+        uri = result->uri;
+        if (uri->path && uri->path[0] != '/') {
+            httpJoinUriPath(uri, baseUri, uri);
+        }
+        httpCompleteUri(result->uri, baseUri);
+        mprFree(baseUri);
+    } else {
+        result = cloneUri(ejs, up, 0);
+        httpCompleteUri(result->uri, NULL);
+    }
+    httpNormalizeUri(result->uri);
+    return (EjsObj*) result;
 }
 
 
@@ -214,12 +251,14 @@ static EjsObj *uri_basename(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
 
 /*  
-    Complete missing parts of a Uri
-    function get complete()
+    function complete(missing = null): Uri
  */
 static EjsObj *uri_complete(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) cloneUri(ejs, up, 1);
+    EjsUri  *result;
+
+    result = cloneUri(ejs, up, 0);
+    return completeUri(ejs, result, (argc >= 1) ? argv[0] : 0, 1);
 }
 
 
@@ -466,110 +505,32 @@ static EjsObj *uri_isDir(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     Join uri segments
     function join(...others): Uri
  */
-#if OLD && UNUSED
 static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    EjsUri      *np;
+    EjsUri      *result;
+    EjsObj      *arg;
     EjsArray    *args;
-    EjsObj      *vp;
-    char        *other, *cp, *result, *prior;
+    HttpUri     *uri, *other, *oldUri;
     int         i;
 
     args = (EjsArray*) argv[0];
-    np = cloneUri(ejs, up, 0);
-    result = mprStrdup(np->uri, np->uri->path);
-
+    result = cloneUri(ejs, up, 0);
+    uri = result->uri;
     for (i = 0; i < args->length; i++) {
-        vp = ejsGetProperty(ejs, (EjsObj*) args, i);
-        if ((other = getUriString(ejs, vp)) == NULL) {
+        arg = ejsGetProperty(ejs, (EjsObj*) args, i);
+        if ((other = toHttpUri(ejs, result, arg, 0)) == NULL) {
             return 0;
         }
-        prior = result;
-        if (strncmp(other, "http://", 7) == 0 || strncmp(other, "https://", 8) == 0) {
-            mprFree(np->uri);
-            np->uri = httpCreateUri(np, other, 0);
-            result = mprStrdup(np->uri, np->uri->path);
-            prior = 0;
-        } else if (other[0] == '/') {
-            result = mprStrdup(np->uri, other);
-            prior = 0;
-        } else if (*prior == '\0') {
-            result = mprStrdup(np->uri, other);
-        } else {
-            if (prior[strlen(prior) - 1] == '/') {
-                result = mprStrcat(np->uri, -1, prior, other, NULL);
-            } else {
-                if ((cp = strrchr(prior, '/')) != NULL) {
-                    cp[1] = '\0';
-                }
-                result = mprStrcat(np->uri, -1, prior, other, NULL);
-            }
-        }
-        if (prior != np->uri->path) {
-            mprFree(prior);
-        }
+        oldUri = uri;
+        uri = httpJoinUri(result, oldUri, 1, &other, 0);
         mprFree(other);
+        if (!ejsIsUri(ejs, arg)) {
+            mprFree(oldUri);
+        }
     }
-    np->uri->path = result;
-    np->uri->ext = (char*) mprGetPathExtension(np->uri, np->uri->path);
-    //  MOB -- what about reference?
-    return (EjsObj*) np;
+    result->uri = uri;
+    return (EjsObj*) result;
 }
-
-#else
-
-static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
-{
-    EjsUri      *np;
-    EjsArray    *args;
-    EjsObj      *vp;
-    char        *other, *result, *prior, *cp;
-    int         i;
-
-    args = (EjsArray*) argv[0];
-    np = cloneUri(ejs, up, 0);
-    result = mprStrdup(np->uri, np->uri->path);
-
-    for (i = 0; i < args->length; i++) {
-        vp = ejsGetProperty(ejs, (EjsObj*) args, i);
-        if ((other = getUriString(ejs, vp)) == NULL) {
-            return 0;
-        }
-        prior = result;
-        if (strncmp(other, "http://", 7) == 0 || strncmp(other, "https://", 8) == 0) {
-            mprFree(np->uri);
-            np->uri = httpCreateUri(np, other, 0);
-            result = mprStrdup(np->uri, np->uri->path);
-            prior = 0;
-        } else if (other[0] == '/') {
-            result = mprStrdup(np->uri, other);
-            prior = 0;
-        } else if (*prior == '\0') {
-            result = mprStrdup(np->uri, other);
-        } else {
-            if (prior[strlen(prior) - 1] == '/') {
-                prior[strlen(prior) - 1] = '\0';
-            }
-            if (other[0] == '/') {
-                result = mprStrcat(np->uri, -1, prior, other, NULL);
-            } else {
-                result = mprStrcat(np->uri, -1, prior, "/", other, NULL);
-            }
-        }
-        if (prior != np->uri->path) {
-            mprFree(prior);
-        }
-        mprFree(other);
-    }
-    np->uri->path = result;
-    np->uri->ext = (char*) mprGetPathExtension(np->uri, np->uri->path);
-    if ((cp = strchr(result, '#')) != NULL) {
-        *cp++ = '\0';
-        np->uri->reference = cp;
-    }
-    return (EjsObj*) np;
-}
-#endif
 
 
 /*  
@@ -649,6 +610,7 @@ static EjsObj *uri_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     
     uri = up->uri;
     if (uri->port == 0) {
+        //  MOB -- push this down into http
         if (uri->scheme == 0 || strcmp(uri->scheme, "http") == 0) {
             return (EjsObj*) ejsCreateNumber(ejs, 80);
         } else if (uri->scheme && strcmp(uri->scheme, "https") == 0) {
@@ -690,6 +652,55 @@ static EjsObj *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **arg
     nuri->ext = ext;
     nuri->path = mprStrcat(nuri, -1, mprTrimPathExtension(nuri, nuri->path), ".", nuri->ext, NULL);
     return (EjsObj*) np;
+}
+
+
+/*  
+    function resolve(...targets): Uri
+ */
+static EjsObj *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    EjsArray    *args;
+    EjsObj      *arg;
+    EjsUri      *result;
+    HttpUri     *uri, *target, *old;
+    int         i;
+
+    args = (EjsArray*) argv[0];
+    result = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    uri = up->uri;
+    for (i = 0; i < args->length; i++) {
+        arg = ejsGetProperty(ejs, (EjsObj*) args, i);
+        target = toHttpUri(ejs, ejs, arg, 0);
+        old = uri;
+        uri = httpResolveUri(result, uri, 1, &target, 0);
+        if (old != up->uri) {
+            mprFree(old);
+        }
+        if (!ejsIsUri(ejs, target)) {
+            mprFree(target);
+        }
+    }
+    if (up->uri == uri) {
+        uri = httpCloneUri(result, uri, 0);
+    }
+    result->uri = uri;
+    return (EjsObj*) result;
+}
+
+
+/*  
+    function relative(base): Uri
+ */
+static EjsObj *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    EjsUri      *result;
+    HttpUri     *baseUri;
+
+    baseUri = toHttpUri(ejs, up, argv[0], 0);
+    result = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    result->uri = httpGetRelativeUri(result, baseUri, up->uri, 1);
+    return (EjsObj*) result;
 }
 
 
@@ -820,6 +831,7 @@ static EjsObj *uri_set_uri(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
 /*********************************** Helpers **********************************/
 
+#if UNUSED && KEEP
 static char *uriToString(Ejs *ejs, EjsUri *up)
 {
     HttpUri     *uri;
@@ -827,17 +839,74 @@ static char *uriToString(Ejs *ejs, EjsUri *up)
     uri = up->uri;
     return httpFormatUri(ejs, uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, 0);
 }
+#endif
 
 
+static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQuery)
+{
+    EjsUri      *missingUri;
+
+    if (missing == 0 || ejsIsNull(missing) || ejsIsUndefined(missing)) {
+        missingUri = 0;
+    } else if (ejsGetPropertyCount(ejs, missing) > 0) {
+        missingUri = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+        missingUri->uri = createHttpUriFromHash(ejs, missingUri, missing, 1);
+    } else {
+        missingUri = ejsToUri(ejs, missing);
+    }
+    if (missingUri == 0) {
+        if (!includeQuery) {
+            up->uri->query = NULL;
+        }
+        httpCompleteUri(up->uri, NULL);
+    } else {
+        httpCompleteUri(up->uri, missingUri->uri);
+    }
+    return (EjsObj*) up;
+}
+
+
+#if UNUSED
 static char *getUriString(Ejs *ejs, EjsObj *vp)
 {
     if (ejsIsString(vp)) {
+        //  MOB query dup
         return mprStrdup(ejs, ejsGetString(ejs, vp));
+
     } else if (ejsIsUri(ejs, vp)) {
         return uriToString(ejs, ((EjsUri*) vp));
     }
-    ejsThrowIOError(ejs, "Bad path");
+    ejsThrowIOError(ejs, "Bad ");
     return NULL;
+}
+#endif
+
+
+static HttpUri *toHttpUri(Ejs *ejs, MprCtx ctx, EjsObj *arg, int dup)
+{
+    HttpUri     *uri;
+
+    if (ejsIsString(arg)) {
+        uri = httpCreateUri(ctx, ejsGetString(ejs, arg), 0);
+
+    } else if (ejsIsUri(ejs, arg)) {
+        if (dup) {
+            uri = httpCloneUri(ctx, ((EjsUri*) arg)->uri, 0);
+        } else {
+            uri = ((EjsUri*) arg)->uri;
+        }
+
+    } else if (ejsIsPath(ejs, arg)) {
+        uri = httpCreateUri(ctx, ((EjsPath*) arg)->path, 0);
+
+    } else if (ejsGetPropertyCount(ejs, arg) > 0) {
+        uri = createHttpUriFromHash(ejs, ctx, arg, 0);
+
+    } else {
+        arg = (EjsObj*) ejsToString(ejs, arg);
+        uri = httpCreateUri(ctx, ejsGetString(ejs, arg), 0);
+    }
+    return uri;
 }
 
 
@@ -885,7 +954,7 @@ static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact)
 }
 
 
-static void setUriFromHash(Ejs *ejs, EjsUri *up, EjsObj *arg)
+static HttpUri *createHttpUriFromHash(Ejs *ejs, MprCtx ctx, EjsObj *arg, int complete)
 {
     EjsObj      *schemeObj, *hostObj, *portObj, *pathObj, *referenceObj, *queryObj;
     EjsName     qname;
@@ -906,7 +975,6 @@ static void setUriFromHash(Ejs *ejs, EjsUri *up, EjsObj *arg)
             port = (int) mprAtoi(ejsGetString(ejs, portObj), 10);
         }
     }
-
     pathObj = ejsGetPropertyByName(ejs, arg, EN(&qname, "path"));
     path = (pathObj && ejsIsString(pathObj)) ? ejsGetString(ejs, pathObj) : 0;
 
@@ -916,8 +984,7 @@ static void setUriFromHash(Ejs *ejs, EjsUri *up, EjsObj *arg)
     queryObj = ejsGetPropertyByName(ejs, arg, EN(&qname, "query"));
     query = (queryObj && ejsIsString(queryObj)) ? ejsGetString(ejs, queryObj) : 0;
 
-    mprFree(up->uri);
-    up->uri = httpCreateUriFromParts(up, scheme, host, port, path, reference, query);
+    return httpCreateUriFromParts(ctx, scheme, host, port, path, reference, query, complete);
 }
 
 
@@ -987,7 +1054,7 @@ EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *
     if (up == 0) {
         return 0;
     }
-    up->uri = httpCreateUriFromParts(up, scheme, host, port, path, reference, query);
+    up->uri = httpCreateUriFromParts(up, scheme, host, port, path, reference, query, 1);
     return up;
 }
 
@@ -1019,6 +1086,7 @@ void ejsConfigureUriType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Uri_encodeComponent, (EjsProc) uri_encodeComponent);
 
     ejsBindConstructor(ejs, type, (EjsProc) uri_constructor);
+    ejsBindMethod(ejs, prototype, ES_Uri_absolute, (EjsProc) uri_absolute);
     ejsBindMethod(ejs, prototype, ES_Uri_basename, (EjsProc) uri_basename);
     ejsBindMethod(ejs, prototype, ES_Uri_complete, (EjsProc) uri_complete);
     ejsBindMethod(ejs, prototype, ES_Uri_components, (EjsProc) uri_components);
@@ -1043,6 +1111,8 @@ void ejsConfigureUriType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_Uri_query, (EjsProc) uri_query, (EjsProc) uri_set_query);
     ejsBindAccess(ejs, prototype, ES_Uri_reference, (EjsProc) uri_reference, (EjsProc) uri_set_reference);
     ejsBindMethod(ejs, prototype, ES_Uri_replaceExt, (EjsProc) uri_replaceExtension);
+    ejsBindMethod(ejs, prototype, ES_Uri_relative, (EjsProc) uri_relative);
+    ejsBindMethod(ejs, prototype, ES_Uri_resolve, (EjsProc) uri_resolve);
     ejsBindMethod(ejs, prototype, ES_Uri_same, (EjsProc) uri_same);
     ejsBindMethod(ejs, prototype, ES_Uri_toString, (EjsProc) uri_toString);
     ejsBindMethod(ejs, prototype, ES_Uri_trimExt, (EjsProc) uri_trimExt);

@@ -16,6 +16,7 @@ module ejs.web {
             Master Route Table. Routes are processed from first to last. Inner routes are tested before their outer parent.
          */
 		var routes: Array = []
+		var routeLookup: Object = {}
 		
         /**
             Function to test if the Request.filename is a directory.
@@ -26,6 +27,7 @@ module ejs.web {
 
         /**
             Simple top level route table for "es" and "ejs" scripts. Matches simply by script extension.
+            The default route is used for makeUri.
          */
         public static var TopRoutes = [
           { name: "es",      builder: ScriptBuilder,    match: /\.es$/ },
@@ -35,6 +37,7 @@ module ejs.web {
           { name: "default", builder: StaticBuilder },
         ]
 
+//  MOB -- rename these MvcRoutes
         /** 
             Restful routes. Supports CRUD actions: index, show, create, update, destroy. The restful routes defined are:
             <pre>
@@ -47,6 +50,7 @@ module ejs.web {
                 PUT		/controller/1           update      Update 
                 DELETE	/controller/1           destroy     
             </pre>
+            The default route is used for makeUri.
         */
         public static var RestfulRoutes = [
   { name: "es",      builder: ScriptBuilder,                match: /^\/web\/.*\.es$/   },
@@ -65,6 +69,7 @@ module ejs.web {
   { name: "index",   builder: MvcBuilder, method: "GET",    match: "/:controller",          params: { action: "index" } },
         ]
 
+        # Config.Legacy
         public static var LegacyRoutes = [
   { name: "es",      builder: ScriptBuilder,                match: /^\/web\/.*\.es$/   },
   { name: "ejs",     builder: TemplateBuilder,              match: /^\/web\/.*\.ejs$/,      module: "ejs.template"  },
@@ -146,6 +151,7 @@ module ejs.web {
                     addRoutes(route.subroute, route)
                 }
                 routes.append(route)
+                routeLookup[route.name] = route
             }
 		}
 
@@ -430,7 +436,7 @@ module ejs.web {
         /**
             Make a URI provided parts of a URI. The URI is completed using the current request and route. 
             @param request Request object
-            @param components Object hash of URI component properties.
+            @param location Object hash of URI component properties.
             @option scheme String URI protocol scheme (http or https)
             @option host String URI host name or IP address.
             @option port Number TCP/IP port number for communications
@@ -438,24 +444,39 @@ module ejs.web {
             @option query String URI query parameters. Does not include "?"
             @option reference String URI path reference. Does not include "#"
          */
-        public function makeUri(request: Request, components: Object): Uri {
+
+//  MOB -- need makeAbsUri
+        public function makeUri(request: Request, location: Object): Uri {
             if (urimaker) {
-                return urimaker(request, components)
+                return urimaker(request, location)
             }
             let where
+//  MOB -- can request ever be null?
             if (request) {
-                //  Base the URI on the current application home uri
-                let base = blend(request.absHome.components, request.params)
+                // where = Uri(location).relative(uri)
+                where = request.uri.relative(location)
+            } else {
+                where = location.clone()
+            }
+/*OLD
+                let base = blend(request.uri.components, request.params)
                 delete base.id
                 delete base.query
-                if (components is String) {
-                    where = blend(base, { path: components })
+                if (Object.getOwnPropertyCount(location) > 0) {
+                    where = blend(base, location)
                 } else {
-                    where = blend(base, components)
+                    base.path = location
+                    where = base
                 }
             } else {
-                where = components.clone()
+                where = location.clone()
             }
+*/
+
+
+/*
+   UNUSED
+            //  MOB -- really don't want this in the query. Should be done via post or URI path: /id/
             if (where.id != undefined) {
                 if (where.query) {
                     where.query += "&" + "id=" + where.id
@@ -463,18 +484,20 @@ module ejs.web {
                     where.query = "id=" + where.id
                 }
             }
+*/
+            /*
+                If a path not supplied, build up the path via route tokens
+             */
             let uri = Uri(where)
-            let routeName = where.route || "default"
-            let route = this
-            if (routeName != this.name) {
-                for each (r in router.routes) {
-                    if (r.name == routeName) {
-                        route = r
-                        break
+            if (!location.path) {
+                let routeName = where.route || "default"
+                let route = this
+                if (routeName != this.name) {
+                    route = routeLookup[routeName]
+                    if (!route) {
+                        throw new ReferenceError("makeUri: Unknown route \"" + routeName + "\"")
                     }
                 }
-            }
-            if (!components.path) {
                 for each (token in route.tokens) {
                     if (!where[token]) {
                         throw new ArgError("Missing URI token \"" + token + "\"")

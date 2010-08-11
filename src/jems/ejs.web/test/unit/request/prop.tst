@@ -14,7 +14,7 @@ server.observe("readable", function (event, request: Request) {
     assert(authGroup == null)
     assert(authType == null)
     assert(authUser == null)
-    assert(autoFinalize == true)
+    assert(autoFinalizing == true)
     assert(config && config.log && config.web)
     assert(contentLength == -1);
     assert(contentType == null)

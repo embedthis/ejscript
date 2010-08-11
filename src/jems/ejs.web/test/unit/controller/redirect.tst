@@ -10,7 +10,16 @@ public class TestController extends Controller {
     use namespace action
 
     action function index() {
-        redirectAction("list")
+        redirect("/test/list")
+    }
+    action function list() {
+        render("Hello List")
+    }
+    action function phase1() {
+        redirectAction("phase2")
+    }
+    action function phase2() {
+        render("Hello Phase 2")
     }
 } 
 
@@ -24,12 +33,24 @@ server.observe("readable", function (event, request: Request) {
 server.listen(HTTP)
 load("../utils.es")
 
-//  first
+/*OK
+//  redirect()
 let http = new Http
 http.followRedirects = true
 http.get(HTTP + "/test/index")
 do { App.eventLoop(10, true) } while(!http.wait())
+print(http.response)
 assert(http.response == "Hello List")
+http.close()
+*/
+
+//  redirectAction()
+let http = new Http
+http.followRedirects = true
+http.get(HTTP + "/test/phase1")
+do { App.eventLoop(10, true) } while(!http.wait())
+print(http.response)
+assert(http.response == "Hello Phase 2")
 http.close()
 
 server.close()

@@ -79,7 +79,6 @@ UNUSED - MOB -- better to set in Request
 
         /********************************************* Methods *******************************************/
 
-// MOB -- must controllers have a "Controller suffix"?
         /** 
             Static factory method to create and initialize a controller. The controller class is specified by 
             params["controller"] which should be set to the controller name without the "Controller" suffix. 
@@ -151,13 +150,13 @@ UNUSED - MOB -- better to set in Request
                 } else {
                     response = this[actionName]()
                 }
-                if (!response && !rendered && !redirected && request.autoFinalize) {
+                if (!response && !rendered && !redirected && request.autoFinalizing) {
                     /* Run a default view */
                     renderView()
                 }
                 runFilters(_afterFilters)
             }
-            request.finalize()
+            request.autoFinalize()
             return response
         }
 
@@ -241,8 +240,13 @@ UNUSED - MOB -- better to set in Request
             Redirect the client to the given action
             @param action Controller action name to which to redirect the client.
          */
-        function redirectAction(action: String): Void
-            redirect({action: action})
+        function redirectAction(action: String): Void {
+            if (request.route) {
+                redirect({action: action})
+            } else {
+                redirect(request.uri.dirname.join(action))
+            }
+        }
 
         /** 
             Render the raw arguments back to the client. The args are converted to strings.

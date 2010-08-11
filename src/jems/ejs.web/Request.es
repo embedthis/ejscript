@@ -48,10 +48,11 @@ module ejs.web {
         native enumerable var authUser: String
 
         /** 
-            Will the request auto-finalize. Set to false if dontFinalize() is called. Templated pages and controllers 
-            will auto-finalize, i.e. calling finalize() is not required unless dontFinalize() has been called.
+            Will the request auto-finalize. Defaults to true and set to false if dontAutoFinalize() is called. Web 
+            frameworks will often auto-finalize so user code does not need to worry about finalization. User code can then
+            call dontAutoFinalize to defeat auto-finalization.
          */
-        native enumerable var autoFinalize: Boolean
+        native enumerable var autoFinalizing: Boolean
 
         /** 
             Request configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
@@ -307,6 +308,15 @@ module ejs.web {
         native function set async(enable: Boolean): Void
 
         /** 
+            Finalize the request if dontAutoFinalize has not been called. Finalization signals the end of any write data 
+            and flushes any buffered write data to the client. This routine is used by frameworks to allow users to 
+            defeat finalization by calling dontAutoFinalize. Users can then call finalize() to explictly control when
+            all the response data has been written. If dontAutoFinalize() has been called, this call will have no effect. 
+            In that case, call finalize() to finalize the request.
+         */
+        native function autoFinalize(): Void 
+
+        /** 
             @duplicate Stream.close
             This closes the current request by finalizing all transmission data and sending a "close" event. It may 
             not close the actually socket connection so that it can be reused for future requests.
@@ -330,10 +340,10 @@ module ejs.web {
         }
 
         /**
-            Stop auto-finalizing the request. Calling dontFinalize will keep the request open until a forced finalize is
-            made via "finalize(true). 
+            Stop auto-finalizing the request. Calling this routine will keep the request open until finalize() is 
+            explicitly called.
          */
-        native function dontFinalize(): Void
+        native function dontAutoFinalize(): Void
 
         /** 
             Destroy a session. This call destroys the session state store that is being used for the current client. 
@@ -360,11 +370,10 @@ module ejs.web {
             Uri(pathInfo).extension
 
         /** 
-            Signals the end of any write data and flushes any buffered write data to the client. 
-            If dontFinalize() has been called, this call will have no effect unless $force is true.
-            @param force Do finalization even if dontFinalize has been called.
+            Signals the end of any and all response data and flushes any buffered write data to the client. 
+            If the request has already been finalized, this call has no additional effect.
          */
-        native function finalize(force: Boolean = false): Void 
+        native function finalize(): Void 
 
         /** 
             Has the request output been finalized. 
@@ -409,8 +418,8 @@ module ejs.web {
         }
 
         /** 
-            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent 
-            to the client. Flushing the read direction is ignored
+            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure buffered write data is sent 
+            to the client. Flushing the read direction is ignored.
             @duplicate Stream.flush
          */
         native function flush(dir: Number = Stream.WRITE): Void
@@ -435,44 +444,89 @@ module ejs.web {
             flash("inform", msg)
 
         /** 
-            Make a URI, provided parts of the URI. The URI is completed using the current request and route state.
-            @params location The location parameter can be a URI string or object hash of components. If the URI is a
-               string, it is may be an absolute or relative URI. It is joined using Uri.join() to a base URI fromed from
-               the current request parameters. If the URI is an object hash, the following properties are examined
-               and used to augment parameters from the existing request: scheme, host, port, path, query, reference. 
-               Properties that are relevant to the current request route, such as "controller", or "action" are also
-               consulted.
+            Make an absolute URI. 
+            The URI is created from the given location parameter. The location may contain partial or complete URI 
+            information. The missing parts are supplied using the current request URI and optional route tables. 
+            @params location The location parameter can be a URI string or object hash of components. If the location is a
+               string, it is may be an absolute or relative URI. If location is an absolute URI, it will be used unmodified.
+               If location is a relative URI, is append to the current request URI. The location argument can also be
+               an object hash of URI components: scheme, host, port, path, query, reference, controller, action and other
+               route table tokens. 
             @option scheme String URI protocol scheme (http or https)
             @option host String URI host name or IP address.
             @option port Number TCP/IP port number for communications
-            @option path String URI path 
+            @option path String URI path portion
             @option query String URI query parameters. Does not include "?"
             @option reference String URI path reference. Does not include "#"
-            @option controller String Controller name if using an MVC route
-            @option action String Action name if using an MVC route
-            @return A Uri object
+            @option controller String Controller name if using a Controller-based route
+            @option action String Action name if using a Controller-based route
+            @option other String Other route table toeksn
+            @return An absolute Uri object
+         */
+        function makeAbsUri(location: Object): Uri {
+            if (route) {
+                //  MOB -- what about Router.makeAbsUri
+                return route.makeAbsUri(this, location)
+            }
+/* UNUSED
+            let result
+//  MOB - don't want to inherit query, reference
+//  MOB - what about query in uri. Don't want to inherit that
+            if (Object.getOwnPropertyCount(location) > 0) {
+                // return Uri(blend(uri.components, location))
+                return Uri(location).absolute(uri)
+            }
+*/
+            return uri.absolute(location)
+        }
+
+        /*
+Examples:
+uri = "http://example.com/a/b.html"
+makeUri("c.html") == "c.html"
+makeAbsUri("c.html") == "http://example.com/a/c.html"
+
+makeUri("../c.html") == "../c.html"
+makeAbsUri("../c.html") == "http://example.com/c.html"
+
+makeUri({path: "c.html"}) == "../c.html"
+makeAbsUri({path: "c.html"}) == "http://example.com/c.html"
+
+         */
+        /** 
+            Make a URI relative to the current request uri. 
+            The URI is created from the given location parameter. The location may contain partial or complete URI 
+            information. The missing parts are supplied using the current request URI and optional route tables. 
+            @params location The location parameter can be a URI string or object hash of components. If the location is a
+               string, it is may be an absolute or relative URI. If location is an absolute URI, it will be used unmodified.
+               If location is a relative URI, is append to the current request URI. The location argument can also be
+               an object hash of URI components: scheme, host, port, path, query, reference, controller, action and other
+               route table tokens. 
+            @option scheme String URI protocol scheme (http or https)
+            @option host String URI host name or IP address.
+            @option port Number TCP/IP port number for communications
+            @option path String URI path portion
+            @option query String URI query parameters. Does not include "?"
+            @option reference String URI path reference. Does not include "#"
+            @option controller String Controller name if using a Controller-based route
+            @option action String Action name if using a Controller-based route
+            @option other String Other route table toeksn
+            @return A relative Uri to the current uri
          */
         function makeUri(location: Object): Uri {
-dump("MakeUri", location)
             if (route) {
-print("ROUTE SET ")
-                if (location is String) {
-                    return route.makeUri(this, params).join(location)
-                } else {
-                    return route.makeUri(this, blend(params.clone(), location))
-                }
-            } else {
-print("NO ROUTE SET ")
+                return route.makeUri(this, location)
             }
-            let components = absHome.components
-dump("Components", components)
-            if (location is String) {
-                return Uri(components).join(location)
-            } else {
-                blend(components, location)
+/* UNUSED
+            let result
+//  MOB - don't want to inherit query, reference
+//  MOB - what about query in uri. Don't want to inherit that
+            if (Object.getOwnPropertyCount(location) > 0) {
+                return uri.relative(Uri(blend(uri.components, location)))
             }
-dump("RESULT", components)
-            return Uri(components)
+*/
+            // return Uri(location).relative(uri)
+            return uri.relative(location)
         }
 
         /** 
@@ -497,27 +551,26 @@ dump("RESULT", components)
             Redirect the client to a new URL. This call redirects the client's browser to a new location specified 
             by the $url.  Optionally, a redirection code may be provided. Normally this code is set to be the HTTP 
             code 302 which means a temporary redirect. A 301, permanent redirect code may be explicitly set.
-            @param location Url to redirect the client toward. This can be a relative or absolute string URL or it can be
-                a hash of URL components. For example, the following are valid inputs: "../index.ejs", 
+            @param location Uri to redirect the client toward. This can be a relative or absolute string URI or it can be
+                a hash of URI components. For example, the following are valid inputs: "../index.ejs", 
                 "http://www.example.com/home.html", {action: "list"}.
             @param status Optional HTTP redirection status
          */
-        function redirect(location: Object, status: Number = Http.MovedTemporarily): Void {
-            /*
-                This permits urls like: ".." or "/" or "http://..."
-             */
+        function redirect(location: *, status: Number = Http.MovedTemporarily): Void {
+        /*
+        UNUSED
             let base = uri.clone()
             base.query = ""
             base.reference = ""
-            let url = (location is String) ? makeUri(base.join(location).normalize.components) : makeUri(location)
-print("REDIRECT base " + base)
-dump("REDIRECT location ", location)
+            let target = (location is String) ? makeUri(base.join(location).normalize.components) : makeUri(location)
+         */
             this.status = status
-            setHeader("Location", url)
+            let target: Uri = makeAbsUri(location)
+            setHeader("Location", target)
             write("<!DOCTYPE html>\r\n" +
                    "<html><head><title>Redirect (" + status + ")</title></head>\r\n" +
                     "<body><h1>Redirect (" + status + ")</h1>\r\n" + 
-                    "<p>The document has moved <a href=\"" + url + 
+                    "<p>The document has moved <a href=\"" + target + 
                     "\">here</a>.</p>\r\n" +
                     "<address>" + server.software + " at " + host + " Port " + server.port + 
                     "</address></body>\r\n</html>\r\n")
@@ -552,7 +605,7 @@ dump("REDIRECT location ", location)
                 setHeaders(response.headers)
             if (response.body)
                 write(response.body)
-            finalize()
+            autoFinalize()
         }
 
         /** 
@@ -730,7 +783,7 @@ dump("REDIRECT location ", location)
                 setHeader("Content-Type", "text/html")
                 write(errorBody(title, text))
             } catch {}
-            finalize(true)
+            finalize()
             log.debug(4, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 

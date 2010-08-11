@@ -15,9 +15,9 @@ server.observe("readable", function (event, request: Request) {
     absHome = "http://localhost:" + PORT + "/"
     assert(absHome == "http://localhost:" + PORT + "/")
 
-    assert(autoFinalize == true)
-    autoFinalize = false
-    assert(!autoFinalize)
+    assert(autoFinalizing == true)
+    autoFinalizing = false
+    assert(!autoFinalizing)
 
     assert(headers && headers.host && headers.date && headers.connection && headers["user-agent"])
     headers["Custom-Header"] = 1234
@@ -89,7 +89,7 @@ server.observe("readable", function (event, request: Request) {
     assert(server && server.documentRoot == "." && server.serverRoot == ".")
     assert(status == 200)
 
-    finalize(true)
+    finalize()
 })
 
 let http = new Http

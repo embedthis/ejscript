@@ -397,8 +397,8 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_authUser:
         return createString(ejs, conn ? conn->authUser : NULL);
 
-    case ES_ejs_web_Request_autoFinalize:
-        return ejsCreateBoolean(ejs, !req->dontFinalize);
+    case ES_ejs_web_Request_autoFinalizing:
+        return ejsCreateBoolean(ejs, !req->dontAutoFinalize);
 
     case ES_ejs_web_Request_config:
         value = ejs->objectType->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
@@ -630,8 +630,8 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         req->absHome = value;
         break;
 
-    case ES_ejs_web_Request_autoFinalize:
-        req->dontFinalize = !ejsGetBoolean(ejs, value);
+    case ES_ejs_web_Request_autoFinalizing:
+        req->dontAutoFinalize = !ejsGetBoolean(ejs, value);
         break;
 
     case ES_ejs_web_Request_dir:
@@ -756,27 +756,6 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
 
 /******************************************************************************/
 /*  
-    function observe(name: [String|Array], listener: Function): Void
- */
-static EjsObj *req_observe(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
-{
-    HttpConn    *conn;
-    
-    conn = req->conn;
-    ejsAddObserver(ejs, &req->emitter, argv[0], argv[1]);
-
-    if (conn->readq->count > 0) {
-        ejsSendEvent(ejs, req->emitter, "readable", NULL, (EjsObj*) req);
-    }
-    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
-            conn->writeq->ioCount == 0) {
-        ejsSendEvent(ejs, req->emitter, "writable", NULL, (EjsObj*) req);
-    }
-    return 0;
-}
-
-
-/*  
     function get async(): Boolean
  */
 static EjsObj *req_async(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
@@ -792,6 +771,18 @@ static EjsObj *req_set_async(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (argv[0] != ejs->trueValue) {
         ejsThrowIOError(ejs, "Request only supports async mode");
+    }
+    return 0;
+}
+
+
+/*  
+    function autoFinalize(): Void
+ */
+static EjsObj *req_autoFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+{
+    if (req->conn && !req->dontAutoFinalize) {
+        httpFinalize(req->conn);
     }
     return 0;
 }
@@ -824,27 +815,22 @@ static EjsObj *req_destroySession(Ejs *ejs, EjsRequest *req, int argc, EjsObj **
 
 
 /*  
-    function dontFinalize(): Void
+    function dontAutoFinalize(): Void
  */
-static EjsObj *req_dontFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+static EjsObj *req_dontAutoFinalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    req->dontFinalize = 1;
+    req->dontAutoFinalize = 1;
     return 0;
 }
 
 
 /*  
-    function finalize(force: Boolean = false): Void
+    function finalize(): Void
  */
 static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    int     force;
-
     if (req->conn) {
-        force = (argc == 1 && argv[0] == ejs->trueValue);
-        if (!req->dontFinalize || force) {
-            httpFinalize(req->conn);
-        }
+        httpFinalize(req->conn);
     }
     return 0;
 }
@@ -903,6 +889,27 @@ static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         }
     }
     return (value) ? value : (EjsObj*) ejs->nullValue;
+}
+
+
+/*  
+    function observe(name: [String|Array], listener: Function): Void
+ */
+static EjsObj *req_observe(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+{
+    HttpConn    *conn;
+    
+    conn = req->conn;
+    ejsAddObserver(ejs, &req->emitter, argv[0], argv[1]);
+
+    if (conn->readq->count > 0) {
+        ejsSendEvent(ejs, req->emitter, "readable", NULL, (EjsObj*) req);
+    }
+    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
+            conn->writeq->ioCount == 0) {
+        ejsSendEvent(ejs, req->emitter, "writable", NULL, (EjsObj*) req);
+    }
+    return 0;
 }
 
 
@@ -1247,9 +1254,6 @@ void ejsConfigureRequestType(Ejs *ejs)
 
     helpers = &type->helpers;
     helpers->mark = (EjsMarkHelper) markRequest;
-#if UNUSED
-    helpers->clone = (EjsCloneHelper) ejsCloneRequest;
-#endif
     helpers->destroy = (EjsDestroyHelper) destroyRequest;
     helpers->getProperty = (EjsGetPropertyHelper) getRequestProperty;
     helpers->getPropertyCount = (EjsGetPropertyCountHelper) getRequestPropertyCount;
@@ -1259,9 +1263,10 @@ void ejsConfigureRequestType(Ejs *ejs)
 
     prototype = type->prototype;
     ejsBindAccess(ejs, prototype, ES_ejs_web_Request_async, (EjsProc) req_async, (EjsProc) req_set_async);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_autoFinalize, (EjsProc) req_autoFinalize);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_close, (EjsProc) req_close);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_destroySession, (EjsProc) req_destroySession);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_dontFinalize, (EjsProc) req_dontFinalize);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_dontAutoFinalize, (EjsProc) req_dontAutoFinalize);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalize, (EjsProc) req_finalize);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalized, (EjsProc) req_finalized);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_flush, (EjsProc) req_flush);

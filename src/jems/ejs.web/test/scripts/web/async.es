@@ -8,10 +8,10 @@ exports.app = function (request: Request) {
     return function(request: Request) {
         setStatus(200)
         setHeaders({"Content-Type": "text/html"})
-        request.dontFinalize()
+        request.dontAutoFinalize()
         Timer(50, function() {
             request.write("Now done\n")
-            request.finalize(true)
+            request.finalize()
         }).start()
     } 
 }

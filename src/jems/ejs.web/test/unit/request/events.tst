@@ -16,6 +16,7 @@ server.observe("readable", function (event, request: Request) {
         // print("GOT " + event)
         events[event] = true
     })
+    dontAutoFinalize()
     switch (pathInfo) {
     case "/success":
         //  Won't get a writable event because the writing is complete here

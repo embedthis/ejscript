@@ -410,6 +410,8 @@ typedef struct HttpUri {
  */
 extern HttpUri *httpCreateUri(MprCtx ctx, cchar *uri, int complete);
 
+extern HttpUri *httpCloneUri(MprCtx ctx, HttpUri *base, int complete);
+
 /** 
     Format a URI
     @description Format a URI string using the input components.
@@ -428,7 +430,7 @@ extern char *httpFormatUri(MprCtx ctx, cchar *scheme, cchar *host, int port, cch
         int complete);
 
 extern HttpUri *httpCreateUriFromParts(MprCtx ctx, cchar *scheme, cchar *host, int port, cchar *path, cchar *reference, 
-        cchar *query);
+        cchar *query, int complete);
 
 /** 
     Get the mime type for an extension.
@@ -459,6 +461,13 @@ extern char *httpUriToString(MprCtx ctx, HttpUri *uri, int complete);
     @ingroup HttpUri
  */
 extern char *httpNormalizeUriPath(MprCtx ctx, cchar *uri);
+extern void httpNormalizeUri(HttpUri *uri);
+
+extern HttpUri *httpJoinUri(MprCtx ctx, HttpUri *uri, int argc, HttpUri **others, int normalize);
+extern HttpUri *httpJoinUriPath(HttpUri *uri, HttpUri *base, HttpUri *other);
+extern HttpUri *httpCompleteUri(HttpUri *uri, HttpUri *missing);
+extern HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup);
+extern HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, int normalize);
 
 /** 
     Content range structure

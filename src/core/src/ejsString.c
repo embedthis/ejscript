@@ -28,18 +28,15 @@ static EjsObj *castString(Ejs *ejs, EjsString *sp, EjsType *type)
 
     if (type == ejs->pathType) {
         return (EjsObj*) ejsCreatePath(ejs, sp->value);
-        
     } else if (type == ejs->uriType) {
         return (EjsObj*) ejsCreateUri(ejs, sp->value);
     }
-    
     switch (type->id) {
     case ES_Boolean:
         if (sp->value[0]) {
             return (EjsObj*) ejs->trueValue;
-        } else {
-            return (EjsObj*) ejs->falseValue;
         }
+        return (EjsObj*) ejs->falseValue;
 
     case ES_Number:
         return (EjsObj*) ejsParse(ejs, sp->value, ES_Number);
@@ -47,12 +44,11 @@ static EjsObj *castString(Ejs *ejs, EjsString *sp, EjsType *type)
     case ES_RegExp:
         if (sp->value && sp->value[0] == '/') {
             return (EjsObj*) ejsCreateRegExp(ejs, sp->value);
-        } else {
-            buf = mprStrcat(ejs, -1, "/", sp->value, "/", NULL);
-            result = (EjsObj*) ejsCreateRegExp(ejs, buf);
-            mprFree(buf);
-            return result;
         }
+        buf = mprStrcat(ejs, -1, "/", sp->value, "/", NULL);
+        result = (EjsObj*) ejsCreateRegExp(ejs, buf);
+        mprFree(buf);
+        return result;
 
     case ES_String:
         return (EjsObj*) sp;

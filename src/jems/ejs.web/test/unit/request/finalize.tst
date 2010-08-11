@@ -16,16 +16,16 @@ server.observe("readable", function (event, request: Request) {
     case "/dontFinalize":
         //  Test an inactivity timeout
         setLimits({inactivityTimeout: 1})
-        dontFinalize()
-        finalize()
+        dontAutoFinalize()
+        autoFinalize()
         // Should timeout
         break;
 
     case "/force":
         //  Test an inactivity timeout
         setLimits({inactivityTimeout: 1})
-        dontFinalize()
-        finalize(true)
+        dontAutoFinalize()
+        finalize()
         // Should NOT timeout
         break;
 

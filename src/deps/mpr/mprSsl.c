@@ -1337,6 +1337,8 @@ struct  MprWorkerService;
 struct  MprXml;
 
 
+#undef UNUSED
+
 //  MOB TODO - make these consistent: CANT vs NOT or NO
 //  MOB SORT 
 

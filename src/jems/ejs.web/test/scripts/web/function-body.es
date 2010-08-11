@@ -5,6 +5,5 @@ exports.app = function (request) {
         status = 200
         setHeaders({"Content-Type": "text/plain"})
         write("Hello World - Function\n")
-        finalize()
     } 
 }

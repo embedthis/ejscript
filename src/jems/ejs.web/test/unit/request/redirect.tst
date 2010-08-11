@@ -14,22 +14,20 @@ server.observe("readable", function (event, request: Request) {
     switch (pathInfo) {
     case "/redirect-string":
         redirect("/elsewhere/", Http.MovedPermanently)
-        finalize()
         break
 
     case "/redirect-object":
         redirect({ host: "example.com", port: 8080, path: "/home", query: "color=blue"}, Http.MovedTemporarily)
-        finalize()
         break
 
     case "/redirect/relative":
         redirect("../../absolute/dir.html")
-        finalize()
         break
 
     default:
         writeError(Http.ServerError, "Bad test URI")
     }
+    finalize()
 })
 
 
