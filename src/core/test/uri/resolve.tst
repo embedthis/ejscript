@@ -9,6 +9,6 @@ assert(base.resolve("/") == "/")
 assert(base.resolve("..").normalize == "/a/")
 
 base = Uri("c.html")
-assert(base.resolve("") == ".")
+assert(base.resolve("") == "")
 assert(base.resolve("/") == "/")
-assert(base.resolve("a.html") == "./a.html")
+assert(base.resolve("a.html") == "a.html")

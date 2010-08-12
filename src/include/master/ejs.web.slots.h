@@ -491,6 +491,7 @@
 #define ES_ejs_web_Web_processBody_body                                1
 #define ES_ejs_web_Web_process_app                                     0
 #define ES_ejs_web_Web_process_request                                 1
+#define ES_ejs_web_Web_process_finalize                                2
 #define ES_ejs_web_Web_start_address                                   0
 #define ES_ejs_web_Web_start_documentRoot                              1
 #define ES_ejs_web_Web_start_serverRoot                                2
@@ -499,6 +500,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   644367
+#define _ES_CHECKSUM_ejs_web   646620
 
 #endif

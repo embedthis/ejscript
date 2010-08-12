@@ -522,7 +522,7 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
             return 0;
         }
         oldUri = uri;
-        uri = httpJoinUri(result, oldUri, 1, &other, 0);
+        uri = httpJoinUri(result, oldUri, 1, &other);
         mprFree(other);
         if (!ejsIsUri(ejs, arg)) {
             mprFree(oldUri);
@@ -656,30 +656,21 @@ static EjsObj *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **arg
 
 
 /*  
-    function resolve(...targets): Uri
+    function resolve(target, relative: Boolean = true): Uri
  */
 static EjsObj *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    EjsArray    *args;
-    EjsObj      *arg;
     EjsUri      *result;
-    HttpUri     *uri, *target, *old;
-    int         i;
+    HttpUri     *uri, *target;
+    int         relative;
 
-    args = (EjsArray*) argv[0];
-    result = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    relative = (argc >= 2 && argv[1] == ejs->falseValue) ? 0 : 1;
     uri = up->uri;
-    for (i = 0; i < args->length; i++) {
-        arg = ejsGetProperty(ejs, (EjsObj*) args, i);
-        target = toHttpUri(ejs, ejs, arg, 0);
-        old = uri;
-        uri = httpResolveUri(result, uri, 1, &target, 0);
-        if (old != up->uri) {
-            mprFree(old);
-        }
-        if (!ejsIsUri(ejs, target)) {
-            mprFree(target);
-        }
+    target = toHttpUri(ejs, ejs, argv[0], 0);
+    result = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    uri = httpResolveUri(result, uri, 1, &target, relative);
+    if (!ejsIsUri(ejs, target)) {
+        mprFree(target);
     }
     if (up->uri == uri) {
         uri = httpCloneUri(result, uri, 0);
@@ -800,6 +791,19 @@ static EjsObj *uri_toString(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     uri = up->uri;
     return (EjsObj*) ejsCreateStringAndFree(ejs, httpUriToString(up, uri, 0));
+}
+
+
+/* 
+   function toLocalString(): String
+ */
+static EjsObj *uri_toLocalString(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    HttpUri     *uri;
+
+    uri = up->uri;
+    return (EjsObj*) ejsCreateStringAndFree(ejs, 
+        httpFormatUri(ejs, NULL, NULL, 0, uri->path, uri->reference, uri->query, 0));
 }
 
 
@@ -1046,7 +1050,8 @@ EjsUri *ejsCreateUri(Ejs *ejs, cchar *path)
 }
 
 
-EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference)
+EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
+    int complete)
 {
     EjsUri      *up;
 
@@ -1054,7 +1059,7 @@ EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *
     if (up == 0) {
         return 0;
     }
-    up->uri = httpCreateUriFromParts(up, scheme, host, port, path, reference, query, 1);
+    up->uri = httpCreateUriFromParts(up, scheme, host, port, path, reference, query, complete);
     return up;
 }
 
@@ -1115,6 +1120,7 @@ void ejsConfigureUriType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Uri_resolve, (EjsProc) uri_resolve);
     ejsBindMethod(ejs, prototype, ES_Uri_same, (EjsProc) uri_same);
     ejsBindMethod(ejs, prototype, ES_Uri_toString, (EjsProc) uri_toString);
+    ejsBindMethod(ejs, prototype, ES_Uri_toLocalString, (EjsProc) uri_toLocalString);
     ejsBindMethod(ejs, prototype, ES_Uri_trimExt, (EjsProc) uri_trimExt);
     ejsBindAccess(ejs, prototype, ES_Uri_uri, (EjsProc) uri_toString, (EjsProc) uri_set_uri);
 

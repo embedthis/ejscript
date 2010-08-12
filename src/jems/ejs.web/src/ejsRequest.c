@@ -368,7 +368,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     EjsObj      *value;
     EjsName     n;
     HttpConn    *conn;
-    cchar       *pathInfo;
+    cchar       *pathInfo, *scriptName;
     char        *path, *filename, *uri, *ip, *scheme;
     int         port;
 
@@ -487,7 +487,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 scheme = (conn->secure) ? "https" : "http";
                 /* NOTE: conn->rx->uri is not normalized or decoded */
                 req->originalUri = (EjsObj*) ejsCreateFullUri(ejs, scheme, getHost(conn, req), req->server->port, 
-                    conn->rx->uri, conn->rx->parsedUri->query, conn->rx->parsedUri->reference);
+                    conn->rx->uri, conn->rx->parsedUri->query, conn->rx->parsedUri->reference, 0);
             }
             return req->originalUri;
         }
@@ -566,22 +566,32 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         } else return ejs->nullValue;
 
     case ES_ejs_web_Request_uri:
-        if (conn) {
-            if (req->uri == 0) {
-                scheme = (conn->secure) ? "https" : "http";
-                path = mprStrcat(req, -1, getDefaultString(ejs, req->scriptName, ""),
+        if (req->uri == 0) {
+            scriptName = getDefaultString(ejs, req->scriptName, "");
+            if (conn) {
+                path = mprStrcat(req, -1, scriptName,
                     getDefaultString(ejs, req->pathInfo, conn->rx->uri), NULL);
+                scheme = (conn->secure) ? "https" : "http";
                 req->uri = (EjsObj*) ejsCreateFullUri(ejs, 
                     getDefaultString(ejs, req->scheme, scheme),
                     getDefaultString(ejs, req->host, getHost(conn, req)),
                     getDefaultInt(ejs, req->port, req->server->port),
                     path,
                     getDefaultString(ejs, req->query, conn->rx->parsedUri->query),
-                    getDefaultString(ejs, req->reference, conn->rx->parsedUri->reference));
+                    getDefaultString(ejs, req->reference, conn->rx->parsedUri->reference), 0);
+            } else {
+                path = mprStrcat(req, -1, scriptName, getDefaultString(ejs, req->pathInfo, NULL), NULL);
+                req->uri = (EjsObj*) ejsCreateFullUri(ejs, 
+                    getDefaultString(ejs, req->scheme, NULL),
+                    getDefaultString(ejs, req->host, NULL),
+                    getDefaultInt(ejs, req->port, 0),
+                    path,
+                    getDefaultString(ejs, req->query, NULL),
+                    getDefaultString(ejs, req->reference, NULL), 0);
             }
-            return req->uri;
+            mprFree(path);
         }
-        return ejs->nullValue;
+        return req->uri;
 
     default:
         if (slotNum < req->obj.numSlots) {
@@ -621,6 +631,8 @@ static int getNum(Ejs *ejs, EjsObj *vp)
 
 static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *value)
 {
+    EjsUri      *up;
+
     switch (slotNum) {
     default:
     case ES_ejs_web_Request_config:
@@ -689,6 +701,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_scriptName:
+        //  MOB -- all these need ejsToString()
         req->scriptName = value;
         req->filename = 0;
         req->uri = 0;
@@ -700,13 +713,37 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_scheme:
-        req->scheme = value;
+        req->scheme = (EjsObj*) ejsToString(ejs, value);
         req->uri = 0;
         break;
 
     case ES_ejs_web_Request_uri:
-        req->uri = value;
+        up = ejsToUri(ejs, value);
+        req->uri = (EjsObj*) up;
         req->filename = 0;
+        if (!connOk(ejs, req, 0)) {
+            /*
+                This is really just for unit testing without a connection
+             */
+            if (up->uri->scheme) {
+                req->scheme = (EjsObj*) ejsCreateString(ejs, up->uri->scheme);
+            }
+            if (up->uri->host) {
+                req->host = (EjsObj*) ejsCreateString(ejs, up->uri->host);
+            }
+            if (up->uri->port) {
+                req->port = (EjsObj*) ejsCreateNumber(ejs, up->uri->port);
+            }
+            if (up->uri->path) {
+                req->pathInfo = (EjsObj*) ejsCreateString(ejs, up->uri->path);
+            }
+            if (up->uri->query) {
+                req->query = (EjsObj*) ejsCreateString(ejs, up->uri->query);
+            }
+            if (up->uri->reference) {
+                req->reference = (EjsObj*) ejsCreateString(ejs, up->uri->reference);
+            }
+        }
         break;
 
     /*
@@ -1279,7 +1316,6 @@ void ejsConfigureRequestType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setHeader, (EjsProc) req_setHeader);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_trace, (EjsProc) req_trace);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_write, (EjsProc) req_write);
-
 }
 
 

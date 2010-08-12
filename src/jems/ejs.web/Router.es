@@ -432,50 +432,30 @@ module ejs.web {
             this.router = router
         }
 
-        //  MOB - OPT
         /**
-            Make a URI provided parts of a URI. The URI is completed using the current request and route. 
+            Make a URI. The URI is created from the given location parameter. The location may contain partial or complete 
+            URI information. The missing parts are supplied using the current request URI and the current route.
             @param request Request object
             @param location Object hash of URI component properties.
+            @param If true, return a relative URI by disregarding the scheme, host and port portions of "this" URI. 
+                Defaults to true.
             @option scheme String URI protocol scheme (http or https)
             @option host String URI host name or IP address.
             @option port Number TCP/IP port number for communications
             @option path String URI path 
             @option query String URI query parameters. Does not include "?"
             @option reference String URI path reference. Does not include "#"
+            @option controller String Controller name if using a Controller-based route
+            @option action String Action name if using a Controller-based route
+            @option other String Other route table tokens
+            @return A Uri object.
          */
-
-//  MOB -- need makeAbsUri
-        public function makeUri(request: Request, location: Object): Uri {
+        public function makeUri(request: Request, location: Object, relative: Boolean = true): Uri {
             if (urimaker) {
-                return urimaker(request, location)
+                return urimaker(request, location, relative)
             }
-            let where
-//  MOB -- can request ever be null?
-            if (request) {
-                // where = Uri(location).relative(uri)
-                where = request.uri.relative(location)
-            } else {
-                where = location.clone()
-            }
-/*OLD
-                let base = blend(request.uri.components, request.params)
-                delete base.id
-                delete base.query
-                if (Object.getOwnPropertyCount(location) > 0) {
-                    where = blend(base, location)
-                } else {
-                    base.path = location
-                    where = base
-                }
-            } else {
-                where = location.clone()
-            }
-*/
+            let where = request.uri.resolve(location, relative)
 
-
-/*
-   UNUSED
             //  MOB -- really don't want this in the query. Should be done via post or URI path: /id/
             if (where.id != undefined) {
                 if (where.query) {
@@ -484,12 +464,11 @@ module ejs.web {
                     where.query = "id=" + where.id
                 }
             }
-*/
             /*
                 If a path not supplied, build up the path via route tokens
              */
             let uri = Uri(where)
-            if (!location.path) {
+            if (Object.getOwnPropertyCount(location) > 0 && !location.path) {
                 let routeName = where.route || "default"
                 let route = this
                 if (routeName != this.name) {

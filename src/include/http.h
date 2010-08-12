@@ -463,11 +463,11 @@ extern char *httpUriToString(MprCtx ctx, HttpUri *uri, int complete);
 extern char *httpNormalizeUriPath(MprCtx ctx, cchar *uri);
 extern void httpNormalizeUri(HttpUri *uri);
 
-extern HttpUri *httpJoinUri(MprCtx ctx, HttpUri *uri, int argc, HttpUri **others, int normalize);
+extern HttpUri *httpJoinUri(MprCtx ctx, HttpUri *uri, int argc, HttpUri **others);
 extern HttpUri *httpJoinUriPath(HttpUri *uri, HttpUri *base, HttpUri *other);
 extern HttpUri *httpCompleteUri(HttpUri *uri, HttpUri *missing);
 extern HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup);
-extern HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, int normalize);
+extern HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, int relative);
 
 /** 
     Content range structure

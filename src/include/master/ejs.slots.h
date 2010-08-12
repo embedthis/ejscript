@@ -1754,11 +1754,12 @@
 #define ES_Uri_startsWith                                              33
 #define ES_Uri_toJSON                                                  34
 #define ES_Uri_toString                                                35
-#define ES_Uri_trimEnd                                                 36
-#define ES_Uri_trimExt                                                 37
-#define ES_Uri_trimStart                                               38
-#define ES_Uri_uri                                                     39
-#define ES_Uri_NUM_INSTANCE_PROP                                       40
+#define ES_Uri_toLocalString                                           36
+#define ES_Uri_trimEnd                                                 37
+#define ES_Uri_trimExt                                                 38
+#define ES_Uri_trimStart                                               39
+#define ES_Uri_uri                                                     40
+#define ES_Uri_NUM_INSTANCE_PROP                                       41
 #define ES_Uri_NUM_INHERITED_PROP                                      0
 
 /*
@@ -1934,6 +1935,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1305812
+#define _ES_CHECKSUM_ejs   1307537
 
 #endif

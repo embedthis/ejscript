@@ -289,32 +289,31 @@
 #define ES_ejs_web_Request_flush                                       56
 #define ES_ejs_web_Request_header                                      57
 #define ES_ejs_web_Request_inform                                      58
-#define ES_ejs_web_Request_makeAbsUri                                  59
-#define ES_ejs_web_Request_makeUri                                     60
-#define ES_ejs_web_Request_observe                                     61
-#define ES_ejs_web_Request_read                                        62
-#define ES_ejs_web_Request_redirect                                    63
-#define ES_ejs_web_Request_removeObserver                              64
-#define ES_ejs_web_Request_sendFile                                    65
-#define ES_ejs_web_Request_sendResponse                                66
-#define ES_ejs_web_Request_setCookie                                   67
-#define ES_ejs_web_Request_setHeader                                   68
-#define ES_ejs_web_Request_setHeaders                                  69
-#define ES_ejs_web_Request_setLimits                                   70
-#define ES_ejs_web_Request_setLocation                                 71
-#define ES_ejs_web_Request_setStatus                                   72
-#define ES_ejs_web_Request_setupFlash                                  73
-#define ES_ejs_web_Request_show                                        74
-#define ES_ejs_web_Request_trace                                       75
-#define ES_ejs_web_Request_warn                                        76
-#define ES_ejs_web_Request_write                                       77
-#define ES_ejs_web_Request_writeError                                  78
-#define ES_ejs_web_Request_writeHtml                                   79
-#define ES_ejs_web_Request_env                                         80
-#define ES_ejs_web_Request_input                                       81
-#define ES_ejs_web_Request_queryString                                 82
-#define ES_ejs_web_Request_serverPort                                  83
-#define ES_ejs_web_Request_NUM_INSTANCE_PROP                           84
+#define ES_ejs_web_Request_makeUri                                     59
+#define ES_ejs_web_Request_observe                                     60
+#define ES_ejs_web_Request_read                                        61
+#define ES_ejs_web_Request_redirect                                    62
+#define ES_ejs_web_Request_removeObserver                              63
+#define ES_ejs_web_Request_sendFile                                    64
+#define ES_ejs_web_Request_sendResponse                                65
+#define ES_ejs_web_Request_setCookie                                   66
+#define ES_ejs_web_Request_setHeader                                   67
+#define ES_ejs_web_Request_setHeaders                                  68
+#define ES_ejs_web_Request_setLimits                                   69
+#define ES_ejs_web_Request_setLocation                                 70
+#define ES_ejs_web_Request_setStatus                                   71
+#define ES_ejs_web_Request_setupFlash                                  72
+#define ES_ejs_web_Request_show                                        73
+#define ES_ejs_web_Request_trace                                       74
+#define ES_ejs_web_Request_warn                                        75
+#define ES_ejs_web_Request_write                                       76
+#define ES_ejs_web_Request_writeError                                  77
+#define ES_ejs_web_Request_writeHtml                                   78
+#define ES_ejs_web_Request_env                                         79
+#define ES_ejs_web_Request_input                                       80
+#define ES_ejs_web_Request_queryString                                 81
+#define ES_ejs_web_Request_serverPort                                  82
+#define ES_ejs_web_Request_NUM_INSTANCE_PROP                           83
 #define ES_ejs_web_Request_NUM_INHERITED_PROP                          0
 
 
@@ -491,6 +490,7 @@
 #define ES_ejs_web_Web_processBody_body                                1
 #define ES_ejs_web_Web_process_app                                     0
 #define ES_ejs_web_Web_process_request                                 1
+#define ES_ejs_web_Web_process_finalize                                2
 #define ES_ejs_web_Web_start_address                                   0
 #define ES_ejs_web_Web_start_documentRoot                              1
 #define ES_ejs_web_Web_start_serverRoot                                2
@@ -499,6 +499,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   644367
+#define _ES_CHECKSUM_ejs_web   646487
 
 #endif

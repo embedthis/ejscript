@@ -10813,17 +10813,17 @@ HttpUri *httpJoinUriPath(HttpUri *uri, HttpUri *base, HttpUri *other)
     if (other->path[0] == '/') {
         uri->path = mprStrdup(uri, other->path);
     } else {
-        sep = ((base->path[strlen(base->path) - 1] == '/') || (other->path[0] == '\0' || other->path[0] == '/'))  ? "" : "/";
+        sep = ((base->path[0] == '\0' || base->path[strlen(base->path) - 1] == '/') || 
+               (other->path[0] == '\0' || other->path[0] == '/'))  ? "" : "/";
         uri->path = mprStrcat(uri, -1, base->path, sep, other->path, NULL);
     }
     return uri;
 }
 
 
-HttpUri *httpJoinUri(MprCtx ctx, HttpUri *uri, int argc, HttpUri **others, int normalize)
+HttpUri *httpJoinUri(MprCtx ctx, HttpUri *uri, int argc, HttpUri **others)
 {
     HttpUri     *other;
-    char        *oldPath;
     int         i;
 
     uri = httpCloneUri(ctx, uri, 0);
@@ -10850,13 +10850,14 @@ HttpUri *httpJoinUri(MprCtx ctx, HttpUri *uri, int argc, HttpUri **others, int n
         }
     }
     uri->ext = (char*) mprGetPathExtension(uri, uri->path);
-
+#if UNUSED
     //  MOB -- should this normalize?
     if (normalize) {
         oldPath = uri->path;
         uri->path = httpNormalizeUriPath(uri, uri->path);
         mprFree(oldPath);
     }
+#endif
     return uri;
 }
 
@@ -10951,14 +10952,22 @@ char *httpNormalizeUriPath(MprCtx ctx, cchar *pathArg)
 }
 
 
-HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, int normalize)
+HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, int relative)
 {
     HttpUri     *current, *other;
-    char        *oldPath;
     int         i;
 
     current = httpCloneUri(ctx, base, 0);
-
+    /*
+        Must not inherit the query or reference
+     */
+    current->query = NULL;
+    current->reference = NULL;
+    if (relative) {
+        current->host = 0;
+        current->scheme = 0;
+        current->port = 0;
+    }
     for (i = 0; i < argc; i++) {
         other = others[i];
         if (other->scheme) {
@@ -10982,11 +10991,13 @@ HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, i
         }
     }
     current->ext = (char*) mprGetPathExtension(current, current->path);
+#if UNUSED
     if (normalize) {
         oldPath = current->path;
         current->path = httpNormalizeUriPath(current, current->path);
         mprFree(oldPath);
     }
+#endif
     return current;
 }
 
@@ -11031,8 +11042,7 @@ static void trimPathToDirname(HttpUri *uri)
                 cp[1] = '\0';
             }
         } else if (*path) {
-            path[0] = '.';
-            path[1] = '\0';
+            path[0] = '\0';
         }
     }
 }

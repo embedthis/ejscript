@@ -299,6 +299,16 @@ module ejs.web {
         native enumerable var uri: Uri
 
         /*************************************** Methods ******************************************/
+        /*
+            Construct the a Request object. Request objects are typically created by HttpServers and not constructed
+            manually.
+            @param uri Request URI
+            @param dir Default directory containing web documents
+         */
+        function Request(uri: Uri, dir: Path = ".") {
+            this.uri = uri
+            this.dir = dir
+        }
 
         /** 
             @duplicate Stream.async
@@ -444,14 +454,15 @@ module ejs.web {
             flash("inform", msg)
 
         /** 
-            Make an absolute URI. 
-            The URI is created from the given location parameter. The location may contain partial or complete URI 
-            information. The missing parts are supplied using the current request URI and optional route tables. 
+            Make a URI. The URI is created from the given location parameter. The location may contain partial or complete 
+            URI information. The missing parts are supplied using the current request URI and optional route tables. 
             @params location The location parameter can be a URI string or object hash of components. If the location is a
                string, it is may be an absolute or relative URI. If location is an absolute URI, it will be used unmodified.
                If location is a relative URI, is append to the current request URI. The location argument can also be
                an object hash of URI components: scheme, host, port, path, query, reference, controller, action and other
                route table tokens. 
+            @param relative If true, return a relative URI by disregarding the scheme, host and port portions of "this" URI. 
+                Defaults to true.
             @option scheme String URI protocol scheme (http or https)
             @option host String URI host name or IP address.
             @option port Number TCP/IP port number for communications
@@ -460,74 +471,11 @@ module ejs.web {
             @option reference String URI path reference. Does not include "#"
             @option controller String Controller name if using a Controller-based route
             @option action String Action name if using a Controller-based route
-            @option other String Other route table toeksn
-            @return An absolute Uri object
+            @option other String Other route table tokens
+            @return A Uri object.
          */
-        function makeAbsUri(location: Object): Uri {
-            if (route) {
-                //  MOB -- what about Router.makeAbsUri
-                return route.makeAbsUri(this, location)
-            }
-/* UNUSED
-            let result
-//  MOB - don't want to inherit query, reference
-//  MOB - what about query in uri. Don't want to inherit that
-            if (Object.getOwnPropertyCount(location) > 0) {
-                // return Uri(blend(uri.components, location))
-                return Uri(location).absolute(uri)
-            }
-*/
-            return uri.absolute(location)
-        }
-
-        /*
-Examples:
-uri = "http://example.com/a/b.html"
-makeUri("c.html") == "c.html"
-makeAbsUri("c.html") == "http://example.com/a/c.html"
-
-makeUri("../c.html") == "../c.html"
-makeAbsUri("../c.html") == "http://example.com/c.html"
-
-makeUri({path: "c.html"}) == "../c.html"
-makeAbsUri({path: "c.html"}) == "http://example.com/c.html"
-
-         */
-        /** 
-            Make a URI relative to the current request uri. 
-            The URI is created from the given location parameter. The location may contain partial or complete URI 
-            information. The missing parts are supplied using the current request URI and optional route tables. 
-            @params location The location parameter can be a URI string or object hash of components. If the location is a
-               string, it is may be an absolute or relative URI. If location is an absolute URI, it will be used unmodified.
-               If location is a relative URI, is append to the current request URI. The location argument can also be
-               an object hash of URI components: scheme, host, port, path, query, reference, controller, action and other
-               route table tokens. 
-            @option scheme String URI protocol scheme (http or https)
-            @option host String URI host name or IP address.
-            @option port Number TCP/IP port number for communications
-            @option path String URI path portion
-            @option query String URI query parameters. Does not include "?"
-            @option reference String URI path reference. Does not include "#"
-            @option controller String Controller name if using a Controller-based route
-            @option action String Action name if using a Controller-based route
-            @option other String Other route table toeksn
-            @return A relative Uri to the current uri
-         */
-        function makeUri(location: Object): Uri {
-            if (route) {
-                return route.makeUri(this, location)
-            }
-/* UNUSED
-            let result
-//  MOB - don't want to inherit query, reference
-//  MOB - what about query in uri. Don't want to inherit that
-            if (Object.getOwnPropertyCount(location) > 0) {
-                return uri.relative(Uri(blend(uri.components, location)))
-            }
-*/
-            // return Uri(location).relative(uri)
-            return uri.relative(location)
-        }
+        function makeUri(location: Object, relative: Boolean = true): Uri
+            (route) ? route.makeUri(this, location, relative) : uri.resolve(location, relative)
 
         /** 
             @duplicate Stream.observe
@@ -565,7 +513,7 @@ makeAbsUri({path: "c.html"}) == "http://example.com/c.html"
             let target = (location is String) ? makeUri(base.join(location).normalize.components) : makeUri(location)
          */
             this.status = status
-            let target: Uri = makeAbsUri(location)
+            let target: Uri = makeUri(location).absolute(uri)
             setHeader("Location", target)
             write("<!DOCTYPE html>\r\n" +
                    "<html><head><title>Redirect (" + status + ")</title></head>\r\n" +

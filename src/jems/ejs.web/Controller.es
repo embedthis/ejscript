@@ -198,11 +198,9 @@ UNUSED - MOB -- better to set in Request
 
         /** 
             @duplicate Request.makeUri
-            @option controller The name of the controller to use in the URI.
-            @option action The name of the action method to use in the URI.
          */
-        function makeUri(location: Object): Uri
-            request.makeUri(location)
+        function makeUri(location: Object, relative: Boolean = true): Uri
+            request.makeUri(location, relative)
 
         /** 
             Missing action method. This method will be called if the requested action routine does not exist.
@@ -292,7 +290,7 @@ UNUSED - MOB -- better to set in Request
             layouts ||= config.directories.layouts
             let app = TemplateBuilder(request, { layouts: layouts } )
             log.debug(4, "renderPartial: \"" + path + "\"")
-            Web.process(app, request)
+            Web.process(app, request, false)
         }
 
         /** 

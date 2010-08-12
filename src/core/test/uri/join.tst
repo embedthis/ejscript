@@ -22,7 +22,6 @@ assert(u == "/a/./b")
 assert(u.normalize == "/a/b")
 
 u = Uri("/a/b/").join("c")
-assert(u.toString() == "/a/b/c")
 assert(u == "/a/b/c")
 
 u = Uri("/a/b").join("c")

@@ -28,6 +28,9 @@ static EjsObj *castVoid(Ejs *ejs, EjsVoid *vp, EjsType *type)
     case ES_String:
         return (EjsObj*) ejsCreateString(ejs, "undefined");
 
+    case ES_Uri:
+        return (EjsObj*) ejsCreateUri(ejs, "undefined");
+            
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
         return 0;

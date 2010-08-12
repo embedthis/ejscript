@@ -187,7 +187,7 @@ module ejs.web {
             @param request Request object
             @param app Web application function 
          */
-        static function process(app: Function, request: Request): Void {
+        static function process(app: Function, request: Request, finalize: Boolean = true): Void {
             request.config = config
             try {
                 if (request.route && request.route.middleware) {
@@ -215,8 +215,10 @@ module ejs.web {
                         request.sendFile(file)
                     }
                 }
-                request.finalizeFlash()
-                request.autoFinalize()
+                if (finalize) {
+                    request.finalizeFlash()
+                    request.autoFinalize()
+                }
             } catch (e) {
                 App.log.debug(3, e)
                 request.writeError(Http.ServerError, e)

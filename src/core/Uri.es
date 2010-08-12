@@ -322,13 +322,14 @@ module ejs {
         native function replaceExt(ext: String): Uri
 
         /**
-            Resolve URIs in the neighborhood of this URI. Resolve operates like join, except that it joins the 
-            given URIs to the directory portion of the current ("this") URI. For example: 
-            Uri("/a/b.html").resolve("c.html") will return "/a/c.html".
+            Resolve a URI in the neighborhood of this URI. Resolve operates like join, except that it joins the 
+            given URI to the directory portion of the current ("this") URI. For example: 
 
-            Resolve operates by determining a virtual current directory for this URI. It then successively joins the 
-            given URI paths to the directory portion of the current result. If the next URI is an absolute URI, it is 
-            used unmodified.  The effect is to find the given URIs with a virtual current directory set to the 
+                Uri("/a/b.html").resolve("c.html") will return "/a/c.html".
+
+            Resolve operates by determining a virtual current directory for this URI. It then joins the given URI path 
+            to the directory portion of the current result. If the given URI is an absolute URI, it is 
+            used unmodified.  The effect is to find the given URI with a virtual current directory set to the 
             directory containing the prior URI.
 
             Resolve is useful for creating URIs in the region of the current URI and gracefully handles both 
@@ -337,9 +338,11 @@ module ejs {
             is regarded as POST data and not integral to the base URI.
             @param others Other URIs to resolve in the region of this path. These can be URIs, strings or object hashes 
                 of URI components.
+            @param relative If true, return a relative URI by disregarding the scheme, host and port portions of "this" URI. 
+                Defaults to true.
             @return A new URI object that resolves given URI args using the "this" URI as a base. 
          */
-        native function resolve(...others): Path
+        native function resolve(target, relative: Boolean = true): Path
 
         /** 
             Compare two URIs test if they represent the same resource
@@ -372,10 +375,17 @@ module ejs {
             JSON.stringify(this.toString())
 
         /** 
-            Convert the URI to a string. The format of the string will depend on the defined $representation format.
+            Convert the URI to a string.
             @return a string representing the URI.
          */
         native override function toString(): String
+
+        /** 
+            Convert the local portion of the URI to a string. This will include only the path, query and reference
+            components of the URI. The scheme, host and port portions of the URI will be ignored.
+            @return a string representing the URI's path, query and reference portions.
+         */
+        native override function toLocalString(): String
 
         /** 
             Trim a pattern from the end of the URI path
