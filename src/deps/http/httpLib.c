@@ -5917,7 +5917,8 @@ bool httpWillNextQueueAcceptPacket(HttpQueue *q, HttpPacket *packet)
 
 
 /*  
-    Write a block of data. This is the lowest level write routine for data. This will buffer the data and 
+    Write a block of data. This is the lowest level write routine for data. This will buffer the data and flush if
+    the queue buffer is full.
  */
 int httpWriteBlock(HttpQueue *q, cchar *buf, int size)
 {

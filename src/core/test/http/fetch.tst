@@ -11,6 +11,6 @@ http.fetch("GET", ENDPOINT + "/index.html", null, function() {
     assert(status == 200)
     assert(response.length > 0)
 })
-App.waitForEvent(http, "close")
+App.waitForEvent(http, "close", 10000)
 assert(http.status == 200)
 assert(http.response.length > 0)

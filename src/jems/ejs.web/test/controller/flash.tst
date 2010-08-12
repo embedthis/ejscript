@@ -1,5 +1,5 @@
 /*
-    Test Controller.render*
+    Test Controller.write*
  */
 require ejs.web
 
@@ -14,18 +14,18 @@ public class TestController extends Controller {
         flash("two", 2)
         inform("three", 3)
         warn("four", 4)
-        render()
+        finalize()
     }
     action function second() {
         assert(request.flashMessages["one"] == 1)
         assert(request.flashMessages["two"] == 2)
         assert(request.flashMessages["three"] == 3)
         assert(request.flashMessages["four"] == 4)
-        render()
+        finalize()
     }
     action function third() {
         assert(Object.getOwnPropertyCount(request.flashMessages) == 0)
-        render()
+        finalize()
     }
 } 
 

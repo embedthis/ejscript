@@ -49,9 +49,6 @@ module ejs.web {
         /** Form and query parameters - reference to the Request.params object. */
         var params: Object
 
-        /** The response has been rendered. If an action does not render a response, then a default view will be rendered */
-        var rendered: Boolean
-
         /** Reference to the current Request object */
         var request: Request
 
@@ -147,7 +144,7 @@ UNUSED - MOB -- better to set in Request
             params.action = actionName
             runCheckers(_beforeCheckers)
             let response
-            if (!rendered) {
+            if (!request.written && request.autoFinalizing) {
                 if (!this[actionName]) {
                     if (!viewExists(actionName)) {
                         response = this[actionName = "missing"]()
@@ -155,9 +152,9 @@ UNUSED - MOB -- better to set in Request
                 } else {
                     response = this[actionName]()
                 }
-                if (!response && !rendered && request.autoFinalizing) {
+                if (!response && !request.written && request.autoFinalizing) {
                     /* Run a default view */
-                    renderView()
+                    writeView()
                 }
                 runCheckers(_afterCheckers)
             }
@@ -168,7 +165,7 @@ UNUSED - MOB -- better to set in Request
         }
 
         /** 
-            Run an action checker before running the action. If the checker function renders a response, the normal
+            Run an action checker before running the action. If the checker function writes a response, the normal
             processing of the requested action will be prevented.
             @param fn Function callback to invoke
             @param options Checker options. 
@@ -214,7 +211,6 @@ UNUSED - MOB -- better to set in Request
             Missing action method. This method will be called if the requested action routine does not exist.
          */
         action function missing(): Void {
-            rendered = true
             throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
         }
 
@@ -237,10 +233,8 @@ UNUSED - MOB -- better to set in Request
                 "http://www.example.com/home.html", {action: "list"}.
             @param status Http status code to use in the redirection response. Defaults to 302.
          */
-        function redirect(where: Object, status: Number = Http.MovedTemporarily): Void {
+        function redirect(where: Object, status: Number = Http.MovedTemporarily): Void
             request.redirect(where, status)
-            rendered = true
-        }
 
         /** 
             Redirect the client to the given action
@@ -255,95 +249,68 @@ UNUSED - MOB -- better to set in Request
         }
 
         /** 
-            Render the raw arguments back to the client. This call writes the given arguments back to the client
-            using request.write, sets the $rendered property to true and invokes Request.autoFinalize(). 
-            If an action method does call a render routine or set the rendered property to true or call 
-            Request.dontAutoFinalize, then, a default view will be generated when the action method returns. 
-            Call request.dontAutoFinalize() before calling $render if you wish to write more data.
-            Only one call to a render routine is permitted, except for renderPartialTemplate.
+            Render the raw data back to the client. 
+            If an action method does call a write data back to the client and has not called finalize() or 
+            dontAutoFinalize(), a default view template will be generated when the action method returns. 
             @param args Arguments to write to the client.  The args are converted to strings.
          */
-        function render(...args): Void { 
-            if (!rendered) {
-                rendered = true
-                request.write(...args)
-                request.autoFinalize()
-            }
-        }
+        function write(...args): Void
+            request.write(...args)
 
         /**
             Render an error message as the response.
-            This call sets the response status, writes the given arguments back to the client
-            using request.writeError, sets the $rendered property to true and invokes Request.autoFinalize().
-            @param status Http status code to use
+            This call sets the response status and writes a HTML error message with the given arguments back to the client.
+            @param status Http response status code
             @param msgs Error messages to send with the response
          */
-        function renderError(status: Number, ...msgs): Void {
-            if (!rendered) {
-                rendered = true
-                request.writeError(status, ...msgs)
-                request.autoFinalize()
-            }
-        }
+        function writeError(status: Number, ...msgs): Void
+            request.writeError(status, ...msgs)
 
         /** 
-            Render a file's contents back tot he client.
-            This call writes the given file contents back to the client using request.sendFile, sets the $rendered 
-            property to true and invokes Request.autoFinalize().
-            Call request.dontFinalize() before calling renderFile if you wish to write more data.
+            Render file content back to the client.
+            This call writes the given file contents back to the client.
             @param filename Path to the filename to send to the client
          */
-        function renderFile(filename: Path): Void { 
-            if (!rendered) {
-                rendered = true
-                request.sendFile(filename)
-                request.autoFinalize()
-            }
-        }
+        function writeFile(filename: Path): Void
+            request.sendFile(filename)
 
         /** 
-            Render a partial response using template file. This call does not set "rendered" to true. 
-            the action method returns. This call will not finalize the request output.
-            @param path Path to the template to render
+            Render a partial response using template file.
+            @param path Path to the template to render to the client
             @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
          */
-        function renderPartialTemplate(path: Path, layouts: Path = null): Void { 
+        function writePartialTemplate(path: Path, layouts: Path = null): Void { 
             request.filename = path
             layouts ||= config.directories.layouts
             let app = TemplateBuilder(request, { layouts: layouts } )
-            log.debug(4, "renderPartial: \"" + path + "\"")
+            log.debug(4, "writePartialTemplate: \"" + path + "\"")
             Web.process(app, request, false)
         }
 
         /** 
             Render a view template.
-            This call writes the result of running the view template file back to the client, sets the $rendered 
-            property to true and invokes Request.autoFinalize().
-            @param viewName Name of the view to render. The view template filename will be constructed by joining
-                the views directory with the controller name and view name. E.g. views/Controller/list.ejs
+            This call writes the result of running the view template file back to the client.
+            @param viewName Name of the view to render to the client. The view template filename will be constructed by 
+                joining the views directory with the controller name and view name. E.g. views/Controller/list.ejs.
          */
-        function renderView(viewName: String = null): Void {
+        function writeView(viewName: String = null): Void {
             viewName ||= actionName
-            renderTemplate(request.dir.join(config.directories.views, controllerName, viewName).
+            writeTemplate(request.dir.join(config.directories.views, controllerName, viewName).
                 joinExt(config.extensions.ejs))
         }
 
         /** 
             Render a view template from a path.
-            This call writes the result of running the view template file back to the client, sets the $rendered 
-            property to true and invokes Request.autoFinalize().
-            @param path Path to the view template to render
+            This call writes the result of running the view template file back to the client.
+            @param path Path to the view template to render and write to the client.
             @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
          */
-        function renderTemplate(path: Path, layouts: Path = null): Void {
-            if (!rendered) {
-                rendered = true
-                log.debug(4, "renderTemplate: \"" + path + "\"")
-                request.filename = path
-                layouts ||= config.directories.layouts
-                let app = TemplateBuilder(request, { layouts: layouts } )
-                Web.process(app, request)
-            }
+        function writeTemplate(path: Path, layouts: Path = null): Void {
+            log.debug(4, "writeTemplate: \"" + path + "\"")
+            request.filename = path
+            layouts ||= config.directories.layouts
+            let app = TemplateBuilder(request, { layouts: layouts } )
+            Web.process(app, request, false)
         }
 
         /** 
@@ -370,11 +337,37 @@ UNUSED - MOB -- better to set in Request
 
         /** 
             Low-level write data to the client. This will buffer the written data until either flush() or finalize() 
-            is called.  This will not set the $rendered property.
+            is called.
             @duplicate Request.write
          */
         function write(...data): Number
             request.write(...data)
+
+//  MOB -- move in place and doc
+
+        /** @duplicate Request.autoFinalize */
+        function autoFinalize(): Void
+            request.autoFinalize()
+
+        /** @duplicate Request.autoFinalizing */
+        function get autoFinalizing(): Boolean
+            request.autoFinalizing
+
+        /** @duplicate Request.flush */
+        function flush(): Void
+            request.flush()
+
+        /** @duplicate Request.finalize */
+        function finalize(): Void
+            request.finalize()
+
+        /** @duplicate Request.finalized */
+        function get finalized(): Boolean
+            request.finalized
+
+        /** @duplicate Request.dontAutoFinalize */
+        function dontAutoFinalize(): Void
+            request.dontAutoFinalize()
 
         /**************************************** Private ******************************************/
         /*

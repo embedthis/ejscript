@@ -13,7 +13,7 @@ public class TestController extends Controller {
         super(request)
     }
     action function echo() {
-        render("Echo Hello World")
+        write("Echo Hello World")
     }
 } 
 

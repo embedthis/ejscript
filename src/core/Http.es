@@ -287,22 +287,25 @@ UNUSED
 
         /** @hide
             Fetch a URL. This is a convenience method to asynchronously invoke an Http method without waiting. 
+            It can be useful to wait for completion using App.waitForEvent(http, "close"))
             @param method Http method. This is typically "GET" or "POST"
             @param uri URL to fetch
             @param data Body data to send with the request. Set to null for no data.
-            @param callback Function to invoke on completion of the request
+            @param callback Optional function to invoke on completion of the request.
           */
-        function fetch(method: String, uri: Uri, data: *, callback: Function) {
+        function fetch(method: String, uri: Uri, data: *, callback: Function = null) {
             xh = XMLHttp(this)
             xh.open(method, uri)
             xh.send(data)
             xh.onreadystatechange = function () {
                 if (xh.readyState == XMLHttp.Loaded) {
                     response = xh.responseText
-                    if (callback.bound == global) {
-                        callback.call(this)
-                    } else {
-                        callback()
+                    if (callback) {
+                        if (callback.bound == global) {
+                            callback.call(this)
+                        } else {
+                            callback()
+                        }
                     }
                 }
             }

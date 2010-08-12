@@ -1119,11 +1119,12 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     EjsByteArray    *ba;
     HttpQueue       *q;
     HttpConn        *conn;
-    int             err, len;
+    int             err, len, written;
 
     if (!connOk(ejs, req, 1)) return 0;
 
     err = 0;
+    written = 0;
     data = argv[0];
     conn = req->conn;
     q = conn->writeq;
@@ -1132,36 +1133,55 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Response already finalized");
         return 0;
     }
-
     switch (data->type->id) {
     case ES_String:
         s = (EjsString*) data;
-        if (httpWriteBlock(q, s->value, s->length) != s->length) {
+        if ((written = httpWriteBlock(q, s->value, s->length)) != s->length) {
             err++;
         }
         break;
 
     case ES_ByteArray:
         ba = (EjsByteArray*) data;
+        //  MOB -- not updating the read position
+        //  MOB ba->readPosition += len;
+        //  MOB -- should reset ptrs also
         len = ba->writePosition - ba->readPosition;
-        if (httpWriteBlock(q, (char*) &ba->value[ba->readPosition], len) != len) {
+        if ((written = httpWriteBlock(q, (char*) &ba->value[ba->readPosition], len)) != len) {
             err++;
         }
         break;
 
     default:
         s = (EjsString*) ejsToString(ejs, data);
-        if (s && httpWriteBlock(q, s->value, s->length) != s->length) {
+        if (s == NULL || (written = httpWriteBlock(q, s->value, s->length)) != s->length) {
             err++;
         }
-    }
-    if (ejs->exception) {
-        return 0;
     }
     if (err) {
         ejsThrowIOError(ejs, "%s", conn->errorMsg);
     }
+    if (ejs->exception) {
+        return 0;
+    }
+    req->written += written;
+
+    //  MOB - now
+    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
+            conn->writeq->ioCount == 0) {
+        //  MOB - what if over the queue max
+        ejsSendEvent(ejs, req->emitter, "writable", NULL, (EjsObj*) req);
+    }
     return 0;
+}
+
+
+/*
+    function get written(): Number
+ */
+static EjsObj *req_written(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+{
+    return (EjsObj*) ejsCreateNumber(ejs, req->written);
 }
 
 
@@ -1326,6 +1346,7 @@ void ejsConfigureRequestType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setHeader, (EjsProc) req_setHeader);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_trace, (EjsProc) req_trace);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_write, (EjsProc) req_write);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_written, (EjsProc) req_written);
 }
 
 

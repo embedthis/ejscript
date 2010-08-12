@@ -1,5 +1,5 @@
 /*
-    Test Controller.render*
+    Test Controller.redirect*
  */
 require ejs.web
 
@@ -13,13 +13,13 @@ public class TestController extends Controller {
         redirect("/test/list")
     }
     action function list() {
-        render("Hello List")
+        write("Hello List")
     }
     action function phase1() {
         redirectAction("phase2")
     }
     action function phase2() {
-        render("Hello Phase 2")
+        write("Hello Phase 2")
     }
 } 
 

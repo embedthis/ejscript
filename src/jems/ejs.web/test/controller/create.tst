@@ -17,7 +17,6 @@ public class TestController extends Controller {
         assert(request.query == "color=red&temp=cold")
 
         assert(config)
-        assert(!rendered)
         assert(request)
         assert(request.controller == this)
         assert(pathInfo == "/test/echo")
@@ -25,8 +24,7 @@ public class TestController extends Controller {
         assert(home == "../../")
         assert(uri == "http://localhost:6700/test/echo?color=red&temp=cold")
 
-        render("Echo Hello World")
-        assert(rendered)
+        write("Echo Hello World")
     }
 } 
 

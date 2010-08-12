@@ -48,9 +48,12 @@ module ejs.web {
         native enumerable var authUser: String
 
         /** 
-            Will the request auto-finalize. Defaults to true and set to false if dontAutoFinalize() is called. Web 
-            frameworks will often auto-finalize so user code does not need to worry about finalization. User code can then
-            call dontAutoFinalize to defeat auto-finalization.
+            Stop auto-finalizing the request. Some web frameworks will "auto-finalize" requests by calling finalize()
+            automatically at the conclusion of the request. Applications that wish to keep the connection open to the
+            client can defeat this auto-finalization by calling dontAutoFinalize().
+
+            Auto-finalization control. Set to true if the request will be finalized automatically at the conclusion of 
+            the request. Defaults to true and is set to false if dontAutoFinalize() is called. 
          */
         native enumerable var autoFinalizing: Boolean
 
@@ -350,8 +353,9 @@ module ejs.web {
         }
 
         /**
-            Stop auto-finalizing the request. Calling this routine will keep the request open until finalize() is 
-            explicitly called.
+            Stop auto-finalizing the request. Some web frameworks will "auto-finalize" requests by calling finalize()
+            automatically at the conclusion of the request. Applications that wish to keep the connection open to the
+            client can defeat this auto-finalization by calling dontAutoFinalize().
          */
         native function dontAutoFinalize(): Void
 
@@ -522,13 +526,6 @@ module ejs.web {
             @param status Optional HTTP redirection status
          */
         function redirect(location: *, status: Number = Http.MovedTemporarily): Void {
-        /*
-        UNUSED
-            let base = uri.clone()
-            base.query = ""
-            base.reference = ""
-            let target = (location is String) ? makeUri(base.join(location).normalize.components) : makeUri(location)
-         */
             this.status = status
             let target: Uri = makeUri(location).absolute(uri)
             setHeader("Location", target)
@@ -758,6 +755,13 @@ module ejs.web {
          */
         function writeHtml(...args): Void
             write(html(...args))
+
+        /**
+            The number of bytes written to the client. This is the count of bytes passed to $write and buffered, 
+            not the actual number of bytes sent to the network connection.
+            @return
+         */
+        native function get written(): Number
 
         /********************************************** JSGI  ********************************************************/
         /** 
