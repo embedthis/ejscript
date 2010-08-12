@@ -19,7 +19,7 @@ public function fetch(url: String, status: Number = Http.Ok): Http {
 
 
 /*
-    Start a HttpServer that supports controllers and actions.
+    Start a HttpServer that supports controllers and actions. The controller name is ignored.
     URIs are of the form: /controller/action
  */
 public function controllerServer(endpoint): HttpServer {

@@ -11,7 +11,14 @@ module ejs.web {
     /** 
         Web framework controller class. The controller classes can accept web requests and direct them to action methods
         which generate the response. Controllers are responsible for either generating output for the client or invoking
-        a View which will create the response.
+        a View which will create the response. By convention, all Controllers should be defined with a "Controller" 
+        suffix. This permits similar Controller and Model to exist in the same namespace.
+
+        MOB - Need intro to controllers here
+
+        Action methods will autoFinalize by calling Request.autoFinalize unless Request.dontAutoFinalize has been called.
+        If the Controller action wants to keep the request connection to the client open, you must call dontAutoFinalize
+        before returning from the action.
         @stability prototype
         @spec ejs
      */
@@ -24,7 +31,6 @@ module ejs.web {
 
         private static var _initRequest: Request
 
-        private var redirected: Boolean
         private var _afterCheckers: Array
         private var _beforeCheckers: Array
 
@@ -141,7 +147,7 @@ UNUSED - MOB -- better to set in Request
             params.action = actionName
             runCheckers(_beforeCheckers)
             let response
-            if (!redirected && !rendered) {
+            if (!rendered) {
                 if (!this[actionName]) {
                     if (!viewExists(actionName)) {
                         response = this[actionName = "missing"]()
@@ -149,13 +155,15 @@ UNUSED - MOB -- better to set in Request
                 } else {
                     response = this[actionName]()
                 }
-                if (!response && !rendered && !redirected && request.autoFinalizing) {
+                if (!response && !rendered && request.autoFinalizing) {
                     /* Run a default view */
                     renderView()
                 }
                 runCheckers(_afterCheckers)
             }
-            request.autoFinalize()
+            if (!response) {
+                request.autoFinalize()
+            }
             return response
         }
 
@@ -214,7 +222,7 @@ UNUSED - MOB -- better to set in Request
             @duplicate Request.observe
          */
         function observe(name, observer: Function): Void
-            request.observer(name, observer)
+            request.observe(name, observer)
 
         /** 
             @duplicate Request.read
@@ -231,7 +239,7 @@ UNUSED - MOB -- better to set in Request
          */
         function redirect(where: Object, status: Number = Http.MovedTemporarily): Void {
             request.redirect(where, status)
-            redirected = true
+            rendered = true
         }
 
         /** 
@@ -247,18 +255,26 @@ UNUSED - MOB -- better to set in Request
         }
 
         /** 
-            Render the raw arguments back to the client. The args are converted to strings.
-            @param args Arguments to write to the client
+            Render the raw arguments back to the client. This call writes the given arguments back to the client
+            using request.write, sets the $rendered property to true and invokes Request.autoFinalize(). 
+            If an action method does call a render routine or set the rendered property to true or call 
+            Request.dontAutoFinalize, then, a default view will be generated when the action method returns. 
+            Call request.dontAutoFinalize() before calling $render if you wish to write more data.
+            Only one call to a render routine is permitted, except for renderPartialTemplate.
+            @param args Arguments to write to the client.  The args are converted to strings.
          */
         function render(...args): Void { 
             if (!rendered) {
                 rendered = true
                 request.write(...args)
+                request.autoFinalize()
             }
         }
 
         /**
-            Render an error message as the response
+            Render an error message as the response.
+            This call sets the response status, writes the given arguments back to the client
+            using request.writeError, sets the $rendered property to true and invokes Request.autoFinalize().
             @param status Http status code to use
             @param msgs Error messages to send with the response
          */
@@ -266,22 +282,28 @@ UNUSED - MOB -- better to set in Request
             if (!rendered) {
                 rendered = true
                 request.writeError(status, ...msgs)
+                request.autoFinalize()
             }
         }
 
         /** 
-            Render a file's contents. 
+            Render a file's contents back tot he client.
+            This call writes the given file contents back to the client using request.sendFile, sets the $rendered 
+            property to true and invokes Request.autoFinalize().
+            Call request.dontFinalize() before calling renderFile if you wish to write more data.
             @param filename Path to the filename to send to the client
          */
         function renderFile(filename: Path): Void { 
             if (!rendered) {
                 rendered = true
                 request.sendFile(filename)
+                request.autoFinalize()
             }
         }
 
         /** 
-            Render a partial response using template file. Does not set "rendered" to true.
+            Render a partial response using template file. This call does not set "rendered" to true. 
+            the action method returns. This call will not finalize the request output.
             @param path Path to the template to render
             @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
          */
@@ -294,7 +316,9 @@ UNUSED - MOB -- better to set in Request
         }
 
         /** 
-            Render a view template
+            Render a view template.
+            This call writes the result of running the view template file back to the client, sets the $rendered 
+            property to true and invokes Request.autoFinalize().
             @param viewName Name of the view to render. The view template filename will be constructed by joining
                 the views directory with the controller name and view name. E.g. views/Controller/list.ejs
          */
@@ -306,6 +330,8 @@ UNUSED - MOB -- better to set in Request
 
         /** 
             Render a view template from a path.
+            This call writes the result of running the view template file back to the client, sets the $rendered 
+            property to true and invokes Request.autoFinalize().
             @param path Path to the view template to render
             @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
          */

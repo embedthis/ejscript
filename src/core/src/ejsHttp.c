@@ -266,10 +266,17 @@ static EjsObj *http_flush(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    EjsObj  *data;
+
     if (argc == 2 && argv[1] != ejs->nullValue) {
         httpPrepClientConn(hp->conn, HTTP_NEW_REQUEST);
         mprFlushBuf(hp->requestContent);
-        prepForm(ejs, hp, NULL, argv[1]);
+        data = argv[1];
+        if (ejsGetPropertyCount(ejs, data) > 0) {
+            prepForm(ejs, hp, NULL, data);
+        } else {
+            mprPutStringToBuf(hp->requestContent, ejsGetString(ejs, data));
+        }
         mprAddNullToBuf(hp->requestContent);
         httpSetHeader(hp->conn, "Content-Type", "application/x-www-form-urlencoded");
     }

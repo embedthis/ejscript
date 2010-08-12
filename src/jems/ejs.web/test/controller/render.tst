@@ -26,6 +26,9 @@ public class TestController extends Controller {
         renderPartialTemplate("web/part2.ejs")
         render()
     }
+    action function response() {
+        return {status: Http.Ok, headers: { Weather: "raining" }, body: "Hello Response" }
+    }
 } 
 
 load("../utils.es")
@@ -60,6 +63,12 @@ http.close()
 //  renderPartialTemplate
 let http = fetch(HTTP + "/test/partial")
 assert(http.response == "part-1\npart-2\n")
+
+
+//  render a response hash
+let http = fetch(HTTP + "/test/response")
+assert(http.header("Weather") == "raining")
+assert(http.response == "Hello Response")
 
 
 http.close()

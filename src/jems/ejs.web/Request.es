@@ -333,14 +333,14 @@ module ejs.web {
          */
         native function close(): Void
 
-//  MOB -- have a default timeout value
         /**
             Create a session state object. The session state object can be used to share state between requests.
             If a session has not already been created, this call will create a new session and initialize the 
             $session property with the new session. It will also set the $sessionID property and a cookie containing 
             a session ID will be sent to the client with the response. Sessions can also be used/created by simply
             accessing the session property.  Objects are stored in the session state using JSON serialization.
-            @param timeout Session state timeout in seconds. After the timeout has expired, the session will be deleted.
+            @param timeout Optional session state timeout in seconds. Set to zero for no timeout. After the timeout has 
+                expired, the session will be deleted. 
          */
         function createSession(timeout: Number = -1): Session {
             if (timeout >= 0) {
@@ -492,6 +492,23 @@ module ejs.web {
 
         /** 
             @duplicate Stream.read
+            If the request is posting a form, i.e. the Http ContentType header is set to 
+            "application/x-www-form-urlencoded", then the request object will not be created by the HttpServer until
+            all the form data is read and the $params collection is populated with the form data. This permits form
+            data to be processed synchronously without having to use async/observer techniques to respond to readable
+            events. With all other content types, the Request object will be created and run, before incoming client 
+            data has been read. To read data in these situations, register an observer function to run when the
+            connection becomes "readable".
+            @example:
+                request.observe("readable", function(event, request) {
+                    var data = new byteArray
+                    if (read(data)) {
+                        print("Got " + data)
+                    } else {
+                        //  End of input
+                        request.finalize()
+                    }
+                })
          */
         native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
