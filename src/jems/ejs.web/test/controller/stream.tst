@@ -26,13 +26,12 @@ load("../utils.es")
 server = controllerServer(HTTP)
 
 
-//  Sync read
+//  Async fetch with async writing
 
 let http = new Http
 http.fetch("GET", HTTP + "/test/big", null)
 App.waitForEvent(http, "close", 30000)
 assert(http.status == 200)
-assert(http.response.length > 0)
 assert(http.response.length > 0)
 assert(http.response.contains("aa: 1000"))
 http.close()

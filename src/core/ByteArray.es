@@ -326,6 +326,8 @@ module ejs {
         native function write(...data): Number
 
 //  MOB -- should these routines return the number of bytes written?
+//  MOB -- function write(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+
         /** 
             Write a byte to the array. Data is written to the current write $position pointer which is then incremented.
 //  MOB -- no such details exist
