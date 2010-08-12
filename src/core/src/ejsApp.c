@@ -256,10 +256,10 @@ static EjsObj *app_eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    int         timeout;
+    int     timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]): MPR_MAX_TIMEOUT;
-    ejsServiceEvents(ejs, timeout, MPR_SERVICE_NAP);
+    ejsServiceEvents(ejs, timeout, 0);
     return 0;
 }
 

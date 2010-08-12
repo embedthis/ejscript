@@ -7,6 +7,7 @@ const HTTP = ":" + (App.config.test.http_port || "6700")
 
 server = new HttpServer
 server.listen(HTTP)
+load("../utils.es")
 
 server.observe("readable", function (event, request: Request) {
     write(1234)
@@ -24,7 +25,7 @@ server.observe("readable", function (event, request: Request) {
 
 let http = new Http
 http.get(HTTP + "/index.html")
-do { App.eventLoop(10, true) } while(!http.wait())
+http.wait()
 
 //  Validate output
 assert(http.response == "1234, a string, 1,2,3,4, from byte array, &lt;p&gt;html&lt;/p&gt;")

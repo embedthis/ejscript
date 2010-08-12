@@ -42,7 +42,7 @@ server.observe("readable", function (event, request: Request) {
 //  form 
 let http = new Http
 http.form(HTTP + "/form", { color: "red", shape: "square" })
-do { App.eventLoop(10, true) } while(!http.wait())
+http.wait()
 assert(http.status == 200)
 assert(http.response == "")
 http.close()
@@ -51,7 +51,7 @@ http.close()
 //  post 
 let http = new Http
 http.post(HTTP + "/post-sync", "Some data")
-do { App.eventLoop(10, true) } while(!http.wait())
+http.wait()
 assert(http.status == 200)
 assert(http.response == "")
 http.close()

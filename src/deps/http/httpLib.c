@@ -7598,7 +7598,7 @@ int httpSetUri(HttpConn *conn, cchar *uri)
 /*  
     Wait for the Http object to achieve a given state. Timeout is total wait time in msec. If <= 0, then dont wait.
  */
-int httpWait(HttpConn *conn, int state, int timeout)
+int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
 {
     Http        *http;
     MprTime     expire;
@@ -7619,12 +7619,12 @@ int httpWait(HttpConn *conn, int state, int timeout)
     while (conn->state < state && conn->sock && !mprIsSocketEof(conn->sock)) {
         fd = conn->sock->fd;
         if (!conn->writeComplete) {
-            events = mprWaitForSingleIO(conn, fd, MPR_WRITABLE, remainingTime);
+            events = mprWaitForSingleIO(conn, fd, MPR_WRITABLE, 0);
         } else {
             if (mprSocketHasPendingData(conn->sock)) {
                 events = MPR_READABLE;
             } else {
-                events = mprWaitForSingleIO(conn, fd, MPR_READABLE, remainingTime);
+                events = mprWaitForSingleIO(conn, fd, MPR_READABLE, 0);
             }
         }
         http->now = mprGetTime(conn);
@@ -7637,6 +7637,9 @@ int httpWait(HttpConn *conn, int state, int timeout)
         remainingTime = (int) (expire - http->now);
         if (remainingTime <= 0) {
             break;
+        }
+        if (events == 0) {
+            mprServiceEvents(conn, dispatcher, remainingTime, MPR_SERVICE_ONE_THING);
         }
     }
     if (conn->sock == 0 || conn->error) {
@@ -10957,17 +10960,20 @@ HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, i
     HttpUri     *current, *other;
     int         i;
 
-    current = httpCloneUri(ctx, base, 0);
-    /*
-        Must not inherit the query or reference
-     */
-    current->query = NULL;
-    current->reference = NULL;
+    if ((current = httpCloneUri(ctx, base, 0)) == 0) {
+        return 0;
+    }
     if (relative) {
         current->host = 0;
         current->scheme = 0;
         current->port = 0;
     }
+    /*
+        Must not inherit the query or reference
+     */
+    current->query = NULL;
+    current->reference = NULL;
+
     for (i = 0; i < argc; i++) {
         other = others[i];
         if (other->scheme) {

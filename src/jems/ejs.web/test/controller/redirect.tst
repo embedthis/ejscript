@@ -38,7 +38,7 @@ load("../utils.es")
 let http = new Http
 http.followRedirects = true
 http.get(HTTP + "/test/index")
-do { App.eventLoop(10, true) } while(!http.wait())
+http.wait()
 assert(http.response == "Hello List")
 http.close()
 
@@ -47,7 +47,7 @@ http.close()
 let http = new Http
 http.followRedirects = true
 http.get(HTTP + "/test/phase1")
-do { App.eventLoop(10, true) } while(!http.wait())
+http.wait()
 assert(http.response == "Hello Phase 2")
 http.close()
 

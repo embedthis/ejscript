@@ -687,10 +687,10 @@ FUTURE & KEEP
         native function set uri(newUri: Uri): Void
 
         /** 
-            Wait for a request to complete. This will call finalize() if in sync mode if the request is not 
-            already finalized.
-            @param timeout Time in seconds to wait for the request to complete. A timeout of zero means no timeout, ie.
-            wait forever. A timeout of < 0, means don't wait.
+            Wait for a request to complete. This will call finalize() if in sync mode and the request is not already 
+            finalized.
+            @param timeout Timeout in milliseconds to wait for the request to complete. A timeout of zero means no 
+            timeout, ie. wait forever. A timeout of < 0 (default), means use the default request timeout.
             @return True if the request successfully completes.
          */
         native function wait(timeout: Number = -1): Boolean

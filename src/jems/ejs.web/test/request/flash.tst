@@ -42,14 +42,14 @@ http.close()
 let http = new Http
 http.setCookie(cookie)
 http.get(HTTP + "/second")
-do { App.eventLoop(10, true) } while(!http.wait())
+http.wait()
 http.close()
 
 //  Third page - verify flash is empty
 let http = new Http
 http.setCookie(cookie)
 http.get(HTTP + "/third")
-do { App.eventLoop(10, true) } while(!http.wait())
+http.wait()
 http.close()
 
 server.close()

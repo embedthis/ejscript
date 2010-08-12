@@ -70,7 +70,7 @@ http.close()
 let http = new Http
 http.post(HTTP + "/receive", "Too much receive data")
 http.finalize()
-do { App.eventLoop(10, true) } while(!http.wait())
+http.wait()
 assert(http.status == Http.EntityTooLarge)
 assert(http.response.contains("Request content body of 21 bytes is too big. Limit 10."))
 http.close()

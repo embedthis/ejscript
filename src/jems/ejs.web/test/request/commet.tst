@@ -42,8 +42,7 @@ http.observe("writable", function (event, h) {
     }
 })
 http.post(HTTP + "/commet")
-
-do { App.eventLoop(10, true) } while(!http.wait())
+http.wait()
 
 assert(http.status == 200)
 assert(http.response == "Hello World")

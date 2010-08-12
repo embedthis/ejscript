@@ -8,6 +8,7 @@ const HTTP = ":" + PORT
 
 server = new HttpServer
 server.listen(HTTP)
+load("../utils.es")
 
 server.observe("readable", function (event, request: Request) {
 
@@ -94,5 +95,5 @@ server.observe("readable", function (event, request: Request) {
 
 let http = new Http
 http.get(HTTP + "/index.html")
-do { App.eventLoop(10, true) } while(!http.wait())
+http.wait()
 server.close()

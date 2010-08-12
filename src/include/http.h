@@ -2541,11 +2541,12 @@ extern void httpSetSimpleHeader(HttpConn *conn, cchar *key, cchar *value);
 /** 
     Wait for the connection to achieve the requested state Used for blocking client requests.
     @param conn HttpConn connection object created via $httpCreateConn
+    @param dispatcher Mpr dispatcher to use for waiting
     @param state HTTP_STATE_XXX to wait for.
     @param timeout Timeout in milliseconds to wait 
     @ingroup HttpTx
  */
-extern int httpWait(HttpConn *conn, int state, int timeout);
+extern int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout);
 
 /** 
     Write the transmission headers
