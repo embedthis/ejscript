@@ -440,6 +440,19 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *obj, EjsObj *options)
 
 
 /**
+    Get a Path representation of a variable.
+    @return Returns a string variable or null if an exception is thrown.
+ */
+EjsPath *ejsToPath(Ejs *ejs, EjsObj *obj)
+{
+    if (obj == 0 || ejsIsPath(ejs, obj)) {
+        return (EjsPath*) obj;
+    }
+    return (EjsPath*) ejsCast(ejs, obj, ejs->pathType);
+}
+
+
+/**
     Get a Uri representation of a variable.
     @return Returns a string variable or null if an exception is thrown.
  */

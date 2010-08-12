@@ -39,7 +39,7 @@ server.observe("readable", function (event, request: Request) {
 server.listen(HTTP)
 load("../utils.es")
 
-//  first
+//  first - Send a request to set flash messages and get a session cookie
 let http = fetch(HTTP + "/test/first")
 let cookie = http.sessionCookie
 assert(cookie.contains("-ejs-session-="))

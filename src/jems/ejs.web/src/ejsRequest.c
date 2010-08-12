@@ -631,6 +631,7 @@ static int getNum(Ejs *ejs, EjsObj *vp)
 
 static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *value)
 {
+    EjsType     *type;
     EjsUri      *up;
 
     switch (slotNum) {
@@ -639,7 +640,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         return ejs->objectType->helpers.setProperty(ejs, (EjsObj*) req, slotNum, value);
 
     case ES_ejs_web_Request_absHome:
-        req->absHome = value;
+        req->absHome = (EjsObj*) ejsToUri(ejs, value);
         break;
 
     case ES_ejs_web_Request_autoFinalizing:
@@ -647,12 +648,12 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_dir:
-        req->dir = (EjsPath*) value;
+        req->dir = ejsToPath(ejs, value);
         req->filename = 0;
         break;
 
     case ES_ejs_web_Request_filename:
-        req->filename = (EjsPath*) value;
+        req->filename = ejsToPath(ejs, value);
         break;
 
     case ES_ejs_web_Request_headers:
@@ -663,36 +664,41 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_home:
-        req->home = (EjsUri*) value;
+        req->home = ejsToUri(ejs, value);
         break;
 
     case ES_ejs_web_Request_host:
-        req->host = value;
+        req->host = (EjsObj*) ejsToString(ejs, value);
         req->uri = 0;
         break;
 
     case ES_ejs_web_Request_log:
+        type = ejsGetType(ejs, ES_Logger);
+        if (!ejsIsA(ejs, value, type)) {
+            ejsThrowArgError(ejs, "Property is not a logger");
+            break;
+        }
         req->log = value;
         break;
 
     case ES_ejs_web_Request_pathInfo:
-        req->pathInfo = value;
+        req->pathInfo = (EjsObj*) ejsToString(ejs, value);
         req->filename = 0;
         req->uri = 0;
         break;
 
     case ES_ejs_web_Request_port:
-        req->port = value;
+        req->port = (EjsObj*) ejsToNumber(ejs, value);
         req->uri = 0;
         break;
 
     case ES_ejs_web_Request_query:
-        req->query = value;
+        req->query = (EjsObj*) ejsToString(ejs, value);
         req->uri = 0;
         break;
 
     case ES_ejs_web_Request_reference:
-        req->reference = value;
+        req->reference = (EjsObj*) ejsToString(ejs, value);
         req->uri = 0;
         break;
 
@@ -701,14 +707,18 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_scriptName:
-        //  MOB -- all these need ejsToString()
-        req->scriptName = value;
+        req->scriptName = (EjsObj*) ejsToString(ejs, value);
         req->filename = 0;
         req->uri = 0;
         req->absHome = 0;
         break;
 
     case ES_ejs_web_Request_server:
+        type = ejsGetTypeByName(ejs, "ejs.web", "HttpServer");
+        if (!ejsIsA(ejs, value, type)) {
+            ejsThrowArgError(ejs, "Property is not an instance of HttpServer");
+            break;
+        }
         req->server = (EjsHttpServer*) value;
         break;
 

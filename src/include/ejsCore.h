@@ -1903,6 +1903,7 @@ extern EjsPath *ejsCreatePathAndFree(Ejs *ejs, char *path);
 #else
     #define ejsIsPath(ejs, vp) (vp && ((EjsObj*) vp)->type == ejs->pathType)
 #endif
+extern EjsPath *ejsToPath(Ejs *ejs, EjsObj *obj);
 
 
 /** 
