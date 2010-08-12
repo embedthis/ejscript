@@ -30,18 +30,17 @@ public class TestController extends Controller {
     }
 } 
 
-server = new HttpServer
+load("../utils.es")
+
+let server = new HttpServer
 server.observe("readable", function (event, request: Request) {
     let [,params.controller, params.action] = pathInfo.toString().split("/")
-    assert(params.controller == "test")
-    assert(params.action == "echo")
     let app = Controller.create(request).app
     assert(app is Function)
     Web.process(app, request)
 })
-
 server.listen(HTTP)
-load("../utils.es")
+
 
 //  Simple echo action
 let http = fetch(HTTP + "/test/echo?color=red&temp=cold")

@@ -17,25 +17,15 @@ public class TestController extends Controller {
     }
 } 
 
-server = new HttpServer
-server.observe("readable", function (event, request: Request) {
-    let [,params.controller, params.action] = pathInfo.toString().split("/")
-    assert(params.controller == "test")
-    assert(params.action == "echo")
-
-    //  Use constructor form instead of create form
-    let app = TestController(request).app
-    assert(app is Function)
-    Web.process(app, request)
-})
-
-server.listen(HTTP)
 load("../utils.es")
+server = controllerServer(HTTP)
+
 
 //  Simple echo action
 let http = fetch(HTTP + "/test/echo")
 assert(http.status == Http.Ok)
 assert(http.response == "Echo Hello World")
+
 
 http.close()
 server.close()

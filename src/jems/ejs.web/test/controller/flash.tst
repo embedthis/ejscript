@@ -29,15 +29,9 @@ public class TestController extends Controller {
     }
 } 
 
-server = new HttpServer
-server.observe("readable", function (event, request: Request) {
-    let [,params.controller, params.action] = pathInfo.toString().split("/")
-    let app = Controller.create(request).app
-    Web.process(app, request)
-})
-
-server.listen(HTTP)
 load("../utils.es")
+server = controllerServer(HTTP)
+
 
 //  first - Send a request to set flash messages and get a session cookie
 let http = fetch(HTTP + "/test/first")
@@ -45,12 +39,14 @@ let cookie = http.sessionCookie
 assert(cookie.contains("-ejs-session-="))
 http.close()
 
+
 //  second - test flash messages from first page and clear flash
 let http = new Http
 http.setCookie(cookie)
 http.get(HTTP + "/test/second")
 http.wait()
 http.close()
+
 
 //  third - verify flash is empty
 let http = new Http

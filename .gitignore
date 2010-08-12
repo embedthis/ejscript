@@ -99,3 +99,4 @@ ejs.log
 projects/MACOSX/*/*/xcuserdata
 projects/MACOSX/*/*/project.xcworkspace
 src/jems/ejs.db.mapper/Model.nes
+src/jems/ejs.web/test/t.es

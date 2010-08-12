@@ -25,9 +25,8 @@ module ejs.web {
         private static var _initRequest: Request
 
         private var redirected: Boolean
-        private var _afterFilters: Array
-        private var _beforeFilters: Array
-        private var _wrapFilters: Array
+        private var _afterCheckers: Array
+        private var _beforeCheckers: Array
 
         /** Name of the action being run */
         var actionName:  String 
@@ -117,15 +116,15 @@ UNUSED - MOB -- better to set in Request
         }
 
         /** 
-            Run a filter function after running the action
+            Run an action checker function after running the action
             @param fn Function callback to invoke
-            @param options Filter options. 
-            @option only Only run the filter for this action name
-            @option except Run the filter for actions except this name
+            @param options Checker options. 
+            @option only Only run the checker for this action name
+            @option except Run the checker for all actions except this name
          */
-        function afterFilter(fn, options: Object? = null): Void {
-            _afterFilters ||= []
-            _afterFilters.append([fn, options])
+        function afterChecker(fn, options: Object = null): Void {
+            _afterCheckers ||= []
+            _afterCheckers.append([fn, options])
         }
 
         /** 
@@ -140,7 +139,7 @@ UNUSED - MOB -- better to set in Request
             use namespace action
             actionName ||= aname || params.action || "index"
             params.action = actionName
-            runFilters(_beforeFilters)
+            runCheckers(_beforeCheckers)
             let response
             if (!redirected && !rendered) {
                 if (!this[actionName]) {
@@ -154,22 +153,23 @@ UNUSED - MOB -- better to set in Request
                     /* Run a default view */
                     renderView()
                 }
-                runFilters(_afterFilters)
+                runCheckers(_afterCheckers)
             }
             request.autoFinalize()
             return response
         }
 
         /** 
-            Run a filter function before running the action
+            Run an action checker before running the action. If the checker function renders a response, the normal
+            processing of the requested action will be prevented.
             @param fn Function callback to invoke
-            @param options Filter options. 
-            @option only Only run the filter for this action name
-            @option except Run the filter for actions except this name
+            @param options Checker options. 
+            @option only Only run the checker for this action name
+            @option except Run the checker for all actions except this name
          */
-        function beforeFilter(fn, options: Object? = null): Void {
-            _beforeFilters ||= []
-            _beforeFilters.append([fn, options])
+        function beforeChecker(fn, options: Object = null): Void {
+            _beforeCheckers ||= []
+            _beforeCheckers.append([fn, options])
         }
 
         /** 
@@ -321,12 +321,11 @@ UNUSED - MOB -- better to set in Request
         }
 
         /** 
-            Remove all defined filters on the Controller.
+            Remove all defined checkers on the Controller.
          */
-        function removeFilters(): Void {
-            _beforeFilters = null
-            _afterFilters = null
-            _wrapFilters = null
+        function removeCheckers(): Void {
+            _beforeCheckers = null
+            _afterCheckers = null
         }
 
         /** @duplicate Request.setHeader */
@@ -342,19 +341,6 @@ UNUSED - MOB -- better to set in Request
          */
         function warn(msg: String): Void
             request.warn(msg)
-
-//  MOB -- these are not being used
-        /** 
-            Run a filter function wrapping the action
-            @param fn Function callback to invoke
-            @param options Filter options. 
-            @option only Only run the filter for this action name
-            @option except Run the filter for actions except this name
-         */
-        function wrapFilter(fn, options: Object? = null): Void {
-            _wrapFilters ||= []
-            _wrapFilters.append([fn, options])
-        }
 
         /** 
             Low-level write data to the client. This will buffer the written data until either flush() or finalize() 
@@ -390,27 +376,19 @@ UNUSED - MOB -- better to set in Request
         }
 
         /* 
-            Run the before/after filters. These are typically used to handle authorization and similar tasks
+            Run the before/after checkers. These are typically used to handle authorization and similar tasks
          */
-        private function runFilters(filters: Array): Void {
-            for each (filter in filters) {
-                let [fn, options] = filter
+        private function runCheckers(checkers: Array): Void {
+            for each (checker in checkers) {
+                let [fn, options] = checker
                 if (options) {
-                    only = options.only
-                    if (only) {
-                        if (only is String && actionName != only) {
-                            continue
-                        }
-                        if (only is Array && !only.contains(actionName)) {
+                    if (only = options.only) {
+                        if ((only is String && actionName != only) || (only is Array && !only.contains(actionName))) {
                             continue
                         }
                     } 
-                    except = options.except
-                    if (except) {
-                        if (except is String && actionName == except) {
-                            continue
-                        }
-                        if (except is Array && except.contains(actionName)) {
+                    if (except = options.except) {
+                        if ((except is String && actionName == except) || (except is Array && except.contains(actionName))) {
                             continue
                         }
                     }
@@ -457,7 +435,23 @@ UNUSED - MOB -- better to set in Request
          */
         # Config.Legacy
         function resetFilters(): Void
-            removeFilters()
+            removeCheckers()
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function afterFilter(fn, options: Object = null): Void
+            afterCheck(fn, options)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function beforeFilter(fn, options: Object = null): Void
+            beforeCheck(fn, options)
     }
 }
 
