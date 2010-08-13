@@ -144,7 +144,7 @@ UNUSED - MOB -- better to set in Request
             params.action = actionName
             runCheckers(_beforeCheckers)
             let response
-            if (!request.written && request.autoFinalizing) {
+            if (!request.finalized && request.autoFinalizing) {
                 if (!this[actionName]) {
                     if (!viewExists(actionName)) {
                         response = this[actionName = "missing"]()
@@ -152,12 +152,12 @@ UNUSED - MOB -- better to set in Request
                 } else {
                     response = this[actionName]()
                 }
-                if (!response && !request.written && request.autoFinalizing) {
+                if (!response && !request.responded && request.autoFinalizing) {
                     /* Run a default view */
                     writeView()
                 }
-                runCheckers(_afterCheckers)
             }
+            runCheckers(_afterCheckers)
             if (!response) {
                 request.autoFinalize()
             }
@@ -166,7 +166,8 @@ UNUSED - MOB -- better to set in Request
 
         /** 
             Run an action checker before running the action. If the checker function writes a response, the normal
-            processing of the requested action will be prevented.
+            processing of the requested action will be prevented. Note that checkers do not autoFinalize so if the
+            checker does write a response, it must call finalize.
             @param fn Function callback to invoke
             @param options Checker options. 
             @option only Only run the checker for this action name
@@ -375,6 +376,7 @@ UNUSED - MOB -- better to set in Request
 
             mode: "debug",
             database: {
+                module: "name.mod",
                 class: "Database",
                 adapter: "sqlite3",
                 debug: { name: "db/blog.sdb", trace: true },
@@ -386,7 +388,7 @@ UNUSED - MOB -- better to set in Request
             let dbconfig = config.database
             let dbclass = dbconfig["class"]
             let profile = dbconfig[config.mode]
-            if (dbclass && dbconfig.adapter && profile.name) {
+            if (dbclass) {
                 if (dbconfig.module && !global[dbclass]) {
                     global.load(dbconfig.module + ".mod")
                 }
@@ -431,22 +433,153 @@ UNUSED - MOB -- better to set in Request
         /********************************************  LEGACY 1.0.2 ****************************************/
 
         /** 
-            Old appUrl routine
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function get absUrl()
+            absHome
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function afterFilter(fn, options: Object = null): Void
+            afterCheck(fn, options)
+
+        /** 
             @hide
             @deprecated 2.0.0
          */
         # Config.Legacy
         function get appUrl()
-            request.home.toString().trimEnd("/")
+            home.trimEnd("/")
 
-        /** 
-            Old makeUrl routine
+        /**
             @hide
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String
-            makeUri({ path: action })
+        function beforeFilter(fn, options: Object = null): Void
+            beforeCheck(fn, options)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function createSession(timeout: Number): Void
+            request.createSession(timeout)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function destroySession(): Void
+            request.destroySession()
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function discardOutput(): Void {
+            //  No supported
+            true
+        }
+            
+        /**
+            escapeHtml, html is now a global in Utils.es
+         */
+
+        /** 
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function get host()
+            request.server
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function keepAlive(on: Boolean): Void {
+            // Not supported 
+            true
+        }
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function loadView(path): Void
+            writeTemplate(path)
+
+        /** 
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
+            options = options.clone()
+            options.action = action;
+            options.id = id;
+            options.query = query;
+            makeUri(options)
+        }
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function redirectUrl(uri: String, status: Number = 302): Void
+            redirect(uri, status)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function render(...args): Void
+            write(...args)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function renderFile(filename: String): Void
+            writeFile(filename)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function renderRaw(...args): Void
+            write(...args)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function renderView(name: String = null): Void
+            writeView(name)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function reportError(status: Number, msg: String, e: Object = null): Void
+            writeError(status, msg + e)
 
         /**
             @hide
@@ -461,16 +594,20 @@ UNUSED - MOB -- better to set in Request
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function afterFilter(fn, options: Object = null): Void
-            afterCheck(fn, options)
+        function sendError(status, ...msgs): Void
+            writeError(status, ...msgs)
 
         /**
             @hide
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function beforeFilter(fn, options: Object = null): Void
-            beforeCheck(fn, options)
+        function setCookie(name: String, value: String, path: String = null, domain: String = null,
+                lifetime: Number = 0, secure: Boolean = false): Void  {
+            request.setCookie(name, 
+                { value: value, path: path, domain: domain, lifetime: Date().future(lifetime * 1000), secure: secure})
+        }
+
     }
 }
 

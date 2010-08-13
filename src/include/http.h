@@ -1304,7 +1304,7 @@ typedef struct HttpConn {
     int             state;                  /**< Connection state */
     int             flags;                  /**< Connection flags */
     int             abortPipeline;          /**< Connection errors (not proto errors) abort the pipeline */
-    int             advancing;              /**< In httpAdvanceRx (mutex) */
+    int             advancing;              /**< In httpProcess (reentrancy prevention) */
     int             complete;               /**< Request is complete and should step through all remaining states */
     int             writeComplete;          /**< All write data has been sent for the current request */
     int             error;                  /**< A request error has occurred */
@@ -1937,6 +1937,7 @@ typedef struct HttpRx {
     MprList         *etags;                 /**< Document etag to uniquely identify the document version */
     MprTime         since;                  /**< If-Modified date */
 
+    int             eof;                    /**< All read data has been received (eof) */
     int             length;                 /**< Declared content length (ENV: CONTENT_LENGTH) */
     int             chunkState;             /**< Chunk encoding state */
     int             chunkSize;              /**< Size of the next chunk */
@@ -1946,7 +1947,6 @@ typedef struct HttpRx {
     int             remainingContent;       /**< Remaining content data to read (in next chunk if chunked) */
     int             receivedContent;        /**< Length of content actually received */
     int             readContent;            /**< Length of content read by user */
-    int             readComplete;           /**< All read data has been received (eof) */
 
     bool            ifModified;             /**< If-Modified processing requested */
     bool            ifMatch;                /**< If-Match processing requested */
@@ -2103,11 +2103,12 @@ extern char *httpReadString(HttpConn *conn);
 /* Internal */
 extern HttpRx *httpCreateRx(HttpConn *conn);
 extern void httpDestroyRx(HttpConn *conn);
+extern void httpCloseRx(struct HttpConn *conn);
 extern bool httpContentNotModified(HttpConn *conn);
 extern HttpRange *httpCreateRange(HttpConn *conn, int start, int end);
 extern void  httpConnError(struct HttpConn *conn, int status, cchar *fmt, ...);
 extern void  httpProtocolError(struct HttpConn *conn, int status, cchar *fmt, ...);
-extern void  httpAdvanceRx(HttpConn *conn, HttpPacket *packet);
+extern void  httpProcess(HttpConn *conn, HttpPacket *packet);
 extern void  httpProcessWriteEvent(HttpConn *conn);
 extern bool  httpProcessCompletion(HttpConn *conn);
 extern int   httpSetUri(HttpConn *conn, cchar *newUri);

@@ -2472,14 +2472,14 @@ static void readEvent(HttpConn *conn)
        
         if (nbytes > 0) {
             mprAdjustBufEnd(packet->content, nbytes);
-            httpAdvanceRx(conn, packet);
+            httpProcess(conn, packet);
 
         } else if (nbytes < 0) {
             if (conn->state <= HTTP_STATE_CONNECTED) {
                 conn->connError = conn->error = 1;
                 break;
             } else if (conn->state < HTTP_STATE_COMPLETE) {
-                httpAdvanceRx(conn, packet);
+                httpProcess(conn, packet);
                 if (!conn->error && conn->state < HTTP_STATE_COMPLETE) {
                     httpConnError(conn, HTTP_CODE_COMMS_ERROR, "Connection lost");
                     break;
@@ -2645,6 +2645,7 @@ void httpCompleteWriting(HttpConn *conn)
     if (conn->tx) {
         conn->tx->finalized = 1;
     }
+    //  MOB -- id this necessary?
     httpDiscardTransmitData(conn);
 }
 
@@ -4294,7 +4295,7 @@ static void netOutgoingService(HttpQueue *q)
     if (conn->sock == 0 || conn->writeComplete) {
         return;
     }
-    if (tx->flags & HTTP_TX_NO_BODY || conn->writeComplete) {
+    if (tx->flags & HTTP_TX_NO_BODY) {
         httpDiscardData(q, 1);
     }
     if ((tx->bytesWritten + q->count) > conn->limits->transmissionBodySize) {
@@ -5794,7 +5795,7 @@ int httpRead(HttpConn *conn, char *buf, int size)
 
 int httpIsEof(HttpConn *conn) 
 {
-    return conn->rx == 0 || conn->rx->readComplete;
+    return conn->rx == 0 || conn->rx->eof;
 }
 
 
@@ -6442,10 +6443,10 @@ void httpDestroyRx(HttpConn *conn)
 
 
 /*  
-    Process incoming requests. This will process as many requests as possible before returning. All socket I/O is
-    non-blocking, and this routine must not block. Note: packet may be null.
+    Process incoming requests and drive the state machine. This will process as many requests as possible before returning. 
+    All socket I/O is non-blocking, and this routine must not block. Note: packet may be null.
  */
-void httpAdvanceRx(HttpConn *conn, HttpPacket *packet)
+void httpProcess(HttpConn *conn, HttpPacket *packet)
 {
     mprAssert(conn);
 
@@ -6453,7 +6454,7 @@ void httpAdvanceRx(HttpConn *conn, HttpPacket *packet)
     conn->advancing = 1;
 
     while (conn->canProceed) {
-        LOG(conn, 7, "httpAdvanceRx, state %d, error %d", conn->state, conn->error);
+        LOG(conn, 7, "httpProcess, state %d, error %d", conn->state, conn->error);
 
         switch (conn->state) {
         case HTTP_STATE_BEGIN:
@@ -7012,7 +7013,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
         }
     }
     if (rx->remainingContent == 0) {
-        rx->readComplete = 1;
+        rx->eof = 1;
     }
 }
 
@@ -7283,6 +7284,8 @@ static bool processContent(HttpConn *conn, HttpPacket *packet)
     rx = conn->rx;
     q = &conn->tx->queue[HTTP_QUEUE_RECEIVE];
 
+    //  MOB -- clarify what remainingContent is when chunked. Need simple way to tell end of input
+
     if (conn->complete || conn->connError || rx->remainingContent <= 0) {
         httpSetState(conn, HTTP_STATE_RUNNING);
         return 1;
@@ -7297,7 +7300,7 @@ static bool processContent(HttpConn *conn, HttpPacket *packet)
     }
     if (rx->remainingContent == 0) {
         if (!(rx->flags & HTTP_REC_CHUNKED) || (rx->chunkState == HTTP_CHUNK_EOF)) {
-            rx->readComplete = 1;
+            rx->eof = 1;
             httpSendPacketToNext(q, httpCreateEndPacket(rx));
         }
         httpSetState(conn, HTTP_STATE_RUNNING);
@@ -7367,6 +7370,19 @@ static bool processCompletion(HttpConn *conn)
         return more;
     }
     return 0;
+}
+
+
+void httpCloseRx(HttpConn *conn)
+{
+    if (!conn->rx->eof) {
+        conn->connError = 1;
+    }
+    httpFinalize(conn);
+    conn->abortPipeline = 1;
+    if (conn->state < HTTP_STATE_COMPLETE && !conn->advancing) {
+        httpProcess(conn, NULL);
+    }
 }
 
 
@@ -7596,6 +7612,13 @@ int httpSetUri(HttpConn *conn, cchar *uri)
 }
 
 
+static void waitHandler(HttpConn *conn, struct MprEvent *event)
+{
+    httpCallEvent(conn, event->mask);
+    httpEnableConnEvents(conn);
+}
+
+
 /*  
     Wait for the Http object to achieve a given state. Timeout is total wait time in msec. If <= 0, then dont wait.
  */
@@ -7603,7 +7626,7 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
 {
     Http        *http;
     MprTime     expire;
-    int         events, fd, remainingTime;
+    int         eventMask, remainingTime, addedHandler, saveAsync;
 
     http = conn->http;
 
@@ -7614,10 +7637,22 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
         mprAssert(conn->state >= HTTP_STATE_BEGIN);
         return MPR_ERR_BAD_STATE;
     } 
+    if (conn->waitHandler.fd < 0) {
+        saveAsync = conn->async;
+        conn->async = 1;
+        eventMask = MPR_READABLE;
+        if (!conn->writeComplete) {
+            eventMask |= MPR_WRITABLE;
+        }
+        mprInitWaitHandler(conn, &conn->waitHandler, conn->sock->fd, eventMask, conn->dispatcher,
+            (MprEventProc) waitHandler, conn);
+        addedHandler = 1;
+    } else addedHandler = 0;
+
     http->now = mprGetTime(conn);
     expire = http->now + timeout;
-    remainingTime = timeout;
-    while (conn->state < state && conn->sock && !mprIsSocketEof(conn->sock)) {
+    while (!conn->error && conn->state < state && conn->sock && !mprIsSocketEof(conn->sock)) {
+#if UNUSED
         fd = conn->sock->fd;
         if (!conn->writeComplete) {
             events = mprWaitForSingleIO(conn, fd, MPR_WRITABLE, 0);
@@ -7635,13 +7670,17 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
         if (conn->error) {
             return MPR_ERR_BAD_STATE;
         }
+#endif
         remainingTime = (int) (expire - http->now);
         if (remainingTime <= 0) {
             break;
         }
-        if (events == 0) {
-            mprServiceEvents(conn, dispatcher, remainingTime, MPR_SERVICE_ONE_THING);
-        }
+        mprAssert(!mprSocketHasPendingData(conn->sock));
+        mprServiceEvents(conn, dispatcher, remainingTime, MPR_SERVICE_ONE_THING);
+    }
+    if (addedHandler) {
+        mprRemoveWaitHandler(&conn->waitHandler);
+        conn->async = saveAsync;
     }
     if (conn->sock == 0 || conn->error) {
         return MPR_ERR_CONNECTION;
@@ -7969,7 +8008,7 @@ void httpSendOutgoingService(HttpQueue *q)
     if (conn->sock == 0 || conn->writeComplete) {
         return;
     }
-    if (tx->flags & HTTP_TX_NO_BODY || conn->writeComplete) {
+    if (tx->flags & HTTP_TX_NO_BODY) {
         httpDiscardData(q, 1);
     }
     if ((tx->bytesWritten + q->ioCount) > conn->limits->transmissionBodySize) {
@@ -8349,9 +8388,10 @@ static int destroyServerConnections(HttpServer *server)
 
     for (next = 0; (conn = mprGetNextItem(http->connections, &next)) != 0; ) {
         if (conn->server == server) {
-            httpRemoveConn(http, conn);
             conn->server = 0;
             mprFree(conn);
+            /* Free will remove from the list */
+            next--;
         }
     }
     unlock(http);
@@ -9249,7 +9289,7 @@ void httpFinalize(HttpConn *conn)
     httpPutForService(conn->writeq, httpCreateEndPacket(tx), 1);
     httpServiceQueues(conn);
     if (conn->state == HTTP_STATE_RUNNING && conn->writeComplete && !conn->advancing) {
-        httpAdvanceRx(conn, NULL);
+        httpProcess(conn, NULL);
     }
 }
 

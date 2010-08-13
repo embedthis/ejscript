@@ -159,8 +159,11 @@ module ejs {
         native function get fullYear(): Number 
         native function set fullYear(year: Number): void
 
+//  MOB -- rethink name
         /**
-            @hide
+            Calculate a time that is $msec in the future
+            @param msec Period into the future in milliseconds. Can be negative for the past.
+            @return A new date object
          */
         native function future(msec: Number): Date
 

@@ -244,6 +244,12 @@ module ejs.web {
          */
         native enumerable var remoteAddress: String
 
+        /**
+            The application has responded in some way. The application has commenced a response by doing some 
+            output or setting status.
+         */
+        native var responded: Boolean
+
         /** 
             Http response headers. This is the proposed set of headers to send with the response.
             The case of header keys is preserved.
@@ -333,6 +339,8 @@ module ejs.web {
             @duplicate Stream.close
             This closes the current request by finalizing all transmission data and sending a "close" event. It may 
             not close the actually socket connection so that it can be reused for future requests.
+            It is normally not necessary to explicitly call close as the web framework will automatically close finalized
+            requests when all input data has been read.
          */
         native function close(): Void
 
@@ -543,7 +551,6 @@ module ejs.web {
          */
         native function removeObserver(name, observer: Function): Void
 
-//  MOB -- should this be sendFile - YES
         /**
             Send a static file back to the client. This is a high performance way to send static content to the client.
             This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
@@ -847,21 +854,10 @@ module ejs.web {
             @deprecated 2.0.0
           */
         # Config.Legacy
-        function get body(): String
-            input.readString()
-
-        /** 
-            Control the caching of the response content. Setting cacheable to false will add a Cache-Control: no-cache
-            header to the output
-            @param enable Set to false (default) to disable caching of the response content.
-            @hide
-            @deprecated 2.0.0
-         */
-        # Config.Legacy
-        function cachable(enable: Boolean = false): Void {
-            if (!cache) {
-                setHeader("Cache-Control", "no-cache", false)
-            }
+        function get body(): String {
+            let data = new ByteArray
+            while (read(data));
+            return data
         }
 
         /** 

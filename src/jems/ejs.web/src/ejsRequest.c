@@ -528,6 +528,9 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_remoteAddress:
         return createString(ejs, conn ? conn->ip : NULL);
 
+    case ES_ejs_web_Request_responded:
+        return ejsCreateBoolean(ejs, req->responded);
+
     case ES_ejs_web_Request_responseHeaders:
         return createResponseHeaders(ejs, req);
 
@@ -702,6 +705,10 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         req->uri = 0;
         break;
 
+    case ES_ejs_web_Request_responded:
+        req->responded = (value == ejs->trueValue);
+        break;
+
     case ES_ejs_web_Request_responseHeaders:
         req->responseHeaders = value;
         break;
@@ -771,6 +778,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     case ES_ejs_web_Request_limits:
     case ES_ejs_web_Request_localAddress:
     case ES_ejs_web_Request_originalMethod:
+    case ES_ejs_web_Request_originalUri:
     case ES_ejs_web_Request_params:
     case ES_ejs_web_Request_protocol:
     case ES_ejs_web_Request_referrer:
@@ -794,8 +802,8 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     case ES_ejs_web_Request_status:
         if (!connOk(ejs, req, 1)) return 0;
         httpSetStatus(req->conn, getNum(ejs, value));
+        req->responded = 1;
         break;
-
     }
     return 0;
 }
@@ -842,9 +850,9 @@ static EjsObj *req_close(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     if (req->conn) {
         httpFinalize(req->conn);
+        httpCloseRx(req->conn);
     }
     ejsSendRequestCloseEvent(ejs, req);
-    //  MOB -- should we do more to actually complete the request?
     return 0;
 }
 
@@ -1165,6 +1173,7 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         return 0;
     }
     req->written += written;
+    req->responded = 1;
 
     //  MOB - now
     if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&

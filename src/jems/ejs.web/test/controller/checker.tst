@@ -14,13 +14,13 @@ public class TestController extends Controller {
         beforeChecker(authorize, { except: "anyone"} )
         afterChecker(monitor, { only: "secret"} )
     }
-
     function authorize() {
         events["authorize"] = true
         if (params["key"] != "abracadabra") {
             setStatus(Http.Forbidden)
             events["denied"] = true
             write("Access Denied")
+            finalize()
         }
     }
     function monitor() {
@@ -50,10 +50,11 @@ http.close()
 //  Without key, should be denied
 let http = fetch(HTTP + "/test/secret", Http.Forbidden)
 assert(http.response == "Access Denied")
+http.wait()
 assert(events.authorize && events.monitor && events.denied)
 http.close()
 
-
+//  No key required
 events = {}
 let http = fetch(HTTP + "/test/anyone")
 assert(http.response == "Welcome Everybody")

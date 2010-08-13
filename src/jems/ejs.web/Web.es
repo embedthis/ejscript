@@ -218,6 +218,7 @@ module ejs.web {
                 if (finalize) {
                     request.finalizeFlash()
                     request.autoFinalize()
+                    //  if (request.finalized) request.close()
                 }
             } catch (e) {
                 App.log.debug(3, e)

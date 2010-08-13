@@ -44,7 +44,6 @@ server.observe("readable", function (event, request: Request) {
     assert(uri == "http://localhost:9000/test.html")
 
     assert(originalUri == "http://localhost:6700/index.html")
-    originalUri == "boom"
 
     assert(pathInfo == "/index.html")
     pathInfo = "/list/"

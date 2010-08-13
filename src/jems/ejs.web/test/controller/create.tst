@@ -44,6 +44,6 @@ server.listen(HTTP)
 let http = fetch(HTTP + "/test/echo?color=red&temp=cold")
 assert(http.status == Http.Ok)
 assert(http.response == "Echo Hello World")
-
 http.close()
+
 server.close()
