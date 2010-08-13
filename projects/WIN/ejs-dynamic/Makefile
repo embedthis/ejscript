@@ -14,8 +14,7 @@ JEMS		= ../../../src/jems
 MPR_HDR 	= $(BLD_TOP)/buildConfig.h $(shell find $(SRC)/include -name 'mpr*.h')
 LIBS		= ws2_32.lib
 PROJECTS	= libmpr.vcproj libsqlite3.vcproj libmprssl.vcproj libpcre.vcproj libhttp.vcproj libejs.vcproj \
-			  ejsweb.vcproj ejsmod.vcproj ejsc.vcproj ejs.vcproj ejssql.vcproj \
-	          ejs.web.vcproj ejs.db.sqlite.vcproj ejs.io.vcproj ejs.sys.vcproj ejs.web.vcproj ejs.xml.vcproj
+			  ejsmod.vcproj ejsc.vcproj ejs.vcproj ejssql.vcproj ejs.web.vcproj ejs.db.sqlite.vcproj ejs.web.vcproj
 
 MAKE_IFLAGS	= -I$(BLD_TOP)/src/include/master $(BLD_REGEXP_IFLAGS) $(BLD_MPR_IFLAGS)
 ifeq ($(BLD_FEATURE_OPENSSL),1)
@@ -75,11 +74,6 @@ ejs.vcproj: Makefile buildConfig.override
 ejssql.vcproj: Makefile buildConfig.override
 	@makeVsProj --project ejssql.vcproj --exe ejssql.exe --search "$(BLD_MPR_LIBPATHS)" --dflags "$(DFLAGS)" \
 		--libs "$(LIBS) libsqlite3.lib" $(MPR_HDR) $(JEMS)/ejs.db.sqlite/src/ejssql.c
-
-ejsweb.vcproj: Makefile buildConfig.override
-	@makeVsProj --project ejsweb.vcproj --exe ejsweb.exe --search "$(BLD_MPR_LIBPATHS)" --dflags "$(DFLAGS)" \
-		--libs "$(LIBS) libmpr.lib libhttp.lib libejs.lib ejs.web.lib" \
-        $(MPR_HDR) $(DEPS)/appweb/appweb.c $(DEPS)/appweb/appwebLib.c
 
 ejs.db.sqlite.vcproj: Makefile buildConfig.override
 	@makeVsProj --project ejs.db.sqlite.vcproj --library ec --dflags "$(DFLAGS)" \

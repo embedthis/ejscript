@@ -16,17 +16,19 @@ EXPORTS
   httpAddUsersToGroup
   httpAddVars
   httpAddVarsFromQueue
-  httpAdvanceRx
   httpAppendHeader
   httpAppendQueue
   httpCallEvent
   httpClearHeaders
   httpClearStages
   httpCloneStage
+  httpCloneUri
   httpCloseClientConn
   httpCloseConn
+  httpCloseRx
   httpCompareFormVar
   httpCompleteRequest
+  httpCompleteUri
   httpCompleteWriting
   httpConnError
   httpConnect
@@ -114,6 +116,7 @@ EXPORTS
   httpGetQueryString
   httpGetQueueData
   httpGetQueueRoom
+  httpGetRelativeUri
   httpGetServerAsync
   httpGetServerContext
   httpGetStatus
@@ -134,6 +137,8 @@ EXPORTS
   httpJoinPacket
   httpJoinPacketForService
   httpJoinPackets
+  httpJoinUri
+  httpJoinUriPath
   httpLimitError
   httpLoadSsl
   httpLookupErrorDocument
@@ -142,6 +147,7 @@ EXPORTS
   httpMatchEtag
   httpMatchModified
   httpNeedRetry
+  httpNormalizeUri
   httpNormalizeUriPath
   httpOmitBody
   httpOpenAuthFilter
@@ -155,6 +161,7 @@ EXPORTS
   httpParseAcl
   httpPrepClientConn
   httpPrepServerConn
+  httpProcess
   httpProcessPipeline
   httpProtocolError
   httpPutBackPacket
@@ -177,6 +184,7 @@ EXPORTS
   httpResetCredentials
   httpResetPipeline
   httpResizePacket
+  httpResolveUri
   httpScheduleQueue
   httpSendOpen
   httpSendOutgoingService
