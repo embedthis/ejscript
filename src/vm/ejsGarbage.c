@@ -128,7 +128,7 @@ void *ejsAlloc(Ejs *ejs, int size)
         return 0;
     }
     //  MOB -- how to do this test less often?
-    if (++ejs->workDone >= ejs->workQuota && !ejs->gcRequired) {
+    if (++ejs->workDone >= ejs->workQuota && !ejs->gcRequired && ejs->gc.enabled) {
         ejs->gcRequired = 1;
         ejsAttention(ejs);
     }
@@ -168,7 +168,7 @@ EjsObj *ejsAllocVar(Ejs *ejs, EjsType *type, int extra)
             return 0;
         }
         //  MOB -- how to do this test less often?
-        if (++ejs->workDone >= ejs->workQuota && !ejs->gcRequired) {
+        if (++ejs->workDone >= ejs->workQuota && !ejs->gcRequired && ejs->gc.enabled) {
             ejs->gcRequired = 1;
             ejsAttention(ejs);
         }
@@ -221,7 +221,7 @@ EjsObj *ejsAllocPooled(Ejs *ejs, int id)
             mprAssert(pool->count >= 0);
             ejsAddToGcStats(ejs, vp, id);
 #endif
-            if (++ejs->workDone >= ejs->workQuota) {
+            if (++ejs->workDone >= ejs->workQuota && !ejs->gcRequired && ejs->gc.enabled) {
                 ejs->gcRequired = 1;
                 ejsAttention(ejs);
             }

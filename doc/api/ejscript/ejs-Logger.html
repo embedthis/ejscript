@@ -48,6 +48,10 @@ log.debug(2, "message")
    <tr><td nowrap align='center'>public static const </td><td>Off</td><td><a href='ejs-Number.html'>Number</a></td><td>Logging level for no logging. </td></tr>
 <a name='Warn'></a>
    <tr><td nowrap align='center'>public static const </td><td>Warn</td><td><a href='ejs-Number.html'>Number</a></td><td>Logging level for warnings. </td></tr>
+<a name='nativeStream'></a>
+   <tr><td nowrap align='left'>public static const get </td><td>nativeStream</td><td><a href='ejs-Stream.html'>Stream</a></td><td>Logging stream for native code logging instrumentation. This controls logging from C code.
+This is initialized at startup via a command line "--log spec" switch and/or the ejsrc "log.location" field.
+Thereafter, this field is readonly.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>

@@ -58,7 +58,7 @@ class EjsMvc {
             db: Path("db"),
             cache: Path("cache"),
             controllers: Path("controllers"),
-            layouts: Path("views/layouts"),
+            layouts: Path("layouts"),
             models: Path("models"),
             views: Path("views"),
             src: Path("src"),
@@ -1435,6 +1435,7 @@ class Templates {
 
     database: {
         class: "Database",
+        module: "",
         adapter: "sqlite3",
         timeout: 5000,
         debug: {
@@ -1450,6 +1451,8 @@ class Templates {
     
     directories: {
         cache: "cache",
+        views: "views",
+        layouts: "layouts",
     },
 
     log: {
@@ -1470,6 +1473,12 @@ class Templates {
 
     web: {
         endpoint: "127.0.0.1:4000",
+        expires: {
+            html:   86400,
+            ejs:    86400,
+            es:     86400,
+            "":     86400,
+        },
         view: {
             connectors: {
                 table: "html",
@@ -1728,7 +1737,7 @@ These Directories are created via command "ejsmvc generate app"
 These files are also created:
 
     ejsrc                     Configuration file
-    views/layouts/default.ejs Default template page for all views
+    layouts/default.ejs       Default template layout page
     web/layout.css            Default layout style sheet
     web/themes/default.css    Default theme style sheet
     web/images/banner.jpg     Default UI banner

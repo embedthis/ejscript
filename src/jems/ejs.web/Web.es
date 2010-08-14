@@ -16,6 +16,20 @@ module ejs.web {
         static var config
 
         private static var defaultConfig = {
+            cache: {
+                enable: true,
+                reload: true,
+            },
+            directories: {
+                cache: Path("cache"),
+                layouts: Path("layouts"),
+                views: Path("views"),
+            },
+            extensions: {
+                es:  "es",
+                ejs: "ejs",
+                mod: "mod",
+            },
             log: {
                 showClient: true,
                 //  where: "file" - defaults to web server log
@@ -30,10 +44,11 @@ module ejs.web {
             web: {
                 expires: {
                     /*
-                        "html": 86400,
-                        "ejs": 86400,
-                        "es": 86400,
-                        "": 86400,
+                        MOB -- can we have some of this be the default?
+                        html:   86400,
+                        ejs:    86400,
+                        es:     86400,
+                        "":     86400,
                      */
                 },
                 endpoint: "127.0.0.1:4000",
@@ -100,7 +115,6 @@ module ejs.web {
             }
         }
 
-
         private static function processBody(request: Request, body: Object): Void {
             if (body is Path) {
                 if (request.isSecure) {
@@ -115,7 +129,7 @@ module ejs.web {
 //  MOB -- what about async? what if can't accept all the data?
                     request.write(item)
                 }
-                request.finalize()
+                request.autoFinalize()
 
             } else if (body is Stream) {
                 if (body.async) {
@@ -128,25 +142,25 @@ module ejs.web {
 //  MOB -- what about async? what if can't accept all the data?
                             request.write(body)
                         } else {
-                            request.finalize()
+                            request.autoFinalize()
                         }
                     })
                     //  MOB -- or this? but what about error events
                     request.observe("complete", function(event, body) {
-                        request.finalize()
+                        request.autoFinalize()
                     })
                 } else {
                     ba = new ByteArray
                     while (body.read(ba)) {
                         request.write(ba)
                     }
-                    request.finalize()
+                    request.autoFinalize()
                 }
             } else if (body && body.forEach) {
                 body.forEach(function(block) {
                     request.write(block)
                 })
-                request.finalize()
+                request.autoFinalize()
 
             } else if (body is Function) {
                 /* Functions don't auto finalize. The user is responsible for calling finalize() */
@@ -154,30 +168,32 @@ module ejs.web {
 
             } else if (body) {
                 request.write(body)
-                request.finalize()
+                request.autoFinalize()
 
             } else {
                 let file = request.responseHeaders["X-Sendfile"]
                 if (file && !request.isSecure) {
                     request.sendFile(file)
                 } else {
-                    request.finalize()
+                    request.autoFinalize()
                 }
             }
         }
 
 //  MOB WARNING: this may block in write?? - is request in async mode?
+//  MOB -- is this the best name?
         /** 
             Process a web request
             @param request Request object
-            @param app JSGI application function 
+            @param app Web application function 
          */
-        static function process(app: Function, request: Request): Void {
+        static function process(app: Function, request: Request, finalize: Boolean = true): Void {
             request.config = config
             try {
                 if (request.route && request.route.middleware) {
                     app = Middleware(app, request.route.middleware)
                 }
+                request.setupFlash()
                 let response
                 if (app.bound != global) {
                     response = app(request)
@@ -199,7 +215,13 @@ module ejs.web {
                         request.sendFile(file)
                     }
                 }
+                if (finalize) {
+                    request.finalizeFlash()
+                    request.autoFinalize()
+                    //  if (request.finalized) request.close()
+                }
             } catch (e) {
+                App.log.debug(3, e)
                 request.writeError(Http.ServerError, e)
             }
         }

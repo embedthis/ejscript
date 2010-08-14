@@ -212,6 +212,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *
     }
 done:
     if (slotNum >= 0) {
+        //  MOB MUST GET RID OF THIS. Means that every store does a get
         lookup->ref = ejsGetProperty(ejs, obj, slotNum);
         if (ejs->exception) {
             slotNum = -1;

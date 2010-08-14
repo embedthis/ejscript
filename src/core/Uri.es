@@ -29,16 +29,35 @@ module ejs {
         native function Uri(uri: Object)
 
         /** 
+            Create a complete absolute URI from "this" URI with all mandatory components present including 
+            scheme and host.  The resulting URI path will be normalized and any missing components will be 
+            completed with values from the given $base URI. If "this" URI path is relative, it will be joined to base 
+            URI's path.
+            Any query component of "this" URI is discarded in the result. This is because the query component of "this" URI
+            is regarded as POST data and not integral to the base URI.
+            @param base Optional URI to provide missing components and a base URI path if the current URI path is relative. 
+            The base argument can be a string, URI or an object hash of URI component. If the base argument is not supplied,
+            the current URI will be completed as much as possible. See $complete.
+            @return A complete, absolute URI.
+          */
+        native function absolute(base = null): Uri
+
+        /** 
             The base of portion of the URI. The base portion is the trailing portion of the path without any 
                 directory elements.
          */
         native function get basename(): Uri
         
         /** 
-            A completed URI including scheme, host. The URI path will be normalized and completed with default values 
-            for missing components. 
+            Create a complete absolute URI from "this" URI with all mandatory components present including scheme and host. 
+            The resulting URI path will be normalized and missing (mandatory) components will be completed with values 
+            from the given "missing" argument.
+            @param missing Optional URI to provide the missing components. The missing argument can be a string, URI or
+                an object hash of URI component. If this missing argument is not provided, the following defaults are used:
+                "http://localhost:80/".
+            @return A complete, absolute URI.
          */
-        native function get complete(): Uri
+        native function complete(missing = null): Uri
 
         /** 
             Break a URI into its components by converting the URI to an absolute URI and breaking into components.
@@ -171,7 +190,7 @@ module ejs {
         native function set host(value: String): Void
 
         /** 
-            Is the URI is absolute. Set to true if the URI is an absolute path with the path component beginning with "/"
+            Is the URI is an absolute path. Set to true if the URI path component beginning with a "/".
          */
         native function get isAbsolute(): Boolean
 
@@ -189,19 +208,22 @@ module ejs {
             isDir == false
 
         /** 
-            Is if the URI is relative. Set to true if the URI's path component does not begin with "/"
+            Is if the URI path is relative. Set to true if the URI's path component does not begin with a "/".
          */
         function get isRelative(): Boolean
             isAbsolute == false
 
         /** 
-            Join URIs. If a URI is absolute, replace the join with it and continue. If a URI is
-            relative, replace the basename portion of the existing URI with the next joining uri and continue. For 
-            example:  Uri("/admin/login").join("logout") will replace "login" with "logout" whereas 
-            Uri("/admin/").join("login") will append login.
-            @return A new joined URI.
+            Join URIs. URI argument are joined in turn starting with "this" URI" as the base. If a URI argument is absolute,
+            the progressive result is replaced with the absolute URI and joining continues. If a URI argument is relative, 
+            a "/" is appended followed by the argument, and joining continues. For example:  
+                Uri("/admin").join("/display") will result in "/display"
+                Uri("/admin").join("logout") will result in "/admin/logout"
+                Uri("/admin").join("private", "profile") will result in "/admin/private/profile"
+            @param others Other URIs to join. These can be URIs, strings or object hashes of URI components.
+            @return A new URI with the arguments joined to the current URI.
          */
-        native function join(...other): Uri
+        native function join(...others): Uri
 
         /** 
             Join an extension to a URI. If the basename of the URI already has an extension, this call does nothing.
@@ -234,12 +256,6 @@ module ejs {
         native function get port(): Number
         native function set port(value: Number): Void
 
-        /** 
-            The URI protocol scheme. Set to "http" by default.
-         */
-        native function get scheme(): String
-        native function set scheme(value: String): Void
-
 //  MOB -- are all these null or some other default values?
         /** 
             The URI query string. The query string is the fragment after a "?" character in the URI.
@@ -255,12 +271,27 @@ module ejs {
         native function set reference(value: String): Void
 
         /** 
-            Create a URI with a releative path from the current URI to a given URI. This call computes the relative
-            path from this URI to the $target URI argument.
-            @param target Uri Target URI to locate.
-            @return a new URI object for the target URI
+            Create a URI with a relative path from the $base URI to "this" URI. 
+            If the base URI has a different scheme, host or port to that of "this" URI, then a relative URI cannot be 
+            formed and the current URI is returned.
+            Any query component of the $base URI is ignored in the result. This is because the query component 
+            is regarded as POST data and not integral to the base URI.
+            @param base Base URI to use in calculating the relative path to "this" URI. The base argument can be a string, 
+            URI or an object hash of URI component.
+            @return a new URI object with a relative path from the $base URI to "this" URI.
          */
-        function relative(target: Uri): Uri {
+        native function relative(base): Uri
+
+//  MOB -- UNUSED
+        function OLDrelative(target): Uri {
+            if (!target.isAbsolute || !this.isAbsolute) {
+                /* If target is relative, just use it. If this is relative, can't use it because we don't know where it is */
+                return target
+            }
+            if (this.scheme != target.scheme || this.host != target.host || this.port != target.port) {
+                /* Different server */
+                return target
+            }
             let parts = this.normalize.path.toString().split("/")
             let targetParts = target.normalize.path.toString().split("/")
             if (parts.length < targetParts.length) {
@@ -290,6 +321,29 @@ module ejs {
          */
         native function replaceExt(ext: String): Uri
 
+        /**
+            Resolve a URI in the neighborhood of this URI. Resolve operates like join, except that it joins the 
+            given URI to the directory portion of the current ("this") URI. For example: 
+
+                Uri("/a/b.html").resolve("c.html") will return "/a/c.html".
+
+            Resolve operates by determining a virtual current directory for this URI. It then joins the given URI path 
+            to the directory portion of the current result. If the given URI is an absolute URI, it is 
+            used unmodified.  The effect is to find the given URI with a virtual current directory set to the 
+            directory containing the prior URI.
+
+            Resolve is useful for creating URIs in the region of the current URI and gracefully handles both 
+            absolute and relative URI segments.
+            Any query component of "this" URI is discarded in the result. This is because the query component of "this" URI
+            is regarded as POST data and not integral to the base URI.
+            @param others Other URIs to resolve in the region of this path. These can be URIs, strings or object hashes 
+                of URI components.
+            @param relative If true, return a relative URI by disregarding the scheme, host and port portions of "this" URI. 
+                Defaults to true.
+            @return A new URI object that resolves given URI args using the "this" URI as a base. 
+         */
+        native function resolve(target, relative: Boolean = true): Path
+
         /** 
             Compare two URIs test if they represent the same resource
             @param other Other URI to compare with
@@ -297,6 +351,12 @@ module ejs {
             @return True if the URIs represent the same underlying resource
          */
         native function same(other: Object, exact: Boolean = false): Boolean
+
+        /** 
+            The URI protocol scheme. Set to "http" by default.
+         */
+        native function get scheme(): String
+        native function set scheme(value: String): Void
 
         /** 
             Return true if the URI path starts with the given prefix. This skips the scheme, host and port portions
@@ -315,10 +375,17 @@ module ejs {
             JSON.stringify(this.toString())
 
         /** 
-            Convert the URI to a string. The format of the string will depend on the defined $representation format.
+            Convert the URI to a string.
             @return a string representing the URI.
          */
         native override function toString(): String
+
+        /** 
+            Convert the local portion of the URI to a string. This will include only the path, query and reference
+            components of the URI. The scheme, host and port portions of the URI will be ignored.
+            @return a string representing the URI's path, query and reference portions.
+         */
+        native override function toLocalString(): String
 
         /** 
             Trim a pattern from the end of the URI path
@@ -395,7 +462,7 @@ module ejs {
     /** 
         Encode objects using using www-url encoding. Each object is encoded as a "key=value" pair. Each pair is separated
         by a "&" character. 
-        @param str String to encode
+        @param items Strings to encode
         @returns an encoded string
      */
     function encodeObjects(...items) {

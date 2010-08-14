@@ -7,7 +7,6 @@ const BIG = HTTP + "/big.es"
 var http: Http = new Http
 
 http.get(BIG)
-http.finalize()
 buf = new ByteArray
 while (http.read(buf) > 0) {
     assert(buf.available > 0)

@@ -63,7 +63,7 @@ module ejs {
             global patterns. This is only set if the "g" flag was used.
             It is set to the match ending index plus one. Set to zero if no match.
          */
-        shared native function get lastIndex(): Number
+        native function get lastIndex(): Number
 
         /**
             Set the integer index of the end of the last match plus one. This is the index to start the next match for
@@ -88,24 +88,24 @@ module ejs {
             input string looking for matches.
             @spec ejs
          */
-        shared native function get global(): Boolean
+        native function get global(): Boolean
 
         /**
             Ignore case flag. If the ignore case modifier was specified, the regular expression is case insensitive.
             @spec ejs
          */
-        shared native function get ignoreCase(): Boolean
+        native function get ignoreCase(): Boolean
 
         /**
             Multiline flag. If the multiline modifier was specified, the regular expression will search through carriage 
             return and new line characters in the input.
          */
-        shared native function get multiline(): Boolean
+        native function get multiline(): Boolean
 
         /**
             Regular expression source pattern currently set.
          */
-        shared native function get source(): String
+        native function get source(): String
 
         /**
             Substring last matched. Set to the matched string or null if there were no matches.
@@ -144,7 +144,7 @@ module ejs {
             Sticky flag. If the sticky modifier was specified, the regular expression will only match from the $lastIndex.
             @spec ejs
          */
-        shared native function get sticky(): Boolean
+        native function get sticky(): Boolean
 
         /**
             Test whether this regular expression will match against a string.

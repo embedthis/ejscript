@@ -14,7 +14,7 @@ module ejs.web {
             let id = md5(request.id)
             return Loader.load(id, id, request.config, function (id, path) {
                 if (!global.TemplateParser) {
-                    load("ejs.web.template.mod")
+                    load("ejs.template.mod")
                 }
                 let data = TemplateParser().build(response.body)
                 return Loader.wrap(data)
@@ -36,11 +36,14 @@ module ejs.web {
     /** 
         Template builder for use in routing tables to serve requests for template files (*.ejs).
         @param request Request object. 
+        @param options Object hash of options
+        @options layout Path Layout file
+        @options dir Path Base directory to use for including files and for resolving layout directives
         @return A web script function that services a web request.
-        @example:
+        @example: Example use in a Route table entry
           { name: "index", builder: TemplateBuilder, match: "\.ejs$" }
      */
-    function TemplateBuilder(request: Request): Function {
+    function TemplateBuilder(request: Request, options: Object = {}): Function {
         let path = request.filename
         if (!path.exists) {
             request.writeError(Http.NotFound, "Cannot find " + path)
@@ -48,9 +51,9 @@ module ejs.web {
         }
         return Loader.load(path, path, request.config, function (id, path) {
             if (!global.TemplateParser) {
-                load("ejs.web.template.mod")
+                load("ejs.template.mod")
             }
-            let data = TemplateParser().build(path.readString())
+            let data = TemplateParser().build(path.readString(), options)
             return Loader.wrap(data)
         }).app
     }

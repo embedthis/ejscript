@@ -20,6 +20,8 @@ module ejs.web {
     dynamic class Request implements Stream {
         use default namespace public
 
+        private var lastFlash: Object
+
         /** 
             Absolute Uri for the top-level of the application. This returns an absolute Uri (includes scheme and host) 
             for the top-most application Uri. See $home to get a relative Uri.
@@ -46,16 +48,25 @@ module ejs.web {
         native enumerable var authUser: String
 
         /** 
-            Will the request auto-finalize. Set to false if dontFinalize() is called. Templated pages and controllers 
-            will auto-finalize, i.e. calling finalize() is not required unless dontFinalize() has been called.
+            Stop auto-finalizing the request. Some web frameworks will "auto-finalize" requests by calling finalize()
+            automatically at the conclusion of the request. Applications that wish to keep the connection open to the
+            client can defeat this auto-finalization by calling dontAutoFinalize().
+
+            Auto-finalization control. Set to true if the request will be finalized automatically at the conclusion of 
+            the request. Defaults to true and is set to false if dontAutoFinalize() is called. 
          */
-        native enumerable var autoFinalize: Boolean
+        native enumerable var autoFinalizing: Boolean
 
         /** 
             Request configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
             Middleware may modify to refer to a request local configuration object.
          */
         enumerable var config: Object
+
+        /** 
+            Associated Controller object. Set to null if no associated controller.
+         */
+        enumerable var controller: Controller
 
         /** 
             Get the request content length. This is the length of body data sent by the client with the request. 
@@ -107,6 +118,15 @@ module ejs.web {
             the Request $uri does not correspond to any physical resource may not define this property.
          */
         enumerable var filename: Path
+
+        /** 
+            Transient "flash" messages to pass to the next request. By convention, the following keys are used:
+            @option error    Negative errors (Warnings and errors)
+            @option inform   Informational / postitive feedback (note)
+            @option warn     Negative feedback (Warnings and errors)
+            @option *        Other feedback (reminders, suggestions...)
+        */
+        public var flashMessages: Object
 
         /** 
             Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
@@ -224,6 +244,12 @@ module ejs.web {
          */
         native enumerable var remoteAddress: String
 
+        /**
+            The application has responded in some way. The application has commenced a response by doing some 
+            output or setting status.
+         */
+        native var responded: Boolean
+
         /** 
             Http response headers. This is the proposed set of headers to send with the response.
             The case of header keys is preserved.
@@ -282,6 +308,16 @@ module ejs.web {
         native enumerable var uri: Uri
 
         /*************************************** Methods ******************************************/
+        /*
+            Construct the a Request object. Request objects are typically created by HttpServers and not constructed
+            manually.
+            @param uri Request URI
+            @param dir Default directory containing web documents
+         */
+        function Request(uri: Uri, dir: Path = ".") {
+            this.uri = uri
+            this.dir = dir
+        }
 
         /** 
             @duplicate Stream.async
@@ -291,31 +327,45 @@ module ejs.web {
         native function set async(enable: Boolean): Void
 
         /** 
+            Finalize the request if dontAutoFinalize has not been called. Finalization signals the end of any write data 
+            and flushes any buffered write data to the client. This routine is used by frameworks to allow users to 
+            defeat finalization by calling dontAutoFinalize. Users can then call finalize() to explictly control when
+            all the response data has been written. If dontAutoFinalize() has been called, this call will have no effect. 
+            In that case, call finalize() to finalize the request.
+         */
+        native function autoFinalize(): Void 
+
+        /** 
             @duplicate Stream.close
             This closes the current request by finalizing all transmission data and sending a "close" event. It may 
             not close the actually socket connection so that it can be reused for future requests.
+            It is normally not necessary to explicitly call close as the web framework will automatically close finalized
+            requests when all input data has been read.
          */
         native function close(): Void
 
-//  MOB -- have a default timeout value
         /**
             Create a session state object. The session state object can be used to share state between requests.
             If a session has not already been created, this call will create a new session and initialize the 
             $session property with the new session. It will also set the $sessionID property and a cookie containing 
             a session ID will be sent to the client with the response. Sessions can also be used/created by simply
             accessing the session property.  Objects are stored in the session state using JSON serialization.
-            @param timeout Session state timeout in seconds. After the timeout has expired, the session will be deleted.
+            @param timeout Optional session state timeout in seconds. Set to zero for no timeout. After the timeout has 
+                expired, the session will be deleted. 
          */
         function createSession(timeout: Number = -1): Session {
-            setLimits({ sessionTimeout: timeout })
+            if (timeout >= 0) {
+                setLimits({ sessionTimeout: timeout })
+            }
             return session
         }
 
         /**
-            Stop auto-finalizing the request. Calling dontFinalize will keep the request open until a forced finalize is
-            made via "finalize(true). 
+            Stop auto-finalizing the request. Some web frameworks will "auto-finalize" requests by calling finalize()
+            automatically at the conclusion of the request. Applications that wish to keep the connection open to the
+            client can defeat this auto-finalization by calling dontAutoFinalize().
          */
-        native function dontFinalize(): Void
+        native function dontAutoFinalize(): Void
 
         /** 
             Destroy a session. This call destroys the session state store that is being used for the current client. 
@@ -325,21 +375,73 @@ module ejs.web {
         native function destroySession(): Void
 
         /** 
+            Set an error flash notification message.
+            Flash messages persist for only one request and are a convenient way to pass state information or 
+            feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
+            be called before and after the request is processed. Web.process will call setupFlash and finalizeFlash 
+            automatically.
+            @param msg Message to store
+         */
+        function error(msg: String): Void
+            flash("error", msg)
+
+        /** 
             The request pathInfo file extension
          */
         function get extension(): String
             Uri(pathInfo).extension
 
         /** 
-            Signals the end of any write data and flushes any buffered write data to the client. 
-            If dontFinalize() has been called, this call will have no effect unless $force is true.
-            @param force Do finalization even if dontFinalize has been called.
+            Signals the end of any and all response data and flushes any buffered write data to the client. 
+            If the request has already been finalized, this call has no additional effect.
          */
-        native function finalize(force: Boolean = false): Void 
+        native function finalize(): Void 
 
         /** 
-            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent 
-            to the client. Flushing the read direction is ignored
+            Has the request output been finalized. 
+            @return True if the all the output has been written.
+         */
+        native function get finalized(): Boolean 
+
+        /* 
+            Save flash messages for the next request and delete old flash messages.
+         */
+        function finalizeFlash() {
+            if (flashMessages) {
+                if (lastFlash) {
+                    for (item in flashMessages) {
+                        for each (old in lastFlash) {
+                            if (hashcode(flashMessages[item]) == hashcode(old)) {
+                                delete flashMessages[item]
+                            }
+                        }
+                    }
+                }
+                if (Object.getOwnPropertyCount(flashMessages) > 0) {
+                    session["__flash__"] = flashMessages
+                }
+            }
+        }
+
+        /** 
+            Set a transient flash notification message. Flash messages persist for only one request and are a convenient
+                way to pass state information or feedback messages to the next request. To use flash messages, 
+                setupFlash() and finalizeFlash() must be called before and after the request is processed. Web.process
+                will call setupFlash and finalizeFlash automatically.
+            @param key Flash message key
+            @param msg Message to store
+         */
+        function flash(key: String, msg: String): Void {
+            if (flashMessages == null) {
+                createSession()
+                flashMessages = {}
+            }
+            flashMessages[key] = msg
+        }
+
+        /** 
+            Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure buffered write data is sent 
+            to the client. Flushing the read direction is ignored.
             @duplicate Stream.flush
          */
         native function flush(dir: Number = Stream.WRITE): Void
@@ -353,39 +455,39 @@ module ejs.web {
         native function header(key: String): String
 
         /** 
-            Make a URI, provided parts of the URI. The URI is completed using the current request and route state.
-            @params location The location parameter can be a URI string or object hash of components. If the URI is a
-               string, it is may be an absolute or relative URI. It is joined using Uri.join() to a base URI fromed from
-               the current request parameters. If the URI is an object hash, the following properties are examined
-               and used to augment parameters from the existing request: scheme, host, port, path, query, reference. 
-               Properties that are relevant to the current request route, such as "controller", or "action" are also
-               consulted.
+            Set a informational flash notification message.
+            Flash messages persist for only one request and are a convenient way to pass state information or 
+            feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
+            be called before and after the request is processed. Web.process will call setupFlash and finalizeFlash 
+            automatically.
+            @param msg Message to store
+         */
+        function inform(msg: String): Void
+            flash("inform", msg)
+
+        /** 
+            Make a URI. The URI is created from the given location parameter. The location may contain partial or complete 
+            URI information. The missing parts are supplied using the current request URI and optional route tables. 
+            @params location The location parameter can be a URI string or object hash of components. If the location is a
+               string, it is may be an absolute or relative URI. If location is an absolute URI, it will be used unmodified.
+               If location is a relative URI, is append to the current request URI. The location argument can also be
+               an object hash of URI components: scheme, host, port, path, query, reference, controller, action and other
+               route table tokens. 
+            @param relative If true, return a relative URI by disregarding the scheme, host and port portions of "this" URI. 
+                Defaults to true.
             @option scheme String URI protocol scheme (http or https)
             @option host String URI host name or IP address.
             @option port Number TCP/IP port number for communications
-            @option path String URI path 
+            @option path String URI path portion
             @option query String URI query parameters. Does not include "?"
             @option reference String URI path reference. Does not include "#"
-            @option controller String Controller name if using an MVC route
-            @option action String Action name if using an MVC route
-            @return A Uri object
+            @option controller String Controller name if using a Controller-based route
+            @option action String Action name if using a Controller-based route
+            @option other String Other route table tokens
+            @return A Uri object.
          */
-        function makeUri(location: Object): Uri {
-            if (route) {
-                if (location is String) {
-                    return route.makeUri(this, params).join(location)
-                } else {
-                    return route.makeUri(this, blend(params.clone(), location))
-                }
-            }
-            let components = absHome.components
-            if (location is String) {
-                return Uri(components).join(location)
-            } else {
-                blend(components, location)
-            }
-            return Uri(components)
-        }
+        function makeUri(location: Object, relative: Boolean = true): Uri
+            (route) ? route.makeUri(this, location, relative) : uri.resolve(location, relative)
 
         /** 
             @duplicate Stream.observe
@@ -402,6 +504,23 @@ module ejs.web {
 
         /** 
             @duplicate Stream.read
+            If the request is posting a form, i.e. the Http ContentType header is set to 
+            "application/x-www-form-urlencoded", then the request object will not be created by the HttpServer until
+            all the form data is read and the $params collection is populated with the form data. This permits form
+            data to be processed synchronously without having to use async/observer techniques to respond to readable
+            events. With all other content types, the Request object will be created and run, before incoming client 
+            data has been read. To read data in these situations, register an observer function to run when the
+            connection becomes "readable".
+            @example:
+                request.observe("readable", function(event, request) {
+                    var data = new byteArray
+                    if (read(data)) {
+                        print("Got " + data)
+                    } else {
+                        //  End of input
+                        request.finalize()
+                    }
+                })
          */
         native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
@@ -409,25 +528,19 @@ module ejs.web {
             Redirect the client to a new URL. This call redirects the client's browser to a new location specified 
             by the $url.  Optionally, a redirection code may be provided. Normally this code is set to be the HTTP 
             code 302 which means a temporary redirect. A 301, permanent redirect code may be explicitly set.
-            @param location Url to redirect the client toward. This can be a relative or absolute string URL or it can be
-                a hash of URL components. For example, the following are valid inputs: "../index.ejs", 
+            @param location Uri to redirect the client toward. This can be a relative or absolute string URI or it can be
+                a hash of URI components. For example, the following are valid inputs: "../index.ejs", 
                 "http://www.example.com/home.html", {action: "list"}.
             @param status Optional HTTP redirection status
          */
-        function redirect(location: Object, status: Number = Http.MovedTemporarily): Void {
-            /*
-                This permits urls like: ".." or "/" or "http://..."
-             */
-            let base = uri.clone()
-            base.query = ""
-            base.reference = ""
-            let url = (location is String) ? makeUri(base.join(location).normalize.components) : makeUri(location)
+        function redirect(location: *, status: Number = Http.MovedTemporarily): Void {
             this.status = status
-            setHeader("Location", url)
+            let target: Uri = makeUri(location).absolute(uri)
+            setHeader("Location", target)
             write("<!DOCTYPE html>\r\n" +
                    "<html><head><title>Redirect (" + status + ")</title></head>\r\n" +
                     "<body><h1>Redirect (" + status + ")</h1>\r\n" + 
-                    "<p>The document has moved <a href=\"" + url + 
+                    "<p>The document has moved <a href=\"" + target + 
                     "\">here</a>.</p>\r\n" +
                     "<address>" + server.software + " at " + host + " Port " + server.port + 
                     "</address></body>\r\n</html>\r\n")
@@ -438,7 +551,6 @@ module ejs.web {
          */
         native function removeObserver(name, observer: Function): Void
 
-//  MOB -- should this be sendFile - YES
         /**
             Send a static file back to the client. This is a high performance way to send static content to the client.
             This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
@@ -462,7 +574,7 @@ module ejs.web {
                 setHeaders(response.headers)
             if (response.body)
                 write(response.body)
-            finalize()
+            autoFinalize()
         }
 
         /** 
@@ -547,6 +659,21 @@ module ejs.web {
         function setStatus(status: Number): Void
             this.status = status
 
+        /* 
+            Prepare the flash message area. This copies flash messages from the session state store into the flashMessages
+            store.
+         */
+        function setupFlash() {
+            if (sessionID) {
+                lastFlash = null
+                flashMessages = session["__flash__"]
+                if (flashMessages) {
+                    session["__flash__"] = undefined
+                    lastFlash = flashMessages.clone()
+                }
+            }
+        }
+
         /** 
             Dump objects for debugging
             @param args List of arguments to print.
@@ -588,6 +715,16 @@ module ejs.web {
           */
         native function trace(options: Object): Void
 
+        /** 
+            Set a warning flash notification.
+            Flash messages persist for only one request and are a convenient way to pass state information or 
+            feedback messages to the next request. To use flash messages, setupFlash() and finalizeFlash() must 
+            be called before and after the request is processed. Web.process will call setupFlash and finalizeFlash 
+            automatically.
+            @param msg Message to store
+         */
+        function warn(msg: String): Void
+            flash("warn", msg)
 
         /** 
             Write data to the client. This will buffer the written data until either flush() or finalize() is called. 
@@ -596,14 +733,13 @@ module ejs.web {
         native function write(...data): Number
 
         /** 
-            Write an error message back to the user and finalize the request. 
-            The output is html escaped for security.
+            Write an error message back to the user and finalize the request.  The output is Html escaped for security.
             @param status Http status code
-            @param msg Message to send. The message may be modified for readability if it contains an exception backtrace.
+            @param msgs Messages to send with the response. The messages may be modified for readability if it 
+                contains an exception backtrace.
          */
-        function writeError(code: Number, ...msgs): Void {
-            let text
-            status = code
+        function writeError(status: Number, ...msgs): Void {
+            this.status = status
             let msg = msgs.join(" ").replace(/.*Error Exception: /, "")
             let title = "Request Error for \"" + pathInfo + "\""
             let text
@@ -616,16 +752,23 @@ module ejs.web {
                 setHeader("Content-Type", "text/html")
                 write(errorBody(title, text))
             } catch {}
-            finalize(true)
+            finalize()
             log.debug(4, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 
         /** 
-            Send text back to the client which is first HTML escaped.
-            @param args Objects to emit
+            Send HTML escaped data back to the client.
+            @param args Objects to encode and write back to the client.
          */
         function writeHtml(...args): Void
             write(html(...args))
+
+        /**
+            The number of bytes written to the client. This is the count of bytes passed to $write and buffered, 
+            not the actual number of bytes sent to the network connection.
+            @return
+         */
+        native function get written(): Number
 
         /********************************************** JSGI  ********************************************************/
         /** 
@@ -711,21 +854,10 @@ module ejs.web {
             @deprecated 2.0.0
           */
         # Config.Legacy
-        function get body(): String
-            input.readString()
-
-        /** 
-            Control the caching of the response content. Setting cacheable to false will add a Cache-Control: no-cache
-            header to the output
-            @param enable Set to false (default) to disable caching of the response content.
-            @hide
-            @deprecated 2.0.0
-         */
-        # Config.Legacy
-        function cachable(enable: Boolean = false): Void {
-            if (!cache) {
-                setHeader("Cache-Control", "no-cache", false)
-            }
+        function get body(): String {
+            let data = new ByteArray
+            while (read(data));
+            return data
         }
 
         /** 

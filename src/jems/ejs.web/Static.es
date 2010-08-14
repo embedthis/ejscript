@@ -50,6 +50,7 @@ module ejs.web {
                 }
 
             } else if (request.method == "PUT") {
+                request.dontAutoFinalize()
                 return { body: put }
 
             } else if (request.method == "HEAD") {
@@ -84,7 +85,7 @@ module ejs.web {
                     request.finalize()
                 }
             })
-            request.input.observe(["complete", "error"], function (event, request) {
+            request.input.observe(["close", "complete", "error"], function (event, request) {
                 if (event == "error") {
                     file.close()
                     file.remove()

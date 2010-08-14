@@ -26,8 +26,9 @@
 
 <p class='classDescription'>Request objects manage the state and execution of a web request. The HttpServer class creates
 instances of Request in response to incoming client requests. The Request object holds the client request state
-including the request URL and headers. It is also a Stream and by calling the read() method, request body 
-content can be read.<br/><br/>The response to send back to the client can be defined by setting status and calling setHeaders() and write() to 
+including the request URL and headers. It provides low-level properties and methods to inspect and control the
+request. The Request object is a Stream and by calling the read() and write() methods, request body 
+content can be read and written.<br/><br/>The response to send back to the client can be defined by setting status and calling setHeaders() and write() to 
 set the response status, headers and body content respectively.</p>
 
 </div>
@@ -42,20 +43,26 @@ set the response status, headers and body content respectively.</p>
    <tr><td nowrap align='center'>public static </td><td>jsgi</td><td><a href='ejs-Object.html'>Object</a></td><td>JSGI specification configuration object. </td></tr>
 <a name='absHome'></a>
    <tr><td nowrap align='center'>public </td><td>absHome</td><td><a href='ejs-Uri.html'>Uri</a></td><td>Absolute Uri for the top-level of the application. This returns an absolute Uri (includes scheme and host) 
-for the top most application Uri. See <a href='#home'>home</a> to get a relative Uri.</td></tr>
+for the top-most application Uri. See <a href='#home'>home</a> to get a relative Uri.</td></tr>
 <a name='authGroup'></a>
-   <tr><td nowrap align='center'>public </td><td>authGroup</td><td><a href='ejs-String.html'>String</a></td><td>Authentication group. This property is set to the value of the authentication group header.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>authGroup</td><td><a href='ejs-String.html'>String</a></td><td>Authentication group. This property is set to the value of the authentication group header. 
+This field is read-only.</td></tr>
 <a name='authType'></a>
-   <tr><td nowrap align='center'>public </td><td>authType</td><td><a href='ejs-String.html'>String</a></td><td>Authentication method if authorization is being used (basic or digest). Set to null if not using authentication.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>authType</td><td><a href='ejs-String.html'>String</a></td><td>Authentication method if authorization is being used (basic or digest). Set to null if not using authentication. 
+This field is read-only.</td></tr>
 <a name='authUser'></a>
    <tr><td nowrap align='center'>public </td><td>authUser</td><td><a href='ejs-String.html'>String</a></td><td>Authentication user name. This property is set to the value of the authentication user header. Set to null if
-not yet defined.</td></tr>
+not yet defined.
+This field is read-only.</td></tr>
+<a name='autoFinalize'></a>
+   <tr><td nowrap align='center'>public </td><td>autoFinalize</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Will the request auto-finalize. Set to false if dontFinalize() is called. Templated pages and controllers 
+will auto-finalize, i.e. calling finalize() is not required unless dontFinalize() has been called.</td></tr>
 <a name='config'></a>
    <tr><td nowrap align='center'>public </td><td>config</td><td><a href='ejs-Object.html'>Object</a></td><td>Request configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
 Middleware may modify to refer to a request local configuration object.</td></tr>
 <a name='contentLength'></a>
    <tr><td nowrap align='center'>public </td><td>contentLength</td><td><a href='ejs-Number.html'>Number</a></td><td>Get the request content length. This is the length of body data sent by the client with the request. 
-This property is readonly and is set to the length of the request content body in bytes or -1 if not known.
+This property is read-only and is set to the length of the request content body in bytes or -1 if not known.
 Body data is readable by using <a href='#read()'>read()</a> or by using the request object as a stream.</td></tr>
 <a name='contentType'></a>
    <tr><td nowrap align='center'>public </td><td>contentType</td><td><a href='ejs-String.html'>String</a></td><td>The request content type as specified by the "Content-Type" Http request header. This is set to null 
@@ -68,12 +75,6 @@ sent to and from the browser with each request.</td></tr>
    <tr><td nowrap align='center'>public </td><td>dir</td><td><a href='ejs-Path.html'>Path</a></td><td>Application web document directory on the local file system. This is set to the directory containing the
 application. For MVC applications, this is set to the base directory of the application. For non-MVC apps, 
 it is set to the directory containing the application startup script.</td></tr>
-<a name='dontFinalize'></a>
-   <tr><td nowrap align='center'>public </td><td>dontFinalize</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Don't auto-finalize the request. If dontFinalize is true, web frameworks should not auto-finalize requests. 
-Rather, callers must explicitly invoke <a href='#finalize'>finalize</a> with force set to true.</td></tr>
-<a name='encoding'></a>
-   <tr><td nowrap align='center'>public </td><td>encoding</td><td><a href='ejs-String.html'>String</a></td><td>Get the encoding scheme for serializing strings. Not yet implemented.
-MOB -- should this not be in the headers?.</td></tr>
 <a name='env'></a>
    <tr><td nowrap align='center'>public </td><td>env</td><td><a href='ejs-Object.html'>Object</a></td><td>Storage for middleware specific state. Added for JSGI compliance.</td></tr>
 <a name='errorMessage'></a>
@@ -86,38 +87,60 @@ the Request <a href='#uri'>uri</a> does not correspond to any physical resource 
    <tr><td nowrap align='center'>public </td><td>files</td><td><a href='ejs-Object.html'>Object</a></td><td>Files uploaded as part of the request. For each uploaded file, an instance of UploadFile is created in files. 
 Each element is named by the file upload HTML input element ID in the HTML page form.</td></tr>
 <a name='headers'></a>
-   <tr><td nowrap align='center'>public </td><td>headers</td><td><a href='ejs-Object.html'>Object</a></td><td>Request Http headers. This is an object hash filled with the request headers from the client.  If multiple 
+   <tr><td nowrap align='center'>public </td><td>headers</td><td><a href='ejs-Object.html'>Object</a></td><td>Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
 headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
 HTTP/1.1 specification. Use the header() method if you want to retrieve a single header.
-Header property names are lower case. ie. "content_length". Use <a href='#headers()'>headers()</a> if you want to match headers
-using a mixed case key. E.g. headers("Content-Length").</td></tr>
+Headers defined on the server-side by creating new header entries in <a href='#headers'>headers</a> will preserve case. 
+Use <a href='#headers()'>headers()</a> if you want to match headers using a mixed case key. e.g. headers("Content-Length").</td></tr>
 <a name='home'></a>
-   <tr><td nowrap align='center'>public </td><td>home</td><td><a href='ejs-Uri.html'>Uri</a></td><td>Relative Uri for the top-level of the application. This returns a relative Uri from the current request
-up to the top most application Uri.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>home</td><td><a href='ejs-Uri.html'>Uri</a></td><td>Home URI for the application. This is a relative Uri for the top-most level of the application.</td></tr>
 <a name='host'></a>
-   <tr><td nowrap align='center'>public </td><td>host</td><td><a href='ejs-String.html'>String</a></td><td>Server host name. This is set to the authorized server name (HttpServer.name) if one is configured. 
-Otherwise it will be set to the <a href='#localAddress'>localAddress</a> value which is either the "Host" header value if supplied 
-by the client or is the server IP address of the accepting interface.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>host</td><td><a href='ejs-String.html'>String</a></td><td>Host serving the request. This is initialized to the authorized server hostname (HttpServer.name) if one is 
+configured.  Otherwise it will use Http "Host" header value if supplied by the client else the server IP 
+address of the accepting interface. This algorithm attempts to use the most public address available for 
+the server.</td></tr>
 <a name='isSecure'></a>
    <tr><td nowrap align='center'>public </td><td>isSecure</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Flag indicating if the request is using secure communications. This means that TLS/SSL is the underlying
 protocol scheme.</td></tr>
+<a name='limits'></a>
+   <tr><td nowrap align='center'>public </td><td>limits</td><td><a href='ejs-Object.html'>Object</a></td><td>Resource limits for the request. The limits have initial default values defined by the owning HttpServer.</td></tr>
 <a name='localAddress'></a>
    <tr><td nowrap align='center'>public </td><td>localAddress</td><td><a href='ejs-String.html'>String</a></td><td>Server IP address of the accepting interface. </td></tr>
+<a name='log'></a>
+   <tr><td nowrap align='center'>public </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.</td></tr>
 <a name='method'></a>
    <tr><td nowrap align='center'>public </td><td>method</td><td><a href='ejs-String.html'>String</a></td><td>Request HTTP method. String containing the Http method (DELETE | GET | POST | PUT | OPTIONS | TRACE).</td></tr>
+<a name='originalMethod'></a>
+   <tr><td nowrap align='center'>public </td><td>originalMethod</td><td><a href='ejs-String.html'>String</a></td><td>Original HTTP request method used by the client. If the method is overridden by including a "__method__" 
+parameter in a POST request or by defining an X-HTTP-METHOD-OVERRIDE Http header, the original method used by
+the client is stored in this property and the method property reflects the newly defined value.</td></tr>
+<a name='originalUri'></a>
+   <tr><td nowrap align='center'>public </td><td>originalUri</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The original request URI supplied by the client. This is the Uri path supplied by the client on the first
+line of the Http request. It is combined with the HttpServer scheme, host and port components to yield a 
+fully qualified URI. The "uri" property has fields for: scheme, host, port, path, query and reference.
+The "uri" property is read-only.</td></tr>
 <a name='params'></a>
-   <tr><td nowrap align='center'>public </td><td>params</td><td><a href='ejs-Object.html'>Object</a></td><td>The request form parameters. Object hash of user url-encoded post data parameters.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>params</td><td><a href='ejs-Object.html'>Object</a></td><td>The request form parameters. This parameters are www-url decoded from the POST request body data.</td></tr>
 <a name='pathInfo'></a>
-   <tr><td nowrap align='center'>public </td><td>pathInfo</td><td><a href='ejs-String.html'>String</a></td><td>Portion of the request URL after the scriptName. This is the location of the request within the application.</td></tr>
+   <tr><td nowrap align='center'>public </td><td>pathInfo</td><td><a href='ejs-String.html'>String</a></td><td>Portion of the request URL after the scriptName. This is the location of the request within the application.
+The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the 
+uri or scriptName properties will not affect the pathInfo property.</td></tr>
+<a name='port'></a>
+   <tr><td nowrap align='center'>public </td><td>port</td><td><a href='ejs-Number.html'>Number</a></td><td>TCP/IP port number for the server of this request. </td></tr>
 <a name='protocol'></a>
    <tr><td nowrap align='center'>public </td><td>protocol</td><td><a href='ejs-String.html'>String</a></td><td>Http request protocol (HTTP/1.0 | HTTP/1.1). </td></tr>
 <a name='query'></a>
    <tr><td nowrap align='center'>public </td><td>query</td><td><a href='ejs-String.html'>String</a></td><td>Request query string. This is the portion of the Uri after the "?". Set to null if there is no query.</td></tr>
+<a name='reference'></a>
+   <tr><td nowrap align='center'>public </td><td>reference</td><td><a href='ejs-String.html'>String</a></td><td>Request reference string. This is the portion of the Uri after the "#". Set to null if there is no reference.</td></tr>
 <a name='referrer'></a>
    <tr><td nowrap align='center'>public </td><td>referrer</td><td><a href='ejs-String.html'>String</a></td><td>Name of the referring URL. This comes from the request "Referrer" Http header. Set to null if there is
 no defined referrer.</td></tr>
 <a name='remoteAddress'></a>
    <tr><td nowrap align='center'>public </td><td>remoteAddress</td><td><a href='ejs-String.html'>String</a></td><td>IP address of the client issuing the request. </td></tr>
+<a name='responseHeaders'></a>
+   <tr><td nowrap align='center'>public </td><td>responseHeaders</td><td><a href='ejs-Object.html'>Object</a></td><td>Http response headers. This is the proposed set of headers to send with the response.
+The case of header keys is preserved.</td></tr>
 <a name='route'></a>
    <tr><td nowrap align='center'>public </td><td>route</td><td><a href='ejs.web-Route.html'>Route</a></td><td>Route used for the request. The route is the matching entry in the route table for the request.
 The route has properties two properties of particular interest: "name" which is the name of the route and
@@ -127,39 +150,31 @@ and "type" which classifies the type of request.</td></tr>
 <a name='scriptName'></a>
    <tr><td nowrap align='center'>public </td><td>scriptName</td><td><a href='ejs-String.html'>String</a></td><td>Script name for the current application serving the request. This is typically the leading Uri portion 
 corresponding to the application, but middleware may modify this to be an arbitrary string representing 
-the application.  The script name is typically determined by the Router as it parses the request using 
-the routing tables.</td></tr>
+the application.  The script name is often determined by the Router as it parses the request using 
+the routing tables. The scriptName will be set to the empty string if not defined.</td></tr>
 <a name='server'></a>
    <tr><td nowrap align='center'>public </td><td>server</td><td><a href='ejs.web-HttpServer.html'>HttpServer</a></td><td>Owning server for the request. This is the HttpServer object that created this request.</td></tr>
 <a name='session'></a>
    <tr><td nowrap align='center'>public </td><td>session</td><td><a href='ejs.web-Session.html'>Session</a></td><td>Session state object. The session state object can be used to share state between requests.
 If a session has not already been created, accessing this property automatically creates a new session 
-and sets the <a href='#sessionID'>sessionID</a> property and a cookie containing a session ID sent to the client.
+and sets the <a href='#sessionID'>sessionID</a> property and a cookie containing a session ID sent to the client with the response.
 To test if a session has been created, test the sessionID property which will not auto-create a session.
-Objects are stored the session state by JSON serialization.</td></tr>
+Objects are stored in the session state using JSON serialization.</td></tr>
 <a name='sessionID'></a>
    <tr><td nowrap align='center'>public </td><td>sessionID</td><td><a href='ejs-String.html'>String</a></td><td>Current session ID. Index into the <a href='#sessions'>sessions</a> object. Set to null if no session is defined.</td></tr>
 <a name='status'></a>
    <tr><td nowrap align='center'>public </td><td>status</td><td><a href='ejs-Number.html'>Number</a></td><td>Set to the (proposed) Http response status code. </td></tr>
 <a name='uri'></a>
-   <tr><td nowrap align='center'>public </td><td>uri</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The request URL path as a parsed Uri. This is the original Uri path combined with the HttpServer scheme, host
-and port components. It will not reflect changes to pathInfo or scriptName.</td></tr>
-<a name='userAgent'></a>
-   <tr><td nowrap align='center'>public </td><td>userAgent</td><td><a href='ejs-String.html'>String</a></td><td>Get the name of the client browser software set in the "User-Agent" Http header. </td></tr>
+   <tr><td nowrap align='center'>public </td><td>uri</td><td><a href='ejs-Uri.html'>Uri</a></td><td>The current request URI. This property is read-only and is dynamically computed from the originalUri combined
+with the current scheme, host, port, scriptName, pathInfo, query and reference property values. 
+The "uri" property has fields for: scheme, host, port, path, query and reference.</td></tr>
+<a name='extension'></a>
+   <tr><td nowrap align='left'>public const get </td><td>extension</td><td><a href='ejs-String.html'>String</a></td><td>The request pathInfo file extension. </td></tr>
 <a name='input'></a>
    <tr><td nowrap align='left'>public const get </td><td>input</td><td><a href='ejs-Stream.html'>Stream</a></td><td>Request content stream. This is equivalent to using "this" as Request objects are streams connected to the
 input content. Added for JSGI compliance.</td></tr>
-<a name='limits'></a>
-   <tr><td nowrap align='left'>public const get </td><td>limits</td><td><a href='ejs-Object.html'>Object</a></td><td>Resource limits for the request. The limits have initial default values defined by the owning HttpServer.</td></tr>
-<a name='log'></a>
-   <tr><td nowrap align='left'>public const get </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Logger object. Set to App.log. This is configured from the "log" section of the "ejsrc" config file.</td></tr>
 <a name='queryString'></a>
    <tr><td nowrap align='left'>public const get </td><td>queryString</td><td><a href='ejs-String.html'>String</a></td><td>Decoded query string (URL query string). Eqivalent to the <a href='#query'>query</a> property. Added for JSGI compliance.</td></tr>
-<a name='responseHeaders'></a>
-   <tr><td nowrap align='left'>public const get </td><td>responseHeaders</td><td><a href='ejs-Object.html'>Object</a></td><td>Get the (proposed) response headers. </td></tr>
-<a name='serverName'></a>
-   <tr><td nowrap align='left'>public const get </td><td>serverName</td><td><a href='ejs-String.html'>String</a></td><td>Name of the server responding to the request. This is the portion of the URL that follows the scheme.
-If a "Host" header is provided, it is used in preference.</td></tr>
 <a name='serverPort'></a>
    <tr><td nowrap align='left'>public const get </td><td>serverPort</td><td><a href='ejs-Number.html'>Number</a></td><td>Listening port number for the server. </td></tr>
 </table>
@@ -171,26 +186,29 @@ If a "Host" header is provided, it is used in preference.</td></tr>
 <h2 class='classSection'>Request Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#cachable'><b>cachable</b></a>(enable: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Control the caching of the response content.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This closes the current request.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This closes the current request by finalizing all transmission data and sending a "close" event.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#createSession'><b>createSession</b></a>(timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs.web-Session.html'>Session</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a session state object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#destroySession'><b>destroySession</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Destroy a session.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#dontFinalize'><b>dontFinalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop auto-finalizing the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(force: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data and flushes any buffered write data to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a request header by keyword.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#makeUri'><b>makeUri</b></a>(location: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a URI, provided parts of the URI.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#redirect'><b>redirect</b></a>(where: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to a new URL.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#redirect'><b>redirect</b></a>(location: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to a new URL.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#sendfile'><b>sendfile</b></a>(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a static file back to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#sendFile'><b>sendFile</b></a>(file: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a static file back to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#sendResponse'><b>sendResponse</b></a>(response: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a response to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setCookie'><b>setCookie</b></a>(name: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a cookie header to send with the response.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a header.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the HTTP response headers.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set a Http response header in <a href='#responseHeaders'>responseHeaders</a>. </td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set multiple Http response headers in <a href='#responseHeaders'>responseHeaders</a>. </td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the request resource limits.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLocation'><b>setLocation</b></a>(prefix: <a href='ejs-String.html'>String</a>, location: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to define an application at a given Uri prefix and directory location.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setStatus'><b>setStatus</b></a>(status: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set to the (proposed) Http response status code.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trace'><b>trace</b></a>(level: <a href='ejs-Number.html'>Number</a>, options: <a href='ejs-Object.html'>Object</a> = expression , size: <a href='ejs-Number.html'>Number</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure tracing for this request.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setStatus'><b>setStatus</b></a>(status: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set the (proposed) Http response status code.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trace'><b>trace</b></a>(options: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure tracing for this request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write data to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#writeError'><b>writeError</b></a>(code: <a href='ejs-Number.html'>Number</a>, msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write an error message back to the user and finalize the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#writeHtml'><b>writeHtml</b></a>(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send text back to the client which is first HTML escaped.</td></tr>
 </table>
 
@@ -198,32 +216,35 @@ If a "Host" header is provided, it is used in preference.</td></tr>
 
 <hr />
 <h2>Method Detail</h2>
-<a name='cachable'></a>
-<div class='api'>
-<div class='apiSig'>const   public  cachable(enable: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Control the caching of the response content.</p>
-<dl><dt>Description</dt><dd>Setting cacheable to false will add a Cache-Control: no-cache
-header to the output.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>enable: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Set to false (default) to disable caching of the response content. [default: false]</td></tr></table></dd>
-</dl></div>
-</div>
-<hr />
 <a name='close'></a>
 <div class='api'>
 <div class='apiSig'>const   public  close(): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Close the stream.This closes the current request.</p>
-<dl><dt>Description</dt><dd>It may not close the actually socket connection so that it can be reused
-for future requests.</dd></dl>
+<p>Close the stream.This closes the current request by finalizing all transmission data and sending a "close" event.</p>
+<dl><dt>Description</dt><dd>It may 
+not close the actually socket connection so that it can be reused for future requests.</dd></dl>
 <dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>close</td><td>Issued before closing the stream.</td></tr>
 </table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='createSession'></a>
+<div class='api'>
+<div class='apiSig'>const   public  createSession(timeout: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs.web-Session.html'>Session</a>
+</div>
+<div class='apiDetail'>
+<p>Create a session state object.</p>
+<dl><dt>Description</dt><dd>The session state object can be used to share state between requests.
+If a session has not already been created, this call will create a new session and initialize the 
+<a href='#session'>session</a> property with the new session. It will also set the <a href='#sessionID'>sessionID</a> property and a cookie containing 
+a session ID will be sent to the client with the response. Sessions can also be used/created by simply
+accessing the session property.  Objects are stored in the session state using JSON serialization.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>timeout: <a href='ejs-Number.html'>Number</a> </td><td>Session state timeout in seconds. After the timeout has expired, the session will be deleted. [default: -1]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -234,7 +255,19 @@ for future requests.</dd></dl>
 <div class='apiDetail'>
 <p>Destroy a session.</p>
 <dl><dt>Description</dt><dd>This call destroys the session state store that is being used for the current client. 
-If no session exists, this call has no effect.</dd></dl>
+If no session exists, this call has no effect. Sessions are created by reading or writing to the <a href='#session'>session</a> 
+property.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='dontFinalize'></a>
+<div class='api'>
+<div class='apiSig'>const   public  dontFinalize(): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Stop auto-finalizing the request.</p>
+<dl><dt>Description</dt><dd>Calling dontFinalize will keep the request open until a forced finalize is
+made via "finalize(true).</dd></dl>
 </div>
 </div>
 <hr />
@@ -244,10 +277,10 @@ If no session exists, this call has no effect.</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Signals the end of any write data and flushes any buffered write data to the client.</p>
-<dl><dt>Description</dt><dd>If <a href='#dontFinalize'>dontFinalize</a> is true, this call will have no effect unless <a href='#force'>force</a> is true.</dd></dl>
+<dl><dt>Description</dt><dd>If dontFinalize() has been called, this call will have no effect unless <a href='#force'>force</a> is true.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>force: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Do finalization even if <a href='#dontFinalize'>dontFinalize</a> is true. [default: false]</td></tr></table></dd>
+<tr class='param'><td class='param'>force: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Do finalization even if dontFinalize has been called. [default: false]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -275,9 +308,39 @@ to the client. Flushing the read direction is ignored</dd></dl>
 </div>
 <div class='apiDetail'>
 <p>Get a request header by keyword.</p>
-<dl><dt>Description</dt><dd>The key match is case insensitive.</dd></dl>
-<dl><dt>Returns</dt>
+<dl><dt>Description</dt><dd>Headers supplied by the remote client are stored in lower-case. 
+Headers defined on the server-side preserve case. This routine supports both by doing a case-insensitive lookup.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>key: <a href='ejs-String.html'>String</a> </td><td>Header key value to retrieve. The key match is case insensitive.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
 <dd>The header value.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='makeUri'></a>
+<div class='api'>
+<div class='apiSig'>const   public  makeUri(location: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a>
+</div>
+<div class='apiDetail'>
+<p>Make a URI, provided parts of the URI.</p>
+<dl><dt>Description</dt><dd>The URI is completed using the current request and route state.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>location: <a href='ejs-Object.html'>Object</a> </td><td>The location parameter can be a URI string or object hash of components. If the URI is a string, it is may be an absolute or relative URI. It is joined using Uri.join() to a base URI fromed from the current request parameters. If the URI is an object hash, the following properties are examined and used to augment parameters from the existing request: scheme, host, port, path, query, reference.  Properties that are relevant to the current request route, such as "controller", or "action" are also consulted.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>scheme</td><td>String URI protocol scheme (http or https).</td></tr>
+<td class='param'>host</td><td>String URI host name or IP address.</td></tr>
+<td class='param'>port</td><td>Number TCP/IP port number for communications.</td></tr>
+<td class='param'>path</td><td>String URI path.</td></tr>
+<td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
+<td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
+<td class='param'>controller</td><td>String Controller name if using an MVC route.</td></tr>
+<td class='param'>action</td><td>String Action name if using an MVC route.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A Uri object.</dd></dl>
 </div>
 </div>
 <hr />
@@ -298,7 +361,7 @@ to the client. Flushing the read direction is ignored</dd></dl>
 <td class='param'>readable</td><td>Issued when some body content is available.</td></tr>
 <td class='param'>writable</td><td>Issued when the connection is writable to accept body data (PUT, POST).</td></tr>
 <td class='param'>close</td><td>Issued when the request completes.</td></tr>
-<td class='param'>error</td><td>Issued if the request does not complete or the connection disconnects All events are called with the signature: function (event: String, http: Http): Void.</td></tr>
+<td class='param'>error</td><td>Issued if the request does not complete or the connection disconnects. An error event is not  caused by non-200 status codes, these are regarded as valid return results. Rather, an error event will be issued when the request cannot return a complete, valid Http response to the client. All events are called with the signature: function (event: String, http: Http): Void.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -328,7 +391,7 @@ In this case a "readable" event will be issued when data is available for readin
 <hr />
 <a name='redirect'></a>
 <div class='api'>
-<div class='apiSig'>const   public  redirect(where: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  redirect(location: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Redirect the client to a new URL.</p>
@@ -336,7 +399,7 @@ In this case a "readable" event will be issued when data is available for readin
 by the <a href='#url'>url</a>. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>where: <a href='ejs-Object.html'>Object</a> </td><td>Url to redirect the client toward. This can be a relative or absolute string URL or it can be a hash of URL components. For example, the following are valid inputs: "../index.ejs",  "http://www.example.com/home.html", {action: "list"}.</td></tr><tr class='param'><td class='param'>status: <a href='ejs-Number.html'>Number</a> </td><td>Optional HTTP redirection status. [default: expression]</td></tr></table></dd>
+<tr class='param'><td class='param'>location: <a href='ejs-Object.html'>Object</a> </td><td>Url to redirect the client toward. This can be a relative or absolute string URL or it can be a hash of URL components. For example, the following are valid inputs: "../index.ejs",  "http://www.example.com/home.html", {action: "list"}.</td></tr><tr class='param'><td class='param'>status: <a href='ejs-Number.html'>Number</a> </td><td>Optional HTTP redirection status. [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -352,9 +415,9 @@ by the <a href='#url'>url</a>. </dd></dl>
 </dl></div>
 </div>
 <hr />
-<a name='sendfile'></a>
+<a name='sendFile'></a>
 <div class='api'>
-<div class='apiSig'>const   public  sendfile(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Boolean.html'>Boolean</a>
+<div class='apiSig'>const   public  sendFile(file: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Boolean.html'>Boolean</a>
 </div>
 <div class='apiDetail'>
 <p>Send a static file back to the client.</p>
@@ -363,7 +426,7 @@ This call must be invoked prior to sending any data or headers to the client, ot
 and the slower netConnector will be used instead.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>path: <a href='ejs-Path.html'>Path</a> </td><td>Path to the file to send back to the client.</td></tr></table></dd>
+<tr class='param'><td class='param'>file: <a href='ejs-Path.html'>Path</a> </td><td>Path to the file to send back to the client.</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the Send connector can successfully be used.</dd></dl>
 </div>
@@ -402,9 +465,9 @@ default values.</dd></dl>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>value</td><td>Cookie value.</td></tr>
 <td class='param'>path</td><td>Uri path to which the cookie applies.</td></tr>
-<td class='param'>domain</td><td>Domain in which the cookie applies. Must have 2-3 dots.</td></tr>
-<td class='param'>lifetime</td><td>Duration for the cookie to persist in seconds.</td></tr>
-<td class='param'>secure</td><td>Set to true if the cookie only applies for SSL based connections.</td></tr>
+<td class='param'>domain</td><td>String Domain in which the cookie applies. Must have 2-3 "." and begin with a leading ".".  For example: domain: .example.com.</td></tr>
+<td class='param'>expires</td><td>Date When the cookie expires.</td></tr>
+<td class='param'>secure</td><td>Boolean Set to true if the cookie only applies for SSL based connections.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -414,9 +477,10 @@ default values.</dd></dl>
 <div class='apiSig'>const   public  setHeader(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Set a header.</p>
-<dl><dt>Description</dt><dd>If a header has already been defined and <a href='#overwrite'>overwrite</a> is true, the header will be overwritten.
-NOTE: case does not matter in the header keyword.</dd></dl>
+<p>Convenience routine to set a Http response header in <a href='#responseHeaders'>responseHeaders</a>. </p>
+<dl><dt>Description</dt><dd>If a header has already been 
+defined and <a href='#overwrite'>overwrite</a> is true, the header will be overwritten. NOTE: case is ignored in the header keyword.
+Access <a href='#responseHeaders'>responseHeaders</a> to inspect the proposed response header set.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>key: <a href='ejs-String.html'>String</a> </td><td>The header keyword for the request, e.g. "accept".</td></tr><tr class='param'><td class='param'>value: <a href='ejs-String.html'>String</a> </td><td>The value to associate with the header, e.g. "yes".</td></tr><tr class='param'><td class='param'>overwrite: <a href='ejs-Boolean.html'>Boolean</a> </td><td>If the header is already defined and overwrite is true, then the new value will overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", " separator. [default: true]</td></tr></table></dd>
@@ -428,8 +492,9 @@ NOTE: case does not matter in the header keyword.</dd></dl>
 <div class='apiSig'>const   public  setHeaders(headers: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Set the HTTP response headers.</p>
-<dl><dt>Description</dt><dd>Use getResponseHeaders to inspect the proposed response header set.</dd></dl>
+<p>Convenience routine to set multiple Http response headers in <a href='#responseHeaders'>responseHeaders</a>. </p>
+<dl><dt>Description</dt><dd>Access <a href='#responseHeaders'>responseHeaders</a> to 
+inspect the proposed response header set.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>headers: <a href='ejs-Object.html'>Object</a> </td><td>Set of headers to use.</td></tr><tr class='param'><td class='param'>overwrite: <a href='ejs-Boolean.html'>Boolean</a> </td><td>If the header is already defined and overwrite is true, then the new value will overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", " separator. [default: true]</td></tr></table></dd>
@@ -443,7 +508,7 @@ NOTE: case does not matter in the header keyword.</dd></dl>
 <div class='apiDetail'>
 <p>Update the request resource limits.</p>
 <dl><dt>Description</dt><dd>The supplied limit fields are updated.
-See <a href='#limit'>limit</a> for limit field details.</dd></dl>
+See the <a href='#limits'>limits</a> property for limit field details.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>limits: <a href='ejs-Object.html'>Object</a> </td><td>Object hash of limit fields and values.</td></tr></table></dd>
@@ -464,7 +529,7 @@ See <a href='#limit'>limit</a> for limit field details.</dd></dl>
 called from routing tables.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>prefix: <a href='ejs-String.html'>String</a> </td><td>The leading Uri prefix for the application. This prefix is removed from the pathInfo and the <a href='#scriptName'>scriptName</a> property is set to the prefix after removing the leading "/".</td></tr><tr class='param'><td class='param'>location: <a href='ejs-Path.html'>Path</a> </td><td>Path to where the application home directory is. This sets the <a href='#dir'>dir</a> property to the <a href='#location'>location</a> argument.</td></tr></table></dd>
+<tr class='param'><td class='param'>prefix: <a href='ejs-String.html'>String</a> </td><td>The leading Uri prefix for the application. This prefix is removed from the pathInfo and the <a href='#scriptName'>scriptName</a> property is set to the prefix.</td></tr><tr class='param'><td class='param'>location: <a href='ejs-Path.html'>Path</a> </td><td>Path to where the application home directory is. This sets the <a href='#dir'>dir</a> property to the <a href='#location'>location</a> argument.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -473,25 +538,40 @@ called from routing tables.</dd></dl>
 <div class='apiSig'>const   public  setStatus(status: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Set to the (proposed) Http response status code.</p>
-<dl><dt>Description</dt><dd>This is equivalent to assigning to the <a href='#status'>status</a> property.</dd></dl>
+<p>Convenience routine to set the (proposed) Http response status code.</p>
+<dl><dt>Description</dt><dd>This is equivalent to assigning 
+to the <a href='#status'>status</a> property.</dd></dl>
 </div>
 </div>
 <hr />
 <a name='trace'></a>
 <div class='api'>
-<div class='apiSig'>const   public  trace(level: <a href='ejs-Number.html'>Number</a>, options: <a href='ejs-Object.html'>Object</a> = expression , size: <a href='ejs-Number.html'>Number</a> = null): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  trace(options: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Configure tracing for this request.</p>
-<dl><dt>Description</dt><dd>The default tracing is defined by the owning HttpServer and is typically
-to trace the first line of responses and headers at level 3. As the Request first line and headers are
-already parsed and traced before the Request object is created, Modifying the request trace level via trace()
-will only impact the tracing of body content.</dd></dl>
+<dl><dt>Description</dt><dd>Tracing is initialized by the owning HttpServer and is typically
+defined to trace the first line of requests and responses at level 2, headers at level 3 and body content
+at level 4. Once the request has been created however, the first line and headers of the request are 
+already parsed and traced by the HttpServer, so modifying the trace level via trace() on the request object
+will only impact the tracing of response body content.<br/><br/>The options argument contains optional properties: rx and tx 
+(for receive and transmit tracing). The rx and tx properties may contain an object hash which describes 
+the tracing for that direction and includes any of the following fields:.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>Level at which request tracing will occurr.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Set of trace options. Select from: "body" to body content.,. [default: expression ]</td></tr><tr class='param'><td class='param'>size: <a href='ejs-Number.html'>Number</a> </td><td>Maximum request body size to trace. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td> [default: expression ]</td></tr></table></dd>
-</dl></div>
+<tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Set of trace options with properties "rx" and "tx" for receive and transmit direction tracing. The include property is an array of file extensions to include in tracing. The include property is an array of file extensions to exclude from tracing. The all property specifies that everything for this direction should be traced. The conn property specifies that new connections should be traced. The first property specifies that the first line of the request should be traced. The headers property specifies that the headers (including first line) of the request should be traced. The body property specifies that the body content of the request should be traced. The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit  will not be traced.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>transmit.</td><td>Object hash with optional properties: include, exclude, first, headers, body, size.</td></tr>
+<td class='param'>receive.</td><td>Object hash with optional properties: include, exclude, conn, first, headers, body, size.</td></tr>
+</table></dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>trace({
+    transmit: { exclude: ["gif", "png"], "headers": 3, "body": 4, size: 1000000 }
+    receive:  { "conn": 1, "headers": 2 , "body": 4, size: 1024 }
+})
+</pre></dd></dl>
+</div>
 </div>
 <hr />
 <a name='write'></a>
@@ -518,6 +598,19 @@ A "writable" event will be issued when the stream can again absorb more data.Thi
 <dl><dt>Throws</dt><dd>
 <a href='ejs-IOError.html'>IOError</a>: if there is an I/O error. 
 </dd>
+</dl></div>
+</div>
+<hr />
+<a name='writeError'></a>
+<div class='api'>
+<div class='apiSig'>const   public  writeError(code: <a href='ejs-Number.html'>Number</a>, msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Write an error message back to the user and finalize the request.</p>
+<dl><dt>Description</dt><dd>The output is html escaped for security.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>code: <a href='ejs-Number.html'>Number</a> </td><td>Http status code.</td></tr><tr class='param'><td class='param'>msgs: <a href='ejs-Array.html'>Array</a> </td><td>Messages to send with the response. The messages may be modified for readability if it  contains an exception backtrace.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

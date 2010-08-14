@@ -1,8 +1,3 @@
-/*
-    MOB - incomplete
- */
-
-
 //  Instance methods are visible to instances
 
 var i = new String

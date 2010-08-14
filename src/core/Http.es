@@ -264,11 +264,12 @@ module ejs {
          */
         native function get date(): Date
 
-        /**
+        /*
+UNUSED
             Stop auto-finalizing the request. Calling dontFinalize will keep the request open until a forced finalize is
             made via "finalize(true). 
-         */
         native function dontFinalize(): Void
+         */
 
         /** 
             Encoding scheme for serializing strings. The default encoding is UTF-8. Not yet implemented.
@@ -286,22 +287,25 @@ module ejs {
 
         /** @hide
             Fetch a URL. This is a convenience method to asynchronously invoke an Http method without waiting. 
+            It can be useful to wait for completion using App.waitForEvent(http, "close"))
             @param method Http method. This is typically "GET" or "POST"
             @param uri URL to fetch
             @param data Body data to send with the request. Set to null for no data.
-            @param callback Function to invoke on completion of the request
+            @param callback Optional function to invoke on completion of the request.
           */
-        function fetch(method: String, uri: Uri, data: *, callback: Function) {
+        function fetch(method: String, uri: Uri, data: *, callback: Function = null) {
             xh = XMLHttp(this)
             xh.open(method, uri)
             xh.send(data)
             xh.onreadystatechange = function () {
                 if (xh.readyState == XMLHttp.Loaded) {
                     response = xh.responseText
-                    if (callback.bound == global) {
-                        callback.call(this)
-                    } else {
-                        callback()
+                    if (callback) {
+                        if (callback.bound == global) {
+                            callback.call(this)
+                        } else {
+                            callback()
+                        }
                     }
                 }
             }
@@ -309,10 +313,14 @@ module ejs {
 
         /** 
             Signals the end of any write data and flushes any buffered write data to the client. 
-            If dontFinalize() has been called, this call will have no effect unless $force is true.
-            @param force Do finalization even if dontFinalize() has been called.
          */
-        native function finalize(force: Boolean = false): Void 
+        native function finalize(): Void 
+
+        /** 
+            Has the request output been finalized. 
+            @return True if the all the output has been written.
+         */
+        native function get finalized(): Boolean 
 
         /** 
             Flush request data. Calling flush(Sream.WRITE) or finalize() is required to ensure write data is sent to 
@@ -322,7 +330,8 @@ module ejs {
         native function flush(dir: Number = Stream.WRITE): Void
 
         /** 
-            Control whether redirects should be automatically followed by this Http object. Default is true.
+            Control whether redirects should be automatically followed by this Http object. When true, a redirected
+            response will be followed and the redirected URL will be transparently re-fetched.  Default is false.
          */
         native function get followRedirects(): Boolean
         native function set followRedirects(flag: Boolean): Void
@@ -339,7 +348,7 @@ module ejs {
          */
         native function form(uri: Uri, data: Object): Void
 
-        /*
+        /**
 FUTURE & KEEP
             Commence a POST request with form data the current uri. See connect() for connection details.
             @param uri Optional request uri. If non-null, this overrides any previously defined uri for the Http object.
@@ -347,6 +356,7 @@ FUTURE & KEEP
             @param data Data objects to pass with the POST request. The objects are json encoded and the Content-Type is
             set to "application/json". If you require "application/x-www-form-urlencoded" encoding, use publicForm().
             @throws IOError if the request cannot be issued to the remote server.
+            @hide
 
             function publicForm(uri: Uri, ...data): Void
                 connect("POST", uri, Uri.encodeObjects(data))
@@ -356,7 +366,7 @@ FUTURE & KEEP
         /** 
             Commence a GET request for the current uri. See connect() for connection details.
             This call initiates a GET request. It does not wait for the request to complete. 
-            The get() call will auto-finalize. If you need to send body content with a get request, use connect(). 
+            The get() method will call finalize. If you need to send body content with a get request, use connect(). 
             Once initiated, one of the $read or response routines  may be used to receive the response data.
             @param uri The uri to get. This overrides any previously defined uri for the Http object. If null, use
                 a previously defined uri.
@@ -543,6 +553,22 @@ FUTURE & KEEP
         native function set retries(count: Number): Void
 
         /** 
+            Get the ejs session cookie. This call extracts the ejs session cookie from the Http response headers.
+            Ejscript sessions are identified by a client cookie which when transmitted with subsequent requests will 
+            permit the server to locate the relevant session state store for the server-side application. 
+            Use: setCookie("Cookie", cookie) to transmit the cookie on subsquent requests.
+         */
+        function get sessionCookie()
+            header("Set-Cookie").match(/(-ejs-session-=.*);/)[1]
+
+        /**
+            Set a "Cookie" header in the request headers. This is used to send a cookie to the server.
+            @param cookie Cookie header value
+         */
+        function setCookie(cookie: String): Void
+            setHeader("Cookie", cookie)
+
+        /** 
             Set the user credentials to use if the request requires authentication.
          */
         native function setCredentials(username: String, password: String): Void
@@ -664,9 +690,10 @@ FUTURE & KEEP
         native function set uri(newUri: Uri): Void
 
         /** 
-            Wait for a request to complete. This will auto-finalize if in sync mode if the request is not already finalized.
-            @param timeout Time in seconds to wait for the request to complete. A timeout of zero means no timeout, ie.
-            wait forever. A timeout of < 0, means don't wait.
+            Wait for a request to complete. This will call finalize() if in sync mode and the request is not already 
+            finalized.
+            @param timeout Timeout in milliseconds to wait for the request to complete. A timeout of zero means no 
+            timeout, ie. wait forever. A timeout of < 0 (default), means use the default request timeout.
             @return True if the request successfully completes.
          */
         native function wait(timeout: Number = -1): Boolean

@@ -13,20 +13,21 @@ module ejs.db {
         @stability evolving
      */
     class Database {
+        private static var defaultDb: Database
 
         private var _adapter: Object
         private var _connection: String
         private var _name: String
         private var _traceAll: Boolean
 
-        private static var defaultDb: Database
-
         use default namespace public
 
         /**
-            Initialize a database connection using the supplied database connection string
+            Initialize a database connection using the supplied database connection string. The first opened database
+            will also be defined as the default database.
             @param adapter Database adapter to use. E.g. "sqlite"
             @param connectionString Connection string stipulating how to connect to the database. The format is one of the 
+            @param trace Trace database requests to the log
             following forms:
                 <ul>
                     <li>adapter://host/database/username/password</li>
@@ -36,7 +37,7 @@ module ejs.db {
                 For sqlite connection strings, the abbreviated form is permitted where a filename is supplied and the 
                 connection string is assumed to be: <pre>sqlite://localhost/filename</pre>
          */
-        function Database(adapter: String, connectionString: String) {
+        function Database(adapter: String, connectionString: String, trace: Boolean = false) {
             Database.defaultDb ||= this
             if (adapter == "sqlite3") adapter = "sqlite"
             _name = Path(connectionString).basename
@@ -49,6 +50,7 @@ module ejs.db {
                 throw "Can't find database connector for " + adapter
             }
             _adapter = new global."ejs.db"::[adapterClass](connectionString)
+            _traceAll = trace
         }
 
         /**
@@ -145,12 +147,8 @@ module ejs.db {
             Set the default database for the application.
             @param db the default database to define
          */
-        static function set defaultDatabase(db: Database): Void {
-            /*
-                Do this rather than using a Database static var so Database can go into the master interpreter
-             */
+        static function set defaultDatabase(db: Database): Void 
             defaultDb = db
-        }
 
         /**
             Destroy a database

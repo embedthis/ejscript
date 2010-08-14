@@ -4,5 +4,4 @@
 
 exports.app = function() {
     write("Hello World\r\n")
-    finalize()
 }

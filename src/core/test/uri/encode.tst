@@ -1,5 +1,5 @@
 /*
-    Uri encoding tests
+    Uri.encodeURI, encodeURIComponents
  */
 
 s= "http://[127.0.0.1]:4000:/some $p@th/special+!()*,;#ext?a=b&c=d"

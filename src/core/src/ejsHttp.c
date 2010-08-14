@@ -200,6 +200,7 @@ static EjsObj *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*  
     function dontFinalize(): Void
  */
@@ -208,20 +209,39 @@ static EjsObj *http_dontFinalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     hp->dontFinalize = 1;
     return 0;
 }
+#endif
 
 
 /*  
-    function finalize(force: Boolean = false): Void
+    function finalize(): Void
  */
 static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+#if UNUSED
     int     force;
 
     force = (argc == 1 && argv[0] == ejs->trueValue);
     if (!hp->dontFinalize || force) {
         httpFinalize(hp->conn);
     }
+#else
+    if (hp->conn) {
+        httpFinalize(hp->conn);
+    }
+#endif
     return 0;
+}
+
+
+/*  
+    function get finalized(): Boolean
+ */
+static EjsObj *http_finalized(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+{
+    if (hp->conn && hp->conn->tx) {
+        return (EjsObj*) ejsCreateBoolean(ejs, hp->conn->tx->finalized);
+    }
+    return ejs->falseValue;
 }
 
 
@@ -246,10 +266,17 @@ static EjsObj *http_flush(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    EjsObj  *data;
+
     if (argc == 2 && argv[1] != ejs->nullValue) {
         httpPrepClientConn(hp->conn, HTTP_NEW_REQUEST);
         mprFlushBuf(hp->requestContent);
-        prepForm(ejs, hp, NULL, argv[1]);
+        data = argv[1];
+        if (ejsGetPropertyCount(ejs, data) > 0) {
+            prepForm(ejs, hp, NULL, data);
+        } else {
+            mprPutStringToBuf(hp->requestContent, ejsGetString(ejs, data));
+        }
         mprAddNullToBuf(hp->requestContent);
         httpSetHeader(hp->conn, "Content-Type", "application/x-www-form-urlencoded");
     }
@@ -524,12 +551,20 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsObj      *result;
     HttpConn    *conn;
-    int         count;
+    int         count, timeout;
     
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
     conn = hp->conn;
 
-    if (!waitForState(hp, HTTP_STATE_CONTENT, conn->async ? 0 : conn->limits->inactivityTimeout, 0)) {
+    if (conn->async) {
+        timeout = 0;
+    } else {
+        timeout = conn->limits->inactivityTimeout;
+        if (timeout <= 0) {
+            timeout = INT_MAX;
+        }
+    }
+    if (!waitForState(hp, HTTP_STATE_CONTENT, timeout, 0)) {
         return 0;
     }
     if ((count = readTransfer(ejs, hp, count)) < 0) {
@@ -802,17 +837,23 @@ static EjsObj *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
 
 
 /*  
+    Wait for a request to complete. Timeout is in msec.
+
     function wait(timeout: Number = -1): Boolean
-    Wait for a request to complete
  */
 static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     MprTime     mark;
     int         timeout;
 
-    timeout = (argc == 1) ? ejsGetInt(ejs, argv[0]) : hp->conn->limits->requestTimeout;
+    timeout = (argc >= 1) ? ejsGetInt(ejs, argv[0]) : -1;
+    if (timeout < 0) {
+        timeout = hp->conn->limits->requestTimeout;
+        if (timeout == 0) {
+            timeout = INT_MAX;
+        }
+    }
     mark = mprGetTime(ejs);
-
     if (!waitForState(hp, HTTP_STATE_COMPLETE, timeout, 0)) {
         return (EjsObj*) ejs->falseValue;
     }
@@ -1223,7 +1264,7 @@ static bool expired(EjsHttp *hp)
 
 /*  
     Wait for the connection to acheive a requested state
-    A timeout of zero means no timeout (ie. wait forever). A timeout of < 0 means don't wait.
+    Timeout is in msec. <= 0 means don't wait.
  */
 static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
 {
@@ -1257,10 +1298,9 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
     if (!conn->async) {
         httpFinalize(conn);
     }
-
     while (conn->state < state && count < conn->retries && redirectCount < 16 && !ejs->exiting && !mprIsExiting(conn)) {
         count++;
-        if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
+        if ((rc = httpWait(conn, ejs->dispatcher, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
                     mprFree(hp->uri);
@@ -1270,7 +1310,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
                 }
                 count--; 
                 redirectCount++;
-            } else if (httpWait(conn, state, remaining) == 0) {
+            } else if (httpWait(conn, ejs->dispatcher, state, remaining) == 0) {
                 success = 1;
                 break;
             }
@@ -1278,7 +1318,9 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
             if (rc == MPR_ERR_CONNECTION) {
                 httpFormatError(conn, HTTP_CODE_COMMS_ERROR, "Connection error");
             } else if (rc == MPR_ERR_TIMEOUT) {
-                httpFormatError(conn, HTTP_CODE_REQUEST_TIMEOUT, "Request timed out");
+                if (timeout > 0) {
+                    httpFormatError(conn, HTTP_CODE_REQUEST_TIMEOUT, "Request timed out");
+                }
             } else {
                 httpFormatError(conn, HTTP_CODE_CLIENT_ERROR, "Client request error");
             }
@@ -1296,7 +1338,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
             break;
         }
         remaining = (int) (mark + timeout - mprGetTime(conn));
-        if (remaining <= 0) {
+        if (count > 0 && remaining <= 0) {
             break;
         }
         if (hp->requestContentCount > 0) {
@@ -1326,6 +1368,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
 
 /*  
     Wait till the response headers have been received. Safe in sync and async mode. Async mode never blocks.
+    Timeout < 0 means use default inactivity timeout. Timeout of zero means wait forever.
  */
 static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
 {
@@ -1337,6 +1380,9 @@ static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
     }
     if (timeout < 0) {
         timeout = hp->conn->limits->inactivityTimeout;
+        if (timeout <= 0) {
+            timeout = INT_MAX;
+        }
     }
     if (hp->conn->state < HTTP_STATE_PARSED && !waitForState(hp, HTTP_STATE_PARSED, timeout, 1)) {
         return 0;
@@ -1477,8 +1523,11 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_contentLength, (EjsProc) http_contentLength);
     ejsBindMethod(ejs, prototype, ES_Http_contentType, (EjsProc) http_contentType);
     ejsBindMethod(ejs, prototype, ES_Http_date, (EjsProc) http_date);
+#if UNUSED
     ejsBindMethod(ejs, prototype, ES_Http_dontFinalize, (EjsProc) http_dontFinalize);
+#endif
     ejsBindMethod(ejs, prototype, ES_Http_finalize, (EjsProc) http_finalize);
+    ejsBindMethod(ejs, prototype, ES_Http_finalized, (EjsProc) http_finalized);
     ejsBindMethod(ejs, prototype, ES_Http_flush, (EjsProc) http_flush);
     ejsBindAccess(ejs, prototype, ES_Http_followRedirects, (EjsProc) http_followRedirects, 
         (EjsProc) http_set_followRedirects);

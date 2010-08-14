@@ -82,7 +82,7 @@ and "./" components removed. The value will not be converted to an absolute URI 
 <h2 class='classSection'>Uri Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decode'><b>decode</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a URI encoded strin using www-url encoding.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decode'><b>decode</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a URI encoded string using www-url encoding.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#decodeComponent'><b>decodeComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Decode a URI encoded component using www-url encoding.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#encode'><b>encode</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a URI using www-url encoding.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#encodeComponent'><b>encodeComponent</b></a>(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Encode a URI component suitable for the "application/x-www-form-urlencoded" mime type.</td></tr>
@@ -111,7 +111,8 @@ NOTE: this does a case-sensitive match.</td></tr>
 <div class='apiSig'>static const   public  decode(str: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Decode a URI encoded strin using www-url encoding.</p>
+<p>Decode a URI encoded string using www-url encoding.</p>
+<dl><dt>Description</dt><dd>See encode for details about the character mappings.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>
@@ -126,6 +127,7 @@ NOTE: this does a case-sensitive match.</td></tr>
 </div>
 <div class='apiDetail'>
 <p>Decode a URI encoded component using www-url encoding.</p>
+<dl><dt>Description</dt><dd>See encodeComponent for details about the character mappings.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>str: <a href='ejs-String.html'>String</a> </td><td>String to decode.</td></tr></table></dd>

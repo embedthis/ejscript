@@ -2786,11 +2786,11 @@ static int validateArgs(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 
     if (argc < nonDefault) {
         if (!fun->rest || argc != (fun->numArgs - 1)) {
-            if (fun->strict) {
-                ejsThrowArgError(ejs, "Insufficient actual parameters. Call requires %d parameter(s).", nonDefault);
+            if (fun->strict || (ejsIsNativeFunction(fun) && !fun->allowMissingArgs)) {
+                ejsThrowArgError(ejs, "Insufficient actual parameters %d. Call requires %d parameter(s).", argc, nonDefault);
                 return EJS_ERR;
             } else {
-                /* Create undefined values for missing args */
+                /* Create undefined values for missing args for script functions */
                 for (i = argc; i < nonDefault; i++) {
                     pushOutside(ejs, ejs->undefinedValue);
                 }

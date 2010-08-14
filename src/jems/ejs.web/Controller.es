@@ -3,14 +3,22 @@
  */
 
 module ejs.web {
-
-    /* 
+    /**
         Namespace for all action methods 
      */
     namespace action = "action"
 
     /** 
-        Web framework controller class.
+        Web framework controller class. The controller classes can accept web requests and direct them to action methods
+        which generate the response. Controllers are responsible for either generating output for the client or invoking
+        a View which will create the response. By convention, all Controllers should be defined with a "Controller" 
+        suffix. This permits similar Controller and Model to exist in the same namespace.
+
+        MOB - Need intro to controllers here
+
+        Action methods will autoFinalize by calling Request.autoFinalize unless Request.dontAutoFinalize has been called.
+        If the Controller action wants to keep the request connection to the client open, you must call dontAutoFinalize
+        before returning from the action.
         @stability prototype
         @spec ejs
      */
@@ -23,11 +31,8 @@ module ejs.web {
 
         private static var _initRequest: Request
 
-        private var redirected: Boolean
-        private var _afterFilters: Array
-        private var _beforeFilters: Array
-        private var _wrapFilters: Array
-        private var lastFlash: Object
+        private var _afterCheckers: Array
+        private var _beforeCheckers: Array
 
         /** Name of the action being run */
         var actionName:  String 
@@ -38,32 +43,19 @@ module ejs.web {
         /** Lower case controller name */
         var controllerName: String
 
-        /** Deployment mode: debug, test, production */
-        var deploymentMode: String
-
         /** Logger stream - reference to Request.log */
         var log: Logger
 
         /** Form and query parameters - reference to the Request.params object. */
         var params: Object
 
-        /** The response has been rendered. If an action does not render a response, then a default view will be rendered */
-        var rendered: Boolean
-
         /** Reference to the current Request object */
         var request: Request
 
-        /** Reference to the current View object */
+        /** Reference to the current View object 
+UNUSED - MOB -- better to set in Request
         var view: View
-
-        /** 
-            Flash messages to display on the next screen
-                "error"         Negative errors (Warnings and errors)
-                "inform"        Informational / postitive feedback (note)
-                "warn"          Negative feedback (Warnings and errors)
-                "*"             Other feedback (reminders, suggestions...)
-        */
-        public var flash: Object
+         */
 
         /***************************************** Convenience Getters  ***************************************/
 
@@ -88,18 +80,37 @@ module ejs.web {
             request ? request.uri : null
 
         /********************************************* Methods *******************************************/
+
+        /** 
+            Static factory method to create and initialize a controller. The controller class is specified by 
+            params["controller"] which should be set to the controller name without the "Controller" suffix. 
+            This call expects the controller class to be loaded. Called by Mvc.load().
+            @param request Web request object
+            @param cname Controller class name. This should be the name of the Controller class without the "Controller"
+                suffix.
+         */
+        static function create(request: Request, cname: String = null): Controller {
+            cname ||= (request.params.controller.toPascal() + "Controller")
+            _initRequest = request
+            let c: Controller = new global[cname](request)
+            c.request = request
+            _initRequest = null
+            return c
+        }
+
         /** 
             Create and initialize a controller. This may be called directly by class constructors or via 
             the Controller.create factory method.
             @param req Web request object
          */
         function Controller(req: Request) {
-            //  initRequest may be set by create() to allow subclasses to omit constructors
+            /*  _initRequest may be set by create() to allow subclasses to omit constructors */
+            controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
             request = req || _initRequest
             if (request) {
+                request.controller = this
                 log = request.log
                 params = request.params
-                controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
                 config = request.config
                 if (config.database) {
                     openDatabase(request)
@@ -107,87 +118,111 @@ module ejs.web {
             }
         }
 
-        /** MOB */
-        function afterFilter(fn, options: Object? = null): Void {
-            _afterFilters ||= []
-            _afterFilters.append([fn, options])
-        }
-
-        /** MOB */
-        function beforeFilter(fn, options: Object? = null): Void {
-            _beforeFilters ||= []
-            _beforeFilters.append([fn, options])
+        /** 
+            Run an action checker function after running the action
+            @param fn Function callback to invoke
+            @param options Checker options. 
+            @option only Only run the checker for this action name
+            @option except Run the checker for all actions except this name
+         */
+        function afterChecker(fn, options: Object = null): Void {
+            _afterCheckers ||= []
+            _afterCheckers.append([fn, options])
         }
 
         /** 
-            Factory method to create and initialize a controller. The controller class is specified by 
-            params["controller"] which should be set by the router to the controller name without the "Controller" suffix. 
-            This call expects the controller class to be loaded. Called by Mvc.load().
-            @param request Web request object
+            Controller web application. This function will run the controller action method and return a response object. 
+            The action method may be specified by the $aname parameter or it may be supplied via params.action.
+            @param request Request object
+            @param aname Optional action method name. If not supplied, params.action is consulted. If that is absent too, 
+                "index" is used as the action method name.
+            @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
-        static function create(request: Request): Controller {
-            let cname: String = request.params["controller"]
-            if (!cname) {
-                throw "Can't run app, controller " + cname + " is not loaded"
+        function app(request: Request, aname: String = null): Object {
+            use namespace action
+            actionName ||= aname || params.action || "index"
+            params.action = actionName
+            runCheckers(_beforeCheckers)
+            let response
+            if (!request.finalized && request.autoFinalizing) {
+                if (!this[actionName]) {
+                    if (!viewExists(actionName)) {
+                        response = this[actionName = "missing"]()
+                    }
+                } else {
+                    response = this[actionName]()
+                }
+                if (!response && !request.responded && request.autoFinalizing) {
+                    /* Run a default view */
+                    writeView()
+                }
             }
-            _initRequest = request
-            let uname = cname.toPascal() + "Controller"
-            let c: Controller = new global[uname](request)
-            c.request = request
-            _initRequest = null
-            return c
+            runCheckers(_afterCheckers)
+            if (!response) {
+                request.autoFinalize()
+            }
+            return response
         }
 
         /** 
-            Send an error notification to the user. This is just a convenience instead of setting flash["error"]
-            @param msg Message to display
+            Run an action checker before running the action. If the checker function writes a response, the normal
+            processing of the requested action will be prevented. Note that checkers do not autoFinalize so if the
+            checker does write a response, it must call finalize.
+            @param fn Function callback to invoke
+            @param options Checker options. 
+            @option only Only run the checker for this action name
+            @option except Run the checker for all actions except this name
          */
-        function error(msg: String): Void {
-            flash ||= {}
-            flash["error"] = msg
+        function beforeChecker(fn, options: Object = null): Void {
+            _beforeCheckers ||= []
+            _beforeCheckers.append([fn, options])
         }
 
         /** 
-            @duplicate Rquest.header
+            @duplicate Request.error
+         */
+        function error(msg: String): Void
+            request.error(msg)
+
+        /** 
+            @duplicate Request.flash
+         */
+        function flash(key: String, msg: String): Void
+            request.flash(key, msg)
+
+        /** 
+            @duplicate Request.header
          */
         function header(key: String): String
             request.header(key)
 
         /** 
-            Send a positive notification to the user. This is just a convenience instead of setting flash["inform"]
-            @param msg Message to display
+            @duplicate Request.inform
          */
-        function inform(msg: String): Void {
-            flash ||= {}
-            flash["inform"] = msg
-        }
+        function inform(msg: String): Void
+            request.inform(msg)
 
         /** 
             @duplicate Request.makeUri
-            @option controller The name of the controller to use in the URI.
-            @option action The name of the action method to use in the URI.
          */
-        function makeUri(location: Object): Uri
-            request.makeUri(location)
+        function makeUri(location: Object, relative: Boolean = true): Uri
+            request.makeUri(location, relative)
 
-//  MOB - could this use a general meta facility
         /** 
             Missing action method. This method will be called if the requested action routine does not exist.
          */
         action function missing(): Void {
-            rendered = true
             throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
         }
 
-//  MOB -- are there any controller events?
         /** 
             @duplicate Request.observe
          */
         function observe(name, observer: Function): Void
-            request.observer(name, observer)
+            request.observe(name, observer)
 
         /** 
-            @duplicate Stream.read
+            @duplicate Request.read
          */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
             request.read(buffer, offset, count)
@@ -199,119 +234,92 @@ module ejs.web {
                 "http://www.example.com/home.html", {action: "list"}.
             @param status Http status code to use in the redirection response. Defaults to 302.
          */
-        function redirect(where: Object, status: Number = Http.MovedTemporarily): Void {
+        function redirect(where: Object, status: Number = Http.MovedTemporarily): Void
             request.redirect(where, status)
-            redirected = true
-        }
 
         /** 
             Redirect the client to the given action
             @param action Controller action name to which to redirect the client.
          */
-        function redirectAction(action: String): Void
-            redirect({action: action})
+        function redirectAction(action: String): Void {
+            if (request.route) {
+                redirect({action: action})
+            } else {
+                redirect(request.uri.dirname.join(action))
+            }
+        }
 
         /** 
-            Render the raw arguments back to the client. The args are converted to strings.
-            @param args Arguments to write to the client
+            Render the raw data back to the client. 
+            If an action method does call a write data back to the client and has not called finalize() or 
+            dontAutoFinalize(), a default view template will be generated when the action method returns. 
+            @param args Arguments to write to the client.  The args are converted to strings.
          */
-        function render(...args): Void { 
-            rendered = true
-            request.write(args)
-            request.finalize()
-        }
+        function write(...args): Void
+            request.write(...args)
 
         /**
-            Render an error message as the response
+            Render an error message as the response.
+            This call sets the response status and writes a HTML error message with the given arguments back to the client.
+            @param status Http response status code
+            @param msgs Error messages to send with the response
          */
-        function renderError(status: Number, ...msgs): Void {
-            rendered = true
+        function writeError(status: Number, ...msgs): Void
             request.writeError(status, ...msgs)
-        }
 
         /** 
-            Render a file's contents. 
+            Render file content back to the client.
+            This call writes the given file contents back to the client.
             @param filename Path to the filename to send to the client
          */
-        function renderFile(filename: Path): Void { 
-            rendered = true
+        function writeFile(filename: Path): Void
             request.sendFile(filename)
-            request.finalize()
+
+        /** 
+            Render a partial response using template file.
+            @param path Path to the template to render to the client
+            @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
+         */
+        function writePartialTemplate(path: Path, layouts: Path = null): Void { 
+            request.filename = path
+            layouts ||= config.directories.layouts
+            let app = TemplateBuilder(request, { layouts: layouts } )
+            log.debug(4, "writePartialTemplate: \"" + path + "\"")
+            Web.process(app, request, false)
         }
 
         /** 
-            Render a partial ejs template. Does not set "rendered" to true.
+            Render a view template.
+            This call writes the result of running the view template file back to the client.
+            @param viewName Name of the view to render to the client. The view template filename will be constructed by 
+                joining the views directory with the controller name and view name. E.g. views/Controller/list.ejs.
          */
-        function renderPartial(path: Path): void { 
-            //  MOB -- todo
-        }
-
-        /** 
-            Render a view template
-         */
-        function renderView(viewName: String? = null): Void {
-            if (rendered) {
-                throw new Error("renderView invoked but render has already been called")
-                return
-            }
+        function writeView(viewName: String = null): Void {
             viewName ||= actionName
-            let viewClass = controllerName + "_" + viewName + "View"
-            loadView(viewName)
-            view = new global[viewClass](request)
-            view.controller = this
-            //  MOB -- slow. Native method for this?
-            for each (let n: String in Object.getOwnPropertyNames(this, {includeBases: true, excludeFunctions: true})) {
-                view.public::[n] = this[n]
-            }
-            log.debug(4, "render view: \"" + controllerName + "/" + viewName + "\"")
-            rendered = true
-            view.render(request)
+            writeTemplate(request.dir.join(config.directories.views, controllerName, viewName).
+                joinExt(config.extensions.ejs))
         }
 
         /** 
-            Run the controller action. 
-            @param request Request object
-            @return A response object hash {status, headers, body} or null if writing directly using the request object.
+            Render a view template from a path.
+            This call writes the result of running the view template file back to the client.
+            @param path Path to the view template to render and write to the client.
+            @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
          */
-//  MOB -- is this a builder or what?
-        function run(request: Request): Object {
-            actionName = params.action || "index"
-            params.action = actionName
-            use namespace action
-            if (request.sessionID) {
-                flashBefore()
-            }
-            runFilters(_beforeFilters)
-            let response
-            if (!redirected) {
-                if (!this[actionName]) {
-                    if (!viewExists(actionName)) {
-                        actionName = "missing"
-                        response = this[actionName]()
-                    }
-                } else {
-                    response = this[actionName]()
-                }
-                if (!response && !rendered && !redirected && request.autoFinalize) {
-                    /* Run a default view */
-                    renderView()
-                }
-                runFilters(_afterFilters)
-            }
-            if (flash) {
-                flashAfter()
-            }
-            if (!response) {
-                request.finalize()
-            }
-            return response
+        function writeTemplate(path: Path, layouts: Path = null): Void {
+            log.debug(4, "writeTemplate: \"" + path + "\"")
+            request.filename = path
+            layouts ||= config.directories.layouts
+            let app = TemplateBuilder(request, { layouts: layouts } )
+            Web.process(app, request, false)
         }
 
-        /** MOB */
-        function resetFilters(): Void {
-            _beforeFilters = null
-            _afterFilters = null
-            _wrapFilters = null
+        /** 
+            Remove all defined checkers on the Controller.
+         */
+        function removeCheckers(): Void {
+            _beforeCheckers = null
+            _afterCheckers = null
         }
 
         /** @duplicate Request.setHeader */
@@ -323,149 +331,85 @@ module ejs.web {
             request.status = status
 
         /** 
-            Send a warning message back to the client for display in the flash area. This is just a convenience instead of
-            setting flash["warn"]
-            @param msg Message to display
+            @duplicate Request.warn
          */
-        function warn(msg: String): Void {
-            flash ||= {}
-            flash["warn"] = msg
-        }
-
-        /** MOB */
-        function wrapFilter(fn, options: Object? = null): Void {
-            _wrapFilters ||= []
-            _wrapFilters.append([fn, options])
-        }
+        function warn(msg: String): Void
+            request.warn(msg)
 
         /** 
-            Low-level write data to the client. This will buffer the written data until either flush() or 
-            finalize() is called.  This will not set the $rendered property.
+            Low-level write data to the client. This will buffer the written data until either flush() or finalize() 
+            is called.
             @duplicate Request.write
          */
         function write(...data): Number
             request.write(...data)
 
+//  MOB -- move in place and doc
+
+        /** @duplicate Request.autoFinalize */
+        function autoFinalize(): Void
+            request.autoFinalize()
+
+        /** @duplicate Request.autoFinalizing */
+        function get autoFinalizing(): Boolean
+            request.autoFinalizing
+
+        /** @duplicate Request.flush */
+        function flush(): Void
+            request.flush()
+
+        /** @duplicate Request.finalize */
+        function finalize(): Void
+            request.finalize()
+
+        /** @duplicate Request.finalized */
+        function get finalized(): Boolean
+            request.finalized
+
+        /** @duplicate Request.dontAutoFinalize */
+        function dontAutoFinalize(): Void
+            request.dontAutoFinalize()
+
         /**************************************** Private ******************************************/
-        /* 
-            Save the flash message for the next request. Delete old flash messages
-         */
-        private function flashAfter() {
-            if (lastFlash) {
-                for (item in flash) {
-                    for each (old in lastFlash) {
-                        if (hashcode(flash[item]) == hashcode(old)) {
-                            delete flash[item]
-                        }
-                    }
-                }
-            }
-//  MOB -- obj.length was so much easier!
-            if (Object.getOwnPropertyCount(flash) > 0) {
-                request.session["__flash__"] = flash
-            }
-        }
-
-        /* 
-            Prepare the flash message. This extracts any flash message from the session state store
-         */
-        private function flashBefore() {
-            lastFlash = null
-            flash = request.session["__flash__"]
-            if (flash) {
-                request.session["__flash__"] = undefined
-                lastFlash = flash.clone()
-            }
-        }
-
-        /**
-            Load the view. 
-            @param viewName Bare view name
-            @hide
-         */
-        private function loadView(viewName: String) {
-            let dirs = config.directories
-            let cvname = controllerName + "_" + viewName
-            let path = request.dir.join("views", controllerName, viewName).joinExt(config.extensions.ejs)
-            let cached = Loader.cached(path, request.config, request.dir.join(dirs.cache))
-            let viewClass = cvname + "View"
-
-//  MOB -- can this be generalized and use the Web.serve code?
-            //  TODO - OPT. Could keep a cache of cached.modified
-            if (global[viewClass] && cached.modified >= path.modified) {
-                log.debug(4, "Use loaded view: \"" + controllerName + "/" + viewName + "\"")
-                return
-            } else if (!path.exists) {
-                throw "Missing view: \"" + path+ "\""
-            }
-            if (cached && cached.exists && cached.modified >= path.modified) {
-                log.debug(4, "Load view \"" + controllerName + "/" + viewName + "\" from: " + cached);
-                load(cached)
-            } else {
-                if (!global.TemplateParser) {
-                    load("ejs.web.template.mod")
-                }
-                let layouts = request.dir.join(dirs.layouts)
-                log.debug(4, "Rebuild view \"" + controllerName + "/" + viewName + "\" and save to: " + cached);
-                if (!path.exists) {
-                    throw "Can't find view: \"" + path + "\""
-                }
-                let code = TemplateParser().buildView(cvname, path.readString(), { layouts: layouts })
-                eval(code, cached)
-            }
-        }
-
         /*
-            Generic open of a database. Expects and ejscr configuration like:
+            Open database. Expects ejsrc configuration:
 
-            mode: "debug"
+            mode: "debug",
             database: {
+                module: "name.mod",
                 class: "Database",
                 adapter: "sqlite3",
-                debug: {
-                    name: "db/blog.sdb", trace: true, 
-                }
+                debug: { name: "db/blog.sdb", trace: true },
+                test: { name: "db/blog.sdb", trace: true },
+                production: { name: "db/blog.sdb", trace: true },
             }
          */
         private function openDatabase(request: Request) {
-            let deploymentMode = config.mode
             let dbconfig = config.database
-            let klass = dbconfig["class"]
-            let adapter = dbconfig.adapter
-            let profile = dbconfig[deploymentMode]
-            if (klass && dbconfig.adapter && profile.name) {
-                //  MOB -- should NS be here
-                use namespace "ejs.db"
-                let db = new global[klass](dbconfig.adapter, request.dir.join(profile.name))
-                if (profile.trace) {
-                    db.trace(true)
+            let dbclass = dbconfig["class"]
+            let profile = dbconfig[config.mode]
+            if (dbclass) {
+                if (dbconfig.module && !global[dbclass]) {
+                    global.load(dbconfig.module + ".mod")
                 }
+                new global[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
             }
         }
 
         /* 
-            Run the before/after filters. These are typically used to handle authorization and similar tasks
+            Run the before/after checkers. These are typically used to handle authorization and similar tasks
          */
-        private function runFilters(filters: Array): Void {
-            for each (filter in filters) {
-                let fn = filter[0]
-                let options = filter[1]
+        private function runCheckers(checkers: Array): Void {
+            for each (checker in checkers) {
+                let [fn, options] = checker
                 if (options) {
-                    only = options.only
-                    if (only) {
-                        if (only is String && actionName != only) {
-                            continue
-                        }
-                        if (only is Array && !only.contains(actionName)) {
+                    if (only = options.only) {
+                        if ((only is String && actionName != only) || (only is Array && !only.contains(actionName))) {
                             continue
                         }
                     } 
-                    except = options.except
-                    if (except) {
-                        if (except is String && actionName == except) {
-                            continue
-                        }
-                        if (except is Array && except.contains(actionName)) {
+                    if (except = options.except) {
+                        if ((except is String && actionName == except) || (except is Array && except.contains(actionName))) {
                             continue
                         }
                     }
@@ -479,7 +423,7 @@ module ejs.web {
             if (global[viewClass]) {
                 return true
             }
-            let path = request.dir.join("views", controllerName, name).joinExt(config.extensions.ejs)
+            let path = request.dir.join(config.directories.views, controllerName, name).joinExt(config.extensions.ejs)
             if (path.exists) {
                 return true
             }
@@ -493,16 +437,177 @@ module ejs.web {
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function get appUrl()
-            request.home.toString().trimEnd("/")
+        function get absUrl()
+            absHome
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function afterFilter(fn, options: Object = null): Void
+            afterCheck(fn, options)
 
         /** 
             @hide
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String
-            makeUri({ path: action })
+        function get appUrl()
+            home.trimEnd("/")
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function beforeFilter(fn, options: Object = null): Void
+            beforeCheck(fn, options)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function createSession(timeout: Number): Void
+            request.createSession(timeout)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function destroySession(): Void
+            request.destroySession()
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function discardOutput(): Void {
+            //  No supported
+            true
+        }
+            
+        /**
+            escapeHtml, html is now a global in Utils.es
+         */
+
+        /** 
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function get host()
+            request.server
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function keepAlive(on: Boolean): Void {
+            // Not supported 
+            true
+        }
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function loadView(path): Void
+            writeTemplate(path)
+
+        /** 
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
+            options = options.clone()
+            options.action = action;
+            options.id = id;
+            options.query = query;
+            makeUri(options)
+        }
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function redirectUrl(uri: String, status: Number = 302): Void
+            redirect(uri, status)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function render(...args): Void
+            write(...args)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function renderFile(filename: String): Void
+            writeFile(filename)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function renderRaw(...args): Void
+            write(...args)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function renderView(name: String = null): Void
+            writeView(name)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function reportError(status: Number, msg: String, e: Object = null): Void
+            writeError(status, msg + e)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function resetFilters(): Void
+            removeCheckers()
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function sendError(status, ...msgs): Void
+            writeError(status, ...msgs)
+
+        /**
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function setCookie(name: String, value: String, path: String = null, domain: String = null,
+                lifetime: Number = 0, secure: Boolean = false): Void  {
+            request.setCookie(name, 
+                { value: value, path: path, domain: domain, lifetime: Date().future(lifetime * 1000), secure: secure})
+        }
+
     }
 }
 

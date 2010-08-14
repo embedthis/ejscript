@@ -7101,9 +7101,11 @@ static EcNode *parseAttribute(EcCompiler *cp)
             }
             break;
 
+#if UNUSED
         case T_SHARED:
             np->attributes |= EJS_PROP_SHARED;
             break;
+#endif
 
         case T_STATIC:
             if (inClass || inInterface) {
@@ -7365,7 +7367,6 @@ static EcNode *parseVariableBinding(EcCompiler *cp, EcNode *np, EcNode *attribut
         initialize = parsePattern(cp);
         for (next = 0; (elt = mprGetNextItem(initialize->children, &next)) != 0 && !cp->error; ) {
             var = createNode(cp, N_VAR);
-            mprAssert(elt->field.expr->kind == N_QNAME);
             var->qname = ejsCopyName(var, &elt->field.expr->qname);
             var->name.varKind = np->def.varKind;
             var->attributes |= np->attributes;

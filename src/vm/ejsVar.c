@@ -20,6 +20,9 @@ static bool      parseBoolean(Ejs *ejs, cchar *s);
  */
 EjsObj *ejsCast(Ejs *ejs, EjsObj *obj, EjsType *type)
 {
+    EjsObj  *result;
+    int     save;
+
     mprAssert(ejs);
     mprAssert(type);
     mprAssert(obj);
@@ -31,7 +34,15 @@ EjsObj *ejsCast(Ejs *ejs, EjsObj *obj, EjsType *type)
         return obj;
     }
     if (obj->type->helpers.cast) {
-        return (obj->type->helpers.cast)(ejs, obj, type);
+        /*
+            Don't GC cast operations. This enables native code to not worry about the GC collecting tmp objects
+            MOB - what other operations should this apply to?
+         */
+        save = ejs->gc.enabled;
+        ejs->gc.enabled = 0;
+        result = (obj->type->helpers.cast)(ejs, obj, type);
+        ejs->gc.enabled = save;
+        return result;
     }
     ejsThrowInternalError(ejs, "Cast helper not defined for type \"%s\"", obj->type->qname.name);
     return 0;
@@ -425,6 +436,32 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *obj, EjsObj *options)
         result = ejsToString(ejs, obj);
     }
     return result;
+}
+
+
+/**
+    Get a Path representation of a variable.
+    @return Returns a string variable or null if an exception is thrown.
+ */
+EjsPath *ejsToPath(Ejs *ejs, EjsObj *obj)
+{
+    if (obj == 0 || ejsIsPath(ejs, obj)) {
+        return (EjsPath*) obj;
+    }
+    return (EjsPath*) ejsCast(ejs, obj, ejs->pathType);
+}
+
+
+/**
+    Get a Uri representation of a variable.
+    @return Returns a string variable or null if an exception is thrown.
+ */
+EjsUri *ejsToUri(Ejs *ejs, EjsObj *obj)
+{
+    if (obj == 0 || ejsIsUri(ejs, obj)) {
+        return (EjsUri*) obj;
+    }
+    return (EjsUri*) ejsCast(ejs, obj, ejs->uriType);
 }
 
 

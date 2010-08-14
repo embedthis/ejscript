@@ -113,10 +113,10 @@ static EjsObj *hs_set_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
 static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     if (sp->server) {
-        //  MOB -- who make sure that the server object is permanent?
         ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
         mprFree(sp->server);
         sp->server = 0;
+        sp->obj.permanent = 0;
     }
     return 0;
 }
@@ -596,9 +596,7 @@ static void closeEjs(HttpQueue *q)
     EjsRequest  *req;
 
     if ((req = httpGetConnContext(q->conn)) != 0) {
-        if (!req->closed) {
-            ejsSendRequestCloseEvent(req->ejs, req);
-        }
+        ejsSendRequestCloseEvent(req->ejs, req);
         req->conn = 0;
     }
     httpSetConnContext(q->conn, 0);

@@ -77,7 +77,9 @@ static ReservedWord keywords[] =
   { "require",          G_CONREV,           T_REQUIRE,                  0, },
   { "return",           G_RESERVED,         T_RETURN,                   0, },
   { "set",              G_CONREV,           T_SET,                      0, },
+#if UNUSED
   { "shared",           G_CONREV,           T_ATTRIBUTE,                T_SHARED, },
+#endif
   { "standard",         G_CONREV,           T_STANDARD,                 0, },
   { "static",           G_CONREV,           T_ATTRIBUTE,                T_STATIC, },
   { "strict",           G_CONREV,           T_STRICT,                   0, },

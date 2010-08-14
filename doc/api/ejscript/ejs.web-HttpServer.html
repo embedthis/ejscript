@@ -55,11 +55,14 @@
 <table class='itemTable' summary='properties'>
    <tr><th>Qualifiers</th><th>Property</th><th>Type</th><th width='95%'>Description</th></tr>
 <a name='indicies'></a>
-   <tr><td nowrap align='center'>public static </td><td>indicies</td><td>&nbsp;</td><td>Return an object hash with the current server resource limits. </td></tr>
+   <tr><td nowrap align='center'>public static </td><td>indicies</td><td>&nbsp;</td><td>Index files list. Index files are used by various handlers when requests to directories are made. The 
+indicies are tried in turn for the first valid index file.</td></tr>
 <a name='documentRoot'></a>
    <tr><td nowrap align='center'>public </td><td>documentRoot</td><td><a href='ejs-Path.html'>Path</a></td><td>Default local directory for web documents to serve. This is used as the default Request.dir value.</td></tr>
 <a name='serverRoot'></a>
    <tr><td nowrap align='center'>public </td><td>serverRoot</td><td><a href='ejs-Path.html'>Path</a></td><td>Default root directory for the server. The app does not change its current directory to this path.</td></tr>
+<a name='sessions'></a>
+   <tr><td nowrap align='center'>public </td><td>sessions</td><td><a href='ejs-Object.html'>Object</a></td><td>Hash of session objects. This is created on demand as requests require session state storage.</td></tr>
 <a name='address'></a>
    <tr><td nowrap align='left'>public const get </td><td>address</td><td><a href='ejs-String.html'>String</a></td><td>Get the local IP address bound to this socket. </td></tr>
 <a name='isSecure'></a>
@@ -80,7 +83,7 @@ protocol scheme.</td></tr>
 <h2 class='classSection'>HttpServer Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#accept'><b>accept</b></a>(): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Accept a for client connection.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#accept'><b>accept</b></a>(): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Accept a new incoming for sync servers.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
@@ -88,8 +91,7 @@ protocol scheme.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#secure'><b>secure</b></a>(keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a> = null , ciphers: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the Secure Sockets Layer (SSL) protocol credentials.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the server resource limits.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setPipeline'><b>setPipeline</b></a>(incoming: <a href='ejs-Array.html'>Array</a>, outgoing: <a href='ejs-Array.html'>Array</a>, connector: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the stages of the Http processing pipeline.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trace'><b>trace</b></a>(level: <a href='ejs-Number.html'>Number</a>, options: <a href='ejs-Object.html'>Object</a> = expression , size: <a href='ejs-Number.html'>Number</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure request tracing for the server.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#traceFilter'><b>traceFilter</b></a>(include: <a href='ejs-Array.html'>Array</a>, exclude: <a href='ejs-Array.html'>Array</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure trace filters for request tracing.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#trace'><b>trace</b></a>(options: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Configure request tracing for the server.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#verifyClients'><b>verifyClients</b></a>(caCertPath: <a href='ejs-Path.html'>Path</a>, caCertFile: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Verify client certificates.</td></tr>
 </table>
 
@@ -102,10 +104,10 @@ protocol scheme.</td></tr>
 <div class='apiSig'>const   public  accept(): <a href='ejs.web-Request.html'>Request</a>
 </div>
 <div class='apiDetail'>
-<p>Accept a for client connection.</p>
-<dl><dt>Description</dt><dd>This creates a request object in response to an incoming client connection
-on the current HttpServer object. This call is only required in sync mode. 
-In async mode, the HttpServer automatically creates the Request object and passes it on "readable" events.</dd></dl>
+<p>Accept a new incoming for sync servers.</p>
+<dl><dt>Description</dt><dd>This call creates a request object in response to an 
+incoming client connection on the current HttpServer object.  In async mode, the accept() call is not needed
+as the HttpServer automatically creates the Request object and passes it on "readable" events.</dd></dl>
 <dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>Issues</td><td>A "accept" event when there is a new connection available.</td></tr>
@@ -113,8 +115,8 @@ In async mode, the HttpServer automatically creates the Request object and passe
 </dl><dl><dt>Returns</dt>
 <dd>A Request object if in sync mode. No return value if in async mode.</dd></dl>
 <dl><dt>Example</dt>
-<dd><pre>server = new Http(".", "./web")
-server.listen("80")
+<dd><pre>server = new HttpServer
+server.listen("8080")
 while (request = server.accept()) {
     Web.serve(request)
 }
@@ -161,6 +163,7 @@ observers via "readable" events.</dd></dl>
 </dl><dl><dt>Example</dt>
 <dd><pre>server = new Http(".", "./web")
 server.observe("readable", function (event, request) {
+    //  NOTE: this is set to the request
     Web.serve(request)
 })
 server.listen("80")
@@ -179,7 +182,7 @@ server.listen("80")
 <tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function observer(event: String, ...args): Void.</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
-<td class='param'>readable</td><td>Issued when there is a new request available.</td></tr>
+<td class='param'>readable</td><td>Issued when there is a new request available. This readable event will explicitlyl set the value of "this" to the request regardless of whether the function has a bound "this" value.</td></tr>
 <td class='param'>close</td><td>Issued when server is being closed.</td></tr>
 <td class='param'>createSession</td><td>Issued when a new session store object is created for a client. The request object is passed.</td></tr>
 <td class='param'>destroySession</td><td>Issued when a session is destroyed. The request object is passed.</td></tr>
@@ -222,7 +225,7 @@ server.listen("80")
 <div class='apiDetail'>
 <p>Update the server resource limits.</p>
 <dl><dt>Description</dt><dd>The supplied limit fields are updated.
-See <a href='#limit'>limit</a> for limit field details.</dd></dl>
+See the <a href='#limits'>limits</a> property for limit field details.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>limits: <a href='ejs-Object.html'>Object</a> </td><td>Object hash of limit fields and values.</td></tr></table></dd>
@@ -250,28 +253,29 @@ the network.</dd></dl>
 <hr />
 <a name='trace'></a>
 <div class='api'>
-<div class='apiSig'>const   public  trace(level: <a href='ejs-Number.html'>Number</a>, options: <a href='ejs-Object.html'>Object</a> = expression , size: <a href='ejs-Number.html'>Number</a> = null): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  trace(options: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Configure request tracing for the server.</p>
-<dl><dt>Description</dt><dd>The default is to trace the first line of requests and responses 
-and headers at level 3.</dd></dl>
+<dl><dt>Description</dt><dd>The default is to trace the first line of requests and responses at
+level 2 and to trace headers at level 3. The options argument contains optional properties: rx and tx 
+(for receive and transmit tracing). The rx and tx properties may contain an object hash which describes 
+the tracing for that direction and includes any of the following fields:.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>level: <a href='ejs-Number.html'>Number</a> </td><td>Level at which request tracing will occurr.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Set of trace options. Select from: "request" to trace requests, "response" to trace responses, "conn" to trace new connections, "first" to trace the first line of requests or responses, "headers" to  trace headers, and "body" to trace body content. Or use "all" to trace everything. [default: expression ]</td></tr><tr class='param'><td class='param'>size: <a href='ejs-Number.html'>Number</a> </td><td>Maximum request body size to trace. [default: null]</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td> [default: expression ]</td></tr></table></dd>
-</dl></div>
+<tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Set of trace options with properties "rx" and "tx" for receive and transmit direction tracing. The include property is an array of file extensions to include in tracing. The include property is an array of file extensions to exclude from tracing. The all property specifies that everything for this direction should be traced. The conn property specifies that new connections should be traced. The first property specifies that the first line of the request should be traced. The headers property specifies that the headers (including first line) of the request should be traced. The body property specifies that the body content of the request should be traced. The size property specifies a maximum body size in bytes that will be traced. Content beyond this limit  will not be traced.</td></tr></table></dd>
+</dl><dl><dt>Options</dt>
+<dd><table class='parameters' summary ='options'>
+<td class='param'>transmit.</td><td>Object hash with optional properties: include, exclude, first, headers, body, size.</td></tr>
+<td class='param'>receive.</td><td>Object hash with optional properties: include, exclude, conn, first, headers, body, size.</td></tr>
+</table></dd>
+</dl><dl><dt>Example</dt>
+<dd><pre>trace({
+    transmit: { exclude: ["gif", "png"], "headers": 3, "body": 4, size: 1000000 }
+    receive:  { "conn": 1, "headers": 2 , "body": 4, size: 1024 }
+})
+</pre></dd></dl>
 </div>
-<hr />
-<a name='traceFilter'></a>
-<div class='api'>
-<div class='apiSig'>const   public  traceFilter(include: <a href='ejs-Array.html'>Array</a>, exclude: <a href='ejs-Array.html'>Array</a> = expression): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Configure trace filters for request tracing.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>include: <a href='ejs-Array.html'>Array</a> </td><td>Set of extensions to include when tracing.</td></tr><tr class='param'><td class='param'>exclude: <a href='ejs-Array.html'>Array</a> </td><td>Set of extensions to exclude when tracing. [default: expression]</td></tr></table></dd>
-</dl></div>
 </div>
 <hr />
 <a name='verifyClients'></a>

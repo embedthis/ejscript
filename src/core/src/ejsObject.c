@@ -2070,7 +2070,8 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     if (pretty || indent) {
         mprPutCharToBuf(buf, '\n');
     }
-    if (++ejs->serializeDepth <= depth) {
+    if (++ejs->serializeDepth <= depth && !obj->visited) {
+        obj->visited = 1;
         for (slotNum = 0; slotNum < count && !ejs->exception; slotNum++) {
             trait = ejsGetTrait(ejs, obj, slotNum);
             if (trait && (trait->attributes & (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | 
@@ -2079,6 +2080,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
             }
             pp = ejsGetProperty(ejs, obj, slotNum);
             if (ejs->exception) {
+                obj->visited = 0;
                 return 0;
             }
             if (pp == 0) {
@@ -2133,6 +2135,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
                 if (!ejs->exception) {
                     ejsThrowTypeError(ejs, "Can't serialize property %s", qname.name);
                 }
+                obj->visited = 0;
                 return 0;
             } else {
                 if (replacer) {
@@ -2150,6 +2153,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
                 mprPutCharToBuf(buf, '\n');
             }
         }
+        obj->visited = 0;
     }
     --ejs->serializeDepth; 
     if (pretty || indent) {

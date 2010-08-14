@@ -19,8 +19,6 @@ http.observe("close", function (event, http) {
 })
 
 http.get(HTTP + "/index.html")
-http.finalize()
-
 let mark = new Date
 while (!complete && mark.elapsed < TIMEOUT) {
     App.eventLoop(TIMEOUT - mark.elapsed, 1)

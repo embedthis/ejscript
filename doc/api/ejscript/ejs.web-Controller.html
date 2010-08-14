@@ -22,7 +22,8 @@
 
 <p class='classBrief'>Create and initialize a controller.</p>
 
-<p class='classDescription'></p>
+<p class='classDescription'>This may be called directly by class constructors or via 
+the Controller.create factory method.</p>
 
 </div>
 
@@ -35,7 +36,7 @@
 <a name='actionName'></a>
    <tr><td nowrap align='center'>ejs.web </td><td>actionName</td><td><a href='ejs-String.html'>String</a></td><td>Name of the action being run. </td></tr>
 <a name='config'></a>
-   <tr><td nowrap align='center'>ejs.web </td><td>config</td><td><a href='ejs-Object.html'>Object</a></td><td>Alias for request.config */. </td></tr>
+   <tr><td nowrap align='center'>ejs.web </td><td>config</td><td><a href='ejs-Object.html'>Object</a></td><td>Configuration settings - reference to Request.config. </td></tr>
 <a name='controllerName'></a>
    <tr><td nowrap align='center'>ejs.web </td><td>controllerName</td><td><a href='ejs-String.html'>String</a></td><td>Lower case controller name. </td></tr>
 <a name='deploymentMode'></a>
@@ -47,19 +48,25 @@
 "warn"          Negative feedback (Warnings and errors)
 "*""             Other feedback (reminders, suggestions...). </td></tr>
 <a name='log'></a>
-   <tr><td nowrap align='center'>ejs.web </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Logger channel. </td></tr>
+   <tr><td nowrap align='center'>ejs.web </td><td>log</td><td><a href='ejs-Logger.html'>Logger</a></td><td>Logger stream - reference to Request.log. </td></tr>
 <a name='params'></a>
-   <tr><td nowrap align='center'>ejs.web </td><td>params</td><td><a href='ejs-Object.html'>Object</a></td><td>Reference to the Request.params object. This stores the request query and form parameters.</td></tr>
+   <tr><td nowrap align='center'>ejs.web </td><td>params</td><td><a href='ejs-Object.html'>Object</a></td><td>Form and query parameters - reference to the Request.params object. </td></tr>
+<a name='rendered'></a>
+   <tr><td nowrap align='center'>ejs.web </td><td>rendered</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>The response has been rendered. If an action does not render a response, then a default view will be rendered.</td></tr>
 <a name='request'></a>
-   <tr><td nowrap align='center'>ejs.web </td><td>request</td><td><a href='ejs.web-Request.html'>Request</a></td><td>Reference to the current Request. </td></tr>
+   <tr><td nowrap align='center'>ejs.web </td><td>request</td><td><a href='ejs.web-Request.html'>Request</a></td><td>Reference to the current Request object. </td></tr>
 <a name='view'></a>
-   <tr><td nowrap align='center'>ejs.web </td><td>view</td><td><a href='ejs.web-View.html'>View</a></td><td>Reference to the current view. </td></tr>
+   <tr><td nowrap align='center'>ejs.web </td><td>view</td><td><a href='ejs.web-View.html'>View</a></td><td>Reference to the current View object. </td></tr>
+<a name='absHome'></a>
+   <tr><td nowrap align='left'>ejs.web const get </td><td>absHome</td><td><a href='ejs-Uri.html'>Uri</a></td><td> </td></tr>
+<a name='home'></a>
+   <tr><td nowrap align='left'>ejs.web const get </td><td>home</td><td><a href='ejs-Uri.html'>Uri</a></td><td> </td></tr>
+<a name='pathInfo'></a>
+   <tr><td nowrap align='left'>ejs.web const get </td><td>pathInfo</td><td><a href='ejs-String.html'>String</a></td><td> </td></tr>
 <a name='session'></a>
-   <tr><td nowrap align='left'>ejs.web const get </td><td>session</td><td><a href='ejs.web-Session.html'>Session</a></td><td>Session state object. The session state object can be used to share state between requests.
-If a session has not already been created, this call creates a session and sets the <a href='#sessionID'>sessionID</a> property. 
-A cookie containing a session ID is automatically created and sent to the client on the first response 
-after creating the session. Objects are stored the session state by JSON serialization.
-This getter property is a wrapper and returns the Request.session object.</td></tr>
+   <tr><td nowrap align='left'>ejs.web const get </td><td>session</td><td><a href='ejs.web-Session.html'>Session</a></td><td> </td></tr>
+<a name='uri'></a>
+   <tr><td nowrap align='left'>ejs.web const get </td><td>uri</td><td><a href='ejs-Uri.html'>Uri</a></td><td> </td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Properties'><i>Inherited Properties</i></a></p>
@@ -71,18 +78,24 @@ This getter property is a wrapper and returns the Request.session object.</td></
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>static const </td><td><a href='#create'><b>create</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs.web-Controller.html'>Controller</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Factory method to create and initialize a controller.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#error'><b>error</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send an error notification to the user.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td></td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#inform'><b>inform</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a positive notification to the user.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#makeUri'><b>makeUri</b></a>(parts: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a URI suitable for invoking actions.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#makeUri'><b>makeUri</b></a>(location: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td></td></tr>
    <tr class='apiDef'><td class='apiType'>action const </td><td><a href='#missing'><b>missing</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Missing action method.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td></td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#redirect'><b>redirect</b></a>(where: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to the given URL.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#redirectAction'><b>redirectAction</b></a>(action: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to the given action.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#render'><b>render</b></a>(args: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render the raw arguments back to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderError'><b>renderError</b></a>(status: <a href='ejs-Number.html'>Number</a>, msgs: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render an error message as the response.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderFile'><b>renderFile</b></a>(filename: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a file's contents.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderFile'><b>renderFile</b></a>(filename: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a file's contents.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderPartial'><b>renderPartial</b></a>(path: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a partial ejs template.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#renderView'><b>renderView</b></a>(viewName: <a href='ejs-String.html'>String</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Render a view template.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#run'><b>run</b></a>(request: <a href='ejs.web-Request.html'>Request</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Run the controller action.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td></td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#setStatus'><b>setStatus</b></a>(status: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td></td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#warn'><b>warn</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Send a warning message back to the client for display in the flash area.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Low-level write data to the client.</td></tr>
 </table>
 
 <p class='inheritedLink'><a href='ejs-Object.html#Methods'><i>Inherited Methods</i></a></p>
@@ -130,29 +143,6 @@ This call expects the controller class to be loaded. Called by Mvc.load().</dd><
 </dl></div>
 </div>
 <hr />
-<a name='makeUri'></a>
-<div class='api'>
-<div class='apiSig'>const   ejs.web  makeUri(parts: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a>
-</div>
-<div class='apiDetail'>
-<p>Make a URI suitable for invoking actions.</p>
-<dl><dt>Description</dt><dd>This routine will construct a URL Based on a supplied action name, 
-model id and options that may contain an optional controller name. This is a convenience routine to remove from 
-applications the burden of building URLs that correctly use action and controller names.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>parts: <a href='ejs-Object.html'>Object</a> </td><td></td></tr></table></dd>
-</dl><dl><dt>Options</dt>
-<dd><table class='parameters' summary ='options'>
-<td class='param'>url</td><td>An override url to use. All other args are ignored.</td></tr>
-<td class='param'>query</td><td>Query string to append to the URL. Overridden by the query arg.</td></tr>
-<td class='param'>controller</td><td>The name of the controller to use in the URL.</td></tr>
-</table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>A string URL.</dd></dl>
-</div>
-</div>
-<hr />
 <a name='missing'></a>
 <div class='api'>
 <div class='apiSig'>const   action  missing(): <a href='ejs-Void.html'>Void</a>
@@ -160,6 +150,29 @@ applications the burden of building URLs that correctly use action and controlle
 <div class='apiDetail'>
 <p>Missing action method.</p>
 <dl><dt>Description</dt><dd>This method will be called if the requested action routine does not exist.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='read'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  read(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Read a data from the stream.</p>
+<dl><dt>Description</dt><dd>If data is available, the call will return immediately. 
+If no data is available and the stream is in sync mode, the call will block until data is available.
+If no data is available and the stream is in async mode, the call will not block and will return immediately.
+In this case a "readable" event will be issued when data is available for reading.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>buffer: <a href='ejs-ByteArray.html'>ByteArray</a> </td><td>Destination byte array for read data.</td></tr><tr class='param'><td class='param'>offset: <a href='ejs-Number.html'>Number</a> </td><td>Offset in the byte array to place the data. If the offset is -1, then data is appended to the buffer write <a href='#position'>position</a> which is then updated [default: 0 ]</td></tr><tr class='param'><td class='param'>count: <a href='ejs-Number.html'>Number</a> </td><td>Read up to this number of bytes. If -1, read as much as the buffer will hold up. If the  stream is of fixed and known length (such as a file) and the buffer is of sufficient size or is growable,  read the entire stream. [default: -1]</td></tr><tr class='param'><td class='param'>offset: <a href='ejs-Number.html'>Number</a> </td><td> [default: 0 ]</td></tr><tr class='param'><td class='param'>count: <a href='ejs-Number.html'>Number</a> </td><td> [default: -1]</td></tr></table></dd>
+</dl><dl><dt>Events</dt>
+<dd><table class='parameters' summary ='events'>
+<td class='param'>readable</td><td>Issued when there is new read data available.</td></tr>
+<td class='param'>writable</td><td>Issued when the stream becomes empty.</td></tr>
+</table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
 </div>
 </div>
 <hr />
@@ -194,7 +207,10 @@ applications the burden of building URLs that correctly use action and controlle
 <div class='apiDetail'>
 <p>Render the raw arguments back to the client.</p>
 <dl><dt>Description</dt><dd>The args are converted to strings.</dd></dl>
-</div>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>args: <a href='ejs-Array.html'>Array</a> </td><td>Arguments to write to the client.</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='renderError'></a>
@@ -203,16 +219,22 @@ applications the burden of building URLs that correctly use action and controlle
 </div>
 <div class='apiDetail'>
 <p>Render an error message as the response.</p>
-</div>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>status: <a href='ejs-Number.html'>Number</a> </td><td>Http status code to use.</td></tr><tr class='param'><td class='param'>msgs: <a href='ejs-Array.html'>Array</a> </td><td>Error messages to send with the response.</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='renderFile'></a>
 <div class='api'>
-<div class='apiSig'>const   ejs.web  renderFile(filename: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   ejs.web  renderFile(filename: <a href='ejs-Path.html'>Path</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Render a file's contents.</p>
-</div>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>filename: <a href='ejs-Path.html'>Path</a> </td><td>Path to the filename to send to the client.</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='renderPartial'></a>
@@ -263,6 +285,17 @@ setting flash["warn"].</dd></dl>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>msg: <a href='ejs-String.html'>String</a> </td><td>Message to display.</td></tr></table></dd>
 </dl></div>
+</div>
+<hr />
+<a name='write'></a>
+<div class='api'>
+<div class='apiSig'>const   ejs.web  write(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a>
+</div>
+<div class='apiDetail'>
+<p>Low-level write data to the client.</p>
+<dl><dt>Description</dt><dd>This will buffer the written data until either flush() or 
+finalize() is called.  This will not set the <a href='#rendered'>rendered</a> property.</dd></dl>
+</div>
 </div>
 <hr />
 <div class="terms">

@@ -509,17 +509,18 @@ module ejs {
 
         /**
             Resolve paths in the neighborhood of this path. Resolve operates like join, except that it joins the 
-            given paths to the directory portion of the current ("this") path. For example: if "path" is set to
-            "/usr/bin/ejs/bin", then path.resolve("lib") will return "/usr/lib/ejs/lib". i.e. it will return the
+            given paths to the directory portion of the current ("this") path. For example: 
+            Path("/usr/bin/ejs/bin").resolve("lib") will return "/usr/lib/ejs/lib". i.e. it will return the
             sibling directory "lib".
 
-            Resolve operations by accumulating a virtual current directory, starting with "this" path. It then
-            successively joins the given paths. If the next path is an absolute path, it is used unmodified. 
-            The effect is to find the given paths with a virtual current directory set to the directory containing 
-            the prior path.
+            Resolve operates by determining a virtual current directory for this Path object. It then successively 
+            joins the given paths to the directory portion of the current result. If the next path is an absolute path, 
+            it is used unmodified.  The effect is to find the given paths with a virtual current directory set to the 
+            directory containing the prior path.
 
             Resolve is useful for creating paths in the region of the current path and gracefully handles both 
             absolute and relative path segments.
+            @params otherPaths Paths to resolve in the region of this path.
             @return A new Path object that is resolved against the prior path. 
          */
         native function resolve(...otherPaths): Path
