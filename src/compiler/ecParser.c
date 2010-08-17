@@ -1676,7 +1676,7 @@ static EcNode *parseFunctionExpressionBody(EcCompiler *cp)
     } else {
         np = createNode(cp, N_DIRECTIVES);
         ret = createNode(cp, N_RETURN);
-        ret->ret.blockLess = 1;
+        ret->ret.blockless = 1;
         ret = appendNode(ret, parseAssignmentExpression(cp));
         np = appendNode(np, ret);
     }
@@ -8265,7 +8265,7 @@ static EcNode *parseFunctionBody(EcCompiler *cp, EcNode *fun)
          */
         np = createNode(cp, N_DIRECTIVES);
         ret = createNode(cp, N_RETURN);
-        ret->ret.blockLess = 1;
+        ret->ret.blockless = 1;
         ret = appendNode(ret, parseAssignmentExpression(cp));
         np = appendNode(np, ret);
     }

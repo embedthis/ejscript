@@ -42,22 +42,10 @@ module ejs {
          */
         enumerable var message: String
 
+        /**
+            Callback stack
+         */
         enumerable var stack: Array
-
-        /*
-UNUSED MOB
-            Execution call stack. Contains the execution stack backtrace at the point the Error object was created.
-            The stack is an array of stack frame records. Each record consists of the following properties: 
-                {file: String, lineno: Number, func: String, code: String}
-        function get stack(): Array {
-print("_STACK " + _stack)
-            if (!_stack) {
-print("CAPTURE")
-                _stack = capture()
-            }
-            return _stack
-        }
-*/
 
         /** 
             Time the event was created. The Context constructor will automatically set the timestamp to the current time.  
@@ -99,8 +87,7 @@ print("CAPTURE")
 
     /**
         Arguments error exception class. 
-        Thrown the arguments cannot be cast to the required type or in strict mode if there are too few or too 
-        many arguments.
+        Thrown the arguments are not compatible with the required function  parameters.
         @spec ejs
         @stability evolving
      */
@@ -112,6 +99,7 @@ print("CAPTURE")
         native function ArgError(message: String? = null) 
     }
 
+//MOB Who is using this? Delete
     /**
         Arithmetic error exception class. Thrown when the system cannot perform an arithmetic operation, 
         @spec ejs
@@ -138,6 +126,7 @@ print("CAPTURE")
         native function AssertError(message: String? = null) 
     }
 
+//MOB Who is using this? Delete
     /**
         Code (instruction) error exception class. Thrown when an illegal or insecure operation code is detected 
         in the instruction stream.
@@ -194,6 +183,7 @@ print("CAPTURE")
         native function MemoryError(message: String? = null) 
     }
 
+//MOB Who is using this? Delete
     /**
         OutOfBounds error exception class. Thrown to indicate that an attempt has been made to set or access an 
         object's property outside of the permitted set of values for that property. For example, an array has been 
@@ -294,8 +284,9 @@ print("CAPTURE")
         native function TypeError(message: String? = null) 
     }
 
+//MOB Delete
     /**
-        Uri error exception class. Thrown a Uri fails to parse.
+        Uri error exception class. Throw a Uri fails to parse.
         @stability prototype
         @hide
      */

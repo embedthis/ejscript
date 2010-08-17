@@ -18,118 +18,36 @@ module ejs.web {
         private var request: Request
         private var view: View
 
-        function HtmlConnector(request, view) {
-            this.request = request
+//  MOB -- all elements must have a DOM-ID
+        /* Sequential DOM ID generator */
+        private var nextDomID: Number = 0
+
+        /*
+            Mapping of helper options to HTML attributes ("" value means don't map the name)
+         */
+        private const htmlOptions: Object = { 
+            background: "",
+            color: "",
+            domid: "id",
+            height: "",
+            method: "",
+            size: "",
+            style: "class",
+            visible: "",
+            width: "",
+        }
+        function HtmlConnector(view) {
             this.view = view
+            this.request = view.request
         }
 
-        /*
-            Options to implement:
-                method
-                update
-                confirm     JS confirm code
-                condition   JS expression. True to continue
-                success
-                failure
-                query
-   
-            Not implemented
-                submit      FakeFormDiv
-                complete
-                before
-                after
-                loading
-                loaded
-                interactive
-         */
-
-        function aform(record: Object, options: Object = {}): Void {
-            options.domid ||= "form"
-            onsubmit = ""
-            if (options.condition) {
-                onsubmit += options.condition + ' && '
-            }
-            if (options.confirm) {
-                onsubmit += 'confirm("' + options.confirm + '"); && '
-            }
-            onsubmit = '$.ajax({ ' +
-                'uri: "' + options.uri + '", ' + 
-                'type: "' + options.method + '", '
-
-            if (options.query) {
-                onsubmit += 'data: ' + options.query + ', '
-            } else {
-                onsubmit += 'data: $("#' + options.domid + '").serialize(), '
-            }
-            if (options.update) {
-                if (options.success) {
-                    onsubmit += 'success: function(data) { $("#' + options.update + '").html(data).hide("slow"); ' + 
-                        options.success + '; }, '
-                } else {
-                    onsubmit += 'success: function(data) { $("#' + options.update + '").html(data).hide("slow"); }, '
-                }
-            } else if (options.success) {
-                onsubmit += 'success: function(data) { ' + options.success + '; } '
-            }
-            if (options.error) {
-                onsubmit += 'error: function(data) { ' + options.error + '; }, '
-            }
-            onsubmit += '}); return false;'
-            write('<form action="' + "/User/list" + '"' + getOptions(options) + "onsubmit='" + onsubmit + "' >")
-        }
-
-        /*
-            TODO Extra options:
-                method
-                update
-                confirm     JS confirm code
-                condition   JS expression. True to continue
-                success
-                failure
-                query
-         */
-		function alink(text: String, options: Object): Void {
-            options.domid ||= "alink"
-            onclick = ""
-            if (options.condition) {
-                onclick += options.condition + ' && '
-            }
-            if (options.confirm) {
-                onclick += 'confirm("' + options.confirm + '"); && '
-            }
-            onclick = '$.ajax({ ' +
-                'uri: "' + options.action + '", ' + 
-                'type: "' + options.method + '", '
-
-            if (options.query) {
-                'data: ' + options.query + ', '
-            }
-
-            if (options.update) {
-                if (options.success) {
-                    onclick += 'success: function(data) { $("#' + options.update + '").html(data); ' + 
-                        options.success + '; }, '
-                } else {
-                    onclick += 'success: function(data) { $("#' + options.update + '").html(data); }, '
-                }
-            } else if (options.success) {
-                onclick += 'success: function(data) { ' + options.success + '; } '
-            }
-            if (options.error) {
-                onclick += 'error: function(data) { ' + options.error + '; }, '
-            }
-            onclick += '}); return false;'
-            options.uri ||= request.makeUri(options)
-            write('<a href="' + options.uri + '"' + getOptions(options) + "onclick='" + onclick + "' rel='nofollow'>" + 
-                text + '</a>')
-		}
-
-		function button(value: String, buttonName: String, options: Object): Void {
-            write('<input name="' + buttonName + '" type="submit" value="' + value + '"' + getOptions(options) + ' />')
+//  MOB - what about data-remote?
+		function button(field: String, label: String, options: Object): Void {
+            write('<input name="' + field + '" type="submit" value="' + label + '"' + getAttributes(options) + ' />')
         }
 
 		function buttonLink(text: String, options: Object): Void {
-            options.uri ||= request.makeUri(options)
+            let options.uri ||= request.makeUri(options)
             if (options["data-remote"]) {
                 let attributes = getDataAttributes(options)
                 write('<button ' + attributes + '>' + text + '</button></a>')
@@ -146,32 +64,27 @@ module ejs.web {
 		function checkbox(field: String, choice: String, submitValue: String, options: Object): Void {
             let checked = (choice == submitValue) ? ' checked="yes" ' : ''
             //  MOB -- should these have \r\n at the end of each line?
-            write('<input name="' + field + '" type="checkbox" "' + getOptions(options) + checked + 
-                '" value="' + submitValue + '" />')
-            write('<input name="' + field + '" type="hidden" "' + getOptions(options) + '" value="" />')
+            write('<input name="' + field + '" type="checkbox" "' + getAttributes(options) + checked + 
+                '" value="' + submitValue + '" />\n')
+            write('    <input name="' + field + '" type="hidden" "' + getAttributes(options) + '" value="" />')
         }
 
 		function endform(): Void {
             write('</form>')
         }
 
-		function flash(kind: String, msg: String, options: Object): Void {
-            write('<div' + getOptions(options) + '>' + msg + '</div>\r\n')
-            if (kind == "inform") {
-                write('<script>$(document).ready(function() {
-                        $("div.-ejs-flashInform").animate({opacity: 1.0}, 2000).hide("slow");});
-                    </script>')
-            }
-		}
-
 		function form(record: Object, options: Object): Void {
             options.uri ||= request.makeUri(options)
-            write('<form method="post" action="' + options.uri + '"' + getOptions(options) + 
+            write('<form method="' + options.method + '" action="' + options.uri + '"' + getAttributes(options) + 
                 ' xonsubmit="ejs.fixCheckboxes();">')
+            if (options.id) {
+                //  MOB -- should this be some more unique field?
+                write('<input name="id" type="hidden" value="' + options.id + '" />')
+            }
         }
 
         function image(src: String, options: Object): Void {
-			write('<img src="' + src + '"' + getOptions(options) + '/>')
+			write('<img src="' + src + '"' + getAttributes(options) + '/>')
         }
 
         function imageLink(src: String, options: Object): Void {
@@ -180,21 +93,16 @@ module ejs.web {
         }
 
         function label(text: String, options: Object): Void {
-            write('<span ' + getOptions(options) + ' type="' + getTextKind(options) + '">' +  text + '</span>')
+            write('<span ' + getAttributes(options) + ' type="' + getTextKind(options) + '">' +  text + '</span>')
         }
 
 		function link(text: String, options: Object): Void {
             options.uri ||= request.makeUri(options)
-			write('<a href="' + options.uri + '"' + getOptions(options) + ' rel="nofollow">' + text + '</a>')
-		}
-
-		function extlink(text: String, options: Object): Void {
-            options.uri ||= request.makeUri(options)
-			write('<a href="' + uri + '"' + getOptions(options) + ' rel="nofollow">' + text + '</a>')
+			write('<a href="' + options.uri + '"' + getAttributes(options) + ' rel="nofollow">' + text + '</a>')
 		}
 
 		function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
-            write('<select name="' + name + '" ' + getOptions(options) + '>')
+            write('<select name="' + name + '" ' + getAttributes(options) + '>')
             let isSelected: Boolean
             let i = 0
             for each (choice in choices) {
@@ -222,7 +130,16 @@ module ejs.web {
         }
 
 		function mail(name: String, address: String, options: Object): Void  {
-			write('<a href="mailto:' + address + '" ' + getOptions(options) + ' rel="nofollow">' + name + '</a>')
+			write('<a href="mailto:' + address + '" ' + getAttributes(options) + ' rel="nofollow">' + name + '</a>')
+		}
+
+		function flash(kind: String, msg: String, options: Object): Void {
+            write('<div' + getAttributes(options) + '>' + msg + '</div>\r\n')
+            if (kind == "inform") {
+                write('<script>$(document).ready(function() {
+                        $("div.-ejs-flashInform").animate({opacity: 1.0}, 2000).hide("slow");});
+                    </script>')
+            }
 		}
 
 		function progress(initialData: Array, options: Object): Void {
@@ -234,13 +151,13 @@ module ejs.web {
             if (choices is Array) {
                 for each (v in choices) {
                     checked = (v == selected) ? "checked" : ""
-                    write(v + ' <input type="radio" name="' + name + '"' + getOptions(options) + 
+                    write(v + ' <input type="radio" name="' + name + '"' + getAttributes(options) + 
                         ' value="' + v + '" ' + checked + ' />\r\n')
                 }
             } else {
                 for (item in choices) {
                     checked = (choices[item] == selected) ? "checked" : ""
-                    write(item + ' <input type="radio" name="' + name + '"' + getOptions(options) + 
+                    write(item + ' <input type="radio" name="' + name + '"' + getAttributes(options) + 
                         ' value="' + choices[item] + '" ' + checked + ' />\r\n')
                 }
             }
@@ -260,7 +177,8 @@ module ejs.web {
 
 		function table(data, options: Object? = null): Void {
             let originalOptions = options
-            let tableId = view.getNextId()
+                //  MOB -- should come via getAttributes
+            let tableId = nextDomID
 
             if (data is Array) {
                 if (data.length == 0) {
@@ -270,7 +188,6 @@ module ejs.web {
             } else if (!(data is Array) && data is Object) {
                 data = [data]
 			}
-
             options = (originalOptions && originalOptions.clone()) || {}
             let columns = getColumns(data, options)
 
@@ -386,7 +303,7 @@ module ejs.web {
                         styleCell += " " + (options.styleCells[row][col] || "")
                     }
                     styleCell = styleCell.trim()
-                    data = view.getValue(r, name, { render: column.render, formatter: column.formatter } )
+                    data = view.formatValue(r, name, { format: column.format} )
 
                     let align = ""
                     if (column.align) {
@@ -421,15 +338,16 @@ module ejs.web {
 			write('    </tbody>\r\n  </table>\r\n')
 		}
 
-		function tabs(initialData: Array, options: Object): Void {
+		function tabs(data: Array, options: Object): Void {
             write('<div class="-ejs-tabs">\r\n')
             write('   <ul>\r\n')
-            for each (t in initialData) {
+            for each (t in data) {
                 for (name in t) {
                     let uri = t[name]
                     if (options["data-remote"]) {
                         write('      <li data-remote="' + uri + '">' + name + '</a></li>\r\n')
                     } else {
+//  MOB -- get rid of all window.location
                         write('      <li onclick="window.location=\'' + uri + '\'"><a href="' + uri + '" rel="nofollow">' + 
                             name + '</a></li>\r\n')
                     }
@@ -440,7 +358,7 @@ module ejs.web {
         }
 
         function text(field: String, value: String, options: Object): Void {
-            write('<input name="' + field + '" ' + getOptions(options) + ' type="' + getTextKind(options) + 
+            write('<input name="' + field + '" ' + getAttributes(options) + ' type="' + getTextKind(options) + 
                 '" value="' + value + '" />')
         }
 
@@ -453,7 +371,7 @@ module ejs.web {
             if (numRows == undefined) {
                 numRows = 10
             }
-            write('<textarea name="' + name + '" type="' + getTextKind(options) + '" ' + getOptions(options) + 
+            write('<textarea name="' + name + '" type="' + getTextKind(options) + '" ' + getAttributes(options) + 
                 ' cols="' + numCols + '" rows="' + numRows + '">' + value + '</textarea>')
         }
 
@@ -489,7 +407,6 @@ module ejs.web {
     
         private function getTextKind(options): String {
             var kind: String
-
             if (options.password) {
                 kind = "password"
             } else if (options.hidden) {
@@ -500,12 +417,7 @@ module ejs.web {
             return kind
         }
 
-		private function getOptions(options: Object): String
-            view.getOptions(options)
-
-        private function write(str: String): Void
-            request.write(str)
-
+        //  MOB -- merge in with getAttributes
         private function getDataAttributes(options): String {
             let attributes = ""
             //  MOB -- would it be better to have data-remote == uri?
@@ -520,6 +432,73 @@ module ejs.web {
             }
             return attributes
         }
+
+        //  MOB -- edit this down to just HTML attributes
+        /**
+            Map options to a HTML attribute string.
+            @param options Optional extra options.
+            @returns a string containing the HTML attributes to emit.
+            @option background String Background color. This is a CSS RGB color specification. For example "FF0000" for red.
+            @option color String Foreground color. This is a CSS RGB color specification. For example "FF0000" for red.
+            @option data String URL or action to get live data. The refresh option specifies how often to invoke
+                fetch the data.
+            @option domid Number Client DOM-ID to use for the generated element
+            @option height (Number|String) Height of the table. Can be a number of pixels or a percentage string. 
+                Defaults to unlimited.
+            @option method String HTTP method to invoke. May be: GET, POST, PUT or DELETE.
+            @option size (Number|String) Size of the element.
+            @option style String CSS Style to use for the table.
+            @option visible Boolean Make the control visible. Defaults to true.
+            @option width (Number|String) Width of the table or column. Can be a number of pixels or a percentage string. 
+         */
+        function getAttributes(options: Object): String {
+            if (!options.domid) {
+                options.domid = nextDomID
+            }
+            if (options.hasError) {
+                //  MOB -- need consistency with styles
+                options.style += " -ejs-fieldError"
+            }
+            let result: String = ""
+            for (let option: String in options) {
+                let mapped = htmlOptions[option]
+                if (mapped || mapped == "") {
+                    if (mapped == "") {
+                        /* No mapping, keep the original option name */
+                        mapped = option
+                    }
+                    result += ' ' +  mapped + '="' + options[option] + '"'
+                } else if (option.startsWith("data-")) {
+                    result += ' ' +  option + '="' + options[option] + '"'
+                }
+            }
+            return result + " "
+        }
+
+        /** 
+            Get the next usable DOM ID for view controls
+         */
+        function get nextDomID(): String
+            "id_" + nextDomID++
+
+/* MOB Functionality moved to getAttributes
+        private function getOptions(field: String, options: Object): Object {
+            let record = view.currentRecord
+            if (record) {
+                if (record.id) {
+                    options.domid ||= field + '_' + record.id
+                }
+             */
+            }
+//  MOB - probably needs some kind of prefix
+            options.style ||= field
+            return options
+        }
+*/
+
+//  MOB -- what other should be aliased. Check Request and Control:  flash?
+        private function write(str: String): Void
+            request.write(str)
 	}
 }
 

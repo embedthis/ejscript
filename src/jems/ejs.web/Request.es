@@ -120,13 +120,13 @@ module ejs.web {
         enumerable var filename: Path
 
         /** 
-            Transient "flash" messages to pass to the next request. By convention, the following keys are used:
+            Notification "flash" messages to pass to the next request (only). By convention, the following keys are used:
             @option error    Negative errors (Warnings and errors)
             @option inform   Informational / postitive feedback (note)
             @option warn     Negative feedback (Warnings and errors)
             @option *        Other feedback (reminders, suggestions...)
         */
-        public var flashMessages: Object
+        public var flash: Object
 
         /** 
             Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
@@ -338,9 +338,10 @@ module ejs.web {
         /** 
             @duplicate Stream.close
             This closes the current request by finalizing all transmission data and sending a "close" event. It may 
-            not close the actually socket connection so that it can be reused for future requests.
-            It is normally not necessary to explicitly call close as the web framework will automatically close finalized
-            requests when all input data has been read.
+            not actually close the socket connection if the reuse limit has not been exceeded (see limits).
+            It is normally not necessary to explicitly call close a requeset as the web framework will automatically 
+            close finalized requests when all input data has fully been read. Calling close on an already closed
+            request is silently ignored.
          */
         native function close(): Void
 
@@ -383,7 +384,7 @@ module ejs.web {
             @param msg Message to store
          */
         function error(msg: String): Void
-            flash("error", msg)
+            notify("error", msg)
 
         /** 
             The request pathInfo file extension
@@ -407,36 +408,21 @@ module ejs.web {
             Save flash messages for the next request and delete old flash messages.
          */
         function finalizeFlash() {
-            if (flashMessages) {
+            if (flash) {
                 if (lastFlash) {
-                    for (item in flashMessages) {
+                    for (item in flash) {
                         for each (old in lastFlash) {
-                            if (hashcode(flashMessages[item]) == hashcode(old)) {
-                                delete flashMessages[item]
+                            if (hashcode(flash[item]) == hashcode(old)) {
+                                delete flash[item]
                             }
                         }
                     }
                 }
-                if (Object.getOwnPropertyCount(flashMessages) > 0) {
-                    session["__flash__"] = flashMessages
+                if (Object.getOwnPropertyCount(flash) > 0) {
+                    session["__flash__"] = flash
+// dump("@@@@@ FINALIZE FLASH", session["__flash__"])
                 }
             }
-        }
-
-        /** 
-            Set a transient flash notification message. Flash messages persist for only one request and are a convenient
-                way to pass state information or feedback messages to the next request. To use flash messages, 
-                setupFlash() and finalizeFlash() must be called before and after the request is processed. Web.process
-                will call setupFlash and finalizeFlash automatically.
-            @param key Flash message key
-            @param msg Message to store
-         */
-        function flash(key: String, msg: String): Void {
-            if (flashMessages == null) {
-                createSession()
-                flashMessages = {}
-            }
-            flashMessages[key] = msg
         }
 
         /** 
@@ -463,11 +449,12 @@ module ejs.web {
             @param msg Message to store
          */
         function inform(msg: String): Void
-            flash("inform", msg)
+            notify("inform", msg)
 
         /** 
-            Make a URI. The URI is created from the given location parameter. The location may contain partial or complete 
-            URI information. The missing parts are supplied using the current request URI and optional route tables. 
+            Make a URI. The URI is created from the given location parameter and the result is normalized. The location 
+            may contain partial or complete URI information. The missing parts are supplied using the current request URI 
+            and optional route tables. 
             @params location The location parameter can be a URI string or object hash of components. If the location is a
                string, it is may be an absolute or relative URI. If location is an absolute URI, it will be used unmodified.
                If location is a relative URI, is append to the current request URI. The location argument can also be
@@ -484,10 +471,33 @@ module ejs.web {
             @option controller String Controller name if using a Controller-based route
             @option action String Action name if using a Controller-based route
             @option other String Other route table tokens
-            @return A Uri object.
+            @return A normalized Uri object.
          */
-        function makeUri(location: Object, relative: Boolean = true): Uri
-            (route) ? route.makeUri(this, location, relative) : uri.resolve(location, relative)
+        function makeUri(location: Object, relative: Boolean = true): Uri {
+            let result 
+            if (route) {
+                result = route.makeUri(this, location, relative)
+            } else {
+                result = uri.resolve(location, relative).normalize
+            }
+            return result
+        }
+
+        /** 
+            Set a transient flash notification message. Flash messages persist for only one request and are a convenient
+                way to pass state information or feedback messages to the next request. To use flash messages, 
+                setupFlash() and finalizeFlash() must be called before and after the request is processed. Web.process
+                will call setupFlash and finalizeFlash automatically.
+            @param key Flash message key
+            @param msg Message to store
+         */
+        function notify(key: String, msg: String): Void {
+            if (!flash) {
+                createSession()
+                flash = {}
+            }
+            flash[key] = msg
+        }
 
         /** 
             @duplicate Stream.observe
@@ -535,7 +545,7 @@ module ejs.web {
          */
         function redirect(location: *, status: Number = Http.MovedTemporarily): Void {
             this.status = status
-            let target: Uri = makeUri(location).absolute(uri)
+            let target: Uri = makeUri(location, false)
             setHeader("Location", target)
             write("<!DOCTYPE html>\r\n" +
                    "<html><head><title>Redirect (" + status + ")</title></head>\r\n" +
@@ -660,17 +670,20 @@ module ejs.web {
             this.status = status
 
         /* 
-            Prepare the flash message area. This copies flash messages from the session state store into the flashMessages
-            store.
+            Prepare the flash message area. This copies flash messages from the session state store into the flash store.
          */
         function setupFlash() {
             if (sessionID) {
                 lastFlash = null
-                flashMessages = session["__flash__"]
-                if (flashMessages) {
+// print("@@@@@@@@@@@@@@ SESSION FLASH \"" + session["__flash__"] + "\"")
+                flash = session["__flash__"]
+                if (flash) {
                     session["__flash__"] = undefined
-                    lastFlash = flashMessages.clone()
+                    lastFlash = flash.clone()
+                } else {
+                    flash = null
                 }
+// print("TYPE " + typeOf(flash))
             }
         }
 
@@ -724,13 +737,26 @@ module ejs.web {
             @param msg Message to store
          */
         function warn(msg: String): Void
-            flash("warn", msg)
+            notify("warn", msg)
 
         /** 
             Write data to the client. This will buffer the written data until either flush() or finalize() is called. 
             @duplicate Stream.write
          */
         native function write(...data): Number
+
+        /** 
+            Write a block of data to the client. This will buffer the written data which will be flushed when either 
+            close(), flush() or finalize() is called or the underlying pipeline is full. 
+            @param buffer Destination byte array for read data.
+            @param offset Offset in the byte array from which to write. If the offset is -1, then data is
+                written from the buffer read $position which is then updated. 
+            @param count Read up to this number of bytes. If -1, write all available data in the buffer. 
+            @returns a count of the bytes actually written. Returns null on eof.
+            @event writable Issued when the connection can absorb more data.
+         */
+        # FUTURE
+        native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
         /** 
             Write an error message back to the user and finalize the request.  The output is Html escaped for security.
@@ -747,13 +773,15 @@ module ejs.web {
                 text = "<pre>" + escapeHtml(msg) + "</pre>\r\n" +
                     '<p>To prevent errors being displayed in the "browser, ' + 
                     'set <b>log.showClient</b> to false in the ejsrc file.</p>\r\n'
+                try {
+                    setHeader("Content-Type", "text/html")
+                    write(errorBody(title, text))
+                } catch {}
             }
-            try {
-                setHeader("Content-Type", "text/html")
-                write(errorBody(title, text))
-            } catch {}
             finalize()
-            log.debug(4, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
+            //  MOB -- what level should this be?
+            //  Can't be zero else it comes out in utest
+            log.debug(1, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 
         /** 

@@ -523,9 +523,9 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
         oldUri = uri;
         uri = httpJoinUri(result, oldUri, 1, &other);
-        mprFree(other);
+        mprFree(oldUri);
         if (!ejsIsUri(ejs, arg)) {
-            mprFree(oldUri);
+            mprFree(other);
         }
     }
     result->uri = uri;

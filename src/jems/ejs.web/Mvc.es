@@ -30,7 +30,7 @@ module ejs.web {
                 app: "",
                 //  MOB - should be moved to files
                 appmod: "App.mod",
-                views: {
+                view: {
                     connectors: { },
                     formats: { },
                 },

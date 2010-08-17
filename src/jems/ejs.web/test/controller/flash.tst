@@ -10,21 +10,21 @@ public class TestController extends Controller {
     use namespace action
 
     action function first() {
-        error("one", 1)
-        flash("two", 2)
-        inform("three", 3)
-        warn("four", 4)
+        notify("general", "zero")
+        error(1)
+        inform(2)
+        warn(3)
         finalize()
     }
     action function second() {
-        assert(request.flashMessages["one"] == 1)
-        assert(request.flashMessages["two"] == 2)
-        assert(request.flashMessages["three"] == 3)
-        assert(request.flashMessages["four"] == 4)
+        assert(request.flash["general"] == "zero")
+        assert(request.flash["error"] == 1)
+        assert(request.flash["inform"] == 2)
+        assert(request.flash["warn"] == 3)
         finalize()
     }
     action function third() {
-        assert(Object.getOwnPropertyCount(request.flashMessages) == 0)
+        assert(Object.getOwnPropertyCount(request.flash) == 0)
         finalize()
     }
 } 

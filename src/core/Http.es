@@ -218,7 +218,8 @@ module ejs {
             @duplicate Stream.close 
             This closes any open network connection and resets the http object to be ready for another connection. 
             Connections should be explicitly closed rather than relying on the garbage collector to dispose of the 
-            Http object and automatically close the connection.
+            Http object and automatically close the connection. If you have more requests that can be issued on 
+            the same network connection, use reset() rather than close to prepare for a new request on the same connection.
          */
         native function close(): Void 
 
@@ -531,7 +532,7 @@ FUTURE & KEEP
         native function removeObserver(name, observer: Function): Void
 
         /**
-            Reset the Http object to prepare for a new request
+            Reset the Http object to prepare for a new request. This will not close the connection.
          */
         native function reset(): Void
 

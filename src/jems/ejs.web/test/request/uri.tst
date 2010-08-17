@@ -6,8 +6,7 @@ require ejs.web
 r = new Request("/dir/list.ejs#ref?a=b")
 
 assert(r.makeUri("c.html") == "/dir/c.html")
-assert(r.makeUri("../c.html") == "/dir/../c.html")
-assert(r.makeUri("../c.html").normalize == "/c.html")
+assert(r.makeUri("../c.html") == "/c.html")
 assert(r.makeUri("/c.html") == "/c.html")
 
 assert(r.makeUri({

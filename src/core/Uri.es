@@ -4,7 +4,6 @@
  */
 
 module ejs {
-
     /**
         Uri class to manage Uris
         @stability evolving

@@ -69,7 +69,8 @@ module ejs.web {
   { name: "index",   builder: MvcBuilder, method: "GET",    match: "/:controller",          params: { action: "index" } },
         ]
 
-        # Config.Legacy
+        //  MOB - remove
+        # Config.Legacy || 1
         public static var LegacyRoutes = [
   { name: "es",      builder: ScriptBuilder,                match: /^\/web\/.*\.es$/   },
   { name: "ejs",     builder: TemplateBuilder,              match: /^\/web\/.*\.ejs$/,      module: "ejs.template"  },
@@ -454,7 +455,7 @@ module ejs.web {
             if (urimaker) {
                 return urimaker(request, location, relative)
             }
-            let where = request.uri.resolve(location, relative)
+            let where = request.uri.resolve(location, relative).normalize
 
             //  MOB -- really don't want this in the query. Should be done via post or URI path: /id/
             if (where.id != undefined) {
@@ -469,19 +470,20 @@ module ejs.web {
              */
             let uri = Uri(where)
             if (Object.getOwnPropertyCount(location) > 0 && !location.path) {
-                let routeName = where.route || "default"
+                let routeName = location.route || "default"
                 let route = this
                 if (routeName != this.name) {
-                    route = routeLookup[routeName]
+                    route = router.routeLookup[routeName]
                     if (!route) {
                         throw new ReferenceError("makeUri: Unknown route \"" + routeName + "\"")
                     }
                 }
                 for each (token in route.tokens) {
-                    if (!where[token]) {
+                    let value = location[token] || request.params[token]
+                    if (!value) {
                         throw new ArgError("Missing URI token \"" + token + "\"")
                     }
-                    uri = uri.join(where[token])
+                    uri = uri.join(value)
                 }
             }
             return uri

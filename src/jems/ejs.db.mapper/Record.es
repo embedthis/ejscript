@@ -812,7 +812,7 @@ module ejs.db.mapper {
         static function remove(...ids): Void {
             for each (let key: Object in ids) {
                 let cmd: String = "DELETE FROM " + _tableName + " WHERE " + _keyName + " = " + key + ";"
-                db.query(cmd, "remove", _trace)
+                getDb().query(cmd, "remove", _trace)
             }
         }
 
@@ -953,7 +953,7 @@ module ejs.db.mapper {
          */
         static function sql(cmd: String, count: Number? = null): Array {
             cmd = "SELECT " + cmd + ";"
-            return db.query(cmd, "select", _trace)
+            return getDb().query(cmd, "select", _trace)
         }
 
         /**

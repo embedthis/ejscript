@@ -10,7 +10,6 @@ assert(v)
 assert(v.config == null)
 assert(v.controller == null)
 assert(v.currentRecord == null)
-assert(v.log == null)
 assert(v.request == null)
 
 //  Now with a request
@@ -22,5 +21,4 @@ assert(v)
 assert(v.config == r.config)
 assert(v.controller == null)
 assert(v.currentRecord == null)
-assert(v.log == r.log)
 assert(v.request == r)

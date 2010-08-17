@@ -34,7 +34,7 @@ module ejs.web {
             if (key == "name") {
                 cookies[name] = cookie = {}
             }
-            cookie[key] = parts[1]
+            cookies[key] = parts[1]
         }
         return cookies
     }

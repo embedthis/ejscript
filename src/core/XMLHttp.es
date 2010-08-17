@@ -11,7 +11,7 @@ module ejs {
         This code is prototype and is not yet supported
         @spec ejs
         @hide
-        @stability prototype
+        @stability evolving
      */
     class XMLHttp {
 

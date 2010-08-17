@@ -2629,7 +2629,8 @@ static void genObjectLiteral(EcCompiler *cp, EcNode *np)
     int         next, argc;
 
     if (np->objectLiteral.isArray) {
-        return genArrayLiteral(cp, np);
+        genArrayLiteral(cp, np);
+        return;
     }
     ENTER(cp);
     /*
@@ -2780,7 +2781,7 @@ static void genReturn(EcCompiler *cp, EcNode *np)
             ecEncodeOpcode(cp, EJS_OP_RETURN_VALUE);
             popStack(cp, 1);
 
-        } else if (np->ret.blockLess) {
+        } else if (np->ret.blockless) {
             /*
                 The return was inserted by the parser. So we must still process the statement
              */

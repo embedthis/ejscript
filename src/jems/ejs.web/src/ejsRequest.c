@@ -887,6 +887,7 @@ static EjsObj *req_finalize(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     if (req->conn) {
         httpFinalize(req->conn);
     }
+    req->responded = 1;
     return 0;
 }
 
@@ -1050,8 +1051,8 @@ static EjsObj *req_sendFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     httpSetSendConnector(req->conn, path->path);
 
     packet = httpCreateDataPacket(conn->writeq, 0);
-    packet->entityLength = info.size;
-    trans->length = trans->entityLength = info.size;
+    packet->entityLength = (int) info.size;
+    trans->length = trans->entityLength = (int) info.size;
     httpPutForService(conn->writeq, packet, 0);
     httpFinalize(req->conn);
     return ejs->trueValue;

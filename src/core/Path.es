@@ -32,7 +32,7 @@ module ejs {
         corresponding file or directory for the Path  may or may not exist. Once created, Paths are immutable and their
         path value cannot be changed.
         @spec ejs
-        @stability prototype
+        @stability evolving
      */
     final class Path {
 

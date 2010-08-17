@@ -83,7 +83,6 @@ class EjsMvc {
                     rest: "html",
                 },
                 formats: {
-                    currency: "$%10f",
                     Date: "%a %e %b %H:%M",
                 },
             },
@@ -490,7 +489,9 @@ print(e)
             trace("[PARSE]", file)
         }
         let parser: TemplateParser = new TemplateParser
-        results = parser.buildView(controllerPrefix + viewName, file.readString(), { layout: layoutPage })
+        // results = parser.buildView(controllerPrefix + viewName, file.readString(), { layout: layoutPage })
+        // results = parser.build(file.readString(), { layout: layoutPage })
+        results = Loader.wrap(parser.build(file.readString(), { layout: layoutPage }))
         let intermediate: Path = dirs.cache.join(md5(file)).joinExt(ext.es)
         let out = intermediate.replaceExt(ext.mod)
         try {
@@ -1459,6 +1460,7 @@ class Templates {
         enable: true,
         location: "stdout",
         level: 1,
+        showClient: false,
     },
 
     mvc: {

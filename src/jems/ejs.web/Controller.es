@@ -103,7 +103,7 @@ UNUSED - MOB -- better to set in Request
             the Controller.create factory method.
             @param req Web request object
          */
-        function Controller(req: Request) {
+        function Controller(req: Request = null) {
             /*  _initRequest may be set by create() to allow subclasses to omit constructors */
             controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
             request = req || _initRequest
@@ -125,7 +125,7 @@ UNUSED - MOB -- better to set in Request
             @option only Only run the checker for this action name
             @option except Run the checker for all actions except this name
          */
-        function afterChecker(fn, options: Object = null): Void {
+        function checkAfter(fn, options: Object = null): Void {
             _afterCheckers ||= []
             _afterCheckers.append([fn, options])
         }
@@ -173,7 +173,7 @@ UNUSED - MOB -- better to set in Request
             @option only Only run the checker for this action name
             @option except Run the checker for all actions except this name
          */
-        function beforeChecker(fn, options: Object = null): Void {
+        function checkBefore(fn, options: Object = null): Void {
             _beforeCheckers ||= []
             _beforeCheckers.append([fn, options])
         }
@@ -187,8 +187,8 @@ UNUSED - MOB -- better to set in Request
         /** 
             @duplicate Request.flash
          */
-        function flash(key: String, msg: String): Void
-            request.flash(key, msg)
+        function get flash(): Object
+            request.flash
 
         /** 
             @duplicate Request.header
@@ -216,6 +216,12 @@ UNUSED - MOB -- better to set in Request
         }
 
         /** 
+            @duplicate Request.notify
+         */
+        function notify(key: String, msg: String): Void
+            request.notify(key, msg)
+
+        /** 
             @duplicate Request.observe
          */
         function observe(name, observer: Function): Void
@@ -237,10 +243,10 @@ UNUSED - MOB -- better to set in Request
         function redirect(where: Object, status: Number = Http.MovedTemporarily): Void
             request.redirect(where, status)
 
-        /** 
+//  MOB -- remove UNUSED
+        /*
             Redirect the client to the given action
             @param action Controller action name to which to redirect the client.
-         */
         function redirectAction(action: String): Void {
             if (request.route) {
                 redirect({action: action})
@@ -248,6 +254,7 @@ UNUSED - MOB -- better to set in Request
                 redirect(request.uri.dirname.join(action))
             }
         }
+         */
 
         /** 
             Render the raw data back to the client. 
@@ -315,6 +322,20 @@ UNUSED - MOB -- better to set in Request
         }
 
         /** 
+            Render a view template from a string literal.
+            This call writes the result of running the view template file back to the client.
+            @param page String literal containing the view template to render and write to the client.
+            @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
+         */
+        function writeTemplateLiteral(page: String, layouts: Path = null): Void {
+            log.debug(4, "writeTemplateLiteral")
+            request.filename = null
+            layouts ||= config.directories.layouts
+            let app = TemplateBuilder(request, { layouts: layouts, literal: page } )
+            Web.process(app, request, false)
+        }
+
+        /** 
             Remove all defined checkers on the Controller.
          */
         function removeCheckers(): Void {
@@ -325,6 +346,10 @@ UNUSED - MOB -- better to set in Request
         /** @duplicate Request.setHeader */
         function setHeader(key: String, value: String, overwrite: Boolean = true): Void
             request.setHeader(key, value, overwrite)
+
+        /** @duplicate Request.setHeaders */
+        function setHeaders(headers: Object, overwrite: Boolean = true): Void
+            request.setHeaders(headers, overwrite)
 
         /** @duplicate Request.setStatus */
         function setStatus(status: Number): Void
@@ -392,6 +417,8 @@ UNUSED - MOB -- better to set in Request
                 if (dbconfig.module && !global[dbclass]) {
                     global.load(dbconfig.module + ".mod")
                 }
+                // namespace db = dbconfig.module
+                // use namespace db
                 new global[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
             }
         }
@@ -446,7 +473,7 @@ UNUSED - MOB -- better to set in Request
          */
         # Config.Legacy
         function afterFilter(fn, options: Object = null): Void
-            afterCheck(fn, options)
+            checkAfter(fn, options)
 
         /** 
             @hide
@@ -462,7 +489,7 @@ UNUSED - MOB -- better to set in Request
          */
         # Config.Legacy
         function beforeFilter(fn, options: Object = null): Void
-            beforeCheck(fn, options)
+            checkBefore(fn, options)
 
         /**
             @hide

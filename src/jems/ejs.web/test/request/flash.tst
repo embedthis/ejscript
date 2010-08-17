@@ -1,5 +1,5 @@
 /*
-    Test flash() 
+    Test flash messages and Request.notify()  
  */
 require ejs.web
 
@@ -13,16 +13,16 @@ server.observe("readable", function (event, request: Request) {
     request.setupFlash()
     switch (pathInfo) {
     case "/first":
-        flash("forecast", "rain")
-        assert(flashMessages["forecast"] == "rain")
+        notify("forecast", "rain")
+        assert(flash["forecast"] == "rain")
         break
 
     case "/second":
-        assert(flashMessages["forecast"] == "rain")
+        assert(flash["forecast"] == "rain")
         break
 
     case "/third":
-        assert(flashMessages["forecast"] == undefined)
+        assert(flash["forecast"] == undefined)
         break
 
     default:

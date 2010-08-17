@@ -439,7 +439,7 @@ typedef struct EcNode {
 
         #define N_RETURN 27
         struct {
-            int                 blockLess;  /* Block-less function expression */
+            int                 blockless;  /* Function expression */
         } ret;
 
         #define N_EXPRESSIONS 22

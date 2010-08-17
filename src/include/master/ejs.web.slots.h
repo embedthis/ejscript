@@ -65,10 +65,9 @@
 /*
     Class property slots for the "Controller" type 
  */
-#define ES_ejs_web_Controller__initializer___Controller_               0
-#define ES_ejs_web_Controller__initRequest                             1
-#define ES_ejs_web_Controller_ejs_web_create                           2
-#define ES_ejs_web_Controller_NUM_CLASS_PROP                           3
+#define ES_ejs_web_Controller__initRequest                             0
+#define ES_ejs_web_Controller_ejs_web_create                           1
+#define ES_ejs_web_Controller_NUM_CLASS_PROP                           2
 
 /*
    Prototype (instance) slots for "Controller" type 
@@ -503,6 +502,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   655375
+#define _ES_CHECKSUM_ejs_web   649770
 
 #endif

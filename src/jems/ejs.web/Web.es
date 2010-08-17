@@ -51,16 +51,15 @@ module ejs.web {
                         "":     86400,
                      */
                 },
-                endpoint: "127.0.0.1:4000",
-                views: {
+                // endpoint: "127.0.0.1:4000",
+                view: {
                     connectors: {
                         table: "html",
                         chart: "google",
                         rest: "html",
                     },
                     formats: {
-                        currency:   "$%10f",
-                        Date:       "%a %e %b %H:%M",
+                        Date: "%a %e %b %H:%M",
                     },
                 },
             },
