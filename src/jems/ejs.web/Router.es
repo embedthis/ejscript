@@ -177,7 +177,8 @@ module ejs.web {
                 if (request.method == "POST") {
                     let method = request.params["__method__"] || request.header("X-HTTP-METHOD-OVERRIDE")
                     if (method) {
-                        request.originalMethod ||= request.method
+                        // MOB automatically done request.originalMethod ||= request.method
+                        log.debug(3, "Change method from " + request.method + " TO " + method)
                         request.method = method
                     }
                 }
@@ -438,8 +439,7 @@ module ejs.web {
             URI information. The missing parts are supplied using the current request URI and the current route.
             @param request Request object
             @param location Object hash of URI component properties.
-            @param If true, return a relative URI by disregarding the scheme, host and port portions of "this" URI. 
-                Defaults to true.
+            @param relative If true, return a URI relative to Request.home.
             @option scheme String URI protocol scheme (http or https)
             @option host String URI host name or IP address.
             @option port Number TCP/IP port number for communications
@@ -456,15 +456,6 @@ module ejs.web {
                 return urimaker(request, location, relative)
             }
             let where = request.uri.resolve(location, relative).normalize
-
-            //  MOB -- really don't want this in the query. Should be done via post or URI path: /id/
-            if (where.id != undefined) {
-                if (where.query) {
-                    where.query += "&" + "id=" + where.id
-                } else {
-                    where.query = "id=" + where.id
-                }
-            }
             /*
                 If a path not supplied, build up the path via route tokens
              */
@@ -478,13 +469,27 @@ module ejs.web {
                         throw new ReferenceError("makeUri: Unknown route \"" + routeName + "\"")
                     }
                 }
-                for each (token in route.tokens) {
-                    let value = location[token] || request.params[token]
-                    if (!value) {
-                        throw new ArgError("Missing URI token \"" + token + "\"")
+                if (route.tokens) {
+                    if (uri.path == "/") {
+                        for each (let token in route.tokens) {
+                            let value = location[token]
+                            if (value == undefined) {
+                                if (token == "action") {
+                                    continue
+                                }
+                                value = request.params[token]
+                                if (value == undefined) {
+                                    throw new ArgError("Missing URI token \"" + token + "\"")
+                                }
+                            }
+                            uri = uri.join(value)
+                        }
                     }
-                    uri = uri.join(value)
+                } else if (location.action) {
+                    uri = uri.join(location.action)
                 }
+                //  OPT - done again in Request.makeUri
+                uri = uri.relative(request.uri.path)
             }
             return uri
         }

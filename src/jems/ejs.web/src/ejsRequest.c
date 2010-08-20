@@ -1123,18 +1123,19 @@ static EjsObj *req_trace(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
+    EjsArray        *args;
     EjsString       *s;
     EjsObj          *data;
     EjsByteArray    *ba;
     HttpQueue       *q;
     HttpConn        *conn;
-    int             err, len, written;
+    int             err, len, written, i;
 
     if (!connOk(ejs, req, 1)) return 0;
 
     err = 0;
     written = 0;
-    data = argv[0];
+    args = (EjsArray*) argv[0];
     conn = req->conn;
     q = conn->writeq;
 
@@ -1142,38 +1143,41 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Response already finalized");
         return 0;
     }
-    switch (data->type->id) {
-    case ES_String:
-        s = (EjsString*) data;
-        if ((written = httpWriteBlock(q, s->value, s->length)) != s->length) {
-            err++;
-        }
-        break;
+    for (i = 0; i < args->length; i++) {
+        data = args->data[i];
+        switch (data->type->id) {
+        case ES_String:
+            s = (EjsString*) data;
+            if ((written = httpWriteBlock(q, s->value, s->length)) != s->length) {
+                err++;
+            }
+            break;
 
-    case ES_ByteArray:
-        ba = (EjsByteArray*) data;
-        //  MOB -- not updating the read position
-        //  MOB ba->readPosition += len;
-        //  MOB -- should reset ptrs also
-        len = ba->writePosition - ba->readPosition;
-        if ((written = httpWriteBlock(q, (char*) &ba->value[ba->readPosition], len)) != len) {
-            err++;
-        }
-        break;
+        case ES_ByteArray:
+            ba = (EjsByteArray*) data;
+            //  MOB -- not updating the read position
+            //  MOB ba->readPosition += len;
+            //  MOB -- should reset ptrs also
+            len = ba->writePosition - ba->readPosition;
+            if ((written = httpWriteBlock(q, (char*) &ba->value[ba->readPosition], len)) != len) {
+                err++;
+            }
+            break;
 
-    default:
-        s = (EjsString*) ejsToString(ejs, data);
-        if (s == NULL || (written = httpWriteBlock(q, s->value, s->length)) != s->length) {
-            err++;
+        default:
+            s = (EjsString*) ejsToString(ejs, data);
+            if (s == NULL || (written = httpWriteBlock(q, s->value, s->length)) != s->length) {
+                err++;
+            }
         }
+        if (err) {
+            ejsThrowIOError(ejs, "%s", conn->errorMsg);
+        }
+        if (ejs->exception) {
+            return 0;
+        }
+        req->written += written;
     }
-    if (err) {
-        ejsThrowIOError(ejs, "%s", conn->errorMsg);
-    }
-    if (ejs->exception) {
-        return 0;
-    }
-    req->written += written;
     req->responded = 1;
 
     //  MOB - now

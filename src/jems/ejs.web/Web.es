@@ -119,6 +119,7 @@ module ejs.web {
                 if (request.isSecure) {
                     body = File(body, "r")
                 } else {
+print("@@@ SEND FILE")
                     request.sendFile(body)
                     return
                 }
@@ -151,6 +152,7 @@ module ejs.web {
                 } else {
                     ba = new ByteArray
                     while (body.read(ba)) {
+//  MOB -- exceptions on all these writes should be caught --- normal situation for client to disappear
                         request.write(ba)
                     }
                     request.autoFinalize()
@@ -220,6 +222,7 @@ module ejs.web {
                     //  if (request.finalized) request.close()
                 }
             } catch (e) {
+print("@@@@@@@@@@@@@@@ " + request.uri + " CATCH " + e)
                 App.log.debug(3, e)
                 request.writeError(Http.ServerError, e)
             }

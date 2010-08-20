@@ -17,4 +17,11 @@ assert(Uri("../..").relative(base) == "../..")
 
 base = Uri("http://localhost/a/b/c?x=y")
 assert(Uri("/a/b/c/d/e/f").relative(base) == "d/e/f")
-assert(Uri("/a").relative(base) == "..")
+assert(Uri("/a").relative(base) == "../..")
+
+//  Test trailing slashes
+assert(Uri("/abc").relative("/abc/xyz") == "..")
+assert(Uri("/abc/").relative("/abc/xyz") == ".")
+assert(Uri("/abc").relative("/abc/xyz/") == "../..")
+
+assert(Uri("/abc/def").relative("/xyz") == "abc/def")

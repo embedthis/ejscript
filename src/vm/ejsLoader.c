@@ -436,8 +436,8 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     }
     if ((module = ejsLookupModule(ejs, name, minVersion, maxVersion)) != 0) {
         if (checksum != module->checksum) {
-            ejsThrowIOError(ejs, "Can't load module %s due to checksum mismatch.\n"
-                            "The program was compiled expecting a different version of module %s.", mp->name, name);
+            ejsThrowIOError(ejs, "Can't load module \"%s\" due to checksum mismatch.\n"
+                "The program was compiled depending on a different version of module \"%s\".", mp->name, name);
             return MPR_ERR_BAD_STATE;
         }
     }

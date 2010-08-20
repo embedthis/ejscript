@@ -85,6 +85,7 @@ class EjsMvc {
                 formats: {
                     Date: "%a %e %b %H:%M",
                 },
+                // helpers: []
             },
         },
         session: {
@@ -1435,8 +1436,8 @@ class Templates {
     },
 
     database: {
+        module: "ejs.db",
         class: "Database",
-        module: "",
         adapter: "sqlite3",
         timeout: 5000,
         debug: {
@@ -1464,7 +1465,6 @@ class Templates {
     },
 
     mvc: {
-        compiler: "ejsc --debug --web",
         start: "start.es",
     },
 
@@ -1491,6 +1491,7 @@ class Templates {
                 currency:   "$%10f",
                 Date:       "%a %e %b %H:%M",
             },
+            helpers: [],
         },
     },
 
@@ -1822,7 +1823,7 @@ module App {
      ***************************  Default Layout templates ******************
      */
     public static const DefaultLayout = 
-'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+'<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
@@ -1830,6 +1831,7 @@ module App {
     <link href="web/images/favicon.ico" rel="shortcut icon" />
     <% stylesheet(["web/layout.css", "web/themes/default.css" ]); %>
     <% script(["web/js/jquery.js", "web/js/jquery.tablesorter.js", "web/js/jquery.ejs.js"]) %>
+    <% securityToken() %>
 </head>
 
 <body>

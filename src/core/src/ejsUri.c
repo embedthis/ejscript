@@ -960,10 +960,18 @@ static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact)
 
 static HttpUri *createHttpUriFromHash(Ejs *ejs, MprCtx ctx, EjsObj *arg, int complete)
 {
-    EjsObj      *schemeObj, *hostObj, *portObj, *pathObj, *referenceObj, *queryObj;
+    EjsObj      *schemeObj, *hostObj, *portObj, *pathObj, *referenceObj, *queryObj, *uriObj;
     EjsName     qname;
     cchar       *scheme, *host, *path, *reference, *query;
     int         port;
+
+    /*
+        This permits a uri property override. Used in ejs.web::View
+     */
+    uriObj = ejsGetPropertyByName(ejs, arg, EN(&qname, "uri"));
+    if (uriObj) {
+        return toHttpUri(ejs, ctx, uriObj, 1);
+    }
 
     schemeObj = ejsGetPropertyByName(ejs, arg, EN(&qname, "scheme"));
     scheme = (schemeObj && ejsIsString(schemeObj)) ? ejsGetString(ejs, schemeObj) : 0;

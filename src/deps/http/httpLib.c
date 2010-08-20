@@ -3622,10 +3622,8 @@ static int httpTimer(Http *http, MprEvent *event)
             diff = (conn->lastActivity + requestTimeout) - http->now;
             inactivity = 0;
         }
+
         if (diff < 0 && !conn->complete) {
-#if UNUSED
-            httpRemoveConn(http, conn);
-#endif
             if (conn->rx) {
                 if (inactivity) {
                     httpConnError(conn, HTTP_CODE_REQUEST_TIMEOUT,
@@ -7384,7 +7382,6 @@ void httpCloseRx(HttpConn *conn)
         conn->connError = 1;
     }
     httpFinalize(conn);
-    conn->abortPipeline = 1;
     if (conn->state < HTTP_STATE_COMPLETE && !conn->advancing) {
         httpProcess(conn, NULL);
     }
@@ -7685,7 +7682,7 @@ void httpWriteBlocked(HttpConn *conn)
 {
     mprLog(conn, 7, "Write Blocked");
     conn->canProceed = 0;
-    conn->writeBlocked = 0;
+    conn->writeBlocked = 1;
 }
 
 
@@ -8894,7 +8891,7 @@ void httpInitTrace(HttpTrace *trace)
     mprAssert(trace);
 
     for (dir = 0; dir < HTTP_TRACE_MAX_DIR; dir++) {
-        trace[dir].levels[HTTP_TRACE_CONN] = 2;
+        trace[dir].levels[HTTP_TRACE_CONN] = 3;
         trace[dir].levels[HTTP_TRACE_FIRST] = 2;
         trace[dir].levels[HTTP_TRACE_HEADER] = 3;
         trace[dir].levels[HTTP_TRACE_BODY] = 4;
@@ -10550,8 +10547,9 @@ HttpUri *httpCreateUriFromParts(MprCtx ctx, cchar *scheme, cchar *host, int port
         up->port = port;
     }
     if (path) {
-        while (path[0] == '/' && path[1] == '/')
+        while (path[0] == '/' && path[1] == '/') {
             path++;
+        }
         up->path = mprStrdup(up, path);
     }
     if (up->path == 0) {
@@ -10751,7 +10749,7 @@ char *httpFormatUri(MprCtx ctx, cchar *scheme, cchar *host, int port, cchar *pat
 HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup)
 {
     HttpUri     *uri;
-    char        *targetPath, *basePath, *bp, *cp, *tp;
+    char        *targetPath, *basePath, *bp, *cp, *tp, *startDiff;
     int         i, baseSegments, commonSegments;
 
     if (target == 0) {
@@ -10779,20 +10777,22 @@ HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup)
     targetPath = httpNormalizeUriPath(ctx, target->path);
     basePath = httpNormalizeUriPath(ctx, base->path);
 
+    /* Count trailing "/" */
     for (baseSegments = 0, bp = basePath; *bp; bp++) {
-        if (*bp == '/' && bp[1]) {
+        if (*bp == '/') {
             baseSegments++;
         }
     }
 
     /*
-        Find portion of path that matches the home directory, if any.
+        Find portion of path that matches the base, if any.
      */
     commonSegments = 0;
-    for (bp = base->path, tp = target->path; *bp && *tp; bp++, tp++) {
+    for (bp = base->path, tp = startDiff = target->path; *bp && *tp; bp++, tp++) {
         if (*bp == '/') {
             if (*tp == '/') {
                 commonSegments++;
+                startDiff = tp;
             }
         } else {
             if (*bp != *tp) {
@@ -10802,13 +10802,15 @@ HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup)
     }
 
     /*
-        Add one more segment if the last segment matches. Handle trailing separators
+        Add one more segment if the last segment matches. Handle trailing separators.
      */
+#if OLD
     if ((*bp == '/' || *bp == '\0') && (*tp == '/' || *tp == '\0')) {
         commonSegments++;
     }
-    if (*tp == '/') {
-        tp++;
+#endif
+    if (*startDiff == '/') {
+        startDiff++;
     }
     
     //  MOB -- should this remove scheme, host, port to be truly relative
@@ -10819,8 +10821,8 @@ HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup)
         *cp++ = '.';
         *cp++ = '/';
     }
-    if (*tp) {
-        strcpy(cp, tp);
+    if (*startDiff) {
+        strcpy(cp, startDiff);
     } else if (cp > uri->path) {
         /*
             Cleanup trailing separators ("../" is the end of the new path)

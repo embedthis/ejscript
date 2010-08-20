@@ -20,6 +20,9 @@ module ejs.web {
     dynamic class Request implements Stream {
         use default namespace public
 
+        /** Security Token for use to help mitigate CSRF security threats */
+        static const SecurityTokenName = "__ejs_security_token__"
+
         private var lastFlash: Object
 
         /** 
@@ -341,9 +344,15 @@ module ejs.web {
             not actually close the socket connection if the reuse limit has not been exceeded (see limits).
             It is normally not necessary to explicitly call close a requeset as the web framework will automatically 
             close finalized requests when all input data has fully been read. Calling close on an already closed
-            request is silently ignored.
+            request is silently ignored. 
          */
         native function close(): Void
+
+        function checkSecurityToken() {
+            if (session[SecurityTokenName] && session[SecurityTokenName] != params[SecurityTokenName]) {
+                throw "Security token does not match. Potential CSRF attack. Denying request"
+            }
+        }
 
         /**
             Create a session state object. The session state object can be used to share state between requests.
@@ -420,7 +429,6 @@ module ejs.web {
                 }
                 if (Object.getOwnPropertyCount(flash) > 0) {
                     session["__flash__"] = flash
-// dump("@@@@@ FINALIZE FLASH", session["__flash__"])
                 }
             }
         }
@@ -476,9 +484,14 @@ module ejs.web {
         function makeUri(location: Object, relative: Boolean = true): Uri {
             let result 
             if (route) {
-                result = route.makeUri(this, location, relative)
+                return route.makeUri(this, location, relative)
+            } else if (location.action) {
+                result = uri.resolve(location, relative).normalize.join(location.action)
             } else {
                 result = uri.resolve(location, relative).normalize
+            }
+            if (relative) {
+                result = result.relative(request.uri.path)
             }
             return result
         }
@@ -560,6 +573,15 @@ module ejs.web {
             @duplicate Stream.removeObserver 
          */
         native function removeObserver(name, observer: Function): Void
+
+        /**
+            Get a security token to help mitigate CSRF threats. The security token is submitted by forms and requests and
+            can be validated by controllers. The token is stored in session["__ejs-security-token__"]. 
+         */
+        function get securityToken(): Object {
+            session[SecurityTokenName] ||= md5(Math.random()) 
+            return session[SecurityTokenName]
+        }
 
         /**
             Send a static file back to the client. This is a high performance way to send static content to the client.
@@ -785,10 +807,10 @@ module ejs.web {
         }
 
         /** 
-            Send HTML escaped data back to the client.
-            @param args Objects to encode and write back to the client.
+            Write safely. Write HTML escaped data back to the client.
+            @param args Objects to HTML encode and write back to the client.
          */
-        function writeHtml(...args): Void
+        function writeSafe(...args): Void
             write(html(...args))
 
         /**
@@ -952,6 +974,14 @@ module ejs.web {
         # Config.Legacy
         function get userAgent(): String
             header("user-agent")
+
+        /** 
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function writeHtml(...args): Void
+            writeSafe(...args)
     }
 }
 

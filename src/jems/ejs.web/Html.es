@@ -1,365 +1,379 @@
 /**
-   Html.es -- MVC HTML view support
+   Html.es -- HtmlViewConnector. This provides HTML view support.
  */
 
 module ejs.web {
 
-//  MOB -- should not be public
 	/**
-	    The Html Connector provides bare HTML encoding of Ejscript controls
+	    The Html Connector provides bare HTML encoding of View controls.
+
+        MOB Style conventions???
+            -ejs- prefixes all internal styles
+            -ejs-alert
+            -ejs-flash
+            -ejs-flash-inform
+            -ejs-flash-warn
+            -ejs-flash-error
+            -ejs-hidden
+            -ejs-tabs
+            -ejs-fieldError     MOB -- should this be field-error
+            -ejs-progress
+            -ejs-progress-inner
+            -ejs-table
+            -ejs-table-download
+            -ejs-even-row
+            -ejs-click
+            -ejs-field-error
+            -ejs-form-error
         @stability prototype
         @spec ejs
         @hide
 	 */
-	public class HtmlConnector {
+	public class HtmlViewConnector {
 
         use default namespace module
 
         private var request: Request
         private var view: View
 
-//  MOB -- all elements must have a DOM-ID
         /* Sequential DOM ID generator */
-        private var nextDomID: Number = 0
+        private var lastDomID: Number = 0
 
         /*
-            Mapping of helper options to HTML attributes ("" value means don't map the name)
+            Mapping of helper options to HTML attributes.
+            NOTE: data-*, click and remote are handled specially in getAttributes.
          */
-        private const htmlOptions: Object = { 
-            background: "",
-            color: "",
-            domid: "id",
-            height: "",
-            method: "",
-            size: "",
-            style: "class",
-            visible: "",
-            width: "",
+        private static const htmlOptions: Object = { 
+            "apply":                "data-apply",
+            "background":           "background",
+            "class":                "class",
+            "color":                "color",
+            "colour":               "color",
+            "domid":                "id",
+            "height":               "height",
+            "key":                  "data-key",
+            "method":               "data-method",
+            "modal":                "data-modal",
+            "period":               "data-refresh-period",
+            "pivot":                "data-pivot",
+            "refresh":              "data-refresh",
+            "rel":                  "rel",
+            "size":                 "size",
+            "sort":                 "data-sort",
+            "sortOrder":            "data-sort-order",
+            "style":                "class",
+            "visible":              "visible",
+            "width":                "width",
         }
-        function HtmlConnector(view) {
+
+        private static const defaultScripts = [
+            "web/layout.css", 
+            "web/themes/default.css", 
+            "web/js/tv/jquery.treeview.css",
+        ]
+
+        //  MOB -- what about minified?
+
+        private static const defaultStylesheets = [
+            "web/js/jquery.js", 
+            "web/js/jquery.tablesorter.js",
+            "web/js/tv/jquery.treeview.js",
+            "web/js/tv/lib/jquery.cookie.js",
+            "web/js/tv/jquery.treeview.async.js",
+            "web/js/jquery.address.js",
+            "web/js/jquery.simplemodal.js",
+            "web/js/jquery.ejs.js",
+        ]
+
+        function HtmlViewConnector(view) {
             this.view = view
             this.request = view.request
         }
 
-//  MOB - what about data-remote?
+		function alert(text: String, options: Object): Void {
+            options.style = append(options.style, "-ejs-alert")
+            write('<div' + getAttributes(options) + '>' +  text + '</div>\r\n')
+        }
+
 		function button(field: String, label: String, options: Object): Void {
-            write('<input name="' + field + '" type="submit" value="' + label + '"' + getAttributes(options) + ' />')
+            write('    <input name="' + field + '" type="submit" value="' + label + '"' + getAttributes(options) + ' />\r\n')
         }
 
 		function buttonLink(text: String, options: Object): Void {
-            let options.uri ||= request.makeUri(options)
-            if (options["data-remote"]) {
-                let attributes = getDataAttributes(options)
-                write('<button ' + attributes + '>' + text + '</button></a>')
-            } else {
-                write('<button onclick="window.location=\'' + options.uri + '\';">' + text + '</button></a>')
-            }
+            options.click ||= true
+            let attributes = getAttributes(options)
+            write('<button ' + attributes + '>' + text + '</button></a>\r\n')
         }
 
-		function chart(initialData: Array, options: Object): Void {
+		function chart(data: Array, options: Object): Void {
             //  TODO
             throw 'HtmlConnector control "chart" not implemented.'
 		}
 
-		function checkbox(field: String, choice: String, submitValue: String, options: Object): Void {
-            let checked = (choice == submitValue) ? ' checked="yes" ' : ''
-            //  MOB -- should these have \r\n at the end of each line?
-            write('<input name="' + field + '" type="checkbox" "' + getAttributes(options) + checked + 
-                '" value="' + submitValue + '" />\n')
-            write('    <input name="' + field + '" type="hidden" "' + getAttributes(options) + '" value="" />')
+		function checkbox(field: String, value: Object, checkedValue: Object, options: Object): Void {
+            let checked = (value == checkedValue) ? ' checked="yes"' : ''
+            write('    <input name="' + field + '" type="checkbox"' + getAttributes(options) + checked + 
+                ' value="' + checkedValue + '" />\r\n')
+            write('    <input name="' + field + '" type="hidden"' + getAttributes(options) + ' value="" />\r\n')
         }
 
 		function endform(): Void {
-            write('</form>')
+            write('</form>\r\n')
         }
 
+		function flash(kind: String, msg: String, options: Object): Void {
+            options.style = append(options.style, "-ejs-flash -ejs-flash-" + kind)
+            write('<div' + getAttributes(options) + '>' + msg + '</div>\r\n')
+            if (kind == "inform") {
+                write('<script>$(document).ready(function() {
+                        $("div.-ejs-flash-inform").animate({opacity: 1.0}, 2000).hide("slow");
+                    });}</script>\r\n')
+            }
+		}
+
 		function form(record: Object, options: Object): Void {
-            options.uri ||= request.makeUri(options)
-            write('<form method="' + options.method + '" action="' + options.uri + '"' + getAttributes(options) + 
-                ' xonsubmit="ejs.fixCheckboxes();">')
-            if (options.id) {
-                //  MOB -- should this be some more unique field?
-                write('<input name="id" type="hidden" value="' + options.id + '" />')
+            let uri ||= request.makeUri(options)
+            emitFormErrors(record, options)
+            write('<form action="' + uri + '"' + getAttributes(options) + '>\r\n')
+            if (options.id != undefined) {
+                write('    <input name="id" type="hidden" value="' + options.id + '" />\r\n')
+                if (!options.insecure) {
+                    let token = options.securityToken || request.securityToken
+                    write('    <input name="' + Request.SecurityTokenName + '" type="hidden" value="' + token + '" />\r\n')
+                }
             }
         }
 
         function image(src: String, options: Object): Void {
-			write('<img src="' + src + '"' + getAttributes(options) + '/>')
+			write('<img src="' + src + '"' + getAttributes(options) + '/>\r\n')
         }
 
-        function imageLink(src: String, options: Object): Void {
-            options.uri ||= request.makeUri(options)
-			//  MOB - TODO
-        }
-
+//  MOB - merge label and link?
         function label(text: String, options: Object): Void {
-            write('<span ' + getAttributes(options) + ' type="' + getTextKind(options) + '">' +  text + '</span>')
+            // write('<span ' + getAttributes(options) + ' type="' + getTextKind(options) + '">' +  text + '</span>\r\n')
+            write('<span ' + getAttributes(options) + '>' +  text + '</span>\r\n')
         }
 
 		function link(text: String, options: Object): Void {
-            options.uri ||= request.makeUri(options)
-			write('<a href="' + options.uri + '"' + getAttributes(options) + ' rel="nofollow">' + text + '</a>')
+            let uri ||= request.makeUri(options)
+			write('<a href="' + uri + '"' + getAttributes(options) + '>' + text + '</a>\r\n')
 		}
 
 		function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
-            write('<select name="' + name + '" ' + getAttributes(options) + '>')
-            let isSelected: Boolean
-            let i = 0
-            for each (choice in choices) {
-                if (choice is Array) {
-                    isSelected = (choice[0] == defaultValue) ? 'selected="yes"' : ''
-                    write('  <option value="' + choice[0] + '"' + isSelected + '>' + choice[1] + '</option>')
-                } else {
-                    if (choice && choice.id) {
-                        for (field in choice) {
-                            isSelected = (choice.id == defaultValue) ? 'selected="yes"' : ''
-                            if (field != "id") {
-                                write('  <option value="' + choice.id + '"' + isSelected + '>' + choice[field] + '</option>')
-                                done = true
-                                break
-                            }
+            let selected
+            write('    <select name="' + name + '" ' + getAttributes(options) + '>\r\n')
+            if (choices is Array) {
+                let i = 0
+                for each (choice in choices) {
+                    if (choice is Array) {
+                        /* list("priority", [["3", "low"], ["5", "med"], ["9", "high"]]) */
+                        let [key, value] = choice
+                        selected = (choice[0] == defaultValue) ? ' selected="yes"' : ''
+                        write('      <option value="' + choice[0] + '"' + selected + '>' + choice[1] + '</option>\r\n')
+
+                    } else if (Object.getOwnPropertyCount(choice) > 0) {
+                        /* list("priority", [{low: 3}, {med: 5}, {high: 9}]) */
+                        for (let [key, value] in choice) {
+                            selected = (value == defaultValue) ? ' selected="yes"' : ''
+                            write('      <option value="' + value + '"' + selected + '>' + key + '</option>\r\n')
                         }
                     } else {
-                        isSelected = (choice == defaultValue) ? 'selected="yes"' : ''
-                        write('  <option value="' + choice + '"' + isSelected + '>' + choice + '</option>')
+                        /* list("priority", ["low", "med", "high"]) */
+                        selected = (choice == defaultValue) ? ' selected="yes"' : ''
+                        write('      <option value="' + i + '"' + selected + '>' + choice + '</option>\r\n')
                     }
+                    i++
                 }
-                i++
+            } else {
+                /* list("priority", {low: 0, med: 1, high: 2}) */
+                for (let [key, value]  in choices) {
+                    selected = (value == defaultValue) ? ' selected="yes"' : ''
+                    write('      <option value="' + value + '"' + selected + '>' + key + '</option>\r\n')
+                }
             }
-            write('</select>')
+            write('    </select>\r\n')
         }
 
 		function mail(name: String, address: String, options: Object): Void  {
-			write('<a href="mailto:' + address + '" ' + getAttributes(options) + ' rel="nofollow">' + name + '</a>')
+			write('<a href="mailto:' + address + '"' + getAttributes(options) + '>' + name + '</a>\r\n')
 		}
 
-		function flash(kind: String, msg: String, options: Object): Void {
-            write('<div' + getAttributes(options) + '>' + msg + '</div>\r\n')
-            if (kind == "inform") {
-                write('<script>$(document).ready(function() {
-                        $("div.-ejs-flashInform").animate({opacity: 1.0}, 2000).hide("slow");});
-                    </script>')
-            }
-		}
-
-		function progress(initialData: Array, options: Object): Void {
-            write('<p>' + initialData + '%</p>')
+		function progress(data: Number, options: Object): Void {
+            options["data-progress"] = data
+            write('<div class="-ejs-progress">\r\n    <div class="-ejs-progress-inner"' + getAttributes(options) + 
+                '>' + data + '%</div>\r\n</div>>\r\n')
 		}
 
         function radio(name: String, choices: Object, selected: String, options: Object): Void {
             let checked: String
+            let attributes = getAttributes(options)
             if (choices is Array) {
-                for each (v in choices) {
-                    checked = (v == selected) ? "checked" : ""
-                    write(v + ' <input type="radio" name="' + name + '"' + getAttributes(options) + 
-                        ' value="' + v + '" ' + checked + ' />\r\n')
+                for each (choice in choices) {
+                    if (choice is Array) {
+                        /* radio("priority", [["3", "low"], ["5", "med"], ["9", "high"]]) */
+                        let [key, value] = choice
+                        checked = (value == selected) ? "checked " : ""
+                        write('    ' + key.toPascal() + ' <input type="radio" name=' + name + attributes + ' value="' + 
+                            value + '"' + checked + '/>\r\n')
+
+                    } else if (Object.getOwnPropertyCount(choice) > 0) {
+                        /* radio("priority", [{low: 3}, {med: 5}, {high: 9}]) */
+                        for (let [key, value] in choice) {
+                            checked = (value == selected) ? "checked " : ""
+                            write('  ' + key.toPascal() + ' <input type="radio" name=' + name + attributes + ' value="' + 
+                                value + '"' + checked + '/>\r\n')
+                        }
+
+                    } else {
+                        /* radio("priority", ["low", "med", "high"]) */
+                        checked = (choice == selected) ? "checked " : ""
+                        write("    " + choice + ' <input type="radio" name="' + name + '"' + attributes + ' value="' + 
+                            choice + '" ' + checked + '/>\r\n')
+                    }
                 }
             } else {
-                for (item in choices) {
-                    checked = (choices[item] == selected) ? "checked" : ""
-                    write(item + ' <input type="radio" name="' + name + '"' + getAttributes(options) + 
-                        ' value="' + choices[item] + '" ' + checked + ' />\r\n')
+                /* radio("priority", {low: 0, med: 1, high: 2}) */
+                for (let [key, value] in choices) {
+                    checked = (value == selected) ? "checked " : ""
+                    write("    " + key.toPascal() + ' <input type="radio" name="' + name + '"' + attributes + ' value="' + 
+                        value + '" ' + checked + '/>\r\n')
                 }
             }
         }
 
 		function script(uri: String, options: Object): Void {
-            write('<script src="' + uri + '" type="text/javascript"></script>\r\n')
+            if (uri == null) {
+                for each (uri in defaultScripts) {
+                    script(request.home.join(uri), options)
+                }
+            } else {
+                write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
+            }
 		}
 
-		function status(initialData: Array, options: Object): Void {
-            write('<p>' + initialData + '</p>\r\n')
+        function securityToken(options: Object): Void {
+            write('    <meta name="SecurityTokenName"=' + Request.SecurityTokenName + '" />\r\n')
+            write('    <meta name="' + Request.SecurityTokenName + '" content="' + request.securityToken + '" />\r\n')
         }
 
 		function stylesheet(uri: String, options: Object): Void {
-            write('<link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
-		}
-
-		function table(data, options: Object? = null): Void {
-            let originalOptions = options
-                //  MOB -- should come via getAttributes
-            let tableId = nextDomID
-
-            if (data is Array) {
-                if (data.length == 0) {
-                    write("<p>No Data</p>")
-                    return
-                }
-            } else if (!(data is Array) && data is Object) {
-                data = [data]
-			}
-            options = (originalOptions && originalOptions.clone()) || {}
-            let columns = getColumns(data, options)
-
-            let refresh = options.refresh || 10000
-            let sortOrder = options.sortOrder || ""
-            let sort = options.sort
-            if (sort == undefined) sort = true
-            let attributes = getDataAttributes(options)
-
-            //  TODO - would be nice to auto sense this
-            if (!options.ajax) {
-                let uri = (data is String) ? data : null
-                uri ||= options.data
-                write('  <script type="text/javascript">\r\n' +
-                    '   $(function() { $("#' + tableId + '").eTable({ refresh: ' + refresh + 
-                    ', sort: "' + sort + '", sortOrder: "' + sortOrder + '"' + 
-                    ((uri) ? (', uri: "' + uri + '"'): "") + 
-                    '})});\r\n' + 
-                    '  </script>\r\n')
-                if (data is String) {
-                    /* Data is an action method */
-                    write('<table id="' + tableId + '" class="-ejs-table"></table>\r\n')
-                    return
+            if (uri == null) {
+                for each (uri in defaultStylesheets) {
+                    stylesheet(request.home.join(uri), options)
                 }
             } else {
-                write('  <script type="text/javascript">$("#' + tableId + '").eTableSetOptions({ refresh: ' + refresh +
-                    ', sort: "' + sort + '", sortOrder: "' + sortOrder + '"})' + ';</script>\r\n')
+                write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
             }
-			write('  <table id="' + tableId + '" class="-ejs-table ' + (options.styleTable || "" ) + '"' + 
-                attributes + '>\r\n')
+		}
 
+		function table(data, options: Object): Void {
+            if (!data is Array) {
+                data = [data]
+            }
+            if (data.length == 0) {
+                write("<p>No Data</p>\n")
+                return
+            }
+            options.style = append(options.style, "-ejs-table")
+
+            o = options.clone(); delete o.click; delete o.remote; delete o.method
+
+            let attributes = getAttributes(o)
+            let columns = getColumns(data, options)
+
+			write('  <table' + attributes + '>\r\n')
             /*
-                Table title and column headings
+                Table title header and column headings
              */
             if (options.showHeader != false) {
-                write('    <thead class="' + (options.styleHeader || "") + '">\r\n')
+                write('    <thead>\r\n')
                 if (options.title) {
-                    let gif = request.home.join("/web/images/green.gif")
-                    if (columns.length < 2) {
-                        //  TODO - this icon should be styled and not be here
-                        write('  <tr><td>' + options.title + ' ' + '<img src="' + 
-                            gif + '" class="-ejs-table-download -ejs-clickable" onclick="$(\'#' + 
-                            tableId + '\').eTableToggleRefresh();" />\r\n  </td></tr>\r\n')
-                    } else {
-                        write('  <tr><td colspan="' + (columns.length - 1) + '">' + options.title + 
-                            '</td><td class="right">' + '<img src="' + gif + 
-                            '" class="-ejs-table-download -ejs-clickable" onclick="$(\'#' + tableId + 
-                            '\').eTableToggleRefresh();" />\r\n  </td></tr>\r\n')
-                    }
+                    write('        <tr><td colspan="' + columns.length + '">' + options.title + '</td></tr>\r\n')
                 }
-                /*
-                    Emit column headings
-                 */
-                if (columns) {
-                    write('    <tr>\r\n')
-                    for (let name in columns) {
-                        if (name == null) continue
-                        let header = (columns[name].header) ? (columns[name].header) : name.toPascal()
-                        let width = (columns[name].width) ? ' width="' + columns[name].width + '"' : ''
-                        write('    <th ' + width + '>' + header + '</th>\r\n')
-                    }
+                write('        <tr>\r\n')
+                for (let [name, column] in columns) {
+                    if (name == null) continue
+                    let header = (column.header) ? (column.header) : name.toPascal()
+                    let width = (column.width) ? ' width="' + column.width + '"' : ''
+                    write('            <th' + width + '>' + header + '</th>\r\n')
                 }
-                write("     </tr>\r\n    </thead>\r\n")
+                write("        </tr>\r\n    </thead>\r\n")
             }
+            write('    <tbody>\r\n')
 
-            let styleBody = options.styleBody || ""
-            write('    <tbody class="' + styleBody + '">\r\n')
+            /*
+                Render each row
+             */
+            let rowAtt = getAttributes({ click: options.click, method: options.method, remote: options.remote })
 
             let row: Number = 0
-
 			for each (let r: Object in data) {
-                let uri = null
-                // let uriOptions = { controller: options.controller, query: options.query }
-                let uriOptions = options.clone()
-                if (options.click) {
-                    uriOptions.query = (options.query is Array) ? options.query[row] : options.query
-                    if (options.click is Array) {
-                        if (options.click[row] is String) {
-                            uri = request.makeUri(blend(uriOptions, {action: options.click[row], id: r.id}))
-                        }
-                    } else {
-                        uri = request.makeUri(blend(uriOptions, {action: options.click, id: r.id}))
-                    }
-                }
-                let odd = options.styleOddRow || "-ejs-oddRow"
-                let even = options.styleOddRow || "-ejs-evenRow"
-                styleRow = ((row % 2) ? odd : even) || ""
-                if (options.styleRows) {
-                    styleRow += " " + (options.styleRows[row] || "")
-                }
-                if (uri) {
-                    write('    <tr class="' + styleRow + 
-                        '" onclick="window.location=\'' + uri + '\';">\r\n')
-                } else {
-                    write('    <tr class="' + styleRow + '">\r\n')
-                }
+                let styleRow = options.styleRows ? ('class="' + options.styleRows[row] + '"') : ""
+
+                write('        <tr' + rowAtt + styleRow + '>\r\n')
 
                 let col = 0
-				for (name in columns) {
-                    if (name == null) {
-                        continue
-                    }
-                    let column = columns[name]
+				for (let [name, column] in columns) {
+                    let value = view.getValue(r, name, options)
                     let styleCell: String = ""
-
                     if (options.styleColumns) {
-                        styleCell = options.styleColumns[col] || ""
+                        styleCell = append(styleCell, options.styleColumns[col])
                     }
                     if (column.style) {
-                        styleCell += " " + column.style
+                        styleCell = append(styleCell, column.style)
                     }
                     if (options.styleCells && options.styleCells[row]) {
-                        styleCell += " " + (options.styleCells[row][col] || "")
+                        styleCell = append(styleCell, options.styleCells[row][col])
                     }
-                    styleCell = styleCell.trim()
-                    data = view.formatValue(r, name, { format: column.format} )
-
-                    let align = ""
+                    let attr = ""
+                    if (styleCell) {
+                        attr = ' class="' + styleCell + '"'
+                    }
                     if (column.align) {
-                        align = 'align="' + column.align + '"'
+                        attr = append(attr, ' align="' + column.align + '"')
+                    } else if (value is Number) {
+                        attr = append(attr, ' align="right"')
                     }
-                    let cellUrl
-                    if (options.click is Array && options.click[0] is Array) {
-                        if (options.query is Array) {
-                            if (options.query[0] is Array) {
-                                uriOptions.query = options.query[row][col]
-                            } else {
-                                uriOptions.query = options.query[row]
-                            }
-                        } else {
-                            uriOptions.query = options.query
-                        }
-                        cellUrl = request.makeUri(blend(uriOptions, { action: options.click[row][col], id: r.id}))
-                    }
-					styleCell = styleCell.trim()
-                    if (cellUrl) {
-                        write('    <td class="' + styleCell + '"' + align + 
-                            ' xonclick="window.location=\'' + cellUrl + '\';"><a href="' + cellUrl + '" rel="nofollow">' + 
-                            data + '</a></td>\r\n')
-                    } else {
-                        write('    <td class="' + styleCell + '"' + align + '>' + data + '</td>\r\n')
-                    }
+                    value = view.formatValue(value, r, name, { formatter: column.formatter} )
+                    write('            <td' + attr + '>' + value + '</td>\r\n')
                     col++
 				}
                 row++
-				write('    </tr>\r\n')
+				write('        </tr>\r\n')
 			}
-			write('    </tbody>\r\n  </table>\r\n')
+			write('    </tbody>\r\n</table>\r\n')
 		}
 
-		function tabs(data: Array, options: Object): Void {
-            write('<div class="-ejs-tabs">\r\n')
-            write('   <ul>\r\n')
-            for each (t in data) {
-                for (name in t) {
-                    let uri = t[name]
-                    if (options["data-remote"]) {
-                        write('      <li data-remote="' + uri + '">' + name + '</a></li>\r\n')
-                    } else {
-//  MOB -- get rid of all window.location
-                        write('      <li onclick="window.location=\'' + uri + '\'"><a href="' + uri + '" rel="nofollow">' + 
-                            name + '</a></li>\r\n')
+		function tabs(data: Object, options: Object): Void {
+            let attributes = getAttributes(options)
+            let att
+            if (options["data-remote"]) {
+                att = "data-remote"
+            } else if (options.click) {
+                att = "data-click"
+            } else {
+                att = "data-show"
+            }
+            write('<div class="-ejs-tabs">\r\n    <ul>\r\n')
+            if (data is Array) {
+                for each (tuple in data) {
+                    for (let [name, target] in tuple) {
+                        let uri = request.makeUri(target)
+                        write('      <li ' + att + '="' + uri + '">' + name + '</li>\r\n')
                     }
                 }
+            } else {
+                for (let [name, target] in data) {
+                    let uri = request.makeUri(target)
+                    write('      <li ' + att + '="' + uri + '">' + name + '</li>\r\n')
+                }
             }
-            write('    </ul>')
-            write('</div>')
+            write('    </ul>\r\n</div>\r\n')
         }
 
         function text(field: String, value: String, options: Object): Void {
-            write('<input name="' + field + '" ' + getAttributes(options) + ' type="' + getTextKind(options) + 
-                '" value="' + value + '" />')
+            write('    <input name="' + field + '"' + getAttributes(options) + ' type="' + getTextKind(options) + 
+                '" value="' + value + '" />\r\n')
         }
 
         function textarea(name: String, value: String, options: Object): Void {
@@ -371,12 +385,93 @@ module ejs.web {
             if (numRows == undefined) {
                 numRows = 10
             }
-            write('<textarea name="' + name + '" type="' + getTextKind(options) + '" ' + getAttributes(options) + 
-                ' cols="' + numCols + '" rows="' + numRows + '">' + value + '</textarea>')
+            write('<textarea name="' + name + '" type="' + getTextKind(options) + '"' + getAttributes(options) + 
+                ' cols="' + numCols + '" rows="' + numRows + '">' + value + '</textarea>\r\n')
         }
 
-        function tree(initialData: Array, options: Object): Void {
-            throw 'HtmlConnector control "tree" not implemented.'
+        function tree(data: Object, options: Object): Void {
+            options.style = append(options.style, "-ejs-tree")
+            let attributes = getAttributes(options)
+            let columns = getColumns(data, options)
+
+			write('<div' + attributes + '>\r\n')
+            write(serialize(data, {pretty: true}))
+			write('</div>\r\n')
+        }
+
+        /************************************************** Support ***************************************************/
+
+        private function emitFormErrors(record, options): Void {
+            if (!record || !record.getErrors || options.hideErrors) {
+                return
+            }
+            let errors = record.getErrors()
+            if (errors) {
+                write('<div class="-ejs-form-error"><h2>The ' + Object.getName(record).toLowerCase() + ' has ' + 
+                    errors.length + (errors.length > 1 ? ' errors' : ' error') + ' that ' +
+                    ((errors.length > 1) ? 'prevent' : 'prevents') + '  it being saved.</h2>\r\n')
+                write('    <p>There were problems with the following fields:</p>\r\n')
+                write('    <ul>\r\n')
+                for (e in errors) {
+                    write('        <li>' + e.toPascal() + ' ' + errors[e] + '</li>\r\n')
+                }
+                write('    </ul>\r\n')
+                write('</div>\r\n')
+            }
+        }
+
+        //  FUTURE MOB -- never called. MOB -- better to push to client via data-filter
+        //  TODO - this actually modifies the grid. Need to doc this.
+        private function filter(data: Array): Array {
+            data = data.clone()
+            pattern = request.params.filter.toLowerCase()
+            for (let i = 0; i < data.length; i++) {
+                let found: Boolean = false
+                for each (f in data[i]) {
+                    if (f.toString().toLowerCase().indexOf(pattern) >= 0) {
+                        found = true
+                    }
+                }
+                if (!found) {
+                    data.remove(i, i)
+                    i--
+                }
+            }
+            return data
+        }
+
+        private function makeUri(location: Object, options: Object): Uri {
+            if (location == true) {
+                return request.makeUri(options)
+            } else if (location is String) {
+                return request.makeUri({action: location})
+            }
+            return request.makeUri(location)
+        }
+
+        /**
+            Map options to a HTML attribute string. See htmlOptions and $View for a discussion on standard options.
+            @param options Control options
+            @returns a string containing the HTML attributes to emit. Will return an empty string or a string with a 
+                leading space (and not trailing space)
+         */
+        private function getAttributes(options: Object): String {
+            if (options.hasError) {
+                options.style = append(options.style, "-ejs-field-error")
+            }
+            if (options.remote) {
+                options["data-remote"] = makeUri(options.remote, options)
+            } else if (options.click) {
+                options["data-click"] = makeUri(options.click, options)
+            }
+            let result: String = ""
+            for (let [key, value] in options) {
+                if (value != undefined) {
+                    let mapped = htmlOptions[key] || key
+                    result += mapped + '="' + value + '" '
+                }
+            }
+            return (result == "") ? "" : (" " + result.trimEnd())
         }
 
         private function getColumns(data: Object, options: Object): Object {
@@ -392,7 +487,7 @@ module ejs.web {
                 }
             } else {
                 /*
-                    No supplied columns. Infer from data
+                    No supplied columns, so infer from data.
                  */
                 columns = {}
                 if (data is Array) {
@@ -417,88 +512,21 @@ module ejs.web {
             return kind
         }
 
-        //  MOB -- merge in with getAttributes
-        private function getDataAttributes(options): String {
-            let attributes = ""
-            //  MOB -- would it be better to have data-remote == uri?
-            if (options["data-remote"]) {
-                attributes += ' data-remote="' + options["data-remote"] + '"'
-            }
-            if (options["data-apply"]) {
-                attributes += ' data-apply="' + options["data-apply"] + '"'
-            }
-            if (options["data-id"]) {
-                attributes += ' data-id="' + options["data-id"] + '"'
-            }
-            return attributes
-        }
-
-        //  MOB -- edit this down to just HTML attributes
-        /**
-            Map options to a HTML attribute string.
-            @param options Optional extra options.
-            @returns a string containing the HTML attributes to emit.
-            @option background String Background color. This is a CSS RGB color specification. For example "FF0000" for red.
-            @option color String Foreground color. This is a CSS RGB color specification. For example "FF0000" for red.
-            @option data String URL or action to get live data. The refresh option specifies how often to invoke
-                fetch the data.
-            @option domid Number Client DOM-ID to use for the generated element
-            @option height (Number|String) Height of the table. Can be a number of pixels or a percentage string. 
-                Defaults to unlimited.
-            @option method String HTTP method to invoke. May be: GET, POST, PUT or DELETE.
-            @option size (Number|String) Size of the element.
-            @option style String CSS Style to use for the table.
-            @option visible Boolean Make the control visible. Defaults to true.
-            @option width (Number|String) Width of the table or column. Can be a number of pixels or a percentage string. 
-         */
-        function getAttributes(options: Object): String {
-            if (!options.domid) {
-                options.domid = nextDomID
-            }
-            if (options.hasError) {
-                //  MOB -- need consistency with styles
-                options.style += " -ejs-fieldError"
-            }
-            let result: String = ""
-            for (let option: String in options) {
-                let mapped = htmlOptions[option]
-                if (mapped || mapped == "") {
-                    if (mapped == "") {
-                        /* No mapping, keep the original option name */
-                        mapped = option
-                    }
-                    result += ' ' +  mapped + '="' + options[option] + '"'
-                } else if (option.startsWith("data-")) {
-                    result += ' ' +  option + '="' + options[option] + '"'
-                }
-            }
-            return result + " "
-        }
-
         /** 
             Get the next usable DOM ID for view controls
          */
-        function get nextDomID(): String
-            "id_" + nextDomID++
+        private function get nextDomID(): String
+            "id_" + lastDomID++
 
-/* MOB Functionality moved to getAttributes
-        private function getOptions(field: String, options: Object): Object {
-            let record = view.currentRecord
-            if (record) {
-                if (record.id) {
-                    options.domid ||= field + '_' + record.id
-                }
-             */
-            }
-//  MOB - probably needs some kind of prefix
-            options.style ||= field
-            return options
-        }
-*/
-
-//  MOB -- what other should be aliased. Check Request and Control:  flash?
         private function write(str: String): Void
             request.write(str)
+
+        private function append(str: String, suffix: String): String {
+            if (suffix) {
+                return (str) ? (str + " " + suffix) : suffix
+            }
+            return str
+        }
 	}
 }
 

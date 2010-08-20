@@ -34,9 +34,12 @@ module ejs.web {
             }
             if (request.method == "GET" || request.method == "POST") {
                 headers["Content-Length"] = filename.size
-                body = filename
-                // headers["X-Sendfile"] = filename
-                // body = File(filename, "r")
+                if (request.config.web.nosend) {
+                    body = File(filename, "r")
+                } else {
+print("SET FILENAME " + filename + " TYPE " + typeOf(filename))
+                    body = filename
+                }
 
             } else if (request.method == "DELETE") {
                 status = Http.NoContent

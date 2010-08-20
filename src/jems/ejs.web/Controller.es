@@ -115,19 +115,10 @@ UNUSED - MOB -- better to set in Request
                 if (config.database) {
                     openDatabase(request)
                 }
+                if (request.method == "POST") {
+                    checkBefore(checkSecurityToken)
+                }
             }
-        }
-
-        /** 
-            Run an action checker function after running the action
-            @param fn Function callback to invoke
-            @param options Checker options. 
-            @option only Only run the checker for this action name
-            @option except Run the checker for all actions except this name
-         */
-        function checkAfter(fn, options: Object = null): Void {
-            _afterCheckers ||= []
-            _afterCheckers.append([fn, options])
         }
 
         /** 
@@ -162,6 +153,18 @@ UNUSED - MOB -- better to set in Request
                 request.autoFinalize()
             }
             return response
+        }
+
+        /** 
+            Run an action checker function after running the action
+            @param fn Function callback to invoke
+            @param options Checker options. 
+            @option only Only run the checker for this action name
+            @option except Run the checker for all actions except this name
+         */
+        function checkAfter(fn, options: Object = null): Void {
+            _afterCheckers ||= []
+            _afterCheckers.append([fn, options])
         }
 
         /** 
@@ -243,19 +246,6 @@ UNUSED - MOB -- better to set in Request
         function redirect(where: Object, status: Number = Http.MovedTemporarily): Void
             request.redirect(where, status)
 
-//  MOB -- remove UNUSED
-        /*
-            Redirect the client to the given action
-            @param action Controller action name to which to redirect the client.
-        function redirectAction(action: String): Void {
-            if (request.route) {
-                redirect({action: action})
-            } else {
-                redirect(request.uri.dirname.join(action))
-            }
-        }
-         */
-
         /** 
             Render the raw data back to the client. 
             If an action method does call a write data back to the client and has not called finalize() or 
@@ -314,6 +304,7 @@ UNUSED - MOB -- better to set in Request
             @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
          */
         function writeTemplate(path: Path, layouts: Path = null): Void {
+log.debug(0, "writeTemplate: \"" + path + "\"")
             log.debug(4, "writeTemplate: \"" + path + "\"")
             request.filename = path
             layouts ||= config.directories.layouts
@@ -396,6 +387,11 @@ UNUSED - MOB -- better to set in Request
             request.dontAutoFinalize()
 
         /**************************************** Private ******************************************/
+
+        private function checkSecurityToken() {
+            request.checkSecurityToken()
+        }
+
         /*
             Open database. Expects ejsrc configuration:
 

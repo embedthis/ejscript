@@ -2244,7 +2244,6 @@ static EjsObj *obj_getType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     return (EjsObj*) vp->type;
 }
 
-
 /*
     Return the type name of a var as a string. If the var is a type, get the base type.
  */
@@ -2260,6 +2259,16 @@ EjsObj *ejsGetTypeName(Ejs *ejs, EjsObj *vp)
         return ejs->nullValue;
     }
     return (EjsObj*) ejsCreateString(ejs, type->qname.name);
+}
+
+
+/*
+    function getTypeName(obj): String
+ */
+static EjsObj *obj_getTypeName(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
+{
+    mprAssert(argc >= 1);
+    return (EjsObj*) ejsGetTypeName(ejs, argv[0]);
 }
 
 
@@ -2385,6 +2394,7 @@ void ejsConfigureObjectType(Ejs *ejs)
     /* Reflection */
     ejsBindMethod(ejs, type, ES_Object_getBaseType, obj_getBaseType);
     ejsBindMethod(ejs, type, ES_Object_getType, obj_getType);
+    ejsBindMethod(ejs, type, ES_Object_getTypeName, obj_getTypeName);
     ejsBindMethod(ejs, type, ES_Object_getName, obj_getName);
     ejsBindMethod(ejs, type, ES_Object_isType, obj_isType);
     ejsBindMethod(ejs, type, ES_Object_isPrototype, obj_isPrototype);
