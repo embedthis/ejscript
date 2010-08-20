@@ -1344,10 +1344,11 @@
 #define ES_Object_seal                                                 14
 #define ES_Object_getBaseType                                          15
 #define ES_Object_getType                                              16
-#define ES_Object_isType                                               17
-#define ES_Object_isPrototype                                          18
-#define ES_Object_getName                                              19
-#define ES_Object_NUM_CLASS_PROP                                       20
+#define ES_Object_getTypeName                                          17
+#define ES_Object_isType                                               18
+#define ES_Object_isPrototype                                          19
+#define ES_Object_getName                                              20
+#define ES_Object_NUM_CLASS_PROP                                       21
 
 /*
    Prototype (instance) slots for "Object" type 
@@ -1391,6 +1392,7 @@
 #define ES_Object_seal_obj                                             0
 #define ES_Object_getBaseType_obj                                      0
 #define ES_Object_getType_obj                                          0
+#define ES_Object_getTypeName_obj                                      0
 #define ES_Object_isType_obj                                           0
 #define ES_Object_isPrototype_obj                                      0
 #define ES_Object_getName_obj                                          0
@@ -1931,6 +1933,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1304647
+#define _ES_CHECKSUM_ejs   1306087
 
 #endif
