@@ -567,7 +567,7 @@ module ejs.web {
                     "\">here</a>.</p>\r\n" +
                     "<address>" + server.software + " at " + host + " Port " + server.port + 
                     "</address></body>\r\n</html>\r\n")
-            finalize()
+            //  MOB -- want to allow templates to call redirect and may write more blank linkes -- finalize()
         }
 
         /** 

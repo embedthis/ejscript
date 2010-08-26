@@ -8,233 +8,118 @@
  */
 
 ;(function($) {
-
-    /* Chainable functions */
-
+    /* 
+        Published interface:
+            $.ejs
+            $.ejs.defaults
+     */
+    var defaults = {
+        "updating": true,
+        "toggle": 27,
+    }
     $.fn.extend({
-        ejsSortTable: function(settings) {
-            var defaults = {
-                "data-sort-order": "ascending",
-            };
-            $.extend(defaults, settings || {});
-            this.each(function() { 
-                var e = $(this);
-                var options = $.extend({}, defaults, e.data("ejs-options") || {}, getDataAttributes.apply(e));
-                if (!options.sortConfig) {
-                    if (options["data-sort"] != "false") {
-                        var items = $("th", e).filter(':contains("' + options["data-sort"] + '")');
-                        var el = $("th", e).filter(':contains("' + options["data-sort"] + '")').get(0);
-                        if (el) {
-                            var order = (options["data-sort-order"].indexOf("asc") >= 0) ? 0 : 1;
-                            options.sortConfig = {sortList: [[el.cellIndex, order]]};
-                        } else {
-                            options.sortConfig = {sortList: [[0, 0]]};
-                        }
-                    }
-                    e.tablesorter(options.sortConfig);
-                }
-                e.data("ejs-options", options);
-            });
-            return this;
-        },
-
-        ejsRefresh: function(settings) {
-            function anim() {
-                var e = $(this);
-                options = e.data("ejs-options")
-                var effects = options["data-effects"];
-                if (effects == "highlight") {
-                    e.fadeTo(0, 0.3);
-                    e.fadeTo(750, 1);
-                } else if (effects == "fadein") {
-                    e.fadeTo(0, 0);
-                    e.fadeTo(1000, 1);
-                } else if (effects == "fadeout") {
-                    e.fadeTo(0, 1);
-                    e.fadeTo(1000, 0);
-                } else if (effects == "bold") {
-                    /* Broken */
-                    e.css("font-weight", 100);
-                    e.animate({"opacity": 0.1, "font-weight": 900}, 1000);
-                }
-            }
-
-            function applyData(data, http) {
-                var d, e, id, oldID, newElt, options, isHtml = false;
-
-                var id = this.attr("id");
-                var apply = this.attr('data-apply') || id;
-                e = (apply) ? $('#' + apply) : $(this);
-
-                var options = e.data("ejs-options");
-                var contentType = http.getResponseHeader("Content-Type");
-
-                if (contentType == "text/html") {
-                    try {
-                        /* Copy old element options and id */
-                        data = $(data);
-                        data.data("ejs-options", options);
-                        data.attr("id", id);
-                        copyDataAttributes.call(data, e);
-                        isHtml = true;
-                    } catch (e) {
-                        console.debug(e);
-                    }
-                }
-                if (isHtml) {
-                    if (e[0] && e[0].tagName == "TABLE") {
-                        /* Copy tablesorter options and config and re-sort the data before displaying */
-                        data.data("tablesorter", e.data("tablesorter"));
-                        var config = data[0].config = e[0].config;
-                        data.tablesorter({ sortList: config.sortList });
-                    }
-                    e.replaceWith(data);
-                    e = data;
-
-                } else {
-                    d = e[0];
-                    if (d.type == "checkbox") {
-                        if (data == e.val()) {
-                            e.attr("checked", "yes")
-                        } else {
-                            e.removeAttr("checked")
-                        }
-                    } else if (d.type == "radio") {
-                        //  MOB BROKEN
-                        if (data == e.val()) {
-                            e.attr("checked", "yes")
-                        } else {
-                            e.removeAttr("checked")
-                        }
-                    } else if (d.type == "text" || d.type == "textarea") {
-                        e.val(data);
-                    } else if (d.tagName == "IMG") {
-                        e.attr("src", data)
-                        // var img = $('<img />').attr('src', data);
-                    } else {
-                        e.text(data);
-                    }
-                }
-                anim.call(e);
-                return e;
-            }
-
-            function update(defaults) {
-                var e = $(this);
-                var doptions = e.data("ejs-options");
-                var options = $.extend({}, defaults, e.data("ejs-options") || {}, getDataAttributes.apply(e));
-                e.data("ejs-options", options);
-                if (options.refresh) {
-                    var method = options["data-refresh-method"] || "GET";
-                    $.ajax({
-                        url: options["data-refresh"],
-                        type: method,
-                        success: function (data, status, http) { 
-                            if (http.status == 200) {
-                                e = applyData.call(e, data, http); 
-                            } else if (http.status == 0) {
-                                log("Error updating control: can't connect to server");
-                            } else {
-                                log("Error updating control: " + http.statusText + " " + http.responseText); 
-                            }
-                        },
-                        complete: function() {
-                            setTimeout(function(e) { 
-                                update.call(e, options); 
-                            }, options["data-refresh-period"], e);
-                        },
-                        error: function (http, msg, e) { 
-                            log("Error updating control: " + msg); 
-                        },
-                    });
-                } else {
-                    setTimeout(function(e) { update.call(e, options);}, options["data-refresh-period"], e);
-                }
-                if (!options.bound) {
-                    $(document).bind('keyup.refresh', function(event) {
-                        //  MOB -- should expose this as defaults
-                        if (event.keyCode == options.toggle) {
-                            $('[data-refresh]').ejsToggleRefresh();
-                        }
-                    });
-                    options.bound = true;
-                }
-            }
-
-            var defaults = {
-                "period": 60000,
-                "refresh": true,
-                "toggle": 27,
-            };
-            $.extend(defaults, settings || {});
-            this.each(function() { 
-                update.call($(this), defaults);
-            });
-            return this;
-        },
-
-        ejsToggleRefresh: function() {
-            this.each(function() {
-                elt = $(this);
-                var options = elt.data("ejs-options");
-                if (options) {
-                    options.refresh = !options.refresh;
-                }
-            /* FUTURE
-                var image = $(".-ejs-table-download", e.get(0));
-                if (options.refresh) {
-                    image.src = image.src.replace(/red/, "green");
-                } else {
-                    image.src = image.src.replace(/green/, "red");
-                }
-            */
+        /*
+            Load or reload ejs support. Can be called after adding new elements to a page.
+         */
+        ejs: function(options) {
+            $.extend(defaults, options || {});
+            $('[data-sort-order]').each(sort);
+            $('[data-refresh]').each(refresh);
+            $('[data-modal]').each(function() {
+                this.modal({
+                    escClose: false, 
+                    overlayId: "-ejs-modal-background", 
+                    containerId: "-ejs-modal-foreground",
+                });
             });
         },
     });
 
+    $.fn.ejs.defaults = defaults;
+
     /************************************************* Support ***********************************************/
     /*
-        Background request using data-* element attributes. Apply the result to the data-apply (or current element).
+        Background request using data-remote attributes. Apply the result to the data-apply (or current element).
      */
     function backgroundRequest() {
-        var el     = $(this),
-            data   = el.is('form') ? el.serializeArray() : [],
-            method = el.attr('method') || el.attr('data-method') || 'GET',
+        var elt     = $(this),
+            data    = elt.is('form') ? elt.serializeArray() : [],
+            method  = elt.attr('method') || elt.attr('data-method') || 'GET',
             /* Data-url is a modified remote URL */
-            url    = el.attr('action') || el.attr('href') || el.attr('data-url') || el.attr('data-remote');
+            //  MOB -- remove data-url
+            url     = elt.attr('action') || elt.attr('href') || elt.attr('data-url') || elt.attr('data-remote');
 
         if (url === undefined) {
             throw "No URL specified for remote call";
         }
-        el.trigger('ajax:before');
+        elt.trigger('http:before');
         // MOB changeUrl(url);
         $.ajax({
             url: url,
             data: data,
             type: method.toUpperCase(),
             beforeSend: function (http) {
-                el.trigger('ajax:loading', http);
+                elt.trigger('http:loading', http);
             },
             success: function (data, status, http) {
-                el.trigger('ajax:success', [data, status, http]);
-                var apply = el.attr('data-apply');
+                elt.trigger('http:success', [data, status, http]);
+                var apply = elt.attr('data-apply');
                 if (apply) {
                     $(apply).html(data)
                 }
             },
             complete: function (http) {
-                el.trigger('ajax:complete', http);
+                elt.trigger('http:complete', http);
             },
             error: function (http, status, error) {
-                el.trigger('ajax:failure', [http, status, error]);
+                elt.trigger('http:failure', [http, status, error]);
             }
         });
-        el.trigger('ajax:after');
+        elt.trigger('http:after');
+    }
+
+    function copyDataAttributes(from) {
+        this.each(function() {
+            var e = $(this);
+            $.each($(from)[0].attributes, function(index, att) {
+                if (att.name.indexOf("data-") == 0) {
+                    if (e.attr(att.name) == null) {
+                        e.attr(att.name, att.value);
+                    }
+                }
+            });
+        });
     }
 
     /*
-        Foreground request using data-* element attributes. This supports non-GET methods and use of 
-        the SecurityToken
+        Get an object containing all data-attributes
+     */ 
+    function getDataAttributes(elt) {
+        var elt = $(elt);
+        var result = {};
+        $.each(elt[0].attributes, function(index, att) {
+            if (att.name.indexOf("data-") == 0) {
+                result[att.name.substring(5)] = att.value;
+            }
+        });
+        return result;
+    }
+
+    /*
+        Debug logging
+     */
+    function log(msg) {
+        // $('#console').append('<div>' + new Date() + ' ' + text + '</div>');
+        if (window.console) {
+            console.debug(msg);
+        } else {
+            alert(msg);
+        }
+    }
+
+    /*
+        Foreground request using data-* element attributes. This makes all elements clickable and supports 
+        non-GET methods with security tokens to aleviate CSRF.
      */
     function request() {
         var el     = $(this);
@@ -293,48 +178,187 @@
         }
     }
 
-    function copyDataAttributes(from) {
-        this.each(function() {
-            var e = $(this);
-            $.each($(from)[0].attributes, function(index, att) {
-                if (att.name.indexOf("data-") == 0) {
-                    if (e.attr(att.name) == null) {
-                        e.attr(att.name, att.value);
-                    }
+    /*
+        Apply table sorting. Uses tablesorter plugin.
+     */
+    function sort(options) {
+        var elt = $(this);
+        var o = $.extend({}, defaults, options, elt.data("ejs-options") || {}, getDataAttributes(elt));
+        if (!o.sortConfig) {
+            if (o.sort != "false") {
+                var items = $("th", elt).filter(':contains("' + o.sort + '")');
+                var sortColumn = $("th", elt).filter(':contains("' + o.sort + '")').get(0);
+                if (sortColumn) {
+                    var order = (o["sort-order"].indexOf("asc") >= 0) ? 0 : 1;
+                    o.sortConfig = {sortList: [[sortColumn.cellIndex, order]]};
+                } else {
+                    o.sortConfig = {sortList: [[0, 0]]};
                 }
-            });
-        });
-    }
-
-    function getDataAttributes() {
-        var e = $(this);
-        var result = {};
-        $.each(e[0].attributes, function(index, att) {
-            if (att.name.indexOf("data-") == 0) {
-                result[att.name] = att.value;
             }
-        });
-        return result;
+            elt.tablesorter(o.sortConfig);
+        }
+        elt.data("ejs-options", o);
+        return this;
     }
 
-    function log(msg) {
-        // $('#console').append('<div>' + new Date() + ' ' + text + '</div>');
-        if (window.console) {
-            console.debug(msg);
-        } else {
-            alert(msg);
+    /*
+        Refresh dynamic elements using a data-refresh attribugte
+     */
+    function refresh(options) {
+        function anim() {
+            var e = $(this);
+            var o = e.data("ejs-options")
+            var effects = o.effects;
+            if (effects == "highlight") {
+                e.fadeTo(0, 0.3);
+                e.fadeTo(750, 1);
+            } else if (effects == "fadein") {
+                e.fadeTo(0, 0);
+                e.fadeTo(1000, 1);
+            } else if (effects == "fadeout") {
+                e.fadeTo(0, 1);
+                e.fadeTo(1000, 0);
+            } else if (effects == "bold") {
+                /* Broken */
+                e.css("font-weight", 100);
+                e.animate({"opacity": 0.1, "font-weight": 900}, 1000);
+            }
         }
+
+        function applyData(data, http) {
+            var d, id, oldID, newElt, isHtml = false;
+
+            var id = this.attr("id");
+            var apply = this.attr('data-apply') || id;
+            var e = (apply) ? $('#' + apply) : $(this);
+            var o = e.data("ejs-options");
+            var contentType = http.getResponseHeader("Content-Type");
+
+            if (contentType == "text/html") {
+                try {
+                    /* Copy old element options and id */
+                    data = $(data);
+                    data.data("ejs-options", o);
+                    data.attr("id", id);
+                    copyDataAttributes.call(data, e);
+                    isHtml = true;
+                } catch (e) {
+                    console.debug(e);
+                }
+            }
+            if (isHtml) {
+                if (e[0] && e[0].tagName == "TABLE") {
+                    /* Copy tablesorter data and config and re-sort the data before displaying */
+                    data.data("tablesorter", e.data("tablesorter"));
+                    var config = data[0].config = e[0].config;
+                    data.tablesorter({ sortList: config.sortList });
+                }
+                e.replaceWith(data);
+                e = data;
+
+            } else {
+                d = e[0];
+                if (d.type == "checkbox") {
+                    if (data == e.val()) {
+                        e.attr("checked", "yes")
+                    } else {
+                        e.removeAttr("checked")
+                    }
+                } else if (d.type == "radio") {
+                    //  MOB BROKEN
+                    if (data == e.val()) {
+                        e.attr("checked", "yes")
+                    } else {
+                        e.removeAttr("checked")
+                    }
+                } else if (d.type == "text" || d.type == "textarea") {
+                    e.val(data);
+                } else if (d.tagName == "IMG") {
+                    e.attr("src", data)
+                    // var img = $('<img />').attr('src', data);
+                } else {
+                    e.text(data);
+                }
+            }
+            anim.call(e);
+            return e;
+        }
+
+        function update(options) {
+            var elt = $(this);
+            var o = $.extend({}, options, elt.data("ejs-options") || {}, getDataAttributes(elt));
+            elt.data("ejs-options", o);
+            if (o.updating) {
+                var method = o["refresh-method"] || "GET";
+
+                //  MOB - consider firing events - elt.trigger('http:complete', http);
+                $.ajax({
+                    url: o.refresh,
+                    type: method,
+                    success: function (data, status, http) { 
+                        if (http.status == 200) {
+                            elt = applyData.call(elt, data, http); 
+                        } else if (http.status == 0) {
+                            log("Error updating control: can't connect to server");
+                        } else {
+                            log("Error updating control: " + http.statusText + " " + http.responseText); 
+                        }
+                    },
+                    complete: function() {
+                        setTimeout(function(elt) { 
+                            update.call(elt, o); 
+                        }, o["refresh-period"], elt);
+                    },
+                    error: function (http, msg, elt) { 
+                        log("Error updating control: " + msg); 
+                    },
+                });
+            } else {
+                setTimeout(function(elt) { update.call(elt, o);}, o["refresh-period"], elt);
+            }
+            if (!o.bound) {
+                $(document).bind('keyup.refresh', function(event) {
+                    if (event.keyCode == o.toggle) {
+                        $('[data-refresh]').each(toggle);
+                    }
+                });
+                o.bound = true;
+            }
+        }
+        var elt = $(this);
+        var refreshCfg = $.extend({}, defaults, options || {});
+        update.call(elt, refreshCfg);
+        return this;
+    }
+
+    /*
+        Toggle dynmic refresh on or off
+     */
+    function toggle() {
+        elt = $(this);
+        var o = elt.data("ejs-options");
+        if (o) {
+            o.updating = !o.updating;
+        }
+        /* FUTURE
+            var image = $(".-ejs-table-download", e.get(0));
+            if (o.updating) {
+                image.src = image.src.replace(/red/, "green");
+            } else {
+                image.src = image.src.replace(/green/, "red");
+            }
+        */
     }
 
     /***************************************** Live Attach to Elements ***************************************/
 
     /* Click with data-confirm */
     $('a[data-confirm],input[data-confirm]').live('click', function () {
-        var el = $(this);
-        el.bind('confirm', function (evt) {
-            return confirm(el.attr('data-confirm'));
+        var elt = $(this);
+        elt.bind('confirm', function (evt) {
+            return confirm(elt.attr('data-confirm'));
         });
-        el.trigger('confirm');
+        elt.trigger('confirm');
     });
 
     /* Click with tabs */
@@ -363,6 +387,7 @@
         if (!id) {
             id = $(this).parent().children().index($(this)) + 1;
         }
+        //  MOB 
         table.attr('data-url', table.attr('data-remote') + "?id=" + id);
         backgroundRequest.apply(this);
         e.preventDefault();
@@ -440,17 +465,7 @@
     /**************************** Initialization ************************/
 
     $(document).ready(function() {
-
-        $('[data-sort-order]').ejsSortTable();
-        $('[data-refresh]').ejsRefresh();
-
-        $.each($('[data-modal]'), function() {
-            this.modal({
-                escClose: false, 
-                overlayId: "-ejs-modal-background", 
-                containerId: "-ejs-modal-foreground",
-            });
-        });
+        $(document).ejs();
     });
 
 })(jQuery);
