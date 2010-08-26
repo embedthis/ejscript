@@ -16,7 +16,7 @@ public class TestController extends Controller {
         write("Hello List")
     }
     action function phase1() {
-        redirectAction("phase2")
+        redirect("phase2")
     }
     action function phase2() {
         write("Hello Phase 2")

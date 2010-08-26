@@ -33,21 +33,25 @@ module ejs.web {
         @option confirm String Message to prompt the user to requeset confirmation before submitting a form or request.
         @option data-* All other data-* names are passed through to the HTML unmodified.
         @option domid String Client-side DOM-ID to use for the control
+        @option effects String Transition effects to apply when updating a control. Select from: "fadein", "fadeout",
+            "highlight".
         @option escape Boolean Escape the text before rendering. This converts HTML reserved tags and delimiters into
             an encoded form.
         @option field String Client DOM name to use for the generated HTML element.
         @option height (Number|String) Height of the table. Can be a number of pixels or a percentage string. 
             Defaults to unlimited.
         @option id Number Numeric database ID for the record that originated the data for the view element.
-        @option method String HTTP method to invoke. May be: GET, POST, PUT or DELETE.
+        @option method String HTTP method to invoke.
         @option modal String Make a form a modal dialog.
         @option period Number Period in milliseconds to invoke the $refresh URI to update the control data. If period
             is zero (or undefined), then refresh will be done using a perisistent connection.
         @option rel String HTML rel attribute. Can be used to generate "rel=nofollow" on links.
         @option remote (String|Boolean) Perform the request in the background without changing the browser location.
-            The option may be set to the URI to invoke or it may be set to true if an implicit URI is defined by the control.
+            The option may be set to the URI to invoke or it may be set to true and the URI will be determined by
+            other options.
         @option refresh (String|URI|Object) URI to invoke in the background to refresh the control data every $period.
             milliseconds. If period is undefined or zero, a persistent connection will be used to refresh data.
+        @option refresh-method String HTTP method to invoke for refresh requests.
         @option size (Number|String) Size of the element.
         @option style String CSS Style to use for the table.
         @option value Object Override value to display if used without a form control record.
@@ -107,6 +111,7 @@ module ejs.web {
                 }
             } else {
                 request = {}
+                config = App.config
             }
             for (helper in config.web.view.helpers) {
                 if (helper.contains("::")) {
@@ -162,10 +167,10 @@ module ejs.web {
             @param options Optional extra options. See $View for a list of the standard options.
             Examples:
                 button("commit", "OK")
+                button("commit", "Cancel")
          */
         function button(name: String, label: String, options: Object = {}): Void {
             options = getOptions(options)
-            name = getFieldName(name, options)
             getConnector("button", options).button(name, label, options)
         }
 
@@ -210,7 +215,7 @@ module ejs.web {
                 simple property of the record or it can have multiple parts, such as: field.field.field. If this call 
                 is used without a form control record, the actual data value should be supplied via the options.value 
                 property.
-            @param checkedValue Value to use for the field when checked. Defaults to true.
+            @param checkedValue Value for which the checkbox will be checked. Defaults to true.
             @param options Optional extra options. See $View for a list of the standard options.
             @option value Object Override value to display if used without a form control record.
          */
@@ -219,6 +224,18 @@ module ejs.web {
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("checkbox", options).checkbox(name, value, checkedValue, options)
+        }
+
+        /**
+            Render a HTML division. This creates an HTML element with the required options. It is useful to generate
+                a dynamically refreshing division.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @examples
+                <% div({ refresh: "/getData", period: 2000}) %>
+         */
+        function div(body: String, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("div", options).div(body, options)
         }
 
         /**
@@ -482,7 +499,7 @@ MOB - doc not right
             options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
-            getConnector("radio", options).radio(name, choices, value, options)
+            getConnector("radio", options).radio(name, value, choices, options)
         }
 
         /** 
@@ -553,39 +570,67 @@ MOB - doc not right
                 objects where each object represents the data for a row. The column names are the object property names 
                 and the cell text is the object property values.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option columns (Array|Object) The columsn list can be either an array of column names or an object hash 
+            @option keyFormat String Define how the keys will be handled for click and edit URIs. 
+                Set to one of the set: ["names", "pairs", "params"]. Default is "params".
+                Set to "names" to add only the key names to the request URI. Each name is separated using "/".
+                Set to "pairs" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
+                    key and value are formatted as "key=value".
+                Set to "params" to add the key/value pair to the POST body parameters. 
+                If you require more complex key management, set click or edit to a callback function and format the 
+                URI and params manually.
+            @option cell Boolean Set to true to make click or edit links apply per cell instead of per row. 
+                The default is false.
+            @option click (Boolean|Uri|String) URI to invoke when editing cells. If set to true, the rest of the 
+                options specifies the URI to invoke. Otherwise click can be set to a URI to invoke. The relevant column 
+                or columns must be marked as editable in the columns properties. If set to a function, the function will 
+                be invoked to provide the click method, uri and parameters. The function should be of the form:
+
+                function click(record, field: String, value, options): {method: String, uri: Uri, params: Object}
+
+                If using cell based click/edit, then field will be set to the relevant field. If using row click/edit,
+                then field will be null. 
+
+            @option columns (Array|Object) The columns list can be either an array of column names or an object hash 
                 of column objects where each column entry is hash of column options. 
                 Column options: align, formatter, header, sort, sortOrder, style, width.
+            @option edit (Boolean|Uri|String) URI to invoke when editing cells. If set to true, the rest of the 
+                options specifies the URI to invoke. Otherwise click can be set to a URI to invoke. The relevant 
+                column or columns must be marked as editable in the columns properties.
+            @option key Array List of fields to set as the key values to uniquely identify the clicked or edited 
+                row. The key will be rendered as a "data-key" HTML attribute and will be passed to the 
+                receiving controller when the entry is clicked or edited. Each entry of the key option can be a simple
+                string field name or it can be an Object with a single property, where the property name is a simple
+                string field name and the property value is the mapped field name to use as the actual key name. This 
+                supports using custom key names. NOTE: this option cannot be used if using cell clicks or edits. In that
+                case, set click/edit to a callback function and explicitly construct the required URI and parameters.
             @option pageSize Number Number of rows to display per page. Omit or set to <= 0 for unlimited. 
                 Defaults to unlimited.
+            @option params Object Hash of post parameters to include in the request. This is a hash of key/value items.
             @option pivot Boolean Pivot the table by swaping rows for columns and vice-versa
             @option query URI query string to add to click URIs. Can be a single-dimension array for per-row query 
                 strings or a two-dimensional array for per cell (order is row/column).
             @option showHeader Boolean Control if column headings are displayed.
             @option showId Boolean If a columns option is not provided, the id column is normally hidden. 
                 To display, set showId to be true.
-            @option sort String Enable row sorting and define the column to sort by.
+            @option sort String Enable row sorting and define the column to sort by. Defaults to the first column.
             @option sortOrder String Default sort order. Set to "ascending" or "descending".Defaults to ascending.
-            @option style String CSS class to use for the table.
+            @option style String CSS class to use for the table. The ultimate style to use for a table cell is the 
+                combination of style, styleCells, styleColumns and style Rows.
             @option styleCells 2D Array of styles to use for the table body cells.
             @option styleColumns Array of styles to use for the table body columns. Can also use the style option in the
                 columns option.
             @option styleRows Array of styles to use for the table body rows
             @option title String Table title.
 
-//  MOB
-@option key Number Key column index. The key is added to click requests as a "key=value" POST or query field.
-@option method String Http method to use for click events
-
 //  MOB -- should auto-align currency to the right
-
+//  MOB -- test editable
             Column options:
             <ul>
                 <li>align</li>
+                <li>editable</li>
                 <li>formatter</li>
                 <li>header</li>
                 <li>sort String Define the column to sort by and the sort order</li>
-                    Defaults to ascending.</li>
                 <li>sortOrder String Set to "ascending" or "descending".  Defaults to ascending.</li>
                 <li>style</li>
                 <li>width</li>
@@ -699,6 +744,34 @@ MOB - doc not right
             getConnector("tree", options).tree(data, options)
         }
 
+        /**
+            Render a partial view. This creates an HTML element with the required options. It is useful to generate
+                a dynamically refreshing division.
+MOB -- review and rethink this
+            @param viewPath (String|Object) If a string, it is a view template name or the name of an action. If an object,
+                it should have properties: controller and action. Action can be the name of a view template.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @examples
+                <% view(viewName) %>
+         */
+        function view(viewPath, options: Object = {}): Void {
+            let cname = controllerName
+            let action = viewPath
+            let ext = config.extensions.ejs
+            if (Object.getOwnPropertyCount(viewPath) > 0) {
+                if (viewPath.controller) {
+                    cname = viewPath.controller
+                }
+                if (viewPath.action) {
+                    action = viewPath.action
+                }
+                if (viewPath.ext) {
+                    ext = viewPath.ext
+                }
+            }
+            controller.writeTemplate(request.dir.join(config.directories.views, cname, action).joinExt(ext))
+        }
+
         // MOB TODO - need a rich text editor. Wiki style.  wiki()
         // MOB TODO - need markdown style output?
 
@@ -807,7 +880,11 @@ MOB - doc not right
 
         private function getOptions(options: Object): Object {
             if (options is String) {
-                options = {action: options}
+                if (options.startsWith("/")) {
+                    options = {uri: options.toString() }
+                } else {
+                    options = {action: options}
+                }
             } else if (options is Uri) {
                 options = {uri: options.toString() }
             }

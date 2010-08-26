@@ -154,15 +154,23 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
 
 static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
 {
-    MprHash     *hp;
-    HttpConn    *conn;
     EjsName     n;
+    EjsString   *value;
+    EjsObj      *old;
+    HttpConn    *conn;
+    MprHash     *hp;
     
     if (req->headers == 0) {
         req->headers = (EjsObj*) ejsCreateSimpleObject(ejs);
         conn = req->conn;
         for (hp = 0; conn && (hp = mprGetNextHash(conn->rx->headers, hp)) != 0; ) {
-            ejsSetPropertyByName(ejs, req->headers, EN(&n, hp->key), ejsCreateString(ejs, hp->data));
+            EN(&n, hp->key);
+            if ((old = ejsGetPropertyByName(ejs, req->headers, &n)) != 0) {
+                value = ejsCreateStringAndFree(ejs, mprStrcat(req, -1, ejsGetString(ejs, old), "; ", hp->data, NULL));
+            } else {
+                value = ejsCreateString(ejs, hp->data);
+            }
+            ejsSetPropertyByName(ejs, req->headers, &n, value);
         }
     }
     return (EjsObj*) req->headers;
@@ -241,9 +249,9 @@ static EjsSession *getSession(Ejs *ejs, EjsRequest *req, int create)
     }
     if ((req->session = ejsGetSession(ejs, req)) == NULL && create) {
         req->session = ejsCreateSession(ejs, req, 0, 0);
-    }
-    if (req->session && conn) {
-        httpSetCookie(conn, EJS_SESSION, req->session->id, "/", NULL, 0, conn->secure);
+        if (req->session && conn) {
+            httpSetCookie(conn, EJS_SESSION, req->session->id, "/", NULL, 0, conn->secure);
+        }
     }
     return req->session;
 }
@@ -1081,6 +1089,11 @@ static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         }
     }
     ejsSetPropertyByName(ejs, req->responseHeaders, ejsName(&n, "", mprStrdup(req->responseHeaders, key)), value);
+
+    /* MOB Just until we have filters - to disable chunk filtering */
+    if (strcmp(key, "x-chunk-size") == 0) {
+        httpSetChunkSize(req->conn, ejsGetInt(ejs, value));
+    }
     return 0;
 }
 

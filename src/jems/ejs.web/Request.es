@@ -80,7 +80,7 @@ module ejs.web {
 
         /** 
             The request content type as specified by the "Content-Type" Http request header. This is set to null 
-            if not defined.
+            if not defined. This is the content type of the request body content sent with the request.
          */
         native enumerable var contentType: String
 
@@ -136,7 +136,7 @@ module ejs.web {
             headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
             HTTP/1.1 specification. Use the header() method if you want to retrieve a single header.
             Headers defined on the server-side by creating new header entries in $headers will preserve case. 
-            Use $headers() if you want to match headers using a mixed case key. e.g. headers("Content-Length").
+            Use $header() if you want to match headers using a mixed case key. e.g. header("Content-Length").
          */
         native enumerable var headers: Object
 
@@ -491,7 +491,7 @@ module ejs.web {
                 result = uri.resolve(location, relative).normalize
             }
             if (relative) {
-                result = result.relative(request.uri.path)
+                result = result.relative(uri.path)
             }
             return result
         }
@@ -567,6 +567,7 @@ module ejs.web {
                     "\">here</a>.</p>\r\n" +
                     "<address>" + server.software + " at " + host + " Port " + server.port + 
                     "</address></body>\r\n</html>\r\n")
+            finalize()
         }
 
         /** 
@@ -697,7 +698,6 @@ module ejs.web {
         function setupFlash() {
             if (sessionID) {
                 lastFlash = null
-// print("@@@@@@@@@@@@@@ SESSION FLASH \"" + session["__flash__"] + "\"")
                 flash = session["__flash__"]
                 if (flash) {
                     session["__flash__"] = undefined
@@ -705,7 +705,6 @@ module ejs.web {
                 } else {
                     flash = null
                 }
-// print("TYPE " + typeOf(flash))
             }
         }
 
@@ -862,6 +861,22 @@ module ejs.web {
          */
         function get serverPort(): Number
             server.port
+
+
+        /**
+            @example
+            @option max-age Max time in seconds the resource is considered fresh
+            @option s-maxage Max time in seconds the resource is considered fresh from a shared cache
+            @option public marks authenticated responses as cacheable
+            @option private shared caches may not store the response
+            @option no-cache cache must re-submit request for validation before using cached copy
+            @option no-store response may not be stored in a cache.
+            @option must-revalidate forces caches to observe expiry and other freshness information
+            @option proxy-revalidate similar to must-revalidate except only for proxy caches
+          */
+        function cache(options) {
+        }
+
 
         /*************************************** Deprecated ***************************************/
 

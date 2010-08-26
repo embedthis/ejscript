@@ -171,7 +171,6 @@ void *ejsGetProperty(Ejs *ejs, void *vp, int slotNum)
 
     mprAssert(ejs);
     mprAssert(vp);
-    mprAssert(slotNum >= 0);
 
     obj = (EjsObj*) vp;
     type = obj->type;

@@ -143,6 +143,9 @@ UNUSED - MOB -- better to set in Request
                 } else {
                     response = this[actionName]()
                 }
+                if (response && !response.body) {
+                    throw "Response object is missing a \"body\""
+                }
                 if (!response && !request.responded && request.autoFinalizing) {
                     /* Run a default view */
                     writeView()
@@ -275,12 +278,15 @@ UNUSED - MOB -- better to set in Request
         /** 
             Render a partial response using template file.
             @param path Path to the template to render to the client
-            @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
+            @param options Additional options.
+            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
          */
-        function writePartialTemplate(path: Path, layouts: Path = null): Void { 
+        function writePartialTemplate(path: Path, options: Object = {}): Void { 
             request.filename = path
-            layouts ||= config.directories.layouts
-            let app = TemplateBuilder(request, { layouts: layouts } )
+            if (options.layout === undefined) {
+                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+            }
+            let app = TemplateBuilder(request, options)
             log.debug(4, "writePartialTemplate: \"" + path + "\"")
             Web.process(app, request, false)
         }
@@ -290,39 +296,52 @@ UNUSED - MOB -- better to set in Request
             This call writes the result of running the view template file back to the client.
             @param viewName Name of the view to render to the client. The view template filename will be constructed by 
                 joining the views directory with the controller name and view name. E.g. views/Controller/list.ejs.
+            @param options Additional options.
+            @option controller Optional controller for the view.
+            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
          */
-        function writeView(viewName: String = null): Void {
-            viewName ||= actionName
-            writeTemplate(request.dir.join(config.directories.views, controllerName, viewName).
-                joinExt(config.extensions.ejs))
+        function writeView(viewName = null, options: Object = {}): Void {
+            let controller = options.controller || controllerName
+            viewName ||= options.action || actionName
+            if (options.layout === undefined) {
+                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+            }
+            writeTemplate(request.dir.join(config.directories.views, controller, viewName).
+                joinExt(config.extensions.ejs), options)
         }
 
         /** 
             Render a view template from a path.
             This call writes the result of running the view template file back to the client.
             @param path Path to the view template to render and write to the client.
-            @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
+            @param options Additional options.
+            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
          */
-        function writeTemplate(path: Path, layouts: Path = null): Void {
-log.debug(0, "writeTemplate: \"" + path + "\"")
+        function writeTemplate(path: Path, options: Object = {}): Void {
             log.debug(4, "writeTemplate: \"" + path + "\"")
+            let saveFilename = request.filename
             request.filename = path
-            layouts ||= config.directories.layouts
-            let app = TemplateBuilder(request, { layouts: layouts } )
+            if (options.layout === undefined) {
+                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+            }
+            let app = TemplateBuilder(request, options)
             Web.process(app, request, false)
+            request.filename = saveFilename
         }
 
         /** 
             Render a view template from a string literal.
             This call writes the result of running the view template file back to the client.
             @param page String literal containing the view template to render and write to the client.
-            @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
+            @param layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
          */
-        function writeTemplateLiteral(page: String, layouts: Path = null): Void {
+        function writeTemplateLiteral(page: String, options: Object = {}): Void {
             log.debug(4, "writeTemplateLiteral")
-            request.filename = null
-            layouts ||= config.directories.layouts
-            let app = TemplateBuilder(request, { layouts: layouts, literal: page } )
+            if (options.layout === undefined) {
+                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+            }
+            options.literal = page
+            let app = TemplateBuilder(request, options)
             Web.process(app, request, false)
         }
 

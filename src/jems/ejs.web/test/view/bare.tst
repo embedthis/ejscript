@@ -7,7 +7,7 @@ require ejs.web
 v = new View
 assert(v)
 
-assert(v.config == null)
+assert(v.config == App.config)
 assert(v.controller == null)
 assert(v.currentRecord == null)
 assert(v.request == null)

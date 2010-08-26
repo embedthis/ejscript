@@ -14,56 +14,116 @@ module ejs.web {
      */
     function StaticApp(request: Request): Object {
         let filename = request.filename
-        let status = Http.Ok, headers, body
-        if (!filename.exists && request.method != "PUT") {
-            status = Http.NotFound, 
-            body = errorBody("Not Found", "Cannot find " + escapeHtml(request.pathInfo))
-        } else {
-            headers = {
-                "Content-Type": Uri(request.uri).mimeType,
-            }
-            let expires = request.config.web.expires
-            if (expires) {
-                let lifetime = expires[request.extension] || expires[""]
-                if (lifetime) {
-                    let when = new Date
-                    when.time += (lifetime * 1000)
-                    headers["Expires"] = when.toUTCString()
-                    // headers["Cache-Control"] = "max-age=" + lifetime
-                }
-            }
-            if (request.method == "GET" || request.method == "POST") {
-                headers["Content-Length"] = filename.size
-                if (request.config.web.nosend) {
-                    body = File(filename, "r")
-                } else {
-print("SET FILENAME " + filename + " TYPE " + typeOf(filename))
-                    body = filename
-                }
+        let status = Http.Ok, body
 
-            } else if (request.method == "DELETE") {
-                status = Http.NoContent
-                //  MOB -- remove try when not needed
-                try {
-                    if (!filename.remove()) {
-                        status = Http.NotFound
-                    }
-                } catch {
+        let headers = {
+            "Content-Type": Uri(request.uri).mimeType,
+        }
+        if (request.method != "PUT") {
+            if ((encoding = request.header("Accept-Encoding")) && encoding.contains("gzip")) {
+                let compressed = Path(filename + ".gz")
+                if (compressed.exists) {
+                    request.filename = compressed
+                    headers["Content-Encoding"] = "gzip"
+                }
+            }
+            if (!filename.exists) {
+                return {
+                    status: Http.NotFound, 
+                    body: errorBody("Not Found", "Cannot find " + escapeHtml(request.pathInfo))
+                }
+            }
+        }
+        let etag
+        if (filename.exists) {
+            etag = "%x-%x".format(filename.size, filename.modified)
+            headers["ETag"] = etag
+            headers["Last-Modified"] = filename.modified.toUTCString()
+        }
+        let ignoreIfModified = false
+
+        let rtags = request.header("If-Match")
+        if (rtags) {
+            for each (rtag in rtags.split(",")) {
+                if (rtag != etag || (rtag == "*" && !filename.exists)) {
+                    /* Etag doesn't match - don't retrieve - must still check If-Modified */
+                   status = Http.PrecondFailed
+                } else {
+                    ignoreIfModified = true
+                }
+            }
+        }
+        let rtags = request.header("If-None-Match")
+        if (rtags) {
+            for each (rtag in rtags.split(",")) {
+                if (rtag == etag || (rtag == "*" && filename.exists)) {
+                    /* Etag matches - don't retrieve */
+                    status = Http.PrecondFailed
+                } else {
+                    ignoreIfModified = true
+                }
+            }
+        }
+
+        /*
+            Must not return NotModified if an If-None-Match failed
+         */
+        if (!ignoreIfModified && (when = request.header("If-Modified-Since"))) {
+            when = Date.parse(when)
+            if (filename.exists && filename.modified <= when) {
+                return { headers: headers, status: Http.NotModified }
+            }
+        }
+        if (!ignoreIfModified && (when = request.header("If-Unmodified-Since"))) {
+            when = Date.parse(when)
+            if (!filename.exists && when < filename.modified) {
+                status = Http.PrecondFailed
+            }
+        }
+        if (status != Http.Ok) {
+            return { status: status }
+        }
+
+        let expires = request.config.web.expires
+        if (expires) {
+            let lifetime = expires[request.extension] || expires[""]
+            if (lifetime) {
+                let when = new Date
+                when.time += (lifetime * 1000)
+                headers["Expires"] = when.toUTCString()
+                //MOB  headers["Cache-Control"] = "max-age=" + lifetime
+            }
+        }
+        if (request.method == "GET" || request.method == "POST") {
+            headers["Content-Length"] = filename.size
+            if (request.config.web.nosend) {
+                body = File(filename, "r")
+            } else {
+                body = filename
+            }
+
+        } else if (request.method == "DELETE") {
+            status = Http.NoContent
+            //  MOB -- remove try when not needed
+            try {
+                if (!filename.remove()) {
                     status = Http.NotFound
                 }
-
-            } else if (request.method == "PUT") {
-                request.dontAutoFinalize()
-                return { body: put }
-
-            } else if (request.method == "HEAD") {
-                /* No need to calculate the content */
-                headers["Content-Length"] = filename.size
-
-            } else {
-                status = Http.BadMethod
-                body = errorBody("Unsupported method ", "Method " + escapeHtml(request.method) + " is not supported")
+            } catch {
+                status = Http.NotFound
             }
+
+        } else if (request.method == "PUT") {
+            request.dontAutoFinalize()
+            return { body: put }
+
+        } else if (request.method == "HEAD") {
+            /* No need to calculate the content */
+            headers["Content-Length"] = filename.size
+
+        } else {
+            status = Http.BadMethod
+            body = errorBody("Unsupported method ", "Method " + escapeHtml(request.method) + " is not supported")
         }
         return {
             status: status,
@@ -71,6 +131,7 @@ print("SET FILENAME " + filename + " TYPE " + typeOf(filename))
             body: body
         }
 
+        /* Inline function to handle put requests */
         function put(request: Request) {
             //  MOB -- how to handle ranges?
             let path = request.dir.join(request.pathInfo.trimStart('/'))

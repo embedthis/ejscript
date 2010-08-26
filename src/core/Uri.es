@@ -111,7 +111,7 @@ module ejs {
         /** 
             Encode a URI using www-url encoding. This replaces special characters with encoded alternative sequence.
             The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", 
-            "*", "'", "(", ")", "#", ";", ",", "/", "?", ":", "@", "&", "=", "+", "$". Note that encocdeURI does not encode
+            "*", "'", "(", ")", "#", ";", ",", "/", "?", ":", "@", "&", "=", "+", "$". Note that encocde does not encode
             "&", "+" and "=". If you require these to be encoded, use encodeComponents. 
             NOTE: This routine encodes "!", "'", "(", ")" and "*", whereas the $encodeURI routine does not. It does not
             encode "[" and "]" which may be used in IPv6 numeric hostnames.

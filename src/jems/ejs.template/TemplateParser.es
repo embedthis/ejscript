@@ -41,7 +41,7 @@ module ejs.template  {
         private var viewModule: String
 
         /**
-            Build a templated page using JSGI
+            Build a templated page
             @param script String containing the script to parse
             @param options Object hash with options to control parsing
             @options layout Path Layout file

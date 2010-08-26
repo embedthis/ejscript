@@ -52,6 +52,7 @@ module ejs.web {
                      */
                 },
                 // endpoint: "127.0.0.1:4000",
+                // helpers: [],
                 view: {
                     connectors: {
                         table: "html",
@@ -61,6 +62,7 @@ module ejs.web {
                     formats: {
                         Date: "%a %e %b %H:%M",
                     },
+                    layout: "default.ejs",
                 },
             },
         }
@@ -96,7 +98,8 @@ module ejs.web {
                     process(app, request)
                 }
             } catch (e) {
-                request.writeError(Http.ServerError, e)
+                let status = request.status != Http.Ok ? request.status : Http.ServerError
+                request.writeError(status, e)
             }
         }
 
@@ -119,7 +122,6 @@ module ejs.web {
                 if (request.isSecure) {
                     body = File(body, "r")
                 } else {
-print("@@@ SEND FILE")
                     request.sendFile(body)
                     return
                 }
@@ -219,10 +221,8 @@ print("@@@ SEND FILE")
                 if (finalize) {
                     request.finalizeFlash()
                     request.autoFinalize()
-                    //  if (request.finalized) request.close()
                 }
             } catch (e) {
-print("@@@@@@@@@@@@@@@ " + request.uri + " CATCH " + e)
                 App.log.debug(3, e)
                 request.writeError(Http.ServerError, e)
             }

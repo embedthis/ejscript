@@ -379,8 +379,6 @@ module ejs {
             does not exist. NOTE: this is not a string representation of an octal posix mask. 
          */
         native function get perms(): Number
-
-        /** */
         native function set perms(perms: Number): Void
 
         /**

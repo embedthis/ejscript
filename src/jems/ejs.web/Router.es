@@ -84,6 +84,7 @@ module ejs.web {
   { name: "destroy", builder: MvcBuilder, method: "POST",   match: "/:controller/destroy",  params: { action: "destroy" } },
   { name: "default", builder: MvcBuilder,                   match: "/:controller/:action",  params: {} },
   { name: "index",   builder: MvcBuilder, method: "GET",    match: "/:controller",          params: { action: "index" } },
+  { name: "index",   builder: MvcBuilder, method: "POST",   match: "/:controller",          params: { action: "index" } },
   { name: "static",  builder: StaticBuilder, },
         ]
 
@@ -170,18 +171,19 @@ module ejs.web {
             let log = request.log
             log.debug(5, "Routing " + request.pathInfo)
 
+            if (request.method == "POST") {
+                let method = request.params["__method__"] || request.header("X-HTTP-METHOD-OVERRIDE")
+                if (method && method.toUpperCase() != request.method) {
+                    // MOB automatically done request.originalMethod ||= request.method
+                    log.debug(3, "Change method from " + request.method + " TO " + method + " for " + request.uri)
+                    request.method = method
+                }
+            }
+
             //  MOB - need better way to turn on debug trace without slowing down the router
             for each (r in routes) {
                 log.debug(6, "Test route \"" + r.name + "\"")
 
-                if (request.method == "POST") {
-                    let method = request.params["__method__"] || request.header("X-HTTP-METHOD-OVERRIDE")
-                    if (method) {
-                        // MOB automatically done request.originalMethod ||= request.method
-                        log.debug(3, "Change method from " + request.method + " TO " + method)
-                        request.method = method
-                    }
-                }
                 if (r.method && request.method != r.method) {
                     continue
                 }
@@ -419,7 +421,7 @@ module ejs.web {
         var type: String
 
         /**
-            Function to make URIs according to the route format
+            Function to make URIs
          */
         var urimaker: Function
 

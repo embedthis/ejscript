@@ -111,6 +111,20 @@ module ejs.web {
 */
         }
 
+        private function rebuildComponent(request: Request, mod: Path, files: Array) {
+            let code = "require ejs.web\n"
+            for each (file in files) {
+                let path = Path(file)
+                if (!path.exists) {
+                    request.status = Http.NotFound
+                    throw "Can't find required component: \"" + path + "\""
+                }
+                code += path.readString()
+            }
+            request.log.debug(2, "Rebuild component: " + mod + " files: " + files)
+            eval(code, mod)
+        }
+
         /** 
             Load a component. This will load a module and optionally recompile if the given dependency paths are
             more recent than the module itself. If recompilation occurs, the result will be cached in the supplied module.
@@ -135,21 +149,15 @@ module ejs.web {
                 rebuild = true
             }
             if (rebuild) {
-                let code = "require ejs.web\n"
-                for each (file in files) {
-                    let path = Path(file)
-                    if (!path.exists) {
-                        throw "Can't find required component: \"" + path + "\""
-                    }
-                    code += path.readString()
-                }
-                request.log.debug(4, "Rebuild component: " + mod + " files: " + files)
-                eval(code, mod)
-
+                rebuildComponent(request, mod, files)
             } else if (!loaded[mod]) {
                 request.log.debug(4, "Reload component : " + mod)
-                global.load(mod)
-                loaded[mod] = new Date
+                try {
+                    global.load(mod)
+                    loaded[mod] = new Date
+                } catch (e) {
+                    rebuildComponent(request, mod, files)
+                }
 
             } else {
                 request.log.debug(4, "Use existing component: " + mod)

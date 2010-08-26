@@ -16,7 +16,7 @@ module ejs.web {
             -ejs-flash-error
             -ejs-hidden
             -ejs-tabs
-            -ejs-fieldError     MOB -- should this be field-error
+            -ejs-field-error
             -ejs-progress
             -ejs-progress-inner
             -ejs-table
@@ -44,17 +44,20 @@ module ejs.web {
             NOTE: data-*, click and remote are handled specially in getAttributes.
          */
         private static const htmlOptions: Object = { 
+            "addKey":               "data-add-key",
             "apply":                "data-apply",
             "background":           "background",
             "class":                "class",
             "color":                "color",
             "colour":               "color",
             "domid":                "id",
+            "effects":              "data-effects",
             "height":               "height",
             "key":                  "data-key",
             "method":               "data-method",
             "modal":                "data-modal",
             "period":               "data-refresh-period",
+            "params":               "data-params",
             "pivot":                "data-pivot",
             "refresh":              "data-refresh",
             "rel":                  "rel",
@@ -72,7 +75,7 @@ module ejs.web {
             "web/js/tv/jquery.treeview.css",
         ]
 
-        //  MOB -- what about minified?
+        //  MOB -- what about minified versions?
 
         private static const defaultStylesheets = [
             "web/js/jquery.js", 
@@ -117,6 +120,11 @@ module ejs.web {
             write('    <input name="' + field + '" type="hidden"' + getAttributes(options) + ' value="" />\r\n')
         }
 
+        function div(body: String, options: Object): Void {
+            // write('<div ' + getAttributes(options) + ' type="' + getTextKind(options) + '">' +  body + '</div>\r\n')
+            write('<span ' + getAttributes(options) + '>' +  body + '</span>\r\n')
+        }
+
 		function endform(): Void {
             write('</form>\r\n')
         }
@@ -150,6 +158,9 @@ module ejs.web {
 
 //  MOB - merge label and link?
         function label(text: String, options: Object): Void {
+            if (options.refresh && !options.domid) {
+                options.domid = getNextID()
+            }
             // write('<span ' + getAttributes(options) + ' type="' + getTextKind(options) + '">' +  text + '</span>\r\n')
             write('<span ' + getAttributes(options) + '>' +  text + '</span>\r\n')
         }
@@ -204,29 +215,30 @@ module ejs.web {
                 '>' + data + '%</div>\r\n</div>>\r\n')
 		}
 
-        function radio(name: String, choices: Object, selected: String, options: Object): Void {
+        function radio(name: String, actual: String, choices: Object, options: Object): Void {
             let checked: String
             let attributes = getAttributes(options)
+dump("CHOICES", choices)
             if (choices is Array) {
                 for each (choice in choices) {
                     if (choice is Array) {
                         /* radio("priority", [["3", "low"], ["5", "med"], ["9", "high"]]) */
                         let [key, value] = choice
-                        checked = (value == selected) ? "checked " : ""
+                        checked = (value == actual) ? "checked " : ""
                         write('    ' + key.toPascal() + ' <input type="radio" name=' + name + attributes + ' value="' + 
                             value + '"' + checked + '/>\r\n')
 
                     } else if (Object.getOwnPropertyCount(choice) > 0) {
                         /* radio("priority", [{low: 3}, {med: 5}, {high: 9}]) */
                         for (let [key, value] in choice) {
-                            checked = (value == selected) ? "checked " : ""
+                            checked = (value == actual) ? "checked " : ""
                             write('  ' + key.toPascal() + ' <input type="radio" name=' + name + attributes + ' value="' + 
                                 value + '"' + checked + '/>\r\n')
                         }
 
                     } else {
                         /* radio("priority", ["low", "med", "high"]) */
-                        checked = (choice == selected) ? "checked " : ""
+                        checked = (choice == actual) ? "checked " : ""
                         write("    " + choice + ' <input type="radio" name="' + name + '"' + attributes + ' value="' + 
                             choice + '" ' + checked + '/>\r\n')
                     }
@@ -234,7 +246,7 @@ module ejs.web {
             } else {
                 /* radio("priority", {low: 0, med: 1, high: 2}) */
                 for (let [key, value] in choices) {
-                    checked = (value == selected) ? "checked " : ""
+                    checked = (value == actual) ? "checked " : ""
                     write("    " + key.toPascal() + ' <input type="radio" name="' + name + '"' + attributes + ' value="' + 
                         value + '" ' + checked + '/>\r\n')
                 }
@@ -252,7 +264,7 @@ module ejs.web {
 		}
 
         function securityToken(options: Object): Void {
-            write('    <meta name="SecurityTokenName"=' + Request.SecurityTokenName + '" />\r\n')
+            write('    <meta name="SecurityTokenName" content="' + Request.SecurityTokenName + '" />\r\n')
             write('    <meta name="' + Request.SecurityTokenName + '" content="' + request.securityToken + '" />\r\n')
         }
 
@@ -275,20 +287,25 @@ module ejs.web {
                 return
             }
             options.style = append(options.style, "-ejs-table")
-
-            o = options.clone(); delete o.click; delete o.remote; delete o.method
-
-            let attributes = getAttributes(o)
+            let attributes = getAttributes({
+                period: options.period,
+                refresh: options.refresh,
+                sort: options.sort,
+                sortOrder: options.sortOrder || "ascending",
+                style: options.style,
+            })
             let columns = getColumns(data, options)
 
 			write('  <table' + attributes + '>\r\n')
+
             /*
                 Table title header and column headings
              */
             if (options.showHeader != false) {
                 write('    <thead>\r\n')
                 if (options.title) {
-                    write('        <tr><td colspan="' + columns.length + '">' + options.title + '</td></tr>\r\n')
+                    let length = Object.getOwnPropertyCount(columns)
+                    write('        <tr><td colspan="' + length + '">' + options.title + '</td></tr>\r\n')
                 }
                 write('        <tr>\r\n')
                 for (let [name, column] in columns) {
@@ -304,17 +321,23 @@ module ejs.web {
             /*
                 Render each row
              */
-            let rowAtt = getAttributes({ click: options.click, method: options.method, remote: options.remote })
-
-            let row: Number = 0
+            let row = 0
 			for each (let r: Object in data) {
-                let styleRow = options.styleRows ? ('class="' + options.styleRows[row] + '"') : ""
-
-                write('        <tr' + rowAtt + styleRow + '>\r\n')
+                let values = {}
+                for (name in columns) {
+                    values[name] = view.getValue(r, name, options)
+                }
+                let styleRow = options.styleRows ? (' class="' + options.styleRows[row] + '"') : ""
+                if (options.cell) {
+                    write('        <tr' + styleRow + '>\r\n')
+                } else {
+                    let att = getCellRowAtt(r, row, null, values, options)
+                    write('        <tr' + att + styleRow + '>\r\n')
+                }
 
                 let col = 0
 				for (let [name, column] in columns) {
-                    let value = view.getValue(r, name, options)
+                    let value = values[name]
                     let styleCell: String = ""
                     if (options.styleColumns) {
                         styleCell = append(styleCell, options.styleColumns[col])
@@ -334,6 +357,9 @@ module ejs.web {
                     } else if (value is Number) {
                         attr = append(attr, ' align="right"')
                     }
+                    if (options.cell) {
+                        attr = append(attr, getCellRowAtt(r, row, name, values, options))
+                    }
                     value = view.formatValue(value, r, name, { formatter: column.formatter} )
                     write('            <td' + attr + '>' + value + '</td>\r\n')
                     col++
@@ -347,7 +373,7 @@ module ejs.web {
 		function tabs(data: Object, options: Object): Void {
             let attributes = getAttributes(options)
             let att
-            if (options["data-remote"]) {
+            if (options.remote) {
                 att = "data-remote"
             } else if (options.click) {
                 att = "data-click"
@@ -376,7 +402,7 @@ module ejs.web {
                 '" value="' + value + '" />\r\n')
         }
 
-        function textarea(name: String, value: String, options: Object): Void {
+        function textarea(field: String, value: String, options: Object): Void {
             numCols = options.numCols
             if (numCols == undefined) {
                 numCols = 60
@@ -385,7 +411,7 @@ module ejs.web {
             if (numRows == undefined) {
                 numRows = 10
             }
-            write('<textarea name="' + name + '" type="' + getTextKind(options) + '"' + getAttributes(options) + 
+            write('<textarea name="' + field + '" type="' + getTextKind(options) + '"' + getAttributes(options) + 
                 ' cols="' + numCols + '" rows="' + numRows + '">' + value + '</textarea>\r\n')
         }
 
@@ -440,11 +466,18 @@ module ejs.web {
             return data
         }
 
-        private function makeUri(location: Object, options: Object): Uri {
+        /*
+            Like makeUri but supports location == true to use the rest of options.
+         */
+        private function buildUri(location: Object, options: Object): Uri {
             if (location == true) {
                 return request.makeUri(options)
             } else if (location is String) {
-                return request.makeUri({action: location})
+                if (location.startsWith("/")) {
+                    return request.makeUri(location)
+                } else {
+                    return request.makeUri({action: location})
+                }
             }
             return request.makeUri(location)
         }
@@ -460,18 +493,104 @@ module ejs.web {
                 options.style = append(options.style, "-ejs-field-error")
             }
             if (options.remote) {
-                options["data-remote"] = makeUri(options.remote, options)
+                options["data-remote"] = buildUri(options.remote, options)
             } else if (options.click) {
-                options["data-click"] = makeUri(options.click, options)
+                options["data-click"] = buildUri(options.click, options)
             }
-            let result: String = ""
-            for (let [key, value] in options) {
-                if (value != undefined) {
-                    let mapped = htmlOptions[key] || key
-                    result += mapped + '="' + value + '" '
+            if (options.refresh && !options.domid) {
+                options.domid = getNextID()
+            }
+            return mapAttributes(options)
+        }
+
+        /*
+            Get attributes for table cells and rows
+         */
+        private function getCellRowAtt(record, row, field, values, options): String {
+            let click, edit, key, method, params
+            if (options.click) {
+                ({method, uri, params, key}) = getTableLink(options.click, record, row, field, values, options)
+                click = buildUri(uri, options)
+            } else if (options.edit) {
+                ({method, uri, params, key}) = getTableLink(options.edit, record, row, field, values, options)
+                edit = buildUri(uri, options)
+            }
+            if (params) {
+                /* Process params and convert to an encoded query string */
+                let list = []
+                for (let [key,value] in params) {
+                    list.push(Uri.encodeComponent(key) + "=" + Uri.encodeComponent(value))
+                }
+                params = list.join("&")
+            }
+            return mapAttributes({ 
+                addKey: options.addKey, "data-click": click, "data-edit": edit, key: key, method: method, params: params,
+            })
+        }
+
+        /*
+            Get data-key attributes for tables
+         */
+        private function getKeyAtt(keyFields: Array, record, row, values, options): String {
+            let keys
+            if (!keyFields && options.click && record.id) {
+                keyFields = ["id"]
+            }
+            if (keyFields) {
+                for (name in record) {
+                    /* Add missing values if columns are not being displayed */
+                    values[name] ||= record[name]
+                }
+                keys = []
+                for each (key in keyFields) {
+                    if (key is String) {
+                        /* Array of key names corresponding to the columns */
+                        keys.push(Uri.encodeComponent(key) + "=" + Uri.encodeComponent((values[key] || row)))
+                    } else {
+                        /* Hash of key:mapped names corresponding to the columns */
+                        for (field in key) {
+                            keys.push(Uri.encodeComponent(key[field]) + "=" + Uri.encodeComponent((values[field] || row)))
+                        }
+                    }
+                }
+                if (keys && keys.length > 0) {
+                    return keys.join("&")
                 }
             }
-            return (result == "") ? "" : (" " + result.trimEnd())
+            return ""
+        }
+
+        /*
+            Get table click/edit links. Return a hash {method, uri, params, key}
+         */
+        private function getTableLink(location, record, row, field, values, options): Object {
+            if (location is Function) {
+                result = location(record, field, values[field], options)
+            } else {
+                let uri = buildUri(location, options)
+                let key = getKeyAtt(options.key, record, row, values, options)
+                result = { method: options.method, uri: uri, params: options.params, key: key}
+            }
+            return result
+        }
+
+        /*
+            Map options to HTML attributes
+         */
+        private function mapAttributes(options: Object): String {
+            let result: String = ""
+            if (options.method) {
+                options.method = options.method.toUpperCase();
+            }
+            for (let [key, value] in options) {
+                if (value != undefined) {
+                    if (htmlOptions[key] || key.startsWith("data-")) {
+                        let mapped = htmlOptions[key] ? htmlOptions[key] : key
+                        result += mapped + '="' + value + '" '
+                    }
+                }
+            }
+            return (result == "") ? result : (" " + result.trimEnd())
         }
 
         private function getColumns(data: Object, options: Object): Object {
@@ -515,7 +634,7 @@ module ejs.web {
         /** 
             Get the next usable DOM ID for view controls
          */
-        private function get nextDomID(): String
+        private function getNextID(): String
             "id_" + lastDomID++
 
         private function write(str: String): Void

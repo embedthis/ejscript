@@ -102,11 +102,13 @@ class EjsMvc {
         if (config.mvc) {
             dirs = config.directories
             dirs.home = App.dir
+            //  MOB -- should these come from ejsrc
             dirs.lib = App.exeDir.join("../lib")
             dirs.mod = App.exeDir.join("../modules")
             for (d in dirs) {
                 dirs[d] = Path(dirs[d])
             }
+            //  MOB -- should this come from ejsrc
             layoutPage = dirs.layouts.join("default.ejs")
             mvc = Path(App.args[0]).basename
         }

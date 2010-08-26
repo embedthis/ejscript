@@ -18,7 +18,7 @@ server.observe("readable", function (event, request: Request) {
     ba.write(", from byte array, ")
     write(ba)
 
-    writeHtml("<p>html</p>")
+    writeSafe("<p>html</p>")
     flush()
     finalize()
 })
@@ -28,5 +28,5 @@ http.get(HTTP + "/index.html")
 http.wait()
 
 //  Validate output
-assert(http.response == "1234, a string, 1,2,3,4, from byte array, &lt;p&gt;html&lt;/p&gt;")
+assert(http.response == "1234, a string, 1234, from byte array, &lt;p&gt;html&lt;/p&gt;")
 server.close()
