@@ -22,6 +22,6 @@ assert(u == "https://example.net:4443/short/path#ref?pri=high")
 u.uri = "short/path"
 assert(u == "short/path")
 assert(u.path == "short/path")
-assert(u.host == "localhost")
-assert(u.port == 80)
+assert(u.host === null)
+assert(u.port === null)
 

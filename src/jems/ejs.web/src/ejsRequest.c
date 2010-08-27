@@ -384,17 +384,18 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     switch (slotNum) {
     case ES_ejs_web_Request_absHome:
-        if (req->conn) {
-            if (req->absHome == 0) {
+        if (req->absHome == 0) {
+            if (req->conn) {
                 scheme = conn->secure ? "https" : "http";
                 ip = conn->sock ? conn->sock->acceptIp : req->server->ip;
                 port = conn->sock ? conn->sock->acceptPort : req->server->port;
                 uri = mprAsprintf(req, -1, "%s://%s:%d%s/", scheme, conn->sock->ip, req->server->port, conn->rx->scriptName);
                 req->absHome = (EjsObj*) ejsCreateUriAndFree(ejs, uri);
+            } else {
+                req->absHome = ejs->nullValue;
             }
-            return req->absHome;
         }
-        return ejs->nullValue;
+        return req->absHome;
 
     case ES_ejs_web_Request_authGroup:
         return createString(ejs, conn ? conn->authGroup : NULL);
@@ -454,12 +455,12 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return createHeaders(ejs, req);
 
     case ES_ejs_web_Request_home:
-        if (conn) {
-            if (req->home == 0) {
+        if (req->home == 0) {
+            if (conn) {
                 req->home = ejsCreateUriAndFree(ejs, makeRelativeHome(ejs, req));
-            }
-            return req->home;
-        } else return ejs->nullValue;
+            } else return ejs->nullValue;
+        }
+        return req->home;
 
     case ES_ejs_web_Request_host:
         if (req->host == 0) {
@@ -490,16 +491,17 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return mapNull(ejs, req->originalMethod);
 
     case ES_ejs_web_Request_originalUri:
-        if (conn) {
-            if (req->originalUri == 0) {
+        if (req->originalUri == 0) {
+            if (conn) {
                 scheme = (conn->secure) ? "https" : "http";
                 /* NOTE: conn->rx->uri is not normalized or decoded */
                 req->originalUri = (EjsObj*) ejsCreateUriFromParts(ejs, scheme, getHost(conn, req), req->server->port, 
                     conn->rx->uri, conn->rx->parsedUri->query, conn->rx->parsedUri->reference, 0);
+            } else {
+                return ejs->nullValue;
             }
-            return req->originalUri;
         }
-        return ejs->nullValue;
+        return req->originalUri;
 
     case ES_ejs_web_Request_params:
         return createParams(ejs, req);

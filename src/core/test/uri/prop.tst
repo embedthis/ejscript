@@ -21,7 +21,7 @@ assert(u.isRegular)
 //  With query
 u = Uri({host: "www.example.com", query: "ab=cd&ef=gh"})
 assert(!u.hasScheme)
-assert(u.scheme == "http")
+assert(u.scheme === null)
 parts = u.components
 assert(parts.host == "www.example.com")
 assert(parts.query == "ab=cd&ef=gh")

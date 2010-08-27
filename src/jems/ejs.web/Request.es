@@ -746,8 +746,11 @@ module ejs.web {
             @return A normalized, server-local Uri object.
          */
         function toplink(target: *): Uri {
-            if (target is String && target.startsWith("/")) {
-                target = target.substring(1);
+            if (target is String) {
+                if (target.startsWith("/")) {
+                    target = target.substring(1)
+                } 
+                target = Uri(target).normalize
             }
             let result = absHome.local.resolve(target)
             if (result.path == "/" && route && Object.getOwnPropertyCount(target) > 0 && !target.path) {

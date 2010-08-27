@@ -462,7 +462,11 @@ static EjsObj *uri_hasScheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 static EjsObj *uri_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     if (up->uri->host == 0) {
+#if UNUSED
         return (EjsObj*) ejsCreateString(ejs, "localhost");
+#else
+        return ejs->nullValue;
+#endif
     }    
     return (EjsObj*) ejsCreateString(ejs, up->uri->host);
 }
@@ -624,7 +628,9 @@ static EjsObj *uri_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     
     uri = up->uri;
     if (uri->port == 0) {
-        //  MOB -- push this down into http
+        if (uri->host == 0) {
+            return ejs->nullValue;
+        }
         if (uri->scheme == 0 || strcmp(uri->scheme, "http") == 0) {
             return (EjsObj*) ejsCreateNumber(ejs, 80);
         } else if (uri->scheme && strcmp(uri->scheme, "https") == 0) {
@@ -720,7 +726,11 @@ static EjsObj *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 static EjsObj *uri_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     if (up->uri->scheme == 0) {
+#if UNUSED
         return (EjsObj*) ejsCreateString(ejs, "http");
+#else
+        return ejs->nullValue;
+#endif
     }
     return (EjsObj*) ejsCreateString(ejs, up->uri->scheme);
 }
