@@ -156,6 +156,22 @@ module ejs.web {
             getConnector("alert", options).alert(text, options)
         }
 
+/*  MOB - deprecate link vs label
+MOB - doc not right
+            Emit a text link to an action. The URI is constructed from the given action and the current controller. 
+            The controller may be overridden by setting the controller option.
+            @param text Link text to display
+            @param options Optional extra options. See $View for a list of the standard options.
+            @option controller String Name of the target controller for the given action
+            @option uri String Use a URI rather than action and controller for the target uri.
+        function anchor(text: String, options: Object = {}): Void {
+            options = getOptions(options)
+            options.click ||= true
+            // options.action ||= text.split(" ")[0].toLowerCase()
+            getConnector("label", options).label(text, options)
+        }
+ */
+
         /**
             Render a form button. This creates a button suitable for use inside an input form. When the button is clicked,
             the input form will be submitted.
@@ -323,6 +339,16 @@ MOB -- much more doc here
             connector.form(record, options)
         }
 
+        /** 
+            Emit an icon link.
+            @param src Source name for the icon.
+            @param options Optional extra options. See $View for a list of the standard options.
+         */
+        function icon(src: Object, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("icon", options).icon(src, options)
+        }
+
         /**
             Render an image
             @param src Source name for the image.
@@ -402,23 +428,6 @@ print("CATCH " + e)
         function label(text: String, options: Object = {}): Void {
             options = getOptions(options)
             getConnector("label", options).label(text, options)
-        }
-
-/*  MOB - deprecate link vs label
- */
-        /** 
-MOB - doc not right
-            Emit a text link to an action. The URI is constructed from the given action and the current controller. 
-            The controller may be overridden by setting the controller option.
-            @param text Link text to display
-            @param options Optional extra options. See $View for a list of the standard options.
-            @option controller String Name of the target controller for the given action
-            @option uri String Use a URI rather than action and controller for the target uri.
-         */
-        function link(text: String, options: Object = {}): Void {
-            options = getOptions(options)
-            options.action ||= text.split(" ")[0].toLowerCase()
-            getConnector("link", options).link(text, options)
         }
 
         /**
@@ -504,20 +513,19 @@ MOB - doc not right
 
         /** 
             Emit a script link.
-            @param uri URI for the script to load. Call with no arguments or uri set to null to get a 
-                default set of scripts.
+            @param target Script URI to load. Call with no arguments or uri set to null to get a default set of scripts.
             @param options Optional extra options. See $View for a list of the standard options.
          */
-        function script(uri: Object, options: Object = {}): Void {
+        function script(target: Object, options: Object = {}): Void {
             let connector = getConnector("script", options)
-            if (uri is Array) {
-                for each (u in uri) {
+            if (target is Array) {
+                for each (u in target) {
                     connector.script(request.home.join(u), options)
                 }
-            } else if (uri == null) {
+            } else if (target == null) {
                 connector.script(null, options)
             } else {
-                connector.script(request.home.join(uri), options)
+                connector.script(request.home.join(target), options)
             }
         }
 
@@ -572,10 +580,11 @@ MOB - doc not right
             @param options Optional extra options. See $View for a list of the standard options.
             @option keyFormat String Define how the keys will be handled for click and edit URIs. 
                 Set to one of the set: ["names", "pairs", "params"]. Default is "params".
-                Set to "names" to add only the key names to the request URI. Each name is separated using "/".
                 Set to "pairs" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
                     key and value are formatted as "key=value".
                 Set to "params" to add the key/value pair to the POST body parameters. 
+                Set to "tokens" to add only the key names to the request URI. Each name is separated using "/". This
+                    provides "pretty" URIs that are easily tokenized by the router.
                 If you require more complex key management, set click or edit to a callback function and format the 
                 URI and params manually.
             @option cell Boolean Set to true to make click or edit links apply per cell instead of per row. 
@@ -777,10 +786,10 @@ MOB -- review and rethink this
 
         /***************************************** Wrapped Request Functions **********************************************/
         /**
-            @duplicate Request.makeUri
+            @duplicate Request.link
          */
-        function makeUri(parts: Object): Uri
-            request.makeUri(parts)
+        function link(parts: Object): Uri
+            request.link(parts)
 
         /** 
             @duplicate Request.redirect
@@ -818,6 +827,12 @@ MOB -- review and rethink this
          */
         function show(...args): Void
             request.show(...args)
+
+        /**
+            @duplicate Request.toplink
+         */
+        function toplink(parts: Object): Uri
+            request.toplink(parts)
 
         /**
             @duplicate Request.write
@@ -880,7 +895,7 @@ MOB -- review and rethink this
 
         private function getOptions(options: Object): Object {
             if (options is String) {
-                if (options.startsWith("/")) {
+                if (options.startsWith("/") || options.contains("/")) {
                     options = {uri: options.toString() }
                 } else {
                     options = {action: options}

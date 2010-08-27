@@ -10,7 +10,9 @@ public class TestController extends Controller {
     use namespace action
 
     action function index() {
+print("BEFORE")
         redirect("/test/list")
+print("AFTER")
     }
     action function list() {
         write("Hello List")
@@ -26,15 +28,18 @@ public class TestController extends Controller {
 load("../utils.es")
 server = controllerServer(HTTP)
 
+print("AA")
 
 //  redirect()
 let http = new Http
 http.followRedirects = true
+print(HTTP + "/test/index")
 http.get(HTTP + "/test/index")
 http.wait()
 assert(http.response == "Hello List")
 http.close()
 
+print("BB")
 
 //  redirectAction()
 let http = new Http

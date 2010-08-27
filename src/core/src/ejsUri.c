@@ -556,6 +556,20 @@ static EjsObj *uri_joinExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
 
 /*  
+    function local(): Uri
+ */
+static EjsObj *uri_local(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    EjsUri      *result;
+
+    if ((result = cloneUri(ejs, up, 0)) != 0) {
+        httpMakeUriLocal(result->uri);
+    }
+    return (EjsObj*) result;
+}
+
+
+/*  
     Get the mimeType
     function mimeType(): String
  */
@@ -656,20 +670,24 @@ static EjsObj *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **arg
 
 
 /*  
-    function resolve(target, relative: Boolean = true): Uri
+    function resolve(target): Uri
  */
 static EjsObj *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *result;
     HttpUri     *uri, *target;
+
+#if UNUSED
     int         relative;
 
     relative = (argc >= 2 && argv[1] == ejs->falseValue) ? 0 : 1;
+#endif
+
     uri = up->uri;
     target = toHttpUri(ejs, ejs, argv[0], 0);
     result = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
-    uri = httpResolveUri(result, uri, 1, &target, relative);
-    if (!ejsIsUri(ejs, target)) {
+    uri = httpResolveUri(result, uri, 1, &target, 0);
+    if (!ejsIsUri(ejs, argv[0])) {
         mprFree(target);
     }
     if (up->uri == uri) {
@@ -870,22 +888,6 @@ static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
 }
 
 
-#if UNUSED
-static char *getUriString(Ejs *ejs, EjsObj *vp)
-{
-    if (ejsIsString(vp)) {
-        //  MOB query dup
-        return mprStrdup(ejs, ejsGetString(ejs, vp));
-
-    } else if (ejsIsUri(ejs, vp)) {
-        return uriToString(ejs, ((EjsUri*) vp));
-    }
-    ejsThrowIOError(ejs, "Bad ");
-    return NULL;
-}
-#endif
-
-
 static HttpUri *toHttpUri(Ejs *ejs, MprCtx ctx, EjsObj *arg, int dup)
 {
     HttpUri     *uri;
@@ -1058,7 +1060,7 @@ EjsUri *ejsCreateUri(Ejs *ejs, cchar *path)
 }
 
 
-EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
+EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
     int complete)
 {
     EjsUri      *up;
@@ -1116,6 +1118,7 @@ void ejsConfigureUriType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Uri_isDir, (EjsProc) uri_isDir);
     ejsBindMethod(ejs, prototype, ES_Uri_join, (EjsProc) uri_join);
     ejsBindMethod(ejs, prototype, ES_Uri_joinExt, (EjsProc) uri_joinExt);
+    ejsBindMethod(ejs, prototype, ES_Uri_local, (EjsProc) uri_local);
     ejsBindMethod(ejs, prototype, ES_Uri_mimeType, (EjsProc) uri_mimeType);
     ejsBindMethod(ejs, prototype, ES_Uri_normalize, (EjsProc) uri_normalize);
     ejsBindAccess(ejs, prototype, ES_Uri_path, (EjsProc) uri_path, (EjsProc) uri_set_path);

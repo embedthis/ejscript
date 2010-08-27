@@ -141,7 +141,8 @@ module ejs.web {
         native enumerable var headers: Object
 
         /** 
-            Home URI for the application. This is a relative Uri for the top-most level of the application. 
+            Home URI for the application. This is a relative Uri from the current URI to the 
+            the top-most directory level of the application. 
          */ 
         native enumerable var home: Uri
 
@@ -211,8 +212,8 @@ module ejs.web {
 
         /** 
             Portion of the request URL after the scriptName. This is the location of the request within the application.
-            The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the 
-            uri or scriptName properties will not affect the pathInfo property.
+            The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
+            scriptName properties will not affect the pathInfo property.
          */
         native enumerable var pathInfo: String
 
@@ -275,7 +276,8 @@ module ejs.web {
             Script name for the current application serving the request. This is typically the leading Uri portion 
             corresponding to the application, but middleware may modify this to be an arbitrary string representing 
             the application.  The script name is often determined by the Router as it parses the request using 
-            the routing tables. The scriptName will be set to the empty string if not defined.
+            the routing tables. The scriptName will be set to the empty string if not defined, otherwise is should begin
+            with a "/" character. NOTE: changing script name will not update home or absHome.
          */
         native enumerable var scriptName: String
 
@@ -342,7 +344,7 @@ module ejs.web {
             @duplicate Stream.close
             This closes the current request by finalizing all transmission data and sending a "close" event. It may 
             not actually close the socket connection if the reuse limit has not been exceeded (see limits).
-            It is normally not necessary to explicitly call close a requeset as the web framework will automatically 
+            It is normally not necessary to explicitly call close a request as the web framework will automatically 
             close finalized requests when all input data has fully been read. Calling close on an already closed
             request is silently ignored. 
          */
@@ -460,40 +462,37 @@ module ejs.web {
             notify("inform", msg)
 
         /** 
-            Make a URI. The URI is created from the given location parameter and the result is normalized. The location 
-            may contain partial or complete URI information. The missing parts are supplied using the current request URI 
-            and optional route tables. 
-            @params location The location parameter can be a URI string or object hash of components. If the location is a
-               string, it is may be an absolute or relative URI. If location is an absolute URI, it will be used unmodified.
-               If location is a relative URI, is append to the current request URI. The location argument can also be
-               an object hash of URI components: scheme, host, port, path, query, reference, controller, action and other
-               route table tokens. 
-            @param relative If true, return a relative URI by disregarding the scheme, host and port portions of "this" URI. 
-                Defaults to true.
-            @option scheme String URI protocol scheme (http or https)
-            @option host String URI host name or IP address.
-            @option port Number TCP/IP port number for communications
+            Create a link to a URI. The target parameter may contain partial or complete URI information. The missing 
+            parts are supplied using the current request URI and route tables.  The resulting URI is a normalized, 
+            server-local URI. It will not include scheme, host or port components. 
+            @params target The target parameter can be a URI string or object hash of components. If the target is a
+               string, it is may be an absolute or relative URI. If the target has an absolute URI path, that path
+               it be used unmodified. If the target is a relative URI, it is appended to the current request URI path. 
+               The target argument can also be an object hash of URI components: path, query, reference, controller, 
+               action and other route table tokens. 
             @option path String URI path portion
             @option query String URI query parameters. Does not include "?"
             @option reference String URI path reference. Does not include "#"
             @option controller String Controller name if using a Controller-based route
             @option action String Action name if using a Controller-based route
             @option other String Other route table tokens
-            @return A normalized Uri object.
+            @example
+                Given a current request of http://example.com/samples/demo" and "r" == the current request:
+
+                r.link("images/splash.png")                  returns "/samples/images/splash.png"
+                r.link("images/splash.png").complete(r.uri)  returns "http://example.com/samples/images/splash.png"
+                r.link("images/splash.png").relative(r.uri)  returns "images/splash.png"
+
+            @return A normalized, server-local Uri object.
          */
-        function makeUri(location: Object, relative: Boolean = true): Uri {
-            let result 
-            if (route) {
-                return route.makeUri(this, location, relative)
-            } else if (location.action) {
-                result = uri.resolve(location, relative).normalize.join(location.action)
-            } else {
-                result = uri.resolve(location, relative).normalize
+        function link(target: Object): Uri {
+            let result = uri.local.resolve(target)
+            if (result.path == "/" && route && Object.getOwnPropertyCount(target) > 0 && !target.path) {
+                result = route.completeLink(result, this, target)
+            } else if (target.action) {
+                result = result.join(target.action)
             }
-            if (relative) {
-                result = result.relative(uri.path)
-            }
-            return result
+            return result.normalize
         }
 
         /** 
@@ -548,17 +547,17 @@ module ejs.web {
         native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
         /** 
-            Redirect the client to a new URL. This call redirects the client's browser to a new location specified 
+            Redirect the client to a new URL. This call redirects the client's browser to a new target specified 
             by the $url.  Optionally, a redirection code may be provided. Normally this code is set to be the HTTP 
             code 302 which means a temporary redirect. A 301, permanent redirect code may be explicitly set.
-            @param location Uri to redirect the client toward. This can be a relative or absolute string URI or it can be
+            @param target Uri to redirect the client toward. This can be a relative or absolute string URI or it can be
                 a hash of URI components. For example, the following are valid inputs: "../index.ejs", 
                 "http://www.example.com/home.html", {action: "list"}.
             @param status Optional HTTP redirection status
          */
-        function redirect(location: *, status: Number = Http.MovedTemporarily): Void {
+        function redirect(target: *, status: Number = Http.MovedTemporarily): Void {
             this.status = status
-            let target: Uri = makeUri(location, false)
+            target = link(target).complete(uri)
             setHeader("Location", target)
             write("<!DOCTYPE html>\r\n" +
                    "<html><head><title>Redirect (" + status + ")</title></head>\r\n" +
@@ -674,14 +673,14 @@ module ejs.web {
             Convenience routine to define an application at a given Uri prefix and directory location. This is typically
                 called from routing tables.
             @param prefix The leading Uri prefix for the application. This prefix is removed from the pathInfo and the
-                $scriptName property is set to the prefix.
+                $scriptName property is set to the prefix. The script name should begin with "/".
             @param location Path to where the application home directory is. This sets the $dir property to the $location
                 argument.
         */
         function setLocation(prefix: String, location: Path): Void {
             prefix = prefix.trimEnd("/")
             pathInfo = pathInfo.trimStart(prefix)
-            scriptName = prefix     //MOB .trimStart("/")
+            scriptName = prefix
             dir = location
         }
 
@@ -717,6 +716,46 @@ module ejs.web {
             for each (var e: Object in args) {
                 write(serialize(e, {pretty: true}) + "\r\n")
             }
+        }
+
+        /** 
+            Create a top-level URI link. A top-level URI has an absolute path and is useful to ensure a link always
+            refers to the same resource even when a HTML fragment may be rendered from pages different URLs. 
+            The target parameter may contain partial or complete URI information. The missing parts are supplied 
+            using the current request URI and route tables.  The resulting URI is a top-level normalized, server-local URI. 
+            It will not include scheme, host or port components. The path will always beging with "/". NOTE: the 
+            result will include the current $scriptName.
+            @params target The target parameter can be a URI string or object hash of components. If the target is a
+               string, it is may be an absolute or relative URI. If the target has an absolute URI path, that path
+               it be used unmodified. If the target is a relative URI, it is appended to the current request URI path. 
+               The target argument can also be an object hash of URI components: path, query, reference, controller, 
+               action and other route table tokens. 
+            @option path String URI path portion
+            @option query String URI query parameters. Does not include "?"
+            @option reference String URI path reference. Does not include "#"
+            @option controller String Controller name if using a Controller-based route
+            @option action String Action name if using a Controller-based route
+            @option other String Other route table tokens
+            @example
+                Given a current request of http://example.com/samples/demo", where scriptName is "samples" and 
+                "r" == the current request:
+
+                r.toplink("images/splash.png")   returns "/samples/images/splash.png"
+                r.toplink("/images/splash.png")  returns "/samples/images/splash.png"
+
+            @return A normalized, server-local Uri object.
+         */
+        function toplink(target: *): Uri {
+            if (target is String && target.startsWith("/")) {
+                target = target.substring(1);
+            }
+            let result = absHome.local.resolve(target)
+            if (result.path == "/" && route && Object.getOwnPropertyCount(target) > 0 && !target.path) {
+                result = route.completeLink(result, this, target)
+            } else if (target.action) {
+                result = result.join(target.action)
+            }
+            return result.normalize
         }
 
         /**

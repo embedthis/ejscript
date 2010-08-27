@@ -209,10 +209,10 @@ UNUSED - MOB -- better to set in Request
             request.inform(msg)
 
         /** 
-            @duplicate Request.makeUri
+            @duplicate Request.link
          */
-        function makeUri(location: Object, relative: Boolean = true): Uri
-            request.makeUri(location, relative)
+        function link(location: Object): Uri
+            request.link(location)
 
         /** 
             Missing action method. This method will be called if the requested action routine does not exist.
@@ -249,6 +249,13 @@ UNUSED - MOB -- better to set in Request
         function redirect(where: Object, status: Number = Http.MovedTemporarily): Void
             request.redirect(where, status)
 
+        /** 
+            @duplicate Request.toplink
+         */
+        function toplink(location: Object): Uri
+            request.toplink(location)
+
+//  MOB -- should all these be render() instead of write to save confusion?
         /** 
             Render the raw data back to the client. 
             If an action method does call a write data back to the client and has not called finalize() or 
@@ -567,13 +574,8 @@ UNUSED - MOB -- better to set in Request
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
-            options = options.clone()
-            options.action = action;
-            options.id = id;
-            options.query = query;
-            makeUri(options)
-        }
+        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String
+            link({ action, id, query })
 
         /**
             @hide

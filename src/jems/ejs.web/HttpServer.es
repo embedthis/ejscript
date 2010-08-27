@@ -91,6 +91,7 @@ module ejs.web {
             @return A string containing the name and version of the web server software
          */
         native function get software(): String
+
         /** 
             Create a HttpServer object. The server is created in async mode by default.
             @param documentRoot Directory containing web documents to serve. If set to null and the HttpServer is hosted,
@@ -137,7 +138,8 @@ module ejs.web {
         native function accept(): Request
 
         /** 
-            @duplicate Stream.close */
+            @duplicate Stream.close 
+         */
         native function close(): Void
 
         /** 

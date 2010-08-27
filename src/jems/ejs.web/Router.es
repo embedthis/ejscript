@@ -27,7 +27,7 @@ module ejs.web {
 
         /**
             Simple top level route table for "es" and "ejs" scripts. Matches simply by script extension.
-            The default route is used for makeUri.
+            The default route is used for Router.link.
          */
         public static var TopRoutes = [
           { name: "es",      builder: ScriptBuilder,    match: /\.es$/ },
@@ -50,7 +50,7 @@ module ejs.web {
                 PUT		/controller/1           update      Update 
                 DELETE	/controller/1           destroy     
             </pre>
-            The default route is used for makeUri.
+            The default route is used for Router.link.
         */
         public static var RestfulRoutes = [
   { name: "es",      builder: ScriptBuilder,                match: /^\/web\/.*\.es$/   },
@@ -422,6 +422,8 @@ module ejs.web {
 
         /**
             Function to make URIs
+            MOB - doc signature
+                return urimaker(uri, request, options)
          */
         var urimaker: Function
 
@@ -437,44 +439,68 @@ module ejs.web {
         }
 
         /**
-            Make a URI. The URI is created from the given location parameter. The location may contain partial or complete 
-            URI information. The missing parts are supplied using the current request URI and the current route.
+            Complete a URI link by adding route token information. 
+            @param target Object hash of URI component properties.
             @param request Request object
-            @param location Object hash of URI component properties.
-            @param relative If true, return a URI relative to Request.home.
-            @option scheme String URI protocol scheme (http or https)
-            @option host String URI host name or IP address.
-            @option port Number TCP/IP port number for communications
-            @option path String URI path 
-            @option query String URI query parameters. Does not include "?"
-            @option reference String URI path reference. Does not include "#"
+            @option route String Route whose tokens are used to build the link.
             @option controller String Controller name if using a Controller-based route
             @option action String Action name if using a Controller-based route
             @option other String Other route table tokens
             @return A Uri object.
          */
-        public function makeUri(request: Request, location: Object, relative: Boolean = true): Uri {
+        public function completeLink(uri: Uri, request: Request, options: Object): Uri {
             if (urimaker) {
-                return urimaker(request, location, relative)
+                return urimaker(uri, request, options)
             }
-            let where = request.uri.resolve(location, relative).normalize
+            let routeName = options.route || "default"
+            let route = this
+            if (routeName != this.name) {
+                /* Using another route */
+                route = router.routeLookup[routeName]
+                if (!route) {
+                    throw new ReferenceError("link: Unknown route \"" + routeName + "\"")
+                }
+            }
+            if (route.tokens) {
+                for each (let token in route.tokens) {
+                    let value = options[token]
+                    if (value == undefined) {
+                        if (token == "action") {
+                            continue
+                        }
+                        value = request.params[token]
+                        if (value == undefined) {
+                            throw new ArgError("Missing URI token \"" + token + "\"")
+                        }
+                    }
+                    uri = uri.join(value)
+                }
+            }
+            return uri
+        }
+
+        public function UNUSED_link(target: Object, request: Request): Uri {
+            if (urimaker) {
+                return urimaker(request, target)
+            }
+            let uri = request.uri.local.resolve(target)
+
             /*
                 If a path not supplied, build up the path via route tokens
              */
-            let uri = Uri(where)
-            if (Object.getOwnPropertyCount(location) > 0 && !location.path) {
-                let routeName = location.route || "default"
+            if (Object.getOwnPropertyCount(target) > 0 && !target.path) {
+                let routeName = target.route || "default"
                 let route = this
                 if (routeName != this.name) {
                     route = router.routeLookup[routeName]
                     if (!route) {
-                        throw new ReferenceError("makeUri: Unknown route \"" + routeName + "\"")
+                        throw new ReferenceError("link: Unknown route \"" + routeName + "\"")
                     }
                 }
                 if (route.tokens) {
                     if (uri.path == "/") {
                         for each (let token in route.tokens) {
-                            let value = location[token]
+                            let value = target[token]
                             if (value == undefined) {
                                 if (token == "action") {
                                     continue
@@ -487,11 +513,9 @@ module ejs.web {
                             uri = uri.join(value)
                         }
                     }
-                } else if (location.action) {
-                    uri = uri.join(location.action)
+                } else if (target.action) {
+                    uri = uri.join(target.action)
                 }
-                //  OPT - done again in Request.makeUri
-                uri = uri.relative(request.uri.path)
             }
             return uri
         }

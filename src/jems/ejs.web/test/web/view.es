@@ -14,6 +14,6 @@ class MyView extends View {
 exports.app = function(request: Request) {
     View(request).render(function(request: Request) {
         write("Hello World\r\n")
-        write("URI " + makeUri("/logout.es") + "\r\n")
+        write("URI " + link("/logout.es") + "\r\n")
     })
 }

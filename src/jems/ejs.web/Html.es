@@ -44,7 +44,6 @@ module ejs.web {
             NOTE: data-*, click and remote are handled specially in getAttributes.
          */
         private static const htmlOptions: Object = { 
-            "addKey":               "data-add-key",
             "apply":                "data-apply",
             "background":           "background",
             "class":                "class",
@@ -54,6 +53,7 @@ module ejs.web {
             "effects":              "data-effects",
             "height":               "height",
             "key":                  "data-key",
+            "keyFormat":            "data-key-format",
             "method":               "data-method",
             "modal":                "data-modal",
             "period":               "data-refresh-period",
@@ -69,20 +69,16 @@ module ejs.web {
             "width":                "width",
         }
 
-        private static const defaultScripts = [
+        private static const defaultStylesheets = [
             "web/layout.css", 
             "web/themes/default.css", 
-            "web/js/tv/jquery.treeview.css",
         ]
 
         //  MOB -- what about minified versions?
 
-        private static const defaultStylesheets = [
+        private static const defaultScripts = [
             "web/js/jquery.js", 
             "web/js/jquery.tablesorter.js",
-            "web/js/tv/jquery.treeview.js",
-            "web/js/tv/lib/jquery.cookie.js",
-            "web/js/tv/jquery.treeview.async.js",
             "web/js/jquery.address.js",
             "web/js/jquery.simplemodal.js",
             "web/js/jquery.ejs.js",
@@ -97,6 +93,14 @@ module ejs.web {
             options.style = append(options.style, "-ejs-alert")
             write('<div' + getAttributes(options) + '>' +  text + '</div>\r\n')
         }
+
+/*
+   MOB - deprecated. Use label
+		function anchor(text: String, options: Object): Void {
+            let uri ||= request.link(options)
+			write('<a href="' + uri + '"' + getAttributes(options) + '>' + text + '</a>\r\n')
+		}
+*/
 
 		function button(field: String, label: String, options: Object): Void {
             write('    <input name="' + field + '" type="submit" value="' + label + '"' + getAttributes(options) + ' />\r\n')
@@ -140,7 +144,7 @@ module ejs.web {
 		}
 
 		function form(record: Object, options: Object): Void {
-            let uri ||= request.makeUri(options)
+            let uri ||= request.link(options)
             emitFormErrors(record, options)
             write('<form action="' + uri + '"' + getAttributes(options) + '>\r\n')
             if (options.id != undefined) {
@@ -152,23 +156,17 @@ module ejs.web {
             }
         }
 
+		function icon(uri: String, options: Object): Void {
+            write('    <link href="' + uri + '" rel="shortcut icon" />\r\n')
+		}
+
         function image(src: String, options: Object): Void {
 			write('<img src="' + src + '"' + getAttributes(options) + '/>\r\n')
         }
 
-//  MOB - merge label and link?
         function label(text: String, options: Object): Void {
-            if (options.refresh && !options.domid) {
-                options.domid = getNextID()
-            }
-            // write('<span ' + getAttributes(options) + ' type="' + getTextKind(options) + '">' +  text + '</span>\r\n')
             write('<span ' + getAttributes(options) + '>' +  text + '</span>\r\n')
         }
-
-		function link(text: String, options: Object): Void {
-            let uri ||= request.makeUri(options)
-			write('<a href="' + uri + '"' + getAttributes(options) + '>' + text + '</a>\r\n')
-		}
 
 		function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
             let selected
@@ -256,7 +254,7 @@ dump("CHOICES", choices)
 		function script(uri: String, options: Object): Void {
             if (uri == null) {
                 for each (uri in defaultScripts) {
-                    script(request.home.join(uri), options)
+                    script(request.absHome.local.join(uri), options)
                 }
             } else {
                 write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
@@ -271,7 +269,7 @@ dump("CHOICES", choices)
 		function stylesheet(uri: String, options: Object): Void {
             if (uri == null) {
                 for each (uri in defaultStylesheets) {
-                    stylesheet(request.home.join(uri), options)
+                    stylesheet(request.absHome.local.join(uri), options)
                 }
             } else {
                 write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
@@ -384,13 +382,13 @@ dump("CHOICES", choices)
             if (data is Array) {
                 for each (tuple in data) {
                     for (let [name, target] in tuple) {
-                        let uri = request.makeUri(target)
+                        let uri = request.link(target)
                         write('      <li ' + att + '="' + uri + '">' + name + '</li>\r\n')
                     }
                 }
             } else {
                 for (let [name, target] in data) {
-                    let uri = request.makeUri(target)
+                    let uri = request.link(target)
                     write('      <li ' + att + '="' + uri + '">' + name + '</li>\r\n')
                 }
             }
@@ -466,20 +464,21 @@ dump("CHOICES", choices)
             return data
         }
 
+//  MOB -- should be a link here too 
         /*
-            Like makeUri but supports location == true to use the rest of options.
+            Like link but supports location == true to use the rest of options.
          */
         private function buildUri(location: Object, options: Object): Uri {
             if (location == true) {
-                return request.makeUri(options)
+                return request.link(options)
             } else if (location is String) {
                 if (location.startsWith("/")) {
-                    return request.makeUri(location)
+                    return request.link(location)
                 } else {
-                    return request.makeUri({action: location})
+                    return request.link({action: location})
                 }
             }
-            return request.makeUri(location)
+            return request.link(location)
         }
 
         /**
@@ -524,7 +523,12 @@ dump("CHOICES", choices)
                 params = list.join("&")
             }
             return mapAttributes({ 
-                addKey: options.addKey, "data-click": click, "data-edit": edit, key: key, method: method, params: params,
+                "data-click": click,
+                "data-edit": edit,
+                key: key, 
+                keyFormat: options.keyFormat,
+                method: method,
+                params: params,
             })
         }
 

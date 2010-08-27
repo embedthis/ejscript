@@ -494,7 +494,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
             if (req->originalUri == 0) {
                 scheme = (conn->secure) ? "https" : "http";
                 /* NOTE: conn->rx->uri is not normalized or decoded */
-                req->originalUri = (EjsObj*) ejsCreateFullUri(ejs, scheme, getHost(conn, req), req->server->port, 
+                req->originalUri = (EjsObj*) ejsCreateUriFromParts(ejs, scheme, getHost(conn, req), req->server->port, 
                     conn->rx->uri, conn->rx->parsedUri->query, conn->rx->parsedUri->reference, 0);
             }
             return req->originalUri;
@@ -580,10 +580,9 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->uri == 0) {
             scriptName = getDefaultString(ejs, req->scriptName, "");
             if (conn) {
-                path = mprStrcat(req, -1, scriptName,
-                    getDefaultString(ejs, req->pathInfo, conn->rx->uri), NULL);
+                path = mprStrcat(req, -1, scriptName, getDefaultString(ejs, req->pathInfo, conn->rx->uri), NULL);
                 scheme = (conn->secure) ? "https" : "http";
-                req->uri = (EjsObj*) ejsCreateFullUri(ejs, 
+                req->uri = (EjsObj*) ejsCreateUriFromParts(ejs, 
                     getDefaultString(ejs, req->scheme, scheme),
                     getDefaultString(ejs, req->host, getHost(conn, req)),
                     getDefaultInt(ejs, req->port, req->server->port),
@@ -592,7 +591,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                     getDefaultString(ejs, req->reference, conn->rx->parsedUri->reference), 0);
             } else {
                 path = mprStrcat(req, -1, scriptName, getDefaultString(ejs, req->pathInfo, NULL), NULL);
-                req->uri = (EjsObj*) ejsCreateFullUri(ejs, 
+                req->uri = (EjsObj*) ejsCreateUriFromParts(ejs, 
                     getDefaultString(ejs, req->scheme, NULL),
                     getDefaultString(ejs, req->host, NULL),
                     getDefaultInt(ejs, req->port, 0),

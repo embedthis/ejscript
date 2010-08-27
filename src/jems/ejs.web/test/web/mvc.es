@@ -22,7 +22,7 @@ exports.app = function(request: Request) {
     View(request).render(function(request: Request) {
         //  MOB -- this == view
         write("Hello World\r\n")
-        print("URI " + makeUri("/logout.es"))
+        print("URI " + link("/logout.es"))
     })
 }
 

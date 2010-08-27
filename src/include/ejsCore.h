@@ -1929,8 +1929,8 @@ typedef struct EjsUri {
  */
 extern EjsUri *ejsCreateUri(Ejs *ejs, cchar *uri);
 extern EjsUri *ejsCreateUriAndFree(Ejs *ejs, char *uri);
-extern EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference,
-        int complete);
+extern EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, 
+        cchar *reference, int complete);
 
 #if DOXYGEN
     /** 

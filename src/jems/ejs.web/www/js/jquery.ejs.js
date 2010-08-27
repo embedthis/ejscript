@@ -122,11 +122,11 @@
         non-GET methods with security tokens to aleviate CSRF.
      */
     function request() {
-        var el     = $(this);
-        var method = el.attr('method') || el.attr('data-method') || 'GET';
-        var url    = el.attr('action') || el.attr('href') || el.attr('data-click');
-        var key    = el.attr('data-key');
-        var addKey = el.attr('data-add-key');
+        var el          = $(this);
+        var method      = el.attr('method') || el.attr('data-method') || 'GET';
+        var url         = el.attr('action') || el.attr('href') || el.attr('data-click');
+        var key         = el.attr('data-key');
+        var keyFormat   = el.attr('data-key-format');
         var params;
 
         if (url === undefined) {
@@ -135,12 +135,12 @@
         }
         method = method.toUpperCase();
         if (key) {
-            if (!addKey) {
-                addKey = (method == "GET") ? "names" : null;
+            if (!keyFormat) {
+                keyFormat = (method == "GET") ? "names" : null;
             }
-        } else addKey = null;
+        } else keyFormat = null;
 
-        if (addKey == "names") {
+        if (keyFormat == "tokens") {
             var keys = [];
             var split = key.split("&");
             for (i in split) {
@@ -150,9 +150,9 @@
             if (keys.length > 0) {
                 url = url + "/" + keys.join("/");
             }
-        } else if (addKey == "pairs") {
+        } else if (keyFormat == "pairs") {
             url = url + "?" + key;
-        } else if (addKey == "params") {
+        } else if (keyFormat == "params") {
             params = key.split("&");
         }
         if (method == "GET") {
@@ -232,7 +232,7 @@
             var apply = this.attr('data-apply') || id;
             var e = (apply) ? $('#' + apply) : $(this);
             var o = e.data("ejs-options");
-            var contentType = http.getResponseHeader("Content-Type");
+            var contentType = http.getResponseHeader("Content-Type") || "text/html";
 
             if (contentType == "text/html") {
                 try {
