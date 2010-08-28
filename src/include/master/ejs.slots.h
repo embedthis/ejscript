@@ -1737,14 +1737,14 @@
 #define ES_Uri_isRelative                                              18
 #define ES_Uri_join                                                    19
 #define ES_Uri_joinExt                                                 20
-#define ES_Uri_mimeType                                                21
-#define ES_Uri_normalize                                               22
-#define ES_Uri_path                                                    23
-#define ES_Uri_port                                                    24
-#define ES_Uri_query                                                   25
-#define ES_Uri_reference                                               26
-#define ES_Uri_relative                                                27
-#define ES_Uri_OLDrelative                                             28
+#define ES_Uri_local                                                   21
+#define ES_Uri_mimeType                                                22
+#define ES_Uri_normalize                                               23
+#define ES_Uri_path                                                    24
+#define ES_Uri_port                                                    25
+#define ES_Uri_query                                                   26
+#define ES_Uri_reference                                               27
+#define ES_Uri_relative                                                28
 #define ES_Uri_replaceExt                                              29
 #define ES_Uri_resolve                                                 30
 #define ES_Uri_same                                                    31
@@ -1933,6 +1933,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1306087
+#define _ES_CHECKSUM_ejs   1301506
 
 #endif
