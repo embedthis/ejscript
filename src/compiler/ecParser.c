@@ -1743,7 +1743,7 @@ static EcNode *parseObjectLiteral(EcCompiler *cp)
 static EcNode *parseFieldList(EcCompiler *cp, EcNode *np)
 {
     ENTER(cp);
-    while (peekToken(cp) != T_RBRACE) {
+    while (peekToken(cp) != T_RBRACE && !cp->error) {
         if (peekToken(cp) != T_COMMA) {
             np = appendNode(np, parseLiteralField(cp));
         } else {

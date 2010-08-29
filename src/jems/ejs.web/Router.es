@@ -1,23 +1,106 @@
 /**
-    Router.es - Web Request router. Parse and route web requests.
+    Router.es - Web Request router. Route incoming client HTTP requests.
  */
 
 module ejs.web {
 
     /** 
-        Web router class. Routes incomding HTTP requests to the appropriate location. The Route class supports 
-        configurable user-defined route tables. It parses the route table at startup and matches request URIs and other 
-        request parameters to determine the matching application and target for the request.
+        Web router class. Routes incoming client HTTP requests to the appropriate location. The Route class supports 
+        configurable user-defined routes. 
+
+        Each application should create a Router instance and then attach matching routes.
+        @example:
+
+        var r = new Router
+
+        //  Match files with a ".es" extension and use the ScriptBuilder to run
+        r.add("es", /\.es$/,  {run: ScriptBuilder})
+
+        //  Match directories and use the DirBuilder to run
+        r.add(Router.isDir,    {name: "dir", run: DirBuilder})
+
+        //  Match RESTful routes and run with the MvcBuilder
+        r.add("new", "/:controller/new",        {run: MvcBuilder,    method: "GET",  action: "new"})
+        r.add("edit", "/:controller/:id/edit",  {run: MvcBuilder,    method: "GET",  action: "edit"})
+        r.add("show", "/:controller/:id",       {run: MvcBuilder,    method: "GET",  action: "show"})
+        r.add("update", "/:controller/:id",     {run: MvcBuilder,    method: "PUT",  action: "update"})
+        r.add("delete", "/:controller/:id",     {run: MvcBuilder,    method: "DELETE", action: "delete"})
+        r.add("default", "/:controller/:action",{run: MvcBuilder})
+        r.add("create", "/:controller",         {run: MvcBuilder,    method: "POST", action: "create"})
+        r.add("index", "/:controller",          {run: MvcBuilder,    method: "GET",  action: "index"})
+        
+        //  Match an "admin" application. This sets the scriptName to "admin" expects an MVC application to be
+        //  located at the directory "myApp"
+        r.add("adminApp", "/admin/",        {location: { prefix: "/control", dir: "my"})
+
+        //  Rewrite a request for "old.html" to new.html
+        r.add("old", "/web/old.html",  {rewrite: function(request) { request.pathInfo = "/web/new.html"}})
+
+        //  Handle a request with a literal response
+        r.add("unknown", "/oldStuff/", {response: {body: "Not found"} })
+
+        //  Handle a request with an inline function
+        r.add("unknown", "/oldStuff/", {run: function(request) { return {body: "Not found"} }})
+
+        //  A custom matching function to match SSL requests
+        r.add("secure", function (request) {
+            if (request.scheme == "https") {
+                request.params["security"] = "high"
+                return true
+            }, {name: "secure", action: "private" })
+
+        //  A matching function that rewrites a request and then continues matching other routes
+        r.add("upgrade", function (request) {
+            if (request.uri.startsWith("/old")) {
+                request.uri = request.uri.toString().trimStart("/old")
+                return false
+            })
+
+        //  Nest matching routes
+        r.add("posts", "/blog", {controller: "post", subroute: {
+                r.add("comment", "/comment/:action/:id")
+            }
+        })
+
+        //  Match with regular expression. The sub-match is available via $N parameters
+        r.add("dash", /^\/Dash-((Mini)|(Full))/, { controller: "post", action: "list", kind: "$1" })
+        
+        //  Conditional matching. Surround optional tokens in "()"
+        r.add("dash", "/Dash(/:product(/:branch(/:configuration)))", {   
+            name: "dash", 
+            method: "GET", 
+            controller: "Dash", 
+            action: "index",
+            after: "home",
+        })
+
         @stability prototype
         @spec ejs
      */
     class Router {
+
+        public static const Restful = "restful"
+        public static const Direct = "direct"
+        public static const Top = "top"
+
+        /* Seed for generating route names */
+        var nameSeed: Number = 0
+
         /*
             Master Route Table. Routes are processed from first to last. Inner routes are tested before their outer parent.
          */
 		var routes: Array = []
 		var routeLookup: Object = {}
 		
+        /*
+            Map of run functions based on request extension 
+         */
+        var runners = {
+            "es":   ScriptBuilder,
+            "ejs":  TemplateBuilder,
+            "html": StaticBuilder,
+        }
+
         /**
             Function to test if the Request.filename is a directory.
             @param request Request object to consider
@@ -26,20 +109,40 @@ module ejs.web {
         public static function isDir(request) request.filename.isDir
 
         /**
-            Simple top level route table for "es" and "ejs" scripts. Matches simply by script extension.
-            The default route is used for Router.link.
+            Add top-level routes for static content, directories and "es" and "ejs" scripts.
          */
-        public static var TopRoutes = [
-          { name: "es",      builder: ScriptBuilder,    match: /\.es$/ },
-          { name: "ejs",     builder: TemplateBuilder,  match: /\.ejs$/, module: "ejs.template" },
-          { name: "dir",     builder: DirBuilder,       match: isDir },
-          { name: "markdown",builder: TemplateBuilder,  match: /\.md$/, module: "ejs.markdown" },
-          { name: "default", builder: StaticBuilder },
-        ]
+        public function topRoutes() {
+            add("home", /^\/$/,   {run: StaticBuilder, redirect: "/index.ejs"})
+            add("es",   /\.es$/,  {run: ScriptBuilder})
+            add("ejs",  /\.ejs$/, {module: "ejs.template", run: TemplateBuilder})
+            add("dir",  isDir,    {run: DirBuilder})
+        }
 
-//  MOB -- rename these MvcRoutes
+        /**
+            Add a default route for static content not matched by prior routes
+         */
+        public function defaultRoute() {
+            add("default", null, {run: StaticBuilder})
+        }
+//ZZZ
+        public function resourceRoutes(name: String, prefix: String = null): Void {
+            name = name.trimStart(":")
+            if (prefix === null) {
+                prefix = (name + "-")
+            }
+            add(prefix + "new",     "/" + name + "/new",      {run: MvcBuilder,  method: "GET",  action: "new"})
+            add(prefix + "edit",    "/" + name + "/:id/edit", {run: MvcBuilder,  method: "GET",  action: "edit"})
+            add(prefix + "show",    "/" + name + "/:id",      {run: MvcBuilder,  method: "GET",  action: "show"})
+            add(prefix + "update",  "/" + name + "/:id",      {run: MvcBuilder,  method: "PUT",  action: "update"})
+            add(prefix + "delete",  "/" + name + "/:id",      {run: MvcBuilder,  method: "DELETE", action: "delete"})
+            add(prefix + "default", "/" + name + "/:action",  {run: MvcBuilder})
+            add(prefix + "create",  "/" + name + "",          {run: MvcBuilder,  method: "POST", action: "create"})
+            add(prefix + "index",   "/" + name + "",          {run: MvcBuilder,  method: "GET",  action: "index"})
+        }
+
         /** 
-            Restful routes. Supports CRUD actions: index, show, create, update, destroy. The restful routes defined are:
+            Restful routes for MVC apps. Supports CRUD actions: index, show, create, update, destroy. 
+            The restful routes defined are:
             <pre>
                 Method  URL                     Action
                 GET		/controller             index
@@ -50,112 +153,243 @@ module ejs.web {
                 PUT		/controller/1           update      Update 
                 DELETE	/controller/1           destroy     
             </pre>
-            The default route is used for Router.link.
+            The default route is used for $Request.link.
         */
-        public static var RestfulRoutes = [
-  { name: "es",      builder: ScriptBuilder,                match: /^\/web\/.*\.es$/   },
-  { name: "ejs",     builder: TemplateBuilder,              match: /^\/web\/.*\.ejs$/,      module: "ejs.template" },
-  { name: "web",     builder: StaticBuilder,                match: /^\/web\//  },
-  { name: "home",    builder: StaticBuilder,                match: /^\/$/,                  redirect: "/web/index.ejs" },
-  { name: "ico",     builder: StaticBuilder,                match: /^\/favicon.ico$/,       redirect: "/web/favicon.ico" },
-  { name: "dir",     builder: DirBuilder,                   match: isDir },
-  { name: "new",     builder: MvcBuilder, method: "GET",    match: "/:controller/new",      params: { action: "new" } },
-  { name: "edit",    builder: MvcBuilder, method: "GET",    match: "/:controller/:id/edit", params: { action: "edit" } },
-  { name: "show",    builder: MvcBuilder, method: "GET",    match: "/:controller/:id",      params: { action: "show" } },
-  { name: "update",  builder: MvcBuilder, method: "PUT",    match: "/:controller/:id",      params: { action: "update" } },
-  { name: "delete",  builder: MvcBuilder, method: "DELETE", match: "/:controller/:id",      params: { action: "delete" } },
-  { name: "default", builder: MvcBuilder,                   match: "/:controller/:action",  params: {} },
-  { name: "create",  builder: MvcBuilder, method: "POST",   match: "/:controller",          params: { action: "create" } },
-  { name: "index",   builder: MvcBuilder, method: "GET",    match: "/:controller",          params: { action: "index" } },
-        ]
+        public function restfulRoutes() {
+            topRoutes()
+            let staticPattern = RegExp("^\\/" + (App.config.directories.static || "static") + "\\/")
+            add("static",   staticPattern, {run: StaticBuilder})
+            resourceRoutes(":controller", "")
+            defaultRoute()
+        }
 
-        //  MOB - remove
-        # Config.Legacy || 1
-        public static var LegacyRoutes = [
-  { name: "es",      builder: ScriptBuilder,                match: /^\/web\/.*\.es$/   },
-  { name: "ejs",     builder: TemplateBuilder,              match: /^\/web\/.*\.ejs$/,      module: "ejs.template"  },
-  { name: "web",     builder: StaticBuilder,                match: /^\/web\//  },
-  { name: "home",    builder: StaticBuilder,                match: /^\/$/,                  redirect: "/web/index.ejs" },
-  { name: "ico",     builder: StaticBuilder,                match: /^\/favicon.ico$/,       redirect: "/web/favicon.ico" },
-  { name: "list",    builder: MvcBuilder, method: "GET",    match: "/:controller/list",     params: { action: "list" } },
-  { name: "create",  builder: MvcBuilder, method: "POST",   match: "/:controller/create",   params: { action: "create" } },
-  { name: "edit",    builder: MvcBuilder, method: "GET",    match: "/:controller/edit",     params: { action: "edit" } },
-  { name: "update",  builder: MvcBuilder, method: "POST",   match: "/:controller/update",   params: { action: "update" } },
-  { name: "destroy", builder: MvcBuilder, method: "POST",   match: "/:controller/destroy",  params: { action: "destroy" } },
-  { name: "default", builder: MvcBuilder,                   match: "/:controller/:action",  params: {} },
-  { name: "index",   builder: MvcBuilder, method: "GET",    match: "/:controller",          params: { action: "index" } },
-  { name: "index",   builder: MvcBuilder, method: "POST",   match: "/:controller",          params: { action: "index" } },
-  { name: "static",  builder: StaticBuilder, },
-        ]
+        /** 
+            Direct routes for MVC apps. These map HTTP methods directly to namespace qualified controller methods.
+            Supports CRUD actions: index, show, create, update, destroy. 
+            The restful routes defined are:
+            <pre>
+                Method  URL                     Action
+                GET		/controller             index
+                POST	/controller/new         new         NEED new name
+                POST	/controller             create      Create new 
+                GET		/controller/1           show        Get and display data (not editable)
+                GET		/controller/1/edit      edit        Get and display a form
+                PUT		/controller/1           update      Update 
+                DELETE	/controller/1           destroy     
+            </pre>
+            The default route is used for $Request.link.
+        */
+        public function directRoutes() {
+            topRoutes()
+            let staticPattern = RegExp("^\/" + (App.config.directories.static || "static") + "\/")
+            add("static",   staticPattern,          {run: StaticBuilder})
+            add("new",      "/:controller/new",     {run: MvcBuilder,    method: "GET",  action: "GET::new"})
+            add("edit",     "/:controller/:id/edit",{run: MvcBuilder,    method: "GET",  action: "GET::thing"})
+            add("show",     "/:controller/:id",     {run: MvcBuilder,    method: "GET",  action: "GET::thing"})
+            add("update",   "/:controller/:id",     {run: MvcBuilder,    method: "PUT",  action: "PUT::thing"})
+            add("delete",   "/:controller/:id",     {run: MvcBuilder,    method: "DELETE", action: "DELETE::thing"})
+            add("default",  "/:controller/:action", {run: MvcBuilder})
+            add("create",   "/:controller",         {run: MvcBuilder,    method: "POST", action: "POST::create"})
+            add("index",    "/:controller",         {run: MvcBuilder,    method: "GET",  action: "GET::index"})
+            defaultRoute()
+        }
 
-        function Router(set: Array = RestfulRoutes) {
-            addRoutes(set)
+        function Router(kind: String = Router.Restful) {
+            switch (kind) {
+            case "direct":
+                directRoutes()
+                break
+            case "restful":
+                restfulRoutes()
+                break
+            case "top":
+                topRoutes()
+                break
+            default:
+                throw "Unknown route kind"
+            }
+        }
+
+        function addBuilder(builder: Function, ext: String): Void
+            runners[ext] = builder
+
+        function lookupRunners(ext): Function {
+            let runner = runners[ext] || MvcBuilder
+            return runner
         }
 
         /**
-            Add the restful routes to the routing table
+            Add a route
+            @param pattern Set of routes to add. This must be an array of Route instances.
+            @param options
+            @return The route name
+MOB - doc
+            @option action String Short form for params.action
+            @option builder Outer parent route
+            @option do String Short form for params.controller "#" params.action
+            @option name Outer parent route
+            @option method Outer parent route
+            @option limits Outer parent route
+            @option location Object hash with properties prefix and dir
+            @option params Outer parent route
+            @option parent Outer parent route
+            @option redirect 
+            @option rewrite 
+            @option run (Function|Object) This can be either a function to serve the request or it can be a 
+                response hash with status, headers and body properties. The function should return such a response object.
          */
-		public function addRestfulRoutes(): Void
-            addRoutes(RestfulRoutes)
+		public function add(name: String, pattern, options: Object = {}): String {
+            let r = new Route(this)
 
-        /**
-            Add a set of routes to the routing table
-            @param routeSet Set of routes to add. This must be an array of Route instances.
-            @param outer Outer route
-         */
-		public function addRoutes(routeSet: Array, outer: Route? = null): Void {
-            for each (route in routeSet) {
-                route = route.clone()
-                /* 
-                    Combine with all outer routes. Outer route patterns are prepended. Order matters. 
-                 */
-                while (outer) {
-                    route.name = outer.name + "." + route.name
-                    route.match = outer.match + route.match
-                    for (p in outer.params) {
-                        route.params[p] = outer.params[p]
-                    }
-                    outer = outer.parent
+            name ||= (nameSeed++ cast String)
+            r.name = name
+
+            /* 
+                Combine with all outer routes. Outer route patterns are prepended. Order matters. 
+             */
+            let outer = options.parent
+            while (outer) {
+                if (r.name) {
+                    r.name = outer.name + "." + r.name
                 }
-                /*  
-                    Compile the route and create a RegExp matcher if the match pattern is a string. Each :token is 
-                    extracted into tokens and a corresponding RegExp sub-expression is created in the matcher.
-                 */
-                let splitter, tokens
-                route.matcher = route.match
-                if (route.match is String) {
-                    /*  
-                        For string patterns, Create a regular expression splitter pattern so :TOKENS can be referenced
-                        positionally in the override hash via $N args.
-                     */
-                    tokens = route.match.match(/:([^:\W]*)/g)
-                    for (i in tokens) {
-                        tokens[i] = tokens[i].trim(":")
-                    }
-                    let template = route.match.replace(/:([^:\W]+)/g, "([^\W]*)").replace(/\//g, "\\/")
-                    route.matcher = RegExp("^" + template)
-                    /*  Splitter ends up looking like "$1$2$3$4..." */
-                    count = 1
-                    splitter = ""
-                    for (c in tokens) {
-                        splitter += "$" + count++ + ":"
-                    }
-                    route.splitter = splitter.trim(":")
-                    route.tokens = tokens
+                pattern = outer.match + pattern
+                for (p in outer.params) {
+                    r.params[p] = outer.params[p]
                 }
-                if (route.middleware) {
-                    route.middleware = route.middleware.reverse()
-                }
-                route = new Route(route, this)
-                if (route.subroute) {
-                    /* Must process nested routes first before appending the parent route to the routes table */
-                    route.subroute.parent = route
-                    addRoutes(route.subroute, route)
-                }
-                routes.append(route)
-                routeLookup[route.name] = route
+                outer = outer.parent
             }
+//  MOB -- functionalize
+            /*  
+                Compile the route and create a RegExp matcher if the match pattern is a string. Each :token is 
+                extracted into tokens and a corresponding RegExp sub-expression is created in the matcher.
+             */
+            let splitter, tokens, method
+
+            r.match = pattern
+            r.method = options.method
+
+            if (pattern is String) {
+                /*  
+                    For string patterns, Create a regular expression splitter pattern so :TOKENS can be referenced
+                    positionally in the override hash via $N args.
+                 */
+print("BEFORE " + pattern)
+                pattern = pattern.replace(/\)/g, ")*")
+print("AFTER " + pattern)
+                tokens = pattern.match(/:([^:\W]*)/g)
+                for (i in tokens) {
+                    tokens[i] = tokens[i].trim(":")
+                }
+                let template = pattern.replace(/:([^:\W]+)/g, "([^\W]*)").replace(/\//g, "\\/")
+                if (!template.contains(".:format")) {
+                    template += "(.:format)*"
+                }
+print("TEMPLATE " + template)
+                r.matcher = RegExp("^" + template)
+                /*  Splitter ends up looking like "$1$2$3$4..." */
+                count = 1
+                splitter = ""
+                for (c in tokens) {
+                    splitter += "$" + count++ + ":"
+                }
+                r.splitter = splitter.trim(":")
+                r.tokens = tokens
+            } else {
+                if (pattern is Function) {
+                    r.matcher = pattern
+                } else if (pattern is RegExp) {
+                    r.matcher = pattern
+                } else {
+                    r.matcher = RegExp(pattern.toString())
+                }
+            }
+            if (options.middleware) {
+//  MOB -- needs testing
+                r.middleware = options.middleware.reverse()
+            }
+            let params = r.params = options.params || {}
+            if (options.action) {
+                params.action = options.action
+            }
+            if (options.controller) {
+                params.controller = options.controller
+            }
+//  MOB -- fix options.do
+            if (options.dox) {
+                let [controller, action] = options.dox.split("#")
+                params.action = action
+                params.controller = controller
+            }
+            if (params.action) {
+                let [ns, action] = params.action.split("::")
+                if (action) {
+                    params.action = action
+                    params.ns = ns
+                } else {
+                    params.action = ns
+                }
+            }
+            r.run = options.run || lookupRunners(r)
+            if (!(r.run is Function)) {
+                r.run = function(request) {
+                    return options.run
+                }
+            }
+            r.options = options
+
+            if (options.parent) {
+                /* Must process nested routes first before appending the parent route to the routes table */
+                //  MOB -- needs work
+                options.parent.parent = r
+                addRoutes(r.subroute, r)
+            }
+            routeLookup[r.name] = r
+
+            let inserted
+            if (options.replace) {
+                for (let [i, route] in routes) {
+                    if (route.name == options.replace) {
+                        routes.remove(i, i)
+                        inserted = routes.insert(i, r)
+                        break
+                    }
+                }
+            } else if (options.first) {
+                inserted = routes.insert(0, r)
+            } else if (options.before) {
+                for (let [i, route] in routes) {
+                    if (route.name == options.before) {
+                        inserted = routes.insert(i, r)
+                        break
+                    }
+                }
+            } else if (options.after) {
+                for (let [i, route] in routes) {
+                    if (route.name == options.after) {
+                        inserted = routes.insert(i + 1, r)
+                        break
+                    }
+                }
+            }
+            if (!inserted) {
+                routes.append(r)
+            }
+            return r.name
 		}
+
+		public function replace(name: String, pattern, options: Object = {}): Void {
+            options.replace = name
+            add(name, pattern, options)
+        }
+
+		public function remove(name: String): Void {
+            for (i in routes) {
+                if (routes[i].name == name) {
+                    routes.remove(i)
+                    break
+                }
+            }
+        }
 
 
         /** 
@@ -180,13 +414,20 @@ module ejs.web {
                 }
             }
 
+print("PI \"" + pathInfo + "\"")
+
             //  MOB - need better way to turn on debug trace without slowing down the router
             for each (r in routes) {
+                let options = r.options
                 log.debug(6, "Test route \"" + r.name + "\"")
+print("Test route " + r.name)
 
-                if (r.method && request.method != r.method) {
-                    continue
+                if (r.method) {
+                    if (!request.method.contains(r.method)) {
+                        continue
+                    }
                 }
+print("MATCHER " + r.matcher)
                 if (r.matcher is Function) { 
                     if (!r.matcher(request)) {
                         continue
@@ -215,11 +456,16 @@ module ejs.web {
                     }
 
                 } else {
+print("STRING/REGEXP " + pathInfo)
                     /*  String or RegExp based matcher */
                     if (!pathInfo.match(r.matcher)) {
+print("STRING/REGEXP - continue")
                         continue
                     }
                     parts = pathInfo.replace(r.matcher, r.splitter)
+print("SPLITTER " + r.splitter)
+print("TOKENS " + r.tokens)
+print("PARTS " + parts)
                     parts = parts.split(":")
                     for (i in r.tokens) {
                         params[r.tokens[i]] = parts[i]
@@ -234,7 +480,7 @@ module ejs.web {
                     return route(request)
                 }
                 if (r.redirect) {
-                    request.pathInfo = r.redirect;
+                    request.pathInfo = r.redirect
                     log.debug(5, "Route redirected to \"" + request.pathInfo + "\" (reroute)")
                     return route(request)
                 }
@@ -245,10 +491,12 @@ module ejs.web {
                     log.debug(4, "Set location prefix \"" + location.prefix + "\" dir \"" + location.dir + "\" (reroute)")
                     return route(request)
                 }
-                if (r.module && !r.initialized) {
-                    global.load(r.module + ".mod")
+                if (options.module && !r.initialized) {
+                    global.load(options.module + ".mod")
                     r.initialized = true
                 }
+print("@@@@ Matched route \"" + r.name + "\"")
+dump("PARAMS", request.params)
                 if (log.level >= 4) {
                     log.debug(4, "Matched route \"" + r.name + "\"")
                     log.debug(5, "  Route params " + serialize(params, {pretty: true}))
@@ -268,7 +516,9 @@ module ejs.web {
                         request.trace(r.trace.level || 0, r.trace.options, r.trace.size)
                     }
                 }
-                let app = r.builder(request)
+                r.params.ns ||= request.method
+                let app = r.run(request)
+
                 if (app == null) {
                     return function(request) {}
                 }
@@ -276,8 +526,50 @@ module ejs.web {
             }
             throw "No route for " + pathInfo
         }
+
+        public function show(all: Boolean = false): Void {
+            // dump(routes)
+            print("Route Table:")
+            for each (r in routes) {
+                let o = r.options
+                let method = o.method || "ALL"
+                let target
+                if (o.controller || o.action) {
+                    let controller = o.controller || "*"
+                    target = controller + "." + o.action
+                } else if (r.run) {
+                    target = r.run.name
+                } else {
+                    target = "UNKNOWN"
+                }
+                let match = r.match
+                if (match is Function) {
+                    match = match.name
+                } else if (!match) {
+                    match = "*"
+                }
+                let line = "%10s: %16s: %7s: %-45s".format(r.name, target, method, match)
+                if (all) {
+                    if (r.params && Object.getOwnPropertyCount(r.params) > 0) {
+                        if (!(r.params.action && Object.getOwnPropertyCount(r.params) == 1)) {
+                            line += "  %s".format(serialize(r.params))
+                        }
+                    }
+                }
+                print(line)
+                /*
+                    module
+                    middleware
+                    params
+                    subroute
+                    splitter
+                 */
+            }
+            print()
+        }
     }
 
+//  MOB - move this back to Web?
     /** 
         Script builder for use in routing tables to load pure script files (*.es).
         @param request Request object. 
@@ -317,22 +609,6 @@ module ejs.web {
         use default namespace public
 
         /**
-            Builder function to create the Provider function that represents the web application for requests matching 
-            this route.
-         */
-        var builder: Function
-
-        /**
-            Directory for the application serving the route. This directory path will be assigned to Request.dir.
-         */
-        var dir: Path
-
-        /**
-            Resource limits for the request. See HttpServer.limits for details.
-          */
-        var limits: Object
-
-        /**
             Matching pattern for URIs. The pattern is used to match the request in general and pathInfo specifically. 
             The pattern can be a token string, a regular expression or a function. If it is a string of tokens separated
             by ":", it is converted to a regular expression and the positional tokens (:NAME) are extracted for web
@@ -344,7 +620,6 @@ module ejs.web {
             
             If the match pattern is a function, it is run to test for a request match. The function should return true to 
             match the request. The function can set parameters in request.params.
-          
         */
         var match: Object
 
@@ -360,14 +635,30 @@ module ejs.web {
         var middleware: Array
 
         /**
-            Module containing code to serve the route.  
-         */
-        var module: String
-
-        /**
-            Optional route name.
+            Route name
          */
         var name: String
+
+        /**
+            Extra route options
+            @option limits Object Resource limits for the request. See HttpServer.limits for details.
+            @option linker Function Function that will be called by Request.link to make to make URI links.
+            
+                function linker(uri: Uri, request: Request, options: Object): Uri
+            @option location Object Application location to serve the request. Location contains two properties: prefix
+                which is the string URI prefix for the application and dir which is a Path to the physical file system
+                directory containing the MVC applciation.
+            @option String Name of the required module containing code to serve requests on thsi route.  
+            @option rewrite Function Rewrite function to rewrite the request before serving. It may update
+                the request scriptName, pathInfo and other Request properties.
+            @option redirect String URI to redirect the request toward.
+            @option threaded Boolean If true, the request should be run in a worker thread if possible. This thread
+                will not be dedicated, but will be assigned as the request requires CPU resources.
+            @option trace Object Trace options for the request. Note: the route is created after the Request object 
+                is created so the tracing of the connections and request headers will be controlled by the owning server. 
+                See HttpServer.trace for trace property fields.
+         */
+        var options: Object
 
         /**
             Request parameters to add to the Request.params. This optional override hash provides parameters which will 
@@ -375,21 +666,15 @@ module ejs.web {
          */
         var params: Object
 
-        /**
-            Provider function that represents the web application for requests matching this route
-         */
-        var provider: Function
-
-        /**
-            Rewrite function. If present, this function is invoked with the Request as an argument. It may rewrite
-            the request scriptName, pathInfo and other Request properties.
-         */
-        var rewrite: Function
-
         /** 
           Router instance reference
          */
         var router: Router
+
+        /**
+            Function to run to serve the request.
+         */
+        var runner: Function
 
         /**
             Nested route. A nested route prepends the match patter of the outer route to its "match" pattern. 
@@ -397,60 +682,39 @@ module ejs.web {
          */
         var subroute: Route
 
-        /**
-            Threaded request indicator. If true, the request should be run in a worker thread if possible. This thread
-            will not be dedicated, but will be assigned as the request requires CPU resources.
-         */
-        var threaded: Boolean
+/////////////////////// UNUSED
 
-        /**
-            Trace options for the request. Note: the route is created after the Request object is created so 
-            the tracing of the connections and request headers will be controlled by the owning server. See
-            HttpServer.trace. Fields are:
-            @option level Level at which request tracing will occurr for the request.
-            @option options Set of trace options. Select from: "body" to trace body content.
-            @option size Maximum request body size to trace
-            @option include Set of extensions to include when tracing
-            @option exclude Set of extensions to exclude when tracing
-          */
-        var trace: Object
-
-        /*
-            Type of requests matched by this route. Typical types: "es", "ejs", "mvc"
-         */
-        var type: String
-
-        /**
-            Function to make URIs
-            MOB - doc signature
-                return urimaker(uri, request, options)
-         */
-        var urimaker: Function
+//        /*
+//            Type of requests matched by this route. Typical types: "es", "ejs", "mvc"
+//         */
+//        var type: String
+//
+//        /**
+//            Directory for the application serving the route. This directory path will be assigned to Request.dir.
+//         */
+//        var dir: Path
+//        /**
+//            Provider function that represents the web application for requests matching this route
+//         */
+//        var provider: Function
 
         internal var matcher: Object
         internal var splitter: String
         internal var tokens: Array
 
-        function Route(route: Object, router: Router) {
-            for (field in route) {
-               this[field] = route[field]
-            } 
+        function Route(router: Router) {
             this.router = router
         }
 
         /**
             Complete a URI link by adding route token information. 
-            @param target Object hash of URI component properties.
-            @param request Request object
-            @option route String Route whose tokens are used to build the link.
-            @option controller String Controller name if using a Controller-based route
-            @option action String Action name if using a Controller-based route
-            @option other String Other route table tokens
+            @param uri Current URI to complete
+            @param request Current request object
             @return A Uri object.
          */
-        public function completeLink(uri: Uri, request: Request, options: Object): Uri {
-            if (urimaker) {
-                return urimaker(uri, request, options)
+        public function completeLink(uri: Uri, request: Request, target: Object): Uri {
+            if (options.linker) {
+                return options.linker(uri, request, target)
             }
             let routeName = options.route || "default"
             let route = this
@@ -463,7 +727,7 @@ module ejs.web {
             }
             if (route.tokens) {
                 for each (let token in route.tokens) {
-                    let value = options[token]
+                    let value = target[token]
                     if (value == undefined) {
                         if (token == "action") {
                             continue
@@ -474,47 +738,6 @@ module ejs.web {
                         }
                     }
                     uri = uri.join(value)
-                }
-            }
-            return uri
-        }
-
-        public function UNUSED_link(target: Object, request: Request): Uri {
-            if (urimaker) {
-                return urimaker(request, target)
-            }
-            let uri = request.uri.local.resolve(target)
-
-            /*
-                If a path not supplied, build up the path via route tokens
-             */
-            if (Object.getOwnPropertyCount(target) > 0 && !target.path) {
-                let routeName = target.route || "default"
-                let route = this
-                if (routeName != this.name) {
-                    route = router.routeLookup[routeName]
-                    if (!route) {
-                        throw new ReferenceError("link: Unknown route \"" + routeName + "\"")
-                    }
-                }
-                if (route.tokens) {
-                    if (uri.path == "/") {
-                        for each (let token in route.tokens) {
-                            let value = target[token]
-                            if (value == undefined) {
-                                if (token == "action") {
-                                    continue
-                                }
-                                value = request.params[token]
-                                if (value == undefined) {
-                                    throw new ArgError("Missing URI token \"" + token + "\"")
-                                }
-                            }
-                            uri = uri.join(value)
-                        }
-                    }
-                } else if (target.action) {
-                    uri = uri.join(target.action)
                 }
             }
             return uri

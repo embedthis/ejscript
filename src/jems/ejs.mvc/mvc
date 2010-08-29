@@ -62,7 +62,7 @@ class EjsMvc {
             models: Path("models"),
             views: Path("views"),
             src: Path("src"),
-            web: Path("web"),
+            static: Path("static"),
         },
         extensions: {
             es: "es",
@@ -1785,7 +1785,7 @@ let server: HttpServer = new HttpServer("web")
 //  MOB - change to RestfulRoutes
 var router = Router(Router.LegacyRoutes)
 
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
     Web.serve(request, router)
 })

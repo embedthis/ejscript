@@ -41,6 +41,7 @@ module ejs.web {
         var config: Object 
 
         /** Lower case controller name */
+//  MOB -- seems upper case?
         var controllerName: String
 
         /** Logger stream - reference to Request.log */
@@ -106,6 +107,7 @@ UNUSED - MOB -- better to set in Request
         function Controller(req: Request = null) {
             /*  _initRequest may be set by create() to allow subclasses to omit constructors */
             controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
+print("IS CONTROLLER NAME UPPER CASE " + controllerName)
             request = req || _initRequest
             if (request) {
                 request.controller = this
@@ -136,6 +138,8 @@ UNUSED - MOB -- better to set in Request
             runCheckers(_beforeCheckers)
             let response
             if (!request.finalized && request.autoFinalizing) {
+
+//  MOB - this allows Controller.toString(). Must only check for explicit ::action methods
                 if (!this[actionName]) {
                     if (!viewExists(actionName)) {
                         response = this[actionName = "missing"]()
