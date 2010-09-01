@@ -108,4 +108,10 @@ UNUSED && KEEP
      */
     function unescapeHtml(s: String): String
         s.replace(/&amp;/g,'&').replace(/&gt;/g,'>').replace(/&lt;/g,'<').replace(/&quot;/g,'"')
+
+    //  TODO - need real pluralization and toSingular
+    function toPlural(word: String): String {
+        return word + "s"
+    }
+
 }

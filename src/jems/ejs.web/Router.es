@@ -13,31 +13,34 @@ module ejs.web {
 
         var r = new Router
 
-        //  Match files with a ".es" extension and use the ScriptBuilder to run
+        //  Add route for files with a ".es" extension and use the ScriptBuilder to run
         r.add("es", /\.es$/,  {run: ScriptBuilder})
 
-        //  Match directories and use the DirBuilder to run
+        //  Add route for directories and use the DirBuilder to run
         r.add(Router.isDir,    {name: "dir", run: DirBuilder})
 
-        //  Match RESTful routes and run with the MvcBuilder
-        r.add("new", "/:controller/new",        {run: MvcBuilder,    method: "GET",  action: "new"})
-        r.add("edit", "/:controller/:id/edit",  {run: MvcBuilder,    method: "GET",  action: "edit"})
-        r.add("show", "/:controller/:id",       {run: MvcBuilder,    method: "GET",  action: "show"})
-        r.add("update", "/:controller/:id",     {run: MvcBuilder,    method: "PUT",  action: "update"})
-        r.add("delete", "/:controller/:id",     {run: MvcBuilder,    method: "DELETE", action: "delete"})
-        r.add("default", "/:controller/:action",{run: MvcBuilder})
-        r.add("create", "/:controller",         {run: MvcBuilder,    method: "POST", action: "create"})
-        r.add("index", "/:controller",          {run: MvcBuilder,    method: "GET",  action: "index"})
+        //  Add route for RESTful routes and run with the MvcBuilder
+        r.add("edit", "/:controller/:id/edit",  {method: "GET",  action: "edit"})
+        r.add("show", "/:controller/:id",       {method: "GET",  action: "show"})
+        r.add("update", "/:controller/:id",     {method: "PUT",  action: "update"})
+        r.add("destroy","/:controller/:id",     {method: "DELETE", action: "destroy"})
+        r.add("init", "/:controller/init",      {method: "GET",  action: "init"})
+        r.add("index", "/:controller",          {method: "GET",  action: "index"})
+        r.add("create", "/:controller",         {method: "POST", action: "create"})
+        r.add("default", "/:controller(/:action(/:id))")
         
-        //  Match an "admin" application. This sets the scriptName to "admin" expects an MVC application to be
+        //  Add route for upper or lower case "D" or "d". Run the default app: MvcBuilder
+        r.add("refresh", "/[Dd]ash/refresh", {method: "GET", controller: "Dash", action: "refresh", after: "static"})
+
+        //  Add route for an "admin" application. This sets the scriptName to "admin" expects an MVC application to be
         //  located at the directory "myApp"
-        r.add("adminApp", "/admin/",        {location: { prefix: "/control", dir: "my"})
+        r.add("adminApp", "/admin/", {location: { prefix: "/control", dir: "my"})
 
         //  Rewrite a request for "old.html" to new.html
         r.add("old", "/web/old.html",  {rewrite: function(request) { request.pathInfo = "/web/new.html"}})
 
         //  Handle a request with a literal response
-        r.add("unknown", "/oldStuff/", {response: {body: "Not found"} })
+        r.add("unknown", "/oldStuff/", {run: {body: "Not found"} })
 
         //  Handle a request with an inline function
         r.add("unknown", "/oldStuff/", {run: function(request) { return {body: "Not found"} }})
@@ -47,14 +50,18 @@ module ejs.web {
             if (request.scheme == "https") {
                 request.params["security"] = "high"
                 return true
-            }, {name: "secure", action: "private" })
+            }, {
+                name: "secure", action: "private" 
+            }
+        })
 
         //  A matching function that rewrites a request and then continues matching other routes
         r.add("upgrade", function (request) {
             if (request.uri.startsWith("/old")) {
                 request.uri = request.uri.toString().trimStart("/old")
                 return false
-            })
+            }
+        })
 
         //  Nest matching routes
         r.add("posts", "/blog", {controller: "post", subroute: {
@@ -63,7 +70,7 @@ module ejs.web {
         })
 
         //  Match with regular expression. The sub-match is available via $N parameters
-        r.add("dash", /^\/Dash-((Mini)|(Full))/, { controller: "post", action: "list", kind: "$1" })
+        r.add("dash", /^\/Dash-((Mini)|(Full))$/, {controller: "post", action: "list", kind: "$1"})
         
         //  Conditional matching. Surround optional tokens in "()"
         r.add("dash", "/Dash(/:product(/:branch(/:configuration)))", {   
@@ -73,6 +80,12 @@ module ejs.web {
             action: "index",
             after: "home",
         })
+
+        //  Replace the home page route
+        r.addHome("Status.index")
+
+        //  Display the route table to the console
+        r.show()
 
         @stability prototype
         @spec ejs
@@ -89,9 +102,10 @@ module ejs.web {
         /*
             Master Route Table. Routes are processed from first to last. Inner routes are tested before their outer parent.
          */
-		var routes: Array = []
-		var routeLookup: Object = {}
-		
+        var routes: Array = []
+        var routeLookup: Object = {}
+        var resources: Object = {}
+        
         /*
             Map of run functions based on request extension 
          */
@@ -109,104 +123,158 @@ module ejs.web {
         public static function isDir(request) request.filename.isDir
 
         /**
-            Add top-level routes for static content, directories and "es" and "ejs" scripts.
+            Add a catch-all route for static content
+            @return The router instance to enable chaining
          */
-        public function topRoutes() {
+        public function addCatchall(): Route
+            add("catchall", /^\/.*$/, {run: StaticBuilder})
+
+        /** 
+            Direct routes for MVC apps. These map HTTP methods directly to method names.
+        */
+        public function addDirect(name: String, options: Object = {}): Void {
+            add(name + "-solo", "/" + name + "/(/:id(/:action(/:extra)))")
+            let names = options.plural || toPlural(name)
+            //  MOB -- what should the group really be?
+            add(name + "-collection", "/" + names + "/(/:action(/:extra))", {contrtoller: name, namespace: "GROUP"})
+        }
+
+        /**
+            Add a home page route. This will add or update the home page route.
+            @return The router instance to enable chaining
+         */
+        public function addHome(options: String): Route
+            add("home", "/", options)
+
+        /**
+            Add restful routes for a singleton resource. 
+            Supports member CRUD actions: show, create, update, destroy.
+            Supports collection actions: edit, index, show. 
+            The restful routes defined are:
+            <pre>
+                Method  URL                   Action
+                GET     /controller           show        Display a resource (not editable)
+                GET     /controller/edit      edit        Display a resource form suitable for editing
+                PUT     /controller           update      Update a resource (idempotent)
+                DELETE  /controller           destroy     Destroy a resource (idempotent)
+                ANY     /controller/action    *           Other custom actions
+
+                GET     /controllers          index       Display an overview of the resource
+                GET     /controllers/init     init        Initialize and display a blank form for a new resource
+                POST    /controllers          create      Accept a form creating a new resource
+                ANY     /controllers/action   *           Other custom actions
+            </pre>
+            The default route is used for $Request.link.
+            @param name Singular name of the resource to route
+            @param options Object hash of options. Defaults to {}
+            @option controller Controller name to use instead of $name
+            @return The router instance to enable chaining
+         */
+        public function addResource(name: String, options: Object = {}): Void {
+            let c = options.controller || name
+            add("edit",    "/" + name + "/edit",    {resource: name, method: "GET",    controller: c, action: "edit"})
+            add("show",    "/" + name,              {resource: name, method: "GET",    controller: c, action: "show"})
+            add("update",  "/" + name,              {resource: name, method: "PUT",    controller: c, action: "update"})
+            add("destroy", "/" + name,              {resource: name, method: "DELETE", controller: c, action: "destroy"})
+            add("default", "/" + name + "/:action", {resource: name,                   controller: c})
+            
+            let names = options.plural || toPlural(name)
+            add("init",    "/" + names + "/init",   {resource: name, method: "GET",    controller: c, action: "init"})
+            add("index",   "/" + names,             {resource: name, method: "GET",    controller: c, action: "index"})
+            add("create",  "/" + names,             {resource: name, method: "POST",   controller: c, action: "create"})
+            add("default", "/" + names + "/:action",{resource: name,                   controller: c})
+        }
+
+        /** 
+            Add restful routes for a resource collection. 
+            Supports CRUD actions: edit, index, show, create, update, destroy. The restful routes defined are:
+            <pre>
+                Method  URL                     Action
+                GET     /controller/1           show        Display a resource (not editable)
+                GET     /controller/1/edit      edit        Display a resource form suitable for editing
+                PUT     /controller/1           update      Update a resource (idempotent)
+                DELETE  /controller/1           destroy     Destroy a resource (idempotent)
+
+                GET     /controller             index       Display an overview of the resource
+                GET     /controller/init        init        Initialize and display a blank form for a new resource
+                POST    /controller             create      Accept a form creating a new resource
+                ANY     /controller             destroy     Destroy all (idempotent)
+            </pre>
+            The default route is used for $Request.link.
+            @param resource Plural name of the resource to route
+            @param options Object hash of options. Defaults to {}
+            @option controller Controller name to use instead of $name
+        */
+        public function addResources(name: String, options: Object = {}): Void {
+            let c = options.controller || name
+            add("edit",    "/" + name + "/:id/edit",  {resource: name, method: "GET",    controller: c, action: "edit"})
+            add("show",    "/" + name + "/:id",       {resource: name, method: "GET",    controller: c, action: "show"})
+            add("update",  "/" + name + "/:id",       {resource: name, method: "PUT",    controller: c, action: "update"})
+            add("destroy", "/" + name + "/:id",       {resource: name, method: "DELETE", controller: c, action: "destroy"})
+            
+            add("intit",   "/" + name + "/init",      {resource: name, method: "GET",    controller: c, action: "init"})
+            add("create",  "/" + name,                {resource: name, method: "POST",   controller: c, action: "create"})
+            add("default", "/" + name + "/:action",   {resource: name,                   controller: c})
+        }
+
+        //  Helpers get(), post(), destroy(), put()
+
+        /** 
+            Add default restful routes for singleton resources. This also adds top level routes and a static content
+            catchall route.  @see $addResource for restful route details.
+        */
+        public function addRestful(): Void {
+            //  Default resource routes for a singleton
+            add("edit",    "/:controller/edit",    {method: "GET",    action: "edit"})
+            add("show",    "/:controller",         {method: "GET",    action: "show"})
+            add("update",  "/:controller",         {method: "PUT",    action: "update"})
+            add("destroy", "/:controller",         {method: "DELETE", action: "destroy"})
+            //  Default resource Collection routes 
+            add("init",    "/:controller/init",    {method: "GET",    action: "init"})
+            add("create",  "/:controller",         {method: "POST",   action: "create"})
+            add("default", "/:controller(/:action(/:id))")
+        }
+
+        /**
+            Add simple MVC routes. The URL pattern "/:controller/:action" is routed to the tokenized action in the
+            specified controller. All HTTP method verbs are supported.
+            @return The router instance to enable chaining
+         */
+        public function addSimple(): Route
+            add("default", "/:controller(/:action(/:id))")
+
+        public function addStatic(): Route {
+            let staticPattern = RegExp("^\\/" + (App.config.directories.static || "static") + "\\/")
+            return add("static", staticPattern, {run: StaticBuilder})
+        }
+
+        /**
+            Add top-level routes for static content, directories and "es" and "ejs" scripts.
+            @return The router instance to enable chaining
+         */
+        public function addTop(): Void {
             add("home", /^\/$/,   {run: StaticBuilder, redirect: "/index.ejs"})
             add("es",   /\.es$/,  {run: ScriptBuilder})
             add("ejs",  /\.ejs$/, {module: "ejs.template", run: TemplateBuilder})
             add("dir",  isDir,    {run: DirBuilder})
         }
 
-        /**
-            Add a default route for static content not matched by prior routes
-         */
-        public function defaultRoute() {
-            add("default", null, {run: StaticBuilder})
-        }
-//ZZZ
-        public function resourceRoutes(name: String, prefix: String = null): Void {
-            name = name.trimStart(":")
-            if (prefix === null) {
-                prefix = (name + "-")
-            }
-            add(prefix + "new",     "/" + name + "/new",      {run: MvcBuilder,  method: "GET",  action: "new"})
-            add(prefix + "edit",    "/" + name + "/:id/edit", {run: MvcBuilder,  method: "GET",  action: "edit"})
-            add(prefix + "show",    "/" + name + "/:id",      {run: MvcBuilder,  method: "GET",  action: "show"})
-            add(prefix + "update",  "/" + name + "/:id",      {run: MvcBuilder,  method: "PUT",  action: "update"})
-            add(prefix + "delete",  "/" + name + "/:id",      {run: MvcBuilder,  method: "DELETE", action: "delete"})
-            add(prefix + "default", "/" + name + "/:action",  {run: MvcBuilder})
-            add(prefix + "create",  "/" + name + "",          {run: MvcBuilder,  method: "POST", action: "create"})
-            add(prefix + "index",   "/" + name + "",          {run: MvcBuilder,  method: "GET",  action: "index"})
-        }
-
-        /** 
-            Restful routes for MVC apps. Supports CRUD actions: index, show, create, update, destroy. 
-            The restful routes defined are:
-            <pre>
-                Method  URL                     Action
-                GET		/controller             index
-                POST	/controller/new         new         NEED new name
-                POST	/controller             create      Create new 
-                GET		/controller/1           show        Get and display data (not editable)
-                GET		/controller/1/edit      edit        Get and display a form
-                PUT		/controller/1           update      Update 
-                DELETE	/controller/1           destroy     
-            </pre>
-            The default route is used for $Request.link.
-        */
-        public function restfulRoutes() {
-            topRoutes()
-            let staticPattern = RegExp("^\\/" + (App.config.directories.static || "static") + "\\/")
-            add("static",   staticPattern, {run: StaticBuilder})
-            resourceRoutes(":controller", "")
-            defaultRoute()
-        }
-
-        /** 
-            Direct routes for MVC apps. These map HTTP methods directly to namespace qualified controller methods.
-            Supports CRUD actions: index, show, create, update, destroy. 
-            The restful routes defined are:
-            <pre>
-                Method  URL                     Action
-                GET		/controller             index
-                POST	/controller/new         new         NEED new name
-                POST	/controller             create      Create new 
-                GET		/controller/1           show        Get and display data (not editable)
-                GET		/controller/1/edit      edit        Get and display a form
-                PUT		/controller/1           update      Update 
-                DELETE	/controller/1           destroy     
-            </pre>
-            The default route is used for $Request.link.
-        */
-        public function directRoutes() {
-            topRoutes()
-            let staticPattern = RegExp("^\/" + (App.config.directories.static || "static") + "\/")
-            add("static",   staticPattern,          {run: StaticBuilder})
-            add("new",      "/:controller/new",     {run: MvcBuilder,    method: "GET",  action: "GET::new"})
-            add("edit",     "/:controller/:id/edit",{run: MvcBuilder,    method: "GET",  action: "GET::thing"})
-            add("show",     "/:controller/:id",     {run: MvcBuilder,    method: "GET",  action: "GET::thing"})
-            add("update",   "/:controller/:id",     {run: MvcBuilder,    method: "PUT",  action: "PUT::thing"})
-            add("delete",   "/:controller/:id",     {run: MvcBuilder,    method: "DELETE", action: "DELETE::thing"})
-            add("default",  "/:controller/:action", {run: MvcBuilder})
-            add("create",   "/:controller",         {run: MvcBuilder,    method: "POST", action: "POST::create"})
-            add("index",    "/:controller",         {run: MvcBuilder,    method: "GET",  action: "GET::index"})
-            defaultRoute()
-        }
-
-        function Router(kind: String = Router.Restful) {
-            switch (kind) {
+        function Router(name: String = null) {
+            switch (name) {
             case "direct":
-                directRoutes()
+                addDirect()
                 break
             case "restful":
-                restfulRoutes()
+                addRestful()
                 break
             case "top":
-                topRoutes()
+                addTop()
+                break
+            case null:
+            case "":
                 break
             default:
-                throw "Unknown route kind"
+                throw "Unknown route set: " + name
             }
         }
 
@@ -219,31 +287,49 @@ module ejs.web {
         }
 
         /**
-            Add a route
-            @param pattern Set of routes to add. This must be an array of Route instances.
+            Add a route.
+            A route pattern must match the entire request pathInfo. 
+            @param pattern Route pattern to match. If pattern is not supplied, the name is used as the pattern and is 
+                interpreted as "controller(/action)".
             @param options
             @return The route name
 MOB - doc
             @option action String Short form for params.action
             @option builder Outer parent route
-            @option do String Short form for params.controller "#" params.action
+            @option do String Short form for params.controller "." params.action
             @option name Outer parent route
             @option method Outer parent route
             @option limits Outer parent route
             @option location Object hash with properties prefix and dir
             @option params Outer parent route
             @option parent Outer parent route
+            @option resource String Name of the RESTful resource owning this route. The actual route name will use this
+                resource name as a prefix.
             @option redirect 
             @option rewrite 
             @option run (Function|Object) This can be either a function to serve the request or it can be a 
                 response hash with status, headers and body properties. The function should return such a response object.
          */
-		public function add(name: String, pattern, options: Object = {}): String {
+        public function add(name: String, pattern = null, options: Object = null): Router {
             let r = new Route(this)
 
+            if (options.resource) {
+                name = options.resource + "-" + name
+            }
+            if (pattern == null) {
+                //  Interpret as "/controller(/action)" and convert into "/:controller(/:action)
+//XX wrap with {}
+                pattern = name.split("/").join("/:")
+            }
+            if (options === null) {
+                options = { action: name }
+            } else if (options is String) {
+                options = { action: options }
+            } else if (options.action == null) {
+                options.action = name
+            }
             name ||= (nameSeed++ cast String)
             r.name = name
-
             /* 
                 Combine with all outer routes. Outer route patterns are prepended. Order matters. 
              */
@@ -272,34 +358,46 @@ MOB - doc
                 /*  
                     For string patterns, Create a regular expression splitter pattern so :TOKENS can be referenced
                     positionally in the override hash via $N args.
+                    Allow () expressions, these are made into non-capturing parentheses.
                  */
-print("BEFORE " + pattern)
-                pattern = pattern.replace(/\)/g, ")*")
-print("AFTER " + pattern)
-                tokens = pattern.match(/:([^:\W]*)/g)
+                if (pattern.contains("(")) {
+                    pattern = pattern.replace(/\(/g, "(?:")
+                    pattern = pattern.replace(/\)/g, ")?")
+                } else {
+                /*  MOB -- should be using AcceptContent
+                    if (!pattern.contains(".:format")) {
+                        pattern += "(.:format)*"
+                    }
+                 */
+                }
+                r.components = pattern.slice(1).split("/")
+
+//XX are tokens needed?
+                tokens = pattern.match(/:([^:\W]+)/g)
                 for (i in tokens) {
                     tokens[i] = tokens[i].trim(":")
                 }
-                let template = pattern.replace(/:([^:\W]+)/g, "([^\W]*)").replace(/\//g, "\\/")
-                if (!template.contains(".:format")) {
-                    template += "(.:format)*"
-                }
-print("TEMPLATE " + template)
-                r.matcher = RegExp("^" + template)
-                /*  Splitter ends up looking like "$1$2$3$4..." */
+//XX new regexp to scan for {}
+                let template = pattern.replace(/:([^:\W]+)/g, "([\\w]+)").replace(/\//g, "\\/")
+                r.matcher = RegExp("^" + template + "$")
+                /*  Splitter ends up looking like "$1:$2:$3:$4" */
                 count = 1
-                splitter = ""
-                for (c in tokens) {
-                    splitter += "$" + count++ + ":"
+                if (!r.spitter) {
+                    splitter = ""
+                    for (c in tokens) {
+                        splitter += "$" + count++ + ":"
+                    }
+                    r.splitter = splitter.trim(":")
                 }
-                r.splitter = splitter.trim(":")
-                r.tokens = tokens
+                if (!r.tokens) {
+                    r.tokens = tokens
+                }
             } else {
                 if (pattern is Function) {
                     r.matcher = pattern
                 } else if (pattern is RegExp) {
                     r.matcher = pattern
-                } else {
+                } else if (pattern) {
                     r.matcher = RegExp(pattern.toString())
                 }
             }
@@ -311,22 +409,34 @@ print("TEMPLATE " + template)
             if (options.action) {
                 params.action = options.action
             }
+            let action = params.action
+            if (action) {
+                if (action.contains(/[\.\/]/)) {
+                    let [controller, act] = action.split(/[\.\/]/)
+                    params.action = action = act
+                    params.controller = controller
+                } 
+                if (action.contains("::")) {
+                    let [ns, act] = action.split("::")
+                    params.action = action
+                    params.namespace = ns
+                }
+            }
             if (options.controller) {
                 params.controller = options.controller
             }
-//  MOB -- fix options.do
-            if (options.dox) {
-                let [controller, action] = options.dox.split("#")
-                params.action = action
-                params.controller = controller
-            }
-            if (params.action) {
-                let [ns, action] = params.action.split("::")
-                if (action) {
-                    params.action = action
-                    params.ns = ns
-                } else {
-                    params.action = ns
+            for (field in params) {
+                let value = params[field]
+                if (value.contains("{")) {
+                    let ptokens = value.match(/([^\}*]\})/g)
+                    count = 1
+                    let splitter = ""
+                    for (c in ptokens) {
+                        splitter += "$" + count++ + ":"
+                    }
+                    splitter = splitter.trim(":")
+//XX use different field names
+                    params[field] = {tokens: ptokens, splitter: splitter}
                 }
             }
             r.run = options.run || lookupRunners(r)
@@ -335,7 +445,14 @@ print("TEMPLATE " + template)
                     return options.run
                 }
             }
-            r.options = options
+            r.limits = options.limits
+            r.linker = options.linker
+            r.location = options.location
+            r.module = options.module
+            r.rewrite = options.rewrite
+            r.redirect = options.redirect
+            r.threaded = options.threaded
+            r.trace = options.trace
 
             if (options.parent) {
                 /* Must process nested routes first before appending the parent route to the routes table */
@@ -345,16 +462,9 @@ print("TEMPLATE " + template)
             }
             routeLookup[r.name] = r
 
+//MOB functionalize
             let inserted
-            if (options.replace) {
-                for (let [i, route] in routes) {
-                    if (route.name == options.replace) {
-                        routes.remove(i, i)
-                        inserted = routes.insert(i, r)
-                        break
-                    }
-                }
-            } else if (options.first) {
+            if (options.first) {
                 inserted = routes.insert(0, r)
             } else if (options.before) {
                 for (let [i, route] in routes) {
@@ -370,31 +480,40 @@ print("TEMPLATE " + template)
                         break
                     }
                 }
+            } else {
+                for (let [i, route] in routes) {
+                    if (route.name == r.name) {
+                        routes.remove(i, i)
+                        inserted = routes.insert(i, r)
+                        break
+                    }
+                }
             }
             if (!inserted) {
                 routes.append(r)
             }
-            return r.name
-		}
-
-		public function replace(name: String, pattern, options: Object = {}): Void {
-            options.replace = name
-            add(name, pattern, options)
+            let resource = options.resource || ""
+            let map = resources[resource] ||= {}
+            map[name] = r
+            return this
         }
 
-		public function remove(name: String): Void {
+        public function replace(name: String, pattern, options: Object = {}): Router
+            add(name, pattern, options)
+
+        public function remove(name: String): Router {
             for (i in routes) {
                 if (routes[i].name == name) {
                     routes.remove(i)
                     break
                 }
             }
+            return this
         }
 
-
         /** 
-            Route a request. The request is matched against the user-configured route table. If no route table is defined,
-            the restfulRoutes are used. The call returns the web application to execute.
+            Route a request. The request is matched against the configured route table. 
+            The call returns the web application to execute.
             @param request The current request object
             @return The web application function of the signature: 
                 function app(request: Request): Object
@@ -405,35 +524,30 @@ print("TEMPLATE " + template)
             let log = request.log
             log.debug(5, "Routing " + request.pathInfo)
 
+print("REQ " + request.method + " PATH " + pathInfo)
             if (request.method == "POST") {
-                let method = request.params["__method__"] || request.header("X-HTTP-METHOD-OVERRIDE")
+                let method = request.params["-ejs-method-"] || request.header("X-HTTP-METHOD-OVERRIDE")
                 if (method && method.toUpperCase() != request.method) {
                     // MOB automatically done request.originalMethod ||= request.method
                     log.debug(3, "Change method from " + request.method + " TO " + method + " for " + request.uri)
                     request.method = method
+print("MAP method to " + method)
                 }
             }
 
-print("PI \"" + pathInfo + "\"")
-
             //  MOB - need better way to turn on debug trace without slowing down the router
             for each (r in routes) {
-                let options = r.options
                 log.debug(6, "Test route \"" + r.name + "\"")
-print("Test route " + r.name)
 
                 if (r.method) {
                     if (!request.method.contains(r.method)) {
                         continue
                     }
                 }
-print("MATCHER " + r.matcher)
+// print("@@@@ Test route \"" + r.name + " MATCH " + r.matcher + "\"")
                 if (r.matcher is Function) { 
                     if (!r.matcher(request)) {
                         continue
-                    }
-                    for (i in r.params) {
-                        params[i] = r.params[i]
                     }
 
                 } else if (!r.splitter) { 
@@ -442,38 +556,31 @@ print("MATCHER " + r.matcher)
                         if (!results) {
                             continue
                         }
-                        for (let name in r.params) {
-                            let value = r.params[name]
-                            if (value.contains("$")) {
-                                value = pathInfo.replace(r.matcher, value)
-                            }
-                            params[name] = value
-                        }
-                    } else {
-                        for (i in r.params) {
-                            params[i] = r.params[i]
-                        }
                     }
 
                 } else {
-print("STRING/REGEXP " + pathInfo)
                     /*  String or RegExp based matcher */
                     if (!pathInfo.match(r.matcher)) {
-print("STRING/REGEXP - continue")
                         continue
                     }
                     parts = pathInfo.replace(r.matcher, r.splitter)
-print("SPLITTER " + r.splitter)
-print("TOKENS " + r.tokens)
-print("PARTS " + parts)
                     parts = parts.split(":")
                     for (i in r.tokens) {
-                        params[r.tokens[i]] = parts[i]
+                        params[r.tokens[i]] = parts[i].trimStart("/")
                     }
-                    /*  Apply override params */
-                    for (i in r.params) {
-                        params[i] = r.params[i]
+                }
+                /*  Apply override params */
+                for (field in r.params) {
+                    let value = r.params[field]
+                    if (value.contains("$") && !r.splitter) {
+                        //  MOB -- not right
+                        value = pathInfo.replace(r.matcher, value)
                     }
+                    if (value.contains("{")) {
+                        //  MOB -- not right
+                        value = request[value.trim.slice(1,-1)]
+                    }
+                    params[field] = value
                 }
                 if (r.rewrite && !r.rewrite(request)) {
                     log.debug(5, "Request rewritten as \"" + request.pathInfo + "\" (reroute)")
@@ -491,8 +598,8 @@ print("PARTS " + parts)
                     log.debug(4, "Set location prefix \"" + location.prefix + "\" dir \"" + location.dir + "\" (reroute)")
                     return route(request)
                 }
-                if (options.module && !r.initialized) {
-                    global.load(options.module + ".mod")
+                if (r.module && !r.initialized) {
+                    global.load(r.module + ".mod")
                     r.initialized = true
                 }
 print("@@@@ Matched route \"" + r.name + "\"")
@@ -516,7 +623,7 @@ dump("PARAMS", request.params)
                         request.trace(r.trace.level || 0, r.trace.options, r.trace.size)
                     }
                 }
-                r.params.ns ||= request.method
+//  MOB -- what if run is a response hash?
                 let app = r.run(request)
 
                 if (app == null) {
@@ -528,33 +635,38 @@ dump("PARAMS", request.params)
         }
 
         public function show(all: Boolean = false): Void {
-            // dump(routes)
             print("Route Table:")
             for each (r in routes) {
-                let o = r.options
-                let method = o.method || "ALL"
+                let method = r.method || "ALL"
                 let target
-                if (o.controller || o.action) {
-                    let controller = o.controller || "*"
-                    target = controller + "." + o.action
+                let params = r.params
+                if (params.controller || params.action) {
+                    let controller = params.controller || "*"
+                    let action = params.action || "*"
+                    target = controller + "." + action
                 } else if (r.run) {
                     target = r.run.name
                 } else {
                     target = "UNKNOWN"
                 }
                 let match = r.match
-                if (match is Function) {
-                    match = match.name
+                if (match is String) {
+                    match = "%s  " + match
+                } else if (match is RegExp) {
+                    match = "%r  " + match
+                } else if (match is Function) {
+                    match = "%f  " + match.name
                 } else if (!match) {
                     match = "*"
                 }
-                let line = "%10s: %16s: %7s: %-45s".format(r.name, target, method, match)
+                let line = "%16s: %20s: %7s:  %-45s".format(r.name, target, method, match)
                 if (all) {
                     if (r.params && Object.getOwnPropertyCount(r.params) > 0) {
                         if (!(r.params.action && Object.getOwnPropertyCount(r.params) == 1)) {
                             line += "  %s".format(serialize(r.params))
                         }
                     }
+                    line += "\n       exp: " + r.matcher + "\n"
                 }
                 print(line)
                 /*
@@ -608,6 +720,7 @@ dump("PARAMS", request.params)
     enumerable dynamic class Route {
         use default namespace public
 
+//XX update doc
         /**
             Matching pattern for URIs. The pattern is used to match the request in general and pathInfo specifically. 
             The pattern can be a token string, a regular expression or a function. If it is a string of tokens separated
@@ -640,31 +753,45 @@ dump("PARAMS", request.params)
         var name: String
 
         /**
-            Extra route options
-            @option limits Object Resource limits for the request. See HttpServer.limits for details.
-            @option linker Function Function that will be called by Request.link to make to make URI links.
-            
-                function linker(uri: Uri, request: Request, options: Object): Uri
-            @option location Object Application location to serve the request. Location contains two properties: prefix
-                which is the string URI prefix for the application and dir which is a Path to the physical file system
-                directory containing the MVC applciation.
-            @option String Name of the required module containing code to serve requests on thsi route.  
-            @option rewrite Function Rewrite function to rewrite the request before serving. It may update
-                the request scriptName, pathInfo and other Request properties.
-            @option redirect String URI to redirect the request toward.
-            @option threaded Boolean If true, the request should be run in a worker thread if possible. This thread
-                will not be dedicated, but will be assigned as the request requires CPU resources.
-            @option trace Object Trace options for the request. Note: the route is created after the Request object 
-                is created so the tracing of the connections and request headers will be controlled by the owning server. 
-                See HttpServer.trace for trace property fields.
+            Resource limits for the request. See HttpServer.limits for details.
          */
-        var options: Object
+        var limits: Object
+
+        /**
+            Function that will be called by Request.link to make to make URI links.
+
+                function linker(uri: Uri, request: Request, options: Object): Uri
+         */
+        var linker: Function
+
+        /**
+            Application location to serve the request. Location contains two properties: prefix which is the string 
+            URI prefix for the application and dir which is a Path to the physical file system directory containing 
+            the MVC applciation.
+         */
+        var location: Object
+
+        /**
+            Name of a required module containing code to serve requests on this route.  
+         */
+        var moduleName: String
 
         /**
             Request parameters to add to the Request.params. This optional override hash provides parameters which will 
             be defined in Request.params[].
          */
         var params: Object
+
+        /**
+            Rewrite function to rewrite the request before serving. It may update the request scriptName, pathInfo 
+            and other Request properties.
+         */
+        var rewrite: Function
+
+        /**
+            URI to redirect the request toward.
+         */
+        var redirect: String
 
         /** 
           Router instance reference
@@ -682,25 +809,38 @@ dump("PARAMS", request.params)
          */
         var subroute: Route
 
-/////////////////////// UNUSED
+        /**
+            If true, the request should be run in a worker thread if possible. This thread will not be dedicated, 
+            but will be assigned as the request requires CPU resources.
+         */
+        var threaded: Boolean
 
-//        /*
-//            Type of requests matched by this route. Typical types: "es", "ejs", "mvc"
-//         */
-//        var type: String
-//
-//        /**
-//            Directory for the application serving the route. This directory path will be assigned to Request.dir.
-//         */
-//        var dir: Path
-//        /**
-//            Provider function that represents the web application for requests matching this route
-//         */
-//        var provider: Function
+        /**
+            Trace options for the request. Note: the route is created after the Request object is created so the tracing 
+            of the connections and request headers will be controlled by the owning server. 
+            See HttpServer.trace for trace property fields.
+         */
+        var trace: Object
 
+        /*
+            Matcher function or regular expression. This matches the pathInfo for the route.
+         */
         internal var matcher: Object
+
+        /*
+            Splitter. This is used as the replacement argument to extract tokens from the pathInfo
+         */
         internal var splitter: String
+
+        /**
+            key tokens in the route pattern
+         */
         internal var tokens: Array
+
+        /**
+            Route pattern split at "/"
+         */
+        internal var components: Array
 
         function Route(router: Router) {
             this.router = router
@@ -710,35 +850,40 @@ dump("PARAMS", request.params)
             Complete a URI link by adding route token information. 
             @param uri Current URI to complete
             @param request Current request object
+            @param options Object hash of options describing the target link. See $Request.link.
+            @option resource Name of the RESTFul resource owning the route.
+            @option route Name of the route to use to pattern the URI.
             @return A Uri object.
          */
-        public function completeLink(uri: Uri, request: Request, target: Object): Uri {
-            if (options.linker) {
-                return options.linker(uri, request, target)
+        public function completeLink(uri: Uri, request: Request, options: Object): Uri {
+            if (settings.linker) {
+                return settings.linker(uri, request, options)
             }
-            let routeName = options.route || "default"
-            let route = this
-            if (routeName != this.name) {
-                /* Using another route */
-                route = router.routeLookup[routeName]
-                if (!route) {
-                    throw new ReferenceError("link: Unknown route \"" + routeName + "\"")
-                }
+            let resource = options.resource || ""
+            let map = resources[resource]
+            if (!map) {
+                throw new ReferenceError("Unknown route resource \"" + resource + "\"")
             }
-            if (route.tokens) {
-                for each (let token in route.tokens) {
-                    let value = target[token]
+            let routeName = options.route || request.route.name || "default"
+            let route = map[routeName]
+            if (!route) {
+                throw new ReferenceError("Unknown route \"" + routeName + "\"")
+            }
+            for each (let value in route.components) {
+                if (value.startsWith(":")) {
+                    let token = value.slice(1)
+                    value = options[token]
                     if (value == undefined) {
                         if (token == "action") {
                             continue
                         }
                         value = request.params[token]
                         if (value == undefined) {
-                            throw new ArgError("Missing URI token \"" + token + "\"")
+                            continue
                         }
                     }
-                    uri = uri.join(value)
                 }
+                uri = uri.join(value)
             }
             return uri
         }

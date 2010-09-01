@@ -1133,7 +1133,7 @@ print(e)
     }
 
     function createMigration(model: String, attributes: Array, comment: String, tableExists: Boolean): Void {
-        let tableName = plural(model).toPascal()
+        let tableName = toPlural(model).toPascal()
         let forward = ''
         let backward = ''
 
@@ -1401,11 +1401,6 @@ print(e)
         if (verbose) {
             print("  " + tag + ": " + args.join(" "))
         }
-    }
-
-    //  TODO - share with rest of framework
-    function plural(word: String): String {
-        return word + "s"
     }
 
     function upgradeApp() {

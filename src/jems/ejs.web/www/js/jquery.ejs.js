@@ -26,7 +26,7 @@
             $('[data-sort-order]').each(sort);
             $('[data-refresh]').each(refresh);
             $('[data-modal]').each(function() {
-                this.modal({
+                $(this).modal({
                     escClose: false, 
                     overlayId: "-ejs-modal-background", 
                     containerId: "-ejs-modal-foreground",
@@ -145,7 +145,7 @@
             var split = key.split("&");
             for (i in split) {
                 pair = split[i];
-                keys.push(pair.split("=")[0]);
+                keys.push(pair.split("=")[1]);
             } 
             if (keys.length > 0) {
                 url = url + "/" + keys.join("/");
@@ -162,7 +162,7 @@
             var token = $('meta[name=' + tokenName + ']').attr('content');
             if (token) {
                 var form = $('<form method="post" action="' + url + '"/>').
-                    append('<input name="__method__" value="' + method + '" type="hidden" />').
+                    append('<input name="-ejs-method-" value="' + method + '" type="hidden" />').
                     append('<input name="' + tokenName + '" value="' + token + '" type="hidden" />');
                 if (params) {
                     for (k in params) {

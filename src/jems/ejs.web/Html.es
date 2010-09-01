@@ -4,8 +4,8 @@
 
 module ejs.web {
 
-	/**
-	    The Html Connector provides bare HTML encoding of View controls.
+    /**
+        The Html Connector provides bare HTML encoding of View controls.
 
         MOB Style conventions???
             -ejs- prefixes all internal styles
@@ -28,8 +28,8 @@ module ejs.web {
         @stability prototype
         @spec ejs
         @hide
-	 */
-	public class HtmlViewConnector {
+     */
+    public class HtmlViewConnector {
 
         use default namespace module
 
@@ -89,35 +89,35 @@ module ejs.web {
             this.request = view.request
         }
 
-		function alert(text: String, options: Object): Void {
+        function alert(text: String, options: Object): Void {
             options.style = append(options.style, "-ejs-alert")
             write('<div' + getAttributes(options) + '>' +  text + '</div>\r\n')
         }
 
 /*
    MOB - deprecated. Use label
-		function anchor(text: String, options: Object): Void {
+        function anchor(text: String, options: Object): Void {
             let uri ||= request.link(options)
-			write('<a href="' + uri + '"' + getAttributes(options) + '>' + text + '</a>\r\n')
-		}
+            write('<a href="' + uri + '"' + getAttributes(options) + '>' + text + '</a>\r\n')
+        }
 */
 
-		function button(field: String, label: String, options: Object): Void {
+        function button(field: String, label: String, options: Object): Void {
             write('    <input name="' + field + '" type="submit" value="' + label + '"' + getAttributes(options) + ' />\r\n')
         }
 
-		function buttonLink(text: String, options: Object): Void {
+        function buttonLink(text: String, options: Object): Void {
             options.click ||= true
             let attributes = getAttributes(options)
             write('<button ' + attributes + '>' + text + '</button></a>\r\n')
         }
 
-		function chart(data: Array, options: Object): Void {
+        function chart(data: Array, options: Object): Void {
             //  TODO
             throw 'HtmlConnector control "chart" not implemented.'
-		}
+        }
 
-		function checkbox(field: String, value: Object, checkedValue: Object, options: Object): Void {
+        function checkbox(field: String, value: Object, checkedValue: Object, options: Object): Void {
             let checked = (value == checkedValue) ? ' checked="yes"' : ''
             write('    <input name="' + field + '" type="checkbox"' + getAttributes(options) + checked + 
                 ' value="' + checkedValue + '" />\r\n')
@@ -129,11 +129,11 @@ module ejs.web {
             write('<span ' + getAttributes(options) + '>' +  body + '</span>\r\n')
         }
 
-		function endform(): Void {
+        function endform(): Void {
             write('</form>\r\n')
         }
 
-		function flash(kind: String, msg: String, options: Object): Void {
+        function flash(kind: String, msg: String, options: Object): Void {
             options.style = append(options.style, "-ejs-flash -ejs-flash-" + kind)
             write('<div' + getAttributes(options) + '>' + msg + '</div>\r\n')
             if (kind == "inform") {
@@ -141,34 +141,46 @@ module ejs.web {
                         $("div.-ejs-flash-inform").animate({opacity: 1.0}, 2000).hide("slow");
                     });}</script>\r\n')
             }
-		}
+        }
 
-		function form(record: Object, options: Object): Void {
+        function form(record: Object, options: Object): Void {
+    //  MOB -- need to be overridden for delete buttons
+            options.method ||= ((record && options.id) ? "PUT" : "POST")
+            options.action ||= "update"
+            let method = options.method
+            if (method != "GET" && method != "POST") {
+                method = "POST"
+            }
             let uri ||= request.link(options)
             emitFormErrors(record, options)
-            write('<form action="' + uri + '"' + getAttributes(options) + '>\r\n')
+    //  MOB -- what is method: true for?
+            let attributes = getAttributes(options, { method: true })
+            write('<form method="' + method + '" action="' + uri + '"' + attributes + '>\r\n')
             if (options.id != undefined) {
                 write('    <input name="id" type="hidden" value="' + options.id + '" />\r\n')
-                if (!options.insecure) {
-                    let token = options.securityToken || request.securityToken
-                    write('    <input name="' + Request.SecurityTokenName + '" type="hidden" value="' + token + '" />\r\n')
-                }
+            }
+            if (!options.insecure) {
+                let token = options.securityToken || request.securityToken
+                write('    <input name="' + Request.SecurityTokenName + '" type="hidden" value="' + token + '" />\r\n')
+            }
+            if (options.method && options.method != "POST") {
+                write('    <input name="-ejs-method-" type="hidden" value="' + options.method.toUpperCase() + '" />\r\n')
             }
         }
 
-		function icon(uri: String, options: Object): Void {
+        function icon(uri: String, options: Object): Void {
             write('    <link href="' + uri + '" rel="shortcut icon" />\r\n')
-		}
+        }
 
         function image(src: String, options: Object): Void {
-			write('<img src="' + src + '"' + getAttributes(options) + '/>\r\n')
+            write('<img src="' + src + '"' + getAttributes(options) + '/>\r\n')
         }
 
         function label(text: String, options: Object): Void {
             write('<span ' + getAttributes(options) + '>' +  text + '</span>\r\n')
         }
 
-		function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
+        function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
             let selected
             write('    <select name="' + name + '" ' + getAttributes(options) + '>\r\n')
             if (choices is Array) {
@@ -203,20 +215,19 @@ module ejs.web {
             write('    </select>\r\n')
         }
 
-		function mail(name: String, address: String, options: Object): Void  {
-			write('<a href="mailto:' + address + '"' + getAttributes(options) + '>' + name + '</a>\r\n')
-		}
+        function mail(name: String, address: String, options: Object): Void  {
+            write('<a href="mailto:' + address + '"' + getAttributes(options) + '>' + name + '</a>\r\n')
+        }
 
-		function progress(data: Number, options: Object): Void {
+        function progress(data: Number, options: Object): Void {
             options["data-progress"] = data
             write('<div class="-ejs-progress">\r\n    <div class="-ejs-progress-inner"' + getAttributes(options) + 
                 '>' + data + '%</div>\r\n</div>>\r\n')
-		}
+        }
 
         function radio(name: String, actual: String, choices: Object, options: Object): Void {
             let checked: String
             let attributes = getAttributes(options)
-dump("CHOICES", choices)
             if (choices is Array) {
                 for each (choice in choices) {
                     if (choice is Array) {
@@ -251,7 +262,7 @@ dump("CHOICES", choices)
             }
         }
 
-		function script(uri: String, options: Object): Void {
+        function script(uri: String, options: Object): Void {
             if (uri == null) {
                 for each (uri in defaultScripts) {
                     script(request.absHome.local.join(uri), options)
@@ -259,14 +270,14 @@ dump("CHOICES", choices)
             } else {
                 write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
             }
-		}
+        }
 
         function securityToken(options: Object): Void {
             write('    <meta name="SecurityTokenName" content="' + Request.SecurityTokenName + '" />\r\n')
             write('    <meta name="' + Request.SecurityTokenName + '" content="' + request.securityToken + '" />\r\n')
         }
 
-		function stylesheet(uri: String, options: Object): Void {
+        function stylesheet(uri: String, options: Object): Void {
             if (uri == null) {
                 for each (uri in defaultStylesheets) {
                     stylesheet(request.absHome.local.join(uri), options)
@@ -274,9 +285,9 @@ dump("CHOICES", choices)
             } else {
                 write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
             }
-		}
+        }
 
-		function table(data, options: Object): Void {
+        function table(data, options: Object): Void {
             if (!data is Array) {
                 data = [data]
             }
@@ -294,7 +305,7 @@ dump("CHOICES", choices)
             })
             let columns = getColumns(data, options)
 
-			write('  <table' + attributes + '>\r\n')
+            write('  <table' + attributes + '>\r\n')
 
             /*
                 Table title header and column headings
@@ -320,7 +331,7 @@ dump("CHOICES", choices)
                 Render each row
              */
             let row = 0
-			for each (let r: Object in data) {
+            for each (let r: Object in data) {
                 let values = {}
                 for (name in columns) {
                     values[name] = view.getValue(r, name, options)
@@ -334,7 +345,7 @@ dump("CHOICES", choices)
                 }
 
                 let col = 0
-				for (let [name, column] in columns) {
+                for (let [name, column] in columns) {
                     let value = values[name]
                     let styleCell: String = ""
                     if (options.styleColumns) {
@@ -361,14 +372,14 @@ dump("CHOICES", choices)
                     value = view.formatValue(value, r, name, { formatter: column.formatter} )
                     write('            <td' + attr + '>' + value + '</td>\r\n')
                     col++
-				}
+                }
                 row++
-				write('        </tr>\r\n')
-			}
-			write('    </tbody>\r\n</table>\r\n')
-		}
+                write('        </tr>\r\n')
+            }
+            write('    </tbody>\r\n</table>\r\n')
+        }
 
-		function tabs(data: Object, options: Object): Void {
+        function tabs(data: Object, options: Object): Void {
             let attributes = getAttributes(options)
             let att
             if (options.remote) {
@@ -418,9 +429,9 @@ dump("CHOICES", choices)
             let attributes = getAttributes(options)
             let columns = getColumns(data, options)
 
-			write('<div' + attributes + '>\r\n')
+            write('<div' + attributes + '>\r\n')
             write(serialize(data, {pretty: true}))
-			write('</div>\r\n')
+            write('</div>\r\n')
         }
 
         /************************************************** Support ***************************************************/
@@ -487,7 +498,7 @@ dump("CHOICES", choices)
             @returns a string containing the HTML attributes to emit. Will return an empty string or a string with a 
                 leading space (and not trailing space)
          */
-        private function getAttributes(options: Object): String {
+        private function getAttributes(options: Object, exclude: Object = null): String {
             if (options.hasError) {
                 options.style = append(options.style, "-ejs-field-error")
             }
@@ -499,7 +510,7 @@ dump("CHOICES", choices)
             if (options.refresh && !options.domid) {
                 options.domid = getNextID()
             }
-            return mapAttributes(options)
+            return mapAttributes(options, exclude)
         }
 
         /*
@@ -581,12 +592,13 @@ dump("CHOICES", choices)
         /*
             Map options to HTML attributes
          */
-        private function mapAttributes(options: Object): String {
+        private function mapAttributes(options: Object, exclude: Object = null): String {
             let result: String = ""
             if (options.method) {
                 options.method = options.method.toUpperCase();
             }
             for (let [key, value] in options) {
+                if (exclude && exclude[key]) continue
                 if (value != undefined) {
                     if (htmlOptions[key] || key.startsWith("data-")) {
                         let mapped = htmlOptions[key] ? htmlOptions[key] : key
@@ -650,12 +662,12 @@ dump("CHOICES", choices)
             }
             return str
         }
-	}
+    }
 }
 
 
 /*
-   @copy	default
+   @copy    default
    
    Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
    Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.

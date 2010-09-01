@@ -20,6 +20,9 @@ class Shape {
         let o = this
         assert(o.("bbb")::["x"] == "BLUE")
         assert(o.blue::["x"] == "BLUE")
+
+        let a = "bbb", b = "x"
+        assert(o.(a)::[b] == "BLUE")
     }
 }
 

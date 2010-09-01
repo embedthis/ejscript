@@ -1033,42 +1033,6 @@ static EjsObj *req_removeObserver(Ejs *ejs, EjsRequest *req, int argc, EjsObj **
 
 
 /*  
-    function sendFile(path: Path): Boolean
- */
-static EjsObj *req_sendFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
-{
-    EjsPath         *path;
-    HttpConn        *conn;
-    HttpRx          *rx;
-    HttpTx          *trans;
-    HttpPacket      *packet;
-    MprPath         info;
-
-    if (!connOk(ejs, req, 1)) return 0;
-    conn = req->conn;
-    rx = conn->rx;
-    trans = conn->tx;
-
-    if (rx->ranges || conn->secure || trans->chunkSize > 0) {
-        return ejs->falseValue;
-    }
-    path = (EjsPath*) argv[0];
-    if (mprGetPathInfo(ejs, path->path, &info) < 0) {
-        ejsThrowIOError(ejs, "Cannot open %s", path->path);
-        return ejs->falseValue;
-    }
-    httpSetSendConnector(req->conn, path->path);
-
-    packet = httpCreateDataPacket(conn->writeq, 0);
-    packet->entityLength = (int) info.size;
-    trans->length = trans->entityLength = (int) info.size;
-    httpPutForService(conn->writeq, packet, 0);
-    httpFinalize(req->conn);
-    return ejs->trueValue;
-}
-
-
-/*  
     function setHeader(key: String, value: String, overwrite: Boolean = true): Void
  */
 static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
@@ -1201,6 +1165,42 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         ejsSendEvent(ejs, req->emitter, "writable", NULL, (EjsObj*) req);
     }
     return 0;
+}
+
+
+/*  
+    function writeFile(path: Path): Boolean
+ */
+static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+{
+    EjsPath         *path;
+    HttpConn        *conn;
+    HttpRx          *rx;
+    HttpTx          *trans;
+    HttpPacket      *packet;
+    MprPath         info;
+
+    if (!connOk(ejs, req, 1)) return 0;
+    conn = req->conn;
+    rx = conn->rx;
+    trans = conn->tx;
+
+    if (rx->ranges || conn->secure || trans->chunkSize > 0) {
+        return ejs->falseValue;
+    }
+    path = (EjsPath*) argv[0];
+    if (mprGetPathInfo(ejs, path->path, &info) < 0) {
+        ejsThrowIOError(ejs, "Cannot open %s", path->path);
+        return ejs->falseValue;
+    }
+    httpSetSendConnector(req->conn, path->path);
+
+    packet = httpCreateDataPacket(conn->writeq, 0);
+    packet->entityLength = (int) info.size;
+    trans->length = trans->entityLength = (int) info.size;
+    httpPutForService(conn->writeq, packet, 0);
+    httpFinalize(req->conn);
+    return ejs->trueValue;
 }
 
 
@@ -1369,11 +1369,11 @@ void ejsConfigureRequestType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_observe, (EjsProc) req_observe);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_read, (EjsProc) req_read);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_removeObserver, (EjsProc) req_removeObserver);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_sendFile, (EjsProc) req_sendFile);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setLimits, (EjsProc) req_setLimits);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setHeader, (EjsProc) req_setHeader);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_trace, (EjsProc) req_trace);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_write, (EjsProc) req_write);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_writeFile, (EjsProc) req_writeFile);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_written, (EjsProc) req_written);
 }
 

@@ -988,12 +988,12 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
         /*
             Unbound or Function expression or instance variable containing a function. Can't use fast path op codes below.
          */
-        if (left->kind == N_QNAME) {
+        if (left->kind == N_QNAME && !left->name.nameExpr) {
             argc = genCallArgs(cp, right);
             ecEncodeOpcode(cp, EJS_OP_CALL_SCOPED_NAME);
             ecEncodeName(cp, &np->qname);
             
-        } else if (left->kind == N_DOT && left->right->kind == N_QNAME) {
+        } else if (left->kind == N_DOT && left->right->kind == N_QNAME && !left->right->name.nameExpr) {
             processNodeGetValue(cp, left->left);
             if (state->dupLeft) {
                 ecEncodeOpcode(cp, EJS_OP_DUP);
@@ -1009,13 +1009,9 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             /*
                 MOB BUG. Could be an arbitrary expression on the left. Need a consistent way to save the right most
                 object before the property. */
-#if OLD
-            ecEncodeOpcode(cp, EJS_OP_LOAD_GLOBAL);
-            pushStack(cp, 1);
-#else
             count = getStackCount(cp);
             left->needThis = 1;
-#endif
+
             processNodeGetValue(cp, left);
             if (getStackCount(cp) < (count + 2)) {
                 ecEncodeOpcode(cp, EJS_OP_DUP);
@@ -3341,7 +3337,6 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
         pushStack(cp, 1);
         np->needThis = 0;
     }
-
     if (np->name.qualifierExpr || np->name.nameExpr) {
         genNameExpr(cp, np);
         if (state->currentObjectNode) {
@@ -3355,7 +3350,6 @@ static void genUnboundName(EcCompiler *cp, EcNode *np)
         LEAVE(cp);
         return;
     }
-
     if (state->currentObjectNode) {
         /*
             Property name (requires obj on stack)
@@ -3497,7 +3491,6 @@ static void genUseNamespace(EcCompiler *cp, EcNode *np)
     if (np->useNamespace.isLiteral) {
         ecEncodeOpcode(cp, EJS_OP_ADD_NAMESPACE);
         ecEncodeString(cp, np->qname.name);
-
     } else {
         genName(cp, np);
         ecEncodeOpcode(cp, EJS_OP_ADD_NAMESPACE_REF);

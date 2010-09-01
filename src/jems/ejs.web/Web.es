@@ -109,6 +109,7 @@ module ejs.web {
             @param request Request object
          */
         static native function worker(app: Function, request: Request): Void
+
         private static function workerHelper(app: Function, request: Request): Void {
             try {
                 process(app, request)
@@ -117,12 +118,15 @@ module ejs.web {
             }
         }
 
+        //  MOB -- where here should content mapping take place according to Accept: 
+        //    Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
         private static function processBody(request: Request, body: Object): Void {
             if (body is Path) {
+                //  MOB -- should have generic way of disabling writeFile
                 if (request.isSecure) {
                     body = File(body, "r")
                 } else {
-                    request.sendFile(body)
+                    request.writeFile(body)
                     return
                 }
             }
@@ -176,7 +180,7 @@ module ejs.web {
             } else {
                 let file = request.responseHeaders["X-Sendfile"]
                 if (file && !request.isSecure) {
-                    request.sendFile(file)
+                    request.writeFile(file)
                 } else {
                     request.autoFinalize()
                 }
@@ -215,7 +219,7 @@ module ejs.web {
                 } else {
                     let file = request.responseHeaders["X-Sendfile"]
                     if (file && !request.isSecure) {
-                        request.sendFile(file)
+                        request.writeFile(file)
                     }
                 }
                 if (finalize) {

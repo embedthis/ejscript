@@ -91,7 +91,7 @@ UNUSED - MOB -- better to set in Request
                 suffix.
          */
         static function create(request: Request, cname: String = null): Controller {
-            cname ||= (request.params.controller.toPascal() + "Controller")
+            cname ||= (request.params.controller + "Controller")
             _initRequest = request
             let c: Controller = new global[cname](request)
             c.request = request
@@ -107,7 +107,6 @@ UNUSED - MOB -- better to set in Request
         function Controller(req: Request = null) {
             /*  _initRequest may be set by create() to allow subclasses to omit constructors */
             controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
-print("IS CONTROLLER NAME UPPER CASE " + controllerName)
             request = req || _initRequest
             if (request) {
                 request.controller = this
@@ -132,20 +131,20 @@ print("IS CONTROLLER NAME UPPER CASE " + controllerName)
             @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
         function app(request: Request, aname: String = null): Object {
-            use namespace action
+            let ns = params.namespace || "action"
             actionName ||= aname || params.action || "index"
             params.action = actionName
             runCheckers(_beforeCheckers)
             let response
             if (!request.finalized && request.autoFinalizing) {
 
-//  MOB - this allows Controller.toString(). Must only check for explicit ::action methods
-                if (!this[actionName]) {
+                let ns = "action"
+                if (!(ns)::[actionName]) {
                     if (!viewExists(actionName)) {
-                        response = this[actionName = "missing"]()
+                        response = (ns)::[actionName = "missing"]()
                     }
                 } else {
-                    response = this[actionName]()
+                    response = (ns)::[actionName]()
                 }
                 if (response && !response.body) {
                     throw "Response object is missing a \"body\""
@@ -169,6 +168,7 @@ print("IS CONTROLLER NAME UPPER CASE " + controllerName)
             @option only Only run the checker for this action name
             @option except Run the checker for all actions except this name
          */
+//  MOB -- rename after
         function checkAfter(fn, options: Object = null): Void {
             _afterCheckers ||= []
             _afterCheckers.append([fn, options])
@@ -183,6 +183,7 @@ print("IS CONTROLLER NAME UPPER CASE " + controllerName)
             @option only Only run the checker for this action name
             @option except Run the checker for all actions except this name
          */
+//  MOB -- rename before
         function checkBefore(fn, options: Object = null): Void {
             _beforeCheckers ||= []
             _beforeCheckers.append([fn, options])
@@ -284,7 +285,7 @@ print("IS CONTROLLER NAME UPPER CASE " + controllerName)
             @param filename Path to the filename to send to the client
          */
         function writeFile(filename: Path): Void
-            request.sendFile(filename)
+            request.writeFile(filename)
 
         /** 
             Render a partial response using template file.
@@ -443,9 +444,9 @@ print("IS CONTROLLER NAME UPPER CASE " + controllerName)
                 if (dbconfig.module && !global[dbclass]) {
                     global.load(dbconfig.module + ".mod")
                 }
-                // namespace db = dbconfig.module
-                // use namespace db
-                new global[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
+                let module = dbconfig.module || "public"
+                // new global[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
+                new global.(module)::[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
             }
         }
 

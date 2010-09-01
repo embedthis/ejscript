@@ -191,7 +191,7 @@ module ejs.web {
         native enumerable var method: String
 
         /** 
-            Original HTTP request method used by the client. If the method is overridden by including a "__method__" 
+            Original HTTP request method used by the client. If the method is overridden by including a "-ejs-method-" 
             parameter in a POST request or by defining an X-HTTP-METHOD-OVERRIDE Http header, the original method used by
             the client is stored in this property and the method property reflects the newly defined value.
          */
@@ -483,10 +483,14 @@ module ejs.web {
                 r.link("images/splash.png").complete(r.uri)  returns "http://example.com/samples/images/splash.png"
                 r.link("images/splash.png").relative(r.uri)  returns "images/splash.png"
 
+                r.link({action: "checkout")
+                r.link({controller: "User", action: "logout")
+
             @return A normalized, server-local Uri object.
          */
         function link(target: Object): Uri {
             let result = uri.local.resolve(target)
+            //  MOB -- is the && !target.path needed?
             if (result.path == "/" && route && Object.getOwnPropertyCount(target) > 0 && !target.path) {
                 result = route.completeLink(result, this, target)
             } else if (target.action) {
@@ -581,32 +585,6 @@ module ejs.web {
         function get securityToken(): Object {
             session[SecurityTokenName] ||= md5(Math.random()) 
             return session[SecurityTokenName]
-        }
-
-        /**
-            Send a static file back to the client. This is a high performance way to send static content to the client.
-            This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
-            and the slower netConnector will be used instead.
-            @param file Path to the file to send back to the client
-            @return True if the Send connector can successfully be used. 
-         */
-        native function sendFile(file: Path): Boolean
-
-        /** 
-            Send a response to the client. This can be used instead of setting status and calling setHeaders() and write(). 
-            The $response argument is an object hash containing status, headers and
-            body properties. The respond method replaces previously defined status and headers.
-            @option status Numeric Http status code (e.g. 200 for a successful response)
-            @option header Object hash of Http headers
-            @option body Body content
-        */
-        function sendResponse(response: Object): Void {
-            status = response.status || 200
-            if (response.headers)
-                setHeaders(response.headers)
-            if (response.body)
-                write(response.body)
-            autoFinalize()
         }
 
         /** 
@@ -846,6 +824,40 @@ module ejs.web {
             //  Can't be zero else it comes out in utest
             log.debug(1, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
+
+        /**
+            Send a static file back to the client. This is a high performance way to send static content to the client.
+            This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
+            and the slower netConnector will be used instead.
+            @param file Path to the file to send back to the client
+            @return True if the Send connector can successfully be used. 
+         */
+        native function writeFile(file: Path): Boolean
+
+        //  MOB
+        function sendFile(file: Path): Boolean
+            writeFile(file)
+
+        /** 
+            Send a response to the client. This can be used instead of setting status and calling setHeaders() and write(). 
+            The $response argument is an object hash containing status, headers and
+            body properties. The respond method replaces previously defined status and headers.
+            @option status Numeric Http status code (e.g. 200 for a successful response)
+            @option header Object hash of Http headers
+            @option body Body content
+        */
+        function writeResponse(response: Object): Void {
+            status = response.status || 200
+            if (response.headers)
+                setHeaders(response.headers)
+            if (response.body)
+                write(response.body)
+            autoFinalize()
+        }
+
+        //  MOB
+        function sendResponse(response: Object): Void
+            writeResponse(response)
 
         /** 
             Write safely. Write HTML escaped data back to the client.

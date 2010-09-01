@@ -96,11 +96,10 @@ module ejs.web {
             loadComponent(request, appmod, files, deps)
 
             /* Load controller */
-            let controller = request.params.controller
-            let ucontroller = controller.toPascal()
-            let mod = dir.join(dirs.cache, ucontroller).joinExt(ext.mod)
+            let controller = request.params.controller = request.params.controller.toPascal()
+            let mod = dir.join(dirs.cache, controller).joinExt(ext.mod)
             if (!mod.exists || config.cache.reload) {
-                files = [dir.join(dirs.controllers, ucontroller).joinExt(ext.es)]
+                files = [dir.join(dirs.controllers, controller).joinExt(ext.es)]
                 deps = [dir.join(dirs.controllers, "Base").joinExt(ext.es)]
                 loadComponent(request, mod, files, deps)
             } else {
@@ -188,7 +187,7 @@ module ejs.web {
         let mvc: Mvc = Mvc.apps[request.dir] || (Mvc.apps[request.dir] = new Mvc(request))
         //  MOB -- rename to load?
         mvc.init(request)
-        let cname: String = request.params["controller"].toPascal() + "Controller"
+        let cname: String = request.params.controller + "Controller"
         return Controller.create(request, cname).app
     }
 }

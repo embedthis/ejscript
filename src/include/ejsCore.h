@@ -83,7 +83,9 @@ struct EjsXML;
 #define EJS_TRAIT_SETTER                0x100       /**< Property is a settter */
 #define EJS_TRAIT_THROW_NULLS           0x200       /**< Property rejects null */
 
+#if UNUSED || 1
 #define EJS_PROP_HAS_VALUE              0x400       /**< Property has a value record */
+#endif
 #define EJS_PROP_NATIVE                 0x800       /**< Property is backed by native code */
 #define EJS_PROP_STATIC                 0x1000      /**< Class static property */
 #if UNUSED

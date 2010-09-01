@@ -993,7 +993,6 @@ static EcNode *parseIdentifier(EcCompiler *cp)
     if (cp->token->groupMask & G_CONREV) {
         tid = T_ID;
     }
-
     switch (tid) {
     case T_MUL:
     case T_ID:
@@ -1286,11 +1285,12 @@ static EcNode *parseExpressionQualifiedName(EcCompiler *cp)
         return LEAVE(cp, unexpected(cp));
     }
     qualifier = parseListExpression(cp);
-
+    if (getToken(cp) != T_RPAREN) {
+        return LEAVE(cp, expected(cp, ")"));
+    }
     if (getToken(cp) == T_COLON_COLON) {
         np = parseQualifiedNameIdentifier(cp);
         np->name.qualifierExpr = linkNode(np, qualifier);
-
     } else {
         np = expected(cp, "\"::\"");
     }
@@ -2555,7 +2555,7 @@ static EcNode *parseThisExpression(EcCompiler *cp)
  */
 static EcNode *parsePrimaryExpression(EcCompiler *cp)
 {
-    EcNode      *np;
+    EcNode      *np, *qualifier, *name;
     EjsObj      *vp;
     Ejs         *ejs;
     int         tid;
@@ -2648,6 +2648,18 @@ static EcNode *parsePrimaryExpression(EcCompiler *cp)
 
     case T_LPAREN:
         np = parseParenListExpression(cp);
+        if (peekToken(cp) == T_COLON_COLON) {
+            getToken(cp);
+            qualifier = np;
+            if ((np = parseQualifiedNameIdentifier(cp)) != 0) {
+                if (np->kind == N_EXPRESSIONS) {
+                    name = np;
+                    np = createNode(cp, N_QNAME);
+                    np->name.nameExpr = linkNode(np, name);
+                }
+                np->name.qualifierExpr = linkNode(np, qualifier);
+            }
+        }
         break;
 
     case T_LBRACKET:
@@ -2886,7 +2898,7 @@ static EcNode *parseRestArgument(EcCompiler *cp)
  */
 static EcNode *parsePropertyOperator(EcCompiler *cp)
 {
-    EcNode      *np, *name;
+    EcNode      *np, *qualifier, *name;
     char        *id;
 
     ENTER(cp);
@@ -2897,10 +2909,17 @@ static EcNode *parsePropertyOperator(EcCompiler *cp)
         getToken(cp);
         switch (peekToken(cp)) {
         case T_LPAREN:
-            np = appendNode(np, parseParenListExpression(cp));
+            name = parseParenListExpression(cp);
+            if (peekToken(cp) == T_COLON_COLON) {
+                qualifier = name;
+                getToken(cp);
+                name = parseQualifiedNameIdentifier(cp);
+                name->name.qualifierExpr = linkNode(name, qualifier);
+            }
+            np = appendNode(np, name);
             break;
 
-        /* TODO - should handle all contextually reserved identifiers here */
+        /* MOB TODO - should handle all contextually reserved identifiers here */
         case T_TYPE:
         case T_ID:
         case T_GET:
@@ -2926,8 +2945,15 @@ static EcNode *parsePropertyOperator(EcCompiler *cp)
             break;
 
         default:
+            if (cp->token->groupMask & G_RESERVED) {
+                np = appendNode(np, parseIdentifier(cp));
+            } else {
+                np = appendNode(np, parsePropertyName(cp));
+            }
+#if UNUSED
             getToken(cp);
             np = unexpected(cp);
+#endif
             break;
         }
         break;
@@ -5540,7 +5566,6 @@ static EcNode *parseIfStatement(EcCompiler *cp)
         getToken(cp);
         return LEAVE(cp, parseError(cp, "Expecting \"(\""));
     }
-
     np = createNode(cp, N_IF);
     if ((np->tenary.cond = linkNode(np, parseParenListExpression(cp))) == 0) {
         return LEAVE(cp, 0);
@@ -5581,7 +5606,6 @@ static EcNode *parseSwitchStatement(EcCompiler *cp)
 
     if (getToken(cp) != T_SWITCH) {
         np = unexpected(cp);
-
     } else {
         if (peekToken(cp) != T_TYPE) {
             np = appendNode(np, parseParenListExpression(cp));
@@ -5787,7 +5811,6 @@ static EcNode *parseTypeCaseElement(EcCompiler *cp)
 static EcNode *parseDoStatement(EcCompiler *cp)
 {
     EcNode      *np;
-
 
     ENTER(cp);
 
@@ -8650,11 +8673,16 @@ static EcNode *parseInterfaceBody(EcCompiler *cp)
  */
 static EcNode *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributeNode)
 {
+    EcState     *state;
     EcNode      *varDefNode, *assignNode, *varNode, *typeNode, *namespaceNode, *nameNode;
     EjsObj      *vp;
 
     ENTER(cp);
-
+    state = cp->state;
+    if (state->inClass || state->inFunction) {
+        getToken(cp);
+        return LEAVE(cp, parseError(cp, "Namespace definitions are not permitted inside classes or functions"));
+    }
     if (getToken(cp) != T_NAMESPACE) {
         return LEAVE(cp, unexpected(cp));
     }
@@ -8683,7 +8711,6 @@ static EcNode *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributeNode)
 
     if (peekToken(cp) == T_ASSIGN) {
         namespaceNode = parseNamespaceInitialisation(cp, varNode);
-
     } else {
         /*
             Create a namespace literal node from which to assign.
@@ -8714,10 +8741,7 @@ static EcNode *parseNamespaceDefinition(EcCompiler *cp, EcNode *attributeNode)
     NamespaceInitialisation (501)
         EMPTY
         = StringLiteral
-        = SimpleQualifiedName
-
-    Input
-        =
+        = MOB -- not supported SimpleQualifiedName
 
     AST
         N_LITERAL
@@ -8734,15 +8758,22 @@ static EcNode *parseNamespaceInitialisation(EcCompiler *cp, EcNode *nameNode)
     if (getToken(cp) != T_ASSIGN) {
         return LEAVE(cp, unexpected(cp));
     }
-    if (peekToken(cp) == T_STRING) {
-        getToken(cp);
-        np = createNode(cp, N_LITERAL);
-        vp = (EjsObj*) ejsCreateNamespace(cp->ejs, nameNode->qname.name, mprStrdup(np, (char*) cp->token->text));
-        np->literal.var = vp;
+    if (peekToken(cp) != T_STRING) {
+        return LEAVE(cp, expected(cp, "Namespace initializers must be literal strings"));
+    }
+    getToken(cp);
+    np = createNode(cp, N_LITERAL);
+    vp = (EjsObj*) ejsCreateNamespace(cp->ejs, nameNode->qname.name, mprStrdup(np, (char*) cp->token->text));
+    np->literal.var = vp;
 
+    if (peekToken(cp) != T_SEMICOLON && cp->peekToken->tokenId != T_EOF && cp->peekToken->lineNumber == cp->token->lineNumber) {
+        return LEAVE(cp, expected(cp, "Namespace initializers must be simple literal strings"));
+    }
+#if UNUSED
     } else {
         np = parsePrimaryName(cp);
     }
+#endif
     return LEAVE(cp, np);
 }
 

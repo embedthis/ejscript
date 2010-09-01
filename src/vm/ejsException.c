@@ -404,7 +404,7 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
             message = (EjsObj*) ejsCreateString(ejs, "Uncaught StopIteration exception");
         }
     }
-    if (message == ejs->nullValue) {
+    if (message == ejs->nullValue || message == 0) {
         msg = "Exception";
     } else{
         msg = ejsToString(ejs, message)->value;

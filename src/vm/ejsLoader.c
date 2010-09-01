@@ -863,7 +863,6 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     EjsTypeFixup    *fixup;
     EjsName         qname, propTypeName;
     EjsObj          *current, *value;
-    cchar           *str;
     int             slotNum, attributes, fixupKind;
 
     value = 0;
@@ -875,16 +874,22 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     ejsModuleReadNumber(ejs, mp, &slotNum);
     ejsModuleReadType(ejs, mp, &type, &fixup, &propTypeName, 0);
 
+#if 1 || UNUSED
+    /*
+        This is used for namespace values. It is required when compiling (only) and thus module init code is not 
+        being run -- but we still need the value of the namespace if a script wants to declare a variable qualified
+        by the namespace that is defined in the module.
+     */
     //  MOB -- remove the need for this flag
-
     if (attributes & EJS_PROP_HAS_VALUE) {
+        cchar  *str;
         if ((str = ejsModuleReadString(ejs, mp)) == 0) {
             return MPR_ERR_CANT_READ;
         }
         /*  Only doing for namespaces currently */
         value = (EjsObj*) ejsCreateNamespace(ejs, str, str);
     }
-
+#endif
     mprLog(ejs, 9, "Loading property %s:%s at slot %d", qname.space, qname.name, slotNum);
 
     if (attributes & EJS_PROP_NATIVE) {

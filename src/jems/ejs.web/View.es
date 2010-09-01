@@ -330,11 +330,10 @@ MOB -- much more doc here
          */
         function form(record: Object, options: Object = {}): Void {
             options = getOptions(options)
-            if (currentRecord = record) {
+            currentRecord = record
+            if (record) {
                 options.id ||= record.id
             }
-            options.method ||= "POST"
-            options.action ||= "update"
             let connector = getConnector("form", options)
             connector.form(record, options)
         }
