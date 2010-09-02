@@ -103,7 +103,7 @@ module ejs.web {
             @example: This is a fully async server:
 
             let server: HttpServer = new HttpServer(".", "web")
-            let router = Router(Router.RestfulRoutes)
+            let router = Router(Router.Restful)
             server.observe("readable", function (event: String, request: Request) {
                 request.status = 200
                 request.setHeaders({"Content-Type": "text/plain"})

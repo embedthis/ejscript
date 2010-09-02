@@ -336,6 +336,16 @@ module ejs {
         function startsWith(prefix: Object): Boolean
             path.toString().startsWith(prefix.toString()) 
 
+        /**
+            Create a URI based on a template. The template is a subset of the URI-templates specification and supports
+            simple {tokens} only. Each token is looked for in the set of provided option objects. The search stops with
+            the first object providing a value.
+            @param pattern URI-Template with {word} tokens.
+            @param options Set of option objects with token properties to complete the URI.
+            @return A URI
+         */
+        native static function template(pattern: String, ...options): Uri
+
         /** 
             Convert the URI to a JSON string. 
             @return a JSON string representing the URI.

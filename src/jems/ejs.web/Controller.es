@@ -91,6 +91,7 @@ UNUSED - MOB -- better to set in Request
                 suffix.
          */
         static function create(request: Request, cname: String = null): Controller {
+            request.params.controller = request.params.controller.toPascal()
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
             let c: Controller = new global[cname](request)
@@ -136,15 +137,19 @@ UNUSED - MOB -- better to set in Request
             params.action = actionName
             runCheckers(_beforeCheckers)
             let response
+//  MOB - temp
+use namespace action
             if (!request.finalized && request.autoFinalizing) {
-
-                let ns = "action"
-                if (!(ns)::[actionName]) {
+// print("NS \"" + ns + "\" name " + actionName)
+// breakpoint()
+// print("PRESENT " + this.(ns)::[actionName])
+                if (!this.(ns)::[actionName]) {
                     if (!viewExists(actionName)) {
-                        response = (ns)::[actionName = "missing"]()
+                        response = this.(ns)::[actionName = "missing"]()
                     }
                 } else {
-                    response = (ns)::[actionName]()
+                    response = this.(ns)::[actionName]()
+// print("RESP " + response)
                 }
                 if (response && !response.body) {
                     throw "Response object is missing a \"body\""

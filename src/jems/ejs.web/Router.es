@@ -20,14 +20,14 @@ module ejs.web {
         r.add(Router.isDir,    {name: "dir", run: DirBuilder})
 
         //  Add route for RESTful routes and run with the MvcBuilder
-        r.add("edit", "/:controller/:id/edit",  {method: "GET",  action: "edit"})
-        r.add("show", "/:controller/:id",       {method: "GET",  action: "show"})
-        r.add("update", "/:controller/:id",     {method: "PUT",  action: "update"})
-        r.add("destroy","/:controller/:id",     {method: "DELETE", action: "destroy"})
-        r.add("init", "/:controller/init",      {method: "GET",  action: "init"})
-        r.add("index", "/:controller",          {method: "GET",  action: "index"})
-        r.add("create", "/:controller",         {method: "POST", action: "create"})
-        r.add("default", "/:controller(/:action(/:id))")
+        r.add("edit",    "/{controller}/{id}/edit", {method: "GET",  action: "edit"})
+        r.add("show",    "/{controller}/{id}",      {method: "GET",  action: "show"})
+        r.add("update",  "/{controller}/{id}",      {method: "PUT",  action: "update"})
+        r.add("destroy", "/{controller}/{id}",      {method: "DELETE", action: "destroy"})
+        r.add("init",    "/{controller}/init",      {method: "GET",  action: "init"})
+        r.add("index",   "/{controller}",           {method: "GET",  action: "index"})
+        r.add("create",  "/{controller}",           {method: "POST", action: "create"})
+        r.add("default", "/{controller}(/{action}(/{id}))")
         
         //  Add route for upper or lower case "D" or "d". Run the default app: MvcBuilder
         r.add("refresh", "/[Dd]ash/refresh", {method: "GET", controller: "Dash", action: "refresh", after: "static"})
@@ -65,7 +65,7 @@ module ejs.web {
 
         //  Nest matching routes
         r.add("posts", "/blog", {controller: "post", subroute: {
-                r.add("comment", "/comment/:action/:id")
+                r.add("comment", "/comment/{action}/{id}")
             }
         })
 
@@ -73,7 +73,7 @@ module ejs.web {
         r.add("dash", /^\/Dash-((Mini)|(Full))$/, {controller: "post", action: "list", kind: "$1"})
         
         //  Conditional matching. Surround optional tokens in "()"
-        r.add("dash", "/Dash(/:product(/:branch(/:configuration)))", {   
+        r.add("dash", "/Dash(/{product}(/{branch}(/{configuration})))", {   
             name: "dash", 
             method: "GET", 
             controller: "Dash", 
@@ -126,24 +126,24 @@ module ejs.web {
             Add a catch-all route for static content
             @return The router instance to enable chaining
          */
-        public function addCatchall(): Route
+        public function addCatchall(): Void
             add("catchall", /^\/.*$/, {run: StaticBuilder})
 
         /** 
             Direct routes for MVC apps. These map HTTP methods directly to method names.
         */
         public function addDirect(name: String, options: Object = {}): Void {
-            add(name + "-solo", "/" + name + "/(/:id(/:action(/:extra)))")
+            add(name + "-solo", "/" + name + "/(/{id}(/{action}))")
             let names = options.plural || toPlural(name)
             //  MOB -- what should the group really be?
-            add(name + "-collection", "/" + names + "/(/:action(/:extra))", {contrtoller: name, namespace: "GROUP"})
+            add(name + "-collection", "/" + names + "/(/{action})", {contrtoller: name, namespace: "GROUP"})
         }
 
         /**
             Add a home page route. This will add or update the home page route.
             @return The router instance to enable chaining
          */
-        public function addHome(options: String): Route
+        public function addHome(options: String): Void
             add("home", "/", options)
 
         /**
@@ -172,17 +172,17 @@ module ejs.web {
          */
         public function addResource(name: String, options: Object = {}): Void {
             let c = options.controller || name
-            add("edit",    "/" + name + "/edit",    {resource: name, method: "GET",    controller: c, action: "edit"})
-            add("show",    "/" + name,              {resource: name, method: "GET",    controller: c, action: "show"})
-            add("update",  "/" + name,              {resource: name, method: "PUT",    controller: c, action: "update"})
-            add("destroy", "/" + name,              {resource: name, method: "DELETE", controller: c, action: "destroy"})
-            add("default", "/" + name + "/:action", {resource: name,                   controller: c})
+            add("edit",    '/'+name+ "/edit",      {resource: name, method: "GET",    controller: c, action: "edit"})
+            add("show",    '/'+name,               {resource: name, method: "GET",    controller: c, action: "show"})
+            add("update",  '/'+name,               {resource: name, method: "PUT",    controller: c, action: "update"})
+            add("destroy", '/'+name,               {resource: name, method: "DELETE", controller: c, action: "destroy"})
+            add("default", '/'+name+ "/{action}",  {resource: name,                   controller: c})
             
             let names = options.plural || toPlural(name)
-            add("init",    "/" + names + "/init",   {resource: name, method: "GET",    controller: c, action: "init"})
-            add("index",   "/" + names,             {resource: name, method: "GET",    controller: c, action: "index"})
-            add("create",  "/" + names,             {resource: name, method: "POST",   controller: c, action: "create"})
-            add("default", "/" + names + "/:action",{resource: name,                   controller: c})
+            add("init",    '/'+names+ "/init",     {resource: name, method: "GET",    controller: c, action: "init"})
+            add("index",   '/'+names,              {resource: name, method: "GET",    controller: c, action: "index"})
+            add("create",  '/'+names,              {resource: name, method: "POST",   controller: c, action: "create"})
+            add("default", '/'+names+ "/{action}", {resource: name,                   controller: c})
         }
 
         /** 
@@ -207,14 +207,13 @@ module ejs.web {
         */
         public function addResources(name: String, options: Object = {}): Void {
             let c = options.controller || name
-            add("edit",    "/" + name + "/:id/edit",  {resource: name, method: "GET",    controller: c, action: "edit"})
-            add("show",    "/" + name + "/:id",       {resource: name, method: "GET",    controller: c, action: "show"})
-            add("update",  "/" + name + "/:id",       {resource: name, method: "PUT",    controller: c, action: "update"})
-            add("destroy", "/" + name + "/:id",       {resource: name, method: "DELETE", controller: c, action: "destroy"})
-            
-            add("intit",   "/" + name + "/init",      {resource: name, method: "GET",    controller: c, action: "init"})
-            add("create",  "/" + name,                {resource: name, method: "POST",   controller: c, action: "create"})
-            add("default", "/" + name + "/:action",   {resource: name,                   controller: c})
+            add("edit",    '/'+name + "/{id}/edit",  {resource: name, method: "GET",    controller: c, action: "edit"})
+            add("show",    '/'+name + "/{id}",       {resource: name, method: "GET",    controller: c, action: "show"})
+            add("update",  '/'+name + "/{id}",       {resource: name, method: "PUT",    controller: c, action: "update"})
+            add("destroy", '/'+name + "/{id}",       {resource: name, method: "DELETE", controller: c, action: "destroy"})
+            add("intit",   '/'+name + "/init",       {resource: name, method: "GET",    controller: c, action: "init"})
+            add("create",  '/'+name,                 {resource: name, method: "POST",   controller: c, action: "create"})
+            add("default", '/'+name + "/{action}",   {resource: name,                   controller: c})
         }
 
         //  Helpers get(), post(), destroy(), put()
@@ -225,27 +224,27 @@ module ejs.web {
         */
         public function addRestful(): Void {
             //  Default resource routes for a singleton
-            add("edit",    "/:controller/edit",    {method: "GET",    action: "edit"})
-            add("show",    "/:controller",         {method: "GET",    action: "show"})
-            add("update",  "/:controller",         {method: "PUT",    action: "update"})
-            add("destroy", "/:controller",         {method: "DELETE", action: "destroy"})
+            add("edit",    "/{controller}/edit",    {method: "GET",    action: "edit"})
+            add("show",    "/{controller}",         {method: "GET",    action: "show"})
+            add("update",  "/{controller}",         {method: "PUT",    action: "update"})
+            add("destroy", "/{controller}",         {method: "DELETE", action: "destroy"})
             //  Default resource Collection routes 
-            add("init",    "/:controller/init",    {method: "GET",    action: "init"})
-            add("create",  "/:controller",         {method: "POST",   action: "create"})
-            add("default", "/:controller(/:action(/:id))")
+            add("init",    "/{controller}/init",    {method: "GET",    action: "init"})
+            add("create",  "/{controller}",         {method: "POST",   action: "create"})
+            add("default", "/{controller}(/{action}(/{id}))")
         }
 
         /**
-            Add simple MVC routes. The URL pattern "/:controller/:action" is routed to the tokenized action in the
+            Add simple MVC routes.
             specified controller. All HTTP method verbs are supported.
             @return The router instance to enable chaining
          */
-        public function addSimple(): Route
-            add("default", "/:controller(/:action(/:id))")
+        public function addSimple(): Void
+            add("default", "/{controller}(/{action}(/{id}))")
 
-        public function addStatic(): Route {
+        public function addStatic(): Void {
             let staticPattern = RegExp("^\\/" + (App.config.directories.static || "static") + "\\/")
-            return add("static", staticPattern, {run: StaticBuilder})
+            add("static", staticPattern, {run: StaticBuilder})
         }
 
         /**
@@ -257,6 +256,7 @@ module ejs.web {
             add("es",   /\.es$/,  {run: ScriptBuilder})
             add("ejs",  /\.ejs$/, {module: "ejs.template", run: TemplateBuilder})
             add("dir",  isDir,    {run: DirBuilder})
+            addCatchall()
         }
 
         function Router(name: String = null) {
@@ -288,15 +288,14 @@ module ejs.web {
 
         /**
             Add a route.
-            A route pattern must match the entire request pathInfo. 
-            @param pattern Route pattern to match. If pattern is not supplied, the name is used as the pattern and is 
+            A route template must match the entire request pathInfo. 
+            @param template Route template to match. If template is not supplied, the name is used as the template and is 
                 interpreted as "controller(/action)".
             @param options
             @return The route name
 MOB - doc
             @option action String Short form for params.action
             @option builder Outer parent route
-            @option do String Short form for params.controller "." params.action
             @option name Outer parent route
             @option method Outer parent route
             @option limits Outer parent route
@@ -310,17 +309,17 @@ MOB - doc
             @option run (Function|Object) This can be either a function to serve the request or it can be a 
                 response hash with status, headers and body properties. The function should return such a response object.
          */
-        public function add(name: String, pattern = null, options: Object = null): Router {
+        public function add(name: String, template = null, options: Object = {}): Void {
             let r = new Route(this)
 
-            if (options.resource) {
+            if (options && options.resource) {
                 name = options.resource + "-" + name
             }
-            if (pattern == null) {
+            if (template == null) {
                 //  Interpret as "/controller(/action)" and convert into "/:controller(/:action)
-//XX wrap with {}
-                pattern = name.split("/").join("/:")
+                template = "{" + name.split("/").join("}{") + "}"
             }
+/*
             if (options === null) {
                 options = { action: name }
             } else if (options is String) {
@@ -328,60 +327,56 @@ MOB - doc
             } else if (options.action == null) {
                 options.action = name
             }
+*/
+            if (options is String) {
+                options = { action: options }
+            }
             name ||= (nameSeed++ cast String)
             r.name = name
             /* 
-                Combine with all outer routes. Outer route patterns are prepended. Order matters. 
+                Combine with all outer routes. Outer route templates are prepended. Order matters. 
              */
             let outer = options.parent
             while (outer) {
                 if (r.name) {
                     r.name = outer.name + "." + r.name
                 }
-                pattern = outer.match + pattern
+                template = outer.match + template
                 for (p in outer.params) {
                     r.params[p] = outer.params[p]
                 }
                 outer = outer.parent
             }
-//  MOB -- functionalize
+
             /*  
-                Compile the route and create a RegExp matcher if the match pattern is a string. Each :token is 
-                extracted into tokens and a corresponding RegExp sub-expression is created in the matcher.
+                Compile the route and create a RegExp matcher
              */
-            let splitter, tokens, method
-
-            r.match = pattern
-            r.method = options.method
-
-            if (pattern is String) {
+            if (template is String) {
+                r.template = template.replace(/[\(\)]/g, "")
                 /*  
-                    For string patterns, Create a regular expression splitter pattern so :TOKENS can be referenced
+                    For string templates, Create a regular expression splitter template so :TOKENS can be referenced
                     positionally in the override hash via $N args.
                     Allow () expressions, these are made into non-capturing parentheses.
                  */
-                if (pattern.contains("(")) {
-                    pattern = pattern.replace(/\(/g, "(?:")
-                    pattern = pattern.replace(/\)/g, ")?")
+                if (template.contains("(")) {
+                    template = template.replace(/\(/g, "(?:")
+                    template = template.replace(/\)/g, ")?")
                 } else {
                 /*  MOB -- should be using AcceptContent
-                    if (!pattern.contains(".:format")) {
-                        pattern += "(.:format)*"
+                    if (!template.contains(".:format")) {
+                        template += "(.:format)*"
                     }
                  */
                 }
-                r.components = pattern.slice(1).split("/")
-
-//XX are tokens needed?
-                tokens = pattern.match(/:([^:\W]+)/g)
+                let tokens = template.match(/\{([^\}]+)\}/g)
                 for (i in tokens) {
-                    tokens[i] = tokens[i].trim(":")
+                    tokens[i] = tokens[i].trimStart('{').trimEnd('}')
                 }
-//XX new regexp to scan for {}
-                let template = pattern.replace(/:([^:\W]+)/g, "([\\w]+)").replace(/\//g, "\\/")
-                r.matcher = RegExp("^" + template + "$")
+                let pattern = template.replace(/\{([^\}]+)\}/g, "([^/]*)").replace(/\//g, "\\/")
+                r.matcher = RegExp("^" + pattern + "$")
                 /*  Splitter ends up looking like "$1:$2:$3:$4" */
                 count = 1
+                let splitter
                 if (!r.spitter) {
                     splitter = ""
                     for (c in tokens) {
@@ -393,12 +388,13 @@ MOB - doc
                     r.tokens = tokens
                 }
             } else {
-                if (pattern is Function) {
-                    r.matcher = pattern
-                } else if (pattern is RegExp) {
-                    r.matcher = pattern
-                } else if (pattern) {
-                    r.matcher = RegExp(pattern.toString())
+                r.template = template
+                if (template is Function) {
+                    r.matcher = template
+                } else if (template is RegExp) {
+                    r.matcher = template
+                } else if (template) {
+                    r.matcher = RegExp(template.toString())
                 }
             }
             if (options.middleware) {
@@ -412,8 +408,8 @@ MOB - doc
             let action = params.action
             if (action) {
                 if (action.contains(/[\.\/]/)) {
-                    let [controller, act] = action.split(/[\.\/]/)
-                    params.action = action = act
+                    let [controller, act] = action.trimStart("/").split(/[\.\/]/)
+                    params.action = action = act || "index"
                     params.controller = controller
                 } 
                 if (action.contains("::")) {
@@ -421,6 +417,10 @@ MOB - doc
                     params.action = action
                     params.namespace = ns
                 }
+/*
+            } else if (!tokens[action]) {
+                params.action = name
+*/
             }
             if (options.controller) {
                 params.controller = options.controller
@@ -435,7 +435,7 @@ MOB - doc
                         splitter += "$" + count++ + ":"
                     }
                     splitter = splitter.trim(":")
-//XX use different field names
+//MOB use different field names
                     params[field] = {tokens: ptokens, splitter: splitter}
                 }
             }
@@ -448,6 +448,7 @@ MOB - doc
             r.limits = options.limits
             r.linker = options.linker
             r.location = options.location
+            r.method = options.method
             r.module = options.module
             r.rewrite = options.rewrite
             r.redirect = options.redirect
@@ -495,20 +496,28 @@ MOB - doc
             let resource = options.resource || ""
             let map = resources[resource] ||= {}
             map[name] = r
-            return this
         }
 
-        public function replace(name: String, pattern, options: Object = {}): Router
-            add(name, pattern, options)
+        public function lookup(options: Object): Route {
+            if (options is String) {
+                options = {route: options}
+            }
+            let resource = options.resource || ""
+            let map = resources[resource]
+            let routeName = options.route || (options.resource ? (options.resource + "-default") : "default")
+            return map[routeName]
+        }
 
-        public function remove(name: String): Router {
+        public function replace(name: String, template, options: Object = {}): Void
+            add(name, template, options)
+
+        public function remove(name: String): Void {
             for (i in routes) {
                 if (routes[i].name == name) {
                     routes.remove(i)
                     break
                 }
             }
-            return this
         }
 
         /** 
@@ -520,18 +529,19 @@ MOB - doc
          */
         public function route(request): Function {
             let params = request.params
+//XX dump("ROUTE PARAMS", params)
             let pathInfo = request.pathInfo
             let log = request.log
             log.debug(5, "Routing " + request.pathInfo)
 
-print("REQ " + request.method + " PATH " + pathInfo)
+//XX print("REQ " + request.method + " PATH " + pathInfo)
             if (request.method == "POST") {
                 let method = request.params["-ejs-method-"] || request.header("X-HTTP-METHOD-OVERRIDE")
                 if (method && method.toUpperCase() != request.method) {
                     // MOB automatically done request.originalMethod ||= request.method
                     log.debug(3, "Change method from " + request.method + " TO " + method + " for " + request.uri)
                     request.method = method
-print("MAP method to " + method)
+//XX print("MAP method to " + method)
                 }
             }
 
@@ -544,7 +554,7 @@ print("MAP method to " + method)
                         continue
                     }
                 }
-// print("@@@@ Test route \"" + r.name + " MATCH " + r.matcher + "\"")
+//XX print("@@@@ Test route \"" + r.name + " MATCH \"" + pathInfo + "\".match(" + r.matcher + ")")
                 if (r.matcher is Function) { 
                     if (!r.matcher(request)) {
                         continue
@@ -566,7 +576,7 @@ print("MAP method to " + method)
                     parts = pathInfo.replace(r.matcher, r.splitter)
                     parts = parts.split(":")
                     for (i in r.tokens) {
-                        params[r.tokens[i]] = parts[i].trimStart("/")
+                        params[r.tokens[i]] ||= parts[i].trimStart("/")
                     }
                 }
                 /*  Apply override params */
@@ -602,8 +612,8 @@ print("MAP method to " + method)
                     global.load(r.module + ".mod")
                     r.initialized = true
                 }
-print("@@@@ Matched route \"" + r.name + "\"")
-dump("PARAMS", request.params)
+//XX print("@@@@ Matched route \"" + r.name + "\"")
+//XX dump("PARAMS", request.params)
                 if (log.level >= 4) {
                     log.debug(4, "Matched route \"" + r.name + "\"")
                     log.debug(5, "  Route params " + serialize(params, {pretty: true}))
@@ -638,9 +648,9 @@ dump("PARAMS", request.params)
             print("Route Table:")
             for each (r in routes) {
                 let method = r.method || "ALL"
-                let target
-                let params = r.params
-                if (params.controller || params.action) {
+                let target, params = r.params, tokens = r.tokens
+                if (params.controller || params.action || 
+                        tokens && (tokens.contains("action") || tokens.contains("controller"))) {
                     let controller = params.controller || "*"
                     let action = params.action || "*"
                     target = controller + "." + action
@@ -649,24 +659,24 @@ dump("PARAMS", request.params)
                 } else {
                     target = "UNKNOWN"
                 }
-                let match = r.match
-                if (match is String) {
-                    match = "%s  " + match
-                } else if (match is RegExp) {
-                    match = "%r  " + match
-                } else if (match is Function) {
-                    match = "%f  " + match.name
-                } else if (!match) {
-                    match = "*"
+                let template = r.template
+                if (template is String) {
+                    template = "%s  " + template
+                } else if (template is RegExp) {
+                    template = "%r  " + template
+                } else if (template is Function) {
+                    template = "%f  " + template.name
+                } else if (!template) {
+                    template = "*"
                 }
-                let line = "%16s: %20s: %7s:  %-45s".format(r.name, target, method, match)
+                let line = "%16s: %20s: %7s:  %s".format(r.name, target, method, template)
                 if (all) {
-                    if (r.params && Object.getOwnPropertyCount(r.params) > 0) {
-                        if (!(r.params.action && Object.getOwnPropertyCount(r.params) == 1)) {
-                            line += "  %s".format(serialize(r.params))
+                    if (params && Object.getOwnPropertyCount(params) > 0) {
+                        if (!(params.action && Object.getOwnPropertyCount(params) == 1)) {
+                            line += "  %s".format(serialize(params))
                         }
                     }
-                    line += "\n       exp: " + r.matcher + "\n"
+                    line += "\n                                             matcher: " + r.matcher + "\n"
                 }
                 print(line)
                 /*
@@ -705,11 +715,11 @@ dump("PARAMS", request.params)
         Route class. A Route describes a mapping from a set of resources to a URI. The Router uses tables of 
         Routes to serve and route requests to web scripts.
 
-        If the URL pattern is a regular expression, it is used to match against the request pathInfo. If it matches,
+        If the URL template is a regular expression, it is used to match against the request pathInfo. If it matches,
         the pathInfo is matched and sub-expressions may be referenced in the override parameters by using $1, $2 and
         so on. e.g. { priority: "$1" }
         
-        If the URL pattern is a function, it is run to test for a request match. It should return true to 
+        If the URL template is a function, it is run to test for a request match. It should return true to 
         accept the request. The function can set parameters in request.params.
 
         The optional override hash provides parameters which will be defined in params[] overriding any tokenized 
@@ -720,21 +730,20 @@ dump("PARAMS", request.params)
     enumerable dynamic class Route {
         use default namespace public
 
-//XX update doc
         /**
-            Matching pattern for URIs. The pattern is used to match the request in general and pathInfo specifically. 
-            The pattern can be a token string, a regular expression or a function. If it is a string of tokens separated
-            by ":", it is converted to a regular expression and the positional tokens (:NAME) are extracted for web
-            requests and mapped to items in the params collection. ie. params[NAME]. 
+            Template pattern for URIs. The template is used to match the request pathInfo. The template can be a 
+            uri-template string, a regular expression or a function. If it is a string, it may contain tokens enclosed 
+            in {} and is converted to a regular expression. The tokens are extracted and mapped to items in the 
+            Request.params collection. ie. params[NAME]. 
 
-            If the match pattern is a regular expression, it is used to match against the request pathInfo. If it matches
+            If the template is a regular expression, it is used to match against the request pathInfo. If it matches
             the pathInfo, then sub-expressions may be referenced in the $params values by using $1, $2 and
             so on. e.g. params: { priority: "$1" }
             
-            If the match pattern is a function, it is run to test for a request match. The function should return true to 
-            match the request. The function can set parameters in request.params.
+            If the template is a function, it is run to test for a request match. The function should return true to 
+            match the request. The function can directly set parameters in request.params.
         */
-        var match: Object
+        var template: Object
 
         /**
             HTTP method to match. If null, all methods are matched
@@ -804,7 +813,7 @@ dump("PARAMS", request.params)
         var runner: Function
 
         /**
-            Nested route. A nested route prepends the match patter of the outer route to its "match" pattern. 
+            Nested route. A nested route prepends the outer route template to its template. 
             The param set of the outer route are appended to the inner route.
          */
         var subroute: Route
@@ -814,6 +823,11 @@ dump("PARAMS", request.params)
             but will be assigned as the request requires CPU resources.
          */
         var threaded: Boolean
+
+        /**
+            Key tokens in the route template
+         */
+        var tokens: Array
 
         /**
             Trace options for the request. Note: the route is created after the Request object is created so the tracing 
@@ -832,16 +846,6 @@ dump("PARAMS", request.params)
          */
         internal var splitter: String
 
-        /**
-            key tokens in the route pattern
-         */
-        internal var tokens: Array
-
-        /**
-            Route pattern split at "/"
-         */
-        internal var components: Array
-
         function Route(router: Router) {
             this.router = router
         }
@@ -852,39 +856,26 @@ dump("PARAMS", request.params)
             @param request Current request object
             @param options Object hash of options describing the target link. See $Request.link.
             @option resource Name of the RESTFul resource owning the route.
-            @option route Name of the route to use to pattern the URI.
+            @option route Name of the route
             @return A Uri object.
          */
         public function completeLink(uri: Uri, request: Request, options: Object): Uri {
-            if (settings.linker) {
-                return settings.linker(uri, request, options)
+            if (options.linker) {
+                return options.linker(uri, request, options)
             }
             let resource = options.resource || ""
-            let map = resources[resource]
+            let map = router.resources[resource]
             if (!map) {
                 throw new ReferenceError("Unknown route resource \"" + resource + "\"")
             }
-            let routeName = options.route || request.route.name || "default"
+            let routeName = options.route || (resource ? (resource + "-default") : "default")
             let route = map[routeName]
             if (!route) {
                 throw new ReferenceError("Unknown route \"" + routeName + "\"")
             }
-            for each (let value in route.components) {
-                if (value.startsWith(":")) {
-                    let token = value.slice(1)
-                    value = options[token]
-                    if (value == undefined) {
-                        if (token == "action") {
-                            continue
-                        }
-                        value = request.params[token]
-                        if (value == undefined) {
-                            continue
-                        }
-                    }
-                }
-                uri = uri.join(value)
-            }
+// print("RESOURCE \"" + resource + "\" template " + template)
+            uri.path = Uri.template(route.template, options, {action: "", controller: request.params.controller}).path
+// print("RESULT " + uri)
             return uri
         }
     }

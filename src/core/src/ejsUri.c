@@ -810,6 +810,62 @@ static EjsObj *uri_same(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 }
 
 
+/*  
+    Expand a template with {word} tokens from the given options objects
+
+    function template(pattern: String, ...options): Uri
+ */
+static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    EjsArray    *options;
+    EjsObj      *obj, *value;
+    EjsUri      *uri;
+    EjsName     n;
+    MprBuf      *buf;
+    cchar       *pattern, *cp, *ep, *str;
+    char        *token;
+    int         i, len;
+
+    pattern = ejsGetString(ejs, argv[0]);
+    options = (EjsArray*) argv[1];
+
+    buf = mprCreateBuf(ejs, -1, -1);
+    for (cp = pattern; *cp; cp++) {
+        if (*cp == '{' && (cp == pattern || cp[-1] != '\\')) {
+            if ((ep = strchr(++cp, '}')) != 0) {
+                len = ep - cp;
+                token = mprMemdup(buf, cp, len + 1);
+                token[len] = '\0';
+                value = 0;
+                for (i = 0; i < options->length; i++) {
+                    obj = options->data[i];
+                    if ((value = ejsGetPropertyByName(ejs, obj, EN(&n, token))) != 0 && value != ejs->nullValue && 
+                            value != ejs->undefinedValue) {
+                        str = ejsGetString(ejs, value);
+                        if (str && *str) {
+                            mprPutStringToBuf(buf, str);
+                            break;
+                        } else {
+                            value = 0;
+                        }
+                    }
+                }
+                if (value == 0 && cp >= &pattern[2] && cp[-2] == '/') {
+                    mprAdjustBufEnd(buf, -1);
+                }
+                cp = ep;
+            }
+        } else {
+            mprPutCharToBuf(buf, *cp);
+        }
+    }
+    mprAddNullToBuf(buf);
+    uri = ejsCreateUri(ejs, mprGetBufStart(buf));
+    mprFree(buf);
+    return (EjsObj*) uri;
+}
+
+
 /* 
    function toString(): String
  */
@@ -1109,6 +1165,7 @@ void ejsConfigureUriType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Uri_decodeComponent, (EjsProc) uri_decodeComponent);
     ejsBindMethod(ejs, type, ES_Uri_encode, (EjsProc) uri_encode);
     ejsBindMethod(ejs, type, ES_Uri_encodeComponent, (EjsProc) uri_encodeComponent);
+    ejsBindMethod(ejs, type, ES_Uri_template, (EjsProc) uri_template);
 
     ejsBindConstructor(ejs, type, (EjsProc) uri_constructor);
     ejsBindMethod(ejs, prototype, ES_Uri_absolute, (EjsProc) uri_absolute);

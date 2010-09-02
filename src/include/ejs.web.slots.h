@@ -408,11 +408,12 @@
 #define ES_ejs_web_Router_addBuilder                                   14
 #define ES_ejs_web_Router_lookupRunners                                15
 #define ES_ejs_web_Router_add                                          16
-#define ES_ejs_web_Router_replace                                      17
-#define ES_ejs_web_Router_remove                                       18
-#define ES_ejs_web_Router_route                                        19
-#define ES_ejs_web_Router_show                                         20
-#define ES_ejs_web_Router_NUM_INSTANCE_PROP                            21
+#define ES_ejs_web_Router_lookup                                       17
+#define ES_ejs_web_Router_replace                                      18
+#define ES_ejs_web_Router_remove                                       19
+#define ES_ejs_web_Router_route                                        20
+#define ES_ejs_web_Router_show                                         21
+#define ES_ejs_web_Router_NUM_INSTANCE_PROP                            22
 #define ES_ejs_web_Router_NUM_INHERITED_PROP                           0
 
 /*
@@ -424,7 +425,7 @@
 /*
    Prototype (instance) slots for "Route" type 
  */
-#define ES_ejs_web_Route_match                                         0
+#define ES_ejs_web_Route_template                                      0
 #define ES_ejs_web_Route_method                                        1
 #define ES_ejs_web_Route_middleware                                    2
 #define ES_ejs_web_Route_name                                          3
@@ -439,13 +440,12 @@
 #define ES_ejs_web_Route_runner                                        12
 #define ES_ejs_web_Route_subroute                                      13
 #define ES_ejs_web_Route_threaded                                      14
-#define ES_ejs_web_Route_trace                                         15
-#define ES_ejs_web_Route_matcher                                       16
-#define ES_ejs_web_Route_splitter                                      17
-#define ES_ejs_web_Route_tokens                                        18
-#define ES_ejs_web_Route_components                                    19
-#define ES_ejs_web_Route_completeLink                                  20
-#define ES_ejs_web_Route_NUM_INSTANCE_PROP                             21
+#define ES_ejs_web_Route_tokens                                        15
+#define ES_ejs_web_Route_trace                                         16
+#define ES_ejs_web_Route_matcher                                       17
+#define ES_ejs_web_Route_splitter                                      18
+#define ES_ejs_web_Route_completeLink                                  19
+#define ES_ejs_web_Route_NUM_INSTANCE_PROP                             20
 #define ES_ejs_web_Route_NUM_INHERITED_PROP                            0
 #define ES_ejs_web_Session_NUM_CLASS_PROP                              0
 
@@ -590,6 +590,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   772157
+#define _ES_CHECKSUM_ejs_web   774870
 
 #endif

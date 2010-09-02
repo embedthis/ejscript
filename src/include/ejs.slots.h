@@ -1715,7 +1715,8 @@
 #define ES_Uri_decodeComponent                                         1
 #define ES_Uri_encode                                                  2
 #define ES_Uri_encodeComponent                                         3
-#define ES_Uri_NUM_CLASS_PROP                                          4
+#define ES_Uri_template                                                4
+#define ES_Uri_NUM_CLASS_PROP                                          5
 
 /*
    Prototype (instance) slots for "Uri" type 
@@ -1771,6 +1772,8 @@
 #define ES_Uri_decodeComponent_str                                     0
 #define ES_Uri_encode_str                                              0
 #define ES_Uri_encodeComponent_str                                     0
+#define ES_Uri_template_pattern                                        0
+#define ES_Uri_template_options                                        1
 #define ES_Void_NUM_CLASS_PROP                                         0
 
 /*
@@ -1937,6 +1940,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1304510
+#define _ES_CHECKSUM_ejs   1306919
 
 #endif

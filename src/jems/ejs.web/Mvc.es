@@ -96,7 +96,11 @@ module ejs.web {
             loadComponent(request, appmod, files, deps)
 
             /* Load controller */
-            let controller = request.params.controller = request.params.controller.toPascal()
+            let params = request.params
+            if (!params.controller) {
+                throw "No controller specified by route: " + request.route.name
+            }
+            let controller = params.controller = params.controller.toPascal()
             let mod = dir.join(dirs.cache, controller).joinExt(ext.mod)
             if (!mod.exists || config.cache.reload) {
                 files = [dir.join(dirs.controllers, controller).joinExt(ext.es)]
