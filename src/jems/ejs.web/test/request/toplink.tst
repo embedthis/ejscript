@@ -16,8 +16,8 @@ assert(r.toplink("c.html").complete(r.uri) == "http://example.com/c.html")
 assert(r.toplink("../c.html").complete(r.uri) == "http://example.com/c.html")
 assert(r.toplink("/c.html").complete(r.uri) == "http://example.com/c.html")
 
-//  No controller defined and no route
-assert(r.toplink({action: "login"}) == "/login")
+//  No controller defined and no route - action ignored
+assert(r.toplink({action: "login"}) == "/")
 
 assert(r.toplink({
     scheme: "https", host: "example.com", port: 8080, path: "/some.html", query: "color=red", reference: "42"}) ==

@@ -755,7 +755,6 @@ module ejs.web {
             if (route && Object.getOwnPropertyCount(target) > 0 && !target.uri) {
                 target = route.completeLink(target, this)
             } 
-            //  MOB -- removed non-mvc cast of using action
             return absHome.local.resolve(target).normalize
         }
 

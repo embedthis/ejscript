@@ -5400,7 +5400,9 @@ bool httpServiceQueues(HttpConn *conn)
 
     workDone = 0;
     while (conn->state < HTTP_STATE_COMPLETE && (q = httpGetNextQueueForService(&conn->serviceq)) != NULL) {
-        if (!q->servicing) {
+        if (q->servicing) {
+            q->flags |= HTTP_QUEUE_RESERVICE;
+        } else {
             httpServiceQueue(q);
             workDone = 1;
         }
@@ -5868,7 +5870,9 @@ void httpScheduleQueue(HttpQueue *q)
 
 void httpServiceQueue(HttpQueue *q)
 {
-    if (!q->servicing) {
+    if (q->servicing) {
+        q->flags |= HTTP_QUEUE_RESERVICE;
+    } else {
         q->servicing = 1;
         /*  
             Since we are servicing this "q" now, we can remove from the schedule queue if it is already queued.
@@ -5877,6 +5881,10 @@ void httpServiceQueue(HttpQueue *q)
             httpGetNextQueueForService(&q->conn->serviceq);
         }
         q->service(q);
+        if (q->flags & HTTP_QUEUE_RESERVICE) {
+            q->flags &= ~HTTP_QUEUE_RESERVICE;
+            httpScheduleQueue(q);
+        }
         q->flags |= HTTP_QUEUE_SERVICED;
         q->servicing = 0;
     }
@@ -10927,7 +10935,7 @@ void httpNormalizeUri(HttpUri *uri)
 char *httpNormalizeUriPath(MprCtx ctx, cchar *pathArg)
 {
     char    *dupPath, *path, *sp, *dp, *mark, **segments;
-    int     j, i, nseg, len;
+    int     firstc, j, i, nseg, len;
 
     if (pathArg == 0 || *pathArg == '\0') {
         return mprStrdup(ctx, "");
@@ -10943,6 +10951,7 @@ char *httpNormalizeUriPath(MprCtx ctx, cchar *pathArg)
         return NULL;
     }
     nseg = len = 0;
+    firstc = *dupPath;
     for (mark = sp = dupPath; *sp; sp++) {
         if (*sp == '/') {
             *sp = '\0';
@@ -10966,7 +10975,9 @@ char *httpNormalizeUriPath(MprCtx ctx, cchar *pathArg)
                     j--;
                 }
             } else if (sp[1] == '.' && sp[2] == '\0')  {
-                if ((i+1) == nseg) {
+                if (i == 1 && *segments[0] == '\0') {
+                    j = 0;
+                } else if ((i+1) == nseg) {
                     if (--j >= 0) {
                         segments[j] = "";
                     }
@@ -10980,13 +10991,12 @@ char *httpNormalizeUriPath(MprCtx ctx, cchar *pathArg)
     }
     nseg = j;
     mprAssert(nseg >= 0);
-
     if ((path = mprAlloc(ctx, len + nseg + 1)) != 0) {
         for (i = 0, dp = path; i < nseg; ) {
             strcpy(dp, segments[i]);
             len = strlen(segments[i]);
             dp += len;
-            if (++i < nseg) {
+            if (++i < nseg || (nseg == 1 && *segments[0] == '\0' && firstc == '/')) {
                 *dp++ = '/';
             }
         }

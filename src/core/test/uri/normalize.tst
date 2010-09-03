@@ -28,9 +28,9 @@ check("/abc/../def", "/def")
 check("../abc", "abc")
 check("abc/..", "")
 check("/abc/..", "/")
-check("/..", "")
+check("/..", "/")
 check("../", "")
-check("/../", "")
+check("/../", "/")
 
 
 //  Trailing slash forms

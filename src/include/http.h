@@ -721,6 +721,7 @@ extern int httpResizePacket(struct HttpQueue *q, HttpPacket *packet, int size);
 #define HTTP_QUEUE_SERVICED       0x10        /**< Queue has been serviced at least once */
 #define HTTP_QUEUE_EOF            0x20        /**< Queue at end of data */
 #define HTTP_QUEUE_STARTED        0x40        /**< Queue started */
+#define HTTP_QUEUE_RESERVICE      0x80        /**< Queue requires reservicing */
 
 /*  
     Queue callback prototypes
@@ -1922,7 +1923,7 @@ typedef struct HttpRx {
 
     char            *method;                /**< Request method */
     char            *uri;                   /**< Original URI (alias for parsedUri->uri) (not decoded) */
-    char            *scriptName;            /**< ScriptName portion of the url (Decoded) */
+    char            *scriptName;            /**< ScriptName portion of the url (Decoded). May be empty or start with "/" */
     char            *pathInfo;              /**< Path information after the scriptName (Decoded and normalized) */
 
 #if FUTURE

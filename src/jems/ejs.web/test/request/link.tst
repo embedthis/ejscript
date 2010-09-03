@@ -18,8 +18,8 @@ assert(r.link("c.html").complete(r.uri) == "http://example.com/dir/c.html")
 assert(r.link("../c.html").complete(r.uri) == "http://example.com/c.html")
 assert(r.link("/c.html").complete(r.uri) == "http://example.com/c.html")
 
-//  No controller defined and no route
-assert(r.link({action: "login"}) == "/login")
+//  No controller defined and no route - action ignored
+assert(r.link({action: "login"}) == "/")
 
 assert(r.link({
     scheme: "https", host: "example.com", port: 8080, path: "/some.html", query: "color=red", reference: "42"}) ==
