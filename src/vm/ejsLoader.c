@@ -413,33 +413,32 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     if (mp->hasError) {
         return MPR_ERR_CANT_READ;
     }
-    if (ejsLookupModule(ejs, name, minVersion, maxVersion) != 0) {
-        return 0;
-    }
-    saveCallback = ejs->loaderCallback;
-    nextModule = mprGetListCount(ejs->modules);
-    ejs->loaderCallback = NULL;
+    if (ejsLookupModule(ejs, name, minVersion, maxVersion) == 0) {
+        saveCallback = ejs->loaderCallback;
+        nextModule = mprGetListCount(ejs->modules);
+        ejs->loaderCallback = NULL;
 
-    mprLog(ejs, 6, "    Load dependency section %s", name);
-    rc = loadScriptModule(ejs, name, minVersion, maxVersion, mp->flags | EJS_LOADER_DEP);
-    ejs->loaderCallback = saveCallback;
-    if (rc < 0) {
-        return rc;
+        mprLog(ejs, 6, "    Load dependency section %s", name);
+        rc = loadScriptModule(ejs, name, minVersion, maxVersion, mp->flags | EJS_LOADER_DEP);
+        ejs->loaderCallback = saveCallback;
+        if (rc < 0) {
+            return rc;
+        }
+        if (mp->dependencies == 0) {
+            mp->dependencies = mprCreateList(mp);
+        }
+        for (next = nextModule; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
+            mprAddItem(mp->dependencies, module);
+            if (ejs->loaderCallback) {
+                (ejs->loaderCallback)(ejs, EJS_SECT_DEPENDENCY, mp, module);
+            }
+        }
     }
     if ((module = ejsLookupModule(ejs, name, minVersion, maxVersion)) != 0) {
         if (checksum != module->checksum) {
-            ejsThrowIOError(ejs, "Can't load module %s due to checksum mismatch.\n"
-                "The program was compiled expecting a different version of module %s.", mp->name, name);
+            ejsThrowIOError(ejs, "Can't load module \"%s\" due to checksum mismatch.\n"
+                "The program was compiled depending on a different version of module \"%s\".", mp->name, name);
             return MPR_ERR_BAD_STATE;
-        }
-    }
-    if (mp->dependencies == 0) {
-        mp->dependencies = mprCreateList(mp);
-    }
-    for (next = nextModule; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
-        mprAddItem(mp->dependencies, module);
-        if (ejs->loaderCallback) {
-            (ejs->loaderCallback)(ejs, EJS_SECT_DEPENDENCY, mp, module);
         }
     }
     return 0;
@@ -864,7 +863,6 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     EjsTypeFixup    *fixup;
     EjsName         qname, propTypeName;
     EjsObj          *current, *value;
-    cchar           *str;
     int             slotNum, attributes, fixupKind;
 
     value = 0;
@@ -876,16 +874,22 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     ejsModuleReadNumber(ejs, mp, &slotNum);
     ejsModuleReadType(ejs, mp, &type, &fixup, &propTypeName, 0);
 
+#if 1 || UNUSED
+    /*
+        This is used for namespace values. It is required when compiling (only) and thus module init code is not 
+        being run -- but we still need the value of the namespace if a script wants to declare a variable qualified
+        by the namespace that is defined in the module.
+     */
     //  MOB -- remove the need for this flag
-
     if (attributes & EJS_PROP_HAS_VALUE) {
+        cchar  *str;
         if ((str = ejsModuleReadString(ejs, mp)) == 0) {
             return MPR_ERR_CANT_READ;
         }
         /*  Only doing for namespaces currently */
         value = (EjsObj*) ejsCreateNamespace(ejs, str, str);
     }
-
+#endif
     mprLog(ejs, 9, "Loading property %s:%s at slot %d", qname.space, qname.name, slotNum);
 
     if (attributes & EJS_PROP_NATIVE) {

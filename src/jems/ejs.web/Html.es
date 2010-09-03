@@ -1,450 +1,417 @@
 /**
-   Html.es -- MVC HTML view support
+   Html.es -- HtmlViewConnector. This provides HTML view support.
  */
 
 module ejs.web {
 
-//  MOB -- should not be public
-	/**
-	    The Html Connector provides bare HTML encoding of Ejscript controls
+    /**
+        The Html Connector provides bare HTML encoding of View controls.
+
+        MOB Style conventions???
+            -ejs- prefixes all internal styles
+            -ejs-alert
+            -ejs-flash
+            -ejs-flash-inform
+            -ejs-flash-warn
+            -ejs-flash-error
+            -ejs-hidden
+            -ejs-tabs
+            -ejs-field-error
+            -ejs-progress
+            -ejs-progress-inner
+            -ejs-table
+            -ejs-table-download
+            -ejs-even-row
+            -ejs-click
+            -ejs-field-error
+            -ejs-form-error
         @stability prototype
         @spec ejs
         @hide
-	 */
-	public class HtmlConnector {
+     */
+    public class HtmlViewConnector {
 
         use default namespace module
 
         private var request: Request
         private var view: View
 
-        function HtmlConnector(request, view) {
-            this.request = request
+        /* Sequential DOM ID generator */
+        private var lastDomID: Number = 0
+
+        /*
+            Mapping of helper options to HTML attributes.
+            NOTE: data-*, click and remote are handled specially in getAttributes.
+         */
+        private static const htmlOptions: Object = { 
+            "apply":                "data-apply",
+            "background":           "background",
+            "class":                "class",
+            "color":                "color",
+            "colour":               "color",
+            "domid":                "id",
+            "effects":              "data-effects",
+            "height":               "height",
+            "key":                  "data-key",
+            "keyFormat":            "data-key-format",
+            "method":               "data-method",
+            "modal":                "data-modal",
+            "period":               "data-refresh-period",
+            "params":               "data-params",
+            "pivot":                "data-pivot",
+            "refresh":              "data-refresh",
+            "rel":                  "rel",
+            "size":                 "size",
+            "sort":                 "data-sort",
+            "sortOrder":            "data-sort-order",
+            "style":                "class",
+            "visible":              "visible",
+            "width":                "width",
+        }
+
+        private static const defaultStylesheets = [
+            "web/layout.css", 
+            "web/themes/default.css", 
+        ]
+
+        //  MOB -- what about minified versions?
+
+        private static const defaultScripts = [
+            "web/js/jquery.js", 
+            "web/js/jquery.tablesorter.js",
+            "web/js/jquery.address.js",
+            "web/js/jquery.simplemodal.js",
+            "web/js/jquery.ejs.js",
+        ]
+
+        function HtmlViewConnector(view) {
             this.view = view
+            this.request = view.request
         }
 
-        /*
-            Options to implement:
-                method
-                update
-                confirm     JS confirm code
-                condition   JS expression. True to continue
-                success
-                failure
-                query
-   
-            Not implemented
-                submit      FakeFormDiv
-                complete
-                before
-                after
-                loading
-                loaded
-                interactive
-         */
-
-        function aform(record: Object, options: Object = {}): Void {
-            options.domid ||= "form"
-            onsubmit = ""
-            if (options.condition) {
-                onsubmit += options.condition + ' && '
-            }
-            if (options.confirm) {
-                onsubmit += 'confirm("' + options.confirm + '"); && '
-            }
-            onsubmit = '$.ajax({ ' +
-                'uri: "' + options.uri + '", ' + 
-                'type: "' + options.method + '", '
-
-            if (options.query) {
-                onsubmit += 'data: ' + options.query + ', '
-            } else {
-                onsubmit += 'data: $("#' + options.domid + '").serialize(), '
-            }
-            if (options.update) {
-                if (options.success) {
-                    onsubmit += 'success: function(data) { $("#' + options.update + '").html(data).hide("slow"); ' + 
-                        options.success + '; }, '
-                } else {
-                    onsubmit += 'success: function(data) { $("#' + options.update + '").html(data).hide("slow"); }, '
-                }
-            } else if (options.success) {
-                onsubmit += 'success: function(data) { ' + options.success + '; } '
-            }
-            if (options.error) {
-                onsubmit += 'error: function(data) { ' + options.error + '; }, '
-            }
-            onsubmit += '}); return false;'
-            write('<form action="' + "/User/list" + '"' + getOptions(options) + "onsubmit='" + onsubmit + "' >")
+        function alert(text: String, options: Object): Void {
+            options.style = append(options.style, "-ejs-alert")
+            write('<div' + getAttributes(options) + '>' +  text + '</div>\r\n')
         }
 
-        /*
-            TODO Extra options:
-                method
-                update
-                confirm     JS confirm code
-                condition   JS expression. True to continue
-                success
-                failure
-                query
-         */
-		function alink(text: String, options: Object): Void {
-            options.domid ||= "alink"
-            onclick = ""
-            if (options.condition) {
-                onclick += options.condition + ' && '
-            }
-            if (options.confirm) {
-                onclick += 'confirm("' + options.confirm + '"); && '
-            }
-            onclick = '$.ajax({ ' +
-                'uri: "' + options.action + '", ' + 
-                'type: "' + options.method + '", '
+/*
+   MOB - deprecated. Use label
+        function anchor(text: String, options: Object): Void {
+            let uri ||= request.link(options)
+            write('<a href="' + uri + '"' + getAttributes(options) + '>' + text + '</a>\r\n')
+        }
+*/
 
-            if (options.query) {
-                'data: ' + options.query + ', '
-            }
-
-            if (options.update) {
-                if (options.success) {
-                    onclick += 'success: function(data) { $("#' + options.update + '").html(data); ' + 
-                        options.success + '; }, '
-                } else {
-                    onclick += 'success: function(data) { $("#' + options.update + '").html(data); }, '
-                }
-            } else if (options.success) {
-                onclick += 'success: function(data) { ' + options.success + '; } '
-            }
-            if (options.error) {
-                onclick += 'error: function(data) { ' + options.error + '; }, '
-            }
-            onclick += '}); return false;'
-            options.uri ||= request.makeUri(options)
-            write('<a href="' + options.uri + '"' + getOptions(options) + "onclick='" + onclick + "' rel='nofollow'>" + 
-                text + '</a>')
-		}
-
-		function button(value: String, buttonName: String, options: Object): Void {
-            write('<input name="' + buttonName + '" type="submit" value="' + value + '"' + getOptions(options) + ' />')
+        function button(field: String, label: String, options: Object): Void {
+            write('    <input name="' + field + '" type="submit" value="' + label + '"' + getAttributes(options) + ' />\r\n')
         }
 
-		function buttonLink(text: String, options: Object): Void {
-            options.uri ||= request.makeUri(options)
-            if (options["data-remote"]) {
-                let attributes = getDataAttributes(options)
-                write('<button ' + attributes + '>' + text + '</button></a>')
-            } else {
-                write('<button onclick="window.location=\'' + options.uri + '\';">' + text + '</button></a>')
-            }
+        function buttonLink(text: String, options: Object): Void {
+            options.click ||= true
+            let attributes = getAttributes(options)
+            write('<button ' + attributes + '>' + text + '</button></a>\r\n')
         }
 
-		function chart(initialData: Array, options: Object): Void {
+        function chart(data: Array, options: Object): Void {
             //  TODO
             throw 'HtmlConnector control "chart" not implemented.'
-		}
-
-		function checkbox(field: String, choice: String, submitValue: String, options: Object): Void {
-            let checked = (choice == submitValue) ? ' checked="yes" ' : ''
-            //  MOB -- should these have \r\n at the end of each line?
-            write('<input name="' + field + '" type="checkbox" "' + getOptions(options) + checked + 
-                '" value="' + submitValue + '" />')
-            write('<input name="' + field + '" type="hidden" "' + getOptions(options) + '" value="" />')
         }
 
-		function endform(): Void {
-            write('</form>')
+        function checkbox(field: String, value: Object, checkedValue: Object, options: Object): Void {
+            let checked = (value == checkedValue) ? ' checked="yes"' : ''
+            write('    <input name="' + field + '" type="checkbox"' + getAttributes(options) + checked + 
+                ' value="' + checkedValue + '" />\r\n')
+            write('    <input name="' + field + '" type="hidden"' + getAttributes(options) + ' value="" />\r\n')
         }
 
-		function flash(kind: String, msg: String, options: Object): Void {
-            write('<div' + getOptions(options) + '>' + msg + '</div>\r\n')
+        function div(body: String, options: Object): Void {
+            // write('<div ' + getAttributes(options) + ' type="' + getTextKind(options) + '">' +  body + '</div>\r\n')
+            write('<span ' + getAttributes(options) + '>' +  body + '</span>\r\n')
+        }
+
+        function endform(): Void {
+            write('</form>\r\n')
+        }
+
+        function flash(kind: String, msg: String, options: Object): Void {
+            options.style = append(options.style, "-ejs-flash -ejs-flash-" + kind)
+            write('<div' + getAttributes(options) + '>' + msg + '</div>\r\n')
             if (kind == "inform") {
                 write('<script>$(document).ready(function() {
-                        $("div.-ejs-flashInform").animate({opacity: 1.0}, 2000).hide("slow");});
-                    </script>')
+                        $("div.-ejs-flash-inform").animate({opacity: 1.0}, 2000).hide("slow");
+                    });}</script>\r\n')
             }
-		}
+        }
 
-		function form(record: Object, options: Object): Void {
-            options.uri ||= request.makeUri(options)
-            write('<form method="post" action="' + options.uri + '"' + getOptions(options) + 
-                ' xonsubmit="ejs.fixCheckboxes();">')
+        function form(record: Object, options: Object): Void {
+    //  MOB -- need to be overridden for delete buttons
+            options.method ||= ((record && options.id) ? "PUT" : "POST")
+            options.action ||= "update"
+            let method = options.method
+            if (method != "GET" && method != "POST") {
+                method = "POST"
+            }
+            let uri ||= request.link(options)
+            emitFormErrors(record, options)
+    //  MOB -- what is method: true for?
+            let attributes = getAttributes(options, { method: true })
+            write('<form method="' + method + '" action="' + uri + '"' + attributes + '>\r\n')
+            if (options.id != undefined) {
+                write('    <input name="id" type="hidden" value="' + options.id + '" />\r\n')
+            }
+            if (!options.insecure) {
+                let token = options.securityToken || request.securityToken
+                write('    <input name="' + Request.SecurityTokenName + '" type="hidden" value="' + token + '" />\r\n')
+            }
+            if (options.method && options.method != "POST") {
+                write('    <input name="-ejs-method-" type="hidden" value="' + options.method.toUpperCase() + '" />\r\n')
+            }
+        }
+
+        function icon(uri: String, options: Object): Void {
+            write('    <link href="' + uri + '" rel="shortcut icon" />\r\n')
         }
 
         function image(src: String, options: Object): Void {
-			write('<img src="' + src + '"' + getOptions(options) + '/>')
-        }
-
-        function imageLink(src: String, options: Object): Void {
-            options.uri ||= request.makeUri(options)
-			//  MOB - TODO
+            write('<img src="' + src + '"' + getAttributes(options) + '/>\r\n')
         }
 
         function label(text: String, options: Object): Void {
-            write('<span ' + getOptions(options) + ' type="' + getTextKind(options) + '">' +  text + '</span>')
+            write('<span ' + getAttributes(options) + '>' +  text + '</span>\r\n')
         }
 
-		function link(text: String, options: Object): Void {
-            options.uri ||= request.makeUri(options)
-			write('<a href="' + options.uri + '"' + getOptions(options) + ' rel="nofollow">' + text + '</a>')
-		}
+        function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
+            let selected
+            write('    <select name="' + name + '" ' + getAttributes(options) + '>\r\n')
+            if (choices is Array) {
+                let i = 0
+                for each (choice in choices) {
+                    if (choice is Array) {
+                        /* list("priority", [["3", "low"], ["5", "med"], ["9", "high"]]) */
+                        let [key, value] = choice
+                        selected = (choice[0] == defaultValue) ? ' selected="yes"' : ''
+                        write('      <option value="' + choice[0] + '"' + selected + '>' + choice[1] + '</option>\r\n')
 
-		function extlink(text: String, options: Object): Void {
-            options.uri ||= request.makeUri(options)
-			write('<a href="' + uri + '"' + getOptions(options) + ' rel="nofollow">' + text + '</a>')
-		}
-
-		function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
-            write('<select name="' + name + '" ' + getOptions(options) + '>')
-            let isSelected: Boolean
-            let i = 0
-            for each (choice in choices) {
-                if (choice is Array) {
-                    isSelected = (choice[0] == defaultValue) ? 'selected="yes"' : ''
-                    write('  <option value="' + choice[0] + '"' + isSelected + '>' + choice[1] + '</option>')
-                } else {
-                    if (choice && choice.id) {
-                        for (field in choice) {
-                            isSelected = (choice.id == defaultValue) ? 'selected="yes"' : ''
-                            if (field != "id") {
-                                write('  <option value="' + choice.id + '"' + isSelected + '>' + choice[field] + '</option>')
-                                done = true
-                                break
-                            }
+                    } else if (Object.getOwnPropertyCount(choice) > 0) {
+                        /* list("priority", [{low: 3}, {med: 5}, {high: 9}]) */
+                        for (let [key, value] in choice) {
+                            selected = (value == defaultValue) ? ' selected="yes"' : ''
+                            write('      <option value="' + value + '"' + selected + '>' + key + '</option>\r\n')
                         }
                     } else {
-                        isSelected = (choice == defaultValue) ? 'selected="yes"' : ''
-                        write('  <option value="' + choice + '"' + isSelected + '>' + choice + '</option>')
+                        /* list("priority", ["low", "med", "high"]) */
+                        selected = (choice == defaultValue) ? ' selected="yes"' : ''
+                        write('      <option value="' + i + '"' + selected + '>' + choice + '</option>\r\n')
                     }
-                }
-                i++
-            }
-            write('</select>')
-        }
-
-		function mail(name: String, address: String, options: Object): Void  {
-			write('<a href="mailto:' + address + '" ' + getOptions(options) + ' rel="nofollow">' + name + '</a>')
-		}
-
-		function progress(initialData: Array, options: Object): Void {
-            write('<p>' + initialData + '%</p>')
-		}
-
-        function radio(name: String, choices: Object, selected: String, options: Object): Void {
-            let checked: String
-            if (choices is Array) {
-                for each (v in choices) {
-                    checked = (v == selected) ? "checked" : ""
-                    write(v + ' <input type="radio" name="' + name + '"' + getOptions(options) + 
-                        ' value="' + v + '" ' + checked + ' />\r\n')
+                    i++
                 }
             } else {
-                for (item in choices) {
-                    checked = (choices[item] == selected) ? "checked" : ""
-                    write(item + ' <input type="radio" name="' + name + '"' + getOptions(options) + 
-                        ' value="' + choices[item] + '" ' + checked + ' />\r\n')
+                /* list("priority", {low: 0, med: 1, high: 2}) */
+                for (let [key, value]  in choices) {
+                    selected = (value == defaultValue) ? ' selected="yes"' : ''
+                    write('      <option value="' + value + '"' + selected + '>' + key + '</option>\r\n')
+                }
+            }
+            write('    </select>\r\n')
+        }
+
+        function mail(name: String, address: String, options: Object): Void  {
+            write('<a href="mailto:' + address + '"' + getAttributes(options) + '>' + name + '</a>\r\n')
+        }
+
+        function progress(data: Number, options: Object): Void {
+            options["data-progress"] = data
+            write('<div class="-ejs-progress">\r\n    <div class="-ejs-progress-inner"' + getAttributes(options) + 
+                '>' + data + '%</div>\r\n</div>>\r\n')
+        }
+
+        function radio(name: String, actual: String, choices: Object, options: Object): Void {
+            let checked: String
+            let attributes = getAttributes(options)
+            if (choices is Array) {
+                for each (choice in choices) {
+                    if (choice is Array) {
+                        /* radio("priority", [["3", "low"], ["5", "med"], ["9", "high"]]) */
+                        let [key, value] = choice
+                        checked = (value == actual) ? "checked " : ""
+                        write('    ' + key.toPascal() + ' <input type="radio" name=' + name + attributes + ' value="' + 
+                            value + '"' + checked + '/>\r\n')
+
+                    } else if (Object.getOwnPropertyCount(choice) > 0) {
+                        /* radio("priority", [{low: 3}, {med: 5}, {high: 9}]) */
+                        for (let [key, value] in choice) {
+                            checked = (value == actual) ? "checked " : ""
+                            write('  ' + key.toPascal() + ' <input type="radio" name=' + name + attributes + ' value="' + 
+                                value + '"' + checked + '/>\r\n')
+                        }
+
+                    } else {
+                        /* radio("priority", ["low", "med", "high"]) */
+                        checked = (choice == actual) ? "checked " : ""
+                        write("    " + choice + ' <input type="radio" name="' + name + '"' + attributes + ' value="' + 
+                            choice + '" ' + checked + '/>\r\n')
+                    }
+                }
+            } else {
+                /* radio("priority", {low: 0, med: 1, high: 2}) */
+                for (let [key, value] in choices) {
+                    checked = (value == actual) ? "checked " : ""
+                    write("    " + key.toPascal() + ' <input type="radio" name="' + name + '"' + attributes + ' value="' + 
+                        value + '" ' + checked + '/>\r\n')
                 }
             }
         }
 
-		function script(uri: String, options: Object): Void {
-            write('<script src="' + uri + '" type="text/javascript"></script>\r\n')
-		}
-
-		function status(initialData: Array, options: Object): Void {
-            write('<p>' + initialData + '</p>\r\n')
+        function script(uri: String, options: Object): Void {
+            if (uri == null) {
+                for each (uri in defaultScripts) {
+                    script(request.absHome.local.join(uri), options)
+                }
+            } else {
+                write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
+            }
         }
 
-		function stylesheet(uri: String, options: Object): Void {
-            write('<link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
-		}
+        function securityToken(options: Object): Void {
+            write('    <meta name="SecurityTokenName" content="' + Request.SecurityTokenName + '" />\r\n')
+            write('    <meta name="' + Request.SecurityTokenName + '" content="' + request.securityToken + '" />\r\n')
+        }
 
-		function table(data, options: Object? = null): Void {
-            let originalOptions = options
-            let tableId = view.getNextId()
-
-            if (data is Array) {
-                if (data.length == 0) {
-                    write("<p>No Data</p>")
-                    return
+        function stylesheet(uri: String, options: Object): Void {
+            if (uri == null) {
+                for each (uri in defaultStylesheets) {
+                    stylesheet(request.absHome.local.join(uri), options)
                 }
-            } else if (!(data is Array) && data is Object) {
-                data = [data]
-			}
+            } else {
+                write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
+            }
+        }
 
-            options = (originalOptions && originalOptions.clone()) || {}
+        function table(data, options: Object): Void {
+            if (!data is Array) {
+                data = [data]
+            }
+            if (data.length == 0) {
+                write("<p>No Data</p>\n")
+                return
+            }
+            options.style = append(options.style, "-ejs-table")
+            let attributes = getAttributes({
+                period: options.period,
+                refresh: options.refresh,
+                sort: options.sort,
+                sortOrder: options.sortOrder || "ascending",
+                style: options.style,
+            })
             let columns = getColumns(data, options)
 
-            let refresh = options.refresh || 10000
-            let sortOrder = options.sortOrder || ""
-            let sort = options.sort
-            if (sort == undefined) sort = true
-            let attributes = getDataAttributes(options)
-
-            //  TODO - would be nice to auto sense this
-            if (!options.ajax) {
-                let uri = (data is String) ? data : null
-                uri ||= options.data
-                write('  <script type="text/javascript">\r\n' +
-                    '   $(function() { $("#' + tableId + '").eTable({ refresh: ' + refresh + 
-                    ', sort: "' + sort + '", sortOrder: "' + sortOrder + '"' + 
-                    ((uri) ? (', uri: "' + uri + '"'): "") + 
-                    '})});\r\n' + 
-                    '  </script>\r\n')
-                if (data is String) {
-                    /* Data is an action method */
-                    write('<table id="' + tableId + '" class="-ejs-table"></table>\r\n')
-                    return
-                }
-            } else {
-                write('  <script type="text/javascript">$("#' + tableId + '").eTableSetOptions({ refresh: ' + refresh +
-                    ', sort: "' + sort + '", sortOrder: "' + sortOrder + '"})' + ';</script>\r\n')
-            }
-			write('  <table id="' + tableId + '" class="-ejs-table ' + (options.styleTable || "" ) + '"' + 
-                attributes + '>\r\n')
+            write('  <table' + attributes + '>\r\n')
 
             /*
-                Table title and column headings
+                Table title header and column headings
              */
             if (options.showHeader != false) {
-                write('    <thead class="' + (options.styleHeader || "") + '">\r\n')
+                write('    <thead>\r\n')
                 if (options.title) {
-                    let gif = request.home.join("/web/images/green.gif")
-                    if (columns.length < 2) {
-                        //  TODO - this icon should be styled and not be here
-                        write('  <tr><td>' + options.title + ' ' + '<img src="' + 
-                            gif + '" class="-ejs-table-download -ejs-clickable" onclick="$(\'#' + 
-                            tableId + '\').eTableToggleRefresh();" />\r\n  </td></tr>\r\n')
-                    } else {
-                        write('  <tr><td colspan="' + (columns.length - 1) + '">' + options.title + 
-                            '</td><td class="right">' + '<img src="' + gif + 
-                            '" class="-ejs-table-download -ejs-clickable" onclick="$(\'#' + tableId + 
-                            '\').eTableToggleRefresh();" />\r\n  </td></tr>\r\n')
-                    }
+                    let length = Object.getOwnPropertyCount(columns)
+                    write('        <tr><td colspan="' + length + '">' + options.title + '</td></tr>\r\n')
                 }
-                /*
-                    Emit column headings
-                 */
-                if (columns) {
-                    write('    <tr>\r\n')
-                    for (let name in columns) {
-                        if (name == null) continue
-                        let header = (columns[name].header) ? (columns[name].header) : name.toPascal()
-                        let width = (columns[name].width) ? ' width="' + columns[name].width + '"' : ''
-                        write('    <th ' + width + '>' + header + '</th>\r\n')
-                    }
+                write('        <tr>\r\n')
+                for (let [name, column] in columns) {
+                    if (name == null) continue
+                    let header = (column.header) ? (column.header) : name.toPascal()
+                    let width = (column.width) ? ' width="' + column.width + '"' : ''
+                    write('            <th' + width + '>' + header + '</th>\r\n')
                 }
-                write("     </tr>\r\n    </thead>\r\n")
+                write("        </tr>\r\n    </thead>\r\n")
             }
+            write('    <tbody>\r\n')
 
-            let styleBody = options.styleBody || ""
-            write('    <tbody class="' + styleBody + '">\r\n')
-
-            let row: Number = 0
-
-			for each (let r: Object in data) {
-                let uri = null
-                // let uriOptions = { controller: options.controller, query: options.query }
-                let uriOptions = options.clone()
-                if (options.click) {
-                    uriOptions.query = (options.query is Array) ? options.query[row] : options.query
-                    if (options.click is Array) {
-                        if (options.click[row] is String) {
-                            uri = request.makeUri(blend(uriOptions, {action: options.click[row], id: r.id}))
-                        }
-                    } else {
-                        uri = request.makeUri(blend(uriOptions, {action: options.click, id: r.id}))
-                    }
+            /*
+                Render each row
+             */
+            let row = 0
+            for each (let r: Object in data) {
+                let values = {}
+                for (name in columns) {
+                    values[name] = view.getValue(r, name, options)
                 }
-                let odd = options.styleOddRow || "-ejs-oddRow"
-                let even = options.styleOddRow || "-ejs-evenRow"
-                styleRow = ((row % 2) ? odd : even) || ""
-                if (options.styleRows) {
-                    styleRow += " " + (options.styleRows[row] || "")
-                }
-                if (uri) {
-                    write('    <tr class="' + styleRow + 
-                        '" onclick="window.location=\'' + uri + '\';">\r\n')
+                let styleRow = options.styleRows ? (' class="' + options.styleRows[row] + '"') : ""
+                if (options.cell) {
+                    write('        <tr' + styleRow + '>\r\n')
                 } else {
-                    write('    <tr class="' + styleRow + '">\r\n')
+                    let att = getCellRowAtt(r, row, null, values, options)
+                    write('        <tr' + att + styleRow + '>\r\n')
                 }
 
                 let col = 0
-				for (name in columns) {
-                    if (name == null) {
-                        continue
-                    }
-                    let column = columns[name]
+                for (let [name, column] in columns) {
+                    let value = values[name]
                     let styleCell: String = ""
-
                     if (options.styleColumns) {
-                        styleCell = options.styleColumns[col] || ""
+                        styleCell = append(styleCell, options.styleColumns[col])
                     }
                     if (column.style) {
-                        styleCell += " " + column.style
+                        styleCell = append(styleCell, column.style)
                     }
                     if (options.styleCells && options.styleCells[row]) {
-                        styleCell += " " + (options.styleCells[row][col] || "")
+                        styleCell = append(styleCell, options.styleCells[row][col])
                     }
-                    styleCell = styleCell.trim()
-                    data = view.getValue(r, name, { render: column.render, formatter: column.formatter } )
-
-                    let align = ""
+                    let attr = ""
+                    if (styleCell) {
+                        attr = ' class="' + styleCell + '"'
+                    }
                     if (column.align) {
-                        align = 'align="' + column.align + '"'
+                        attr = append(attr, ' align="' + column.align + '"')
+                    } else if (value is Number) {
+                        attr = append(attr, ' align="right"')
                     }
-                    let cellUrl
-                    if (options.click is Array && options.click[0] is Array) {
-                        if (options.query is Array) {
-                            if (options.query[0] is Array) {
-                                uriOptions.query = options.query[row][col]
-                            } else {
-                                uriOptions.query = options.query[row]
-                            }
-                        } else {
-                            uriOptions.query = options.query
-                        }
-                        cellUrl = request.makeUri(blend(uriOptions, { action: options.click[row][col], id: r.id}))
+                    if (options.cell) {
+                        attr = append(attr, getCellRowAtt(r, row, name, values, options))
                     }
-					styleCell = styleCell.trim()
-                    if (cellUrl) {
-                        write('    <td class="' + styleCell + '"' + align + 
-                            ' xonclick="window.location=\'' + cellUrl + '\';"><a href="' + cellUrl + '" rel="nofollow">' + 
-                            data + '</a></td>\r\n')
-                    } else {
-                        write('    <td class="' + styleCell + '"' + align + '>' + data + '</td>\r\n')
-                    }
+                    value = view.formatValue(value, r, name, { formatter: column.formatter} )
+                    write('            <td' + attr + '>' + value + '</td>\r\n')
                     col++
-				}
+                }
                 row++
-				write('    </tr>\r\n')
-			}
-			write('    </tbody>\r\n  </table>\r\n')
-		}
+                write('        </tr>\r\n')
+            }
+            write('    </tbody>\r\n</table>\r\n')
+        }
 
-		function tabs(initialData: Array, options: Object): Void {
-            write('<div class="-ejs-tabs">\r\n')
-            write('   <ul>\r\n')
-            for each (t in initialData) {
-                for (name in t) {
-                    let uri = t[name]
-                    if (options["data-remote"]) {
-                        write('      <li data-remote="' + uri + '">' + name + '</a></li>\r\n')
-                    } else {
-                        write('      <li onclick="window.location=\'' + uri + '\'"><a href="' + uri + '" rel="nofollow">' + 
-                            name + '</a></li>\r\n')
+        function tabs(data: Object, options: Object): Void {
+            let attributes = getAttributes(options)
+            let att
+            if (options.remote) {
+                att = "data-remote"
+            } else if (options.click) {
+                att = "data-click"
+            } else {
+                att = "data-show"
+            }
+            write('<div class="-ejs-tabs">\r\n    <ul>\r\n')
+            if (data is Array) {
+                for each (tuple in data) {
+                    for (let [name, target] in tuple) {
+                        let uri = request.link(target)
+                        write('      <li ' + att + '="' + uri + '">' + name + '</li>\r\n')
                     }
                 }
+            } else {
+                for (let [name, target] in data) {
+                    let uri = request.link(target)
+                    write('      <li ' + att + '="' + uri + '">' + name + '</li>\r\n')
+                }
             }
-            write('    </ul>')
-            write('</div>')
+            write('    </ul>\r\n</div>\r\n')
         }
 
         function text(field: String, value: String, options: Object): Void {
-            write('<input name="' + field + '" ' + getOptions(options) + ' type="' + getTextKind(options) + 
-                '" value="' + value + '" />')
+            write('    <input name="' + field + '"' + getAttributes(options) + ' type="' + getTextKind(options) + 
+                '" value="' + value + '" />\r\n')
         }
 
-        function textarea(name: String, value: String, options: Object): Void {
+        function textarea(field: String, value: String, options: Object): Void {
             numCols = options.numCols
             if (numCols == undefined) {
                 numCols = 60
@@ -453,12 +420,193 @@ module ejs.web {
             if (numRows == undefined) {
                 numRows = 10
             }
-            write('<textarea name="' + name + '" type="' + getTextKind(options) + '" ' + getOptions(options) + 
-                ' cols="' + numCols + '" rows="' + numRows + '">' + value + '</textarea>')
+            write('<textarea name="' + field + '" type="' + getTextKind(options) + '"' + getAttributes(options) + 
+                ' cols="' + numCols + '" rows="' + numRows + '">' + value + '</textarea>\r\n')
         }
 
-        function tree(initialData: Array, options: Object): Void {
-            throw 'HtmlConnector control "tree" not implemented.'
+        function tree(data: Object, options: Object): Void {
+            options.style = append(options.style, "-ejs-tree")
+            let attributes = getAttributes(options)
+            let columns = getColumns(data, options)
+
+            write('<div' + attributes + '>\r\n')
+            write(serialize(data, {pretty: true}))
+            write('</div>\r\n')
+        }
+
+        /************************************************** Support ***************************************************/
+
+        private function emitFormErrors(record, options): Void {
+            if (!record || !record.getErrors || options.hideErrors) {
+                return
+            }
+            let errors = record.getErrors()
+            if (errors) {
+                write('<div class="-ejs-form-error"><h2>The ' + Object.getName(record).toLowerCase() + ' has ' + 
+                    errors.length + (errors.length > 1 ? ' errors' : ' error') + ' that ' +
+                    ((errors.length > 1) ? 'prevent' : 'prevents') + '  it being saved.</h2>\r\n')
+                write('    <p>There were problems with the following fields:</p>\r\n')
+                write('    <ul>\r\n')
+                for (e in errors) {
+                    write('        <li>' + e.toPascal() + ' ' + errors[e] + '</li>\r\n')
+                }
+                write('    </ul>\r\n')
+                write('</div>\r\n')
+            }
+        }
+
+        //  FUTURE MOB -- never called. MOB -- better to push to client via data-filter
+        //  TODO - this actually modifies the grid. Need to doc this.
+        private function filter(data: Array): Array {
+            data = data.clone()
+            pattern = request.params.filter.toLowerCase()
+            for (let i = 0; i < data.length; i++) {
+                let found: Boolean = false
+                for each (f in data[i]) {
+                    if (f.toString().toLowerCase().indexOf(pattern) >= 0) {
+                        found = true
+                    }
+                }
+                if (!found) {
+                    data.remove(i, i)
+                    i--
+                }
+            }
+            return data
+        }
+
+//  MOB -- should be a link here too 
+        /*
+            Like link but supports location == true to use the rest of options.
+         */
+        private function buildUri(location: Object, options: Object): Uri {
+            if (location == true) {
+                return request.link(options)
+            } else if (location is String) {
+                if (location.startsWith("/")) {
+                    return request.link(location)
+                } else {
+                    return request.link({action: location})
+                }
+            }
+            return request.link(location)
+        }
+
+        /**
+            Map options to a HTML attribute string. See htmlOptions and $View for a discussion on standard options.
+            @param options Control options
+            @returns a string containing the HTML attributes to emit. Will return an empty string or a string with a 
+                leading space (and not trailing space)
+         */
+        private function getAttributes(options: Object, exclude: Object = null): String {
+            if (options.hasError) {
+                options.style = append(options.style, "-ejs-field-error")
+            }
+            if (options.remote) {
+                options["data-remote"] = buildUri(options.remote, options)
+            } else if (options.click) {
+                options["data-click"] = buildUri(options.click, options)
+            }
+            if (options.refresh && !options.domid) {
+                options.domid = getNextID()
+            }
+            return mapAttributes(options, exclude)
+        }
+
+        /*
+            Get attributes for table cells and rows
+         */
+        private function getCellRowAtt(record, row, field, values, options): String {
+            let click, edit, key, method, params
+            if (options.click) {
+                ({method, uri, params, key}) = getTableLink(options.click, record, row, field, values, options)
+                click = buildUri(uri, options)
+            } else if (options.edit) {
+                ({method, uri, params, key}) = getTableLink(options.edit, record, row, field, values, options)
+                edit = buildUri(uri, options)
+            }
+            if (params) {
+                /* Process params and convert to an encoded query string */
+                let list = []
+                for (let [key,value] in params) {
+                    list.push(Uri.encodeComponent(key) + "=" + Uri.encodeComponent(value))
+                }
+                params = list.join("&")
+            }
+            return mapAttributes({ 
+                "data-click": click,
+                "data-edit": edit,
+                key: key, 
+                keyFormat: options.keyFormat,
+                method: method,
+                params: params,
+            })
+        }
+
+        /*
+            Get data-key attributes for tables
+         */
+        private function getKeyAtt(keyFields: Array, record, row, values, options): String {
+            let keys
+            if (!keyFields && options.click && record.id) {
+                keyFields = ["id"]
+            }
+            if (keyFields) {
+                for (name in record) {
+                    /* Add missing values if columns are not being displayed */
+                    values[name] ||= record[name]
+                }
+                keys = []
+                for each (key in keyFields) {
+                    if (key is String) {
+                        /* Array of key names corresponding to the columns */
+                        keys.push(Uri.encodeComponent(key) + "=" + Uri.encodeComponent((values[key] || row)))
+                    } else {
+                        /* Hash of key:mapped names corresponding to the columns */
+                        for (field in key) {
+                            keys.push(Uri.encodeComponent(key[field]) + "=" + Uri.encodeComponent((values[field] || row)))
+                        }
+                    }
+                }
+                if (keys && keys.length > 0) {
+                    return keys.join("&")
+                }
+            }
+            return ""
+        }
+
+        /*
+            Get table click/edit links. Return a hash {method, uri, params, key}
+         */
+        private function getTableLink(location, record, row, field, values, options): Object {
+            if (location is Function) {
+                result = location(record, field, values[field], options)
+            } else {
+                let uri = buildUri(location, options)
+                let key = getKeyAtt(options.key, record, row, values, options)
+                result = { method: options.method, uri: uri, params: options.params, key: key}
+            }
+            return result
+        }
+
+        /*
+            Map options to HTML attributes
+         */
+        private function mapAttributes(options: Object, exclude: Object = null): String {
+            let result: String = ""
+            if (options.method) {
+                options.method = options.method.toUpperCase();
+            }
+            for (let [key, value] in options) {
+                if (exclude && exclude[key]) continue
+                if (value != undefined) {
+                    if (htmlOptions[key] || key.startsWith("data-")) {
+                        let mapped = htmlOptions[key] ? htmlOptions[key] : key
+                        result += mapped + '="' + value + '" '
+                    }
+                }
+            }
+            return (result == "") ? result : (" " + result.trimEnd())
         }
 
         private function getColumns(data: Object, options: Object): Object {
@@ -474,7 +622,7 @@ module ejs.web {
                 }
             } else {
                 /*
-                    No supplied columns. Infer from data
+                    No supplied columns, so infer from data.
                  */
                 columns = {}
                 if (data is Array) {
@@ -489,7 +637,6 @@ module ejs.web {
     
         private function getTextKind(options): String {
             var kind: String
-
             if (options.password) {
                 kind = "password"
             } else if (options.hidden) {
@@ -500,32 +647,27 @@ module ejs.web {
             return kind
         }
 
-		private function getOptions(options: Object): String
-            view.getOptions(options)
+        /** 
+            Get the next usable DOM ID for view controls
+         */
+        private function getNextID(): String
+            "id_" + lastDomID++
 
         private function write(str: String): Void
             request.write(str)
 
-        private function getDataAttributes(options): String {
-            let attributes = ""
-            //  MOB -- would it be better to have data-remote == uri?
-            if (options["data-remote"]) {
-                attributes += ' data-remote="' + options["data-remote"] + '"'
+        private function append(str: String, suffix: String): String {
+            if (suffix) {
+                return (str) ? (str + " " + suffix) : suffix
             }
-            if (options["data-apply"]) {
-                attributes += ' data-apply="' + options["data-apply"] + '"'
-            }
-            if (options["data-id"]) {
-                attributes += ' data-id="' + options["data-id"] + '"'
-            }
-            return attributes
+            return str
         }
-	}
+    }
 }
 
 
 /*
-   @copy	default
+   @copy    default
    
    Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
    Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.

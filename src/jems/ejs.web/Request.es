@@ -20,6 +20,9 @@ module ejs.web {
     dynamic class Request implements Stream {
         use default namespace public
 
+        /** Security Token for use to help mitigate CSRF security threats */
+        static const SecurityTokenName = "__ejs_security_token__"
+
         private var lastFlash: Object
 
         /** 
@@ -77,7 +80,7 @@ module ejs.web {
 
         /** 
             The request content type as specified by the "Content-Type" Http request header. This is set to null 
-            if not defined.
+            if not defined. This is the content type of the request body content sent with the request.
          */
         native enumerable var contentType: String
 
@@ -120,25 +123,26 @@ module ejs.web {
         enumerable var filename: Path
 
         /** 
-            Transient "flash" messages to pass to the next request. By convention, the following keys are used:
+            Notification "flash" messages to pass to the next request (only). By convention, the following keys are used:
             @option error    Negative errors (Warnings and errors)
             @option inform   Informational / postitive feedback (note)
             @option warn     Negative feedback (Warnings and errors)
             @option *        Other feedback (reminders, suggestions...)
         */
-        public var flashMessages: Object
+        public var flash: Object
 
         /** 
             Request Http headers. This is an object hash filled with lower-case request headers from the client. If multiple 
             headers of the same key value are defined, their contents will be catenated with a ", " separator as per the 
             HTTP/1.1 specification. Use the header() method if you want to retrieve a single header.
             Headers defined on the server-side by creating new header entries in $headers will preserve case. 
-            Use $headers() if you want to match headers using a mixed case key. e.g. headers("Content-Length").
+            Use $header() if you want to match headers using a mixed case key. e.g. header("Content-Length").
          */
         native enumerable var headers: Object
 
         /** 
-            Home URI for the application. This is a relative Uri for the top-most level of the application. 
+            Home URI for the application. This is a relative Uri from the current URI to the 
+            the top-most directory level of the application. 
          */ 
         native enumerable var home: Uri
 
@@ -187,7 +191,7 @@ module ejs.web {
         native enumerable var method: String
 
         /** 
-            Original HTTP request method used by the client. If the method is overridden by including a "__method__" 
+            Original HTTP request method used by the client. If the method is overridden by including a "-ejs-method-" 
             parameter in a POST request or by defining an X-HTTP-METHOD-OVERRIDE Http header, the original method used by
             the client is stored in this property and the method property reflects the newly defined value.
          */
@@ -208,8 +212,8 @@ module ejs.web {
 
         /** 
             Portion of the request URL after the scriptName. This is the location of the request within the application.
-            The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the 
-            uri or scriptName properties will not affect the pathInfo property.
+            The pathInfo is originally derrived from uri.path after splitting off the scriptName. Changes to the uri or 
+            scriptName properties will not affect the pathInfo property.
          */
         native enumerable var pathInfo: String
 
@@ -272,7 +276,8 @@ module ejs.web {
             Script name for the current application serving the request. This is typically the leading Uri portion 
             corresponding to the application, but middleware may modify this to be an arbitrary string representing 
             the application.  The script name is often determined by the Router as it parses the request using 
-            the routing tables. The scriptName will be set to the empty string if not defined.
+            the routing tables. The scriptName will be set to the empty string if not defined, otherwise is should begin
+            with a "/" character. NOTE: changing script name will not update home or absHome.
          */
         native enumerable var scriptName: String
 
@@ -338,11 +343,18 @@ module ejs.web {
         /** 
             @duplicate Stream.close
             This closes the current request by finalizing all transmission data and sending a "close" event. It may 
-            not close the actually socket connection so that it can be reused for future requests.
-            It is normally not necessary to explicitly call close as the web framework will automatically close finalized
-            requests when all input data has been read.
+            not actually close the socket connection if the reuse limit has not been exceeded (see limits).
+            It is normally not necessary to explicitly call close a request as the web framework will automatically 
+            close finalized requests when all input data has fully been read. Calling close on an already closed
+            request is silently ignored. 
          */
         native function close(): Void
+
+        function checkSecurityToken() {
+            if (session[SecurityTokenName] && session[SecurityTokenName] != params[SecurityTokenName]) {
+                throw "Security token does not match. Potential CSRF attack. Denying request"
+            }
+        }
 
         /**
             Create a session state object. The session state object can be used to share state between requests.
@@ -383,7 +395,7 @@ module ejs.web {
             @param msg Message to store
          */
         function error(msg: String): Void
-            flash("error", msg)
+            notify("error", msg)
 
         /** 
             The request pathInfo file extension
@@ -407,36 +419,20 @@ module ejs.web {
             Save flash messages for the next request and delete old flash messages.
          */
         function finalizeFlash() {
-            if (flashMessages) {
+            if (flash) {
                 if (lastFlash) {
-                    for (item in flashMessages) {
+                    for (item in flash) {
                         for each (old in lastFlash) {
-                            if (hashcode(flashMessages[item]) == hashcode(old)) {
-                                delete flashMessages[item]
+                            if (hashcode(flash[item]) == hashcode(old)) {
+                                delete flash[item]
                             }
                         }
                     }
                 }
-                if (Object.getOwnPropertyCount(flashMessages) > 0) {
-                    session["__flash__"] = flashMessages
+                if (Object.getOwnPropertyCount(flash) > 0) {
+                    session["__flash__"] = flash
                 }
             }
-        }
-
-        /** 
-            Set a transient flash notification message. Flash messages persist for only one request and are a convenient
-                way to pass state information or feedback messages to the next request. To use flash messages, 
-                setupFlash() and finalizeFlash() must be called before and after the request is processed. Web.process
-                will call setupFlash and finalizeFlash automatically.
-            @param key Flash message key
-            @param msg Message to store
-         */
-        function flash(key: String, msg: String): Void {
-            if (flashMessages == null) {
-                createSession()
-                flashMessages = {}
-            }
-            flashMessages[key] = msg
         }
 
         /** 
@@ -463,31 +459,61 @@ module ejs.web {
             @param msg Message to store
          */
         function inform(msg: String): Void
-            flash("inform", msg)
+            notify("inform", msg)
 
         /** 
-            Make a URI. The URI is created from the given location parameter. The location may contain partial or complete 
-            URI information. The missing parts are supplied using the current request URI and optional route tables. 
-            @params location The location parameter can be a URI string or object hash of components. If the location is a
-               string, it is may be an absolute or relative URI. If location is an absolute URI, it will be used unmodified.
-               If location is a relative URI, is append to the current request URI. The location argument can also be
-               an object hash of URI components: scheme, host, port, path, query, reference, controller, action and other
-               route table tokens. 
-            @param relative If true, return a relative URI by disregarding the scheme, host and port portions of "this" URI. 
-                Defaults to true.
-            @option scheme String URI protocol scheme (http or https)
-            @option host String URI host name or IP address.
-            @option port Number TCP/IP port number for communications
+            Create a link to a URI. The target parameter may contain partial or complete URI information. The missing 
+            parts are supplied using the current request URI and route tables.  The resulting URI is a normalized, 
+            server-local URI. It will not include scheme, host or port components. 
+            @params target The target parameter can be a URI string or object hash of components. If the target is a
+               string, it is may be an absolute or relative URI. If the target has an absolute URI path, that path
+               it be used unmodified. If the target is a relative URI, it is appended to the current request URI path. 
+               The target argument can also be an object hash of URI components: path, query, reference, controller, 
+               action and other route table tokens. 
             @option path String URI path portion
             @option query String URI query parameters. Does not include "?"
             @option reference String URI path reference. Does not include "#"
             @option controller String Controller name if using a Controller-based route
             @option action String Action name if using a Controller-based route
             @option other String Other route table tokens
-            @return A Uri object.
+            @example
+                Given a current request of http://example.com/samples/demo" and "r" == the current request:
+
+                r.link("images/splash.png")                  returns "/samples/images/splash.png"
+                r.link("images/splash.png").complete(r.uri)  returns "http://example.com/samples/images/splash.png"
+                r.link("images/splash.png").relative(r.uri)  returns "images/splash.png"
+
+                r.link({action: "checkout")
+                r.link({controller: "User", action: "logout")
+
+            @return A normalized, server-local Uri object.
          */
-        function makeUri(location: Object, relative: Boolean = true): Uri
-            (route) ? route.makeUri(this, location, relative) : uri.resolve(location, relative)
+        function link(target: Object): Uri {
+            let result = uri.local.resolve(target)
+            //  MOB -- is the && !target.path needed?
+            if (result.path == "/" && route && Object.getOwnPropertyCount(target) > 0 && !target.path) {
+                result = route.completeLink(result, this, target)
+            } else if (target.action) {
+                result = result.join(target.action)
+            }
+            return result.normalize
+        }
+
+        /** 
+            Set a transient flash notification message. Flash messages persist for only one request and are a convenient
+                way to pass state information or feedback messages to the next request. To use flash messages, 
+                setupFlash() and finalizeFlash() must be called before and after the request is processed. Web.process
+                will call setupFlash and finalizeFlash automatically.
+            @param key Flash message key
+            @param msg Message to store
+         */
+        function notify(key: String, msg: String): Void {
+            if (!flash) {
+                createSession()
+                flash = {}
+            }
+            flash[key] = msg
+        }
 
         /** 
             @duplicate Stream.observe
@@ -525,17 +551,17 @@ module ejs.web {
         native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
         /** 
-            Redirect the client to a new URL. This call redirects the client's browser to a new location specified 
+            Redirect the client to a new URL. This call redirects the client's browser to a new target specified 
             by the $url.  Optionally, a redirection code may be provided. Normally this code is set to be the HTTP 
             code 302 which means a temporary redirect. A 301, permanent redirect code may be explicitly set.
-            @param location Uri to redirect the client toward. This can be a relative or absolute string URI or it can be
+            @param target Uri to redirect the client toward. This can be a relative or absolute string URI or it can be
                 a hash of URI components. For example, the following are valid inputs: "../index.ejs", 
                 "http://www.example.com/home.html", {action: "list"}.
             @param status Optional HTTP redirection status
          */
-        function redirect(location: *, status: Number = Http.MovedTemporarily): Void {
+        function redirect(target: *, status: Number = Http.MovedTemporarily): Void {
             this.status = status
-            let target: Uri = makeUri(location).absolute(uri)
+            target = link(target).complete(uri)
             setHeader("Location", target)
             write("<!DOCTYPE html>\r\n" +
                    "<html><head><title>Redirect (" + status + ")</title></head>\r\n" +
@@ -544,6 +570,7 @@ module ejs.web {
                     "\">here</a>.</p>\r\n" +
                     "<address>" + server.software + " at " + host + " Port " + server.port + 
                     "</address></body>\r\n</html>\r\n")
+            //  MOB -- want to allow templates to call redirect and may write more blank linkes -- finalize()
         }
 
         /** 
@@ -552,29 +579,12 @@ module ejs.web {
         native function removeObserver(name, observer: Function): Void
 
         /**
-            Send a static file back to the client. This is a high performance way to send static content to the client.
-            This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
-            and the slower netConnector will be used instead.
-            @param file Path to the file to send back to the client
-            @return True if the Send connector can successfully be used. 
+            Get a security token to help mitigate CSRF threats. The security token is submitted by forms and requests and
+            can be validated by controllers. The token is stored in session["__ejs-security-token__"]. 
          */
-        native function sendFile(file: Path): Boolean
-
-        /** 
-            Send a response to the client. This can be used instead of setting status and calling setHeaders() and write(). 
-            The $response argument is an object hash containing status, headers and
-            body properties. The respond method replaces previously defined status and headers.
-            @option status Numeric Http status code (e.g. 200 for a successful response)
-            @option header Object hash of Http headers
-            @option body Body content
-        */
-        function sendResponse(response: Object): Void {
-            status = response.status || 200
-            if (response.headers)
-                setHeaders(response.headers)
-            if (response.body)
-                write(response.body)
-            autoFinalize()
+        function get securityToken(): Object {
+            session[SecurityTokenName] ||= md5(Math.random()) 
+            return session[SecurityTokenName]
         }
 
         /** 
@@ -641,14 +651,14 @@ module ejs.web {
             Convenience routine to define an application at a given Uri prefix and directory location. This is typically
                 called from routing tables.
             @param prefix The leading Uri prefix for the application. This prefix is removed from the pathInfo and the
-                $scriptName property is set to the prefix.
+                $scriptName property is set to the prefix. The script name should begin with "/".
             @param location Path to where the application home directory is. This sets the $dir property to the $location
                 argument.
         */
         function setLocation(prefix: String, location: Path): Void {
             prefix = prefix.trimEnd("/")
             pathInfo = pathInfo.trimStart(prefix)
-            scriptName = prefix     //MOB .trimStart("/")
+            scriptName = prefix
             dir = location
         }
 
@@ -660,16 +670,17 @@ module ejs.web {
             this.status = status
 
         /* 
-            Prepare the flash message area. This copies flash messages from the session state store into the flashMessages
-            store.
+            Prepare the flash message area. This copies flash messages from the session state store into the flash store.
          */
         function setupFlash() {
             if (sessionID) {
                 lastFlash = null
-                flashMessages = session["__flash__"]
-                if (flashMessages) {
+                flash = session["__flash__"]
+                if (flash) {
                     session["__flash__"] = undefined
-                    lastFlash = flashMessages.clone()
+                    lastFlash = flash.clone()
+                } else {
+                    flash = null
                 }
             }
         }
@@ -683,6 +694,49 @@ module ejs.web {
             for each (var e: Object in args) {
                 write(serialize(e, {pretty: true}) + "\r\n")
             }
+        }
+
+        /** 
+            Create a top-level URI link. A top-level URI has an absolute path and is useful to ensure a link always
+            refers to the same resource even when a HTML fragment may be rendered from pages different URLs. 
+            The target parameter may contain partial or complete URI information. The missing parts are supplied 
+            using the current request URI and route tables.  The resulting URI is a top-level normalized, server-local URI. 
+            It will not include scheme, host or port components. The path will always beging with "/". NOTE: the 
+            result will include the current $scriptName.
+            @params target The target parameter can be a URI string or object hash of components. If the target is a
+               string, it is may be an absolute or relative URI. If the target has an absolute URI path, that path
+               it be used unmodified. If the target is a relative URI, it is appended to the current request URI path. 
+               The target argument can also be an object hash of URI components: path, query, reference, controller, 
+               action and other route table tokens. 
+            @option path String URI path portion
+            @option query String URI query parameters. Does not include "?"
+            @option reference String URI path reference. Does not include "#"
+            @option controller String Controller name if using a Controller-based route
+            @option action String Action name if using a Controller-based route
+            @option other String Other route table tokens
+            @example
+                Given a current request of http://example.com/samples/demo", where scriptName is "samples" and 
+                "r" == the current request:
+
+                r.toplink("images/splash.png")   returns "/samples/images/splash.png"
+                r.toplink("/images/splash.png")  returns "/samples/images/splash.png"
+
+            @return A normalized, server-local Uri object.
+         */
+        function toplink(target: *): Uri {
+            if (target is String) {
+                if (target.startsWith("/")) {
+                    target = target.substring(1)
+                } 
+                target = Uri(target).normalize
+            }
+            let result = absHome.local.resolve(target)
+            if (result.path == "/" && route && Object.getOwnPropertyCount(target) > 0 && !target.path) {
+                result = route.completeLink(result, this, target)
+            } else if (target.action) {
+                result = result.join(target.action)
+            }
+            return result.normalize
         }
 
         /**
@@ -724,13 +778,26 @@ module ejs.web {
             @param msg Message to store
          */
         function warn(msg: String): Void
-            flash("warn", msg)
+            notify("warn", msg)
 
         /** 
             Write data to the client. This will buffer the written data until either flush() or finalize() is called. 
             @duplicate Stream.write
          */
         native function write(...data): Number
+
+        /** 
+            Write a block of data to the client. This will buffer the written data which will be flushed when either 
+            close(), flush() or finalize() is called or the underlying pipeline is full. 
+            @param buffer Destination byte array for read data.
+            @param offset Offset in the byte array from which to write. If the offset is -1, then data is
+                written from the buffer read $position which is then updated. 
+            @param count Read up to this number of bytes. If -1, write all available data in the buffer. 
+            @returns a count of the bytes actually written. Returns null on eof.
+            @event writable Issued when the connection can absorb more data.
+         */
+        # FUTURE
+        native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
 
         /** 
             Write an error message back to the user and finalize the request.  The output is Html escaped for security.
@@ -747,20 +814,56 @@ module ejs.web {
                 text = "<pre>" + escapeHtml(msg) + "</pre>\r\n" +
                     '<p>To prevent errors being displayed in the "browser, ' + 
                     'set <b>log.showClient</b> to false in the ejsrc file.</p>\r\n'
+                try {
+                    setHeader("Content-Type", "text/html")
+                    write(errorBody(title, text))
+                } catch {}
             }
-            try {
-                setHeader("Content-Type", "text/html")
-                write(errorBody(title, text))
-            } catch {}
             finalize()
-            log.debug(4, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
+            //  MOB -- what level should this be?
+            //  Can't be zero else it comes out in utest
+            log.debug(1, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 
-        /** 
-            Send HTML escaped data back to the client.
-            @param args Objects to encode and write back to the client.
+        /**
+            Send a static file back to the client. This is a high performance way to send static content to the client.
+            This call must be invoked prior to sending any data or headers to the client, otherwise it will be ignored
+            and the slower netConnector will be used instead.
+            @param file Path to the file to send back to the client
+            @return True if the Send connector can successfully be used. 
          */
-        function writeHtml(...args): Void
+        native function writeFile(file: Path): Boolean
+
+        //  MOB
+        function sendFile(file: Path): Boolean
+            writeFile(file)
+
+        /** 
+            Send a response to the client. This can be used instead of setting status and calling setHeaders() and write(). 
+            The $response argument is an object hash containing status, headers and
+            body properties. The respond method replaces previously defined status and headers.
+            @option status Numeric Http status code (e.g. 200 for a successful response)
+            @option header Object hash of Http headers
+            @option body Body content
+        */
+        function writeResponse(response: Object): Void {
+            status = response.status || 200
+            if (response.headers)
+                setHeaders(response.headers)
+            if (response.body)
+                write(response.body)
+            autoFinalize()
+        }
+
+        //  MOB
+        function sendResponse(response: Object): Void
+            writeResponse(response)
+
+        /** 
+            Write safely. Write HTML escaped data back to the client.
+            @param args Objects to HTML encode and write back to the client.
+         */
+        function writeSafe(...args): Void
             write(html(...args))
 
         /**
@@ -812,6 +915,22 @@ module ejs.web {
          */
         function get serverPort(): Number
             server.port
+
+
+        /**
+            @example
+            @option max-age Max time in seconds the resource is considered fresh
+            @option s-maxage Max time in seconds the resource is considered fresh from a shared cache
+            @option public marks authenticated responses as cacheable
+            @option private shared caches may not store the response
+            @option no-cache cache must re-submit request for validation before using cached copy
+            @option no-store response may not be stored in a cache.
+            @option must-revalidate forces caches to observe expiry and other freshness information
+            @option proxy-revalidate similar to must-revalidate except only for proxy caches
+          */
+        function cache(options) {
+        }
+
 
         /*************************************** Deprecated ***************************************/
 
@@ -924,6 +1043,14 @@ module ejs.web {
         # Config.Legacy
         function get userAgent(): String
             header("user-agent")
+
+        /** 
+            @hide
+            @deprecated 2.0.0
+         */
+        # Config.Legacy
+        function writeHtml(...args): Void
+            writeSafe(...args)
     }
 }
 

@@ -219,7 +219,7 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
     int         rc, remaining;
 
     if (timeout < 0) {
-        timeout = MPR_MAX_TIMEOUT;
+        timeout = INT_MAX;
     }
     expires = mprGetTime(ejs) + timeout;
     remaining = timeout;
@@ -243,7 +243,7 @@ static EjsObj *app_eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int     timeout, oneEvent;
 
-    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : MPR_MAX_TIMEOUT;
+    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : INT_MAX;
     oneEvent = (argc > 1) ? (argv[1] == ejs->trueValue) : 0;
     ejsServiceEvents(ejs, timeout, oneEvent ? MPR_SERVICE_ONE_THING: 0);
     return 0;

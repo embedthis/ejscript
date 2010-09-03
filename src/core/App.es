@@ -335,8 +335,9 @@ module ejs {
             let done
             function callback(event) done = true
             obj.observe(events, callback)
-            for (let mark = new Date; !done && mark.elapsed < timeout; )
+            for (let mark = new Date; !done && mark.elapsed < timeout; ) {
                 App.eventLoop(timeout - mark.elapsed, 1)
+            }
             obj.removeObserver(events, callback)
             return done
         }

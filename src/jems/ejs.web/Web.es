@@ -51,17 +51,18 @@ module ejs.web {
                         "":     86400,
                      */
                 },
-                endpoint: "127.0.0.1:4000",
-                views: {
+                // endpoint: "127.0.0.1:4000",
+                // helpers: [],
+                view: {
                     connectors: {
                         table: "html",
                         chart: "google",
                         rest: "html",
                     },
                     formats: {
-                        currency:   "$%10f",
-                        Date:       "%a %e %b %H:%M",
+                        Date: "%a %e %b %H:%M",
                     },
+                    layout: "default.ejs",
                 },
             },
         }
@@ -85,10 +86,10 @@ module ejs.web {
             Serve a web request. Convenience function to route, load and start a web application. 
             Called by web application start script
             @param request Request object
-            @param router Configured router instance. If omitted, a default Router will be created using the TopRoutes
+            @param router Configured router instance. If omitted, a default Router will be created using the Router.Top
                 routing table.
          */
-        static function serve(request: Request, router: Router = Router(Router.TopRoutes)): Void {
+        static function serve(request: Request, router: Router = Router(Router.Top)): Void {
             try {
                 let app = router.route(request)
                 if (request.route.threaded) {
@@ -97,7 +98,8 @@ module ejs.web {
                     process(app, request)
                 }
             } catch (e) {
-                request.writeError(Http.ServerError, e)
+                let status = request.status != Http.Ok ? request.status : Http.ServerError
+                request.writeError(status, e)
             }
         }
 
@@ -107,6 +109,7 @@ module ejs.web {
             @param request Request object
          */
         static native function worker(app: Function, request: Request): Void
+
         private static function workerHelper(app: Function, request: Request): Void {
             try {
                 process(app, request)
@@ -115,12 +118,15 @@ module ejs.web {
             }
         }
 
+        //  MOB -- where here should content mapping take place according to Accept: 
+        //    Accept: application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5
         private static function processBody(request: Request, body: Object): Void {
             if (body is Path) {
+                //  MOB -- should have generic way of disabling writeFile
                 if (request.isSecure) {
                     body = File(body, "r")
                 } else {
-                    request.sendFile(body)
+                    request.writeFile(body)
                     return
                 }
             }
@@ -152,6 +158,7 @@ module ejs.web {
                 } else {
                     ba = new ByteArray
                     while (body.read(ba)) {
+//  MOB -- exceptions on all these writes should be caught --- normal situation for client to disappear
                         request.write(ba)
                     }
                     request.autoFinalize()
@@ -173,7 +180,7 @@ module ejs.web {
             } else {
                 let file = request.responseHeaders["X-Sendfile"]
                 if (file && !request.isSecure) {
-                    request.sendFile(file)
+                    request.writeFile(file)
                 } else {
                     request.autoFinalize()
                 }
@@ -212,13 +219,12 @@ module ejs.web {
                 } else {
                     let file = request.responseHeaders["X-Sendfile"]
                     if (file && !request.isSecure) {
-                        request.sendFile(file)
+                        request.writeFile(file)
                     }
                 }
                 if (finalize) {
                     request.finalizeFlash()
                     request.autoFinalize()
-                    //  if (request.finalized) request.close()
                 }
             } catch (e) {
                 App.log.debug(3, e)
@@ -238,10 +244,9 @@ module ejs.web {
                 the documentRoot will be defined by the web server.
             @param serverRoot Base directory for the server configuration. If set to null and the HttpServer is hosted,
                 the serverRoot will be defined by the web server.
-            @param routes Route table to use. Defaults to Router.TopRoutes
+            @param routes Route table to use. Defaults to Router.Top
          */
-        static function start(address: String, documentRoot: Path = ".", serverRoot: Path = ".", 
-                routes = Router.TopRoutes): Void {
+        static function start(address: String, documentRoot: Path = ".", serverRoot: Path = ".", routes = Router.Top): Void {
             let server: HttpServer = new HttpServer(documentRoot, serverRoot)
             var router = Router(routes)
             server.observe("readable", function (event, request) {

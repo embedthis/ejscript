@@ -29,11 +29,7 @@ server.observe("readable", function (event, request: Request) {
 //  Without client message
 let http = fetch(HTTP + "/no-show-client", Http.ServerError)
 assert(http.status == Http.ServerError)
-assert(http.response.contains("DOCTYPE"))
-assert(http.response.contains("<head>"))
-assert(http.response.contains("<body>"))
-assert(!http.response.contains("Test Error Message"))
-assert(!http.response.contains("showClient"))
+assert(http.response == "")
 http.close()
 
 //  With full client message

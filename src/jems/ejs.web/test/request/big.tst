@@ -30,14 +30,13 @@ server.observe("readable", function (event, request: Request) {
             //  To write in smaller chunks from a single byte array
             writeBlock(data, -1, System.Bufsize)
         })
-        finalize()
+        close()
         break
  */
 
     default:
         writeError(Http.ServerError, "Bad test URI")
     }
-
 })
 
 

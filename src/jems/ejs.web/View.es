@@ -6,667 +6,268 @@ module ejs.web {
     require ejs.web
 
     /**
-        Base class for web framework views. This class provides the core functionality for all Ejscript view web pages.
-        Ejscript web pages are compiled to create a new View class which extends the View base class. In addition to
-        the properties defined by this class, user view classes will typically inherit at runtime all public properites 
-        of any associated controller object defined in Request.controller.
+        Base class for web framework Views. This class provides the core functionality for templated Ejscript view 
+        web pages. Ejscript web pages are compiled to create a new View class which extends the View base class.  
+        This class provides a suite of high-level control methods that generate HTML for input, output and 
+        presentation needs.  In addition to the properties defined by this class, user view classes will typically 
+        inherit at runtime, all public properites of any associated controller object defined in Request.controller.
+
+        <h4>Control Methods</h4>
+        Control methods are grouped into two families: input form controls and general output controls. Input controls
+        are typically located inside a form/endform control pair that defines a current data record from which data
+        will be presented. Output controls can be used anywhere on a page.
+
+        Input controls are generally of the form: function(field, options) where field is the name of the property
+        in the current record that contains the data to display. The options is an object hash that controls and modifies
+        how the control will render. The options hash can also be a plain string, in which case it is interpreted as an 
+        object hash with a single "action" property set to the value of the options string. i.e. {action: options}. Note
+        that controls will modify the options object and so sharing one option set over many controls is not advisable.
+
+        Various controls have custom options, but they share the following common set of option properties:
+
+        @option apply String Client DOM-ID to apply the data fetched from the $remote URI.
+        @option background String Background color. This is a CSS RGB color specification. For example "FF0000" for red.
+        @option click (Boolean|Uri|String) The control is click by the user. If set to true, the rest of the 
+            options specifies the URI to invoke. Otherwise click can be set to a URI to invoke.
+        @option color String Foreground color. This is a CSS RGB color specification. For example "FF0000" for red.
+        @option confirm String Message to prompt the user to requeset confirmation before submitting a form or request.
+        @option data-* All other data-* names are passed through to the HTML unmodified.
+        @option domid String Client-side DOM-ID to use for the control
+        @option effects String Transition effects to apply when updating a control. Select from: "fadein", "fadeout",
+            "highlight".
+        @option escape Boolean Escape the text before rendering. This converts HTML reserved tags and delimiters into
+            an encoded form.
+        @option field String Client DOM name to use for the generated HTML element.
+        @option height (Number|String) Height of the table. Can be a number of pixels or a percentage string. 
+            Defaults to unlimited.
+        @option id Number Numeric database ID for the record that originated the data for the view element.
+        @option method String HTTP method to invoke.
+        @option modal String Make a form a modal dialog.
+        @option period Number Period in milliseconds to invoke the $refresh URI to update the control data. If period
+            is zero (or undefined), then refresh will be done using a perisistent connection.
+        @option rel String HTML rel attribute. Can be used to generate "rel=nofollow" on links.
+        @option remote (String|Boolean) Perform the request in the background without changing the browser location.
+            The option may be set to the URI to invoke or it may be set to true and the URI will be determined by
+            other options.
+        @option refresh (String|URI|Object) URI to invoke in the background to refresh the control data every $period.
+            milliseconds. If period is undefined or zero, a persistent connection will be used to refresh data.
+        @option refresh-method String HTTP method to invoke for refresh requests.
+        @option size (Number|String) Size of the element.
+        @option style String CSS Style to use for the table.
+        @option value Object Override value to display if used without a form control record.
+        @option visible Boolean Make the control visible. Defaults to true.
+        @option width (Number|String) Width of the table or column. Can be a number of pixels or a percentage string. 
+
+        <h4>Dynamic Data</h4>
+        Most controls can perform background updates of their data after the initial presentation. This is done via
+        the refresh and period options.
+
         @spec ejs
         @stability prototype
      */
-    dynamic class View {
+    enumerable dynamic class View {
         /*
             Define properties and functions are (by default) in the ejs.web namespace rather than internal to avoid clashes.
          */
         use default namespace module
 
+        /* Cache of connector objects */
+        private var connectors: Object = {}
+
         /* Current record being used inside a form */
         private var currentRecord: Object
 
-        /* Sequential DOM ID generator */
-        private var nextId: Number = 0
+        /* Data value presentation formats */
+        public var formats: Object
 
-        /* Configuration from the applications ejsrc files */
+        /* Configuration from the ejsrc configuration files */
         public var config: Object
 
         /** Optional controller object */
         public var controller
 
+        /** Form and query parameters - reference to the Request.params object. */
+        public var params: Object
+
         /** Current request object */
         public var request: Request
-
-        /** Logger channel */
-        public var log: Logger
 
         /**
             Constructor method to initialize a new View
             @param request Request object
          */
         function View(request: Object) {
-/*
-            view = this
-*/
-            controller = request.controller
-
-            //  MOB -- replace all this with blend
-            this.request = request
-            this.config = request.config
-            this.log = request.log
-            for each (let n: String in Object.getOwnPropertyNames(controller, {includeBases: true, excludeFunctions: true})){
-                if (n.startsWith("_")) continue
-                //  MOB - can we remove public::
-                this.public::[n] = controller[n]
+            if (request) {
+                controller = request.controller
+//  MOB -- replace all this with blend. Perhaps request and config come over automatically.
+                this.request = request
+                this.config = request.config
+                formats = config.web.view.formats
+                for each (let n: String in 
+                        Object.getOwnPropertyNames(controller, {includeBases: true, excludeFunctions: true})){
+                    if (n.startsWith("_")) continue
+                    //  MOB - can we remove public::
+                    this.public::[n] = controller[n]
+                }
+            } else {
+                request = {}
+                config = App.config
+            }
+            for (helper in config.web.view.helpers) {
+                if (helper.contains("::")) {
+                    [mod, klass] = helper.split("::")
+                    global.load(mod + ".mod")
+                    /*  MOB -- should use 
+                        blend(this, global.[mod]::[klass])
+                     */
+                    blend(this, global[klass])
+                } else {
+                    blend(this, global[helper])
+                }
             }
         }
 
-        /** 
-            Get the next usable DOM ID for view controls
-         */
-        function getNextId(): String
-            "id_" + nextId++
-
         /**
-            Make a uri from parts. The parts may include http properties for: scheme, host, port, path, reference and query.
-            Depending on the route table entry used for the request, properties may also be included for route tokens 
-            such as "controller" or "action". These will take precedence over the http properties.
-            @param parts Uri components fields 
-            @return a Uri
-         */
-        function makeUri(parts: Object): Uri
-            request.makeUri(parts)
-
-        /**
-            Process and emit a view to the client. Overridden or replaced by the views.
+            Process and emit a view to the client. This invokes the given render function with "this" set to the view.
             @param renderer Rendering function. This may be any external function. The function will have its scope
                 modified so that it executes as if it were a member method of the View class.
          */
         function render(renderer: Function): Void {
-            if (renderer) {
-                // MOB renderer.setScope(this)
-                renderer.call(this, request)
-            }
+            renderer.call(this, request)
         }
 
-        /** 
-            Set a header. If a header has already been defined and $overwrite is true, the header will be overwritten.
-            NOTE: case does not matter in the header keyword.
-            @param key The header keyword for the request, e.g. "accept".
-            @param value The value to associate with the header, e.g. "yes"
-            @param overwrite If the header is already defined and overwrite is true, then the new value will
-                overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", "
-                separator.
-         */
-        function setHeader(key: String, value: String, overwrite: Boolean = true): Void
-            request.setHeader(key, value, overwrite)
-
-        /**
-            Set the HTTP response headers. Use getHeaders to inspect the response headers.
-            @param headers Set of headers to use
-            @param overwrite If the header is already defined and overwrite is true, then the new value will
-                overwrite the old. If overwrite is false, the new value will be catenated to the old value with a ", "
-                separator.
-         */
-        function setHeaders(headers: Object, overwrite: Boolean = true): Void
-            request.setHeader(headers, overwrite)
-
-        /**
-            Set the Http response status
-            @param status Http status code
-         */
-        function setStatus(status: Number): Void
-            request.setStatus(status)
+        /************************************************ View Controls ***************************************************/
 
         /** 
-            Dump objects for debugging
-            @param args List of arguments to print.
-            @hide
+            Emit a status alert area
+            @param text Initial message text to display. Status messages may be updated by calling the 
+                $Controller.status function.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @option refresh URI to call to to get status message updates.
+            @option period Polling period in milliseconds for the client to check the server for status message 
+                updates. If this is not specifed, the connection to the server will be kept open. This permits the 
+                server to "push" alerts to the console, but will consume a connection at the server for each client.
+            @example
+                <% status("Status Message", { refresh: "/getData", period: 2000" }) %>
          */
-        function show(...args): Void
-            request.show(...args)
-
-        /**
-            Write data to the client
-            @param data Data to write
-            @return The number of bytes written
-         */
-        function write(...data): Number
-            request.write(...data)
-
-        /************************************************ View Helpers ****************************************************/
-        /**
-            Render an asynchronous (ajax) form.
-            @param record Data record to edit
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option action Action to invoke when the form is submitted. Defaults to "create" or "update" depending on 
-                whether the field has been previously saved.
-            @option uri String Use a URL rather than action and controller for the target uri.
-         */
-        function aform(record: Object, options: Object = {action: "update"}): Void {
-            currentRecord = record
-            emitFormErrors(record)
-            options = setOptions("aform", options)
-            if (options.method == null) {
-                options.method = "POST"
-            }
-            options.action ||= "update"
-            options.id ||= record.id
-            let connector = getConnector("aform", options)
-            connector.aform(record, options)
+        function alert(text: String, options: Object = {}): Void {
+            options = getOptions(options)
+            text = formatValue(text, options)
+            getConnector("alert", options).alert(text, options)
         }
 
-        /** 
-            Emit an asynchronous (ajax) link to an action. The URL is constructed from the given action and the 
-                current controller. The controller may be overridden by setting the controller option.
+/*  MOB - deprecate link vs label
+MOB - doc not right
+            Emit a text link to an action. The URI is constructed from the given action and the current controller. 
+            The controller may be overridden by setting the controller option.
             @param text Link text to display
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option action Action to invoke when the link is clicked
+            @param options Optional extra options. See $View for a list of the standard options.
             @option controller String Name of the target controller for the given action
-            @option uri String Use a URL rather than action and controller for the target uri.
-         */
-        function alink(text: String, options: Object = {}): Void {
-            options = setOptions("alink", options)
-            options.action ||= text.split(" ")[0].toLowerCase()
-            options.method ||= "POST"
-            let connector = getConnector("alink", options)
-            connector.alink(text, options)
+            @option uri String Use a URI rather than action and controller for the target uri.
+        function anchor(text: String, options: Object = {}): Void {
+            options = getOptions(options)
+            options.click ||= true
+            // options.action ||= text.split(" ")[0].toLowerCase()
+            getConnector("label", options).label(text, options)
         }
+ */
 
         /**
             Render a form button. This creates a button suitable for use inside an input form. When the button is clicked,
             the input form will be submitted.
-            @param value Text to display in the button.
-            @param buttonName Form name of button.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
+            @param name Name for the input button. This defines the HTML element name and provides the source of the
+                initial value to display. The field should be a property of the form control record. It can be a simple 
+                property of the record or it can have multiple parts, such as: field.field.field. If this call is used 
+                without a form control record, the actual data value should be supplied via the options.value property.
+            @param label Text label to display in the button.
+            @param options Optional extra options. See $View for a list of the standard options.
             Examples:
-                button("Click Me", "OK")
+                button("commit", "OK")
+                button("commit", "Cancel")
          */
-        function button(value: String, buttonName: String? = null, options: Object = {}): Void {
-            options = setOptions("button", options)
-            buttonName ||= value.toLowerCase()
-            let connector = getConnector("button", options)
-            connector.button(value, buttonName, options)
+        function button(name: String, label: String, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("button", options).button(name, label, options)
         }
 
-//  MOB -- action is really a uri
         /**
-            Render a link button. This creates a button suitable for use outside an input form. When the button is clicked,
-            the associated URL will be invoked.
-            @param text Text to display in the button.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option action Target action to invoke when the button is clicked.
+            Render a link button. This creates a button suitable for use outside an input form. When the button 
+            is clicked, the associated URI will be invoked.
+            @param text Text to display in the button. The text can contain embedded HTML.
+            @param options Options specifying the target URI to invoke. See $View for a list of the standard options.
          */
         function buttonLink(text: String, options: Object = {}): Void {
-            options = setOptions("buttonLink", options)
-            let connector = getConnector("buttonLink", options)
-            connector.buttonLink(text, options)
+            options = getOptions(options)
+            getConnector("buttonLink", options).buttonLink(text, options)
         }
 
         /**
             Render a chart. The chart control can display static or dynamic tabular data. The client chart control manages
-            sorting by column, dynamic data refreshes, pagination and clicking on rows.
-            @param initialData Optional initial data for the control. The data option may be used with the refresh option to 
+                sorting by column, dynamic data refreshes, pagination and clicking on rows.
+            MOB -- update
+            @param data Optional initial data for the control. The data option may be used with the refresh option to 
                 dynamically refresh the data.
-            @param options Object Optional extra options. See also $getOptions for a list of the standard options.
+
+            @param data Initial data to display. This should be a data grid (array of objects).
+            @param options Object Optional extra options. See also $View for a list of the standard options.
             @option columns Object hash of column entries. Each column entry is in-turn an object hash of options. If unset, 
                 all columns are displayed using defaults.
             @option kind String Type of chart. Select from: piechart, table, linechart, annotatedtimeline, guage, map, 
                 motionchart, areachart, intensitymap, imageareachart, barchart, imagebarchart, bioheatmap, columnchart, 
                 linechart, imagelinechart, imagepiechart, scatterchart (and more)
-            @option onClick String Action or URL to invoke when a chart element  is clicked.
             @example
-                <% chart(null, { data: "getData", refresh: 2" }) %>
-                <% chart(data, { onClick: "action" }) %>
+                <% chart(grid, { refresh: "/getData", period: 2000" }) %>
+                <% chart(data, { onclick: "action" }) %>
          */
-        function chart(initialData: Array, options: Object = {}): Void {
-            let connector = getConnector("chart", options)
-            connector.chart(initialData, options)
+        function chart(data: Array, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("chart", options).chart(data, options)
         }
 
         /**
             Render an input checkbox. This creates a checkbox suitable for use within an input form. 
-            @param field Name of the field to display. This is used to create a HTML "name" and "id" attribute for the 
-                input element. If used inside a model form, it is the field name in the model containing the checkbox
-                value to display. If used without a model, the value to display should be passed via options.value. 
-            @param choice Value to submit if checked. Defaults to "true"
-            @param options Optional extra options. See $getOptions for a list of the standard options.
+            @param name Name for the input checkbox. This defines the HTML element name and provides the source of the
+                initial value for the checkbox. The field should be a property of the $form control record. It can be a 
+                simple property of the record or it can have multiple parts, such as: field.field.field. If this call 
+                is used without a form control record, the actual data value should be supplied via the options.value 
+                property.
+            @param checkedValue Value for which the checkbox will be checked. Defaults to true.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @option value Object Override value to display if used without a form control record.
          */
-        function checkbox(field: String, choice: String = "true", options: Object = {}): Void {
-            options = setOptions(field, options)
-            let value = getValue(currentRecord, field, options)
-            let connector = getConnector("checkbox", options)
-            connector.checkbox(options.fieldName, choice, value, options)
+        function checkbox(name: String, checkedValue: Object = true, options: Object = {}): Void {
+            options = getOptions(options)
+            let value = getValue(currentRecord, name, options)
+            name = getFieldName(name, options) 
+            getConnector("checkbox", options).checkbox(name, value, checkedValue, options)
+        }
+
+        /**
+            Render a HTML division. This creates an HTML element with the required options. It is useful to generate
+                a dynamically refreshing division.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @examples
+                <% div({ refresh: "/getData", period: 2000}) %>
+         */
+        function div(body: String, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("div", options).div(body, options)
         }
 
         /**
             End an input form. This closes an input form initiated by calling the $form method.
          */
         function endform(): Void {
-            let connector = getConnector("endform", null)
-            connector.endform()
+            getConnector("endform").endform()
             currentRecord = undefined
         }
 
-        //  TODO - should have an option to not show validation errors
-        /**
-            Render a form.
-            @param record Model record to edit
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option action Action to invoke when the form is submitted. Defaults to "create" or "update" depending on 
-                whether the field has been previously saved.
-            @option uri String Use a URL rather than action and controller for the target uri.
-         */
-//  MOB -- COMPAT was form(action, record, options)
-        function form(record: Object, options: Object = {}): Void {
-            currentRecord = record
-            log.debug(5, serialize(record, {pretty: true}))
-            emitFormErrors(record)
-            options = setOptions("form", options)
-            options.method ||= "POST"
-            options.action ||= "update"
-            if (record) {
-                options.id ||= record.id
-            }
-            let connector = getConnector("form", options)
-            connector.form(record, options)
-        }
-
-        /**
-            Render an image control
-            @param src Optional initial source name for the image. The data option may be used with the refresh option to 
-                dynamically refresh the data.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @examples
-                <% image("myPic.gif") %>
-                <% image("myPic.gif", { data: "getData", refresh: 2, style: "myStyle" }) %>
-         */
-        function image(src: String, options: Object = {}): Void {
-            options = setOptions("image", options)
-            getConnector("image", options)
-            connector.image(src, options)
-        }
-
-        /**
-            Render a clickable image. This creates an clickable image suitable for use outside an input form. 
-            When the image is clicked, the associated URL will be invoked.
-            @param image Optional initial source name for the image. The data option may be used with the refresh option to 
-                dynamically refresh the data.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option action Target action to invoke when the image is clicked.
-         */
-        function imageLink(image: String, options: Object = {}): Void {
-            options = setOptions("imageLink", options)
-            let connector = getConnector("imageLink", options)
-            connector.imageLink(text, options)
-        }
-
-        /**
-            Render an input field as part of a form. This is a smart input control that will call the appropriate
-                input control based on the model field data type.
-            @param field Model field name containing the text data for the control.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @examples
-                <% input(modelFieldName) %>
-                <% input(null, { options }) %>
-         */
-        function input(field: String, options: Object = {}): Void {
-            try {
-                datatype = Object.getType(currentRecord).getColumnType(field)
-
-                //  TODO - needs fleshing out for each type
-                switch (datatype) {
-                case "binary":
-                case "date":
-                case "datetime":
-                case "decimal":
-                case "float":
-                case "integer":
-                case "number":
-                case "string":
-                case "time":
-                case "timestamp":
-                    text(field, options)
-                    break
-                case "text":
-                    textarea(field, options)
-                    break
-                case "boolean":
-                    checkbox(field, "true", options)
-                    break
-                default:
-                    throw "input control: Unknown field type: " + datatype + " for field " + field
-                }
-            } catch {
-                text(field, options)
-            }
-        }
-
-        /**
-            Render a text label field. This renders an output-only text field. Use text() for input fields.
-            @param text Optional initial data for the control. The data option may be used with the refresh option to 
-                dynamically refresh the data.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @examples
-                <% label("Hello World") %>
-                <% label(null, { data: "getData", refresh: 2, style: "myStyle" }) %>
-         */
-        function label(text: String, options: Object = {}): Void {
-            options = setOptions("label", options)
-            let connector = getConnector("label", options)
-            connector.label(text, options)
-        }
-
-        //  TODO - how to do image links?
-        /** 
-            Emit a link to an action. The URL is constructed from the given action and the current controller. The controller
-            may be overridden by setting the controller option.
-            @param text Link text to display
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option action Action to invoke when the link is clicked
-            @option controller String Name of the target controller for the given action
-            @option uri String Use a URL rather than action and controller for the target uri.
-         */
-        function link(text: String, options: Object = {}): Void {
-            options = setOptions("link", options)
-            options.action ||= text.split(" ")[0].toLowerCase()
-            let connector = getConnector("link", options)
-            connector.link(text, options)
-        }
-
-        /** 
-            Emit an application relative link. If invoking an action, it is safer to use \a action.
-            @param text Link text to display
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-         */
-        function extlink(text: String, options: Object = {}): Void {
-            let connector = getConnector("extlink", options)
-            connector.extlink(text, options)
-        }
-
-        /**
-            Emit a selection list. 
-            @param field Name of the field to display. This is used to create a HTML "name" and "id" attribute for the 
-                input element. If used inside a model form, it is the field name in the model containing the list item to
-                select. If used without a model, the value to select should be passed via options.value. 
-            @param choices Choices to select from. This can be an array list where each element is displayed and the value 
-                returned is an element index (origin zero). It can also be an array of array tuples where the 
-                first is the value to send to the app, and the second tuple entry is the value to display. Or it can be an 
-                array of objects such as those returned from a table lookup. If choices is null, the $field value is 
-                used to construct a model class name to use to return a data grid containing an array of row objects. 
-                The first non-id field is used as the value to display.
-            @param options control options
-            @example
-                list("stockId", Stock.stockList) 
-                list("low", ["low", "med", "high"])
-                list("low", [["3", "low"], ["5", "med"], ["9", "high"]])
-                list("low", [{low: 3}, {med: 5}, {high: 9}])
-                list("Stock Type")  // Will invoke StockType.findAll() to do a table lookup
-         */
-        function list(field: String, choices: Object? = null, options: Object = {}): Void {
-            options = setOptions(field, options)
-            if (choices == null) {
-                //TODO - is this de-pluralizing?
-                modelTypeName = field.replace(/\s/, "").toPascal()
-                modelTypeName = modelTypeName.replace(/Id$/, "")
-                if (global[modelTypeName] == undefined) {
-                    throw new Error("Can't find model to create list data: " + modelTypeName)
-                }
-                choices = global[modelTypeName].findAll()
-            }
-            let value = getValue(currentRecord, field, options)
-            let connector = getConnector("list", options)
-            connector.list(options.fieldName, choices, value, options)
-        }
-
-        /**
-            Emit a mail link
-            @param name Recipient name to display
-            @param address Mail recipient address
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-         */
-        function mail(name: String, address: String, options: Object = {}): Void  {
-            let connector = getConnector("mail", options)
-            connector.mail(name, address, options)
-        }
-
-        /** 
-            Emit a progress bar. Not implemented.
-            @param initialData Optional initial data for the control. The data option may be used with the refresh option 
-                to dynamically refresh the data. Progress data is a simple Number in the range 0 to 100 and represents 
-                a percentage completion value.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @example
-                <% progress(null, { data: "getData", refresh: 2" }) %>
-         */
-        function progress(initialData: Object, options: Object = {}): Void {
-            let connector = getConnector("progress", options)
-            connector.progress(initialData, options)
-        }
-
-        /** 
-            Emit a radio autton. The URL is constructed from the given action and the current controller. The controller
-                may be overridden by setting the controller option.
-            @param field Name of the field to display. This is used to create a HTML "name" and "id" attribute for the 
-                input element. If used inside a model form, it is the field name in the model containing the radio data to
-                display. If used without a model, the value to display should be passed via options.value. 
-            @param choices Array or object containing the option values. If array, each element is a radio option. If an 
-                object hash, then they property name is the radio text to display and the property value is what is returned.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option controller String Name of the target controller for the given action
-            @option value String Name of the option to select by default
-            @example
-                radio("priority", ["low", "med", "high"])
-                radio("priority", {low: 0, med: 1, high: 2})
-                radio(priority, Message.priorities)
-         */
-        function radio(field: String, choices: Object, options: Object = {}): Void {
-            options = setOptions(field, options)
-            let value = getValue(currentRecord, field, options)
-            let connector = getConnector("radio", options)
-            connector.radio(options.fieldName, choices, value, options)
-        }
-
-        /** 
-            Emit a script link.
-            @param uri URL for the script to load
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-         */
-        function script(uri: Object, options: Object = {}): Void {
-            let connector = getConnector("script", options)
-            if (uri is Array) {
-                for each (u in uri) {
-                    connector.script(request.home.join(u), options)
-                }
-            } else {
-                connector.script(request.home.join(uri), options)
-            }
-        }
-
-        /** 
-            Emit a status control area. Not implemented.
-            @param initialData Optional initial data for the control. The data option may be used with the refresh option to 
-                dynamically refresh the data. Status data is a simple String. Status messages may be updated by calling the
-                \a statusMessage function.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @example
-                <% status("Initial Status Message", { data: "getData", refresh: 2" }) %>
-         */
-        function status(initialData: Object, options: Object = {}): Void {
-            let connector = getConnector("status", options)
-            connector.status(initialData, options)
-        }
-
-        /** 
-            Emit a style sheet link.
-            @param uri Stylesheet uri or array of stylesheets
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-         */
-        function stylesheet(uri: Object, options: Object = {}): Void {
-            let connector = getConnector("stylesheet", options)
-            if (uri is Array) {
-                for each (u in uri) {
-                    connector.stylesheet(request.home.join(u), options)
-                }
-            } else {
-                connector.stylesheet(request.home.join(uri), options)
-            }
-        }
-
-        /*
-            TODO table
-            - in-cell editing
-            - pagination
-         */
-        /**
-            Render a table. The table control can display static or dynamic tabular data. The client table control manages
-                sorting by column, dynamic data refreshes, pagination and clicking on rows. If the table supplies a URL
-                or action for the data parameter, the table data is retrieved asynchronously using Ajax requests on that
-                action/URL value. The action routine should call the table() control to render the data and must set the
-                ajax option to true.  
-            @param data Data for the control or URL/action to supply data. If data is a String, it is interpreted as a URL
-                or action that will be invoked to supply HTML for the table. In this case, the refresh option defines 
-                how frequently to refresh the table data. The data parameter can also be a grid of data, ie. an Array of 
-                objects where each object represents the data for a row. The column names are the object property names 
-                and the cell text is the object property values. The data parameter can also be a model instance.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option ajax Set to true if the table control is being invoked as part of an Ajax data refresh.
-            @option click String Action or URL to invoke an element in the table is clicked. The click arg can be is 
-                a String to apply to all cells, a single-dimension array of strings for per-row URLs, and a 
-                two-dimension array for per cell URLs (order is row/column).
-            @option columns Object hash of column entries. Each column entry is in-turn an object hash of options. If unset, 
-                all columns are displayed using defaults. Column options: align, formatter, header, render, sort, sortOrder, 
-                style, width.
-            @option pageSize Number Number of rows to display per page. Omit or set to <= 0 for unlimited. 
-                Defaults to unlimited.
-            @option pivot Boolean Pivot the table by swaping rows for columns and vice-versa
-            @option query URL query string to add to click URLs. Can be a single-dimension array for per-row query 
-                strings or a two-dimensional array for per cell (order is row/column).
-            @option showHeader Boolean Control if column headings are displayed.
-            @option showId Boolean If a columns option is not provided, the id column is normally hidden. 
-                To display, set showId to be true.
-            @option sort String Enable row sorting and define the column to sort by.
-            @option sortOrder String Default sort order. Set to "ascending" or "descending".Defaults to ascending.
-            @option style String CSS style to use for the table.
-            @option styleColumns Array of styles to use for the table body columns. Can also use the style option in the
-                columns option.
-            @option styleBody String CSS style to use for the table body cells
-            @option styleCells Grid of styles to use for the table body cells
-            @option styleHeader String CSS style to use for the table header.
-            @option styleRows Array of styles to use for the table body rows
-            @option styleOddRow String CSS style to use for odd data rows in the table
-            @option styleEvenRow String CSS style to use for even data rows in the table
-            @option title String Table title
-
-            Column options:
-            <ul>
-            <li>align</li>
-            <li>format</li>
-            <li>formatter</li>
-            <li>header</li>
-            <li>render</li>
-            <li>sort String Define the column to sort by and the sort order. Set to "ascending" or "descending". 
-                Defaults to ascending.</li>
-            <li>style</li>
-            </ul>
-        
-            @example
-                <% table("getData", { refresh: 2, pivot: true" }) %>
-                <% table(gridData, { click: "edit" }) %>
-                <% table(Table.findAll()) %>
-                <% table(gridData, {
-                    click: "edit",
-                    sort: "Product",
-                    columns: {
-                        product:    { header: "Product", width: "20%" }
-                        date:       { format: date('%m-%d-%y) }
-                    }
-                 }) %>
-         */
-        function table(data, options: Object = {}): Void {
-            options = setOptions("table", options)
-            let connector = getConnector("table", options)
-            if (options.pivot) {
-                data = pivot(data)
-            }
-            connector.table(data, options)
-        }
-
-        /**
-            Render a tab control. The tab control can display static or dynamic tree data.
-            @param initialData Optional initial data for the control. The data option may be used with the refresh option to 
-                dynamically refresh the data. Tab data is an array of objects -- one per tab. For example:
-                [{"Tab One Label", "action1"}, {"Tab Two Label", "action2"}]
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-         */
-        function tabs(initialData: Array, options: Object = {}): Void {
-            let connector = getConnector("tabs", options)
-            connector.tabs(initialData, options)
-        }
-
-        /**
-            Render a text input field as part of a form.
-            @param field Name of the field to display. This is used to create a HTML "name" and "id" attribute for the 
-                input element. If used inside a model form, it is the field name in the model containing the text data to
-                display. If used without a model, the value to display should be passed via options.value. 
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option escape Boolean Escape the text before rendering. This converts HTML reserved tags and delimiters into
-                an encoded form.
-            @option style String CSS Style to use for the control
-            @option visible Boolean Make the control visible. Defaults to true.
-            @examples
-                <% text("name") %>
-         */
-        function text(field: String, options: Object = {}): Void {
-            options = setOptions(field, options)
-            let value = getValue(currentRecord, field, options)
-            let connector = getConnector("text", options)
-            connector.text(options.fieldName, value, options)
-        }
-
-//  TODO - need a rich text editor. Wiki style
-        /**
-            Render a text area
-            @param field Name of the field to display. This is used to create a HTML "name" and "id" attribute for the 
-                input element. If used inside a model form, it is the field name in the model containing the text data to
-                display. If used without a model, the value to display should be passed via options.value. 
-            @option Boolean escape Escape the text before rendering. This converts HTML reserved tags and delimiters into
-                an encoded form.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option data String URL or action to get data 
-            @option numCols Number number of text columns
-            @option numRows Number number of text rows
-            @option style String CSS Style to use for the control
-            @option visible Boolean Make the control visible. Defaults to true.
-            @examples
-                <% textarea("name") %>
-         */
-        function textarea(field: String, options: Object = {}): Void {
-            options = setOptions(field, options)
-            let value = getValue(currentRecord, field, options)
-            let connector = getConnector("textarea", options)
-            connector.textarea(options.fieldName, value, options)
-        }
-
-        /**
-            Render a tree control. The tree control can display static or dynamic tree data.
-            @param initialData Optional initial data for the control. The data option may be used with the refresh option to 
-                dynamically refresh the data. The tree data is typically an XML document.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @option data URL or action to get data 
-            @option refresh If set, this defines the data refresh period in seconds. Only valid if the data option is defined
-            @option style String CSS Style to use for the control
-            @option visible Boolean Make the control visible. Defaults to true.
-         */
-        function tree(initialData: Object, options: Object = {}): Void {
-            let connector = getConnector("tree", options)
-            connector.tree(initialData, options)
-        }
-
-        /*********************************** Wrappers for Control Methods ***********************************/
         /** 
             Emit a flash message area. 
             @param kinds Kinds of flash messages to display. May be a single string 
                 ("error", "inform", "message", "warning"), an array of strings or null. If set to null (or omitted), 
                 then all flash messages will be displayed.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
+            @param options Optional extra options. See $View for a list of the standard options.
             @option retain Number. Number of seconds to retain the message. If <= 0, the message is retained until another
                 message is displayed. Default is 0.
             @example
@@ -674,11 +275,9 @@ module ejs.web {
                 <% flash() %>
                 <% flash(["error", "warning"]) %>
          */
-        function flash(kinds: Object? = null, options: Object = {}): Void {
-            options = setOptions("flash", options)
-//  MOB - move flash to Request?
-//            let cflash = request.flash
-            let cflash = controller ? controller.flash : null
+        function flash(kinds: Object = null, options: Object = {}): Void {
+            options = getOptions(options)
+            let cflash ||= request.flash
             if (cflash == null || cflash.length == 0) {
                 return
             }
@@ -695,205 +294,646 @@ module ejs.web {
             } else {
                 msgs = cflash
             }
+            let connector = getConnector("flash", options)
             for (kind in msgs) {
                 let msg: String = msgs[kind]
                 if (msg && msg != "") {
-                    let connector = getConnector("flash", options)
-                    options.style = "-ejs-flash -ejs-flash" + kind.toPascal()
-                    connector.flash(kind, msg, options)
+                    connector.flash(kind, msg, options.clone())
                 }
             }
         }
 
-        private function emitFormErrors(record): Void {
-            if (!record || !record.getErrors) {
-                return
-            }
-            let errors = record.getErrors()
-            if (errors) {
-                write('<div class="-ejs-formError"><h2>The ' + Object.getName(record).toLowerCase() + ' has ' + 
-                    errors.length + (errors.length > 1 ? ' errors' : ' error') + ' that ' +
-                    ((errors.length > 1) ? 'prevent' : 'prevents') + '  it being saved.</h2>\r\n')
-                write('    <p>There were problems with the following fields:</p>\r\n')
-                write('    <ul>\r\n')
-                for (e in errors) {
-                    write('        <li>' + e.toPascal() + ' ' + errors[e] + '</li>\r\n')
-                }
-                write('    </ul>\r\n')
-                write('</div>\r\n')
-            }
-        }
+        /**
+            Render a form.
+            The generated form HTML will include by default a security token definition to guard against CSRF threats.
+            This token will automatically be included when the form is submitted and will be validated by the 
+            receiving Controller. To disable this functionality, set options.nosecurity to true. This security token
+            will be generated once for the view and the same token will be used by all forms on the view page. To use
+            security tokens outside a form, you need to manually call $securityToken in the &lt;head> section of the page.
 
-        /* ****************************************** Support ***********************************************/
-        /*
-            Get the view connector to render a control
+
+MOB -- much more doc here
+    - Talk about controllers updating the record
+    - Talk about HTML ids generated from field names
+            @param record Record to display and optionally update
+            @param options Optional extra options. See $View for a list of the standard options.
+            @option hideErrors Don't display model errors. Models retain error diagnostics from a failed write. Setting
+                thish option will prevent their display.
+            @option method HTTP method to use when submitting the form.
+            @option action Action to invoke when the form is submitted. Defaults to "create" or "update" depending on 
+                whether the field has been previously saved.
+            @option controller Controller to invoke when the form is submitted. Defaults to the current controller.
+            @option nosecurity Don't generate a security token for the form.
+            @option securityToken String Override CSRF security token to include when the form is submitted. A default 
+                security token will always be generated unless options.nosecurity is defined to be true.
+            @option uri String Use a complete URI rather than an action and controller option to create the target uri.
          */
-        private function getConnector(kind: String, options: Object) {
-            let vc = request.config.web.view
-            //  TODO OPT
-            let connectorName = (options && options["connector"]) || vc.connectors[kind] || vc.connectors["rest"] || "html"
-            vc.connectors[kind] = connectorName
-            let name = (connectorName + "Connector").toPascal()
+        function form(record: Object, options: Object = {}): Void {
+            options = getOptions(options)
+            currentRecord = record
+            if (record) {
+                options.id ||= record.id
+            }
+            let connector = getConnector("form", options)
+            connector.form(record, options)
+        }
+
+        /** 
+            Emit an icon link.
+            @param src Source name for the icon.
+            @param options Optional extra options. See $View for a list of the standard options.
+         */
+        function icon(src: Object, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("icon", options).icon(src, options)
+        }
+
+        /**
+            Render an image
+            @param src Source name for the image.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @examples
+                <% image("pic.gif") %>
+                <% image("pic.gif", { refresh: "/getData", period: 2000, style: "myStyle" }) %>
+                <% image("pic.gif", { click: true, uri: "/foreground/click" }) %>
+                <% image("checkout.gif", { click: true, action: "checkout" }) %>
+                <% image("pic.gif", { remote: "/background/click" }) %>
+         */
+        function image(src: String, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("image", options).image(src, options)
+        }
+
+        /**
+            Render an input field as part of a form. This is a smart input control that will call the appropriate
+                input control based on the model field data type.
+            @param name Name for the input field. This defines the HTML element name and provides the source 
+                of the initial value to display. The field should be a property of the form control record. It can 
+                be a simple property of the record or it can have multiple parts, such as: field.field.field. If 
+                this call is used without a form control record, the actual data value should be supplied via the 
+                options.value property.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @examples
+                <% input("phone") %>
+         */
+        function input(name: String, options: Object = {}): Void {
             try {
-                return new global[name](request, this)
+                let datatype
+                if (currentRecord && Object.getType(currentRecord).getColumnType) {
+                    datatype = Object.getType(currentRecord).getColumnType(name)
+                } else {
+                    let value = getValue(currentRecord, name, options)
+                    datatype = Object.getTypeName(value).toLowerCase()
+                }
+                //  MOB TODO - needs fleshing out for each type
+                switch (datatype) {
+                case "binary":
+                case "date":
+                case "datetime":
+                case "decimal":
+                case "float":
+                case "integer":
+                case "number":
+                case "string":
+                case "time":
+                case "timestamp":
+                    text(name, options)
+                    break
+                case "text":
+                    textarea(name, options)
+                    break
+                case "boolean":
+                    checkbox(name, "true", options)
+                    break
+                default:
+                    throw "input control: Unknown field type: " + datatype + " for field " + name
+                }
+            } catch (e) {
+print("CATCH " + e)
+                text(name, options)
+            }
+        }
+
+        /**
+            Render a text label field. This renders an output-only text field. Use text() for input fields.
+            @param text Label text to display.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @examples
+                <% label("Hello World") %>
+                <% label("Hello", { refresh: "/getData", period: 2000, style: "myStyle" }) %>
+                <% label("Hello", { click: "/foreground/link" }) %>
+                <% label("Checkout", { click: true, action: "checkout" }) %>
+         */
+        function label(text: String, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("label", options).label(text, options)
+        }
+
+        /**
+            Emit a selection list. 
+            @param field Field to provide the default value for the list. The field should be a property of the form control 
+                record. The field can be a simple property of the record or it can have multiple parts, 
+                i.e. field.field.field. The field name is used to create the HTML input control name.
+                If this call is used without a form control record, the actual data value should be supplied via the 
+                options.value property.
+            @param choices Choices to select from. This can be an array list where each element is displayed and the value 
+                returned is an element index (origin zero). It can also be an array of key/value array tuples where the 
+                first entry is the value to display and the second is the value to send to the app. Or it can be an 
+                array of objects such as those returned from a table lookup. Lastly, it can be an object where the
+                property key is the value to display and the property value is the value to send to the app.
+            @param options control options
+            @example
+                list("stockId", Stock.stockList) 
+                list("priority", ["low", "med", "high"])
+                list("priority", [["low", 0], ["med", 0.5], ["high", 1]])
+                list("priority", [{low: 3}, {med: 5}, {high: 9}])
+                list("priority", {low: 0, med: 1, high: 2})
+         */
+        function list(name: String, choices: Object, options: Object = {}): Void {
+            options = getOptions(options)
+            let value = getValue(currentRecord, name, options)
+            name = getFieldName(name, options) 
+            getConnector("list", options).list(name, choices, value, options)
+        }
+
+        /**
+            Emit a mail link
+            @param name Recipient name to display
+            @param address Mail recipient address link
+            @param options Optional extra options. See $View for a list of the standard options.
+         */
+        function mail(name: String, address: String, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("mail", options).mail(name, address, options)
+        }
+
+//  MOB -- redo progress using a commet style
+        /** 
+            Emit a progress bar.
+            @param data Optional initial data for the control. The data option may be used with the refresh option 
+                to dynamically refresh the data. Progress data is a simple Number in the range 0 to 100 and represents 
+                a percentage completion value.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @example
+                <% progress(percent, { refresh: "/getData", period: 2000" }) %>
+         */
+        function progress(percent: Number, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("progress", options).progress(percent, options)
+        }
+
+        /** 
+            Render a radio button. This creates a radio button suitable for use within an input form. 
+            @param name Name for the input radio button. This defines the HTML element name and provides the source 
+                of the initial value to display. The field should be a property of the form control record. It can 
+                be a simple property of the record or it can have multiple parts, such as: field.field.field. If 
+                this call is used without a form control record, the actual data value should be supplied via the 
+                options.value property.
+            @param choices Choices to select from. This can be an array list where each element is displayed and the value 
+                returned is an element index (origin zero). It can also be an array of key/value array tuples where the 
+                first entry is the value to display and the second is the value to send to the app. Or it can be an 
+                array of objects such as those returned from a table lookup. Lastly, it can be an object where the
+                property key is the value to display and the property value is the value to send to the app.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @option value Object Override value to display if used without a form control record.
+            @example
+                radio("priority", ["low", "med", "high"])
+                radio("priority", [["low", 0], ["med", 0.5], ["high", 1]])
+                radio("priority", [{low: 3}, {med: 5}, {high: 9}])
+                radio("priority", {low: 0, med: 1, high: 2})
+                radio("priority", Message.priorities)
+         */
+        function radio(name: String, choices: Object, options: Object = {}): Void {
+            options = getOptions(options)
+            let value = getValue(currentRecord, name, options)
+            name = getFieldName(name, options) 
+            getConnector("radio", options).radio(name, value, choices, options)
+        }
+
+        /** 
+            Emit a script link.
+            @param target Script URI to load. Call with no arguments or uri set to null to get a default set of scripts.
+            @param options Optional extra options. See $View for a list of the standard options.
+         */
+        function script(target: Object, options: Object = {}): Void {
+            let connector = getConnector("script", options)
+            if (target is Array) {
+                for each (u in target) {
+                    connector.script(request.home.join(u), options)
+                }
+            } else if (target == null) {
+                connector.script(null, options)
+            } else {
+                connector.script(request.home.join(target), options)
+            }
+        }
+
+        /**
+            Generate a security token for the page and emit a &lt;meta HTML element for the security token.
+            Security tokens are used to help guard against CSRF threats.
+            This token will automatically be included whenever forms are submitted and the token be validated by the 
+            receiving Controller. Forms will normally automatically generate the security token and that explicitly
+            calling this routine is not required unless a security token is required for non-form requests such as AJAX
+            requests. The $securityToken control should be called inside the &lt;head section of the view page.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @example
+                &lt;head>
+                    <% securityToken() %>
+                &lt;/head>
+        */
+        function securityToken(options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("securityToken", options).securityToken(options)
+        }
+
+        /** 
+            Emit a style sheet link.
+            @param uri Stylesheet uri or array of stylesheets. Call with no arguments or uri set to null to get a 
+                default set of stylesheets.
+            @param options Optional extra options. See $View for a list of the standard options.
+         */
+        function stylesheet(uri: Object, options: Object = {}): Void {
+            let connector = getConnector("stylesheet", options)
+            if (uri is Array) {
+                for each (u in uri) {
+                    connector.stylesheet(request.home.join(u), options)
+                }
+            } else if (uri == null) {
+                connector.stylesheet(null, options)
+            } else {
+                connector.stylesheet(request.home.join(uri), options)
+            }
+        }
+
+        /*
+            TODO table
+            - in-cell editing
+            - pagination
+         */
+        /**
+            Render a table. The table control can display static or dynamic tabular data. The client table control 
+                manages sorting by column, dynamic data refreshes, pagination and clicking on rows or cells.
+            @param data Initial data to display. The data must be a grid of data, ie. an Array of 
+                objects where each object represents the data for a row. The column names are the object property names 
+                and the cell text is the object property values.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @option keyFormat String Define how the keys will be handled for click and edit URIs. 
+                Set to one of the set: ["names", "pairs", "params"]. Default is "params".
+                Set to "pairs" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
+                    key and value are formatted as "key=value".
+                Set to "params" to add the key/value pair to the POST body parameters. 
+                Set to "tokens" to add only the key names to the request URI. Each name is separated using "/". This
+                    provides "pretty" URIs that are easily tokenized by the router.
+                If you require more complex key management, set click or edit to a callback function and format the 
+                URI and params manually.
+            @option cell Boolean Set to true to make click or edit links apply per cell instead of per row. 
+                The default is false.
+            @option click (Boolean|Uri|String) URI to invoke when editing cells. If set to true, the rest of the 
+                options specifies the URI to invoke. Otherwise click can be set to a URI to invoke. The relevant column 
+                or columns must be marked as editable in the columns properties. If set to a function, the function will 
+                be invoked to provide the click method, uri and parameters. The function should be of the form:
+
+                function click(record, field: String, value, options): {method: String, uri: Uri, params: Object}
+
+                If using cell based click/edit, then field will be set to the relevant field. If using row click/edit,
+                then field will be null. 
+
+            @option columns (Array|Object) The columns list can be either an array of column names or an object hash 
+                of column objects where each column entry is hash of column options. 
+                Column options: align, formatter, header, sort, sortOrder, style, width.
+            @option edit (Boolean|Uri|String) URI to invoke when editing cells. If set to true, the rest of the 
+                options specifies the URI to invoke. Otherwise click can be set to a URI to invoke. The relevant 
+                column or columns must be marked as editable in the columns properties.
+            @option key Array List of fields to set as the key values to uniquely identify the clicked or edited 
+                row. The key will be rendered as a "data-key" HTML attribute and will be passed to the 
+                receiving controller when the entry is clicked or edited. Each entry of the key option can be a simple
+                string field name or it can be an Object with a single property, where the property name is a simple
+                string field name and the property value is the mapped field name to use as the actual key name. This 
+                supports using custom key names. NOTE: this option cannot be used if using cell clicks or edits. In that
+                case, set click/edit to a callback function and explicitly construct the required URI and parameters.
+            @option pageSize Number Number of rows to display per page. Omit or set to <= 0 for unlimited. 
+                Defaults to unlimited.
+            @option params Object Hash of post parameters to include in the request. This is a hash of key/value items.
+            @option pivot Boolean Pivot the table by swaping rows for columns and vice-versa
+            @option query URI query string to add to click URIs. Can be a single-dimension array for per-row query 
+                strings or a two-dimensional array for per cell (order is row/column).
+            @option showHeader Boolean Control if column headings are displayed.
+            @option showId Boolean If a columns option is not provided, the id column is normally hidden. 
+                To display, set showId to be true.
+            @option sort String Enable row sorting and define the column to sort by. Defaults to the first column.
+            @option sortOrder String Default sort order. Set to "ascending" or "descending".Defaults to ascending.
+            @option style String CSS class to use for the table. The ultimate style to use for a table cell is the 
+                combination of style, styleCells, styleColumns and style Rows.
+            @option styleCells 2D Array of styles to use for the table body cells.
+            @option styleColumns Array of styles to use for the table body columns. Can also use the style option in the
+                columns option.
+            @option styleRows Array of styles to use for the table body rows
+            @option title String Table title.
+
+//  MOB -- should auto-align currency to the right
+//  MOB -- test editable
+            Column options:
+            <ul>
+                <li>align</li>
+                <li>editable</li>
+                <li>formatter</li>
+                <li>header</li>
+                <li>sort String Define the column to sort by and the sort order</li>
+                <li>sortOrder String Set to "ascending" or "descending".  Defaults to ascending.</li>
+                <li>style</li>
+                <li>width</li>
+            </ul>
+        
+            @example
+                <% table(gridData, { refresh: "/getData", period: 1000, pivot: true" }) %>
+                <% table(gridData, { click: "edit" }) %>
+                <% table(Table.findAll()) %>
+                <% table(gridData, {
+                    click: "edit",
+                    sort: "Product",
+                    columns: {
+                        product:    { header: "Product", width: "20%" }
+                        date:       { format: date('%m-%d-%y) }
+                    }
+                 }) %>
+         */
+        function table(data, options: Object = {}): Void {
+            options = getOptions(options)
+            //  MOB - move to client side (data-pivot). No good here as it can't be refreshed!
+            if (options.pivot) {
+                data = pivot(data)
+            }
+            getConnector("table", options).table(data, options)
+        }
+
+        /**
+            Render a tab control. 
+            The tab control can manage a set of panes and selectively show and hide or invoke the selected panes. 
+            If the click option is defined, the selected pane will be invoked via a foreground click. If the
+            remote option is defined, the selected pane will be invoked via a background click. Otherwise the 
+            selected pane will be made visible and other panes will be hidden.
+            @param data Initial data for the control. Tab data can be an array of objects -- one per tab. It can also
+                be a single object where the tab text is the property key and the property value is the target.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @param click Invoke the target URI in the foreground when clicked.
+            @param remote Invoke the target URI in the background when clicked.
+            @example
+                tabs({Status: "pane-1", "Edit: "pane-2"})
+                tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: true})
+         */
+        function tabs(data: Object, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("tabs", options).tabs(data, options)
+        }
+
+        /**
+            Render a text input field as part of a form.
+            @param name Name for the input text field. This defines the HTML element name and provides the source 
+                of the initial value to display. The field should be a property of the form control record. It can 
+                be a simple property of the record or it can have multiple parts, such as: field.field.field. If 
+                this call is used without a form control record, the actual data value should be supplied via the 
+                options.value property.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @option escape Boolean Escape the text before rendering. This converts HTML reserved tags and delimiters into
+                an encoded form.
+            @option password Boolean The data to display is a password and should be obfuscated.
+            @option value Object Override value to display if used without a form control record.
+            @examples
+                <% text("name") %>
+                <% text("product.name") %>
+                <% text("address", { escape: true }) %>
+                <% text("password", {value: params.password, password: true}) %>
+         */
+        function text(name: String, options: Object = {}): Void {
+            options = getOptions(options)
+            let value = getValue(currentRecord, name, options)
+            value = formatValue(value, options)
+            name = getFieldName(name, options) 
+            getConnector("text", options).text(name, value, options)
+        }
+
+
+        /**
+            Render a text area
+            @param name Name for the input textarea field. This defines the HTML element name and provides the source 
+                of the initial value to display. The field should be a property of the form control record. It can 
+                be a simple property of the record or it can have multiple parts, such as: field.field.field. If 
+                this call is used without a form control record, the actual data value should be supplied via the 
+                options.value property.
+            @option Boolean escape Escape the text before rendering. This converts HTML reserved tags and delimiters into
+                an encoded form.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @option numCols Number number of text columns
+            @option numRows Number number of text rows
+            @option value Object Override value to display if used without a form control record.
+            @examples
+                <% textarea("name") %>
+         */
+        function textarea(name: String, options: Object = {}): Void {
+            options = getOptions(options)
+            let value = getValue(currentRecord, name, options)
+            value = formatValue(value, options)
+            name = getFieldName(name, options) 
+            getConnector("textarea", options).textarea(name, value, options)
+        }
+
+        /**
+            Render a tree control. The tree control can display static or dynamic tree data.
+            @param data Optional initial data for the control. The data option may be used with the refresh option to 
+                dynamically refresh the data. The tree data is typically an XML document.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @option data URI or action to get data 
+            @option refresh If set, this defines the data refresh period in seconds. Only valid if the data option is defined
+            @option style String CSS Style to use for the control
+            @option visible Boolean Make the control visible. Defaults to true.
+         */
+        function tree(data: Object, options: Object = {}): Void {
+            options = getOptions(options)
+            getConnector("tree", options).tree(data, options)
+        }
+
+        /**
+            Render a partial view. This creates an HTML element with the required options. It is useful to generate
+                a dynamically refreshing division.
+MOB -- review and rethink this
+            @param viewPath (String|Object) If a string, it is a view template name or the name of an action. If an object,
+                it should have properties: controller and action. Action can be the name of a view template.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @examples
+                <% view(viewName) %>
+         */
+        function view(viewPath, options: Object = {}): Void {
+            let cname = controllerName
+            let action = viewPath
+            let ext = config.extensions.ejs
+            if (Object.getOwnPropertyCount(viewPath) > 0) {
+                if (viewPath.controller) {
+                    cname = viewPath.controller
+                }
+                if (viewPath.action) {
+                    action = viewPath.action
+                }
+                if (viewPath.ext) {
+                    ext = viewPath.ext
+                }
+            }
+            controller.writeTemplate(request.dir.join(config.directories.views, cname, action).joinExt(ext))
+        }
+
+        // MOB TODO - need a rich text editor. Wiki style.  wiki()
+        // MOB TODO - need markdown style output?
+
+        /***************************************** Wrapped Request Functions **********************************************/
+        /**
+            @duplicate Request.link
+         */
+        function link(parts: Object): Uri
+            request.link(parts)
+
+        /** 
+            @duplicate Request.redirect
+         */
+        function redirect(location: *, status: Number = Http.MovedTemporarily): Void
+            request.redirect(location)
+
+        /** 
+            @duplicate Request.session 
+         */
+        function get session(): Session 
+            request.session
+
+        /** 
+            @duplicate Request.setHeader
+         */
+        function setHeader(key: String, value: String, overwrite: Boolean = true): Void
+            request.setHeader(key, value, overwrite)
+
+        /**
+            @duplicate Request.setHeaders
+         */
+        function setHeaders(headers: Object, overwrite: Boolean = true): Void
+            request.setHeaders(headers, overwrite)
+
+        /**
+            @duplicate Request.setStatus
+         */
+        function setStatus(status: Number): Void
+            request.setStatus(status)
+
+        /** 
+            @duplicate Request.show
+            @hide
+         */
+        function show(...args): Void
+            request.show(...args)
+
+        /**
+            @duplicate Request.toplink
+         */
+        function toplink(parts: Object): Uri
+            request.toplink(parts)
+
+        /**
+            @duplicate Request.write
+         */
+        function write(...data): Number
+            request.write(...data)
+
+        /**
+            @duplicate Request.writeSafe
+         */
+        function writeSafe(...data): Number
+            request.writeSafe(...data)
+
+        /*********************************************** Support ****************************************************/
+        /**
+            Get the data value for presentation.
+            @param record Object containing the data to present. This could be a plain-old-object or it could be a model.
+         */
+        function formatValue(value: Object, options: Object): String {
+            if (value == undefined) {
+                value = ""
+            }
+            let formatter = options.formatter || formatters[typeOf(value)] || plainFormatter
+            let result = formatter(this, value, options)
+            if (options.escape) {
+                result = escapeHtml(result)
+            }
+            return result
+        }
+
+        private function getConnector(kind: String, options: Object = {}) {
+            let vc = config.web.view
+            let connectorName = options.connector || vc.connectors[kind] || vc.connectors["rest"]
+            let name = (connectorName + "ViewConnector").toPascal()
+            if (connectors[name]) {
+                return connectors[name]
+            }
+            try {
+                return connectors[name] = new global[name](this)
             } catch (e: Error) {
                 throw new Error("Undefined view connector: " + name)
             }
         }
 
         /*
-            Update the options based on the model and field being considered
+            Get a field name for an input control. This will use the Record type name if not a plain-old-object.
+            If options.field is defined, it is used in preference of the given field.
          */
-        private function setOptions(field: String, options: Object): Object {
-            if (options is String) {
-                options = {action: options}
+        private function getFieldName(field: Object, options: Object): String {
+            if (options.field) {
+                return options.field
             }
             if (currentRecord) {
-                if (currentRecord.id) {
-                    options.domid ||= field + '_' + currentRecord.id
+                if (Object.getType(currentRecord) != Object) {
+                    return typeOf(currentRecord).toCamel() + '.' + field
                 }
-                if (currentRecord.hasError(field)) {
-                    options.style += " -ejs-fieldError"
-                }
-                //  MOB -- not portable to other ORM
-                options.fieldName ||= typeOf(currentRecord).toCamel() + '.' + field
-            } else {
-                options.fieldName ||= field
             }
-            options.style ||= field
+            return field
+        }
+
+        private function getOptions(options: Object): Object {
+            if (options is String) {
+                if (options.startsWith("/") || options.contains("/")) {
+                    options = {uri: options.toString() }
+                } else {
+                    options = {action: options}
+                }
+            } else if (options is Uri) {
+                options = {uri: options.toString() }
+            }
             return options
         }
 
-        /**
-            Get the data value for presentation.
-            @hide
-         */
-        function getValue(record: Object, field: String, options: Object): String {
-            let value
-            if (record && field) {
-                value = record[field]
-            }
-            value ||= options.value
-            if (!value == null || value == undefined) {
-                value = record
-                if (value) {
-                    for each (let part in field.split(".")) {
-                        value = value[part]
-                    }
-                }
-                value ||= ""
-            }
-            if (options.render != undefined && options.render is Function) {
-                result = options.render(value, record, field).toString()
-                return result
-            }
-            if (options.formatter != undefined && options.formatter is Function) {
-                return options.formatter(value).toString()
-            }
-            let typeName = typeOf(value)
-
-            //  TODO OPT
-            let fmt
-            let web = request.config.web
-            if (web.view && web.view.formats) {
-                fmt = web.view.formats[typeName]
-            }
-            if (fmt == undefined || fmt == null || fmt == "") {
-                return value.toString()
-            }
-            switch (typeName) {
-            case "Date":
-                return new Date(value).format(fmt)
-            case "Number":
-                return fmt.format(value)
-            }
-            return value.toString()
-        }
-
-        /**
-            Temporary helper function to format the date. TODO - should move to helpers somewhere
-            @param fmt Format string
-            @returns a formatted string
-            @hide
-         */
-        function date(fmt: String): String {
-            return function (data: String): String {
-                return new Date(data).format(fmt)
-            }
-        }
-
-        /**
-            Temporary helper function to format a number as currency. TODO
-            @param fmt Format string
-            @returns a formatted string
-            @hide
-         */
-        function currency(fmt: String): String {
-            return function (data: String): String {
-                return fmt.format(data)
-            }
-        }
-
-        /**
-            Temporary helper function to format a number. TODO
-            @param fmt Format string
-            @returns a formatted string
-            @hide
-         */
-        function number(fmt: String): String {
-            return function (data: String): String {
-                return fmt.format(data)
-            }
-        }
-
         /*
-            Mapping of helper options to HTML attributes ("" value means don't map the name)
+            Get the data value. Data may be:
+                options.value       Overrides all
+                data                if a record is not defined
+                fieldname           data is a record[data] if a simple string
+                { field: name }
          */
-        private static const htmlOptions: Object = { 
-            background: "", color: "", domid: "id", height: "", method: "", size: "", style: "class", visible: "", 
-            width: "", remote: "data-remote",
-        }
-
-        /**
-            Map options to a HTML attribute string.
-            @param options Optional extra options. See $getOptions for a list of the standard options.
-            @returns a string containing the HTML attributes to emit.
-            @option background String Background color. This is a CSS RGB color specification. For example "FF0000" for red.
-            @option color String Foreground color. This is a CSS RGB color specification. For example "FF0000" for red.
-            @option data String URL or action to get live data. The refresh option specifies how often to invoke
-                fetch the data.
-            @option id String Browser element ID for the control
-            @option escape Boolean Escape the text before rendering. This converts HTML reserved tags and delimiters into
-                an encoded form.
-            @option height (Number|String) Height of the table. Can be a number of pixels or a percentage string. 
-                Defaults to unlimited.
-            @option method String HTTP method to invoke. May be: GET, POST, PUT or DELETE.
-            @option refresh If set, this defines the data refresh period in milliseconds. Only valid if the data option 
-                is defined.
-            @option size (Number|String) Size of the element.
-            @option style String CSS Style to use for the table.
-            @option value Default data value to use for the control if not supplied by other means.
-            @option visible Boolean Make the control visible. Defaults to true.
-            @option width (Number|String) Width of the table or column. Can be a number of pixels or a percentage string. 
-         */
-        function getOptions(options: Object): String {
-            if (!options) {
-                return " "
-            }
-            let result: String = ""
-            for (let option: String in options) {
-                let mapped = View.htmlOptions[option]
-                if (mapped || mapped == "") {
-                    if (mapped == "") {
-                        /* No mapping, keep the original option name */
-                        mapped = option
+        function getValue(record: Object, data: Object, options: Object): Object {
+            let value
+            if (options.value !== undefined) {
+                value = options.value
+            } else if (record) {
+                let field = data.field || data
+                value = record[field]
+                if (value == undefined) {
+                    /* Support field.field.field ... */
+                    let parts = field 
+                    value = record
+                    for each (field in parts.split(".")) {
+                        value = value[field]
                     }
-                    result += ' ' +  mapped + '="' + options[option] + '"'
-                } else if (option.startsWith("data-")) {
-                    result += ' ' +  option + '="' + options[option] + '"'
                 }
+                if (record.hasError && record.hasError(field)) {
+                    options.hasError = true
+                }
+            } else {
+                value = data
             }
-            return result + " "
+            return value
         }
 
         /*
@@ -922,32 +962,64 @@ module ejs.web {
             return table
         }
 
-        //  TODO - this actually modifies the grid. Need to doc this.
-        private function filter(data: Array): Array {
-            data = data.clone()
-            pattern = request.params.filter.toLowerCase()
-            for (let i = 0; i < data.length; i++) {
-                let found: Boolean = false
-                for each (f in data[i]) {
-                    if (f.toString().toLowerCase().indexOf(pattern) >= 0) {
-                        found = true
-                    }
-                }
-                if (!found) {
-                    data.remove(i, i)
-                    i--
-                }
-            }
-            return data
+        /************************************************ View Renderers **************************************************/
+
+        var formatters = {
+            Date: dateFormatter,
+            String: plainFormatter,
+            Number: plainFormatter,
+            Boolean: plainFormatter,
+            //  MOB -- put all standard types here -- faster
         }
 
+        private static function dateFormatter(view: View, value: Object, options: Object): String
+            new Date(value).format(view.formats.Date)
+
+        private static function plainFormatter(view: View, value: Object, options: Object): String
+            value.toString()
+       
+        /************************************************ View Helpers ****************************************************/
+        /**
+            Temporary helper function to format the date. MOB - should move to helpers somewhere
+            @param fmt Format string
+            @returns a formatted string
+         */
+        function date(fmt: String): String {
+            return function (data: String): String {
+                return new Date(data).format(fmt)
+            }
+        }
+
+        /**
+            Temporary helper function to format a number as currency. MOB
+            @param fmt Format string
+            @returns a formatted string
+         */
+        function currency(fmt: String): String {
+            return function (data: String): String {
+                return fmt.format(data)
+            }
+        }
+
+        /**
+            Temporary helper function to format a number. MOB
+            @param fmt Format string
+            @returns a formatted string
+         */
+        function number(fmt: String): String {
+            return function (data: String): String {
+                return fmt.format(data)
+            }
+        }
+
+        /*************************************************** Deprecated ***************************************************/
         /** 
             @hide
             @deprecated 2.0.0
          */
         # Config.Legacy
         function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String 
-            makeUri({ path: action })
+            request.makeUrl(action, id, options, query)
 
         /** 
             @hide
@@ -955,20 +1027,7 @@ module ejs.web {
          */
         # Config.Legacy
         function get appUrl()
-            request.home.toString().trimEnd("/")
-
-        /** 
-            @hide
-            @deprecated 2.0.0
-         */
-        # Config.Legacy
-        function redirect(url: Object) {
-            if (controller) {
-                controller.redirect(url)
-            } else {
-                request.redirect(url)
-            }
-        }
+            request.appUrl
     }
 }
 

@@ -17,7 +17,7 @@ module ejs {
             <tr><td>?</td><td>Match the preceding item zero or one times.</td></tr>
             <tr><td>(mem)</td><td>Match inside the parenthesis (i.e. "mem") and store the match.</td></tr>
             <tr><td>(?:nomem)</td><td>Match "nomem" and do not store the match.</td></tr>
-            <tr><td>oper(?=need)</td><td>Match "oper" only if it is  followed by "need".</td></tr>
+            <tr><td>oper(?=need)</td><td>Match "oper" only if it is followed by "need".</td></tr>
             <tr><td>oper(?!not)</td><td>Match "oper" only if it is not followed by "not".</td></tr>
             <tr><td>either|or</td><td>Match "either" or "or".</td></tr>
             <tr><td>{int}</td><td>Match exactly int occurences of the preceding item.</td></tr>

@@ -8,7 +8,7 @@ module ejs.web {
         @hide
      */
     # FUTURE
-	class GoogleConnector {
+    class GoogleConnector {
 
         use default namespace module
 
@@ -16,6 +16,8 @@ module ejs.web {
             // this.controller = controller
         }
 
+        //  MOB -- state should be stored in View.viewState. This should be stateless
+//  MOB -- all methods must become static
         private var nextId: Number = 0
 
         private function scriptHeader(kind: String, id: String): Void {
@@ -28,19 +30,19 @@ module ejs.web {
         //  TODO - must support Ejs options: bands, columns, data, onClick, refresh, pageSize, pivot, 
         //      sortColumn, sortOrder, style, styleHead, styleEvenRow, styleOddRow, styleCell, visible, widths
         //      Support @options
-		function table(data, options: Object): Void {
+        function table(data, options: Object): Void {
             var id: String = "GoogleTable_" + nextId++
 
-			if (data == null || data.length == 0) {
-				write("<p>No Data</p>")
-				return
-			}
+            if (data == null || data.length == 0) {
+                write("<p>No Data</p>")
+                return
+            }
             let columns: Array = options["columns"]
 
             scriptHeader("table", id)
             
             write('  function ' + 'draw_' + id + '() {')
-			write('    var data = new google.visualization.DataTable();')
+            write('    var data = new google.visualization.DataTable();')
 
             let firstLine: Object = data[0]
             if (columns) {
@@ -63,10 +65,10 @@ module ejs.web {
 
             for each (name in columns) {
                 write('    data.addColumn("string", "' + name.toPascal() + '");')
-			}
-			write('    data.addRows(' + data.length + ');')
+            }
+            write('    data.addRows(' + data.length + ');')
 
-			for (let row: Object in data) {
+            for (let row: Object in data) {
                 let col: Number = 0
                 for each (name in columns) {
                     write('    data.setValue(' + row + ', ' + col + ', "' + data[row][name] + '");')
@@ -100,31 +102,31 @@ module ejs.web {
             write('</script>')
 
             write('<div id="' + id + '"></div>')
-		}
+        }
 
         //  TODO - must support Ejs options: columns, kind, onClick, refresh, style, visible
         //  TODO - use @options
 
-		function chart(grid: Array, options: Object): Void {
+        function chart(grid: Array, options: Object): Void {
             var id: String = "GoogleChart_" + nextId++
 
-			if (grid == null || grid.length == 0) {
-				write("<p>No Data</p>")
-				return
-			}
+            if (grid == null || grid.length == 0) {
+                write("<p>No Data</p>")
+                return
+            }
 
             let columns: Array = options["columns"]
 
             scriptHeader("piechart", id)
             
             write('  function ' + 'draw_' + id + '() {')
-			write('    var data = new google.visualization.DataTable();')
+            write('    var data = new google.visualization.DataTable();')
 
-			let firstLine: Object = grid[0]
+            let firstLine: Object = grid[0]
             let col: Number = 0
             //  TODO - need to get data types
             let dataType: String = "string"
-			for (let name: String in firstLine) {
+            for (let name: String in firstLine) {
                 if  (columns && columns.contains(name)) {
                     write('    data.addColumn("' + dataType + '", "' + name.toPascal() + '");')
                     col++
@@ -133,13 +135,13 @@ module ejs.web {
                     }
                     dataType = "number"
                 }
-			}
-			write('    data.addRows(' + grid.length + ');')
+            }
+            write('    data.addRows(' + grid.length + ');')
 
-			for (let row: Object in grid) {
+            for (let row: Object in grid) {
                 let col2: Number = 0
                 //  TODO - workaround
-				for (let name2: String in grid[row]) {
+                for (let name2: String in grid[row]) {
                     if  (columns && columns.contains(name2)) {
                         if (col2 == 0) {
                             write('    data.setValue(' + row + ', ' + col2 + ', "' + grid[row][name2] + '");')
@@ -162,7 +164,7 @@ module ejs.web {
             write('</script>')
 
             write('<div id="' + id + '"></div>')
-		}
+        }
 
         private function getOptions(options: Object, defaults: Object): Object {
             var result: Object = {}
@@ -179,12 +181,12 @@ module ejs.web {
         private function write(str: String): Void {
             view.write(str)
         }
-	}
+    }
 }
 
 
 /*
-   @copy	default
+   @copy    default
    
    Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
    Copyright (c) Michael O'Brien, 1993-2010. All Rights Reserved.

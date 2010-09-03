@@ -83,7 +83,9 @@ struct EjsXML;
 #define EJS_TRAIT_SETTER                0x100       /**< Property is a settter */
 #define EJS_TRAIT_THROW_NULLS           0x200       /**< Property rejects null */
 
+#if UNUSED || 1
 #define EJS_PROP_HAS_VALUE              0x400       /**< Property has a value record */
+#endif
 #define EJS_PROP_NATIVE                 0x800       /**< Property is backed by native code */
 #define EJS_PROP_STATIC                 0x1000      /**< Class static property */
 #if UNUSED
@@ -1929,8 +1931,8 @@ typedef struct EjsUri {
  */
 extern EjsUri *ejsCreateUri(Ejs *ejs, cchar *uri);
 extern EjsUri *ejsCreateUriAndFree(Ejs *ejs, char *uri);
-extern EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference,
-        int complete);
+extern EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, 
+        cchar *reference, int complete);
 
 #if DOXYGEN
     /** 

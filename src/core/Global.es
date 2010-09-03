@@ -169,10 +169,12 @@ module ejs {
      */
     native function md5(str: String): String
 
+//  MOB -- rewrite
     /** 
-        Blend one object into another. This is useful for inheriting and optionally overwriting option hashes (among other
-        things). The merge is done at the primitive property level and it does a deep clone of the source. If overwrite 
-        is true, the property is replaced. If overwrite is false, the property will be added if it does not already exist
+        Blend one object into another.  The merge is done at the primitive property level and it does a deep clone of 
+        the source. If overwrite is true, the property is replaced. If overwrite is false, the property will be added 
+        if it does not already exist This is useful for inheriting and optionally overwriting option hashes (among other
+        things). 
         @param dest Destination object
         @param src Source object
         @param overwrite Boolean. If true, then overwrite existing properties in the destination object.

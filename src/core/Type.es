@@ -17,18 +17,7 @@ module ejs {
         @spec ejs
         @stability evolving
      */
-    native final class Type {
-
-        use default namespace ejs
-
-        /**
-MOB - UNUSED - DELETE
-            The prototype object for the type. The prototype object provides the template of instance properties 
-            shared by all Objects.
-        static function get prototype(): Object
-            null
-         */
-    }
+    native final class Type { }
 }
 
 /*

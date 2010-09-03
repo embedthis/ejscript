@@ -5,7 +5,7 @@
 module ejs.web {
 
     /**
-        Method override wrapper middleware. Provides HTTP method overriding via a "__method__" POST parameter or via
+        Method override wrapper middleware. Provides HTTP method overriding via a "-ejs-method-" POST parameter or via
             a X-HTTP-METHOD-OVERRIDE Http header.
         @param app Application generating the response. 
         @return A web application function that services a web request and when invoked with the request object will 
@@ -16,9 +16,8 @@ module ejs.web {
     function MethodOverride(app: Function): Function {
         return function(request: Request) {
             if (request.method == "POST") {
-                let method = request.params["__method__"] || request.header("X-HTTP-METHOD-OVERRIDE")
+                let method = request.params["-ejs-method-"] || request.header("X-HTTP-METHOD-OVERRIDE")
                 if (method) {
-                    //MOB request.originalMethod ||= request.method
                     request.method = method
                 }
             }

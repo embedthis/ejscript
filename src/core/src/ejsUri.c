@@ -462,7 +462,11 @@ static EjsObj *uri_hasScheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 static EjsObj *uri_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     if (up->uri->host == 0) {
+#if UNUSED
         return (EjsObj*) ejsCreateString(ejs, "localhost");
+#else
+        return ejs->nullValue;
+#endif
     }    
     return (EjsObj*) ejsCreateString(ejs, up->uri->host);
 }
@@ -523,9 +527,9 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
         oldUri = uri;
         uri = httpJoinUri(result, oldUri, 1, &other);
-        mprFree(other);
+        mprFree(oldUri);
         if (!ejsIsUri(ejs, arg)) {
-            mprFree(oldUri);
+            mprFree(other);
         }
     }
     result->uri = uri;
@@ -552,6 +556,20 @@ static EjsObj *uri_joinExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     nuri->ext = ext;
     nuri->path = mprStrcat(nuri, -1, mprTrimPathExtension(nuri, nuri->path), ".", nuri->ext, NULL);
     return (EjsObj*) np;
+}
+
+
+/*  
+    function local(): Uri
+ */
+static EjsObj *uri_local(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    EjsUri      *result;
+
+    if ((result = cloneUri(ejs, up, 0)) != 0) {
+        httpMakeUriLocal(result->uri);
+    }
+    return (EjsObj*) result;
 }
 
 
@@ -610,7 +628,9 @@ static EjsObj *uri_port(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     
     uri = up->uri;
     if (uri->port == 0) {
-        //  MOB -- push this down into http
+        if (uri->host == 0) {
+            return ejs->nullValue;
+        }
         if (uri->scheme == 0 || strcmp(uri->scheme, "http") == 0) {
             return (EjsObj*) ejsCreateNumber(ejs, 80);
         } else if (uri->scheme && strcmp(uri->scheme, "https") == 0) {
@@ -656,20 +676,24 @@ static EjsObj *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **arg
 
 
 /*  
-    function resolve(target, relative: Boolean = true): Uri
+    function resolve(target): Uri
  */
 static EjsObj *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsUri      *result;
     HttpUri     *uri, *target;
+
+#if UNUSED
     int         relative;
 
     relative = (argc >= 2 && argv[1] == ejs->falseValue) ? 0 : 1;
+#endif
+
     uri = up->uri;
     target = toHttpUri(ejs, ejs, argv[0], 0);
     result = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
-    uri = httpResolveUri(result, uri, 1, &target, relative);
-    if (!ejsIsUri(ejs, target)) {
+    uri = httpResolveUri(result, uri, 1, &target, 0);
+    if (!ejsIsUri(ejs, argv[0])) {
         mprFree(target);
     }
     if (up->uri == uri) {
@@ -702,7 +726,11 @@ static EjsObj *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 static EjsObj *uri_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     if (up->uri->scheme == 0) {
+#if UNUSED
         return (EjsObj*) ejsCreateString(ejs, "http");
+#else
+        return ejs->nullValue;
+#endif
     }
     return (EjsObj*) ejsCreateString(ejs, up->uri->scheme);
 }
@@ -779,6 +807,62 @@ static EjsObj *uri_same(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     other = (EjsUri*) argv[0];
     exact = (argc == 2 && argv[1] == (EjsObj*) ejs->trueValue);
     return (EjsObj*) (same(ejs, up->uri, other->uri, exact) ? ejs->trueValue: ejs->falseValue);
+}
+
+
+/*  
+    Expand a template with {word} tokens from the given options objects
+
+    function template(pattern: String, ...options): Uri
+ */
+static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
+{
+    EjsArray    *options;
+    EjsObj      *obj, *value;
+    EjsUri      *uri;
+    EjsName     n;
+    MprBuf      *buf;
+    cchar       *pattern, *cp, *ep, *str;
+    char        *token;
+    int         i, len;
+
+    pattern = ejsGetString(ejs, argv[0]);
+    options = (EjsArray*) argv[1];
+
+    buf = mprCreateBuf(ejs, -1, -1);
+    for (cp = pattern; *cp; cp++) {
+        if (*cp == '{' && (cp == pattern || cp[-1] != '\\')) {
+            if ((ep = strchr(++cp, '}')) != 0) {
+                len = ep - cp;
+                token = mprMemdup(buf, cp, len + 1);
+                token[len] = '\0';
+                value = 0;
+                for (i = 0; i < options->length; i++) {
+                    obj = options->data[i];
+                    if ((value = ejsGetPropertyByName(ejs, obj, EN(&n, token))) != 0 && value != ejs->nullValue && 
+                            value != ejs->undefinedValue) {
+                        str = ejsGetString(ejs, value);
+                        if (str && *str) {
+                            mprPutStringToBuf(buf, str);
+                            break;
+                        } else {
+                            value = 0;
+                        }
+                    }
+                }
+                if (value == 0 && cp >= &pattern[2] && cp[-2] == '/') {
+                    mprAdjustBufEnd(buf, -1);
+                }
+                cp = ep;
+            }
+        } else {
+            mprPutCharToBuf(buf, *cp);
+        }
+    }
+    mprAddNullToBuf(buf);
+    uri = ejsCreateUri(ejs, mprGetBufStart(buf));
+    mprFree(buf);
+    return (EjsObj*) uri;
 }
 
 
@@ -870,22 +954,6 @@ static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
 }
 
 
-#if UNUSED
-static char *getUriString(Ejs *ejs, EjsObj *vp)
-{
-    if (ejsIsString(vp)) {
-        //  MOB query dup
-        return mprStrdup(ejs, ejsGetString(ejs, vp));
-
-    } else if (ejsIsUri(ejs, vp)) {
-        return uriToString(ejs, ((EjsUri*) vp));
-    }
-    ejsThrowIOError(ejs, "Bad ");
-    return NULL;
-}
-#endif
-
-
 static HttpUri *toHttpUri(Ejs *ejs, MprCtx ctx, EjsObj *arg, int dup)
 {
     HttpUri     *uri;
@@ -960,10 +1028,18 @@ static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact)
 
 static HttpUri *createHttpUriFromHash(Ejs *ejs, MprCtx ctx, EjsObj *arg, int complete)
 {
-    EjsObj      *schemeObj, *hostObj, *portObj, *pathObj, *referenceObj, *queryObj;
+    EjsObj      *schemeObj, *hostObj, *portObj, *pathObj, *referenceObj, *queryObj, *uriObj;
     EjsName     qname;
     cchar       *scheme, *host, *path, *reference, *query;
     int         port;
+
+    /*
+        This permits a uri property override. Used in ejs.web::View
+     */
+    uriObj = ejsGetPropertyByName(ejs, arg, EN(&qname, "uri"));
+    if (uriObj) {
+        return toHttpUri(ejs, ctx, uriObj, 1);
+    }
 
     schemeObj = ejsGetPropertyByName(ejs, arg, EN(&qname, "scheme"));
     scheme = (schemeObj && ejsIsString(schemeObj)) ? ejsGetString(ejs, schemeObj) : 0;
@@ -1050,7 +1126,7 @@ EjsUri *ejsCreateUri(Ejs *ejs, cchar *path)
 }
 
 
-EjsUri *ejsCreateFullUri(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
+EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cchar *path, cchar *query, cchar *reference, 
     int complete)
 {
     EjsUri      *up;
@@ -1089,6 +1165,7 @@ void ejsConfigureUriType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Uri_decodeComponent, (EjsProc) uri_decodeComponent);
     ejsBindMethod(ejs, type, ES_Uri_encode, (EjsProc) uri_encode);
     ejsBindMethod(ejs, type, ES_Uri_encodeComponent, (EjsProc) uri_encodeComponent);
+    ejsBindMethod(ejs, type, ES_Uri_template, (EjsProc) uri_template);
 
     ejsBindConstructor(ejs, type, (EjsProc) uri_constructor);
     ejsBindMethod(ejs, prototype, ES_Uri_absolute, (EjsProc) uri_absolute);
@@ -1108,6 +1185,7 @@ void ejsConfigureUriType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Uri_isDir, (EjsProc) uri_isDir);
     ejsBindMethod(ejs, prototype, ES_Uri_join, (EjsProc) uri_join);
     ejsBindMethod(ejs, prototype, ES_Uri_joinExt, (EjsProc) uri_joinExt);
+    ejsBindMethod(ejs, prototype, ES_Uri_local, (EjsProc) uri_local);
     ejsBindMethod(ejs, prototype, ES_Uri_mimeType, (EjsProc) uri_mimeType);
     ejsBindMethod(ejs, prototype, ES_Uri_normalize, (EjsProc) uri_normalize);
     ejsBindAccess(ejs, prototype, ES_Uri_path, (EjsProc) uri_path, (EjsProc) uri_set_path);

@@ -4,7 +4,6 @@
  */
 
 module ejs {
-
     /**
         Uri class to manage Uris
         @stability evolving
@@ -43,8 +42,8 @@ module ejs {
         native function absolute(base = null): Uri
 
         /** 
-            The base of portion of the URI. The base portion is the trailing portion of the path without any 
-                directory elements.
+            The base of portion of the URI. The base portion is the trailing portion of the path without any directory 
+            elements.
          */
         native function get basename(): Uri
         
@@ -89,7 +88,7 @@ module ejs {
 
         /** 
             The directory portion of a URI path. The directory portion is the leading portion including all directory 
-            elements of the URI path excluding the base name. On some systems, it will include a drive specifier.
+            elements of the URI path excluding the base name.
          */
         native function get dirname(): Uri
 
@@ -112,7 +111,7 @@ module ejs {
         /** 
             Encode a URI using www-url encoding. This replaces special characters with encoded alternative sequence.
             The encode call replaces all characters except: alphabetic, decimal digits, "-", "_", ".", "!", "~", 
-            "*", "'", "(", ")", "#", ";", ",", "/", "?", ":", "@", "&", "=", "+", "$". Note that encocdeURI does not encode
+            "*", "'", "(", ")", "#", ";", ",", "/", "?", ":", "@", "&", "=", "+", "$". Note that encocde does not encode
             "&", "+" and "=". If you require these to be encoded, use encodeComponents. 
             NOTE: This routine encodes "!", "'", "(", ")" and "*", whereas the $encodeURI routine does not. It does not
             encode "[" and "]" which may be used in IPv6 numeric hostnames.
@@ -232,6 +231,12 @@ module ejs {
         native function joinExt(ext: String): Uri
 
         /** 
+            Create a local URI. A local URI has no scheme, host or port components.
+            @return A complete, local URI.
+          */
+        native function get local(): Uri
+
+        /** 
             The mime type of the URI. This is set to a mime type string by examining the URI extension. Set to null if
             the URI has no extension.
          */
@@ -282,39 +287,6 @@ module ejs {
          */
         native function relative(base): Uri
 
-//  MOB -- UNUSED
-        function OLDrelative(target): Uri {
-            if (!target.isAbsolute || !this.isAbsolute) {
-                /* If target is relative, just use it. If this is relative, can't use it because we don't know where it is */
-                return target
-            }
-            if (this.scheme != target.scheme || this.host != target.host || this.port != target.port) {
-                /* Different server */
-                return target
-            }
-            let parts = this.normalize.path.toString().split("/")
-            let targetParts = target.normalize.path.toString().split("/")
-            if (parts.length < targetParts.length) {
-                u = this.clone()
-                u.path = targetParts.slice(parts.length).join("/")
-                return u
-            } else {
-                let results = ""
-                len = parts.length.min(targetParts.length)
-                for (common = 0; common < len; common++) {
-                    if (parts[common] != targetParts[common]) {
-                        break
-                    }
-                }
-                results = "../".times(parts.length - common - 1)
-                if (targetParts.length > 1) {
-                    results += targetParts.slice(common).join("/")
-                }
-                results = results.trimEnd("/")
-                return Uri(results)
-            }
-        }
-
         /** 
             Replace the extension and return a new URI.
             @return A path with extension.
@@ -327,22 +299,19 @@ module ejs {
 
                 Uri("/a/b.html").resolve("c.html") will return "/a/c.html".
 
-            Resolve operates by determining a virtual current directory for this URI. It then joins the given URI path 
-            to the directory portion of the current result. If the given URI is an absolute URI, it is 
-            used unmodified.  The effect is to find the given URI with a virtual current directory set to the 
-            directory containing the prior URI.
+            Resolve operates by determining a virtual current directory for this URI (dirname). It then joins the 
+            given URI path to the directory portion of the current result. If the resolving URI is an absolute URI, it is 
+            used unmodified. 
 
-            Resolve is useful for creating URIs in the region of the current URI and gracefully handles both 
-            absolute and relative URI segments.
+            Resolve is useful for creating URIs in the region of the current URI and gracefully handles both absolute 
+            and relative URI segments.
             Any query component of "this" URI is discarded in the result. This is because the query component of "this" URI
             is regarded as POST data and not integral to the base URI.
             @param others Other URIs to resolve in the region of this path. These can be URIs, strings or object hashes 
                 of URI components.
-            @param relative If true, return a relative URI by disregarding the scheme, host and port portions of "this" URI. 
-                Defaults to true.
             @return A new URI object that resolves given URI args using the "this" URI as a base. 
          */
-        native function resolve(target, relative: Boolean = true): Path
+        native function resolve(target): Uri
 
         /** 
             Compare two URIs test if they represent the same resource
@@ -366,6 +335,16 @@ module ejs {
          */
         function startsWith(prefix: Object): Boolean
             path.toString().startsWith(prefix.toString()) 
+
+        /**
+            Create a URI based on a template. The template is a subset of the URI-templates specification and supports
+            simple {tokens} only. Each token is looked for in the set of provided option objects. The search stops with
+            the first object providing a value.
+            @param pattern URI-Template with {word} tokens.
+            @param options Set of option objects with token properties to complete the URI.
+            @return A URI
+         */
+        native static function template(pattern: String, ...options): Uri
 
         /** 
             Convert the URI to a JSON string. 

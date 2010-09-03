@@ -5,9 +5,9 @@
 module ejs.template  {
 
     /*
-        TODO implement these directives
-          -%>                   Omit newline after tag
-          &lt;%h                   Html escape the output
+        MOB TODO implement these directives
+          -%>  Omit newline after tag
+          <%s   For safe output Html escape the output
      */
 
     /** 
@@ -20,6 +20,7 @@ module ejs.template  {
           <li>%&gt;          End an ejs directive</li>
           <li>&lt;%&#64; include "file" %> Include an ejs file</li>
           <li>&lt;%&#64 layout "file" %>  Specify a layout page to use. Use layout "" to disable layout management.</li>
+          <li>&lt;%&#64 view "[module::]class" %>  Specify a view class to use with optional module.</li>
         </ul>
         Directives for use outside of &lt;% %&gt; 
         <ul>
@@ -36,42 +37,23 @@ module ejs.template  {
         private var script: String
         private var pos: Number = 0
         private var lineNumber: Number = 0
+        private var viewClass: String = "View"
+        private var viewModule: String
 
         /**
-            Build a templated page using JSGI
+            Build a templated page
             @param script String containing the script to parse
             @param options Object hash with options to control parsing
             @options layout Path Layout file
             @options dir Path Base directory to use for including files and for resolving layout directives
          */
         public function build(script: String, options: Object = {}): String {
-            return "require ejs.web\n\n" + 
-                "exports.app = function (request: Request) {\n" + 
-                "    View(request).render(function(request: Request) {\n" +
-                parse(script, options) + 
-                "\n    })\n}\n"
+            let code = parse(script, options)
+            return "require ejs.web\n" + 
+                ((viewModule) ? ("require " + viewModule + "\n") : "") + 
+                "\nexports.app = function (request: Request) {\n" + 
+                "    " + viewClass + "(request).render(function(request: Request) {\n" + code + "\n    })\n}\n"
         }
-
-        /*
-UNUSED
-            Build an MVC view.
-            @param name Name of the view to build
-            @param script View web page script
-            @param options Object hash of options
-            @options layout Path Layout file
-            @options dir Path Base directory to use for including files and for resolving layout directives
-            @hide 
-        public function buildView(name: String, script: String, options: Object = {}): String {
-            return "require ejs.web\n\n" + 
-                "public dynamic class " + name + "View extends View {\n\n" +
-                "    function " + name + "View(request: Request) {\n" +
-                "        super(request)\n" +
-                "    }\n\n" + 
-                "    public override function render(request: Request) {\n" + 
-                parse(script, options) + 
-                "\n    }\n}\n"
-        }
-         */
 
         /**
             Template parser. Parse the given script and return the compiled (Ejscript) result
@@ -97,6 +79,7 @@ UNUSED
 
                 switch (tid) {
                 case Token.Literal:
+                    //  MOB -- should amalgamate writes
                     out.write("\n        write(\"" + token + "\");")
                     break
 
@@ -104,19 +87,20 @@ UNUSED
                     /*
                         Trick to get undefined variables to evaluate to "".
                         Catenate with "" to cause toString to run.
+                        Write safely by HTML escaping the expression
                      */
-                    out.write("\n        write(\"\" + ", token, ");\n")
+                    out.write("\n        writeSafe(\"\" + ", token, ");\n")
                     break
 
                 case Token.Equals:
-                    out.write("\n        write(\"\" + (", token, "));\n")
+                    /* Write safely by HTML escaping the expression */
+                    out.write("\n        writeSafe(\"\" + (", token, "));\n")
                     break
 
                 case Token.EjsTag:
                     /*
                         Just copy the Ejscript code straight through
                      */
-                    //  TODO BUG ByteArray.write(ByteArray) is not working. Requires toString()
                     out.write(token.toString())
                     break
 
@@ -136,7 +120,7 @@ UNUSED
                         break
 
                     case "layout":
-                        let layouts = options.layouts || "views/layouts"
+                        let layouts = options.layouts || App.config.directories.layouts || "layouts"
                         let path = args[1]
                         if (path == "" || path == '""') {
                             layoutPage = undefined
@@ -149,6 +133,14 @@ UNUSED
                                 }
                             }
                         }
+                        break
+
+                    case "view":
+                        viewClass = args[1].trim("'").trim('"')
+                        if (viewClass.contains("::")) {
+                            [viewModule, viewClass] = viewClass.split("::")
+                        }
+                        viewClass ||= "View"
                         break
 
                     case "content":
@@ -199,8 +191,8 @@ UNUSED
                              */
                             pos++
                             eatSpace()
-                            while ((c = script[pos]) != undefined && (c != '%' || script[pos+1] != '>' || 
-                                    script[pos-1] == '\\')) {
+                            while (pos < script.length && (c = script[pos]) != undefined && 
+                                    (c != '%' || script[pos+1] != '>' || script[pos-1] == '\\')) {
                                 token.write(c)
                                 pos++
                             }
@@ -213,7 +205,8 @@ UNUSED
                              */
                             pos++
                             eatSpace()
-                            while ((c = script[pos]) != undefined && (c != '%' || script[pos+1] != '>')) {
+                            while (pos < script.length && (c = script[pos]) != undefined && 
+                                    (c != '%' || script[pos+1] != '>')) {
                                 token.write(c)
                                 pos++
                             }
@@ -221,8 +214,9 @@ UNUSED
                             return Token.Control
 
                         } else {
-                            while ((c = script[pos]) != undefined && (c != '%' || script[pos+1] != '>' || 
-                                    script[pos-1] == '\\')) {
+                            while (pos < script.length && 
+                                    (c = script[pos]) != undefined && 
+                                    (c != '%' || script[pos+1] != '>' || script[pos-1] == '\\')) {
                                 token.write(c)
                                 pos++
                             }
@@ -275,7 +269,7 @@ UNUSED
         }
 
         private function eatSpace(): Void {
-            while (script[pos].isSpace) {
+            while (pos < script.length && script[pos].isSpace) {
                 pos++
             }
         }

@@ -69,7 +69,6 @@ module ejs {
          */
         native function get name(): String
 
-//  MOB -- ECMA: this is a var on all functions and not a getter on the prototype
         //  Number of arguments expected by the function
         native function get length(): Number
 
@@ -78,13 +77,15 @@ module ejs {
         native function setScope(scope: Object): Void
     }
 
-    //  MOB -- remove
-    /** @hide */
+//  MOB -- remove
+/** 
+        UNUSED @hide 
     native function makeGetter(fn: Function): Function
+*/
 
-    //  MOB -- move into Object   Object.
-    /** @hide */
+/** UNUSED
     native function clearBoundThis(fn: Function): Function
+*/
 }
 
 /*

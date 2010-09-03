@@ -23,8 +23,6 @@
  */
 #define ES_readFile_path                                               0
 #define ES_readFile_encoding                                           1
-#define ES_makeGetter_fn                                               0
-#define ES_clearBoundThis_fn                                           0
 #define ES_assert_condition                                            0
 #define ES_cloneBase_klass                                             0
 #define ES_dump_args                                                   0

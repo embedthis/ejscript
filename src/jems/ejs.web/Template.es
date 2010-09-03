@@ -34,26 +34,31 @@ module ejs.web {
     }
 
     /** 
-        Template builder for use in routing tables to serve requests for template files (*.ejs).
+        Template builder for use in routing tables to serve requests for templates. The template path can be supplied
+        via the request.filename or a literal template can be provided via options.literal.
         @param request Request object. 
         @param options Object hash of options
         @options layout Path Layout file
+        @options literal String containing the template to render. In this case request.filename is ignored.
         @options dir Path Base directory to use for including files and for resolving layout directives
         @return A web script function that services a web request.
         @example: Example use in a Route table entry
           { name: "index", builder: TemplateBuilder, match: "\.ejs$" }
      */
     function TemplateBuilder(request: Request, options: Object = {}): Function {
-        let path = request.filename
-        if (!path.exists) {
-            request.writeError(Http.NotFound, "Cannot find " + path)
-            return null
+        let path
+        if (!options.literal) {
+            path = request.filename
+            if (path && !path.exists) {
+                request.writeError(Http.NotFound, "Cannot find " + path)
+                return null
+            }
         }
         return Loader.load(path, path, request.config, function (id, path) {
             if (!global.TemplateParser) {
                 load("ejs.template.mod")
             }
-            let data = TemplateParser().build(path.readString(), options)
+            let data = options.literal || TemplateParser().build(path.readString(), options)
             return Loader.wrap(data)
         }).app
     }

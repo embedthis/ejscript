@@ -239,7 +239,6 @@ module ejs {
             @param tag Activity tag to prefix the message. The tag string is wraped in "[]".
             @param args Output string to log
             @hide
-            @stability prototype
          */
         function activity(tag: String, ...args): Void {
             let msg = args.join(" ")

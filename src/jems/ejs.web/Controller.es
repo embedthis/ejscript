@@ -41,6 +41,7 @@ module ejs.web {
         var config: Object 
 
         /** Lower case controller name */
+//  MOB -- seems upper case?
         var controllerName: String
 
         /** Logger stream - reference to Request.log */
@@ -90,7 +91,8 @@ UNUSED - MOB -- better to set in Request
                 suffix.
          */
         static function create(request: Request, cname: String = null): Controller {
-            cname ||= (request.params.controller.toPascal() + "Controller")
+            request.params.controller = request.params.controller.toPascal()
+            cname ||= (request.params.controller + "Controller")
             _initRequest = request
             let c: Controller = new global[cname](request)
             c.request = request
@@ -103,7 +105,7 @@ UNUSED - MOB -- better to set in Request
             the Controller.create factory method.
             @param req Web request object
          */
-        function Controller(req: Request) {
+        function Controller(req: Request = null) {
             /*  _initRequest may be set by create() to allow subclasses to omit constructors */
             controllerName = typeOf(this).trim("Controller") || "-DefaultController-"
             request = req || _initRequest
@@ -115,19 +117,10 @@ UNUSED - MOB -- better to set in Request
                 if (config.database) {
                     openDatabase(request)
                 }
+                if (request.method == "POST") {
+                    checkBefore(checkSecurityToken)
+                }
             }
-        }
-
-        /** 
-            Run an action checker function after running the action
-            @param fn Function callback to invoke
-            @param options Checker options. 
-            @option only Only run the checker for this action name
-            @option except Run the checker for all actions except this name
-         */
-        function afterChecker(fn, options: Object = null): Void {
-            _afterCheckers ||= []
-            _afterCheckers.append([fn, options])
         }
 
         /** 
@@ -139,18 +132,27 @@ UNUSED - MOB -- better to set in Request
             @return A response object hash {status, headers, body} or null if writing directly using the request object.
          */
         function app(request: Request, aname: String = null): Object {
-            use namespace action
+            let ns = params.namespace || "action"
             actionName ||= aname || params.action || "index"
             params.action = actionName
             runCheckers(_beforeCheckers)
             let response
+//  MOB - temp
+use namespace action
             if (!request.finalized && request.autoFinalizing) {
-                if (!this[actionName]) {
+// print("NS \"" + ns + "\" name " + actionName)
+// breakpoint()
+// print("PRESENT " + this.(ns)::[actionName])
+                if (!this.(ns)::[actionName]) {
                     if (!viewExists(actionName)) {
-                        response = this[actionName = "missing"]()
+                        response = this.(ns)::[actionName = "missing"]()
                     }
                 } else {
-                    response = this[actionName]()
+                    response = this.(ns)::[actionName]()
+// print("RESP " + response)
+                }
+                if (response && !response.body) {
+                    throw "Response object is missing a \"body\""
                 }
                 if (!response && !request.responded && request.autoFinalizing) {
                     /* Run a default view */
@@ -165,6 +167,19 @@ UNUSED - MOB -- better to set in Request
         }
 
         /** 
+            Run an action checker function after running the action
+            @param fn Function callback to invoke
+            @param options Checker options. 
+            @option only Only run the checker for this action name
+            @option except Run the checker for all actions except this name
+         */
+//  MOB -- rename after
+        function checkAfter(fn, options: Object = null): Void {
+            _afterCheckers ||= []
+            _afterCheckers.append([fn, options])
+        }
+
+        /** 
             Run an action checker before running the action. If the checker function writes a response, the normal
             processing of the requested action will be prevented. Note that checkers do not autoFinalize so if the
             checker does write a response, it must call finalize.
@@ -173,7 +188,8 @@ UNUSED - MOB -- better to set in Request
             @option only Only run the checker for this action name
             @option except Run the checker for all actions except this name
          */
-        function beforeChecker(fn, options: Object = null): Void {
+//  MOB -- rename before
+        function checkBefore(fn, options: Object = null): Void {
             _beforeCheckers ||= []
             _beforeCheckers.append([fn, options])
         }
@@ -187,8 +203,8 @@ UNUSED - MOB -- better to set in Request
         /** 
             @duplicate Request.flash
          */
-        function flash(key: String, msg: String): Void
-            request.flash(key, msg)
+        function get flash(): Object
+            request.flash
 
         /** 
             @duplicate Request.header
@@ -203,10 +219,10 @@ UNUSED - MOB -- better to set in Request
             request.inform(msg)
 
         /** 
-            @duplicate Request.makeUri
+            @duplicate Request.link
          */
-        function makeUri(location: Object, relative: Boolean = true): Uri
-            request.makeUri(location, relative)
+        function link(location: Object): Uri
+            request.link(location)
 
         /** 
             Missing action method. This method will be called if the requested action routine does not exist.
@@ -214,6 +230,12 @@ UNUSED - MOB -- better to set in Request
         action function missing(): Void {
             throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
         }
+
+        /** 
+            @duplicate Request.notify
+         */
+        function notify(key: String, msg: String): Void
+            request.notify(key, msg)
 
         /** 
             @duplicate Request.observe
@@ -238,17 +260,12 @@ UNUSED - MOB -- better to set in Request
             request.redirect(where, status)
 
         /** 
-            Redirect the client to the given action
-            @param action Controller action name to which to redirect the client.
+            @duplicate Request.toplink
          */
-        function redirectAction(action: String): Void {
-            if (request.route) {
-                redirect({action: action})
-            } else {
-                redirect(request.uri.dirname.join(action))
-            }
-        }
+        function toplink(location: Object): Uri
+            request.toplink(location)
 
+//  MOB -- should all these be render() instead of write to save confusion?
         /** 
             Render the raw data back to the client. 
             If an action method does call a write data back to the client and has not called finalize() or 
@@ -273,17 +290,20 @@ UNUSED - MOB -- better to set in Request
             @param filename Path to the filename to send to the client
          */
         function writeFile(filename: Path): Void
-            request.sendFile(filename)
+            request.writeFile(filename)
 
         /** 
             Render a partial response using template file.
             @param path Path to the template to render to the client
-            @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
+            @param options Additional options.
+            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
          */
-        function writePartialTemplate(path: Path, layouts: Path = null): Void { 
+        function writePartialTemplate(path: Path, options: Object = {}): Void { 
             request.filename = path
-            layouts ||= config.directories.layouts
-            let app = TemplateBuilder(request, { layouts: layouts } )
+            if (options.layout === undefined) {
+                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+            }
+            let app = TemplateBuilder(request, options)
             log.debug(4, "writePartialTemplate: \"" + path + "\"")
             Web.process(app, request, false)
         }
@@ -293,24 +313,52 @@ UNUSED - MOB -- better to set in Request
             This call writes the result of running the view template file back to the client.
             @param viewName Name of the view to render to the client. The view template filename will be constructed by 
                 joining the views directory with the controller name and view name. E.g. views/Controller/list.ejs.
+            @param options Additional options.
+            @option controller Optional controller for the view.
+            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
          */
-        function writeView(viewName: String = null): Void {
-            viewName ||= actionName
-            writeTemplate(request.dir.join(config.directories.views, controllerName, viewName).
-                joinExt(config.extensions.ejs))
+        function writeView(viewName = null, options: Object = {}): Void {
+            let controller = options.controller || controllerName
+            viewName ||= options.action || actionName
+            if (options.layout === undefined) {
+                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+            }
+            writeTemplate(request.dir.join(config.directories.views, controller, viewName).
+                joinExt(config.extensions.ejs), options)
         }
 
         /** 
             Render a view template from a path.
             This call writes the result of running the view template file back to the client.
             @param path Path to the view template to render and write to the client.
-            @param layouts Optional directory for layout files. Defaults to config.directories.layouts.
+            @param options Additional options.
+            @option layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
          */
-        function writeTemplate(path: Path, layouts: Path = null): Void {
+        function writeTemplate(path: Path, options: Object = {}): Void {
             log.debug(4, "writeTemplate: \"" + path + "\"")
+            let saveFilename = request.filename
             request.filename = path
-            layouts ||= config.directories.layouts
-            let app = TemplateBuilder(request, { layouts: layouts } )
+            if (options.layout === undefined) {
+                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+            }
+            let app = TemplateBuilder(request, options)
+            Web.process(app, request, false)
+            request.filename = saveFilename
+        }
+
+        /** 
+            Render a view template from a string literal.
+            This call writes the result of running the view template file back to the client.
+            @param page String literal containing the view template to render and write to the client.
+            @param layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
+         */
+        function writeTemplateLiteral(page: String, options: Object = {}): Void {
+            log.debug(4, "writeTemplateLiteral")
+            if (options.layout === undefined) {
+                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+            }
+            options.literal = page
+            let app = TemplateBuilder(request, options)
             Web.process(app, request, false)
         }
 
@@ -325,6 +373,10 @@ UNUSED - MOB -- better to set in Request
         /** @duplicate Request.setHeader */
         function setHeader(key: String, value: String, overwrite: Boolean = true): Void
             request.setHeader(key, value, overwrite)
+
+        /** @duplicate Request.setHeaders */
+        function setHeaders(headers: Object, overwrite: Boolean = true): Void
+            request.setHeaders(headers, overwrite)
 
         /** @duplicate Request.setStatus */
         function setStatus(status: Number): Void
@@ -371,6 +423,11 @@ UNUSED - MOB -- better to set in Request
             request.dontAutoFinalize()
 
         /**************************************** Private ******************************************/
+
+        private function checkSecurityToken() {
+            request.checkSecurityToken()
+        }
+
         /*
             Open database. Expects ejsrc configuration:
 
@@ -392,7 +449,9 @@ UNUSED - MOB -- better to set in Request
                 if (dbconfig.module && !global[dbclass]) {
                     global.load(dbconfig.module + ".mod")
                 }
-                new global[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
+                let module = dbconfig.module || "public"
+                // new global[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
+                new global.(module)::[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
             }
         }
 
@@ -446,7 +505,7 @@ UNUSED - MOB -- better to set in Request
          */
         # Config.Legacy
         function afterFilter(fn, options: Object = null): Void
-            afterCheck(fn, options)
+            checkAfter(fn, options)
 
         /** 
             @hide
@@ -462,7 +521,7 @@ UNUSED - MOB -- better to set in Request
          */
         # Config.Legacy
         function beforeFilter(fn, options: Object = null): Void
-            beforeCheck(fn, options)
+            checkBefore(fn, options)
 
         /**
             @hide
@@ -525,13 +584,8 @@ UNUSED - MOB -- better to set in Request
             @deprecated 2.0.0
          */
         # Config.Legacy
-        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String {
-            options = options.clone()
-            options.action = action;
-            options.id = id;
-            options.query = query;
-            makeUri(options)
-        }
+        function makeUrl(action: String, id: String = null, options: Object = {}, query: Object = null): String
+            link({ action, id, query })
 
         /**
             @hide

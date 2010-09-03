@@ -130,7 +130,7 @@ module ejs {
         }
 
         /** 
-            Add an observer for a set of events.
+            Add an observer on a set of events.
             The callback will be invoked when the requested event is fired by calling Emitter.fire. When the callback 
             runs, it will be invoked with the value of "this" relevant to the context of the callback. If the callback
             is a class method, the value of "this" will be the object instance. Global functions will have "this" set to
@@ -139,7 +139,7 @@ module ejs {
             The name can be a string or an array of event strings.
             @param callback Function to call when the event is received.
          */
-        function observe(name: Object!, callback: Function!): Void {
+        function on(name: Object!, callback: Function!): Void {
             if (name is String) {
                 addOneObserver(name, callback)
             } else if (name is Array) {
@@ -151,7 +151,11 @@ module ejs {
             }
         }
 
-        private function removeOneObserver(name: String, callback: Function): Void {
+        //  MOB
+        function observe(name: Object!, callback: Function!): Void
+            on(name, callback)
+
+        private function removeOneObserver(name: String!, callback: Function): Void {
             var observers: Array? = endpoints[name]
             for (let i in observers) {
                 var e: Endpoint = observers[i]
@@ -163,11 +167,11 @@ module ejs {
         }
 
         /** 
-            Remove a registered observer.
+            Turn off and Remove a registered observer.
             @param name Event name used when the observer was added.
             @param callback Callback function used when the observer was added.
          */
-        function removeObserver(name: Object, callback: Function): Void {
+        function off(name: Object!, callback: Function): Void {
             if (name is String) {
                 removeOneObserver(name, callback)
             } else if (name is Array) {
@@ -178,6 +182,9 @@ module ejs {
                 throw new Error("Bad name type for removeObserver")
             }
         }
+        function removeObserver(name: Object!, callback: Function): Void
+            off(name, callback)
+
 
         /** 
             @hide 

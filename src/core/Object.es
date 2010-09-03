@@ -244,10 +244,17 @@ MOB -- inconsistent with JSON.baseClasses
   
         /**
             Get the type for an object. If the object is an instance, this is the class type object. If the object is a
-            type, this value is "Type".
+            type, this value is Type.
             @return A type object
          */
         native static function getType(obj: Object): Type
+  
+        /**
+            Get the name of the type for an object. If the object is an instance, this is the name of the class type object.
+            If the object is a type, this value is "Type". 
+            @return A type object
+         */
+        native static function getTypeName(obj: Object): String
   
         /**
             Test if the object is a type object
@@ -270,7 +277,7 @@ MOB -- inconsistent with JSON.baseClasses
   
     /**
         Return the name of a type. This is a fixed version of the standard "typeof" operator. It returns the real
-        Ejscript underlying type name. 
+        Ejscript underlying type name. This call is an alias for Object.getTypeName(o).
         @param o Object or value to examine. 
         @return A string type name. 
         @spec ejs

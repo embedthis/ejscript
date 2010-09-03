@@ -630,6 +630,7 @@ static int sendRequest(HttpConn *conn, cchar *method, cchar *url)
 static int retryRequest(HttpConn *conn, cchar *url) 
 {
     HttpRx  *rx;
+    HttpUri *target, *location;
     char    *redirect;
     cchar   *msg, *sep;
     int     count, redirectCount;
@@ -649,10 +650,14 @@ static int retryRequest(HttpConn *conn, cchar *url)
         if (sendRequest(conn, method, url) < 0) {
             return MPR_ERR_CANT_WRITE;
         }
-        if (httpWait(conn, NULL, HTTP_STATE_PARSED, conn->limits->requestTimeout) == 0) {
+        if (httpWait(conn, conn->dispatcher, HTTP_STATE_PARSED, conn->limits->requestTimeout) == 0) {
             if (httpNeedRetry(conn, &redirect)) {
                 if (redirect) {
-                    url = resolveUrl(conn, redirect);
+                    location = httpCreateUri(conn, redirect, 0);
+                    target = httpJoinUri(conn, conn->tx->parsedUri, 1, &location);
+                    url = httpUriToString(conn, target, 1);
+                    mprFree(location);
+                    mprFree(target);
                     httpPrepClientConn(conn, HTTP_NEW_REQUEST);
                 }
                 /* Count redirects and auth retries */
@@ -767,7 +772,7 @@ static int doRequest(HttpConn *conn, cchar *url)
         return MPR_ERR_CANT_CONNECT;
     }
     while (!conn->error && conn->state < HTTP_STATE_COMPLETE && mprGetElapsedTime(conn, mark) <= limits->requestTimeout) {
-        httpWait(conn, NULL, HTTP_STATE_COMPLETE, 10);
+        httpWait(conn, conn->dispatcher, HTTP_STATE_COMPLETE, 10);
         readBody(conn);
     }
     if (conn->state < HTTP_STATE_COMPLETE && !conn->error) {

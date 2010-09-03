@@ -595,11 +595,13 @@ static int createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
 
     mprLog(cp, 7, "    global property section %s", qname.name);
 
+#if 1 || (UNUSED && MOB)
     if (trait->type) {
         if (trait->type == ejs->namespaceType || (!ejs->initialized && (strcmp(trait->type->qname.name, "Namespace") == 0))){
             attributes |= EJS_PROP_HAS_VALUE;
         }
     }
+#endif
     rc = 0;
     rc += ecEncodeByte(cp, EJS_SECT_PROPERTY);
     rc += ecEncodeName(cp, &qname);
@@ -608,6 +610,7 @@ static int createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
     rc += ecEncodeNumber(cp, (cp->bind || (block != ejs->global)) ? slotNum : -1);
     rc += ecEncodeGlobal(cp, (EjsObj*) trait->type, trait->type ? &trait->type->qname : 0);
 
+#if 1 || UNUSED
     if (attributes & EJS_PROP_HAS_VALUE) {
         if (vp && ejsIsNamespace(vp)) {
             rc += ecEncodeString(cp, ((EjsNamespace*) vp)->name);
@@ -615,6 +618,7 @@ static int createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
             rc += ecEncodeString(cp, 0);
         }
     }
+#endif
     mp->checksum += sum(qname.name, 0);
     return rc;
 }

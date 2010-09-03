@@ -16,14 +16,14 @@ public class TestController extends Controller {
         writeFile("../utils.es")
     }
     action function index() {
-        writeView()
+        writeView(null, { layout: null })
     }
     action function viewFile() {
-        writeTemplate("list.ejs")
+        writeTemplate("list.ejs", { layout: null })
     }
     action function partial() {
-        writePartialTemplate("web/part1.ejs")
-        writePartialTemplate("web/part2.ejs")
+        writePartialTemplate("web/part1.ejs", { layout: null })
+        writePartialTemplate("web/part2.ejs", { layout: null })
         write()
     }
     action function response() {

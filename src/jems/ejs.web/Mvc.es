@@ -30,7 +30,7 @@ module ejs.web {
                 app: "",
                 //  MOB - should be moved to files
                 appmod: "App.mod",
-                views: {
+                view: {
                     connectors: { },
                     formats: { },
                 },
@@ -96,11 +96,14 @@ module ejs.web {
             loadComponent(request, appmod, files, deps)
 
             /* Load controller */
-            let controller = request.params.controller
-            let ucontroller = controller.toPascal()
-            let mod = dir.join(dirs.cache, ucontroller).joinExt(ext.mod)
+            let params = request.params
+            if (!params.controller) {
+                throw "No controller specified by route: " + request.route.name
+            }
+            let controller = params.controller = params.controller.toPascal()
+            let mod = dir.join(dirs.cache, controller).joinExt(ext.mod)
             if (!mod.exists || config.cache.reload) {
-                files = [dir.join(dirs.controllers, ucontroller).joinExt(ext.es)]
+                files = [dir.join(dirs.controllers, controller).joinExt(ext.es)]
                 deps = [dir.join(dirs.controllers, "Base").joinExt(ext.es)]
                 loadComponent(request, mod, files, deps)
             } else {
@@ -109,6 +112,20 @@ module ejs.web {
 /* MOB -- implement
             request.logger = logger
 */
+        }
+
+        private function rebuildComponent(request: Request, mod: Path, files: Array) {
+            let code = "require ejs.web\n"
+            for each (file in files) {
+                let path = Path(file)
+                if (!path.exists) {
+                    request.status = Http.NotFound
+                    throw "Can't find required component: \"" + path + "\""
+                }
+                code += path.readString()
+            }
+            request.log.debug(2, "Rebuild component: " + mod + " files: " + files)
+            eval(code, mod)
         }
 
         /** 
@@ -135,21 +152,15 @@ module ejs.web {
                 rebuild = true
             }
             if (rebuild) {
-                let code = "require ejs.web\n"
-                for each (file in files) {
-                    let path = Path(file)
-                    if (!path.exists) {
-                        throw "Can't find required component: \"" + path + "\""
-                    }
-                    code += path.readString()
-                }
-                request.log.debug(4, "Rebuild component: " + mod + " files: " + files)
-                eval(code, mod)
-
+                rebuildComponent(request, mod, files)
             } else if (!loaded[mod]) {
                 request.log.debug(4, "Reload component : " + mod)
-                global.load(mod)
-                loaded[mod] = new Date
+                try {
+                    global.load(mod)
+                    loaded[mod] = new Date
+                } catch (e) {
+                    rebuildComponent(request, mod, files)
+                }
 
             } else {
                 request.log.debug(4, "Use existing component: " + mod)
@@ -180,7 +191,7 @@ module ejs.web {
         let mvc: Mvc = Mvc.apps[request.dir] || (Mvc.apps[request.dir] = new Mvc(request))
         //  MOB -- rename to load?
         mvc.init(request)
-        let cname: String = request.params["controller"].toPascal() + "Controller"
+        let cname: String = request.params.controller + "Controller"
         return Controller.create(request, cname).app
     }
 }

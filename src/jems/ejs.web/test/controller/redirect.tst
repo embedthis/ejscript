@@ -16,7 +16,7 @@ public class TestController extends Controller {
         write("Hello List")
     }
     action function phase1() {
-        redirectAction("phase2")
+        redirect("phase2")
     }
     action function phase2() {
         write("Hello Phase 2")
@@ -26,7 +26,6 @@ public class TestController extends Controller {
 load("../utils.es")
 server = controllerServer(HTTP)
 
-
 //  redirect()
 let http = new Http
 http.followRedirects = true
@@ -34,7 +33,6 @@ http.get(HTTP + "/test/index")
 http.wait()
 assert(http.response == "Hello List")
 http.close()
-
 
 //  redirectAction()
 let http = new Http

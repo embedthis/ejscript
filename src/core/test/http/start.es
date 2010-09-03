@@ -6,7 +6,7 @@ require ejs.web
 let HTTP = ":" + (App.config.test.http_port || "6700")
 let HTTPS = ":" + (App.config.test.ssl_port || "6743")
 
-var router = Router(Router.TopRoutes)
+var router = Router(Router.Top)
 
 //  Start regular server
 let server: HttpServer = new HttpServer("web")

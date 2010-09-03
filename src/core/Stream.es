@@ -44,7 +44,7 @@ module ejs {
 
         /** 
             Close the stream. 
-            @event close Issued before closing the stream.
+            @event close A close event is issued before closing the stream.
          */
         function close(): Void
 

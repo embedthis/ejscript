@@ -62,7 +62,7 @@ class EjsMvc {
             models: Path("models"),
             views: Path("views"),
             src: Path("src"),
-            web: Path("web"),
+            static: Path("static"),
         },
         extensions: {
             es: "es",
@@ -83,9 +83,9 @@ class EjsMvc {
                     rest: "html",
                 },
                 formats: {
-                    currency: "$%10f",
                     Date: "%a %e %b %H:%M",
                 },
+                // helpers: []
             },
         },
         session: {
@@ -102,11 +102,13 @@ class EjsMvc {
         if (config.mvc) {
             dirs = config.directories
             dirs.home = App.dir
+            //  MOB -- should these come from ejsrc
             dirs.lib = App.exeDir.join("../lib")
             dirs.mod = App.exeDir.join("../modules")
             for (d in dirs) {
                 dirs[d] = Path(dirs[d])
             }
+            //  MOB -- should this come from ejsrc
             layoutPage = dirs.layouts.join("default.ejs")
             mvc = Path(App.args[0]).basename
         }
@@ -490,7 +492,9 @@ print(e)
             trace("[PARSE]", file)
         }
         let parser: TemplateParser = new TemplateParser
-        results = parser.buildView(controllerPrefix + viewName, file.readString(), { layout: layoutPage })
+        // results = parser.buildView(controllerPrefix + viewName, file.readString(), { layout: layoutPage })
+        // results = parser.build(file.readString(), { layout: layoutPage })
+        results = Loader.wrap(parser.build(file.readString(), { layout: layoutPage }))
         let intermediate: Path = dirs.cache.join(md5(file)).joinExt(ext.es)
         let out = intermediate.replaceExt(ext.mod)
         try {
@@ -1129,7 +1133,7 @@ print(e)
     }
 
     function createMigration(model: String, attributes: Array, comment: String, tableExists: Boolean): Void {
-        let tableName = plural(model).toPascal()
+        let tableName = toPlural(model).toPascal()
         let forward = ''
         let backward = ''
 
@@ -1399,11 +1403,6 @@ print(e)
         }
     }
 
-    //  TODO - share with rest of framework
-    function plural(word: String): String {
-        return word + "s"
-    }
-
     function upgradeApp() {
         if (!dirs.cache.exists || !isDir(dirs.cache)) {
             makeDir(dirs.cache)
@@ -1434,8 +1433,8 @@ class Templates {
     },
 
     database: {
+        module: "ejs.db",
         class: "Database",
-        module: "",
         adapter: "sqlite3",
         timeout: 5000,
         debug: {
@@ -1459,10 +1458,10 @@ class Templates {
         enable: true,
         location: "stdout",
         level: 1,
+        showClient: false,
     },
 
     mvc: {
-        compiler: "ejsc --debug --web",
         start: "start.es",
     },
 
@@ -1489,6 +1488,7 @@ class Templates {
                 currency:   "$%10f",
                 Date:       "%a %e %b %H:%M",
             },
+            helpers: [],
         },
     },
 
@@ -1780,7 +1780,7 @@ let server: HttpServer = new HttpServer("web")
 //  MOB - change to RestfulRoutes
 var router = Router(Router.LegacyRoutes)
 
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
     Web.serve(request, router)
 })
@@ -1820,7 +1820,7 @@ module App {
      ***************************  Default Layout templates ******************
      */
     public static const DefaultLayout = 
-'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+'<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
@@ -1828,6 +1828,7 @@ module App {
     <link href="web/images/favicon.ico" rel="shortcut icon" />
     <% stylesheet(["web/layout.css", "web/themes/default.css" ]); %>
     <% script(["web/js/jquery.js", "web/js/jquery.tablesorter.js", "web/js/jquery.ejs.js"]) %>
+    <% securityToken() %>
 </head>
 
 <body>

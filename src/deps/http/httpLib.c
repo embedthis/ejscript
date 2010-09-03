@@ -2364,6 +2364,9 @@ void httpPrepClientConn(HttpConn *conn, int retry)
         if (conn->keepAliveCount >= 0) {
             /* Eat remaining input incase last request did not consume all data */
             httpConsumeLastRequest(conn);
+        } else {
+            mprFree(conn->input);
+            conn->input = 0;
         }
         if (retry && (tx = conn->tx) != 0) {
             headers = tx->headers;
@@ -2502,6 +2505,7 @@ static void writeEvent(HttpConn *conn)
     if (conn->tx) {
         httpEnableQueue(conn->tx->queue[HTTP_QUEUE_TRANS].prevQ);
         httpServiceQueues(conn);
+        httpProcess(conn, NULL);
     }
 }
 
@@ -3419,6 +3423,7 @@ HttpStatusCode HttpStatusCodes[] = {
     { 409, "409", "Conflict" },
     { 410, "410", "Length Required" },
     { 411, "411", "Length Required" },
+    { 412, "412", "Precondition Failed" },
     { 413, "413", "Request Entity Too Large" },
     { 414, "414", "Request-URI Too Large" },
     { 415, "415", "Unsupported Media Type" },
@@ -3622,10 +3627,8 @@ static int httpTimer(Http *http, MprEvent *event)
             diff = (conn->lastActivity + requestTimeout) - http->now;
             inactivity = 0;
         }
+
         if (diff < 0 && !conn->complete) {
-#if UNUSED
-            httpRemoveConn(http, conn);
-#endif
             if (conn->rx) {
                 if (inactivity) {
                     httpConnError(conn, HTTP_CODE_REQUEST_TIMEOUT,
@@ -4318,7 +4321,8 @@ static void netOutgoingService(HttpQueue *q)
             }
         }
         if (tx->file) {
-            return httpSendOutgoingService(q);
+            httpSendOutgoingService(q);
+            return;
         }
     }
     while (q->first || q->ioIndex) {
@@ -6496,6 +6500,9 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
     char        *start, *end;
     int         len;
 
+    if (packet == NULL) {
+        return 0;
+    }
     if (conn->server && !httpValidateLimits(conn->server, HTTP_VALIDATE_OPEN_REQUEST, conn)) {
         return 0;
     }
@@ -6571,7 +6578,7 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
 {
     HttpRx      *rx;
     char        *method, *uri, *protocol;
-    int         methodFlags, traced, level;
+    int         methodFlags, traced;
 
     mprLog(conn, 4, "New request from %s:%d to %s:%d", conn->ip, conn->port, conn->sock->ip, conn->sock->port);
 
@@ -6649,16 +6656,17 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
         httpProtocolError(conn, HTTP_CODE_NOT_ACCEPTABLE, "Unsupported HTTP protocol");
     }
     rx->flags |= methodFlags;
-    rx->method = method;
+    rx->method = mprStrUpper(method);
 
     if (httpSetUri(conn, uri) < 0) {
         httpProtocolError(conn, HTTP_CODE_BAD_REQUEST, "Bad URL format");
     }
     httpSetState(conn, HTTP_STATE_FIRST);
-
+#if UNUSED
     if (!traced && (level = httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_FIRST, NULL)) >= 0) {
         mprLog(conn, level, "%s %s %s", method, uri, protocol);
     }
+#endif
 }
 
 
@@ -6861,7 +6869,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
             if ((strcmp(key, "if-modified-since") == 0) || (strcmp(key, "if-unmodified-since") == 0)) {
                 MprTime     newDate = 0;
                 char        *cp;
-                bool        ifModified = (key[3] == 'M');
+                bool        ifModified = (key[3] == 'm');
 
                 if ((cp = strchr(value, ';')) != 0) {
                     *cp = '\0';
@@ -6878,7 +6886,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
 
             } else if ((strcmp(key, "if-match") == 0) || (strcmp(key, "if-none-match") == 0)) {
                 char    *word, *tok;
-                bool    ifMatch = key[3] == 'M';
+                bool    ifMatch = key[3] == 'm';
 
                 if ((tok = strchr(value, ';')) != 0) {
                     *tok = '\0';
@@ -6965,7 +6973,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
 
 #if BLD_DEBUG
         case 'x':
-            if (strcmp(key, "x-appweb-chunk-size") == 0) {
+            if (strcmp(key, "x-chunk-size") == 0) {
                 tx->chunkSize = atoi(value);
                 if (tx->chunkSize <= 0) {
                     tx->chunkSize = 0;
@@ -7284,8 +7292,9 @@ static bool processContent(HttpConn *conn, HttpPacket *packet)
     rx = conn->rx;
     q = &conn->tx->queue[HTTP_QUEUE_RECEIVE];
 
-    //  MOB -- clarify what remainingContent is when chunked. Need simple way to tell end of input
-
+    if (packet == NULL) {
+        return 0;
+    }
     if (conn->complete || conn->connError || rx->remainingContent <= 0) {
         httpSetState(conn, HTTP_STATE_RUNNING);
         return 1;
@@ -7379,7 +7388,6 @@ void httpCloseRx(HttpConn *conn)
         conn->connError = 1;
     }
     httpFinalize(conn);
-    conn->abortPipeline = 1;
     if (conn->state < HTTP_STATE_COMPLETE && !conn->advancing) {
         httpProcess(conn, NULL);
     }
@@ -7637,8 +7645,8 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
         mprAssert(conn->state >= HTTP_STATE_BEGIN);
         return MPR_ERR_BAD_STATE;
     } 
+    saveAsync = conn->async;
     if (conn->waitHandler.fd < 0) {
-        saveAsync = conn->async;
         conn->async = 1;
         eventMask = MPR_READABLE;
         if (!conn->writeComplete) {
@@ -7652,25 +7660,6 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
     http->now = mprGetTime(conn);
     expire = http->now + timeout;
     while (!conn->error && conn->state < state && conn->sock && !mprIsSocketEof(conn->sock)) {
-#if UNUSED
-        fd = conn->sock->fd;
-        if (!conn->writeComplete) {
-            events = mprWaitForSingleIO(conn, fd, MPR_WRITABLE, 0);
-        } else {
-            if (mprSocketHasPendingData(conn->sock)) {
-                events = MPR_READABLE;
-            } else {
-                events = mprWaitForSingleIO(conn, fd, MPR_READABLE, 0);
-            }
-        }
-        http->now = mprGetTime(conn);
-        if (events) {
-            httpCallEvent(conn, events);
-        }
-        if (conn->error) {
-            return MPR_ERR_BAD_STATE;
-        }
-#endif
         remainingTime = (int) (expire - http->now);
         if (remainingTime <= 0) {
             break;
@@ -7678,7 +7667,7 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
         mprAssert(!mprSocketHasPendingData(conn->sock));
         mprServiceEvents(conn, dispatcher, remainingTime, MPR_SERVICE_ONE_THING);
     }
-    if (addedHandler) {
+    if (addedHandler && conn->waitHandler.fd >= 0) {
         mprRemoveWaitHandler(&conn->waitHandler);
         conn->async = saveAsync;
     }
@@ -7699,7 +7688,7 @@ void httpWriteBlocked(HttpConn *conn)
 {
     mprLog(conn, 7, "Write Blocked");
     conn->canProceed = 0;
-    conn->writeBlocked = 0;
+    conn->writeBlocked = 1;
 }
 
 
@@ -8469,8 +8458,8 @@ int httpValidateLimits(HttpServer *server, int event, HttpConn *conn)
             mprRemoveHash(server->clients, conn->ip);
         }
         server->clientCount = mprGetHashCount(server->clients);
-        mprLog(server, 4, "Close connection. Active requests %d, active clients %d", 
-            server->requestCount, server->clientCount);
+        mprLog(server, 4, "Close connection %d. Active requests %d, active clients %d", 
+            conn->seqno, server->requestCount, server->clientCount);
         break;
     
     case HTTP_VALIDATE_OPEN_REQUEST:
@@ -8908,7 +8897,7 @@ void httpInitTrace(HttpTrace *trace)
     mprAssert(trace);
 
     for (dir = 0; dir < HTTP_TRACE_MAX_DIR; dir++) {
-        trace[dir].levels[HTTP_TRACE_CONN] = 2;
+        trace[dir].levels[HTTP_TRACE_CONN] = 3;
         trace[dir].levels[HTTP_TRACE_FIRST] = 2;
         trace[dir].levels[HTTP_TRACE_HEADER] = 3;
         trace[dir].levels[HTTP_TRACE_BODY] = 4;
@@ -9646,15 +9635,18 @@ void httpSetMimeType(HttpConn *conn, cchar *mimeType)
 void httpWriteHeaders(HttpConn *conn, HttpPacket *packet)
 {
     Http        *http;
+    HttpRx      *rx;
     HttpTx      *tx;
     HttpUri     *parsedUri;
     MprHash     *hp;
     MprBuf      *buf;
+    int         level;
 
     mprAssert(packet->flags == HTTP_PACKET_HEADER);
 
     http = conn->http;
     tx = conn->tx;
+    rx = conn->rx;
     buf = packet->content;
 
     if (tx->flags & HTTP_TX_HEADERS_CREATED) {
@@ -9722,6 +9714,10 @@ void httpWriteHeaders(HttpConn *conn, HttpPacket *packet)
     }
     tx->headerSize = mprGetBufLength(buf);
     tx->flags |= HTTP_TX_HEADERS_CREATED;
+
+    if ((level = httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_FIRST, NULL)) == mprGetLogLevel(tx)) {
+        mprLog(conn, level, "%s %s %d", rx->method, rx->uri, tx->status);
+    }
 }
 
 
@@ -10564,8 +10560,9 @@ HttpUri *httpCreateUriFromParts(MprCtx ctx, cchar *scheme, cchar *host, int port
         up->port = port;
     }
     if (path) {
-        while (path[0] == '/' && path[1] == '/')
+        while (path[0] == '/' && path[1] == '/') {
             path++;
+        }
         up->path = mprStrdup(up, path);
     }
     if (up->path == 0) {
@@ -10670,22 +10667,14 @@ HttpUri *httpCompleteUri(HttpUri *uri, HttpUri *missing)
     if (uri->scheme == 0) {
         uri->scheme = scheme;
     }
+    if (uri->port == 0 && port) {
+        /* Don't complete port if there is a host */
+        if (uri->host == 0) {
+            uri->port = port;
+        }
+    }
     if (uri->host == 0) {
         uri->host = host;
-    }
-    if (uri->port == 0) {
-        if (port) {
-            uri->port = port;
-#if UNUSED
-        //  MOB - don't complete as it implies an absolute URL
-        } else {
-            if (strcmp(uri->scheme, "https") == 0) {
-                uri->port = 443;
-            } else { 
-                uri->port = 80;
-            }
-#endif
-        }
     }
     return uri;
 }
@@ -10761,11 +10750,13 @@ char *httpFormatUri(MprCtx ctx, cchar *scheme, cchar *host, int port, cchar *pat
 
 /*
     This returns a URI relative to the base for the given target
+
+    uri = target.relative(base)
  */
 HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup)
 {
     HttpUri     *uri;
-    char        *targetPath, *basePath, *bp, *cp, *tp;
+    char        *targetPath, *basePath, *bp, *cp, *tp, *startDiff;
     int         i, baseSegments, commonSegments;
 
     if (target == 0) {
@@ -10775,15 +10766,11 @@ HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup)
         /* If target is relative, just use it. If base is relative, can't use it because we don't know where it is */
         return (dup) ? httpCloneUri(ctx, target, 0) : target;
     }
-    if (base->scheme && target->scheme) {
-        if (base->scheme != target->scheme || (base->scheme && strcmp(base->scheme, target->scheme) != 0)) {
-            return (dup) ? httpCloneUri(ctx, target, 0) : target;
-        }
+    if (base->scheme && target->scheme && strcmp(base->scheme, target->scheme) != 0) {
+        return (dup) ? httpCloneUri(ctx, target, 0) : target;
     }
-    if (base->host && target->host) {
-        if (base->host != target->host || (base->host && strcmp(base->host, target->host) != 0)) {
-            return (dup) ? httpCloneUri(ctx, target, 0) : target;
-        }
+    if (base->host && target->host && (base->host && strcmp(base->host, target->host) != 0)) {
+        return (dup) ? httpCloneUri(ctx, target, 0) : target;
     }
     if (getPort(base) != getPort(target)) {
         return (dup) ? httpCloneUri(ctx, target, 0) : target;
@@ -10793,20 +10780,22 @@ HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup)
     targetPath = httpNormalizeUriPath(ctx, target->path);
     basePath = httpNormalizeUriPath(ctx, base->path);
 
+    /* Count trailing "/" */
     for (baseSegments = 0, bp = basePath; *bp; bp++) {
-        if (*bp == '/' && bp[1]) {
+        if (*bp == '/') {
             baseSegments++;
         }
     }
 
     /*
-        Find portion of path that matches the home directory, if any.
+        Find portion of path that matches the base, if any.
      */
     commonSegments = 0;
-    for (bp = base->path, tp = target->path; *bp && *tp; bp++, tp++) {
+    for (bp = base->path, tp = startDiff = target->path; *bp && *tp; bp++, tp++) {
         if (*bp == '/') {
             if (*tp == '/') {
                 commonSegments++;
+                startDiff = tp;
             }
         } else {
             if (*bp != *tp) {
@@ -10816,25 +10805,32 @@ HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup)
     }
 
     /*
-        Add one more segment if the last segment matches. Handle trailing separators
+        Add one more segment if the last segment matches. Handle trailing separators.
      */
+#if OLD
     if ((*bp == '/' || *bp == '\0') && (*tp == '/' || *tp == '\0')) {
         commonSegments++;
     }
-    if (*tp == '/') {
-        tp++;
+#endif
+    if (*startDiff == '/') {
+        startDiff++;
     }
     
-    //  MOB -- should this remove scheme, host, port to be truly relative
-    uri = httpCloneUri(ctx, target, 0);
+    if ((uri = httpCloneUri(ctx, target, 0)) == 0) {
+        return 0;
+    }
+    uri->host = 0;
+    uri->scheme = 0;
+    uri->port = 0;
+
     uri->path = cp = mprAlloc(ctx, baseSegments * 3 + (int) strlen(target->path) + 2);
     for (i = commonSegments; i < baseSegments; i++) {
         *cp++ = '.';
         *cp++ = '.';
         *cp++ = '/';
     }
-    if (*tp) {
-        strcpy(cp, tp);
+    if (*startDiff) {
+        strcpy(cp, startDiff);
     } else if (cp > uri->path) {
         /*
             Cleanup trailing separators ("../" is the end of the new path)
@@ -10850,18 +10846,21 @@ HttpUri *httpGetRelativeUri(MprCtx ctx, HttpUri *base, HttpUri *target, int dup)
 }
 
 
-HttpUri *httpJoinUriPath(HttpUri *uri, HttpUri *base, HttpUri *other)
+/*
+    result = base.join(other)
+ */
+HttpUri *httpJoinUriPath(HttpUri *result, HttpUri *base, HttpUri *other)
 {
     char    *sep;
 
     if (other->path[0] == '/') {
-        uri->path = mprStrdup(uri, other->path);
+        result->path = mprStrdup(result, other->path);
     } else {
         sep = ((base->path[0] == '\0' || base->path[strlen(base->path) - 1] == '/') || 
                (other->path[0] == '\0' || other->path[0] == '/'))  ? "" : "/";
-        uri->path = mprStrcat(uri, -1, base->path, sep, other->path, NULL);
+        result->path = mprStrcat(result, -1, base->path, sep, other->path, NULL);
     }
-    return uri;
+    return result;
 }
 
 
@@ -10894,14 +10893,17 @@ HttpUri *httpJoinUri(MprCtx ctx, HttpUri *uri, int argc, HttpUri **others)
         }
     }
     uri->ext = (char*) mprGetPathExtension(uri, uri->path);
-#if UNUSED
-    //  MOB -- should this normalize?
-    if (normalize) {
-        oldPath = uri->path;
-        uri->path = httpNormalizeUriPath(uri, uri->path);
-        mprFree(oldPath);
+    return uri;
+}
+
+
+HttpUri *httpMakeUriLocal(HttpUri *uri)
+{
+    if (uri) {
+        uri->host = 0;
+        uri->scheme = 0;
+        uri->port = 0;
     }
-#endif
     return uri;
 }
 
@@ -10996,7 +10998,7 @@ char *httpNormalizeUriPath(MprCtx ctx, cchar *pathArg)
 }
 
 
-HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, int relative)
+HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, int local)
 {
     HttpUri     *current, *other;
     int         i;
@@ -11004,7 +11006,7 @@ HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, i
     if ((current = httpCloneUri(ctx, base, 0)) == 0) {
         return 0;
     }
-    if (relative) {
+    if (local) {
         current->host = 0;
         current->scheme = 0;
         current->port = 0;
@@ -11038,13 +11040,6 @@ HttpUri *httpResolveUri(MprCtx ctx, HttpUri *base, int argc, HttpUri **others, i
         }
     }
     current->ext = (char*) mprGetPathExtension(current, current->path);
-#if UNUSED
-    if (normalize) {
-        oldPath = current->path;
-        current->path = httpNormalizeUriPath(current, current->path);
-        mprFree(oldPath);
-    }
-#endif
     return current;
 }
 
