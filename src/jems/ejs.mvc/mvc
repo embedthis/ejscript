@@ -1224,8 +1224,8 @@ print(e)
         let name = controller.toPascal()
         let path = dirs.controllers.join(name).joinExt(ext.es)
 
-        let stndActions: Array = [ "index", "list", "create", "edit", "update", "destroy" ]
-        let views: Array = [ "list", "edit" ]
+        let stndActions: Array = [ "create", "destroy", "edit", "index", "init", "show", "update" ]
+        let views: Array = [ "index", "edit" ]
         let actions: Array = []
 
         if (extraActions) {
@@ -1253,8 +1253,8 @@ print(e)
     /*  Create a scaffold views.  Usage: controllerName [actions ...]
      */
     function generateScaffoldViews(controller: String, model: String, extraActions: Array? = null): Void {
-        let stndActions: Array = [ "index", "list", "create", "edit", "update", "destroy" ]
-        let views: Array = [ "list", "edit" ]
+        let stndActions: Array = [ "create", "destroy", "edit", "index", "init", "show", "update" ]
+        let views: Array = [ "index", "edit" ]
         let actions: Array = stndActions.clone()
 
         if (extraActions) {
@@ -1273,7 +1273,7 @@ print(e)
                 data = Templates.ScaffoldEditView.replace(/\${MODEL}/g, model)
                 data = data.replace(/\${LOWER_MODEL}/g, model.toLowerCase())
                 break
-            case "list":
+            case "index":
                 data = Templates.ScaffoldListView.replace(/\${MODEL}/g, model)
                 break
             default:
@@ -1532,8 +1532,6 @@ public class ${NAME}Controller extends BaseController {
     function ${NAME}Controller() {
     }
 
-    use namespace action
-
     NEXT_ACTION
 }
 '
@@ -1553,56 +1551,47 @@ public class ${NAME}Controller extends BaseController {
     function ${NAME}Controller() {
     }
 
-    use namespace action
-
-    action function index() { 
-        renderView("list")
-    }
-
-    action function list() { 
+    action function create() {
+        ${LOWER_MODEL} = new ${MODEL}(params.${LOWER_MODEL})
+        if (${LOWER_MODEL}.save()) {
+            inform("New ${LOWER_MODEL} created")
+            redirect("index")
+        } else {
+            renderView("edit")
+        }
     }
 
     action function edit() {
         ${LOWER_MODEL} = ${MODEL}.find(params.id)
     }
 
-    action function create() {
+    action function index() {
+    }
+
+    action function init() {
         ${LOWER_MODEL} = new ${MODEL}
         renderView("edit")
     }
 
+    action function show() {
+        ${LOWER_MODEL} = ${MODEL}.find(params.id)
+    }
+
     action function update() {
-        if (params.commit == "Cancel") {
-            redirect("list")
-
-        } else if (params.commit == "Delete") {
-            destroy()
-
-        } else if (params.id) {
-            ${LOWER_MODEL} = ${MODEL}.find(params.id)
-            if (${LOWER_MODEL}.saveUpdate(params.${LOWER_MODEL})) {
-                inform("${MODEL} updated successfully.")
-                redirect("list")
-            } else {
-                /* Validation failed */
-                renderView("edit")
-            }
-
+        ${LOWER_MODEL} = ${MODEL}.find(params.id)
+        if (${LOWER_MODEL}.saveUpdate(params.${LOWER_MODEL})) {
+            inform("${MODEL} updated successfully.")
+            redirect("index")
         } else {
-            ${LOWER_MODEL} = new ${MODEL}(params.${LOWER_MODEL})
-            if (${LOWER_MODEL}.save()) {
-                inform("New ${LOWER_MODEL} created")
-                redirect("list")
-            } else {
-                renderView("edit")
-            }
+            /* Validation failed */
+            renderView("edit")
         }
     }
 
     action function destroy() {
         ${MODEL}.remove(params.id)
         inform("${MODEL} " + params.id + " removed")
-        redirect("list")
+        redirect("index")
     }
 
     NEXT_ACTION
@@ -1640,8 +1629,8 @@ public class ${NAME}Controller extends BaseController {
     </table>
 
     <% button("OK", "commit") %>
-    <% button("Cancel", "commit") %>
-    <% if (${LOWER_MODEL}.id) button("Delete", "commit") %>
+    <% buttonLink("Cancel", "index") %>
+    <% if (${LOWER_MODEL}.id) buttonLink("Delete", "destroy") %>
 <% endform() %>
 '
 

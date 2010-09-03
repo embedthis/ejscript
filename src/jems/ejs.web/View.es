@@ -156,21 +156,17 @@ module ejs.web {
             getConnector("alert", options).alert(text, options)
         }
 
-/*  MOB - deprecate link vs label
-MOB - doc not right
-            Emit a text link to an action. The URI is constructed from the given action and the current controller. 
-            The controller may be overridden by setting the controller option.
+        /**
+            Emit an anchor. This is lable inside an anchor reference. 
             @param text Link text to display
             @param options Optional extra options. See $View for a list of the standard options.
-            @option controller String Name of the target controller for the given action
-            @option uri String Use a URI rather than action and controller for the target uri.
+         */
         function anchor(text: String, options: Object = {}): Void {
             options = getOptions(options)
             options.click ||= true
             // options.action ||= text.split(" ")[0].toLowerCase()
             getConnector("label", options).label(text, options)
         }
- */
 
         /**
             Render a form button. This creates a button suitable for use inside an input form. When the button is clicked,
@@ -179,7 +175,7 @@ MOB - doc not right
                 initial value to display. The field should be a property of the form control record. It can be a simple 
                 property of the record or it can have multiple parts, such as: field.field.field. If this call is used 
                 without a form control record, the actual data value should be supplied via the options.value property.
-            @param label Text label to display in the button.
+            @param label Text label to display in the button and value to send when the form is submitted.
             @param options Optional extra options. See $View for a list of the standard options.
             Examples:
                 button("commit", "OK")
@@ -578,12 +574,12 @@ print("CATCH " + e)
                 and the cell text is the object property values.
             @param options Optional extra options. See $View for a list of the standard options.
             @option keyFormat String Define how the keys will be handled for click and edit URIs. 
-                Set to one of the set: ["names", "pairs", "params"]. Default is "params".
-                Set to "pairs" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
+                Set to one of the set: ["body", "path", "query"]. Default is "path".
+                Set to "query" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
                     key and value are formatted as "key=value".
-                Set to "params" to add the key/value pair to the POST body parameters. 
-                Set to "tokens" to add only the key names to the request URI. Each name is separated using "/". This
-                    provides "pretty" URIs that are easily tokenized by the router.
+                Set to "params" to add the key/value pair to the request body parameters. 
+                Set to "path" to add the key values in order to the request URI. Each value is separated using "/". This
+                    provides "pretty" URIs that can be easily tokenized by router templates.
                 If you require more complex key management, set click or edit to a callback function and format the 
                 URI and params manually.
             @option cell Boolean Set to true to make click or edit links apply per cell instead of per row. 
@@ -894,13 +890,19 @@ MOB -- review and rethink this
 
         private function getOptions(options: Object): Object {
             if (options is String) {
-                if (options.startsWith("/") || options.contains("/")) {
-                    options = {uri: options.toString() }
+                if (options[0] == "@") {
+                    options = options.slice(1)
+                    if (options.contains(/[\.\/]/)) {
+                        let [controller, action] = options.split(/[\.\/]/)
+                        options = {controller: controller, action: action || "index"}
+                    } else { 
+                        options = {action: options}
+                    }
                 } else {
-                    options = {action: options}
+                    options = {uri: options.toString()}
                 }
             } else if (options is Uri) {
-                options = {uri: options.toString() }
+                options = {uri: options.toString()}
             }
             return options
         }

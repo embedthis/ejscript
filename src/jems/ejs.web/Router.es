@@ -859,7 +859,7 @@ MOB - doc
             @option route Name of the route
             @return A Uri object.
          */
-        public function completeLink(uri: Uri, request: Request, options: Object): Uri {
+        public function completeLink(options: Object, request: Request): Uri {
             if (options.linker) {
                 return options.linker(uri, request, options)
             }
@@ -873,10 +873,10 @@ MOB - doc
             if (!route) {
                 throw new ReferenceError("Unknown route \"" + routeName + "\"")
             }
-// print("RESOURCE \"" + resource + "\" template " + template)
-            uri.path = Uri.template(route.template, options, {action: "", controller: request.params.controller}).path
-// print("RESULT " + uri)
-            return uri
+            let result = Uri.template("/{scriptName}" + route.template, options, 
+                {scriptName: request.scriptName, action: "", controller: request.params.controller}).path
+print("COMPLETE " + result + " RESOURCE \"" + resource + "\" template " + template)
+            return result
         }
     }
 }

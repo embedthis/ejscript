@@ -253,9 +253,13 @@ div.-ejs-formError h2 {
     font-size: 12pt;
 }
 
-.-ejs-clickable {
+[data-click] {
     cursor: pointer;
 }
+[data-click]:hover { 
+    color: #CC4477;
+}
+
 
 /*
     Flash web control

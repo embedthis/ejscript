@@ -1034,7 +1034,7 @@ static HttpUri *createHttpUriFromHash(Ejs *ejs, MprCtx ctx, EjsObj *arg, int com
     int         port;
 
     /*
-        This permits a uri property override. Used in ejs.web::View
+        This permits a uri property override. Used in ejs.web::View.getOptions()
      */
     uriObj = ejsGetPropertyByName(ejs, arg, EN(&qname, "uri"));
     if (uriObj) {

@@ -103,7 +103,7 @@ module ejs {
             encode preserves:           ! * ' ( ) # ; , / ? : @ 
 
             NOTE: encodeComponent is encoding [] which is hard for IPv6
-            TODO:
+            MOB:
                 Don't encode [] for IPv6
                 Encode ! ' ( ) *
          */

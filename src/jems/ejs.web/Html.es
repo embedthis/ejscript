@@ -94,16 +94,13 @@ module ejs.web {
             write('<div' + getAttributes(options) + '>' +  text + '</div>\r\n')
         }
 
-/*
-   MOB - deprecated. Use label
         function anchor(text: String, options: Object): Void {
             let uri ||= request.link(options)
             write('<a href="' + uri + '"' + getAttributes(options) + '>' + text + '</a>\r\n')
         }
-*/
 
-        function button(field: String, label: String, options: Object): Void {
-            write('    <input name="' + field + '" type="submit" value="' + label + '"' + getAttributes(options) + ' />\r\n')
+        function button(name: String, value: String, options: Object): Void {
+            write('    <input name="' + name + '" type="submit" value="' + value + '"' + getAttributes(options) + ' />\r\n')
         }
 
         function buttonLink(text: String, options: Object): Void {
@@ -146,7 +143,7 @@ module ejs.web {
         function form(record: Object, options: Object): Void {
     //  MOB -- need to be overridden for delete buttons
             options.method ||= ((record && options.id) ? "PUT" : "POST")
-            options.action ||= "update"
+            options.action ||= ((record && options.id) ? "update" : "create")
             let method = options.method
             if (method != "GET" && method != "POST") {
                 method = "POST"

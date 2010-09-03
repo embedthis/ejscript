@@ -464,12 +464,15 @@ module ejs.web {
         /** 
             Create a link to a URI. The target parameter may contain partial or complete URI information. The missing 
             parts are supplied using the current request URI and route tables.  The resulting URI is a normalized, 
-            server-local URI. It will not include scheme, host or port components. 
+            server-local URI (begins with "/"). The URI will include any defined scriptName but will not include scheme, 
+            host or port components.
             @params target The target parameter can be a URI string or object hash of components. If the target is a
-               string, it is may be an absolute or relative URI. If the target has an absolute URI path, that path
-               it be used unmodified. If the target is a relative URI, it is appended to the current request URI path. 
+               string, it is may contain an absolute or relative URI. If the target has an absolute URI path, that path
+               is used unmodified. If the target is a relative URI, it is appended to the current request URI path. 
                The target argument can also be an object hash of URI components: path, query, reference, controller, 
                action and other route table tokens. 
+               If the target is a string begins with "@" it has the form "@[Controller.]action". This is a shorthand
+               way to specify an action and optional controller.
             @option path String URI path portion
             @option query String URI query parameters. Does not include "?"
             @option reference String URI path reference. Does not include "#"
@@ -485,18 +488,30 @@ module ejs.web {
 
                 r.link({action: "checkout")
                 r.link({controller: "User", action: "logout")
+                r.link("@User.logout")
+                r.link({uri: "http://example.com/checkout"})
+
+                r.link({action: "checkout")
+                r.link("@checkout")
 
             @return A normalized, server-local Uri object.
          */
         function link(target: Object): Uri {
-            let result = uri.local.resolve(target)
-            //  MOB -- is the && !target.path needed?
-            if (result.path == "/" && route && Object.getOwnPropertyCount(target) > 0 && !target.path) {
-                result = route.completeLink(result, this, target)
-            } else if (target.action) {
-                result = result.join(target.action)
+            let result
+            if (target[0] == "@") {
+                target = target.slice(1)
+                if (target.contains(/[\.\/]/)) {
+                    let [controller, action] = target.split(/[\.\/]/)
+                    target = {controller: controller, action: action || "index"}
+                } else { 
+                    target = {action: target}
+                }
             }
-            return result.normalize
+            if (route && Object.getOwnPropertyCount(target) > 0 && !target.uri) {
+                target = route.completeLink(target, this)
+            }
+            let result = uri.local.resolve(target).normalize
+            return result
         }
 
         /** 
@@ -723,20 +738,25 @@ module ejs.web {
 
             @return A normalized, server-local Uri object.
          */
+//  MOB -- should this be topLink
         function toplink(target: *): Uri {
             if (target is String) {
-                if (target.startsWith("/")) {
-                    target = target.substring(1)
-                } 
-                target = Uri(target).normalize
+                if (target[0] == "@") {
+                    if (target.contains(".")) {
+                        let [controller, action] = target.split(".")
+                        target = {controller: controller, action: action || "index"}
+                    } else { 
+                        target = {action: target}
+                    }
+                } else if (target[0] == '/') {
+                    target = Uri(target.substring(1)).normalize
+                }
             }
-            let result = absHome.local.resolve(target)
-            if (result.path == "/" && route && Object.getOwnPropertyCount(target) > 0 && !target.path) {
-                result = route.completeLink(result, this, target)
-            } else if (target.action) {
-                result = result.join(target.action)
-            }
-            return result.normalize
+            if (route && Object.getOwnPropertyCount(target) > 0 && !target.uri) {
+                target = route.completeLink(target, this)
+            } 
+            //  MOB -- removed non-mvc cast of using action
+            return absHome.local.resolve(target).normalize
         }
 
         /**
