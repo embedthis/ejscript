@@ -4,7 +4,11 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
 #
 
+HEADERS		:= ejs.cache.slots.h ejs.db.sqlite.slots.h ejs.slots.h ejs.web.slots.h
+
 include 		.makedep
+
+compileExtra: $(HEADERS)
 
 #
 #   Update buildConfig.h version information. This is used in windows packages for building with VS.
@@ -20,4 +24,9 @@ ifeq ($(BLD_OS),WIN)
 	mv versions.h master/buildConfig.h
 endif
 
-cleanExtra: dependExtra
+cleanExtra: 
+	rm -f $(HEADERS)
+
+%.h: master/%.h
+	cp $< .
+
