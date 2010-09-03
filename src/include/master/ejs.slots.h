@@ -583,10 +583,12 @@
 #define ES_Emitter_getObservers                                        5
 #define ES_Emitter_fire                                                6
 #define ES_Emitter_fireThis                                            7
-#define ES_Emitter_observe                                             8
-#define ES_Emitter_removeOneObserver                                   9
-#define ES_Emitter_removeObserver                                      10
-#define ES_Emitter_NUM_INSTANCE_PROP                                   11
+#define ES_Emitter_on                                                  8
+#define ES_Emitter_observe                                             9
+#define ES_Emitter_removeOneObserver                                   10
+#define ES_Emitter_off                                                 11
+#define ES_Emitter_removeObserver                                      12
+#define ES_Emitter_NUM_INSTANCE_PROP                                   13
 #define ES_Emitter_NUM_INHERITED_PROP                                  0
 #define ES_Endpoint_NUM_CLASS_PROP                                     0
 
@@ -1480,26 +1482,28 @@
 #define ES_Promise_getObservers                                        5
 #define ES_Promise_fire                                                6
 #define ES_Promise_fireThis                                            7
-#define ES_Promise_observe                                             8
-#define ES_Promise_removeOneObserver                                   9
-#define ES_Promise_removeObserver                                      10
-#define ES_Promise_timer                                               11
-#define ES_Promise_complete                                            12
-#define ES_Promise_onSuccess                                           13
-#define ES_Promise_onCancel                                            14
-#define ES_Promise_onError                                             15
-#define ES_Promise_onProgress                                          16
-#define ES_Promise_onTimeout                                           17
-#define ES_Promise_emitSuccess                                         18
-#define ES_Promise_emitError                                           19
-#define ES_Promise_emitCancel                                          20
-#define ES_Promise_cancel                                              21
-#define ES_Promise_then                                                22
-#define ES_Promise_timeout                                             23
-#define ES_Promise_wait                                                24
-#define ES_Promise_issue                                               25
-#define ES_Promise_NUM_INSTANCE_PROP                                   26
-#define ES_Promise_NUM_INHERITED_PROP                                  11
+#define ES_Promise_on                                                  8
+#define ES_Promise_observe                                             9
+#define ES_Promise_removeOneObserver                                   10
+#define ES_Promise_off                                                 11
+#define ES_Promise_removeObserver                                      12
+#define ES_Promise_timer                                               13
+#define ES_Promise_complete                                            14
+#define ES_Promise_onSuccess                                           15
+#define ES_Promise_onCancel                                            16
+#define ES_Promise_onError                                             17
+#define ES_Promise_onProgress                                          18
+#define ES_Promise_onTimeout                                           19
+#define ES_Promise_emitSuccess                                         20
+#define ES_Promise_emitError                                           21
+#define ES_Promise_emitCancel                                          22
+#define ES_Promise_cancel                                              23
+#define ES_Promise_then                                                24
+#define ES_Promise_timeout                                             25
+#define ES_Promise_wait                                                26
+#define ES_Promise_issue                                               27
+#define ES_Promise_NUM_INSTANCE_PROP                                   28
+#define ES_Promise_NUM_INHERITED_PROP                                  13
 #define ES_RegExp_NUM_CLASS_PROP                                       0
 
 /*
@@ -1711,7 +1715,8 @@
 #define ES_Uri_decodeComponent                                         1
 #define ES_Uri_encode                                                  2
 #define ES_Uri_encodeComponent                                         3
-#define ES_Uri_NUM_CLASS_PROP                                          4
+#define ES_Uri_template                                                4
+#define ES_Uri_NUM_CLASS_PROP                                          5
 
 /*
    Prototype (instance) slots for "Uri" type 
@@ -1767,6 +1772,8 @@
 #define ES_Uri_decodeComponent_str                                     0
 #define ES_Uri_encode_str                                              0
 #define ES_Uri_encodeComponent_str                                     0
+#define ES_Uri_template_pattern                                        0
+#define ES_Uri_template_options                                        1
 #define ES_Void_NUM_CLASS_PROP                                         0
 
 /*
@@ -1933,6 +1940,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1301506
+#define _ES_CHECKSUM_ejs   1306919
 
 #endif
