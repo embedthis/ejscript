@@ -501,17 +501,60 @@ module ejs.web {
             if (target[0] == "@") {
                 target = target.slice(1)
                 if (target.contains(/[\.\/]/)) {
-                    let [controller, action] = target.split(/[\.\/]/)
-                    target = {controller: controller, action: action || "index"}
+                    let [resource, route] = target.split(/[\.\/]/)
+                    target = {resource: resource, route: route}
                 } else { 
-                    target = {action: target}
+                    target = {route: target}
                 }
             }
             if (route && Object.getOwnPropertyCount(target) > 0 && !target.uri) {
                 target = route.completeLink(target, this)
             }
+print("RESULT " + target)
+//  MOB -- should links be script name relative
             let result = uri.local.resolve(target).normalize
             return result
+        }
+
+        /*
+            Select the response content type based on the request "Accept" header . See RFC-2616.
+            @param formats Array of supported mime types
+            @return The selected mime type string
+
+            Accept: "application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png"
+         */
+        function matchContent(...formats): String {
+            let accept = header("Accept")
+            if (accept) {
+                let media = accept.split(",")
+                for (let [i, m] in media) {
+                    let [mime, quality] = m.split(";")
+                    quality = (quality || "q=1").trimStart("q=") cast Number
+                    media[i] = { mime: mime, quality: quality || 1}
+                }
+                media = media.sort(function(a, i, j) {
+                    if (a[i].quality < a[j].quality) {
+                        return -1
+                    } else if (a[i].quality > a[j].quality) {
+                        return 1
+                    } else {
+                        return 0
+                    }
+                }, -1)
+                for each (m in media) {
+                    if (m.mime.contains("*")) {
+                        let pat = RegExp(m.mime.replace(/\*/g, ".*"))
+                        for each (f in formats) {
+                            if (f.match(pat)) {
+                                return f
+                            }
+                        }
+                    } else if (formats.contains(m.mime)) {
+                        return m.mime
+                    }
+                }
+            }
+            return formats[0]
         }
 
         /** 
@@ -743,10 +786,10 @@ module ejs.web {
             if (target is String) {
                 if (target[0] == "@") {
                     if (target.contains(".")) {
-                        let [controller, action] = target.split(".")
-                        target = {controller: controller, action: action || "index"}
+                        let [resource, route] = target.split(".")
+                        target = {resource: resource, route: route}
                     } else { 
-                        target = {action: target}
+                        target = {route: target}
                     }
                 } else if (target[0] == '/') {
                     target = Uri(target.substring(1)).normalize
@@ -814,9 +857,39 @@ module ejs.web {
             @param count Read up to this number of bytes. If -1, write all available data in the buffer. 
             @returns a count of the bytes actually written. Returns null on eof.
             @event writable Issued when the connection can absorb more data.
+
+            MOB - same for Http and other streams
          */
         # FUTURE
         native function writeBlock(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
+
+        /**
+            Write content based on the requested accept mime type
+            @param data
+         */
+        function writeContent(data): Void {
+            let mime = matchContent("application/json", "text/html", "application/xml", "text/plain")
+            setHeader("Content-Type", mime)
+            switch (mime) {
+            case "application/json":
+                write(serialize(data, {pretty: true}) + "\n")
+                break
+            case "application/xml":
+                write("XML\n")
+                break
+            case "text/html":
+                if (controller) {
+                    controller.writeView("edit")
+                } else {
+                    write("HTML\n")
+                }
+                break
+            default:
+            case "text/plain":
+                write("PLAIN " + serialize(data, {pretty: true}) + "\n")
+                break
+            }
+        }
 
         /** 
             Write an error message back to the user and finalize the request.  The output is Html escaped for security.

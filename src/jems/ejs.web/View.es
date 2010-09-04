@@ -893,10 +893,10 @@ MOB -- review and rethink this
                 if (options[0] == "@") {
                     options = options.slice(1)
                     if (options.contains(/[\.\/]/)) {
-                        let [controller, action] = options.split(/[\.\/]/)
-                        options = {controller: controller, action: action || "index"}
+                        let [resource, route] = options.split(/[\.\/]/)
+                        options = {resource: resource, route: route}
                     } else { 
-                        options = {action: options}
+                        options = {route: options}
                     }
                 } else {
                     options = {uri: options.toString()}

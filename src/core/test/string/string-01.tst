@@ -194,6 +194,10 @@ assert(s.slice(-2, -1) == "e")
 assert(s.slice(0, -4) == "ab")
 assert(s.slice(0, -1, 2) == "ace")
 
+assert("a".slice(0) == "a")
+assert("a".slice(1) == "")
+assert("a".slice(8) == "")
+
 
 // split
 a = "abc"

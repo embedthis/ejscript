@@ -476,15 +476,19 @@ module ejs.web {
         /*
             Like link but supports location == true to use the rest of options.
          */
+//  MOB - strange API
         private function buildUri(location: Object, options: Object): Uri {
             if (location == true) {
                 return request.link(options)
             } else if (location is String) {
+                return request.link(location)
+/*
                 if (location.startsWith("/")) {
                     return request.link(location)
                 } else {
                     return request.link({action: location})
                 }
+*/
             }
             return request.link(location)
         }
@@ -516,6 +520,7 @@ module ejs.web {
         private function getCellRowAtt(record, row, field, values, options): String {
             let click, edit, key, method, params
             if (options.click) {
+                //  MOB -- should these use "let"
                 ({method, uri, params, key}) = getTableLink(options.click, record, row, field, values, options)
                 click = buildUri(uri, options)
             } else if (options.edit) {
@@ -579,6 +584,19 @@ module ejs.web {
             if (location is Function) {
                 result = location(record, field, values[field], options)
             } else {
+                if (location is String && location[0] == '@') {
+                    location = location.slice(1)
+                    if (location.contains(/[\.\/]/)) {
+                        let [resource, route] = location.split(/[\.\/]/)
+                        location = {resource: resource, route: route}
+                    } else { 
+                        location = {route: location}
+                    }
+                    if (record) {
+                        location.id = record.id
+                    }
+dump("HERE######", location)
+                }
                 let uri = buildUri(location, options)
                 let key = getKeyAtt(options.key, record, row, values, options)
                 result = { method: options.method, uri: uri, params: options.params, key: key}

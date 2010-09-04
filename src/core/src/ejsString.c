@@ -90,7 +90,7 @@ static void destroyString(Ejs *ejs, EjsString *sp)
 static EjsObj *getStringProperty(Ejs *ejs, EjsString *sp, int index)
 {
     if (index < 0 || index >= sp->length) {
-        ejsThrowOutOfBoundsError(ejs, "Bad string subscript");
+        return (EjsObj*) ejs->emptyStringValue;
         return 0;
     }
     return (EjsObj*) ejsCreateStringWithLength(ejs, &sp->value[index], 1);
@@ -1258,20 +1258,18 @@ static EjsObj *sliceString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     if (start < 0) {
         start += sp->length;
     }
-    if (start >= sp->length) {
-        start = sp->length - 1;
-    }
     if (start < 0) {
         start = 0;
+    } else if (start >= sp->length) {
+        start = sp->length;
     }
     if (end < 0) {
         end += sp->length;
     }
-    if (end >= sp->length) {
-        end = sp->length;
-    }
     if (end < 0) {
         end = 0;
+    } if (end >= sp->length) {
+        end = sp->length;
     }
     if (step == 0) {
         step = 1;

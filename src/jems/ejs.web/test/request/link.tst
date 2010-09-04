@@ -25,3 +25,9 @@ assert(r.link({
     scheme: "https", host: "example.com", port: 8080, path: "/some.html", query: "color=red", reference: "42"}) ==
     "https://example.com:8080/some.html#42?color=red")
 
+
+r = new Request("http://example.com/Product/update")
+print(r.link("abc"))
+print(r.link(""))
+print(r.link("."))
+

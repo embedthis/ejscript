@@ -1288,7 +1288,7 @@ static EjsObj *sortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     if (ap->length <= 1) {
         return (EjsObj*) ap;
     }
-    compare = (EjsFunction*) ((argc == 1) ? argv[0]: NULL);
+    compare = (EjsFunction*) ((argc >= 1) ? argv[0]: NULL);
     if ((EjsObj*) compare == ejs->nullValue) {
         compare = 0;
     }
@@ -1296,7 +1296,7 @@ static EjsObj *sortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Compare argument is not a function");
         return 0;
     }
-    direction = (argc == 2) ? ejsGetInt(ejs, argv[1]) : 1;
+    direction = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 1;
     quickSort(ejs, ap, compare, direction, 0, ap->length - 1);
     return (EjsObj*) ap;
 }

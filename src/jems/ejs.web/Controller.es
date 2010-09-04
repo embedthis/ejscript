@@ -275,6 +275,9 @@ use namespace action
         function write(...args): Void
             request.write(...args)
 
+        function writeContent(...args): Void
+            request.writeContent(...args)
+
         /**
             Render an error message as the response.
             This call sets the response status and writes a HTML error message with the given arguments back to the client.
