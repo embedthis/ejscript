@@ -8,7 +8,7 @@ load("../utils.es")
 
 server = new HttpServer
 
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     session["anything"] = 42
     request.finalize()
 })

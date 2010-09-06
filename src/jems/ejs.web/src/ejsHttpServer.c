@@ -46,18 +46,6 @@ static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
 
 
 /*  
-    function observe(name: [String|Array], observer: Function): Void
- */
-static EjsObj *hs_observe(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
-{
-    //  TODO -- should fire if currently readable / writable (also socket etc)
-    ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
-    sp->emitter->permanent = 1;
-    return 0;
-}
-
-
-/*  
     function get address(): String
  */
 static EjsObj *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
@@ -136,6 +124,18 @@ static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
     }
     return sp->limits;
+}
+
+
+/*  
+    function on(name: [String|Array], observer: Function): Void
+ */
+static EjsObj *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    //  TODO -- should fire if currently readable / writable (also socket etc)
+    ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
+    sp->emitter->permanent = 1;
+    return 0;
 }
 
 
@@ -845,7 +845,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_listen, (EjsProc) hs_listen);
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_name, (EjsProc) hs_name, (EjsProc) hs_set_name);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_port, (EjsProc) hs_port);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_observe, (EjsProc) hs_observe);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_on, (EjsProc) hs_on);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_removeObserver, (EjsProc) hs_removeObserver);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_secure, (EjsProc) hs_secure);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setLimits, (EjsProc) hs_setLimits);

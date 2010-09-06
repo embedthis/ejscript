@@ -465,7 +465,7 @@ FUTURE & KEEP
             @event error Issued if the request does not complete successfully. This is not issued if the request 
                 ompletes successfully but with a non 200 Http status code.
          */
-        native function observe(name, observer: Function): Void
+        native function on(name, observer: Function): Void
 
         /** 
             Initiate a POST request. This call initiates a POST request. It does not wait for the request to complete. 
@@ -831,7 +831,7 @@ FUTURE & KEEP
          */
         # Config.Legacy
         function setCallback(eventMask: Number, cb: Function): Void {
-            observe("" + eventMask, cb);
+            on("" + eventMask, cb);
         }
 
         /** 

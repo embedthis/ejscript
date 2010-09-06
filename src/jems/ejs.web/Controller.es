@@ -40,8 +40,7 @@ module ejs.web {
         /** Configuration settings - reference to Request.config */
         var config: Object 
 
-        /** Lower case controller name */
-//  MOB -- seems upper case?
+        /** Pascal case controller name */
         var controllerName: String
 
         /** Logger stream - reference to Request.log */
@@ -52,11 +51,6 @@ module ejs.web {
 
         /** Reference to the current Request object */
         var request: Request
-
-        /** Reference to the current View object 
-UNUSED - MOB -- better to set in Request
-        var view: View
-         */
 
         /***************************************** Convenience Getters  ***************************************/
 
@@ -81,7 +75,6 @@ UNUSED - MOB -- better to set in Request
             request ? request.uri : null
 
         /********************************************* Methods *******************************************/
-
         /** 
             Static factory method to create and initialize a controller. The controller class is specified by 
             params["controller"] which should be set to the controller name without the "Controller" suffix. 
@@ -118,9 +111,21 @@ UNUSED - MOB -- better to set in Request
                     openDatabase(request)
                 }
                 if (request.method == "POST") {
-                    checkBefore(checkSecurityToken)
+                    before(checkSecurityToken)
                 }
             }
+        }
+
+        /** 
+            Run an action checker function after running the action
+            @param fn Function callback to invoke
+            @param options Checker options. 
+            @option only Only run the checker for this action name
+            @option except Run the checker for all actions except this name
+         */
+        function after(fn, options: Object = null): Void {
+            _afterCheckers ||= []
+            _afterCheckers.append([fn, options])
         }
 
         /** 
@@ -166,18 +171,13 @@ use namespace action
             return response
         }
 
-        /** 
-            Run an action checker function after running the action
-            @param fn Function callback to invoke
-            @param options Checker options. 
-            @option only Only run the checker for this action name
-            @option except Run the checker for all actions except this name
-         */
-//  MOB -- rename after
-        function checkAfter(fn, options: Object = null): Void {
-            _afterCheckers ||= []
-            _afterCheckers.append([fn, options])
-        }
+        /** @duplicate Request.autoFinalize */
+        function autoFinalize(): Void
+            request.autoFinalize()
+
+        /** @duplicate Request.autoFinalizing */
+        function get autoFinalizing(): Boolean
+            request.autoFinalizing
 
         /** 
             Run an action checker before running the action. If the checker function writes a response, the normal
@@ -188,11 +188,14 @@ use namespace action
             @option only Only run the checker for this action name
             @option except Run the checker for all actions except this name
          */
-//  MOB -- rename before
-        function checkBefore(fn, options: Object = null): Void {
+        function before(fn, options: Object = null): Void {
             _beforeCheckers ||= []
             _beforeCheckers.append([fn, options])
         }
+
+        /** @duplicate Request.dontAutoFinalize */
+        function dontAutoFinalize(): Void
+            request.dontAutoFinalize()
 
         /** 
             @duplicate Request.error
@@ -200,11 +203,23 @@ use namespace action
         function error(msg: String): Void
             request.error(msg)
 
+        /** @duplicate Request.finalize */
+        function finalize(): Void
+            request.finalize()
+
+        /** @duplicate Request.finalized */
+        function get finalized(): Boolean
+            request.finalized
+
         /** 
             @duplicate Request.flash
          */
         function get flash(): Object
             request.flash
+
+        /** @duplicate Request.flush */
+        function flush(): Void
+            request.flush()
 
         /** 
             @duplicate Request.header
@@ -212,15 +227,11 @@ use namespace action
         function header(key: String): String
             request.header(key)
 
-        /** 
-            @duplicate Request.inform
-         */
+        /** @duplicate Request.inform */
         function inform(msg: String): Void
             request.inform(msg)
 
-        /** 
-            @duplicate Request.link
-         */
+        /** @duplicate Request.link */
         function link(location: Object): Uri
             request.link(location)
 
@@ -231,21 +242,15 @@ use namespace action
             throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
         }
 
-        /** 
-            @duplicate Request.notify
-         */
+        /** @duplicate Request.notify */
         function notify(key: String, msg: String): Void
             request.notify(key, msg)
 
-        /** 
-            @duplicate Request.observe
-         */
-        function observe(name, observer: Function): Void
-            request.observe(name, observer)
+        /** @duplicate Request.on */
+        function on(name, observer: Function): Void
+            request.on(name, observer)
 
-        /** 
-            @duplicate Request.read
-         */
+        /** @duplicate Request.read */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
             request.read(buffer, offset, count)
 
@@ -260,12 +265,25 @@ use namespace action
             request.redirect(where, status)
 
         /** 
-            @duplicate Request.toplink
+            Remove all defined checkers on the Controller.
          */
-        function toplink(location: Object): Uri
-            request.toplink(location)
+        function removeCheckers(): Void {
+            _beforeCheckers = null
+            _afterCheckers = null
+        }
 
-//  MOB -- should all these be render() instead of write to save confusion?
+        /** @duplicate Request.setHeader */
+        function setHeader(key: String, value: String, overwrite: Boolean = true): Void
+            request.setHeader(key, value, overwrite)
+
+        /** @duplicate Request.setHeaders */
+        function setHeaders(headers: Object, overwrite: Boolean = true): Void
+            request.setHeaders(headers, overwrite)
+
+        /** @duplicate Request.setStatus */
+        function setStatus(status: Number): Void
+            request.status = status
+
         /** 
             Render the raw data back to the client. 
             If an action method does call a write data back to the client and has not called finalize() or 
@@ -366,26 +384,6 @@ use namespace action
         }
 
         /** 
-            Remove all defined checkers on the Controller.
-         */
-        function removeCheckers(): Void {
-            _beforeCheckers = null
-            _afterCheckers = null
-        }
-
-        /** @duplicate Request.setHeader */
-        function setHeader(key: String, value: String, overwrite: Boolean = true): Void
-            request.setHeader(key, value, overwrite)
-
-        /** @duplicate Request.setHeaders */
-        function setHeaders(headers: Object, overwrite: Boolean = true): Void
-            request.setHeaders(headers, overwrite)
-
-        /** @duplicate Request.setStatus */
-        function setStatus(status: Number): Void
-            request.status = status
-
-        /** 
             @duplicate Request.warn
          */
         function warn(msg: String): Void
@@ -398,32 +396,6 @@ use namespace action
          */
         function write(...data): Number
             request.write(...data)
-
-//  MOB -- move in place and doc
-
-        /** @duplicate Request.autoFinalize */
-        function autoFinalize(): Void
-            request.autoFinalize()
-
-        /** @duplicate Request.autoFinalizing */
-        function get autoFinalizing(): Boolean
-            request.autoFinalizing
-
-        /** @duplicate Request.flush */
-        function flush(): Void
-            request.flush()
-
-        /** @duplicate Request.finalize */
-        function finalize(): Void
-            request.finalize()
-
-        /** @duplicate Request.finalized */
-        function get finalized(): Boolean
-            request.finalized
-
-        /** @duplicate Request.dontAutoFinalize */
-        function dontAutoFinalize(): Void
-            request.dontAutoFinalize()
 
         /**************************************** Private ******************************************/
 
@@ -508,7 +480,7 @@ use namespace action
          */
         # Config.Legacy
         function afterFilter(fn, options: Object = null): Void
-            checkAfter(fn, options)
+            after(fn, options)
 
         /** 
             @hide
@@ -524,7 +496,7 @@ use namespace action
          */
         # Config.Legacy
         function beforeFilter(fn, options: Object = null): Void
-            checkBefore(fn, options)
+            before(fn, options)
 
         /**
             @hide

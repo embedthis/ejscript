@@ -9,7 +9,7 @@ function app() {
 }
 
 let server: HttpServer = new HttpServer(documentRoot, serverRoot)
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     // Web.process(app)
     Web.process(Head(ContentType(app)))
 })

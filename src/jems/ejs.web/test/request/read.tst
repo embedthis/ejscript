@@ -10,7 +10,7 @@ server.listen(HTTP)
 // server.trace(0, ["headers", "first", "body", "request", "response"])
 load("../utils.es")
 
-server.observe("readable", function (event, request: Request) {
+server.on("readable", function (event, request: Request) {
     switch (pathInfo) {
     case "/form":
         assert(params.color == "red")
@@ -23,7 +23,7 @@ server.observe("readable", function (event, request: Request) {
 
     case "/post-sync":
         dontAutoFinalize()
-        observe("readable", function (event) {
+        on("readable", function (event) {
             let ba = new ByteArray
             if (read(ba)) {
                 assert(ba == "Some data")

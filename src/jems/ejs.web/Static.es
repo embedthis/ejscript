@@ -140,7 +140,7 @@ module ejs.web {
             let file = new File(path, "w")
             file.position = 0;
 
-            request.input.observe("readable", function () {
+            request.input.on("readable", function () {
                 buf = new ByteArray
                 if (request.read(buf)) {
                     file.write(buf)
@@ -149,7 +149,7 @@ module ejs.web {
                     request.finalize()
                 }
             })
-            request.input.observe(["close", "complete", "error"], function (event, request) {
+            request.input.on(["close", "complete", "error"], function (event, request) {
                 if (event == "error") {
                     file.close()
                     file.remove()

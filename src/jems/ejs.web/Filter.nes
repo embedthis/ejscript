@@ -23,16 +23,16 @@ module ejs {
 
         function Filter(next: Filter) {
             this.next = next
-            observe("writable", function() {
+            on("writable", function() {
                 service()
             })
         }
 
         native function canWrite(data, count: Number = null): Boolean
 
-        function observe(name: String, listener: Function): Void {
+        function on(name: String, listener: Function): Void {
             emitter ||= new Emitter
-            emitter.observe(name, listener)
+            emitter.on(name, listener)
         }
 
         function removeObserver(name, listener: Function): Void {

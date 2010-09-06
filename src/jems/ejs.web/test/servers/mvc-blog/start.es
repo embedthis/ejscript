@@ -4,7 +4,7 @@ require ejs.web
 let server: HttpServer = new HttpServer(".")
 var router = Router(Router.LegacyRoutes)
 
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
     Web.serve(request, router)
 })

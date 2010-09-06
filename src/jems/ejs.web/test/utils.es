@@ -24,7 +24,7 @@ public function fetch(url: String, status: Number = Http.Ok): Http {
  */
 public function controllerServer(endpoint): HttpServer {
     server = new HttpServer
-    server.observe("readable", function (event, request: Request) {
+    server.on("readable", function (event, request: Request) {
         let [,params.controller, params.action] = pathInfo.toString().split("/")
         let app = Controller.create(request).app
         assert(app is Function)

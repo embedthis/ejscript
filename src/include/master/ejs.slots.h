@@ -328,7 +328,7 @@
 #define ES_BinaryStream_encoding                                       6
 #define ES_BinaryStream_endian                                         7
 #define ES_BinaryStream_flush                                          8
-#define ES_BinaryStream_observe                                        9
+#define ES_BinaryStream_on                                             9
 #define ES_BinaryStream_read                                           10
 #define ES_BinaryStream_readBoolean                                    11
 #define ES_BinaryStream_readByte                                       12
@@ -389,7 +389,7 @@
 #define ES_ByteArray_iterator_getValues                                11
 #define ES_ByteArray_length                                            12
 #define ES_ByteArray_MD5                                               13
-#define ES_ByteArray_observe                                           14
+#define ES_ByteArray_on                                                14
 #define ES_ByteArray_read                                              15
 #define ES_ByteArray_readBoolean                                       16
 #define ES_ByteArray_readByte                                          17
@@ -866,7 +866,7 @@
 #define ES_File_iterator_get                                           6
 #define ES_File_iterator_getValues                                     7
 #define ES_File_isOpen                                                 8
-#define ES_File_observe                                                9
+#define ES_File_on                                                     9
 #define ES_File_open                                                   10
 #define ES_File_options                                                11
 #define ES_File_path                                                   12
@@ -1007,7 +1007,7 @@
 #define ES_Http_lastModified                                           23
 #define ES_Http_limits                                                 24
 #define ES_Http_method                                                 25
-#define ES_Http_observe                                                26
+#define ES_Http_on                                                     26
 #define ES_Http_post                                                   27
 #define ES_Http_put                                                    28
 #define ES_Http_read                                                   29
@@ -1175,7 +1175,7 @@
 #define ES_Logger_error                                                16
 #define ES_Logger_info                                                 17
 #define ES_Logger_activity                                             18
-#define ES_Logger_observe                                              19
+#define ES_Logger_on                                                   19
 #define ES_Logger_read                                                 20
 #define ES_Logger_removeObserver                                       21
 #define ES_Logger_write                                                22
@@ -1537,7 +1537,7 @@
 #define ES_Socket_encoding                                             5
 #define ES_Socket_flush                                                6
 #define ES_Socket_listen                                               7
-#define ES_Socket_observe                                              8
+#define ES_Socket_on                                                   8
 #define ES_Socket_port                                                 9
 #define ES_Socket_read                                                 10
 #define ES_Socket_remoteAddress                                        11
@@ -1561,7 +1561,7 @@
 #define ES_Stream_async                                                0
 #define ES_Stream_close                                                1
 #define ES_Stream_flush                                                2
-#define ES_Stream_observe                                              3
+#define ES_Stream_on                                                   3
 #define ES_Stream_read                                                 4
 #define ES_Stream_removeObserver                                       5
 #define ES_Stream_write                                                6
@@ -1676,7 +1676,7 @@
 #define ES_TextStream_encoding                                         7
 #define ES_TextStream_fill                                             8
 #define ES_TextStream_flush                                            9
-#define ES_TextStream_observe                                          10
+#define ES_TextStream_on                                               10
 #define ES_TextStream_read                                             11
 #define ES_TextStream_readLine                                         12
 #define ES_TextStream_readLines                                        13
@@ -1940,6 +1940,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1306919
+#define _ES_CHECKSUM_ejs   1302623
 
 #endif

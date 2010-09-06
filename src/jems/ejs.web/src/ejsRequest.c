@@ -551,7 +551,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return req->scheme;
 
     case ES_ejs_web_Request_scriptName:
-        return req->scriptName;
+        return req->scriptName ? req->scriptName : (EjsObj*) ejs->emptyStringValue;
 
     case ES_ejs_web_Request_server:
         return req->server;
@@ -958,9 +958,9 @@ static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 
 
 /*  
-    function observe(name: [String|Array], listener: Function): Void
+    function on(name: [String|Array], listener: Function): Void
  */
-static EjsObj *req_observe(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     HttpConn    *conn;
     
@@ -1366,7 +1366,7 @@ void ejsConfigureRequestType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalized, (EjsProc) req_finalized);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_flush, (EjsProc) req_flush);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_header, (EjsProc) req_header);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_observe, (EjsProc) req_observe);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_on, (EjsProc) req_on);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_read, (EjsProc) req_read);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_removeObserver, (EjsProc) req_removeObserver);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setLimits, (EjsProc) req_setLimits);

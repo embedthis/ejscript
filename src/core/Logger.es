@@ -251,7 +251,7 @@ module ejs {
         /** 
             @hide
          */
-        function observe(name, observer: Function): Void {
+        function on(name, observer: Function): Void {
             throw "observe is not supported"
         }
 

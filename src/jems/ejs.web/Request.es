@@ -463,16 +463,23 @@ module ejs.web {
 
         /** 
             Create a link to a URI. The target parameter may contain partial or complete URI information. The missing 
-            parts are supplied using the current request URI and route tables.  The resulting URI is a normalized, 
-            server-local URI (begins with "/"). The URI will include any defined scriptName but will not include scheme, 
+            parts are supplied using the current request URI and optional route tables. The resulting URI is a normalized, 
+            server-local URI (begins with "/"). The URI will include any defined scriptName, but will not include scheme, 
             host or port components.
+
             @params target The target parameter can be a URI string or object hash of components. If the target is a
                string, it is may contain an absolute or relative URI. If the target has an absolute URI path, that path
                is used unmodified. If the target is a relative URI, it is appended to the current request URI path. 
-               The target argument can also be an object hash of URI components: path, query, reference, controller, 
-               action and other route table tokens. 
-               If the target is a string begins with "@" it has the form "@[Controller.]action". This is a shorthand
-               way to specify an action and optional controller.
+               The target argument can also be an object hash of URI components: scheme, host, port, path, reference and
+               query. If the hash contains a route property that specifies the name of a route table entry, then the
+               hash may contain properties that will be used when creating the URI by expanding the route template. 
+               If the target is a string that begins with "@" it will be interpreted as a controller/action pair of the 
+               form "@[Controller/]action". This is a shorthand way to specify an action and optional controller. The 
+               short-hand link("@") refers to the "index" action of the current controller.
+               If the target is a string that begins with "#" it will be interpreted as a resource/route pair of the 
+               form "#[Resource/]route". This is a shorthand way to specify a route and optional resource. The short-hand
+               link("#") refers to the default route of the current resource. 
+
             @option path String URI path portion
             @option query String URI query parameters. Does not include "?"
             @option reference String URI path reference. Does not include "#"
@@ -493,27 +500,79 @@ module ejs.web {
 
                 r.link({action: "checkout")
                 r.link("@checkout")
+                r.link("#")
+                r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
 
             @return A normalized, server-local Uri object.
          */
         function link(target: Object): Uri {
-            let result
-            if (target[0] == "@") {
-                target = target.slice(1)
-                if (target.contains(/[\.\/]/)) {
-                    let [resource, route] = target.split(/[\.\/]/)
-                    target = {resource: resource, route: route}
+            target = makeUriHash(target)
+            if (route && target.route) {
+                let template = target.template || route.getTemplate(target, this)
+                target.scriptName ||= scriptName
+            /*
+                //  MOB -- nice to remove these
+                action ||= ""
+                controller ||= request.params.controller
+            */
+                target = Uri.template(template, target).path
+            }
+            return uri.local.resolve(target).normalize
+        }
+
+        /*
+            Make a URI hash from a string.  This converts the target URI specification into a hash of properties 
+            describing the target URI.
+            @param target String URI target to convert. If this is not a string, the target is returned.
+            @return An object hash representing the target.
+            @example: Sample targets
+                "/path/to/something"
+                "http://example.com/path/to/something"
+                "#resource.route"
+                "#resource/"
+                "#route"
+                "@controller.action"
+                "@controller/"
+                "@action"
+                URI object
+                { URI or router template fields: scheme, host, port, path, reference, query, ... }
+                { uri: AnyTargetAbove }
+                Support #action
+         */
+        function makeUriHash(target): Object {
+            let o = (target.uri) ? target.uri : target
+            if (!(o is String)) {
+                return target
+            }
+            if (o[0] == '#') {
+                o = o.slice(1)
+                if (o.contains(/[\.\/]/)) {
+                    let [resource, r] = o.split(/[\.\/]/)
+                    o = {resource: resource || o.resource, route: r || o.route || "default"}
                 } else { 
-                    target = {route: target}
+                    o = {resource: o.resource, route: o || o.route || "default"}
                 }
+            } else if (o[0] == '@') {
+                o = o.slice(1)
+                if (o.contains(/[\.\/]/)) {
+                    let [ctlr, action] = o.split(/[\.\/]/)
+                    o = {controller: ctlr || o.controller || controller, action: action || o.action}
+                } else { 
+                    o = {action: o}
+                }
+                o.route = target.route || "default"
+                o.resource = target.resource || ""
+
+            } else {
+                if (o[0] == '/') {
+                    o = scriptName + o
+                }
+                o = { uri: o}
+            } 
+            if (Object.getOwnPropertyCount(target) > 0) {
+                o = blend(target, o)
             }
-            if (route && Object.getOwnPropertyCount(target) > 0 && !target.uri) {
-                target = route.completeLink(target, this)
-            }
-print("RESULT " + target)
-//  MOB -- should links be script name relative
-            let result = uri.local.resolve(target).normalize
-            return result
+            return o
         }
 
         /*
@@ -574,7 +633,7 @@ print("RESULT " + target)
         }
 
         /** 
-            @duplicate Stream.observe
+            @duplicate Stream.on
             @event readable Issued when some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
             @event close Issued when the request completes
@@ -584,7 +643,7 @@ print("RESULT " + target)
             All events are called with the signature:
             function (event: String, http: Http): Void
          */
-        native function observe(name, observer: Function): Void
+        native function on(name, observer: Function): Void
 
         /** 
             @duplicate Stream.read
@@ -596,7 +655,7 @@ print("RESULT " + target)
             data has been read. To read data in these situations, register an observer function to run when the
             connection becomes "readable".
             @example:
-                request.observe("readable", function(event, request) {
+                request.on("readable", function(event, request) {
                     var data = new byteArray
                     if (read(data)) {
                         print("Got " + data)
@@ -628,7 +687,6 @@ print("RESULT " + target)
                     "\">here</a>.</p>\r\n" +
                     "<address>" + server.software + " at " + host + " Port " + server.port + 
                     "</address></body>\r\n</html>\r\n")
-            //  MOB -- want to allow templates to call redirect and may write more blank linkes -- finalize()
         }
 
         /** 
@@ -755,6 +813,7 @@ print("RESULT " + target)
         }
 
         /** 
+MOB -- delete
             Create a top-level URI link. A top-level URI has an absolute path and is useful to ensure a link always
             refers to the same resource even when a HTML fragment may be rendered from pages different URLs. 
             The target parameter may contain partial or complete URI information. The missing parts are supplied 
@@ -780,26 +839,15 @@ print("RESULT " + target)
                 r.toplink("/images/splash.png")  returns "/samples/images/splash.png"
 
             @return A normalized, server-local Uri object.
-         */
-//  MOB -- should this be topLink
         function toplink(target: *): Uri {
-            if (target is String) {
-                if (target[0] == "@") {
-                    if (target.contains(".")) {
-                        let [resource, route] = target.split(".")
-                        target = {resource: resource, route: route}
-                    } else { 
-                        target = {route: target}
-                    }
-                } else if (target[0] == '/') {
-                    target = Uri(target.substring(1)).normalize
-                }
+print("TOPLINK TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
+            target = makeUriHash(target)
+            if (route && target.route) {
+                target = route.expandTemplate(target, this)
             }
-            if (route && Object.getOwnPropertyCount(target) > 0 && !target.uri) {
-                target = route.completeLink(target, this)
-            } 
             return absHome.local.resolve(target).normalize
         }
+*/
 
         /**
             Configure tracing for this request. Tracing is initialized by the owning HttpServer and is typically
@@ -912,8 +960,7 @@ print("RESULT " + target)
                 } catch {}
             }
             finalize()
-            //  MOB -- what level should this be?
-            //  Can't be zero else it comes out in utest
+            //  MOB -- what level should this be? Can't be zero else it comes out in utest
             log.debug(1, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 
@@ -926,7 +973,7 @@ print("RESULT " + target)
          */
         native function writeFile(file: Path): Boolean
 
-        //  MOB
+        //  MOB - remove
         function sendFile(file: Path): Boolean
             writeFile(file)
 
@@ -947,7 +994,7 @@ print("RESULT " + target)
             autoFinalize()
         }
 
-        //  MOB
+        //  MOB - remove
         function sendResponse(response: Object): Void
             writeResponse(response)
 

@@ -104,16 +104,16 @@ module ejs.web {
 
             let server: HttpServer = new HttpServer(".", "web")
             let router = Router(Router.Restful)
-            server.observe("readable", function (event: String, request: Request) {
+            server.on("readable", function (event: String, request: Request) {
                 request.status = 200
                 request.setHeaders({"Content-Type": "text/plain"})
-                request.observe("readable", function (event, request) {
+                request.on("readable", function (event, request) {
                     let data = new ByteArray
                     if (request.read(data) == null) {
                         print("EOF")
                     }
                 })
-                request.observe("writable", function (event) {
+                request.on("writable", function (event) {
                     request.write("Hello World")
                     request.finalize()
                 })
@@ -164,7 +164,7 @@ module ejs.web {
             @event Issues a "accept" event when there is a new connection available.
             @example:
                 server = new Http(".", "./web")
-                server.observe("readable", function (event, request) {
+                server.on("readable", function (event, request) {
                     //  NOTE: this is set to the request
                     Web.serve(request)
                 })
@@ -176,7 +176,7 @@ module ejs.web {
             Add an observer for server events. 
             @param name Name of the event to listen for. The name may be an array of events.
             @param observer Callback listening function. The function is called with the following signature:
-                function observer(event: String, ...args): Void
+                function on(event: String, ...args): Void
             @event readable Issued when there is a new request available. This readable event will explicitlyl set the
                 value of "this" to the request regardless of whether the function has a bound "this" value.
             @event close Issued when server is being closed.
@@ -184,7 +184,7 @@ module ejs.web {
                 passed.
             @event destroySession Issued when a session is destroyed. The request object is passed.
          */
-        native function observe(name, observer: Function): Void
+        native function on(name, observer: Function): Void
 
         /** 
             Remove an observer from the server. 

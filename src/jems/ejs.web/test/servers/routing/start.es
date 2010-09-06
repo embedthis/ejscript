@@ -65,7 +65,7 @@ public static var RestfulRoutes = [
 ]
 
 var router = Router(routes)
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     Web.serve(request, router)
 })
 

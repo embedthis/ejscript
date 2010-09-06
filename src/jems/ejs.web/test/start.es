@@ -33,7 +33,7 @@ MyRoutes = [
 
 // var router = Router(Router.Top)
 var router = Router(MyRoutes)
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     // request.setLimits({timeout: 0, inactivityTimeout: 60})
     // App.log.info(request.method, request.uri)
     Web.serve(request, router)

@@ -91,7 +91,7 @@ module ejs.web {
             write('    table.draw(data, ' + serialize(goptions) + ');')
 
             if (options.click) {
-                write('    google.visualization.events.observe(table, "select", function() {')
+                write('    google.visualization.events.on(table, "select", function() {')
                 write('        var row = table.getSelection()[0].row;')
                 write('        window.location = "' + view.makeUrl(options.click, "", options) + '?id=" + ' + 
                     'data.getValue(row, 0);')

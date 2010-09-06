@@ -1,5 +1,5 @@
 /*
-    Test HttpServer.observe and events
+    Test HttpServer.on and events
  */
 require ejs.web
 
@@ -10,7 +10,7 @@ server = new HttpServer
 assert(server.address == null)
 
 events = {}
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     events[event] = true
     request.session
     request.destroySession()
@@ -21,7 +21,7 @@ function watch(event, request) {
     //  Respond to request and trigger session events. Save record of events.
     events[event] = true
 }
-server.observe(["close", "createSession", "destroySession", "readable"], watch)
+server.on(["close", "createSession", "destroySession", "readable"], watch)
 
 //  Run server and fetch one request
 assert(server.sessions == null)

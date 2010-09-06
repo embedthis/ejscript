@@ -10,11 +10,11 @@ server = new HttpServer
 server.listen(HTTP)
 load("../utils.es")
 
-server.observe("readable", function (event, request: Request) {
+server.on("readable", function (event, request: Request) {
     switch (pathInfo) {
     case "/commet":
         dontAutoFinalize()
-        observe("readable", function (event) {
+        on("readable", function (event) {
             if (read(commetData, -1) == null) {
                 write("Hello World")
                 finalize()
@@ -33,7 +33,7 @@ var commetData = new ByteArray
 let http = new Http
 let done = 0
 http.async = true
-http.observe("writable", function (event, h) {
+http.on("writable", function (event, h) {
     if (done < 1000) {
         http.write("%05d abcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxyz\r\n".format(done++))
         http.flush()

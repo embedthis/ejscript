@@ -18,7 +18,7 @@ public class TestController extends Controller {
 
     action function stream() {
         dontAutoFinalize()
-        observe("readable", function (event) {
+        on("readable", function (event) {
             let data = new ByteArray
             if (read(data)) {
                 assert(data == "Some data")

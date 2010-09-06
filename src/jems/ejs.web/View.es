@@ -165,7 +165,7 @@ module ejs.web {
             options = getOptions(options)
             options.click ||= true
             // options.action ||= text.split(" ")[0].toLowerCase()
-            getConnector("label", options).label(text, options)
+            getConnector("anchor", options).anchor(text, options)
         }
 
         /**
@@ -194,6 +194,9 @@ module ejs.web {
          */
         function buttonLink(text: String, options: Object = {}): Void {
             options = getOptions(options)
+            if (currentRecord) {
+                options.id ||= currentRecord.id
+            }
             getConnector("buttonLink", options).buttonLink(text, options)
         }
 
@@ -352,7 +355,7 @@ MOB -- much more doc here
                 <% image("pic.gif") %>
                 <% image("pic.gif", { refresh: "/getData", period: 2000, style: "myStyle" }) %>
                 <% image("pic.gif", { click: true, uri: "/foreground/click" }) %>
-                <% image("checkout.gif", { click: true, action: "checkout" }) %>
+                <% image("checkout.gif", { click: true, uri: "@checkout" }) %>
                 <% image("pic.gif", { remote: "/background/click" }) %>
          */
         function image(src: String, options: Object = {}): Void {
@@ -418,7 +421,7 @@ print("CATCH " + e)
                 <% label("Hello World") %>
                 <% label("Hello", { refresh: "/getData", period: 2000, style: "myStyle" }) %>
                 <% label("Hello", { click: "/foreground/link" }) %>
-                <% label("Checkout", { click: true, action: "checkout" }) %>
+                <% label("Checkout", { click: true, uri: "@checkout" }) %>
          */
         function label(text: String, options: Object = {}): Void {
             options = getOptions(options)
@@ -515,11 +518,13 @@ print("CATCH " + e)
             let connector = getConnector("script", options)
             if (target is Array) {
                 for each (u in target) {
+//  MOB -- should not be doing this join
                     connector.script(request.home.join(u), options)
                 }
             } else if (target == null) {
                 connector.script(null, options)
             } else {
+//  MOB -- should not be doing this join
                 connector.script(request.home.join(target), options)
             }
         }
@@ -552,11 +557,13 @@ print("CATCH " + e)
             let connector = getConnector("stylesheet", options)
             if (uri is Array) {
                 for each (u in uri) {
+//  MOB -- should not be doing this join
                     connector.stylesheet(request.home.join(u), options)
                 }
             } else if (uri == null) {
                 connector.stylesheet(null, options)
             } else {
+//  MOB -- should not be doing this join
                 connector.stylesheet(request.home.join(uri), options)
             }
         }
@@ -889,22 +896,8 @@ MOB -- review and rethink this
         }
 
         private function getOptions(options: Object): Object {
-            if (options is String) {
-                if (options[0] == "@") {
-                    options = options.slice(1)
-                    if (options.contains(/[\.\/]/)) {
-                        let [resource, route] = options.split(/[\.\/]/)
-                        options = {resource: resource, route: route}
-                    } else { 
-                        options = {route: options}
-                    }
-                } else {
-                    options = {uri: options.toString()}
-                }
-            } else if (options is Uri) {
-                options = {uri: options.toString()}
-            }
-            return options
+            //  MOB -- 
+            return request.makeUriHash(options)
         }
 
         /*

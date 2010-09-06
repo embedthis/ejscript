@@ -9,7 +9,6 @@ assert(r.link("c.html") == "/dir/c.html")
 assert(r.link("../c.html") == "/c.html")
 assert(r.link("/c.html") == "/c.html")
 
-
 assert(r.link("c.html").local == "/dir/c.html")
 assert(r.link("../c.html").local == "/c.html")
 assert(r.link("/c.html").local == "/c.html")
@@ -27,7 +26,7 @@ assert(r.link({
 
 
 r = new Request("http://example.com/Product/update")
-print(r.link("abc"))
-print(r.link(""))
-print(r.link("."))
+assert(r.link("abc") == "/Product/abc")
+assert(r.link("") == "/Product")
+assert(r.link(".") == "/Product/")
 

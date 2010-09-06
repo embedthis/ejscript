@@ -6,7 +6,7 @@ require ejs.web
 let address = ":" + (App.config.test.http_port || "6700")
 let server: HttpServer = new HttpServer("../../web")
 
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     Web.serve(request)
 /*
     switch (request.pathInfo) {
@@ -28,7 +28,7 @@ server.observe("readable", function (event, request) {
         // "Content-Length", 11,
         "Content-Type": "text/plain",
     })
-    request.observe("readable", function (event, request) {
+    request.on("readable", function (event, request) {
         let data = new ByteArray
         if (request.read(data)) {
             request.write(data)
@@ -36,14 +36,14 @@ server.observe("readable", function (event, request) {
             request.finalize()
         }
     })
-    request.observe("writable", function (event, request) {
+    request.on("writable", function (event, request) {
         // request.write("Some Data\r\n")
         //  request.finalize()
     })
-    request.observe("close", function (event, request) {
+    request.on("close", function (event, request) {
         print("CLOSE EVENT")
     })
-    request.observe("error", function (event, request) {
+    request.on("error", function (event, request) {
         print("ERROR EVENT")
     })
 */

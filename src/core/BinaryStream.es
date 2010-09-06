@@ -45,11 +45,11 @@ module ejs {
             inbuf = new ByteArray
             outbuf = new ByteArray
 
-            inbuf.observe("writable", function (event: String, buffer: ByteArray) {
+            inbuf.on("writable", function (event: String, buffer: ByteArray) {
                 nextStream.read(buffer)
             })
 
-            outbuf.observe("readable", function (event: String, buffer: ByteArray) {
+            outbuf.on("readable", function (event: String, buffer: ByteArray) {
                 count = nextStream.write(buffer)
                 buffer.readPosition += count
                 buffer.reset()
@@ -129,9 +129,9 @@ module ejs {
         }
 
         /** 
-            @duplicate Stream.observe 
+            @duplicate Stream.on 
          */
-        native function observe(name, observer: Function): Void
+        native function on(name, observer: Function): Void
 
         /** 
             @duplicate Stream.read
@@ -226,7 +226,7 @@ module ejs {
         }
 
         /** 
-            @duplicate Stream.observe 
+            @duplicate Stream.on 
          */
         native function removeObserver(name, observer: Function): Void
 

@@ -36,7 +36,7 @@ module ejs {
         native function Cmd(cmdline: String = null, options: Object = null)
 
         /** 
-            @duplicate Stream.observe
+            @duplicate Stream.on
             @event readable Issued when output data to read.
             @event writable Issued when the connection to the command is writable to accept data.
             @event complete Issued when the command completes
@@ -44,7 +44,7 @@ module ejs {
             All events are called with the signature:
             function (event: String, cmd: Cmd): Void
          */
-        native function observe(name, listener: Function): Void
+        native function on(name, listener: Function): Void
 
         /** 
             @duplicate Stream.available

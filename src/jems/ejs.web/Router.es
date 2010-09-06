@@ -107,7 +107,7 @@ module ejs.web {
         /*
             Routes indexed by resource name
          */
-        var resources: Object = {}
+        public var resources: Object = {}
         
         /*
             Map of run functions based on request extension 
@@ -173,18 +173,12 @@ module ejs.web {
             @option controller Controller name to use instead of $name
             @return The router instance to enable chaining
          */
-        public function UNUSED_addResource(name: String, options: Object = {}): Void {
+        public function addResource(name: String, options: Object = {}): Void {
             let c = options.controller || name
-            add("edit",    '/'+name+ "/edit",      {resource: name, method: "GET",    controller: c, action: "edit"})
-            add("show",    '/'+name,               {resource: name, method: "GET",    controller: c, action: "show"})
-            add("update",  '/'+name,               {resource: name, method: "PUT",    controller: c, action: "update"})
-            add("destroy", '/'+name,               {resource: name, method: "DELETE", controller: c, action: "destroy"})
-            add("default", '/'+name+ "/{action}",  {resource: name,                   controller: c})
-            
-            let names = options.plural || toPlural(name)
-            add("init",    '/'+names+ "/init",     {resource: name, method: "GET",    controller: c, action: "init"})
-            add("create",  '/'+names,              {resource: name, method: "POST",   controller: c, action: "create"})
-            // add("default", '/'+names+ "/{action}", {resource: name,                   controller: c})
+            add("edit",    '/' + name + "/edit",      {resource: name, method: "GET",    controller: c, action: "edit"})
+            add("show",    '/' + name,                {resource: name, method: "GET",    controller: c, action: "show"})
+            add("update",  '/' + name,                {resource: name, method: "PUT",    controller: c, action: "update"})
+            add("default", '/' + name + "/{action}",  {resource: name,                   controller: c})
         }
 
         /** 
@@ -207,7 +201,6 @@ module ejs.web {
             @param options Object hash of options. Defaults to {}
             @option controller Controller name to use instead of $name
         */
-//  MOB -- support array of names
         public function addResources(names: *, options: Object = {}): Void {
             if (name is Array) {
                 for each (name in names) {
@@ -228,8 +221,6 @@ module ejs.web {
 
             add("default", '/' + name + "/{action}",   {resource: name,                   controller: c})
         }
-
-        //  Helpers get(), post(), destroy(), put()
 
         /** 
             Add default restful routes for singleton resources. This also adds top level routes and a static content
@@ -253,7 +244,10 @@ module ejs.web {
             @return The router instance to enable chaining
          */
         public function addSimple(): Void
-            add("default", "/{controller}(/{action}(/{id}))")
+            add("simple", "/{controller}(/{action}(/{id}))")
+
+        public function addDefault(): Void
+            add("default", "/{controller}(/{action})")
 
         public function addStatic(): Void {
             let staticPattern = RegExp("^\\/" + (App.config.directories.static || "static") + "\\/")
@@ -356,13 +350,16 @@ module ejs.web {
             @option rewrite 
             @option run (Function|Object) This can be either a function to serve the request or it can be a 
                 response hash with status, headers and body properties. The function should return such a response object.
+            @example:
+                r.add("user", "/User/{action}", {controller: "User"})
          */
         public function add(name: String, template = null, options: Object = {}): Void {
             let r = new Route(this)
 
-            if (options && options.resource) {
+            if (options.resource) {
                 name = options.resource + "-" + name
             }
+
             if (template == null) {
                 //  Interpret as "/controller(/action)" and convert into "/:controller(/:action)
                 template = "{" + name.split("/").join("}{") + "}"
@@ -520,23 +517,17 @@ module ejs.web {
             let pathInfo = request.pathInfo
             let log = request.log
 
-dump("RPARMS", r.params)
             for (field in r.params) {
                 /*  Apply override params */
                 let value = r.params[field]
-print("FIELD " + field + " = " + value)
                 if (value.contains("$") && !r.splitter) {
-                    //  MOB -- not right
                     value = pathInfo.replace(r.matcher, value)
                 }
                 if (value.contains("{")) {
-                    //  MOB -- not right
                     value = request[value.trim.slice(1,-1)]
                 }
-print("SET " + field + " to " + value)
                 params[field] = value
             }
-dump("PPP", params)
             if (r.rewrite && !r.rewrite(request)) {
                 log.debug(5, "Request rewritten as \"" + request.pathInfo + "\" (reroute)")
                 return route(request)
@@ -557,10 +548,11 @@ dump("PPP", params)
                 global.load(r.module + ".mod")
                 r.initialized = true
             }
-print("@@@@ Matched route \"" + r.name + "\"")
-            if (log.level >= 4) {
-                log.debug(4, "Matched route \"" + r.name + "\"")
-                log.debug(5, "  Route params " + serialize(params, {pretty: true}))
+            if (log.level >= 3) {
+                log.debug(3, "Matched route \"" + r.name + "\"")
+                if (log.level >= 5) {
+                    log.debug(5, "  Route params " + serialize(params, {pretty: true}))
+                }
                 if (log.level >= 6) {
                     log.debug(6, "  Route " + serialize(r, {pretty: true}))
                     log.debug(6, "  REQUEST\n" + serialize(request, {pretty: true}))
@@ -577,7 +569,6 @@ print("@@@@ Matched route \"" + r.name + "\"")
                     request.trace(r.trace.level || 0, r.trace.options, r.trace.size)
                 }
             }
-//  MOB -- what if run is a response hash?
             let app = r.run(request)
             if (app == null) {
                 return function(request) {}
@@ -601,14 +592,11 @@ print("@@@@ Matched route \"" + r.name + "\"")
             if (request.method == "POST") {
                 let method = request.params["-ejs-method-"] || request.header("X-HTTP-METHOD-OVERRIDE")
                 if (method && method.toUpperCase() != request.method) {
-                    // MOB automatically done request.originalMethod ||= request.method
                     log.debug(3, "Change method from " + request.method + " TO " + method + " for " + request.uri)
                     request.method = method
                 }
             }
             let routeSet = resources[pathInfo.split("/")[1]] || routes
-//dumpDef(routeSet)
-            //  MOB - need better way to turn on debug trace without slowing down the router
             for each (r in routeSet) {
                 log.debug(6, "Test route \"" + r.name + "\"")
                 if (r.method && !request.method.contains(r.method)) {
@@ -712,13 +700,6 @@ print("@@@@ Matched route \"" + r.name + "\"")
             Resource limits for the request. See HttpServer.limits for details.
          */
         var limits: Object
-
-        /**
-            Function that will be called by Request.link to make to make URI links.
-
-                function linker(uri: Uri, request: Request, options: Object): Uri
-         */
-        var linker: Function
 
         /**
             Application location to serve the request. Location contains two properties: prefix which is the string 
@@ -834,39 +815,46 @@ print("@@@@ Matched route \"" + r.name + "\"")
         }
 
         /**
-            Complete a URI link by adding route token information. 
+            Get the template pattern for a route. 
             @param uri Current URI to complete
             @param request Current request object
-            @param options Object hash of options describing the target link. See $Request.link.
+            @param options Object hash of options describing the route. See $Request.link.
             @option resource Name of the RESTFul resource owning the route.
             @option route Name of the route
-            @return A Uri object.
+            @return A template string
          */
-        public function completeLink(options: Object, request: Request): Uri {
-            if (options.linker) {
-                return options.linker(uri, request, options)
-            }
+        public function getTemplate(options: Object, request: Request): String {
             let routeName = options.route || "default"
-            let resource = options.resource || request.route.resource || ""
+            let resource = options.resource
+            if (resource == null || resource == undefined) {
+                /* Resource may be "" */
+                resource ||= request.route.resource || ""
+            }
             if (resource) {
                 routeName = resource + "-" + routeName
             }
             let resourceRoutes = router.resources[resource]
             if (!resourceRoutes) {
-                // throw new ReferenceError("Unknown route resource \"" + resource + "\"")
-//  MOB -- temp
+                // MOB throw new ReferenceError("Unknown route resource \"" + resource + "\"")
+                //  This is for controllers
+
                 options.controller = resource
                 resourceRoutes = router.resources[""]
                 routeName = "default"
             }
-dump("COMPLETE LINK for " + resource + "." + routeName, options)
             let route = resourceRoutes[routeName]
             if (!route) {
                 throw new ReferenceError("Unknown route \"" + routeName + "\" in resource: \"" + resource + "\"")
             }
-print("COMPLETE resource: \"" + resource + "\" route: \"" + route.name + "\"")
-            return Uri.template("/{scriptName}" + route.template, options, 
-                {scriptName: request.scriptName, action: "", controller: request.params.controller}).path
+            //  MOB -- should add to template permanently (sub-routes messes up)
+            return "/{scriptName}" + route.template
+    /*
+            return Uri.template("/{scriptName}" + route.template, options, {
+                    scriptName: options.scriptName || request.scriptName, 
+                    action: "", 
+                    controller: request.params.controller
+                }).path
+    */
         }
     }
 }

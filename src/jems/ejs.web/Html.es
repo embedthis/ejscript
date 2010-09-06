@@ -141,16 +141,16 @@ module ejs.web {
         }
 
         function form(record: Object, options: Object): Void {
-    //  MOB -- need to be overridden for delete buttons
             options.method ||= ((record && options.id) ? "PUT" : "POST")
             options.action ||= ((record && options.id) ? "update" : "create")
+            options.route ||= "default"
             let method = options.method
             if (method != "GET" && method != "POST") {
                 method = "POST"
             }
             let uri ||= request.link(options)
             emitFormErrors(record, options)
-    //  MOB -- what is method: true for?
+            /* Exclude method from the mapped-attribute list. Don't want data-method */
             let attributes = getAttributes(options, { method: true })
             write('<form method="' + method + '" action="' + uri + '"' + attributes + '>\r\n')
             if (options.id != undefined) {
@@ -452,6 +452,7 @@ module ejs.web {
             }
         }
 
+/*
         //  FUTURE MOB -- never called. MOB -- better to push to client via data-filter
         //  TODO - this actually modifies the grid. Need to doc this.
         private function filter(data: Array): Array {
@@ -472,26 +473,11 @@ module ejs.web {
             return data
         }
 
-//  MOB -- should be a link here too 
         /*
             Like link but supports location == true to use the rest of options.
          */
-//  MOB - strange API
-        private function buildUri(location: Object, options: Object): Uri {
-            if (location == true) {
-                return request.link(options)
-            } else if (location is String) {
-                return request.link(location)
-/*
-                if (location.startsWith("/")) {
-                    return request.link(location)
-                } else {
-                    return request.link({action: location})
-                }
-*/
-            }
-            return request.link(location)
-        }
+        private function buildLink(location: Object, options: Object): Uri
+            request.link(location === true ? options : location)
 
         /**
             Map options to a HTML attribute string. See htmlOptions and $View for a discussion on standard options.
@@ -504,9 +490,9 @@ module ejs.web {
                 options.style = append(options.style, "-ejs-field-error")
             }
             if (options.remote) {
-                options["data-remote"] = buildUri(options.remote, options)
+                options["data-remote"] = buildLink(options.remote, options)
             } else if (options.click) {
-                options["data-click"] = buildUri(options.click, options)
+                options["data-click"] = buildLink(options.click, options)
             }
             if (options.refresh && !options.domid) {
                 options.domid = getNextID()
@@ -518,14 +504,13 @@ module ejs.web {
             Get attributes for table cells and rows
          */
         private function getCellRowAtt(record, row, field, values, options): String {
-            let click, edit, key, method, params
+            let click, edit, key, method, params, uri
             if (options.click) {
-                //  MOB -- should these use "let"
                 ({method, uri, params, key}) = getTableLink(options.click, record, row, field, values, options)
-                click = buildUri(uri, options)
+                click = buildLink(uri, options)
             } else if (options.edit) {
                 ({method, uri, params, key}) = getTableLink(options.edit, record, row, field, values, options)
-                edit = buildUri(uri, options)
+                edit = buildLink(uri, options)
             }
             if (params) {
                 /* Process params and convert to an encoded query string */
@@ -550,9 +535,11 @@ module ejs.web {
          */
         private function getKeyAtt(keyFields: Array, record, row, values, options): String {
             let keys
+/*
             if (!keyFields && options.click && record.id) {
                 keyFields = ["id"]
             }
+*/
             if (keyFields) {
                 for (name in record) {
                     /* Add missing values if columns are not being displayed */
@@ -581,25 +568,22 @@ module ejs.web {
             Get table click/edit links. Return a hash {method, uri, params, key}
          */
         private function getTableLink(location, record, row, field, values, options): Object {
+            if (location === true) {
+                location = options
+            }
             if (location is Function) {
                 result = location(record, field, values[field], options)
             } else {
-                if (location is String && location[0] == '@') {
-                    location = location.slice(1)
-                    if (location.contains(/[\.\/]/)) {
-                        let [resource, route] = location.split(/[\.\/]/)
-                        location = {resource: resource, route: route}
-                    } else { 
-                        location = {route: location}
-                    }
-                    if (record) {
-                        location.id = record.id
-                    }
-dump("HERE######", location)
+                location = request.makeUriHash(location)
+                if (record) {
+                    location.id = record.id
                 }
-                let uri = buildUri(location, options)
-                let key = getKeyAtt(options.key, record, row, values, options)
-                result = { method: options.method, uri: uri, params: options.params, key: key}
+                result = { 
+                    method: options.method, 
+                    uri: request.link(location), 
+                    params: options.params, 
+                    key: getKeyAtt(options.key, record, row, values, options)
+                }
             }
             return result
         }

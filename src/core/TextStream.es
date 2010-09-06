@@ -45,7 +45,7 @@ module ejs {
             inbuf = new ByteArray
 /* UNUSED
             let self = this
-            inbuf.observe("writable", function (event, ba) {
+            inbuf.on("writable", function (event, ba) {
                 self.fill()
             });
 */
@@ -125,7 +125,7 @@ module ejs {
         /** 
             @duplicate Stream.observe 
          */
-        function observe(name, observer: Function): Void {
+        function on(name, observer: Function): Void {
             throw new ArgError("Observers are not supported")
         }
 

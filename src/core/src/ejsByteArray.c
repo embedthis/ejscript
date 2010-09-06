@@ -309,9 +309,9 @@ static EjsObj *ba_ByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 
 
 /**
-    function get observe(name, listener: Function): Void
+    function get on(name, listener: Function): Void
  */
-static EjsObj *ba_observe(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsObj *ba_on(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     ejsAddObserver(ejs, &ap->emitter, argv[0], argv[1]);
     return 0;
@@ -1410,7 +1410,7 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     helpers->setProperty = (EjsSetPropertyHelper) setByteArrayProperty;
     
     ejsBindConstructor(ejs, type, (EjsProc) ba_ByteArray);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_observe, (EjsProc) ba_observe);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_on, (EjsProc) ba_on);
     ejsBindMethod(ejs, prototype, ES_ByteArray_available, (EjsProc) ba_available);
     ejsBindAccess(ejs, prototype, ES_ByteArray_async, (EjsProc) ba_async, (EjsProc) ba_setAsync);
     ejsBindMethod(ejs, prototype, ES_ByteArray_close, (EjsProc) ba_close);

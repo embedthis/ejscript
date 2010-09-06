@@ -10,7 +10,7 @@ server = new HttpServer
 server.listen(HTTP)
 load("../utils.es")
 
-server.observe("readable", function (event, request: Request) {
+server.on("readable", function (event, request: Request) {
 
     assert(absHome == "http://127.0.0.1" + HTTP + "/")
     absHome = "http://localhost:" + PORT + "/"

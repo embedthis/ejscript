@@ -26,7 +26,7 @@ module ejs {
             @return Returns this promise
          */
         function onSuccess(observer: Function): Promise {
-            observe("success", observer)
+            on("success", observer)
             return this
         }
 
@@ -36,7 +36,7 @@ module ejs {
             @return Returns this promise
          */
         function onCancel(observer: Function): Promise {
-            observe("cancel", observer)
+            on("cancel", observer)
             return this
         }
 
@@ -46,7 +46,7 @@ module ejs {
             @return Returns this promise
          */
         function onError(observer: Function): Promise {
-            observe("error", observer)
+            on("error", observer)
             return this
         }
 
@@ -56,7 +56,7 @@ module ejs {
             @return Returns this promise
          */
         function onProgress(observer: Function): Promise {
-            observe("progress", observer)
+            on("progress", observer)
             return this
         }
 
@@ -66,7 +66,7 @@ module ejs {
             @return Returns this promise
          */
         function onTimeout(observer: Function): Promise {
-            observe("timeout", observer)
+            on("timeout", observer)
             return this
         }
 
@@ -140,15 +140,15 @@ module ejs {
          */
         function then(success: Function, error: Function? = null, cancel: Function? = null, 
                 progress: Function? = null): Promise {
-            observe("success", success)
+            on("success", success)
             if (error) {
-                observe("error", error)
+                on("error", error)
             }
             if (cancel) {
-                observe("cancel", cancel)
+                on("cancel", cancel)
             }
             if (progress) {
-                observe("progress", progress)
+                on("progress", progress)
             }
             return this
         }
@@ -170,9 +170,9 @@ module ejs {
                     timer.stop()
                 }
             }
-            observe("success", wakeup)
-            observe("error", wakeup)
-            observe("cancel", wakeup)
+            on("success", wakeup)
+            on("error", wakeup)
+            on("cancel", wakeup)
             timer = new Timer(msec, function() {
                 if (complete || timeoutComplete) {
                     return;
@@ -200,7 +200,7 @@ module ejs {
                 waitComplete = true
                 result = args
             }
-            observe(["cancel", "error", "success"], wakeup)
+            on(["cancel", "error", "success"], wakeup)
             timer = new Timer(timeout, wakeup)
             timer.start()
             while (!waitComplete && !complete) {

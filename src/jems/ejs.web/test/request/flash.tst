@@ -9,7 +9,7 @@ server = new HttpServer
 server.listen(HTTP)
 load("../utils.es")
 
-server.observe("readable", function (event, request: Request) {
+server.on("readable", function (event, request: Request) {
     request.setupFlash()
     switch (pathInfo) {
     case "/first":

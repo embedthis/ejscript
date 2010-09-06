@@ -59,7 +59,7 @@ module ejs {
         function flush(dir: Number): Void 
 
         /** 
-            Add an observer to the stream. 
+            Add an observer to the stream for the named events. 
             @param name Name of the event to listen for. The name may be an array of events.
             @param observer Callback observer function. The function is called with the following signature:
                 function observer(event: String, ...args): Void
@@ -67,7 +67,7 @@ module ejs {
             @event writable Issued when the stream becomes writable.
             @event close Issued when stream is being closed.
          */
-        function observe(name, observer: Function): Void
+        function on(name, observer: Function): Void
 
         /** 
             Read a data from the stream. 

@@ -95,8 +95,8 @@ module ejs {
          */
         native function get isOpen(): Boolean
 
-        /** @duplicate Stream.observe */
-        native function observe(name, observer: Function): Void
+        /** @duplicate Stream.on */
+        native function on(name, observer: Function): Void
 
         /**  
             Open a file. This opens the file designated when the File constructor was called.

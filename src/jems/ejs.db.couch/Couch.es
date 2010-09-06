@@ -112,8 +112,8 @@ module ejs.db.couch {
         /**
             @hide
          */
-        function observe(event: String, observer: Function): Void
-            hp.observe(event, observer)
+        function on(event: String, observer: Function): Void
+            hp.on(event, observer)
 
         /**
             @hide

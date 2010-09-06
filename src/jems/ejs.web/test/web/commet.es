@@ -2,13 +2,13 @@ require ejs.web
 
 exports.app = function(r: Request) {
 
-    observe("error", function(event) {
+    on("error", function(event) {
         print("GOT ERROR EVENT " + errorMessage)
     })
-    observe("close", function(event) {
+    on("close", function(event) {
         print("GOT CLOSE EVENT")
     })
-    observe("readable", function(event) {
+    on("readable", function(event) {
         buf = new ByteArray
         if (read(buf)) {
             print('READ returned ' + buf)

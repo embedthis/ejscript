@@ -1,5 +1,5 @@
 /*
-    Test Controller.checkAfter, checkBefore, removeCheckers
+    Test Controller.after, before, removeCheckers
  */
 require ejs.web
 
@@ -11,8 +11,8 @@ public class TestController extends Controller {
 
     function TestController() {
         removeCheckers()
-        checkBefore(authorize, { except: "anyone"} )
-        checkAfter(monitor, { only: "secret"} )
+        before(authorize, { except: "anyone"} )
+        after(monitor, { only: "secret"} )
     }
     function authorize() {
         events["authorize"] = true
@@ -40,7 +40,7 @@ server = controllerServer(HTTP)
 
 let events = {}
 
-//  checkBefore - With key, should be allowed
+//  before - With key, should be allowed
 let http = fetch(HTTP + "/test/secret?key=abracadabra")
 assert(http.response == "Top Secret")
 assert(events.authorize && events.monitor && !events.denied)

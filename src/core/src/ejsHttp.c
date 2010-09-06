@@ -46,9 +46,9 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
 
 /*  
-    function observe(name, observer: function): Void
+    function on(name, observer: function): Void
  */
-EjsObj *http_observe(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsFunction     *observer;
     HttpConn        *conn;
@@ -1543,7 +1543,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_lastModified, (EjsProc) http_lastModified);
     ejsBindMethod(ejs, prototype, ES_Http_limits, (EjsProc) http_limits);
     ejsBindAccess(ejs, prototype, ES_Http_method, (EjsProc) http_method, (EjsProc) http_set_method);
-    ejsBindMethod(ejs, prototype, ES_Http_observe, (EjsProc) http_observe);
+    ejsBindMethod(ejs, prototype, ES_Http_on, (EjsProc) http_on);
     ejsBindMethod(ejs, prototype, ES_Http_post, (EjsProc) http_post);
     ejsBindMethod(ejs, prototype, ES_Http_put, (EjsProc) http_put);
     ejsBindMethod(ejs, prototype, ES_Http_read, (EjsProc) http_read);

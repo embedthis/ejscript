@@ -5,7 +5,7 @@ exports.app = function() {
     setStatus(200)
     setHeaders({"Content-Type": "text/plain"})
     dontAutoFinalize()
-    observe("readable", function(request) {
+    on("readable", function(request) {
         let data = new ByteArray
         if (read(data)) {
             write(data)

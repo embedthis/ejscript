@@ -8,22 +8,22 @@ class MyFilter extends Filter {
 
 filter = new Filter(stream)
 
-filter.observe("readable", function(request) {
+filter.on("readable", function(request) {
     assert(this == filter)
     buf = new ByteArray
     filter.write(read(buf))
 })
 
-filter.observe("writable", function(request) {
+filter.on("writable", function(request) {
     assert(this == filter)
     buf = new ByteArray
     filter.write(read(buf))
 })
 
-filter.observe("close", function(request) {
+filter.on("close", function(request) {
     assert(this == filter)
 })
 
-filter.observe("error", function(request) {
+filter.on("error", function(request) {
     assert(this == filter)
 })

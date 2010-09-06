@@ -10,7 +10,7 @@ server = new HttpServer
 server.listen(HTTP)
 load("../utils.es")
 
-server.observe("readable", function (event, request: Request) {
+server.on("readable", function (event, request: Request) {
     let j = Request.jsgi
     assert(j)
     assert(j.errors)

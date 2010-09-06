@@ -11,10 +11,10 @@ http.async = true
 var complete
 
 var buf = new ByteArray
-http.observe("readable", function (event, http) {
+http.on("readable", function (event, http) {
     http.read(buf, -1)
 })
-http.observe("close", function (event, http) {
+http.on("close", function (event, http) {
     complete = true
 })
 

@@ -172,8 +172,8 @@ module ejs {
             return md5(buf.readString())
         }
 
-        /** @duplicate Stream.observe */
-        native function observe(name: Object, observer: Function): Void
+        /** @duplicate Stream.on */
+        native function on(name: Object, observer: Function): Void
 
         /** 
             @duplicate Stream.read
@@ -401,7 +401,7 @@ module ejs {
          */
         # Config.Legacy
         function set input(callback: Function): Void {
-            observe("writable", function(event: String, ba: ByteArray): Void {
+            on("writable", function(event: String, ba: ByteArray): Void {
                 callback(ba)
             })
         }
@@ -418,7 +418,7 @@ module ejs {
 
         # Config.Legacy
         function set output(callback: Function): Void {
-            observe("readable", function(event: String, ba: ByteArray): Void {
+            on("readable", function(event: String, ba: ByteArray): Void {
                 callback(ba)
             })
         }

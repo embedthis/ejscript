@@ -11,8 +11,8 @@ load("../utils.es")
 
 var events
 
-server.observe("readable", function (event, request: Request) {
-    observe(["close", "error", "readable", "writable"], function(event) {
+server.on("readable", function (event, request: Request) {
+    on(["close", "error", "readable", "writable"], function(event) {
         // print("GOT " + event)
         events[event] = true
     })

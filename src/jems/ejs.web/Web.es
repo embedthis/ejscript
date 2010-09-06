@@ -142,7 +142,7 @@ module ejs.web {
                     request.async = true
                     //  Should we wait on request being writable or on the body stream being readable?
 //  MOB Must detect eof and do a finalize()
-                    request.observe("readable", function(event, request) {
+                    request.on("readable", function(event, request) {
                         let data = new ByteArray
                         if (request.read(data)) {
 //  MOB -- what about async? what if can't accept all the data?
@@ -152,7 +152,7 @@ module ejs.web {
                         }
                     })
                     //  MOB -- or this? but what about error events
-                    request.observe("complete", function(event, body) {
+                    request.on("complete", function(event, body) {
                         request.autoFinalize()
                     })
                 } else {
@@ -249,7 +249,7 @@ module ejs.web {
         static function start(address: String, documentRoot: Path = ".", serverRoot: Path = ".", routes = Router.Top): Void {
             let server: HttpServer = new HttpServer(documentRoot, serverRoot)
             var router = Router(routes)
-            server.observe("readable", function (event, request) {
+            server.on("readable", function (event, request) {
                 serve(request, router)
             })
             server.listen(address)
@@ -277,7 +277,7 @@ module ejs.web {
          */
         static function run(address: String, documentRoot: Path = ".", serverRoot: Path = "."): Void {
             let server: HttpServer = new HttpServer(documentRoot, serverRoot)
-            server.observe("readable", function (event, request) {
+            server.on("readable", function (event, request) {
                 try {
                     if (!request.filename.exists) {
                         request.writeError(Http.NotFound, "Cannot find " + request.uri)

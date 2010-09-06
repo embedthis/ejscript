@@ -16,7 +16,7 @@ for (i in COUNT) {
     data.write("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: " + i + "\n")
 }
 
-server.observe("readable", function (event, request: Request) {
+server.on("readable", function (event, request: Request) {
     switch (pathInfo) {
     case "/single":
         write(data)
@@ -26,7 +26,7 @@ server.observe("readable", function (event, request: Request) {
 /* FUTURE
     case "/multiple":
         dontAutoFinalize()
-        observe("writable", function (event, request) {
+        on("writable", function (event, request) {
             //  To write in smaller chunks from a single byte array
             writeBlock(data, -1, System.Bufsize)
         })

@@ -9,7 +9,7 @@ module ejs {
         The emitter class provides a publish/subscribe model of communication. It supports the registration of observers
         who want to subscribe to events of interest. 
         @example
-            events.observe(event, function (event, ...args) {
+            events.on(event, function (event, ...args) {
                 //  Do something
             }
             events.fire("topic", 1, 2, 3)
@@ -151,7 +151,7 @@ module ejs {
             }
         }
 
-        //  MOB
+        //  MOB - remove
         function observe(name: Object!, callback: Function!): Void
             on(name, callback)
 
@@ -192,7 +192,7 @@ module ejs {
          */
         # Config.Legacy
         function addListener(name: Object, callback: Function): Void
-            observe(name, callback)
+            on(name, callback)
 
         /** 
             @hide 

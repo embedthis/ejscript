@@ -1274,7 +1274,7 @@ print(e)
                 data = data.replace(/\${LOWER_MODEL}/g, model.toLowerCase())
                 break
             case "index":
-                data = Templates.ScaffoldListView.replace(/\${MODEL}/g, model)
+                data = Templates.ScaffoldIndexView.replace(/\${MODEL}/g, model)
                 break
             default:
                 data = Templates.ScaffoldView.replace(/\${MODEL}/g, model)
@@ -1600,14 +1600,14 @@ public class ${NAME}Controller extends BaseController {
 
 
     /*
-     *****************  ScaffoldListView template ******************
+     *****************  ScaffoldIndexView template ******************
      */
-    public static const ScaffoldListView = 
+    public static const ScaffoldIndexView = 
 '<h1>${MODEL} List</h1>
 
-<% table(${MODEL}.findAll(), {click: "edit"}) %>
+<% table(${MODEL}.findAll(), {click: "#edit"}) %>
 <br/>
-<% buttonLink("New ${MODEL}", "create") %>
+<% buttonLink("New ${MODEL}", "#init") %>
 '
 
 
@@ -1629,8 +1629,8 @@ public class ${NAME}Controller extends BaseController {
     </table>
 
     <% button("OK", "commit") %>
-    <% buttonLink("Cancel", "index") %>
-    <% if (${LOWER_MODEL}.id) buttonLink("Delete", "destroy") %>
+    <% buttonLink("Cancel", "#") %>
+    <% if (${LOWER_MODEL}.id) buttonLink("Delete", {method: "DELETE", uri: "#destroy"}) %>
 <% endform() %>
 '
 

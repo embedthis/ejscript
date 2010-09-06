@@ -11,7 +11,7 @@ server.listen(HTTP)
 server.setLimits({ sessions: 10, sessionTimeout: 60 })
 server.setLimits({ inactivityTimeout: 0, requestTimeout: 0 })
 
-server.observe("readable", function (event, request: Request) {
+server.on("readable", function (event, request: Request) {
     switch (pathInfo) {
     case "/basic":
         assert(sessionID == null)

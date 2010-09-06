@@ -85,11 +85,11 @@ module ejs {
         native function listen(address): Socket
 
         /** 
-            @duplicate Stream.observe 
+            @duplicate Stream.on 
             @event readable Issued when the response headers have been fully received and some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
          */
-        native function observe(name, observer: Function): Void
+        native function on(name, observer: Function): Void
 
         /** 
             The port bound to this socket. Set to the integer port number or zero if not bound.

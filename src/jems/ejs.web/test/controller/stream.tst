@@ -12,7 +12,7 @@ public class TestController extends Controller {
     action function big() {
         dontAutoFinalize()
         let count = 0
-        observe("writable", function (event) {
+        on("writable", function (event) {
             if (count++ < 1000) {
                 write("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: " + count + "\n")
             } else {

@@ -35,9 +35,9 @@ static EjsObj *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 
 /*
-    function observe(name: [String|Array], listener: Function): Void
+    function on(name: [String|Array], listener: Function): Void
  */
-EjsObj *sock_observe(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+EjsObj *sock_on(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
     return 0;
@@ -439,12 +439,12 @@ void ejsConfigureSocketType(Ejs *ejs)
 
     ejsBindConstructor(ejs, type, (EjsProc) sock_Socket);
     ejsBindMethod(ejs, prototype, ES_Socket_accept, (EjsProc) sock_accept);
-    ejsBindMethod(ejs, prototype, ES_Socket_observe, (EjsProc) sock_observe);
     ejsBindMethod(ejs, prototype, ES_Socket_address, (EjsProc) sock_address);
     ejsBindAccess(ejs, prototype, ES_Socket_async, (EjsProc) sock_async, (EjsProc) sock_set_async);
     ejsBindMethod(ejs, prototype, ES_Socket_close, (EjsProc) sock_close);
     ejsBindMethod(ejs, prototype, ES_Socket_connect, (EjsProc) sock_connect);
     ejsBindMethod(ejs, prototype, ES_Socket_listen, (EjsProc) sock_listen);
+    ejsBindMethod(ejs, prototype, ES_Socket_on, (EjsProc) sock_on);
     ejsBindMethod(ejs, prototype, ES_Socket_port, (EjsProc) sock_port);
     ejsBindMethod(ejs, prototype, ES_Socket_read, (EjsProc) sock_read);
     ejsBindMethod(ejs, prototype, ES_Socket_remoteAddress, (EjsProc) sock_remoteAddress);

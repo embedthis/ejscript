@@ -11,7 +11,7 @@ var router = Router(Router.Top)
 //  Start regular server
 let server: HttpServer = new HttpServer("web")
 
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
     Web.serve(request, router)
 })
@@ -21,7 +21,7 @@ server.listen(HTTP)
 //  Start secure server
 if (Config.SSL) {
     var secureServer: HttpServer = new HttpServer("web")
-    secureServer.observe("readable", function (event, request) {
+    secureServer.on("readable", function (event, request) {
         // App.log.info(request.method, request.uri, request.scheme)
         Web.serve(request, router)
     })

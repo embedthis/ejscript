@@ -334,7 +334,7 @@ module ejs {
         static function waitForEvent(obj: *, events: Object, timeout: Number = Number.MaxInt32): Boolean {
             let done
             function callback(event) done = true
-            obj.observe(events, callback)
+            obj.on(events, callback)
             for (let mark = new Date; !done && mark.elapsed < timeout; ) {
                 App.eventLoop(timeout - mark.elapsed, 1)
             }

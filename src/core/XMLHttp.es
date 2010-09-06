@@ -137,11 +137,11 @@ module ejs {
             if (user && password) {
                 hp.setCredentials(user, password)
             }
-            hp.observe(["close", "error"], function (event, ...args) {
+            hp.on(["close", "error"], function (event, ...args) {
                 state = Loaded
                 notify()
             })
-            hp.observe("readable", function (event, ...args) {
+            hp.on("readable", function (event, ...args) {
                 let count = hp.read(responseBuf, -1)
                 state = Receiving
                 notify()
