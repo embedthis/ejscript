@@ -562,40 +562,6 @@ module ejs.web {
             return target
         }
 
-/*
-            let o = (target.uri) ? target.uri : target
-            if (o is String) {
-                if (o[0] == '@') {
-                    o = o.slice(1)
-                    if (o.contains("/")) {
-                        let [ctlr, action] = o.split("/")
-                        o = {controller: ctlr, action: action}
-                    } else { 
-                        o = {action: o || "index"}
-                    }
-                    //  MOB -- Is this right to use o.action, or should it go straight to the default
-                    o.route = target.route || o.action || "default"
-
-                } else {
-                    if (o[0] == '/') {
-                        o = scriptName + o
-                    }
-                    o = { uri: o}
-                } 
-                if (Object.getOwnPropertyCount(target) > 0) {
-                    o = blend(target, o)
-                }
-            } else {
-                o = target
-            }
-            if (o.action && !o.controller && controller) {
-                o.controller = controller.controllerName
-            }
-dump("MUH", o)
-            return o
-        }
-*/
-
         /*
             Select the response content type based on the request "Accept" header . See RFC-2616.
             @param formats Array of supported mime types
@@ -944,7 +910,6 @@ dump("MUH", o)
                 } catch {}
             }
             finalize()
-            //  MOB -- what level should this be? Can't be zero else it comes out in utest
             log.debug(1, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 

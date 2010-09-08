@@ -151,7 +151,6 @@ module ejs.web {
                 <% status("Status Message", { refresh: "/getData", period: 2000" }) %>
          */
         function alert(text: String, options: Object = {}): Void {
-            //MOB options = getOptions(options)
             text = formatValue(text, options)
             getConnector("alert", options).alert(text, options)
         }
@@ -182,7 +181,6 @@ module ejs.web {
                 button("commit", "Cancel")
          */
         function button(name: String, label: String, options: Object = {}): Void {
-            //MOB options = getOptions(options)
             getConnector("button", options).button(name, label, options)
         }
 
@@ -195,9 +193,7 @@ module ejs.web {
                 buttonLink("Cancel" "@")
          */
         function buttonLink(text: String, options: Object = {}): Void {
-dump("VBL", options)
             options = getOptions(options)
-dump("AVBL", options)
             if (currentRecord) {
                 options.id ||= currentRecord.id
             }
@@ -222,10 +218,8 @@ dump("AVBL", options)
                 <% chart(grid, { refresh: "/getData", period: 2000" }) %>
                 <% chart(data, { onclick: "action" }) %>
          */
-        function chart(data: Array, options: Object = {}): Void {
-            //MOB options = getOptions(options)
+        function chart(data: Array, options: Object = {}): Void
             getConnector("chart", options).chart(data, options)
-        }
 
         /**
             Render an input checkbox. This creates a checkbox suitable for use within an input form. 
@@ -239,7 +233,6 @@ dump("AVBL", options)
             @option value Object Override value to display if used without a form control record.
          */
         function checkbox(name: String, checkedValue: Object = true, options: Object = {}): Void {
-            //MOB options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("checkbox", options).checkbox(name, value, checkedValue, options)
@@ -252,10 +245,8 @@ dump("AVBL", options)
             @examples
                 <% div({ refresh: "/getData", period: 2000}) %>
          */
-        function div(body: String, options: Object = {}): Void {
-            //MOB options = getOptions(options)
+        function div(body: String, options: Object = {}): Void
             getConnector("div", options).div(body, options)
-        }
 
         /**
             End an input form. This closes an input form initiated by calling the $form method.
@@ -279,7 +270,6 @@ dump("AVBL", options)
                 <% flash(["error", "warning"]) %>
          */
         function flash(kinds: Object = null, options: Object = {}): Void {
-            //MOB options = getOptions(options)
             let cflash ||= request.flash
             if (cflash == null || cflash.length == 0) {
                 return
@@ -332,7 +322,6 @@ MOB -- much more doc here
             @option uri String Use a complete URI rather than an action and controller option to create the target uri.
          */
         function form(record: Object, options: Object = {}): Void {
-            //MOB options = getOptions(options)
             currentRecord = record
             if (record) {
                 options.id ||= record.id
@@ -346,10 +335,8 @@ MOB -- much more doc here
             @param src Source name for the icon.
             @param options Optional extra options. See $View for a list of the standard options.
          */
-        function icon(src: Object, options: Object = {}): Void {
-            //MOB options = getOptions(options)
+        function icon(src: Object, options: Object = {}): Void
             getConnector("icon", options).icon(src, options)
-        }
 
         /**
             Render an image
@@ -362,10 +349,8 @@ MOB -- much more doc here
                 <% image("checkout.gif", { click: true, uri: "@checkout" }) %>
                 <% image("pic.gif", { remote: "/background/click" }) %>
          */
-        function image(src: String, options: Object = {}): Void {
-            //MOB options = getOptions(options)
+        function image(src: String, options: Object = {}): Void
             getConnector("image", options).image(src, options)
-        }
 
         /**
             Render an input field as part of a form. This is a smart input control that will call the appropriate
@@ -427,10 +412,8 @@ print("CATCH " + e)
                 <% label("Hello", { click: "/foreground/link" }) %>
                 <% label("Checkout", { click: true, uri: "@checkout" }) %>
          */
-        function label(text: String, options: Object = {}): Void {
-            //MOB options = getOptions(options)
+        function label(text: String, options: Object = {}): Void
             getConnector("label", options).label(text, options)
-        }
 
         /**
             Emit a selection list. 
@@ -453,7 +436,6 @@ print("CATCH " + e)
                 list("priority", {low: 0, med: 1, high: 2})
          */
         function list(name: String, choices: Object, options: Object = {}): Void {
-            //MOB options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("list", options).list(name, choices, value, options)
@@ -465,10 +447,8 @@ print("CATCH " + e)
             @param address Mail recipient address link
             @param options Optional extra options. See $View for a list of the standard options.
          */
-        function mail(name: String, address: String, options: Object = {}): Void {
-            //MOB options = getOptions(options)
+        function mail(name: String, address: String, options: Object = {}): Void
             getConnector("mail", options).mail(name, address, options)
-        }
 
 //  MOB -- redo progress using a commet style
         /** 
@@ -480,10 +460,8 @@ print("CATCH " + e)
             @example
                 <% progress(percent, { refresh: "/getData", period: 2000" }) %>
          */
-        function progress(percent: Number, options: Object = {}): Void {
-            //MOB options = getOptions(options)
+        function progress(percent: Number, options: Object = {}): Void
             getConnector("progress", options).progress(percent, options)
-        }
 
         /** 
             Render a radio button. This creates a radio button suitable for use within an input form. 
@@ -507,7 +485,6 @@ print("CATCH " + e)
                 radio("priority", Message.priorities)
          */
         function radio(name: String, choices: Object, options: Object = {}): Void {
-            //MOB options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("radio", options).radio(name, value, choices, options)
@@ -543,10 +520,8 @@ print("CATCH " + e)
                     <% securityToken() %>
                 &lt;/head>
         */
-        function securityToken(options: Object = {}): Void {
-            //MOB options = getOptions(options)
+        function securityToken(options: Object = {}): Void
             getConnector("securityToken", options).securityToken(options)
-        }
 
         /** 
             Emit a style sheet link.
@@ -658,7 +633,6 @@ print("CATCH " + e)
                  }) %>
          */
         function table(data, options: Object = {}): Void {
-            //MOB options = getOptions(options)
             //  MOB - move to client side (data-pivot). No good here as it can't be refreshed!
             if (options.pivot) {
                 data = pivot(data)
@@ -681,10 +655,8 @@ print("CATCH " + e)
                 tabs({Status: "pane-1", "Edit: "pane-2"})
                 tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: true})
          */
-        function tabs(data: Object, options: Object = {}): Void {
-            //MOB options = getOptions(options)
+        function tabs(data: Object, options: Object = {}): Void
             getConnector("tabs", options).tabs(data, options)
-        }
 
         /**
             Render a text input field as part of a form.
@@ -705,7 +677,6 @@ print("CATCH " + e)
                 <% text("password", {value: params.password, password: true}) %>
          */
         function text(name: String, options: Object = {}): Void {
-            //MOB options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             value = formatValue(value, options)
             name = getFieldName(name, options) 
@@ -730,7 +701,6 @@ print("CATCH " + e)
                 <% textarea("name") %>
          */
         function textarea(name: String, options: Object = {}): Void {
-            //MOB options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             value = formatValue(value, options)
             name = getFieldName(name, options) 
@@ -747,10 +717,8 @@ print("CATCH " + e)
             @option style String CSS Style to use for the control
             @option visible Boolean Make the control visible. Defaults to true.
          */
-        function tree(data: Object, options: Object = {}): Void {
-            //MOB options = getOptions(options)
+        function tree(data: Object, options: Object = {}): Void
             getConnector("tree", options).tree(data, options)
-        }
 
         /**
             Render a partial view. This creates an HTML element with the required options. It is useful to generate

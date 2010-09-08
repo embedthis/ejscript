@@ -173,11 +173,11 @@ module ejs.web {
         MVC request handler.  
         @param request Request object
         @return A response hash (empty). MVC apps use Request methods directly to set status, headers and response body.
-     */
     function MvcApp(request: Request): Object {
         let app = MvcBuilder(request)
         return app(request)
     }
+     */
 
     /** 
         MVC builder for use in routing tables. The MVC builder function can be included directly in Route table entries.

@@ -839,7 +839,8 @@ static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
                 value = 0;
                 for (i = 0; i < options->length; i++) {
                     obj = options->data[i];
-                    if ((value = ejsGetPropertyByName(ejs, obj, EN(&n, token))) != 0 && value != ejs->nullValue && 
+                    ejsName(&n, NULL, token);
+                    if ((value = ejsGetPropertyByName(ejs, obj, &n)) != 0 && value != ejs->nullValue && 
                             value != ejs->undefinedValue) {
                         str = ejsGetString(ejs, value);
                         if (str && *str) {

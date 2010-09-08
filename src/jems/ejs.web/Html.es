@@ -105,9 +105,7 @@ module ejs.web {
 
         function buttonLink(text: String, options: Object): Void {
             options.click ||= true
-dump("BL", options)
             let attributes = getAttributes(options)
-print("AFTER BL " + attributes)
             write('<button ' + attributes + '>' + text + '</button></a>\r\n')
         }
 

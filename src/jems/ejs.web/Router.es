@@ -20,17 +20,20 @@ module ejs.web {
         r.add(Router.isDir,    {name: "dir", run: DirBuilder})
 
         //  Add route for RESTful routes and run with the MvcBuilder
-        r.add("/{controller}/{id}/edit", {action: "edit"})
-        r.add("/{controller}/{id}",      {action: "show"})
-        r.add("/{controller}/{id}",      {method: "PUT",  action: "update"})
-        r.add("/{controller}/{id}",      {method: "DELETE", action: "destroy"})
+        r.addResources("User")
+
+        //  Manually create restful routes
+        r.add("/{controller}",           {action: "create", method: "POST"})
         r.add("/{controller}/init",      {action: "init"})
         r.add("/{controller}",           {action: "index"})
-        r.add("/{controller}",           {method: "POST", action: "create"})
-        r.add("/{controller}(/{action}(/{id}))")
+        r.add("/{controller}/{id}/edit", {action: "edit"})
+        r.add("/{controller}/{id}",      {action: "show"})
+        r.add("/{controller}/{id}",      {action: "update", method: "PUT"})
+        r.add("/{controller}/{id}",      {action: "destroy", method: "DELETE"})
+        r.add("/{controller}(/do/{action})")
         
         //  Add route for upper or lower case "D" or "d". Run the default app: MvcBuilder
-        r.add("/[Dd]ash/refresh", {controller: "Dash", action: "refresh", after: "static"})
+        r.add("/[Dd]ash/refresh", "@Dash/refresh")
 
         //  Add route for an "admin" application. This sets the scriptName to "admin" expects an MVC application to be
         //  located at the directory "myApp"
@@ -63,6 +66,9 @@ module ejs.web {
             }
         })
 
+        //  Set request parameters with values from request
+        r.add("/custom", {action: "display", params: { from: "{uri}", transport: "{scheme}" })
+
         //  Nest matching routes
         r.add("/blog", {controller: "post", subroute: {
                 r.add("comment", "/comment/{action}/{id}")
@@ -78,7 +84,6 @@ module ejs.web {
             method: "POST", 
             controller: "Dash", 
             action: "index",
-            after: "home",
         })
 
         //  Replace the home page route
@@ -149,36 +154,25 @@ module ejs.web {
             <pre>
 //  MOB -- update
                 Method  URL                   Action
-                GET     /controller           show        Display a resource (not editable)
                 GET     /controller/edit      edit        Display a resource form suitable for editing
+                GET     /controller           show        Display a resource (not editable)
                 PUT     /controller           update      Update a resource (idempotent)
-                DELETE  /controller           destroy     Destroy a resource (idempotent)
-                ANY     /controller/action    *           Other custom actions
-
-                GET     /controllers          index       Display an overview of the resource
-                GET     /controllers/init     init        Initialize and display a blank form for a new resource
-                POST    /controllers          create      Accept a form creating a new resource
                 ANY     /controllers/action   *           Other custom actions
             </pre>
             The default route is used for $Request.link.
-            @param name Singular name of the resource to route
-            @param options Object hash of options. Defaults to {}
-            @option controller Controller name to use instead of $name
-            @return The router instance to enable chaining
+            @param name Name of the resource to route. Can also be an array of names.
          */
-        public function addResource(names: *, options: Object = {}): Void {
-            if (names is Array) {
-                for each (name in names) {
-                    addResource(name, options.clone())
+        public function addResource(name: *): Void {
+            if (name is Array) {
+                for each (n in name) {
+                    addResource(n)
                 }
                 return
             } 
-            let name = names
-            let c = options.controller || name
-            add('/' + name + "/edit",      {controller: c, action: "edit"})
-            add('/' + name,                {controller: c, action: "show"})
-            add('/' + name,                {controller: c, action: "update", method: "PUT"})
-            add('/' + name + "/{action}",  {controller: c, name: "default",  method: "*"})
+            add('/' + name + "/edit",      {controller: name, action: "edit"})
+            add('/' + name,                {controller: name, action: "show"})
+            add('/' + name,                {controller: name, action: "update", method: "PUT"})
+            add('/' + name + "/{action}",  {controller: name, name: "default",  method: "*"})
         }
 
         /** 
@@ -198,49 +192,49 @@ module ejs.web {
             </pre>
             The default route is used for $Request.link.
             @param name Plural name of the resource to route
-            @param options Object hash of options. Defaults to {}
-            @option controller Controller name to use instead of $name
         */
-        public function addResources(names: *, options: Object = {}): Void {
-            if (names is Array) {
-                for each (name in names) {
-                    addResources(name, options.clone())
+        public function addResources(name: *): Void {
+            if (name is Array) {
+                for each (n in name) {
+                    addResources(n)
                 }
                 return
             } 
-            let name = names
-            let c = options.controller || name
-            add('/' + name + "/init",        {controller: c, action: "init"})
-            add('/' + name,                  {controller: c, action: "index"})
-            add('/' + name,                  {controller: c, action: "create", method: "POST"})
+            add('/' + name + "/init",       {controller: name, action: "init"})
+            add('/' + name,                 {controller: name, action: "index"})
+            add('/' + name,                 {controller: name, action: "create", method: "POST"})
 
             let id = {id: "[0-9]+"}
-            add('/' + name + "/{id}/edit",   {controller: c, action: "edit", constraints: id})
-            add('/' + name + "/{id}",        {controller: c, action: "show", constraints: id})
-            add('/' + name + "/{id}",        {controller: c, action: "update", , constraints: id, method: "PUT"})
-            add('/' + name + "/{id}",        {controller: c, action: "destroy", , constraints: id, method: "DELETE"})
+            add('/' + name + "/{id}/edit",  {controller: name, action: "edit", constraints: id})
+            add('/' + name + "/{id}",       {controller: name, action: "show", constraints: id})
+            add('/' + name + "/{id}",       {controller: name, action: "update", , constraints: id, method: "PUT"})
+            add('/' + name + "/{id}",       {controller: name, action: "destroy", , constraints: id, method: "DELETE"})
 
-            add('/' + name + "/{action}", {controller: c, name: "default", method: "*"})
-            // add('/' + name + "/do/{action}", {controller: c, name: "default", method: "*"})
+            add('/' + name + "/{action}",   {controller: name, name: "default", method: "*"})
         }
 
         /** 
             Add default restful routes for singleton resources. This also adds top level routes and a static content
-            catchall route.  @see $addResource for restful route details.
+            catchall route.  
+            @see $addResources for restful route details.
         */
         public function addRestful(): Void {
-            add("/{controller}/edit",               {action: "edit"})
-            add("/{controller}",                    {action: "show"})
-            add("/{controller}",                    {action: "update", method: "PUT"})
-            add("/{controller}",                    {action: "destroy", method: "DELETE"})
             add("/{controller}/init",               {action: "init"})
+            add("/{controller}",                    {action: "index"})
             add("/{controller}",                    {action: "create", method: "POST"})
-            add("/{controller}(/{action}(/{id}))",  {name: "default", method: "*"})
+
+            let id = {id: "[0-9]+"}
+            add("/{controller}/{id}/edit",          {action: "edit", constraints: id})
+            add("/{controller}/{id}",               {action: "show", constraints: id})
+            add("/{controller}/{id}",               {action: "update", constraints: id, method: "PUT"})
+            add("/{controller}/{id}",               {action: "destroy", constraints: id, method: "DELETE"})
+
+            add("/{controller}(/{action})",         {name: "default", method: "*"})
         }
 
         /**
-            Add simple MVC routes.
-            specified controller. All HTTP method verbs are supported.
+            Add a default MVC controller/action route. This consists of a "/{controller}/{action}" route.
+            All HTTP method verbs are supported.
             @return The router instance to enable chaining
          */
         public function addDefault(): Void {
@@ -257,7 +251,6 @@ module ejs.web {
             if (staticPattern) {
                 add(staticPattern, {name: "static", run: StaticBuilder})
             }
-            //  MOB - rename all Builders => ???App
             add(/\.es$/,  {name: "es",  run: ScriptBuilder, method: "*"})
             add(/\.ejs$/, {name: "ejs", module: "ejs.template", run: TemplateBuilder, method: "*"})
             add(isDir,    {name: "dir", run: DirBuilder})
@@ -294,11 +287,12 @@ module ejs.web {
             runners[ext] || MvcBuilder
 
         private function insertRoute(r: Route, options: Object): Void {
-            let first
+            let routeSetName
             if (r.template is String) {
-                first = r.template.split("{")[0].split("/")[1]
+                routeSetName = r.template.split("{")[0].split("/")[1]
             }
-            let routeSet = routes[first || ""] ||= {}
+            r.routeSetName = routeSetName || ""
+            let routeSet = routes[r.routeSetName] ||= {}
             routeSet[r.name] = r
         }
 
@@ -376,22 +370,20 @@ module ejs.web {
             for (field in r.params) {
                 /*  Apply override params */
                 let value = r.params[field]
-                if (value.contains("$") && !r.splitter) {
+                if (value.contains("$")) {
                     value = pathInfo.replace(r.pattern, value)
                 }
                 if (value.contains("{")) {
-                    value = request[value.trim.slice(1,-1)]
+                    value = Uri.template(value, params, request)
                 }
                 params[field] = value
             }
             if (r.rewrite && !r.rewrite(request)) {
-print("Request rewritten as \"" + request.pathInfo + "\" (reroute)")
                 log.debug(5, "Request rewritten as \"" + request.pathInfo + "\" (reroute)")
                 return route(request)
             }
             if (r.redirect) {
                 request.pathInfo = r.redirect
-print("Route redirected to \"" + request.pathInfo + "\" (reroute)")
                 log.debug(5, "Route redirected to \"" + request.pathInfo + "\" (reroute)")
                 return route(request)
             }
@@ -407,7 +399,7 @@ print("Route redirected to \"" + request.pathInfo + "\" (reroute)")
                 r.initialized = true
             }
             if (log.level >= 3) {
-                log.debug(3, "Matched route \"" + r.controller + "/" + r.name + "\"")
+                log.debug(3, "Matched route \"" + r.routeSetName + "/" + r.name + "\"")
                 if (log.level >= 5) {
                     log.debug(5, "  Route params " + serialize(params, {pretty: true}))
                 }
@@ -454,19 +446,17 @@ print("Route redirected to \"" + request.pathInfo + "\" (reroute)")
             }
             let routeSet = routes[request.pathInfo.split("/")[1]]
             for each (r in routeSet) {
-                log.debug(6, "Test route \"" + r.name + "\"")
-// print("Test route \"" + r.name + "\"")
+                log.debug(5, "Test route \"" + r.name + "\"")
                 if (r.match(request)) {
-// print("Match route \"" + r.name + "\"")
+                    log.debug(3, "Match route \"" + r.name + "\"")
                     return makeApp(request, r)
                 }
             }
             routeSet = routes[""]
             for each (r in routeSet) {
-                log.debug(6, "Test route \"" + r.name + "\"")
-// print("Test route \"" + r.name + "\"")
+                log.debug(5, "Test route \"" + r.name + "\"")
                 if (r.match(request)) {
-// print("Match route \"" + r.name + "\"")
+                    log.debug(3, "Match route \"" + r.name + "\"")
                     return makeApp(request, r)
                 }
             }
@@ -526,6 +516,7 @@ print("Route redirected to \"" + request.pathInfo + "\" (reroute)")
         Route class. A Route describes a mapping from a set of resources to a URI. The Router uses tables of 
         Routes to serve and route requests to web scripts.
 
+MOB -- verify
         If the URL template is a regular expression, it is used to match against the request pathInfo. If it matches,
         the pathInfo is matched and sub-expressions may be referenced in the override parameters by using $1, $2 and
         so on. e.g. { priority: "$1" }
@@ -543,11 +534,6 @@ print("Route redirected to \"" + request.pathInfo + "\" (reroute)")
 
         /* Seed for generating route names */
         private static var nameSeed: Number = 0
-
-        /**
-            Controller owning the route
-         */
-        var controller: String
 
         /**
             Resource limits for the request. See HttpServer.limits for details.
@@ -603,6 +589,11 @@ print("Route redirected to \"" + request.pathInfo + "\" (reroute)")
           Router instance reference
          */
         var router: Router
+
+        /**
+            Route set owning the route. This is the first component of the template.
+         */
+        var routeSetName: String
 
         /**
             Function to run to serve the request.
@@ -734,7 +725,6 @@ print("Route redirected to \"" + request.pathInfo + "\" (reroute)")
                         t = t.replace("{" + token + "}", "([^/]*)")
                     }
                 } 
-                // t = t.replace(/\{([^\}]+)\}/g, "([^/]*)").replace(/\//g, "\\/")
                 t = t.replace(/\//g, "\\/")
                 pattern = RegExp("^" + t + "$")
                 /*  Splitter ends up looking like "$1:$2:$3:$4" */
@@ -773,6 +763,12 @@ print("Route redirected to \"" + request.pathInfo + "\" (reroute)")
             for (i in tokens) {
                 request.params[tokens[i]] ||= parts[i].trimStart("/")
             }
+/*
+            for (field in params) {
+                request.params[field] ||= params[field].replace(trimStart("/"))
+            }
+dump("PPP", request.params)
+*/
             return true
         }
 
@@ -803,20 +799,6 @@ print("Route redirected to \"" + request.pathInfo + "\" (reroute)")
             }
             if (options.controller) {
                 params.controller = options.controller
-            }
-            for (field in params) {
-                let value = params[field]
-                if (value.contains("{")) {
-                    let tokens = value.match(/([^\}*]\})/g)
-                    count = 1
-                    let args = ""
-                    for (c in tokens) {
-                        args += "$" + count++ + ":"
-                    }
-                    args = args.trim(":")
-                    //  MOB -- is this being used?
-                    params[field] = {tokens: tokens, splitter: args}
-                }
             }
         }
 
@@ -863,7 +845,7 @@ print("Route redirected to \"" + request.pathInfo + "\" (reroute)")
         }
 
         private function setRouteProperties(options: Object): Void {
-            controller = options.controller || ""
+            //MOB controller = options.controller || ""
             limits = options.limits
             linker = options.linker
             location = options.location

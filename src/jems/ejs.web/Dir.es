@@ -45,7 +45,8 @@ module ejs.web {
         @example:
           { name: "index", builder: DirBuilder, match: Router.isDir }
      */
-    function DirBuilder(request: Request): Function DirApp
+    function DirBuilder(request: Request): Function 
+        DirApp
 }
 
 /*
