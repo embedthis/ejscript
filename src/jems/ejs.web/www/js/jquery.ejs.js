@@ -136,11 +136,11 @@
         method = method.toUpperCase();
         if (key) {
             if (!keyFormat) {
-                keyFormat = (method == "GET") ? "names" : null;
+                keyFormat = (method == "GET") ? "path" : null;
             }
         } else keyFormat = null;
 
-        if (keyFormat == "tokens") {
+        if (keyFormat == "path") {
             var keys = [];
             var split = key.split("&");
             for (i in split) {
@@ -150,9 +150,9 @@
             if (keys.length > 0) {
                 url = url + "/" + keys.join("/");
             }
-        } else if (keyFormat == "pairs") {
+        } else if (keyFormat == "query") {
             url = url + "?" + key;
-        } else if (keyFormat == "params") {
+        } else if (keyFormat == "body") {
             params = key.split("&");
         }
         if (method == "GET") {
@@ -437,6 +437,19 @@
     $('[data-click]').live('click', function (e) {
         request.apply(this);
         e.preventDefault();
+    });
+
+    $('[data-click]').live('mouseover', function (e) {
+        var click = $(this).attr("data-click");
+        if (click.indexOf("http://") == 0) {
+            window.status = click;
+        } else {
+            var location = window.location;
+            window.status = location.protocol + "//" + location.host + click;
+        }
+    });
+    $('[data-click]').live('mouseout', function (e) {
+            window.status = "";
     });
 
 /////////////////////////////////////////

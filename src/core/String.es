@@ -249,7 +249,7 @@ module ejs {
         /**
             Search and replace. Search for the given pattern which can be either a string or a regular expression 
             and replace it with the replace text. If the pattern is a string, only the first occurrence is replaced.
-            @param pattern The regular expression pattern to search for.
+            @param pattern The regular expression or string pattern to search for.
             @param replacement The string to replace the match with or a function to generate the replacement text. The
                 replacement string can contain special replacement patterns: "$$" inserts a "$", "$&" inserts the
                 matched substring, "$`" inserts the portion that preceeds the matched substring, "$'" inserts the

@@ -15,7 +15,7 @@ let server: HttpServer = new HttpServer(".", "web")
 
     // server.name = "embedthis.com"
 
-var router = Router(Router.Top)
+var router = Router(Router.Default)
 server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri)
     Web.serve(request, router)

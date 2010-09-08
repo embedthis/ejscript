@@ -70,18 +70,18 @@ module ejs.web {
         }
 
         private static const defaultStylesheets = [
-            "web/layout.css", 
-            "web/themes/default.css", 
+            "/layout.css", 
+            "/themes/default.css", 
         ]
 
         //  MOB -- what about minified versions?
 
         private static const defaultScripts = [
-            "web/js/jquery.js", 
-            "web/js/jquery.tablesorter.js",
-            "web/js/jquery.address.js",
-            "web/js/jquery.simplemodal.js",
-            "web/js/jquery.ejs.js",
+            "/js/jquery.js", 
+            "/js/jquery.tablesorter.js",
+            "/js/jquery.address.js",
+            "/js/jquery.simplemodal.js",
+            "/js/jquery.ejs.js",
         ]
 
         function HtmlViewConnector(view) {
@@ -105,7 +105,9 @@ module ejs.web {
 
         function buttonLink(text: String, options: Object): Void {
             options.click ||= true
+dump("BL", options)
             let attributes = getAttributes(options)
+print("AFTER BL " + attributes)
             write('<button ' + attributes + '>' + text + '</button></a>\r\n')
         }
 
@@ -143,12 +145,11 @@ module ejs.web {
         function form(record: Object, options: Object): Void {
             options.method ||= ((record && options.id) ? "PUT" : "POST")
             options.action ||= ((record && options.id) ? "update" : "create")
-            options.route ||= "default"
             let method = options.method
             if (method != "GET" && method != "POST") {
                 method = "POST"
             }
-            let uri ||= request.link(options)
+            let uri = request.link(options)
             emitFormErrors(record, options)
             /* Exclude method from the mapped-attribute list. Don't want data-method */
             let attributes = getAttributes(options, { method: true })
@@ -261,8 +262,10 @@ module ejs.web {
 
         function script(uri: String, options: Object): Void {
             if (uri == null) {
+                let sdir = request.config.directories.static || "static"
                 for each (uri in defaultScripts) {
-                    script(request.absHome.local.join(uri), options)
+                    uri = request.link("/" + sdir + uri)
+                    write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
                 }
             } else {
                 write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
@@ -275,9 +278,12 @@ module ejs.web {
         }
 
         function stylesheet(uri: String, options: Object): Void {
+            let sdir = request.config.directories.static || "static"
             if (uri == null) {
+                let sdir = request.config.directories.static || "static"
                 for each (uri in defaultStylesheets) {
-                    stylesheet(request.absHome.local.join(uri), options)
+                    uri = request.link("/" + sdir + uri)
+                    write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
                 }
             } else {
                 write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
@@ -472,6 +478,7 @@ module ejs.web {
             }
             return data
         }
+*/
 
         /*
             Like link but supports location == true to use the rest of options.

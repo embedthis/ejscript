@@ -63,6 +63,7 @@ static EjsObj *breakpoint(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 #endif
 
 
+//  MOB -- would this be better as blend(obj, obj, obj, ...)
 /*  
     function blend(dest: Object, src: Object, overwrite: Boolean = true): void
  */

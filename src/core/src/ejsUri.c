@@ -850,8 +850,10 @@ static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
                         }
                     }
                 }
-                if (value == 0 && cp >= &pattern[2] && cp[-2] == '/') {
-                    mprAdjustBufEnd(buf, -1);
+                if (value == 0 || value == ejs->undefinedValue || value == ejs->nullValue) {
+                    if (cp >= &pattern[2] && cp[-2] == '/') {
+                        mprAdjustBufEnd(buf, -1);
+                    }
                 }
                 cp = ep;
             }

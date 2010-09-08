@@ -31,7 +31,7 @@ MyRoutes = [
   { name: "static",  builder: StaticBuilder, },
 ]
 
-// var router = Router(Router.Top)
+// var router = Router(Router.Default)
 var router = Router(MyRoutes)
 server.on("readable", function (event, request) {
     // request.setLimits({timeout: 0, inactivityTimeout: 60})

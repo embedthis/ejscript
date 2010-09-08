@@ -151,7 +151,7 @@ module ejs.web {
                 <% status("Status Message", { refresh: "/getData", period: 2000" }) %>
          */
         function alert(text: String, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             text = formatValue(text, options)
             getConnector("alert", options).alert(text, options)
         }
@@ -182,7 +182,7 @@ module ejs.web {
                 button("commit", "Cancel")
          */
         function button(name: String, label: String, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("button", options).button(name, label, options)
         }
 
@@ -191,9 +191,13 @@ module ejs.web {
             is clicked, the associated URI will be invoked.
             @param text Text to display in the button. The text can contain embedded HTML.
             @param options Options specifying the target URI to invoke. See $View for a list of the standard options.
+            @example
+                buttonLink("Cancel" "@")
          */
         function buttonLink(text: String, options: Object = {}): Void {
+dump("VBL", options)
             options = getOptions(options)
+dump("AVBL", options)
             if (currentRecord) {
                 options.id ||= currentRecord.id
             }
@@ -219,7 +223,7 @@ module ejs.web {
                 <% chart(data, { onclick: "action" }) %>
          */
         function chart(data: Array, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("chart", options).chart(data, options)
         }
 
@@ -235,7 +239,7 @@ module ejs.web {
             @option value Object Override value to display if used without a form control record.
          */
         function checkbox(name: String, checkedValue: Object = true, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("checkbox", options).checkbox(name, value, checkedValue, options)
@@ -249,7 +253,7 @@ module ejs.web {
                 <% div({ refresh: "/getData", period: 2000}) %>
          */
         function div(body: String, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("div", options).div(body, options)
         }
 
@@ -275,7 +279,7 @@ module ejs.web {
                 <% flash(["error", "warning"]) %>
          */
         function flash(kinds: Object = null, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             let cflash ||= request.flash
             if (cflash == null || cflash.length == 0) {
                 return
@@ -328,7 +332,7 @@ MOB -- much more doc here
             @option uri String Use a complete URI rather than an action and controller option to create the target uri.
          */
         function form(record: Object, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             currentRecord = record
             if (record) {
                 options.id ||= record.id
@@ -343,7 +347,7 @@ MOB -- much more doc here
             @param options Optional extra options. See $View for a list of the standard options.
          */
         function icon(src: Object, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("icon", options).icon(src, options)
         }
 
@@ -359,7 +363,7 @@ MOB -- much more doc here
                 <% image("pic.gif", { remote: "/background/click" }) %>
          */
         function image(src: String, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("image", options).image(src, options)
         }
 
@@ -424,7 +428,7 @@ print("CATCH " + e)
                 <% label("Checkout", { click: true, uri: "@checkout" }) %>
          */
         function label(text: String, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("label", options).label(text, options)
         }
 
@@ -449,7 +453,7 @@ print("CATCH " + e)
                 list("priority", {low: 0, med: 1, high: 2})
          */
         function list(name: String, choices: Object, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("list", options).list(name, choices, value, options)
@@ -462,7 +466,7 @@ print("CATCH " + e)
             @param options Optional extra options. See $View for a list of the standard options.
          */
         function mail(name: String, address: String, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("mail", options).mail(name, address, options)
         }
 
@@ -477,7 +481,7 @@ print("CATCH " + e)
                 <% progress(percent, { refresh: "/getData", period: 2000" }) %>
          */
         function progress(percent: Number, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("progress", options).progress(percent, options)
         }
 
@@ -503,7 +507,7 @@ print("CATCH " + e)
                 radio("priority", Message.priorities)
          */
         function radio(name: String, choices: Object, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("radio", options).radio(name, value, choices, options)
@@ -511,21 +515,18 @@ print("CATCH " + e)
 
         /** 
             Emit a script link.
-            @param target Script URI to load. Call with no arguments or uri set to null to get a default set of scripts.
+            @param target Script URI to load. URI or array of scripts. Call with no arguments or set to null to 
+                get a default set of scripts.
             @param options Optional extra options. See $View for a list of the standard options.
          */
         function script(target: Object, options: Object = {}): Void {
             let connector = getConnector("script", options)
             if (target is Array) {
-                for each (u in target) {
-//  MOB -- should not be doing this join
-                    connector.script(request.home.join(u), options)
+                for each (uri in target) {
+                    connector.script(uri, options)
                 }
-            } else if (target == null) {
-                connector.script(null, options)
             } else {
-//  MOB -- should not be doing this join
-                connector.script(request.home.join(target), options)
+                connector.script(target, options)
             }
         }
 
@@ -543,28 +544,24 @@ print("CATCH " + e)
                 &lt;/head>
         */
         function securityToken(options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("securityToken", options).securityToken(options)
         }
 
         /** 
             Emit a style sheet link.
-            @param uri Stylesheet uri or array of stylesheets. Call with no arguments or uri set to null to get a 
+            @param target Stylesheet URI or array of stylesheets. Call with no arguments or set to null to get a 
                 default set of stylesheets.
             @param options Optional extra options. See $View for a list of the standard options.
          */
-        function stylesheet(uri: Object, options: Object = {}): Void {
+        function stylesheet(target: Object, options: Object = {}): Void {
             let connector = getConnector("stylesheet", options)
-            if (uri is Array) {
-                for each (u in uri) {
-//  MOB -- should not be doing this join
-                    connector.stylesheet(request.home.join(u), options)
+            if (target is Array) {
+                for each (uri in target) {
+                    connector.stylesheet(uri, options)
                 }
-            } else if (uri == null) {
-                connector.stylesheet(null, options)
             } else {
-//  MOB -- should not be doing this join
-                connector.stylesheet(request.home.join(uri), options)
+                connector.stylesheet(target, options)
             }
         }
 
@@ -661,7 +658,7 @@ print("CATCH " + e)
                  }) %>
          */
         function table(data, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             //  MOB - move to client side (data-pivot). No good here as it can't be refreshed!
             if (options.pivot) {
                 data = pivot(data)
@@ -685,7 +682,7 @@ print("CATCH " + e)
                 tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: true})
          */
         function tabs(data: Object, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("tabs", options).tabs(data, options)
         }
 
@@ -708,7 +705,7 @@ print("CATCH " + e)
                 <% text("password", {value: params.password, password: true}) %>
          */
         function text(name: String, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             value = formatValue(value, options)
             name = getFieldName(name, options) 
@@ -733,7 +730,7 @@ print("CATCH " + e)
                 <% textarea("name") %>
          */
         function textarea(name: String, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             value = formatValue(value, options)
             name = getFieldName(name, options) 
@@ -751,7 +748,7 @@ print("CATCH " + e)
             @option visible Boolean Make the control visible. Defaults to true.
          */
         function tree(data: Object, options: Object = {}): Void {
-            options = getOptions(options)
+            //MOB options = getOptions(options)
             getConnector("tree", options).tree(data, options)
         }
 
@@ -895,10 +892,8 @@ MOB -- review and rethink this
             return field
         }
 
-        private function getOptions(options: Object): Object {
-            //  MOB -- 
-            return request.makeUriHash(options)
-        }
+        private function getOptions(options: Object): Object
+            (options is String) ? request.makeUriHash(options) : options
 
         /*
             Get the data value. Data may be:

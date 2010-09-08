@@ -1,7 +1,6 @@
 /*
-    Test ejs.sys::CmdArgs
+    Test CmdArgs
 */
-
 let template = [
     [ "verbose" ],
     [ "quiet", null, false ],

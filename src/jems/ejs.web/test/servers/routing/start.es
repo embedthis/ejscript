@@ -2,7 +2,7 @@
     Routed Http server
 
     This demonstrates the various kinds of rouces the Router class can support. Typically the standard routes provided
-    by the Router class Router.Restful, Router.Top and Router.Legacy are sufficient. However, users can create and 
+    by the Router class Router.Restful, Router.Default and Router.Legacy are sufficient. However, users can create and 
     modify their own routes.
 
     Usage: ejs routed-server.es [PORT]

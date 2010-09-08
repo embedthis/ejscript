@@ -40,6 +40,7 @@ module ejs.web {
         /** Configuration settings - reference to Request.config */
         var config: Object 
 
+//  MOB -- rename to "name"
         /** Pascal case controller name */
         var controllerName: String
 

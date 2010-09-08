@@ -1773,9 +1773,11 @@ static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, EjsOb
             }
         }
         qname = ejsGetPropertyName(ejs, obj, slotNum);
+#if UNUSED
         if (qname.name[0] == '\0') {
             continue;
         }
+#endif
         if (excludeFunctions && ejsIsFunction(ejsGetProperty(ejs, obj, slotNum))) {
             continue;
         }

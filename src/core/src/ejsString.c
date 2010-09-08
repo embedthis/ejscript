@@ -1316,7 +1316,6 @@ static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     if (ejsIsString(argv[0])) {
         delim = ejsGetString(ejs, argv[0]);
         delimLen = (int) strlen(delim);
-
         if (delimLen == 0) {
             for (cp = sp->value; (--limit != -1) && *cp; cp++) {
                 ejsSetProperty(ejs, results, -1, ejsCreateStringWithLength(ejs, cp, 1));

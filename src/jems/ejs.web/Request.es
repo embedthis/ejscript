@@ -471,14 +471,13 @@ module ejs.web {
                string, it is may contain an absolute or relative URI. If the target has an absolute URI path, that path
                is used unmodified. If the target is a relative URI, it is appended to the current request URI path. 
                The target argument can also be an object hash of URI components: scheme, host, port, path, reference and
-               query. If the hash contains a route property that specifies the name of a route table entry, then the
+               query. 
+               
+               If the hash contains a route property that specifies the name of a route table entry, then the
                hash may contain properties that will be used when creating the URI by expanding the route template. 
                If the target is a string that begins with "@" it will be interpreted as a controller/action pair of the 
                form "@[Controller/]action". This is a shorthand way to specify an action and optional controller. The 
                short-hand link("@") refers to the "index" action of the current controller.
-               If the target is a string that begins with "#" it will be interpreted as a resource/route pair of the 
-               form "#[Resource/]route". This is a shorthand way to specify a route and optional resource. The short-hand
-               link("#") refers to the default route of the current resource. 
 
             @option path String URI path portion
             @option query String URI query parameters. Does not include "?"
@@ -498,24 +497,17 @@ module ejs.web {
                 r.link("@User.logout")
                 r.link({uri: "http://example.com/checkout"})
 
-                r.link({action: "checkout")
+                r.link({route: "default", action: "checkout")
                 r.link("@checkout")
-                r.link("#")
+                r.link("@")
                 r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
 
             @return A normalized, server-local Uri object.
          */
         function link(target: Object): Uri {
             target = makeUriHash(target)
-            if (route && target.route) {
-                let template = target.template || route.getTemplate(target, this)
-                target.scriptName ||= scriptName
-            /*
-                //  MOB -- nice to remove these
-                action ||= ""
-                controller ||= request.params.controller
-            */
-                target = Uri.template(template, target).path
+            if (target.route) {
+                target = Uri.template(target.template, target).path
             }
             return uri.local.resolve(target).normalize
         }
@@ -528,52 +520,81 @@ module ejs.web {
             @example: Sample targets
                 "/path/to/something"
                 "http://example.com/path/to/something"
-                "#resource.route"
-                "#resource/"
-                "#route"
-                "@controller.action"
+                "@controller/action"
                 "@controller/"
                 "@action"
                 URI object
-                { URI or router template fields: scheme, host, port, path, reference, query, ... }
-                { uri: AnyTargetAbove }
-                Support #action
+                {scheme, host, port, path, reference, query, uri: uriString}
+                {controller: name, action: name}
+                {action: "Controller/action"}
+                {custom: name, custom: name}
+                {uri: AnyTargetAbove }
          */
         function makeUriHash(target): Object {
-            let o = (target.uri) ? target.uri : target
-            if (!(o is String)) {
-                return target
+            if (target is Uri) {
+                target = target.toString()
             }
-            if (o[0] == '#') {
-                o = o.slice(1)
-                if (o.contains(/[\.\/]/)) {
-                    let [resource, r] = o.split(/[\.\/]/)
-                    o = {resource: resource || o.resource, route: r || o.route || "default"}
-                } else { 
-                    o = {resource: o.resource, route: o || o.route || "default"}
+            if (target is String) {
+                if (target[0] == '@') {
+                    target = {action: target.slice(1)}
+                } else {
+                    /* Non-mvc URI string */
+                    return {uri: (target[0] == '/') ? (scriptName + target) : target}
                 }
-            } else if (o[0] == '@') {
-                o = o.slice(1)
-                if (o.contains(/[\.\/]/)) {
-                    let [ctlr, action] = o.split(/[\.\/]/)
-                    o = {controller: ctlr || o.controller || controller, action: action || o.action}
-                } else { 
-                    o = {action: o}
-                }
-                o.route = target.route || "default"
-                o.resource = target.resource || ""
-
-            } else {
-                if (o[0] == '/') {
-                    o = scriptName + o
-                }
-                o = { uri: o}
-            } 
+            }
             if (Object.getOwnPropertyCount(target) > 0) {
-                o = blend(target, o)
+                let action = target.action
+                if (action && action.contains("/")) {
+                    [target.controller, target.action] = action.split("/")
+                }
+                if (target.controller) {
+                    //  MOB - messes up Cancel (/Product) button link. 
+                    // target.action ||= "index"
+                } else if (target.action != undefined && controller) {
+                    target.controller = controller.controllerName
+                }
+                if (route) {
+                    target.route ||= target.action || "default"
+                    target.scriptName ||= scriptName
+                    target.template ||= route.getTemplate(target.controller, target.route)
+                }
             }
+            return target
+        }
+
+/*
+            let o = (target.uri) ? target.uri : target
+            if (o is String) {
+                if (o[0] == '@') {
+                    o = o.slice(1)
+                    if (o.contains("/")) {
+                        let [ctlr, action] = o.split("/")
+                        o = {controller: ctlr, action: action}
+                    } else { 
+                        o = {action: o || "index"}
+                    }
+                    //  MOB -- Is this right to use o.action, or should it go straight to the default
+                    o.route = target.route || o.action || "default"
+
+                } else {
+                    if (o[0] == '/') {
+                        o = scriptName + o
+                    }
+                    o = { uri: o}
+                } 
+                if (Object.getOwnPropertyCount(target) > 0) {
+                    o = blend(target, o)
+                }
+            } else {
+                o = target
+            }
+            if (o.action && !o.controller && controller) {
+                o.controller = controller.controllerName
+            }
+dump("MUH", o)
             return o
         }
+*/
 
         /*
             Select the response content type based on the request "Accept" header . See RFC-2616.
@@ -812,43 +833,6 @@ module ejs.web {
             }
         }
 
-        /** 
-MOB -- delete
-            Create a top-level URI link. A top-level URI has an absolute path and is useful to ensure a link always
-            refers to the same resource even when a HTML fragment may be rendered from pages different URLs. 
-            The target parameter may contain partial or complete URI information. The missing parts are supplied 
-            using the current request URI and route tables.  The resulting URI is a top-level normalized, server-local URI. 
-            It will not include scheme, host or port components. The path will always beging with "/". NOTE: the 
-            result will include the current $scriptName.
-            @params target The target parameter can be a URI string or object hash of components. If the target is a
-               string, it is may be an absolute or relative URI. If the target has an absolute URI path, that path
-               it be used unmodified. If the target is a relative URI, it is appended to the current request URI path. 
-               The target argument can also be an object hash of URI components: path, query, reference, controller, 
-               action and other route table tokens. 
-            @option path String URI path portion
-            @option query String URI query parameters. Does not include "?"
-            @option reference String URI path reference. Does not include "#"
-            @option controller String Controller name if using a Controller-based route
-            @option action String Action name if using a Controller-based route
-            @option other String Other route table tokens
-            @example
-                Given a current request of http://example.com/samples/demo", where scriptName is "samples" and 
-                "r" == the current request:
-
-                r.toplink("images/splash.png")   returns "/samples/images/splash.png"
-                r.toplink("/images/splash.png")  returns "/samples/images/splash.png"
-
-            @return A normalized, server-local Uri object.
-        function toplink(target: *): Uri {
-print("TOPLINK TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
-            target = makeUriHash(target)
-            if (route && target.route) {
-                target = route.expandTemplate(target, this)
-            }
-            return absHome.local.resolve(target).normalize
-        }
-*/
-
         /**
             Configure tracing for this request. Tracing is initialized by the owning HttpServer and is typically
             defined to trace the first line of requests and responses at level 2, headers at level 3 and body content
@@ -1055,7 +1039,6 @@ print("TOPLINK TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
         function get serverPort(): Number
             server.port
 
-
         /**
             @example
             @option max-age Max time in seconds the resource is considered fresh
@@ -1066,10 +1049,10 @@ print("TOPLINK TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT")
             @option no-store response may not be stored in a cache.
             @option must-revalidate forces caches to observe expiry and other freshness information
             @option proxy-revalidate similar to must-revalidate except only for proxy caches
+//MOB
           */
         function cache(options) {
         }
-
 
         /*************************************** Deprecated ***************************************/
 
