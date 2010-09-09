@@ -305,6 +305,11 @@ module ejs.web {
             @option action Action method to service the request. This may be of the form "controller/action" or "controller/"
             @option controller Controller to service the request.
             @option name Name to give to the route. If absent, the name is created from the controller and action names.
+                The route naming rules are:
+                1. Use options.name if provided, else
+                2. Use any action name, else
+                3. Use "index"
+                The action name is sleuthed from the template if no options are given.
             @option outer Parent route. The parent's template and parameters are appended to this route.
             @option params Override parameter to provide to the request in the Request.params.
             @examples:
@@ -332,7 +337,9 @@ module ejs.web {
         }
 
         /**
-            Lookup a route
+            Lookup a route by name. The route name is determined by the options provided when the route was created.
+            Action names will be sleuthed from the template if no options provided.
+            Outer routes are pre-pended if defined.
             @param options Route description. This can be either string or object hash. If it is a string, it should be
                 of the form "controller/action". If the options is an object hash, it should have properties
                 controller and action. The controller is used as the index for the route set. The action property is
@@ -853,6 +860,10 @@ module ejs.web {
             }
         }
 
+        /*
+            If no options provided, sleuth the action from the template. This will probably also end up setting 
+            the name to the action component
+         */
         private function parseOptions(options: Object): Object {
             if (!options) {
                 let t = template.replace(/[\(\)]/g, "")
@@ -862,11 +873,6 @@ module ejs.web {
             }
             let action = options.action
             if (action) {
-/* UNUSED
-                if (action is Function) {
-                    options.run ||= options.action
-                } else 
-*/
                 if (action[0] == '@') {
                     [options.controller, options.action] = action.slice(1).split("/")
                 }
@@ -878,7 +884,13 @@ module ejs.web {
         }
 
         /*
-            Create a useful (deterministic) name for the route
+            Create a useful (deterministic) name for the route. Rules are:
+            1. Use options.name if provided, else
+            2. Use any action name, else
+            3. Use "index"
+
+            Action names will be sleuthed from the template if no options provided.
+            Outer routes are pre-pended if defined.
          */
         private function setName(options: Object) {
             name = options.name || options.action || "index"
