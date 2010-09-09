@@ -937,9 +937,7 @@ UNUSED
             } else if (options.run) {
                 response = options.run
                 builder = function (request) {
-print("IN BUILDER")
                     return function (request) {
-print("IN REQUEST APP")
                         return response
                     }
                 }

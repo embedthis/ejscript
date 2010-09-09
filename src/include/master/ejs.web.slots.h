@@ -383,38 +383,33 @@
     Class property slots for the "Router" type 
  */
 #define ES_ejs_web_Router__initializer___Router_                       0
-#define ES_ejs_web_Router_Restful                                      1
-#define ES_ejs_web_Router_Direct                                       2
-#define ES_ejs_web_Router_Handlers                                     3
-#define ES_ejs_web_Router_Default                                      4
-#define ES_ejs_web_Router_isDir                                        5
-#define ES_ejs_web_Router_NUM_CLASS_PROP                               6
+#define ES_ejs_web_Router_Default                                      1
+#define ES_ejs_web_Router_Restful                                      2
+#define ES_ejs_web_Router_isDir                                        3
+#define ES_ejs_web_Router_NUM_CLASS_PROP                               4
 
 /*
    Prototype (instance) slots for "Router" type 
  */
 #define ES_ejs_web_Router_routes                                       0
-#define ES_ejs_web_Router_runners                                      1
-#define ES_ejs_web_Router_addCatchall                                  2
-#define ES_ejs_web_Router_addDirect                                    3
-#define ES_ejs_web_Router_addHome                                      4
-#define ES_ejs_web_Router_addResource                                  5
-#define ES_ejs_web_Router_addResources                                 6
-#define ES_ejs_web_Router_addRestful                                   7
-#define ES_ejs_web_Router_addDefault                                   8
-#define ES_ejs_web_Router_addHandlers                                  9
-#define ES_ejs_web_Router_addBuilder                                   10
-#define ES_ejs_web_Router_lookupRunners                                11
-#define ES_ejs_web_Router_insertRoute                                  12
-#define ES_ejs_web_Router_add                                          13
-#define ES_ejs_web_Router_lookup                                       14
-#define ES_ejs_web_Router_replace                                      15
-#define ES_ejs_web_Router_remove                                       16
-#define ES_ejs_web_Router_makeApp                                      17
-#define ES_ejs_web_Router_route                                        18
-#define ES_ejs_web_Router_show                                         19
-#define ES_ejs_web_Router_showRoute                                    20
-#define ES_ejs_web_Router_NUM_INSTANCE_PROP                            21
+#define ES_ejs_web_Router_addCatchall                                  1
+#define ES_ejs_web_Router_addDirect                                    2
+#define ES_ejs_web_Router_addHome                                      3
+#define ES_ejs_web_Router_addResource                                  4
+#define ES_ejs_web_Router_addResources                                 5
+#define ES_ejs_web_Router_addRestful                                   6
+#define ES_ejs_web_Router_addDefault                                   7
+#define ES_ejs_web_Router_addHandlers                                  8
+#define ES_ejs_web_Router_insertRoute                                  9
+#define ES_ejs_web_Router_add                                          10
+#define ES_ejs_web_Router_lookup                                       11
+#define ES_ejs_web_Router_replace                                      12
+#define ES_ejs_web_Router_remove                                       13
+#define ES_ejs_web_Router_makeApp                                      14
+#define ES_ejs_web_Router_route                                        15
+#define ES_ejs_web_Router_show                                         16
+#define ES_ejs_web_Router_showRoute                                    17
+#define ES_ejs_web_Router_NUM_INSTANCE_PROP                            18
 #define ES_ejs_web_Router_NUM_INHERITED_PROP                           0
 
 /*
@@ -433,36 +428,38 @@
 /*
    Prototype (instance) slots for "Route" type 
  */
-#define ES_ejs_web_Route_limits                                        0
-#define ES_ejs_web_Route_location                                      1
-#define ES_ejs_web_Route_method                                        2
-#define ES_ejs_web_Route_middleware                                    3
-#define ES_ejs_web_Route_name                                          4
-#define ES_ejs_web_Route_moduleName                                    5
-#define ES_ejs_web_Route_params                                        6
-#define ES_ejs_web_Route_rewrite                                       7
-#define ES_ejs_web_Route_redirect                                      8
-#define ES_ejs_web_Route_router                                        9
-#define ES_ejs_web_Route_routeSetName                                  10
-#define ES_ejs_web_Route_run                                           11
-#define ES_ejs_web_Route_subroute                                      12
-#define ES_ejs_web_Route_template                                      13
-#define ES_ejs_web_Route_threaded                                      14
-#define ES_ejs_web_Route_tokens                                        15
-#define ES_ejs_web_Route_trace                                         16
-#define ES_ejs_web_Route_match                                         17
-#define ES_ejs_web_Route_pattern                                       18
-#define ES_ejs_web_Route_splitter                                      19
-#define ES_ejs_web_Route_getTemplate                                   20
-#define ES_ejs_web_Route_inheritRoutes                                 21
-#define ES_ejs_web_Route_compileTemplate                               22
-#define ES_ejs_web_Route_matchAndSplit                                 23
-#define ES_ejs_web_Route_matchRegExp                                   24
-#define ES_ejs_web_Route_makeParams                                    25
-#define ES_ejs_web_Route_parseOptions                                  26
-#define ES_ejs_web_Route_setName                                       27
-#define ES_ejs_web_Route_setRouteProperties                            28
-#define ES_ejs_web_Route_NUM_INSTANCE_PROP                             29
+#define ES_ejs_web_Route_builder                                       0
+#define ES_ejs_web_Route_limits                                        1
+#define ES_ejs_web_Route_location                                      2
+#define ES_ejs_web_Route_method                                        3
+#define ES_ejs_web_Route_middleware                                    4
+#define ES_ejs_web_Route_name                                          5
+#define ES_ejs_web_Route_moduleName                                    6
+#define ES_ejs_web_Route_originalTemplate                              7
+#define ES_ejs_web_Route_outer                                         8
+#define ES_ejs_web_Route_params                                        9
+#define ES_ejs_web_Route_rewrite                                       10
+#define ES_ejs_web_Route_redirect                                      11
+#define ES_ejs_web_Route_response                                      12
+#define ES_ejs_web_Route_router                                        13
+#define ES_ejs_web_Route_routeSetName                                  14
+#define ES_ejs_web_Route_template                                      15
+#define ES_ejs_web_Route_threaded                                      16
+#define ES_ejs_web_Route_tokens                                        17
+#define ES_ejs_web_Route_trace                                         18
+#define ES_ejs_web_Route_match                                         19
+#define ES_ejs_web_Route_pattern                                       20
+#define ES_ejs_web_Route_splitter                                      21
+#define ES_ejs_web_Route_getTemplate                                   22
+#define ES_ejs_web_Route_inheritRoutes                                 23
+#define ES_ejs_web_Route_compileTemplate                               24
+#define ES_ejs_web_Route_matchAndSplit                                 25
+#define ES_ejs_web_Route_matchRegExp                                   26
+#define ES_ejs_web_Route_makeParams                                    27
+#define ES_ejs_web_Route_parseOptions                                  28
+#define ES_ejs_web_Route_setName                                       29
+#define ES_ejs_web_Route_setRouteProperties                            30
+#define ES_ejs_web_Route_NUM_INSTANCE_PROP                             31
 #define ES_ejs_web_Route_NUM_INHERITED_PROP                            0
 #define ES_ejs_web_Session_NUM_CLASS_PROP                              0
 
@@ -608,6 +605,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   806304
+#define _ES_CHECKSUM_ejs_web   803916
 
 #endif
