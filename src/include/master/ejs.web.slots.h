@@ -32,10 +32,12 @@
 #define ES_ejs_web_MethodOverride_app                                  0
 #define ES_ejs_web_Middleware_app                                      0
 #define ES_ejs_web_Middleware_middleware                               1
+#define ES_ejs_web_MvcApp_request                                      0
 #define ES_ejs_web_MvcBuilder_request                                  0
 #define ES_ejs_web_toOrdinal_number                                    0
 #define ES_ejs_web_toPlural_word                                       0
 #define ES_ejs_web_toSingular_plural                                   0
+#define ES_ejs_web_ScriptApp_request                                   0
 #define ES_ejs_web_ScriptBuilder_request                               0
 #define ES_ejs_web_ShowExceptions_app                                  0
 #define ES_ejs_web_StaticApp_request                                   0
@@ -52,16 +54,16 @@
 #define ES_ejs_web_escapeHtml_str                                      0
 #define ES_ejs_web_html_args                                           0
 #define ES_ejs_web_unescapeHtml_s                                      0
-#define ES_ejs_web_CommonLogBuilder_NUM_CLASS_PROP                     0
+#define ES_ejs_web_CommonLogClass_NUM_CLASS_PROP                       0
 
 /*
-   Prototype (instance) slots for "CommonLogBuilder" type 
+   Prototype (instance) slots for "CommonLogClass" type 
  */
-#define ES_ejs_web_CommonLogBuilder_app                                0
-#define ES_ejs_web_CommonLogBuilder_logger                             1
-#define ES_ejs_web_CommonLogBuilder_run                                2
-#define ES_ejs_web_CommonLogBuilder_NUM_INSTANCE_PROP                  3
-#define ES_ejs_web_CommonLogBuilder_NUM_INHERITED_PROP                 0
+#define ES_ejs_web_CommonLogClass_innerApp                             0
+#define ES_ejs_web_CommonLogClass_logger                               1
+#define ES_ejs_web_CommonLogClass_app                                  2
+#define ES_ejs_web_CommonLogClass_NUM_INSTANCE_PROP                    3
+#define ES_ejs_web_CommonLogClass_NUM_INHERITED_PROP                   0
 
 
 /*
@@ -393,23 +395,22 @@
  */
 #define ES_ejs_web_Router_routes                                       0
 #define ES_ejs_web_Router_addCatchall                                  1
-#define ES_ejs_web_Router_addDirect                                    2
-#define ES_ejs_web_Router_addHome                                      3
-#define ES_ejs_web_Router_addResource                                  4
-#define ES_ejs_web_Router_addResources                                 5
-#define ES_ejs_web_Router_addRestful                                   6
-#define ES_ejs_web_Router_addDefault                                   7
-#define ES_ejs_web_Router_addHandlers                                  8
+#define ES_ejs_web_Router_addDefault                                   2
+#define ES_ejs_web_Router_addDirect                                    3
+#define ES_ejs_web_Router_addHandlers                                  4
+#define ES_ejs_web_Router_addHome                                      5
+#define ES_ejs_web_Router_addResource                                  6
+#define ES_ejs_web_Router_addResources                                 7
+#define ES_ejs_web_Router_addRestful                                   8
 #define ES_ejs_web_Router_insertRoute                                  9
 #define ES_ejs_web_Router_add                                          10
 #define ES_ejs_web_Router_lookup                                       11
-#define ES_ejs_web_Router_replace                                      12
-#define ES_ejs_web_Router_remove                                       13
-#define ES_ejs_web_Router_makeApp                                      14
-#define ES_ejs_web_Router_route                                        15
-#define ES_ejs_web_Router_show                                         16
-#define ES_ejs_web_Router_showRoute                                    17
-#define ES_ejs_web_Router_NUM_INSTANCE_PROP                            18
+#define ES_ejs_web_Router_remove                                       12
+#define ES_ejs_web_Router_makeApp                                      13
+#define ES_ejs_web_Router_route                                        14
+#define ES_ejs_web_Router_show                                         15
+#define ES_ejs_web_Router_showRoute                                    16
+#define ES_ejs_web_Router_NUM_INSTANCE_PROP                            17
 #define ES_ejs_web_Router_NUM_INHERITED_PROP                           0
 
 /*
@@ -605,6 +606,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   803916
+#define _ES_CHECKSUM_ejs_web   806511
 
 #endif

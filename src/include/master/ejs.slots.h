@@ -1622,7 +1622,9 @@
 #define ES_String_trimEnd                                              41
 #define ES_String_MINUS                                                42
 #define ES_String_MOD                                                  43
-#define ES_String_NUM_INSTANCE_PROP                                    44
+#define ES_String_toLower                                              44
+#define ES_String_toUpper                                              45
+#define ES_String_NUM_INSTANCE_PROP                                    46
 #define ES_String_NUM_INHERITED_PROP                                   0
 
 /*
@@ -1940,6 +1942,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1302623
+#define _ES_CHECKSUM_ejs   1304124
 
 #endif
