@@ -1350,7 +1350,7 @@ static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
             if (count <= 0) {
                 break;
             }
-            if (rp->endLastMatch < matches[0]) {
+            if (rp->endLastMatch <= matches[0]) {
                 match = ejsCreateStringWithLength(ejs, &sp->value[rp->endLastMatch], matches[0] - rp->endLastMatch);
                 ejsSetProperty(ejs, results, resultCount++, match);
             }

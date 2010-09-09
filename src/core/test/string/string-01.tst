@@ -1,5 +1,5 @@
 /*
- *	String methods 
+  	String methods 
  */
 
 /*BUG
@@ -216,6 +216,9 @@ assert("abc/".split("/") == "abc,")
 assert("abc//".split("/") == "abc,,")
 assert("abc//def".split("/") == "abc,,def")
 
+//  split with regexp
+assert("/abc/def".split(/\//g) == ",abc,def")
+assert("/abc/def".split("/") == ",abc,def")
 
 // startsWith
 s = "abcdef"
