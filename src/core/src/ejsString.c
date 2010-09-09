@@ -1451,12 +1451,18 @@ static EjsObj *toCamel(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     override function toJSON(): String
  */
-static EjsObj *stringToJSON(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
+EjsObj *ejsStringToJSON(Ejs *ejs, EjsObj *vp)
 {
-    EjsObj  *result;
-    MprBuf  *buf;
-    int     i, c;
+    EjsObj      *result;
+    EjsString   *sp;
+    MprBuf      *buf;
+    int         i, c;
 
+    if (ejsIsString(vp)) {
+        sp = (EjsString*) vp;
+    } else {
+        sp = ejsToString(ejs, vp);
+    }
     buf = mprCreateBuf(sp, 0, 0);
     mprPutCharToBuf(buf, '"');
     for (i = 0; i < sp->length; i++) {
@@ -2023,7 +2029,7 @@ void ejsConfigureStringType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_String_startsWith, (EjsProc) startsWith);
     ejsBindMethod(ejs, prototype, ES_String_substring, (EjsProc) substring);
     ejsBindMethod(ejs, prototype, ES_String_toCamel, (EjsProc) toCamel);
-    ejsBindMethod(ejs, prototype, ES_String_toJSON, (EjsProc) stringToJSON);
+    ejsBindMethod(ejs, prototype, ES_String_toJSON, (EjsProc) ejsStringToJSON);
     ejsBindMethod(ejs, prototype, ES_String_toLowerCase, (EjsProc) toLowerCase);
     ejsBindMethod(ejs, prototype, ES_String_toPascal, (EjsProc) toPascal);
     ejsBindMethod(ejs, prototype, ES_String_toString, (EjsProc) stringToString);

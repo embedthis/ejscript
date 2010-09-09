@@ -2020,7 +2020,11 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
      */
     count = ejsGetPropertyCount(ejs, vp);
     if (count == 0 && vp->type != ejs->objectType && vp->type != ejs->arrayType) {
-        return (EjsObj*) ejsToString(ejs, vp);
+        if (ejsIsNull(vp) || ejsIsUndefined(vp) || ejsIsBoolean(vp) || ejsIsNumber(vp) || ejsIsString(vp)) {
+            return (EjsObj*) ejsToString(ejs, vp);
+        } else {
+            return (EjsObj*) ejsStringToJSON(ejs, vp);
+        }
     }
     depth = 99;
     baseClasses = hidden = namespaces = pretty = 0;
