@@ -70,10 +70,8 @@ module ejs.web {
         r.add("/custom", {action: "display", params: { from: "{uri}", transport: "{scheme}" })
 
         //  Nest matching routes
-        r.add("/blog", {controller: "post", subroute: {
-                r.add("comment", "/comment/{action}/{id}")
-            }
-        })
+        let outer = r.add("/blog", {action: "/post/index"})
+        r.add("/comment", {action: "/comment/{action}/{id}", outer: outer})
 
         //  Match with regular expression. The sub-match is available via $N parameters
         r.add(/^\/Dash-((Mini)|(Full))$/, {controller: "post", action: "list", kind: "$1"})
@@ -97,10 +95,18 @@ module ejs.web {
      */
     class Router {
 
-        public static const Restful = "restful"
-        public static const Direct = "direct"
-        public static const Handlers = "handlers"
+        /**
+            Symbolic constant for Router() to add top-level routes for directory, *.es, *.ejs and a catchall 
+            route for static pages. 
+            Use of this constant will not add routes for MVC content or RESTful resources. 
+         */ 
         public static const Default = "default"
+
+        /**
+            Symbolic constant for Router() to add top-level routes for directory, *.es, *.ejs, generic routes for
+            RESTful resources and a catchall route for static pages
+         */ 
+        public static const Restful = "restful"
 
         /*
             Routes indexed by first component of the URI path/template
@@ -109,12 +115,13 @@ module ejs.web {
         
         /*
             Map of run functions based on request extension 
-         */
-        var runners = {
+UNUSED
+        var builders = {
             "es":   ScriptBuilder,
             "ejs":  TemplateBuilder,
             "html": StaticBuilder,
         }
+         */
 
         /**
             Function to test if the Request.filename is a directory.
@@ -125,7 +132,6 @@ module ejs.web {
 
         /**
             Add a catch-all route for static content
-            @return The router instance to enable chaining
          */
         public function addCatchall(): Void
             add(/^\/.*$/, {name: "catchall", run: StaticBuilder, method: "*"})
@@ -134,7 +140,6 @@ module ejs.web {
             Direct routes for MVC apps. These map HTTP methods directly to method names.
         */
         public function addDirect(name: String, options: Object = {}): Void {
-//  MOB -- TODO
             add("/" + name + "/(/{id}(/{action}))")
             let names = options.plural || toPlural(name)
             add("/" + names + "/(/{action})", {contrtoller: name, namespace: "GROUP"})
@@ -148,18 +153,16 @@ module ejs.web {
 
         /**
             Add restful routes for a singleton resource. 
-            Supports member CRUD actions: show, create, update, destroy.
-            Supports collection actions: edit, index, show. 
+            Supports member CRUD actions: edit, show, update, and custom actions.
             The restful routes defined are:
             <pre>
-//  MOB -- update
                 Method  URL                   Action
                 GET     /controller/edit      edit        Display a resource form suitable for editing
                 GET     /controller           show        Display a resource (not editable)
                 PUT     /controller           update      Update a resource (idempotent)
                 ANY     /controllers/action   *           Other custom actions
             </pre>
-            The default route is used for $Request.link.
+            The default route is used when constructing URIs via Request.link.
             @param name Name of the resource to route. Can also be an array of names.
          */
         public function addResource(name: *): Void {
@@ -180,18 +183,19 @@ module ejs.web {
             Supports CRUD actions: edit, index, show, create, update, destroy. The restful routes defined are:
             <pre>
                 Method  URL                     Action
-                GET     /controller/1           show        Display a resource (not editable)
-                GET     /controller/1/edit      edit        Display a resource form suitable for editing
-                PUT     /controller/1           update      Update a resource (idempotent)
-                DELETE  /controller/1           destroy     Destroy a resource (idempotent)
-
                 GET     /controller             index       Display an overview of the resource
                 GET     /controller/init        init        Initialize and display a blank form for a new resource
                 POST    /controller             create      Accept a form creating a new resource
-                ANY     /controller             destroy     Destroy all (idempotent)
+
+                GET     /controller/1/edit      edit        Display a resource form suitable for editing
+                GET     /controller/1           show        Display a resource (not editable)
+                PUT     /controller/1           update      Update a resource (idempotent)
+                DELETE  /controller/1           destroy     Destroy a resource (idempotent)
+
+                ANY     /controller/action      default     Other custom actions
             </pre>
-            The default route is used for $Request.link.
-            @param name Plural name of the resource to route
+            The default route is used when constructing URIs via Request.link.
+            @param name Name of the resource to route. Can also be an array of names.
         */
         public function addResources(name: *): Void {
             if (name is Array) {
@@ -214,9 +218,22 @@ module ejs.web {
         }
 
         /** 
-            Add default restful routes for singleton resources. This also adds top level routes and a static content
-            catchall route.  
-            @see $addResources for restful route details.
+            Add default restful routes for resources. This adds default routes for generic resources.
+            Supports CRUD actions: edit, index, show, create, update, destroy. The restful routes defined are:
+            <pre>
+                Method  URL                     Action
+                GET     /controller             index       Display an overview of the resource
+                GET     /controller/init        init        Initialize and display a blank form for a new resource
+                POST    /controller             create      Accept a form creating a new resource
+
+                GET     /controller/1/edit      edit        Display a resource form suitable for editing
+                GET     /controller/1           show        Display a resource (not editable)
+                PUT     /controller/1           update      Update a resource (idempotent)
+                DELETE  /controller/1           destroy     Destroy a resource (idempotent)
+
+                ANY     /controller/action      default     Other custom actions
+            </pre>
+            The default route is used when constructing URIs via Request.link.
         */
         public function addRestful(): Void {
             add("/{controller}/init",               {action: "init"})
@@ -235,16 +252,12 @@ module ejs.web {
         /**
             Add a default MVC controller/action route. This consists of a "/{controller}/{action}" route.
             All HTTP method verbs are supported.
-            @return The router instance to enable chaining
          */
-        public function addDefault(): Void {
+        public function addDefault(): Void
             add("/{controller}(/{action})", {name: "default", method: "*"})
-            //add("/{controller}(/{action}(/{id}))", {name: "default", method: "*"})
-        }
 
         /**
-            Add handler routes for for static content, directories, "es" scripts and stand-alone ejs templated pages.
-            @return The router instance to enable chaining
+            Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages.
          */
         public function addHandlers(): Void {
             let staticPattern = "\/" + (App.config.directories.static || "static") + "\/.*"
@@ -256,35 +269,41 @@ module ejs.web {
             add(isDir,    {name: "dir", run: DirBuilder})
         }
 
-        function Router(name: String = null) {
-            switch (name) {
-            case "direct":
-                addDirect()
-                break
-            case "restful":
-                addRestful()
-                break
-            case "handlers":
-                addHandlers()
-                break
-            case "default":
+        /**
+            Create a Router instance
+            @param routeSet Name of the route set to add. Supports sets include:
+                Router.Default, Router.Direct, Router.Handlers, Router.Restful
+         */
+        function Router(routeSet: String = null) {
+            switch (routeSet) {
+            case Default:
                 addHandlers()
                 addCatchall()
                 break
+            case Restful:
+                addHandlers()
+                addRestful()
+                addCatchall()
+                break
             case null:
-            case "":
                 break
             default:
                 throw "Unknown route set: " + name
             }
         }
 
-        //  MOB -- rename
+        /** 
+UNUSED
+            Add a builder function for an extension
+            @param builder Builder function. Builders must be of the form
+                function builder(request: Request): Function
+            @param ext 
         function addBuilder(builder: Function, ext: String): Void
-            runners[ext] = builder
+            builders[ext] = builder
 
-        function lookupRunners(ext): Function
-            runners[ext] || MvcBuilder
+        private function lookupBuilders(ext): Function
+            builders[ext] || MvcBuilder
+         */
 
         private function insertRoute(r: Route, options: Object): Void {
             let routeSetName
@@ -296,40 +315,51 @@ module ejs.web {
             routeSet[r.name] = r
         }
 
-// MOB - doc
-        /**
-            Add a route.
-            A route template must match the entire request pathInfo. 
-            @param template Route template to match. If template is not supplied, the name is used as the template and is 
-                interpreted as "controller(/action)".
-            @param options
-            @return The route name
-            @option action String Short form for params.action
-            @option builder Outer parent route
-            @option name Route name
-            @option method Outer parent route
-            @option limits Outer parent route
+        /*
+            Add a route
+            @param template String or Regular Expression defining the form of a matching URI (Request.pathInfo).
+            @param options Route options representing the URI and options to use when servicing the request. If it
+                is a string, it may begin with an "@" and be of the form "@[controller/]action". In this case, if there
+                is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke.
+                The controller or action may be absent. For example: "@Controller/", "@action", "@controller/action".
+                If the string does not begin with an "@", it is interpreted as a literal URI. For example: "/web/index.html".
+                If the options is an object hash, it may contain the options below:
+            @option action Action method to service the request. This may be of the form "controller/action" or "controller/"
+            @option controller Controller to service the request.
+            @option name Name to give to the route. If absent, the name is created from the controller and action names.
+            @option outer Parent route. The parent's template and parameters are appended to this route.
+            @option params Override parameter to provide to the request in the Request.params.
+            @examples:
+                Route("/{controller}(/{action}(/{id}))/", { method: "POST" })
+                Route("/User/login", {name: "login" })
+            @option name Name for the route
+            @option method String|RegExp HTTP methods to support.
+            @option limits Limits object for the requests on this route. See HttpServer.limits.
             @option location Object hash with properties prefix and dir
-            @option params Outer parent route
+            @option params Override request parameters.
             @option parent Outer parent route
-            @option redirect 
-            @option rewrite 
-            @option run (Function|Object) This can be either a function to serve the request or it can be a 
-                response hash with status, headers and body properties. The function should return such a response object.
+            @option redirect Redirect requests on this route to this URI.
+            @option rewrite Rewrite function. This can rewrite request properties.
+            @option run (Function|Object) This can be either a builder function to serve the request or it can be a 
+                response hash with status, headers and body properties. The builder function should return a function 
+                of the form:
+                    function (request: Request): Object
             @example:
                 r.add("/User/{action}", {controller: "User"})
          */
-        public function add(template: Object, options: Object = null): Void {
+        public function add(template: Object, options: Object = null): Route {
             let r = new Route(template, options, this)
-            if (options && options.subroute) {
-                options.subroute.parent = r
-                add(r.subroute, r)
-            }
             insertRoute(r, options)
+            return r
         }
 
         /*
             Lookup a route
+            @param options Route description. This can be either string or object hash. If it is a string, it should be
+                of the form "controller/action". If the options is an object hash, it should have properties
+                controller and action. The controller is used as the index for the route set. The action property is
+                the index for the route name.
+            @return Route object
          */
         public function lookup(options: Object): Route {
             if (options is String) {
@@ -339,7 +369,9 @@ module ejs.web {
                 if (options.contains("/")) {
                     let [controller, action] = options.split("/")
                     let routeSet = routes[controller]
-                    return routeSet[action]
+                    if (routeSet) {
+                        return routeSet[action]
+                    }
                 }
                 return routes[""][options]
             }
@@ -349,9 +381,25 @@ module ejs.web {
             return routeSet[routeName]
         }
 
-        public function replace(name: String, template, options: Object = {}): Void
-            add(name, template, options)
+        /**
+            Replace a route route
+            @param template String or Regular Expression defining the form of a matching URI (Request.pathInfo).
+            @param options Route options representing the URI and options to use when servicing the request. If it
+                is a string, it may begin with an "@" and be of the form "@[controller/]action". In this case, if there
+                is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke.
+                The controller or action may be absent. For example: "@Controller/", "@action", "@controller/action".
+                If the string does not begin with an "@", it is interpreted as a literal URI. For example: "/web/index.html".
+                If the options is an object hash, it may contain the options below:
+                See $add() for option details.
+         */
+        public function replace(template, options: Object = {}): Void
+            add(template, options)
 
+        /*
+            Remove a route
+            @param name Name of the route to remove. Name should be of the form "controller/action" where controller
+            is the index for the route set and action is the index for the route name.
+         */
         public function remove(name: String): Void {
             let routeSet = routes[name.split("/")[0]]
             for (let routeName in routeSet) {
@@ -362,6 +410,9 @@ module ejs.web {
             }
         }
 
+        /*
+            Make the application function to service the request
+         */
         private function makeApp(request: Request, r: Route): Function {
             let params = request.params
             let pathInfo = request.pathInfo
@@ -370,10 +421,10 @@ module ejs.web {
             for (field in r.params) {
                 /*  Apply override params */
                 let value = r.params[field]
-                if (value.contains("$")) {
+                if (value.toString().contains("$")) {
                     value = pathInfo.replace(r.pattern, value)
                 }
-                if (value.contains("{")) {
+                if (value.toString().contains("{")) {
                     value = Uri.template(value, params, request)
                 }
                 params[field] = value
@@ -419,11 +470,7 @@ module ejs.web {
                     request.trace(r.trace.level || 0, r.trace.options, r.trace.size)
                 }
             }
-            let app = r.run(request)
-            if (app == null) {
-                return function(request) {}
-            }
-            return app
+            return r.builder(request)
         }
 
         /** 
@@ -463,18 +510,22 @@ module ejs.web {
             throw "No route for " + request.pathInfo
         }
 
-        public function show(all: Boolean = false): Void {
+        /**
+            Show the route table
+            @param extra Set to true to display extra route information
+         */
+        public function show(extra: Boolean = false): Void {
             let lastController
             for each (name in Object.getOwnPropertyNames(routes).sort()) {
                 print("\n" + (name || "Global")+ ":")
                 for each (r in routes[name]) {
-                    showRoute(r, all)
+                    showRoute(r, extra)
                 }
             }
             print()
         }
 
-        public function showRoute(r: Route, all: Boolean = false): Void {
+        private function showRoute(r: Route, extra: Boolean = false): Void {
             let method = r.method || "*"
             let target
             let tokens = r.tokens
@@ -484,8 +535,10 @@ module ejs.web {
                 let controller = params.controller || "*"
                 let action = params.action || "*"
                 target = controller + "/" + action
-            } else if (r.run) {
-                target = r.run.name
+            } else if (r.response) {
+                target = "Response Object"
+            } else if (r.builder) {
+                target = r.builder.name
             } else {
                 target = "UNKNOWN"
             }
@@ -500,7 +553,7 @@ module ejs.web {
                 template = "*"
             }
             let line = "  %-24s %-24s %-7s %s".format(r.name, target, method, template)
-            if (all) {
+            if (extra) {
                 if (params && Object.getOwnPropertyCount(params) > 0) {
                     if (!(params.action && Object.getOwnPropertyCount(params) == 1)) {
                         line += "\n                                                    %s".format(serialize(params))
@@ -513,27 +566,32 @@ module ejs.web {
     }
 
     /** 
-        Route class. A Route describes a mapping from a set of resources to a URI. The Router uses tables of 
-        Routes to serve and route requests to web scripts.
+        Route class. A Route describes a mapping from a URI to a web application. A route has a URI template and a
+        serving function.
 
-MOB -- verify
-        If the URL template is a regular expression, it is used to match against the request pathInfo. If it matches,
+        If the URI template is a regular expression, it is used to match against the request pathInfo. If it matches,
         the pathInfo is matched and sub-expressions may be referenced in the override parameters by using $1, $2 and
         so on. e.g. { priority: "$1" }
         
         If the URL template is a function, it is run to test for a request match. It should return true to 
         accept the request. The function can set parameters in request.params.
 
-        The optional override hash provides parameters which will be defined in params[] overriding any tokenized 
+        The optional override params hash provides parameters which will be defined in params[] overriding any tokenized 
         parameters previously set.
-      
-        Routes are tested in-order from first to last. Inner routes are tested before their outer parent.
      */
     enumerable dynamic class Route {
         use default namespace public
 
-        /* Seed for generating route names */
+        /* 
+            Seed for generating route names 
+         */
         private static var nameSeed: Number = 0
+
+        /**
+            Builder function to create a function app to serve the request. The builder should return return a function 
+            that will be invoked serve the request. The builder can also be a response object hash.
+         */
+        var builder: Object
 
         /**
             Resource limits for the request. See HttpServer.limits for details.
@@ -568,6 +626,17 @@ MOB -- verify
          */
         var moduleName: String
 
+        /*
+            Original template as supplied by caller
+         */
+        var originalTemplate: Object
+
+        /**
+            Outer route for a nested route. A nested route prepends the outer route template to its template. 
+            The param set of the outer route is appended to the inner route.
+         */
+        var outer: Route
+
         /**
             Request parameters to add to the Request.params. This optional override hash provides parameters which will 
             be defined in Request.params[].
@@ -576,7 +645,8 @@ MOB -- verify
 
         /**
             Rewrite function to rewrite the request before serving. It may update the request scriptName, pathInfo 
-            and other Request properties.
+            and other Request properties. Return true to continue serving the request on this route. Otherwise re-route
+            after rewriting the request. 
          */
         var rewrite: Function
 
@@ -584,6 +654,11 @@ MOB -- verify
             URI to redirect the request toward.
          */
         var redirect: String
+
+        /**
+            Response object hash
+         */
+        var response: Object
 
         /** 
           Router instance reference
@@ -596,25 +671,14 @@ MOB -- verify
         var routeSetName: String
 
         /**
-            Function to run to serve the request.
-         */
-        var run: Function
-
-        /**
-            Nested route. A nested route prepends the outer route template to its template. 
-            The param set of the outer route are appended to the inner route.
-         */
-        var subroute: Route
-
-        /**
             Template pattern for URIs. The template is used to match the request pathInfo. The template can be a 
-            uri-template string, a regular expression or a function. If it is a string, it may contain tokens enclosed 
-            in {} and is converted to a regular expression. The tokens are extracted and mapped to items in the 
-            Request.params collection. ie. params[NAME]. 
+            string, a regular expression or a function. If it is a string, it may contain tokens enclosed in braces 
+            "{}" and it is converted to a regular expression for fast matching. At run-time, request tokens 
+            are extracted and stored as items in the Request.params collection.
 
-            If the template is a regular expression, it is used to match against the request pathInfo. If it matches
-            the pathInfo, then sub-expressions may be referenced in the $params values by using $1, $2 and
-            so on. e.g. params: { priority: "$1" }
+            If the template is a regular expression, it is used to match against the request pathInfo. If it matches, 
+            then sub-expressions may be referenced in the $params values by using $1, $2 and so on. 
+            e.g. params: { priority: "$1" }
             
             If the template is a function, it is run to test for a request match. The function should return true to 
             match the request. The function can directly set parameters in request.params.
@@ -655,20 +719,31 @@ MOB -- verify
         internal var splitter: String
 
         /*
+            Create a new Route instance. This is normally not invoked directly. Rather Router.add() is used to
+            create and install routes into the Router.
+            @param template String or Regular Expression defining the form of a matching URI (Request.pathInfo).
+            @param options Route options representing the URI and options to use when servicing the request. If it
+                is a string, it may begin with an "@" and be of the form "@[controller/]action". In this case, if there
+                is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke.
+                The controller or action may be absent. For example: "@Controller/", "@action", "@controller/action".
+                If the string does not begin with an "@", it is interpreted as a literal URI. For example: "/web/index.html".
+                If the options is an object hash, it may contain the options below:
+            @option action Action method to service the request. This may be of the form "controller/action" or "controller/"
+            @option controller Controller to service the request.
+            @option name Name to give to the route. If absent, the name is created from the controller and action names.
+            @option outer Parent route. The parent's template and parameters are appended to this route.
+            @option params Override parameter to provide to the request in the Request.params.
             @examples:
                 Route("/{controller}(/{action}(/{id}))/", { method: "POST" })
                 Route("/User/login", {name: "login" })
-
-                If no options
-                    - 
          */
         function Route(template: Object, options: Object, router: Router) {
             this.router = router
             this.template = template
             options = parseOptions(options)
+            makeParams(options)
             inheritRoutes(options)
             compileTemplate(options)
-            makeParams(options)
             setName(options)
             setRouteProperties(options)
         }
@@ -689,16 +764,20 @@ MOB -- verify
         }
 
         private function inheritRoutes(options: Object): Void {
-            let outer = options.parent
-            while (outer) {
-                //  MOB -- not ideal when doing Dash-index
-                name = outer.name + "." + name
-                template = outer.match + template
-                for (p in outer.params) {
-                    params[p] = outer.params[p]
+            let parent = options.outer
+            if (parent) {
+                let ptem = (parent.originalTemplate is RegExp) ? parent.originalTemplate.source : parent.originalTemplate
+                let tem = (template is RegExp) ? template.source : template
+                if (template is RegExp) {
+                    template = RegExp(ptem + tem)
+                } else {
+                    template = ptem + tem
                 }
-                outer = outer.parent
+                for (p in parent.params) {
+                    params[p] = parent.params[p]
+                }
             }
+            this.originalTemplate = template
         }
 
         private function compileTemplate(options: Object): Void {
@@ -751,6 +830,9 @@ MOB -- verify
             }
         }
 
+        /*
+            Match a request and apply splitter to create request params
+         */
         private function matchAndSplit(request: Request): Boolean {
             if (method && !request.method.contains(method)) {
                 return false
@@ -763,15 +845,12 @@ MOB -- verify
             for (i in tokens) {
                 request.params[tokens[i]] ||= parts[i].trimStart("/")
             }
-/*
-            for (field in params) {
-                request.params[field] ||= params[field].replace(trimStart("/"))
-            }
-dump("PPP", request.params)
-*/
             return true
         }
 
+        /*
+            Match a request using a regular expression without splitter
+         */
         private function matchRegExp(request: Request): Boolean {
             if (method && !request.method.contains(method)) {
                 return false
@@ -779,6 +858,9 @@ dump("PPP", request.params)
             return request.pathInfo.match(pattern)
         }
 
+        /*
+            Make the params object based on input options
+         */
         private function makeParams(options: Object): Void {
             params = options.params || {}
             if (options.action) {
@@ -802,15 +884,6 @@ dump("PPP", request.params)
             }
         }
 
-        /*
-            MOB - doc
-            add(template, "@Controller/action") 
-            add(template, "#Resource/route") 
-            add(template, { controller: name, action: name })
-
-            add("/User/login"   => controller/action
-            add("/User/login"   => controller/action
-        */
         private function parseOptions(options: Object): Object {
             if (!options) {
                 let t = template.replace(/[\(\)]/g, "")
@@ -836,16 +909,16 @@ dump("PPP", request.params)
             Create a useful (deterministic) name for the route
          */
         private function setName(options: Object) {
-            //  MOB - set to index so @Dash/ will map to an index
-            //  Default routes should be defined explicitly
-            name = options.name || options.action || "index"      //  MOB template.split("/")[1]
+            name = options.name || options.action || "index"
+            if (outer && !options.name) {
+                name = options.name + "/" + name
+            }
             if (!name) {
                 throw "Route has no name defined"
             }
         }
 
         private function setRouteProperties(options: Object): Void {
-            //MOB controller = options.controller || ""
             limits = options.limits
             linker = options.linker
             location = options.location
@@ -859,11 +932,16 @@ dump("PPP", request.params)
             } else {
                 method = options.method || "GET"
             }
-
-            run = options.run || router.lookupRunners(this)
-            if (!(run is Function)) {
-                run = function(request) {
-                    return options.run
+            if (options.run is Function) {
+                builder = options.run || MvcBuilder
+            } else if (options.run) {
+                response = options.run
+                builder = function (request) {
+print("IN BUILDER")
+                    return function (request) {
+print("IN REQUEST APP")
+                        return response
+                    }
                 }
             }
         }
