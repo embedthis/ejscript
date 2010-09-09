@@ -164,6 +164,8 @@ module ejs.web {
         @return A web script function that services a web request for static content
         @example:
           { name: "index", builder: StaticBuilder, }
+        @spec ejs
+        @stability prototype
      */
     function StaticBuilder(request: Request): Function {
         //  MOB -- BUG should not need "ejs.web"

@@ -441,10 +441,14 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return createString(ejs, conn ? conn->errorMsg : NULL);
 
     case ES_ejs_web_Request_filename:
-        if (req->filename == 0 && conn) {
+        if (req->filename == 0) {
             pathInfo = ejsGetString(ejs, req->pathInfo);
-            filename = mprJoinPath(ejs, req->dir->path, &pathInfo[1]);
-            req->filename = ejsCreatePathAndFree(ejs, filename);
+            if (req->dir) {
+                filename = mprJoinPath(ejs, req->dir->path, &pathInfo[1]);
+                req->filename = ejsCreatePathAndFree(ejs, filename);
+            } else {
+                req->filename = ejsCreatePath(ejs, pathInfo);
+            }
         }
         return req->filename ? (EjsObj*) req->filename : (EjsObj*) ejs->nullValue;
 

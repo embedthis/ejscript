@@ -3,12 +3,28 @@
  */
 
 module ejs.web {
+
+    /**
+        Run a script app. The script at request.filename will be run
+        @param request Request object
+        @return A response object
+        @spec ejs
+        @stability prototype
+     */
+    function ScriptApp(request: Request) {
+        let app = ScriptBuilder(request)
+        return app(request)
+    }
+
+
     /** 
         Script builder for use in routing tables to load pure script files (*.es).
         @param request Request object. 
         @return A web script function that services a web request.
         @example:
           { name: "index", builder: ScriptBuilder, match: "\.es$" }
+        @spec ejs
+        @stability prototype
      */
     function ScriptBuilder(request: Request): Function {
         if (!request.filename.exists) {

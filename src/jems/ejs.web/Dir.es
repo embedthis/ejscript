@@ -44,9 +44,12 @@ module ejs.web {
         yield a response object.
         @example:
           { name: "index", builder: DirBuilder, match: Router.isDir }
+        @spec ejs
+        @stability prototype
      */
-    function DirBuilder(request: Request): Function 
-        DirApp
+    function DirBuilder(request: Request): Function {
+        return DirApp
+    }
 }
 
 /*

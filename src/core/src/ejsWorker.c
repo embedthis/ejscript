@@ -432,7 +432,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     if (msg->stack) {
         ejsSetProperty(ejs, event, ES_ErrorEvent_stack, msg->stack);
-        if ((frame = ejsGetProperty(ejs, msg->stack, 0)) != 0) {
+        if ((frame = ejsGetProperty(ejs, msg->stack, 0)) != 0 && frame != ejs->undefinedValue) {
             ejsSetProperty(ejs, event, ES_ErrorEvent_filename, 
                 ejsGetPropertyByName(ejs, frame, ejsName(&qname, "", "filename")));
             ejsSetProperty(ejs, event, ES_ErrorEvent_lineno, 
@@ -787,7 +787,7 @@ static void markWorker(Ejs *ejs, EjsWorker *worker)
 {
     ejsMarkObject(ejs, (EjsObj*) worker);
     if (worker->event) {
-        ejsMarkObject(ejs, (EjsObj*) worker->event);
+        ejsMark(ejs, (EjsObj*) worker->event);
     }
 }
 

@@ -168,23 +168,27 @@ module ejs.web {
         }
     }
 
-//  MOB - is this right? who calls this?
     /**
         MVC request handler.  
         @param request Request object
         @return A response hash (empty). MVC apps use Request methods directly to set status, headers and response body.
+        @spec ejs
+        @stability prototype
+     */
     function MvcApp(request: Request): Object {
         let app = MvcBuilder(request)
         return app(request)
     }
-     */
 
+//  MOB -- update doc
     /** 
         MVC builder for use in routing tables. The MVC builder function can be included directly in Route table entries.
         @param request Request object. 
         @return A web script function that services a web request.
         @example:
           { name: "index", builder: MvcBuilder, match: "/" }
+        @spec ejs
+        @stability prototype
      */
     function MvcBuilder(request: Request): Function {
         //  MOB OPT - Currently Mvc has no state so really don't need an Mvc instance

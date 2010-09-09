@@ -12,25 +12,28 @@ module ejs.web {
             yield a response object.
         @example:
             export.app = CommonLog(app)
+        @spec ejs
+        @stability prototype
      */
-    function CommonLog(app, logger: Stream = App.log): Object
-        (new CommonLogBuilder(app, logger)).run
+    function CommonLog(app, logger: Stream = App.log): Object {
+        return (new CommonLogClass(app, logger)).app
+    }
 
     /**
-        TODO MOB
+        TODO - doc
      */
-    class CommonLogBuilder {
-        var app: Function
+    class CommonLogClass {
+        var innerApp: Function
         var logger: Stream
 
-        function CommonLogBuilder(app, logger: Stream = App.log) {
-            this.app = app
+        function CommonLogClass(app, logger: Stream = App.log) {
+            this.innerApp = app
             this.logger = logger
         }
 
-        function run(request: Request): Object {
+        function app(request: Request): Object {
             let start = new Date
-            let response = app.call(request, request)
+            let response = innerApp.call(request, request)
             let size = (response.body is String) ? response.body.length : 0
             /*
                 Sample:  10.0.0.5 - - [16/Mar/2010:15:40:36 -0700] "GET /index.html HTTP/1.1" 200 44

@@ -7,6 +7,8 @@ module ejs.web {
         Template middleware filter. This interprets the output of an inner web app as a template page which is processed.
         @param app Application function object
         @returns A response object hash
+        @spec ejs
+        @stability prototype
      */
     function TemplateFilter(app: Function): Object {
         return function(request) {
@@ -22,13 +24,14 @@ module ejs.web {
         }
     }
 
-    /**
-        Build a web application from a template page. The template web page at Request.filename will be processed and
-            a web application script created.
-        @param request Request object
-        @return A web application function
+    /** 
+        Template web page handler. The template web page at request.filename will be processed and run.
+        @param request Request objects
+        @returns A response hash object
+        @spec ejs
+        @stability prototype
      */
-    function TemplateApp(request: Request): Function {
+    function TemplateApp(request: Request) {
         let app = TemplateBuilder(request)
         return app(request)
     }
@@ -44,6 +47,8 @@ module ejs.web {
         @return A web script function that services a web request.
         @example: Example use in a Route table entry
           { name: "index", builder: TemplateBuilder, match: "\.ejs$" }
+        @spec ejs
+        @stability prototype
      */
     function TemplateBuilder(request: Request, options: Object = {}): Function {
         let path

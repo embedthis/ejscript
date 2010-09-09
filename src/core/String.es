@@ -497,7 +497,7 @@ module ejs {
             @hide 
             @deprecated 2.0.0
          */
-        # Config.Legacy
+        # Config.Legacy || 1
         function toLower(): String
             toLowerCase()
 
@@ -505,7 +505,7 @@ module ejs {
             @hide 
             @deprecated 2.0.0
          */
-        # Config.Legacy
+        # Config.Legacy || 1
         function toUpper(): String
             toUpperCase()
     }

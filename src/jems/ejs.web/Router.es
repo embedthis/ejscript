@@ -85,7 +85,7 @@ module ejs.web {
         })
 
         //  Replace the home page route
-        r.addHome("/Status/")
+        r.addHome("/Status")
 
         //  Display the route table to the console
         r.show()
@@ -113,16 +113,6 @@ module ejs.web {
          */
         public var routes: Object = {}
         
-        /*
-            Map of run functions based on request extension 
-UNUSED
-        var builders = {
-            "es":   ScriptBuilder,
-            "ejs":  TemplateBuilder,
-            "html": StaticBuilder,
-        }
-         */
-
         /**
             Function to test if the Request.filename is a directory.
             @param request Request object to consider
@@ -136,13 +126,33 @@ UNUSED
         public function addCatchall(): Void
             add(/^\/.*$/, {name: "catchall", run: StaticBuilder, method: "*"})
 
+        /**
+            Add a default MVC controller/action route. This consists of a "/{controller}/{action}" route.
+            All HTTP method verbs are supported.
+         */
+        public function addDefault(): Void
+            add("/{controller}(/{action})", {name: "default", method: "*"})
+
         /** 
             Direct routes for MVC apps. These map HTTP methods directly to method names.
-        */
+            @hide
+         */
         public function addDirect(name: String, options: Object = {}): Void {
-            add("/" + name + "/(/{id}(/{action}))")
-            let names = options.plural || toPlural(name)
-            add("/" + names + "/(/{action})", {contrtoller: name, namespace: "GROUP"})
+            add("/" + name + "/(/{id}(/{action}))", {method: "*"})
+            add("/" + name + "/(/{action})", {contrtoller: name, namespace: "GROUP", method: "*"})
+        }
+
+        /**
+            Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages.
+         */
+        public function addHandlers(): Void {
+            let staticPattern = "\/" + (App.config.directories.static || "static") + "\/.*"
+            if (staticPattern) {
+                add(staticPattern, {name: "static", run: StaticBuilder})
+            }
+            add(/\.es$/,  {name: "es",  run: ScriptBuilder, method: "*"})
+            add(/\.ejs$/, {name: "ejs", module: "ejs.template", run: TemplateBuilder, method: "*"})
+            add(isDir,    {name: "dir", run: DirBuilder})
         }
 
         /**
@@ -246,27 +256,8 @@ UNUSED
             add("/{controller}/{id}",               {action: "update", constraints: id, method: "PUT"})
             add("/{controller}/{id}",               {action: "destroy", constraints: id, method: "DELETE"})
 
+            //  Same as addDefault()
             add("/{controller}(/{action})",         {name: "default", method: "*"})
-        }
-
-        /**
-            Add a default MVC controller/action route. This consists of a "/{controller}/{action}" route.
-            All HTTP method verbs are supported.
-         */
-        public function addDefault(): Void
-            add("/{controller}(/{action})", {name: "default", method: "*"})
-
-        /**
-            Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages.
-         */
-        public function addHandlers(): Void {
-            let staticPattern = "\/" + (App.config.directories.static || "static") + "\/.*"
-            if (staticPattern) {
-                add(staticPattern, {name: "static", run: StaticBuilder})
-            }
-            add(/\.es$/,  {name: "es",  run: ScriptBuilder, method: "*"})
-            add(/\.ejs$/, {name: "ejs", module: "ejs.template", run: TemplateBuilder, method: "*"})
-            add(isDir,    {name: "dir", run: DirBuilder})
         }
 
         /**
@@ -292,19 +283,6 @@ UNUSED
             }
         }
 
-        /** 
-UNUSED
-            Add a builder function for an extension
-            @param builder Builder function. Builders must be of the form
-                function builder(request: Request): Function
-            @param ext 
-        function addBuilder(builder: Function, ext: String): Void
-            builders[ext] = builder
-
-        private function lookupBuilders(ext): Function
-            builders[ext] || MvcBuilder
-         */
-
         private function insertRoute(r: Route, options: Object): Void {
             let routeSetName
             if (r.template is String) {
@@ -315,7 +293,7 @@ UNUSED
             routeSet[r.name] = r
         }
 
-        /*
+        /**
             Add a route
             @param template String or Regular Expression defining the form of a matching URI (Request.pathInfo).
             @param options Route options representing the URI and options to use when servicing the request. If it
@@ -353,7 +331,7 @@ UNUSED
             return r
         }
 
-        /*
+        /**
             Lookup a route
             @param options Route description. This can be either string or object hash. If it is a string, it should be
                 of the form "controller/action". If the options is an object hash, it should have properties
@@ -382,32 +360,20 @@ UNUSED
         }
 
         /**
-            Replace a route route
-            @param template String or Regular Expression defining the form of a matching URI (Request.pathInfo).
-            @param options Route options representing the URI and options to use when servicing the request. If it
-                is a string, it may begin with an "@" and be of the form "@[controller/]action". In this case, if there
-                is a "/" delimiter, the first portion is a controller and the second is the controller action to invoke.
-                The controller or action may be absent. For example: "@Controller/", "@action", "@controller/action".
-                If the string does not begin with an "@", it is interpreted as a literal URI. For example: "/web/index.html".
-                If the options is an object hash, it may contain the options below:
-                See $add() for option details.
-         */
-        public function replace(template, options: Object = {}): Void
-            add(template, options)
-
-        /*
             Remove a route
             @param name Name of the route to remove. Name should be of the form "controller/action" where controller
             is the index for the route set and action is the index for the route name.
          */
         public function remove(name: String): Void {
-            let routeSet = routes[name.split("/")[0]]
+            let [controller, action] = name.split("/")
+            let routeSet = routes[controller]
             for (let routeName in routeSet) {
-                if (routeName == name) {
-                    delete routeSet[route]
-                    break
+                if (routeName == action) {
+                    delete routeSet[action]
+                    return
                 }
             }
+            throw "Can't find route \"" + name + "\" to remove"
         }
 
         /*
@@ -434,6 +400,7 @@ UNUSED
                 return route(request)
             }
             if (r.redirect) {
+                //  TODO OPT - could this this via a custom builder
                 request.pathInfo = r.redirect
                 log.debug(5, "Route redirected to \"" + request.pathInfo + "\" (reroute)")
                 return route(request)
@@ -626,14 +593,15 @@ UNUSED
          */
         var moduleName: String
 
-        /*
+        /**
             Original template as supplied by caller
          */
-        var originalTemplate: Object
+        private var originalTemplate: Object
 
         /**
             Outer route for a nested route. A nested route prepends the outer route template to its template. 
             The param set of the outer route is appended to the inner route.
+            @hide
          */
         var outer: Route
 
@@ -755,6 +723,7 @@ UNUSED
             @param controller Controller name
             @param routeName Route name to look for
             @return A template URI string
+            @hide
          */
         public function getTemplate(controller: String, routeName: String): String {
             let routes = router.routes
@@ -893,9 +862,12 @@ UNUSED
             }
             let action = options.action
             if (action) {
+/* UNUSED
                 if (action is Function) {
                     options.run ||= options.action
-                } else if (action[0] == '@') {
+                } else 
+*/
+                if (action[0] == '@') {
                     [options.controller, options.action] = action.slice(1).split("/")
                 }
             }
@@ -928,19 +900,20 @@ UNUSED
             threaded = options.threaded
             trace = options.trace
             if (options.method == "" || options.method == "*") {
-                options.method = ""
+                method = options.method = ""
             } else {
                 method = options.method || "GET"
             }
-            if (options.run is Function) {
-                builder = options.run || MvcBuilder
-            } else if (options.run) {
+            options.run ||= MvcBuilder
+            if (!(options.run is Function)) {
                 response = options.run
                 builder = function (request) {
                     return function (request) {
                         return response
                     }
                 }
+            } else {
+                builder = options.run
             }
         }
 
