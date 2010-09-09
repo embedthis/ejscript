@@ -433,6 +433,7 @@ EjsString *ejsToJSON(Ejs *ejs, EjsObj *obj, EjsObj *options)
         result = (EjsString*) ejsRunFunction(ejs, fn, obj, argc, argv);
     } else {
         result = ejsToString(ejs, obj);
+        result = ejsToJSON(ejs, (EjsObj*) result, options);
     }
     return result;
 }
