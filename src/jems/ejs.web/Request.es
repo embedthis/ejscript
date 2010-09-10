@@ -267,6 +267,12 @@ module ejs.web {
          */
         enumerable var route: Route
 
+        /**
+            Count of times the request has been routed. Used to prevent recursive loops.
+            @hide
+         */
+        native var routed: Number
+
         /** 
             Http request scheme (http | https)
          */

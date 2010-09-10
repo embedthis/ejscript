@@ -10,8 +10,13 @@ server.listen(HTTP)
 
 //  Server - route request and serialize the request object as a response
 server.on("readable", function (event, request: Request) {
-    router.route(request)
-//dump(request)
+    try {
+        router.route(request)
+    } catch (e) {
+        print(e)
+        finalize()
+        assert(!e)
+    }
     write(serialize(request) + "\n")
     finalize()
 })
@@ -26,6 +31,15 @@ router.setDefaultBuilder(builder)
 
 router.reset()
 router.add("/path/next/last")
+let response = test("/path/next/last")
+assert(response.pathInfo == "/path/next/last")
+assert(Object.getOwnPropertyCount(response.params) == 0)
+
+
+//  @/path/next/last. Should map to controller: path, action: next
+
+router.reset()
+router.add("@/path/next/last")
 let response = test("/path/next/last")
 assert(response.pathInfo == "/path/next/last")
 assert(Object.getOwnPropertyCount(response.params) == 2)
@@ -101,5 +115,39 @@ assert(response.params.summary == "red mild 100")
 assert(response.params.color == "red")
 assert(response.params.flavor == "mild")
 assert(response.params.temp == "100")
+
+
+//  Regular expression templates
+
+router.reset()
+router.add(/^\/[Dd]ash-((Mini)|(Full))$/, {name: "test", controller: "post", action: "list", params: {kind: "$1"}})
+let response = test("/Dash-Full")
+assert(response.params.action == "list")
+assert(response.params.controller == "post")
+assert(response.params.kind == "Full")
+test("/dash-Full")
+test("/dash-Mini")
+
+
+//  Function template
+
+router.reset()
+router.add(function match(request) {
+    return request.pathInfo.startsWith("/important/")
+})
+let response = test("/important/not-really")
+response = test("/important/")
+
+
+//  Matching function that modifies the request and matching routes
+
+router.reset()
+router.add(function rewrite(request) {
+    request.params["extra"] = "important"
+    return false
+}, {set: "User"})
+router.add("/User/login")
+let response = test("/User/login")
+assert(response.params.extra == "important")
 
 server.close()

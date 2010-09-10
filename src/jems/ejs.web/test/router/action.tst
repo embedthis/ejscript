@@ -10,7 +10,13 @@ server.listen(HTTP)
 
 //  Server - route request and serialize the request object as a response
 server.on("readable", function (event, request: Request) {
-    router.route(request)
+    try {
+        router.route(request)
+    } catch (e) {
+        print(e)
+        finalize()
+        assert(!e)
+    }
     write(serialize(request) + "\n")
     finalize()
 })
@@ -20,17 +26,68 @@ let router = new Router
 router.setDefaultBuilder(builder)
 
 
-/*NOT OK
-//  /path/next/last. Should map to controller: path, action: next
+//  add("/User/{action}") -- Set action/controller from the template
 
 router.reset()
 router.add("/User/{action}")
 let response = test("/User/register")
 assert(response.pathInfo == "/User/register")
-dump(response)
+assert(Object.getOwnPropertyCount(response.params) == 1)
+assert(response.params.action == "register")
+
+
+//  Override controller: add("/User/{action}", {controller: "Staff"})
+
+router.reset()
+router.add("/User/{action}", {controller: "Staff"})
+let response = test("/User/register")
+assert(response.pathInfo == "/User/register")
 assert(Object.getOwnPropertyCount(response.params) == 2)
-assert(response.params.controller == "path")
-assert(response.params.action == "next")
-*/
+assert(response.params.controller == "Staff")
+assert(response.params.action == "register")
+
+
+//  Default action too: add("/User/{action}", {controller: "Staff", action: "authorize"})
+
+router.reset()
+router.add("/User/register", {controller: "Staff", action: "authorize"})
+let response = test("/User/register")
+assert(response.pathInfo == "/User/register")
+assert(Object.getOwnPropertyCount(response.params) == 2)
+assert(response.params.controller == "Staff")
+assert(response.params.action == "authorize")
+
+
+//  Default action with "controller/action"
+
+router.reset()
+router.add("/User/register", {action: "Staff/discount"})
+let response = test("/User/register")
+assert(response.pathInfo == "/User/register")
+assert(Object.getOwnPropertyCount(response.params) == 2)
+assert(response.params.controller == "Staff")
+assert(response.params.action == "discount")
+
+
+//  Set with @literal - controller only
+
+router.reset()
+router.add("/User/{action}", "@Staff/")
+let response = test("/User/register")
+assert(response.pathInfo == "/User/register")
+assert(Object.getOwnPropertyCount(response.params) == 2)
+assert(response.params.controller == "Staff")
+assert(response.params.action == "register")
+
+
+//  Set with @literal
+
+router.reset()
+router.add("/{controller}/{action}", "@discount")
+let response = test("/User/register")
+assert(response.pathInfo == "/User/register")
+assert(Object.getOwnPropertyCount(response.params) == 2)
+assert(response.params.controller == "User")
+assert(response.params.action == "discount")
 
 server.close()

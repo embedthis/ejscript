@@ -17,10 +17,8 @@
 
 static int      cmpName(EjsName *a, EjsName *b);
 static int      cmpQname(EjsName *a, EjsName *b);
-static EjsName  getObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum);
 static int      growSlots(Ejs *ejs, EjsObj *obj, int size);
 static int      hashProperty(EjsObj *obj, int slotNum, EjsName *qname);
-static int      lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname);
 static EjsObj   *obj_defineProperty(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv);
 static EjsObj   *obj_toString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
 static void     removeHashEntry(Ejs *ejs, EjsObj  *obj, EjsName *qname);
@@ -434,7 +432,7 @@ static int deleteObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum)
         return EJS_ERR;
     }
 #endif
-    qname = getObjectPropertyName(ejs, obj, slotNum);
+    qname = ejsGetObjectPropertyName(ejs, obj, slotNum);
     if (qname.name) {
         removeHashEntry(ejs, obj, &qname);
     }
@@ -450,7 +448,7 @@ static int deleteObjectPropertyByName(Ejs *ejs, EjsObj *obj, EjsName *qname)
 {
     int     slotNum;
 
-    slotNum = lookupObjectProperty(ejs, obj, qname);
+    slotNum = ejsLookupObjectProperty(ejs, obj, qname);
     if (slotNum < 0) {
         ejsThrowReferenceError(ejs, "Property does not exist");
         return EJS_ERR;
@@ -485,7 +483,7 @@ static int getObjectPropertyCount(Ejs *ejs, EjsObj *obj)
 }
 
 
-static EjsName getObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum)
+EjsName ejsGetObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum)
 {
     EjsName     qname;
 
@@ -515,7 +513,7 @@ static EjsTrait *getObjectPropertyTrait(Ejs *ejs, EjsObj *obj, int slotNum)
     Only the name portion is hashed. The namespace is not included in the hash. This is used to do a one-step lookup 
     for properties regardless of the namespace.
  */
-static int lookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
+int ejsLookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
 {
     EjsSlot     *slots, *sp, *np;
     int         slotNum, index, prior;
@@ -2370,8 +2368,8 @@ void ejsCreateObjectHelpers(Ejs *ejs)
     helpers->destroy                = (EjsDestroyHelper) destroyObject;
     helpers->getProperty            = (EjsGetPropertyHelper) getObjectProperty;
     helpers->getPropertyCount       = (EjsGetPropertyCountHelper) getObjectPropertyCount;
-    helpers->getPropertyName        = (EjsGetPropertyNameHelper) getObjectPropertyName;
-    helpers->lookupProperty         = (EjsLookupPropertyHelper) lookupObjectProperty;
+    helpers->getPropertyName        = (EjsGetPropertyNameHelper) ejsGetObjectPropertyName;
+    helpers->lookupProperty         = (EjsLookupPropertyHelper) ejsLookupObjectProperty;
     helpers->invokeOperator         = (EjsInvokeOperatorHelper) ejsObjectOperator;
     helpers->mark                   = (EjsMarkHelper) ejsMarkObject;
     helpers->setProperty            = (EjsSetPropertyHelper) setObjectProperty;

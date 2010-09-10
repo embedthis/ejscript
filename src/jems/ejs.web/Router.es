@@ -6,20 +6,32 @@ module ejs.web {
 
     /** 
         Web router class. Routes incoming client HTTP requests to the appropriate location. The Route class supports 
-        configurable user-defined routes. 
+        configurable user-defined routes.  Each application should create a Router instance and then attach matching routes.
 
-        Each application should create a Router instance and then attach matching routes.
+        The Router works by defining routes in a route table. For rapid routing, routes are grouped into sets of 
+        routes with the same leading URI path segment. For example: the route template "/User/login" would be put into
+        the "User" route set. If a route template is a function or regular expression, the route is added to the "Global"
+        route set.
+        
+        The pathInfo and other request properties are examined when selecting a matching route. The request's leading 
+        URI pathInfo segment is used to select a route set and then the request is matched against each route in that set.
+        Routes are matched in the order in which they are defined.
+
         @example:
 
         var r = new Router
 
+        //  Match /some/path and run the custom builder. Target is data for the customBuilder.
+        r.add("/some/path", {run: customBuilder, target: "/other/path"})
+
+        //  Match /some/path and run MvcBuilder with controller == User and action == "register"
+        r.add("@/User/register")
+
         //  Add route for files with a ".es" extension and use the ScriptBuilder to run
-        r.add(/\.es$/,  {run: ScriptBuilder})
+        r.add(/\.es$/, {run: ScriptBuilder})
 
         //  Add route for directories and use the DirBuilder to run
-        r.add(Router.isDir,    {name: "dir", run: DirBuilder})
-
-        r.add("/some/path", {run: customBuilder, target: "/other/path"})
+        r.add(Router.isDir, {name: "dir", run: DirBuilder})
 
         //  Add route for RESTful routes and run with the MvcBuilder
         r.addResources("User")
@@ -34,12 +46,12 @@ module ejs.web {
         r.add("/{controller}/{id}",      {action: "destroy", method: "DELETE"})
         r.add("/{controller}(/do/{action})")
         
-        //  Add route for upper or lower case "D" or "d". Run the default app: MvcBuilder
+        //  Add route for upper or lower case "D" or "d". Run the default app: MvcBuilder, Dash contoller, refresh action.
         r.add("/[Dd]ash/refresh", "@Dash/refresh")
 
-        //  Add route for an "admin" application. This sets the scriptName to "admin" expects an MVC application to be
-        //  located at the directory "myApp"
-        r.add("/admin/", {location: { prefix: "/control", dir: "my"})
+        //  Add route for an "admin" application. This sets the scriptName to "admin" and expects an application to be
+        //      located at the directory "myApp"
+        r.add("/admin/", {location: { scriptName: "/control", dir: "my"})
 
         //  Rewrite a request for "old.html" to new.html
         r.add("/web/old.html",  {rewrite: function(request) { request.pathInfo = "/web/new.html"}})
@@ -76,7 +88,7 @@ module ejs.web {
         r.add("/comment", {target: "/comment/{action}/{id}", outer: outer})
 
         //  Match with regular expression. The sub-match is available via $N parameters
-        r.add(/^\/Dash-((Mini)|(Full))$/, {controller: "post", action: "list", kind: "$1"})
+        r.add(/^\/Dash-((Mini)|(Full))$/, {controller: "post", action: "list", params: {kind: "$1"}})
         
         //  Conditional matching. Surround optional tokens in "()"
         r.add("/Dash(/{product}(/{branch}(/{configuration})))", {   
@@ -103,6 +115,11 @@ module ejs.web {
             Use of this constant will not add routes for MVC content or RESTful resources. 
          */ 
         public static const Default = "default"
+
+        /**
+            Max calls to route() per request
+         */
+        static const MaxRoute = 20
 
         /**
             Symbolic constant for Router() to add top-level routes for directory, *.es, *.ejs, generic routes for
@@ -165,8 +182,9 @@ module ejs.web {
 
         /**
             Add a home page route. This will add or update the "home" page route.
+            @param target Target to invoke when the home page is accessed.
          */
-        public function addHome(target: String): Void
+        public function addHome(target: Object): Void
             add("/", { name: "home", target: target})
 
         /**
@@ -292,11 +310,6 @@ module ejs.web {
         }
 
         private function insertRoute(r: Route, options: Object): Void {
-            let routeSetName
-            if (r.template is String) {
-                routeSetName = r.template.split("{")[0].split("/")[1]
-            }
-            r.routeSetName = routeSetName || ""
             let routeSet = routes[r.routeSetName] ||= {}
             routeSet[r.name] = r
         }
@@ -327,7 +340,9 @@ module ejs.web {
             @option name Name for the route
             @option method String|RegExp HTTP methods to support.
             @option limits Limits object for the requests on this route. See HttpServer.limits.
-            @option location Object hash with properties prefix and dir
+            @option location Application location to serve the request. Location contains two properties: scriptName 
+                which is the string URI prefix for the application and dir which is a Path to the physical file system 
+                directory containing the applciation.
             @option params Override request parameters.
             @option parent Outer parent route
             @option redirect Redirect requests on this route to this URI.
@@ -336,7 +351,9 @@ module ejs.web {
                 response hash with status, headers and body properties. The builder function should return a function 
                 of the form:
                     function (request: Request): Object
-            @option target Target for the route. This can be a URI or an "@[controller/]action"
+            @option set Route set name in which to add this route. Defaults to the first component of the template if
+                the template is a string, otherwise "".
+            @option target Target for the route. This can be a Uri path or a controller/action pair: "@[controller/]action".
             @example:
                 r.add("/User/{action}", {controller: "User"})
          */
@@ -414,20 +431,21 @@ module ejs.web {
             }
             if (r.rewrite && !r.rewrite(request)) {
                 log.debug(5, "Request rewritten as \"" + request.pathInfo + "\" (reroute)")
-                return route(request)
+                return reroute(request)
             }
             if (r.redirect) {
                 //  TODO OPT - could this this via a custom builder
                 request.pathInfo = r.redirect
                 log.debug(5, "Route redirected to \"" + request.pathInfo + "\" (reroute)")
-                return route(request)
+                return reroute(request)
             }
             request.route = r
             let location = r.location
-            if (location && location.prefix && location.dir) {
-                request.setLocation(location.prefix, location.dir)
-                log.debug(4, "Set location prefix \"" + location.prefix + "\" dir \"" + location.dir + "\" (reroute)")
-                return route(request)
+            if (location && location.scriptName && location.scriptName != request.scriptName && location.dir) {
+                request.setLocation(location.scriptName, location.dir)
+                log.debug(4, "Set location scriptName \"" + location.scriptName + "\" dir \"" + 
+                        location.dir + "\" (reroute)")
+                return reroute(request)
             }
             if (r.module && !r.initialized) {
                 global.load(r.module + ".mod")
@@ -464,6 +482,14 @@ module ejs.web {
             routes = {}
         }
 
+        private function reroute(request): Function {
+            request.routed ||= 1
+            if (request.routed++ > MaxRoute) {
+                throw "Too many route calls. Route table may have a loop."
+            }
+            return route(request)
+        }
+
         /** 
             Route a request. The request is matched against the configured route table. 
             The call returns the web application to execute.
@@ -474,7 +500,6 @@ module ejs.web {
         public function route(request): Function {
             let log = request.log
             log.debug(5, "Routing " + request.pathInfo)
-
             if (request.method == "POST") {
                 let method = request.params["-ejs-method-"] || request.header("X-HTTP-METHOD-OVERRIDE")
                 if (method && method.toUpperCase() != request.method) {
@@ -512,7 +537,7 @@ module ejs.web {
         public function show(extra: Boolean = false): Void {
             let lastController
             for each (name in Object.getOwnPropertyNames(routes).sort()) {
-                print("\n" + (name || "Top")+ "/")
+                print("\n" + (name || "Global")+ "/")
                 for each (r in routes[name]) {
                     showRoute(r, extra)
                 }
@@ -594,9 +619,9 @@ module ejs.web {
         var limits: Object
 
         /**
-            Application location to serve the request. Location contains two properties: prefix which is the string 
+            Application location to serve the request. Location contains two properties: scriptName which is the string 
             URI prefix for the application and dir which is a Path to the physical file system directory containing 
-            the MVC applciation.
+            the applciation.
          */
         var location: Object
 
@@ -746,12 +771,13 @@ module ejs.web {
             inheritRoutes(options)
             compileTemplate(options)
             setName(options)
+            setRouteSetName(options)
             setRouteProperties(options)
         }
 
         /**
             Get the template pattern for a route given a controller and a route name. If the specified controller 
-            cannot be found, the Top route set is used. If the specified route name cannot be found, the "default"
+            cannot be found, the Global route set is used. If the specified route name cannot be found, the "default"
             route is used. Use Uri.template to expand the template with URI components.
             @param controller Controller name
             @param routeName Route name to look for
@@ -776,7 +802,7 @@ module ejs.web {
                     template = ptem + tem
                 }
                 for (p in parent.params) {
-                    params[p] = parent.params[p]
+                    params[p] ||= parent.params[p]
                 }
             }
             this.originalTemplate = template
@@ -875,6 +901,14 @@ module ejs.web {
                 params.namespace = options.namespace
             }
         }
+/*
+
+    add("/abc/def")             => add("/abc/def", {target: "@/abc/def"})
+    add("/abc/def", "/path")    => add("/abc/def", {target: "/path"})
+    add("/abc/def", "@action")  => add("/abc/def", {target: "@action"})
+                                => add("/abc/def", {action: "action"})
+
+ */
 
         /*
             If no options provided, sleuth the action from the template. This will probably also end up setting 
@@ -882,15 +916,25 @@ module ejs.web {
          */
         private function parseOptions(options: Object): Object {
             if (!options) {
-                let t = template.replace(/[\(\)]/g, "")
-                options = {target: "@" + t.split("{")[0].trimStart("/")}
+                if (template is String) {
+                    if (template[0] == '@') {
+                        let t = template.replace(/[\(\)]/g, "")
+                        options = {target: t.split("{")[0]}
+                        template = template.trimStart("@")
+                    }
+                }
+                options ||= {}
             } else if (options is String) {
                 options = {target: options}
             }
             target = options.target
             if (target) {
                 if (target[0] == '@') {
-                    [options.controller, options.action] = target.slice(1).split("/")
+                    if (target.contains("/")) {
+                        [options.controller, options.action] = target.slice(1).trimStart("/").split("/")
+                    } else {
+                        options.action = target.slice(1)
+                    }
                 }
             }
             if (options.action) {
@@ -916,14 +960,18 @@ module ejs.web {
             Action names will be sleuthed from the template if no options provided.
             Outer routes are pre-pended if defined.
          */
-        private function setName(options: Object) {
+        private function setName(options: Object): Void {
             name = options.name
             if (!name && options.action) {
                 name = options.action
             }
-            if (!name && template) {
-                /* Take second component */
-                name = template.split("{")[0].split("/")[2]
+            if (!name) {
+                if (template is String) {
+                    /* Take second component */
+                    name = template.split("{")[0].split("/")[2]
+                } else if (template is Function) {
+                    name = template.name
+                }
             }
             name ||= "index"
             if (outer && !options.name) {
@@ -932,6 +980,16 @@ module ejs.web {
             if (!name) {
                 throw "Route has no name defined"
             }
+        }
+
+        private function setRouteSetName(options: Object): Void {
+            if (options) {
+                routeSetName = options.set
+            }
+            if (!routeSetName && template is String) {
+                routeSetName = template.split("{")[0].split("/")[1]
+            }
+            routeSetName ||= ""
         }
 
         private function setRouteProperties(options: Object): Void {

@@ -12,7 +12,7 @@ var route = router.lookup("path/index")
 assert(route)
 assert(route.name == "index")
 assert(route.template == "/path")
-assert(route.params.controller == "path")
+assert(Object.getOwnPropertyCount(route.params) == 0)
 
 
 //  addDefault

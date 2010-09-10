@@ -177,7 +177,7 @@ int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *
                 if (name->space[0] && (name->space[0] != target.space[0] || strcmp(name->space, target.space) != 0)) {
                     /* Unique name match. Name matches, but namespace does not */
                     slotNum = -1;
-                } else if (target.space[0]) {
+                } else if (target.space && target.space[0]) {
                     for (next = -1; (nsp = (EjsNamespace*) ejsGetPrevItem(&ejs->globalBlock->namespaces, &next)) != 0; ) {
                         if (strcmp(nsp->uri, target.space) == 0) {
                             goto done;

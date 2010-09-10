@@ -626,13 +626,25 @@ static int getRequestPropertyCount(Ejs *ejs, EjsRequest *req)
 
 static EjsName getRequestPropertyName(Ejs *ejs, EjsRequest *req, int slotNum)
 {
-    return ejsGetPropertyName(ejs, (EjsObj*) req->obj.type->prototype, slotNum);
+    EjsName     qname;
+
+    qname = ejsGetPropertyName(ejs, req->obj.type->prototype, slotNum);
+    if (qname.name == 0) {
+        qname = ejsGetObjectPropertyName(ejs, &req->obj, slotNum);
+    }
+    return qname;
 }
 
 
 static int lookupRequestProperty(Ejs *ejs, EjsRequest *req, EjsName *qname)
 {
-    return ejsLookupProperty(ejs, (EjsObj*) req->obj.type->prototype, qname);
+    int slotNum;
+    
+    slotNum = ejsLookupProperty(ejs, req->obj.type->prototype, qname);
+    if (slotNum < 0) {
+        slotNum = ejsLookupObjectProperty(ejs, &req->obj, qname);
+    }
+    return slotNum;
 }
 
 
