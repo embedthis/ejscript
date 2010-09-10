@@ -1869,6 +1869,16 @@ static EjsObj *obj_isFrozen(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED && KEEP
+/*
+    function isObject(obj): Boolean
+ */
+static EjsObj *obj_isObject(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
+{
+    return argv[0]->type == ejs->objectType ? ejs->trueValue : ejs->falseValue;
+}
+#endif
+
 /*
     static function isPrototypeOf(obj: Object): Boolean
  */
@@ -2298,7 +2308,6 @@ static EjsObj *obj_getName(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 /*********************************** Globals **********************************/
-
 /*
     function typeOf(obj): String
  */
@@ -2402,8 +2411,8 @@ void ejsConfigureObjectType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Object_getType, obj_getType);
     ejsBindMethod(ejs, type, ES_Object_getTypeName, obj_getTypeName);
     ejsBindMethod(ejs, type, ES_Object_getName, obj_getName);
-    ejsBindMethod(ejs, type, ES_Object_isType, obj_isType);
     ejsBindMethod(ejs, type, ES_Object_isPrototype, obj_isPrototype);
+    ejsBindMethod(ejs, type, ES_Object_isType, obj_isType);
 
     ejsBindMethod(ejs, prototype, ES_Object_constructor, (EjsProc) obj_constructor);
     ejsBindMethod(ejs, prototype, ES_Object_clone, obj_clone);

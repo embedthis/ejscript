@@ -243,6 +243,12 @@ MOB -- inconsistent with JSON.baseClasses
         native static function getBaseType(obj: Type): Type
   
         /**
+            Get the name of the object if it is a function or type.
+            @return The string name of the function or type
+         */
+        native static function getName(obj: Object): String
+
+        /**
             Get the type for an object. If the object is an instance, this is the class type object. If the object is a
             type, this value is Type.
             @return A type object
@@ -256,12 +262,14 @@ MOB -- inconsistent with JSON.baseClasses
          */
         native static function getTypeName(obj: Object): String
   
-        /**
-            Test if the object is a type object
-            @return True if the object is a type object
+        /** 
+            Test if the object is a simple object whose base class is Object.
+            @param obj Target object to use in test.
+            @returns true if the direct type of this object is Object.
          */
-        native static function isType(obj: Object): Boolean
-  
+        # UNUSED 
+        native static function isObject(obj: Object): Boolean
+
         /**
             Test if the object is a prototype object
             @return True if the object is being used as a prototype object
@@ -269,10 +277,10 @@ MOB -- inconsistent with JSON.baseClasses
         native static function isPrototype(obj: Object): Boolean
   
         /**
-            Get the name of the object if it is a function or type.
-            @return The string name of the function or type
+            Test if the object is a type object
+            @return True if the object is a type object
          */
-        native static function getName(obj: Object): String
+        native static function isType(obj: Object): Boolean
     }
   
     /**

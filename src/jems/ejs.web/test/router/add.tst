@@ -37,9 +37,7 @@ assert(route)
 assert(route.name == "home")
 assert(route.template == "/")
 assert(route.tokens == null)
-//  MOB -- strange
-assert(route.params.controller == "home.html")
-assert(route.params.action == "index")
+assert(Object.getOwnPropertyCount(route.params) == 0)
 
 
 //  addCatchall
@@ -59,7 +57,7 @@ assert(route.tokens == null)
 let router = new Router
 router.addHandlers()
 assert(Object.getOwnPropertyCount(router.routes) == 2)
-for each (name in ["es", "ejs", "dir", "static/static"]) {
+for each (name in ["es", "ejs", "dir", "static/default"]) {
     assert(router.lookup(name))
 }
 
@@ -197,8 +195,3 @@ assert(route = router.lookup("default"))
 assert(route.name == "default")
 assert(route.template == "/{controller}/{action}")
 assert(route.method == "")
-
-
-//  addDirect()
-let router = new Router
-router.addDirect("User")

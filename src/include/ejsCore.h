@@ -2380,6 +2380,7 @@ extern EjsString *ejsDupString(Ejs *ejs, EjsString *sp);
 
 extern int ejsStrdup(MprCtx ctx, uchar **dest, const void *src, int nbytes);
 extern int ejsStrcat(Ejs *ejs, EjsString *dest, EjsObj *src);
+extern EjsObj *ejsStringToJSON(Ejs *ejs, EjsObj *vp);
 
 /** 
     Timer Class

@@ -988,7 +988,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
         /*
             Unbound or Function expression or instance variable containing a function. Can't use fast path op codes below.
          */
-        if (left->kind == N_QNAME && !left->name.nameExpr) {
+        if (left->kind == N_QNAME && !(left->name.nameExpr || left->name.qualifierExpr)) {
             argc = genCallArgs(cp, right);
             ecEncodeOpcode(cp, EJS_OP_CALL_SCOPED_NAME);
             ecEncodeName(cp, &np->qname);
