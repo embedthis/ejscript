@@ -34,9 +34,6 @@
 #define ES_ejs_web_Middleware_middleware                               1
 #define ES_ejs_web_MvcApp_request                                      0
 #define ES_ejs_web_MvcBuilder_request                                  0
-#define ES_ejs_web_toOrdinal_number                                    0
-#define ES_ejs_web_toPlural_word                                       0
-#define ES_ejs_web_toSingular_plural                                   0
 #define ES_ejs_web_ScriptApp_request                                   0
 #define ES_ejs_web_ScriptBuilder_request                               0
 #define ES_ejs_web_ShowExceptions_app                                  0
@@ -54,6 +51,7 @@
 #define ES_ejs_web_escapeHtml_str                                      0
 #define ES_ejs_web_html_args                                           0
 #define ES_ejs_web_unescapeHtml_s                                      0
+#define ES_ejs_web_toPlural_word                                       0
 #define ES_ejs_web_CommonLogClass_NUM_CLASS_PROP                       0
 
 /*
@@ -247,33 +245,6 @@
 
 
 /*
-    Class property slots for the "Inflector" type 
- */
-#define ES_ejs_web_Inflector__initializer___Inflector_                 0
-#define ES_ejs_web_Inflector_plural                                    1
-#define ES_ejs_web_Inflector_singular                                  2
-#define ES_ejs_web_Inflector_irregular                                 3
-#define ES_ejs_web_Inflector_uncountable                               4
-#define ES_ejs_web_Inflector_toOrdinal                                 5
-#define ES_ejs_web_Inflector_toPlural                                  6
-#define ES_ejs_web_Inflector_toSingular                                7
-#define ES_ejs_web_Inflector_NUM_CLASS_PROP                            8
-
-/*
-   Prototype (instance) slots for "Inflector" type 
- */
-#define ES_ejs_web_Inflector_NUM_INSTANCE_PROP                         0
-#define ES_ejs_web_Inflector_NUM_INHERITED_PROP                        0
-
-/*
-    Local slots for methods in type "Inflector" 
- */
-#define ES_ejs_web_Inflector_toOrdinal_number                          0
-#define ES_ejs_web_Inflector_toPlural_word                             0
-#define ES_ejs_web_Inflector_toSingular_word                           0
-
-
-/*
     Class property slots for the "Request" type 
  */
 #define ES_ejs_web_Request__initializer___Request_                     0
@@ -387,17 +358,16 @@
 #define ES_ejs_web_Router__initializer___Router_                       0
 #define ES_ejs_web_Router_Default                                      1
 #define ES_ejs_web_Router_Restful                                      2
-#define ES_ejs_web_Router_defaultBuilder                               3
-#define ES_ejs_web_Router_isDir                                        4
-#define ES_ejs_web_Router_NUM_CLASS_PROP                               5
+#define ES_ejs_web_Router_isDir                                        3
+#define ES_ejs_web_Router_NUM_CLASS_PROP                               4
 
 /*
    Prototype (instance) slots for "Router" type 
  */
-#define ES_ejs_web_Router_routes                                       0
-#define ES_ejs_web_Router_addCatchall                                  1
-#define ES_ejs_web_Router_addDefault                                   2
-#define ES_ejs_web_Router_addDirect                                    3
+#define ES_ejs_web_Router_defaultBuilder                               0
+#define ES_ejs_web_Router_routes                                       1
+#define ES_ejs_web_Router_addCatchall                                  2
+#define ES_ejs_web_Router_addDefault                                   3
 #define ES_ejs_web_Router_addHandlers                                  4
 #define ES_ejs_web_Router_addHome                                      5
 #define ES_ejs_web_Router_addResource                                  6
@@ -610,6 +580,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   809215
+#define _ES_CHECKSUM_ejs_web   784062
 
 #endif
