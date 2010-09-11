@@ -123,7 +123,7 @@ module ejs {
         }
 
         /** 
-            @duplicate Stream.observe 
+            @duplicate Stream.on 
          */
         function on(name, observer: Function): Void {
             throw new ArgError("Observers are not supported")

@@ -56,7 +56,7 @@
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the input stream and free up all associated resources.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Iterate over the positions in a file.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this file to be used by "for each (v in obj)".</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#open'><b>open</b></a>(options: <a href='ejs-Object.html'>Object</a> = null): <a href='ejs-File.html'>File</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Open a file.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a block of data from a file into a byte array.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readBytes'><b>readBytes</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-ByteArray.html'>ByteArray</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read data bytes from a file and return a byte array containing the data.</td></tr>
@@ -105,12 +105,12 @@
 </div>
 </div>
 <hr />
-<a name='observe'></a>
+<a name='on'></a>
 <div class='api'>
-<div class='apiSig'>const   public  observe(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  on(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add an observer to the stream.</p>
+<p>Add an observer to the stream for the named events.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Callback observer function. The function is called with the following signature: function observer(event: String, ...args): Void.</td></tr></table></dd>

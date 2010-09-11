@@ -12,7 +12,7 @@ module ejs.db {
         @spec ejs
         @stability evolving
      */
-    public class Database {
+    class Database {
         private static var defaultDb: Database
 
         private var _adapter: Object

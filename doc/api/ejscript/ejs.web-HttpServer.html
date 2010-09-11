@@ -21,17 +21,17 @@
 <tr><td><strong>Stability</strong></td><td>Prototype.</td></tr>
 <tr><td><strong>Example</strong></td><td><pre>
             let server: HttpServer = new HttpServer(".", "web")
-            let router = Router(Router.RestfulRoutes)
-            server.observe("readable", function (event: String, request: Request) {
+            let router = Router(Router.Restful)
+            server.on("readable", function (event: String, request: Request) {
                 request.status = 200
                 request.setHeaders({"Content-Type": "text/plain"})
-                request.observe("readable", function (event, request) {
+                request.on("readable", function (event, request) {
                     let data = new ByteArray
                     if (request.read(data) == null) {
                         print("EOF")
                     }
                 })
-                request.observe("writable", function (event) {
+                request.on("writable", function (event) {
                     request.write("Hello World")
                     request.finalize()
                 })
@@ -86,7 +86,7 @@ protocol scheme.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#accept'><b>accept</b></a>(): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Accept a new incoming for sync servers.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#secure'><b>secure</b></a>(keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a> = null , ciphers: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the Secure Sockets Layer (SSL) protocol credentials.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the server resource limits.</td></tr>
@@ -132,7 +132,7 @@ while (request = server.accept()) {
 <p>Close the stream.</p>
 <dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
-<td class='param'>close</td><td>Issued before closing the stream.</td></tr>
+<td class='param'>close</td><td>A close event is issued before closing the stream.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -162,7 +162,7 @@ observers via "readable" events.</dd></dl>
 </dd>
 </dl><dl><dt>Example</dt>
 <dd><pre>server = new Http(".", "./web")
-server.observe("readable", function (event, request) {
+server.on("readable", function (event, request) {
     //  NOTE: this is set to the request
     Web.serve(request)
 })
@@ -171,15 +171,15 @@ server.listen("80")
 </div>
 </div>
 <hr />
-<a name='observe'></a>
+<a name='on'></a>
 <div class='api'>
-<div class='apiSig'>const   public  observe(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  on(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Add an observer for server events.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function observer(event: String, ...args): Void.</td></tr></table></dd>
+<tr class='param'><td class='param'>name </td><td>Name of the event to listen for. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Callback listening function. The function is called with the following signature: function on(event: String, ...args): Void.</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>readable</td><td>Issued when there is a new request available. This readable event will explicitlyl set the value of "this" to the request regardless of whether the function has a bound "this" value.</td></tr>

@@ -157,16 +157,6 @@ module ejs.web {
         public function addDefault(): Void
             add("/{controller}(/{action})", {name: "default", method: "*"})
 
-        /** 
-            Direct routes for MVC apps. These map HTTP methods directly to method names.
-            @hide
-         */
-        # UNUSED && KEEP
-        public function addDirect(name: String, options: Object = {}): Void {
-            add("/" + name + "/(/{id}(/{action}))", {method: "*"})
-            add("/" + name + "/(/{action})", {contrtoller: name, namespace: "GROUP", method: "*"})
-        }
-
         /**
             Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages.
          */
@@ -526,6 +516,10 @@ module ejs.web {
             throw "No route for " + request.pathInfo
         }
 
+        /**
+            Set the default builder function for the route
+            @hide
+         */
         public function setDefaultBuilder(builder: Function): Void {
             defaultBuilder = builder
         }

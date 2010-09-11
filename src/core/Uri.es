@@ -307,7 +307,7 @@ module ejs {
             and relative URI segments.
             Any query component of "this" URI is discarded in the result. This is because the query component of "this" URI
             is regarded as POST data and not integral to the base URI.
-            @param others Other URIs to resolve in the region of this path. These can be URIs, strings or object hashes 
+            @param target Other URI to resolve in the region of this path. Target can be a URI, string or object hash
                 of URI components.
             @return A new URI object that resolves given URI args using the "this" URI as a base. 
          */

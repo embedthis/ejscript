@@ -52,6 +52,7 @@
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#format'><b>format</b></a>(layout: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Format a date using a format specifier in local time.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#formatUTC'><b>formatUTC</b></a>(layout: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Format a date using a format specifier in UTC time.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#future'><b>future</b></a>(msec: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Date.html'>Date</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Calculate a time that is <a href='#msec'>msec</a> in the future.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getDate'><b>getDate</b></a>(): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the day of the month in local time.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getDay'><b>getDay</b></a>(): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the day of the week in local time.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getFullYear'><b>getFullYear</b></a>(): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return the year as four digits in local time.</td></tr>
@@ -201,6 +202,20 @@ the O/S strftime routine and so not all the format specifiers are available on a
 <dd>String representation of the date.</dd></dl>
 <dl><dt>Specified</dt>
 <dd>ejscript-2.0</dd></dl>
+</div>
+</div>
+<hr />
+<a name='future'></a>
+<div class='api'>
+<div class='apiSig'>const   public  future(msec: <a href='ejs-Number.html'>Number</a>): <a href='ejs-Date.html'>Date</a>
+</div>
+<div class='apiDetail'>
+<p>Calculate a time that is <a href='#msec'>msec</a> in the future.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>msec: <a href='ejs-Number.html'>Number</a> </td><td>Period into the future in milliseconds. Can be negative for the past.</td></tr></table></dd>
+</dl><dl><dt>Returns</dt>
+<dd>A new date object.</dd></dl>
 </div>
 </div>
 <hr />

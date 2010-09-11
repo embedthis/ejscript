@@ -356,9 +356,14 @@ module ejs.web {
          */
         native function close(): Void
 
+        /**
+            Check the request security token. If a required security token is defined in the session state, the
+            request must supply the same token with all POST requests. This helps mitigate potential CSRF threats.
+            @throw Throws a SecurityError if the token does not match.
+         */
         function checkSecurityToken() {
             if (session[SecurityTokenName] && session[SecurityTokenName] != params[SecurityTokenName]) {
-                throw "Security token does not match. Potential CSRF attack. Denying request"
+                throw new SecurityError("Security token does not match. Potential CSRF attack. Denying request")
             }
         }
 
@@ -421,7 +426,7 @@ module ejs.web {
          */
         native function get finalized(): Boolean 
 
-        /* 
+        /**
             Save flash messages for the next request and delete old flash messages.
          */
         function finalizeFlash() {
@@ -518,7 +523,7 @@ module ejs.web {
             return uri.local.resolve(target).normalize
         }
 
-        /*
+        /**
             Make a URI hash from a string.  This converts the target URI specification into a hash of properties 
             describing the target URI.
             @param target String URI target to convert. If this is not a string, the target is returned.
@@ -568,10 +573,10 @@ module ejs.web {
             return target
         }
 
-        /*
+        /**
             Select the response content type based on the request "Accept" header . See RFC-2616.
-            @param formats Array of supported mime types
-            @return The selected mime type string
+            @param formats Array of server supported mime types
+            @return formats The selected mime types mime type string
 
             Accept: "application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png"
          */
@@ -778,7 +783,7 @@ module ejs.web {
         function setStatus(status: Number): Void
             this.status = status
 
-        /* 
+        /**
             Prepare the flash message area. This copies flash messages from the session state store into the flash store.
          */
         function setupFlash() {
@@ -869,7 +874,7 @@ module ejs.web {
 
         /**
             Write content based on the requested accept mime type
-            @param data
+            @param data Data to send to the client
          */
         function writeContent(data): Void {
             let mime = matchContent("application/json", "text/html", "application/xml", "text/plain")
@@ -928,10 +933,6 @@ module ejs.web {
          */
         native function writeFile(file: Path): Boolean
 
-        //  MOB - remove
-        function sendFile(file: Path): Boolean
-            writeFile(file)
-
         /** 
             Send a response to the client. This can be used instead of setting status and calling setHeaders() and write(). 
             The $response argument is an object hash containing status, headers and
@@ -949,16 +950,12 @@ module ejs.web {
             autoFinalize()
         }
 
-        //  MOB - remove
-        function sendResponse(response: Object): Void
-            writeResponse(response)
-
         /** 
             Write safely. Write HTML escaped data back to the client.
-            @param args Objects to HTML encode and write back to the client.
+            @param data Objects to HTML encode and write back to the client.
          */
-        function writeSafe(...args): Void
-            write(html(...args))
+        function writeSafe(...data): Void
+            write(html(...data))
 
         /**
             The number of bytes written to the client. This is the count of bytes passed to $write and buffered, 
@@ -1020,7 +1017,8 @@ module ejs.web {
             @option no-store response may not be stored in a cache.
             @option must-revalidate forces caches to observe expiry and other freshness information
             @option proxy-revalidate similar to must-revalidate except only for proxy caches
-//MOB
+            @hide
+            MOB - complete
           */
         function cache(options) {
         }

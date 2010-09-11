@@ -55,23 +55,23 @@ module ejs.web {
 
         /***************************************** Convenience Getters  ***************************************/
 
-        /** @duplicate Request.absHome */
+        /** @duplicate ejs.web::Request.absHome */
         function get absHome(): Uri 
             request ? request.absHome : null
 
-        /** @duplicate Request.home */
+        /** @duplicate ejs.web::Request.home */
         function get home(): Uri 
             request ? request.home : null
 
-        /** @duplicate Request.pathInfo */
+        /** @duplicate ejs.web::Request.pathInfo */
         function get pathInfo(): String 
             request ? request.pathInfo : null
 
-        /** @duplicate Request.session */
+        /** @duplicate ejs.web::Request.session */
         function get session(): Session 
             request ? request.session : null
 
-        /** @duplicate Request.uri */
+        /** @duplicate ejs.web::Request.uri */
         function get uri(): Uri 
             request ? request.uri : null
 
@@ -172,11 +172,11 @@ use namespace action
             return response
         }
 
-        /** @duplicate Request.autoFinalize */
+        /** @duplicate ejs.web::Request.autoFinalize */
         function autoFinalize(): Void
             request.autoFinalize()
 
-        /** @duplicate Request.autoFinalizing */
+        /** @duplicate ejs.web::Request.autoFinalizing */
         function get autoFinalizing(): Boolean
             request.autoFinalizing
 
@@ -194,47 +194,47 @@ use namespace action
             _beforeCheckers.append([fn, options])
         }
 
-        /** @duplicate Request.dontAutoFinalize */
+        /** @duplicate ejs.web::Request.dontAutoFinalize */
         function dontAutoFinalize(): Void
             request.dontAutoFinalize()
 
         /** 
-            @duplicate Request.error
+            @duplicate ejs.web::Request.error
          */
         function error(msg: String): Void
             request.error(msg)
 
-        /** @duplicate Request.finalize */
+        /** @duplicate ejs.web::Request.finalize */
         function finalize(): Void
             request.finalize()
 
-        /** @duplicate Request.finalized */
+        /** @duplicate ejs.web::Request.finalized */
         function get finalized(): Boolean
             request.finalized
 
         /** 
-            @duplicate Request.flash
+            @duplicate ejs.web::Request.flash
          */
         function get flash(): Object
             request.flash
 
-        /** @duplicate Request.flush */
-        function flush(): Void
-            request.flush()
+        /** @duplicate ejs.web::Request.flush */
+        function flush(dir: Number = Stream.WRITE): Void
+            request.flush(dir)
 
         /** 
-            @duplicate Request.header
+            @duplicate ejs.web::Request.header
          */
         function header(key: String): String
             request.header(key)
 
-        /** @duplicate Request.inform */
+        /** @duplicate ejs.web::Request.inform */
         function inform(msg: String): Void
             request.inform(msg)
 
-        /** @duplicate Request.link */
-        function link(location: Object): Uri
-            request.link(location)
+        /** @duplicate ejs.web::Request.link */
+        function link(target: Object): Uri
+            request.link(target)
 
         /** 
             Missing action method. This method will be called if the requested action routine does not exist.
@@ -243,15 +243,15 @@ use namespace action
             throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
         }
 
-        /** @duplicate Request.notify */
+        /** @duplicate ejs.web::Request.notify */
         function notify(key: String, msg: String): Void
             request.notify(key, msg)
 
-        /** @duplicate Request.on */
+        /** @duplicate ejs.web::Request.on */
         function on(name, observer: Function): Void
             request.on(name, observer)
 
-        /** @duplicate Request.read */
+        /** @duplicate ejs.web::Request.read */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
             request.read(buffer, offset, count)
 
@@ -273,15 +273,15 @@ use namespace action
             _afterCheckers = null
         }
 
-        /** @duplicate Request.setHeader */
+        /** @duplicate ejs.web::Request.setHeader */
         function setHeader(key: String, value: String, overwrite: Boolean = true): Void
             request.setHeader(key, value, overwrite)
 
-        /** @duplicate Request.setHeaders */
+        /** @duplicate ejs.web::Request.setHeaders */
         function setHeaders(headers: Object, overwrite: Boolean = true): Void
             request.setHeaders(headers, overwrite)
 
-        /** @duplicate Request.setStatus */
+        /** @duplicate ejs.web::Request.setStatus */
         function setStatus(status: Number): Void
             request.status = status
 
@@ -294,8 +294,11 @@ use namespace action
         function write(...args): Void
             request.write(...args)
 
-        function writeContent(...args): Void
-            request.writeContent(...args)
+        /**
+            @duplicate ejs.web::Request.writeContent
+         */
+        function writeContent(data): Void
+            request.writeContent(data)
 
         /**
             Render an error message as the response.
@@ -372,7 +375,8 @@ use namespace action
             Render a view template from a string literal.
             This call writes the result of running the view template file back to the client.
             @param page String literal containing the view template to render and write to the client.
-            @param layout Optional layout template. Defaults to config.directories.layouts/default.ejs.
+            @param options Additional options.
+            @option layout Path layout template. Defaults to config.directories.layouts/default.ejs.
          */
         function writeTemplateLiteral(page: String, options: Object = {}): Void {
             log.debug(4, "writeTemplateLiteral")
@@ -385,7 +389,7 @@ use namespace action
         }
 
         /** 
-            @duplicate Request.warn
+            @duplicate ejs.web::Request.warn
          */
         function warn(msg: String): Void
             request.warn(msg)
@@ -393,7 +397,7 @@ use namespace action
         /** 
             Low-level write data to the client. This will buffer the written data until either flush() or finalize() 
             is called.
-            @duplicate Request.write
+            @duplicate ejs.web::Request.write
          */
         function write(...data): Number
             request.write(...data)
@@ -426,7 +430,6 @@ use namespace action
                     global.load(dbconfig.module + ".mod")
                 }
                 let module = dbconfig.module || "public"
-                // new global[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
                 new global.(module)::[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
             }
         }

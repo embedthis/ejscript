@@ -453,7 +453,7 @@ FUTURE & KEEP
         native function set method(name: String)
 
         /** 
-            @duplicate Stream.observe
+            @duplicate Stream.on
             All events are called with the following signature.  The "this" object will be set to the instance object
             if the callback is a method. Otherwise, "this" will be set to the Http instance. If Function.bind may also
             be used to define the "this" object and to inject additional callback arguments. 

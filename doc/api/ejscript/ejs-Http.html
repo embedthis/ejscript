@@ -110,6 +110,8 @@
    <tr><td nowrap align='left'>public const get </td><td>contentType</td><td><a href='ejs-String.html'>String</a></td><td>Response content type derrived from the response Http Content-Type header. To set the request body Content-Type, use setHeader("Content-Type", MimeType).</td></tr>
 <a name='date'></a>
    <tr><td nowrap align='left'>public const get </td><td>date</td><td><a href='ejs-Date.html'>Date</a></td><td>When the response was generated. Response date derrived from the response Http Date header.</td></tr>
+<a name='finalized'></a>
+   <tr><td nowrap align='left'>public const get </td><td>finalized</td><td><a href='ejs-Boolean.html'>Boolean</a></td><td>Has the request output been finalized. </td></tr>
 <a name='headers'></a>
    <tr><td nowrap align='left'>public const get </td><td>headers</td><td><a href='ejs-Object.html'>Object</a></td><td>Response headers. Use header() to retrieve a single header value.
 Set to an object filled with all the response headers. If multiple headers of the same key value are
@@ -121,6 +123,11 @@ defined, their contents will be catenated with a ", " separator as per the HTTP/
 Set to null if not known.</td></tr>
 <a name='limits'></a>
    <tr><td nowrap align='left'>public const get </td><td>limits</td><td><a href='ejs-Object.html'>Object</a></td><td>Resource limits for requests. </td></tr>
+<a name='sessionCookie'></a>
+   <tr><td nowrap align='left'>public const get </td><td>sessionCookie</td><td>&nbsp;</td><td>Get the ejs session cookie. This call extracts the ejs session cookie from the Http response headers.
+Ejscript sessions are identified by a client cookie which when transmitted with subsequent requests will 
+permit the server to locate the relevant session state store for the server-side application. 
+Use: setCookie("Cookie", cookie) to transmit the cookie on subsquent requests.</td></tr>
 <a name='status'></a>
    <tr><td nowrap align='left'>public const get </td><td>status</td><td><a href='ejs-Number.html'>Number</a></td><td>Http response status code from the Http response status line, e.g. 200. Set to null if unknown.</td></tr>
 <a name='statusMessage'></a>
@@ -137,15 +144,14 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.This closes any open network connection and resets the http object to be ready for another connection.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#connect'><b>connect</b></a>(method: <a href='ejs-String.html'>String</a>, uri: <a href='ejs-Uri.html'>Uri</a> = null, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HTTP request for the current method and uri.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#dontFinalize'><b>dontFinalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Stop auto-finalizing the request.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(force: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data and flushes any buffered write data to the client.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#finalize'><b>finalize</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Signals the end of any write data and flushes any buffered write data to the client.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#form'><b>form</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a POST request with www-url encoded key=value data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#get'><b>get</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a GET request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getRequestHeaders'><b>getRequestHeaders</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) request headers that will be sent with the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#head'><b>head</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HEAD request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the value of a single response header.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#observe'><b>observe</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream.All events are called with the following signature.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.All events are called with the following signature.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#post'><b>post</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Initiate a POST request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#put'><b>put</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a PUT request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
@@ -154,6 +160,7 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readXml'><b>readXml</b></a>(): <a href='ejs-XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the request response as an XML document.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reset'><b>reset</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reset the Http object to prepare for a new request.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setCookie'><b>setCookie</b></a>(cookie: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a "Cookie" header in the request headers.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setCredentials'><b>setCredentials</b></a>(username: <a href='ejs-String.html'>String</a>, password: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the user credentials to use if the request requires authentication.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a request header.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set request headers.</td></tr>
@@ -175,10 +182,11 @@ line or from a local error message if the response fails to parse.</td></tr>
 <div class='apiDetail'>
 <p>Close the stream.This closes any open network connection and resets the http object to be ready for another connection.</p>
 <dl><dt>Description</dt><dd>Connections should be explicitly closed rather than relying on the garbage collector to dispose of the 
-Http object and automatically close the connection.</dd></dl>
+Http object and automatically close the connection. If you have more requests that can be issued on 
+the same network connection, use reset() rather than close to prepare for a new request on the same connection.</dd></dl>
 <dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
-<td class='param'>close</td><td>Issued before closing the stream.</td></tr>
+<td class='param'>close</td><td>A close event is issued before closing the stream.</td></tr>
 </table></dd>
 </dl></div>
 </div>
@@ -205,28 +213,13 @@ the request headers.</dd></dl>
 </dl></div>
 </div>
 <hr />
-<a name='dontFinalize'></a>
-<div class='api'>
-<div class='apiSig'>const   public  dontFinalize(): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Stop auto-finalizing the request.</p>
-<dl><dt>Description</dt><dd>Calling dontFinalize will keep the request open until a forced finalize is
-made via "finalize(true).</dd></dl>
-</div>
-</div>
-<hr />
 <a name='finalize'></a>
 <div class='api'>
-<div class='apiSig'>const   public  finalize(force: <a href='ejs-Boolean.html'>Boolean</a> = false): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  finalize(): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Signals the end of any write data and flushes any buffered write data to the client.</p>
-<dl><dt>Description</dt><dd>If dontFinalize() has been called, this call will have no effect unless <a href='#force'>force</a> is true.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>force: <a href='ejs-Boolean.html'>Boolean</a> </td><td>Do finalization even if dontFinalize() has been called. [default: false]</td></tr></table></dd>
-</dl></div>
+</div>
 </div>
 <hr />
 <a name='flush'></a>
@@ -273,7 +266,7 @@ After writing data, form() will call finalize().</dd></dl>
 <p>Commence a GET request for the current uri.</p>
 <dl><dt>Description</dt><dd>See connect() for connection details.
 This call initiates a GET request. It does not wait for the request to complete. 
-The get() call will auto-finalize. If you need to send body content with a get request, use connect(). 
+The get() method will call finalize. If you need to send body content with a get request, use connect(). 
 Once initiated, one of the <a href='#read'>read</a> or response routines  may be used to receive the response data.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
@@ -325,12 +318,12 @@ headers or header(key) to get a single response header.</dd></dl>
 </div>
 </div>
 <hr />
-<a name='observe'></a>
+<a name='on'></a>
 <div class='api'>
-<div class='apiSig'>const   public  observe(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  on(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
-<p>Add an observer to the stream.All events are called with the following signature.</p>
+<p>Add an observer to the stream for the named events.All events are called with the following signature.</p>
 <dl><dt>Description</dt><dd>The "this" object will be set to the instance object
 if the callback is a method. Otherwise, "this" will be set to the Http instance. If Function.bind may also
 be used to define the "this" object and to inject additional callback arguments. 
@@ -480,7 +473,21 @@ In this case a "readable" event will be issued when data is available for readin
 </div>
 <div class='apiDetail'>
 <p>Reset the Http object to prepare for a new request.</p>
+<dl><dt>Description</dt><dd>This will not close the connection.</dd></dl>
 </div>
+</div>
+<hr />
+<a name='setCookie'></a>
+<div class='api'>
+<div class='apiSig'>const   public  setCookie(cookie: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Set a "Cookie" header in the request headers.</p>
+<dl><dt>Description</dt><dd>This is used to send a cookie to the server.</dd></dl>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>cookie: <a href='ejs-String.html'>String</a> </td><td>Cookie header value.</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='setCredentials'></a>
@@ -590,10 +597,11 @@ http.upload(URL, files, fields)
 </div>
 <div class='apiDetail'>
 <p>Wait for a request to complete.</p>
-<dl><dt>Description</dt><dd>This will auto-finalize if in sync mode if the request is not already finalized.</dd></dl>
+<dl><dt>Description</dt><dd>This will call finalize() if in sync mode and the request is not already 
+finalized.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>timeout: <a href='ejs-Number.html'>Number</a> </td><td>Time in seconds to wait for the request to complete. A timeout of zero means no timeout, ie. wait forever. A timeout of < 0, means don't wait. [default: -1]</td></tr></table></dd>
+<tr class='param'><td class='param'>timeout: <a href='ejs-Number.html'>Number</a> </td><td>Timeout in milliseconds to wait for the request to complete. A timeout of zero means no  timeout, ie. wait forever. A timeout of < 0 (default), means use the default request timeout. [default: -1]</td></tr></table></dd>
 </dl><dl><dt>Returns</dt>
 <dd>True if the request successfully completes.</dd></dl>
 </div>

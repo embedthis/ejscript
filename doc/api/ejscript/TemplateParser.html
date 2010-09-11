@@ -31,6 +31,7 @@
 <li>%&gt;          End an ejs directive</li>
 <li>&lt;%&#64; include "file" %> Include an ejs file</li>
 <li>&lt;%&#64 layout "file" %>  Specify a layout page to use. Use layout "" to disable layout management.</li>
+<li>&lt;%&#64 view "[module::]class" %>  Specify a view class to use with optional module.</li>
 </ul>
 Directives for use outside of &lt;% %&gt; 
 <ul>
@@ -54,7 +55,7 @@ Directives for use outside of &lt;% %&gt;
 <h2 class='classSection'>TemplateParser Methods</h2>
 <table class='apiIndex' summary='methods'>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#build'><b>build</b></a>(script: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Build a templated page using JSGI.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#build'><b>build</b></a>(script: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Build a templated page.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#parse'><b>parse</b></a>(script: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Template parser.</td></tr>
 </table>
 
@@ -67,7 +68,7 @@ Directives for use outside of &lt;% %&gt;
 <div class='apiSig'>const   public  build(script: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a> = expression): <a href='ejs-String.html'>String</a>
 </div>
 <div class='apiDetail'>
-<p>Build a templated page using JSGI.</p>
+<p>Build a templated page.</p>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>script: <a href='ejs-String.html'>String</a> </td><td>String containing the script to parse.</td></tr><tr class='param'><td class='param'>options: <a href='ejs-Object.html'>Object</a> </td><td>Object hash with options to control parsing. [default: expression]</td></tr></table></dd>

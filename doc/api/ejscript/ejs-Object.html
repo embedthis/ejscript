@@ -54,9 +54,10 @@ objects, providing information about base classes, serialization and deserializa
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getName'><b>getName</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the name of the object if it is a function or type.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getOwnPropertyCount'><b>getOwnPropertyCount</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>The number of properties in the object including non-enumerable properties.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getOwnPropertyDescriptor'><b>getOwnPropertyDescriptor</b></a>(obj: <a href='ejs-Object.html'>Object</a>, prop: <a href='ejs-String.html'>String</a>): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the prototype property descriptor.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getOwnPropertyNames'><b>getOwnPropertyNames</b></a>(obj: <a href='ejs-Object.html'>Object</a>, options): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an array of all property names including non-enumerable properties.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getOwnPropertyNames'><b>getOwnPropertyNames</b></a>(obj: <a href='ejs-Object.html'>Object</a>, options = null): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Return an array of all property names including non-enumerable properties.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getOwnPrototypeOf'><b>getOwnPrototypeOf</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Type.html'>Type</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the prototype object.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getType'><b>getType</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Type.html'>Type</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the type for an object.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#getTypeName'><b>getTypeName</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the name of the type for an object.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get an iterator for this object to be used by "for each (v in obj)".</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#hasOwnProperty'><b>hasOwnProperty</b></a>(name: <a href='ejs-String.html'>String</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Check if an object has a property.</td></tr>
    <tr class='apiDef'><td class='apiType'>public static const </td><td><a href='#isExtensible'><b>isExtensible</b></a>(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Test if an object is extensible.</td></tr>
@@ -219,7 +220,7 @@ the given object. Property names are interpreted using the set of currently open
 <hr />
 <a name='getOwnPropertyNames'></a>
 <div class='api'>
-<div class='apiSig'>static const   public  getOwnPropertyNames(obj: <a href='ejs-Object.html'>Object</a>, options): <a href='ejs-Array.html'>Array</a>
+<div class='apiSig'>static const   public  getOwnPropertyNames(obj: <a href='ejs-Object.html'>Object</a>, options = null): <a href='ejs-Array.html'>Array</a>
 </div>
 <div class='apiDetail'>
 <p>Return an array of all property names including non-enumerable properties.</p>
@@ -228,7 +229,7 @@ and does not include the namespace portions of the names. Use getOwnPropertyDesc
 namespace values.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>obj: <a href='ejs-Object.html'>Object</a> </td><td>Object to inspect.</td></tr><tr class='param'><td class='param'>options </td><td>Property selection options MOB -- inconsistent with JSON.baseClasses.</td></tr></table></dd>
+<tr class='param'><td class='param'>obj: <a href='ejs-Object.html'>Object</a> </td><td>Object to inspect.</td></tr><tr class='param'><td class='param'>options </td><td>Property selection options MOB -- inconsistent with JSON.baseClasses. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
 <td class='param'>includeBases</td><td>Boolean determining if base class properties will included. Defaults to false.</td></tr>
@@ -260,7 +261,20 @@ namespace values.</dd></dl>
 <div class='apiDetail'>
 <p>Get the type for an object.</p>
 <dl><dt>Description</dt><dd>If the object is an instance, this is the class type object. If the object is a
-type, this value is "Type".</dd></dl>
+type, this value is Type.</dd></dl>
+<dl><dt>Returns</dt>
+<dd>A type object.</dd></dl>
+</div>
+</div>
+<hr />
+<a name='getTypeName'></a>
+<div class='api'>
+<div class='apiSig'>static const   public  getTypeName(obj: <a href='ejs-Object.html'>Object</a>): <a href='ejs-String.html'>String</a>
+</div>
+<div class='apiDetail'>
+<p>Get the name of the type for an object.</p>
+<dl><dt>Description</dt><dd>If the object is an instance, this is the name of the class type object.
+If the object is a type, this value is "Type".</dd></dl>
 <dl><dt>Returns</dt>
 <dd>A type object.</dd></dl>
 </div>

@@ -151,10 +151,6 @@ module ejs {
             }
         }
 
-        //  MOB - remove
-        function observe(name: Object!, callback: Function!): Void
-            on(name, callback)
-
         private function removeOneObserver(name: String!, callback: Function): Void {
             var observers: Array? = endpoints[name]
             for (let i in observers) {
@@ -182,29 +178,12 @@ module ejs {
                 throw new Error("Bad name type for removeObserver")
             }
         }
-        function removeObserver(name: Object!, callback: Function): Void
-            off(name, callback)
-
-
-        /** 
-            @hide 
-            @deprecated 1.0.0
-         */
-        # Config.Legacy
-        function addListener(name: Object, callback: Function): Void
-            on(name, callback)
-
-        /** 
-            @hide 
-            @deprecated 1.0.0
-         */
-        # Config.Legacy
-        function emit(name: String, ...args): Void 
-            fire(name, ...args)
     }
 
 
-    /* Observing endpoints */
+    /* 
+        Observing endpoints 
+     */
     internal class Endpoint {
         public var callback: Function
         public var name: String

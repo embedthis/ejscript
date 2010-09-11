@@ -241,6 +241,7 @@ module ejs.web {
         /**
             Render a HTML division. This creates an HTML element with the required options. It is useful to generate
                 a dynamically refreshing division.
+            @param body Division body content
             @param options Optional extra options. See $View for a list of the standard options.
             @examples
                 <% div({ refresh: "/getData", period: 2000}) %>
@@ -417,8 +418,8 @@ print("CATCH " + e)
 
         /**
             Emit a selection list. 
-            @param field Field to provide the default value for the list. The field should be a property of the form control 
-                record. The field can be a simple property of the record or it can have multiple parts, 
+            @param name Field name to provide the default value for the list. The field should be a property of the 
+                form control record. The field can be a simple property of the record or it can have multiple parts, 
                 i.e. field.field.field. The field name is used to create the HTML input control name.
                 If this call is used without a form control record, the actual data value should be supplied via the 
                 options.value property.
@@ -453,9 +454,7 @@ print("CATCH " + e)
 //  MOB -- redo progress using a commet style
         /** 
             Emit a progress bar.
-            @param data Optional initial data for the control. The data option may be used with the refresh option 
-                to dynamically refresh the data. Progress data is a simple Number in the range 0 to 100 and represents 
-                a percentage completion value.
+            @param percent Progress percentage (0-100) 
             @param options Optional extra options. See $View for a list of the standard options.
             @example
                 <% progress(percent, { refresh: "/getData", period: 2000" }) %>
@@ -649,8 +648,8 @@ print("CATCH " + e)
             @param data Initial data for the control. Tab data can be an array of objects -- one per tab. It can also
                 be a single object where the tab text is the property key and the property value is the target.
             @param options Optional extra options. See $View for a list of the standard options.
-            @param click Invoke the target URI in the foreground when clicked.
-            @param remote Invoke the target URI in the background when clicked.
+            @option click Invoke the target URI in the foreground when clicked.
+            @option remote Invoke the target URI in the background when clicked.
             @example
                 tabs({Status: "pane-1", "Edit: "pane-2"})
                 tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: true})
@@ -753,62 +752,56 @@ MOB -- review and rethink this
 
         /***************************************** Wrapped Request Functions **********************************************/
         /**
-            @duplicate Request.link
+            @duplicate ejs.web::Request.link
          */
-        function link(parts: Object): Uri
-            request.link(parts)
+        function link(target: Object): Uri
+            request.link(target)
 
         /** 
-            @duplicate Request.redirect
+            @duplicate ejs.web::Request.redirect
          */
-        function redirect(location: *, status: Number = Http.MovedTemporarily): Void
-            request.redirect(location)
+        function redirect(target: *, status: Number = Http.MovedTemporarily): Void
+            request.redirect(target)
 
         /** 
-            @duplicate Request.session 
+            @duplicate ejs.web::Request.session 
          */
         function get session(): Session 
             request.session
 
         /** 
-            @duplicate Request.setHeader
+            @duplicate ejs.web::Request.setHeader
          */
         function setHeader(key: String, value: String, overwrite: Boolean = true): Void
             request.setHeader(key, value, overwrite)
 
         /**
-            @duplicate Request.setHeaders
+            @duplicate ejs.web::Request.setHeaders
          */
         function setHeaders(headers: Object, overwrite: Boolean = true): Void
             request.setHeaders(headers, overwrite)
 
         /**
-            @duplicate Request.setStatus
+            @duplicate ejs.web::Request.setStatus
          */
         function setStatus(status: Number): Void
             request.setStatus(status)
 
         /** 
-            @duplicate Request.show
+            @duplicate ejs.web::Request.show
             @hide
          */
         function show(...args): Void
             request.show(...args)
 
         /**
-            @duplicate Request.toplink
-         */
-        function toplink(parts: Object): Uri
-            request.toplink(parts)
-
-        /**
-            @duplicate Request.write
+            @duplicate ejs.web::Request.write
          */
         function write(...data): Number
             request.write(...data)
 
         /**
-            @duplicate Request.writeSafe
+            @duplicate ejs.web::Request.writeSafe
          */
         function writeSafe(...data): Number
             request.writeSafe(...data)
@@ -816,7 +809,12 @@ MOB -- review and rethink this
         /*********************************************** Support ****************************************************/
         /**
             Get the data value for presentation.
-            @param record Object containing the data to present. This could be a plain-old-object or it could be a model.
+            @param value Data to present
+            @param options Formatting options
+            @option formatter Optional data formatter. If undefined, defaults to a basic formatter based on the value's
+                data type.
+            @option escape If true, the data will be HTML escaped
+            @return The formatted data.
          */
         function formatValue(value: Object, options: Object): String {
             if (value == undefined) {
@@ -863,12 +861,14 @@ MOB -- review and rethink this
         private function getOptions(options: Object): Object
             (options is String) ? request.makeUriHash(options) : options
 
-        /*
-            Get the data value. Data may be:
-                options.value       Overrides all
-                data                if a record is not defined
-                fieldname           data is a record[data] if a simple string
-                { field: name }
+//  MOB -- refactor - poor API
+        /**
+            @param record Optional record holding the data to display
+            @param data String field name in record or object hash {field: field}. If record is not defined, "data" is
+                the actual data.
+            @param options Optional extra options. See $View for a list of the standard options.
+            @param value Override value.
+            @hide
          */
         function getValue(record: Object, data: Object, options: Object): Object {
             let value
