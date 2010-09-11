@@ -123,6 +123,13 @@ module ejs {
         }
 
         /** 
+            @duplicate Stream.off
+         */
+        function off(name, observer: Function): Void {
+            throw new ArgError("Observers are not supported")
+        }
+
+        /** 
             @duplicate Stream.on 
          */
         function on(name, observer: Function): Void {
@@ -244,13 +251,6 @@ module ejs {
          */
         function readString(count: Number = -1): String
             inbuf.readString(count)
-
-        /** 
-            @duplicate Stream.removeObserver
-         */
-        function removeObserver(name, observer: Function): Void {
-            throw new ArgError("Observers are not supported")
-        }
 
         /** 
             Write characters to the stream.

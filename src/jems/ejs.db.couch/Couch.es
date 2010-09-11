@@ -112,14 +112,14 @@ module ejs.db.couch {
         /**
             @hide
          */
-        function on(event: String, observer: Function): Void
-            hp.on(event, observer)
+        function off(event: String, observer: Function): Void
+            hp.off(event, observer)
 
         /**
             @hide
          */
-        function removeObserver(event: String, observer: Function): Void
-            hp.removeObserver(event, observer)
+        function on(event: String, observer: Function): Void
+            hp.on(event, observer)
 
         /**
             @hide

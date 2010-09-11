@@ -30,15 +30,15 @@ module ejs {
 
         native function canWrite(data, count: Number = null): Boolean
 
+        function off(name, listener: Function): Void {
+            if (emitter) {
+                emitter.off(name, listener)
+            }
+        }
+
         function on(name: String, listener: Function): Void {
             emitter ||= new Emitter
             emitter.on(name, listener)
-        }
-
-        function removeObserver(name, listener: Function): Void {
-            if (emitter) {
-                emitter.removeObserver(name, listener)
-            }
         }
 
         function put(data): Void {}

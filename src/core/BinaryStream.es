@@ -226,9 +226,9 @@ module ejs {
         }
 
         /** 
-            @duplicate Stream.on 
+            @duplicate Stream.off 
          */
-        native function removeObserver(name, observer: Function): Void
+        native function off(name, observer: Function): Void
 
         /** 
             Return the space available for write data. This call can be used to prevent write from blocking or 

@@ -23,6 +23,6 @@ function eventCallback(e: String, data): Void {
 }
 
 var s: Shape = new Shape
-s.events.observe("keyboard", eventCallback)
+s.events.on("keyboard", eventCallback)
 s.events.fire("keyboard", KeyboardEvent("PageUp"))
 assert(fired)

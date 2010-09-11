@@ -68,7 +68,7 @@ var events = []
 promise = Promise().onSuccess(function (event) {
     events += [event]
 })
-promise.observe("success", function(event) {
+promise.on("success", function(event) {
     events += [event]
 })
 promise.emitSuccess()

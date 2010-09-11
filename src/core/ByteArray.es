@@ -172,6 +172,9 @@ module ejs {
             return md5(buf.readString())
         }
 
+        /** @duplicate Stream.off */
+        native function off(name: Object, observer: Function): Void
+
         /** @duplicate Stream.on */
         native function on(name: Object, observer: Function): Void
 
@@ -284,13 +287,6 @@ module ejs {
          */
         function readXML(): XML
             XML(readString())
-
-        /** 
-            Remove an observer from the stream
-            @param name Event name previously used with observe. The name may be an array of events.
-            @param observer Observer function previously used with observe.
-         */
-        native function removeObserver(name: Object, observer: Function): Void
 
         /** 
             Reset the read and $writePosition pointers if there is no available data.

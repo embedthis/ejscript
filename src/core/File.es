@@ -95,6 +95,9 @@ module ejs {
          */
         native function get isOpen(): Boolean
 
+        /** @duplicate Stream.off */
+        native function off(name, observer: Function): Void
+
         /** @duplicate Stream.on */
         native function on(name, observer: Function): Void
 
@@ -175,9 +178,6 @@ module ejs {
             }
             Path(path).remove()
         }
-
-        /** @duplicate Stream.removeObserver */
-        native function removeObserver(name, observer: Function): Void
 
         /** 
             The size of the file in bytes.

@@ -173,6 +173,13 @@ module ejs.web {
         native function listen(endpoint: String?): Void
 
         /** 
+            Remove an observer from the server. 
+            @param name Event name previously used with observe. The name may be an array of events.
+            @param observer Observer function previously used with observe.
+         */
+        native function off(name: Object, observer: Function): Void
+
+        /** 
             Add an observer for server events. 
             @param name Name of the event to listen for. The name may be an array of events.
             @param observer Callback listening function. The function is called with the following signature:
@@ -185,13 +192,6 @@ module ejs.web {
             @event destroySession Issued when a session is destroyed. The request object is passed.
          */
         native function on(name, observer: Function): Void
-
-        /** 
-            Remove an observer from the server. 
-            @param name Event name previously used with observe. The name may be an array of events.
-            @param observer Observer function previously used with observe.
-         */
-        native function removeObserver(name: Object, observer: Function): Void
 
         /** 
             Define the Secure Sockets Layer (SSL) protocol credentials. This must be done before calling $listen.

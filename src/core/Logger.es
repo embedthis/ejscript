@@ -251,6 +251,13 @@ module ejs {
         /** 
             @hide
          */
+        function off(name, observer: Function): Void {
+            throw "observe is not supported"
+        }
+
+        /** 
+            @hide
+         */
         function on(name, observer: Function): Void {
             throw "observe is not supported"
         }
@@ -261,13 +268,6 @@ module ejs {
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number  {
             throw "Read not supported"
             return null
-        }
-
-        /** 
-            @hide
-         */
-        function removeObserver(name, observer: Function): Void {
-            throw "observe is not supported"
         }
 
         /** 

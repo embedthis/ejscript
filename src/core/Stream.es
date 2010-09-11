@@ -59,6 +59,13 @@ module ejs {
         function flush(dir: Number): Void 
 
         /** 
+            Remove an observer from the stream. 
+            @param name Event name previously used with observe. The name may be an array of events.
+            @param observer Observer function previously used with observe.
+         */
+        function off(name, observer: Function): Void
+
+        /** 
             Add an observer to the stream for the named events. 
             @param name Name of the event to listen for. The name may be an array of events.
             @param observer Callback observer function. The function is called with the following signature:
@@ -86,13 +93,6 @@ module ejs {
             @event writable Issued when the stream becomes empty.
          */
         function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number 
-
-        /** 
-            Remove an observer from the stream. 
-            @param name Event name previously used with observe. The name may be an array of events.
-            @param observer Observer function previously used with observe.
-         */
-        function removeObserver(name, observer: Function): Void
 
         /** 
             Write data to the stream.

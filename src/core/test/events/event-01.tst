@@ -12,7 +12,7 @@ function callback(e: String, a, b, c): Void {
 }
 
 public var events: Emitter = new Emitter
-events.observe("simple", callback)
+events.on("simple", callback)
 events.fire("simple", 1, 2, 3)
 
 assert(fired != undefined)

@@ -84,6 +84,11 @@ module ejs {
          */
         native function flush(dir: Number = Stream.BOTH): Void
 
+        /** 
+            @duplicate Stream.off
+         */
+        native function off(name, listener: Function): Void
+
         /**
             @duplicate Stream.read
          */
@@ -112,11 +117,6 @@ module ejs {
          */
         function readXml(): XML
             XML(readString())
-
-        /** 
-            @duplicate Stream.removeObserver
-         */
-        native function removeObserver(name, listener: Function): Void
 
         /**
             Return the command output data as a string. This is an alias for $readString() but it will cache the 

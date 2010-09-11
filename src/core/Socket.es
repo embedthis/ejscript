@@ -84,6 +84,9 @@ module ejs {
          */
         native function listen(address): Socket
 
+        /** @duplicate Stream.off */
+        native function off(name: Object, observer: Function): Void
+
         /** 
             @duplicate Stream.on 
             @event readable Issued when the response headers have been fully received and some body content is available.
@@ -106,9 +109,6 @@ module ejs {
             is not bound.
          */
         native function get remoteAddress(): String 
-
-        /** @duplicate Stream.removeObserver */
-        native function removeObserver(name: Object, observer: Function): Void
 
         /** 
             @duplicate Stream.write 

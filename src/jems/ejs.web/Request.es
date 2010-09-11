@@ -631,6 +631,11 @@ module ejs.web {
         }
 
         /** 
+            @duplicate Stream.off 
+         */
+        native function off(name, observer: Function): Void
+
+        /** 
             @duplicate Stream.on
             @event readable Issued when some body content is available.
             @event writable Issued when the connection is writable to accept body data (PUT, POST).
@@ -686,11 +691,6 @@ module ejs.web {
                     "<address>" + server.software + " at " + host + " Port " + server.port + 
                     "</address></body>\r\n</html>\r\n")
         }
-
-        /** 
-            @duplicate Stream.removeObserver 
-         */
-        native function removeObserver(name, observer: Function): Void
 
         /**
             Get a security token to help mitigate CSRF threats. The security token is submitted by forms and requests and

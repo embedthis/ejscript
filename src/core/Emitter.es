@@ -39,7 +39,7 @@ module ejs {
             }
             if (callback) {
                 observers.append(new Endpoint(callback, name))
-                fire("observe", name, callback)
+                fire("on", name, callback)
             }
         }
 
@@ -156,7 +156,7 @@ module ejs {
             for (let i in observers) {
                 var e: Endpoint = observers[i]
                 if (e.callback == callback && e.name == name) {
-                    fire("removeObserver", name, callback)
+                    fire("off", name, callback)
                     observers.splice(i, 1)
                 }
             }
@@ -175,7 +175,7 @@ module ejs {
                     removeOneObserver(n, callback)
                 }
             } else {
-                throw new Error("Bad name type for removeObserver")
+                throw new Error("Bad name type for off()")
             }
         }
     }

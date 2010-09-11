@@ -874,9 +874,9 @@ static EjsObj *ba_reset(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 
 
 /**
-    function get removeObserver(name, listener: Function): Number
+    function off(name, listener: Function): Number
  */
-static EjsObj *ba_removeObserver(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+static EjsObj *ba_off(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     ejsRemoveObserver(ejs, ap->emitter, argv[0], argv[1]);
     return 0;
@@ -1417,12 +1417,15 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ByteArray_compact, (EjsProc) ba_compact);
     ejsBindMethod(ejs, prototype, ES_ByteArray_copyIn, (EjsProc) ba_copyIn);
     ejsBindMethod(ejs, prototype, ES_ByteArray_copyOut, (EjsProc) ba_copyOut);
+    ejsBindAccess(ejs, prototype, ES_ByteArray_endian, (EjsProc) endian, (EjsProc) setEndian);
     ejsBindMethod(ejs, prototype, ES_ByteArray_flush, (EjsProc) ba_flush);
     ejsBindMethod(ejs, prototype, ES_ByteArray_growable, (EjsProc) ba_growable);
     ejsBindMethod(ejs, prototype, ES_ByteArray_length, (EjsProc) ba_getLength);
     ejsBindMethod(ejs, prototype, ES_ByteArray_iterator_get, (EjsProc) ba_get);
     ejsBindMethod(ejs, prototype, ES_ByteArray_iterator_getValues, (EjsProc) ba_getValues);
-    ejsBindAccess(ejs, prototype, ES_ByteArray_endian, (EjsProc) endian, (EjsProc) setEndian);
+#if ES_ByteArray_off
+    ejsBindMethod(ejs, prototype, ES_ByteArray_off, (EjsProc) ba_off);
+#endif
     ejsBindMethod(ejs, prototype, ES_ByteArray_read, (EjsProc) ba_read);
     ejsBindMethod(ejs, prototype, ES_ByteArray_readBoolean, (EjsProc) ba_readBoolean);
     ejsBindMethod(ejs, prototype, ES_ByteArray_readByte, (EjsProc) ba_readByte);
@@ -1433,7 +1436,6 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     ejsBindAccess(ejs, prototype, ES_ByteArray_readPosition, (EjsProc) ba_readPosition,(EjsProc) ba_setReadPosition);
     ejsBindMethod(ejs, prototype, ES_ByteArray_readShort, (EjsProc) ba_readShort);
     ejsBindMethod(ejs, prototype, ES_ByteArray_readString, (EjsProc) ba_readString);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_removeObserver, (EjsProc) ba_removeObserver);
     ejsBindMethod(ejs, prototype, ES_ByteArray_reset, (EjsProc) ba_reset);
     ejsBindMethod(ejs, prototype, ES_ByteArray_room, (EjsProc) ba_room);
     ejsBindMethod(ejs, prototype, ES_ByteArray_toString, (EjsProc) ba_toString);

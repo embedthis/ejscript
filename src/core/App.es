@@ -338,7 +338,7 @@ module ejs {
             for (let mark = new Date; !done && mark.elapsed < timeout; ) {
                 App.eventLoop(timeout - mark.elapsed, 1)
             }
-            obj.removeObserver(events, callback)
+            obj.off(events, callback)
             return done
         }
     }

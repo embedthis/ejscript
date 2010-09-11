@@ -453,6 +453,11 @@ FUTURE & KEEP
         native function set method(name: String)
 
         /** 
+            @duplicate Stream.off
+         */
+        native function off(name, observer: Function): Void
+
+        /** 
             @duplicate Stream.on
             All events are called with the following signature.  The "this" object will be set to the instance object
             if the callback is a method. Otherwise, "this" will be set to the Http instance. If Function.bind may also
@@ -525,11 +530,6 @@ FUTURE & KEEP
          */
         function readXml(): XML
             XML(response)
-
-        /** 
-            @duplicate Stream.removeObserver
-         */
-        native function removeObserver(name, observer: Function): Void
 
         /**
             Reset the Http object to prepare for a new request. This will not close the connection.

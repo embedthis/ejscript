@@ -974,6 +974,16 @@ static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 
 
 /*  
+    function off(name: [String|Array], listener: Function): Void
+ */
+static EjsObj *req_off(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+{
+    ejsRemoveObserver(ejs, req->emitter, argv[0], argv[1]);
+    return 0;
+}
+
+
+/*  
     function on(name: [String|Array], listener: Function): Void
  */
 static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
@@ -1035,16 +1045,6 @@ static EjsObj *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     ba->writePosition += nbytes;
     return (EjsObj*) ejsCreateNumber(ejs, nbytes);
-}
-
-
-/*  
-    function removeObserver(name: [String|Array], listener: Function): Void
- */
-static EjsObj *req_removeObserver(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
-{
-    ejsRemoveObserver(ejs, req->emitter, argv[0], argv[1]);
-    return 0;
 }
 
 
@@ -1382,9 +1382,9 @@ void ejsConfigureRequestType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_finalized, (EjsProc) req_finalized);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_flush, (EjsProc) req_flush);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_header, (EjsProc) req_header);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_off, (EjsProc) req_off);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_on, (EjsProc) req_on);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_read, (EjsProc) req_read);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_Request_removeObserver, (EjsProc) req_removeObserver);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setLimits, (EjsProc) req_setLimits);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_setHeader, (EjsProc) req_setHeader);
     ejsBindMethod(ejs, prototype, ES_ejs_web_Request_trace, (EjsProc) req_trace);

@@ -264,9 +264,9 @@ static EjsObj *sock_remoteAddress(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **ar
 
 
 /*
-    function removeObserver(name, listener: Function): Void
+    function off(name, listener: Function): Void
  */
-static EjsObj *sock_removeObserver(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+static EjsObj *sock_off(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     ejsRemoveObserver(ejs, sp->emitter, argv[0], argv[1]);
     return 0;
@@ -444,11 +444,13 @@ void ejsConfigureSocketType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Socket_close, (EjsProc) sock_close);
     ejsBindMethod(ejs, prototype, ES_Socket_connect, (EjsProc) sock_connect);
     ejsBindMethod(ejs, prototype, ES_Socket_listen, (EjsProc) sock_listen);
+#if ES_Socket_off
+    ejsBindMethod(ejs, prototype, ES_Socket_off, (EjsProc) sock_off);
+#endif
     ejsBindMethod(ejs, prototype, ES_Socket_on, (EjsProc) sock_on);
     ejsBindMethod(ejs, prototype, ES_Socket_port, (EjsProc) sock_port);
     ejsBindMethod(ejs, prototype, ES_Socket_read, (EjsProc) sock_read);
     ejsBindMethod(ejs, prototype, ES_Socket_remoteAddress, (EjsProc) sock_remoteAddress);
-    ejsBindMethod(ejs, prototype, ES_Socket_removeObserver, (EjsProc) sock_removeObserver);
     ejsBindMethod(ejs, prototype, ES_Socket_write, (EjsProc) sock_write);
 }
 

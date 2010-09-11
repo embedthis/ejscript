@@ -282,6 +282,18 @@ static EjsObj *hs_set_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 }
 
 
+#if ES_ejs_web_HttpServer_off
+/*  
+    function off(name: [String|Array], observer: Function): Void
+ */
+static EjsObj *hs_off(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
+{
+    ejsRemoveObserver(ejs, sp->emitter, argv[0], argv[1]);
+    return 0;
+}
+#endif
+
+
 /*  
     function get port(): Number
  */
@@ -289,18 +301,6 @@ static EjsObj *hs_port(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateNumber(ejs, sp->port);
 }
-
-
-#if ES_ejs_web_HttpServer_removeObserver
-/*  
-    function removeObserver(name: [String|Array], observer: Function): Void
- */
-static EjsObj *hs_removeObserver(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
-{
-    ejsRemoveObserver(ejs, sp->emitter, argv[0], argv[1]);
-    return 0;
-}
-#endif
 
 
 /*  
@@ -845,8 +845,8 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_listen, (EjsProc) hs_listen);
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_name, (EjsProc) hs_name, (EjsProc) hs_set_name);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_port, (EjsProc) hs_port);
+    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_off, (EjsProc) hs_off);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_on, (EjsProc) hs_on);
-    ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_removeObserver, (EjsProc) hs_removeObserver);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_secure, (EjsProc) hs_secure);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setLimits, (EjsProc) hs_setLimits);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_setPipeline, (EjsProc) hs_setPipeline);
