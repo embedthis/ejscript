@@ -1,5 +1,5 @@
 /*
-    Test sendResponse, setStatus, setCookie
+    Test writeResponse, setStatus, setCookie
  */
 require ejs.web
 
@@ -12,12 +12,12 @@ load("../utils.es")
 server.on("readable", function (event, request: Request) {
     switch (pathInfo) {
     case "/sendfile":
-        sendFile("../utils.es")
+        writeFile("../utils.es")
         finalize()
         break
 
-    case "/sendResponse":
-        sendResponse({ status: 201, headers: {"Custom": 42}, body: "hello moon"})
+    case "/writeResponse":
+        writeResponse({ status: 201, headers: {"Custom": 42}, body: "hello moon"})
         break
 
     case "/setStatus":
@@ -44,8 +44,8 @@ server.on("readable", function (event, request: Request) {
     }
 })
 
-//  sendResponse
-let http = fetch(HTTP + "/sendResponse", 201)
+//  writeResponse
+let http = fetch(HTTP + "/writeResponse", 201)
 assert(http.status == 201)
 assert(http.headers["custom"] == 42)
 assert(http.response == "hello moon")
@@ -73,7 +73,7 @@ assert(cookie.contains("secure"))
 http.close()
 
 
-//  sendFile
+//  writeFile
 let http = fetch(HTTP + "/sendfile")
 assert(http.status == 200)
 assert(http.response == Path("../utils.es").readString())

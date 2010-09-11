@@ -34,7 +34,7 @@ assert(Object.getOwnPropertyCount(server.sessions) == 1)
 
 //  Close server and verify all events received
 server.close()
-server.removeObserver(["close", "createSession", "destroySession", "readable"], watch)
+server.off(["close", "createSession", "destroySession", "readable"], watch)
 assert(events.close)
 assert(events.readable)
 assert(events.createSession)
