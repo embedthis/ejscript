@@ -1,22 +1,5 @@
 LIBRARY libmpr.dll
 EXPORTS
-  __dummyMprSelectWait
-  __dummyMprUnix
-  __dummyMprVxWorks
-  __dummyMprWince
-  __dummy_romfs
-  __mprDummyEpoll
-  __mprDummyKqueue
-  __mprDummyPollWait
-  __mprDummyUnicode
-  _mprAlloc
-  _mprAllocWithDestructor
-  _mprAllocWithDestructorZeroed
-  _mprAllocZeroed
-  _mprMemdup
-  _mprRealloc
-  _mprStrdup
-  _mprStrndup
   _unused_strtod
   assertTrue
   dtoa
@@ -37,7 +20,11 @@ EXPORTS
   mprAdjustBufStart
   mprAllocArena
   mprAllocHeap
+  mprAllocInternal
   mprAllocSlab
+  mprAllocWithDestructorInternal
+  mprAllocWithDestructorZeroedInternal
+  mprAllocZeroedInternal
   mprAppendList
   mprAsprintf
   mprAtoi
@@ -268,6 +255,7 @@ EXPORTS
   mprMapSeparators
   mprMemcmp
   mprMemcpy
+  mprMemdupInternal
   mprMemoryError
   mprNop
   mprOpen
@@ -301,6 +289,7 @@ EXPORTS
   mprReadCmdPipe
   mprReadRegistry
   mprReadSocket
+  mprReallocInternal
   mprReallocStrcat
   mprReapCmd
   mprRecallWaitHandler
@@ -427,7 +416,9 @@ EXPORTS
   mprStrcmpAnyCaseCount
   mprStrcpy
   mprStrcpyCount
+  mprStrdupInternal
   mprStrlen
+  mprStrndupInternal
   mprStrnstr
   mprTerminate
   mprToAsc
@@ -470,4 +461,13 @@ EXPORTS
   mprXmlSetParseArg
   mprXmlSetParserHandler
   print
+  stubMmprEpoll
+  stubMprKqueue
+  stubMprPollWait
+  stubMprSelectWait
+  stubMprUnicode
+  stubMprUnix
+  stubMprVxWorks
+  stubMprWince
+  stubRomfs
   universalTime
