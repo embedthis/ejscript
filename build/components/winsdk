@@ -44,7 +44,7 @@ setWinEnv()
 
     VS=`echo $cc | sed 's/\/VC\/.*//'`
     VSBIN=`dirname "${cc}"`
-    VSLIB=`echo $VSBIN | sed 's/Bin/Lib/'`
+    VSLIB=`echo $VSBIN | sed 's/Bin/Lib/' | sed 's/x86_amd64/amd64/'`
 
 #   if [ "$KIND" = HOST ] ; then
 #       if [ "$BLD_HOST_CPU" = x86_64 ] ; then

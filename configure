@@ -156,8 +156,10 @@ setSystemConfiguration() {
 
     if [ "${BLD_HOST_SYSTEM}" != "${BLD_BUILD_SYSTEM}" ] ; then
         BLD_CROSS=1
-        BLD_HOST_DIST=Unknown
-        BLD_HOST_DIST_VER=Unknown
+        if [ "${BLD_HOST_OS}" != "${BLD_BUILD_OS}" ] ; then
+            BLD_HOST_DIST=Unknown
+            BLD_HOST_DIST_VER=Unknown
+        fi
     else 
         BLD_CROSS=0
     fi
@@ -1217,7 +1219,7 @@ without() {
     lowerName=`lower ${name}`
 
     if [ ! -f build/components/${lowerName} ] ; then
-        echo "Unknown component \"${name}\". Ignoring and continuing ..."
+        echo -e "\nUnknown component \"${name}\". Ignoring and continuing ...\n"
     fi
     components=" ${BLD_COMPONENTS} "
     if [ "${components/ $lowerName /}" = "$components" ] ; then

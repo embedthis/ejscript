@@ -14164,7 +14164,7 @@ static void readPipe(MprWaitService *ws)
 }
 
 #else
-void __dummyMprSelectWait() {}
+int dummyMprSelectWait() { return 0;}
 #endif /* MPR_EVENT_SELECT */
 
 /*
