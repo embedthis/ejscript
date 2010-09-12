@@ -144,6 +144,7 @@ EXPORTS
   httpLookupErrorDocument
   httpLookupStage
   httpLookupStatus
+  httpMakeUriLocal
   httpMatchEtag
   httpMatchModified
   httpNeedRetry

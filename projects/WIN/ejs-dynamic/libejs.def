@@ -182,7 +182,6 @@ EXPORTS
   ejsCreateFileSystem
   ejsCreateFrame
   ejsCreateFrameType
-  ejsCreateFullUri
   ejsCreateFunction
   ejsCreateFunctionType
   ejsCreateGCService
@@ -219,6 +218,7 @@ EXPORTS
   ejsCreateUndefined
   ejsCreateUri
   ejsCreateUriAndFree
+  ejsCreateUriFromParts
   ejsCreateVm
   ejsCreateVoidType
   ejsCreateWorker
@@ -273,6 +273,7 @@ EXPORTS
   ejsGetNamespaceCount
   ejsGetNextItem
   ejsGetNumOption
+  ejsGetObjectPropertyName
   ejsGetOptable
   ejsGetPrevItem
   ejsGetProperty
@@ -319,6 +320,7 @@ EXPORTS
   ejsLookupItem
   ejsLookupModule
   ejsLookupNativeModule
+  ejsLookupObjectProperty
   ejsLookupProperty
   ejsLookupScope
   ejsLookupVar
@@ -388,6 +390,7 @@ EXPORTS
   ejsStartMprLogging
   ejsStrcat
   ejsStrdup
+  ejsStringToJSON
   ejsThrowArgError
   ejsThrowArithmeticError
   ejsThrowAssertError
@@ -420,8 +423,8 @@ EXPORTS
   getNextJsonToken
   http_async
   http_available
-  http_observe
-  http_removeObserver
+  http_off
+  http_on
   http_setHeader
   http_set_async
   markHttp
@@ -438,7 +441,7 @@ EXPORTS
   sock_accept
   sock_address
   sock_async
-  sock_observe
+  sock_on
   sock_set_async
   truncateFile
   writeFile
