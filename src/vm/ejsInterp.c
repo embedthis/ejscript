@@ -3209,11 +3209,7 @@ static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags)
         for (i = 0; i < count && count > 0; i++) {
             ejsPopBlock(ejs);
         }
-#if OLD
-        count = (state->stack - fp->stackReturn - fp->argc);
-#else
-        count = state->stack - fp->stackBase;
-#endif
+        count = (int) (state->stack - fp->stackBase);
         state->stack -= (count - ex->numStack);
         mprAssert(state->stack >= fp->stackReturn);
     }

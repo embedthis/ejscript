@@ -1248,7 +1248,7 @@ static char *probe(MprCtx ctx, cchar *path, int minVersion, int maxVersion)
         *ext = '\0';
     }
     files = mprGetPathFiles(ctx, dir, 0);
-    nameLen = strlen(base);
+    nameLen = (int) strlen(base);
     bestVersion = -1;
     best = 0;
 

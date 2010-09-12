@@ -73,7 +73,7 @@ int ecCreateModuleSection(EcCompiler *cp)
     /*
         Remember this location for the module checksum. Reserve 4 bytes.
      */
-    state->checksumOffset = mprGetBufEnd(buf) - buf->data;
+    state->checksumOffset = (int) (mprGetBufEnd(buf) - buf->data);
     mprAdjustBufEnd(buf, 4);
 
     /*

@@ -157,7 +157,7 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
                     }
                 }
             }
-            len = cp - value;
+            len = (int) (cp - value);
             id = mprMemdup(req, value, len + 1);
             id[len] = '\0';
             session = ejsGetPropertyByName(master, server->sessions, ejsName(&qname, "", id));

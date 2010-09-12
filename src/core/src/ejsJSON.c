@@ -198,7 +198,7 @@ Token getNextJsonToken(MprBuf *buf, char **token, JsonState *js)
                 return TOK_ERR;
             }
             if (buf) {
-                mprPutBlockToBuf(buf, (char*) start, cp - start);
+                mprPutBlockToBuf(buf, (char*) start, (int) (cp - start));
             }
             cp++;
 
@@ -220,7 +220,7 @@ Token getNextJsonToken(MprBuf *buf, char **token, JsonState *js)
                 return TOK_ERR;
             }
             if (buf) {
-                mprPutBlockToBuf(buf, (char*) start, cp - start);
+                mprPutBlockToBuf(buf, (char*) start, (int) (cp - start));
             }
             
             cp++;
@@ -237,7 +237,7 @@ Token getNextJsonToken(MprBuf *buf, char **token, JsonState *js)
                 }
             }
             if (buf) {
-                mprPutBlockToBuf(buf, (char*) start, cp - start);
+                mprPutBlockToBuf(buf, (char*) start, (int) (cp - start));
             }
         }
         if (buf) {

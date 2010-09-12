@@ -544,7 +544,7 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
             for (j = 0; j < ival; j++) {
                 att = (int) getNum(mp);
                 mprSprintf(mp, bufp, buflen,  "%d ", ival);
-                len = strlen(bufp);
+                len = (int) strlen(bufp);
                 bufp += len;
                 buflen -= len;
             }
@@ -575,13 +575,13 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
         case EBC_INIT_DEFAULT8:
             numEntries = getByte(mp);
             mprSprintf(mp, bufp, buflen,  "<%d> ", numEntries);
-            len = strlen(bufp);
+            len = (int) strlen(bufp);
             bufp += len;
             buflen -= len;
             for (j = 0; j < numEntries; j++) {
                 ival = getByte(mp);
                 mprSprintf(mp, bufp, buflen,  "<%d> ", ival + 2);
-                len = strlen(bufp);
+                len = (int) strlen(bufp);
                 bufp += len;
                 buflen -= len;
             }
@@ -590,13 +590,13 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
         case EBC_INIT_DEFAULT:
             numEntries = getByte(mp);
             mprSprintf(mp, bufp, buflen,  "<%d> ", numEntries);
-            len = strlen(bufp);
+            len = (int) strlen(bufp);
             bufp += len;
             buflen -= len;
             for (j = 0; j < numEntries; j++) {
                 ival = getWord(mp);
                 mprSprintf(mp, bufp, buflen,  "<%d> ", ival + 2);
-                len = strlen(bufp);
+                len = (int) strlen(bufp);
                 bufp += len;
                 buflen -= len;
             }
@@ -615,7 +615,7 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
             mprError(mp, "Bad arg type in opcode table");
             break;
         }
-        len = strlen(bufp);
+        len = (int) strlen(bufp);
         bufp += len;
         buflen -= len;
 
@@ -630,7 +630,7 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
             *stackEffect = -ival;
         }
     }
-    return mp->pc - start;
+    return (int) (mp->pc - start);
 }
 
 
@@ -672,7 +672,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
     }
     
     while ((mp->pc - start) < codeLen) {
-        address = mp->pc - start;
+        address = (int) (mp->pc - start);
         opcode = *mp->pc++;
         argbuf[0] = '\0';
         stackEffect = 0;
@@ -707,10 +707,10 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
             if ((currentLine = getString(mp)) == 0) {
                 goto badToken;
             }
-            nbytes = (mp->pc - start) - address - 1;
+            nbytes = (int) (mp->pc - start) - address - 1;
 
         } else {
-            nbytes = decodeOperands(mp, opt, argbuf, sizeof(argbuf), mp->pc - start, &stackEffect);
+            nbytes = decodeOperands(mp, opt, argbuf, (int) sizeof(argbuf), (int) (mp->pc - start), &stackEffect);
         }
 
         if (mp->showAsm) {

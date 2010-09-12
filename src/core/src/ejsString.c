@@ -560,7 +560,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 ejsThrowArgError(ejs, "Bad format specifier");
                 return 0;
             }
-            catString(ejs, result, buf, strlen(buf));
+            catString(ejs, result, buf, (int) strlen(buf));
             mprFree(buf);
             last = i + 1;
             nextArg++;
@@ -1636,7 +1636,7 @@ static EjsObj *trim(Ejs *ejs, EjsString *sp, cchar *pattern, int where)
         }
         end++;
     } else {
-        patternLength = strlen(pattern);
+        patternLength = (int) strlen(pattern);
         if (patternLength <= 0 || patternLength > sp->length) {
             return (EjsObj*) sp;
         }

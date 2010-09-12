@@ -595,7 +595,7 @@ static EjsObj *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *pathLength(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, strlen(fp->path));
+    return (EjsObj*) ejsCreateNumber(ejs, (int) strlen(fp->path));
 }
 
 
@@ -1146,7 +1146,7 @@ static EjsObj *pathToJSON(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     int     i, c, len;
 
     buf = mprCreateBuf(fp, 0, 0);
-    len = strlen(fp->path);
+    len = (int) strlen(fp->path);
     mprPutCharToBuf(buf, '"');
     for (i = 0; i < len; i++) {
         c = fp->path[i];

@@ -2066,7 +2066,7 @@ static char *fixSentance(MprCtx ctx, char *str)
     /*
         Copy the string and grow by 1 byte (plus null) to allow for a trailing period.
      */
-    len = strlen(str) + 2;
+    len = (int) strlen(str) + 2;
     buf = mprAlloc(ctx, len);
     if (str == 0) {
         return "";
@@ -2085,7 +2085,7 @@ static char *fixSentance(MprCtx ctx, char *str)
         Add a "." if the string does not appear to contain HTML tags
      */
     if (strstr(str, "</") == 0) {
-        len = strlen(str);
+        len = (int) strlen(str);
         if (str[len - 1] != '.') {
             str[len] = '.';
             str[len+1] = '\0';
@@ -2112,7 +2112,7 @@ static char *formatExample(Ejs *ejs, char *docString)
         }
         for (indent = 0; *cp == '\t' || *cp == ' '; indent++, cp++) {}
 
-        buf = mprAlloc(ejs, strlen(example) * 4 + 2);
+        buf = mprAlloc(ejs, (int) strlen(example) * 4 + 2);
         for (cp = example, dp = buf; *cp; ) {
             for (i = 0; i < indent && *cp; i++, cp++) {}
             for (; *cp && *cp != '\n'; ) {
@@ -2383,8 +2383,7 @@ static char *getFilename(cchar *name)
         }
         *cp = '\0';
     }
-    mprStrcpy(&buf[strlen(buf)], sizeof(buf) - strlen(buf) - 1, ".html");
-
+    mprStrcpy(&buf[strlen(buf)], sizeof(buf) - (int) strlen(buf) - 1, ".html");
     return buf;
 }
 
@@ -2437,7 +2436,7 @@ static bool match(cchar *last, cchar *key)
     mprAssert(last);
     mprAssert(key && *key);
 
-    len = strlen(key);
+    len = (int) strlen(key);
     return strncmp(last, key, len) == 0;
 }
 

@@ -128,8 +128,8 @@ static EjsObj *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         ip = 0;
         //  TODO - support IPv6
         for (res = reslist; res; res = res->ai_next) {
-            if (getnameinfo(res->ai_addr, res->ai_addrlen, ipaddr, sizeof(ipaddr) - 1, service, sizeof(service) - 1, 
-                    NI_NUMERICHOST | NI_NUMERICSERV | NI_NOFQDN) == 0) {
+            if (getnameinfo(res->ai_addr, (socklen_t) res->ai_addrlen, ipaddr, (int) sizeof(ipaddr) - 1, service, 
+                    (int) sizeof(service) - 1, NI_NUMERICHOST | NI_NUMERICSERV | NI_NOFQDN) == 0) {
                 if (strncmp(ipaddr, "10.", 3) == 0 || strncmp(ipaddr, "127.", 4) == 0 ||
                      strncmp(ipaddr, "169.", 4) == 0 || strncmp(ipaddr, "172.", 4) == 0 ||
                      strncmp(ipaddr, "192.", 4) == 0) {

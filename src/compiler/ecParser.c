@@ -890,7 +890,7 @@ static EcNode *parseXMLText(EcCompiler *cp, EcNode *np)
         for (p = cp->peekToken->text; p && *p; p++) {
             if (*p == '{' || *p == '<') {
                 if (cp->peekToken->text < p) {
-                    mprPutBlockToBuf(np->literal.data, (cchar*) cp->token->text, p - cp->token->text);
+                    mprPutBlockToBuf(np->literal.data, (cchar*) cp->token->text, (int) (p - cp->token->text));
                     mprAddNullToBuf(np->literal.data);
                     if (getToken(cp) == T_EOF || cp->token->tokenId == T_ERR || cp->token->tokenId == T_NOP) {
                         return 0;
@@ -9409,7 +9409,7 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
         np->qname.name = ejs->state->internal->uri;
     } else if (path) {
         apath = mprGetAbsPath(cp, path);
-        md5 = mprGetMD5Hash(cp, apath, strlen(apath), NULL);
+        md5 = mprGetMD5Hash(cp, apath, (int) strlen(apath), NULL);
         np->qname.name = mprAsprintf(np, -1, "%s-%s-%d", EJS_INTERNAL_NAMESPACE, md5, cp->uid++);
         mprFree(md5);
         mprFree(apath);

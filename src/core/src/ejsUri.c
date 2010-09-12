@@ -238,7 +238,7 @@ static EjsObj *uri_basename(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     if (path == 0) {
         return (EjsObj*) ejs->emptyStringValue;
     }
-    len = strlen(path);
+    len = (int) strlen(path);
     if (path[len - 1] == '/') {
         *path = '\0';
     } else {
@@ -332,7 +332,7 @@ static EjsObj *uri_dirname(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     if (path == 0) {
         return (EjsObj*) ejs->emptyStringValue;
     }
-    len = strlen(path);
+    len = (int) strlen(path);
     if (path[len - 1] == '/') {
         if (len > 1) {
             path[len - 1] = '\0';
@@ -833,7 +833,7 @@ static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     for (cp = pattern; *cp; cp++) {
         if (*cp == '{' && (cp == pattern || cp[-1] != '\\')) {
             if ((ep = strchr(++cp, '}')) != 0) {
-                len = ep - cp;
+                len = (int) (ep - cp);
                 token = mprMemdup(buf, cp, len + 1);
                 token[len] = '\0';
                 value = 0;
