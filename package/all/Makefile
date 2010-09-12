@@ -10,7 +10,7 @@ SRC				:= ../../src
 JEMS			:= $(SRC)/jems
 STAGING			:= staging
 DEST			:= $(STAGING)/src/deps/ejs
-INC_DEST		:= $(STAGING)/src/include
+INC_DEST		:= $(STAGING)/src/include/master
 DOC_DEST		:= $(STAGING)/doc
 ARCHIVE			+= $(BLD_TOP)/releases/ejs-all.tgz
 EJS_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ejsTune ejsByteCode ejsByteCodeTable ejsCore ejsModule ejs ejsWeb)
@@ -36,7 +36,7 @@ combo packageExtra:	prep $(TARGETS) $(ARCHIVE)
 prep:
 	@$(call log) "[Prepare]" "All-in-one combo package"
 	rm -fr $(STAGING)
-	mkdir -p $(STAGING)/src/include $(STAGING)/src/deps/ejs $(STAGING)/doc/api $(STAGING)/doc/man
+	mkdir -p $(STAGING)/src/include/master $(STAGING)/src/deps/ejs $(STAGING)/doc/api $(STAGING)/doc/man
 
 $(INC_DEST)/ejs.h: $(EJS_HEADERS)
 	@all-in-one $(EJS_HEADERS) $(EC_HEADERS) | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >$(INC_DEST)/ejs.h

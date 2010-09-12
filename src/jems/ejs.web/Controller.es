@@ -430,7 +430,7 @@ use namespace action
                     global.load(dbconfig.module + ".mod")
                 }
                 let module = dbconfig.module || "public"
-                new global.(module)::[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
+                new (module)::[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
             }
         }
 
