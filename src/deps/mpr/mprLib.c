@@ -634,7 +634,7 @@ static void monitorStack();
 static int mapProt(int flags);
 #endif
 
-static MprBlk *_mprAllocBlock(MprCtx ctx, MprHeap *heap, MprBlk *parent, uint usize);
+static MprBlk *mprAllocBlockInternal(MprCtx ctx, MprHeap *heap, MprBlk *parent, uint usize);
 
 /*
     Initialize the memory subsystem
@@ -744,7 +744,7 @@ static MprCtx allocHeap(MprCtx ctx, cchar *name, uint heapSize, bool threadSafe,
     pageHeap = &mpr->pageHeap;
     mprAssert(pageHeap);
 
-    if (unlikely((bp = _mprAllocBlock(ctx, pageHeap, NULL, usize)) == 0)) {
+    if (unlikely((bp = mprAllocBlockInternal(ctx, pageHeap, NULL, usize)) == 0)) {
         allocError(parent, usize);
         unlockHeap(pageHeap);
         return 0;
@@ -848,7 +848,7 @@ MprHeap *mprAllocSlab(MprCtx ctx, cchar *name, uint objSize, uint count, bool th
 /*
     Allocate a block. Not used to allocate heaps.
  */
-void *_mprAlloc(MprCtx ctx, uint usize)
+void *mprAllocInternal(MprCtx ctx, uint usize)
 {
     MprBlk      *bp, *parent;
     MprHeap     *heap;
@@ -862,7 +862,7 @@ void *_mprAlloc(MprCtx ctx, uint usize)
     heap = mprGetHeap(parent);
     mprAssert(heap);
 
-    if (unlikely((bp = _mprAllocBlock(ctx, heap, parent, usize)) == 0)) {
+    if (unlikely((bp = mprAllocBlockInternal(ctx, heap, parent, usize)) == 0)) {
         allocError(parent, usize);
         return 0;
     }
@@ -873,11 +873,11 @@ void *_mprAlloc(MprCtx ctx, uint usize)
 /*
     Allocate and zero a block
  */
-void *_mprAllocZeroed(MprCtx ctx, uint size)
+void *mprAllocZeroedInternal(MprCtx ctx, uint size)
 {
     void    *newBlock;
 
-    newBlock = _mprAlloc(ctx, size);
+    newBlock = mprAllocInternal(ctx, size);
     mprAssert(newBlock);
 
     if (newBlock) {
@@ -890,7 +890,7 @@ void *_mprAllocZeroed(MprCtx ctx, uint size)
 /*
     Allocate an object. Typically used via the macro: mprAllocObj
  */
-void *_mprAllocWithDestructor(MprCtx ctx, uint size, MprDestructor destructor)
+void *mprAllocWithDestructorInternal(MprCtx ctx, uint size, MprDestructor destructor)
 {
     MprBlk      *bp;
     void        *ptr;
@@ -898,7 +898,7 @@ void *_mprAllocWithDestructor(MprCtx ctx, uint size, MprDestructor destructor)
     mprAssert(VALID_CTX(ctx));
     mprAssert(size > 0);
 
-    ptr = _mprAlloc(ctx, size + sizeof(MprDestructor));
+    ptr = mprAllocInternal(ctx, size + sizeof(MprDestructor));
     mprAssert(ptr);
     if (ptr == 0) {
         return 0;
@@ -989,11 +989,11 @@ void mprInitBlock(MprCtx ctx, void *ptr, uint size)
 /*
     Allocate and zero a block
  */
-void *_mprAllocWithDestructorZeroed(MprCtx ctx, uint size, MprDestructor destructor)
+void *mprAllocWithDestructorZeroedInternal(MprCtx ctx, uint size, MprDestructor destructor)
 {
     void    *newBlock;
 
-    newBlock = _mprAllocWithDestructor(ctx, size, destructor);
+    newBlock = mprAllocWithDestructorInternal(ctx, size, destructor);
     if (newBlock) {
         memset(newBlock, 0, size);
     }
@@ -1104,7 +1104,7 @@ void mprFreeChildren(MprCtx ptr)
 /*
     Rallocate a block
  */
-void *_mprRealloc(MprCtx ctx, void *ptr, uint usize)
+void *mprReallocInternal(MprCtx ctx, void *ptr, uint usize)
 {
     MprHeap     *heap;
     MprBlk      *parent, *bp, *newbp, *child;
@@ -1116,7 +1116,7 @@ void *_mprRealloc(MprCtx ctx, void *ptr, uint usize)
     mpr = mprGetMpr(ctx);
 
     if (ptr == 0) {
-        return _mprAlloc(ctx, usize);
+        return mprAllocInternal(ctx, usize);
     }
 
     mprAssert(VALID_CTX(ptr));
@@ -1130,7 +1130,7 @@ void *_mprRealloc(MprCtx ctx, void *ptr, uint usize)
     parent = GET_BLK(ctx);
     mprAssert(parent);
 
-    newPtr = _mprAlloc(ctx, usize);
+    newPtr = mprAllocInternal(ctx, usize);
     if (newPtr == 0) {
         return 0;
     }
@@ -1255,7 +1255,7 @@ void mprReparentBlock(MprCtx ctx, cvoid *ptr)
 }
 
 
-char *_mprStrdup(MprCtx ctx, cchar *str)
+char *mprStrdupInternal(MprCtx ctx, cchar *str)
 {
     char    *newp;
     int     len;
@@ -1266,7 +1266,7 @@ char *_mprStrdup(MprCtx ctx, cchar *str)
         str = "";
     }
     len = (int) strlen(str) + 1;
-    newp = (char*) _mprAlloc(ctx, len);
+    newp = (char*) mprAllocInternal(ctx, len);
     if (newp) {
         memcpy(newp, str, len);
     }
@@ -1274,7 +1274,7 @@ char *_mprStrdup(MprCtx ctx, cchar *str)
 }
 
 
-char *_mprStrndup(MprCtx ctx, cchar *str, uint usize)
+char *mprStrndupInternal(MprCtx ctx, cchar *str, uint usize)
 {
     char    *newp;
     uint    len;
@@ -1286,7 +1286,7 @@ char *_mprStrndup(MprCtx ctx, cchar *str, uint usize)
     }
     len = (int) strlen(str) + 1;
     len = min(len, usize);
-    newp = (char*) _mprAlloc(ctx, len);
+    newp = (char*) mprAllocInternal(ctx, len);
     if (newp) {
         memcpy(newp, str, len);
     }
@@ -1294,13 +1294,13 @@ char *_mprStrndup(MprCtx ctx, cchar *str, uint usize)
 }
 
 
-void *_mprMemdup(MprCtx ctx, cvoid *ptr, uint usize)
+void *mprMemdupInternal(MprCtx ctx, cvoid *ptr, uint usize)
 {
     char    *newp;
 
     mprAssert(VALID_CTX(ctx));
 
-    newp = (char*) _mprAlloc(ctx, usize);
+    newp = (char*) mprAllocInternal(ctx, usize);
     if (newp) {
         memcpy(newp, ptr, usize);
     }
@@ -1311,7 +1311,7 @@ void *_mprMemdup(MprCtx ctx, cvoid *ptr, uint usize)
 /*
     Allocate a block from a heap. Must be heap locked when called.
  */
-static MprBlk *_mprAllocBlock(MprCtx ctx, MprHeap *heap, MprBlk *parent, uint usize)
+static MprBlk *mprAllocBlockInternal(MprCtx ctx, MprHeap *heap, MprBlk *parent, uint usize)
 {
     MprBlk      *bp;
     Mpr         *mpr;
@@ -2674,7 +2674,7 @@ void mprSetWinMsgCallback(MprWaitService *ws, MprMsgCallback callback)
 
 
 #else
-void __mprAsyncDummy() {}
+void stubMprAsync() {}
 #endif /* MPR_EVENT_ASYNC */
 
 /*
@@ -7202,7 +7202,7 @@ void mprWakeNotifier(MprCtx ctx)
 }
 
 #else
-void __mprDummyEpoll() {}
+void stubMmprEpoll() {}
 #endif /* MPR_EVENT_EPOLL */
 
 /*
@@ -8895,7 +8895,7 @@ void mprWakeNotifier(MprCtx ctx)
 }
 
 #else
-void __mprDummyKqueue() {}
+void stubMprKqueue() {}
 #endif /* MPR_EVENT_KQUEUE */
 
 /*
@@ -12478,7 +12478,7 @@ void mprWakeNotifier(MprCtx ctx)
 }
 
 #else
-void __mprDummyPollWait() {}
+void stubMprPollWait() {}
 #endif /* MPR_EVENT_POLL */
 
 /*
@@ -13821,7 +13821,7 @@ MprRomFileSystem *mprCreateRomFileSystem(MprCtx ctx, cchar *path)
 
 
 #else /* BLD_FEATURE_ROMFS */
-void __dummy_romfs() {}
+void stubRomfs() {}
 #endif /* BLD_FEATURE_ROMFS */
 
 /*
@@ -14164,7 +14164,7 @@ static void readPipe(MprWaitService *ws)
 }
 
 #else
-int dummyMprSelectWait() { return 0;}
+void stubMprSelectWait() {}
 #endif /* MPR_EVENT_SELECT */
 
 /*
@@ -20722,7 +20722,7 @@ int mprScanUs(uni *us, cchar *fmt, ...)
 }
 
 #else
-void __mprDummyUnicode() {}
+void stubMprUnicode() {}
 #endif
 
 /*
@@ -20938,7 +20938,7 @@ void mprWriteToOsLog(MprCtx ctx, cchar *message, int flags, int level)
 }
 
 #else
-void __dummyMprUnix() {}
+void stubMprUnix() {}
 #endif /* BLD_UNIX_LIKE */
 
 /*
@@ -21150,7 +21150,7 @@ int usleep(uint msec)
 
 
 #else
-void __dummyMprVxWorks() {}
+void stubMprVxWorks() {}
 #endif /* VXWORKS */
 
 /*
@@ -21823,7 +21823,7 @@ static cchar *getHive(cchar *keyPath, HKEY *hive)
 }
 
 #else
-void __dummyMprWin() {}
+void stubMprWin() {}
 #endif /* BLD_WIN_LIKE */
 
 /*
@@ -22854,7 +22854,7 @@ void mprWriteToOsLog(MprCtx ctx, cchar *message, int flags, int level)
 }
 
 #else
-void __dummyMprWince() {}
+void stubMprWince() {}
 #endif /* WINCE */
 
 /*
