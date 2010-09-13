@@ -2288,7 +2288,7 @@ static void printMprHeaps(MprCtx ctx)
     MprHeap     *heap;
     MprRegion   *region;
     cchar       *kind;
-    int         available, total, remaining;
+    int64       available, total, remaining;
 
     bp = MPR_GET_BLK(ctx);
 
@@ -2325,10 +2325,10 @@ static void printMprHeaps(MprCtx ctx)
         mprLog(ctx, 0, "    Alloc calls              %,10d",            heap->totalAllocCalls);
 
         if (heap->flags & (MPR_ALLOC_PAGE_HEAP | MPR_ALLOC_ARENA_HEAP | MPR_ALLOC_SLAB_HEAP)) {
-            mprLog(ctx, 0, "    Heap Regions             %,10d K",      total / 1024);
-            mprLog(ctx, 0, "    Depleted regions         %,10d K",      available / 1024);
+            mprLog(ctx, 0, "    Heap Regions             %,10d K",      (int) (total / 1024));
+            mprLog(ctx, 0, "    Depleted regions         %,10d K",      (int) (available / 1024));
             if (heap->region) {
-                mprLog(ctx, 0, "    Unallocated memory       %,10d K",  remaining / 1024);
+                mprLog(ctx, 0, "    Unallocated memory       %,10d K",  (int) (remaining / 1024));
             }            
         }
             
@@ -2514,7 +2514,6 @@ int mprWaitForSingleIO(MprCtx ctx, int fd, int desiredMask, int timeout)
 void mprWaitForIO(MprWaitService *ws, int timeout)
 {
     MSG     msg;
-    int     rc;
 
     mprAssert(ws->hwnd);
 
@@ -2529,8 +2528,7 @@ void mprWaitForIO(MprWaitService *ws, int timeout)
             return;
         }
         ws->willAwake = mprGetMpr(ws)->eventService->now + timeout;
-        rc = SetTimer(ws->hwnd, 0, timeout, NULL);
-        mprAssert(rc != 0);
+        SetTimer(ws->hwnd, 0, timeout, NULL);
 
         if (GetMessage(&msg, NULL, 0, 0) == 0) {
             mprTerminate(ws, 1);
@@ -2840,7 +2838,7 @@ char *mprStealBuf(MprCtx ctx, MprBuf *bp)
  */
 void mprAddNullToBuf(MprBuf *bp)
 {
-    int     space;
+    size_t      space;
 
     space = bp->endbuf - bp->end;
     if (space < (int) sizeof(char)) {
@@ -3073,7 +3071,7 @@ int mprPutSubStringToBuf(MprBuf *bp, cchar *str, int count)
     int     len;
 
     if (str) {
-        len = strlen(str);
+        len = (int) strlen(str);
         len = min(len, count);
         if (len > 0) {
             return mprPutBlockToBuf(bp, str, len);
@@ -4256,11 +4254,11 @@ static int sanitizeArgs(MprCmd *cmd, int argc, char **argv, char **env)
             destp += strlen(*ep) + 1;
         }
         if (!hasSystemRoot) {
-            mprSprintf(cmd, destp, endp - destp - 1, "SYSTEMROOT=%s", SYSTEMROOT);
+            mprSprintf(cmd, destp, (int) (endp - destp - 1), "SYSTEMROOT=%s", SYSTEMROOT);
             destp += 12 + strlen(SYSTEMROOT);
         }
         if (!hasPath) {
-            mprSprintf(cmd, destp, endp - destp - 1, "PATH=%s", PATH);
+            mprSprintf(cmd, destp, (int) (endp - destp - 1), "PATH=%s", PATH);
             destp += 6 + strlen(PATH);
         }
         *destp++ = '\0';
@@ -5265,7 +5263,7 @@ char *mprDecode64(MprCtx ctx, cchar *s)
     char        *buffer, *bp;
     int         len, c, i, j, shift;
 
-    len = strlen(s);
+    len = (int) strlen(s);
     if ((buffer = mprAlloc(ctx, len + 1)) == 0) {
         return NULL;
     }
@@ -5300,7 +5298,7 @@ char *mprEncode64(MprCtx ctx, cchar *s)
     char    *buffer, *bp;
     int     len, x, i, j, shift;
 
-    len = strlen(s) * 2;
+    len = (int) strlen(s) * 2;
     if ((buffer = mprAlloc(ctx, len + 1)) == 0) {
         return NULL;
     }
@@ -7680,7 +7678,7 @@ int mprWrite(MprFile *file, cvoid *buf, uint count)
 
 int mprWriteString(MprFile *file, cchar *str)
 {
-    return mprWrite(file, str, strlen(str));
+    return mprWrite(file, str, (int) strlen(str));
 }
 
 
@@ -7869,7 +7867,7 @@ int mprPuts(MprFile *file, cchar *str)
     int     total, bytes, count;
 
     mprAssert(file);
-    count = strlen(str);
+    count = (int) strlen(str);
 
     /*
         Buffer output and flush when full.
@@ -11588,7 +11586,7 @@ char *mprGetNormalizedPath(MprCtx ctx, cchar *pathArg)
         Allocate one spare byte incase we need to break into segments. If so, will add a trailing "/" to make 
         parsing easier later.
      */
-    len = strlen(pathArg);
+    len = (int) strlen(pathArg);
     if ((path = mprAlloc(ctx, len + 2)) == 0) {
         return NULL;
     }
@@ -11673,7 +11671,7 @@ char *mprGetNormalizedPath(MprCtx ctx, cchar *pathArg)
                 continue;
             }
             segments[i++] = mark;
-            len += sp - mark;
+            len += (int) (sp - mark);
 #if KEEP
             if (i == 1 && segmentCount == 1 && fs->hasDriveSpecs && strchr(mark, ':') != 0) {
                 /*
@@ -11689,7 +11687,7 @@ char *mprGetNormalizedPath(MprCtx ctx, cchar *pathArg)
 
     if (--sp > mark) {
         segments[i++] = mark;
-        len += sp - mark;
+        len += (int) (sp - mark);
     }
     mprAssert(i <= segmentCount);
     segmentCount = i;
@@ -12712,7 +12710,7 @@ int mprStaticPrintf(MprCtx ctx, cchar *fmt, ...)
     va_start(ap, fmt);
     sprintfCore(ctx, buf, MPR_MAX_STRING, fmt, ap);
     va_end(ap);
-    return mprWrite(fs->stdOutput, buf, strlen(buf));
+    return mprWrite(fs->stdOutput, buf, (int) strlen(buf));
 }
 
 
@@ -12730,7 +12728,7 @@ int mprStaticPrintfError(MprCtx ctx, cchar *fmt, ...)
     va_start(ap, fmt);
     sprintfCore(ctx, buf, MPR_MAX_STRING, fmt, ap);
     va_end(ap);
-    return mprWrite(fs->stdError, buf, strlen(buf));
+    return mprWrite(fs->stdError, buf, (int) strlen(buf));
 }
 
 
@@ -13255,7 +13253,7 @@ static void outFloat(MprCtx ctx, Format *fmt, char specChar, double value)
         // sprintf(result, "%*.*e", fmt->width, fmt->precision, value);
     }
 
-    len = strlen(result);
+    len = (int) strlen(result);
     fill = fmt->width - len;
     if (fmt->flags & SPRINTF_COMMA) {
         if (((len - 1) / 3) > 0) {
@@ -13377,7 +13375,7 @@ char *mprDtoa(MprCtx ctx, double value, int ndigits, int mode, int flags)
             Note: ndigits < 0 seems to trim N digits from the end with rounding.
          */
         ip = intermediate = dtoa(value, mode, ndigits, &period, &sign, NULL);
-        len = strlen(intermediate);
+        len = (int) strlen(intermediate);
         exponent = period - 1;
 
         if (mode == MPR_DTOA_ALL_DIGITS && ndigits == 0) {
@@ -13422,7 +13420,7 @@ char *mprDtoa(MprCtx ctx, double value, int ndigits, int mode, int flags)
                         count = totalDigits + sign - mprGetBufLength(buf);
                         mprPutCharToBuf(buf, '.');
                         mprPutSubStringToBuf(buf, &ip[period], count);
-                        mprPutPadToBuf(buf, '0', count - strlen(&ip[period]));
+                        mprPutPadToBuf(buf, '0', count - (int) strlen(&ip[period]));
                     }
                 }
 
@@ -15951,7 +15949,7 @@ char *mprReallocStrcat(MprCtx ctx, int destMax, char *buf, cchar *src, ...)
         destMax = INT_MAX;
     }
 
-    existingLen = (buf) ? strlen(buf) : 0;
+    existingLen = (buf) ? (int) strlen(buf) : 0;
     required = existingLen + 1;
 
     str = (char*) src;
@@ -19192,7 +19190,8 @@ char *mprFormatTime(MprCtx ctx, cchar *fmt, struct tm *tp)
         tp = &tm;
     }
     endp = &localFmt[sizeof(localFmt) - 1];
-    for (cp = fmt, size = sizeof(localFmt) - 1; *cp && dp < &localFmt[sizeof(localFmt) - 32]; size = endp - dp - 1) {
+    size = (int) sizeof(localFmt) - 1;
+    for (cp = fmt; *cp && dp < &localFmt[sizeof(localFmt) - 32]; size = (int) (endp - dp - 1)) {
         if (*cp == '%') {
             *dp++ = *cp++;
         again:
