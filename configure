@@ -702,8 +702,7 @@ remapDir() {
 #   Convert the search path into a normal PATH style with ":" separators
 #   On windows, this requires cygwin paths in searchPath.
 #
-convertSearchPath() 
-{
+convertSearchPath() {
     local x
 
     if [ "$1" != "" ] ; then
@@ -737,14 +736,11 @@ findComponents() {
             echo -e "  #   (Modify build/search.config and build/components for component searching)\n  #"
         fi
 
-echo BSP $BUILD_SEARCH_PATH
-echo HSP $HOST_SEARCH_PATH
         eval SEARCH_PATH=\$${kind}_SEARCH_PATH
         if [ "$verbose" -gt 0 ] ; then
             echo -n -e "\nSearch for $kind components using $kind search path:\n    "
             echo $SEARCH_PATH | sed -e 's/:/    /g'
         fi
-echo MOB $SEARCH_PATH | sed -e 's/:/    /g'
 
         for name in $BLD_COMPONENTS ; do
             upperName=`upper ${name}`
