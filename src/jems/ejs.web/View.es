@@ -32,6 +32,7 @@ module ejs.web {
         @option color String Foreground color. This is a CSS RGB color specification. For example "FF0000" for red.
         @option confirm String Message to prompt the user to requeset confirmation before submitting a form or request.
         @option data-* All other data-* names are passed through to the HTML unmodified.
+MOB -- better name? "dom"
         @option domid String Client-side DOM-ID to use for the control
         @option effects String Transition effects to apply when updating a control. Select from: "fadein", "fadeout",
             "highlight".
@@ -48,9 +49,11 @@ module ejs.web {
         @option rel String HTML rel attribute. Can be used to generate "rel=nofollow" on links.
         @option remote (String|Boolean) Perform the request in the background without changing the browser location.
             The option may be set to the URI to invoke or it may be set to true and the URI will be determined by
-            other options.
+            other options. It may also use the "@Controller/action" form.
         @option refresh (String|URI|Object) URI to invoke in the background to refresh the control data every $period.
-            milliseconds. If period is undefined or zero, a persistent connection will be used to refresh data.
+            milliseconds. If period is undefined or zero, a persistent connection will be used to refresh data. The 
+            option may be set to the URI to invoke or it may be set to true and the URI will be determined by
+            other options. It may also use the "@Controller/action" form.
         @option refresh-method String HTTP method to invoke for refresh requests.
         @option size (Number|String) Size of the element.
         @option style String CSS Style to use for the table.

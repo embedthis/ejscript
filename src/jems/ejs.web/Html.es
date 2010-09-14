@@ -104,8 +104,11 @@ module ejs.web {
         }
 
         function buttonLink(text: String, options: Object): Void {
+print("@@@@@@@@@@@@@@@@@@")
             options.click ||= true
+dump("BL", options)
             let attributes = getAttributes(options)
+print('ATT ' + attributes)
             write('<button ' + attributes + '>' + text + '</button></a>\r\n')
         }
 
@@ -149,8 +152,12 @@ module ejs.web {
             }
             let uri = request.link(options)
             emitFormErrors(record, options)
-            /* Exclude method from the mapped-attribute list. Don't want data-method */
+            let attributes = getAttributes(options)
+/*
+   MOB - remove
+            Exclude method from the mapped-attribute list. Don't want data-method 
             let attributes = getAttributes(options, { method: true })
+*/
             write('<form method="' + method + '" action="' + uri + '"' + attributes + '>\r\n')
             if (options.id != undefined) {
                 write('    <input name="id" type="hidden" value="' + options.id + '" />\r\n')
@@ -159,9 +166,12 @@ module ejs.web {
                 let token = options.securityToken || request.securityToken
                 write('    <input name="' + Request.SecurityTokenName + '" type="hidden" value="' + token + '" />\r\n')
             }
+/*
+   MOB - remove
             if (options.method && options.method != "POST") {
                 write('    <input name="-ejs-method-" type="hidden" value="' + options.method.toUpperCase() + '" />\r\n')
             }
+*/
         }
 
         function icon(uri: String, options: Object): Void {
@@ -298,6 +308,7 @@ module ejs.web {
             }
             options.style = append(options.style, "-ejs-table")
             let attributes = getAttributes({
+                apply: options.apply,
                 period: options.period,
                 refresh: options.refresh,
                 sort: options.sort,
@@ -341,7 +352,7 @@ module ejs.web {
                 if (options.cell) {
                     write('        <tr' + styleRow + '>\r\n')
                 } else {
-                    let att = getCellRowAtt(r, row, null, values, options)
+                    let att = getRowCellAtt(r, row, null, values, options)
                     write('        <tr' + att + styleRow + '>\r\n')
                 }
 
@@ -368,7 +379,7 @@ module ejs.web {
                         attr = append(attr, ' align="right"')
                     }
                     if (options.cell) {
-                        attr = append(attr, getCellRowAtt(r, row, name, values, options))
+                        attr = append(attr, getRowCellAtt(r, row, name, values, options))
                     }
                     value = view.formatValue(value, r, name, { formatter: column.formatter} )
                     write('            <td' + attr + '>' + value + '</td>\r\n')
@@ -394,13 +405,13 @@ module ejs.web {
             if (data is Array) {
                 for each (tuple in data) {
                     for (let [name, target] in tuple) {
-                        let uri = request.link(target)
+                        let uri = (att == "data-show") ? target : request.link(target)
                         write('      <li ' + att + '="' + uri + '">' + name + '</li>\r\n')
                     }
                 }
             } else {
                 for (let [name, target] in data) {
-                    let uri = request.link(target)
+                    let uri = (att == "data-show") ? target : request.link(target)
                     write('      <li ' + att + '="' + uri + '">' + name + '</li>\r\n')
                 }
             }
@@ -508,26 +519,30 @@ module ejs.web {
         /*
             Get attributes for table cells and rows
          */
-        private function getCellRowAtt(record, row, field, values, options): String {
-            let click, edit, key, method, params, uri
+        private function getRowCellAtt(record, row, field, values, options): String {
+            let click, edit, key, method, params, uri, remote
             if (options.click) {
                 ({method, uri, params, key}) = getTableLink(options.click, record, row, field, values, options)
                 click = buildLink(uri, options)
             } else if (options.edit) {
                 ({method, uri, params, key}) = getTableLink(options.edit, record, row, field, values, options)
                 edit = buildLink(uri, options)
+            } else if (options.remote) {
+                ({method, uri, params, key}) = getTableLink(options.remote, record, row, field, values, options)
+                remote = buildLink(uri, options)
             }
             if (params) {
                 /* Process params and convert to an encoded query string */
                 let list = []
-                for (let [key,value] in params) {
-                    list.push(Uri.encodeComponent(key) + "=" + Uri.encodeComponent(value))
+                for (let [k,v] in params) {
+                    list.push(Uri.encodeComponent(k) + "=" + Uri.encodeComponent(v))
                 }
                 params = list.join("&")
             }
             return mapAttributes({ 
                 "data-click": click,
                 "data-edit": edit,
+                "data-remote": remote,
                 key: key, 
                 keyFormat: options.keyFormat,
                 method: method,
@@ -540,11 +555,6 @@ module ejs.web {
          */
         private function getKeyAtt(keyFields: Array, record, row, values, options): String {
             let keys
-/*
-            if (!keyFields && options.click && record.id) {
-                keyFields = ["id"]
-            }
-*/
             if (keyFields) {
                 for (name in record) {
                     /* Add missing values if columns are not being displayed */
@@ -566,7 +576,7 @@ module ejs.web {
                     return keys.join("&")
                 }
             }
-            return ""
+            return null
         }
 
         /*

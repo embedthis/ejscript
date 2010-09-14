@@ -950,7 +950,7 @@ module ejs.web {
             Create a useful (deterministic) name for the route. Rules are:
             1. Use options.name if provided, else
             2. Use any action name, else
-            3. Use "index"
+            3. Use "default"
 
             Action names will be sleuthed from the template if no options provided.
             Outer routes are pre-pended if defined.
@@ -968,7 +968,8 @@ module ejs.web {
                     name = template.name
                 }
             }
-            name ||= "index"
+            //  MOB -- was index
+            name ||= "default"
             if (outer && !options.name) {
                 name = options.name + "/" + name
             }

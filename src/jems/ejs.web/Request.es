@@ -556,7 +556,9 @@ module ejs.web {
             if (Object.getOwnPropertyCount(target) > 0) {
                 let action = target.action
                 if (action) {
-                    action = action.trimStart("@")
+print("TRIM " + action)
+                    action = target.action = action.trimStart("@")
+print("TRIM TO " + action)
                     if (action.contains("/")) {
                         [target.controller, target.action] = action.split("/")
                     }
@@ -570,6 +572,7 @@ module ejs.web {
                     target.template ||= route.getTemplate(target.controller, target.route)
                 }
             }
+dump("MUH", target)
             return target
         }
 
