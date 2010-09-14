@@ -726,13 +726,14 @@ convertSearchPath() {
 
 
 findComponents() {
-    local with build host mandatory name path upperName os
+    local with build host mandatory name path upperName os system
 
     [ $quiet = 0 ] && echo -e "  # Finding components ..."
 
     for kind in BUILD HOST ; do
         if [ $quiet = 0 ] ; then
-            echo -e "  #\n  # Search for `lower $kind` components"
+            eval system=\$BLD_${KIND}_SYSTEM
+            echo -e "  #\n  # Search for `lower $kind` components for $system"
             echo -e "  #   (Modify build/search.config and build/components for component searching)\n  #"
         fi
 
