@@ -95,59 +95,60 @@
 #define ES_printHash                                                   74
 #define ES_instanceOf                                                  75
 #define ES_Http                                                        76
-#define ES_toOrdinal                                                   77
-#define ES_toPlural                                                    78
-#define ES_toSingular                                                  79
-#define ES_iterator_Iterable                                           80
-#define ES_iterator_Iterator                                           81
-#define ES_iterator_StopIteration                                      82
-#define ES_JSON                                                        83
-#define ES_deserialize                                                 84
-#define ES_serialize                                                   85
-#define ES_require                                                     86
-#define ES_Loader                                                      87
-#define ES_Locale                                                      88
-#define ES_Logger                                                      89
-#define ES_Math                                                        90
-#define ES_Memory                                                      91
-#define ES_Namespace                                                   92
-#define ES_Null                                                        93
-#define ES_Number                                                      94
-#define ES_Object                                                      95
-#define ES_typeOf                                                      96
-#define ES_Path                                                        97
-#define ES_Promise                                                     98
-#define ES_RegExp                                                      99
-#define ES_Socket                                                      100
-#define ES_Stream                                                      101
-#define ES_String                                                      102
-#define ES_System                                                      103
-#define ES_TextStream                                                  104
-#define ES_Timer                                                       105
-#define ES_setInterval                                                 106
-#define ES_clearInterval                                               107
-#define ES_setTimeout                                                  108
-#define ES_clearTimeout                                                109
-#define ES_Type                                                        110
-#define ES_Uri                                                         111
-#define ES_decodeURI                                                   112
-#define ES_decodeURIComponent                                          113
-#define ES_encodeURI                                                   114
-#define ES_encodeURIComponent                                          115
-#define ES_encodeObjects                                               116
-#define ES_Void                                                        117
-#define ES_Worker                                                      118
-#define ES_Event                                                       119
-#define ES_ErrorEvent                                                  120
-#define ES_ejs_worker_self                                             121
-#define ES_ejs_worker_exit                                             122
-#define ES_ejs_worker_postMessage                                      123
-#define ES_ejs_worker_onerror                                          124
-#define ES_ejs_worker_onmessage                                        125
-#define ES_XML                                                         126
-#define ES_XMLHttp                                                     127
-#define ES_XMLList                                                     128
-#define ES_global_NUM_CLASS_PROP                                       129
+#define ES_Inflector                                                   77
+#define ES_toOrdinal                                                   78
+#define ES_toPlural                                                    79
+#define ES_toSingular                                                  80
+#define ES_iterator_Iterable                                           81
+#define ES_iterator_Iterator                                           82
+#define ES_iterator_StopIteration                                      83
+#define ES_JSON                                                        84
+#define ES_deserialize                                                 85
+#define ES_serialize                                                   86
+#define ES_require                                                     87
+#define ES_Loader                                                      88
+#define ES_Locale                                                      89
+#define ES_Logger                                                      90
+#define ES_Math                                                        91
+#define ES_Memory                                                      92
+#define ES_Namespace                                                   93
+#define ES_Null                                                        94
+#define ES_Number                                                      95
+#define ES_Object                                                      96
+#define ES_typeOf                                                      97
+#define ES_Path                                                        98
+#define ES_Promise                                                     99
+#define ES_RegExp                                                      100
+#define ES_Socket                                                      101
+#define ES_Stream                                                      102
+#define ES_String                                                      103
+#define ES_System                                                      104
+#define ES_TextStream                                                  105
+#define ES_Timer                                                       106
+#define ES_setInterval                                                 107
+#define ES_clearInterval                                               108
+#define ES_setTimeout                                                  109
+#define ES_clearTimeout                                                110
+#define ES_Type                                                        111
+#define ES_Uri                                                         112
+#define ES_decodeURI                                                   113
+#define ES_decodeURIComponent                                          114
+#define ES_encodeURI                                                   115
+#define ES_encodeURIComponent                                          116
+#define ES_encodeObjects                                               117
+#define ES_Void                                                        118
+#define ES_Worker                                                      119
+#define ES_Event                                                       120
+#define ES_ErrorEvent                                                  121
+#define ES_ejs_worker_self                                             122
+#define ES_ejs_worker_exit                                             123
+#define ES_ejs_worker_postMessage                                      124
+#define ES_ejs_worker_onerror                                          125
+#define ES_ejs_worker_onmessage                                        126
+#define ES_XML                                                         127
+#define ES_XMLHttp                                                     128
+#define ES_XMLList                                                     129
+#define ES_global_NUM_CLASS_PROP                                       130
 
 /*
    Prototype (instance) slots for "global" type 
@@ -1039,6 +1040,45 @@
 #define ES_Http_write                                                  50
 #define ES_Http_NUM_INSTANCE_PROP                                      51
 #define ES_Http_NUM_INHERITED_PROP                                     0
+
+
+/*
+    Class property slots for the "Inflector" type 
+ */
+#define ES_Inflector__initializer___Inflector_                         0
+#define ES_Inflector_irregularMap                                      1
+#define ES_Inflector_pluralRules                                       2
+#define ES_Inflector_singularRules                                     3
+#define ES_Inflector_uncountable                                       4
+#define ES_Inflector_addIrregular                                      5
+#define ES_Inflector_addPlural                                         6
+#define ES_Inflector_addSingular                                       7
+#define ES_Inflector_addUncountable                                    8
+#define ES_Inflector_toOrdinal                                         9
+#define ES_Inflector_toPlural                                          10
+#define ES_Inflector_toSingular                                        11
+#define ES_Inflector_NUM_CLASS_PROP                                    12
+
+/*
+   Prototype (instance) slots for "Inflector" type 
+ */
+#define ES_Inflector_NUM_INSTANCE_PROP                                 0
+#define ES_Inflector_NUM_INHERITED_PROP                                0
+
+/*
+    Local slots for methods in type "Inflector" 
+ */
+#define ES_Inflector_addIrregular_singular                             0
+#define ES_Inflector_addIrregular_plural                               1
+#define ES_Inflector_addPlural_expr                                    0
+#define ES_Inflector_addPlural_replacement                             1
+#define ES_Inflector_addSingular_expr                                  0
+#define ES_Inflector_addSingular_replacement                           1
+#define ES_Inflector_addUncountable_expr                               0
+#define ES_Inflector_addUncountable_replacement                        1
+#define ES_Inflector_toOrdinal_number                                  0
+#define ES_Inflector_toPlural_word                                     0
+#define ES_Inflector_toSingular_word                                   0
 #define ES_iterator_Iterable_NUM_CLASS_PROP                            0
 
 /*
@@ -1945,6 +1985,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1294922
+#define _ES_CHECKSUM_ejs   1326519
 
 #endif
