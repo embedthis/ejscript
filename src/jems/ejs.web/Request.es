@@ -555,13 +555,13 @@ module ejs.web {
             }
             if (Object.getOwnPropertyCount(target) > 0) {
                 let action = target.action
-                if (action && action.contains("/")) {
-                    [target.controller, target.action] = action.split("/")
+                if (action) {
+                    action = action.trimStart("@")
+                    if (action.contains("/")) {
+                        [target.controller, target.action] = action.split("/")
+                    }
                 }
-                if (target.controller) {
-                    //  MOB - messes up Cancel (/Product) button link. 
-                    // target.action ||= "index"
-                } else if (target.action != undefined && controller) {
+                if (!target.controller && target.action != undefined && controller) {
                     target.controller = controller.controllerName
                 }
                 if (route) {

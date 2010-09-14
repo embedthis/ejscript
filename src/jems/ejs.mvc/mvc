@@ -992,7 +992,7 @@ print(e)
     function generateHomePage(): Void {
         let data = Templates.HomePage.replace(/\${NAME}/g, appName.toPascal())
         data = data.replace(/\${STATIC}/g, dirs.static)
-        makeFile(dirs.views.join("Base/home.ejs"), data, "HomePage")
+        makeFile(dirs.views.join("Base/index.ejs"), data, "HomePage")
     }
 
     function generatePages(): Void {
@@ -1548,43 +1548,41 @@ public class ${NAME}Controller extends BaseController {
         ${LOWER_MODEL} = new ${MODEL}(params.${LOWER_MODEL})
         if (${LOWER_MODEL}.save()) {
             inform("New ${LOWER_MODEL} created")
-            redirect("index")
+            redirect("@")
         } else {
-            renderView("edit")
-        }
-    }
-
-    action function edit() {
-        ${LOWER_MODEL} = ${MODEL}.find(params.id)
-    }
-
-    action function index() {
-    }
-
-    action function init() {
-        ${LOWER_MODEL} = new ${MODEL}
-        renderView("edit")
-    }
-
-    action function show() {
-        ${LOWER_MODEL} = ${MODEL}.find(params.id)
-    }
-
-    action function update() {
-        ${LOWER_MODEL} = ${MODEL}.find(params.id)
-        if (${LOWER_MODEL}.saveUpdate(params.${LOWER_MODEL})) {
-            inform("${MODEL} updated successfully.")
-            redirect("index")
-        } else {
-            /* Validation failed */
-            renderView("edit")
+            writeView("edit")
         }
     }
 
     action function destroy() {
         ${MODEL}.remove(params.id)
         inform("${MODEL} " + params.id + " removed")
-        redirect("index")
+        redirect("@")
+    }
+
+    action function edit() {
+        ${LOWER_MODEL} = ${MODEL}.find(params.id)
+    }
+
+    action function init() {
+        ${LOWER_MODEL} = new ${MODEL}
+        writeView("edit")
+    }
+
+    action function show() {
+        ${LOWER_MODEL} = ${MODEL}.find(params.id)
+        writeContent(post)
+    }
+
+    action function update() {
+        ${LOWER_MODEL} = ${MODEL}.find(params.id)
+        if (${LOWER_MODEL}.saveUpdate(params.${LOWER_MODEL})) {
+            inform("${MODEL} updated successfully.")
+            redirect("@")
+        } else {
+            /* Validation failed */
+            writeView("edit")
+        }
     }
 
     NEXT_ACTION
@@ -1598,9 +1596,8 @@ public class ${NAME}Controller extends BaseController {
     public static const ScaffoldIndexView = 
 '<h1>${MODEL} List</h1>
 
-<% table(${MODEL}.findAll(), {click: "#edit"}) %>
-<br/>
-<% buttonLink("New ${MODEL}", "#init") %>
+<% table(${MODEL}.findAll(), {click: "@edit"}) %>
+<% buttonLink("New ${MODEL}", "@init") %>
 '
 
 
@@ -1610,10 +1607,10 @@ public class ${NAME}Controller extends BaseController {
     public static const ScaffoldEditView = 
 '<h1><%= (${LOWER_MODEL}.id) ? "Edit" : "Create" %> ${MODEL}</h1>
 
-<% form("update", ${LOWER_MODEL}) %>
+<% form(${LOWER_MODEL}) %>
 
     <table border="0">
-    <% for each (name in ${MODEL}.columnNames) {
+    <% for each (name in ${MODEL}.getColumnNames()) {
         if (name == "id") continue
         uname = name.toPascal()
     %>
@@ -1621,9 +1618,9 @@ public class ${NAME}Controller extends BaseController {
     <% } %>
     </table>
 
-    <% button("OK", "commit") %>
-    <% buttonLink("Cancel", "#") %>
-    <% if (${LOWER_MODEL}.id) buttonLink("Delete", {method: "DELETE", uri: "#destroy"}) %>
+    <% button("commit", "OK") %>
+    <% buttonLink("Cancel", "@") %>
+    <% if (${LOWER_MODEL}.id) buttonLink("Delete", {method: "DELETE", action: "destroy"}) %>
 <% endform() %>
 '
 
@@ -1732,34 +1729,15 @@ These files are also created:
 */
 
     /*
-     ***************************  View header and footer templates ******************
-     */
-    public static const ViewHeader = 
-'
-require ejs.web
-
-public dynamic class ${CONTROLLER}${VIEW}View extends View {
-    function ${CONTROLLER}${VIEW}View(request: Request) {
-        super(request)
-    }
-
-    override public function render(request: Request) {
-'
-
-    public static const ViewFooter = '
-    }
-}
-'
-
-    /*
      ***************************  start.es ****************************
      */
     public static const Start = 
 '
 require ejs.web
     
-let server: HttpServer = new HttpServer(".", ".")
-var router = Router(Router.Top)
+let server: HttpServer = new HttpServer
+var router = new Router(Router.Restful)
+// router.show()
 
 server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
@@ -1790,7 +1768,7 @@ module App {
 <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
     <% securityToken() %>
-    <% icon("{STATIC}/images/favicon.ico") %>
+    <% icon("/${STATIC}/images/favicon.ico") %>
     <% stylesheet() %>
     <% script() %>
     <title>@@title</title>
@@ -1819,7 +1797,7 @@ module App {
 <div class="contentLeft">
     <h1>Welcome to Ejscript</h1>
 
-    <img src="<%= request.home.join("{STATIC}/images/splash.jpg") %>" class="wrapLeft shadow" alt=""/>
+    <% image("/${STATIC}/images/splash.jpg", { style: "wrapLeft shadow" }) %>
     <p>Ejscript is a web framework that makes it dramatically easier to create dynamic web 
     applications using Server-Side JavaScript.</p>
 
@@ -1867,8 +1845,8 @@ module App {
         <li><a href="http://ejscript.org/products/ejs/doc/product/index.html">Documentation</li>
         <li><a href="http://ejscript.org/products/ejs/doc/ref/ejs/webArchitecture.html">Web Framework</li>
         <li><a href="http://ejscript.org/products/ejs/doc/api/ejscript/index.html">Ejscript API</li>
-        <li><a href="http://www.embedthis.com/blog/">Blog</li>
-        <li><a href="http://www.appwebserver.org">Appweb</li>
+        <li><a href="http://embedthis.com/blog/">Blog</li>
+        <li><a href="http://appwebserver.org">Appweb</li>
     </ul>
 </div>
 '

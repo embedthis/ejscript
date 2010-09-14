@@ -288,6 +288,7 @@ module ejs.web {
                 addCatchall()
                 break
             case Restful:
+                addHome("@Base/")
                 addHandlers()
                 addRestful()
                 addCatchall()
