@@ -13,6 +13,7 @@
 /********************************** Forwards **********************************/
 
 static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn);
+static EjsHttpServer *getServerContext(HttpConn *conn);
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp);
 static void setupConnTrace(HttpConn *conn);
 static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
@@ -182,7 +183,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     EjsObj      *endpoint;
     EjsPath     *root;
 
-    endpoint = argv[0];
+    endpoint = (argc >= 1) ? argv[0] : ejs->nullValue;
 
     if (sp->server) {
         mprFree(sp->server);
@@ -648,21 +649,24 @@ static void setupConnTrace(HttpConn *conn)
 }
 
 
-static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
+static EjsHttpServer *getServerContext(HttpConn *conn)
 {
     Ejs             *ejs;
-    EjsRequest      *req;
     EjsPath         *dirPath;
+    EjsHttpServer   *sp;
     HttpLoc         *loc;
     cchar           *dir;
 
+    if ((sp = httpGetServerContext(conn->server)) != 0) {
+        return sp;
+    }
     if (conn->tx->handler->match) {
         /*
             Hosted handler. Must supply a location block which defines the HttpServer instance.
          */
         loc = conn->rx->loc;
         if (loc == 0 || loc->context == 0) {
-            mprError(sp, "Location block is not defined for request");
+            mprError(conn, "Location block is not defined for request");
             return 0;
         }
         sp = (EjsHttpServer*) loc->context;
@@ -679,11 +683,24 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
         }
         httpSetServerContext(conn->server, sp);
         httpSetRequestNotifier(conn, (HttpNotifier) stateChangeNotifier);
-    } else {
-        ejs = sp->ejs;
-        dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-        dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : ".";
+        return sp;
     }
+    mprError(conn, "Server context not defined for request");
+    return NULL;
+}
+
+
+static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
+{
+    Ejs             *ejs;
+    EjsRequest      *req;
+    EjsPath         *dirPath;
+    cchar           *dir;
+
+    ejs = sp->ejs;
+    dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
+    dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : ".";
+
     req = ejsCreateRequest(ejs, sp, conn, dir);
     httpSetConnContext(conn, req);
     conn->dispatcher = ejs->dispatcher;
@@ -724,11 +741,15 @@ static void runEjs(HttpQueue *q)
 
     conn = q->conn;
     if (!conn->abortPipeline) {
-        sp = httpGetServerContext(conn->server);
-        mprAssert(sp);
-        if ((req = httpGetConnContext(conn)) == 0 && (req = createRequest(sp, conn)) == 0) {
-            return;
+        if ((req = httpGetConnContext(conn)) == 0) {
+            if ((sp = getServerContext(conn)) == 0) {
+                return;
+            }
+            if ((req = createRequest(sp, conn)) == 0) {
+                return;
+            }
         }
+        sp = httpGetServerContext(conn->server);
         if (!req->accepted) {
             /* Server accept event */
             req->accepted = 1;

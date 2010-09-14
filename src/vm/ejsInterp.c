@@ -3828,10 +3828,12 @@ static void manageBreakpoint(Ejs *ejs)
 
     //  TODO - should have a switch to turn this on / off
     //  OPT - compiler should strip '\n' from currentLine and we should explicitly add it here
+
     optable = ejsGetOptable(ejs);
-    mprLog(ejs, 7, "%0s %04d: [%d] %02x: %-35s # %s:%d %s",
-        mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
-        (uchar) opcode, optable[opcode].name, fp->filename, fp->lineNumber, fp->currentLine);
+    if (mprGetLogLevel(ejs) > 7) {
+        mprPrintf(ejs, "%0s %04d: [%d] %02x: %-35s # %s:%d %s",
+            mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
+            (uchar) opcode, optable[opcode].name, fp->filename, fp->lineNumber, fp->currentLine);
     if (stop && once++ == 0) {
         mprSleep(ejs, 0);
     }
