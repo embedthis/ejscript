@@ -25,10 +25,11 @@ module ejs.web {
 
         Various controls have custom options, but they share the following common set of option properties:
 
+        @option action String Action to invoke. This can be a URI string or a Controller action of the form
+            @Controller/action.
         @option apply String Client DOM-ID to apply the data fetched from the $remote URI.
         @option background String Background color. This is a CSS RGB color specification. For example "FF0000" for red.
-        @option click (Boolean|Uri|String) The control is click by the user. If set to true, the rest of the 
-            options specifies the URI to invoke. Otherwise click can be set to a URI to invoke.
+
         @option color String Foreground color. This is a CSS RGB color specification. For example "FF0000" for red.
         @option confirm String Message to prompt the user to requeset confirmation before submitting a form or request.
         @option data-* All other data-* names are passed through to the HTML unmodified.
@@ -165,7 +166,8 @@ MOB -- better name? "dom"
          */
         function anchor(text: String, options: Object = {}): Void {
             options = getOptions(options)
-            options.click ||= true
+            //  MOB -- is this needed?
+//ZZ options.click ||= true
             // options.action ||= text.split(" ")[0].toLowerCase()
             getConnector("anchor", options).anchor(text, options)
         }
@@ -219,7 +221,7 @@ MOB -- better name? "dom"
                 linechart, imagelinechart, imagepiechart, scatterchart (and more)
             @example
                 <% chart(grid, { refresh: "/getData", period: 2000" }) %>
-                <% chart(data, { onclick: "action" }) %>
+                <% chart(data, { action: "@update" }) %>
          */
         function chart(data: Array, options: Object = {}): Void
             getConnector("chart", options).chart(data, options)
@@ -348,10 +350,11 @@ MOB -- much more doc here
             @param options Optional extra options. See $View for a list of the standard options.
             @examples
                 <% image("pic.gif") %>
-                <% image("pic.gif", { refresh: "/getData", period: 2000, style: "myStyle" }) %>
-                <% image("pic.gif", { click: true, uri: "/foreground/click" }) %>
-                <% image("checkout.gif", { click: true, uri: "@checkout" }) %>
-                <% image("pic.gif", { remote: "/background/click" }) %>
+                <% image("pic.gif", { refresh: "@store/getData", period: 2000, style: "myStyle" }) %>
+MOB - uri not supported
+                <% image("pic.gif", { action: "@foreground/click" }) %>
+                <% image("checkout.gif", { action: "@checkout" }) %>
+                <% image("pic.gif", { remote: "@store/update" }) %>
          */
         function image(src: String, options: Object = {}): Void
             getConnector("image", options).image(src, options)
@@ -413,8 +416,8 @@ print("CATCH " + e)
             @examples
                 <% label("Hello World") %>
                 <% label("Hello", { refresh: "/getData", period: 2000, style: "myStyle" }) %>
-                <% label("Hello", { click: "/foreground/link" }) %>
-                <% label("Checkout", { click: true, uri: "@checkout" }) %>
+                <% label("Hello", { action: "/foreground/link" }) %>
+                <% label("Checkout", { action: "@checkout" }) %>
          */
         function label(text: String, options: Object = {}): Void
             getConnector("label", options).label(text, options)
@@ -554,6 +557,15 @@ print("CATCH " + e)
                 objects where each object represents the data for a row. The column names are the object property names 
                 and the cell text is the object property values.
             @param options Optional extra options. See $View for a list of the standard options.
+            @option action (Boolean|Uri|String|Function) URI to invoke when editing cells. 
+                or columns must be marked as editable in the columns properties. If set to a function, the function will 
+                be invoked to provide the action uri and parameters. The function should be of the form:
+
+                function click(record, field: String, value, options): {method: String, uri: Uri, params: Object}
+
+                If using cell based click/edit, then field will be set to the relevant field. If using row click/edit,
+                then field will be null. 
+
             @option keyFormat String Define how the keys will be handled for click and edit URIs. 
                 Set to one of the set: ["body", "path", "query"]. Default is "path".
                 Set to "query" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
@@ -565,16 +577,6 @@ print("CATCH " + e)
                 URI and params manually.
             @option cell Boolean Set to true to make click or edit links apply per cell instead of per row. 
                 The default is false.
-            @option click (Boolean|Uri|String) URI to invoke when editing cells. If set to true, the rest of the 
-                options specifies the URI to invoke. Otherwise click can be set to a URI to invoke. The relevant column 
-                or columns must be marked as editable in the columns properties. If set to a function, the function will 
-                be invoked to provide the click method, uri and parameters. The function should be of the form:
-
-                function click(record, field: String, value, options): {method: String, uri: Uri, params: Object}
-
-                If using cell based click/edit, then field will be set to the relevant field. If using row click/edit,
-                then field will be null. 
-
             @option columns (Array|Object) The columns list can be either an array of column names or an object hash 
                 of column objects where each column entry is hash of column options. 
                 Column options: align, formatter, header, sort, sortOrder, style, width.
@@ -622,11 +624,11 @@ print("CATCH " + e)
             </ul>
         
             @example
-                <% table(gridData, { refresh: "/getData", period: 1000, pivot: true" }) %>
-                <% table(gridData, { click: "edit" }) %>
+                <% table(gridData, { refresh: "@update", period: 1000, pivot: true" }) %>
+                <% table(gridData, { action: "@edit" }) %>
                 <% table(Table.findAll()) %>
                 <% table(gridData, {
-                    click: "edit",
+                    action: "@edit",
                     sort: "Product",
                     columns: {
                         product:    { header: "Product", width: "20%" }
@@ -635,6 +637,7 @@ print("CATCH " + e)
                  }) %>
          */
         function table(data, options: Object = {}): Void {
+            options = getOptions(options)
             //  MOB - move to client side (data-pivot). No good here as it can't be refreshed!
             if (options.pivot) {
                 data = pivot(data)
@@ -645,17 +648,17 @@ print("CATCH " + e)
         /**
             Render a tab control. 
             The tab control can manage a set of panes and selectively show and hide or invoke the selected panes. 
-            If the click option is defined, the selected pane will be invoked via a foreground click. If the
+            If the action option is defined, the selected pane will be invoked via a foreground click. If the
             remote option is defined, the selected pane will be invoked via a background click. Otherwise the 
             selected pane will be made visible and other panes will be hidden.
             @param data Initial data for the control. Tab data can be an array of objects -- one per tab. It can also
                 be a single object where the tab text is the property key and the property value is the target.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option click Invoke the target URI in the foreground when clicked.
-            @option remote Invoke the target URI in the background when clicked.
+            @option action Invoke the target action or URI in the foreground when clicked.
+            @option remote Invoke the target action or URI in the background when clicked.
             @example
                 tabs({Status: "pane-1", "Edit: "pane-2"})
-                tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: true})
+                tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { action: "@someAction"})
          */
         function tabs(data: Object, options: Object = {}): Void
             getConnector("tabs", options).tabs(data, options)
@@ -740,6 +743,7 @@ MOB -- review and rethink this
                 if (viewPath.controller) {
                     cname = viewPath.controller
                 }
+//MOB - reivew
                 if (viewPath.action) {
                     action = viewPath.action
                 }
@@ -862,7 +866,7 @@ MOB -- review and rethink this
         }
 
         private function getOptions(options: Object): Object
-            (options is String) ? request.makeUriHash(options) : options
+            (typeOf(Object) != "Object") ? request.makeUriHash(options) : options
 
 //  MOB -- refactor - poor API
         /**

@@ -41,17 +41,20 @@
     /*
         Background request using data-remote attributes. Apply the result to the data-apply (or current element).
      */
-    function backgroundRequest() {
-        var elt     = $(this),
-            data    = elt.is('form') ? elt.serializeArray() : [],
-            method  = elt.attr('method') || elt.attr('data-method') || 'GET',
-            /* Data-url is a modified remote URL */
-            //  MOB -- remove data-url
-            url     = elt.attr('action') || elt.attr('href') || elt.attr('data-url') || elt.attr('data-remote');
+    function backgroundRequest(url) {
+        var elt         = $(this),
+            data        = elt.is('form') ? elt.serializeArray() : [],
+            method      = elt.attr('method') || elt.attr('data-method') || 'GET',
+            key         = elt.attr('data-key');
+            keyFormat   = elt.attr('data-key-format');
 
         if (url === undefined) {
-            throw "No URL specified for remote call";
+            url = elt.attr('action') || elt.attr('href') || elt.attr('data-remote');
+            if (!url) {
+                throw "No URL specified for remote call";
+            }
         }
+        url = addKeysToUrl(url, key, keyFormat);
         elt.trigger('http:before');
         // MOB changeUrl(url);
         $.ajax({
@@ -117,6 +120,23 @@
         }
     }
 
+    function addKeysToUrl(url, key, keyFormat) {
+        if (keyFormat == "path") {
+            var keys = [];
+            var split = key.split("&");
+            for (i in split) {
+                var pair = split[i];
+                keys.push(pair.split("=")[1]);
+            } 
+            if (keys.length > 0) {
+                url = url + "/" + keys.join("/");
+            }
+        } else if (keyFormat == "query") {
+            url = url + "?" + key;
+        }
+        return url;
+    }
+
     /*
         Foreground request using data-* element attributes. This makes all elements clickable and supports 
         non-GET methods with security tokens to aleviate CSRF.
@@ -124,7 +144,7 @@
     function request() {
         var el          = $(this);
         var method      = el.attr('method') || el.attr('data-method') || 'GET';
-        var url         = el.attr('action') || el.attr('href') || el.attr('data-click');
+        var url         = el.attr('action') || el.attr('href') || el.attr('data-action');
         var key         = el.attr('data-key');
         var keyFormat   = el.attr('data-key-format');
         var params;
@@ -134,25 +154,11 @@
             return;
         }
         method = method.toUpperCase();
-        if (key) {
-            if (!keyFormat) {
-                keyFormat = (method == "GET") ? "path" : null;
-            }
-        } else keyFormat = null;
-
-        if (keyFormat == "path") {
-            var keys = [];
-            var split = key.split("&");
-            for (i in split) {
-                pair = split[i];
-                keys.push(pair.split("=")[1]);
-            } 
-            if (keys.length > 0) {
-                url = url + "/" + keys.join("/");
-            }
-        } else if (keyFormat == "query") {
-            url = url + "?" + key;
-        } else if (keyFormat == "body") {
+        if (key && !keyFormat) {
+            keyFormat = (method == "GET") ? "path" : null;
+        }
+        url = addKeysToUrl(url, key, keyFormat);
+        if (keyFormat == "body") {
             params = key.split("&");
         }
         if (method == "GET") {
@@ -361,10 +367,55 @@
         elt.trigger('confirm');
     });
 
-    /* Click with tabs */
-//  MOB -- should this be this or div#-ejs-tabs
-    $('div.tabbed-dialog li').live('click', function(e) {
-        var next = $(this).attr('data-remote');
+    /* Click in form. Ensure submit buttons are added for remote calls */
+    $('input[type=submit]').live('click', function (e) {
+        $(this).attr("checked", true);
+    });
+
+    /* Click on link foreground with data-method */
+    $('a[data-method]:not([data-remote])').live('click', function (e) {
+        request.apply(this)
+        e.preventDefault();
+    });
+
+    /* Click on table row data-remote */
+    $('tr[data-remote]').live('click', function(e) {
+        var table = $(this).parents("table");
+        var url = $(this).attr('data-remote');
+        backgroundRequest.call(table, url);
+        e.preventDefault();
+    });
+
+    /* Click data-remote */
+    $('button[data-remote]').live('click', function(e) {
+        backgroundRequest.apply(this);
+        e.preventDefault();
+    });
+
+    $('form').live('submit', function (e) {
+        var method = $(this).attr('data-method');
+        if (method) {
+            $(this).append('<input name="-ejs-method-" value="' + method + '" type="hidden" />');
+        }
+    });
+
+    //  MOB -- should dynamically add data-method input field
+    /* Click on form with data-remote (background) */
+    $('form[data-remote]').live('submit', function (e) {
+        backgroundRequest.apply(this);
+        e.preventDefault();
+    });
+
+
+    /* Click on link with data-remote (background) */
+    $('a[data-remote],input[data-remote]').live('click', function (e) {
+        backgroundRequest.apply(this);
+        e.preventDefault();
+    });
+
+    /* Click data-toggle */
+    $('li[data-toggle]').live('click', function(e) {
+        var next = $(this).attr('data-toggle');
         $('div[id|=pane]').hide();
         var pane = $('div#' + next);
         pane.fadeIn(500);
@@ -374,73 +425,14 @@
         return false
     });
 
-    /* Click in form. Ensure submit buttons are added for remote calls */
-    $('input[type=submit]').live('click', function (e) {
-        $(this).attr("checked", true);
-    });
-
-    /* Click on table data-remote="" */
-    $('table[data-remote] tr').live('click', function(e) {
-        var table = $(this).parents("table");
-        //  MOB -- remove this and use data-key
-        var id = $(this).attr('data-id');
-        if (!id) {
-            id = $(this).parent().children().index($(this)) + 1;
-        }
-        //  MOB 
-        table.attr('data-url', table.attr('data-remote') + "?id=" + id);
-        backgroundRequest.apply(this);
-        e.preventDefault();
-    });
-
-    /* Click with button data-remote */
-    $('button[data-remote]').live('click', function(e) {
-        backgroundRequest.apply(this);
-        e.preventDefault();
-    });
-
-    /* Click on form with data-remote (background) */
-    $('form[data-remote]').live('submit', function (e) {
-        backgroundRequest.apply(this);
-        e.preventDefault();
-    });
-
-    /* Click on link with data-remote (background) */
-    $('a[data-remote],input[data-remote]').live('click', function (e) {
-        backgroundRequest.apply(this);
-        e.preventDefault();
-    });
-
-    /* Click on link foreground with data-method */
-    $('a[data-method]:not([data-remote])').live('click', function (e) {
-        request.apply(this)
-/* UNUSED
-        var link = $(this);
-        var href = link.attr('href');
-        var method = link.attr('data-method');
-        var tokenName = $('meta[name=SecurityTokenName]').attr('content');
-        var token = $('meta[name=' + tokenName + ']').attr('content');
-        if (token) {
-            $('<form method="post" action="' + url + '"/>').hide().
-                append('<input name="__method__" value="' + method + '" type="hidden" />').
-                append('<input name="' + tokenName + '" value="' + token + '" type="hidden" />').
-                appendTo('body').
-                submit();
-        } else {
-            alert("Missing Security Token");
-        }
-*/
-        e.preventDefault();
-    });
-
-    /* Click on anything with data-click */
-    $('[data-click]').live('click', function (e) {
+    /* Click on anything with data-action */
+    $('[data-action]').live('click', function (e) {
         request.apply(this);
         e.preventDefault();
     });
 
-    $('[data-click]').live('mouseover', function (e) {
-        var click = $(this).attr("data-click");
+    $('[data-action]').live('mouseover', function (e) {
+        var click = $(this).attr("data-action");
         if (click.indexOf("http://") == 0) {
             window.status = click;
         } else {
@@ -448,7 +440,7 @@
             window.status = location.protocol + "//" + location.host + click;
         }
     });
-    $('[data-click]').live('mouseout', function (e) {
+    $('[data-action]').live('mouseout', function (e) {
             window.status = "";
     });
 

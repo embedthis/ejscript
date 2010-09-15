@@ -493,8 +493,10 @@ module ejs.web {
             @option path String URI path portion
             @option query String URI query parameters. Does not include "?"
             @option reference String URI path reference. Does not include "#"
-            @option controller String Controller name if using a Controller-based route
-            @option action String Action name if using a Controller-based route
+            @option controller String Controller name if using a Controller-based route. This can also be specified via
+                the action option.
+            @option action String Action to invoke. This can be a URI string or a Controller action of the form
+                @Controller/action.
             @option other String Other route table tokens
             @example
                 Given a current request of http://example.com/samples/demo" and "r" == the current request:
@@ -503,62 +505,88 @@ module ejs.web {
                 r.link("images/splash.png").complete(r.uri)  returns "http://example.com/samples/images/splash.png"
                 r.link("images/splash.png").relative(r.uri)  returns "images/splash.png"
 
-                r.link({action: "checkout")
-                r.link({controller: "User", action: "logout")
-                r.link("@User.logout")
-                r.link({uri: "http://example.com/checkout"})
-
-                r.link({route: "default", action: "checkout")
+                r.link("http://example.com/index.html")
+                r.link("/path/to/index.html")
+                r.link("@Controller/checkout")
+                r.link("@Controller/")
                 r.link("@checkout")
                 r.link("@")
+                r.link({action: "@checkout")
+                r.link({action: "@logout", controller: "Admin")
+                r.link({uri: "http://example.com/checkout"})
+
+                r.link({route: "default", action: "@checkout")
                 r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
 
             @return A normalized, server-local Uri object.
          */
         function link(target: Object): Uri {
             target = makeUriHash(target)
+            //  MOB -- maybe make inline
+            if (!target.uri) {
+                prepTarget(target)
+            }
             if (target.route) {
                 target = Uri.template(target.template, target).path
             }
             return uri.local.resolve(target).normalize
         }
 
-        /**
-            Make a URI hash from a string.  This converts the target URI specification into a hash of properties 
-            describing the target URI.
-            @param target String URI target to convert. If this is not a string, the target is returned.
-            @return An object hash representing the target.
-            @example: Sample targets
-                "/path/to/something"
-                "http://example.com/path/to/something"
-                "@controller/action"
-                "@controller/"
-                "@action"
-                URI object
-                {scheme, host, port, path, reference, query, uri: uriString}
-                {controller: name, action: name}
-                {action: "Controller/action"}
-                {custom: name, custom: name}
-                {uri: AnyTargetAbove }
-         */
+        private function prepTarget(target): Void {
+            if (target.action) {
+                if (target.action[0] == '@') {
+                    target.action = target.action.trimStart("@")
+                    if (target.action.contains("/")) {
+                        [target.controller, target.action] = target.action.split("/")
+                    }
+                    if (!target.controller && controller) {
+                        target.controller = controller.controllerName
+                    }
+                    target.route = target.action || "default"
+                }
+            }
+            if (route) {
+                target.route ||= "default"
+                target.scriptName ||= scriptName
+                target.template ||= route.getTemplate(target.controller, target.route)
+            }
+        }
+
+         // MOB -- DOC
         function makeUriHash(target): Object {
             if (target is Uri) {
                 target = target.toString()
             }
             if (target is String) {
                 if (target[0] == '@') {
-                    target = {action: target.slice(1)}
+                    target = {action: target}
                 } else {
                     /* Non-mvc URI string */
+                    return {uri: (target[0] == '/') ? (scriptName + target) : target}
+                }
+            }
+            return target
+        }
+
+/*
+    MOB - UNUSED
+        function makeUriHash(target): Object {
+            if (target is Uri) {
+                target = target.toString()
+            }
+            if (target is String) {
+                if (target[0] == '@') {
+                    //ZZZ target = {action: target.slice(1)}
+                    target = {action: target}
+                } else {
+                    // Non-mvc URI string 
                     return {uri: (target[0] == '/') ? (scriptName + target) : target}
                 }
             }
             if (Object.getOwnPropertyCount(target) > 0) {
                 let action = target.action
                 if (action) {
-print("TRIM " + action)
                     action = target.action = action.trimStart("@")
-print("TRIM TO " + action)
                     if (action.contains("/")) {
                         [target.controller, target.action] = action.split("/")
                     }
@@ -572,9 +600,10 @@ print("TRIM TO " + action)
                     target.template ||= route.getTemplate(target.controller, target.route)
                 }
             }
-dump("MUH", target)
             return target
         }
+*/
+
 
         /**
             Select the response content type based on the request "Accept" header . See RFC-2616.

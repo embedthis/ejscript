@@ -22,7 +22,6 @@ module ejs.web {
             -ejs-table
             -ejs-table-download
             -ejs-even-row
-            -ejs-click
             -ejs-field-error
             -ejs-form-error
         @stability prototype
@@ -41,7 +40,7 @@ module ejs.web {
 
         /*
             Mapping of helper options to HTML attributes.
-            NOTE: data-*, click and remote are handled specially in getAttributes.
+            NOTE: data-*, action and remote are handled specially in getAttributes.
          */
         private static const htmlOptions: Object = { 
             "apply":                "data-apply",
@@ -105,7 +104,7 @@ module ejs.web {
 
         function buttonLink(text: String, options: Object): Void {
 print("@@@@@@@@@@@@@@@@@@")
-            options.click ||= true
+//ZZ options.click ||= true
 dump("BL", options)
             let attributes = getAttributes(options)
 print('ATT ' + attributes)
@@ -152,7 +151,7 @@ print('ATT ' + attributes)
             }
             let uri = request.link(options)
             emitFormErrors(record, options)
-            let attributes = getAttributes(options)
+            let attributes = getAttributes(options, {action: true, "data-action": true})
 /*
    MOB - remove
             Exclude method from the mapped-attribute list. Don't want data-method 
@@ -272,6 +271,7 @@ print('ATT ' + attributes)
             if (uri == null) {
                 let sdir = request.config.directories.static || "static"
                 for each (uri in defaultScripts) {
+print("SCRIPT " + "/" + sdir + uri)
                     uri = request.link("/" + sdir + uri)
                     write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
                 }
@@ -394,24 +394,24 @@ print('ATT ' + attributes)
         function tabs(data: Object, options: Object): Void {
             let attributes = getAttributes(options)
             let att
-            if (options.remote) {
+            if (options.toggle) {
+                att = "data-toggle"
+            } else if (options.remote) {
                 att = "data-remote"
-            } else if (options.click) {
-                att = "data-click"
             } else {
-                att = "data-show"
+                att = "data-action"
             }
             write('<div class="-ejs-tabs">\r\n    <ul>\r\n')
             if (data is Array) {
                 for each (tuple in data) {
                     for (let [name, target] in tuple) {
-                        let uri = (att == "data-show") ? target : request.link(target)
+                        let uri = (att == "data-toggle") ? target : request.link(target)
                         write('      <li ' + att + '="' + uri + '">' + name + '</li>\r\n')
                     }
                 }
             } else {
                 for (let [name, target] in data) {
-                    let uri = (att == "data-show") ? target : request.link(target)
+                    let uri = (att == "data-toggle") ? target : request.link(target)
                     write('      <li ' + att + '="' + uri + '">' + name + '</li>\r\n')
                 }
             }
@@ -492,8 +492,16 @@ print('ATT ' + attributes)
         /*
             Like link but supports location == true to use the rest of options.
          */
-        private function buildLink(location: Object, options: Object): Uri
+        private function buildLink(location: Object, options: Object): Uri {
+/* MOB TRUE
             request.link(location === true ? options : location)
+*/
+            if (typeOf(location) != "Object") {
+                location = request.makeUriHash(location)
+            }
+            location = blend(location, options, false)
+            return request.link(location)
+        }
 
         /**
             Map options to a HTML attribute string. See htmlOptions and $View for a discussion on standard options.
@@ -505,10 +513,10 @@ print('ATT ' + attributes)
             if (options.hasError) {
                 options.style = append(options.style, "-ejs-field-error")
             }
-            if (options.remote) {
+            if (options.action) {
+                options["data-action"] = buildLink(options.action, options)
+            } else if (options.remote) {
                 options["data-remote"] = buildLink(options.remote, options)
-            } else if (options.click) {
-                options["data-click"] = buildLink(options.click, options)
             }
             if (options.refresh && !options.domid) {
                 options.domid = getNextID()
@@ -520,10 +528,10 @@ print('ATT ' + attributes)
             Get attributes for table cells and rows
          */
         private function getRowCellAtt(record, row, field, values, options): String {
-            let click, edit, key, method, params, uri, remote
-            if (options.click) {
-                ({method, uri, params, key}) = getTableLink(options.click, record, row, field, values, options)
-                click = buildLink(uri, options)
+            let action, edit, key, method, params, uri, remote
+            if (options.action) {
+                ({method, uri, params, key}) = getTableLink(options.action, record, row, field, values, options)
+                action = buildLink(uri, options)
             } else if (options.edit) {
                 ({method, uri, params, key}) = getTableLink(options.edit, record, row, field, values, options)
                 edit = buildLink(uri, options)
@@ -540,7 +548,7 @@ print('ATT ' + attributes)
                 params = list.join("&")
             }
             return mapAttributes({ 
-                "data-click": click,
+                "data-action": action,
                 "data-edit": edit,
                 "data-remote": remote,
                 key: key, 
@@ -580,7 +588,7 @@ print('ATT ' + attributes)
         }
 
         /*
-            Get table click/edit links. Return a hash {method, uri, params, key}
+            Get table links. Return a hash {method, uri, params, key}
          */
         private function getTableLink(location, record, row, field, values, options): Object {
             if (location === true) {
@@ -589,7 +597,9 @@ print('ATT ' + attributes)
             if (location is Function) {
                 result = location(record, field, values[field], options)
             } else {
-                location = request.makeUriHash(location)
+                if (typeOf(location) != "Object") {
+                    location = request.makeUriHash(location)
+                }
                 if (record) {
                     location.id = record.id
                 }
