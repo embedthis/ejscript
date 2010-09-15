@@ -53,9 +53,9 @@ is not bound.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#connect'><b>connect</b></a>(address: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Establish a connection to a client from this socket to the supplied address.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(address): <a href='ejs-Socket.html'>Socket</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen on a socket for client connections.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#off'><b>off</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.</td></tr>
 </table>
 
@@ -155,6 +155,18 @@ receive the client socket object for the connection.</dd></dl>
 </dl></div>
 </div>
 <hr />
+<a name='off'></a>
+<div class='api'>
+<div class='apiSig'>const   public  off(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Remove an observer from the stream.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='on'></a>
 <div class='api'>
 <div class='apiSig'>const   public  on(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
@@ -196,18 +208,6 @@ In this case a "readable" event will be issued when data is available for readin
 </dl><dl><dt>Returns</dt>
 <dd>A count of the bytes actually read. Returns null on eof.</dd></dl>
 </div>
-</div>
-<hr />
-<a name='removeObserver'></a>
-<div class='api'>
-<div class='apiSig'>const   public  removeObserver(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Remove an observer from the stream.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
-</dl></div>
 </div>
 <hr />
 <a name='write'></a>

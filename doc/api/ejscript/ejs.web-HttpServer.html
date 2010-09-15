@@ -85,9 +85,9 @@ protocol scheme.</td></tr>
    <tr><th>Qualifiers</th><th width='95%'>Method</th></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#accept'><b>accept</b></a>(): <a href='ejs.web-Request.html'>Request</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Accept a new incoming for sync servers.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#close'><b>close</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Close the stream.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#listen'><b>listen</b></a>(endpoint: <a href='ejs-String.html'>String</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Listen for client connections.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#off'><b>off</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer for server events.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the server.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#secure'><b>secure</b></a>(keyFile: <a href='ejs-Path.html'>Path</a>, certFile: <a href='ejs-Path.html'>Path</a>, protocols: <a href='ejs-Array.html'>Array</a> = null , ciphers: <a href='ejs-Array.html'>Array</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the Secure Sockets Layer (SSL) protocol credentials.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setLimits'><b>setLimits</b></a>(limits: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Update the server resource limits.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setPipeline'><b>setPipeline</b></a>(incoming: <a href='ejs-Array.html'>Array</a>, outgoing: <a href='ejs-Array.html'>Array</a>, connector: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Define the stages of the Http processing pipeline.</td></tr>
@@ -139,20 +139,20 @@ while (request = server.accept()) {
 <hr />
 <a name='listen'></a>
 <div class='api'>
-<div class='apiSig'>const   public  listen(endpoint: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a>
+<div class='apiSig'>const   public  listen(endpoint: <a href='ejs-String.html'>String</a> = null): <a href='ejs-Void.html'>Void</a>
 </div>
 <div class='apiDetail'>
 <p>Listen for client connections.</p>
 <dl><dt>Description</dt><dd>This creates a HTTP server listening on a single socket endpoint. It can
 also be used to attach to an existing listening connection if embedded in a web server. <br/><br/>When used inside a web server, the web server should define the listening endpoints and ensure the 
 EjsScript startup script is executed. Then, when listen is called, the HttpServer object will be bound to
-the web server's listening connection. In this case, the endpoint argument is ignored.<br/><br/>HttpServer supports both sync and async modes of operation.  In sync mode, after listen call is made, 
+the web server's listening connection. In this case, the endpoint argument is not required and is ignored.<br/><br/>HttpServer supports both sync and async modes of operation.  In sync mode, after listen call is made, 
 <a href='#accept'>accept</a> must be called to wait for and receive client connections. The <a href='#accept'>accept</a> call will create the 
 Request object.  In async mode, Request objects will be created automatically and passed to registered 
 observers via "readable" events.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>endpoint: <a href='ejs-String.html'>String</a> </td><td>The endpoint address on which to listen. An endoint may be a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics.</td></tr></table></dd>
+<tr class='param'><td class='param'>endpoint: <a href='ejs-String.html'>String</a> </td><td>The endpoint address on which to listen. An endoint may be a port number or a composite  "IP:PORT" string. If only a port number is provided, the socket will listen on all interfaces on that port.  If null is provided for an endpoint value, an existing web server listening connection will be used. In this case, the web server will typically be the virtual host that specifies the EjsStartup script. See the hosting web server documentation for specifics. [default: null]</td></tr></table></dd>
 </dl><dl><dt>Events</dt>
 <dd><table class='parameters' summary ='events'>
 <td class='param'>Issues</td><td>A "accept" event when there is a new connection available.</td></tr>
@@ -171,6 +171,18 @@ server.listen("80")
 </div>
 </div>
 <hr />
+<a name='off'></a>
+<div class='api'>
+<div class='apiSig'>const   public  off(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Remove an observer from the server.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='on'></a>
 <div class='api'>
 <div class='apiSig'>const   public  on(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
@@ -187,18 +199,6 @@ server.listen("80")
 <td class='param'>createSession</td><td>Issued when a new session store object is created for a client. The request object is passed.</td></tr>
 <td class='param'>destroySession</td><td>Issued when a session is destroyed. The request object is passed.</td></tr>
 </table></dd>
-</dl></div>
-</div>
-<hr />
-<a name='removeObserver'></a>
-<div class='api'>
-<div class='apiSig'>const   public  removeObserver(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Remove an observer from the server.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

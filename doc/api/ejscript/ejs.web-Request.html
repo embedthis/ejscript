@@ -219,14 +219,13 @@ not the actual number of bytes sent to the network connection.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a request header by keyword.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#inform'><b>inform</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a informational flash notification message.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#link'><b>link</b></a>(target: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a link to a URI.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#makeUriHash'><b>makeUriHash</b></a>(target): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Make a URI hash from a string.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#link'><b>link</b></a>(target: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a URI link.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#matchContent'><b>matchContent</b></a>(formats: <a href='ejs-Array.html'>Array</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Select the response content type based on the request "Accept" header.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#notify'><b>notify</b></a>(key: <a href='ejs-String.html'>String</a>, msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a transient flash notification message.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#off'><b>off</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.If the request is posting a form, i.e.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#redirect'><b>redirect</b></a>(target: <a href='ejs-Object.html'>Object</a>, status: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Redirect the client to a new URL.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setCookie'><b>setCookie</b></a>(name: <a href='ejs-String.html'>String</a>, options: <a href='ejs-Object.html'>Object</a>)</tr><tr class='apiBrief'><td>&nbsp;</td><td>Define a cookie header to send with the response.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeader'><b>setHeader</b></a>(key: <a href='ejs-String.html'>String</a>, value: <a href='ejs-String.html'>String</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set a Http response header in <a href='#responseHeaders'>responseHeaders</a>. </td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setHeaders'><b>setHeaders</b></a>(headers: <a href='ejs-Object.html'>Object</a>, overwrite: <a href='ejs-Boolean.html'>Boolean</a> = true): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convenience routine to set multiple Http response headers in <a href='#responseHeaders'>responseHeaders</a>. </td></tr>
@@ -424,53 +423,36 @@ automatically.</dd></dl>
 <div class='apiSig'>const   public  link(target: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a>
 </div>
 <div class='apiDetail'>
-<p>Create a link to a URI.</p>
-<dl><dt>Description</dt><dd>The target parameter may contain partial or complete URI information. The missing 
-parts are supplied using the current request URI and optional route tables. The resulting URI is a normalized, 
-server-local URI (begins with "/"). The URI will include any defined scriptName, but will not include scheme, 
-host or port components.</dd></dl>
+<p>Create a URI link.</p>
+<dl><dt>Description</dt><dd>The target parameter may contain partial or complete URI information. The missing parts 
+are supplied using the current request and route tables. The resulting URI is a normalized, server-local 
+URI (begins with "/"). The URI will include any defined scriptName, but will not include scheme, host or 
+port components.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>target: <a href='ejs-Object.html'>Object</a> </td><td>The target parameter can be a URI string or object hash of components. If the target is a string, it is may contain an absolute or relative URI. If the target has an absolute URI path, that path is used unmodified. If the target is a relative URI, it is appended to the current request URI path.  The target argument can also be an object hash of URI components: scheme, host, port, path, reference and query.   If the hash contains a route property that specifies the name of a route table entry, then the hash may contain properties that will be used when creating the URI by expanding the route template.  If the target is a string that begins with ".</td></tr></table></dd>
+<tr class='param'><td class='param'>target: <a href='ejs-Object.html'>Object</a> </td><td>The URI target. The target parameter can be a URI string or object hash of components. If the  target is a string, it is may contain an absolute or relative URI. If the target has an absolute URI path,  that path is used unmodified. If the target is a relative URI, it is appended to the current request URI  path.  The target can also be an object hash of URI components: scheme, host, port, path, reference and query. If these component properties are supplied, these will be combined to create a URI.  The URI will be created according to the route URI template. The template may be explicitly specified via a "route" target property. Otherwise, if an "action" property is specified, the route of the same name will be used. If these don't result in a usable route, the "default" route will be used. See the Router for more details.  If the target is a string that begins with ".</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
+<td class='param'>scheme</td><td>String URI scheme portion.</td></tr>
+<td class='param'>host</td><td>String URI host portion.</td></tr>
+<td class='param'>port</td><td>Number URI port number.</td></tr>
 <td class='param'>path</td><td>String URI path portion.</td></tr>
-<td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
 <td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
-<td class='param'>controller</td><td>String Controller name if using a Controller-based route.</td></tr>
-<td class='param'>action</td><td>String Action name if using a Controller-based route.</td></tr>
-<td class='param'>other</td><td>String Other route table tokens.</td></tr>
+<td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
+<td class='param'>controller</td><td>String Controller name if using a Controller-based route. This can also be specified via the action option.</td></tr>
+<td class='param'>action</td><td>String Action to invoke. This can be a URI string or a Controller action of the form.</td></tr>
+<td class='param'>route</td><td>String Route name to use for the URI template.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A normalized, server-local Uri object.</dd></dl>
+<dd>A normalized, server-local Uri object. MOB - OPT make native.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>Given a current request of http://example.com/samples/demo" and "r" == the current request:
- r.link("images/splash.png")                  returns "/samples/images/splash.png"
+  r.link("images/splash.png")                  returns "/samples/images/splash.png"
 r.link("images/splash.png").complete(r.uri)  returns "http://example.com/samples/images/splash.png"
 r.link("images/splash.png").relative(r.uri)  returns "images/splash.png"
- r.link({action: "checkout")
-r.link({controller: "User", action: "logout")
+ r.link("http://example.com/index.html")
+r.link("/path/to/index.html")
 r.link("</pre></dd></dl>
-</div>
-</div>
-<hr />
-<a name='makeUriHash'></a>
-<div class='api'>
-<div class='apiSig'>const   public  makeUriHash(target): <a href='ejs-Object.html'>Object</a>
-</div>
-<div class='apiDetail'>
-<p>Make a URI hash from a string.</p>
-<dl><dt>Description</dt><dd>This converts the target URI specification into a hash of properties 
-describing the target URI.</dd></dl>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>target </td><td>String URI target to convert. If this is not a string, the target is returned.</td></tr></table></dd>
-</dl><dl><dt>Returns</dt>
-<dd>An object hash representing the target.</dd></dl>
-<dl><dt>Example</dt>
-<dd><pre>"/path/to/something"
-"http://example.com/path/to/something"
-"</pre></dd></dl>
 </div>
 </div>
 <hr />
@@ -502,6 +484,18 @@ will call setupFlash and finalizeFlash automatically.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
 <tr class='param'><td class='param'>key: <a href='ejs-String.html'>String</a> </td><td>Flash message key.</td></tr><tr class='param'><td class='param'>msg: <a href='ejs-String.html'>String</a> </td><td>Message to store.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
+<a name='off'></a>
+<div class='api'>
+<div class='apiSig'>const   public  off(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Remove an observer from the stream.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
@@ -577,19 +571,7 @@ connection becomes "readable".</dd></dl>
 by the <a href='#url'>url</a>. </dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>target: <a href='ejs-Object.html'>Object</a> </td><td>Uri to redirect the client toward. This can be a relative or absolute string URI or it can be a hash of URI components. For example, the following are valid inputs: "../index.ejs",  "http://www.example.com/home.html", {action: "list"}.</td></tr><tr class='param'><td class='param'>status: <a href='ejs-Number.html'>Number</a> </td><td>Optional HTTP redirection status. [default: expression]</td></tr></table></dd>
-</dl></div>
-</div>
-<hr />
-<a name='removeObserver'></a>
-<div class='api'>
-<div class='apiSig'>const   public  removeObserver(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Remove an observer from the stream.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
+<tr class='param'><td class='param'>target: <a href='ejs-Object.html'>Object</a> </td><td>Uri to redirect the client toward. This can be a relative or absolute string URI or it can be a hash of URI components. For example, the following are valid inputs: "../index.ejs",  "http://www.example.com/home.html", ".</td></tr><tr class='param'><td class='param'>status: <a href='ejs-Number.html'>Number</a> </td><td>Optional HTTP redirection status. [default: expression]</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

@@ -151,6 +151,7 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#getRequestHeaders'><b>getRequestHeaders</b></a>(): <a href='ejs-Object.html'>Object</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the (proposed) request headers that will be sent with the request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#head'><b>head</b></a>(uri: <a href='ejs-Uri.html'>Uri</a> = null): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a HEAD request for the current uri.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get the value of a single response header.</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#off'><b>off</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.All events are called with the following signature.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#post'><b>post</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Initiate a POST request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#put'><b>put</b></a>(uri: <a href='ejs-Uri.html'>Uri</a>, data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Commence a PUT request for the current uri.</td></tr>
@@ -158,7 +159,6 @@ line or from a local error message if the response fails to parse.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readLines'><b>readLines</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Array.html'>Array</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the request response as an array of lines.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readString'><b>readString</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the response as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readXml'><b>readXml</b></a>(): <a href='ejs-XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read the request response as an XML document.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reset'><b>reset</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reset the Http object to prepare for a new request.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setCookie'><b>setCookie</b></a>(cookie: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a "Cookie" header in the request headers.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#setCredentials'><b>setCredentials</b></a>(username: <a href='ejs-String.html'>String</a>, password: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set the user credentials to use if the request requires authentication.</td></tr>
@@ -318,6 +318,18 @@ headers or header(key) to get a single response header.</dd></dl>
 </div>
 </div>
 <hr />
+<a name='off'></a>
+<div class='api'>
+<div class='apiSig'>const   public  off(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Remove an observer from the stream.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
+</dl></div>
+</div>
+<hr />
 <a name='on'></a>
 <div class='api'>
 <div class='apiSig'>const   public  on(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
@@ -452,18 +464,6 @@ In this case a "readable" event will be issued when data is available for readin
 <dl><dt>Throws</dt><dd>
 <a href='ejs-IOError.html'>IOError</a>: if an I/O error occurs. 
 </dd>
-</dl></div>
-</div>
-<hr />
-<a name='removeObserver'></a>
-<div class='api'>
-<div class='apiSig'>const   public  removeObserver(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Remove an observer from the stream.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />

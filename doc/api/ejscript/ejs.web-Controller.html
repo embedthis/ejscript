@@ -94,7 +94,7 @@ The "uri" property has fields for: scheme, host, port, path, query and reference
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush the stream and underlying streams.Flush request data.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#header'><b>header</b></a>(key: <a href='ejs-String.html'>String</a>): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Get a request header by keyword.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#inform'><b>inform</b></a>(msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a informational flash notification message.</td></tr>
-   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#link'><b>link</b></a>(target: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a link to a URI.</td></tr>
+   <tr class='apiDef'><td class='apiType'>const </td><td><a href='#link'><b>link</b></a>(target: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Create a URI link.</td></tr>
    <tr class='apiDef'><td class='apiType'>action const </td><td><a href='#missing'><b>missing</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Missing action method.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#notify'><b>notify</b></a>(key: <a href='ejs-String.html'>String</a>, msg: <a href='ejs-String.html'>String</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Set a transient flash notification message.</td></tr>
    <tr class='apiDef'><td class='apiType'>const </td><td><a href='#on'><b>on</b></a>(name, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
@@ -294,32 +294,35 @@ automatically.</dd></dl>
 <div class='apiSig'>const   ejs.web  link(target: <a href='ejs-Object.html'>Object</a>): <a href='ejs-Uri.html'>Uri</a>
 </div>
 <div class='apiDetail'>
-<p>Create a link to a URI.</p>
-<dl><dt>Description</dt><dd>The target parameter may contain partial or complete URI information. The missing 
-parts are supplied using the current request URI and optional route tables. The resulting URI is a normalized, 
-server-local URI (begins with "/"). The URI will include any defined scriptName, but will not include scheme, 
-host or port components.</dd></dl>
+<p>Create a URI link.</p>
+<dl><dt>Description</dt><dd>The target parameter may contain partial or complete URI information. The missing parts 
+are supplied using the current request and route tables. The resulting URI is a normalized, server-local 
+URI (begins with "/"). The URI will include any defined scriptName, but will not include scheme, host or 
+port components.</dd></dl>
 <dl><dt>Parameters</dt>
 <dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>target: <a href='ejs-Object.html'>Object</a> </td><td>The target parameter can be a URI string or object hash of components. If the target is a string, it is may contain an absolute or relative URI. If the target has an absolute URI path, that path is used unmodified. If the target is a relative URI, it is appended to the current request URI path.  The target argument can also be an object hash of URI components: scheme, host, port, path, reference and query.   If the hash contains a route property that specifies the name of a route table entry, then the hash may contain properties that will be used when creating the URI by expanding the route template.  If the target is a string that begins with ".</td></tr></table></dd>
+<tr class='param'><td class='param'>target: <a href='ejs-Object.html'>Object</a> </td><td>The URI target. The target parameter can be a URI string or object hash of components. If the  target is a string, it is may contain an absolute or relative URI. If the target has an absolute URI path,  that path is used unmodified. If the target is a relative URI, it is appended to the current request URI  path.  The target can also be an object hash of URI components: scheme, host, port, path, reference and query. If these component properties are supplied, these will be combined to create a URI.  The URI will be created according to the route URI template. The template may be explicitly specified via a "route" target property. Otherwise, if an "action" property is specified, the route of the same name will be used. If these don't result in a usable route, the "default" route will be used. See the Router for more details.  If the target is a string that begins with ".</td></tr></table></dd>
 </dl><dl><dt>Options</dt>
 <dd><table class='parameters' summary ='options'>
+<td class='param'>scheme</td><td>String URI scheme portion.</td></tr>
+<td class='param'>host</td><td>String URI host portion.</td></tr>
+<td class='param'>port</td><td>Number URI port number.</td></tr>
 <td class='param'>path</td><td>String URI path portion.</td></tr>
-<td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
 <td class='param'>reference</td><td>String URI path reference. Does not include "#".</td></tr>
-<td class='param'>controller</td><td>String Controller name if using a Controller-based route.</td></tr>
-<td class='param'>action</td><td>String Action name if using a Controller-based route.</td></tr>
-<td class='param'>other</td><td>String Other route table tokens.</td></tr>
+<td class='param'>query</td><td>String URI query parameters. Does not include "?".</td></tr>
+<td class='param'>controller</td><td>String Controller name if using a Controller-based route. This can also be specified via the action option.</td></tr>
+<td class='param'>action</td><td>String Action to invoke. This can be a URI string or a Controller action of the form.</td></tr>
+<td class='param'>route</td><td>String Route name to use for the URI template.</td></tr>
 </table></dd>
 </dl><dl><dt>Returns</dt>
-<dd>A normalized, server-local Uri object.</dd></dl>
+<dd>A normalized, server-local Uri object. MOB - OPT make native.</dd></dl>
 <dl><dt>Example</dt>
 <dd><pre>Given a current request of http://example.com/samples/demo" and "r" == the current request:
- r.link("images/splash.png")                  returns "/samples/images/splash.png"
+  r.link("images/splash.png")                  returns "/samples/images/splash.png"
 r.link("images/splash.png").complete(r.uri)  returns "http://example.com/samples/images/splash.png"
 r.link("images/splash.png").relative(r.uri)  returns "images/splash.png"
- r.link({action: "checkout")
-r.link({controller: "User", action: "logout")
+ r.link("http://example.com/index.html")
+r.link("/path/to/index.html")
 r.link("</pre></dd></dl>
 </div>
 </div>

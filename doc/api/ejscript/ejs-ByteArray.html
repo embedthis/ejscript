@@ -64,6 +64,7 @@ array storage.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#flush'><b>flush</b></a>(dir: <a href='ejs-Number.html'>Number</a> = expression): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Flush (discard) the data in the byte array and reset the read and write positions.</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const override </td><td><a href='#get'><b>get</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Iterator for this array to be used by "for (v in array)".</td></tr>
    <tr class='apiDef'><td class='apiType'>iterator const override </td><td><a href='#getValues'><b>getValues</b></a>(): <a href='iterator-Iterator.html'>Iterator</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Iterator for this array to be used by "for each (v in array)".</td></tr>
+   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#off'><b>off</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#on'><b>on</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Add an observer to the stream for the named events.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#read'><b>read</b></a>(buffer: <a href='ejs-ByteArray.html'>ByteArray</a>, offset: <a href='ejs-Number.html'>Number</a> = 0 , count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the stream.Data is read from the current read <a href='#position'>position</a> pointer toward the current <a href='#writePosition'>writePosition</a>. </td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readBoolean'><b>readBoolean</b></a>(): <a href='ejs-Boolean.html'>Boolean</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a boolean from the array.</td></tr>
@@ -75,7 +76,6 @@ array storage.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readShort'><b>readShort</b></a>(): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a 16-bit short integer from the array.The data will be decoded according to the endian property.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readString'><b>readString</b></a>(count: <a href='ejs-Number.html'>Number</a> = -1): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read a data from the array as a string.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#readXML'><b>readXML</b></a>(): <a href='ejs-XML.html'>XML</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Read an XML document from the array.</td></tr>
-   <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#removeObserver'><b>removeObserver</b></a>(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Remove an observer from the stream.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#reset'><b>reset</b></a>(): <a href='ejs-Void.html'>Void</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Reset the read and <a href='#writePosition'>writePosition</a> pointers if there is no available data.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const override </td><td><a href='#toString'><b>toString</b></a>(): <a href='ejs-String.html'>String</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Convert the data in the byte array between the <a href='#readPosition'>readPosition</a> and writePosition.</td></tr>
    <tr class='apiDef'><td class='apiType'>public const </td><td><a href='#write'><b>write</b></a>(data: <a href='ejs-Array.html'>Array</a>): <a href='ejs-Number.html'>Number</a></tr><tr class='apiBrief'><td>&nbsp;</td><td>Write data to the stream.Write data to the ByteArray.</td></tr>
@@ -178,6 +178,18 @@ read and write positions. This call does not issue events.</dd></dl>
 <p>Iterator for this array to be used by "for each (v in array)".</p>
 <dl><dt>Description</dt><dd>This will return read data in the array.</dd></dl>
 </div>
+</div>
+<hr />
+<a name='off'></a>
+<div class='api'>
+<div class='apiSig'>const   public  off(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
+</div>
+<div class='apiDetail'>
+<p>Remove an observer from the stream.</p>
+<dl><dt>Parameters</dt>
+<dd><table class='parameters' summary ='parameters'>
+<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
+</dl></div>
 </div>
 <hr />
 <a name='on'></a>
@@ -375,18 +387,6 @@ available, the call will return return null indicating eof. If there is insuffic
 <dl><dt>Throws</dt><dd>
 <a href='ejs-IOError.html'>IOError</a>: if an I/O error occurs or a premature end of file. 
 </dd>
-</dl></div>
-</div>
-<hr />
-<a name='removeObserver'></a>
-<div class='api'>
-<div class='apiSig'>const   public  removeObserver(name: <a href='ejs-Object.html'>Object</a>, observer: <a href='ejs-Function.html'>Function</a>): <a href='ejs-Void.html'>Void</a>
-</div>
-<div class='apiDetail'>
-<p>Remove an observer from the stream.</p>
-<dl><dt>Parameters</dt>
-<dd><table class='parameters' summary ='parameters'>
-<tr class='param'><td class='param'>name: <a href='ejs-Object.html'>Object</a> </td><td>Event name previously used with observe. The name may be an array of events.</td></tr><tr class='param'><td class='param'>observer: <a href='ejs-Function.html'>Function</a> </td><td>Observer function previously used with observe.</td></tr></table></dd>
 </dl></div>
 </div>
 <hr />
