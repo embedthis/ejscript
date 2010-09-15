@@ -443,6 +443,18 @@
     $('[data-click]').live('mouseout', function (e) {
         window.status = "";
     });
+    $('[data-remote]').live('mouseover', function (e) {
+        var remote = $(this).attr("data-remote");
+        if (remote.indexOf("http://") == 0) {
+            window.status = remote;
+        } else {
+            var location = window.location;
+            window.status = location.protocol + "//" + location.host + remote;
+        }
+    });
+    $('[data-remote]').live('mouseout', function (e) {
+        window.status = "";
+    });
 
 /////////////////////////////////////////
 /*  MOB -- TODO - fix location 
