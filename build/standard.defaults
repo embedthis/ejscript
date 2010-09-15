@@ -80,7 +80,9 @@ BLD_FEATURE_COMPLETE_NATIVE=1
 #
 #	Device or emulator. (PocketPC2003, Smartphone2003)
 #
-BLD_FEATURE_DEVICE=PocketPC2003
+if [ "$BLD_FEATURE_DEVICE" = "" ] ; then
+    BLD_FEATURE_DEVICE=PocketPC2003
+fi
 
 #
 #	Enable cross-building the compiler

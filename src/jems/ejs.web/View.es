@@ -166,9 +166,6 @@ MOB -- better name? "dom"
          */
         function anchor(text: String, options: Object = {}): Void {
             options = getOptions(options)
-            //  MOB -- is this needed?
-//ZZ options.click ||= true
-            // options.action ||= text.split(" ")[0].toLowerCase()
             getConnector("anchor", options).anchor(text, options)
         }
 
@@ -221,7 +218,7 @@ MOB -- better name? "dom"
                 linechart, imagelinechart, imagepiechart, scatterchart (and more)
             @example
                 <% chart(grid, { refresh: "/getData", period: 2000" }) %>
-                <% chart(data, { action: "@update" }) %>
+                <% chart(data, { click: "@update" }) %>
          */
         function chart(data: Array, options: Object = {}): Void
             getConnector("chart", options).chart(data, options)
@@ -310,7 +307,6 @@ MOB -- better name? "dom"
             will be generated once for the view and the same token will be used by all forms on the view page. To use
             security tokens outside a form, you need to manually call $securityToken in the &lt;head> section of the page.
 
-
 MOB -- much more doc here
     - Talk about controllers updating the record
     - Talk about HTML ids generated from field names
@@ -319,12 +315,14 @@ MOB -- much more doc here
             @option hideErrors Don't display model errors. Models retain error diagnostics from a failed write. Setting
                 thish option will prevent their display.
             @option method HTTP method to use when submitting the form.
+MOB - action
             @option action Action to invoke when the form is submitted. Defaults to "create" or "update" depending on 
                 whether the field has been previously saved.
             @option controller Controller to invoke when the form is submitted. Defaults to the current controller.
             @option nosecurity Don't generate a security token for the form.
             @option securityToken String Override CSRF security token to include when the form is submitted. A default 
                 security token will always be generated unless options.nosecurity is defined to be true.
+MOB - DOC - this should be in the general options
             @option uri String Use a complete URI rather than an action and controller option to create the target uri.
          */
         function form(record: Object, options: Object = {}): Void {
@@ -352,8 +350,8 @@ MOB -- much more doc here
                 <% image("pic.gif") %>
                 <% image("pic.gif", { refresh: "@store/getData", period: 2000, style: "myStyle" }) %>
 MOB - uri not supported
-                <% image("pic.gif", { action: "@foreground/click" }) %>
-                <% image("checkout.gif", { action: "@checkout" }) %>
+                <% image("pic.gif", { click: "@foreground/click" }) %>
+                <% image("checkout.gif", { click: "@checkout" }) %>
                 <% image("pic.gif", { remote: "@store/update" }) %>
          */
         function image(src: String, options: Object = {}): Void
@@ -416,8 +414,8 @@ print("CATCH " + e)
             @examples
                 <% label("Hello World") %>
                 <% label("Hello", { refresh: "/getData", period: 2000, style: "myStyle" }) %>
-                <% label("Hello", { action: "/foreground/link" }) %>
-                <% label("Checkout", { action: "@checkout" }) %>
+                <% label("Hello", { click: "/foreground/link" }) %>
+                <% label("Checkout", { click: "@checkout" }) %>
          */
         function label(text: String, options: Object = {}): Void
             getConnector("label", options).label(text, options)
@@ -557,9 +555,9 @@ print("CATCH " + e)
                 objects where each object represents the data for a row. The column names are the object property names 
                 and the cell text is the object property values.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option action (Boolean|Uri|String|Function) URI to invoke when editing cells. 
+            @option click (Boolean|Uri|String|Function) URI to invoke when editing cells. 
                 or columns must be marked as editable in the columns properties. If set to a function, the function will 
-                be invoked to provide the action uri and parameters. The function should be of the form:
+                be invoked to provide the uri and parameters. The function should be of the form:
 
                 function click(record, field: String, value, options): {method: String, uri: Uri, params: Object}
 
@@ -625,10 +623,10 @@ print("CATCH " + e)
         
             @example
                 <% table(gridData, { refresh: "@update", period: 1000, pivot: true" }) %>
-                <% table(gridData, { action: "@edit" }) %>
+                <% table(gridData, { click: "@edit" }) %>
                 <% table(Table.findAll()) %>
                 <% table(gridData, {
-                    action: "@edit",
+                    click: "@edit",
                     sort: "Product",
                     columns: {
                         product:    { header: "Product", width: "20%" }
@@ -648,17 +646,17 @@ print("CATCH " + e)
         /**
             Render a tab control. 
             The tab control can manage a set of panes and selectively show and hide or invoke the selected panes. 
-            If the action option is defined, the selected pane will be invoked via a foreground click. If the
+            If the click option is defined, the selected pane will be invoked via a foreground click. If the
             remote option is defined, the selected pane will be invoked via a background click. Otherwise the 
             selected pane will be made visible and other panes will be hidden.
             @param data Initial data for the control. Tab data can be an array of objects -- one per tab. It can also
                 be a single object where the tab text is the property key and the property value is the target.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option action Invoke the target action or URI in the foreground when clicked.
-            @option remote Invoke the target action or URI in the background when clicked.
+            @option click Invoke the target click or URI in the foreground when clicked.
+            @option remote Invoke the target URI in the background when clicked.
             @example
                 tabs({Status: "pane-1", "Edit: "pane-2"})
-                tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { action: "@someAction"})
+                tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: "@someAction"})
          */
         function tabs(data: Object, options: Object = {}): Void
             getConnector("tabs", options).tabs(data, options)
@@ -717,7 +715,7 @@ print("CATCH " + e)
             @param data Optional initial data for the control. The data option may be used with the refresh option to 
                 dynamically refresh the data. The tree data is typically an XML document.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option data URI or action to get data 
+            @option data URI to get data 
             @option refresh If set, this defines the data refresh period in seconds. Only valid if the data option is defined
             @option style String CSS Style to use for the control
             @option visible Boolean Make the control visible. Defaults to true.
@@ -865,8 +863,27 @@ MOB -- review and rethink this
             return field
         }
 
-        private function getOptions(options: Object): Object
-            (typeOf(Object) != "Object") ? request.makeUriHash(options) : options
+        private function getOptions(options: Object, name: String = "click"): Object {
+            if (options is Uri) {
+                options = options.toString()
+            }
+            if (options is String) {
+/*
+                if (options[0] == '@') {
+                    let str = options
+                    options = {}
+                    options[name] = str
+                } else {
+                    // Non-mvc URI string
+                    return {uri: (options[0] == '/') ? (request.scriptName + options) : options}
+                }
+*/
+                let str = options
+                options = {}
+                options[name] = str
+            }
+            return options
+        }
 
 //  MOB -- refactor - poor API
         /**

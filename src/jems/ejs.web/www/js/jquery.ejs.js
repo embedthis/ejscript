@@ -144,7 +144,7 @@
     function request() {
         var el          = $(this);
         var method      = el.attr('method') || el.attr('data-method') || 'GET';
-        var url         = el.attr('action') || el.attr('href') || el.attr('data-action');
+        var url         = el.attr('action') || el.attr('href') || el.attr('data-click');
         var key         = el.attr('data-key');
         var keyFormat   = el.attr('data-key-format');
         var params;
@@ -425,14 +425,14 @@
         return false
     });
 
-    /* Click on anything with data-action */
-    $('[data-action]').live('click', function (e) {
+    /* Click on anything with data-click */
+    $('[data-click]').live('click', function (e) {
         request.apply(this);
         e.preventDefault();
     });
 
-    $('[data-action]').live('mouseover', function (e) {
-        var click = $(this).attr("data-action");
+    $('[data-click]').live('mouseover', function (e) {
+        var click = $(this).attr("data-click");
         if (click.indexOf("http://") == 0) {
             window.status = click;
         } else {
@@ -440,8 +440,8 @@
             window.status = location.protocol + "//" + location.host + click;
         }
     });
-    $('[data-action]').live('mouseout', function (e) {
-            window.status = "";
+    $('[data-click]').live('mouseout', function (e) {
+        window.status = "";
     });
 
 /////////////////////////////////////////

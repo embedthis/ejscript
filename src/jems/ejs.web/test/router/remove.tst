@@ -9,10 +9,10 @@ assert(request)
 let router = new Router
 router.add("/path")
 assert(Object.getOwnPropertyCount(router.routes) == 1)
-var route = router.lookup("path/index")
-assert(route.name == "index")
+var route = router.lookup("path/default")
+assert(route.name == "default")
 assert(route.template == "/path")
 
 //  Remove
-router.remove("path/index")
-assert(router.lookup("path/index") == null)
+router.remove("path/default")
+assert(router.lookup("path/default") == null)

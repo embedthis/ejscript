@@ -8,9 +8,9 @@ require ejs.web
 let router = new Router
 router.add("/path")
 assert(Object.getOwnPropertyCount(router.routes) == 1)
-var route = router.lookup("path/index")
+var route = router.lookup("path/default")
 assert(route)
-assert(route.name == "index")
+assert(route.name == "default")
 assert(route.template == "/path")
 assert(Object.getOwnPropertyCount(route.params) == 0)
 

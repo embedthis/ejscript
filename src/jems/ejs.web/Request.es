@@ -473,33 +473,44 @@ module ejs.web {
             notify("inform", msg)
 
         /** 
-            Create a link to a URI. The target parameter may contain partial or complete URI information. The missing 
-            parts are supplied using the current request URI and optional route tables. The resulting URI is a normalized, 
-            server-local URI (begins with "/"). The URI will include any defined scriptName, but will not include scheme, 
-            host or port components.
+            Create a URI link. The target parameter may contain partial or complete URI information. The missing parts 
+            are supplied using the current request and route tables. The resulting URI is a normalized, server-local 
+            URI (begins with "/"). The URI will include any defined scriptName, but will not include scheme, host or 
+            port components.
 
-            @params target The target parameter can be a URI string or object hash of components. If the target is a
-               string, it is may contain an absolute or relative URI. If the target has an absolute URI path, that path
-               is used unmodified. If the target is a relative URI, it is appended to the current request URI path. 
-               The target argument can also be an object hash of URI components: scheme, host, port, path, reference and
-               query. 
+            @params target The URI target. The target parameter can be a URI string or object hash of components. If the 
+                target is a string, it is may contain an absolute or relative URI. If the target has an absolute URI path, 
+                that path is used unmodified. If the target is a relative URI, it is appended to the current request URI 
+                path.  The target can also be an object hash of URI components: scheme, host, port, path, reference and
+                query. If these component properties are supplied, these will be combined to create a URI.
+
+                The URI will be created according to the route URI template. The template may be explicitly specified
+                via a "route" target property. Otherwise, if an "action" property is specified, the route of the same
+                name will be used. If these don't result in a usable route, the "default" route will be used. See the
+                Router for more details.
                
-               If the hash contains a route property that specifies the name of a route table entry, then the
-               hash may contain properties that will be used when creating the URI by expanding the route template. 
-               If the target is a string that begins with "@" it will be interpreted as a controller/action pair of the 
-               form "@[Controller/]action". This is a shorthand way to specify an action and optional controller. The 
-               short-hand link("@") refers to the "index" action of the current controller.
+                If the target is a string that begins with "@" it will be interpreted as a controller/action pair of the 
+                form "@Controller/action". If the "controller/" portion is absent, the current controller is used. If 
+                the action component is missing, the "index" action is used. A bare "@" refers to the "index" action 
+                of the current controller.
 
+                Lastly, the target object hash may contain an override "uri" property. If specified, the value of the 
+                "uri" property will be returned and all other properties will be ignored.
+
+            @option scheme String URI scheme portion
+            @option host String URI host portion
+            @option port Number URI port number
             @option path String URI path portion
-            @option query String URI query parameters. Does not include "?"
             @option reference String URI path reference. Does not include "#"
+            @option query String URI query parameters. Does not include "?"
             @option controller String Controller name if using a Controller-based route. This can also be specified via
                 the action option.
             @option action String Action to invoke. This can be a URI string or a Controller action of the form
                 @Controller/action.
-            @option other String Other route table tokens
+            @option route String Route name to use for the URI template
             @example
                 Given a current request of http://example.com/samples/demo" and "r" == the current request:
+
 
                 r.link("images/splash.png")                  returns "/samples/images/splash.png"
                 r.link("images/splash.png").complete(r.uri)  returns "http://example.com/samples/images/splash.png"
@@ -511,49 +522,18 @@ module ejs.web {
                 r.link("@Controller/")
                 r.link("@checkout")
                 r.link("@")
-                r.link({action: "@checkout")
-                r.link({action: "@logout", controller: "Admin")
+                r.link({action: "checkout")
+                r.link({action: "logout", controller: "Admin")
+                r.link({action: "Admin/logout")
+                r.link({action: "@Admin/logout")
                 r.link({uri: "http://example.com/checkout"})
-
                 r.link({route: "default", action: "@checkout")
                 r.link({product: "candy", quantity: "10", template: "/cart/{product}/{quantity}")
 
             @return A normalized, server-local Uri object.
+            MOB - OPT make native
          */
         function link(target: Object): Uri {
-            target = makeUriHash(target)
-            //  MOB -- maybe make inline
-            if (!target.uri) {
-                prepTarget(target)
-            }
-            if (target.route) {
-                target = Uri.template(target.template, target).path
-            }
-            return uri.local.resolve(target).normalize
-        }
-
-        private function prepTarget(target): Void {
-            if (target.action) {
-                if (target.action[0] == '@') {
-                    target.action = target.action.trimStart("@")
-                    if (target.action.contains("/")) {
-                        [target.controller, target.action] = target.action.split("/")
-                    }
-                    if (!target.controller && controller) {
-                        target.controller = controller.controllerName
-                    }
-                    target.route = target.action || "default"
-                }
-            }
-            if (route) {
-                target.route ||= "default"
-                target.scriptName ||= scriptName
-                target.template ||= route.getTemplate(target.controller, target.route)
-            }
-        }
-
-         // MOB -- DOC
-        function makeUriHash(target): Object {
             if (target is Uri) {
                 target = target.toString()
             }
@@ -562,48 +542,34 @@ module ejs.web {
                     target = {action: target}
                 } else {
                     /* Non-mvc URI string */
-                    return {uri: (target[0] == '/') ? (scriptName + target) : target}
+                    target = {uri: (target[0] == '/') ? (scriptName + target) : target}
                 }
             }
-            return target
-        }
-
-/*
-    MOB - UNUSED
-        function makeUriHash(target): Object {
-            if (target is Uri) {
-                target = target.toString()
-            }
-            if (target is String) {
-                if (target[0] == '@') {
-                    //ZZZ target = {action: target.slice(1)}
-                    target = {action: target}
-                } else {
-                    // Non-mvc URI string 
-                    return {uri: (target[0] == '/') ? (scriptName + target) : target}
+            if (!target.uri) {
+                if (target.action) {
+                    if (target.action[0] == '@') {
+                        target.action = target.action.slice(1)
+                    }
+                    if (target.action.contains("/")) {
+                        [target.controller, target.action] = target.action.split("/")
+                    }
+                    if (!target.controller && controller) {
+                        target.controller = controller.controllerName
+                    }
+                    target.route = target.action || "default"
                 }
-            }
-            if (Object.getOwnPropertyCount(target) > 0) {
-                let action = target.action
-                if (action) {
-                    action = target.action = action.trimStart("@")
-                    if (action.contains("/")) {
-                        [target.controller, target.action] = action.split("/")
+                if (target.route) {
+                    target.scriptName ||= scriptName
+                    if (!target.template && route) {
+                        target.template = route.getTemplate(target.controller, target.route)
                     }
                 }
-                if (!target.controller && target.action != undefined && controller) {
-                    target.controller = controller.controllerName
-                }
-                if (route) {
-                    target.route ||= target.action || "default"
-                    target.scriptName ||= scriptName
-                    target.template ||= route.getTemplate(target.controller, target.route)
-                }
             }
-            return target
+            if (target.route && target.template) {
+                target = Uri.template(target.template, target).path
+            }
+            return uri.local.resolve(target).normalize
         }
-*/
-
 
         /**
             Select the response content type based on the request "Accept" header . See RFC-2616.
@@ -708,7 +674,7 @@ module ejs.web {
             code 302 which means a temporary redirect. A 301, permanent redirect code may be explicitly set.
             @param target Uri to redirect the client toward. This can be a relative or absolute string URI or it can be
                 a hash of URI components. For example, the following are valid inputs: "../index.ejs", 
-                "http://www.example.com/home.html", {action: "list"}.
+                "http://www.example.com/home.html", "@list".
             @param status Optional HTTP redirection status
          */
         function redirect(target: *, status: Number = Http.MovedTemporarily): Void {

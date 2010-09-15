@@ -40,7 +40,7 @@ module ejs.web {
 
         /*
             Mapping of helper options to HTML attributes.
-            NOTE: data-*, action and remote are handled specially in getAttributes.
+            NOTE: data-*, click and remote are handled specially in getAttributes.
          */
         private static const htmlOptions: Object = { 
             "apply":                "data-apply",
@@ -94,7 +94,7 @@ module ejs.web {
         }
 
         function anchor(text: String, options: Object): Void {
-            let uri ||= request.link(options)
+            let uri = makeLink(options.click, options)
             write('<a href="' + uri + '"' + getAttributes(options) + '>' + text + '</a>\r\n')
         }
 
@@ -103,11 +103,7 @@ module ejs.web {
         }
 
         function buttonLink(text: String, options: Object): Void {
-print("@@@@@@@@@@@@@@@@@@")
-//ZZ options.click ||= true
-dump("BL", options)
             let attributes = getAttributes(options)
-print('ATT ' + attributes)
             write('<button ' + attributes + '>' + text + '</button></a>\r\n')
         }
 
@@ -151,7 +147,7 @@ print('ATT ' + attributes)
             }
             let uri = request.link(options)
             emitFormErrors(record, options)
-            let attributes = getAttributes(options, {action: true, "data-action": true})
+            let attributes = getAttributes(options, {action: true, "data-click": true})
 /*
    MOB - remove
             Exclude method from the mapped-attribute list. Don't want data-method 
@@ -271,7 +267,6 @@ print('ATT ' + attributes)
             if (uri == null) {
                 let sdir = request.config.directories.static || "static"
                 for each (uri in defaultScripts) {
-print("SCRIPT " + "/" + sdir + uri)
                     uri = request.link("/" + sdir + uri)
                     write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
                 }
@@ -399,7 +394,7 @@ print("SCRIPT " + "/" + sdir + uri)
             } else if (options.remote) {
                 att = "data-remote"
             } else {
-                att = "data-action"
+                att = "data-click"
             }
             write('<div class="-ejs-tabs">\r\n    <ul>\r\n')
             if (data is Array) {
@@ -489,18 +484,20 @@ print("SCRIPT " + "/" + sdir + uri)
         }
 */
 
-        /*
-            Like link but supports location == true to use the rest of options.
-         */
-        private function buildLink(location: Object, options: Object): Uri {
-/* MOB TRUE
-            request.link(location === true ? options : location)
-*/
-            if (typeOf(location) != "Object") {
-                location = request.makeUriHash(location)
+        private function makeLink(target: Object, options: Object): Object {
+            if (target is Uri) {
+                target = target.toString()
             }
-            location = blend(location, options, false)
-            return request.link(location)
+            if (target is String) {
+                if (target[0] == '@') {
+                    target = {action: target}
+                } else {
+                    /* Non-mvc URI string */
+                    return (target[0] == '/') ? (request.scriptName + target) : target
+                }
+            }
+            target = blend(target, options, false)
+            return request.link(target)
         }
 
         /**
@@ -513,10 +510,10 @@ print("SCRIPT " + "/" + sdir + uri)
             if (options.hasError) {
                 options.style = append(options.style, "-ejs-field-error")
             }
-            if (options.action) {
-                options["data-action"] = buildLink(options.action, options)
+            if (options.click) {
+                options["data-click"] = makeLink(options.click, options)
             } else if (options.remote) {
-                options["data-remote"] = buildLink(options.remote, options)
+                options["data-remote"] = makeLink(options.remote, options)
             }
             if (options.refresh && !options.domid) {
                 options.domid = getNextID()
@@ -525,19 +522,39 @@ print("SCRIPT " + "/" + sdir + uri)
         }
 
         /*
+            Get table links. Return a hash {method, uri, params, key}
+         */
+        private function getRowLink(location, record, row, field, values, options): Object {
+            if (location is Function) {
+                result = location(record, field, values[field], options)
+            } else {
+                result = { 
+                    method: options.method, 
+                    uri: makeLink(location, options)
+                    params: options.params, 
+                    key: getKeyAtt(options.key, record, row, values, options)
+                }
+            }
+            return result
+        }
+
+        /*
             Get attributes for table cells and rows
          */
         private function getRowCellAtt(record, row, field, values, options): String {
-            let action, edit, key, method, params, uri, remote
-            if (options.action) {
-                ({method, uri, params, key}) = getTableLink(options.action, record, row, field, values, options)
-                action = buildLink(uri, options)
+            let click, edit, key, method, params, uri, remote
+            if (record) {
+                options.id = record.id
+            }
+            if (options.click) {
+                ({method, uri, params, key}) = getRowLink(options.click, record, row, field, values, options)
+                click = makeLink(uri, options)
             } else if (options.edit) {
-                ({method, uri, params, key}) = getTableLink(options.edit, record, row, field, values, options)
-                edit = buildLink(uri, options)
+                ({method, uri, params, key}) = getRowLink(options.edit, record, row, field, values, options)
+                edit = makeLink(uri, options)
             } else if (options.remote) {
-                ({method, uri, params, key}) = getTableLink(options.remote, record, row, field, values, options)
-                remote = buildLink(uri, options)
+                ({method, uri, params, key}) = getRowLink(options.remote, record, row, field, values, options)
+                remote = makeLink(uri, options)
             }
             if (params) {
                 /* Process params and convert to an encoded query string */
@@ -548,7 +565,7 @@ print("SCRIPT " + "/" + sdir + uri)
                 params = list.join("&")
             }
             return mapAttributes({ 
-                "data-action": action,
+                "data-click": click,
                 "data-edit": edit,
                 "data-remote": remote,
                 key: key, 
@@ -585,32 +602,6 @@ print("SCRIPT " + "/" + sdir + uri)
                 }
             }
             return null
-        }
-
-        /*
-            Get table links. Return a hash {method, uri, params, key}
-         */
-        private function getTableLink(location, record, row, field, values, options): Object {
-            if (location === true) {
-                location = options
-            }
-            if (location is Function) {
-                result = location(record, field, values[field], options)
-            } else {
-                if (typeOf(location) != "Object") {
-                    location = request.makeUriHash(location)
-                }
-                if (record) {
-                    location.id = record.id
-                }
-                result = { 
-                    method: options.method, 
-                    uri: request.link(location), 
-                    params: options.params, 
-                    key: getKeyAtt(options.key, record, row, values, options)
-                }
-            }
-            return result
         }
 
         /*
