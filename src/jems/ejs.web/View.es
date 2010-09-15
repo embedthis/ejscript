@@ -868,16 +868,6 @@ MOB -- review and rethink this
                 options = options.toString()
             }
             if (options is String) {
-/*
-                if (options[0] == '@') {
-                    let str = options
-                    options = {}
-                    options[name] = str
-                } else {
-                    // Non-mvc URI string
-                    return {uri: (options[0] == '/') ? (request.scriptName + options) : options}
-                }
-*/
                 let str = options
                 options = {}
                 options[name] = str

@@ -1608,19 +1608,17 @@ public class ${NAME}Controller extends BaseController {
 '<h1><%= (${LOWER_MODEL}.id) ? "Edit" : "Create" %> ${MODEL}</h1>
 
 <% form(${LOWER_MODEL}) %>
-
     <table border="0">
-    <% for each (name in ${MODEL}.getColumnNames()) {
-        if (name == "id") continue
-        uname = name.toPascal()
-    %>
+        <% for each (name in ${MODEL}.getColumnNames()) {
+            if (name == "id") continue
+            uname = name.toPascal()
+        %>
         <tr><td>@@uname</td><td><% input(name) %></td></tr>
     <% } %>
     </table>
-
     <% button("commit", "OK") %>
     <% buttonLink("Cancel", "@") %>
-    <% if (${LOWER_MODEL}.id) buttonLink("Delete", {method: "DELETE", action: "destroy"}) %>
+    <% if (${LOWER_MODEL}.id) buttonLink("Delete", {method: "DELETE", click: "@destroy"}) %>
 <% endform() %>
 '
 
@@ -1776,7 +1774,7 @@ module App {
 
 <body>
     <div class="top">
-        <h1><a href="@@request.home">${NAME} Application</a></h1>
+        <h1><% anchor("${NAME} Application", request.home) %></h1>
     </div>
     <div id="logo">EJScript&trade;</div>
 

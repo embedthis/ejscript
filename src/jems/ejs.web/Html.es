@@ -145,14 +145,12 @@ module ejs.web {
             if (method != "GET" && method != "POST") {
                 method = "POST"
             }
+dump("FORM", options)
             let uri = request.link(options)
+print("URI " + uri)
             emitFormErrors(record, options)
             let attributes = getAttributes(options, {action: true, "data-click": true})
-/*
-   MOB - remove
-            Exclude method from the mapped-attribute list. Don't want data-method 
-            let attributes = getAttributes(options, { method: true })
-*/
+print("ATT " + attributes)
             write('<form method="' + method + '" action="' + uri + '"' + attributes + '>\r\n')
             if (options.id != undefined) {
                 write('    <input name="id" type="hidden" value="' + options.id + '" />\r\n')
@@ -161,12 +159,6 @@ module ejs.web {
                 let token = options.securityToken || request.securityToken
                 write('    <input name="' + Request.SecurityTokenName + '" type="hidden" value="' + token + '" />\r\n')
             }
-/*
-   MOB - remove
-            if (options.method && options.method != "POST") {
-                write('    <input name="-ejs-method-" type="hidden" value="' + options.method.toUpperCase() + '" />\r\n')
-            }
-*/
         }
 
         function icon(uri: String, options: Object): Void {
@@ -496,6 +488,8 @@ module ejs.web {
                     return (target[0] == '/') ? (request.scriptName + target) : target
                 }
             }
+dump("TARGET", target)
+print("TYPE " + typeOf(target))
             target = blend(target, options, false)
             return request.link(target)
         }
@@ -513,7 +507,13 @@ module ejs.web {
             if (options.click) {
                 options["data-click"] = makeLink(options.click, options)
             } else if (options.remote) {
+                if (options.remote == true) {
+                    options.remote = options.action
+                }
                 options["data-remote"] = makeLink(options.remote, options)
+            } else if (options.action) {
+                /* This is just a safety net incase someone uses "action" instead of click */
+                options["data-click"] = makeLink(options.click, options)
             }
             if (options.refresh && !options.domid) {
                 options.domid = getNextID()
