@@ -4,14 +4,14 @@
 require ejs.web
 
 //  Empty router
-var router = new Router
+var router = new Router(null)
 assert(router)
 assert(router.routes)
 assert(Object.getOwnPropertyCount(router.routes) == 0)
 
 
 //  Empty router
-var router = new Router
+var router = new Router(null)
 assert(router)
 assert(router.routes)
 router.add("/something")

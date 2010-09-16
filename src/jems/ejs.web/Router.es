@@ -281,7 +281,7 @@ module ejs.web {
             @param routeSet Name of the route set to add. Supports sets include:
                 Router.Default, Router.Direct, Router.Handlers, Router.Restful
          */
-        function Router(routeSet: String = null) {
+        function Router(routeSet: String = Restful) {
             switch (routeSet) {
             case Default:
                 addHandlers()
@@ -316,6 +316,9 @@ module ejs.web {
                 If the options is an object hash, it may contain the options below:
             @option action Action method to service the request if using controllers. This may also be of the form 
                 "controller/action" to set both the action and controller in one property.
+            @option constraints Object Object hash of properties whose values are constrained. The property names are
+                the field names to be constrained and their values are regular expressions for which the actual URI
+                values must match for the route to match.
             @option controller Controller to service the request.
             @option name Name to give to the route. If absent, the name is created from the controller and action names.
                 The route naming rules are:

@@ -5,7 +5,7 @@ require ejs.web
 
 //  add
 
-let router = new Router
+let router = new Router(null)
 router.add("/path")
 assert(Object.getOwnPropertyCount(router.routes) == 1)
 var route = router.lookup("path/default")
@@ -17,7 +17,7 @@ assert(Object.getOwnPropertyCount(route.params) == 0)
 
 //  addDefault
 
-let router = new Router
+let router = new Router(null)
 router.addDefault()
 assert(Object.getOwnPropertyCount(router.routes) == 1)
 var route = router.lookup("default")
@@ -29,7 +29,7 @@ assert(route.tokens == "controller,action")
 
 //  addHome
 
-let router = new Router
+let router = new Router(null)
 router.addHome("/home.html")
 assert(Object.getOwnPropertyCount(router.routes) == 1)
 var route = router.lookup("home")
@@ -42,7 +42,7 @@ assert(Object.getOwnPropertyCount(route.params) == 0)
 
 //  addCatchall
 
-let router = new Router
+let router = new Router(null)
 router.addCatchall()
 assert(Object.getOwnPropertyCount(router.routes) == 1)
 var route = router.lookup("catchall")
@@ -54,7 +54,7 @@ assert(route.tokens == null)
 
 //  addHandlers
 
-let router = new Router
+let router = new Router(null)
 router.addHandlers()
 assert(Object.getOwnPropertyCount(router.routes) == 2)
 for each (name in ["es", "ejs", "dir", "static/default"]) {
@@ -64,7 +64,7 @@ for each (name in ["es", "ejs", "dir", "static/default"]) {
 
 //  addResource
 
-let router = new Router
+let router = new Router(null)
 router.addResource("test")
 assert(Object.getOwnPropertyCount(router.routes) == 1)
 assert(route = router.lookup("test/edit"))
@@ -88,7 +88,7 @@ assert(route.template == "/test/{action}")
 assert(route.method == "")
 
 //  addResource([])
-let router = new Router
+let router = new Router(null)
 router.addResource(["one", "two", "three"])
 assert(Object.getOwnPropertyCount(router.routes) == 3)
 assert(route = router.lookup("one/default"))
@@ -98,7 +98,7 @@ assert(route = router.lookup("three/default"))
 
 //  addResources
 
-let router = new Router
+let router = new Router(null)
 router.addResources("test")
 assert(Object.getOwnPropertyCount(router.routes) == 1)
 assert(route = router.lookup("test/init"))
@@ -143,7 +143,7 @@ assert(route.method == "")
 
 
 //  addResources([])
-let router = new Router
+let router = new Router(null)
 router.addResources(["one", "two", "three"])
 assert(Object.getOwnPropertyCount(router.routes) == 3)
 assert(route = router.lookup("one/default"))
@@ -152,7 +152,7 @@ assert(route = router.lookup("three/default"))
 
 
 //  addRestful
-let router = new Router
+let router = new Router(null)
 router.addRestful()
 assert(Object.getOwnPropertyCount(router.routes) == 1)
 
