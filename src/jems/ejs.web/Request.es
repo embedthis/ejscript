@@ -129,6 +129,7 @@ module ejs.web {
             @option warn     Negative feedback (Warnings and errors)
             @option *        Other feedback (reminders, suggestions...)
         */
+//  MOB -- why public here
         public var flash: Object
 
         /** 

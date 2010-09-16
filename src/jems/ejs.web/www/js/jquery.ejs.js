@@ -41,12 +41,14 @@
     /*
         Background request using data-remote attributes. Apply the result to the data-apply (or current element).
      */
-    function backgroundRequest(url) {
+    function remote(url) {
         var elt         = $(this),
             data        = elt.is('form') ? elt.serializeArray() : [],
-            method      = elt.attr('method') || elt.attr('data-method') || 'GET',
+            method      = elt.attr('data-remote-method') || 'GET';
+/*MOB
             key         = elt.attr('data-key');
             keyFormat   = elt.attr('data-key-format');
+*/
 
         if (url === undefined) {
             url = elt.attr('action') || elt.attr('href') || elt.attr('data-remote');
@@ -54,7 +56,10 @@
                 throw "No URL specified for remote call";
             }
         }
+/*
+   MOB
         url = addKeysToUrl(url, key, keyFormat);
+ */
         elt.trigger('http:before');
         // MOB changeUrl(url);
         $.ajax({
@@ -102,6 +107,7 @@
         var result = {};
         $.each(elt[0].attributes, function(index, att) {
             if (att.name.indexOf("data-") == 0) {
+                //  MOB -- why bother removing data-
                 result[att.name.substring(5)] = att.value;
             }
         });
@@ -120,6 +126,7 @@
         }
     }
 
+/* MOB
     function addKeysToUrl(url, key, keyFormat) {
         if (keyFormat == "path") {
             var keys = [];
@@ -136,6 +143,7 @@
         }
         return url;
     }
+*/
 
     /*
         Foreground request using data-* element attributes. This makes all elements clickable and supports 
@@ -143,24 +151,29 @@
      */
     function request() {
         var el          = $(this);
-        var method      = el.attr('method') || el.attr('data-method') || 'GET';
-        var url         = el.attr('action') || el.attr('href') || el.attr('data-click');
+        var method      = el.attr('data-click-method') || el.attr('data-method') || 'GET';
+        var url         = el.attr('data-click') || el.attr('action') || el.attr('href');
+/*
         var key         = el.attr('data-key');
         var keyFormat   = el.attr('data-key-format');
-        var params;
+*/
+        var params      = el.attr('data-click-params');;
 
         if (url === undefined) {
             alert("No URL specified");
             return;
         }
         method = method.toUpperCase();
+/*
         if (key && !keyFormat) {
             keyFormat = (method == "GET") ? "path" : null;
         }
         url = addKeysToUrl(url, key, keyFormat);
+        //  MOB - think carefully before removing this
         if (keyFormat == "body") {
             params = key.split("&");
         }
+*/
         if (method == "GET") {
             window.location = url;
         } else {
@@ -372,6 +385,7 @@
         $(this).attr("checked", true);
     });
 
+//  MOB -- is this used? or is data-click always present?
     /* Click on link foreground with data-method */
     $('a[data-method]:not([data-remote])').live('click', function (e) {
         request.apply(this)
@@ -382,13 +396,13 @@
     $('tr[data-remote]').live('click', function(e) {
         var table = $(this).parents("table");
         var url = $(this).attr('data-remote');
-        backgroundRequest.call(table, url);
+        remote.call(table, url);
         e.preventDefault();
     });
 
     /* Click data-remote */
     $('button[data-remote]').live('click', function(e) {
-        backgroundRequest.apply(this);
+        remote.apply(this);
         e.preventDefault();
     });
 
@@ -399,17 +413,20 @@
         }
     });
 
-    //  MOB -- should dynamically add data-method input field
     /* Click on form with data-remote (background) */
     $('form[data-remote]').live('submit', function (e) {
-        backgroundRequest.apply(this);
+        var method = $(this).attr('data-method');
+        if (method) {
+            $(this).append('<input name="-ejs-method-" value="' + method + '" type="hidden" />');
+        }
+        remote.apply(this);
         e.preventDefault();
     });
 
 
     /* Click on link with data-remote (background) */
     $('a[data-remote],input[data-remote]').live('click', function (e) {
-        backgroundRequest.apply(this);
+        remote.apply(this);
         e.preventDefault();
     });
 

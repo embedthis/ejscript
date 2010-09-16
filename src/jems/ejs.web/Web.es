@@ -86,10 +86,10 @@ module ejs.web {
             Serve a web request. Convenience function to route, load and start a web application. 
             Called by web application start script
             @param request Request object
-            @param router Configured router instance. If omitted, a default Router will be created using the Router.Default
+            @param router Configured router instance. If omitted, a default Router will be created using the Router.Top
                 routing table.
          */
-        static function serve(request: Request, router: Router = Router(Router.Default)): Void {
+        static function serve(request: Request, router: Router = Router()): Void {
             try {
                 let app = router.route(request)
                 if (request.route.threaded) {
@@ -244,10 +244,10 @@ module ejs.web {
                 the documentRoot will be defined by the web server.
             @param serverRoot Base directory for the server configuration. If set to null and the HttpServer is hosted,
                 the serverRoot will be defined by the web server.
-            @param routes Route table to use. Defaults to Router.Default
+            @param routes Route table to use. Defaults to Router.Top
          */
         static function start(address: String, documentRoot: Path = ".", serverRoot: Path = ".", 
-                routes = Router.Default): Void {
+                routes = Router.Top): Void {
             let server: HttpServer = new HttpServer(documentRoot, serverRoot)
             var router = Router(routes)
             server.on("readable", function (event, request) {

@@ -8,10 +8,11 @@ let HTTPS = ":" + (App.config.test.ssl_port || "6743")
 
 //  Start regular server
 let server: HttpServer = new HttpServer("web")
+let router: Router = new Router(Router.Top)
 
 server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
-    Web.serve(request)
+    Web.serve(request, router)
 })
 // App.log.info("Listen on ", HTTP)
 server.listen(HTTP)
@@ -21,7 +22,7 @@ if (Config.SSL) {
     var secureServer: HttpServer = new HttpServer("web")
     secureServer.on("readable", function (event, request) {
         // App.log.info(request.method, request.uri, request.scheme)
-        Web.serve(request)
+        Web.serve(request, router)
     })
     secureServer.secure("ssl/server.key.pem", "ssl/server.crt")
     App.log.info("Secure listen on ", HTTPS)

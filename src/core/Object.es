@@ -200,7 +200,7 @@ MOB -- inconsistent with JSON.baseClasses
         static native function set prototype(v: Object): Void
 
         /** 
-            Seal an object. This prevents changing the configuration of any property. This includes prventing property 
+            Seal an object. This prevents changing the configuration of any property. This includes preventing property 
             deletion, changes to property descriptors or adding new properties to the object.
             @param obj Object to seal
          */ 

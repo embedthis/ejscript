@@ -25,28 +25,37 @@ module ejs.web {
 
         Various controls have custom options, but they share the following common set of option properties:
 
+MOB - need to describe the option inheritance process. click: {} will inherit defaults from outer options, request, route
+
+MOB - need to document which controls options support these options
         @option action String Action to invoke. This can be a URI string or a Controller action of the form
             @Controller/action.
         @option apply String Client DOM-ID to apply the data fetched from the $remote URI.
         @option background String Background color. This is a CSS RGB color specification. For example "FF0000" for red.
+        @option click (Boolean|Uri|String|Function) URI to invoke if the control is clicked.
+MOB - more
+            Can be set to a function to call to provide the uri and parameters. The function should be of the form:
+
+            function click(record, field: String, value, options): {method: String, uri: Uri, params: Object}
 
         @option color String Foreground color. This is a CSS RGB color specification. For example "FF0000" for red.
         @option confirm String Message to prompt the user to requeset confirmation before submitting a form or request.
-        @option data-* All other data-* names are passed through to the HTML unmodified.
-MOB -- better name? "dom"
+        @option controller Controller owning the action to invoke when clicked. Defaults to the current controller.
+        @option data-* All data-* names are passed through to the HTML unmodified.
         @option domid String Client-side DOM-ID to use for the control
         @option effects String Transition effects to apply when updating a control. Select from: "fadein", "fadeout",
             "highlight".
         @option escape Boolean Escape the text before rendering. This converts HTML reserved tags and delimiters into
             an encoded form.
-        @option field String Client DOM name to use for the generated HTML element.
-        @option height (Number|String) Height of the table. Can be a number of pixels or a percentage string. 
+        @option height (Number|String) Height of the control. Can be a number of pixels or a percentage string. 
             Defaults to unlimited.
         @option id Number Numeric database ID for the record that originated the data for the view element.
+            MOB -- how is this used
         @option method String HTTP method to invoke.
-        @option modal String Make a form a modal dialog.
+            MOB -- what about method inside click, remote ...
         @option period Number Period in milliseconds to invoke the $refresh URI to update the control data. If period
             is zero (or undefined), then refresh will be done using a perisistent connection.
+        @option query URI query string to add to click URIs.
         @option rel String HTML rel attribute. Can be used to generate "rel=nofollow" on links.
         @option remote (String|Boolean) Perform the request in the background without changing the browser location.
             The option may be set to the URI to invoke or it may be set to true and the URI will be determined by
@@ -55,12 +64,13 @@ MOB -- better name? "dom"
             milliseconds. If period is undefined or zero, a persistent connection will be used to refresh data. The 
             option may be set to the URI to invoke or it may be set to true and the URI will be determined by
             other options. It may also use the "@Controller/action" form.
-        @option refresh-method String HTTP method to invoke for refresh requests.
         @option size (Number|String) Size of the element.
         @option style String CSS Style to use for the table.
         @option value Object Override value to display if used without a form control record.
+            MOB - what fields
         @option visible Boolean Make the control visible. Defaults to true.
-        @option width (Number|String) Width of the table or column. Can be a number of pixels or a percentage string. 
+        @option width (Number|String) Width of the control. Can be a number of pixels or a percentage string. Defaults to
+            unlimited.
 
         <h4>Dynamic Data</h4>
         Most controls can perform background updates of their data after the initial presentation. This is done via
@@ -94,7 +104,7 @@ MOB -- better name? "dom"
         public var params: Object
 
         /** Current request object */
-        public var request: Request
+        public var request: Object
 
         /**
             Constructor method to initialize a new View
@@ -147,7 +157,6 @@ MOB -- better name? "dom"
             @param text Initial message text to display. Status messages may be updated by calling the 
                 $Controller.status function.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option refresh URI to call to to get status message updates.
             @option period Polling period in milliseconds for the client to check the server for status message 
                 updates. If this is not specifed, the connection to the server will be kept open. This permits the 
                 server to "push" alerts to the console, but will consume a connection at the server for each client.
@@ -159,15 +168,16 @@ MOB -- better name? "dom"
             getConnector("alert", options).alert(text, options)
         }
 
+//  MOB -- consider deprecating
         /**
             Emit an anchor. This is lable inside an anchor reference. 
             @param text Link text to display
             @param options Optional extra options. See $View for a list of the standard options.
-         */
         function anchor(text: String, options: Object = {}): Void {
             options = getOptions(options)
-            getConnector("anchor", options).anchor(text, options)
+            getConnector("label", options).label(text, options)
         }
+*/
 
         /**
             Render a form button. This creates a button suitable for use inside an input form. When the button is clicked,
@@ -205,11 +215,9 @@ MOB -- better name? "dom"
         /**
             Render a chart. The chart control can display static or dynamic tabular data. The client chart control manages
                 sorting by column, dynamic data refreshes, pagination and clicking on rows.
-            MOB -- update
+    MOB -- update
             @param data Optional initial data for the control. The data option may be used with the refresh option to 
                 dynamically refresh the data.
-
-            @param data Initial data to display. This should be a data grid (array of objects).
             @param options Object Optional extra options. See also $View for a list of the standard options.
             @option columns Object hash of column entries. Each column entry is in-turn an object hash of options. If unset, 
                 all columns are displayed using defaults.
@@ -232,7 +240,6 @@ MOB -- better name? "dom"
                 property.
             @param checkedValue Value for which the checkbox will be checked. Defaults to true.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option value Object Override value to display if used without a form control record.
          */
         function checkbox(name: String, checkedValue: Object = true, options: Object = {}): Void {
             let value = getValue(currentRecord, name, options)
@@ -267,6 +274,7 @@ MOB -- better name? "dom"
             @param options Optional extra options. See $View for a list of the standard options.
             @option retain Number. Number of seconds to retain the message. If <= 0, the message is retained until another
                 message is displayed. Default is 0.
+                MOB - this default implies it is displayed for zero seconds
             @example
                 <% flash("status") %>
                 <% flash() %>
@@ -309,21 +317,14 @@ MOB -- better name? "dom"
 
 MOB -- much more doc here
     - Talk about controllers updating the record
-    - Talk about HTML ids generated from field names
             @param record Record to display and optionally update
             @param options Optional extra options. See $View for a list of the standard options.
             @option hideErrors Don't display model errors. Models retain error diagnostics from a failed write. Setting
                 thish option will prevent their display.
-            @option method HTTP method to use when submitting the form.
-MOB - action
-            @option action Action to invoke when the form is submitted. Defaults to "create" or "update" depending on 
-                whether the field has been previously saved.
-            @option controller Controller to invoke when the form is submitted. Defaults to the current controller.
+            @option modal String Make a form a modal dialog.
             @option nosecurity Don't generate a security token for the form.
             @option securityToken String Override CSRF security token to include when the form is submitted. A default 
                 security token will always be generated unless options.nosecurity is defined to be true.
-MOB - DOC - this should be in the general options
-            @option uri String Use a complete URI rather than an action and controller option to create the target uri.
          */
         function form(record: Object, options: Object = {}): Void {
             currentRecord = record
@@ -417,8 +418,11 @@ print("CATCH " + e)
                 <% label("Hello", { click: "/foreground/link" }) %>
                 <% label("Checkout", { click: "@checkout" }) %>
          */
-        function label(text: String, options: Object = {}): Void
+        function label(text: String, options: Object = {}): Void {
+            options = getOptions(options)
+            text = formatValue(text, options)
             getConnector("label", options).label(text, options)
+        }
 
         /**
             Emit a selection list. 
@@ -432,7 +436,7 @@ print("CATCH " + e)
                 first entry is the value to display and the second is the value to send to the app. Or it can be an 
                 array of objects such as those returned from a table lookup. Lastly, it can be an object where the
                 property key is the value to display and the property value is the value to send to the app.
-            @param options control options
+            @param options Optional extra options. See $View for a list of the standard options.
             @example
                 list("stockId", Stock.stockList) 
                 list("priority", ["low", "med", "high"])
@@ -479,7 +483,6 @@ print("CATCH " + e)
                 array of objects such as those returned from a table lookup. Lastly, it can be an object where the
                 property key is the value to display and the property value is the value to send to the app.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option value Object Override value to display if used without a form control record.
             @example
                 radio("priority", ["low", "med", "high"])
                 radio("priority", [["low", 0], ["med", 0.5], ["high", 1]])
@@ -555,15 +558,6 @@ print("CATCH " + e)
                 objects where each object represents the data for a row. The column names are the object property names 
                 and the cell text is the object property values.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option click (Boolean|Uri|String|Function) URI to invoke when editing cells. 
-                or columns must be marked as editable in the columns properties. If set to a function, the function will 
-                be invoked to provide the uri and parameters. The function should be of the form:
-
-                function click(record, field: String, value, options): {method: String, uri: Uri, params: Object}
-
-                If using cell based click/edit, then field will be set to the relevant field. If using row click/edit,
-                then field will be null. 
-
             @option keyFormat String Define how the keys will be handled for click and edit URIs. 
                 Set to one of the set: ["body", "path", "query"]. Default is "path".
                 Set to "query" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
@@ -575,15 +569,16 @@ print("CATCH " + e)
                 URI and params manually.
             @option cell Boolean Set to true to make click or edit links apply per cell instead of per row. 
                 The default is false.
+MOB - test
             @option columns (Array|Object) The columns list can be either an array of column names or an object hash 
                 of column objects where each column entry is hash of column options. 
                 Column options: align, formatter, header, sort, sortOrder, style, width.
             @option edit (Boolean|Uri|String) URI to invoke when editing cells. If set to true, the rest of the 
                 options specifies the URI to invoke. Otherwise click can be set to a URI to invoke. The relevant 
                 column or columns must be marked as editable in the columns properties.
-            @option key Array List of fields to set as the key values to uniquely identify the clicked or edited 
-                row. The key will be rendered as a "data-key" HTML attribute and will be passed to the 
-                receiving controller when the entry is clicked or edited. Each entry of the key option can be a simple
+            @option key Array List of fields to set as the key values to uniquely identify the clicked or edited row. 
+                The key will be rendered as a "data-key" HTML attribute and will be passed to the receiving controller 
+                when the entry is clicked or edited. Each entry of the key option can be a simple
                 string field name or it can be an Object with a single property, where the property name is a simple
                 string field name and the property value is the mapped field name to use as the actual key name. This 
                 supports using custom key names. NOTE: this option cannot be used if using cell clicks or edits. In that
@@ -591,6 +586,7 @@ print("CATCH " + e)
             @option pageSize Number Number of rows to display per page. Omit or set to <= 0 for unlimited. 
                 Defaults to unlimited.
             @option params Object Hash of post parameters to include in the request. This is a hash of key/value items.
+                MOB - should be in click: {}, edit: {}
             @option pivot Boolean Pivot the table by swaping rows for columns and vice-versa
             @option query URI query string to add to click URIs. Can be a single-dimension array for per-row query 
                 strings or a two-dimensional array for per cell (order is row/column).
@@ -652,8 +648,6 @@ print("CATCH " + e)
             @param data Initial data for the control. Tab data can be an array of objects -- one per tab. It can also
                 be a single object where the tab text is the property key and the property value is the target.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option click Invoke the target click or URI in the foreground when clicked.
-            @option remote Invoke the target URI in the background when clicked.
             @example
                 tabs({Status: "pane-1", "Edit: "pane-2"})
                 tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: "@someAction"})
@@ -669,10 +663,7 @@ print("CATCH " + e)
                 this call is used without a form control record, the actual data value should be supplied via the 
                 options.value property.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option escape Boolean Escape the text before rendering. This converts HTML reserved tags and delimiters into
-                an encoded form.
             @option password Boolean The data to display is a password and should be obfuscated.
-            @option value Object Override value to display if used without a form control record.
             @examples
                 <% text("name") %>
                 <% text("product.name") %>
@@ -694,12 +685,9 @@ print("CATCH " + e)
                 be a simple property of the record or it can have multiple parts, such as: field.field.field. If 
                 this call is used without a form control record, the actual data value should be supplied via the 
                 options.value property.
-            @option Boolean escape Escape the text before rendering. This converts HTML reserved tags and delimiters into
-                an encoded form.
             @param options Optional extra options. See $View for a list of the standard options.
             @option numCols Number number of text columns
             @option numRows Number number of text rows
-            @option value Object Override value to display if used without a form control record.
             @examples
                 <% textarea("name") %>
          */
@@ -715,10 +703,8 @@ print("CATCH " + e)
             @param data Optional initial data for the control. The data option may be used with the refresh option to 
                 dynamically refresh the data. The tree data is typically an XML document.
             @param options Optional extra options. See $View for a list of the standard options.
+MOB - update
             @option data URI to get data 
-            @option refresh If set, this defines the data refresh period in seconds. Only valid if the data option is defined
-            @option style String CSS Style to use for the control
-            @option visible Boolean Make the control visible. Defaults to true.
          */
         function tree(data: Object, options: Object = {}): Void
             getConnector("tree", options).tree(data, options)
@@ -818,7 +804,6 @@ MOB -- review and rethink this
             @param options Formatting options
             @option formatter Optional data formatter. If undefined, defaults to a basic formatter based on the value's
                 data type.
-            @option escape If true, the data will be HTML escaped
             @return The formatted data.
          */
         function formatValue(value: Object, options: Object): String {
@@ -881,7 +866,6 @@ MOB -- review and rethink this
             @param data String field name in record or object hash {field: field}. If record is not defined, "data" is
                 the actual data.
             @param options Optional extra options. See $View for a list of the standard options.
-            @param value Override value.
             @hide
          */
         function getValue(record: Object, data: Object, options: Object): Object {

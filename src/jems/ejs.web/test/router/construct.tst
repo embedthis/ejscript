@@ -18,12 +18,12 @@ router.add("/something")
 assert(Object.getOwnPropertyCount(router.routes) == 1)
 
 
-//  Default route set
-var router = new Router(Router.Default)
+//  Top level route set
+var router = new Router(Router.Top)
 assert(router)
 assert(router.routes)
 assert(Object.getOwnPropertyCount(router.routes) > 1)
-for each (name in ["es", "ejs", "dir", "catchall", "static/default"]) {
+for each (name in ["es", "ejs", "dir", "static/default"]) {
     assert(router.lookup(name))
 }
 

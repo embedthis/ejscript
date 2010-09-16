@@ -114,7 +114,7 @@ module ejs.web {
             route for static pages. 
             Use of this constant will not add routes for MVC content or RESTful resources. 
          */ 
-        public static const Default = "default"
+        public static const Top = "top"
 
         /**
             Max calls to route() per request
@@ -154,8 +154,8 @@ module ejs.web {
             Add a default MVC controller/action route. This consists of a "/{controller}/{action}" route.
             All HTTP method verbs are supported.
          */
-        public function addDefault(): Void
-            add("/{controller}(/{action})", {name: "default", method: "*"})
+        public function addDefault(run: Object): Void
+            add("/{controller}(/{action}(/.*))", {name: "default", method: "*", run: run})
 
         /**
             Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages.
@@ -277,15 +277,21 @@ module ejs.web {
         }
 
         /**
-            Create a Router instance
-            @param routeSet Name of the route set to add. Supports sets include:
-                Router.Default, Router.Direct, Router.Handlers, Router.Restful
+            Create a Router instance and initialize routes.
+            @param routeSet Optional name of the route set to add. Supports sets include:
+                Router.Top and Router.Restful. The Top routes provide top level routes for pages with extensions ".ejs", 
+                and ".es" as well as for static content (see $addHandlers, $addCatchall). The Restful routes provide 
+                default Controller/Action routes according to a RESTful paradigm (see $addRestful). The routeSet can
+               also be set to null to add not routes. This is useful for creating a bare Router instance. Defaults 
+               to Top.
+           @throws Error for an unknown route set.
          */
-        function Router(routeSet: String = Restful) {
+        function Router(routeSet: String = Top) {
             switch (routeSet) {
-            case Default:
+            case Top:
                 addHandlers()
-                addCatchall()
+                addDefault(StaticBuilder)
+                // addCatchall()
                 break
             case Restful:
                 addHome("@Base/")
@@ -296,7 +302,7 @@ module ejs.web {
             case null:
                 break
             default:
-                throw "Unknown route set: " + name
+                throw new ArgError("Unknown route set: " + routeSet)
             }
         }
 
@@ -842,7 +848,7 @@ module ejs.web {
                     splitter = splitter.trim(":")
                 }
                 match = matchAndSplit
-                template = template.replace(/[\(\)]/g, "")
+                template = template.replace(/[\(\)]/g, "").replace(/\/\.\*/g, "")
             } else {
                 if (template is Function) {
                     match = template

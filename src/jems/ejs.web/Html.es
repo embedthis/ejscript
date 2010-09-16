@@ -51,14 +51,17 @@ module ejs.web {
             "domid":                "id",
             "effects":              "data-effects",
             "height":               "height",
-            "key":                  "data-key",
-            "keyFormat":            "data-key-format",
-            "method":               "data-method",
+
+//          "key":                  "data-key",
+//          "keyFormat":            "data-key-format",
+//          "method":               "data-method",
+//          "refresh":              "data-refresh",
+
             "modal":                "data-modal",
+//  MOB
             "period":               "data-refresh-period",
             "params":               "data-params",
             "pivot":                "data-pivot",
-            "refresh":              "data-refresh",
             "rel":                  "rel",
             "size":                 "size",
             "sort":                 "data-sort",
@@ -93,10 +96,13 @@ module ejs.web {
             write('<div' + getAttributes(options) + '>' +  text + '</div>\r\n')
         }
 
+/*
         function anchor(text: String, options: Object): Void {
-            let uri = makeLink(options.click, options)
-            write('<a href="' + uri + '"' + getAttributes(options) + '>' + text + '</a>\r\n')
+            setLink(options.click, options, "data-click")
+            let att = getAttributes(options, {"data-click": true})
+            write('<a href="' + options.data-click + '"' + att + '>' + text + '</a>\r\n')
         }
+*/
 
         function button(name: String, value: String, options: Object): Void {
             write('    <input name="' + name + '" type="submit" value="' + value + '"' + getAttributes(options) + ' />\r\n')
@@ -121,7 +127,7 @@ module ejs.web {
 
         function div(body: String, options: Object): Void {
             // write('<div ' + getAttributes(options) + ' type="' + getTextKind(options) + '">' +  body + '</div>\r\n')
-            write('<span ' + getAttributes(options) + '>' +  body + '</span>\r\n')
+            write('<span' + getAttributes(options) + '>' +  body + '</span>\r\n')
         }
 
         function endform(): Void {
@@ -145,12 +151,9 @@ module ejs.web {
             if (method != "GET" && method != "POST") {
                 method = "POST"
             }
-dump("FORM", options)
             let uri = request.link(options)
-print("URI " + uri)
             emitFormErrors(record, options)
             let attributes = getAttributes(options, {action: true, "data-click": true})
-print("ATT " + attributes)
             write('<form method="' + method + '" action="' + uri + '"' + attributes + '>\r\n')
             if (options.id != undefined) {
                 write('    <input name="id" type="hidden" value="' + options.id + '" />\r\n')
@@ -170,7 +173,7 @@ print("ATT " + attributes)
         }
 
         function label(text: String, options: Object): Void {
-            write('<span ' + getAttributes(options) + '>' +  text + '</span>\r\n')
+            write('<span' + getAttributes(options) + '>' +  text + '</span>\r\n')
         }
 
         function list(name: String, choices: Object, defaultValue: String, options: Object): Void {
@@ -294,6 +297,7 @@ print("ATT " + attributes)
                 return
             }
             options.style = append(options.style, "-ejs-table")
+    /*
             let attributes = getAttributes({
                 apply: options.apply,
                 period: options.period,
@@ -302,6 +306,8 @@ print("ATT " + attributes)
                 sortOrder: options.sortOrder || "ascending",
                 style: options.style,
             })
+    */
+            let attributes = getAttributes(options)
             let columns = getColumns(data, options)
 
             write('  <table' + attributes + '>\r\n')
@@ -336,10 +342,21 @@ print("ATT " + attributes)
                     values[name] = view.getValue(r, name, options)
                 }
                 let styleRow = options.styleRows ? (' class="' + options.styleRows[row] + '"') : ""
+                let rowOptions = {
+                    click: options.click,
+                    edit: options.edit,
+                    id: r.id,
+                    key: options.key,
+                    params: options.params,
+                    remote: options.remote,
+                }
                 if (options.cell) {
                     write('        <tr' + styleRow + '>\r\n')
                 } else {
-                    let att = getRowCellAtt(r, row, null, values, options)
+                    rowOptions.record = r
+                    rowOptions.field = null
+                    rowOptions.values = values
+                    let att = getAttributes(rowOptions)
                     write('        <tr' + att + styleRow + '>\r\n')
                 }
 
@@ -366,7 +383,11 @@ print("ATT " + attributes)
                         attr = append(attr, ' align="right"')
                     }
                     if (options.cell) {
-                        attr = append(attr, getRowCellAtt(r, row, name, values, options))
+                        rowOptions.record = r
+                        rowOptions.row = row
+                        rowOptions.field = name
+                        rowOptions.values = values
+                        attr = append(attr, getAttributes(rowOptions))
                     }
                     value = view.formatValue(value, r, name, { formatter: column.formatter} )
                     write('            <td' + attr + '>' + value + '</td>\r\n')
@@ -476,22 +497,46 @@ print("ATT " + attributes)
         }
 */
 
-        private function makeLink(target: Object, options: Object): Object {
-            if (target is Uri) {
-                target = target.toString()
+        /*
+            Set the template key fields
+                        options.record = r
+                        options.row = row
+                        options.field = name
+                        options.values = values
+        */
+        private function setKeyFields(target: Object, keyFields: Array, options: Object): Void {
+dump("SKF", target)
+dump("keys", keyFields)
+dump("options", options)
+            let record = options.record
+            let row = options.row
+            let values = options.values
+            for (name in record) {
+                // Add missing values incase columns are not being displayed 
+                values[name] ||= record[name]
             }
-            if (target is String) {
-                if (target[0] == '@') {
-                    target = {action: target}
+            let keys = []
+            for each (key in keyFields) {
+                if (key is String) {
+                    // Array of key names corresponding to the columns 
+                    //  MOB
+                    // keys.push(Uri.encodeComponent(key) + "=" + Uri.encodeComponent((values[key] || row)))
+                    target[key] = Uri.encodeComponent((values[key] || row))
                 } else {
-                    /* Non-mvc URI string */
-                    return (target[0] == '/') ? (request.scriptName + target) : target
+                    // Hash of key:mapped names corresponding to the columns
+                    for (field in key) {
+                        //  MOB
+                        // keys.push(Uri.encodeComponent(key[field]) + "=" + Uri.encodeComponent((values[field] || row)))
+                        target[key[field]] = Uri.encodeComponent((values[key] || row))
+                    }
                 }
             }
-dump("TARGET", target)
-print("TYPE " + typeOf(target))
-            target = blend(target, options, false)
-            return request.link(target)
+        /*  MOB
+            if (keys && keys.length > 0) {
+                return keys.join("&")
+            }
+            return null
+         */
         }
 
         /**
@@ -505,124 +550,45 @@ print("TYPE " + typeOf(target))
                 options.style = append(options.style, "-ejs-field-error")
             }
             if (options.click) {
-                options["data-click"] = makeLink(options.click, options)
+                setLink(options.click, options, "data-click")
+
             } else if (options.remote) {
                 if (options.remote == true) {
                     options.remote = options.action
                 }
-                options["data-remote"] = makeLink(options.remote, options)
+                setLink(options.remote, options, "data-remote")
+
             } else if (options.action) {
                 /* This is just a safety net incase someone uses "action" instead of click */
-                options["data-click"] = makeLink(options.click, options)
+                setLink(options.action, options, "data-click")
             }
-            if (options.refresh && !options.domid) {
-                options.domid = getNextID()
+            if (options.refresh) {
+                options.domid ||= getNextID()
+                setLink(options.refresh, options, "data-refresh")
             }
             return mapAttributes(options, exclude)
         }
 
         /*
-            Get table links. Return a hash {method, uri, params, key}
-         */
-        private function getRowLink(location, record, row, field, values, options): Object {
-            if (location is Function) {
-                result = location(record, field, values[field], options)
-            } else {
-                result = { 
-                    method: options.method, 
-                    uri: makeLink(location, options)
-                    params: options.params, 
-                    key: getKeyAtt(options.key, record, row, values, options)
-                }
-            }
-            return result
-        }
-
-        /*
+MOB
             Get attributes for table cells and rows
-         */
-        private function getRowCellAtt(record, row, field, values, options): String {
-            let click, edit, key, method, params, uri, remote
-            if (record) {
-                options.id = record.id
-            }
+        private function getRowCellAtt(options: Object, exclude: Object = null): String {
             if (options.click) {
-                ({method, uri, params, key}) = getRowLink(options.click, record, row, field, values, options)
-                click = makeLink(uri, options)
+                setLink(options.click, options, "data-click")
             } else if (options.edit) {
-                ({method, uri, params, key}) = getRowLink(options.edit, record, row, field, values, options)
-                edit = makeLink(uri, options)
+                setLink(options.edit, options, "data-edit")
             } else if (options.remote) {
-                ({method, uri, params, key}) = getRowLink(options.remote, record, row, field, values, options)
-                remote = makeLink(uri, options)
-            }
-            if (params) {
-                /* Process params and convert to an encoded query string */
-                let list = []
-                for (let [k,v] in params) {
-                    list.push(Uri.encodeComponent(k) + "=" + Uri.encodeComponent(v))
+                if (options.remote == true) {
+                    options.remote = options.action
                 }
-                params = list.join("&")
+                setLink(options.remote, options, "data-remote")
+            } else if (options.action) {
+                // This is just a safety net incase someone uses "action" instead of click 
+                setLink(options.action, options, "data-click")
             }
-            return mapAttributes({ 
-                "data-click": click,
-                "data-edit": edit,
-                "data-remote": remote,
-                key: key, 
-                keyFormat: options.keyFormat,
-                method: method,
-                params: params,
-            })
+            return mapAttributes(options, exclude)
         }
-
-        /*
-            Get data-key attributes for tables
          */
-        private function getKeyAtt(keyFields: Array, record, row, values, options): String {
-            let keys
-            if (keyFields) {
-                for (name in record) {
-                    /* Add missing values if columns are not being displayed */
-                    values[name] ||= record[name]
-                }
-                keys = []
-                for each (key in keyFields) {
-                    if (key is String) {
-                        /* Array of key names corresponding to the columns */
-                        keys.push(Uri.encodeComponent(key) + "=" + Uri.encodeComponent((values[key] || row)))
-                    } else {
-                        /* Hash of key:mapped names corresponding to the columns */
-                        for (field in key) {
-                            keys.push(Uri.encodeComponent(key[field]) + "=" + Uri.encodeComponent((values[field] || row)))
-                        }
-                    }
-                }
-                if (keys && keys.length > 0) {
-                    return keys.join("&")
-                }
-            }
-            return null
-        }
-
-        /*
-            Map options to HTML attributes
-         */
-        private function mapAttributes(options: Object, exclude: Object = null): String {
-            let result: String = ""
-            if (options.method) {
-                options.method = options.method.toUpperCase();
-            }
-            for (let [key, value] in options) {
-                if (exclude && exclude[key]) continue
-                if (value != undefined) {
-                    if (htmlOptions[key] || key.startsWith("data-")) {
-                        let mapped = htmlOptions[key] ? htmlOptions[key] : key
-                        result += mapped + '="' + value + '" '
-                    }
-                }
-            }
-            return (result == "") ? result : (" " + result.trimEnd())
-        }
 
         private function getColumns(data: Object, options: Object): Object {
             let columns
@@ -662,11 +628,70 @@ print("TYPE " + typeOf(target))
             return kind
         }
 
-        /** 
+        /*
             Get the next usable DOM ID for view controls
          */
         private function getNextID(): String
             "id_" + lastDomID++
+
+        /*
+            Map options to HTML attributes
+         */
+        private function mapAttributes(options: Object, exclude: Object = null): String {
+            let result: String = ""
+            if (options.method) {
+                options.method = options.method.toUpperCase();
+            }
+            for (let [key, value] in options) {
+                if (exclude && exclude[key]) continue
+                if (value != undefined) {
+                    if (htmlOptions[key] || key.startsWith("data-")) {
+                        let mapped = htmlOptions[key] ? htmlOptions[key] : key
+                        result += mapped + '="' + value + '" '
+                    }
+                }
+            }
+            return (result == "") ? result : (" " + result.trimEnd())
+        }
+
+        private function setLink(target: Object, options: Object, prefix: String) {
+            if (typeOf(target) != "Object") {
+                target = target.toString()
+                if (target[0] == '@') {
+                    target = {action: target}
+                } else {
+                    /* Non-mvc URI string */
+                    target = {uri: (target[0] == '/') ? (request.scriptName + target) : target}
+                }
+            } else {
+                target = target.clone()
+            }
+            blend(target, options, false)
+            if (options.key && options.record) {
+                setKeyFields(target, options.key, options)
+            }
+            target.uri ||= request.link(target)
+            if (target.params) {
+                /* Process params and convert to an encoded query string */
+                let list = []
+                for (let [k,v] in target.params) {
+                    list.push(Uri.encodeComponent(k) + "=" + Uri.encodeComponent(v))
+                }
+                target.params = list.join("&")
+            }
+            options[prefix] = target.uri
+            if (target.method) {
+                options[prefix + "-" + "method"] = target.method
+            }
+            if (target.params) {
+                options[prefix + "-" + "params"] = target.params
+            }
+/*
+            if (target.key) {
+                options[prefix + "-" + "key"] = target.key
+            }
+*/
+        }
 
         private function write(str: String): Void
             request.write(str)
