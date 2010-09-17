@@ -26,18 +26,14 @@ module ejs.web {
         Various controls have custom options, but they share the following common set of option properties:
 
 MOB - need to describe the option inheritance process. click: {} will inherit defaults from outer options, request, route
-
 MOB - need to document which controls options support these options
+
         @option action String Action to invoke. This can be a URI string or a Controller action of the form
             @Controller/action.
-        @option apply String Client DOM-ID to apply the data fetched from the $remote URI.
+        @option apply String Client JQuery selector identifying the element to apply the remote update.
+            Typically "div.ID" where ID is the DOM ID for the element.
         @option background String Background color. This is a CSS RGB color specification. For example "FF0000" for red.
-        @option click (Boolean|Uri|String|Function) URI to invoke if the control is clicked.
-MOB - more
-            Can be set to a function to call to provide the uri and parameters. The function should be of the form:
-
-            function click(record, field: String, value, options): {method: String, uri: Uri, params: Object}
-
+        @option click (Boolean|Uri|String) URI to invoke if the control is clicked.
         @option color String Foreground color. This is a CSS RGB color specification. For example "FF0000" for red.
         @option confirm String Message to prompt the user to requeset confirmation before submitting a form or request.
         @option controller Controller owning the action to invoke when clicked. Defaults to the current controller.
@@ -49,21 +45,36 @@ MOB - more
             an encoded form.
         @option height (Number|String) Height of the control. Can be a number of pixels or a percentage string. 
             Defaults to unlimited.
+        @option key Array List of fields to set as the key values to uniquely identify the clicked or edited element. 
+            The key will be rendered as a "data-key" HTML attribute and will be passed to the receiving controller 
+            when the entry is clicked or edited. Each entry of the key option can be a simple
+            string field name or it can be an Object with a single property, where the property name is a simple
+            string field name and the property value is the mapped field name to use as the actual key name. This 
+            supports using custom key names. NOTE: this option cannot be used if using cell clicks or edits. In that
+            case, set click/edit to a callback function and explicitly construct the required URI and parameters.
+        @option keyFormat String Define how the keys will be handled for click and edit URIs. 
+            Set to one of the set: ["body", "path", "query"]. Default is "path".
+            Set to "query" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
+                key and value are formatted as "key=value".
+            Set to "params" to add the key/value pair to the request body parameters. 
+            Set to "path" to add the key values in order to the request URI. Each value is separated using "/". This
+                provides "pretty" URIs that can be easily tokenized by router templates.
+            If you require more complex key management, set click or edit to a callback function and format the 
+            URI and params manually.
         @option id Number Numeric database ID for the record that originated the data for the view element.
             MOB -- how is this used
         @option method String HTTP method to invoke.
             MOB -- what about method inside click, remote ...
+        @option params
+MOB - test
         @option period Number Period in milliseconds to invoke the $refresh URI to update the control data. If period
             is zero (or undefined), then refresh will be done using a perisistent connection.
         @option query URI query string to add to click URIs.
         @option rel String HTML rel attribute. Can be used to generate "rel=nofollow" on links.
-        @option remote (String|Boolean) Perform the request in the background without changing the browser location.
-            The option may be set to the URI to invoke or it may be set to true and the URI will be determined by
-            other options. It may also use the "@Controller/action" form.
-        @option refresh (String|URI|Object) URI to invoke in the background to refresh the control data every $period.
-            milliseconds. If period is undefined or zero, a persistent connection will be used to refresh data. The 
-            option may be set to the URI to invoke or it may be set to true and the URI will be determined by
-            other options. It may also use the "@Controller/action" form.
+        @option remote (String|URI|Object) Perform the request in the background without changing the browser location.
+        @option refresh (String|URI|Object) URI to invoke in the background to refresh the control's data every $period.
+            milliseconds. If period is undefined or zero, a persistent connection may be used to refresh data.
+            The refresh option may use the "@Controller/action" form.
         @option size (Number|String) Size of the element.
         @option style String CSS Style to use for the table.
         @option value Object Override value to display if used without a form control record.
@@ -161,7 +172,7 @@ MOB - more
                 updates. If this is not specifed, the connection to the server will be kept open. This permits the 
                 server to "push" alerts to the console, but will consume a connection at the server for each client.
             @example
-                <% status("Status Message", { refresh: "/getData", period: 2000" }) %>
+                <% alert("Status Message", { refresh: "/getData", period: 2000" }) %>
          */
         function alert(text: String, options: Object = {}): Void {
             text = formatValue(text, options)
@@ -558,15 +569,6 @@ print("CATCH " + e)
                 objects where each object represents the data for a row. The column names are the object property names 
                 and the cell text is the object property values.
             @param options Optional extra options. See $View for a list of the standard options.
-            @option keyFormat String Define how the keys will be handled for click and edit URIs. 
-                Set to one of the set: ["body", "path", "query"]. Default is "path".
-                Set to "query" to add the key/value pairs to the request URI. Each pair is separated using "&" and the
-                    key and value are formatted as "key=value".
-                Set to "params" to add the key/value pair to the request body parameters. 
-                Set to "path" to add the key values in order to the request URI. Each value is separated using "/". This
-                    provides "pretty" URIs that can be easily tokenized by router templates.
-                If you require more complex key management, set click or edit to a callback function and format the 
-                URI and params manually.
             @option cell Boolean Set to true to make click or edit links apply per cell instead of per row. 
                 The default is false.
 MOB - test
@@ -576,13 +578,6 @@ MOB - test
             @option edit (Boolean|Uri|String) URI to invoke when editing cells. If set to true, the rest of the 
                 options specifies the URI to invoke. Otherwise click can be set to a URI to invoke. The relevant 
                 column or columns must be marked as editable in the columns properties.
-            @option key Array List of fields to set as the key values to uniquely identify the clicked or edited row. 
-                The key will be rendered as a "data-key" HTML attribute and will be passed to the receiving controller 
-                when the entry is clicked or edited. Each entry of the key option can be a simple
-                string field name or it can be an Object with a single property, where the property name is a simple
-                string field name and the property value is the mapped field name to use as the actual key name. This 
-                supports using custom key names. NOTE: this option cannot be used if using cell clicks or edits. In that
-                case, set click/edit to a callback function and explicitly construct the required URI and parameters.
             @option pageSize Number Number of rows to display per page. Omit or set to <= 0 for unlimited. 
                 Defaults to unlimited.
             @option params Object Hash of post parameters to include in the request. This is a hash of key/value items.
@@ -678,6 +673,7 @@ MOB - test
         }
 
 
+//  MOB -- could this be merged with text and use numCols
         /**
             Render a text area
             @param name Name for the input textarea field. This defines the HTML element name and provides the source 
@@ -703,8 +699,6 @@ MOB - test
             @param data Optional initial data for the control. The data option may be used with the refresh option to 
                 dynamically refresh the data. The tree data is typically an XML document.
             @param options Optional extra options. See $View for a list of the standard options.
-MOB - update
-            @option data URI to get data 
          */
         function tree(data: Object, options: Object = {}): Void
             getConnector("tree", options).tree(data, options)

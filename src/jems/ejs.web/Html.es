@@ -56,18 +56,17 @@ module ejs.web {
 //          "keyFormat":            "data-key-format",
 //          "method":               "data-method",
 //          "refresh":              "data-refresh",
+//          "params":               "data-params",
 
             "modal":                "data-modal",
 //  MOB
             "period":               "data-refresh-period",
-            "params":               "data-params",
             "pivot":                "data-pivot",
             "rel":                  "rel",
             "size":                 "size",
             "sort":                 "data-sort",
             "sortOrder":            "data-sort-order",
             "style":                "class",
-            "visible":              "visible",
             "width":                "width",
         }
 
