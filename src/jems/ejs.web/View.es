@@ -175,6 +175,7 @@ MOB - test
                 <% alert("Status Message", { refresh: "/getData", period: 2000" }) %>
          */
         function alert(text: String, options: Object = {}): Void {
+            options = getOptions(options)
             text = formatValue(text, options)
             getConnector("alert", options).alert(text, options)
         }
@@ -204,6 +205,7 @@ MOB - test
                 button("commit", "Cancel")
          */
         function button(name: String, label: String, options: Object = {}): Void {
+            options = getOptions(options)
             getConnector("button", options).button(name, label, options)
         }
 
@@ -239,8 +241,10 @@ MOB - test
                 <% chart(grid, { refresh: "/getData", period: 2000" }) %>
                 <% chart(data, { click: "@update" }) %>
          */
-        function chart(data: Array, options: Object = {}): Void
+        function chart(data: Array, options: Object = {}): Void {
+            options = getOptions(options)
             getConnector("chart", options).chart(data, options)
+        }
 
         /**
             Render an input checkbox. This creates a checkbox suitable for use within an input form. 
@@ -253,6 +257,7 @@ MOB - test
             @param options Optional extra options. See $View for a list of the standard options.
          */
         function checkbox(name: String, checkedValue: Object = true, options: Object = {}): Void {
+            options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("checkbox", options).checkbox(name, value, checkedValue, options)
@@ -266,8 +271,10 @@ MOB - test
             @examples
                 <% div({ refresh: "/getData", period: 2000}) %>
          */
-        function div(body: String, options: Object = {}): Void
+        function div(body: String, options: Object = {}): Void {
+            options = getOptions(options)
             getConnector("div", options).div(body, options)
+        }
 
         /**
             End an input form. This closes an input form initiated by calling the $form method.
@@ -292,6 +299,7 @@ MOB - test
                 <% flash(["error", "warning"]) %>
          */
         function flash(kinds: Object = null, options: Object = {}): Void {
+            options = getOptions(options)
             let cflash ||= request.flash
             if (cflash == null || cflash.length == 0) {
                 return
@@ -305,7 +313,6 @@ MOB - test
                 for each (kind in kinds) {
                     msgs[kind] = cflash[kind]
                 }
-
             } else {
                 msgs = cflash
             }
@@ -338,6 +345,7 @@ MOB -- much more doc here
                 security token will always be generated unless options.nosecurity is defined to be true.
          */
         function form(record: Object, options: Object = {}): Void {
+            options = getOptions(options, "action")
             currentRecord = record
             if (record) {
                 options.id ||= record.id
@@ -351,8 +359,10 @@ MOB -- much more doc here
             @param src Source name for the icon.
             @param options Optional extra options. See $View for a list of the standard options.
          */
-        function icon(src: Object, options: Object = {}): Void
+        function icon(src: Object, options: Object = {}): Void {
+            options = getOptions(options)
             getConnector("icon", options).icon(src, options)
+        }
 
         /**
             Render an image
@@ -366,8 +376,10 @@ MOB - uri not supported
                 <% image("checkout.gif", { click: "@checkout" }) %>
                 <% image("pic.gif", { remote: "@store/update" }) %>
          */
-        function image(src: String, options: Object = {}): Void
+        function image(src: String, options: Object = {}): Void {
+            options = getOptions(options)
             getConnector("image", options).image(src, options)
+        }
 
         /**
             Render an input field as part of a form. This is a smart input control that will call the appropriate
@@ -456,6 +468,7 @@ print("CATCH " + e)
                 list("priority", {low: 0, med: 1, high: 2})
          */
         function list(name: String, choices: Object, options: Object = {}): Void {
+            options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("list", options).list(name, choices, value, options)
@@ -467,8 +480,10 @@ print("CATCH " + e)
             @param address Mail recipient address link
             @param options Optional extra options. See $View for a list of the standard options.
          */
-        function mail(name: String, address: String, options: Object = {}): Void
+        function mail(name: String, address: String, options: Object = {}): Void {
+            options = getOptions(options)
             getConnector("mail", options).mail(name, address, options)
+        }
 
 //  MOB -- redo progress using a commet style
         /** 
@@ -478,8 +493,10 @@ print("CATCH " + e)
             @example
                 <% progress(percent, { refresh: "/getData", period: 2000" }) %>
          */
-        function progress(percent: Number, options: Object = {}): Void
+        function progress(percent: Number, options: Object = {}): Void {
+            options = getOptions(options)
             getConnector("progress", options).progress(percent, options)
+        }
 
         /** 
             Render a radio button. This creates a radio button suitable for use within an input form. 
@@ -502,6 +519,7 @@ print("CATCH " + e)
                 radio("priority", Message.priorities)
          */
         function radio(name: String, choices: Object, options: Object = {}): Void {
+            options = getOptions(options)
             let value = getValue(currentRecord, name, options)
             name = getFieldName(name, options) 
             getConnector("radio", options).radio(name, value, choices, options)
@@ -637,18 +655,26 @@ MOB - test
         /**
             Render a tab control. 
             The tab control can manage a set of panes and selectively show and hide or invoke the selected panes. 
-            If the click option is defined, the selected pane will be invoked via a foreground click. If the
-            remote option is defined, the selected pane will be invoked via a background click. Otherwise the 
-            selected pane will be made visible and other panes will be hidden.
-            @param data Initial data for the control. Tab data can be an array of objects -- one per tab. It can also
-                be a single object where the tab text is the property key and the property value is the target.
+            If the click option is defined (default), the selected pane will be invoked via a foreground click. If the
+            remote option is defined, the selected pane will be invoked via a background click. If the toggle option is
+            defined the selected pane will be made visible and other panes will be hidden.
+            If using show/hide tabs, define the initial visible pane to be of the class "-ejs-pane-visible" and define
+            other panes to be "-ejs-pane-hidden". The Control's client side code will toggle these classes to make panes
+            visible or hidden.
+            @param data Tab data for the control. Tab data can be be a single object where the tab text is the property 
+                key and the target to invoke is the property value. It can also be an an array of objects, one per tab. 
             @param options Optional extra options. See $View for a list of the standard options.
+            @option click Set to true to invoke the selected pane via a foreground click.
+            @option remote Set to true to invoke the selected pane via a background click.
+            @option toggle Set to true to show the selected pane and hide other panes.
             @example
                 tabs({Status: "pane-1", "Edit: "pane-2"})
                 tabs([{Status: "/url-1"}, {"Edit: "/url-2"}], { click: "@someAction"})
          */
-        function tabs(data: Object, options: Object = {}): Void
+        function tabs(data: Object, options: Object = {}): Void {
+            options = getOptions(options)
             getConnector("tabs", options).tabs(data, options)
+        }
 
         /**
             Render a text input field as part of a form.
@@ -656,14 +682,18 @@ MOB - test
                 of the initial value to display. The field should be a property of the form control record. It can 
                 be a simple property of the record or it can have multiple parts, such as: field.field.field. If 
                 this call is used without a form control record, the actual data value should be supplied via the 
-                options.value property.
+                options.value property. If the cols or rows option is defined, then a textarea HTML element will be used for
+                multiline input.
             @param options Optional extra options. See $View for a list of the standard options.
+            @option cols Number number of text columns
+            @option rows Number number of text rows
             @option password Boolean The data to display is a password and should be obfuscated.
             @examples
                 <% text("name") %>
                 <% text("product.name") %>
                 <% text("address", { escape: true }) %>
                 <% text("password", {value: params.password, password: true}) %>
+                <% text("password", {size: 20}) %>
          */
         function text(name: String, options: Object = {}): Void {
             let value = getValue(currentRecord, name, options)
@@ -672,36 +702,16 @@ MOB - test
             getConnector("text", options).text(name, value, options)
         }
 
-
-//  MOB -- could this be merged with text and use numCols
-        /**
-            Render a text area
-            @param name Name for the input textarea field. This defines the HTML element name and provides the source 
-                of the initial value to display. The field should be a property of the form control record. It can 
-                be a simple property of the record or it can have multiple parts, such as: field.field.field. If 
-                this call is used without a form control record, the actual data value should be supplied via the 
-                options.value property.
-            @param options Optional extra options. See $View for a list of the standard options.
-            @option numCols Number number of text columns
-            @option numRows Number number of text rows
-            @examples
-                <% textarea("name") %>
-         */
-        function textarea(name: String, options: Object = {}): Void {
-            let value = getValue(currentRecord, name, options)
-            value = formatValue(value, options)
-            name = getFieldName(name, options) 
-            getConnector("textarea", options).textarea(name, value, options)
-        }
-
         /**
             Render a tree control. The tree control can display static or dynamic tree data.
             @param data Optional initial data for the control. The data option may be used with the refresh option to 
                 dynamically refresh the data. The tree data is typically an XML document.
             @param options Optional extra options. See $View for a list of the standard options.
          */
-        function tree(data: Object, options: Object = {}): Void
+        function tree(data: Object, options: Object = {}): Void {
+            options = getOptions(options)
             getConnector("tree", options).tree(data, options)
+        }
 
         /**
             Render a partial view. This creates an HTML element with the required options. It is useful to generate

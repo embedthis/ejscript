@@ -5,10 +5,31 @@ require ejs.web
 
 const HTTP = ":" + (App.config.test.http_port || "6700")
 
-load("../utils.es")
+public var proxyData
 
-public function proxy(tag, text, options, expected) {
-    labelData = { text: text, options: options }
+const WAIT_TIMEOUT = 30000
+var cookie
+
+public function fetch(url: String, status: Number = Http.Ok): Http {
+    let http = new Http
+    http.setCookie(cookie)
+    http.get(url)
+    http.wait(WAIT_TIMEOUT)
+    if (http.status != status) {
+        App.log.debug(0, "STATUS is " + http.status + " expected " + status)
+        App.log.debug(0, "RESPONSE is " + http.response)
+        assert(http.status == status)
+    }
+    if (http.sessionCookie) {
+        cookie = http.sessionCookie
+    }
+    return http
+}
+
+
+public function proxy(tag, ...args) {
+    expected = args.pop()
+    proxyData = args
     let http = fetch(HTTP + "/" + tag)
     let response = http.response.trim()
     try {
@@ -17,10 +38,16 @@ public function proxy(tag, text, options, expected) {
             assert(response == expected)
         } else if (expected is Array) {
             for each (part in expected) {
+                if (!(response.contains(part))) {
+                    print("\nResponse does not contain: " + part + "\n")
+                }
                 assert(response.contains(part))
             }
-        } else {
+        } else if (expected != null) {
             for (let [key, value] in expected) {
+                if (!(response.contains(value))) {
+                    print("\nResponse does not contain: " + value + "\n")
+                }
                 assert(response.contains(value))
             }
         }

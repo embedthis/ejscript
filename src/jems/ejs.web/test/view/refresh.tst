@@ -10,14 +10,15 @@ server = new HttpServer
 server.listen(HTTP)
 load("proxy.es")
 
-public var labelData = {}
+public var proxyData
 
 server.on("readable", function (event, request: Request) {
     try {
         router.route(request)
         switch (pathInfo) {
         case "/label":
-            View(this).label(labelData.text, labelData.options)
+            let view = new View(this)
+            view.label.apply(view, proxyData)
             close()
             break
 

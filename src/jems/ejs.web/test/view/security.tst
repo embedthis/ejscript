@@ -1,5 +1,5 @@
 /*
-    Remote options
+    View.securityToken
  */
 require ejs.web
 
@@ -17,9 +17,9 @@ server.on("readable", function (event, request: Request) {
     try {
         router.route(request)
         switch (pathInfo) {
-        case "/label":
+        case "/security":
             let view = new View(this)
-            view.label.apply(view, proxyData)
+            view.securityToken.apply(view, proxyData)
             close()
             break
 
@@ -31,13 +31,12 @@ server.on("readable", function (event, request: Request) {
     }
 })
 
-//  Remote options
-proxy("label", "Text", {remote: "@login"}, '<span data-remote="/login">Text</span>') 
 
-proxy("label", "Text", {remote: "@login", apply: "div.content"}, 
-    '<span data-apply="div.content" data-remote="/login">Text</span>')
+//  Default
+proxy("security", [
+    '<meta name="SecurityTokenName" content="__ejs_security_token__" />',
+    '<meta name="__ejs_security_token__" content="',
+])
 
-proxy("label", "Text", {remote: {controller: "Admin", action: "login", method: "PUT"}}, 
-    '<span data-remote="/Admin/login" data-remote-method="PUT">Text</span>')
 
 server.close()

@@ -559,8 +559,13 @@ FUTURE & KEEP
             permit the server to locate the relevant session state store for the server-side application. 
             Use: setCookie("Cookie", cookie) to transmit the cookie on subsquent requests.
          */
-        function get sessionCookie()
-            header("Set-Cookie").match(/(-ejs-session-=.*);/)[1]
+        function get sessionCookie() {
+            let cookie = header("Set-Cookie")
+            if (cookie) {
+                return cookie.match(/(-ejs-session-=.*);/)[1]
+            }
+            return null
+        }
 
         /**
             Set a "Cookie" header in the request headers. This is used to send a cookie to the server.

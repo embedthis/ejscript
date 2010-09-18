@@ -1,5 +1,5 @@
 /*
-    Remote options
+    View.stylesheet
  */
 require ejs.web
 
@@ -17,9 +17,9 @@ server.on("readable", function (event, request: Request) {
     try {
         router.route(request)
         switch (pathInfo) {
-        case "/label":
+        case "/stylesheet":
             let view = new View(this)
-            view.label.apply(view, proxyData)
+            view.stylesheet.apply(view, proxyData)
             close()
             break
 
@@ -31,13 +31,18 @@ server.on("readable", function (event, request: Request) {
     }
 })
 
-//  Remote options
-proxy("label", "Text", {remote: "@login"}, '<span data-remote="/login">Text</span>') 
 
-proxy("label", "Text", {remote: "@login", apply: "div.content"}, 
-    '<span data-apply="div.content" data-remote="/login">Text</span>')
+//  Default
+proxy("stylesheet", [
+    '<link rel="stylesheet" type="text/css" href="/static/layout.css" />',
+    '<link rel="stylesheet" type="text/css" href="/static/themes/default.css" />',
+])
 
-proxy("label", "Text", {remote: {controller: "Admin", action: "login", method: "PUT"}}, 
-    '<span data-remote="/Admin/login" data-remote-method="PUT">Text</span>')
+
+//  Custom
+proxy("stylesheet", ["one.css", "two.css"], [
+    '<link rel="stylesheet" type="text/css" href="one.css" />',
+    '<link rel="stylesheet" type="text/css" href="two.css" />',
+])
 
 server.close()

@@ -182,6 +182,16 @@ div.-ejs-tabs li {
 	padding: 8px 6px 8px 4px;
 }
 
+div.-ejs-pane-visible {
+    visibility: visible;
+    display: block;
+}
+
+div.-ejs-pane-hidden {
+    visibility: hidden;
+    display: none;
+}
+
 div.-ejs-formError {
     width: 550px;
     margin-bottom: 20px;

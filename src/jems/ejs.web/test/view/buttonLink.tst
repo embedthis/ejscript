@@ -1,5 +1,5 @@
 /*
-    Remote options
+    View.buttonLink
  */
 require ejs.web
 
@@ -8,18 +8,15 @@ const HTTP = ":" + (App.config.test.http_port || "6700")
 router = new Router(Router.Top)
 server = new HttpServer
 server.listen(HTTP)
-
 load("proxy.es")
-
-public var proxyData
 
 server.on("readable", function (event, request: Request) {
     try {
         router.route(request)
         switch (pathInfo) {
-        case "/label":
+        case "/buttonLink":
             let view = new View(this)
-            view.label.apply(view, proxyData)
+            view.buttonLink.apply(view, proxyData)
             close()
             break
 
@@ -31,13 +28,16 @@ server.on("readable", function (event, request: Request) {
     }
 })
 
-//  Remote options
-proxy("label", "Text", {remote: "@login"}, '<span data-remote="/login">Text</span>') 
 
-proxy("label", "Text", {remote: "@login", apply: "div.content"}, 
-    '<span data-apply="div.content" data-remote="/login">Text</span>')
+//  Simple buttonLink (use as part of a form)
 
-proxy("label", "Text", {remote: {controller: "Admin", action: "login", method: "PUT"}}, 
-    '<span data-remote="/Admin/login" data-remote-method="PUT">Text</span>')
+proxy("buttonLink", "Click Me", '<button>Click Me</button></a>')
+
+//  Click action 
+proxy("buttonLink", "Click Me", "@buy", '<button data-click="/buy">Click Me</button></a>')
+
+//  Remote click
+proxy("buttonLink", "Click Me", {remote: "@buy", apply: "div.cart"}, 
+    '<button data-apply="div.cart" data-remote="/buy">Click Me</button></a>')
 
 server.close()

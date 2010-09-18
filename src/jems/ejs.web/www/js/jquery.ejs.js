@@ -15,7 +15,8 @@
      */
     var defaults = {
         "updating": true,
-        "toggle": 27,
+        //  ESC to toggle updating
+        "toggle-updating": 27,
     }
     $.fn.extend({
         /*
@@ -337,8 +338,8 @@
             }
             if (!o.bound) {
                 $(document).bind('keyup.refresh', function(event) {
-                    if (event.keyCode == o.toggle) {
-                        $('[data-refresh]').each(toggle);
+                    if (event.keyCode == o["toggle-updating"]) {
+                        $('[data-refresh]').each(toggleUpdating);
                     }
                 });
                 o.bound = true;
@@ -350,10 +351,7 @@
         return this;
     }
 
-    /*
-        Toggle dynmic refresh on or off
-     */
-    function toggle() {
+    function toggleUpdating() {
         elt = $(this);
         var o = elt.data("ejs-options");
         if (o) {
@@ -436,11 +434,15 @@
         $('div[id|=pane]').hide();
         var pane = $('div#' + next);
         pane.fadeIn(500);
-        pane.addClass('pane-visible');
-        pane.removeClass('pane-hidden');
+        pane.addClass('-ejs-pane-visible');
+        pane.removeClass('-ejs-pane-hidden');
         e.preventDefault();
         return false
     });
+
+    $('div[-ejs-flash-inform]]').live('load', function(e) {
+        $(this).animate({opacity: 1.0}, 2000).hide("slow");
+    }
 
     /* Click on anything with data-click */
     $('[data-click]').live('click', function (e) {

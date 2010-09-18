@@ -1,5 +1,5 @@
 /*
-    Remote options
+    View.button()
  */
 require ejs.web
 
@@ -8,18 +8,15 @@ const HTTP = ":" + (App.config.test.http_port || "6700")
 router = new Router(Router.Top)
 server = new HttpServer
 server.listen(HTTP)
-
 load("proxy.es")
-
-public var proxyData
 
 server.on("readable", function (event, request: Request) {
     try {
         router.route(request)
         switch (pathInfo) {
-        case "/label":
+        case "/button":
             let view = new View(this)
-            view.label.apply(view, proxyData)
+            view.button.apply(view, proxyData)
             close()
             break
 
@@ -31,13 +28,9 @@ server.on("readable", function (event, request: Request) {
     }
 })
 
-//  Remote options
-proxy("label", "Text", {remote: "@login"}, '<span data-remote="/login">Text</span>') 
 
-proxy("label", "Text", {remote: "@login", apply: "div.content"}, 
-    '<span data-apply="div.content" data-remote="/login">Text</span>')
+//  Simple button
 
-proxy("label", "Text", {remote: {controller: "Admin", action: "login", method: "PUT"}}, 
-    '<span data-remote="/Admin/login" data-remote-method="PUT">Text</span>')
+proxy("button", "commit", "OK", {}, '<input name="commit" type="submit" value="OK" />')
 
 server.close()

@@ -1,5 +1,5 @@
 /*
-    Remote options
+    View.image
  */
 require ejs.web
 
@@ -17,9 +17,9 @@ server.on("readable", function (event, request: Request) {
     try {
         router.route(request)
         switch (pathInfo) {
-        case "/label":
+        case "/image":
             let view = new View(this)
-            view.label.apply(view, proxyData)
+            view.image.apply(view, proxyData)
             close()
             break
 
@@ -31,13 +31,18 @@ server.on("readable", function (event, request: Request) {
     }
 })
 
-//  Remote options
-proxy("label", "Text", {remote: "@login"}, '<span data-remote="/login">Text</span>') 
 
-proxy("label", "Text", {remote: "@login", apply: "div.content"}, 
-    '<span data-apply="div.content" data-remote="/login">Text</span>')
+//  Basic
+proxy("image", "weather.png", '<img src="weather.png"/>')
 
-proxy("label", "Text", {remote: {controller: "Admin", action: "login", method: "PUT"}}, 
-    '<span data-remote="/Admin/login" data-remote-method="PUT">Text</span>')
+
+//  Clickable
+proxy("image", "weather.png", "@expand", '<img src="weather.png" data-click="/expand"/>')
+
+
+//  Refresh
+proxy("image", "weather.png", {refresh: "@expand", period: 2000}, 
+    '<img src="weather.png" data-refresh-period="2000" id="id_0" data-refresh="/expand"/>')
+
 
 server.close()

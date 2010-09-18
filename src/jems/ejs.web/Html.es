@@ -109,7 +109,7 @@ module ejs.web {
 
         function buttonLink(text: String, options: Object): Void {
             let attributes = getAttributes(options)
-            write('<button ' + attributes + '>' + text + '</button></a>\r\n')
+            write('<button' + attributes + '>' + text + '</button></a>\r\n')
         }
 
         function chart(data: Array, options: Object): Void {
@@ -125,8 +125,7 @@ module ejs.web {
         }
 
         function div(body: String, options: Object): Void {
-            // write('<div ' + getAttributes(options) + ' type="' + getTextKind(options) + '">' +  body + '</div>\r\n')
-            write('<span' + getAttributes(options) + '>' +  body + '</span>\r\n')
+            write('<div' + getAttributes(options) + '>' +  body + '</div>\r\n')
         }
 
         function endform(): Void {
@@ -136,18 +135,20 @@ module ejs.web {
         function flash(kind: String, msg: String, options: Object): Void {
             options.style = append(options.style, "-ejs-flash -ejs-flash-" + kind)
             write('<div' + getAttributes(options) + '>' + msg + '</div>\r\n')
+        /* MOB - remove
             if (kind == "inform") {
                 write('<script>$(document).ready(function() {
                         $("div.-ejs-flash-inform").animate({opacity: 1.0}, 2000).hide("slow");
                     });}</script>\r\n')
             }
+         */
         }
 
         function form(record: Object, options: Object): Void {
-            options.method ||= ((record && options.id) ? "PUT" : "POST")
+            let method ||= options.method || ((record && options.id) ? "PUT" : "POST")
             options.action ||= ((record && options.id) ? "update" : "create")
-            let method = options.method
             if (method != "GET" && method != "POST") {
+                options.method = method
                 method = "POST"
             }
             let uri = request.link(options)
@@ -182,10 +183,10 @@ module ejs.web {
                 let i = 0
                 for each (choice in choices) {
                     if (choice is Array) {
-                        /* list("priority", [["3", "low"], ["5", "med"], ["9", "high"]]) */
+                        /* list("priority", [["low", "3"], ["med", "5"], ["high", "9"]]) */
                         let [key, value] = choice
-                        selected = (choice[0] == defaultValue) ? ' selected="yes"' : ''
-                        write('      <option value="' + choice[0] + '"' + selected + '>' + choice[1] + '</option>\r\n')
+                        selected = (value == defaultValue) ? ' selected="yes"' : ''
+                        write('      <option value="' + value + '"' + selected + '>' + key + '</option>\r\n')
 
                     } else if (Object.getOwnPropertyCount(choice) > 0) {
                         /* list("priority", [{low: 3}, {med: 5}, {high: 9}]) */
@@ -228,31 +229,32 @@ module ejs.web {
                     if (choice is Array) {
                         /* radio("priority", [["3", "low"], ["5", "med"], ["9", "high"]]) */
                         let [key, value] = choice
-                        checked = (value == actual) ? "checked " : ""
-                        write('    ' + key.toPascal() + ' <input type="radio" name=' + name + attributes + ' value="' + 
-                            value + '"' + checked + '/>\r\n')
+                        checked = (value == actual) ? " checked" : ""
+                        write('    ' + key.toPascal() + ' <input type="radio" name="' + name + '"' + attributes + 
+                            ' value="' + value + '"' + checked + ' />\r\n')
 
                     } else if (Object.getOwnPropertyCount(choice) > 0) {
                         /* radio("priority", [{low: 3}, {med: 5}, {high: 9}]) */
                         for (let [key, value] in choice) {
-                            checked = (value == actual) ? "checked " : ""
-                            write('  ' + key.toPascal() + ' <input type="radio" name=' + name + attributes + ' value="' + 
-                                value + '"' + checked + '/>\r\n')
+                            checked = (value == actual) ? " checked" : ""
+                            write('  ' + key.toPascal() + ' <input type="radio" name="' + name + '"' + attributes + 
+                                ' value="' + value + '"' + checked + ' />\r\n')
                         }
 
                     } else {
                         /* radio("priority", ["low", "med", "high"]) */
-                        checked = (choice == actual) ? "checked " : ""
-                        write("    " + choice + ' <input type="radio" name="' + name + '"' + attributes + ' value="' + 
-                            choice + '" ' + checked + '/>\r\n')
+                        checked = (choice == actual) ? " checked" : ""
+                        write("    " + choice.toPascal() + 
+                            ' <input type="radio" name="' + name + '"' + attributes + ' value="' + 
+                            choice + '"' + checked + ' />\r\n')
                     }
                 }
             } else {
                 /* radio("priority", {low: 0, med: 1, high: 2}) */
                 for (let [key, value] in choices) {
-                    checked = (value == actual) ? "checked " : ""
+                    checked = (value == actual) ? " checked" : ""
                     write("    " + key.toPascal() + ' <input type="radio" name="' + name + '"' + attributes + ' value="' + 
-                        value + '" ' + checked + '/>\r\n')
+                        value + '"' + checked + ' />\r\n')
                 }
             }
         }
@@ -399,7 +401,7 @@ module ejs.web {
         }
 
         function tabs(data: Object, options: Object): Void {
-            let attributes = getAttributes(options)
+            let attributes = getAttributes(options, {"data-remote": true})
             let att
             if (options.toggle) {
                 att = "data-toggle"
@@ -408,7 +410,7 @@ module ejs.web {
             } else {
                 att = "data-click"
             }
-            write('<div class="-ejs-tabs">\r\n    <ul>\r\n')
+            write('<div class="-ejs-tabs"' + attributes + '>\r\n    <ul>\r\n')
             if (data is Array) {
                 for each (tuple in data) {
                     for (let [name, target] in tuple) {
@@ -426,21 +428,22 @@ module ejs.web {
         }
 
         function text(field: String, value: String, options: Object): Void {
-            write('    <input name="' + field + '"' + getAttributes(options) + ' type="' + getTextKind(options) + 
-                '" value="' + value + '" />\r\n')
-        }
-
-        function textarea(field: String, value: String, options: Object): Void {
-            numCols = options.numCols
-            if (numCols == undefined) {
-                numCols = 60
+            if (options.rows) {
+                let cols = options.size
+                if (cols == undefined) {
+                    cols = 60
+                }
+                let rows = options.rows
+                if (rows == undefined) {
+                    rows = 10
+                }
+                att = getAttributes(options, {size: true})
+                write('    <textarea name="' + field + '" type="' + getTextKind(options) + '"' + att + 
+                    ' cols="' + cols + '" rows="' + rows + '">' + value + '</textarea>\r\n')
+            } else {
+                write('    <input name="' + field + '"' + getAttributes(options) + ' type="' + getTextKind(options) + 
+                    '" value="' + value + '" />\r\n')
             }
-            numRows = options.numRows
-            if (numRows == undefined) {
-                numRows = 10
-            }
-            write('<textarea name="' + field + '" type="' + getTextKind(options) + '"' + getAttributes(options) + 
-                ' cols="' + numCols + '" rows="' + numRows + '">' + value + '</textarea>\r\n')
         }
 
         function tree(data: Object, options: Object): Void {
@@ -552,7 +555,7 @@ dump("options", options)
                 setLink(options.click, options, "data-click")
 
             } else if (options.remote) {
-                if (options.remote == true) {
+                if (options.remote == true && options.action) {
                     options.remote = options.action
                 }
                 setLink(options.remote, options, "data-remote")
