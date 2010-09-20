@@ -200,7 +200,9 @@ module ejs.web {
                 if (request.route && request.route.middleware) {
                     app = Middleware(app, request.route.middleware)
                 }
-                request.setupFlash()
+                if (finalize) {
+                    request.setupFlash()
+                }
                 let response
                 if (app.bound != global) {
                     response = app(request)

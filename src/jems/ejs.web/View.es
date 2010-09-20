@@ -23,11 +23,7 @@ module ejs.web {
         object hash with a single "action" property set to the value of the options string. i.e. {action: options}. Note
         that controls will modify the options object and so sharing one option set over many controls is not advisable.
 
-        Various controls have custom options, but they share the following common set of option properties:
-
-MOB - need to describe the option inheritance process. click: {} will inherit defaults from outer options, request, route
-MOB - need to document which controls options support these options
-
+        Various controls have custom options, but most share the following common set of option properties. 
         @option action String Action to invoke. This can be a URI string or a Controller action of the form
             @Controller/action.
         @option apply String Client JQuery selector identifying the element to apply the remote update.
@@ -62,11 +58,8 @@ MOB - need to document which controls options support these options
             If you require more complex key management, set click or edit to a callback function and format the 
             URI and params manually.
         @option id Number Numeric database ID for the record that originated the data for the view element.
-            MOB -- how is this used
         @option method String HTTP method to invoke.
-            MOB -- what about method inside click, remote ...
-        @option params
-MOB - test
+        @option params Request parameters to include with a click or remote request
         @option period Number Period in milliseconds to invoke the $refresh URI to update the control data. If period
             is zero (or undefined), then refresh will be done using a perisistent connection.
         @option query URI query string to add to click URIs.
@@ -78,8 +71,6 @@ MOB - test
         @option size (Number|String) Size of the element.
         @option style String CSS Style to use for the table.
         @option value Object Override value to display if used without a form control record.
-            MOB - what fields
-        @option visible Boolean Make the control visible. Defaults to true.
         @option width (Number|String) Width of the control. Can be a number of pixels or a percentage string. Defaults to
             unlimited.
 

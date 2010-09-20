@@ -26,6 +26,8 @@
             $.extend(defaults, options || {});
             $('[data-sort-order]').each(sort);
             $('[data-refresh]').each(refresh);
+            $('div[class~=-ejs-flash-inform]').animate({opacity: 1.0}, 2000).hide("slow");
+
             $('[data-modal]').each(function() {
                 $(this).modal({
                     escClose: false, 
@@ -46,10 +48,6 @@
         var elt         = $(this),
             data        = elt.is('form') ? elt.serializeArray() : [],
             method      = elt.attr('data-remote-method') || 'GET';
-/*MOB
-            key         = elt.attr('data-key');
-            keyFormat   = elt.attr('data-key-format');
-*/
 
         if (url === undefined) {
             url = elt.attr('action') || elt.attr('href') || elt.attr('data-remote');
@@ -57,10 +55,6 @@
                 throw "No URL specified for remote call";
             }
         }
-/*
-   MOB
-        url = addKeysToUrl(url, key, keyFormat);
- */
         elt.trigger('http:before');
         // MOB changeUrl(url);
         $.ajax({
@@ -119,32 +113,12 @@
         Debug logging
      */
     function log(msg) {
-        // $('#console').append('<div>' + new Date() + ' ' + text + '</div>');
         if (window.console) {
             console.debug(msg);
         } else {
             alert(msg);
         }
     }
-
-/* MOB
-    function addKeysToUrl(url, key, keyFormat) {
-        if (keyFormat == "path") {
-            var keys = [];
-            var split = key.split("&");
-            for (i in split) {
-                var pair = split[i];
-                keys.push(pair.split("=")[1]);
-            } 
-            if (keys.length > 0) {
-                url = url + "/" + keys.join("/");
-            }
-        } else if (keyFormat == "query") {
-            url = url + "?" + key;
-        }
-        return url;
-    }
-*/
 
     /*
         Foreground request using data-* element attributes. This makes all elements clickable and supports 
@@ -154,10 +128,6 @@
         var el          = $(this);
         var method      = el.attr('data-click-method') || el.attr('data-method') || 'GET';
         var url         = el.attr('data-click') || el.attr('action') || el.attr('href');
-/*
-        var key         = el.attr('data-key');
-        var keyFormat   = el.attr('data-key-format');
-*/
         var params      = el.attr('data-click-params');;
 
         if (url === undefined) {
@@ -165,16 +135,7 @@
             return;
         }
         method = method.toUpperCase();
-/*
-        if (key && !keyFormat) {
-            keyFormat = (method == "GET") ? "path" : null;
-        }
-        url = addKeysToUrl(url, key, keyFormat);
-        //  MOB - think carefully before removing this
-        if (keyFormat == "body") {
-            params = key.split("&");
-        }
-*/
+
         if (method == "GET") {
             window.location = url;
         } else {
@@ -440,10 +401,6 @@
         return false
     });
 
-    $('div[-ejs-flash-inform]]').live('load', function(e) {
-        $(this).animate({opacity: 1.0}, 2000).hide("slow");
-    }
-
     /* Click on anything with data-click */
     $('[data-click]').live('click', function (e) {
         request.apply(this);
@@ -459,9 +416,11 @@
             window.status = location.protocol + "//" + location.host + click;
         }
     });
+
     $('[data-click]').live('mouseout', function (e) {
         window.status = "";
     });
+
     $('[data-remote]').live('mouseover', function (e) {
         var remote = $(this).attr("data-remote");
         if (remote.indexOf("http://") == 0) {
@@ -471,6 +430,7 @@
             window.status = location.protocol + "//" + location.host + remote;
         }
     });
+
     $('[data-remote]').live('mouseout', function (e) {
         window.status = "";
     });

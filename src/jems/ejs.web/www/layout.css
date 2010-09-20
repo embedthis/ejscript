@@ -15,7 +15,7 @@ div.top {
 	height: 90px;
 }
 
-div.top h1 a {
+div.top h1 {
     margin: 10px 0 0 20px;
 }
 
@@ -210,8 +210,6 @@ div.-ejs-flash {
 }
 
 #-ejs-modal-foreground {
-    height: 240px; 
-    width: 450px; 
     color: #bbb; 
     background-color: #333; 
     border: 4px solid #444; 

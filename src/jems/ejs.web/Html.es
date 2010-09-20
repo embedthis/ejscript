@@ -109,7 +109,7 @@ module ejs.web {
 
         function buttonLink(text: String, options: Object): Void {
             let attributes = getAttributes(options)
-            write('<button' + attributes + '>' + text + '</button></a>\r\n')
+            write('<button' + attributes + '>' + text + '</button>\r\n')
         }
 
         function chart(data: Array, options: Object): Void {
@@ -135,17 +135,11 @@ module ejs.web {
         function flash(kind: String, msg: String, options: Object): Void {
             options.style = append(options.style, "-ejs-flash -ejs-flash-" + kind)
             write('<div' + getAttributes(options) + '>' + msg + '</div>\r\n')
-        /* MOB - remove
-            if (kind == "inform") {
-                write('<script>$(document).ready(function() {
-                        $("div.-ejs-flash-inform").animate({opacity: 1.0}, 2000).hide("slow");
-                    });}</script>\r\n')
-            }
-         */
         }
 
         function form(record: Object, options: Object): Void {
             let method ||= options.method || ((record && options.id) ? "PUT" : "POST")
+            options.action ||= options.click
             options.action ||= ((record && options.id) ? "update" : "create")
             if (method != "GET" && method != "POST") {
                 options.method = method
@@ -308,7 +302,7 @@ module ejs.web {
                 style: options.style,
             })
     */
-            let attributes = getAttributes(options)
+            let attributes = getAttributes(options, {"data-click": true})
             let columns = getColumns(data, options)
 
             write('  <table' + attributes + '>\r\n')
