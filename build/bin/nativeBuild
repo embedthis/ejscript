@@ -44,7 +44,7 @@ winBuild() {
 
         for f in ejs ejsc ejsmod ejssql http
         do
-            if [ !-x $BLD_BIN_DIR/${f}${BLD_EXE} ] ; then
+            if [ ! -x "$BLD_BIN_DIR/${f}${BLD_EXE}" ] ; then
                 echo Missing target $BLD_BIN_DIR/${f}${BLD_EXE} >&2
                 status=255
             fi
