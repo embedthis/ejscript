@@ -27,7 +27,7 @@ public function fetch(url: String, status: Number = Http.Ok): Http {
 }
 
 
-public function proxy(tag, ...args) {
+public function proxy(tag, ...args): Http {
     expected = args.pop()
     proxyData = args
     let http = fetch(HTTP + "/" + tag)
@@ -60,4 +60,5 @@ public function proxy(tag, ...args) {
         throw e
     }
     http.close()
+    return http
 }

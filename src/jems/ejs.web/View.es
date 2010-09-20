@@ -583,26 +583,17 @@ print("CATCH " + e)
         /**
             Render a table. The table control can display static or dynamic tabular data. The client table control 
                 manages sorting by column, dynamic data refreshes, pagination and clicking on rows or cells.
-            @param data Initial data to display. The data must be a grid of data, ie. an Array of 
-                objects where each object represents the data for a row. The column names are the object property names 
-                and the cell text is the object property values.
+            @param data Data to display. The data must be a grid of data, ie. an Array of objects where each object 
+                represents the data for a row. The column names are the object property names and the cell text is 
+                the object property values.
             @param options Optional extra options. See $View for a list of the standard options.
             @option cell Boolean Set to true to make click or edit links apply per cell instead of per row. 
                 The default is false.
-MOB - test
             @option columns (Array|Object) The columns list can be either an array of column names or an object hash 
                 of column objects where each column entry is hash of column options. 
                 Column options: align, formatter, header, sort, sortOrder, style, width.
-            @option edit (Boolean|Uri|String) URI to invoke when editing cells. If set to true, the rest of the 
-                options specifies the URI to invoke. Otherwise click can be set to a URI to invoke. The relevant 
-                column or columns must be marked as editable in the columns properties.
-            @option pageSize Number Number of rows to display per page. Omit or set to <= 0 for unlimited. 
-                Defaults to unlimited.
             @option params Object Hash of post parameters to include in the request. This is a hash of key/value items.
-                MOB - should be in click: {}, edit: {}
             @option pivot Boolean Pivot the table by swaping rows for columns and vice-versa
-            @option query URI query string to add to click URIs. Can be a single-dimension array for per-row query 
-                strings or a two-dimensional array for per cell (order is row/column).
             @option showHeader Boolean Control if column headings are displayed.
             @option showId Boolean If a columns option is not provided, the id column is normally hidden. 
                 To display, set showId to be true.
@@ -610,24 +601,21 @@ MOB - test
             @option sortOrder String Default sort order. Set to "ascending" or "descending".Defaults to ascending.
             @option style String CSS class to use for the table. The ultimate style to use for a table cell is the 
                 combination of style, styleCells, styleColumns and style Rows.
-            @option styleCells 2D Array of styles to use for the table body cells.
+            @option styleCells 2D Array of styles to use for the table body cells. Can also provide an array to the 
+                column.style property.
             @option styleColumns Array of styles to use for the table body columns. Can also use the style option in the
                 columns option.
             @option styleRows Array of styles to use for the table body rows
             @option title String Table title.
-
-//  MOB -- should auto-align currency to the right
-//  MOB -- test editable
             Column options:
             <ul>
-                <li>align</li>
-                <li>editable</li>
-                <li>formatter</li>
-                <li>header</li>
-                <li>sort String Define the column to sort by and the sort order</li>
-                <li>sortOrder String Set to "ascending" or "descending".  Defaults to ascending.</li>
-                <li>style</li>
-                <li>width</li>
+                <li>align - Will right-align numbers by default</li>
+                <li>click - URI to invoke if the cell is clicked</li>
+                <li>edit - MOB </li>
+                <li>formatter - Function to invoke to format the value to display</li>
+                <li>header - Header text for the column</li>
+                <li>style - Cell styles</li>
+                <li>width - Column width. Can be a string percentage or numeric pixel width</li>
             </ul>
         
             @example

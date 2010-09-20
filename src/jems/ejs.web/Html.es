@@ -351,15 +351,19 @@ module ejs.web {
                     params: options.params,
                     remote: options.remote,
                 }
+    /*MOB
                 if (options.cell) {
                     write('        <tr' + styleRow + '>\r\n')
                 } else {
+    */
                     rowOptions.record = r
                     rowOptions.field = null
                     rowOptions.values = values
                     let att = getAttributes(rowOptions)
                     write('        <tr' + att + styleRow + '>\r\n')
+    /*MOB
                 }
+    */
 
                 let col = 0
                 for (let [name, column] in columns) {
@@ -369,7 +373,11 @@ module ejs.web {
                         styleCell = append(styleCell, options.styleColumns[col])
                     }
                     if (column.style) {
-                        styleCell = append(styleCell, column.style)
+                        if (column.style is Array) {
+                            styleCell = append(styleCell, column.style[r])
+                        } else {
+                            styleCell = append(styleCell, column.style)
+                        }
                     }
                     if (options.styleCells && options.styleCells[row]) {
                         styleCell = append(styleCell, options.styleCells[row][col])
@@ -383,14 +391,18 @@ module ejs.web {
                     } else if (value is Number) {
                         attr = append(attr, ' align="right"')
                     }
-                    if (options.cell) {
+                    if (column.click || column.edit /* MOB options.cell */) {
+                        /* really cell options */
                         rowOptions.record = r
                         rowOptions.row = row
                         rowOptions.field = name
                         rowOptions.values = values
+                        rowOptions.key = column.key
+                        rowOptions.click = column.click
+                        rowOptions.edit = column.edit
                         attr = append(attr, getAttributes(rowOptions))
                     }
-                    value = view.formatValue(value, r, name, { formatter: column.formatter} )
+                    value = view.formatValue(value, { formatter: column.formatter} )
                     write('            <td' + attr + '>' + value + '</td>\r\n')
                     col++
                 }
@@ -507,9 +519,6 @@ module ejs.web {
                         options.values = values
         */
         private function setKeyFields(target: Object, keyFields: Array, options: Object): Void {
-dump("SKF", target)
-dump("keys", keyFields)
-dump("options", options)
             let record = options.record
             let row = options.row
             let values = options.values
@@ -560,6 +569,9 @@ dump("options", options)
                 }
                 setLink(options.remote, options, "data-remote")
 
+            } else if (options.edit) {
+                setLink(options.edit, options, "data-edit")
+
             } else if (options.action) {
                 /* This is just a safety net incase someone uses "action" instead of click */
                 setLink(options.action, options, "data-click")
@@ -570,27 +582,6 @@ dump("options", options)
             }
             return mapAttributes(options, exclude)
         }
-
-        /*
-MOB
-            Get attributes for table cells and rows
-        private function getRowCellAtt(options: Object, exclude: Object = null): String {
-            if (options.click) {
-                setLink(options.click, options, "data-click")
-            } else if (options.edit) {
-                setLink(options.edit, options, "data-edit")
-            } else if (options.remote) {
-                if (options.remote == true) {
-                    options.remote = options.action
-                }
-                setLink(options.remote, options, "data-remote")
-            } else if (options.action) {
-                // This is just a safety net incase someone uses "action" instead of click 
-                setLink(options.action, options, "data-click")
-            }
-            return mapAttributes(options, exclude)
-        }
-         */
 
         private function getColumns(data: Object, options: Object): Object {
             let columns
@@ -688,7 +679,7 @@ MOB
             if (target.params) {
                 options[prefix + "-" + "params"] = target.params
             }
-/*
+/*MOB
             if (target.key) {
                 options[prefix + "-" + "key"] = target.key
             }
