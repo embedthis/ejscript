@@ -2022,7 +2022,6 @@ static EcNode *parseElementList(EcCompiler *cp, EcNode *np)
 
     ENTER(cp);
 
-    index = 0;
     for (index = 0; np; ) {
         if (peekToken(cp) == T_COMMA) {
             getToken(cp);
@@ -2033,6 +2032,10 @@ static EcNode *parseElementList(EcCompiler *cp, EcNode *np)
             if ((elt = parseLiteralElement(cp)) != 0) {
                 mprAssert(elt->kind == N_FIELD);
                 elt->field.index = index;
+                if (peekToken(cp) != T_COMMA && cp->peekToken->tokenId != T_RBRACKET) {
+                    getToken(cp);
+                    return LEAVE(cp, unexpected(cp));
+                }
             }
             np = appendNode(np, elt);
         }
