@@ -558,7 +558,6 @@ static EjsObj *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         }
 
     } else {
-
         /*
             x = new Array(element0, element1, ..., elementN):
          */
@@ -567,7 +566,6 @@ static EjsObj *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
             ejsThrowMemoryError(ejs);
             return 0;
         }
-
         src = args->data;
         dest = ap->data;
         for (i = 0; i < size; i++) {
@@ -661,11 +659,7 @@ static EjsObj *concatArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     args = ((EjsArray*) argv[0]);
 
-    /*
-        Guess the new array size. May exceed this if args has elements that are themselves arrays.
-     */
-    newArray = ejsCreateArray(ejs, ap->length + ((EjsArray*) argv[0])->length);
-
+    newArray = ejsCreateArray(ejs, ap->length);
     src = ap->data;
     dest = newArray->data;
 
@@ -683,7 +677,7 @@ static EjsObj *concatArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         vp = args->data[i];
         if (ejsIsArray(vp)) {
             vpa = (EjsArray*) vp;
-            if (growArray(ejs, newArray, newArray->length + vpa->length - 1) < 0) {
+            if (growArray(ejs, newArray, next + vpa->length) < 0) {
                 ejsThrowMemoryError(ejs);
                 return 0;
             }
@@ -691,8 +685,11 @@ static EjsObj *concatArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
             for (k = 0; k < vpa->length; k++) {
                 dest[next++] = vpa->data[k];
             }
-
         } else {
+            if (growArray(ejs, newArray, next + 1) < 0) {
+                ejsThrowMemoryError(ejs);
+                return 0;
+            }
             dest[next++] = vp;
         }
     }
@@ -907,7 +904,6 @@ static EjsObj *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     if (growArray(ejs, ap, ap->length + args->length) < 0) {
         return 0;
     }
-
     delta = args->length;
     dest = ap->data;
     src = args->data;
@@ -1525,7 +1521,7 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
         return 0;
     }
     if (len <= ap->length) {
-        return EJS_ERR;
+        return 0;
     }
     size = mprGetBlockSize(ap->data) / sizeof(EjsObj*);
 
