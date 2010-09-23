@@ -970,7 +970,6 @@ static int genCallArgs(EcCompiler *cp, EcNode *np)
 static void genCallSequence(EcCompiler *cp, EcNode *np)
 {
     Ejs             *ejs;
-    EjsType         *type;
     EcNode          *left, *right;
     EcState         *state;
     EjsFunction     *fun;
@@ -993,7 +992,8 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             ecEncodeOpcode(cp, EJS_OP_CALL_SCOPED_NAME);
             ecEncodeName(cp, &np->qname);
             
-        } else if (left->kind == N_DOT && left->right->kind == N_QNAME && !left->right->name.nameExpr) {
+        } else if (left->kind == N_DOT && left->right->kind == N_QNAME && 
+                   !(left->right->name.nameExpr || left->right->name.qualifierExpr)) {
             processNodeGetValue(cp, left->left);
             if (state->dupLeft) {
                 ecEncodeOpcode(cp, EJS_OP_DUP);
@@ -1010,13 +1010,19 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
                 MOB BUG. Could be an arbitrary expression on the left. Need a consistent way to save the right most
                 object before the property. */
             count = getStackCount(cp);
+#if UNUSED
             left->needThis = 1;
-
+#endif
             processNodeGetValue(cp, left);
+#if UNUSED
             if (getStackCount(cp) < (count + 2)) {
                 ecEncodeOpcode(cp, EJS_OP_DUP);
                 pushStack(cp, 1);
             }
+#endif
+            ecEncodeOpcode(cp, EJS_OP_LOAD_THIS_LOOKUP);
+            pushStack(cp, 1);
+            ecEncodeOpcode(cp, EJS_OP_SWAP);
             argc = genCallArgs(cp, right);
             ecEncodeOpcode(cp, EJS_OP_CALL);
             popStack(cp, 2);
@@ -1061,7 +1067,9 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
     if (staticMethod) {
         mprAssert(ejsIsType(lookup->obj));
         if (state->currentClass && state->inFunction && 
+#if UNUSED
                 ejsIsTypeSubType(ejs, state->currentClass, (EjsType*) lookup->originalObj) && 
+#endif
                 lookup->obj != (EjsObj*) ejs->objectType) {
             /*
                 Calling a static method from within a class or subclass. So we can use "this".
@@ -1070,6 +1078,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
             mprAssert(0);
             ecEncodeOpcode(cp, EJS_OP_CALL_THIS_STATIC_SLOT);
             ecEncodeNumber(cp, lookup->slotNum);
+#if UNUSED
             /*
                 If searching the scope chain (i.e. without a qualifying obj.property), and if the current class is not the 
                 original object, then see how far back on the inheritance chain we must go.
@@ -1079,6 +1088,7 @@ static void genCallSequence(EcCompiler *cp, EcNode *np)
                     lookup->nthBase++;
                 }
             }
+#endif
             if (!state->currentFunction->staticMethod) {
                 /*
                     If calling from within an instance function, need to step over the instance also

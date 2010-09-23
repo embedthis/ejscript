@@ -43,7 +43,6 @@
         FRAME->currentLine = GET_STRING(); \
     }
 
-
 static void callFunction(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, int stackAdjust);
 
 static MPR_INLINE void getPropertyFromSlot(Ejs *ejs, EjsObj *thisObj, EjsObj *obj, int slotNum) 
@@ -480,6 +479,15 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
 
         CASE (EJS_OP_LOAD_THIS):
             push(THIS);
+            BREAK;
+
+        CASE (EJS_OP_LOAD_THIS_LOOKUP):
+            if (lookup.originalObj) {
+                push(lookup.originalObj);
+            } else {
+                obj = FRAME->function.moduleInitializer ? ejs->global : (EjsObj*) FRAME;
+                push(obj);
+            }
             BREAK;
 
         /*

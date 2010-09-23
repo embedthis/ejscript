@@ -144,17 +144,22 @@ module ejs.web {
             runCheckers(_beforeCheckers)
             let response
 //  MOB - temp
-use namespace action
+// use namespace action
             if (!request.finalized && request.autoFinalizing) {
 // print("NS \"" + ns + "\" name " + actionName)
 // breakpoint()
 // print("PRESENT " + this.(ns)::[actionName])
-                if (!this.(ns)::[actionName]) {
+
+//  MOB -- this.(ns)::[actionName]    appears to be binding from the left
+//  this.(ns
+                var x = (ns)::[actionName]
+                if (!(ns)::[actionName]) {
                     if (!viewExists(actionName)) {
                         response = this.(ns)::[actionName = "missing"]()
                     }
                 } else {
-                    response = this.(ns)::[actionName]()
+breakpoint()
+                    response = (ns)::[actionName]()
 // print("RESP " + response)
                 }
                 if (response && !response.body) {

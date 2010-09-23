@@ -88,6 +88,7 @@ static void *opcodeJump[] = {
     &&EJS_OP_LOAD_REGEXP,
     &&EJS_OP_LOAD_STRING,
     &&EJS_OP_LOAD_THIS,
+    &&EJS_OP_LOAD_THIS_LOOKUP,
     &&EJS_OP_LOAD_THIS_BASE,
     &&EJS_OP_LOAD_TRUE,
     &&EJS_OP_LOAD_UNDEFINED,

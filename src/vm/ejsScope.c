@@ -40,6 +40,7 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
     //  MOB -- remove nthBlock. Not needed if not binding
     for (lookup->nthBlock = 0, bp = state->bp; bp; bp = bp->scope, lookup->nthBlock++) {
         /* Seach simple object */
+        lookup->originalObj = (EjsObj*) bp;
         if ((slotNum = ejsLookupVarWithNamespaces(ejs, (EjsObj*) bp, name, lookup)) >= 0) {
             return slotNum;
         }
@@ -48,6 +49,7 @@ int ejsLookupScope(Ejs *ejs, EjsName *name, EjsLookup *lookup)
             if (thisObj && frame->function.boundThis == thisObj && 
                     thisObj != ejs->global && !frame->function.staticMethod && 
                     !frame->function.isInitializer) {
+                lookup->originalObj = thisObj;
                 /* Instance method only */
                 if ((slotNum = ejsLookupVarWithNamespaces(ejs, thisObj, name, lookup)) >= 0) {
                     return slotNum;
@@ -113,7 +115,6 @@ int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
     if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, name, lookup)) >= 0) {
         return slotNum;
     }
-    
     /* Lookup prototype chain */
     for (nthBase = 1, type = obj->type; type; type = type->baseType, nthBase++) {
         if ((prototype = type->prototype) == 0 || prototype->shortScope) {
@@ -124,7 +125,6 @@ int ejsLookupVar(Ejs *ejs, EjsObj *obj, EjsName *name, EjsLookup *lookup)
             return slotNum;
         }
     }
-
     /* Lookup base-class chain */
     type = ejsIsType(obj) ? ((EjsType*) obj)->baseType : obj->type;
     for (nthBase = 1; type; type = type->baseType, nthBase++) {

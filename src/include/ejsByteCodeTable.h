@@ -136,6 +136,7 @@ EjsOptable ejsOptable[] = {
     {   "LOAD_REGEXP",               1,         { EBC_STRING,                             },},
     {   "LOAD_STRING",               1,         { EBC_STRING,                             },},
     {   "LOAD_THIS",                 1,         { EBC_NONE,                               },},
+    {   "LOAD_THIS_LOOKUP",          1,         { EBC_NONE,                               },},
     {   "LOAD_THIS_BASE",            1,         { EBC_NUM,                                },},
     {   "LOAD_TRUE",                 1,         { EBC_NONE,                               },},
     {   "LOAD_UNDEFINED",            1,         { EBC_NONE,                               },},

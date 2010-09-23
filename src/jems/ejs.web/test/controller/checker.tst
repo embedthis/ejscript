@@ -46,7 +46,6 @@ assert(http.response == "Top Secret")
 assert(events.authorize && events.monitor && !events.denied)
 http.close()
 
-
 //  Without key, should be denied
 let http = fetch(HTTP + "/test/secret", Http.Forbidden)
 assert(http.response == "Access Denied")

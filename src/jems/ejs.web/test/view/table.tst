@@ -246,8 +246,8 @@ proxy("table", data, {
         },
     },
 }, [
-    '<th width="50%">Colour</th>'
-    '<td align="center">red</td>'
+    '<th width="50%">Colour</th>',
+    '<td align="center">red</td>',
 ])
 
 
@@ -265,7 +265,7 @@ proxy("table", data, {
         },
     },
 }, [
-    '<td>Very red</td>'
+    '<td>Very red</td>',
     '<td>Very blue</td>'
 ])
 

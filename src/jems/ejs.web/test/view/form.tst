@@ -79,7 +79,7 @@ let withID = {id: 7, name: "Joe", height: 6.0}
 proxy("fields", withID, { action: "@register", method: "LIST" }, [
     '<form method="POST" action="/register" data-click-method="LIST">',
     '<input name="__ejs_security_token__" type="hidden" value="',
-    '<input name="name" type="text" value="Joe" />'
+    '<input name="name" type="text" value="Joe" />',
     '</form>',
 ])
 

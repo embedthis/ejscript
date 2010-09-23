@@ -13,7 +13,7 @@ module ejs {
             ['child',  'children'],
             ['man',    'men'     ],
             ['move',   'moves'   ],
-            ['person', 'people'  ]
+            ['person', 'people'  ],
             ['sex',    'sexes'   ],
         ]
 
@@ -65,7 +65,7 @@ module ejs {
         ]
 
         static var uncountable = [
-            "equipment"
+            "equipment",
             "fish",
             "information",
             "money",

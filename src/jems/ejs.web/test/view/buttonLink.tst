@@ -31,13 +31,13 @@ server.on("readable", function (event, request: Request) {
 
 //  Simple buttonLink (use as part of a form)
 
-proxy("buttonLink", "Click Me", '<button>Click Me</button></a>')
+proxy("buttonLink", "Click Me", '<button>Click Me</button>')
 
 //  Click action 
-proxy("buttonLink", "Click Me", "@buy", '<button data-click="/buy">Click Me</button></a>')
+proxy("buttonLink", "Click Me", "@buy", '<button data-click="/buy">Click Me</button>')
 
 //  Remote click
 proxy("buttonLink", "Click Me", {remote: "@buy", apply: "div.cart"}, 
-    '<button data-apply="div.cart" data-remote="/buy">Click Me</button></a>')
+    '<button data-apply="div.cart" data-remote="/buy">Click Me</button>')
 
 server.close()
