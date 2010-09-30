@@ -156,7 +156,10 @@ static MprBlk *splitBlock(MprBlk *bp, size_t required, int qspare);
 static void getSystemInfo();
 static void unlinkChild(MprBlk *bp);
 static void *virtAlloc(size_t size);
+
+#if BLD_CC_MMU && !BLD_WIN_LIKE
 static void virtFree(MprBlk *bp);
+#endif
 
 #if BLD_WIN_LIKE
     static int winPageModes(int flags);
@@ -980,6 +983,7 @@ static MprBlk *splitBlock(MprBlk *bp, size_t required, int qspare)
 }
 
 
+#if BLD_CC_MMU && !BLD_WIN_LIKE
 static void virtFree(MprBlk *bp)
 {
     MprBlk      *spare, *after;
@@ -1026,6 +1030,7 @@ static void virtFree(MprBlk *bp)
 
     mprVirtFree((void*) bp, bp->size);
 }
+#endif
 
 
 /*
@@ -4845,7 +4850,7 @@ static void update(MD5CONTEXT *context, uchar *input, uint inputLen);
 
 int mprRandom()
 {
-#if WIN
+#if WIN || VXWORKS
 	return rand();
 #else
     return random();
@@ -15126,11 +15131,9 @@ static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct so
 
     ss = mprGetMpr(ctx)->socketService;
 
-    sa = mprAllocObjZeroed(ctx, struct sockaddr_in);
-    if (sa == 0) {
+    if ((sa = mprAllocObj(ctx, struct sockaddr_in, NULL)) == NULL) {
         return MPR_ERR_NO_MEMORY;
     }
-
     memset((char*) sa, '\0', sizeof(struct sockaddr_in));
     sa->sin_family = AF_INET;
     sa->sin_port = htons((short) (port & 0xFFFF));
