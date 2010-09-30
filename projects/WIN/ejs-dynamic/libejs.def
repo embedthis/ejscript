@@ -1,6 +1,5 @@
 LIBRARY libejs.dll
 EXPORTS
-
   __dummyEjsDebug
   _ejsGetBoolean
   _ejsGetDouble
@@ -343,6 +342,8 @@ EXPORTS
   ejsName
   ejsObjectOperator
   ejsOffsetExceptions
+  ejsOpCount
+  ejsOptable
   ejsParse
   ejsParseModuleVersion
   ejsPopBlock
@@ -429,6 +430,7 @@ EXPORTS
   http_set_async
   markHttp
   markType
+  nodes
   parseXMLAttribute
   parseXMLAttributes
   parseXMLElement
@@ -443,5 +445,6 @@ EXPORTS
   sock_async
   sock_on
   sock_set_async
+  tokenNames
   truncateFile
   writeFile
