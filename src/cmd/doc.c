@@ -487,7 +487,7 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
         if (strncmp(qname.space, "internal", 8) == 0 || strcmp(qname.space, "private") == 0) {
             continue;
         }
-        crec = (ClassRec*) mprAllocObjZeroed(classes, ClassRec);
+        crec = (ClassRec*) mprAllocCtx(classes, sizeof(ClassRec));
         crec->qname = qname;
         crec->trait = trait;
         crec->block = ejs->globalBlock;
@@ -500,7 +500,7 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
      */
     if (strcmp(namespace, "__all") == 0) {
         if (mp->firstGlobal < ejsGetPropertyCount(ejs, ejs->global)) {
-            crec = (ClassRec*) mprAllocObjZeroed(classes, ClassRec);
+            crec = (ClassRec*) mprAllocCtx(classes, sizeof(ClassRec));
             crec->qname.name = EJS_GLOBAL;
             crec->qname.space = EJS_EJS_NAMESPACE;
             crec->block = ejs->globalBlock;
@@ -739,8 +739,8 @@ static void generateClassPages(EjsMod *mp)
         Finally do one page specially for "global"
         TODO - Functionalize
      */
-    trait = mprAllocObjZeroed(mp, EjsTrait);
-    doc = mprAllocObjZeroed(mp, EjsDoc);
+    trait = mprAllocCtx(mp, sizeof(EjsTrait));
+    doc = mprAllocCtx(mp, sizeof(EjsDoc));
     doc->docString = (char*) mprStrdup(doc, "Global object containing all global functions and variables.");
     doc->returns = doc->example = doc->description = "";
     doc->trait = trait;
@@ -1066,7 +1066,7 @@ static MprList *buildPropertyList(EjsMod *mp, EjsObj *obj, int numInherited)
         if (strcmp(qname.space, EJS_PRIVATE_NAMESPACE) == 0 || strstr(qname.space, ",private]") != 0) {
             continue;
         }
-        prec = mprAllocObjZeroed(list, PropRec);
+        prec = mprAllocCtx(list, sizeof(PropRec));
         prec->qname = qname;
         prec->obj = obj;
         prec->slotNum = slotNum;
@@ -1124,7 +1124,7 @@ static MprList *buildGetterList(EjsMod *mp, EjsObj *obj, int numInherited)
         if (strcmp(qname.space, EJS_PRIVATE_NAMESPACE) == 0 || strstr(qname.space, ",private]") != 0) {
             continue;
         }
-        prec = mprAllocObjZeroed(list, PropRec);
+        prec = mprAllocCtx(list, sizeof(PropRec));
         prec->qname = qname;
         prec->obj = obj;
         prec->slotNum = slotNum;
@@ -1321,7 +1321,7 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
             }
         }
 #endif
-        fp = mprAllocObjZeroed(methods, FunRec);
+        fp = mprAllocCtx(methods, sizeof(FunRec));
         fp->fun = fun;
         fp->obj = obj;
         fp->slotNum = slotNum;

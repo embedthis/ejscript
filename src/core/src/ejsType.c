@@ -98,7 +98,7 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numSlots)
             typeSize += sizeof(EjsHash) + (sizeHash * (int) sizeof(EjsSlot*));
         }
     }
-    if ((vp = (EjsObj*) mprAllocZeroed(ejsGetAllocCtx(ejs), typeSize)) == 0) {
+    if ((vp = (EjsObj*) mprAllocCtx(ejsGetAllocCtx(ejs), typeSize)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }

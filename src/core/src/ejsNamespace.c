@@ -116,8 +116,8 @@ char *ejsFormatReservedNamespace(MprCtx ctx, EjsName *typeName, cchar *spaceName
     spaceLen = (int) strlen(spaceName);
 
     /*
-     *  Add 4 for [,,]
-     *  Add 2 for the trailing "::" and one for the null
+        Add 4 for [,,]
+        Add 2 for the trailing "::" and one for the null
      */
     len += 4 + spaceLen + 2 + 1;
 
@@ -125,7 +125,6 @@ char *ejsFormatReservedNamespace(MprCtx ctx, EjsName *typeName, cchar *spaceName
     if (namespace == 0) {
         return 0;
     }
-
     sp = namespace;
     *sp++ = '[';
 
@@ -150,7 +149,6 @@ char *ejsFormatReservedNamespace(MprCtx ctx, EjsName *typeName, cchar *spaceName
     *sp = '\0';
 
     mprAssert(sp <= &namespace[len]);
-
     return namespace;
 }
 

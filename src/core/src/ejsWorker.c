@@ -569,7 +569,7 @@ static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
         ejsThrowArgError(ejs, "Can't serialize message data");
         return 0;
     }
-    if ((msg = mprAllocObjZeroed(ejs, Message)) == 0) {
+    if ((msg = mprAllocObj(ejs, Message, NULL)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -624,7 +624,7 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
         handleError(outside, outsideWorker, inside->exception, 0);
         inside->exception = 0;
     }
-    if ((msg = mprAllocObjZeroed(outside, Message)) == 0) {
+    if ((msg = mprAllocObj(outside, Message, NULL)) == 0) {
         ejsThrowMemoryError(outside);
         return 0;
     }
@@ -713,7 +713,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     mprAssert(exception);
     mprAssert(ejs == worker->ejs);
 
-    if ((msg = mprAllocObjZeroed(ejs, Message)) == 0) {
+    if ((msg = mprAllocObj(ejs, Message, NULL)) == 0) {
         ejsThrowMemoryError(ejs);
         return;
     }

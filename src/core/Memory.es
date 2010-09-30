@@ -57,7 +57,9 @@ module ejs {
         /**
             Peak memory ever used by the application in bytes. This statistic is the maximum value ever attained by 
             $allocated. 
+            @deprecated
          */
+        # DEPRECATED
         native static function get peak(): Number
         
         /**
@@ -82,7 +84,9 @@ module ejs {
 
         /**
             Peak stack size ever used by the application in bytes 
+            @deprecated
          */
+        # DEPRECATED
         native static function get stack(): Number
         
         /**

@@ -452,11 +452,9 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
 {
     EcCompiler      *cp;
 
-    cp = mprAllocObjWithDestructorZeroed(ejs, EcCompiler, NULL);
-    if (cp == 0) {
+    if ((cp = mprAllocObj(ejs, EcCompiler, NULL)) == 0) {
         return 0;
     }
-
     cp->ejs = ejs;
     cp->strict = 0;
     cp->tabWidth = EC_TAB_WIDTH;
@@ -10003,12 +10001,10 @@ static EcNode *createNode(EcCompiler *cp, int kind)
 
     mprAssert(cp->state);
 
-    np = mprAllocObjZeroed(cp->state, EcNode);
-    if (np == 0) {
+    if ((np = mprAllocObj(cp->state, EcNode, NULL)) == 0) {
         cp->memError = 1;
         return 0;
     }
-
     np->seqno = cp->nextSeqno++;
     np->kind = kind;
     np->cp = cp;

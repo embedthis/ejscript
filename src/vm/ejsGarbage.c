@@ -72,10 +72,10 @@ gc->firstGlobal = 0;
     ejs->workQuota = EJS_WORK_QUOTA;
 
     for (i = 0; i < EJS_MAX_GEN; i++) {
-        gc->generations[i] = mprAllocObjZeroed(ejs->heap, EjsGen);
+        gc->generations[i] = mprAllocCtx(ejs->heap, sizeof(EjsGen));
     }
     for (i = 0; i < EJS_MAX_TYPE; i++) {
-        gc->pools[i] = mprAllocObjZeroed(ejs->heap, EjsPool);
+        gc->pools[i] = mprAllocCtx(ejs->heap, sizeof(EjsPool));
     }
     ejs->currentGeneration = ejs->gc.generations[EJS_GEN_ETERNAL];
     return 0;
@@ -87,13 +87,14 @@ void ejsDestroyGCService(Ejs *ejs)
     EjsGC       *gc;
     EjsGen      *gen;
     EjsObj      *vp;
-    MprBlk      *bp, *next;
+    MprBlk      *bp, *next, *end;
     int         generation;
     
     gc = &ejs->gc;
     for (generation = EJS_GEN_ETERNAL; generation >= 0; generation--) {
         gen = gc->generations[generation];
-        for (bp = mprGetFirstChild(gen); bp; bp = next) {
+        end = mprGetEndChildren(gen);
+        for (bp = mprGetFirstChild(gen); bp != end; bp = next) {
             next = bp->next;
             vp = MPR_GET_PTR(bp);
             checkAddr(vp);
@@ -163,7 +164,7 @@ EjsObj *ejsAllocVar(Ejs *ejs, EjsType *type, int extra)
     }
     if (vp == 0) {
         size = type->instanceSize + extra;
-        if ((vp = (EjsObj*) mprAllocZeroed(ejsGetAllocCtx(ejs), size)) == 0) {
+        if ((vp = (EjsObj*) mprAllocCtx(ejsGetAllocCtx(ejs), size)) == 0) {
             ejsThrowMemoryError(ejs);
             return 0;
         }
@@ -184,15 +185,14 @@ EjsObj *ejsAllocPooled(Ejs *ejs, int id)
 {
     EjsPool     *pool;
     EjsObj      *vp;
-    MprBlk      *bp, *gp;
+    MprBlk      *bp;
 
     if (0 < id && id < ejs->gc.numPools) {
         pool = ejs->gc.pools[id];
         if ((bp = mprGetFirstChild(pool)) != NULL) {
             vp = MPR_GET_PTR(bp);
-            /*
-                Transfer from the pool to the current generation. Inline for speed.
-             */
+            mprStealBlock(ejs->currentGeneration, vp);
+#if OLD
             gp = MPR_GET_BLK(ejs->currentGeneration);
             if (bp->prev) {
                 bp->prev->next = bp->next;
@@ -209,6 +209,7 @@ EjsObj *ejsAllocPooled(Ejs *ejs, int id)
             bp->next = gp->children;
             gp->children = bp;
             bp->prev = 0;
+#endif
 
             memset(vp, 0, pool->type->instanceSize);
             vp->type = pool->type;
@@ -242,7 +243,6 @@ void ejsFreeVar(Ejs *ejs, void *vp, int id)
     EjsPool     *pool;
     EjsGC       *gc;
     EjsObj      *obj;
-    MprBlk      *bp, *pp;
 
     mprAssert(vp);
     checkAddr(vp);
@@ -259,10 +259,12 @@ void ejsFreeVar(Ejs *ejs, void *vp, int id)
     type->dontPool = 1;
 
     if (!type->dontPool && 0 <= id && id < gc->numPools && pool->count < EJS_MAX_OBJ_POOL) {
+        pool->type = obj->type; 
+        mprStealBlock(pool, obj);
+#if OLD
         /*
             Transfer from the current generation back to the pool. Inline for speed.
          */
-        pool->type = obj->type; 
         pp = MPR_GET_BLK(pool);
         bp = MPR_GET_BLK(obj);
         if (bp->prev) {
@@ -287,6 +289,7 @@ void ejsFreeVar(Ejs *ejs, void *vp, int id)
         bp->next = pp->children;
         pp->children = bp;
         bp->prev = 0;
+#endif
 
 #if BLD_DEBUG
         obj->type = (void*) -1;
@@ -349,7 +352,7 @@ static void mark(Ejs *ejs, int generation)
     EjsGen          *gen;
     EjsBlock        *block;
     EjsObj          *vp, **sp, **top;
-    MprBlk          *bp, *nextBp;
+    MprBlk          *bp, *nextBp, *end;
     int             next;
 
     gc = &ejs->gc;
@@ -414,7 +417,8 @@ static void mark(Ejs *ejs, int generation)
     for (generation = EJS_MAX_GEN - 1; generation >= 0; generation--) {
         ejs->gc.collectGeneration = generation;
         gen = ejs->gc.generations[generation];
-        for (bp = mprGetFirstChild(gen); bp; bp = nextBp) {
+        end = mprGetEndChildren(gen);
+        for (bp = mprGetFirstChild(gen); bp != end; bp = nextBp) {
             nextBp = bp->next;
             vp = MPR_GET_PTR(bp);
             if (!vp->marked && vp->permanent) {
@@ -433,7 +437,7 @@ static void sweep(Ejs *ejs, int maxGeneration)
     EjsObj      *vp;
     EjsGC       *gc;
     EjsGen      *gen;
-    MprBlk      *bp, *next;
+    MprBlk      *bp, *next, *end;
     int         destroyed, generation;
     
     /*
@@ -444,7 +448,8 @@ static void sweep(Ejs *ejs, int maxGeneration)
         gc->collectGeneration = generation;
         gen = gc->generations[generation];
 
-        for (destroyed = 0, bp = mprGetFirstChild(gen); bp; bp = next) {
+        end = mprGetEndChildren(gen);
+        for (destroyed = 0, bp = mprGetFirstChild(gen); bp != end; bp = next) {
             next = bp->next;
             vp = MPR_GET_PTR(bp);
             checkAddr(vp);
@@ -472,13 +477,14 @@ static void resetMarks(Ejs *ejs)
     EjsGC       *gc;
     EjsObj      *obj;
     EjsBlock    *block, *b;
-    MprBlk      *bp;
+    MprBlk      *bp, *end;
     int         i;
 
     gc = &ejs->gc;
     for (i = 0; i < EJS_MAX_GEN; i++) {
         gen = gc->generations[i];
-        for (bp = mprGetFirstChild(gen); bp; bp = bp->next) {
+        end = mprGetEndChildren(gen);
+        for (bp = mprGetFirstChild(gen); bp != end; bp = bp->next) {
             obj = MPR_GET_PTR(bp);
             obj->marked = 0;
         }
@@ -554,8 +560,8 @@ void ejsMark(Ejs *ejs, void *ptr)
 
 static inline bool memoryUsageOk(Ejs *ejs)
 {
-    MprAlloc    *alloc;
-    int64        memory;
+    MprAllocStats   *alloc;
+    size_t          memory;
 
     memory = mprGetUsedMemory(ejs);
     alloc = mprGetAllocStats(ejs);
@@ -565,13 +571,13 @@ static inline bool memoryUsageOk(Ejs *ejs)
 
 static inline void pruneTypePools(Ejs *ejs)
 {
-    EjsPool     *pool;
-    EjsGC       *gc;
-    EjsObj      *vp;
-    MprAlloc    *alloc;
-    MprBlk      *bp, *next;
-    int64       memory;
-    int         i;
+    EjsPool         *pool;
+    EjsGC           *gc;
+    EjsObj          *vp;
+    MprAllocStats   *alloc;
+    MprBlk          *bp, *next, *end;
+    size_t          memory;
+    int             i;
 
     gc = &ejs->gc;
 
@@ -581,7 +587,8 @@ static inline void pruneTypePools(Ejs *ejs)
     for (i = 0; i < gc->numPools; i++) {
         pool = gc->pools[i];
         if (pool->count) {
-            for (bp = mprGetFirstChild(pool); bp; bp = next) {
+            end = mprGetEndChildren(pool);
+            for (bp = mprGetFirstChild(pool); bp != end; bp = next) {
                 next = bp->next;
                 vp = MPR_GET_PTR(bp);
                 mprFree(vp);
@@ -612,10 +619,11 @@ void ejsMakeEternalPermanent(Ejs *ejs)
 {
     EjsGen      *gen;
     EjsObj      *vp;
-    MprBlk      *bp;
+    MprBlk      *bp, *end;
 
     gen = ejs->gc.generations[EJS_GEN_ETERNAL];
-    for (bp = mprGetFirstChild(gen); bp; bp = bp->next) {
+    end = mprGetEndChildren(gen);
+    for (bp = mprGetFirstChild(gen); bp != end; bp = bp->next) {
         vp = MPR_GET_PTR(bp);
         vp->permanent = 1;
     }
@@ -743,7 +751,7 @@ void ejsPrintAllocReport(Ejs *ejs)
     EjsType         *type;
     EjsGC           *gc;
     EjsPool         *pool;
-    MprAlloc        *ap;
+    MprAllocStats   *ap;
     int             i, maxSlot, typeMemory, count, peakCount, freeCount, peakFreeCount, reuseCount;
 
     gc = &ejs->gc;

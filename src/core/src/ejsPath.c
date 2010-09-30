@@ -258,16 +258,13 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Cant open %s", fp->path);
         return 0;
     }
-
     to = mprOpen(ejs, toPath, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, EJS_FILE_PERMS);
     if (to == 0) {
         ejsThrowIOError(ejs, "Cant create %s", toPath);
         mprFree(from);
         return 0;
     }
-
-    buf = mprAlloc(ejs, MPR_BUFSIZE);
-    if (buf == 0) {
+    if ((buf = mprAlloc(ejs, MPR_BUFSIZE)) == NULL) {
         ejsThrowMemoryError(ejs);
         mprFree(to);
         mprFree(from);

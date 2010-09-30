@@ -145,12 +145,10 @@ EcLexer *ecCreateLexer(EcCompiler *cp)
     ReservedWord    *rp;
     int             size;
 
-    lp = mprAllocObjWithDestructorZeroed(cp, EcLexer, destroyLexer);
-    if (lp == 0) {
+    if ((lp = mprAllocObj(cp, EcLexer, destroyLexer)) == 0) {
         return 0;
     }
-    lp->input = mprAllocObjZeroed(lp, EcInput);
-    if (lp->input == 0) {
+    if ((lp->input = mprAllocObj(lp, EcInput, NULL)) == 0) {
         mprFree(lp);
         return 0;
     }
@@ -208,7 +206,7 @@ int ecGetToken(EcInput *input)
 
     if (token == 0) {
         //  TBD -- need an API for this
-        input->token = mprAllocObjZeroed(input, EcToken);
+        input->token = mprAllocObj(input, EcToken, NULL);
         if (input->token == 0) {
             //  TBD -- err code
             return -1;
@@ -1135,21 +1133,17 @@ int ecOpenFileStream(EcLexer *lp, const char *path)
     MprPath         info;
     int             c;
 
-    fs = mprAllocObjZeroed(lp->input, EcFileStream);
-    if (fs == 0) {
+    if ((fs = mprAllocObj(lp->input, EcFileStream, NULL)) == 0) {
         return MPR_ERR_NO_MEMORY;
     }
-
     if ((fs->file = mprOpen(lp, path, O_RDONLY | O_BINARY, 0666)) == 0) {
         mprFree(fs);
         return MPR_ERR_CANT_OPEN;
     }
-
     if (mprGetPathInfo(fs, path, &info) < 0 || info.size < 0) {
         mprFree(fs);
         return MPR_ERR_CANT_ACCESS;
     }
-
     /* Sanity check */
     mprAssert(info.size < (100 * 1024 * 1024));
     mprAssert(info.size >= 0);
@@ -1163,7 +1157,6 @@ int ecOpenFileStream(EcLexer *lp, const char *path)
         mprFree(fs);
         return MPR_ERR_CANT_READ;
     }
-
     fs->stream.buf[info.size] = '\0';
     fs->stream.nextChar = fs->stream.buf;
     fs->stream.end = &fs->stream.buf[info.size];
@@ -1195,13 +1188,10 @@ int ecOpenMemoryStream(EcLexer *lp, const uchar *buf, int len)
     EcMemStream     *ms;
     int             c;
 
-    ms = mprAllocObjZeroed(lp->input, EcMemStream);
-    if (ms == 0) {
+    if ((ms = mprAllocObj(lp->input, EcMemStream, NULL)) == 0) {
         return MPR_ERR_NO_MEMORY;
     }
-
     ms->stream.lineNumber = 0;
-
     ms->stream.buf = mprMemdup(ms, buf, len + 1);
     ms->stream.buf[len] = '\0';
     ms->stream.nextChar = ms->stream.buf;
@@ -1223,7 +1213,6 @@ int ecOpenMemoryStream(EcLexer *lp, const uchar *buf, int len)
      */
     c = getNextChar(&ms->stream);
     putBackChar(&ms->stream, c);
-
     return 0;
 }
 
@@ -1232,11 +1221,9 @@ int ecOpenConsoleStream(EcLexer *lp, EcStreamGet gets)
 {
     EcConsoleStream     *cs;
 
-    cs = mprAllocObjZeroed(lp->input, EcConsoleStream);
-    if (cs == 0) {
+    if ((cs = mprAllocObj(lp->input, EcConsoleStream, NULL)) == 0) {
         return MPR_ERR_NO_MEMORY;
     }
-
     cs->stream.lineNumber = 0;
     cs->stream.nextChar = 0;
     cs->stream.end = 0;

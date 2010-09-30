@@ -37,7 +37,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numSlots)
     mprAssert(ejs);
 
     size = numSlots * sizeof(EjsSlot) + sizeof(EjsFrame);
-    if ((obj = (EjsObj*) mprAllocZeroed(ejsGetAllocCtx(ejs), size)) == 0) {
+    if ((obj = (EjsObj*) mprAllocCtx(ejsGetAllocCtx(ejs), size)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }

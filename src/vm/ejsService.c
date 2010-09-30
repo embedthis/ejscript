@@ -30,15 +30,11 @@ EjsService *ejsCreateService(MprCtx ctx)
 {
     EjsService  *sp;
 
-    sp = mprAllocObjWithDestructorZeroed(ctx, EjsService, destroyEjsService);
-    if (sp == 0) {
+    if ((sp = mprAllocObj(ctx, EjsService, destroyEjsService)) == NULL) {
         return 0;
     }
     mprGetMpr(ctx)->ejsService = sp;
     sp->nativeModules = mprCreateHash(sp, -1);
-#if UNUSED
-    mprSetLogHandler(ctx, logHandler, NULL);
-#endif
     return sp;
 }
 
@@ -67,14 +63,13 @@ Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, i
     cchar   *name;
     static int seqno = 0;
 
-    ejs = mprAllocObjWithDestructorZeroed(ctx, Ejs, destroyEjs);
-    if (ejs == 0) {
+    if ((ejs = mprAllocObj(ctx, Ejs, destroyEjs)) == NULL) {
         return 0;
     }
     mprSetAllocCallback(ejs, (MprAllocFailure) allocFailure);
     ejs->service = mprGetMpr(ctx)->ejsService;
     ejs->empty = require && mprGetListCount(require) == 0;
-    ejs->heap = mprAllocHeap(ejs, "Ejs Object Heap", 1, 0, NULL);
+    ejs->heap = mprAllocCtx(ejs, 0);
     ejs->mutex = mprCreateLock(ejs);
     if (ejs->service->http == 0) {
         ejs->service->http = httpCreate(ejs->service);
@@ -136,7 +131,7 @@ static int destroyEjs(Ejs *ejs)
     ejsDestroyGCService(ejs);
     state = ejs->masterState;
     if (state->stackBase) {
-        mprMapFree(state->stackBase, state->stackSize);
+        mprVirtFree(state->stackBase, state->stackSize);
     }
     mprFree(ejs->heap);
     mprSetAltLogData(ejs, NULL);
@@ -400,10 +395,10 @@ static int cloneMaster(Ejs *ejs, Ejs *master)
  */
 static void allocFailure(Ejs *ejs, uint size, uint total, bool granted)
 {
-    MprAlloc    *alloc;
-    EjsObj      *argv[2], *thisObj;
-    char        msg[MPR_MAX_STRING];
-    va_list     dummy = NULL_INIT;
+    MprAllocStats   *alloc;
+    EjsObj          *argv[2], *thisObj;
+    char            msg[MPR_MAX_STRING];
+    va_list         dummy = NULL_INIT;
 
     alloc = mprGetAllocStats(ejs);
     if (granted) {
@@ -787,7 +782,7 @@ static int startLogging(Ejs *ejs)
     EjsObj      *app;
     EjsName     qname;
 
-    if ((ld = mprAllocObjZeroed(ejs, EjsLogData))  == 0) {
+    if ((ld = mprAllocObj(ejs, EjsLogData, NULL))  == 0) {
         return MPR_ERR_NO_MEMORY;
     }
     ld->ejs = ejs;
@@ -904,7 +899,7 @@ int ejsStartMprLogging(Mpr *mpr, char *logSpec)
     Global memory allocation handler. This is invoked when there is no notifier to handle an allocation failure.
     The interpreter has an allocFailure (see ejsService: allocFailure) and it will handle allocation errors.
  */
-void ejsMemoryFailure(MprCtx ctx, int64 size, int64 total, bool granted)
+void ejsMemoryFailure(MprCtx ctx, size_t size, size_t total, bool granted)
 {
     if (!granted) {
         mprPrintfError(ctx, "Can't allocate memory block of size %d\n", size);

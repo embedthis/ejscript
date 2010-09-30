@@ -41,8 +41,7 @@ MAIN(ejsmodMain, int argc, char **argv)
     /*
         Allocate the primary control structure
      */
-    mp = mprAllocObjZeroed(mpr, EjsMod);
-    if (mp == 0) {
+    if ((mp = mprAllocCtx(mpr, sizeof(EjsMod))) == NULL) {
         return MPR_ERR_NO_MEMORY;
     }
     mp->lstRecords = mprCreateList(mp);

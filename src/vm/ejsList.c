@@ -83,7 +83,7 @@ int ejsAddItemToSharedList(MprCtx ctx, EjsList *lp, cvoid *item)
 {
     EjsList     tmp;
 
-    if (lp->items == NULL || mprGetParent(lp->items) != ctx) {
+    if (lp->items == NULL || !mprIsParent(ctx, lp->items)) {
         tmp = *lp;
         lp->items = 0;
         lp->length = 0;

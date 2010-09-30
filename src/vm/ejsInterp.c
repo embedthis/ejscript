@@ -1428,7 +1428,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             blk->prev = blk->scope = state.bp;
             state.bp = blk;
             blk->stackBase = state.stack;
-            ejsSetDebugName(state.bp, mprGetName(v1));
+            ejsSetDebugName(state.bp, ejsGetDebugName(v1));
             BREAK;
 
         /*
@@ -3322,7 +3322,7 @@ int ejsInitStack(Ejs *ejs)
 {
     EjsState    *state;
 
-    state = ejs->state = ejs->masterState = mprAllocObjZeroed(ejs, EjsState);
+    state = ejs->state = ejs->masterState = mprAllocBlock(ejs, sizeof(EjsState), MPR_ALLOC_ZERO);
 
     /*
         Allocate the stack
@@ -3333,7 +3333,7 @@ int ejsInitStack(Ejs *ejs)
         This will allocate memory virtually for systems with virutal memory. Otherwise, it will just use malloc.
         TODO - create a guard page
      */
-    state->stackBase = mprMapAlloc(ejs, state->stackSize, MPR_MAP_READ | MPR_MAP_WRITE);
+    state->stackBase = mprVirtAlloc(state->stackSize, MPR_MAP_READ | MPR_MAP_WRITE);
     if (state->stackBase == 0) {
         mprSetAllocError(ejs);
         return EJS_ERR;

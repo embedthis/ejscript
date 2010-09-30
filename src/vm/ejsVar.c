@@ -513,7 +513,7 @@ EjsName *ejsAllocName(MprCtx ctx, cchar *name, cchar *space)
 {
     EjsName     *np;
 
-    np = mprAllocObj(ctx, EjsName);
+    np = mprAllocObj(ctx, EjsName, NULL);
     if (np) {
         np->name = mprStrdup(np, name);
         np->space = mprStrdup(np, space);

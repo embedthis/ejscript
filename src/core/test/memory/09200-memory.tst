@@ -7,7 +7,6 @@ if (Config.OS == "MACOSX" || Config.OS == "LINUX") {
     allocated = Memory.allocated
     assert(allocated > 0) 
     assert(allocated < Memory.system) 
-    assert(allocated <= Memory.peak) 
     assert(allocated < Memory.maximum) 
 
 /*
@@ -22,14 +21,10 @@ if (Config.OS == "MACOSX" || Config.OS == "LINUX") {
     assert(resident < Memory.system) 
     assert(resident < Memory.maximum) 
 
-    stack = Memory.allocated
-    assert(stack > 0) 
-    assert(stack < Memory.system) 
-
 /* TODO
- *
- *  This is working but the redline is very twitchy
- *
+  
+    This is working but the redline is very twitchy
+  
     trapError = false
     Memory.redline = 4 * 1024 * 1024
     Memory.callback = function(size, total) {

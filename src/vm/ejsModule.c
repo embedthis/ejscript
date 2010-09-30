@@ -16,8 +16,7 @@ EjsModule *ejsCreateModule(Ejs *ejs, cchar *name, int version)
 
     mprAssert(version >= 0);
 
-    mp = (EjsModule*) mprAllocZeroed(ejs, sizeof(EjsModule));
-    if (mp == 0) {
+    if ((mp = (EjsModule*) mprAllocObj(ejs, EjsModule, NULL)) == NULL) {
         mprAssert(mp);
         return 0;
     }
@@ -28,7 +27,7 @@ EjsModule *ejsCreateModule(Ejs *ejs, cchar *name, int version)
     } else {
         mp->vname = mp->name;
     }
-    mp->constants = mprAllocZeroed(mp, sizeof(EjsConst));
+    mp->constants = mprAllocCtx(mp, sizeof(EjsConst));
     if (mp->constants == 0) {
         return 0;
     }
@@ -50,7 +49,7 @@ int ejsAddNativeModule(MprCtx ctx, cchar *name, EjsNativeCallback callback, int 
 
     es = ejsGetService(ctx);
 
-    nm = mprAllocObjZeroed(es, EjsNativeModule);
+    nm = mprAllocObj(es, EjsNativeModule, NULL);
     nm->name = name;
     nm->callback = callback;
     nm->checksum = checksum;

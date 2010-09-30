@@ -1296,7 +1296,7 @@ static char *probe(MprCtx ctx, cchar *path, int minVersion, int maxVersion)
  */
 static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVersion, int maxVersion)
 {
-    MprCtx      *tx;
+    MprCtx      tx;
     EjsPath     *dir;
     char        *withDotMod, *path, *filename, *basename, *cp, *slash, *name, *bootSearch, *tok, *searchDir, *dp;
     int         i;
@@ -1307,7 +1307,8 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
     if (maxVersion <= 0) {
         maxVersion = MAXINT;
     }
-    ctx = withDotMod = makeModuleName(ejs, moduleName);
+    ctx = mprAllocCtx(ejs, 0);
+    withDotMod = makeModuleName(ejs, moduleName);
     name = mprGetNormalizedPath(ctx, withDotMod);
 
     mprLog(ejs, 6, "Search for module \"%s\"", name);
@@ -1398,7 +1399,7 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
 
             /* Search bin/../modules */
             dp = mprGetAppDir(ctx);
-            tx = (MprCtx*) dp;
+            tx = mprAllocCtx(ejs, 0);
             dp = mprGetPathParent(tx, dp);
             dp = mprJoinPath(tx, dp, BLD_MOD_NAME);
             filename = mprJoinPath(ctx, dp, basename);
@@ -1427,7 +1428,6 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
 
 char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVersion)
 {
-    MprCtx      ctx;
     char        *path, *withDotMod, *name;
 
     mprAssert(moduleName && *moduleName);
@@ -1435,15 +1435,16 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
     if (maxVersion <= 0) {
         maxVersion = MAXINT;
     }
-    ctx = withDotMod = makeModuleName(ejs, moduleName);
-    name = mprGetNormalizedPath(ctx, withDotMod);
+    withDotMod = makeModuleName(ejs, moduleName);
+    name = mprGetNormalizedPath(ejs, withDotMod);
 
     mprLog(ejs, 6, "Search for module \"%s\"", name);
-    path = searchForModule(ejs, ctx, name, minVersion, maxVersion);
+    path = searchForModule(ejs, ejs, name, minVersion, maxVersion);
     if (path) {
-        mprLog(ctx, 6, "Found %s at %s", name, path);
+        mprLog(ejs, 6, "Found %s at %s", name, path);
     }
-    mprFree(ctx);
+    mprFree(name);
+    mprFree(withDotMod);
     return path;
 }
 
@@ -1481,7 +1482,7 @@ static EjsLoadState *createLoadState(Ejs *ejs, int flags)
 {
     EjsLoadState    *ls;
 
-    ls = mprAllocObjZeroed(ejs, EjsLoadState);
+    ls = mprAllocCtx(ejs, sizeof(EjsLoadState));
     ls->typeFixups = mprCreateList(ls);
     ls->firstModule = mprGetListCount(ejs->modules);
     ls->flags = flags;

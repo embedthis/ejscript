@@ -1957,7 +1957,7 @@ static void astNew(EcCompiler *cp, EcNode *np)
              */
             np->qname = left->qname;
             np->lookup = left->lookup;
-            np->lookup.trait = mprAllocObj(cp->ejs, EjsTrait);
+            np->lookup.trait = mprAllocObj(cp->ejs, EjsTrait, NULL);
             np->lookup.trait->type = (EjsType*) np->lookup.ref;
             np->lookup.ref = 0;
             np->lookup.instanceProperty = 1;
@@ -3775,7 +3775,7 @@ static void addGlobalProperty(EcCompiler *cp, EcNode *np, EjsName *qname)
     up = cp->state->currentModule;
     mprAssert(up);
 
-    prop = mprAllocObjZeroed(cp, EjsName);
+    prop = mprAllocObj(cp, EjsName, NULL);
     *prop = *qname;
 
     if (up->globalProperties == 0) {

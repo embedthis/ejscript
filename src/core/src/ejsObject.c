@@ -306,7 +306,7 @@ void *ejsCloneObject(Ejs *ejs, void *vp, bool deep)
         ejsMakeObjHash(dest);
     }
 #endif
-    ejsSetDebugName(dest, mprGetName(src));
+    ejsSetDebugName(dest, ejsGetDebugName(src));
     return dest;
 }
 
@@ -722,7 +722,7 @@ static int setObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qn
         EjsObj  *value;
 
         value = obj->slots[slotNum].value.ref;
-        if (value != ejs->nullValue && *mprGetName(value) == '\0') {
+        if (value != ejs->nullValue && *ejsGetDebugName(value) == '\0') {
             ejsSetDebugName(value, qname->name);
         }
     }

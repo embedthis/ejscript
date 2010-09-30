@@ -45,7 +45,7 @@ MprThreadLocal  *sqliteTls;
 #define SET_CTX(ctx)  mprSetThreadData(sqliteTls, (void*) ctx)
 #else
 /*
-    Single-threaded (or VxWorks). Use one single context for all threads. In this case, we must create a thread-safe arena.
+    Single-threaded (or VxWorks). Use one single context for all threads.
  */
 static MprCtx sqliteCtx;
 #define SET_CTX(ctx)
@@ -59,15 +59,14 @@ static MprCtx sqliteCtx;
 #define SET_CTX(ctx)
 #endif /* MAP_ALLOC */
     
-
 /*
     Ejscript Sqlite class object
  */
 typedef struct EjsSqlite {
-    EjsObj       obj;                /* Extends Object */
-    sqlite3         *sdb;               /* Sqlite handle */
-    MprHeap         *arena;             /* Memory context arena */
-    Ejs             *ejs;               /* Interp reference */
+    EjsObj          obj;            /* Extends Object */
+    sqlite3         *sdb;           /* Sqlite handle */
+    MprCtx          ctx;            /* Memory context arena */
+    Ejs             *ejs;           /* Interp reference */
 } EjsSqlite;
 
 /********************************** Forwards **********************************/
@@ -90,31 +89,18 @@ static EjsVar *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **arg
     path = ejsGetString(ejs, argv[0]);    
     db->ejs = ejs;
     
-    /*
-     *  Create a memory context for use by sqlite. This is a virtual paged memory region.
-     *  TODO OPT - Could do better for running applications.
-     */
-#if MAP_ALLOC
-    db->arena = mprAllocArena(ejs, "sqlite", EJS_MAX_SQLITE_MEM, !USE_TLS, 0);
-    if (db->arena == 0) {
+    if ((db->ctx = mprAllocCtx(ejs, 0)) == NULL) {
         return 0;
     }
-    SET_CTX(db->arena);
-#else
-    db->arena = mprAllocHeap(ejs, "sqlite", EJS_MAX_SQLITE_MEM, 1, 0);
-    if (db->arena == 0) {
-        return 0;
-    }
-    SET_CTX(db->arena);
-#endif
+    SET_CTX(db->ctx);
     
 #if UNUSED
     EjsSqlite       **dbp;
     /*
-     *  Create a destructor object so we can cleanup and close the database. Must create after the arena so it will be
-     *  invoked before the arena is freed. 
+        Create a destructor object so we can cleanup and close the database. Must create after the ctx so it will be
+        invoked before the ctx is freed. 
      */
-    if ((dbp = mprAllocWithDestructor(ejs, sizeof(void*), (MprDestructor) sqldbDestructor)) == 0) {
+    if ((dbp = mprAllocObj(ejs, void*, sqldbDestructor)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -143,7 +129,7 @@ static int sqldbDestructor(EjsSqlite **dbp)
     db = *dbp;
 
     if (db->sdb) {
-        SET_CTX(db->arena);
+        SET_CTX(db->ctx);
         sqlite3_close(db->sdb);
         db->sdb = 0;
     }
@@ -161,7 +147,7 @@ static int sqliteClose(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
     mprAssert(db);
 
     if (db->sdb) {
-        SET_CTX(db->arena);
+        SET_CTX(db->ctx);
         sqlite3_close(db->sdb);
         db->sdb = 0;
     }
@@ -189,7 +175,7 @@ static EjsVar *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
     mprAssert(ejs);
     mprAssert(db);
 
-    SET_CTX(db->arena);
+    SET_CTX(db->ctx);
     cmd = ejsGetString(ejs, argv[0]);
     retries = 0;
     sdb = db->sdb;
@@ -245,7 +231,7 @@ static EjsVar *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
                         ejsName(&qname, EJS_EMPTY_NAMESPACE, mprStrdup(row, colName));
                     } else {
                         /*
-                         *  Append the table name for columns from foreign tables. Convert to camel case (tableColumn)
+                            Append the table name for columns from foreign tables. Convert to camel case (tableColumn)
                          */
                         len = strlen(tableName) + 1;
                         tableName = mprStrcat(row, -1, "_", tableName, colName, NULL);

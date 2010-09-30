@@ -101,9 +101,7 @@ int ecEnterState(EcCompiler *cp)
 {
     EcState *state;
 
-    //  OPT - keep state free list for speed
-    state = mprAllocObjZeroed(cp, EcState);
-    if (state == 0) {
+    if ((state = mprAllocObj(cp, EcState, NULL)) == 0) {
         mprAssert(state);
         //  TBD -- convenience function for this.
         cp->memError = 1;

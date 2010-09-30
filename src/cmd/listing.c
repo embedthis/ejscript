@@ -52,7 +52,7 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
 
     va_start(args, kind);
     mp = ejs->userData;
-    lst = mprAllocObjZeroed(mp, Lst);
+    lst = mprAllocCtx(mp, sizeof(Lst));
 
     /*
         Decode the record type and create a list for later processing. We need to process

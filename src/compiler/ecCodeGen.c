@@ -3627,8 +3627,7 @@ static EcCodeGen *allocCodeBuffer(EcCompiler *cp)
     state = cp->state;
     mprAssert(state);
 
-    code = mprAllocObjZeroed(state, EcCodeGen);
-    if (code == 0) {
+    if ((code = mprAllocObj(state, EcCodeGen, NULL)) == 0) {
         cp->fatalError = 1;
         return 0;
     }
@@ -4420,8 +4419,7 @@ static void addException(EcCompiler *cp, uint tryStart, uint tryEnd, EjsType *ca
     code = state->code;
     mprAssert(code);
 
-    exception = mprAllocObjZeroed(cp, EjsEx);
-    if (exception == 0) {
+    if ((exception = mprAllocObj(cp, EjsEx, NULL)) == 0) {
         mprAssert(0);
         return;
     }
@@ -4443,7 +4441,7 @@ static void addJump(EcCompiler *cp, EcNode *np, int kind)
 
     ENTER(cp);
 
-    jump = mprAllocObjZeroed(cp, EcJump);
+    jump = mprAllocObj(cp, EcJump, NULL);
     mprAssert(jump);
 
     jump->kind = kind;

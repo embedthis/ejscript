@@ -392,8 +392,7 @@ EjsEx *ejsAddException(EjsFunction *fun, uint tryStart, uint tryEnd, EjsType *ca
 
     code = &fun->body.code;
 
-    exception = mprAllocObjZeroed(fun, EjsEx);
-    if (exception == 0) {
+    if ((exception = mprAllocObj(fun, EjsEx, NULL)) == 0) {
         mprAssert(0);
         return 0;
     }

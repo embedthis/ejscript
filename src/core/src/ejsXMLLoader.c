@@ -26,8 +26,7 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     /*
         Create the parser stack
      */
-    parser = mprAllocObjZeroed(xp, EjsXmlState);
-    if (parser == 0) {
+    if ((parser = mprAllocObj(xp, EjsXmlState, NULL)) == 0) {
         mprFree(xp);
         return 0;
     }
