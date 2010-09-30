@@ -1,4 +1,5 @@
 #define BLD_MPRLIB 1
+#define MPR_IN_ALLOC 1
 #include "mpr.h"
 
 /******************************************************************************/
@@ -118,15 +119,6 @@ static int stopSeqno = -1;
 
 #define percent(a,b) ((int) ((a) * 100 / (b)))
 
-
-#if BLD_WIN_LIKE
-    __declspec(dllexport) Mpr *MPR = NULL;
-#else
-    Mpr *MPR = NULL;
-#endif
-static MprHeap      *heap;
-static int          padding[] = { TRAILER_SIZE, CHILDREN_SIZE, DESTRUCTOR_SIZE, DESTRUCTOR_SIZE };
-
 #if !MACOSX && !FREEBSD
     #define NEED_FFSL 1
     #if WIN
@@ -143,6 +135,11 @@ static int          padding[] = { TRAILER_SIZE, CHILDREN_SIZE, DESTRUCTOR_SIZE, 
     static inline int ffsl(ulong word);
     static inline int flsl(ulong word);
 #endif
+
+
+Mpr             *MPR;
+static MprHeap  *heap;
+static int      padding[] = { TRAILER_SIZE, CHILDREN_SIZE, DESTRUCTOR_SIZE, DESTRUCTOR_SIZE };
 
 
 static void allocException(size_t size, bool granted);
@@ -482,6 +479,14 @@ MprBlk *mprGetEndChildren(cvoid *ptr)
 }
 
 
+#if BLD_WIN_LIKE
+Mpr *mprGetMpr(MprCtx ctx)
+{
+    return MPR;
+}
+#endif
+
+
 int mprGetPageSize()
 {
     return heap->pageSize;
@@ -811,10 +816,12 @@ static void unlinkChild(MprBlk *bp)
 static MprBlk *getBlock(size_t usize, int padWords, int flags)
 {
     MprBlk      *bp;
-    size_t      maxBlock;
-    int         bucket, group, size, index;
+    size_t      maxBlock, size;
+    int         bucket, group, index;
 
+	int mob = MPR_ALLOC_HDR_SIZE;
     mprAssert(usize >= 0);
+	mob = usize + MPR_ALLOC_HDR_SIZE + (padWords * sizeof(void*));
     size = MPR_ALLOC_ALIGN(usize + MPR_ALLOC_HDR_SIZE + (padWords * sizeof(void*)));
     
     if ((bp = searchFree(size, &index)) == NULL) {
@@ -913,7 +920,11 @@ static void freeBlock(MprBlk *bp)
         mprAssert(after->prior == bp);
     }
 #endif
-#if BLD_CC_MMU
+#if BLD_CC_MMU && !BLD_WIN_LIKE
+    /*
+        Windows can't easily release portions of a prior virtual allocation. You can decommit memory on windows, 
+        but the pages are still part of the virtual address space -- so this will result in a loss of virtual space.
+     */
     if (bp->size >= MPR_ALLOC_RETURN && heap->stats.bytesFree > (MPR_REGION_MIN_SIZE * 4)) {
         INC(unpins);
         unlockHeap(heap);
@@ -975,7 +986,7 @@ static void virtFree(MprBlk *bp)
     size_t      gap;
 
     /*
-        If block is non-aligned, split the portion off the front sand save
+        If block is non-aligned, split the front portion and save
      */
     gap = MPR_PAGE_ALIGN(bp, heap->pageSize) - (size_t) bp;
     if (gap) {
@@ -1060,7 +1071,7 @@ static MprBlk *growHeap(size_t required)
 
     mprAssert(required > 0);
 
-    size = max(required, heap->chunkSize);
+    size = max(required, (size_t) heap->chunkSize);
     size = MPR_PAGE_ALIGN(size, heap->pageSize);
 
     if ((bp = (MprBlk*) virtAlloc(size)) == NULL) {
@@ -1378,11 +1389,10 @@ static inline int flsl(ulong word)
 static void printQueueStats() 
 {
     MprFreeBlk  *freeq;
-    int         i, index, total;
+    int         i, index;
 
     mprRawLog(MPR, 0, "\nFree Queue Stats\n Bucket                     Size   Count        Reuse\n");
     for (i = 0, freeq = heap->free; freeq != heap->freeEnd; freeq++, i++) {
-        total += freeq->size * freeq->count;
         index = (freeq - heap->free);
         mprRawLog(MPR, 0, "%7d %24lu %7d %12d\n", i, freeq->size, freeq->count, freeq->reuse);
     }
@@ -1527,6 +1537,7 @@ Mpr *mprCreateEx(int argc, char **argv, MprAllocFailure cback, void *shell)
     if (cback == 0) {
         cback = memoryFailure;
     }
+    srand((uint) time(NULL));
     mpr = (Mpr*) mprCreateAllocService(cback, (MprDestructor) mprDestructor);
 
     if (mpr == 0) {
@@ -4835,8 +4846,7 @@ static void update(MD5CONTEXT *context, uchar *input, uint inputLen);
 int mprRandom()
 {
 #if WIN
-    int x = rand_s();
-    return rand_s();
+	return rand();
 #else
     return random();
 #endif
@@ -20379,7 +20389,7 @@ MprOsService *mprCreateOsService(MprCtx ctx)
     /*
         Cleanup the environment. IFS is often a security hole
      */
-     putenv("IFS=\t ");
+    putenv("IFS=\t ");
     return os;
 }
 

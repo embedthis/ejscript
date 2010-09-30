@@ -4578,7 +4578,8 @@ extern MprThreadLocal *mprCreateThreadLocal(MprCtx ctx);
 #if BLD_DEBUG
     #define BLD_MEMORY_DEBUG        1                   /* Fill blocks, verifies block integrity. */
     #define BLD_MEMORY_STATS        1                   /* Include memory stats routines */
-    #define BLD_MEMORY_VERIFY       0                   /* Add trailer magic word */
+    //  MOB -- reverse this
+    #define BLD_MEMORY_VERIFY       1                   /* Add trailer magic word */
 #else
     #define BLD_MEMORY_DEBUG        0
     #define BLD_MEMORY_STATS        0
@@ -6487,7 +6488,7 @@ typedef struct Mpr {
 
 extern void mprNop(void *ptr);
 
-#if DOXYGEN
+#if DOXYGEN || BLD_WIN_LIKE
 /**
     Return the MPR control instance.
     @description Return the MPR singleton control object. 
@@ -6497,17 +6498,6 @@ extern void mprNop(void *ptr);
     @ingroup Mpr
  */
 extern Mpr *mprGetMpr(ctx);
-#endif
-
-#if BLD_WIN_LIKE
-    #define mprGetMpr(ctx) MPR
-    #if !MPR_IN_ALLOC
-        #if BLD_MPRLIB
-            extern Mpr *MPR;
-        #else
-            __declspec(dllimport) Mpr *MPR;
-        #endif
-    #endif
 #else
     #define mprGetMpr(ctx) MPR
     extern Mpr *MPR;

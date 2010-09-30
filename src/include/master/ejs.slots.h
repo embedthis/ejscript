@@ -1302,13 +1302,11 @@
 #define ES_Memory_allocated                                            0
 #define ES_Memory_callback                                             1
 #define ES_Memory_maximum                                              2
-#define ES_Memory_peak                                                 3
-#define ES_Memory_redline                                              4
-#define ES_Memory_resident                                             5
-#define ES_Memory_stack                                                6
-#define ES_Memory_system                                               7
-#define ES_Memory_stats                                                8
-#define ES_Memory_NUM_CLASS_PROP                                       9
+#define ES_Memory_redline                                              3
+#define ES_Memory_resident                                             4
+#define ES_Memory_system                                               5
+#define ES_Memory_stats                                                6
+#define ES_Memory_NUM_CLASS_PROP                                       7
 
 /*
    Prototype (instance) slots for "Memory" type 
@@ -1985,6 +1983,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1326519
+#define _ES_CHECKSUM_ejs   1326201
 
 #endif

@@ -1,6 +1,5 @@
 LIBRARY libmpr.dll
 EXPORTS
-  _unused_strtod
   assertTrue
   dtoa
   floorDiv
@@ -18,13 +17,7 @@ EXPORTS
   mprAddTestGroup
   mprAdjustBufEnd
   mprAdjustBufStart
-  mprAllocArena
-  mprAllocHeap
-  mprAllocInternal
-  mprAllocSlab
-  mprAllocWithDestructorInternal
-  mprAllocWithDestructorZeroedInternal
-  mprAllocZeroedInternal
+  mprAllocBlock
   mprAppendList
   mprAsprintf
   mprAtoi
@@ -112,6 +105,7 @@ EXPORTS
   mprGetAppVersion
   mprGetAvailableWorkers
   mprGetBlockFromBuf
+  mprGetBlockSize
   mprGetBufEnd
   mprGetBufLength
   mprGetBufOrigin
@@ -132,16 +126,17 @@ EXPORTS
   mprGetDispatcher
   mprGetDomainName
   mprGetElapsedTime
+  mprGetEndChildren
   mprGetEndian
   mprGetError
   mprGetFileFd
   mprGetFilePosition
   mprGetFileSize
+  mprGetFirstChild
   mprGetFirstHash
   mprGetFirstItem
   mprGetFirstPathSeparator
   mprGetHashCount
-  mprGetHeap
   mprGetHostName
   mprGetHwnd
   mprGetInst
@@ -158,15 +153,14 @@ EXPORTS
   mprGetMaxWorkers
   mprGetModuleSearchPath
   mprGetMpr
-  mprGetName
   mprGetNativePath
+  mprGetNextChild
   mprGetNextEvent
   mprGetNextHash
   mprGetNextItem
   mprGetNormalizedPath
   mprGetOsError
   mprGetPageSize
-  mprGetParent
   mprGetPathBase
   mprGetPathDir
   mprGetPathExtension
@@ -221,6 +215,7 @@ EXPORTS
   mprIsExiting
   mprIsInfinite
   mprIsNan
+  mprIsParent
   mprIsPathSeparator
   mprIsRelPath
   mprIsSocketEof
@@ -248,14 +243,12 @@ EXPORTS
   mprMakeLink
   mprMakeTime
   mprMakeUniversalTime
-  mprMapAlloc
-  mprMapFree
   mprMapMprPriorityToOs
   mprMapOsPriorityToMpr
   mprMapSeparators
   mprMemcmp
   mprMemcpy
-  mprMemdupInternal
+  mprMemdup
   mprMemoryError
   mprNop
   mprOpen
@@ -284,12 +277,13 @@ EXPORTS
   mprPuts
   mprQueueEvent
   mprQueueIOEvent
+  mprRandom
   mprRawLog
   mprRead
   mprReadCmdPipe
   mprReadRegistry
   mprReadSocket
-  mprReallocInternal
+  mprRealloc
   mprReallocStrcat
   mprReapCmd
   mprRecallWaitHandler
@@ -305,7 +299,6 @@ EXPORTS
   mprRemoveNotifier
   mprRemoveRangeOfItems
   mprRemoveWaitHandler
-  mprReparentBlock
   mprReportTestResults
   mprRescheduleEvent
   mprResetAllocError
@@ -340,9 +333,7 @@ EXPORTS
   mprSetCmdTimeout
   mprSetCurrentThreadPriority
   mprSetDebugMode
-  mprSetDestructor
   mprSetDomainName
-  mprSetDynamicName
   mprSetHashCase
   mprSetHostName
   mprSetHwnd
@@ -357,7 +348,6 @@ EXPORTS
   mprSetMaxWorkers
   mprSetMinWorkers
   mprSetModuleSearchPath
-  mprSetName
   mprSetPathNewline
   mprSetPathSeparators
   mprSetSecureProvider
@@ -381,7 +371,6 @@ EXPORTS
   mprSpinLock
   mprSpinUnlock
   mprSprintf
-  mprStackCheck
   mprStart
   mprStartCmd
   mprStartEventsThread
@@ -416,9 +405,9 @@ EXPORTS
   mprStrcmpAnyCaseCount
   mprStrcpy
   mprStrcpyCount
-  mprStrdupInternal
+  mprStrdup
   mprStrlen
-  mprStrndupInternal
+  mprStrndup
   mprStrnstr
   mprTerminate
   mprToAsc
@@ -429,11 +418,13 @@ EXPORTS
   mprTrySpinLock
   mprUnloadModule
   mprUnlock
+  mprUpdateDestructor
   mprUriDecode
   mprUriEncode
   mprUserError
-  mprValidateBlock
   mprVasprintf
+  mprVirtAlloc
+  mprVirtFree
   mprVsprintf
   mprWaitForCmd
   mprWaitForCond
@@ -471,3 +462,4 @@ EXPORTS
   stubMprWince
   stubRomfs
   universalTime
+  unused_strtod
