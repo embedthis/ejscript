@@ -2,7 +2,7 @@
 /******************************************************************************/
 /* 
  *  This file is an amalgamation of all the individual source code files for
- *  Multithreaded Portable Runtime 4.0.0.
+ *  Multithreaded Portable Runtime 4.1.0.
  *
  *  Catenating all the source into a single file makes embedding simpler and
  *  the resulting application faster, as many compilers can do whole file
@@ -4578,9 +4578,11 @@ extern MprThreadLocal *mprCreateThreadLocal(MprCtx ctx);
 #if BLD_DEBUG
     #define BLD_MEMORY_DEBUG        1                   /* Fill blocks, verifies block integrity. */
     #define BLD_MEMORY_STATS        1                   /* Include memory stats routines */
+    #define BLD_MEMORY_VERIFY       0                   /* Add trailer magic word */
 #else
     #define BLD_MEMORY_DEBUG        0
     #define BLD_MEMORY_STATS        0
+    #define BLD_MEMORY_VERIFY       0
 #endif
 
 #if MPR_64_BIT
@@ -4596,8 +4598,6 @@ extern MprThreadLocal *mprCreateThreadLocal(MprCtx ctx);
 
 #define MPR_ALLOC_ALIGN(x)          (((x) + MPR_ALIGN - 1) & ~(MPR_ALIGN - 1))
 #define MPR_ALLOC_HDR_SIZE          (MPR_ALLOC_ALIGN(sizeof(struct MprBlk)))
-#define MPR_ALLOC_MAX_STEPS         16
-#define MPR_ALLOC_MAP_BITS          64
 #define MPR_PAGE_ALIGN(x, psize)    ((((size_t) (x)) + ((size_t) (psize)) - 1) & ~(((size_t) (psize)) - 1))
 #define MPR_PAGE_ALIGNED(x, psize)  ((((size_t) (x)) % ((size_t) (psize))) == 0)
 
@@ -6012,6 +6012,12 @@ extern void mprReleaseWorker(MprWorker *worker);
 extern MprWorker *mprGetCurrentWorker(MprCtx ctx);
 
 /**
+    Return a random number
+    @returns A random integer
+ */
+extern int mprRandom();
+
+/**
     Deocde buffer using base-46 encoding.
     @param str String to decode
     @returns Buffer containing the decoded string. Caller must free.
@@ -6481,13 +6487,7 @@ typedef struct Mpr {
 
 extern void mprNop(void *ptr);
 
-#if BLD_WIN_LIKE || BLD_UNIX_LIKE
-#define BLD_HAS_GLOBAL_MPR 1
-#else
-#define BLD_HAS_GLOBAL_MPR 0
-#endif
-
-#if DOXYGEN || !BLD_HAS_GLOBAL_MPR || BLD_WIN_LIKE
+#if DOXYGEN
 /**
     Return the MPR control instance.
     @description Return the MPR singleton control object. 
@@ -6496,12 +6496,21 @@ extern void mprNop(void *ptr);
     @stability Evolving.
     @ingroup Mpr
  */
-extern struct Mpr *mprGetMpr(MprCtx ctx);
-#define MPR(ctx) mprGetMpr(ctx)
-#else
+extern Mpr *mprGetMpr(ctx);
+#endif
 
-extern Mpr *MPR;
-#define mprGetMpr(ctx) MPR
+#if BLD_WIN_LIKE
+    #define mprGetMpr(ctx) MPR
+    #if !MPR_IN_ALLOC
+        #if BLD_MPRLIB
+            extern Mpr *MPR;
+        #else
+            __declspec(dllimport) Mpr *MPR;
+        #endif
+    #endif
+#else
+    #define mprGetMpr(ctx) MPR
+    extern Mpr *MPR;
 #endif
 
 /**
