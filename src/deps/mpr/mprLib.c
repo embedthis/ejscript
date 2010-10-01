@@ -20596,7 +20596,7 @@ void stubMprUnix() {}
 
 MprOsService *mprCreateOsService(MprCtx ctx)
 {
-    return mprAllocObj(ctx, MprOsService);
+    return mprAllocObj(ctx, MprOsService, NULL);
 }
 
 
@@ -21506,7 +21506,7 @@ MprOsService *mprCreateOsService(MprCtx ctx)
 {
     files = mprCreateList(ctx);
     currentDir = mprStrdup(ctx, "/");
-    return mprAllocObj(ctx, MprOsService);
+    return mprAllocObj(ctx, MprOsService, NULL);
 }
 
 
