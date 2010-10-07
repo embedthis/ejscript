@@ -123,14 +123,15 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
          */
         if ((nativeModule = ejsLookupNativeModule(ejs, mp->name)) == 0) {
 #if !BLD_FEATURE_STATIC
-            if (loadNativeLibrary(ejs, mp, mp->path) < 0) {
+            loadNativeLibrary(ejs, mp, mp->path);
+            nativeModule = ejsLookupNativeModule(ejs, mp->name);
+#endif
+            if (nativeModule == NULL) {
                 if (ejs->exception == 0) {
-                    ejsThrowIOError(ejs, "Can't load the native module file \"%s\"", mp->path);
+                    ejsThrowIOError(ejs, "Can't load or initialize the native module file \"%s\"", mp->path);
                 }
                 return MPR_ERR_CANT_INITIALIZE;
             }
-            nativeModule = ejsLookupNativeModule(ejs, mp->name);
-#endif
             if (!(ejs->flags & EJS_FLAG_NO_INIT)) {
                 if (nativeModule->checksum != mp->checksum) {
                     ejsThrowIOError(ejs, "Module \"%s\" does not match native code (%d, %d)", mp->path, 
