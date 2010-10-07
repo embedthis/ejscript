@@ -13,6 +13,10 @@
 #include    "ejsTune.h"
 #include    "ejsCore.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*********************************** Defines **********************************/
 /*
     Compiler validation modes. From "use standard|strict"
@@ -933,7 +937,7 @@ typedef struct EcState {
         where the pragma was defined. ie. it is not passed into classes or functions (1 level deep).
         If the defaultNamespace is not defined, then the namespace field is used.
      */
-    cchar           *namespace;             /* Namespace for declarations */
+    cchar           *nspace;                /* Namespace for declarations */
     cchar           *defaultNamespace;      /* Default namespace for new top level declarations. Does not propagate */
     int             namespaceCount;         /* Count of namespaces originally in block. Used to pop namespaces */
 
@@ -1151,6 +1155,9 @@ extern uint     ecGetCodeOffset(EcCompiler *cp);
 extern int      ecGetCodeLen(EcCompiler *cp, uchar *mark);
 extern void     ecAdjustCodeLength(EcCompiler *cp, int adj);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _h_EC_COMPILER */
 
 /*

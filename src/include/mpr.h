@@ -104,6 +104,7 @@
     #include    <sys/uio.h>
     #include    <sys/wait.h>
     #include    <unistd.h>
+    #include    <wchar.h>
 #if LINUX && !__UCLIBC__
     #include    <sys/sendfile.h>
 #endif
@@ -218,6 +219,7 @@
     #include    <sys/utsname.h>
     #include    <sys/wait.h>
     #include    <unistd.h>
+    #include    <wchar.h>
     #include    <libkern/OSAtomic.h>
     #include    <float.h>
     #define __USE_ISOC99 1
@@ -414,7 +416,7 @@ extern "C" {
 #endif
 
 #ifndef PRINTF_ATTRIBUTE
-    #if (__GNUC__ >= 3) && !DOXYGEN && BLD_DEBUG
+    #if (__GNUC__ >= 3) && !DOXYGEN && BLD_DEBUG && UNUSED
         /** 
             Use gcc attribute to check printf fns.  a1 is the 1-based index of the parameter containing the format, 
             and a2 the index of the first argument. Note that some gcc 2.x versions don't handle this properly 
@@ -1464,6 +1466,30 @@ extern void mprBreakpoint();
     #define mprAssert(C)    if (1) ; else
 #endif
 
+/*
+    Unicode characters are build-time configurable to be 1, 2 or 4 bytes
+ */
+#define BLD_UNICODE_LEN  1
+#if BLD_UNICODE_LEN == 4
+    typedef int MprChar;
+    #define T(s) L ## s
+#elif BLD_UNICODE_LEN == 2
+    //  MOB - must be compiled -fshort-wchar
+    typedef short MprChar;
+    #define T(s) L ## s
+#else
+    typedef char MprChar;
+    #define T(s) s
+#endif
+
+/*
+    Unicode capable strings
+ */
+typedef struct MprStr {
+    int         length;
+    MprChar     value[0];
+} MprStr;
+
 /**
     Memory Allocation Service.
     @description The MPR provides a memory allocator to replace malloc. This allocator is a faster than most allocators
@@ -1500,7 +1526,7 @@ typedef void *MprCtx;
 
 /**
     Safe String Module
-    @description The MPR provides a suite of safe string manipulation routines to help prevent buffer overflows
+    @description The MPR provides a suite of safe ascii string manipulation routines to help prevent buffer overflows
         and other potential security traps.
     @see MprString, mprAsprintf, mprAllocStrcpy, mprAtoi, mprItoa, mprMemcpy,
         mprPrintf, mprReallocStrcat, mprSprintf, mprStaticPrintf, mprStrLower, mprStrTok, mprStrTrim, mprStrUpper,
@@ -4589,9 +4615,11 @@ extern MprThreadLocal *mprCreateThreadLocal(MprCtx ctx);
 #if MPR_64_BIT
     #define MPR_ALIGN               16
     #define MPR_ALIGN_SHIFT         4
+    #define MPR_SIZE_BITS           59
 #else
     #define MPR_ALIGN               8
     #define MPR_ALIGN_SHIFT         3
+    #define MPR_SIZE_BITS           27
 #endif
 
 #define MPR_ALLOC_MAGIC             0xe814ecab
@@ -4623,16 +4651,16 @@ extern MprThreadLocal *mprCreateThreadLocal(MprCtx ctx);
     @ingroup MprMem
  */
 typedef struct MprBlk {
-    struct MprBlk   *next;              /* Next sibling */
-    struct MprBlk   *prev;              /* Previous sibling */
-    struct MprBlk   *prior;             /* Size of block prior to this block in memory */
-    size_t          size: 27;           /* Internal block length including header (max size 134217728) */
-    uint            pad:   3;           /* Max pad words: destructor, children.forw, children.back, debug-trailer */
-    uint            free:  1;           /* Block is free */
-    uint            last:  1;           /* Block is last in memory region chunk */
+    struct MprBlk   *next;                  /* Next sibling */
+    struct MprBlk   *prev;                  /* Previous sibling */
+    struct MprBlk   *prior;                 /* Size of block prior to this block in memory */
+    size_t          size:  MPR_SIZE_BITS;   /* Internal block length including header (max size 134217728) */
+    uint            pad:  3;                /* Max pad words: destructor, children.forw, children.back, debug-trailer */
+    uint            free: 1;                /* Block is free */
+    uint            last: 1;                /* Block is last in memory region chunk */
 #if BLD_MEMORY_DEBUG
-    uint            magic;              /* Unique signature */
-    int             seqno;              /* Allocation sequence number */
+    uint            magic;                  /* Unique signature */
+    int             seqno;                  /* Allocation sequence number */
 #endif
 } MprBlk;
 
@@ -4666,7 +4694,7 @@ typedef struct MprAllocStats {
     uint            numCpu;                 /* Number of CPUs */
     size_t          pageSize;               /* System page size */
     size_t          bytesAllocated;         /* Bytes currently allocated */
-    size_t          bytesFree;              /* Bytes currently allocated */
+    size_t          bytesFree;              /* Bytes currently free */
     size_t          redLine;                /* Warn if allocation exceeds this level */
     size_t          maxMemory;              /* Max memory that can be allocated */
     size_t          rss;                    /* OS calculated resident stack size in bytes */
@@ -4678,7 +4706,6 @@ typedef struct MprAllocStats {
     uint64          requests;               /* Count of memory requests */
     uint64          reuse;                  /* Count of times a block was reused from a free queue */
     uint64          splits;                 /* Count of times a block was split */
-    uint64          scans;                  /* Count of times a queue was searched looking for a free block */
     uint64          unpins;                 /* Count of times a block was unpinned and released back to the O/S */
 #endif
 } MprAllocStats;
@@ -4691,6 +4718,7 @@ typedef struct MprFreeBlk {
     struct MprFreeBlk *forw;                /* Free list forward chain */
     struct MprFreeBlk *back;                /* Free list backward chain */
 #if BLD_MEMORY_STATS
+    /* These only exist in the queue header */
     size_t          size;                   /* Min size of block in queue */
     uint            count;                  /* Number of blocks on the queue */
     uint            reuse;                  /* Count of allocations from the free list */
@@ -5162,7 +5190,7 @@ extern int mprGetPageSize();
     @param ptr Any memory allocated by mprAlloc
     @returns the block size in bytes
  */
-extern int mprGetBlockSize(cvoid *ptr);
+extern size_t mprGetBlockSize(cvoid *ptr);
 
 
 //  MOB -- temp
@@ -6788,62 +6816,6 @@ extern int mprGetEndian(MprCtx ctx);
 //  TODO DOC
 extern int mprGetLogFd(MprCtx ctx);
 extern int mprSetLogFd(MprCtx ctx, int fd);
-
-
-#if WIN || WINCE
-extern char* mprToAsc(MprCtx ctx, cuni *u);
-extern uni* mprToUni(MprCtx ctx, cchar* a);
-#endif
-
-#if FUTURE
-#define BLD_FEATURE_UTF16  1
-#if BLD_FEATURE_UTF16
-    typedef short MprUsData;
-#else
-    typedef char MprUsData;
-#endif
-
-typedef struct MprUs {
-    MprUsData   *str;
-    int         length;
-} MprUs;
-
-
-extern MprUs    *mprAllocUs(MprCtx ctx);
-extern int      mprCopyUs(MprUs *dest, MprUs *src);
-extern int      mprCatUs(MprUs *dest, MprUs *src);
-extern int      mprCatUsArgs(MprUs *dest, MprUs *src, ...);
-extern MprUs    *mprDupUs(MprUs *us);
-extern int      mprCopyStrToUs(MprUs *dest, cchar *str);
-extern int      mprGetUsLength(MprUs *us);
-extern int      mprContainsChar(MprUs *us, int charPat);
-extern int      mprContainsUs(MprUs *us, MprUs *pat);
-extern int      mprContainsCaselessUs(MprUs *us, MprUs *pat);
-extern int      mprContainsStr(MprUs *us, cchar *pat);
-#if FUTURE
-extern int      mprContainsPattern(MprUs *us, MprRegex *pat);
-#endif
-extern MprUs    *mprTrimUs(MprUs *dest, MprUs *pat);
-extern int      mprTruncateUs(MprUs *dest, int len);
-extern MprUs    *mprSubUs(MprUs *dest, int start, int len);
-extern MprUs    *mprMemToUs(MprCtx ctx, const char *buf, int len);
-extern MprUs    *mprStrToUs(MprCtx ctx, cchar *str);
-extern char     *mprUsToStr(MprUs *us);
-extern void     mprUsToLower(MprUs *us);
-extern void     mprUsToUpper(MprUs *us);
-extern MprUs    *mprTokenizeUs(MprUs *us, MprUs *delim, int *last);
-extern int      mprFormatUs(MprUs *us, int maxSize, cchar *fmt, ...);
-extern int      mprScanUs(MprUs *us, cchar *fmt, ...);
-
-/*
-    What about:
-        isdigit, isalpha, isalnum, isupper, islower, isspace
-        replace
-        reverse
-        split
-            extern MprList *mprSplit(MprUs *us, MprUs *delim)
- */
-#endif
 
 /*
    External dependencies

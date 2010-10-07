@@ -1101,7 +1101,7 @@ extern int ejsBindFunction(Ejs *ejs, void *obj, int slotNum, EjsProc fn);
     you need these routines in your code.
  */
 
-extern int      ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *blockRef, struct EjsNamespace *namespace);
+extern int      ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *blockRef, struct EjsNamespace *nsp);
 extern int      ejsAddScope(MprCtx ctx, EjsBlock *block, EjsBlock *scopeBlock);
 extern EjsBlock *ejsCreateBlock(Ejs *ejs, int numSlots);
 
