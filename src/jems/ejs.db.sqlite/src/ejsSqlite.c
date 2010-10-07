@@ -11,10 +11,11 @@
 
 #include    "ejs.h"
 
+#if BLD_FEATURE_SQLITE
+
 #include    "sqlite3.h"
 #include    "ejs.db.sqlite.slots.h"
 
-#if BLD_FEATURE_SQLITE
 /*********************************** Locals ***********************************/
 
 #define THREAD_STYLE SQLITE_CONFIG_MULTITHREAD
