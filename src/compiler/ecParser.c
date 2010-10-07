@@ -1616,7 +1616,7 @@ static EcNode *parseFunctionExpression(EcCompiler *cp)
     if (np->qname.name == 0) {
         np->qname.name = mprAsprintf(np, -1, "--fun_%d-%d--", np->seqno, (int) mprGetTime(np));
     }
-    np->qname.space = mprStrdup(np, state->inFunction ? EJS_EMPTY_NAMESPACE: cp->fileState->namespace);
+    np->qname.space = mprStrdup(np, state->inFunction ? EJS_EMPTY_NAMESPACE: cp->fileState->nspace);
 
     np = parseFunctionSignature(cp, np);
     if (np == 0) {
@@ -1806,7 +1806,7 @@ static EcNode *parseLiteralField(EcCompiler *cp)
             ejsDefineProperty is called -- they will get cross-linked.
          */
         fp->qname.name = mprAsprintf(np, -1, "--fun_%d-%d--", fp->seqno, (int) mprGetTime(fp));
-        fp->qname.space = mprStrdup(fp, cp->fileState->namespace);
+        fp->qname.space = mprStrdup(fp, cp->fileState->nspace);
         mprAssert(cp->state->topVarBlockNode);
         appendNode(cp->state->topVarBlockNode, fp);
         /*
@@ -6391,7 +6391,7 @@ static EcNode *parseCatchClause(EcCompiler *cp)
             arg->kind = N_VAR;
             arg->name.varKind = KIND_LET;
             arg->kindName = "n_var";
-            arg->qname.space = cp->state->namespace;
+            arg->qname.space = cp->state->nspace;
 
             /* Create assignment node */
             name = createNode(cp, N_QNAME);
@@ -8275,7 +8275,7 @@ static EcNode *parseFunctionBody(EcCompiler *cp, EcNode *fun)
     ENTER(cp);
 
     cp->state->inFunction = 1;
-    cp->state->namespace = EJS_EMPTY_NAMESPACE;
+    cp->state->nspace = EJS_EMPTY_NAMESPACE;
 
     if (peekToken(cp) == T_LBRACE) {
         np = parseBlock(cp);
@@ -8865,7 +8865,7 @@ static EcNode *parseModuleDefinition(EcCompiler *cp)
         }
     } else {
         isDefault = 1;
-        namespace = cp->fileState->namespace;
+        namespace = cp->fileState->nspace;
     }
     
     if (isDefault) {
@@ -8889,7 +8889,7 @@ static EcNode *parseModuleDefinition(EcCompiler *cp)
      */
     pos = 0;
     if (!isDefault) {
-        body = insertNode(body, createNamespaceNode(cp, cp->fileState->namespace, 0, 1), pos++);
+        body = insertNode(body, createNamespaceNode(cp, cp->fileState->nspace, 0, 1), pos++);
     }
     body = insertNode(body, createNamespaceNode(cp, namespace, 1, 1), pos++);
     for (next = 0; (name = mprGetNextItem(cp->require, &next)) != 0; ) {
@@ -9291,7 +9291,7 @@ static EcNode *parsePragmaItem(EcCompiler *cp)
                         break;
                     }
                 }
-                cp->blockState->namespace = np->qname.name;
+                cp->blockState->nspace = np->qname.name;
                 np->useNamespace.isDefault = 1;
             }
         }
@@ -9417,8 +9417,8 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
     } else {
         np->qname.name = EJS_INTERNAL_NAMESPACE;
     }
-    state->namespace = np->qname.name;
-    cp->fileState->namespace = state->namespace;
+    state->nspace = np->qname.name;
+    cp->fileState->nspace = state->nspace;
 
     /*
         Create the default module node
@@ -9431,7 +9431,7 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
         via --require switch
      */
     block = createNode(cp, N_BLOCK);
-    namespace = createNamespaceNode(cp, cp->fileState->namespace, 0, 1);
+    namespace = createNamespaceNode(cp, cp->fileState->nspace, 0, 1);
     namespace->useNamespace.isInternal = 1;
     block = appendNode(block, namespace);
     for (next = 0; (name = mprGetNextItem(cp->require, &next)) != 0; ) {
@@ -10448,7 +10448,7 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, c
         } else if (cp->blockState->defaultNamespace) {
             namespace = cp->blockState->defaultNamespace;
         } else {
-            namespace = cp->blockState->namespace;
+            namespace = cp->blockState->nspace;
         }
     }
     mprAssert(namespace);
@@ -10461,7 +10461,7 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, c
 
     } else if (state->inClass) {
         if (strcmp(namespace, EJS_INTERNAL_NAMESPACE) == 0) {
-            namespace = mprStrdup(np, cp->fileState->namespace);
+            namespace = mprStrdup(np, cp->fileState->nspace);
         } else if (strcmp(namespace, EJS_PRIVATE_NAMESPACE) == 0 || strcmp(namespace, EJS_PROTECTED_NAMESPACE) == 0) {
             namespace = (char*) ejsFormatReservedNamespace(np, &state->currentClassName, namespace);
         } else {
@@ -10472,7 +10472,7 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, c
         if (cp->visibleGlobals) {
             namespace = EJS_EMPTY_NAMESPACE;
         } else if (strcmp(namespace, EJS_INTERNAL_NAMESPACE) == 0) {
-            namespace = mprStrdup(np, cp->fileState->namespace);
+            namespace = mprStrdup(np, cp->fileState->nspace);
         } else {
             namespace = (char*) mprStrdup(np, namespace);
         }

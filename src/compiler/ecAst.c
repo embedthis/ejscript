@@ -2048,7 +2048,7 @@ static void astProgram(EcCompiler *cp, EcNode *np)
     ENTER(cp);
     ejs = cp->ejs;
     state = cp->state;
-    state->namespace = np->qname.name;
+    state->nspace = np->qname.name;
 
     next = 0;
     while ((child = getNextAstNode(cp, np, &next)) != 0) {
@@ -2429,7 +2429,7 @@ static void astUseNamespace(EcCompiler *cp, EcNode *np)
                     MOB -- not right
                  */
                 for (s = cp->state; s; s = s->prev) {
-                    s->namespace = (char*) namespace->uri;
+                    s->nspace = (char*) namespace->uri;
                     if (s == cp->blockState) {
                         break;
                     }
@@ -3602,7 +3602,7 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsObj *block,
     if (namespace == 0 || !ejsIsNamespace(namespace)) {
         namespace = ejsLookupNamespace(cp->ejs, np->qname.space);
     }
-    if (namespace == 0 && strcmp(cp->state->namespace, np->qname.space) == 0) {
+    if (namespace == 0 && strcmp(cp->state->nspace, np->qname.space) == 0) {
         namespace = ejsCreateNamespace(ejs, np->qname.space, np->qname.space);
     }
     if (namespace == 0) {

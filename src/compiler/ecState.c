@@ -60,7 +60,7 @@ int ecPushState(EcCompiler *cp, EcState *newState)
         newState->inSettings = prev->inSettings;
         newState->noin = prev->noin;
         newState->blockNestCount = prev->blockNestCount;
-        newState->namespace = prev->namespace;
+        newState->nspace = prev->nspace;
         newState->defaultNamespace = prev->defaultNamespace;
         newState->breakState = prev->breakState;
         newState->classState = prev->classState;
