@@ -732,7 +732,7 @@ static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *
             ejsThrowArgError(ejs, "include is not an array");
             return;
         }
-        tp->include = mprCreateHash(ctx, 0);
+        tp->include = mprCreateHash(ctx, 0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
                 mprAddHash(tp->include, mprStrdup(tp->include, ejsGetString(ejs, ejsToString(ejs, ext))), "");
@@ -744,7 +744,7 @@ static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *
             ejsThrowArgError(ejs, "exclude is not an array");
             return;
         }
-        tp->exclude = mprCreateHash(ctx, 0);
+        tp->exclude = mprCreateHash(ctx, 0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
                 mprAddHash(tp->exclude, mprStrdup(tp->exclude, ejsGetString(ejs, ejsToString(ejs, ext))), "");

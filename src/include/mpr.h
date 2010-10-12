@@ -1467,6 +1467,7 @@ extern void mprBreakpoint();
 #endif
 
 /*
+    Limited, low-level unicode support. The mprPrintf and Hash table modules support unicode string structures.
     Unicode characters are build-time configurable to be 1, 2 or 4 bytes
  */
 #define BLD_UNICODE_LEN  1
@@ -1482,13 +1483,10 @@ extern void mprBreakpoint();
     #define T(s) s
 #endif
 
-/*
-    Unicode capable strings
- */
-typedef struct MprStr {
+typedef struct MprUni {
     int         length;
     MprChar     value[0];
-} MprStr;
+} MprUni;
 
 /**
     Memory Allocation Service.
@@ -1534,6 +1532,7 @@ typedef void *MprCtx;
         mprStrcat, mprAllocStrcpy, mprReallocStrcat, mprVasprintf
  */
 typedef struct MprString { int dummy; } MprString;
+//  MOB -- rename this MprSafeString or MprCString
 
 /**
     Print a formatted message to the standard error channel
@@ -2848,8 +2847,12 @@ typedef struct MprHashTable {
     MprHash         **buckets;          /**< Hash collision bucket table */
     int             hashSize;           /**< Size of the buckets array */
     int             count;              /**< Number of symbols in the table */
-    int             caseless;           /**< Do case insensitive lookups */
+    int             flags;              /**< Hash control flags */
 } MprHashTable;
+
+#define MPR_HASH_CASELESS       0x1     /**< Key comparisons ignore case */
+#define MPR_HASH_UNICODE        0x2     /**< Hash keys are unicode strings */
+#define MPR_HASH_PERM_KEYS      0x4     /**< Keys are permanent - don't need to dup */
 
 /**
     Add a symbol value into the hash table
@@ -2860,7 +2863,7 @@ typedef struct MprHashTable {
     @return Integer count of the number of entries.
     @ingroup MprHash
  */
-extern MprHash *mprAddHash(MprHashTable *table, cchar *key, cvoid *ptr);
+extern MprHash *mprAddHash(MprHashTable *table, cvoid *key, cvoid *ptr);
 
 /**
     Add a duplicate symbol value into the hash table
@@ -2873,7 +2876,7 @@ extern MprHash *mprAddHash(MprHashTable *table, cchar *key, cvoid *ptr);
     @return Integer count of the number of entries.
     @ingroup MprHash
  */
-extern MprHash *mprAddDuplicateHash(MprHashTable *table, cchar *key, cvoid *ptr);
+extern MprHash *mprAddDuplicateHash(MprHashTable *table, cvoid *key, cvoid *ptr);
 
 /**
     Copy a hash table
@@ -2894,7 +2897,7 @@ extern MprHashTable *mprCopyHash(MprCtx ctx, MprHashTable *table);
         when complete.
     @ingroup MprHash
  */
-extern MprHashTable *mprCreateHash(MprCtx ctx, int hashSize);
+extern MprHashTable *mprCreateHash(MprCtx ctx, int hashSize, int flags);
 
 /**
     Set the case comparision mechanism for a hash table. The case of keys and values are always preserved, this call
@@ -2943,7 +2946,7 @@ extern int mprGetHashCount(MprHashTable *table);
     @return Value associated with the key when the entry was inserted via mprInsertSymbol.
     @ingroup MprHash
  */
-extern cvoid *mprLookupHash(MprHashTable *table, cchar *key);
+extern cvoid *mprLookupHash(MprHashTable *table, cvoid *key);
 
 /**
     Lookup a symbol in the hash table and return the hash entry
@@ -2953,7 +2956,7 @@ extern cvoid *mprLookupHash(MprHashTable *table, cchar *key);
     @return MprHash table structure for the entry
     @ingroup MprHash
  */
-extern MprHash *mprLookupHashEntry(MprHashTable *table, cchar *key);
+extern MprHash *mprLookupHashEntry(MprHashTable *table, cvoid *key);
 
 /**
     Remove a symbol entry from the hash table.
@@ -2963,7 +2966,7 @@ extern MprHash *mprLookupHashEntry(MprHashTable *table, cchar *key);
     @return Returns zero if successful, otherwise a negative MPR error code is returned.
     @ingroup MprHash
  */
-extern int mprRemoveHash(MprHashTable *table, cchar *key);
+extern int mprRemoveHash(MprHashTable *table, cvoid *key);
 
 /*
     Prototypes for file system switch methods

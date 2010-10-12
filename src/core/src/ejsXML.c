@@ -129,7 +129,7 @@ static int deleteXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName *qname)
         }
 
     } else {
-        /* name and   */
+        /* name and */
         if (xml->elements) {
             for (next = 0; (item = mprGetNextItem(xml->elements, &next)) != 0; ) {
                 mprAssert(item->qname.name);

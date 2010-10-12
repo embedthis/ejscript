@@ -34,7 +34,7 @@ EjsService *ejsCreateService(MprCtx ctx)
         return 0;
     }
     mprGetMpr(ctx)->ejsService = sp;
-    sp->nativeModules = mprCreateHash(sp, -1);
+    sp->nativeModules = mprCreateHash(sp, -1, 0);
     return sp;
 }
 
@@ -95,8 +95,8 @@ Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, i
     if (master == 0) {
         ejs->modules = mprCreateList(ejs);
         ejs->workers = mprCreateList(ejs);
-        ejs->coreTypes = mprCreateHash(ejs, 0);
-        ejs->standardSpaces = mprCreateHash(ejs, 0);
+        ejs->coreTypes = mprCreateHash(ejs, 0, 0);
+        ejs->standardSpaces = mprCreateHash(ejs, 0, 0);
         
         if (defineTypes(ejs) < 0 || loadStandardModules(ejs, require) < 0) {
             if (ejs->exception) {

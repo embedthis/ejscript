@@ -638,7 +638,7 @@ static int createDocSection(EcCompiler *cp, EjsObj *block, int slotNum)
         return 0;
     }
     if (ejs->doc == 0) {
-        ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE);
+        ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE, 0);
     }
     mprSprintf(cp, key, sizeof(key), "%Lx %d", PTOL(block), slotNum);
     doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
@@ -793,7 +793,7 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
     mprAssert(ejs);
     constants = mp->constants;
     if (constants->table == 0) {
-        constants->table = mprCreateHash(constants, EJS_DOC_HASH_SIZE);
+        constants->table = mprCreateHash(constants, EJS_DOC_HASH_SIZE, 0);
     }
 
     /*

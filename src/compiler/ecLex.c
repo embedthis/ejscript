@@ -157,7 +157,7 @@ EcLexer *ecCreateLexer(EcCompiler *cp)
     lp->compiler = cp;
 
     size = sizeof(keywords) / sizeof(ReservedWord);
-    lp->keywords = mprCreateHash(lp, size);
+    lp->keywords = mprCreateHash(lp, size, 0);
     if (lp->keywords == 0) {
         mprFree(lp);
         return 0;

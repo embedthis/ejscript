@@ -131,7 +131,7 @@ int emCreateDoc(EjsMod *mp)
     ejs = mp->ejs;
 
     if (ejs->doc == 0) {
-        ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE);
+        ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE, 0);
         if (ejs->doc == 0) {
             return MPR_ERR_NO_MEMORY;
         }

@@ -32,7 +32,7 @@ EjsModule *ejsCreateModule(Ejs *ejs, cchar *name, int version)
         return 0;
     }
 #if UNUSED
-    mp->constants->table = mprCreateHash(mp->constants, 0);
+    mp->constants->table = mprCreateHash(mp->constants, 0, 0);
 #endif
     return mp;
 }

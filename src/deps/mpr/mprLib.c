@@ -6463,7 +6463,7 @@ cchar *mprLookupMimeType(MprCtx ctx, cchar *ext)
         return "";
     }
     if (mimeTable == 0) {
-        mimeTable = mprCreateHash(mprGetMpr(ctx), 67);
+        mimeTable = mprCreateHash(mprGetMpr(ctx), 67, 0);
         for (cp = mimeTypes; cp[0]; cp += 2) {
             mprAddHash(mimeTable, cp[0], cp[1]);
         }
@@ -7850,10 +7850,9 @@ void mprSetPathNewline(MprCtx ctx, cchar *path, cchar *newline)
 /*
     mprHash.c - Fast hashing table lookup module
 
-    This hash table uses a fast key lookup mechanism. Keys are strings and the value entries are arbitrary pointers.
-    The keys are hashed into a series of buckets which then have a chain of hash entries using the standard doubly
-    linked list classes (List/Link). The chain in in collating sequence so search time through the chain is on
-    average (N/hashSize)/2.
+    This hash table uses a fast key lookup mechanism. Keys may be C strings or unicode strings. The hash value entries 
+    are arbitrary pointers. The keys are hashed into a series of buckets which then have a chain of hash entries.
+    The chain in in collating sequence so search time through the chain is on average (N/hashSize)/2.
 
     This module is not thread-safe. It is the callers responsibility to perform all thread synchronization.
 
@@ -7863,15 +7862,16 @@ void mprSetPathNewline(MprCtx ctx, cchar *path, cchar *newline)
 
 
 
-static int hashIndex(MprHashTable *table, cchar *key, int size);
-static MprHash  *lookupInner(int *bucketIndex, MprHash **prevSp, MprHashTable *table, cchar *key);
+static inline void *dupKey(MprHashTable *table, MprHash *sp, cvoid *key);
+static int hashIndex(MprHashTable *table, cvoid *key, int size);
+static MprHash  *lookupHash(int *bucketIndex, MprHash **prevSp, MprHashTable *table, cvoid *key);
 
 /*
     Create a new hash table of a given size. Caller should provide a size that is a prime number for the greatest
     efficiency. Caller should use mprFree to free the hash table.
  */
 
-MprHashTable *mprCreateHash(MprCtx ctx, int hashSize)
+MprHashTable *mprCreateHash(MprCtx ctx, int hashSize, int flags)
 {
     MprHashTable    *table;
 
@@ -7883,7 +7883,7 @@ MprHashTable *mprCreateHash(MprCtx ctx, int hashSize)
         hashSize = MPR_DEFAULT_HASH_SIZE;
     }
     table->hashSize = hashSize;
-
+    table->flags = flags;
     table->count = 0;
     table->hashSize = hashSize;
     table->buckets = (MprHash**) mprAllocZeroed(table, sizeof(MprHash*) * hashSize);
@@ -7895,18 +7895,12 @@ MprHashTable *mprCreateHash(MprCtx ctx, int hashSize)
 }
 
 
-void mprSetHashCase(MprHashTable *table, int caseMatters)
-{
-    table->caseless = !caseMatters;
-}
-
-
 MprHashTable *mprCopyHash(MprCtx ctx, MprHashTable *master)
 {
     MprHash         *hp;
     MprHashTable    *table;
 
-    table = mprCreateHash(ctx, master->hashSize);
+    table = mprCreateHash(ctx, master->hashSize, master->flags);
     if (table == 0) {
         return 0;
     }
@@ -7920,15 +7914,15 @@ MprHashTable *mprCopyHash(MprCtx ctx, MprHashTable *master)
 
 
 /*
-    Insert an entry into the hash table. If the entry already exists, update its value. Order of insertion is not preserved.
+    Insert an entry into the hash table. If the entry already exists, update its value. 
+    Order of insertion is not preserved.
  */
-MprHash *mprAddHash(MprHashTable *table, cchar *key, cvoid *ptr)
+MprHash *mprAddHash(MprHashTable *table, cvoid *key, cvoid *ptr)
 {
     MprHash     *sp, *prevSp;
     int         index;
 
-    sp = lookupInner(&index, &prevSp, table, key);
-
+    sp = lookupHash(&index, &prevSp, table, key);
     if (sp != 0) {
         /*
             Already exists. Just update the data.
@@ -7944,7 +7938,11 @@ MprHash *mprAddHash(MprHashTable *table, cchar *key, cvoid *ptr)
         return 0;
     }
     sp->data = ptr;
-    sp->key = mprStrdup(sp, key);
+    if (!(table->flags & MPR_HASH_PERM_KEYS)) {
+        sp->key = dupKey(table, sp, key);
+    } else {
+        sp->key = (void*) key;
+    }
     sp->bucket = index;
     sp->next = table->buckets[index];
     table->buckets[index] = sp;
@@ -7958,7 +7956,7 @@ MprHash *mprAddHash(MprHashTable *table, cchar *key, cvoid *ptr)
     Order of insertion is not preserved. Lookup cannot be used to retrieve all duplicate keys, some will be shadowed. 
     Use enumeration to retrieve the keys.
  */
-MprHash *mprAddDuplicateHash(MprHashTable *table, cchar *key, cvoid *ptr)
+MprHash *mprAddDuplicateHash(MprHashTable *table, cvoid *key, cvoid *ptr)
 {
     MprHash     *sp;
     int         index;
@@ -7970,7 +7968,11 @@ MprHash *mprAddDuplicateHash(MprHashTable *table, cchar *key, cvoid *ptr)
     index = hashIndex(table, key, table->hashSize);
 
     sp->data = ptr;
-    sp->key = mprStrdup(sp, key);
+    if (!(table->flags & MPR_HASH_PERM_KEYS)) {
+        sp->key = dupKey(table, sp, key);
+    } else {
+        sp->key = (void*) key;
+    }
     sp->bucket = index;
     sp->next = table->buckets[index];
     table->buckets[index] = sp;
@@ -7982,12 +7984,12 @@ MprHash *mprAddDuplicateHash(MprHashTable *table, cchar *key, cvoid *ptr)
 /*
     Remove an entry from the table
  */
-int mprRemoveHash(MprHashTable *table, cchar *key)
+int mprRemoveHash(MprHashTable *table, cvoid *key)
 {
     MprHash     *sp, *prevSp;
     int         index;
 
-    if ((sp = lookupInner(&index, &prevSp, table, key)) == 0) {
+    if ((sp = lookupHash(&index, &prevSp, table, key)) == 0) {
         return MPR_ERR_NOT_FOUND;
     }
     if (prevSp) {
@@ -8004,24 +8006,24 @@ int mprRemoveHash(MprHashTable *table, cchar *key)
 /*
     Lookup a key and return the hash entry
  */
-MprHash *mprLookupHashEntry(MprHashTable *table, cchar *key)
+MprHash *mprLookupHashEntry(MprHashTable *table, cvoid *key)
 {
     mprAssert(key);
 
-    return lookupInner(0, 0, table, key);
+    return lookupHash(0, 0, table, key);
 }
 
 
 /*
     Lookup a key and return the hash entry data
  */
-cvoid *mprLookupHash(MprHashTable *table, cchar *key)
+cvoid *mprLookupHash(MprHashTable *table, cvoid *key)
 {
     MprHash     *sp;
 
     mprAssert(key);
 
-    sp = lookupInner(0, 0, table, key);
+    sp = lookupHash(0, 0, table, key);
     if (sp == 0) {
         return 0;
     }
@@ -8029,10 +8031,11 @@ cvoid *mprLookupHash(MprHashTable *table, cchar *key)
 }
 
 
-static MprHash *lookupInner(int *bucketIndex, MprHash **prevSp, MprHashTable *table, cchar *key)
+static MprHash *lookupHash(int *bucketIndex, MprHash **prevSp, MprHashTable *table, cvoid *key)
 {
     MprHash     *sp, *prev;
-    int         index, rc;
+    MprUni      *u1, *u2;
+    int         index, rc, i;
 
     mprAssert(key);
 
@@ -8044,7 +8047,16 @@ static MprHash *lookupInner(int *bucketIndex, MprHash **prevSp, MprHashTable *ta
     prev = 0;
 
     while (sp) {
-        if (table->caseless) {
+        if (table->flags & MPR_HASH_UNICODE) {
+            u1 = (MprUni*) sp->key;
+            u2 = (MprUni*) key;
+            rc = -1;
+            if (u1->length == u2->length) {
+                for (i = 0; i < u1->length; i++) {
+                    rc = u1->value[i] == u2->value[i];
+                }
+            }
+        } else if (table->flags & MPR_HASH_CASELESS) {
             rc = mprStrcmpAnyCase(sp->key, key);
         } else {
             rc = strcmp(sp->key, key);
@@ -8113,28 +8125,65 @@ MprHash *mprGetNextHash(MprHashTable *table, MprHash *last)
 }
 
 
-//  TODO OPT - Get a better hash. See Ejscript
 /*
     Hash the key to produce a hash index.
  */
-static int hashIndex(MprHashTable *table, cchar *key, int size)
+static int hashIndex(MprHashTable *table, cvoid *vkey, int size)
 {
-    int     c;
+    MprUni  *ukey;
+    cchar   *key;
     uint    sum;
+    int     c, i;
 
-    if (table->caseless) {
+    //  MOB TODO OPT - Get a better hash. See Ejscript
+
+    if (table->flags & MPR_HASH_UNICODE) {
+        ukey = (MprUni*) vkey;
         sum = 0;
-        while (*key) {
-            c = *key++;
-            sum += (sum * 33) + tolower(c);
+        if (table->flags & MPR_HASH_CASELESS) {
+            for (i = 0; i < ukey->length; i++) {
+                c = ukey->value[i];
+                sum += (sum * 33) + tolower(c);
+            }
+        } else {
+            for (i = 0; i < ukey->length; i++) {
+                sum += (sum * 33) + ukey->value[i];
+            }
         }
     } else {
-        sum = 0;
-        while (*key) {
-            sum += (sum * 33) + *key++;
+        if (table->flags & MPR_HASH_CASELESS) {
+            key = (char*) vkey;
+            sum = 0;
+            while (*key) {
+                c = *key++;
+                sum += (sum * 33) + tolower(c);
+            }
+        } else {
+            key = (char*) vkey;
+            sum = 0;
+            while (*key) {
+                sum += (sum * 33) + *key++;
+            }
         }
     }
     return sum % size;
+}
+
+
+static inline void *dupKey(MprHashTable *table, MprHash *sp, cvoid *key)
+{
+    char    *ptr;
+    int     len;
+
+    if (table->flags & MPR_HASH_UNICODE) {
+        MprUni  *ukey;
+        len = ((ukey->length + 1) * sizeof(MprChar));
+        ptr = mprAlloc(sp, len);
+        memcpy(ptr, ukey->value, len);
+        return ptr;
+    } else {
+        return mprStrdup(sp, key);
+    }
 }
 
 
@@ -12448,7 +12497,7 @@ static int getState(char c, int state)
 static char *sprintfCore(MprCtx ctx, char *buf, int maxsize, cchar *spec, va_list arg)
 {
     Format      fmt;
-    MprStr      *ms;
+    MprUni      *us;
     char        c;
     int64       iValue;
     uint64      uValue;
@@ -12583,33 +12632,33 @@ static char *sprintfCore(MprCtx ctx, char *buf, int maxsize, cchar *spec, va_lis
 
             case 'N':
                 /* Name */
-                ms = va_arg(arg, MprStr*);
+                us = va_arg(arg, MprUni*);
 #if BLD_CHAR_LEN == 1
-                outString(ctx, &fmt, ms->value, ms->length);
+                outString(ctx, &fmt, us->value, us->length);
                 BPUT(ctx, &fmt, ':');
                 BPUT(ctx, &fmt, ':');
-                ms = va_arg(arg, MprStr*);
-                outString(ctx, &fmt, ms->value, ms->length);
+                us = va_arg(arg, MprUni*);
+                outString(ctx, &fmt, us->value, us->length);
 #else
-                outWideString(ctx, &fmt, ms->value, ms->length);
+                outWideString(ctx, &fmt, us->value, us->length);
                 BPUT(ctx, &fmt, ':');
-                ms = va_arg(arg, MprStr*);
-                outWideString(ctx, &fmt, ms->value, ms->length);
+                us = va_arg(arg, MprUni*);
+                outWideString(ctx, &fmt, us->value, us->length);
 #endif
                 break;
 
             case 'S':
-                /* MprStr */
-                ms = va_arg(arg, MprStr*);
+                /* MprUni */
+                us = va_arg(arg, MprUni*);
 #if BLD_CHAR_LEN == 1
-                outString(ctx, &fmt, ms->value, ms->length);
+                outString(ctx, &fmt, us->value, us->length);
 #else
-                outWideString(ctx, &fmt, ms->value, ms->length);
+                outWideString(ctx, &fmt, us->value, us->length);
 #endif
                 break;
 
             case 'w':
-                /* Wide string */
+                /* Wide string of MprChar characters. Null terminated. */
 #if BLD_CHAR_LEN > 1
                 outWideString(ctx, &fmt, va_arg(arg, MprChar*), -1);
                 break;
@@ -13884,7 +13933,6 @@ void stubMprSelectWait() {}
 
 #if !VXWORKS && !WINCE
 /*
-    Set this to 0 to disable the IPv6 address service. You can do this if you only need IPv4.
     On MAC OS X, getaddrinfo is not thread-safe and crashes when called by a 2nd thread at any time. ie. locking wont help.
  */
 #define BLD_HAS_GETADDRINFO 1
@@ -13898,7 +13946,8 @@ static MprSocket *createSocket(MprCtx ctx, struct MprSsl *ssl);
 static MprSocketProvider *createStandardProvider(MprSocketService *ss);
 static void disconnectSocket(MprSocket *sp);
 static int  flushSocket(MprSocket *sp);
-static int  getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct sockaddr **addr, socklen_t *addrlen);
+static int  getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, int *protocol, struct sockaddr **addr, 
+        socklen_t *addrlen);
 static int  getSocketIpAddr(MprCtx ctx, struct sockaddr *addr, int addrlen, char *ip, int size, int *port);
 static int  listenSocket(MprSocket *sp, cchar *ip, int port, int initialFlags);
 static int  readSocket(MprSocket *sp, void *buf, int bufsize);
@@ -14123,7 +14172,7 @@ static int listenSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
 {
     struct sockaddr     *addr;
     socklen_t           addrlen;
-    int                 datagram, family, rc;
+    int                 datagram, family, protocol, rc;
 
     lock(sp);
 
@@ -14141,7 +14190,7 @@ static int listenSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
          MPR_SOCKET_LISTENER | MPR_SOCKET_NOREUSE | MPR_SOCKET_NODELAY | MPR_SOCKET_THREAD));
 
     datagram = sp->flags & MPR_SOCKET_DATAGRAM;
-    if (getSocketInfo(sp, ip, port, &family, &addr, &addrlen) < 0) {
+    if (getSocketInfo(sp, ip, port, &family, &protocol, &addr, &addrlen) < 0) {
         unlock(sp);
         return MPR_ERR_NOT_FOUND;
     }
@@ -14149,7 +14198,7 @@ static int listenSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
     /*
         Create the O/S socket
      */
-    sp->fd = (int) socket(family, datagram ? SOCK_DGRAM: SOCK_STREAM, 0);
+    sp->fd = (int) socket(family, datagram ? SOCK_DGRAM: SOCK_STREAM, protocol);
     if (sp->fd < 0) {
         unlock(sp);
         return MPR_ERR_CANT_OPEN;
@@ -14245,7 +14294,7 @@ static int connectSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
 {
     struct sockaddr     *addr;
     socklen_t           addrlen;
-    int                 broadcast, datagram, family, rc, err;
+    int                 broadcast, datagram, family, protocol, rc, err;
 
     lock(sp);
 
@@ -14268,7 +14317,7 @@ static int connectSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
     }
     datagram = sp->flags & MPR_SOCKET_DATAGRAM;
 
-    if (getSocketInfo(sp, ip, port, &family, &addr, &addrlen) < 0) {
+    if (getSocketInfo(sp, ip, port, &family, &protocol, &addr, &addrlen) < 0) {
         err = mprGetSocketError(sp);
         closesocket(sp->fd);
         sp->fd = -1;
@@ -14278,7 +14327,7 @@ static int connectSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
     /*
         Create the O/S socket
      */
-    sp->fd = (int) socket(family, datagram ? SOCK_DGRAM: SOCK_STREAM, 0);
+    sp->fd = (int) socket(family, datagram ? SOCK_DGRAM: SOCK_STREAM, protocol);
     if (sp->fd < 0) {
         err = mprGetSocketError(sp);
         unlock(sp);
@@ -14657,7 +14706,7 @@ static int writeSocket(MprSocket *sp, void *buf, int bufsize)
 {
     struct sockaddr     *addr;
     socklen_t           addrlen;
-    int                 family, sofar, errCode, len, written;
+    int                 family, protocol, sofar, errCode, len, written;
 
     mprAssert(buf);
     mprAssert(bufsize >= 0);
@@ -14665,7 +14714,7 @@ static int writeSocket(MprSocket *sp, void *buf, int bufsize)
 
     lock(sp);
     if (sp->flags & (MPR_SOCKET_BROADCAST | MPR_SOCKET_DATAGRAM)) {
-        if (getSocketInfo(sp, sp->ip, sp->port, &family, &addr, &addrlen) < 0) {
+        if (getSocketInfo(sp, sp->ip, sp->port, &family, &protocol, &addr, &addrlen) < 0) {
             unlock(sp);
             return MPR_ERR_NOT_FOUND;
         }
@@ -15061,7 +15110,8 @@ int mprGetSocketError(MprSocket *sp)
     Get a socket address from a host/port combination. If a host provides both IPv4 and IPv6 addresses, 
     prefer the IPv4 address.
  */
-static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct sockaddr **addr, socklen_t *addrlen)
+static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, int *protocol, 
+    struct sockaddr **addr, socklen_t *addrlen)
 {
     MprSocketService    *ss;
     struct addrinfo     hints, *res;
@@ -15107,6 +15157,7 @@ static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct so
         hints.ai_family = AF_INET6;
         rc = getaddrinfo(ip, portBuf, &hints, &res);
         if (rc != 0) {
+            freeaddrinfo(res);
             mprUnlock(ss->mutex);
             return MPR_ERR_CANT_OPEN;
         }
@@ -15116,6 +15167,7 @@ static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct so
 
     *addrlen = (int) res->ai_addrlen;
     *family = res->ai_family;
+    *protocol = res->ai_protocol;
 
     freeaddrinfo(res);
     mprUnlock(ss->mutex);
@@ -15124,7 +15176,8 @@ static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct so
 
 
 #elif MACOSX
-static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct sockaddr **addr, socklen_t *addrlen)
+static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, int *protocol, 
+        struct sockaddr **addr, socklen_t *addrlen)
 {
     MprSocketService    *ss;
     struct hostent      *hostent;
@@ -15168,6 +15221,7 @@ static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct so
     mprAssert(hostent);
     *addrlen = len;
     *family = hostent->h_addrtype;
+    *protocol = 0;
     freehostent(hostent);
     mprUnlock(ss->mutex);
     return 0;
@@ -15176,7 +15230,8 @@ static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct so
 
 #else
 
-static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct sockaddr **addr, socklen_t *addrlen)
+static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, int *protocol,
+        struct sockaddr **addr, socklen_t *addrlen)
 {
     MprSocketService    *ss;
     struct sockaddr_in  *sa;
@@ -15227,6 +15282,7 @@ static int getSocketInfo(MprCtx ctx, cchar *ip, int port, int *family, struct so
     *addr = (struct sockaddr*) sa;
     *addrlen = sizeof(struct sockaddr_in);
     *family = sa->sin_family;
+    *protocol = 0;
     mprUnlock(ss->mutex);
     return 0;
 }
@@ -18352,7 +18408,7 @@ int mprCreateTimeService(MprCtx ctx)
     TimeToken           *tt;
 
     mpr = mprGetMpr(ctx);
-    mpr->timeTokens = mprCreateHash(mpr, -1);
+    mpr->timeTokens = mprCreateHash(mpr, -1, 0);
     ctx = mpr->timeTokens;
 
     for (tt = days; tt->name; tt++) {
