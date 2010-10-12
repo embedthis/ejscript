@@ -186,6 +186,7 @@ Mpr *mprCreateAllocService(MprAllocFailure cback, MprDestructor destructor)
     memset(heap, 0, sizeof(MprHeap));
     heap->stats.maxMemory = INT_MAX;
     heap->stats.redLine = INT_MAX / 100 * 99;
+    mprInitSpinLock(heap, &heap->spin);
 
     padWords = DESTRUCTOR_SIZE;
     usize = sizeof(Mpr) + (padWords * sizeof(void*));
@@ -8835,6 +8836,7 @@ int mprRemoveLastItem(MprList *lp)
 
 /*
     Remove an index from the list. Return the index where the item resided.
+    The list is compacted.
  */
 int mprRemoveItemAtPos(MprList *lp, int index)
 {
