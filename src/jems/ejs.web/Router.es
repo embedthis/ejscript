@@ -161,7 +161,7 @@ module ejs.web {
             Add routes to handle static content, directories, "es" scripts and stand-alone ejs templated pages.
          */
         public function addHandlers(): Void {
-            let staticPattern = "\/" + (App.config.directories.static || "static") + "\/.*"
+            let staticPattern = "\/" + (App.config.directories.static.basename || "static") + "\/.*"
             if (staticPattern) {
                 add(staticPattern, {name: "default", run: StaticBuilder})
             }
@@ -444,7 +444,7 @@ module ejs.web {
             if (location && location.scriptName && location.scriptName != request.scriptName && location.dir) {
                 request.setLocation(location.scriptName, location.dir)
                 log.debug(4, "Set location scriptName \"" + location.scriptName + "\" dir \"" + 
-                        location.dir + "\" (reroute)")
+                    location.dir + "\" (reroute)")
                 return reroute(request)
             }
             if (r.module && !r.initialized) {

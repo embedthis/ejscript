@@ -111,6 +111,7 @@ module ejs {
                 if (dir.exists) {
                     return Path(dir).join(md5(id)).joinExt('.mod')
                 } else {
+throw new Error("BOOM")
                     App.log.error("Can't find cache directory: " + dir)
                 }
             }
