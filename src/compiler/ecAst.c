@@ -3577,7 +3577,7 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsObj *block,
 {
     Ejs             *ejs;
     EjsName         qname;
-    EjsNamespace    *namespace;
+    EjsNamespace    *nspace;
     int             slotNum;
 
     ejs = cp->ejs;
@@ -3587,19 +3587,19 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsObj *block,
     }
     qname.name = np->qname.space;
     qname.space = 0;
-    namespace = (EjsNamespace*) getTypeProperty(cp, 0, qname);
-    if (namespace == 0 || !ejsIsNamespace(ejs, namespace)) {
-        namespace = ejsLookupNamespace(cp->ejs, np->qname.space);
+    nspace = (EjsNamespace*) getTypeProperty(cp, 0, qname);
+    if (nspace == 0 || !ejsIsNamespace(ejs, nspace)) {
+        nspace = ejsLookupNamespace(cp->ejs, np->qname.space);
     }
-    if (namespace == 0 && cp->state->nspace == np->qname.space) {
-        namespace = ejsCreateNamespace(ejs, np->qname.space);
+    if (nspace == 0 && cp->state->nspace == np->qname.space) {
+        nspace = ejsCreateNamespace(ejs, np->qname.space);
     }
-    if (namespace == 0) {
+    if (nspace == 0) {
         if (!np->literalNamespace) {
             astError(cp, np, "Can't find namespace \"%S\"", qname.name);
         }
     } else {
-        if (namespace->name != np->qname.space) {
+        if (nspace->name != np->qname.space) {
             slotNum = ejsLookupProperty(ejs, block, np->qname);
             mprAssert(slotNum >= 0);
             if (slotNum >= 0) {
@@ -3608,7 +3608,7 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsObj *block,
                     Change the name to use the namespace URI. This will change the property name and set
                     "modified" so that the caller can modify the derrived names (type->qname)
                  */
-                np->qname.space = namespace->name;
+                np->qname.space = nspace->name;
                 ejsSetPropertyName(ejs, block, slotNum, np->qname);
                 if (modified) {
                     *modified = 1;
@@ -3617,7 +3617,7 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsObj *block,
         }
     }
     //  MOB - nobody uses this except as a return code
-    return namespace;
+    return nspace;
 }
 
 

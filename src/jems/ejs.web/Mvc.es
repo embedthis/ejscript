@@ -23,7 +23,7 @@ module ejs.web {
                 controllers: Path("controllers"),
                 models: Path("models"),
                 src: Path("src"),
-                web: Path("web"),
+                static: Path("static"),
             },
             mvc: {
                 //  MOB -- what is this?
@@ -40,20 +40,29 @@ module ejs.web {
         private static var loaded: Object = {}
         private static const EJSRC = "ejsrc"
 
+        private static function initMvc(): Void {
+            blend(App.config, defaultConfig, false)
+        }
+        initMvc()
+
         /*
-            Load the app/ejsrc and defaultConfig
+            Load the app/ejsrc and defaultConfig. Blend with the HttpServer.config
             @return The configuration object
          */
         private function loadConfig(request: Request): Object {
             let config = request.config
             let path = request.dir.join(EJSRC)
-            if (path.exists) {
+            if (request.dir != request.server.documentRoot && path.exists) {
+                /* This is an app specific ejsrc */
                 let appConfig = path.readJSON()
                 /* Clone to get a request private copy of the configuration before blending "app/ejsrc" */
                 config = request.config = request.config.clone()
                 blend(config, appConfig, true)
+                let dirs = config.directories
+                for (let [key,value] in dirs) {
+                    dirs[key] = request.dir.join(value)
+                }
             }
-            blend(config, defaultConfig, false)
 /* FUTURE
             if (config.log) {
                 logger = new Logger("request", App.log, config.log.level)
@@ -78,40 +87,42 @@ module ejs.web {
          */
         public function init(request: Request): Void {
             let config = loadConfig(request)
-            let ext = config.extensions
             let dirs = config.directories
-            let dir = request.dir
+            let appmod = dirs.cache.join(config.mvc.appmod)
 
-            request.log.debug(4, "MVC init at \"" + dir + "\"")
-
-            /* Load App. Touch ejsrc triggers a complete reload */
-            let appmod = dir.join(dirs.cache, config.mvc.appmod)
-            let files, deps
-            if (config.cache.reload) {
-                deps = [dir.join(EJSRC)]
-                files = dir.join(dirs.models).find("*" + ext.es)
-                files += dir.join(dirs.src).find("*" + ext.es)
-                files += [dir.join(dirs.controllers, "Base").joinExt(ext.es)]
-            }
-            loadComponent(request, appmod, files, deps)
-
-            /* Load controller */
-            let params = request.params
-            if (!params.controller) {
-                throw new StateError("No controller specified by route: " + request.route.name)
-            }
-            let controller = params.controller = params.controller.toPascal()
-            let mod = dir.join(dirs.cache, controller).joinExt(ext.mod)
-            if (!mod.exists || config.cache.reload) {
-                files = [dir.join(dirs.controllers, controller).joinExt(ext.es)]
-                deps = [dir.join(dirs.controllers, "Base").joinExt(ext.es)]
-                loadComponent(request, mod, files, deps)
+            if (config.mvc.flat) {
+                global.load(appmod)
             } else {
-                loadComponent(request, mod)
+                let ext = config.extensions
+                let dir = request.dir
+                request.log.debug(4, "MVC init at \"" + dir + "\"")
+
+                /* Load App. Touch ejsrc triggers a complete reload */
+                let files, deps
+                if (config.cache.reload) {
+                    deps = [dir.join(EJSRC)]
+                    files = dirs.models.find("*" + ext.es)
+                    files += dirs.src.find("*" + ext.es)
+                    files += [dirs.controllers.join("Base").joinExt(ext.es)]
+                }
+                loadComponent(request, appmod, files, deps)
+
+                /* Load controller */
+                let params = request.params
+                if (!params.controller) {
+                    throw new StateError("No controller specified by route: " + request.route.name)
+                }
+                let controller = params.controller = params.controller.toPascal()
+                let mod = dirs.cache.join(controller).joinExt(ext.mod)
+                if (!mod.exists || config.cache.reload) {
+                    files = [dirs.controllers.join(controller).joinExt(ext.es)]
+                    deps = [dirs.controllers.join("Base").joinExt(ext.es)]
+                    loadComponent(request, mod, files, deps)
+                } else {
+                    loadComponent(request, mod)
+                }
             }
-/* MOB -- implement
-            request.logger = logger
-*/
+            // FUTURE request.logger = logger
         }
 
         private function rebuildComponent(request: Request, mod: Path, files: Array) {

@@ -52,6 +52,7 @@ with --os=win --build --optional pkg
 
 with regexp mpr http
 with --host --optional matrixssl openssl ssl
+with --optional mysql 
 with --optional sqlite 
 with ejs
 

@@ -26,6 +26,7 @@ class EjsMvc {
     private const NextMigration: String = ".ejs/nextMigration"
 
     private var appName: String
+    private var buildAll: Boolean
     private var cmd: CmdArgs
     private var database: String = "sqlite"
     private var dirs: Object
@@ -146,7 +147,7 @@ class EjsMvc {
         let pre = "    " + mvc + " "
         print("  Commands:\n" +
             pre + "clean\n" +
-            pre + "compile [all | app | controller names | view names]\n" +
+            pre + "compile [flat | app | controller names | view names]\n" +
             pre + "compile path/name.ejs ...\n" +
             pre + "generate app name\n" + 
             pre + "generate controller name [action [, action] ...]\n" + 
@@ -320,19 +321,19 @@ print(e)
             }
             break
 
-        case "all":
+        case "flat":
             /*
-                Build entire app as one module
+                Build entire app flat as one module
              */
+            buildAll = true
             let saveVerbose = verbose
             let saveKeep = options.keep
-            verbose = 0
             let pat = "*." + ext.es
             let controllers = find(dirs.controllers, pat)
             for each (c in controllers) {
                 rm(dirs.cache.join(c.basename.replaceExt(ext.mod)))
             }
-            buildApp()
+            // buildApp()
             files = find("config", pat) + find("src", pat) + controllers + find(dirs.models, pat)
             let viewFiles = find(dirs.views, "*." + ext.ejs)
             let esPages = []
@@ -362,7 +363,7 @@ print(e)
 
         case "app":
             /*
-             *  Build app portions. This includes src, models and Base Controller
+                Build app portions. This includes src, models and Base Controller
              */
             buildApp()
             break
@@ -481,7 +482,7 @@ print(e)
         let controllerSource: Path = dirs.controllers.join(controller).joinExt(ext.es)
         let controllerMod: Path = dirs.cache.join(controller).joinExt(ext.mod)
 
-        if (controllerSource.exists) {
+        if (controllerSource.exists && !buildAll) {
             if (!controllerMod.exists) {
                 buildController(controllerSource)
             }

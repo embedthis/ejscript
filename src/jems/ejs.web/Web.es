@@ -13,7 +13,7 @@ module ejs.web {
     class Web {
         use default namespace public
 
-        static var config
+        // static var config
 
         private static var defaultConfig = {
             cache: {
@@ -69,18 +69,21 @@ module ejs.web {
 
         /*  
             One time initialization for the Web class. Loads the top-level "ejsrc" configuration file.
-            The server must be restarted to reload changes.
+            The server must be restarted to reload changes. This happens before HttpServer loads serverRoot/ejsrc.
          */
-        private static function init(): Void {
-            let path = Path("ejsrc")
+        private static function initWeb(): Void {
+        /*
+            MOB - remove
             config = App.config
+            let path = Path("ejsrc")
             if (path.exists) {
                 let webConfig = deserialize(path.readString())
                 blend(config, webConfig, true)
             }
-            blend(config, defaultConfig, false)
+        */
+            blend(App.config, defaultConfig, false)
         }
-        init()
+        initWeb()
 
         /** 
             Serve a web request. Convenience function to route, load and start a web application. 
@@ -195,7 +198,7 @@ module ejs.web {
             @param app Web application function 
          */
         static function process(app: Function, request: Request, finalize: Boolean = true): Void {
-            request.config = config
+            request.config = request.server.config
             try {
                 if (request.route && request.route.middleware) {
                     app = Middleware(app, request.route.middleware)

@@ -94,7 +94,7 @@ module ejs.web {
         /** 
             Application web document directory on the local file system. This is set to the directory containing the
             application. For MVC applications, this is set to the base directory of the application. For non-MVC apps, 
-            it is set to the directory containing the application startup script.
+            it is set to the document root directory specified when the HttpServer was instantiated.
          */
         native enumerable var dir: Path
 

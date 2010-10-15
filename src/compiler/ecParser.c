@@ -8851,7 +8851,6 @@ static EcNode *parseModuleDefinition(EcCompiler *cp)
         isDefault = 1;
         nspace = cp->fileState->nspace;
     }
-    
     if (isDefault) {
         /*
             No module name. Set the namespace to the unique internal namespace name.

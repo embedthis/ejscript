@@ -11,10 +11,11 @@
 
 #include    "ejs.h"
 
+#if BLD_FEATURE_SQLITE
+
 #include    "sqlite3.h"
 #include    "ejs.db.sqlite.slots.h"
 
-#if BLD_FEATURE_SQLITE
 /*********************************** Locals ***********************************/
 
 #define THREAD_STYLE SQLITE_CONFIG_MULTITHREAD
@@ -79,15 +80,18 @@ static int sqldbDestructor(EjsSqlite **db);
 /*
     DB Constructor and also used for constructor for sub classes.
 
-    function Sqlite(connectionString: String)
+    function Sqlite(options: Object)
  */
 static EjsVar *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
 {
     sqlite3         *sdb;
+    EjsObj          *options;
+    EjsName         qname;
     cchar           *path;
 
-    path = ejsGetString(ejs, argv[0]);    
+    sdb = 0;
     db->ejs = ejs;
+    options = argv[0];
     
     if ((db->ctx = mprAllocCtx(ejs, 0)) == NULL) {
         return 0;
@@ -107,16 +111,35 @@ static EjsVar *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **arg
     *dbp = db;
 #endif
 
-    sdb = 0;
-    if (sqlite3_open(path, &sdb) != SQLITE_OK) {
-        ejsThrowIOError(ejs, "Can't open database %s", path);
-        return 0;
+    /*
+        MOB - this will create a database if it doesn't exist. Should have more control over creating databases.
+     */
+    if (ejsIsPath(ejs, options) || ejsIsString(options)) {
+        path = ejsGetString(ejs, ejsToString(ejs, options));
+    } else {
+        path = ejsGetString(ejs, ejsToString(ejs, ejsGetPropertyByName(ejs, options, ejsName(&qname, "", "name"))));
+    }
+    if (strncmp(path, "memory://", 9) == 0) {
+        sdb = (sqlite3*) (size_t) mprAtoi(&path[9], 10);
+
+    } else {
+        if (strncmp(path, "file://", 7) == 0) {
+            path += 7;
+        }
+        if (strstr(path, "://") == NULL) {
+            if (sqlite3_open(path, &sdb) != SQLITE_OK) {
+                ejsThrowIOError(ejs, "Can't open database %s", path);
+                return 0;
+            }
+            //  MOB TODO - should be configurable somewhere
+            sqlite3_soft_heap_limit(2 * 1024 * 1024);
+            sqlite3_busy_timeout(sdb, EJS_SQLITE_TIMEOUT);
+        } else {
+            ejsThrowArgError(ejs, "Unknown SQLite database URI %s", path);
+            return 0;
+        }
     }
     db->sdb = sdb;
-    sqlite3_busy_timeout(sdb, EJS_SQLITE_TIMEOUT);
-
-    //  TODO - should be configurable somewhere
-    sqlite3_soft_heap_limit(2 * 1024 * 1024);
     return 0;
 }
 

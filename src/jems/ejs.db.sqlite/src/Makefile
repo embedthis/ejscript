@@ -1,5 +1,5 @@
 #
-#	Makefile to build the DB Classes
+#	Makefile to build the SQLite Classe
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
 #

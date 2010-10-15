@@ -30,6 +30,13 @@ module ejs.web {
         native function set async(enable: Boolean): Void
 
         /** 
+            Server configuration. Initially refers to App.config which is filled with the aggregated "ejsrc" content.
+            If a documentRoot/ejsrc exists, it is loaded once at startup and is blended (overwrites) existing 
+            App.config settings.
+         */
+        enumerable var config: Object
+
+        /** 
             Default local directory for web documents to serve. This is used as the default Request.dir value.
          */
         var documentRoot: Path
@@ -94,10 +101,13 @@ module ejs.web {
 
         /** 
             Create a HttpServer object. The server is created in async mode by default.
+            If an "ejsrc" file exists in the server root, it will be loaded and update the "$config" properties.
             @param documentRoot Directory containing web documents to serve. If set to null and the HttpServer is hosted,
                 the documentRoot will be defined by the web server.
+MOB - more explanation about what is in the ServerRoot
             @param serverRoot Base directory for the server configuration. If set to null and the HttpServer is hosted,
-                the serverRoot will be defined by the web server.
+                the serverRoot will be defined by the web server. The serverRoot directory may contain an optional "ejsrc"
+                configuration file to load.
             @spec ejs
             @stability prototype
             @example: This is a fully async server:
@@ -120,7 +130,20 @@ module ejs.web {
             }
             server.listen("127.0.0.1:7777")
          */
-        native function HttpServer(documentRoot: Path = ".", serverRoot: Path = ".")
+        function HttpServer(documentRoot: Path = ".", serverRoot: Path = ".") {
+            this.documentRoot = documentRoot
+            this.serverRoot = serverRoot
+            config = App.config
+            let path = serverRoot.join("ejsrc")
+            if (path.exists) {
+                blend(config, path.readJSON(), true)
+            }
+            let dirs = config.directories
+            for (let [key,value] in dirs) {
+                dirs[key] = documentRoot.join(value)
+            }
+            // blend(config, defaultConfig, false)
+        }
 
         /** 
             Accept a new incoming for sync servers.  This call creates a request object in response to an 

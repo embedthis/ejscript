@@ -13,6 +13,10 @@
 #include    "ejsTune.h"
 #include    "ejsCore.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*********************************** Defines **********************************/
 /*
     Compiler validation modes. From "use standard|strict"
@@ -1157,6 +1161,9 @@ extern uint     ecGetCodeOffset(EcCompiler *cp);
 extern int      ecGetCodeLen(EcCompiler *cp, uchar *mark);
 extern void     ecAdjustCodeLength(EcCompiler *cp, int adj);
 
+#ifdef __cplusplus
+}
+#endif
 #endif /* _h_EC_COMPILER */
 
 /*

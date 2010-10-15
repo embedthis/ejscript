@@ -40,9 +40,15 @@ void ejsCreateConfigType(Ejs *ejs)
     ejsSetProperty(ejs, type, ES_Config_LibDir, ejsCreateStringFromCS(ejs, path));
 }
 #else
+#ifdef BLD_BIN_PREFIX
     ejsSetProperty(ejs, type, ES_Config_BinDir, ejsCreateStringFromCS(ejs, BLD_BIN_PREFIX));
+#endif
+#ifdef BLD_MOD_PREFIX
     ejsSetProperty(ejs, type, ES_Config_ModDir, ejsCreateStringFromCS(ejs, BLD_MOD_PREFIX));
+#endif
+#ifdef BLD_LIB_PREFIX
     ejsSetProperty(ejs, type, ES_Config_LibDir, ejsCreateStringFromCS(ejs, BLD_LIB_PREFIX));
+>>>>>>> 6529b6889f97be240c589a2b2c95de7587e45962
 #endif
 }
 

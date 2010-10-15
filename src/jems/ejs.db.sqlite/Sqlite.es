@@ -81,14 +81,13 @@ module ejs.db.sqlite {
 
         /**
             Initialize a database connection using the supplied database connection string
-            @param connectionString Connection string stipulating how to connect to the database. The only supported 
-            format is:
-                <ul>
-                    <li>filename</li>
-                </ul>
-                Where filename is the path to the database. 
+            @param options Connection options stipulating how to connect to the database. This can be a simple
+                String or Path specifying the filename for the database, or it can be an object with a "name" property
+                containing an access URI for the database.
+            @options name Database name URI specifying the SQLite database to open. 
+                Example: file://var/spool/db/database.db
          */
-        native "ejs.db" function Sqlite(connectionString: String)
+        native "ejs.db" function Sqlite(options: Object)
 
         /** @duplicate ejs.db::Database.addColumn */
         function addColumn(table: String, column: String, datatype: String, options = null): Void {

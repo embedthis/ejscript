@@ -32,6 +32,9 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version)
     if ((mp->constants = ejsAlloc(ejs, sizeof(EjsConst))) == NULL) {
         return 0;
     }
+#if UNUSED
+    mp->constants->table = mprCreateHash(mp->constants, 0, 0);
+#endif
     return mp;
 }
 

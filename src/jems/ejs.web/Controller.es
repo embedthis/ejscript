@@ -158,7 +158,7 @@ module ejs.web {
                         response = this.(ns)::[actionName = "missing"]()
                     }
                 } else {
-breakpoint()
+// breakpoint()
                     response = (ns)::[actionName]()
 // print("RESP " + response)
                 }
@@ -351,10 +351,9 @@ breakpoint()
             let controller = options.controller || controllerName
             viewName ||= options.action || actionName
             if (options.layout === undefined) {
-                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+                options.layout = config.directories.layouts.join(config.web.view.layout)
             }
-            writeTemplate(request.dir.join(config.directories.views, controller, viewName).
-                joinExt(config.extensions.ejs), options)
+            writeTemplate(config.directories.views.join(controller, viewName).joinExt(config.extensions.ejs), options)
         }
 
         /** 
@@ -369,7 +368,7 @@ breakpoint()
             let saveFilename = request.filename
             request.filename = path
             if (options.layout === undefined) {
-                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+                options.layout = config.directories.layouts.join(config.web.view.layout)
             }
             let app = TemplateBuilder(request, options)
             Web.process(app, request, false)
@@ -386,7 +385,7 @@ breakpoint()
         function writeTemplateLiteral(page: String, options: Object = {}): Void {
             log.debug(4, "writeTemplateLiteral")
             if (options.layout === undefined) {
-                options.layout = Path(config.directories.layouts).join(config.web.view.layout)
+                options.layout = config.directories.layouts.join(config.web.view.layout)
             }
             options.literal = page
             let app = TemplateBuilder(request, options)
@@ -429,13 +428,14 @@ breakpoint()
         private function openDatabase(request: Request) {
             let dbconfig = config.database
             let dbclass = dbconfig["class"]
-            let profile = dbconfig[config.mode]
+            let options = dbconfig[config.mode]
             if (dbclass) {
                 if (dbconfig.module && !global[dbclass]) {
                     global.load(dbconfig.module + ".mod")
                 }
                 let module = dbconfig.module || "public"
-                new (module)::[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
+                options.dir = request.dir
+                new (module)::[dbclass](dbconfig.adapter, options)
             }
         }
 
@@ -466,7 +466,7 @@ breakpoint()
             if (global[viewClass]) {
                 return true
             }
-            let path = request.dir.join(config.directories.views, controllerName, name).joinExt(config.extensions.ejs)
+            let path = config.directories.views.join(controllerName, name).joinExt(config.extensions.ejs)
             if (path.exists) {
                 return true
             }

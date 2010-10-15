@@ -19,6 +19,7 @@ static void setupConnTrace(HttpConn *conn);
 static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
 
 /************************************ Code ************************************/
+#if UNUSED
 /*  
     function HttpServer(documentRoot: Path = ".", serverRoot: Path = ".")
     Constructor function
@@ -36,14 +37,9 @@ static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **arg
     serverRoot = (argc >= 2) ? argv[1] : (EjsObj*) ejsCreatePath(ejs, ".");
     ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_serverRoot, serverRoot);
 
-#if UNUSED
-    sp->traceLevel = HTTP_TRACE_LEVEL;
-    sp->traceMask = HTTP_TRACE_TRANSMIT | HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS;
-    sp->traceMaxLength = INT_MAX;
-#endif
-    httpInitTrace(sp->trace);
     return (EjsObj*) sp;
 }
+#endif
 
 
 /*  
@@ -833,6 +829,25 @@ static void markHttpServer(Ejs *ejs, EjsHttpServer *sp)
 }
 
 
+static EjsHttpServer *createHttpServer(Ejs *ejs, EjsType *type, int size)
+{
+    EjsHttpServer   *sp;
+
+    if ((sp = (EjsHttpServer*) ejsCreateObject(ejs, type, 0)) == NULL) {
+        return NULL;
+    }
+    sp->ejs = ejs;
+    sp->async = 1;
+#if UNUSED
+    sp->traceLevel = HTTP_TRACE_LEVEL;
+    sp->traceMask = HTTP_TRACE_TRANSMIT | HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS;
+    sp->traceMaxLength = INT_MAX;
+#endif
+    httpInitTrace(sp->trace);
+    return sp;
+}
+
+
 static void destroyHttpServer(Ejs *ejs, EjsHttpServer *sp)
 {
     ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
@@ -853,10 +868,13 @@ void ejsConfigureHttpServerType(Ejs *ejs)
 
     type = ejsConfigureNativeType(ejs, "ejs.web", "HttpServer", sizeof(EjsHttpServer));
     type->helpers.mark = (EjsMarkHelper) markHttpServer;
+    type->helpers.create = (EjsCreateHelper) createHttpServer;
     type->helpers.destroy = (EjsDestroyHelper) destroyHttpServer;
 
     prototype = type->prototype;
+#if UNUSED
     ejsBindConstructor(ejs, type, (EjsProc) hs_HttpServer);
+#endif
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_accept, (EjsProc) hs_accept);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_address, (EjsProc) hs_address);
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_async, (EjsProc) hs_async, (EjsProc) hs_set_async);

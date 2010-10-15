@@ -363,19 +363,25 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 #if VXWORKS
     ejsSetProperty(ejs, ap, -1, ejsCreatePathAndFree(ejs, mprGetCurrentPath(ejs)));
 #else
-{
     /*
         Create a default search path
         "." : APP_EXE_DIR/../modules : /usr/lib/ejs/1.0.0/modules
      */
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromCS(ejs, "."));
     char *relModDir;
     relModDir = mprAsprintf(ejs, -1, "%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromCS(ejs, "."));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathAndFree(ejs, mprGetAppDir(ejs)));
+#ifdef BLD_MOD_NAME
+{
+    char *relModDir;
+    relModDir = mprAsprintf(ejs, -1, "%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathAndFree(ejs, mprGetAbsPath(ejs, relModDir)));
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromCS(ejs, BLD_MOD_PREFIX));
     mprFree(relModDir);
 }
+#endif
+#ifdef BLD_MOD_PREFIX
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromCS(ejs, BLD_MOD_PREFIX));
+#endif
 #endif
     return (EjsArray*) ap;
 }
