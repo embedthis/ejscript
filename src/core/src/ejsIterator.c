@@ -15,13 +15,13 @@
 static void markIteratorVar(Ejs *ejs, EjsIterator *ip)
 {
     /* MOB - not used or needed */
-    ejsMarkObject(ejs, (EjsObj*) ip);
+    ejsMarkObject(ejs, ip);
 
     if (ip->target) {
         ejsMark(ejs, ip->target);
     }
     if (ip->namespaces) {
-        ejsMark(ejs, (EjsObj*) ip->namespaces);
+        ejsMark(ejs, ip->namespaces);
     }
     if (ip->indexVar) {
         ejsMark(ejs, ip->indexVar);
@@ -32,10 +32,10 @@ static void markIteratorVar(Ejs *ejs, EjsIterator *ip)
 /*
     Call the supplied next() function to return the next enumerable item
  */
-static EjsObj *nextIterator(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EV *nextIterator(Ejs *ejs, EjsIterator *ip, int argc, EV **argv)
 {
     if (ip->nativeNext) {
-        return (ip->nativeNext)(ejs, (EjsObj*) ip, argc, argv);
+        return (ip->nativeNext)(ejs, ip, argc, argv);
     } else {
         ejsThrowStopIteration(ejs);
         return 0;
@@ -43,12 +43,12 @@ static EjsObj *nextIterator(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 }
 
 
-EjsObj *ejsThrowStopIteration(Ejs *ejs)
+EV *ejsThrowStopIteration(Ejs *ejs)
 {
 #if FUTURE
-    ejs->exception = (EjsObj*) ejs->iterator;
+    ejs->exception = ejs->iterator;
 #else
-    ejs->exception = (EjsObj*) ejs->stopIterationType;
+    ejs->exception = ejs->stopIterationType;
 #endif
     ejsAttention(ejs);
     return 0;
@@ -62,9 +62,9 @@ EjsObj *ejsThrowStopIteration(Ejs *ejs)
 
     public function Iterator(obj, f, deep, ...namespaces)
  */
-static EjsObj *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EV *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EV **argv)
 {
-    if (argc != 2 || !ejsIsFunction(argv[1])) {
+    if (argc != 2 || !ejsIsFunction(ejs, argv[1])) {
         ejsThrowArgError(ejs, "usage: Iterator(obj, function)");
         return 0;
     }
@@ -72,7 +72,7 @@ static EjsObj *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EjsObj *
     ip->next = (EjsFunction*) argv[1];
     mprAssert(ip->nativeNext == 0);
 
-    return (EjsObj*) ip;
+    return ip;
 }
 #endif
 
@@ -81,7 +81,7 @@ static EjsObj *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EjsObj *
 /*
     Create an iterator.
  */
-EjsIterator *ejsCreateIterator(Ejs *ejs, EjsObj *obj, EjsProc nativeNext, bool deep, EjsArray *namespaces)
+EjsIterator *ejsCreateIterator(Ejs *ejs, EV *obj, EjsProc nativeNext, bool deep, EjsArray *namespaces)
 {
     EjsIterator     *ip;
 
@@ -93,7 +93,6 @@ EjsIterator *ejsCreateIterator(Ejs *ejs, EjsObj *obj, EjsProc nativeNext, bool d
         ip->target = obj;
         ip->deep = deep;
         ip->namespaces = namespaces;
-        ejsSetDebugName(ip, "iterator");
     }
     return ip;
 }
@@ -112,7 +111,7 @@ void ejsCreateIteratorType(Ejs *ejs)
     type->helpers.mark  = (EjsMarkHelper) markIteratorVar;
 
     type = ejs->stopIterationType = ejsCreateNativeType(ejs, EJS_ITERATOR_NAMESPACE, "StopIteration", 
-        ES_iterator_StopIteration, sizeof(EjsObj));
+        ES_iterator_StopIteration, sizeof(EjsError));
 }
 
 
@@ -123,7 +122,6 @@ void ejsConfigureIteratorType(Ejs *ejs)
 
     type = ejsGetTypeByName(ejs, EJS_ITERATOR_NAMESPACE, "Iterator");
     prototype = type->prototype;
-
     ejsBindMethod(ejs, prototype, ES_iterator_Iterator_next, (EjsProc) nextIterator);
 }
 

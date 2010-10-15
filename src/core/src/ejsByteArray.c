@@ -14,7 +14,7 @@ static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
 
 static int  flushByteArray(Ejs *ejs, EjsByteArray *ap);
 static int  getInput(Ejs *ejs, EjsByteArray *ap, int required);
-static int  lookupByteArrayProperty(Ejs *ejs, EjsByteArray *ap, EjsName *qname);
+static int  lookupByteArrayProperty(Ejs *ejs, EjsByteArray *ap, EjsName qname);
 
 static MPR_INLINE int swap16(EjsByteArray *ap, int a);
 static MPR_INLINE int swap32(EjsByteArray *ap, int a);
@@ -24,7 +24,7 @@ static int putByte(EjsByteArray *ap, int value);
 static int putInteger(EjsByteArray *ap, int value);
 static int putLong(EjsByteArray *ap, int64 value);
 static int putShort(EjsByteArray *ap, int value);
-static int putString(EjsByteArray *ap, cchar *value, int len);
+static int putString(EjsByteArray *ap, EjsString *value, int len);
 static int putNumber(EjsByteArray *ap, MprNumber value);
 static int putDouble(EjsByteArray *ap, double value);
 
@@ -118,14 +118,14 @@ static EjsObj *getByteArrayProperty(Ejs *ejs, EjsByteArray *ap, int slotNum)
 }
 
 
-static int lookupByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, EjsName *qname)
+static int lookupByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, EjsName qname)
 {
     int     index;
 
-    if (qname == 0 || ! isdigit((int) qname->name[0])) {
+    if (qname.name == 0 || ! isdigit((int) qname.name->value[0])) {
         return EJS_ERR;
     }
-    index = atoi(qname->name);
+    index = ejsAtoi(ejs, qname.name, 10);
     if (index < ap->length) {
         return index;
     }
@@ -150,16 +150,16 @@ static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         return ejsInvokeOperator(ejs, (EjsObj*) ejs->zeroValue, opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
-        if (ejsIsNull(rhs) || ejsIsUndefined(rhs)) {
+        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
             return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
-        } else if (ejsIsNumber(rhs)) {
+        } else if (ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsNumber(rhs)) {
+        if (ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
@@ -183,7 +183,7 @@ static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         return 0;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -194,7 +194,7 @@ static EjsObj *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
 {
     EjsObj      *result;
 
-    if (rhs == 0 || lhs->type != rhs->type) {
+    if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if ((result = coerceByteArrayOperands(ejs, lhs, opcode, rhs)) != 0) {
             return result;
         }
@@ -234,7 +234,7 @@ static EjsObj *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         return (EjsObj*) ejs->zeroValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
     mprAssert(0);
@@ -243,7 +243,7 @@ static EjsObj *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
 
 static void markByteArrayVar(Ejs *ejs, EjsByteArray *ap)
 {
-    mprAssert(ejsIsByteArray(ap));
+    mprAssert(ejsIsByteArray(ejs, ap));
 
     //  MOB -- not needed
     ejsMarkObject(ejs, (EjsObj*) ap);
@@ -267,7 +267,7 @@ static int setByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slotNum, 
             return EJS_ERR;
         }
     }
-    if (ejsIsNumber(value)) {
+    if (ejsIsNumber(ejs, value)) {
         ap->value[slotNum] = ejsGetInt(ejs, value);
     } else {
         ap->value[slotNum] = ejsGetInt(ejs, ejsToNumber(ejs, value));
@@ -468,7 +468,7 @@ static EjsObj *setEndian(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     int     endian;
 
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
 
     endian = ejsGetInt(ejs, argv[0]);
     if (endian != 0 && endian != 1) {
@@ -490,7 +490,7 @@ static EjsObj *nextByteArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
     EjsByteArray    *ap;
 
     ap = (EjsByteArray*) ip->target;
-    if (!ejsIsByteArray(ap)) {
+    if (!ejsIsByteArray(ejs, ap)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -524,7 +524,7 @@ static EjsObj *nextByteArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **
     EjsByteArray    *ap;
 
     ap = (EjsByteArray*) ip->target;
-    if (!ejsIsByteArray(ap)) {
+    if (!ejsIsByteArray(ejs, ap)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -579,8 +579,8 @@ static EjsObj *ba_getLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
-    mprAssert(ejsIsByteArray(ap));
+    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
+    mprAssert(ejsIsByteArray(ejs, ap));
 
     ap->length = ejsGetInt(ejs, argv[0]);
     if (ap->readPosition >= ap->length) {
@@ -797,7 +797,7 @@ static EjsObj *ba_setReadPosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj *
 {
     int     pos;
 
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
 
     pos = ejsGetInt(ejs, argv[0]);
     if (pos < 0 || pos > ap->length) {
@@ -852,6 +852,7 @@ static EjsObj *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
         return (EjsObj*) ejs->nullValue;
     }
     count = min(count, availableBytes(ap));
+    //  MOB - UNICODE ENCODING
     result = (EjsObj*) ejsCreateStringWithLength(ejs, (cchar*) &ap->value[ap->readPosition], count);
     adjustReadPosition(ap, count);
     return result;
@@ -899,6 +900,7 @@ static EjsObj *ba_room(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
+    //  MOB - UNICODE ENCODING
     return (EjsObj*) ejsCreateStringWithLength(ejs, (cchar*) &ap->value[ap->readPosition], availableBytes(ap));
 }
 
@@ -907,7 +909,7 @@ static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Write data to the array. Data is written to the current write $position pointer.
     function write(...data): Number
  */
-EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
+EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EV **argv)
 {
     EjsArray        *args;
     EjsByteArray    *bp;
@@ -915,15 +917,15 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
     EjsObj          *vp;
     int             i, len, wrote;
 
-    mprAssert(argc == 1 && ejsIsArray(argv[0]));
+    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
     /*
         Unwrap nested arrays
      */
     args = (EjsArray*) argv[0];
-    while (args && ejsIsArray(args) && args->length == 1) {
-        vp = ejsGetProperty(ejs, (EjsVar*) args, 0);
-        if (!ejsIsArray(vp)) {
+    while (args && ejsIsArray(ejs, args) && args->length == 1) {
+        vp = ejsGetProperty(ejs, args, 0);
+        if (!ejsIsArray(ejs, vp)) {
             break;
         }
         args = (EjsArray*) vp;
@@ -935,11 +937,11 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
     wrote = 0;
 
     for (i = 0; i < args->length; i++) {
-        vp = ejsGetProperty(ejs, (EjsVar*) args, i);
+        vp = ejsGetProperty(ejs, args, i);
         if (vp == 0) {
             continue;
         }
-        switch (vp->type->id) {
+        switch (TYPE(vp)->id) {
         case ES_Boolean:
             if (!ejsMakeRoomInByteArray(ejs, ap, EJS_SIZE_BOOLEAN)) {
                 return 0;
@@ -966,12 +968,12 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
                 return 0;
             }
             sp = (EjsString*) vp;
-            wrote += putString(ap, sp->value, sp->length);
+            wrote += putString(ap, sp, sp->length);
             break;
 
         default:
             sp = ejsToString(ejs, vp);
-            wrote += putString(ap, sp->value, sp->length);
+            wrote += putString(ap, sp, sp->length);
             break;
 
         case ES_ByteArray:
@@ -1100,7 +1102,7 @@ static EjsObj *ba_setWritePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj 
 {
     int     pos;
 
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
 
     pos = ejsGetInt(ejs, argv[0]);
     if (pos < 0 || pos > ap->length) {
@@ -1299,9 +1301,10 @@ static int putNumber(EjsByteArray *ap, MprNumber value)
 }
 
 
-static int putString(EjsByteArray *ap, cchar *value, int len)
+static int putString(EjsByteArray *ap, EjsString *str, int len)
 {
-    mprMemcpy(&ap->value[ap->writePosition], room(ap), value, len);
+    //  MOB -- this must do encoding
+    mprMemcpy(&ap->value[ap->writePosition], room(ap), str->value, len);
     ap->writePosition += len;
     return len;
 }
@@ -1382,7 +1385,6 @@ EjsByteArray *ejsCreateByteArray(Ejs *ejs, int size)
     ap->growable = 1;
     ap->growInc = MPR_BUFSIZE;
     ap->endian = mprGetEndian(ejs);
-    ejsSetDebugName(ap, "ByteArray instance");
     return ap;
 }
 
@@ -1390,7 +1392,7 @@ EjsByteArray *ejsCreateByteArray(Ejs *ejs, int size)
 void ejsConfigureByteArrayType(Ejs *ejs)
 {
     EjsType         *type;
-    EjsTypeHelpers  *helpers;
+    EjsHelpers  *helpers;
     EjsObj          *prototype;
 
     type = ejs->byteArrayType = ejsConfigureNativeType(ejs, "ejs", "ByteArray", sizeof(EjsByteArray));

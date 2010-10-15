@@ -14,11 +14,11 @@
 
     function cast(type: Type) : Object
  */
-
 static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
 {
     EjsString   *stack, *msg;
-    cchar       *str;
+    //  MOB -- rename
+    EjsString   *us;
     char        *buf;
 
     switch (type->id) {
@@ -27,10 +27,10 @@ static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
 
     case ES_String:
         stack = (EjsString*) ejsRunFunctionBySlot(ejs, (EjsObj*) error, ES_Error_formatStack, 0, NULL);
-        str = ejsIsString(stack) ? stack->value : "";
+        us = ejsIsString(ejs, stack) ? stack : ejs->emptyString;
         msg = ejsGetProperty(ejs, error, ES_Error_message);
         if ((buf = mprAsprintf(ejs, -1,
-                "%s Exception: %s\nStack:\n%s\n", error->obj.type->qname.name, msg->value, str)) == NULL) {
+                "%S Exception: %S\nStack:\n%S\n", TYPE(error)->qname.name, msg, us)) == NULL) {
             ejsThrowMemoryError(ejs);
         }
         return (EjsObj*) ejsCreateStringAndFree(ejs, buf);
@@ -100,6 +100,7 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 
     //  MOB -- why?
     type->constructor.block.nobind = 1;
+    ejsCloneObjectHelpers(ejs, type);
     type->helpers.cast = (EjsCastHelper) castError;
     return type;
 }

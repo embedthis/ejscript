@@ -22,6 +22,7 @@
 
 /**************************** Forward Declarations ****************************/
 
+static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv);
 static int mapMode(cchar *mode);
 static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv);
 static int readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, int offset, int count);
@@ -33,15 +34,13 @@ static void unmapFile(EjsFile *fp);
 
 /************************************ Helpers *********************************/
 
-//  MOB -- should not be required
-
 static void destroyFile(Ejs *ejs, EjsFile *fp)
 {
     mprAssert(fp);
 
-    mprFree(fp->path);
-    fp->path = 0;
-    ejsFreeVar(ejs, (EjsObj*) fp, -1);
+    if (fp->file) {
+        closeFile(ejs, fp, 0, NULL);
+    }
 }
 
 
@@ -91,22 +90,31 @@ static EjsObj *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
 
 
 
-static int lookupFileProperty(Ejs *ejs, EjsFile *fp, EjsName *qname)
+static int lookupFileProperty(Ejs *ejs, EjsFile *fp, EjsName qname)
 {
     int     index;
 
-    if (qname == 0 || !isdigit((int) qname->name[0])) {
+    if (qname.name == 0 || !isdigit((int) qname.name->value[0])) {
         return EJS_ERR;
     }
     if (!(fp->mode & FILE_OPEN)) {
         ejsThrowIOError(ejs, "File is not open");
         return 0;
     }
-    index = atoi(qname->name);
+    index = ejsAtoi(ejs, qname.name, 10);
     if (index < mprGetFileSize(fp->file)) {
         return index;
     }
     return EJS_ERR;
+}
+
+
+static void markFile(Ejs *ejs, void *ptr)
+{
+    EjsFile     *fp;
+
+    fp = (EjsFile*) ptr;
+    ejsMark(ejs, fp->path);
 }
 
 
@@ -125,7 +133,7 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
         ejsThrowIOError(ejs, "File is not opened for writing");
         return 0;
     }
-    c = ejsIsNumber(value) ? ejsGetInt(ejs, value) : ejsGetInt(ejs, ejsToNumber(ejs, value));
+    c = ejsIsNumber(ejs, value) ? ejsGetInt(ejs, value) : ejsGetInt(ejs, ejsToNumber(ejs, value));
 
     offset = mprSeek(fp->file, SEEK_CUR, 0);
     if (slotNum < 0) {
@@ -151,13 +159,13 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
 
 /************************************ Methods *********************************/
 
-int ejsGetNumOption(Ejs *ejs, EjsObj *options, cchar *field, int defaultValue, bool optional)
+//  MOB - rename
+static int ejsGetNumOption(Ejs *ejs, EjsObj *options, cchar *field, int defaultValue, bool optional)
 {
     EjsObj      *vp;
-    EjsName     qname;
     EjsNumber   *num;
 
-    vp = ejsGetPropertyByName(ejs, options, ejsName(&qname, "", field));
+    vp = ejsGetPropertyByName(ejs, options, EN(field));
     if (vp == 0) {
         if (optional) {
             return defaultValue;
@@ -166,7 +174,7 @@ int ejsGetNumOption(Ejs *ejs, EjsObj *options, cchar *field, int defaultValue, b
         return 0;
     }
     num = ejsToNumber(ejs, vp);
-    if (!ejsIsNumber(num)) {
+    if (!ejsIsNumber(ejs, num)) {
         ejsThrowArgError(ejs, "Bad option type for field \"%s\"", field);
         return 0;
     }
@@ -174,26 +182,25 @@ int ejsGetNumOption(Ejs *ejs, EjsObj *options, cchar *field, int defaultValue, b
 }
 
 
-cchar *ejsGetStrOption(Ejs *ejs, EjsObj *options, cchar *field, cchar *defaultValue, bool optional)
+static cchar *getStrOption(Ejs *ejs, EjsObj *options, cchar *field, cchar *defaultValue, bool optional)
 {
     EjsObj      *vp;
-    EjsName     qname;
     EjsString   *str;
 
-    vp = ejsGetPropertyByName(ejs, options, ejsName(&qname, "", field));
+    vp = ejsGetPropertyByName(ejs, options, EN(field));
     if (vp == 0) {
         if (optional) {
-            return defaultValue;
+            return mprStrdup(ejs, defaultValue);
         }
         ejsThrowArgError(ejs, "Required option %s is missing", field);
         return 0;
     }
     str = ejsToString(ejs, vp);
-    if (!ejsIsString(str)) {
+    if (!ejsIsString(ejs, str)) {
         ejsThrowArgError(ejs, "Bad option type for field \"%s\"", field);
         return 0;
     }
-    return str->value;
+    return ejsToMulti(ejs, str);
 }
 
 
@@ -203,8 +210,8 @@ cchar *ejsGetStrOption(Ejs *ejs, EjsObj *options, cchar *field, cchar *defaultVa
  */
 static EjsObj *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    EjsObj  *pp;
-    cchar   *path;
+    EjsObj      *pp;
+    cchar       *path;
 
     if (argc < 1 || argc > 2) {
         ejsThrowArgError(ejs, "Bad args");
@@ -212,14 +219,14 @@ static EjsObj *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
     pp = argv[0];
     if (ejsIsPath(ejs, pp)) {
-        path = ((EjsPath*) pp)->path;
-    } else if (ejsIsString(pp)) {
+        path = ((EjsPath*) pp)->value;
+    } else if (ejsIsString(ejs, pp)) {
         path = ejsGetString(ejs, pp);
     } else {
         ejsThrowIOError(ejs, "Bad path");
         return NULL;
     }
-    fp->path = mprGetNormalizedPath(fp, path);
+    fp->path = ejsAllocAndFree(ejs, mprGetNormalizedPath(fp, path), -1);
     if (argc == 2) {
         openFile(ejs, fp, 1, &argv[1]);
     }
@@ -362,7 +369,7 @@ static EjsObj *getFileValues(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getFilePath(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePath(ejs, fp->path);
+    return (EjsObj*) ejsCreatePathFromCS(ejs, fp->path);
 }
 
 
@@ -388,7 +395,7 @@ static EjsObj *setFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     long        pos;
 
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
     pos = ejsGetInt(ejs, argv[0]);
 
     if (fp->file == 0) {
@@ -428,18 +435,18 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         return 0;
     }
     options = argv[0];
-    if (argc == 0 || ejsIsNull(options) || ejsIsUndefined(options)) {
+    if (argc == 0 || ejsIsNull(ejs, options) || ejsIsUndefined(ejs, options)) {
         omode = O_RDONLY | O_BINARY;
         perms = EJS_FILE_PERMS;
         fp->mode = FILE_READ;
         mode = "r";
     } else {
-        if (ejsIsString(options)) {
+        if (ejsIsString(ejs, options)) {
             mode = ejsGetString(ejs, options);
             perms = EJS_FILE_PERMS;
         } else {
             perms = ejsGetNumOption(ejs, options, "permissions", EJS_FILE_PERMS, 1);
-            mode = ejsGetStrOption(ejs, options, "mode", "r", 1);
+            mode = getStrOption(ejs, options, "mode", "r", 1);
             if (ejs->exception) {
                 return 0;
             }
@@ -459,6 +466,7 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     fp->modeString = mprStrdup(fp, mode);
     fp->perms = perms;
 
+    //  MOB -- who ensure this gets closed?
     fp->file = mprOpen(fp, fp->path, omode, perms);
     if (fp->file == 0) {
         ejsThrowIOError(ejs, "Can't open %s", fp->path);
@@ -476,12 +484,11 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 
 static EjsObj *getFileOptions(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    EjsName     qname;
     EjsObj      *options;
 
     options = (EjsObj*) ejsCreateSimpleObject(ejs);
-    ejsSetPropertyByName(ejs, options, ejsName(&qname, "", "mode"), ejsCreateString(ejs, fp->modeString));
-    ejsSetPropertyByName(ejs, options, ejsName(&qname, "", "permissions"), ejsCreateNumber(ejs, fp->perms));
+    ejsSetPropertyByName(ejs, options, EN("mode"), ejsCreateStringFromCS(ejs, fp->modeString));
+    ejsSetPropertyByName(ejs, options, EN("permissions"), ejsCreateNumber(ejs, fp->perms));
     return options;
 }
 
@@ -502,7 +509,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Bad args");
         return 0;
     } else {
-        mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+        mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
         count = ejsGetInt(ejs, argv[0]);
     }
     if (fp->file == 0) {
@@ -557,7 +564,7 @@ static EjsObj *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Bad args");
         return 0;
     } else {
-        mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+        mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
         count = ejsGetInt(ejs, argv[0]);
     }
     if (fp->file == 0) {
@@ -578,17 +585,16 @@ static EjsObj *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         }
         mprAssert(count >= 0);
     }
-    result = ejsCreateBareString(ejs, count);
-    if (result == 0) {
+    if ((result = ejsCreateBareString(ejs, count)) == NULL) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    totalRead = mprRead(fp->file, result->value, count);
+    totalRead = mprRead(fp->file, result, count);
     if (totalRead != count) {
         ejsThrowIOError(ejs, "Can't read from file: %s", fp->path);
         return 0;
     }
-    return (EjsObj*) result;
+    return (EjsObj*) ejsInternString(ejs, result);
 }
 
 
@@ -694,10 +700,10 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     EjsByteArray    *ap;
     EjsObj          *vp;
     EjsString       *str;
-    cchar            *buf;
+    cchar           *buf;
     int             i, len, written;
 
-    mprAssert(argc == 1 && ejsIsArray(argv[0]));
+    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
     args = (EjsArray*) argv[0];
 
@@ -710,21 +716,23 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     for (i = 0; i < args->length; i++) {
         vp = ejsGetProperty(ejs, (EjsObj*) args, i);
         mprAssert(vp);
-        switch (vp->type->id) {
+        switch (TYPE(vp)->id) {
         case ES_ByteArray:
             ap = (EjsByteArray*) vp;
+            //  MOB ENCODING
             buf = (cchar*) &ap->value[ap->readPosition];
             len = ap->writePosition - ap->readPosition;
             break;
 
         case ES_String:
+            //  MOB ENCODING
             buf = ((EjsString*) vp)->value;
             len = ((EjsString*) vp)->length;
             break;
 
         default:
             str = ejsToString(ejs, vp);
-            buf = ejsGetString(ejs, str);
+            buf = str->value;
             len = str->length;
             break;
         }
@@ -842,7 +850,7 @@ EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
     if (fp == 0) {
         return 0;
     }
-    arg = (EjsObj*) ejsCreateString(ejs, path);
+    arg = (EjsObj*) ejsCreateStringFromCS(ejs, path);
     fileConstructor(ejs, fp, 1, (EjsObj**) &arg);
     return fp;
 }
@@ -855,9 +863,8 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     mprAssert(fd >= 0);
     mprAssert(name);
 
-    fp = (EjsFile*) ejsCreate(ejs, ejs->fileType, 0);
-    if (fp == 0) {
-        return 0;
+    if ((fp = (EjsFile*) ejsCreate(ejs, ejs->fileType, 0)) == NULL) {
+        return NULL;
     }
     fp->perms = EJS_FILE_PERMS;
     fp->mode = FILE_OPEN;
@@ -886,10 +893,11 @@ void ejsConfigureFileType(Ejs *ejs)
     type->virtualSlots = 1;
     prototype = type->prototype;
 
-    type->helpers.destroy = (EjsDestroyHelper) destroyFile;
-    type->helpers.getProperty = (EjsGetPropertyHelper) getFileProperty;
+    type->helpers.destroy        = (EjsDestroyHelper) destroyFile;
+    type->helpers.getProperty    = (EjsGetPropertyHelper) getFileProperty;
     type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupFileProperty;
-    type->helpers.setProperty = (EjsSetPropertyHelper) setFileProperty;
+    type->helpers.setProperty    = (EjsSetPropertyHelper) setFileProperty;
+    type->helpers.mark           = (EjsMarkHelper) markFile;
 
     ejsBindConstructor(ejs, type, (EjsProc) fileConstructor);
     ejsBindMethod(ejs, prototype, ES_File_canRead, (EjsProc) canReadFile);

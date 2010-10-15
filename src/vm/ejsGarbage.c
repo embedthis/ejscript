@@ -1,8 +1,7 @@
 /**
-    ejsGarbage.c - EJS Garbage collector.
+    ejsGarbage.c - Generational garbage collector.
 
-    This implements a non-compacting, generational mark and sweep collection algorithm with 
-    fast pooled object allocations.
+    This implements a generational, non-compacting, mark and sweep collection algorithm with fast slab object allocations.
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
@@ -10,45 +9,26 @@
 
 #include    "ejs.h"
 
-/****************************** Forward Declarations **************************/
+/******************************************************************************/
+
+#if EJS_MEMORY_DEBUG
+    #define BREAKPOINT(bp)      breakpoint(bp);
+    #define CHECK(bp)           ejsCheckBlock(bp)
+#else /* !EJS_MEMORY_DEBUG */
+    #define BREAKPOINT(bp)
+    #define CHECK(bp)           
+#endif
+
+//  MOB - should be once in ejs.h
+#define GET_BLK(ptr)            ((EjsMem*) (((char*) (ptr)) - sizeof(EjsMem)))
+#define INIT_LIST(bp)           if (1) { bp->next = bp->prev = bp; } else
+
+/***************************** Forward Declarations ***************************/
 
 static void mark(Ejs *ejs, int generation);
 static void markGlobal(Ejs *ejs, int generation);
-static inline bool memoryUsageOk(Ejs *ejs);
-static inline void pruneTypePools(Ejs *ejs);
 static void resetMarks(Ejs *ejs);
 static void sweep(Ejs *ejs, int generation);
-
-#if BLD_DEBUG
-/*
-    For debugging it can be helpful to disable the pooling of objects. Because mprFree will fill freed objects in 
-    debug mode - bad frees will show up quickly with seg faults.
-
-    Break on the allocation, mark and freeing of a nominated object
-    Set ejsBreakAddr to the address of the object to watch and set a breakpoint in the debugger below.
-    Set ejsBreakSeq to the object sequence number to watch and set a breakpoint in the debugger below.
- */
-static void *ejsBreakAddr = (void*) 0;
-static int ejsBreakSeq = 0;
-static void checkAddr(EjsObj *addr) {
-    if ((void*) addr == ejsBreakAddr) { 
-        /* Set a breakpoint here */
-        addr = ejsBreakAddr;
-    }
-    if (addr->seq == ejsBreakSeq) {
-        addr->seq = ejsBreakSeq;
-    }
-}
-/*
-    Unique allocation sequence. Helps GC debugging.
- */
-static int nextSequence;
-
-#else /* !BLD_DEBUG */
-#define checkAddr(addr)
-#undef ejsAddToGcStats
-#define ejsAddToGcStats(ejs, vp, id)
-#endif
 
 /************************************* Code ***********************************/
 /*
@@ -56,262 +36,36 @@ static int nextSequence;
  */
 int ejsCreateGCService(Ejs *ejs)
 {
-    EjsGC       *gc;
-    int         i;
+    EjsHeap     *heap;
 
     mprAssert(ejs);
+    heap = ejs->heap;
 
-    gc = &ejs->gc;
-    gc->enabled = 1;
-    gc->firstGlobal = (ejs->empty) ? 0 : ES_global_NUM_CLASS_PROP;
-
+#if UNUSED
+    heap->firstGlobal = (ejs->empty) ? 0 : ES_global_NUM_CLASS_PROP;
 //  MOB -- Some types are immutable App.config
-gc->firstGlobal = 0;
-    gc->numPools = EJS_MAX_TYPE;
-    gc->allocGeneration = EJS_GEN_ETERNAL;
-    ejs->workQuota = EJS_WORK_QUOTA;
-
-    for (i = 0; i < EJS_MAX_GEN; i++) {
-        gc->generations[i] = mprAllocCtx(ejs->heap, sizeof(EjsGen));
-    }
-    for (i = 0; i < EJS_MAX_TYPE; i++) {
-        gc->pools[i] = mprAllocCtx(ejs->heap, sizeof(EjsPool));
-    }
-    ejs->currentGeneration = ejs->gc.generations[EJS_GEN_ETERNAL];
+heap->firstGlobal = 0;
+#endif
     return 0;
 }
 
 
 void ejsDestroyGCService(Ejs *ejs)
 {
-    EjsGC       *gc;
-    EjsGen      *gen;
-    EjsObj      *vp;
-    MprBlk      *bp, *next, *end;
-    int         generation;
+    EjsHeap     *heap;
+    EjsMem      *gp;
+    EjsMem      *bp, *next;
     
-    gc = &ejs->gc;
-    for (generation = EJS_GEN_ETERNAL; generation >= 0; generation--) {
-        gen = gc->generations[generation];
-        end = mprGetEndChildren(gen);
-        for (bp = mprGetFirstChild(gen); bp != end; bp = next) {
+    heap = ejs->heap;
+    for (gp = heap->generations; gp < &heap->generations[EJS_MAX_GEN]; gp++) {
+        for (bp = gp->next; bp != gp; bp = next) {
             next = bp->next;
-            vp = MPR_GET_PTR(bp);
-            checkAddr(vp);
-            /*
-                Only the types that MUST free resources will set needFinalize. All will have a destroy helper.
-             */
-            if (vp->type->needFinalize && vp->type->helpers.destroy) {
-                (vp->type->helpers.destroy)(ejs, vp);
-            }
+            ejsFree(ejs, bp);
         }
     }
 }
 
 
-#if FUTURE
-
-- Move vp->marked down into MprBlk.flags
-
-- ?? How to move objects and /size
-    - Movable types?
-    - clone 
-#endif
-
-void *ejsAlloc(Ejs *ejs, int size)
-{
-    void        *ptr;
-
-    mprAssert(size >= 0);
-
-    if ((ptr = mprAllocZeroed(ejsGetAllocCtx(ejs), size)) == 0) {
-        ejsThrowMemoryError(ejs);
-        return 0;
-    }
-    //  MOB -- how to do this test less often?
-    if (++ejs->workDone >= ejs->workQuota && !ejs->gcRequired && ejs->gc.enabled) {
-        ejs->gcRequired = 1;
-        ejsAttention(ejs);
-    }
-    //  MOB -- what kind of stats?
-    // ejsAddToGcStats(ejs, vp, type->id);
-    return ptr;
-}
-
-
-void ejsFree(Ejs *ejs, void *ptr)
-{
-    mprAssert(0);
-}
-
-
-/*
-    Allocate a new variable. Size is set to the extra bytes for properties in addition to the type's instance size.
- */
-EjsObj *ejsAllocVar(Ejs *ejs, EjsType *type, int extra)
-{
-    EjsObj      *vp;
-    int         size;
-
-    mprAssert(type);
-    mprAssert(extra >= 0);
-
-    //  MOB -- disable pooling
-    if (0 && !type->dontPool) {
-        vp = ejsAllocPooled(ejs, type->id);
-    } else {
-        vp = 0;
-    }
-    if (vp == 0) {
-        size = type->instanceSize + extra;
-        if ((vp = (EjsObj*) mprAllocCtx(ejsGetAllocCtx(ejs), size)) == 0) {
-            ejsThrowMemoryError(ejs);
-            return 0;
-        }
-        //  MOB -- how to do this test less often?
-        if (++ejs->workDone >= ejs->workQuota && !ejs->gcRequired && ejs->gc.enabled) {
-            ejs->gcRequired = 1;
-            ejsAttention(ejs);
-        }
-    }
-    vp->type = type;
-    vp->master = (ejs->master == 0);
-    ejsAddToGcStats(ejs, vp, type->id);
-    return (EjsObj*) vp;
-}
-
-
-EjsObj *ejsAllocPooled(Ejs *ejs, int id)
-{
-    EjsPool     *pool;
-    EjsObj      *vp;
-    MprBlk      *bp;
-
-    if (0 < id && id < ejs->gc.numPools) {
-        pool = ejs->gc.pools[id];
-        if ((bp = mprGetFirstChild(pool)) != NULL) {
-            vp = MPR_GET_PTR(bp);
-            mprStealBlock(ejs->currentGeneration, vp);
-#if OLD
-            gp = MPR_GET_BLK(ejs->currentGeneration);
-            if (bp->prev) {
-                bp->prev->next = bp->next;
-            } else {
-                bp->parent->children = bp->next;
-            }
-            if (bp->next) {
-                bp->next->prev = bp->prev;
-            }
-            bp->parent = gp;
-            if (gp->children) {
-                gp->children->prev = bp;
-            }
-            bp->next = gp->children;
-            gp->children = bp;
-            bp->prev = 0;
-#endif
-
-            memset(vp, 0, pool->type->instanceSize);
-            vp->type = pool->type;
-            vp->master = (ejs->master == 0);
-#if BLD_DEBUG
-            vp->seq = nextSequence++;
-            checkAddr((EjsObj*) vp);
-            pool->reuse++;
-            pool->count--;
-            mprAssert(pool->count >= 0);
-            ejsAddToGcStats(ejs, vp, id);
-#endif
-            if (++ejs->workDone >= ejs->workQuota && !ejs->gcRequired && ejs->gc.enabled) {
-                ejs->gcRequired = 1;
-                ejsAttention(ejs);
-            }
-            return vp;
-        }
-    }
-    return 0;
-}
-
-
-/*
-    Free an object. This is should only ever be called by the destroy helpers to free a object or recycle the 
-    object to a type specific free pool. 
- */
-void ejsFreeVar(Ejs *ejs, void *vp, int id)
-{
-    EjsType     *type;
-    EjsPool     *pool;
-    EjsGC       *gc;
-    EjsObj      *obj;
-
-    mprAssert(vp);
-    checkAddr(vp);
-
-    obj = (EjsObj*) vp;
-    gc = &ejs->gc;
-    type = obj->type;
-    if (id < 0) {
-        id = type->id;
-    }
-    pool = gc->pools[id];
-
-    //  MOB -- disable pooling
-    type->dontPool = 1;
-
-    if (!type->dontPool && 0 <= id && id < gc->numPools && pool->count < EJS_MAX_OBJ_POOL) {
-        pool->type = obj->type; 
-        mprStealBlock(pool, obj);
-#if OLD
-        /*
-            Transfer from the current generation back to the pool. Inline for speed.
-         */
-        pp = MPR_GET_BLK(pool);
-        bp = MPR_GET_BLK(obj);
-        if (bp->prev) {
-            bp->prev->next = bp->next;
-        } else {
-            bp->parent->children = bp->next;
-        }
-        if (bp->next) {
-            bp->next->prev = bp->prev;
-        }
-        if (bp->children) {
-            /* Frees any allocated slots, names or traits */
-            mprFreeChildren(obj);
-        }
-        /*
-            Add to the pool
-         */
-        bp->parent = pp;
-        if (pp->children) {
-            pp->children->prev = bp;
-        }
-        bp->next = pp->children;
-        pp->children = bp;
-        bp->prev = 0;
-#endif
-
-#if BLD_DEBUG
-        obj->type = (void*) -1;
-        pool->allocated--;
-        mprAssert(pool->allocated >= 0);
-        pool->count++;
-        if (pool->count > pool->peakCount) {
-            pool->peakCount = pool->count;
-        }
-#endif
-    } else {
-#if BLD_DEBUG
-        obj->type = (void*) -1;
-        if (0 <= id && id < gc->numPools) {
-            pool = gc->pools[id];
-            pool->allocated--;
-            mprAssert(pool->allocated >= 0);
-        }
-#endif
-        mprFree(obj);
-    }
-}
 
 
 /*
@@ -320,25 +74,20 @@ void ejsFreeVar(Ejs *ejs, void *vp, int id)
  */
 void ejsCollectGarbage(Ejs *ejs, int gen)
 {
-    EjsGC       *gc;
+    EjsHeap     *heap;
     
-    gc = &ejs->gc;
-    if (!gc->enabled || gc->collecting || !ejs->initialized) {
+    heap = ejs->heap;
+    if (!heap->enabled || heap->collecting || !ejs->initialized) {
         return;
     }
-    gc->collecting = 1;
-
+    heap->collecting = 1;
     mark(ejs, gen);
     sweep(ejs, gen);
-    if (!memoryUsageOk(ejs)) {
-        pruneTypePools(ejs);
-    }
-    ejs->workDone = 0;
-    ejs->gcRequired = 0;
-    gc->collecting = 0;
-#if BLD_DEBUG
-    gc->totalSweeps++;
-#endif
+    heap->workDone = 0;
+    heap->gcRequired = 0;
+    heap->collecting = 0;
+    //  MOB
+    heap->gen = &heap->generations[EJS_GEN_NEW];
 }
 
 
@@ -348,15 +97,15 @@ void ejsCollectGarbage(Ejs *ejs, int gen)
 static void mark(Ejs *ejs, int generation)
 {
     EjsModule       *mp;
-    EjsGC           *gc;
-    EjsGen          *gen;
+    EjsHeap         *heap;
+    EjsMem          *gp;
     EjsBlock        *block;
-    EjsObj          *vp, **sp, **top;
-    MprBlk          *bp, *nextBp, *end;
+    EV              *vp, **sp, **top;
+    EjsMem          *bp;
     int             next;
 
-    gc = &ejs->gc;
-    gc->collectGeneration = generation;
+    heap = ejs->heap;
+    heap->gen = &heap->generations[generation];
 
     resetMarks(ejs);
     markGlobal(ejs, generation);
@@ -376,11 +125,6 @@ static void mark(Ejs *ejs, int generation)
     if (ejs->search) {
         ejsMark(ejs, ejs->search);
     }
-#if UNUSED
-    if (ejs->sessions) {
-        ejsMark(ejs, ejs->sessions);
-    }
-#endif
     if (ejs->applications) {
         ejsMark(ejs, ejs->applications);
     }
@@ -388,7 +132,7 @@ static void mark(Ejs *ejs, int generation)
     /*
         Mark initializers
      */
-    for (next = 0; (mp = (EjsModule*) mprGetNextItem(ejs->modules, &next)) != 0;) {
+    for (next = 0; (mp = (EjsModule*) ejsGetNextItem(ejs, ejs->modules, &next)) != 0;) {
         if (mp->initializer) {
             ejsMark(ejs, mp->initializer);
         }
@@ -414,15 +158,10 @@ static void mark(Ejs *ejs, int generation)
     /*
         Mark all permanent
      */
-    for (generation = EJS_MAX_GEN - 1; generation >= 0; generation--) {
-        ejs->gc.collectGeneration = generation;
-        gen = ejs->gc.generations[generation];
-        end = mprGetEndChildren(gen);
-        for (bp = mprGetFirstChild(gen); bp != end; bp = nextBp) {
-            nextBp = bp->next;
-            vp = MPR_GET_PTR(bp);
-            if (!vp->marked && vp->permanent) {
-                ejsMark(ejs, vp);
+    for (gp = heap->generations; gp < &heap->generations[EJS_MAX_GEN]; gp++) {
+        for (bp = gp->next; bp != gp; bp = bp->next) {
+            if (!bp->visited && bp->permanent) {
+                ejsMark(ejs, bp);
             }
         }
     }
@@ -434,68 +173,43 @@ static void mark(Ejs *ejs, int generation)
  */
 static void sweep(Ejs *ejs, int maxGeneration)
 {
-    EjsObj      *vp;
-    EjsGC       *gc;
-    EjsGen      *gen;
-    MprBlk      *bp, *next, *end;
-    int         destroyed, generation;
+    EjsHeap     *heap;
+    EjsMem      *gp, *bp;
     
-    /*
-        Go from oldest to youngest incase moving objects to elder generations and we clear the mark.
-     */
-    gc = &ejs->gc;
-    for (generation = maxGeneration; generation >= 0; generation--) {
-        gc->collectGeneration = generation;
-        gen = gc->generations[generation];
-
-        end = mprGetEndChildren(gen);
-        for (destroyed = 0, bp = mprGetFirstChild(gen); bp != end; bp = next) {
-            next = bp->next;
-            vp = MPR_GET_PTR(bp);
-            checkAddr(vp);
-            if (!vp->marked && !vp->permanent) {
-                (vp->type->helpers.destroy)(ejs, vp);
-                destroyed++;
+    heap = ejs->heap;
+    for (gp = &heap->generations[EJS_MAX_GEN - 1]; gp >= heap->generations; gp--) {
+        for (bp = gp->next; bp != gp; bp = bp->next) {
+            if (!bp->visited && !bp->permanent) {
+                ejsFree(ejs, bp);
             }
         }
-#if BLD_DEBUG
-        gc->allocatedObjects -= destroyed;
-        gc->totalReclaimed += destroyed;
-        gen->totalReclaimed += destroyed;
-        gen->totalSweeps++;
-#endif
     }
 }
 
 
+//  MOB -- is slow to have to do this twice
 /*
     Reset all marks prior to doing a mark/sweep
  */
 static void resetMarks(Ejs *ejs)
 {
-    EjsGen      *gen;
-    EjsGC       *gc;
-    EjsObj      *obj;
+    EjsHeap     *heap;
     EjsBlock    *block, *b;
-    MprBlk      *bp, *end;
-    int         i;
+    EjsMem      *gp, *bp;
 
-    gc = &ejs->gc;
-    for (i = 0; i < EJS_MAX_GEN; i++) {
-        gen = gc->generations[i];
-        end = mprGetEndChildren(gen);
-        for (bp = mprGetFirstChild(gen); bp != end; bp = bp->next) {
-            obj = MPR_GET_PTR(bp);
-            obj->marked = 0;
+    heap = ejs->heap;
+    for (gp = heap->generations; gp < &heap->generations[EJS_MAX_GEN]; gp++) {
+        for (bp = gp->next; bp != gp; bp = bp->next) {
+            bp->visited = 0;
         }
     }
     for (block = ejs->state->bp; block; block = block->prev) {
-        block->obj.marked = 0;
+        GET_BLK(block)->visited = 0;
         if (block->prevException) {
-            block->prevException->marked = 0;
+            GET_BLK(block->prevException)->visited = 0;
         }
         for (b = block->scope; b; b = b->scope) {
-            b->obj.marked = 0;
+            GET_BLK(b)->visited = 0;
         }
     }
 }
@@ -503,17 +217,18 @@ static void resetMarks(Ejs *ejs)
     
 static void markGlobal(Ejs *ejs, int generation)
 {
-    EjsGC       *gc;
+#if MOB
+    EjsHeap     *heap;
     EjsObj      *obj;
     EjsBlock    *block;
     EjsObj      *item;
     MprHash     *hp;
     int         i, next;
 
-    gc = &ejs->gc;
+    heap = ejs->heap;
 
     obj = (EjsObj*) ejs->global;
-    obj->marked = 1;
+    GET_BLK(obj)->visited = 1;
 
     if (generation == EJS_GEN_ETERNAL) {
         for (i = 0; i < obj->numSlots; i++) {
@@ -524,7 +239,7 @@ static void markGlobal(Ejs *ejs, int generation)
         }
 
     } else {
-        i = gc->firstGlobal;
+        i = heap->firstGlobal;
         for (; i < obj->numSlots; i++) {
             ejsMark(ejs, obj->slots[i].value.ref);
         }
@@ -538,75 +253,36 @@ static void markGlobal(Ejs *ejs, int generation)
             ejsMark(ejs, item);
         }
     }
+#endif
 }
 
 
 /*
     Mark a variable as used. All variable marking comes through here.
-    NOTE: The container is not used by anyone (verified).
  */
 void ejsMark(Ejs *ejs, void *ptr)
 {
-    EjsObj      *vp;
+    EjsMem      *bp;
 
-    vp = (EjsObj*) ptr;
-    if (vp && !vp->marked) {
-        checkAddr(vp);
-        vp->marked = 1;
-        (vp->type->helpers.mark)(ejs, vp);
-    }
-}
-
-
-static inline bool memoryUsageOk(Ejs *ejs)
-{
-    MprAllocStats   *alloc;
-    size_t          memory;
-
-    memory = mprGetUsedMemory(ejs);
-    alloc = mprGetAllocStats(ejs);
-    return memory < alloc->redLine;
-}
-
-
-static inline void pruneTypePools(Ejs *ejs)
-{
-    EjsPool         *pool;
-    EjsGC           *gc;
-    EjsObj          *vp;
-    MprAllocStats   *alloc;
-    MprBlk          *bp, *next, *end;
-    size_t          memory;
-    int             i;
-
-    gc = &ejs->gc;
-
-    /*
-        Still insufficient memory, must reclaim all objects from the type pools.
-     */
-    for (i = 0; i < gc->numPools; i++) {
-        pool = gc->pools[i];
-        if (pool->count) {
-            end = mprGetEndChildren(pool);
-            for (bp = mprGetFirstChild(pool); bp != end; bp = next) {
-                next = bp->next;
-                vp = MPR_GET_PTR(bp);
-                mprFree(vp);
+    if (ptr) {
+        bp = GET_BLK(ptr);
+        if (bp && !bp->visited) {
+            CHECK(bp);
+            bp->visited = 1;
+            if (bp->hasType) {
+                (bp->type->helpers.mark)(ejs, ptr);
+                if (!GET_BLK(bp->type)->visited) {
+                    ejsMark(ejs, bp->type);
+                }
+            } else if (bp->manager) {
+                (bp->manager)(ejs, ptr, EJS_MANAGE_MARK);
             }
-            pool->count = 0;
+#if BLD_DEBUG
+            if (!GET_BLK(bp->name)->visited) {
+                ejsMark(ejs, bp->name);
+            }
+#endif
         }
-    }
-    gc->totalRedlines++;
-
-    memory = mprGetUsedMemory(ejs);
-    alloc = mprGetAllocStats(ejs);
-
-    if (memory >= alloc->maxMemory) {
-        /*
-            Could not provide sufficient memory. Go into graceful degrade mode
-         */
-        ejsThrowMemoryError(ejs);
-        ejsGracefulDegrade(ejs);
     }
 }
 
@@ -617,31 +293,24 @@ static inline void pruneTypePools(Ejs *ejs)
  */
 void ejsMakeEternalPermanent(Ejs *ejs)
 {
-    EjsGen      *gen;
-    EjsObj      *vp;
-    MprBlk      *bp, *end;
+    EjsMem      *gp, *bp;
 
-    gen = ejs->gc.generations[EJS_GEN_ETERNAL];
-    end = mprGetEndChildren(gen);
-    for (bp = mprGetFirstChild(gen); bp != end; bp = bp->next) {
-        vp = MPR_GET_PTR(bp);
-        vp->permanent = 1;
+    gp = &ejs->heap->generations[EJS_GEN_ETERNAL];
+    for (bp = gp->next; bp != gp; bp = bp->next) {
+        bp->permanent = 1;
     }
 }
 
 
-/*
-    Permanent objects are never freed
- */
-void ejsMakePermanent(Ejs *ejs, EjsObj *vp)
+void ejsMakePermanent(Ejs *ejs, void *ptr)
 {
-    vp->permanent = 1;
+    GET_BLK(ptr)->permanent = 1;
 }
 
 
-void ejsMakeTransient(Ejs *ejs, EjsObj *vp)
+void ejsMakeTransient(Ejs *ejs, void *ptr)
 {
-    vp->permanent = 0;
+    GET_BLK(ptr)->permanent = 0;
 }
 
 
@@ -651,7 +320,7 @@ void ejsMakeTransient(Ejs *ejs, EjsObj *vp)
  */
 int ejsIsTimeForGC(Ejs *ejs, int timeTillNextEvent)
 {
-    EjsGC       *gc;
+    EjsHeap       *heap;
 
     if (timeTillNextEvent < EJS_MIN_TIME_FOR_GC) {
         /*
@@ -665,11 +334,11 @@ int ejsIsTimeForGC(Ejs *ejs, int timeTillNextEvent)
         Return if we haven't done enough work to warrant a collection. Trigger a little short of the work quota to try 
         to run GC before a demand allocation requires it.
      */
-    gc = &ejs->gc;
-    if (!gc->enabled || ejs->workDone < (ejs->workQuota - EJS_SHORT_WORK_QUOTA)) {
+    heap = ejs->heap;
+    if (!heap->enabled || heap->workDone < (heap->workQuota - EJS_SHORT_WORK_QUOTA)) {
         return 0;
     }
-    mprLog(ejs, 7, "Time for GC. Work done %d, time till next event %d", ejs->workDone, timeTillNextEvent);
+    mprLog(ejs, 7, "Time for GC. Work done %d, time till next event %d", heap->workDone, timeTillNextEvent);
     return 1;
 }
 
@@ -678,8 +347,8 @@ int ejsEnableGC(Ejs *ejs, bool on)
 {
     int     old;
 
-    old = ejs->gc.enabled;
-    ejs->gc.enabled = on;
+    old = ejs->heap->enabled;
+    ejs->heap->enabled = on;
     return old;
 }
 
@@ -691,124 +360,26 @@ int ejsEnableGC(Ejs *ejs, bool on)
 void ejsGracefulDegrade(Ejs *ejs)
 {
     mprLog(ejs, 1, "WARNING: Memory almost depleted. In graceful degrade mode");
-    ejs->gc.degraded = 1;
+    ejs->heap->degraded = 1;
     mprSignalExit(ejs);
 }
 
 
 int ejsSetGeneration(Ejs *ejs, int generation)
 {
-    int     old;
+    EjsHeap     *heap;
+    EjsMem      *gen;
     
-    old = ejs->gc.allocGeneration;
-    ejs->gc.allocGeneration = generation;
-    ejs->currentGeneration = ejs->gc.generations[generation];
-    return old;
+    mprAssert(0 <= generation && generation < EJS_MAX_GEN);
+    if (generation < 0 || generation >= EJS_MAX_GEN) {
+        return -1;
+    }
+    heap = ejs->heap;
+    gen = heap->gen;
+    heap->gen = &heap->generations[generation];
+    return gen - heap->generations;;
 }
 
-
-#undef ejsAddToGcStats
-
-/*
-    Update GC stats for a new object allocation
- */
-void ejsAddToGcStats(Ejs *ejs, EjsObj *vp, int id)
-{
-#if BLD_DEBUG
-    EjsPool     *pool;
-    EjsGC       *gc;
-
-    gc = &ejs->gc;
-    if (id < ejs->gc.numPools) {
-        pool = ejs->gc.pools[id];
-        pool->allocated++;
-        mprAssert(pool->allocated >= 0);
-        if (pool->allocated > pool->peakAllocated) {
-            pool->peakAllocated = pool->allocated;
-        }
-    }
-    gc->totalAllocated++;
-    gc->allocatedObjects++;
-    if (gc->allocatedObjects >= gc->peakAllocatedObjects) {
-        gc->peakAllocatedObjects = gc->allocatedObjects;
-    }
-    if (vp->type == ejs->typeType) {
-        gc->allocatedTypes++;
-        if (gc->allocatedTypes >= gc->peakAllocatedTypes) {
-            gc->peakAllocatedTypes = gc->allocatedTypes;
-        }
-    }
-    /* Convenient place for this */
-    vp->seq = nextSequence++;
-    checkAddr(vp);
-#endif
-}
-
-
-void ejsPrintAllocReport(Ejs *ejs)
-{
-#if BLD_DEBUG
-    EjsType         *type;
-    EjsGC           *gc;
-    EjsPool         *pool;
-    MprAllocStats   *ap;
-    int             i, maxSlot, typeMemory, count, peakCount, freeCount, peakFreeCount, reuseCount;
-
-    gc = &ejs->gc;
-    ap = mprGetAllocStats(ejs);
-    
-    /*
-        EJS stats
-     */
-    mprLog(ejs, 0, "\n\nEJS Memory Statistics");
-    mprLog(ejs, 0, "  Types allocated        %,14d", gc->allocatedTypes / 2);
-    mprLog(ejs, 0, "  Objects allocated      %,14d", gc->allocatedObjects);
-    mprLog(ejs, 0, "  Peak objects allocated %,14d", gc->peakAllocatedObjects);
-
-    /*
-        Per type
-     */
-    mprLog(ejs, 0, "\nObject Cache Statistics");
-    mprLog(ejs, 0, "------------------------");
-    mprLog(ejs, 0, "Name                TypeSize  ObjectSize  ObjectCount  PeakCount  FreeList  PeakFreeList   ReuseCount");
-    
-    maxSlot = ejsGetPropertyCount(ejs, ejs->global);
-    typeMemory = 0;
-
-    count = peakCount = freeCount = peakFreeCount = reuseCount = 0;
-    for (i = 0; i < gc->numPools; i++) {
-        pool = gc->pools[i];
-        type = ejsGetType(ejs, i);
-        if (type == 0) {
-            continue;
-        }
-        if (type->id != i) {
-            /* Skip type alias (string == String) */
-            continue;
-        }
-        mprLog(ejs, 0, "%-22s %,5d %,8d %,10d  %,10d, %,9d, %,10d, %,14d", type->qname.name, ejsGetTypeSize(ejs, type), 
-            type->instanceSize, pool->allocated, pool->peakAllocated, pool->count, pool->peakCount, pool->reuse);
-
-        typeMemory += ejsGetTypeSize(ejs, type);
-        count += pool->allocated;
-        peakCount += pool->peakAllocated;
-        freeCount += pool->count;
-        peakFreeCount += pool->peakCount;
-        reuseCount += pool->reuse;
-    }
-    mprLog(ejs, 0, "%-22s                %,10d  %,10d, %,9d, %,10d, %,14d", "Total", 
-        count, peakCount, freeCount, peakFreeCount, reuseCount);
-    mprLog(ejs, 0, "\nTotal type memory        %,14d K", typeMemory / 1024);
-
-    mprLog(ejs, 0, "\nEJS Garbage Collector Statistics");
-    mprLog(ejs, 0, "  Total allocations      %,14d", gc->totalAllocated);
-    mprLog(ejs, 0, "  Total reclaimations    %,14d", gc->totalReclaimed);
-    mprLog(ejs, 0, "  Total sweeps           %,14d", gc->totalSweeps);
-    mprLog(ejs, 0, "  Total redlines         %,14d", gc->totalRedlines);
-    mprLog(ejs, 0, "  Object GC work quota   %,14d", ejs->workQuota);
-    //  TODO - check these stats. Need a total of all allocations and all reuse
-#endif
-}
 
 /*
     @copy   default

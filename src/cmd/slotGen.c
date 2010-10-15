@@ -17,7 +17,7 @@ static char *defaultVersion;
 static int  createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file);
 static int  genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int firstClassSlot, int lastClassSlot,
                 int isGlobal);
-static char *mapFullName(MprCtx ctx, EjsName *qname, int mapTypeName);
+static char *mapFullName(Ejs *ejs, EjsName *qname, int mapTypeName);
 static char *mapName(MprCtx ctx, cchar *name, int mapTypeName);
 static char *mapNamespace(MprCtx ctx, cchar *space);
 
@@ -38,10 +38,9 @@ int emCreateSlotFiles(EjsMod *bp, EjsModule *mp, MprFile *outfile)
 
 static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 {
-    MprFile     *localFile;
     Ejs         *ejs;
-    EjsName     qname;
     EjsType     *type;
+    MprFile     *localFile;
     char        *path, slotsName[MPR_MAX_FNAME], moduleName[MPR_MAX_FNAME];
     char        *cp, *sp, *dp;
     int         slotNum;
@@ -52,7 +51,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     localFile = 0;
     ejs = bp->ejs;
 
-    mprStrcpy(moduleName, sizeof(moduleName), mp->name);
+    mprStrcpy(moduleName, sizeof(moduleName), ejsGetString(ejs, mp->name));
     for (cp = moduleName; *cp; cp++)  {
         if (*cp == '.') {
             *cp = '_';
@@ -71,7 +70,7 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     *dp = '\0';
 
     if (file == 0) {
-        path = mprStrcat(bp, -1, mp->name, ".slots.h", NULL);
+        path = mprStrcat(bp, -1, ejsGetString(ejs, mp->name), ".slots.h", NULL);
         localFile = file = mprOpen(bp, path, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
     } else {
         path = mprStrdup(bp, file->path);
@@ -100,11 +99,11 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 
     mprFprintf(file, "\n/*\n   Slots for the \"%s\" module \n */\n", mp->name);
 
-    ejsName(&qname, EJS_EJS_NAMESPACE, EJS_GLOBAL);
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
-    type = ejsCreateType(ejs, &qname, NULL, NULL, NULL, sizeof(EjsType), slotNum, ejs->global->numSlots, 0, 0, NULL);
+    type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, sizeof(EjsType), slotNum, 
+        ejs->global->numSlots, 0, 0, NULL);
     type->constructor.block = *ejs->globalBlock;
-    type->constructor.block.obj.type = ejs->typeType;
+    TYPE(type) = ejs->typeType;
     type->constructor.block.obj.isType = 1;
 
     if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
@@ -133,17 +132,17 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
 
     ejs = bp->ejs;
 
-    typeStr = mapFullName(file, &type->qname, 1);
+    typeStr = mapFullName(ejs, &type->qname, 1);
 #if UNUSED
     if (slotNum < type->numInherited && obj == type->prototype) {
-        subStr = mapFullName(file, &type->baseType->qname, 1);
+        subStr = mapFullName(ejs, &type->baseType->qname, 1);
         subSep = "_";
     } else {
         subSep = subStr = "";
     }
 #endif
-    funStr = mapFullName(file, funName, 0);
-    nameStr = mapFullName(file, name, 0);
+    funStr = mapFullName(ejs, funName, 0);
+    nameStr = mapFullName(ejs, name, 0);
 
     if (nameStr[0] != '\0') {
         funSep = (char*) ((*funStr && *typeStr) ? "_" : "");
@@ -180,7 +179,7 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
 {
     char        name[MPR_MAX_STRING], *typeStr, *sp;
 
-    typeStr = mapFullName(file, &type->qname, 1);
+    typeStr = mapFullName(bp->ejs, &type->qname, 1);
     if (*typeStr == '\0') {
         mprFree(typeStr);
         typeStr = mprStrdup(file, EJS_GLOBAL);
@@ -211,19 +210,17 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     EjsTrait        *trait, *lp;
     EjsType         *nt;
     EjsFunction     *fun;
-    cchar           *typeName;
     EjsName         qname, lqname;
     int             slotNum, i, methodHeader, count, offset;
 
     mprAssert(bp);
     mprAssert(type);
-    mprAssert(ejsIsType(type));
+    mprAssert(ejsIsType(ejs, type));
 
     ejs = bp->ejs;
-    typeName = type->qname.name;
     lastClassSlot = max(firstClassSlot, lastClassSlot);
 
-    if (!isGlobal || strcmp(mp->name, "ejs") == 0) {
+    if (!isGlobal || ejsCompareCString(ejs, mp->name, "ejs") == 0) {
         /*
             Only emit global property slots for "ejs"
          */
@@ -231,7 +228,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
             if (isGlobal) {
                 mprFprintf(file, "\n\n/*\n    Global property slots\n */\n");
             } else {
-                mprFprintf(file, "\n\n/*\n    Class property slots for the \"%s\" type \n */\n", typeName);
+                mprFprintf(file, "\n\n/*\n    Class property slots for the \"%S\" type \n */\n", type->qname.name);
             }
             for (slotNum = firstClassSlot; slotNum < lastClassSlot; slotNum++) {
                 trait = ejsGetTrait(ejs, (EjsObj*) type, slotNum);
@@ -250,7 +247,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
      */
     prototype = type->prototype;
     if (prototype) {
-        mprFprintf(file, "\n/*\n   Prototype (instance) slots for \"%s\" type \n */\n", typeName);
+        mprFprintf(file, "\n/*\n   Prototype (instance) slots for \"%S\" type \n */\n", type->qname.name);
         count = ejsGetPropertyCount(ejs, prototype);
         offset = 0;
         for (slotNum = offset; slotNum < count; slotNum++) {
@@ -268,7 +265,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
     /*
         For the global type, only emit the count for the "ejs" module
      */
-    if (!isGlobal || strcmp(mp->name, "ejs") == 0) {
+    if (!isGlobal || ejsCompareCString(ejs, mp->name, "ejs") == 0) {
         defineSlotCount(bp, file, mp, type, "INSTANCE", slotNum);
     }
 
@@ -286,7 +283,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
             continue;
         }
         vp = ejsGetProperty(ejs, (EjsObj*) type, slotNum);
-        if (vp == 0 || !ejsIsFunction(vp)) {
+        if (vp == 0 || !ejsIsFunction(ejs, vp)) {
             continue;
         }
         fun = ((EjsFunction*) vp);
@@ -298,7 +295,7 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
             if (isGlobal) {
                 mprFprintf(file, "\n/*\n    Local slots for global methods \n */\n");
             } else {
-                mprFprintf(file, "\n/*\n    Local slots for methods in type \"%s\" \n */\n", typeName);
+                mprFprintf(file, "\n/*\n    Local slots for methods in type \"%S\" \n */\n", type->qname.name);
             }
             methodHeader++;
         }
@@ -332,41 +329,41 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         if (vp == 0) {
             continue;
         }
-        if (! ejsIsType(vp) || vp->visited) {
+        if (! ejsIsType(ejs, vp) || VISITED(vp)) {
             continue;
         }
         nt = (EjsType*) vp;
         if (nt->module != mp) {
             continue;
         }
-        vp->visited = 1;
+        VISITED(vp) = 1;
 
         count = ejsGetPropertyCount(ejs, (EjsObj*) nt);
         if (genType(bp, file, mp, nt, 0, count, 0) < 0) {
-            vp->visited = 0;
+            VISITED(vp) = 0;
             return EJS_ERR;
         }
-        vp->visited = 0;
+        VISITED(vp) = 0;
     }
     return 0;
 }
 
 
-static char *mapFullName(MprCtx ctx, EjsName *qname, int mapTypeName)
+static char *mapFullName(Ejs *ejs, EjsName *qname, int mapTypeName)
 {
     cchar       *name, *space;
     char        *cp, *buf;
 
     if (qname == 0) {
-        return mprStrdup(ctx, "");
+        return mprStrdup(ejs, "");
     }
-    name = mapName(ctx, qname->name, mapTypeName);
-    space = mapNamespace(ctx, qname->space);
+    name = mapName(ejs, ejsGetString(ejs, qname->name), mapTypeName);
+    space = mapNamespace(ejs, ejsGetString(ejs, qname->space));
 
     if (*space) {
-        buf = mprStrcat(ctx, -1, space, "_", name, NULL);
+        buf = mprStrcat(ejs, -1, space, "_", name, NULL);
     } else {
-        buf = mprStrdup(ctx, name);
+        buf = mprStrdup(ejs, name);
     }
     for (cp = buf; *cp; cp++)  {
         if (*cp == '-') {

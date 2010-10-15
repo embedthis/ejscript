@@ -182,7 +182,7 @@ MAIN(ejsmodMain, int argc, char **argv)
     if (mp->html || mp->xml) {
         flags |= EJS_FLAG_DOC;
     }
-    ejs = ejsCreateVm(ejsService, NULL, searchPath, requiredModules, 0, NULL, flags);
+    ejs = ejsCreateVm(ejsService, searchPath, requiredModules, 0, NULL, flags);
     if (ejs == 0) {
         return MPR_ERR_NO_MEMORY;
     }
@@ -236,31 +236,31 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
         For each module on the command line
      */
     for (i = 0; i < argc && !mp->fatalError; i++) {
-        moduleCount = mprGetListCount(ejs->modules);
+        moduleCount = ejsGetLength(ejs, ejs->modules);
         ejs->userData = mp;
         if (!mprPathExists(mp, argv[i], R_OK)) {
             mprError(mp, "Can't access module %s", argv[i]);
             return EJS_ERR;
         }
-        if ((ejsLoadModule(ejs, argv[i], -1, -1, EJS_LOADER_NO_INIT)) < 0) {
+        if ((ejsLoadModule(ejs, ejsCreateStringFromCS(ejs, argv[i]), -1, -1, EJS_LOADER_NO_INIT)) < 0) {
             ejs->loaderCallback = NULL;
             mprError(mp, "Can't load module %s\n%s", argv[i], ejsGetErrorMsg(ejs, 0));
             return EJS_ERR;
         }
         if (mp->genSlots) {
-            for (next = moduleCount; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
+            for (next = moduleCount; (module = ejsGetNextItem(ejs, ejs->modules, &next)) != 0; ) {
                 emCreateSlotFiles(mp, module, outfile);
             }
         }
         if (mp->depends) {
             depends = mprCreateList(ejs);
-            for (next = moduleCount; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
+            for (next = moduleCount; (module = ejsGetNextItem(ejs, ejs->modules, &next)) != 0; ) {
                 getDepends(ejs, depends, module);
             }
             count = mprGetListCount(depends);
             for (next = 1; (module = mprGetNextItem(depends, &next)) != 0; ) {
                 int version = module->version;
-                printf("%s-%d.%d.%d%s", module->name, EJS_MAJOR(version), EJS_MINOR(version), EJS_PATCH(version),
+                mprPrintf(ejs, "%S-%d.%d.%d%s", module->name, EJS_MAJOR(version), EJS_MINOR(version), EJS_PATCH(version),
                     (next >= count) ? "" : " ");
             }
             printf("\n");
@@ -283,7 +283,7 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
     if (mprLookupItem(list, mp) < 0) {
         mprAddItem(list, mp);
     }
-    for (next = 0; (module = mprGetNextItem(mp->dependencies, &next)) != 0; ) {
+    for (next = 0; (module = ejsGetNextItem(ejs, mp->dependencies, &next)) != 0; ) {
         if (mprLookupItem(list, module) < 0) {
             mprAddItem(list, module);
         }

@@ -10,30 +10,28 @@
 
 /******************************************************************************/
 
-EjsModule *ejsCreateModule(Ejs *ejs, cchar *name, int version)
+EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version)
 {
     EjsModule   *mp;
 
     mprAssert(version >= 0);
 
-    if ((mp = (EjsModule*) mprAllocObj(ejs, EjsModule, NULL)) == NULL) {
+    //  MOB -- needs a type and helpers
+    if ((mp = (EjsModule*) ejsAlloc(ejs, sizeof(EjsModule))) == NULL) {
         mprAssert(mp);
         return 0;
     }
-    mp->name = mprStrdup(mp, name);
+    //  MOB - must MARK
+    mp->name = name;
     mp->version = version;
     if (version) {
-        mp->vname = mprAsprintf(mp, -1, "%s-%d", name, version);
+        mp->vname = ejsSprintf(ejs, "%s-%d", name, version);
     } else {
         mp->vname = mp->name;
     }
-    mp->constants = mprAllocCtx(mp, sizeof(EjsConst));
-    if (mp->constants == 0) {
+    if ((mp->constants = ejsAlloc(ejs, sizeof(EjsConst))) == NULL) {
         return 0;
     }
-#if UNUSED
-    mp->constants->table = mprCreateHash(mp->constants, 0);
-#endif
     return mp;
 }
 
@@ -42,27 +40,27 @@ EjsModule *ejsCreateModule(Ejs *ejs, cchar *name, int version)
     Register a native module callback to be invoked when it it time to configure the module. This is used by loadable modules
     when they are built statically.
  */
-int ejsAddNativeModule(MprCtx ctx, cchar *name, EjsNativeCallback callback, int checksum, int flags)
+int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, int checksum, int flags)
 {
-    EjsService          *es;
     EjsNativeModule     *nm;
 
-    es = ejsGetService(ctx);
-
-    nm = mprAllocObj(es, EjsNativeModule, NULL);
+    if ((nm = ejsAlloc(ejs, sizeof(EjsNativeModule))) == NULL) {
+        return MPR_ERR_NO_MEMORY;
+    }
     nm->name = name;
     nm->callback = callback;
     nm->checksum = checksum;
     nm->flags = flags;
 
-    if (mprAddHash(es->nativeModules, name, nm) == 0) {
+    //  MOB -- but what if name is GC'd?
+    if (mprAddHash(ejs->service->nativeModules, name, nm) == 0) {
         return EJS_ERR;
     }
     return 0;
 }
 
 
-EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name) 
+EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, EjsString *name) 
 {
     return (EjsNativeModule*) mprLookupHash(ejs->service->nativeModules, name);
 }
@@ -86,7 +84,7 @@ int ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, cchar *pool, int poolSize)
     If both are -1, then any version is acceptable.
     If both are equal, then only that version is acceptable.
  */
-EjsModule *ejsLookupModule(Ejs *ejs, cchar *name, int minVersion, int maxVersion)
+EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVersion)
 {
     EjsModule   *mp, *best;
     int         next;
@@ -95,9 +93,9 @@ EjsModule *ejsLookupModule(Ejs *ejs, cchar *name, int minVersion, int maxVersion
         maxVersion = MAXINT;
     }
     best = 0;
-    for (next = 0; (mp = (EjsModule*) mprGetNextItem(ejs->modules, &next)) != 0; ) {
+    for (next = 0; (mp = (EjsModule*) ejsGetNextItem(ejs, ejs->modules, &next)) != 0; ) {
         if ((minVersion == 0 && maxVersion == 0) || (minVersion <= mp->version && mp->version <= maxVersion)) {
-            if (strcmp(mp->name, name) == 0) {
+            if (mp->name == name) {
                 if (best == 0 || best->version < mp->version) {
                     best = mp;
                 }
@@ -111,18 +109,19 @@ EjsModule *ejsLookupModule(Ejs *ejs, cchar *name, int minVersion, int maxVersion
 int ejsAddModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
-    return mprAddItem(ejs->modules, mp);
+    return ejsAddItem(ejs, ejs->modules, mp);
 }
 
 
 int ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
-    return mprRemoveItem(ejs->modules, mp);
+    return ejsRemoveItem(ejs, ejs->modules, mp);
 }
 
 
-MprList *ejsGetModuleList(Ejs *ejs)
+//  MOB -- remove
+EjsArray *ejsGetModuleList(Ejs *ejs)
 {
     return ejs->modules;
 }

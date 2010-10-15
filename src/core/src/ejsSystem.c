@@ -20,7 +20,7 @@ static EjsObj *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     char        *err, *output;
     int         status;
 
-    mprAssert(argc == 1 && ejsIsString(argv[0]));
+    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     cmd = mprCreateCmd(ejs, ejs->dispatcher);
     cmdline = ejsGetString(ejs, argv[0]);
@@ -31,7 +31,7 @@ static EjsObj *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         mprFree(cmd);
         return 0;
     }
-    result = ejsCreateString(ejs, output);
+    result = ejsCreateStringFromCS(ejs, output);
     mprFree(cmd);
     return (EjsObj*) result;
 }
@@ -46,7 +46,7 @@ static EjsObj *system_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     char        *err;
     int         status;
 
-    mprAssert(argc == 1 && ejsIsString(argv[0]));
+    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     cmd = mprCreateCmd(ejs, ejs->dispatcher);
     status = mprRunCmd(cmd, ejsGetString(ejs, argv[0]), NULL, &err, 0);
@@ -68,7 +68,7 @@ static EjsObj *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     MprCmd      *cmd;
     int         status, pid;
 
-    mprAssert(argc == 1 && ejsIsString(argv[0]));
+    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     cmd = mprCreateCmd(ejs, ejs->dispatcher);
     status = mprRunCmd(cmd, ejsGetString(ejs, argv[0]), NULL, NULL, MPR_CMD_DETACH);
@@ -111,7 +111,7 @@ static EjsObj *system_hostname(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
 /*
     function get ipaddr(): String
  */
-static EjsObj *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *system_ipaddr(Ejs *ejs, EV *unused, int argc, EV **argv)
 {
 #if BLD_UNIX_LIKE || BLD_WIN_LIKE
     struct addrinfo *res, *reslist, hints;
@@ -119,7 +119,7 @@ static EjsObj *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     char            ipaddr[MPR_MAX_STRING], service[MPR_MAX_STRING];
 
     if ((ip = mprGetIpAddr(ejs)) != 0) {
-        return (EjsObj*) ejsCreateString(ejs, mprGetIpAddr(ejs));
+        return ejsCreateStringFromCS(ejs, mprGetIpAddr(ejs));
     }
     memset((char*) &hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
@@ -142,7 +142,7 @@ static EjsObj *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
                 }
             }
         }
-        return (EjsVar*) ejsCreateString(ejs, ip ? ip : "127.0.0.1");
+        return ejsCreateStringFromCS(ejs, ip ? ip : "127.0.0.1");
     }
 #endif
     return ejs->nullValue;

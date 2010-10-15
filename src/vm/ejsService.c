@@ -11,7 +11,6 @@
 /*********************************** Forward **********************************/
 
 static void allocFailure(Ejs *ejs, uint size, uint total, bool granted);
-static int  cloneMaster(Ejs *ejs, Ejs *master);
 static int  configureEjs(Ejs *ejs);
 static int  defineTypes(Ejs *ejs);
 static int  destroyEjs(Ejs *ejs);
@@ -34,7 +33,8 @@ EjsService *ejsCreateService(MprCtx ctx)
         return 0;
     }
     mprGetMpr(ctx)->ejsService = sp;
-    sp->nativeModules = mprCreateHash(sp, -1);
+    sp->nativeModules = mprCreateHash(sp, -1, MPR_HASH_PERM_KEYS | MPR_HASH_UNICODE);
+    sp->mutex = mprCreateLock(sp);
     return sp;
 }
 
@@ -53,11 +53,12 @@ EjsService *ejsGetService(MprCtx ctx)
 
 /*  
     Create a new interpreter
-    @param master Master interpreter to clone for rapid-startup
     @param searchPath Array of paths to search for modules. Must be persistent.
     @param require List of modules to pre-load
+    @param argc Count of command line args 
+    @param argv Array of command line args
  */
-Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
+Ejs *ejsCreateVm(MprCtx ctx, cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
 {
     Ejs     *ejs;
     cchar   *name;
@@ -90,24 +91,23 @@ Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, i
         return 0;
     }
     ejsCreateGCService(ejs);
+    ejsCreateAllocService(ejs);
+    ejsCreateStringService(ejs);
     ejsSetGeneration(ejs, EJS_GEN_ETERNAL);
 
-    if (master == 0) {
-        ejs->modules = mprCreateList(ejs);
-        ejs->workers = mprCreateList(ejs);
-        ejs->coreTypes = mprCreateHash(ejs, 0);
-        ejs->standardSpaces = mprCreateHash(ejs, 0);
-        
-        if (defineTypes(ejs) < 0 || loadStandardModules(ejs, require) < 0) {
-            if (ejs->exception) {
-                ejsReportError(ejs, "Can't initialize interpreter");
-            }
-            mprFree(ejs);
-            return 0;
+    if (defineTypes(ejs) < 0 || loadStandardModules(ejs, require) < 0) {
+        if (ejs->exception) {
+            ejsReportError(ejs, "Can't initialize interpreter");
         }
-    } else {
-        cloneMaster(ejs, master);
+        mprFree(ejs);
+        return 0;
     }
+    ejs->modules = ejsCreateArray(ejs, 0);
+    ejs->workers = ejsCreateArray(ejs, 0);
+#if UNUSED
+    ejs->standardSpaces = mprCreateHash(ejs, 0);
+#endif
+    
     ejsFreezeGlobal(ejs);
     ejsMakeEternalPermanent(ejs);
     startLogging(ejs);
@@ -137,6 +137,12 @@ static int destroyEjs(Ejs *ejs)
     mprSetAltLogData(ejs, NULL);
     mprSetLogHandler(ejs, NULL, NULL);
     return 0;
+}
+
+
+void ejsCloneDefaultHelpers(Ejs *ejs, EjsType *type)
+{
+    type->helpers = ejs->heap->type->helpers;
 }
 
 
@@ -174,14 +180,18 @@ static int defineTypes(Ejs *ejs)
     /*
         These types are used by the compiler. Must work with an empty interpreter. Order does not matter.
      */
+#if UNUSED
     ejsCreateArrayType(ejs);
+#endif
     ejsCreateBooleanType(ejs);
     ejsCreateErrorType(ejs);
     ejsCreateIteratorType(ejs);
     ejsCreateVoidType(ejs);
     ejsCreateNumberType(ejs);
     ejsCreateRegExpType(ejs);
+#if UNUSED
     ejsCreateStringType(ejs);
+#endif
     ejsCreateXMLType(ejs);
     ejsCreateXMLListType(ejs);
     ejsCreateConfigType(ejs);
@@ -189,7 +199,7 @@ static int defineTypes(Ejs *ejs)
     /*  
         Define the native module configuration routines.
      */
-    ejsAddNativeModule(ejs->service, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
+    ejsAddNativeModule(ejs, ejsCreateStringFromCS(ejs, "ejs"), configureEjs, _ES_CHECKSUM_ejs, 0);
 
 #if BLD_FEATURE_EJS_ALL_IN_ONE || BLD_FEATURE_STATIC
 #if BLD_FEATURE_SQLITE
@@ -271,121 +281,12 @@ static int loadStandardModules(Ejs *ejs, MprList *require)
             if (strcmp(name, "ejs") == 0) {
                 flags |= EJS_LOADER_BUILTIN;
             }
-            rc += ejsLoadModule(ejs, name, ver, ver, flags);
+            rc += ejsLoadModule(ejs, ejsCreateStringFromCS(ejs, name), ver, ver, flags);
         }
     } else {
-        rc += ejsLoadModule(ejs, "ejs", ver, ver, EJS_LOADER_STRICT | EJS_LOADER_BUILTIN);
+        rc += ejsLoadModule(ejs, ejsCreateStringFromCS(ejs, "ejs"), ver, ver, EJS_LOADER_STRICT | EJS_LOADER_BUILTIN);
     }
     return rc;
-}
-
-
-//  MOB -- remove if not used anymore
-/* 
-   When cloning the master interpreter, the new interpreter references the master's core types. The core types MUST
-   be immutable for this to work.
- */
-static int cloneMaster(Ejs *ejs, Ejs *master)
-{
-    EjsName     qname;
-    EjsObj      *vp;
-    EjsTrait    *trait;
-    int         i, count;
-
-    mprAssert(master);
-
-    ejs->master = master;
-    ejs->service = master->service;
-
-    //  TODO - OPT
-
-    ejs->objectType = master->objectType;
-    ejs->arrayType = master->arrayType;
-    ejs->blockType = master->blockType;
-    ejs->booleanType = master->booleanType;
-    ejs->byteArrayType = master->byteArrayType;
-    ejs->dateType = master->dateType;
-    ejs->errorType = master->errorType;
-    ejs->eventType = master->eventType;
-    ejs->functionType = master->functionType;
-    ejs->iteratorType = master->iteratorType;
-    ejs->namespaceType = master->namespaceType;
-    ejs->nullType = master->nullType;
-    ejs->numberType = master->numberType;
-    ejs->objectType = master->objectType;
-    ejs->pathType = master->pathType;
-    ejs->requestType = master->requestType;
-    ejs->regExpType = master->regExpType;
-    ejs->stringType = master->stringType;
-    ejs->stopIterationType = master->stopIterationType;
-    ejs->typeType = master->typeType;
-    ejs->voidType = master->voidType;
-    ejs->webType = master->webType;
-    ejs->workerType = master->workerType;
-
-    ejs->emptyStringValue = master->emptyStringValue;
-    ejs->falseValue = master->falseValue;
-    ejs->infinityValue = master->infinityValue;
-    ejs->minusOneValue = master->minusOneValue;
-    ejs->nanValue = master->nanValue;
-    ejs->negativeInfinityValue = master->negativeInfinityValue;
-    ejs->nullValue = master->nullValue;
-    ejs->oneValue = master->oneValue;
-    ejs->trueValue = master->trueValue;
-    ejs->undefinedValue = master->undefinedValue;
-    ejs->zeroValue = master->zeroValue;
-
-    ejs->emptySpace = master->emptySpace;
-    ejs->ejsSpace = master->ejsSpace;
-    ejs->iteratorSpace = master->iteratorSpace;
-    ejs->internalSpace = master->internalSpace;
-    ejs->publicSpace = master->publicSpace;
-
-    ejs->argv = master->argv;
-    ejs->argc = master->argc;
-    ejs->coreTypes = master->coreTypes;
-    ejs->standardSpaces = master->standardSpaces;
-
-    ejs->modules = mprDupList(ejs, master->modules);
-
-    ejs->xmlType = master->xmlType;
-    ejs->xmlListType = master->xmlListType;
-
-    ejs->sqlite = master->sqlite;
-
-    ejs->globalBlock = ejsCreateBlock(ejs, master->globalBlock->obj.sizeSlots);
-    ejs->global = (EjsObj*) ejs->globalBlock; 
-    ejsSetDebugName(ejs->global, "global");
-    ejs->global->numSlots = master->global->numSlots;
-
-    //  TODO what about traits
-    ejs->global->numSlots = master->global->numSlots;
-
-    ejsCopyList(ejs->globalBlock, &ejs->globalBlock->namespaces, &master->globalBlock->namespaces);
-
-    /*
-        Copy global properties. If the type is immutable (!dynamic) then just copy the reference, else clone.
-     */ 
-    count = ejsGetPropertyCount(master, master->global);
-    for (i = 0; i < count; i++) {
-        vp = ejsGetProperty(ejs, master->global, i);
-        if (vp) {
-            if (ejsIsType(vp) && !vp->dynamic) {
-                ejsSetProperty(ejs, ejs->global, i, ejsGetProperty(master, master->global, i));
-            } else {
-                ejsSetProperty(ejs, ejs->global, i, ejsClone(ejs, vp, 1));
-            }
-            qname = ejsGetPropertyName(master, master->global, i);
-            ejsSetPropertyName(ejs, ejs->global, i, &qname);
-            trait = ejsGetTrait(ejs, master->global, i);
-            if (trait) {
-                ejsSetTraitDetails(ejs, ejs->global, i, trait->type, trait->attributes);
-            }
-        }
-    }
-    ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
-    ejs->initialized = 1;
-    return 0;
 }
 
 
@@ -396,15 +297,15 @@ static int cloneMaster(Ejs *ejs, Ejs *master)
 static void allocFailure(Ejs *ejs, uint size, uint total, bool granted)
 {
     MprAllocStats   *alloc;
-    EjsObj          *argv[2], *thisObj;
+    EV              *argv[2], *thisObj;
     char            msg[MPR_MAX_STRING];
     va_list         dummy = NULL_INIT;
 
     alloc = mprGetAllocStats(ejs);
     if (granted) {
         if (ejs->memoryCallback) {
-            argv[0] = (EjsObj*) ejsCreateNumber(ejs, size);
-            argv[1] = (EjsObj*) ejsCreateNumber(ejs, total);
+            argv[0] = ejsCreateNumber(ejs, size);
+            argv[1] = ejsCreateNumber(ejs, total);
             thisObj = ejs->memoryCallback->boundThis ? ejs->memoryCallback->boundThis : ejs->global; 
             ejsRunFunction(ejs, ejs->memoryCallback, thisObj, 2, argv);
         }
@@ -436,7 +337,7 @@ void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 {
     mprAssert(ejs);
     mprAssert(paths && paths);
-    mprAssert(ejsIsArray(paths));
+    mprAssert(ejsIsArray(ejs, paths));
 
     ejs->search = paths;
 }
@@ -444,16 +345,16 @@ void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 
 EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 {
-    EjsObj      *ap;
-    char        *dir, *next, *tok;
+    EV      *ap;
+    char    *dir, *next, *tok;
 
-    ap = (EjsObj*) ejsCreateArray(ejs, 0);
+    ap = ejsCreateArray(ejs, 0);
 
     if (search) {
         next = mprStrdup(ejs, search);
         dir = mprStrTok(next, MPR_SEARCH_SEP, &tok);
         while (dir && *dir) {
-            ejsSetProperty(ejs, ap, -1, ejsCreatePath(ejs, dir));
+            ejsSetProperty(ejs, ap, -1, ejsCreatePathFromCS(ejs, dir));
             dir = mprStrTok(NULL, MPR_SEARCH_SEP, &tok);
         }
         mprFree(next);
@@ -469,10 +370,10 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
      */
     char *relModDir;
     relModDir = mprAsprintf(ejs, -1, "%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
-    ejsSetProperty(ejs, ap, -1, ejsCreatePath(ejs, "."));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromCS(ejs, "."));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathAndFree(ejs, mprGetAppDir(ejs)));
     ejsSetProperty(ejs, ap, -1, ejsCreatePathAndFree(ejs, mprGetAbsPath(ejs, relModDir)));
-    ejsSetProperty(ejs, ap, -1, ejsCreatePath(ejs, BLD_MOD_PREFIX));
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromCS(ejs, BLD_MOD_PREFIX));
     mprFree(relModDir);
 }
 #endif
@@ -480,9 +381,9 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 }
 
 
-EjsObj *ejsGetGlobalObject(Ejs *ejs)
+EV *ejsGetGlobalObject(Ejs *ejs)
 {
-    return (EjsObj*) ejs->global;
+    return ejs->global;
 }
 
 
@@ -510,11 +411,11 @@ int ejsEvalModule(cchar *path)
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
-    if ((ejs = ejsCreateVm(service, NULL, NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((ejs = ejsCreateVm(service, NULL, NULL, 0, NULL, 0)) == 0) {
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
-    if (ejsLoadModule(ejs, path, -1, -1, 0) < 0) {
+    if (ejsLoadModule(ejs, ejsCreateStringFromCS(ejs, path), -1, -1, 0) < 0) {
         mprFree(mpr);
         return MPR_ERR_CANT_READ;
     }
@@ -572,8 +473,7 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
 {
     EjsType         *type;
     EjsFunction     *fun;
-    EjsName         qname;
-    EjsObj          *args;
+    EV              *args;
     int             attributes, i, slotNum;
 
     type = 0;
@@ -592,34 +492,29 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
             return EJS_ERR;
         }
     } else {
-        ejsName(&qname, EJS_PUBLIC_NAMESPACE, className);
-        type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, &qname);
+        type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, N(EJS_PUBLIC_NAMESPACE, className));
     }
-
-    if (type == 0 || !ejsIsType(type)) {
+    if (type == 0 || !ejsIsType(ejs, type)) {
         mprError(ejs, "Can't find class \"%s\"", className);
         return EJS_ERR;
     }
-
-    ejsName(&qname, EJS_PUBLIC_NAMESPACE, methodName);
-    slotNum = ejsLookupProperty(ejs, (EjsObj*) type, &qname);
+    slotNum = ejsLookupProperty(ejs, type, N(EJS_PUBLIC_NAMESPACE, methodName));
     if (slotNum < 0) {
         return MPR_ERR_CANT_ACCESS;
     }
-    fun = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, slotNum);
-    if (! ejsIsFunction(fun)) {
+    fun = (EjsFunction*) ejsGetProperty(ejs, type, slotNum);
+    if (! ejsIsFunction(ejs, fun)) {
         mprError(ejs, "Property \"%s\" is not a function");
         return MPR_ERR_BAD_STATE;
     }
-
-    attributes = ejsGetTypePropertyAttributes(ejs, (EjsObj*) type, slotNum);
+    attributes = ejsGetTypePropertyAttributes(ejs, type, slotNum);
     if (!(attributes & EJS_PROP_STATIC)) {
         mprError(ejs, "Method \"%s\" is not declared static");
         return EJS_ERR;
     }
-    args = (EjsObj*) ejsCreateArray(ejs, ejs->argc);
+    args = ejsCreateArray(ejs, ejs->argc);
     for (i = 0; i < ejs->argc; i++) {
-        ejsSetProperty(ejs, args, i, ejsCreateString(ejs, ejs->argv[i]));
+        ejsSetProperty(ejs, args, i, ejsCreateStringFromCS(ejs, ejs->argv[i]));
     }
     if (ejsRunFunction(ejs, fun, 0, 1, &args) == 0) {
         return EJS_ERR;
@@ -630,7 +525,7 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
 
 int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener)
 {
-    EjsObj      *emitter, *argv[2];
+    EV          *emitter, *argv[2];
     EjsArray    *list;
     int         i;
 
@@ -640,11 +535,11 @@ int ejsAddObserver(Ejs *ejs, EjsObj **emitterPtr, EjsObj *name, EjsObj *listener
     emitter = *emitterPtr;
 
     argv[1] = listener;
-    if (ejsIsArray(name)) {
+    if (ejsIsArray(ejs, name)) {
         list = (EjsArray*) name;
         for (i = 0; i < list->length; i++) {
-            name = ejsGetProperty(ejs, (EjsObj*) list, i);
-            if (!ejsIsNull(name)) {
+            name = ejsGetProperty(ejs, list, i);
+            if (!ejsIsNull(ejs, name)) {
                 argv[0] = name;
                 ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_on, 2, argv);
             }
@@ -670,17 +565,17 @@ int ejsHasObservers(Ejs *ejs, EjsObj *emitter)
 
 int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
 {
-    EjsObj      *argv[2];
+    EV          *argv[2];
     EjsArray    *list;
     int         i;
 
     if (emitter) {
         argv[1] = listener;
-        if (ejsIsArray(name)) {
+        if (ejsIsArray(ejs, name)) {
             list = (EjsArray*) name;
             for (i = 0; i < list->length; i++) {
-                name = ejsGetProperty(ejs, (EjsObj*) list, i);
-                if (!ejsIsNull(name)) {
+                name = ejsGetProperty(ejs, list, i);
+                if (!ejsIsNull(ejs, name)) {
                     argv[0] = name;
                     ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_off, 2, argv);
                 }
@@ -694,14 +589,14 @@ int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
 }
 
 
-int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsObj *thisObj, int argc, EjsObj **argv)
+int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EV *thisObj, int argc, EV **argv)
 {
-    EjsObj      **av;
-    int         i;
+    EV      **av;
+    int     i;
 
     if (emitter) {
-        av = (EjsObj**) mprAlloc(emitter, (argc + 2) * sizeof(EjsObj*));
-        av[0] = (EjsObj*) ejsCreateString(ejs, name);
+        av = (EV**) mprAlloc(emitter, (argc + 2) * sizeof(EV*));
+        av[0] = ejsCreateStringFromCS(ejs, name);
         av[1] = thisObj ? thisObj : ejs->nullValue;
         for (i = 0; i < argc; i++) {
             av[i + 2] = argv[i];
@@ -713,9 +608,9 @@ int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsObj *thisObj, int a
 }
 
 
-int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EjsObj *thisObj, EjsObj *arg)
+int ejsSendEvent(Ejs *ejs, EjsObj *emitter, cchar *name, EV *thisObj, EV *arg)
 {
-    EjsObj      **argv;
+    EV      **argv;
 
     argv = &arg;
     return ejsSendEventv(ejs, emitter, name, thisObj, 1, argv);
@@ -730,7 +625,7 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
     EjsFunction *method;
     EjsType     *type;
     EjsName     qname;
-    EjsObj      *global, *vp;
+    EV          *global, *vp;
     int         globalCount, slotNum, methodCount;
     int         methodSlot;
 
@@ -745,21 +640,21 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
      */
     for (slotNum = 0; slotNum < globalCount; slotNum++) {
         vp = ejsGetProperty(ejs, global, slotNum);
-        if (vp == 0 || !ejsIsType(vp)) {
+        if (vp == 0 || !ejsIsType(ejs, vp)) {
             continue;
         }
         type = (EjsType*) vp;
 
-        methodCount = ejsGetPropertyCount(ejs, (EjsObj*) type);
+        methodCount = ejsGetPropertyCount(ejs, type);
 
         for (methodSlot = 0; methodSlot < methodCount; methodSlot++) {
-            method = (EjsFunction*) ejsGetProperty(ejs, (EjsObj*) type, methodSlot);
+            method = (EjsFunction*) ejsGetProperty(ejs, type, methodSlot);
             if (method == 0) {
                 continue;
             }
 
             qname = ejsGetPropertyName(ejs, type, methodSlot);
-            if (qname.name && strcmp(qname.name, methodName) == 0) {
+            if (qname.name && qname.name == ejsCreateStringFromCS(ejs, methodName)) {
                 *typeReturn = type;
             }
         }
@@ -780,21 +675,19 @@ static int startLogging(Ejs *ejs)
 {
     EjsLogData  *ld;
     EjsObj      *app;
-    EjsName     qname;
 
     if ((ld = mprAllocObj(ejs, EjsLogData, NULL))  == 0) {
         return MPR_ERR_NO_MEMORY;
     }
     ld->ejs = ejs;
 
-    if ((app = ejsGetPropertyByName(ejs, ejs->global, ejsName(&qname, EJS_EJS_NAMESPACE, "App"))) == 0) {
+    if ((app = ejsGetPropertyByName(ejs, ejs->global, N(EJS_EJS_NAMESPACE, "App"))) == 0) {
         return MPR_ERR_CANT_READ;
     }
-    if ((ld->log = ejsGetPropertyByName(ejs, app, ejsName(&qname, EJS_PUBLIC_NAMESPACE, "log"))) == 0) {
+    if ((ld->log = ejsGetPropertyByName(ejs, app, N(EJS_PUBLIC_NAMESPACE, "log"))) == 0) {
         return MPR_ERR_CANT_READ;
     }
-    ejsName(&qname, EJS_PUBLIC_NAMESPACE, "write");
-    if ((ld->loggerWrite = ejsGetPropertyByName(ejs, ld->log->type->prototype, &qname)) < 0) {
+    if ((ld->loggerWrite = ejsGetPropertyByName(ejs, TYPE(ld->log)->prototype, N(EJS_PUBLIC_NAMESPACE, "write"))) < 0) {
         return MPR_ERR_CANT_READ;
     }
     mprSetAltLogData(ejs, ld);
@@ -808,7 +701,7 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
     MprFile     *file;
     Ejs         *ejs;
     EjsLogData  *ld;
-    EjsObj      *str, *saveException;
+    EV          *str, *saveException;
     static int  solo = 0;
     char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
 
@@ -842,7 +735,7 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
     ld = (EjsLogData*) mpr->altLogData;
     if (ld && ld->loggerWrite) {
         ejs = ld->ejs;
-        str = (EjsObj*) ejsCreateString(ejs, msg);
+        str = (EjsObj*) ejsCreateStringFromCS(ejs, msg);
         saveException = ejs->exception;
         ejsClearException(ejs);
         ejsRunFunction(ejs, ld->loggerWrite, ld->log, 1, &str);
@@ -950,6 +843,18 @@ void ejsLockVm(Ejs *ejs)
 void ejsUnlockVm(Ejs *ejs)
 {
     mprUnlock(ejs->mutex);
+}
+
+
+void ejsLockService(Ejs *ejs)
+{
+    mprLock(ejs->service->mutex);
+}
+
+
+void ejsUnlockService(Ejs *ejs)
+{
+    mprUnlock(ejs->service->mutex);
 }
 
 /*

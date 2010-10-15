@@ -20,7 +20,7 @@ static EjsObj *castNamespace(Ejs *ejs, EjsNamespace *vp, EjsType *type)
         return (EjsObj*) ejsCreateBoolean(ejs, 1);
 
     case ES_String:
-        return (EjsObj*) ejsCreateString(ejs, "[object Namespace]");
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "[object Namespace]");
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -38,7 +38,7 @@ static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
         if ((EjsObj*) rhs == ejs->nullValue || (EjsObj*) rhs == ejs->undefinedValue) {
             return (EjsObj*) ((opCode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
         }
-        boolResult = (strcmp(lhs->name, rhs->name) == 0 && strcmp(lhs->uri, rhs->uri) == 0);
+        boolResult = ejsCompareString(ejs, lhs->name, rhs->name) == 0;
         break;
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
@@ -49,7 +49,7 @@ static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
         if ((EjsObj*) rhs == ejs->nullValue || (EjsObj*) rhs == ejs->undefinedValue) {
             return (EjsObj*) ((opCode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
         }
-        boolResult = ! (strcmp(lhs->name, rhs->name) == 0 && strcmp(lhs->uri, rhs->uri) == 0);
+        boolResult = !(ejsCompareString(ejs, lhs->name, rhs->name) == 0);
         break;
 
     case EJS_OP_COMPARE_STRICTLY_NE:
@@ -67,7 +67,7 @@ static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
 /*
     Define a reserved namespace in a block.
  */
-EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, cchar *spaceName)
+EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, EjsString *spaceName)
 {
     EjsNamespace    *namespace;
 
@@ -82,7 +82,7 @@ EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typ
 
 
 /*
-    Format a reserved namespace to create a unique namespace Uri. "internal, public, private, protected"
+    Format a reserved namespace to create a unique namespace. "internal, public, private, protected"
 
     Namespaces are formatted as strings using the following format, where type is optional. Types may be qualified.
         [type,space]
@@ -90,65 +90,19 @@ EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typ
     Example:
         [debug::Shape,public] where Shape was declared as "debug class Shape"
  */
-char *ejsFormatReservedNamespace(MprCtx ctx, EjsName *typeName, cchar *spaceName)
+EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
 {
-    cchar   *typeNameSpace;
-    char    *namespace, *sp;
-    int     len, typeLen, spaceLen, l;
-
-    len = typeLen = spaceLen = 0;
-    typeNameSpace = 0;
+    EjsString   *namespace;
 
     if (typeName) {
-        if (typeName->name == 0) {
-            typeName = 0;
+        if (typeName->space && typeName->space == ejs->publicString) {
+            namespace = ejsSprintf(ejs, "[%S::%S,%S]", typeName->space, typeName->name, spaceName);
+        } else {
+            namespace = ejsSprintf(ejs, "[%S,%S]", typeName->name, spaceName);
         }
-        typeNameSpace = typeName->space ? typeName->space : EJS_PUBLIC_NAMESPACE;
+    } else {
+        namespace = ejsSprintf(ejs, "[%S]", spaceName);
     }
-
-    if (typeName && typeName->name) {
-        //  Join the qualified typeName to be "space::name"
-        mprAssert(typeName->name);
-        typeLen = (int) strlen(typeNameSpace);
-        typeLen += 2 + (int) strlen(typeName->name);          //  Allow for the "::" between space::name
-        len += typeLen;
-    }
-    spaceLen = (int) strlen(spaceName);
-
-    /*
-        Add 4 for [,,]
-        Add 2 for the trailing "::" and one for the null
-     */
-    len += 4 + spaceLen + 2 + 1;
-
-    namespace = mprAlloc(ctx, len);
-    if (namespace == 0) {
-        return 0;
-    }
-    sp = namespace;
-    *sp++ = '[';
-
-    if (typeName) {
-        if (strcmp(typeNameSpace, EJS_PUBLIC_NAMESPACE) != 0) {
-            l = (int) strlen(typeNameSpace);
-            strcpy(sp, typeNameSpace);
-            sp += l;
-            *sp++ = ':';
-            *sp++ = ':';
-        }
-        l = (int) strlen(typeName->name);
-        strcpy(sp, typeName->name);
-        sp += l;
-    }
-
-    *sp++ = ',';
-    strcpy(sp, spaceName);
-    sp += spaceLen;
-
-    *sp++ = ']';
-    *sp = '\0';
-
-    mprAssert(sp <= &namespace[len]);
     return namespace;
 }
 
@@ -156,44 +110,36 @@ char *ejsFormatReservedNamespace(MprCtx ctx, EjsName *typeName, cchar *spaceName
 /*********************************** Factory **********************************/
 /*
     Create a namespace with the given Uri as its definition qualifying value.
-    TODO - uri is not used. Remove
  */
-EjsNamespace *ejsCreateNamespace(Ejs *ejs, cchar *name, cchar *uri)
+EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
 {
     EjsNamespace    *np;
 
-    if (uri == 0) {
-        uri = name;
-    } else if (name == 0) {
-        name = uri;
-    }
     np = (EjsNamespace*) ejsCreate(ejs, ejs->namespaceType, 0);
     if (np) {
-        np->name = (char*) name;
-        np->uri = (char*) uri;
+        np->name = name;
     }
-    ejsSetDebugName(np, np->uri);
+    ejsSetDebugName(np, np->name);
     return np;
 }
 
 
 /*
-    Create a reserved namespace. Format the package, type and space names to create a unique namespace Uri.
-    packageName, typeName and uri are optional.
+    Create a reserved namespace. Format the package, type and space names to create a unique namespace.
  */
-EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, cchar *spaceName)
+EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
 {
     EjsNamespace    *namespace;
-    char            *formattedName;
+    EjsString       *formattedName;
 
     mprAssert(spaceName);
 
     if (typeName) {
-        formattedName = (char*) ejsFormatReservedNamespace(ejs, typeName, spaceName);
+        formattedName = ejsFormatReservedNamespace(ejs, typeName, spaceName);
     } else {
-        formattedName = (char*) spaceName;
+        formattedName = spaceName;
     }
-    namespace = ejsCreateNamespace(ejs, formattedName, formattedName);
+    namespace = ejsCreateNamespace(ejs, formattedName);
     return namespace;
 }
 

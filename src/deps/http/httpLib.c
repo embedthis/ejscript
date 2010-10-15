@@ -393,7 +393,7 @@ int httpAddGroup(HttpAuth *auth, cchar *group, HttpAcl acl, bool enabled)
         Create the index on demand
      */
     if (auth->groups == 0) {
-        auth->groups = mprCreateHash(auth, -1);
+        auth->groups = mprCreateHash(auth, -1, 0);
     }
     if (mprLookupHash(auth->groups, group)) {
         return MPR_ERR_ALREADY_EXISTS;
@@ -431,7 +431,7 @@ int httpAddUser(HttpAuth *auth, cchar *realm, cchar *user, cchar *password, bool
         return MPR_ERR_NO_MEMORY;
     }
     if (auth->users == 0) {
-        auth->users = mprCreateHash(auth, -1);
+        auth->users = mprCreateHash(auth, -1, 0);
     }
     key = mprStrcat(auth, -1, realm, ":", user, NULL);
     if (mprLookupHash(auth->users, key)) {
@@ -3296,7 +3296,7 @@ void httpAddUploadFile(HttpConn *conn, cchar *id, HttpUploadFile *upfile)
 
     rx = conn->rx;
     if (rx->files == 0) {
-        rx->files = mprCreateHash(rx, -1);
+        rx->files = mprCreateHash(rx, -1, 0);
     }
     mprAddHash(rx->files, id, upfile);
 }
@@ -3456,10 +3456,10 @@ Http *httpCreate(MprCtx ctx)
     http->protocol = "HTTP/1.1";
     http->mutex = mprCreateLock(http);
     http->connections = mprCreateList(http);
-    http->stages = mprCreateHash(http, 31);
+    http->stages = mprCreateHash(http, 31, 0);
 
     updateCurrentDate(http);
-    http->statusCodes = mprCreateHash(http, 41);
+    http->statusCodes = mprCreateHash(http, 41, 0);
     for (code = HttpStatusCodes; code->code; code++) {
         mprAddHash(http->statusCodes, code->codeString, code);
     }
@@ -3882,9 +3882,9 @@ HttpLoc *httpCreateLocation(Http *http)
         return 0;
     }
     loc->http = http;
-    loc->errorDocuments = mprCreateHash(loc, HTTP_SMALL_HASH_SIZE);
+    loc->errorDocuments = mprCreateHash(loc, HTTP_SMALL_HASH_SIZE, 0);
     loc->handlers = mprCreateList(loc);
-    loc->extensions = mprCreateHash(loc, HTTP_SMALL_HASH_SIZE);
+    loc->extensions = mprCreateHash(loc, HTTP_SMALL_HASH_SIZE, 0);
     loc->inputStages = mprCreateList(loc);
     loc->outputStages = mprCreateList(loc);
     loc->prefix = mprStrdup(loc, "");
@@ -4048,7 +4048,7 @@ int httpAddFilter(HttpLoc *loc, cchar *name, cchar *extensions, int direction)
     filter = httpCloneStage(loc->http, stage);
 
     if (extensions && *extensions) {
-        filter->extensions = mprCreateHash(filter, 0);
+        filter->extensions = mprCreateHash(filter, 0, 0);
         extlist = mprStrdup(loc, extensions);
         word = mprStrTok(extlist, " \t\r\n", &tok);
         while (word) {
@@ -4117,7 +4117,7 @@ void httpResetPipeline(HttpLoc *loc)
     if (mprIsParent(loc, loc->extensions)) {
         mprFree(loc->extensions);
     }
-    loc->extensions = mprCreateHash(loc, 0);
+    loc->extensions = mprCreateHash(loc, 0, 0);
     
     if (mprIsParent(loc, loc->handlers)) {
         mprFree(loc->handlers);
@@ -5433,7 +5433,7 @@ static void setEnvironment(HttpConn *conn)
     tx = conn->tx;
 
     if (tx->handler->flags & (HTTP_STAGE_VARS | HTTP_STAGE_ENV_VARS)) {
-        rx->formVars = mprCreateHash(rx, HTTP_MED_HASH_SIZE);
+        rx->formVars = mprCreateHash(rx, HTTP_MED_HASH_SIZE, 0);
         if (rx->parsedUri->query) {
             httpAddVars(conn, rx->parsedUri->query, (int) strlen(rx->parsedUri->query));
         }
@@ -6397,8 +6397,7 @@ HttpRx *httpCreateRx(HttpConn *conn)
     rx->statusMessage = "";
     rx->mimeType = "";
     rx->needInputPipeline = !conn->server;
-    rx->headers = mprCreateHash(rx, HTTP_SMALL_HASH_SIZE);
-    mprSetHashCase(rx->headers, 0);
+    rx->headers = mprCreateHash(rx, HTTP_SMALL_HASH_SIZE, MPR_HASH_CASELESS);
     return rx;
 }
 
@@ -8310,7 +8309,7 @@ HttpServer *httpCreateServer(Http *http, cchar *ip, int port, MprDispatcher *dis
     if ((server = mprAllocObj(http, HttpServer, destroyServer)) == 0) {
         return 0;
     }
-    server->clients = mprCreateHash(server, HTTP_CLIENTS_HASH);
+    server->clients = mprCreateHash(server, HTTP_CLIENTS_HASH, 0);
     server->async = 1;
     server->http = http;
     server->port = port;
@@ -9064,8 +9063,7 @@ HttpTx *httpCreateTx(HttpConn *conn, MprHashTable *headers)
         tx->headers = headers;
         mprStealBlock(tx, headers);
     } else {
-        tx->headers = mprCreateHash(tx, HTTP_SMALL_HASH_SIZE);
-        mprSetHashCase(tx->headers, 0);
+        tx->headers = mprCreateHash(tx, HTTP_SMALL_HASH_SIZE, MPR_HASH_CASELESS);
         setDefaultHeaders(conn);
     }
     httpInitQueue(conn, &tx->queue[HTTP_QUEUE_TRANS], "TxHead");
@@ -9217,8 +9215,7 @@ void httpClearHeaders(HttpConn *conn)
 
     tx = conn->tx;
     mprFree(tx->headers);
-    tx->headers = mprCreateHash(tx, HTTP_SMALL_HASH_SIZE);
-    mprSetHashCase(tx->headers, 0);
+    tx->headers = mprCreateHash(tx, HTTP_SMALL_HASH_SIZE, MPR_HASH_CASELESS);
     setDefaultHeaders(conn);
 }
 

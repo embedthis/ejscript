@@ -17,9 +17,9 @@
 static EjsObj *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     mprAssert(argc >= 2);
-    mprAssert(ejsIsNumber(argv[0]));
-    mprAssert(ejsIsFunction(argv[1]));
-    mprAssert(ejsIsArray(argv[2]));
+    mprAssert(ejsIsNumber(ejs, argv[0]));
+    mprAssert(ejsIsFunction(ejs, argv[1]));
+    mprAssert(ejsIsArray(ejs, argv[2]));
 
     tp->ejs = ejs;
     tp->period = ejsGetInt(ejs, argv[0]);
@@ -46,7 +46,7 @@ static EjsObj *timer_get_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsObj *timer_set_drift(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsBoolean(argv[0]));
+    mprAssert(argc == 1 && ejsIsBoolean(ejs, argv[0]));
     tp->drift = ejsGetBoolean(ejs, argv[0]);
     return 0;
 }
@@ -87,7 +87,7 @@ static EjsObj *timer_get_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsObj *timer_set_period(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
 
     tp->period = ejsGetInt(ejs, argv[0]);
     return 0;
@@ -109,7 +109,7 @@ static EjsObj *timer_get_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
  */
 static EjsObj *timer_set_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsBoolean(argv[0]));
+    mprAssert(argc == 1 && ejsIsBoolean(ejs, argv[0]));
 
     tp->repeat = ejsGetBoolean(ejs, argv[0]);
     if (tp->event) {
@@ -122,27 +122,27 @@ static EjsObj *timer_set_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 static int timerCallback(EjsTimer *tp, MprEvent *e)
 {
     Ejs         *ejs;
-    EjsObj      *thisObj, *error;
+    EV          *thisObj, *error;
 
     mprAssert(tp);
     mprAssert(tp->args);
     mprAssert(tp->callback);
 
     ejs = tp->ejs;
-    thisObj = (tp->callback->boundThis) ? tp->callback->boundThis : (EjsObj*) tp;
+    thisObj = (tp->callback->boundThis) ? tp->callback->boundThis : tp;
     ejsRunFunction(tp->ejs, tp->callback, thisObj, tp->args->length, tp->args->data);
     if (ejs->exception) {
         if (tp->onerror) {
             error = ejs->exception;
             ejsClearException(ejs);
-            ejsRunFunction(tp->ejs, tp->onerror, thisObj, 1, (EjsObj**) &error);
+            ejsRunFunction(tp->ejs, tp->onerror, thisObj, 1, &error);
         } else {
             mprError(tp, "Uncaught exception in timer\n%s", ejsGetErrorMsg(ejs, 1));
             ejsClearException(ejs);
         }
     }
     if (!tp->repeat) {
-        tp->obj.permanent = 0;
+        ejsMakeTransient(ejs, tp);
     }
     return 0;
 }
@@ -151,13 +151,13 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
 /*
     function start(): Void
  */
-static EjsObj *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
+static EV *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EV **argv)
 {
     int     flags;
 
     if (tp->event == 0) {
         flags = tp->repeat ? MPR_EVENT_CONTINUOUS : 0;
-        tp->obj.permanent = 1;
+        ejsMakePermanent(ejs, tp);
         tp->event = mprCreateEvent(ejs->dispatcher, "timer", tp->period, (MprEventProc) timerCallback, tp, flags);
         if (tp->event == 0) {
             ejsThrowMemoryError(ejs);
@@ -175,7 +175,7 @@ static EjsObj *timer_stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     if (tp->event) {
         mprRemoveEvent(tp->event);
-        tp->obj.permanent = 0;
+        ejsMakeTransient(ejs, tp);
     }
     return 0;
 }

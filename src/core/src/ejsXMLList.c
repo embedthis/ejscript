@@ -32,7 +32,7 @@ static EjsObj   *text(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
 
 #endif
 
-static bool allDigitsForXmlList(cchar *name);
+static bool allDigitsForXmlList(EjsString *name);
 static EjsXML *resolve(Ejs *ejs, EjsXML *obj);
 static EjsXML *shallowCopy(Ejs *ejs, EjsXML *xml);
 
@@ -40,15 +40,17 @@ static EjsXML *shallowCopy(Ejs *ejs, EjsXML *xml);
 
 static EjsXML *createXmlListVar(Ejs *ejs, EjsType *type, int size)
 {
-    return (EjsXML*) ejsCreateXMLList(ejs, NULL, NULL);
+    return (EjsXML*) ejsCreateXMLList(ejs, NULL, N(NULL, NULL));
 }
 
 
+#if UNUSED
 //  TODO - can remove this
 static void destroyXmlList(Ejs *ejs, EjsXML *list)
 {
     ejsFreeVar(ejs, (EjsObj*) list, -1);
 }
+#endif
 
 
 static EjsObj *cloneXmlList(Ejs *ejs, EjsXML *list, bool deep)
@@ -56,7 +58,7 @@ static EjsObj *cloneXmlList(Ejs *ejs, EjsXML *list, bool deep)
     EjsXML  *newList;
 
     //  TODO - implement deep copy
-    newList = (EjsXML*) ejsCreate(ejs, list->obj.type, 0);
+    newList = (EjsXML*) ejsCreate(ejs, TYPE(list), 0);
     if (newList == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -97,13 +99,13 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
             elt = mprGetFirstItem(vp->elements);
             if (elt->kind == EJS_XML_ELEMENT) {
                 if (elt->elements == 0) {
-                    return (EjsObj*) ejs->emptyStringValue;
+                    return (EjsObj*) ejs->emptyString;
                 }
                 if (elt->elements && mprGetListCount(elt->elements) == 1) {
                     //  TODO - what about PI and comments?
                     item = mprGetFirstItem(elt->elements);
                     if (item->kind == EJS_XML_TEXT) {
-                        return (EjsObj*) ejsCreateString(ejs, item->value);
+                        return (EjsObj*) item->value;
                     }
                 }
             }
@@ -117,7 +119,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
                 mprPutStringToBuf(buf, " ");
             }
         }
-        result = (EjsObj*) ejsCreateString(ejs, (char*) buf->start);
+        result = (EjsObj*) ejsCreateStringFromCS(ejs, (char*) buf->start);
         mprFree(buf);
         return result;
 
@@ -130,19 +132,19 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
 
 //  TODO - seems the return code for delete should be boolean?
 
-static int deleteXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname)
+static int deleteXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname)
 {
     EjsXML      *elt;
     int         index, next;
 
-    if (isdigit((int) qname->name[0]) && allDigitsForXmlList(qname->name)) {
-        index = atoi(qname->name);
+    if (isdigit((int) qname.name->value[0]) && allDigitsForXmlList(qname.name)) {
+        index = ejsAtoi(ejs, qname.name, 10);
 
         elt = (EjsXML*) mprGetItem(list->elements, index);
         if (elt) {
             if (elt->parent) {
                 if (elt->kind == EJS_XML_ATTRIBUTE) {
-                    ejsDeletePropertyByName(ejs, (EjsObj*) elt->parent, &elt->qname);
+                    ejsDeletePropertyByName(ejs, (EjsObj*) elt->parent, elt->qname);
                 } else {
                     //  TODO - let q be the property of parent where parent[q] == x[i]
                     mprRemoveItem(elt->parent->elements, elt);
@@ -174,7 +176,7 @@ static int getXmlListPropertyCount(Ejs *ejs, EjsXML *list)
     Lookup a property by name. There are 7 kinds of lookups:
          prop, @att, [prop], *, @*, .name, .@name
  */
-static EjsObj *getXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname)
+static EjsObj *getXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname)
 {
     EjsXML      *result, *subList, *item;
     int         nextItem;
@@ -182,14 +184,14 @@ static EjsObj *getXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname)
     /*
         Get the n'th item in the list
      */
-    if (isdigit((int) qname->name[0]) && allDigitsForXmlList(qname->name)) {
-        return mprGetItem(list->elements, atoi(qname->name));
+    if (isdigit((int) qname.name->value[0]) && allDigitsForXmlList(qname.name)) {
+        return mprGetItem(list->elements, ejsAtoi(ejs, qname.name, 10));
     }
 
     result = ejsCreateXMLList(ejs, list, qname);
 
     /*
-        Build a list of all the elements that themselves have a property qname.
+        Build a list of all the elements that themselves have a property qname
      */
     for (nextItem = 0; (item = mprGetNextItem(list->elements, &nextItem)) != 0; ) {
         if (item->kind == EJS_XML_ELEMENT) {
@@ -209,9 +211,9 @@ static EjsObj *getXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname)
 static EjsObj *getXmlListNodeName(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
     if (xml->targetProperty.name) {
-        return (EjsVar*) ejsCreateString(ejs, xml->targetProperty.name);
+        return (EjsObj*) xml->targetProperty.name;
     } else if (xml->targetObject) {
-        return (EjsVar*) ejsCreateString(ejs, xml->targetObject->qname.name);
+        return (EjsObj*) xml->targetObject->qname.name;
     } else {
         return ejs->nullValue;
     }
@@ -331,7 +333,7 @@ static EjsObj *invokeOperator(Ejs *ejs, EjsXML *lhs, int opCode,  EjsXML *rhs)
 /*
     Set an alpha property by name.
  */
-static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname, EjsObj *value)
+static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsObj *value)
 {
     EjsXML      *elt, *targetObject;
     int         count;
@@ -370,7 +372,7 @@ static int setAlphaPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname, EjsObj
 }
 
 
-static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsName *qname, EjsObj *value)
+static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsName qname, EjsObj *value)
 {
     EjsXML      *elt, *last, *attList;
     int         index;
@@ -397,16 +399,16 @@ static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsNa
         return 0;
     }
 
-    elt = ejsCreateXML(ejs, EJS_XML_ELEMENT, &list->targetProperty, targetObject, NULL);
+    elt = ejsCreateXML(ejs, EJS_XML_ELEMENT, list->targetProperty, targetObject, NULL);
 
-    if (list->targetProperty.name && list->targetProperty.name[0] == '@') {
+    if (list->targetProperty.name && list->targetProperty.name->value[0] == '@') {
         elt->kind = EJS_XML_ATTRIBUTE;
-        attList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, &list->targetProperty);
+        attList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, list->targetProperty);
         if (attList && mprGetListCount(attList->elements) > 0) {
             /* Spec says so. But this surely means you can't update an attribute? */
             return 0;
         }
-    } else if (list->targetProperty.name == 0 || qname->name[0] == '*') {
+    } else if (list->targetProperty.name == NULL || qname.name->value[0] == '*') {
         elt->kind = EJS_XML_TEXT;
         elt->qname.name = 0;
     }
@@ -460,7 +462,6 @@ static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsNa
 static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj *value)
 {
     EjsXML      *node;
-    EjsName     name;
     int         i, j;
 
     if (!ejsIsXML(ejs, value)) {
@@ -470,14 +471,13 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
     mprSetItem(list->elements, index, value);
 
     if (elt->kind == EJS_XML_ATTRIBUTE) {
-        mprAssert(ejsIsString(value));
+        mprAssert(ejsIsString(ejs, value));
         i = mprLookupItem(elt->parent->elements, elt);
         mprAssert(i >= 0);
         ejsSetXML(ejs, elt->parent, i, elt);
         //  TODO - why do this. Doesn't above do this?
-        ejsSetPropertyByName(ejs, elt->parent, &elt->qname, value);
-        mprFree(elt->value);
-        elt->value = mprStrdup(elt, ((EjsString*) value)->value);
+        ejsSetPropertyByName(ejs, elt->parent, elt->qname, value);
+        elt->value = (EjsString*) value;
     }
 
     if (ejsIsXML(ejs, value) && ((EjsXML*) value)->kind == EJS_XML_LIST) {
@@ -496,8 +496,8 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
             mprAssert(index >= 0);
             mprSetItem(elt->parent->elements, index, value);
             ((EjsXML*) value)->parent = elt->parent;
-            if (ejsIsString(value)) {
-                node = ejsCreateXML(ejs, EJS_XML_TEXT, NULL, list, ((EjsString*) value)->value);
+            if (ejsIsString(ejs, value)) {
+                node = ejsCreateXML(ejs, EJS_XML_TEXT, N(NULL, NULL), list, (EjsString*) value);
                 mprSetItem(list->elements, index, node);
             } else {
                 mprSetItem(list->elements, index, value);
@@ -505,8 +505,7 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
         }
 
     } else {
-        ejsName(&name, 0, "*");
-        ejsSetPropertyByName(ejs, elt, &name, value);
+        ejsSetPropertyByName(ejs, elt, N(NULL, "*"), value);
     }
     return index;
 }
@@ -515,12 +514,12 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
 /*
     Set a property by name.
  */
-static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname, EjsObj *value)
+static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsObj *value)
 {
     EjsXML      *elt, *targetObject;
     int         index;
 
-    if (!isdigit((int) qname->name[0])) {
+    if (!isdigit((int) qname.name->value[0])) {
         return setAlphaPropertyByName(ejs, list, qname, value);
     }
 
@@ -538,8 +537,7 @@ static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname, EjsO
             return 0;
         }
     }
-
-    index = atoi(qname->name);
+    index = ejsAtoi(ejs, qname.name, 10);
     if (index >= mprGetListCount(list->elements)) {
         /*
             Create, then fall through to update
@@ -561,18 +559,18 @@ static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName *qname, EjsO
 /*
     function parent(): XML
  */
-static EjsVar *xl_parent(Ejs *ejs, EjsXML *xml, int argc, EjsVar **argv)
+static EjsObj *xl_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
-    return xml->targetObject ? (EjsVar*) xml->targetObject : (EjsVar*) ejs->nullValue;
+    return xml->targetObject ? (EjsObj*) xml->targetObject : (EjsObj*) ejs->nullValue;
 }
 
 /******************************** Support Routines **************************/
 
-static bool allDigitsForXmlList(cchar *name)
+static bool allDigitsForXmlList(EjsString *name)
 {
-    cchar   *cp;
+    EjsChar     *cp;
 
-    for (cp = name; *cp; cp++) {
+    for (cp = name->value; *cp; cp++) {
         if (!isdigit((int) *cp) || *cp == '.') {
             return 0;
         }
@@ -591,8 +589,7 @@ static EjsXML *shallowCopy(Ejs *ejs, EjsXML *xml)
     if (xml == 0) {
         return 0;
     }
-    root = ejsCreateXMLList(ejs, xml->targetObject, &xml->targetProperty);
-    if (root == 0) {
+    if ((root = ejsCreateXMLList(ejs, xml->targetObject, xml->targetProperty)) == NULL) {
         return 0;
     }
     if (xml->elements) {
@@ -630,7 +627,7 @@ static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
         /* Resolved to a list of items */
         return xml;
     }
-    if (xml->targetObject == 0 || xml->targetProperty.name == 0 || xml->targetProperty.name[0] == '*') {
+    if (xml->targetObject == 0 || xml->targetProperty.name == NULL || xml->targetProperty.name->value[0] == '*') {
         /* End of chain an no more target objects */
         return 0;
     }
@@ -639,7 +636,7 @@ static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
         return 0;
     }
     //  TODO - OPT. targetPropertyList is also being created below.
-    targetPropertyList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, &xml->targetProperty);
+    targetPropertyList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, xml->targetProperty);
     if (targetPropertyList == 0) {
         return 0;
     }
@@ -652,10 +649,9 @@ static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
         }
         /*
             Create the property as an element (The text value will be optimized away).
-            TODO - OPT. Need an empty string value in EjsFiber.
          */
-        ejsSetPropertyByName(ejs, targetObject, &xml->targetProperty, ejsCreateString(ejs, ""));
-        targetPropertyList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, &xml->targetProperty);
+        ejsSetPropertyByName(ejs, targetObject, xml->targetProperty, ejs->emptyString);
+        targetPropertyList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, xml->targetProperty);
     }
     return targetPropertyList;
 }
@@ -675,7 +671,7 @@ static EjsObj *xmlListConstructor(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **
         if (ejsIsObject(vp)) {
             /* Convert DOM to XML. Not implemented */;
 
-        } else if (ejsIsString(vp)) {
+        } else if (ejsIsString(ejs, vp)) {
             str = ((EjsString*) vp)->value;
             if (str == 0) {
                 return 0;
@@ -707,7 +703,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     EjsString       *sp;
     MprBuf          *buf;
-    EjsVar          *result;
+    EjsObj          *result;
     cchar           *cp;
 
     /*
@@ -724,7 +720,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     }
     mprPutCharToBuf(buf, '"');
     mprAddNullToBuf(buf);
-    result = (EjsVar*) ejsCreateStringAndFree(ejs, mprStealBuf(vp, buf));
+    result = (EjsObj*) ejsCreateStringAndFree(ejs, mprStealBuf(vp, buf));
     mprFree(buf);
     return result;
 }
@@ -737,7 +733,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
  */
 static EjsObj *xmlListToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    return (vp->type->helpers.cast)(ejs, vp, ejs->stringType);
+    return (TYPE(vp)->helpers.cast)(ejs, vp, ejs->stringType);
 }
 
 
@@ -796,14 +792,14 @@ static EjsObj *setLength(Ejs *ejs, EjsXMLList *xml, int argc, EjsObj **argv)
 
 /*********************************** Factory **********************************/
 
-EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName *targetProperty)
+EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty)
 {
     EjsType     *type;
     EjsXML      *list;
 
     type = ejs->xmlListType;
 
-    list = (EjsXML*) ejsAllocVar(ejs, type, 0);
+    list = (EjsXML*) ejsAllocValue(ejs, type, 0);
     if (list == 0) {
         return 0;
     }
@@ -811,8 +807,8 @@ EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName *targetProperty
     list->elements = mprCreateList(list);
     list->targetObject = targetObject;
 
-    if (targetProperty) {
-        list->targetProperty.name = mprStrdup(list, targetProperty->name);
+    if (targetProperty.name) {
+        list->targetProperty.name = targetProperty.name;
     }
     return list;
 }
@@ -832,7 +828,9 @@ void ejsCreateXMLListType(Ejs *ejs)
     type->helpers.clone = (EjsCloneHelper) cloneXmlList;
     type->helpers.cast = (EjsCastHelper) xlCast;
     type->helpers.create = (EjsCreateHelper) createXmlListVar;
+#if UNUSED
     type->helpers.destroy = (EjsDestroyHelper) destroyXmlList;
+#endif
     type->helpers.getPropertyByName = (EjsGetPropertyByNameHelper) getXmlListPropertyByName;
     type->helpers.getPropertyCount = (EjsGetPropertyCountHelper) getXmlListPropertyCount;
     type->helpers.deletePropertyByName = (EjsDeletePropertyByNameHelper) deleteXmlListPropertyByName;

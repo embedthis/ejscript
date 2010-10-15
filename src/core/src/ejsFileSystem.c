@@ -18,7 +18,7 @@ static EjsObj *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int argc, EjsO
 {
     cchar   *path;
 
-    mprAssert(argc == 1 && ejsIsString(argv[0]));
+    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     path = ejsGetString(ejs, argv[0]);
     fp->path = mprGetNormalizedPath(fp, path);
@@ -95,7 +95,7 @@ static EjsObj *isWritable(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, mprGetPathNewline(ejs, fp->path));
+    return (EjsObj*) ejsCreateStringFromCS(ejs, mprGetPathNewline(ejs, fp->path));
 }
 
 
@@ -106,8 +106,11 @@ static EjsObj *getNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
  */
 static EjsObj *setNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    mprAssert(ejsIsString(argv[0]));
-    mprSetPathNewline(ejs, fp->path, ((EjsString*) argv[0])->value);
+    cchar   *nl;
+
+    mprAssert(ejsIsString(ejs, argv[0]));
+    nl = ejsToMulti(ejs, (EjsString*) argv[0]);
+    mprSetPathNewline(ejs, fp->path, nl);
     return 0;
 }
 
@@ -133,7 +136,7 @@ static EjsObj *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, fp->fs->separators);
+    return (EjsObj*) ejsCreateStringFromCS(ejs, fp->fs->separators);
 }
 
 
@@ -144,7 +147,7 @@ static EjsObj *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **arg
  */
 static EjsObj *setSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsString(argv[0]));
+    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
     mprSetPathSeparators(ejs, fp->path, ejsGetString(ejs, argv[0]));
     return 0;
 }
@@ -171,7 +174,7 @@ EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
     if (fs == 0) {
         return 0;
     }
-    arg = (EjsObj*) ejsCreateString(ejs, path);
+    arg = (EjsObj*) ejsCreateStringFromCS(ejs, path);
     fileSystemConstructor(ejs, fs, 1, (EjsObj**) &arg);
     return fs;
 }

@@ -59,8 +59,8 @@ typedef struct EcNode {
     EjsName             qname;
     int                 literalNamespace;   /* Namespace is a literal */
 
-    cchar               *filename;          /* File containing source code line */
-    char                *currentLine;       /* Current source code line */
+    EjsString           *filename;          /* File containing source code line */
+    EjsString           *currentLine;       /* Current source code line */
     int                 lineNumber;
 
     Node                left;               /* children[0] */
@@ -225,7 +225,7 @@ typedef struct EcNode {
         struct {
             EjsModule   *ref;               /* Module object */
             char        *filename;          /* Module file name */
-            char        *name;              /* Module name */
+            EjsString   *name;              /* Module name */
             int         version;
         } module;
 
@@ -291,7 +291,7 @@ typedef struct EcNode {
          */
         #define N_CLASS  16
         struct {
-            char        *extends;           /* Class base class */
+            EjsString   *extends;           /* Class base class */
             Node        implements;         /* Implemented interfaces */
             MprList     *staticProperties;  /* List of static properties */
             MprList     *instanceProperties;/* Implemented interfaces */
@@ -451,7 +451,7 @@ typedef struct EcNode {
 #endif
 
     int                 kind;               /* Kind of node */
-    MprList             *children;
+    EjsArray            *children;
 
     struct EcCompiler   *cp;                /* Compiler instance reference */
 
@@ -737,9 +737,9 @@ typedef int (*EcStreamGet)(struct EcStream *stream);
 
 
 typedef struct EcStream {
-    char        *name;                          /* Stream name / filename */
+    EjsString   *name;                          /* Stream name / filename */
 
-    char        *currentLine;                   /* Current input source line */
+    EjsString   *currentLine;                   /* Current input source line */
     int         lineNumber;                     /* Line number in source of current token */
     int         column;                         /* Current reading position */
 
@@ -801,14 +801,15 @@ typedef struct EcToken {
     int         groupMask;
 
     //  MOB -- convert from uchar
+    //  MOB UNICODE EjsChar
     uchar       *text;                          /* Token text */
     int         textLen;                        /* Length of text */
     int         textBufSize;                    /* Size of text buffer */
 
-    EjsObj   *number;                        /* Any numeric literals */
+    EjsObj      *number;                        /* Any numeric literals */
 
-    char        *filename;
-    char        *currentLine;
+    EjsString   *filename;
+    EjsString   *currentLine;
     int         lineNumber;
     int         column;
     int         eol;                            /* At the end of the line */
@@ -921,7 +922,7 @@ typedef struct EcState {
     EjsFunction     *currentFunction;       /* Current open method */
 
     //  TODO - can this be derrived from currentMethod?
-    cchar           *currentFunctionName;   /* Current method name */
+    EjsString       *currentFunctionName;   /* Current method name */
 
     EjsObj          *letBlock;              /* Block for local block scope declarations */
     EjsObj          *varBlock;              /* Block for var declarations */
@@ -933,8 +934,8 @@ typedef struct EcState {
         where the pragma was defined. ie. it is not passed into classes or functions (1 level deep).
         If the defaultNamespace is not defined, then the namespace field is used.
      */
-    cchar           *namespace;             /* Namespace for declarations */
-    cchar           *defaultNamespace;      /* Default namespace for new top level declarations. Does not propagate */
+    EjsString       *nspace;                /* Namespace for declarations */
+    EjsString       *defaultNamespace;      /* Default namespace for new top level declarations. Does not propagate */
     int             namespaceCount;         /* Count of namespaces originally in block. Used to pop namespaces */
 
     //  TODO - should change this to include functions also
@@ -989,6 +990,7 @@ extern void     ecStartBreakableStatement(struct EcCompiler *cp, int kinds);
     Primary compiler control structure
  */
 typedef struct EcCompiler {
+    MprCtx      ctx;                        /* Mpr allocation context */
     /*
         Properties ordered to make debugging easier
      */
@@ -1032,6 +1034,8 @@ typedef struct EcCompiler {
     bool        debug;                      /* Run in debug mode */
     bool        doc;                        /* Include documentation strings in output */
     char        *extraFiles;                /* Extra source files to compile */
+
+    //  MOB -- convert to EjsArray
     MprList     *require;                   /* Required list of modules to pre-load */
     bool        interactive;                /* Interactive use (ejsh) */
     bool        merge;                      /* Merge all dependent modules */
@@ -1052,8 +1056,8 @@ typedef struct EcCompiler {
     int         strip;                      /* Strip debug symbols */
     int         tabWidth;                   /* For error reporting "^" */
 
-    MprList     *modules;                   /* List of modules to process */
-    MprList     *fixups;                    /* Type reference fixups */
+    EjsArray    *modules;                   /* List of modules to process */
+    EjsArray    *fixups;                    /* Type reference fixups */
 
     char        *errorMsg;                  /* Aggregated error messages */
     int         error;                      /* Unresolved parse error */
@@ -1077,12 +1081,11 @@ typedef struct EcCompiler {
 extern int          ecAddModule(EcCompiler *cp, EjsModule *mp);
 extern EcNode       *ecAppendNode(EcNode *np, EcNode *child);
 extern int          ecAstFixup(EcCompiler *cp, struct EcNode *np);
-extern EcNode       *ecChangeNode(EcNode *np, EcNode *oldNode, EcNode *newNode);
+extern EcNode       *ecChangeNode(EcCompiler *cp, EcNode *np, EcNode *oldNode, EcNode *newNode);
 extern void         ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *up);
 extern int          ecCodeGen(EcCompiler *cp, int argc, struct EcNode **nodes);
 extern int          ecCompile(EcCompiler *cp, int argc, char **path);
 extern EcLexer      *ecCreateLexer(EcCompiler *cp);
-extern void         ecDestroyLexer(EcCompiler *cp);
 EcCompiler          *ecCreateCompiler(struct Ejs *ejs, int flags);
 extern EcNode       *ecCreateNode(EcCompiler *cp, int kind);
 extern void         ecFreeToken(EcInput *input, EcToken *token);
@@ -1091,23 +1094,24 @@ extern char         *ecGetInputStreamName(EcLexer *lp);
 extern int          ecGetToken(EcInput *input);
 extern int          ecGetRegExpToken(EcInput *input, cchar *prefix);
 extern EcNode       *ecLinkNode(EcNode *np, EcNode *child);
-extern EjsModule    *ecLookupModule(EcCompiler *cp, cchar *name, int minVersion, int maxVersion);
-extern int          ecLookupScope(EcCompiler *cp, EjsName *name);
-extern int          ecLookupVar(EcCompiler *cp, EjsObj *vp, EjsName *name);
+
+extern EjsModule    *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion);
+extern int          ecLookupScope(EcCompiler *cp, EjsName name);
+extern int          ecLookupVar(EcCompiler *cp, EjsObj *vp, EjsName name);
 extern EcNode       *ecParseWarning(EcCompiler *cp, char *fmt, ...);
 extern int          ecPeekToken(EcCompiler *cp);
 extern int          ecPutSpecificToken(EcInput *input, EcToken *token);
 extern int          ecPutToken(EcInput *input);
-extern void         ecSetError(EcCompiler *cp, cchar *severity, cchar *filename, int lineNumber,
-                        char *currentLine, int column, char *msg);
+extern void         ecSetError(EcCompiler *cp, cchar *severity, EjsString *filename, int lineNumber,
+                        EjsString *currentLine, int column, char *msg);
 extern void         ecResetInput(EcCompiler *cp);
 extern EcNode       *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput);
 extern int          ecRemoveModule(EcCompiler *cp, EjsModule *mp);
 extern void         ecResetParser(EcCompiler *cp);
 extern int          ecResetModuleList(EcCompiler *cp);
-extern int          ecOpenConsoleStream(EcLexer *lp, EcStreamGet gets);
-extern int          ecOpenFileStream(EcLexer *input, cchar *path);
-extern int          ecOpenMemoryStream(EcLexer *input, const uchar *buf, int len);
+extern int          ecOpenConsoleStream(EcCompiler *cp, EcLexer *lp, EcStreamGet gets);
+extern int          ecOpenFileStream(EcCompiler *cp, EcLexer *input, cchar *path);
+extern int          ecOpenMemoryStream(EcCompiler *cp, EcLexer *input, const uchar *buf, int len);
 extern void         ecCloseStream(EcLexer *input);
 extern void         ecSetOptimizeLevel(EcCompiler *cp, int level);
 extern void         ecSetWarnLevel(EcCompiler *cp, int level);
@@ -1123,8 +1127,9 @@ extern int          ecAstProcess(struct EcCompiler *cp, int argc,  struct EcNode
  */
 extern void     ecAddFunctionConstants(EcCompiler *cp, EjsObj *obj, int slotNum);
 extern void     ecAddConstants(EcCompiler *cp, EjsObj *obj);
-extern int      ecAddConstant(EcCompiler *cp, cchar *str);
-extern int      ecAddNameConstant(EcCompiler *cp, EjsName *qname);
+extern int      ecAddStringConstant(EcCompiler *cp, EjsString *sp);
+extern int      ecAddCStringConstant(EcCompiler *cp, cchar *str);
+extern int      ecAddNameConstant(EcCompiler *cp, EjsName qname);
 extern int      ecAddDocConstant(EcCompiler *cp, void *vp, int slotNum);
 extern int      ecAddModuleConstant(EcCompiler *cp, EjsModule *up, cchar *str);
 extern int      ecCreateModuleHeader(EcCompiler *cp);
@@ -1138,10 +1143,11 @@ extern int      ecEncodeBlock(EcCompiler *cp, uchar *buf, int len);
 extern int      ecEncodeByte(EcCompiler *cp, int value);
 extern int      ecEncodeUint(EcCompiler *cp, int number);
 extern int      ecEncodeNumber(EcCompiler *cp, int64 number);
-extern int      ecEncodeName(EcCompiler *cp, EjsName *qname);
+extern int      ecEncodeName(EcCompiler *cp, EjsName qname);
 extern int      ecEncodeOpcode(EcCompiler *cp, int value);
-extern int      ecEncodeString(EcCompiler *cp, cchar *str);
-extern int      ecEncodeGlobal(EcCompiler *cp, EjsObj *obj, EjsName *qname);
+extern int      ecEncodeCString(EcCompiler *cp, cchar *str);
+extern int      ecEncodeString(EcCompiler *cp, EjsString *sp);
+extern int      ecEncodeGlobal(EcCompiler *cp, EjsObj *obj, EjsName qname);
 extern int      ecEncodeWord(EcCompiler *cp, int value);
 extern int      ecEncodeDouble(EcCompiler *cp, double value);
 extern int      ecEncodeByteAtPos(EcCompiler *cp, uchar *pos, int value);

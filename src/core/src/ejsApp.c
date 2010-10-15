@@ -19,7 +19,7 @@ static EjsObj *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     args = ejsCreateArray(ejs, ejs->argc);
     for (i = 0; i < ejs->argc; i++) {
-        ejsSetProperty(ejs, args, i, ejsCreateString(ejs, ejs->argv[i]));
+        ejsSetProperty(ejs, args, i, ejsCreateStringFromCS(ejs, ejs->argv[i]));
     }
     return (EjsObj*) args;
 }
@@ -46,14 +46,15 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mprAssert(argc == 1);
 
     if (ejsIsPath(ejs, argv[0])) {
-        path = ((EjsPath*) argv[0])->path;
-    } else if (ejsIsString(argv[0])) {
+        path = ((EjsPath*) argv[0])->value;
+
+    } else if (ejsIsString(ejs, argv[0])) {
         path = ejsGetString(ejs, argv[0]);
+
     } else {
         ejsThrowIOError(ejs, "Bad path");
         return NULL;
     }
-
     if (chdir((char*) path) < 0) {
         ejsThrowIOError(ejs, "Can't change the current directory");
     }
@@ -72,7 +73,7 @@ static EjsObj *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
     if (value == 0) {
         return (EjsObj*) ejs->nullValue;
     }
-    return (EjsObj*) ejsCreateString(ejs, value);
+    return (EjsObj*) ejsCreateStringFromCS(ejs, value);
 }
 
 
@@ -91,7 +92,6 @@ static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
     setenv(key, value, 1);
 #else
     char   *cmd;
-
     cmd = mprStrcat(app, -1, ejsGetString(ejs, argv[0]), "=", ejsGetString(ejs, argv[1]), NULL);
     putenv(cmd);
 #endif
@@ -106,7 +106,7 @@ static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
  */
 static EjsObj *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePath(ejs, mprGetAppDir(ejs));
+    return (EjsObj*) ejsCreatePathFromCS(ejs, mprGetAppDir(ejs));
 }
 
 
@@ -116,7 +116,7 @@ static EjsObj *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePath(ejs, mprGetAppPath(ejs));
+    return (EjsObj*) ejsCreatePathFromCS(ejs, mprGetAppPath(ejs));
 }
 
 
@@ -158,7 +158,7 @@ static EjsObj *app_noexit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *app_name(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, mprGetAppName(ejs));
+    return (EjsObj*) ejsCreateStringFromCS(ejs, mprGetAppName(ejs));
 }
 
 
@@ -205,6 +205,7 @@ static EjsObj *app_createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
     cchar   *searchPath;
 
+    //  MOB -- should this be EjsString?
     searchPath = (argc == 0) ? NULL : ejsGetString(ejs, argv[0]);
     return (EjsObj*) ejsCreateSearchPath(ejs, searchPath);
 }

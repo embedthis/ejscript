@@ -8,6 +8,7 @@
 
 #include    "ejs.h"
 
+//  MOB -- rename to LexBlock
 /*********************************** Helpers **********************************/
 
 EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
@@ -18,8 +19,10 @@ EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
     if (block == 0) {
         return 0;
     }
-    block->obj.shortScope = 1;
+    SHORT_SCOPE(block) = 1;
+#if UNUSED
     ejsInitList(&block->namespaces);
+#endif
     return block;
 }
 
@@ -35,7 +38,7 @@ void ejsMarkBlock(Ejs *ejs, EjsBlock *block)
         ejsMark(ejs, (EjsObj*) block->prevException);
     }
     if (block->namespaces.length > 0) {
-        for (next = 0; ((item = (EjsObj*) ejsGetNextItem(&block->namespaces, &next)) != 0); ) {
+        for (next = 0; ((item = (EjsObj*) ejsGetNextItem(ejs, &block->namespaces, &next)) != 0); ) {
             ejsMark(ejs, item);
         }
     }
@@ -57,7 +60,16 @@ EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
 
     dest->nobind = src->nobind;
     dest->scope = src->scope;
+#if MOB && OPT
     dest->namespaces = src->namespaces;
+#else
+#if UNUSED
+    ejsInitList(&dest->namespaces);
+    ejsCopyList(ejs, &dest->namespaces, &src->namespaces);
+#else
+    ejsAppendArray(ejs, &dest->namespaces, &src->namespaces);
+#endif
+#endif
     return dest;
 }
 
@@ -65,15 +77,14 @@ EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
 
 void ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block)
 {
-    ejsClearList(&block->namespaces);
+    ejsClearArray(ejs, &block->namespaces);
 }
 
 
 int ejsGetNamespaceCount(EjsBlock *block)
 {
     mprAssert(block);
-
-    return ejsGetListCount(&block->namespaces);
+    return block->namespaces.length;
 }
 
 
@@ -88,23 +99,21 @@ void ejsPopBlockNamespaces(EjsBlock *block, int count)
 
 int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
 {
-    EjsFunction     *fun;
-    EjsList         *list;
-
     mprAssert(block);
 
     if (nsp == 0) {
         ejsThrowTypeError(ejs, "Not a namespace");
         return EJS_ERR;
     }
-    fun = (EjsFunction*) block;
-    list = &block->namespaces;
-
-    //  TODO OPT need a routine or option to only add unique namespaces.   
 #if UNUSED
+    //  TODO OPT need a routine or option to only add unique namespaces.   
+    EjsFunction     *fun;
+    fun = (EjsFunction*) block;
+
+    list = &block->namespaces;
     EjsNamespace    *namespace;
     int             next;
-    if (ejsIsFunction(fun)) {
+    if (ejsIsFunction(ejs, fun)) {
         if (fun->isInitializer) {
             block = block->scope;
             list = &block->namespaces;
@@ -120,7 +129,11 @@ int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
         }
     }
 #endif
-    ejsAddItemToSharedList(block, list, nsp);
+#if MOB && OPT
+    ejsAddItemToSharedList(ejs, list, nsp);
+#else
+    ejsAddItem(ejs, &block->namespaces, nsp);
+#endif
     return 0;
 }
 
@@ -132,25 +145,27 @@ void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
 {
     EjsNamespace    *nsp;
     EjsBlock        *block;
-    EjsList         *baseNamespaces, oldNamespaces;
+    EjsArray        *baseNamespaces, *oldNamespaces;
     int             next;
 
     block = &type->constructor.block;
-    oldNamespaces = block->namespaces;
+    oldNamespaces = &block->namespaces;
+#if UNUSED
     ejsInitList(&block->namespaces);
+#endif
     baseNamespaces = &baseType->constructor.block.namespaces;
 
     if (baseNamespaces) {
-        for (next = 0; ((nsp = (EjsNamespace*) ejsGetNextItem(baseNamespaces, &next)) != 0); ) {
-            if (strstr(nsp->name, ",protected")) {
-                ejsAddItem(block, &block->namespaces, nsp);
+        for (next = 0; ((nsp = (EjsNamespace*) ejsGetNextItem(ejs, baseNamespaces, &next)) != 0); ) {
+            //  MOB -- must be a better way to do this?
+            if (ejsContainsString(ejs, nsp->name, ejs->commaProtString)) {
+                ejsAddItem(ejs, &block->namespaces, nsp);
             }
         }
     }
-
-    if (oldNamespaces.length > 0) {
-        for (next = 0; ((nsp = (EjsNamespace*) ejsGetNextItem(&oldNamespaces, &next)) != 0); ) {
-            ejsAddItem(block, &block->namespaces, nsp);
+    if (oldNamespaces->length > 0) {
+        for (next = 0; ((nsp = (EjsNamespace*) ejsGetNextItem(ejs, oldNamespaces, &next)) != 0); ) {
+            ejsAddItem(ejs, &block->namespaces, nsp);
         }
     }
 }
@@ -163,9 +178,13 @@ void ejsCreateBlockType(Ejs *ejs)
     EjsType     *type;
 
     type = ejs->blockType = ejsCreateNativeType(ejs, "ejs", "Block", ES_Block, sizeof(EjsBlock));
-    type->constructor.block.obj.shortScope = 1;
+    SHORT_SCOPE(type) = 1;
+    ejsCloneObjectHelpers(ejs, type);
+
     type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;
     type->helpers.mark = (EjsMarkHelper) ejsMarkBlock;
+
+    ejs->commaProtString = ejsCreateStringFromCS(ejs, ",protected");
 }
 
 

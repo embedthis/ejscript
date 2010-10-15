@@ -25,9 +25,9 @@ static EjsObj *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **
  */
 static EjsObj *setRedlineCallback(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsFunction(argv[0]));
+    mprAssert(argc == 1 && ejsIsFunction(ejs, argv[0]));
 
-    if (!ejsIsFunction(argv[0])) {
+    if (!ejsIsFunction(ejs, argv[0])) {
         ejsThrowArgError(ejs, "Callaback is not a function");
         return 0;
     }
@@ -55,7 +55,7 @@ static EjsObj *setMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     maxMemory;
 
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
 
     maxMemory = ejsGetInt(ejs, argv[0]);
     mprSetAllocLimits(ejs, -1, maxMemory);
@@ -96,7 +96,7 @@ static EjsObj *setRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     redline;
 
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
 
     redline = ejsGetInt(ejs, argv[0]);
     if (redline <= 0) {

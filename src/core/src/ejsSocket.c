@@ -74,7 +74,7 @@ EjsObj *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
  */
 EjsObj *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, sp->address);
+    return (EjsObj*) ejsCreateStringFromCS(ejs, sp->address);
 }
 
 
@@ -120,14 +120,14 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     char            *cp;
 
     address = (EjsString*) argv[0];
-    if (ejsIsNumber(address)) {
+    if (ejsIsNumber(ejs, address)) {
         sp->address = mprStrdup(sp, "127.0.0.1");
         sp->port = (int) ((EjsNumber*) address)->value;
     } else {
-        if (!ejsIsString(address)) {
+        if (!ejsIsString(ejs, address)) {
             address = ejsToString(ejs, (EjsObj*) address);
         }
-        sp->address = mprStrdup(sp, address->value);
+        sp->address = ejsToMulti(ejs, address);
         if ((cp = strchr(sp->address, ':')) != 0) {
             *cp++ = '\0';
             sp->port = atoi(cp);
@@ -165,14 +165,14 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     char        *cp;
 
     address = (EjsString*) argv[0];
-    if (ejsIsNumber(address)) {
+    if (ejsIsNumber(ejs, address)) {
         sp->address = mprStrdup(sp, "");
         sp->port = (int) ((EjsNumber*) address)->value;
     } else {
-        if (!ejsIsString(address)) {
+        if (!ejsIsString(ejs, address)) {
             address = ejsToString(ejs, (EjsObj*) address);
         }
-        sp->address = mprStrdup(sp, address->value);
+        sp->address = ejsToMulti(ejs, address);
         if ((cp = strchr(sp->address, ':')) != 0) {
             *cp++ = '\0';
             sp->port = atoi(cp);
@@ -259,7 +259,7 @@ static EjsObj *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
  */
 static EjsObj *sock_remoteAddress(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, sp->address);
+    return (EjsObj*) ejsCreateStringFromCS(ejs, sp->address);
 }
 
 
@@ -310,7 +310,7 @@ static int writeSocketData(Ejs *ejs, EjsSocket *sp)
 /*
     function write(...data): Number
  */
-static EjsObj *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
+static EjsNumber *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EV **argv)
 {
     int     nbytes;
 
@@ -329,7 +329,7 @@ static EjsObj *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     if (sp->async) {
         enableSocketEvents(sp, socketIOEvent);
     }
-    return (EjsObj*) ejsCreateNumber(ejs, nbytes);
+    return ejsCreateNumber(ejs, nbytes);
 }
 
 

@@ -142,6 +142,7 @@
 		C92F848810F2B80300CA953D /* ejsHttpServer.c in Sources */ = {isa = PBXBuildFile; fileRef = C92F848610F2B80300CA953D /* ejsHttpServer.c */; };
 		C92F848910F2B80300CA953D /* ejsWeb.c in Sources */ = {isa = PBXBuildFile; fileRef = C92F848710F2B80300CA953D /* ejsWeb.c */; };
 		C92F849B10F2B93200CA953D /* libhttp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C95E4FDB10EBFD9300982610 /* libhttp.dylib */; };
+		C941F2C8125A382E00886439 /* ejsAlloc.c in Sources */ = {isa = PBXBuildFile; fileRef = C941F2C7125A382E00886439 /* ejsAlloc.c */; };
 		C94D085511C724C9001B151C /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C94D085611C724CD001B151C /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
 		C953B94D113DE3FD00869FBE /* ecAst.c in Sources */ = {isa = PBXBuildFile; fileRef = C97624260FD06F8B009C78E1 /* ecAst.c */; };
@@ -169,7 +170,6 @@
 		C97628350FD079D9009C78E1 /* ejsModule.c in Sources */ = {isa = PBXBuildFile; fileRef = C976248E0FD06F8B009C78E1 /* ejsModule.c */; };
 		C97628360FD079D9009C78E1 /* ejsScope.c in Sources */ = {isa = PBXBuildFile; fileRef = C976248F0FD06F8B009C78E1 /* ejsScope.c */; };
 		C97628370FD079D9009C78E1 /* ejsService.c in Sources */ = {isa = PBXBuildFile; fileRef = C97624900FD06F8B009C78E1 /* ejsService.c */; };
-		C97628380FD079D9009C78E1 /* ejsVar.c in Sources */ = {isa = PBXBuildFile; fileRef = C97624910FD06F8B009C78E1 /* ejsVar.c */; };
 		C976283B0FD07A35009C78E1 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C976283E0FD07A56009C78E1 /* libpcre.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627AF0FD077C3009C78E1 /* libpcre.dylib */; };
 		C976283F0FD07A56009C78E1 /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
@@ -191,6 +191,7 @@
 		C976286E0FD07B2D009C78E1 /* libejs.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627CB0FD07828009C78E1 /* libejs.dylib */; };
 		C97628740FD07C69009C78E1 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C97628790FD07C7F009C78E1 /* libsqlite.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627BD0FD077FC009C78E1 /* libsqlite.dylib */; };
+		C97D30781263AF2900262E95 /* ejsHelper.c in Sources */ = {isa = PBXBuildFile; fileRef = C97D30771263AF2900262E95 /* ejsHelper.c */; };
 		C9818119110EBDA800F241EF /* ejssql.c in Sources */ = {isa = PBXBuildFile; fileRef = C9818105110EBD4E00F241EF /* ejssql.c */; };
 		C981811F110EBDC400F241EF /* sqlite3.c in Sources */ = {isa = PBXBuildFile; fileRef = C9818106110EBD4E00F241EF /* sqlite3.c */; };
 		C98761380FD87DA200311B7A /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
@@ -745,6 +746,7 @@
 		C92F848510F2B7DE00CA953D /* HttpServer.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HttpServer.es; path = ../../../src/jems/ejs.web/HttpServer.es; sourceTree = SOURCE_ROOT; };
 		C92F848610F2B80300CA953D /* ejsHttpServer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHttpServer.c; path = ../../../src/jems/ejs.web/src/ejsHttpServer.c; sourceTree = SOURCE_ROOT; };
 		C92F848710F2B80300CA953D /* ejsWeb.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsWeb.c; path = ../../../src/jems/ejs.web/src/ejsWeb.c; sourceTree = SOURCE_ROOT; };
+		C941F2C7125A382E00886439 /* ejsAlloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsAlloc.c; path = ../../../src/vm/ejsAlloc.c; sourceTree = SOURCE_ROOT; };
 		C95E4FBA10EBFD2B00982610 /* mprLib.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mprLib.c; sourceTree = "<group>"; };
 		C95E4FBB10EBFD2B00982610 /* mprSsl.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = mprSsl.c; sourceTree = "<group>"; };
 		C95E4FDB10EBFD9300982610 /* libhttp.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libhttp.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -770,7 +772,6 @@
 		C976248E0FD06F8B009C78E1 /* ejsModule.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsModule.c; path = ../../../src/vm/ejsModule.c; sourceTree = "<group>"; };
 		C976248F0FD06F8B009C78E1 /* ejsScope.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsScope.c; path = ../../../src/vm/ejsScope.c; sourceTree = "<group>"; };
 		C97624900FD06F8B009C78E1 /* ejsService.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsService.c; path = ../../../src/vm/ejsService.c; sourceTree = "<group>"; };
-		C97624910FD06F8B009C78E1 /* ejsVar.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsVar.c; path = ../../../src/vm/ejsVar.c; sourceTree = "<group>"; };
 		C97627A60FD077A7009C78E1 /* libmpr.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmpr.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97627AF0FD077C3009C78E1 /* libpcre.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libpcre.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97627B60FD077E7009C78E1 /* libmprssl.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libmprssl.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -778,6 +779,7 @@
 		C97627CB0FD07828009C78E1 /* libejs.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libejs.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97627D90FD07850009C78E1 /* ejs.web.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = ejs.web.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		C97A5E9211E7F7F600BB0981 /* test.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = test.xcconfig; sourceTree = "<group>"; };
+		C97D30771263AF2900262E95 /* ejsHelper.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHelper.c; path = ../../../src/vm/ejsHelper.c; sourceTree = SOURCE_ROOT; };
 		C9818105110EBD4E00F241EF /* ejssql.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejssql.c; path = ../../../src/jems/ejs.db.sqlite/src/ejssql.c; sourceTree = SOURCE_ROOT; };
 		C9818106110EBD4E00F241EF /* sqlite3.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sqlite3.c; path = ../../../src/jems/ejs.db.sqlite/src/sqlite3.c; sourceTree = SOURCE_ROOT; };
 		C98D7153110FBEEA00F2ED80 /* ejssql */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ejssql; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1267,6 +1269,8 @@
 		C97628390FD079EF009C78E1 /* vm */ = {
 			isa = PBXGroup;
 			children = (
+				C97D30771263AF2900262E95 /* ejsHelper.c */,
+				C941F2C7125A382E00886439 /* ejsAlloc.c */,
 				C97624880FD06F8B009C78E1 /* ejsByteCode.c */,
 				C97624890FD06F8B009C78E1 /* ejsException.c */,
 				C976248A0FD06F8B009C78E1 /* ejsGarbage.c */,
@@ -1276,7 +1280,6 @@
 				C976248E0FD06F8B009C78E1 /* ejsModule.c */,
 				C976248F0FD06F8B009C78E1 /* ejsScope.c */,
 				C97624900FD06F8B009C78E1 /* ejsService.c */,
-				C97624910FD06F8B009C78E1 /* ejsVar.c */,
 			);
 			name = vm;
 			sourceTree = "<group>";
@@ -1724,6 +1727,7 @@
 			isa = PBXProject;
 			buildConfigurationList = C97623C40FD06EC4009C78E1 /* Build configuration list for PBXProject "ejs-all" */;
 			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -2005,7 +2009,6 @@
 				C97628350FD079D9009C78E1 /* ejsModule.c in Sources */,
 				C97628360FD079D9009C78E1 /* ejsScope.c in Sources */,
 				C97628370FD079D9009C78E1 /* ejsService.c in Sources */,
-				C97628380FD079D9009C78E1 /* ejsVar.c in Sources */,
 				C953B94D113DE3FD00869FBE /* ecAst.c in Sources */,
 				C953B94E113DE3FD00869FBE /* ecCompile.c in Sources */,
 				C953B94F113DE3FD00869FBE /* ecCodeGen.c in Sources */,
@@ -2052,6 +2055,8 @@
 				C9188B80115DAC060018846C /* ejsXMLLoader.c in Sources */,
 				C9902A691161776B00473F37 /* ejsFrame.c in Sources */,
 				C9267D9A118AAEF000A446EA /* ejsLogger.c in Sources */,
+				C941F2C8125A382E00886439 /* ejsAlloc.c in Sources */,
+				C97D30781263AF2900262E95 /* ejsHelper.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

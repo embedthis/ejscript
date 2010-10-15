@@ -38,13 +38,13 @@ void ejsClearAttention(Ejs *ejs)
 }
 
 
-EjsObj *ejsThrowException(Ejs *ejs, EjsObj *obj)
+EV *ejsThrowException(Ejs *ejs, EV *error)
 {
-    mprAssert(obj);
+    mprAssert(error);
 
-    ejs->exception = obj;
+    ejs->exception = error;
     ejsAttention(ejs);
-    return obj;
+    return error;
 }
 
 
@@ -57,16 +57,16 @@ void ejsClearException(Ejs *ejs)
 }
 
 
-static EjsObj *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtArgs)
+static EV *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtArgs)
 {
     EjsError    *error;
-    EjsObj      *argv[1];
+    EV          *argv[1];
     char        *msg;
 
     mprAssert(type);
 
     msg = mprVasprintf(ejs, -1, fmt, fmtArgs);
-    argv[0] = (EjsObj*) ejsCreateString(ejs, msg);
+    argv[0] = ejsCreateStringFromCS(ejs, msg);
     if (argv[0] == 0) {
         mprAssert(argv[0]);
         return 0;
@@ -84,7 +84,7 @@ static EjsObj *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
         error->message = mprStrdup(error, ejsGetString(ejs, argv[0]));
         ejsFormatStack(ejs, error);
 #endif
-        return (EjsObj*) error;
+        return error;
         
     } else {
         error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
@@ -97,14 +97,14 @@ static EjsObj *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
     }
 #endif
     mprFree(msg);
-    return (EjsObj*) error;
+    return error;
 }
 
 
-EjsObj *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
+EV *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
 {
     EjsType     *type;
-    EjsObj      *error;
+    EV          *error;
 
     if (ejs->exception) {
 #if UNUSED
@@ -131,7 +131,7 @@ EjsObj *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
 }
 
 
-EjsObj *ejsThrowArgError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowArgError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -141,7 +141,7 @@ EjsObj *ejsThrowArgError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowArithmeticError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowArithmeticError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -151,7 +151,7 @@ EjsObj *ejsThrowArithmeticError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowAssertError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowAssertError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -161,7 +161,7 @@ EjsObj *ejsThrowAssertError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowInstructionError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowInstructionError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -171,7 +171,7 @@ EjsObj *ejsThrowInstructionError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -181,7 +181,7 @@ EjsObj *ejsThrowError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowIOError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowIOError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -191,7 +191,7 @@ EjsObj *ejsThrowIOError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowInternalError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowInternalError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -201,7 +201,7 @@ EjsObj *ejsThrowInternalError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowMemoryError(Ejs *ejs)
+EV *ejsThrowMemoryError(Ejs *ejs)
 {
     /*
         Don't do double exceptions for memory errors
@@ -214,7 +214,7 @@ EjsObj *ejsThrowMemoryError(Ejs *ejs)
 }
 
 
-EjsObj *ejsThrowOutOfBoundsError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowOutOfBoundsError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -224,7 +224,7 @@ EjsObj *ejsThrowOutOfBoundsError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowReferenceError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowReferenceError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -234,7 +234,7 @@ EjsObj *ejsThrowReferenceError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -244,7 +244,7 @@ EjsObj *ejsThrowResourceError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -254,7 +254,7 @@ EjsObj *ejsThrowStateError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowSyntaxError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowSyntaxError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -264,7 +264,7 @@ EjsObj *ejsThrowSyntaxError(Ejs *ejs, cchar *fmt, ...)
 }
 
 
-EjsObj *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...)
+EV *ejsThrowTypeError(Ejs *ejs, cchar *fmt, ...)
 {
     va_list     fmtArgs;
 
@@ -279,9 +279,8 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
     EjsFrame        *fp;
     EjsState        *state;
     EjsArray        *stack;
-    EjsObj          *frame;
-    EjsName         qname;
-    cchar           *line;
+    EV              *frame;
+    EjsString       *line;
     int             index;
 
     mprAssert(ejs);
@@ -292,24 +291,24 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
         for (fp = state->fp; fp; fp = fp->caller) {
             if (uplevels-- <= 0) {
                 if (fp->currentLine == 0) {
-                    line = "";
-                } else {
-                    for (line = fp->currentLine; *line && isspace((int) *line); line++) {
-                        ;
-                    }
+                    line = ejs->emptyString;
                 }
                 frame = ejsCreateSimpleObject(ejs);
-                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "filename"), 
-                    ejsCreatePath(ejs, fp->filename ? fp->filename : "undefined"));
-                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "lineno"), ejsCreateNumber(ejs, fp->lineNumber));
-                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "func"), ejsCreateString(ejs, fp->function.name));
-                ejsSetPropertyByName(ejs, frame, ejsName(&qname, "", "code"), ejsCreateString(ejs, line));
+                if (fp->filename) {
+                    ejsSetPropertyByName(ejs, frame, N("", "filename"), ejsCreatePath(ejs, fp->filename));
+                } else {
+                    ejsSetPropertyByName(ejs, frame, N("", "filename"), ejs->undefinedValue);
+                }
+                ejsSetPropertyByName(ejs, frame, N("", "lineno"), ejsCreateNumber(ejs, fp->lineNumber));
+                ejsSetPropertyByName(ejs, frame, N("", "func"), fp->function.name);
+                ejsSetPropertyByName(ejs, frame, N("", "code"), line);
                 ejsSetProperty(ejs, stack, index++, frame);
             }
         }
     }
     return stack;
 }
+
 
 #if UNUSED
 char *ejsFormatStack(Ejs *ejs, EjsError *error)
@@ -369,18 +368,16 @@ char *ejsFormatStack(Ejs *ejs, EjsError *error)
  */
 cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
 {
-    EjsObj      *message, *stack, *error;
-    EjsString   *str;
-    EjsObj      *saveException;
-    cchar       *tag, *msg;
+    EjsString   *str, *tag, *msg;
+    EV          *message, *stack, *error, *saveException;
     char        *buf;
 
-    error = (EjsObj*) ejs->exception;
+    error = ejs->exception;
     message = stack = 0;
-    tag = 0;
+    tag = NULL;
 
     if (error) {
-        tag = error->type->qname.name;
+        tag = TYPE(error)->qname.name;
         if (ejsIsA(ejs, error, ejs->errorType)) {
             message = ejsGetProperty(ejs, error, ES_Error_message);
             if (withStack) {
@@ -390,36 +387,34 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
                 ejs->exception = saveException;
             }
 
-        } else if (ejsIsString(error)) {
-            tag = "Error";
+        } else if (ejsIsString(ejs, error)) {
+            tag = ejsCreateStringFromCS(ejs, "Error");
             message = error;
 
-        } else if (ejsIsNumber(error)) {
-            tag = "Error";
+        } else if (ejsIsNumber(ejs, error)) {
+            tag = ejsCreateStringFromCS(ejs, "Error");
             message = error;
             
-        } else if (error == (EjsObj*) ejs->stopIterationType) {
-            //  MOB -- should never happen
-            tag = "StopIteration";
-            message = (EjsObj*) ejsCreateString(ejs, "Uncaught StopIteration exception");
+        } else if (error == ejs->stopIterationType) {
+            message = ejsCreateStringFromCS(ejs, "Uncaught StopIteration exception");
         }
     }
     if (message == ejs->nullValue || message == 0) {
-        msg = "Exception";
+        msg = ejsCreateStringFromCS(ejs, "Exception");
     } else{
-        msg = ejsToString(ejs, message)->value;
+        msg = ejsToString(ejs, message);
     }
     if (ejsIsA(ejs, error, ejs->errorType)) {
-        buf = mprAsprintf(ejs, -1, "%s: %s\nStack:\n%s", tag, msg, (stack) ? ejsGetString(ejs, stack) : "");
+        buf = mprAsprintf(ejs, -1, "%S: %S\nStack:\n%s", tag, msg, (stack) ? ejsGetString(ejs, stack) : "");
 
-    } else if (message && ejsIsString(message)){
-        buf = mprAsprintf(ejs, -1, "%s: %s", tag, msg);
+    } else if (message && ejsIsString(ejs, message)){
+        buf = mprAsprintf(ejs, -1, "%S: %S", tag, msg);
 
-    } else if (message && ejsIsNumber(message)){
-        buf = mprAsprintf(ejs, -1, "%s: %g", tag, msg);
+    } else if (message && ejsIsNumber(ejs, message)){
+        buf = mprAsprintf(ejs, -1, "%S: %g", tag, msg);
         
     } else if (error) {
-        EjsObj *saveException = ejs->exception;
+        EV *saveException = ejs->exception;
         ejs->exception = 0;
         str = ejsToString(ejs, error);
         buf = mprStrdup(ejs, ejsGetString(ejs, str));
@@ -440,7 +435,7 @@ bool ejsHasException(Ejs *ejs)
 }
 
 
-EjsObj *ejsGetException(Ejs *ejs)
+EV *ejsGetException(Ejs *ejs)
 {
     return ejs->exception;
 }

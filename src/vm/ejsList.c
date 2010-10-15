@@ -8,18 +8,17 @@
 
 #include    "ejs.h"
 
+#if UNUSED
 /****************************** Forward Declarations **************************/
 
-static int growList(MprCtx ctx, EjsList *lp, int incr);
+static int growList(Ejs *ejs, EjsList *lp, int incr);
 
-#define CAPACITY(lp) (mprGetBlockSize(lp) / sizeof(void*))
+#define CAPACITY(lp) (ejsGetBlockSize(lp) / sizeof(void*))
 
 //  OPT - inline some of these functions as macros
 
 /************************************ Code ************************************/
-/*
-    Initialize a list which may not be a memory context.
- */
+
 void ejsInitList(EjsList *lp)
 {
     lp->length = 0;
@@ -31,7 +30,7 @@ void ejsInitList(EjsList *lp)
 /*
     Define the list maximum size. If the list has not yet been written to, the initialSize will be observed.
  */
-int ejsSetListLimits(MprCtx ctx, EjsList *lp, int initialSize, int maxSize)
+int ejsSetListLimits(Ejs *ejs, EjsList *lp, int initialSize, int maxSize)
 {
     int         size;
 
@@ -44,9 +43,7 @@ int ejsSetListLimits(MprCtx ctx, EjsList *lp, int initialSize, int maxSize)
     size = initialSize * sizeof(void*);
 
     if (lp->items == 0) {
-        lp->items = (void**) mprAllocZeroed(ctx, size);
-        if (lp->items == 0) {
-            mprFree(lp);
+        if ((lp->items = (void**) ejsAlloc(ejs, size)) == NULL) {
             return MPR_ERR_NO_MEMORY;
         }
     }
@@ -58,7 +55,7 @@ int ejsSetListLimits(MprCtx ctx, EjsList *lp, int initialSize, int maxSize)
 /*
     Add an item to the list and return the item index.
  */
-int ejsAddItem(MprCtx ctx, EjsList *lp, cvoid *item)
+int ejsAddItem(Ejs *ejs, EjsList *lp, cvoid *item)
 {
     int     index, capacity;
 
@@ -69,7 +66,7 @@ int ejsAddItem(MprCtx ctx, EjsList *lp, cvoid *item)
     mprAssert(capacity >= 0);
 
     if (lp->items == 0 || lp->length >= capacity) {
-        if (growList(ctx, lp, 1) < 0) {
+        if (growList(ejs, lp, 1) < 0) {
             return MPR_ERR_TOO_MANY;
         }
     }
@@ -79,23 +76,25 @@ int ejsAddItem(MprCtx ctx, EjsList *lp, cvoid *item)
 }
 
 
-int ejsAddItemToSharedList(MprCtx ctx, EjsList *lp, cvoid *item)
+#if UNUSED
+int ejsAddItemToSharedList(Ejs *ejs, EjsList *lp, cvoid *item)
 {
     EjsList     tmp;
 
-    if (lp->items == NULL || !mprIsParent(ctx, lp->items)) {
+    if (lp->items == NULL || !mprIsParent(ejs, lp->items)) {
         tmp = *lp;
         lp->items = 0;
         lp->length = 0;
-        if (ejsCopyList(ctx, lp, &tmp) < 0) {
+        if (ejsCopyList(ejs, lp, &tmp) < 0) {
             return MPR_ERR_NO_MEMORY;
         }
     }
-    return ejsAddItem(ctx, lp, item);
+    return ejsAddItem(ejs, lp, item);
 }
+#endif
 
 
-EjsList *ejsAppendList(MprCtx ctx, EjsList *list, EjsList *add)
+EjsList *ejsAppendList(Ejs *ejs, EjsList *list, EjsList *add)
 {
     void        *item;
     int         next;
@@ -104,7 +103,7 @@ EjsList *ejsAppendList(MprCtx ctx, EjsList *list, EjsList *add)
     mprAssert(list != add);
 
     for (next = 0; ((item = ejsGetNextItem(add, &next)) != 0); ) {
-        if (ejsAddItem(ctx, list, item) < 0) {
+        if (ejsAddItem(ejs, list, item) < 0) {
             mprFree(list);
             return 0;
         }
@@ -119,6 +118,7 @@ void ejsClearList(EjsList *lp)
 
     mprAssert(lp);
 
+    //  MOB OPT - memset
     for (i = 0; i < lp->length; i++) {
         lp->items[i] = 0;
     }
@@ -126,7 +126,7 @@ void ejsClearList(EjsList *lp)
 }
 
 
-int ejsCopyList(MprCtx ctx, EjsList *dest, EjsList *src)
+int ejsCopyList(Ejs *ejs, EjsList *dest, EjsList *src)
 {
     void        *item;
     int         next, capacity;
@@ -134,11 +134,11 @@ int ejsCopyList(MprCtx ctx, EjsList *dest, EjsList *src)
     ejsClearList(dest);
 
     capacity = CAPACITY(src->items);
-    if (ejsSetListLimits(ctx, dest, capacity, src->maxSize) < 0) {
+    if (ejsSetListLimits(ejs, dest, capacity, src->maxSize) < 0) {
         return MPR_ERR_NO_MEMORY;
     }
     for (next = 0; (item = ejsGetNextItem(src, &next)) != 0; ) {
-        if (ejsAddItem(ctx, dest, item) < 0) {
+        if (ejsAddItem(ejs, dest, item) < 0) {
             return MPR_ERR_NO_MEMORY;
         }
     }
@@ -264,12 +264,12 @@ int ejsRemoveItemAtPos(EjsList *lp, int index)
 /*
     Grow the list by the requried increment
  */
-static int growList(MprCtx ctx, EjsList *lp, int incr)
+static int growList(Ejs *ejs, EjsList *lp, int incr)
 {
     int     len, memsize, capacity;
 
     /*
-     *  Need to grow the list
+        Need to grow the list
      */
     capacity = CAPACITY(lp->items);
     mprAssert(capacity >= 0);
@@ -284,24 +284,20 @@ static int growList(MprCtx ctx, EjsList *lp, int incr)
     }
 
     /*
-     *  If growing by 1, then use the default increment which exponentially grows.
-     *  Otherwise, assume the caller knows exactly how the list needs to grow.
+        If growing by 1, then use the default increment which exponentially grows. Otherwise, assume the caller 
+        knows exactly how the list needs to grow.
      */
-    if (incr <= 1) {
-        len = MPR_LIST_INCR + capacity + capacity;
-    } else {
-        len = capacity + incr;
-    }
+    len = (incr <= 1) ? (MPR_LIST_INCR + capacity + capacity) : (capacity + incr);
     memsize = len * sizeof(void*);
 
     /*
         Grow the list of items. Use the existing context for lp->items if it already exists. Otherwise use the list as the
         memory context.
      */
-    lp->items = (void**) mprRealloc(ctx, lp->items, memsize);
+    lp->items = (void**) ejsRealloc(ejs, lp->items, memsize);
 
     /*
-     *  Zero the new portion (required for no-compact lists)
+        Zero the new portion (required for no-compact lists)
      */
     memset(&lp->items[capacity], 0, sizeof(void*) * (len - capacity));
     return 0;
@@ -321,146 +317,8 @@ int ejsLookupItem(EjsList *lp, cvoid *item)
     }
     return MPR_ERR_NOT_FOUND;
 }
-
-
-#if KEEP
-/*
-    Change the item in the list at index. Return the old item.
- */
-void *ejsSetItem(MprCtx ctx, EjsList *lp, int index, cvoid *item)
-{
-    void    *old;
-
-    mprAssert(lp);
-    mprAssert(lp->length >= 0);
-
-    if (index >= lp->length) {
-        lp->length = index + 1;
-    }
-    capacity = CAPACITY(lp->items);
-    if (lp->length > capacity) {
-        if (growList(ctx, lp, lp->length - capacity) < 0) {
-            return 0;
-        }
-    }
-    old = lp->items[index];
-    lp->items[index] = (void*) item;
-    return old;
-}
-
-
-/*
-    Insert an item to the list at a specified position. We insert before "index".
- */
-int ejsInsertItemAtPos(MprCtx ctx, EjsList *lp, int index, cvoid *item)
-{
-    void    **items;
-    int     i;
-
-    mprAssert(lp);
-    mprAssert(lp->length >= 0);
-
-    if (lp->length >= CAPACITY(lp->items)) {
-        if (growList(ctx, lp, 1) < 0) {
-            return MPR_ERR_TOO_MANY;
-        }
-    }
-
-    /*
-     *  Copy up items to make room to insert
-     */
-    items = lp->items;
-    for (i = lp->length; i > index; i--) {
-        items[i] = items[i - 1];
-    }
-    lp->items[index] = (void*) item;
-    lp->length++;
-    return index;
-}
-
-
-/*
-    Remove an item from the list. Return the index where the item resided.
- */
-int ejsRemoveItem(MprCtx ctx, EjsList *lp, void *item)
-{
-    int     index;
-
-    mprAssert(lp);
-    mprAssert(lp->length > 0);
-
-    index = ejsLookupItem(lp, item);
-    if (index < 0) {
-        return index;
-    }
-    return ejsRemoveItemAtPos(ctx, lp, index);
-}
-
-
-/*
-    Remove a set of items. Return 0 if successful.
- */
-int ejsRemoveRangeOfItems(EjsList *lp, int start, int end)
-{
-    void    **items;
-    int     i, count, capacity;
-
-    mprAssert(lp);
-    mprAssert(lp->length > 0);
-    mprAssert(start > end);
-
-    if (start < 0 || start >= lp->length) {
-        return MPR_ERR_NOT_FOUND;
-    }
-    if (end < 0 || end >= lp->length) {
-        return MPR_ERR_NOT_FOUND;
-    }
-    if (start > end) {
-        return MPR_ERR_BAD_ARGS;
-    }
-
-    /*
-     *  Copy down to coejsess
-     */
-    items = lp->items;
-    count = end - start;
-    for (i = start; i < (lp->length - count); i++) {
-        items[i] = items[i + count];
-    }
-    lp->length -= count;
-    capacity = CAPACITY(lp->items);
-    for (i = lp->length; i < capacity; i++) {
-        items[i] = 0;
-    }
-    return 0;
-}
-
-
-void *ejsGetFirstItem(EjsList *lp)
-{
-    mprAssert(lp);
-
-    if (lp == 0) {
-        return 0;
-    }
-    if (lp->length == 0) {
-        return 0;
-    }
-    return lp->items[0];
-}
-
-
-int ejsGetListCapacity(EjsList *lp)
-{
-    mprAssert(lp);
-
-    if (lp == 0) {
-        return 0;
-    }
-    return CAPACITY(lp->items);
-}
-
 #endif
+
 
 /*
     @copy   default

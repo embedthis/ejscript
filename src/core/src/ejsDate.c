@@ -77,11 +77,11 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         Binary operators
      */
     case EJS_OP_ADD:
-        if (ejsIsUndefined(rhs)) {
+        if (ejsIsUndefined(ejs, rhs)) {
             return (EjsObj*) ejs->nanValue;
-        } else if (ejsIsNull(rhs)) {
+        } else if (ejsIsNull(ejs, rhs)) {
             rhs = (EjsObj*) ejs->zeroValue;
-        } else if (ejsIsBoolean(rhs) || ejsIsNumber(rhs)) {
+        } else if (ejsIsBoolean(ejs, rhs) || ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         } else {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
@@ -95,7 +95,7 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsString(rhs)) {
+        if (ejsIsString(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
@@ -125,7 +125,7 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         return (EjsObj*) ejs->falseValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -136,7 +136,7 @@ static EjsObj *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *r
 {
     EjsObj      *result;
 
-    if (rhs == 0 || lhs->obj.type != rhs->obj.type) {
+    if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if (!ejsIsA(ejs, (EjsObj*) lhs, ejs->dateType) || !ejsIsA(ejs, (EjsObj*) rhs, ejs->dateType)) {
             if ((result = coerceDateOperands(ejs, (EjsObj*) lhs, opcode, (EjsObj*) rhs)) != 0) {
                 return result;
@@ -232,7 +232,7 @@ static EjsObj *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *r
         return (EjsObj*) ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) ^ fixed(rhs->value)));
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %s", opcode, lhs->obj.type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
     /* Should never get here */
@@ -263,7 +263,7 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
     struct tm   tm;
     int         year;
 
-    mprAssert(argc == 1 && ejsIsArray(argv[0]));
+    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
     args = (EjsArray*) argv[0];
 
@@ -273,16 +273,16 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
 
     } else if (args->length == 1) {
         vp = ejsGetProperty(ejs, (EjsObj*) args, 0);
-        if (ejsIsNumber(vp)) {
+        if (ejsIsNumber(ejs, vp)) {
             /* Milliseconds */
             date->value = ejsGetNumber(ejs, vp);
 
-        } else if (ejsIsString(vp)) {
+        } else if (ejsIsString(ejs, vp)) {
             if (mprParseTime(ejs, &date->value, ejsGetString(ejs, vp), MPR_LOCAL_TIMEZONE, NULL) < 0) {
                 ejsThrowArgError(ejs, "Can't parse date string: %s", ejsGetString(ejs, vp));
                 return 0;
             }
-        } else if (ejsIsDate(vp)) {
+        } else if (ejsIsDate(ejs, vp)) {
             date->value = ((EjsDate*) vp)->value;
 
         } else {

@@ -17,7 +17,7 @@
 
 static EjsObj *castBooleanVar(Ejs *ejs, EjsBoolean *vp, EjsType *type)
 {
-    mprAssert(ejsIsBoolean(vp));
+    mprAssert(ejsIsBoolean(ejs, vp));
 
     switch (type->id) {
 
@@ -25,7 +25,7 @@ static EjsObj *castBooleanVar(Ejs *ejs, EjsBoolean *vp, EjsType *type)
         return (EjsObj*) ((vp->value) ? ejs->oneValue: ejs->zeroValue);
 
     case ES_String:
-        return (EjsObj*) ejsCreateString(ejs, (vp->value) ? "true" : "false");
+        return (EjsObj*) ejsCreateStringFromCS(ejs, (vp->value) ? "true" : "false");
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -42,9 +42,9 @@ static EjsObj *coerceBooleanOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *
     switch (opcode) {
 
     case EJS_OP_ADD:
-        if (ejsIsUndefined(rhs)) {
+        if (ejsIsUndefined(ejs, rhs)) {
             return (EjsObj*) ejs->nanValue;
-        } else if (ejsIsNull(rhs) || ejsIsNumber(rhs) || ejsIsDate(rhs)) {
+        } else if (ejsIsNull(ejs, rhs) || ejsIsNumber(ejs, rhs) || ejsIsDate(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         } else {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
@@ -58,7 +58,7 @@ static EjsObj *coerceBooleanOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
-        if (ejsIsString(rhs)) {
+        if (ejsIsString(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
@@ -88,7 +88,7 @@ static EjsObj *coerceBooleanOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *
         return (EjsObj*) ejs->falseValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
 }
@@ -101,7 +101,7 @@ static EjsObj *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
 {
     EjsObj      *result;
 
-    if (rhs == 0 || lhs->obj.type != rhs->obj.type) {
+    if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if (!ejsIsA(ejs, (EjsObj*) lhs, ejs->booleanType) || !ejsIsA(ejs, (EjsObj*) rhs, ejs->booleanType)) {
             if ((result = coerceBooleanOperands(ejs, (EjsObj*) lhs, opcode, (EjsObj*) rhs)) != 0) {
                 return result;
@@ -191,7 +191,7 @@ static EjsObj *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
         return (EjsObj*) ejsCreateBoolean(ejs, lhs->value ^ rhs->value);
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %s", opcode, lhs->obj.type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
 }
@@ -234,7 +234,6 @@ void ejsCreateBooleanType(Ejs *ejs)
 
     type = ejs->booleanType = ejsCreateNativeType(ejs, "ejs", "Boolean", ES_Boolean, sizeof(EjsBoolean));
     type->immutable = 1;
-
     type->helpers.cast = (EjsCastHelper) castBooleanVar;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeBooleanOperator;
 
@@ -248,9 +247,6 @@ void ejsCreateBooleanType(Ejs *ejs)
     vp = (EjsBoolean*) ejsCreate(ejs, type, 0);
     vp->value = 0;
     ejs->falseValue = (EjsObj*) vp;
-
-    ejsSetDebugName(ejs->falseValue, "false");
-    ejsSetDebugName(ejs->trueValue, "true");
 }
 
 

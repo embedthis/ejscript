@@ -18,13 +18,13 @@ void ejsCreateConfigType(Ejs *ejs)
     type = ejs->configType = ejsCreateNativeType(ejs, "ejs", "Config", ES_Config, sizeof(EjsObj));
 
     ejsSetProperty(ejs, type, ES_Config_Debug, BLD_DEBUG ? ejs->trueValue: ejs->falseValue);
-    ejsSetProperty(ejs, type, ES_Config_CPU, ejsCreateString(ejs, BLD_HOST_CPU));
-    ejsSetProperty(ejs, type, ES_Config_OS, ejsCreateString(ejs, BLD_OS));
-    ejsSetProperty(ejs, type, ES_Config_Product, ejsCreateString(ejs, BLD_PRODUCT));
+    ejsSetProperty(ejs, type, ES_Config_CPU, ejsCreateStringFromCS(ejs, BLD_HOST_CPU));
+    ejsSetProperty(ejs, type, ES_Config_OS, ejsCreateStringFromCS(ejs, BLD_OS));
+    ejsSetProperty(ejs, type, ES_Config_Product, ejsCreateStringFromCS(ejs, BLD_PRODUCT));
 
-    ejsSetProperty(ejs, type, ES_Config_Title, ejsCreateString(ejs, BLD_NAME));
+    ejsSetProperty(ejs, type, ES_Config_Title, ejsCreateStringFromCS(ejs, BLD_NAME));
     mprSprintf(ejs, version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
-    ejsSetProperty(ejs, type, ES_Config_Version, ejsCreateString(ejs, version));
+    ejsSetProperty(ejs, type, ES_Config_Version, ejsCreateStringFromCS(ejs, version));
 
     ejsSetProperty(ejs, type, ES_Config_Legacy, ejsCreateBoolean(ejs, BLD_FEATURE_LEGACY_API));
     ejsSetProperty(ejs, type, ES_Config_SSL, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
@@ -35,14 +35,14 @@ void ejsCreateConfigType(Ejs *ejs)
     char    *path;
 
     path = mprGetAppDir(ejs);
-    ejsSetProperty(ejs, type, ES_Config_BinDir, ejsCreateString(ejs, path));
-    ejsSetProperty(ejs, type, ES_Config_ModDir, ejsCreateString(ejs, path));
-    ejsSetProperty(ejs, type, ES_Config_LibDir, ejsCreateString(ejs, path));
+    ejsSetProperty(ejs, type, ES_Config_BinDir, ejsCreateStringFromCS(ejs, path));
+    ejsSetProperty(ejs, type, ES_Config_ModDir, ejsCreateStringFromCS(ejs, path));
+    ejsSetProperty(ejs, type, ES_Config_LibDir, ejsCreateStringFromCS(ejs, path));
 }
 #else
-    ejsSetProperty(ejs, type, ES_Config_BinDir, ejsCreateString(ejs, BLD_BIN_PREFIX));
-    ejsSetProperty(ejs, type, ES_Config_ModDir, ejsCreateString(ejs, BLD_MOD_PREFIX));
-    ejsSetProperty(ejs, type, ES_Config_LibDir, ejsCreateString(ejs, BLD_LIB_PREFIX));
+    ejsSetProperty(ejs, type, ES_Config_BinDir, ejsCreateStringFromCS(ejs, BLD_BIN_PREFIX));
+    ejsSetProperty(ejs, type, ES_Config_ModDir, ejsCreateStringFromCS(ejs, BLD_MOD_PREFIX));
+    ejsSetProperty(ejs, type, ES_Config_LibDir, ejsCreateStringFromCS(ejs, BLD_LIB_PREFIX));
 #endif
 }
 

@@ -20,7 +20,7 @@ typedef struct Lst {
     EjsModule   *module;                    /* Module holding class, function or property */
     EjsModule   *dependency;                /* Dependant module */
     EjsType     *type;                      /* Class reference */
-    EjsVar      *owner;                     /* Owner (type, function, block) for the element */
+    EjsObj      *owner;                     /* Owner (type, function, block) for the element */
     EjsFunction *fun;                       /* Relevant function */
     int         numSlots;                   /* Number of slots*/
     int         slotNum;                    /* Slot number */
@@ -34,8 +34,7 @@ typedef struct Lst {
 /*
     Mod manager control structure
  */
-typedef struct EjsMod
-{
+typedef struct EjsMod {
     char        *currentLine;               /* Current input source code line */
     int         currentLineNumber;          /* Current input source line number */
     char        *currentFileName;           /* Current input file name */

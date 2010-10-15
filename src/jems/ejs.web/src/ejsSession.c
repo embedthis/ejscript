@@ -24,10 +24,8 @@ static void sessionTimer(EjsHttpServer *sp, MprEvent *event);
 static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
 {
     EjsObj      *vp;
-    Ejs         *master;
 
-    master = ejs->master ? ejs->master : ejs;
-    ejsLockVm(master);
+    ejsLockService(ejs);
     vp = ejs->objectType->helpers.getProperty(ejs, (EjsObj*) sp, slotNum);
     if (vp) {
         vp = ejsDeserialize(ejs, (EjsString*) vp);
@@ -36,7 +34,7 @@ static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
         vp = (EjsObj*) ejs->emptyStringValue;
     }
     noteSessionActivity(ejs, sp);
-    ejsUnlockVm(master);
+    ejsUnlockService(ejs);
     return vp;
 }
 
@@ -44,12 +42,10 @@ static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
 static EjsObj *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName *qname)
 {
     EjsObj      *vp;
-    Ejs         *master;
     int         slotNum;
 
     qname->space = EJS_EMPTY_NAMESPACE;
-    master = ejs->master ? ejs->master : ejs;
-    ejsLockVm(master);
+    ejsLockService(ejs);
 
     slotNum = ejs->objectType->helpers.lookupProperty(ejs, (EjsObj*) sp, qname);
     if (slotNum < 0) {
@@ -64,25 +60,22 @@ static EjsObj *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName *qname
         }
     }
     noteSessionActivity(ejs, sp);
-    ejsUnlockVm(master);
+    ejsUnlockService(ejs);
     return vp;
 }
 
 
 static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsObj *value)
 {
-    Ejs     *master;
-    
-    /*  
-        Allocate the serialized object using the master interpreter
-     */
-    master = ejs->master ? ejs->master : ejs;
-    ejsLockVm(master);
+    ejsLockService(ejs);
 
-    value = (EjsObj*) ejsToJSON(master, value, NULL);
-    slotNum = master->objectType->helpers.setProperty(master, (EjsObj*) sp, slotNum, value);
+    value = (EjsObj*) ejsToJSON(ejs, value, NULL);
+
+    //  MOB -- but how is this collected
+    value = mprStrdup(ejs->service, value);
+    slotNum = ejs->objectType->helpers.setProperty(ejs, (EjsObj*) sp, slotNum, value);
     noteSessionActivity(ejs, sp);
-    ejsUnlockVm(master);
+    ejsUnlockService(ejs);
     return slotNum;
 }
 
@@ -122,7 +115,6 @@ void ejsUpdateSessionLimits(Ejs *ejs, EjsHttpServer *server)
 
 EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
 {
-    Ejs             *master;
     EjsName         qname;
     EjsSession      *session;
     EjsHttpServer   *server;
@@ -130,7 +122,6 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
     char            *id, *cp, *value;
     int             quoted, len;
 
-    master = ejs->master ? ejs->master : ejs;
     server = req->server;
     session = 0;
 
@@ -160,7 +151,7 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
             len = (int) (cp - value);
             id = mprMemdup(req, value, len + 1);
             id[len] = '\0';
-            session = ejsGetPropertyByName(master, server->sessions, ejsName(&qname, "", id));
+            session = ejsGetPropertyByName(ejs, server->sessions, ejsName(&qname, "", id));
             mprFree(id);
             break;
         }
@@ -170,12 +161,10 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
 
 
 /*  
-    Create a new session object. This is created in the master interpreter and will persist past the life 
-    of the current request. This will allocate a new session ID. Timeout is in msec.
+    Create a new session object.  This will allocate a new session ID. Timeout is in msec.
  */
 EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure)
 {
-    Ejs             *master;
     EjsSession      *session;
     EjsName         qname;
     EjsHttpServer   *server;
@@ -184,7 +173,6 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     char            idBuf[64], *id;
     int             count, slotNum, next;
 
-    master = ejs->master ? ejs->master : ejs;
     if ((server = req->server) == 0) {
         return 0;
     }
@@ -195,10 +183,10 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     }
     now = mprGetTime(ejs);
 
-    ejsLockVm(master);
-    session = (EjsSession*) ejsCreateObject(master, ejs->sessionType, 0);
+    ejsLockService(ejs);
+    session = (EjsSession*) ejsCreateObject(ejs, ejs->sessionType, 0);
     if (session == 0) {
-        ejsUnlockVm(master);
+        ejsUnlockService(ejs);
         return 0;
     }
     session->timeout = timeout;
@@ -211,7 +199,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     id = mprGetMD5Hash(session, idBuf, sizeof(idBuf), "x");
     if (id == 0) {
         mprFree(session);
-        ejsUnlockVm(master);
+        ejsUnlockService(ejs);
         return 0;
     }
     session->id = mprStrdup(session, id);
@@ -224,13 +212,13 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     if (count >= limits->sessionCount) {
         ejsThrowResourceError(ejs, "Too many sessions: %d, limit %d", count, limits->sessionCount);
         mprFree(session);
-        ejsUnlockVm(master);
+        ejsUnlockService(ejs);
         return 0;
     }
-    slotNum = ejsSetPropertyByName(master, server->sessions, EN(&qname, session->id), session);
+    slotNum = ejsSetPropertyByName(ejs, server->sessions, EN(&qname, session->id), session);
     if (slotNum < 0) {
         mprFree(session);
-        ejsUnlockVm(master);
+        ejsUnlockService(ejs);
         return 0;
     }
     session->index = slotNum;
@@ -239,7 +227,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
         server->sessionTimer = mprCreateTimerEvent(ejs->dispatcher, "sessionTimer", EJS_TIMER_PERIOD, 
             (MprEventProc) sessionTimer, server, MPR_EVENT_CONTINUOUS);
     }
-    ejsUnlockVm(master);
+    ejsUnlockService(ejs);
 
     mprLog(ejs, 3, "Created new session %s. Count %d/%d", id, slotNum + 1, limits->sessionCount);
     if (server->emitter) {
@@ -254,17 +242,15 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
  */
 int ejsDestroySession(Ejs *ejs, EjsHttpServer *server, EjsSession *session)
 {
-    Ejs         *master;
     EjsName     qname;
     int         slotNum;
 
     if (session && server->sessions) {
-        master = ejs->master ? ejs->master : ejs;
         if (server) {
             ejsSendEvent(ejs, server->emitter, "destroySession", NULL, (EjsObj*) ejsCreateString(ejs, session->id));
         }
-        if ((slotNum = ejsLookupProperty(master, server->sessions, EN(&qname, session->id))) >= 0) {
-            ejsDeleteProperty(master, server->sessions, slotNum);
+        if ((slotNum = ejsLookupProperty(ejs, server->sessions, EN(&qname, session->id))) >= 0) {
+            ejsDeleteProperty(ejs, server->sessions, slotNum);
             return 1;
         }
     }

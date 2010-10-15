@@ -23,13 +23,13 @@ static EjsObj *castVoid(Ejs *ejs, EjsVoid *vp, EjsType *type)
         return (EjsObj*) ejs->nanValue;
 
     case ES_Object:
-        return vp;
+        return (EjsObj*) vp;
 
     case ES_String:
-        return (EjsObj*) ejsCreateString(ejs, "undefined");
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "undefined");
 
     case ES_Uri:
-        return (EjsObj*) ejsCreateUri(ejs, "undefined");
+        return (EjsObj*) ejsCreateUriFromCS(ejs, "undefined");
             
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -44,14 +44,14 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
     switch (opcode) {
 
     case EJS_OP_ADD:
-        if (!ejsIsNumber(rhs)) {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
+        if (!ejsIsNumber(ejs, rhs)) {
+            return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, (EjsObj*) lhs), opcode, (EjsObj*) rhs);
         }
         /* Fall through */
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, (EjsObj*) ejs->nanValue, opcode, rhs);
+        return ejsInvokeOperator(ejs, (EjsObj*) ejs->nanValue, opcode, (EjsObj*) rhs);
 
     /*
      *  Comparision
@@ -61,7 +61,7 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
         return (EjsObj*) ejs->falseValue;
 
     case EJS_OP_COMPARE_NE:
-        if (ejsIsNull(rhs)) {
+        if (ejsIsNull(ejs, rhs)) {
             return (EjsObj*) ejs->falseValue;
         }
         return (EjsObj*) ejs->trueValue;
@@ -70,7 +70,7 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
         return (EjsObj*) ejs->trueValue;
 
     case EJS_OP_COMPARE_EQ:
-        if (ejsIsNull(rhs)) {
+        if (ejsIsNull(ejs, rhs)) {
             return (EjsObj*) ejs->trueValue;
         }
         return (EjsObj*) ejs->falseValue;
@@ -95,7 +95,7 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
         return (EjsObj*) ejs->falseValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -107,7 +107,7 @@ static EjsObj *invokeVoidOperator(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
 {
     EjsObj      *result;
 
-    if (rhs == 0 || lhs->type != rhs->type) {
+    if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if ((result = coerceVoidOperands(ejs, lhs, opcode, rhs)) != 0) {
             return result;
         }
@@ -146,7 +146,7 @@ static EjsObj *invokeVoidOperator(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
         return (EjsObj*) ejs->nanValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
     mprAssert(0);
@@ -190,7 +190,6 @@ void ejsCreateVoidType(Ejs *ejs)
     type->helpers.getProperty      = (EjsGetPropertyHelper) getVoidProperty;
 
     ejs->undefinedValue = ejsCreate(ejs, type, 0);
-    ejsSetDebugName(ejs->undefinedValue, "undefined");
 }
 
 

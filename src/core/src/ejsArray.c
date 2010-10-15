@@ -14,17 +14,17 @@
 /***************************** Forward Declarations ***************************/
 
 static int  checkSlot(Ejs *ejs, EjsArray *ap, int slotNum);
-static bool compareArrayElement(Ejs *ejs, EjsObj *v1, EjsObj *v2);
+static bool compareArrayElement(Ejs *ejs, EV *v1, EV *v2);
 static int growArray(Ejs *ejs, EjsArray *ap, int len);
-static int lookupArrayProperty(Ejs *ejs, EjsArray *ap, EjsName *qname);
-static EjsObj *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
-static EjsObj *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
-static EjsObj *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
+static int lookupArrayProperty(Ejs *ejs, EjsArray *ap, EjsName qname);
+static EV *pushArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv);
+static EjsArray *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv);
+static EjsString *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EV **argv);
 
-static EjsObj *makeIntersection(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
-static EjsObj *makeUnion(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
-static EjsObj *removeArrayElements(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
-static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv);
+static EjsArray *makeIntersection(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
+static EjsArray *makeUnion(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
+static EjsArray *removeArrayElements(Ejs *ejs, EjsArray *lhs, EjsArray *rhs);
+static EV *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EV **argv);
 
 /******************************************************************************/
 /*
@@ -52,14 +52,14 @@ static EjsArray *createArray(Ejs *ejs, EjsType *type, int numSlots)
 /*
     Cast the object operand to a primitive type
  */
-static EjsObj *castArray(Ejs *ejs, EjsArray *vp, EjsType *type)
+static EV *castArray(Ejs *ejs, EjsArray *vp, EjsType *type)
 {
     switch (type->id) {
     case ES_Boolean:
-        return (EjsObj*) ejs->trueValue;
+        return ejs->trueValue;
 
     case ES_Number:
-        return (EjsObj*) ejs->zeroValue;
+        return ejs->zeroValue;
 
     case ES_String:
         return arrayToString(ejs, vp, 0, 0);
@@ -71,13 +71,13 @@ static EjsObj *castArray(Ejs *ejs, EjsArray *vp, EjsType *type)
 }
 
 
-static EjsArray *cloneArray(Ejs *ejs, EjsArray *ap, bool deep)
+EjsArray *ejsCloneArray(Ejs *ejs, EjsArray *ap, bool deep)
 {
     EjsArray    *newArray;
-    EjsObj      **dest, **src;
+    EV          **dest, **src;
     int         i;
 
-    newArray = (EjsArray*) ejsCloneObject(ejs, (EjsObj*) ap, deep);
+    newArray = (EjsArray*) ejsCloneObject(ejs, ap, deep);
     if (newArray == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -95,22 +95,22 @@ static EjsArray *cloneArray(Ejs *ejs, EjsArray *ap, bool deep)
                 dest[i] = ejsClone(ejs, src[i], 1);
             }
         } else {
-            memcpy(dest, src, ap->length * sizeof(EjsObj*));
+            memcpy(dest, src, ap->length * sizeof(EV*));
         }
     }
     return newArray;
 }
 
 
+#if UNUSED
 //  TODO - can remove as free var will do this automatically
 static void destroyArray(Ejs *ejs, EjsArray *ap)
 {
     mprAssert(ap);
 
-    mprFree(ap->data);
-    ap->data = 0;
-    ejsFreeVar(ejs, (EjsObj*) ap, -1);
+    ejsFreeVar(ejs, ap, -1);
 }
+#endif
 
 
 /*
@@ -135,12 +135,12 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
 /*
     Delete an element by name.
  */
-static int deleteArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName *qname)
+static int deleteArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
-    if (isdigit((int) qname->name[0])) {
-        return deleteArrayProperty(ejs, ap, atoi(qname->name));
+    if (isdigit((int) qname.name->value[0])) {
+        return deleteArrayProperty(ejs, ap, atoi(qname.name->value));
     }
-    return (ejs->objectType->helpers.deletePropertyByName)(ejs, (EjsObj*) ap, qname);
+    return (ejs->objectType->helpers.deletePropertyByName)(ejs, ap, qname);
 }
 
 
@@ -156,7 +156,7 @@ static int getArrayPropertyCount(Ejs *ejs, EjsArray *ap)
 /*
     Get an array element. Slot numbers correspond to indicies.
  */
-static EjsObj *getArrayProperty(Ejs *ejs, EjsArray *ap, int slotNum)
+static EV *getArrayProperty(Ejs *ejs, EjsArray *ap, int slotNum)
 {
     if (slotNum < 0 || slotNum >= ap->length) {
         return ejs->undefinedValue;
@@ -165,12 +165,12 @@ static EjsObj *getArrayProperty(Ejs *ejs, EjsArray *ap, int slotNum)
 }
 
 
-static EjsObj *getArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName *qname)
+static EV *getArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
     int     slotNum;
 
-    if (isdigit((int) qname->name[0])) { 
-        slotNum = atoi(qname->name);
+    if (isdigit((int) qname.name->value[0])) { 
+        slotNum = ejsAtoi(ejs, qname.name, 10);
         if (slotNum < 0 || slotNum >= ap->length) {
             return 0;
         }
@@ -178,32 +178,31 @@ static EjsObj *getArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName *qname)
     }
 
     /* The "length" property is a method getter */
-    if (strcmp(qname->name, "length") == 0) {
+    if (qname.name == ejs->lengthString) {
         return 0;
     }
-    slotNum = (ejs->objectType->helpers.lookupProperty)(ejs, (EjsObj*) ap, qname);
+    slotNum = (ejs->objectType->helpers.lookupProperty)(ejs, ap, qname);
     if (slotNum < 0) {
         return 0;
     }
-    return (ejs->objectType->helpers.getProperty)(ejs, (EjsObj*) ap, slotNum);
+    return (ejs->objectType->helpers.getProperty)(ejs, ap, slotNum);
 }
 
 
 /*
     Lookup an array index.
  */
-static int lookupArrayProperty(Ejs *ejs, EjsArray *ap, EjsName *qname)
+static int lookupArrayProperty(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
     int     index;
 
-    if (qname == 0 || !isdigit((int) qname->name[0])) {
+    if (qname.name == 0 || !isdigit((int) qname.name->value[0])) {
         return EJS_ERR;
     }
-    index = atoi(qname->name);
+    index = ejsAtoi(ejs, qname.name, 10);
     if (index < ap->length) {
         return index;
     }
-
     return EJS_ERR;
 }
 
@@ -211,7 +210,7 @@ static int lookupArrayProperty(Ejs *ejs, EjsArray *ap, EjsName *qname)
 /*
     Cast operands as required for invokeArrayOperator
  */
-static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsObj *rhs)
+static EV *coerceArrayOperands(Ejs *ejs, EV *lhs, int opcode,  EV *rhs)
 {
     switch (opcode) {
     /*
@@ -222,34 +221,34 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsObj *r
 
     case EJS_OP_AND: case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_OR: case EJS_OP_REM:
     case EJS_OP_SHL: case EJS_OP_SHR: case EJS_OP_SUB: case EJS_OP_USHR: case EJS_OP_XOR:
-        return ejsInvokeOperator(ejs, (EjsObj*) ejs->zeroValue, opcode, rhs);
+        return ejsInvokeOperator(ejs, ejs->zeroValue, opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
-        if (ejsIsNull(rhs) || ejsIsUndefined(rhs)) {
-            return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
-        } else if (ejsIsNumber(rhs)) {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
+        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
+            return ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
+        } else if (ejsIsNumber(ejs, rhs)) {
+            return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsNumber(rhs)) {
-            return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
+        if (ejsIsNumber(ejs, rhs)) {
+            return ejsInvokeOperator(ejs, ejsToNumber(ejs, lhs), opcode, rhs);
         }
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
+        return ejsInvokeOperator(ejs, ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NOT_ZERO:
     case EJS_OP_COMPARE_NULL:
-        return (EjsObj*) ejs->trueValue;
+        return ejs->trueValue;
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ejs->falseValue;
+        return ejs->falseValue;
 
     /*
         Unary operators
@@ -258,18 +257,18 @@ static EjsObj *coerceArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsObj *r
         return 0;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
 }
 
 
-static EjsObj *invokeArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsObj *rhs)
+static EV *invokeArrayOperator(Ejs *ejs, EV *lhs, int opcode,  EV *rhs)
 {
-    EjsObj      *result;
+    EV      *result;
 
-    if (rhs == 0 || lhs->type != rhs->type) {
+    if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if ((result = coerceArrayOperands(ejs, lhs, opcode, rhs)) != 0) {
             return result;
         }
@@ -279,75 +278,73 @@ static EjsObj *invokeArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsObj *r
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_GE:
-        return (EjsObj*) ejsCreateBoolean(ejs, (lhs == rhs));
+        return ejsCreateBoolean(ejs, (lhs == rhs));
 
     case EJS_OP_COMPARE_NE: case EJS_OP_COMPARE_STRICTLY_NE:
     case EJS_OP_COMPARE_LT: case EJS_OP_COMPARE_GT:
-        return (EjsObj*) ejsCreateBoolean(ejs, !(lhs == rhs));
+        return ejsCreateBoolean(ejs, !(lhs == rhs));
 
     /*
         Unary operators
      */
     case EJS_OP_COMPARE_NOT_ZERO:
-        return (EjsObj*) ejs->trueValue;
+        return ejs->trueValue;
 
     case EJS_OP_COMPARE_UNDEFINED:
     case EJS_OP_COMPARE_NULL:
     case EJS_OP_COMPARE_FALSE:
     case EJS_OP_COMPARE_TRUE:
     case EJS_OP_COMPARE_ZERO:
-        return (EjsObj*) ejs->falseValue;
+        return ejs->falseValue;
 
     case EJS_OP_LOGICAL_NOT: case EJS_OP_NOT: case EJS_OP_NEG:
-        return (EjsObj*) ejs->oneValue;
+        return ejs->oneValue;
 
     /*
         Binary operators
      */
     case EJS_OP_DIV: case EJS_OP_MUL: case EJS_OP_REM:
     case EJS_OP_SHR: case EJS_OP_USHR: case EJS_OP_XOR:
-        return (EjsObj*) ejs->zeroValue;
+        return ejs->zeroValue;
 
-#if EXTENSIONS || 1
     /*
         Operator overload
      */
     case EJS_OP_ADD:
-        result = (EjsObj*) ejsCreateArray(ejs, 0);
-        pushArray(ejs, (EjsArray*) result, 1, (EjsObj**) &lhs);
-        pushArray(ejs, (EjsArray*) result, 1, (EjsObj**) &rhs);
+        result = ejsCreateArray(ejs, 0);
+        pushArray(ejs, (EjsArray*) result, 1, &lhs);
+        pushArray(ejs, (EjsArray*) result, 1, &rhs);
         return result;
 
     case EJS_OP_AND:
-        return (EjsObj*) makeIntersection(ejs, (EjsArray*) lhs, (EjsArray*) rhs);
+        return makeIntersection(ejs, (EjsArray*) lhs, (EjsArray*) rhs);
 
     case EJS_OP_OR:
-        return (EjsObj*) makeUnion(ejs, (EjsArray*) lhs, (EjsArray*) rhs);
+        return makeUnion(ejs, (EjsArray*) lhs, (EjsArray*) rhs);
 
     case EJS_OP_SHL:
         return pushArray(ejs, (EjsArray*) lhs, 1, &rhs);
 
     case EJS_OP_SUB:
-        return (EjsObj*) removeArrayElements(ejs, (EjsArray*) lhs, (EjsArray*) rhs);
-#endif
+        return removeArrayElements(ejs, (EjsArray*) lhs, (EjsArray*) rhs);
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %s", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
-
     mprAssert(0);
 }
 
 
 static void markArrayVar(Ejs *ejs, EjsArray *ap)
 {
-    EjsObj          *vp;
-    int             i;
+    EV          *vp;
+    int         i;
 
-    mprAssert(ejsIsArray(ap));
+    mprAssert(ejsIsArray(ejs, ap));
 
-    ejsMarkObject(ejs, (EjsObj*) ap);
+    ejsMarkObject(ejs, ap);
+    ejsMark(ejs, ap->data);
     for (i = ap->length - 1; i >= 0; i--) {
         if ((vp = ap->data[i]) != 0) {
             ejsMark(ejs, vp);
@@ -360,7 +357,7 @@ static void markArrayVar(Ejs *ejs, EjsArray *ap)
     Create or update an array elements. If slotNum is < 0, then create the next free array slot. If slotNum is greater
     than the array length, grow the array.
  */
-static int setArrayProperty(Ejs *ejs, EjsArray *ap, int slotNum,  EjsObj *value)
+static int setArrayProperty(Ejs *ejs, EjsArray *ap, int slotNum,  EV *value)
 {
     if ((slotNum = checkSlot(ejs, ap, slotNum)) < 0) {
         return EJS_ERR;
@@ -370,33 +367,32 @@ static int setArrayProperty(Ejs *ejs, EjsArray *ap, int slotNum,  EjsObj *value)
 }
 
 
-static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName *qname, EjsObj *value)
+static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname, EV *value)
 {
     int     slotNum;
 
-    if (!isdigit((int) qname->name[0])) { 
+    if (!isdigit((int) qname.name->value[0])) { 
         /* The "length" property is a method getter */
-        if (strcmp(qname->name, "length") == 0) {
+        if (qname.name == ejs->lengthString) {
             setArrayLength(ejs, ap, 1, &value);
             return ES_Array_length;
         }
-        slotNum = (ejs->objectType->helpers.lookupProperty)(ejs, (EjsObj*) ap, qname);
+        slotNum = (ejs->objectType->helpers.lookupProperty)(ejs, ap, qname);
         if (slotNum < 0) {
-            slotNum = (ejs->objectType->helpers.setProperty)(ejs, (EjsObj*) ap, slotNum, value);
+            slotNum = (ejs->objectType->helpers.setProperty)(ejs, ap, slotNum, value);
             if (slotNum < 0) {
                 return EJS_ERR;
             }
-            if ((ejs->objectType->helpers.setPropertyName)(ejs, (EjsObj*) ap, slotNum, qname) < 0) {
+            if ((ejs->objectType->helpers.setPropertyName)(ejs, ap, slotNum, qname) < 0) {
                 return EJS_ERR;
             }
             return slotNum;
 
         } else {
-            return (ejs->objectType->helpers.setProperty)(ejs, (EjsObj*) ap, slotNum, value);
+            return (ejs->objectType->helpers.setProperty)(ejs, ap, slotNum, value);
         }
     }
-
-    if ((slotNum = checkSlot(ejs, ap, atoi(qname->name))) < 0) {
+    if ((slotNum = checkSlot(ejs, ap, ejsAtoi(ejs, qname.name, 10))) < 0) {
         return EJS_ERR;
     }
     ap->data[slotNum] = value;
@@ -404,11 +400,10 @@ static int setArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName *qname, EjsObj
 }
 
 
-#if EXTENSIONS || 1
-static EjsObj *makeIntersection(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
+static EjsArray *makeIntersection(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
 {
     EjsArray    *result;
-    EjsObj      **l, **r, **resultSlots;
+    EV          **l, **r, **resultSlots;
     int         i, j, k;
 
     result = ejsCreateArray(ejs, 0);
@@ -430,11 +425,11 @@ static EjsObj *makeIntersection(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
             }
         }
     }
-    return (EjsObj*) result;
+    return result;
 }
 
 
-static int addUnique(Ejs *ejs, EjsArray *ap, EjsObj *element)
+static int addUnique(Ejs *ejs, EjsArray *ap, EV *element)
 {
     int     i;
 
@@ -452,14 +447,13 @@ static int addUnique(Ejs *ejs, EjsArray *ap, EjsObj *element)
 }
 
 
-static EjsObj *makeUnion(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
+static EjsArray *makeUnion(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
 {
     EjsArray    *result;
-    EjsObj      **l, **r;
+    EV          **l, **r;
     int         i;
 
     result = ejsCreateArray(ejs, 0);
-
     l = lhs->data;
     r = rhs->data;
 
@@ -469,13 +463,13 @@ static EjsObj *makeUnion(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
     for (i = 0; i < rhs->length; i++) {
         addUnique(ejs, result, r[i]);
     }
-    return (EjsObj*) result;
+    return result;
 }
 
 
-static EjsObj *removeArrayElements(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
+static EjsArray *removeArrayElements(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
 {
-    EjsObj  **l, **r;
+    EV      **l, **r;
     int     i, j, k;
 
     l = lhs->data;
@@ -491,15 +485,14 @@ static EjsObj *removeArrayElements(Ejs *ejs, EjsArray *lhs, EjsArray *rhs)
             }
         }
     }
-    return (EjsObj*) lhs;
+    return lhs;
 }
-#endif
 
 
 static int checkSlot(Ejs *ejs, EjsArray *ap, int slotNum)
 {
     if (slotNum < 0) {
-        if (!ap->obj.dynamic) {
+        if (!DYNAMIC(ap)) {
             ejsThrowTypeError(ejs, "Object is not dynamic");
             return EJS_ERR;
         }
@@ -531,14 +524,13 @@ static int checkSlot(Ejs *ejs, EjsArray *ap, int slotNum)
         var arr = Array(size);
         var arr = Array(elt, elt, elt, ...);
  */
-
-static EjsObj *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     EjsArray    *args;
-    EjsObj      *arg0, **src, **dest;
+    EV          *arg0, **src, **dest;
     int         size, i;
 
-    mprAssert(argc == 1 && ejsIsArray(argv[0]));
+    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
     args = (EjsArray*) argv[0];
     if (args->length == 0) {
@@ -547,7 +539,7 @@ static EjsObj *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     size = 0;
     arg0 = getArrayProperty(ejs, args, 0);
 
-    if (args->length == 1 && ejsIsNumber(arg0)) {
+    if (args->length == 1 && ejsIsNumber(ejs, arg0)) {
         /*
             x = new Array(size);
          */
@@ -573,7 +565,7 @@ static EjsObj *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         }
     }
     ap->length = size;
-    return (EjsObj*) ap;
+    return ap;
 }
 
 
@@ -582,12 +574,12 @@ static EjsObj *arrayConstructor(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function append(obj: Object) : Array
  */
-static EjsObj *appendArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *appendArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     if (setArrayProperty(ejs, ap, ap->length, argv[0]) < 0) {
         return 0;
     }
-    return (EjsObj*) ap;
+    return ap;
 }
 
 
@@ -596,7 +588,7 @@ static EjsObj *appendArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function clear() : void
  */
-static EjsObj *clearArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EV *clearArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     ap->length = 0;
     return 0;
@@ -608,15 +600,15 @@ static EjsObj *clearArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function clone(deep: Boolean = false) : Array
  */
-static EjsArray *cloneArrayMethod(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *cloneArrayMethod(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     bool    deep;
 
-    mprAssert(argc == 0 || ejsIsBoolean(argv[0]));
+    mprAssert(argc == 0 || ejsIsBoolean(ejs, argv[0]));
 
     deep = (argc == 1) ? ((EjsBoolean*) argv[0])->value : 0;
 
-    return cloneArray(ejs, ap, deep);
+    return ejsCloneArray(ejs, ap, deep);
 }
 
 
@@ -625,10 +617,10 @@ static EjsArray *cloneArrayMethod(Ejs *ejs, EjsArray *ap, int argc, EjsObj **arg
 
     function compact() : Array
  */
-static EjsArray *compactArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *compactArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    EjsObj      **data, **src, **dest;
-    int         i;
+    EV      **data, **src, **dest;
+    int     i;
 
     data = ap->data;
     src = dest = &data[0];
@@ -649,13 +641,13 @@ static EjsArray *compactArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function concat(...args): Array
  */
-static EjsObj *concatArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *concatArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     EjsArray    *args, *newArray, *vpa;
-    EjsObj      *vp, **src, **dest;
+    EV          *vp, **src, **dest;
     int         i, k, next;
 
-    mprAssert(argc == 1 && ejsIsArray(argv[0]));
+    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
     args = ((EjsArray*) argv[0]);
 
@@ -675,7 +667,7 @@ static EjsObj *concatArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
      */
     for (i = 0; i < args->length; i++) {
         vp = args->data[i];
-        if (ejsIsArray(vp)) {
+        if (ejsIsArray(ejs, vp)) {
             vpa = (EjsArray*) vp;
             if (growArray(ejs, newArray, next + vpa->length) < 0) {
                 ejsThrowMemoryError(ejs);
@@ -693,7 +685,7 @@ static EjsObj *concatArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
             dest[next++] = vp;
         }
     }
-    return (EjsObj*) newArray;
+    return newArray;
 }
 
 
@@ -701,13 +693,13 @@ static EjsObj *concatArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     Function to iterate and return the next element name.
     NOTE: this is not a method of Array. Rather, it is a callback function for Iterator
  */
-static EjsObj *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EV *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EV **argv)
 {
-    EjsArray        *ap;
-    EjsObj          *vp, **data;
+    EjsArray    *ap;
+    EV          *vp, **data;
 
     ap = (EjsArray*) ip->target;
-    if (!ejsIsArray(ap)) {
+    if (!ejsIsArray(ejs, ap)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -718,7 +710,7 @@ static EjsObj *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         if (vp == 0) {
             continue;
         }
-        return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
+        return ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);
     return 0;
@@ -730,9 +722,9 @@ static EjsObj *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 
     iterator native function get(): Iterator
  */
-static EjsObj *getArrayIterator(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
+static EV *getArrayIterator(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, (EjsProc) nextArrayKey, 0, NULL);
+    return (EV*) ejsCreateIterator(ejs, ap, (EjsProc) nextArrayKey, 0, NULL);
 }
 
 
@@ -740,13 +732,13 @@ static EjsObj *getArrayIterator(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
     Function to iterate and return the next element value.
     NOTE: this is not a method of Array. Rather, it is a callback function for Iterator
  */
-static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
+static EV *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EV **argv)
 {
     EjsArray    *ap;
-    EjsObj      *vp, **data;
+    EV          *vp, **data;
 
     ap = (EjsArray*) ip->target;
-    if (!ejsIsArray(ap)) {
+    if (!ejsIsArray(ejs, ap)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -770,14 +762,14 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
 
     iterator native function getValues(): Iterator
  */
-static EjsObj *getArrayValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
+static EV *getArrayValues(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    return (EjsObj*) ejsCreateIterator(ejs, ap, (EjsProc) nextArrayValue, 0, NULL);
+    return ejsCreateIterator(ejs, ap, (EjsProc) nextArrayValue, 0, NULL);
 }
 
 
 #if KEEP
-static EjsObj *find(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EV *find(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     return 0;
 }
@@ -792,14 +784,14 @@ static EjsObj *find(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     @param match Matching function
     @return Returns a new array containing all matching elements.
  */
-static EjsObj *findAll(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EV *findAll(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    EjsObj      *funArgs[3];
+    EV          *funArgs[3];
     EjsBoolean  *result;
     EjsArray    *elements;
     int         i;
 
-    mprAssert(argc == 1 && ejsIsFunction(argv[0]));
+    mprAssert(argc == 1 && ejsIsFunction(ejs, argv[0]));
 
     elements = ejsCreateArray(ejs, 0);
     if (elements == 0) {
@@ -808,32 +800,32 @@ static EjsObj *findAll(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     }
 
     for (i = 0; i < ap->length; i++) {
-        funArgs[0] = ap->obj.properties.slots[i];               /* Array element */
-        funArgs[1] = (EjsObj*) ejsCreateNumber(ejs, i);             /* element index */
-        funArgs[2] = (EjsObj*) ap;                                  /* Array */
+        funArgs[0] = ap->obj.properties.slots[i];         /* Array element */
+        funArgs[1] = ejsCreateNumber(ejs, i);             /* element index */
+        funArgs[2] = ap;                                  /* Array */
         result = (EjsBoolean*) ejsRunFunction(ejs, (EjsFunction*) argv[0], 0, 3, funArgs);
-        if (result == 0 || !ejsIsBoolean(result) || !result->value) {
+        if (result == 0 || !ejsIsBoolean(ejs, result) || !result->value) {
             setArrayProperty(ejs, elements, elements->length, ap->obj.properties.slots[i]);
         }
     }
-    return (EjsObj*) elements;
+    return elements;
 }
 #endif
 
 
-static bool compareArrayElement(Ejs *ejs, EjsObj *v1, EjsObj *v2)
+static bool compareArrayElement(Ejs *ejs, EV *v1, EV *v2)
 {
     if (v1 == v2) {
         return 1;
     }
-    if (v1->type != v2->type) {
+    if (TYPE(v1) != TYPE(v2)) {
         return 0;
     }
-    if (ejsIsNumber(v1)) {
+    if (ejsIsNumber(ejs, v1)) {
         return ((EjsNumber*) v1)->value == ((EjsNumber*) v2)->value;
     }
-    if (ejsIsString(v1)) {
-        return strcmp(((EjsString*) v1)->value, ((EjsString*) v2)->value) == 0;
+    if (ejsIsString(ejs, v1)) {
+        return (EjsString*) v1 == (EjsString*) v2;
     }
     return 0;
 }
@@ -846,10 +838,10 @@ static bool compareArrayElement(Ejs *ejs, EjsObj *v1, EjsObj *v2)
 
     function indexOf(element: Object, startIndex: Number = 0): Number
  */
-static EjsObj *indexOfArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EV *indexOfArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    EjsObj      *element;
-    int         i, start;
+    EV      *element;
+    int     i, start;
 
     mprAssert(argc == 1 || argc == 2);
 
@@ -860,17 +852,17 @@ static EjsObj *indexOfArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         start += ap->length;
     }
     if (start >= ap->length) {
-        return (EjsObj*) ejs->minusOneValue;
+        return ejs->minusOneValue;
     }
     if (start < 0) {
         start = 0;
     }
     for (i = start; i < ap->length; i++) {
         if (compareArrayElement(ejs, ap->data[i], element)) {
-            return (EjsObj*) ejsCreateNumber(ejs, i);
+            return ejsCreateNumber(ejs, i);
         }
     }
-    return (EjsObj*) ejs->minusOneValue;
+    return ejs->minusOneValue;
 }
 
 
@@ -880,13 +872,13 @@ static EjsObj *indexOfArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function insert(pos: Number, ...args): Array
  */
-static EjsObj *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *insertArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     EjsArray    *args;
-    EjsObj      **src, **dest;
+    EV          **src, **dest;
     int         i, pos, delta, oldLen, endInsert;
 
-    mprAssert(argc == 2 && ejsIsArray(argv[1]));
+    mprAssert(argc == 2 && ejsIsArray(ejs, argv[1]));
 
     pos = ejsGetInt(ejs, argv[0]);
     if (pos < 0) {
@@ -915,8 +907,7 @@ static EjsObj *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     for (i = 0; i < delta; i++) {
         dest[pos++] = src[i];
     }
-
-    return (EjsObj*) ap;
+    return ap;
 }
 
 
@@ -927,31 +918,25 @@ static EjsObj *insertArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function join(sep: String = undefined): String
  */
-static EjsObj *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsString *joinArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     EjsString       *result, *sep;
-    EjsObj          *vp;
+    EV              *vp;
     int             i;
 
-    if (argc == 1) {
-        sep = (EjsString*) argv[0];
-    } else {
-        sep = 0;
-    }
-    result = ejsCreateString(ejs, "");
-    result->obj.permanent = 1;
+    sep = (argc == 1) ? (EjsString*) argv[0] : NULL;
+    result = ejs->emptyString;
     for (i = 0; i < ap->length; i++) {
         vp = ap->data[i];
-        if (vp == 0 || ejsIsUndefined(vp) || ejsIsNull(vp)) {
+        if (vp == 0 || ejsIsUndefined(ejs, vp) || ejsIsNull(ejs, vp)) {
             continue;
         }
         if (i > 0 && sep) {
-            ejsStrcat(ejs, result, (EjsObj*) sep);
+            result = ejsCatString(ejs, result, sep);
         }
-        ejsStrcat(ejs, result, vp);
+        result = ejsCatString(ejs, result, ejsToString(ejs, vp));
     }
-    result->obj.permanent = 1;
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -962,10 +947,10 @@ static EjsObj *joinArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function lastIndexOf(element: Object, fromIndex: Number = 0): Number
  */
-static EjsObj *lastArrayIndexOf(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsNumber *lastArrayIndexOf(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    EjsObj          *element;
-    int             i, start;
+    EV      *element;
+    int     i, start;
 
     mprAssert(argc == 1 || argc == 2);
 
@@ -978,14 +963,14 @@ static EjsObj *lastArrayIndexOf(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         start = ap->length - 1;
     }
     if (start < 0) {
-        return (EjsObj*) ejs->minusOneValue;
+        return ejs->minusOneValue;
     }
     for (i = start; i >= 0; i--) {
         if (compareArrayElement(ejs, ap->data[i], element)) {
-            return (EjsObj*) ejsCreateNumber(ejs, i);
+            return ejsCreateNumber(ejs, i);
         }
     }
-    return (EjsObj*) ejs->minusOneValue;
+    return ejs->minusOneValue;
 }
 
 
@@ -995,9 +980,9 @@ static EjsObj *lastArrayIndexOf(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     override function get length(): Number
  */
-static EjsObj *getArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsNumber *getArrayLength(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ap->length);
+    return ejsCreateNumber(ejs, ap->length);
 }
 
 
@@ -1006,13 +991,13 @@ static EjsObj *getArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     override function set length(value: Number): void
  */
-static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EV *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    EjsObj      **data, **dest;
-    int         length;
+    EV      **data, **dest;
+    int     length;
 
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
-    mprAssert(ejsIsArray(ap));
+    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
+    mprAssert(ejsIsArray(ejs, ap));
 
     length = (int) ((EjsNumber*) argv[0])->value;
     if (length < 0) {
@@ -1038,10 +1023,10 @@ static EjsObj *setArrayLength(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function pop(): Object
  */
-static EjsObj *popArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EV *popArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     if (ap->length == 0) {
-        return (EjsObj*) ejs->undefinedValue;
+        return ejs->undefinedValue;
     }
     return ap->data[--ap->length];
 }
@@ -1053,16 +1038,15 @@ static EjsObj *popArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function push(...items): Number
  */
-static EjsObj *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EV *pushArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     EjsArray    *args;
-    EjsObj      **src, **dest;
+    EV          **src, **dest;
     int         i, oldLen;
 
-    mprAssert(argc == 1 && ejsIsArray(argv[0]));
+    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
     args = (EjsArray*) argv[0];
-
     oldLen = ap->length;
     if (growArray(ejs, ap, ap->length + args->length) < 0) {
         return 0;
@@ -1072,7 +1056,7 @@ static EjsObj *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     for (i = 0; i < args->length; i++) {
         dest[i + oldLen] = src[i];
     }
-    return (EjsObj*) ejsCreateNumber(ejs, ap->length);
+    return ejsCreateNumber(ejs, ap->length);
 }
 
 
@@ -1082,15 +1066,14 @@ static EjsObj *pushArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function reverse(): Array
  */
-static EjsObj *reverseArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *reverseArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    EjsObj  *tmp, **data;
+    EV      *tmp, **data;
     int     i, j;
 
     if (ap->length <= 1) {
-        return (EjsObj*) ap;
+        return ap;
     }
-
     data = ap->data;
     i = (ap->length - 2) / 2;
     j = (ap->length + 1) / 2;
@@ -1100,7 +1083,7 @@ static EjsObj *reverseArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         data[i] = data[j];
         data[j] = tmp;
     }
-    return (EjsObj*) ap;
+    return ap;
 }
 
 
@@ -1110,9 +1093,9 @@ static EjsObj *reverseArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function shift(): Object
  */
-static EjsObj *shiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EV *shiftArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    EjsObj      *result, **data;
+    EV         *result, **data;
     int         i;
 
     if (ap->length == 0) {
@@ -1133,10 +1116,10 @@ static EjsObj *shiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function slice(start: Number, end: Number, step: Number = 1): Array
  */
-static EjsObj *sliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *sliceArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     EjsArray    *result;
-    EjsObj      **src, **dest;
+    EV          **src, **dest;
     int         start, end, step, i, j, len, size;
 
     mprAssert(1 <= argc && argc <= 3);
@@ -1198,7 +1181,7 @@ static EjsObj *sliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         }
     }
     result->length = len;
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -1207,16 +1190,16 @@ static EjsObj *sliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
  */
 static int partition(Ejs *ejs, EjsArray *array, EjsFunction *compare, int direction, int p, int r)
 {
-    EjsObj      *tmp, *x, *argv[3];
     EjsString   *sx, *so;
     EjsNumber   *result;
+    EV          *argv[3], *tmp, *x;
     int         i, j, order;
 
     x = array->data[r];
     sx = 0;
 
     if (compare) {
-        if ((argv[1] = (EjsObj*) ejsCreateNumber(ejs, r)) == 0) {
+        if ((argv[1] = ejsCreateNumber(ejs, r)) == 0) {
             return 0;
         }
     } else {
@@ -1228,10 +1211,10 @@ static int partition(Ejs *ejs, EjsArray *array, EjsFunction *compare, int direct
 
     for (i = p; i < r; i++) {
         if (compare) {
-            argv[0] = (EjsObj*) array;
-            argv[2] = (EjsObj*) ejsCreateNumber(ejs, i);
-            result = (EjsNumber*) ejsRunFunction(ejs, compare, NULL, 3, argv);
-            if (!ejsIsNumber(result)) {
+            argv[0] = array;
+            argv[2] = ejsCreateNumber(ejs, i);
+            result = ejsRunFunction(ejs, compare, NULL, 3, argv);
+            if (!ejsIsNumber(ejs, result)) {
                 return 0;
             }
             order = ejsGetInt(ejs, result);
@@ -1240,7 +1223,7 @@ static int partition(Ejs *ejs, EjsArray *array, EjsFunction *compare, int direct
             if ((so = ejsToString(ejs, array->data[i])) == 0) {
                 return 0;
             }
-            order = strcmp(sx->value, so->value);
+            order = ejsCompareString(ejs, sx, so);
         }
         order *= direction;
         if (order > 0) {
@@ -1276,25 +1259,25 @@ void quickSort(Ejs *ejs, EjsArray *ap, EjsFunction *compare, int direction, int 
     Where compare is defined as:
         function compare(a,b): Number
  */
-static EjsObj *sortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *sortArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     EjsFunction     *compare;
     int             direction;
 
     if (ap->length <= 1) {
-        return (EjsObj*) ap;
+        return ap;
     }
     compare = (EjsFunction*) ((argc >= 1) ? argv[0]: NULL);
-    if ((EjsObj*) compare == ejs->nullValue) {
+    if (compare == ejs->nullValue) {
         compare = 0;
     }
-    if (compare && !ejsIsFunction(compare)) {
+    if (compare && !ejsIsFunction(ejs, compare)) {
         ejsThrowArgError(ejs, "Compare argument is not a function");
         return 0;
     }
     direction = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 1;
     quickSort(ejs, ap, compare, direction, 0, ap->length - 1);
-    return (EjsObj*) ap;
+    return ap;
 }
 
 
@@ -1304,10 +1287,10 @@ static EjsObj *sortArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     function splice(start: Number, deleteCount: Number, ...values): Array
 
  */
-static EjsObj *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     EjsArray    *result, *values;
-    EjsObj      **data, **dest, **items;
+    EV          **data, **dest, **items;
     int         start, deleteCount, i, delta, endInsert, oldLen;
 
     mprAssert(1 <= argc && argc <= 3);
@@ -1318,7 +1301,7 @@ static EjsObj *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     if (ap->length == 0) {
         if (deleteCount <= 0) {
-            return (EjsObj*) ap;
+            return ap;
         }
         ejsThrowArgError(ejs, "Array is empty");
         return 0;
@@ -1339,13 +1322,11 @@ static EjsObj *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
     if (deleteCount > ap->length) {
         deleteCount = ap->length;
     }
-
     result = ejsCreateArray(ejs, deleteCount);
     if (result == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
-
     data = ap->data;
     dest = result->data;
     items = values->data;
@@ -1381,7 +1362,7 @@ static EjsObj *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         Copy in new values
      */
     for (i = 0; i < values->length; i++) {
-        data[start + i] = items[i];
+        data[start + i] = data[i];
     }
 
     /*
@@ -1392,7 +1373,7 @@ static EjsObj *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
             data[i] = data[i - delta];
         }
     }
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -1404,7 +1385,7 @@ static EjsObj *spliceArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function toLocaleString(): String
  */
-static EjsObj *toLocaleString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsString *toLocaleString(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     return arrayToString(ejs, ap, argc, argv);
 }
@@ -1417,33 +1398,32 @@ static EjsObj *toLocaleString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     override function toString(): String
  */
-static EjsObj *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsString *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     EjsString       *result;
-    EjsObj          *vp;
+    EV              *vp;
     int             i, rc;
 
-    result = ejsCreateString(ejs, "");
+    result = ejs->emptyString;
     if (result == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
-
     for (i = 0; i < ap->length; i++) {
         vp = ap->data[i];
         rc = 0;
         if (i > 0) {
-            rc = ejsStrcat(ejs, result, (EjsObj*) ejsCreateString(ejs, ","));
+            result = ejsCatString(ejs, result, ejsCreateStringFromCS(ejs, ","));
         }
         if (vp != 0 && vp != ejs->undefinedValue && vp != ejs->nullValue) {
-            rc = ejsStrcat(ejs, result, vp);
+            result = ejsCatString(ejs, result, ejsToString(ejs, vp));
         }
         if (rc < 0) {
             ejsThrowMemoryError(ejs);
             return 0;
         }
     }
-    return (EjsObj*) result;
+    return result;
 }
 
 
@@ -1453,10 +1433,10 @@ static EjsObj *arrayToString(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 
     function unique(): Array
  */
-static EjsObj *uniqueArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
+static EjsArray *uniqueArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
-    EjsObj      **data;
-    int         i, j, k;
+    EV      **data;
+    int     i, j, k;
 
     data = ap->data;
 
@@ -1471,24 +1451,24 @@ static EjsObj *uniqueArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
             }
         }
     }
-    return (EjsObj*) ap;
+    return ap;
 }
 
 
 /*
     function unshift(...args): Array
  */
-static EjsVar *unshiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsVar **argv)
+static EjsArray *unshiftArray(Ejs *ejs, EjsArray *ap, int argc, EV **argv)
 {
     EjsArray    *args;
-    EjsObj      **src, **dest;
+    EV          **src, **dest;
     int         i, delta, oldLen, endInsert;
 
-    mprAssert(argc == 1 && ejsIsArray(argv[0]));
+    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
     args = (EjsArray*) argv[0];
     if (args->length <= 0) {
-        return (EjsObj*) ap;
+        return ap;
     }
     oldLen = ap->length;
     if (growArray(ejs, ap, ap->length + args->length) < 0) {
@@ -1505,15 +1485,15 @@ static EjsVar *unshiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsVar **argv)
     for (i = 0; i < delta; i++) {
         dest[i] = src[i];
     }
-    return (EjsObj*) ap;
+    return ap;
 }
 
 /*********************************** Support **********************************/
 
 static int growArray(Ejs *ejs, EjsArray *ap, int len)
 {
-    EjsObj      **dp;
-    int         i, size, count, factor;
+    EV      **dp;
+    int     i, size, count, factor;
 
     mprAssert(ap);
 
@@ -1523,7 +1503,7 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
     if (len <= ap->length) {
         return 0;
     }
-    size = mprGetBlockSize(ap->data) / sizeof(EjsObj*);
+    size = ejsGetBlockSize(ap->data) / sizeof(EV*);
 
     /*
         Allocate or grow the data structures.
@@ -1542,13 +1522,13 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
         if (ap->data == 0) {
             mprAssert(ap->length == 0);
             mprAssert(count > 0);
-            ap->data = (EjsObj**) mprAllocZeroed(ap, sizeof(EjsObj*) * count);
+            ap->data = (EV**) ejsAlloc(ejs, sizeof(EV*) * count);
             if (ap->data == 0) {
                 return EJS_ERR;
             }
         } else {
             mprAssert(size > 0);
-            ap->data = (EjsObj**) mprRealloc(ap, ap->data, sizeof(EjsObj*) * count);
+            ap->data = (EV**) ejsRealloc(ejs, ap->data, sizeof(EV*) * count);
             if (ap->data == 0) {
                 return EJS_ERR;
             }
@@ -1560,6 +1540,173 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
     }
     ap->length = len;
     return 0;
+}
+
+
+/*********************************** C Array API  *****************************/
+
+int ejsAddItem(Ejs *ejs, EjsArray *ap, EV *item)
+{
+    int     index;
+
+    index = ap->length;
+    if (setArrayProperty(ejs, ap, index, &item) < 0) {
+        return MPR_ERR_NO_MEMORY;
+    }
+    return index;
+}
+
+
+int ejsAppendArray(Ejs *ejs, EjsArray *dest, EjsArray *src)
+{
+    int     next;
+
+    for (next = 0; next < src->length; next++) {
+        if (ejsSetProperty(ejs, dest, dest->length, src->data[next]) < 0) {
+            return MPR_ERR_NO_MEMORY;
+        }
+    }
+    return 0;
+}
+
+
+void ejsClearArray(Ejs *ejs, EjsArray *ap)
+{
+    ap->length = 0;
+}
+
+
+/*
+    Insert an item to the list at a specified position. We insert before the item at "index".
+    ie. The inserted item will go into the "index" location and the other elements will be moved up.
+ */
+int ejsInsertItem(Ejs *ejs, EjsArray *ap, int index, EV *item)
+{
+    return insertArray(ejs, ap, index, item) != 0;
+}
+
+
+void *ejsGetItem(Ejs *ejs, EjsArray *ap, int index)
+{
+    return ejsGetProperty(ejs, ap, index);
+}
+
+
+void *ejsGetFirstItem(Ejs *ejs, EjsArray *ap)
+{
+    mprAssert(ap);
+
+    if (ap == 0 || ap->length == 0) {
+        return 0;
+    }
+    return ap->data[0];
+}
+
+
+void *ejsGetLastItem(Ejs *ejs, EjsArray *ap)
+{
+    mprAssert(ap);
+
+    if (ap == 0 || ap->length == 0) {
+        return 0;
+    }
+    return ap->data[ap->length - 1];
+}
+
+
+void *ejsGetNextItem(Ejs *ejs, EjsArray *ap, int *next)
+{
+    void    *item;
+    int     index;
+
+    mprAssert(next);
+    mprAssert(*next >= 0);
+
+    if (ap == 0) {
+        return 0;
+    }
+    index = *next;
+    if (index < ap->length) {
+        item = ap->data[index];
+        *next = ++index;
+        return item;
+    }
+    return 0;
+}
+
+
+void *ejsGetPrevItem(Ejs *ejs, EjsArray *ap, int *next)
+{
+    int     index;
+
+    mprAssert(next);
+
+    if (ap == 0) {
+        return 0;
+    }
+    if (*next < 0) {
+        *next = ap->length;
+    }
+    index = *next;
+
+    if (--index < ap->length && index >= 0) {
+        *next = index;
+        return ap->data[index];
+    }
+    return 0;
+}
+
+
+int ejsLookupItem(Ejs *ejs, EjsArray *ap, EV *item)
+{
+    int     i;
+
+    mprAssert(ap);
+    
+    for (i = 0; i < ap->length; i++) {
+        if (ap->data[i] == item) {
+            return i;
+        }
+    }
+    return MPR_ERR_NOT_FOUND;
+}
+
+
+/*
+    Remove an item. The array is not compacted
+ */
+int ejsRemoveItem(Ejs *ejs, EjsArray *ap, EV *item)
+{
+    int     i;
+
+    for (i = 0; i < ap->length; i++) {
+        if (ap->data[i] == item) {
+            return deleteArrayProperty(ejs, ap, i);
+        }
+    }
+    return MPR_ERR_NOT_FOUND;
+}
+
+
+int ejsRemoveLastItem(Ejs *ejs, EjsArray *ap)
+{
+    mprAssert(ap);
+
+    if (ap->length <= 0) {
+        return MPR_ERR_NOT_FOUND;
+    }
+    return deleteArrayProperty(ejs, ap, ap->length - 1);
+}
+
+
+int ejsRemoveItemAtPos(Ejs *ejs, EjsArray *ap, int index)
+{
+    mprAssert(ap);
+
+    if (ap->length <= 0) {
+        return MPR_ERR_NOT_FOUND;
+    }
+    return deleteArrayProperty(ejs, ap, index);
 }
 
 
@@ -1580,7 +1727,6 @@ EjsArray *ejsCreateArray(Ejs *ejs, int size)
             return 0;
         }
     }
-    ejsSetDebugName(ap, "array instance");
     return ap;
 }
 
@@ -1588,17 +1734,17 @@ EjsArray *ejsCreateArray(Ejs *ejs, int size)
 void ejsCreateArrayType(Ejs *ejs)
 {
     EjsType         *type;
-    EjsTypeHelpers  *helpers;
+    EjsHelpers      *helpers;
 
     type = ejs->arrayType = ejsCreateNativeType(ejs, "ejs", "Array", ES_Array, sizeof(EjsArray));
     type->numericIndicies = 1;
     type->virtualSlots = 1;
 
+    ejsCloneObjectHelpers(ejs, type);
     helpers = &type->helpers;
     helpers->cast = (EjsCastHelper) castArray;
-    helpers->clone = (EjsCloneHelper) cloneArray;
+    helpers->clone = (EjsCloneHelper) ejsCloneArray;
     helpers->create = (EjsCreateHelper) createArray;
-    helpers->destroy = (EjsDestroyHelper) destroyArray;
     helpers->getProperty = (EjsGetPropertyHelper) getArrayProperty;
     helpers->getPropertyCount = (EjsGetPropertyCountHelper) getArrayPropertyCount;
     helpers->getPropertyByName = (EjsGetPropertyByNameHelper) getArrayPropertyByName;
@@ -1623,29 +1769,29 @@ void ejsConfigureArrayType(Ejs *ejs)
     /*
         We override some Object methods
      */
-    ejsBindConstructor(ejs, type, (EjsProc) arrayConstructor);
+    ejsBindConstructor(ejs, type, arrayConstructor);
     ejsBindMethod(ejs, prototype, ES_Array_iterator_get, getArrayIterator);
     ejsBindMethod(ejs, prototype, ES_Array_iterator_getValues, getArrayValues);
-    ejsBindMethod(ejs, prototype, ES_Array_clone, (EjsProc) cloneArrayMethod);
-    ejsBindMethod(ejs, prototype, ES_Array_toString, (EjsProc) arrayToString);
-    ejsBindMethod(ejs, prototype, ES_Array_append, (EjsProc) appendArray);
-    ejsBindMethod(ejs, prototype, ES_Array_clear, (EjsProc) clearArray);
-    ejsBindMethod(ejs, prototype, ES_Array_compact, (EjsProc) compactArray);
-    ejsBindMethod(ejs, prototype, ES_Array_concat, (EjsProc) concatArray);
-    ejsBindMethod(ejs, prototype, ES_Array_indexOf, (EjsProc) indexOfArray);
-    ejsBindMethod(ejs, prototype, ES_Array_insert, (EjsProc) insertArray);
-    ejsBindMethod(ejs, prototype, ES_Array_join, (EjsProc) joinArray);
-    ejsBindMethod(ejs, prototype, ES_Array_lastIndexOf, (EjsProc) lastArrayIndexOf);
-    ejsBindAccess(ejs, prototype, ES_Array_length, (EjsProc) getArrayLength, (EjsProc) setArrayLength);
-    ejsBindMethod(ejs, prototype, ES_Array_pop, (EjsProc) popArray);
-    ejsBindMethod(ejs, prototype, ES_Array_push, (EjsProc) pushArray);
-    ejsBindMethod(ejs, prototype, ES_Array_reverse, (EjsProc) reverseArray);
-    ejsBindMethod(ejs, prototype, ES_Array_shift, (EjsProc) shiftArray);
-    ejsBindMethod(ejs, prototype, ES_Array_slice, (EjsProc) sliceArray);
-    ejsBindMethod(ejs, prototype, ES_Array_sort, (EjsProc) sortArray);
-    ejsBindMethod(ejs, prototype, ES_Array_splice, (EjsProc) spliceArray);
-    ejsBindMethod(ejs, prototype, ES_Array_unique, (EjsProc) uniqueArray);
-    ejsBindMethod(ejs, prototype, ES_Array_unshift, (EjsProc) unshiftArray);
+    ejsBindMethod(ejs, prototype, ES_Array_clone, cloneArrayMethod);
+    ejsBindMethod(ejs, prototype, ES_Array_toString, arrayToString);
+    ejsBindMethod(ejs, prototype, ES_Array_append, appendArray);
+    ejsBindMethod(ejs, prototype, ES_Array_clear, clearArray);
+    ejsBindMethod(ejs, prototype, ES_Array_compact, compactArray);
+    ejsBindMethod(ejs, prototype, ES_Array_concat, concatArray);
+    ejsBindMethod(ejs, prototype, ES_Array_indexOf, indexOfArray);
+    ejsBindMethod(ejs, prototype, ES_Array_insert, insertArray);
+    ejsBindMethod(ejs, prototype, ES_Array_join, joinArray);
+    ejsBindMethod(ejs, prototype, ES_Array_lastIndexOf, lastArrayIndexOf);
+    ejsBindAccess(ejs, prototype, ES_Array_length, getArrayLength, setArrayLength);
+    ejsBindMethod(ejs, prototype, ES_Array_pop, popArray);
+    ejsBindMethod(ejs, prototype, ES_Array_push, pushArray);
+    ejsBindMethod(ejs, prototype, ES_Array_reverse, reverseArray);
+    ejsBindMethod(ejs, prototype, ES_Array_shift, shiftArray);
+    ejsBindMethod(ejs, prototype, ES_Array_slice, sliceArray);
+    ejsBindMethod(ejs, prototype, ES_Array_sort, sortArray);
+    ejsBindMethod(ejs, prototype, ES_Array_splice, spliceArray);
+    ejsBindMethod(ejs, prototype, ES_Array_unique, uniqueArray);
+    ejsBindMethod(ejs, prototype, ES_Array_unshift, unshiftArray);
 
 #if FUTURE
     ejsBindMethod(ejs, prototype, ES_Array_toLocaleString, toLocaleString);

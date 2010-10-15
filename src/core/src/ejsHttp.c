@@ -17,7 +17,7 @@ static void     prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data);
 static int      readTransfer(Ejs *ejs, EjsHttp *hp, int count);
 static void     sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp);
 static void     sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp);
-static EjsObj   *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EjsObj **argv);
+static EV       *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EV **argv);
 static bool     waitForResponseHeaders(EjsHttp *hp, int timeout);
 static bool     waitForState(EjsHttp *hp, int state, int timeout, int throw);
 static int      writeHttpData(Ejs *ejs, EjsHttp *hp);
@@ -128,7 +128,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         httpSetConnNotifier(hp->conn, httpNotify);
         httpSetConnContext(hp->conn, hp);
     }
-    hp->obj.permanent = 0;
+    ejsMakeTransient(ejs, hp);
     return 0;
 }
 
@@ -136,7 +136,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function connect(method: String, url = null, data ...): Void
  */
-static EjsObj *http_connect(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EV *http_connect(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
 {
     mprFree(hp->method);
     hp->method = mprStrdup(hp, ejsGetString(ejs, argv[0]));
@@ -150,7 +150,7 @@ static EjsObj *http_connect(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->certFile) {
-        return (EjsObj*) ejsCreateString(ejs, hp->certFile);
+        return (EjsObj*) ejsCreateStringFromCS(ejs, hp->certFile);
     }
     return ejs->nullValue;
 }
@@ -264,7 +264,7 @@ static EjsObj *http_flush(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     function form(uri: String = null, formData: Object = null): Void
     Issue a POST method with form data
  */
-static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EV *http_form(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
 {
     EjsObj  *data;
 
@@ -307,7 +307,7 @@ static EjsObj *http_set_followRedirects(Ejs *ejs, EjsHttp *hp, int argc, EjsObj 
     function get(uri: String = null, ...data): Void
     The spec allows GET methods to have body data, but is rarely, if ever, used.
  */
-static EjsObj *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EV *http_get(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
 {
     startHttpRequest(ejs, hp, "GET", argc, argv);
     if (hp->conn) {
@@ -326,12 +326,11 @@ static EjsObj *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
     MprHash         *p;
     HttpConn        *conn;
     EjsObj          *headers;
-    EjsName         n;
 
     conn = hp->conn;
     headers = (EjsObj*) ejsCreateSimpleObject(ejs);
     for (p = 0; (p = mprGetNextHash(conn->tx->headers, p)) != 0; ) {
-        ejsSetPropertyByName(ejs, headers, EN(&n, p->key), ejsCreateString(ejs, p->data));
+        ejsSetPropertyByName(ejs, headers, EN(p->key), ejsCreateStringFromCS(ejs, p->data));
     }
     return (EjsObj*) headers;
 }
@@ -340,7 +339,7 @@ static EjsObj *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
 /*  
     function head(uri: String = null): Void
  */
-static EjsObj *http_head(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EV *http_head(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
 {
     return startHttpRequest(ejs, hp, "HEAD", argc, argv);
 }
@@ -364,7 +363,7 @@ static EjsObj *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     value = httpGetHeader(hp->conn, str);
     mprFree(str);
     if (value) {
-        result = (EjsObj*) ejsCreateString(ejs, value);
+        result = (EjsObj*) ejsCreateStringFromCS(ejs, value);
     } else {
         result = (EjsObj*) ejs->nullValue;
     }
@@ -379,8 +378,7 @@ static EjsObj *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     MprHashTable    *hash;
     MprHash         *p;
-    EjsObj       *results;
-    EjsName         qname;
+    EjsObj          *results;
     int             i;
 
     if (!waitForResponseHeaders(hp, -1)) {
@@ -392,8 +390,7 @@ static EjsObj *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         return (EjsObj*) results;
     }
     for (i = 0, p = mprGetFirstHash(hash); p; p = mprGetNextHash(hash, p), i++) {
-        ejsName(&qname, "", p->key);
-        ejsSetPropertyByName(ejs, results, &qname, ejsCreateString(ejs, p->data));
+        ejsSetPropertyByName(ejs, results, EN(p->key), ejsCreateStringFromCS(ejs, p->data));
     }
     return (EjsObj*) results;
 }
@@ -414,7 +411,7 @@ static EjsObj *http_isSecure(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->keyFile) {
-        return (EjsObj*) ejsCreateString(ejs, hp->keyFile);
+        return (EjsObj*) ejsCreateStringFromCS(ejs, hp->keyFile);
     }
     return ejs->nullValue;
 }
@@ -458,7 +455,7 @@ static EjsObj *http_limits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, hp->method);
+    return (EjsObj*) ejsCreateStringFromCS(ejs, hp->method);
 }
 
 
@@ -485,7 +482,7 @@ static EjsObj *http_set_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function post(uri: String = null, ...requestContent): Void
  */
-static EjsObj *http_post(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EV *http_post(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
 {
     return startHttpRequest(ejs, hp, "POST", argc, argv);
 }
@@ -494,7 +491,7 @@ static EjsObj *http_post(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function put(uri: String = null, form object): Void
  */
-static EjsObj *http_put(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EV *http_put(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
 {
     return startHttpRequest(ejs, hp, "PUT", argc, argv);
 }
@@ -570,6 +567,7 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if ((count = readTransfer(ejs, hp, count)) < 0) {
         return 0;
     }
+    //  MOB - UNICODE ENCODING
     result = (EjsObj*) ejsCreateStringWithLength(ejs, mprGetBufStart(hp->responseContent), count);
     mprAdjustBufStart(hp->responseContent, count);
     return result;
@@ -697,9 +695,8 @@ static EjsObj *http_setLimits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static int getNumOption(Ejs *ejs, EjsObj *options, cchar *field)
 {
     EjsObj      *obj;
-    EjsName     n;
 
-    if ((obj = ejsGetPropertyByName(ejs, options, EN(&n, field))) != 0) {
+    if ((obj = ejsGetPropertyByName(ejs, options, EN(field))) != 0) {
         return ejsGetInt(ejs, obj);
     }
     return -1;
@@ -710,7 +707,6 @@ static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *
 {
     EjsArray    *extensions;
     EjsObj      *ext;
-    EjsName     n;
     HttpTrace   *tp;
     int         i, level, *levels;
 
@@ -727,24 +723,24 @@ static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *
         levels[HTTP_TRACE_BODY] = getNumOption(ejs, options, "body");
     }
     tp->size = getNumOption(ejs, options, "size");
-    if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN(&n, "include"))) != 0) {
-        if (!ejsIsArray(extensions)) {
+    if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN("include"))) != 0) {
+        if (!ejsIsArray(ejs, extensions)) {
             ejsThrowArgError(ejs, "include is not an array");
             return;
         }
-        tp->include = mprCreateHash(ctx, 0);
+        tp->include = mprCreateHash(ctx, 0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
                 mprAddHash(tp->include, mprStrdup(tp->include, ejsGetString(ejs, ejsToString(ejs, ext))), "");
             }
         }
     }
-    if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN(&n, "exclude"))) != 0) {
-        if (!ejsIsArray(extensions)) {
+    if ((extensions = (EjsArray*) ejsGetPropertyByName(ejs, options, EN("exclude"))) != 0) {
+        if (!ejsIsArray(ejs, extensions)) {
             ejsThrowArgError(ejs, "exclude is not an array");
             return;
         }
-        tp->exclude = mprCreateHash(ctx, 0);
+        tp->exclude = mprCreateHash(ctx, 0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
                 mprAddHash(tp->exclude, mprStrdup(tp->exclude, ejsGetString(ejs, ejsToString(ejs, ext))), "");
@@ -757,12 +753,11 @@ static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *
 int ejsSetupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, EjsObj *options)
 {
     EjsObj      *rx, *tx;
-    EjsName     n;
 
-    if ((rx = ejsGetPropertyByName(ejs, options, EN(&n, "rx"))) != 0) {
+    if ((rx = ejsGetPropertyByName(ejs, options, EN("rx"))) != 0) {
         setupTrace(ejs, ctx, trace, HTTP_TRACE_RX, rx);
     }
-    if ((tx = ejsGetPropertyByName(ejs, options, EN(&n, "tx"))) != 0) {
+    if ((tx = ejsGetPropertyByName(ejs, options, EN("tx"))) != 0) {
         setupTrace(ejs, ctx, trace, HTTP_TRACE_TX, tx);
     }
     return 0;
@@ -784,7 +779,7 @@ static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateUri(ejs, hp->uri);
+    return (EjsObj*) ejsCreateUriFromCS(ejs, hp->uri);
 }
 
 
@@ -829,9 +824,9 @@ static EjsObj *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
     }
     conn = hp->conn;
     if (conn->errorMsg) {
-        return (EjsObj*) ejsCreateString(ejs, conn->errorMsg);
+        return (EjsObj*) ejsCreateStringFromCS(ejs, conn->errorMsg);
     } else {
-        return (EjsObj*) ejsCreateString(ejs, httpGetStatusMessage(hp->conn));
+        return (EjsObj*) ejsCreateStringFromCS(ejs, httpGetStatusMessage(hp->conn));
     }
 }
 
@@ -861,7 +856,7 @@ static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-static EjsObj *http_write(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
+static EV *http_write(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
 {
     int     nbytes;
 
@@ -878,7 +873,7 @@ static EjsObj *http_write(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
             httpEnableConnEvents(hp->conn);
         }
     }
-    return (EjsObj*) ejsCreateNumber(ejs, nbytes);
+    return ejsCreateNumber(ejs, nbytes);
 }
 
 
@@ -886,7 +881,7 @@ static EjsObj *http_write(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*
     function [get|put|delete|post...](uri = null, ...data): Void
  */
-static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EjsObj **argv)
+static EV *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EV **argv)
 {
     EjsArray        *args;
     EjsByteArray    *data;
@@ -905,7 +900,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         uriObj = (EjsUri*) argv[0];
         hp->uri = httpUriToString(hp, uriObj->uri, 1);
     }
-    if (argc == 2 && ejsIsArray(argv[1])) {
+    if (argc == 2 && ejsIsArray(ejs, argv[1])) {
         args = (EjsArray*) argv[1];
         if (args->length > 0) {
             data = ejsCreateByteArray(ejs, -1);
@@ -931,12 +926,12 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         ejsThrowIOError(ejs, "Can't issue request for \"%s\"", hp->uri);
         return 0;
     }
-    hp->obj.permanent = 1;
+    ejsMakePermanent(ejs, hp);
 
     if (mprGetBufLength(hp->requestContent) > 0) {
         nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent));
         if (nbytes < 0) {
-            hp->obj.permanent = 0;
+            ejsMakeTransient(ejs, hp);
             ejsThrowIOError(ejs, "Can't write request data for \"%s\"", hp->uri);
             return 0;
         } else if (nbytes > 0) {
@@ -983,7 +978,7 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
             }
             sendHttpCloseEvent(ejs, hp);
         }
-        hp->obj.permanent = 0;
+        ejsMakeTransient(ejs, hp);
         break;
 
     case 0:
@@ -1119,7 +1114,7 @@ static EjsObj *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
     if (value == 0) {
         return (EjsObj*) ejs->nullValue;
     }
-    return (EjsObj*) ejsCreateString(ejs, value);
+    return (EjsObj*) ejsCreateStringFromCS(ejs, value);
 }
 
 
@@ -1133,20 +1128,19 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
     EjsName     qname;
     EjsObj      *vp;
     EjsString   *value;
-    cchar       *key, *sep;
+    cchar       *key, *sep, *vstr;
     char        *encodedKey, *encodedValue, *newPrefix, *newKey;
     int         i, count;
 
     count = ejsGetPropertyCount(ejs, data);
     for (i = 0; i < count; i++) {
         qname = ejsGetPropertyName(ejs, data, i);
-        key = qname.name;
 
         vp = ejsGetProperty(ejs, data, i);
         if (vp == 0) {
             continue;
         }
-        if (ejsGetPropertyCount(ejs, vp) > 0 && !ejsIsArray(vp)) {
+        if (ejsGetPropertyCount(ejs, vp) > 0 && !ejsIsArray(ejs, vp)) {
             if (prefix) {
                 newPrefix = mprAsprintf(hp, -1, "%s.%s", prefix, qname.name);
                 prepForm(ejs, hp, newPrefix, vp);
@@ -1155,7 +1149,9 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
                 prepForm(ejs, hp, (char*) qname.name, vp);
             }
         } else {
-            if (ejsIsArray(vp)) {
+            //  MOB -- must prevent GC here
+            key = ejsToMulti(ejs, qname.name);
+            if (ejsIsArray(ejs, vp)) {
                 value = ejsToJSON(ejs, vp, NULL);
             } else {
                 value = ejsToString(ejs, vp);
@@ -1168,7 +1164,8 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
             } else {
                 encodedKey = mprUriEncode(hp, key, MPR_ENCODE_URI_COMPONENT);
             }
-            encodedValue = mprUriEncode(hp, value->value, MPR_ENCODE_URI_COMPONENT);
+            vstr = ejsToMulti(ejs, value);
+            encodedValue = mprUriEncode(hp, vstr, MPR_ENCODE_URI_COMPONENT);
             mprPutFmtToBuf(hp->requestContent, "%s%s=%s", sep, encodedKey, encodedValue);
             mprFree(encodedKey);
             mprFree(encodedValue);
@@ -1405,7 +1402,9 @@ static void destroyHttp(Ejs *ejs, EjsHttp *hp)
         mprFree(hp->conn);
         hp->conn = 0;
     }
+#if UNUSED
     ejsFreeVar(ejs, (EjsObj*) hp, -1);
+#endif
 }
 
 
@@ -1414,28 +1413,24 @@ static void destroyHttp(Ejs *ejs, EjsHttp *hp)
  */
 void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server) 
 {
-    EjsName     qname;
-
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "chunk"), ejsCreateNumber(ejs, limits->chunkSize));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "receive"), ejsCreateNumber(ejs, limits->receiveBodySize));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "reuse"), ejsCreateNumber(ejs, limits->keepAliveCount));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "transmission"), ejsCreateNumber(ejs, limits->transmissionBodySize));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "upload"), ejsCreateNumber(ejs, limits->uploadSize));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "inactivityTimeout"), 
+    ejsSetPropertyByName(ejs, obj, EN("chunk"), ejsCreateNumber(ejs, limits->chunkSize));
+    ejsSetPropertyByName(ejs, obj, EN("receive"), ejsCreateNumber(ejs, limits->receiveBodySize));
+    ejsSetPropertyByName(ejs, obj, EN("reuse"), ejsCreateNumber(ejs, limits->keepAliveCount));
+    ejsSetPropertyByName(ejs, obj, EN("transmission"), ejsCreateNumber(ejs, limits->transmissionBodySize));
+    ejsSetPropertyByName(ejs, obj, EN("upload"), ejsCreateNumber(ejs, limits->uploadSize));
+    ejsSetPropertyByName(ejs, obj, EN("inactivityTimeout"), 
         ejsCreateNumber(ejs, limits->inactivityTimeout / MPR_TICKS_PER_SEC));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "requestTimeout"), 
-        ejsCreateNumber(ejs, limits->requestTimeout / MPR_TICKS_PER_SEC));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "sessionTimeout"), 
-        ejsCreateNumber(ejs, limits->sessionTimeout / MPR_TICKS_PER_SEC));
+    ejsSetPropertyByName(ejs, obj, EN("requestTimeout"), ejsCreateNumber(ejs, limits->requestTimeout / MPR_TICKS_PER_SEC));
+    ejsSetPropertyByName(ejs, obj, EN("sessionTimeout"), ejsCreateNumber(ejs, limits->sessionTimeout / MPR_TICKS_PER_SEC));
 
     if (server) {
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "clients"), ejsCreateNumber(ejs, limits->clientCount));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "header"), ejsCreateNumber(ejs, limits->headerSize));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "headers"), ejsCreateNumber(ejs, limits->headerCount));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "requests"), ejsCreateNumber(ejs, limits->requestCount));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "sessions"), ejsCreateNumber(ejs, limits->sessionCount));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "stageBuffer"), ejsCreateNumber(ejs, limits->stageBufferSize));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "uri"), ejsCreateNumber(ejs, limits->uriSize));
+        ejsSetPropertyByName(ejs, obj, EN("clients"), ejsCreateNumber(ejs, limits->clientCount));
+        ejsSetPropertyByName(ejs, obj, EN("header"), ejsCreateNumber(ejs, limits->headerSize));
+        ejsSetPropertyByName(ejs, obj, EN("headers"), ejsCreateNumber(ejs, limits->headerCount));
+        ejsSetPropertyByName(ejs, obj, EN("requests"), ejsCreateNumber(ejs, limits->requestCount));
+        ejsSetPropertyByName(ejs, obj, EN("sessions"), ejsCreateNumber(ejs, limits->sessionCount));
+        ejsSetPropertyByName(ejs, obj, EN("stageBuffer"), ejsCreateNumber(ejs, limits->stageBufferSize));
+        ejsSetPropertyByName(ejs, obj, EN("uri"), ejsCreateNumber(ejs, limits->uriSize));
     }
 }
 
@@ -1446,9 +1441,8 @@ void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server)
 static void setLimit(Ejs *ejs, EjsObj *obj, cchar *field, int *limit, int factor)
 {
     EjsObj      *vp;
-    EjsName     qname;
 
-    if ((vp = ejsGetPropertyByName(ejs, obj, ejsName(&qname, "", field))) != 0) {
+    if ((vp = ejsGetPropertyByName(ejs, obj, EN(field))) != 0) {
         *limit = ejsGetInt(ejs, ejsToNumber(ejs, vp)) * factor;
     }
 }
@@ -1507,7 +1501,9 @@ void ejsConfigureHttpType(Ejs *ejs)
     EjsObj      *prototype;
 
     type = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Http", sizeof(EjsHttp));
+#if UNUSED
     type->needFinalize = 1;
+#endif
     prototype = type->prototype;
 
     type->helpers.mark = (EjsMarkHelper) markHttp;

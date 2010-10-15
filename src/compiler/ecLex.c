@@ -124,7 +124,6 @@ static int  addFormattedStringToToken(EcToken *tp, char *fmt, ...);
 static int  addStringToToken(EcToken *tp, char *str);
 static int  decodeNumber(EcInput *input, int radix, int length);
 static void initializeToken(EcToken *tp, EcStream *stream);
-static int  destroyLexer(EcLexer *lp);
 static int  finishToken(EcToken *tp, int tokenId, int subId, int groupMask);
 static int  getNumberToken(EcInput *input, EcToken *tp, int c);
 static int  getAlphaToken(EcInput *input, EcToken *tp, int c);
@@ -138,18 +137,18 @@ static void setTokenCurrentLine(EcToken *tp);
 
 /************************************ Code ************************************/
 
-
 EcLexer *ecCreateLexer(EcCompiler *cp)
 {
     EcLexer         *lp;
     ReservedWord    *rp;
     int             size;
 
-    if ((lp = mprAllocObj(cp, EcLexer, destroyLexer)) == 0) {
+    if ((lp = ejsAlloc(cp->ejs, sizeof(EcLexer))) == 0) {
         return 0;
     }
-    if ((lp->input = mprAllocObj(lp, EcInput, NULL)) == 0) {
-        mprFree(lp);
+    //  MOB -- can input be merged with EcLexer
+
+    if ((lp->input = ejsAlloc(cp->ejs, sizeof(EcInput))) == 0) {
         return 0;
     }
     lp->input->lexer = lp;
@@ -157,28 +156,14 @@ EcLexer *ecCreateLexer(EcCompiler *cp)
     lp->compiler = cp;
 
     size = sizeof(keywords) / sizeof(ReservedWord);
-    lp->keywords = mprCreateHash(lp, size);
+    lp->keywords = mprCreateHash(cp->ctx, size, 0);
     if (lp->keywords == 0) {
-        mprFree(lp);
         return 0;
     }
     for (rp = keywords; rp->name; rp++) {
         mprAddHash(lp->keywords, rp->name, rp);
     }
     return lp;
-}
-
-
-static int destroyLexer(EcLexer *lp)
-{
-    return 0;
-}
-
-
-void ecDestroyLexer(EcCompiler *cp)
-{
-    mprFree(cp->lexer);
-    cp->lexer = 0;
 }
 
 
@@ -205,8 +190,7 @@ int ecGetToken(EcInput *input)
     }
 
     if (token == 0) {
-        //  TBD -- need an API for this
-        input->token = mprAllocObj(input, EcToken, NULL);
+        input->token = ejsAlloc(input->compiler->ejs, sizeof(EcToken));
         if (input->token == 0) {
             //  TBD -- err code
             return -1;
@@ -376,7 +360,7 @@ int ecGetToken(EcInput *input)
                  */
                 if (tp->text && tp->text[0] == '*' && tp->text[1] != '*') {
                     mprFree(input->doc);
-                    input->doc = mprStrdup(input, (char*) tp->text);
+                    input->doc = mprStrdup(input->compiler->ctx, (char*) tp->text);
                 }
                 initializeToken(tp, stream);
                 break;
@@ -1034,8 +1018,6 @@ static int finishToken(EcToken *tp, int tokenId, int subId, int groupMask)
     if (tp->currentLine == 0) {
         setTokenCurrentLine(tp);
     }
-    if (tp->text == 0) {
-    }
     if (tp->currentLine) {
         end = strchr(tp->currentLine, '\n');
         len = end ? (int) (end - tp->currentLine) : (int) strlen(tp->currentLine);
@@ -1127,13 +1109,13 @@ char *ecGetInputStreamName(EcLexer *lp)
 }
 
 
-int ecOpenFileStream(EcLexer *lp, const char *path)
+int ecOpenFileStream(EcCompiler *cp, EcLexer *lp, cchar *path)
 {
     EcFileStream    *fs;
     MprPath         info;
     int             c;
 
-    if ((fs = mprAllocObj(lp->input, EcFileStream, NULL)) == 0) {
+    if ((fs = ejsAlloc(cp->ejs, sizeof(EcFileStream))) == 0) {
         return MPR_ERR_NO_MEMORY;
     }
     if ((fs->file = mprOpen(lp, path, O_RDONLY | O_BINARY, 0666)) == 0) {
@@ -1144,11 +1126,8 @@ int ecOpenFileStream(EcLexer *lp, const char *path)
         mprFree(fs);
         return MPR_ERR_CANT_ACCESS;
     }
-    /* Sanity check */
-    mprAssert(info.size < (100 * 1024 * 1024));
-    mprAssert(info.size >= 0);
 
-    fs->stream.buf = (char*) mprAlloc(fs, (int) info.size + 1);
+    fs->stream.buf = (char*) ejsAlloc(cp->ejs, (int) info.size + 1);
     if (fs->stream.buf == 0) {
         mprFree(fs);
         return MPR_ERR_NO_MEMORY;
@@ -1164,9 +1143,8 @@ int ecOpenFileStream(EcLexer *lp, const char *path)
     fs->stream.lineNumber = 1;
     fs->stream.compiler = lp->compiler;
 
-    fs->stream.name = mprStrdup(lp, path);
+    fs->stream.name = mprStrdup(cp->ctx, path);
 
-    mprFree(lp->input->stream);
     lp->input->stream = (EcStream*) fs;
 
     lp->input->putBack = 0;
@@ -1183,12 +1161,12 @@ int ecOpenFileStream(EcLexer *lp, const char *path)
 }
 
 
-int ecOpenMemoryStream(EcLexer *lp, const uchar *buf, int len)
+int ecOpenMemoryStream(EcCompiler *cp, EcLexer *lp, cuchar *buf, int len)
 {
     EcMemStream     *ms;
     int             c;
 
-    if ((ms = mprAllocObj(lp->input, EcMemStream, NULL)) == 0) {
+    if ((ms = ejsAlloc(cp->ejs, sizeof(EcMemStream))) == 0) {
         return MPR_ERR_NO_MEMORY;
     }
     ms->stream.lineNumber = 0;
@@ -1200,7 +1178,6 @@ int ecOpenMemoryStream(EcLexer *lp, const uchar *buf, int len)
     ms->stream.lineNumber = 1;
     ms->stream.compiler = lp->compiler;
 
-    mprFree(lp->input->stream);
     lp->input->stream = (EcStream*) ms;
 
     lp->input->putBack = 0;
@@ -1217,11 +1194,11 @@ int ecOpenMemoryStream(EcLexer *lp, const uchar *buf, int len)
 }
 
 
-int ecOpenConsoleStream(EcLexer *lp, EcStreamGet gets)
+int ecOpenConsoleStream(EcCompiler *cp, EcLexer *lp, EcStreamGet gets)
 {
     EcConsoleStream     *cs;
 
-    if ((cs = mprAllocObj(lp->input, EcConsoleStream, NULL)) == 0) {
+    if ((cs = ejsAlloc(cp->ejs, sizeof(EcConsoleStream))) == 0) {
         return MPR_ERR_NO_MEMORY;
     }
     cs->stream.lineNumber = 0;
@@ -1231,7 +1208,6 @@ int ecOpenConsoleStream(EcLexer *lp, EcStreamGet gets)
     cs->stream.gets = gets;
     cs->stream.compiler = lp->compiler;
 
-    mprFree(lp->input->stream);
     lp->input->stream = (EcStream*) cs;
 
     lp->input->putBack = 0;

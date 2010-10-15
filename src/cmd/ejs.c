@@ -263,7 +263,7 @@ MAIN(ejsMain, int argc, char **argv)
         return MPR_ERR_NO_MEMORY;
     }
     ejsInitCompiler(ejsService);
-    ejs = ejsCreateVm(ejsService, NULL, searchPath, requiredModules, argc - nextArg, (cchar **) &argv[nextArg], 0);
+    ejs = ejsCreateVm(ejsService, searchPath, requiredModules, argc - nextArg, (cchar **) &argv[nextArg], 0);
     if (ejs == 0) {
         return MPR_ERR_NO_MEMORY;
     }
@@ -361,7 +361,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
 
     ejs = cp->ejs;
 
-    if (ecOpenConsoleStream(cp->lexer, (cmd) ? commandGets: consoleGets) < 0) {
+    if (ecOpenConsoleStream(cp, cp->lexer, (cmd) ? commandGets: consoleGets) < 0) {
         mprError(cp, "Can't open input");
         return EJS_ERR;
     }
@@ -390,7 +390,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
             }
         }
         if (!ejs->exception && ejs->result != ejs->undefinedValue) {
-            if (ejsIsDate(ejs->result) || ejsIsType(ejs->result)) {
+            if (ejsIsDate(ejs, ejs->result) || ejsIsType(ejs, ejs->result)) {
                 if ((result = (EjsString*) ejsToString(ejs, ejs->result)) != 0) {
                     mprPrintf(cp, "%s\n", result->value);
                 }

@@ -34,16 +34,8 @@ static EjsObj *req_worker(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     EjsRequest  *nreq;
     HttpConn    *conn;
 
-#if TRY
-    if ((nejs = ejsCreateVm(ejsService, ejs, NULL, NULL, 0, NULL, 0)) == 0) {
-        //  THROW
-        return 0;
-    }
-#else
-    //  Cloning ejs would be faster
-    //  MOB -- need to pick up service
-    if ((nejs = ejsCreateVm(ejsGetService(req), NULL, NULL, NULL, 0, NULL, EJS_FLAG_MASTER)) == 0) {
-        //  THROW
+    if ((nejs = ejsCreateVm(ejsGetService(req), NULL, NULL, 0, NULL, 0)) == 0) {
+        //  MOB THROW
         return 0;
     }
     nejs->loc = ejs->loc;
@@ -51,7 +43,6 @@ static EjsObj *req_worker(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         mprError(ejs, "Can't load ejs.web.mod: %s", ejsGetErrorMsg(ejs, 1));
         return 0;
     }
-#endif
     conn = req->conn;
     nreq = 0;
 #if FUTURE

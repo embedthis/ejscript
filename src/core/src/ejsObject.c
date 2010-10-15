@@ -10,45 +10,41 @@
 
 /*********************************** Defines **********************************/
 
-#define CMP_QNAME(a,b) cmpQname(a, b)
-#define CMP_NAME(a,b) cmpName(a, b)
+#define CMP_QNAME(a,b) ((a)->name == (b)->name && (a)->space == (b)->space)
+#define CMP_NAME(a,b) ((a)->name == (b)->name)
 
 /****************************** Forward Declarations **************************/
 
-static int      cmpName(EjsName *a, EjsName *b);
-static int      cmpQname(EjsName *a, EjsName *b);
 static int      growSlots(Ejs *ejs, EjsObj *obj, int size);
-static int      hashProperty(EjsObj *obj, int slotNum, EjsName *qname);
+static int      hashProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname);
 static EjsObj   *obj_defineProperty(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv);
 static EjsObj   *obj_toString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv);
-static void     removeHashEntry(Ejs *ejs, EjsObj  *obj, EjsName *qname);
+static void     removeHashEntry(Ejs *ejs, EjsObj  *obj, EjsName qname);
 
 /************************************* Code ***********************************/
 /*
     Cast the operand to another type
  */
-static EjsObj *castObject(Ejs *ejs, EjsObj *obj, EjsType *type)
+static EV *castObject(Ejs *ejs, EV *obj, EjsType *type)
 {
     EjsString       *str;
     EjsFunction     *fun;
-    EjsObj          *result;
+    EV              *result;
     EjsLookup       lookup;
-    EjsName         qname;
     int             enabled;
     
-    mprAssert(ejsIsType(type));
+    mprAssert(ejsIsType(ejs, type));
 
     if (type->hasMeta) {
-        ejsName(&qname, EJS_META_NAMESPACE, "cast");
-        return ejsRunFunctionByName(ejs, (EjsObj*) type, &qname, (EjsObj*) type, 1, &obj);
+        return ejsRunFunctionByName(ejs, type, N(EJS_META_NAMESPACE, "cast"), type, 1, &obj);
     }
 
     switch (type->id) {
     case ES_Boolean:
-        return (EjsObj*) ejsCreateBoolean(ejs, 1);
+        return ejsCreateBoolean(ejs, 1);
 
     case ES_Number:
-        str = ejsToString(ejs, (EjsObj*) obj);
+        str = ejsToString(ejs, obj);
         if (str == 0) {
             ejsThrowMemoryError(ejs);
             return 0;
@@ -56,32 +52,30 @@ static EjsObj *castObject(Ejs *ejs, EjsObj *obj, EjsType *type)
         return ejsParse(ejs, ejsGetString(ejs, str), ES_Number);
 
     case ES_String:
-        if (!obj->isType && !obj->isPrototype) {
-            if (ejsLookupVar(ejs, obj, ejsName(&qname, "", "toString"), &lookup) >= 0 && 
-                    lookup.obj != ejs->objectType->prototype) {
+        if (!ejsIsType(ejs, obj) && !ejsIsPrototype(ejs, obj)) {
+            if (ejsLookupVar(ejs, obj, EN("toString"), &lookup) >= 0 && lookup.obj != ejs->objectType->prototype) {
                 fun = ejsGetProperty(ejs, lookup.obj, lookup.slotNum);
-                if (fun && ejsIsFunction(fun) && fun->body.proc != obj_toString) {
+                if (fun && ejsIsFunction(ejs, fun) && fun->body.proc != (EjsFun) obj_toString) {
                     /* Disable GC because toString is used pervasively in native code */
-                    enabled = ejs->gc.enabled;
-                    ejs->gc.enabled = 0;
-                    result = (EjsObj*) ejsRunFunction(ejs, fun, obj, 0, NULL);
-                    ejs->gc.enabled = enabled;
+                    enabled = ejsEnableGC(ejs, 0);
+                    result = ejsRunFunction(ejs, fun, obj, 0, NULL);
+                    ejsEnableGC(ejs, enabled);
                     return result;
                 }
             }
         }
         if (obj == ejs->global) {
-            return (EjsObj*) ejsCreateString(ejs, "[object global]");
+            return ejsCreateStringFromCS(ejs, "[object global]");
         } else {
-            if (obj->type->helpers.cast && obj->type->helpers.cast != castObject) {
-                return (obj->type->helpers.cast)(ejs, obj, type);
+            if (TYPE(obj)->helpers.cast && TYPE(obj)->helpers.cast != castObject) {
+                return (TYPE(obj)->helpers.cast)(ejs, obj, type);
             }
-            return (EjsObj*) ejsCreateStringAndFree(ejs, mprStrcat(ejs, -1, "[object ", obj->type->qname.name, "]", NULL));
+            return ejsCreateStringAndFree(ejs, mprStrcat(ejs, -1, "[object ", TYPE(obj)->qname.name, "]", NULL));
         }
 
     default:
-        if (ejsIsA(ejs, (EjsObj*) obj, type)) {
-            return (EjsObj*) obj;
+        if (ejsIsA(ejs, obj, type)) {
+            return obj;
         }
         ejsThrowTypeError(ejs, "Can't cast to this type");
         return 0;
@@ -107,16 +101,16 @@ EjsObj *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
         return ejsInvokeOperator(ejs, (EjsObj*) ejs->zeroValue, opcode, rhs);
 
     case EJS_OP_COMPARE_EQ:  case EJS_OP_COMPARE_NE:
-        if (ejsIsNull(rhs) || ejsIsUndefined(rhs)) {
+        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
             return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
-        } else if (ejsIsNumber(rhs)) {
+        } else if (ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
 
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsNumber(rhs)) {
+        if (ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
@@ -138,7 +132,7 @@ EjsObj *ejsCoerceOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
         return 0;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -149,7 +143,7 @@ EjsObj *ejsObjectOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
 {
     EjsObj      *result;
 
-    if (rhs == 0 || lhs->type != rhs->type) {
+    if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if ((result = ejsCoerceOperands(ejs, lhs, opcode, rhs)) != 0) {
             return result;
         }
@@ -188,7 +182,7 @@ EjsObj *ejsObjectOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs)
         return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, (EjsObj*) ejsToNumber(ejs, rhs));
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
     mprAssert(0);
@@ -212,15 +206,15 @@ void *ejsCreateObject(Ejs *ejs, EjsType *type, int numSlots)
         numSlots = max(numSlots, prototype->numSlots);
     }
     if (type->dynamicInstance) {
-        if ((obj = ejsAllocVar(ejs, type, 0)) == 0) {
+        if ((obj = ejsAllocValue(ejs, type, 0)) == 0) {
             return 0;
         }
         if (numSlots > 0) {
             growSlots(ejs, obj, numSlots);
         }
-        obj->dynamic = 1;
+        DYNAMIC(obj) = 1;
     } else {
-        if ((obj = ejsAllocVar(ejs, type, numSlots * sizeof(EjsSlot))) == 0) {
+        if ((obj = ejsAllocValue(ejs, type, numSlots * sizeof(EjsSlot))) == 0) {
             return 0;
         }
         if (numSlots > 0) {
@@ -229,17 +223,20 @@ void *ejsCreateObject(Ejs *ejs, EjsType *type, int numSlots)
         }
     }
     obj->numSlots = numSlots;
-    obj->type = type;
+    TYPE(obj) = type;
     ejsSetDebugName(obj, type->qname.name);
+#if BLD_DEBUG
+    obj->mem = EJS_GET_MEM(obj);
+#endif
 
     if (obj->sizeSlots > 0) {
         if (type->hasInstanceVars) {
             if (prototype->numSlots > 0) {
-                ejsCopySlots(ejs, obj, obj->slots, prototype->slots, prototype->numSlots, 0);
+                ejsCopySlots(ejs, obj, obj->slots, prototype->slots, prototype->numSlots);
             }
             ejsZeroSlots(ejs, &obj->slots[prototype->numSlots], obj->sizeSlots - prototype->numSlots);
             if (numSlots > EJS_HASH_MIN_PROP) {
-                ejsMakeObjHash(obj);
+                ejsMakeObjHash(ejs, obj);
             }
         } else {
             ejsZeroSlots(ejs, obj->slots, obj->sizeSlots);
@@ -263,50 +260,38 @@ void *ejsCloneObject(Ejs *ejs, void *vp, bool deep)
 
     src = (EjsObj*) vp;
     numSlots = src->numSlots;
-    dest = ejsCreateObject(ejs, src->type, numSlots);
+    dest = ejsCreateObject(ejs, TYPE(src), numSlots);
     if (dest == 0) {
         return 0;
     }
     dest->numSlots = numSlots;
+
     //  MOB - OPT make a flags word
-    dest->builtin = src->builtin;
-    dest->dynamic = src->dynamic;
+    BUILTIN(dest) = BUILTIN(src);
+    DYNAMIC(dest) = DYNAMIC(src);
+    SHORT_SCOPE(dest) = SHORT_SCOPE(src);
+
     dest->isFunction = src->isFunction;
     dest->isPrototype = src->isPrototype;
     dest->isType = src->isType;
-    dest->permanent = src->permanent;
-    dest->shortScope = src->shortScope;
 
-    //  MOB - OPT name copying
+    dp = dest->slots;
+    sp = src->slots;
+    for (i = 0; i < numSlots; i++, sp++, dp++) {
+        *dp = *sp;
 #if UNUSED
-    dp = dest->slots;
-    sp = src->slots;
-    for (i = 0; i < numSlots; i++, sp++, dp++) {
-        *dp = *sp;
-        //  MOB -- all native types must provide clone or set immutable
-        if (deep && !sp->value.ref->type->immutable) {
-            dp->value.ref = ejsClone(ejs, sp->value.ref, deep);
-        }
-    }
-#else
-    dp = dest->slots;
-    sp = src->slots;
-    for (i = 0; i < numSlots; i++, sp++, dp++) {
-        *dp = *sp;
         dp->trait = sp->trait;
-        //  MOB - OPT name copying
-        dp->qname.space = mprStrdup(dest, sp->qname.space);
-        dp->qname.name = mprStrdup(dest, sp->qname.name);
+        dp->qname = sp->qname;
+#endif
         dp->hashChain = -1;
-        if (deep && !sp->value.ref->type->immutable) {
+        if (deep && !TYPE(sp->value.ref)->immutable) {
             dp->value.ref = ejsClone(ejs, sp->value.ref, deep);
         }
     }
     if (dest->numSlots > EJS_HASH_MIN_PROP) {
-        ejsMakeObjHash(dest);
+        ejsMakeObjHash(ejs, dest);
     }
-#endif
-    ejsSetDebugName(dest, ejsGetDebugName(src));
+    ejsCopyDebugName(dest, src);
     return dest;
 }
 
@@ -319,7 +304,7 @@ static EjsObj *prepareAccessors(Ejs *ejs, EjsObj *obj, int slotNum, int64 *attri
     fun = ejsGetProperty(ejs, obj, slotNum);
 
     if (*attributes & EJS_TRAIT_SETTER) {
-        if (ejsIsFunction(fun)) {
+        if (ejsIsFunction(ejs, fun)) {
             /* Existing getter, add a setter */
             fun->setter = (EjsFunction*) value;
             if ((trait = ejsGetTrait(ejs, obj, slotNum)) != 0) {
@@ -333,7 +318,7 @@ static EjsObj *prepareAccessors(Ejs *ejs, EjsObj *obj, int slotNum, int64 *attri
         value = (EjsObj*) fun;
 
     } else if (*attributes & EJS_TRAIT_GETTER) {
-        if (ejsIsFunction(fun) && ejsHasTrait(obj, slotNum, EJS_TRAIT_SETTER)) {
+        if (ejsIsFunction(ejs, fun) && ejsHasTrait(obj, slotNum, EJS_TRAIT_SETTER)) {
             /* Existing getter and setter - preserve any defined setter, overwrite getter */
             if (fun->setter) {
                 ((EjsFunction*) value)->setter = fun->setter;
@@ -348,7 +333,7 @@ static EjsObj *prepareAccessors(Ejs *ejs, EjsObj *obj, int slotNum, int64 *attri
 /*
     Define (or redefine) a property and set its name, type, attributes and property value.
  */
-static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qname, EjsType *propType, int64 attributes, 
+static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname, EjsType *propType, int64 attributes, 
     EjsObj *value)
 {
     EjsFunction     *fun;
@@ -357,10 +342,9 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
 
     mprAssert(ejs);
     mprAssert(slotNum >= -1);
-    mprAssert(qname);
 
-    if (attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER) && !ejsIsFunction(value)) {
-        ejsThrowTypeError(ejs, "Property \"%s\" is not a function", qname->name);
+    if (attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER) && !ejsIsFunction(ejs, value)) {
+        ejsThrowTypeError(ejs, "Property \"%s\" is not a function", qname.name);
         return 0;
     }
     priorSlot = ejsLookupProperty(ejs, obj, qname);
@@ -387,12 +371,12 @@ static int defineObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qna
     }
 
     //  MOB -- reconsider this code
-    if (value && ejsIsFunction(value)) {
+    if (value && ejsIsFunction(ejs, value)) {
         fun = ((EjsFunction*) value);
-        if (!ejsIsNativeFunction(fun) && ejsIsType(obj)) {
+        if (!ejsIsNativeFunction(ejs, fun) && ejsIsType(ejs, obj)) {
             ((EjsType*) obj)->hasScriptFunctions = 1;
         }
-        if (fun->staticMethod && ejsIsType(obj)) {
+        if (fun->staticMethod && ejsIsType(ejs, obj)) {
             type = (EjsType*) obj;
             if (!type->isInterface) {
                 /* For static methods, find the right base class and set thisObj to speed up later invocations */
@@ -414,7 +398,6 @@ static int deleteObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum)
     EjsSlot     *sp;
 
     mprAssert(obj);
-    mprAssert(obj->type);
     mprAssert(slotNum >= 0);
 
     if (slotNum < 0 || slotNum >= obj->numSlots) {
@@ -423,7 +406,7 @@ static int deleteObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum)
     }
 #if UNUSED
     //  MOB -- this should be in the VM and not here
-    if (!obj->dynamic) {
+    if (!DYNAMIC(obj)) {
         //  MOB -- probably can remove this and rely on fixed below as per ecma spec
         ejsThrowTypeError(ejs, "Can't delete properties in a non-dynamic object");
         return EJS_ERR;
@@ -434,7 +417,7 @@ static int deleteObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 #endif
     qname = ejsGetObjectPropertyName(ejs, obj, slotNum);
     if (qname.name) {
-        removeHashEntry(ejs, obj, &qname);
+        removeHashEntry(ejs, obj, qname);
     }
     sp = &obj->slots[slotNum];
     sp->value.ref = ejs->undefinedValue;
@@ -444,7 +427,7 @@ static int deleteObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 }
 
 
-static int deleteObjectPropertyByName(Ejs *ejs, EjsObj *obj, EjsName *qname)
+static int deleteObjectPropertyByName(Ejs *ejs, EjsObj *obj, EjsName qname)
 {
     int     slotNum;
 
@@ -454,12 +437,6 @@ static int deleteObjectPropertyByName(Ejs *ejs, EjsObj *obj, EjsName *qname)
         return EJS_ERR;
     }
     return deleteObjectProperty(ejs, obj, slotNum);
-}
-
-
-static void destroyObject(Ejs *ejs, EjsObj *vp)
-{
-    ejsFreeVar(ejs, vp, -1);
 }
 
 
@@ -513,21 +490,20 @@ static EjsTrait *getObjectPropertyTrait(Ejs *ejs, EjsObj *obj, int slotNum)
     Only the name portion is hashed. The namespace is not included in the hash. This is used to do a one-step lookup 
     for properties regardless of the namespace.
  */
-int ejsLookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
+int ejsLookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName qname)
 {
     EjsSlot     *slots, *sp, *np;
     int         slotNum, index, prior;
 
-    mprAssert(qname);
-    mprAssert(qname->name);
+    mprAssert(qname.name);
 
     slots = obj->slots;
     if (obj->hash == 0) {
         /* No hash. Just do a linear search */
-        if (qname->space) {
+        if (qname.space) {
             for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
                 sp = &slots[slotNum];
-                if (CMP_QNAME(&sp->qname, qname)) {
+                if (CMP_QNAME(&sp->qname, &qname)) {
                     return slotNum;
                 }
             }
@@ -535,7 +511,7 @@ int ejsLookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
         } else {
             for (slotNum = 0, prior = -1; slotNum < obj->numSlots; slotNum++) {
                 sp = &slots[slotNum];
-                if (CMP_NAME(&sp->qname, qname)) {
+                if (CMP_NAME(&sp->qname, &qname)) {
                     if (prior >= 0) {
                         /* Multiple properties with the same name */
                         return -1;
@@ -552,21 +528,21 @@ int ejsLookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
             We assume that names rarely clash with different namespaces. We do this so variable lookup and do a one
             hash probe and find matching names. Lookup will then pick the right namespace.
          */
-        index = ejsComputeHashCode(obj, qname);
-        if (qname->space) {
+        index = ejsComputeStringHashCode(qname.name, obj->hash->size);
+        if (qname.space) {
             mprAssert(obj->hash);
             mprAssert(obj->hash->buckets);
             mprAssert(index < obj->hash->size);
             for (slotNum = obj->hash->buckets[index]; slotNum >= 0; slotNum = slots[slotNum].hashChain) {
                 sp = &slots[slotNum];
-                if (CMP_QNAME(&sp->qname, qname)) {
+                if (CMP_QNAME(&sp->qname, &qname)) {
                     return slotNum;
                 }
             }
         } else {
             for (slotNum = obj->hash->buckets[index]; slotNum >= 0; slotNum = sp->hashChain) {
                 sp = &slots[slotNum];
-                if (CMP_NAME(&sp->qname, qname)) {
+                if (CMP_NAME(&sp->qname, &qname)) {
                     /* Now ensure there are no more matching names - must be unique in the "name" only */
                     for (np = sp; np->hashChain >= 0; ) {
                         np = &slots[np->hashChain];
@@ -587,19 +563,18 @@ int ejsLookupObjectProperty(struct Ejs *ejs, EjsObj *obj, EjsName *qname)
 /*
     Mark the object properties for the garbage collector
  */
-void ejsMarkObject(Ejs *ejs, void *vp)
+void ejsMarkObject(Ejs *ejs, void *ptr)
 {
     EjsSlot     *sp;
     EjsObj      *obj;
     int         i;
 
-    obj = (EjsObj*) vp;
+    obj = (EjsObj*) ptr;
 
-    if (!obj->type->constructor.block.obj.marked) {
-        ejsMark(ejs, (EjsObj*) obj->type);
-    }
-    sp = obj->slots;
-    for (i = 0; i < obj->numSlots; i++, sp++) {
+    ejsMark(ejs, obj->slots);
+    ejsMark(ejs, obj->hash);
+    for (sp = obj->slots, i = 0; i < obj->numSlots; i++, sp++) {
+        //  MOB -- better to test against NULL
         if (sp->value.ref != ejs->nullValue) {      //  MOB test permanent
             ejsMark(ejs, sp->value.ref);
         }
@@ -618,7 +593,7 @@ int ejsGetSlot(Ejs *ejs, EjsObj *obj, int slotNum)
     if (slotNum < 0) {
         //  MOB - should this be here or only in the VM. probably only in the VM.
         //  MOB -- or move this routine to the VM
-        if (!obj->dynamic) {
+        if (!DYNAMIC(obj)) {
             if (obj == ejs->nullValue) {
                 ejsThrowReferenceError(ejs, "Object is null");
             } else if (obj == ejs->undefinedValue) {
@@ -683,15 +658,12 @@ static int setObjectProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *value)
     Set the name for a property. Objects maintain a hash lookup for property names. This is hash is created on demand 
     if there are more than N properties. If an object is not dynamic, it will use the types name hash. If dynamic, 
     then the types name hash will be copied when required. 
-    
-    MOB WARNING: Callers must supply persistent names strings in qname
  */
-static int setObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qname)
+static int setObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname)
 {
     mprAssert(obj);
-    mprAssert(qname);
-    mprAssert(qname->name);
-    mprAssert(qname->space);
+    mprAssert(qname.name);
+    mprAssert(qname.space);
 
     if ((slotNum = ejsGetSlot(ejs, obj, slotNum)) < 0) {
         return EJS_ERR;
@@ -700,30 +672,30 @@ static int setObjectPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName *qn
 
     /* Remove the old hash entry if the name will change */
     if (obj->slots[slotNum].hashChain >= 0) {
-        if (CMP_QNAME(&obj->slots[slotNum].qname, qname)) {
+        if (CMP_QNAME(&obj->slots[slotNum].qname, &qname)) {
             return slotNum;
         }
-        removeHashEntry(ejs, obj, &obj->slots[slotNum].qname);
+        removeHashEntry(ejs, obj, obj->slots[slotNum].qname);
     }
-    /* Set the property name. NOTE: the name must be persistent.  */
-    obj->slots[slotNum].qname = *qname;
+    obj->slots[slotNum].qname = qname;
     
     mprAssert(slotNum < obj->numSlots);
     mprAssert(obj->numSlots <= obj->sizeSlots);
     
     if (obj->hash || obj->numSlots > EJS_HASH_MIN_PROP) {
-        if (hashProperty(obj, slotNum, qname) < 0) {
+        if (hashProperty(ejs, obj, slotNum, qname) < 0) {
             ejsThrowMemoryError(ejs);
             return EJS_ERR;
         }
     }
 #if BLD_DEBUG
+    //  MOB - OPT
     {
         EjsObj  *value;
 
         value = obj->slots[slotNum].value.ref;
-        if (value != ejs->nullValue && *ejsGetDebugName(value) == '\0') {
-            ejsSetDebugName(value, qname->name);
+        if (value != ejs->nullValue && ejsGetDebugName(value) == NULL) {
+            ejsSetDebugName(value, qname.name);
         }
     }
 #endif
@@ -798,7 +770,7 @@ int ejsInsertGrowObject(Ejs *ejs, EjsObj *obj, int incr, int offset)
         obj->slots[i] = *sp;
     }
     ejsZeroSlots(ejs, &obj->slots[offset], incr);
-    if (ejsMakeObjHash(obj) < 0) {
+    if (ejsMakeObjHash(ejs, obj) < 0) {
         return EJS_ERR;
     }   
     return 0;
@@ -827,7 +799,7 @@ static int growSlots(Ejs *ejs, EjsObj *obj, int sizeSlots)
         if (obj->slots == 0) {
             mprAssert(obj->sizeSlots == 0);
             mprAssert(sizeSlots > 0);
-            obj->slots = (EjsSlot*) mprAlloc(obj, sizeof(EjsSlot) * sizeSlots);
+            obj->slots = (EjsSlot*) ejsAlloc(ejs, sizeof(EjsSlot) * sizeSlots);
             if (obj->slots == 0) {
                 return EJS_ERR;
             }
@@ -836,9 +808,9 @@ static int growSlots(Ejs *ejs, EjsObj *obj, int sizeSlots)
         } else {
             if (obj->separateSlots) {
                 mprAssert(obj->sizeSlots > 0);
-                obj->slots = (EjsSlot*) mprRealloc(obj, obj->slots, sizeof(EjsSlot) * sizeSlots);
+                obj->slots = (EjsSlot*) ejsRealloc(ejs, obj->slots, sizeof(EjsSlot) * sizeSlots);
             } else {
-                slots = (EjsSlot*) mprAlloc(obj, sizeof(EjsSlot) * sizeSlots);
+                slots = (EjsSlot*) ejsAlloc(ejs, sizeof(EjsSlot) * sizeSlots);
                 memcpy(slots, obj->slots, obj->sizeSlots * sizeof(EjsSlot));
                 obj->slots = slots;
                 obj->separateSlots = 1;
@@ -877,7 +849,7 @@ static void removeSlot(Ejs *ejs, EjsObj *obj, int slotNum, int compact)
         i = slotNum;
     }
     ejsZeroSlots(ejs, &obj->slots[i], 1);
-    ejsMakeObjHash(obj);
+    ejsMakeObjHash(ejs, obj);
 }
 
 
@@ -893,8 +865,9 @@ void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
         for (sp = &slots[count - 1]; sp >= slots; sp--) {
             sp->value.ref = ejs->nullValue;
             sp->hashChain = -1;
-            sp->qname.name = "";
-            sp->qname.space = "";
+            //  MOB -- why set names to this. Better to set to null?
+            sp->qname.name = ejs->emptyString;
+            sp->qname.space = ejs->emptyString;
             sp->trait.type = 0;
             sp->trait.attributes = 0;
         }
@@ -902,16 +875,11 @@ void ejsZeroSlots(Ejs *ejs, EjsSlot *slots, int count)
 }
 
 
-void ejsCopySlots(Ejs *ejs, EjsObj *obj, EjsSlot *dest, EjsSlot *src, int count, int dup)
+void ejsCopySlots(Ejs *ejs, EjsObj *obj, EjsSlot *dest, EjsSlot *src, int count)
 {
     while (count-- > 0) {
         *dest = *src;
         dest->hashChain = -1;
-        if (dup) {
-            //  TOOD
-            dest->qname.space = mprStrdup(obj, src->qname.space);
-            dest->qname.name = mprStrdup(obj, src->qname.name);
-        }
         dest++;
         src++;
     }
@@ -919,15 +887,15 @@ void ejsCopySlots(Ejs *ejs, EjsObj *obj, EjsSlot *dest, EjsSlot *src, int count,
 
 /*********************************** Traits ***********************************/
 
-void ejsSetTraitType(EjsTrait *trait, EjsType *type)
+void ejsSetTraitType(Ejs *ejs, EjsTrait *trait, EjsType *type)
 {
     mprAssert(trait);
-    mprAssert(type == 0 || ejsIsType(type));
+    mprAssert(type == 0 || ejsIsType(ejs, type));
     trait->type = type;
 }
 
 
-void ejsSetTraitAttributes(EjsTrait *trait, int attributes)
+void ejsSetTraitAttributes(Ejs *ejs, EjsTrait *trait, int attributes)
 {
     mprAssert(trait);
     mprAssert((attributes & EJS_TRAIT_MASK) == attributes);
@@ -969,7 +937,6 @@ int ejsSetTraitDetails(Ejs *ejs, void *vp, int slotNum, EjsType *type, int attri
     }
     return slotNum;
 }
-
 
 
 int ejsHasTrait(EjsObj *obj, int slotNum, int attributes)
@@ -1044,18 +1011,17 @@ int ejsGetHashSize(int numSlots)
 }
 
 
-static int hashProperty(EjsObj *obj, int slotNum, EjsName *qname)
+static int hashProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname)
 {
     EjsName     *slotName;
     int         chainSlotNum, lastSlot, index;
 
-    mprAssert(qname);
-
+    //  MOB -- is this right?
     if (obj->hash == NULL || obj->hash->size < obj->numSlots) {
         /*  Remake the entire hash */
-        return ejsMakeObjHash(obj);
+        return ejsMakeObjHash(ejs, obj);
     }
-    index = ejsComputeHashCode(obj, qname);
+    index = ejsComputeStringHashCode(qname.name, obj->hash->size);
 
     /* Scan the collision chain */
     lastSlot = -1;
@@ -1065,7 +1031,7 @@ static int hashProperty(EjsObj *obj, int slotNum, EjsName *qname)
 
     while (chainSlotNum >= 0) {
         slotName = &obj->slots[chainSlotNum].qname;
-        if (CMP_QNAME(slotName, qname)) {
+        if (CMP_QNAME(slotName, &qname)) {
             return 0;
         }
         mprAssert(lastSlot != chainSlotNum);
@@ -1084,7 +1050,7 @@ static int hashProperty(EjsObj *obj, int slotNum, EjsName *qname)
         obj->hash->buckets[index] = slotNum;
     }
     obj->slots[slotNum].hashChain = -2;
-    obj->slots[slotNum].qname = *qname;
+    obj->slots[slotNum].qname = qname;
     return 0;
 }
 
@@ -1094,7 +1060,7 @@ static int hashProperty(EjsObj *obj, int slotNum, EjsName *qname)
     If numInstanceProp is < 0, then grow the number of properties by an increment. Otherwise, set the number of properties 
     to numInstanceProp. We currently don't allow reductions.
  */
-int ejsMakeObjHash(EjsObj *obj)
+int ejsMakeObjHash(Ejs *ejs, EjsObj *obj)
 {
     EjsSlot         *sp;
     EjsHash         *oldHash, *hp;
@@ -1112,8 +1078,8 @@ int ejsMakeObjHash(EjsObj *obj)
     oldHash = obj->hash;
     newHashSize = ejsGetHashSize(obj->numSlots);
     if (oldHash == NULL || oldHash->size < newHashSize) {
-        mprFree(oldHash);
-        hp = (EjsHash*) mprAlloc(obj, sizeof(EjsHash) + (newHashSize * sizeof(int)));
+        ejsFree(ejs, oldHash);
+        hp = (EjsHash*) ejsAlloc(ejs, sizeof(EjsHash) + (newHashSize * sizeof(int)));
         if (hp == 0) {
             return EJS_ERR;
         }
@@ -1137,7 +1103,7 @@ int ejsMakeObjHash(EjsObj *obj)
         Rehash existing properties
      */
     for (sp = obj->slots, i = 0; i < obj->numSlots; i++, sp++) {
-        if (sp->qname.name && hashProperty(obj, i, &sp->qname) < 0) {
+        if (sp->qname.name && hashProperty(ejs, obj, i, sp->qname) < 0) {
             return EJS_ERR;
         }
     }
@@ -1161,7 +1127,7 @@ void ejsClearObjHash(EjsObj *obj)
 }
 
 
-static void removeHashEntry(Ejs *ejs, EjsObj *obj, EjsName *qname)
+static void removeHashEntry(Ejs *ejs, EjsObj *obj, EjsName qname)
 {
     EjsSlot     *sp;
     EjsName     *nextName;
@@ -1173,9 +1139,10 @@ static void removeHashEntry(Ejs *ejs, EjsObj *obj, EjsName *qname)
          */
         for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
             sp = &obj->slots[slotNum];
-            if (CMP_QNAME(&sp->qname, qname)) {
-                sp->qname.name = "";
-                sp->qname.space = "";
+            if (CMP_QNAME(&sp->qname, &qname)) {
+                //  MOB -- would null be better
+                sp->qname.name = ejs->emptyString;
+                sp->qname.space = ejs->emptyString;
                 sp->hashChain = -1;
                 return;
             }
@@ -1183,21 +1150,22 @@ static void removeHashEntry(Ejs *ejs, EjsObj *obj, EjsName *qname)
         mprAssert(0);
         return;
     }
-    index = ejsComputeHashCode(obj, qname);
+    index = ejsComputeStringHashCode(qname.name, obj->hash->size);
     slotNum = obj->hash->buckets[index];
     lastSlot = -1;
     buckets = obj->hash->buckets;
     while (slotNum >= 0) {
         sp = &obj->slots[slotNum];
         nextName = &sp->qname;
-        if (CMP_QNAME(nextName, qname)) {
+        if (CMP_QNAME(nextName, &qname)) {
             if (lastSlot >= 0) {
                 obj->slots[lastSlot].hashChain = obj->slots[slotNum].hashChain;
             } else {
                 buckets[index] = obj->slots[slotNum].hashChain;
             }
-            sp->qname.name = "";
-            sp->qname.space = "";
+            //  MOB -- null would be better
+            sp->qname.name = ejs->emptyString;
+            sp->qname.space = ejs->emptyString;
             sp->hashChain = -1;
             return;
         }
@@ -1209,41 +1177,30 @@ static void removeHashEntry(Ejs *ejs, EjsObj *obj, EjsName *qname)
 
 
 /*
-    Compute a property name hash. Based on work by Paul Hsieh.
+    Compute a property name hash with and ASCII key. 
+    (Based on work by Paul Hsieh, see http://www.azillionmonkeys.com/qed/hash.html)
  */
-int ejsComputeHashCode(EjsObj *obj, EjsName *qname)
+int ejsComputeCStringHashCode(cchar *name, int tableSize)
 {
     uchar   *cdata;
-    uint    len, hash, rem, tmp;
+    uint    len, hash, tmp;
 
-    mprAssert(obj);
-    mprAssert(qname);
-    mprAssert(qname->name);
+    mprAssert(name);
+    mprAssert(tableSize > 0);
 
-    if ((len = (int) strlen(qname->name)) == 0) {
+    if (name == NULL || (len = (int) strlen(name)) == 0) {
         return 0;
     }
-
-    rem = len & 3;
     hash = len;
 
-#if KEEP_FOR_UNICODE
-    for (len >>= 2; len > 0; len--, data += 2) {
-        hash  += *data;
-        tmp   =  (data[1] << 11) ^ hash;
-        hash  =  (hash << 16) ^ tmp;
-        hash  += hash >> 11;
-    }
-#endif
-
-    cdata = (uchar*) qname->name;
+    cdata = (uchar*) name;
     for (len >>= 2; len > 0; len--, cdata += 4) {
-        hash  += *cdata | (cdata[1] << 8);
+        hash  += cdata[0] | (cdata[1] << 8);
         tmp   =  ((cdata[2] | (cdata[3] << 8)) << 11) ^ hash;
         hash  =  (hash << 16) ^ tmp;
         hash  += hash >> 11;
     }
-    switch (rem) {
+    switch (len & 3) {
     case 3: 
         hash += cdata[0] + (cdata[1] << 8);
         hash ^= hash << 16;
@@ -1255,14 +1212,11 @@ int ejsComputeHashCode(EjsObj *obj, EjsName *qname)
         hash ^= hash << 11;
         hash += hash >> 17;
         break;
-    case 1: hash += cdata[0];
+    case 1: 
+        hash += cdata[0];
         hash ^= hash << 10;
         hash += hash >> 1;
     }
-
-    /* 
-        Force "avalanching" of final 127 bits 
-     */
     hash ^= hash << 3;
     hash += hash >> 5;
     hash ^= hash << 4;
@@ -1270,40 +1224,78 @@ int ejsComputeHashCode(EjsObj *obj, EjsName *qname)
     hash ^= hash << 25;
     hash += hash >> 6;
 
-    mprAssert(obj->hash->size);
-    return hash % obj->hash->size;
+    return hash % tableSize;
 }
 
 
-static int cmpName(EjsName *a, EjsName *b) 
+/*
+    Compute a property name hash. 
+    (Based on work by Paul Hsieh, see http://www.azillionmonkeys.com/qed/hash.html)
+ */
+int ejsComputeStringHashCode(EjsString *name, int tableSize)
 {
-    mprAssert(a);
-    mprAssert(b);
-    mprAssert(a->name);
-    mprAssert(b->name);
+    EjsChar     *data;
+    uint        len, tmp;
+    uint        hash;
 
-    return (a->name == b->name || (a->name[0] == b->name[0] && strcmp(a->name, b->name) == 0));
-}
+    mprAssert(name);
+    mprAssert(tableSize > 0);
 
-
-static int cmpQname(EjsName *a, EjsName *b) 
-{
-    mprAssert(a);
-    mprAssert(b);
-    mprAssert(a->name);
-    mprAssert(a->space);
-    mprAssert(b->name);
-    mprAssert(b->space);
-
-    if (a->name == b->name && a->space == b->space) {
-        return 1;
+    if ((len = name->length) == 0) {
+        return 0;
     }
-    if (a->name[0] == b->name[0] && strcmp(a->name, b->name) == 0) {
-        if (a->space[0] == b->space[0] && strcmp(a->space, b->space) == 0) {
-            return 1;
-        }
+    data = name->value;
+    hash = name->length;
+
+#if BLD_CHAR_LEN == 1
+    for (len >>= 2; len > 0; len--, data += 4) {
+        hash  += data[0] | (data[1] << 8);
+        tmp   =  ((data[2] | (data[3] << 8)) << 11) ^ hash;
+        hash  =  (hash << 16) ^ tmp;
+        hash  += hash >> 11;
     }
-    return 0;
+    switch (len & 3) {
+    case 3: 
+        hash += data[0] + (data[1] << 8);
+        hash ^= hash << 16;
+        hash ^= data[sizeof(ushort)] << 18;
+        hash += hash >> 11;
+        break;
+    case 2: 
+        hash += data[0] + (data[1] << 8);
+        hash ^= hash << 11;
+        hash += hash >> 17;
+        break;
+    case 1: 
+        hash += data[0];
+        hash ^= hash << 10;
+        hash += hash >> 1;
+    }
+
+#elif BLD_CHAR_LEN == 2
+    for (; len > 0; len--, data += 2) {
+        hash  += data[0];
+        tmp   =  (data[1] << 11) ^ hash;
+        hash  =  (hash << 16) ^ tmp;
+        hash  += hash >> 11;
+    }
+    if (len & 1) {
+        hash += data[0];
+        hash += hash << 11;
+        hash += hash >> 17;
+        break;
+    }
+#else
+     error "Unsupported char length"
+#endif
+    hash ^= hash << 3;
+    hash += hash >> 5;
+    hash ^= hash << 4;
+    hash += hash >> 17;
+    hash ^= hash << 25;
+    hash += hash >> 6;
+
+    return hash % tableSize;
 }
 
 
@@ -1321,7 +1313,7 @@ int ejsCompactObject(Ejs *ejs, EjsObj *obj)
         *dest++ = *src;
     }
     obj->numSlots -= removed;
-    ejsMakeObjHash(obj);
+    ejsMakeObjHash(ejs, obj);
     return obj->numSlots;
 }
 
@@ -1333,12 +1325,11 @@ int ejsCompactObject(Ejs *ejs, EjsObj *obj)
 static EjsObj *obj_constructor(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
     EjsObj      *constructor;
-    EjsName     qname;
 
-    if ((constructor = ejsGetPropertyByName(ejs, obj, ejsName(&qname, "", "constructor"))) != 0) {
+    if ((constructor = ejsGetPropertyByName(ejs, obj, EN("constructor"))) != 0) {
         return constructor;
     }
-    return (EjsObj*) obj->type;
+    return (EjsObj*) TYPE(obj);
 }
 
 
@@ -1355,10 +1346,10 @@ static EjsObj *obj_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
         mprAssert(0);
         prototype = ejs->undefinedValue;
         
-    } else if (ejsIsType(obj)) {
+    } else if (ejsIsType(ejs, obj)) {
         prototype = ((EjsType*) obj)->prototype;
         
-    } else if (ejsIsFunction(obj)) {
+    } else if (ejsIsFunction(ejs, obj)) {
         fun = (EjsFunction*) obj;
         if (fun->archetype) {
             prototype = fun->archetype->prototype;
@@ -1381,19 +1372,18 @@ static EjsObj *obj_set_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
     EjsObj          *prototype;
     EjsFunction     *fun;
-    EjsName         pname;
 
     if (ejs->compiling) {
         mprAssert(0);
         return ejs->undefinedValue;
     }
     prototype = argv[0];
-    if (ejsIsType(obj)) {
+    if (ejsIsType(ejs, obj)) {
         ((EjsType*) obj)->prototype = prototype;
     } else {
-        if (ejsIsFunction(obj)) {
+        if (ejsIsFunction(ejs, obj)) {
             fun = (EjsFunction*) obj;
-            if (ejsIsType(fun->archetype)) {
+            if (ejsIsType(ejs, fun->archetype)) {
                 fun->archetype->prototype = prototype;
             } else {
                 ejsCreateArchetype(ejs, fun, prototype);
@@ -1402,7 +1392,7 @@ static EjsObj *obj_set_prototype(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
             /*
                 Normal property creation. This "prototype" property is not used internally.
              */
-            ejsSetPropertyByName(ejs, obj, ejsName(&pname, "", "prototype"), prototype);
+            ejsSetPropertyByName(ejs, obj, EN("prototype"), prototype);
         }
     }
     return 0;
@@ -1435,14 +1425,14 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     prototype = argv[0];
     properties = (argc >= 1) ? argv[1] : 0;
 
-    if (ejsIsType(prototype)) {
+    if (ejsIsType(ejs, prototype)) {
         type = (EjsType*) prototype;
     } else {
-        constructor = ejsGetPropertyByName(ejs, prototype, ejsName(&qname, "", "constructor"));
+        constructor = ejsGetPropertyByName(ejs, prototype, EN("constructor"));
         if (constructor) {
-            if (ejsIsType(constructor)) {
+            if (ejsIsType(ejs, constructor)) {
                 type = (EjsType*) constructor;
-            } else if (ejsIsFunction(constructor)) {
+            } else if (ejsIsFunction(ejs, constructor)) {
                 if (constructor->archetype == 0) {
                     if ((type = ejsCreateArchetype(ejs, constructor, prototype)) == 0) {
                         return 0;
@@ -1458,7 +1448,7 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             if ((type = ejsCreateArchetype(ejs, NULL, prototype)) == 0) {
                 return 0;
             }
-            ejsSetPropertyByName(ejs, prototype, &qname, type);
+            ejsSetPropertyByName(ejs, prototype, qname, type);
         }
     }
     obj = ejsCreateObject(ejs, type, 0);
@@ -1468,7 +1458,7 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             qname = ejsGetPropertyName(ejs, properties, slotNum);
             options = ejsGetProperty(ejs, properties, slotNum);
             argv[0] = obj;
-            argv[1] = (EjsObj*) ejsCreateString(ejs, qname.name);
+            argv[1] = (EjsObj*) qname.name;
             argv[2] = options;
             obj_defineProperty(ejs, (EjsObj*) type, 3, argv);
         }
@@ -1486,58 +1476,58 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     EjsType         *type;
     EjsObj          *obj, *options, *configurable, *enumerable, *namespace, *value, *writable;
     EjsName         qname;
-    char            *space, *name;
     int             attributes, slotNum;
 
     mprAssert(argc == 3);
 
     obj = argv[0];
-    name = (char*) mprStrdup(obj, ejsGetString(ejs, argv[1]));
+    qname.name = (EjsString*) argv[1];
+    qname.space = ejs->emptyString;
     options = argv[2];
-    space = (char*) "";
     value = 0;
     set = get = 0;
     attributes = 0;
 
-    if ((namespace = ejsGetPropertyByName(ejs, options, EN(&qname, "namespace"))) != 0) {
-        space = (char*) mprStrdup(ejs, ejsGetString(ejs, namespace));
+    if ((namespace = ejsGetPropertyByName(ejs, options, EN("namespace"))) != 0) {
+        qname.space = (EjsString*) namespace;
     }
-    if ((slotNum = ejsLookupProperty(ejs, obj, ejsName(&qname, space, name))) >= 0) {
+    if ((slotNum = ejsLookupProperty(ejs, obj, qname)) >= 0) {
         if (ejsHasTrait(obj, slotNum, EJS_TRAIT_FIXED)) {
-            ejsThrowTypeError(ejs, "Property \"%s\" is not configurable", qname.name);
+            ejsThrowTypeError(ejs, "Property \"%N\" is not configurable", qname);
             return 0;
         }
     }
-    type = ejsGetPropertyByName(ejs, options, EN(&qname, "type"));
+    type = ejsGetPropertyByName(ejs, options, EN("type"));
 
-    if ((configurable = ejsGetPropertyByName(ejs, options, EN(&qname, "configurable"))) != 0) {
+    if ((configurable = ejsGetPropertyByName(ejs, options, EN("configurable"))) != 0) {
         if (configurable == (EjsObj*) ejs->falseValue) {
             attributes |= EJS_TRAIT_FIXED;
         }
     }
-    if ((enumerable = ejsGetPropertyByName(ejs, options, EN(&qname, "enumerable"))) != 0) {
+    if ((enumerable = ejsGetPropertyByName(ejs, options, EN("enumerable"))) != 0) {
         if (enumerable == (EjsObj*) ejs->falseValue) {
             attributes |= EJS_TRAIT_HIDDEN;
         }
     }
-    value = ejsGetPropertyByName(ejs, options, EN(&qname, "value"));
+    value = ejsGetPropertyByName(ejs, options, EN("value"));
     if (value && type && !ejsIsA(ejs, value, type)) {
         ejsThrowArgError(ejs, "Value is not of the required type");
         return 0;
     }
 
-    if ((get = ejsGetPropertyByName(ejs, options, EN(&qname, "get"))) != 0) {
-        if (ejsIsFunction(get)) {
-            get->setter = ejsGetPropertyByName(ejs, obj, ejsName(&qname, space, "set"));
+    if ((get = ejsGetPropertyByName(ejs, options, EN("get"))) != 0) {
+        if (ejsIsFunction(ejs, get)) {
+            EjsName qset = { qname.space, CS("set") };
+            get->setter = ejsGetPropertyByName(ejs, obj, qset);
             attributes |= EJS_TRAIT_GETTER;
         } else {
             ejsThrowArgError(ejs, "The \"get\" property is not a function");
             return 0;
         }
     }
-    if ((set = ejsGetPropertyByName(ejs, options, EN(&qname, "set"))) != 0) {
-        if (ejsIsFunction(set)) {
-            if (get == 0 && (fun = ejsGetPropertyByName(ejs, obj, ejsName(&qname, space, name))) != 0) {
+    if ((set = ejsGetPropertyByName(ejs, options, EN("set"))) != 0) {
+        if (ejsIsFunction(ejs, set)) {
+            if (get == 0 && (fun = ejsGetPropertyByName(ejs, obj, qname)) != 0) {
                 get = fun;
             }
             if (get) {
@@ -1556,15 +1546,14 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     if (get) {
         value = (EjsObj*) get;
     }
-    if ((writable = ejsGetPropertyByName(ejs, options, EN(&qname, "writable"))) != 0) {
+    if ((writable = ejsGetPropertyByName(ejs, options, EN("writable"))) != 0) {
         if (writable == (EjsObj*) ejs->falseValue) {
             attributes |= EJS_TRAIT_READONLY;
         }
     }
     mprAssert((attributes & EJS_TRAIT_MASK) == attributes);
-    ejsName(&qname, space, name);
-    if (defineObjectProperty(ejs, obj, -1, ejsName(&qname, space, name), type, attributes, value) < 0) {
-        ejsThrowTypeError(ejs, "Can't define property %s", name);
+    if (defineObjectProperty(ejs, obj, -1, qname, type, attributes, value) < 0) {
+        ejsThrowTypeError(ejs, "Can't define property %s", qname.name);
     }
     return 0;
 }
@@ -1582,13 +1571,13 @@ static EjsObj *obj_freeze(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
         obj->slots[slotNum].trait.attributes |= EJS_TRAIT_READONLY | EJS_TRAIT_FIXED;
     }
-    if (ejsIsType(obj)) {
+    if (ejsIsType(ejs, obj)) {
         obj = ((EjsType*) obj)->prototype;
         for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
             obj->slots[slotNum].trait.attributes |= EJS_TRAIT_READONLY | EJS_TRAIT_FIXED;
         }
     }
-    obj->dynamic = 0;
+    DYNAMIC(obj) = 0;
     return 0;
 }
 
@@ -1607,7 +1596,7 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 
     for (; ip->index < obj->numSlots; ip->index++) {
         qname = ejsGetPropertyName(ejs, (EjsObj*) obj, ip->index);
-        if (qname.name[0] == '\0') {
+        if (qname.name == NULL) {
             continue;
         }
         trait = ejsGetTrait(ejs, obj, ip->index);
@@ -1617,7 +1606,7 @@ static EjsObj *nextObjectKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
             continue;
         }
         ip->index++;
-        return (EjsObj*) ejsCreateString(ejs, qname.name);
+        return (EjsObj*) qname.name;
     }
     ejsThrowStopIteration(ejs);
     return 0;
@@ -1680,7 +1669,7 @@ static EjsObj *obj_getOwnPropertyCount(Ejs *ejs, EjsObj *unused, int argc, EjsOb
     EjsObj      *obj;
 
     obj = argv[0];
-    return (EjsObj*) ejsCreateNumber(ejs, ejsGetPropertyCount(ejs, obj) - obj->type->numInherited);
+    return (EjsObj*) ejsCreateNumber(ejs, ejsGetPropertyCount(ejs, obj) - TYPE(obj)->numInherited);
 }
 
 
@@ -1695,40 +1684,40 @@ static EjsObj *obj_getOwnPropertyDescriptor(Ejs *ejs, EjsObj *unused, int argc, 
     EjsName         qname, qn;
     EjsType         *type;
     EjsLookup       lookup;
-    cchar           *prop;
     int             slotNum;
 
     obj = argv[0];
-    prop = ejsGetString(ejs, argv[1]);
-    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, EN(&qname, prop), &lookup)) < 0) {
+    //  MOB - ugly
+    qname.space = ejs->emptyString;
+    qname.name = (EjsString*) argv[1];
+    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, qname, &lookup)) < 0) {
         return (EjsObj*) ejs->falseValue;
     }
     trait = ejsGetTrait(ejs, obj, slotNum);
     result = ejsCreateSimpleObject(ejs);
-    value = ejsGetVarByName(ejs, obj, EN(&qname, prop), &lookup);
+    value = ejsGetVarByName(ejs, obj, qname, &lookup);
     if (value == 0) {
         value = ejs->nullValue;
     }
     type = (trait) ? trait->type: 0;
     if (trait && trait->attributes & EJS_TRAIT_GETTER) {
-        ejsSetPropertyByName(ejs, result, EN(&qname, "get"), value);
+        ejsSetPropertyByName(ejs, result, EN("get"), value);
     } else if (trait && trait->attributes & EJS_TRAIT_SETTER) {
         fun = (EjsFunction*) value;
-        if (ejsIsFunction(fun)) {
-            ejsSetPropertyByName(ejs, result, EN(&qname, "set"), fun->setter);
+        if (ejsIsFunction(ejs, fun)) {
+            ejsSetPropertyByName(ejs, result, EN("set"), fun->setter);
         }
     } else if (value) {
-        ejsSetPropertyByName(ejs, result, EN(&qname, "value"), value);
+        ejsSetPropertyByName(ejs, result, EN("value"), value);
     }
-    ejsSetPropertyByName(ejs, result, EN(&qname, "configurable"), 
+    ejsSetPropertyByName(ejs, result, EN("configurable"), 
         ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_FIXED)));
-    ejsSetPropertyByName(ejs, result, EN(&qname, "enumerable"), 
+    ejsSetPropertyByName(ejs, result, EN("enumerable"), 
         ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_HIDDEN)));
     qn = ejsGetPropertyName(ejs, obj, slotNum);
-    ejsSetPropertyByName(ejs, result, EN(&qname, "namespace"), ejsCreateString(ejs, qn.space));
-    ejsSetPropertyByName(ejs, result, EN(&qname, "type"), 
-         type ? (EjsObj*) type : ejs->nullValue);
-    ejsSetPropertyByName(ejs, result, EN(&qname, "writable"), 
+    ejsSetPropertyByName(ejs, result, EN("namespace"), qn.space);
+    ejsSetPropertyByName(ejs, result, EN("type"), type ? (EjsObj*) type : ejs->nullValue);
+    ejsSetPropertyByName(ejs, result, EN("writable"), 
         ejsCreateBoolean(ejs, !trait || !(trait->attributes & EJS_TRAIT_READONLY)));
     return result;
 }
@@ -1752,10 +1741,10 @@ static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, EjsOb
     excludeFunctions = 0;
     if (argc > 0) {
         options = argv[1];
-        if ((arg = ejsGetPropertyByName(ejs, options, EN(&qname, "includeBases"))) != 0) {
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("includeBases"))) != 0) {
             includeBases = (arg == (EjsObj*) ejs->trueValue);
         }
-        if ((arg = ejsGetPropertyByName(ejs, options, EN(&qname, "excludeFunctions"))) != 0) {
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("excludeFunctions"))) != 0) {
             excludeFunctions = (arg == (EjsObj*) ejs->trueValue);
         }
     }
@@ -1763,7 +1752,7 @@ static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, EjsOb
         return 0;
     }
     index = 0;
-    slotNum = (includeBases) ? 0 : obj->type->numInherited;
+    slotNum = (includeBases) ? 0 : TYPE(obj)->numInherited;
     for (; slotNum < obj->numSlots; slotNum++) {
         if ((trait = ejsGetTrait(ejs, obj, slotNum)) != 0) {
             if (trait->attributes & (EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
@@ -1776,21 +1765,21 @@ static EjsObj *obj_getOwnPropertyNames(Ejs *ejs, EjsObj *unused, int argc, EjsOb
             continue;
         }
 #endif
-        if (excludeFunctions && ejsIsFunction(ejsGetProperty(ejs, obj, slotNum))) {
+        if (excludeFunctions && ejsIsFunction(ejs, ejsGetProperty(ejs, obj, slotNum))) {
             continue;
         }
-        ejsSetProperty(ejs, result, index++, ejsCreateString(ejs, qname.name));
+        ejsSetProperty(ejs, result, index++, qname.name);
     }
-    if (ejsIsType(obj) || ejsIsFunction(obj)) {
-        if (ejsLookupProperty(ejs, obj, ejsName(&qname, "", "prototype")) < 0) {
-            ejsSetProperty(ejs, result, index++, ejsCreateString(ejs, "prototype"));
+    if (ejsIsType(ejs, obj) || ejsIsFunction(ejs, obj)) {
+        if (ejsLookupProperty(ejs, obj, EN("prototype")) < 0) {
+            ejsSetProperty(ejs, result, index++, ejsCreateStringFromCS(ejs, "prototype"));
         }
-        if (ejsLookupProperty(ejs, obj, ejsName(&qname, "", "length")) < 0) {
-            ejsSetProperty(ejs, result, index++, ejsCreateString(ejs, "length"));
+        if (ejsLookupProperty(ejs, obj, EN("length")) < 0) {
+            ejsSetProperty(ejs, result, index++, ejsCreateStringFromCS(ejs, "length"));
         }
     } else if (obj->isPrototype) {
-        if (ejsLookupProperty(ejs, obj, ejsName(&qname, "", "constructor")) < 0) {
-            ejsSetProperty(ejs, result, index++, ejsCreateString(ejs, "constructor"));
+        if (ejsLookupProperty(ejs, obj, EN("constructor")) < 0) {
+            ejsSetProperty(ejs, result, index++, ejsCreateStringFromCS(ejs, "constructor"));
         }
     }
     return (EjsObj*) result;
@@ -1805,7 +1794,7 @@ static EjsObj *obj_getOwnPrototypeOf(Ejs *ejs, EjsObj *unused, int argc, EjsObj 
     EjsObj      *obj;
 
     obj = argv[0];
-    return (EjsObj*) obj->type->prototype;
+    return (EjsObj*) TYPE(obj)->prototype;
 }
 
 
@@ -1817,10 +1806,10 @@ static EjsObj *obj_hasOwnProperty(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv
     EjsName     qname;
     EjsLookup   lookup;
     int         slotNum;
-    cchar       *prop;
 
-    prop = ejsGetString(ejs, argv[0]);
-    slotNum = ejsLookupVarWithNamespaces(ejs, obj, EN(&qname, prop), &lookup);
+    qname.space = ejs->emptyString;
+    qname.name = (EjsString*) argv[0];
+    slotNum = ejsLookupVarWithNamespaces(ejs, obj, qname, &lookup);
     return (EjsObj*) ejsCreateBoolean(ejs, slotNum >= 0);
 }
 
@@ -1833,7 +1822,7 @@ static EjsObj *obj_isExtensible(Ejs *ejs, EjsObj *unused, int argc, EjsObj **arg
     EjsObj      *obj;
 
     obj = argv[0];
-    return (EjsObj*) ejsCreateBoolean(ejs, obj->dynamic);
+    return (EjsObj*) ejsCreateBoolean(ejs, DYNAMIC(obj));
 }
 
 
@@ -1860,7 +1849,7 @@ static EjsObj *obj_isFrozen(Ejs *ejs, EjsObj *type, int argc, EjsObj **argv)
             }
         }
     }
-    if (obj->dynamic) {
+    if (DYNAMIC(obj)) {
         frozen = 0;
     }
     return (EjsObj*) ejsCreateBoolean(ejs, frozen);
@@ -1885,7 +1874,7 @@ static EjsObj *obj_isPrototypeOf(Ejs *ejs, EjsObj *prototype, int argc, EjsObj *
     EjsObj  *obj;
     
     obj = argv[0];
-    return prototype == obj->type->prototype ? ejs->trueValue : ejs->falseValue;
+    return prototype == TYPE(obj)->prototype ? ejs->trueValue : ejs->falseValue;
 }
 
 
@@ -1908,7 +1897,7 @@ static EjsObj *obj_isSealed(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             }
         }
     }
-    if (obj->dynamic) {
+    if (DYNAMIC(obj)) {
         sealed = 0;
     }
     return (EjsObj*) ejsCreateBoolean(ejs, sealed);
@@ -1941,7 +1930,7 @@ static EjsObj *obj_keys(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         }
         vp = ejsGetProperty(ejs, obj, slotNum);
         qname = ejsGetPropertyName(ejs, obj, slotNum);
-        ejsSetProperty(ejs, result, slotNum, ejsCreateString(ejs, qname.name));
+        ejsSetProperty(ejs, result, slotNum, ejsCreateStringFromCS(ejs, qname.name));
     }
     return (EjsObj*) result;
 }
@@ -1956,7 +1945,7 @@ static EjsObj *obj_preventExtensions(Ejs *ejs, EjsObj *unused, int argc, EjsObj 
     EjsObj      *obj;
 
     obj = argv[0];
-    obj->dynamic = 0;
+    DYNAMIC(obj) = 0;
     return obj;
 }
 
@@ -1976,7 +1965,7 @@ static EjsObj *obj_seal(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         trait = ejsGetTrait(ejs, obj, slotNum);
         trait->attributes |= EJS_TRAIT_FIXED;
     }
-    obj->dynamic = 0;
+    DYNAMIC(obj) = 0;
     return 0;
 }
 
@@ -1989,13 +1978,13 @@ static EjsObj *obj_propertyIsEnumerable(Ejs *ejs, EjsObj *obj, int argc, EjsObj 
     EjsTrait    *trait;
     EjsName     qname;
     EjsLookup   lookup;
-    cchar       *prop;
     int         slotNum;
 
     mprAssert(argc == 1 || argc == 2);
 
-    prop = ejsGetString(ejs, argv[0]);
-    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, EN(&qname, prop), &lookup)) < 0) {
+    qname.space = ejs->emptyString;
+    qname.name = (EjsString*) argv[0];
+    if ((slotNum = ejsLookupVarWithNamespaces(ejs, obj, qname, &lookup)) < 0) {
         return (EjsObj*) ejs->falseValue;
     }
     trait = ejsGetTrait(ejs, obj, slotNum);
@@ -2015,20 +2004,22 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     MprBuf      *buf;
     EjsObj      *arg, *pp, *result;
     EjsName     qname;
-    EjsObj      *obj, *options, *replacerArgs[2];
+    EjsObj      *obj, *options;
     EjsFunction *replacer;
+    EV          *replacerArgs[2];
     EjsString   *sv;
     EjsTrait    *trait;
     char        key[16], *cp, *indent;
-    int         c, isArray, i, count, slotNum, depth, hidden, baseClasses, namespaces, pretty;
+    int         enabled, c, isArray, i, count, slotNum, depth, hidden, baseClasses, namespaces, pretty;
 
     /*
         The main code below can handle Arrays, Objects, objects derrived from Object and also native classes with properties.
         All others just use toString
      */
     count = ejsGetPropertyCount(ejs, vp);
-    if (count == 0 && vp->type != ejs->objectType && vp->type != ejs->arrayType) {
-        if (ejsIsNull(vp) || ejsIsUndefined(vp) || ejsIsBoolean(vp) || ejsIsNumber(vp) || ejsIsString(vp)) {
+    if (count == 0 && TYPE(vp) != ejs->objectType && TYPE(vp) != ejs->arrayType) {
+        if (ejsIsNull(ejs, vp) || ejsIsUndefined(ejs, vp) || ejsIsBoolean(ejs, vp) || ejsIsNumber(ejs, vp) || 
+                ejsIsString(ejs, vp)) {
             return (EjsObj*) ejsToString(ejs, vp);
         } else {
             return (EjsObj*) ejsStringToJSON(ejs, vp);
@@ -2039,19 +2030,20 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     replacer = NULL;
     indent = NULL;
     options = NULL;
+    enabled = ejsEnableGC(ejs, 0);
     
     if (argc > 0) {
         options = argv[0];
-        if ((arg = ejsGetPropertyByName(ejs, options, EN(&qname, "baseClasses"))) != 0) {
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("baseClasses"))) != 0) {
             baseClasses = (arg == (EjsObj*) ejs->trueValue);
         }
-        if ((arg = ejsGetPropertyByName(ejs, options, EN(&qname, "depth"))) != 0) {
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("depth"))) != 0) {
             depth = ejsGetInt(ejs, arg);
         }
-        if ((arg = ejsGetPropertyByName(ejs, options, EN(&qname, "indent"))) != 0) {
-            if (ejsIsString(arg)) {
-               indent = ((EjsString*) arg)->value; 
-            } else if (ejsIsNumber(arg)) {
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("indent"))) != 0) {
+            if (ejsIsString(ejs, arg)) {
+               indent = (char*) ejsGetString(ejs, arg);
+            } else if (ejsIsNumber(ejs, arg)) {
                 i = ejsGetInt(ejs, arg);
                 if (i < 0 || i >= MPR_MAX_STRING) {
                     indent = NULL;
@@ -2062,21 +2054,21 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
                 }
             }
         }
-        if ((arg = ejsGetPropertyByName(ejs, options, EN(&qname, "hidden"))) != 0) {
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("hidden"))) != 0) {
             hidden = (arg == (EjsObj*) ejs->trueValue);
         }
-        if ((arg = ejsGetPropertyByName(ejs, options, EN(&qname, "namespaces"))) != 0) {
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("namespaces"))) != 0) {
             namespaces = (arg == (EjsObj*) ejs->trueValue);
         }
-        if ((arg = ejsGetPropertyByName(ejs, options, EN(&qname, "pretty"))) != 0) {
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("pretty"))) != 0) {
             pretty = (arg == (EjsObj*) ejs->trueValue);
         }
-        replacer = ejsGetPropertyByName(ejs, options, EN(&qname, "replacer"));
-        if (!ejsIsFunction(replacer)) {
+        replacer = ejsGetPropertyByName(ejs, options, EN("replacer"));
+        if (!ejsIsFunction(ejs, replacer)) {
             replacer = NULL;
         }
     }
-    isArray = ejsIsArray(vp);
+    isArray = ejsIsArray(ejs, vp);
 
     obj = (EjsObj*) vp;
     buf = mprCreateBuf(ejs, 0, 0);
@@ -2084,8 +2076,8 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     if (pretty || indent) {
         mprPutCharToBuf(buf, '\n');
     }
-    if (++ejs->serializeDepth <= depth && !obj->visited) {
-        obj->visited = 1;
+    if (++ejs->serializeDepth <= depth && !VISITED(obj)) {
+        VISITED(obj) = 1;
         for (slotNum = 0; slotNum < count && !ejs->exception; slotNum++) {
             trait = ejsGetTrait(ejs, obj, slotNum);
             if (trait && (trait->attributes & (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | 
@@ -2094,7 +2086,8 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
             }
             pp = ejsGetProperty(ejs, obj, slotNum);
             if (ejs->exception) {
-                obj->visited = 0;
+                VISITED(obj) = 0;
+                ejsEnableGC(ejs, enabled);
                 return 0;
             }
             if (pp == 0) {
@@ -2102,15 +2095,12 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
             }
             if (isArray) {
                 mprItoa(key, sizeof(key), slotNum, 10);
-                qname.name = key;
-                qname.space = "";
+                qname.name = ejsCreateStringFromCS(ejs, key);
+                qname.space = ejs->emptyString;
             } else {
                 qname = ejsGetPropertyName(ejs, vp, slotNum);
             }
-            if (qname.name == 0) {
-                continue;
-            }
-            if (qname.space[0] == '\0' && qname.name[0] == '\0') {
+            if (qname.space && qname.name) {
                 continue;
             }
             if (pretty) {
@@ -2124,7 +2114,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
             }
             if (!isArray) {
                 if (namespaces) {
-                    if (qname.space[0] != EJS_EMPTY_NAMESPACE[0]) {
+                    if (qname.space != ejs->emptyString) {
                         mprPutFmtToBuf(buf, "\"%s\"::", qname.space);
                     }
                 }
@@ -2145,20 +2135,22 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
             }
 //  MOB GC - Can this be collected?
             sv = (EjsString*) ejsToJSON(ejs, pp, options);
-            if (sv == 0 || !ejsIsString(sv)) {
+            if (sv == 0 || !ejsIsString(ejs, sv)) {
                 if (!ejs->exception) {
                     ejsThrowTypeError(ejs, "Can't serialize property %s", qname.name);
                 }
-                obj->visited = 0;
+                VISITED(obj) = 0;
+                ejsEnableGC(ejs, enabled);
                 return 0;
             } else {
                 if (replacer) {
 //  MOB GC - Can this be collected?
-                    replacerArgs[0] = (EjsObj*) ejsCreateString(ejs, qname.name); 
+                    replacerArgs[0] = (EjsObj*) qname.name; 
                     replacerArgs[1] = (EjsObj*) sv; 
                     pp = ejsRunFunction(ejs, replacer, obj, 2, replacerArgs);
                 }
-                mprPutStringToBuf(buf, sv->value);
+                //  MOB -- UNICODE - should the buffer be in unicode from the start -- yes
+                mprPutStringToBuf(buf, ejsGetString(ejs, sv));
             }
             if ((slotNum + 1) < count) {
                 mprPutCharToBuf(buf, ',');
@@ -2167,7 +2159,7 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
                 mprPutCharToBuf(buf, '\n');
             }
         }
-        obj->visited = 0;
+        VISITED(obj) = 0;
     }
     --ejs->serializeDepth; 
     if (pretty || indent) {
@@ -2177,9 +2169,9 @@ static EjsObj *obj_toJSON(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     }
     mprPutCharToBuf(buf, isArray ? ']' : '}');
     mprAddNullToBuf(buf);
-//  MOB GC
-    result = (EjsObj*) ejsCreateString(ejs, mprGetBufStart(buf));
+    result = (EjsObj*) ejsCreateStringFromCS(ejs, mprGetBufStart(buf));
     mprFree(buf);
+    ejsEnableGC(ejs, enabled);
     return result;
 }
 
@@ -2199,7 +2191,7 @@ static EjsObj *toLocaleString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
 static EjsObj *obj_toString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    if (ejsIsString(vp)) {
+    if (ejsIsString(ejs, vp)) {
         return vp;
     }
     return (EjsObj*) castObject(ejs, vp, ejs->stringType);
@@ -2217,7 +2209,7 @@ static EjsObj *obj_getBaseType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
     EjsObj      *vp;
 
     vp = argv[0];
-    if (ejsIsType(vp)) {
+    if (ejsIsType(ejs, vp)) {
         return (EjsObj*) (((EjsType*) vp)->baseType);
     }
     return (EjsObj*) ejs->nullValue;
@@ -2229,7 +2221,7 @@ static EjsObj *obj_getBaseType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
  */
 static EjsObj *obj_isPrototype(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, ejsIsPrototype(argv[0]));
+    return (EjsObj*) ejsCreateBoolean(ejs, ejsIsPrototype(ejs, argv[0]));
 }
 
 
@@ -2238,7 +2230,7 @@ static EjsObj *obj_isPrototype(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv
  */
 static EjsObj *obj_isType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, ejsIsType(argv[0]));
+    return (EjsObj*) ejsCreateBoolean(ejs, ejsIsType(ejs, argv[0]));
 }
 
 
@@ -2252,27 +2244,25 @@ static EjsObj *obj_getType(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsObj      *vp;
 
     vp = argv[0];
-    if (vp->type == 0) {
-        return ejs->nullValue;
-    }
-    return (EjsObj*) vp->type;
+    return (EjsObj*) TYPE(vp);
 }
 
+//  MOB - move out of here
 /*
     Return the type name of a var as a string. If the var is a type, get the base type.
  */
-EjsObj *ejsGetTypeName(Ejs *ejs, EjsObj *vp)
+EjsString *ejsGetTypeName(Ejs *ejs, EV *vp)
 {
     EjsType     *type;
 
     if (vp == 0) {
         return ejs->undefinedValue;
     }
-    type = (EjsType*) vp->type;
+    type = (EjsType*) TYPE(vp);
     if (type == 0) {
         return ejs->nullValue;
     }
-    return (EjsObj*) ejsCreateString(ejs, type->qname.name);
+    return type->qname.name;
 }
 
 
@@ -2297,12 +2287,12 @@ static EjsObj *obj_getName(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     obj = argv[0];
 
-    if (ejsIsType(obj)) {
-        return (EjsObj*) ejsCreateString(ejs, ((EjsType*) obj)->qname.name);
-    } else if (ejsIsFunction(obj)) {
-        return (EjsObj*) ejsCreateString(ejs, ((EjsFunction*) obj)->name);
+    if (ejsIsType(ejs, obj)) {
+        return (EjsObj*) ((EjsType*) obj)->qname.name;
+    } else if (ejsIsFunction(ejs, obj)) {
+        return (EjsObj*) ((EjsFunction*) obj)->name;
     }
-    return (EjsObj*) ejs->emptyStringValue;
+    return (EjsObj*) ejs->emptyString;
 }
 
 /*********************************** Globals **********************************/
@@ -2316,36 +2306,37 @@ static EjsObj *obj_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 }
 
 
+//  MOB -- move out of here
 /*
     Get the ecma "typeof" value for an object. Unfortunately, typeof is pretty lame.
  */
-EjsObj *ejsGetTypeOf(Ejs *ejs, EjsObj *vp)
+EjsString *ejsGetTypeOf(Ejs *ejs, EV *vp)
 {
     if (vp == ejs->undefinedValue) {
-        return (EjsObj*) ejsCreateString(ejs, "undefined");
+        return ejsCreateStringFromCS(ejs, "undefined");
 
     } else if (vp == ejs->nullValue) {
         /* Yea - I know, ECMAScript is broken */
-        return (EjsObj*) ejsCreateString(ejs, "object");
+        return ejsCreateStringFromCS(ejs, "object");
 
-    } if (ejsIsBoolean(vp)) {
-        return (EjsObj*) ejsCreateString(ejs, "boolean");
+    } if (ejsIsBoolean(ejs, vp)) {
+        return ejsCreateStringFromCS(ejs, "boolean");
 
-    } else if (ejsIsNumber(vp)) {
-        return (EjsObj*) ejsCreateString(ejs, "number");
+    } else if (ejsIsNumber(ejs, vp)) {
+        return ejsCreateStringFromCS(ejs, "number");
 
-    } else if (ejsIsString(vp)) {
-        return (EjsObj*) ejsCreateString(ejs, "string");
+    } else if (ejsIsString(ejs, vp)) {
+        return ejsCreateStringFromCS(ejs, "string");
 
-    } else if (ejsIsFunction(vp)) {
-        return (EjsObj*) ejsCreateString(ejs, "function");
+    } else if (ejsIsFunction(ejs, vp)) {
+        return ejsCreateStringFromCS(ejs, "function");
                
-    } else if (ejsIsType(vp)) {
+    } else if (ejsIsType(ejs, vp)) {
         /* Pretend it is a constructor function */
-        return (EjsObj*) ejsCreateString(ejs, "function");
+        return ejsCreateStringFromCS(ejs, "function");
                
     } else {
-        return (EjsObj*) ejsCreateString(ejs, "object");
+        return ejsCreateStringFromCS(ejs, "object");
     }
 }
 
@@ -2355,7 +2346,7 @@ EjsObj *ejsGetTypeOf(Ejs *ejs, EjsObj *vp)
 void ejsCreateObjectHelpers(Ejs *ejs)
 {
     EjsType         *type;
-    EjsTypeHelpers  *helpers;
+    EjsHelpers  *helpers;
 
     type = ejs->objectType;
     helpers = &type->helpers;
@@ -2365,7 +2356,6 @@ void ejsCreateObjectHelpers(Ejs *ejs)
     helpers->defineProperty         = (EjsDefinePropertyHelper) defineObjectProperty;
     helpers->deleteProperty         = (EjsDeletePropertyHelper) deleteObjectProperty;
     helpers->deletePropertyByName   = (EjsDeletePropertyByNameHelper) deleteObjectPropertyByName;
-    helpers->destroy                = (EjsDestroyHelper) destroyObject;
     helpers->getProperty            = (EjsGetPropertyHelper) getObjectProperty;
     helpers->getPropertyCount       = (EjsGetPropertyCountHelper) getObjectPropertyCount;
     helpers->getPropertyName        = (EjsGetPropertyNameHelper) ejsGetObjectPropertyName;
@@ -2374,10 +2364,6 @@ void ejsCreateObjectHelpers(Ejs *ejs)
     helpers->mark                   = (EjsMarkHelper) ejsMarkObject;
     helpers->setProperty            = (EjsSetPropertyHelper) setObjectProperty;
     helpers->setPropertyName        = (EjsSetPropertyNameHelper) setObjectPropertyName;
-#if UNUSED
-    helpers->getPropertyTrait       = (EjsGetPropertyTraitHelper) getObjectPropertyTrait;
-    helpers->setPropertyTrait       = (EjsSetPropertyTraitHelper) setObjectPropertyTrait;
-#endif
 }
 
 

@@ -20,19 +20,19 @@ static int parseFlags(EjsRegExp *rp, cchar *flags);
 
     function cast(type: Type) : Object
  */
-static EjsObj *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
+static EV *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 {
     char    *pattern, *flags;
 
     switch (type->id) {
     case ES_Boolean:
-        return (EjsObj*) ejs->trueValue;
+        return ejs->trueValue;
 
     case ES_String:
         flags = makeFlags(rp);
         pattern = mprStrcat(rp, -1, "/", rp->pattern, "/", flags, NULL);
         mprFree(flags);
-        return (EjsVar*) ejsCreateStringAndFree(ejs, pattern);
+        return ejsCreateStringAndFree(ejs, pattern);
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -50,7 +50,9 @@ static void destroyRegExp(Ejs *ejs, EjsRegExp *rp)
         free(rp->compiled);
         rp->compiled = 0;
     }
-    ejsFreeVar(ejs, (EjsObj*) rp, -1);
+#if UNUSED
+    ejsFreeVar(ejs, rp, -1);
+#endif
 }
 
 
@@ -73,7 +75,7 @@ static EjsObj *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **arg
         flags = (char*) ejsGetString(ejs, argv[1]);
         rp->options |= parseFlags(rp, flags);
     }
-    rp->pattern = mprStrdup(rp, pattern);
+    rp->pattern = (char*) pattern;
     if (rp->compiled) {
         free(rp->compiled);
     }
@@ -163,7 +165,7 @@ static EjsObj *regex_getMultiline(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **ar
 
 static EjsObj *regex_getSource(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, rp->pattern);
+    return (EjsObj*) ejsCreateStringFromCS(ejs, rp->pattern);
 }
 
 
@@ -214,26 +216,28 @@ EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp)
     Create an initialized regular expression object. The pattern should include
     the slash delimiters. For example: /abc/ or /abc/g
  */
-
-EjsRegExp *ejsCreateRegExp(Ejs *ejs, cchar *pattern)
+EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
 {
     EjsRegExp   *rp;
-    cchar       *errMsg;
+    cchar       *pat, *errMsg;
     char        *flags;
-    int         column, errCode;
+    int         column, errCode, len;
 
-    mprAssert(pattern[0] == '/');
-    if (*pattern != '/') {
+    pat = ejsToMulti(ejs, pattern);
+    if (pat[0] != '/') {
         ejsThrowArgError(ejs, "Bad regular expression pattern. Must start with '/'");
         return 0;
     }
-
     rp = (EjsRegExp*) ejsCreate(ejs, ejs->regExpType, 0);
     if (rp != 0) {
         /*
             Strip off flags for passing to pcre_compile2
          */
-        rp->pattern = mprStrdup(rp, &pattern[1]);
+        len = strlen(pat);
+        rp->pattern = ejsAlloc(ejs, len);
+        memcpy(rp->pattern, &pat[1], len);
+        rp->pattern[len] = '\0';
+        //  MOB - UNICODE?
         if ((flags = strrchr(rp->pattern, '/')) != 0) {
             rp->options = parseFlags(rp, &flags[1]);
             *flags = '\0';
@@ -241,6 +245,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, cchar *pattern)
         if (rp->compiled) {
             free(rp->compiled);
         }
+        //  MOB - UNICODE is pattern meant to be 
         rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
         if (rp->compiled == NULL) {
             ejsThrowArgError(ejs, "Can't compile regular expression. Error %s at column %d", errMsg, column);
@@ -328,14 +333,23 @@ static char *makeFlags(EjsRegExp *rp)
 }
 
 
+static void markRegExp(Ejs *ejs, EjsRegExp *rp)
+{
+    ejsMark(ejs, rp->pattern);
+}
+
+
 void ejsCreateRegExpType(Ejs *ejs)
 {
     EjsType     *type;
 
     type = ejs->regExpType = ejsCreateNativeType(ejs, "ejs", "RegExp", ES_RegExp, sizeof(EjsRegExp));
+#if UNUSED
     type->needFinalize = 1;
+#endif
     type->helpers.cast = (EjsCastHelper) castRegExp;
     type->helpers.destroy = (EjsDestroyHelper) destroyRegExp;
+    type->helpers.mark = (EjsMarkHelper) markRegExp;
 }
 
 

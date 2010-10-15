@@ -11,20 +11,24 @@
 
 /****************************** Forward Declarations **************************/
 
-static int  createBlockSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsBlock *vp);
-static int  createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj *vp);
-static int  createDependencySection(EcCompiler *cp);
-static int  createExceptionSection(EcCompiler *cp, EjsFunction *mp);
-static int  createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsFunction *fun, int isSetter);
-static int  createGlobalProperties(EcCompiler *cp);
-static int  createGlobalType(EcCompiler *cp, EjsType *klass);
-static int  createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj *vp);
-static int  createSection(EcCompiler *cp, EjsObj *block, int slotNum);
-static int  reserveRoom(EcCompiler *cp, int room);
-static int  sum(cchar *name, int value);
-static int  swapWordField(EcCompiler *cp, int word);
+static int createBlockSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsBlock *vp);
+static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj *vp);
+static int createDependencySection(EcCompiler *cp);
+static int createDocSection(EcCompiler *cp, EjsObj *block, int slotNum);
+static int createExceptionSection(EcCompiler *cp, EjsFunction *mp);
+static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsFunction *fun, int isSetter);
+static int createGlobalProperties(EcCompiler *cp);
+static int createGlobalType(EcCompiler *cp, EjsType *klass);
+static int createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj *vp);
+static int createSection(EcCompiler *cp, EjsObj *block, int slotNum);
+static int reserveRoom(EcCompiler *cp, int room);
+static int sumNum(int value);
+static int sumString(EjsString *name);
+static int swapWordField(EcCompiler *cp, int word);
 
-static int  createDocSection(EcCompiler *cp, EjsObj *block, int slotNum);
+#if UNUSED
+static int sumCString(cchar *name);
+#endif
 
 /*********************************** Code *************************************/
 /*
@@ -97,7 +101,7 @@ int ecCreateModuleSection(EcCompiler *cp)
     if (rc < 0) {
         return MPR_ERR_CANT_WRITE;
     }
-    mp->checksum += (sum(mp->name, 0) & EJS_ENCODE_MAX_WORD);
+    mp->checksum += (sumString(mp->name) & EJS_ENCODE_MAX_WORD);
     ejsEncodeWord((uchar*) &buf->data[state->checksumOffset], mp->checksum);
     return 0;
 }
@@ -118,14 +122,14 @@ static int createDependencySection(EcCompiler *cp)
         If merging, don't need references to dependent modules as they are aggregated onto the output
      */
     if (mp->dependencies && !cp->merge) {
-        count = mprGetListCount(mp->dependencies);
+        count = ejsGetLength(ejs, mp->dependencies);
         for (i = 0; i < count; i++) {
-            module = (EjsModule*) mprGetItem(mp->dependencies, i);
+            module = (EjsModule*) ejsGetProperty(ejs, mp->dependencies, i);
 
             if (module->compiling && cp->outputFile) {
                 continue;
             }
-            if (strcmp(mp->name, module->name) == 0) {
+            if (mp->name == module->name) {
                 /* A module can't depend on itself */
                 continue;
             }
@@ -145,7 +149,7 @@ static int createDependencySection(EcCompiler *cp)
             if (rc < 0) {
                 return MPR_ERR_CANT_WRITE;
             }
-            mp->checksum += sum(module->name, 0);
+            mp->checksum += sumString(module->name);
             mprLog(cp, 7, "    dependency section for %s from module %s", module->name, mp->name);
         }
     }
@@ -171,16 +175,17 @@ static int createGlobalProperties(EcCompiler *cp)
         return 0;
     }
     for (next = 0; (prop = (EjsName*) mprGetNextItem(mp->globalProperties, &next)) != 0; ) {
-        slotNum = ejsLookupProperty(ejs, ejs->global, prop);
+        slotNum = ejsLookupProperty(ejs, ejs->global, *prop);
         if (slotNum < 0) {
             mprError(ejs, "Code generation error. Can't find global property %s.", prop->name);
             return EJS_ERR;
         }
         vp = ejsGetProperty(ejs, ejs->global, slotNum);
-        if (vp->visited) {
+        //  MOB -- but visited never being set?
+        if (VISITED(vp)) {
             continue;
         }
-        if (ejsIsType(vp)) {
+        if (ejsIsType(ejs, vp)) {
             if (createGlobalType(cp, (EjsType*) vp) < 0) {
                 return EJS_ERR;
             }
@@ -191,9 +196,9 @@ static int createGlobalProperties(EcCompiler *cp)
         }
     }
     for (next = 0; (prop = (EjsName*) mprGetNextItem(mp->globalProperties, &next)) != 0; ) {
-        slotNum = ejsLookupProperty(ejs, ejs->global, prop);
+        slotNum = ejsLookupProperty(ejs, ejs->global, *prop);
         vp = ejsGetProperty(ejs, ejs->global, slotNum);
-        vp->visited = 0;
+        VISITED(vp) = 0;
     }
     return 0;
 }
@@ -212,12 +217,12 @@ static int createGlobalType(EcCompiler *cp, EjsType *type)
     ejs = cp->ejs;
     mp = cp->state->currentModule;
 
-    if (type->constructor.block.obj.visited || type->module != mp) {
+    if (VISITED(type) || type->module != mp) {
         return 0;
     }
-    type->constructor.block.obj.visited = 1;
+    VISITED(type) = 1;
 
-    if (type->baseType && !type->baseType->constructor.block.obj.visited) {
+    if (type->baseType && !VISITED(type->baseType)) {
         createGlobalType(cp, type->baseType);
     }
     if (type->implements) {
@@ -225,7 +230,7 @@ static int createGlobalType(EcCompiler *cp, EjsType *type)
             createGlobalType(cp, iface);
         }
     }
-    slotNum = ejsLookupProperty(ejs, ejs->global, &type->qname);
+    slotNum = ejsLookupProperty(ejs, ejs->global, type->qname);
     mprAssert(slotNum >= 0);
 
     if (createSection(cp, ejs->global, slotNum) < 0) {
@@ -251,15 +256,15 @@ static int createSection(EcCompiler *cp, EjsObj *block, int slotNum)
     /*
         hoistBlockVar will delete hoisted properties but will not (yet) compact to reclaim the slot.
      */
-    if (slotNum < 0 || trait == 0 || vp == 0 || qname.name[0] == '\0') {
+    if (slotNum < 0 || trait == 0 || vp == 0 || qname.name->value[0] == '\0') {
         return 0;
     }
     mprAssert(qname.name);
 
-    if (ejsIsType(vp)) {
+    if (ejsIsType(ejs, vp)) {
         return createClassSection(cp, block, slotNum, vp);
 
-    } else if (ejsIsFunction(vp)) {
+    } else if (ejsIsFunction(ejs, vp)) {
         fun = (EjsFunction*) vp;
         if (createFunctionSection(cp, block, slotNum, fun, 0) < 0) {
             return EJS_ERR;
@@ -270,7 +275,7 @@ static int createSection(EcCompiler *cp, EjsObj *block, int slotNum)
         }
         return 0;
 
-    } else if (ejsIsBlock(vp)) {
+    } else if (ejsIsBlock(ejs, vp)) {
         return createBlockSection(cp, block, slotNum, (EjsBlock*) vp);
     }
     return createPropertySection(cp, block, slotNum, vp);
@@ -301,7 +306,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     
     type = ejsGetProperty(ejs, ejs->global, slotNum);
     mprAssert(type);
-    mprAssert(ejsIsType(type));
+    mprAssert(ejsIsType(ejs, type));
 
     rc = 0;
     rc += ecEncodeByte(cp, EJS_SECT_CLASS);
@@ -336,7 +341,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
     rc += ecEncodeNumber(cp, (cp->bind) ? slotNum: -1);
 
     mprAssert(type != type->baseType);
-    rc += ecEncodeGlobal(cp, (EjsObj*) type->baseType, &type->baseType->qname);
+    rc += ecEncodeGlobal(cp, (EjsObj*) type->baseType, type->baseType->qname);
     rc += ecEncodeNumber(cp, ejsGetPropertyCount(ejs, (EjsObj*) type));
 
     instanceTraits = ejsGetPropertyCount(ejs, (EjsObj*) type->prototype);
@@ -347,7 +352,7 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
 
     if (type->implements) {
         for (next = 0; (iface = mprGetNextItem(type->implements, &next)) != 0; ) {
-            rc += ecEncodeGlobal(cp, (EjsObj*) iface, &iface->qname);
+            rc += ecEncodeGlobal(cp, (EjsObj*) iface, iface->qname);
         }
     }
     if (rc < 0) {
@@ -390,7 +395,8 @@ static int createClassSection(EcCompiler *cp, EjsObj *block, int slotNum, EjsObj
             }
         }
     }
-    mp->checksum += sum(type->qname.name, ejsGetPropertyCount(ejs, (EjsObj*) type) + instanceTraits + interfaceCount);
+    mp->checksum += sumNum(ejsGetPropertyCount(ejs, (EjsObj*) type) + instanceTraits + interfaceCount);
+    mp->checksum += sumString(type->qname.name);
     if (ecEncodeByte(cp, EJS_SECT_CLASS_END) < 0) {
         return EJS_ERR;
     }
@@ -444,8 +450,7 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
         }
     } else {
         attributes = EJS_FUN_MODULE_INITIALIZER;
-        qname.name = EJS_INITIALIZER_NAME;
-        qname.space = EJS_EJS_NAMESPACE;
+        qname = N(EJS_EJS_NAMESPACE, EJS_INITIALIZER_NAME);
     }
     if (fun->isConstructor) {
         mprAssert(fun->block.obj.isFunction);
@@ -467,7 +472,7 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
     rc += ecEncodeString(cp, qname.space);
     rc += ecEncodeNumber(cp, attributes);
     rc += ecEncodeByte(cp, fun->strict);
-    rc += ecEncodeGlobal(cp, (EjsObj*) resultType, (resultType) ? &resultType->qname : 0);
+    rc += ecEncodeGlobal(cp, (EjsObj*) resultType, (resultType) ? resultType->qname : N(NULL, NULL));
     rc += ecEncodeNumber(cp, (cp->bind || (block != ejs->global)) ? slotNum: -1);
     rc += ecEncodeNumber(cp, numSlots);
     rc += ecEncodeNumber(cp, fun->numArgs);
@@ -495,11 +500,11 @@ static int createFunctionSection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
     if (ecEncodeByte(cp, EJS_SECT_FUNCTION_END) < 0) {
         return EJS_ERR;
     }
-    if (strstr(qname.name, "--fun_")) {
+    mp->checksum += sumNum(fun->numArgs + numSlots - fun->numArgs + code->numHandlers);
+    if (ejsContainsUString(ejs, qname.name, "--fun_")) {
         /* Don't sum the name for dynamic functions */
-        mp->checksum += sum(NULL, fun->numArgs + numSlots - fun->numArgs + code->numHandlers);
     } else {
-        mp->checksum += sum(qname.name, fun->numArgs + numSlots - fun->numArgs + code->numHandlers);
+        mp->checksum += sumString(qname.name);
     }
     return rc;
 }
@@ -533,7 +538,7 @@ static int createExceptionSection(EcCompiler *cp, EjsFunction *fun)
         rc += ecEncodeNumber(cp, ex->handlerEnd);
         rc += ecEncodeNumber(cp, ex->numBlocks);
         rc += ecEncodeNumber(cp, ex->numStack);
-        rc += ecEncodeGlobal(cp, (EjsObj*) ex->catchType, ex->catchType ? &ex->catchType->qname : 0);
+        rc += ecEncodeGlobal(cp, (EjsObj*) ex->catchType, ex->catchType ? ex->catchType->qname : N(NULL, NULL));
     }
     return rc;
 }
@@ -589,37 +594,34 @@ static int createPropertySection(EcCompiler *cp, EjsObj *block, int slotNum, Ejs
     
     createDocSection(cp, block, slotNum);
 
-    mprAssert(qname.name[0] != '\0');
+    mprAssert(qname.name->value[0] != '\0');
     trait = ejsGetTrait(ejs, block, slotNum);
     attributes = trait->attributes;
 
     mprLog(cp, 7, "    global property section %s", qname.name);
 
-#if 1 || (UNUSED && MOB)
     if (trait->type) {
-        if (trait->type == ejs->namespaceType || (!ejs->initialized && (strcmp(trait->type->qname.name, "Namespace") == 0))){
+        if (trait->type == ejs->namespaceType || (!ejs->initialized && 
+                trait->type->qname.name == ejs->namespaceType->qname.name)){
             attributes |= EJS_PROP_HAS_VALUE;
         }
     }
-#endif
     rc = 0;
     rc += ecEncodeByte(cp, EJS_SECT_PROPERTY);
-    rc += ecEncodeName(cp, &qname);
+    rc += ecEncodeName(cp, qname);
 
     rc += ecEncodeNumber(cp, attributes);
     rc += ecEncodeNumber(cp, (cp->bind || (block != ejs->global)) ? slotNum : -1);
-    rc += ecEncodeGlobal(cp, (EjsObj*) trait->type, trait->type ? &trait->type->qname : 0);
+    rc += ecEncodeGlobal(cp, (EjsObj*) trait->type, trait->type ? trait->type->qname : N(NULL, NULL));
 
-#if 1 || UNUSED
     if (attributes & EJS_PROP_HAS_VALUE) {
-        if (vp && ejsIsNamespace(vp)) {
+        if (vp && ejsIsNamespace(ejs, vp)) {
             rc += ecEncodeString(cp, ((EjsNamespace*) vp)->name);
         } else {
             rc += ecEncodeString(cp, 0);
         }
     }
-#endif
-    mp->checksum += sum(qname.name, 0);
+    mp->checksum += sumString(qname.name);
     return rc;
 }
 
@@ -638,7 +640,7 @@ static int createDocSection(EcCompiler *cp, EjsObj *block, int slotNum)
         return 0;
     }
     if (ejs->doc == 0) {
-        ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE);
+        ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE, 0);
     }
     mprSprintf(cp, key, sizeof(key), "%Lx %d", PTOL(block), slotNum);
     doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
@@ -653,7 +655,7 @@ static int createDocSection(EcCompiler *cp, EjsObj *block, int slotNum)
     if (ecEncodeByte(cp, EJS_SECT_DOC) < 0) {
         return MPR_ERR_CANT_WRITE;
     }
-    if (ecEncodeString(cp, doc->docString) < 0) {
+    if (ecEncodeCString(cp, doc->docString) < 0) {
         return MPR_ERR_CANT_WRITE;
     }
     return 0;
@@ -665,7 +667,28 @@ static int createDocSection(EcCompiler *cp, EjsObj *block, int slotNum)
     Add a constant to the constant pool. Grow if required and return the
     constant string offset into the pool.
  */
-int ecAddConstant(EcCompiler *cp, cchar *str)
+int ecAddStringConstant(EcCompiler *cp, EjsString *sp)
+{
+    int    offset;
+
+    mprAssert(cp);
+
+    if (sp) {
+        offset = ecAddModuleConstant(cp, cp->state->currentModule, ejsGetString(cp->ejs, sp));
+        if (offset < 0) {
+            cp->fatalError = 1;
+            mprAssert(offset > 0);
+            return EJS_ERR;
+        }
+
+    } else {
+        offset = 0;
+    }
+    return offset;
+}
+
+
+int ecAddCStringConstant(EcCompiler *cp, cchar *str)
 {
     int    offset;
 
@@ -686,9 +709,9 @@ int ecAddConstant(EcCompiler *cp, cchar *str)
 }
 
 
-int ecAddNameConstant(EcCompiler *cp, EjsName *qname)
+int ecAddNameConstant(EcCompiler *cp, EjsName qname)
 {
-    if (ecAddConstant(cp, qname->name) < 0 || ecAddConstant(cp, qname->space) < 0) {
+    if (ecAddStringConstant(cp, qname.name) < 0 || ecAddStringConstant(cp, qname.space) < 0) {
         return EJS_ERR;
     }
     return 0;
@@ -701,7 +724,7 @@ void ecAddFunctionConstants(EcCompiler *cp, EjsObj *obj, int slotNum)
 
     fun = ejsGetProperty(cp->ejs, obj, slotNum);
     if (fun->resultType) {
-        ecAddNameConstant(cp, &fun->resultType->qname);
+        ecAddNameConstant(cp, fun->resultType->qname);
     }
     if (cp->ejs->flags & EJS_FLAG_DOC) {
         ecAddDocConstant(cp, obj, slotNum);
@@ -723,29 +746,29 @@ void ecAddConstants(EcCompiler *cp, EjsObj *block)
 
     ejs = cp->ejs;
     
-    if (block->visited) {
+    if (VISITED(block)) {
         return;
     }
-    block->visited = 1;
+    VISITED(block) = 1;
 
     numTraits = ejsGetPropertyCount(ejs, block);
     for (i = 0; i < numTraits; i++) {
         qname = ejsGetPropertyName(ejs, block, i);
-        ecAddNameConstant(cp, &qname);
+        ecAddNameConstant(cp, qname);
         trait = ejsGetTrait(ejs, block, i);
         if (trait && trait->type) {
-            ecAddNameConstant(cp, &trait->type->qname);
+            ecAddNameConstant(cp, trait->type->qname);
         }
         vp = ejsGetProperty(ejs, block, i);
         if (vp != block) {
-            if (ejsIsFunction(vp)) {
+            if (ejsIsFunction(ejs, vp)) {
                 ecAddFunctionConstants(cp, block, i);
-            } else if (ejsIsBlock(vp)) {
+            } else if (ejsIsBlock(ejs, vp)) {
                 ecAddConstants(cp, (EjsObj*) vp);
             }
         }
     }
-    block->visited = 0;
+    VISITED(block) = 0;
 }
 
 
@@ -764,7 +787,7 @@ int ecAddDocConstant(EcCompiler *cp, void *vp, int slotNum)
     mprSprintf(cp, key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
     doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
     if (doc && doc->docString) {
-        if (ecAddConstant(cp, doc->docString) < 0) {
+        if (ecAddCStringConstant(cp, doc->docString) < 0) {
             mprAssert(0);
             return EJS_ERR;
         }
@@ -793,9 +816,8 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
     mprAssert(ejs);
     constants = mp->constants;
     if (constants->table == 0) {
-        constants->table = mprCreateHash(constants, EJS_DOC_HASH_SIZE);
+        constants->table = mprCreateHash(constants, EJS_DOC_HASH_SIZE, 0);
     }
-
     /*
         Maintain a symbol table for quick location
      */
@@ -847,14 +869,15 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
 /****************************** Value Emitters ********************************/
 /*
     Emit an encoded string ored with flags. The name index is shifted by 2.
+    MOB -- should be full qname
  */
-static int encodeTypeName(EcCompiler *cp, cchar *name, int flags)
+static int encodeTypeName(EcCompiler *cp, EjsString *name, int flags)
 {
     int        offset;
 
-    mprAssert(name && *name);
+    mprAssert(name);
 
-    offset = ecAddModuleConstant(cp, cp->state->currentModule, name);
+    offset = ecAddModuleConstant(cp, cp->state->currentModule, ejsGetString(cp->ejs, name));
     if (offset < 0) {
         cp->fatalError = 1;
         mprAssert(offset > 0);
@@ -868,7 +891,7 @@ static int encodeTypeName(EcCompiler *cp, cchar *name, int flags)
     Encode a global variable (usually a type). The encoding is untyped: 0, bound type: slot number, unbound or 
     unresolved type: name.
  */
-int ecEncodeGlobal(EcCompiler *cp, EjsObj *obj, EjsName *qname)
+int ecEncodeGlobal(EcCompiler *cp, EjsObj *obj, EjsName qname)
 {
     Ejs         *ejs;
     int         slotNum;
@@ -884,15 +907,15 @@ int ecEncodeGlobal(EcCompiler *cp, EjsObj *obj, EjsName *qname)
     /*
         If binding globals, we can encode the slot number of the type.
      */
-    if (obj->builtin || cp->bind) {
+    if (BUILTIN(obj) || cp->bind) {
         slotNum = ejsLookupProperty(ejs, ejs->global, qname);
         if (slotNum >= 0) {
             ecEncodeNumber(cp, (slotNum << 2) | EJS_ENCODE_GLOBAL_SLOT);
             return 0;
         }
     }
-    encodeTypeName(cp, qname->name, EJS_ENCODE_GLOBAL_NAME);
-    ecEncodeString(cp, qname->space);
+    encodeTypeName(cp, qname.name, EJS_ENCODE_GLOBAL_NAME);
+    ecEncodeString(cp, qname.space);
     return 0;
 }
 
@@ -936,20 +959,42 @@ int ecEncodeOpcode(EcCompiler *cp, int code)
 /*
     Encode a <name><namespace> pair
  */
-int ecEncodeName(EcCompiler *cp, EjsName *qname)
+int ecEncodeName(EcCompiler *cp, EjsName qname)
 {
     int     rc;
 
-    mprAssert(qname->name);
+    mprAssert(qname.name);
 
     rc = 0;
-    rc += ecEncodeString(cp, qname->name);
-    rc += ecEncodeString(cp, qname->space);
+    rc += ecEncodeString(cp, qname.name);
+    rc += ecEncodeString(cp, qname.space);
     return rc;
 }
 
 
-int ecEncodeString(EcCompiler *cp, cchar *str)
+int ecEncodeString(EcCompiler *cp, EjsString *sp)
+{
+    cchar   *str;
+    int     offset;
+
+    mprAssert(cp);
+
+    if (sp) {
+        str = ejsGetString(cp->ejs, sp);
+        offset = ecAddModuleConstant(cp, cp->state->currentModule, str);
+        if (offset < 0) {
+            cp->error = 1;
+            cp->fatalError = 1;
+            return EJS_ERR;
+        }
+    } else {
+        offset = 0;
+    }
+    return ecEncodeNumber(cp, offset);
+}
+
+
+int ecEncodeCString(EcCompiler *cp, cchar *str)
 {
     int    offset;
 
@@ -1140,14 +1185,38 @@ static int swapWordField(EcCompiler *cp, int word)
 /*
     Simple checksum of name and slots. Not meant to be rigorous.
  */
-static int sum(cchar *name, int value)
+static int sumNum(int value)
+{
+    int     checksum;
+
+    checksum += value;
+    return checksum;
+}
+
+
+#if UNUSED
+static int sumCString(cchar *name)
 {
     cchar    *cp;
     int     checksum;
 
-    checksum = value;
     if (name) {
         for (cp = name; *cp; cp++) {
+            checksum += *cp;
+        }
+    }
+    return checksum;
+}
+#endif
+
+
+static int sumString(EjsString *name)
+{
+    EjsChar *cp;
+    int     checksum;
+
+    if (name) {
+        for (cp = name->value; *cp; cp++) {
             checksum += *cp;
         }
     }

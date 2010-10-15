@@ -14,7 +14,7 @@
  */
 static EjsObj *getEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((ejs->gc.enabled) ? ejs->trueValue: ejs->falseValue);
+    return (EjsObj*) ((ejs->heap->enabled) ? ejs->trueValue: ejs->falseValue);
 }
 
 
@@ -23,8 +23,8 @@ static EjsObj *getEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsObj *setEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 1 && ejsIsBoolean(argv[0]));
-    ejs->gc.enabled = ejsGetBoolean(ejs, argv[0]);
+    mprAssert(argc == 1 && ejsIsBoolean(ejs, argv[0]));
+    ejs->heap->enabled = ejsGetBoolean(ejs, argv[0]);
     return 0;
 }
 
@@ -37,7 +37,7 @@ static EjsObj *runGC(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     deep;
 
-    deep = ((argc == 1) && ejsIsBoolean(argv[1]));
+    deep = ((argc == 1) && ejsIsBoolean(ejs, argv[1]));
     ejsCollectGarbage(ejs, EJS_GEN_NEW);
     return 0;
 }
@@ -48,7 +48,7 @@ static EjsObj *runGC(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsObj *getWorkQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ejs->workQuota);
+    return (EjsObj*) ejsCreateNumber(ejs, ejs->heap->workQuota);
 }
 
 
@@ -59,14 +59,14 @@ static EjsObj *setWorkQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     quota;
 
-    mprAssert(argc == 1 && ejsIsNumber(argv[0]));
+    mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
     quota = ejsGetInt(ejs, argv[0]);
 
     if (quota < EJS_SHORT_WORK_QUOTA && quota != 0) {
         ejsThrowArgError(ejs, "Bad work quota");
         return 0;
     }
-    ejs->workQuota = quota;
+    ejs->heap->workQuota = quota;
     return 0;
 }
 

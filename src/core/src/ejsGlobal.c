@@ -20,7 +20,7 @@ static EjsObj *assertMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
     mprAssert(argc == 1);
 
-    if (! ejsIsBoolean(argv[0])) {
+    if (! ejsIsBoolean(ejs, argv[0])) {
         b = (EjsBoolean*) ejsCast(ejs, argv[0], ejs->booleanType);
     } else {
         b = (EjsBoolean*) argv[0];
@@ -106,14 +106,14 @@ static EjsObj *error(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsObj      *args, *vp;
     int         rc, i, count;
 
-    mprAssert(argc == 1 && ejsIsArray(argv[0]));
+    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
     args = argv[0];
     count = ejsGetPropertyCount(ejs, args);
 
     for (i = 0; i < count; i++) {
         if ((vp = ejsGetProperty(ejs, args, i)) != 0) {
-            if (!ejsIsString(vp)) {
+            if (!ejsIsString(ejs, vp)) {
                 vp = (EjsObj*) ejsToJSON(ejs, vp, NULL);
             }
             if (ejs->exception) {
@@ -136,9 +136,10 @@ static EjsObj *error(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    cchar       *script, *cache;
+    EjsString   *script;
+    cchar       *cache;
 
-    script = ejsGetString(ejs, argv[0]);
+    script = (EjsString*) argv[0];
     if (argc < 2 || argv[1] == ejs->nullValue) {
         cache = NULL;
     } else {
@@ -158,7 +159,7 @@ static EjsObj *eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *formatStackMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, ejsFormatStack(ejs, NULL));
+    return (EjsObj*) ejsCreateStringFromCS(ejs, ejsFormatStack(ejs, NULL));
 }
 #endif
 
@@ -209,7 +210,7 @@ static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         return (EjsObj*) ejs->nullValue;
     }
     mprAddNullToBuf(buf);
-    result = (EjsObj*) ejsCreateString(ejs, mprGetBufStart(buf));
+    result = (EjsObj*) ejsCreateStringFromCS(ejs, mprGetBufStart(buf));
     mprFree(buf);
     return result;
 }
@@ -234,7 +235,7 @@ static EjsObj *load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             return (ejs->service->loadScriptFile)(ejs, path, cache);
         }
     } else {
-        ejsLoadModule(ejs, path, -1, -1, 0);
+        ejsLoadModule(ejs, ejsCreateStringFromCS(ejs, path), -1, -1, 0);
         return (ejs->exception) ? 0 : ejs->result;
     }
     return 0;
@@ -248,9 +249,11 @@ static EjsObj *load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 static EjsObj *md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsString   *str;
+    char        *hash;
 
     str = (EjsString*) argv[0];
-    return (EjsObj*) ejsCreateStringAndFree(ejs, mprGetMD5Hash(ejs, str->value, str->length, NULL));
+    hash = mprGetMD5Hash(ejs, ejsToMulti(ejs, str), str->length, NULL);
+    return (EjsObj*) ejsCreateStringAndFree(ejs, hash);
 }
 
 
@@ -273,25 +276,19 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
         }
         name = ejsGetPropertyName(ejs, src, i);
         /* NOTE: treats arrays as primitive types */
-        if (!ejsIsArray(vp) && !ejsIsXML(ejs, vp) && ejsGetPropertyCount(ejs, vp) > 0) {
-            if ((dp = ejsGetPropertyByName(ejs, dest, &name)) == 0 || ejsGetPropertyCount(ejs, dp) == 0) {
-                name.name = mprStrdup(dest, name.name);
-                name.space = mprStrdup(dest, name.space);
-                ejsSetPropertyByName(ejs, dest, &name, ejsCloneObject(ejs, (EjsObj*) vp, 1));
+        if (!ejsIsArray(ejs, vp) && !ejsIsXML(ejs, vp) && ejsGetPropertyCount(ejs, vp) > 0) {
+            if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetPropertyCount(ejs, dp) == 0) {
+                ejsSetPropertyByName(ejs, dest, name, ejsCloneObject(ejs, (EjsObj*) vp, 1));
             } else {
                 ejsBlendObject(ejs, dp, vp, overwrite);
             }
         } else {
             /* Primitive type (including arrays) */
             if (overwrite) {
-                name.name = mprStrdup(dest, name.name);
-                name.space = mprStrdup(dest, name.space);
-                ejsSetPropertyByName(ejs, dest, &name, vp);
+                ejsSetPropertyByName(ejs, dest, name, vp);
             } else {
-                if (ejsLookupProperty(ejs, dest, &name) < 0) {
-                    name.name = mprStrdup(dest, name.name);
-                    name.space = mprStrdup(dest, name.space);
-                    ejsSetPropertyByName(ejs, dest, &name, vp);
+                if (ejsLookupProperty(ejs, dest, name) < 0) {
+                    ejsSetPropertyByName(ejs, dest, name, vp);
                 }
             }
         }
@@ -309,15 +306,12 @@ static EjsObj *parse(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cchar       *str;
     int         preferred;
 
+    //  MOB UNICODE
     str = ejsGetString(ejs, argv[0]);
-
-    if (argc == 2 && !ejsIsType(argv[1])) {
+    if (argc == 2 && !ejsIsType(ejs, argv[1])) {
         ejsThrowArgError(ejs, "PreferredType argument is not a type");
         return 0;
     }
-    while (isspace((int) *str)) {
-        str++;
-    }    
     preferred = (argc == 2) ? ((EjsType*) argv[1])->id : -1;
     return ejsParse(ejs, str, preferred);
 }
@@ -337,6 +331,7 @@ static EjsObj *parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cchar       *str;
     int         radix, err;
 
+    //  MOB -- don't convert to cstring
     str = ejsGetString(ejs, argv[0]);
     radix = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
     while (isspace((int) *str)) {
@@ -362,16 +357,17 @@ static EjsObj *printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsString   *s;
     EjsObj      *args, *vp;
+    cchar       *data;
     int         i, count, rc;
 
-    mprAssert(argc == 1 && ejsIsArray(argv[0]));
+    mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
     args = argv[0];
     count = ejsGetPropertyCount(ejs, args);
 
     for (i = 0; i < count; i++) {
         if ((vp = ejsGetProperty(ejs, args, i)) != 0) {
-            s  = (ejsIsString(vp)) ? (EjsString*) vp : (EjsString*) ejsToString(ejs, vp);
+            s  = (ejsIsString(ejs, vp)) ? (EjsString*) vp : (EjsString*) ejsToString(ejs, vp);
             if (ejs->exception) {
                 return 0;
             }
@@ -387,7 +383,8 @@ static EjsObj *printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
                 }
             }
 #endif
-            rc = write(1, s->value, s->length);
+            data = ejsToMulti(ejs, s);
+            rc = write(1, data, s->length);
             if ((i+1) < count) {
                 rc = write(1, " ", 1);
             }
@@ -395,16 +392,6 @@ static EjsObj *printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     }
     rc = write(1, "\n", 1);
     return 0;
-}
-
-
-static EjsNamespace *addNamespace(Ejs *ejs, EjsBlock *block, cchar *space)
-{
-    EjsNamespace    *ns;
-
-    ns = ejsDefineReservedNamespace(ejs, block, 0, space);
-    mprAddHash(ejs->standardSpaces, space, ns);
-    return ns;
 }
 
 
@@ -431,19 +418,18 @@ void ejsCreateGlobalBlock(Ejs *ejs)
     ejs->globalBlock->isGlobal = 1;
     ejs->global = (EjsObj*) ejs->globalBlock;
     ejs->global->numSlots = (ejs->empty) ? 0: ES_global_NUM_CLASS_PROP;
-    ejs->global->dynamic = 1;
-    ejs->global->shortScope = 1;
-    ejsSetDebugName(ejs->global, "global");
+    DYNAMIC(ejs->global) = 1;
+    SHORT_SCOPE(ejs->global) = 1;
     
     /*  
         Create the standard namespaces. Order matters here. This is the (reverse) order of lookup.
         Empty is first to maximize speed of searching dynamic properties. Ejs second to maximize builtin lookups.
      */
     block = (EjsBlock*) ejs->global;
-    ejs->iteratorSpace =    addNamespace(ejs, block, EJS_ITERATOR_NAMESPACE);
-    ejs->publicSpace =      addNamespace(ejs, block, EJS_PUBLIC_NAMESPACE);
-    ejs->ejsSpace =         addNamespace(ejs, block, EJS_EJS_NAMESPACE);
-    ejs->emptySpace =       addNamespace(ejs, block, EJS_EMPTY_NAMESPACE);
+    ejs->iteratorSpace = ejsDefineReservedNamespace(ejs, block, NULL, CS(EJS_ITERATOR_NAMESPACE));
+    ejs->publicSpace =   ejsDefineReservedNamespace(ejs, block, NULL, CS(EJS_PUBLIC_NAMESPACE));
+    ejs->ejsSpace =      ejsDefineReservedNamespace(ejs, block, NULL, CS(EJS_EJS_NAMESPACE));
+    ejs->emptySpace =    ejsDefineReservedNamespace(ejs, block, NULL, CS(EJS_EMPTY_NAMESPACE));
 }
 
 

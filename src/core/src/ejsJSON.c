@@ -19,36 +19,37 @@ typedef struct JsonState {
 
 /***************************** Forward Declarations ***************************/
 
-static EjsObj *parseLiteral(Ejs *ejs, JsonState *js);
-static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js);
+static EV *parseLiteral(Ejs *ejs, JsonState *js);
+static EV *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js);
 
 /*********************************** Locals ***********************************/
 /*
     Convert a string into an object.
     function deserialize(obj: String, options: Object): Object
  */
-EjsObj *deserialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+EV *deserialize(Ejs *ejs, EV *unused, int argc, EV **argv)
 {
     mprAssert(argc >=1);
     return ejsDeserialize(ejs, (EjsString*) argv[0]);
 }
 
 
-EjsObj *ejsDeserialize(Ejs *ejs, EjsString *str)
+EV *ejsDeserialize(Ejs *ejs, EjsString *str)
 {
-    EjsObj      *obj;
+    EV          *obj;
     JsonState   js;
     cchar       *data;
 
-    if (!ejsIsString(str)) {
+    if (!ejsIsString(ejs, str)) {
         ejsThrowSyntaxError(ejs, "Object is not a string");
         return 0;
     }
+    //  MOB - UNICODE - should not convert into CSTRING
     data = ejsGetString(ejs, str);
     if (data == 0) {
         return 0;
     } else if (*data == '\0') {
-        return (EjsObj*) ejs->emptyStringValue;
+        return ejs->emptyString;
     }
 
     //  MOB -- check that js.data never modifies this
@@ -74,10 +75,10 @@ EjsObj *ejsDeserialize(Ejs *ejs, EjsString *str)
 }
 
 
-static EjsObj *parseLiteral(Ejs *ejs, JsonState *js)
+static EV *parseLiteral(Ejs *ejs, JsonState *js)
 {
     MprBuf      *buf;
-    EjsObj      *vp;
+    EV          *vp;
 
     mprAssert(js);
 
@@ -286,10 +287,9 @@ Token peekNextJsonToken(JsonState *js)
     Parse an object literal string pointed to by js->next into the given buffer. Update js->next to point
     to the next input token in the object literal. Supports nested object literals.
  */
-static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
+static EV *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
 {
-    EjsName     qname;
-    EjsObj      *obj, *vp;
+    EV      *obj, *vp;
     MprBuf      *valueBuf;
     char        *token, *key, *value;
     int         tid, isArray;
@@ -302,9 +302,9 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
     }
     if (tid == TOK_LBRACKET) {
         isArray = 1;
-        obj = (EjsObj*) ejsCreateArray(ejs, 0);
+        obj = ejsCreateArray(ejs, 0);
     } else if (tid == TOK_LBRACE) {
-        obj = (EjsObj*) ejsCreateSimpleObject(ejs);
+        obj = ejsCreateSimpleObject(ejs);
     } else {
         return ejsParse(ejs, token, ES_String);
     }
@@ -353,7 +353,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
                 valueBuf = mprCreateBuf(ejs, 0, 0);
                 getNextJsonToken(valueBuf, &value, js);
                 if (tid == TOK_QID) {
-                    vp = (EjsObj*) ejsCreateString(ejs, value);
+                    vp = ejsCreateStringFromCS(ejs, value);
                 } else {
                     if (strcmp(value, "null") == 0) {
                         vp = ejs->nullValue;
@@ -381,9 +381,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
                 return 0;
             }
         } else {
-            key = mprStrdup(obj, key);
-            ejsName(&qname, EJS_EMPTY_NAMESPACE, key);
-            if (ejsSetPropertyByName(ejs, obj, &qname, vp) < 0) {
+            if (ejsSetPropertyByName(ejs, obj, EN(key), vp) < 0) {
                 ejsThrowMemoryError(ejs);
                 return 0;
             }
@@ -398,9 +396,9 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
   
     function serialize(obj: Object, options: Object = null)
  */
-static EjsObj *serialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *serialize(Ejs *ejs, EV *unused, int argc, EV **argv)
 {
-    return (EjsObj*) ejsToJSON(ejs, argv[0], (argc == 2) ? argv[1] : NULL);
+    return ejsToJSON(ejs, argv[0], (argc == 2) ? argv[1] : NULL);
 }
 
 

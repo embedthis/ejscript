@@ -34,7 +34,7 @@ static EjsObj *ref_base(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
     EjsObj      *vp;
 
     vp = rp->subject;
-    if (ejsIsType(vp)) {
+    if (ejsIsType(ejs, vp)) {
         return (EjsObj*) (((EjsType*) vp)->baseType);
     }
     if (vp->type == 0) {
@@ -49,7 +49,7 @@ static EjsObj *ref_base(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
  */
 static EjsObj *ref_isType(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateBoolean(ejs, ejsIsType(rp->subject));
+    return (EjsObj*) ejsCreateBoolean(ejs, ejsIsType(ejs, rp->subject));
 }
 
 
@@ -84,7 +84,7 @@ EjsObj *ejsGetTypeName(Ejs *ejs, EjsObj *vp)
     if (type == 0) {
         return ejs->nullValue;
     }
-    return (EjsObj*) ejsCreateString(ejs, type->qname.name);
+    return (EjsObj*) ejsCreateStringFromCS(ejs, type->qname.name);
 }
 
 
@@ -98,10 +98,10 @@ static EjsObj *ref_name(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
     EjsType     *type;
 
     type = (EjsType*) rp->subject;
-    if (!ejsIsType(type)) {
-        return (EjsObj*) ejs->emptyStringValue;
+    if (!ejsIsType(ejs, type)) {
+        return (EjsObj*) ejs->emptyString;
     }
-    return (EjsObj*) ejsCreateString(ejs, type->qname.name);
+    return (EjsObj*) ejsCreateStringFromCS(ejs, type->qname.name);
 }
 
 /*********************************** Globals **********************************/
@@ -122,30 +122,30 @@ static EjsObj *ref_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 EjsObj *ejsGetTypeOf(Ejs *ejs, EjsObj *vp)
 {
     if (vp == ejs->undefinedValue) {
-        return (EjsObj*) ejsCreateString(ejs, "undefined");
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "undefined");
 
     } else if (vp == ejs->nullValue) {
         /* Yea - I know, ECMAScript is broken */
-        return (EjsObj*) ejsCreateString(ejs, "object");
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "object");
 
-    } if (ejsIsBoolean(vp)) {
-        return (EjsObj*) ejsCreateString(ejs, "boolean");
+    } if (ejsIsBoolean(ejs, vp)) {
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "boolean");
 
-    } else if (ejsIsNumber(vp)) {
-        return (EjsObj*) ejsCreateString(ejs, "number");
+    } else if (ejsIsNumber(ejs, vp)) {
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "number");
 
-    } else if (ejsIsString(vp)) {
-        return (EjsObj*) ejsCreateString(ejs, "string");
+    } else if (ejsIsString(ejs, vp)) {
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "string");
 
-    } else if (ejsIsFunction(vp)) {
-        return (EjsObj*) ejsCreateString(ejs, "function");
+    } else if (ejsIsFunction(ejs, vp)) {
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "function");
                
-    } else if (ejsIsType(vp)) {
+    } else if (ejsIsType(ejs, vp)) {
         /* Pretend it is a constructor function */
-        return (EjsObj*) ejsCreateString(ejs, "function");
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "function");
                
     } else {
-        return (EjsObj*) ejsCreateString(ejs, "object");
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "object");
     }
 }
 

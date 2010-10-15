@@ -210,6 +210,7 @@ typedef struct EjsModuleHdr {
 /*
     Structure for the string constant pool
  */
+//  MOB -- get rid of the constant pool
 typedef struct EjsConst {
     char        *pool;                      /* Constant pool storage */
     int         size;                       /* Size of constant pool storage */
@@ -220,11 +221,11 @@ typedef struct EjsConst {
 } EjsConst;
 
 /*
-    Module. NOTE: not an EjsObj
+    Module
  */
 typedef struct EjsModule {
-    char            *name;                  /* Name of this module */
-    char            *vname;                 /* Versioned name */
+    EjsString       *name;                  /* Name of this module */
+    EjsString       *vname;                 /* Versioned name */
     char            *path;                  /* Module file path name */
     int             version;                /* Made with EJS_MAKE_VERSION */
     int             minVersion;             /* Minimum version when used as a dependency */
@@ -232,11 +233,12 @@ typedef struct EjsModule {
     int             checksum;               /* Checksum of slots and names */
 
     EjsLoadState    *loadState;             /* State while loading */
-    MprList         *dependencies;          /* Module file dependencies. List of EjsModules */
+    EjsArray        *dependencies;          /* Module file dependencies. List of EjsModules */
     MprFile         *file;                  /* File handle for loading and code generation */
 
     /*
         Used during code generation
+        MOB - move to separate struct
      */
     struct EcCodeGen *code;                 /* Code generation buffer */
     MprList         *globalProperties;      /* List of global properties */
@@ -244,6 +246,7 @@ typedef struct EjsModule {
 
     /*
         Used only while loading modules
+        MOB move into separate struct
      */
     MprList         *current;               /* Current stack of open objects */
     EjsBlock        *scope;                 /* Lexical scope chain */
@@ -263,7 +266,8 @@ typedef struct EjsModule {
     uint            hasError        : 1;    /* Module has a loader error */
     uint            visited         : 1;    /* Module has been traversed */
     int             flags;                  /* Loading flags */
-    char            *doc;                   /* Current doc string */
+    //  MOB -- change to EjsString
+    cchar           *doc;                   /* Current doc string */
 } EjsModule;
 
 
@@ -271,7 +275,7 @@ typedef int (*EjsNativeCallback)(Ejs *ejs);
 
 typedef struct EjsNativeModule {
     EjsNativeCallback callback;             /* Callback to configure module native types and properties */
-    cchar           *name;                  /* Module name */
+    EjsString       *name;                  /* Module name */
     int             checksum;               /* Checksum expected by native code */
     int             flags;                  /* Configuration flags */
 } EjsNativeModule;
@@ -318,18 +322,18 @@ typedef struct EjsDoc {
 
 /******************************** Prototypes **********************************/
 
-extern int          ejsAddNativeModule(MprCtx ctx, cchar *name, EjsNativeCallback callback, int checksum, int flags);
-extern EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name);
-extern EjsModule    *ejsCreateModule(struct Ejs *ejs, cchar *name, int version);
-extern int          ejsLoadModule(struct Ejs *ejs, cchar *name, int minVer, int maxVer, int flags);
+extern int          ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, int checksum, int flags);
+extern EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, EjsString *name);
+extern EjsModule    *ejsCreateModule(Ejs *ejs, EjsString *name, int version);
+extern int          ejsLoadModule(Ejs *ejs, EjsString *name, int minVer, int maxVer, int flags);
 extern char         *ejsSearchForModule(Ejs *ejs, cchar *name, int minVer, int maxVer);
-extern int          ejsModuleReadName(struct Ejs *ejs, MprFile *file, char **name, int len);
-extern int          ejsModuleReadNumber(struct Ejs *ejs, EjsModule *module, int *number);
-extern int          ejsModuleReadByte(struct Ejs *ejs, EjsModule *module, int *number);
-extern char         *ejsModuleReadString(struct Ejs *ejs, EjsModule *module);
-extern int          ejsModuleReadType(struct Ejs *ejs, EjsModule *module, EjsType **typeRef, EjsTypeFixup **fixup, 
+extern int          ejsModuleReadName(Ejs *ejs, MprFile *file, char **name, int len);
+extern int          ejsModuleReadNumber(Ejs *ejs, EjsModule *module, int *number);
+extern int          ejsModuleReadByte(Ejs *ejs, EjsModule *module, int *number);
+extern EjsString    *ejsModuleReadString(Ejs *ejs, EjsModule *module);
+extern int          ejsModuleReadType(Ejs *ejs, EjsModule *module, EjsType **typeRef, EjsTypeFixup **fixup, 
                         EjsName *typeName, int *slotNum);
-extern int          ejsSetModuleConstants(struct Ejs *ejs, EjsModule *mp, cchar *pool, int poolSize);
+extern int          ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, cchar *pool, int poolSize);
 extern double       ejsDecodeDouble(Ejs *ejs, uchar **pp);
 extern int64        ejsDecodeNum(uchar **pp);
 extern int          ejsDecodeWord(uchar **pp);
@@ -340,12 +344,12 @@ extern int          ejsEncodeByteAtPos(uchar *pos, int value);
 extern int          ejsEncodeUint(uchar *pos, uint number);
 extern int          ejsEncodeWordAtPos(uchar *pos, int value);
 
-extern char         *ejsGetDocKey(struct Ejs *ejs, EjsBlock *block, int slotNum, char *buf, int bufsize);
-extern EjsDoc       *ejsCreateDoc(struct Ejs *ejs, void *vp, int slotNum, cchar *docString);
+extern char         *ejsGetDocKey(Ejs *ejs, EjsBlock *block, int slotNum, char *buf, int bufsize);
+extern EjsDoc       *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, cchar *docString);
 
-extern int          ejsAddModule(Ejs *ejs, struct EjsModule *up);
-extern struct EjsModule *ejsLookupModule(Ejs *ejs, cchar *name, int minVersion, int maxVersion);
-extern int          ejsRemoveModule(Ejs *ejs, struct EjsModule *up);
+extern int          ejsAddModule(Ejs *ejs, EjsModule *up);
+extern EjsModule    *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVersion);
+extern int          ejsRemoveModule(Ejs *ejs, EjsModule *up);
 
 #ifdef __cplusplus
 }

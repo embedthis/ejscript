@@ -54,11 +54,11 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
      *  Binary operators
      */
     case EJS_OP_ADD:
-        if (ejsIsUndefined(rhs)) {
+        if (ejsIsUndefined(ejs, rhs)) {
             return (EjsObj*) ejs->nanValue;
-        } else if (ejsIsNull(rhs)) {
+        } else if (ejsIsNull(ejs, rhs)) {
             return (EjsObj*) lhs;
-        } else if (ejsIsBoolean(rhs) || ejsIsDate(rhs)) {
+        } else if (ejsIsBoolean(ejs, rhs) || ejsIsDate(ejs, rhs)) {
             return ejsInvokeOperator(ejs, lhs, opcode, (EjsObj*) ejsToNumber(ejs, rhs));
         } else {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
@@ -72,11 +72,11 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsNull(rhs) || ejsIsUndefined(rhs)) {
+        if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
             return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
-        } else if (ejsIsNumber(rhs)) {
+        } else if (ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToNumber(ejs, lhs), opcode, rhs);
-        } else if (ejsIsString(rhs)) {
+        } else if (ejsIsString(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
         }
         return ejsInvokeOperator(ejs, lhs, opcode, (EjsObj*) ejsToNumber(ejs, rhs));
@@ -106,7 +106,7 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
         return (EjsObj*) ejs->falseValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -119,8 +119,7 @@ static EjsObj *invokeNumberOperator(Ejs *ejs, EjsNumber *lhs, int opcode, EjsNum
 
     mprAssert(lhs);
     
-    //  TODO - why test rhs == 0
-    if (rhs == 0 || lhs->obj.type != rhs->obj.type) {
+    if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if (!ejsIsA(ejs, (EjsObj*) lhs, ejs->numberType) || !ejsIsA(ejs, (EjsObj*) rhs, ejs->numberType)) {
             if ((result = coerceNumberOperands(ejs, (EjsObj*) lhs, opcode, (EjsObj*) rhs)) != 0) {
                 return result;
@@ -213,7 +212,7 @@ static EjsObj *invokeNumberOperator(Ejs *ejs, EjsNumber *lhs, int opcode, EjsNum
         return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) (fixed(lhs->value) ^ fixed(rhs->value)));
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %s", opcode, lhs->obj.type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
 }
@@ -249,7 +248,7 @@ static EjsObj *nextNumber(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     EjsNumber   *np;
 
     np = (EjsNumber*) ip->target;
-    if (!ejsIsNumber(np)) {
+    if (!ejsIsNumber(ejs, np)) {
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
@@ -420,7 +419,6 @@ EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
     if (vp != 0) {
         vp->value = value;
     }
-    ejsSetDebugName(vp, "number value");
     return vp;
 }
 
@@ -455,16 +453,6 @@ void ejsCreateNumberType(Ejs *ejs)
     ejs->maxValue->value = 1.7976931348623157e+308;
     ejs->minValue = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
     ejs->minValue->value = 5e-324;
-
-    ejsSetDebugName(ejs->infinityValue, "Infinity");
-    ejsSetDebugName(ejs->negativeInfinityValue, "NegativeInfinity");
-    ejsSetDebugName(ejs->nanValue, "NaN");
-
-    ejsSetDebugName(ejs->minusOneValue, "-1");
-    ejsSetDebugName(ejs->oneValue, "1");
-    ejsSetDebugName(ejs->zeroValue, "0");
-    ejsSetDebugName(ejs->maxValue, "MaxValue");
-    ejsSetDebugName(ejs->minValue, "MinValue");
 }
 
 

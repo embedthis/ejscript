@@ -26,6 +26,7 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     /*
         Create the parser stack
      */
+    //  MOB - switch to ejsAlloc
     if ((parser = mprAllocObj(xp, EjsXmlState, NULL)) == 0) {
         mprFree(xp);
         return 0;
@@ -61,18 +62,19 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     Note: we recurse on every new nested elt.
  */
 
-static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, cchar *value)
+static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, cchar *str)
 {
     Ejs             *ejs;
     EjsXmlState     *parser;
     EjsXmlTagState  *tos;
-    EjsName         qname;
+    EjsString       *value;
     EjsXML          *xml, *node, *parent;
 
     parser = (EjsXmlState*) xp->parseArg;
     ejs = parser->ejs;
     tos = &parser->nodeStack[parser->topOfStack];
     xml = tos->obj;
+    value = ejsCreateStringFromCS(ejs, str);
     
     mprAssert(xml);
 
@@ -81,12 +83,12 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
 
     switch (state) {
     case MPR_XML_PI:
-        node = ejsCreateXML(ejs, EJS_XML_PROCESSING, NULL, xml, value);
+        node = ejsCreateXML(ejs, EJS_XML_PROCESSING, N(NULL, NULL), xml, value);
         ejsAppendToXML(ejs, xml, node);
         break;
 
     case MPR_XML_COMMENT:
-        node = ejsCreateXML(ejs, EJS_XML_COMMENT, NULL, xml, value);
+        node = ejsCreateXML(ejs, EJS_XML_COMMENT, N(NULL, NULL), xml, value);
         ejsAppendToXML(ejs, xml, node);
         break;
 
@@ -97,10 +99,9 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
             return MPR_ERR_BAD_SYNTAX;
         }
         if (xml->kind <= 0) {
-            ejsConfigureXML(ejs, xml, EJS_XML_ELEMENT, tagName, xml, NULL);
+            ejsConfigureXML(ejs, xml, EJS_XML_ELEMENT, ejsCreateStringFromCS(ejs, tagName), xml, NULL);
         } else {
-            ejsName(&qname, 0, tagName);
-            xml = ejsCreateXML(ejs, EJS_XML_ELEMENT, &qname, xml, NULL);
+            xml = ejsCreateXML(ejs, EJS_XML_ELEMENT, N(NULL, tagName), xml, NULL);
             tos = &parser->nodeStack[++(parser->topOfStack)];
             tos->obj = (EjsXML*) xml;
             tos->attributes = 0;
@@ -109,8 +110,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
         break;
 
     case MPR_XML_NEW_ATT:
-        ejsName(&qname, 0, attName);
-        node = ejsCreateXML(ejs, EJS_XML_ATTRIBUTE, &qname, xml, value);
+        node = ejsCreateXML(ejs, EJS_XML_ATTRIBUTE, N(NULL, attName), xml, value);
         //  TODO - rc
         ejsAppendAttributeToXML(ejs, xml, node);
         //  TODO RC
@@ -137,8 +137,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
 
     case MPR_XML_ELT_DATA:
     case MPR_XML_CDATA:
-        ejsName(&qname, 0, attName);
-        node = ejsCreateXML(ejs, EJS_XML_TEXT, &qname, xml, value);
+        node = ejsCreateXML(ejs, EJS_XML_TEXT, N(NULL, attName), xml, value);
         //  TODO - rc
         ejsAppendToXML(ejs, xml, node);
         break;
@@ -185,10 +184,10 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
     EjsXML      *xml, *child, *attribute, *elt;
     int         sawElements, next;
     
-    if (node->obj.visited) {
+    if (VISITED(node)) {
         return 0;
     }
-    node->obj.visited = 1;
+    VISITED(node) = 1;
 
     if (node->kind == EJS_XML_LIST) {
         for (next = 0; (elt = mprGetNextItem(node->elements, &next)) != 0; ) {
@@ -252,14 +251,14 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
         /*
             Only here when converting solo attributes to a string
          */
-        mprPutStringToBuf(buf, xml->value);
+        mprPutStringToBuf(buf, ejsGetString(ejs, xml->value));
         break;
         
     case EJS_XML_TEXT:
-        mprPutStringToBuf(buf, xml->value);
+        mprPutStringToBuf(buf, ejsGetString(ejs, xml->value));
         break;
     }
-    node->obj.visited = 0;
+    VISITED(node) = 0;
     return 0;
 }
 

@@ -10,16 +10,19 @@
 
 /******************************************************************************/
 
+#if UNUSED
 static void destroyFrame(Ejs *ejs, EjsFrame *frame)
 {
     //  MOB -- does this now mean that the last arg can be deleted?
     ejsFreeVar(ejs, (EjsObj*) frame, ES_Frame);
 }
+#endif
 
 
 static void markFrame(Ejs *ejs, EjsFrame *frame)
 {
     ejsMarkFunction(ejs, (EjsFunction*) frame);
+    ejsMarkFunction(ejs, frame->orig);
     if (frame->caller) {
         ejsMark(ejs, (EjsObj*) frame->caller);
     }
@@ -37,13 +40,11 @@ static EjsFrame *allocFrame(Ejs *ejs, int numSlots)
     mprAssert(ejs);
 
     size = numSlots * sizeof(EjsSlot) + sizeof(EjsFrame);
-    if ((obj = (EjsObj*) mprAllocCtx(ejsGetAllocCtx(ejs), size)) == 0) {
+    if ((obj = (EjsObj*) ejsAlloc(ejs, size)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    obj->type = ejs->frameType;
-    obj->master = (ejs->master == 0);
-    ejsAddToGcStats(ejs, obj, ES_Frame);
+    TYPE(obj) = ejs->frameType;
     return (EjsFrame*) obj;
 }
 
@@ -59,9 +60,9 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
     if (fp == 0) {
         return 0;
     }
-    fp->function.name = mprStrdup(fp, fun->name);
+    fp->orig = fun;
+    fp->function.name = fun->name;
     ejsSetDebugName(fp, fun->name);
-
     fp->function.block.obj.isFrame = 1;
     fp->function.isConstructor = fun->isConstructor;
     fp->function.isInitializer = fun->isInitializer;
@@ -70,7 +71,7 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
 }
 
 
-EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, EjsObj **argv)
+EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EV *thisObj, int argc, EV **argv)
 {
     EjsFrame    *frame;
     EjsObj      *obj, *activation;
@@ -80,10 +81,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     numSlots = (activation) ? activation->numSlots : 0;
     sizeSlots = max(numSlots, EJS_MIN_FRAME_SLOTS);
 
-    /*
-        MOB OPT - need to pool frames
-     */
-#if UNUSED
+#if UNUSED && OPT
     if (sizeSlots > EJS_MIN_FRAME_SLOTS || (frame = (EjsFrame*) ejsAllocPooled(ejs, ES_Frame)) == 0) {
         frame = allocFrame(ejs, sizeSlots);
     }
@@ -98,11 +96,12 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
         //  MOB -- could the function be setup as the prototype and thus avoid doing this?
         //  MOB -- assumes that the function is sealed
         memcpy(obj->slots, activation->slots, numSlots * sizeof(EjsSlot));
-        ejsMakeObjHash(obj);
+        ejsMakeObjHash(ejs, obj);
     }
     ejsZeroSlots(ejs, &obj->slots[numSlots], sizeSlots - numSlots);
-    obj->dynamic = 1;
+    DYNAMIC(obj) = 1;
 
+    frame->orig = fun;
     frame->function.name = fun->name;
     frame->function.block.obj.isFrame = 1;
     frame->function.block.namespaces = fun->block.namespaces;
@@ -148,7 +147,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
             frame->function.block.obj.slots[i].value.ref = argv[i];
         }
     }
-    ejsSetDebugName(frame, ejsGetDebugName(fun));
+    ejsCopyDebugName(frame, fun);
     return frame;
 }
 
@@ -156,13 +155,15 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 void ejsCreateFrameType(Ejs *ejs)
 {
     EjsType         *type;
-    EjsTypeHelpers  *helpers;
+    EjsHelpers  *helpers;
 
     type = ejs->frameType = ejsCreateNativeType(ejs, "ejs", "Frame", ES_Frame, sizeof(EjsFrame));
-    type->constructor.block.obj.shortScope = 1;
+    SHORT_SCOPE(type) = 1;
 
     helpers = &type->helpers;
+#if UNUSED
     helpers->destroy = (EjsDestroyHelper) destroyFrame;
+#endif
     helpers->mark    = (EjsMarkHelper) markFrame;
 }
 

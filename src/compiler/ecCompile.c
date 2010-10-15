@@ -11,8 +11,8 @@
 
 /***************************** Forward Declarations ***************************/
 
-static EjsObj *loadScriptLiteral(Ejs *ejs, cchar *script, cchar *cache);
-static EjsObj *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache);
+static EV *loadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache);
+static EV *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache);
 
 /************************************ Code ************************************/
 
@@ -28,7 +28,7 @@ int ejsInitCompiler(EjsService *service)
 /*
     Load a script file. This indirect routine is used by the core VM to compile a file when required.
  */
-static EjsObj *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache)
+static EV *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache)
 {
     if (ejsLoadScriptFile(ejs, path, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW) < 0) {
         return 0;
@@ -41,7 +41,7 @@ static EjsObj *loadScriptFile(Ejs *ejs, cchar *path, cchar *cache)
 /*
     Function for ejs->loadScriptLiteral. This indirect routine is used by the core VM to compile a script when required.
  */
-static EjsObj *loadScriptLiteral(Ejs *ejs, cchar *script, cchar *cache)
+static EV *loadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache)
 {
     if (ejsLoadScriptLiteral(ejs, script, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW) < 0) {
         return 0;
@@ -84,14 +84,11 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
 /*
     Load and initialize a script literal
  */
-int ejsLoadScriptLiteral(Ejs *ejs, cchar *script, cchar *cache, int flags)
+int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
 {
     EcCompiler      *ec;
     cchar           *path;
 
-#if MOB && WAS
-    if ((ec = ecCreateCompiler(ejs, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG)) == 0) {
-#endif
     if ((ec = ecCreateCompiler(ejs, flags)) == 0) {
         return MPR_ERR_NO_MEMORY;
     }
@@ -101,7 +98,7 @@ int ejsLoadScriptLiteral(Ejs *ejs, cchar *script, cchar *cache, int flags)
     } else {
         ec->noout = 1;
     }
-    if (ecOpenMemoryStream(ec->lexer, (uchar*) script, (int) strlen(script)) < 0) {
+    if (ecOpenMemoryStream(ec, ec->lexer, (uchar*) ejsGetString(ejs, script), script->length) < 0) {
         mprError(ejs, "Can't open memory stream");
         mprFree(ec);
         return EJS_ERR;
@@ -138,7 +135,7 @@ int ejsEvalFile(cchar *path)
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
-    if ((ejs = ejsCreateVm(service, NULL, NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((ejs = ejsCreateVm(service, NULL, NULL, 0, NULL, 0)) == 0) {
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
@@ -166,11 +163,11 @@ int ejsEvalScript(cchar *script)
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
-    if ((ejs = ejsCreateVm(service, NULL, NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((ejs = ejsCreateVm(service, NULL, NULL, 0, NULL, 0)) == 0) {
         mprFree(mpr);
         return MPR_ERR_NO_MEMORY;
     }
-    if (ejsLoadScriptLiteral(ejs, script, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
+    if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromCS(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
         mprFree(mpr);
         return MPR_ERR;

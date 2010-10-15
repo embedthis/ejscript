@@ -11,10 +11,10 @@
 /****************************** Forward Declarations **************************/
 
 static int  addFixup(Ejs *ejs, EjsModule *mp, int kind, EjsObj *target, int slotNum, EjsTypeFixup *fixup);
-static int  alreadyLoaded(Ejs *ejs, cchar *name, int minVersion, int maxVersion);
+static int  alreadyLoaded(Ejs *ejs, EjsString *name, int minVersion, int maxVersion);
 static EjsLoadState *createLoadState(Ejs *ejs, int flags);
-static EjsTypeFixup *createFixup(Ejs *ejs, EjsModule *mp, EjsName *qname, int slotNum);
-static int  fixupTypes(Ejs *ejs, MprList *list);
+static EjsTypeFixup *createFixup(Ejs *ejs, EjsModule *mp, EjsName qname, int slotNum);
+static int  fixupTypes(Ejs *ejs, EjsArray *list);
 static EjsObj *getCurrentBlock(EjsModule *mp);
 static int  getVersion(cchar *name);
 static int  initializeModule(Ejs *ejs, EjsModule *mp);
@@ -66,20 +66,20 @@ static void setDoc(Ejs *ejs, EjsModule *mp, void *vp, int slotNum);
         The final list of modules aggregates all modules loaded including those from dependant modules.
     @return Returns the last loaded module.
  */
-int ejsLoadModule(Ejs *ejs, cchar *path, int minVersion, int maxVersion, int flags)
+int ejsLoadModule(Ejs *ejs, EjsString *path, int minVersion, int maxVersion, int flags)
 {
-    char            *trimmedPath, *name;
-    int             status, version;
+    char    *trimmedPath, *name;
+    int     status, version;
 
-    mprAssert(path && *path);
+    mprAssert(path);
 
-    trimmedPath = mprStrdup(ejs, path);
+    trimmedPath = mprStrdup(ejs, ejsGetString(ejs, path));
     if ((version = trimModule(ejs, trimmedPath)) != 0) {
         minVersion = maxVersion = version;
     }
     name = mprGetPathBase(ejs, trimmedPath);
 
-    if ((status = alreadyLoaded(ejs, name, minVersion, maxVersion)) == 0) {
+    if ((status = alreadyLoaded(ejs, ejsCreateStringFromCS(ejs, name), minVersion, maxVersion)) == 0) {
         status = loadScriptModule(ejs, trimmedPath, minVersion, maxVersion, flags);
 #if UNUSED
         EjsModule  *mp;
@@ -195,7 +195,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
 
     created = 0;
     mp = 0;
-    firstModule = mprGetListCount(ejs->modules);
+    firstModule = ejsGetLength(ejs, ejs->modules);
 
     while ((sectionType = mprGetc(file)) >= 0) {
         if (sectionType < 0 || sectionType >= EJS_SECT_MAX) {
@@ -276,7 +276,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
         }
     }
     status = 0;
-    for (next = firstModule; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
+    for (next = firstModule; (mp = ejsGetNextItem(ejs, ejs->modules, &next)) != 0; ) {
         if (mp->loadState) {
             if (fixupTypes(ejs, mp->loadState->typeFixups) < 0) {
                 return MPR_ERR_CANT_LOAD;
@@ -353,7 +353,7 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
         return 0;
     }
 
-    mp = ejsCreateModule(ejs, name, version);
+    mp = ejsCreateModule(ejs, ejsCreateStringFromCS(ejs, name), version);
     if (mp == 0) {
         mprFree(pool);
         return 0;
@@ -398,8 +398,8 @@ static int loadEndModuleSection(Ejs *ejs, EjsModule *mp)
 static int loadDependencySection(Ejs *ejs, EjsModule *mp)
 {
     EjsModule   *module;
+    EjsString   *name;
     void        *saveCallback;
-    char        *name;
     int         rc, next, minVersion, maxVersion, checksum, nextModule;
 
     mprAssert(ejs);
@@ -415,20 +415,20 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     }
     if (ejsLookupModule(ejs, name, minVersion, maxVersion) == 0) {
         saveCallback = ejs->loaderCallback;
-        nextModule = mprGetListCount(ejs->modules);
+        nextModule = ejsGetLength(ejs, ejs->modules);
         ejs->loaderCallback = NULL;
 
         mprLog(ejs, 6, "    Load dependency section %s", name);
-        rc = loadScriptModule(ejs, name, minVersion, maxVersion, mp->flags | EJS_LOADER_DEP);
+        rc = loadScriptModule(ejs, ejsGetString(ejs, name), minVersion, maxVersion, mp->flags | EJS_LOADER_DEP);
         ejs->loaderCallback = saveCallback;
         if (rc < 0) {
             return rc;
         }
         if (mp->dependencies == 0) {
-            mp->dependencies = mprCreateList(mp);
+            mp->dependencies = ejsCreateArray(ejs, 0);
         }
-        for (next = nextModule; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
-            mprAddItem(mp->dependencies, module);
+        for (next = nextModule; (module = ejsGetNextItem(ejs, ejs->modules, &next)) != 0; ) {
+            ejsAddItem(ejs, mp->dependencies, module);
             if (ejs->loaderCallback) {
                 (ejs->loaderCallback)(ejs, EJS_SECT_DEPENDENCY, mp, module);
             }
@@ -452,7 +452,7 @@ static int loadBlockSection(Ejs *ejs, EjsModule *mp)
     EjsName     qname;
     int         slotNum, numSlot;
 
-    qname.space = EJS_BLOCK_NAMESPACE;
+    qname.space = ejsCreateStringFromCS(ejs, EJS_BLOCK_NAMESPACE);
     qname.name = ejsModuleReadString(ejs, mp);
     ejsModuleReadNumber(ejs, mp, &slotNum);
     ejsModuleReadNumber(ejs, mp, &numSlot);
@@ -469,12 +469,12 @@ static int loadBlockSection(Ejs *ejs, EjsModule *mp)
         property to be replaced is !dont-delete
      */
     if (mp->loadState->flags & EJS_LOADER_STRICT) {
-        if (ejsLookupProperty(ejs, current, &qname) >= 0) {
+        if (ejsLookupProperty(ejs, current, qname) >= 0) {
             ejsThrowReferenceError(ejs, "Block \"%s\" already loaded", qname.name);
             return MPR_ERR_CANT_CREATE;
         }
     }
-    slotNum = ejsDefineProperty(ejs, current, slotNum, &qname, ejs->blockType, 0, (EjsObj*) bp);
+    slotNum = ejsDefineProperty(ejs, current, slotNum, qname, ejs->blockType, 0, (EjsObj*) bp);
     if (slotNum < 0) {
         return MPR_ERR_CANT_WRITE;
     }
@@ -522,8 +522,8 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         return MPR_ERR_CANT_READ;
     }
     if (mp->loadState->flags & EJS_LOADER_STRICT) {
-        if (ejsLookupProperty(ejs, ejs->global, &qname) >= 0) {
-            ejsThrowReferenceError(ejs, "Class \"%s\" already loaded", qname.name);
+        if (ejsLookupProperty(ejs, ejs->global, qname) >= 0) {
+            ejsThrowReferenceError(ejs, "Class \"%S\" already loaded", qname.name);
             return MPR_ERR_CANT_CREATE;
         }
     }
@@ -533,14 +533,14 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     type = nativeType = 0;
     if (!ejs->empty) {
         if (attributes & EJS_PROP_NATIVE) {
-            type = nativeType = (EjsType*) mprLookupHash(ejs->coreTypes, qname.name);
+            type = nativeType = (EjsType*) ejsGetPropertyByName(ejs, ejs->coreTypes, qname);
             if (type == 0) {
-                mprLog(ejs, 1, "WARNING: can't find native type \"%s\"", qname.name);
+                mprLog(ejs, 1, "WARNING: can't find native type \"%S\"", qname.name);
             }
         } else {
 #if BLD_DEBUG
-            if (mprLookupHash(ejs->coreTypes, qname.name)) {
-                mprError(ejs, "WARNING: type \"%s\" defined as a native type but not declared as native", qname.name);
+            if (ejsLookupProperty(ejs, ejs->coreTypes, qname)) {
+                mprError(ejs, "WARNING: type \"%S\" defined as a native type but not declared as native", qname.name);
             }
 #endif
         }
@@ -548,16 +548,16 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     if (attributes & EJS_TYPE_FIXUP) {
         baseType = 0;
         if (fixup == 0) {
-            fixup = createFixup(ejs, mp, (baseType) ? &baseType->qname : &ejs->objectType->qname, -1);
+            fixup = createFixup(ejs, mp, (baseType) ? baseType->qname : ejs->objectType->qname, -1);
         }
     }
-    mprLog(ejs, 9, "    Load %s class %s for module %s at slot %d", qname.space, qname.name, mp->name, slotNum);
+    mprLog(ejs, 9, "    Load %S class %S for module %S at slot %d", qname.space, qname.name, mp->name, slotNum);
 
     if (slotNum < 0) {
         slotNum = ejs->globalBlock->obj.numSlots;
     }
     if (type == 0) {
-        type = ejsCreateType(ejs, &qname, mp, baseType, NULL, sizeof(EjsObj), slotNum, numTypeProp, 
+        type = ejsCreateType(ejs, qname, mp, baseType, NULL, sizeof(EjsObj), slotNum, numTypeProp, 
             numInstanceProp, attributes,0);
         if (type == 0) {
             ejsThrowInternalError(ejs, "Can't create class %s", qname.name);
@@ -603,9 +603,9 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         }
     }
     if (mp->flags & EJS_LOADER_BUILTIN) {
-        type->constructor.block.obj.builtin = 1;
+        BUILTIN(type) = 1;
     }
-    slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, &qname, ejs->typeType, attributes, (EjsObj*) type);
+    slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ejs->typeType, attributes, (EjsObj*) type);
     if (slotNum < 0) {
         ejsThrowMemoryError(ejs);
         return MPR_ERR_NO_MEMORY;
@@ -680,7 +680,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     }
     block = getCurrentBlock(mp);
     currentType = 0;
-    if (ejsIsType(block)) {
+    if (ejsIsType(ejs, block)) {
         currentType = (EjsType*) block;
         if (!(attributes & (EJS_FUN_CONSTRUCTOR | EJS_PROP_STATIC))) {
             block = ((EjsType*) currentType)->prototype;
@@ -696,7 +696,8 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         Read the code. We pass ownership of the code to createMethod i.e. don't free.
      */
     if (codeLen > 0) {
-        code = (uchar*) mprAlloc(ejsGetAllocCtx(ejs), codeLen);
+        //  MOB -- this should use ejsAlloc and be GC able
+        code = (uchar*) mprAlloc(ejs, codeLen);
         if (code == 0) {
             return MPR_ERR_NO_MEMORY;
         }
@@ -724,9 +725,9 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
 
     } else {
         if (mp->loadState->flags & EJS_LOADER_STRICT) {
-            if ((sn = ejsLookupProperty(ejs, block, &qname)) >= 0 && !(attributes & EJS_FUN_OVERRIDE)) {
+            if ((sn = ejsLookupProperty(ejs, block, qname)) >= 0 && !(attributes & EJS_FUN_OVERRIDE)) {
                 if (!(attributes & EJS_TRAIT_SETTER && ejsHasTrait(block, sn, EJS_TRAIT_GETTER))) {
-                    if (ejsIsType(block)) {
+                    if (ejsIsType(ejs, block)) {
                         ejsThrowReferenceError(ejs,
                             "function \"%s\" already defined in type \"%s\". Add \"override\" to the function declaration.", 
                             qname.name, ((EjsType*) block)->qname.name);
@@ -749,7 +750,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     mprAssert(fun->block.obj.isFunction);
 
     if (mp->flags & EJS_LOADER_BUILTIN) {
-        fun->block.obj.builtin = 1;
+        BUILTIN(fun) = 1;
     }
     if (code) {
         mprStealBlock(fun, code);
@@ -760,7 +761,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     if (block == ejs->global && slotNum < 0) {
         //  MOB -- don't understand this. Why ejs->global and override?
         if (attributes & EJS_FUN_OVERRIDE) {
-            slotNum = ejsLookupProperty(ejs, block, &qname);
+            slotNum = ejsLookupProperty(ejs, block, qname);
             if (slotNum < 0) {
                 mprError(ejs, "Can't find method \"%s\" to override", qname.name);
                 return MPR_ERR_NO_MEMORY;
@@ -775,7 +776,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
             mp->initializer = fun;
             slotNum = -1;
         } else {
-            slotNum = ejsDefineProperty(ejs, block, slotNum, &qname, ejs->functionType, attributes, (EjsObj*) fun);
+            slotNum = ejsDefineProperty(ejs, block, slotNum, qname, ejs->functionType, attributes, (EjsObj*) fun);
             if (slotNum < 0) {
                 return MPR_ERR_NO_MEMORY;
             }
@@ -791,7 +792,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     setDoc(ejs, mp, block, slotNum);
 
     mp->currentMethod = fun;
-    pushScope(mp, ejsIsType(fun) ? NULL : (EjsBlock*) fun, (EjsObj*) fun->activation);
+    pushScope(mp, ejsIsType(ejs, fun) ? NULL : (EjsBlock*) fun, (EjsObj*) fun->activation);
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_FUNCTION, mp, block, slotNum, qname, fun, attributes);
     }
@@ -809,7 +810,7 @@ static int loadEndFunctionSection(Ejs *ejs, EjsModule *mp)
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_FUNCTION_END, mp, fun);
     }
-    popScope(mp, ejsIsType(fun));
+    popScope(mp, ejsIsType(ejs, fun));
     return 0;
 }
 
@@ -841,7 +842,7 @@ static int loadExceptionSection(Ejs *ejs, EjsModule *mp)
         if (mp->hasError) {
             return MPR_ERR_CANT_READ;
         }
-        ex = ejsAddException(fun, tryStart, tryEnd, catchType, handlerStart, handlerEnd, numBlocks, numStack, flags, i);
+        ex = ejsAddException(ejs, fun, tryStart, tryEnd, catchType, handlerStart, handlerEnd, numBlocks, numStack, flags, i);
         if (fixup) {
             mprAssert(catchType == 0);
             if (addFixup(ejs, mp, EJS_FIXUP_EXCEPTION, (EjsObj*) ex, 0, fixup) < 0) {
@@ -882,12 +883,12 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
      */
     //  MOB -- remove the need for this flag
     if (attributes & EJS_PROP_HAS_VALUE) {
-        cchar  *str;
+        EjsString  *str;
         if ((str = ejsModuleReadString(ejs, mp)) == 0) {
             return MPR_ERR_CANT_READ;
         }
         /*  Only doing for namespaces currently */
-        value = (EjsObj*) ejsCreateNamespace(ejs, str, str);
+        value = (EjsObj*) ejsCreateNamespace(ejs, str);
     }
 #endif
     mprLog(ejs, 9, "Loading property %s:%s at slot %d", qname.space, qname.name, slotNum);
@@ -896,28 +897,28 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
         mp->hasNative = 1;
     }
     if (mp->loadState->flags & EJS_LOADER_STRICT) {
-        if (ejsLookupProperty(ejs, current, &qname) >= 0) {
+        if (ejsLookupProperty(ejs, current, qname) >= 0) {
             ejsThrowReferenceError(ejs, "property \"%s\" already loaded", qname.name);
             return MPR_ERR_CANT_CREATE;
         }
     }
-    if (ejsIsType(current)) {
+    if (ejsIsType(ejs, current)) {
         if (!(attributes & EJS_PROP_STATIC) && current != ejs->global && ((EjsType*) current)->prototype){
             current = (EjsObj*) ((EjsType*) current)->prototype;
         }
     }
-    slotNum = ejsDefineProperty(ejs, current, slotNum, &qname, type, attributes, value);
+    slotNum = ejsDefineProperty(ejs, current, slotNum, qname, type, attributes, value);
     if (slotNum < 0) {
         return MPR_ERR_CANT_WRITE;
     }
     if (mp->flags & EJS_LOADER_BUILTIN) {
         value = ejsGetProperty(ejs, current, slotNum);
-        value->builtin = 1;
+        BUILTIN(value) = 1;
     }
     if (fixup) {
-        if (ejsIsFunction(current)) {
+        if (ejsIsFunction(ejs, current)) {
             fixupKind = EJS_FIXUP_LOCAL;
-        } else if (ejsIsType(current) && !(attributes & EJS_PROP_STATIC) && current != ejs->global) {
+        } else if (ejsIsType(ejs, current) && !(attributes & EJS_PROP_STATIC) && current != ejs->global) {
             mprAssert(((EjsType*) current)->prototype);
             current = (EjsObj*) ((EjsType*) current)->prototype;
             fixupKind = EJS_FIXUP_INSTANCE_PROPERTY;
@@ -941,11 +942,11 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
 
 static int loadDocSection(Ejs *ejs, EjsModule *mp)
 {
-    char        *doc;
+    cchar  *doc;
 
     mprLog(ejs, 9, "    Documentation section");
 
-    doc = ejsModuleReadString(ejs, mp);
+    doc = ejsGetString(ejs, ejsModuleReadString(ejs, mp));
 
     if (ejs->flags & EJS_FLAG_DOC) {
         mp->doc = doc;
@@ -966,7 +967,7 @@ static int loadDocSection(Ejs *ejs, EjsModule *mp)
 static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
 {
     MprModule   *mm;
-    char        *bare, *path, initName[MPR_MAX_PATH], moduleName[MPR_MAX_PATH], *cp;
+    char        *bare, *path, *moduleName, initName[MPR_MAX_PATH], *cp;
 
     /*
         Replace ".mod" with ".so", ".dll" or ".dylib"
@@ -988,7 +989,7 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
         Build the DSO entry point name. Format is "Name_ModuleInit" where Name has "." converted to "_"
         Typical name: ejs_io_Init or com_acme_rockets_Init
      */
-    mprStrcpy(moduleName, sizeof(moduleName), mp->name);
+    moduleName = ejsToMulti(ejs, mp->name);
     moduleName[0] = tolower((int) moduleName[0]);
     mprSprintf(ejs, initName, sizeof(initName), "%s_Init", moduleName);
     for (cp = initName; *cp; cp++) {
@@ -1058,7 +1059,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
 }
 
 
-static int fixupTypes(Ejs *ejs, MprList *list)
+static int fixupTypes(Ejs *ejs, EjsArray *list)
 {
     EjsTypeFixup    *fixup;
     EjsModule       *mp;
@@ -1068,7 +1069,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
     EjsEx           *targetException;
     int             next;
 
-    for (next = 0; (fixup = (EjsTypeFixup*) mprGetNextItem(list, &next)) != 0; ) {
+    for (next = 0; (fixup = (EjsTypeFixup*) ejsGetNextItem(ejs, list, &next)) != 0; ) {
         mp = 0;
         type = 0;
         if (fixup->typeSlotNum >= 0) {
@@ -1076,7 +1077,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
 
         } else if (fixup->typeName.name) {
             mprAssert(fixup->typeSlotNum < 0);
-            type = ejsGetPropertyByName(ejs, ejs->global, &fixup->typeName);
+            type = ejsGetPropertyByName(ejs, ejs->global, fixup->typeName);
             
         } else {
             continue;
@@ -1085,14 +1086,6 @@ static int fixupTypes(Ejs *ejs, MprList *list)
             if (fixup->typeName.name) {
                 ejsThrowReferenceError(ejs, "Can't fixup forward type reference for \"%s\". Fixup kind %d", 
                     fixup->typeName.name, fixup->kind);
-            } else {
-#if BLD_DEBUG
-                ejsThrowReferenceError(ejs, "Can't fixup forward type reference for \"%s\". Fixup kind %d", 
-                    fixup->target->name, fixup->kind);
-#else
-                ejsThrowReferenceError(ejs, "Can't fixup forward type reference for \"%s\". Fixup kind %d", 
-                    fixup->typeName.name, fixup->kind);
-#endif
             }
             return MPR_ERR_CANT_LOAD;
         }
@@ -1130,7 +1123,7 @@ static int fixupTypes(Ejs *ejs, MprList *list)
 
         case EJS_FIXUP_INSTANCE_PROPERTY:
             mprAssert(fixup->target);
-            mprAssert(ejsIsBlock(fixup->target));
+            mprAssert(ejsIsBlock(ejs, fixup->target));
             mprAssert(fixup->target->isPrototype);
             trait = ejsGetTrait(ejs, fixup->target, fixup->slotNum);
             mprAssert(trait);
@@ -1338,11 +1331,11 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
             3. Search for "a.b.c" in EJSPATH
          */
         for (i = 0; i < ejs->search->length; i++) {
-            dir = ejsGetProperty(ejs, (EjsVar*) ejs->search, i);
+            dir = ejsGetProperty(ejs, ejs->search, i);
             if (!ejsIsPath(ejs, dir)) {
                 continue;
             }
-            filename = mprJoinPath(ctx, dir->path, name);
+            filename = mprJoinPath(ctx, dir->value, name);
             if ((path = probe(ctx, filename, minVersion, maxVersion)) != 0) {
                 return path;
             }
@@ -1352,11 +1345,11 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
             4. Search for "a/b/c" in EJSPATH
          */
         for (i = 0; i < ejs->search->length; i++) {
-            dir = ejsGetProperty(ejs, (EjsVar*) ejs->search, i);
+            dir = ejsGetProperty(ejs, ejs->search, i);
             if (!ejsIsPath(ejs, dir)) {
                 continue;
             }
-            filename = mprJoinPath(ctx, dir->path, slash);
+            filename = mprJoinPath(ctx, dir->value, slash);
             if ((path = probe(ctx, filename, minVersion, maxVersion)) != 0) {
                 return path;
             }
@@ -1367,11 +1360,11 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
          */
         basename = mprGetPathBase(ctx, slash);
         for (i = 0; i < ejs->search->length; i++) {
-            dir = ejsGetProperty(ejs, (EjsVar*) ejs->search, i);
+            dir = ejsGetProperty(ejs, ejs->search, i);
             if (!ejsIsPath(ejs, dir)) {
                 continue;
             }
-            filename = mprJoinPath(ctx, dir->path, basename);
+            filename = mprJoinPath(ctx, dir->value, basename);
             if ((path = probe(ctx, filename, minVersion, maxVersion)) != 0) {
                 return path;
             }
@@ -1463,15 +1456,15 @@ static char *makeModuleName(MprCtx ctx, cchar *name)
 }
 
 
-static int alreadyLoaded(Ejs *ejs, cchar *name, int minVersion, int maxVersion)
+static int alreadyLoaded(Ejs *ejs, EjsString *name, int minVersion, int maxVersion)
 {
     EjsModule   *mp;
 
     if ((mp = ejsLookupModule(ejs, name, minVersion, maxVersion)) == 0) {
         return 0;
     }
-    if (mp->compiling && strcmp(name, EJS_DEFAULT_MODULE) != 0) {
-        ejsThrowStateError(ejs, "Attempt to load module \"%s\" that is currently being compiled.", name);
+    if (mp->compiling && ejsCompareUString(ejs, name, EJS_DEFAULT_MODULE) != 0) {
+        ejsThrowStateError(ejs, "Attempt to load module \"%S\" that is currently being compiled.", name);
         return MPR_ERR_ALREADY_EXISTS;
     }
     return 1;
@@ -1482,9 +1475,9 @@ static EjsLoadState *createLoadState(Ejs *ejs, int flags)
 {
     EjsLoadState    *ls;
 
-    ls = mprAllocCtx(ejs, sizeof(EjsLoadState));
-    ls->typeFixups = mprCreateList(ls);
-    ls->firstModule = mprGetListCount(ejs->modules);
+    ls = ejsAlloc(ejs, sizeof(EjsLoadState));
+    ls->typeFixups = ejsCreateArray(ejs, 0);
+    ls->firstModule = ejsGetLength(ejs, ejs->modules);
     ls->flags = flags;
     return ls;
 }
@@ -1494,7 +1487,7 @@ static EjsLoadState *createLoadState(Ejs *ejs, int flags)
     Read a string constant. String constants are stored as token offsets into
     the constant pool. The pool contains null terminated UTF-8 strings.
  */
-char *ejsModuleReadString(Ejs *ejs, EjsModule *mp)
+EjsString *ejsModuleReadString(Ejs *ejs, EjsModule *mp)
 {
     int     t;
 
@@ -1503,7 +1496,7 @@ char *ejsModuleReadString(Ejs *ejs, EjsModule *mp)
     if (ejsModuleReadNumber(ejs, mp, &t) < 0) {
         return 0;
     }
-    return tokenToString(mp, t);
+    return ejsCreateStringFromCS(ejs, tokenToString(mp, t));
 }
 
 
@@ -1564,7 +1557,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
         /*
             Type was unbound at compile time
          */
-        qname.name = tokenToString(mp, t >> 2);
+        qname.name = ejsCreateStringFromCS(ejs, tokenToString(mp, t >> 2));
         if (qname.name == 0) {
             mp->hasError = 1;
             return MPR_ERR_CANT_LOAD;
@@ -1574,7 +1567,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
             return MPR_ERR_CANT_LOAD;
         }
         if (qname.name) {
-            slot = ejsLookupProperty(ejs, ejs->global, &qname);
+            slot = ejsLookupProperty(ejs, ejs->global, qname);
             if (slot >= 0) {
                 type = ejsGetProperty(ejs, ejs->global, slot);
             }
@@ -1585,14 +1578,14 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
         type = 0;
     }
     if (type) {
-        if (!ejsIsType(type)) {
+        if (!ejsIsType(ejs, type)) {
             mp->hasError = 1;
             return MPR_ERR_CANT_LOAD;
         }
         *typeRef = type;
 
     } else if (type == 0 && fixup) {
-        *fixup = createFixup(ejs, mp, &qname, slot);
+        *fixup = createFixup(ejs, mp, qname, slot);
     }
     if (typeName) {
         *typeName = qname;
@@ -1604,7 +1597,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
 }
 
 
-static EjsTypeFixup *createFixup(Ejs *ejs, EjsModule *mp, EjsName *qname, int slotNum)
+static EjsTypeFixup *createFixup(Ejs *ejs, EjsModule *mp, EjsName qname, int slotNum)
 {
     EjsTypeFixup    *fixup;
 
@@ -1614,7 +1607,7 @@ static EjsTypeFixup *createFixup(Ejs *ejs, EjsModule *mp, EjsName *qname, int sl
     if (fixup == 0) {
         return 0;
     }
-    fixup->typeName = *qname;
+    fixup->typeName = qname;
     fixup->typeSlotNum = slotNum;
     return fixup;
 }
@@ -1632,7 +1625,7 @@ static int addFixup(Ejs *ejs, EjsModule *mp, int kind, EjsObj *target, int slotN
     fixup->target = target;
     fixup->slotNum = slotNum;
 
-    index = mprAddItem(mp->loadState->typeFixups, fixup);
+    index = ejsAddItem(ejs, mp->loadState->typeFixups, fixup);
     if (index < 0) {
         return MPR_ERR_CANT_LOAD;
     }
@@ -1922,13 +1915,12 @@ EjsDoc *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, cchar *docString)
     EjsDoc      *doc;
     char        key[32];
 
-    doc = mprAllocZeroed(ejs, sizeof(EjsDoc));
-    if (doc == 0) {
+    if ((doc = mprAllocZeroed(ejs, sizeof(EjsDoc))) == 0) {
         return 0;
     }
-    doc->docString = mprStrdup(doc, docString);
+    doc->docString = (char*) docString;
     if (ejs->doc == 0) {
-        ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE);
+        ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE, 0);
     }
     mprSprintf(ejs, key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
     mprAddHash(ejs->doc, key, doc);

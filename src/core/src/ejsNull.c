@@ -30,7 +30,7 @@ static EjsObj *castNull(Ejs *ejs, EjsObj *vp, EjsType *type)
         return vp;
 
     case ES_String:
-        return (EjsObj*) ejsCreateString(ejs, "null");
+        return (EjsObj*) ejsCreateStringFromCS(ejs, "null");
     }
 }
 
@@ -40,7 +40,7 @@ static EjsObj *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
     switch (opcode) {
 
     case EJS_OP_ADD:
-        if (!ejsIsNumber(rhs)) {
+        if (!ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
         }
         /* Fall through */
@@ -54,15 +54,15 @@ static EjsObj *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
      */
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
     case EJS_OP_COMPARE_GE: case EJS_OP_COMPARE_GT:
-        if (ejsIsNumber(rhs)) {
+        if (ejsIsNumber(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejs->zeroValue, opcode, rhs);
-        } else if (ejsIsString(rhs)) {
+        } else if (ejsIsString(ejs, rhs)) {
             return ejsInvokeOperator(ejs, (EjsObj*) ejsToString(ejs, lhs), opcode, rhs);
         }
         break;
 
     case EJS_OP_COMPARE_NE:
-        if (ejsIsUndefined(rhs)) {
+        if (ejsIsUndefined(ejs, rhs)) {
             return (EjsObj*) ejs->falseValue;
         }
         return (EjsObj*) ejs->trueValue;
@@ -71,7 +71,7 @@ static EjsObj *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         return (EjsObj*) ejs->trueValue;
 
     case EJS_OP_COMPARE_EQ:
-        if (ejsIsUndefined(rhs)) {
+        if (ejsIsUndefined(ejs, rhs)) {
             return (EjsObj*) ejs->trueValue;
         }
         return (EjsObj*) ejs->falseValue;
@@ -96,7 +96,7 @@ static EjsObj *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         return 0;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -107,7 +107,7 @@ static EjsObj *invokeNullOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
 {
     EjsObj      *result;
 
-    if (rhs == 0 || lhs->type != rhs->type) {
+    if (rhs == 0 || TYPE(lhs) != TYPE(rhs)) {
         if ((result = coerceNullOperands(ejs, lhs, opcode, rhs)) != 0) {
             return result;
         }
@@ -149,7 +149,7 @@ static EjsObj *invokeNullOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         return ejsInvokeOperator(ejs, (EjsObj*) ejs->zeroValue, opcode, rhs);
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %s", opcode, lhs->type->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
 }
@@ -193,7 +193,6 @@ void ejsCreateNullType(Ejs *ejs)
     type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeNullOperator;
 
     ejs->nullValue = ejsCreate(ejs, type, 0);
-    ejsSetDebugName(ejs->nullValue, "null");
 }
 
 
