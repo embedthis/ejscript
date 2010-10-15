@@ -12,7 +12,7 @@ TOOLS			+= ejs.jem ejs.mvc
 #
 #	Loadable module jems (usable with require)
 #
-LOADABLE		= ejs.cache ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.mysql ejs.db.sqlite ejs.tar \
+LOADABLE		= ejs.cache ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.sqlite ejs.tar \
 				  	ejs.unix ejs.web ejs.web.jsgi ejs.template 
 LOADABLE_FILES	= $(shell for d in $(LOADABLE); do echo $$d/*.es | sort; done)
 MODULES			= $(call mod, $(LOADABLE))
