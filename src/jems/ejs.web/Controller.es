@@ -428,13 +428,14 @@ module ejs.web {
         private function openDatabase(request: Request) {
             let dbconfig = config.database
             let dbclass = dbconfig["class"]
-            let profile = dbconfig[config.mode]
+            let options = dbconfig[config.mode]
             if (dbclass) {
                 if (dbconfig.module && !global[dbclass]) {
                     global.load(dbconfig.module + ".mod")
                 }
                 let module = dbconfig.module || "public"
-                new (module)::[dbclass](dbconfig.adapter, request.dir.join(profile.name), profile.trace)
+                options.dir = request.dir
+                new (module)::[dbclass](dbconfig.adapter, options)
             }
         }
 

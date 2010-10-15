@@ -15,33 +15,39 @@ module ejs.db {
     class Database {
         private static var defaultDb: Database
 
-        private var _adapter: Object
-        private var _connection: String
-        private var _name: String
-        private var _traceAll: Boolean
+        private var adapter: Object
+        private var options: Object
 
         use default namespace public
 
         /**
             Initialize a database connection using the supplied database connection string. The first opened database
             will also be defined as the default database.
-            @param adapter Database adapter to use. E.g. "sqlite"
-            @param connectionString Connection string stipulating how to connect to the database. The format is one of the 
-            @param trace Trace database requests to the log
-            following forms:
+            @param adapter Database adapter to use. E.g. "sqlite". Sqlite is currently the only supported adapter.
+            @param options Connection options. This may be filename or an object hash of properties. If set to a filename
+                they type must be either String or Path and it should contain the filename of the database on the local
+                system. If options is set ot an object hash. It should contain adapter specific properties that specify 
+                how to attach to the database. Typical fields include:
                 <ul>
-                    <li>adapter://host/database/username/password</li>
-                    <li>filename</li>
+                    <li>name - Database URI
+                        Examples: http://example.com:1234/database.db,
+                        Examples: file://var/spool/db/database.db
+                    </li>
+                    <li>username - Database username</li>
+                    <li>password - Database password</li>
+                    <li>trace - Trace database commands to the log
+                    <li>socket - /var/run/mysqld/mysqld.sock
                 </ul>
-                Where adapter specifies the kind of database. Sqlite is currently the only supported adapter.
-                For sqlite connection strings, the abbreviated form is permitted where a filename is supplied and the 
-                connection string is assumed to be: <pre>sqlite://localhost/filename</pre>
          */
-        function Database(adapter: String, connectionString: String, trace: Boolean = false) {
+        function Database(adapter: String, options: Object) {
             Database.defaultDb ||= this
             if (adapter == "sqlite3") adapter = "sqlite"
-            _name = Path(connectionString).basename
-            _connection = connectionString
+            if (options is String || options is Path) {
+                let name = Path(options)
+                options = { name: name }
+            }
+            options.trace ||= false
+            this.options = options
             let adapterClass = adapter.toPascal()
             if (!global."ejs.db"::[adapterClass]) {
                 load("ejs.db." + adapter + ".mod")
@@ -49,8 +55,7 @@ module ejs.db {
             if (!global."ejs.db"::[adapterClass]) {
                 throw "Can't find database connector for " + adapter
             }
-            _adapter = new global."ejs.db"::[adapterClass](connectionString)
-            _traceAll = trace
+            this.adapter = new global."ejs.db"::[adapterClass](options)
         }
 
         /**
@@ -62,7 +67,7 @@ module ejs.db {
             @param options Optional parameters
          */
         function addColumn(table: String, column: String, datatype: String, options = null): Void
-            _adapter.addColumn(table, column, datatype, options)
+            adapter.addColumn(table, column, datatype, options)
 
         /**
             Add an index on a column
@@ -71,7 +76,7 @@ module ejs.db {
             @param index Name of the index
          */
         function addIndex(table: String, column: String, index: String): Void
-            _adapter.addIndex(table, column, index)
+            adapter.addIndex(table, column, index)
 
         /**
             Change a column
@@ -82,35 +87,35 @@ module ejs.db {
             @param options Optional parameters
          */
         function changeColumn(table: String, column: String, datatype: String, options: Object? = null): Void
-            _adapter.changeColumn(table, column, datatype, options)
+            adapter.changeColumn(table, column, datatype, options)
 
         /**
             Close the database connection. Database connections should be closed when no longer needed rather than waiting
             for the garbage collector to automatically close the connection when disposing the database instance.
          */
         function close(): Void
-            _adapter.close()
+            adapter.close()
 
         /**
             Commit a database transaction
          */
         function commit(): Void
-            _adapter.commit()
+            adapter.commit()
 
         //  TODO - implement
         /**
-            Reconnect to the database using a new connection string
-            @param connectionString See Database() for information about connection string formats.
+            Reconnect to the database using new connection options
+            @param connectionString See Database() for information about connection options.
             @hide
          */
-        function connect(connectionString: String): Void
-            _adapter.connect(connectionString)
+        function connect(options: Object): Void
+            adapter.connect(options)
 
         /**
-            The database connection string
+            The database connection options
          */
-        function get connection(): String
-            _connection
+        function get connectionOptions(): Object
+            options
 
         /**
             Create a new database
@@ -118,16 +123,15 @@ module ejs.db {
             @options Optional parameters
          */
         function createDatabase(name: String, options: Object? = null): Void
-            _adapter.createDatabase(name, options)
+            adapter.createDatabase(name, options)
 
         /**
             Create a new table
             @param table Name of the table
             @param columns Array of column descriptor tuples consisting of name:datatype
-            @options Optional parameters
          */
         function createTable(table: String, columns: Array? = null): Void
-            _adapter.createTable(table, columns)
+            adapter.createTable(table, columns)
 
         /**
             Map the database independant data type to a database dependant SQL data type
@@ -135,7 +139,7 @@ module ejs.db {
             @returns The corresponding SQL database type
          */
         function dataTypeToSqlType(dataType:String): String
-            _adapter.dataTypeToSqlType(dataType)
+            adapter.dataTypeToSqlType(dataType)
 
         /**
             The default database for the application.
@@ -155,20 +159,20 @@ module ejs.db {
             @param name Name of the database to remove
          */
         function destroyDatabase(name: String): Void
-            _adapter.destroyDatabase(name)
+            adapter.destroyDatabase(name)
 
         /**
             Destroy a table
             @param table Name of the table to destroy
          */
         function destroyTable(table: String): Void
-            _adapter.destroyTable(table)
+            adapter.destroyTable(table)
 
         /**
             End a transaction
          */
         function endTransaction(): Void
-            _adapter.endTransaction()
+            adapter.endTransaction()
 
         /**
             Get column information 
@@ -177,27 +181,27 @@ module ejs.db {
                 database connector in use.
          */
         function getColumns(table: String): Array
-            _adapter.getColumns(table)
+            adapter.getColumns(table)
 
         /**
             Return list of tables in a database
             @returns an array containing list of table names present in the currently opened database.
          */
         function getTables(): Array
-            _adapter.getTables()
+            adapter.getTables()
 
         /**
             Return the number of rows in a table
             @returns the count of rows in a table in the currently opened database.
          */
         function getNumRows(table: String): Number
-            _adapter.getNumRows(table)
+            adapter.getNumRows(table)
 
         /**
-            The name of the database.
+            The name of the database
          */
         function get name(): String
-            _name
+            options.name
 
         /**
             Execute a SQL command on the database.
@@ -209,10 +213,10 @@ module ejs.db {
             @TODO Refactor logging when Log class implemented
          */
         function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
-            if (_traceAll || trace) {
+            if (options.trace || trace) {
                 print(tag + ": " + cmd)
             }
-            return _adapter.sql(cmd)
+            return adapter.sql(cmd)
         }
 
         /**
@@ -221,7 +225,7 @@ module ejs.db {
             @param columns Array of column names to remove
          */
         function removeColumns(table: String, columns: Array): Void
-            _adapter.removeColumns(table, columns)
+            adapter.removeColumns(table, columns)
 
         /**
             Remove an index
@@ -229,7 +233,7 @@ module ejs.db {
             @param index Name of the index to remove
          */
         function removeIndex(table: String, index: String): Void
-            _adapter.removeIndex(table, index)
+            adapter.removeIndex(table, index)
 
         /**
             Rename a column
@@ -238,7 +242,7 @@ module ejs.db {
             @param newColumn New column name
          */
         function renameColumn(table: String, oldColumn: String, newColumn: String): Void
-            _adapter.renameColumn(table, oldColumn, newColumn)
+            adapter.renameColumn(table, oldColumn, newColumn)
 
         /**
             Rename a table
@@ -246,14 +250,14 @@ module ejs.db {
             @param newTable New table name
          */
         function renameTable(oldTable: String, newTable: String): Void
-            _adapter.renameTable(oldTable, newTable)
+            adapter.renameTable(oldTable, newTable)
 
         /**
             Rollback an uncommited database transaction
             @hide
          */
         function rollback(): Void
-            _adapter.rollback()
+            adapter.rollback()
 
         /**
             Execute a SQL command on the database. This is a low level SQL command interface that bypasses logging.
@@ -263,7 +267,7 @@ module ejs.db {
                 names and values
          */
         function sql(cmd: String): Array
-            _adapter.sql(cmd)
+            adapter.sql(cmd)
 
         /**
             Map the SQL type to a database independant data type
@@ -271,7 +275,7 @@ module ejs.db {
             @returns The corresponding database independant type
          */
         function sqlTypeToDataType(sqlType: String): String
-            _adapter.sqlTypeToDataType(sqlType)
+            adapter.sqlTypeToDataType(sqlType)
 
         /**
             Map the SQL type to an Ejscript type class
@@ -279,13 +283,13 @@ module ejs.db {
             @returns The corresponding type class
          */
         function sqlTypeToEjsType(sqlType: String): Type
-            _adapter.sqlTypeToEjsType(sqlType)
+            adapter.sqlTypeToEjsType(sqlType)
 
         /**
             Start a new database transaction
          */
         function startTransaction(): Void
-            _adapter.startTransaction()
+            adapter.startTransaction()
 
 //  MOB -- should be setter/getter
         /**
@@ -294,7 +298,7 @@ module ejs.db {
             @param on If true, display each SQL statement to the log
          */
         function trace(on: Boolean): void
-            _traceAll = on
+            options.trace = on
 
         /**
             Execute a database transaction
