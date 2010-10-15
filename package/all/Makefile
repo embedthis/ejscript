@@ -6,13 +6,14 @@
 
 include 		.makedep
 
+EJS_ARCHIVE		+= $(BLD_TOP)/releases/ejs-all.tgz
+FLAT_ARCHIVE	+= $(BLD_TOP)/releases/ejs-flat.tgz
 SRC				:= ../../src
 JEMS			:= $(SRC)/jems
 STAGING			:= staging
 DEST			:= $(STAGING)/src/deps/ejs
 INC_DEST		:= $(STAGING)/src/include/master
 DOC_DEST		:= $(STAGING)/doc
-ARCHIVE			+= $(BLD_TOP)/releases/ejs-all.tgz
 EJS_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ejsTune ejsByteCode ejsByteCodeTable ejsCore ejsModule ejs ejsWeb)
 SLOT_HEADERS	+= $(shell find $(SRC)/include -name 'ejs*slots.h')
 EC_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ecCompiler)
@@ -31,7 +32,8 @@ WEB_SOURCES		+= $(shell find $(JEMS)/ejs.web -name '*.c' | egrep -v 'SAVE|save|l
 TARGETS			+= $(patsubst %,$(INC_DEST)/%, ejs.h ejs.slots.h sqlite3.h)
 TARGETS			+= $(patsubst %,$(DEST)/%, ejsLib.c ejs.c ejsc.c ejsmod.c ejssql.c sqlite3.c ejs.es)
 
-combo packageExtra:	prep $(TARGETS) $(ARCHIVE)
+combo packageExtra:	prep $(TARGETS) $(EJS_ARCHIVE)
+#cleanExtra
 	
 prep:
 	@$(call log) "[Prepare]" "All-in-one combo package"
@@ -82,16 +84,26 @@ $(DEST)/sqlite3.c: $(SQLITE_SOURCES) $(SQLITE_HEADERS)
 $(DEST)/ejs.es: $(ES_SOURCES)
 	all-in-one $(ES_SOURCES)  | egrep -v 'use strict' >$(DEST)/ejs.es
 
-$(ARCHIVE): Makefile $(TARGETS)
+$(EJS_ARCHIVE): Makefile $(TARGETS)
 	cp $(BLD_TOP)/doc/api/ejsBare.html $(STAGING)/doc/api
 	cp $(BLD_TOP)/doc/man/*.1 $(STAGING)/doc/man
 	cp -r $(BLD_LIB_DIR)/www $(DEST)
 	cp Makefile.all $(DEST)/Makefile
 	cp -r $(BLD_BIN_DIR)/*.cmd $(DEST)
-	@$(call log) "[Generate]" "tar cfz $(ARCHIVE) -C $(STAGING) ."
-	rm -f $(ARCHIVE)
-	tar cfz $(ARCHIVE) -C $(STAGING) .
-	rm -fr $(STAGING)
+	$(call log) "[Generate]" "tar cfz $(EJS_ARCHIVE) -C $(STAGING) ."
+	rm -f $(EJS_ARCHIVE)
+	tar cfz $(EJS_ARCHIVE) -C $(STAGING) .
+
+flat $(FLAT_ARCHIVE): prep $(TARGETS) $(EJS_ARCHIVE)
+	mv $(STAGING)/src/deps/ejs/www $(STAGING)
+	find $(STAGING)/src -type f | xargs -I % mv % $(STAGING) 
+	cp $(SRC)/include/pcre.h $(SRC)/include/http.h $(SRC)/include/mpr.h $(SRC)/include/mprSsl.h $(STAGING) 
+	cp $(SRC)/deps/mpr/mprLib.c $(SRC)/deps/mpr/mprSsl.c $(STAGING)
+	cp $(SRC)/deps/http/httpLib.c $(SRC)/deps/pcre/pcre.c $(STAGING)
+	rm -fr $(STAGING)/doc $(STAGING)/src 
+	$(call log) "[Generate]" "tar cfz $(FLAT_ARCHIVE) -C $(STAGING) ."
+	rm -f $(FLAT_ARCHIVE)
+	tar cfz $(FLAT_ARCHIVE) -C $(STAGING) .
 
 cleanExtra:
 	rm -fr $(STAGING)
