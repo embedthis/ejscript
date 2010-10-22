@@ -97,7 +97,7 @@ $(COMBO_VER):
 	cp $(BLD_TOP)/doc/man/*.1 $(TDIR)/doc/man
 	cp -r $(BLD_LIB_DIR)/www $(DEST)
 	cp Makefile.combo $(DEST)/Makefile
-	cp -r $(BLD_BIN_DIR)/*.cmd $(DEST)
+	cp $(BLD_BIN_DIR)/*.cmd $(DEST) $(BLD_BIN_DIR)/jem $(BLD_BIN_DIR)/mvc $(DEST)
 	$(call log) "[Generate]" "tar cfz $(COMBO_VER) -C $(STAGING) ."
 	tar cfz $(COMBO_VER) -C $(STAGING) .
 	cd $(REL_DIR) ; ln -s $(COMBO_VER_NAME) $(COMBO_PERM_NAME)
