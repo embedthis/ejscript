@@ -707,7 +707,11 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsObj *otherThis, int argc, int stac
             }
             vp = ejsGetVarByName(ejs, NULL, &qname, &lookup);
             if (unlikely(vp == 0)) {
+#if UNUSED
                 ejsThrowReferenceError(ejs, "%s is not defined", qname.name);
+#else
+                push(ejs->undefinedValue);
+#endif
             } else {
                 CHECK_VALUE(vp, NULL, lookup.obj, lookup.slotNum);
             }

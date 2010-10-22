@@ -59,7 +59,7 @@ proxy("form", noID, "@register", [
 
 let withID = {id: 7, name: "Joe", height: 6.0}
 proxy("form", withID, "@register", [
-    '<form method="POST" action="/register" data-click-method="PUT">',
+    '<form method="POST" action="/register" data-method="PUT">',
     '<input name="__ejs_security_token__" type="hidden" value="',
     '</form>',
 ])
@@ -68,7 +68,7 @@ proxy("form", withID, "@register", [
 //  Method override (custom method LIST)
 let withID = {id: 7, name: "Joe", height: 6.0}
 proxy("form", withID, { action: "@register", method: "LIST" }, [
-    '<form method="POST" action="/register" data-click-method="LIST">',
+    '<form method="POST" action="/register" data-method="LIST">',
     '<input name="__ejs_security_token__" type="hidden" value="',
     '</form>',
 ])
@@ -77,7 +77,7 @@ proxy("form", withID, { action: "@register", method: "LIST" }, [
 //  With input text field using supplied data record. Scheme derived from record property names.
 let withID = {id: 7, name: "Joe", height: 6.0}
 proxy("fields", withID, { action: "@register", method: "LIST" }, [
-    '<form method="POST" action="/register" data-click-method="LIST">',
+    '<form method="POST" action="/register" data-method="LIST">',
     '<input name="__ejs_security_token__" type="hidden" value="',
     '<input name="name" type="text" value="Joe" />',
     '</form>',

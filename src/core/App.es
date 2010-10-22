@@ -325,6 +325,13 @@ module ejs {
             }
         }
 
+        static function updateLog(): Void {
+            let log = config.log
+            if (log && log.enable) {
+                App.log.redirect(log.location, log.level)
+            }
+        }
+
         /** @hide
             Wait for an event
             @param Observable object

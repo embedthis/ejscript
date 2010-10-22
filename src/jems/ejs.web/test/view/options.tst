@@ -81,7 +81,7 @@ proxy("label", "Text>", {domid: 999}, '<span id="999">Text></span>')
 
 //  Params
 proxy("label", "Text", {click: "/login", params: {name: "Bob", weight: 175.5}, method: "POST"}, 
-    '<span data-click="/login" data-click-method="POST" data-click-params="name=Bob&weight=175.5">Text</span>')
+    '<span data-method="POST" data-click="/login" data-click-method="POST" data-click-params="name=Bob&weight=175.5">Text</span>')
 
 //  Query
 proxy("label", "Text", {click: { path: "/test.php", query: "a=b&c=d"}}, '<span data-click="/test.php?a=b&c=d">Text</span>')

@@ -1,19 +1,27 @@
 #
-#	Makefile to build the all-in-one combined Ejscript distribution
+#	Makefile to build the combo and flat Ejscript distributions
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
 #
 
 include 		.makedep
 
-EJS_ARCHIVE		+= $(BLD_TOP)/releases/ejs-all.tgz
-FLAT_ARCHIVE	+= $(BLD_TOP)/releases/ejs-flat.tgz
+STAGING			:= $(PWD)/staging
+TDIR			:= $(STAGING)/ejs-$(BLD_VERSION)
+REL_DIR			:= ../../releases
+COMBO_VER_NAME	:= ejs-$(BLD_VERSION)-combo.tgz
+COMBO_PERM_NAME	:= ejs-combo.tgz
+COMBO_VER		:= $(REL_DIR)/$(COMBO_VER_NAME)
+COMBO_PERM		:= $(REL_DIR)/$(COMBO_PERM_NAME)
+FLAT_VER_NAME	:= ejs-$(BLD_VERSION)-flat.tgz
+FLAT_PERM_NAME	:= ejs-flat.tgz
+FLAT_VER		:= $(REL_DIR)/$(FLAT_VER_NAME)
+FLAT_PERM		:= $(REL_DIR)/$(FLAT_PERM_NAME)
 SRC				:= ../../src
 JEMS			:= $(SRC)/jems
-STAGING			:= staging
-DEST			:= $(STAGING)/src/deps/ejs
-INC_DEST		:= $(STAGING)/src/include/master
-DOC_DEST		:= $(STAGING)/doc
+DEST			:= $(TDIR)/src/deps/ejs
+INC_DEST		:= $(TDIR)/src/include/master
+DOC_DEST		:= $(TDIR)/doc
 EJS_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ejsTune ejsByteCode ejsByteCodeTable ejsCore ejsModule ejs ejsWeb)
 SLOT_HEADERS	+= $(shell find $(SRC)/include -name 'ejs*slots.h')
 EC_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ecCompiler)
@@ -32,20 +40,20 @@ WEB_SOURCES		+= $(shell find $(JEMS)/ejs.web -name '*.c' | egrep -v 'SAVE|save|l
 TARGETS			+= $(patsubst %,$(INC_DEST)/%, ejs.h ejs.slots.h sqlite3.h)
 TARGETS			+= $(patsubst %,$(DEST)/%, ejsLib.c ejs.c ejsc.c ejsmod.c ejssql.c sqlite3.c ejs.es)
 
-combo packageExtra:	prep $(TARGETS) $(EJS_ARCHIVE)
-#cleanExtra
+combo packageExtra:	prep $(TARGETS) $(COMBO_VER) $(FLAT_VER)
 	
 prep:
-	@$(call log) "[Prepare]" "All-in-one combo package"
-	rm -fr $(STAGING)
-	mkdir -p $(STAGING)/src/include/master $(STAGING)/src/deps/ejs $(STAGING)/doc/api $(STAGING)/doc/man
+	@$(call log) "[Prepare]" "Combo package"
+	rm -fr $(STAGING) $(COMBO_VER) $(COMBO_PERM) $(FLAT_VER) $(FLAT_PERM)
+	mkdir -p $(REL_DIR)
+	mkdir -p $(TDIR)/src/include/master $(TDIR)/src/deps/ejs $(TDIR)/doc/api $(TDIR)/doc/man
 
 $(INC_DEST)/ejs.h: $(EJS_HEADERS)
-	@all-in-one $(EJS_HEADERS) $(EC_HEADERS) | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >$(INC_DEST)/ejs.h
+	@combo $(EJS_HEADERS) $(EC_HEADERS) | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >$(INC_DEST)/ejs.h
 	@echo '#include "ejs.slots.h"' >>$(INC_DEST)/ejs.h
 
 $(INC_DEST)/ejs.slots.h: $(SLOT_HEADERS)
-	@all-in-one $(SLOT_HEADERS) >$(INC_DEST)/ejs.slots.h
+	@combo $(SLOT_HEADERS) >$(INC_DEST)/ejs.slots.h
 
 $(INC_DEST)/sqlite3.h: $(BLD_INC_DIR)/sqlite3.h
 	cp $(BLD_INC_DIR)/sqlite3.h $(INC_DEST)/sqlite3.h
@@ -53,7 +61,7 @@ $(INC_DEST)/sqlite3.h: $(BLD_INC_DIR)/sqlite3.h
 $(DEST)/ejsLib.c: $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES)
 	echo '#define EJS_DEFINE_OPTABLE 1' >$(DEST)/ejsLib.c
 	echo '#include "ejs.h"' >>$(DEST)/ejsLib.c
-	all-in-one $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES) $(EC_SOURCES) | \
+	combo $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES) $(EC_SOURCES) | \
         csplit -s -f tmpEjsLib. - '/#include.*ejsByteGoto.h/'
 	(cat tmpEjsLib.00 ; cat $(SRC)/include/ejsByteGoto.h ; \
 	if [ "$(BLD_OS)" = MACOSX -o "$(BLD_OS)" = FREEBSD ] ; \
@@ -64,46 +72,46 @@ $(DEST)/ejsLib.c: $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES)
 
 $(DEST)/ejsc.c: $(EJS_HEADERS) $(EC_HEADERS) $(SRC)/cmd/ejsc.c
 	echo '#include "ejs.h"' >$(DEST)/ejsc.c
-	all-in-one $(SRC)/cmd/ejsc.c | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sql' >>$(DEST)/ejsc.c
+	combo $(SRC)/cmd/ejsc.c | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sql' >>$(DEST)/ejsc.c
 
 $(DEST)/ejs.c: $(EJS_HEADERS) $(SRC)/cmd/ejs.c
 	echo '#include "ejs.h"' >$(DEST)/ejs.c
-	all-in-one $(SRC)/cmd/ejs.c | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sql' >>$(DEST)/ejs.c
+	combo $(SRC)/cmd/ejs.c | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sql' >>$(DEST)/ejs.c
 
 $(DEST)/ejsmod.c: $(EJSMOD_HEADERS) $(EJSMOD_SOURCES)
 	echo '#include "ejs.h"' >$(DEST)/ejsmod.c
-	all-in-one $(EJSMOD_HEADERS) $(EJSMOD_SOURCES) | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >>$(DEST)/ejsmod.c
+	combo $(EJSMOD_HEADERS) $(EJSMOD_SOURCES) | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >>$(DEST)/ejsmod.c
 
 $(DEST)/ejssql.c: $(JEMS)/ejs.db.sqlite/src/ejssql.c
-	all-in-one $(SQLITE_HEADERS) $(SRC)//jems/ejs.db.sqlite/src/ejssql.c | \
+	combo $(SQLITE_HEADERS) $(SRC)//jems/ejs.db.sqlite/src/ejssql.c | \
 		egrep -v '#include.*ejs|#include.*sqlite3' >$(DEST)/ejssql.c
 
 $(DEST)/sqlite3.c: $(SQLITE_SOURCES) $(SQLITE_HEADERS)
-	all-in-one $(SQLITE_HEADERS) $(SQLITE_SOURCES) | egrep -v '#include.*ejs|#include.*sqlite3' >$(DEST)/sqlite3.c
+	combo $(SQLITE_HEADERS) $(SQLITE_SOURCES) | egrep -v '#include.*ejs|#include.*sqlite3' >$(DEST)/sqlite3.c
 
 $(DEST)/ejs.es: $(ES_SOURCES)
-	all-in-one $(ES_SOURCES)  | egrep -v 'use strict' >$(DEST)/ejs.es
+	combo $(ES_SOURCES)  | egrep -v 'use strict' >$(DEST)/ejs.es
 
-$(EJS_ARCHIVE): Makefile $(TARGETS)
-	cp $(BLD_TOP)/doc/api/ejsBare.html $(STAGING)/doc/api
-	cp $(BLD_TOP)/doc/man/*.1 $(STAGING)/doc/man
+$(COMBO_VER):
+	cp $(BLD_TOP)/doc/api/ejsBare.html $(TDIR)/doc/api
+	cp $(BLD_TOP)/doc/man/*.1 $(TDIR)/doc/man
 	cp -r $(BLD_LIB_DIR)/www $(DEST)
-	cp Makefile.all $(DEST)/Makefile
+	cp Makefile.combo $(DEST)/Makefile
 	cp -r $(BLD_BIN_DIR)/*.cmd $(DEST)
-	$(call log) "[Generate]" "tar cfz $(EJS_ARCHIVE) -C $(STAGING) ."
-	rm -f $(EJS_ARCHIVE)
-	tar cfz $(EJS_ARCHIVE) -C $(STAGING) .
+	$(call log) "[Generate]" "tar cfz $(COMBO_VER) -C $(STAGING) ."
+	tar cfz $(COMBO_VER) -C $(STAGING) .
+	cd $(REL_DIR) ; ln -s $(COMBO_VER_NAME) $(COMBO_PERM_NAME)
 
-flat $(FLAT_ARCHIVE): prep $(TARGETS) $(EJS_ARCHIVE)
-	mv $(STAGING)/src/deps/ejs/www $(STAGING)
-	find $(STAGING)/src -type f | xargs -I % mv % $(STAGING) 
-	cp $(SRC)/include/pcre.h $(SRC)/include/http.h $(SRC)/include/mpr.h $(SRC)/include/mprSsl.h $(STAGING) 
-	cp $(SRC)/deps/mpr/mprLib.c $(SRC)/deps/mpr/mprSsl.c $(STAGING)
-	cp $(SRC)/deps/http/httpLib.c $(SRC)/deps/pcre/pcre.c $(STAGING)
-	rm -fr $(STAGING)/doc $(STAGING)/src 
-	$(call log) "[Generate]" "tar cfz $(FLAT_ARCHIVE) -C $(STAGING) ."
-	rm -f $(FLAT_ARCHIVE)
-	tar cfz $(FLAT_ARCHIVE) -C $(STAGING) .
+flat $(FLAT_VER):
+	mv $(TDIR)/src/deps/ejs/www $(TDIR)
+	find $(TDIR)/src -type f | xargs -I % mv % $(TDIR) 
+	cp $(SRC)/include/pcre.h $(SRC)/include/http.h $(SRC)/include/mpr.h $(SRC)/include/mprSsl.h $(TDIR) 
+	cp $(SRC)/deps/mpr/mprLib.c $(SRC)/deps/mpr/mprSsl.c $(TDIR)
+	cp $(SRC)/deps/http/httpLib.c $(SRC)/deps/pcre/pcre.c $(TDIR)
+	rm -fr $(TDIR)/doc $(TDIR)/src $(TDIR)/Makefile
+	$(call log) "[Generate]" "tar cfz $(FLAT_VER) -C $(STAGING) ."
+	tar cfz $(FLAT_VER) -C $(STAGING) .
+	cd $(REL_DIR) ; ln -s $(FLAT_VER_NAME) $(FLAT_PERM_NAME)
 
 cleanExtra:
 	rm -fr $(STAGING)

@@ -375,7 +375,7 @@ typedef const uni cuni;
 extern "C" {
 #else
     #if !MACOSX
-        typedef int bool;
+        typedef char bool;
     #endif
 #endif
 
@@ -8876,7 +8876,6 @@ static int writeOss(MprSocket *sp, void *buf, int len)
         unlock(sp);
         return -1;
     }
-
     totalWritten = 0;
     ERR_clear_error();
 

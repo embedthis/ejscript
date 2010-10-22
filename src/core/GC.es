@@ -48,7 +48,6 @@ module ejs {
                 geneartion of objects.
          */
         native static function run(deep: Boolean = false): void
-
     }
 }
 

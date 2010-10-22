@@ -457,6 +457,7 @@ print("CATCH " + e)
                 list("priority", [["low", 0], ["med", 0.5], ["high", 1]])
                 list("priority", [{low: 3}, {med: 5}, {high: 9}])
                 list("priority", {low: 0, med: 1, high: 2})
+                list("priority", [{id: 77, field: "value", ...}, ...])
          */
         function list(name: String, choices: Object, options: Object = {}): Void {
             options = getOptions(options)
@@ -521,6 +522,8 @@ print("CATCH " + e)
             @param target Script URI to load. URI or array of scripts. Call with no arguments or set to null to 
                 get a default set of scripts.
             @param options Optional extra options. See $View for a list of the standard options.
+            @option minified If the target is null, a minified option will determine if compressed (minifed) 
+                or uncompressed versions of the scripts will be used.
          */
         function script(target: Object, options: Object = {}): Void {
             let connector = getConnector("script", options)

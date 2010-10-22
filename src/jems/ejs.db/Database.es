@@ -324,7 +324,7 @@ module ejs.db {
             // return str.replace(/'/g, "''").replace(/[#;",;\\-]/g, "\\$0")
             // return str.replace(/'/g, "''").replace(/[#";\\]/g, "\\$0")
             // return str.replace(/'/g, "''").replace(/[;\\]/g, "\\$0")
-            return str.replace(/'/g, "''")
+            return str.toString().replace(/'/g, "''")
         }
     }
 }

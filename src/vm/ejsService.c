@@ -20,7 +20,6 @@ static int  loadStandardModules(Ejs *ejs, MprList *require);
 static void logHandler(MprCtx ctx, int flags, int level, cchar *msg);
 static int  runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName);
 static int  searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn);
-static int  startLogging(Ejs *ejs);
 
 /************************************* Code ***********************************/
 /*  
@@ -110,7 +109,9 @@ Ejs *ejsCreateVm(MprCtx ctx, Ejs *master, cchar *searchPath, MprList *require, i
     }
     ejsFreezeGlobal(ejs);
     ejsMakeEternalPermanent(ejs);
+#if UNUSED && KEEP
     startLogging(ejs);
+#endif
 
     if (mprHasAllocError(ejs)) {
         mprError(ejs, "Memory allocation error during initialization");
@@ -772,6 +773,7 @@ static int searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn)
 }
 
 
+#if UNUSED && KEEP
 typedef struct EjsLogData {
     Ejs         *ejs;
     EjsObj      *log;
@@ -780,6 +782,9 @@ typedef struct EjsLogData {
 } EjsLogData;
 
 
+/*
+    Set Mpr log data to go via ejs
+ */
 static int startLogging(Ejs *ejs)
 {
     EjsLogData  *ld;
@@ -804,15 +809,13 @@ static int startLogging(Ejs *ejs)
     mprSetAltLogData(ejs, ld);
     return 0;
 }
+#endif
 
 
 static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
 {
     Mpr         *mpr;
     MprFile     *file;
-    Ejs         *ejs;
-    EjsLogData  *ld;
-    EjsObj      *str, *saveException;
     static int  solo = 0;
     char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
 
@@ -843,8 +846,15 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
             msg = amsg = mprAsprintf(ctx, -1, "%s: %s: %s\n", prefix, tag, msg);
         }
     }
+#if UNUSED && KEEP
+    /*
+        Direct Mpr log data via App.log
+     */
+    EjsLogData  *ld;
+    EjsObj      *str, *saveException;
     ld = (EjsLogData*) mpr->altLogData;
     if (ld && ld->loggerWrite) {
+        Ejs *ejs;
         ejs = ld->ejs;
         str = (EjsObj*) ejsCreateString(ejs, msg);
         saveException = ejs->exception;
@@ -852,10 +862,11 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
         ejsRunFunction(ejs, ld->loggerWrite, ld->log, 1, &str);
         ejs->exception = saveException;
 
-    } else if (mpr->logData) {
+    } else 
+#endif
+    if (mpr->logData) {
         file = (MprFile*) mpr->logData;
         mprFprintf(file, "%s", msg);
-
     } else {
         file = (MprFile*) mpr->logData;
         mprPrintfError(ctx, "%s", msg);

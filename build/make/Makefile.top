@@ -120,12 +120,12 @@ uninstall uninstall-%:
 		--root=$(ROOT_DIR) --remove $(INS_WITH) pre $$packs post
 	
 combo:
-	if [ -d package/all ] ; then \
-		make -C package/all combo ; \
+	if [ -d package/combo ] ; then \
+		make -C package/combo combo ; \
 	elif [ -f package/Makefile ] ; then \
 		make -C package combo ; \
-	elif [ -d all ] ; then \
-		make -C all combo ; \
+	elif [ -d combo ] ; then \
+		make -C combo combo ; \
 	fi
 
 package-only:

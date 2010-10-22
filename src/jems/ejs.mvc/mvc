@@ -333,7 +333,6 @@ print(e)
             for each (c in controllers) {
                 rm(dirs.cache.join(c.basename.replaceExt(ext.mod)))
             }
-            // buildApp()
             files = find("config", pat) + find("src", pat) + controllers + find(dirs.models, pat)
             let viewFiles = find(dirs.views, "*." + ext.ejs)
             let esPages = []
@@ -350,6 +349,14 @@ print(e)
                 rm(intermediate.replaceExt(ext.mod))
                 esPages.append(intermediate)
             }
+
+            /*
+                Make flat configuration file
+             */
+            flat = dirs.cache.join("_flat_.es")
+            makeFile(flat, "App.config.cache.preloaded = true", "Flat Configuration")
+            esPages += [flat]
+
             files += esPages
             options.keep = saveKeep
             verbose = saveVerbose
@@ -495,7 +502,7 @@ print(e)
         let parser: TemplateParser = new TemplateParser
         // results = parser.buildView(controllerPrefix + viewName, file.readString(), { layout: layoutPage })
         // results = parser.build(file.readString(), { layout: layoutPage })
-        results = Loader.wrap(parser.build(file.readString(), { layout: layoutPage }))
+        results = Loader.wrap(file, parser.build(file.readString(), { layout: layoutPage }))
         let intermediate: Path = dirs.cache.join(md5(file)).joinExt(ext.es)
         let out = intermediate.replaceExt(ext.mod)
         try {
@@ -546,8 +553,8 @@ print(e)
             trace("[PARSE]", file)
         }
         let parser: TemplateParser = new TemplateParser
-        // results = Loader.wrap(parser.build(file.readString(), { layout: layoutPage }))
-        results = Loader.wrap(parser.build(file.readString()))
+        // results = Loader.wrap(file, parser.build(file.readString(), { layout: layoutPage }))
+        results = Loader.wrap(file, parser.build(file.readString()))
         let intermediate: Path = dirs.cache.join(md5(file)).joinExt(ext.es)
         try {
             intermediate.write(results)
@@ -1297,7 +1304,7 @@ print(e)
             }
         }
         appName = App.dir.basename.toString().toLowerCase()
-        if (!dirs.cache.exists || !isDir(dirs.cache) || !exists("ejsrc")) {
+        if (!dirs.cache.exists || !isDir(dirs.cache)) {
             upgradeApp()
         }
     }
@@ -1468,7 +1475,7 @@ class Templates {
     },
 
     web: {
-        endpoint: "127.0.0.1:4000",
+        endpoint: ":4000",
         expires: {
             html:   86400,
             ejs:    86400,
@@ -1761,9 +1768,9 @@ module App {
      */
     public static const DefaultLayout = 
 '<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html lang="en">
 <head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <meta charset="utf-8" />
     <% securityToken() %>
     <% icon("/${STATIC}/images/favicon.ico") %>
     <% stylesheet() %>

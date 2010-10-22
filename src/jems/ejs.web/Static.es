@@ -88,10 +88,10 @@ module ejs.web {
         if (expires) {
             let lifetime = expires[request.extension] || expires[""]
             if (lifetime) {
+                headers["Cache-Control"] = "max-age=" + lifetime
                 let when = new Date
                 when.time += (lifetime * 1000)
                 headers["Expires"] = when.toUTCString()
-                //MOB  headers["Cache-Control"] = "max-age=" + lifetime
             }
         }
         if (request.method == "GET" || request.method == "POST") {

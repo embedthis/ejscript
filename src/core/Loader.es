@@ -22,7 +22,8 @@ module ejs {
     public class Loader {
         //  TODO - doc
         public  static var mainId
-        private static var signatures = {}
+        public static var signatures = {}
+        public static var initializers = {}
         private static var timestamps = {}
         private static const defaultExtensions = [".es", ".js"]
 
@@ -32,6 +33,11 @@ module ejs {
          */
         public static function init(mainId: String? = null) {
             require.main = mainId
+        }
+
+        public static function register(id, fn): Function {
+            Loader.initializers[id] = fn
+            return fn
         }
 
         /**
@@ -56,7 +62,7 @@ module ejs {
         }
 
         /** 
-            Load a CommonJS module and return the exports object. After the first load, the CJS module will be compile
+            Load a CommonJS module and return the exports object. After the first load, the CJS module will be compiled
             and cached as a byte-code module.
             @param id Unique name of the module to load. The id may be a unique ID, an absolute path, relative path or a 
                 path fragment that is resolved relative to the App search path. Ids may or may not include a ".es" or 
@@ -71,16 +77,31 @@ module ejs {
             let cache: Path = cached(id, config)
             if (path) {
                 if (cache && cache.exists && cache.modified >= path.modified) {
+                    /* Cache mod file exists and is current */
                     App.log.debug(4, "Use cache for: " + path)
+                    if (initializers[path]) {
+                        initializer = initializers[path]
+                        signatures[path] = exports = {}
+                        initializer(require, exports, {id: id, path: path}, null)
+                        return exports
+                    }
                     initializer = global.load(cache)
                 } else {
+                    /* Missing cache mod file */
+                    if (initializers[path] && config.cache.preloaded) {
+                        //  MOB -- warning. This prevents reload working. Should rebuild all and reload.
+                        initializer = initializers[path]
+                        signatures[path] = exports = {}
+                        initializer(require, exports, {id: id, path: path}, null)
+                        return exports
+                    }
                     if (codeReader) {
                         code = codeReader(id, path)
                     } else {
                         if (!path.exists) {
                             throw "Cannot find \"" + path + "\"."
                         }
-                        code = wrap(path.readString())
+                        code = wrap(id, path.readString())
                     }
                     if (cache) {
                         App.log.debug(4, "Recompile module to: " + cache)
@@ -96,9 +117,9 @@ module ejs {
                 }
                 initializer = eval(code, cache)
             }
-            signatures[path] = exports = {}
-            //  MOB -- implement system?
+            //  MOB -- implement system and module?
             //  function initializer(require, exports, module, system)
+            signatures[path] = exports = {}
             initializer(require, exports, {id: id, path: path}, null)
             return exports
         }
@@ -118,8 +139,8 @@ module ejs {
         }
 
         /** @hide */
-        public static function wrap(code: String): String
-            "(function(require, exports, module, system) {\n" + code + "\n})"
+        public static function wrap(id: String, code: String): String
+            "Loader.register(\"" + id + "\", function(require, exports, module, system) {\n" + code + "\n})"
 
         /*  
             Locate a CommonJS module. The id can be an absolute path, a path with/without a "es" or "js" extension. 

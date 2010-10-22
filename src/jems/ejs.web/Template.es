@@ -19,7 +19,7 @@ module ejs.web {
                     load("ejs.template.mod")
                 }
                 let data = TemplateParser().build(response.body)
-                return Loader.wrap(data)
+                return Loader.wrap(id, data)
             }).app(request)
         }
     }
@@ -64,7 +64,7 @@ module ejs.web {
                 load("ejs.template.mod")
             }
             let data = options.literal || TemplateParser().build(path.readString(), options)
-            return Loader.wrap(data)
+            return Loader.wrap(path, data)
         }).app
     }
 }
