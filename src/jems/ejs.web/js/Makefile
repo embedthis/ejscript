@@ -1,0 +1,47 @@
+#
+#	Makefile for the ejs.web/js
+#
+#	Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
+#
+
+include 	.makedep
+
+DEST		:= ../www/js
+TARGETS		+= $(DEST)/jquery.ejs.min.js
+TARGETS		+= $(DEST)/jquery.simplemodal.min.js
+TARGETS		+= $(DEST)/jquery.tablesorter.min.js
+TARGETS		+= $(DEST)/jquery.treeview.min.js
+
+min: $(TARGETS)
+
+$(DEST)/jquery.ejs.min.js: jquery.ejs.js 
+	$(call log) "[Generate]" "minify $(DEST)/jquery.ejs.min.js"
+	minify jquery.ejs.js
+	mv jquery.ejs.min.js $(DEST)
+	
+$(DEST)/jquery.simplemodal.min.js: jquery.simplemodal.js 
+	$(call log) "[Generate]" "minify $(DEST)/jquery.simplemodal.min.js"
+	minify jquery.simplemodal.js
+	mv jquery.simplemodal.min.js $(DEST)
+	
+$(DEST)/jquery.tablesorter.min.js: jquery.tablesorter.js 
+	$(call log) "[Generate]" "minify $(DEST)/jquery.tablesorter.min.js"
+	minify jquery.tablesorter.js
+	mv jquery.tablesorter.min.js $(DEST)
+	
+$(DEST)/jquery.treeview.min.js: jquery.treeview.js 
+	$(call log) "[Generate]" "minify $(DEST)/jquery.treeview.min.js"
+	minify jquery.treeview.js
+	mv jquery.treeview.min.js $(DEST)
+	cp -r treeview.css tree-images $(DEST)
+	
+#
+#	Don't generation jquery. Use distributed minified version
+#
+$(DEST)/jquery.min.js: jquery.js 
+	$(call log) "[Generate]" "minify jquery.min.js"
+	minify jquery.js
+	mv jquery.min.js $(DEST)
+	
+cleanExtra:
+	rm -rf *.min.js
