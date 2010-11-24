@@ -1,0 +1,6 @@
+i=1
+while read token
+do
+    printf "#define %-25s %3d\n" $token $i
+    i=$((i + 1))
+done

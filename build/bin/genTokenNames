@@ -1,0 +1,7 @@
+i=1
+while read token
+do
+    token=`tr '[A-Z]' '[a-z]' | sed 's/^t_//'`
+    printf "    \"%s\",\n" $token
+    i=$((i + 1))
+done
