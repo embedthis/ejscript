@@ -8,7 +8,7 @@ include 		.makedep
 
 STAGING			:= $(PWD)/staging
 TDIR			:= $(STAGING)/ejs-$(BLD_VERSION)
-REL_DIR			:= ../../releases
+REL_DIR			:= $(BLD_OUT_DIR)/releases
 DIST_VER_NAME	:= ejs-$(BLD_VERSION)-dist.tgz
 DIST_PERM_NAME	:= ejs-dist.tgz
 DIST_VER		:= $(REL_DIR)/$(DIST_VER_NAME)
@@ -40,13 +40,12 @@ WEB_SOURCES		+= $(shell find $(JEMS)/ejs.web -name '*.c' | egrep -v 'SAVE|save|l
 TARGETS			+= $(patsubst %,$(INC_DEST)/%, ejs.h ejs.slots.h sqlite3.h)
 TARGETS			+= $(patsubst %,$(DEST)/%, ejsLib.c ejs.c ejsc.c ejsmod.c ejssql.c sqlite3.c ejs.es)
 
-dist packageExtra:	prep $(TARGETS) $(DIST_VER) $(FLAT_VER)
+dist packageExtra:	prep $(TARGETS) $(DIST_VER) $(FLAT_VER) cleanup
 	
 prep:
-	@$(call log) "[Prepare]" "Combo package"
+	@$(call log) "[Prepare]" "Package directories"
 	rm -fr $(STAGING) $(DIST_VER) $(DIST_PERM) $(FLAT_VER) $(FLAT_PERM)
-	mkdir -p $(REL_DIR)
-	mkdir -p $(TDIR)/src/include/master $(TDIR)/src/deps/ejs $(TDIR)/doc/api $(TDIR)/doc/man
+	mkdir -p $(REL_DIR) $(TDIR)/src/include/master $(TDIR)/src/deps/ejs $(TDIR)/doc/api $(TDIR)/doc/man
 
 $(INC_DEST)/ejs.h: $(EJS_HEADERS)
 	@dist $(EJS_HEADERS) $(EC_HEADERS) | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >$(INC_DEST)/ejs.h
@@ -55,8 +54,8 @@ $(INC_DEST)/ejs.h: $(EJS_HEADERS)
 $(INC_DEST)/ejs.slots.h: $(SLOT_HEADERS)
 	@dist $(SLOT_HEADERS) >$(INC_DEST)/ejs.slots.h
 
-$(INC_DEST)/sqlite3.h: $(BLD_INC_DIR)/sqlite3.h
-	cp $(BLD_INC_DIR)/sqlite3.h $(INC_DEST)/sqlite3.h
+$(INC_DEST)/sqlite3.h: $(BLD_TOP)/src/include/sqlite3.h
+	cp $(BLD_TOP)/src/include/sqlite3.h $(INC_DEST)/sqlite3.h
 
 $(DEST)/ejsLib.c: $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES)
 	echo '#define EJS_DEFINE_OPTABLE 1' >$(DEST)/ejsLib.c
@@ -113,5 +112,8 @@ flat $(FLAT_VER):
 	tar cfz $(FLAT_VER) -C $(STAGING) .
 	cd $(REL_DIR) ; ln -s $(FLAT_VER_NAME) $(FLAT_PERM_NAME)
 
-cleanExtra:
+cleanup:
 	rm -fr $(STAGING)
+
+cleanExtra:
+	rm -fr $(STAGING) $(REL_DIR)/*.tgz
