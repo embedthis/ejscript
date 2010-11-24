@@ -34,11 +34,11 @@ server.on("readable", function (event, request: Request) {
 
 //  Default
 proxy("script", [
-    '<script src="/static/js/jquery.js" type="text/javascript"></script>',
-    '<script src="/static/js/jquery.tablesorter.js" type="text/javascript"></script>',
-    '<script src="/static/js/jquery.address.js" type="text/javascript"></script>',
-    '<script src="/static/js/jquery.simplemodal.js" type="text/javascript"></script>',
-    '<script src="/static/js/jquery.ejs.js" type="text/javascript"></script>',
+    '<script src="/static/js/jquery.min.js" type="text/javascript"></script>',
+    '<script src="/static/js/jquery.tablesorter.min.js" type="text/javascript"></script>',
+    '<script src="/static/js/jquery.simplemodal.min.js" type="text/javascript"></script>',
+    '<script src="/static/js/jquery.treeview.min.js" type="text/javascript"></script>',
+    '<script src="/static/js/jquery.ejs.min.js" type="text/javascript"></script>',
 ])
 
 

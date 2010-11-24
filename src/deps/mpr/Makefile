@@ -1,5 +1,9 @@
 #
+<<<<<<< HEAD
 #	Makefile for the MPR (Multithreaded Portable Runtime)
+=======
+#	Makefile for the MPR (Multithreaded Portable Runtime) for use with the combo release.
+>>>>>>> 1b12c9a381ca8d0e2f4312397da1ef521d417509
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2010. All Rights Reserved.
 #

@@ -8929,6 +8929,7 @@ void mprMarkHash(MprHashTable *table)
     MprHash     *sp;
     int         i;
 
+<<<<<<< HEAD
     if (table) {
         for (i = 0; i < table->hashSize; i++) {
             for (sp = (MprHash*) table->buckets[i]; sp; sp = sp->next) {
@@ -8936,6 +8937,16 @@ void mprMarkHash(MprHashTable *table)
             }
         }
         mprMark(table);
+=======
+    if (table->flags & MPR_HASH_UNICODE) {
+        MprUni  *ukey = (MprUni*) key;
+        len = ((ukey->length + 1) * sizeof(MprChar));
+        ptr = mprAlloc(sp, len);
+        memcpy(ptr, ukey->value, len);
+        return ptr;
+    } else {
+        return mprStrdup(sp, key);
+>>>>>>> 1b12c9a381ca8d0e2f4312397da1ef521d417509
     }
 }
 

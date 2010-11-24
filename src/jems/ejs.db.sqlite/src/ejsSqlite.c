@@ -68,6 +68,7 @@ typedef struct EjsSqlite {
     sqlite3         *sdb;           /* Sqlite handle */
     MprCtx          ctx;            /* Memory context arena */
     Ejs             *ejs;           /* Interp reference */
+    int             memory;         /* In-memory database */
 } EjsSqlite;
 
 /********************************** Forwards **********************************/
@@ -123,6 +124,7 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
         sdb = (sqlite3*) (size_t) stoi(&path[9], 10, NULL);
 
     } else {
+        db->memory = 0;
         if (strncmp(path, "file://", 7) == 0) {
             path += 7;
         }
@@ -169,7 +171,7 @@ static int sqliteClose(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
     mprAssert(ejs);
     mprAssert(db);
 
-    if (db->sdb) {
+    if (db->sdb && !db->memory) {
         SET_CTX(db->ctx);
         sqlite3_close(db->sdb);
         db->sdb = 0;

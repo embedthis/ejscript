@@ -15,8 +15,7 @@
      */
     var defaults = {
         "updating": true,
-        //  ESC to toggle updating
-        "toggle-updating": 27,
+        "toggle-updating": 27
     }
     $.fn.extend({
         /*
@@ -32,10 +31,10 @@
                 $(this).modal({
                     escClose: false, 
                     overlayId: "-ejs-modal-background", 
-                    containerId: "-ejs-modal-foreground",
+                    containerId: "-ejs-modal-foreground"
                 });
             });
-        },
+        }
     });
 
     $.fn.ejs.defaults = defaults;
@@ -47,10 +46,10 @@
     function remote(url) {
         var elt         = $(this),
             data        = elt.is('form') ? elt.serializeArray() : [],
-            method      = elt.attr('data-remote-method') || 'GET';
+            method      = elt.attr('data-remote-method') || elt.attr('method') || 'GET';
 
         if (url === undefined) {
-            url = elt.attr('action') || elt.attr('href') || elt.attr('data-remote');
+            url = elt.attr('data-remote') || elt.attr('action') || elt.attr('href');
             if (!url) {
                 throw "No URL specified for remote call";
             }
@@ -128,7 +127,7 @@
         var el          = $(this);
         var method      = el.attr('data-click-method') || el.attr('data-method') || 'GET';
         var url         = el.attr('data-click') || el.attr('action') || el.attr('href');
-        var params      = el.attr('data-click-params');;
+        var params      = el.attr('data-click-params');
 
         if (url === undefined) {
             alert("No URL specified");
@@ -292,7 +291,7 @@
                     },
                     error: function (http, msg, elt) { 
                         log("Error updating control: " + msg); 
-                    },
+                    }
                 });
             } else {
                 setTimeout(function(elt) { update.call(elt, o);}, o["refresh-period"], elt);

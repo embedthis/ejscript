@@ -5130,7 +5130,24 @@ extern MprAny mprLookupModuleData(MprAny any, cchar *name);
     @param path Pointer to a string that will receive the module path.
     @returns 0 if the module was found and path set to the location of the module.
  */
+<<<<<<< HEAD
 extern int mprSearchForModule(MprAny any, cchar *module, char **path);
+=======
+typedef struct MprBlk {
+    struct MprBlk   *next;                  /* Next sibling or block in freeq */
+    struct MprBlk   *prev;                  /* Previous sibling or block in freeq */
+    struct MprBlk   *prior;                 /* Size of block prior to this block in memory */
+    size_t          size:  MPR_SIZE_BITS;   /* Internal block length including header (max size 134217728) */
+    uint            pad:  3;                /* Max pad words: destructor, children.forw, children.back, debug-trailer */
+    uint            free: 1;                /* Block is free */
+    uint            last: 1;                /* Block is last in memory region chunk */
+#if BLD_MEMORY_DEBUG
+    uint            magic;                  /* Unique signature */
+    int             seqno;                  /* Allocation sequence number */
+#endif
+} MprBlk;
+
+>>>>>>> 1b12c9a381ca8d0e2f4312397da1ef521d417509
 
 /**
     Set the module search path
@@ -5211,6 +5228,7 @@ typedef struct MprDispatcher {
 } MprDispatcher;
 
 
+<<<<<<< HEAD
 typedef struct MprEventService {
     MprTime         now;                /**< Current notion of time for the dispatcher service */
     MprDispatcher   runQ;               /**< Queue of running dispatchers */
@@ -5223,6 +5241,47 @@ typedef struct MprEventService {
     struct MprCond  *waitCond;          /**< Waiting sync */
     struct MprMutex *mutex;             /**< Multi-thread sync */
 } MprEventService;
+=======
+#if MPR_GC
+extern void *mprAllocBlock(size_t size, int flags);
+
+/* Allocate - no manager */
+extern void *mprAlloc(size_t size);
+extern void *mprAllocZeroed(size_t size);
+
+/* Allocate structure and define manager */
+extern void *mprAllocObj(Type type, MprManager manager);
+
+/* Free. Invoke any manager */
+extern int  mprFree(void *ptr);
+
+/* Realloc. Preserve manager */
+extern void *mprRealloc(void *ptr, size_t size);
+
+/* Allocate, but no manager */
+extern char *mprAsprintf(int maxSize, cchar *fmt, ...);
+extern char *mprStrdup(cchar *str);
+extern char *mprStrndup(cchar *str, size_t size);
+
+//  Removed
+extern void *mprAllocCtx(ctx, size); 
+
+//  OLD
+extern void *mprAllocBlock(MprCtx ctx, size_t size, int flags);
+extern void *mprAlloc(MprCtx ctx, size_t size);
+extern int mprFree(void *ptr);
+extern void *mprAllocZeroed(MprCtx ctx, size_t size);
+extern void *mprAllocCtx(ctx, size); 
+extern void *mprAllocWithDestructor(MprCtx ctx, size_t size, MprDestructor destructor);
+extern void *mprRealloc(MprCtx ctx, void *ptr, size_t size);
+extern char *mprAsprintf(MprCtx ctx, int maxSize, cchar *fmt, ...);
+extern char *mprStrdup(MprCtx ctx, cchar *str);
+extern char *mprStrndup(MprCtx ctx, cchar *str, size_t size);
+extern void *mprAllocObj(MprCtx ctx, Type type, MprDestructor destructor);
+#endif
+
+extern struct Mpr *mprCreateAllocService(MprAllocFailure cback, MprDestructor destructor);
+>>>>>>> 1b12c9a381ca8d0e2f4312397da1ef521d417509
 
 /*
     ServiceEvents parameters
@@ -5263,6 +5322,7 @@ extern void mprEnableDispatcher(MprDispatcher *dispatcher);
  */
 extern int mprServiceEvents(MprAny any, MprDispatcher *dispatcher, int delay, int flags);
 
+#if UNUSED
 /**
     Create a new event
     @description Create a new event for service
@@ -5286,7 +5346,12 @@ extern MprEvent *mprCreateEvent(MprDispatcher *dispatcher, cchar *name, int peri
     @param event Event object to queue
     @ingroup MprEvent
  */
+<<<<<<< HEAD
 extern void mprQueueEvent(MprDispatcher *dispatcher, MprEvent *event);
+=======
+extern void *mprAllocWithDestructorZeroed(MprCtx ctx, size_t size, MprDestructor destructor);
+#endif
+>>>>>>> 1b12c9a381ca8d0e2f4312397da1ef521d417509
 
 /**
     Initialize an event
@@ -5361,7 +5426,34 @@ extern MprEvent *mprCreateTimerEvent(MprDispatcher *dispatcher, cchar *name, int
     @param period Time in milliseconds used by continuous events between firing of the event.
     @ingroup MprEvent
  */
+<<<<<<< HEAD
 extern void mprRescheduleEvent(MprEvent *event, int period);
+=======
+extern char *mprStrdup(MprCtx ctx, cchar *str);
+#else /* !DOXYGEN */
+
+extern void *mprAllocBlock(MprCtx ctx, size_t size, int flags);
+extern void *mprRealloc(MprCtx ctx, void *ptr, size_t size);
+extern void *mprMemdup(MprCtx ctx, cvoid *ptr, size_t size);
+extern char *mprStrndup(MprCtx ctx, cchar *str, size_t size);
+extern char *mprStrdup(MprCtx ctx, cchar *str);
+#endif
+
+#define mprAllocObj(ctx, type, destructor) \
+    ((destructor != NULL) ? \
+        ((type*) mprUpdateDestructor( \
+            mprAllocBlock(ctx, sizeof(type), MPR_ALLOC_DESTRUCTOR | MPR_ALLOC_CHILDREN | MPR_ALLOC_ZERO), \
+            (MprDestructor) destructor)) : \
+        (type*) mprAllocBlock(ctx, sizeof(type), MPR_ALLOC_CHILDREN | MPR_ALLOC_ZERO))
+
+#define mprAllocWithDestructor(ctx, size, destructor) \
+    mprUpdateDestructor(mprAllocBlock(ctx, size, MPR_ALLOC_DESTRUCTOR | MPR_ALLOC_CHILDREN), (MprDestructor) destructor)
+
+//  MOB -- doc
+#define mprAlloc(ctx, size) mprAllocBlock(ctx, size, 0)
+#define mprAllocZeroed(ctx, size) mprAllocBlock(ctx, size, MPR_ALLOC_ZERO)
+#define mprAllocCtx(ctx, size) mprAllocBlock(ctx, size, MPR_ALLOC_CHILDREN | MPR_ALLOC_ZERO)
+>>>>>>> 1b12c9a381ca8d0e2f4312397da1ef521d417509
 
 /* Internal API */
 extern void mprRelayEvent(MprDispatcher *dispatcher, MprEventProc proc, void *data, MprEvent *event);

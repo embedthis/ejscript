@@ -746,6 +746,9 @@ typedef struct EjsLogData {
 } EjsLogData;
 
 
+/*
+    Set Mpr log data to go via ejs
+ */
 static int startLogging(Ejs *ejs)
 {
     EjsLogData  *ld;
@@ -806,6 +809,9 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
         }
     }
 #if UNUSED && KEEP
+    /*
+        Direct Mpr log data via App.log
+     */
     EjsLogData  *ld;
     EjsObj      *str, *saveException;
     ld = (EjsLogData*) mpr->altLogData;
@@ -823,7 +829,6 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
     if (mpr->logData) {
         file = (MprFile*) mpr->logData;
         mprFprintf(file, "%s", msg);
-
     } else {
         file = (MprFile*) mpr->logData;
         mprPrintfError(ctx, "%s", msg);

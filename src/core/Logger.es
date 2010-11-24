@@ -60,6 +60,7 @@ module ejs {
 
         private var _filter: Function
         private var _level: Number = 0
+        private var _location
         private var _pattern: RegExp
         private var _name: String
 
@@ -87,26 +88,30 @@ module ejs {
 
         /** 
             Redirect log output.
-            @param location Optional output stream or Logger to send messages to. If a parent Logger instance is provided for
-                the output parameter, messages are sent to the parent for rendering.
+            @param location Optional output stream or Logger to send messages to. If a parent Logger instance is 
+                provided for the output parameter, messages are sent to the parent for rendering.
          */
-        function redirect(location): Void {
+        function redirect(location, level: Number = this._level): Void {
             if (location is Stream) {
                 _outStream = location
             } else {
                 location = location.toString()
-                let [path, level] = location.split(":")
-                if (level) {
-                    _level = level
-                }
+                let [path, lev] = location.split(":")
+                _level = level || lev
+                let stream
                 if (path == "stdout") {
-                    _outStream = App.outputStream
+                    stream = App.outputStream
                 } else if (path == "stderr") {
-                    _outStream = App.errorStream
+                    stream = App.errorStream
                 } else {
-                    _outStream = File(path).open("wa+")
+                    stream = File(path).open("wa+")
                 }
+                if (_outStream && stream != _outStream) {
+                    _outStream.close()
+                }
+                _outStream = stream
             }
+            _location = location
         }
 
         /** 
@@ -160,6 +165,9 @@ module ejs {
                 nativeLogLevel = level
             }
         }
+
+        function get location()
+            _location
 
         /** 
             Matching expression to filter log messages. The match regular expression is used to match 
