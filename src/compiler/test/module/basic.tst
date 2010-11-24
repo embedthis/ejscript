@@ -1,13 +1,9 @@
 /*
- *	Module tests
- *  NOTE: Versioned modules are an experimental feature and likely to change in syntax
- */
+  	Module tests
+    NOTE: Versioned modules are an experimental feature and likely to change in syntax
 
-
-
-/*
- *  NOTE: This code does not execute linearly. As each "require" statement is executed, the corresponding module
- *  initializer will be executed.
+    NOTE: This code does not execute linearly. As each "require" statement is executed, the corresponding module
+    initializer will be executed.
  */
 
 var x = "GLOBAL"

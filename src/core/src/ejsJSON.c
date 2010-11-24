@@ -11,49 +11,66 @@
 /*********************************** Locals ***********************************/
 
 typedef struct JsonState {
-    char    *data;
-    char    *end;
-    char    *next;
-    char    *error;
+    MprChar    *data;
+    MprChar    *end;
+    MprChar    *next;
+    MprChar    *error;
 } JsonState;
+
+typedef struct Json {
+    MprBuf      *buf;
+    EjsObj      *current;
+    EjsObj      *options;           /* Options object */
+    EjsFunction *replacer;
+    char        *indent;
+    int         baseClasses;
+    int         depth;
+    int         hidden;
+    int         namespaces;
+    int         pretty;
+    int         nest;              /* Json serialize nest level */
+} Json;
 
 /***************************** Forward Declarations ***************************/
 
-static EV *parseLiteral(Ejs *ejs, JsonState *js);
-static EV *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js);
+static EjsObj *parseLiteral(Ejs *ejs, JsonState *js);
+static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js);
+static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json);
 
 /*********************************** Locals ***********************************/
 /*
-    Convert a string into an object.
     function deserialize(obj: String, options: Object): Object
  */
-EV *deserialize(Ejs *ejs, EV *unused, int argc, EV **argv)
+EjsObj *g_deserialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     mprAssert(argc >=1);
     return ejsDeserialize(ejs, (EjsString*) argv[0]);
 }
 
 
-EV *ejsDeserialize(Ejs *ejs, EjsString *str)
+/*
+    function serialize(obj: Object, options: Object = null)
+        Options: baseClasses, depth, indent, hidden, pretty, replacer
+ */
+static EjsObj *g_serialize(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    EV          *obj;
+    return (EjsObj*) ejsToJSON(ejs, argv[0], (argc == 2) ? argv[1] : NULL);
+}
+
+
+EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
+{
+    EjsObj      *obj;
     JsonState   js;
-    cchar       *data;
 
     if (!ejsIsString(ejs, str)) {
         ejsThrowSyntaxError(ejs, "Object is not a string");
         return 0;
     }
-    //  MOB - UNICODE - should not convert into CSTRING
-    data = ejsGetString(ejs, str);
-    if (data == 0) {
-        return 0;
-    } else if (*data == '\0') {
+    if (str->length == 0) {
         return ejs->emptyString;
     }
-
-    //  MOB -- check that js.data never modifies this
-    js.next = js.data = (char*) data;
+    js.next = js.data = str->value;
     js.end = &js.data[str->length];
     js.error = 0;
     if ((obj = parseLiteral(ejs, &js)) == 0) {
@@ -61,9 +78,9 @@ EV *ejsDeserialize(Ejs *ejs, EjsString *str)
             ejsThrowSyntaxError(ejs, 
                 "Can't parse object literal. Error at position %d.\n"
                 "===========================\n"
-                "Offending text: %s\n"
+                "Offending text: %w\n"
                 "===========================\n"
-                "In literal %s"
+                "In literal %w"
                 "\n===========================\n",
                 (int) (js.error - js.data), js.error, js.data);
         } else {
@@ -75,10 +92,10 @@ EV *ejsDeserialize(Ejs *ejs, EjsString *str)
 }
 
 
-static EV *parseLiteral(Ejs *ejs, JsonState *js)
+static EjsObj *parseLiteral(Ejs *ejs, JsonState *js)
 {
     MprBuf      *buf;
-    EV          *vp;
+    EjsObj      *vp;
 
     mprAssert(js);
 
@@ -103,7 +120,7 @@ typedef enum Token {
 } Token;
 
 
-static uchar *skipComments(uchar *cp, uchar *end)
+static MprChar *skipComments(MprChar *cp, MprChar *end)
 {
     int     inComment;
 
@@ -146,18 +163,17 @@ static uchar *skipComments(uchar *cp, uchar *end)
 }
 
 
-Token getNextJsonToken(MprBuf *buf, char **token, JsonState *js)
+Token getNextJsonToken(MprBuf *buf, MprChar **token, JsonState *js)
 {
-    uchar   *start, *cp, *end, *next;
-    char    *src, *dest;
-    int     quote, tid, c;
+    MprChar     *start, *cp, *end, *next;
+    MprChar     *src, *dest;
+    int         quote, tid, c;
 
-    //  MOB -- buf is always set?
     if (buf) {
         mprFlushBuf(buf);
     }
-    cp = (uchar*) js->next;
-    end = (uchar*) js->end;
+    cp = js->next;
+    end = js->end;
     cp = skipComments(cp, end);
     next = cp + 1;
     quote = -1;
@@ -195,11 +211,11 @@ Token getNextJsonToken(MprBuf *buf, char **token, JsonState *js)
                 }
             }
             if (*cp != quote) {
-                js->error = (char*) cp;
+                js->error = cp;
                 return TOK_ERR;
             }
             if (buf) {
-                mprPutBlockToBuf(buf, (char*) start, (int) (cp - start));
+                mprPutBlockToBuf(buf, (char*) start, (cp - start));
             }
             cp++;
 
@@ -217,13 +233,12 @@ Token getNextJsonToken(MprBuf *buf, char **token, JsonState *js)
                 }
             }
             if (*cp != '/') {
-                js->error = (char*) cp;
+                js->error = cp;
                 return TOK_ERR;
             }
             if (buf) {
-                mprPutBlockToBuf(buf, (char*) start, (int) (cp - start));
+                mprPutBlockToBuf(buf, (char*) start, (cp - start));
             }
-            
             cp++;
 
         } else {
@@ -247,13 +262,13 @@ Token getNextJsonToken(MprBuf *buf, char **token, JsonState *js)
         if (*cp == ',' || *cp == ':') {
             cp++;
         } else if (*cp != '}' && *cp != ']' && *cp != '\0' && *cp != '\n' && *cp != '\r' && *cp != ' ') {
-            js->error = (char*) cp;
+            js->error = cp;
             return TOK_ERR;
         }
         next = cp;
 
         if (buf) {
-            for (dest = src = buf->start; src < buf->end; ) {
+            for (dest = src = (MprChar*) buf->start; src < (MprChar*) buf->end; ) {
                 c = *src++;
                 if (c == '\\') {
                     c = *src++;
@@ -268,10 +283,10 @@ Token getNextJsonToken(MprBuf *buf, char **token, JsonState *js)
                 *dest++ = c;
             }
             *dest = '\0';
-            *token = mprGetBufStart(buf);
+            *token = (MprChar*) mprGetBufStart(buf);
         }
     }
-    js->next = (char*) next;
+    js->next = next;
     return tid;
 }
 
@@ -287,11 +302,11 @@ Token peekNextJsonToken(JsonState *js)
     Parse an object literal string pointed to by js->next into the given buffer. Update js->next to point
     to the next input token in the object literal. Supports nested object literals.
  */
-static EV *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
+static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
 {
-    EV      *obj, *vp;
+    EjsAny      *obj, *vp;
     MprBuf      *valueBuf;
-    char        *token, *key, *value;
+    MprChar     *token, *key, *value;
     int         tid, isArray;
 
     isArray = 0;
@@ -302,9 +317,9 @@ static EV *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
     }
     if (tid == TOK_LBRACKET) {
         isArray = 1;
-        obj = ejsCreateArray(ejs, 0);
+        obj = (EjsObj*) ejsCreateArray(ejs, 0);
     } else if (tid == TOK_LBRACE) {
-        obj = ejsCreateSimpleObject(ejs);
+        obj = ejsCreateEmptyPot(ejs);
     } else {
         return ejsParse(ejs, token, ES_String);
     }
@@ -312,7 +327,6 @@ static EV *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
         ejsThrowMemoryError(ejs);
         return 0;
     }
-
     while (1) {
         vp = 0;
         tid = peekNextJsonToken(js);
@@ -353,11 +367,11 @@ static EV *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
                 valueBuf = mprCreateBuf(ejs, 0, 0);
                 getNextJsonToken(valueBuf, &value, js);
                 if (tid == TOK_QID) {
-                    vp = ejsCreateStringFromCS(ejs, value);
+                    vp = ejsCreateString(ejs, value, strlen(value));
                 } else {
-                    if (strcmp(value, "null") == 0) {
+                    if (mcmp(value, "null") == 0) {
                         vp = ejs->nullValue;
-                    } else if (strcmp(value, "undefined") == 0) {
+                    } else if (mcmp(value, "undefined") == 0) {
                         vp = ejs->undefinedValue;
                     } else {
                         vp = ejsParse(ejs, value, -1);
@@ -381,7 +395,7 @@ static EV *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
                 return 0;
             }
         } else {
-            if (ejsSetPropertyByName(ejs, obj, EN(key), vp) < 0) {
+            if (ejsSetPropertyByName(ejs, obj, WEN(key), vp) < 0) {
                 ejsThrowMemoryError(ejs);
                 return 0;
             }
@@ -391,26 +405,239 @@ static EV *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
 }
 
 
-/*
-    Global function to convert the object to a source code string in JSON format. This is the actual work-horse.
-  
-    function serialize(obj: Object, options: Object = null)
+/**
+    Get a serialized string representation of a variable using JSON encoding.
+    This will look for a "toJSON" function on the specified object. Use ejsSerialize for low level JSON.
+    @return Returns a string variable or null if an exception is thrown.
  */
-static EjsString *serialize(Ejs *ejs, EV *unused, int argc, EV **argv)
+EjsString *ejsToJSON(Ejs *ejs, EjsAny *vp, EjsObj *options)
 {
-    return ejsToJSON(ejs, argv[0], (argc == 2) ? argv[1] : NULL);
+    EjsFunction     *fn;
+    EjsString       *result;
+    EjsObj          *argv[1];
+    int             argc;
+
+    fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) TYPE(vp)->prototype, N(NULL, "toJSON"));
+    if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
+        result = ejsSerialize(ejs, vp, options);
+    } else {
+        argv[0] = options;
+        argc = options ? 1 : 0;
+        result = (EjsString*) ejsRunFunction(ejs, fn, vp, argc, argv);
+    }
+    return result;
+}
+
+
+/*
+    Low level JSON encoding.
+ */
+EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
+{
+    Json        json;
+    EjsObj      *arg;
+    EjsString   *result;
+    char        *indent;
+    int         i;
+
+    memset(&json, 0, sizeof(Json));
+
+    json.depth = 99;
+    
+    if (options) {
+        json.options = options;
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("baseClasses"))) != 0) {
+            json.baseClasses = (arg == (EjsObj*) ejs->trueValue);
+        }
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("depth"))) != 0) {
+            json.depth = ejsGetInt(ejs, arg);
+        }
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("indent"))) != 0) {
+            if (ejsIsString(ejs, arg)) {
+               json.indent = (char*) ejsToMulti(ejs, arg);
+            } else if (ejsIsNumber(ejs, arg)) {
+                i = ejsGetInt(ejs, arg);
+                if (0 <= i && i < MPR_MAX_STRING) {
+                    json.indent = mprAlloc(arg, i + 1);
+                    mprHold(json.indent);
+                    memset(indent, ' ', i);
+                    json.indent[i] = '\0';
+                }
+            }
+        }
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("hidden"))) != 0) {
+            json.hidden = (arg == (EjsObj*) ejs->trueValue);
+        }
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("namespaces"))) != 0) {
+            json.namespaces = (arg == (EjsObj*) ejs->trueValue);
+        }
+        if ((arg = ejsGetPropertyByName(ejs, options, EN("pretty"))) != 0) {
+            json.pretty = (arg == (EjsObj*) ejs->trueValue);
+        }
+        json.replacer = ejsGetPropertyByName(ejs, options, EN("replacer"));
+        if (!ejsIsFunction(ejs, json.replacer)) {
+            json.replacer = NULL;
+        }
+    }
+    result = serialize(ejs, vp, &json);
+    mprRelease(json.indent);
+    return result;
+}
+
+
+static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
+{
+    EjsName     qname;
+    EjsFunction *fn;
+    EjsString   *result, *sv;
+    EjsTrait    *trait;
+    EjsObj      *pp, *obj, *replacerArgs[2];
+    MprChar     *cp;
+    char        key[16];
+    int         c, isArray, i, count, slotNum;
+
+    /*
+        The main code below can handle Arrays, Objects, objects derrived from Object and also native classes with properties.
+        All others just use toString.
+     */
+    count = ejsGetPropertyCount(ejs, vp);
+    if (count == 0 && TYPE(vp) != ejs->objectType && TYPE(vp) != ejs->arrayType) {
+        //  MOB OPT - need some flag for this test.
+        if (ejsIsNull(ejs, vp) || ejsIsUndefined(ejs, vp) || ejsIsBoolean(ejs, vp) || ejsIsNumber(ejs, vp) || 
+                ejsIsString(ejs, vp)) {
+            return ejsToString(ejs, vp);
+        } else {
+            return ejsStringToJSON(ejs, vp);
+        }
+    }
+    obj = vp;
+    json->nest++;
+    if (json->buf == 0) {
+        json->buf = mprCreateBuf(ejs, 0, 0);
+        mprHold(json->buf);
+    }
+    isArray = ejsIsArray(ejs, vp);
+    mprPutCharToWideBuf(json->buf, isArray ? '[' : '{');
+    if (json->pretty || json->indent) {
+        mprPutCharToWideBuf(json->buf, '\n');
+    }
+    if (++ejs->serializeDepth <= json->depth && !VISITED(obj)) {
+        VISITED(obj) = 1;
+        for (slotNum = 0; slotNum < count && !ejs->exception; slotNum++) {
+            trait = ejsGetPropertyTraits(ejs, obj, slotNum);
+            if (trait && (trait->attributes & (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | 
+                    EJS_FUN_MODULE_INITIALIZER)) && !json->hidden) {
+                continue;
+            }
+            pp = ejsGetProperty(ejs, obj, slotNum);
+            if (ejs->exception) {
+                VISITED(obj) = 0;
+                json->nest--;
+                return 0;
+            }
+            if (pp == 0) {
+                mprAssert(0);
+                continue;
+            }
+            if (isArray) {
+                itos(key, sizeof(key), slotNum, 10);
+                qname.name = ejsCreateStringFromAsc(ejs, key);
+                qname.space = ejs->emptyString;
+            } else {
+                qname = ejsGetPropertyName(ejs, vp, slotNum);
+            }
+            if (json->pretty) {
+                for (i = 0; i < ejs->serializeDepth; i++) {
+                    mprPutStringToWideBuf(json->buf, "  ");
+                }
+            } else {
+                if (json->indent) {
+                    mprPutStringToWideBuf(json->buf, json->indent);
+                }
+            }
+            if (!isArray) {
+                if (json->namespaces) {
+                    if (qname.space != ejs->emptyString) {
+                        mprPutFmtToWideBuf(json->buf, "\"%@\"::", qname.space);
+                    }
+                }
+//  MOB -- should this be in unicode?  yes?
+                mprPutCharToWideBuf(json->buf, '"');
+                for (cp = qname.name->value; cp && *cp; cp++) {
+                    c = *cp;
+                    if (c == '"' || c == '\\') {
+                        mprPutCharToWideBuf(json->buf, '\\');
+                        mprPutCharToWideBuf(json->buf, c);
+                    } else {
+                        mprPutCharToWideBuf(json->buf, c);
+                    }
+                }
+                mprPutStringToWideBuf(json->buf, "\":");
+                if (json->pretty || json->indent) {
+                    mprPutCharToWideBuf(json->buf, ' ');
+                }
+            }
+            fn = (EjsFunction*) ejsGetPropertyByName(ejs, (EjsObj*) TYPE(pp)->prototype, N(NULL, "toJSON"));
+// MOB - check that this is going directly to serialize most of the time
+            if (!ejsIsFunction(ejs, fn) || (fn->isNativeProc && fn->body.proc == (EjsFun) ejsObjToJSON)) {
+                sv = serialize(ejs, pp, json);
+            } else {
+#if UNUSED
+                sv = (EjsString*) ejsToJSON(ejs, pp, json->options);
+#endif
+                sv = (EjsString*) ejsRunFunction(ejs, fn, pp, 1, &json->options);
+            }
+            if (sv == 0 || !ejsIsString(ejs, sv)) {
+                if (!ejs->exception) {
+                    ejsThrowTypeError(ejs, "Can't serialize property %@", qname.name);
+                }
+                VISITED(obj) = 0;
+                return 0;
+            } else {
+                if (json->replacer) {
+                    replacerArgs[0] = (EjsObj*) qname.name; 
+                    replacerArgs[1] = (EjsObj*) sv; 
+
+                    /* function replacer(key: String, value: String): String */
+                    sv = ejsRunFunction(ejs, json->replacer, obj, 2, (EjsObj**) replacerArgs);
+                }
+                //  MOB -- UNICODE - should the json->buf be in unicode from the start -- yes
+                mprPutStringToWideBuf(json->buf, ejsToMulti(ejs, sv));
+            }
+            if ((slotNum + 1) < count) {
+                mprPutCharToWideBuf(json->buf, ',');
+            }
+            if (json->pretty || json->indent) {
+                mprPutCharToWideBuf(json->buf, '\n');
+            }
+        }
+        VISITED(obj) = 0;
+    }
+    --ejs->serializeDepth; 
+    if (json->pretty || json->indent) {
+        for (i = ejs->serializeDepth; i > 0; i--) {
+            mprPutStringToWideBuf(json->buf, "  ");
+        }
+    }
+    mprPutCharToWideBuf(json->buf, isArray ? ']' : '}');
+    mprAddNullToWideBuf(json->buf);
+
+    if (--json->nest == 0) {
+        result = ejsCreateString(ejs, mprGetBufStart(json->buf), mprGetBufLength(json->buf) / sizeof(MprChar));
+        mprRelease(json->buf);
+#if UNUSED
+    } else {
+        result = ejsCreateNonInternedString(ejs, mprGetBufStart(json->buf), mprGetBufLength(json->buf) / sizeof(MprChar));
+#endif
+    }
+    return result;
 }
 
 
 void ejsConfigureJSONType(Ejs *ejs)
 {
-    EjsBlock    *block;
-
-    block = ejs->globalBlock;
-    mprAssert(block);
-
-    ejsBindFunction(ejs, block, ES_deserialize, deserialize);
-    ejsBindFunction(ejs, block, ES_serialize, serialize);
+    ejsBindFunction(ejs, ejs->global, ES_deserialize, g_deserialize);
+    ejsBindFunction(ejs, ejs->global, ES_serialize, g_serialize);
 }
 
 

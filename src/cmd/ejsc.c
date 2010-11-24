@@ -31,7 +31,7 @@ MAIN(ejscMain, int argc, char **argv)
     /*
         Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
      */
-    mpr = mprCreate(argc, argv, ejsMemoryFailure);
+    mpr = mprCreate(argc, argv, NULL);
     mprSetAppName(mpr, argv[0], 0, 0);
 
     if (mprStart(mpr) < 0) {
@@ -136,11 +136,11 @@ MAIN(ejscMain, int argc, char **argv)
                 if (requiredModules == 0) {
                     requiredModules = mprCreateList(mpr);
                 }
-                modules = mprStrdup(mpr, argv[++nextArg]);
-                name = mprStrTok(modules, " \t,", &tok);
+                modules = sclone(mpr, argv[++nextArg]);
+                name = stok(modules, " \t,", &tok);
                 while (name != NULL) {
                     require(requiredModules, name);
-                    name = mprStrTok(NULL, " \t", &tok);
+                    name = stok(NULL, " \t", &tok);
                 }
             }
 
@@ -234,7 +234,7 @@ MAIN(ejscMain, int argc, char **argv)
 
     ejsService = ejsCreateService(mpr);
     if (ejsService == 0) {
-        return MPR_ERR_NO_MEMORY;
+        return MPR_ERR_MEMORY;
     }
     ejsFlags = EJS_FLAG_NO_INIT;
     if (doc) {
@@ -242,17 +242,18 @@ MAIN(ejscMain, int argc, char **argv)
     }
     ejs = ejsCreateVm(ejsService, searchPath, requiredModules, 0, NULL, ejsFlags);
     if (ejs == 0) {
-        return MPR_ERR_NO_MEMORY;
+        return MPR_ERR_MEMORY;
     }
     ecFlags |= (debug) ? EC_FLAGS_DEBUG: 0;
     ecFlags |= (merge) ? EC_FLAGS_MERGE: 0;
     ecFlags |= (bind) ? EC_FLAGS_BIND: 0;
     ecFlags |= (noout) ? EC_FLAGS_NO_OUT: 0;
     ecFlags |= (parseOnly) ? EC_FLAGS_PARSE_ONLY: 0;
+    ecFlags |= (doc) ? EC_FLAGS_DOC: 0;
 
     cp = ecCreateCompiler(ejs, ecFlags);
     if (cp == 0) {
-        return MPR_ERR_NO_MEMORY;
+        return MPR_ERR_MEMORY;
     }
     cp->require = requiredModules;
     cp->modver = modver;

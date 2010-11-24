@@ -27,16 +27,13 @@ module ejs {
             Memory redline callback. When the memory redline limit is exceeded, the callback will be invoked. 
             If no callback is defined and the redline limit is exceeded, a MemoryError exception is thrown. This callback
             enables the application detect low memory conditions before they become critical and to recover by freeing 
-            memory or to gracefully exit. The callback is invoked with the following signature:
+            memory or to gracefully exit.  While the callback is active subsequent invocations of the callback are 
+            suppressed.  The callback is invoked with the following signature:
                 function callback(size: Number, total: Number): Void
-            @param fn Callback function to invoke when the redline limit is exceeded. While the callback is active
-                subsequent invocations of the callback are suppressed.
-         */
-        native static function set callback(fn: Function): Void
-
-        /**  TODO - required for setter @hide 
          */
         native static function get callback(): Void
+        native static function set callback(fn: Function): Void
+
 
 //  MOB -- what is the default?
         /**
@@ -54,14 +51,6 @@ module ejs {
          */
         native static function set maximum(value: Number): Void
 
-        /**
-            Peak memory ever used by the application in bytes. This statistic is the maximum value ever attained by 
-            $allocated. 
-            @deprecated
-         */
-        # DEPRECATED
-        native static function get peak(): Number
-        
         /**
             Memory redline value in bytes. When the memory redline limit is exceeded, the redline $callback will be invoked. 
             If no callback is defined, a MemoryError exception is thrown. The redline limit enables the application detect 
@@ -82,13 +71,6 @@ module ejs {
          */
         native static function get resident(): Number
 
-        /**
-            Peak stack size ever used by the application in bytes 
-            @deprecated
-         */
-        # DEPRECATED
-        native static function get stack(): Number
-        
         /**
             System RAM. This is the total amount of RAM installed in the system in bytes.
          */

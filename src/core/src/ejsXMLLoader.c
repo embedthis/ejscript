@@ -15,6 +15,15 @@ static int  parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName,
 
 /************************************* Code ***********************************/
 
+//  MOB - unused
+static void manageXmlParser(EjsXmlState *parser, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+    } else if (flags & MPR_MANAGE_FREE) {
+    }
+}
+
+
 MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
 {
     EjsXmlState *parser;
@@ -27,7 +36,7 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
         Create the parser stack
      */
     //  MOB - switch to ejsAlloc
-    if ((parser = mprAllocObj(xp, EjsXmlState, NULL)) == 0) {
+    if ((parser = mprAllocObj(xp, EjsXmlState, manageXmlParser)) == 0) {
         mprFree(xp);
         return 0;
     }
@@ -41,7 +50,6 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
 
     mprXmlSetParseArg(xp, parser);
     mprXmlSetParserHandler(xp, parserHandler);
-
     return xp;
 }
 
@@ -74,7 +82,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
     ejs = parser->ejs;
     tos = &parser->nodeStack[parser->topOfStack];
     xml = tos->obj;
-    value = ejsCreateStringFromCS(ejs, str);
+    value = ejsCreateStringFromAsc(ejs, str);
     
     mprAssert(xml);
 
@@ -99,7 +107,7 @@ static int parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName, 
             return MPR_ERR_BAD_SYNTAX;
         }
         if (xml->kind <= 0) {
-            ejsConfigureXML(ejs, xml, EJS_XML_ELEMENT, ejsCreateStringFromCS(ejs, tagName), xml, NULL);
+            ejsConfigureXML(ejs, xml, EJS_XML_ELEMENT, ejsCreateStringFromAsc(ejs, tagName), xml, NULL);
         } else {
             xml = ejsCreateXML(ejs, EJS_XML_ELEMENT, N(NULL, tagName), xml, NULL);
             tos = &parser->nodeStack[++(parser->topOfStack)];
@@ -195,7 +203,6 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
         }
         return 0;
     }
-    
     mprAssert(ejsIsXML(ejs, node));
     xml = (EjsXML*) node;
     
@@ -209,10 +216,10 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
         }
         indent(buf, indentLevel);
 
-        mprPutFmtToBuf(buf, "<%s", xml->qname.name);
+        mprPutFmtToBuf(buf, "<%@", xml->qname.name);
         if (xml->attributes) {
             for (next = 0; (attribute = mprGetNextItem(xml->attributes, &next)) != 0; ) {
-                mprPutFmtToBuf(buf, " %s=\"%s\"",  attribute->qname.name, attribute->value);
+                mprPutFmtToBuf(buf, " %@=\"%@\"",  attribute->qname.name, attribute->value);
             }
         }
         
@@ -233,7 +240,7 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
                 mprPutCharToBuf(buf, '\n');
                 indent(buf, indentLevel);
             }
-            mprPutFmtToBuf(buf, "</%s>", xml->qname.name);
+            mprPutFmtToBuf(buf, "</%@>", xml->qname.name);
             
         } else {
             /* Solo */
@@ -244,18 +251,18 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
     case EJS_XML_COMMENT:
         mprPutCharToBuf(buf, '\n');
         indent(buf, indentLevel);
-        mprPutFmtToBuf(buf, "<!--%s -->", xml->value);
+        mprPutFmtToBuf(buf, "<!--%@ -->", xml->value);
         break;
         
     case EJS_XML_ATTRIBUTE:
         /*
             Only here when converting solo attributes to a string
          */
-        mprPutStringToBuf(buf, ejsGetString(ejs, xml->value));
+        mprPutStringToBuf(buf, ejsToMulti(ejs, xml->value));
         break;
         
     case EJS_XML_TEXT:
-        mprPutStringToBuf(buf, ejsGetString(ejs, xml->value));
+        mprPutStringToBuf(buf, ejsToMulti(ejs, xml->value));
         break;
     }
     VISITED(node) = 0;

@@ -11,73 +11,37 @@
 //  MOB -- rename to LexBlock
 /*********************************** Helpers **********************************/
 
-EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
-{
-    EjsBlock        *block;
-
-    block = (EjsBlock*) ejsCreateObject(ejs, ejs->blockType, size);
-    if (block == 0) {
-        return 0;
-    }
-    SHORT_SCOPE(block) = 1;
-#if UNUSED
-    ejsInitList(&block->namespaces);
-#endif
-    return block;
-}
-
-
-void ejsMarkBlock(Ejs *ejs, EjsBlock *block)
-{
-    EjsObj          *item;
-    EjsBlock        *b;
-    int             next;
-
-    ejsMarkObject(ejs, (EjsObj*) block);
-    if (block->prevException) {
-        ejsMark(ejs, (EjsObj*) block->prevException);
-    }
-    if (block->namespaces.length > 0) {
-        for (next = 0; ((item = (EjsObj*) ejsGetNextItem(ejs, &block->namespaces, &next)) != 0); ) {
-            ejsMark(ejs, item);
-        }
-    }
-    for (b = block->scope; b; b = b->scope) {
-        ejsMark(ejs, (EjsObj*) b);
-    }
-    //  TODO MOB - this should not be required as GC in mark() follows the block caller/prev chain
-    for (b = block->prev; b; b = b->prev) {
-        ejsMark(ejs, (EjsObj*) b);
-    }
-}
-
-
 EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
 {
     EjsBlock    *dest;
 
-    dest = (EjsBlock*) ejsCloneObject(ejs, (EjsObj*) src, deep);
+    dest = (EjsBlock*) ejsClonePot(ejs, (EjsObj*) src, deep);
 
     dest->nobind = src->nobind;
     dest->scope = src->scope;
 #if MOB && OPT
+    //  This could work if a bit is set in EjsBlock to say inherited
     dest->namespaces = src->namespaces;
 #else
-#if UNUSED
-    ejsInitList(&dest->namespaces);
-    ejsCopyList(ejs, &dest->namespaces, &src->namespaces);
-#else
-    ejsAppendArray(ejs, &dest->namespaces, &src->namespaces);
-#endif
+    mprInitList(&dest->namespaces);
+    mprCopyList(&dest->namespaces, &src->namespaces);
 #endif
     return dest;
+}
+
+
+void ejsSetBlockLocation(EjsBlock *block, EjsLoc *loc)
+{
+#if BLD_DEBUG
+    block->loc = *loc; 
+#endif
 }
 
 /********************************* Namespaces *******************************/
 
 void ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block)
 {
-    ejsClearArray(ejs, &block->namespaces);
+    mprClearList(&block->namespaces);
 }
 
 
@@ -105,34 +69,18 @@ int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
         ejsThrowTypeError(ejs, "Not a namespace");
         return EJS_ERR;
     }
-#if UNUSED
-    //  TODO OPT need a routine or option to only add unique namespaces.   
-    EjsFunction     *fun;
-    fun = (EjsFunction*) block;
-
-    list = &block->namespaces;
-    EjsNamespace    *namespace;
-    int             next;
-    if (ejsIsFunction(ejs, fun)) {
-        if (fun->isInitializer) {
-            block = block->scope;
-            list = &block->namespaces;
-            for (next = 0; (namespace = ejsGetNextItem(list, &next)) != 0; ) {
-                if (strcmp(namespace->name, nsp->name) == 0) {
-                    /* Already there */
-                    return 0;
-                }
-            }
-            if (block->obj.master && ejs->master) {
-                nsp = ejsCreateNamespace(ejs->master, mprStrdup(ejs->master, nsp->name), mprStrdup(ejs->master, nsp->uri));
-            }
+#if UNUSED && KEEP
+    /* Namespaces must be ordered and so can't do this */ 
+    for (next = 0; ((existing = (EjsNamespace*) mprGetNextItem(&block->namespaces, &next)) != 0); ) {
+        if (existing->value == nsp->value) {
+            break;
         }
     }
-#endif
-#if MOB && OPT
-    ejsAddItemToSharedList(ejs, list, nsp);
+    if (existing == NULL) {
+        mprAddItem(&block->namespaces, nsp);
+    }
 #else
-    ejsAddItem(ejs, &block->namespaces, nsp);
+        mprAddItem(&block->namespaces, nsp);
 #endif
     return 0;
 }
@@ -143,29 +91,29 @@ int ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *block, EjsNamespace *nsp)
  */
 void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
 {
-    EjsNamespace    *nsp;
+    EjsNamespace    *nsp, *existing;
     EjsBlock        *block;
-    EjsArray        *baseNamespaces, *oldNamespaces;
-    int             next;
+    MprList         *baseNamespaces;
+    int             next, i;
 
     block = &type->constructor.block;
-    oldNamespaces = &block->namespaces;
-#if UNUSED
-    ejsInitList(&block->namespaces);
-#endif
     baseNamespaces = &baseType->constructor.block.namespaces;
 
     if (baseNamespaces) {
-        for (next = 0; ((nsp = (EjsNamespace*) ejsGetNextItem(ejs, baseNamespaces, &next)) != 0); ) {
+        for (next = 0; ((nsp = (EjsNamespace*) mprGetNextItem(baseNamespaces, &next)) != 0); ) {
             //  MOB -- must be a better way to do this?
-            if (ejsContainsString(ejs, nsp->name, ejs->commaProtString)) {
-                ejsAddItem(ejs, &block->namespaces, nsp);
+            if (ejsContainsString(ejs, nsp->value, ejs->commaProtString)) {
+                for (i = 0; ((existing = (EjsNamespace*) mprGetNextItem(&block->namespaces, &i)) != 0); ) {
+                    if (existing->value == nsp->value) {
+                        break;
+                    }
+                }
+                //  MOB -- debug to see if duplicates found 
+                mprAssert(existing == NULL);
+                if (existing == NULL) {
+                    mprInsertItemAtPos(&block->namespaces, next - 1, nsp);
+                }
             }
-        }
-    }
-    if (oldNamespaces->length > 0) {
-        for (next = 0; ((nsp = (EjsNamespace*) ejsGetNextItem(ejs, oldNamespaces, &next)) != 0); ) {
-            ejsAddItem(ejs, &block->namespaces, nsp);
         }
     }
 }
@@ -173,18 +121,69 @@ void ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType)
 
 /*************************************** Factory ***********************************/
 
+EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
+{
+    EjsBlock        *block;
+
+    block = (EjsBlock*) ejsCreatePot(ejs, ejs->blockType, size);
+    if (block == 0) {
+        return 0;
+    }
+    block->pot.shortScope = 1;
+    block->pot.isBlock = 1;
+    mprInitList(&block->namespaces);
+#if BLD_DEBUG
+    block->pot.mem = MPR_GET_MEM(block);
+#endif
+    return block;
+}
+
+
+void ejsManageBlock(EjsBlock *block, int flags)
+{
+    EjsObj          *item;
+    EjsBlock        *b;
+    int             next;
+
+    if (block) {
+        if (flags & MPR_MANAGE_MARK) {
+            ejsManagePot(block, flags);
+            mprMark(block->prevException);
+
+            if (block->namespaces.length > 0) {
+                mprMark(block->namespaces.items);
+                for (next = 0; ((item = (EjsObj*) mprGetNextItem(&block->namespaces, &next)) != 0); ) {
+                    mprMark(item);
+                }
+            }
+            for (b = block->scope; b; b = b->scope) {
+                mprMark(b);
+            }
+    #if UNUSED
+            //  TODO MOB - this should not be required as GC in mark() follows the block caller/prev chain
+            for (b = block->prev; b; b = b->prev) {
+                mprMark(b);
+            }
+    #endif
+            /*
+                Don't mark stack as the VM will mark that
+                Don't mark locations as they are always inherited from a frame which will mark them for us
+             */
+        }
+    }
+}
+
+
 void ejsCreateBlockType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->blockType = ejsCreateNativeType(ejs, "ejs", "Block", ES_Block, sizeof(EjsBlock));
-    SHORT_SCOPE(type) = 1;
-    ejsCloneObjectHelpers(ejs, type);
+    type = ejsCreateNativeType(ejs, N("ejs", "Block"), ES_Block, sizeof(EjsBlock), ejsManageBlock, EJS_POT_HELPERS);
+    ejs->blockType = type;
+    type->constructor.block.pot.shortScope = 1;
 
     type->helpers.clone = (EjsCloneHelper) ejsCloneBlock;
-    type->helpers.mark = (EjsMarkHelper) ejsMarkBlock;
-
-    ejs->commaProtString = ejsCreateStringFromCS(ejs, ",protected");
+    ejs->commaProtString = ejsCreateStringFromAsc(ejs, ",protected");
 }
 
 

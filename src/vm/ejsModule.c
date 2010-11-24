@@ -8,34 +8,62 @@
 
 #include    "ejs.h"
 
-/******************************************************************************/
+/********************************** Forwards **********************************/
 
-EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version)
+static void manageConstants(EjsConstants *constants, int flags);
+static void manageModule(EjsModule *module, int flags);
+
+/************************************ Code ************************************/
+
+EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants *constants)
 {
     EjsModule   *mp;
 
     mprAssert(version >= 0);
 
-    //  MOB -- needs a type and helpers
-    if ((mp = (EjsModule*) ejsAlloc(ejs, sizeof(EjsModule))) == NULL) {
+    if ((mp = mprAllocObj(ejs, EjsModule, manageModule)) == NULL) {
         mprAssert(mp);
         return 0;
     }
-    //  MOB - must MARK
     mp->name = name;
     mp->version = version;
-    if (version) {
-        mp->vname = ejsSprintf(ejs, "%s-%d", name, version);
-    } else {
-        mp->vname = mp->name;
-    }
-    if ((mp->constants = ejsAlloc(ejs, sizeof(EjsConst))) == NULL) {
+    mp->vname = (version) ? ejsSprintf(ejs, "%@-%d", name, version) : mp->name;
+    if (constants) {
+        mp->constants = constants;
+    } else if ((mp->constants = ejsCreateConstants(ejs, EJS_INDEX_INCR, EC_BUFSIZE)) == NULL) {
         return 0;
     }
-#if UNUSED
-    mp->constants->table = mprCreateHash(mp->constants, 0, 0);
-#endif
+    mprAssert(mp->checksum == 0);
     return mp;
+}
+
+
+static void manageModule(EjsModule *mp, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(mp->name);
+        mprMark(mp->vname);
+        mprMark(mp->path);
+        mprMark(mp->loadState);
+        mprMark(mp->dependencies);
+        mprMark(mp->file);
+        mprMark(mp->code);
+        mprMark(mp->initializer);
+        mprMark(mp->constants);
+        mprMark(mp->doc);
+        mprMark(mp->currentMethod);
+        mprMarkList(mp->globalProperties);
+        mprMarkList(mp->current);
+    }
+}
+
+
+static void manageNativeModule(EjsNativeModule *nm, int flags)
+{
+
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(nm->name);
+    }
 }
 
 
@@ -47,16 +75,15 @@ int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, in
 {
     EjsNativeModule     *nm;
 
-    if ((nm = ejsAlloc(ejs, sizeof(EjsNativeModule))) == NULL) {
-        return MPR_ERR_NO_MEMORY;
+    if ((nm = mprAllocObj(ejs, EjsNativeModule, manageNativeModule)) == NULL) {
+        return MPR_ERR_MEMORY;
     }
     nm->name = name;
     nm->callback = callback;
     nm->checksum = checksum;
     nm->flags = flags;
 
-    //  MOB -- but what if name is GC'd?
-    if (mprAddHash(ejs->service->nativeModules, name, nm) == 0) {
+    if (mprAddHash(ejs->service->nativeModules, nm->name->value, nm) == 0) {
         return EJS_ERR;
     }
     return 0;
@@ -65,16 +92,13 @@ int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, in
 
 EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, EjsString *name) 
 {
-    return (EjsNativeModule*) mprLookupHash(ejs->service->nativeModules, name);
+    return (EjsNativeModule*) mprLookupHash(ejs->service->nativeModules, name->value);
 }
 
 
-int ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, cchar *pool, int poolSize)
+int ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, EjsConstants *constants)
 {
-    mprStealBlock(mp, pool);
-    mp->constants->pool = (char*) pool;
-    mp->constants->size = poolSize;
-    mp->constants->len = poolSize;
+    mp->constants = constants;
     return 0;
 }
 
@@ -96,7 +120,7 @@ EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVer
         maxVersion = MAXINT;
     }
     best = 0;
-    for (next = 0; (mp = (EjsModule*) ejsGetNextItem(ejs, ejs->modules, &next)) != 0; ) {
+    for (next = 0; (mp = (EjsModule*) mprGetNextItem(ejs->modules, &next)) != 0; ) {
         if ((minVersion == 0 && maxVersion == 0) || (minVersion <= mp->version && mp->version <= maxVersion)) {
             if (mp->name == name) {
                 if (best == 0 || best->version < mp->version) {
@@ -112,23 +136,679 @@ EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVer
 int ejsAddModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
-    return ejsAddItem(ejs, ejs->modules, mp);
+    return mprAddItem(ejs->modules, mp);
 }
 
 
 int ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
-    return ejsRemoveItem(ejs, ejs->modules, mp);
+    return mprRemoveItem(ejs->modules, mp);
 }
 
 
-//  MOB -- remove
-EjsArray *ejsGetModuleList(Ejs *ejs)
+/************************************************* Constants ***************************************************/
+
+static void manageConstants(EjsConstants *cp, int flags)
 {
-    return ejs->modules;
+    EjsString   **sp;
+
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(cp->pool);
+        mprMark(cp->table);
+        mprMark(cp->index);
+#if UNUSED
+        for (i = 0; i < cp->count; i++) {
+            value = PTOI(cp->index[i]);
+            if (!(value & 0x1)) {
+                mprMark(cp->index[i]);
+            }
+        }
+#endif
+    } else {
+        for (sp = (EjsString**) &cp->index[cp->indexCount - 1]; sp >= (EjsString**) cp->index; sp--) {
+            if (!(PTOI(*sp) & 0x1)) {
+                mprRelease(*sp);
+            }
+        }
+    }
 }
 
+
+EjsConstants *ejsCreateConstants(Ejs *ejs, int count, size_t size)
+{
+    EjsConstants    *constants;
+
+    mprAssert(ejs);
+
+    if ((constants = mprAllocObj(ejs, EjsConstants, manageConstants)) == 0) {
+        return NULL;
+    }
+    if (ejs->compiling) {
+        if ((constants->table = mprCreateHash(constants, EJS_DOC_HASH_SIZE, 0)) == 0) {
+            return 0;
+        }
+    }
+    if ((constants->pool = mprAlloc(constants, size)) == 0) {
+        return 0;
+    }
+    constants->poolSize = size;
+    constants->poolLength = 0;
+
+    if ((constants->index = mprAlloc(constants, count * sizeof(EjsString*))) == NULL) {
+        return 0;
+    }
+    constants->index[0] = ejs->emptyString;
+    constants->indexCount = 1;
+    return constants;
+}
+
+
+int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, size_t len)
+{
+    int     indexSize;
+
+    if ((constants->poolLength + len) >= constants->poolSize) {
+        constants->poolSize = ((constants->poolSize + len) + EC_BUFSIZE - 1) / EC_BUFSIZE * EC_BUFSIZE;
+        if ((constants->pool = mprRealloc(constants, constants->pool, constants->poolSize)) == 0) {
+            return MPR_ERR_MEMORY;
+        }
+    }
+    if (constants->indexCount >= constants->indexSize) {
+        indexSize = (constants->indexCount + EJS_INDEX_INCR - 1) / EJS_INDEX_INCR * EJS_INDEX_INCR;
+        if ((constants->index = mprRealloc(constants, constants->index, indexSize * sizeof(EjsString*))) == NULL) {
+            return MPR_ERR_MEMORY;
+        }
+        constants->indexSize = indexSize;
+    }
+    return 0;
+}
+
+
+int ejsAddConstant(Ejs *ejs, EjsConstants *constants, cchar *str)
+{
+    size_t      len;
+    int         oldLen;
+
+    if (constants->locked) {
+        mprError(ejs, "Constant pool for module is locked. Can't add constant \"%s\".",  str);
+        return MPR_ERR_CANT_WRITE;
+    }
+    len = slen(str) + 1;
+    if (ejsGrowConstants(ejs, constants, len) < 0) {
+        return MPR_ERR_MEMORY;
+    }
+    memcpy(&constants->pool[constants->poolLength], str, len);
+    oldLen = constants->poolLength;
+    constants->poolLength += len;
+
+    mprAddHash(constants->table, str, ITOP(constants->indexCount));
+    constants->index[constants->indexCount] = ITOP(oldLen << 1 | 1);
+    return constants->indexCount++;
+}
+
+
+EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
+{
+    EjsConstants    *constants;
+    EjsString       *sp;
+    cchar           *str;
+    int             value;
+
+    constants = mp->constants;
+    if (index < 0 || index >= constants->indexCount) {
+        mprAssert(!(index < 0 || index >= constants->indexCount));
+        return 0;
+    }
+    value = PTOI(constants->index[index]);
+    if (value & 0x1) {
+        str = &constants->pool[value >> 1];
+        constants->index[index] = sp = ejsInternMulti(ejs, str, slen(str));
+        mprHold(sp);
+    }
+    mprAssert(constants->index[index]);
+    return constants->index[index];
+}
+
+
+/************************************************** Debug ******************************************************/
+
+EjsDebug *ejsCreateDebug(Ejs *ejs)
+{
+    EjsDebug    *debug;
+    size_t      len;
+
+    len = sizeof(EjsDebug) + (EJS_DEBUG_INCR * sizeof(EjsLine));
+    if ((debug = mprAllocZeroed(ejs, len)) == 0) {
+        return NULL;
+    }
+    debug->size = EJS_DEBUG_INCR;
+    debug->length = 0;
+    return debug;
+}
+
+
+/*
+    Only called by the compiler
+ */
+EjsDebug *ejsAddDebugLine(Ejs *ejs, EjsDebug *debug, int offset, MprChar *source)
+{
+    EjsLine     *line;
+    size_t      len;
+
+    if (debug == 0) {
+        debug = ejsCreateDebug(ejs);
+    }
+    if (debug->length >= debug->size) {
+        debug->size += EJS_DEBUG_INCR;
+        len = sizeof(EjsDebug) + (debug->size * sizeof(EjsLine));
+        if ((debug = mprRealloc(ejs, debug, len)) == 0) {
+            return 0;
+        }
+    }
+    if (debug->length > 0 && offset == debug->lines[debug->length - 1].offset) {
+        line = &debug->lines[debug->length - 1];
+    } else {
+        line = &debug->lines[debug->length++];
+    }
+    line->source = source;
+    line->offset = offset;
+    return debug;
+}
+
+
+static void manageDebug(EjsDebug *debug, int flags)
+{
+    int     i;
+
+    if (flags & MPR_MANAGE_MARK) {
+        for (i = 0; i < debug->length; i++) {
+            mprMark(debug->lines[i].source);
+        }
+    } else {
+    }
+}
+
+
+/*
+    Demand load debug information for a function
+ */
+static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
+{
+    EjsModule   *mp;
+    EjsDebug    *debug;
+    EjsLine     *line;
+    EjsCode     *code;
+    MprOffset   prior;
+    int         i, size, length;
+
+    mp = fun->body.code->module;
+    code = fun->body.code;
+    mprAssert(mp->file);
+    if (mp->file == 0) {
+        mprAssert(mp->file);
+        return 0;
+    }
+    prior = mprGetFilePosition(mp->file);
+    if (mprSeek(mp->file, SEEK_SET, code->debugOffset) != code->debugOffset) {
+        mprAssert(0);
+        return 0;
+    }
+    length = ejsModuleReadNum(ejs, mp);
+    if (mp->hasError) {
+        mprSeek(mp->file, SEEK_SET, prior);
+        return 0;
+    }
+    size = sizeof(EjsDebug) + length * sizeof(EjsLine);
+    if ((debug = mprAllocBlock(ejs, size, MPR_ALLOC_MANAGER)) == 0) {
+        mprSeek(mp->file, SEEK_SET, prior);
+        return 0;
+    }
+    mprSetManager(debug, manageDebug);
+    debug->size = length;
+    debug->length = length;
+    for (i = 0; i < debug->length; i++) {
+        line = &debug->lines[i];
+        line->offset = ejsModuleReadNum(ejs, mp);
+        line->source = ejsModuleReadMultiAsWide(ejs, mp);
+    }
+    mprSeek(mp->file, SEEK_SET, prior);
+    return debug;
+}
+
+
+int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *linep, MprChar **sourcep)
+{
+    EjsCode     *code;
+    EjsDebug    *debug;
+    MprChar     *str, *tok, *path, *line, *source;
+    uint        offset;
+    int         i;
+
+    code = fun->body.code;
+    if (code == 0) {
+        return MPR_ERR_CANT_FIND;
+    }
+    offset = (uint) (pc - code->byteCode) - 1;
+    debug = code->debug;
+    if (debug == 0) {
+        if (code->debugOffset == 0) {
+            return MPR_ERR_CANT_FIND;
+        }
+        if (debug == 0 && code->debugOffset) {
+            if ((debug = loadDebug(ejs, fun)) == 0) {
+                return MPR_ERR_CANT_READ;
+            }
+            code->debug = debug;
+        }
+    }
+    /*
+        Source format is:  path|line| code
+     */
+    if (debug->length > 0) {
+        for (i = 0; i < debug->length; i++) {
+            if (offset < debug->lines[i].offset) {
+                break;
+            }
+        }
+        if (i > 0) {
+            i--;
+        }
+        str = wclone(ejs, debug->lines[i].source);
+        path = wtok(str, "|", &tok);
+        line = wtok(NULL, "|", &tok);
+        source = tok;
+    } else {
+        path = line = source = "";
+        i = -1;
+    }
+    if (pathp) {
+        *pathp = wclone(ejs, path);
+    }
+    if (linep) {
+        *linep = wtoi(line, 10, NULL);
+    }
+    if (sourcep) {
+        *sourcep = wclone(ejs, source);
+    }
+    return i;
+}
+
+
+/************************************************** Encoding ******************************************************/
+/*
+    Decode a 32 bit integer. The maximum encoded value is EJS_ENCODE_MAX_WORD as the value is number encoded
+ */
+int ejsDecodeInt32(Ejs *ejs, uchar **pp)
+{
+    uchar   *start;
+    int     value;
+
+    start = *pp;
+    value = (int) ejsDecodeNum(ejs, pp);
+    *pp = start + 4;
+    return value;
+}
+
+
+int64 ejsDecodeNum(Ejs *ejs, uchar **pp)
+{
+    uchar   *pos;
+    uint64  t;
+    uint    c;
+    int     sign, shift;
+
+    pos = *pp;
+    c = (uint) *pos++;
+
+    /*
+        Map sign bit (0,1) to 1,-1
+     */
+    sign = 1 - ((c & 0x1) << 1);
+    t = (c >> 1) & 0x3f;
+    shift = 6;
+
+    while (c & 0x80) {
+        c = *pos++;
+        t |= (c & 0x7f) << shift;
+        shift += 7;
+    }
+    *pp = pos;
+    return t * sign;
+}
+
+
+/*
+    Decode a double using swapping
+ */
+double ejsDecodeDouble(Ejs *ejs, uchar **pp)
+{
+    double   value;
+
+    memcpy(&value, *pp, sizeof(double));
+    value = ejsSwapDouble(ejs, value);
+    *pp += sizeof(double);
+    return value;
+}
+
+
+/*
+    Encode a number in a RLL encoding. Encoding is:
+        Bit     0:  Sign
+        Bits  1-6:  Low 6 bits (0-64)
+        Bit     7:  Extension bit
+        Bits 8-15:  Next 7 bits
+        Bits   16:  Extension bit
+        ...
+ */
+int ejsEncodeNum(Ejs *ejs, uchar *pos, int64 number)
+{
+    uchar       *start;
+    uint        encoded;
+    uint64      unumber;
+
+    mprAssert(pos);
+
+    start = pos;
+    if (number < 0) {
+        unumber = -number;
+        encoded = (uint) (((unumber & 0x3F) << 1) | 1);
+    } else {
+        encoded = (uint) (((number & 0x3F) << 1));
+        unumber = number;
+    }
+    unumber >>= 6;
+
+    while (unumber) {
+        *pos++ = encoded | 0x80;
+        encoded = (int) (unumber & 0x7f);
+        unumber >>= 7;
+    }
+    *pos++ = encoded;
+    mprAssert((pos - start) < 11);
+    return (int) (pos - start);
+}
+
+
+#if UNUSED && KEEP
+int ejsEncodeUint(Ejs *ejs, uchar *pos, uint number)
+{
+    uchar       *start;
+    uint        encoded;
+
+    mprAssert(pos);
+
+    start = pos;
+    encoded = (uint) (((number & 0x3F) << 1));
+    number >>= 6;
+
+    while (number) {
+        *pos++ = encoded | 0x80;
+        encoded = (int) (number & 0x7f);
+        number >>= 7;
+    }
+    *pos++ = encoded;
+    mprAssert((pos - start) < 11);
+    return (int) (pos - start);
+}
+#endif
+
+
+/*
+    Encode a 32 bit integer. The maximum encoded value is EJS_ENCODE_MAX_WORD as the value is number encoded
+ */
+int ejsEncodeInt32(Ejs *ejs, uchar *pos, int number)
+{
+    int         len;
+
+    mprAssert(pos);
+    if (abs(number) > EJS_ENCODE_MAX_WORD) {
+        mprAssert("Code generation error. Word exceeds maximum");
+        return 0;
+    }
+    len = ejsEncodeNum(ejs, pos, (int64) number);
+    mprAssert(len <= 4);
+    return 4;
+}
+
+
+/*
+    Encode a double using swapping
+ */
+int ejsEncodeDouble(Ejs *ejs, uchar *pos, double number)
+{
+    number = ejsSwapDouble(ejs, number);
+    memcpy(pos, &number, sizeof(double));
+    return sizeof(double);
+}
+
+
+int ejsEncodeByteAtPos(Ejs *ejs, uchar *pos, int value)
+{
+    mprAssert(pos);
+    *pos = value;
+    return 0;
+}
+
+
+int ejsEncodeInt32AtPos(Ejs *ejs, uchar *pos, int value)
+{
+    return ejsEncodeInt32(ejs, pos, value);
+}
+
+
+
+void ejsModuleReadBlock(Ejs *ejs, EjsModule *mp, char *buf, int len)
+{
+    mprAssert(mp);
+
+    if (mprRead(mp->file, buf, len) != len) {
+        mp->hasError = 1;
+    }
+}
+
+
+int ejsModuleReadByte(Ejs *ejs, EjsModule *mp)
+{
+    int     c;
+
+    mprAssert(mp);
+
+    if ((c = mprGetc(mp->file)) < 0) {
+        mp->hasError = 1;
+        return 0;
+    }
+    return c;
+}
+
+
+/*
+    Read a string constant. String constants are stored as token offsets into
+    the constant pool. The pool contains null terminated UTF-8 strings.
+ */
+EjsString *ejsModuleReadConst(Ejs *ejs, EjsModule *mp)
+{
+    int     t;
+
+    t = ejsModuleReadNum(ejs, mp);
+    return ejsCreateStringFromConst(ejs, mp, t);
+}
+
+
+/*
+    Decode a 4 byte number from a file
+ */
+int ejsModuleReadInt32(Ejs *ejs, EjsModule *mp)
+{
+    uchar   buf[4], *pp;
+
+    mprAssert(mp);
+
+    if (mprRead(mp->file, buf, 4) != 4) {
+        mp->hasError = 1;
+        return 0;
+    }
+    pp = buf;
+    return ejsDecodeInt32(ejs, &pp);
+}
+
+
+
+/*
+    Read a multibyte string. The length is encoded first, followed by a string of bytes.
+ */
+char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
+{
+    char    *buf;
+    int     len;
+
+    mprAssert(mp);
+
+    len = ejsModuleReadNum(ejs, mp);
+    if (mp->hasError || (buf = mprAlloc(mp, len)) == 0) {
+        return NULL;
+    }
+    if (mprRead(mp->file, buf, len) != len) {
+        mp->hasError = 1;
+        return NULL;
+    }
+    return buf;
+}
+
+
+/*
+    Read a multibyte string. The length is encoded first, followed by a string of bytes.
+ */
+MprChar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
+{
+    MprChar     *result;
+    char        *str;
+
+    mprAssert(mp);
+
+    //  MOB OPT - need direct multi to wide without the double copy
+    str = ejsModuleReadMulti(ejs, mp);
+    result = amtow(ejs, str, NULL);
+    mprFree(str);
+    return result;
+}
+
+
+/*
+    Read an encoded number. Numbers are variable-length and little-endian encoded in 7 bits with the 0x80 
+    bit of each byte being a continuation bit.
+ */
+int64 ejsModuleReadNum(Ejs *ejs, EjsModule *mp)
+{
+    int64   t;
+    int     c;
+    int     sign, shift;
+
+    mprAssert(ejs);
+    mprAssert(mp);
+    mprAssert(mp->file);
+
+    if ((c = mprGetc(mp->file)) < 0) {
+        mp->hasError = 1;
+        return 0;
+    }
+    /* Map sign bit (0,1) to 1,-1 */
+    sign = 1 - ((c & 0x1) << 1);
+    t = (c >> 1) & 0x3f;
+    shift = 6;
+    
+    while (c & 0x80) {
+        if ((c = mprGetc(mp->file)) < 0) {
+            mp->hasError = 1;
+            return 0;
+        }
+        t |= (c & 0x7f) << shift;
+        shift += 7;
+    }
+    return (t * sign);
+}
+
+
+/*
+    Read a constant qname. String constants are stored as token offsets into
+    the constant pool. The pool contains null terminated UTF-8 strings.
+ */
+EjsName ejsModuleReadName(Ejs *ejs, EjsModule *mp)
+{
+    EjsName     qname;
+    int         t;
+
+    t = ejsModuleReadNum(ejs, mp);
+    qname.name = ejsCreateStringFromConst(ejs, mp, t);
+    t = ejsModuleReadNum(ejs, mp);
+    qname.space = ejsCreateStringFromConst(ejs, mp, t);
+    return qname;
+}
+
+
+#if UNUSED && KEEP
+int ejsSwapInt16(Ejs *ejs, int word)
+{
+    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+        return word;
+    }
+    return ((word & 0xFF) << 8) | ((word & 0xFF00) >> 8);
+}
+#endif
+
+
+int ejsSwapInt32(Ejs *ejs, int word)
+{
+    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+        return word;
+    }
+    return ((word & 0xFF000000) >> 24) | ((word & 0xFF0000) >> 8) | ((word & 0xFF00) << 8) | ((word & 0xFF) << 24);
+}
+
+
+int64 ejsSwapInt64(Ejs *ejs, int64 a)
+{
+    int64   low, high;
+
+    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+        return a;
+    }
+    low = a & 0xFFFFFFFF;
+    high = (a >> 32) & 0xFFFFFFFF;
+    return  (double) ((low & 0xFF) << 24 | (low & 0xFF00 << 8) | (low & 0xFF0000 >> 8) | (low & 0xFF000000 >> 16) |
+            ((high & 0xFF) << 24 | (high & 0xFF00 << 8) | (high & 0xFF0000 >> 8) | (high & 0xFF000000 >> 16)) << 32);
+}
+
+
+double ejsSwapDouble(Ejs *ejs, double a)
+{
+    union {
+        int64   i;
+        double  d;
+    } alias;
+    
+    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+        return a;
+    }
+    alias.d = a;
+    return ejsSwapInt64(ejs, alias.i);
+}
+
+
+#if UNUSED && KEEP
+double ejsSwapDouble(Ejs *ejs, double a)
+{
+    int64   low, high;
+
+    if (mprGetEndian(ejs) == MPR_LITTLE_ENDIAN) {
+        return a;
+    }
+    low = ((int64) a) & 0xFFFFFFFF;
+    high = (((int64) a) >> 32) & 0xFFFFFFFF;
+    return  (double) ((low & 0xFF) << 24 | (low & 0xFF00 << 8) | (low & 0xFF0000 >> 8) | (low & 0xFF000000 >> 16) |
+            ((high & 0xFF) << 24 | (high & 0xFF00 << 8) | (high & 0xFF0000 >> 8) | (high & 0xFF000000 >> 16)) << 32);
+}
+#endif
 
 /*
     @copy   default

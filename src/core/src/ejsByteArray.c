@@ -183,7 +183,7 @@ static EjsObj *coerceByteArrayOperands(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         return 0;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -234,25 +234,10 @@ static EjsObj *invokeByteArrayOperator(Ejs *ejs, EjsObj *lhs, int opcode,  EjsOb
         return (EjsObj*) ejs->zeroValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
     mprAssert(0);
-}
-
-
-static void markByteArrayVar(Ejs *ejs, EjsByteArray *ap)
-{
-    mprAssert(ejsIsByteArray(ejs, ap));
-
-    //  MOB -- not needed
-    ejsMarkObject(ejs, (EjsObj*) ap);
-    if (ap->emitter) {
-        ejsMark(ejs, (EjsObj*) ap->emitter);
-    }
-    if (ap->listeners) {
-        ejsMark(ejs, (EjsObj*) ap->listeners);
-    }
 }
 
 
@@ -853,7 +838,7 @@ static EjsObj *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
     }
     count = min(count, availableBytes(ap));
     //  MOB - UNICODE ENCODING
-    result = (EjsObj*) ejsCreateStringWithLength(ejs, (cchar*) &ap->value[ap->readPosition], count);
+    result = (EjsObj*) ejsCreateStringFromMulti(ejs, (cchar*) &ap->value[ap->readPosition], count);
     adjustReadPosition(ap, count);
     return result;
 }
@@ -901,7 +886,7 @@ static EjsObj *ba_room(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     //  MOB - UNICODE ENCODING
-    return (EjsObj*) ejsCreateStringWithLength(ejs, (cchar*) &ap->value[ap->readPosition], availableBytes(ap));
+    return (EjsObj*) ejsCreateStringFromMulti(ejs, (cchar*) &ap->value[ap->readPosition], availableBytes(ap));
 }
 
 
@@ -909,7 +894,7 @@ static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     Write data to the array. Data is written to the current write $position pointer.
     function write(...data): Number
  */
-EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EV **argv)
+EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     EjsArray        *args;
     EjsByteArray    *bp;
@@ -1330,7 +1315,7 @@ void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, int readPosition, int 
 }
 
 
-int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, int offset, char *data, int length)
+int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, int offset, char *data, size_t length)
 {
     int     i;
 
@@ -1389,13 +1374,24 @@ EjsByteArray *ejsCreateByteArray(Ejs *ejs, int size)
 }
 
 
+static void manageByteArray(EjsByteArray *ap, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(ap->emitter);
+        mprMark(ap->listeners);
+        mprMark(ap->type);
+    }
+}
+
+
 void ejsConfigureByteArrayType(Ejs *ejs)
 {
-    EjsType         *type;
+    EjsType     *type;
     EjsHelpers  *helpers;
-    EjsObj          *prototype;
+    EjsPot      *prototype;
 
-    type = ejs->byteArrayType = ejsConfigureNativeType(ejs, "ejs", "ByteArray", sizeof(EjsByteArray));
+    type = ejs->byteArrayType = ejsConfigureNativeType(ejs, N("ejs", "ByteArray"), sizeof(EjsByteArray), 
+        (MprManager) manageByteArray, EJS_OBJ_HELPERS);
     type->numericIndicies = 1;
     type->virtualSlots = 1;
     prototype = type->prototype;
@@ -1403,11 +1399,10 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     helpers = &type->helpers;
     helpers->cast = (EjsCastHelper) castByteArrayVar;
     helpers->clone = (EjsCloneHelper) cloneByteArrayVar;
+    helpers->deleteProperty = (EjsDeletePropertyHelper) deleteByteArrayProperty;
     helpers->getProperty = (EjsGetPropertyHelper) getByteArrayProperty;
     helpers->getPropertyCount = (EjsGetPropertyCountHelper) getByteArrayPropertyCount;
-    helpers->deleteProperty = (EjsDeletePropertyHelper) deleteByteArrayProperty;
     helpers->invokeOperator = (EjsInvokeOperatorHelper) invokeByteArrayOperator;
-    helpers->mark = (EjsMarkHelper) markByteArrayVar;
     helpers->lookupProperty = (EjsLookupPropertyHelper) lookupByteArrayProperty;
     helpers->setProperty = (EjsSetPropertyHelper) setByteArrayProperty;
     

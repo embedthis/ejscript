@@ -22,7 +22,7 @@ static int  commandGets(EcStream *stream);
 static int  interpretCommands(EcCompiler*cp, cchar *cmd);
 static int  interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv, cchar *className, cchar *method);
 static void require(MprList *list, cchar *name);
-static void setupUnixSignals(Mpr *mpr);
+static void setupSignals();
 
 /************************************ Code ************************************/
 
@@ -40,9 +40,10 @@ MAIN(ejsMain, int argc, char **argv)
     /*  
         Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
      */
-    mpr = mprCreate(argc, argv, ejsMemoryFailure);
+    mpr = mprCreate(argc, argv, NULL);
+mprEnableGC(1);
     mprSetAppName(mpr, argv[0], 0, 0);
-    setupUnixSignals(mpr);
+    setupSignals();
 
     if (mprStart(mpr) < 0) {
         mprError(mpr, "Can't start mpr services");
@@ -66,6 +67,7 @@ MAIN(ejsMain, int argc, char **argv)
     strict = 0;
 
     files = mprCreateList(mpr);
+    mprAddRoot(files);
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];
@@ -130,11 +132,11 @@ MAIN(ejsMain, int argc, char **argv)
             if (nextArg >= argc) {
                 err++;
             } else {
-                extraFiles = mprStrdup(mpr, argv[++nextArg]);
-                name = mprStrTok(extraFiles, " \t", &tok);
+                extraFiles = sclone(mpr, argv[++nextArg]);
+                name = stok(extraFiles, " \t", &tok);
                 while (name != NULL) {
                     mprAddItem(files, name);
-                    name = mprStrTok(NULL, " \t", &tok);
+                    name = stok(NULL, " \t", &tok);
                 }
             }
 
@@ -195,11 +197,11 @@ MAIN(ejsMain, int argc, char **argv)
                 if (requiredModules == 0) {
                     requiredModules = mprCreateList(mpr);
                 }
-                modules = mprStrdup(mpr, argv[++nextArg]);
-                name = mprStrTok(modules, " \t", &tok);
+                modules = sclone(mpr, argv[++nextArg]);
+                name = stok(modules, " \t", &tok);
                 while (name != NULL) {
                     require(requiredModules, name);
-                    name = mprStrTok(NULL, " \t", &tok);
+                    name = stok(NULL, " \t", &tok);
                 }
             }
 
@@ -260,12 +262,12 @@ MAIN(ejsMain, int argc, char **argv)
 
     ejsService = ejsCreateService(mpr);
     if (ejsService == 0) {
-        return MPR_ERR_NO_MEMORY;
+        return MPR_ERR_MEMORY;
     }
     ejsInitCompiler(ejsService);
     ejs = ejsCreateVm(ejsService, searchPath, requiredModules, argc - nextArg, (cchar **) &argv[nextArg], 0);
     if (ejs == 0) {
-        return MPR_ERR_NO_MEMORY;
+        return MPR_ERR_MEMORY;
     }
     ecFlags = 0;
     ecFlags |= (merge) ? EC_FLAGS_MERGE: 0;
@@ -275,7 +277,7 @@ MAIN(ejsMain, int argc, char **argv)
 
     cp = ecCreateCompiler(ejs, ecFlags);
     if (cp == 0) {
-        return MPR_ERR_NO_MEMORY;
+        return MPR_ERR_MEMORY;
     }
     //  TODO - should be an arg to create compiler
     cp->require = requiredModules;
@@ -306,9 +308,10 @@ MAIN(ejsMain, int argc, char **argv)
 #if BLD_DEBUG
      if (stats) {
         mprSetLogLevel(ejs, 1);
-        ejsPrintAllocReport(ejs);
+        mprPrintMemReport("Memory Usage", 0);
     }
 #endif
+    mprFree(files);
     mprFree(cp);
     mprFree(ejs);
     if (mprStop(mpr)) {
@@ -360,23 +363,16 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
     int         err;
 
     ejs = cp->ejs;
+    cp->interactive = 1;
 
-    if (ecOpenConsoleStream(cp, cp->lexer, (cmd) ? commandGets: consoleGets) < 0) {
+    if (ecOpenConsoleStream(cp, (cmd) ? commandGets: consoleGets, cmd) < 0) {
         mprError(cp, "Can't open input");
         return EJS_ERR;
     }
-    if (cmd) {
-        cp->lexer->input->stream->buf = mprStrdup(cp, cmd);
-    } else {
-        cp->interactive = 1;
-    }
-    cp->input = cp->lexer->input;
-    cp->token = cp->lexer->input->token;
-
     ecResetInput(cp);
     tmpArgv[0] = EC_INPUT_STREAM;
 
-    while (!cp->lexer->input->stream->eof) {
+    while (!cp->stream->eof) {
         err = 0;
         cp->uid = 0;
         if (ecCompile(cp, 1, tmpArgv) < 0) {
@@ -392,11 +388,11 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
         if (!ejs->exception && ejs->result != ejs->undefinedValue) {
             if (ejsIsDate(ejs, ejs->result) || ejsIsType(ejs, ejs->result)) {
                 if ((result = (EjsString*) ejsToString(ejs, ejs->result)) != 0) {
-                    mprPrintf(cp, "%s\n", result->value);
+                    mprPrintf(cp, "%@\n", result);
                 }
             } else if (ejs->result != ejs->nullValue) {
                 if ((result = (EjsString*) ejsToJSON(ejs, ejs->result, NULL)) != 0) {
-                    mprPrintf(cp, "%s\n", result->value);
+                    mprPrintf(cp, "%@\n", result);
                 }
             }
         }
@@ -406,12 +402,13 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
         err = 0;
         mprServiceEvents(ejs, ejs->dispatcher, 0, 0);
     }
-    ecCloseStream(cp->lexer);
+    ecCloseStream(cp);
     return 0;
 }
 
 
 #if BLD_CC_EDITLINE
+//  MOB -- cleanup
 static History  *cmdHistory;
 static EditLine *eh; 
 static cchar    *prompt;
@@ -489,7 +486,7 @@ static int consoleGets(EcStream *stream)
     if (stream->flags & EC_STREAM_EOL) {
         return 0;
     }
-    mprSprintf(stream, prompt, sizeof(prompt), "%s-%d> ", EJS_NAME, stream->compiler->state->blockNestCount);
+    mprSprintf(prompt, sizeof(prompt), "%s-%d> ", EJS_NAME, stream->compiler->state->blockNestCount);
 
     line = readline(prompt);
     if (line == NULL) {
@@ -497,13 +494,8 @@ static int consoleGets(EcStream *stream)
         mprPrintf(stream, "\n");
         return -1;
     }
-    cp = mprStrTrim(line, "\r\n");
-    len = (int) strlen(cp);
-    stream->buf = mprStrdup(stream, cp);
-    stream->nextChar = stream->buf;
-    stream->end = &stream->buf[len];
-    stream->currentLine = stream->buf;
-    stream->lineNumber = 1;
+    cp = strim(line, "\r\n", MPR_TRIM_BOTH);
+    ecSetStreamBuf(stream, cp, strlen(cp));
     stream->flags |= EC_STREAM_EOL;
     return len;
 }
@@ -514,17 +506,14 @@ static int consoleGets(EcStream *stream)
  */
 static int commandGets(EcStream *stream)
 {
-    /*  We only get to execute one string of commands. So we only come here once. Second time round, nextChar will be set.
+    /*  
+        We only get to execute one string of commands. So we only come here once. Second time round, nextChar will be set.
      */
     if (stream->nextChar) {
         stream->eof = 1;
         return -1;
     }
-    stream->nextChar = stream->buf;
-    stream->end = &stream->buf[strlen(stream->buf)];
-    stream->currentLine = stream->buf;
-    stream->lineNumber = 1;
-    return (int) strlen(stream->buf);
+    return (int) (stream->end - stream->nextChar);
 }
 
 
@@ -538,17 +527,78 @@ static void require(MprList *list, cchar *name)
 }
 
 
-static void setupUnixSignals(Mpr *mpr)
+#if BLD_UNIX_LIKE 
+/*
+    Catch signals. Do a graceful shutdown.
+ */
+static void catchSignal(int signo, siginfo_t *info, void *arg)
+{
+    Mpr     *mpr;
+
+    mpr = mprGetMpr(NULL);
+    if (mpr) {
+#if DEBUG_IDE
+        if (signo == SIGINT) {
+            return;
+        }
+#endif
+        mprLog(mpr, 2, "Received signal %d", signo);
+        if (signo == SIGTERM) {
+            mprLog(mpr, 1, "Exiting immediately ...");
+            mprTerminate(mpr, 0);
+        } else {
+            mprLog(mpr, 1, "Executing a graceful exit. Waiting for all requests to complete");
+            mprTerminate(mpr, 1);
+        }
+    }
+}
+#endif /* BLD_HOST_UNIX */
+
+
+static void setupSignals()
 {
 #if BLD_UNIX_LIKE
+    struct sigaction    act;
+
+    memset(&act, 0, sizeof(act));
+    act.sa_sigaction = catchSignal;
+    act.sa_flags = 0;
+   
+    /*
+        Mask these when processing signals
+     */
+    sigemptyset(&act.sa_mask);
+    sigaddset(&act.sa_mask, SIGALRM);
+    sigaddset(&act.sa_mask, SIGCHLD);
+    sigaddset(&act.sa_mask, SIGPIPE);
+    sigaddset(&act.sa_mask, SIGTERM);
+    sigaddset(&act.sa_mask, SIGUSR1);
+    sigaddset(&act.sa_mask, SIGUSR2);
+
+    if (!mprGetDebugMode(NULL)) {
+        sigaddset(&act.sa_mask, SIGINT);
+    }
+
+    /*
+        Catch thse signals
+     */
+    sigaction(SIGINT, &act, 0);
+    sigaction(SIGQUIT, &act, 0);
+    sigaction(SIGTERM, &act, 0);
+    sigaction(SIGUSR1, &act, 0);
+    
+    /*
+        Ignore pipe signals
+     */
     signal(SIGPIPE, SIG_IGN);
+
 #if LINUX
     /*
         Ignore signals from write requests to large files
      */
     signal(SIGXFSZ, SIG_IGN);
 #endif
-#endif
+#endif /* BLD_UNIX_LIKE */
 }
 
 

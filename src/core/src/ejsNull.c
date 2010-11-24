@@ -30,7 +30,7 @@ static EjsObj *castNull(Ejs *ejs, EjsObj *vp, EjsType *type)
         return vp;
 
     case ES_String:
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "null");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "null");
     }
 }
 
@@ -96,7 +96,7 @@ static EjsObj *coerceNullOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         return 0;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -149,7 +149,7 @@ static EjsObj *invokeNullOperator(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         return ejsInvokeOperator(ejs, (EjsObj*) ejs->zeroValue, opcode, rhs);
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
 }
@@ -186,20 +186,21 @@ void ejsCreateNullType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->nullType = ejsCreateNativeType(ejs, "ejs", "Null", ES_Null, sizeof(EjsNull));
+    type = ejs->nullType = ejsCreateNativeType(ejs, N("ejs", "Null"), ES_Null, sizeof(EjsNull), NULL, EJS_OBJ_HELPERS);
 
     type->helpers.cast             = (EjsCastHelper) castNull;
     type->helpers.getProperty      = (EjsGetPropertyHelper) getNullProperty;
     type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeNullOperator;
 
     ejs->nullValue = ejsCreate(ejs, type, 0);
+    ejsSetName(ejs->nullValue, "null");
 }
 
 
 void ejsConfigureNullType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
     type = ejs->nullType;
     prototype = type->prototype;

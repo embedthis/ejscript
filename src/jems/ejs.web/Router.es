@@ -905,14 +905,6 @@ module ejs.web {
                 params.namespace = options.namespace
             }
         }
-/*
-
-    add("/abc/def")             => add("/abc/def", {target: "@/abc/def"})
-    add("/abc/def", "/path")    => add("/abc/def", {target: "/path"})
-    add("/abc/def", "@action")  => add("/abc/def", {target: "@action"})
-                                => add("/abc/def", {action: "action"})
-
- */
 
         /*
             If no options provided, sleuth the action from the template. This will probably also end up setting 

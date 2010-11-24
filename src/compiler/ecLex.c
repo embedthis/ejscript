@@ -15,9 +15,8 @@
 
 /*********************************** Locals ***********************************/
 
-typedef struct ReservedWord
-{
-    char    *name;
+typedef struct ReservedWord {
+    void    *name;
     int     groupMask;
     int     tokenId;
     int     subId;
@@ -70,16 +69,10 @@ static ReservedWord keywords[] =
   { "override",         G_CONREV,           T_ATTRIBUTE,                T_OVERRIDE, },
   { "private",          G_CONREV,           T_RESERVED_NAMESPACE,       T_PRIVATE, },
   { "protected",        G_CONREV,           T_RESERVED_NAMESPACE,       T_PROTECTED, },
-#if UNUSED
-  { "prototype",        G_CONREV,           T_ATTRIBUTE,                T_PROTOTYPE, },
-#endif
   { "public",           G_CONREV,           T_RESERVED_NAMESPACE,       T_PUBLIC, },
   { "require",          G_CONREV,           T_REQUIRE,                  0, },
   { "return",           G_RESERVED,         T_RETURN,                   0, },
   { "set",              G_CONREV,           T_SET,                      0, },
-#if UNUSED
-  { "shared",           G_CONREV,           T_ATTRIBUTE,                T_SHARED, },
-#endif
   { "standard",         G_CONREV,           T_STANDARD,                 0, },
   { "static",           G_CONREV,           T_ATTRIBUTE,                T_STATIC, },
   { "strict",           G_CONREV,           T_STRICT,                   0, },
@@ -122,103 +115,104 @@ static ReservedWord keywords[] =
 static int  addCharToToken(EcToken *tp, int c);
 static int  addFormattedStringToToken(EcToken *tp, char *fmt, ...);
 static int  addStringToToken(EcToken *tp, char *str);
-static int  decodeNumber(EcInput *input, int radix, int length);
-static void initializeToken(EcToken *tp, EcStream *stream);
-static int  finishToken(EcToken *tp, int tokenId, int subId, int groupMask);
-static int  getNumberToken(EcInput *input, EcToken *tp, int c);
-static int  getAlphaToken(EcInput *input, EcToken *tp, int c);
-static int  getComment(EcInput *input, EcToken *tp, int c);
+static int  decodeNumber(EcCompiler *cp, int radix, int length);
+static int  finalizeToken(EcToken *tp);
+static int  initializeToken(EcToken *tp, EcStream *stream);
+static int  setTokenID(EcToken *tp, int tokenId, int subId, int groupMask);
+static int  makeNumberToken(EcCompiler *cp, EcToken *tp, int c);
+static int  makeAlphaToken(EcCompiler *cp, EcToken *tp, int c);
+static int  getComment(EcCompiler *cp, EcToken *tp, int c);
 static int  getNextChar(EcStream *stream);
-static int  getQuotedToken(EcInput *input, EcToken *tp, int c);
+static int  makeQuotedToken(EcCompiler *cp, EcToken *tp, int c);
 static int  makeSubToken(EcToken *tp, int c, int tokenId, int subId, int groupMask);
 static int  makeToken(EcToken *tp, int c, int tokenId, int groupMask);
 static void putBackChar(EcStream *stream, int c);
-static void setTokenCurrentLine(EcToken *tp);
 
 /************************************ Code ************************************/
 
-EcLexer *ecCreateLexer(EcCompiler *cp)
+void ecInitLexer(EcCompiler *cp)
 {
-    EcLexer         *lp;
     ReservedWord    *rp;
     int             size;
 
-    if ((lp = ejsAlloc(cp->ejs, sizeof(EcLexer))) == 0) {
-        return 0;
-    }
-    //  MOB -- can input be merged with EcLexer
-
-    if ((lp->input = ejsAlloc(cp->ejs, sizeof(EcInput))) == 0) {
-        return 0;
-    }
-    lp->input->lexer = lp;
-    lp->input->compiler = cp;
-    lp->compiler = cp;
-
     size = sizeof(keywords) / sizeof(ReservedWord);
-    lp->keywords = mprCreateHash(cp->ctx, size, 0);
-    if (lp->keywords == 0) {
-        return 0;
+    if ((cp->keywords = mprCreateHash(cp, size, MPR_HASH_UNICODE)) == 0) {
+        return;
     }
     for (rp = keywords; rp->name; rp++) {
-        mprAddHash(lp->keywords, rp->name, rp);
+#if BLD_CHAR_LEN > 1
+        rp->name = amtow(cp->keywords, rp->name, NULL);
+#endif
+        mprAddHash(cp->keywords, rp->name, rp);
     }
-    return lp;
 }
 
 
-int ecGetToken(EcInput *input)
+static void manageToken(EcToken *tp, int flags)
 {
-    EcToken     *token, *tp;
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(tp->text);
+        ecMarkLocation(&tp->loc);
+        mprMark(tp->next);
+        mprMark(tp->stream);
+        mprMark(tp->name);
+    }
+}
+
+
+static EcToken *getToken(EcCompiler *cp)
+{
+    EcToken     *prev, *tp;
+
+    if ((tp = cp->putback) != 0) {
+        cp->putback = tp->next;
+        prev = cp->token;
+        cp->token = tp;
+        if (prev) {
+            prev->next = cp->freeTokens;
+            cp->freeTokens = prev;
+        }
+    } else {
+        if ((tp = cp->freeTokens) != 0) {
+            cp->freeTokens = tp->next;
+            tp->next = NULL;
+            cp->token = tp;
+        } else {
+            if ((cp->token = mprAllocObj(cp, EcToken, manageToken)) == 0) {
+                return 0;
+            }
+        }
+        initializeToken(cp->token, cp->stream);
+    }
+    return cp->token;
+}
+
+
+int ecGetToken(EcCompiler *cp)
+{
+    EcToken     *tp;
     EcStream    *stream;
     int         c;
 
-    token = input->token;
-
-    if ((tp = input->putBack) != 0) {
-        input->putBack = tp->next;
-        input->token = tp;
-
-        /*
-            Move any old token to free list
-         */
-        if (token) {
-            token->next = input->freeTokens;
-            input->freeTokens = token;
-        }
+    if ((tp = getToken(cp)) == NULL) {
+        return T_ERR;
+    }
+    if (tp->tokenId) {
         return tp->tokenId;
     }
-
-    if (token == 0) {
-        input->token = ejsAlloc(input->compiler->ejs, sizeof(EcToken));
-        if (input->token == 0) {
-            //  TBD -- err code
-            return -1;
-        }
-        input->token->lineNumber = 1;
-    }
-
-    stream = input->stream;
-    tp = input->token;
-    mprAssert(tp);
-
-    initializeToken(tp, stream);
+    stream = cp->stream;
 
     while (1) {
-
         c = getNextChar(stream);
-
         /*
             Overloadable operators
-          
             + - ~ * / % < > <= >= == << >> >>> & | === != !==
-          
             TODO FUTURE, we could allow also:  ".", "[", "(" and unary !, ^
          */
         switch (c) {
         default:
             if (isdigit(c)) {
-                return getNumberToken(input, tp, c);
+                return makeNumberToken(cp, tp, c);
 
             } else if (c == '\\') {
                 c = getNextChar(stream);
@@ -229,7 +223,7 @@ int ecGetToken(EcInput *input)
                 c = '\n';
             }
             if (isalpha(c) || c == '_' || c == '\\' || c == '$') {
-                return getAlphaToken(input, tp, c);
+                return makeAlphaToken(cp, tp, c);
             }
             return makeToken(tp, 0, T_ERR, 0);
 
@@ -239,9 +233,8 @@ int ecGetToken(EcInput *input)
         case 0:
             if (stream->flags & EC_STREAM_EOL) {
                 return makeToken(tp, 0, T_NOP, 0);
-            } else {
-                return makeToken(tp, 0, T_EOF, 0);
             }
+            return makeToken(tp, 0, T_EOF, 0);
 
         case ' ':
         case '\f':
@@ -252,14 +245,11 @@ int ecGetToken(EcInput *input)
 
         case '\r':
         case '\n':
-            if (tp->textLen == 0 && tp->lineNumber != stream->lineNumber) {
-                tp->currentLine = 0;
-            }
             break;
 
         case '"':
         case '\'':
-            return getQuotedToken(input, tp, c);
+            return makeQuotedToken(cp, tp, c);
 
         case '#':
             return makeToken(tp, c, T_HASH, 0);
@@ -351,16 +341,18 @@ int ecGetToken(EcInput *input)
                 /*
                     C and C++ comments
                  */
-                if (getComment(input, tp, c) < 0) {
+                if (getComment(cp, tp, c) < 0) {
                     return tp->tokenId;
                 }
                 /*
                     Doc comments are: [slash]**. The second "*' becomes the first char of the comment.
                     Don't regard: [slash]*** (three stars) as a comment.
                  */
-                if (tp->text && tp->text[0] == '*' && tp->text[1] != '*') {
-                    mprFree(input->doc);
-                    input->doc = mprStrdup(input->compiler->ctx, (char*) tp->text);
+                if (cp->doc) {
+                    if (tp->text && tp->text[0] == '*' && tp->text[1] != '*') {
+                        mprFree(cp->docToken);
+                        cp->docToken = mprMemdup(cp, tp->text, tp->length * sizeof(MprChar));;
+                    }
                 }
                 initializeToken(tp, stream);
                 break;
@@ -395,7 +387,7 @@ int ecGetToken(EcInput *input)
 #endif
             } else if (isdigit(c)) {
                 putBackChar(stream, c);
-                return getNumberToken(input, tp, '.');
+                return makeNumberToken(cp, tp, '.');
             }
             putBackChar(stream, c);
             //  EJS extension to consider this an operator
@@ -551,23 +543,22 @@ int ecGetToken(EcInput *input)
 }
 
 
-int ecGetRegExpToken(EcInput *input, cchar *prefix)
+int ecGetRegExpToken(EcCompiler *cp, MprChar *prefix)
 {
     EcToken     *token, *tp;
     EcStream    *stream;
-    cchar       *cp;
+    MprChar     *pp;
     int         c;
 
-    stream = input->stream;
-    tp = token = input->token;
+    stream = cp->stream;
+    tp = token = cp->token;
     mprAssert(tp != 0);
 
     initializeToken(tp, stream);
 
-    for (cp = prefix; cp && *cp; cp++) {
-        addCharToToken(tp, *cp);
+    for (pp = prefix; pp && *pp; pp++) {
+        addCharToToken(tp, *pp);
     }
-
     while (1) {
         c = getNextChar(stream);
         switch (c) {
@@ -595,8 +586,7 @@ int ecGetRegExpToken(EcInput *input, cchar *prefix)
         case '\\':
             c = getNextChar(stream);
             if (c == '\r' || c == '\n' || c == 0) {
-                ecSetError(input->compiler, "Warning", stream->name, stream->lineNumber, 0, stream->column,
-                    "Illegal newline in regular expression");
+                ecError(cp, "Warning", &stream->loc, "Illegal newline in regular expression");
                 return makeToken(tp, 0, T_ERR, 0);
             }
             addCharToToken(tp, '\\');
@@ -605,8 +595,7 @@ int ecGetRegExpToken(EcInput *input, cchar *prefix)
 
         case '\r':
         case '\n':
-            ecSetError(input->compiler, "Warning", stream->name, stream->lineNumber, 0, stream->column,
-                "Illegal newline in regular expression");
+            ecError(cp, "Warning", &stream->loc, "Illegal newline in regular expression");
             return makeToken(tp, 0, T_ERR, 0);
 
         default:
@@ -617,51 +606,37 @@ int ecGetRegExpToken(EcInput *input, cchar *prefix)
 
 
 /*
-    Put back the current input token
+    Put back the current lexer token
  */
-int ecPutToken(EcInput *input)
+int ecPutToken(EcCompiler *cp)
 {
-    ecPutSpecificToken(input, input->token);
-    input->token = 0;
+    ecPutSpecificToken(cp, cp->token);
+    cp->token = 0;
     return 0;
 }
 
 
 /*
-    Put the given (specific) token back on the input queue. The current input
-    token is unaffected.
+    Put the given (specific) token back on the input queue. The current input token is unaffected.
  */
-int ecPutSpecificToken(EcInput *input, EcToken *tp)
+int ecPutSpecificToken(EcCompiler *cp, EcToken *tp)
 {
     mprAssert(tp);
     mprAssert(tp->tokenId > 0);
 
-    /*
-        Push token back on the input putBack queue
-     */
-    tp->next = input->putBack;
-    input->putBack = tp;
+    tp->next = cp->putback;
+    cp->putback = tp;
     return 0;
 }
 
 
-/*
-    Take the current token. Memory ownership retains with input unless the caller calls mprSteal.
- */
-EcToken *ecTakeToken(EcInput *input)
+EcToken *ecTakeToken(EcCompiler *cp)
 {
     EcToken *token;
 
-    token = input->token;
-    input->token = 0;
+    token = cp->token;
+    cp->token = 0;
     return token;
-}
-
-
-void ecFreeToken(EcInput *input, EcToken *token)
-{
-    token->next = input->freeTokens;
-    input->freeTokens = token;
 }
 
 
@@ -670,11 +645,11 @@ void ecFreeToken(EcInput *input, EcToken *token)
     Octal:      0[DIGITS]
     Float:      [DIGITS].[DIGITS][(e|E)[+|-]DIGITS]
  */
-static int getNumberToken(EcInput *input, EcToken *tp, int c)
+static int makeNumberToken(EcCompiler *cp, EcToken *tp, int c)
 {
     EcStream    *stream;
 
-    stream = input->stream;
+    stream = cp->stream;
     if (c == '0') {
         c = getNextChar(stream);
         if (tolower(c) == 'x') {
@@ -685,7 +660,8 @@ static int getNumberToken(EcInput *input, EcToken *tp, int c)
                 c = getNextChar(stream);
             } while (isxdigit(c));
             putBackChar(stream, c);
-            return finishToken(tp, T_NUMBER, -1, 0);
+            setTokenID(tp, T_NUMBER, -1, 0);
+            return finalizeToken(tp);
 
         } else if ('0' <= c && c <= '7') {
             /* Octal */
@@ -695,7 +671,8 @@ static int getNumberToken(EcInput *input, EcToken *tp, int c)
                 c = getNextChar(stream);
             } while ('0' <= c && c <= '7');
             putBackChar(stream, c);
-            return finishToken(tp, T_NUMBER, -1, 0);
+            setTokenID(tp, T_NUMBER, -1, 0);
+            return finalizeToken(tp);
 
         } else {
             putBackChar(stream, c);
@@ -731,11 +708,12 @@ static int getNumberToken(EcInput *input, EcToken *tp, int c)
         }
     }
     putBackChar(stream, c);
-    return finishToken(tp, T_NUMBER, -1, 0);
+    setTokenID(tp, T_NUMBER, -1, 0);
+    return finalizeToken(tp);
 }
 
 
-static int getAlphaToken(EcInput *input, EcToken *tp, int c)
+static int makeAlphaToken(EcCompiler *cp, EcToken *tp, int c)
 {
     ReservedWord    *rp;
     EcStream        *stream;
@@ -743,7 +721,7 @@ static int getAlphaToken(EcInput *input, EcToken *tp, int c)
     /*
         We know that c is an alpha already
      */
-    stream = input->stream;
+    stream = cp->stream;
 
     while (isalnum(c) || c == '_' || c == '$' || c == '\\') {
         if (c == '\\') {
@@ -751,7 +729,7 @@ static int getAlphaToken(EcInput *input, EcToken *tp, int c)
             if (c == '\n' || c == '\r') {
                 break;
             } else if (c == 'u') {
-                c = decodeNumber(input, 16, 4);
+                c = decodeNumber(cp, 16, 4);
                 //  TODO - for now, mask back to 8 bits.
                 c = c & 0xff;
             }
@@ -762,22 +740,22 @@ static int getAlphaToken(EcInput *input, EcToken *tp, int c)
     if (c) {
         putBackChar(stream, c);
     }
-
-    rp = (ReservedWord*) mprLookupHash(input->lexer->keywords, (char*) tp->text);
+    rp = (ReservedWord*) mprLookupHash(cp->keywords, tp->text);
     if (rp) {
-        return finishToken(tp, rp->tokenId, rp->subId, rp->groupMask);
+        setTokenID(tp, rp->tokenId, rp->subId, rp->groupMask);
     } else {
-        return finishToken(tp, T_ID, -1, 0);
+        setTokenID(tp, T_ID, -1, 0);
     }
+    return finalizeToken(tp);
 }
 
 
-static int getQuotedToken(EcInput *input, EcToken *tp, int c)
+static int makeQuotedToken(EcCompiler *cp, EcToken *tp, int c)
 {
     EcStream    *stream;
     int         quoteType;
 
-    stream = input->stream;
+    stream = cp->stream;
     quoteType = c;
 
     for (c = getNextChar(stream); c && c != quoteType; c = getNextChar(stream)) {
@@ -809,16 +787,16 @@ static int getQuotedToken(EcInput *input, EcToken *tp, int c)
                 c = '\t';
                 break;
             case 'u':
-                c = decodeNumber(input, 16, 4);
+                c = decodeNumber(cp, 16, 4);
                 break;
             case 'x':
-                c = decodeNumber(input, 16, 2);
+                c = decodeNumber(cp, 16, 2);
                 break;
             case 'v':
                 c = '\v';
                 break;
             case '0':
-                c = decodeNumber(input, 8, 3);
+                c = decodeNumber(cp, 8, 3);
                 break;
             default:
                 break;
@@ -826,17 +804,41 @@ static int getQuotedToken(EcInput *input, EcToken *tp, int c)
         }
         addCharToToken(tp, c);
     }
-    return finishToken(tp, T_STRING, -1, 0);
+    mprAssert(tp->text);
+    setTokenID(tp, T_STRING, -1, 0);
+    return finalizeToken(tp);
 }
 
 
-static int decodeNumber(EcInput *input, int radix, int length)
+static int makeToken(EcToken *tp, int c, int tokenId, int groupMask)
+{
+    if (c && addCharToToken(tp, c) < 0) {
+        return T_ERR;
+    }
+    setTokenID(tp, tokenId, -1, groupMask);
+    return finalizeToken(tp);
+}
+
+
+static int makeSubToken(EcToken *tp, int c, int tokenId, int subId, int groupMask)
+{
+    if (addCharToToken(tp, c) < 0) {
+        return T_ERR;
+    }
+    setTokenID(tp, tokenId, subId, groupMask);
+    return finalizeToken(tp);
+}
+
+
+//  MOB - should this return int64
+//  MOB -- should be same arg format as stoi
+static int decodeNumber(EcCompiler *cp, int radix, int length)
 {
     char        buf[16];
     int         i, c, lowerc;
 
     for (i = 0; i < length; i++) {
-        c = getNextChar(input->stream);
+        c = getNextChar(cp->stream);
         if (c == 0) {
             break;
         }
@@ -853,24 +855,23 @@ static int decodeNumber(EcInput *input, int radix, int length)
         buf[i] = c;
     }
     if (i < length) {
-        putBackChar(input->stream, c);
+        putBackChar(cp->stream, c);
     }
     buf[i] = '\0';
-    return (int) mprAtoi(buf, radix);
+    return (int) stoi(buf, radix, NULL);
 }
 
 
 /*
     C, C++ and doc style comments. Return token or zero for no token.
  */
-static int getComment(EcInput *input, EcToken *tp, int c)
+static int getComment(EcCompiler *cp, EcToken *tp, int c)
 {
     EcStream    *stream;
     int         form, startLine;
 
-    startLine = tp->stream->lineNumber;
-
-    stream = input->stream;
+    startLine = cp->stream->loc.lineNumber;
+    stream = cp->stream;
     form = c;
 
     for (form = c; c > 0;) {
@@ -883,12 +884,10 @@ static int getComment(EcInput *input, EcToken *tp, int c)
             makeToken(tp, 0, form == '/' ? T_EOF: T_ERR, 0);
             return 1;
         }
-
         if (form == '/') {
             if (c == '\n' || c == '\r') {
                 break;
             }
-
         } else {
             if (c == '*') {
                 c = getNextChar(stream);
@@ -904,9 +903,8 @@ static int getComment(EcInput *input, EcToken *tp, int c)
                     /*
                         Nested comment
                      */
-                    if (input->compiler->warnLevel > 0) {
-                        ecSetError(input->compiler, "Warning", stream->name, stream->lineNumber, 0,
-                            stream->column, "Possible nested comment");
+                    if (cp->warnLevel > 0) {
+                        ecError(cp, "Warning", &stream->loc, "Possible nested comment");
                     }
                 }
                 addCharToToken(tp, '/');
@@ -918,20 +916,46 @@ static int getComment(EcInput *input, EcToken *tp, int c)
 }
 
 
+static int initializeToken(EcToken *tp, EcStream *stream)
+{
+    tp->stream = stream;
+    tp->loc = tp->stream->loc;
+    tp->length = 0;
+    tp->loc.lineNumber = 0;
+    tp->tokenId = 0;
+    if (tp->text == 0) {
+        tp->size = EC_TOKEN_INCR;
+        if ((tp->text = mprAlloc(tp, tp->size * sizeof(MprChar))) == 0) {
+            return MPR_ERR_MEMORY;
+        }
+        tp->text[0] = '\0';
+    }
+    return 0;
+}
+
+
+static int finalizeToken(EcToken *tp)
+{
+    if (tp->loc.lineNumber == 0) {
+        tp->loc = tp->stream->loc;
+    }
+    return tp->tokenId;
+}
+
+
 static int addCharToToken(EcToken *tp, int c)
 {
-    if (tp->currentLine == 0) {
-        setTokenCurrentLine(tp);
-    }
-    if (tp->textLen >= (tp->textBufSize - 1)) {
-        tp->text = (uchar*) mprRealloc(tp, tp->text, tp->textBufSize += EC_TOKEN_INCR);
-        if (tp->text == 0) {
-            return MPR_ERR_NO_MEMORY;
+    if (tp->length >= (tp->size - 1)) {
+        tp->size += EC_TOKEN_INCR;
+        if ((tp->text = mprRealloc(tp, tp->text, tp->size * sizeof(MprChar))) == 0) {
+            return MPR_ERR_MEMORY;
         }
     }
-    tp->text[tp->textLen++] = c;
-    mprAssert(tp->textLen < tp->textBufSize);
-    tp->text[tp->textLen] = '\0';
+    tp->text[tp->length++] = c;
+    tp->text[tp->length] = '\0';
+    if (tp->loc.lineNumber == 0) {
+        tp->loc = tp->stream->loc;
+    }
     return 0;
 }
 
@@ -942,7 +966,7 @@ static int addStringToToken(EcToken *tp, char *str)
 
     for (cp = str; *cp; cp++) {
         if (addCharToToken(tp, *cp) < 0) {
-            return MPR_ERR_NO_MEMORY;
+            return MPR_ERR_MEMORY;
         }
     }
     return 0;
@@ -955,123 +979,49 @@ static int addFormattedStringToToken(EcToken *tp, char *fmt, ...)
     char        *buf;
 
     va_start(args, fmt);
-    buf = mprVasprintf(tp, MPR_MAX_STRING, fmt, args);
+    buf = mprAsprintfv(tp, fmt, args);
     addStringToToken(tp, buf);
     mprFree(buf);
     va_end(args);
-
     return 0;
 }
 
 
-/*
-    Called at the start of every token to initialize the token
- */
-static void initializeToken(EcToken *tp, EcStream *stream)
+static int setTokenID(EcToken *tp, int tokenId, int subId, int groupMask)
 {
-    tp->textLen = 0;
-    tp->stream = stream;
-    if (tp->lineNumber != stream->lineNumber) {
-        tp->currentLine = 0;
-    }
-#if UNUSED
-    if (tp->text == 0) {
-        tp->text = (uchar*) mprRealloc(tp, tp->text, tp->textBufSize += EC_TOKEN_INCR);
-    }
-    tp->text[0] = '\0';
-#endif
-}
-
-
-/*
-    Set the token's source debug information. 
- */
-static void setTokenCurrentLine(EcToken *tp)
-{
-    tp->currentLine = tp->stream->currentLine;
-    tp->lineNumber = tp->stream->lineNumber;
-    /*
-        The column is less one because we have already consumed one character.
-     */
-    tp->column = max(tp->stream->column - 1, 0);
-    tp->filename = tp->stream->name;
-}
-
-
-/*
-    Called to complete any token
- */
-static int finishToken(EcToken *tp, int tokenId, int subId, int groupMask)
-{
-    EcStream        *stream;
-    char            *end;
-    int             len;
-
     mprAssert(tp);
-    stream = tp->stream;
-    mprAssert(stream);
 
     tp->tokenId = tokenId;
     tp->subId = subId;
     tp->groupMask = groupMask;
-
-    if (tp->currentLine == 0) {
-        setTokenCurrentLine(tp);
-    }
-    if (tp->currentLine) {
-        end = strchr(tp->currentLine, '\n');
-        len = end ? (int) (end - tp->currentLine) : (int) strlen(tp->currentLine);
-
-        tp->currentLine = (char*) mprMemdup(tp, tp->currentLine, len + 1);
-        tp->currentLine[len] = '\0';
-        mprAssert(tp->currentLine);
-
-        mprLog(tp, 9, "Lex lineNumber %d \"%s\" %s", tp->lineNumber, tp->text, tp->currentLine);
-    }
     return tokenId;
 }
 
 
-static int makeToken(EcToken *tp, int c, int tokenId, int groupMask)
-{
-    if (c && addCharToToken(tp, c) < 0) {
-        return T_ERR;
-    }
-    return finishToken(tp, tokenId, -1, groupMask);
-}
-
-
-static int makeSubToken(EcToken *tp, int c, int tokenId, int subId, int groupMask)
-{
-    if (addCharToToken(tp, c) < 0) {
-        return T_ERR;
-    }
-    return finishToken(tp, tokenId, subId, groupMask);
-}
-
-
-/*
-    Get the next input char from the input stream.
- */
 static int getNextChar(EcStream *stream)
 {
-    int         c;
+    MprChar     c, *next, *start;
 
-    if (stream->nextChar >= stream->end && stream->gets) {
-        if (stream->gets(stream) < 0) {
+    if (stream->nextChar >= stream->end && stream->getInput) {
+        if (stream->getInput(stream) < 0) {
             return 0;
         }
     }
     if (stream->nextChar < stream->end) {
-        c = (uchar) *stream->nextChar++;
+        c = *stream->nextChar++;
         if (c == '\n') {
-            stream->lineNumber++;
-            stream->lastColumn = stream->column;
-            stream->column = 0;
-            stream->lastLine = stream->currentLine;
-            stream->currentLine = stream->nextChar;
+            stream->lastLoc = stream->loc;
+            stream->loc.lineNumber++;
+            stream->loc.column = 0;
+            stream->loc.source = 0;
         } else {
-            stream->column++;
+            stream->loc.column++;
+        }
+        if (stream->loc.source == 0) {
+            //  MOB -- replace this when doing lazy loading. source should be an index into a buffer.
+            for (start = stream->nextChar - 1; isspace((int) *start); start++) ;
+            for (next = start; *next && *next != '\n'; next++) ;
+            stream->loc.source = wsub(stream->compiler->ejs, start, 0, next - start);
         }
         return c;
     }
@@ -1079,46 +1029,98 @@ static int getNextChar(EcStream *stream)
 }
 
 
-/*
-    Put back a character onto the input stream.
- */
 static void putBackChar(EcStream *stream, int c)
 {
     if (stream->buf < stream->nextChar && c) {
         stream->nextChar--;
         mprAssert(c == (uchar) *stream->nextChar);
         if (c == '\n') {
-            stream->currentLine = stream->lastLine;
-            stream->column = stream->lastColumn + 1;
-            stream->lineNumber--;
-            mprAssert(stream->lineNumber >= 0);
+            stream->loc = stream->lastLoc;
+            stream->loc.column = 0;
+        } else {
+            stream->loc.column--;
         }
-        stream->column--;
-        mprAssert(stream->column >= 0);
+        mprAssert(stream->loc.column >= 0);
     }
 }
 
 
-char *ecGetInputStreamName(EcLexer *lp)
+void ecManageStream(EcStream *sp, int flags) 
 {
-    mprAssert(lp);
-    mprAssert(lp->input);
-    mprAssert(lp->input->stream);
-
-    return lp->input->stream->name;
+    if (flags & MPR_MANAGE_MARK) {
+        ecMarkLocation(&sp->loc);
+        ecMarkLocation(&sp->lastLoc);
+        mprMark(sp->buf);
+    }
 }
 
 
-int ecOpenFileStream(EcCompiler *cp, EcLexer *lp, cchar *path)
+void *ecCreateStream(EcCompiler *cp, size_t size, cchar *path, void *manager)
+{
+    EcLocation  *loc;
+    EcStream    *sp;
+
+    if ((sp = mprAllocBlock(cp, size, MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
+        return NULL;
+    }
+    mprSetManager(sp, manager);
+    sp->compiler = cp;
+    cp->stream = sp;
+    loc = &sp->loc;
+    loc->column = 0;
+    loc->source = 0;
+    loc->lineNumber = 1;
+    loc->filename = sclone(cp, path);
+    cp->putback = NULL;
+    return sp;
+}
+
+
+void ecSetStreamBuf(EcStream *sp, cchar *contents, size_t len)
+{
+    MprChar     *buf;
+
+    if (contents) {
+#if BLD_CHAR_LEN > 1
+        buf = amtow(cp, contents, &len);
+#else
+        buf = (MprChar*) contents;
+        if (len <= 0) {
+            len = strlen(buf);
+        }
+#endif
+        sp->buf = buf;
+        sp->nextChar = buf;
+        sp->end = &buf[len];
+
+        //  MOB -- should flush old token
+        putBackChar(sp, getNextChar(sp));
+    }
+}
+
+
+void manageFileStream(EcFileStream *fs, int flags) 
+{
+    if (flags & MPR_MANAGE_MARK) {
+        ecManageStream((EcStream*) fs, flags);
+        mprMark(fs->file);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+        mprFree(fs->file);
+    }
+}
+
+
+int ecOpenFileStream(EcCompiler *cp, cchar *path)
 {
     EcFileStream    *fs;
     MprPath         info;
-    int             c;
+    char            *contents;
 
-    if ((fs = ejsAlloc(cp->ejs, sizeof(EcFileStream))) == 0) {
-        return MPR_ERR_NO_MEMORY;
+    if ((fs = ecCreateStream(cp, sizeof(EcFileStream), path, manageFileStream)) == 0) {
+        return MPR_ERR_MEMORY;
     }
-    if ((fs->file = mprOpen(lp, path, O_RDONLY | O_BINARY, 0666)) == 0) {
+    if ((fs->file = mprOpen(cp, path, O_RDONLY | O_BINARY, 0666)) == 0) {
         mprFree(fs);
         return MPR_ERR_CANT_OPEN;
     }
@@ -1126,106 +1128,50 @@ int ecOpenFileStream(EcCompiler *cp, EcLexer *lp, cchar *path)
         mprFree(fs);
         return MPR_ERR_CANT_ACCESS;
     }
-
-    fs->stream.buf = (char*) ejsAlloc(cp->ejs, (int) info.size + 1);
-    if (fs->stream.buf == 0) {
+    if ((contents = mprAlloc(cp, (int) info.size + 1)) == 0) {
         mprFree(fs);
-        return MPR_ERR_NO_MEMORY;
+        return MPR_ERR_MEMORY;
     }
-    if (mprRead(fs->file, fs->stream.buf, (int) info.size) != (int) info.size) {
+    if (mprRead(fs->file, contents, (int) info.size) != (int) info.size) {
         mprFree(fs);
         return MPR_ERR_CANT_READ;
     }
-    fs->stream.buf[info.size] = '\0';
-    fs->stream.nextChar = fs->stream.buf;
-    fs->stream.end = &fs->stream.buf[info.size];
-    fs->stream.currentLine = fs->stream.buf;
-    fs->stream.lineNumber = 1;
-    fs->stream.compiler = lp->compiler;
-
-    fs->stream.name = mprStrdup(cp->ctx, path);
-
-    lp->input->stream = (EcStream*) fs;
-
-    lp->input->putBack = 0;
-    lp->input->token = 0;
-    lp->input->state = 0;
-    lp->input->next = 0;
-
-    /*
-        Initialize the stream line and column data.
-     */
-    c = getNextChar(&fs->stream);
-    putBackChar(&fs->stream, c);
+    contents[info.size] = '\0';
+    ecSetStreamBuf((EcStream*) fs, contents, info.size);
     return 0;
 }
 
 
-int ecOpenMemoryStream(EcCompiler *cp, EcLexer *lp, cuchar *buf, int len)
+int ecOpenMemoryStream(EcCompiler *cp, cchar *contents, size_t len)
 {
     EcMemStream     *ms;
-    int             c;
 
-    if ((ms = ejsAlloc(cp->ejs, sizeof(EcMemStream))) == 0) {
-        return MPR_ERR_NO_MEMORY;
+    if ((ms = ecCreateStream(cp, sizeof(EcMemStream), "memory", ecManageStream)) == 0) {
+        return MPR_ERR_MEMORY;
     }
-    ms->stream.lineNumber = 0;
-    ms->stream.buf = mprMemdup(ms, buf, len + 1);
-    ms->stream.buf[len] = '\0';
-    ms->stream.nextChar = ms->stream.buf;
-    ms->stream.end = &ms->stream.buf[len];
-    ms->stream.currentLine = ms->stream.buf;
-    ms->stream.lineNumber = 1;
-    ms->stream.compiler = lp->compiler;
-
-    lp->input->stream = (EcStream*) ms;
-
-    lp->input->putBack = 0;
-    lp->input->token = 0;
-    lp->input->state = 0;
-    lp->input->next = 0;
-
-    /*
-        Initialize the stream line and column data.
-     */
-    c = getNextChar(&ms->stream);
-    putBackChar(&ms->stream, c);
+    ecSetStreamBuf((EcStream*) ms, contents, len);
     return 0;
 }
 
 
-int ecOpenConsoleStream(EcCompiler *cp, EcLexer *lp, EcStreamGet gets)
+int ecOpenConsoleStream(EcCompiler *cp, EcStreamGet getInput, cchar *contents)
 {
     EcConsoleStream     *cs;
 
-    if ((cs = ejsAlloc(cp->ejs, sizeof(EcConsoleStream))) == 0) {
-        return MPR_ERR_NO_MEMORY;
+    if ((cs = ecCreateStream(cp, sizeof(EcConsoleStream), "console", ecManageStream)) == 0) {
+        return MPR_ERR_MEMORY;
     }
-    cs->stream.lineNumber = 0;
-    cs->stream.nextChar = 0;
-    cs->stream.end = 0;
-    cs->stream.currentLine = 0;
-    cs->stream.gets = gets;
-    cs->stream.compiler = lp->compiler;
-
-    lp->input->stream = (EcStream*) cs;
-
-    lp->input->putBack = 0;
-    lp->input->token = 0;
-    lp->input->state = 0;
-    lp->input->next = 0;
-
+    cs->stream.getInput = getInput;
+    ecSetStreamBuf((EcStream*) cs, contents, contents ? strlen(contents) : 0);
     return 0;
 }
 
 
-void ecCloseStream(EcLexer *lp)
+void ecCloseStream(EcCompiler *cp)
 {
-    /*
-        This will close file streams
-     */
-    mprFree(lp->input->stream);
-    lp->input->stream = 0;
+    /* This will close file streams */
+    mprFree(cp->stream);
+    cp->stream = 0;
 }
 
 

@@ -19,7 +19,7 @@ static EjsObj *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     args = ejsCreateArray(ejs, ejs->argc);
     for (i = 0; i < ejs->argc; i++) {
-        ejsSetProperty(ejs, args, i, ejsCreateStringFromCS(ejs, ejs->argv[i]));
+        ejsSetProperty(ejs, args, i, ejsCreateStringFromAsc(ejs, ejs->argv[i]));
     }
     return (EjsObj*) args;
 }
@@ -31,7 +31,7 @@ static EjsObj *app_args(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *app_dir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathAndFree(ejs, mprGetCurrentPath(ejs));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetCurrentPath(ejs));
 }
 
 
@@ -49,7 +49,7 @@ static EjsObj *app_chdir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         path = ((EjsPath*) argv[0])->value;
 
     } else if (ejsIsString(ejs, argv[0])) {
-        path = ejsGetString(ejs, argv[0]);
+        path = ejsToMulti(ejs, argv[0]);
 
     } else {
         ejsThrowIOError(ejs, "Bad path");
@@ -69,11 +69,11 @@ static EjsObj *app_getenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 {
     cchar   *value;
 
-    value = getenv(ejsGetString(ejs, argv[0]));
+    value = getenv(ejsToMulti(ejs, argv[0]));
     if (value == 0) {
         return (EjsObj*) ejs->nullValue;
     }
-    return (EjsObj*) ejsCreateStringFromCS(ejs, value);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, value);
 }
 
 
@@ -87,12 +87,12 @@ static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 #if BLD_UNIX_LIKE
     char    *key, *value;
 
-    key = mprStrdup(ejs, ejsGetString(ejs, argv[0]));
-    value = mprStrdup(ejs, ejsGetString(ejs, argv[1]));
+    key = sclone(ejs, ejsToMulti(ejs, argv[0]));
+    value = sclone(ejs, ejsToMulti(ejs, argv[1]));
     setenv(key, value, 1);
 #else
     char   *cmd;
-    cmd = mprStrcat(app, -1, ejsGetString(ejs, argv[0]), "=", ejsGetString(ejs, argv[1]), NULL);
+    cmd = sjoin(app, ejsToMulti(ejs, argv[0]), "=", ejsToMulti(ejs, argv[1]), NULL);
     putenv(cmd);
 #endif
 #endif
@@ -106,7 +106,7 @@ static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
  */
 static EjsObj *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromCS(ejs, mprGetAppDir(ejs));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs));
 }
 
 
@@ -116,7 +116,7 @@ static EjsObj *app_exeDir(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *app_exePath(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromCS(ejs, mprGetAppPath(ejs));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetAppPath(ejs));
 }
 
 
@@ -158,7 +158,7 @@ static EjsObj *app_noexit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *app_name(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromCS(ejs, mprGetAppName(ejs));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetAppName(ejs));
 }
 
 
@@ -169,7 +169,7 @@ static EjsObj *app_set_name(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     cchar   *name;
 
-    name = ejsGetString(argv[0]);
+    name = ejsToMulti(argv[0]);
     mprSetAppName(ejs, name, name, NULL);
     return 0;
 }
@@ -206,7 +206,7 @@ static EjsObj *app_createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
     cchar   *searchPath;
 
     //  MOB -- should this be EjsString?
-    searchPath = (argc == 0) ? NULL : ejsGetString(ejs, argv[0]);
+    searchPath = (argc == 0) ? NULL : ejsToMulti(ejs, argv[0]);
     return (EjsObj*) ejsCreateSearchPath(ejs, searchPath);
 }
 
@@ -271,7 +271,7 @@ void ejsConfigureAppType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->appType = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "App");
+    type = ejs->appType = ejsGetTypeByName(ejs, N("ejs", "App"));
     mprAssert(type);
 
     ejsSetProperty(ejs, type, ES_App__inputStream, ejsCreateFileFromFd(ejs, 0, "stdin", O_RDONLY));

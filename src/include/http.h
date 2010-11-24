@@ -1,15 +1,15 @@
 
 /******************************************************************************/
 /* 
- *  This file is an amalgamation of all the individual source code files for
- *  Http Library 0.5.0.
- *
- *  Catenating all the source into a single file makes embedding simpler and
- *  the resulting application faster, as many compilers can do whole file
- *  optimization.
- *
- *  If you want to modify http, you can still get the whole source
- *  as individual files if you need.
+    This file is an amalgamation of all the individual source code files for
+     .
+  
+    Catenating all the source into a single file makes embedding simpler and
+    the resulting application faster, as many compilers can do whole file
+    optimization.
+  
+    If you want to modify , you can still get the whole source
+    as individual files if you need.
  */
 
 
@@ -220,7 +220,7 @@ typedef struct Http {
 
     struct HttpLimits *clientLimits;        /**< Client resource limits */
     struct HttpLimits *serverLimits;        /**< Server resource limits */
-    struct HttpLoc *clientLocation;    /**< Default location block for clients */
+    struct HttpLoc *clientLocation;         /**< Default location block for clients */
 
     MprEvent        *timer;                 /**< Admin service timer */
     MprTime         now;                    /**< When was the currentDate last computed */
@@ -903,7 +903,7 @@ extern bool httpWillNextQueueAcceptPacket(HttpQueue *q, HttpPacket *packet);
     @return A count of the bytes actually written
     @ingroup HttpQueue
  */
-extern int httpWrite(HttpQueue *q, cchar *fmt, ...);
+extern size_t httpWrite(HttpQueue *q, cchar *fmt, ...);
 
 /** 
     Write a block of data to the queue
@@ -915,7 +915,7 @@ extern int httpWrite(HttpQueue *q, cchar *fmt, ...);
     @return A count of the bytes actually written
     @ingroup HttpQueue
  */
-extern int httpWriteBlock(HttpQueue *q, cchar *buf, int size);
+extern size_t httpWriteBlock(HttpQueue *q, cchar *buf, size_t size);
 
 /** 
     Write a string of data to the queue
@@ -927,7 +927,7 @@ extern int httpWriteBlock(HttpQueue *q, cchar *buf, int size);
     @return A count of the bytes actually written
     @ingroup HttpQueue
  */
-extern int httpWriteString(HttpQueue *q, cchar *s);
+extern size_t httpWriteString(HttpQueue *q, cchar *s);
 
 /* Internal */
 extern HttpQueue *httpFindPreviousQueue(HttpQueue *q);
@@ -989,6 +989,16 @@ typedef struct HttpStage {
     int             flags;                  /**< Stage flags */
     void            *stageData;             /**< Private stage data */
     MprHashTable    *extensions;            /**< Matching extensions for this filter */
+
+    /**
+        Modify a request
+        @description This method is invoked to potentially modify a request. 
+        @param conn MaConn connection object
+        @param stage Stage object
+        @return True if the stage wishes to process this request.
+        @ingroup MaStage
+     */
+    bool (*modify)(struct HttpConn *conn, struct HttpStage *stage);
 
     /** 
         Match a request
@@ -1833,11 +1843,12 @@ typedef struct HttpLoc {
     HttpStage       *handler;               /**< Fixed handler */
     void            *handlerData;           /**< Data reserved for the handler */
     MprHashTable    *extensions;            /**< Hash of handlers by extensions */
+    MprHashTable    *expires;               /**< Expiry of content by mime type */
     MprList         *handlers;              /**< List of handlers for this location */
     MprList         *inputStages;           /**< Input stages */
     MprList         *outputStages;          /**< Output stages */
     MprHashTable    *errorDocuments;        /**< Set of error documents to use on errors */
-    struct HttpLoc *parent;            /**< Parent location */
+    struct HttpLoc  *parent;                /**< Parent location */
     void            *context;               /**< Hosting context */
     char            *uploadDir;             /**< Upload directory */
     int             autoDelete;             /**< Auto delete uploaded files */
@@ -1846,7 +1857,7 @@ typedef struct HttpLoc {
     struct MprSsl   *ssl;                   /**< SSL configuration */
 } HttpLoc;
 
-extern HttpLoc *httpInitLocation(Http *http, MprCtx ctx, int serverSide);
+extern HttpLoc *httpInitLocation(Http *http, int serverSide);
 extern void httpAddErrorDocument(HttpLoc *location, cchar *code, cchar *url);
 
 extern void httpFinalizeLocation(HttpLoc *location);
@@ -1867,6 +1878,7 @@ extern HttpLoc *httpCreateInheritedLocation(Http *http, HttpLoc *location);
 extern int httpSetHandler(HttpLoc *location, cchar *name);
 extern int httpAddFilter(HttpLoc *location, cchar *name, cchar *extensions, int direction);
 extern void httpClearStages(HttpLoc *location, int direction);
+extern void httpAddLocationExpiry(HttpLoc *location, MprTime when, cchar *mimeTypes);
 
 /**
     Upload File
@@ -1925,12 +1937,13 @@ typedef struct HttpRx {
 
     HttpConn        *conn;                  /**< Connection object */
     HttpPacket      *freePackets;           /**< Free list of packets */
-    HttpPacket      *headerPacket;          /**< HTTP headers */
-    HttpUri         *parsedUri;             /**< Parsed request uri */
-    HttpLoc         *loc;                   /**< Location block */
-    MprList         *inputPipeline;         /**< Input processing */
-    MprHashTable    *headers;               /**< Header variables */
     MprList         *etags;                 /**< Document etag to uniquely identify the document version */
+    HttpPacket      *headerPacket;          /**< HTTP headers */
+    MprHashTable    *headers;               /**< Header variables */
+    MprList         *inputPipeline;         /**< Input processing */
+    HttpLoc         *loc;                   /**< Location block */
+    HttpUri         *parsedUri;             /**< Parsed request uri */
+    MprHashTable    *requestData;           /**< General request data storage. Users must create hash table if required */
     MprTime         since;                  /**< If-Modified date */
 
     int             eof;                    /**< All read data has been received (eof) */
@@ -2096,19 +2109,24 @@ extern int httpRead(HttpConn *conn, char *buffer, int size);
  */
 extern char *httpReadString(HttpConn *conn);
 
+//  MOB DOC
+extern void httpSetStageData(HttpConn *conn, cchar *key, cvoid *data);
+extern cvoid *httpGetStageData(HttpConn *conn, cchar *key);
+
+
 /* Internal */
 extern HttpRx *httpCreateRx(HttpConn *conn);
 extern void httpDestroyRx(HttpConn *conn);
 extern void httpCloseRx(struct HttpConn *conn);
 extern bool httpContentNotModified(HttpConn *conn);
 extern HttpRange *httpCreateRange(HttpConn *conn, int start, int end);
-extern void  httpConnError(struct HttpConn *conn, int status, cchar *fmt, ...);
-extern void  httpProtocolError(struct HttpConn *conn, int status, cchar *fmt, ...);
-extern void  httpProcess(HttpConn *conn, HttpPacket *packet);
-extern void  httpProcessWriteEvent(HttpConn *conn);
-extern bool  httpProcessCompletion(HttpConn *conn);
-extern int   httpSetUri(HttpConn *conn, cchar *newUri);
-extern void  httpSetEtag(HttpConn *conn, MprPath *info);
+extern void httpConnError(struct HttpConn *conn, int status, cchar *fmt, ...);
+extern void httpProtocolError(struct HttpConn *conn, int status, cchar *fmt, ...);
+extern void httpProcess(HttpConn *conn, HttpPacket *packet);
+extern void httpProcessWriteEvent(HttpConn *conn);
+extern bool httpProcessCompletion(HttpConn *conn);
+extern int  httpSetUri(HttpConn *conn, cchar *newUri);
+extern void httpSetEtag(HttpConn *conn, MprPath *info);
 extern bool httpMatchEtag(HttpConn *conn, char *requestedEtag);
 extern bool httpMatchModified(HttpConn *conn, MprTime time);
 
@@ -2223,6 +2241,9 @@ extern void httpCreateEnvVars(HttpConn *conn);
 #define HTTP_TX_HEADERS_CREATED     0x4     /**< Response headers have been created */
 #define HTTP_TX_SENDFILE            0x8     /**< Relay output via Send connector */
 
+typedef cchar *(*HttpRedirectCallback)(HttpConn *conn, int *code, HttpUri *uri);
+typedef void (*HttpEnvCallback)(HttpConn *conn);
+
 /** 
     Http Tx
     @description The tx object controls the transmission of data. This may be client requests or responses to
@@ -2264,6 +2285,9 @@ typedef struct HttpTx {
     int             entityLength;           /**< Original content length before range subsetting */
     int             bytesWritten;           /**< Bytes written including headers */
     int             headerSize;             /**< Size of the header written */
+
+    HttpRedirectCallback redirectCallback;  /**< Redirect callback */
+    HttpEnvCallback envCallback;            /**< SetEnv callback */
 } HttpTx;
 
 /** 
@@ -2575,6 +2599,9 @@ extern int httpWriteUploadData(HttpConn *conn, MprList *formData, MprList *fileD
  */
 extern void httpWriteBlocked(HttpConn *conn);
 
+
+typedef int (*HttpListenCallback)(struct HttpServer *server);
+
 /** 
     Server endpoint
     @stability Evolving
@@ -2601,6 +2628,7 @@ typedef struct  HttpServer {
     MprSocket       *sock;                  /**< Listening socket */
     MprDispatcher   *dispatcher;            /**< Event dispatcher */
     HttpNotifier    notifier;               /**< Http state change notification callback */
+    HttpListenCallback listenCallback;      /**< Invoked when creating listeners */
     struct MprSsl   *ssl;                   /**< Server SSL configuration */
 } HttpServer;
 

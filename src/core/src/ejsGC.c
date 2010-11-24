@@ -14,7 +14,7 @@
  */
 static EjsObj *getEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((ejs->heap->enabled) ? ejs->trueValue: ejs->falseValue);
+    return (EjsObj*) ((mprGetMpr(ejs)->heap.enabled) ? ejs->trueValue: ejs->falseValue);
 }
 
 
@@ -24,7 +24,7 @@ static EjsObj *getEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 static EjsObj *setEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsBoolean(ejs, argv[0]));
-    ejs->heap->enabled = ejsGetBoolean(ejs, argv[0]);
+    mprGetMpr(ejs)->heap.enabled = ejsGetBoolean(ejs, argv[0]);
     return 0;
 }
 
@@ -32,28 +32,29 @@ static EjsObj *setEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 /*
     run(deep: Boolean = false)
     Note: deep currently is not implemented
+    MOB -- change args to be a string "thread", "all"
  */
 static EjsObj *runGC(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     deep;
 
     deep = ((argc == 1) && ejsIsBoolean(ejs, argv[1]));
-    ejsCollectGarbage(ejs, EJS_GEN_NEW);
+    mprCollectGarbage();
     return 0;
 }
 
 
 /*
-    native static function get workQuota(): Number
+    native static function get newQuota(): Number
  */
 static EjsObj *getWorkQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ejs->heap->workQuota);
+    return (EjsObj*) ejsCreateNumber(ejs, mprGetMpr(ejs)->heap.newQuota);
 }
 
 
 /*
-    native static function set workQuota(quota: Number): Void
+    native static function set newQuota(quota: Number): Void
  */
 static EjsObj *setWorkQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
@@ -62,11 +63,11 @@ static EjsObj *setWorkQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
     quota = ejsGetInt(ejs, argv[0]);
 
-    if (quota < EJS_SHORT_WORK_QUOTA && quota != 0) {
+    if (quota < MPR_NEW_QUOTA && quota != 0) {
         ejsThrowArgError(ejs, "Bad work quota");
         return 0;
     }
-    ejs->heap->workQuota = quota;
+    mprGetMpr(ejs)->heap.newQuota = quota;
     return 0;
 }
 
@@ -75,12 +76,12 @@ void ejsConfigureGCType(Ejs *ejs)
 {
     EjsType         *type;
 
-    if ((type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "GC")) == 0) {
+    if ((type = ejsGetTypeByName(ejs, N("ejs", "GC"))) == 0) {
         mprError(ejs, "Can't find GC type");
         return;
     }
     ejsBindAccess(ejs, type, ES_GC_enabled, (EjsProc) getEnable, (EjsProc) setEnable);
-    ejsBindAccess(ejs, type, ES_GC_workQuota, (EjsProc) getWorkQuota, (EjsProc) setWorkQuota);
+    ejsBindAccess(ejs, type, ES_GC_newQuota, (EjsProc) getWorkQuota, (EjsProc) setWorkQuota);
     ejsBindMethod(ejs, type, ES_GC_run, (EjsProc) runGC);
 }
 

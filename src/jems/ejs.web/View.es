@@ -405,10 +405,8 @@ MOB - uri not supported
                 case "string":
                 case "time":
                 case "timestamp":
-                    text(name, options)
-                    break
                 case "text":
-                    textarea(name, options)
+                    text(name, options)
                     break
                 case "boolean":
                     checkbox(name, "true", options)
@@ -457,6 +455,7 @@ print("CATCH " + e)
                 list("priority", [["low", 0], ["med", 0.5], ["high", 1]])
                 list("priority", [{low: 3}, {med: 5}, {high: 9}])
                 list("priority", {low: 0, med: 1, high: 2})
+                list("priority", [{id: 77, field: "value", ...}, ...])
          */
         function list(name: String, choices: Object, options: Object = {}): Void {
             options = getOptions(options)
@@ -521,6 +520,8 @@ print("CATCH " + e)
             @param target Script URI to load. URI or array of scripts. Call with no arguments or set to null to 
                 get a default set of scripts.
             @param options Optional extra options. See $View for a list of the standard options.
+            @option minified If the target is null, a minified option will determine if compressed (minifed) 
+                or uncompressed versions of the scripts will be used.
          */
         function script(target: Object, options: Object = {}): Void {
             let connector = getConnector("script", options)
@@ -718,7 +719,7 @@ MOB -- review and rethink this
                     ext = viewPath.ext
                 }
             }
-            controller.writeTemplate(request.dir.join(config.directories.views, cname, action).joinExt(ext))
+            controller.writeTemplate(request.dir.join(config.directories.views.basename, cname, action).joinExt(ext))
         }
 
         // MOB TODO - need a rich text editor. Wiki style.  wiki()

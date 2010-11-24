@@ -103,6 +103,15 @@ extern "C" {
         type        catchType
     }
 
+    Debug {
+        byte        section
+        number      countOfLines
+        string      fileName
+        number      startLine
+        number      addressOffset      
+        ...
+    }
+
     Block {
         byte        section
         string      name
@@ -175,17 +184,18 @@ typedef struct EjsTypeFixup
  */
 #define EJS_SECT_MODULE         1           /* Module section */
 #define EJS_SECT_MODULE_END     2           /* End of a module */
-#define EJS_SECT_DEPENDENCY     3           /* Module dependency */
-#define EJS_SECT_CLASS          4           /* Class definition */
-#define EJS_SECT_CLASS_END      5           /* End of class definition */
-#define EJS_SECT_FUNCTION       6           /* Function */
-#define EJS_SECT_FUNCTION_END   7           /* End of function definition */
-#define EJS_SECT_BLOCK          8           /* Nested block */
-#define EJS_SECT_BLOCK_END      9           /* End of Nested block */
-#define EJS_SECT_PROPERTY       10          /* Property (variable) definition */
-#define EJS_SECT_EXCEPTION      11          /* Exception definition */
-#define EJS_SECT_DOC            12          /* Documentation for an element */
-#define EJS_SECT_MAX            13
+#define EJS_SECT_DEBUG          3           /* Module dependency */
+#define EJS_SECT_DEPENDENCY     4           /* Module dependency */
+#define EJS_SECT_CLASS          5           /* Class definition */
+#define EJS_SECT_CLASS_END      6           /* End of class definition */
+#define EJS_SECT_FUNCTION       7           /* Function */
+#define EJS_SECT_FUNCTION_END   8           /* End of function definition */
+#define EJS_SECT_BLOCK          9           /* Nested block */
+#define EJS_SECT_BLOCK_END      10          /* End of Nested block */
+#define EJS_SECT_PROPERTY       11          /* Property (variable) definition */
+#define EJS_SECT_EXCEPTION      12          /* Exception definition */
+#define EJS_SECT_DOC            13          /* Documentation for an element */
+#define EJS_SECT_MAX            14
 
 /*
     Psudo section types for loader callback
@@ -202,27 +212,12 @@ typedef struct EjsTypeFixup
     File format is little-endian. All headers are aligned on word boundaries.
  */
 typedef struct EjsModuleHdr {
-    int         magic;                      /* Magic number for Ejscript modules */
-    int         fileVersion;                /* Module file format version */
-    int         flags;                      /* Module flags */
+    int32       magic;                      /* Magic number for Ejscript modules */
+    int32       fileVersion;                /* Module file format version */
+    int32       flags;                      /* Module flags */
 } EjsModuleHdr;
 
-/*
-    Structure for the string constant pool
- */
-//  MOB -- get rid of the constant pool
-typedef struct EjsConst {
-    char        *pool;                      /* Constant pool storage */
-    int         size;                       /* Size of constant pool storage */
-    int         len;                        /* Length of active constant pool */
-    int         base;                       /* Base used during relocations */
-    int         locked;                     /* No more additions allowed */
-    MprHashTable *table;                    /* Hash table for fast lookup */
-} EjsConst;
 
-/*
-    Module
- */
 typedef struct EjsModule {
     EjsString       *name;                  /* Name of this module */
     EjsString       *vname;                 /* Versioned name */
@@ -233,7 +228,7 @@ typedef struct EjsModule {
     int             checksum;               /* Checksum of slots and names */
 
     EjsLoadState    *loadState;             /* State while loading */
-    EjsArray        *dependencies;          /* Module file dependencies. List of EjsModules */
+    MprList         *dependencies;          /* Module file dependencies. List of EjsModules */
     MprFile         *file;                  /* File handle for loading and code generation */
 
     /*
@@ -250,14 +245,16 @@ typedef struct EjsModule {
      */
     MprList         *current;               /* Current stack of open objects */
     EjsBlock        *scope;                 /* Lexical scope chain */
-    EjsConst        *constants;             /* Constant pool */
+    EjsConstants    *constants;             /* Constant pool */
     int             nameToken;              /* */
     int             firstGlobal;            /* First global property */
     int             lastGlobal;             /* Last global property + 1*/
-    struct EjsFunction  *currentMethod;     /* Current method being loaded */
+    struct EjsFunction *currentMethod;      /* Current method being loaded */
 
     uint            compiling       : 1;    /* Module currently being compiled from source */
     uint            configured      : 1;    /* Module types have been configured with native code */
+
+    //  MOB -- used to test if a module should be compiled
     uint            loaded          : 1;    /* Module has been loaded from an external file */
     uint            nativeLoaded    : 1;    /* Backing shared library loaded */
     uint            hasNative       : 1;    /* Has native property definitions */
@@ -266,8 +263,7 @@ typedef struct EjsModule {
     uint            hasError        : 1;    /* Module has a loader error */
     uint            visited         : 1;    /* Module has been traversed */
     int             flags;                  /* Loading flags */
-    //  MOB -- change to EjsString
-    cchar           *doc;                   /* Current doc string */
+    EjsString       *doc;                   /* Current doc string */
 } EjsModule;
 
 
@@ -285,28 +281,25 @@ typedef struct EjsNativeModule {
     Element documentation string. The loader will create if required.
  */
 typedef struct EjsDoc {
-    char        *docString;                         /* Original doc string */
-    char        *brief;
-    char        *description;
-    char        *example;
-    char        *requires;
-    char        *returns;
-    char        *stability;                         /* prototype, evolving, stable, mature, deprecated */
-    char        *spec;                              /* Where specified */
-    int         deprecated;                         /* Hide doc if true */
-    int         hide;                               /* Hide doc if true */
-    int         cracked;                            /* Doc has been cracked and tokenized */
-
+    EjsString   *docString;                         /* Original doc string */
+    MprChar     *brief;
+    MprChar     *description;
+    MprChar     *example;
+    MprChar     *requires;
+    MprChar     *returns;
+    MprChar     *stability;                         /* prototype, evolving, stable, mature, deprecated */
+    MprChar     *spec;                              /* Where specified */
     struct EjsDoc *duplicate;                       /* From @duplicate directive */
-
     MprList     *defaults;                          /* Parameter default values */
     MprList     *params;                            /* Function parameters */
     MprList     *options;                           /* Option parameter values */
     MprList     *events;                            /* Option parameter values */
     MprList     *see;
     MprList     *throws;
-
     EjsTrait    *trait;                             /* Back pointer to trait */
+    int         deprecated;                         /* Hide doc if true */
+    int         hide;                               /* Hide doc if true */
+    int         cracked;                            /* Doc has been cracked and tokenized */
 } EjsDoc;
 
 
@@ -319,33 +312,44 @@ typedef struct EjsDoc {
 #define EJS_LOADER_BUILTIN    0x8                   /* Loading builtins */
 #define EJS_LOADER_DEP        0x10                  /* Loading a dependency */
 
-
 /******************************** Prototypes **********************************/
 
 extern int          ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, int checksum, int flags);
 extern EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, EjsString *name);
-extern EjsModule    *ejsCreateModule(Ejs *ejs, EjsString *name, int version);
+extern EjsModule    *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants *constants);
+
+//  MOB -- would this be better with an ascii name?
 extern int          ejsLoadModule(Ejs *ejs, EjsString *name, int minVer, int maxVer, int flags);
 extern char         *ejsSearchForModule(Ejs *ejs, cchar *name, int minVer, int maxVer);
-extern int          ejsModuleReadName(Ejs *ejs, MprFile *file, char **name, int len);
-extern int          ejsModuleReadNumber(Ejs *ejs, EjsModule *module, int *number);
-extern int          ejsModuleReadByte(Ejs *ejs, EjsModule *module, int *number);
-extern EjsString    *ejsModuleReadString(Ejs *ejs, EjsModule *module);
+extern int          ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, EjsConstants *constants);
+
+extern void         ejsModuleReadBlock(Ejs *ejs, EjsModule *module, char *buf, int len);
+extern int          ejsModuleReadByte(Ejs *ejs, EjsModule *module);
+extern EjsString    *ejsModuleReadConst(Ejs *ejs, EjsModule *module);
+extern int          ejsModuleReadInt32(Ejs *ejs, EjsModule *module);
+extern EjsName      ejsModuleReadName(Ejs *ejs, EjsModule *module);
+extern int64        ejsModuleReadNum(Ejs *ejs, EjsModule *module);
+extern char         *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp);
+extern MprChar      *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp);
 extern int          ejsModuleReadType(Ejs *ejs, EjsModule *module, EjsType **typeRef, EjsTypeFixup **fixup, 
                         EjsName *typeName, int *slotNum);
-extern int          ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, cchar *pool, int poolSize);
+
 extern double       ejsDecodeDouble(Ejs *ejs, uchar **pp);
-extern int64        ejsDecodeNum(uchar **pp);
-extern int          ejsDecodeWord(uchar **pp);
-extern int          ejsEncodeNum(uchar *pos, int64 number);
-extern int          ejsEncodeWord(uchar *pos, int number);
+extern int          ejsDecodeInt32(Ejs *ejs, uchar **pp);
+extern int64        ejsDecodeNum(Ejs *ejs, uchar **pp);
+
+extern int          ejsEncodeByteAtPos(Ejs *ejs, uchar *pos, int value);
 extern int          ejsEncodeDouble(Ejs *ejs, uchar *pos, double number);
-extern int          ejsEncodeByteAtPos(uchar *pos, int value);
-extern int          ejsEncodeUint(uchar *pos, uint number);
-extern int          ejsEncodeWordAtPos(uchar *pos, int value);
+extern int          ejsEncodeInt32(Ejs *ejs, uchar *pos, int number);
+extern int          ejsEncodeNum(Ejs *ejs, uchar *pos, int64 number);
+extern int          ejsEncodeInt32AtPos(Ejs *ejs, uchar *pos, int value);
+
+extern double       ejsSwapDouble(Ejs *ejs, double a);
+extern int          ejsSwapInt32(Ejs *ejs, int word);
+extern int64        ejsSwapInt64(Ejs *ejs, int64 word);
 
 extern char         *ejsGetDocKey(Ejs *ejs, EjsBlock *block, int slotNum, char *buf, int bufsize);
-extern EjsDoc       *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, cchar *docString);
+extern EjsDoc       *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, EjsString *docString);
 
 extern int          ejsAddModule(Ejs *ejs, EjsModule *up);
 extern EjsModule    *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVersion);

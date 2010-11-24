@@ -13,7 +13,7 @@ let compileFlags = [
 /*
     Compile a test stub so we can use the same tests in commands
  */
-sh(locate("ejsc") + " --out ejs.test.mod misc/test.stub.es")
+sh(locate("ejsc") + " --out ejs.test.mod test.stub.es")
 
 if (test.depth >= 2) {
     for (i = 0; i < test.depth && i < compileFlags.length; i++) {

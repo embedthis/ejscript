@@ -39,7 +39,7 @@ static EjsObj *req_worker(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         return 0;
     }
     nejs->loc = ejs->loc;
-    if (ejsLoadModule(ejs, "ejs.web", -1, -1, 0) < 0) {
+    if (ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs.web"), -1, -1, 0) < 0) {
         mprError(ejs, "Can't load ejs.web.mod: %s", ejsGetErrorMsg(ejs, 1));
         return 0;
     }
@@ -70,7 +70,7 @@ static EjsObj *web_escapeHtml(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsString   *str;
 
     str = (EjsString*) argv[0];
-    return (EjsObj*) ejsCreateStringAndFree(ejs, mprEscapeHtml(ejs, str->value));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprEscapeHtml(ejs, str->value));
 }
 
 
@@ -79,10 +79,9 @@ static EjsObj *web_escapeHtml(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 static int configureWebTypes(Ejs *ejs)
 {
     EjsType     *type;
-    EjsName     qname;
     int         slotNum;
 
-    type = ejsGetTypeByName(ejs, "ejs.web", "Web");
+    type = ejsGetTypeByName(ejs, N("ejs.web", "Web"));
     if (type == 0) {
         mprError(ejs, "Can't find Web class");
         ejs->hasError = 1;
@@ -92,7 +91,7 @@ static int configureWebTypes(Ejs *ejs)
 
     ejsBindMethod(ejs, type, ES_ejs_web_Web_worker, (EjsProc) req_worker);
 
-    if ((slotNum = ejsLookupProperty(ejs, ejs->global, ejsName(&qname, "ejs.web", "escapeHtml"))) != 0) {
+    if ((slotNum = ejsLookupProperty(ejs, ejs->global, N("ejs.web", "escapeHtml"))) != 0) {
         ejsBindFunction(ejs, ejs->global, slotNum, web_escapeHtml);
     }
     ejsConfigureHttpServerType(ejs);
@@ -105,9 +104,10 @@ static int configureWebTypes(Ejs *ejs)
 /*  
     Module load entry point
  */
-int ejs_web_Init(MprCtx ctx)
+int ejs_web_Init(Ejs *ejs)
 {
-    return ejsAddNativeModule(ctx, "ejs.web", configureWebTypes, _ES_CHECKSUM_ejs_web, EJS_LOADER_ETERNAL);
+    return ejsAddNativeModule(ejs, ejsCreateStringFromAsc(ejs, "ejs.web"), configureWebTypes, 
+        _ES_CHECKSUM_ejs_web, EJS_LOADER_ETERNAL);
 }
 
 

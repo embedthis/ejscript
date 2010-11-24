@@ -11,28 +11,10 @@
 #include    "ejs.h"
 
 /************************************ Code ************************************/
-
-static void markIteratorVar(Ejs *ejs, EjsIterator *ip)
-{
-    /* MOB - not used or needed */
-    ejsMarkObject(ejs, ip);
-
-    if (ip->target) {
-        ejsMark(ejs, ip->target);
-    }
-    if (ip->namespaces) {
-        ejsMark(ejs, ip->namespaces);
-    }
-    if (ip->indexVar) {
-        ejsMark(ejs, ip->indexVar);
-    }
-}
-
-
 /*
     Call the supplied next() function to return the next enumerable item
  */
-static EV *nextIterator(Ejs *ejs, EjsIterator *ip, int argc, EV **argv)
+static EjsObj *nextIterator(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 {
     if (ip->nativeNext) {
         return (ip->nativeNext)(ejs, ip, argc, argv);
@@ -43,15 +25,15 @@ static EV *nextIterator(Ejs *ejs, EjsIterator *ip, int argc, EV **argv)
 }
 
 
-EV *ejsThrowStopIteration(Ejs *ejs)
+EjsObj *ejsThrowStopIteration(Ejs *ejs)
 {
 #if FUTURE
     ejs->exception = ejs->iterator;
 #else
-    ejs->exception = ejs->stopIterationType;
+    ejs->exception = (EjsObj*) ejs->stopIterationType;
 #endif
     ejsAttention(ejs);
-    return 0;
+    return ejs->exception;
 }
 
 
@@ -62,7 +44,7 @@ EV *ejsThrowStopIteration(Ejs *ejs)
 
     public function Iterator(obj, f, deep, ...namespaces)
  */
-static EV *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EV **argv)
+static EjsObj *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 {
     if (argc != 2 || !ejsIsFunction(ejs, argv[1])) {
         ejsThrowArgError(ejs, "usage: Iterator(obj, function)");
@@ -81,7 +63,7 @@ static EV *iteratorConstructor(Ejs *ejs, EjsIterator *ip, int argc, EV **argv)
 /*
     Create an iterator.
  */
-EjsIterator *ejsCreateIterator(Ejs *ejs, EV *obj, EjsProc nativeNext, bool deep, EjsArray *namespaces)
+EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, EjsProc nativeNext, bool deep, EjsArray *namespaces)
 {
     EjsIterator     *ip;
 
@@ -98,6 +80,16 @@ EjsIterator *ejsCreateIterator(Ejs *ejs, EV *obj, EjsProc nativeNext, bool deep,
 }
 
 
+static void manageIterator(EjsIterator *ip, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(ip->target);
+        mprMark(ip->namespaces);
+        mprMark(ip->indexVar);
+    }
+}
+
+
 /*
     Create the Iterator and StopIteration types
  */
@@ -105,22 +97,24 @@ void ejsCreateIteratorType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->iteratorType = ejsCreateNativeType(ejs, EJS_ITERATOR_NAMESPACE, "Iterator", 
-        ES_iterator_Iterator, sizeof(EjsIterator));
-    ejs->iterator = (EjsIterator*) ejsCreate(ejs, type, 0);
-    type->helpers.mark  = (EjsMarkHelper) markIteratorVar;
+    type = ejs->iteratorType = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "Iterator"), 
+        ES_iterator_Iterator, sizeof(EjsIterator), (MprManager) manageIterator, EJS_OBJ_HELPERS);
 
-    type = ejs->stopIterationType = ejsCreateNativeType(ejs, EJS_ITERATOR_NAMESPACE, "StopIteration", 
-        ES_iterator_StopIteration, sizeof(EjsError));
+    //  MOB - check this is used
+    ejs->iterator = (EjsIterator*) ejsCreate(ejs, type, 0);
+
+    //  MOB - surely stop iteration could be an instance?
+    type = ejs->stopIterationType = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "StopIteration"), 
+        ES_iterator_StopIteration, sizeof(EjsError), (MprManager) manageIterator, EJS_OBJ_HELPERS);
 }
 
 
 void ejsConfigureIteratorType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejsGetTypeByName(ejs, EJS_ITERATOR_NAMESPACE, "Iterator");
+    type = ejs->iteratorType;
     prototype = type->prototype;
     ejsBindMethod(ejs, prototype, ES_iterator_Iterator_next, (EjsProc) nextIterator);
 }

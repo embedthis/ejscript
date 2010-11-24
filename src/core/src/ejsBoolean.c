@@ -14,18 +14,16 @@
 
     function cast(type: Type) : Object
  */
-
 static EjsObj *castBooleanVar(Ejs *ejs, EjsBoolean *vp, EjsType *type)
 {
     mprAssert(ejsIsBoolean(ejs, vp));
 
     switch (type->id) {
-
     case ES_Number:
         return (EjsObj*) ((vp->value) ? ejs->oneValue: ejs->zeroValue);
 
     case ES_String:
-        return (EjsObj*) ejsCreateStringFromCS(ejs, (vp->value) ? "true" : "false");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, (vp->value) ? "true" : "false");
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -88,7 +86,7 @@ static EjsObj *coerceBooleanOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *
         return (EjsObj*) ejs->falseValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %s", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
 }
@@ -191,7 +189,7 @@ static EjsObj *invokeBooleanOperator(Ejs *ejs, EjsBoolean *lhs, int opcode, EjsB
         return (EjsObj*) ejsCreateBoolean(ejs, lhs->value ^ rhs->value);
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
 }
@@ -232,7 +230,8 @@ void ejsCreateBooleanType(Ejs *ejs)
     EjsType     *type;
     EjsBoolean  *vp;
 
-    type = ejs->booleanType = ejsCreateNativeType(ejs, "ejs", "Boolean", ES_Boolean, sizeof(EjsBoolean));
+    type = ejsCreateNativeType(ejs, N("ejs", "Boolean"), ES_Boolean, sizeof(EjsBoolean), NULL, EJS_OBJ_HELPERS);
+    ejs->booleanType = type;
     type->immutable = 1;
     type->helpers.cast = (EjsCastHelper) castBooleanVar;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeBooleanOperator;
@@ -253,16 +252,15 @@ void ejsCreateBooleanType(Ejs *ejs)
 void ejsConfigureBooleanType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejsGetTypeByName(ejs, "ejs", "Boolean");
+    type = ejs->booleanType;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) booleanConstructor);
     ejsSetProperty(ejs, ejs->global, ES_boolean, type);
     ejsSetProperty(ejs, ejs->global, ES_true, ejs->trueValue);
     ejsSetProperty(ejs, ejs->global, ES_false, ejs->falseValue);
-
 }
 
 

@@ -48,7 +48,7 @@ static EjsObj *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
             Format:  Tue Jul 15 2010 10:53:23 GMT-0700 (PDT)
          */
         mprDecodeLocalTime(ejs, &tm, dp->value);
-        return (EjsObj*) ejsCreateStringAndFree(ejs, mprFormatTime(ejs, "%a %b %d %Y %T GMT%z (%Z)", &tm));
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime(ejs, "%a %b %d %Y %T GMT%z (%Z)", &tm));
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -125,7 +125,7 @@ static EjsObj *coerceDateOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *rhs
         return (EjsObj*) ejs->falseValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -232,7 +232,7 @@ static EjsObj *invokeDateOperator(Ejs *ejs, EjsDate *lhs, int opcode, EjsDate *r
         return (EjsObj*) ejsCreateDate(ejs, (MprNumber) (fixed(lhs->value) ^ fixed(rhs->value)));
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
     /* Should never get here */
@@ -278,8 +278,8 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
             date->value = ejsGetNumber(ejs, vp);
 
         } else if (ejsIsString(ejs, vp)) {
-            if (mprParseTime(ejs, &date->value, ejsGetString(ejs, vp), MPR_LOCAL_TIMEZONE, NULL) < 0) {
-                ejsThrowArgError(ejs, "Can't parse date string: %s", ejsGetString(ejs, vp));
+            if (mprParseTime(ejs, &date->value, ejsToMulti(ejs, vp), MPR_LOCAL_TIMEZONE, NULL) < 0) {
+                ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, vp));
                 return 0;
             }
         } else if (ejsIsDate(ejs, vp)) {
@@ -287,6 +287,7 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
 
         } else {
             ejsThrowArgError(ejs, "Can't construct date from this argument");
+            return 0;
         }
 
     } else {
@@ -356,12 +357,6 @@ static EjsObj *date_set_day(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     MprTime     dayDiff, day;
 
     day = ejsGetNumber(ejs, argv[0]);
-#if UNUSED
-    if (day < 0 || day > 6) {
-        ejsThrowArgError(ejs, "Bad day. Range 0-6");
-        return 0;
-    }
-#endif
     mprDecodeLocalTime(ejs, &tm, dp->value);
     dayDiff = day - tm.tm_wday;
     dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
@@ -392,12 +387,6 @@ static EjsObj *date_set_dayOfYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
     MprTime     dayDiff, day;
 
     day = ejsGetNumber(ejs, argv[0]);
-#if UNUSED
-    if (day < 0 || day > 365) {
-        ejsThrowArgError(ejs, "Bad day. Range 0-365");
-        return 0;
-    }
-#endif
     mprDecodeLocalTime(ejs, &tm, dp->value);
     dayDiff = day - tm.tm_yday;
     dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
@@ -428,12 +417,6 @@ static EjsObj *date_set_date(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     MprTime     dayDiff, day;
 
     day = ejsGetNumber(ejs, argv[0]);
-#if UNUSED
-    if (day < 1 || day > 31) {
-        ejsThrowArgError(ejs, "Bad day. Range 1-31");
-        return 0;
-    }
-#endif
     mprDecodeLocalTime(ejs, &tm, dp->value);
     dayDiff = day - tm.tm_mday;
     dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
@@ -459,7 +442,7 @@ static EjsObj *date_format(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
 
     mprDecodeLocalTime(ejs, &tm, dp->value);
-    return (EjsObj*) ejsCreateStringAndFree(ejs, mprFormatTime(ejs, ejsGetString(ejs, argv[0]), &tm));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime(ejs, ejsToMulti(ejs, argv[0]), &tm));
 }
 
 
@@ -471,7 +454,7 @@ static EjsObj *date_formatUTC(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
 
     mprDecodeUniversalTime(ejs, &tm, dp->value);
-    return (EjsObj*) ejsCreateStringAndFree(ejs, mprFormatTime(ejs, ejsGetString(ejs, argv[0]), &tm));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime(ejs, ejsToMulti(ejs, argv[0]), &tm));
 }
 
 
@@ -762,8 +745,8 @@ static EjsObj *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
     MprTime     when;
 
-    if (mprParseTime(ejs, &when, ejsGetString(ejs, argv[0]), MPR_LOCAL_TIMEZONE, NULL) < 0) {
-        ejsThrowArgError(ejs, "Can't parse date string: %s", ejsGetString(ejs, argv[0]));
+    if (mprParseTime(ejs, &when, ejsToMulti(ejs, argv[0]), MPR_LOCAL_TIMEZONE, NULL) < 0) {
+        ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
     return (EjsObj*) ejsCreateNumber(ejs, when);
@@ -784,8 +767,8 @@ static EjsObj *date_parseDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv
     } else {
         defaults = 0;
     }
-    if (mprParseTime(ejs, &when, ejsGetString(ejs, argv[0]), MPR_LOCAL_TIMEZONE, defaults) < 0) {
-        ejsThrowArgError(ejs, "Can't parse date string: %s", ejsGetString(ejs, argv[0]));
+    if (mprParseTime(ejs, &when, ejsToMulti(ejs, argv[0]), MPR_LOCAL_TIMEZONE, defaults) < 0) {
+        ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
     return (EjsObj*) ejsCreateDate(ejs, when);
@@ -806,8 +789,8 @@ static EjsObj *date_parseUTCDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **a
     } else {
         defaults = 0;
     }
-    if (mprParseTime(ejs, &when, ejsGetString(ejs, argv[0]), MPR_UTC_TIMEZONE, defaults) < 0) {
-        ejsThrowArgError(ejs, "Can't parse date string: %s", ejsGetString(ejs, argv[0]));
+    if (mprParseTime(ejs, &when, ejsToMulti(ejs, argv[0]), MPR_UTC_TIMEZONE, defaults) < 0) {
+        ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
     return (EjsObj*) ejsCreateDate(ejs, when);
@@ -851,12 +834,6 @@ static EjsObj *date_setUTCDate(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     MprTime     dayDiff, day;
 
     day = ejsGetNumber(ejs, argv[0]);
-#if UNUSED
-    if (day < 1 || day > 31) {
-        ejsThrowArgError(ejs, "Bad day. Range 1-31");
-        return 0;
-    }
-#endif
     mprDecodeUniversalTime(ejs, &tm, dp->value);
     dayDiff = day - tm.tm_mday;
     dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
@@ -981,8 +958,8 @@ static EjsObj *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 
     mprDecodeUniversalTime(ejs, &tm, dp->value);
     base = mprFormatTime(ejs, "%Y-%m-%dT%H:%M:%S", &tm);
-    str = mprAsprintf(ejs, -1, "%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
-    vp = (EjsObj*) ejsCreateStringAndFree(ejs, str);
+    str = mprAsprintf(ejs, "%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
+    vp = (EjsObj*) ejsCreateStringFromAsc(ejs, str);
     mprFree(base);
     return vp;
 }
@@ -1000,9 +977,9 @@ static EjsObj *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 
     mprDecodeUniversalTime(ejs, &tm, dp->value);
     base = mprFormatTime(ejs, "%Y-%m-%dT%H:%M:%S", &tm);
-    str = mprAsprintf(ejs, -1, "\"%sZ\"", base);
+    str = mprAsprintf(ejs, "\"%sZ\"", base);
     mprFree(base);
-    return (EjsObj*) ejsCreateStringAndFree(ejs, str);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, str);
 }
 
 
@@ -1099,9 +1076,9 @@ EjsDate *ejsCreateDate(Ejs *ejs, MprTime value)
 void ejsConfigureDateType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejs->dateType = ejsConfigureNativeType(ejs, "ejs", "Date", sizeof(EjsDate));
+    type = ejs->dateType = ejsConfigureNativeType(ejs, N("ejs", "Date"), sizeof(EjsDate), NULL, EJS_OBJ_HELPERS);
     prototype = type->prototype;
 
     type->helpers.cast = (EjsCastHelper) castDate;

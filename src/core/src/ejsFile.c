@@ -34,16 +34,6 @@ static void unmapFile(EjsFile *fp);
 
 /************************************ Helpers *********************************/
 
-static void destroyFile(Ejs *ejs, EjsFile *fp)
-{
-    mprAssert(fp);
-
-    if (fp->file) {
-        closeFile(ejs, fp, 0, NULL);
-    }
-}
-
-
 /*  
     Index into a file and extract a byte. This is random access reading.
  */
@@ -106,15 +96,6 @@ static int lookupFileProperty(Ejs *ejs, EjsFile *fp, EjsName qname)
         return index;
     }
     return EJS_ERR;
-}
-
-
-static void markFile(Ejs *ejs, void *ptr)
-{
-    EjsFile     *fp;
-
-    fp = (EjsFile*) ptr;
-    ejsMark(ejs, fp->path);
 }
 
 
@@ -190,7 +171,7 @@ static cchar *getStrOption(Ejs *ejs, EjsObj *options, cchar *field, cchar *defau
     vp = ejsGetPropertyByName(ejs, options, EN(field));
     if (vp == 0) {
         if (optional) {
-            return mprStrdup(ejs, defaultValue);
+            return sclone(ejs, defaultValue);
         }
         ejsThrowArgError(ejs, "Required option %s is missing", field);
         return 0;
@@ -221,12 +202,12 @@ static EjsObj *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     if (ejsIsPath(ejs, pp)) {
         path = ((EjsPath*) pp)->value;
     } else if (ejsIsString(ejs, pp)) {
-        path = ejsGetString(ejs, pp);
+        path = ejsToMulti(ejs, pp);
     } else {
         ejsThrowIOError(ejs, "Bad path");
-        return NULL;
+        return 0;
     }
-    fp->path = ejsAllocAndFree(ejs, mprGetNormalizedPath(fp, path), -1);
+    fp->path = mprGetNormalizedPath(fp, path);
     if (argc == 2) {
         openFile(ejs, fp, 1, &argv[1]);
     }
@@ -369,7 +350,7 @@ static EjsObj *getFileValues(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getFilePath(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathFromCS(ejs, fp->path);
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, fp->path);
 }
 
 
@@ -442,7 +423,7 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         mode = "r";
     } else {
         if (ejsIsString(ejs, options)) {
-            mode = ejsGetString(ejs, options);
+            mode = ejsToMulti(ejs, options);
             perms = EJS_FILE_PERMS;
         } else {
             perms = ejsGetNumOption(ejs, options, "permissions", EJS_FILE_PERMS, 1);
@@ -463,8 +444,9 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     if (fp->file) {
         mprFree(fp->file);
     }
-    fp->modeString = mprStrdup(fp, mode);
+    fp->modeString = sclone(fp, mode);
     fp->perms = perms;
+    fp->ejs = ejs;
 
     //  MOB -- who ensure this gets closed?
     fp->file = mprOpen(fp, fp->path, omode, perms);
@@ -486,8 +468,8 @@ static EjsObj *getFileOptions(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     EjsObj      *options;
 
-    options = (EjsObj*) ejsCreateSimpleObject(ejs);
-    ejsSetPropertyByName(ejs, options, EN("mode"), ejsCreateStringFromCS(ejs, fp->modeString));
+    options = (EjsObj*) ejsCreateEmptyPot(ejs);
+    ejsSetPropertyByName(ejs, options, EN("mode"), ejsCreateStringFromAsc(ejs, fp->modeString));
     ejsSetPropertyByName(ejs, options, EN("permissions"), ejsCreateNumber(ejs, fp->perms));
     return options;
 }
@@ -589,7 +571,7 @@ static EjsObj *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    totalRead = mprRead(fp->file, result, count);
+    totalRead = mprRead(fp->file, result->value, count);
     if (totalRead != count) {
         ejsThrowIOError(ejs, "Can't read from file: %s", fp->path);
         return 0;
@@ -663,7 +645,7 @@ static EjsObj *getFileSize(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 #if UNUSED
     if (fp->mode & FILE_OPEN) {
         /*
-            GetFileSize is not accurate
+            GetFileSize is not accurate - MOB why?
          */
         return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mprGetFileSize(fp->file));
     } else {
@@ -683,7 +665,7 @@ EjsObj *truncateFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     int     size;
 
     size = ejsGetInt(ejs, argv[0]);
-    if (mprTruncatePath(ejs, fp->path, size) < 0) {
+    if (mprTruncate(fp->path, size) < 0) {
         ejsThrowIOError(ejs, "Cant truncate %s", fp->path);
     }
     return 0;
@@ -701,7 +683,8 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     EjsObj          *vp;
     EjsString       *str;
     cchar           *buf;
-    int             i, len, written;
+    size_t          len;
+    int             i, written;
 
     mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
@@ -725,15 +708,12 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             break;
 
         case ES_String:
-            //  MOB ENCODING
-            buf = ((EjsString*) vp)->value;
-            len = ((EjsString*) vp)->length;
+            buf = awtom(NULL, ((EjsString*) vp)->value, &len);
             break;
 
         default:
             str = ejsToString(ejs, vp);
-            buf = str->value;
-            len = str->length;
+            buf = awtom(NULL, ((EjsString*) str)->value, &len);
             break;
         }
         if (mprWrite(fp->file, buf, len) != len) {
@@ -741,6 +721,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             return 0;
         }
         written += len;
+        /* Use GC to free buf as it may not be allocated */
     }
     return (EjsObj*) ejsCreateNumber(ejs, written);
 }
@@ -776,7 +757,6 @@ static void *mapFile(EjsFile *fp, uint size, int mode)
 {
     Mpr         *mpr;
     void        *ptr;
-    int x;
 
     mpr = mprGetMpr();
     x = ~(mpr->alloc.pageSize - 1);
@@ -784,13 +764,12 @@ static void *mapFile(EjsFile *fp, uint size, int mode)
 #if MACOSX || LINUX || FREEBSD
     //  USE MAP_SHARED instead of MAP_PRIVATE if opened for write
     ptr = mmap(0, size, mode, MAP_FILE | MAP_PRIVATE, fp->file->fd, 0);
-    x = errno;
 #else
     ptr = VirtualAlloc(0, size, MEM_RESERVE | MEM_COMMIT, mapProt(mode));
 #endif
 
     if (ptr == 0) {
-        mprSetAllocError(mpr);
+        mprSetMemError(mpr);
         return 0;
     }
     return ptr;
@@ -850,7 +829,8 @@ EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
     if (fp == 0) {
         return 0;
     }
-    arg = (EjsObj*) ejsCreateStringFromCS(ejs, path);
+    fp->ejs = ejs;
+    arg = (EjsObj*) ejsCreateStringFromAsc(ejs, path);
     fileConstructor(ejs, fp, 1, (EjsObj**) &arg);
     return fp;
 }
@@ -866,6 +846,7 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     if ((fp = (EjsFile*) ejsCreate(ejs, ejs->fileType, 0)) == NULL) {
         return NULL;
     }
+    fp->ejs = ejs;
     fp->perms = EJS_FILE_PERMS;
     fp->mode = FILE_OPEN;
     if (!(mode & O_WRONLY)) {
@@ -878,26 +859,44 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     if (fp->file == 0) {
         return 0;
     }
-    fp->path = mprStrdup(fp, "");
+    fp->path = sclone(fp, "");
     return fp;
+}
+
+
+static void manageFile(void *ptr, int flags)
+{
+    EjsFile     *fp;
+
+    fp = (EjsFile*) ptr;
+
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(fp->file);
+        mprMark(fp->path);
+        mprMark(fp->modeString);
+        mprMark(fp->type);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+        if (fp->file) {
+            closeFile(fp->ejs, fp, 0, NULL);
+        }
+    }
 }
 
 
 void ejsConfigureFileType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejs->fileType = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "File", sizeof(EjsFile));
+    type = ejs->fileType = ejsConfigureNativeType(ejs, N("ejs", "File"), sizeof(EjsFile), manageFile, EJS_OBJ_HELPERS);
     type->numericIndicies = 1;
     type->virtualSlots = 1;
     prototype = type->prototype;
 
-    type->helpers.destroy        = (EjsDestroyHelper) destroyFile;
     type->helpers.getProperty    = (EjsGetPropertyHelper) getFileProperty;
     type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupFileProperty;
     type->helpers.setProperty    = (EjsSetPropertyHelper) setFileProperty;
-    type->helpers.mark           = (EjsMarkHelper) markFile;
 
     ejsBindConstructor(ejs, type, (EjsProc) fileConstructor);
     ejsBindMethod(ejs, prototype, ES_File_canRead, (EjsProc) canReadFile);

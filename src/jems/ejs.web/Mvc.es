@@ -17,6 +17,7 @@ module ejs.web {
             Default configuration for MVC apps. This layers over App.defaultConfig and ejs.web::defaultConfig.
          */
         private static var defaultConfig = {
+            //  MOB -- change to dirs
             directories: {
                 bin: Path("bin"),
                 db: Path("db"),
@@ -59,11 +60,13 @@ module ejs.web {
                 config = request.config = request.config.clone()
                 blend(config, appConfig, true)
                 let dirs = config.directories
-                for (let [key,value] in dirs) {
-                    dirs[key] = request.dir.join(value)
+                for each (key in ["bin", "db", "controllers", "models", "src", "static"]) {
+                    dirs[key] = request.dir.join(dirs[key])
                 }
+                App.updateLog()
             }
 /* FUTURE
+            //  Create per-MVC app logs
             if (config.log) {
                 logger = new Logger("request", App.log, config.log.level)
             }
@@ -90,9 +93,11 @@ module ejs.web {
             let dirs = config.directories
             let appmod = dirs.cache.join(config.mvc.appmod)
 
-            if (config.mvc.flat) {
+            //  MOB -- fix when allowing loading multiple applications
+            if (!global.BaseController) {
                 global.load(appmod)
-            } else {
+            }
+            if (!config.cache.preloaded) {
                 let ext = config.extensions
                 let dir = request.dir
                 request.log.debug(4, "MVC init at \"" + dir + "\"")

@@ -35,7 +35,7 @@ extern "C" {
     @see EjsHttpServer
  */
 typedef struct EjsHttpServer {
-    EjsObj          obj;                        /**< Extends Object */
+    EjsPot          pot;                        /**< Extends Object */
     Ejs             *ejs;                       /**< Ejscript interpreter handle */
     HttpServer      *server;                    /**< Http server object */
     MprEvent        *sessionTimer;              /**< Session expiry timer */
@@ -53,7 +53,7 @@ typedef struct EjsHttpServer {
     int             async;                      /**< Async mode */
     EjsObj          *emitter;                   /**< Event emitter */
     EjsObj          *limits;                    /**< Limits object */
-    EjsObj          *sessions;                  /**< Session cache */
+    EjsPot          *sessions;                  /**< Session cache */
     EjsArray        *incomingStages;            /**< Incoming Http pipeline stages */
     EjsArray        *outgoingStages;            /**< Outgoing Http pipeline stages */
 } EjsHttpServer;
@@ -68,7 +68,7 @@ typedef struct EjsHttpServer {
     @see EjsRequest ejsCreateRequest
  */
 typedef struct EjsRequest {
-    EjsObj          obj;                /**< Base object storage */
+    EjsPot          pot;                /**< Base object storage */
     EjsObj          *cookies;           /**< Cached cookies */
     HttpConn        *conn;              /**< Underlying Http connection object */
     EjsHttpServer   *server;            /**< Owning server */
@@ -139,7 +139,7 @@ extern EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep);
     @see EjsSession ejsCreateSession ejsDestroySession
  */
 typedef struct EjsSession {
-    EjsObj      obj;
+    EjsPot      pot;
     MprTime     expire;             /* When the session should expire */
     cchar       *id;                /* Session ID */
     int         timeout;            /* Session inactivity lifespan */

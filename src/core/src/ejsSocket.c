@@ -74,7 +74,7 @@ EjsObj *sock_accept(Ejs *ejs, EjsSocket *listen, int argc, EjsObj **argv)
  */
 EjsObj *sock_address(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromCS(ejs, sp->address);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, sp->address);
 }
 
 
@@ -121,7 +121,7 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
     address = (EjsString*) argv[0];
     if (ejsIsNumber(ejs, address)) {
-        sp->address = mprStrdup(sp, "127.0.0.1");
+        sp->address = sclone(sp, "127.0.0.1");
         sp->port = (int) ((EjsNumber*) address)->value;
     } else {
         if (!ejsIsString(ejs, address)) {
@@ -166,7 +166,7 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
     address = (EjsString*) argv[0];
     if (ejsIsNumber(ejs, address)) {
-        sp->address = mprStrdup(sp, "");
+        sp->address = sclone(sp, "");
         sp->port = (int) ((EjsNumber*) address)->value;
     } else {
         if (!ejsIsString(ejs, address)) {
@@ -259,7 +259,7 @@ static EjsObj *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
  */
 static EjsObj *sock_remoteAddress(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromCS(ejs, sp->address);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, sp->address);
 }
 
 
@@ -310,7 +310,7 @@ static int writeSocketData(Ejs *ejs, EjsSocket *sp)
 /*
     function write(...data): Number
  */
-static EjsNumber *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EV **argv)
+static EjsNumber *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     int     nbytes;
 
@@ -396,29 +396,27 @@ static int socketIOEvent(EjsSocket *sp, MprEvent *event)
 }
 
 
-/*  Mark the object properties for the garbage collector
+/*********************************** Factory **********************************/
+/*  
+   Manage the object properties for the garbage collector
  */
-static void markSocket(Ejs *ejs, EjsSocket *sp)
+static void manageSocket(EjsSocket *sp, int flags)
 {
-    //  MOB -- not needed
-    ejsMarkObject(ejs, (EjsObj*) sp);
-
-    if (sp->emitter) {
-        ejsMark(ejs, (EjsObj*) sp->emitter);
-    }
-    if (sp->data) {
-        ejsMark(ejs, (EjsObj*) sp->data);
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(sp->emitter);
+        mprMark(sp->data);
+        mprMark(sp->sock);
+        mprMark(sp->address);
     }
 }
 
 
-/*********************************** Factory **********************************/
 
 EjsSocket *ejsCreateSocket(Ejs *ejs)
 {
     EjsSocket     *sp;
 
-    sp = (EjsSocket*) ejsCreate(ejs, ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "Socket"), 0);
+    sp = (EjsSocket*) ejsCreate(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
     if (sp == 0) {
         return 0;
     }
@@ -431,10 +429,9 @@ EjsSocket *ejsCreateSocket(Ejs *ejs)
 void ejsConfigureSocketType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Socket", sizeof(EjsSocket));
-    type->helpers.mark = (EjsMarkHelper) markSocket;
+    type = ejsConfigureNativeType(ejs, N("ejs", "Socket"), sizeof(EjsSocket), (MprManager) manageSocket, EJS_OBJ_HELPERS);
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) sock_Socket);

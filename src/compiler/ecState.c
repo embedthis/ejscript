@@ -10,86 +10,29 @@
 #include    "ecCompiler.h"
 
 /************************************ Code ************************************/
-/*
-    Push the state onto the stack
- */
-int ecPushState(EcCompiler *cp, EcState *newState)
+
+static void manageState(EcState *state, int flags)
 {
-    EcState     *prev;
-
-    prev = cp->state;
-    if (prev) {
-        /*
-            Copy inherited fields.
-            OPT - could we just use structure assignment?
-         */
-        newState->inClass = prev->inClass;
-        newState->inFunction = prev->inFunction;
-        newState->captureBreak = prev->captureBreak;
-        newState->captureFinally = prev->captureFinally;
-        newState->inMethod = prev->inMethod;
-        newState->blockIsMethod = prev->blockIsMethod;
-
-        newState->stateLevel = prev->stateLevel;
-        newState->currentClass = prev->currentClass;
-        newState->currentClassNode = prev->currentClassNode;
-        newState->currentClassName = prev->currentClassName;
-        newState->currentModule = prev->currentModule;
-        newState->currentFunction = prev->currentFunction;
-        newState->currentFunctionName = prev->currentFunctionName;
-        newState->currentFunctionNode = prev->currentFunctionNode;
-        newState->topVarBlockNode = prev->topVarBlockNode;
-        newState->currentObjectNode = prev->currentObjectNode;
-        newState->onLeft = prev->onLeft;
-        newState->onRight = prev->onRight;
-        newState->needsValue = prev->needsValue;
-        newState->needsStackReset = prev->needsStackReset;
-        newState->code = prev->code;
-        newState->varBlock = prev->varBlock;
-        newState->optimizedLetBlock = prev->optimizedLetBlock;
-        newState->letBlock = prev->letBlock;
-        newState->letBlockNode = prev->letBlockNode;
-        newState->conditional = prev->conditional;
-        newState->instanceCode = prev->instanceCode;
-        newState->instanceCodeBuf = prev->instanceCodeBuf;
-        newState->staticCodeBuf = prev->staticCodeBuf;
-        newState->strict = prev->strict;
-        newState->inheritedTraits = prev->inheritedTraits;
-        newState->disabled = prev->disabled;
-        newState->inHashExpression = prev->inHashExpression;
-        newState->inSettings = prev->inSettings;
-        newState->noin = prev->noin;
-        newState->blockNestCount = prev->blockNestCount;
-        newState->nspace = prev->nspace;
-        newState->defaultNamespace = prev->defaultNamespace;
-        newState->breakState = prev->breakState;
-        newState->classState = prev->classState;
-        newState->inInterface = prev->inInterface;
-        newState->dupLeft = prev->dupLeft;
-
-    } else {
-        newState->strict = cp->strict;
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(state->code);
+        mprMark(state->currentClass);
+        mprMark(state->currentClassNode);
+        mprMark(state->currentFunction);
+        mprMark(state->currentFunctionNode);
+        mprMark(state->currentModule);
+        mprMark(state->currentObjectNode);
+        mprMark(state->defaultNamespace);
+        mprMark(state->instanceCodeBuf);
+        mprMark(state->letBlock);
+        mprMark(state->letBlockNode);
+        mprMark(state->nspace);
+        mprMark(state->optimizedLetBlock);
+        mprMark(state->prev);
+        mprMark(state->staticCodeBuf);
+        mprMark(state->topVarBlockNode);
+        mprMark(state->varBlock);
+        mprMark(state->next);
     }
-    newState->prev = prev;
-    newState->stateLevel++;
-    cp->state = newState;
-    return 0;
-}
-
-
-/*
-    Pop the state. Clear out old notes and put onto the state free list.
- */
-EcState *ecPopState(EcCompiler *cp)
-{
-    EcState *prev, *state;
-
-    state = cp->state;
-    mprAssert(state);
-
-    prev = state->prev;
-    mprFree(state);
-    return prev;
 }
 
 
@@ -99,24 +42,36 @@ EcState *ecPopState(EcCompiler *cp)
  */
 int ecEnterState(EcCompiler *cp)
 {
-    EcState *state;
+    EcState     *state;
 
-    if ((state = mprAllocObj(cp, EcState, NULL)) == 0) {
-        mprAssert(state);
-        //  TBD -- convenience function for this.
-        cp->memError = 1;
-        cp->error = 1;
-        cp->fatalError = 1;
-        /* Memory erorrs are reported globally */
-        return MPR_ERR_NO_MEMORY;
+    if ((state = cp->freeStates) != NULL) {
+        cp->freeStates = state->next;
+        state->next = NULL;
+    } else {
+        if ((state = mprAllocBlock(cp, sizeof(EcState), MPR_ALLOC_MANAGER)) == 0) {
+            return MPR_ERR_MEMORY;
+        }
+        mprSetManager(state, manageState);
     }
-    if (ecPushState(cp, state) < 0) {
-        cp->memError = 1;
-        cp->error = 1;
-        cp->fatalError = 1;
-        return MPR_ERR_NO_MEMORY;
+
+    if (cp->state) {
+        *state = *cp->state;
     }
+    state->prev = cp->state;
+    cp->state = state;
     return 0;
+}
+
+
+void ecLeaveState(EcCompiler *cp)
+{
+    EcState     *state;
+
+    state = cp->state;
+    state->next = cp->freeStates;
+    cp->freeStates = state;
+
+    cp->state = cp->state->prev;
 }
 
 
@@ -125,30 +80,11 @@ int ecEnterState(EcCompiler *cp)
  */
 EcNode *ecLeaveStateWithResult(EcCompiler *cp, EcNode *np)
 {
-    /*
-        Steal the result from the current state and pass back to be owned by the previous state.
-     */
-    if (cp->state->prev) {
-        mprStealBlock(cp->state->prev, np);
-    } else {
-        mprAssert(cp->state);
-        mprStealBlock(cp, np);
-    }
-    cp->state = ecPopState(cp);
-
+    ecLeaveState(cp);
     if (cp->fatalError || cp->error) {
         return 0;
     }
     return np;
-}
-
-
-/*
-    Leave a level. Pop the state and pass back the current node.
- */
-void ecLeaveState(EcCompiler *cp)
-{
-    cp->state = ecPopState(cp);
 }
 
 

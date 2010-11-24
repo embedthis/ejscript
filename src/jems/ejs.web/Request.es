@@ -547,6 +547,7 @@ module ejs.web {
                 }
             }
             if (!target.uri) {
+                target = target.clone()
                 if (target.action) {
                     if (target.action[0] == '@') {
                         target.action = target.action.slice(1)
@@ -909,9 +910,8 @@ module ejs.web {
             this.status = status
             let msg = msgs.join(" ").replace(/.*Error Exception: /, "")
             let title = "Request Error for \"" + pathInfo + "\""
-            let text
             if (config.log.showClient) {
-                text = "<pre>" + escapeHtml(msg) + "</pre>\r\n" +
+                let text = "<pre>" + escapeHtml(msg) + "</pre>\r\n" +
                     '<p>To prevent errors being displayed in the "browser, ' + 
                     'set <b>log.showClient</b> to false in the ejsrc file.</p>\r\n'
                 try {

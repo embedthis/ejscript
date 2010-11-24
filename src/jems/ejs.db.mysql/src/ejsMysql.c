@@ -343,14 +343,17 @@ static EjsVar *tables(Ejs *ejs, EjsDb *db, int argc, EjsVar **argv)
 /*
     Called by the garbage colllector
  */
-static void *destroyDb(Ejs *ejs, EjsDb *db)
+static void manageDb(EjsDb *db, int flags)
 {
-    if (db->sdb) {
-        ejsSetDbMemoryContext(db->tls, db->arena);
-        closeDb(ejs, db, 0, 0);
-        db->sdb = 0;
+    if (flags == MPR_MANAGE_MARK) {
+        ;
+    } else {
+        if (db->sdb) {
+            ejsSetDbMemoryContext(db->tls, db->arena);
+            closeDb(ejs, db, 0, 0);
+            db->sdb = 0;
+        }
     }
-    ejsFreeVar(ejs, (EjsVar*) db, -1);
 }
 
 /*********************************** Factory *******************************/
@@ -359,8 +362,8 @@ void ejsConfigureDbTypes(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = (EjsType*) ejsConfigureNativeType(ejs, "ejs.db", Database, sizeof(EjsDb));
-    type->helpers->destroy = (EjsDestroyHelper) destroyDb;
+    type = (EjsType*) ejsConfigureNativeType(ejs, "ejs.db", Database, sizeof(EjsDb), (MprManager) manageDb, 
+        EJS_DEFAULT_HELPERS);
 
     ejsBindMethod(ejs, type, ES_ejs_db_Database_Database, (EjsProc) dbConstructor);
     ejsBindMethod(ejs, type, ES_ejs_db_Database_close, (EjsProc) closeDb);

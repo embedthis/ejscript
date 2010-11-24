@@ -134,15 +134,17 @@ MOB - more explanation about what is in the ServerRoot
             this.documentRoot = documentRoot
             this.serverRoot = serverRoot
             config = App.config
-            let path = serverRoot.join("ejsrc")
-            if (path.exists) {
-                blend(config, path.readJSON(), true)
+            if (serverRoot != ".") {
+                let path = serverRoot.join("ejsrc")
+                if (path.exists) {
+                    blend(config, path.readJSON(), true)
+                    App.updateLog()
+                }
             }
             let dirs = config.directories
             for (let [key,value] in dirs) {
                 dirs[key] = documentRoot.join(value)
             }
-            // blend(config, defaultConfig, false)
         }
 
         /** 

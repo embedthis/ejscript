@@ -1,6 +1,5 @@
-
 /*
- *	Calling types as constructors
+  	Calling types as constructors
  */
 
 d = Date()

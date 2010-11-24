@@ -98,7 +98,6 @@ EjsOptable ejsOptable[] = {
     {   "COMPARE_TRUE",             -1,         { EBC_NONE,                               },},
     {   "COMPARE_UNDEFINED",        -1,         { EBC_NONE,                               },},
     {   "COMPARE_ZERO",             -1,         { EBC_NONE,                               },},
-    {   "DEBUG",                     0,         { EBC_NUM, EBC_STRING,                    },},
     {   "DEFINE_CLASS",              0,         { EBC_GLOBAL,                             },},
     {   "DEFINE_FUNCTION",           0,         { EBC_STRING, EBC_STRING,                 },},
     {   "DELETE_NAME_EXPR",         -2,         { EBC_NONE,                               },},

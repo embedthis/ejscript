@@ -42,6 +42,70 @@ extern "C" {
 #define EC_PHASE_BIND           3           /* Bind var references to slots and property types */
 #define EC_AST_PHASES           4
 
+typedef struct EcLocation {
+    MprChar     *source;
+    char        *filename;
+    int         lineNumber;
+    int         column;
+} EcLocation;
+
+#define N_ARGS                  1
+#define N_ASSIGN_OP             2
+#define N_ATTRIBUTES            3
+#define N_BINARY_OP             4
+#define N_BINARY_TYPE_OP        5
+#define N_BLOCK                 6
+#define N_BREAK                 7
+#define N_CALL                  8
+#define N_CASE_ELEMENTS         9
+#define N_CASE_LABEL            10
+#define N_CATCH                 11
+#define N_CATCH_ARG             12
+#define N_CATCH_CLAUSES         13
+#define N_CLASS                 14
+#define N_CONTINUE              15
+#define N_DASSIGN               16
+#define N_DIRECTIVES            17
+#define N_DO                    18
+#define N_DOT                   19
+#define N_END_FUNCTION          20
+#define N_EXPRESSIONS           21
+#define N_FIELD                 22
+#define N_FOR                   23
+#define N_FOR_IN                24
+#define N_FUNCTION              25
+#define N_GOTO                  26
+#define N_HASH                  27
+#define N_IF                    28
+#define N_LITERAL               29
+#define N_MODULE                30
+#define N_NEW                   31
+#define N_NOP                   32
+#define N_OBJECT_LITERAL        33
+#define N_PARAMETER             34
+#define N_POSTFIX_OP            35
+#define N_PRAGMA                36
+#define N_PRAGMAS               37
+#define N_PROGRAM               38
+#define N_QNAME                 39
+#define N_REF                   40
+#define N_RETURN                41
+#define N_SPREAD                42
+#define N_SUPER                 43
+#define N_SWITCH                44
+#define N_THIS                  45
+#define N_THROW                 46
+#define N_TRY                   47
+#define N_TYPE_IDENTIFIERS      48
+#define N_UNARY_OP              49
+#define N_USE_MODULE            50
+#define N_USE_NAMESPACE         51
+#define N_VALUE                 52
+#define N_VAR                   53
+#define N_VAR_DEFINITION        54
+#define N_VOID                  55
+#define N_WITH                  56
+
 /*
     Ast node define
  */
@@ -49,285 +113,101 @@ extern "C" {
 typedef struct EcNode   *Node;
 #endif
 
+/*
+    Structure for code generation buffers
+ */
+typedef struct EcCodeGen {
+    MprBuf      *buf;                   /* Code generation buffer */
+    MprList     *jumps;                 /* Break/continues to patch for this code block */
+    MprList     *exceptions;            /* Exception handlers for this code block */
+    EjsDebug    *debug;                 /* Source debug info */ 
+    int         jumpKinds;              /* Kinds of jumps allowed */
+    int         breakMark;              /* Stack item counter for the target for break/continue stmts */
+    int         blockMark;              /* Lexical block counter for the target for break/continue stmts */
+    int         stackCount;             /* Current stack item counter */
+    int         blockCount;             /* Current block counter */
+    int         lastLineNumber;         /* Last line for debug */
+} EcCodeGen;
+
+
 typedef struct EcNode {
-    //  TODO - need consistency in naming. Nodes should have a node suffix. 
-    //  References EjsObj should have a Ref suffix.
-    /*
-        Ordered for debugging
-     */
-    char                *kindName;          /* Node kind string */
-
-    /*
-        TODO - optimize name+qualifier fields
-     */
-    EjsName             qname;
-    int                 literalNamespace;   /* Namespace is a literal */
-
-    EjsString           *filename;          /* File containing source code line */
-    EjsString           *currentLine;       /* Current source code line */
-    int                 lineNumber;
-
-    Node                left;               /* children[0] */
-    Node                right;              /* children[1] */
-
-    EjsBlock            *blockRef;          /* Block scope */
-    bool                createBlockObject;  /* Create the block object to contain let scope variables */
-    bool                blockCreated;       /* Block object has been created */
-    EjsLookup           lookup;
-    int                 attributes;         /* Attributes applying to this node */
-    bool                specialNamespace;   /* Using a public|private|protected|internal namespace */
-    Node                typeNode;           /* Type of name */
-    Node                parent;             /* Parent node */
-    EjsNamespace        *namespaceRef;      /* Namespace reference */
-    MprList             *namespaces;        /* Namespaces for hoisted variables */
-
-    #define N_VALUE     1
-
+    char                *kindName;              /* Node kind string */
 #if BLD_DEBUG
     char                *tokenName;
 #endif
+    EjsName             qname;
+    EcLocation          loc;                    /* Source code info */
+    EjsBlock            *blockRef;              /* Block scope */
+    EjsLookup           lookup;                 /* Lookup residuals */
+    EjsNamespace        *namespaceRef;          /* Namespace reference */
+    Node                left;                   /* children[0] */
+    Node                right;                  /* children[1] */
+    Node                typeNode;               /* Type of name */
+    Node                parent;                 /* Parent node */
+    MprList             *namespaces;            /* Namespaces for hoisted variables */
+    MprList             *children;
 
-    int                 tokenId;            /* Lex token */
-    int                 groupMask;          /* Token group */
-    int                 subId;              /* Sub token */
+    int                 kind;                   /* Kind of node */
+    int                 attributes;             /* Attributes applying to this node */
+    int                 tokenId;                /* Lex token */
+    int                 groupMask;              /* Token group */
+    int                 subId;                  /* Sub token */
+    int                 slotNum;                /* Allocated slot for variable */
+    int                 jumpLength;             /* Goto length for exceptions */
+    int                 seqno;                  /* Unique sequence number */
 
-    /*
-        MOB TODO - order in most useful order: name, type, function, binary
-        MOB TODO - rename all with a Node suffix. ie. nameNode, importNode
-     */
+    uint                blockCreated      : 1;  /* Block object has been created */
+    uint                createBlockObject : 1;  /* Create the block object to contain let scope variables */
+    uint                enabled           : 1;  /* Node is enabled via conditional definitions */
+    int                 literalNamespace  : 1;  /* Namespace is a literal */
+    uint                needThis          : 1;  /* Need to push this object */
+    uint                needDupObj        : 1;  /* Need to dup the object on stack (before) */
+    uint                needDup           : 1;  /* Need to dup the result (after) */
+    uint                slotFixed         : 1;  /* Slot fixup has been done */
+    uint                specialNamespace  : 1;  /* Using a public|private|protected|internal namespace */
 
-    //  MOB TODO - disable for now
-#if !BLD_DEBUG && 0
+    uchar               *patchAddress;      /* For code patching */
+    EcCodeGen           *code;              /* Code buffer */
+
+    EjsName             *globalProp;        /* Set if this is a global property */
+    EjsString           *doc;               /* Documentation string */
+
+    struct EcCompiler   *cp;                /* Compiler instance reference */
+
     union {
+#if UNUSED
+        struct {
+            EcCodeGen   *rightCode;
+        } binary;
 #endif
 
-        //  GROUPING ONLY
-        #define N_ATTRIBUTES 50
+        struct {
+            Node        expression;
+            EcCodeGen   *expressionCode;    /* Code buffer for the case expression */
+            int         kind;
+            int         nextCaseCode;       /* Goto length to the next case statements */
+        } caseLabel;
+
+        struct {
+            Node        arg;                /* Catch block argument */
+        } catchBlock;
 
         /*
-            Name nodes hold a fully qualified name.
-         */
-        #define N_QNAME  3
-        #define N_VAR 63
-        struct {
-            Node        nameExpr;           /* Name expression */
-            Node        qualifierExpr;      /* Qualifier expression */
-            int         isAttribute;        /* Attribute identifier "@" */
-            int         isType;             /* Name is a type */
-            int         isNamespace;        /* Name is a namespace */
-            int         letScope;           /* Variable is defined in let block scope */
-            int         instanceVar;        /* Instance or static var (if defined in class) */
-            int         isRest;             /* ... rest style args */
-            int         varKind;            /* Variable definition kind */
-            EjsObj      *nsvalue;           /* Initialization value (MOB - remove) */
-        } name;
-
-        /*
-            cast, is, to
-         */
-        #define N_BINARY_TYPE_OP  5
-
-        /*
-           + - * / % << >> >>> & | ^ && || instanceof in == != ===
-                !== < <= > >= , ]
-         */
-        #define N_BINARY_OP  6
-        #define N_ASSIGN_OP  7
-
-        struct {
-            struct EcCodeGen    *rightCode;
-        } binary;
-
-
-        #define N_FOR_IN 33
-        struct {
-            int         each;                       /* For each used */
-            Node        iterVar;
-            Node        iterGet;
-            Node        iterNext;
-            Node        body;
-            struct EcCodeGen    *initCode;
-            struct EcCodeGen    *bodyCode;
-        } forInLoop;
-
-
-        /*
-            Used by for and while
-         */
-        #define N_FOR   32
-        struct {
-            Node        initializer;
-            Node        cond;
-            Node        perLoop;
-            Node        body;
-            struct EcCodeGen    *condCode;
-            struct EcCodeGen    *bodyCode;
-            struct EcCodeGen    *perLoopCode;
-        } forLoop;
-
-
-        #define N_DO    51
-        struct {
-            Node        cond;
-            Node        body;
-            struct EcCodeGen    *condCode;
-            struct EcCodeGen    *bodyCode;
-        } doWhile;
-
-
-        /*  OPT - convert to grouping  */
-        #define N_UNARY_OP  9
-        struct {
-            int         dummy;
-        } unary;
-
-
-        #define N_IF  10
-        struct {
-            Node                cond;
-            Node                thenBlock;
-            Node                elseBlock;
-            struct EcCodeGen    *thenCode;
-            struct EcCodeGen    *elseCode;
-        } tenary;
-
-
-        #define N_HASH  55
-        struct {
-            Node        expr;
-            Node        body;
-            bool        disabled;
-        } hash;
-
-
-        #define N_VAR_DEFINITION  11
-        /*
-            Var definitions have one child per variable. Child nodes can
-            be either N_NAME or N_ASSIGN_OP
+            Var definitions have one child per variable. Child nodes can be either N_NAME or N_ASSIGN_OP
          */
         struct {
             int         varKind;            /* Variable definition kind */
         } def;
 
-
-        //  TODO - split apart into separate AST nodes.
-        /*
-           Pragmas: use strict, use standard
-         */
-        #define N_PRAGMA  12
+#if UNUSED
         struct {
-            Node        decimalContext;     /* use decimal expr */
-            uint        strict;             /* Strict mode */
-            char        *moduleName;        /* Module name value */
-        } pragma;
+            Node        cond;
+            Node        body;
+            EcCodeGen   *condCode;
+            EcCodeGen   *bodyCode;
+        } doWhile;
+#endif
 
-
-        /*
-            Module defintions
-         */
-        #define N_MODULE 52
-        struct {
-            EjsModule   *ref;               /* Module object */
-            char        *filename;          /* Module file name */
-            EjsString   *name;              /* Module name */
-            int         version;
-        } module;
-
-
-        /*
-            Use module
-         */
-        #define N_USE_MODULE 53
-        struct {
-            int         minVersion;
-            int         maxVersion;
-        } useModule;
-
-
-        /*
-            use namespace, use default namespace
-         */
-        #define N_USE_NAMESPACE  49
-        struct {
-            int         isDefault;          /* "use default" */
-            int         isLiteral;          /* use namespace "literal" */
-            int         isInternal;         /* internal namespace */
-        } useNamespace;
-
-
-        #define N_FUNCTION 14
-        struct {
-            uint        operatorFn : 1;     /* operator function */
-            uint        getter : 1;         /* getter function */
-            uint        setter : 1;         /* setter function */
-            uint        call : 1;           /* */
-            uint        has : 1;            /* */
-            uint        hasRest : 1;        /* Has rest parameter */
-            uint        hasReturn : 1;      /* Has a return statement */
-            uint        isMethod : 1;       /* Is a class method */
-            uint        isConstructor : 1;  /* Is constructor method */
-            uint        isDefaultConstructor : 1;/* Is default constructor */
-            Node        resultType;         /* Function return type */
-            Node        body;               /* Function body */
-            Node        parameters;         /* Function formal parameters */
-            Node        constructorSettings;/* Constructor settings */
-
-            /*
-                Bound definition
-             */
-            EjsFunction *functionVar;       /* Function variable */
-            Node        expressionRef;      /* Reference to the function expression name */
-
-        } function;
-
-        #define N_END_FUNCTION 40
-
-        #define N_PARAMETER 15
-        struct {
-            char        *type;              /* Parameter type */
-            char        *value;             /* Default value */
-            int         isRest : 1;         /* Is rest parameter */
-        } parameter;
-
-
-        /*
-            Body stored in the child node
-         */
-        #define N_CLASS  16
-        struct {
-            EjsString   *extends;           /* Class base class */
-            Node        implements;         /* Implemented interfaces */
-            MprList     *staticProperties;  /* List of static properties */
-            MprList     *instanceProperties;/* Implemented interfaces */
-            MprList     *classMethods;      /* Static methods */
-            MprList     *methods;           /* Instance methods */
-            Node        constructor;        /* Class constructor */
-            int         isInterface;        /* This is an interface */
-
-            EjsType     *ref;               /* Type instance ref */
-            EjsFunction *initializer;       /* Initializer function */
-
-            EjsNamespace *publicSpace;
-            EjsNamespace *internalSpace;
-
-        } klass;
-
-
-        #define N_DIRECTIVES 18
-
-        #define N_SUPER 35
-        struct {
-            int         dummy;
-        } super;
-
-
-        #define N_NEW 31
-        struct {
-            int         callConstructors;   /* Bound type has a constructor */
-        } newExpr;
-
-
-        #define N_TRY 36
         struct {
             /* Children are the catch clauses */
             Node        tryBlock;           /* Try code */
@@ -336,378 +216,355 @@ typedef struct EcNode {
             int         numBlocks;          /* Count of open blocks in the try block */
         } exception;
 
-
-        #define N_CATCH 37
+#if UNUSED
         struct {
-            Node        arg;                /* Catch block argument */
-        } catchBlock;
+            char        *space;             /* Namespace qualifier */
+        } expr;
+#endif
 
-
-        #define N_CALL 28
         struct {
-            int         dummmy;
-        } call;
+            Node        expr;               /* Field expression */
+            Node        fieldName;          /* Field element name for objects */
+            int         fieldKind;          /* value or function */
+            int         index;              /* Array index, set to -1 for objects */
+            int         varKind;            /* Variable definition kind (const) */
+        } field;
 
+        struct {
+            Node        resultType;         /* Function return type */
+            Node        body;               /* Function body */
+            Node        parameters;         /* Function formal parameters */
+            Node        constructorSettings;/* Constructor settings */
+            Node        expressionRef;      /* Reference to the function expression name */
+            EjsFunction *functionVar;       /* Function variable */
+            uint        operatorFn    : 1;  /* operator function */
+            uint        getter        : 1;  /* getter function */
+            uint        setter        : 1;  /* setter function */
+            uint        call          : 1;  /* */
+            uint        has           : 1;  /* */
+            uint        hasRest       : 1;  /* Has rest parameter */
+            uint        hasReturn     : 1;  /* Has a return statement */
+            uint        isMethod      : 1;  /* Is a class method */
+            uint        isConstructor : 1;  /* Is constructor method */
+            uint        isDefaultConstructor : 1; /* Is default constructor */
+        } function;
 
-        #define N_PROGRAM 20
+        struct {
+            Node        iterVar;
+            Node        iterGet;
+            Node        iterNext;
+            Node        body;
+            EcCodeGen   *initCode;
+            EcCodeGen   *bodyCode;
+            int         each;               /* For each used */
+        } forInLoop;
+
+        struct {
+            Node        body;
+            Node        cond;
+            Node        initializer;
+            Node        perLoop;
+            EcCodeGen   *condCode;
+            EcCodeGen   *bodyCode;
+            EcCodeGen   *perLoopCode;
+        } forLoop;
+
+        struct {
+            Node        body;
+            Node        expr;
+            bool        disabled;
+        } hash;
+
+        struct {
+            Node         implements;          /* Implemented interfaces */
+            Node         constructor;         /* Class constructor */
+            MprList      *staticProperties;   /* List of static properties */
+            MprList      *instanceProperties; /* Implemented interfaces */
+            MprList      *classMethods;       /* Static methods */
+            MprList      *methods;            /* Instance methods */
+            EjsType      *ref;                /* Type instance ref */
+            EjsFunction  *initializer;        /* Initializer function */
+            EjsNamespace *publicSpace;
+            EjsNamespace *internalSpace;
+            EjsString    *extends;            /* Class base class */
+            int          isInterface;         /* This is an interface */
+        } klass;
+
+        struct {
+            EjsObj      *var;               /* Special value */
+            MprBuf      *data;              /* XML data */
+        } literal;
+
+        struct {
+            EjsModule   *ref;               /* Module object */
+            EjsString   *name;              /* Module name */
+            char        *filename;          /* Module file name */
+            int         version;
+        } module;
+
+        /*
+            Name nodes hold a fully qualified name.
+         */
+        struct {
+            Node        nameExpr;           /* Name expression */
+            Node        qualifierExpr;      /* Qualifier expression */
+            EjsObj      *nsvalue;           /* Initialization value (MOB - remove) */
+            uint        instanceVar  : 1;   /* Instance or static var (if defined in class) */
+            uint        isAttribute  : 1;   /* Attribute identifier "@" */
+            uint        isDefault    : 1;   /* use default namespace */
+            uint        isInternal   : 1;   /* internal namespace */
+            uint        isLiteral    : 1;   /* use namespace "literal" */
+            uint        isNamespace  : 1;   /* Name is a namespace */
+            uint        isRest       : 1;   /* ... rest style args */
+            uint        isType       : 1;   /* Name is a type */
+            uint        letScope     : 1;   /* Variable is defined in let block scope */
+            int         varKind;            /* Variable definition kind */
+        } name;
+
+        struct {
+            int         callConstructors;   /* Bound type has a constructor */
+        } newExpr;
+
+        struct {
+            Node        typeNode;           /* Type of object */
+            int         isArray;            /* Array literal */
+        } objectLiteral;
+
+#if UNUSED
+        struct {
+            char        *type;              /* Parameter type */
+            char        *value;             /* Default value */
+            int         isRest1;            /* Is rest parameter */
+        } parameter;
+#endif
+
+        struct {
+            uint        strict;             /* Strict mode */
+#if UNUSED
+            char        *moduleName;        /* Module name value */
+#endif
+        } pragma;
+
         struct {
             MprList     *dependencies;      /* Accumulated list of dependent modules */
         } program;
 
-
-        /*
-            Block kinds
-         */
-        #define EC_CLASS_BLOCK      1
-        #define EC_FUNCTION_BLOCK   2
-        #define EC_INTERFACE_BLOCK  3
-        #define EC_NESTED_BLOCK     4
-        #define EC_GLOBAL_BLOCK     5
-        #define EC_MODULE_BLOCK     6
-
-        #define N_BLOCK 25
-
-        //  MOB -- what does this actually do? - why not just use children?
-        #define N_REF 42
         struct {
             Node        node;               /* Actual node reference */
         } ref;
 
-
-        #define N_SWITCH 43
         struct {
-            int         dummy;
-        } switchNode;
-
-
-        #define EC_SWITCH_KIND_CASE     1   /* Case block */
-        #define EC_SWITCH_KIND_DEFAULT  2   /* Default block */
-
-        #define N_CASE_LABEL 44
-        struct {
-            Node                expression;
-            int                 kind;
-            struct EcCodeGen    *expressionCode;    /* Code buffer for the case expression */
-            int                 nextCaseCode;       /* Goto length to the next case statements */
-        } caseLabel;
-
-        #define N_THIS 30
-
-        #define N_THIS_GENERATOR    1
-        #define N_THIS_CALLEE       2
-        #define N_THIS_TYPE         3
-        #define N_THIS_FUNCTION     4
-
-        struct {
-            int                 thisKind;   /* Kind of this. See N_THIS_ flags */
-        } thisNode;
-
-        #define N_CASE_ELEMENTS 45
-        #define N_BREAK         46
-        #define N_CONTINUE      47
-        #define N_GOTO          48
-
-        #define N_LITERAL       2
-        struct {
-            EjsObj              *var;       /* Special value */
-            MprBuf              *data;      /* XML data */
-        } literal;
-
-        #define N_OBJECT_LITERAL    56      /* Array or object literal */
-        #define N_DASSIGN 62                /* Destructuring assignment */
-        struct {
-            Node                typeNode;   /* Type of object */
-            int                 isArray;    /* Array literal */
-        } objectLiteral;
-
-        /*
-            Object (and Array) literal field
-         */
-        #define FIELD_KIND_VALUE        0x1
-        #define FIELD_KIND_FUNCTION     0x2
-
-        #define N_FIELD 57
-        struct {
-            int                 fieldKind;  /* value or function */
-            int                 varKind;    /* Variable definition kind (const) */
-            Node                expr;       /* Field expression */
-            Node                fieldName;  /* Field element name for objects */
-            int                 index;      /* Array index, set to -1 for objects */
-        } field;
-
-        #define N_WITH 60
-        struct {
-            Node                object;
-            Node                statement;
-        } with;
-
-        #define N_RETURN 27
-        struct {
-            int                 blockless;  /* Function expression */
+            int         blockless;          /* Function expression */
         } ret;
 
-        #define N_EXPRESSIONS 22
         struct {
-            char                *space;      /* Namespace qualifier */
-        } expr;
-#if !BLD_DEBUG && 0
+            Node        cond;
+            Node        thenBlock;
+            Node        elseBlock;
+            EcCodeGen   *thenCode;
+            EcCodeGen   *elseCode;
+        } tenary;
+
+        struct {
+            int         thisKind;           /* Kind of this. See EC_THIS_ flags */
+        } thisNode;
+
+        struct {
+            int         minVersion;
+            int         maxVersion;
+        } useModule;
+
+        struct {
+            Node        object;
+            Node        statement;
+        } with;
     };
-#endif
-
-    int                 kind;               /* Kind of node */
-    EjsArray            *children;
-
-    struct EcCompiler   *cp;                /* Compiler instance reference */
-
-    int                 column;             /* Column of token in currentLine */
-
-    /*
-        Bound definition. Applies to names and expression values.
-     */
-
-    int                 slotFixed;          /* Slot fixup has been done */
-    int                 needThis;           /* Need to push this object */
-    int                 needDupObj;         /* Need to dup the object on stack (before) */
-    int                 needDup;            /* Need to dup the result (after) */
-    int                 slotNum;            /* Allocated slot for variable */
-    int                 enabled;            /* Node is enabled via conditional definitions */
-
-    uchar               *patchAddress;      /* For code patching */
-    struct EcCodeGen    *code;              /* Code buffer */
-    int                 jumpLength;         /* Goto length for exceptions */
-
-    int                 seqno;              /* Unique sequence number */
-    EjsName             *globalProp;        /* Set if this is a global property */
-    char                *doc;               /* Documentation string */
 } EcNode;
 
 
 /*
-    Grouping node types
+    Various per-node flags
  */
-/* 21 - unused */
-#define N_PRAGMAS 23
-#define N_TYPE_IDENTIFIERS 24
-#define N_DOT 26
-#define N_ARGS 29
-/* N_new 31 */
-/* N_for 32 */
-/* N_forIn 33 */
-#define N_POSTFIX_OP 34
-/* N_try 36 */
-/* N_catch 37 */
-#define N_CATCH_CLAUSES 38
-#define N_THROW 39
-#define N_NOP 41
-#define N_VOID 54
-/* N_HASH 55 */
-/* N_OBJECT_LITERAL 56 */
-/* N_FIELD 57 */
-#define N_ARRAY_LITERAL_UNUSED 58
-#define N_CATCH_ARG 59
-#define N_WITH 60
-#define N_SPREAD 61
-/* N_DASSIGN 62 */
-/* N_VAR 63 */
+#define EC_THIS_GENERATOR       1
+#define EC_THIS_CALLEE          2
+#define EC_THIS_TYPE            3
+#define EC_THIS_FUNCTION        4
 
-#define EC_NUM_NODES                    8
-#define EC_TAB_WIDTH                    4
+#define EC_SWITCH_KIND_CASE     1   /* Case block */
+#define EC_SWITCH_KIND_DEFAULT  2   /* Default block */
+
+/*
+    Object (and Array) literal field
+ */
+#define FIELD_KIND_VALUE        0x1
+#define FIELD_KIND_FUNCTION     0x2
+
+#define EC_NUM_NODES            8
+#define EC_TAB_WIDTH            4
 
 /*
     Fix clash with arpa/nameser.h
  */
 #undef T_NULL
 
-#if UNUSED && MOVED
-/*
-    Flags for ecCompile()
- */
-#define EC_FLAGS_BIND            0x1                    /* Bind global references and type/object properties */
-#define EC_FLAGS_DEBUG           0x2                    /* Generate symbolic debugging information */
-#define EC_FLAGS_MERGE           0x8                    /* Merge all output onto one output file */
-#define EC_FLAGS_NO_OUT          0x10                   /* Don't generate any output file */
-#define EC_FLAGS_PARSE_ONLY      0x20                   /* Just parse source. Don't generate code */
-#define EC_FLAGS_THROW           0x40                   /* Throw errors when compiling. Used for eval() */
-#endif
-
 /*
     Lexical tokens (must start at 1)
     ASSIGN tokens must be +1 compared to their non-assignment counterparts.
+    (Use genTokens to recreate)
+    WARNING: ensure T_MOD and T_MOD_ASSIGN are adjacent. rewriteCompoundAssignment relies on this
  */
-#define T_AS 1
-#define T_ASSIGN 2
-#define T_AT 3
-#define T_ATTRIBUTE 4
-#define T_BIT_AND 5
-#define T_BIT_AND_ASSIGN 6
-#define T_BIT_OR 7
-#define T_BIT_OR_ASSIGN 8
-#define T_BIT_XOR 9
-#define T_BIT_XOR_ASSIGN 10
-#define T_BREAK 11
-#define T_CALL 12
-#define T_CASE 13
-#define T_CAST 14
-#define T_CATCH 15
-#define T_CLASS 16
-/* TODO - remove and resequence #define T_CLOSE_TAG 17 */
-#define T_COLON 18
-#define T_COLON_COLON 19
-#define T_COMMA 20
-#define T_CONST 21
-#define T_CONTEXT_RESERVED_ID 22
-#define T_CONTINUE 23
-#define T_DEBUGGER 24
-#define T_DECIMAL 25                    //  UNUSED
-#define T_DECREMENT 26
-#define T_DEFAULT 27
-#define T_DELETE 28
-#define T_DIV 29
-#define T_DIV_ASSIGN 30
-#define T_DO 31
-#define T_DOT 32
-#define T_DOT_DOT 33
-#define T_DOT_LESS 34
-#define T_DOUBLE 35
-#define T_DYNAMIC 36
-#define T_EACH 37
-#define T_ELIPSIS 38
-#define T_ELSE 39
-#define T_ENUMERABLE 40
-#define T_EOF 41
-#define T_EQ 42
-#define T_EXTENDS 43
-#define T_FALSE 44
-#define T_FINAL 45
-#define T_FINALLY 46
-#define T_FLOAT 47
-#define T_FOR 48
-#define T_FUNCTION 49
-#define T_GE 50
-#define T_GET 51
-#define T_GOTO 52
-#define T_GT 53
-#define T_ID 54
-#define T_IF 55
-#define T_IMPLEMENTS 56
-#define T_IMPORT 57
-#define T_IN 58
-#define T_INCLUDE 59
-#define T_INCREMENT 60
-#define T_INSTANCEOF 61
-#define T_INT 62
-#define T_INTERFACE 64
-#define T_INTERNAL 65
-#define T_INTRINSIC 66
-#define T_IS 67
-#define T_LBRACE 68
-#define T_LBRACKET 69
-#define T_LE 70
-#define T_LET 71
-#define T_LOGICAL_AND 72
-#define T_LOGICAL_AND_ASSIGN 73
-#define T_LOGICAL_NOT 74
-#define T_LOGICAL_OR 75
-#define T_LOGICAL_OR_ASSIGN 76
-#define T_LOGICAL_XOR 77
-#define T_LOGICAL_XOR_ASSIGN 78
-#define T_LPAREN 79
-#define T_LSH 80
-#define T_LSH_ASSIGN 81
-#define T_LT 82
-#define T_MINUS 83
-#define T_MINUS_ASSIGN 84
-#define T_MINUS_MINUS 85
-#define T_MOD 86
-#define T_MOD_ASSIGN 87
-#define T_MODULE 88
-#define T_MUL 89
-#define T_MUL_ASSIGN 90
-#define T_NAMESPACE 91
-#define T_NATIVE 92
-#define T_NE 93
-#define T_NEW 94
-#define T_NULL 95
-#define T_NUMBER 96
-/* TODO - remove and resequence #define T_OPEN_TAG 97 */
-#define T_OVERRIDE 98
-//  TODO #define    T_PACKAGE 99
-#define T_PLUS 100
-#define T_PLUS_ASSIGN 101
-#define T_PLUS_PLUS 102
-#define T_PRIVATE 103
-#define T_PROTECTED 104
-#define T_PROTOTYPE 105
-#define T_PUBLIC 106
-#define T_QUERY 107
-#define T_RBRACE 108
-#define T_RBRACKET 109
-#define T_READONLY 110
-#define T_RETURN 111
-#define T_ROUNDING 112
-#define T_RPAREN 113
-#define T_RSH 114
-#define T_RSH_ASSIGN 115
-#define T_RSH_ZERO 116
-#define T_RSH_ZERO_ASSIGN 117
-#define T_SEMICOLON 118
-#define T_SET 119
-#define T_RESERVED_NAMESPACE 120
-#define T_STANDARD 121
-#define T_STATIC 122
-#define T_STRICT 123
-#define T_STRICT_EQ 124
-#define T_STRICT_NE 125
-#define T_STRING 126
-#define T_SUPER 127
-#define T_SWITCH 128
-#define T_SYNCHRONIZED 129
-#define T_THIS 130
-#define T_THROW 131
-#define T_TILDE 132
-#define T_TO 133
-#define T_TRUE 134
-#define T_TRY 135
-#define T_TYPE 136
-#define T_TYPEOF 137
-#define T_UINT 138
-#define T_USE 139
-#define T_VAR 140
-#define T_VOID 141
-#define T_WHILE 142
-#define T_WITH 143
-#define T_XML 144
-#define T_YIELD 145
-#define T_EARLY_TODO_REMOVED 146
-#define T_ENUM 147
-#define T_HAS 148
-#define T_PRECISION 149
-#define T_UNDEFINED 150
-#define T_BOOLEAN 151
-#define T_LONG 152
-#define T_VOLATILE 153
-#define T_ULONG 154
-#define T_HASH 155
-#define T_ABSTRACT 156
-#define T_CALLEE 157
-#define T_GENERATOR 158
-#define T_NUMBER_WORD 159
-#define T_XML_COMMENT_START 161
-#define T_XML_COMMENT_END 162
-#define T_CDATA_START 163
-#define T_CDATA_END 164
-#define T_XML_PI_START 165
-#define T_XML_PI_END 166
-#define T_LT_SLASH 167
-#define T_SLASH_GT 168
-#define T_LIKE 169
-#define T_REGEXP 170
-#define T_REQUIRE 171
-#if UNUSED
-#define T_SHARED 172
-#endif
-#define T_NOP 174
-#define T_ERR 175
+#define T_ASSIGN                    1
+#define T_AT                        2
+#define T_ATTRIBUTE                 3
+#define T_BIT_AND                   4
+#define T_BIT_AND_ASSIGN            5
+#define T_BIT_OR                    6
+#define T_BIT_OR_ASSIGN             7
+#define T_BIT_XOR                   8
+#define T_BIT_XOR_ASSIGN            9
+#define T_BREAK                    10
+#define T_CALL                     11
+#define T_CALLEE                   12
+#define T_CASE                     13
+#define T_CAST                     14
+#define T_CATCH                    15
+#define T_CDATA_END                16
+#define T_CDATA_START              17
+#define T_CLASS                    18
+#define T_COLON                    19
+#define T_COLON_COLON              20
+#define T_COMMA                    21
+#define T_CONST                    22
+#define T_CONTEXT_RESERVED_ID      23
+#define T_CONTINUE                 24
+#define T_DEBUGGER                 25
+#define T_DECREMENT                26
+#define T_DEFAULT                  27
+#define T_DELETE                   28
+#define T_DIV                      29
+#define T_DIV_ASSIGN               30
+#define T_DO                       31
+#define T_DOT                      32
+#define T_DOT_DOT                  33
+#define T_DOT_LESS                 34
+#define T_DOUBLE                   35
+#define T_DYNAMIC                  36
+#define T_EACH                     37
+#define T_ELIPSIS                  38
+#define T_ELSE                     39
+#define T_ENUMERABLE               40
+#define T_EOF                      41
+#define T_EQ                       42
+#define T_ERR                      43
+#define T_EXTENDS                  44
+#define T_FALSE                    45
+#define T_FINAL                    46
+#define T_FINALLY                  47
+#define T_FLOAT                    48
+#define T_FOR                      49
+#define T_FUNCTION                 50
+#define T_GE                       51
+#define T_GENERATOR                52
+#define T_GET                      53
+#define T_GOTO                     54
+#define T_GT                       55
+#define T_HAS                      56
+#define T_HASH                     57
+#define T_ID                       58
+#define T_IF                       59
+#define T_IMPLEMENTS               60
+#define T_IN                       61
+#define T_INCLUDE                  62
+#define T_INCREMENT                63
+#define T_INSTANCEOF               64
+#define T_INT                      65
+#define T_INTERFACE                66
+#define T_INTERNAL                 67
+#define T_INTRINSIC                68
+#define T_IS                       69
+#define T_LBRACE                   70
+#define T_LBRACKET                 71
+#define T_LE                       72
+#define T_LET                      73
+#define T_LOGICAL_AND              74
+#define T_LOGICAL_AND_ASSIGN       75
+#define T_LOGICAL_NOT              76
+#define T_LOGICAL_OR               77
+#define T_LOGICAL_OR_ASSIGN        78
+#define T_LOGICAL_XOR              79
+#define T_LOGICAL_XOR_ASSIGN       80
+#define T_LPAREN                   81
+#define T_LSH                      82
+#define T_LSH_ASSIGN               83
+#define T_LT                       84
+#define T_LT_SLASH                 85
+#define T_MINUS                    86
+#define T_MINUS_ASSIGN             87
+#define T_MINUS_MINUS              88
+#define T_MODULE                   89
+#define T_MOD                      90       // WARNING sorted order manually fixed!!
+#define T_MOD_ASSIGN               91
+#define T_MUL                      92
+#define T_MUL_ASSIGN               93
+#define T_NAMESPACE                94
+#define T_NATIVE                   95
+#define T_NE                       96
+#define T_NEW                      97
+#define T_NOP                      98
+#define T_NULL                     99
+#define T_NUMBER                  100
+#define T_NUMBER_WORD             101
+#define T_OVERRIDE                102
+#define T_PLUS                    103
+#define T_PLUS_ASSIGN             104
+#define T_PLUS_PLUS               105
+#define T_PRIVATE                 106
+#define T_PROTECTED               107
+#define T_PROTOTYPE               108
+#define T_PUBLIC                  109
+#define T_QUERY                   110
+#define T_RBRACE                  111
+#define T_RBRACKET                112
+#define T_REGEXP                  113
+#define T_REQUIRE                 114
+#define T_RESERVED_NAMESPACE      115
+#define T_RETURN                  116
+#define T_RPAREN                  117
+#define T_RSH                     118
+#define T_RSH_ASSIGN              119
+#define T_RSH_ZERO                120
+#define T_RSH_ZERO_ASSIGN         121
+#define T_SEMICOLON               122
+#define T_SET                     123
+#define T_SLASH_GT                124
+#define T_STANDARD                125
+#define T_STATIC                  126
+#define T_STRICT                  127
+#define T_STRICT_EQ               128
+#define T_STRICT_NE               129
+#define T_STRING                  130
+#define T_SUPER                   131
+#define T_SWITCH                  132
+#define T_THIS                    133
+#define T_THROW                   134
+#define T_TILDE                   135
+#define T_TO                      136
+#define T_TRUE                    137
+#define T_TRY                     138
+#define T_TYPE                    139
+#define T_TYPEOF                  140
+#define T_UINT                    141
+#define T_UNDEFINED               142
+#define T_USE                     143
+#define T_VAR                     144
+#define T_VOID                    145
+#define T_WHILE                   146
+#define T_WITH                    147
+#define T_XML_COMMENT_END         148
+#define T_XML_COMMENT_START       149
+#define T_XML_PI_END              150
+#define T_XML_PI_START            151
+#define T_YIELD                   152
 
 /*
     Group masks
@@ -741,29 +598,15 @@ typedef int (*EcStreamGet)(struct EcStream *stream);
 
 
 typedef struct EcStream {
-    EjsString   *name;                          /* Stream name / filename */
-
-    EjsString   *currentLine;                   /* Current input source line */
-    int         lineNumber;                     /* Line number in source of current token */
-    int         column;                         /* Current reading position */
-
-    char        *lastLine;                      /* Save last currentLine */
-    int         lastColumn;                     /* Save last column length for putBack */
-
-    /*
-        In-memory copy if input source
-     */
-    char        *buf;                           /* Buffer holding source file */
-    char        *nextChar;                      /* Ptr to next input char */
-    char        *end;                           /* Ptr to one past end of buf */
-
-    bool        eof;                            /* At end of file */
-
-    int         flags;                          /* Input flags */
-    EcStreamGet gets;                           /* Stream get another characters */
-
     struct EcCompiler *compiler;                /* Compiler back reference */
-
+    EcLocation  loc;                            /* Source code debug info */
+    EcLocation  lastLoc;                        /* Location info for a prior line */
+    EcStreamGet getInput;                       /* Get more input callback */
+    MprChar     *buf;                           /* Buffer holding source file */
+    MprChar     *nextChar;                      /* Ptr to next input char */
+    MprChar     *end;                           /* Ptr to one past end of buf */
+    bool        eof;                            /* At end of file */
+    int         flags;                          /* Input flags */
 } EcStream;
 
 
@@ -776,7 +619,6 @@ typedef struct EcFileStream {
 } EcFileStream;
 
 
-
 /*
     Parse source code from a memory block
  */
@@ -785,72 +627,32 @@ typedef struct EcMemStream {
 } EcMemStream;
 
 
-
 /*
     Parse input from the console (or file if using ejsh)
  */
 typedef struct EcConsoleStream {
     EcStream    stream;
-    MprBuf      *inputBuffer;                   /* Stream input buffer */
 } EcConsoleStream;
 
 
-
 /*
-    Program input tokens
+    Program source input tokens
  */
 typedef struct EcToken {
+    MprChar     *text;                  /* Token text */
+    int         length;                 /* Length of text in characters */
+    int         size;                   /* Size of text in characters */
     int         tokenId;
     int         subId;
     int         groupMask;
-
-    //  MOB -- convert from uchar
-    //  MOB UNICODE EjsChar
-    uchar       *text;                          /* Token text */
-    int         textLen;                        /* Length of text */
-    int         textBufSize;                    /* Size of text buffer */
-
-    EjsObj      *number;                        /* Any numeric literals */
-
-    EjsString   *filename;
-    EjsString   *currentLine;
-    int         lineNumber;
-    int         column;
-    int         eol;                            /* At the end of the line */
-
-    EcStream    *stream;                        /* Current input stream */
-    struct EcToken *next;                       /* Putback linkage */
-} EcToken;
-
-
-
-/*
-    Input token parsing state. Includes putback stack for N lookahead.
- */
-typedef struct EcInput {
+    int         eol;                    /* At the end of the line */
+    EcLocation  loc;                    /* Source code debug info */
+    struct EcToken *next;               /* Putback and freelist linkage */
     EcStream    *stream;
-
-    int         state;                  /* Lexer state */
-
-    EcToken     *putBack;               /* List of putback tokens */
-    EcToken     *token;                 /* Current token */
-    EcToken     *freeTokens;            /* Free list of tokens */
-
-    char        *doc;                   /* Last doc token */
-
-    struct EcLexer *lexer;              /* Owning lexer */
-    struct EcInput *next;               /* List of input streams */
-    struct EcCompiler *compiler;        /* Reference to compiler */
-} EcInput;
-
-
-
-typedef struct EcLexer {
-    MprHashTable        *keywords;
-    EcInput             *input;         /* List of input streams */
-    struct EcCompiler   *compiler;      /* Owning compiler */
-} EcLexer;
-
+#if BLD_DEBUG
+    char        *name;                  /* Debug token name */
+#endif
+} EcToken;
 
 
 /*
@@ -868,118 +670,58 @@ typedef struct EcJump {
 
 
 /*
-    Structure for code generation buffers
- */
-typedef struct EcCodeGen {
-    MprBuf      *buf;                   /* Code generation buffer */
-    MprList     *jumps;                 /* Break/continues to patch for this code block */
-    MprList     *exceptions;            /* Exception handlers for this code block */
-    int         jumpKinds;              /* Kinds of jumps allowed */
-    int         breakMark;              /* Stack item counter for the target for break/continue stmts */
-    int         blockMark;              /* Lexical block counter for the target for break/continue stmts */
-    int         stackCount;             /* Current stack item counter */
-    int         blockCount;             /* Current block counter */
-} EcCodeGen;
-
-
-/*
     Current parse state. Each non-terminal production has its own state.
     Some state fields are inherited. We keep a linked list from EcCompiler.
  */
 typedef struct EcState {
-    /*
-        TODO - group into EcInheritableState and EcPrivateState. Then can use structure assignment.
-     */
-    /*
-        Inherited fields. These are inherited by new states.
-     */
-    //  OPT - compress into bit mask
-    int             inModule;               /* Inside a module declaration */
-    int             inClass;                /* Inside a class declaration */
-    int             inFunction;             /* Inside a function declaration */
-    int             inMethod;               /* Inside a method declaration */
-    int             captureBreak;           /* Capture break/continue inside a catch/finally block */
-    int             captureFinally;         /* Capture break/continue with a finally block */
-    int             blockIsMethod;          /* Current function is a method */
-    int             inHashExpression;       /* Inside a # expression */
-    int             inSettings;             /* Inside constructor settings */
+    uint            blockIsMethod    : 1;   /* Current function is a method */
+    uint            captureBreak     : 1;   /* Capture break/continue inside a catch/finally block */
+    uint            captureFinally   : 1;   /* Capture break/continue with a finally block */
+    uint            conditional      : 1;   /* In branching conditional */
+    uint            disabled         : 1;   /* Disable nodes below this scope */
+    uint            dupLeft          : 1;   /* Dup left side */
+    uint            inClass          : 1;   /* Inside a class declaration */
+    uint            inFunction       : 1;   /* Inside a function declaration */
+    uint            inHashExpression : 1;   /* Inside a # expression */
+    uint            inInterface      : 1;   /* Inside an interface */
+    uint            inMethod         : 1;   /* Inside a method declaration */
+    uint            inSettings       : 1;   /* Inside constructor settings */
+    uint            instanceCode     : 1;   /* Generating instance class code */
+    uint            needsValue       : 1;   /* Expression must yield a value */
+    uint            noin             : 1;   /* Don't allow "in" */
+    uint            onLeft           : 1;   /* On the left of an assignment */
+    uint            saveOnLeft       : 1;   /* Saved left of an assignment */
+    uint            strict           : 1;   /* Compiler checking mode: Strict, standard*/
 
-    /*
-        These are used when parsing
-     */
-    EjsModule       *currentModule;         /* Current open module definition */
-    EjsName         currentClassName;       /* Current open class name - Used only in ecParse */
-    EcNode          *currentClassNode;      /* Current open class */
-    EcNode          *currentFunctionNode;   /* Current open method */
-    int             noin;                   /* Don't allow "in" */
-    int             checksumOffset;         /* Location to write checksum when writing out modules */
-
-    //  TODO - rename
-    EcNode          *topVarBlockNode;       /* Top var block node */
-
-    /*
-        These are used when doing AST processing and code generation
-     */
-    EjsType         *currentClass;          /* Current open class */
-
-    //  TODO - should be using frame->currentMethod
-    EjsFunction     *currentFunction;       /* Current open method */
-
-    //  TODO - can this be derrived from currentMethod?
-    EjsString       *currentFunctionName;   /* Current method name */
-
-    EjsObj          *letBlock;              /* Block for local block scope declarations */
-    EjsObj          *varBlock;              /* Block for var declarations */
-    EjsObj          *optimizedLetBlock;     /* Optimized let block declarations - may equal ejs->global */
-    EcNode          *letBlockNode;
-
-    /*
-        The defaultNamespace comes from "use default namespace NAME" and is used for new declarations in the top level block
-        where the pragma was defined. ie. it is not passed into classes or functions (1 level deep).
-        If the defaultNamespace is not defined, then the namespace field is used.
-     */
-    EjsString       *nspace;                /* Namespace for declarations */
-    EjsString       *defaultNamespace;      /* Default namespace for new top level declarations. Does not propagate */
+    int             blockNestCount;         /* Count of blocks encountered. Used by ejs shell */
     int             namespaceCount;         /* Count of namespaces originally in block. Used to pop namespaces */
 
-    //  TODO - should change this to include functions also
+    EjsModule       *currentModule;         /* Current open module definition */
+    EjsType         *currentClass;          /* Current open class */
+    EjsName         currentClassName;       /* Current open class name */
+    EcNode          *currentClassNode;      /* Current open class */
+    EjsFunction     *currentFunction;       /* Current open method */
+    EcNode          *currentFunctionNode;   /* Current open method */
     EcNode          *currentObjectNode;     /* Left object in "." or "[" */
+    EcNode          *topVarBlockNode;       /* Top var block node */
 
-    int             preserveStackCount;     /* If reset needed, preserve this count of elements */
-    int             needsStackReset;        /* Stack must be reset before jumping */
-    int             needsValue;             /* Express must yield a value */
+    EjsBlock        *letBlock;              /* Block for local block scope declarations */
+    EjsBlock        *varBlock;              /* Block for var declarations */
+    EjsBlock        *optimizedLetBlock;     /* Optimized let block declarations - may equal ejs->global */
+    EcNode          *letBlockNode;          /* Node for the current let block */
 
-    //  MOB -- should rationalize and have only one of these. Parser needs onRight.
-    int             onLeft;                 /* On the left of an assignment */
+    EjsString       *nspace;                /* Namespace for declarations */
+    EjsString       *defaultNamespace;      /* Default namespace for new top level declarations. Does not propagate */
 
-    //  MOB -- unused
-    int             onRight;                /* On the right of an assignment */
-    int             dupLeft;                /* Dup left side */
-
-    int             saveOnLeft;             /* Saved left of an assignment */
-    int             conditional;            /* In branching conditional */
-    int             strict;                 /* Compiler checking mode: Strict, standard*/
-    int             inheritedTraits;        /* Inherited traits from current block */
-    bool            disabled;               /* Disable nodes below this scope */
-
-    struct EcCodeGen    *code;              /* Global and function code buffer */
-    struct EcCodeGen    *staticCodeBuf;     /* Class static level code generation buffer */
-    struct EcCodeGen    *instanceCodeBuf;   /* Class instance level code generation buffer */
-
-    MprList         *namespaces;            /* List of open namespaces */
-
-    /*
-        TODO refactor or source via some other way
-     */
-    int             inInterface;            /* Inside an interface */
-    int             instanceCode;           /* Generating instance class code */
+    EcCodeGen       *code;                  /* Global and function code buffer */
+    EcCodeGen       *staticCodeBuf;         /* Class static level code generation buffer */
+    EcCodeGen       *instanceCodeBuf;       /* Class instance level code generation buffer */
 
     struct EcState  *prev;                  /* State stack */
     struct EcState  *prevBlockState;        /* Block state stack */
     struct EcState  *breakState;            /* State for breakable blocks */
     struct EcState  *classState;            /* State for current class */
-    int             blockNestCount;         /* Count of blocks encountered. Used by ejs shell */
-    int             stateLevel;             /* State level counter */
+    struct EcState  *next;                  /* Next state when on free list */
 } EcState;
 
 
@@ -994,40 +736,28 @@ extern void     ecStartBreakableStatement(struct EcCompiler *cp, int kinds);
     Primary compiler control structure
  */
 typedef struct EcCompiler {
-    MprCtx      ctx;                        /* Mpr allocation context */
     /*
         Properties ordered to make debugging easier
      */
     int         phase;                      /* Ast processing phase */
     EcState     *state;                     /* Current state */
+    EcToken     *peekToken;                 /* Peek ahead token */
+    EcToken     *token;                     /* Current input token */
 
-#if BLD_DEBUG
-    char        *currentLine;               /* Current input source code line */
-#endif
-
-    EcToken     *peekToken;                 /* Alias for peek ahead */
-    EcToken     *token;                     /* Alias for lexer->input->token */
-
-#if BLD_DEBUG
-    char        *tokenName;                 /* Name of last consumed token */
-    char        *peekTokenName;             /* Name of lookahead token */
-#endif
+    /*  Lexer */
+    MprHashTable *keywords;
+    EcStream    *stream;
+    EcToken     *putback;                   /* List of active putback tokens */
+    EcState     *freeStates;                /* Free list of states */
+    EcToken     *freeTokens;                /* Free list of tokens */
+    EjsString   *docToken;                  /* Last doc token */
 
     EcState     *fileState;                 /* Top level state for the file */
-#if UNUSED
-    EcState     *classState;                /* State for the current class - used in parse */
-#endif
 //  MOB -- these are risky and should be moved into state. A nested block, directive class etc willl modify
     EcState     *directiveState;            /* State for the current directive - used in parse and CodeGen */
     EcState     *blockState;                /* State for the current block */
 
     EjsLookup   lookup;                     /* Lookup residuals */
-
-    int         currentLineNumber;          /* Current input source line number */
-    cchar       *currentFilename;           /* Current input file name */
-
-    EcLexer     *lexer;                     /* Lexical analyser */
-    EcInput     *input;                     /* Alias for lexer->input */
     EjsService  *vmService;                 /* VM runtime */
     Ejs         *ejs;                       /* Interpreter instance */
 
@@ -1039,7 +769,6 @@ typedef struct EcCompiler {
     bool        doc;                        /* Include documentation strings in output */
     char        *extraFiles;                /* Extra source files to compile */
 
-    //  MOB -- convert to EjsArray
     MprList     *require;                   /* Required list of modules to pre-load */
     bool        interactive;                /* Interactive use (ejsh) */
     bool        merge;                      /* Merge all dependent modules */
@@ -1060,13 +789,12 @@ typedef struct EcCompiler {
     int         strip;                      /* Strip debug symbols */
     int         tabWidth;                   /* For error reporting "^" */
 
-    EjsArray    *modules;                   /* List of modules to process */
-    EjsArray    *fixups;                    /* Type reference fixups */
+    MprList     *modules;                   /* List of modules to process */
+    MprList     *fixups;                    /* Type reference fixups */
 
     char        *errorMsg;                  /* Aggregated error messages */
     int         error;                      /* Unresolved parse error */
     int         fatalError;                 /* Any a fatal error - Can't continue */
-    int         memError;                   /* Memory error */
     int         errorCount;                 /* Count of all errors */
     int         warningCount;               /* Count of all warnings */
     int         nextSeqno;                  /* Node sequence numbers */
@@ -1075,13 +803,13 @@ typedef struct EcCompiler {
     /*
         TODO - aggregate these into flags
      */
-    int         peeking;                    /* Parser is doing peek() */
     int         lastOpcode;                 /* Last opcode encoded */
     int         uid;                        /* Unique identifier generator */
 } EcCompiler;
 
 /********************************** Prototypes *******************************/
 
+//  MOB -- reorder
 extern int          ecAddModule(EcCompiler *cp, EjsModule *mp);
 extern EcNode       *ecAppendNode(EcNode *np, EcNode *child);
 extern int          ecAstFixup(EcCompiler *cp, struct EcNode *np);
@@ -1089,14 +817,14 @@ extern EcNode       *ecChangeNode(EcCompiler *cp, EcNode *np, EcNode *oldNode, E
 extern void         ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *up);
 extern int          ecCodeGen(EcCompiler *cp, int argc, struct EcNode **nodes);
 extern int          ecCompile(EcCompiler *cp, int argc, char **path);
-extern EcLexer      *ecCreateLexer(EcCompiler *cp);
-EcCompiler          *ecCreateCompiler(struct Ejs *ejs, int flags);
+extern EcCompiler   *ecCreateCompiler(struct Ejs *ejs, int flags);
+extern void         ecInitLexer(EcCompiler *cp);
 extern EcNode       *ecCreateNode(EcCompiler *cp, int kind);
-extern void         ecFreeToken(EcInput *input, EcToken *token);
+extern void         ecFreeToken(EcCompiler *cp, EcToken *token);
 extern char         *ecGetErrorMessage(EcCompiler *cp);
-extern char         *ecGetInputStreamName(EcLexer *lp);
-extern int          ecGetToken(EcInput *input);
-extern int          ecGetRegExpToken(EcInput *input, cchar *prefix);
+extern EjsString    *ecGetInputStreamName(EcCompiler *lp);
+extern int          ecGetToken(EcCompiler *cp);
+extern int          ecGetRegExpToken(EcCompiler *cp, MprChar *prefix);
 extern EcNode       *ecLinkNode(EcNode *np, EcNode *child);
 
 extern EjsModule    *ecLookupModule(EcCompiler *cp, EjsString *name, int minVersion, int maxVersion);
@@ -1104,33 +832,39 @@ extern int          ecLookupScope(EcCompiler *cp, EjsName name);
 extern int          ecLookupVar(EcCompiler *cp, EjsObj *vp, EjsName name);
 extern EcNode       *ecParseWarning(EcCompiler *cp, char *fmt, ...);
 extern int          ecPeekToken(EcCompiler *cp);
-extern int          ecPutSpecificToken(EcInput *input, EcToken *token);
-extern int          ecPutToken(EcInput *input);
-extern void         ecSetError(EcCompiler *cp, cchar *severity, EjsString *filename, int lineNumber,
-                        EjsString *currentLine, int column, char *msg);
+extern int          ecPutSpecificToken(EcCompiler *cp, EcToken *token);
+extern int          ecPutToken(EcCompiler *cp);
+extern void         ecError(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, ...);
+extern void         ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_list args);
 extern void         ecResetInput(EcCompiler *cp);
 extern EcNode       *ecResetError(EcCompiler *cp, EcNode *np, bool eatInput);
 extern int          ecRemoveModule(EcCompiler *cp, EjsModule *mp);
 extern void         ecResetParser(EcCompiler *cp);
 extern int          ecResetModuleList(EcCompiler *cp);
-extern int          ecOpenConsoleStream(EcCompiler *cp, EcLexer *lp, EcStreamGet gets);
-extern int          ecOpenFileStream(EcCompiler *cp, EcLexer *input, cchar *path);
-extern int          ecOpenMemoryStream(EcCompiler *cp, EcLexer *input, const uchar *buf, int len);
-extern void         ecCloseStream(EcLexer *input);
+extern int          ecOpenConsoleStream(EcCompiler *cp, EcStreamGet gets, cchar *contents);
+extern int          ecOpenFileStream(EcCompiler *cp, cchar *path);
+extern int          ecOpenMemoryStream(EcCompiler *cp, cchar *contents, size_t len);
+extern void         ecCloseStream(EcCompiler *cp);
 extern void         ecSetOptimizeLevel(EcCompiler *cp, int level);
 extern void         ecSetWarnLevel(EcCompiler *cp, int level);
 extern void         ecSetStrictMode(EcCompiler *cp, int on);
 extern void         ecSetTabWidth(EcCompiler *cp, int width);
 extern void         ecSetOutputFile(EcCompiler *cp, cchar *outputFile);
 extern void         ecSetCertFile(EcCompiler *cp, cchar *certFile);
-extern EcToken      *ecTakeToken(EcInput *input);
+extern EcToken      *ecTakeToken(EcCompiler *cp);
 extern int          ecAstProcess(struct EcCompiler *cp, int argc,  struct EcNode **nodes);
+extern void         *ecCreateStream(EcCompiler *cp, size_t size, cchar *filename, void *manager);
+extern void         ecSetStreamBuf(EcStream *sp, cchar *contents, size_t len);
+extern int          ecParseFile(EcCompiler *cp, char *path, EcNode **nodes);
+extern void         ecManageStream(EcStream *sp, int flags);
+extern void         ecMarkLocation(EcLocation *loc);
+
 
 /*
     Module file creation routines.
  */
-extern void     ecAddFunctionConstants(EcCompiler *cp, EjsObj *obj, int slotNum);
-extern void     ecAddConstants(EcCompiler *cp, EjsObj *obj);
+extern void     ecAddFunctionConstants(EcCompiler *cp, EjsPot *obj, int slotNum);
+extern void     ecAddConstants(EcCompiler *cp, EjsAny *obj);
 extern int      ecAddStringConstant(EcCompiler *cp, EjsString *sp);
 extern int      ecAddCStringConstant(EcCompiler *cp, cchar *str);
 extern int      ecAddNameConstant(EcCompiler *cp, EjsName qname);
@@ -1143,19 +877,20 @@ extern int      ecCreateModuleSection(EcCompiler *cp);
 /*
     Encoding emitter routines
  */
-extern int      ecEncodeBlock(EcCompiler *cp, uchar *buf, int len);
-extern int      ecEncodeByte(EcCompiler *cp, int value);
-extern int      ecEncodeUint(EcCompiler *cp, int number);
-extern int      ecEncodeNumber(EcCompiler *cp, int64 number);
-extern int      ecEncodeName(EcCompiler *cp, EjsName qname);
-extern int      ecEncodeOpcode(EcCompiler *cp, int value);
-extern int      ecEncodeCString(EcCompiler *cp, cchar *str);
-extern int      ecEncodeString(EcCompiler *cp, EjsString *sp);
-extern int      ecEncodeGlobal(EcCompiler *cp, EjsObj *obj, EjsName qname);
-extern int      ecEncodeWord(EcCompiler *cp, int value);
-extern int      ecEncodeDouble(EcCompiler *cp, double value);
-extern int      ecEncodeByteAtPos(EcCompiler *cp, uchar *pos, int value);
-extern int      ecEncodeWordAtPos(EcCompiler *cp, uchar *pos, int value);
+extern void      ecEncodeBlock(EcCompiler *cp, cuchar *buf, int len);
+extern void      ecEncodeByte(EcCompiler *cp, int value);
+extern void      ecEncodeByteAtPos(EcCompiler *cp, int offset, int value);
+extern void      ecEncodeConst(EcCompiler *cp, EjsString *sp);
+extern void      ecEncodeDouble(EcCompiler *cp, double value);
+extern void      ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname);
+extern void      ecEncodeInt32(EcCompiler *cp, int value);
+extern void      ecEncodeInt32AtPos(EcCompiler *cp, int offset, int value);
+extern void      ecEncodeNum(EcCompiler *cp, int64 number);
+extern void      ecEncodeName(EcCompiler *cp, EjsName qname);
+extern void      ecEncodeMulti(EcCompiler *cp, cchar *str);
+extern void      ecEncodeWideAsMulti(EcCompiler *cp, MprChar *str);
+extern void      ecEncodeOpcode(EcCompiler *cp, int value);
+
 extern void     ecCopyCode(EcCompiler *cp, uchar *pos, int size, int dist);
 extern uint     ecGetCodeOffset(EcCompiler *cp);
 extern int      ecGetCodeLen(EcCompiler *cp, uchar *mark);

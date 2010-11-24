@@ -31,14 +31,8 @@ module ejs {
             The quota of work to perform before the GC will be invoked. Set to the number of work units that will 
             trigger the GC to run. This roughly corresponds to the number of allocated objects.
          */
-        native static function get workQuota(): Number
-
-        /**
-            @duplicate GC.workQuota
-            @param quota The number of work units that will trigger the GC to run. This roughly corresponds to the number
-            of allocated objects.
-         */
-        native static function set workQuota(quota: Number): Void
+        native static function get newQuota(): Number
+        native static function set newQuota(quota: Number): Void
 
         /**
             Run the garbage collector and reclaim memory allocated to objects and properties that are no longer reachable. 

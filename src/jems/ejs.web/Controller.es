@@ -143,24 +143,13 @@ module ejs.web {
             params.action = actionName
             runCheckers(_beforeCheckers)
             let response
-//  MOB - temp
-// use namespace action
             if (!request.finalized && request.autoFinalizing) {
-// print("NS \"" + ns + "\" name " + actionName)
-// breakpoint()
-// print("PRESENT " + this.(ns)::[actionName])
-
-//  MOB -- this.(ns)::[actionName]    appears to be binding from the left
-//  this.(ns
-                var x = (ns)::[actionName]
                 if (!(ns)::[actionName]) {
                     if (!viewExists(actionName)) {
-                        response = this.(ns)::[actionName = "missing"]()
+                        response = "action"::missing()
                     }
                 } else {
-// breakpoint()
                     response = (ns)::[actionName]()
-// print("RESP " + response)
                 }
                 if (response && !response.body) {
                     throw "Response object is missing a \"body\""
@@ -244,8 +233,9 @@ module ejs.web {
         /** 
             Missing action method. This method will be called if the requested action routine does not exist.
          */
-        action function missing(): Void {
-            throw "Missing Action: \"" + params.action + "\" could not be found for controller \"" + controllerName + "\""
+        action function missing() {
+            throw "Missing Action: " + params.action + ": could not be found for controller: " + controllerName
+            return ""
         }
 
         /** @duplicate ejs.web::Request.notify */
@@ -330,6 +320,7 @@ module ejs.web {
          */
         function writePartialTemplate(path: Path, options: Object = {}): Void { 
             request.filename = path
+            request.setHeader("Content-Type", "text/html")
             if (options.layout === undefined) {
                 options.layout = Path(config.directories.layouts).join(config.web.view.layout)
             }
@@ -367,6 +358,7 @@ module ejs.web {
             log.debug(4, "writeTemplate: \"" + path + "\"")
             let saveFilename = request.filename
             request.filename = path
+            request.setHeader("Content-Type", "text/html")
             if (options.layout === undefined) {
                 options.layout = config.directories.layouts.join(config.web.view.layout)
             }
@@ -384,6 +376,7 @@ module ejs.web {
          */
         function writeTemplateLiteral(page: String, options: Object = {}): Void {
             log.debug(4, "writeTemplateLiteral")
+            request.setHeader("Content-Type", "text/html")
             if (options.layout === undefined) {
                 options.layout = config.directories.layouts.join(config.web.view.layout)
             }
@@ -427,7 +420,7 @@ module ejs.web {
          */
         private function openDatabase(request: Request) {
             let dbconfig = config.database
-            let dbclass = dbconfig["class"]
+            let dbclass = dbconfig["dbclass"]
             let options = dbconfig[config.mode]
             if (dbclass) {
                 if (dbconfig.module && !global[dbclass]) {

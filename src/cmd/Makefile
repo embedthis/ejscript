@@ -6,24 +6,17 @@
 
 include 		.makedep
 
-ifeq ($(BUILDING_CROSS),1)
-	ifeq ($(BLD_FEATURE_EJS_CROSS_COMPILER),1)
-		TARGETS		+= $(BLD_BIN_DIR)/ejs$(BLD_EXE) 
-		TARGETS		+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
-	endif
-else
-	TARGETS		+= $(BLD_BIN_DIR)/ejs$(BLD_EXE) 
-	TARGETS		+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
-endif
+TOOLS		+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
+TOOLS		+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) 
+TARGETS		+= $(BLD_BIN_DIR)/ejs$(BLD_EXE) 
 
-ifeq	($(BUILD_NATIVE_OR_COMPLETE_CROSS),1)
-	TARGETS		+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) 
-endif
 ifeq	($(BLD_CC_EDITLINE),1)
 	LIBS		+= edit curses
 endif
 
-compileExtra: $(TARGETS)
+compileExtra: tools $(TARGETS)
+
+tools: $(TOOLS)
 
 EJS_OBJECTS		+= $(BLD_OBJ_DIR)/ejs$(BLD_OBJ)
 ifeq ($(BLD_FEATURE_ROMFS),1)

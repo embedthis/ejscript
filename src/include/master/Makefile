@@ -7,7 +7,7 @@
 include 		.makedep
 
 import:
-	@for f in *slots* ; do \
+	for f in *slots* ; do \
 		echo cp ../$$f . ; \
 		cp ../$$f . ; \
 	done

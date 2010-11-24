@@ -35,14 +35,14 @@ MAIN(ejsmodMain, int argc, char **argv)
     /*
         Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
      */
-    mpr = mprCreate(argc, argv, ejsMemoryFailure);
+    mpr = mprCreate(argc, argv, NULL);
     mprSetAppName(mpr, argv[0], 0, 0);
 
     /*
         Allocate the primary control structure
      */
-    if ((mp = mprAllocCtx(mpr, sizeof(EjsMod))) == NULL) {
-        return MPR_ERR_NO_MEMORY;
+    if ((mp = mprAlloc(mpr, sizeof(EjsMod))) == NULL) {
+        return MPR_ERR_MEMORY;
     }
     mp->lstRecords = mprCreateList(mp);
     mp->blocks = mprCreateList(mp);
@@ -118,11 +118,11 @@ MAIN(ejsmodMain, int argc, char **argv)
                 if (requiredModules == 0) {
                     requiredModules = mprCreateList(mpr);
                 }
-                modules = mprStrdup(mpr, argv[++nextArg]);
-                name = mprStrTok(modules, " \t", &tok);
+                modules = sclone(mpr, argv[++nextArg]);
+                name = stok(modules, " \t", &tok);
                 while (name != NULL) {
                     require(requiredModules, name);
-                    name = mprStrTok(NULL, " \t", &tok);
+                    name = stok(NULL, " \t", &tok);
                 }
             }
 
@@ -176,7 +176,7 @@ MAIN(ejsmodMain, int argc, char **argv)
      */
     ejsService = ejsCreateService(mpr); 
     if (ejsService == 0) {
-        return MPR_ERR_NO_MEMORY;
+        return MPR_ERR_MEMORY;
     }
     flags = EJS_FLAG_NO_INIT;
     if (mp->html || mp->xml) {
@@ -184,7 +184,7 @@ MAIN(ejsmodMain, int argc, char **argv)
     }
     ejs = ejsCreateVm(ejsService, searchPath, requiredModules, 0, NULL, flags);
     if (ejs == 0) {
-        return MPR_ERR_NO_MEMORY;
+        return MPR_ERR_MEMORY;
     }
     mp->ejs = ejs;
 
@@ -236,31 +236,31 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
         For each module on the command line
      */
     for (i = 0; i < argc && !mp->fatalError; i++) {
-        moduleCount = ejsGetLength(ejs, ejs->modules);
+        moduleCount = mprGetListCount(ejs->modules);
         ejs->userData = mp;
         if (!mprPathExists(mp, argv[i], R_OK)) {
             mprError(mp, "Can't access module %s", argv[i]);
             return EJS_ERR;
         }
-        if ((ejsLoadModule(ejs, ejsCreateStringFromCS(ejs, argv[i]), -1, -1, EJS_LOADER_NO_INIT)) < 0) {
+        if ((ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, argv[i]), -1, -1, EJS_LOADER_NO_INIT)) < 0) {
             ejs->loaderCallback = NULL;
             mprError(mp, "Can't load module %s\n%s", argv[i], ejsGetErrorMsg(ejs, 0));
             return EJS_ERR;
         }
         if (mp->genSlots) {
-            for (next = moduleCount; (module = ejsGetNextItem(ejs, ejs->modules, &next)) != 0; ) {
+            for (next = moduleCount; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
                 emCreateSlotFiles(mp, module, outfile);
             }
         }
         if (mp->depends) {
             depends = mprCreateList(ejs);
-            for (next = moduleCount; (module = ejsGetNextItem(ejs, ejs->modules, &next)) != 0; ) {
+            for (next = moduleCount; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
                 getDepends(ejs, depends, module);
             }
             count = mprGetListCount(depends);
             for (next = 1; (module = mprGetNextItem(depends, &next)) != 0; ) {
                 int version = module->version;
-                mprPrintf(ejs, "%S-%d.%d.%d%s", module->name, EJS_MAJOR(version), EJS_MINOR(version), EJS_PATCH(version),
+                mprPrintf(ejs, "%@-%d.%d.%d%s", module->name, EJS_MAJOR(version), EJS_MINOR(version), EJS_PATCH(version),
                     (next >= count) ? "" : " ");
             }
             printf("\n");
@@ -283,7 +283,7 @@ static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp)
     if (mprLookupItem(list, mp) < 0) {
         mprAddItem(list, mp);
     }
-    for (next = 0; (module = ejsGetNextItem(ejs, mp->dependencies, &next)) != 0; ) {
+    for (next = 0; (module = mprGetNextItem(mp->dependencies, &next)) != 0; ) {
         if (mprLookupItem(list, module) < 0) {
             mprAddItem(list, module);
         }
@@ -337,21 +337,10 @@ static void logger(MprCtx ctx, int flags, int level, const char *msg)
 
     if (flags & MPR_LOG_SRC) {
         mprFprintf(file, "%s: %d: %s\n", prefix, level, msg);
-
     } else if (flags & MPR_ERROR_SRC) {
-        /*
-            Use static printing to avoid malloc when the messages are small.
-            This is important for memory allocation errors.
-         */
-        if (strlen(msg) < (MPR_MAX_STRING - 32)) {
-            mprStaticPrintf(file, "%s: Error: %s\n", prefix, msg);
-        } else {
-            mprFprintf(file, "%s: Error: %s\n", prefix, msg);
-        }
-
+        mprFprintf(file, "%s: Error: %s\n", prefix, msg);
     } else if (flags & MPR_FATAL_SRC) {
         mprFprintf(file, "%s: Fatal: %s\n", prefix, msg);
-        
     } else if (flags & MPR_RAW) {
         mprFprintf(file, "%s", msg);
     }

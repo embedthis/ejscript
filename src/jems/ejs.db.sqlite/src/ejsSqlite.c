@@ -82,7 +82,7 @@ static int sqldbDestructor(EjsSqlite **db);
 
     function Sqlite(options: Object)
  */
-static EjsVar *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
+static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 {
     sqlite3         *sdb;
     EjsObj          *options;
@@ -93,7 +93,7 @@ static EjsVar *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **arg
     db->ejs = ejs;
     options = argv[0];
     
-    if ((db->ctx = mprAllocCtx(ejs, 0)) == NULL) {
+    if ((db->ctx = mprAlloc(ejs, 0)) == NULL) {
         return 0;
     }
     SET_CTX(db->ctx);
@@ -114,13 +114,13 @@ static EjsVar *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **arg
     /*
         MOB - this will create a database if it doesn't exist. Should have more control over creating databases.
      */
-    if (ejsIsPath(ejs, options) || ejsIsString(options)) {
-        path = ejsGetString(ejs, ejsToString(ejs, options));
+    if (ejsIsPath(ejs, options) || ejsIsString(ejs, options)) {
+        path = ejsToMulti(ejs, ejsToString(ejs, options));
     } else {
-        path = ejsGetString(ejs, ejsToString(ejs, ejsGetPropertyByName(ejs, options, ejsName(&qname, "", "name"))));
+        path = ejsToMulti(ejs, ejsToString(ejs, ejsGetPropertyByName(ejs, options, EN("name"))));
     }
     if (strncmp(path, "memory://", 9) == 0) {
-        sdb = (sqlite3*) (size_t) mprAtoi(&path[9], 10);
+        sdb = (sqlite3*) (size_t) stoi(&path[9], 10, NULL);
 
     } else {
         if (strncmp(path, "file://", 7) == 0) {
@@ -164,7 +164,7 @@ static int sqldbDestructor(EjsSqlite **dbp)
 /*
     function close(): Void
  */
-static int sqliteClose(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
+static int sqliteClose(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 {
     mprAssert(ejs);
     mprAssert(db);
@@ -183,13 +183,13 @@ static int sqliteClose(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
 
     Will support multiple sql cmds but will only return one result table.
  */
-static EjsVar *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
+static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 {
     sqlite3         *sdb;
     sqlite3_stmt    *stmt;
     EjsArray        *result;
     EjsObj       *row;
-    EjsVar          *svalue;
+    EjsObj          *svalue;
     EjsName         qname;
     char            *tableName;
     cchar           *tail, *colName, *cmd, *value, *defaultTableName;
@@ -199,7 +199,7 @@ static EjsVar *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
     mprAssert(db);
 
     SET_CTX(db->ctx);
-    cmd = ejsGetString(ejs, argv[0]);
+    cmd = ejsToMulti(ejs, argv[0]);
     retries = 0;
     sdb = db->sdb;
     if (sdb == 0) {
@@ -229,12 +229,12 @@ static EjsVar *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
         ncol = sqlite3_column_count(stmt);
         for (rowNum = 0; ; rowNum++) {
             if ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
-                row = ejsCreateSimpleObject(ejs);
+                row = ejsCreateEmptyPot(ejs);
                 if (row == 0) {
                     sqlite3_finalize(stmt);
                     return 0;
                 }
-                if (ejsSetProperty(ejs, (EjsVar*) result, rowNum, (EjsVar*) row) < 0) {
+                if (ejsSetProperty(ejs, (EjsObj*) result, rowNum, (EjsObj*) row) < 0) {
                     ejsThrowIOError(ejs, "Can't update query result set");
                     return 0;
                 }
@@ -251,13 +251,13 @@ static EjsVar *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
                     value = (cchar*) sqlite3_column_text(stmt, i);
 
                     if (tableName == 0 || strcmp(tableName, defaultTableName) == 0) {
-                        ejsName(&qname, EJS_EMPTY_NAMESPACE, mprStrdup(row, colName));
+                        qname = EN(colName);
                     } else {
                         /*
                             Append the table name for columns from foreign tables. Convert to camel case (tableColumn)
                          */
                         len = strlen(tableName) + 1;
-                        tableName = mprStrcat(row, -1, "_", tableName, colName, NULL);
+                        tableName = sjoin(row, NULL, tableName, "_", colName, NULL);
                         if (len > 3 && tableName[len - 1] == 's' && tableName[len - 2] == 'e' && tableName[len - 3] == 'i') {
                             tableName[len - 3] = 'y';
                             strcpy(&tableName[len - 2], colName);
@@ -271,11 +271,11 @@ static EjsVar *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
                         }
                         // tableName[0] = tolower((int) tableName[0]);
                         tableName[len] = toupper((int) tableName[len]);
-                        ejsName(&qname, EJS_EMPTY_NAMESPACE, tableName);
+                        qname = EN(tableName);
                     }
-                    if (ejsLookupProperty(ejs, (EjsVar*) row, &qname) < 0) {
-                        svalue = (EjsVar*) ejsCreateString(ejs, mprStrdup(row, value));
-                        if (ejsSetPropertyByName(ejs, (EjsVar*) row, &qname, svalue) < 0) {
+                    if (ejsLookupProperty(ejs, (EjsObj*) row, qname) < 0) {
+                        svalue = (EjsObj*) ejsCreateStringFromMulti(ejs, value, strlen(value));
+                        if (ejsSetPropertyByName(ejs, (EjsObj*) row, qname, svalue) < 0) {
                             ejsThrowIOError(ejs, "Can't update query result set name");
                             return 0;
                         }
@@ -308,22 +308,9 @@ static EjsVar *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsVar **argv)
         }
         return 0;
     }
-    return (EjsVar*) result;
+    return (EjsObj*) result;
 }
 
-
-/*
-    This will be called by the GC when an instance is no-longer in use. It will always be called.
- */
-static void destroySqliteDb(Ejs *ejs, EjsSqlite *db)
-{
-    mprAssert(db);
-
-    if (db->sdb) {
-        sqliteClose(ejs, db, 0, 0);
-    }
-    ejsFreeVar(ejs, (EjsVar*) db, -1);
-}
 
 /*********************************** Malloc ********************************/
 #if MAP_ALLOC
@@ -464,16 +451,24 @@ struct sqlite3_mutex_methods mut = {
 
 /*********************************** Factory *******************************/
 
+static int manageSqlite(EjsSqlite *db, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+    } else if (flags & MPR_MANAGE_FREE) {
+        if (db->sdb) {
+            sqliteClose(db->ejs, db, 0, 0);
+        }
+    }
+    return 0;
+}
+
+
 static int configureSqliteTypes(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
     
-    type = (EjsType*) ejsConfigureNativeType(ejs, "ejs.db", "Sqlite", sizeof(EjsSqlite));
-    type->needFinalize = 1;
-
-    type->helpers.destroy = (EjsDestroyHelper) destroySqliteDb;
-
+    type = (EjsType*) ejsConfigureNativeType(ejs, N("ejs.db", "Sqlite"), sizeof(EjsSqlite), manageSqlite, EJS_POT_HELPERS);
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, (EjsProc) sqliteConstructor);
     ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_close, (EjsProc) sqliteClose);
@@ -506,9 +501,10 @@ static int configureSqliteTypes(Ejs *ejs)
 }
 
 
-int ejs_db_sqlite_Init(MprCtx ctx)
+int ejs_db_sqlite_Init(Ejs *ejs)
 {
-    return ejsAddNativeModule(ctx, "ejs.db.sqlite", configureSqliteTypes, _ES_CHECKSUM_ejs_db_sqlite, EJS_LOADER_ETERNAL);
+    return ejsAddNativeModule(ejs, ejsCreateStringFromAsc(ejs, "ejs.db.sqlite"), configureSqliteTypes, 
+        _ES_CHECKSUM_ejs_db_sqlite, EJS_LOADER_ETERNAL);
 }
 
 #endif /* BLD_FEATURE_SQLITE */

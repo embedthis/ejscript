@@ -50,7 +50,6 @@ static void *opcodeJump[] = {
     &&EJS_OP_COMPARE_TRUE,
     &&EJS_OP_COMPARE_UNDEFINED,
     &&EJS_OP_COMPARE_ZERO,
-    &&EJS_OP_DEBUG,
     &&EJS_OP_DEFINE_CLASS,
     &&EJS_OP_DEFINE_FUNCTION,
     &&EJS_OP_DELETE_NAME_EXPR,

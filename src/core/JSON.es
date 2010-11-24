@@ -35,9 +35,10 @@ module ejs {
         /**
             Convert an object into a string JSON representation
             @param obj Object to stringify
-            @param replacer an optional parameter that determines how object values are stringified for objects without a 
-                toJSON method. It can be a function or an array.
-                NOTE: The replacer function is not yet implemented.
+            @param replacer an optional function that determines how object values are stringified for objects without a 
+                toJSON method. The replace has the following signature:
+
+                function replacer(key: String, value: String): String
             @param indent optional parameter for the level of indentation of nested structures. If omitted, 
                 the text will be packed without whitespace. If a number, it specifies the number of spaces 
                 to indent at each level. If a string, it contains the characters used to indent at each level.
@@ -80,7 +81,9 @@ module ejs {
         @option pretty Boolean determining if a human readable output is used with new lines after each property. 
             Default is false.
         @option replacer an optional parameter that determines how object values are stringified for objects without a 
-            toJSON method. It can be a function or an array.
+            toJSON method.  The replace has the following signature:
+
+                function replacer(key: String, value: String): String
         @return This function returns a string containing an object literal that can be used to reinstantiate an object.
         @throws TypeError If the object could not be converted to a string.
         @spec ejs

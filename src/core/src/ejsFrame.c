@@ -10,40 +10,35 @@
 
 /******************************************************************************/
 
-#if UNUSED
-static void destroyFrame(Ejs *ejs, EjsFrame *frame)
+static void manageFrame(EjsFrame *frame, int flags)
 {
-    //  MOB -- does this now mean that the last arg can be deleted?
-    ejsFreeVar(ejs, (EjsObj*) frame, ES_Frame);
-}
-#endif
-
-
-static void markFrame(Ejs *ejs, EjsFrame *frame)
-{
-    ejsMarkFunction(ejs, (EjsFunction*) frame);
-    ejsMarkFunction(ejs, frame->orig);
-    if (frame->caller) {
-        ejsMark(ejs, (EjsObj*) frame->caller);
+    if (frame) {
+        if (flags & MPR_MANAGE_MARK) {
+            ejsManageFunction((EjsFunction*) frame, flags);
+            ejsManageFunction(frame->orig, flags);
+            manageFrame(frame->caller, flags);
+            mprMark(((EjsObj*) frame)->type);
+            mprMark(frame->loc.source);
+            mprMark(frame->loc.filename);
+            /* Marking the stack is done in ejsGarbage.c:mark() */
+        }
     }
-    /* Marking the stack is done in ejsGarbage.c:mark() */
 }
 
 
-/*************************************************************************************************************/
-
-static EjsFrame *allocFrame(Ejs *ejs, int numSlots)
+static EjsFrame *allocFrame(Ejs *ejs, int numProp)
 {
     EjsObj      *obj;
     uint        size;
 
     mprAssert(ejs);
 
-    size = numSlots * sizeof(EjsSlot) + sizeof(EjsFrame);
-    if ((obj = (EjsObj*) ejsAlloc(ejs, size)) == 0) {
+    size = sizeof(EjsFrame) + sizeof(EjsProperties) + numProp * sizeof(EjsSlot);
+    if ((obj = mprAllocBlock(ejs, size, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
+    mprSetManager(obj, manageFrame);
     TYPE(obj) = ejs->frameType;
     return (EjsFrame*) obj;
 }
@@ -62,48 +57,44 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
     }
     fp->orig = fun;
     fp->function.name = fun->name;
-    ejsSetDebugName(fp, fun->name);
-    fp->function.block.obj.isFrame = 1;
+    fp->function.block.pot.isBlock = 1;
+    fp->function.block.pot.isFrame = 1;
     fp->function.isConstructor = fun->isConstructor;
     fp->function.isInitializer = fun->isInitializer;
     fp->function.staticMethod = fun->staticMethod;
+    ejsSetName(fp, MPR_NAME("frame"));
     return fp;
 }
 
 
-EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EV *thisObj, int argc, EV **argv)
+EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     EjsFrame    *frame;
-    EjsObj      *obj, *activation;
-    int         numSlots, sizeSlots, i;
+    EjsPot      *obj, *activation;
+    int         numProp, size, i;
 
     activation = fun->activation;
-    numSlots = (activation) ? activation->numSlots : 0;
-    sizeSlots = max(numSlots, EJS_MIN_FRAME_SLOTS);
+    numProp = (activation) ? activation->numProp : 0;
+    size = max(numProp, EJS_MIN_FRAME_SLOTS);
 
-#if UNUSED && OPT
-    if (sizeSlots > EJS_MIN_FRAME_SLOTS || (frame = (EjsFrame*) ejsAllocPooled(ejs, ES_Frame)) == 0) {
-        frame = allocFrame(ejs, sizeSlots);
-    }
-#else
-    frame = allocFrame(ejs, sizeSlots);
-#endif
-    obj = (EjsObj*) frame;
-    obj->slots = (EjsSlot*) &(((char*) obj)[sizeof(EjsFrame)]);
-    obj->sizeSlots = sizeSlots;
-    obj->numSlots = numSlots;
+    frame = allocFrame(ejs, size);
+    obj = (EjsPot*) frame;
+    obj->properties = (EjsProperties*) &(((char*) obj)[sizeof(EjsFrame)]);
+    obj->properties->size = size;
+    obj->numProp = numProp;
     if (activation) {
         //  MOB -- could the function be setup as the prototype and thus avoid doing this?
         //  MOB -- assumes that the function is sealed
-        memcpy(obj->slots, activation->slots, numSlots * sizeof(EjsSlot));
-        ejsMakeObjHash(ejs, obj);
+        memcpy(obj->properties->slots, activation->properties->slots, numProp * sizeof(EjsSlot));
+        ejsMakeHash(ejs, obj);
     }
-    ejsZeroSlots(ejs, &obj->slots[numSlots], sizeSlots - numSlots);
+    ejsZeroSlots(ejs, &obj->properties->slots[numProp], size - numProp);
     DYNAMIC(obj) = 1;
 
     frame->orig = fun;
     frame->function.name = fun->name;
-    frame->function.block.obj.isFrame = 1;
+    frame->function.block.pot.isBlock = 1;
+    frame->function.block.pot.isFrame = 1;
     frame->function.block.namespaces = fun->block.namespaces;
     frame->function.block.scope = fun->block.scope;
     frame->function.block.prev = fun->block.prev;
@@ -134,7 +125,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EV *thisObj, int argc, EV *
     }
     frame->function.resultType = fun->resultType;
     frame->function.body = fun->body;
-    frame->pc = fun->body.code.byteCode;
+    frame->pc = fun->body.code->byteCode;
     mprAssert(frame->pc);
 
     if (argc > 0) {
@@ -144,27 +135,24 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EV *thisObj, int argc, EV *
             return 0;
         }
         for (i = 0; i < argc; i++) {
-            frame->function.block.obj.slots[i].value.ref = argv[i];
+            frame->function.block.pot.properties->slots[i].value.ref = argv[i];
         }
     }
-    ejsCopyDebugName(frame, fun);
+    ejsCopyName(frame, fun);
+#if BLD_DEBUG
+    frame->function.block.pot.mem = MPR_GET_MEM(frame);
+#endif
     return frame;
 }
 
 
 void ejsCreateFrameType(Ejs *ejs)
 {
-    EjsType         *type;
-    EjsHelpers  *helpers;
+    EjsType     *type;
 
-    type = ejs->frameType = ejsCreateNativeType(ejs, "ejs", "Frame", ES_Frame, sizeof(EjsFrame));
-    SHORT_SCOPE(type) = 1;
-
-    helpers = &type->helpers;
-#if UNUSED
-    helpers->destroy = (EjsDestroyHelper) destroyFrame;
-#endif
-    helpers->mark    = (EjsMarkHelper) markFrame;
+    type = ejs->frameType = ejsCreateNativeType(ejs, N("ejs", "Frame"), ES_Frame, sizeof(EjsFrame), manageFrame, 
+        EJS_POT_HELPERS);
+    type->constructor.block.pot.shortScope = 1;
 }
 
 

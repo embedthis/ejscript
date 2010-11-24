@@ -26,10 +26,10 @@ static EjsObj *castVoid(Ejs *ejs, EjsVoid *vp, EjsType *type)
         return (EjsObj*) vp;
 
     case ES_String:
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "undefined");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "undefined");
 
     case ES_Uri:
-        return (EjsObj*) ejsCreateUriFromCS(ejs, "undefined");
+        return (EjsObj*) ejsCreateUriFromMulti(ejs, "undefined");
             
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -95,7 +95,7 @@ static EjsObj *coerceVoidOperands(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
         return (EjsObj*) ejs->falseValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -146,7 +146,7 @@ static EjsObj *invokeVoidOperator(Ejs *ejs, EjsVoid *lhs, int opcode, EjsVoid *r
         return (EjsObj*) ejs->nanValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
     mprAssert(0);
@@ -183,22 +183,25 @@ void ejsCreateVoidType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->voidType = ejsCreateNativeType(ejs, "ejs", "Void", ES_Void, sizeof(EjsVoid));
+    //  MOB -- should not be a Void type. Should be "NULL" == void
+    type = ejsCreateNativeType(ejs, N("ejs", "Void"), ES_Void, sizeof(EjsVoid), NULL, EJS_OBJ_HELPERS);
+    ejs->voidType = type;
 
     type->helpers.cast             = (EjsCastHelper) castVoid;
     type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeVoidOperator;
     type->helpers.getProperty      = (EjsGetPropertyHelper) getVoidProperty;
 
     ejs->undefinedValue = ejsCreate(ejs, type, 0);
+    ejsSetName(ejs->undefinedValue, "undefined");
 }
 
 
 void ejsConfigureVoidType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejsGetTypeByName(ejs, "ejs", "Void");
+    type = ejs->voidType;
     prototype = type->prototype;
 
     ejsSetProperty(ejs, ejs->global, ES_void, type);

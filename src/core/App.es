@@ -5,7 +5,6 @@
  */
 
 module ejs {
-
     /** 
         Standard error text stream. Use write(), writeLine() and other TextStream methods.
         @spec ejs
@@ -348,6 +347,7 @@ module ejs {
         @hide
      */
     function appInit(): Void {
+
         App.name = App.args[0] || Config.Product
         App.title = App.args[0] || Config.Title
 

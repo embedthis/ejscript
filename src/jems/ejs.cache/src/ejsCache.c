@@ -15,7 +15,7 @@ typedef struct EjsCache
 {
     EjsObj   obj;                /* Base object */
     EjsObj   *cache;             /* Cache object */
-    int         timeout;            /* Session inactivity lifespan */
+    int      timeout;            /* Session inactivity lifespan */
 } EjsCache;
 
 /*********************************** Forwards *********************************/
@@ -27,88 +27,77 @@ static void cacheTimer(EjsWebControl *control, MprEvent *event);
 
 /************************************* Code ***********************************/
  
-static EjsVar *cacheConstructor(Ejs *ejs, EjsCache *cp, int argc, EjsVar **argv)
+static EjsObj *cacheConstructor(Ejs *ejs, EjsCache *cp, int argc, EjsObj **argv)
 {
-    Ejs         *master;
     EjsType     *cacheType;
 
-    master = ejs->master ? ejs->master : ejs;
-
-    cacheType = ejsGetTypeByName(master, "ejs.cache", "Cache");
+    cacheType = ejsGetTypeByName(ejs, "ejs.cache", "Cache");
     if (cacheType == 0) {
         ejsThrowTypeError(ejs, "Can't find Cache type");
         return 0;
     }
-#if ES_ejs_cache_Cache_Cache
-    cp->cache = ejsGetProperty(master, (EjsVar*) cacheType, ES_ejs_cache_Cache_cache);
-#endif
+    cp->cache = ejsGetProperty(ejs, (EjsObj*) cacheType, ES_ejs_cache_Cache_cache);
     return 0;
 }
 
 
-static EjsVar *readCache(Ejs *ejs, EjsCache *cp, int argc, EjsVar **argv)
+static EjsObj *readCache(Ejs *ejs, EjsCache *cp, int argc, EjsObj **argv)
 {
-    Ejs         *master;
     EjsName     qname;
-    EjsVar      *vp;
+    EjsObj      *vp;
     cchar       *domain, *key;
 
-    master = ejs->master ? ejs->master : ejs;
     domain = ejsGetString(ejs, argv[0]);
     key = ejsGetString(ejs, argv[1]);
-    ejsLockVm(master);
+    ejsLockVm(ejs);
 
-    vp = ejsGetPropertyByName(master, cp->cache, ejsName(&qname, domain, key));
+    vp = ejsGetPropertyByName(ejs, cp->cache, ejsName(&qname, domain, key));
     if (vp == 0) {
-        ejsUnlockVm(master);
+        ejsUnlockVm(ejs);
         return ejs->nullValue;
     }
     vp = ejsDeserialize(ejs, (EjsString*) vp);
     if (vp == ejs->undefinedValue) {
-        vp = (EjsVar*) ejs->emptyStringValue;
+        vp = (EjsObj*) ejs->emptyStringValue;
     }
-    ejsUnlockVm(master);
+    ejsUnlockVm(ejs);
     return vp;
 }
 
 
-static EjsVar *removeCache(Ejs *ejs, EjsCache *cp, int argc, EjsVar **argv)
+static EjsObj *removeCache(Ejs *ejs, EjsCache *cp, int argc, EjsObj **argv)
 {
-    Ejs         *master;
     EjsName     qname;
     cchar       *domain, *key;
 
-    master = ejs->master ? ejs->master : ejs;
     domain = ejsGetString(ejs, argv[0]);
     key = ejsGetString(ejs, argv[1]);
 
-    ejsLockVm(master);
-    ejsDeletePropertyByName(master, cp->cache, ejsName(&qname, domain, key));
-    ejsUnlockVm(master);
+    ejsLockVm(ejs);
+    ejsDeletePropertyByName(ejs, cp->cache, ejsName(&qname, domain, key));
+    ejsUnlockVm(ejs);
     return 0;
 }
 
 
-static EjsVar *writeCache(Ejs *ejs, EjsCache *cp, int argc, EjsVar **argv)
+static EjsObj *writeCache(Ejs *ejs, EjsCache *cp, int argc, EjsObj **argv)
 {
-    Ejs         *master;
     EjsName     qname;
-    EjsVar      *value;
+    EjsObj      *value;
     cchar       *domain, *key;
 
-    master = ejs->master ? ejs->master : ejs;
     domain = ejsGetString(ejs, argv[0]);
     key = ejsGetString(ejs, argv[1]);
-    ejsLockVm(master);
+    ejsLockVm(ejs);
 
-    value = (EjsVar*) ejsToJSON(master, argv[2], NULL);
-    ejsSetPropertyByName(master, cp->cache, ejsName(&qname, domain, key), value);
+    value = (EjsObj*) ejsToJSON(ejs, argv[2], NULL);
+    ejsSetPropertyByName(ejs, cp->cache, ejsName(&qname, domain, key), value);
 #if FUTURE
     if (argc == 4) {
         //  TODO - store the timeout somehow.
     }
 #endif
-    ejsUnlockVm(master);
+    ejsUnlockVm(ejs);
     return 0;
 }
 
@@ -125,16 +114,15 @@ static void cacheActivity(Ejs *ejs, EjsCache *sp)
  */
 static void cacheTimer(EjsWebControl *control, MprEvent *event)
 {
-    Ejs             *master;
-    EjsObj       *caches;
+    EjsObj     *caches;
     EjsCache   *cache;
-    MprTime         now;
-    int             i, count, deleted;
+    MprTime    now;
+    int        i, count, deleted;
 
     now = mprGetTime(control);
 
     caches = control->caches;
-    master = control->master;
+    ejs = control->master;
     if (master == 0) {
         mprAssert(master);
         return;
@@ -144,13 +132,13 @@ static void cacheTimer(EjsWebControl *control, MprEvent *event)
         This could be on the primary event thread. Can't block long.
      */
     if (mprTryLock(master->mutex)) {
-        count = ejsGetPropertyCount(master, (EjsVar*) caches);
+        count = ejsGetPropertyCount(master, (EjsObj*) caches);
         deleted = 0;
         for (i = count - 1; i >= 0; i--) {
-            cache = ejsGetProperty(master, (EjsVar*) caches, i);
+            cache = ejsGetProperty(master, (EjsObj*) caches, i);
             if (cache->obj.var.type == control->cacheType) {
                 if (cache && cache->expire <= now) {
-                    ejsDeleteProperty(master, (EjsVar*) caches, i);
+                    ejsDeleteProperty(master, (EjsObj*) caches, i);
                     deleted++;
                 }
             }
@@ -173,7 +161,7 @@ static int configureCacheType(Ejs *ejs)
     EjsType     *type;
     EjsObj      *prototype;
 
-    type = ejsConfigureNativeType(ejs, "ejs.cache", "Cache", sizeof(EjsCache));
+    type = ejsConfigureNativeType(ejs, "ejs.cache", "Cache", sizeof(EjsCache), manageCache, EJS_DEFAULT_HELPERS);
 
     ejsBindConstructor(ejs, type, (EjsProc) cacheConstructor);
     prototype = type->prototype;

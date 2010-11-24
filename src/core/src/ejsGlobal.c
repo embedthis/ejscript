@@ -13,9 +13,10 @@
     Assert a condition is true.
     static function assert(condition: Boolean): Boolean
  */
-static EjsObj *assertMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     EjsFrame        *fp;
+    MprChar         *source;
     EjsBoolean      *b;
 
     mprAssert(argc == 1);
@@ -29,8 +30,8 @@ static EjsObj *assertMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
     if (b == 0 || !b->value) {
         fp = ejs->state->fp;
-        if (fp->currentLine) {
-            ejsThrowAssertError(ejs, "%s", fp->currentLine);
+        if (ejsGetDebugInfo(ejs, (EjsFunction*) fp, fp->pc, NULL, NULL, &source) >= 0) {
+            ejsThrowAssertError(ejs, "%w", source);
         } else {
             ejsThrowAssertError(ejs, "Assertion error");
         }
@@ -45,7 +46,7 @@ static EjsObj *assertMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     Trap to the debugger
     static function breakpoint(): Void
  */
-static EjsObj *breakpoint(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+static EjsObj *g_breakpoint(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
 #if BLD_DEBUG && DEBUG_IDE
 #if BLD_HOST_CPU_ARCH == MPR_CPU_IX86 || BLD_HOST_CPU_ARCH == MPR_CPU_IX64
@@ -67,7 +68,7 @@ static EjsObj *breakpoint(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 /*  
     function blend(dest: Object, src: Object, overwrite: Boolean = true): void
  */
-static EjsObj *blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *g_blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsObj      *src, *dest;
     int         overwrite;
@@ -84,7 +85,7 @@ static EjsObj *blend(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Clone the base class. Used by Record.es
     static function cloneBase(klass: Type): Void
  */
-static EjsObj *cloneBase(Ejs *ejs, EjsObj *ignored, int argc, EjsObj **argv)
+static EjsObj *g_cloneBase(Ejs *ejs, EjsObj *ignored, int argc, EjsObj **argv)
 {
     EjsType     *type;
     
@@ -134,7 +135,7 @@ static EjsObj *error(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*  
     function eval(script: String, cache: String = null): String
  */
-static EjsObj *eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsString   *script;
     cchar       *cache;
@@ -143,7 +144,7 @@ static EjsObj *eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (argc < 2 || argv[1] == ejs->nullValue) {
         cache = NULL;
     } else {
-        cache = ejsGetString(ejs, argv[1]);
+        cache = ejsToMulti(ejs, argv[1]);
     }
     if (ejsLoadScriptLiteral(ejs, script, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW | EC_FLAGS_VISIBLE) < 0) {
         return 0;
@@ -152,24 +153,12 @@ static EjsObj *eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED
-/*
-    Format the stack
-    function formatStack(): String
- */
-static EjsObj *formatStackMethod(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
-{
-    return (EjsObj*) ejsCreateStringFromCS(ejs, ejsFormatStack(ejs, NULL));
-}
-#endif
-
-
 #if ES_hashcode
 /*  
     Get the hash code for the object.
     function hashcode(o: Object): Number
  */
-static EjsObj *hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
+static EjsObj *g_hashcode(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1);
     return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) PTOL(argv[0]));
@@ -210,7 +199,7 @@ static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         return (EjsObj*) ejs->nullValue;
     }
     mprAddNullToBuf(buf);
-    result = (EjsObj*) ejsCreateStringFromCS(ejs, mprGetBufStart(buf));
+    result = (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
     mprFree(buf);
     return result;
 }
@@ -221,12 +210,12 @@ static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Load a script or module. Name should have an extension. Name will be located according to the EJSPATH search strategy.
     static function load(filename: String, cache: String): void
  */
-static EjsObj *load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *g_load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     cchar       *path, *cache, *cp;
 
-    path = ejsGetString(ejs, argv[0]);
-    cache = (argc < 2) ? 0 : ejsGetString(ejs, argv[1]);
+    path = ejsToMulti(ejs, argv[0]);
+    cache = (argc < 2) ? 0 : ejsToMulti(ejs, argv[1]);
 
     if ((cp = strrchr(path, '.')) != NULL && strcmp(cp, EJS_MODULE_EXT) != 0) {
         if (ejs->service->loadScriptFile == 0) {
@@ -235,7 +224,7 @@ static EjsObj *load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             return (ejs->service->loadScriptFile)(ejs, path, cache);
         }
     } else {
-        ejsLoadModule(ejs, ejsCreateStringFromCS(ejs, path), -1, -1, 0);
+        ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, 0);
         return (ejs->exception) ? 0 : ejs->result;
     }
     return 0;
@@ -246,14 +235,14 @@ static EjsObj *load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Compute an MD5 checksum
     static function md5(name: String): void
  */
-static EjsObj *md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsString   *str;
     char        *hash;
 
     str = (EjsString*) argv[0];
     hash = mprGetMD5Hash(ejs, ejsToMulti(ejs, str), str->length, NULL);
-    return (EjsObj*) ejsCreateStringAndFree(ejs, hash);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, hash);
 }
 
 
@@ -278,7 +267,7 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
         /* NOTE: treats arrays as primitive types */
         if (!ejsIsArray(ejs, vp) && !ejsIsXML(ejs, vp) && ejsGetPropertyCount(ejs, vp) > 0) {
             if ((dp = ejsGetPropertyByName(ejs, dest, name)) == 0 || ejsGetPropertyCount(ejs, dp) == 0) {
-                ejsSetPropertyByName(ejs, dest, name, ejsCloneObject(ejs, (EjsObj*) vp, 1));
+                ejsSetPropertyByName(ejs, dest, name, ejsClonePot(ejs, (EjsObj*) vp, 1));
             } else {
                 ejsBlendObject(ejs, dp, vp, overwrite);
             }
@@ -301,19 +290,18 @@ int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite)
     Parse the input and convert to a primitive type
     static function parse(input: String, preferredType: Type = null): void
  */
-static EjsObj *parse(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *g_parse(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    cchar       *str;
+    EjsString   *input;
     int         preferred;
 
-    //  MOB UNICODE
-    str = ejsGetString(ejs, argv[0]);
+    input = (EjsString*) argv[0];
     if (argc == 2 && !ejsIsType(ejs, argv[1])) {
         ejsThrowArgError(ejs, "PreferredType argument is not a type");
         return 0;
     }
     preferred = (argc == 2) ? ((EjsType*) argv[1])->id : -1;
-    return ejsParse(ejs, str, preferred);
+    return ejsParse(ejs, input->value, preferred);
 }
 
 
@@ -325,20 +313,20 @@ static EjsObj *parse(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         [(+|-)][0][(x|X)][HEX_DIGITS]
         [(+|-)][DIGITS]
  */
-static EjsObj *parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *g_parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprNumber   n;
     cchar       *str;
     int         radix, err;
 
     //  MOB -- don't convert to cstring
-    str = ejsGetString(ejs, argv[0]);
+    str = ejsToMulti(ejs, argv[0]);
     radix = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
     while (isspace((int) *str)) {
         str++;
     }
     if (*str == '-' || *str == '+' || isdigit((int) *str)) {
-        n = (MprNumber) mprParseNumber(str, radix, &err);
+        n = (MprNumber) stoi(str, radix, &err);
         if (err) {
             return (EjsObj*) ejs->nanValue;
         }
@@ -353,7 +341,7 @@ static EjsObj *parseInt(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     static function print(...args): void
     DEPRECATED static function output(...args): void
  */
-static EjsObj *printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     EjsString   *s;
     EjsObj      *args, *vp;
@@ -371,20 +359,8 @@ static EjsObj *printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             if (ejs->exception) {
                 return 0;
             }
-#if OLD
-            if (vp && s) {
-                char        *cp;
-                if (s->length > 0 && s->value[0] == '"') {
-                    cp = mprStrdup(ejs, s->value);
-                    rc = write(1, cp, strlen(cp));
-                    mprFree(cp);
-                } else {
-                    rc = write(1, s->value, s->length);
-                }
-            }
-#endif
             data = ejsToMulti(ejs, s);
-            rc = write(1, data, s->length);
+            rc = write(1, data, strlen(data));
             if ((i+1) < count) {
                 rc = write(1, " ", 1);
             }
@@ -401,8 +377,8 @@ void ejsFreezeGlobal(Ejs *ejs)
     int         i;
 
     for (i = 0; i < ES_global_NUM_CLASS_PROP; i++) {
-        if ((trait = ejsGetTrait(ejs, ejs->global, i)) != 0) {
-            trait->attributes |= EJS_TRAIT_READONLY | EJS_TRAIT_FIXED;
+        if ((trait = ejsGetPropertyTraits(ejs, ejs->global, i)) != 0) {
+            ejsSetPropertyTraits(ejs, ejs->global, i, NULL, trait->attributes | EJS_TRAIT_READONLY | EJS_TRAIT_FIXED);
         }
     }
 }
@@ -414,22 +390,25 @@ void ejsCreateGlobalBlock(Ejs *ejs)
     int         sizeSlots;
 
     sizeSlots = (ejs->empty) ? 0 : max(ES_global_NUM_CLASS_PROP, EJS_NUM_GLOBAL);
-    ejs->globalBlock = ejsCreateBlock(ejs, sizeSlots);
-    ejs->globalBlock->isGlobal = 1;
-    ejs->global = (EjsObj*) ejs->globalBlock;
-    ejs->global->numSlots = (ejs->empty) ? 0: ES_global_NUM_CLASS_PROP;
-    DYNAMIC(ejs->global) = 1;
-    SHORT_SCOPE(ejs->global) = 1;
+    block = ejsCreateBlock(ejs, sizeSlots);
+    ejs->global = block;
+    block->isGlobal = 1;
+    block->pot.numProp = (ejs->empty) ? 0: ES_global_NUM_CLASS_PROP;
+    block->pot.shortScope = 1;
+    DYNAMIC(block) = 1;
+    ejsSetName(block, "global");
+#if BLD_DEBUG
+    ejs->globalBlock = block;
+#endif
     
     /*  
         Create the standard namespaces. Order matters here. This is the (reverse) order of lookup.
         Empty is first to maximize speed of searching dynamic properties. Ejs second to maximize builtin lookups.
      */
-    block = (EjsBlock*) ejs->global;
-    ejs->iteratorSpace = ejsDefineReservedNamespace(ejs, block, NULL, CS(EJS_ITERATOR_NAMESPACE));
-    ejs->publicSpace =   ejsDefineReservedNamespace(ejs, block, NULL, CS(EJS_PUBLIC_NAMESPACE));
-    ejs->ejsSpace =      ejsDefineReservedNamespace(ejs, block, NULL, CS(EJS_EJS_NAMESPACE));
-    ejs->emptySpace =    ejsDefineReservedNamespace(ejs, block, NULL, CS(EJS_EMPTY_NAMESPACE));
+    ejs->iteratorSpace  = ejsDefineReservedNamespace(ejs, block, NULL, EJS_ITERATOR_NAMESPACE);
+    ejs->publicSpace    = ejsDefineReservedNamespace(ejs, block, NULL, EJS_PUBLIC_NAMESPACE);
+    ejs->ejsSpace       = ejsDefineReservedNamespace(ejs, block, NULL, EJS_EJS_NAMESPACE);
+    ejs->emptySpace     = ejsDefineReservedNamespace(ejs, block, NULL, EJS_EMPTY_NAMESPACE);
 }
 
 
@@ -437,32 +416,21 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
 {
     EjsBlock    *block;
 
-    block = ejs->globalBlock;
+    block = (EjsBlock*) ejs->global;
     mprAssert(block);
     
-//  MOB -- prefix these functions to be more unique need g_ prefix
+    ejsBindFunction(ejs, block, ES_assert, g_assert);
+    ejsBindFunction(ejs, block, ES_breakpoint, g_breakpoint);
+    ejsBindFunction(ejs, block, ES_cloneBase, (EjsProc) g_cloneBase);
+    ejsBindFunction(ejs, block, ES_eval, g_eval);
+    ejsBindFunction(ejs, block, ES_hashcode, g_hashcode);
+    ejsBindFunction(ejs, block, ES_load, g_load);
+    ejsBindFunction(ejs, block, ES_md5, g_md5);
+    ejsBindFunction(ejs, block, ES_blend, g_blend);
+    ejsBindFunction(ejs, block, ES_parse, g_parse);
+    ejsBindFunction(ejs, block, ES_parseInt, g_parseInt);
+    ejsBindFunction(ejs, block, ES_print, g_printLine);
 
-    ejsBindFunction(ejs, block, ES_assert, assertMethod);
-    ejsBindFunction(ejs, block, ES_breakpoint, breakpoint);
-    ejsBindFunction(ejs, block, ES_cloneBase, (EjsProc) cloneBase);
-    ejsBindFunction(ejs, block, ES_eval, eval);
-#if UNUSED
-    ejsBindFunction(ejs, block, ES_formatStack, formatStackMethod);
-#endif
-    ejsBindFunction(ejs, block, ES_hashcode, hashcode);
-    ejsBindFunction(ejs, block, ES_load, load);
-    ejsBindFunction(ejs, block, ES_md5, md5);
-    ejsBindFunction(ejs, block, ES_blend, blend);
-    ejsBindFunction(ejs, block, ES_parse, parse);
-    ejsBindFunction(ejs, block, ES_parseInt, parseInt);
-    ejsBindFunction(ejs, block, ES_print, printLine);
-
-#if UNUSED
-    /* DEPRECATED */
-    ejsBindFunction(ejs, block, ES_error, error);
-    ejsBindFunction(ejs, block, ES_input, input);
-    ejsBindFunction(ejs, block, ES_output, printLine);
-#endif
     ejsSetProperty(ejs, ejs->global, ES_global, ejs->global);
 }
 

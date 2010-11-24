@@ -16,18 +16,18 @@ static void setFunctionAttributes(EjsFunction *fun, int attributes);
 /*
     Create a function object.
  */
-static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numSlots)
+static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numProp)
 {
     EjsFunction     *fun;
 
     /*
         Note: Functions are not pooled, frames are.
      */
-    fun = (EjsFunction*) ejsCreateObject(ejs, ejs->functionType, 0);
+    fun = (EjsFunction*) ejsCreatePot(ejs, ejs->functionType, 0);
     if (fun == 0) {
         return 0;
     }
-    fun->block.obj.isFunction = 1;
+    fun->block.pot.isFunction = 1;
     DYNAMIC(fun) = 1;
     return fun;
 }
@@ -38,11 +38,11 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numSlots)
 
     function cast(type: Type) : Object
  */
-static EV *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
+static EjsAny *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
 {
     switch (type->id) {
     case ES_String:
-        return ejsCreateStringFromCS(ejs, "[function Function]");
+        return ejsCreateStringFromAsc(ejs, "[function Function]");
 
     case ES_Number:
         return ejs->nanValue;
@@ -51,7 +51,7 @@ static EV *castFunction(Ejs *ejs, EjsFunction *vp, EjsType *type)
         return ejs->trueValue;
             
     default:
-        ejsThrowTypeError(ejs, "Can't cast type \"%s\"", type->qname.name);
+        ejsThrowTypeError(ejs, "Can't cast type \"%@\"", type->qname.name);
         return 0;
     }
     return 0;
@@ -88,43 +88,10 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
     dest->name = src->name;
 
     if (src->activation) {
-        dest->activation = ejsCloneObject(ejs, src->activation, 0);
+        dest->activation = ejsClonePot(ejs, src->activation, 0);
     }
-    ejsCopyDebugName(dest, src);
+    ejsCopyName(dest, src);
     return dest;
-}
-
-
-#if UNUSED
-//  MOB -- delete
-static void destroyFunction(Ejs *ejs, EjsFunction *fun)
-{
-    ejsFreeVar(ejs, fun, ES_Function);
-}
-#endif
-
-
-void ejsMarkFunction(Ejs *ejs, EjsFunction *fun)
-{
-    ejsMarkBlock(ejs, (EjsBlock*) fun);
-    if (fun->activation) {
-        ejsMark(ejs, fun->activation);
-    }
-    if (fun->setter) {
-        ejsMark(ejs, fun->setter);
-    }
-    if (fun->archetype) {
-        ejsMark(ejs, fun->archetype);
-    }
-    if (fun->resultType) {
-        ejsMark(ejs, fun->resultType);
-    }
-    if (fun->boundThis) {
-        ejsMark(ejs, fun->boundThis);
-    }
-    if (fun->boundArgs) {
-        ejsMark(ejs, fun->boundArgs);
-    }
 }
 
 
@@ -132,9 +99,9 @@ void ejsMarkFunction(Ejs *ejs, EjsFunction *fun)
 /*
     function Function(...[args], body)
  */
-static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
+static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, void *argv)
 {
-#if UNUSED
+#if UNUSED && FUTURE
     EjsArray        *args;
     EjsString       *str;
     MprBuf          *buf;
@@ -150,14 +117,14 @@ static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, EV **argv
         return 0;
     }
     str = ejsToString(ejs, args->data[args->length - 1]);
-    body = ejsGetString(ejs, str);
+    body = ejsToMulti(ejs, str);
 
     buf = mprCreateBuf(ejs, -1, -1);
     mprPutStringToBuf(buf, "function(");
     count = args->length - 1;
     for (i = 0; i < count; i++) {
         str = ejsToString(ejs, args->data[i]);
-        param = ejsGetString(ejs, str);
+        param = ejsToMulti(ejs, str);
         mprPutStringToBuf(buf, param);
         if (i < (count - 1)) {
             mprPutCharToBuf(buf, ',');
@@ -181,10 +148,10 @@ static EjsFunction *fun_Function(Ejs *ejs, EjsFunction *fun, int argc, EV **argv
 /*
     function apply(thisObj: Object, args: Array)
  */
-static EV *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
+static EjsObj *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     EjsArray    *args;
-    EV          *save, *result, *thisObj;
+    EjsObj      *save, *result, *thisObj;
     
     mprAssert(argc > 1);
     args = (EjsArray*) argv[1];
@@ -201,7 +168,7 @@ static EV *fun_applyFunction(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
 /*
     function bind(thisObj: Object, ...args): Void
  */
-static EV *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
+static EjsObj *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     mprAssert(argc >= 1);
 
@@ -217,7 +184,7 @@ static EV *fun_bindFunction(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
 /*
     function bound(): Function
  */
-static EV *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
+static EjsObj *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     return fun->boundThis;
 }
@@ -226,7 +193,7 @@ static EV *fun_bound(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
 /*
     function call(thisObj, ...args)
  */
-static EV *fun_call(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
+static EjsObj *fun_call(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     mprAssert(argc > 1);
     return fun_applyFunction(ejs, fun, argc, argv);
@@ -238,7 +205,7 @@ static EV *fun_call(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
 
     function get length(): Number
  */
-static EjsNumber *fun_length(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
+static EjsNumber *fun_length(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     return ejsCreateNumber(ejs, fun->numArgs);
 }
@@ -248,7 +215,7 @@ static EjsNumber *fun_length(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
 /*
     function get name(): String
  */
-static EjsString *fun_name(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
+static EjsString *fun_name(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     if (fun->name && fun->name->value[0] == '-') {
         return ejs->emptyString;
@@ -261,7 +228,7 @@ static EjsString *fun_name(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
 /*
     function setScope(obj): Void
  */
-static EV *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
+static EjsObj *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EjsObj **argv)
 {
     EjsBlock    *scope;
 
@@ -279,68 +246,13 @@ static EV *fun_setScope(Ejs *ejs, EjsFunction *fun, int argc, EV **argv)
 
 
 /*************************************************************************************************************/
-/*
-    Create a script function. This defines the method traits. It does not create a  method slot. ResultType may
-    be null to indicate untyped. NOTE: untyped functions may return a result at their descretion.
- */
-EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, int numDefault, 
-    int numExceptions, EjsType *resultType, int attributes, EjsConst *constants, EjsBlock *scope, int strict)
-{
-    EjsFunction     *fun;
-
-    if ((fun = ejsCreateSimpleFunction(ejs, name, attributes)) == 0) {
-        return 0;
-    }
-    ejsInitFunction(ejs, fun, name, byteCode, codeLen, numArgs, numDefault, numExceptions, resultType, 
-        attributes, constants, scope, strict);
-    return fun;
-}
-
-
-void ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, 
-    int numDefault, int numExceptions, EjsType *resultType, int attributes, EjsConst *constants, EjsBlock *scope, int strict)
-{
-    EjsCode         *code;
-
-    if (scope) {
-        fun->block.scope = scope;
-    }
-    fun->block.obj.isFunction = 1;
-    fun->numArgs = numArgs;
-    fun->numDefault = numDefault;
-    fun->resultType = resultType;
-    fun->strict = strict;
-    code = &fun->body.code;
-    code->codeLen = codeLen;
-    code->byteCode = (uchar*) byteCode;
-    code->numHandlers = numExceptions;
-    code->constants = constants;
-    fun->name = name;
-    ejsSetDebugName(ejs, name);
-    setFunctionAttributes(fun, attributes);
-}
-
 
 void ejsDisableFunction(Ejs *ejs, EjsFunction *fun)
 {
-    fun->block.obj.isFunction = 0;
+    fun->block.pot.isFunction = 0;
     fun->isConstructor = 0;
     fun->isInitializer = 0;
     fun->activation = 0;
-}
-
-
-EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, EjsString *name, int attributes)
-{
-    EjsFunction     *fun;
-
-    if ((fun = (EjsFunction*) ejsCreate(ejs, ejs->functionType, 0)) == NULL) {
-        return 0;
-    }
-    fun->name = name;
-    ejsCopyDebugName(fun, fun->name);
-    setFunctionAttributes(fun, attributes);
-    return fun;
 }
 
 
@@ -379,10 +291,9 @@ static void setFunctionAttributes(EjsFunction *fun, int attributes)
 }
 
 
-//  MOB -- should this be EjsString as an arg?
-void ejsSetFunctionName(Ejs *ejs, EjsFunction *fun, cchar *name)
+void ejsSetFunctionName(Ejs *ejs, EjsFunction *fun, EjsString *name)
 {
-    fun->name = ejsCreateStringFromCS(ejs, name);
+    fun->name = name;
 }
 
 
@@ -395,10 +306,8 @@ EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, E
 
     mprAssert(fun);
 
-    code = &fun->body.code;
-
-    //  MOB -- who marks
-    if ((exception = ejsAlloc(ejs, sizeof(EjsEx))) == 0) {
+    /* Managed by manageCode */
+    if ((exception = mprAllocZeroed(NULL, sizeof(EjsEx))) == 0) {
         mprAssert(0);
         return 0;
     }
@@ -411,10 +320,10 @@ EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, E
     exception->numBlocks = numBlocks;
     exception->numStack = numStack;
 
+    code = fun->body.code;
     if (preferredIndex < 0) {
         preferredIndex = code->numHandlers++;
     }
-
     if (preferredIndex >= code->sizeHandlers) {
         size = code->sizeHandlers + EJS_EX_INC;
         code->handlers = (EjsEx**) mprRealloc(fun, code->handlers, size * sizeof(EjsEx));
@@ -437,8 +346,8 @@ void ejsOffsetExceptions(EjsFunction *fun, int offset)
 
     mprAssert(fun);
 
-    for (i = 0; i < fun->body.code.numHandlers; i++) {
-        ex = fun->body.code.handlers[i];
+    for (i = 0; i < fun->body.code->numHandlers; i++) {
+        ex = fun->body.code->handlers[i];
         ex->tryStart += offset;
         ex->tryEnd += offset;
         ex->handlerStart += offset;
@@ -447,25 +356,84 @@ void ejsOffsetExceptions(EjsFunction *fun, int offset)
 }
 
 
+static void manageCode(EjsCode *code, int flags)
+{
+    int     i;
+
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(code->module);
+        mprMark(code->debug);
+        if (code->numHandlers > 0) {
+            mprMark(code->handlers);
+            for (i = 0; i < code->numHandlers; i++) {
+                /* Manage EjsEx */
+                mprMark(code->handlers[i]);
+            }
+        }
+    }
+}
+
+
+EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, size_t len, 
+    EjsDebug *debug)
+{
+    EjsCode     *code;
+
+    mprAssert(fun);
+    mprAssert(module);
+    mprAssert(byteCode);
+    mprAssert(len >= 0);
+
+    if ((code = mprAllocBlock(fun, sizeof(EjsCode) + len, MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
+        return NULL;
+    }
+    mprSetManager(code, manageCode);
+    code->codeLen = len;
+    code->module = module;
+    code->debug = debug;
+    memcpy(code->byteCode, byteCode, len);
+    return code;
+}
+
+
 /*
     Set the byte code for a script function
  */
-int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, uchar *byteCode, int len)
+int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, size_t len, EjsDebug *debug)
 {
+    EjsCode     *code;
+
     mprAssert(fun);
     mprAssert(byteCode);
     mprAssert(len >= 0);
 
-    if ((fun->body.code.byteCode = (uchar*) ejsAlloc(ejs, len)) == NULL) {
-        return EJS_ERR;
+    code = fun->body.code;
+#if UNUSED
+    if (code == NULL) {
+        if ((code = mprAllocZeroed(fun, sizeof(EjsCode) + len)) == 0) {
+            return MPR_ERR_MEMORY;
+        }
+        fun->body.code = code;
+    } else {
+        if (len > code->codeLen) {
+            if ((code = mprRealloc(fun, code, sizeof(EjsCode) + len)) == 0) {
+                return MPR_ERR_MEMORY;
+            }
+            fun->body.code = code;
+        }
     }
-    memcpy(fun->body.code.byteCode, byteCode, len);
-    fun->body.code.codeLen = len;
+    memcpy(code->byteCode, byteCode, len);
+    code->codeLen = len;
+    code->module = module;
+    code->debug = debug;
+#else
+    fun->body.code = ejsCreateCode(ejs, fun, module, byteCode, len, debug);
+#endif
     return 0;
 }
 
 
-static EV *nopFunction(Ejs *ejs, EV *obj, int argc, EV **argv)
+static EjsObj *nopFunction(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 {
     return ejs->undefinedValue;
 }
@@ -474,51 +442,144 @@ static EV *nopFunction(Ejs *ejs, EV *obj, int argc, EV **argv)
 //  MOB -- who calls this?
 void ejsUseActivation(Ejs *ejs, EjsFunction *fun)
 {
-    EjsObj  *activation;
-    int     numSlots;
+    EjsPot  *activation;
+    int     numProp;
 
     if ((activation = fun->activation) == 0) {
         return;
     }
-    numSlots = activation->numSlots;
-    if (numSlots > 0) {
-        ejsGrowObject(ejs, (EjsObj*) fun, numSlots);
-        ejsCopySlots(ejs, (EjsObj*) fun, fun->block.obj.slots, fun->activation->slots, numSlots);
-        fun->block.obj.numSlots = numSlots;
+    numProp = activation->numProp;
+    if (numProp > 0) {
+        ejsGrowPot(ejs, (EjsPot*) fun, numProp);
+        //  MOB -- fix this API
+        ejsCopySlots(ejs, (EjsPot*) fun, fun->block.pot.properties->slots, fun->activation->properties->slots, numProp);
+        fun->block.pot.numProp = numProp;
     }
 }
 
 
-EjsObj *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numSlots)
+EjsPot *ejsCreateActivation(Ejs *ejs, EjsFunction *fun, int numProp)
 {
-    EjsObj  *activation;
+    EjsPot  *activation;
 
-    activation = ejsCreateObject(ejs, ejs->objectType, numSlots);
-    ejsCopyDebugName(activation, fun);
+    activation = ejsCreatePot(ejs, ejs->objectType, numProp);
+    ejsCopyName(activation, fun);
     return activation;
 }
 
 
 /********************************** Factory **********************************/
 
+EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, EjsString *name, int attributes)
+{
+    EjsFunction     *fun;
+
+    if ((fun = (EjsFunction*) ejsCreate(ejs, ejs->functionType, 0)) == NULL) {
+        return 0;
+    }
+    fun->name = name;
+    fun->block.pot.isBlock = 1;
+    fun->block.pot.isFunction = 1;
+    ejsCopyName(fun, fun->name);
+    setFunctionAttributes(fun, attributes);
+    return fun;
+}
+
+
+/*
+    Create a script function. This defines the method traits. It does not create a  method slot. ResultType may
+    be null to indicate untyped. NOTE: untyped functions may return a result at their descretion.
+ */
+EjsFunction *ejsCreateFunction(Ejs *ejs, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, int numDefault, 
+    int numExceptions, EjsType *resultType, int attributes, EjsModule *module, EjsBlock *scope, int strict)
+{
+    EjsFunction     *fun;
+
+    if ((fun = ejsCreateSimpleFunction(ejs, name, attributes)) == 0) {
+        return 0;
+    }
+    ejsInitFunction(ejs, fun, name, byteCode, codeLen, numArgs, numDefault, numExceptions, resultType, attributes, 
+        module, scope, strict);
+    return fun;
+}
+
+
+/*
+    Init function to initialize constructors inside types
+ */
+int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCode, int codeLen, int numArgs, 
+    int numDefault, int numExceptions, EjsType *resultType, int attributes, EjsModule *module, EjsBlock *scope, int strict)
+{
+    if (scope) {
+        fun->block.scope = scope;
+    }
+    fun->block.pot.isBlock = 1;
+    fun->block.pot.isFunction = 1;
+    fun->numArgs = numArgs;
+    fun->numDefault = numDefault;
+    fun->resultType = resultType;
+    fun->strict = strict;
+
+    if (codeLen > 0) {
+#if UNUSED
+        if ((code = mprAllocZeroed(fun, sizeof(EjsCode) + codeLen)) == 0) {
+            return MPR_ERR_MEMORY;
+        }
+        fun->body.code = code;
+        code->module = module;
+        code->numHandlers = numExceptions;
+        code->codeLen = codeLen;
+        memcpy(code->byteCode, byteCode, codeLen);
+#else
+        fun->body.code = ejsCreateCode(ejs, fun, module, byteCode, codeLen, NULL);
+        fun->body.code->numHandlers = numExceptions;
+#endif
+    }
+    fun->name = name;
+    ejsSetName(fun, MPR_NAME("function"));
+    setFunctionAttributes(fun, attributes);
+#if BLD_DEBUG
+    fun->block.pot.mem = MPR_GET_MEM(fun);
+#endif
+    return 0;
+}
+
+
+void ejsManageFunction(EjsFunction *fun, int flags)
+{
+    if (fun) {
+        if (flags & MPR_MANAGE_MARK) {
+            ejsManageBlock((EjsBlock*) fun, flags);
+            mprMark(fun->name);
+            mprMark(fun->activation);
+            mprMark(fun->setter);
+            mprMark(fun->archetype);
+            mprMark(fun->resultType);
+            mprMark(fun->boundThis);
+            mprMark(fun->boundArgs);
+            if (!fun->isNativeProc) {
+                mprMark(fun->body.code);
+            }
+        }
+    }
+}
+
+
 void ejsCreateFunctionType(Ejs *ejs)
 {
     EjsType         *type;
-    EjsHelpers  *helpers;
+    EjsHelpers      *helpers;
     EjsFunction     *nop;
 
-    type = ejs->functionType = ejsCreateNativeType(ejs, "ejs", "Function", ES_Function, sizeof(EjsFunction));
+    type = ejs->functionType = ejsCreateNativeType(ejs, N("ejs", "Function"), ES_Function, sizeof(EjsFunction), 
+        ejsManageFunction, EJS_POT_HELPERS);
 
     helpers = &type->helpers;
-    helpers->create         = (EjsCreateHelper) createFunction;
-    helpers->cast           = (EjsCastHelper) castFunction;
-    helpers->clone          = (EjsCloneHelper) ejsCloneFunction;
-#if UNUSED
-    helpers->destroy        = (EjsDestroyHelper) destroyFunction;
-#endif
-    helpers->mark           = (EjsMarkHelper) ejsMarkFunction;
+    helpers->create = (EjsCreateHelper) createFunction;
+    helpers->cast   = (EjsCastHelper) castFunction;
+    helpers->clone  = (EjsCloneHelper) ejsCloneFunction;
 
-    nop = ejs->nopFunction = ejsCreateFunction(ejs, ejsCreateStringFromCS(ejs, "nop"), NULL, 0, -1, 0, 0, NULL, 
+    nop = ejs->nopFunction = ejsCreateFunction(ejs, ejsCreateStringFromAsc(ejs, "nop"), NULL, 0, -1, 0, 0, NULL, 
         EJS_PROP_NATIVE, NULL, NULL, 0);
     nop->body.proc = (EjsFun) nopFunction;
     nop->isNativeProc = 1;
@@ -528,7 +589,7 @@ void ejsCreateFunctionType(Ejs *ejs)
 void ejsConfigureFunctionType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
     type = ejs->functionType;
     prototype = type->prototype;

@@ -262,14 +262,6 @@ MOB -- inconsistent with JSON.baseClasses
          */
         native static function getTypeName(obj: Object): String
   
-        /** 
-            Test if the object is a simple object whose base class is Object.
-            @param obj Target object to use in test.
-            @returns true if the direct type of this object is Object.
-         */
-        # UNUSED 
-        native static function isObject(obj: Object): Boolean
-
         /**
             Test if the object is a prototype object
             @return True if the object is being used as a prototype object

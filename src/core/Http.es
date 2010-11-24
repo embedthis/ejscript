@@ -265,13 +265,6 @@ module ejs {
          */
         native function get date(): Date
 
-        /*
-UNUSED
-            Stop auto-finalizing the request. Calling dontFinalize will keep the request open until a forced finalize is
-            made via "finalize(true). 
-        native function dontFinalize(): Void
-         */
-
         /** 
             Encoding scheme for serializing strings. The default encoding is UTF-8. Not yet implemented.
             @hide
@@ -492,7 +485,7 @@ FUTURE & KEEP
             @param data Optional data objects to write to the request stream. Data is written raw and is not encoded 
                 or converted.  However, put intelligently handles arrays such that, each element of the array will be 
                 written. If encoding of put data is required, use the BinaryStream filter. If no putData is supplied,
-                and the $contentLength is non-zero you must call $write to supply the body data.
+                and the ContentLength header is non-zero you must call $write to supply the body data.
             @param data Optional object hash of key value pairs to use as the post data.
             @throws IOError if the request cannot be issued to the remote server.
          */
@@ -710,7 +703,7 @@ FUTURE & KEEP
             If the Content-Length header has not been defined, the data will be transferred using chunked transfers. 
             @duplicate Stream.write
          */
-        native function write(...data): Void
+        native function write(...data): Number
 
         /* ***************************************** Legacy *******************************************/
 
@@ -780,14 +773,6 @@ FUTURE & KEEP
         # Config.Legacy
         function get contentEncoding(): String
             header("content-encoding")
-
-        /**
-            @hide
-            @deprecated 1.0.0
-            //  TODO - can't use conditional compilation to remove as it will disable the getter which remains
-         */
-        function set contentLength(value: Number): Void
-            setHeader("content-length", value)
 
         /** 
             Commence a DELETE request for the current uri. See connect() for connection details.

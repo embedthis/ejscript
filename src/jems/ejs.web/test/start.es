@@ -5,10 +5,14 @@
 require ejs.web
 
 let address = App.args[1] || App.config.test.http_port || ":6700"
-let server: HttpServer = new HttpServer(".")
+let server: HttpServer = new HttpServer("web")
 
-//  MOB -- these routes dont handle /index.html
-MyRoutes = [
+var r = new Router
+r.show()
+
+/*
+var r = new Router(null)
+r.add(
   { name: "app",     builder: MvcBuilder,                   match: "/blog/", 
                                                             location: { prefix: "/blog/", dir: "mvc-blog" }, },
 
@@ -30,13 +34,12 @@ MyRoutes = [
   { name: "index",   builder: MvcBuilder, method: "GET",    match: "/:controller",          params: { action: "index", } },
   { name: "static",  builder: StaticBuilder, },
 ]
+*/
 
-// var router = Router(Router.Default)
-var router = Router(MyRoutes)
 server.on("readable", function (event, request) {
     // request.setLimits({timeout: 0, inactivityTimeout: 60})
     // App.log.info(request.method, request.uri)
-    Web.serve(request, router)
+    Web.serve(request, r)
 })
 
 App.log.info("Listen on " + address)

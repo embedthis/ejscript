@@ -51,6 +51,11 @@
 #define ES_ejs_web_escapeHtml_str                                      0
 #define ES_ejs_web_html_args                                           0
 #define ES_ejs_web_unescapeHtml_s                                      0
+
+
+/*
+    Class property slots for the "CommonLogClass" type 
+ */
 #define ES_ejs_web_CommonLogClass_NUM_CLASS_PROP                       0
 
 /*
@@ -196,25 +201,26 @@
  */
 #define ES_ejs_web_HttpServer_address                                  0
 #define ES_ejs_web_HttpServer_async                                    1
-#define ES_ejs_web_HttpServer_documentRoot                             2
-#define ES_ejs_web_HttpServer_isSecure                                 3
-#define ES_ejs_web_HttpServer_limits                                   4
-#define ES_ejs_web_HttpServer_name                                     5
-#define ES_ejs_web_HttpServer_port                                     6
-#define ES_ejs_web_HttpServer_serverRoot                               7
-#define ES_ejs_web_HttpServer_sessions                                 8
-#define ES_ejs_web_HttpServer_software                                 9
-#define ES_ejs_web_HttpServer_accept                                   10
-#define ES_ejs_web_HttpServer_close                                    11
-#define ES_ejs_web_HttpServer_listen                                   12
-#define ES_ejs_web_HttpServer_off                                      13
-#define ES_ejs_web_HttpServer_on                                       14
-#define ES_ejs_web_HttpServer_secure                                   15
-#define ES_ejs_web_HttpServer_setPipeline                              16
-#define ES_ejs_web_HttpServer_setLimits                                17
-#define ES_ejs_web_HttpServer_trace                                    18
-#define ES_ejs_web_HttpServer_verifyClients                            19
-#define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        20
+#define ES_ejs_web_HttpServer_config                                   2
+#define ES_ejs_web_HttpServer_documentRoot                             3
+#define ES_ejs_web_HttpServer_isSecure                                 4
+#define ES_ejs_web_HttpServer_limits                                   5
+#define ES_ejs_web_HttpServer_name                                     6
+#define ES_ejs_web_HttpServer_port                                     7
+#define ES_ejs_web_HttpServer_serverRoot                               8
+#define ES_ejs_web_HttpServer_sessions                                 9
+#define ES_ejs_web_HttpServer_software                                 10
+#define ES_ejs_web_HttpServer_accept                                   11
+#define ES_ejs_web_HttpServer_close                                    12
+#define ES_ejs_web_HttpServer_listen                                   13
+#define ES_ejs_web_HttpServer_off                                      14
+#define ES_ejs_web_HttpServer_on                                       15
+#define ES_ejs_web_HttpServer_secure                                   16
+#define ES_ejs_web_HttpServer_setPipeline                              17
+#define ES_ejs_web_HttpServer_setLimits                                18
+#define ES_ejs_web_HttpServer_trace                                    19
+#define ES_ejs_web_HttpServer_verifyClients                            20
+#define ES_ejs_web_HttpServer_NUM_INSTANCE_PROP                        21
 #define ES_ejs_web_HttpServer_NUM_INHERITED_PROP                       0
 
 
@@ -226,7 +232,8 @@
 #define ES_Mvc_defaultConfig                                           2
 #define ES_Mvc_loaded                                                  3
 #define ES_Mvc_EJSRC                                                   4
-#define ES_Mvc_NUM_CLASS_PROP                                          5
+#define ES_Mvc_initMvc                                                 5
+#define ES_Mvc_NUM_CLASS_PROP                                          6
 
 /*
    Prototype (instance) slots for "Mvc" type 
@@ -432,6 +439,11 @@
 #define ES_ejs_web_Route_setRouteProperties                            32
 #define ES_ejs_web_Route_NUM_INSTANCE_PROP                             33
 #define ES_ejs_web_Route_NUM_INHERITED_PROP                            0
+
+
+/*
+    Class property slots for the "Session" type 
+ */
 #define ES_ejs_web_Session_NUM_CLASS_PROP                              0
 
 /*
@@ -439,6 +451,11 @@
  */
 #define ES_ejs_web_Session_NUM_INSTANCE_PROP                           0
 #define ES_ejs_web_Session_NUM_INHERITED_PROP                          0
+
+
+/*
+    Class property slots for the "UploadFile" type 
+ */
 #define ES_ejs_web_UploadFile_NUM_CLASS_PROP                           0
 
 /*
@@ -533,17 +550,16 @@
     Class property slots for the "Web" type 
  */
 #define ES_ejs_web_Web__initializer___Web_                             0
-#define ES_ejs_web_Web_config                                          1
-#define ES_ejs_web_Web_defaultConfig                                   2
-#define ES_ejs_web_Web_init                                            3
-#define ES_ejs_web_Web_serve                                           4
-#define ES_ejs_web_Web_worker                                          5
-#define ES_ejs_web_Web_workerHelper                                    6
-#define ES_ejs_web_Web_processBody                                     7
-#define ES_ejs_web_Web_process                                         8
-#define ES_ejs_web_Web_start                                           9
-#define ES_ejs_web_Web_run                                             10
-#define ES_ejs_web_Web_NUM_CLASS_PROP                                  11
+#define ES_ejs_web_Web_defaultConfig                                   1
+#define ES_ejs_web_Web_initWeb                                         2
+#define ES_ejs_web_Web_serve                                           3
+#define ES_ejs_web_Web_worker                                          4
+#define ES_ejs_web_Web_workerHelper                                    5
+#define ES_ejs_web_Web_processBody                                     6
+#define ES_ejs_web_Web_process                                         7
+#define ES_ejs_web_Web_start                                           8
+#define ES_ejs_web_Web_run                                             9
+#define ES_ejs_web_Web_NUM_CLASS_PROP                                  10
 
 /*
    Prototype (instance) slots for "Web" type 
@@ -573,6 +589,6 @@
 #define ES_ejs_web_Web_run_documentRoot                                1
 #define ES_ejs_web_Web_run_serverRoot                                  2
 
-#define _ES_CHECKSUM_ejs_web   759214
+#define _ES_CHECKSUM_ejs_web   761945
 
 #endif

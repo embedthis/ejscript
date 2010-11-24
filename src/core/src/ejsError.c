@@ -29,11 +29,10 @@ static EjsObj *castError(Ejs *ejs, EjsError *error, EjsType *type)
         stack = (EjsString*) ejsRunFunctionBySlot(ejs, (EjsObj*) error, ES_Error_formatStack, 0, NULL);
         us = ejsIsString(ejs, stack) ? stack : ejs->emptyString;
         msg = ejsGetProperty(ejs, error, ES_Error_message);
-        if ((buf = mprAsprintf(ejs, -1,
-                "%S Exception: %S\nStack:\n%S\n", TYPE(error)->qname.name, msg, us)) == NULL) {
+        if ((buf = mprAsprintf(ejs, "%@ Exception: %@\nStack:\n%@\n", TYPE(error)->qname.name, msg, us)) == NULL) {
             ejsThrowMemoryError(ejs);
         }
-        return (EjsObj*) ejsCreateStringAndFree(ejs, buf);
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, buf);
         break;
 
     default:
@@ -70,10 +69,6 @@ static EjsObj *error_capture(Ejs *ejs, EjsError *error, int argc,  EjsObj **argv
     int     uplevels;
     
     uplevels = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
-#if UNUSED
-    ejsSetProperty(ejs, error, ES_Error_stack, ejsCaptureStack(ejs, uplevels));
-    return 0;
-#endif
     return (EjsObj*) ejsCaptureStack(ejs, uplevels);
 }
 
@@ -83,7 +78,7 @@ EjsError *ejsCreateError(Ejs *ejs, EjsType *type, EjsObj *msg)
 {
     EjsError    *error;
 
-    error = (EjsError*) ejsCreateObject(ejs, type, 0);
+    error = (EjsError*) ejsCreatePot(ejs, type, 0);
     if (error) {
         ejsSetProperty(ejs, error, ES_Error_message, msg);
         ejsSetProperty(ejs, error, ES_Error_timestamp, ejsCreateDate(ejs, mprGetTime(ejs)));
@@ -92,15 +87,17 @@ EjsError *ejsCreateError(Ejs *ejs, EjsType *type, EjsObj *msg)
     return error;
 }
 
+
 static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 {
     EjsType     *type;
 
-    type = ejsCreateNativeType(ejs, "ejs", name, id, sizeof(EjsError));
+    //  MOB -- remove this type and just use EjsObj - bug what about castError helper
+    type = ejsCreateNativeType(ejs, N("ejs", name), id, sizeof(EjsError), NULL, EJS_POT_HELPERS);
 
     //  MOB -- why?
     type->constructor.block.nobind = 1;
-    ejsCloneObjectHelpers(ejs, type);
+
     type->helpers.cast = (EjsCastHelper) castError;
     return type;
 }
@@ -124,7 +121,6 @@ void ejsCreateErrorType(Ejs *ejs)
     defineType(ejs, "SyntaxError", ES_SyntaxError);
     defineType(ejs, "TypeError", ES_TypeError);
     defineType(ejs, "URIError", ES_URIError);
-
 }
 
 
@@ -132,7 +128,7 @@ static void configureType(Ejs *ejs, cchar *name)
 {
     EjsType     *type;
 
-    type = ejsGetTypeByName(ejs, "ejs", name);
+    type = ejsGetTypeByName(ejs, N("ejs", name));
     mprAssert(type);
     ejsBindConstructor(ejs, type, (EjsProc) errorConstructor);
 }

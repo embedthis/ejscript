@@ -19,36 +19,13 @@ static void setupConnTrace(HttpConn *conn);
 static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags);
 
 /************************************ Code ************************************/
-#if UNUSED
-/*  
-    function HttpServer(documentRoot: Path = ".", serverRoot: Path = ".")
-    Constructor function
- */
-static EjsObj *hs_HttpServer(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
-{
-    EjsObj      *serverRoot, *documentRoot;
-
-    sp->ejs = ejs;
-    sp->async = 1;
-
-    documentRoot = (argc >= 1) ? argv[0] : (EjsObj*) ejsCreatePath(ejs, ".");
-    ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_documentRoot, documentRoot);
-
-    serverRoot = (argc >= 2) ? argv[1] : (EjsObj*) ejsCreatePath(ejs, ".");
-    ejsSetProperty(ejs, sp, ES_ejs_web_HttpServer_serverRoot, serverRoot);
-
-    return (EjsObj*) sp;
-}
-#endif
-
-
 /*  
     function get address(): String
  */
 static EjsObj *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     if (sp->ip) {
-        return (EjsObj*) ejsCreateString(ejs, sp->ip);
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, sp->ip);
     } 
     return ejs->nullValue;
 }
@@ -101,7 +78,7 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
         mprFree(sp->server);
         sp->server = 0;
-        sp->obj.permanent = 0;
+        mprRelease(sp);
     }
     return 0;
 }
@@ -115,7 +92,7 @@ static EjsObj *hs_limits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     HttpLimits  *limits;
 
     if (sp->limits == 0) {
-        sp->limits = ejsCreateSimpleObject(ejs);
+        sp->limits = ejsCreateEmptyPot(ejs);
         limits = (sp->server) ? sp->server->limits : ejs->http->serverLimits;
         mprAssert(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
@@ -131,7 +108,7 @@ static EjsObj *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     //  TODO -- should fire if currently readable / writable (also socket etc)
     ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
-    sp->emitter->permanent = 1;
+    mprHold(sp->emitter);
     return 0;
 }
 
@@ -144,7 +121,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
     HttpLimits  *limits;
     
     if (sp->limits == 0) {
-        sp->limits = ejsCreateSimpleObject(ejs);
+        sp->limits = ejsCreateEmptyPot(ejs);
         limits = (sp->server) ? sp->server->limits : ejs->http->serverLimits;
         mprAssert(limits);
         ejsGetHttpLimits(ejs, sp->limits, limits, 1);
@@ -186,7 +163,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         sp->server = 0;
     }
     if (endpoint == ejs->nullValue) {
-        sp->obj.permanent = 1;
+        mprHold(sp);
         if (ejs->loc) {
             ejs->loc->context = sp;
         } else {
@@ -197,7 +174,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     }
     if (ejs->loc) {
         /* Being called hosted - ignore endpoint value */
-        sp->obj.permanent = 1;
+        mprHold(sp);
         ejs->loc->context = sp;
         return (EjsObj*) ejs->nullValue;
     }
@@ -231,11 +208,11 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
     if (ejsIsPath(ejs, root)) {
         //  MOB -- why is this needed? remove?
-        server->documentRoot = mprStrdup(server, root->path);
+        server->documentRoot = sclone(server, root->value);
     }
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
     if (ejsIsPath(ejs, root)) {
-        server->serverRoot = mprStrdup(server, root->path);
+        server->serverRoot = sclone(server, root->value);
     }
 
     //  MOB -- who make sure that the sp object is permanent?
@@ -259,7 +236,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 static EjsObj *hs_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     if (sp->name) {
-        return (EjsObj*) ejsCreateString(ejs, sp->name);
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, sp->name);
     }
     return (EjsObj*) ejs->nullValue;
 }
@@ -271,7 +248,7 @@ static EjsObj *hs_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 static EjsObj *hs_set_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     mprFree(sp->name);
-    sp->name = mprStrdup(sp, ejsGetString(ejs, argv[0]));
+    sp->name = sclone(sp, ejsToMulti(ejs, argv[0]));
     if (sp->server) {
         httpSetServerName(sp->server, sp->name);
     }
@@ -318,17 +295,17 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         return 0;
     }
     if (argv[0] != ejs->nullValue) {
-        mprSetSslKeyFile(sp->ssl, ejsGetString(ejs, argv[0]));
+        mprSetSslKeyFile(sp->ssl, ejsToMulti(ejs, argv[0]));
     }
     if (argv[1] != ejs->nullValue) {
-        mprSetSslCertFile(sp->ssl, ejsGetString(ejs, argv[1]));
+        mprSetSslCertFile(sp->ssl, ejsToMulti(ejs, argv[1]));
     }
 
-    if (argc >= 3 && ejsIsArray(argv[2])) {
+    if (argc >= 3 && ejsIsArray(ejs, argv[2])) {
         protocols = (EjsArray*) argv[2];
         protoMask = 0;
         for (i = 0; i < protocols->length; i++) {
-            token = ejsGetString(ejs, ejsToString(ejs, ejsGetProperty(ejs, protocols, i)));
+            token = ejsToMulti(ejs, ejsGetProperty(ejs, protocols, i));
             mask = -1;
             if (*token == '-') {
                 token++;
@@ -336,27 +313,27 @@ static EjsObj *hs_secure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
             } else if (*token == '+') {
                 token++;
             }
-            if (mprStrcmpAnyCase(token, "SSLv2") == 0) {
+            if (scasecmp(token, "SSLv2") == 0) {
                 protoMask &= ~(MPR_PROTO_SSLV2 & ~mask);
                 protoMask |= (MPR_PROTO_SSLV2 & mask);
 
-            } else if (mprStrcmpAnyCase(token, "SSLv3") == 0) {
+            } else if (scasecmp(token, "SSLv3") == 0) {
                 protoMask &= ~(MPR_PROTO_SSLV3 & ~mask);
                 protoMask |= (MPR_PROTO_SSLV3 & mask);
 
-            } else if (mprStrcmpAnyCase(token, "TLSv1") == 0) {
+            } else if (scasecmp(token, "TLSv1") == 0) {
                 protoMask &= ~(MPR_PROTO_TLSV1 & ~mask);
                 protoMask |= (MPR_PROTO_TLSV1 & mask);
 
-            } else if (mprStrcmpAnyCase(token, "ALL") == 0) {
+            } else if (scasecmp(token, "ALL") == 0) {
                 protoMask &= ~(MPR_PROTO_ALL & ~mask);
                 protoMask |= (MPR_PROTO_ALL & mask);
             }
         }
         mprSetSslProtocols(sp->ssl, protoMask);
     }
-    if (argc >= 4 && ejsIsArray(argv[3])) {
-        mprSetSslCiphers(sp->ssl, ejsGetString(ejs, argv[3]));
+    if (argc >= 4 && ejsIsArray(ejs, argv[3])) {
+        mprSetSslCiphers(sp->ssl, ejsToMulti(ejs, argv[3]));
     }
     mprConfigureSsl(sp->ssl);
 #else
@@ -373,7 +350,7 @@ static EjsObj *hs_setPipeline(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
 {
     sp->incomingStages = (EjsArray*) argv[0];
     sp->outgoingStages = (EjsArray*) argv[1];
-    sp->connector = ejsGetString(ejs, argv[2]);
+    sp->connector = ejsToMulti(ejs, argv[2]);
 
     if (sp->server) {
         /* NOTE: this will only impact future requests */
@@ -398,7 +375,7 @@ static EjsObj *hs_trace(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_software(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateString(ejs, EJS_HTTPSERVER_NAME);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, EJS_HTTPSERVER_NAME);
 }
 
 
@@ -412,76 +389,7 @@ static EjsObj *hs_verifyClients(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **
 }
 
 
-/************************************ Helpers *************************************/
-#if UNUSED
-/*
-    Get limits:  obj[*] = limits
- */
-void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server) 
-{
-    EjsName     qname;
-
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "chunk"), ejsCreateNumber(ejs, limits->chunkSize));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "receive"), ejsCreateNumber(ejs, limits->receiveBodySize));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "reuse"), ejsCreateNumber(ejs, limits->keepAliveCount));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "transmission"), ejsCreateNumber(ejs, limits->transmissionBodySize));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "upload"), ejsCreateNumber(ejs, limits->uploadSize));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "inactivityTimeout"), 
-        ejsCreateNumber(ejs, limits->inactivityTimeout / MPR_TICKS_PER_SEC));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "requestTimeout"), 
-        ejsCreateNumber(ejs, limits->requestTimeout / MPR_TICKS_PER_SEC));
-    ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "sessionTimeout"), 
-        ejsCreateNumber(ejs, limits->sessionTimeout / MPR_TICKS_PER_SEC));
-
-    if (server) {
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "clients"), ejsCreateNumber(ejs, limits->clientCount));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "header"), ejsCreateNumber(ejs, limits->headerSize));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "headers"), ejsCreateNumber(ejs, limits->headerCount));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "requests"), ejsCreateNumber(ejs, limits->requestCount));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "sessions"), ejsCreateNumber(ejs, limits->sessionCount));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "stageBuffer"), ejsCreateNumber(ejs, limits->stageBufferSize));
-        ejsSetPropertyByName(ejs, obj, ejsName(&qname, "", "uri"), ejsCreateNumber(ejs, limits->uriSize));
-    }
-}
-
-
-/*
-    Set the limit field:    *limit = obj[field]
- */
-static void setLimit(Ejs *ejs, EjsObj *obj, cchar *field, int *limit, int factor)
-{
-    EjsObj      *vp;
-    EjsName     qname;
-
-    if ((vp = ejsGetPropertyByName(ejs, obj, ejsName(&qname, "", field))) != 0) {
-        *limit = ejsGetInt(ejs, ejsToNumber(ejs, vp)) * factor;
-    }
-}
-
-
-void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server) 
-{
-    setLimit(ejs, obj, "chunk", &limits->chunkSize, 1);
-    setLimit(ejs, obj, "inactivityTimeout", &limits->inactivityTimeout, MPR_TICKS_PER_SEC);
-    setLimit(ejs, obj, "receive", &limits->receiveBodySize, 1);
-    setLimit(ejs, obj, "reuse", &limits->keepAliveCount, 1);
-    setLimit(ejs, obj, "requestTimeout", &limits->requestTimeout, MPR_TICKS_PER_SEC);
-    setLimit(ejs, obj, "sessionTimeout", &limits->sessionTimeout, MPR_TICKS_PER_SEC);
-    setLimit(ejs, obj, "transmission", &limits->transmissionBodySize, 1);
-    setLimit(ejs, obj, "upload", &limits->uploadSize, 1);
-
-    if (server) {
-        setLimit(ejs, obj, "clients", &limits->clientCount, 1);
-        setLimit(ejs, obj, "requests", &limits->requestCount, 1);
-        setLimit(ejs, obj, "sessions", &limits->sessionCount, 1);
-        setLimit(ejs, obj, "stageBuffer", &limits->stageBufferSize, 1);
-        setLimit(ejs, obj, "uri", &limits->uriSize, 1);
-        setLimit(ejs, obj, "headers", &limits->headerCount, 1);
-        setLimit(ejs, obj, "header", &limits->headerSize, 1);
-    }
-}
-#endif
-
+/************************************ Support *************************************/
 
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp) 
 {
@@ -500,7 +408,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
         httpClearStages(loc, HTTP_STAGE_OUTGOING);
         for (i = 0; i < sp->outgoingStages->length; i++) {
             vs = ejsGetProperty(ejs, sp->outgoingStages, i);
-            if (vs && ejsIsString(vs)) {
+            if (vs && ejsIsString(ejs, vs)) {
                 name = vs->value;
                 if ((stage = httpLookupStage(http, name)) == 0) {
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
@@ -514,7 +422,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
         httpClearStages(loc, HTTP_STAGE_INCOMING);
         for (i = 0; i < sp->incomingStages->length; i++) {
             vs = ejsGetProperty(ejs, sp->incomingStages, i);
-            if (vs && ejsIsString(vs)) {
+            if (vs && ejsIsString(ejs, vs)) {
                 name = vs->value;
                 if ((stage = httpLookupStage(http, name)) == 0) {
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
@@ -668,14 +576,14 @@ static EjsHttpServer *getServerContext(HttpConn *conn)
         sp = (EjsHttpServer*) loc->context;
         ejs = sp->ejs;
         dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-        dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : conn->documentRoot;
+        dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->value : conn->documentRoot;
         if (sp->server == 0) {
             /* Don't set limits or pipeline. That will come from the embedding server */
             sp->server = conn->server;
             sp->server->ssl = loc->ssl;
-            sp->ip = mprStrdup(sp, conn->server->ip);
+            sp->ip = sclone(sp, conn->server->ip);
             sp->port = conn->server->port;
-            sp->dir = mprStrdup(sp, dir);
+            sp->dir = sclone(sp, dir);
         }
         httpSetServerContext(conn->server, sp);
         httpSetRequestNotifier(conn, (HttpNotifier) stateChangeNotifier);
@@ -695,7 +603,7 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 
     ejs = sp->ejs;
     dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-    dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->path : ".";
+    dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->value : ".";
 
     req = ejsCreateRequest(ejs, sp, conn, dir);
     httpSetConnContext(conn, req);
@@ -707,7 +615,7 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
     if (sp->pipe) {
         def = ejsRunFunction(ejs, sp->createPipeline, 
         if ((vp = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "handler"))) != 0) { 
-            handler = ejsGetString(ejs, vp);
+            handler = ejsToMulti(ejs, vp);
         }
         if ((incoming = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "incoming"))) != 0) { 
             count = ejsGetProperty(ejs, incoming)
@@ -719,10 +627,9 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
             count = ejsGetProperty(ejs, incoming)
         }
         if ((connector = ejsGetPropertyByName(ejs, def, ejsName(&name, "", "connector"))) != 0) { 
-            connector = ejsGetString(ejs, vp);
+            connector = ejsToMulti(ejs, vp);
         }
-        httpSetPipeline(conn, ejsGetString(ejs, Handler), 
-            ejsGetString(ejs, connector), 
+        httpSetPipeline(conn, ejsToMulti(ejs, Handler), ejsToMulti(ejs, connector), 
     }
 #endif
     return req;
@@ -806,26 +713,23 @@ HttpStage *ejsAddWebHandler(Http *http)
 /*  
     Mark the object properties for the garbage collector
  */
-static void markHttpServer(Ejs *ejs, EjsHttpServer *sp)
+static void manageHttpServer(EjsHttpServer *sp, int flags)
 {
-    /*
-        sp->emitter is permanent
-     */
-    ejsMarkObject(ejs, (EjsObj*) sp);
-    if (sp->limits) {
-        ejsMark(ejs, (EjsObj*) sp->limits);
+    if (flags & MPR_MANAGE_MARK) {
+        ejsManagePot(sp, flags);
+        mprMark(sp->limits);
+        mprMark(sp->outgoingStages);
+        mprMark(sp->incomingStages);
+        mprMark(sp->sessions);
+
+    } else {
+        ejsSendEvent(sp->ejs, sp->emitter, "close", NULL, sp);
+        if (sp->server) {
+            mprFree(sp->server);
+            sp->server = 0;
+        }
+        mprRelease(sp->emitter);
     }
-    if (sp->outgoingStages) {
-        ejsMark(ejs, (EjsObj*) sp->outgoingStages);
-    }
-    if (sp->incomingStages) {
-        ejsMark(ejs, (EjsObj*) sp->incomingStages);
-    }
-#if UNUSED
-    if (sp->sessions) {
-        ejsMark(ejs, (EjsObj*) sp->sessions);
-    }
-#endif
 }
 
 
@@ -833,48 +737,25 @@ static EjsHttpServer *createHttpServer(Ejs *ejs, EjsType *type, int size)
 {
     EjsHttpServer   *sp;
 
-    if ((sp = (EjsHttpServer*) ejsCreateObject(ejs, type, 0)) == NULL) {
+    if ((sp = (EjsHttpServer*) ejsAlloc(ejs, type, 0)) == NULL) {
         return NULL;
     }
     sp->ejs = ejs;
     sp->async = 1;
-#if UNUSED
-    sp->traceLevel = HTTP_TRACE_LEVEL;
-    sp->traceMask = HTTP_TRACE_TRANSMIT | HTTP_TRACE_RECEIVE | HTTP_TRACE_CONN | HTTP_TRACE_FIRST | HTTP_TRACE_HEADERS;
-    sp->traceMaxLength = INT_MAX;
-#endif
     httpInitTrace(sp->trace);
     return sp;
 }
 
 
-static void destroyHttpServer(Ejs *ejs, EjsHttpServer *sp)
-{
-    ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
-    if (sp->server) {
-        mprFree(sp->server);
-        sp->server = 0;
-    }
-    if (sp->emitter) {
-        sp->emitter->permanent = 0;
-    }
-}
-
-
 void ejsConfigureHttpServerType(Ejs *ejs)
 {
-    EjsObj      *prototype;
     EjsType     *type;
+    EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, "ejs.web", "HttpServer", sizeof(EjsHttpServer));
-    type->helpers.mark = (EjsMarkHelper) markHttpServer;
+    type = ejsConfigureNativeType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer, EJS_POT_HELPERS);
     type->helpers.create = (EjsCreateHelper) createHttpServer;
-    type->helpers.destroy = (EjsDestroyHelper) destroyHttpServer;
 
     prototype = type->prototype;
-#if UNUSED
-    ejsBindConstructor(ejs, type, (EjsProc) hs_HttpServer);
-#endif
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_accept, (EjsProc) hs_accept);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_address, (EjsProc) hs_address);
     ejsBindAccess(ejs, prototype, ES_ejs_web_HttpServer_async, (EjsProc) hs_async, (EjsProc) hs_set_async);
@@ -892,6 +773,8 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_trace, (EjsProc) hs_trace);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_verifyClients, (EjsProc) hs_verifyClients);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_software, (EjsProc) hs_software);
+
+    ejsLoadHttpService(ejs);
     ejsAddWebHandler(ejs->http);
 }
 

@@ -17,7 +17,7 @@ static void     prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data);
 static int      readTransfer(Ejs *ejs, EjsHttp *hp, int count);
 static void     sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp);
 static void     sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp);
-static EV       *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EV **argv);
+static EjsObj   *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EjsObj **argv);
 static bool     waitForResponseHeaders(EjsHttp *hp, int timeout);
 static bool     waitForState(EjsHttp *hp, int state, int timeout, int throw);
 static int      writeHttpData(Ejs *ejs, EjsHttp *hp);
@@ -28,17 +28,20 @@ static int      writeHttpData(Ejs *ejs, EjsHttp *hp);
  */
 static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    ejsLoadHttpService(ejs);
+
     hp->ejs = ejs;
     hp->conn = httpCreateClient(ejs->http, ejs->dispatcher);
     if (hp->conn == 0) {
         ejsThrowMemoryError(ejs);
+        return 0;
     }
     httpSetConnNotifier(hp->conn, httpNotify);
     httpSetConnContext(hp->conn, hp);
     if (argc == 1 && argv[0] != ejs->nullValue) {
         hp->uri = httpUriToString(hp, ((EjsUri*) argv[0])->uri, 1);
     }
-    hp->method = mprStrdup(hp, "GET");
+    hp->method = sclone(hp, "GET");
     hp->requestContent = mprCreateBuf(hp, HTTP_BUFSIZE, -1);
     hp->responseContent = mprCreateBuf(hp, HTTP_BUFSIZE, -1);
     return (EjsObj*) hp;
@@ -128,7 +131,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         httpSetConnNotifier(hp->conn, httpNotify);
         httpSetConnContext(hp->conn, hp);
     }
-    ejsMakeTransient(ejs, hp);
+    mprRelease(hp);
     return 0;
 }
 
@@ -136,10 +139,10 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function connect(method: String, url = null, data ...): Void
  */
-static EV *http_connect(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
+static EjsObj *http_connect(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     mprFree(hp->method);
-    hp->method = mprStrdup(hp, ejsGetString(ejs, argv[0]));
+    hp->method = sclone(hp, ejsToMulti(ejs, argv[0]));
     return startHttpRequest(ejs, hp, NULL, argc - 1, &argv[1]);
 }
 
@@ -150,7 +153,7 @@ static EV *http_connect(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
 static EjsObj *http_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->certFile) {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, hp->certFile);
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, hp->certFile);
     }
     return ejs->nullValue;
 }
@@ -162,7 +165,7 @@ static EjsObj *http_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_set_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     mprFree(hp->certFile);
-    hp->certFile = mprStrdup(hp, ejsGetString(ejs, argv[0]));
+    hp->certFile = sclone(hp, ejsToMulti(ejs, argv[0]));
     return 0;
 }
 
@@ -200,35 +203,14 @@ static EjsObj *http_date(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED
-/*  
-    function dontFinalize(): Void
- */
-static EjsObj *http_dontFinalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
-{
-    hp->dontFinalize = 1;
-    return 0;
-}
-#endif
-
-
 /*  
     function finalize(): Void
  */
 static EjsObj *http_finalize(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-#if UNUSED
-    int     force;
-
-    force = (argc == 1 && argv[0] == ejs->trueValue);
-    if (!hp->dontFinalize || force) {
-        httpFinalize(hp->conn);
-    }
-#else
     if (hp->conn) {
         httpFinalize(hp->conn);
     }
-#endif
     return 0;
 }
 
@@ -264,7 +246,7 @@ static EjsObj *http_flush(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     function form(uri: String = null, formData: Object = null): Void
     Issue a POST method with form data
  */
-static EV *http_form(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
+static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsObj  *data;
 
@@ -275,7 +257,7 @@ static EV *http_form(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
         if (ejsGetPropertyCount(ejs, data) > 0) {
             prepForm(ejs, hp, NULL, data);
         } else {
-            mprPutStringToBuf(hp->requestContent, ejsGetString(ejs, data));
+            mprPutStringToBuf(hp->requestContent, ejsToMulti(ejs, data));
         }
         mprAddNullToBuf(hp->requestContent);
         httpSetHeader(hp->conn, "Content-Type", "application/x-www-form-urlencoded");
@@ -307,7 +289,7 @@ static EjsObj *http_set_followRedirects(Ejs *ejs, EjsHttp *hp, int argc, EjsObj 
     function get(uri: String = null, ...data): Void
     The spec allows GET methods to have body data, but is rarely, if ever, used.
  */
-static EV *http_get(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
+static EjsObj *http_get(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     startHttpRequest(ejs, hp, "GET", argc, argv);
     if (hp->conn) {
@@ -328,9 +310,9 @@ static EjsObj *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
     EjsObj          *headers;
 
     conn = hp->conn;
-    headers = (EjsObj*) ejsCreateSimpleObject(ejs);
+    headers = (EjsObj*) ejsCreateEmptyPot(ejs);
     for (p = 0; (p = mprGetNextHash(conn->tx->headers, p)) != 0; ) {
-        ejsSetPropertyByName(ejs, headers, EN(p->key), ejsCreateStringFromCS(ejs, p->data));
+        ejsSetPropertyByName(ejs, headers, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
     }
     return (EjsObj*) headers;
 }
@@ -339,7 +321,7 @@ static EjsObj *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
 /*  
     function head(uri: String = null): Void
  */
-static EV *http_head(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
+static EjsObj *http_head(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     return startHttpRequest(ejs, hp, "HEAD", argc, argv);
 }
@@ -357,13 +339,13 @@ static EjsObj *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
     }
-    str = (char*) ejsGetString(ejs, argv[0]);
-    str = mprStrdup(ejs, str);
-    mprStrLower(str);
+    str = (char*) ejsToMulti(ejs, argv[0]);
+    str = sclone(ejs, str);
+    slower(str);
     value = httpGetHeader(hp->conn, str);
     mprFree(str);
     if (value) {
-        result = (EjsObj*) ejsCreateStringFromCS(ejs, value);
+        result = (EjsObj*) ejsCreateStringFromAsc(ejs, value);
     } else {
         result = (EjsObj*) ejs->nullValue;
     }
@@ -378,19 +360,19 @@ static EjsObj *http_headers(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     MprHashTable    *hash;
     MprHash         *p;
-    EjsObj          *results;
+    EjsPot          *results;
     int             i;
 
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
     }
-    results = ejsCreateSimpleObject(ejs);
+    results = ejsCreateEmptyPot(ejs);
     hash = httpGetHeaderHash(hp->conn);
     if (hash == 0) {
         return (EjsObj*) results;
     }
     for (i = 0, p = mprGetFirstHash(hash); p; p = mprGetNextHash(hash, p), i++) {
-        ejsSetPropertyByName(ejs, results, EN(p->key), ejsCreateStringFromCS(ejs, p->data));
+        ejsSetPropertyByName(ejs, results, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
     }
     return (EjsObj*) results;
 }
@@ -411,7 +393,7 @@ static EjsObj *http_isSecure(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->keyFile) {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, hp->keyFile);
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, hp->keyFile);
     }
     return ejs->nullValue;
 }
@@ -423,7 +405,7 @@ static EjsObj *http_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_set_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     mprFree(hp->keyFile);
-    hp->keyFile = mprStrdup(hp, ejsGetString(ejs, argv[0]));
+    hp->keyFile = sclone(hp, ejsToMulti(ejs, argv[0]));
     return 0;
 }
 
@@ -443,7 +425,7 @@ static EjsObj *http_lastModified(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_limits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->limits == 0) {
-        hp->limits = ejsCreateSimpleObject(ejs);
+        hp->limits = (EjsObj*) ejsCreateEmptyPot(ejs);
         ejsGetHttpLimits(ejs, hp->limits, hp->conn->limits, 0);
     }
     return hp->limits;
@@ -455,7 +437,7 @@ static EjsObj *http_limits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromCS(ejs, hp->method);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, hp->method);
 }
 
 
@@ -466,7 +448,7 @@ static EjsObj *http_set_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     cchar    *method;
 
-    method = ejsGetString(ejs, argv[0]);
+    method = ejsToMulti(ejs, argv[0]);
     if (strcmp(method, "DELETE") != 0 && strcmp(method, "GET") != 0 &&  strcmp(method, "HEAD") != 0 &&
             strcmp(method, "OPTIONS") != 0 && strcmp(method, "POST") != 0 && strcmp(method, "PUT") != 0 &&
             strcmp(method, "TRACE") != 0) {
@@ -474,7 +456,7 @@ static EjsObj *http_set_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         return 0;
     }
     mprFree(hp->method);
-    hp->method = mprStrdup(hp, ejsGetString(ejs, argv[0]));
+    hp->method = sclone(hp, ejsToMulti(ejs, argv[0]));
     return 0;
 }
 
@@ -482,7 +464,7 @@ static EjsObj *http_set_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 /*  
     function post(uri: String = null, ...requestContent): Void
  */
-static EV *http_post(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
+static EjsObj *http_post(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     return startHttpRequest(ejs, hp, "POST", argc, argv);
 }
@@ -491,7 +473,7 @@ static EV *http_post(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
 /*  
     function put(uri: String = null, form object): Void
  */
-static EV *http_put(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
+static EjsObj *http_put(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     return startHttpRequest(ejs, hp, "PUT", argc, argv);
 }
@@ -568,7 +550,7 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         return 0;
     }
     //  MOB - UNICODE ENCODING
-    result = (EjsObj*) ejsCreateStringWithLength(ejs, mprGetBufStart(hp->responseContent), count);
+    result = (EjsObj*) ejsCreateStringFromMulti(ejs, mprGetBufStart(hp->responseContent), count);
     mprAdjustBufStart(hp->responseContent, count);
     return result;
 }
@@ -641,7 +623,7 @@ static EjsObj *http_set_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    httpSetCredentials(hp->conn, ejsGetString(ejs, argv[0]), ejsGetString(ejs, argv[1]));
+    httpSetCredentials(hp->conn, ejsToMulti(ejs, argv[0]), ejsToMulti(ejs, argv[1]));
     return 0;
 }
 
@@ -662,8 +644,8 @@ EjsObj *http_setHeader(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Can't update request headers once the request has started");
         return 0;
     }
-    key = ejsGetString(ejs, argv[0]);
-    value = ejsGetString(ejs, argv[1]);
+    key = ejsToMulti(ejs, argv[0]);
+    value = ejsToMulti(ejs, argv[1]);
     overwrite = (argc == 3) ? ejsGetBoolean(ejs, argv[2]) : 1;
     if (overwrite) {
         httpSetSimpleHeader(hp->conn, key, value);
@@ -683,7 +665,7 @@ static EjsObj *http_setLimits(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         httpSetUniqueConnLimits(hp->conn);
     }
     if (hp->limits == 0) {
-        hp->limits = ejsCreateSimpleObject(ejs);
+        hp->limits = (EjsObj*) ejsCreateEmptyPot(ejs);
         ejsGetHttpLimits(ejs, hp->limits, hp->conn->limits, 0);
     }
     ejsBlendObject(ejs, hp->limits, argv[0], 1);
@@ -731,7 +713,7 @@ static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *
         tp->include = mprCreateHash(ctx, 0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
-                mprAddHash(tp->include, mprStrdup(tp->include, ejsGetString(ejs, ejsToString(ejs, ext))), "");
+                mprAddHash(tp->include, sclone(tp->include, ejsToMulti(ejs, ejsToString(ejs, ext))), "");
             }
         }
     }
@@ -743,7 +725,7 @@ static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *
         tp->exclude = mprCreateHash(ctx, 0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
-                mprAddHash(tp->exclude, mprStrdup(tp->exclude, ejsGetString(ejs, ejsToString(ejs, ext))), "");
+                mprAddHash(tp->exclude, sclone(tp->exclude, ejsToMulti(ejs, ejsToString(ejs, ext))), "");
             }
         }
     }
@@ -779,7 +761,7 @@ static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateUriFromCS(ejs, hp->uri);
+    return (EjsObj*) ejsCreateUriFromMulti(ejs, hp->uri);
 }
 
 
@@ -824,10 +806,9 @@ static EjsObj *http_statusMessage(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv
     }
     conn = hp->conn;
     if (conn->errorMsg) {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, conn->errorMsg);
-    } else {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, httpGetStatusMessage(hp->conn));
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, conn->errorMsg);
     }
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, httpGetStatusMessage(hp->conn));
 }
 
 
@@ -856,7 +837,10 @@ static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 }
 
 
-static EV *http_write(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
+/*
+    function write(...data): Void
+ */
+static EjsNumber *http_write(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     int     nbytes;
 
@@ -881,7 +865,7 @@ static EV *http_write(Ejs *ejs, EjsHttp *hp, int argc, EV **argv)
 /*
     function [get|put|delete|post...](uri = null, ...data): Void
  */
-static EV *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EV **argv)
+static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EjsObj **argv)
 {
     EjsArray        *args;
     EjsByteArray    *data;
@@ -916,7 +900,7 @@ static EV *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EV **
     }
     if (method && strcmp(hp->method, method) != 0) {
         mprFree(hp->method);
-        hp->method = mprStrdup(hp, method);
+        hp->method = sclone(hp, method);
     }
     if (hp->method == 0) {
         ejsThrowArgError(ejs, "HTTP Method is not defined");
@@ -926,12 +910,12 @@ static EV *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EV **
         ejsThrowIOError(ejs, "Can't issue request for \"%s\"", hp->uri);
         return 0;
     }
-    ejsMakePermanent(ejs, hp);
+    mprAddRoot(hp);
 
     if (mprGetBufLength(hp->requestContent) > 0) {
         nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent));
         if (nbytes < 0) {
-            ejsMakeTransient(ejs, hp);
+            mprRelease(hp);
             ejsThrowIOError(ejs, "Can't write request data for \"%s\"", hp->uri);
             return 0;
         } else if (nbytes > 0) {
@@ -978,7 +962,7 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
             }
             sendHttpCloseEvent(ejs, hp);
         }
-        ejsMakeTransient(ejs, hp);
+        mprRelease(hp);
         break;
 
     case 0:
@@ -1114,7 +1098,7 @@ static EjsObj *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
     if (value == 0) {
         return (EjsObj*) ejs->nullValue;
     }
-    return (EjsObj*) ejsCreateStringFromCS(ejs, value);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, value);
 }
 
 
@@ -1142,7 +1126,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
         }
         if (ejsGetPropertyCount(ejs, vp) > 0 && !ejsIsArray(ejs, vp)) {
             if (prefix) {
-                newPrefix = mprAsprintf(hp, -1, "%s.%s", prefix, qname.name);
+                newPrefix = mprAsprintf(hp, "%s.%@", prefix, qname.name);
                 prepForm(ejs, hp, newPrefix, vp);
                 mprFree(newPrefix);
             } else {
@@ -1158,7 +1142,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
             }
             sep = (mprGetBufLength(hp->requestContent) > 0) ? "&" : "";
             if (prefix) {
-                newKey = mprStrcat(hp, -1, prefix, ".", key, NULL);
+                newKey = sjoin(hp, prefix, ".", key, NULL);
                 encodedKey = mprUriEncode(hp, newKey, MPR_ENCODE_URI_COMPONENT); 
                 mprFree(newKey);
             } else {
@@ -1187,44 +1171,19 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
     int         i, count;
 
     jdata = ejsToJSON(ejs, data, NULL);
-            if (prefix) {
-                newKey = mprStrcat(hp, -1, prefix, ".", key, NULL);
-                encodedKey = mprUriEncode(hp, newKey, MPR_ENCODE_URI_COMPONENT); 
-                mprFree(newKey);
-            } else {
-                encodedKey = mprUriEncode(hp, key, MPR_ENCODE_URI_COMPONENT);
-            }
-            encodedValue = mprUriEncode(hp, value->value, MPR_ENCODE_URI_COMPONENT);
-            mprPutFmtToBuf(hp->requestContent, "%s%s=%s", sep, encodedKey, encodedValue);
-            mprFree(encodedKey);
-            mprFree(encodedValue);
-        }
+    if (prefix) {
+        newKey = sjoin(hp, prefix, ".", key, NULL);
+        encodedKey = mprUriEncode(hp, newKey, MPR_ENCODE_URI_COMPONENT); 
+        mprFree(newKey);
+    } else {
+        encodedKey = mprUriEncode(hp, key, MPR_ENCODE_URI_COMPONENT);
     }
+    encodedValue = mprUriEncode(hp, value->value, MPR_ENCODE_URI_COMPONENT);
+    mprPutFmtToBuf(hp->requestContent, "%s%s=%s", sep, encodedKey, encodedValue);
+    mprFree(encodedKey);
+    mprFree(encodedValue);
 }
 #endif
-
-
-/*  
-    Mark the object properties for the garbage collector
- */
-void markHttp(Ejs *ejs, EjsHttp *http)
-{
-    //  MOB -- not needed
-    ejsMarkObject(ejs, (EjsObj*) http);
-
-    if (http->responseCache) {
-        ejsMark(ejs, (EjsObj*) http->responseCache);
-    }
-    if (http->emitter) {
-        ejsMark(ejs, (EjsObj*) http->emitter);
-    }
-    if (http->data) {
-        ejsMark(ejs, (EjsObj*) http->data);
-    }
-    if (http->limits) {
-        ejsMark(ejs, (EjsObj*) http->limits);
-    }
-}
 
 
 #if FUTURE
@@ -1313,7 +1272,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
                 break;
             }
         } else {
-            if (rc == MPR_ERR_CONNECTION) {
+            if (rc == MPR_ERR_CANT_CONNECT) {
                 httpFormatError(conn, HTTP_CODE_COMMS_ERROR, "Connection error");
             } else if (rc == MPR_ERR_TIMEOUT) {
                 if (timeout > 0) {
@@ -1386,25 +1345,6 @@ static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
         return 0;
     }
     return 1;
-}
-
-
-/*
-    Need a destructor because the connection object is owned by ejs->http and won't be automatically freed.
- */
-static void destroyHttp(Ejs *ejs, EjsHttp *hp)
-{
-    mprAssert(hp);
-
-    if (hp->conn) {
-        sendHttpCloseEvent(ejs, hp);
-        httpCloseConn(hp->conn);
-        mprFree(hp->conn);
-        hp->conn = 0;
-    }
-#if UNUSED
-    ejsFreeVar(ejs, (EjsObj*) hp, -1);
-#endif
 }
 
 
@@ -1495,23 +1435,40 @@ static void sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp)
 
 /*********************************** Factory **********************************/
 
+/*  
+    Manage the object properties for the garbage collector
+ */
+static void manageHttp(EjsHttp *http, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(http->responseCache);
+        mprMark(http->emitter);
+        mprMark(http->data);
+        mprMark(http->limits);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+        if (http->conn) {
+            sendHttpCloseEvent(http->ejs, http);
+            httpCloseConn(http->conn);
+            mprFree(http->conn);
+            http->conn = 0;
+        }
+    }
+}
+
+
 void ejsConfigureHttpType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Http", sizeof(EjsHttp));
-#if UNUSED
-    type->needFinalize = 1;
-#endif
+    type = ejsConfigureNativeType(ejs, N("ejs", "Http"), sizeof(EjsHttp), (MprManager) manageHttp, EJS_OBJ_HELPERS);
     prototype = type->prototype;
-
-    type->helpers.mark = (EjsMarkHelper) markHttp;
-    type->helpers.destroy = (EjsDestroyHelper) destroyHttp;
 
     ejsBindConstructor(ejs, type, (EjsProc) httpConstructor);
     ejsBindAccess(ejs, prototype, ES_Http_async, (EjsProc) http_async, (EjsProc) http_set_async);
 #if ES_Http_available
+    /* DEPRECATED */
     ejsBindMethod(ejs, prototype, ES_Http_available, (EjsProc) http_available);
 #endif
     ejsBindMethod(ejs, prototype, ES_Http_close, (EjsProc) http_close);
@@ -1520,9 +1477,6 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_contentLength, (EjsProc) http_contentLength);
     ejsBindMethod(ejs, prototype, ES_Http_contentType, (EjsProc) http_contentType);
     ejsBindMethod(ejs, prototype, ES_Http_date, (EjsProc) http_date);
-#if UNUSED
-    ejsBindMethod(ejs, prototype, ES_Http_dontFinalize, (EjsProc) http_dontFinalize);
-#endif
     ejsBindMethod(ejs, prototype, ES_Http_finalize, (EjsProc) http_finalize);
     ejsBindMethod(ejs, prototype, ES_Http_finalized, (EjsProc) http_finalized);
     ejsBindMethod(ejs, prototype, ES_Http_flush, (EjsProc) http_flush);
@@ -1539,9 +1493,7 @@ void ejsConfigureHttpType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Http_lastModified, (EjsProc) http_lastModified);
     ejsBindMethod(ejs, prototype, ES_Http_limits, (EjsProc) http_limits);
     ejsBindAccess(ejs, prototype, ES_Http_method, (EjsProc) http_method, (EjsProc) http_set_method);
-#if ES_Http_off
     ejsBindMethod(ejs, prototype, ES_Http_off, (EjsProc) http_off);
-#endif
     ejsBindMethod(ejs, prototype, ES_Http_on, (EjsProc) http_on);
     ejsBindMethod(ejs, prototype, ES_Http_post, (EjsProc) http_post);
     ejsBindMethod(ejs, prototype, ES_Http_put, (EjsProc) http_put);

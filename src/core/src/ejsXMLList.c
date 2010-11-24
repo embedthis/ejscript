@@ -29,7 +29,6 @@ static EjsObj   *insertChildBefore(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj *
 static EjsObj   *replace(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
 static EjsObj   *setName(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
 static EjsObj   *text(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv);
-
 #endif
 
 static bool allDigitsForXmlList(EjsString *name);
@@ -42,15 +41,6 @@ static EjsXML *createXmlListVar(Ejs *ejs, EjsType *type, int size)
 {
     return (EjsXML*) ejsCreateXMLList(ejs, NULL, N(NULL, NULL));
 }
-
-
-#if UNUSED
-//  TODO - can remove this
-static void destroyXmlList(Ejs *ejs, EjsXML *list)
-{
-    ejsFreeVar(ejs, (EjsObj*) list, -1);
-}
-#endif
 
 
 static EjsObj *cloneXmlList(Ejs *ejs, EjsXML *list, bool deep)
@@ -119,7 +109,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
                 mprPutStringToBuf(buf, " ");
             }
         }
-        result = (EjsObj*) ejsCreateStringFromCS(ejs, (char*) buf->start);
+        result = (EjsObj*) ejsCreateStringFromAsc(ejs, (char*) buf->start);
         mprFree(buf);
         return result;
 
@@ -568,7 +558,7 @@ static EjsObj *xl_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 
 static bool allDigitsForXmlList(EjsString *name)
 {
-    EjsChar     *cp;
+    MprChar     *cp;
 
     for (cp = name->value; *cp; cp++) {
         if (!isdigit((int) *cp) || *cp == '.') {
@@ -601,7 +591,7 @@ static EjsXML *shallowCopy(Ejs *ejs, EjsXML *xml)
             }
         }
     }
-    if (mprHasAllocError(ejs)) {
+    if (mprHasMemError(ejs)) {
         mprFree(root);
         return 0;
     }
@@ -712,7 +702,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     sp = ejsToString(ejs, vp);
     buf = mprCreateBuf(ejs, -1, -1);
     mprPutCharToBuf(buf, '"');
-    for (cp = ejsGetString(ejs, sp); *cp; cp++) {
+    for (cp = ejsToMulti(ejs, sp); *cp; cp++) {
         if (*cp == '"') {
             mprPutCharToBuf(buf, '\\');
         }
@@ -720,7 +710,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     }
     mprPutCharToBuf(buf, '"');
     mprAddNullToBuf(buf);
-    result = (EjsObj*) ejsCreateStringAndFree(ejs, mprStealBuf(vp, buf));
+    result = (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
     mprFree(buf);
     return result;
 }
@@ -799,8 +789,7 @@ EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty)
 
     type = ejs->xmlListType;
 
-    list = (EjsXML*) ejsAllocValue(ejs, type, 0);
-    if (list == 0) {
+    if ((list = (EjsXML*) ejsAlloc(ejs, type, 0)) == NULL) {
         return 0;
     }
     list->kind = EJS_XML_LIST;
@@ -818,7 +807,8 @@ void ejsCreateXMLListType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->xmlListType = ejsCreateNativeType(ejs, EJS_EJS_NAMESPACE, "XMLList", ES_XMLList, sizeof(EjsXML));
+    type = ejsCreateNativeType(ejs, N("ejs", "XMLList"), ES_XMLList, sizeof(EjsXML), ejsManageXML, EJS_OBJ_HELPERS);
+    ejs->xmlListType = type;
 
     /*
         Must not bind as XML uses get/setPropertyByName to defer to user XML elements over XML methods
@@ -828,14 +818,10 @@ void ejsCreateXMLListType(Ejs *ejs)
     type->helpers.clone = (EjsCloneHelper) cloneXmlList;
     type->helpers.cast = (EjsCastHelper) xlCast;
     type->helpers.create = (EjsCreateHelper) createXmlListVar;
-#if UNUSED
-    type->helpers.destroy = (EjsDestroyHelper) destroyXmlList;
-#endif
     type->helpers.getPropertyByName = (EjsGetPropertyByNameHelper) getXmlListPropertyByName;
     type->helpers.getPropertyCount = (EjsGetPropertyCountHelper) getXmlListPropertyCount;
     type->helpers.deletePropertyByName = (EjsDeletePropertyByNameHelper) deleteXmlListPropertyByName;
-    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) ejsObjectOperator;
-    type->helpers.mark = (EjsMarkHelper) ejsMarkXML;
+    type->helpers.invokeOperator = (EjsInvokeOperatorHelper) ejsInvokeOperatorDefault;
     type->helpers.setPropertyByName = (EjsSetPropertyByNameHelper) setXmlListPropertyByName;
 }
 
@@ -843,9 +829,9 @@ void ejsCreateXMLListType(Ejs *ejs)
 void ejsConfigureXMLListType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "XMLList");
+    type = ejs->xmlListType;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) xmlListConstructor);
@@ -856,7 +842,6 @@ void ejsConfigureXMLListType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, "name", name, NULL);
     ejsBindMethod(ejs, prototype, "valueOf", valueOf, NULL);
 #endif
-    
     ejsBindMethod(ejs, prototype, ES_XMLList_toJSON, (EjsProc) xmlListToJson);
     ejsBindMethod(ejs, prototype, ES_XMLList_toString, (EjsProc) xmlListToString);
     ejsBindMethod(ejs, prototype, ES_XMLList_iterator_get, getXmlListIterator);

@@ -14,10 +14,6 @@ typedef struct Message {
     cchar       *callback;
     char        *data;
     EjsObj      *message;
-#if UNUSED
-    char        *filename;
-    int         lineNumber;
-#endif
     EjsObj      *stack;
     int         callbackSlot;
 } Message;
@@ -28,7 +24,7 @@ static void addWorker(Ejs *ejs, EjsWorker *worker);
 static int join(Ejs *ejs, EjsObj *workers, int timeout);
 static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int throwOutside);
 static void loadFile(EjsWorker *insideWorker, cchar *filename);
-static void removeWorker(Ejs *ejs, EjsWorker *worker);
+static void removeWorker(EjsWorker *worker);
 static int workerMain(EjsWorker *worker, MprEvent *event);
 static EjsObj *workerPreload(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv);
 
@@ -45,6 +41,7 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     EjsObj          *options, *value, *search;
     EjsWorker       *self;
     EjsNamespace    *ns;
+    EjsName         sname;
     cchar           *name;
 
     worker->ejs = ejs;
@@ -58,13 +55,13 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
         search = ejsGetPropertyByName(ejs, options, EN("search"));
         value = ejsGetPropertyByName(ejs, options, EN("name"));
         if (ejsIsString(ejs, value)) {
-            name = ejsGetString(ejs, value);
+            name = ejsToMulti(ejs, value);
         }
     }
     if (name) {
-        worker->name = mprStrdup(worker, name);
+        worker->name = sclone(worker, name);
     } else {
-        worker->name = mprAsprintf(worker, -1, "worker-%d", ejsGetLength(ejs, ejs->workers));
+        worker->name = mprAsprintf(worker, "worker-%d", mprGetListCount(ejs->workers));
     }
 
     /*
@@ -83,30 +80,31 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     self->ejs = wejs;
     self->inside = 1;
     self->pair = worker;
-    self->name = mprStrcat(self, -1, "inside-", worker->name, NULL);
-    ejsMakePermanent(ejs, self);
+    self->name = sjoin(self, "inside-", worker->name, NULL);
+    mprAddRoot(self);
     
     mprEnableDispatcher(wejs->dispatcher);
 
     //  TODO - these should be don't delete
-    ejsSetProperty(ejs, worker, ES_Worker_name, ejsCreateStringFromCS(ejs, self->name));
-    ejsSetProperty(wejs, self,  ES_Worker_name, ejsCreateStringFromCS(wejs, self->name));
+    ejsSetProperty(ejs, worker, ES_Worker_name, ejsCreateStringFromAsc(ejs, self->name));
+    ejsSetProperty(wejs, self,  ES_Worker_name, ejsCreateStringFromAsc(wejs, self->name));
 
-    ejsSetPropertyByName(wejs, wejs->global, N(EJS_WORKER_NAMESPACE, "self"), self);
+    sname = ejsName(wejs, EJS_WORKER_NAMESPACE, "self");
+    ejsSetPropertyByName(wejs, wejs->global, sname, self);
 
     /*
         Workers have a dedicated namespace to enable viewing of the worker globals (self, onmessage, postMessage...)
      */
-    ns = ejsDefineReservedNamespace(wejs, wejs->globalBlock, NULL, ejsCreateStringFromCS(ejs, EJS_WORKER_NAMESPACE));
+    ns = ejsDefineReservedNamespace(wejs, wejs->global, NULL, EJS_WORKER_NAMESPACE);
 
     if (argc > 0 && ejsIsPath(ejs, argv[0])) {
         addWorker(ejs, worker);
-        worker->scriptFile = mprStrdup(worker, ((EjsPath*) argv[0])->value);
+        worker->scriptFile = sclone(worker, ((EjsPath*) argv[0])->value);
         worker->state = EJS_WORKER_STARTED;
-        ejsMakePermanent(ejs, worker);
+        mprAddRoot(worker);
         if (mprCreateEvent(wejs->dispatcher, "workerMain", 0, (MprEventProc) workerMain, self, 0) < 0) {
             ejsThrowStateError(ejs, "Can't create worker event");
-            ejsMakeTransient(ejs, worker);
+            mprRemoveRoot(worker);
             return 0;
         }
     }
@@ -125,19 +123,21 @@ static void addWorker(Ejs *ejs, EjsWorker *worker)
     mprAssert(worker->state == EJS_WORKER_BEGIN);
 
     lock(ejs);
-    ejsAddItem(ejs, ejs->workers, worker);
+    mprAddItem(ejs->workers, worker);
     unlock(ejs);
 }
 
 
-static void removeWorker(Ejs *ejs, EjsWorker *worker) 
+static void removeWorker(EjsWorker *worker) 
 {
-    mprAssert(ejs == worker->ejs);
+    Ejs     *ejs;
+
     mprAssert(!worker->inside);
     mprAssert(worker);
 
+    ejs = worker->ejs;
     lock(ejs);
-    ejsRemoveItem(ejs, ejs->workers, worker);
+    mprRemoveItem(ejs->workers, worker);
     if (ejs->joining) {
         //  MOB - why
         mprWakeWaitService(ejs);
@@ -175,11 +175,11 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
 
     addWorker(ejs, outsideWorker);
     outsideWorker->state = EJS_WORKER_STARTED;
-    ejsMakePermanent(ejs, outsideWorker);
+    mprAddRoot(outsideWorker);
 
     if (mprCreateEvent(inside->dispatcher, "workerMain", 0, (MprEventProc) workerMain, insideWorker, 0) < 0) {
         ejsThrowStateError(ejs, "Can't create worker event");
-        ejsMakeTransient(ejs, outsideWorker);
+        mprRemoveRoot(outsideWorker);
         return 0;
     }
     if (timeout == 0) {
@@ -242,7 +242,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
         /* Join all */
         count = ejsGetLength(ejs, ejs->workers);
         for (i = 0; i < count; i++) {
-            worker = ejsGetItem(ejs, ejs->workers, i);
+            worker = mprGetItem(ejs->workers, i);
             if (worker->state >= EJS_WORKER_COMPLETE) {
                 completed++;
             }
@@ -341,7 +341,7 @@ static void loadFile(EjsWorker *worker, cchar *path)
 
     } else {
         /* Error reporting via thrown exceptions */
-        ejsLoadModule(ejs, ejsCreateStringFromCS(ejs, path), -1, -1, 0);
+        ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, 0);
     }
 }
 
@@ -355,7 +355,7 @@ static EjsObj *workerLoad(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 
     mprAssert(argc == 0 || ejsIsPath(ejs, argv[0]));
 
-    worker->scriptFile = mprStrdup(worker, ((EjsPath*) argv[0])->value);
+    worker->scriptFile = sclone(worker, ((EjsPath*) argv[0])->value);
     timeout = argc == 2 ? ejsGetInt(ejs, argv[1]): 0;
     return startWorker(ejs, worker, timeout);
 }
@@ -370,9 +370,9 @@ static EjsObj *workerLookup(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     cchar       *name;
     int         next;
 
-    name = ejsGetString(ejs, argv[0]);
+    name = ejsToMulti(ejs, argv[0]);
     lock(ejs);
-    for (next = 0; (worker = ejsGetNextItem(ejs, ejs->workers, &next)) != NULL; ) {
+    for (next = 0; (worker = mprGetNextItem(ejs->workers, &next)) != NULL; ) {
         if (worker->name && strcmp(name, worker->name) == 0) {
             unlock(ejs);
             return (EjsObj*) worker;
@@ -393,11 +393,12 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     EjsObj      *event, *frame;
     EjsWorker   *worker;
     EjsFunction *callback;
-    EV          *argv[1];
+    EjsObj      *argv[1];
 
     worker = msg->worker;
     worker->gotMessage = 1;
     ejs = worker->ejs;
+    event = 0;
 
     callback = ejsGetProperty(ejs, worker, msg->callbackSlot);
 
@@ -416,11 +417,11 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     worker->event = event;
     if (msg->data) {
-        ejsSetProperty(ejs, event, ES_Event_data, ejsCreateStringAndFree(ejs, msg->data));
+        ejsSetProperty(ejs, event, ES_Event_data, ejsCreateStringFromAsc(ejs, msg->data));
     }
     if (msg->message) {
         ejsSetProperty(ejs, event, ES_ErrorEvent_message, msg->message);
-        ejsMakeTransient(ejs, msg->message);
+        mprRelease(msg->message);
     }
     if (msg->stack) {
         ejsSetProperty(ejs, event, ES_ErrorEvent_stack, msg->stack);
@@ -435,7 +436,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
             
         } else if (msg->callbackSlot == ES_Worker_onerror) {
             if (msg->message && ejsIsString(ejs, msg->message)) {
-                ejsThrowError(ejs, "Exception in Worker: %s", ejsGetString(ejs, msg->message));
+                ejsThrowError(ejs, "Exception in Worker: %@", ejsToString(ejs, msg->message));
             } else {
                 ejsThrowError(ejs, "Exception in Worker: %s", ejsGetErrorMsg(worker->pair->ejs, 1));
             }
@@ -454,11 +455,11 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
         mprAssert(!worker->inside);
         worker->state = EJS_WORKER_COMPLETE;
         LOG(ejs, 5, "Worker.doMessage: complete");
-        removeWorker(ejs, worker);
+        removeWorker(worker);
         /*
             Now that the inside worker is complete, the outside worker does not need to be protected from GC
          */
-        ejsMakeTransient(ejs, worker);
+        mprRemoveRoot(worker);
     }
     worker->event = 0;
     mprFree(msg);
@@ -559,13 +560,13 @@ static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
         ejsThrowArgError(ejs, "Can't serialize message data");
         return 0;
     }
-    //  MOB -- switch to ejsAlloc
     if ((msg = mprAllocObj(ejs, Message, NULL)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
+    mprHold(msg);
     target = worker->pair;
-    msg->data = mprStrdup(target->ejs, ejsGetString(ejs, data));
+    msg->data = sclone(target->ejs, ejsToMulti(ejs, data));
     msg->worker = target;
     msg->callback = "onmessage";
     msg->callbackSlot = ES_Worker_onmessage;
@@ -615,22 +616,21 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
         handleError(outside, outsideWorker, inside->exception, 0);
         inside->exception = 0;
     }
-    //  MOB -- switch to ejsAlloc
-    if ((msg = mprAllocObj(outside, Message, NULL)) == 0) {
+    if ((msg = mprAlloc(outside, sizeof(Message))) == 0) {
         ejsThrowMemoryError(outside);
         return 0;
     }
-
     /*
         Post "onclose" finalization message
      */
+    mprHold(msg);
     msg->worker = outsideWorker;
     msg->callback = "onclose";
     msg->callbackSlot = ES_Worker_onclose;
 
     insideWorker->state = EJS_WORKER_CLOSED;
     outsideWorker->state = EJS_WORKER_CLOSED;
-    ejsMakeTransient(inside, insideWorker);
+    mprRemoveRoot(insideWorker);
     dispatcher = outside->dispatcher;
     mprCreateEvent(dispatcher, "doMessage", 0, (MprEventProc) doMessage, msg, 0);
     return 0;
@@ -697,7 +697,9 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
  */
 static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int throwOutside)
 {
-    EjsError        *error;
+    Ejs             *inside;
+    EjsString       *str;
+    EjsObj          *e;
     MprDispatcher   *dispatcher;
     Message         *msg;
 
@@ -705,38 +707,33 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     mprAssert(exception);
     mprAssert(ejs == worker->ejs);
 
-    //  MOB -- switch to ejsAlloc
-    if ((msg = mprAllocObj(ejs, Message, NULL)) == 0) {
+    if ((msg = mprAlloc(ejs, sizeof(Message))) == 0) {
         ejsThrowMemoryError(ejs);
         return;
     }
+    mprHold(msg);
     msg->worker = worker;
     msg->callback = "onerror";
     msg->callbackSlot = ES_Worker_onerror;
+    inside = worker->pair->ejs;
     
+    inside->exception = 0;
+    str = ejsSerialize(inside, exception, NULL);
+    e = ejsDeserialize(ejs, ejsSerialize(inside, exception, NULL));
+    inside->exception = exception;
+
     /*
         Inside interpreter owns the exception object, so must fully extract all exception. 
         Allocate into the outside worker's interpreter.
      */
-    if (ejsIsError(ejs, exception)) {
-        error = (EjsError*) exception;
-        if ((msg->message = ejsGetProperty(ejs, error, ES_Error_message)) != 0) {
-            ejsMakeTransient(ejs, msg->message);
-        }
-        if ((msg->stack = ejsGetProperty(ejs, error, ES_Error_stack)) != 0) {
-            ejsMakeTransient(ejs, msg->stack);
-        }
-
-    } else if (ejsIsString(ejs, exception)) {
-        msg->message = exception;
-        ejsMakeTransient(ejs, msg->message);
-
+    if (ejsIsError(inside, exception)) {
+        msg->message = ejsGetPropertyByName(ejs, e, EN("message"));
+        msg->stack = ejsGetPropertyByName(ejs, e, EN("stack"));
     } else {
-        msg->message = (EjsObj*) ejsToString(ejs, exception);
-        ejsMakeTransient(ejs, msg->message);
+        msg->message = e;
     }
     if (throwOutside) {
-        ejsThrowStateError(ejs, "%s", ejsGetString(ejs, msg->message));
+        ejsThrowStateError(ejs, "%@", ejsToString(inside, e));
     }
     dispatcher = ejs->dispatcher;
     mprCreateEvent(dispatcher, "doMessage-error", 0, (MprEventProc) doMessage, msg, 0);
@@ -749,38 +746,25 @@ EjsWorker *ejsCreateWorker(Ejs *ejs)
 }
 
 
-#if UNUSED
-static void destroyWorkerEjs(Ejs *ejs, EjsWorker *worker)
+static void manageWorker(EjsWorker *worker, int flags)
 {
-    if (worker->pair) {
-        mprFree(worker->pair->ejs);
-        worker->pair = 0;
-    }
-}
-#endif
-
-static void destroyWorker(Ejs *ejs, EjsWorker *worker)
-{
-    if (!worker->inside) {
-        removeWorker(ejs, worker);
-        if (worker->pair) {
-            mprFree(worker->pair->ejs);
-            worker->pair = 0;
+    if (flags & MPR_MANAGE_MARK) {
+        if (worker->event) {
+            mprMark(worker->event);
         }
-    } else {
-        if (worker->pair && worker->pair->pair) {
-            worker->pair->pair = 0;
+
+    } else if (flags & MPR_MANAGE_FREE) {
+        if (!worker->inside) {
+            removeWorker(worker);
+            if (worker->pair) {
+                mprFree(worker->pair->ejs);
+                worker->pair = 0;
+            }
+        } else {
+            if (worker->pair && worker->pair->pair) {
+                worker->pair->pair = 0;
+            }
         }
-    }
-    ejsFreeVar(ejs, (EjsObj*) worker, -1);
-}
-
-
-static void markWorker(Ejs *ejs, EjsWorker *worker)
-{
-    ejsMarkObject(ejs, (EjsObj*) worker);
-    if (worker->event) {
-        ejsMark(ejs, (EjsObj*) worker->event);
     }
 }
 
@@ -788,16 +772,11 @@ static void markWorker(Ejs *ejs, EjsWorker *worker)
 void ejsConfigureWorkerType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejs->workerType = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Worker", sizeof(EjsWorker));
-#if UNUSED
-    type->needFinalize = 1;
-#endif
+    type = ejs->workerType = ejsConfigureNativeType(ejs, N("ejs", "Worker"), sizeof(EjsWorker), (MprManager) manageWorker, 
+        EJS_POT_HELPERS);
     prototype = type->prototype;
-
-    type->helpers.destroy = (EjsDestroyHelper) destroyWorker;
-    type->helpers.mark = (EjsMarkHelper) markWorker;
 
     ejsBindConstructor(ejs, type, (EjsProc) workerConstructor);
     ejsBindMethod(ejs, type, ES_Worker_exit, (EjsProc) workerExit);
@@ -812,8 +791,8 @@ void ejsConfigureWorkerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Worker_terminate, (EjsProc) workerTerminate);
     ejsBindMethod(ejs, prototype, ES_Worker_waitForMessage, (EjsProc) workerWaitForMessage);
 
-    ejs->eventType = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "Event");
-    ejs->errorEventType = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "ErrorEvent");
+    ejs->eventType = ejsGetTypeByName(ejs, N("ejs", "Event"));
+    ejs->errorEventType = ejsGetTypeByName(ejs, N("ejs", "ErrorEvent"));
 }
 
 /*

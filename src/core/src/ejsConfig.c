@@ -15,16 +15,18 @@ void ejsCreateConfigType(Ejs *ejs)
     EjsType     *type;
     char        version[16];
 
-    type = ejs->configType = ejsCreateNativeType(ejs, "ejs", "Config", ES_Config, sizeof(EjsObj));
+    //  MOB -- Config should just be converted back to a non-native type
+    type = ejsCreateNativeType(ejs, N("ejs", "Config"), ES_Config, sizeof(EjsObj), NULL, EJS_POT_HELPERS);
+    ejs->configType = type;
 
     ejsSetProperty(ejs, type, ES_Config_Debug, BLD_DEBUG ? ejs->trueValue: ejs->falseValue);
-    ejsSetProperty(ejs, type, ES_Config_CPU, ejsCreateStringFromCS(ejs, BLD_HOST_CPU));
-    ejsSetProperty(ejs, type, ES_Config_OS, ejsCreateStringFromCS(ejs, BLD_OS));
-    ejsSetProperty(ejs, type, ES_Config_Product, ejsCreateStringFromCS(ejs, BLD_PRODUCT));
+    ejsSetProperty(ejs, type, ES_Config_CPU, ejsCreateStringFromAsc(ejs, BLD_HOST_CPU));
+    ejsSetProperty(ejs, type, ES_Config_OS, ejsCreateStringFromAsc(ejs, BLD_OS));
+    ejsSetProperty(ejs, type, ES_Config_Product, ejsCreateStringFromAsc(ejs, BLD_PRODUCT));
 
-    ejsSetProperty(ejs, type, ES_Config_Title, ejsCreateStringFromCS(ejs, BLD_NAME));
-    mprSprintf(ejs, version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
-    ejsSetProperty(ejs, type, ES_Config_Version, ejsCreateStringFromCS(ejs, version));
+    ejsSetProperty(ejs, type, ES_Config_Title, ejsCreateStringFromAsc(ejs, BLD_NAME));
+    mprSprintf(version, sizeof(version), "%s-%s", BLD_VERSION, BLD_NUMBER);
+    ejsSetProperty(ejs, type, ES_Config_Version, ejsCreateStringFromAsc(ejs, version));
 
     ejsSetProperty(ejs, type, ES_Config_Legacy, ejsCreateBoolean(ejs, BLD_FEATURE_LEGACY_API));
     ejsSetProperty(ejs, type, ES_Config_SSL, ejsCreateBoolean(ejs, BLD_FEATURE_SSL));
@@ -32,23 +34,23 @@ void ejsCreateConfigType(Ejs *ejs)
 
 #if BLD_WIN_LIKE
 {
-    char    *path;
+    EjsString    *path;
 
-    path = mprGetAppDir(ejs);
-    ejsSetProperty(ejs, type, ES_Config_BinDir, ejsCreateStringFromCS(ejs, path));
-    ejsSetProperty(ejs, type, ES_Config_ModDir, ejsCreateStringFromCS(ejs, path));
-    ejsSetProperty(ejs, type, ES_Config_LibDir, ejsCreateStringFromCS(ejs, path));
+    path = ejsCreateStringFromAsc(ejs, mprGetAppDir(ejs));
+    ejsSetProperty(ejs, type, ES_Config_BinDir, path);
+    ejsSetProperty(ejs, type, ES_Config_ModDir, path);
+    ejsSetProperty(ejs, type, ES_Config_LibDir, path);
 }
 #else
 #ifdef BLD_BIN_PREFIX
-    ejsSetProperty(ejs, type, ES_Config_BinDir, ejsCreateStringFromCS(ejs, BLD_BIN_PREFIX));
+    ejsSetProperty(ejs, type, ES_Config_BinDir, ejsCreateStringFromAsc(ejs, BLD_BIN_PREFIX));
 #endif
 #ifdef BLD_MOD_PREFIX
-    ejsSetProperty(ejs, type, ES_Config_ModDir, ejsCreateStringFromCS(ejs, BLD_MOD_PREFIX));
+    ejsSetProperty(ejs, type, ES_Config_ModDir, ejsCreateStringFromAsc(ejs, BLD_MOD_PREFIX));
 #endif
 #ifdef BLD_LIB_PREFIX
-    ejsSetProperty(ejs, type, ES_Config_LibDir, ejsCreateStringFromCS(ejs, BLD_LIB_PREFIX));
->>>>>>> 6529b6889f97be240c589a2b2c95de7587e45962
+    ejsSetProperty(ejs, type, ES_Config_LibDir, ejsCreateStringFromAsc(ejs, BLD_LIB_PREFIX));
+#endif
 #endif
 }
 

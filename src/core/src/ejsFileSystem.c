@@ -20,7 +20,7 @@ static EjsObj *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int argc, EjsO
 
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
-    path = ejsGetString(ejs, argv[0]);
+    path = ejsToMulti(ejs, argv[0]);
     fp->path = mprGetNormalizedPath(fp, path);
     fp->fs = mprLookupFileSystem(ejs, path);
     return (EjsObj*) fp;
@@ -95,7 +95,7 @@ static EjsObj *isWritable(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromCS(ejs, mprGetPathNewline(ejs, fp->path));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetPathNewline(ejs, fp->path));
 }
 
 
@@ -117,15 +117,15 @@ static EjsObj *setNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 
 static EjsObj *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
+    cchar   *separators;
     char    *path, *cp;
-    int     sep;
 
-    sep = mprGetPathSeparator(fp, fp->path);
+    separators = mprGetPathSeparators(fp, fp->path);
     path = mprGetAbsPath(ejs, fp->path);
-    if ((cp = strchr(path, sep)) != 0) {
+    if ((cp = strchr(path, separators[0])) != 0) {
         *++cp = '\0';
     }
-    return (EjsObj*) ejsCreatePathAndFree(ejs, path);
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, path);
 }
 
 
@@ -136,7 +136,7 @@ static EjsObj *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromCS(ejs, fp->fs->separators);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, fp->fs->separators);
 }
 
 
@@ -148,7 +148,7 @@ static EjsObj *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **arg
 static EjsObj *setSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
-    mprSetPathSeparators(ejs, fp->path, ejsGetString(ejs, argv[0]));
+    mprSetPathSeparators(ejs, fp->path, ejsToMulti(ejs, argv[0]));
     return 0;
 }
 
@@ -162,19 +162,27 @@ static EjsObj *size(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 
 /*********************************** Factory **********************************/
 
+static void manageFileSystem(EjsFileSystem *fs, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        if (!VISITED(fs)) {
+            mprMark(fs->type);
+            mprMark(fs->path);
+        }
+    }
+}
+
+
 EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
 {
     EjsFileSystem   *fs;
-    EjsType         *type;
     EjsObj          *arg;
 
-    type = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "FileSystem", sizeof(EjsFileSystem));
-    mprAssert(type);
-    fs = (EjsFileSystem*) ejsCreate(ejs, type, 0);
+    fs = (EjsFileSystem*) ejsCreate(ejs, ejs->fileSystemType, 0);
     if (fs == 0) {
         return 0;
     }
-    arg = (EjsObj*) ejsCreateStringFromCS(ejs, path);
+    arg = (EjsObj*) ejsCreateStringFromAsc(ejs, path);
     fileSystemConstructor(ejs, fs, 1, (EjsObj**) &arg);
     return fs;
 }
@@ -183,9 +191,11 @@ EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
 void ejsConfigureFileSystemType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "FileSystem", sizeof(EjsFileSystem));
+    type = ejsConfigureNativeType(ejs, N("ejs", "FileSystem"), sizeof(EjsFileSystem), (MprManager) manageFileSystem, 
+        EJS_OBJ_HELPERS);
+    ejs->fileSystemType = type;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) fileSystemConstructor);

@@ -24,22 +24,16 @@
 include			build/make/Makefile.top
 include			build/make/Makefile.ejs
 
-testCleanup:
-	echo killall testAppweb >/dev/null 2>&1 ; true
-
-ifneq	($(BUILDING_CROSS),1)
+ifeq	($(BLD_CROSS),0)
 testExtra: 
 	$(BLD_BIN_DIR)/ejs $(BLD_TOOLS_DIR)/utest -v src
 endif
 
 diff import sync:
-	if [ ! -x $(BLD_TOOLS_DIR)/edep$(BLD_BUILD_EXE) -a "$(BUILDING_CROSS)" != 1 ] ; then \
-		$(MAKE) -S --no-print-directory _RECURSIVE_=1 -C $(BLD_TOP)/build/src compile ; \
-	fi
-	import.sh --$@ ../tools/releases/tools-all.tgz
-	import.sh --$@ ../mpr/releases/mpr-all.tgz
-	import.sh --$@ ../pcre/releases/pcre-all.tgz
-	import.sh --$@ ../http/releases/http-all.tgz
+	import.sh --$@ ../tools/out/releases/tools-dist.tgz
+	import.sh --$@ ../mpr/out/releases/mpr-dist.tgz
+	import.sh --$@ ../pcre/out/releases/pcre-dist.tgz
+	import.sh --$@ ../http/out/releases/http-dist.tgz
 
 testExtra: test-projects
 

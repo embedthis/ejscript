@@ -160,6 +160,7 @@ module ejs {
          */
         native function readBytes(count: Number = -1): ByteArray
 
+        //  MOB UNICODE encoding. Should this do UTF-8 to Unicode-16?
         /** 
             Read data from a file as a string.
             @param count Number of bytes to read. If -1, read the entire file.

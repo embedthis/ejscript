@@ -22,10 +22,10 @@ typedef struct Lst {
     EjsType     *type;                      /* Class reference */
     EjsObj      *owner;                     /* Owner (type, function, block) for the element */
     EjsFunction *fun;                       /* Relevant function */
-    int         numSlots;                   /* Number of slots*/
+    int         numProp;                    /* Number of properties */
     int         slotNum;                    /* Slot number */
     int         attributes;                 /* Property attributes */
-    char        *name;                      /* General name */
+    EjsString   *name;                      /* General name (used only for block name) */
     EjsName     typeName;                   /* Property type name */
     EjsName     qname;                      /* Qualified Property name */
 } Lst;

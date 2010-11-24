@@ -26,12 +26,12 @@ static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
     EjsObj      *vp;
 
     ejsLockService(ejs);
-    vp = ejs->objectType->helpers.getProperty(ejs, (EjsObj*) sp, slotNum);
+    vp = ejs->potHelpers.getProperty(ejs, (EjsObj*) sp, slotNum);
     if (vp) {
         vp = ejsDeserialize(ejs, (EjsString*) vp);
     }
     if (vp == ejs->undefinedValue) {
-        vp = (EjsObj*) ejs->emptyStringValue;
+        vp = (EjsObj*) ejs->emptyString;
     }
     noteSessionActivity(ejs, sp);
     ejsUnlockService(ejs);
@@ -39,22 +39,22 @@ static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
 }
 
 
-static EjsObj *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName *qname)
+static EjsObj *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName qname)
 {
     EjsObj      *vp;
     int         slotNum;
 
-    qname->space = EJS_EMPTY_NAMESPACE;
     ejsLockService(ejs);
 
-    slotNum = ejs->objectType->helpers.lookupProperty(ejs, (EjsObj*) sp, qname);
+    qname.space = ejs->emptyString;
+    slotNum = ejs->potHelpers.lookupProperty(ejs, sp, qname);
     if (slotNum < 0) {
         /*  
             Return empty string so that web pages can access session values without having to test for null/undefined
          */
-        vp = (EjsObj*) ejs->emptyStringValue;
+        vp = (EjsObj*) ejs->emptyString;
     } else {
-        vp = ejs->objectType->helpers.getProperty(ejs, (EjsObj*) sp, slotNum);
+        vp = ejs->potHelpers.getProperty(ejs, (EjsObj*) sp, slotNum);
         if (vp) {
             vp = ejsDeserialize(ejs, (EjsString*) vp);
         }
@@ -69,11 +69,9 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsObj *val
 {
     ejsLockService(ejs);
 
+    //  MOB BUG - this won't work multithreaded
     value = (EjsObj*) ejsToJSON(ejs, value, NULL);
-
-    //  MOB -- but how is this collected
-    value = mprStrdup(ejs->service, value);
-    slotNum = ejs->objectType->helpers.setProperty(ejs, (EjsObj*) sp, slotNum, value);
+    slotNum = ejs->potHelpers.setProperty(ejs, (EjsObj*) sp, slotNum, value);
     noteSessionActivity(ejs, sp);
     ejsUnlockService(ejs);
     return slotNum;
@@ -115,7 +113,6 @@ void ejsUpdateSessionLimits(Ejs *ejs, EjsHttpServer *server)
 
 EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
 {
-    EjsName         qname;
     EjsSession      *session;
     EjsHttpServer   *server;
     cchar           *cookies, *cookie;
@@ -151,7 +148,7 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
             len = (int) (cp - value);
             id = mprMemdup(req, value, len + 1);
             id[len] = '\0';
-            session = ejsGetPropertyByName(ejs, server->sessions, ejsName(&qname, "", id));
+            session = ejsGetPropertyByName(ejs, server->sessions, EN(id));
             mprFree(id);
             break;
         }
@@ -166,7 +163,6 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
 EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure)
 {
     EjsSession      *session;
-    EjsName         qname;
     EjsHttpServer   *server;
     HttpLimits      *limits;
     MprTime         now;
@@ -184,8 +180,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     now = mprGetTime(ejs);
 
     ejsLockService(ejs);
-    session = (EjsSession*) ejsCreateObject(ejs, ejs->sessionType, 0);
-    if (session == 0) {
+    if ((session = ejsCreate(ejs, ejs->sessionType, 0)) == 0) {
         ejsUnlockService(ejs);
         return 0;
     }
@@ -195,17 +190,17 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
         Use an MD5 prefix of "x" to avoid the hash being interpreted as a numeric index.
      */
     next = ejs->nextSession++;
-    mprSprintf(ejs, idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(session->expire), (int) now, next);
+    mprSprintf(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(session->expire), (int) now, next);
     id = mprGetMD5Hash(session, idBuf, sizeof(idBuf), "x");
     if (id == 0) {
         mprFree(session);
         ejsUnlockService(ejs);
         return 0;
     }
-    session->id = mprStrdup(session, id);
+    session->id = sclone(session, id);
 
     if (server->sessions == 0) {
-        server->sessions = ejsCreateSimpleObject(ejs);
+        server->sessions = ejsCreateEmptyPot(ejs);
         ejsSetProperty(ejs, server, ES_ejs_web_HttpServer_sessions, server->sessions);
     }
     count = ejsGetPropertyCount(ejs, (EjsObj*) server->sessions);
@@ -215,7 +210,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
         ejsUnlockService(ejs);
         return 0;
     }
-    slotNum = ejsSetPropertyByName(ejs, server->sessions, EN(&qname, session->id), session);
+    slotNum = ejsSetPropertyByName(ejs, server->sessions, EN(session->id), session);
     if (slotNum < 0) {
         mprFree(session);
         ejsUnlockService(ejs);
@@ -231,7 +226,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
 
     mprLog(ejs, 3, "Created new session %s. Count %d/%d", id, slotNum + 1, limits->sessionCount);
     if (server->emitter) {
-        ejsSendEvent(ejs, server->emitter, "createSession", NULL, (EjsObj*) ejsCreateString(ejs, id));
+        ejsSendEvent(ejs, server->emitter, "createSession", NULL, (EjsObj*) ejsCreateStringFromAsc(ejs, id));
     }
     return session;
 }
@@ -242,14 +237,13 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
  */
 int ejsDestroySession(Ejs *ejs, EjsHttpServer *server, EjsSession *session)
 {
-    EjsName     qname;
-    int         slotNum;
+    int     slotNum;
 
     if (session && server->sessions) {
         if (server) {
-            ejsSendEvent(ejs, server->emitter, "destroySession", NULL, (EjsObj*) ejsCreateString(ejs, session->id));
+            ejsSendEvent(ejs, server->emitter, "destroySession", NULL, (EjsObj*) ejsCreateStringFromAsc(ejs, session->id));
         }
-        if ((slotNum = ejsLookupProperty(ejs, server->sessions, EN(&qname, session->id))) >= 0) {
+        if ((slotNum = ejsLookupProperty(ejs, server->sessions, EN(session->id))) >= 0) {
             ejsDeleteProperty(ejs, server->sessions, slotNum);
             return 1;
         }
@@ -275,7 +269,7 @@ static EjsObj *sess_count(Ejs *ejs, EjsSession *sp, int argc, EjsObj **argv)
 static void sessionTimer(EjsHttpServer *server, MprEvent *event)
 {
     Ejs             *ejs;
-    EjsObj          *sessions;
+    EjsPot          *sessions;
     EjsSession      *session;
     MprTime         now;
     HttpLimits      *limits;
@@ -318,7 +312,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
             if ((session = ejsGetProperty(ejs, (EjsObj*) sessions, i)) == 0) {
                 continue;
             }
-            if (session->obj.type == ejs->sessionType) {
+            if (session->pot.type == ejs->sessionType) {
                 mprLog(ejs, 7, "Check session %s timeout %d, expires %d secs", session->id, 
                    session->timeout / MPR_TICKS_PER_SEC,
                    (int) (session->expire - now) / MPR_TICKS_PER_SEC);
@@ -334,7 +328,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
                 }
             }
         }
-        count = ejsCompactObject(ejs, sessions);
+        count = ejsCompactPot(ejs, sessions);
         if (count == 0) {
             server->sessionTimer = 0;
             mprFree(event);
@@ -344,12 +338,23 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
 }
 
 
+static void manageSession(EjsSession *sp, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        ;
+    } else {
+        ;
+    }
+}
+
+
 void ejsConfigureSessionType(Ejs *ejs)
 {
     EjsType         *type;
-    EjsTypeHelpers  *helpers;
+    EjsHelpers      *helpers;
 
-    type = ejs->sessionType = ejsConfigureNativeType(ejs, "ejs.web", "Session", sizeof(EjsSession));
+    type = ejs->sessionType = ejsConfigureNativeType(ejs, N("ejs.web", "Session"), sizeof(EjsSession), manageSession, 
+        EJS_POT_HELPERS);
     helpers = &type->helpers;
     helpers->getProperty = (EjsGetPropertyHelper) getSessionProperty;
     helpers->getPropertyByName = (EjsGetPropertyByNameHelper) getSessionPropertyByName;

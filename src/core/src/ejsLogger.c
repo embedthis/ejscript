@@ -47,7 +47,7 @@ void ejsConfigureLoggerType(Ejs *ejs)
 {
     EjsType         *type;
 
-    type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "Logger");
+    type = ejsGetTypeByName(ejs, N("ejs", "Logger"));
     mprAssert(type);
 
     ejsBindAccess(ejs, type, ES_Logger_nativeLevel, (EjsProc) logger_nativeLevel, (EjsProc) logger_set_nativeLevel);

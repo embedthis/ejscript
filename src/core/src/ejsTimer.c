@@ -27,7 +27,7 @@ static EjsObj *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv
     tp->args = (EjsArray*) argv[2];
     tp->repeat = 0;
     tp->drift = 1;
-    return 0;
+    return (EjsObj*) tp;
 }
 
 
@@ -122,7 +122,7 @@ static EjsObj *timer_set_repeat(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 static int timerCallback(EjsTimer *tp, MprEvent *e)
 {
     Ejs         *ejs;
-    EV          *thisObj, *error;
+    EjsObj      *thisObj, *error;
 
     mprAssert(tp);
     mprAssert(tp->args);
@@ -142,7 +142,7 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
         }
     }
     if (!tp->repeat) {
-        ejsMakeTransient(ejs, tp);
+        mprRelease(tp);
     }
     return 0;
 }
@@ -151,13 +151,13 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
 /*
     function start(): Void
  */
-static EV *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EV **argv)
+static EjsObj *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     int     flags;
 
     if (tp->event == 0) {
         flags = tp->repeat ? MPR_EVENT_CONTINUOUS : 0;
-        ejsMakePermanent(ejs, tp);
+        mprAddRoot(tp);
         tp->event = mprCreateEvent(ejs->dispatcher, "timer", tp->period, (MprEventProc) timerCallback, tp, flags);
         if (tp->event == 0) {
             ejsThrowMemoryError(ejs);
@@ -175,24 +175,25 @@ static EjsObj *timer_stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     if (tp->event) {
         mprRemoveEvent(tp->event);
-        ejsMakeTransient(ejs, tp);
+        mprRelease(tp);
+        tp->event = 0;
     }
     return 0;
 }
 
 /*********************************** Helpers **********************************/
 
-static void markTimer(Ejs *ejs, EjsTimer *tp)
+static void manageTimer(EjsTimer *tp, int flags)
 {
-    ejsMarkObject(ejs, (EjsObj*) tp);
-    if (tp->callback) {
-        ejsMark(ejs, tp->callback);
-    }
-    if (tp->args) {
-        ejsMark(ejs, tp->args);
-    }
-    if (tp->onerror) {
-        ejsMark(ejs, tp->onerror);
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(tp->callback);
+        mprMark(tp->args);
+        mprMark(tp->onerror);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+        if (tp->event) {
+            mprRemoveEvent(tp->event);
+        }
     }
 }
 
@@ -202,12 +203,11 @@ static void markTimer(Ejs *ejs, EjsTimer *tp)
 void ejsConfigureTimerType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejsGetTypeByName(ejs, "ejs", "Timer");
+    type = ejsGetTypeByName(ejs, N("ejs", "Timer"));
     type->instanceSize = sizeof(EjsTimer);
-
-    type->helpers.mark = (EjsMarkHelper) markTimer;
+    type->manager = (MprManager) manageTimer;
 
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, (EjsProc) timer_constructor);

@@ -54,10 +54,10 @@ module ejs.web {
 
 //          "key":                  "data-key",
 //          "keyFormat":            "data-key-format",
-//          "method":               "data-method",
 //          "refresh":              "data-refresh",
 //          "params":               "data-params",
 
+            "method":               "data-method",
             "modal":                "data-modal",
 //  MOB
             "period":               "data-refresh-period",
@@ -70,19 +70,20 @@ module ejs.web {
             "width":                "width",
         }
 
+        //  MOB -- need styles for
         private static const defaultStylesheets = [
             "/layout.css", 
             "/themes/default.css", 
+            "/js/treeview.css", 
         ]
 
-        //  MOB -- what about minified versions?
-
+        //  MOB -- Should offer all-in-one script
         private static const defaultScripts = [
-            "/js/jquery.js", 
-            "/js/jquery.tablesorter.js",
-            "/js/jquery.address.js",
-            "/js/jquery.simplemodal.js",
-            "/js/jquery.ejs.js",
+            "/js/jquery", 
+            "/js/jquery.tablesorter",
+            "/js/jquery.simplemodal",
+            "/js/jquery.treeview",
+            "/js/jquery.ejs",
         ]
 
         function HtmlViewConnector(view) {
@@ -140,7 +141,7 @@ module ejs.web {
         function form(record: Object, options: Object): Void {
             let method ||= options.method || ((record && options.id) ? "PUT" : "POST")
             options.action ||= options.click
-            options.action ||= ((record && options.id) ? "update" : "create")
+            options.action ||= ((record && options.id) ? "@update" : "@create")
             if (method != "GET" && method != "POST") {
                 options.method = method
                 method = "POST"
@@ -182,6 +183,15 @@ module ejs.web {
                         selected = (value == defaultValue) ? ' selected="yes"' : ''
                         write('      <option value="' + value + '"' + selected + '>' + key + '</option>\r\n')
 
+                    } else if (choice && choice.id) {
+                        /* list("priority", [{id: 77, field: "value", ...}, ...]) */
+                        selected = (choice.id == defaultValue) ? ' selected="yes"' : ''
+                        for (let [key, value] in choice) {
+                            if (key != "id" && !(value is Function)) {
+                                write('      <option value="' + choice.id + '"' + selected + '>' + value + '</option>\r\n')
+                                break
+                            }
+                        }
                     } else if (Object.getOwnPropertyCount(choice) > 0) {
                         /* list("priority", [{low: 3}, {med: 5}, {high: 9}]) */
                         for (let [key, value] in choice) {
@@ -255,9 +265,15 @@ module ejs.web {
 
         function script(uri: String, options: Object): Void {
             if (uri == null) {
-                let sdir = request.config.directories.static || "static"
+                if (options.minified == undefined) {
+                    options.minified = true
+                }
+                /* MVC directory */
+                let dirs = request.config.directories
+                let sdir = (dirs && dirs.static) ? dirs.static.basename : "static"
                 for each (uri in defaultScripts) {
                     uri = request.link("/" + sdir + uri)
+                    uri += (options.minified) ? ".min.js" : ".js"
                     write('    <script src="' + uri + '" type="text/javascript"></script>\r\n')
                 }
             } else {
@@ -271,9 +287,10 @@ module ejs.web {
         }
 
         function stylesheet(uri: String, options: Object): Void {
-            let sdir = request.config.directories.static || "static"
             if (uri == null) {
-                let sdir = request.config.directories.static || "static"
+                /* MVC directory */
+                let dirs = request.config.directories
+                let sdir = (dirs && dirs.static) ? dirs.static.basename : "static"
                 for each (uri in defaultStylesheets) {
                     uri = request.link("/" + sdir + uri)
                     write('    <link rel="stylesheet" type="text/css" href="' + uri + '" />\r\n')
@@ -522,17 +539,14 @@ module ejs.web {
             }
             let keys = []
             for each (key in keyFields) {
+                let value = (values[key] != null) ? Uri.encodeComponent(values[key]) : row
                 if (key is String) {
                     // Array of key names corresponding to the columns 
-                    //  MOB
-                    // keys.push(Uri.encodeComponent(key) + "=" + Uri.encodeComponent((values[key] || row)))
-                    target[key] = Uri.encodeComponent((values[key] || row))
+                    target[key] = value
                 } else {
                     // Hash of key:mapped names corresponding to the columns
                     for (field in key) {
-                        //  MOB
-                        // keys.push(Uri.encodeComponent(key[field]) + "=" + Uri.encodeComponent((values[field] || row)))
-                        target[key[field]] = Uri.encodeComponent((values[key] || row))
+                        target[key[field]] = value
                     }
                 }
             }
@@ -566,9 +580,11 @@ module ejs.web {
             } else if (options.edit) {
                 setLink(options.edit, options, "data-edit")
 
+/*
             } else if (options.action) {
-                /* This is just a safety net incase someone uses "action" instead of click */
+                // This is just a safety net incase someone uses "action" instead of click 
                 setLink(options.action, options, "data-click")
+*/
             }
             if (options.refresh) {
                 options.domid ||= getNextID()

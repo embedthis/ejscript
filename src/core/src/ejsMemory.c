@@ -13,13 +13,14 @@
  */
 static EjsObj *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    MprAllocStats    *alloc;
+    MprMemStats    *mem;
 
-    alloc = mprGetAllocStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) alloc->bytesAllocated);
+    mem = mprGetMemStats(ejs);
+    return (EjsObj*) ejsCreateNumber(ejs, (int) mem->bytesAllocated);
 }
 
 
+#if UNUSED
 /*
     native static function callback(fn: Function): Void
  */
@@ -34,6 +35,7 @@ static EjsObj *setRedlineCallback(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **
     ejs->memoryCallback = (EjsFunction*) argv[0];
     return 0;
 }
+#endif
 
 
 /*
@@ -41,10 +43,10 @@ static EjsObj *setRedlineCallback(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **
  */
 static EjsObj *getMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    MprAllocStats    *alloc;
+    MprMemStats    *mem;
 
-    alloc = mprGetAllocStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) alloc->maxMemory);
+    mem = mprGetMemStats(ejs);
+    return (EjsObj*) ejsCreateNumber(ejs, (int) mem->maxMemory);
 }
 
 
@@ -58,23 +60,9 @@ static EjsObj *setMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
 
     maxMemory = ejsGetInt(ejs, argv[0]);
-    mprSetAllocLimits(ejs, -1, maxMemory);
+    mprSetMemLimits(ejs, -1, maxMemory);
     return 0;
 }
-
-
-#if UNUSED
-/*
-    native static function get peak(): Number
- */
-static EjsObj *getPeakMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
-{
-    MprAllocStats    *alloc;
-
-    alloc = mprGetAllocStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) alloc->peakAllocated);
-}
-#endif
 
 
 /*
@@ -82,10 +70,10 @@ static EjsObj *getPeakMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsObj *getRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    MprAllocStats    *alloc;
+    MprMemStats    *mem;
 
-    alloc = mprGetAllocStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) alloc->redLine);
+    mem = mprGetMemStats(ejs);
+    return (EjsObj*) ejsCreateNumber(ejs, (int) mem->redLine);
 }
 
 
@@ -103,7 +91,7 @@ static EjsObj *setRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
         //  TODO - 64 bit
         redline = INT_MAX;
     }
-    mprSetAllocLimits(ejs, redline, -1);
+    mprSetMemLimits(ejs, redline, -1);
     return 0;
 }
 
@@ -113,25 +101,11 @@ static EjsObj *setRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsObj *getResident(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    MprAllocStats    *alloc;
+    MprMemStats    *mem;
 
-    alloc = mprGetAllocStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) alloc->rss);
+    mem = mprGetMemStats(ejs);
+    return (EjsObj*) ejsCreateNumber(ejs, (int) mem->rss);
 }
-
-
-#if UNUSED
-/*
-    native static function get stack(): Number
- */
-static EjsObj *getStack(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
-{
-    MprAllocStats    *alloc;
-
-    alloc = mprGetAllocStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) alloc->peakStack);
-}
-#endif
 
 
 /*
@@ -139,10 +113,10 @@ static EjsObj *getStack(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsObj *getSystemRam(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    MprAllocStats    *alloc;
+    MprMemStats    *mem;
 
-    alloc = mprGetAllocStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (double) alloc->ram);
+    mem = mprGetMemStats(ejs);
+    return (EjsObj*) ejsCreateNumber(ejs, (double) mem->ram);
 }
 
 
@@ -151,9 +125,8 @@ static EjsObj *getSystemRam(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsObj *printStats(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    //  TODO - should go to log file and not to stdout
-    ejsPrintAllocReport(ejs);
-    mprPrintAllocReport("Memory Report", 0);
+    //  MOB TODO - should go to log file and not to stdout
+    mprPrintMemReport("Memory Report", 0);
     return 0;
 }
 
@@ -163,9 +136,8 @@ static EjsObj *printStats(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 void ejsConfigureMemoryType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
 
-    if ((type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "Memory")) == 0) {
+    if ((type = ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Memory"))) == 0) {
         mprError(ejs, "Can't find Memory type");
         return;
     }
@@ -176,8 +148,11 @@ void ejsConfigureMemoryType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Memory_system, (EjsProc) getSystemRam);
     ejsBindMethod(ejs, type, ES_Memory_stats, (EjsProc) printStats);
 
+#if UNUSED
+    EjsPot      *prototype;
     prototype = type->prototype;
     ejsBindAccess(ejs, type, ES_Memory_callback, NULL, (EjsProc) setRedlineCallback);
+#endif
 }
 
 /*

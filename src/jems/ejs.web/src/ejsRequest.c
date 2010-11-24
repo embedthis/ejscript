@@ -38,33 +38,32 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
     mprAssert(params);
 
     if (*svalue == '[') {
-        value = ejsDeserialize(ejs, ejsCreateString(ejs, svalue));
+        value = ejsDeserialize(ejs, ejsCreateStringFromAsc(ejs, svalue));
     } else {
-        value = (EjsVar*) ejsCreateString(ejs, svalue);
+        value = (EjsObj*) ejsCreateStringFromAsc(ejs, svalue);
     }
-
     /*  
         name.name.name
      */
     if (strchr(key, '.') == 0) {
-        ejsName(&qname, "", key);
-        ejsSetPropertyByName(ejs, params, &qname, value);
+        qname = ejsName(ejs, "", key);
+        ejsSetPropertyByName(ejs, params, qname, value);
 
     } else {
-        subkey = mprStrdup(ejs, key);
+        subkey = sclone(ejs, key);
         for (end = strchr(subkey, '.'); end; subkey = end, end = strchr(subkey, '.')) {
             *end++ = '\0';
-            ejsName(&qname, "", subkey);
-            vp = ejsGetPropertyByName(ejs, params, &qname);
+            qname = ejsName(ejs, "", subkey);
+            vp = ejsGetPropertyByName(ejs, params, qname);
             if (vp == 0) {
-                slotNum = ejsSetPropertyByName(ejs, params, &qname, ejsCreateSimpleObject(ejs));
+                slotNum = ejsSetPropertyByName(ejs, params, qname, ejsCreateEmptyPot(ejs));
                 vp = ejsGetProperty(ejs, params, slotNum);
             }
             params = vp;
         }
         mprAssert(params);
-        ejsName(&qname, "", subkey);
-        ejsSetPropertyByName(ejs, params, &qname, value);
+        qname = ejsName(ejs, "", subkey);
+        ejsSetPropertyByName(ejs, params, qname, value);
     }
 }
 
@@ -76,7 +75,7 @@ static EjsObj *createParams(Ejs *ejs, EjsRequest *req)
     MprHash         *hp;
 
     if ((params = req->params) == 0) {
-        params = (EjsObj*) ejsCreateSimpleObject(ejs);
+        params = (EjsObj*) ejsCreateEmptyPot(ejs);
         if (req->conn && (formVars = req->conn->rx->formVars) != 0) {
             hp = 0;
             while ((hp = mprGetNextHash(formVars, hp)) != NULL) {
@@ -90,7 +89,6 @@ static EjsObj *createParams(Ejs *ejs, EjsRequest *req)
 
 static EjsObj *createCookies(Ejs *ejs, EjsRequest *req)
 {
-    EjsName     n;
     EjsObj      *argv[1];
     cchar       *cookieHeader;
 
@@ -103,8 +101,8 @@ static EjsObj *createCookies(Ejs *ejs, EjsRequest *req)
     if ((cookieHeader = mprLookupHash(req->conn->rx->headers, "cookie")) == 0) {
         req->cookies = (EjsObj*) ejs->nullValue;
     } else {
-        argv[0] = (EjsObj*) ejsCreateString(ejs, cookieHeader);
-        req->cookies = ejsRunFunctionByName(ejs, ejs->global, ejsName(&n, "ejs.web", "parseCookies"), ejs->global, 1, argv);
+        argv[0] = (EjsObj*) ejsCreateStringFromAsc(ejs, cookieHeader);
+        req->cookies = ejsRunFunctionByName(ejs, ejs->global, N("ejs.web", "parseCookies"), ejs->global, 1, (EjsObj**) argv);
     }
     return (EjsObj*) req->cookies;
 }
@@ -113,7 +111,7 @@ static EjsObj *createCookies(Ejs *ejs, EjsRequest *req)
 static EjsObj *createEnv(Ejs *ejs, EjsRequest *req)
 {
     if (req->env == 0) {
-        req->env = ejsCreateSimpleObject(ejs);
+        req->env = ejsCreateEmptyPot(ejs);
     }
     return (EjsObj*) req->env;
 }
@@ -124,7 +122,6 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
     HttpUploadFile  *up;
     HttpConn        *conn;
     EjsObj          *files, *file;
-    EjsName         n;
     MprHash         *hp;
     int             index;
 
@@ -136,16 +133,16 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
         if (conn->rx->files == 0) {
             return ejs->nullValue;
         }
-        req->files = files = (EjsObj*) ejsCreateSimpleObject(ejs);
+        req->files = files = (EjsObj*) ejsCreateEmptyPot(ejs);
         for (index = 0, hp = 0; (hp = mprGetNextHash(conn->rx->files, hp)) != 0; index++) {
             up = (HttpUploadFile*) hp->data;
-            file = (EjsObj*) ejsCreateSimpleObject(ejs);
-            ejsSetPropertyByName(ejs, file, EN(&n, "filename"), ejsCreateString(ejs, up->filename));
-            ejsSetPropertyByName(ejs, file, EN(&n, "clientFilename"), ejsCreateString(ejs, up->clientFilename));
-            ejsSetPropertyByName(ejs, file, EN(&n, "contentType"), ejsCreateString(ejs, up->contentType));
-            ejsSetPropertyByName(ejs, file, EN(&n, "name"), ejsCreateString(ejs, hp->key));
-            ejsSetPropertyByName(ejs, file, EN(&n, "size"), ejsCreateNumber(ejs, up->size));
-            ejsSetPropertyByName(ejs, files, EN(&n, hp->key), file);
+            file = (EjsObj*) ejsCreateEmptyPot(ejs);
+            ejsSetPropertyByName(ejs, file, EN("filename"), ejsCreateStringFromAsc(ejs, up->filename));
+            ejsSetPropertyByName(ejs, file, EN("clientFilename"), ejsCreateStringFromAsc(ejs, up->clientFilename));
+            ejsSetPropertyByName(ejs, file, EN("contentType"), ejsCreateStringFromAsc(ejs, up->contentType));
+            ejsSetPropertyByName(ejs, file, EN("name"), ejsCreateStringFromAsc(ejs, hp->key));
+            ejsSetPropertyByName(ejs, file, EN("size"), ejsCreateNumber(ejs, up->size));
+            ejsSetPropertyByName(ejs, files, EN(hp->key), file);
         }
     }
     return (EjsObj*) req->files;
@@ -161,16 +158,16 @@ static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
     MprHash     *hp;
     
     if (req->headers == 0) {
-        req->headers = (EjsObj*) ejsCreateSimpleObject(ejs);
+        req->headers = (EjsObj*) ejsCreateEmptyPot(ejs);
         conn = req->conn;
         for (hp = 0; conn && (hp = mprGetNextHash(conn->rx->headers, hp)) != 0; ) {
-            EN(&n, hp->key);
-            if ((old = ejsGetPropertyByName(ejs, req->headers, &n)) != 0) {
-                value = ejsCreateStringAndFree(ejs, mprStrcat(req, -1, ejsGetString(ejs, old), "; ", hp->data, NULL));
+            n = EN(hp->key);
+            if ((old = ejsGetPropertyByName(ejs, req->headers, n)) != 0) {
+                value = ejsCreateStringFromAsc(ejs, sjoin(req, NULL, ejsToMulti(ejs, old), "; ", hp->data, NULL));
             } else {
-                value = ejsCreateString(ejs, hp->data);
+                value = ejsCreateStringFromAsc(ejs, hp->data);
             }
-            ejsSetPropertyByName(ejs, req->headers, &n, value);
+            ejsSetPropertyByName(ejs, req->headers, n, value);
         }
     }
     return (EjsObj*) req->headers;
@@ -186,14 +183,14 @@ static int fillResponseHeaders(EjsRequest *req)
     EjsObj      *vp;
     EjsTrait    *trait;
     EjsName     n;
-    char        *name, *value;
+    char        *value;
     int         i, count;
     
     if (req->responseHeaders) {
         ejs = req->ejs;
         count = ejsGetPropertyCount(ejs, req->responseHeaders);
         for (i = 0; i < count; i++) {
-            trait = ejsGetTrait(ejs, req->responseHeaders, i);
+            trait = ejsGetPropertyTraits(ejs, req->responseHeaders, i);
             if (trait && trait->attributes & 
                     (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | EJS_FUN_MODULE_INITIALIZER)) {
                 continue;
@@ -202,9 +199,8 @@ static int fillResponseHeaders(EjsRequest *req)
             vp = ejsGetProperty(ejs, req->responseHeaders, i);
             if (n.name && vp && req->conn) {
                 if (vp != ejs->nullValue && vp != ejs->undefinedValue) {
-                    name = mprStrdup(req->conn, n.name);
-                    value = mprStrdup(req->conn, ejsGetString(ejs, vp));
-                    httpSetSimpleHeader(req->conn, name, value);
+                    value = sclone(req->conn, ejsToMulti(ejs, vp));
+                    httpSetSimpleHeader(req->conn, ejsToMulti(ejs, n.name), value);
                 }
             }
         }
@@ -217,16 +213,14 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
 {
     MprHash     *hp;
     HttpConn    *conn;
-    EjsName     n;
     
     if (req->responseHeaders == 0) {
-        req->responseHeaders = (EjsObj*) ejsCreateSimpleObject(ejs);
+        req->responseHeaders = (EjsObj*) ejsCreateEmptyPot(ejs);
         conn = req->conn;
         if (conn) {
             /* Get default headers */
             for (hp = 0; (hp = mprGetNextHash(conn->tx->headers, hp)) != 0; ) {
-                ejsSetPropertyByName(ejs, req->responseHeaders, EN(&n, mprStrdup(req->responseHeaders, hp->key)), 
-                    ejsCreateString(ejs, hp->data));
+                ejsSetPropertyByName(ejs, req->responseHeaders, EN(hp->key), ejsCreateStringFromAsc(ejs, hp->data));
             }
             conn->fillHeaders = (HttpFillHeadersProc) fillResponseHeaders;
             conn->fillHeadersArg = req;
@@ -262,7 +256,7 @@ static EjsObj *createString(Ejs *ejs, cchar *value)
     if (value == 0) {
         return ejs->nullValue;
     }
-    return (EjsObj*) ejsCreateString(ejs, value);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, value);
 }
 
 
@@ -280,7 +274,7 @@ static cchar *getDefaultString(Ejs *ejs, EjsObj *value, cchar *defaultValue)
     if (value == 0 || value == ejs->nullValue) {
         return defaultValue;
     }
-    return ejsGetString(ejs, value);
+    return ejsToMulti(ejs, value);
 }
 
 
@@ -289,7 +283,7 @@ static cchar *getString(Ejs *ejs, EjsObj *value)
     if (value == 0) {
         return "";
     }
-    return ejsGetString(ejs, value);
+    return ejsToMulti(ejs, value);
 }
 
 
@@ -325,7 +319,7 @@ static cchar *getHost(HttpConn *conn, EjsRequest *req)
 static EjsObj *getLimits(Ejs *ejs, EjsRequest *req)
 {
     if (req->limits == 0) {
-        req->limits = ejsCreateSimpleObject(ejs);
+        req->limits = ejsCreateEmptyPot(ejs);
         if (req->conn) {
             ejsGetHttpLimits(ejs, req->limits, req->conn->limits, 0);
         }
@@ -342,7 +336,7 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
     int         levels;
 
     if (req->conn == NULL) {
-        return mprStrdup(req, "/");
+        return sclone(req, "/");
     }
     rx = req->conn->rx;
     mprAssert(rx->pathInfo);
@@ -374,7 +368,6 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
 static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 {
     EjsObj      *value;
-    EjsName     n;
     HttpConn    *conn;
     cchar       *pathInfo, *scriptName;
     char        *path, *filename, *uri, *ip, *scheme;
@@ -389,8 +382,8 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 scheme = conn->secure ? "https" : "http";
                 ip = conn->sock ? conn->sock->acceptIp : req->server->ip;
                 port = conn->sock ? conn->sock->acceptPort : req->server->port;
-                uri = mprAsprintf(req, -1, "%s://%s:%d%s/", scheme, conn->sock->ip, req->server->port, conn->rx->scriptName);
-                req->absHome = (EjsObj*) ejsCreateUriAndFree(ejs, uri);
+                uri = mprAsprintf(req, "%s://%s:%d%s/", scheme, conn->sock->ip, req->server->port, conn->rx->scriptName);
+                req->absHome = (EjsObj*) ejsCreateUriFromMulti(ejs, uri);
             } else {
                 req->absHome = ejs->nullValue;
             }
@@ -423,7 +416,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_contentType:
         if (conn) {
             createHeaders(ejs, req);
-            return mapNull(ejs, ejsGetPropertyByName(ejs, req->headers, EN(&n, "content-type")));
+            return mapNull(ejs, ejsGetPropertyByName(ejs, req->headers, EN("content-type")));
         } else return ejs->nullValue;
 
     case ES_ejs_web_Request_cookies:
@@ -442,12 +435,12 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
 
     case ES_ejs_web_Request_filename:
         if (req->filename == 0) {
-            pathInfo = ejsGetString(ejs, req->pathInfo);
+            pathInfo = ejsToMulti(ejs, req->pathInfo);
             if (req->dir) {
-                filename = mprJoinPath(ejs, req->dir->path, &pathInfo[1]);
-                req->filename = ejsCreatePathAndFree(ejs, filename);
+                filename = mprJoinPath(ejs, req->dir->value, &pathInfo[1]);
+                req->filename = ejsCreatePathFromAsc(ejs, filename);
             } else {
-                req->filename = ejsCreatePath(ejs, pathInfo);
+                req->filename = ejsCreatePathFromAsc(ejs, pathInfo);
             }
         }
         return req->filename ? (EjsObj*) req->filename : (EjsObj*) ejs->nullValue;
@@ -461,7 +454,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
     case ES_ejs_web_Request_home:
         if (req->home == 0) {
             if (conn) {
-                req->home = ejsCreateUriAndFree(ejs, makeRelativeHome(ejs, req));
+                req->home = ejsCreateUriFromMulti(ejs, makeRelativeHome(ejs, req));
             } else return ejs->nullValue;
         }
         return req->home;
@@ -555,7 +548,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return req->scheme;
 
     case ES_ejs_web_Request_scriptName:
-        return req->scriptName ? req->scriptName : (EjsObj*) ejs->emptyStringValue;
+        return req->scriptName ? req->scriptName : (EjsObj*) ejs->emptyString;
 
     case ES_ejs_web_Request_server:
         return req->server;
@@ -586,7 +579,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->uri == 0) {
             scriptName = getDefaultString(ejs, req->scriptName, "");
             if (conn) {
-                path = mprStrcat(req, -1, scriptName, getDefaultString(ejs, req->pathInfo, conn->rx->uri), NULL);
+                path = sjoin(req, NULL, scriptName, getDefaultString(ejs, req->pathInfo, conn->rx->uri), NULL);
                 scheme = (conn->secure) ? "https" : "http";
                 req->uri = (EjsObj*) ejsCreateUriFromParts(ejs, 
                     getDefaultString(ejs, req->scheme, scheme),
@@ -596,7 +589,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                     getDefaultString(ejs, req->query, conn->rx->parsedUri->query),
                     getDefaultString(ejs, req->reference, conn->rx->parsedUri->reference), 0);
             } else {
-                path = mprStrcat(req, -1, scriptName, getDefaultString(ejs, req->pathInfo, NULL), NULL);
+                path = sjoin(req, NULL, scriptName, getDefaultString(ejs, req->pathInfo, NULL), NULL);
                 req->uri = (EjsObj*) ejsCreateUriFromParts(ejs, 
                     getDefaultString(ejs, req->scheme, NULL),
                     getDefaultString(ejs, req->host, NULL),
@@ -610,7 +603,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return req->uri;
 
     default:
-        if (slotNum < req->obj.numSlots) {
+        if (slotNum < req->pot.numProp) {
             return ejs->objectType->helpers.getProperty(ejs, (EjsObj*) req, slotNum);
         }
     }
@@ -628,21 +621,21 @@ static EjsName getRequestPropertyName(Ejs *ejs, EjsRequest *req, int slotNum)
 {
     EjsName     qname;
 
-    qname = ejsGetPropertyName(ejs, req->obj.type->prototype, slotNum);
+    qname = ejsGetPropertyName(ejs, req->pot.type->prototype, slotNum);
     if (qname.name == 0) {
-        qname = ejsGetObjectPropertyName(ejs, &req->obj, slotNum);
+        qname = ejsGetPotPropertyName(ejs, &req->pot, slotNum);
     }
     return qname;
 }
 
 
-static int lookupRequestProperty(Ejs *ejs, EjsRequest *req, EjsName *qname)
+static int lookupRequestProperty(Ejs *ejs, EjsRequest *req, EjsName qname)
 {
     int slotNum;
     
-    slotNum = ejsLookupProperty(ejs, req->obj.type->prototype, qname);
+    slotNum = ejsLookupProperty(ejs, req->pot.type->prototype, qname);
     if (slotNum < 0) {
-        slotNum = ejsLookupObjectProperty(ejs, &req->obj, qname);
+        slotNum = ejsLookupPotProperty(ejs, &req->pot, qname);
     }
     return slotNum;
 }
@@ -650,7 +643,7 @@ static int lookupRequestProperty(Ejs *ejs, EjsRequest *req, EjsName *qname)
 
 static int getNum(Ejs *ejs, EjsObj *vp)
 {
-    if (!ejsIsNumber(vp) && (vp = (EjsObj*) ejsToNumber(ejs, vp)) == 0) {
+    if (!ejsIsNumber(ejs, vp) && (vp = (EjsObj*) ejsToNumber(ejs, vp)) == 0) {
         return 0;
     }
     return (int) ((EjsNumber*) vp)->value;
@@ -746,7 +739,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         break;
 
     case ES_ejs_web_Request_server:
-        type = ejsGetTypeByName(ejs, "ejs.web", "HttpServer");
+        type = ejsGetTypeByName(ejs, N("ejs.web", "HttpServer"));
         if (!ejsIsA(ejs, value, type)) {
             ejsThrowArgError(ejs, "Property is not an instance of HttpServer");
             break;
@@ -768,22 +761,22 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
                 This is really just for unit testing without a connection
              */
             if (up->uri->scheme) {
-                req->scheme = (EjsObj*) ejsCreateString(ejs, up->uri->scheme);
+                req->scheme = (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->scheme);
             }
             if (up->uri->host) {
-                req->host = (EjsObj*) ejsCreateString(ejs, up->uri->host);
+                req->host = (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->host);
             }
             if (up->uri->port) {
                 req->port = (EjsObj*) ejsCreateNumber(ejs, up->uri->port);
             }
             if (up->uri->path) {
-                req->pathInfo = (EjsObj*) ejsCreateString(ejs, up->uri->path);
+                req->pathInfo = (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->path);
             }
             if (up->uri->query) {
-                req->query = (EjsObj*) ejsCreateString(ejs, up->uri->query);
+                req->query = (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->query);
             }
             if (up->uri->reference) {
-                req->reference = (EjsObj*) ejsCreateString(ejs, up->uri->reference);
+                req->reference = (EjsObj*) ejsCreateStringFromAsc(ejs, up->uri->reference);
             }
         }
         break;
@@ -819,9 +812,9 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
     case ES_ejs_web_Request_method:
         if (!connOk(ejs, req, 1)) return 0;
         if (req->originalMethod == 0) {
-            req->originalMethod = (EjsObj*) ejsCreateString(ejs, req->conn->rx->method);
+            req->originalMethod = (EjsObj*) ejsCreateStringFromAsc(ejs, req->conn->rx->method);
         }
-        req->conn->rx->method = mprStrdup(req, getString(ejs, value));
+        req->conn->rx->method = sclone(req, getString(ejs, value));
         break;
 
     case ES_ejs_web_Request_status:
@@ -952,18 +945,18 @@ static EjsObj *req_flush(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 static EjsObj *req_header(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     EjsObj      *value;
-    EjsName     n, qname;
+    EjsName     qname;
     char        *key;
     int         count, i;
 
     createHeaders(ejs, req);
-    key = (char*) ejsGetString(ejs, argv[0]);
+    key = (char*) ejsToMulti(ejs, argv[0]);
 
-    if ((value = ejsGetPropertyByName(ejs, req->headers, EN(&n, key))) == 0) {
+    if ((value = ejsGetPropertyByName(ejs, req->headers, EN(key))) == 0) {
         count = ejsGetPropertyCount(ejs, req->headers);
         for (i = 0; i < count; i++) {
             qname = ejsGetPropertyName(ejs, req->headers, i);
-            if (mprStrcmpAnyCase(qname.name, key) == 0) {
+            if (mcasecmp(qname.name->value, key) == 0) {
                 value = ejsGetProperty(ejs, req->headers, i);
                 break;
             }
@@ -1053,23 +1046,22 @@ static EjsObj *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_setHeader(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    EjsName     n;
-    EjsObj      *old, *value;
+    EjsString   *value;
+    EjsObj      *old;
     cchar       *key;
     int         overwrite;
 
     if (!connOk(ejs, req, 1)) return 0;
-    key = ejsGetString(ejs, argv[0]);
-    value = argv[1];
+    key = ejsToMulti(ejs, argv[0]);
+    value = (EjsString*) argv[1];
     overwrite = argc < 3 || argv[2] == (EjsObj*) ejs->trueValue;
     createResponseHeaders(ejs, req);
     if (!overwrite) {
-        if ((old = ejsGetPropertyByName(ejs, req->responseHeaders, ejsName(&n, "", key))) != 0) {
-            value = (EjsObj*) ejsCreateStringAndFree(ejs, 
-                mprAsprintf(req->responseHeaders, -1, "%s, %s", ejsGetString(ejs, old), ejsGetString(ejs, value)));
+        if ((old = ejsGetPropertyByName(ejs, req->responseHeaders, EN(key))) != 0) {
+            value = ejsSprintf(ejs, "%@, %@", old, value);
         }
     }
-    ejsSetPropertyByName(ejs, req->responseHeaders, ejsName(&n, "", mprStrdup(req->responseHeaders, key)), value);
+    ejsSetPropertyByName(ejs, req->responseHeaders, EN(key), value);
 
     /* MOB Just until we have filters - to disable chunk filtering */
     if (strcmp(key, "x-chunk-size") == 0) {
@@ -1089,7 +1081,7 @@ static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         httpSetUniqueConnLimits(req->conn);
     }
     if (req->limits == 0) {
-        req->limits = ejsCreateSimpleObject(ejs);
+        req->limits = ejsCreateEmptyPot(ejs);
         ejsGetHttpLimits(ejs, req->limits, req->conn->limits, 0);
     }
     ejsBlendObject(ejs, req->limits, argv[0], 1);
@@ -1205,11 +1197,11 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         return ejs->falseValue;
     }
     path = (EjsPath*) argv[0];
-    if (mprGetPathInfo(ejs, path->path, &info) < 0) {
-        ejsThrowIOError(ejs, "Cannot open %s", path->path);
+    if (mprGetPathInfo(ejs, path->value, &info) < 0) {
+        ejsThrowIOError(ejs, "Cannot open %s", path->value);
         return ejs->falseValue;
     }
-    httpSetSendConnector(req->conn, path->path);
+    httpSetSendConnector(req->conn, path->value);
 
     packet = httpCreateDataPacket(conn->writeq, 0);
     packet->entityLength = (int) info.size;
@@ -1246,8 +1238,8 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     newReq->dir = ejsCreatePath(ejs, req->dir->path);
 
     //  MOB -- should these two be EjsPath
-    newReq->home = mprStrdup(newReq, req->home);
-    newReq->absHome = mprStrdup(newReq, req->absHome);
+    newReq->home = sclone(newReq, req->home);
+    newReq->absHome = sclone(newReq, req->absHome);
 
     //  MOB -- problematic. This is a cross-interp link
     newReq->server = req->server;
@@ -1266,7 +1258,7 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     mprAssert(conn);
     mprAssert(dir && *dir);
 
-    type = ejsGetTypeByName(ejs, "ejs.web", "Request");
+    type = ejsGetTypeByName(ejs, N("ejs.web", "Request"));
     if (type == NULL || (req = (EjsRequest*) ejsCreate(ejs, type, 0)) == NULL) {
         return 0;
     }
@@ -1276,23 +1268,13 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     req->server = server;
     rx = conn->rx;
     if (mprIsRelPath(req, dir)) {
-        req->dir = ejsCreatePath(ejs, dir);
+        req->dir = ejsCreatePathFromAsc(ejs, dir);
     } else {
-        req->dir = ejsCreatePathAndFree(ejs, mprGetRelPath(req, dir));
+        req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(req, dir));
     }
-    req->pathInfo = (EjsObj*) ejsCreateString(ejs, rx->pathInfo);
-    req->scriptName = (EjsObj*) ejsCreateString(ejs, rx->scriptName);
+    req->pathInfo = (EjsObj*) ejsCreateStringFromAsc(ejs, rx->pathInfo);
+    req->scriptName = (EjsObj*) ejsCreateStringFromAsc(ejs, rx->scriptName);
     return req;
-}
-
-
-static void destroyRequest(Ejs *ejs, EjsRequest *req)
-{
-    /* 
-        Don't close the connection as it may be in-use by other request objects 
-        This is a request close event, not a connection close event 
-     */
-    //  MOB -- remove this?
 }
 
 
@@ -1325,47 +1307,48 @@ void ejsSendRequestEvent(Ejs *ejs, EjsRequest *req, cchar *event)
 /*  
     Mark the object properties for the garbage collector
  */
-static void markRequest(Ejs *ejs, EjsRequest *req)
+static void manageRequest(EjsRequest *req, int flags)
 {
-    ejsMarkObject(ejs, req);
+    if (flags & MPR_MANAGE_MARK) {
+        ejsManagePot(req, flags);
+        mprMark(req->absHome);
+        mprMark(req->cookies);
+        mprMark(req->dir);
+        mprMark(req->emitter);
+        mprMark(req->env);
+        mprMark(req->filename);
+        mprMark(req->files);
+        mprMark(req->headers);
+        mprMark(req->home);
+        mprMark(req->host);
+        mprMark(req->limits);
+        mprMark(req->originalMethod);
+        mprMark(req->originalUri);
+        mprMark(req->params);
+        mprMark(req->pathInfo);
+        mprMark(req->port);
+        mprMark(req->query);
+        mprMark(req->reference);
+        mprMark(req->responseHeaders);
+        mprMark(req->scheme);
+        mprMark(req->scriptName);
+        mprMark(req->server);
+        mprMark(req->session);
+        mprMark(req->uri);
+    }
+}
 
-    if (req->absHome)           ejsMark(ejs, req->absHome);
-    if (req->cookies)           ejsMark(ejs, req->cookies);
-    if (req->dir)               ejsMark(ejs, req->dir);
-    if (req->emitter)           ejsMark(ejs, req->emitter);
-    if (req->env)               ejsMark(ejs, req->env);
-    if (req->filename)          ejsMark(ejs, req->filename);
-    if (req->files)             ejsMark(ejs, req->files);
-    if (req->headers)           ejsMark(ejs, req->headers);
-    if (req->home)              ejsMark(ejs, req->home);
-    if (req->host)              ejsMark(ejs, req->host);
-    if (req->limits)            ejsMark(ejs, req->limits);
-    if (req->originalMethod)    ejsMark(ejs, req->originalMethod);
-    if (req->originalUri)       ejsMark(ejs, req->originalUri);
-    if (req->params)            ejsMark(ejs, req->params);
-    if (req->pathInfo)          ejsMark(ejs, req->pathInfo);
-    if (req->port)              ejsMark(ejs, req->port);
-    if (req->query)             ejsMark(ejs, req->query);
-    if (req->reference)         ejsMark(ejs, req->reference);
-    if (req->responseHeaders)   ejsMark(ejs, req->responseHeaders);
-    if (req->scheme)            ejsMark(ejs, req->scheme);
-    if (req->scriptName)        ejsMark(ejs, req->scriptName);
-    if (req->server)            ejsMark(ejs, req->server);
-    if (req->session)           ejsMark(ejs, req->session);
-    if (req->uri)               ejsMark(ejs, req->uri);
-} 
 
 void ejsConfigureRequestType(Ejs *ejs)
 {
-    EjsType         *type;
-    EjsTypeHelpers  *helpers;
-    EjsObj          *prototype;
+    EjsType     *type;
+    EjsHelpers  *helpers;
+    EjsPot      *prototype;
 
-    type = ejs->requestType = ejsConfigureNativeType(ejs, "ejs.web", "Request", sizeof(EjsRequest));
+    type = ejs->requestType = ejsConfigureNativeType(ejs, N("ejs.web", "Request"), sizeof(EjsRequest), manageRequest,
+        EJS_POT_HELPERS);
 
     helpers = &type->helpers;
-    helpers->mark = (EjsMarkHelper) markRequest;
-    helpers->destroy = (EjsDestroyHelper) destroyRequest;
     helpers->getProperty = (EjsGetPropertyHelper) getRequestProperty;
     helpers->getPropertyCount = (EjsGetPropertyCountHelper) getRequestPropertyCount;
     helpers->getPropertyName = (EjsGetPropertyNameHelper) getRequestPropertyName;

@@ -84,7 +84,7 @@ EjsObj *ejsGetTypeName(Ejs *ejs, EjsObj *vp)
     if (type == 0) {
         return ejs->nullValue;
     }
-    return (EjsObj*) ejsCreateStringFromCS(ejs, type->qname.name);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, type->qname.name);
 }
 
 
@@ -101,7 +101,7 @@ static EjsObj *ref_name(Ejs *ejs, EjsReflect *rp, int argc, EjsObj **argv)
     if (!ejsIsType(ejs, type)) {
         return (EjsObj*) ejs->emptyString;
     }
-    return (EjsObj*) ejsCreateStringFromCS(ejs, type->qname.name);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, type->qname.name);
 }
 
 /*********************************** Globals **********************************/
@@ -122,57 +122,55 @@ static EjsObj *ref_typeOf(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
 EjsObj *ejsGetTypeOf(Ejs *ejs, EjsObj *vp)
 {
     if (vp == ejs->undefinedValue) {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "undefined");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "undefined");
 
     } else if (vp == ejs->nullValue) {
         /* Yea - I know, ECMAScript is broken */
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "object");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "object");
 
     } if (ejsIsBoolean(ejs, vp)) {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "boolean");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "boolean");
 
     } else if (ejsIsNumber(ejs, vp)) {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "number");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "number");
 
     } else if (ejsIsString(ejs, vp)) {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "string");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "string");
 
     } else if (ejsIsFunction(ejs, vp)) {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "function");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "function");
                
     } else if (ejsIsType(ejs, vp)) {
         /* Pretend it is a constructor function */
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "function");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "function");
                
     } else {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "object");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "object");
     }
 }
 
-
-/*********************************** Helpers **********************************/
-
-static void markReflectVar(Ejs *ejs, EjsReflect *rp)
-{
-    //  MOB - probably not needed
-    ejsMarkObject(ejs, (EjsObj*) rp);
-
-    if (rp->subject) {
-        ejsMark(ejs, rp->subject);
-    }
-}
 
 /*********************************** Factory **********************************/
+
+static void manageReflect(EjsReflect *rp, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        if (rp->subject) {
+            mprmark(rp->subject);
+        }
+    } else if (flags & MPR_MANAGE_FREE) {
+        ;
+    }
+}
+
 
 void ejsConfigureReflectType(Ejs *ejs)
 {
     EjsType     *type;
     EjsObj      *prototype;
 
-    type = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Reflect", sizeof(EjsReflect));
+    type = ejsConfigureNativeType(ejs, N("ejs", "Reflect"), sizeof(EjsReflect), manageReflect, EJS_OBJ_HELPERS);
     prototype = type->prototype;
-
-    type->helpers.mark = (EjsMarkHelper) markReflectVar;
 
     ejsBindConstructor(ejs, type, (EjsProc) ref_Reflect);
     ejsBindMethod(ejs, prototype, ES_Reflect_base, (EjsProc) ref_base);

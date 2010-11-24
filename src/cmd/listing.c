@@ -13,7 +13,7 @@
 
 static EjsString *getBlockName(EjsMod *mp, EjsObj *block, int slotNum);
 static uchar getByte(EjsMod *mp);
-static uint  getWord(EjsMod *mp);
+static uint  getInt32(EjsMod *mp);
 static double getDouble(EjsMod *mp);
 static int64 getNum(EjsMod *dp);
 static EjsString *getString(Ejs *ejs, EjsMod *dp);
@@ -22,7 +22,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
 static char *getAttributeString(EjsMod *mp, int attributes);
 static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun);
 static void leadin(EjsMod *mp, EjsModule *module, int classDec, int inFunction);
-static void lstBlock(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNum, cchar *name, int numSlots);
+static void lstBlock(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNum, EjsString *name, int numProp);
 static void lstClass(EjsMod *mp, EjsModule *module, int slotNum, EjsType *klass, int attributes);
 static void lstClose(EjsMod *mp, MprList *modules, int origin);
 static void lstDependency(EjsMod *mp, EjsModule *module, EjsModule *dependant);
@@ -52,7 +52,7 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
 
     va_start(args, kind);
     mp = ejs->userData;
-    lst = mprAllocCtx(mp, sizeof(Lst));
+    lst = mprAlloc(mp, sizeof(Lst));
 
     /*
         Decode the record type and create a list for later processing. We need to process
@@ -64,8 +64,8 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
         lst->module = va_arg(args, EjsModule*);
         lst->owner = va_arg(args, EjsObj*);
         lst->slotNum = va_arg(args, int);
-        lst->name = va_arg(args, char*);
-        lst->numSlots = va_arg(args, int);
+        lst->name = va_arg(args, EjsString*);
+        lst->numProp = va_arg(args, int);
         break;
 
     case EJS_SECT_BLOCK_END:
@@ -106,6 +106,7 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
         lst->qname = va_arg(args, EjsName);
         lst->fun = va_arg(args, EjsFunction*);
         lst->attributes = va_arg(args, int);
+        //MOB mprAssert(lst->fun->body.code || lst->fun->isNativeProc);
         break;
 
     case EJS_SECT_FUNCTION_END:
@@ -131,6 +132,9 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
         break;
 
     case EJS_SECT_MODULE_END:
+        break;
+            
+    case EJS_SECT_DEBUG:
         break;
 
     default:
@@ -167,7 +171,7 @@ static void lstClose(EjsMod *mp, MprList *modules, int firstModule)
             }
             switch (lst->kind) {
             case EJS_SECT_BLOCK:
-                lstBlock(mp, lst->module, lst->owner, lst->slotNum, lst->name, lst->numSlots);
+                lstBlock(mp, lst->module, lst->owner, lst->slotNum, lst->name, lst->numProp);
                 count++;
                 break;
 
@@ -220,7 +224,7 @@ static int lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr)
     if ((ext = strstr(name, EJS_MODULE_EXT)) != 0) {
         *ext = '\0';
     }
-    path = mprStrcat(mp, -1, name, EJS_LISTING_EXT, NULL);
+    path = sjoin(mp, NULL, name, EJS_LISTING_EXT, NULL);
     if ((mp->file = mprOpen(mp, path,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
         mprError(mp, "Can't create %s", path);
         mprFree(path);
@@ -233,16 +237,15 @@ static int lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr)
 }
 
 
-static void lstBlock(EjsMod *mp, EjsModule *module, EjsObj *owner, int slotNum, cchar *name, int numSlots)
+static void lstBlock(EjsMod *mp, EjsModule *module, EjsObj *owner, int slotNum, EjsString *name, int numProp)
 {
     Ejs         *ejs;
     EjsString   *blockName;
 
     ejs = mp->ejs;
 
-    mprFprintf(mp->file, "\n");
     blockName = getBlockName(mp, owner, slotNum);
-    mprFprintf(mp->file, "BLOCK:      [%S-%02d]  %s (Slots %d)\n", blockName, slotNum, name, numSlots);
+    mprFprintf(mp->file, "BLOCK:      [%@-%02d]  %@ (Slots %d)\n", blockName, slotNum, name, numProp);
 }
 
 
@@ -257,13 +260,14 @@ static void lstClass(EjsMod *mp, EjsModule *module, int slotNum, EjsType *klass,
     mprFprintf(mp->file, "\n");
 
     if (klass->baseType) {
-        mprFprintf(mp->file, "CLASS:      %sclass %s extends %s\n", getAttributeString(mp, attributes), 
+        mprFprintf(mp->file, "CLASS:      %sclass %@ extends %@\n", getAttributeString(mp, attributes), 
             klass->qname.name, klass->baseType->qname.name);
     } else {
-        mprFprintf(mp->file, "CLASS:      %sclass %s\n", getAttributeString(mp, attributes), klass->qname.name);
+        mprFprintf(mp->file, "CLASS:      %sclass %@\n", getAttributeString(mp, attributes), klass->qname.name);
     }
     leadin(mp, module, 1, 0);
-    mprFprintf(mp->file, "        #  Class Details: %d class traits, %d prototype (instance) traits, %s, requested slot %d\n",
+    mprFprintf(mp->file, 
+        "        #  Class Details: %d class traits, %d prototype (instance) traits, %s, requested slot %d\n",
         ejsGetPropertyCount(ejs, (EjsObj*) klass),
         klass->prototype ? ejsGetPropertyCount(ejs, klass->prototype) : 0, 
         klass->hasInstanceVars ? "has-state": "", slotNum);
@@ -273,14 +277,14 @@ static void lstClass(EjsMod *mp, EjsModule *module, int slotNum, EjsType *klass,
 static void lstDependency(EjsMod *mp, EjsModule *module, EjsModule *dependant)
 {
     leadin(mp, module, 0, 0);
-    mprFprintf(mp->file, "DEPENDENCY: require %s (sum %d)\n\n", dependant->vname, dependant->checksum);
+    mprFprintf(mp->file, "DEPENDENCY: require %@ (sum %d)\n\n", dependant->vname, dependant->checksum);
 }
 
 
 static void lstEndModule(EjsMod *mp, EjsModule *module)
 {
-    char        *pp;
-    int         i, size;
+    char    *pp, *end;
+    int     i, size;
 
     mprAssert(mp);
 
@@ -292,17 +296,18 @@ static void lstEndModule(EjsMod *mp, EjsModule *module)
     /*
         Dump the constant pool
      */
-    size = module->constants->len;
+    size = module->constants->poolLength;
     mprFprintf(mp->file,
         "\n----------------------------------------------------------------------------------------------\n"
         "#\n"
         "#  Constant Pool (size %d bytes)\n"
         "#\n", size);
 
-    pp = module->constants->pool;
-    for (i = 0; pp < &module->constants->pool[size]; i++) {
+    pp = (char*) module->constants->pool;
+    end = &((char*) module->constants->pool)[size];
+    for (i = 0; pp < end; i++) {
         mprFprintf(mp->file, "%04d   \"%s\"\n", i, pp);
-        pp = strchr(pp, '\0') + 1;
+        pp += strlen(pp) + 1;
     }
 }
 
@@ -314,13 +319,13 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
     EjsTrait    *trait;
     EjsName     lname;
     EjsType     *resultType;
-    EjsObj      *activation;
+    EjsPot      *activation;
     EjsString   *space, *blockName;
-    int         i, numLocals, numSlots;
+    int         i, numLocals, numProp;
 
     ejs = mp->ejs;
     activation = fun->activation;
-    numSlots = activation ? activation->numSlots : 0;
+    numProp = activation ? activation->numProp : 0;
     space = mapSpace(ejs, qname.space);
 
     mprFprintf(mp->file,  "\nFUNCTION:   ");
@@ -331,25 +336,25 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
     if (attributes) {
         if (slotNum < 0) {
             /* Special just for global initializers */
-            mprFprintf(mp->file,  "[initializer]  %s %sfunction %s(", space, getAttributeString(mp, attributes), 
+            mprFprintf(mp->file,  "[initializer]  %@ %sfunction %@(", space, getAttributeString(mp, attributes), 
                 qname.name);
         } else {
             blockName = getBlockName(mp, block, slotNum);
-            mprFprintf(mp->file,  "[%S-%02d]  %s %sfunction %s(", blockName, slotNum, space,
+            mprFprintf(mp->file,  "[%@-%02d]  %@ %sfunction %@(", blockName, slotNum, space,
                 getAttributeString(mp, attributes), qname.name);
         }
     } else {
         blockName = getBlockName(mp, block, slotNum);
-        mprFprintf(mp->file,  "[%S-%02d]  %s function %s(", blockName, slotNum, space, qname.name);
+        mprFprintf(mp->file,  "[%@-%02d]  %@ function %@(", blockName, slotNum, space, qname.name);
     }
 
     for (i = 0; i < (int) fun->numArgs; ) {
         lname = ejsGetPropertyName(ejs, activation, i);
-        trait = ejsGetTrait(ejs, activation, i);
+        trait = ejsGetPropertyTraits(ejs, activation, i);
         if (trait->type) {
-            mprFprintf(mp->file,  "%s: %s", lname.name, trait->type->qname.name);
+            mprFprintf(mp->file,  "%@: %@", lname.name, trait->type->qname.name);
         } else {
-            mprFprintf(mp->file,  "%s", lname.name);
+            mprFprintf(mp->file,  "%@", lname.name);
         }
         if (++i < (int) fun->numArgs) {
             mprFprintf(mp->file,  ", ");
@@ -357,37 +362,38 @@ static void lstFunction(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
     }
 
     resultType = fun->resultType;
-    mprFprintf(mp->file,  ") : %S\n", resultType ? resultType->qname.name : ejs->voidType->qname.name);
-    mprFprintf(mp->file,  "\n");
+    mprFprintf(mp->file,  ") : %@\n", resultType ? resultType->qname.name : ejs->voidType->qname.name);
 
     /*
         Repeat the args
      */
     for (i = 0; i < (int) fun->numArgs; i++) {
         lname = ejsGetPropertyName(ejs, activation, i);
-        trait = ejsGetTrait(ejs, activation, i);
-        mprFprintf(mp->file,  "     ARG:   [arg-%02d]   %s %s", i, lname.space, lname.name);
+        trait = ejsGetPropertyTraits(ejs, activation, i);
+        mprFprintf(mp->file,  "     ARG:   [arg-%02d]   %@ %@", i, lname.space, lname.name);
         if (trait->type) {
-            mprFprintf(mp->file,  " : %s", trait->type->qname.name);
+            mprFprintf(mp->file,  " : %@", trait->type->qname.name);
         }
         mprFprintf(mp->file,  "\n");
     }
-
-    numLocals = numSlots - fun->numArgs;
+    numLocals = numProp - fun->numArgs;
     for (i = 0; i < numLocals; i++) {
         lname = ejsGetPropertyName(ejs, activation, i + fun->numArgs);
-        trait = ejsGetTrait(ejs, activation, i + fun->numArgs);
-        mprFprintf(mp->file,  "   LOCAL:   [local-%02d] var %s", i + fun->numArgs, lname.name);
+        trait = ejsGetPropertyTraits(ejs, activation, i + fun->numArgs);
+        mprFprintf(mp->file,  "   LOCAL:   [local-%02d]  var %@", i + fun->numArgs, lname.name);
         if (trait->type) {
-            mprFprintf(mp->file,  " : %s", trait->type->qname.name);
+            mprFprintf(mp->file,  " : %@", trait->type->qname.name);
         }
         mprFprintf(mp->file,  "\n");
     }
+    if (fun->body.code) {
+        mprFprintf(mp->file,  "\n");
+        interp(mp, module, fun);
+    }
     mprFprintf(mp->file,  "\n");
-    interp(mp, module, fun);
-
+#if UNUSED
     leadin(mp, module, 0, 0);
-    mprFprintf(mp->file,  "\n");
+#endif
 }
 
 
@@ -400,7 +406,7 @@ void lstException(EjsMod *mp, EjsModule *module, EjsFunction *fun)
     int             i;
 
     ejs = mp->ejs;
-    code = &fun->body.code;
+    code = fun->body.code;
 
     if (code->numHandlers <= 0) {
         return;
@@ -425,7 +431,7 @@ void lstException(EjsMod *mp, EjsModule *module, EjsFunction *fun)
             exKind = "unknown";
         }
         mprFprintf(mp->file,
-            "%-3d %-10s %5d   %5d      %5d        %5d       %S\n",
+            "%-3d %-10s %5d   %5d      %5d        %5d       %@\n",
             i, exKind, ex->tryStart, ex->tryEnd, ex->handlerStart, ex->handlerEnd,
             ex->catchType ? ex->catchType->qname.name : ejs->emptyString);
     }
@@ -445,11 +451,11 @@ static void lstProperty(EjsMod *mp, EjsModule *module, EjsObj *block, int slotNu
     mprFprintf(mp->file, "VARIABLE:   ");
 
     blockName = getBlockName(mp, block, slotNum);
-    mprFprintf(mp->file, "[%S-%02d]  %s %svar %s", blockName, slotNum, space,
+    mprFprintf(mp->file, "[%@-%02d]  %@ %svar %@", blockName, slotNum, space,
         getAttributeString(mp, attributes), qname.name);
 
     if (typeName.name && typeName.name->value[0]) {
-        mprFprintf(mp->file, " : %S", typeName.name);
+        mprFprintf(mp->file, " : %@", typeName.name);
     }
     mprFprintf(mp->file, "\n");
 
@@ -472,7 +478,7 @@ static void lstModule(EjsMod *mp, EjsModule *module)
 {
     mprFprintf(mp->file,
         "\n==============================================================================================\n\n"
-        "MODULE:   %s", module->vname);
+        "MODULE:   %@", module->vname);
 
     if (module->hasInitializer) {
         mprFprintf(mp->file, " <%s>\n", module->hasInitializer ? "hasInitializer, " : "");
@@ -511,76 +517,76 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
 
         case EBC_BYTE:
             ival = getByte(mp);
-            mprSprintf(mp, bufp, buflen,  "<%d> ", ival);
+            mprSprintf(bufp, buflen,  "<%d> ", ival);
             break;
 
         case EBC_DOUBLE:
             dval = getDouble(mp);
-            mprSprintf(mp, bufp, buflen,  "<%f> ", dval);
+            mprSprintf(bufp, buflen,  "<%f> ", dval);
             break;
 
         case EBC_ARGC:
         case EBC_ARGC2:
             ival = (int) getNum(mp);
-            mprSprintf(mp, bufp, buflen,  "<argc: %d> ", ival);
+            mprSprintf(bufp, buflen,  "<argc: %d> ", ival);
             break;
 
         case EBC_ARGC3:
             ival = (int) getNum(mp);
-            mprSprintf(mp, bufp, buflen,  "<argc: %d> ", ival);
+            mprSprintf(bufp, buflen,  "<argc: %d> ", ival);
             break;
 
         case EBC_NEW_ARRAY:
             ival = (int) getNum(mp);     /* argc */
-            mprSprintf(mp, bufp, buflen,  "<argc: %d>", ival);
+            mprSprintf(bufp, buflen,  "<argc: %d>", ival);
             bufp += strlen(bufp);
             *stackEffect -= (ival * 2);
             break;
 
         case EBC_NEW_OBJECT:
             ival = (int) getNum(mp);     /* argc */
-            mprSprintf(mp, bufp, buflen,  "<argc: %d> <att: ", ival);
+            mprSprintf(bufp, buflen,  "<argc: %d> <att: ", ival);
             bufp += strlen(bufp);
             for (j = 0; j < ival; j++) {
                 att = (int) getNum(mp);
-                mprSprintf(mp, bufp, buflen,  "%d ", ival);
+                mprSprintf(bufp, buflen,  "%d ", ival);
                 len = (int) strlen(bufp);
                 bufp += len;
                 buflen -= len;
             }
-            mprSprintf(mp, bufp, buflen,  ">", ival);
+            mprSprintf(bufp, buflen,  ">", ival);
             *stackEffect -= (ival * 3);
             break;
 
         case EBC_SLOT:
             ival = (int) getNum(mp);
-            mprSprintf(mp, bufp, buflen,  "<slot: %d> ", ival);
+            mprSprintf(bufp, buflen,  "<slot: %d> ", ival);
             break;
 
         case EBC_NUM:
             ival = (int) getNum(mp);
-            mprSprintf(mp, bufp, buflen,  "<%d> ", ival);
+            mprSprintf(bufp, buflen,  "<%d> ", ival);
             break;
 
         case EBC_JMP8:
             ival = getByte(mp);
-            mprSprintf(mp, bufp, buflen,  "<addr: %d> ", ((char) ival) + address + 1);
+            mprSprintf(bufp, buflen,  "<addr: %d> ", ((char) ival) + address + 1);
             break;
 
         case EBC_JMP:
-            ival = getWord(mp);
-            mprSprintf(mp, bufp, buflen,  "<addr: %d> ", ival + address + 4);
+            ival = getInt32(mp);
+            mprSprintf(bufp, buflen,  "<addr: %d> ", ival + address + 4);
             break;
 
         case EBC_INIT_DEFAULT8:
             numEntries = getByte(mp);
-            mprSprintf(mp, bufp, buflen,  "<%d> ", numEntries);
+            mprSprintf(bufp, buflen,  "<%d> ", numEntries);
             len = (int) strlen(bufp);
             bufp += len;
             buflen -= len;
             for (j = 0; j < numEntries; j++) {
                 ival = getByte(mp);
-                mprSprintf(mp, bufp, buflen,  "<%d> ", ival + 2);
+                mprSprintf(bufp, buflen,  "<%d> ", ival + 2);
                 len = (int) strlen(bufp);
                 bufp += len;
                 buflen -= len;
@@ -589,13 +595,13 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
 
         case EBC_INIT_DEFAULT:
             numEntries = getByte(mp);
-            mprSprintf(mp, bufp, buflen,  "<%d> ", numEntries);
+            mprSprintf(bufp, buflen,  "<%d> ", numEntries);
             len = (int) strlen(bufp);
             bufp += len;
             buflen -= len;
             for (j = 0; j < numEntries; j++) {
-                ival = getWord(mp);
-                mprSprintf(mp, bufp, buflen,  "<%d> ", ival + 2);
+                ival = getInt32(mp);
+                mprSprintf(bufp, buflen,  "<%d> ", ival + 2);
                 len = (int) strlen(bufp);
                 bufp += len;
                 buflen -= len;
@@ -604,7 +610,8 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
 
         case EBC_STRING:
             sval = getString(mp->ejs, mp);
-            mprSprintf(mp, bufp, buflen,  "<%s> ", sval);
+            mprAssert(sval);
+            mprSprintf(bufp, buflen,  "<%@> ", sval);
             break;
 
         case EBC_GLOBAL:
@@ -641,11 +648,11 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
 {
     EjsOptable  *optable, *opt;
     EjsCode     *code;
-    EjsString   *currentFile, *currentLine;
+    MprChar     *currentLine;
     uchar       *start;
     char        argbuf[MPR_MAX_STRING], lineInfo[MPR_MAX_STRING], name[MPR_MAX_STRING];
-    char        *src, *dest;
-    int         maxOp, opcode, lineNumber, stack, codeLen, address, stackEffect, nbytes, i, lastDebug;
+    char        *currentFile, *src, *dest;
+    int         maxOp, opcode, lineNumber, stack, codeLen, address, stackEffect, nbytes, i, lastLine;
 
     mprAssert(mp);
     mprAssert(module);
@@ -654,17 +661,17 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
     /*
         Store so that getNum and getString can easily read instructions
      */
-    code = &fun->body.code;
+    code = fun->body.code;
     mp->fun = fun;
     mp->module = module;
     mp->pc = code->byteCode;
     codeLen = code->codeLen;
     start = mp->pc;
     stack = 0;
-    lastDebug = 0;
     currentLine = 0;
     lineNumber = 0;
     currentFile = 0;
+    lastLine = -1;
 
     optable = ejsGetOptable(mp);
 
@@ -684,35 +691,18 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
         }
         opt = &optable[opcode];
 
-        if (opcode != EJS_OP_DEBUG || mp->showDebug) {
+        if (mp->showDebug) {
             /*
                 Output address [stack] opcode
                 Format:  "address: [stackDepth] opcode <args> ..."
              */
-            if (lastDebug) {
-                mprFprintf(mp->file, "\n");
-                lastDebug = 0;
-            }
             mprFprintf(mp->file,  "    %04d: [%d] %02x ", address, stack, opcode);
             mp->showAsm = 1;
 
         } else {
             mp->showAsm = 0;
         }
-
-        if (opcode == EJS_OP_DEBUG) {
-            if ((currentFile = getString(mp->ejs, mp)) == 0) {
-                goto badToken;
-            }
-            lineNumber = (int) getNum(mp);
-            if ((currentLine = getString(mp->ejs, mp)) == 0) {
-                goto badToken;
-            }
-            nbytes = (int) (mp->pc - start) - address - 1;
-
-        } else {
-            nbytes = decodeOperands(mp, opt, argbuf, (int) sizeof(argbuf), (int) (mp->pc - start), &stackEffect);
-        }
+        nbytes = decodeOperands(mp, opt, argbuf, (int) sizeof(argbuf), (int) (mp->pc - start), &stackEffect);
 
         if (mp->showAsm) {
             for (i = 24 - (nbytes * 3); i >= 0; i--) {
@@ -728,7 +718,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
             *dest++ = '\0';
             mprFprintf(mp->file,  " %s %s\n", name, argbuf);
 
-        } else if (opcode != EJS_OP_DEBUG) {
+        } else {
             for (i = 24 - (nbytes * 3); i >= 0; i--) {
                 mprFprintf(mp->file, " ");
             }
@@ -749,20 +739,13 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
                 exit(255);
             }
         }
-        if (opcode == EJS_OP_DEBUG) {
-            if (!lastDebug) {
-                mprFprintf(mp->file, "\n");
-            }
-            mprSprintf(mp, lineInfo, sizeof(lineInfo), "%s:%d", currentFile, lineNumber);
-            mprFprintf(mp->file, "    # %-25s %s\n", lineInfo, currentLine);
-            lastDebug = 1;
+        ejsGetDebugInfo(mp->ejs, fun, mp->pc, &currentFile, &lineNumber, &currentLine);
+        if (currentFile && currentLine && *currentLine && lineNumber != lastLine) {
+            mprSprintf(lineInfo, sizeof(lineInfo), "%s:%d", currentFile, lineNumber);
+            mprFprintf(mp->file, "\n    # %-25s %w\n\n", lineInfo, currentLine);
+            lastLine = lineNumber;
         }
     }
-    return;
-
-badToken:
-    mprError(mp, "Bad input stream token 0x%x at %d.\n", 0, address);
-    mp->error = 1;
 }
 
 
@@ -780,17 +763,17 @@ static void lstVarSlot(EjsMod *mp, EjsModule *module, EjsName *qname, EjsTrait *
 
     } else if (trait && trait->type) {
         if (trait->type == mp->ejs->functionType) {
-            mprFprintf(mp->file, "%04d    %s function %s\n", slotNum, space, qname->name);
+            mprFprintf(mp->file, "%04d    %@ function %@\n", slotNum, space, qname->name);
 
         } else if (trait->type == mp->ejs->functionType) {
-            mprFprintf(mp->file, "%04d    %s class %s\n", slotNum, space, qname->name);
+            mprFprintf(mp->file, "%04d    %@ class %@\n", slotNum, space, qname->name);
 
         } else {
-            mprFprintf(mp->file, "%04d    %s var %s: %s\n", slotNum, space, qname->name, trait->type->qname.name);
+            mprFprintf(mp->file, "%04d    %@ var %@: %@\n", slotNum, space, qname->name, trait->type->qname.name);
         }
 
     } else {
-        mprFprintf(mp->file, "%04d    %s var %s\n", slotNum, space, qname->name);
+        mprFprintf(mp->file, "%04d    %@ var %@\n", slotNum, space, qname->name);
     }
 }
 
@@ -803,7 +786,8 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
     Ejs             *ejs;
     EjsTrait        *trait;
     EjsType         *type;
-    EjsObj          *vp, *prototype;
+    EjsObj          *vp;
+    EjsPot          *prototype;
     EjsFunction     *fun;
     EjsBlock        *block;
     EjsName         qname;
@@ -828,7 +812,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
             List slots for global
          */
         for (i = module->firstGlobal; i < module->lastGlobal; i++) {
-            trait = ejsGetTrait(ejs, ejs->global, i);
+            trait = ejsGetPropertyTraits(ejs, ejs->global, i);
             qname = ejsGetPropertyName(ejs, ejs->global, i);
             if (qname.name == 0) {
                 continue;
@@ -847,7 +831,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
 
             count = ejsGetPropertyCount(ejs, (EjsObj*) fun);
             for (i = 0; i < count; i++) {
-                trait = ejsGetTrait(ejs, (EjsObj*) fun, i);
+                trait = ejsGetPropertyTraits(ejs, (EjsObj*) fun, i);
                 qname = ejsGetPropertyName(ejs, (EjsObj*) fun, i);
                 if (qname.name == 0) {
                     continue;
@@ -862,11 +846,11 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         count = ejsGetPropertyCount(ejs, (EjsObj*) obj);
         if (count > 0) {
             mprFprintf(mp->file,  "\n#\n"
-                "#  Local slot assignments for the \"%s\" function (Num slots %d)\n"
+                "#  Local slot assignments for the \"%@\" function (Num slots %d)\n"
                 "#\n", fun->name, count);
 
             for (i = 0; i < count; i++) {
-                trait = ejsGetTrait(ejs, obj, i);
+                trait = ejsGetPropertyTraits(ejs, obj, i);
                 mprAssert(trait);
                 qname = ejsGetPropertyName(ejs, obj, i);
                 lstVarSlot(mp, module, &qname, trait, i);
@@ -879,13 +863,13 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
          */
         type = (EjsType*) obj;
         mprFprintf(mp->file,  "\n#\n"
-            "#  Class slot assignments for the \"%s\" class (Num slots %d)\n"
+            "#  Class slot assignments for the \"%@\" class (Num slots %d)\n"
             "#\n", type->qname.name,
             ejsGetPropertyCount(ejs, (EjsObj*) type));
 
         count = ejsGetPropertyCount(ejs, (EjsObj*) type);
         for (i = 0; i < count; i++) {
-            trait = ejsGetTrait(ejs, (EjsObj*) type, i);
+            trait = ejsGetPropertyTraits(ejs, (EjsObj*) type, i);
             mprAssert(trait);
             qname = ejsGetPropertyName(ejs, obj, i);
             lstVarSlot(mp, module, &qname, trait, i);
@@ -898,14 +882,14 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
             numInherited = 0;
         }
         mprFprintf(mp->file,  "\n#\n"
-            "#  Instance slot assignments for the \"%s\" class (Num prop %d, num inherited %d)\n"
+            "#  Instance slot assignments for the \"%@\" class (Num prop %d, num inherited %d)\n"
             "#\n", type->qname.name,
             prototype ? ejsGetPropertyCount(ejs, prototype): 0, numInherited);
 
         if (prototype) {
             count = ejsGetPropertyCount(ejs, prototype);
             for (i = 0; i < count; i++) {
-                trait = ejsGetTrait(ejs, prototype, i);
+                trait = ejsGetPropertyTraits(ejs, prototype, i);
                 mprAssert(trait);
                 qname = ejsGetPropertyName(ejs, prototype, i);
                 if (qname.name) {
@@ -921,12 +905,12 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         if (count > 0) {
             mprFprintf(mp->file,  
                 "\n#\n"
-                "#  Block slot assignments for the \"%s\" (Num slots %d)\n"
+                "#  Block slot assignments for the \"%@\" (Num slots %d)\n"
                 "#\n", qname.name, ejsGetPropertyCount(ejs, obj));
             
             count = ejsGetPropertyCount(ejs, obj);
             for (i = 0; i < count; i++) {
-                trait = ejsGetTrait(ejs, obj, i);
+                trait = ejsGetPropertyTraits(ejs, obj, i);
                 mprAssert(trait);
                 qname = ejsGetPropertyName(ejs, obj, i);
                 lstVarSlot(mp, module, &qname, trait, i);
@@ -945,7 +929,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         count = ejsGetPropertyCount(ejs, obj);
     }
     for (; i < count; i++) {
-        trait = ejsGetTrait(ejs, obj, i);
+        trait = ejsGetPropertyTraits(ejs, obj, i);
         qname = ejsGetPropertyName(ejs, obj, i);
         vp = ejsGetProperty(ejs, obj, i);
         if (vp == 0) {
@@ -1027,13 +1011,13 @@ static uchar getByte(EjsMod *mp)
 }
 
 
-static uint getWord(EjsMod *mp)
+static uint getInt32(EjsMod *mp)
 {
     uchar   *start;
     uint    value;
 
     start = mp->pc;
-    value = ejsDecodeWord(&mp->pc);
+    value = ejsDecodeInt32(mp->ejs, &mp->pc);
 
     if (mp->showAsm) {
         for (; start < mp->pc; start++) {
@@ -1070,7 +1054,7 @@ static int64 getNum(EjsMod *mp)
     int64       value;
 
     start = mp->pc;
-    value = ejsDecodeNum(&mp->pc);
+    value = ejsDecodeNum(mp->ejs, &mp->pc);
 
     if (mp->showAsm) {
         for (; start < mp->pc; start++) {
@@ -1087,13 +1071,14 @@ static int64 getNum(EjsMod *mp)
  */
 static EjsString *getString(Ejs *ejs, EjsMod *mp)
 {
-    int     number;
+    int         number;
 
     number = (int) getNum(mp);
     if (number < 0) {
+        mprAssert(number >= 0);
         return 0;
     }
-    return ejsCreateStringFromCS(ejs, &mp->module->constants->pool[number]);
+    return ejsCreateStringFromConst(ejs, mp->module, number);
 }
 
 
@@ -1111,7 +1096,7 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
     vp = 0;
 
     if ((t = (int) getNum(mp)) < 0) {
-        mprSprintf(mp, buf, buflen,  "<can't read code>");
+        mprSprintf(buf, buflen,  "<can't read code>");
         return;
     }
 
@@ -1132,8 +1117,7 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
             vp = ejsGetProperty(ejs, ejs->global, slotNum);
         }
         if (vp && ejsIsType(ejs, vp)) {
-            mprSprintf(mp, buf, buflen, "<type: 0x%x,  %s::%s> ", t, ((EjsType*) vp)->qname.space, 
-                ((EjsType*) vp)->qname.name);
+            mprSprintf(buf, buflen, "<type: 0x%x,  %N> ", t, ((EjsType*) vp)->qname);
         }
         break;
 
@@ -1141,26 +1125,25 @@ static void getGlobal(EjsMod *mp, char *buf, int buflen)
         /*
             Type was unknown at compile time
          */
-        //  MOB -- should be an API for this
-        qname.name = ejsCreateStringFromCS(ejs, &mp->module->constants->pool[t >> 2]);
+        qname.name = ejsCreateStringFromConst(ejs, mp->module, t >> 2);
         if (qname.name == 0) {
             mprAssert(0);
-            mprSprintf(mp, buf, buflen,  "<var: 0x%x,  missing name> ", t);
+            mprSprintf(buf, buflen,  "<var: 0x%x,  missing name> ", t);
             return;
         }
         if ((qname.space = getString(mp->ejs, mp)) == 0) {
-            mprSprintf(mp, buf, buflen,  "<var: 0x%x,  missing namespace> ", t);
+            mprSprintf(buf, buflen,  "<var: 0x%x,  missing namespace> ", t);
             return;
         }
         if (qname.name) {
             vp = ejsGetPropertyByName(ejs, ejs->global, qname);
         }
-        mprSprintf(mp, buf, buflen, "<var: 0x%x,  %s::%s> ", t, qname.space, qname.name);
+        mprSprintf(buf, buflen, "<var: 0x%x,  %N> ", t, qname);
         break;
     }
 
     if (vp == 0) {
-        mprSprintf(mp, buf, buflen, "<var: %d,  cannot resolve var/typ at slot e> ", t);
+        mprSprintf(buf, buflen, "<var: %d,  cannot resolve var/typ at slot e> ", t);
     }
 }
 
@@ -1173,8 +1156,8 @@ static void leadin(EjsMod *mp, EjsModule *module, int classDec, int inFunction)
 
 static EjsString *mapSpace(Ejs *ejs, EjsString *space)
 {
-    if (ejsContainsUString(ejs, space, "internal-") != 0) {
-        return ejsCreateStringFromCS(ejs, "internal");
+    if (ejsContainsMulti(ejs, space, "internal-") != 0) {
+        return ejsCreateStringFromAsc(ejs, "internal");
     }
     return space;
 }

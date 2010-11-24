@@ -17,9 +17,9 @@ static cchar *getPathString(Ejs *ejs, EjsObj *vp);
 static EjsObj *castPath(Ejs *ejs, EjsPath *fp, EjsType *type)
 {
     if (type->id == ES_String) {
-        return (EjsObj*) ejsCreateStringFromCS(ejs, fp->value);
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, fp->value);
     }
-    return (ejs->objectType->helpers.cast)(ejs, (EjsObj*) fp, type);
+    return (ejs->potHelpers.cast)(ejs, (EjsObj*) fp, type);
 }
 
 
@@ -27,10 +27,9 @@ static EjsPath *clonePath(Ejs *ejs, EjsPath *src, bool deep)
 {
     EjsPath     *dest;
 
-    dest = (EjsPath*) ejsCloneObject(ejs, (EjsObj*) src, deep);
-
+    dest = (EjsPath*) ejsClone(ejs, (EjsObj*) src, deep);
     dest->info = src->info;
-    dest->value = mprStrdup(dest, src->value);
+    dest->value = sclone(dest, src->value);
     return dest;
 }
 
@@ -42,7 +41,7 @@ static EjsObj *coercePathOperands(Ejs *ejs, EjsPath *lhs, int opcode,  EjsObj *r
         Binary operators
      */
     case EJS_OP_ADD:
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromCS(ejs, lhs->value), opcode, rhs);
+        return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, lhs->value), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_LT:
@@ -50,7 +49,7 @@ static EjsObj *coercePathOperands(Ejs *ejs, EjsPath *lhs, int opcode,  EjsObj *r
         if (ejsIsNull(ejs, rhs) || ejsIsUndefined(ejs, rhs)) {
             return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
         }
-        return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromCS(ejs, lhs->value), opcode, rhs);
+        return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, lhs->value), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
         return (EjsObj*) ejs->trueValue;
@@ -71,7 +70,7 @@ static EjsObj *coercePathOperands(Ejs *ejs, EjsPath *lhs, int opcode,  EjsObj *r
         return (EjsObj*) ejs->falseValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -96,23 +95,23 @@ static EjsObj *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
         if (lhs == rhs || (lhs->value == rhs->value)) {
             return (EjsObj*) ejs->trueValue;
         }
-        return (EjsObj*) ejsCreateBoolean(ejs,  mprStrcmp(lhs->value, rhs->value) == 0);
+        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) == 0);
 
     case EJS_OP_COMPARE_NE:
     case EJS_OP_COMPARE_STRICTLY_NE:
-        return (EjsObj*) ejsCreateBoolean(ejs,  mprStrcmp(lhs->value, rhs->value) != 0);
+        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) != 0);
 
     case EJS_OP_COMPARE_LT:
-        return (EjsObj*) ejsCreateBoolean(ejs,  mprStrcmp(lhs->value, rhs->value) < 0);
+        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) < 0);
 
     case EJS_OP_COMPARE_LE:
-        return (EjsObj*) ejsCreateBoolean(ejs,  mprStrcmp(lhs->value, rhs->value) <= 0);
+        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) <= 0);
 
     case EJS_OP_COMPARE_GT:
-        return (EjsObj*) ejsCreateBoolean(ejs,  mprStrcmp(lhs->value, rhs->value) > 0);
+        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) > 0);
 
     case EJS_OP_COMPARE_GE:
-        return (EjsObj*) ejsCreateBoolean(ejs,  mprStrcmp(lhs->value, rhs->value) >= 0);
+        return (EjsObj*) ejsCreateBoolean(ejs,  scmp(lhs->value, rhs->value) >= 0);
 
     /*
         Unary operators
@@ -134,10 +133,10 @@ static EjsObj *invokePathOperator(Ejs *ejs, EjsPath *lhs, int opcode,  EjsPath *
         Binary operators
      */
     case EJS_OP_ADD:
-        return (EjsObj*) ejsCreatePathFromCS(ejs, mprJoinPath(ejs, lhs->value, rhs->value));
+        return (EjsObj*) ejsCreatePathFromAsc(ejs, mprJoinPath(ejs, lhs->value, rhs->value));
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
     mprAssert(0);
@@ -157,7 +156,7 @@ static EjsObj *pathConstructor(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if ((path = getPathString(ejs, argv[0])) == 0) {
         return (EjsObj*) fp;
     }
-    fp->value = mprStrdup(fp, path);
+    fp->value = path;
     return (EjsObj*) fp;
 }
 
@@ -168,7 +167,7 @@ static EjsObj *pathConstructor(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *absolutePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathAndFree(ejs, mprGetAbsPath(fp, fp->value));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetAbsPath(fp, fp->value));
 }
 
 
@@ -194,7 +193,7 @@ static EjsObj *getAccessedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getPathBasename(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathAndFree(ejs, mprGetPathBase(ejs, fp->value));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetPathBase(ejs, fp->value));
 }
 
 
@@ -215,12 +214,12 @@ static EjsObj *getPathComponents(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     for (last = cp = mprGetAbsPath(fp, fp->value); *cp; cp++) {
         if (*cp == fs->separators[0] || *cp == fs->separators[1]) {
             *cp++ = '\0';
-            ejsSetProperty(ejs, ap, index++, ejsCreateStringFromCS(ejs, last));
+            ejsSetProperty(ejs, ap, index++, ejsCreateStringFromAsc(ejs, last));
             last = cp;
         }
     }
     if (cp > last) {
-        ejsSetProperty(ejs, ap, index++, ejsCreateStringFromCS(ejs, last));
+        ejsSetProperty(ejs, ap, index++, ejsCreateStringFromAsc(ejs, last));
     }
     return (EjsObj*) ap;
 }
@@ -297,7 +296,7 @@ static EjsObj *getCreatedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getPathDirname(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathAndFree(ejs, mprGetPathDir(ejs, fp->value));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetPathDir(ejs, fp->value));
 }
 
 
@@ -324,7 +323,7 @@ static EjsObj *getPathExtension(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if ((cp = strrchr(fp->value, '.')) == 0) {
         return (EjsObj*) ejs->emptyString;
     }
-    return (EjsObj*) ejsCreateStringFromCS(ejs, &cp[1]);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, &cp[1]);
 }
 
 
@@ -377,7 +376,7 @@ static EjsObj *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
     }
     if (ip->index < mprGetListCount(fp->files)) {
         dp = (MprDirEntry*) mprGetItem(fp->files, ip->index++);
-        return (EjsObj*) ejsCreatePathFromCS(ejs, dp->name);
+        return (EjsObj*) ejsCreatePathFromAsc(ejs, dp->name);
     }
     ejsThrowStopIteration(ejs);
     return 0;
@@ -433,13 +432,13 @@ static EjsObj *getPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         }
         if (enumDirs || !(dp->isDir)) {
             if (noPath) {
-                ejsSetProperty(ejs, array, -1, ejsCreatePathFromCS(ejs, dp->name));
+                ejsSetProperty(ejs, array, -1, ejsCreatePathFromAsc(ejs, dp->name));
             } else {
                 /*
                     Prepend the directory name
                  */
                 path = mprJoinPath(ejs, fp->value, dp->name);
-                ejsSetProperty(ejs, array, -1, ejsCreatePathAndFree(ejs, path));
+                ejsSetProperty(ejs, array, -1, ejsCreatePathFromAsc(ejs, path));
             }
         }
     }
@@ -533,18 +532,18 @@ static EjsObj *isPathRelative(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static EjsObj *joinPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     EjsArray    *args;
-    EjsPath     *result;
-    cchar       *other;
+    cchar       *other, *result;
     int         i;
 
     args = (EjsArray*) argv[0];
+    result = fp->value;
     for (i = 0; i < args->length; i++) {
         if ((other = getPathString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i))) == NULL) {
             return 0;
         }
-        result = ejsCreatePathAndFree(ejs, mprJoinPath(ejs, result->value, other));
+        result = mprJoinPath(ejs, result, other);
     }
-    return (EjsObj*) result;
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, result);
 }
 
 
@@ -561,11 +560,11 @@ static EjsObj *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if (mprGetPathExtension(ejs, fp->value)) {
         return (EjsObj*) fp;
     }
-    ext = ejsGetString(ejs, argv[0]);
+    ext = ejsToMulti(ejs, argv[0]);
     while (ext && *ext == '.') {
         ext++;
     }
-    return (EjsObj*) ejsCreatePathFromCS(ejs, mprStrcat(ejs, -1, fp->value, ".", ext, NULL));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, sjoin(ejs, NULL, fp->value, ".", ext, NULL));
 }
 
 
@@ -587,7 +586,7 @@ static EjsObj *pathLinkTarget(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     if ((path = mprGetPathLink(ejs, fp->value)) == 0) {
         return (EjsObj*) ejs->nullValue;
     }
-    return (EjsObj*) ejsCreatePathAndFree(ejs, mprGetPathLink(ejs, fp->value));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetPathLink(ejs, fp->value));
 }
 
 
@@ -629,10 +628,10 @@ static EjsObj *makePathDir(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
 #if FUTURE
     if (owner) {
-        ownerName = ejsGetString(ejs, owner);
+        ownerName = ejsToMulti(ejs, owner);
     }
     if (group) {
-        groupName = ejsGetString(ejs, group);
+        groupName = ejsToMulti(ejs, group);
     }
 #endif
     return 0;
@@ -670,7 +669,7 @@ static EjsObj *pathTemp(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Can't make temp file");
         return 0;
     }
-    return (EjsObj*) ejsCreatePathAndFree(ejs, path);
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, path);
 }
 
 
@@ -683,17 +682,17 @@ static EjsObj *pa_map(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     char    *path;
     int     separator;
 
-    sep = ejsGetString(ejs, argv[0]);
+    sep = ejsToMulti(ejs, argv[0]);
     separator = *sep ? *sep : '/';
-    path = mprStrdup(ejs, fp->value);
+    path = sclone(ejs, fp->value);
     mprMapSeparators(ejs, path, separator);
-    return (EjsObj*) ejsCreatePathAndFree(ejs, path);
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, path);
 }
 
 
 EjsObj *getMimeType(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromCS(ejs, mprLookupMimeType(ejs, fp->value));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprLookupMimeType(ejs, fp->value));
 }
 
 
@@ -719,7 +718,7 @@ static EjsObj *getModifiedDate(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *pa_name(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromCS(ejs, fp->value);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, fp->value);
 }
 
 
@@ -728,7 +727,7 @@ static EjsObj *pa_name(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getNaturalPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathAndFree(ejs, mprGetNativePath(ejs, fp->value));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetNativePath(ejs, fp->value));
 }
 
 
@@ -737,7 +736,7 @@ static EjsObj *getNaturalPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *normalizePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathAndFree(ejs, mprGetNormalizedPath(ejs, fp->value));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetNormalizedPath(ejs, fp->value));
 }
 
 
@@ -748,7 +747,7 @@ static EjsObj *normalizePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getPathParent(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathAndFree(ejs, mprGetPathParent(fp, fp->value));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetPathParent(fp, fp->value));
 }
 
 
@@ -801,9 +800,9 @@ static EjsObj *getPortablePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     lower = (argc >= 1 && argv[0] == (EjsObj*) ejs->trueValue);
     path = mprGetPortablePath(ejs, fp->value);
     if (lower) {
-        mprStrLower(path);
+        slower(path);
     }
-    return (EjsObj*) ejsCreatePathAndFree(ejs, path);
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, path);
 }
 
 
@@ -822,7 +821,7 @@ static EjsObj *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     int             bytes, offset, rc;
 
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
-    path = ejsGetString(ejs, argv[0]);
+    path = ejsToMulti(ejs, argv[0]);
 
     file = mprOpen(ejs, path, O_RDONLY | O_BINARY, 0);
     if (file == 0) {
@@ -871,7 +870,7 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     int         bytes, rc, lineno;
 
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
-    path = ejsGetString(ejs, argv[0]);
+    path = ejsToMulti(ejs, argv[0]);
 
     result = ejsCreateArray(ejs, 0);
     if (result == NULL) {
@@ -910,7 +909,7 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     for (lineno = 0, cp = start; cp < end; cp++) {
         if (*cp == '\n') {
             //  MOB - UNICODE ENCODING
-            if (ejsSetProperty(ejs, result, lineno++, ejsCreateStringWithLength(ejs, start, (int) (cp - start))) < 0) {
+            if (ejsSetProperty(ejs, result, lineno++, ejsCreateStringFromAsc(ejs, start, (int) (cp - start))) < 0) {
                 break;
             }
             start = cp + 1;
@@ -920,7 +919,7 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
     if (cp > start) {
         //  MOB - UNICODE ENCODING
-        ejsSetProperty(ejs, result, lineno++, ejsCreateStringWithLength(ejs, start, (int) (cp - start)));
+        ejsSetProperty(ejs, result, lineno++, ejsCreateStringFromAsc(ejs, start, (int) (cp - start)));
     }
     mprFree(file);
     mprFree(data);
@@ -943,7 +942,7 @@ static EjsObj *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     int         bytes, rc;
 
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
-    path = ejsGetString(ejs, argv[0]);
+    path = ejsToMulti(ejs, argv[0]);
 
     file = mprOpen(ejs, path, O_RDONLY | O_BINARY, 0);
     if (file == 0) {
@@ -969,7 +968,7 @@ static EjsObj *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         }
     }
     //  MOB - UNICODE ENCODING
-    result = (EjsObj*) ejsCreateStringWithLength(ejs, mprGetBufStart(data),  mprGetBufLength(data));
+    result = (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(data),  mprGetBufLength(data));
     mprFree(file);
     mprFree(data);
     return result;
@@ -991,11 +990,11 @@ static EjsObj *readXML(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 /*
     Return a relative path name for the file.
   
-    function get relativePath(): Path
+    function get relative(): Path
  */
 static EjsObj *relativePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathAndFree(ejs, mprGetRelPath(fp, fp->value));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprGetRelPath(fp, fp->value));
 }
 
 
@@ -1027,7 +1026,7 @@ static EjsObj *renamePathFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     cchar    *to;
 
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
-    to = ejsGetString(ejs, argv[0]);
+    to = ejsToMulti(ejs, argv[0]);
     unlink((char*) to);
     if (rename(fp->value, to) < 0) {
         ejsThrowIOError(ejs, "Cant rename file %s to %s", fp->value, to);
@@ -1055,7 +1054,7 @@ static EjsObj *resolvePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         if ((next = getPathString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i))) == NULL) {
             return 0;
         }
-        result = ejsCreatePathAndFree(ejs, mprResolvePath(ejs, result->value, next));
+        result = ejsCreatePathFromAsc(ejs, mprResolvePath(ejs, result->value, next));
     }
     return (EjsObj*) result;
 }
@@ -1071,7 +1070,7 @@ static EjsObj *isPathSame(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     cchar   *other;
 
     if (ejsIsString(ejs, argv[0])) {
-        other = ejsGetString(ejs, argv[0]);
+        other = ejsToMulti(ejs, argv[0]);
     } else if (ejsIsPath(ejs, argv[0])) {
         other = ((EjsPath*) (argv[0]))->value;
     } else {
@@ -1090,10 +1089,10 @@ static EjsObj *pathSeparator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     cchar           *cp;
 
     if ((cp = mprGetFirstPathSeparator(ejs, fp->value)) != 0) {
-        return (EjsObj*) ejsCreateStringAndFree(ejs, mprAsprintf(ejs, -1, "%c", (int) *cp));
+        return (EjsObj*) ejsCreateStringFromMulti(ejs, cp, 1);
     }
     fs = mprLookupFileSystem(ejs, fp->value);
-    return (EjsObj*) ejsCreateStringAndFree(ejs, mprAsprintf(ejs, -1, "%c", (int) fs->separators[0]));
+    return (EjsObj*) ejsCreateStringFromMulti(ejs, fs->separators, 1);
 }
 
 
@@ -1134,7 +1133,7 @@ static EjsObj *pathToJSON(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
     mprPutCharToBuf(buf, '"');
     mprAddNullToBuf(buf);
-    result = (EjsObj*) ejsCreateStringFromCS(ejs, mprGetBufStart(buf));
+    result = (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
     mprFree(buf);
     return result;
 }
@@ -1145,7 +1144,7 @@ static EjsObj *pathToJSON(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *pathToString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromCS(ejs, fp->value);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, fp->value);
 }
 
 
@@ -1154,7 +1153,7 @@ static EjsObj *pathToString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *trimExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreatePathAndFree(ejs, mprTrimPathExtension(ejs, fp->value));
+    return (EjsObj*) ejsCreatePathFromAsc(ejs, mprTrimPathExtension(ejs, fp->value));
 }
 
 
@@ -1166,7 +1165,7 @@ static EjsObj *truncatePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     int     size;
 
     size = ejsGetInt(ejs, argv[0]);
-    if (mprTruncatePath(ejs, fp->value, size) < 0) {
+    if (mprTruncate(fp->value, size) < 0) {
         ejsThrowIOError(ejs, "Cant truncate %s", fp->value);
     }
     return 0;
@@ -1188,7 +1187,7 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
     mprAssert(argc == 3);
 
-    path = ejsGetString(ejs, argv[0]);
+    path = ejsToMulti(ejs, argv[0]);
     permissions = ejsGetInt(ejs, argv[1]);
     args = (EjsArray*) argv[2];
 
@@ -1203,7 +1202,7 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
 
     for (i = 0; i < args->length; i++) {
-        data = ejsGetString(ejs, ejsToString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i)));
+        data = ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i)));
         length = (int) strlen(data);
         bytes = mprWrite(file, data, length);
         if (bytes != length) {
@@ -1220,7 +1219,7 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 static cchar *getPathString(Ejs *ejs, EjsObj *vp)
 {
     if (ejsIsString(ejs, vp)) {
-        return (char*) ejsGetString(ejs, vp);
+        return (char*) ejsToMulti(ejs, vp);
     } else if (ejsIsPath(ejs, vp)) {
         return ((EjsPath*) vp)->value;
     }
@@ -1245,37 +1244,33 @@ EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 }
 
 
-EjsPath *ejsCreatePathFromCS(Ejs *ejs, cchar *value)
+EjsPath *ejsCreatePathFromAsc(Ejs *ejs, cchar *value)
 {
-    return ejsCreatePath(ejs, ejsCreateStringFromCS(ejs, value));
+    return ejsCreatePath(ejs, ejsCreateStringFromAsc(ejs, value));
 }
 
 
-EjsPath *ejsCreatePathAndFree(Ejs *ejs, char *value)
+static void managePath(EjsPath *path, int flags)
 {
-    EjsPath     *path;
-
-    path = ejsCreatePathFromCS(ejs, value);
-    mprFree(value);
-    return path;
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(path->value);
+        mprMark(path->files);
+    }
 }
 
 
 void ejsConfigurePathType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejs->pathType = ejsConfigureNativeType(ejs, EJS_EJS_NAMESPACE, "Path", sizeof(EjsPath));
+    type = ejs->pathType = ejsConfigureNativeType(ejs, N("ejs", "Path"), sizeof(EjsPath), managePath, EJS_OBJ_HELPERS);
     ejs->pathType = type;
     prototype = type->prototype;
 
     type->helpers.cast = (EjsCastHelper) castPath;
     type->helpers.clone = (EjsCloneHelper) clonePath;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokePathOperator;
-#if UNUSED
-    type->helpers.destroy = (EjsDestroyHelper) destroyPath;
-#endif
 
     //  TODO - rename all and use pa_ prefix
     ejsBindConstructor(ejs, type, (EjsProc) pathConstructor);

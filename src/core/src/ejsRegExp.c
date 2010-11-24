@@ -3,7 +3,6 @@
 
     Copyright (c) All Rights Reserved. See details at the end of the file.
  */
-
 /********************************** Includes **********************************/
 
 #include    "ejs.h"
@@ -12,7 +11,7 @@
 /***************************** Forward Declarations ***************************/
 
 static char *makeFlags(EjsRegExp *rp);
-static int parseFlags(EjsRegExp *rp, cchar *flags);
+static int parseFlags(EjsRegExp *rp, MprChar *flags);
 
 /******************************************************************************/
 /*
@@ -20,9 +19,10 @@ static int parseFlags(EjsRegExp *rp, cchar *flags);
 
     function cast(type: Type) : Object
  */
-static EV *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
+static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 {
-    char    *pattern, *flags;
+    EjsString   *result;
+    char        *flags;
 
     switch (type->id) {
     case ES_Boolean:
@@ -30,29 +30,15 @@ static EV *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 
     case ES_String:
         flags = makeFlags(rp);
-        pattern = mprStrcat(rp, -1, "/", rp->pattern, "/", flags, NULL);
+        result = ejsSprintf(ejs, "/%w/%s", rp->pattern, flags);
         mprFree(flags);
-        return ejsCreateStringAndFree(ejs, pattern);
+        return result;
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
         return 0;
     }
     return 0;
-}
-
-
-static void destroyRegExp(Ejs *ejs, EjsRegExp *rp)
-{
-    mprAssert(rp);
-
-    if (rp->compiled) {
-        free(rp->compiled);
-        rp->compiled = 0;
-    }
-#if UNUSED
-    ejsFreeVar(ejs, rp, -1);
-#endif
 }
 
 
@@ -65,23 +51,22 @@ static void destroyRegExp(Ejs *ejs, EjsRegExp *rp)
 
 static EjsObj *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    cchar       *errMsg, *pattern, *flags;
+    cchar       *errMsg;
     int         column, errCode;
 
-    pattern = ejsGetString(ejs, argv[0]);
+    rp->pattern = ejsToString(ejs, argv[0])->value;
     rp->options = PCRE_JAVASCRIPT_COMPAT;
 
     if (argc == 2) {
-        flags = (char*) ejsGetString(ejs, argv[1]);
-        rp->options |= parseFlags(rp, flags);
+        rp->options |= parseFlags(rp, ejsToString(ejs, argv[1])->value);
     }
-    rp->pattern = (char*) pattern;
     if (rp->compiled) {
         free(rp->compiled);
     }
-    rp->compiled = (void*) pcre_compile2(pattern, rp->options, &errCode, &errMsg, &column, NULL);
+    rp->compiled = (void*) pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
     if (rp->compiled == NULL) {
         ejsThrowArgError(ejs, "Can't compile regular expression. Error %s at column %d", errMsg, column);
+        return 0;
     }
     return (EjsObj*) rp;
 }
@@ -109,12 +94,11 @@ static EjsObj *regex_setLastIndex(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **ar
 static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
     EjsArray    *results;
-    EjsString   *match;
-    cchar       *str;
+    EjsString   *match, *str;
     int         matches[EJS_MAX_REGEX_MATCHES * 3];
     int         start, len, i, count, index;
 
-    str = ejsGetString(ejs, argv[0]);
+    str = (EjsString*) argv[0];
     if (argc == 2) {
         start = (int) ejsGetNumber(ejs, argv[1]);
     } else {
@@ -122,7 +106,7 @@ static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     }
     rp->matched = 0;
     mprAssert(rp->compiled);
-    count = pcre_exec(rp->compiled, NULL, str, (int) strlen(str), start, 0, matches, sizeof(matches) / sizeof(int));
+    count = pcre_exec(rp->compiled, NULL, str->value, str->length, start, 0, matches, sizeof(matches) / sizeof(int));
     if (count < 0) {
         rp->endLastMatch = 0;
         return (EjsObj*) ejs->nullValue;
@@ -130,7 +114,7 @@ static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     results = ejsCreateArray(ejs, count);
     for (index = 0, i = 0; i < count; i++, index += 2) {
         len = matches[index + 1] - matches[index];
-        match = ejsCreateStringWithLength(ejs, &str[matches[index]], len);
+        match = ejsCreateString(ejs, &str->value[matches[index]], len);
         ejsSetProperty(ejs, results, i, match);
         if (index == 0) {
             rp->matched = match;
@@ -165,7 +149,7 @@ static EjsObj *regex_getMultiline(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **ar
 
 static EjsObj *regex_getSource(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromCS(ejs, rp->pattern);
+    return (EjsObj*) ejsCreateString(ejs, rp->pattern, wlen(rp->pattern));
 }
 
 
@@ -192,12 +176,12 @@ static EjsObj *regex_sticky(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 
 static EjsObj *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 {
-    cchar       *str;
+    EjsString   *str;
     int         count;
 
-    str = ejsGetString(ejs, argv[0]);
+    str = (EjsString*) argv[0];
     mprAssert(rp->compiled);
-    count = pcre_exec(rp->compiled, NULL, str, (int) strlen(str), rp->endLastMatch, 0, 0, 0);
+    count = pcre_exec(rp->compiled, NULL, str->value, str->length, rp->endLastMatch, 0, 0, 0);
     if (count < 0) {
         rp->endLastMatch = 0;
         return (EjsObj*) ejs->falseValue;
@@ -219,12 +203,11 @@ EjsString *ejsRegExpToString(Ejs *ejs, EjsRegExp *rp)
 EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
 {
     EjsRegExp   *rp;
-    cchar       *pat, *errMsg;
-    char        *flags;
-    int         column, errCode, len;
+    cchar       *errMsg;
+    MprChar     *flags;
+    int         column, errCode;
 
-    pat = ejsToMulti(ejs, pattern);
-    if (pat[0] != '/') {
+    if (pattern->length == 0 || pattern->value[0] != '/') {
         ejsThrowArgError(ejs, "Bad regular expression pattern. Must start with '/'");
         return 0;
     }
@@ -233,14 +216,10 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         /*
             Strip off flags for passing to pcre_compile2
          */
-        len = strlen(pat);
-        rp->pattern = ejsAlloc(ejs, len);
-        memcpy(rp->pattern, &pat[1], len);
-        rp->pattern[len] = '\0';
-        //  MOB - UNICODE?
-        if ((flags = strrchr(rp->pattern, '/')) != 0) {
+        rp->pattern = sclone(rp, &pattern->value[1]);
+        if ((flags = wrchr(rp->pattern, '/')) != 0) {
             rp->options = parseFlags(rp, &flags[1]);
-            *flags = '\0';
+            *flags = 0;
         }
         if (rp->compiled) {
             free(rp->compiled);
@@ -256,9 +235,9 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
 }
 
 
-static int parseFlags(EjsRegExp *rp, cchar *flags)
+static int parseFlags(EjsRegExp *rp, MprChar *flags)
 {
-    cchar       *cp;
+    MprChar     *cp;
     int         options;
 
     if (flags == 0 || *flags == '\0') {
@@ -329,13 +308,21 @@ static char *makeFlags(EjsRegExp *rp)
         *cp++ = 'U';
     }
     *cp++ = '\0';
-    return mprStrdup(rp, buf);
+    return sclone(rp, buf);
 }
 
 
-static void markRegExp(Ejs *ejs, EjsRegExp *rp)
+static void manageRegExp(EjsRegExp *rp, int flags)
 {
-    ejsMark(ejs, rp->pattern);
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(rp->pattern);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+        if (rp->compiled) {
+            free(rp->compiled);
+            rp->compiled = 0;
+        }
+    }
 }
 
 
@@ -343,22 +330,21 @@ void ejsCreateRegExpType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->regExpType = ejsCreateNativeType(ejs, "ejs", "RegExp", ES_RegExp, sizeof(EjsRegExp));
-#if UNUSED
-    type->needFinalize = 1;
-#endif
+    type = ejsCreateNativeType(ejs, N("ejs", "RegExp"), ES_RegExp, sizeof(EjsRegExp), manageRegExp, EJS_OBJ_HELPERS);
+    ejs->regExpType = type;
     type->helpers.cast = (EjsCastHelper) castRegExp;
-    type->helpers.destroy = (EjsDestroyHelper) destroyRegExp;
-    type->helpers.mark = (EjsMarkHelper) markRegExp;
 }
 
 
 void ejsConfigureRegExpType(Ejs *ejs)
 {
     EjsType     *type;
-    EjsObj      *prototype;
+    EjsPot      *prototype;
 
-    type = ejsConfigureNativeType(ejs, "ejs", "RegExp", sizeof(EjsRegExp));
+#if UNUSED
+    type = ejsConfigureNativeType(ejs, N("ejs", "RegExp"), sizeof(EjsRegExp), manageRegExp, EJS_OBJ_HELPERS);
+#endif
+    type = ejs->regExpType;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) regex_Constructor);

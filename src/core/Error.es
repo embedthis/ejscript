@@ -16,6 +16,7 @@ module ejs {
         the call stack for an outer handler to process.
         @stability evolving
      */
+    //  MOB -- make this not a native class
     native dynamic class Error {
 
         use default namespace public
@@ -79,7 +80,7 @@ module ejs {
             let result = ""
             let i = 0
             for each (frame in stack) {
-                result += " [%02d] %s, line %d, %s, %s\n".format(i++, ...frame)
+                result += " [%02d] %s, line %d, %s, %s\n".format(i++, frame.filename, frame.lineno, frame.func, frame.code)
             }
             return result
         }

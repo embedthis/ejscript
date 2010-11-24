@@ -11,7 +11,7 @@
 
     @param argName Description          (Up to next @, case matters on argName)
     @default argName DefaultValue       (Up to next @, case matters on argName)
-    @return Sentance                    (Can use return or returns. If sentance starts with lower case, then start 
+    @return Sentence                    (Can use return or returns. If sentance starts with lower case, then start 
                                             sentance with "Call returns".
     @event eventName Description        (Up to next @, case matters on eventName)
     @option argName Description         (Up to next @, case matters on argName)
@@ -77,6 +77,7 @@ static int       compareProperties(PropRec **p1, PropRec **p2);
 static int       compareNames(char **q1, char **q2);
 static EjsDoc    *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname);
 static MprFile   *createFile(EjsMod *mp, char *name);
+static MprKeyValue *createKeyPair(MprCtx ctx, MprChar *key, MprChar *value);
 static cchar     *demangle(Ejs *ejs, EjsString *name);
 static void      fixupDoc(Ejs *ejs, EjsDoc *doc);
 static char      *fmtAccessors(int attributes);
@@ -88,7 +89,7 @@ static char      *fmtSpace(Ejs *ejs, EjsName qname);
 static char      *fmtType(Ejs *ejs, EjsName qname);
 static char      *fmtTypeReference(Ejs *ejs, EjsName qname);
 static EjsString *fmtModule(Ejs *ejs, EjsString *name);
-static char      *formatExample(Ejs *ejs, char *example);
+static MprChar   *formatExample(Ejs *ejs, EjsString *example);
 static int       generateMethodTable(EjsMod *mp, MprList *methods, EjsObj *obj);
 static void      generateClassPage(EjsMod *mp, EjsObj *obj, EjsName name, EjsTrait *trait, EjsDoc *doc);
 static void      generateClassPages(EjsMod *mp);
@@ -113,16 +114,16 @@ static void      generateNamespaceClassTable(EjsMod *mp, cchar *namespace);
 static int       generateNamespaceClassTableEntries(EjsMod *mp, cchar *namespace);
 static void      generateNamespaceList(EjsMod *mp);
 static void      generatePropertyTable(EjsMod *mp, EjsObj *obj);
-static cchar     *getDefault(EjsDoc *doc, cchar *key);
-static EjsDoc    *getDoc(Ejs *ejs, void *block, int slotNum);
-static EjsDoc    *getDuplicateDoc(Ejs *ejs, cchar *duplicate);
-static void      getKeyValue(char *str, char **key, char **value);
-static char      *getFilename(cchar *name);
+static cchar    *getDefault(EjsDoc *doc, cchar *key);
+static EjsDoc   *getDoc(Ejs *ejs, void *block, int slotNum);
+static EjsDoc   *getDuplicateDoc(Ejs *ejs, MprChar *duplicate);
+static void      getKeyValue(MprChar *str, MprChar **key, MprChar **value);
+static char     *getFilename(cchar *name);
 static int       getPropertyCount(Ejs *ejs, EjsObj *obj);
-static bool      match(cchar *last, cchar *key);
+static bool      match(MprChar *last, cchar *key);
 static void      prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName name, EjsTrait *trait, EjsDoc *doc);
 static void      out(EjsMod *mp, char *fmt, ...);
-static char      *skipAtWord(char *str);
+static MprChar  *skipAtWord(MprChar *str);
 
 /*********************************** Code *************************************/
 
@@ -133,7 +134,7 @@ int emCreateDoc(EjsMod *mp)
     if (ejs->doc == 0) {
         ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE, 0);
         if (ejs->doc == 0) {
-            return MPR_ERR_NO_MEMORY;
+            return MPR_ERR_MEMORY;
         }
     }
     generateImages(mp);
@@ -299,13 +300,13 @@ static void generateNamespaceList(EjsMod *mp)
 
     count = ejsGetPropertyCount(ejs, ejs->global);
     for (slotNum = 0; slotNum < count; slotNum++) {
-        trait = ejsGetTrait(ejs, ejs->global, slotNum);
+        trait = ejsGetPropertyTraits(ejs, ejs->global, slotNum);
         if (trait == 0) {
             continue;
         }
         type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
-        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsCompareCString(ejs, qname.space, "internal-") != 0) {
+        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsCompareMulti(ejs, qname.space, "internal-") != 0) {
             continue;
         }
         doc = getDoc(ejs, ejs->globalBlock, slotNum);
@@ -341,12 +342,12 @@ static void generateNamespaceList(EjsMod *mp)
 
 static void generateNamespace(EjsMod *mp, cchar *namespace)
 {
-    Ejs         *ejs;
-    char        *path;
+    Ejs     *ejs;
+    char    *path;
 
     ejs = mp->ejs;
 
-    path = mprStrcat(mp, -1, namespace, ".html", NULL);
+    path = sjoin(mp, NULL, namespace, ".html", NULL);
     mp->file = createFile(mp, path);
     mprFree(path);
     if (mp->file == 0) {
@@ -385,7 +386,6 @@ static void generateNamespaceClassTable(EjsMod *mp, cchar *namespace)
     } else {
         out(mp, "<h2 class='classSection'>%s Classes</h2>\n", namespace);
     }
-
     out(mp, "<table class='itemTable' summary='classes'>\n");
     out(mp, "   <tr><th>Class</th><th width='95%%'>Description</th></tr>\n");
 
@@ -420,7 +420,7 @@ static int generateNamespaceClassTableEntries(EjsMod *mp, cchar *namespace)
         qname = crec->qname;
         trait = crec->trait;
         fmtName = fmtType(ejs, crec->qname);
-        out(mp, "   <tr><td><a href='%s' target='content'>%s</a></td>", getFilename(fmtName), qname.name);
+        out(mp, "   <tr><td><a href='%s' target='content'>%@</a></td>", getFilename(fmtName), qname.name);
         if (crec->block == ejs->globalBlock && mp->firstGlobal == ejsGetPropertyCount(ejs, ejs->global)) {
             continue;
         }
@@ -457,7 +457,7 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
 
     count = ejsGetPropertyCount(ejs, ejs->global);
     for (slotNum = 0; slotNum < count; slotNum++) {
-        trait = ejsGetTrait(ejs, ejs->global, slotNum);
+        trait = ejsGetPropertyTraits(ejs, ejs->global, slotNum);
         if (trait == 0) {
             continue;
         }
@@ -476,20 +476,20 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
 
         /* Suppress the core language types (should not appear as classes) */
 
-        if (ejsCompareCString(ejs, qname.space, EJS_EJS_NAMESPACE) == 0) {
-            if (ejsCompareCString(ejs, qname.name, "int") == 0 || 
-                ejsCompareCString(ejs, qname.name, "long") == 0 || ejsCompareCString(ejs, qname.name, "decimal") == 0 ||
-                ejsCompareCString(ejs, qname.name, "boolean") == 0 || ejsCompareCString(ejs, qname.name, "double") == 0 || 
-                ejsCompareCString(ejs, qname.name, "string") == 0) {
+        if (ejsCompareMulti(ejs, qname.space, EJS_EJS_NAMESPACE) == 0) {
+            if (ejsCompareMulti(ejs, qname.name, "int") == 0 || 
+                ejsCompareMulti(ejs, qname.name, "long") == 0 || ejsCompareMulti(ejs, qname.name, "decimal") == 0 ||
+                ejsCompareMulti(ejs, qname.name, "boolean") == 0 || ejsCompareMulti(ejs, qname.name, "double") == 0 || 
+                ejsCompareMulti(ejs, qname.name, "string") == 0) {
                 continue;
             }
         }
         /* Other fixups */
-        if (ejsStartsWithCString(ejs, qname.space, "internal") || ejsCompareCString(ejs, qname.space, "private") == 0) {
+        if (ejsStartsWithMulti(ejs, qname.space, "internal") || ejsCompareMulti(ejs, qname.space, "private") == 0) {
             continue;
         }
         //  MOB -- should use ejsAlloc?
-        crec = (ClassRec*) mprAllocCtx(classes, sizeof(ClassRec));
+        crec = (ClassRec*) mprAlloc(classes, sizeof(ClassRec));
         crec->qname = qname;
         crec->trait = trait;
         crec->block = ejs->globalBlock;
@@ -502,7 +502,7 @@ static MprList *buildClassList(EjsMod *mp, cchar *namespace)
      */
     if (strcmp(namespace, "__all") == 0) {
         if (mp->firstGlobal < ejsGetPropertyCount(ejs, ejs->global)) {
-            crec = (ClassRec*) mprAllocCtx(classes, sizeof(ClassRec));
+            crec = (ClassRec*) mprAlloc(classes, sizeof(ClassRec));
             crec->qname = N(EJS_EJS_NAMESPACE, EJS_GLOBAL);
             crec->block = ejs->globalBlock;
             crec->slotNum = ejsLookupProperty(ejs, ejs->global, crec->qname);
@@ -525,7 +525,7 @@ static void generateClassList(EjsMod *mp, cchar *namespace)
 
     ejs = mp->ejs;
 
-    path = mprStrcat(mp, -1, namespace, "-classes.html", NULL);
+    path = sjoin(mp, NULL, namespace, "-classes.html", NULL);
     mp->file = createFile(mp, path);
     mprFree(path);
     if (mp->file == 0) {
@@ -537,7 +537,7 @@ static void generateClassList(EjsMod *mp, cchar *namespace)
         Create the header and auto-load a namespace overview. We do this here because the class list is loaded
         when the user selects a namespace.
      */
-    mprSprintf(mp, script, sizeof(script), "parent.parent.content.location = \'%s.html\';", namespace);
+    mprSprintf(script, sizeof(script), "parent.parent.content.location = \'%s.html\';", namespace);
     generateHtmlHeader(mp, script, "%s Class List", namespace);
 
     out(mp, "<body>\n");
@@ -614,7 +614,7 @@ static void generateHtmlHeader(EjsMod *mp, cchar *script, cchar *fmt, ... )
     va_list     args;
 
     va_start(args, fmt);
-    title = mprVasprintf(mp, -1, fmt, args);
+    title = mprAsprintfv(mp, fmt, args);
     va_end(args);
 
     /*
@@ -639,7 +639,7 @@ static void generateContentHeader(EjsMod *mp, cchar *fmt, ... )
     char        *title;
 
     va_start(args, fmt);
-    title = mprVasprintf(mp, -1, fmt, args);
+    title = mprAsprintfv(mp, fmt, args);
     va_end(args);
 
     generateHtmlHeader(mp, NULL, title);
@@ -715,7 +715,7 @@ static void generateClassPages(EjsMod *mp)
     for (slotNum = mp->firstGlobal; slotNum < count; slotNum++) {
         type = ejsGetProperty(ejs, ejs->global, slotNum);
         qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
-        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithCString(ejs, qname.space, "internal-")) {
+        if (type == 0 || !ejsIsType(ejs, type) || qname.name == 0 || ejsStartsWithMulti(ejs, qname.space, "internal-")) {
             continue;
         }
         /*
@@ -727,7 +727,7 @@ static void generateClassPages(EjsMod *mp)
         if (mp->path == 0) {
             return;
         }
-        trait = ejsGetTrait(ejs, ejs->global, slotNum);
+        trait = ejsGetPropertyTraits(ejs, ejs->global, slotNum);
         doc = getDoc(ejs, ejs->globalBlock, slotNum);
         if (doc && !doc->hide) {
             generateClassPage(mp, (EjsObj*) type, qname, trait, doc);
@@ -740,13 +740,13 @@ static void generateClassPages(EjsMod *mp)
         Finally do one page specially for "global"
         TODO - Functionalize
      */
-    trait = mprAllocCtx(mp, sizeof(EjsTrait));
-    doc = mprAllocCtx(mp, sizeof(EjsDoc));
-    doc->docString = (char*) mprStrdup(doc, "Global object containing all global functions and variables.");
-    doc->returns = doc->example = doc->description = "";
+    trait = mprAlloc(mp, sizeof(EjsTrait));
+    doc = mprAlloc(mp, sizeof(EjsDoc));
+    doc->docString = ejsCreateStringFromAsc(ejs, "Global object containing all global functions and variables.");
+    doc->returns = doc->example = doc->description = NULL;
     doc->trait = trait;
 
-    mprSprintf(mp, key, sizeof(key), "%Lx %d", PTOL(0), 0);
+    mprSprintf(key, sizeof(key), "%Lx %d", PTOL(0), 0);
     mprAddHash(ejs->doc, key, doc);
 
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
@@ -757,7 +757,7 @@ static void generateClassPages(EjsMod *mp)
         return;
     }
 #if UNUSED
-    type = ejsCreateType(ejs, &qname, NULL, NULL, NULL, sizeof(EjsType), slotNum, ejs->globalBlock->obj.numSlots, 
+    type = ejsCreateType(ejs, &qname, NULL, NULL, NULL, sizeof(EjsType), slotNum, ejs->globalBlock->obj.numProp, 
         0, 0, NULL);
     type->constructor.block = *ejs->globalBlock;
     type->constructor.block.obj.type = ejs->typeType;
@@ -789,7 +789,7 @@ static void generateClassPage(EjsMod *mp, EjsObj *obj, EjsName name, EjsTrait *t
     methods = mprCreateList(mp);
     buildMethodList(mp, methods, obj, obj, name);
     if (ejsIsType(ejs, obj)) {
-        buildMethodList(mp, methods, ((EjsType*) obj)->prototype, obj, name);
+        buildMethodList(mp, methods, (EjsObj*) ((EjsType*) obj)->prototype, obj, name);
     }
     count = generateMethodTable(mp, methods, obj);
     if (count > 0) {
@@ -805,11 +805,11 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName qname, EjsTrait *typ
     Ejs             *ejs;
     EjsType         *type;
     EjsTrait        *trait;
-    EjsObj          *prototype;
+    EjsPot          *prototype;
     EjsName         pname;
     EjsDoc          *dp;
     char            *combined;
-    int             slotNum, numInherited;
+    int             slotNum, numProp, numInherited;
 
     ejs = mp->ejs;
 
@@ -824,8 +824,9 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName qname, EjsTrait *typ
     /*
         Loop over all the static properties
      */
-    for (slotNum = 0; slotNum < obj->numSlots; slotNum++) {
-        trait = ejsGetTrait(ejs, obj, slotNum);
+    numProp = ejsGetPropertyCount(ejs, obj);
+    for (slotNum = 0; slotNum < numProp; slotNum++) {
+        trait = ejsGetPropertyTraits(ejs, obj, slotNum);
         if (trait == 0) {
             continue;
         }
@@ -841,7 +842,7 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName qname, EjsTrait *typ
         dp = getDoc(ejs, obj, slotNum);
         if (dp) {
             pname = ejsGetPropertyName(ejs, obj, slotNum);
-            combined = mprAsprintf(mp, -1, "%S.%S", qname.name, pname.name);
+            combined = mprAsprintf(mp, "%S.%S", qname.name, pname.name);
             crackDoc(mp, dp, EN(combined)); 
         }
     }
@@ -854,8 +855,8 @@ static void prepDocStrings(EjsMod *mp, EjsObj *obj, EjsName qname, EjsTrait *typ
         if (prototype) {
             numInherited = type->numInherited;
             if (ejsGetPropertyCount(ejs, prototype) > 0) {
-                for (slotNum = numInherited; slotNum < prototype->numSlots; slotNum++) {
-                    trait = ejsGetTrait(ejs, prototype, slotNum);
+                for (slotNum = numInherited; slotNum < prototype->numProp; slotNum++) {
+                    trait = ejsGetPropertyTraits(ejs, prototype, slotNum);
                     if (trait == 0) {
                         continue;
                     }
@@ -914,16 +915,16 @@ static void generateClassPageHeader(EjsMod *mp, EjsObj *obj, EjsName qname, EjsT
         }
 
         if (doc) {
-            if (*doc->requires) {
+            if (doc->requires) {
                 out(mp, "<tr><td><strong>Requires</strong></td><td>configure --ejs-%s</td></tr>\n", doc->requires);
             }
-            if (*doc->spec) {
+            if (doc->spec) {
                 out(mp, "<tr><td><strong>Specified</strong></td><td>%s</td></tr>\n", doc->spec);
             }
-            if (*doc->stability) {
+            if (doc->stability) {
                 out(mp, "<tr><td><strong>Stability</strong></td><td>%s</td></tr>\n", doc->stability);
             }
-            if (*doc->example) {
+            if (doc->example) {
                 out(mp, "<tr><td><strong>Example</strong></td><td><pre>%s</pre></td></tr>\n", doc->example);
             }
         }
@@ -950,7 +951,8 @@ static void generateClassPageHeader(EjsMod *mp, EjsObj *obj, EjsName qname, EjsT
 
 static int getPropertyCount(Ejs *ejs, EjsObj *obj)
 {
-    EjsObj      *vp, *prototype;
+    EjsObj      *vp;
+    EjsPot      *prototype;
     EjsTrait    *trait;
     EjsType     *type;
     int         limit, count, slotNum;
@@ -961,7 +963,7 @@ static int getPropertyCount(Ejs *ejs, EjsObj *obj)
     for (slotNum = 0; slotNum < limit; slotNum++) {
         vp = ejsGetProperty(ejs, obj, slotNum);
         if (vp) {
-            trait = ejsGetTrait(ejs, obj, slotNum);
+            trait = ejsGetPropertyTraits(ejs, obj, slotNum);
             if (trait && trait->attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER)) {
                 count++;
             } else if (!ejsIsFunction(ejs, vp)) {
@@ -1007,8 +1009,8 @@ static void generatePropertyTable(EjsMod *mp, EjsObj *obj)
     if (ejsIsType(ejs, obj)) {
         type = (EjsType*) obj;
         if (type->prototype) {
-            count += generateClassPropertyTableEntries(mp, type->prototype, type->numInherited);
-            count += generateClassGetterTableEntries(mp, type->prototype, type->numInherited);
+            count += generateClassPropertyTableEntries(mp, (EjsObj*) type->prototype, type->numInherited);
+            count += generateClassGetterTableEntries(mp, (EjsObj*) type->prototype, type->numInherited);
         }
     }
     if (count == 0) {
@@ -1039,7 +1041,7 @@ static MprList *buildPropertyList(EjsMod *mp, EjsObj *obj, int numInherited)
     EjsDoc          *doc;
     PropRec         *prec;
     MprList         *list;
-    int             start, slotNum;
+    int             start, slotNum, numProp;
 
     ejs = mp->ejs;
 
@@ -1052,9 +1054,10 @@ static MprList *buildPropertyList(EjsMod *mp, EjsObj *obj, int numInherited)
     if (obj == ejs->global) {
         start = mp->firstGlobal;
     }
-    for (slotNum = start; slotNum < obj->numSlots; slotNum++) {
+    numProp = ejsGetPropertyCount(ejs, obj);
+    for (slotNum = start; slotNum < numProp; slotNum++) {
         vp = ejsGetProperty(ejs, obj, slotNum);
-        trait = ejsGetTrait(ejs, obj, slotNum);
+        trait = ejsGetPropertyTraits(ejs, obj, slotNum);
         if (trait) {
             doc = getDoc(ejs, obj, slotNum);
             if (doc && doc->hide) {
@@ -1065,11 +1068,11 @@ static MprList *buildPropertyList(EjsMod *mp, EjsObj *obj, int numInherited)
         if (vp == 0 || ejsIsFunction(ejs, vp) || ejsIsType(ejs, vp) || qname.name == 0 || trait == 0) {
             continue;
         }
-        if (ejsCompareCString(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
-            ejsContainsCString(ejs, qname.space, ",private]")) {
+        if (ejsCompareMulti(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
+            ejsContainsMulti(ejs, qname.space, ",private]")) {
             continue;
         }
-        prec = mprAllocCtx(list, sizeof(PropRec));
+        prec = mprAlloc(list, sizeof(PropRec));
         prec->qname = qname;
         prec->obj = obj;
         prec->slotNum = slotNum;
@@ -1091,7 +1094,7 @@ static MprList *buildGetterList(EjsMod *mp, EjsObj *obj, int numInherited)
     EjsDoc          *doc;
     PropRec         *prec;
     MprList         *list;
-    int             slotNum;
+    int             slotNum, numProp;
 
     ejs = mp->ejs;
 
@@ -1105,12 +1108,13 @@ static MprList *buildGetterList(EjsMod *mp, EjsObj *obj, int numInherited)
     } else {
         slotNum = numInherited;
     }
-    for (; slotNum < obj->numSlots; slotNum++) {
+    numProp = ejsGetPropertyCount(ejs, obj);
+    for (; slotNum < numProp; slotNum++) {
         vp = ejsGetProperty(ejs, obj, slotNum);
         if (!ejsIsFunction(ejs, vp)) {
             continue;
         }
-        trait = ejsGetTrait(ejs, obj, slotNum);
+        trait = ejsGetPropertyTraits(ejs, obj, slotNum);
         if (trait) {
             if (!(trait->attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER))) {
                 continue;
@@ -1124,11 +1128,11 @@ static MprList *buildGetterList(EjsMod *mp, EjsObj *obj, int numInherited)
         if (vp == 0 || ejsIsType(ejs, vp) || qname.name == 0 || trait == 0) {
             continue;
         }
-        if (ejsCompareCString(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
-                ejsContainsCString(ejs, qname.space, ",private]")) {
+        if (ejsCompareMulti(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
+                ejsContainsMulti(ejs, qname.space, ",private]")) {
             continue;
         }
-        prec = mprAllocCtx(list, sizeof(PropRec));
+        prec = mprAlloc(list, sizeof(PropRec));
         prec->qname = qname;
         prec->obj = obj;
         prec->slotNum = slotNum;
@@ -1167,7 +1171,7 @@ static int generateClassPropertyTableEntries(EjsMod *mp, EjsObj *obj, int numInh
         trait = prec->trait;
         slotNum = prec->slotNum;
         qname = prec->qname;
-        if (ejsStartsWithCString(ejs, qname.space, "internal") || ejsContainsCString(ejs, qname.space, "private")) {
+        if (ejsStartsWithMulti(ejs, qname.space, "internal") || ejsContainsMulti(ejs, qname.space, "private")) {
             continue;
         }
         if (isalpha((int) qname.name->value[0])) {
@@ -1207,7 +1211,7 @@ static int generateClassGetterTableEntries(EjsMod *mp, EjsObj *obj, int numInher
     EjsDoc          *doc;
     MprList         *getters;
     PropRec         *prec;
-    EjsChar         *name;
+    MprChar         *name;
     cchar           *set, *tname;
     int             slotNum, count, next;
 
@@ -1228,10 +1232,10 @@ static int generateClassGetterTableEntries(EjsMod *mp, EjsObj *obj, int numInher
                 continue;
             }
         }
-        if (ejsStartsWithCString(ejs, qname.space, "internal") || ejsCompareCString(ejs, qname.space, "private") == 0) {
+        if (ejsStartsWithMulti(ejs, qname.space, "internal") || ejsCompareMulti(ejs, qname.space, "private") == 0) {
             continue;
         }
-        if (ejsStartsWithCString(ejs, qname.name, "set-")) {
+        if (ejsStartsWithMulti(ejs, qname.name, "set-")) {
             name = &qname.name->value[4];
             if (isalpha((int) name[0])) {
                 out(mp, "<a name='%w'></a>\n", name);
@@ -1254,7 +1258,7 @@ static int generateClassGetterTableEntries(EjsMod *mp, EjsObj *obj, int numInher
 #endif
         if (fun->resultType) {
             tname = fmtType(ejs, fun->resultType->qname);
-            if (mprStrcmpAnyCase(tname, "intrinsic::Void") == 0) {
+            if (scasecmp(tname, "intrinsic::Void") == 0) {
                 out(mp, "<td>&nbsp;</td>");
             } else {
                 out(mp, "<td>%s</td>", fmtTypeReference(ejs, fun->resultType->qname));
@@ -1283,7 +1287,7 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
     EjsFunction     *fun;
     EjsDoc          *doc;
     FunRec          *fp;
-    int             slotNum, count;
+    int             slotNum, numProp, count;
 
     ejs = mp->ejs;
 
@@ -1293,9 +1297,10 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
         slotNum = 0;
     }
     count = 0;
-    for (count = 0; slotNum < obj->numSlots; slotNum++) {
+    numProp = ejsGetPropertyCount(ejs, obj);
+    for (count = 0; slotNum < numProp; slotNum++) {
         vp = ejsGetProperty(ejs, obj, slotNum);
-        trait = ejsGetTrait(ejs, obj, slotNum);
+        trait = ejsGetPropertyTraits(ejs, obj, slotNum);
 
         fun = (EjsFunction*) vp;
         if (trait->attributes & (EJS_TRAIT_GETTER | EJS_TRAIT_SETTER)) {
@@ -1311,14 +1316,14 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
         if (vp == 0 || !ejsIsFunction(ejs, vp) || qname.name == 0 || trait == 0) {
             continue;
         }
-        if (ejsCompareCString(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
+        if (ejsCompareMulti(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
             continue;
         }
-        if (ejsCompareCString(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
-                ejsContainsCString(ejs, qname.space, ",private]")) {
+        if (ejsCompareMulti(ejs, qname.space, EJS_PRIVATE_NAMESPACE) == 0 || 
+                ejsContainsMulti(ejs, qname.space, ",private]")) {
             continue;
         }
-        if (ejsStartsWithCString(ejs, qname.space, "internal")) {
+        if (ejsStartsWithMulti(ejs, qname.space, "internal")) {
             continue;
         }
 #if UNUSED && KEEP
@@ -1330,7 +1335,7 @@ static void buildMethodList(EjsMod *mp, MprList *methods, EjsObj *obj, EjsObj *o
             }
         }
 #endif
-        fp = mprAllocCtx(methods, sizeof(FunRec));
+        fp = mprAlloc(methods, sizeof(FunRec));
         fp->fun = fun;
         fp->obj = obj;
         fp->slotNum = slotNum;
@@ -1360,7 +1365,8 @@ static int generateMethodTable(EjsMod *mp, MprList *methods, EjsObj *obj)
     type = ejsIsType(ejs, obj) ? ((EjsType*) obj) : 0;
 
     out(mp, "<a name='Methods'></a>\n");
-    out(mp, "<h2 class='classSection'>%S Methods</h2>\n", (type) ? type->qname.name : ejsCreateStringFromCS(ejs, "Global"));
+    out(mp, "<h2 class='classSection'>%S Methods</h2>\n", 
+        (type) ? type->qname.name : ejsCreateStringFromAsc(ejs, "Global"));
     out(mp, "<table class='apiIndex' summary='methods'>\n");
     out(mp, "   <tr><th>Qualifiers</th><th width='95%%'>Method</th></tr>\n");
 
@@ -1373,7 +1379,7 @@ static int generateMethodTable(EjsMod *mp, MprList *methods, EjsObj *obj)
         trait = fp->trait;
         fun = fp->fun;
 
-        if (ejsCompareCString(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
+        if (ejsCompareMulti(ejs, qname.space, EJS_INIT_NAMESPACE) == 0) {
             continue;
         }
 
@@ -1389,14 +1395,14 @@ static int generateMethodTable(EjsMod *mp, MprList *methods, EjsObj *obj)
 
         for (i = 0; i < (int) fun->numArgs; ) {
             argName = ejsGetPropertyName(ejs, fun->activation, i);
-            argTrait = ejsGetTrait(ejs, fun->activation, i);
+            argTrait = ejsGetPropertyTraits(ejs, fun->activation, i);
             if (argTrait->type) {
                 out(mp, "%s: %s", fmtDeclaration(ejs, argName), fmtTypeReference(ejs, argTrait->type->qname));
             } else {
                 out(mp, "%s", fmtDeclaration(ejs, argName));
             }
             if (doc) {
-                defaultValue = getDefault(doc, ejsGetString(ejs, argName.name));
+                defaultValue = getDefault(doc, ejsToMulti(ejs, argName.name));
                 if (defaultValue) {
                     out(mp, " = %s", defaultValue);
                 }
@@ -1459,7 +1465,7 @@ static void checkArgs(EjsMod *mp, Ejs *ejs, EjsName ownerName, EjsFunction *fun,
             if (strncmp(key, "...", 3) == 0) {
                 key += 3;
             }
-            if (strcmp(key, ejsGetString(ejs, argName.name)) == 0) {
+            if (strcmp(key, ejsToMulti(ejs, argName.name)) == 0) {
                 break;
             }
         }
@@ -1483,7 +1489,7 @@ static int findArg(Ejs *ejs, EjsFunction *fun, cchar *name)
     }
     for (i = 0; i < (int) fun->numArgs; i++) {
         argName = ejsGetPropertyName(ejs, fun->activation, i);
-        if (argName.name && ejsCompareCString(ejs, argName.name, name) == 0) {
+        if (argName.name && ejsCompareMulti(ejs, argName.name, name) == 0) {
             return i;
         }
     }
@@ -1538,13 +1544,13 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
     mprAssert(ejsIsFunction(ejs, fun));
 
     qname = ejsGetPropertyName(ejs, obj, slotNum);
-    trait = ejsGetTrait(ejs, obj, slotNum);
+    trait = ejsGetPropertyTraits(ejs, obj, slotNum);
     
     doc = getDoc(ejs, obj, slotNum);
     if (doc && doc->hide) {
         return;
     }
-    if (doc == 0 || doc->brief == 0 || *doc->brief == '\0') {
+    if (doc == 0 || doc->brief == 0) {
         /* One extra to not warn about default constructors */
         if (slotNum >= numInherited + 1) {
             if (mp->warnOnError) {
@@ -1572,14 +1578,14 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
 
     for (i = 0; i < (int) fun->numArgs;) {
         argName = ejsGetPropertyName(ejs, fun->activation, i);
-        argTrait = ejsGetTrait(ejs, fun->activation, i);
+        argTrait = ejsGetPropertyTraits(ejs, fun->activation, i);
         if (argTrait->type) {
             out(mp, "%s: %s", fmtDeclaration(ejs, argName), fmtTypeReference(ejs, argTrait->type->qname));
         } else {
             out(mp, "%s", fmtDeclaration(ejs, argName));
         }
         if (doc) {
-            defaultValue = getDefault(doc, ejsGetString(ejs, argName.name));
+            defaultValue = getDefault(doc, ejsToMulti(ejs, argName.name));
             if (defaultValue) {
                 out(mp, " = %s", defaultValue);
             }
@@ -1596,7 +1602,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
 
     if (doc) {
         out(mp, "<div class='apiDetail'>\n<p>%s</p>\n", doc->brief);
-        if (doc->description && *doc->description) {
+        if (doc->description) {
             out(mp, "<dl><dt>Description</dt><dd>%s</dd></dl>\n", doc->description);
         }
 
@@ -1615,7 +1621,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
                         qname.name, fp->ownerName.name);
                 } else {
                     argName = ejsGetPropertyName(ejs, fun->activation, i);
-                    argTrait = ejsGetTrait(ejs, fun->activation, i);
+                    argTrait = ejsGetPropertyTraits(ejs, fun->activation, i);
                     out(mp, "<tr class='param'><td class='param'>");
                     if (argTrait->type) {
                         out(mp, "%s: %s ", fmtDeclaration(ejs, argName), fmtTypeReference(ejs, argTrait->type->qname));
@@ -1659,7 +1665,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
             out(mp, "</dl>");
         }
 
-        if (*doc->returns) {
+        if (doc->returns) {
             out(mp, "<dl><dt>Returns</dt>\n<dd>%s</dd></dl>\n", doc->returns);
         }
         count = mprGetListCount(doc->throws);
@@ -1678,16 +1684,16 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
             out(mp, "</dd>\n");
             out(mp, "</dl>");
         }
-        if (*doc->requires) {
+        if (doc->requires) {
             out(mp, "<dl><dt>Requires</dt>\n<dd>configure --ejs-%s</dd></dl>\n", doc->requires);
         }
-        if (*doc->spec) {
+        if (doc->spec) {
             out(mp, "<dl><dt>Specified</dt>\n<dd>%s</dd></dl>\n", doc->spec);
         }
-        if (*doc->stability) {
+        if (doc->stability) {
             out(mp, "<dl><dt>Stability</dt>\n<dd>%s</dd></dl>\n", doc->stability);
         }
-        if (*doc->example) {
+        if (doc->example) {
             out(mp, "<dl><dt>Example</dt>\n<dd><pre>%s</pre></dd></dl>\n", doc->example);
         }
         count = mprGetListCount(doc->see);
@@ -1757,9 +1763,9 @@ static char *fmtAccessors(int attributes)
 }
 
 
-static char *joinLines(char *str)
+static MprChar *joinLines(MprChar *str)
 {
-    char    *cp, *np;
+    MprChar    *cp, *np;
 
     for (cp = str; cp && *cp; cp++) {
         if (*cp == '\n') {
@@ -1780,33 +1786,31 @@ static char *joinLines(char *str)
 /*
     Merge in @duplicate entries
  */
-static char *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc, char *spec)
+static MprChar *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc, MprChar *spec)
 {
     EjsDoc      *dup;
-    char        *next, *duplicate, *mark;
+    MprChar     *next, *duplicate, *mark;
 
-    if ((next = strstr(spec, "@duplicate")) == 0) {
+    if ((next = mcontains(spec, "@duplicate", -1)) == 0) {
         return spec;
     }
-    next = spec = mprStrdup(mp, spec);
+    next = spec = wclone(mp, spec);
 
-    while ((next = strstr(next, "@duplicate")) != 0) {
+    while ((next = mcontains(next, "@duplicate", -1)) != 0) {
         mark = next;
-        mprStrTok(next, " \t\n\r", &next);
-        if ((duplicate = mprStrTok(next, " \t\n\r", &next)) == 0) {
+        mtok(next, " \t\n\r", &next);
+        if ((duplicate = mtok(next, " \t\n\r", &next)) == 0) {
             break;
         }
         if ((dup = getDuplicateDoc(ejs, duplicate)) == 0) {
             mprError(ejs, "Can't find @duplicate directive %s for %s", duplicate, qname.name);
         } else {
-            crackDoc(mp, dup, EN(duplicate));
-
+            crackDoc(mp, dup, WEN(duplicate));
             mprCopyList(doc->params, dup->params);
             mprCopyList(doc->options, dup->options);
             mprCopyList(doc->events, dup->events);
             mprCopyList(doc->see, dup->see);
             mprCopyList(doc->throws, dup->throws);
-
             doc->brief = dup->brief;
             doc->description = dup->description;
             doc->example = dup->example;
@@ -1815,7 +1819,7 @@ static char *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc, c
             doc->stability = dup->stability;
             doc->spec = dup->spec;
         }
-        memmove(mark, next, strlen(next) + 1);
+        memmove(mark, next, wlen(next) + 1);
         next = mark;
     }
     return spec;
@@ -1825,9 +1829,9 @@ static char *mergeDuplicates(Ejs *ejs, EjsMod *mp, EjsName qname, EjsDoc *doc, c
 /*
     Cleanup text. Remove leading comments and "*" that are part of the comment and not part of the doc.
  */
-static void prepText(char *str)
+static void prepText(MprChar *str)
 {
-    char    *dp, *cp;
+    MprChar     *dp, *cp;
 
     dp = cp = str;
     while (isspace((int) *cp) || *cp == '*') {
@@ -1857,8 +1861,8 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
     Ejs         *ejs;
     EjsDoc      *dup;
     MprKeyValue *pair;
-    char        *value, *key, *line, *str, *next, *cp, *token, *nextWord, *word, *duplicate;
-    char        *thisBrief, *thisDescription, *start;
+    MprChar     *value, *key, *line, *str, *next, *cp, *token, *nextWord, *word, *duplicate;
+    MprChar     *thisBrief, *thisDescription, *start;
 
     ejs = mp->ejs;
 
@@ -1873,42 +1877,40 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
     doc->see = mprCreateList(doc);
     doc->throws = mprCreateList(doc);
 
-    str = mprStrdup(doc, doc->docString);
+    str = mprMemdup(doc, doc->docString->value, doc->docString->length);
     if (str == NULL) {
         return doc;
     }
     prepText(str);
-    if (strstr(str, "@hide") || strstr(str, "@hidden")) {
+    if (mcontains(str, "@hide", -1) || mcontains(str, "@hidden", -1)) {
         doc->hide = 1;
-    } else if (strstr(str, "@deprecate") || strstr(str, "@deprecated")) {
+    } else if (mcontains(str, "@deprecate", -1) || mcontains(str, "@deprecated", -1)) {
         doc->deprecated = 1;
     }
-    doc->description = "";
-    doc->brief = "";
     str = mergeDuplicates(ejs, mp, qname, doc, str);
 
-    thisDescription = "";
-    thisBrief = "";
+    thisDescription = NULL;
+    thisBrief = NULL;
     next = str;
     
     if (str[0] != '@') {
-        if ((thisBrief = mprStrTok(str, "@", &next)) == 0) {
-            thisBrief = "";
+        if ((thisBrief = mtok(str, "@", &next)) == 0) {
+            thisBrief = NULL;
         } else {
             for (cp = thisBrief; *cp; cp++) {
                 if (*cp == '.' && (isspace((int) cp[1]) || *cp == '*')) {
                     cp++;
                     *cp++ = '\0';
-                    thisDescription = mprStrTrim(cp, " \t\n");
+                    thisDescription = mtrim(cp, " \t\n", MPR_TRIM_BOTH);
                     break;
                 }
             }
         }
     }
-    doc->brief = mprStrcat(doc, -1, doc->brief, thisBrief, NULL);
-    doc->description = mprStrcat(doc, -1, doc->description, thisDescription, NULL);
-    mprStrTrim(doc->brief, " \t\r\n");
-    mprStrTrim(doc->description, " \t\r\n");
+    doc->brief = wjoin(doc, NULL, doc->brief, thisBrief, NULL);
+    doc->description = wjoin(doc, NULL, doc->description, thisDescription, NULL);
+    mtrim(doc->brief, " \t\r\n", MPR_TRIM_BOTH);
+    mtrim(doc->description, " \t\r\n", MPR_TRIM_BOTH);
     mprAssert(doc->brief);
     mprAssert(doc->description);
 
@@ -1918,7 +1920,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
  
         @param argName Description          (Up to next @, case matters on argName)
         @default argName DefaultValue       (Up to next @, case matters on argName)
-        @return Sentance                    (Can use return or returns. If sentance starts with lower case, then start 
+        @return Sentence                    (Can use return or returns. If sentance starts with lower case, then start 
                                                 sentance with "Call returns".
         @option argName Description         (Up to next @, case matters on argName)
         @event eventName Description        (Up to next @, case matters on argName)
@@ -1935,35 +1937,35 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
      */
     start = next;
     while (next) {
-        token = mprStrTok(next, "@", &next);
+        token = mtok(next, "@", &next);
         line = skipAtWord(token);
 
         if (token > &start[2] && token[-2] == '\\') {
             continue;
         }
         if (match(token, "duplicate")) {
-            duplicate = mprStrTrim(line, " \t\n");
+            duplicate = mtrim(line, " \t\n", MPR_TRIM_BOTH);
             if ((dup = getDuplicateDoc(ejs, duplicate)) == 0) {
                 mprError(ejs, "Can't find @duplicate directive %s for %S", duplicate, qname.name);
             } else {
-                crackDoc(mp, dup, EN(duplicate));
+                crackDoc(mp, dup, WEN(duplicate));
                 mprCopyList(doc->params, dup->params);
                 mprCopyList(doc->options, dup->options);
                 mprCopyList(doc->events, dup->events);
                 mprCopyList(doc->see, dup->see);
                 mprCopyList(doc->throws, dup->throws);
-                doc->brief = mprStrcat(doc, -1, doc->brief, " ", dup->brief, NULL);
-                doc->description = mprStrcat(doc, -1, doc->description, " ", dup->description, NULL);
+                doc->brief = mrejoin(doc, NULL, doc->brief, " ", dup->brief, NULL);
+                doc->description = mrejoin(doc, NULL, doc->description, " ", dup->description, NULL);
                 if (dup->example) {
                     if (doc->example) {
-                        doc->example = mprStrcat(doc, -1, doc->example, " ", dup->example, NULL);
+                        doc->example = mrejoin(doc, NULL, doc->example, " ", dup->example, NULL);
                     } else {
                         doc->example = dup->example;
                     }
                 }
                 if (dup->requires) {
                     if (doc->requires) {
-                        doc->requires = mprStrcat(doc, -1, doc->requires, " ", dup->requires, NULL);
+                        doc->requires = mrejoin(doc, NULL, doc->requires, " ", dup->requires, NULL);
                     } else {
                         doc->requires = dup->requires;
                     }
@@ -1986,7 +1988,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
             getKeyValue(line, &key, &value);
             value = joinLines(value);
             if (key && *key) {
-                pair = mprCreateKeyPair(doc->events, key, value);
+                pair = createKeyPair(doc->events, key, value);
                 mprAddItem(doc->events, pair);
             }
 
@@ -1994,7 +1996,7 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
             getKeyValue(line, &key, &value);
             value = joinLines(value);
             if (key && *key) {
-                pair = mprCreateKeyPair(doc->options, key, value);
+                pair = createKeyPair(doc->options, key, value);
                 mprAddItem(doc->options, pair);
             }
 
@@ -2002,8 +2004,8 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
             getKeyValue(line, &key, &value);
             value = joinLines(value);
             if (key && *key) {
-                key = mprStrTrim(key, ".");
-                pair = mprCreateKeyPair(doc->params, key, value);
+                key = mtrim(key, ".", MPR_TRIM_BOTH);
+                pair = createKeyPair(doc->params, key, value);
                 mprAddItem(doc->params, pair);
             }
 
@@ -2011,46 +2013,46 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
             getKeyValue(line, &key, &value);
             value = joinLines(value);
             if (key && *key) {
-                pair = mprCreateKeyPair(doc->defaults, key, value);
+                pair = createKeyPair(doc->defaults, key, value);
                 mprAddItem(doc->defaults, pair);
             }
 
         } else if (match(token, "deprecated")) {
             doc->hide = 1;
             doc->deprecated = 1;
-            doc->stability = "deprecated";
+            doc->stability = amtow(doc, "deprecated", NULL);
 
         } else if (match(token, "hide") || match(token, "hidden")) {
             doc->hide = 1;
 
         } else if (match(token, "spec")) {
-            doc->spec = mprStrTrim(line, " \t\n");
-            mprStrLower(doc->spec);
+            doc->spec = mtrim(line, " \t\n", MPR_TRIM_BOTH);
+            wlower(doc->spec);
 
         } else if (match(token, "stability")) {
-            doc->stability = mprStrTrim(line, " \t");
-            mprStrLower(doc->stability);
+            doc->stability = mtrim(line, " \t", MPR_TRIM_BOTH);
+            wlower(doc->stability);
 
         } else if (match(token, "requires")) {
-            doc->requires = mprStrTrim(line, " \t");
-            mprStrLower(doc->requires);
+            doc->requires = mtrim(line, " \t", MPR_TRIM_BOTH);
+            wlower(doc->requires);
 
         } else if (match(token, "return") || match(token, "returns")) {
             line = joinLines(line);
-            doc->returns = mprStrTrim(line, " \t");
+            doc->returns = mtrim(line, " \t", MPR_TRIM_BOTH);
 
         } else if (match(token, "throw") || match(token, "throws")) {
             getKeyValue(line, &key, &value);
             value = joinLines(value);
-            pair = mprCreateKeyPair(doc->throws, key, value);
+            pair = createKeyPair(doc->throws, key, value);
             mprAddItem(doc->throws, pair);
 
         } else if (match(token, "see") || match(token, "seeAlso")) {
             nextWord = line;
             do {
                 word = nextWord;
-                mprStrTok(word, " \t\r\n", &nextWord);
-                mprAddItem(doc->see, mprStrTrim(word, " \t"));
+                mtok(word, " \t\r\n", &nextWord);
+                mprAddItem(doc->see, mtrim(word, " \t", MPR_TRIM_BOTH));
             } while (nextWord && *nextWord);
         }
     }
@@ -2059,24 +2061,24 @@ static EjsDoc *crackDoc(EjsMod *mp, EjsDoc *doc, EjsName qname)
 }
 
 
-static char *fixSentance(MprCtx ctx, char *str)
+static MprChar *fixSentence(MprCtx ctx, MprChar *str)
 {
-    char    *buf;
-    int     len;
+    MprChar     *buf;
+    size_t      len;
 
     if (str == 0 || *str == '\0') {
-        return "";
+        return NULL;
     }
     
     /*
         Copy the string and grow by 1 byte (plus null) to allow for a trailing period.
      */
-    len = (int) strlen(str) + 2;
+    len = wlen(str) + 2 * sizeof(MprChar);
     buf = mprAlloc(ctx, len);
     if (str == 0) {
-        return "";
+        return NULL;
     }
-    mprStrcpy(buf, len, str);
+    wcopy(buf, len, str);
     str = buf;
     str[0] = toupper((int) str[0]);
 
@@ -2084,13 +2086,13 @@ static char *fixSentance(MprCtx ctx, char *str)
         We can safely patch one past the end as we always have new lines and white space before the next token or 
         end of comment.
      */
-    str = mprStrTrim(str, " \t\r\n.");
+    str = mtrim(str, " \t\r\n.", MPR_TRIM_BOTH);
 
     /*
         Add a "." if the string does not appear to contain HTML tags
      */
-    if (strstr(str, "</") == 0) {
-        len = (int) strlen(str);
+    if (mcontains(str, "</", -1) == 0) {
+        len = wlen(str);
         if (str[len - 1] != '.') {
             str[len] = '.';
             str[len+1] = '\0';
@@ -2100,35 +2102,35 @@ static char *fixSentance(MprCtx ctx, char *str)
 }
 
 
-static char *formatExample(Ejs *ejs, char *docString)
+static MprChar *formatExample(Ejs *ejs, EjsString *docString)
 {
-    char    *example, *cp, *end, *buf, *dp;
-    int     i, indent;
+    MprChar     *example, *cp, *end, *buf, *dp;
+    int         i, indent;
 
-    if ((example = strstr(docString, "@example")) != 0) {
+    if ((example = mcontains(docString->value, "@example", -1)) != 0) {
         example += 8;
         for (cp = example; *cp && *cp != '\n'; cp++) {}
         if (*cp == '\n') {
             cp++;
         }
         example = cp;
-        if ((end = strchr(cp, '@')) != 0) {
+        if ((end = wchr(cp, '@')) != 0) {
             *end = '\0';
         }
         for (indent = 0; *cp == '\t' || *cp == ' '; indent++, cp++) {}
 
-        buf = mprAlloc(ejs, (int) strlen(example) * 4 + 2);
+        buf = mprAlloc(ejs, wlen(example) * 4 + 2);
         for (cp = example, dp = buf; *cp; ) {
             for (i = 0; i < indent && *cp; i++, cp++) {}
             for (; *cp && *cp != '\n'; ) {
                 if (*cp == '<' && cp[1] == '%') {
-                    strcpy(dp, "&lt;");
+                    mtow(dp, 4, "&lt;", 4);
                     dp += 4;
                     cp++;
                     *dp++ = *cp++;
                 } else if (*cp == '%' && cp[1] == '>') {
                     *dp++ = *cp++;
-                    strcpy(dp, "&gt;");
+                    mtow(dp, 4, "&gt;", 4);
                     dp += 4;
                     cp++;
                 } else {
@@ -2142,31 +2144,31 @@ static char *formatExample(Ejs *ejs, char *docString)
         }
         return buf;
     }
-    return "";
+    return NULL;
 }
 
 
-static char *wikiFormat(Ejs *ejs, char *start)
+static MprChar *wikiFormat(Ejs *ejs, MprChar *start)
 {
     EjsLookup   lookup;
     EjsName     qname;
     MprBuf      *buf;
-    char        *end, *cp, *klass, *property, *str;
+    MprChar     *end, *cp, *klass, *property, *str;
     int         slotNum, sentence;
 
     if (start == 0 || *start == '\0') {
-        return "";
+        return NULL;
     }
     buf = mprCreateBuf(ejs, -1, -1);
 
-    end = &start[strlen(start)];
+    end = &start[wlen(start)];
     for (str = start; str < end && *str; str++) {
         /*
             MOB -- expand this to support basic markdown
          */
         if (str[0] == '\n' && str[1] == '\n') {
             /* Two blank lines forces a blank line in the output */
-            mprPutStringToBuf(buf, "<br/><br/>");
+            mprPutStringToWideBuf(buf, "<br/><br/>");
             str++;
 
         } else if (*str == '$') {
@@ -2180,51 +2182,51 @@ static char *wikiFormat(Ejs *ejs, char *start)
                     break;
                 }
             }
-            sentence = (klass[strlen(klass) - 1] == '.');
+            sentence = (klass[wlen(klass) - 1] == '.');
 
-            if ((property = strchr(str, '.')) != 0) {
+            if ((property = wchr(str, '.')) != 0) {
                 *property++ = '\0';
                 if (*property == '\0') {
                     property = &str[1];
                     klass = 0;
                 }
-                str = &property[strlen(property)];
+                str = &property[wlen(property)];
             } else {
-                str = &str[strlen(str)];
+                str = &str[wlen(str)];
                 if (islower((int) *klass)) {
                     property = klass;
                     klass = 0;
                 }
             }
             if (klass) {
-                klass = mprStrTrim(klass, ".");
-                property = mprStrTrim(property, ".");
+                klass = mtrim(klass, ".", MPR_TRIM_BOTH);
+                property = mtrim(property, ".", MPR_TRIM_BOTH);
                 //  TODO Functionalize
                 ejs->state->bp = ejs->globalBlock;
-                if ((slotNum = ejsLookupVar(ejs, ejs->global, EN(klass), &lookup)) < 0) {
+                if ((slotNum = ejsLookupVar(ejs, ejs->global, WEN(klass), &lookup)) < 0) {
                     continue;
                 }
                 qname = lookup.name;
                 if (property) {
-                    mprPutFmtToBuf(buf, "<a href='%s#%s'>%s.%s</a>", getFilename(fmtType(ejs, qname)), 
+                    mprPutFmtToWideBuf(buf, "<a href='%s#%s'>%s.%s</a>", getFilename(fmtType(ejs, qname)), 
                         property, klass, property);
                 } else {
-                    mprPutFmtToBuf(buf, "<a href='%s'>%s</a>", getFilename(fmtType(ejs, qname)), klass);
+                    mprPutFmtToWideBuf(buf, "<a href='%s'>%s</a>", getFilename(fmtType(ejs, qname)), klass);
                 }
             } else {
-                mprPutFmtToBuf(buf, "<a href='#%s'>%s</a>", property, property);
+                mprPutFmtToWideBuf(buf, "<a href='#%s'>%s</a>", property, property);
             }
             if (sentence) {
-                mprPutCharToBuf(buf, '.');
+                mprPutCharToWideBuf(buf, '.');
             }
-            mprPutCharToBuf(buf, ' ');
+            mprPutCharToWideBuf(buf, ' ');
 
         } else {
-            mprPutCharToBuf(buf, *str);
+            mprPutCharToWideBuf(buf, *str);
         }
     }
-    mprAddNullToBuf(buf);
-    return mprStealBuf(ejs, buf);
+    mprAddNullToWideBuf(buf);
+    return (MprChar*) mprGetBufStart(buf);
 }
 
 
@@ -2233,29 +2235,29 @@ static void fixupDoc(Ejs *ejs, EjsDoc *doc)
     MprKeyValue     *pair;
     int             next;
 
-    doc->brief = wikiFormat(ejs, fixSentance(doc, doc->brief));
-    doc->description = wikiFormat(ejs, fixSentance(doc, doc->description));
-    doc->returns = wikiFormat(ejs, fixSentance(doc, doc->returns));
-    doc->stability = fixSentance(doc, doc->stability);
-    doc->requires = wikiFormat(ejs, fixSentance(doc, doc->requires));
+    doc->brief = wikiFormat(ejs, fixSentence(doc, doc->brief));
+    doc->description = wikiFormat(ejs, fixSentence(doc, doc->description));
+    doc->returns = wikiFormat(ejs, fixSentence(doc, doc->returns));
+    doc->stability = fixSentence(doc, doc->stability);
+    doc->requires = wikiFormat(ejs, fixSentence(doc, doc->requires));
     if (doc->spec) {
-        if (strcmp(doc->spec, "ejs") == 0) {
-            doc->spec = mprAsprintf(doc, -1, "ejscript-%d.%d", BLD_MAJOR_VERSION, BLD_MINOR_VERSION);
+        if (mcmp(doc->spec, "ejs") == 0) {
+            doc->spec = mfmt(doc, "ejscript-%d.%d", BLD_MAJOR_VERSION, BLD_MINOR_VERSION);
         }
     } else {
-        doc->spec = "";
+        doc->spec = NULL;
     }
     if (doc->example == 0) {
-        doc->example = "";
+        doc->example = NULL;
     }
     for (next = 0; (pair = mprGetNextItem(doc->events, &next)) != 0; ) {
-        pair->value = wikiFormat(ejs, fixSentance(doc, pair->value));
+        pair->value = wikiFormat(ejs, fixSentence(doc, pair->value));
     }
     for (next = 0; (pair = mprGetNextItem(doc->options, &next)) != 0; ) {
-        pair->value = wikiFormat(ejs, fixSentance(doc, pair->value));
+        pair->value = wikiFormat(ejs, fixSentence(doc, pair->value));
     }
     for (next = 0; (pair = mprGetNextItem(doc->params, &next)) != 0; ) {
-        pair->value = wikiFormat(ejs, fixSentance(doc, pair->value));
+        pair->value = wikiFormat(ejs, fixSentence(doc, pair->value));
     }
     /*
         Don't fix the default value
@@ -2277,7 +2279,7 @@ static void out(EjsMod *mp, char *fmt, ...)
         }
     }
     va_start(args, fmt);
-    buf = mprVasprintf(mp, -1, fmt, args);
+    buf = mprAsprintfv(mp, fmt, args);
     if (mprWriteString(mp->file, buf) < 0) {
         mprError(mp->file, "Can't write to buffer");
     }
@@ -2287,7 +2289,7 @@ static void out(EjsMod *mp, char *fmt, ...)
 
 static EjsString *fmtModule(Ejs *ejs, EjsString *name)
 {
-    if (ejsCompareCString(ejs, name, EJS_DEFAULT_MODULE) == 0) {
+    if (ejsCompareMulti(ejs, name, EJS_DEFAULT_MODULE) == 0) {
         return ejs->emptyString;
     }
     return name;
@@ -2308,12 +2310,12 @@ static char *fmtNamespace(Ejs *ejs, EjsName qname)
     cchar       *space;
     char        *cp;
 
-    space = ejsGetString(ejs, qname.space);
+    space = ejsToMulti(ejs, qname.space);
     if (space[0] == '[') {
-        mprStrcpy(buf, sizeof(buf), &space[1]);
+        scopy(buf, sizeof(buf), &space[1]);
 
     } else {
-        mprStrcpy(buf, sizeof(buf), space);
+        scopy(buf, sizeof(buf), space);
     }
     if (buf[strlen(buf) - 1] == ']') {
         buf[strlen(buf) - 1] = '\0';
@@ -2353,12 +2355,12 @@ static char *fmtType(Ejs *ejs, EjsName qname)
     }
     if (*namespace) {
         if (*namespace) {
-            mprSprintf(ejs, buf, sizeof(buf), "%s::%s", namespace, qname.name);
+            mprSprintf(buf, sizeof(buf), "%s::%s", namespace, qname.name);
         } else {
-            mprSprintf(ejs, buf, sizeof(buf), "%s", qname.name);
+            mprSprintf(buf, sizeof(buf), "%s", qname.name);
         }
     } else {
-        mprSprintf(ejs, buf, sizeof(buf), "%s", qname.name);
+        mprSprintf(buf, sizeof(buf), "%s", qname.name);
     }
     return buf;
 }
@@ -2372,7 +2374,7 @@ static char *getFilename(cchar *name)
     static char buf[MPR_MAX_STRING];
     char        *cp, *sp;
 
-    mprStrcpy(buf, sizeof(buf), name);
+    scopy(buf, sizeof(buf), name);
 
     if ((cp = strstr(buf, "::")) != 0) {
         *cp++ = '-';
@@ -2389,7 +2391,7 @@ static char *getFilename(cchar *name)
         }
         *cp = '\0';
     }
-    mprStrcpy(&buf[strlen(buf)], sizeof(buf) - (int) strlen(buf) - 1, ".html");
+    scopy(&buf[strlen(buf)], sizeof(buf) - (int) strlen(buf) - 1, ".html");
     return buf;
 }
 
@@ -2400,7 +2402,7 @@ static char *fmtTypeReference(Ejs *ejs, EjsName qname)
     char        *typeName;
 
     typeName = fmtType(ejs, qname);
-    mprSprintf(ejs, buf, sizeof(buf), "<a href='%s'>%s</a>", getFilename(typeName), qname.name);
+    mprSprintf(buf, sizeof(buf), "<a href='%s'>%s</a>", getFilename(typeName), qname.name);
     return buf;
 }
 
@@ -2413,7 +2415,7 @@ static char *fmtSpace(Ejs *ejs, EjsName qname)
     namespace = fmtNamespace(ejs, qname);
 
     if (namespace[0]) {
-        mprSprintf(ejs, buf, sizeof(buf), "%s", qname.space);
+        mprSprintf(buf, sizeof(buf), "%s", qname.space);
     }
     return buf;
 }
@@ -2426,15 +2428,15 @@ static char *fmtDeclaration(Ejs *ejs, EjsName qname)
 
     namespace = fmtNamespace(ejs, qname);
     if (namespace[0]) {
-        mprSprintf(ejs, buf, sizeof(buf), "%s %s", qname.space, demangle(ejs, qname.name));
+        mprSprintf(buf, sizeof(buf), "%s %s", qname.space, demangle(ejs, qname.name));
     } else {
-        mprSprintf(ejs, buf, sizeof(buf), "%s", demangle(ejs, qname.name));
+        mprSprintf(buf, sizeof(buf), "%s", demangle(ejs, qname.name));
     }
     return buf;
 }
 
 
-static bool match(cchar *last, cchar *key)
+static bool match(MprChar *last, cchar *key)
 {
     int     len;
 
@@ -2442,11 +2444,11 @@ static bool match(cchar *last, cchar *key)
     mprAssert(key && *key);
 
     len = (int) strlen(key);
-    return strncmp(last, key, len) == 0;
+    return mncmp(last, key, len) == 0;
 }
 
 
-static char *skipAtWord(char *str)
+static MprChar *skipAtWord(MprChar *str)
 {
     while (!isspace((int) *str) && *str)
         str++;
@@ -2479,9 +2481,9 @@ static char *getType(char *str, char *typeName, int typeSize)
 #endif
 
 
-static void getKeyValue(char *str, char **key, char **value)
+static void getKeyValue(MprChar *str, MprChar **key, MprChar **value)
 {
-    char    *end;
+    MprChar     *end;
 
     for (end = str; *end && !isspace((int) *end); end++)
         ;
@@ -2489,13 +2491,13 @@ static void getKeyValue(char *str, char **key, char **value)
         *end = '\0';
     }
     if (key) {
-        *key = mprStrTrim(str, " \t");
+        *key = mtrim(str, " \t", MPR_TRIM_BOTH);
     }
     for (str = end + 1; *str && isspace((int) *str); str++) {
         ;
     }
     if (value) {
-        *value = mprStrTrim(str, " \t");
+        *value = mtrim(str, " \t", MPR_TRIM_BOTH);
     }
 }
 
@@ -2520,10 +2522,10 @@ static int compareClasses(ClassRec **c1, ClassRec **c2)
 
 static cchar *demangle(Ejs *ejs, EjsString *name)
 {
-    if (ejsStartsWithCString(ejs, name, "set-") == 0) {
-        return ejsGetString(ejs, ejsSubString(ejs, name, 4, -1));
+    if (ejsStartsWithMulti(ejs, name, "set-") == 0) {
+        return ejsToMulti(ejs, ejsSubstring(ejs, name, 4, -1));
     }
-    return ejsGetString(ejs, name);
+    return ejsToMulti(ejs, name);
 }
 
 
@@ -2555,8 +2557,7 @@ static int compareNames(char **q1, char **q2)
     if ((cp = strrchr(s2, ':')) != 0) {
         s2 = cp + 1;
     }
-
-    return mprStrcmpAnyCase(s1, s2);
+    return scasecmp(s1, s2);
 }
 
 
@@ -2573,7 +2574,7 @@ static void addUniqueItem(MprList *list, cchar *item)
             return;
         }
     }
-    mprAddItem(list, mprStrdup(list, item));
+    mprAddItem(list, sclone(list, item));
 }
 
 
@@ -2600,34 +2601,34 @@ static EjsDoc *getDoc(Ejs *ejs, void *vp, int slotNum)
 {
     char        key[32];
 
-    mprSprintf(ejs, key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
+    mprSprintf(key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
     return (EjsDoc*) mprLookupHash(ejs->doc, key);
 }
 
 
-static EjsDoc *getDuplicateDoc(Ejs *ejs, cchar *duplicate)
+static EjsDoc *getDuplicateDoc(Ejs *ejs, MprChar *duplicate)
 {
     EjsName         qname;
     EjsDoc          *doc;
     EjsObj          *vp;
     EjsLookup       lookup;
-    char            *space, *dup, *klass, *property;
+    MprChar         *space, *dup, *klass, *property;
     int             slotNum;
 
-    dup = space = mprStrdup(ejs, duplicate);
-    if ((klass = strstr(space, "::")) != 0) {
+    dup = space = wclone(ejs, duplicate);
+    if ((klass = mcontains(space, "::", -1)) != 0) {
         *klass = '\0';
         klass += 2;
     } else {
         klass = space;
-        space = "";
+        space = NULL;
     }
-    if ((property = strchr(klass, '.')) != 0) {
+    if ((property = wchr(klass, '.')) != 0) {
         *property++ = '\0';
     }
     //  TODO Functionalize
     ejs->state->bp = ejs->globalBlock;
-    if ((slotNum = ejsLookupVar(ejs, ejs->global, N(space, klass), &lookup)) < 0) {
+    if ((slotNum = ejsLookupVar(ejs, ejs->global, WN(space, klass), &lookup)) < 0) {
         mprFree(dup);
         return 0;
     }
@@ -2635,9 +2636,9 @@ static EjsDoc *getDuplicateDoc(Ejs *ejs, cchar *duplicate)
         doc = getDoc(ejs, ejs->globalBlock, slotNum);
     } else {
         vp = ejsGetProperty(ejs, ejs->global, slotNum);
-        if ((slotNum = ejsLookupVar(ejs, vp, EN(property), &lookup)) < 0) {
+        if ((slotNum = ejsLookupVar(ejs, vp, WEN(property), &lookup)) < 0) {
             if (ejsIsType(ejs, vp)) {
-                vp = ((EjsType*) vp)->prototype;
+                vp = (EjsObj*) ((EjsType*) vp)->prototype;
                 if ((slotNum = ejsLookupVar(ejs, vp, qname, &lookup)) < 0) {
                     mprFree(dup);
                     return 0;
@@ -2647,7 +2648,7 @@ static EjsDoc *getDuplicateDoc(Ejs *ejs, cchar *duplicate)
             if ((slotNum = ejsLookupVar(ejs, vp, ejsName(&qname, space, property), &lookup)) < 0) {
                 if ((slotNum = ejsLookupVar(ejs, vp, ejsName(&qname, space, property), &lookup)) < 0) {
                     /* Last chance - Not ideal */
-                    space = mprAsprintf(ejs, -1, "%s-%s", space, BLD_VNUM);
+                    space = mprAsprintf(ejs, "%s-%s", space, BLD_VNUM);
                     if ((slotNum = ejsLookupVar(ejs, vp, ejsName(&qname, space, property), &lookup)) < 0) {
                         mprFree(dup);
                         return 0;
@@ -2659,7 +2660,7 @@ static EjsDoc *getDuplicateDoc(Ejs *ejs, cchar *duplicate)
         doc = getDoc(ejs, (EjsBlock*) vp, slotNum);
     }
     if (doc) {
-        if (doc->docString == NULL || *doc->docString == '\0') {
+        if (doc->docString == NULL || doc->docString->value[0] == '\0') {
             mprError(ejs, "Duplicate entry %s provides no description", duplicate);
             mprFree(dup);
             return 0;
@@ -2668,6 +2669,21 @@ static EjsDoc *getDuplicateDoc(Ejs *ejs, cchar *duplicate)
     mprFree(dup);
     return doc;
 }
+
+
+static MprKeyValue *createKeyPair(MprCtx ctx, MprChar *key, MprChar *value)
+{
+    MprKeyValue     *pair;
+    
+    pair = mprAlloc(ctx, sizeof(MprKeyValue));
+    if (pair == 0) {
+        return 0;
+    }
+    pair->key = wclone(pair, key);
+    pair->value = wclone(pair, value);
+    return pair;
+}
+
 
 /*
     @copy   default

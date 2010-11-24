@@ -23,7 +23,7 @@ static EjsObj *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     cmd = mprCreateCmd(ejs, ejs->dispatcher);
-    cmdline = ejsGetString(ejs, argv[0]);
+    cmdline = ejsToMulti(ejs, argv[0]);
     status = mprRunCmd(cmd, cmdline, &output, &err, 0);
     if (status) {
         ejsThrowError(ejs, "Command failed: %s\n\nExit status: %d\n\nError Output: \n%s\nPrevious Output: \n%s\n", 
@@ -31,7 +31,7 @@ static EjsObj *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         mprFree(cmd);
         return 0;
     }
-    result = ejsCreateStringFromCS(ejs, output);
+    result = ejsCreateStringFromAsc(ejs, output);
     mprFree(cmd);
     return (EjsObj*) result;
 }
@@ -49,9 +49,9 @@ static EjsObj *system_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     cmd = mprCreateCmd(ejs, ejs->dispatcher);
-    status = mprRunCmd(cmd, ejsGetString(ejs, argv[0]), NULL, &err, 0);
+    status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, &err, 0);
     if (status) {
-        ejsThrowError(ejs, "Can't run command: %s\nDetails: %s", ejsGetString(ejs, argv[0]), err);
+        ejsThrowError(ejs, "Can't run command: %@\nDetails: %s", ejsToString(ejs, argv[0]), err);
         mprFree(err);
     }
     mprFree(cmd);
@@ -71,9 +71,9 @@ static EjsObj *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     cmd = mprCreateCmd(ejs, ejs->dispatcher);
-    status = mprRunCmd(cmd, ejsGetString(ejs, argv[0]), NULL, NULL, MPR_CMD_DETACH);
+    status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, NULL, MPR_CMD_DETACH);
     if (status) {
-        ejsThrowError(ejs, "Can't run command: %s", ejsGetString(ejs, argv[0]));
+        ejsThrowError(ejs, "Can't run command: %@", ejsToString(ejs, argv[0]));
     }
     pid = cmd->pid;
     mprFree(cmd);
@@ -91,10 +91,10 @@ static EjsObj *system_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     char    **argVector;
     int     argCount;
 
-    mprMakeArgv(ejs, NULL, ejsGetString(ejs, argv[0]), &argCount, &argVector);
+    mprMakeArgv(ejs, NULL, ejsToMulti(ejs, argv[0]), &argCount, &argVector);
     execv(argVector[0], argVector);
 #endif
-    ejsThrowStateError(ejs, "Can't exec %s", ejsGetString(ejs, argv[0]));
+    ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));
     return 0;
 }
 
@@ -104,14 +104,14 @@ static EjsObj *system_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *system_hostname(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringAndFree(ejs, mprStrdup(ejs, mprGetHostName(ejs)));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, sclone(ejs, mprGetHostName(ejs)));
 }
 
 
 /*
     function get ipaddr(): String
  */
-static EjsString *system_ipaddr(Ejs *ejs, EV *unused, int argc, EV **argv)
+static EjsString *system_ipaddr(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
 #if BLD_UNIX_LIKE || BLD_WIN_LIKE
     struct addrinfo *res, *reslist, hints;
@@ -119,7 +119,7 @@ static EjsString *system_ipaddr(Ejs *ejs, EV *unused, int argc, EV **argv)
     char            ipaddr[MPR_MAX_STRING], service[MPR_MAX_STRING];
 
     if ((ip = mprGetIpAddr(ejs)) != 0) {
-        return ejsCreateStringFromCS(ejs, mprGetIpAddr(ejs));
+        return ejsCreateStringFromAsc(ejs, mprGetIpAddr(ejs));
     }
     memset((char*) &hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;
@@ -134,15 +134,15 @@ static EjsString *system_ipaddr(Ejs *ejs, EV *unused, int argc, EV **argv)
                      strncmp(ipaddr, "169.", 4) == 0 || strncmp(ipaddr, "172.", 4) == 0 ||
                      strncmp(ipaddr, "192.", 4) == 0) {
                     if (ip == 0) {
-                        ip = mprStrdup(ejs, ipaddr);
+                        ip = sclone(ejs, ipaddr);
                     }
                 } else {
-                    ip = mprStrdup(ejs, ipaddr);
+                    ip = sclone(ejs, ipaddr);
                     break;
                 }
             }
         }
-        return ejsCreateStringFromCS(ejs, ip ? ip : "127.0.0.1");
+        return ejsCreateStringFromAsc(ejs, ip ? ip : "127.0.0.1");
     }
 #endif
     return ejs->nullValue;
@@ -155,7 +155,7 @@ void ejsConfigureSystemType(Ejs *ejs)
 {
     EjsType         *type;
 
-    if ((type = ejsGetTypeByName(ejs, EJS_EJS_NAMESPACE, "System")) == 0) {
+    if ((type = ejsGetTypeByName(ejs, N("ejs", "System"))) == 0) {
         mprError(ejs, "Can't find System type");
         return;
     }

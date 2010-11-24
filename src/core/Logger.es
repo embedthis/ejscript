@@ -143,7 +143,7 @@ module ejs {
             @hide
          */
         function flush(dir: Number = Stream.BOTH): Void {
-            if (_outStream_) {
+            if (_outStream) {
                 _outStream.flush(dir)
             }
         }

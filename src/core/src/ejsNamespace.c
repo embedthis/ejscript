@@ -20,7 +20,7 @@ static EjsObj *castNamespace(Ejs *ejs, EjsNamespace *vp, EjsType *type)
         return (EjsObj*) ejsCreateBoolean(ejs, 1);
 
     case ES_String:
-        return (EjsObj*) ejsCreateStringFromCS(ejs, "[object Namespace]");
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, "[object Namespace]");
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -38,7 +38,7 @@ static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
         if ((EjsObj*) rhs == ejs->nullValue || (EjsObj*) rhs == ejs->undefinedValue) {
             return (EjsObj*) ((opCode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
         }
-        boolResult = ejsCompareString(ejs, lhs->name, rhs->name) == 0;
+        boolResult = ejsCompareString(ejs, lhs->value, rhs->value) == 0;
         break;
 
     case EJS_OP_COMPARE_STRICTLY_EQ:
@@ -49,7 +49,7 @@ static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
         if ((EjsObj*) rhs == ejs->nullValue || (EjsObj*) rhs == ejs->undefinedValue) {
             return (EjsObj*) ((opCode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
         }
-        boolResult = !(ejsCompareString(ejs, lhs->name, rhs->name) == 0);
+        boolResult = !(ejsCompareString(ejs, lhs->value, rhs->value) == 0);
         break;
 
     case EJS_OP_COMPARE_STRICTLY_NE:
@@ -67,11 +67,11 @@ static EjsObj *invokeNamespaceOperator(Ejs *ejs, EjsNamespace *lhs, int opCode, 
 /*
     Define a reserved namespace in a block.
  */
-EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, EjsString *spaceName)
+EjsNamespace *ejsDefineReservedNamespace(Ejs *ejs, EjsBlock *block, EjsName *typeName, cchar *spaceName)
 {
     EjsNamespace    *namespace;
 
-    namespace = ejsCreateReservedNamespace(ejs, typeName, spaceName);
+    namespace = ejsCreateReservedNamespace(ejs, typeName, ejsCreateStringFromAsc(ejs, spaceName));
     if (namespace) {
         if (ejsAddNamespaceToBlock(ejs, block, namespace) < 0) {
             return 0;
@@ -96,12 +96,12 @@ EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *sp
 
     if (typeName) {
         if (typeName->space && typeName->space == ejs->publicString) {
-            namespace = ejsSprintf(ejs, "[%S::%S,%S]", typeName->space, typeName->name, spaceName);
+            namespace = ejsSprintf(ejs, "[%N,%@]", typeName, spaceName);
         } else {
-            namespace = ejsSprintf(ejs, "[%S,%S]", typeName->name, spaceName);
+            namespace = ejsSprintf(ejs, "[%@,%@]", typeName->name, spaceName);
         }
     } else {
-        namespace = ejsSprintf(ejs, "[%S]", spaceName);
+        namespace = ejsSprintf(ejs, "[%@]", spaceName);
     }
     return namespace;
 }
@@ -115,11 +115,11 @@ EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
 {
     EjsNamespace    *np;
 
-    np = (EjsNamespace*) ejsCreate(ejs, ejs->namespaceType, 0);
+    np = ejsCreate(ejs, ejs->namespaceType, 0);
     if (np) {
-        np->name = name;
+        np->value = name;
     }
-    ejsSetDebugName(np, np->name);
+    ejsSetName(np, MPR_NAME("namespace"));
     return np;
 }
 
@@ -129,7 +129,6 @@ EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
  */
 EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *spaceName)
 {
-    EjsNamespace    *namespace;
     EjsString       *formattedName;
 
     mprAssert(spaceName);
@@ -139,8 +138,15 @@ EjsNamespace *ejsCreateReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString 
     } else {
         formattedName = spaceName;
     }
-    namespace = ejsCreateNamespace(ejs, formattedName);
-    return namespace;
+    return ejsCreateNamespace(ejs, formattedName);
+}
+
+
+static void manageNamespace(EjsNamespace *ns, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(ns->value);
+    }
 }
 
 
@@ -148,7 +154,10 @@ void ejsCreateNamespaceType(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = ejs->namespaceType = ejsCreateNativeType(ejs, "ejs", "Namespace", ES_Namespace, sizeof(EjsNamespace));
+    type = ejsCreateNativeType(ejs, N("ejs", "Namespace"), ES_Namespace, sizeof(EjsNamespace), 
+        (MprManager) manageNamespace, EJS_OBJ_HELPERS);
+    ejs->namespaceType = type;
+
     type->helpers.cast = (EjsCastHelper) castNamespace;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeNamespaceOperator;
 }

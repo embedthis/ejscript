@@ -26,7 +26,7 @@ static EjsObj *castNumber(Ejs *ejs, EjsNumber *vp, EjsType *type)
 
     case ES_String:
         result = mprDtoa(vp, vp->value, 0, 0, 0);
-        return (EjsObj*) ejsCreateStringAndFree(ejs, result);
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, result);
 
     case ES_Number:
         return (EjsObj*) vp;
@@ -106,7 +106,7 @@ static EjsObj *coerceNumberOperands(Ejs *ejs, EjsObj *lhs, int opcode, EjsObj *r
         return (EjsObj*) ejs->falseValue;
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not valid for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not valid for type %@", opcode, TYPE(lhs)->qname.name);
         return ejs->undefinedValue;
     }
     return 0;
@@ -212,7 +212,7 @@ static EjsObj *invokeNumberOperator(Ejs *ejs, EjsNumber *lhs, int opcode, EjsNum
         return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) (fixed(lhs->value) ^ fixed(rhs->value)));
 
     default:
-        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %S", opcode, TYPE(lhs)->qname.name);
+        ejsThrowTypeError(ejs, "Opcode %d not implemented for type %@", opcode, TYPE(lhs)->qname.name);
         return 0;
     }
 }
@@ -315,7 +315,7 @@ static EjsObj *toExponential(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]): 0;
     result = mprDtoa(np, np->value, ndigits, MPR_DTOA_N_DIGITS, MPR_DTOA_EXPONENT_FORM);
-    return (EjsObj*) ejsCreateStringAndFree(ejs, result);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, result);
 }
 
 
@@ -331,7 +331,7 @@ static EjsObj *toFixed(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
     result = mprDtoa(np, np->value, ndigits, MPR_DTOA_N_FRACTION_DIGITS, MPR_DTOA_FIXED_FORM);
-    return (EjsObj*) ejsCreateStringAndFree(ejs, result);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, result);
 }
 
 
@@ -346,7 +346,7 @@ static EjsObj *toPrecision(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
     result = mprDtoa(np, np->value, ndigits, MPR_DTOA_N_DIGITS, 0);
-    return (EjsObj*) ejsCreateStringAndFree(ejs, result);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, result);
 }
 
 
@@ -428,7 +428,8 @@ void ejsCreateNumberType(Ejs *ejs)
     EjsType     *type;
     static int  zero = 0;
 
-    type = ejs->numberType = ejsCreateNativeType(ejs, "ejs", "Number", ES_Number, sizeof(EjsNumber));
+    type = ejsCreateNativeType(ejs, N("ejs", "Number"), ES_Number, sizeof(EjsNumber), NULL, EJS_OBJ_HELPERS);
+    ejs->numberType = type;
     type->immutable = 1;
 
     type->helpers.cast = (EjsCastHelper) castNumber;
@@ -458,10 +459,10 @@ void ejsCreateNumberType(Ejs *ejs)
 
 void ejsConfigureNumberType(Ejs *ejs)
 {
-    EjsType         *type;
-    EjsObj      *prototype;
+    EjsType    *type;
+    EjsPot     *prototype;
 
-    type = ejsGetTypeByName(ejs, "ejs", "Number");
+    type = ejs->numberType;
     prototype = type->prototype;
 
     ejsBindConstructor(ejs, type, (EjsProc) numberConstructor);

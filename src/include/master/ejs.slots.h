@@ -272,6 +272,11 @@
 #define ES_App_waitForEvent_obj                                        0
 #define ES_App_waitForEvent_events                                     1
 #define ES_App_waitForEvent_timeout                                    2
+
+
+/*
+    Class property slots for the "Array" type 
+ */
 #define ES_Array_NUM_CLASS_PROP                                        0
 
 /*
@@ -356,6 +361,11 @@
 #define ES_BinaryStream_writeLong                                      26
 #define ES_BinaryStream_NUM_INSTANCE_PROP                              27
 #define ES_BinaryStream_NUM_INHERITED_PROP                             0
+
+
+/*
+    Class property slots for the "Block" type 
+ */
 #define ES_Block_NUM_CLASS_PROP                                        0
 
 /*
@@ -363,6 +373,11 @@
  */
 #define ES_Block_NUM_INSTANCE_PROP                                     0
 #define ES_Block_NUM_INHERITED_PROP                                    0
+
+
+/*
+    Class property slots for the "Boolean" type 
+ */
 #define ES_Boolean_NUM_CLASS_PROP                                      0
 
 /*
@@ -448,6 +463,11 @@
 #define ES_Cmd_run_data                                                1
 #define ES_Cmd_daemon_cmdline                                          0
 #define ES_Cmd_runx_cmdline                                            0
+
+
+/*
+    Class property slots for the "CmdArgs" type 
+ */
 #define ES_CmdArgs_NUM_CLASS_PROP                                      0
 
 /*
@@ -578,6 +598,11 @@
 #define ES_Date_UTC_minutes                                            4
 #define ES_Date_UTC_seconds                                            5
 #define ES_Date_UTC_milliseconds                                       6
+
+
+/*
+    Class property slots for the "Emitter" type 
+ */
 #define ES_Emitter_NUM_CLASS_PROP                                      0
 
 /*
@@ -596,6 +621,11 @@
 #define ES_Emitter_off                                                 10
 #define ES_Emitter_NUM_INSTANCE_PROP                                   11
 #define ES_Emitter_NUM_INHERITED_PROP                                  0
+
+
+/*
+    Class property slots for the "Endpoint" type 
+ */
 #define ES_Endpoint_NUM_CLASS_PROP                                     0
 
 /*
@@ -633,6 +663,11 @@
     Local slots for methods in type "Error" 
  */
 #define ES_Error_capture_uplevels                                      0
+
+
+/*
+    Class property slots for the "ArgError" type 
+ */
 #define ES_ArgError_NUM_CLASS_PROP                                     0
 
 /*
@@ -648,6 +683,11 @@
 #define ES_ArgError_formatStack                                        7
 #define ES_ArgError_NUM_INSTANCE_PROP                                  8
 #define ES_ArgError_NUM_INHERITED_PROP                                 8
+
+
+/*
+    Class property slots for the "ArithmeticError" type 
+ */
 #define ES_ArithmeticError_NUM_CLASS_PROP                              0
 
 /*
@@ -663,6 +703,11 @@
 #define ES_ArithmeticError_formatStack                                 7
 #define ES_ArithmeticError_NUM_INSTANCE_PROP                           8
 #define ES_ArithmeticError_NUM_INHERITED_PROP                          8
+
+
+/*
+    Class property slots for the "AssertError" type 
+ */
 #define ES_AssertError_NUM_CLASS_PROP                                  0
 
 /*
@@ -678,6 +723,11 @@
 #define ES_AssertError_formatStack                                     7
 #define ES_AssertError_NUM_INSTANCE_PROP                               8
 #define ES_AssertError_NUM_INHERITED_PROP                              8
+
+
+/*
+    Class property slots for the "InstructionError" type 
+ */
 #define ES_InstructionError_NUM_CLASS_PROP                             0
 
 /*
@@ -693,6 +743,11 @@
 #define ES_InstructionError_formatStack                                7
 #define ES_InstructionError_NUM_INSTANCE_PROP                          8
 #define ES_InstructionError_NUM_INHERITED_PROP                         8
+
+
+/*
+    Class property slots for the "IOError" type 
+ */
 #define ES_IOError_NUM_CLASS_PROP                                      0
 
 /*
@@ -708,6 +763,11 @@
 #define ES_IOError_formatStack                                         7
 #define ES_IOError_NUM_INSTANCE_PROP                                   8
 #define ES_IOError_NUM_INHERITED_PROP                                  8
+
+
+/*
+    Class property slots for the "InternalError" type 
+ */
 #define ES_InternalError_NUM_CLASS_PROP                                0
 
 /*
@@ -723,6 +783,11 @@
 #define ES_InternalError_formatStack                                   7
 #define ES_InternalError_NUM_INSTANCE_PROP                             8
 #define ES_InternalError_NUM_INHERITED_PROP                            8
+
+
+/*
+    Class property slots for the "MemoryError" type 
+ */
 #define ES_MemoryError_NUM_CLASS_PROP                                  0
 
 /*
@@ -738,6 +803,11 @@
 #define ES_MemoryError_formatStack                                     7
 #define ES_MemoryError_NUM_INSTANCE_PROP                               8
 #define ES_MemoryError_NUM_INHERITED_PROP                              8
+
+
+/*
+    Class property slots for the "OutOfBoundsError" type 
+ */
 #define ES_OutOfBoundsError_NUM_CLASS_PROP                             0
 
 /*
@@ -753,6 +823,11 @@
 #define ES_OutOfBoundsError_formatStack                                7
 #define ES_OutOfBoundsError_NUM_INSTANCE_PROP                          8
 #define ES_OutOfBoundsError_NUM_INHERITED_PROP                         8
+
+
+/*
+    Class property slots for the "ReferenceError" type 
+ */
 #define ES_ReferenceError_NUM_CLASS_PROP                               0
 
 /*
@@ -768,6 +843,11 @@
 #define ES_ReferenceError_formatStack                                  7
 #define ES_ReferenceError_NUM_INSTANCE_PROP                            8
 #define ES_ReferenceError_NUM_INHERITED_PROP                           8
+
+
+/*
+    Class property slots for the "ResourceError" type 
+ */
 #define ES_ResourceError_NUM_CLASS_PROP                                0
 
 /*
@@ -783,6 +863,11 @@
 #define ES_ResourceError_formatStack                                   7
 #define ES_ResourceError_NUM_INSTANCE_PROP                             8
 #define ES_ResourceError_NUM_INHERITED_PROP                            8
+
+
+/*
+    Class property slots for the "SecurityError" type 
+ */
 #define ES_SecurityError_NUM_CLASS_PROP                                0
 
 /*
@@ -798,6 +883,11 @@
 #define ES_SecurityError_formatStack                                   7
 #define ES_SecurityError_NUM_INSTANCE_PROP                             8
 #define ES_SecurityError_NUM_INHERITED_PROP                            8
+
+
+/*
+    Class property slots for the "StateError" type 
+ */
 #define ES_StateError_NUM_CLASS_PROP                                   0
 
 /*
@@ -813,6 +903,11 @@
 #define ES_StateError_formatStack                                      7
 #define ES_StateError_NUM_INSTANCE_PROP                                8
 #define ES_StateError_NUM_INHERITED_PROP                               8
+
+
+/*
+    Class property slots for the "SyntaxError" type 
+ */
 #define ES_SyntaxError_NUM_CLASS_PROP                                  0
 
 /*
@@ -828,6 +923,11 @@
 #define ES_SyntaxError_formatStack                                     7
 #define ES_SyntaxError_NUM_INSTANCE_PROP                               8
 #define ES_SyntaxError_NUM_INHERITED_PROP                              8
+
+
+/*
+    Class property slots for the "TypeError" type 
+ */
 #define ES_TypeError_NUM_CLASS_PROP                                    0
 
 /*
@@ -843,6 +943,11 @@
 #define ES_TypeError_formatStack                                       7
 #define ES_TypeError_NUM_INSTANCE_PROP                                 8
 #define ES_TypeError_NUM_INHERITED_PROP                                8
+
+
+/*
+    Class property slots for the "URIError" type 
+ */
 #define ES_URIError_NUM_CLASS_PROP                                     0
 
 /*
@@ -858,6 +963,11 @@
 #define ES_URIError_formatStack                                        7
 #define ES_URIError_NUM_INSTANCE_PROP                                  8
 #define ES_URIError_NUM_INHERITED_PROP                                 8
+
+
+/*
+    Class property slots for the "File" type 
+ */
 #define ES_File_NUM_CLASS_PROP                                         0
 
 /*
@@ -887,6 +997,11 @@
 #define ES_File_write                                                  21
 #define ES_File_NUM_INSTANCE_PROP                                      22
 #define ES_File_NUM_INHERITED_PROP                                     0
+
+
+/*
+    Class property slots for the "FileSystem" type 
+ */
 #define ES_FileSystem_NUM_CLASS_PROP                                   0
 
 /*
@@ -898,6 +1013,11 @@
 #define ES_FileSystem_separators                                       3
 #define ES_FileSystem_NUM_INSTANCE_PROP                                4
 #define ES_FileSystem_NUM_INHERITED_PROP                               0
+
+
+/*
+    Class property slots for the "Frame" type 
+ */
 #define ES_Frame_NUM_CLASS_PROP                                        0
 
 /*
@@ -905,6 +1025,11 @@
  */
 #define ES_Frame_NUM_INSTANCE_PROP                                     0
 #define ES_Frame_NUM_INHERITED_PROP                                    0
+
+
+/*
+    Class property slots for the "Function" type 
+ */
 #define ES_Function_NUM_CLASS_PROP                                     0
 
 /*
@@ -925,7 +1050,7 @@
     Class property slots for the "GC" type 
  */
 #define ES_GC_enabled                                                  0
-#define ES_GC_workQuota                                                1
+#define ES_GC_newQuota                                                 1
 #define ES_GC_run                                                      2
 #define ES_GC_NUM_CLASS_PROP                                           3
 
@@ -1079,6 +1204,11 @@
 #define ES_Inflector_toOrdinal_number                                  0
 #define ES_Inflector_toPlural_word                                     0
 #define ES_Inflector_toSingular_word                                   0
+
+
+/*
+    Class property slots for the "Iterable" type 
+ */
 #define ES_iterator_Iterable_NUM_CLASS_PROP                            0
 
 /*
@@ -1088,6 +1218,11 @@
 #define ES_iterator_Iterable_iterator_getValues                        1
 #define ES_iterator_Iterable_NUM_INSTANCE_PROP                         2
 #define ES_iterator_Iterable_NUM_INHERITED_PROP                        0
+
+
+/*
+    Class property slots for the "Iterator" type 
+ */
 #define ES_iterator_Iterator_NUM_CLASS_PROP                            0
 
 /*
@@ -1096,6 +1231,11 @@
 #define ES_iterator_Iterator_next                                      0
 #define ES_iterator_Iterator_NUM_INSTANCE_PROP                         1
 #define ES_iterator_Iterator_NUM_INHERITED_PROP                        0
+
+
+/*
+    Class property slots for the "StopIteration" type 
+ */
 #define ES_iterator_StopIteration_NUM_CLASS_PROP                       0
 
 /*
@@ -1313,6 +1453,11 @@
  */
 #define ES_Memory_NUM_INSTANCE_PROP                                    0
 #define ES_Memory_NUM_INHERITED_PROP                                   0
+
+
+/*
+    Class property slots for the "Namespace" type 
+ */
 #define ES_Namespace_NUM_CLASS_PROP                                    0
 
 /*
@@ -1320,6 +1465,11 @@
  */
 #define ES_Namespace_NUM_INSTANCE_PROP                                 0
 #define ES_Namespace_NUM_INHERITED_PROP                                0
+
+
+/*
+    Class property slots for the "Null" type 
+ */
 #define ES_Null_NUM_CLASS_PROP                                         0
 
 /*
@@ -1441,6 +1591,11 @@
 #define ES_Object_getTypeName_obj                                      0
 #define ES_Object_isPrototype_obj                                      0
 #define ES_Object_isType_obj                                           0
+
+
+/*
+    Class property slots for the "Path" type 
+ */
 #define ES_Path_NUM_CLASS_PROP                                         0
 
 /*
@@ -1512,6 +1667,11 @@
 #define ES_Path_makeTemp                                               63
 #define ES_Path_NUM_INSTANCE_PROP                                      64
 #define ES_Path_NUM_INHERITED_PROP                                     0
+
+
+/*
+    Class property slots for the "Promise" type 
+ */
 #define ES_Promise_NUM_CLASS_PROP                                      0
 
 /*
@@ -1545,6 +1705,11 @@
 #define ES_Promise_issue                                               25
 #define ES_Promise_NUM_INSTANCE_PROP                                   26
 #define ES_Promise_NUM_INHERITED_PROP                                  11
+
+
+/*
+    Class property slots for the "RegExp" type 
+ */
 #define ES_RegExp_NUM_CLASS_PROP                                       0
 
 /*
@@ -1565,6 +1730,11 @@
 #define ES_RegExp_toString                                             12
 #define ES_RegExp_NUM_INSTANCE_PROP                                    13
 #define ES_RegExp_NUM_INHERITED_PROP                                   0
+
+
+/*
+    Class property slots for the "Socket" type 
+ */
 #define ES_Socket_NUM_CLASS_PROP                                       0
 
 /*
@@ -1704,6 +1874,11 @@
 #define ES_System_sh_args                                              0
 #define ES_System_cmd_args                                             0
 #define ES_System_exec_args                                            0
+
+
+/*
+    Class property slots for the "TextStream" type 
+ */
 #define ES_TextStream_NUM_CLASS_PROP                                   0
 
 /*
@@ -1729,6 +1904,11 @@
 #define ES_TextStream_writeLine                                        17
 #define ES_TextStream_NUM_INSTANCE_PROP                                18
 #define ES_TextStream_NUM_INHERITED_PROP                               0
+
+
+/*
+    Class property slots for the "Timer" type 
+ */
 #define ES_Timer_NUM_CLASS_PROP                                        0
 
 /*
@@ -1742,6 +1922,11 @@
 #define ES_Timer_stop                                                  5
 #define ES_Timer_NUM_INSTANCE_PROP                                     6
 #define ES_Timer_NUM_INHERITED_PROP                                    0
+
+
+/*
+    Class property slots for the "Type" type 
+ */
 #define ES_Type_NUM_CLASS_PROP                                         0
 
 /*
@@ -1817,6 +2002,11 @@
 #define ES_Uri_encodeComponent_str                                     0
 #define ES_Uri_template_pattern                                        0
 #define ES_Uri_template_options                                        1
+
+
+/*
+    Class property slots for the "Void" type 
+ */
 #define ES_Void_NUM_CLASS_PROP                                         0
 
 /*
@@ -1859,6 +2049,11 @@
 #define ES_Worker_join_workers                                         0
 #define ES_Worker_join_timeout                                         1
 #define ES_Worker_lookup_name                                          0
+
+
+/*
+    Class property slots for the "Event" type 
+ */
 #define ES_Event_NUM_CLASS_PROP                                        0
 
 /*
@@ -1874,6 +2069,11 @@
 #define ES_Event_formatStack                                           7
 #define ES_Event_NUM_INSTANCE_PROP                                     8
 #define ES_Event_NUM_INHERITED_PROP                                    8
+
+
+/*
+    Class property slots for the "ErrorEvent" type 
+ */
 #define ES_ErrorEvent_NUM_CLASS_PROP                                   0
 
 /*
@@ -1889,6 +2089,11 @@
 #define ES_ErrorEvent_formatStack                                      7
 #define ES_ErrorEvent_NUM_INSTANCE_PROP                                8
 #define ES_ErrorEvent_NUM_INHERITED_PROP                               8
+
+
+/*
+    Class property slots for the "XML" type 
+ */
 #define ES_XML_NUM_CLASS_PROP                                          0
 
 /*
@@ -1955,6 +2160,11 @@
 #define ES_XMLHttp_notify                                              17
 #define ES_XMLHttp_NUM_INSTANCE_PROP                                   18
 #define ES_XMLHttp_NUM_INHERITED_PROP                                  0
+
+
+/*
+    Class property slots for the "XMLList" type 
+ */
 #define ES_XMLList_NUM_CLASS_PROP                                      0
 
 /*
@@ -1983,6 +2193,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1326201
+#define _ES_CHECKSUM_ejs   1324044
 
 #endif
