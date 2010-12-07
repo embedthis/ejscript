@@ -52,7 +52,7 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
 
     va_start(args, kind);
     mp = ejs->userData;
-    lst = mprAlloc(mp, sizeof(Lst));
+    lst = mprAlloc(sizeof(Lst));
 
     /*
         Decode the record type and create a list for later processing. We need to process
@@ -220,13 +220,13 @@ static int lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr)
 
     mprAssert(mp);
 
-    name = mprGetPathBase(mp, moduleFilename);
+    name = mprGetPathBase(moduleFilename);
     if ((ext = strstr(name, EJS_MODULE_EXT)) != 0) {
         *ext = '\0';
     }
-    path = sjoin(mp, NULL, name, EJS_LISTING_EXT, NULL);
-    if ((mp->file = mprOpen(mp, path,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
-        mprError(mp, "Can't create %s", path);
+    path = sjoin(name, EJS_LISTING_EXT, NULL);
+    if ((mp->file = mprOpen(path,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
+        mprError("Can't create %s", path);
         mprFree(path);
         return EJS_ERR;
     }
@@ -619,7 +619,7 @@ static int decodeOperands(EjsMod *mp, EjsOptable *opt, char *argbuf, int argbufL
             break;
 
         default:
-            mprError(mp, "Bad arg type in opcode table");
+            mprError("Bad arg type in opcode table");
             break;
         }
         len = (int) strlen(bufp);
@@ -686,7 +686,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
         stackEffect = 0;
 
         if (opcode < 0 || opcode >= maxOp) {
-            mprError(mp, "Bad opcode %x at address %d.\n", opcode, address);
+            mprError("Bad opcode %x at address %d.\n", opcode, address);
             return;
         }
         opt = &optable[opcode];
@@ -733,7 +733,7 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
 
         if (stack < 0) {
             if (mp->warnOnError) {
-                mprPrintfError(mp, "Instruction stack is negative %d\n", stack);
+                mprPrintfError("Instruction stack is negative %d\n", stack);
             }
             if (mp->exitOnError) {
                 exit(255);

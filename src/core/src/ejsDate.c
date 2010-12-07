@@ -47,8 +47,8 @@ static EjsObj *castDate(Ejs *ejs, EjsDate *dp, EjsType *type)
         /*
             Format:  Tue Jul 15 2010 10:53:23 GMT-0700 (PDT)
          */
-        mprDecodeLocalTime(ejs, &tm, dp->value);
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime(ejs, "%a %b %d %Y %T GMT%z (%Z)", &tm));
+        mprDecodeLocalTime(&tm, dp->value);
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime("%a %b %d %Y %T GMT%z (%Z)", &tm));
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -278,7 +278,7 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
             date->value = ejsGetNumber(ejs, vp);
 
         } else if (ejsIsString(ejs, vp)) {
-            if (mprParseTime(ejs, &date->value, ejsToMulti(ejs, vp), MPR_LOCAL_TIMEZONE, NULL) < 0) {
+            if (mprParseTime(&date->value, ejsToMulti(ejs, vp), MPR_LOCAL_TIMEZONE, NULL) < 0) {
                 ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, vp));
                 return 0;
             }
@@ -322,7 +322,7 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
             vp = ejsGetProperty(ejs, (EjsObj*) args, 5);
             tm.tm_sec = getNumber(ejs, vp);
         }
-        date->value = mprMakeTime(ejs, &tm);
+        date->value = mprMakeTime(&tm);
         if (date->value == -1) {
             ejsThrowArgError(ejs, "Can't construct date from this argument");
         } else if (args->length > 6) {
@@ -342,7 +342,7 @@ static EjsObj *date_day(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_wday);
 }
 
@@ -357,7 +357,7 @@ static EjsObj *date_set_day(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     MprTime     dayDiff, day;
 
     day = ejsGetNumber(ejs, argv[0]);
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     dayDiff = day - tm.tm_wday;
     dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
     return 0;
@@ -372,7 +372,7 @@ static EjsObj *date_dayOfYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_yday);
 }
 
@@ -387,7 +387,7 @@ static EjsObj *date_set_dayOfYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
     MprTime     dayDiff, day;
 
     day = ejsGetNumber(ejs, argv[0]);
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     dayDiff = day - tm.tm_yday;
     dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
     return 0;
@@ -402,7 +402,7 @@ static EjsObj *date_date(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_mday);
 }
 
@@ -417,7 +417,7 @@ static EjsObj *date_set_date(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     MprTime     dayDiff, day;
 
     day = ejsGetNumber(ejs, argv[0]);
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     dayDiff = day - tm.tm_mday;
     dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
     return 0;
@@ -430,7 +430,7 @@ static EjsObj *date_set_date(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
  */
 static EjsObj *date_elapsed(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetElapsedTime(ejs, dp->value));
+    return (EjsObj*) ejsCreateNumber(ejs, mprGetElapsedTime(dp->value));
 }
 
 
@@ -441,8 +441,8 @@ static EjsObj *date_format(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime(ejs, ejsToMulti(ejs, argv[0]), &tm));
+    mprDecodeLocalTime(&tm, dp->value);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime(ejsToMulti(ejs, argv[0]), &tm));
 }
 
 
@@ -453,8 +453,8 @@ static EjsObj *date_formatUTC(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime(ejs, ejsToMulti(ejs, argv[0]), &tm));
+    mprDecodeUniversalTime(&tm, dp->value);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprFormatTime(ejsToMulti(ejs, argv[0]), &tm));
 }
 
 
@@ -466,7 +466,7 @@ static EjsObj *date_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_year + 1900);
 }
 
@@ -479,9 +479,9 @@ static EjsObj *date_set_fullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     tm.tm_year = ejsGetNumber(ejs, argv[0]) - 1900;
-    dp->value = mprMakeTime(ejs, &tm);
+    dp->value = mprMakeTime(&tm);
     return 0;
 }
 
@@ -508,7 +508,7 @@ static EjsObj *date_future(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 */
 static EjsObj *date_getTimezoneOffset(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, -mprGetTimeZoneOffset(ejs, dp->value) / (MPR_TICKS_PER_SEC * 60));
+    return (EjsObj*) ejsCreateNumber(ejs, -mprGetTimeZoneOffset(dp->value) / (MPR_TICKS_PER_SEC * 60));
 }
 
 
@@ -520,7 +520,7 @@ static EjsObj *date_getUTCDate(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_mday);
 }
 
@@ -533,7 +533,7 @@ static EjsObj *date_getUTCDay(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_wday);
 }
 
@@ -546,7 +546,7 @@ static EjsObj *date_getUTCFullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_year + 1900);
 }
 
@@ -559,7 +559,7 @@ static EjsObj *date_getUTCHours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_hour);
 }
 
@@ -582,7 +582,7 @@ static EjsObj *date_getUTCMinutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_min);
 }
 
@@ -595,7 +595,7 @@ static EjsObj *date_getUTCMonth(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_mon);
 }
 
@@ -608,7 +608,7 @@ static EjsObj *date_getUTCSeconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_sec);
 }
 
@@ -621,7 +621,7 @@ static EjsObj *date_hours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_hour);
 }
 
@@ -634,9 +634,9 @@ static EjsObj *date_set_hours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     tm.tm_hour = ejsGetNumber(ejs, argv[0]);
-    dp->value = mprMakeTime(ejs, &tm);
+    dp->value = mprMakeTime(&tm);
     return 0;
 }
 
@@ -667,7 +667,7 @@ static EjsObj *date_minutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_min);
 }
 
@@ -679,9 +679,9 @@ static EjsObj *date_set_minutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     tm.tm_min = ejsGetNumber(ejs, argv[0]);
-    dp->value = mprMakeTime(ejs, &tm);
+    dp->value = mprMakeTime(&tm);
     return 0;
 }
 
@@ -694,7 +694,7 @@ static EjsObj *date_month(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_mon);
 }
 
@@ -706,9 +706,9 @@ static EjsObj *date_set_month(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     tm.tm_mon = ejsGetNumber(ejs, argv[0]);
-    dp->value = mprMakeTime(ejs, &tm);
+    dp->value = mprMakeTime(&tm);
     return 0;
 }
 
@@ -745,7 +745,7 @@ static EjsObj *date_parse(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
     MprTime     when;
 
-    if (mprParseTime(ejs, &when, ejsToMulti(ejs, argv[0]), MPR_LOCAL_TIMEZONE, NULL) < 0) {
+    if (mprParseTime(&when, ejsToMulti(ejs, argv[0]), MPR_LOCAL_TIMEZONE, NULL) < 0) {
         ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
@@ -762,12 +762,12 @@ static EjsObj *date_parseDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv
     MprTime     when;
 
     if (argc >= 2) {
-        mprDecodeLocalTime(ejs, &tm, ((EjsDate*) argv[1])->value);
+        mprDecodeLocalTime(&tm, ((EjsDate*) argv[1])->value);
         defaults = &tm;
     } else {
         defaults = 0;
     }
-    if (mprParseTime(ejs, &when, ejsToMulti(ejs, argv[0]), MPR_LOCAL_TIMEZONE, defaults) < 0) {
+    if (mprParseTime(&when, ejsToMulti(ejs, argv[0]), MPR_LOCAL_TIMEZONE, defaults) < 0) {
         ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
@@ -784,12 +784,12 @@ static EjsObj *date_parseUTCDate(Ejs *ejs, EjsDate *unused, int argc, EjsObj **a
     MprTime     when;
 
     if (argc >= 2) {
-        mprDecodeUniversalTime(ejs, &tm, ((EjsDate*) argv[1])->value);
+        mprDecodeUniversalTime(&tm, ((EjsDate*) argv[1])->value);
         defaults = &tm;
     } else {
         defaults = 0;
     }
-    if (mprParseTime(ejs, &when, ejsToMulti(ejs, argv[0]), MPR_UTC_TIMEZONE, defaults) < 0) {
+    if (mprParseTime(&when, ejsToMulti(ejs, argv[0]), MPR_UTC_TIMEZONE, defaults) < 0) {
         ejsThrowArgError(ejs, "Can't parse date string: %@", ejsToString(ejs, argv[0]));
         return 0;
     }
@@ -805,7 +805,7 @@ static EjsObj *date_seconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_sec);
 }
 
@@ -817,9 +817,9 @@ static EjsObj *date_set_seconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     tm.tm_sec = ejsGetNumber(ejs, argv[0]);
-    dp->value = mprMakeTime(ejs, &tm);
+    dp->value = mprMakeTime(&tm);
     return 0;
 }
 
@@ -834,7 +834,7 @@ static EjsObj *date_setUTCDate(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     MprTime     dayDiff, day;
 
     day = ejsGetNumber(ejs, argv[0]);
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     dayDiff = day - tm.tm_mday;
     dp->value += dayDiff * 86400 * MPR_TICKS_PER_SEC;
     return 0;
@@ -848,9 +848,9 @@ static EjsObj *date_setUTCFullYear(Ejs *ejs, EjsDate *dp, int argc, EjsObj **arg
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     tm.tm_year = ejsGetNumber(ejs, argv[0]) - 1900;
-    dp->value = mprMakeUniversalTime(ejs, &tm);
+    dp->value = mprMakeUniversalTime(&tm);
     return 0;
 }
 
@@ -862,9 +862,9 @@ static EjsObj *date_setUTCHours(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     tm.tm_hour = ejsGetNumber(ejs, argv[0]);
-    dp->value = mprMakeUniversalTime(ejs, &tm);
+    dp->value = mprMakeUniversalTime(&tm);
     return 0;
 }
 
@@ -887,9 +887,9 @@ static EjsObj *date_setUTCMinutes(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     tm.tm_min = ejsGetNumber(ejs, argv[0]);
-    dp->value = mprMakeUniversalTime(ejs, &tm);
+    dp->value = mprMakeUniversalTime(&tm);
     return 0;
 }
 
@@ -901,9 +901,9 @@ static EjsObj *date_setUTCMonth(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     tm.tm_mon = ejsGetNumber(ejs, argv[0]);
-    dp->value = mprMakeUniversalTime(ejs, &tm);
+    dp->value = mprMakeUniversalTime(&tm);
     return 0;
 }
 
@@ -915,9 +915,9 @@ static EjsObj *date_setUTCSeconds(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv
 {
     struct tm   tm;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
+    mprDecodeUniversalTime(&tm, dp->value);
     tm.tm_sec = ejsGetNumber(ejs, argv[0]);
-    dp->value = mprMakeUniversalTime(ejs, &tm);
+    dp->value = mprMakeUniversalTime(&tm);
     if (argc >= 2) {
         dp->value = (dp->value / MPR_TICKS_PER_SEC  * MPR_TICKS_PER_SEC) + ejsGetNumber(ejs, argv[1]);
     }
@@ -956,9 +956,9 @@ static EjsObj *date_toISOString(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
     char        *base, *str;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
-    base = mprFormatTime(ejs, "%Y-%m-%dT%H:%M:%S", &tm);
-    str = mprAsprintf(ejs, "%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
+    mprDecodeUniversalTime(&tm, dp->value);
+    base = mprFormatTime("%Y-%m-%dT%H:%M:%S", &tm);
+    str = mprAsprintf("%s.%03dZ", base, dp->value % MPR_TICKS_PER_SEC);
     vp = (EjsObj*) ejsCreateStringFromAsc(ejs, str);
     mprFree(base);
     return vp;
@@ -975,9 +975,9 @@ static EjsObj *date_toJSON(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
     struct tm   tm;
     char        *base, *str;
 
-    mprDecodeUniversalTime(ejs, &tm, dp->value);
-    base = mprFormatTime(ejs, "%Y-%m-%dT%H:%M:%S", &tm);
-    str = mprAsprintf(ejs, "\"%sZ\"", base);
+    mprDecodeUniversalTime(&tm, dp->value);
+    base = mprFormatTime("%Y-%m-%dT%H:%M:%S", &tm);
+    str = mprAsprintf("\"%sZ\"", base);
     mprFree(base);
     return (EjsObj*) ejsCreateStringFromAsc(ejs, str);
 }
@@ -1023,7 +1023,7 @@ static EjsObj *date_UTC(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
     if (argc > 5) {
         tm.tm_sec = getNumber(ejs, argv[5]);
     }
-    dp = ejsCreateDate(ejs, mprMakeUniversalTime(ejs, &tm));
+    dp = ejsCreateDate(ejs, mprMakeUniversalTime(&tm));
     if (argc > 6) {
         dp->value += getNumber(ejs, argv[6]);
     }
@@ -1038,7 +1038,7 @@ static EjsObj *date_year(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     return (EjsObj*) ejsCreateNumber(ejs, tm.tm_year + 1900);
 }
 
@@ -1050,9 +1050,9 @@ static EjsObj *date_set_year(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
 {
     struct tm   tm;
 
-    mprDecodeLocalTime(ejs, &tm, dp->value);
+    mprDecodeLocalTime(&tm, dp->value);
     tm.tm_year = ejsGetNumber(ejs, argv[0]) - 1900;
-    dp->value = mprMakeTime(ejs, &tm);
+    dp->value = mprMakeTime(&tm);
     return 0;
 }
 

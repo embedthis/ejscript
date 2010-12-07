@@ -50,7 +50,7 @@ static void defineParam(Ejs *ejs, EjsObj *params, cchar *key, cchar *svalue)
         ejsSetPropertyByName(ejs, params, qname, value);
 
     } else {
-        subkey = sclone(ejs, key);
+        subkey = sclone(key);
         for (end = strchr(subkey, '.'); end; subkey = end, end = strchr(subkey, '.')) {
             *end++ = '\0';
             qname = ejsName(ejs, "", subkey);
@@ -163,7 +163,7 @@ static EjsObj *createHeaders(Ejs *ejs, EjsRequest *req)
         for (hp = 0; conn && (hp = mprGetNextHash(conn->rx->headers, hp)) != 0; ) {
             n = EN(hp->key);
             if ((old = ejsGetPropertyByName(ejs, req->headers, n)) != 0) {
-                value = ejsCreateStringFromAsc(ejs, sjoin(req, NULL, ejsToMulti(ejs, old), "; ", hp->data, NULL));
+                value = ejsCreateStringFromAsc(ejs, sjoin(ejsToMulti(ejs, old), "; ", hp->data, NULL));
             } else {
                 value = ejsCreateStringFromAsc(ejs, hp->data);
             }
@@ -199,7 +199,7 @@ static int fillResponseHeaders(EjsRequest *req)
             vp = ejsGetProperty(ejs, req->responseHeaders, i);
             if (n.name && vp && req->conn) {
                 if (vp != ejs->nullValue && vp != ejs->undefinedValue) {
-                    value = sclone(req->conn, ejsToMulti(ejs, vp));
+                    value = ejsToMulti(ejs, vp);
                     httpSetSimpleHeader(req->conn, ejsToMulti(ejs, n.name), value);
                 }
             }
@@ -336,7 +336,7 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
     int         levels;
 
     if (req->conn == NULL) {
-        return sclone(req, "/");
+        return sclone("/");
     }
     rx = req->conn->rx;
     mprAssert(rx->pathInfo);
@@ -348,7 +348,7 @@ static char *makeRelativeHome(Ejs *ejs, EjsRequest *req)
             levels++;
         }
     }
-    home = mprAlloc(req, levels * 3 + 2);
+    home = mprAlloc(levels * 3 + 2);
     if (levels) {
         for (cp = home; levels > 0; levels--) {
             strcpy(cp, "../");
@@ -382,7 +382,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                 scheme = conn->secure ? "https" : "http";
                 ip = conn->sock ? conn->sock->acceptIp : req->server->ip;
                 port = conn->sock ? conn->sock->acceptPort : req->server->port;
-                uri = mprAsprintf(req, "%s://%s:%d%s/", scheme, conn->sock->ip, req->server->port, conn->rx->scriptName);
+                uri = mprAsprintf("%s://%s:%d%s/", scheme, conn->sock->ip, req->server->port, conn->rx->scriptName);
                 req->absHome = (EjsObj*) ejsCreateUriFromMulti(ejs, uri);
             } else {
                 req->absHome = ejs->nullValue;
@@ -437,7 +437,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->filename == 0) {
             pathInfo = ejsToMulti(ejs, req->pathInfo);
             if (req->dir) {
-                filename = mprJoinPath(ejs, req->dir->value, &pathInfo[1]);
+                filename = mprJoinPath(req->dir->value, &pathInfo[1]);
                 req->filename = ejsCreatePathFromAsc(ejs, filename);
             } else {
                 req->filename = ejsCreatePathFromAsc(ejs, pathInfo);
@@ -530,7 +530,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return req->reference;
 
     case ES_ejs_web_Request_referrer:
-        return createString(ejs, conn ? conn->rx->referer: NULL);
+        return createString(ejs, conn ? conn->rx->referrer: NULL);
 
     case ES_ejs_web_Request_remoteAddress:
         return createString(ejs, conn ? conn->ip : NULL);
@@ -579,7 +579,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         if (req->uri == 0) {
             scriptName = getDefaultString(ejs, req->scriptName, "");
             if (conn) {
-                path = sjoin(req, NULL, scriptName, getDefaultString(ejs, req->pathInfo, conn->rx->uri), NULL);
+                path = sjoin(scriptName, getDefaultString(ejs, req->pathInfo, conn->rx->uri), NULL);
                 scheme = (conn->secure) ? "https" : "http";
                 req->uri = (EjsObj*) ejsCreateUriFromParts(ejs, 
                     getDefaultString(ejs, req->scheme, scheme),
@@ -589,7 +589,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                     getDefaultString(ejs, req->query, conn->rx->parsedUri->query),
                     getDefaultString(ejs, req->reference, conn->rx->parsedUri->reference), 0);
             } else {
-                path = sjoin(req, NULL, scriptName, getDefaultString(ejs, req->pathInfo, NULL), NULL);
+                path = sjoin(scriptName, getDefaultString(ejs, req->pathInfo, NULL), NULL);
                 req->uri = (EjsObj*) ejsCreateUriFromParts(ejs, 
                     getDefaultString(ejs, req->scheme, NULL),
                     getDefaultString(ejs, req->host, NULL),
@@ -814,7 +814,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         if (req->originalMethod == 0) {
             req->originalMethod = (EjsObj*) ejsCreateStringFromAsc(ejs, req->conn->rx->method);
         }
-        req->conn->rx->method = sclone(req, getString(ejs, value));
+        req->conn->rx->method = sclone(getString(ejs, value));
         break;
 
     case ES_ejs_web_Request_status:
@@ -1098,7 +1098,7 @@ static EjsObj *req_setLimits(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_trace(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    ejsSetupTrace(ejs, req->conn, req->conn->trace, argv[0]);
+    ejsSetupTrace(ejs, req->conn->trace, argv[0]);
     return 0;
 }
 
@@ -1197,13 +1197,13 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         return ejs->falseValue;
     }
     path = (EjsPath*) argv[0];
-    if (mprGetPathInfo(ejs, path->value, &info) < 0) {
+    if (mprGetPathInfo(path->value, &info) < 0) {
         ejsThrowIOError(ejs, "Cannot open %s", path->value);
         return ejs->falseValue;
     }
     httpSetSendConnector(req->conn, path->value);
 
-    packet = httpCreateDataPacket(conn->writeq, 0);
+    packet = httpCreateDataPacket(0);
     packet->entityLength = (int) info.size;
     trans->length = trans->entityLength = (int) info.size;
     httpPutForService(conn->writeq, packet, 0);
@@ -1238,8 +1238,8 @@ EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
     newReq->dir = ejsCreatePath(ejs, req->dir->path);
 
     //  MOB -- should these two be EjsPath
-    newReq->home = sclone(newReq, req->home);
-    newReq->absHome = sclone(newReq, req->absHome);
+    newReq->home = sclone(req->home);
+    newReq->absHome = sclone(req->absHome);
 
     //  MOB -- problematic. This is a cross-interp link
     newReq->server = req->server;
@@ -1267,10 +1267,10 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     req->ejs = ejs;
     req->server = server;
     rx = conn->rx;
-    if (mprIsRelPath(req, dir)) {
+    if (mprIsRelPath(dir)) {
         req->dir = ejsCreatePathFromAsc(ejs, dir);
     } else {
-        req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(req, dir));
+        req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(dir));
     }
     req->pathInfo = (EjsObj*) ejsCreateStringFromAsc(ejs, rx->pathInfo);
     req->scriptName = (EjsObj*) ejsCreateStringFromAsc(ejs, rx->scriptName);

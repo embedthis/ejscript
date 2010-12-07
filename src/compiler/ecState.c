@@ -48,7 +48,7 @@ int ecEnterState(EcCompiler *cp)
         cp->freeStates = state->next;
         state->next = NULL;
     } else {
-        if ((state = mprAllocBlock(cp, sizeof(EcState), MPR_ALLOC_MANAGER)) == 0) {
+        if ((state = mprAllocBlock(sizeof(EcState), MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
             return MPR_ERR_MEMORY;
         }
         mprSetManager(state, manageState);

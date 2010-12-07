@@ -84,7 +84,7 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
         return result;
 
     case ES_String:
-        buf = mprCreateBuf(ejs, MPR_BUFSIZE, -1);
+        buf = mprCreateBuf(MPR_BUFSIZE, -1);
         if (mprGetListCount(vp->elements) == 1) {
             elt = mprGetFirstItem(vp->elements);
             if (elt->kind == EJS_XML_ELEMENT) {
@@ -700,7 +700,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
         Quote all quotes
      */
     sp = ejsToString(ejs, vp);
-    buf = mprCreateBuf(ejs, -1, -1);
+    buf = mprCreateBuf(-1, -1);
     mprPutCharToBuf(buf, '"');
     for (cp = ejsToMulti(ejs, sp); *cp; cp++) {
         if (*cp == '"') {

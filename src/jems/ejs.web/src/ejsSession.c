@@ -146,7 +146,7 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
                 }
             }
             len = (int) (cp - value);
-            id = mprMemdup(req, value, len + 1);
+            id = mprMemdup(value, len + 1);
             id[len] = '\0';
             session = ejsGetPropertyByName(ejs, server->sessions, EN(id));
             mprFree(id);
@@ -191,13 +191,13 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
      */
     next = ejs->nextSession++;
     mprSprintf(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(session->expire), (int) now, next);
-    id = mprGetMD5Hash(session, idBuf, sizeof(idBuf), "x");
+    id = mprGetMD5Hash(idBuf, sizeof(idBuf), "x");
     if (id == 0) {
         mprFree(session);
         ejsUnlockService(ejs);
         return 0;
     }
-    session->id = sclone(session, id);
+    session->id = sclone(id);
 
     if (server->sessions == 0) {
         server->sessions = ejsCreateEmptyPot(ejs);
@@ -224,7 +224,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     }
     ejsUnlockService(ejs);
 
-    mprLog(ejs, 3, "Created new session %s. Count %d/%d", id, slotNum + 1, limits->sessionCount);
+    mprLog(3, "Created new session %s. Count %d/%d", id, slotNum + 1, limits->sessionCount);
     if (server->emitter) {
         ejsSendEvent(ejs, server->emitter, "createSession", NULL, (EjsObj*) ejsCreateStringFromAsc(ejs, id));
     }
@@ -284,7 +284,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
     if (sessions && server->server && mprTryLock(ejs->mutex)) {
         limits = server->server->limits;
         count = ejsGetPropertyCount(ejs, (EjsObj*) sessions);
-        mprLog(ejs, 6, "Check for sessions count %d/%d", count, limits->sessionCount);
+        mprLog(6, "Check for sessions count %d/%d", count, limits->sessionCount);
         now = mprGetTime(server);
 
         /*
@@ -302,7 +302,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
                     continue;
                 }
                 if ((session->expire - now) < soon) {
-                    mprLog(ejs, 3, "Too many sessions. Pruning session %s", session->id);
+                    mprLog(3, "Too many sessions. Pruning session %s", session->id);
                     ejsDeleteProperty(ejs, (EjsObj*) sessions, i);
                     count--;
                 }
@@ -313,16 +313,16 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
                 continue;
             }
             if (session->pot.type == ejs->sessionType) {
-                mprLog(ejs, 7, "Check session %s timeout %d, expires %d secs", session->id, 
+                mprLog(7, "Check session %s timeout %d, expires %d secs", session->id, 
                    session->timeout / MPR_TICKS_PER_SEC,
                    (int) (session->expire - now) / MPR_TICKS_PER_SEC);
                 if (count > limits->sessionCount) {
-                    mprLog(ejs, 3, "Too many sessions. Pruning session %s", session->id);
+                    mprLog(3, "Too many sessions. Pruning session %s", session->id);
                     ejsDeleteProperty(ejs, (EjsObj*) sessions, i);
                     count--;
                 }  
                 if (session->expire <= now) {
-                    mprLog(ejs, 3, "Session expired: %s (timeout %d secs)", 
+                    mprLog(3, "Session expired: %s (timeout %d secs)", 
                         session->id, session->timeout / MPR_TICKS_PER_SEC);
                     ejsDeleteProperty(ejs, (EjsObj*) sessions, i);
                 }

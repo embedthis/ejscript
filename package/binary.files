@@ -15,18 +15,22 @@ cpy -e -m 0755 package/uninstall.sh "${BLD_BIN_PREFIX}/uninstall"
 cpy -e -m 0755 package/linkup "${BLD_BIN_PREFIX}/linkup"
 
 cpy -m 755 -s -d ${BLD_BIN_DIR} ejs${BLD_EXE} "${BLD_BIN_PREFIX}"
-
 cpy -m 755 -s -d ${BLD_BIN_DIR} angel${BLD_EXE} "${BLD_BIN_PREFIX}"
 
-if [ "$BLD_CROSS" = 0 -o "$BLD_FEATURE_COMPLETE_CROSS" = 1 ] ; then
-    cpy -m 755 -s -d ${BLD_BIN_DIR} ejsc${BLD_EXE} ejsmod${BLD_EXE} "${BLD_BIN_PREFIX}"
-    cpy -m 755 -s -d ${BLD_BIN_DIR} ejssql${BLD_EXE} "${BLD_BIN_PREFIX}"
-#   cpy -m 755 -s -d ${BLD_BIN_DIR} ejscgi${BLD_EXE} "${BLD_BIN_PREFIX}"
+if [ -x "${BLD_BIN_DIR}/ejsc${BLD_EXE}" ] ; then
+    cpy -m 755 -s -d ${BLD_BIN_DIR} ejsc${BLD_EXE} "${BLD_BIN_PREFIX}"
+fi
+if [ -x "${BLD_BIN_DIR}/ejsc${BLD_EXE}" ] ; then
+    cpy -m 755 -s -d ${BLD_BIN_DIR} ejsmod${BLD_EXE} "${BLD_BIN_PREFIX}"
+fi
     cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_VER_PREFIX}/web"
     cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_LIB_PREFIX}/www"
     cpy -m 755 -d ${BLD_BIN_DIR} mvc ejspage jem "${BLD_BIN_PREFIX}"
     if [ $BLD_HOST_OS = WIN ] ; then
         cpy -m 755 -d ${BLD_BIN_DIR} mvc.cmd ejspage.cmd jem.cmd "${BLD_BIN_PREFIX}"
+    fi
+    if [ "$BLD_FEATURE_SQLITE" = 1 ] ; then
+        cpy -m 755 -s -d ${BLD_BIN_DIR} ejssql${BLD_EXE} "${BLD_BIN_PREFIX}"
     fi
 fi
 

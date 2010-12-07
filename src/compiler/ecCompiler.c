@@ -23,10 +23,9 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
 {
     EcCompiler      *cp;
 
-    if ((cp = mprAllocObj(ejs, EcCompiler, manageCompiler)) == 0) {
+    if ((cp = mprAllocObj(EcCompiler, manageCompiler)) == 0) {
         return 0;
     }
-    mprAddRoot(cp);
     cp->ejs = ejs;
     cp->strict = 0;
     cp->tabWidth = EC_TAB_WIDTH;
@@ -64,6 +63,8 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
         
 static void manageCompiler(EcCompiler *cp, int flags)
 {
+    EcToken     *tp;
+
     if (flags & MPR_MANAGE_MARK) {
         mprMark(cp->certFile);
         mprMark(cp->docToken);
@@ -72,7 +73,6 @@ static void manageCompiler(EcCompiler *cp, int flags)
         mprMark(cp->keywords);
         mprMark(cp->peekToken);
         mprMark(cp->putback);
-        mprMark(cp->freeTokens);
         mprMark(cp->freeStates);
         mprMark(cp->state);
         mprMark(cp->stream);
@@ -82,6 +82,11 @@ static void manageCompiler(EcCompiler *cp, int flags)
         mprMarkList(cp->require);
         mprMarkList(cp->modules);
         mprMark(cp->errorMsg);
+        mprMarkList(cp->nodes);
+
+        for (tp = cp->freeTokens; tp; tp = tp->next) {
+            mprMark(tp);
+        }
     }
 }
 
@@ -104,31 +109,33 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
 {
     Ejs         *ejs;
     EjsModule   *mp;
-    EcNode      **nodes;
+    MprList     *nodes;
     EjsBlock    *block;
     cchar       *ext;
     char        *msg;
-    int         i, j, next, nextModule, lflags, rc;
+    int         i, j, next, nextModule, lflags, rc, saveGC;
 
     ejs = cp->ejs;
-    nodes = (EcNode**) mprAlloc(cp->ejs, sizeof(EcNode*) * argc);
-    if (nodes == 0) {
+    if ((nodes = mprCreateList()) == 0) {
         return EJS_ERR;
     }
+    cp->nodes = nodes;
+
     /*
         Warn about source files mentioned multiple times.
+        TODO OPT. This is slow.
      */
     for (i = 0; i < argc; i++) {
         for (j = 0; j < argc; j++) {
             if (i == j) {
                 continue;
             }
-            if (mprSamePath(cp, argv[i], argv[j])) {
+            if (mprSamePath(argv[i], argv[j])) {
                 compileError(cp, "Loading source %s multiple times. Ignoring extra copies.", argv[i]);
                 return EJS_ERR;
             }
         }
-        if (cp->outputFile && mprSamePath(cp, cp->outputFile, argv[i])) {
+        if (cp->outputFile && mprSamePath(cp->outputFile, argv[i])) {
             compileError(cp, "Output file is the same as input file: %s", argv[i]);
             return EJS_ERR;
         }
@@ -138,20 +145,20 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         Compile source files and load any module files
      */
     for (i = 0; i < argc && !cp->fatalError; i++) {
-        ext = mprGetPathExtension(cp, argv[i]);
-        if (scasecmp(ext, EJS_MODULE_EXT) == 0 || scasecmp(ext, BLD_SHOBJ) == 0) {
+        ext = mprGetPathExtension(argv[i]);
+        if (scasecmp(ext, "mod") == 0 || scasecmp(ext, BLD_SHOBJ) == 0) {
             nextModule = ejsGetLength(ejs, ejs->modules);
             lflags = cp->strict ? EJS_LOADER_STRICT : 0;
             if ((rc = ejsLoadModule(cp->ejs, ejsCreateStringFromAsc(ejs, argv[i]), -1, -1, lflags)) < 0) {
-                msg = mprAsprintf(cp, "Error initializing module %s\n%s", argv[i], ejsGetErrorMsg(cp->ejs, 1));
+                msg = mprAsprintf("Error initializing module %s\n%s", argv[i], ejsGetErrorMsg(cp->ejs, 1));
                 EcLocation loc;
-                loc.filename = sclone(cp, argv[i]);
+                loc.filename = sclone(argv[i]);
                 if (rc == MPR_ERR_CANT_INITIALIZE) {
                     ecError(cp, "Error", &loc, msg);
                 } else {
                     ecError(cp, "Error", &loc, msg);
                 }
-                mprFree(msg);
+                cp->nodes = NULL;
                 return EJS_ERR;
             }
             if (cp->merge) {
@@ -164,10 +171,14 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
                     }
                 }
             }
-            nodes[i] = 0;
+            //  MOB -- does this really need to be added?
+            mprAddItem(nodes, 0);
         } else  {
-            ecParseFile(cp, argv[i], &nodes[i]);
+            saveGC = mprEnableGC(0);
+            mprAddItem(nodes, ecParseFile(cp, argv[i]));
+            mprEnableGC(saveGC);
         }
+        mprCollectGarbage(MPR_GC_CHECK);
     }
 
     /*
@@ -181,24 +192,28 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     /*
         Process the internal representation and generate code
      */
+    saveGC = mprEnableGC(0);
     if (!cp->parseOnly && cp->errorCount == 0) {
         ecResetParser(cp);
-        if (ecAstProcess(cp, argc, nodes) < 0) {
+        if (ecAstProcess(cp) < 0) {
             ejsPopBlock(ejs);
-            mprFree(nodes);
+            cp->nodes = NULL;
             return EJS_ERR;
         }
         if (cp->errorCount == 0) {
             ecResetParser(cp);
-            if (ecCodeGen(cp, argc, nodes) < 0) {
+            if (ecCodeGen(cp) < 0) {
                 ejsPopBlock(ejs);
-                mprFree(nodes);
+                cp->nodes = NULL;
                 return EJS_ERR;
             }
         }
     }
     ejsPopBlock(ejs);
-    mprFree(nodes);
+    cp->nodes = NULL;
+    mprEnableGC(saveGC);
+    mprCollectGarbage(MPR_GC_CHECK);
+
     if (cp->errorCount > 0) {
         return EJS_ERR;
     }
@@ -256,6 +271,7 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
     if ((ec = ecCreateCompiler(ejs, flags)) == 0) {
         return MPR_ERR_MEMORY;
     }
+    mprAddRoot(ec);
     if (cache) {
         ec->noout = 0;
         ecSetOutputFile(ec, cache);
@@ -288,6 +304,7 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
     if ((cp = ecCreateCompiler(ejs, flags)) == 0) {
         return MPR_ERR_MEMORY;
     }
+    mprAddRoot(cp);
     if (cache) {
         cp->noout = 0;
         ecSetOutputFile(cp, cache);
@@ -295,7 +312,7 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
         cp->noout = 1;
     }
     if (ecOpenMemoryStream(cp, ejsToMulti(ejs, script), script->length) < 0) {
-        mprError(ejs, "Can't open memory stream");
+        mprError("Can't open memory stream");
         mprFree(cp);
         return EJS_ERR;
     }
@@ -331,7 +348,7 @@ int ejsEvalFile(cchar *path)
         mprFree(mpr);
         return MPR_ERR_MEMORY;
     }
-    if ((ejs = ejsCreateVm(service, NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((ejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
         mprFree(mpr);
         return MPR_ERR_MEMORY;
     }
@@ -359,7 +376,7 @@ int ejsEvalScript(cchar *script)
         mprFree(mpr);
         return MPR_ERR_MEMORY;
     }
-    if ((ejs = ejsCreateVm(service, NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((ejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
         mprFree(mpr);
         return MPR_ERR_MEMORY;
     }
@@ -419,7 +436,7 @@ static char *makeHighlight(EcCompiler *cp, MprChar *source, int col)
     /*
         Allow for "^" to be after the last char, plus one null.
      */
-    if ((dest = mprAlloc(NULL, len + 2)) == NULL) {
+    if ((dest = mprAlloc(len + 2)) == NULL) {
         mprAssert(dest);
         return 0;
     }
@@ -452,26 +469,31 @@ void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_l
 
     errCode = 0;
     appName = mprGetAppName(cp);
-    msg = mprAsprintfv(cp, fmt, args);
+    msg = mprAsprintfv(fmt, args);
 
     if (loc) {
         if (loc->source) {
             pointer = makeHighlight(cp, loc->source, loc->column);
-            errorMsg = mprAsprintf(cp, "%s: %s: %s: %d: %s\n  %@  \n  %s\n", appName, severity, loc->filename, 
+            errorMsg = mprAsprintf("%s: %s: %s: %d: %s\n  %w  \n  %s", appName, severity, loc->filename, 
                 loc->lineNumber, msg, loc->source, pointer);
             mprFree(pointer);
         } else if (loc->lineNumber >= 0) {
-            errorMsg = mprAsprintf(cp, "%s: %s: %s: %d: %s\n", appName, severity, loc->filename, loc->lineNumber, msg);
+            errorMsg = mprAsprintf("%s: %s: %s: %d: %s", appName, severity, loc->filename, loc->lineNumber, msg);
         } else {
-            errorMsg = mprAsprintf(cp, "%s: %s: %s: 0: %s\n", appName, severity, loc->filename, msg);
+            errorMsg = mprAsprintf("%s: %s: %s: 0: %s", appName, severity, loc->filename, msg);
         }
     } else {
-        errorMsg = mprAsprintf(cp, "%s: %s: %s\n", appName, severity, msg);
+        errorMsg = mprAsprintf("%s: %s: %s", appName, severity, msg);
     }
-    cp->errorMsg = srejoin(cp, cp->errorMsg, "", errorMsg, NULL);
+    cp->errorMsg = srejoin(cp->errorMsg, errorMsg, NULL);
     mprBreakpoint();
 }
 
+
+void ecSetRequire(EcCompiler *cp, MprList *modules)
+{
+    cp->require = modules;
+}
 
 /*
     @copy   default

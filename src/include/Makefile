@@ -7,5 +7,5 @@
 include 		.makedep
 
 dependExtra:
-	cp master/*slots.h .
+	cp master/*slots.h $(BLD_INC_DIR)
 

@@ -178,7 +178,7 @@ static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsObj          *result;
     int             c;
 
-    fs = mprGetMpr(ejs)->fileSystem;
+    fs = mprGetMpr()->fileSystem;
 
     buf = mprCreateBuf(ejs, -1, -1);
     while ((c = getchar()) != EOF) {
@@ -241,7 +241,7 @@ static EjsObj *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     char        *hash;
 
     str = (EjsString*) argv[0];
-    hash = mprGetMD5Hash(ejs, ejsToMulti(ejs, str), str->length, NULL);
+    hash = mprGetMD5Hash(ejsToMulti(ejs, str), str->length, NULL);
     return (EjsObj*) ejsCreateStringFromAsc(ejs, hash);
 }
 

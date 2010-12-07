@@ -54,7 +54,7 @@ static EjsObj *regex_Constructor(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **arg
     cchar       *errMsg;
     int         column, errCode;
 
-    rp->pattern = ejsToString(ejs, argv[0])->value;
+    rp->pattern = wclone(ejsToString(ejs, argv[0])->value);
     rp->options = PCRE_JAVASCRIPT_COMPAT;
 
     if (argc == 2) {
@@ -216,7 +216,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         /*
             Strip off flags for passing to pcre_compile2
          */
-        rp->pattern = sclone(rp, &pattern->value[1]);
+        rp->pattern = sclone(&pattern->value[1]);
         if ((flags = wrchr(rp->pattern, '/')) != 0) {
             rp->options = parseFlags(rp, &flags[1]);
             *flags = 0;
@@ -308,7 +308,7 @@ static char *makeFlags(EjsRegExp *rp)
         *cp++ = 'U';
     }
     *cp++ = '\0';
-    return sclone(rp, buf);
+    return sclone(buf);
 }
 
 

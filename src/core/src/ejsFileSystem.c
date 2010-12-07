@@ -21,8 +21,8 @@ static EjsObj *fileSystemConstructor(Ejs *ejs, EjsFileSystem *fp, int argc, EjsO
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     path = ejsToMulti(ejs, argv[0]);
-    fp->path = mprGetNormalizedPath(fp, path);
-    fp->fs = mprLookupFileSystem(ejs, path);
+    fp->path = mprGetNormalizedPath(path);
+    fp->fs = mprLookupFileSystem(path);
     return (EjsObj*) fp;
 }
 
@@ -95,7 +95,7 @@ static EjsObj *isWritable(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
  */
 static EjsObj *getNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetPathNewline(ejs, fp->path));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetPathNewline(fp->path));
 }
 
 
@@ -110,7 +110,7 @@ static EjsObj *setNewline(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 
     mprAssert(ejsIsString(ejs, argv[0]));
     nl = ejsToMulti(ejs, (EjsString*) argv[0]);
-    mprSetPathNewline(ejs, fp->path, nl);
+    mprSetPathNewline(fp->path, nl);
     return 0;
 }
 
@@ -120,8 +120,8 @@ static EjsObj *root(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
     cchar   *separators;
     char    *path, *cp;
 
-    separators = mprGetPathSeparators(fp, fp->path);
-    path = mprGetAbsPath(ejs, fp->path);
+    separators = mprGetPathSeparators(fp->path);
+    path = mprGetAbsPath(fp->path);
     if ((cp = strchr(path, separators[0])) != 0) {
         *++cp = '\0';
     }
@@ -148,7 +148,7 @@ static EjsObj *getSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **arg
 static EjsObj *setSeparators(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
-    mprSetPathSeparators(ejs, fp->path, ejsToMulti(ejs, argv[0]));
+    mprSetPathSeparators(fp->path, ejsToMulti(ejs, argv[0]));
     return 0;
 }
 

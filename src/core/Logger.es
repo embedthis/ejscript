@@ -91,13 +91,13 @@ module ejs {
             @param location Optional output stream or Logger to send messages to. If a parent Logger instance is 
                 provided for the output parameter, messages are sent to the parent for rendering.
          */
-        function redirect(location, level: Number = this._level): Void {
+        function redirect(location, level: Number = null): Void {
             if (location is Stream) {
                 _outStream = location
             } else {
                 location = location.toString()
                 let [path, lev] = location.split(":")
-                _level = level || lev
+                _level = lev || level || this._level
                 let stream
                 if (path == "stdout") {
                     stream = App.outputStream

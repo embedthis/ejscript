@@ -59,7 +59,7 @@ int ecCreateModuleSection(EcCompiler *cp)
     buf = state->code->buf;
     mp = state->currentModule;
 
-    mprLog(cp, 7, "Create module section %s", mp->name);
+    mprLog(7, "Create module section %s", mp->name);
 
     ejs = cp->ejs;
     constants = mp->constants;
@@ -144,7 +144,7 @@ static void createDependencySection(EcCompiler *cp)
 mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
             mp->checksum += sumString(module->name);
 mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
-            mprLog(cp, 7, "    dependency section for %s from module %s", module->name, mp->name);
+            mprLog(7, "    dependency section for %s from module %s", module->name, mp->name);
         }
     }
 }
@@ -171,7 +171,7 @@ static void createGlobalProperties(EcCompiler *cp)
         slotNum = ejsLookupProperty(ejs, ejs->global, *prop);
         if (slotNum < 0) {
             cp->fatalError = 1;
-            mprError(ejs, "Code generation error. Can't find global property %s.", prop->name);
+            mprError("Code generation error. Can't find global property %s.", prop->name);
             return;
         }
         vp = ejsGetProperty(ejs, ejs->global, slotNum);
@@ -286,7 +286,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     qname = ejsGetPropertyName(ejs, ejs->global, slotNum);
     mprAssert(qname.name);
 
-    mprLog(cp, 7, "    type section %s for module %s", qname.name, mp->name);
+    mprLog(7, "    type section %s for module %s", qname.name, mp->name);
     
     type = ejsGetProperty(ejs, ejs->global, slotNum);
     mprAssert(type);
@@ -408,7 +408,7 @@ static void createFunctionSection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     activation = fun->activation;
     numProp = (activation) ? activation->numProp: 0;
     code = fun->body.code;
-
+    
     if (block && slotNum >= 0) {
         qname = ejsGetPropertyName(ejs, block, slotNum);
         createDocSection(cp, block, slotNum);
@@ -556,8 +556,8 @@ static void createDebugSection(EcCompiler *cp, EjsFunction *fun)
     ecEncodeInt32(cp, 0);
 
     startDebug = ecGetCodeOffset(cp);
-    ecEncodeNum(cp, debug->length);
-    for (i = 0; i < debug->length; i++) {
+    ecEncodeNum(cp, debug->numLines);
+    for (i = 0; i < debug->numLines; i++) {
         line = &debug->lines[i];
         ecEncodeNum(cp, line->offset);
         ecEncodeWideAsMulti(cp, line->source);
@@ -610,7 +610,7 @@ static void createPropertySection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
     trait = ejsGetPropertyTraits(ejs, block, slotNum);
     attributes = trait->attributes;
 
-    mprLog(cp, 7, "    global property section %s", qname.name);
+    mprLog(7, "    global property section %s", qname.name);
 
     if (trait->type) {
         if (trait->type == ejs->namespaceType || 
@@ -656,7 +656,7 @@ static void createDocSection(EcCompiler *cp, EjsPot *block, int slotNum)
         return;
     }
     if (ejs->doc == 0) {
-        ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE, 0);
+        ejs->doc = mprCreateHash(EJS_DOC_HASH_SIZE, 0);
     }
     mprSprintf(key, sizeof(key), "%Lx %d", PTOL(block), slotNum);
     doc = (EjsDoc*) mprLookupHash(ejs->doc, key);
@@ -666,7 +666,7 @@ static void createDocSection(EcCompiler *cp, EjsPot *block, int slotNum)
     qname = ejsGetPropertyName(ejs, block, slotNum);
     mprAssert(qname.name);
 
-    mprLog(cp, 7, "Create doc section for %s::%s", qname.space, qname.name);
+    mprLog(7, "Create doc section for %s::%s", qname.space, qname.name);
 
     ecEncodeByte(cp, EJS_SECT_DOC);
     ecEncodeConst(cp, doc->docString);
@@ -989,7 +989,7 @@ void ecEncodeWideAsMulti(EcCompiler *cp, MprChar *str)
 
     mprAssert(cp);
 
-    mstr = awtom(cp, str, &len);
+    mstr = awtom(str, &len);
     len = strlen(mstr) + 1;
     mprAssert(len > 0);
     ecEncodeNum(cp, len);
@@ -1056,7 +1056,7 @@ void ecEncodeByteAtPos(EcCompiler *cp, int offset, int value)
 void ecEncodeInt32AtPos(EcCompiler *cp, int offset, int value)
 {
     if (abs(value) > EJS_ENCODE_MAX_WORD) {
-        mprError(cp, "Code generation error. Word %d exceeds maximum %d", value, EJS_ENCODE_MAX_WORD);
+        mprError("Code generation error. Word %d exceeds maximum %d", value, EJS_ENCODE_MAX_WORD);
         cp->fatalError = 1;
         return;
     }

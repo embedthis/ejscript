@@ -258,7 +258,7 @@ EjsOptable ejsOptable[] = {
 };
 #endif /* EJS_DEFINE_OPTABLE */
 
-extern EjsOptable *ejsGetOptable(MprCtx ctx);
+extern EjsOptable *ejsGetOptable();
 
 #ifdef __cplusplus
 }

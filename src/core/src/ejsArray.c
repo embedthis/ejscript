@@ -679,7 +679,8 @@ static EjsNumber *nextArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **arg
 
     for (; ip->index < ap->length; ip->index++) {
         vp = data[ip->index];
-        if (vp == 0) {
+        mprAssert(vp);
+        if (vp == ejs->undefinedValue) {
             continue;
         }
         return ejsCreateNumber(ejs, ip->index++);
@@ -718,7 +719,8 @@ static EjsObj *nextArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
     data = ap->data;
     for (; ip->index < ap->length; ip->index++) {
         vp = data[ip->index];
-        if (vp == 0) {
+        mprAssert(vp);
+        if (vp == ejs->undefinedValue) {
             continue;
         }
         ip->index++;
@@ -1491,24 +1493,23 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
         } else {
             count = len;
         }
+        //  MOB OPT - this is currently 16
         count = EJS_PROP_ROUNDUP(count);
         if (ap->data == 0) {
             mprAssert(ap->length == 0);
             mprAssert(count > 0);
-            ap->data = (EjsObj**) mprAlloc(NULL, sizeof(EjsObj*) * count);
-            if (ap->data == 0) {
+            if ((ap->data = mprAlloc(sizeof(EjsObj*) * count)) == 0) {
                 return EJS_ERR;
             }
         } else {
             mprAssert(size > 0);
-            ap->data = (EjsObj**) mprRealloc(NULL, ap->data, sizeof(EjsObj*) * count);
-            if (ap->data == 0) {
+            if ((ap->data = mprRealloc(ap->data, sizeof(EjsObj*) * count)) == 0) {
                 return EJS_ERR;
             }
-            dp = &ap->data[ap->length];
-            for (i = ap->length; i < count; i++) {
-                *dp++ = ejs->nullValue;
-            }
+        }
+        dp = &ap->data[ap->length];
+        for (i = ap->length; i < count; i++) {
+            *dp++ = ejs->undefinedValue;
         }
     }
     ap->length = len;

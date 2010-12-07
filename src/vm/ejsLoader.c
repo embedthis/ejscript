@@ -33,7 +33,7 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
 static int  loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr, int flags);
 static int  loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType);
 static int  loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVersion, int flags);
-static char *makeModuleName(MprCtx ctx, cchar *name);
+static char *makeModuleName(cchar *name);
 static void popScope(EjsModule *mp, int keepScope);
 static void pushScope(EjsModule *mp, EjsBlock *block, EjsObj *obj);
 static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion);
@@ -69,11 +69,11 @@ int ejsLoadModule(Ejs *ejs, EjsString *path, int minVersion, int maxVersion, int
 
     mprAssert(path);
 
-    trimmedPath = sclone(ejs, ejsToMulti(ejs, path));
+    trimmedPath = sclone(ejsToMulti(ejs, path));
     if ((version = trimModule(ejs, trimmedPath)) != 0) {
         minVersion = maxVersion = version;
     }
-    name = mprGetPathBase(ejs, trimmedPath);
+    name = mprGetPathBase(trimmedPath);
 
     if ((status = alreadyLoaded(ejs, ejsCreateStringFromAsc(ejs, name), minVersion, maxVersion)) == 0) {
         status = loadScriptModule(ejs, trimmedPath, minVersion, maxVersion, flags);
@@ -161,8 +161,10 @@ static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion)
     mprAssert(filename && *filename);
 
     if ((path = ejsSearchForModule(ejs, filename, minVersion, maxVersion)) == 0) {
-        mprLog(ejs, 2, "Can't find module file \"%s.mod\"", filename);
+        mprLog(2, "Can't find module file \"%s.mod\"", filename);
         if (minVersion <= 0 && maxVersion <= 0) {
+            ejsThrowReferenceError(ejs,  "Can't find module file \"%s\"", filename);
+        } else if (minVersion == 0 && maxVersion == EJS_MAX_VERSION) {
             ejsThrowReferenceError(ejs,  "Can't find module file \"%s\"", filename);
         } else {
             ejsThrowReferenceError(ejs,  "Can't find module file \"%s\", min version %d.%d.%d, max version %d.%d.%d", 
@@ -190,10 +192,10 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
 
     while ((sectionType = mprGetc(file)) >= 0) {
         if (sectionType < 0 || sectionType >= EJS_SECT_MAX) {
-            mprError(ejs, "Bad section type %d in %@", sectionType, mp->name);
+            mprError("Bad section type %d in %@", sectionType, mp->name);
             return MPR_ERR_CANT_LOAD;
         }
-        mprLog(ejs, 9, "Load section type %d", sectionType);
+        mprLog(9, "Load section type %d", sectionType);
         mprAssert(mp == NULL || mp->scope == NULL || mp->scope != mp->scope->scope);
 
         rc = 0;
@@ -241,7 +243,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
                 return MPR_ERR_CANT_LOAD;
             }
             ejsAddModule(ejs, mp);
-            mp->path = sclone(mp, path);
+            mp->path = sclone(path);
             mp->file = file;
             mp->firstGlobal = (ejs->initialized) ? ejsGetPropertyCount(ejs, ejs->global) : 0;
             break;
@@ -382,14 +384,14 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_MODULE, mp);
     }
-    mprLog(ejs, 9, "Load module section %@", name);
+    mprLog(9, "Load module section %@", name);
     return mp;
 }
 
 
 static int loadEndModuleSection(Ejs *ejs, EjsModule *mp)
 {
-    mprLog(ejs, 9, "End module section %@", mp->name);
+    mprLog(9, "End module section %@", mp->name);
 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_MODULE_END, mp);
@@ -397,6 +399,7 @@ static int loadEndModuleSection(Ejs *ejs, EjsModule *mp)
     mprAssert(mprGetListCount(mp->current) == 1);
     mprFree(mp->current);
     mp->current = 0;
+    mp->file = 0;
     return 0;
 }
 
@@ -424,7 +427,7 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
         nextModule = ejsGetLength(ejs, ejs->modules);
         ejs->loaderCallback = NULL;
 
-        mprLog(ejs, 6, "    Load dependency section %@", name);
+        mprLog(6, "    Load dependency section %@", name);
         rc = loadScriptModule(ejs, ejsToMulti(ejs, name), minVersion, maxVersion, mp->flags | EJS_LOADER_DEP);
         ejs->loaderCallback = saveCallback;
         if (rc < 0) {
@@ -494,7 +497,7 @@ static int loadBlockSection(Ejs *ejs, EjsModule *mp)
 
 static int loadEndBlockSection(Ejs *ejs, EjsModule *mp)
 {
-    mprLog(ejs, 9, "    End block section %@", mp->name);
+    mprLog(9, "    End block section %@", mp->name);
 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_BLOCK_END, mp);
@@ -540,12 +543,12 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         if (attributes & EJS_PROP_NATIVE) {
             type = nativeType = (EjsType*) ejsGetPropertyByName(ejs, ejs->coreTypes, qname);
             if (type == 0) {
-                mprLog(ejs, 1, "WARNING: can't find native type \"%@\"", qname.name);
+                mprLog(1, "WARNING: can't find native type \"%@\"", qname.name);
             }
         } else {
 #if BLD_DEBUG
             if (ejsLookupProperty(ejs, ejs->coreTypes, qname) >= 0) {
-                mprError(ejs, "WARNING: type \"%@\" defined as a native type but not declared as native", qname.name);
+                mprError("WARNING: type \"%@\" defined as a native type but not declared as native", qname.name);
             }
 #endif
         }
@@ -556,7 +559,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             fixup = createFixup(ejs, mp, (baseType) ? baseType->qname : ejs->objectType->qname, -1);
         }
     }
-    mprLog(ejs, 9, "    Load %@ class %@ for module %@ at slot %d", qname.space, qname.name, mp->name, slotNum);
+    mprLog(9, "    Load %@ class %@ for module %@ at slot %d", qname.space, qname.name, mp->name, slotNum);
 
     if (slotNum < 0) {
         slotNum = ejsGetPropertyCount(ejs, ejs->global);
@@ -581,12 +584,12 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             Currently errors on Namespace
          */
         if (attributes & EJS_TYPE_HAS_CONSTRUCTOR && !type->hasConstructor) {
-            mprError(ejs, "WARNING: module indicates a constructor required but none exists for \"%@\"", type->qname.name);
+            mprError("WARNING: module indicates a constructor required but none exists for \"%@\"", type->qname.name);
         }
 #endif
 #if UNUSED && KEEP
         if (!type->native) {
-            mprError(ejs, "WARNING: type not defined as native: \"%@\"", type->qname.name);
+            mprError("WARNING: type not defined as native: \"%@\"", type->qname.name);
         }
 #endif
     }
@@ -638,7 +641,7 @@ static int loadEndClassSection(Ejs *ejs, EjsModule *mp)
 {
     EjsType     *type;
 
-    mprLog(ejs, 9, "    End class section");
+    mprLog(9, "    End class section");
 
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_CLASS_END, mp, mp->scope);
@@ -693,13 +696,13 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     mprAssert(numArgs >= 0 && numArgs < EJS_MAX_ARGS);
     mprAssert(numExceptions >= 0 && numExceptions < EJS_MAX_EXCEPTIONS);
 
-    mprLog(ejs, 9, "Loading function %N at slot %d", qname, slotNum);
+    mprLog(9, "Loading function %N at slot %d", qname, slotNum);
 
     /*
         Read the code
      */
     if (codeLen > 0) {
-        if ((code = mprAlloc(ejs, codeLen)) == 0) {
+        if ((code = mprAlloc(codeLen)) == 0) {
             return MPR_ERR_MEMORY;
         }
         if (mprRead(mp->file, code, codeLen) != codeLen) {
@@ -762,7 +765,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         if (attributes & EJS_FUN_OVERRIDE) {
             slotNum = ejsLookupProperty(ejs, block, qname);
             if (slotNum < 0) {
-                mprError(ejs, "Can't find method \"%@\" to override", qname.name);
+                mprError("Can't find method \"%@\" to override", qname.name);
                 return MPR_ERR_MEMORY;
             }
 
@@ -803,7 +806,7 @@ static int loadEndFunctionSection(Ejs *ejs, EjsModule *mp)
 {
     EjsFunction     *fun;
 
-    mprLog(ejs, 9, "    End function section");
+    mprLog(9, "    End function section");
 
     fun = (EjsFunction*) mp->scope;
     if (ejs->loaderCallback) {
@@ -909,7 +912,7 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
         /*  Only doing for namespaces currently */
         value = (EjsObj*) ejsCreateNamespace(ejs, str);
     }
-    mprLog(ejs, 9, "Loading property %N at slot %d", qname, slotNum);
+    mprLog(9, "Loading property %N at slot %d", qname, slotNum);
 
     if (attributes & EJS_PROP_NATIVE) {
         mp->hasNative = 1;
@@ -962,7 +965,7 @@ static int loadDocSection(Ejs *ejs, EjsModule *mp)
 {
     EjsString   *doc;
 
-    mprLog(ejs, 9, "    Documentation section");
+    mprLog(9, "    Documentation section");
 
     doc = ejsModuleReadConst(ejs, mp);
 
@@ -990,15 +993,15 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
     /*
         Replace ".mod" with ".so", ".dll" or ".dylib"
      */
-    bare = sclone(ejs, modPath);
+    bare = sclone(modPath);
     if ((cp = strrchr(bare, '.')) != 0 && strcmp(cp, EJS_MODULE_EXT) == 0) {
         *cp = '\0';
     }
-    path = sjoin(ejs, NULL, bare, BLD_SHOBJ, NULL);
+    path = sjoin(bare, BLD_SHOBJ, NULL);
     mprFree(bare);
 
-    if (! mprPathExists(ejs, path, R_OK)) {
-        mprError(ejs, "Native module not found %s", path);
+    if (! mprPathExists(path, R_OK)) {
+        mprError("Native module not found %s", path);
         mprFree(path);
         return MPR_ERR_CANT_ACCESS;
     }
@@ -1015,8 +1018,8 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
             *cp = '_';
         }
     }
-    mprLog(ejs, 5, "Loading native module %s", path);
-    mm = mprLoadModule(ejs, path, initName, mp);
+    mprLog(5, "Loading native module %s", path);
+    mm = mprLoadModule(path, initName, ejs);
     mprFree(path);
     return (mm == 0) ? MPR_ERR_CANT_OPEN : 1;
 }
@@ -1026,9 +1029,10 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
 static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVersion, int flags)
 {
     EjsModuleHdr    hdr;
+    EjsModule       *mp;
     MprFile         *file;
     char            *path;
-    int             status;
+    int             next, status, firstModule;
 
     mprAssert(filename && *filename);
     mprAssert(ejs->exception == 0);
@@ -1036,20 +1040,21 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
     if ((path = search(ejs, filename, minVersion, maxVersion)) == 0) {
         return MPR_ERR_CANT_ACCESS;
     }
-    if ((file = mprOpen(ejs, path, O_RDONLY | O_BINARY, 0666)) == NULL) {
+    if ((file = mprOpen(path, O_RDONLY | O_BINARY, 0666)) == NULL) {
         ejsThrowIOError(ejs, "Can't open module file %s", path);
         mprFree(path);
         return MPR_ERR_CANT_OPEN;
     }
-    mprLog(ejs, 5, "Loading module %s", path);
+    mprLog(5, "Loading module %s", path);
     mprEnableFileBuffering(file, 0, 0);
+    firstModule = mprGetListCount(ejs->modules);
 
     /*
         Read module file header
      */
     status = 0;
     if ((mprRead(file, &hdr, sizeof(hdr))) != sizeof(hdr)) {
-        ejsThrowIOError(ejs, "Error reading module file %s, corrupt header", path);
+        ejsThrowIOError(ejs, "Can't read module file %s, corrupt header", path);
         status = MPR_ERR_CANT_LOAD;
 
     } else if ((int) ejsSwapInt32(ejs, hdr.magic) != EJS_MODULE_MAGIC) {
@@ -1071,10 +1076,15 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
             }
         }
     }
-    if (status) {
-        mprFree(file);
-    }
+    mprFree(file);
     mprFree(path);
+
+    if (status) {
+        for (next = firstModule; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
+            mprRemoveItem(ejs->modules, mp);
+            mprFree(mp);
+        }
+    }
     return status;
 }
 
@@ -1206,7 +1216,7 @@ static int trimModule(Ejs *ejs, char *name)
     if ((vp = strrchr(name, '-')) == 0) {
         return 0;
     }
-    lastSlash = mprGetLastPathSeparator(ejs, name);
+    lastSlash = mprGetLastPathSeparator(name);
     if (lastSlash && lastSlash > vp) {
         /* There is a "-" but it is in the directory portion of the name and not in the module name */
         return 0;
@@ -1233,30 +1243,30 @@ static int getVersion(cchar *name)
 /*
     Search for a file. If found, Return the path where the file was located. Otherwise return null.
  */
-static char *probe(MprCtx ctx, cchar *path, int minVersion, int maxVersion)
+static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
 {
     MprDirEntry     *dp, *best;
     MprList         *files;
     char            *dir, *base, *ext, *result;
     int             nameLen, version, next, bestVersion;
 
-    mprAssert(ctx);
+    mprAssert(ejs);
     mprAssert(path);
 
-    mprLog(ctx, 7, "Probe for file %s", path);
+    mprLog(7, "Probe for file %s", path);
 
     if (maxVersion == 0) {
-        if (mprPathExists(ctx, path, R_OK)) {
-            return sclone(ctx, path);
+        if (mprPathExists(path, R_OK)) {
+            return sclone(path);
         }
         return 0;
     }
-    dir = mprGetPathDir(ctx, path);
-    base = mprGetPathBase(ctx, path);
+    dir = mprGetPathDir(path);
+    base = mprGetPathBase(path);
     if ((ext = strrchr(base, '.')) != 0) {
         *ext++ = '\0';
     }
-    files = mprGetPathFiles(ctx, dir, 0);
+    files = mprGetPathFiles(dir, 0);
     nameLen = (int) strlen(base);
     bestVersion = -1;
     best = 0;
@@ -1285,7 +1295,7 @@ static char *probe(MprCtx ctx, cchar *path, int minVersion, int maxVersion)
     if (best == 0) {
         result = 0;
     } else {
-        result = mprJoinPath(ctx, dir, best->name);
+        result = mprJoinPath(dir, best->name);
     }
     mprFree(files);
     return result;
@@ -1303,7 +1313,7 @@ static char *probe(MprCtx ctx, cchar *path, int minVersion, int maxVersion)
         4. File named a/b/c in EJSPATH
         5. File named c in EJSPATH
  */
-static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVersion, int maxVersion)
+static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVersion)
 {
     EjsPath     *dir;
     char        *withDotMod, *path, *filename, *basename, *cp, *slash, *name, *bootSearch, *tok, *searchDir, *dp;
@@ -1315,28 +1325,28 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
     if (maxVersion <= 0) {
         maxVersion = MAXINT;
     }
-    withDotMod = makeModuleName(ejs, moduleName);
-    name = mprGetNormalizedPath(ctx, withDotMod);
+    withDotMod = makeModuleName(moduleName);
+    name = mprGetNormalizedPath(withDotMod);
 
-    mprLog(ejs, 6, "Search for module \"%s\"", name);
+    mprLog(6, "Search for module \"%s\"", name);
 
     /*
         1. Search for path directly
      */
-    if ((path = probe(ctx, name, minVersion, maxVersion)) != 0) {
+    if ((path = probe(ejs, name, minVersion, maxVersion)) != 0) {
         return path;
     }
 
     /*
         2. Search for "a/b/c"
      */
-    slash = sclone(ctx, name);
+    slash = sclone(name);
     for (cp = slash; *cp; cp++) {
         if (*cp == '.') {
-            *cp = mprGetPathSeparators(ejs, name)[0];
+            *cp = mprGetPathSeparators(name)[0];
         }
     }
-    if ((path = probe(ctx, slash, minVersion, maxVersion)) != 0) {
+    if ((path = probe(ejs, slash, minVersion, maxVersion)) != 0) {
         return path;
     }
 
@@ -1349,8 +1359,8 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
             if (!ejsIsPath(ejs, dir)) {
                 continue;
             }
-            filename = mprJoinPath(ctx, dir->value, name);
-            if ((path = probe(ctx, filename, minVersion, maxVersion)) != 0) {
+            filename = mprJoinPath(dir->value, name);
+            if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
                 return path;
             }
         }
@@ -1363,8 +1373,8 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
             if (!ejsIsPath(ejs, dir)) {
                 continue;
             }
-            filename = mprJoinPath(ctx, dir->value, slash);
-            if ((path = probe(ctx, filename, minVersion, maxVersion)) != 0) {
+            filename = mprJoinPath(dir->value, slash);
+            if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
                 return path;
             }
         }
@@ -1372,14 +1382,14 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
         /*
             5. Search for "c" in EJSPATH
          */
-        basename = mprGetPathBase(ctx, slash);
+        basename = mprGetPathBase(slash);
         for (i = 0; i < ejs->search->length; i++) {
             dir = ejsGetProperty(ejs, ejs->search, i);
             if (!ejsIsPath(ejs, dir)) {
                 continue;
             }
-            filename = mprJoinPath(ctx, dir->value, basename);
-            if ((path = probe(ctx, filename, minVersion, maxVersion)) != 0) {
+            filename = mprJoinPath(dir->value, basename);
+            if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
                 return path;
             }
         }
@@ -1388,12 +1398,12 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
         /*
             Used when bootstrapping the VM
          */
-        basename = mprGetPathBase(ctx, name);
+        basename = mprGetPathBase(name);
         if (ejs->bootSearch) {
-            bootSearch = sclone(ejs, ejs->bootSearch);
+            bootSearch = sclone(ejs->bootSearch);
             searchDir = stok(bootSearch, MPR_SEARCH_SEP, &tok);
             while (searchDir && *searchDir) {
-                filename = mprJoinPath(ctx, searchDir, basename);
+                filename = mprJoinPath(searchDir, basename);
                 if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
                     mprFree(bootSearch);
                     return path;
@@ -1405,21 +1415,21 @@ static char *searchForModule(Ejs *ejs, MprCtx ctx, cchar *moduleName, int minVer
         } else {
 
             /* Search bin/../modules */
-            dp = mprGetAppDir(ctx);
-            dp = mprGetPathParent(ctx, dp);
-            dp = mprJoinPath(ctx, dp, BLD_MOD_NAME);
-            filename = mprJoinPath(ctx, dp, basename);
+            dp = mprGetAppDir();
+            dp = mprGetPathParent(dp);
+            dp = mprJoinPath(dp, BLD_MOD_NAME);
+            filename = mprJoinPath(dp, basename);
             if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
                 return path;
             }
             /* Search bin */
-            filename = mprJoinPath(ctx, mprGetAppDir(ctx), basename);
+            filename = mprJoinPath(mprGetAppDir(), basename);
             if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
                 return path;
             }
             /* Search "." */
-            path = mprGetCurrentPath(ctx);
-            filename = mprJoinPath(ctx, path, basename);
+            path = mprGetCurrentPath();
+            filename = mprJoinPath(path, basename);
             if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
                 return path;
             }
@@ -1438,13 +1448,13 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
     if (maxVersion <= 0) {
         maxVersion = MAXINT;
     }
-    withDotMod = makeModuleName(ejs, moduleName);
-    name = mprGetNormalizedPath(ejs, withDotMod);
+    withDotMod = makeModuleName(moduleName);
+    name = mprGetNormalizedPath(withDotMod);
 
-    mprLog(ejs, 6, "Search for module \"%s\"", name);
-    path = searchForModule(ejs, ejs, name, minVersion, maxVersion);
+    mprLog(6, "Search for module \"%s\"", name);
+    path = searchForModule(ejs, name, minVersion, maxVersion);
     if (path) {
-        mprLog(ejs, 6, "Found %s at %s", name, path);
+        mprLog(6, "Found %s at %s", name, path);
     }
     mprFree(name);
     mprFree(withDotMod);
@@ -1455,14 +1465,14 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
 /*
     Ensure name has a ".mod" extension
  */
-static char *makeModuleName(MprCtx ctx, cchar *name)
+static char *makeModuleName(cchar *name)
 {
     char    *cp;
 
     if ((cp = strrchr(name, '.')) != NULL && strcmp(cp, EJS_MODULE_EXT) == 0) {
-        return sclone(ctx, name);
+        return sclone(name);
     }
-    return sjoin(ctx, name, EJS_MODULE_EXT, NULL);
+    return sjoin(name, EJS_MODULE_EXT, NULL);
 }
 
 
@@ -1493,7 +1503,7 @@ static EjsLoadState *createLoadState(Ejs *ejs, int flags)
 {
     EjsLoadState    *ls;
 
-    ls = mprAllocObj(ejs, EjsLoadState, manageLoadState);
+    ls = mprAllocObj(EjsLoadState, manageLoadState);
     ls->typeFixups = mprCreateList(ejs);
     ls->firstModule = mprGetListCount(ejs->modules);
     ls->flags = flags;
@@ -1604,8 +1614,7 @@ static EjsTypeFixup *createFixup(Ejs *ejs, EjsModule *mp, EjsName qname, int slo
     /*
         Managed by manageLoadState
      */
-    fixup = mprAllocZeroed(mp->loadState->typeFixups, sizeof(EjsTypeFixup));
-    if (fixup == 0) {
+    if ((fixup = mprAllocZeroed(sizeof(EjsTypeFixup))) == 0) {
         return 0;
     }
     fixup->typeName = qname;
@@ -1682,12 +1691,12 @@ EjsDoc *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, EjsString *docString)
     EjsDoc      *doc;
     char        key[32];
 
-    if ((doc = mprAllocObj(ejs, EjsDoc, manageDoc)) == 0) {
+    if ((doc = mprAllocObj(EjsDoc, manageDoc)) == 0) {
         return 0;
     }
     doc->docString = docString;
     if (ejs->doc == 0) {
-        ejs->doc = mprCreateHash(ejs, EJS_DOC_HASH_SIZE, 0);
+        ejs->doc = mprCreateHash(EJS_DOC_HASH_SIZE, 0);
         mprSetManager(ejs->doc, manageDocStrings);
     }
     mprSprintf(key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);

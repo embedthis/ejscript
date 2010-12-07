@@ -34,13 +34,13 @@ static EjsObj *req_worker(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     EjsRequest  *nreq;
     HttpConn    *conn;
 
-    if ((nejs = ejsCreateVm(ejsGetService(req), NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((nejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
         //  MOB THROW
         return 0;
     }
     nejs->loc = ejs->loc;
     if (ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs.web"), -1, -1, 0) < 0) {
-        mprError(ejs, "Can't load ejs.web.mod: %s", ejsGetErrorMsg(ejs, 1));
+        mprError("Can't load ejs.web.mod: %s", ejsGetErrorMsg(ejs, 1));
         return 0;
     }
     conn = req->conn;
@@ -70,7 +70,7 @@ static EjsObj *web_escapeHtml(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsString   *str;
 
     str = (EjsString*) argv[0];
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprEscapeHtml(ejs, str->value));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprEscapeHtml(str->value));
 }
 
 
@@ -83,7 +83,7 @@ static int configureWebTypes(Ejs *ejs)
 
     type = ejsGetTypeByName(ejs, N("ejs.web", "Web"));
     if (type == 0) {
-        mprError(ejs, "Can't find Web class");
+        mprError("Can't find Web class");
         ejs->hasError = 1;
         return MPR_ERR_CANT_INITIALIZE;
     }

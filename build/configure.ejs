@@ -34,14 +34,6 @@ manageFeatures()
         echo "Enabling the auth-file authorization backend"
         BLD_FEATURE_AUTH_FILE=1
     fi
-    if [ "$BLD_FEATURE_COMPLETE_CROSS" = 1 ] ; then
-        if [ "$BLD_FEATURE_EJS" = 1 ] ; then
-            BLD_FEATURE_EJS_CROSS_COMPILER=1
-        fi
-    fi
-    if [ "$BLD_FEATURE_COMPLETE_CROSS" = 1 ] ; then
-        BLD_FEATURE_EJS_CROSS_COMPILER=1
-    fi
 }
 
 
@@ -55,7 +47,6 @@ createFeatureConfig()
 #
 BLD_FEATURE_AUTH_FILE=$BLD_FEATURE_AUTH_FILE
 BLD_FEATURE_AUTH_PAM=$BLD_FEATURE_AUTH_PAM
-BLD_FEATURE_EJS_CROSS_COMPILER=$BLD_FEATURE_EJS_CROSS_COMPILER
 
 #
 #   Test port configuration
@@ -73,7 +64,6 @@ help()
 
 Additional Ejscript Features:
   --auth=[pam|file]            Build with file or PAM-based http authorization support.
-  --enable-cross-compiler      Include the compiler when cross-compiling.
   --port=PORT                  Set the HTTP test port.
   --sslPort=PORT               Set the SSL test port.
   
@@ -104,20 +94,14 @@ parseArg()
 	disable-all)
         BLD_DISABLE_ALL=1
         BLD_FEATURE_ASSERT=0
-        BLD_FEATURE_EJS_CROSS_COMPILER=0
+        BLD_FEATURE_FLOAT=0
         BLD_FEATURE_LEGACY_API=0
         ;;
-	disable-cross-compiler)
-		BLD_FEATURE_EJS_CROSS_COMPILER=0
-		;;
 	enable-all)
         BLD_FEATURE_ASSERT=1
-        BLD_FEATURE_EJS_CROSS_COMPILER=1
+        BLD_FEATURE_FLOAT=1
         BLD_FEATURE_LEGACY_API=1
         ;;
-	enable-cross-compiler)
-		BLD_FEATURE_EJS_CROSS_COMPILER=1
-		;;
     port=*)
         BLD_HTTP_PORT=${ARG}
         ;;

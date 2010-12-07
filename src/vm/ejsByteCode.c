@@ -12,7 +12,7 @@
 
 #include    "ejs.h"
 
-EjsOptable *ejsGetOptable(MprCtx ctx)
+EjsOptable *ejsGetOptable()
 {
     return ejsOptable;
 }

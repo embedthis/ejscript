@@ -15,12 +15,14 @@ static void manageFrame(EjsFrame *frame, int flags)
     if (frame) {
         if (flags & MPR_MANAGE_MARK) {
             ejsManageFunction((EjsFunction*) frame, flags);
-            ejsManageFunction(frame->orig, flags);
-            manageFrame(frame->caller, flags);
+            mprMark(frame->orig);
+            mprMark(frame->caller);
             mprMark(((EjsObj*) frame)->type);
+            /* Marking the stack is done in ejsGarbage.c:mark() */
+#if BLD_DEBUG
             mprMark(frame->loc.source);
             mprMark(frame->loc.filename);
-            /* Marking the stack is done in ejsGarbage.c:mark() */
+#endif
         }
     }
 }
@@ -34,7 +36,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
     mprAssert(ejs);
 
     size = sizeof(EjsFrame) + sizeof(EjsProperties) + numProp * sizeof(EjsSlot);
-    if ((obj = mprAllocBlock(ejs, size, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == 0) {
+    if ((obj = mprAllocBlock(size, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }

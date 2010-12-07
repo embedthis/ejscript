@@ -136,14 +136,6 @@ extern "C" {
 #define EC_CODE_BUFSIZE         4096            /* Initial size of code gen buffer */
 #define EC_NUM_PAK_PROP         32              /* Initial number of properties */
 
-/*
-    File extensions
-    MOB -- move these out of here 
- */
-#define EJS_MODULE_EXT          ".mod"
-#define EJS_SOURCE_EXT          ".es"
-#define EJS_LISTING_EXT         ".lst"
-
 #ifdef __cplusplus
 }
 #endif

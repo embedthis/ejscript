@@ -22,7 +22,7 @@ static EjsObj *logger_nativeLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
  */
 static EjsObj *logger_set_nativeLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    mprSetLogLevel(ejs, ejsGetInt(ejs, argv[0]));
+    mprSetLogLevel(ejsGetInt(ejs, argv[0]));
     return 0;
 }
 

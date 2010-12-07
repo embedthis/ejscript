@@ -12,8 +12,8 @@
 
 static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQuery);
 static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact);
-static HttpUri *createHttpUriFromHash(Ejs *ejs, MprCtx ctx, EjsObj *arg, int complete);
-static HttpUri *toHttpUri(Ejs *ejs, MprCtx ctx, EjsObj *arg, int dup);
+static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete);
+static HttpUri *toHttpUri(Ejs *ejs, EjsObj *arg, int dup);
 static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv);
 
 /************************************ Helpers *********************************/
@@ -33,7 +33,7 @@ static EjsUri *castToUri(Ejs *ejs, EjsObj *arg)
         up->uri = httpCreateUri(up, ejsToMulti(ejs, arg), 0);
 
     } else if (ejsIsUri(ejs, arg)) {
-        up->uri = httpCloneUri(up, ((EjsUri*) arg)->uri, 0);
+        up->uri = httpCloneUri(((EjsUri*) arg)->uri, 0);
 
     } else if (ejsIsPath(ejs, arg)) {
         ustr = ((EjsPath*) arg)->path;
@@ -57,7 +57,7 @@ static EjsUri *cloneUri(Ejs *ejs, EjsUri *src, bool deep)
 
     dest = (EjsUri*) ejsCreate(ejs, src->type, 0);
     /*  Deep copy will complete the uri */
-    dest->uri = httpCloneUri(dest, src->uri, deep);
+    dest->uri = httpCloneUri(src->uri, deep);
     return dest;
 }
 
@@ -73,7 +73,7 @@ static EjsObj *coerceUriOperands(Ejs *ejs, EjsUri *lhs, int opcode,  EjsObj *rhs
      */
     case EJS_OP_ADD:
         uri = lhs->uri;
-        ustr = httpFormatUri(lhs, uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, 0);
+        ustr = httpFormatUri(uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, 0);
         return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, ustr), opcode, rhs);
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_NE:
@@ -83,7 +83,7 @@ static EjsObj *coerceUriOperands(Ejs *ejs, EjsUri *lhs, int opcode,  EjsObj *rhs
             return (EjsObj*) ((opcode == EJS_OP_COMPARE_EQ) ? ejs->falseValue: ejs->trueValue);
         }
         uri = lhs->uri;
-        ustr = httpFormatUri(lhs, uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, 0);
+        ustr = httpFormatUri(uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, 0);
         return ejsInvokeOperator(ejs, (EjsObj*) ejsCreateStringFromAsc(ejs, ustr), opcode, rhs);
 
     case EJS_OP_COMPARE_STRICTLY_NE:
@@ -190,7 +190,7 @@ static EjsObj *invokeUriOperator(Ejs *ejs, EjsUri *lhs, int opcode,  EjsUri *rhs
 static EjsObj *uri_constructor(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     if (argc >= 0) {
-        up->uri = toHttpUri(ejs, up, argv[0], 1);
+        up->uri = toHttpUri(ejs, argv[0], 1);
     }
     return (EjsObj*) up;
 }
@@ -207,7 +207,7 @@ static EjsObj *uri_absolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     HttpUri     *uri, *baseUri;
 
     if (argc >= 1) {
-        baseUri = toHttpUri(ejs, ejs, argv[0], 1);
+        baseUri = toHttpUri(ejs, argv[0], 1);
         result = cloneUri(ejs, up, 0);
         uri = result->uri;
         if (uri->path && uri->path[0] != '/') {
@@ -303,7 +303,7 @@ static EjsObj *uri_components(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_decode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriDecode(ejs, ejsToMulti(ejs, argv[0])));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriDecode(ejsToMulti(ejs, argv[0])));
 }
 
 
@@ -313,7 +313,7 @@ static EjsObj *uri_decode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *uri_decodeComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriDecode(ejs, ejsToMulti(ejs, argv[0])));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriDecode(ejsToMulti(ejs, argv[0])));
 }
 
 
@@ -355,7 +355,7 @@ static EjsObj *uri_dirname(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_encode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriEncode(ejs, ejsToMulti(ejs, argv[0]), MPR_ENCODE_URI));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriEncode(ejsToMulti(ejs, argv[0]), MPR_ENCODE_URI));
 }
 
 
@@ -365,7 +365,7 @@ static EjsObj *uri_encode(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *uri_encodeComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriEncode(ejs, ejsToMulti(ejs, argv[0]), MPR_ENCODE_URI_COMPONENT));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriEncode(ejsToMulti(ejs, argv[0]), MPR_ENCODE_URI_COMPONENT));
 }
 
 
@@ -388,8 +388,8 @@ static EjsObj *uri_set_extension(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     HttpUri     *uri;
 
     uri = up->uri;
-    uri->ext = sclone(uri, ejsToMulti(ejs, argv[0]));
-    uri->path = sjoin(uri, NULL, mprTrimPathExtension(uri, uri->path), uri->ext, NULL);
+    uri->ext = ejsToMulti(ejs, argv[0]);
+    uri->path = sjoin(mprTrimPathExtension(uri->path), uri->ext, NULL);
     return 0;
 }
 
@@ -477,7 +477,7 @@ static EjsObj *uri_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_set_host(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    up->uri->host = sclone(up->uri, ejsToMulti(ejs, argv[0]));
+    up->uri->host = ejsToMulti(ejs, argv[0]);
     return 0;
 }
 
@@ -521,11 +521,11 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     uri = result->uri;
     for (i = 0; i < args->length; i++) {
         arg = ejsGetProperty(ejs, (EjsObj*) args, i);
-        if ((other = toHttpUri(ejs, result, arg, 0)) == NULL) {
+        if ((other = toHttpUri(ejs, arg, 0)) == NULL) {
             return 0;
         }
         oldUri = uri;
-        uri = httpJoinUri(result, oldUri, 1, &other);
+        uri = httpJoinUri(oldUri, 1, &other);
         mprFree(oldUri);
         if (!ejsIsUri(ejs, arg)) {
             mprFree(other);
@@ -548,12 +548,12 @@ static EjsObj *uri_joinExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     np = cloneUri(ejs, up, 1);
     nuri = np->uri;
-    ext = sclone(nuri, ejsToMulti(ejs, argv[0]));
+    ext = ejsToMulti(ejs, argv[0]);
     if (ext && *ext == '.') {
         ext++;
     }
     nuri->ext = ext;
-    nuri->path = sjoin(nuri, NULL, mprTrimPathExtension(nuri, nuri->path), ".", nuri->ext, NULL);
+    nuri->path = sjoin(mprTrimPathExtension(nuri->path), ".", nuri->ext, NULL);
     return (EjsObj*) np;
 }
 
@@ -578,7 +578,7 @@ static EjsObj *uri_local(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_mimeType(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprLookupMimeType(ejs, up->uri->ext));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprLookupMimeType(up->uri->ext));
 }
 
 
@@ -590,7 +590,7 @@ static EjsObj *uri_normalize(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     EjsUri      *np;
 
     np = cloneUri(ejs, up, 0);
-    np->uri->path = httpNormalizeUriPath(np, up->uri->path);
+    np->uri->path = httpNormalizeUriPath(up->uri->path);
     return (EjsObj*) np;
 }
 
@@ -611,8 +611,8 @@ static EjsObj *uri_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_set_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    up->uri->path = httpNormalizeUriPath(up, ejsToMulti(ejs, argv[0]));
-    up->uri->ext = (char*) mprGetPathExtension(up->uri, up->uri->path);
+    up->uri->path = httpNormalizeUriPath(ejsToMulti(ejs, argv[0]));
+    up->uri->ext = (char*) mprGetPathExtension(up->uri->path);
     return 0;
 }
 
@@ -663,13 +663,13 @@ static EjsObj *uri_replaceExtension(Ejs *ejs, EjsUri *up, int argc, EjsObj **arg
 
     np = cloneUri(ejs, up, 1);
     nuri = np->uri;
-    nuri->path = mprTrimPathExtension(nuri, nuri->path);
-    ext = sclone(np, ejsToMulti(ejs, argv[0]));
+    nuri->path = mprTrimPathExtension(nuri->path);
+    ext = ejsToMulti(ejs, argv[0]);
     if (ext && *ext == '.') {
         ext++;
     }
     nuri->ext = ext;
-    nuri->path = sjoin(nuri, NULL, mprTrimPathExtension(nuri, nuri->path), ".", nuri->ext, NULL);
+    nuri->path = sjoin(mprTrimPathExtension(nuri->path), ".", nuri->ext, NULL);
     return (EjsObj*) np;
 }
 
@@ -689,14 +689,14 @@ static EjsObj *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 #endif
 
     uri = up->uri;
-    target = toHttpUri(ejs, ejs, argv[0], 0);
+    target = toHttpUri(ejs, argv[0], 0);
     result = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
-    uri = httpResolveUri(result, uri, 1, &target, 0);
+    uri = httpResolveUri(uri, 1, &target, 0);
     if (!ejsIsUri(ejs, argv[0])) {
         mprFree(target);
     }
     if (up->uri == uri) {
-        uri = httpCloneUri(result, uri, 0);
+        uri = httpCloneUri(uri, 0);
     }
     result->uri = uri;
     return (EjsObj*) result;
@@ -711,9 +711,9 @@ static EjsObj *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     EjsUri      *result;
     HttpUri     *baseUri;
 
-    baseUri = toHttpUri(ejs, up, argv[0], 0);
+    baseUri = toHttpUri(ejs, argv[0], 0);
     result = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
-    result->uri = httpGetRelativeUri(result, baseUri, up->uri, 1);
+    result->uri = httpGetRelativeUri(baseUri, up->uri, 1);
     return (EjsObj*) result;
 }
 
@@ -741,7 +741,7 @@ static EjsObj *uri_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_set_scheme(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    up->uri->scheme = sclone(up, ejsToMulti(ejs, argv[0]));
+    up->uri->scheme = ejsToMulti(ejs, argv[0]);
     return 0;
 }
 
@@ -765,7 +765,7 @@ static EjsObj *uri_set_query(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     cchar    *value;
 
     value = (argv[0] == ejs->nullValue) ? "" : ejsToMulti(ejs, argv[0]);
-    up->uri->query = sclone(up, value);
+    up->uri->query = sclone(value);
     return 0;
 }
 
@@ -789,7 +789,7 @@ static EjsObj *uri_set_reference(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     cchar    *value;
 
     value = (argv[0] == ejs->nullValue) ? "" : ejsToMulti(ejs, argv[0]);
-    up->uri->reference = sclone(up, value);
+    up->uri->reference = sclone(value);
     return 0;
 }
 
@@ -827,12 +827,12 @@ static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     pattern = ejsToMulti(ejs, argv[0]);
     options = (EjsArray*) argv[1];
 
-    buf = mprCreateBuf(ejs, -1, -1);
+    buf = mprCreateBuf(-1, -1);
     for (cp = pattern; *cp; cp++) {
         if (*cp == '{' && (cp == pattern || cp[-1] != '\\')) {
             if ((ep = strchr(++cp, '}')) != 0) {
                 len = (int) (ep - cp);
-                token = mprMemdup(buf, cp, len + 1);
+                token = mprMemdup(cp, len + 1);
                 token[len] = '\0';
                 value = 0;
                 for (i = 0; i < options->length; i++) {
@@ -874,7 +874,7 @@ static EjsObj *uri_toString(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     HttpUri     *uri;
 
     uri = up->uri;
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, httpUriToString(up, uri, 0));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, httpUriToString(uri, 0));
 }
 
 
@@ -887,7 +887,7 @@ static EjsObj *uri_toLocalString(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     uri = up->uri;
     return (EjsObj*) ejsCreateStringFromAsc(ejs, 
-        httpFormatUri(ejs, NULL, NULL, 0, uri->path, uri->reference, uri->query, 0));
+        httpFormatUri(NULL, NULL, 0, uri->path, uri->reference, uri->query, 0));
 }
 
 
@@ -902,7 +902,7 @@ static EjsObj *uri_trimExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     np = cloneUri(ejs, up, 1);
     nuri = np->uri;
     nuri->ext = 0;
-    nuri->path = mprTrimPathExtension(nuri, nuri->path);
+    nuri->path = mprTrimPathExtension(nuri->path);
     return (EjsObj*) np;
 }
 
@@ -913,7 +913,7 @@ static EjsObj *uri_trimExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 static EjsObj *uri_set_uri(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     mprFree(up->uri);
-    up->uri = httpCreateUri(up, ejsToMulti(ejs, argv[0]), 0);
+    up->uri = httpCreateUri(ejsToMulti(ejs, argv[0]), 0);
     return 0;
 }
 
@@ -925,7 +925,7 @@ static char *uriToString(Ejs *ejs, EjsUri *up)
     HttpUri     *uri;
 
     uri = up->uri;
-    return httpFormatUri(ejs, uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, 0);
+    return httpFormatUri(uri->scheme, uri->host, uri->port, uri->path, uri->reference, uri->query, 0);
 }
 #endif
 
@@ -938,7 +938,7 @@ static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
         missingUri = 0;
     } else if (ejsGetPropertyCount(ejs, missing) > 0) {
         missingUri = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
-        missingUri->uri = createHttpUriFromHash(ejs, missingUri, missing, 1);
+        missingUri->uri = createHttpUriFromHash(ejs, missing, 1);
     } else {
         missingUri = ejsToUri(ejs, missing);
     }
@@ -954,29 +954,29 @@ static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
 }
 
 
-static HttpUri *toHttpUri(Ejs *ejs, MprCtx ctx, EjsObj *arg, int dup)
+static HttpUri *toHttpUri(Ejs *ejs, EjsObj *arg, int dup)
 {
     HttpUri     *uri;
 
     if (ejsIsString(ejs, arg)) {
-        uri = httpCreateUri(ctx, ejsToMulti(ejs, arg), 0);
+        uri = httpCreateUri(ejsToMulti(ejs, arg), 0);
 
     } else if (ejsIsUri(ejs, arg)) {
         if (dup) {
-            uri = httpCloneUri(ctx, ((EjsUri*) arg)->uri, 0);
+            uri = httpCloneUri(((EjsUri*) arg)->uri, 0);
         } else {
             uri = ((EjsUri*) arg)->uri;
         }
 
     } else if (ejsIsPath(ejs, arg)) {
-        uri = httpCreateUri(ctx, ((EjsPath*) arg)->value, 0);
+        uri = httpCreateUri(((EjsPath*) arg)->value, 0);
 
     } else if (ejsGetPropertyCount(ejs, arg) > 0) {
-        uri = createHttpUriFromHash(ejs, ctx, arg, 0);
+        uri = createHttpUriFromHash(ejs, arg, 0);
 
     } else {
         arg = (EjsObj*) ejsToString(ejs, arg);
-        uri = httpCreateUri(ctx, ejsToMulti(ejs, arg), 0);
+        uri = httpCreateUri(ejsToMulti(ejs, arg), 0);
     }
     return uri;
 }
@@ -1026,7 +1026,7 @@ static int same(Ejs *ejs, HttpUri *u1, HttpUri *u2, int exact)
 }
 
 
-static HttpUri *createHttpUriFromHash(Ejs *ejs, MprCtx ctx, EjsObj *arg, int complete)
+static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete)
 {
     EjsObj      *schemeObj, *hostObj, *portObj, *pathObj, *referenceObj, *queryObj, *uriObj;
     cchar       *scheme, *host, *path, *reference, *query;
@@ -1037,7 +1037,7 @@ static HttpUri *createHttpUriFromHash(Ejs *ejs, MprCtx ctx, EjsObj *arg, int com
      */
     uriObj = ejsGetPropertyByName(ejs, arg, EN("uri"));
     if (uriObj) {
-        return toHttpUri(ejs, ctx, uriObj, 1);
+        return toHttpUri(ejs, uriObj, 1);
     }
 
     schemeObj = ejsGetPropertyByName(ejs, arg, EN("scheme"));
@@ -1063,7 +1063,7 @@ static HttpUri *createHttpUriFromHash(Ejs *ejs, MprCtx ctx, EjsObj *arg, int com
     queryObj = ejsGetPropertyByName(ejs, arg, EN("query"));
     query = (queryObj && ejsIsString(ejs, queryObj)) ? ejsToMulti(ejs, queryObj) : 0;
 
-    return httpCreateUriFromParts(ctx, scheme, host, port, path, reference, query, complete);
+    return httpCreateUriFromParts(scheme, host, port, path, reference, query, complete);
 }
 
 
@@ -1074,7 +1074,7 @@ static HttpUri *createHttpUriFromHash(Ejs *ejs, MprCtx ctx, EjsObj *arg, int com
  */
 static EjsObj *decodeURI(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriDecode(ejs, ejsToMulti(ejs, argv[0])));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriDecode(ejsToMulti(ejs, argv[0])));
 }
 
 
@@ -1084,7 +1084,7 @@ static EjsObj *decodeURI(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *decodeURIComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriDecode(ejs, ejsToMulti(ejs, argv[0])));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriDecode(ejsToMulti(ejs, argv[0])));
 }
 
 
@@ -1094,7 +1094,7 @@ static EjsObj *decodeURIComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
  */
 static EjsObj *encodeURI(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriEncode(ejs, ejsToMulti(ejs, argv[0]), MPR_ENCODE_JS_URI));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprUriEncode(ejsToMulti(ejs, argv[0]), MPR_ENCODE_JS_URI));
 }
 
 
@@ -1106,7 +1106,7 @@ static EjsObj *encodeURIComponent(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
 {
     char    *encoded;
 
-    encoded = mprUriEncode(ejs, ejsToMulti(ejs, argv[0]), MPR_ENCODE_JS_URI_COMPONENT);
+    encoded = mprUriEncode(ejsToMulti(ejs, argv[0]), MPR_ENCODE_JS_URI_COMPONENT);
     return (EjsObj*) ejsCreateStringFromAsc(ejs, encoded);
 }
 
@@ -1149,7 +1149,7 @@ EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cc
     if (up == 0) {
         return 0;
     }
-    up->uri = httpCreateUriFromParts(up, scheme, host, port, path, reference, query, complete);
+    up->uri = httpCreateUriFromParts(scheme, host, port, path, reference, query, complete);
     return up;
 }
 

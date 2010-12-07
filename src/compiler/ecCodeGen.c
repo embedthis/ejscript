@@ -138,20 +138,21 @@ void ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *mp)
 /*
     Top level for code generation. Loop through the AST nodes recursively.
  */
-int ecCodeGen(EcCompiler *cp, int argc, EcNode **nodes)
+int ecCodeGen(EcCompiler *cp)
 {
     Ejs         *ejs;
     EjsModule   *mp;
     EcNode      *np;
     MprList     *modules;
-    int         i, version, next;
+    int         i, version, next, count;
 
     ejs = cp->ejs;
     if (ecEnterState(cp) < 0) {
         return EJS_ERR;
     }
-    for (i = 0; i < argc && !cp->error; i++) {
-        np = nodes[i];
+    count = mprGetListCount(cp->nodes);
+    for (i = 0; i < count && !cp->error; i++) {
+        np = mprGetItem(cp->nodes, i);
         cp->fileState = cp->state;
         cp->fileState->strict = cp->strict;
         if (np) {
@@ -1265,22 +1266,77 @@ static void genCatchArg(EcCompiler *cp, EcNode *np)
 
 
 /*
+    Code is injected before existing code
+ */
+static int injectCode(Ejs *ejs, EjsFunction *fun, EcCodeGen *extra)
+{
+    EjsCode     *old;
+    EjsEx       *ex;
+    EjsDebug    *debug;
+    uchar       *byteCode;
+    int         i, next, len, codeLen, extraCodeLen;
+
+    if (extra == NULL || extra->buf == NULL) {
+        return 0;
+    }
+    old = fun->body.code;
+    codeLen = (fun->body.code) ? old->codeLen : 0;
+    extraCodeLen = mprGetBufLength(extra->buf);
+    len = codeLen + extraCodeLen;
+    if (extraCodeLen == 0 || len == 0) {
+        return 0;
+    }
+    if ((byteCode = mprAllocZeroed(len)) == 0) {
+        return MPR_ERR_MEMORY;
+    }
+    mprMemcpy(byteCode, extraCodeLen, mprGetBufStart(extra->buf), extraCodeLen);
+    if (codeLen) {
+        mprMemcpy(&byteCode[extraCodeLen], codeLen, old->byteCode, codeLen);
+    }
+    ejsSetFunctionCode(ejs, fun, old->module, byteCode, len, extra->debug);
+    mprFree(byteCode);
+
+    debug = old->debug;
+    if (debug && debug->numLines > 0) {
+        for (i = 0; i < debug->numLines; i++) {
+            if (ejsAddDebugLine(ejs, &fun->body.code->debug, debug->lines[i].offset + extraCodeLen, debug->lines[i].source) < 0) {
+                return MPR_ERR_MEMORY;
+            }
+        }
+    }
+
+    /*
+        Recreate all exception handlers
+     */
+    for (i = 0; i < old->numHandlers; i++) {
+        ex = old->handlers[i];
+        ex->tryStart += extraCodeLen;
+        ex->tryEnd += extraCodeLen;
+        ex->handlerStart += extraCodeLen;
+        ex->handlerEnd += extraCodeLen;
+        ejsAddException(ejs, fun, ex->tryStart, ex->tryEnd, ex->catchType, ex->handlerStart, ex->handlerEnd, 
+            ex->numBlocks, ex->numStack, ex->flags, -1);
+    }
+    for (next = 0; (ex = mprGetNextItem(extra->exceptions, &next)) != 0; ) {
+        ejsAddException(ejs, fun, ex->tryStart, ex->tryEnd, ex->catchType, ex->handlerStart, ex->handlerEnd, 
+            ex->numBlocks, ex->numStack, ex->flags, -1);
+    }
+    return 0;
+}
+
+
+/*
     Process a class node.
  */
 static void genClass(EcCompiler *cp, EcNode *np)
 {
     Ejs             *ejs;
     EjsType         *type, *baseType;
-    EjsEx           *ex;
     EjsFunction     *constructor;
     EcCodeGen       *code;
     EcState         *state;
     EcNode          *constructorNode;
     EjsName         qname;
-    EjsDebug        *debug;
-    MprBuf          *codeBuf;
-    uchar           *buf;
-    int             next, len, initializerLen, constructorLen, i;
 
     ENTER(cp);
     mprAssert(np->kind == N_CLASS);
@@ -1343,7 +1399,6 @@ static void genClass(EcCompiler *cp, EcNode *np)
         mprAssert(constructorNode);
         mprAssert(state->instanceCodeBuf);
         code = state->code = state->instanceCodeBuf;
-        codeBuf = code->buf;
 
         constructor = state->currentFunction = (EjsFunction*) type;
         mprAssert(constructor);
@@ -1371,36 +1426,37 @@ static void genClass(EcCompiler *cp, EcNode *np)
             ecAddCStringConstant(cp, EJS_CONSTRUCTOR_NAMESPACE);
 
         } else if (type->constructor.block.pot.isFunction) {
+#if UNUSED
             /*
                 Inject instance initializer code into (before) pre-existing constructor code. 
              */
-            initializerLen = mprGetBufLength(codeBuf);
+            initializerCode = code->buf;
+            initializerLen = mprGetBufLength(initializerCode);
             mprAssert(initializerLen >= 0);
             if (initializerLen > 0) {
                 constructorLen = (constructor->body.code) ? constructor->body.code->codeLen : 0;
                 mprAssert(constructorLen >= 0);
-                
                 len = initializerLen + constructorLen;
-                buf = (uchar*) mprAllocZeroed(NULL, len);
-                if (buf == 0) {
+                if ((byteCode = mprAllocZeroed(len)) == 0) {
                     genError(cp, np, "Can't allocate code buffer");
                     LEAVE(cp);
                 }
-                mprMemcpy((char*) buf, initializerLen, mprGetBufStart(codeBuf), initializerLen);
+                mprMemcpy(byteCode, initializerLen, mprGetBufStart(initializerCode), initializerLen);
                 if (constructorLen) {
-                    mprMemcpy((char*) &buf[initializerLen], constructorLen, (char*) constructor->body.code->byteCode, 
-                        constructorLen);
+                    mprMemcpy(&byteCode[initializerLen], constructorLen, constructor->body.code->byteCode, constructorLen);
                 }
                 if (constructor->body.code) {
                     debug = constructor->body.code->debug;
-                    if (debug && debug->length > 0) {
-                        for (i = 0; i < debug->length; i++) {
+                    if (debug && debug->numLines > 0) {
+                        for (i = 0; i < debug->numLines; i++) {
                             addDebugLine(cp, code, debug->lines[i].offset, debug->lines[i].source);
                         }
                     }
                 }
-                ejsSetFunctionCode(ejs, constructor, state->currentModule, buf, len, debug);
-                mprFree(buf);
+#if UNUSED
+                ejsSetFunctionCode(ejs, constructor, state->currentModule, byteCode, len, debug);
+#endif
+                mprFree(byteCode);
 
                 /*
                     Adjust existing exception blocks to accomodate injected code.
@@ -1418,6 +1474,8 @@ static void genClass(EcCompiler *cp, EcNode *np)
                         ex->handlerEnd, ex->numBlocks, ex->numStack, ex->flags, -1);
                 }
             }
+#endif
+            injectCode(ejs, constructor, code);
         }
     }
     ecAddNameConstant(cp, np->qname);
@@ -2117,7 +2175,7 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
     mprAssert(parameters);
 
     count = mprGetListCount(parameters->children);
-    buffers = (EcCodeGen**) mprAllocZeroed(NULL, count * sizeof(EcCodeGen*));
+    buffers = (EcCodeGen**) mprAllocZeroed(count * sizeof(EcCodeGen*));
 
     for (next = 0; (child = getNextNode(cp, parameters, &next)) && !cp->error; ) {
         mprAssert(child->kind == N_VAR_DEFINITION);
@@ -3613,7 +3671,7 @@ static MprFile *openModuleFile(EcCompiler *cp, cchar *filename)
     if (cp->noout) {
         return 0;
     }
-    if ((cp->file = mprOpen(cp, filename,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
+    if ((cp->file = mprOpen(filename,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
         genError(cp, 0, "Can't create %s", filename);
         return 0;
     }
@@ -3654,23 +3712,23 @@ static EcCodeGen *allocCodeBuffer(EcCompiler *cp)
     state = cp->state;
     mprAssert(state);
 
-    if ((code = mprAllocObj(NULL, EcCodeGen, manageCodeGen)) == 0) {
+    if ((code = mprAllocObj(EcCodeGen, manageCodeGen)) == 0) {
         cp->fatalError = 1;
         return 0;
     }
-    if ((code->buf = mprCreateBuf(NULL, EC_CODE_BUFSIZE, 0)) == 0) {
+    if ((code->buf = mprCreateBuf(EC_CODE_BUFSIZE, 0)) == 0) {
         mprAssert(0);
         cp->fatalError = 1;
         return 0;
     }
-    if ((code->exceptions = mprCreateList(code)) == 0) {
+    if ((code->exceptions = mprCreateList()) == 0) {
         mprAssert(0);
         return 0;
     }
     /*
         Jumps are fully processed before the state is freed
      */
-    code->jumps = mprCreateList(code);
+    code->jumps = mprCreateList();
     if (code->jumps == 0) {
         mprAssert(0);
         return 0;
@@ -3754,7 +3812,7 @@ static void copyCodeBuffer(EcCompiler *cp, EcCodeGen *dest, EcCodeGen *src)
      */
     if (src->debug) {
         debug = src->debug;
-        for (i = 0; i < debug->length; i++) {
+        for (i = 0; i < debug->numLines; i++) {
             addDebugLine(cp, dest, baseOffset + debug->lines[i].offset, debug->lines[i].source);
         }
     }
@@ -3965,7 +4023,7 @@ static int mapToken(EcCompiler *cp, int tokenId)
 
 static void addDebugLine(EcCompiler *cp, EcCodeGen *code, int offset, MprChar *source)
 {
-    if ((code->debug = ejsAddDebugLine(cp->ejs, code->debug, offset, source)) == 0) {
+    if (ejsAddDebugLine(cp->ejs, &code->debug, offset, source) < 0) {
         genError(cp, 0, "Can't allocate memory for debug section");
         return;
     }
@@ -3987,7 +4045,7 @@ static void addDebug(EcCompiler *cp, EcNode *np)
         return;
     }
     offset = mprGetBufLength(code->buf);
-    source = mfmt(cp, "%s|%d|%w", np->loc.filename, np->loc.lineNumber, np->loc.source);
+    source = mfmt("%s|%d|%w", np->loc.filename, np->loc.lineNumber, np->loc.source);
     addDebugLine(cp, code, offset, source);
     code->lastLineNumber = np->loc.lineNumber;
 }
@@ -4216,10 +4274,10 @@ static void processModule(EcCompiler *cp, EjsModule *mp)
     }
     if (! cp->outputFile) {
         if (mp->version) {
-            path = mprAsprintf(cp->state, "%s-%d.%d.%d%s", mp->name, 
-                EJS_MAJOR(mp->version), EJS_MINOR(mp->version), EJS_PATCH(mp->version), EJS_MODULE_EXT);
+            path = mprAsprintf("%s-%d.%d.%d%s", mp->name, EJS_MAJOR(mp->version), EJS_MINOR(mp->version), 
+                EJS_PATCH(mp->version), EJS_MODULE_EXT);
         } else {
-            path = mprAsprintf(cp->state, "%@%s", mp->name, EJS_MODULE_EXT);
+            path = mprAsprintf("%@%s", mp->name, EJS_MODULE_EXT);
         }
         if ((mp->file = openModuleFile(cp, path)) == 0) {
             mprFree(path);
@@ -4320,7 +4378,7 @@ static void pushStack(EcCompiler *cp, int count)
     code->stackCount += count;
     mprAssert(code->stackCount >= 0);
 
-    mprLog(cp, level, "Stack %d, after push %d", code->stackCount, count);
+    mprLog(level, "Stack %d, after push %d", code->stackCount, count);
 }
 
 
@@ -4336,7 +4394,7 @@ static void popStack(EcCompiler *cp, int count)
     code->stackCount -= count;
     mprAssert(code->stackCount >= 0);
 
-    mprLog(cp, level, "Stack %d, after pop %d", code->stackCount, count);
+    mprLog(level, "Stack %d, after pop %d", code->stackCount, count);
 }
 
 
@@ -4377,7 +4435,7 @@ static void discardStackItems(EcCompiler *cp, int preserve)
     }
     code->stackCount -= count;
     mprAssert(code->stackCount >= 0);
-    mprLog(cp, level, "Stack %d, after discard\n", code->stackCount);
+    mprLog(level, "Stack %d, after discard\n", code->stackCount);
 }
 
 
@@ -4395,7 +4453,7 @@ static void discardBlockItems(EcCompiler *cp, int preserve)
     }
     code->blockCount -= count;
     mprAssert(code->blockCount >= 0);
-    mprLog(cp, level, "Block level %d, after discard\n", code->blockCount);
+    mprLog(level, "Block level %d, after discard\n", code->blockCount);
 }
 
 
@@ -4405,7 +4463,7 @@ static void discardBlockItems(EcCompiler *cp, int preserve)
 static void setCodeBuffer(EcCompiler *cp, EcCodeGen *saveCode)
 {
     cp->state->code = saveCode;
-    mprLog(cp, level, "Stack %d, after restore code buffer\n", cp->state->code->stackCount);
+    mprLog(level, "Stack %d, after restore code buffer\n", cp->state->code->stackCount);
 }
 
 
@@ -4422,7 +4480,7 @@ static void addException(EcCompiler *cp, uint tryStart, uint tryEnd, EjsType *ca
     code = state->code;
     mprAssert(code);
 
-    if ((exception = mprAllocZeroed(NULL, sizeof(EjsEx))) == 0) {
+    if ((exception = mprAllocZeroed(sizeof(EjsEx))) == 0) {
         mprAssert(0);
         return;
     }
@@ -4444,7 +4502,7 @@ static void addJump(EcCompiler *cp, EcNode *np, int kind)
 
     ENTER(cp);
 
-    jump = mprAllocZeroed(NULL, sizeof(EcJump));
+    jump = mprAllocZeroed(sizeof(EcJump));
     mprAssert(jump);
 
     jump->kind = kind;
@@ -4524,7 +4582,7 @@ static void badNode(EcCompiler *cp, EcNode *np)
 {
     cp->fatalError = 1;
     cp->errorCount++;
-    mprError(cp, "Unsupported language feature\nUnknown AST node kind %d", np->kind);
+    mprError("Unsupported language feature\nUnknown AST node kind %d", np->kind);
 }
 
 

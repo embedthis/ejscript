@@ -36,7 +36,7 @@ static void     appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, E
 static EcNode   *appendNode(EcNode *top, EcNode *np);
 static void     applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributes, EjsString *namespaceName);
 static void     copyDocString(EcCompiler *cp, EcNode *np, EcNode *from);
-static int      compileInput(EcCompiler *cp, EcNode **nodes, cchar *path);
+static EcNode   *compileInput(EcCompiler *cp, cchar *path);
 static EcNode   *createAssignNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode *parent);
 static EcNode   *createBinaryNode(EcCompiler *cp, EcNode *lhs, EcNode *rhs, EcNode *parent);
 static EcNode   *createNameNode(EcCompiler *cp, EjsName name);
@@ -421,19 +421,15 @@ char *nodes[] = {
 /************************************ Code ************************************/
 /*
     Compile the input stream and parse all directives into the given nodes reference.
-    path is optional.
  */
-static int compileInput(EcCompiler *cp, EcNode **nodes, cchar *path)
+static EcNode *compileInput(EcCompiler *cp, cchar *path)
 {
     EcNode      *np;
 
     mprAssert(cp);
-    mprAssert(nodes);
-
-    *nodes = 0;
 
     if (ecEnterState(cp) < 0) {
-        return EJS_ERR;
+        return 0;
     }
     cp->fileState = cp->state;
     cp->fileState->strict = cp->strict;
@@ -450,13 +446,12 @@ static int compileInput(EcCompiler *cp, EcNode **nodes, cchar *path)
     np = parseProgram(cp, path);
     mprAssert(np || cp->error);
     np = ecLeaveStateWithResult(cp, np);
-    *nodes = np;
     cp->fileState = 0;
 
-    if (np == 0 || cp->errorCount > 0) {
-        return EJS_ERR;
+    if (cp->errorCount > 0) {
+        return 0;
     }
-    return 0;
+    return np;
 }
 
 
@@ -464,30 +459,27 @@ static int compileInput(EcCompiler *cp, EcNode **nodes, cchar *path)
     Compile a source file and parse all directives into the given nodes reference.
     This may be called with the input stream already setup to parse a script.
  */
-int ecParseFile(EcCompiler *cp, char *path, EcNode **nodes)
+EcNode *ecParseFile(EcCompiler *cp, char *path)
 {
-    int     rc, opened;
+    EcNode  *np;
+    int     opened;
 
     mprAssert(path);
-    mprAssert(nodes);
 
     opened = 0;
-    path = mprGetNormalizedPath(cp, path);
-
+    path = mprGetNormalizedPath(path);
     if (cp->stream == 0) {
         if (ecOpenFileStream(cp, path) < 0) {
             parseError(cp, "Can't open %s", path);
-            mprFree(path);
-            return EJS_ERR;
+            return 0;
         }
         opened = 1;
     }
-    rc = compileInput(cp, nodes, path);
+    np = compileInput(cp, path);
     if (opened) {
         ecCloseStream(cp);
     }
-    mprFree(path);
-    return rc;
+    return np;
 }
 
 
@@ -1154,7 +1146,7 @@ static EcNode *parseAttributeName(EcCompiler *cp)
     if (np && np->kind == N_QNAME) {
         //  MOB - OPT. Better to allow lexer to keep @ in the id name and return T_AT with the entire attribute name.
         np->name.isAttribute = 1;
-        attribute = sjoin(np, "@", np->qname.name->value, NULL);
+        attribute = sjoin("@", np->qname.name->value, NULL);
         np->qname.name = ejsCreateStringFromAsc(cp->ejs, attribute);
     }
     return LEAVE(cp, np);
@@ -1953,7 +1945,7 @@ struct EcNode *parseXMLInitializer(EcCompiler *cp)
     ejs = cp->ejs;
 
     np = createNode(cp, N_LITERAL, NULL);
-    np->literal.data = mprCreateBuf(np, 0, 0);
+    np->literal.data = mprCreateBuf(0, 0);
 
     if (ejs->xmlType == 0) {
         return LEAVE(cp, parseError(cp, "No XML support configured"));
@@ -2486,7 +2478,7 @@ static EcNode *parseRegularExpression(EcCompiler *cp)
     while (cp->putback) {
         getToken(cp);
     }
-    prefix = wclone(cp, cp->token->text);
+    prefix = wclone(cp->token->text);
 
     id = ecGetRegExpToken(cp, prefix);
     mprFree(prefix);
@@ -6084,7 +6076,6 @@ static EcNode *parseCatchClauses(EcCompiler *cp)
         return LEAVE(cp, unexpected(cp));
     }
     np = createNode(cp, N_CATCH_CLAUSES, NULL);
-
     do {
         np = appendNode(np, parseCatchClause(cp));
     } while (peekToken(cp) == T_CATCH);
@@ -8630,7 +8621,6 @@ static EcNode *parseModuleDefinition(EcCompiler *cp)
     for (next = 0; (name = mprGetNextItem(cp->require, &next)) != 0; ) {
         body = insertNode(body, createNamespaceNode(cp, ejsCreateStringFromAsc(cp->ejs, name), 0, 1), pos++);
     }
-    
     mprAssert(body->kind == N_BLOCK);
     np = appendNode(np, body);
     return LEAVE(cp, np);
@@ -8825,7 +8815,7 @@ static int parseVersion(EcCompiler *cp, int parseMax)
     if (getToken(cp) != T_STRING && cp->token->tokenId != T_NUMBER) {
         return MPR_ERR_BAD_VALUE;
     }
-    str = wclone(cp, cp->token->text);
+    str = wclone(cp->token->text);
     if ((p = mtok(str, ".", &next)) != 0) {
         major = (int) wtoi(p, 10, NULL);
     }
@@ -9143,8 +9133,8 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
     if (cp->visibleGlobals && ejs->state->internal) {
         np->qname.name = ejs->state->internal->value;
     } else if (path) {
-        apath = mprGetAbsPath(cp, path);
-        md5 = mprGetMD5Hash(cp, apath, (int) strlen(apath), NULL);
+        apath = mprGetAbsPath(path);
+        md5 = mprGetMD5Hash(apath, (int) strlen(apath), NULL);
         np->qname.name = ejsSprintf(cp->ejs, "%s-%s-%d", EJS_INTERNAL_NAMESPACE, md5, cp->uid++);
         mprFree(md5);
         mprFree(apath);
@@ -9932,7 +9922,7 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, E
     mprAssert(nspace);
     np->qname.space = nspace;
 
-    mprLog(np, 7, "Parser apply attributes namespace = \"%s\", current line %s", nspace, np->loc.source);
+    mprLog(7, "Parser apply attributes namespace = \"%s\", current line %s", nspace, np->loc.source);
     mprAssert(np->qname.space);
     np->attributes |= attributes;
 }
@@ -10025,7 +10015,7 @@ void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
     if (outputFile) {
         mprFree(cp->outputFile);
         //  MOB UNICODE
-        cp->outputFile = sclone(cp, outputFile);
+        cp->outputFile = sclone(outputFile);
     }
 }
 
@@ -10034,7 +10024,7 @@ void ecSetCertFile(EcCompiler *cp, cchar *certFile)
 {
     //  MOB UNICODE
     mprFree(cp->certFile);
-    cp->certFile = sclone(cp, certFile);
+    cp->certFile = sclone(certFile);
 }
 
 
@@ -10106,6 +10096,9 @@ static void manageNode(EcNode *node, int flags)
             mprMark(node->caseLabel.expressionCode);
             break;
 
+        case N_CASE_ELEMENTS:
+            break;
+
         case N_CATCH:
             mprMark(node->catchBlock.arg);
             break;
@@ -10113,10 +10106,14 @@ static void manageNode(EcNode *node, int flags)
         case N_CATCH_ARG:
             break;
 
+        case N_CATCH_CLAUSES:
+            break;
+            
         case N_CONTINUE:
             break;
 
         case N_DASSIGN:
+            mprMark(node->objectLiteral.typeNode)
             break;
 
         case N_DIRECTIVES:
@@ -10193,6 +10190,12 @@ static void manageNode(EcNode *node, int flags)
             mprMark(node->module.filename);
             mprMark(node->module.name);
             break;
+                
+        case N_NEW:
+            break;
+                
+        case N_NOP:
+            break;
 
         case N_OBJECT_LITERAL:
             mprMark(node->objectLiteral.typeNode);
@@ -10245,6 +10248,9 @@ static void manageNode(EcNode *node, int flags)
             mprMark(node->exception.finallyBlock);
             break;
 
+        case N_TYPE_IDENTIFIERS:
+            break;
+                
         case N_UNARY_OP:
             break;
 
@@ -10287,7 +10293,7 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
     mprAssert(cp->state);
     ejs = cp->ejs;
 
-    if ((np = mprAllocObj(cp, EcNode, manageNode)) == 0) {
+    if ((np = mprAllocObj(EcNode, manageNode)) == 0) {
         return 0;
     }
     np->seqno = cp->nextSeqno++;

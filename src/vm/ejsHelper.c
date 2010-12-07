@@ -22,7 +22,7 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, int extra)
     mprAssert(type);
     mprAssert(extra >= 0);
 
-    if ((vp = mprAllocBlock(ejs, type->instanceSize + extra, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == NULL) {
+    if ((vp = mprAllocBlock(type->instanceSize + extra, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == NULL) {
         return NULL;
     }
     vp->type = type;

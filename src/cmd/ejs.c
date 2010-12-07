@@ -17,11 +17,21 @@
 
 /*********************************** Locals ***********************************/
 
+typedef struct App {
+    MprList     *files;
+    MprList     *modules;
+    EjsService  *ejsService;
+    EcCompiler  *compiler;
+} App;
+
+static App *app;
+
 static int  consoleGets(EcStream *stream);
 static int  commandGets(EcStream *stream);
 static int  interpretCommands(EcCompiler*cp, cchar *cmd);
 static int  interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv, cchar *className, cchar *method);
-static void require(MprList *list, cchar *name);
+static void manageApp(App *app, int flags);
+static void require(cchar *name);
 static void setupSignals();
 
 /************************************ Code ************************************/
@@ -30,9 +40,7 @@ MAIN(ejsMain, int argc, char **argv)
 {
     Mpr             *mpr;
     EcCompiler      *cp;
-    EjsService      *ejsService;
     Ejs             *ejs;
-    MprList         *requiredModules, *files;
     cchar           *cmd, *className, *method, *homeDir;
     char            *argp, *searchPath, *modules, *name, *tok, *extraFiles;
     int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, debugger, optimizeLevel, warnLevel, strict;
@@ -41,12 +49,14 @@ MAIN(ejsMain, int argc, char **argv)
         Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
      */
     mpr = mprCreate(argc, argv, NULL);
-mprEnableGC(1);
-    mprSetAppName(mpr, argv[0], 0, 0);
+    mprSetAppName(argv[0], 0, 0);
     setupSignals();
+    app = mprAllocObj(App, manageApp);
+    mprAddRoot(app);
+    mprEnableGC(1);
 
     if (mprStart(mpr) < 0) {
-        mprError(mpr, "Can't start mpr services");
+        mprError("Can't start mpr services");
         return EJS_ERR;
     }
 
@@ -63,11 +73,8 @@ mprEnableGC(1);
     debugger = 0;
     warnLevel = 1;
     optimizeLevel = 9;
-    requiredModules = 0;
     strict = 0;
-
-    files = mprCreateList(mpr);
-    mprAddRoot(files);
+    app->files = mprCreateList(mpr);
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];
@@ -91,7 +98,7 @@ mprEnableGC(1);
             } else {
                 homeDir = argv[++nextArg];
                 if (chdir((char*) homeDir) < 0) {
-                    mprError(mpr, "Can't change directory to %s", homeDir);
+                    mprError("Can't change directory to %s", homeDir);
                 }
             }
 
@@ -101,13 +108,13 @@ mprEnableGC(1);
             if (nextArg >= argc) {
                 err++;
             } else {
-                homeDir = mprGetAbsPath(mpr, argv[++nextArg]);
+                homeDir = mprGetAbsPath(argv[++nextArg]);
                 if (chroot(homeDir) < 0) {
                     if (errno == EPERM) {
-                        mprPrintfError(mpr, "%s: Must be super user to use the --chroot option", mprGetAppName(mpr));
+                        mprPrintfError("%s: Must be super user to use the --chroot option", mprGetAppName(mpr));
                     } else {
-                        mprPrintfError(mpr, "%s: Can't change change root directory to %s, errno %d",
-                            mprGetAppName(mpr), homeDir, errno);
+                        mprPrintfError("%s: Can't change change root directory to %s, errno %d",
+                            mprGetAppName(), homeDir, errno);
                     }
                     exit(4);
                 }
@@ -132,10 +139,10 @@ mprEnableGC(1);
             if (nextArg >= argc) {
                 err++;
             } else {
-                extraFiles = sclone(mpr, argv[++nextArg]);
+                extraFiles = sclone(argv[++nextArg]);
                 name = stok(extraFiles, " \t", &tok);
                 while (name != NULL) {
-                    mprAddItem(files, name);
+                    mprAddItem(app->files, name);
                     name = stok(NULL, " \t", &tok);
                 }
             }
@@ -144,7 +151,7 @@ mprEnableGC(1);
             if (nextArg >= argc) {
                 err++;
             } else {
-                ejsStartMprLogging(mpr, argv[++nextArg]);
+                ejsStartMprLogging(argv[++nextArg]);
             }
 
         } else if (strcmp(argp, "--method") == 0) {
@@ -194,22 +201,22 @@ mprEnableGC(1);
             if (nextArg >= argc) {
                 err++;
             } else {
-                if (requiredModules == 0) {
-                    requiredModules = mprCreateList(mpr);
+                if (app->modules == 0) {
+                    app->modules = mprCreateList(mpr);
                 }
-                modules = sclone(mpr, argv[++nextArg]);
+                modules = sclone(argv[++nextArg]);
                 name = stok(modules, " \t", &tok);
                 while (name != NULL) {
-                    require(requiredModules, name);
+                    require(name);
                     name = stok(NULL, " \t", &tok);
                 }
             }
 
         } else if (strcmp(argp, "--verbose") == 0 || strcmp(argp, "-v") == 0) {
-            ejsStartMprLogging(mpr, "stdout:2");
+            ejsStartMprLogging("stdout:2");
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
-            mprPrintfError(mpr, "%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);
+            mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);
             exit(0);
 
         } else if (strcmp(argp, "--warn") == 0) {
@@ -235,8 +242,7 @@ mprEnableGC(1);
                 ejs script.es arg1 arg2 arg3
                 ejs --class "Customer" --method "start" --files "script1.es script2.es" main.es
          */
-        mprPrintfError(mpr,
-            "Usage: %s [options] script.es [arguments] ...\n"
+        mprPrintfError("Usage: %s [options] script.es [arguments] ...\n"
             "  Ejscript shell program options:\n"
             "  --class className        # Name of class containing method to run\n"
             "  --cmd ejscriptCode       # Literal ejscript statements to execute\n"
@@ -258,14 +264,14 @@ mprEnableGC(1);
             mpr->name);
         return -1;
     }
-    mprSetDebugMode(mpr, debugger);
+    mprSetDebugMode(debugger);
 
-    ejsService = ejsCreateService(mpr);
-    if (ejsService == 0) {
+    app->ejsService = ejsCreateService(mpr);
+    if (app->ejsService == 0) {
         return MPR_ERR_MEMORY;
     }
-    ejsInitCompiler(ejsService);
-    ejs = ejsCreateVm(ejsService, searchPath, requiredModules, argc - nextArg, (cchar **) &argv[nextArg], 0);
+    ejsInitCompiler(app->ejsService);
+    ejs = ejsCreateVm(searchPath, app->modules, argc - nextArg, (cchar **) &argv[nextArg], 0);
     if (ejs == 0) {
         return MPR_ERR_MEMORY;
     }
@@ -275,26 +281,25 @@ mprEnableGC(1);
     ecFlags |= (noout) ? EC_FLAGS_NO_OUT: 0;
     ecFlags |= (debug) ? EC_FLAGS_DEBUG: 0;
 
-    cp = ecCreateCompiler(ejs, ecFlags);
+    cp = app->compiler = ecCreateCompiler(ejs, ecFlags);
     if (cp == 0) {
         return MPR_ERR_MEMORY;
     }
-    //  TODO - should be an arg to create compiler
-    cp->require = requiredModules;
+    ecSetRequire(cp, app->modules);
 
     ecSetOptimizeLevel(cp, optimizeLevel);
     ecSetWarnLevel(cp, warnLevel);
     ecSetStrictMode(cp, strict);
 
     if (nextArg < argc) {
-        mprAddItem(files, argv[nextArg]);
+        mprAddItem(app->files, argv[nextArg]);
     }
     if (cmd) {
         if (interpretCommands(cp, cmd) < 0) {
             err++;
         }
-    } else if (mprGetListCount(files) > 0) {
-        if (interpretFiles(cp, files, argc - nextArg, &argv[nextArg], className, method) < 0) {
+    } else if (mprGetListCount(app->files) > 0) {
+        if (interpretFiles(cp, app->files, argc - nextArg, &argv[nextArg], className, method) < 0) {
             err++;
         }
     } else {
@@ -307,17 +312,28 @@ mprEnableGC(1);
     }
 #if BLD_DEBUG
      if (stats) {
-        mprSetLogLevel(ejs, 1);
-        mprPrintMemReport("Memory Usage", 0);
+        mprSetLogLevel(1);
+        mprPrintMem("Memory Usage", 0);
     }
 #endif
-    mprFree(files);
-    mprFree(cp);
-    mprFree(ejs);
+    mprFree(app);
     if (mprStop(mpr)) {
         mprFree(mpr);
     }
     return err;
+}
+
+
+static void manageApp(App *app, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(app->files);
+        mprMark(app->ejsService);
+        mprMark(app->compiler);
+        mprMark(app->modules);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+    }
 }
 
 
@@ -339,7 +355,7 @@ static int interpretFiles(EcCompiler *cp, MprList *files, int argc, char **argv,
 #endif
 
     if (ecCompile(cp, files->length, (char**) files->items) < 0) {
-        mprRawLog(cp, 0, "%s", cp->errorMsg);
+        mprRawLog(0, "%s\n", cp->errorMsg);
         return EJS_ERR;
     }
     if (cp->errorCount == 0) {
@@ -366,7 +382,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
     cp->interactive = 1;
 
     if (ecOpenConsoleStream(cp, (cmd) ? commandGets: consoleGets, cmd) < 0) {
-        mprError(cp, "Can't open input");
+        mprError("Can't open input");
         return EJS_ERR;
     }
     ecResetInput(cp);
@@ -376,7 +392,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
         err = 0;
         cp->uid = 0;
         if (ecCompile(cp, 1, tmpArgv) < 0) {
-            mprRawLog(cp, 0, "%s", cp->errorMsg);
+            mprRawLog(0, "%s", cp->errorMsg);
             ejs->result = ejs->undefinedValue;
             err++;
         }
@@ -388,11 +404,11 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
         if (!ejs->exception && ejs->result != ejs->undefinedValue) {
             if (ejsIsDate(ejs, ejs->result) || ejsIsType(ejs, ejs->result)) {
                 if ((result = (EjsString*) ejsToString(ejs, ejs->result)) != 0) {
-                    mprPrintf(cp, "%@\n", result);
+                    mprPrintf("%@\n", result);
                 }
             } else if (ejs->result != ejs->nullValue) {
                 if ((result = (EjsString*) ejsToJSON(ejs, ejs->result, NULL)) != 0) {
-                    mprPrintf(cp, "%@\n", result);
+                    mprPrintf("%@\n", result);
                 }
             }
         }
@@ -400,7 +416,7 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
         cp->errorCount = 0;
         cp->fatalError = 0;
         err = 0;
-        mprServiceEvents(ejs, ejs->dispatcher, 0, 0);
+        mprServiceEvents(ejs->dispatcher, 0, 0);
     }
     ecCloseStream(cp);
     return 0;
@@ -491,7 +507,7 @@ static int consoleGets(EcStream *stream)
     line = readline(prompt);
     if (line == NULL) {
         stream->eof = 1;
-        mprPrintf(stream, "\n");
+        mprPrintf("\n");
         return -1;
     }
     cp = strim(line, "\r\n", MPR_TRIM_BOTH);
@@ -517,12 +533,10 @@ static int commandGets(EcStream *stream)
 }
 
 
-static void require(MprList *list, cchar *name) 
+static void require(cchar *name) 
 {
-    mprAssert(list);
-
     if (name && *name) {
-        mprAddItem(list, name);
+        mprAddItem(app->modules, sclone(name));
     }
 }
 
@@ -535,20 +549,20 @@ static void catchSignal(int signo, siginfo_t *info, void *arg)
 {
     Mpr     *mpr;
 
-    mpr = mprGetMpr(NULL);
+    mpr = mprGetMpr();
     if (mpr) {
 #if DEBUG_IDE
         if (signo == SIGINT) {
             return;
         }
 #endif
-        mprLog(mpr, 2, "Received signal %d", signo);
+        mprLog(2, "Received signal %d", signo);
         if (signo == SIGTERM) {
-            mprLog(mpr, 1, "Exiting immediately ...");
-            mprTerminate(mpr, 0);
+            mprLog(1, "Exiting immediately ...");
+            mprTerminate(0);
         } else {
-            mprLog(mpr, 1, "Executing a graceful exit. Waiting for all requests to complete");
-            mprTerminate(mpr, 1);
+            mprLog(1, "Executing a graceful exit. Waiting for all requests to complete");
+            mprTerminate(MPR_GRACEFUL);
         }
     }
 }

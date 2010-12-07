@@ -1123,7 +1123,7 @@ static int flushByteArray(Ejs *ejs, EjsByteArray *ap)
 int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, int len)
 {
     if (len > ap->length) {
-        ap->value = mprRealloc(ap, ap->value, len);
+        ap->value = mprRealloc(ap->value, len);
         if (ap->value == 0) {
             ejsThrowMemoryError(ejs);
             return EJS_ERR;

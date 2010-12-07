@@ -22,9 +22,8 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event);
  */
 static EjsObj *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    sp->ejs = ejs;
     //  TODO -- ssl?
-    sp->sock = mprCreateSocket(sp, NULL);
+    sp->sock = mprCreateSocket(NULL);
     if (sp->sock == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -121,7 +120,7 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
     address = (EjsString*) argv[0];
     if (ejsIsNumber(ejs, address)) {
-        sp->address = sclone(sp, "127.0.0.1");
+        sp->address = sclone("127.0.0.1");
         sp->port = (int) ((EjsNumber*) address)->value;
     } else {
         if (!ejsIsString(ejs, address)) {
@@ -166,7 +165,7 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
     address = (EjsString*) argv[0];
     if (ejsIsNumber(ejs, address)) {
-        sp->address = sclone(sp, "");
+        sp->address = sclone("");
         sp->port = (int) ((EjsNumber*) address)->value;
     } else {
         if (!ejsIsString(ejs, address)) {
@@ -337,8 +336,11 @@ static EjsNumber *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEvent *event))
 {
+    Ejs     *ejs;
+
+    ejs = sp->type->ejs;
     if (sp->waitHandler.fd < 0) {
-        mprInitWaitHandler(sp, &sp->waitHandler, sp->sock->fd, sp->mask, sp->ejs->dispatcher, (MprEventProc) proc, sp);
+        mprInitWaitHandler(&sp->waitHandler, sp->sock->fd, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp);
     } else {
         //  TODO - need API for this
         sp->waitHandler.proc = (MprEventProc) proc;
@@ -353,7 +355,7 @@ static int socketConnectEvent(EjsSocket *sp, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = sp->ejs;
+    ejs = sp->type->ejs;
     if (sp->emitter) {
         ejsSendEvent(ejs, sp->emitter, "connect", NULL, (EjsObj*) sp);
         ejsSendEvent(ejs, sp->emitter, "writable", NULL, (EjsObj*) sp);
@@ -368,7 +370,7 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = listen->ejs;
+    ejs = listen->type->ejs;
     if (listen->emitter) {
         ejsSendEvent(ejs, listen->emitter, "accept", NULL, (EjsObj*) listen);
     }
@@ -381,7 +383,7 @@ static int socketIOEvent(EjsSocket *sp, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = sp->ejs;
+    ejs = sp->type->ejs;
     if (event->mask & MPR_READABLE) {
         if (sp->emitter) {
             ejsSendEvent(ejs, sp->emitter, "readable", NULL, (EjsObj*) sp);
@@ -420,7 +422,6 @@ EjsSocket *ejsCreateSocket(Ejs *ejs)
     if (sp == 0) {
         return 0;
     }
-    sp->ejs = ejs;
     sp->waitHandler.fd = -1;
     return sp;
 }

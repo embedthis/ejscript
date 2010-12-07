@@ -11,6 +11,7 @@
 /********************************** Forwards **********************************/
 
 static void manageConstants(EjsConstants *constants, int flags);
+static void manageDebug(EjsDebug *debug, int flags);
 static void manageModule(EjsModule *module, int flags);
 
 /************************************ Code ************************************/
@@ -21,7 +22,7 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
 
     mprAssert(version >= 0);
 
-    if ((mp = mprAllocObj(ejs, EjsModule, manageModule)) == NULL) {
+    if ((mp = mprAllocObj(EjsModule, manageModule)) == NULL) {
         mprAssert(mp);
         return 0;
     }
@@ -52,8 +53,11 @@ static void manageModule(EjsModule *mp, int flags)
         mprMark(mp->constants);
         mprMark(mp->doc);
         mprMark(mp->currentMethod);
-        mprMarkList(mp->globalProperties);
         mprMarkList(mp->current);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+        mprFree(mp->file);
+        mp->file = 0;
     }
 }
 
@@ -75,7 +79,7 @@ int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, in
 {
     EjsNativeModule     *nm;
 
-    if ((nm = mprAllocObj(ejs, EjsNativeModule, manageNativeModule)) == NULL) {
+    if ((nm = mprAllocObj(EjsNativeModule, manageNativeModule)) == NULL) {
         return MPR_ERR_MEMORY;
     }
     nm->name = name;
@@ -156,8 +160,10 @@ static void manageConstants(EjsConstants *cp, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(cp->pool);
         mprMark(cp->table);
-        mprMark(cp->index);
 #if UNUSED
+        /* Must not mark the index as it is "held" */
+        mprMark(cp->index);
+        /* By holding the constants, we don't need to mark every GC */
         for (i = 0; i < cp->count; i++) {
             value = PTOI(cp->index[i]);
             if (!(value & 0x1)) {
@@ -165,12 +171,14 @@ static void manageConstants(EjsConstants *cp, int flags)
             }
         }
 #endif
-    } else {
+    } else if (flags & MPR_MANAGE_FREE) {
         for (sp = (EjsString**) &cp->index[cp->indexCount - 1]; sp >= (EjsString**) cp->index; sp--) {
             if (!(PTOI(*sp) & 0x1)) {
-                mprRelease(*sp);
+                // mprRelease(*sp);
+                mprFree(*sp);
             }
         }
+        mprRelease(cp->index);
     }
 }
 
@@ -181,25 +189,26 @@ EjsConstants *ejsCreateConstants(Ejs *ejs, int count, size_t size)
 
     mprAssert(ejs);
 
-    if ((constants = mprAllocObj(ejs, EjsConstants, manageConstants)) == 0) {
+    if ((constants = mprAllocObj(EjsConstants, manageConstants)) == 0) {
         return NULL;
     }
     if (ejs->compiling) {
-        if ((constants->table = mprCreateHash(constants, EJS_DOC_HASH_SIZE, 0)) == 0) {
+        if ((constants->table = mprCreateHash(EJS_DOC_HASH_SIZE, 0)) == 0) {
             return 0;
         }
     }
-    if ((constants->pool = mprAlloc(constants, size)) == 0) {
+    if ((constants->pool = mprAlloc(size)) == 0) {
         return 0;
     }
     constants->poolSize = size;
     constants->poolLength = 0;
 
-    if ((constants->index = mprAlloc(constants, count * sizeof(EjsString*))) == NULL) {
+    if ((constants->index = mprAlloc(count * sizeof(EjsString*))) == NULL) {
         return 0;
     }
     constants->index[0] = ejs->emptyString;
     constants->indexCount = 1;
+    mprHold(constants->index);
     return constants;
 }
 
@@ -210,13 +219,13 @@ int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, size_t len)
 
     if ((constants->poolLength + len) >= constants->poolSize) {
         constants->poolSize = ((constants->poolSize + len) + EC_BUFSIZE - 1) / EC_BUFSIZE * EC_BUFSIZE;
-        if ((constants->pool = mprRealloc(constants, constants->pool, constants->poolSize)) == 0) {
+        if ((constants->pool = mprRealloc(constants->pool, constants->poolSize)) == 0) {
             return MPR_ERR_MEMORY;
         }
     }
     if (constants->indexCount >= constants->indexSize) {
         indexSize = (constants->indexCount + EJS_INDEX_INCR - 1) / EJS_INDEX_INCR * EJS_INDEX_INCR;
-        if ((constants->index = mprRealloc(constants, constants->index, indexSize * sizeof(EjsString*))) == NULL) {
+        if ((constants->index = mprRealloc(constants->index, indexSize * sizeof(EjsString*))) == NULL) {
             return MPR_ERR_MEMORY;
         }
         constants->indexSize = indexSize;
@@ -231,7 +240,7 @@ int ejsAddConstant(Ejs *ejs, EjsConstants *constants, cchar *str)
     int         oldLen;
 
     if (constants->locked) {
-        mprError(ejs, "Constant pool for module is locked. Can't add constant \"%s\".",  str);
+        mprError("Constant pool for module is locked. Can't add constant \"%s\".",  str);
         return MPR_ERR_CANT_WRITE;
     }
     len = slen(str) + 1;
@@ -276,44 +285,47 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
 EjsDebug *ejsCreateDebug(Ejs *ejs)
 {
     EjsDebug    *debug;
-    size_t      len;
+    size_t      size;
 
-    len = sizeof(EjsDebug) + (EJS_DEBUG_INCR * sizeof(EjsLine));
-    if ((debug = mprAllocZeroed(ejs, len)) == 0) {
+    size = sizeof(EjsDebug) + (EJS_DEBUG_INCR * sizeof(EjsLine));
+    if ((debug = mprAllocBlock(size, MPR_ALLOC_MANAGER)) == 0) {
         return NULL;
     }
+    mprSetManager(debug, manageDebug);
     debug->size = EJS_DEBUG_INCR;
-    debug->length = 0;
+    debug->numLines = 0;
     return debug;
 }
 
 
-/*
-    Only called by the compiler
- */
-EjsDebug *ejsAddDebugLine(Ejs *ejs, EjsDebug *debug, int offset, MprChar *source)
+int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, MprChar *source)
 {
+    EjsDebug    *debug;
     EjsLine     *line;
     size_t      len;
 
-    if (debug == 0) {
-        debug = ejsCreateDebug(ejs);
+    mprAssert(debugp);
+    
+    if (*debugp == 0) {
+        *debugp = ejsCreateDebug(ejs);
     }
-    if (debug->length >= debug->size) {
+    debug = *debugp;
+    if (debug->numLines >= debug->size) {
         debug->size += EJS_DEBUG_INCR;
         len = sizeof(EjsDebug) + (debug->size * sizeof(EjsLine));
-        if ((debug = mprRealloc(ejs, debug, len)) == 0) {
-            return 0;
+        if ((debug = mprRealloc(debug, len)) == 0) {
+            return MPR_ERR_MEMORY;
         }
+        *debugp = debug;
     }
-    if (debug->length > 0 && offset == debug->lines[debug->length - 1].offset) {
-        line = &debug->lines[debug->length - 1];
+    if (debug->numLines > 0 && offset == debug->lines[debug->numLines - 1].offset) {
+        line = &debug->lines[debug->numLines - 1];
     } else {
-        line = &debug->lines[debug->length++];
+        line = &debug->lines[debug->numLines++];
     }
     line->source = source;
     line->offset = offset;
-    return debug;
+    return 0;
 }
 
 
@@ -322,10 +334,9 @@ static void manageDebug(EjsDebug *debug, int flags)
     int     i;
 
     if (flags & MPR_MANAGE_MARK) {
-        for (i = 0; i < debug->length; i++) {
+        for (i = 0; i < debug->numLines; i++) {
             mprMark(debug->lines[i].source);
         }
-    } else {
     }
 }
 
@@ -344,35 +355,47 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
 
     mp = fun->body.code->module;
     code = fun->body.code;
-    mprAssert(mp->file);
+    prior = 0;
+    debug = NULL;
+
     if (mp->file == 0) {
-        mprAssert(mp->file);
-        return 0;
+        if ((mp->file = mprOpen(mp->path, O_RDONLY | O_BINARY, 0666)) == NULL) {
+            ejsThrowIOError(ejs, "Can't open module file %s", mp->path);
+            return NULL;
+        }
+        mprEnableFileBuffering(mp->file, 0, 0);
+    } else {
+        prior = mprGetFilePosition(mp->file);
     }
-    prior = mprGetFilePosition(mp->file);
     if (mprSeek(mp->file, SEEK_SET, code->debugOffset) != code->debugOffset) {
+        mprSeek(mp->file, SEEK_SET, prior);
         mprAssert(0);
         return 0;
     }
     length = ejsModuleReadNum(ejs, mp);
+    if (!mp->hasError) {
+        size = sizeof(EjsDebug) + length * sizeof(EjsLine);
+        if ((debug = mprAllocBlock(size, MPR_ALLOC_MANAGER)) != 0) {
+            mprSetManager(debug, manageDebug);
+            debug->size = length;
+            debug->numLines = length;
+            for (i = 0; i < debug->numLines; i++) {
+                line = &debug->lines[i];
+                line->offset = ejsModuleReadNum(ejs, mp);
+                line->source = ejsModuleReadMultiAsWide(ejs, mp);
+            }
+        }
+    }
+    if (prior) {
+        mprSeek(mp->file, SEEK_SET, prior);
+    } else {
+        mprFree(mp->file);
+        mp->file = 0;
+    }
     if (mp->hasError) {
-        mprSeek(mp->file, SEEK_SET, prior);
-        return 0;
+        mprFree(debug);
+        return NULL;
     }
-    size = sizeof(EjsDebug) + length * sizeof(EjsLine);
-    if ((debug = mprAllocBlock(ejs, size, MPR_ALLOC_MANAGER)) == 0) {
-        mprSeek(mp->file, SEEK_SET, prior);
-        return 0;
-    }
-    mprSetManager(debug, manageDebug);
-    debug->size = length;
-    debug->length = length;
-    for (i = 0; i < debug->length; i++) {
-        line = &debug->lines[i];
-        line->offset = ejsModuleReadNum(ejs, mp);
-        line->source = ejsModuleReadMultiAsWide(ejs, mp);
-    }
-    mprSeek(mp->file, SEEK_SET, prior);
     return debug;
 }
 
@@ -405,8 +428,8 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
     /*
         Source format is:  path|line| code
      */
-    if (debug->length > 0) {
-        for (i = 0; i < debug->length; i++) {
+    if (debug->numLines > 0) {
+        for (i = 0; i < debug->numLines; i++) {
             if (offset < debug->lines[i].offset) {
                 break;
             }
@@ -414,7 +437,8 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
         if (i > 0) {
             i--;
         }
-        str = wclone(ejs, debug->lines[i].source);
+        //  TODO OPT - this is pretty expensive
+        str = wclone(debug->lines[i].source);
         path = wtok(str, "|", &tok);
         line = wtok(NULL, "|", &tok);
         source = tok;
@@ -423,13 +447,13 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
         i = -1;
     }
     if (pathp) {
-        *pathp = wclone(ejs, path);
+        *pathp = wclone(path);
     }
     if (linep) {
         *linep = wtoi(line, 10, NULL);
     }
     if (sourcep) {
-        *sourcep = wclone(ejs, source);
+        *sourcep = wclone(source);
     }
     return i;
 }
@@ -665,7 +689,7 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
     mprAssert(mp);
 
     len = ejsModuleReadNum(ejs, mp);
-    if (mp->hasError || (buf = mprAlloc(mp, len)) == 0) {
+    if (mp->hasError || (buf = mprAlloc(len)) == 0) {
         return NULL;
     }
     if (mprRead(mp->file, buf, len) != len) {
@@ -688,7 +712,7 @@ MprChar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
 
     //  MOB OPT - need direct multi to wide without the double copy
     str = ejsModuleReadMulti(ejs, mp);
-    result = amtow(ejs, str, NULL);
+    result = amtow(str, NULL);
     mprFree(str);
     return result;
 }

@@ -513,25 +513,25 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 value = (EjsObj*) ejsToNumber(ejs, value);
                 flen = sizeof(fmt) - len + 1;
                 mtow(&fmt[len - 1], flen, ".0f", 3);
-                buf = wfmt(ejs, fmt, ejsGetNumber(ejs, value));
+                buf = wfmt(fmt, ejsGetNumber(ejs, value));
                 break;
 
             case 'e': case 'g': case 'f':
                 value = (EjsObj*) ejsToNumber(ejs, value);
-                buf = wfmt(ejs, fmt, ejsGetNumber(ejs, value));
+                buf = wfmt(fmt, ejsGetNumber(ejs, value));
                 break;
 
             case 's':
                 value = (EjsObj*) ejsToString(ejs, value);
-                buf = wfmt(ejs, fmt, ejsToMulti(ejs, value));
+                buf = wfmt(fmt, ejsToMulti(ejs, value));
                 break;
 
             case 'X': case 'x':
-                buf = wfmt(ejs, fmt, (int64) ejsGetNumber(ejs, value));
+                buf = wfmt(fmt, (int64) ejsGetNumber(ejs, value));
                 break;
 
             case 'n':
-                buf = wfmt(ejs, fmt, 0);
+                buf = wfmt(fmt, 0);
                 break;
 
             default:
@@ -1419,7 +1419,7 @@ EjsString *ejsStringToJSON(Ejs *ejs, EjsObj *vp)
     } else {
         sp = ejsToString(ejs, vp);
     }
-    buf = mprCreateBuf(sp, 0, 0);
+    buf = mprCreateBuf(0, 0);
     mprPutCharToBuf(buf, '"');
     for (i = 0; i < sp->length; i++) {
         c = sp->value[i];
@@ -1682,7 +1682,7 @@ static int catString(Ejs *ejs, EjsString *dest, char *str, size_t len)
         buf = oldBuf;
     } else {
 #endif
-        buf = (char*) mprRealloc(ejs, oldBuf, newLen);
+        buf = (char*) mprRealloc(oldBuf, newLen);
         if (buf == 0) {
             return -1;
         }
@@ -2116,7 +2116,7 @@ char *ejsToMulti(Ejs *ejs, EjsAny *ev)
         }
     }
     mprAssert(ejsIsString(ejs, ev));
-    return awtom(ejs, ((EjsString*) ev)->value, NULL);
+    return awtom(((EjsString*) ev)->value, NULL);
 }
 
 
@@ -2128,7 +2128,7 @@ EjsString *ejsSprintf(Ejs *ejs, cchar *fmt, ...)
     mprAssert(fmt);
 
     va_start(ap, fmt);
-    result = mprAsprintfv(ejs, fmt, ap);
+    result = mprAsprintfv(fmt, ap);
     va_end(ap);
     return ejsCreateStringFromAsc(ejs, result);
 }
@@ -2368,6 +2368,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, size_t len)
     }
     sp->length = len;
     linkString(ejs, head, sp);
+    // printf("INTERN %d %s\n", ejs->intern.count, sp->value);
     if (ejs->intern.count > ejs->intern.size) {
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ejs);
@@ -2450,8 +2451,23 @@ static int rebuildIntern(Ejs *ejs)
 
     mprAssert(ejs);
 
-    newSize = getInternHashSize(ejs->intern.count);
+#if UNUSED
+    if (ejs->intern.buckets) {
+        for (count = 0, i = 0; i < ejs->intern.size; i++) {
+            head = &ejs->intern.buckets[i];
+            for (sp = head->next; sp != head; sp = sp->next) {
+                count++;
+            }
+        }
+    }
+    ejs->intern.count = count;
+    if (ejs->intern.count && ejs->intern.count <= ejs->intern.size) {
+        return 0;
+    }
+#endif
+
     oldBuckets = ejs->intern.buckets;
+    newSize = getInternHashSize(ejs->intern.count);
     if (oldBuckets) {
         oldSize = ejs->intern.size;
         if (oldSize > newSize) {
@@ -2485,7 +2501,7 @@ static int rebuildIntern(Ejs *ejs)
         printf("Longest chain length %d, index %d\n", bigest, bigIndex);
     }
 #endif
-    if ((ejs->intern.buckets = mprAllocZeroed(NULL, (newSize * sizeof(EjsString)))) == NULL) {
+    if ((ejs->intern.buckets = mprAllocZeroed((newSize * sizeof(EjsString)))) == NULL) {
         return MPR_ERR_MEMORY;
     }
     ejs->intern.size = newSize;
@@ -2502,6 +2518,7 @@ static int rebuildIntern(Ejs *ejs)
             for (sp = head->next; sp != head; sp = next) {
                 next = sp->next;
                 sp->next = sp->prev = NULL;
+                // print("RETAIN %s\n", sp->value);
                 ejsInternString(ejs, sp);
             }
         }
@@ -2530,15 +2547,13 @@ static void linkString(Ejs *ejs, EjsString *head, EjsString *sp)
 
 static void unlinkString(EjsString *sp)
 {
+    //  MOB - lock required if shared over interpreters
     sp->prev->next = sp->next;
     sp->next->prev = sp->prev;
 #if BLD_MEMORY_DEBUG
     sp->next = sp->prev = NULL;
 #endif
-    /*
-        Can't update intern count here we don't have access to the "ejs" object.
-        This means the intern count may be pessimistic. It gets corrected in rebuildIntern
-     */
+    --sp->type->ejs->intern.count;
 }
 
 
@@ -2589,14 +2604,14 @@ EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, size_t len)
     if (value == NULL) {
         value = "";
     }
-    mprAssert(0 < len && len < MAXINT);
+    mprAssert(0 <= len && len < MAXINT);
     return ejsInternMulti(ejs, value, len);
 }
 
 
 EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, size_t len)
 {
-    mprAssert(0 < len && len < MAXINT);
+    mprAssert(0 <= len && len < MAXINT);
     return ejsInternAsc(ejs, value, len);
 }
 

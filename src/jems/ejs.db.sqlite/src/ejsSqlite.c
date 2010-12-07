@@ -31,42 +31,11 @@
 #endif
 
 /*
-    Map allocation routines to use Ejscript/MPR allocation. FUTURE, currently disabled.
- */
-#define MAP_ALLOC 0
-
-#if MAP_ALLOC
-#if !VXWORKS
-/*
-    Thread Local Storage (TLS) is used so memory allocations from within SQLite can use the appropriate MPR memory
-    context for the thread. VxWorks does not support TLS.
- */
-#define USE_TLS 1
-MprThreadLocal  *sqliteTls;
-#define SET_CTX(ctx)  mprSetThreadData(sqliteTls, (void*) ctx)
-#else
-/*
-    Single-threaded (or VxWorks). Use one single context for all threads.
- */
-static MprCtx sqliteCtx;
-#define SET_CTX(ctx)
-#endif /* !VXWORKS */
-
-#else
-/*
-    Using the native SQLite memory allocation and Not mapping allocation routines to the MPR alternatives.
- */
-static MprCtx sqliteCtx;
-#define SET_CTX(ctx)
-#endif /* MAP_ALLOC */
-    
-/*
     Ejscript Sqlite class object
  */
 typedef struct EjsSqlite {
     EjsObj          obj;            /* Extends Object */
     sqlite3         *sdb;           /* Sqlite handle */
-    MprCtx          ctx;            /* Memory context arena */
     Ejs             *ejs;           /* Interp reference */
     int             memory;         /* In-memory database */
 } EjsSqlite;
@@ -93,11 +62,6 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
     sdb = 0;
     db->ejs = ejs;
     options = argv[0];
-    
-    if ((db->ctx = mprAlloc(ejs, 0)) == NULL) {
-        return 0;
-    }
-    SET_CTX(db->ctx);
     
 #if UNUSED
     EjsSqlite       **dbp;
@@ -154,7 +118,6 @@ static int sqldbDestructor(EjsSqlite **dbp)
     db = *dbp;
 
     if (db->sdb) {
-        SET_CTX(db->ctx);
         sqlite3_close(db->sdb);
         db->sdb = 0;
     }
@@ -172,7 +135,6 @@ static int sqliteClose(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
     mprAssert(db);
 
     if (db->sdb && !db->memory) {
-        SET_CTX(db->ctx);
         sqlite3_close(db->sdb);
         db->sdb = 0;
     }
@@ -190,7 +152,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
     sqlite3         *sdb;
     sqlite3_stmt    *stmt;
     EjsArray        *result;
-    EjsObj       *row;
+    EjsObj          *row;
     EjsObj          *svalue;
     EjsName         qname;
     char            *tableName;
@@ -200,7 +162,6 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
     mprAssert(ejs);
     mprAssert(db);
 
-    SET_CTX(db->ctx);
     cmd = ejsToMulti(ejs, argv[0]);
     retries = 0;
     sdb = db->sdb;
@@ -259,7 +220,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                             Append the table name for columns from foreign tables. Convert to camel case (tableColumn)
                          */
                         len = strlen(tableName) + 1;
-                        tableName = sjoin(row, NULL, tableName, "_", colName, NULL);
+                        tableName = sjoin(tableName, "_", colName, NULL);
                         if (len > 3 && tableName[len - 1] == 's' && tableName[len - 2] == 'e' && tableName[len - 3] == 'i') {
                             tableName[len - 3] = 'y';
                             strcpy(&tableName[len - 2], colName);
@@ -315,19 +276,10 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 
 
 /*********************************** Malloc ********************************/
-#if MAP_ALLOC
 
 static void *allocBlock(int size)
 {
-    MprCtx      ctx;
-
-#if USE_TLS
-    mprAssert(sqliteTls);
-    ctx = mprGetThreadData(sqliteTls);
-#else
-    ctx = sqliteCtx;
-#endif
-    return mprAlloc(ctx, size);
+    return mprAlloc(size);
 }
 
 
@@ -339,15 +291,7 @@ static void freeBlock(void *ptr)
 
 static void *reallocBlock(void *ptr, int size)
 {
-    MprCtx      ctx;
-
-#if USE_TLS
-    mprAssert(sqliteTls);
-    ctx = mprGetThreadData(sqliteTls);
-#else
-    ctx = sqliteCtx;
-#endif
-    return mprRealloc(ctx, ptr, size);
+    return mprRealloc(ptr, size);
 }
 
 
@@ -378,7 +322,6 @@ struct sqlite3_mem_methods mem = {
     allocBlock, freeBlock, reallocBlock, blockSize, roundBlockSize, initAllocator, termAllocator, NULL 
 };
 
-#endif /* MAP_ALLOC */
 /*********************************** Mutex ********************************/
 /*
     Mutex mapping for platforms not yet supported by SQLite
@@ -397,15 +340,7 @@ static int termMutex(void) {
 
 static sqlite3_mutex *allocMutex(int kind)
 {
-    MprCtx      ctx;
-
-#if USE_TLS
-    mprAssert(sqliteTls);
-    ctx = mprGetThreadData(sqliteTls);
-#else
-    ctx = sqliteCtx;
-#endif
-    return (sqlite3_mutex*) mprCreateLock(ctx);
+    return (sqlite3_mutex*) mprCreateLock();
 }
 
 
@@ -476,27 +411,13 @@ static int configureSqliteTypes(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_close, (EjsProc) sqliteClose);
     ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_sql, (EjsProc) sqliteSql);
 
-#if MAP_ALLOC
-#if USE_TLS
-    sqliteTls = mprCreateThreadLocal(ejs);
-    if (sqliteTls == 0) {
-        return;
-    }
-    SET_CTX(ejs);
-#else
-    sqliteCtx = ejs;
-#endif
     sqlite3_config(SQLITE_CONFIG_MALLOC, &mem);
-#else
-    sqliteCtx = ejs;
-#endif
-
 #if MAP_MUTEXES
     sqlite3_config(SQLITE_CONFIG_MUTEX, &mut);
 #endif
     sqlite3_config(THREAD_STYLE);
     if (sqlite3_initialize() != SQLITE_OK) {
-        mprError(ejs, "Can't initialize SQLite");
+        mprError("Can't initialize SQLite");
         return MPR_ERR_CANT_INITIALIZE;
     }
     return 0;

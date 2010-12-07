@@ -18,15 +18,13 @@
  */
 static EjsObj *castNumber(Ejs *ejs, EjsNumber *vp, EjsType *type)
 {
-    char    *result;
-    
     switch (type->id) {
     case ES_Boolean:
         return (EjsObj*) ((vp->value) ? ejs->trueValue : ejs->falseValue);
 
     case ES_String:
-        result = mprDtoa(vp, vp->value, 0, 0, 0);
-        return (EjsObj*) ejsCreateStringFromAsc(ejs, result);
+        //  MOB OPT. mprDtoa does a sclone.
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, mprDtoa(vp->value, 0, 0, 0));
 
     case ES_Number:
         return (EjsObj*) vp;
@@ -314,7 +312,7 @@ static EjsObj *toExponential(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
     int     ndigits;
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]): 0;
-    result = mprDtoa(np, np->value, ndigits, MPR_DTOA_N_DIGITS, MPR_DTOA_EXPONENT_FORM);
+    result = mprDtoa(np->value, ndigits, MPR_DTOA_N_DIGITS, MPR_DTOA_EXPONENT_FORM);
     return (EjsObj*) ejsCreateStringFromAsc(ejs, result);
 }
 
@@ -330,7 +328,7 @@ static EjsObj *toFixed(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
     int     ndigits;
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
-    result = mprDtoa(np, np->value, ndigits, MPR_DTOA_N_FRACTION_DIGITS, MPR_DTOA_FIXED_FORM);
+    result = mprDtoa(np->value, ndigits, MPR_DTOA_N_FRACTION_DIGITS, MPR_DTOA_FIXED_FORM);
     return (EjsObj*) ejsCreateStringFromAsc(ejs, result);
 }
 
@@ -345,7 +343,7 @@ static EjsObj *toPrecision(Ejs *ejs, EjsNumber *np, int argc, EjsObj **argv)
     int     ndigits;
     
     ndigits = (argc > 0) ? ejsGetInt(ejs, argv[0]) : 0;
-    result = mprDtoa(np, np->value, ndigits, MPR_DTOA_N_DIGITS, 0);
+    result = mprDtoa(np->value, ndigits, MPR_DTOA_N_DIGITS, 0);
     return (EjsObj*) ejsCreateStringFromAsc(ejs, result);
 }
 

@@ -87,12 +87,13 @@ static EjsObj *app_putenv(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 #if BLD_UNIX_LIKE
     char    *key, *value;
 
-    key = sclone(ejs, ejsToMulti(ejs, argv[0]));
-    value = sclone(ejs, ejsToMulti(ejs, argv[1]));
+    key = sclone(ejsToMulti(ejs, argv[0]));
+    value = sclone(ejsToMulti(ejs, argv[1]));
     setenv(key, value, 1);
 #else
     char   *cmd;
-    cmd = sjoin(app, ejsToMulti(ejs, argv[0]), "=", ejsToMulti(ejs, argv[1]), NULL);
+    //  MOB OPT
+    cmd = sjoin(ejsToMulti(ejs, argv[0]), "=", ejsToMulti(ejs, argv[1]), NULL);
     putenv(cmd);
 #endif
 #endif
@@ -134,7 +135,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (status != 0) {
         exit(status);
     } else {
-        mprTerminate(mprGetMpr(ejs), 1);
+        mprTerminate(MPR_GRACEFUL);
         ejsAttention(ejs);
     }
     return 0;
@@ -225,7 +226,7 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
     expires = mprGetTime(ejs) + timeout;
     remaining = timeout;
     do {
-        rc = mprServiceEvents(ejs, ejs->dispatcher, remaining, MPR_SERVICE_ONE_THING);
+        rc = mprServiceEvents(ejs->dispatcher, remaining, MPR_SERVICE_ONE_THING);
         if (rc > 0 && flags & MPR_SERVICE_ONE_THING) {
             break;
         }

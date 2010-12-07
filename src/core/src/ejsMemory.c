@@ -60,7 +60,7 @@ static EjsObj *setMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsNumber(ejs, argv[0]));
 
     maxMemory = ejsGetInt(ejs, argv[0]);
-    mprSetMemLimits(ejs, -1, maxMemory);
+    mprSetMemLimits(-1, maxMemory);
     return 0;
 }
 
@@ -91,7 +91,7 @@ static EjsObj *setRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
         //  TODO - 64 bit
         redline = INT_MAX;
     }
-    mprSetMemLimits(ejs, redline, -1);
+    mprSetMemLimits(redline, -1);
     return 0;
 }
 
@@ -126,7 +126,7 @@ static EjsObj *getSystemRam(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 static EjsObj *printStats(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     //  MOB TODO - should go to log file and not to stdout
-    mprPrintMemReport("Memory Report", 0);
+    mprPrintMem("Memory Report", 0);
     return 0;
 }
 
@@ -138,7 +138,7 @@ void ejsConfigureMemoryType(Ejs *ejs)
     EjsType     *type;
 
     if ((type = ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Memory"))) == 0) {
-        mprError(ejs, "Can't find Memory type");
+        mprError("Can't find Memory type");
         return;
     }
     ejsBindMethod(ejs, type, ES_Memory_allocated, (EjsProc) getAllocatedMemory);

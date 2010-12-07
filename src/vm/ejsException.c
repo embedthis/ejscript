@@ -17,6 +17,7 @@ static uchar trapByteCode[] = { EJS_OP_ATTENTION };
 void ejsAttention(Ejs *ejs)
 {
     EjsFrame    *frame;
+    uchar       *pc;
 
     frame = ejs->state->fp;
     mprLock(ejs->mutex);
@@ -25,8 +26,9 @@ void ejsAttention(Ejs *ejs)
             Order matters. Setting the pc to the trap byte code will redirect the VM to the ATTENTION op code which
             will call mprLock(ejs->mutex) preventing a race here.
          */
+        pc = frame->pc;
         frame->pc = trapByteCode;
-        frame->attentionPc = frame->pc;
+        frame->attentionPc = pc;
     }
     mprUnlock(ejs->mutex);
 }
@@ -73,7 +75,7 @@ static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
 
     mprAssert(type);
 
-    msg = mprAsprintfv(ejs, fmt, fmtArgs);
+    msg = mprAsprintfv(fmt, fmtArgs);
     argv[0] = ejsCreateStringFromAsc(ejs, msg);
     if (argv[0] == 0) {
         mprAssert(argv[0]);
@@ -85,7 +87,6 @@ static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
         error = ejsCreate(ejs, type, 0);
         ejsSetProperty(ejs, error, ES_Error_message, ejsCreateStringFromAsc(ejs, msg));
     }
-    mprFree(msg);
     return error;
 }
 
@@ -96,7 +97,7 @@ EjsAny *ejsCreateException(Ejs *ejs, int slot, cchar *fmt, va_list fmtArgs)
     EjsAny      *error;
 
     if (ejs->exception) {
-        mprError(ejs, "Double exception: %s", mprAsprintfv(ejs, fmt, fmtArgs));
+        mprError("Double exception: %s", mprAsprintfv(fmt, fmtArgs));
         return ejs->exception;
     }
     type = (ejs->initialized) ? ejsGetProperty(ejs, ejs->global, slot) : NULL;
@@ -291,6 +292,7 @@ EjsArray *ejsCaptureStack(Ejs *ejs, int uplevels)
 /*
     Get the current exception error. May be an Error object or may be any other object that is thrown.
     Caller must NOT free.
+    MOB _- Query should return EjsString?
  */
 cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
 {
@@ -333,26 +335,26 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
     }
     if (ejsIsA(ejs, error, ejs->errorType)) {
         if (stack) {
-            buf = mprAsprintf(ejs, "%@: %@\nStack:\n%s", tag, msg, (stack) ? ejsToMulti(ejs, stack) : "");
+            buf = mprAsprintf("%@: %@\nStack:\n%s", tag, msg, (stack) ? ejsToMulti(ejs, stack) : "");
         } else {
-            buf = mprAsprintf(ejs, "%@: %@\n", tag, msg);
+            buf = mprAsprintf("%@: %@", tag, msg);
         }
 
     } else if (message && ejsIsString(ejs, message)){
-        buf = mprAsprintf(ejs, "%@: %@", tag, msg);
+        buf = mprAsprintf("%@: %@", tag, msg);
 
     } else if (message && ejsIsNumber(ejs, message)){
-        buf = mprAsprintf(ejs, "%@: %g", tag, msg);
+        buf = mprAsprintf("%@: %g", tag, msg);
         
     } else if (error) {
         EjsObj *saveException = ejs->exception;
         ejs->exception = 0;
         str = ejsToString(ejs, error);
-        buf = sclone(ejs, ejsToMulti(ejs, str));
+        buf = sclone(ejsToMulti(ejs, str));
         ejs->exception = saveException;
 
     } else {
-        buf = sclone(ejs, "");
+        buf = sclone("");
     }
     mprFree(ejs->errorMsg);
     ejs->errorMsg = buf;

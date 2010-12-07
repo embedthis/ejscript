@@ -29,6 +29,7 @@ typedef struct Json {
     int         namespaces;
     int         pretty;
     int         nest;              /* Json serialize nest level */
+    struct Json *next;
 } Json;
 
 /***************************** Forward Declarations ***************************/
@@ -99,7 +100,7 @@ static EjsObj *parseLiteral(Ejs *ejs, JsonState *js)
 
     mprAssert(js);
 
-    buf = mprCreateBuf(ejs, 0, 0);
+    buf = mprCreateBuf(0, 0);
     vp = parseLiteralInner(ejs, buf, js);
     mprFree(buf);
     return vp;
@@ -364,7 +365,7 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
                 vp = parseLiteral(ejs, js);
 
             } else if (tid == TOK_ID || tid == TOK_QID) {
-                valueBuf = mprCreateBuf(ejs, 0, 0);
+                valueBuf = mprCreateBuf(0, 0);
                 getNextJsonToken(valueBuf, &value, js);
                 if (tid == TOK_QID) {
                     vp = ejsCreateString(ejs, value, strlen(value));
@@ -437,7 +438,6 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
     Json        json;
     EjsObj      *arg;
     EjsString   *result;
-    char        *indent;
     int         i;
 
     memset(&json, 0, sizeof(Json));
@@ -455,12 +455,13 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
         if ((arg = ejsGetPropertyByName(ejs, options, EN("indent"))) != 0) {
             if (ejsIsString(ejs, arg)) {
                json.indent = (char*) ejsToMulti(ejs, arg);
+                mprHold(json.indent);
             } else if (ejsIsNumber(ejs, arg)) {
                 i = ejsGetInt(ejs, arg);
                 if (0 <= i && i < MPR_MAX_STRING) {
-                    json.indent = mprAlloc(arg, i + 1);
+                    json.indent = mprAlloc(i + 1);
                     mprHold(json.indent);
-                    memset(indent, ' ', i);
+                    memset(json.indent, ' ', i);
                     json.indent[i] = '\0';
                 }
             }
@@ -513,8 +514,8 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
     obj = vp;
     json->nest++;
     if (json->buf == 0) {
-        json->buf = mprCreateBuf(ejs, 0, 0);
-        mprHold(json->buf);
+        json->buf = mprCreateBuf(0, 0);
+        mprAddRoot(json->buf);
     }
     isArray = ejsIsArray(ejs, vp);
     mprPutCharToWideBuf(json->buf, isArray ? '[' : '{');
@@ -588,11 +589,11 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 sv = (EjsString*) ejsRunFunction(ejs, fn, pp, 1, &json->options);
             }
             if (sv == 0 || !ejsIsString(ejs, sv)) {
-                if (!ejs->exception) {
+                if (ejs->exception) {
                     ejsThrowTypeError(ejs, "Can't serialize property %@", qname.name);
+                    VISITED(obj) = 0;
+                    return 0;
                 }
-                VISITED(obj) = 0;
-                return 0;
             } else {
                 if (json->replacer) {
                     replacerArgs[0] = (EjsObj*) qname.name; 
@@ -601,8 +602,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                     /* function replacer(key: String, value: String): String */
                     sv = ejsRunFunction(ejs, json->replacer, obj, 2, (EjsObj**) replacerArgs);
                 }
-                //  MOB -- UNICODE - should the json->buf be in unicode from the start -- yes
-                mprPutStringToWideBuf(json->buf, ejsToMulti(ejs, sv));
+                mprPutBlockToBuf(json->buf, sv->value, sv->length * sizeof(MprChar));
             }
             if ((slotNum + 1) < count) {
                 mprPutCharToWideBuf(json->buf, ',');
@@ -624,11 +624,9 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
 
     if (--json->nest == 0) {
         result = ejsCreateString(ejs, mprGetBufStart(json->buf), mprGetBufLength(json->buf) / sizeof(MprChar));
-        mprRelease(json->buf);
-#if UNUSED
+        mprRemoveRoot(json->buf);
     } else {
-        result = ejsCreateNonInternedString(ejs, mprGetBufStart(json->buf), mprGetBufLength(json->buf) / sizeof(MprChar));
-#endif
+        result = 0;
     }
     return result;
 }

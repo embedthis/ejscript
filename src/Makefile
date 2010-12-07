@@ -62,9 +62,6 @@ $(EJS_MOD): $(EJS_FILES)
 $(EJS_LIB): $(EJS_SOURCES) $(EJS_OBJECTS) $(call lib, mpr)
 	bld --library $(EJS_LIB) --libs "$(BLD_EJS_WITHLIBS)" $(EJS_OBJECTS)
 
-dependExtra:
-	@+T=depend ; D="cmd" ; $(DO_RECURSE) 
-
 cleanExtra:
 	find . -name '*.lst' -o -name '*.mod' -o -name '*.jem' -type f | xargs rm -f
 	rm -f *.slots.h

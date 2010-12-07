@@ -136,7 +136,7 @@ void ecInitLexer(EcCompiler *cp)
     int             size;
 
     size = sizeof(keywords) / sizeof(ReservedWord);
-    if ((cp->keywords = mprCreateHash(cp, size, MPR_HASH_UNICODE)) == 0) {
+    if ((cp->keywords = mprCreateHash(size, MPR_HASH_UNICODE)) == 0) {
         return;
     }
     for (rp = keywords; rp->name; rp++) {
@@ -154,8 +154,6 @@ static void manageToken(EcToken *tp, int flags)
         mprMark(tp->text);
         ecMarkLocation(&tp->loc);
         mprMark(tp->next);
-        mprMark(tp->stream);
-        mprMark(tp->name);
     }
 }
 
@@ -178,7 +176,7 @@ static EcToken *getToken(EcCompiler *cp)
             tp->next = NULL;
             cp->token = tp;
         } else {
-            if ((cp->token = mprAllocObj(cp, EcToken, manageToken)) == 0) {
+            if ((cp->token = mprAllocObj(EcToken, manageToken)) == 0) {
                 return 0;
             }
         }
@@ -351,7 +349,7 @@ int ecGetToken(EcCompiler *cp)
                 if (cp->doc) {
                     if (tp->text && tp->text[0] == '*' && tp->text[1] != '*') {
                         mprFree(cp->docToken);
-                        cp->docToken = mprMemdup(cp, tp->text, tp->length * sizeof(MprChar));;
+                        cp->docToken = mprMemdup(tp->text, tp->length * sizeof(MprChar));;
                     }
                 }
                 initializeToken(tp, stream);
@@ -925,7 +923,7 @@ static int initializeToken(EcToken *tp, EcStream *stream)
     tp->tokenId = 0;
     if (tp->text == 0) {
         tp->size = EC_TOKEN_INCR;
-        if ((tp->text = mprAlloc(tp, tp->size * sizeof(MprChar))) == 0) {
+        if ((tp->text = mprAlloc(tp->size * sizeof(MprChar))) == 0) {
             return MPR_ERR_MEMORY;
         }
         tp->text[0] = '\0';
@@ -947,7 +945,7 @@ static int addCharToToken(EcToken *tp, int c)
 {
     if (tp->length >= (tp->size - 1)) {
         tp->size += EC_TOKEN_INCR;
-        if ((tp->text = mprRealloc(tp, tp->text, tp->size * sizeof(MprChar))) == 0) {
+        if ((tp->text = mprRealloc(tp->text, tp->size * sizeof(MprChar))) == 0) {
             return MPR_ERR_MEMORY;
         }
     }
@@ -979,7 +977,7 @@ static int addFormattedStringToToken(EcToken *tp, char *fmt, ...)
     char        *buf;
 
     va_start(args, fmt);
-    buf = mprAsprintfv(tp, fmt, args);
+    buf = mprAsprintfv(fmt, args);
     addStringToToken(tp, buf);
     mprFree(buf);
     va_end(args);
@@ -1021,7 +1019,7 @@ static int getNextChar(EcStream *stream)
             //  MOB -- replace this when doing lazy loading. source should be an index into a buffer.
             for (start = stream->nextChar - 1; isspace((int) *start); start++) ;
             for (next = start; *next && *next != '\n'; next++) ;
-            stream->loc.source = wsub(stream->compiler->ejs, start, 0, next - start);
+            stream->loc.source = wsub(start, 0, next - start);
         }
         return c;
     }
@@ -1060,7 +1058,7 @@ void *ecCreateStream(EcCompiler *cp, size_t size, cchar *path, void *manager)
     EcLocation  *loc;
     EcStream    *sp;
 
-    if ((sp = mprAllocBlock(cp, size, MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
+    if ((sp = mprAllocBlock(size, MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
         return NULL;
     }
     mprSetManager(sp, manager);
@@ -1070,7 +1068,7 @@ void *ecCreateStream(EcCompiler *cp, size_t size, cchar *path, void *manager)
     loc->column = 0;
     loc->source = 0;
     loc->lineNumber = 1;
-    loc->filename = sclone(cp, path);
+    loc->filename = sclone(path);
     cp->putback = NULL;
     return sp;
 }
@@ -1120,15 +1118,15 @@ int ecOpenFileStream(EcCompiler *cp, cchar *path)
     if ((fs = ecCreateStream(cp, sizeof(EcFileStream), path, manageFileStream)) == 0) {
         return MPR_ERR_MEMORY;
     }
-    if ((fs->file = mprOpen(cp, path, O_RDONLY | O_BINARY, 0666)) == 0) {
+    if ((fs->file = mprOpen(path, O_RDONLY | O_BINARY, 0666)) == 0) {
         mprFree(fs);
         return MPR_ERR_CANT_OPEN;
     }
-    if (mprGetPathInfo(fs, path, &info) < 0 || info.size < 0) {
+    if (mprGetPathInfo(path, &info) < 0 || info.size < 0) {
         mprFree(fs);
         return MPR_ERR_CANT_ACCESS;
     }
-    if ((contents = mprAlloc(cp, (int) info.size + 1)) == 0) {
+    if ((contents = mprAlloc((int) info.size + 1)) == 0) {
         mprFree(fs);
         return MPR_ERR_MEMORY;
     }

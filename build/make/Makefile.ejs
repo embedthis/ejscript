@@ -15,6 +15,9 @@ release:
 	$(call log) "[Config]" "configure --defaults=release --tune=size"
 	./configure --defaults=release --tune=size
 
+cross32:
+	./configure --debug --host=i386-apple-darwin --without-ssl 
+
 cross64:
 	./configure --build=i386-apple-darwin --host=x86_64-apple-darwin --without-ssl --enable-complete-cross
 

@@ -13,7 +13,16 @@
 
 /********************************** Forwards **********************************/
 
-static void require(MprList *list, cchar *name);
+typedef struct App {
+    EjsService  *ejsService;
+    EcCompiler  *compiler;
+    MprList     *modules;
+} App;
+
+static App *app;
+
+static void manageApp(App *app, int flags);
+static void require(cchar *name);
 
 /************************************ Code ************************************/
 
@@ -22,8 +31,6 @@ MAIN(ejscMain, int argc, char **argv)
     Mpr             *mpr;
     Ejs             *ejs;
     EcCompiler      *cp;
-    EjsService      *ejsService;
-    MprList         *requiredModules;
     char            *argp, *searchPath, *outputFile, *certFile, *name, *tok, *modules;
     int             nextArg, err, ejsFlags, ecFlags, bind, debug, doc, merge, modver;
     int             warnLevel, noout, parseOnly, tabWidth, optimizeLevel, strict, strip;
@@ -32,10 +39,13 @@ MAIN(ejscMain, int argc, char **argv)
         Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
      */
     mpr = mprCreate(argc, argv, NULL);
-    mprSetAppName(mpr, argv[0], 0, 0);
+    mprSetAppName(argv[0], 0, 0);
+    app = mprAllocObj(App, manageApp);
+    mprAddRoot(app);
+    mprEnableGC(0);
 
-    if (mprStart(mpr) < 0) {
-        mprError(mpr, "Can't start mpr services");
+    if (mprStart() < 0) {
+        mprError("Can't start mpr services");
         return EJS_ERR;
     }
     err = 0;
@@ -54,7 +64,6 @@ MAIN(ejscMain, int argc, char **argv)
     warnLevel = 1;
     outputFile = 0;
     optimizeLevel = 9;
-    requiredModules = 0;
 
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];
@@ -77,7 +86,7 @@ MAIN(ejscMain, int argc, char **argv)
             if (nextArg >= argc) {
                 err++;
             } else {
-                ejsStartMprLogging(mpr, argv[++nextArg]);
+                ejsStartMprLogging(argv[++nextArg]);
             }
 
         } else if (strcmp(argp, "--merge") == 0) {
@@ -133,13 +142,13 @@ MAIN(ejscMain, int argc, char **argv)
             if (nextArg >= argc) {
                 err++;
             } else {
-                if (requiredModules == 0) {
-                    requiredModules = mprCreateList(mpr);
+                if (app->modules == 0) {
+                    app->modules = mprCreateList(mpr);
                 }
-                modules = sclone(mpr, argv[++nextArg]);
+                modules = sclone(argv[++nextArg]);
                 name = stok(modules, " \t,", &tok);
                 while (name != NULL) {
-                    require(requiredModules, name);
+                    require(name);
                     name = stok(NULL, " \t", &tok);
                 }
             }
@@ -162,7 +171,7 @@ MAIN(ejscMain, int argc, char **argv)
             }
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
-            mprPrintfError(mpr, "%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);
+            mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);
             exit(0);
 
         } else if (strcmp(argp, "--warn") == 0) {
@@ -173,15 +182,15 @@ MAIN(ejscMain, int argc, char **argv)
             }
 
         } else if (strcmp(argp, "--web") == 0) {
-            if (requiredModules == 0) {
-                requiredModules = mprCreateList(mpr);
+            if (app->modules == 0) {
+                app->modules = mprCreateList(mpr);
             }
-            require(requiredModules, "ejs");
-            require(requiredModules, "ejs.unix");
-            require(requiredModules, "ejs.db");
+            require("ejs");
+            require("ejs.unix");
+            require("ejs.db");
             //  TODO MOB - decouple and remove this
-            require(requiredModules, "ejs.db.mapper");
-            require(requiredModules, "ejs.web");
+            require("ejs.db.mapper");
+            require("ejs.web");
 
         } else {
             err++;
@@ -192,7 +201,7 @@ MAIN(ejscMain, int argc, char **argv)
         bind = 1;
     }
     if (outputFile && noout) {
-        mprPrintfError(mpr, "Can't use --out and --noout\n");
+        mprPrintfError("Can't use --out and --noout\n");
         err++;
     }
     if (argc == nextArg) {
@@ -205,8 +214,7 @@ MAIN(ejscMain, int argc, char **argv)
                 ejsc --out group.mod Person.es User.es Customer.es
                 ejsc --out group.mod Person.es User.es Customer.es
          */
-        mprPrintfError(mpr,
-            "Usage: %s [options] files...\n"
+        mprPrintfError("Usage: %s [options] files...\n"
             "  Ejscript compiler options:\n"
             "  --bind                 # Bind global properties to slots. Requires --out.\n"
             "  --debug                # Include symbolic debugging information in output\n"
@@ -232,15 +240,15 @@ MAIN(ejscMain, int argc, char **argv)
         return -1;
     }
 
-    ejsService = ejsCreateService(mpr);
-    if (ejsService == 0) {
+    app->ejsService = ejsCreateService(mpr);
+    if (app->ejsService == 0) {
         return MPR_ERR_MEMORY;
     }
     ejsFlags = EJS_FLAG_NO_INIT;
     if (doc) {
         ejsFlags |= EJS_FLAG_DOC;
     }
-    ejs = ejsCreateVm(ejsService, searchPath, requiredModules, 0, NULL, ejsFlags);
+    ejs = ejsCreateVm(searchPath, app->modules, 0, NULL, ejsFlags);
     if (ejs == 0) {
         return MPR_ERR_MEMORY;
     }
@@ -251,11 +259,11 @@ MAIN(ejscMain, int argc, char **argv)
     ecFlags |= (parseOnly) ? EC_FLAGS_PARSE_ONLY: 0;
     ecFlags |= (doc) ? EC_FLAGS_DOC: 0;
 
-    cp = ecCreateCompiler(ejs, ecFlags);
+    cp = app->compiler = ecCreateCompiler(ejs, ecFlags);
     if (cp == 0) {
         return MPR_ERR_MEMORY;
     }
-    cp->require = requiredModules;
+    cp->require = app->modules;
     cp->modver = modver;
 
     ecSetOptimizeLevel(cp, optimizeLevel);
@@ -271,15 +279,14 @@ MAIN(ejscMain, int argc, char **argv)
             optionally also save to module files.
          */
         if (ecCompile(cp, argc - nextArg, &argv[nextArg]) < 0) {
-            mprRawLog(cp, 0, "%s", cp->errorMsg);
+            mprRawLog(0, "%s\n", cp->errorMsg);
             err++;
         }
     }
     if (cp->errorCount > 0) {
         err++;
     }
-    mprFree(cp);
-    mprFree(ejs);
+    mprFree(app);
     if (mprStop(mpr)) {
         mprFree(mpr);
     }
@@ -287,11 +294,23 @@ MAIN(ejscMain, int argc, char **argv)
 }
 
 
-static void require(MprList *list, cchar *name) 
+static void manageApp(App *app, int flags)
 {
-    mprAssert(list);
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(app->compiler);
+        mprMark(app->ejsService);
+        mprMark(app->modules);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+    }
+}
+
+
+static void require(cchar *name) 
+{
+    mprAssert(app->modules);
     if (name && *name) {
-        mprAddItem(list, name);
+        mprAddItem(app->modules, sclone(name));
     }
 }
 

@@ -171,7 +171,7 @@ static cchar *getStrOption(Ejs *ejs, EjsObj *options, cchar *field, cchar *defau
     vp = ejsGetPropertyByName(ejs, options, EN(field));
     if (vp == 0) {
         if (optional) {
-            return sclone(ejs, defaultValue);
+            return sclone(defaultValue);
         }
         ejsThrowArgError(ejs, "Required option %s is missing", field);
         return 0;
@@ -207,7 +207,7 @@ static EjsObj *fileConstructor(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowIOError(ejs, "Bad path");
         return 0;
     }
-    fp->path = mprGetNormalizedPath(fp, path);
+    fp->path = mprGetNormalizedPath(path);
     if (argc == 2) {
         openFile(ejs, fp, 1, &argv[1]);
     }
@@ -288,7 +288,7 @@ static EjsObj *nextKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsObj *getFileIterator(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    mprGetPathInfo(ejs, fp->path, &fp->info);
+    mprGetPathInfo(fp->path, &fp->info);
     return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, (EjsProc) nextKey, 0, NULL);
 }
 
@@ -338,7 +338,7 @@ static EjsObj *nextValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsObj *getFileValues(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
-    mprGetPathInfo(ejs, fp->path, &fp->info);
+    mprGetPathInfo(fp->path, &fp->info);
 
     return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, (EjsProc) nextValue, 0, NULL);
 }
@@ -444,19 +444,18 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     if (fp->file) {
         mprFree(fp->file);
     }
-    fp->modeString = sclone(fp, mode);
+    fp->modeString = sclone(mode);
     fp->perms = perms;
-    fp->ejs = ejs;
 
     //  MOB -- who ensure this gets closed?
-    fp->file = mprOpen(fp, fp->path, omode, perms);
+    fp->file = mprOpen(fp->path, omode, perms);
     if (fp->file == 0) {
         ejsThrowIOError(ejs, "Can't open %s", fp->path);
         return 0;
     }
 
 #if BLD_CC_MMU && FUTURE
-    mprGetPathInfo(ejs, &fp->info);
+    mprGetPathInfo(&fp->info);
     fp->mapped = mapFile(fp, fp->info.size, MPR_MAP_READ | MPR_MAP_WRITE);
 #endif
     fp->mode |= FILE_OPEN;
@@ -504,7 +503,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
     if (count < 0) {
         //  TODO OPT could this be cached in fp->info 
-        if (mprGetPathInfo(fp, fp->path, &info) == 0) {
+        if (mprGetPathInfo(fp->path, &info) == 0) {
             count = (int) info.size;
             count -= (int) mprGetFilePosition(fp->file);
         } else {
@@ -559,7 +558,7 @@ static EjsObj *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
     if (count < 0) {
         //  TODO OPT could this be cached in fp->info 
-        if (mprGetPathInfo(fp, fp->path, &info) == 0) {
+        if (mprGetPathInfo(fp->path, &info) == 0) {
             count = (int) info.size;
             count -= (int) mprGetFilePosition(fp->file);
         } else {
@@ -615,7 +614,7 @@ static EjsObj *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
     if (count < 0) {
         //  TODO OPT could this be cached in fp->info 
-        if (mprGetPathInfo(fp, fp->path, &info) == 0) {
+        if (mprGetPathInfo(fp->path, &info) == 0) {
             count = (int) info.size;
             count -= (int) mprGetFilePosition(fp->file);
         } else {
@@ -650,7 +649,7 @@ static EjsObj *getFileSize(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mprGetFileSize(fp->file));
     } else {
 #endif
-    if (mprGetPathInfo(ejs, fp->path, &info) < 0) {
+    if (mprGetPathInfo(fp->path, &info) < 0) {
         return (EjsObj*) ejs->minusOneValue;
     }
     return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) info.size);
@@ -708,12 +707,12 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             break;
 
         case ES_String:
-            buf = awtom(NULL, ((EjsString*) vp)->value, &len);
+            buf = awtom(((EjsString*) vp)->value, &len);
             break;
 
         default:
             str = ejsToString(ejs, vp);
-            buf = awtom(NULL, ((EjsString*) str)->value, &len);
+            buf = awtom(((EjsString*) str)->value, &len);
             break;
         }
         if (mprWrite(fp->file, buf, len) != len) {
@@ -829,7 +828,6 @@ EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
     if (fp == 0) {
         return 0;
     }
-    fp->ejs = ejs;
     arg = (EjsObj*) ejsCreateStringFromAsc(ejs, path);
     fileConstructor(ejs, fp, 1, (EjsObj**) &arg);
     return fp;
@@ -846,7 +844,6 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     if ((fp = (EjsFile*) ejsCreate(ejs, ejs->fileType, 0)) == NULL) {
         return NULL;
     }
-    fp->ejs = ejs;
     fp->perms = EJS_FILE_PERMS;
     fp->mode = FILE_OPEN;
     if (!(mode & O_WRONLY)) {
@@ -855,11 +852,11 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     if (mode & (O_WRONLY | O_RDWR)) {
         fp->mode |= FILE_WRITE;
     }
-    fp->file = mprAttachFd(fp, fd, name, mode);
+    fp->file = mprAttachFd(fd, name, mode);
     if (fp->file == 0) {
         return 0;
     }
-    fp->path = sclone(fp, "");
+    fp->path = sclone("");
     return fp;
 }
 
@@ -878,7 +875,7 @@ static void manageFile(void *ptr, int flags)
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (fp->file) {
-            closeFile(fp->ejs, fp, 0, NULL);
+            closeFile(fp->type->ejs, fp, 0, NULL);
         }
     }
 }

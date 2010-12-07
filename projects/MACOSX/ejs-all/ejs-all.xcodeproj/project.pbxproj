@@ -1876,7 +1876,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\necho make -C $SRC TRACE=1 modules\nmake -C $SRC TRACE=1 modules && cp $TOP/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\necho make -C $SRC/jems TRACE=1 modules\nmake -C $SRC/jems TRACE=1 modules && cp $TOP/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\n";
+			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\necho make -C $SRC TRACE=1 modules\nmake -C $SRC TRACE=1 modules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\necho make -C $SRC/jems TRACE=1 modules\nmake -C $SRC/jems TRACE=1 modules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\n";
 			showEnvVarsInLog = 0;
 		};
 		C97A5EC511E81E9B00BB0981 /* ShellScript */ = {
@@ -2476,8 +2476,8 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG_IDE=1";
 				HEADER_SEARCH_PATHS = (
+					../../../out/include,
 					../../../src/include,
-					../../..,
 				);
 				JEMS = $SRCROOT/../../../src/jems;
 				MOD = $BUILT_PRODUCTS_DIR;
@@ -2485,6 +2485,7 @@
 					"-lcrypto",
 					"-lssl",
 				);
+				OUT = $SRCROOT/../../../out;
 				SDKROOT = macosx10.6;
 				SRC = $SRCROOT/../../../src;
 				TOP = $SRCROOT/../../..;
@@ -2681,6 +2682,7 @@
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/lib/ejs;
+				LIBRARY_SEARCH_PATHS = ../../../out/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = libmpr;
 			};
@@ -2744,7 +2746,7 @@
 					../../../extensions/openssl/latest,
 					../../../extensions/matrixssl/latest,
 					../../../src/include,
-					../../..,
+					../../../out/include,
 				);
 				INSTALL_PATH = /usr/lib/ejs;
 				LIBRARY_SEARCH_PATHS = (
@@ -2755,11 +2757,11 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../lib\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../lib\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../out/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../out/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../out/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/build/Debug\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../out/lib\"";
 				OTHER_LDFLAGS = (
 					"-lcrypto",
 					"-lssl",
@@ -2792,11 +2794,11 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
 				);
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../lib\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../lib\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/../../../out/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/../../../out/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/../../../out/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/build/Debug\"";
-				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/../../../out/lib\"";
 				OTHER_LDFLAGS = (
 					"-lcrypto",
 					"-lssl",

@@ -18,8 +18,8 @@ static int  createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file);
 static int  genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int firstClassSlot, int lastClassSlot,
                 int isGlobal);
 static char *mapFullName(Ejs *ejs, EjsName *qname, int mapTypeName);
-static char *mapName(MprCtx ctx, cchar *name, int mapTypeName);
-static char *mapNamespace(MprCtx ctx, cchar *space);
+static char *mapName(cchar *name, int mapTypeName);
+static char *mapNamespace(cchar *space);
 
 /*********************************** Code *************************************/
 
@@ -28,7 +28,7 @@ int emCreateSlotFiles(EjsMod *bp, EjsModule *mp, MprFile *outfile)
     int     rc;
 
     rc = 0;
-    defaultVersion = mprAsprintf(bp, "-%d", ejsParseModuleVersion(BLD_VERSION));
+    defaultVersion = mprAsprintf("-%d", ejsParseModuleVersion(BLD_VERSION));
     if (bp->cslots) {
         rc += createSlotFile(bp, mp, outfile);
     }
@@ -70,13 +70,13 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     *dp = '\0';
 
     if (file == 0) {
-        path = sjoin(bp, NULL, ejsToMulti(ejs, mp->name), ".slots.h", NULL);
-        localFile = file = mprOpen(bp, path, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
+        path = sjoin(ejsToMulti(ejs, mp->name), ".slots.h", NULL);
+        localFile = file = mprOpen(path, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
     } else {
-        path = sclone(bp, file->path);
+        path = sclone(file->path);
     }
     if (file == 0) {
-        mprError(bp, "Can't open %s", path);
+        mprError("Can't open %s", path);
         mprFree(path);
         return MPR_ERR_CANT_OPEN;
     }
@@ -102,12 +102,12 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     slotNum = ejsGetPropertyCount(ejs, ejs->global);
     type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, sizeof(EjsType), slotNum, 
         ejsGetPropertyCount(ejs, ejs->global), 0, 0);
-    type->constructor.block = *ejs->globalBlock;
+    type->constructor.block = *(EjsBlock*) ejs->global;
     TYPE(type) = ejs->typeType;
     type->constructor.block.pot.isType = 1;
 
     if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
-        mprError(bp, "Can't generate slot file for module %@", mp->name);
+        mprError("Can't generate slot file for module %@", mp->name);
         mprFree(path);
         mprFree(localFile);
         return EJS_ERR;
@@ -173,7 +173,7 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
     typeStr = mapFullName(bp->ejs, &type->qname, 1);
     if (*typeStr == '\0') {
         mprFree(typeStr);
-        typeStr = sclone(file, EJS_GLOBAL);
+        typeStr = sclone(EJS_GLOBAL);
     }
     for (sp = typeStr; *sp; sp++) {
         if (*sp == '.') {
@@ -346,15 +346,15 @@ static char *mapFullName(Ejs *ejs, EjsName *qname, int mapTypeName)
     char        *cp, *buf;
 
     if (qname == 0) {
-        return sclone(ejs, "");
+        return sclone("");
     }
-    name = mapName(ejs, ejsToMulti(ejs, qname->name), mapTypeName);
-    space = mapNamespace(ejs, ejsToMulti(ejs, qname->space));
+    name = mapName(ejsToMulti(ejs, qname->name), mapTypeName);
+    space = mapNamespace(ejsToMulti(ejs, qname->space));
 
     if (*space) {
-        buf = sjoin(ejs, NULL, space, "_", name, NULL);
+        buf = sjoin(space, "_", name, NULL);
     } else {
-        buf = sclone(ejs, name);
+        buf = sclone(name);
     }
     for (cp = buf; *cp; cp++)  {
         if (*cp == '-') {
@@ -365,7 +365,7 @@ static char *mapFullName(Ejs *ejs, EjsName *qname, int mapTypeName)
 }
 
 
-static char *mapName(MprCtx ctx, cchar *name, int mapTypeName)
+static char *mapName(cchar *name, int mapTypeName)
 {
     cchar   *value;
     char    *buf, *cp;
@@ -431,7 +431,7 @@ static char *mapName(MprCtx ctx, cchar *name, int mapTypeName)
         value = "ASSIGN_BUG";
     }
 
-    buf = sclone(ctx, value);
+    buf = sclone(value);
     for (cp = buf; *cp; cp++)  {
         if (*cp == '-') {
             *cp = '_';
@@ -441,7 +441,7 @@ static char *mapName(MprCtx ctx, cchar *name, int mapTypeName)
 }
 
 
-static char *mapNamespace(MprCtx ctx, cchar *space)
+static char *mapNamespace(cchar *space)
 {
     char    *cp, *value;
 
@@ -467,7 +467,7 @@ static char *mapNamespace(MprCtx ctx, cchar *space)
     } else if (strstr(space, "internal-") != 0) {
         space = "";
     } else if ((cp = strstr(space, defaultVersion)) != 0 && strcmp(cp, defaultVersion) == 0) {
-        space = sclone(ctx, space);
+        space = sclone(space);
         cp = strstr(space, defaultVersion);
         *cp = '\0';
     }

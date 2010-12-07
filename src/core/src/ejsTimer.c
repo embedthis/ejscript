@@ -21,7 +21,6 @@ static EjsObj *timer_constructor(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv
     mprAssert(ejsIsFunction(ejs, argv[1]));
     mprAssert(ejsIsArray(ejs, argv[2]));
 
-    tp->ejs = ejs;
     tp->period = ejsGetInt(ejs, argv[0]);
     tp->callback = (EjsFunction*) argv[1];
     tp->args = (EjsArray*) argv[2];
@@ -128,16 +127,16 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
     mprAssert(tp->args);
     mprAssert(tp->callback);
 
-    ejs = tp->ejs;
+    ejs = tp->type->ejs;
     thisObj = (tp->callback->boundThis) ? tp->callback->boundThis : tp;
-    ejsRunFunction(tp->ejs, tp->callback, thisObj, tp->args->length, tp->args->data);
+    ejsRunFunction(ejs, tp->callback, thisObj, tp->args->length, tp->args->data);
     if (ejs->exception) {
         if (tp->onerror) {
             error = ejs->exception;
             ejsClearException(ejs);
-            ejsRunFunction(tp->ejs, tp->onerror, thisObj, 1, &error);
+            ejsRunFunction(ejs, tp->onerror, thisObj, 1, &error);
         } else {
-            mprError(tp, "Uncaught exception in timer\n%s", ejsGetErrorMsg(ejs, 1));
+            mprError("Uncaught exception in timer\n%s", ejsGetErrorMsg(ejs, 1));
             ejsClearException(ejs);
         }
     }
@@ -186,6 +185,7 @@ static EjsObj *timer_stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 static void manageTimer(EjsTimer *tp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(tp->event);
         mprMark(tp->callback);
         mprMark(tp->args);
         mprMark(tp->onerror);
@@ -208,6 +208,7 @@ void ejsConfigureTimerType(Ejs *ejs)
     type = ejsGetTypeByName(ejs, N("ejs", "Timer"));
     type->instanceSize = sizeof(EjsTimer);
     type->manager = (MprManager) manageTimer;
+    ejsCloneObjHelpers(ejs, type);
 
     prototype = type->prototype;
     ejsBindConstructor(ejs, type, (EjsProc) timer_constructor);

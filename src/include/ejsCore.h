@@ -213,6 +213,13 @@ typedef BLD_FEATURE_NUM_TYPE MprNumber;
 #define EJS_NAME                    "ejs"
 #define EJS_MOD                     "ejs.mod"
 
+/*
+    File extensions
+ */
+#define EJS_MODULE_EXT              ".mod"
+#define EJS_SOURCE_EXT              ".es"
+#define EJS_LISTING_EXT             ".lst"
+
 typedef struct EjsLoc {
     MprChar         *source;
     char            *filename;
@@ -1215,7 +1222,7 @@ extern int ejsBindFunction(Ejs *ejs, EjsAny *obj, int slotNum, void *fun);
  */
 
 extern int      ejsAddNamespaceToBlock(Ejs *ejs, EjsBlock *blockRef, struct EjsNamespace *nsp);
-extern int      ejsAddScope(MprCtx ctx, EjsBlock *block, EjsBlock *scopeBlock);
+extern int      ejsAddScope(EjsBlock *block, EjsBlock *scopeBlock);
 extern EjsBlock *ejsCreateBlock(Ejs *ejs, int numSlots);
 
 //  TODO - why do we have ejsCloneObject, ejsCloneBlock ... Surely ejsCloneVar is sufficient?
@@ -1230,7 +1237,12 @@ extern void     ejsManageBlock(EjsBlock *block, int flags);
 extern void     ejsPopBlockNamespaces(EjsBlock *block, int count);
 extern EjsBlock *ejsRemoveScope(EjsBlock *block);
 extern void     ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block);
-extern void ejsSetBlockLocation(EjsBlock *block, EjsLoc *loc);
+
+#if BLD_DEBUG
+extern void     ejsSetBlockLocation(EjsBlock *block, EjsLoc *loc);
+#else
+#define ejsSetBlockLocation(block, loc)
+#endif
 
 /** 
     Exception Handler Record
@@ -1277,12 +1289,12 @@ typedef struct EjsLine {
 
 typedef struct EjsDebug {
     int        size;                        /**< Size of lines[] in elements */
-    int        length;                      /**< Number of entries in lines[] */
+    int        numLines;                    /**< Number of entries in lines[] */
     EjsLine    lines[0];
 } EjsDebug;
 
 extern EjsDebug *ejsCreateDebug(Ejs *ejs);
-extern EjsDebug *ejsAddDebugLine(Ejs *ejs, EjsDebug *debug, int offset, MprChar *source);
+extern int ejsAddDebugLine(Ejs *ejs, EjsDebug **debug, int offset, MprChar *source);
 extern int ejsGetDebugInfo(Ejs *ejs, struct EjsFunction *fun, uchar *pc, char **path, int *lineNumber, MprChar **source);
 
 // TODO OPT. Could compress this.
@@ -1930,7 +1942,6 @@ typedef struct EjsFile {
     int             delimiter;          /**< Path delimiter ('/' or '\\') */
     int             hasDriveSpecs;      /**< Paths on this file system have a drive spec */
 #endif
-    Ejs             *ejs;               /**< Interpreter reference */
 } EjsFile;
 
 /** 
@@ -2105,7 +2116,6 @@ extern void ejsFreezeGlobal(Ejs *ejs);
  */
 typedef struct EjsHttp {
     struct EjsType  *type;                      /**< Type of the object */
-    Ejs             *ejs;                       /**< Convenience access to ejs interpreter instance */
     EjsObj          *emitter;                   /**< Event emitter */
     EjsByteArray    *data;                      /**< Buffered write data */
     EjsObj          *limits;                    /**< Limits object */
@@ -2143,7 +2153,7 @@ extern void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int serv
 extern void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server);
 
 //  MOB - rename SetupHttpTrace
-extern int ejsSetupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, EjsObj *options);
+extern int ejsSetupTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options);
 void ejsLoadHttpService(Ejs *ejs);
 
 
@@ -2351,7 +2361,6 @@ typedef struct EjsSocket {
     EjsByteArray    *data;              /**< Buffered write data */
     MprSocket       *sock;              /**< Underlying MPR socket object */
     MprWaitHandler  waitHandler;        /**< I/O event wait handler */
-    Ejs             *ejs;               /**< Convenience access to ejs interpreter instance */
     cchar           *address;           /**< Remote address */
     int             port;               /**< Remote port */
     int             async;              /**< In async mode */
@@ -2384,7 +2393,6 @@ extern EjsSocket *ejsCreateSocket(Ejs *ejs);
  */
 typedef struct EjsTimer {
     struct EjsType  *type;              /**< Type of the object */
-    Ejs             *ejs;               /**< Need interpreter reference in callback */
     MprEvent        *event;             /**< MPR event for the timer */
     int             drift;              /**< Timer event is allowed to drift if system conditions requrie */
     int             repeat;             /**< Timer repeatedly fires */
@@ -2409,7 +2417,6 @@ typedef struct EjsTimer {
  */
 typedef struct EjsWorker {
     EjsPot          pot;                /**< Property storage */
-    struct EjsType  *type;              /**< Type of the object */
     char            *name;              /**< Optional worker name */
     Ejs             *ejs;               /**< Interpreter */
     EjsAny          *event;             /**< Current event object */
@@ -2608,8 +2615,8 @@ typedef struct EjsType {
     EjsHelpers      helpers;                        /**< Type helper methods */
     struct EjsType  *baseType;                      /**< Base class */
     MprManager      manager;                        /**< Manager callback */
+    struct Ejs      *ejs;                           /**< Interpreter reference */
 
-    //  MOB Array?
     MprList         *implements;                    /**< List of implemented interfaces */
         
     uint            callsSuper           : 1;       /**< Constructor calls super() */
@@ -2862,18 +2869,18 @@ extern int      ejsDefineCoreTypes(Ejs *ejs);
 extern int      ejsDefineErrorTypes(Ejs *ejs);
 extern void     ejsInheritBaseClassNamespaces(Ejs *ejs, EjsType *type, EjsType *baseType);
 extern void     ejsServiceEvents(Ejs *ejs, int timeout, int flags);
-extern void     ejsSetSqliteMemCtx(MprThreadLocal *tls, MprCtx ctx);
+extern void     ejsSetSqliteMemCtx(MprThreadLocal *tls);
 extern void     ejsSetSqliteTls(MprThreadLocal *tls);
 
 #if BLD_FEATURE_EJS_ALL_IN_ONE || BLD_FEATURE_STATIC
-extern int      ejs_events_Init(MprCtx ctx);
-extern int      ejs_xml_Init(MprCtx ctx);
-extern int      ejs_io_Init(MprCtx ctx);
-extern int      ejs_sys_Init(MprCtx ctx);
+extern int      ejs_events_Init(Ejs *ejs);
+extern int      ejs_xml_Init(Ejs *ejs);
+extern int      ejs_io_Init(Ejs *ejs);
+extern int      ejs_sys_Init(Ejs *ejs);
 #if BLD_FEATURE_SQLITE
-extern int      ejs_db_sqlite_Init(MprCtx ctx);
+extern int      ejs_db_sqlite_Init(Ejs *ejs);
 #endif
-extern int      ejs_web_Init(MprCtx ctx);
+extern int      ejs_web_Init(Ejs *ejs);
 #endif
 
 /* 
@@ -2942,7 +2949,7 @@ typedef struct EjsService {
     MprMutex        *mutex;             /**< Multithread locking */
 } EjsService;
 
-extern EjsService *ejsGetService(MprCtx ctx);
+extern EjsService *ejsGetService();
 extern int ejsInitCompiler(EjsService *service);
 extern void ejsAttention(Ejs *ejs);
 extern void ejsClearAttention(Ejs *ejs);
@@ -2952,11 +2959,10 @@ extern void ejsClearAttention(Ejs *ejs);
     Open the Ejscript service
     @description One Ejscript service object is required per application. From this service, interpreters
         can be created.
-    @param ctx Any memory context returned by mprAlloc
     @return An ejs service object
     @ingroup Ejs
  */
-extern EjsService *ejsCreateService(MprCtx ctx);
+extern EjsService *ejsCreateService();
 
 /**
     Create an ejs virtual machine 
@@ -2964,7 +2970,6 @@ extern EjsService *ejsCreateService(MprCtx ctx);
         interpreters. One interpreter can be designated as a master interpreter and then it can be cloned by supplying 
         the master interpreter to this call. A master interpreter provides the standard system types and clone interpreters 
         can quickly be created an utilize the master interpreter's types. This saves memory and speeds initialization.
-    @param ctx Any memory context returned by mprAlloc
     @param search Module search path to use. Set to NULL for the default search path.
     @param require Optional list of required modules to load. If NULL, the following modules will be loaded:
         ejs, ejs.io, ejs.events, ejs.xml, ejs.sys and ejs.unix.
@@ -2978,7 +2983,7 @@ extern EjsService *ejsCreateService(MprCtx ctx);
     @return A new interpreter
     @ingroup Ejs
  */
-extern Ejs *ejsCreateVm(MprCtx ctx, cchar *search, MprList *require, int argc, cchar **argv, int flags);
+extern Ejs *ejsCreateVm(cchar *search, MprList *require, int argc, cchar **argv, int flags);
 
 /**
     Create a search path array. This can be used in ejsCreateVm.
@@ -3123,7 +3128,7 @@ extern void ejsSetHandle(Ejs *ejs, void *handle);
 extern void ejsShowCurrentScope(Ejs *ejs);
 extern void ejsShowStack(Ejs *ejs, EjsFunction *fp);
 extern void ejsShowBlockScope(Ejs *ejs, EjsBlock *block);
-extern int ejsStartMprLogging(Mpr *mpr, char *logSpec);
+extern int ejsStartMprLogging(char *logSpec);
 extern void ejsCreateObjHelpers(Ejs *ejs);
 extern void ejsCloneObjHelpers(Ejs *ejs, EjsType *type);
 extern void ejsClonePotHelpers(Ejs *ejs, EjsType *type);

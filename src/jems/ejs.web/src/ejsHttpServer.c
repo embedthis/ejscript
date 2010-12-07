@@ -40,7 +40,7 @@ static EjsObj *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 
     if ((conn = httpAcceptConn(sp->server)) == 0) {
         /* Just ignore */
-        mprError(ejs, "Can't accept connection");
+        mprError("Can't accept connection");
         return 0;
     }
     return (EjsObj*) createRequest(sp, conn);
@@ -179,7 +179,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         return (EjsObj*) ejs->nullValue;
     }
     address = ejsToString(ejs, endpoint);
-    mprParseIp(ejs, address->value, &sp->ip, &sp->port, 80);
+    mprParseIp(address->value, &sp->ip, &sp->port, 80);
 
     /*
         The server uses the ejsDispatcher. This is VERY important. All connections will inherit this also.
@@ -208,11 +208,11 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
     if (ejsIsPath(ejs, root)) {
         //  MOB -- why is this needed? remove?
-        server->documentRoot = sclone(server, root->value);
+        server->documentRoot = sclone(root->value);
     }
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
     if (ejsIsPath(ejs, root)) {
-        server->serverRoot = sclone(server, root->value);
+        server->serverRoot = sclone(root->value);
     }
 
     //  MOB -- who make sure that the sp object is permanent?
@@ -247,8 +247,7 @@ static EjsObj *hs_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
  */
 static EjsObj *hs_set_name(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    mprFree(sp->name);
-    sp->name = sclone(sp, ejsToMulti(ejs, argv[0]));
+    sp->name = ejsToMulti(ejs, argv[0]);
     if (sp->server) {
         httpSetServerName(sp->server, sp->name);
     }
@@ -365,7 +364,7 @@ static EjsObj *hs_setPipeline(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **ar
  */
 static EjsObj *hs_trace(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
-    ejsSetupTrace(ejs, sp, sp->trace, argv[0]);
+    ejsSetupTrace(ejs, sp->trace, argv[0]);
     return 0;
 }
 
@@ -570,7 +569,7 @@ static EjsHttpServer *getServerContext(HttpConn *conn)
          */
         loc = conn->rx->loc;
         if (loc == 0 || loc->context == 0) {
-            mprError(conn, "Location block is not defined for request");
+            mprError("Location block is not defined for request");
             return 0;
         }
         sp = (EjsHttpServer*) loc->context;
@@ -581,15 +580,15 @@ static EjsHttpServer *getServerContext(HttpConn *conn)
             /* Don't set limits or pipeline. That will come from the embedding server */
             sp->server = conn->server;
             sp->server->ssl = loc->ssl;
-            sp->ip = sclone(sp, conn->server->ip);
+            sp->ip = sclone(conn->server->ip);
             sp->port = conn->server->port;
-            sp->dir = sclone(sp, dir);
+            sp->dir = sclone(dir);
         }
         httpSetServerContext(conn->server, sp);
         httpSetRequestNotifier(conn, (HttpNotifier) stateChangeNotifier);
         return sp;
     }
-    mprError(conn, "Server context not defined for request");
+    mprError("Server context not defined for request");
     return NULL;
 }
 
@@ -717,10 +716,22 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         ejsManagePot(sp, flags);
+        mprMark(sp->server);
+        mprMark(sp->sessionTimer);
+        mprMark(sp->ssl);
+        mprMark(sp->connector);
+        mprMark(sp->dir);
+        mprMark(sp->keyFile);
+        mprMark(sp->certFile);
+        mprMark(sp->protocols);
+        mprMark(sp->ciphers);
+        mprMark(sp->ip);
+        mprMark(sp->name);
+        mprMark(sp->emitter);
         mprMark(sp->limits);
+        mprMark(sp->sessions);
         mprMark(sp->outgoingStages);
         mprMark(sp->incomingStages);
-        mprMark(sp->sessions);
 
     } else {
         ejsSendEvent(sp->ejs, sp->emitter, "close", NULL, sp);

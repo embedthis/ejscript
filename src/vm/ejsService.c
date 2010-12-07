@@ -17,7 +17,7 @@ static void manageEjs(Ejs *ejs, int flags);
 static void manageEjsService(EjsService *service, int flags);
 static void markValues(Ejs *ejs);
 static int  loadStandardModules(Ejs *ejs, MprList *require);
-static void logHandler(MprCtx ctx, int flags, int level, cchar *msg);
+static void logHandler(int flags, int level, cchar *msg);
 static int  runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName);
 static int  searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn);
 
@@ -25,21 +25,20 @@ static int  searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn);
 /*  
     Initialize the ejs subsystem
  */
-EjsService *ejsCreateService(MprCtx ctx)
+EjsService *ejsCreateService()
 {
     EjsService  *sp;
 
-    if ((sp = mprAllocObj(ctx, EjsService, manageEjsService)) == NULL) {
+    if ((sp = mprAllocObj(EjsService, manageEjsService)) == NULL) {
         return 0;
     }
-    mprGetMpr(ctx)->ejsService = sp;
+    mprGetMpr()->ejsService = sp;
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
-    mprAddRoot(sp);
 
     //  MOB -- does access to nativeModules need locking? = yes
-    sp->nativeModules = mprCreateHash(sp, -1, MPR_HASH_PERM_KEYS | MPR_HASH_UNICODE);
-    sp->mutex = mprCreateLock(sp);
-    sp->vmlist = mprCreateList(sp);
+    sp->nativeModules = mprCreateHash(-1, MPR_HASH_PERM_KEYS | MPR_HASH_UNICODE);
+    sp->mutex = mprCreateLock();
+    sp->vmlist = mprCreateList();
     return sp;
 }
 
@@ -58,9 +57,9 @@ static void manageEjsService(EjsService *sp, int flags)
 }
 
 
-EjsService *ejsGetService(MprCtx ctx)
+EjsService *ejsGetService()
 {
-    return mprGetMpr(ctx)->ejsService;
+    return mprGetMpr()->ejsService;
 }
 
 
@@ -71,20 +70,18 @@ EjsService *ejsGetService(MprCtx ctx)
     @param argc Count of command line args 
     @param argv Array of command line args
  */
-Ejs *ejsCreateVm(MprCtx ctx, cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
+Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
 {
     Ejs     *ejs;
-    cchar   *name;
     int     save;
     static int seqno = 0;
 
-    mprCollectAllGarbage();
     save = mprEnableGC(0);
-    if ((ejs = mprAllocObj(ctx, Ejs, manageEjs)) == NULL) {
+    if ((ejs = mprAllocObj(Ejs, manageEjs)) == NULL) {
         mprEnableGC(save);
         return 0;
     }
-    ejs->service = mprGetMpr(NULL)->ejsService;
+    ejs->service = mprGetMpr()->ejsService;
     mprAddItem(ejs->service->vmlist, ejs);
     ejs->empty = require && mprGetListCount(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
@@ -92,10 +89,9 @@ Ejs *ejsCreateVm(MprCtx ctx, cchar *searchPath, MprList *require, int argc, ccha
     ejs->argv = argv;
 
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC));
-    name = mprAsprintf(ejs, "ejsDispatcher-%d", seqno++);
-    ejs->dispatcher = mprCreateDispatcher(ejs, name, 1);
-    ejs->modules = mprCreateList(ejs);
-    ejs->workers = mprCreateList(ejs);
+    ejs->dispatcher = mprCreateDispatcher(mprAsprintf("ejsDispatcher-%d", seqno++), 1);
+    ejs->modules = mprCreateList();
+    ejs->workers = mprCreateList();
         
     if ((ejs->bootSearch = searchPath) == 0) {
         ejs->bootSearch = getenv("EJSPATH");
@@ -118,13 +114,13 @@ Ejs *ejsCreateVm(MprCtx ctx, cchar *searchPath, MprList *require, int argc, ccha
     startLogging(ejs);
 #endif
     if (mprHasMemError(ejs)) {
-        mprError(ejs, "Memory allocation error during initialization");
+        mprError("Memory allocation error during initialization");
         mprFree(ejs);
         mprEnableGC(save);
         return 0;
     }
     mprEnableGC(save);
-    mprCollectAllGarbage();
+    mprCollectGarbage(MPR_GC_ALL);
     return ejs;
 }
 
@@ -144,7 +140,6 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->exception);
         mprMark(ejs->exceptionArg);
         mprMark(ejs->masterState);
-        mprMark(ejs->modules);
         mprMark(ejs->mutex);
         mprMark(ejs->result);
         mprMark(ejs->search);
@@ -176,8 +171,8 @@ static void manageEjs(Ejs *ejs, int flags)
         if (state->stackBase) {
             mprVirtFree(state->stackBase, state->stackSize);
         }
-        mprSetAltLogData(ejs, NULL);
-        mprSetLogHandler(ejs, NULL, NULL);
+        mprSetAltLogData(NULL);
+        mprSetLogHandler(NULL, NULL);
         mprRemoveItem(ejs->service->vmlist, ejs);
     }
 }
@@ -310,7 +305,7 @@ static int defineTypes(Ejs *ejs)
     ejs_web_Init(ejs);
 #endif
     if (ejs->hasError || mprHasMemError(ejs)) {
-        mprError(ejs, "Can't create core types");
+        mprError("Can't create core types");
         return EJS_ERR;
     }
     return 0;
@@ -419,7 +414,7 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
     ap = ejsCreateArray(ejs, 0);
 
     if (search) {
-        next = sclone(ejs, search);
+        next = sclone(search);
         dir = stok(next, MPR_SEARCH_SEP, &tok);
         while (dir && *dir) {
             ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, dir));
@@ -437,13 +432,13 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
     char *relModDir;
-    relModDir = mprAsprintf(ejs, "%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
+    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs)));
 #ifdef BLD_MOD_NAME
 {
     char *relModDir;
-    relModDir = mprAsprintf(ejs, "%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
-    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(ejs, relModDir)));
+    relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
+    ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
     mprFree(relModDir);
 }
 #endif
@@ -481,11 +476,11 @@ int ejsEvalModule(cchar *path)
     Mpr             *mpr;
 
     mpr = mprCreate(0, NULL, NULL);
-    if ((service = ejsCreateService(mpr)) == 0) {
+    if ((service = ejsCreateService()) == 0) {
         mprFree(mpr);
         return MPR_ERR_MEMORY;
     }
-    if ((ejs = ejsCreateVm(service, NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((ejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
         mprFree(mpr);
         return MPR_ERR_MEMORY;
     }
@@ -530,7 +525,7 @@ int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
             If the script calls App.noexit(), this will service events until App.exit() is called.
             TODO - should deprecate noexit()
          */
-        mprServiceEvents(ejs, ejs->dispatcher, -1, 0);
+        mprServiceEvents(ejs->dispatcher, -1, 0);
     }
     if (ejs->exception) {
         return EJS_ERR;
@@ -569,7 +564,7 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
         type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, N(EJS_PUBLIC_NAMESPACE, className));
     }
     if (type == 0 || !ejsIsType(ejs, type)) {
-        mprError(ejs, "Can't find class \"%s\"", className);
+        mprError("Can't find class \"%s\"", className);
         return EJS_ERR;
     }
     slotNum = ejsLookupProperty(ejs, type, N(EJS_PUBLIC_NAMESPACE, methodName));
@@ -578,11 +573,11 @@ static int runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName)
     }
     fun = (EjsFunction*) ejsGetProperty(ejs, type, slotNum);
     if (! ejsIsFunction(ejs, fun)) {
-        mprError(ejs, "Property is not a function");
+        mprError("Property is not a function");
         return MPR_ERR_BAD_STATE;
     }
     if (!ejsPropertyHasTrait(ejs, type, slotNum, EJS_PROP_STATIC)) {
-        mprError(ejs, "Method is not declared static");
+        mprError("Method is not declared static");
         return EJS_ERR;
     }
     args = ejsCreateArray(ejs, ejs->argc);
@@ -669,7 +664,7 @@ int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, int a
 
     if (emitter) {
         argv = args;
-        av = mprAlloc(emitter, (argc + 2) * sizeof(EjsObj*));
+        av = mprAlloc((argc + 2) * sizeof(EjsObj*));
         av[0] = (EjsObj*) ejsCreateStringFromAsc(ejs, name);
         av[1] = thisObj ? thisObj : ejs->nullValue;
         for (i = 0; i < argc; i++) {
@@ -774,7 +769,7 @@ static int startLogging(Ejs *ejs)
 #endif
 
 
-static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
+static void logHandler(int flags, int level, cchar *msg)
 {
     Mpr         *mpr;
     MprFile     *file;
@@ -786,7 +781,7 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
         return;
     }
     solo++;
-    mpr = mprGetMpr(ctx);
+    mpr = mprGetMpr();
     prefix = mpr->name;
     amsg = NULL;
 
@@ -805,7 +800,7 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
             mprSprintf(buf, sizeof(buf), "%s: %s: %s\n", prefix, tag, msg);
             msg = buf;
         } else {
-            msg = amsg = mprAsprintf(ctx, "%s: %s: %s\n", prefix, tag, msg);
+            msg = amsg = mprAsprintf("%s: %s: %s\n", prefix, tag, msg);
         }
     }
 #if UNUSED && KEEP
@@ -831,21 +826,23 @@ static void logHandler(MprCtx ctx, int flags, int level, cchar *msg)
         mprFprintf(file, "%s", msg);
     } else {
         file = (MprFile*) mpr->logData;
-        mprPrintfError(ctx, "%s", msg);
+        mprPrintfError("%s", msg);
     }
     mprFree(amsg);
     solo--;
 }
 
 
-int ejsStartMprLogging(Mpr *mpr, char *logSpec)
+int ejsStartMprLogging(char *logSpec)
 {
+    Mpr         *mpr;
     MprFile     *file;
     char        *levelSpec;
     int         level;
 
     level = 0;
-    logSpec = sclone(mpr, logSpec);
+    mpr = mprGetMpr();
+    logSpec = sclone(logSpec);
 
     if ((levelSpec = strchr(logSpec, ':')) != 0) {
         *levelSpec++ = '\0';
@@ -858,15 +855,15 @@ int ejsStartMprLogging(Mpr *mpr, char *logSpec)
         file = mpr->fileSystem->stdError;
 
     } else {
-        if ((file = mprOpen(mpr, logSpec, O_CREAT | O_WRONLY | O_TRUNC | O_TEXT, 0664)) == 0) {
-            mprPrintfError(mpr, "Can't open log file %s\n", logSpec);
+        if ((file = mprOpen(logSpec, O_CREAT | O_WRONLY | O_TRUNC | O_TEXT, 0664)) == 0) {
+            mprPrintfError("Can't open log file %s\n", logSpec);
             mprFree(logSpec);
             return EJS_ERR;
         }
     }
-    mprSetLogFd(mpr, mprGetFileFd(file));
-    mprSetLogLevel(mpr, level);
-    mprSetLogHandler(mpr, logHandler, (void*) file);
+    mprSetLogFd(mprGetFileFd(file));
+    mprSetLogLevel(level);
+    mprSetLogHandler(logHandler, (void*) file);
     mprFree(logSpec);
     return 0;
 }
@@ -883,13 +880,13 @@ static void allocNotifier(int flags, size_t size)
     int         next;
 
     if (flags & MPR_ALLOC_DEPLETED) {
-        mprPrintfError(NULL, "Can't allocate memory block of size %d\n", size);
-        mprPrintfError(NULL, "Total memory used %d\n", (int) mprGetUsedMemory());
+        mprPrintfError("Can't allocate memory block of size %d\n", size);
+        mprPrintfError("Total memory used %d\n", (int) mprGetUsedMemory());
         exit(255);
 
     } else if (flags & MPR_ALLOC_LOW) {
-        mprPrintfError(NULL, "Memory request for %d bytes exceeds memory red-line\n", size);
-        mprPrintfError(NULL, "Total memory used %d\n", (int) mprGetUsedMemory());
+        mprPrintfError("Memory request for %d bytes exceeds memory red-line\n", size);
+        mprPrintfError("Total memory used %d\n", (int) mprGetUsedMemory());
 
     } else if (flags & MPR_ALLOC_GC) {
         sp = MPR->ejsService;
@@ -959,13 +956,13 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
         msg = (char*) emsg;
         buf = 0;
     } else {
-        msg = buf = mprAsprintfv(ejs, fmt, arg);
+        msg = buf = mprAsprintfv(fmt, arg);
     }
     if (ejs->exception) {
-        char *name = mprGetMpr(ejs)->name;
-        mprRawLog(ejs, 0, "%s: %s\n", name, msg);
+        char *name = mprGetMpr()->name;
+        mprRawLog(0, "%s: %s\n", name, msg);
     } else {
-        mprError(ejs, "%s", msg);
+        mprError("%s", msg);
     }
     mprFree(buf);
     va_end(arg);

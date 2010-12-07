@@ -30,7 +30,6 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     ejsLoadHttpService(ejs);
 
-    hp->ejs = ejs;
     hp->conn = httpCreateClient(ejs->http, ejs->dispatcher);
     if (hp->conn == 0) {
         ejsThrowMemoryError(ejs);
@@ -39,11 +38,11 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     httpSetConnNotifier(hp->conn, httpNotify);
     httpSetConnContext(hp->conn, hp);
     if (argc == 1 && argv[0] != ejs->nullValue) {
-        hp->uri = httpUriToString(hp, ((EjsUri*) argv[0])->uri, 1);
+        hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, 1);
     }
-    hp->method = sclone(hp, "GET");
-    hp->requestContent = mprCreateBuf(hp, HTTP_BUFSIZE, -1);
-    hp->responseContent = mprCreateBuf(hp, HTTP_BUFSIZE, -1);
+    hp->method = sclone("GET");
+    hp->requestContent = mprCreateBuf(HTTP_BUFSIZE, -1);
+    hp->responseContent = mprCreateBuf(HTTP_BUFSIZE, -1);
     return (EjsObj*) hp;
 }
 
@@ -131,7 +130,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         httpSetConnNotifier(hp->conn, httpNotify);
         httpSetConnContext(hp->conn, hp);
     }
-    mprRelease(hp);
+    mprRemoveRoot(hp);
     return 0;
 }
 
@@ -142,7 +141,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_connect(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     mprFree(hp->method);
-    hp->method = sclone(hp, ejsToMulti(ejs, argv[0]));
+    hp->method = ejsToMulti(ejs, argv[0]);
     return startHttpRequest(ejs, hp, NULL, argc - 1, &argv[1]);
 }
 
@@ -165,7 +164,7 @@ static EjsObj *http_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_set_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     mprFree(hp->certFile);
-    hp->certFile = sclone(hp, ejsToMulti(ejs, argv[0]));
+    hp->certFile = ejsToMulti(ejs, argv[0]);
     return 0;
 }
 
@@ -340,7 +339,7 @@ static EjsObj *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         return 0;
     }
     str = (char*) ejsToMulti(ejs, argv[0]);
-    str = sclone(ejs, str);
+    str = sclone(str);
     slower(str);
     value = httpGetHeader(hp->conn, str);
     mprFree(str);
@@ -405,7 +404,7 @@ static EjsObj *http_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_set_key(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     mprFree(hp->keyFile);
-    hp->keyFile = sclone(hp, ejsToMulti(ejs, argv[0]));
+    hp->keyFile = ejsToMulti(ejs, argv[0]);
     return 0;
 }
 
@@ -456,7 +455,7 @@ static EjsObj *http_set_method(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         return 0;
     }
     mprFree(hp->method);
-    hp->method = sclone(hp, ejsToMulti(ejs, argv[0]));
+    hp->method = ejsToMulti(ejs, argv[0]);
     return 0;
 }
 
@@ -685,7 +684,7 @@ static int getNumOption(Ejs *ejs, EjsObj *options, cchar *field)
 }
 
 
-static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *options)
+static void setupTrace(Ejs *ejs, HttpTrace *trace, int dir, EjsObj *options)
 {
     EjsArray    *extensions;
     EjsObj      *ext;
@@ -710,10 +709,10 @@ static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *
             ejsThrowArgError(ejs, "include is not an array");
             return;
         }
-        tp->include = mprCreateHash(ctx, 0, 0);
+        tp->include = mprCreateHash(0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
-                mprAddHash(tp->include, sclone(tp->include, ejsToMulti(ejs, ejsToString(ejs, ext))), "");
+                mprAddHash(tp->include, ejsToMulti(ejs, ejsToString(ejs, ext)), "");
             }
         }
     }
@@ -722,25 +721,25 @@ static void setupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, int dir, EjsObj *
             ejsThrowArgError(ejs, "exclude is not an array");
             return;
         }
-        tp->exclude = mprCreateHash(ctx, 0, 0);
+        tp->exclude = mprCreateHash(0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
-                mprAddHash(tp->exclude, sclone(tp->exclude, ejsToMulti(ejs, ejsToString(ejs, ext))), "");
+                mprAddHash(tp->exclude, ejsToMulti(ejs, ejsToString(ejs, ext)), "");
             }
         }
     }
 }
 
 
-int ejsSetupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, EjsObj *options)
+int ejsSetupTrace(Ejs *ejs, HttpTrace *trace, EjsObj *options)
 {
     EjsObj      *rx, *tx;
 
     if ((rx = ejsGetPropertyByName(ejs, options, EN("rx"))) != 0) {
-        setupTrace(ejs, ctx, trace, HTTP_TRACE_RX, rx);
+        setupTrace(ejs, trace, HTTP_TRACE_RX, rx);
     }
     if ((tx = ejsGetPropertyByName(ejs, options, EN("tx"))) != 0) {
-        setupTrace(ejs, ctx, trace, HTTP_TRACE_TX, tx);
+        setupTrace(ejs, trace, HTTP_TRACE_TX, tx);
     }
     return 0;
 }
@@ -751,7 +750,7 @@ int ejsSetupTrace(Ejs *ejs, MprCtx ctx, HttpTrace *trace, EjsObj *options)
  */
 static EjsObj *http_trace(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    ejsSetupTrace(ejs, hp->conn, hp->conn->trace, argv[0]);
+    ejsSetupTrace(ejs, hp->conn->trace, argv[0]);
     return 0;
 }
 
@@ -771,7 +770,7 @@ static EjsObj *http_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_set_uri(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     mprFree(hp->uri);
-    hp->uri = httpUriToString(hp, ((EjsUri*) argv[0])->uri, 1);
+    hp->uri = httpUriToString(((EjsUri*) argv[0])->uri, 1);
     return 0;
 }
 
@@ -882,7 +881,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
     if (argc >= 1 && argv[0] != ejs->nullValue) {
         mprFree(hp->uri);
         uriObj = (EjsUri*) argv[0];
-        hp->uri = httpUriToString(hp, uriObj->uri, 1);
+        hp->uri = httpUriToString(uriObj->uri, 1);
     }
     if (argc == 2 && ejsIsArray(ejs, argv[1])) {
         args = (EjsArray*) argv[1];
@@ -900,7 +899,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
     }
     if (method && strcmp(hp->method, method) != 0) {
         mprFree(hp->method);
-        hp->method = sclone(hp, method);
+        hp->method = sclone(method);
     }
     if (hp->method == 0) {
         ejsThrowArgError(ejs, "HTTP Method is not defined");
@@ -915,7 +914,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
     if (mprGetBufLength(hp->requestContent) > 0) {
         nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent));
         if (nbytes < 0) {
-            mprRelease(hp);
+            mprRemoveRoot(hp);
             ejsThrowIOError(ejs, "Can't write request data for \"%s\"", hp->uri);
             return 0;
         } else if (nbytes > 0) {
@@ -939,7 +938,7 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
     EjsHttp     *hp;
 
     hp = httpGetConnContext(conn);
-    ejs = hp->ejs;
+    ejs = hp->type->ejs;
 
     switch (state) {
     case HTTP_STATE_BEGIN:
@@ -962,7 +961,7 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
             }
             sendHttpCloseEvent(ejs, hp);
         }
-        mprRelease(hp);
+        mprRemoveRoot(hp);
         break;
 
     case 0:
@@ -1054,7 +1053,7 @@ static int httpCallback(EjsHttp *hp, MprEvent *event)
 
     mprAssert(hp->conn->async);
     conn = hp->conn;
-    ejs = hp->ejs;
+    ejs = hp->type->ejs;
 
     //  MOB -- what if this is deleted?
     httpEvent(conn, event);
@@ -1080,7 +1079,7 @@ static EjsObj *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key)
     if (value == 0) {
         return (EjsObj*) ejs->nullValue;
     }
-    if (mprParseTime(ejs, &when, value, MPR_UTC_TIMEZONE, NULL) < 0) {
+    if (mprParseTime(&when, value, MPR_UTC_TIMEZONE, NULL) < 0) {
         value = 0;
     }
     return (EjsObj*) ejsCreateDate(ejs, when);
@@ -1126,7 +1125,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
         }
         if (ejsGetPropertyCount(ejs, vp) > 0 && !ejsIsArray(ejs, vp)) {
             if (prefix) {
-                newPrefix = mprAsprintf(hp, "%s.%@", prefix, qname.name);
+                newPrefix = mprAsprintf("%s.%@", prefix, qname.name);
                 prepForm(ejs, hp, newPrefix, vp);
                 mprFree(newPrefix);
             } else {
@@ -1142,14 +1141,14 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
             }
             sep = (mprGetBufLength(hp->requestContent) > 0) ? "&" : "";
             if (prefix) {
-                newKey = sjoin(hp, prefix, ".", key, NULL);
-                encodedKey = mprUriEncode(hp, newKey, MPR_ENCODE_URI_COMPONENT); 
+                newKey = sjoin(prefix, ".", key, NULL);
+                encodedKey = mprUriEncode(newKey, MPR_ENCODE_URI_COMPONENT); 
                 mprFree(newKey);
             } else {
-                encodedKey = mprUriEncode(hp, key, MPR_ENCODE_URI_COMPONENT);
+                encodedKey = mprUriEncode(key, MPR_ENCODE_URI_COMPONENT);
             }
             vstr = ejsToMulti(ejs, value);
-            encodedValue = mprUriEncode(hp, vstr, MPR_ENCODE_URI_COMPONENT);
+            encodedValue = mprUriEncode(vstr, MPR_ENCODE_URI_COMPONENT);
             mprPutFmtToBuf(hp->requestContent, "%s%s=%s", sep, encodedKey, encodedValue);
             mprFree(encodedKey);
             mprFree(encodedValue);
@@ -1172,13 +1171,13 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
 
     jdata = ejsToJSON(ejs, data, NULL);
     if (prefix) {
-        newKey = sjoin(hp, prefix, ".", key, NULL);
-        encodedKey = mprUriEncode(hp, newKey, MPR_ENCODE_URI_COMPONENT); 
+        newKey = sjoin(prefix, ".", key, NULL);
+        encodedKey = mprUriEncode(newKey, MPR_ENCODE_URI_COMPONENT); 
         mprFree(newKey);
     } else {
-        encodedKey = mprUriEncode(hp, key, MPR_ENCODE_URI_COMPONENT);
+        encodedKey = mprUriEncode(key, MPR_ENCODE_URI_COMPONENT);
     }
-    encodedValue = mprUriEncode(hp, value->value, MPR_ENCODE_URI_COMPONENT);
+    encodedValue = mprUriEncode(value->value, MPR_ENCODE_URI_COMPONENT);
     mprPutFmtToBuf(hp->requestContent, "%s%s=%s", sep, encodedKey, encodedValue);
     mprFree(encodedKey);
     mprFree(encodedValue);
@@ -1233,7 +1232,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
 
     mprAssert(state >= HTTP_STATE_PARSED);
 
-    ejs = hp->ejs;
+    ejs = hp->type->ejs;
     conn = hp->conn;
     mprAssert(conn->state >= HTTP_STATE_CONNECTED);
 
@@ -1261,8 +1260,8 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
                     mprFree(hp->uri);
-                    uri = httpCreateUri(hp, url, 0);
-                    hp->uri = httpUriToString(hp, uri, 1);
+                    uri = httpCreateUri(url, 0);
+                    hp->uri = httpUriToString(uri, 1);
                     httpPrepClientConn(conn, HTTP_NEW_REQUEST);
                 }
                 count--; 
@@ -1448,7 +1447,7 @@ static void manageHttp(EjsHttp *http, int flags)
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (http->conn) {
-            sendHttpCloseEvent(http->ejs, http);
+            sendHttpCloseEvent(http->type->ejs, http);
             httpCloseConn(http->conn);
             mprFree(http->conn);
             http->conn = 0;

@@ -10,8 +10,14 @@
 
 /****************************** Forward Declarations **************************/
 
-static void logger(MprCtx ctx, int flags, int level, const char *msg);
+typedef struct Globals {
+    EjsService  *ejsService;
+    EjsMod      *mod;
+} Globals;
+
 static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp);
+static void logger(int flags, int level, const char *msg);
+static void manageGlobals(Globals *globals, int flags);
 static int  process(EjsMod *mp, cchar *output, int argc, char **argv);
 static void require(MprList *list, cchar *name);
 static int  setLogging(Mpr *mpr, char *logSpec);
@@ -21,8 +27,8 @@ static int  setLogging(Mpr *mpr, char *logSpec);
 MAIN(ejsmodMain, int argc, char **argv)
 {
     Mpr             *mpr;
+    Globals         *globals;
     EjsMod          *mp;
-    EjsService      *ejsService;
     Ejs             *ejs;
     MprList         *requiredModules;
     char            *argp, *searchPath, *output, *modules, *name, *tok;
@@ -36,14 +42,17 @@ MAIN(ejsmodMain, int argc, char **argv)
         Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
      */
     mpr = mprCreate(argc, argv, NULL);
-    mprSetAppName(mpr, argv[0], 0, 0);
+    mprSetAppName(argv[0], 0, 0);
+    globals = mprAllocObj(Globals, manageGlobals);
+    mprAddRoot(globals);
 
     /*
         Allocate the primary control structure
      */
-    if ((mp = mprAlloc(mpr, sizeof(EjsMod))) == NULL) {
+    if ((mp = mprAlloc(sizeof(EjsMod))) == NULL) {
         return MPR_ERR_MEMORY;
     }
+    globals->mod = mp;
     mp->lstRecords = mprCreateList(mp);
     mp->blocks = mprCreateList(mp);
     mp->docDir = ".";
@@ -108,7 +117,7 @@ MAIN(ejsmodMain, int argc, char **argv)
             mp->showDebug++;
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
-            mprPrintfError(mpr, "%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);  
+            mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);  
             exit(0);
 
         } else if (strcmp(argp, "--require") == 0) {
@@ -118,7 +127,7 @@ MAIN(ejsmodMain, int argc, char **argv)
                 if (requiredModules == 0) {
                     requiredModules = mprCreateList(mpr);
                 }
-                modules = sclone(mpr, argv[++nextArg]);
+                modules = sclone(argv[++nextArg]);
                 name = stok(modules, " \t", &tok);
                 while (name != NULL) {
                     require(requiredModules, name);
@@ -156,8 +165,7 @@ MAIN(ejsmodMain, int argc, char **argv)
                 ejsmod --listing embedthis.mod 
                 ejsmod --out slots.h embedthis.mod 
          */
-        mprPrintfError(mpr, 
-            "Usage: %s [options] modules ...\n"
+        mprPrintfError("Usage: %s [options] modules ...\n"
             "  Ejscript module manager options:\n"
             "  --cslots              # Generate a C slot definitions file\n"
             "  --html dir            # Generate HTML documentation to the specified directory\n"
@@ -174,15 +182,15 @@ MAIN(ejsmodMain, int argc, char **argv)
     /*
         Need an interpreter to load modules
      */
-    ejsService = ejsCreateService(mpr); 
-    if (ejsService == 0) {
+    globals->ejsService = ejsCreateService(mpr); 
+    if (globals->ejsService == 0) {
         return MPR_ERR_MEMORY;
     }
     flags = EJS_FLAG_NO_INIT;
     if (mp->html || mp->xml) {
         flags |= EJS_FLAG_DOC;
     }
-    ejs = ejsCreateVm(ejsService, searchPath, requiredModules, 0, NULL, flags);
+    ejs = ejsCreateVm(searchPath, requiredModules, 0, NULL, flags);
     if (ejs == 0) {
         return MPR_ERR_MEMORY;
     }
@@ -201,6 +209,17 @@ MAIN(ejsmodMain, int argc, char **argv)
         mprFree(mpr);
     }
     return err;
+}
+
+
+static void manageGlobals(Globals *globals, int flags)
+{
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(globals->ejsService);
+        mprMark(globals->mod);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+    }
 }
 
 
@@ -225,7 +244,7 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
     ejs = mp->ejs;
     
     if (output) {
-        outfile = mprOpen(mp, output, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
+        outfile = mprOpen(output, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
     } else {
         outfile = 0;
     }
@@ -238,13 +257,13 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
     for (i = 0; i < argc && !mp->fatalError; i++) {
         moduleCount = mprGetListCount(ejs->modules);
         ejs->userData = mp;
-        if (!mprPathExists(mp, argv[i], R_OK)) {
-            mprError(mp, "Can't access module %s", argv[i]);
+        if (!mprPathExists(argv[i], R_OK)) {
+            mprError("Can't access module %s", argv[i]);
             return EJS_ERR;
         }
         if ((ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, argv[i]), -1, -1, EJS_LOADER_NO_INIT)) < 0) {
             ejs->loaderCallback = NULL;
-            mprError(mp, "Can't load module %s\n%s", argv[i], ejsGetErrorMsg(ejs, 0));
+            mprError("Can't load module %s\n%s", argv[i], ejsGetErrorMsg(ejs, 0));
             return EJS_ERR;
         }
         if (mp->genSlots) {
@@ -260,7 +279,7 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
             count = mprGetListCount(depends);
             for (next = 1; (module = mprGetNextItem(depends, &next)) != 0; ) {
                 int version = module->version;
-                mprPrintf(ejs, "%@-%d.%d.%d%s", module->name, EJS_MAJOR(version), EJS_MINOR(version), EJS_PATCH(version),
+                mprPrintf("%@-%d.%d.%d%s", module->name, EJS_MAJOR(version), EJS_MINOR(version), EJS_PATCH(version),
                     (next >= count) ? "" : " ");
             }
             printf("\n");
@@ -307,26 +326,26 @@ static int setLogging(Mpr *mpr, char *logSpec)
     if (strcmp(logSpec, "stdout") == 0) {
         file = mpr->fileSystem->stdOutput;
     } else {
-        if ((file = mprOpen(mpr, logSpec, O_WRONLY, 0664)) == 0) {
-            mprPrintfError(mpr, "Can't open log file %s\n", logSpec);
+        if ((file = mprOpen(logSpec, O_WRONLY, 0664)) == 0) {
+            mprPrintfError("Can't open log file %s\n", logSpec);
             return EJS_ERR;
         }
     }
 
-    mprSetLogLevel(mpr, level);
-    mprSetLogHandler(mpr, logger, (void*) file);
+    mprSetLogLevel(level);
+    mprSetLogHandler(logger, (void*) file);
 
     return 0;
 }
 
 
-static void logger(MprCtx ctx, int flags, int level, const char *msg)
+static void logger(int flags, int level, const char *msg)
 {
     Mpr         *mpr;
     MprFile     *file;
     char        *prefix;
 
-    mpr = mprGetMpr(ctx);
+    mpr = mprGetMpr();
     file = (MprFile*) mpr->logData;
     prefix = mpr->name;
 

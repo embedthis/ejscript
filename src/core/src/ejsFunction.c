@@ -307,7 +307,7 @@ EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, E
     mprAssert(fun);
 
     /* Managed by manageCode */
-    if ((exception = mprAllocZeroed(NULL, sizeof(EjsEx))) == 0) {
+    if ((exception = mprAllocZeroed(sizeof(EjsEx))) == 0) {
         mprAssert(0);
         return 0;
     }
@@ -326,7 +326,7 @@ EjsEx *ejsAddException(Ejs *ejs, EjsFunction *fun, uint tryStart, uint tryEnd, E
     }
     if (preferredIndex >= code->sizeHandlers) {
         size = code->sizeHandlers + EJS_EX_INC;
-        code->handlers = (EjsEx**) mprRealloc(fun, code->handlers, size * sizeof(EjsEx));
+        code->handlers = mprRealloc(code->handlers, size * sizeof(EjsEx));
         if (code->handlers == 0) {
             mprAssert(0);
             return 0;
@@ -363,7 +363,7 @@ static void manageCode(EjsCode *code, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(code->module);
         mprMark(code->debug);
-        if (code->numHandlers > 0) {
+        if (code->handlers) {
             mprMark(code->handlers);
             for (i = 0; i < code->numHandlers; i++) {
                 /* Manage EjsEx */
@@ -384,7 +384,7 @@ EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
     mprAssert(byteCode);
     mprAssert(len >= 0);
 
-    if ((code = mprAllocBlock(fun, sizeof(EjsCode) + len, MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
+    if ((code = mprAllocBlock(sizeof(EjsCode) + len, MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
         return NULL;
     }
     mprSetManager(code, manageCode);
@@ -401,22 +401,20 @@ EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
  */
 int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, size_t len, EjsDebug *debug)
 {
-    EjsCode     *code;
-
     mprAssert(fun);
     mprAssert(byteCode);
     mprAssert(len >= 0);
 
-    code = fun->body.code;
 #if UNUSED
+    code = fun->body.code;
     if (code == NULL) {
-        if ((code = mprAllocZeroed(fun, sizeof(EjsCode) + len)) == 0) {
+        if ((code = mprAllocZeroed(sizeof(EjsCode) + len)) == 0) {
             return MPR_ERR_MEMORY;
         }
         fun->body.code = code;
     } else {
         if (len > code->codeLen) {
-            if ((code = mprRealloc(fun, code, sizeof(EjsCode) + len)) == 0) {
+            if ((code = mprRealloc(code, sizeof(EjsCode) + len)) == 0) {
                 return MPR_ERR_MEMORY;
             }
             fun->body.code = code;
@@ -522,7 +520,7 @@ int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCod
 
     if (codeLen > 0) {
 #if UNUSED
-        if ((code = mprAllocZeroed(fun, sizeof(EjsCode) + codeLen)) == 0) {
+        if ((code = mprAllocZeroed(sizeof(EjsCode) + codeLen)) == 0) {
             return MPR_ERR_MEMORY;
         }
         fun->body.code = code;

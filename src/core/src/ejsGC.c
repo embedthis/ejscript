@@ -14,7 +14,7 @@
  */
 static EjsObj *getEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ((mprGetMpr(ejs)->heap.enabled) ? ejs->trueValue: ejs->falseValue);
+    return (EjsObj*) ((mprGetMpr()->heap.enabled) ? ejs->trueValue: ejs->falseValue);
 }
 
 
@@ -24,22 +24,21 @@ static EjsObj *getEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 static EjsObj *setEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsBoolean(ejs, argv[0]));
-    mprGetMpr(ejs)->heap.enabled = ejsGetBoolean(ejs, argv[0]);
+    mprGetMpr()->heap.enabled = ejsGetBoolean(ejs, argv[0]);
     return 0;
 }
 
 
 /*
     run(deep: Boolean = false)
-    Note: deep currently is not implemented
-    MOB -- change args to be a string "thread", "all"
+    MOB -- change args to be a string "check", "all"
  */
 static EjsObj *runGC(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     deep;
 
     deep = ((argc == 1) && ejsIsBoolean(ejs, argv[1]));
-    mprCollectGarbage();
+    mprCollectGarbage((deep) ? MPR_GC_ALL : MPR_GC_ONE);
     return 0;
 }
 
@@ -49,7 +48,7 @@ static EjsObj *runGC(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
  */
 static EjsObj *getWorkQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetMpr(ejs)->heap.newQuota);
+    return (EjsObj*) ejsCreateNumber(ejs, mprGetMpr()->heap.newQuota);
 }
 
 
@@ -67,7 +66,7 @@ static EjsObj *setWorkQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Bad work quota");
         return 0;
     }
-    mprGetMpr(ejs)->heap.newQuota = quota;
+    mprGetMpr()->heap.newQuota = quota;
     return 0;
 }
 
@@ -77,7 +76,7 @@ void ejsConfigureGCType(Ejs *ejs)
     EjsType         *type;
 
     if ((type = ejsGetTypeByName(ejs, N("ejs", "GC"))) == 0) {
-        mprError(ejs, "Can't find GC type");
+        mprError("Can't find GC type");
         return;
     }
     ejsBindAccess(ejs, type, ES_GC_enabled, (EjsProc) getEnable, (EjsProc) setEnable);

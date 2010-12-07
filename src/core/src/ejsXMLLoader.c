@@ -29,14 +29,13 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
     EjsXmlState *parser;
     MprXml      *xp;
     
-    xp = mprXmlOpen(ejs, MPR_BUFSIZE, EJS_XML_BUF_MAX);
+    xp = mprXmlOpen(MPR_BUFSIZE, EJS_XML_BUF_MAX);
     mprAssert(xp);
 
     /*
         Create the parser stack
      */
-    //  MOB - switch to ejsAlloc
-    if ((parser = mprAllocObj(xp, EjsXmlState, manageXmlParser)) == 0) {
+    if ((parser = mprAllocObj(EjsXmlState, manageXmlParser)) == 0) {
         mprFree(xp);
         return 0;
     }

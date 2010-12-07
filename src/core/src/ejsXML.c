@@ -82,7 +82,7 @@ static EjsObj *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
                 }
             }
         }
-        buf = mprCreateBuf(ejs, MPR_BUFSIZE, -1);
+        buf = mprCreateBuf(MPR_BUFSIZE, -1);
         if (ejsXMLToString(ejs, buf, xml, -1) < 0) {
             mprFree(buf);
             return 0;
@@ -324,7 +324,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
         str = 0;
         for (next = 0; (elt = mprGetNextItem(xvalue->elements, &next)) != 0; ) {
             sv = (EjsString*) ejsCast(ejs, (EjsObj*) elt, ejs->stringType);
-            str = mrejoin(ejs, str, " ", sv->value, NULL);
+            str = mrejoin(str, NULL, " ", sv->value, NULL);
         }
         value = (EjsObj*) ejsCreateString(ejs, str, -1);
         mprFree(str);
@@ -431,7 +431,7 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
     last = 0;
     lastElt = 0;
 
-    mprLog(ejs, 9, "XMLSet %@.%@ = \"%@\"", xml->qname.name, qname.name, ejsCast(ejs, value, ejs->stringType));
+    mprLog(9, "XMLSet %@.%@ = \"%@\"", xml->qname.name, qname.name, ejsCast(ejs, value, ejs->stringType));
 
     if (isdigit((int) qname.name->value[0]) && allDigitsForXml(qname.name)) {
         ejsThrowTypeError(ejs, "Integer indicies for set are not allowed");
@@ -725,7 +725,7 @@ static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     filename = ejsToMulti(ejs, argv[0]);
-    file = mprOpen(ejs, filename, O_RDONLY, 0664);
+    file = mprOpen(filename, O_RDONLY, 0664);
     if (file == 0) {
         ejsThrowIOError(ejs, "Can't open: %s", filename);
         return 0;
@@ -765,12 +765,12 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
         ejsThrowArgError(ejs, "Bad args. Usage: save(filename);");
         return 0;
     }
-    filename = awtom(ejs, ((EjsString*) argv[0])->value, NULL);
+    filename = awtom(((EjsString*) argv[0])->value, NULL);
 
     /*
         Create a buffer to hold the output. All in memory.
      */
-    buf = mprCreateBuf(ejs, MPR_BUFSIZE, -1);
+    buf = mprCreateBuf(MPR_BUFSIZE, -1);
     mprPutStringToBuf(buf, "<?xml version=\"1.0\"?>\n");
 
     /*
@@ -781,7 +781,7 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
         return 0;
     }
 
-    file = mprOpen(ejs, filename,  O_CREAT | O_TRUNC | O_WRONLY | O_TEXT, 0664);
+    file = mprOpen(filename,  O_CREAT | O_TRUNC | O_WRONLY | O_TEXT, 0664);
     if (file == 0) {
         ejsThrowIOError(ejs, "Can't open: %s, %d", filename, mprGetOsError(ejs));
         mprFree(filename);
@@ -820,7 +820,7 @@ static EjsString *xmlToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
         Quote all quotes
      */
     sp = ejsToString(ejs, vp);
-    buf = mprCreateBuf(ejs, -1, -1);
+    buf = mprCreateBuf(-1, -1);
     mprPutCharToBuf(buf, '"');
     for (cp = ejsToMulti(ejs, sp); *cp; cp++) {
         if (*cp == '"') {
@@ -933,28 +933,6 @@ EjsXML *ejsSetXML(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
     mprSetItem(xml->elements, index, node);
     return xml;
 }
-
-
-#if KEEP
-int ejsCopyName(MprCtx ctx, EjsName *to, EjsName *from)
-{
-/*
-
-    TODO -
-
-    mprFree((char*) to->name);
-    mprFree((char*) to->space);
-
-    to->name = sclone(ctx, from->name);
-    to->space = sclone(ctx, from->space);
-    if (to->name == 0 || to->space == 0) {
-        return EJS_ERR;
-    }
-*/
-    *to = *from;
-    return 0;
-}
-#endif
 
 
 EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *xml, EjsXML *node)
@@ -1110,7 +1088,6 @@ void ejsManageXML(EjsXML *xml, int flags)
     int             next;
 
     if (flags & MPR_MANAGE_MARK) {
-        ejsManagePot(xml, flags);
         if (xml->parent && !VISITED(xml->parent)) {
             mprMark(xml->parent);
         }

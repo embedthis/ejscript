@@ -2612,7 +2612,7 @@ EjsObj *ejsRunInitializer(Ejs *ejs, EjsModule *mp)
             }
         }
     }
-    mprLog(ejs, 6, "Running initializer for module %@", mp->name);
+    mprLog(6, "Running initializer for module %@", mp->name);
     return ejsRunFunction(ejs, mp->initializer, ejs->global, 0, NULL);
 }
 
@@ -3284,7 +3284,7 @@ int ejsInitStack(Ejs *ejs)
 {
     EjsState    *state;
 
-    state = ejs->state = ejs->masterState = mprAllocBlock(ejs, sizeof(EjsState), MPR_ALLOC_ZERO);
+    state = ejs->state = ejs->masterState = mprAllocBlock(sizeof(EjsState), MPR_ALLOC_ZERO);
 
     /*
         Allocate the stack
@@ -3352,7 +3352,7 @@ int ejsGrowStack(Ejs *ejs, int incr)
             return MPR_ERR_MEMORY;
         }
         size = (sizeof(EjsObj*) * incr);
-        sp->bottom = (EjsObj**) mprAlloc(sp, size);
+        sp->bottom = (EjsObj**) mprAlloc(size);
         /*
             Push always begins with an increment of sp->top. Initially, sp_bottom points to the first (future) element.
          */
@@ -3674,7 +3674,7 @@ void ejsLog(Ejs *ejs, const char *fmt, ...)
     va_start(args, fmt);
     mprSprintfv(buf, sizeof(buf) - 1, fmt, args);
     va_end(args);
-    mprLog(ejs, 0, "%s", buf);
+    mprLog(0, "%s", buf);
 }
 
 
@@ -3684,7 +3684,7 @@ void ejsShowStack(Ejs *ejs, EjsFunction *fp)
     char    *stack;
     
     stack = ejsFormatStack(ejs, NULL);
-    mprLog(ejs, 7, "Stack\n%s", stack);
+    mprLog(7, "Stack\n%s", stack);
     mprFree(stack);
 }
 #endif
@@ -3811,13 +3811,14 @@ static void manageBreakpoint(Ejs *ejs)
     This code is only active when building in debug mode and debugging in an IDE
  */
 static int ejsOpCount = 0;
+static int doDebug = 1;
 
 static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 {
     EjsFrame        *fp;
     EjsState        *state;
     EjsOptable      *optable;
-    int             offset;
+    int             offset, save;
 #if UNUSED
     static int      showFrequency = 1;
 #endif
@@ -3826,14 +3827,15 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     fp = state->fp;
     opcount[opcode]++;
 
-    if (ejs->initialized) {
+    if (ejs->initialized && doDebug) {
         offset = (int) (fp->pc - fp->function.body.code->byteCode) - 1;
         if (offset < 0) {
             offset = 0;
         }
         optable = ejsGetOptable(ejs);
+        save = mprEnableGC(0);
         if (ejsGetDebugInfo(ejs, (EjsFunction*) fp, fp->pc, &fp->loc.filename, &fp->loc.lineNumber, &fp->loc.source) >= 0) {
-            mprLog(ejs, 6, "%0s %04d: [%d] %02x: %-35s # %s:%d %w",
+            mprLog(6, "%0s %04d: [%d] %02x: %-35s # %s:%d %w",
                 mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
                 (uchar) opcode, optable[opcode].name, fp->loc.filename, fp->loc.lineNumber, fp->loc.source);
         }
@@ -3842,6 +3844,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
             ejsShowOpFrequency(ejs);
         }
 #endif
+        mprEnableGC(save);
         mprAssert(state->stack >= fp->stackReturn);
     }
     ejsOpCount++;
@@ -3859,9 +3862,9 @@ void ejsShowOpFrequency(Ejs *ejs)
         return;
     }
     optable = ejsGetOptable(ejs);
-    mprLog(ejs, 0, "Opcode Frequency");
+    mprLog(0, "Opcode Frequency");
     for (i = 0; i < 256 && optable[i].name; i++) {
-        mprLog(ejs, 6, "%4d %24s %8d", (uchar) i, optable[i].name, opcount[i]);
+        mprLog(6, "%4d %24s %8d", (uchar) i, optable[i].name, opcount[i]);
     }
 }
 #endif

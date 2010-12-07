@@ -120,7 +120,7 @@ module ejs.web {
                 this.config = request.config
                 formats = config.web.view.formats
                 for each (let n: String in 
-                        Object.getOwnPropertyNames(controller, {includeBases: true, excludeFunctions: true})){
+                        Object.getOwnPropertyNames(controller, {includeBases: true, excludeFunctions: true})) {
                     if (n.startsWith("_")) continue
                     //  MOB - can we remove public::
                     this.public::[n] = controller[n]

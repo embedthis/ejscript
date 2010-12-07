@@ -126,11 +126,11 @@ static int astProcess(EcCompiler *cp, EcNode *np)
 }
 
 
-int ecAstProcess(EcCompiler *cp, int argc, EcNode **nodes)
+int ecAstProcess(EcCompiler *cp)
 {
     Ejs         *ejs;
     EcNode      *np;
-    int         phase, i;
+    int         phase, i, count;
 
     if (ecEnterState(cp) < 0) {
         return EJS_ERR;
@@ -148,15 +148,15 @@ int ecAstProcess(EcCompiler *cp, int argc, EcNode **nodes)
         /*
             Loop over each source file
          */
-        for (i = 0; i < argc && !cp->fatalError; i++) {
+        count = mprGetListCount(cp->nodes);
+        for (i = 0; i < count && !cp->fatalError; i++) {
             /*
                 Looping through the input source files. A single top level node describes the source file.
              */
-            np = nodes[i];
+            np = mprGetItem(cp->nodes, i);
             if (np == 0) {
                 continue;
             }
-
             cp->fileState = cp->state;
             cp->fileState->strict = cp->strict;
             processAstNode(cp, np);
@@ -536,7 +536,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
             This slot may be reclaimed during fixup if not required. Instance initializers are prepended to the constructor.
          */
         //  MOB -- rethink name
-        name = mprAsprintf(ejs, "-%@-", type->qname.name);
+        name = mprAsprintf("-%@-", type->qname.name);
         qname.name = ejsCreateStringFromAsc(ejs, name);
         mprFree(name);
         qname.space = ejsCreateStringFromAsc(ejs, EJS_INIT_NAMESPACE);
@@ -1947,7 +1947,7 @@ static void astNew(EcCompiler *cp, EcNode *np)
              */
             np->qname = left->qname;
             np->lookup = left->lookup;
-            np->lookup.trait = mprAllocObj(NULL, EjsTrait, NULL);
+            np->lookup.trait = mprAllocObj(EjsTrait, NULL);
             np->lookup.trait->type = (EjsType*) np->lookup.ref;
             np->lookup.ref = 0;
             np->lookup.instanceProperty = 1;
@@ -2478,7 +2478,7 @@ static void astRequire(EcCompiler *cp, EcNode *np)
             if (mp == 0) {
                 flags = cp->fileState->strict ? EJS_LOADER_STRICT : 0;
                 if (ejsLoadModule(ejs, np->qname.name, np->useModule.minVersion, np->useModule.maxVersion, flags) < 0) {
-                    astError(cp, np, "Error loading module \"%@\"\n%s", np->qname.name, ejsGetErrorMsg(ejs, 1));
+                    astError(cp, np, "%s", ejsGetErrorMsg(ejs, 1));
                     cp->fatalError = 1;
                     LEAVE(cp);
                     return;
@@ -3018,7 +3018,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
     if (cp->outputFile) {
         np->module.filename = cp->outputFile;
     } else {
-        np->module.filename = mprAsprintf(np, "%@%s", np->qname.name, EJS_MODULE_EXT);
+        np->module.filename = mprAsprintf("%@%s", np->qname.name, EJS_MODULE_EXT);
     }
     return mp;
 }
@@ -3278,7 +3278,6 @@ static void processAstNode(EcCompiler *cp, EcNode *np)
         initialization will be required. Either a class constructor, initializer or a global initializer.
      */
     if (cp->phase == EC_PHASE_DEFINE && codeRequired && !state->inMethod && !state->inHashExpression) {
-
         if (state->inClass && !state->currentClass->isInterface) {
             if (instanceCode) {
                 state->currentClass->hasConstructor = 1;
@@ -3761,9 +3760,9 @@ static void openBlock(EcCompiler *cp, EcNode *np, EjsBlock *block)
         if (block == 0) {
             static int index = 0;
             if (np->loc.filename == 0) {
-                debugName = mprAsprintf(np, "block_%04d", index++);
+                debugName = mprAsprintf("block_%04d", index++);
             } else {
-                debugName = mprAsprintf(np, "block_%04d_%d", np->loc.lineNumber, index++);
+                debugName = mprAsprintf("block_%04d_%d", np->loc.lineNumber, index++);
             }
             block = ejsCreateBlock(cp->ejs, 0);
             np->qname = N(EJS_BLOCK_NAMESPACE, debugName);
@@ -3836,7 +3835,7 @@ static EjsNamespace *createHoistNamespace(EcCompiler *cp, EjsObj *obj)
     char            *spaceName;
 
     ejs = cp->ejs;
-    spaceName = mprAsprintf(ejs, "-hoisted-%d", ejsGetPropertyCount(ejs, obj));
+    spaceName = mprAsprintf("-hoisted-%d", ejsGetPropertyCount(ejs, obj));
     namespace = ejsCreateNamespace(ejs, ejsCreateStringFromAsc(ejs, spaceName));
 
     letBlockNode = cp->state->letBlockNode;
@@ -3893,7 +3892,7 @@ static EjsNamespace *lookupNamespace(Ejs *ejs, EjsString *nspace)
             continue;
         }
         namespaces = &block->namespaces;
-        mprLog(ejs, 7, "    SEARCH for qname \"%@\"", nspace);
+        mprLog(7, "    SEARCH for qname \"%@\"", nspace);
         for (nextNamespace = -1; (nsp = (EjsNamespace*) mprGetPrevItem(namespaces, &nextNamespace)) != 0; ) {
             if (nsp->value == nspace) {
                 return nsp;
@@ -4072,7 +4071,7 @@ static void badAst(EcCompiler *cp, EcNode *np)
 {
     cp->fatalError = 1;
     cp->errorCount++;
-    mprError(cp, "Unsupported language feature\nUnknown AST node kind %d",  np->kind);
+    mprError("Unsupported language feature\nUnknown AST node kind %d",  np->kind);
 }
 
 

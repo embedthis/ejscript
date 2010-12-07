@@ -567,7 +567,7 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
         if (props == 0) {
             mprAssert(obj->numProp == 0);
             mprAssert(slotCount > 0);
-            if ((props = mprAlloc(NULL, size)) == 0) {
+            if ((props = mprAlloc(size)) == 0) {
                 return EJS_ERR;
             }
             obj->properties = props;
@@ -576,9 +576,9 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
         } else {
             if (obj->separateSlots) {
                 mprAssert(props->size > 0);
-                props = mprRealloc(NULL, props, size);
+                props = mprRealloc(props, size);
             } else {
-                if ((props = mprAlloc(NULL, size)) != 0) {
+                if ((props = mprAlloc(size)) != 0) {
                     memcpy(props, obj->properties, sizeof(EjsProperties) + obj->properties->size * sizeof(EjsSlot));
                     obj->properties = props;
                     obj->separateSlots = 1;
@@ -876,7 +876,7 @@ int ejsMakeHash(Ejs *ejs, EjsPot *obj)
     oldHash = obj->properties->hash;
     newHashSize = ejsGetHashSize(obj->numProp);
     if (oldHash == NULL || oldHash->size < newHashSize) {
-        hash = (EjsHash*) mprAlloc(NULL, sizeof(EjsHash) + (newHashSize * sizeof(int)));
+        hash = (EjsHash*) mprAlloc(sizeof(EjsHash) + (newHashSize * sizeof(int)));
         if (hash == 0) {
             return EJS_ERR;
         }
@@ -892,9 +892,6 @@ int ejsMakeHash(Ejs *ejs, EjsPot *obj)
         Clear out hash linkage
      */
     if (oldHash) {
-        if (obj->separateHash) {
-            mprFree(oldHash);
-        }
         for (sp = obj->properties->slots, i = 0; i < obj->numProp; i++, sp++) {
             sp->hashChain = -1;
         }
@@ -1081,9 +1078,9 @@ void ejsManagePot(void *ptr, int flags)
                 mprMark(sp->qname.name);
                 mprMark(sp->qname.space);
                 mprMark(sp->value.ref);
-    #if MOB && CONSIDER
+#if MOB && CONSIDER
                 mprMark(sp->trait.type);
-    #endif
+#endif
             }
         }
     }

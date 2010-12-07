@@ -117,16 +117,16 @@ typedef struct EcNode   *Node;
     Structure for code generation buffers
  */
 typedef struct EcCodeGen {
-    MprBuf      *buf;                   /* Code generation buffer */
-    MprList     *jumps;                 /* Break/continues to patch for this code block */
-    MprList     *exceptions;            /* Exception handlers for this code block */
-    EjsDebug    *debug;                 /* Source debug info */ 
-    int         jumpKinds;              /* Kinds of jumps allowed */
-    int         breakMark;              /* Stack item counter for the target for break/continue stmts */
-    int         blockMark;              /* Lexical block counter for the target for break/continue stmts */
-    int         stackCount;             /* Current stack item counter */
-    int         blockCount;             /* Current block counter */
-    int         lastLineNumber;         /* Last line for debug */
+    MprBuf      *buf;                           /* Code generation buffer */
+    MprList     *jumps;                         /* Break/continues to patch for this code block */
+    MprList     *exceptions;                    /* Exception handlers for this code block */
+    EjsDebug    *debug;                         /* Source debug info */ 
+    int         jumpKinds;                      /* Kinds of jumps allowed */
+    int         breakMark;                      /* Stack item counter for the target for break/continue stmts */
+    int         blockMark;                      /* Lexical block counter for the target for break/continue stmts */
+    int         stackCount;                     /* Current stack item counter */
+    int         blockCount;                     /* Current block counter */
+    int         lastLineNumber;                 /* Last line for debug */
 } EcCodeGen;
 
 
@@ -166,13 +166,13 @@ typedef struct EcNode {
     uint                slotFixed         : 1;  /* Slot fixup has been done */
     uint                specialNamespace  : 1;  /* Using a public|private|protected|internal namespace */
 
-    uchar               *patchAddress;      /* For code patching */
-    EcCodeGen           *code;              /* Code buffer */
+    uchar               *patchAddress;          /* For code patching */
+    EcCodeGen           *code;                  /* Code buffer */
 
-    EjsName             *globalProp;        /* Set if this is a global property */
-    EjsString           *doc;               /* Documentation string */
+    EjsName             *globalProp;            /* Set if this is a global property */
+    EjsString           *doc;                   /* Documentation string */
 
-    struct EcCompiler   *cp;                /* Compiler instance reference */
+    struct EcCompiler   *cp;                    /* Compiler instance reference */
 
     union {
 #if UNUSED
@@ -183,20 +183,20 @@ typedef struct EcNode {
 
         struct {
             Node        expression;
-            EcCodeGen   *expressionCode;    /* Code buffer for the case expression */
+            EcCodeGen   *expressionCode;        /* Code buffer for the case expression */
             int         kind;
-            int         nextCaseCode;       /* Goto length to the next case statements */
+            int         nextCaseCode;           /* Goto length to the next case statements */
         } caseLabel;
 
         struct {
-            Node        arg;                /* Catch block argument */
+            Node        arg;                    /* Catch block argument */
         } catchBlock;
 
         /*
             Var definitions have one child per variable. Child nodes can be either N_NAME or N_ASSIGN_OP
          */
         struct {
-            int         varKind;            /* Variable definition kind */
+            int         varKind;                /* Variable definition kind */
         } def;
 
 #if UNUSED
@@ -210,42 +210,42 @@ typedef struct EcNode {
 
         struct {
             /* Children are the catch clauses */
-            Node        tryBlock;           /* Try code */
-            Node        catchClauses;       /* Catch clauses */
-            Node        finallyBlock;       /* Finally code */
-            int         numBlocks;          /* Count of open blocks in the try block */
+            Node        tryBlock;               /* Try code */
+            Node        catchClauses;           /* Catch clauses */
+            Node        finallyBlock;           /* Finally code */
+            int         numBlocks;              /* Count of open blocks in the try block */
         } exception;
 
 #if UNUSED
         struct {
-            char        *space;             /* Namespace qualifier */
+            char        *space;                 /* Namespace qualifier */
         } expr;
 #endif
 
         struct {
-            Node        expr;               /* Field expression */
-            Node        fieldName;          /* Field element name for objects */
-            int         fieldKind;          /* value or function */
-            int         index;              /* Array index, set to -1 for objects */
-            int         varKind;            /* Variable definition kind (const) */
+            Node        expr;                   /* Field expression */
+            Node        fieldName;              /* Field element name for objects */
+            int         fieldKind;              /* value or function */
+            int         index;                  /* Array index, set to -1 for objects */
+            int         varKind;                /* Variable definition kind (const) */
         } field;
 
         struct {
-            Node        resultType;         /* Function return type */
-            Node        body;               /* Function body */
-            Node        parameters;         /* Function formal parameters */
-            Node        constructorSettings;/* Constructor settings */
-            Node        expressionRef;      /* Reference to the function expression name */
-            EjsFunction *functionVar;       /* Function variable */
-            uint        operatorFn    : 1;  /* operator function */
-            uint        getter        : 1;  /* getter function */
-            uint        setter        : 1;  /* setter function */
-            uint        call          : 1;  /* */
-            uint        has           : 1;  /* */
-            uint        hasRest       : 1;  /* Has rest parameter */
-            uint        hasReturn     : 1;  /* Has a return statement */
-            uint        isMethod      : 1;  /* Is a class method */
-            uint        isConstructor : 1;  /* Is constructor method */
+            Node        resultType;             /* Function return type */
+            Node        body;                   /* Function body */
+            Node        parameters;             /* Function formal parameters */
+            Node        constructorSettings;    /* Constructor settings */
+            Node        expressionRef;          /* Reference to the function expression name */
+            EjsFunction *functionVar;           /* Function variable */
+            uint        operatorFn    : 1;      /* operator function */
+            uint        getter        : 1;      /* getter function */
+            uint        setter        : 1;      /* setter function */
+            uint        call          : 1;      /* */
+            uint        has           : 1;      /* */
+            uint        hasRest       : 1;      /* Has rest parameter */
+            uint        hasReturn     : 1;      /* Has a return statement */
+            uint        isMethod      : 1;      /* Is a class method */
+            uint        isConstructor : 1;      /* Is constructor method */
             uint        isDefaultConstructor : 1; /* Is default constructor */
         } function;
 
@@ -256,7 +256,7 @@ typedef struct EcNode {
             Node        body;
             EcCodeGen   *initCode;
             EcCodeGen   *bodyCode;
-            int         each;               /* For each used */
+            int         each;                   /* For each used */
         } forInLoop;
 
         struct {
@@ -760,6 +760,7 @@ typedef struct EcCompiler {
     EjsLookup   lookup;                     /* Lookup residuals */
     EjsService  *vmService;                 /* VM runtime */
     Ejs         *ejs;                       /* Interpreter instance */
+    MprList     *nodes;                     /* Compiled AST nodes */
 
     /*
         Compiler command line options
@@ -815,7 +816,7 @@ extern EcNode       *ecAppendNode(EcNode *np, EcNode *child);
 extern int          ecAstFixup(EcCompiler *cp, struct EcNode *np);
 extern EcNode       *ecChangeNode(EcCompiler *cp, EcNode *np, EcNode *oldNode, EcNode *newNode);
 extern void         ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *up);
-extern int          ecCodeGen(EcCompiler *cp, int argc, struct EcNode **nodes);
+extern int          ecCodeGen(EcCompiler *cp);
 extern int          ecCompile(EcCompiler *cp, int argc, char **path);
 extern EcCompiler   *ecCreateCompiler(struct Ejs *ejs, int flags);
 extern void         ecInitLexer(EcCompiler *cp);
@@ -852,12 +853,13 @@ extern void         ecSetTabWidth(EcCompiler *cp, int width);
 extern void         ecSetOutputFile(EcCompiler *cp, cchar *outputFile);
 extern void         ecSetCertFile(EcCompiler *cp, cchar *certFile);
 extern EcToken      *ecTakeToken(EcCompiler *cp);
-extern int          ecAstProcess(struct EcCompiler *cp, int argc,  struct EcNode **nodes);
+extern int          ecAstProcess(struct EcCompiler *cp);
 extern void         *ecCreateStream(EcCompiler *cp, size_t size, cchar *filename, void *manager);
 extern void         ecSetStreamBuf(EcStream *sp, cchar *contents, size_t len);
-extern int          ecParseFile(EcCompiler *cp, char *path, EcNode **nodes);
+extern EcNode       *ecParseFile(EcCompiler *cp, char *path);
 extern void         ecManageStream(EcStream *sp, int flags);
 extern void         ecMarkLocation(EcLocation *loc);
+extern void         ecSetRequire(EcCompiler *cp, MprList *modules);
 
 
 /*

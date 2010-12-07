@@ -59,15 +59,15 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
         }
     }
     if (name) {
-        worker->name = sclone(worker, name);
+        worker->name = sclone(name);
     } else {
-        worker->name = mprAsprintf(worker, "worker-%d", mprGetListCount(ejs->workers));
+        worker->name = mprAsprintf("worker-%d", mprGetListCount(ejs->workers));
     }
 
     /*
         Create a new interpreter and an "inside" worker object and pair it with the current "outside" worker.
      */
-    wejs = ejsCreateVm(ejs->service, NULL, NULL, 0, NULL, 0);
+    wejs = ejsCreateVm(NULL, NULL, 0, NULL, 0);
     if (wejs == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -80,7 +80,7 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     self->ejs = wejs;
     self->inside = 1;
     self->pair = worker;
-    self->name = sjoin(self, "inside-", worker->name, NULL);
+    self->name = sjoin("inside-", worker->name, NULL);
     mprAddRoot(self);
     
     mprEnableDispatcher(wejs->dispatcher);
@@ -99,7 +99,7 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
 
     if (argc > 0 && ejsIsPath(ejs, argv[0])) {
         addWorker(ejs, worker);
-        worker->scriptFile = sclone(worker, ((EjsPath*) argv[0])->value);
+        worker->scriptFile = sclone(((EjsPath*) argv[0])->value);
         worker->state = EJS_WORKER_STARTED;
         mprAddRoot(worker);
         if (mprCreateEvent(wejs->dispatcher, "workerMain", 0, (MprEventProc) workerMain, self, 0) < 0) {
@@ -160,7 +160,7 @@ static EjsObj *startWorker(Ejs *ejs, EjsWorker *outsideWorker, int timeout)
     mprAssert(!outsideWorker->inside);
     mprAssert(outsideWorker->state == EJS_WORKER_BEGIN);
 
-    LOG(ejs, 5, "Worker.startWorker");
+    LOG(5, "Worker.startWorker");
 
     if (outsideWorker->state > EJS_WORKER_BEGIN) {
         ejsThrowStateError(ejs, "Worker has already started");
@@ -240,7 +240,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
 
     if (workers == 0 || workers == ejs->nullValue) {
         /* Join all */
-        count = ejsGetLength(ejs, ejs->workers);
+        count = mprGetListCount(ejs->workers);
         for (i = 0; i < count; i++) {
             worker = mprGetItem(ejs->workers, i);
             if (worker->state >= EJS_WORKER_COMPLETE) {
@@ -279,7 +279,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
     MprTime     mark;
     int         result, remaining;
 
-    LOG(ejs, 5, "Worker.join: joining %d", ejs->joining);
+    LOG(5, "Worker.join: joining %d", ejs->joining);
 
     mark = mprGetTime(ejs);
     remaining = timeout;
@@ -289,7 +289,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
             break;
         }
         ejsServiceEvents(ejs, remaining, MPR_SERVICE_ONE_THING);
-        remaining = (int) mprGetRemainingTime(ejs, mark, timeout);
+        remaining = (int) mprGetRemainingTime(mark, timeout);
     } while (remaining > 0 && !ejs->exception);
 
     if (ejs->exception) {
@@ -297,7 +297,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
     }
     result = (ejs->joining) ? MPR_ERR_TIMEOUT: 0;
     ejs->joining = 0;
-    LOG(ejs, 5, "Worker.join: result %d", result);
+    LOG(5, "Worker.join: result %d", result);
     return result;
 }
 
@@ -355,7 +355,7 @@ static EjsObj *workerLoad(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 
     mprAssert(argc == 0 || ejsIsPath(ejs, argv[0]));
 
-    worker->scriptFile = sclone(worker, ((EjsPath*) argv[0])->value);
+    worker->scriptFile = sclone(((EjsPath*) argv[0])->value);
     timeout = argc == 2 ? ejsGetInt(ejs, argv[1]): 0;
     return startWorker(ejs, worker, timeout);
 }
@@ -418,6 +418,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     worker->event = event;
     if (msg->data) {
         ejsSetProperty(ejs, event, ES_Event_data, ejsCreateStringFromAsc(ejs, msg->data));
+        mprRelease(msg->data);
     }
     if (msg->message) {
         ejsSetProperty(ejs, event, ES_ErrorEvent_message, msg->message);
@@ -432,7 +433,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     if (callback == 0 || callback == ejs->nullValue) {
         if (msg->callbackSlot == ES_Worker_onmessage) {
-            mprLog(ejs, 1, "Discard message as no onmessage handler defined for worker");
+            mprLog(1, "Discard message as no onmessage handler defined for worker");
             
         } else if (msg->callbackSlot == ES_Worker_onerror) {
             if (msg->message && ejsIsString(ejs, msg->message)) {
@@ -454,10 +455,10 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     if (msg->callbackSlot == ES_Worker_onclose) {
         mprAssert(!worker->inside);
         worker->state = EJS_WORKER_COMPLETE;
-        LOG(ejs, 5, "Worker.doMessage: complete");
+        LOG(5, "Worker.doMessage: complete");
         removeWorker(worker);
         /*
-            Now that the inside worker is complete, the outside worker does not need to be protected from GC
+            Now that the inside worker is complete, the outside worker does not need special protection from GC
          */
         mprRemoveRoot(worker);
     }
@@ -560,13 +561,14 @@ static EjsObj *workerPostMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
         ejsThrowArgError(ejs, "Can't serialize message data");
         return 0;
     }
-    if ((msg = mprAllocObj(ejs, Message, NULL)) == 0) {
+    if ((msg = mprAllocObj(Message, NULL)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
     mprHold(msg);
     target = worker->pair;
-    msg->data = sclone(target->ejs, ejsToMulti(ejs, data));
+    msg->data = ejsToMulti(ejs, data);
+    mprHold(msg->data);
     msg->worker = target;
     msg->callback = "onmessage";
     msg->callbackSlot = ES_Worker_onmessage;
@@ -616,7 +618,7 @@ static int workerMain(EjsWorker *insideWorker, MprEvent *event)
         handleError(outside, outsideWorker, inside->exception, 0);
         inside->exception = 0;
     }
-    if ((msg = mprAlloc(outside, sizeof(Message))) == 0) {
+    if ((msg = mprAllocZeroed(sizeof(Message))) == 0) {
         ejsThrowMemoryError(outside);
         return 0;
     }
@@ -680,7 +682,7 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
     worker->gotMessage = 0;
     do {
         ejsServiceEvents(ejs, remaining, MPR_SERVICE_ONE_THING);
-        remaining = (int) mprGetRemainingTime(ejs, mark, timeout);
+        remaining = (int) mprGetRemainingTime(mark, timeout);
     } while (!worker->gotMessage && remaining > 0 && !ejs->exception);
 
     if (worker->gotMessage) {
@@ -707,7 +709,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
     mprAssert(exception);
     mprAssert(ejs == worker->ejs);
 
-    if ((msg = mprAlloc(ejs, sizeof(Message))) == 0) {
+    if ((msg = mprAllocZeroed(sizeof(Message))) == 0) {
         ejsThrowMemoryError(ejs);
         return;
     }
@@ -731,9 +733,10 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
         msg->stack = ejsGetPropertyByName(ejs, e, EN("stack"));
     } else {
         msg->message = e;
+        msg->stack = (EjsObj*) ejs->emptyString;
     }
     if (throwOutside) {
-        ejsThrowStateError(ejs, "%@", ejsToString(inside, e));
+        ejsThrowStateError(ejs, "%@\n%@", ejsToString(ejs, msg->message), ejsToString(ejs, msg->stack));
     }
     dispatcher = ejs->dispatcher;
     mprCreateEvent(dispatcher, "doMessage-error", 0, (MprEventProc) doMessage, msg, 0);
@@ -749,20 +752,26 @@ EjsWorker *ejsCreateWorker(Ejs *ejs)
 static void manageWorker(EjsWorker *worker, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        if (worker->event) {
-            mprMark(worker->event);
-        }
+        ejsManagePot(worker, flags);
+        mprMark(worker->event);
+        mprMark(worker->name);
+        mprMark(worker->scriptFile);
+        mprMark(worker->scriptLiteral);
 
     } else if (flags & MPR_MANAGE_FREE) {
-        if (!worker->inside) {
+        //  MOB BUG - RACE here if GC mthreaded.
+        if (worker->inside) {
+            if (worker->pair && worker->pair->pair) {
+                worker->pair->pair = 0;
+            }
+        } else {
             removeWorker(worker);
             if (worker->pair) {
                 mprFree(worker->pair->ejs);
+                if (worker->pair->pair) {
+                    worker->pair->pair = 0;
+                }
                 worker->pair = 0;
-            }
-        } else {
-            if (worker->pair && worker->pair->pair) {
-                worker->pair->pair = 0;
             }
         }
     }
