@@ -47,13 +47,13 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *vp, bool deep)
     BUILTIN(dest) = BUILTIN(src);
     DYNAMIC(dest) = DYNAMIC(src);
 
-    dest->numProp = numProp;
-    dest->shortScope = src->shortScope;
     dest->isBlock = src->isBlock;
     dest->isFrame = src->isFrame;
     dest->isFunction = src->isFunction;
     dest->isPrototype = src->isPrototype;
     dest->isType = src->isType;
+    dest->numProp = numProp;
+    dest->shortScope = src->shortScope;
 
     dp = dest->properties->slots;
     sp = src->properties->slots;

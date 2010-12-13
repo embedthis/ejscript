@@ -19,9 +19,9 @@ void ejsAttention(Ejs *ejs)
     EjsFrame    *frame;
     uchar       *pc;
 
-    frame = ejs->state->fp;
     mprLock(ejs->mutex);
-    if (frame && frame->attentionPc == 0 && !frame->ignoreAttention) {
+    frame = ejs->state->fp;
+    if (frame && frame->attentionPc == 0 && !frame->freeze) {
         /*
             Order matters. Setting the pc to the trap byte code will redirect the VM to the ATTENTION op code which
             will call mprLock(ejs->mutex) preventing a race here.

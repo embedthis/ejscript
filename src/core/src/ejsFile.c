@@ -852,10 +852,10 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     if (mode & (O_WRONLY | O_RDWR)) {
         fp->mode |= FILE_WRITE;
     }
-    fp->file = mprAttachFd(fd, name, mode);
-    if (fp->file == 0) {
+    if ((fp->file = mprAttachFd(fd, name, mode)) == 0) {
         return 0;
     }
+    fp->attached = 1;
     fp->path = sclone("");
     return fp;
 }
@@ -874,7 +874,7 @@ static void manageFile(void *ptr, int flags)
         mprMark(fp->type);
 
     } else if (flags & MPR_MANAGE_FREE) {
-        if (fp->file) {
+        if (fp->file && !fp->attached) {
             closeFile(fp->type->ejs, fp, 0, NULL);
         }
     }

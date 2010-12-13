@@ -158,7 +158,7 @@ static void manageToken(EcToken *tp, int flags)
 }
 
 
-static EcToken *getToken(EcCompiler *cp)
+static EcToken *getLexToken(EcCompiler *cp)
 {
     EcToken     *prev, *tp;
 
@@ -192,7 +192,7 @@ int ecGetToken(EcCompiler *cp)
     EcStream    *stream;
     int         c;
 
-    if ((tp = getToken(cp)) == NULL) {
+    if ((tp = getLexToken(cp)) == NULL) {
         return T_ERR;
     }
     if (tp->tokenId) {

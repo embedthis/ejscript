@@ -29,7 +29,9 @@ typedef struct Json {
     int         namespaces;
     int         pretty;
     int         nest;              /* Json serialize nest level */
+#if UNUSED
     struct Json *next;
+#endif
 } Json;
 
 /***************************** Forward Declarations ***************************/

@@ -278,7 +278,7 @@ static cchar *getDefaultString(Ejs *ejs, EjsObj *value, cchar *defaultValue)
 }
 
 
-static cchar *getString(Ejs *ejs, EjsObj *value)
+static cchar *getRequestString(Ejs *ejs, EjsObj *value)
 {
     if (value == 0) {
         return "";
@@ -814,7 +814,7 @@ static int setRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum,  EjsObj *v
         if (req->originalMethod == 0) {
             req->originalMethod = (EjsObj*) ejsCreateStringFromAsc(ejs, req->conn->rx->method);
         }
-        req->conn->rx->method = sclone(getString(ejs, value));
+        req->conn->rx->method = sclone(getRequestString(ejs, value));
         break;
 
     case ES_ejs_web_Request_status:

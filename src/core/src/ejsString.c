@@ -2566,30 +2566,6 @@ EjsString *ejsCreateString(Ejs *ejs, MprChar *value, size_t len)
 }
 
 
-#if MOVED_TO_MODULE
-EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
-{
-    EjsConstants    *constants;
-    EjsString       *vp;
-    cchar           *str;
-    int             value;
-
-    constants = mp->constants;
-    if (index < 0 || index >= constants->indexCount) {
-        mprAssert(!(index < 0 || index >= constants->indexCount));
-        return 0;
-    }
-    value = PTOI(constants->index[index]);
-    if (value & 0x1) {
-        str = &constants->pool[value >> 1];
-        constants->index[index] = vp = ejsInternMulti(ejs, str, slen(str));
-    }
-    mprAssert(constants->index[index]);
-    return constants->index[index];
-}
-#endif
-
-
 EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value)
 {
     if (value == NULL) {
@@ -2660,13 +2636,14 @@ void ejsManageString(EjsString *sp, int flags)
 void ejsManageIntern(Ejs *ejs, int flags)
 {
     EjsIntern   *intern;
+    EjsString   *sp, *head, *next;
+    int         i;
+
+    intern = &ejs->intern;
 
     if (flags & MPR_MANAGE_MARK) {
-        intern = &ejs->intern;
         mprMark(intern->buckets);
 #if UNUSED
-        EjsString   *sp, *head;
-        int         i;
         /* Should not mark all strings as it prevents them being un-interned */
         for (i = intern->size - 1; i >= 0; i--) {
             head = &intern->buckets[i];
@@ -2675,6 +2652,14 @@ void ejsManageIntern(Ejs *ejs, int flags)
             }
         }
 #endif
+    } else if (flags & MPR_MANAGE_FREE) {
+        for (i = intern->size - 1; i >= 0; i--) {
+            head = &intern->buckets[i];
+            for (sp = head->next; sp != head; sp = next) {
+                next = sp->next;
+                mprFree(sp);
+            }
+        }
     }
 }
 

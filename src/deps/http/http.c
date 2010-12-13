@@ -78,7 +78,7 @@ MAIN(httpMain, int argc, char *argv[])
     MprTime         start;
     double          elapsed;
 
-    mpr = mprCreate(argc, argv, NULL);
+    mpr = mprCreate(argc, argv, MPR_USER_EVENTS_THREAD);
 
     /*  
         Explicit initialization of globals for re-entrancy on Vxworks
@@ -118,12 +118,10 @@ MAIN(httpMain, int argc, char *argv[])
     http = httpCreate(mpr);
     processing();
 
-    /*  
-        Wait for all the threads to complete (simple but effective). Keep servicing events as we wind down.
-     */
-    while (activeLoadThreads > 0) {
-        mprServiceEvents(NULL, 10, 0);
+    while (!mprIsComplete()) {
+        mprServiceEvents(NULL, -1, 0);
     }
+
     if (benchmark) {
         elapsed = (double) (mprGetTime(mpr) - start);
         if (fetchCount == 0) {
@@ -785,6 +783,7 @@ static int doRequest(HttpConn *conn, cchar *url)
     return 0;
 }
 
+
 static int setContentLength(HttpConn *conn)
 {
     MprPath     info;
@@ -908,6 +907,9 @@ static void finishThread(MprThread *tp)
     if (tp) {
         mprLock(mutex);
         activeLoadThreads--;
+        if (--activeLoadThreads <= 0) {
+            mprTerminate(MPR_GRACEFUL);
+        }
         mprUnlock(mutex);
     }
 }

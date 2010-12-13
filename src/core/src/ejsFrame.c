@@ -103,10 +103,8 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.block.breakCatch = fun->block.breakCatch;
     frame->function.block.nobind = fun->block.nobind;
 
-#if BLD_HAS_UNNAMED_UNIONS
-    frame->function.bits = fun->bits;
-#else
     //  MOB -- check these
+    //  MOB - OPT
     frame->function.numArgs = fun->numArgs;
     frame->function.numDefault = fun->numDefault;
     frame->function.castNulls = fun->castNulls;
@@ -119,7 +117,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
     frame->function.staticMethod = fun->staticMethod;
     frame->function.strict = fun->strict;
     frame->function.throwNulls = fun->throwNulls;
-#endif
+
     frame->function.boundArgs = fun->boundArgs;
     frame->function.boundThis = fun->boundThis;
     if (thisObj) {

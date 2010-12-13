@@ -9,3 +9,7 @@ include 		.makedep
 dependExtra:
 	cp master/*slots.h $(BLD_INC_DIR)
 
+cleanExtra:
+	mkdir -p $(BLD_INC_DIR)
+	cp master/*slots.h $(BLD_INC_DIR)
+

@@ -21,6 +21,7 @@ typedef struct App {
     MprList     *files;
     MprList     *modules;
     EjsService  *ejsService;
+    Ejs         *ejs;
     EcCompiler  *compiler;
 } App;
 
@@ -46,14 +47,14 @@ MAIN(ejsMain, int argc, char **argv)
     int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, debugger, optimizeLevel, warnLevel, strict;
 
     /*  
-        Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
+        Initialize Multithreaded Portable Runtime (MPR)
      */
-    mpr = mprCreate(argc, argv, NULL);
+//MOB  mpr = mprCreate(argc, argv, MPR_MARK_THREAD | MPR_SWEEP_THREAD);
+    mpr = mprCreate(argc, argv, MPR_USER_GC);
     mprSetAppName(argv[0], 0, 0);
     setupSignals();
     app = mprAllocObj(App, manageApp);
     mprAddRoot(app);
-    mprEnableGC(1);
 
     if (mprStart(mpr) < 0) {
         mprError("Can't start mpr services");
@@ -275,6 +276,7 @@ MAIN(ejsMain, int argc, char **argv)
     if (ejs == 0) {
         return MPR_ERR_MEMORY;
     }
+    app->ejs = ejs;
     ecFlags = 0;
     ecFlags |= (merge) ? EC_FLAGS_MERGE: 0;
     ecFlags |= (bind) ? EC_FLAGS_BIND: 0;
@@ -316,10 +318,10 @@ MAIN(ejsMain, int argc, char **argv)
         mprPrintMem("Memory Usage", 0);
     }
 #endif
+    // MOB - simplify 
     mprFree(app);
-    if (mprStop(mpr)) {
-        mprFree(mpr);
-    }
+    mprStop(mpr);
+    mprFree(mpr);
     return err;
 }
 
@@ -329,6 +331,7 @@ static void manageApp(App *app, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(app->files);
         mprMark(app->ejsService);
+        mprMark(app->ejs);
         mprMark(app->compiler);
         mprMark(app->modules);
 

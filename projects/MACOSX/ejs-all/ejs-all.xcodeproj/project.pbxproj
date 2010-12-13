@@ -737,8 +737,6 @@
 		C9248E5B10A4933400B29BDD /* listing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = listing.c; sourceTree = "<group>"; };
 		C9248E5C10A4933400B29BDD /* slotGen.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = slotGen.c; sourceTree = "<group>"; };
 		C9267D99118AAEF000A446EA /* ejsLogger.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsLogger.c; path = ../../../src/core/src/ejsLogger.c; sourceTree = SOURCE_ROOT; };
-		C92CCCC311389C1E007F17A9 /* ejs.tar.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.tar.slots.h; path = ../../../src/include/ejs.tar.slots.h; sourceTree = SOURCE_ROOT; };
-		C92CCCC411389C1E007F17A9 /* ejs.web.google.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.web.google.slots.h; path = ../../../src/include/ejs.web.google.slots.h; sourceTree = SOURCE_ROOT; };
 		C92CCCC511389C1E007F17A9 /* pcre.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = pcre.h; path = ../../../src/include/pcre.h; sourceTree = SOURCE_ROOT; };
 		C92F848510F2B7DE00CA953D /* HttpServer.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = HttpServer.es; path = ../../../src/jems/ejs.web/HttpServer.es; sourceTree = SOURCE_ROOT; };
 		C92F848610F2B80300CA953D /* ejsHttpServer.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsHttpServer.c; path = ../../../src/jems/ejs.web/src/ejsHttpServer.c; sourceTree = SOURCE_ROOT; };
@@ -781,27 +779,12 @@
 		C99A33DF10C2F1FF00F6C7BC /* package.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = package.json; path = ../../../src/jems/ejs.cjs/package.json; sourceTree = SOURCE_ROOT; };
 		C99A33E110C2F29C00F6C7BC /* Utils.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Utils.es; path = ../../../src/jems/ejs.web/Utils.es; sourceTree = SOURCE_ROOT; };
 		C99A33E210C2F29C00F6C7BC /* Web.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Web.es; path = ../../../src/jems/ejs.web/Web.es; sourceTree = SOURCE_ROOT; };
-		C99A33F810C2F35200F6C7BC /* ejs.cache.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.cache.slots.h; path = ../../../src/include/ejs.cache.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A33F910C2F35200F6C7BC /* ejs.cjs.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.cjs.slots.h; path = ../../../src/include/ejs.cjs.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A33FA10C2F35200F6C7BC /* ejs.db.mapper.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.db.mapper.slots.h; path = ../../../src/include/ejs.db.mapper.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A33FB10C2F35200F6C7BC /* ejs.db.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.db.slots.h; path = ../../../src/include/ejs.db.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A33FC10C2F35200F6C7BC /* ejs.db.sqlite.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.db.sqlite.slots.h; path = ../../../src/include/ejs.db.sqlite.slots.h; sourceTree = SOURCE_ROOT; };
 		C99A33FE10C2F35200F6C7BC /* ejs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.h; path = ../../../src/include/ejs.h; sourceTree = SOURCE_ROOT; };
-		C99A33FF10C2F35200F6C7BC /* ejs.io.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.io.slots.h; path = ../../../src/include/ejs.io.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A340010C2F35200F6C7BC /* ejs.jem.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.jem.slots.h; path = ../../../src/include/ejs.jem.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A340110C2F35200F6C7BC /* ejs.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.slots.h; path = ../../../src/include/ejs.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A340210C2F35200F6C7BC /* ejs.sys.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.sys.slots.h; path = ../../../src/include/ejs.sys.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A340310C2F35200F6C7BC /* ejs.unix.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.unix.slots.h; path = ../../../src/include/ejs.unix.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A340410C2F35200F6C7BC /* ejs.web.jsgi.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.web.jsgi.slots.h; path = ../../../src/include/ejs.web.jsgi.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A340810C2F35200F6C7BC /* ejs.web.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.web.slots.h; path = ../../../src/include/ejs.web.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A340910C2F35200F6C7BC /* ejs.web.template.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.web.template.slots.h; path = ../../../src/include/ejs.web.template.slots.h; sourceTree = SOURCE_ROOT; };
-		C99A340A10C2F35200F6C7BC /* ejs.xml.slots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejs.xml.slots.h; path = ../../../src/include/ejs.xml.slots.h; sourceTree = SOURCE_ROOT; };
 		C99A340B10C2F35200F6C7BC /* ejsByteCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCode.h; path = ../../../src/include/ejsByteCode.h; sourceTree = SOURCE_ROOT; };
 		C99A340C10C2F35200F6C7BC /* ejsByteCodeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCodeTable.h; path = ../../../src/include/ejsByteCodeTable.h; sourceTree = SOURCE_ROOT; };
 		C99A340D10C2F35200F6C7BC /* ejsByteGoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteGoto.h; path = ../../../src/include/ejsByteGoto.h; sourceTree = SOURCE_ROOT; };
 		C99A340E10C2F35200F6C7BC /* ejsModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsModule.h; path = ../../../src/include/ejsModule.h; sourceTree = SOURCE_ROOT; };
 		C99A340F10C2F35200F6C7BC /* ejsTune.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsTune.h; path = ../../../src/include/ejsTune.h; sourceTree = SOURCE_ROOT; };
-		C99A341010C2F35200F6C7BC /* ejsVm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsVm.h; path = ../../../src/include/ejsVm.h; sourceTree = SOURCE_ROOT; };
 		C99A341110C2F35200F6C7BC /* ejsWeb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsWeb.h; path = ../../../src/include/ejsWeb.h; sourceTree = SOURCE_ROOT; };
 		C99A341210C2F35200F6C7BC /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../../src/include/Makefile; sourceTree = SOURCE_ROOT; };
 		C99A341310C2F35200F6C7BC /* mpr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mpr.h; path = ../../../src/include/mpr.h; sourceTree = SOURCE_ROOT; };
@@ -1187,30 +1170,13 @@
 		C976240D0FD06F48009C78E1 /* Headers */ = {
 			isa = PBXGroup;
 			children = (
-				C92CCCC311389C1E007F17A9 /* ejs.tar.slots.h */,
-				C92CCCC411389C1E007F17A9 /* ejs.web.google.slots.h */,
 				C92CCCC511389C1E007F17A9 /* pcre.h */,
-				C99A33F810C2F35200F6C7BC /* ejs.cache.slots.h */,
-				C99A33F910C2F35200F6C7BC /* ejs.cjs.slots.h */,
-				C99A33FA10C2F35200F6C7BC /* ejs.db.mapper.slots.h */,
-				C99A33FB10C2F35200F6C7BC /* ejs.db.slots.h */,
-				C99A33FC10C2F35200F6C7BC /* ejs.db.sqlite.slots.h */,
 				C99A33FE10C2F35200F6C7BC /* ejs.h */,
-				C99A33FF10C2F35200F6C7BC /* ejs.io.slots.h */,
-				C99A340010C2F35200F6C7BC /* ejs.jem.slots.h */,
-				C99A340110C2F35200F6C7BC /* ejs.slots.h */,
-				C99A340210C2F35200F6C7BC /* ejs.sys.slots.h */,
-				C99A340310C2F35200F6C7BC /* ejs.unix.slots.h */,
-				C99A340410C2F35200F6C7BC /* ejs.web.jsgi.slots.h */,
-				C99A340810C2F35200F6C7BC /* ejs.web.slots.h */,
-				C99A340910C2F35200F6C7BC /* ejs.web.template.slots.h */,
-				C99A340A10C2F35200F6C7BC /* ejs.xml.slots.h */,
 				C99A340B10C2F35200F6C7BC /* ejsByteCode.h */,
 				C99A340C10C2F35200F6C7BC /* ejsByteCodeTable.h */,
 				C99A340D10C2F35200F6C7BC /* ejsByteGoto.h */,
 				C99A340E10C2F35200F6C7BC /* ejsModule.h */,
 				C99A340F10C2F35200F6C7BC /* ejsTune.h */,
-				C99A341010C2F35200F6C7BC /* ejsVm.h */,
 				C99A341110C2F35200F6C7BC /* ejsWeb.h */,
 				C99A341210C2F35200F6C7BC /* Makefile */,
 				C99A341310C2F35200F6C7BC /* mpr.h */,
@@ -2480,6 +2446,10 @@
 					../../../src/include,
 				);
 				JEMS = $SRCROOT/../../../src/jems;
+				LIBRARY_SEARCH_PATHS = (
+					../../../out/lib,
+					../../../out/modules,
+				);
 				MOD = $BUILT_PRODUCTS_DIR;
 				OTHER_LDFLAGS = (
 					"-lcrypto",
@@ -2499,10 +2469,14 @@
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = YES;
 				HEADER_SEARCH_PATHS = (
+					../../../out/include,
 					../../../src/include,
-					../../..,
 				);
 				JEMS = $SRCROOT/../../../src/jems;
+				LIBRARY_SEARCH_PATHS = (
+					../../../out/lib,
+					../../../out/modules,
+				);
 				MOD = $BUILT_PRODUCTS_DIR;
 				OTHER_LDFLAGS = (
 					"-lcrypto",

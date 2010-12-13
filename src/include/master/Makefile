@@ -7,8 +7,8 @@
 include 		.makedep
 
 import:
-	for f in *slots* ; do \
-		echo cp ../$$f . ; \
-		cp ../$$f . ; \
+	for f in $(BLD_INC_DIR)/*slots* ; do \
+		echo cp $$f . ; \
+		cp $$f . ; \
 	done
 

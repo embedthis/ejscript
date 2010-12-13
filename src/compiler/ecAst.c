@@ -3892,7 +3892,6 @@ static EjsNamespace *lookupNamespace(Ejs *ejs, EjsString *nspace)
             continue;
         }
         namespaces = &block->namespaces;
-        mprLog(7, "    SEARCH for qname \"%@\"", nspace);
         for (nextNamespace = -1; (nsp = (EjsNamespace*) mprGetPrevItem(namespaces, &nextNamespace)) != 0; ) {
             if (nsp->value == nspace) {
                 return nsp;

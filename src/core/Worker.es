@@ -53,7 +53,7 @@ module ejs {
             @params options Options hash
             @options search Search path
             @options name Name of the Worker instance.
-            @spec WebWorker and ejs-11
+            @spec WebWorker and ejs
          */
         native function Worker(script: Path? = null, options: Object? = null)
 

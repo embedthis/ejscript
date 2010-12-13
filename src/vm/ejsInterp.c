@@ -133,6 +133,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 #define THIS            FRAME->function.boundThis
 #define FILL(mark)      while (mark < FRAME->pc) { *mark++ = EJS_OP_NOP; }
 
+#define DEBUG_IDE 1
 #if BLD_DEBUG && DEBUG_IDE
     static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode);
     static int opcount[256];
@@ -199,7 +200,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsNamespace *nsp;
     EjsString   *str;
     uchar       *mark;
-    int         i, offset, count, opcode, attributes;
+    int         i, offset, count, opcode, attributes, freezeState;
 
 #if BLD_UNIX_LIKE || VXWORKS 
     /*
@@ -1558,12 +1559,18 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             Special circumstances need attention. Exceptions, exiting and garbage collection.
          */
         CASE (EJS_OP_ATTENTION):
-#if MPR_GC_WORKERS > 0
-            mprYieldThread();
+            if (ejs->gc && !FRAME->freeze) {
+                ejs->gc = 0;
+                mprCollectGarbage(MPR_GC_FROM_USER);
+            }
+#if UNUSED && MPR_GC_WORKERS > 0
+            /* Do yield first */
+            if (ejs->yield && !FRAME->freeze) {
+                ejs->yield = 0;
+                mprYieldThread();
+            }
 #endif
-            /*
-                Must lock with ejsAttention
-             */
+            /* Must lock with ejsAttention */
             mprLock(ejs->mutex);
             mprAssert(FRAME->attentionPc);
             if (FRAME->attentionPc) {
@@ -2188,7 +2195,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
              Stack after         []
              */
         CASE (EJS_OP_NEW_ARRAY):
-            FRAME->ignoreAttention = 1;
+            freezeState = FRAME->freeze;
+            FRAME->freeze = 1;
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2204,7 +2212,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             }
             state.stack -= (argc * 2);
             push(vp);
-            FRAME->ignoreAttention = 0;
+            FRAME->freeze = freezeState;
             BREAK;
 
         /*
@@ -2215,7 +2223,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         []
          */
         CASE (EJS_OP_NEW_OBJECT):
-            FRAME->ignoreAttention = 1;
+            freezeState = FRAME->freeze;
+            FRAME->freeze = 1;
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
@@ -2235,7 +2244,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             }
             state.stack -= (argc * 3);
             push(vp);
-            FRAME->ignoreAttention = 0;
+            FRAME->freeze = freezeState;
             BREAK;
 
 
@@ -3488,7 +3497,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
     EjsType         *type;
     EjsObj          **argv;
     EjsObj          *result, **sp;
-    int             count, i;
+    int             count, i, freezeState;
 
     mprAssert(fun);
     mprAssert(ejs->exception == 0);
@@ -3500,9 +3509,10 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
     if (unlikely(ejsIsType(ejs, fun))) {
         type = (EjsType*) fun;
         if (thisObj == NULL) {
-            ejs->state->fp->ignoreAttention = 1;
+            freezeState = ejs->state->fp->freeze;
+            ejs->state->fp->freeze = 1;
             thisObj = ejsCreate(ejs, type, 0);
-            ejs->state->fp->ignoreAttention = 0;
+            ejs->state->fp->freeze = freezeState;
         }
         result = thisObj;
         if (!type->hasConstructor) {
@@ -3575,6 +3585,9 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         fp = ejsCreateFrame(ejs, fun, thisObj, argc, argv);
         fp->function.block.prev = state->bp;
         fp->caller = state->fp;
+        if (fp->caller) {
+            fp->freeze = fp->caller->freeze;
+        }
         fp->stackBase = state->stack;
         fp->stackReturn = state->stack - argc - stackAdjust;
         state->fp = fp;
@@ -3806,12 +3819,12 @@ static void manageBreakpoint(Ejs *ejs)
 #endif
 
 
-#if BLD_DEBUG && DEBUG_IDE
+#if BLD_DEBUG && DEBUG_IDE 
 /*
     This code is only active when building in debug mode and debugging in an IDE
  */
 static int ejsOpCount = 0;
-static int doDebug = 1;
+static int doDebug = 0;
 
 static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 {

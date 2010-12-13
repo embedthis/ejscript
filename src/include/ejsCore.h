@@ -467,17 +467,22 @@ typedef struct Ejs {
     cchar               **argv;             /**< Command line args */
     int                 argc;               /**< Count of command line args */
     int                 flags;              /**< Execution flags */
+    int                 gc;                 /**< GC required (don't make bit field */
     int                 exitStatus;         /**< Status to exit() */
     int                 firstGlobal;        /**< First global to examine for GC */
     int                 joining;            /**< In Worker.join */
     int                 serializeDepth;     /**< Serialization depth */
     int                 spreadArgs;         /**< Count of spread args */
-
+#if UNUSED
+    int                 yield;              /**< GC yield required (don't make bit field */
+#endif
     uint                compiling: 1;       /**< Currently executing the compiler */
     uint                empty: 1;           /**< Interpreter will be created empty */
-    uint                initialized: 1;     /**< Interpreter fully initialized and not empty */
-    uint                hasError: 1;        /**< Interpreter has an initialization error */
     uint                exiting: 1;         /**< VM should exit */
+    uint                finished: 1;        /**< Interpreter has finished processing and can be destroyed */
+    uint                freeze: 1;          /**< Freeze GC sync -- don't do a GC sync */
+    uint                hasError: 1;        /**< Interpreter has an initialization error */
+    uint                initialized: 1;     /**< Interpreter fully initialized and not empty */
 
     EjsAny              *exceptionArg;      /**< Exception object for catch block */
 
@@ -617,23 +622,16 @@ typedef struct EjsProperties {
  */
 typedef struct EjsPot {
     struct EjsType  *type;                      /**< Type of the object */
-#if BLD_HAS_UNNAMED_UNIONS
-    union {
-        struct {
-#endif
-            uint    isBlock         : 1;        /**< Instance is a block */
-            uint    isFrame         : 1;        /**< Instance is a frame */
-            uint    isFunction      : 1;        /**< Instance is a function */
-            uint    isPrototype     : 1;        /**< Object is a type prototype object */
-            uint    isType          : 1;        /**< Instance is a type object */
-            uint    separateHash    : 1;        /**< Object has separate hash memory */
-            uint    separateSlots   : 1;        /**< Object has separate slots[] memory */
-            uint    shortScope      : 1;        /**< Don't follow type or base classes */
-#if BLD_HAS_UNNAMED_UNIONS
-        };
-        int         bits;
-    };
-#endif
+
+    uint    isBlock         : 1;                /**< Instance is a block */
+    uint    isFrame         : 1;                /**< Instance is a frame */
+    uint    isFunction      : 1;                /**< Instance is a function */
+    uint    isPrototype     : 1;                /**< Object is a type prototype object */
+    uint    isType          : 1;                /**< Instance is a type object */
+    uint    separateHash    : 1;                /**< Object has separate hash memory */
+    uint    separateSlots   : 1;                /**< Object has separate slots[] memory */
+    uint    shortScope      : 1;                /**< Don't follow type or base classes */
+
     EjsProperties   *properties;                /** Object properties */
     //  TODO - OPT - merge numProp with bits above (24 bits)
     int             numProp;                    /** Number of properties */
@@ -1351,32 +1349,23 @@ typedef struct EjsFunction {
     EjsAny          *boundThis;             /**< Bound "this" object value */
     struct EjsType  *resultType;            /**< Return type of method */
 
-#if BLD_HAS_UNNAMED_UNIONS
-    union {
-        struct {
-#endif
-            uint    numArgs: 8;             /**< Count of formal parameters */
-            uint    numDefault: 8;          /**< Count of formal parameters with default initializers */
-            uint    allowMissingArgs: 1;    /**< Allow unsufficient args for native functions */
-            uint    castNulls: 1;           /**< Cast return values of null */
-            uint    fullScope: 1;           /**< Closures must capture full scope */
-            uint    hasReturn: 1;           /**< Function has a return stmt */
-            uint    inCatch: 1;             /**< Executing catch block */
-            uint    inException: 1;         /**< Executing catch/finally exception processing */
-            uint    isConstructor: 1;       /**< Function is a constructor */
-            uint    isInitializer: 1;       /**< Function is a type initializer */
-            uint    isNativeProc: 1;        /**< Function is native procedure */
-            uint    moduleInitializer: 1;   /**< Function is a module initializer */
-            uint    rest: 1;                /**< Function has a "..." rest of args parameter */
-            uint    staticMethod: 1;        /**< Function is a static method */
-            uint    strict: 1;              /**< Language strict mode (vs standard) */
-            uint    throwNulls: 1;          /**< Return type cannot be null */
+    uint    numArgs: 8;                     /**< Count of formal parameters */
+    uint    numDefault: 8;                  /**< Count of formal parameters with default initializers */
+    uint    allowMissingArgs: 1;            /**< Allow unsufficient args for native functions */
+    uint    castNulls: 1;                   /**< Cast return values of null */
+    uint    fullScope: 1;                   /**< Closures must capture full scope */
+    uint    hasReturn: 1;                   /**< Function has a return stmt */
+    uint    inCatch: 1;                     /**< Executing catch block */
+    uint    inException: 1;                 /**< Executing catch/finally exception processing */
+    uint    isConstructor: 1;               /**< Function is a constructor */
+    uint    isInitializer: 1;               /**< Function is a type initializer */
+    uint    isNativeProc: 1;                /**< Function is native procedure */
+    uint    moduleInitializer: 1;           /**< Function is a module initializer */
+    uint    rest: 1;                        /**< Function has a "..." rest of args parameter */
+    uint    staticMethod: 1;                /**< Function is a static method */
+    uint    strict: 1;                      /**< Language strict mode (vs standard) */
+    uint    throwNulls: 1;                  /**< Return type cannot be null */
 
-#if BLD_HAS_UNNAMED_UNIONS
-        };
-        int64       bits;
-    };
-#endif
 } EjsFunction;
 
 #if DOXYGEN
@@ -1510,11 +1499,10 @@ typedef struct EjsFrame {
     EjsObj          **stackReturn;          /**< Top of stack to return to */
     uchar           *pc;                    /**< Program counter */
     uchar           *attentionPc;           /**< Restoration PC value after attention */
-    //  MOB OPT pack
-    int             ignoreAttention;        /**< Ignore attention commands */
-    int             getter;                 /**< Frame is a getter */
     uint            argc;                   /**< Actual parameter count */
     int             slotNum;                /**< Slot in owner */
+    uint            freeze: 1;              /**< Garbage collection frozen */
+    uint            getter: 1;              /**< Frame is a getter */
 #if BLD_DEBUG
     EjsLoc          loc;
 #endif
@@ -1536,6 +1524,7 @@ extern EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *src, EjsObj *thisObj, int
 extern EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *src);
 extern EjsBlock *ejsPopBlock(Ejs *ejs);
 extern EjsBlock *ejsPushBlock(Ejs *ejs, EjsBlock *block);
+extern int ejsFreeze(Ejs *ejs, int freeze);
 
 /** 
     Boolean class
@@ -1936,6 +1925,7 @@ typedef struct EjsFile {
     char            *modeString;        /**< User supplied mode string */
     int             mode;               /**< Current open mode */
     int             perms;              /**< Posix permissions mask */
+    int             attached;           /**< Attached to existing descriptor */
 #if FUTURE
     cchar           *cygdrive;          /**< Cygwin drive directory (c:/cygdrive) */
     cchar           *newline;           /**< Newline delimiters */
@@ -3120,9 +3110,6 @@ extern int ejsLookupVar(Ejs *ejs, EjsAny *obj, EjsName name, EjsLookup *lookup);
 extern int ejsLookupVarWithNamespaces(Ejs *ejs, EjsObj *obj, EjsName name, EjsLookup *lookup);
 
 extern int ejsLookupScope(Ejs *ejs, EjsName name, EjsLookup *lookup);
-#if UNUSED
-extern void ejsMemoryNotifier(int flags, size_t size);
-#endif
 extern int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName);
 extern void ejsSetHandle(Ejs *ejs, void *handle);
 extern void ejsShowCurrentScope(Ejs *ejs);

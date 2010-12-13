@@ -73,6 +73,7 @@ static void manageCompiler(EcCompiler *cp, int flags)
         mprMark(cp->keywords);
         mprMark(cp->peekToken);
         mprMark(cp->putback);
+        //  MOB -- don't want to mark free states that are out of scope. Get rid of freeStates?
         mprMark(cp->freeStates);
         mprMark(cp->state);
         mprMark(cp->stream);
@@ -94,12 +95,16 @@ static void manageCompiler(EcCompiler *cp, int flags)
 int ecCompile(EcCompiler *cp, int argc, char **argv)
 {
     Ejs     *ejs;
-    int     rc, saveCompiling;
+    int     rc, saveCompiling, frozen;
 
     ejs = cp->ejs;
     saveCompiling = ejs->compiling;
     ejs->compiling = 1;
+    frozen = ejsFreeze(ejs, -1);
+
     rc = compileInner(cp, argc, argv);
+
+    ejsFreeze(ejs, frozen);
     ejs->compiling = saveCompiling;
     return rc;
 }
@@ -113,7 +118,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     EjsBlock    *block;
     cchar       *ext;
     char        *msg;
-    int         i, j, next, nextModule, lflags, rc, saveGC;
+    int         i, j, next, nextModule, lflags, rc, frozen;
 
     ejs = cp->ejs;
     if ((nodes = mprCreateList()) == 0) {
@@ -174,11 +179,11 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             //  MOB -- does this really need to be added?
             mprAddItem(nodes, 0);
         } else  {
-            saveGC = mprEnableGC(0);
+            frozen = ejsFreeze(ejs, 1);
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
-            mprEnableGC(saveGC);
+            ejsFreeze(ejs, frozen);
         }
-        mprCollectGarbage(MPR_GC_CHECK);
+        mprCollectGarbage(MPR_GC_FROM_USER);
     }
 
     /*
@@ -192,7 +197,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     /*
         Process the internal representation and generate code
      */
-    saveGC = mprEnableGC(0);
+    frozen = ejsFreeze(ejs, 1);
     if (!cp->parseOnly && cp->errorCount == 0) {
         ecResetParser(cp);
         if (ecAstProcess(cp) < 0) {
@@ -211,8 +216,8 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     }
     ejsPopBlock(ejs);
     cp->nodes = NULL;
-    mprEnableGC(saveGC);
-    mprCollectGarbage(MPR_GC_CHECK);
+    ejsFreeze(ejs, frozen);
+    mprCollectGarbage(MPR_GC_FROM_USER);
 
     if (cp->errorCount > 0) {
         return EJS_ERR;
@@ -282,10 +287,13 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
         if (flags & EC_FLAGS_THROW) {
             ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
         }
+        mprRemoveRoot(ec);
         mprFree(ec);
         return EJS_ERR;
     }
+    mprRemoveRoot(ec);
     mprFree(ec);
+
     if (ejsRun(ejs) < 0) {
         return EJS_ERR;
     }
@@ -321,15 +329,17 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
         if (flags & EC_FLAGS_THROW) {
             ejsThrowSyntaxError(ejs, "%s", cp->errorMsg ? cp->errorMsg : "Can't parse script");
         }
+        mprRemoveRoot(cp);
         mprFree(cp);
         return EJS_ERR;
     }
     ecCloseStream(cp);
+    mprRemoveRoot(cp);
+    mprFree(cp);
+
     if (ejsRun(ejs) < 0) {
-        mprFree(cp);
         return EJS_ERR;
     }
-    mprFree(cp);
     return 0;
 }
 
@@ -343,7 +353,7 @@ int ejsEvalFile(cchar *path)
     Ejs             *ejs;
     Mpr             *mpr;
 
-    mpr = mprCreate(0, NULL, NULL);
+    mpr = mprCreate(0, NULL, MPR_USER_GC);
     if ((service = ejsCreateService(mpr)) == 0) {
         mprFree(mpr);
         return MPR_ERR_MEMORY;
@@ -371,7 +381,7 @@ int ejsEvalScript(cchar *script)
     Ejs             *ejs;
     Mpr             *mpr;
 
-    mpr = mprCreate(0, NULL, NULL);
+    mpr = mprCreate(0, NULL, MPR_USER_GC);
     if ((service = ejsCreateService(mpr)) == 0) {
         mprFree(mpr);
         return MPR_ERR_MEMORY;

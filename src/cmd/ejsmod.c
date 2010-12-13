@@ -10,14 +10,15 @@
 
 /****************************** Forward Declarations **************************/
 
-typedef struct Globals {
+typedef struct App {
     EjsService  *ejsService;
+    Ejs         *ejs;
     EjsMod      *mod;
-} Globals;
+} App;
 
 static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp);
 static void logger(int flags, int level, const char *msg);
-static void manageGlobals(Globals *globals, int flags);
+static void manageApp(App *app, int flags);
 static int  process(EjsMod *mp, cchar *output, int argc, char **argv);
 static void require(MprList *list, cchar *name);
 static int  setLogging(Mpr *mpr, char *logSpec);
@@ -27,7 +28,7 @@ static int  setLogging(Mpr *mpr, char *logSpec);
 MAIN(ejsmodMain, int argc, char **argv)
 {
     Mpr             *mpr;
-    Globals         *globals;
+    App             *app;
     EjsMod          *mp;
     Ejs             *ejs;
     MprList         *requiredModules;
@@ -39,12 +40,12 @@ MAIN(ejsmodMain, int argc, char **argv)
     requiredModules = 0;
     
     /*
-        Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
+        Initialze the Multithreaded Portable Runtime (MPR)
      */
-    mpr = mprCreate(argc, argv, NULL);
+    mpr = mprCreate(argc, argv, MPR_USER_GC);
     mprSetAppName(argv[0], 0, 0);
-    globals = mprAllocObj(Globals, manageGlobals);
-    mprAddRoot(globals);
+    app = mprAllocObj(App, manageApp);
+    mprAddRoot(app);
 
     /*
         Allocate the primary control structure
@@ -52,7 +53,7 @@ MAIN(ejsmodMain, int argc, char **argv)
     if ((mp = mprAlloc(sizeof(EjsMod))) == NULL) {
         return MPR_ERR_MEMORY;
     }
-    globals->mod = mp;
+    app->mod = mp;
     mp->lstRecords = mprCreateList(mp);
     mp->blocks = mprCreateList(mp);
     mp->docDir = ".";
@@ -182,8 +183,8 @@ MAIN(ejsmodMain, int argc, char **argv)
     /*
         Need an interpreter to load modules
      */
-    globals->ejsService = ejsCreateService(mpr); 
-    if (globals->ejsService == 0) {
+    app->ejsService = ejsCreateService(mpr); 
+    if (app->ejsService == 0) {
         return MPR_ERR_MEMORY;
     }
     flags = EJS_FLAG_NO_INIT;
@@ -194,6 +195,7 @@ MAIN(ejsmodMain, int argc, char **argv)
     if (ejs == 0) {
         return MPR_ERR_MEMORY;
     }
+    app->ejs = ejs;
     mp->ejs = ejs;
 
     if (nextArg < argc) {
@@ -212,11 +214,12 @@ MAIN(ejsmodMain, int argc, char **argv)
 }
 
 
-static void manageGlobals(Globals *globals, int flags)
+static void manageApp(App *app, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(globals->ejsService);
-        mprMark(globals->mod);
+        mprMark(app->ejsService);
+        mprMark(app->ejs);
+        mprMark(app->mod);
 
     } else if (flags & MPR_MANAGE_FREE) {
     }

@@ -64,7 +64,6 @@ static void manageModule(EjsModule *mp, int flags)
 
 static void manageNativeModule(EjsNativeModule *nm, int flags)
 {
-
     if (flags & MPR_MANAGE_MARK) {
         mprMark(nm->name);
     }
@@ -77,6 +76,7 @@ static void manageNativeModule(EjsNativeModule *nm, int flags)
  */
 int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, int checksum, int flags)
 {
+    EjsService          *sp;
     EjsNativeModule     *nm;
 
     if ((nm = mprAllocObj(EjsNativeModule, manageNativeModule)) == NULL) {
@@ -87,16 +87,27 @@ int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, in
     nm->checksum = checksum;
     nm->flags = flags;
 
-    if (mprAddHash(ejs->service->nativeModules, nm->name->value, nm) == 0) {
+    sp = ejs->service;
+    mprLock(sp->mutex);
+    if (mprAddHash(sp->nativeModules, nm->name->value, nm) == 0) {
+        mprUnlock(sp->mutex);
         return EJS_ERR;
     }
+    mprUnlock(sp->mutex);
     return 0;
 }
 
 
 EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, EjsString *name) 
 {
-    return (EjsNativeModule*) mprLookupHash(ejs->service->nativeModules, name->value);
+    EjsNativeModule     *nm;
+    EjsService          *sp;
+
+    sp = ejs->service;
+    mprLock(sp->mutex);
+    nm = mprLookupHash(sp->nativeModules, name->value);
+    mprUnlock(sp->mutex);
+    return nm;
 }
 
 
@@ -155,30 +166,30 @@ int ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 
 static void manageConstants(EjsConstants *cp, int flags)
 {
-    EjsString   **sp;
-
+    int     i;
+    
     if (flags & MPR_MANAGE_MARK) {
         mprMark(cp->pool);
         mprMark(cp->table);
-#if UNUSED
-        /* Must not mark the index as it is "held" */
+#if UNUSED || 1
         mprMark(cp->index);
-        /* By holding the constants, we don't need to mark every GC */
-        for (i = 0; i < cp->count; i++) {
-            value = PTOI(cp->index[i]);
-            if (!(value & 0x1)) {
+        for (i = 0; i < cp->indexCount; i++) {
+            if (!(PTOI(cp->index[i]) & 0x1)) {
                 mprMark(cp->index[i]);
             }
         }
 #endif
     } else if (flags & MPR_MANAGE_FREE) {
+#if UNUSED
+        EjsString   **sp;
         for (sp = (EjsString**) &cp->index[cp->indexCount - 1]; sp >= (EjsString**) cp->index; sp--) {
             if (!(PTOI(*sp) & 0x1)) {
-                // mprRelease(*sp);
-                mprFree(*sp);
+                mprRelease(*sp);
+                // mprFree(*sp);
             }
         }
         mprRelease(cp->index);
+#endif
     }
 }
 
@@ -273,7 +284,11 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
     if (value & 0x1) {
         str = &constants->pool[value >> 1];
         constants->index[index] = sp = ejsInternMulti(ejs, str, slen(str));
+#if UNUSED
+        //  MOB - can't do this because multiple modules may share the same string. So hold/release may release
+        //  when another modules still needs the string. Must mark all intern in ejsManageIntern.
         mprHold(sp);
+#endif
     }
     mprAssert(constants->index[index]);
     return constants->index[index];

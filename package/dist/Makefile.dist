@@ -30,7 +30,6 @@ ifeq ($(BLD_EJS_DIR),)
 	ifeq ($(BLD_FEATURE_SQLITE),1)
 		TARGETS		+= $(BLD_BIN_DIR)/ejssql$(BLD_EXE)
 	endif
-	endif
 	TOOLS			+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
 	TOOLS			+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE)
 

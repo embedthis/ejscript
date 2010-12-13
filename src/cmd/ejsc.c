@@ -15,6 +15,7 @@
 
 typedef struct App {
     EjsService  *ejsService;
+    Ejs         *ejs;
     EcCompiler  *compiler;
     MprList     *modules;
 } App;
@@ -36,9 +37,9 @@ MAIN(ejscMain, int argc, char **argv)
     int             warnLevel, noout, parseOnly, tabWidth, optimizeLevel, strict, strip;
 
     /*
-        Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
+        Initialize the Multithreaded Portable Runtime (MPR)
      */
-    mpr = mprCreate(argc, argv, NULL);
+    mpr = mprCreate(argc, argv, MPR_USER_GC);
     mprSetAppName(argv[0], 0, 0);
     app = mprAllocObj(App, manageApp);
     mprAddRoot(app);
@@ -252,6 +253,7 @@ MAIN(ejscMain, int argc, char **argv)
     if (ejs == 0) {
         return MPR_ERR_MEMORY;
     }
+    app->ejs = ejs;
     ecFlags |= (debug) ? EC_FLAGS_DEBUG: 0;
     ecFlags |= (merge) ? EC_FLAGS_MERGE: 0;
     ecFlags |= (bind) ? EC_FLAGS_BIND: 0;
@@ -299,6 +301,7 @@ static void manageApp(App *app, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(app->compiler);
         mprMark(app->ejsService);
+        mprMark(app->ejs);
         mprMark(app->modules);
 
     } else if (flags & MPR_MANAGE_FREE) {

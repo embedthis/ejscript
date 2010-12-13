@@ -10,7 +10,7 @@
 
 /*********************************** Forward **********************************/
 
-static void allocNotifier(int flags, size_t size);
+static int allocNotifier(int flags, size_t size);
 static int  configureEjs(Ejs *ejs);
 static int  defineTypes(Ejs *ejs);
 static void manageEjs(Ejs *ejs, int flags);
@@ -35,7 +35,6 @@ EjsService *ejsCreateService()
     mprGetMpr()->ejsService = sp;
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
 
-    //  MOB -- does access to nativeModules need locking? = yes
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_PERM_KEYS | MPR_HASH_UNICODE);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList();
@@ -46,11 +45,12 @@ EjsService *ejsCreateService()
 static void manageEjsService(EjsService *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMarkHash(sp->nativeModules);
         mprMark(sp->http);
         mprMark(sp->mutex);
-        mprMarkList(sp->vmlist);
-
+        mprMark(sp->vmlist);
+        mprLock(sp->mutex);
+        mprMarkHash(sp->nativeModules);
+        mprUnlock(sp->mutex);
     } else if (flags & MPR_MANAGE_FREE) {
         mprRemoveRoot(sp);
     }
@@ -72,17 +72,21 @@ EjsService *ejsGetService()
  */
 Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
 {
-    Ejs     *ejs;
-    int     save;
-    static int seqno = 0;
+    EjsService  *sp;
+    Ejs         *ejs;
+    int         save;
+    static int  seqno = 0;
 
     save = mprEnableGC(0);
     if ((ejs = mprAllocObj(Ejs, manageEjs)) == NULL) {
         mprEnableGC(save);
         return 0;
     }
-    ejs->service = mprGetMpr()->ejsService;
-    mprAddItem(ejs->service->vmlist, ejs);
+    sp = ejs->service = mprGetMpr()->ejsService;
+    mprLock(sp->mutex);
+    mprAddItem(sp->vmlist, ejs);
+    mprUnlock(sp->mutex);
+
     ejs->empty = require && mprGetListCount(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
@@ -120,16 +124,19 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
         return 0;
     }
     mprEnableGC(save);
+#if UNUSED
     mprCollectGarbage(MPR_GC_ALL);
+#endif
     return ejs;
 }
 
 
 static void manageEjs(Ejs *ejs, int flags)
 {
+    EjsService  *sp;
     EjsState    *state;
     EjsBlock    *block;
-    EjsObj      *vp, **sp, **top;
+    EjsObj      *vp, **vpp, **top;
 
     if (flags & MPR_MANAGE_MARK) {
         mprMarkList(ejs->modules);
@@ -144,7 +151,7 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->result);
         mprMark(ejs->search);
         mprMark(ejs->dispatcher);
-        mprMark(ejs->workers);
+        mprMarkList(ejs->workers);
         mprMark(ejs->global);
 
         /*
@@ -157,8 +164,8 @@ static void manageEjs(Ejs *ejs, int flags)
             Mark the evaluation stack. Stack itself is virtually allocated and immune from GC.
          */
         top = ejs->state->stack;
-        for (sp = ejs->state->stackBase; sp <= top; sp++) {
-            if ((vp = *sp) != NULL) {
+        for (vpp = ejs->state->stackBase; vpp <= top; vpp++) {
+            if ((vp = *vpp) != NULL) {
                 mprMark(vp);
             }
         }
@@ -166,14 +173,21 @@ static void manageEjs(Ejs *ejs, int flags)
         ejsManageIntern(ejs, flags);
 
     } else if (flags & MPR_MANAGE_FREE) {
+        ejsManageIntern(ejs, flags);
+        //  MOB -- is this required - NO
         ejsClearException(ejs);
         state = ejs->masterState;
         if (state->stackBase) {
             mprVirtFree(state->stackBase, state->stackSize);
         }
+        //  MOB - should not be here. This is global across all interpreters
         mprSetAltLogData(NULL);
         mprSetLogHandler(NULL, NULL);
-        mprRemoveItem(ejs->service->vmlist, ejs);
+
+        sp = ejs->service;
+        mprLock(sp->mutex);
+        mprRemoveItem(sp->vmlist, ejs);
+        mprUnlock(sp->mutex);
     }
 }
 
@@ -475,7 +489,7 @@ int ejsEvalModule(cchar *path)
     Ejs             *ejs;
     Mpr             *mpr;
 
-    mpr = mprCreate(0, NULL, NULL);
+    mpr = mprCreate(0, NULL, MPR_USER_GC);
     if ((service = ejsCreateService()) == 0) {
         mprFree(mpr);
         return MPR_ERR_MEMORY;
@@ -869,31 +883,57 @@ int ejsStartMprLogging(char *logSpec)
 }
 
 
+int ejsFreeze(Ejs *ejs, int freeze)
+{
+    int     old;
+
+    if (ejs->state->fp) {
+        old = ejs->state->fp->freeze;
+    } else {
+        old = ejs->freeze;
+    }
+    if (freeze != -1) {
+        if (ejs->state->fp) {
+            ejs->state->fp->freeze = freeze;
+        } else {
+            ejs->freeze = freeze;
+        }
+    }
+    return old;
+}
+
+
 /*  
     Global memory allocation handler. This is invoked when there is no notifier to handle an allocation failure.
     The interpreter has an allocNotifier (see ejsService: allocNotifier) and it will handle allocation errors.
  */
-static void allocNotifier(int flags, size_t size)
+static int allocNotifier(int flags, size_t size)
 {
     EjsService  *sp;
     Ejs         *ejs;
     int         next;
 
-    if (flags & MPR_ALLOC_DEPLETED) {
+    if (flags & MPR_MEM_DEPLETED) {
         mprPrintfError("Can't allocate memory block of size %d\n", size);
-        mprPrintfError("Total memory used %d\n", (int) mprGetUsedMemory());
+        mprPrintfError("Total memory used %d\n", (int) mprGetMem());
         exit(255);
 
-    } else if (flags & MPR_ALLOC_LOW) {
+    } else if (flags & MPR_MEM_LOW) {
         mprPrintfError("Memory request for %d bytes exceeds memory red-line\n", size);
-        mprPrintfError("Total memory used %d\n", (int) mprGetUsedMemory());
+        mprPrintfError("Total memory used %d\n", (int) mprGetMem());
 
-    } else if (flags & MPR_ALLOC_GC) {
+    } else if (flags & MPR_MEM_YIELD) {
         sp = MPR->ejsService;
+        //  MOB -- can this be a deadly embrace?
+        mprLock(sp->mutex);
         for (next = 0; (ejs = mprGetNextItem(sp->vmlist, &next)) != 0; ) {
+            ejs->gc = 1;
             ejsAttention(ejs);
         }
+        mprUnlock(sp->mutex);
+        return MPR_DELAY_GC;
     }
+    return 0;
 }
 
 
