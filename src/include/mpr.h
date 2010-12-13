@@ -2371,14 +2371,13 @@ extern char *sjoinv(cchar *str, va_list args);
  */
 extern size_t slen(cchar *str);
 
-//  MOB - should slower, supper, wlower, wupper allocate a new string?
 /**
     Convert a string to lower case. 
-    @description Convert a string to its lower case equivalent. This overwrites the original string.
+    @description Convert a string to its lower case equivalent.
     @param str String to convert.
     @ingroup MprString
  */
-extern char *slower(char *str);
+extern char *slower(cchar *str);
 
 /**
     Compare strings ignoring case.
@@ -2509,16 +2508,14 @@ extern char *stok(char *str, cchar *delim, char **last);
  */
 extern char *ssub(char *str, size_t offset, size_t length);
 
-//  MOB - should slower, supper, wlower, wupper allocate a new string?
 /**
     Convert a string to upper case.
-    This modifies the original string.
     @description Convert a string to its upper case equivalent.
     @param str String to convert.
     @return Returns a pointer to the converted string. Will always equal str.
     @ingroup MprString
  */
-extern char *supper(char *s);
+extern char *supper(cchar *s);
 
 /**
     Trim a string.
@@ -2559,7 +2556,6 @@ extern MprChar *wjoin(MprChar *sep, ...);
 extern MprChar *wjoinv(MprChar *sep, va_list args);
 extern size_t   wlen(MprChar *s);
 
-//  MOB - should slower, supper, wlower, wupper allocate a new string?
 extern MprChar *wlower(MprChar *s);
 extern int      wncasecmp(MprChar *s1, MprChar *s2, size_t len);
 extern int      wncmp(MprChar *s1, MprChar *s2, size_t len);
@@ -5027,10 +5023,11 @@ extern void mprEnableDispatcher(MprDispatcher *dispatcher);
         dispatcher will be serviced without starting a worker thread. This can be set to NULL.
     @param timeout Time in milliseconds to wait. Set to zero for no wait. Set to -1 to wait forever.
     @param flags If set to MPR_SERVICE_ONE_THING, this call will service at most one event. Otherwise set to zero.
+    @param cond Condition variable to wait on if another thread is responsible for servicing events.
     @returns The number of events serviced. Returns MPR_ERR_BUSY is another thread is servicing events and timeout is zero.
     @ingroup MprEvent
  */
-extern int mprServiceEvents(MprDispatcher *dispatcher, int delay, int flags);
+extern int mprServiceEvents(MprDispatcher *dispatcher, int delay, int flags, MprCond *cond);
 
 /**
     Create a new event
@@ -6412,8 +6409,16 @@ typedef struct MprCmd {
     SEM_ID          exitCond;           /* Synchronization semaphore for task exit */
 #endif
     MprMutex        *mutex;             /* Multithread sync */
+    MprCond         *cond;              /* Multithread signalling */
 } MprCmd;
 
+
+/**
+    Close the command
+    @param cmd MprCmd object created via mprCreateCmd
+    @ingroup MprCmd
+ */
+extern void mprCloseCmd(MprCmd *cmd);
 
 /**
     Close the command channel

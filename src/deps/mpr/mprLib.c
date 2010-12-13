@@ -888,7 +888,7 @@ static MprMem *freeBlock(MprMem *mp)
         INC(joins);
     }
     next = GET_NEXT(mp);
-#if BLD_CC_MMU && 0
+#if BLD_CC_MMU
     /*
         Release entire regions back to the O/S. (Region has no prior and is also last when complete)
      */
@@ -1600,7 +1600,6 @@ static void sweep()
 {
     MprRegion   *region, *nextRegion;
     MprMem      *mp, *next;
-MprMem *xnext, *onext;
     int         total;
     
     if (!heap->enabled) {
@@ -1628,24 +1627,16 @@ MprMem *xnext, *onext;
     for (region = heap->regions; region; region = nextRegion) {
         nextRegion = region->next;
         for (mp = region->start; mp; mp = next) {
-            onext = GET_NEXT(mp);
-            if (onext) {
-                CHECK(onext);
-            }
             INC(sweepVisited);
             if (unlikely(mp->gen == heap->dead)) {
                 CHECK(mp);
                 BREAKPOINT(mp);
                 INC(swept);
                 total += mp->size;
-                xnext = freeBlock(mp);
+                next = freeBlock(mp);
             } else {
-                xnext = GET_NEXT(mp);
+                next = GET_NEXT(mp);
             }
-            if (onext != xnext) {
-                mprAssert(onext->magic == 0xfefefefe);
-            }
-            next = xnext;
             if (next) {
                 CHECK(next);
             }
@@ -2140,7 +2131,6 @@ static void startThreads(int flags)
     Thread to service the event queue. Used if the user does not have their own main event loop.
  */
 int mprStartEventsThread()
-int mprStartEventsThread()
 {
     MprThread   *tp;
 
@@ -2158,7 +2148,7 @@ int mprStartEventsThread()
 static void serviceEventsThread(void *data, MprThread *tp)
 {
     mprLog(MPR_CONFIG, "Service thread started");
-    mprServiceEvents(NULL, -1, 0);
+    mprServiceEvents(NULL, -1, 0, NULL);
 }
 
 
@@ -3522,6 +3512,8 @@ MprCmd *mprCreateCmd(MprDispatcher *dispatcher)
         files[i].fd = -1;
     }
     cmd->mutex = mprCreateLock();
+    cmd->cond = mprCreateCond();
+
     cs = mprGetMpr()->cmdService;
     mprLock(cs->mutex);
     mprAddItem(cs->cmds, cmd);
@@ -3588,6 +3580,12 @@ static void vxCmdManager(MprCmd *cmd)
 #endif
 
 
+void mprCloseCmd(MprCmd *cmd)
+{
+    mprFree(cmd);
+}
+
+
 static void resetCmd(MprCmd *cmd)
 {
     MprCmdFile      *files;
@@ -3646,6 +3644,7 @@ void mprCloseCmdFd(MprCmd *cmd, int channel)
     /*
         Disconnect but don't free. This prevents some races with callbacks.
      */
+    mprLock(cmd->mutex);
     if (cmd->handlers[channel]) {
         mprRemoveWaitHandler(cmd->handlers[channel]);
         cmd->handlers[channel] = 0;
@@ -3662,6 +3661,7 @@ void mprCloseCmdFd(MprCmd *cmd, int channel)
             }
         }
     }
+    mprUnlock(cmd->mutex);
 }
 
 
@@ -3741,11 +3741,12 @@ int mprRunCmdV(MprCmd *cmd, int argc, char **argv, char **out, char **err, int f
         return 0;
     }
     unlock(cmd);
+
     if (mprWaitForCmd(cmd, -1) < 0) {
         return MPR_ERR_NOT_READY;
     }
-    lock(cmd);
 
+    lock(cmd);
     if (mprGetCmdExitStatus(cmd, &status) < 0) {
         unlock(cmd);
         return MPR_ERR;
@@ -3994,9 +3995,11 @@ int mprWriteCmdPipe(MprCmd *cmd, int channel, char *buf, int bufsize)
 void mprEnableCmdEvents(MprCmd *cmd, int channel)
 {
 #if BLD_UNIX_LIKE || VXWORKS
+    mprLock(cmd->mutex);
     if (cmd->handlers[channel]) {
         mprEnableWaitEvents(cmd->handlers[channel], MPR_READABLE);
     }
+    mprUnlock(cmd->mutex);
 #endif
 }
 
@@ -4079,28 +4082,27 @@ int mprWaitForCmd(MprCmd *cmd, int timeout)
     expires = mprGetTime() + timeout;
     remaining = timeout;
     do {
+        mprLock(cmd->mutex);
         if (cmd->eofCount >= cmd->requiredEof) {
+            /* WARNING: will block here if requiredEof is zero */
             if (mprReapCmd(cmd, 0) == 0) {
+                mprUnlock(cmd->mutex);
                 return 0;
             }
         }
-        delay = (cmd->eofCount == 0) ? 10 : remaining;
+        mprUnlock(cmd->mutex);
+
 #if BLD_WIN_LIKE && !WINCE
         mprPollCmdPipes(cmd, timeout);
         remaining = (int) (expires - mprGetTime());
         if (cmd->pid == 0 || remaining <= 0) {
             break;
         }
-        mprServiceEvents(cmd->dispatcher, 10, MPR_SERVICE_ONE_THING);
+        delay = 10;
 #else
-        /*
-            MOB BUG - not ideal. Delay must be short as there is a race. The command may increment eofCount before we get
-            into mprServiceEvents if another thread is running mprServiceEvents. This can then hang a long time.
-            Set delay to 20 to be sure.
-         */
-        delay = 20;
-        mprServiceEvents(cmd->dispatcher, delay, MPR_SERVICE_ONE_THING);
+        delay = remaining;
 #endif
+        mprServiceEvents(cmd->dispatcher, delay, MPR_SERVICE_ONE_THING, cmd->cond);
         remaining = (int) (expires - mprGetTime());
     } while (cmd->pid && remaining >= 0);
 
@@ -4120,7 +4122,11 @@ int mprWaitForCmd(MprCmd *cmd, int timeout)
 int mprReapCmd(MprCmd *cmd, int timeout)
 {
     MprTime     mark;
+    int         flags;
+    int         rc, status, waitrc;
 
+    rc = status = waitrc = 0;
+    mprLock(cmd->mutex);
     if (timeout < 0) {
         timeout = MAXINT;
     }
@@ -4128,20 +4134,29 @@ int mprReapCmd(MprCmd *cmd, int timeout)
 
     while (cmd->pid) {
 #if BLD_UNIX_LIKE
-        int     status, waitrc;
-        status = 0;
-        if ((waitrc = waitpid(cmd->pid, &status, WNOHANG | __WALL)) < 0) {
+        /*
+            WARNING: this will block here if the process has not completed and requiredEof is zero. Only happens
+            if creating a command and not opening any stdout or stderr output which users SHOULD do.
+         */
+        flags = (cmd->requiredEof) ? WNOHANG | __WALL : 0;
+        if ((waitrc = waitpid(cmd->pid, &status, flags)) < 0) {
             mprLog(0, "waitpid failed for pid %d, errno %d", cmd->pid, errno);
+            mprUnlock(cmd->mutex);
             return MPR_ERR_CANT_READ;
 
         } else if (waitrc == cmd->pid) {
+            mprLog(7, "waitpid pid %d, errno %d, thread %s", cmd->pid, errno, mprGetCurrentThreadName());
             if (!WIFSTOPPED(status)) {
                 if (WIFEXITED(status)) {
                     cmd->status = WEXITSTATUS(status);
                 } else if (WIFSIGNALED(status)) {
                     cmd->status = WTERMSIG(status);
+                } else {
+                    mprLog(0, "MOB waitpid FUNNY pid %d, errno %d", cmd->pid, errno);
                 }
                 cmd->pid = 0;
+            } else {
+                mprLog(0, "MOB waitpid ELSE pid %d, errno %d", cmd->pid, errno);
             }
             break;
             
@@ -4155,6 +4170,7 @@ int mprReapCmd(MprCmd *cmd, int timeout)
          */
         if (semTake(cmd->exitCond, MPR_TIMEOUT_STOP_TASK) != OK) {
             mprError("cmd: child %s did not exit, errno %d", cmd->program);
+            mprUnlock(cmd->mutex);
             return MPR_ERR_CANT_CREATE;
         }
         semDelete(cmd->exitCond);
@@ -4162,16 +4178,18 @@ int mprReapCmd(MprCmd *cmd, int timeout)
         cmd->pid = 0;
 #endif
 #if BLD_WIN_LIKE
-        int     status, rc;
         if ((rc = WaitForSingleObject(cmd->process, 10)) != WAIT_OBJECT_0) {
             if (rc == WAIT_TIMEOUT) {
+                mprUnlock(cmd->mutex);
                 return -MPR_ERR_TIMEOUT;
             }
             mprLog(6, "cmd: WaitForSingleObject no child to reap rc %d, %d", rc, GetLastError());
+            mprUnlock(cmd->mutex);
             return MPR_ERR_CANT_READ;
         }
         if (GetExitCodeProcess(cmd->process, (ulong*) &status) == 0) {
             mprLog(7, "cmd: GetExitProcess error");
+            mprUnlock(cmd->mutex);
             return MPR_ERR_CANT_READ;
         }
         if (status != STILL_ACTIVE) {
@@ -4189,6 +4207,10 @@ int mprReapCmd(MprCmd *cmd, int timeout)
             break;
         }
     }
+    if (cmd->pid == 0) {
+        mprSignalCond(cmd->cond);
+    }
+    mprUnlock(cmd->mutex);
     return (cmd->pid == 0) ? 0 : 1;
 }
 
@@ -6495,9 +6517,10 @@ static void serviceDispatcher(MprDispatcher *dispatcher)
     @param dispatcher Primary dispatcher to service. This dispatcher is set to the running state and events on this
         dispatcher will be serviced without starting a worker thread. This can be set to NULL.
     @param timeout Time in milliseconds to wait. Set to zero for no wait. Set to -1 to wait forever.
+    @param cond Condition variable to wait on if another thread is responsible for servicing events.
     @returns Zero if not events occurred. Otherwise returns non-zero.
  */
-int mprServiceEvents(MprDispatcher *dispatcher, int timeout, int flags)
+int mprServiceEvents(MprDispatcher *primary, int timeout, int flags, MprCond *cond)
 {
     MprEventService     *es;
     MprDispatcher       *dp;
@@ -6508,25 +6531,41 @@ int mprServiceEvents(MprDispatcher *dispatcher, int timeout, int flags)
     mpr = mprGetMpr();
 
     es = mpr->eventService;
+    beginEventCount = eventCount = es->eventCount;
+
+    if (MPR->heap.flags & (MPR_EVENTS_THREAD | MPR_USER_EVENTS_THREAD)) {
+        if (cond) {
+            mprSetStickyYield(NULL, 1);
+            mprYieldThread(NULL);
+            mprWaitForCond(cond, timeout);
+            mprSetStickyYield(NULL, 0);
+            return 0;
+        }
+    }
     es->now = mprGetTime();
     expires = timeout < 0 ? (es->now + MPR_MAX_TIMEOUT) : (es->now + timeout);
-    beginEventCount = eventCount = es->eventCount;
     justOne = (flags & MPR_SERVICE_ONE_THING) ? 1 : 0;
     wasRunning = 0;
 
     lock(es);
-    if (dispatcher) {
-        wasRunning = isRunning(dispatcher);
-        if (!isRunning(dispatcher)) {
-            queueDispatcher(&es->runQ, dispatcher);
+    if (primary) {
+        wasRunning = isRunning(primary);
+        if (!isRunning(primary)) {
+            queueDispatcher(&es->runQ, primary);
         }
     }
     unlock(es);
 
+    /*
+        Service all dispatchers 
+     */
     do {
         eventCount = es->eventCount;
-        if (dispatcher) {
-            if ((count = dispatchEvents(dispatcher)) < 0) {
+        if (primary) {
+            /*
+                Dispatch events for the requested dispatcher
+             */
+            if ((count = dispatchEvents(primary)) < 0) {
                 return abs(es->eventCount - eventCount);
             } else if (count > 0 && justOne) {
                 break;
@@ -6534,7 +6573,7 @@ int mprServiceEvents(MprDispatcher *dispatcher, int timeout, int flags)
         }
         delay = (int) (expires - es->now);
         if (delay > 0) {
-            idle = getIdleTime(es, dispatcher);
+            idle = getIdleTime(es, primary);
             delay = min(delay, idle);
         }
         while ((dp = getNextReadyDispatcher(es)) != NULL && !mprIsComplete()) {
@@ -6546,7 +6585,7 @@ int mprServiceEvents(MprDispatcher *dispatcher, int timeout, int flags)
         } 
         lock(es);
         if (delay > 0) {
-            if (es->eventCount == eventCount && isIdle(es, dispatcher)) {
+            if (es->eventCount == eventCount && isIdle(es, primary)) {
                 mprSetStickyYield(NULL, 1);
                 if (delay >= MPR_MIN_TIME_FOR_GC) {
                     mprCollectGarbage(MPR_GC_FROM_EVENTS);
@@ -6571,10 +6610,10 @@ int mprServiceEvents(MprDispatcher *dispatcher, int timeout, int flags)
         es->now = mprGetTime();
     } while (es->now < expires && !justOne && !mprIsComplete());
 
-    if (dispatcher && !wasRunning) {
+    if (primary) {
         lock(es);
-        dequeueDispatcher(dispatcher);
-        mprScheduleDispatcher(dispatcher);
+        dequeueDispatcher(primary);
+        mprScheduleDispatcher(primary);
         unlock(es);
     }
     return abs(es->eventCount - beginEventCount);
@@ -6603,7 +6642,8 @@ MprDispatcher *mprCreateDispatcher(cchar *name, int enable)
 
 static void manageDispatcher(MprDispatcher *dispatcher, int flags)
 {
-    MprEvent        *q, *event;
+    MprEventService     *es;
+    MprEvent            *q, *event;
 
     if (flags & MPR_MANAGE_MARK) {
         mprMark(dispatcher->name);
@@ -6614,7 +6654,6 @@ static void manageDispatcher(MprDispatcher *dispatcher, int flags)
             }
         }
     } else if (flags & MPR_MANAGE_FREE) {
-        MprEventService     *es;
         es = dispatcher->service;
         lock(es);
         dequeueDispatcher(dispatcher);
@@ -6654,8 +6693,7 @@ void mprEnableDispatcher(MprDispatcher *dispatcher)
 
 
 /*
-    Relay an event to a new dispatcher. This invokes the callback proc as though it was invoked from the given
-    dispatcher. 
+    Relay an event to a new dispatcher. This invokes the callback proc as though it was invoked from the given dispatcher. 
  */
 void mprRelayEvent(MprDispatcher *dispatcher, MprEventProc proc, void *data, MprEvent *event)
 {
@@ -6675,15 +6713,14 @@ void mprRelayEvent(MprDispatcher *dispatcher, MprEventProc proc, void *data, Mpr
     unlock(es);
 
     dispatcher->inUse++;
-
     (proc)(data, event);
 
     if (--dispatcher->inUse == 0 && dispatcher->deleted) {
         mprFree(dispatcher);
     } else if (!wasRunning) {
-        //  MOB -- why reschedule?
         lock(es);
         dequeueDispatcher(dispatcher);
+        /* ScheduleDispatcher will requeue on the right run/idle/wait queue */
         mprScheduleDispatcher(dispatcher);
         unlock(es);
     }
@@ -6691,8 +6728,9 @@ void mprRelayEvent(MprDispatcher *dispatcher, MprEventProc proc, void *data, Mpr
 
 
 /*
-    Schedule the dispatcher. If the dispatcher is already running then it is not modified. If empty, it is moved to 
-    the idleQ. If there is a past-due event, it is moved to the readQ. If there is a future event, it is put on the waitQ.
+    Schedule the dispatcher. If the dispatcher is already running then it is not modified. If the event queue is empty, 
+    the dispatcher is moved to the idleQ. If there is a past-due event, it is moved to the readyQ. If there is a future 
+    event pending, it is put on the waitQ.
  */
 void mprScheduleDispatcher(MprDispatcher *dispatcher)
 {
@@ -17140,22 +17178,24 @@ size_t slen(cchar *s)
 
 
 /*  
-    Map a string to lower case (overwrites original string)
+    Map a string to lower case. Allocates a new string 
  */
-char *slower(char *str)
+char *slower(cchar *str)
 {
-    char    *cp;
+    char    *cp, *s;
 
     mprAssert(str);
 
     if (str) {
-        for (cp = str; *cp; cp++) {
+        s = sclone(str);
+        for (cp = s; *cp; cp++) {
             if (isupper((int) *cp)) {
                 *cp = (char) tolower((int) *cp);
             }
         }
+        str = s;
     }
-    return str;
+    return (char*) str;
 }
 
 
@@ -17559,19 +17599,21 @@ char *strim(char *str, cchar *set, int where)
 /*  
     Map a string to upper case (overwrites buffer)
  */
-char *supper(char *str)
+char *supper(cchar *str)
 {
-    char    *cp;
+    char    *cp, *s;
 
     mprAssert(str);
     if (str) {
-        for (cp = str; *cp; cp++) {
+        s = sclone(s);
+        for (cp = s; *cp; cp++) {
             if (islower((int) *cp)) {
                 *cp = (char) toupper((int) *cp);
             }
         }
+        str = s;
     }
-    return str;
+    return (char*) str;
 }
 
 
@@ -17962,7 +18004,7 @@ int mprRunTests(MprTestService *sp)
         }
     }
     while (!mprIsComplete()) {
-        mprServiceEvents(NULL, -1, 0);
+        mprServiceEvents(NULL, -1, 0, NULL);
     }
     return (sp->totalFailedCount == 0) ? 0 : 1;
 }
@@ -18352,7 +18394,6 @@ static void runTestProc(MprTestGroup *gp, MprTestCase *test)
     } else if (sp->verbose) {
         mprPrintf("%12s Run test \"%s.%s\": ", "[Test]", gp->fullName, test->name);
     }
-
     if (gp->skip) {
         if (sp->verbose) {
             if (gp->skipWarned++ == 0) {
@@ -19280,7 +19321,7 @@ int mprStartWorkerService()
      */
     ws = MPR->workerService;
     mprSetMinWorkers(ws->minThreads);
-    ws->pruneTimer = mprCreateTimerEvent(mprGetDispatcher(), "pruneTimer", MPR_TIMEOUT_PRUNER, (MprEventProc) pruneWorkers,
+    ws->pruneTimer = mprCreateTimerEvent(mprGetDispatcher(), "pruneWorkers", MPR_TIMEOUT_PRUNER, (MprEventProc) pruneWorkers,
         (void*) ws, 0);
     return 0;
 }
@@ -21103,9 +21144,7 @@ int mprParseTime(MprTime *time, cchar *dateString, int zoneFlags, struct tm *def
         Set to -1 to cause mktime will try to determine if DST is in effect
      */
     tm.tm_isdst = -1;
-
-    str = sclone(dateString);
-    slower(str);
+    str = slower(dateString);
 
     /*
         Handle ISO dates: "2009-05-21t16:06:05.000z
@@ -22574,20 +22613,22 @@ size_t wlen(MprChar *s)
 
 
 /*  
-    Map a string to lower case (overwrites original string)
+    Map a string to lower case 
  */
 MprChar *wlower(MprChar *str)
 {
-    MprChar *cp;
+    MprChar *cp, *s;
 
     mprAssert(str);
 
     if (str) {
-        for (cp = str; *cp; cp++) {
+        s = wclone(str);
+        for (cp = s; *cp; cp++) {
             if (isupper((int) *cp)) {
                 *cp = (MprChar) tolower((int) *cp);
             }
         }
+        str = s;
     }
     return str;
 }
@@ -22893,19 +22934,21 @@ MprChar *wtrim(MprChar *str, MprChar *set, int where)
 
 
 /*  
-    Map a string to upper case (overwrites buffer)
+    Map a string to upper case
  */
 char *wupper(MprChar *str)
 {
-    MprChar     *cp;
+    MprChar     *cp, *s;
 
     mprAssert(str);
     if (str) {
-        for (cp = str; *cp; cp++) {
+        s = wclone(str);
+        for (cp = s; *cp; cp++) {
             if (islower((int) *cp)) {
                 *cp = (char) toupper((int) *cp);
             }
         }
+        str = s;
     }
     return str;
 }
