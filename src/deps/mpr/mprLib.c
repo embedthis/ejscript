@@ -416,9 +416,10 @@ void *mprMemdup(cvoid *ptr, ssize usize)
 }
 
 
-int mprMemcmp(cvoid *s1, int s1Len, cvoid *s2, int s2Len)
+int mprMemcmp(cvoid *s1, ssize s1Len, cvoid *s2, ssize s2Len)
 {
-    int     len, rc;
+    ssize       len;
+    int         rc;
 
     mprAssert(s1);
     mprAssert(s2);
@@ -25521,7 +25522,8 @@ static int scanFor(MprXml *xp, char *pattern)
 static int getNextChar(MprXml *xp)
 {
     MprBuf  *inBuf;
-    int     l, c;
+    ssize   l;
+    int     c;
 
     inBuf = xp->inBuf;
     if (mprGetBufLength(inBuf) <= 0) {

@@ -146,7 +146,7 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             if ((type = ejsCreateArchetype(ejs, NULL, prototype)) == 0) {
                 return 0;
             }
-            ejsSetPropertyByName(ejs, prototype, qname, type);
+            ejsSetPropertyByName(ejs, prototype, EN("constructor"), type);
         }
     }
     obj = ejsCreate(ejs, type, 0);

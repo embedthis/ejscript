@@ -80,7 +80,7 @@ int ecCreateModuleSection(EcCompiler *cp)
     mp->constants->locked = 1;
     ecEncodeNum(cp, constants->poolLength);
     ecEncodeNum(cp, constants->indexCount);
-    ecEncodeBlock(cp, (uchar*) constants->pool, constants->poolLength);
+    ecEncodeBlock(cp, (uchar*) constants->pool, (int) constants->poolLength);
 
     createDependencySection(cp);
     if (mp->hasInitializer) {
@@ -975,7 +975,7 @@ void ecEncodeMulti(EcCompiler *cp, cchar *str)
 
     mprAssert(cp);
 
-    len = strlen(str) + 1;
+    len = (int) strlen(str) + 1;
     mprAssert(len > 0);
     ecEncodeNum(cp, len);
     ecEncodeBlock(cp, (uchar*) str, len);
@@ -985,15 +985,15 @@ void ecEncodeMulti(EcCompiler *cp, cchar *str)
 void ecEncodeWideAsMulti(EcCompiler *cp, MprChar *str)
 {
     char    *mstr;
-    ssize  len;
+    ssize   len;
 
     mprAssert(cp);
 
     mstr = awtom(str, &len);
     len = strlen(mstr) + 1;
     mprAssert(len > 0);
-    ecEncodeNum(cp, len);
-    ecEncodeBlock(cp, (uchar*) str, len);
+    ecEncodeNum(cp, (int) len);
+    ecEncodeBlock(cp, (uchar*) str, (int) len);
 }
 
 

@@ -15,7 +15,7 @@ static bool      parseBoolean(Ejs *ejs, MprChar *s);
 
 /************************************* Code ***********************************/
 
-EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, int extra)
+EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
 {
     EjsObj      *vp;
 

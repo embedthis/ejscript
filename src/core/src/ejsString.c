@@ -357,7 +357,7 @@ static EjsObj *charCodeAt(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     index = (argc == 1) ? ejsGetInt(ejs, argv[0]) : 0;
     if (index < 0) {
-        index = sp->length -1 ;
+        index = (int) sp->length -1 ;
     }
     if (index < 0 || index >= sp->length) {
         return (EjsObj*) ejs->nanValue;;
@@ -412,7 +412,7 @@ static EjsObj *containsString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
         EjsRegExp   *rp;
         int         count;
         rp = (EjsRegExp*) argv[0];
-        count = pcre_exec(rp->compiled, NULL, sp->value, sp->length, 0, 0, 0, 0);
+        count = pcre_exec(rp->compiled, NULL, sp->value, (int) sp->length, 0, 0, 0, 0);
         return (EjsObj*) ejsCreateBoolean(ejs, count >= 0);
     }
     ejsThrowTypeError(ejs, "Wrong argument type");
@@ -428,7 +428,7 @@ static EjsObj *containsString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 static EjsObj *endsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString   *pattern;
-    int         len;
+    ssize       len;
 
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
@@ -455,7 +455,7 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
     EjsString   *result;
     EjsObj      *value;
     MprChar     *buf, fmt[32];
-    ssize      i, flen;
+    ssize       i, flen;
     int         c, len, nextArg, start, kind, last;
 
     mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
@@ -659,7 +659,7 @@ static EjsObj *getStringValues(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 
 static EjsObj *stringLength(Ejs *ejs, EjsString *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ap->length);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) ap->length);
 }
 
 
@@ -677,7 +677,7 @@ static EjsObj *indexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     mprAssert(ejsIsString(ejs, argv[0]));
 
     pattern = (EjsString*) argv[0];
-    patternLength = pattern->length;
+    patternLength = (int) pattern->length;
 
     if (argc == 2) {
         start = ejsGetInt(ejs, argv[1]);
@@ -807,12 +807,12 @@ static EjsObj *lastIndexOf(Ejs *ejs, EjsString *sp, int argc,  EjsObj **argv)
     mprAssert(1 <= argc && argc <= 2);
 
     pattern = (EjsString*) argv[0];
-    patternLength = pattern->length;
+    patternLength = (int) pattern->length;
 
     if (argc == 2) {
         start = ejsGetInt(ejs, argv[1]);
-        if (start >= sp->length) {
-            start = sp->length - 1;
+        if (start >= (int) sp->length) {
+            start = (int) sp->length - 1;
         }
         if (start < 0) {
             start = 0;
@@ -937,7 +937,7 @@ static EjsObj *quote(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 static EjsObj *removeCharsFromString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
     EjsString       *result;
-    int             start, end, i, j;
+    ssize           start, end, i, j;
 
     mprAssert(1 <= argc && argc <= 2);
 
@@ -1171,20 +1171,17 @@ static EjsString *reverseString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv
  */
 static EjsObj *searchString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
+    EjsRegExp   *rp;
     EjsString   *pattern;
-    int         index, patternLength;
+    int         index, patternLength, count, matches[EJS_MAX_REGEX_MATCHES * 3];
 
     if (ejsIsString(ejs, argv[0])) {
         pattern = (EjsString*) argv[0];
-        patternLength = pattern->length;
-
+        patternLength = (int) pattern->length;
         index = indexof(sp->value, sp->length, pattern, patternLength, 1);
         return (EjsObj*) ejsCreateNumber(ejs, index);
 
     } else if (ejsIsRegExp(ejs, argv[0])) {
-        EjsRegExp   *rp;
-        int         matches[EJS_MAX_REGEX_MATCHES * 3];
-        int         count;
         rp = (EjsRegExp*) argv[0];
         count = pcre_exec(rp->compiled, NULL, sp->value, sp->length, 0, 0, matches, sizeof(matches) / sizeof(int));
         if (count < 0) {
@@ -1194,8 +1191,8 @@ static EjsObj *searchString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     } else {
         ejsThrowTypeError(ejs, "Wrong argument type");
-        return 0;
     }
+    return 0;
 }
 
 
@@ -1354,7 +1351,7 @@ static EjsObj *startsWith(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
  */
 static EjsObj *substring(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 {
-    int     start, end, tmp;
+    ssize   start, end, tmp;
 
     start = ejsGetInt(ejs, argv[0]);
     if (argc == 2) {
@@ -1814,10 +1811,10 @@ static int toUni(MprChar *dest, cchar *src, ssize len)
 
 int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
 {
-    int         num, i;
+    int     num, i;
 
     num = 0;
-    for (i = 0; i < sp->length; i++) {
+    for (i = 0; i < (int) sp->length; i++) {
         num = num * radix + (sp->value[i] - '0');
     }
     return num;
@@ -1827,7 +1824,7 @@ int ejsAtoi(Ejs *ejs, EjsString *sp, int radix)
 EjsString *ejsCatString(Ejs *ejs, EjsString *dest, EjsString *src)
 {
     EjsString   *result;
-    int         len;
+    ssize       len;
 
     len = dest->length + src->length;
     if ((result = ejsCreateBareString(ejs, len)) == NULL) {
@@ -1847,7 +1844,7 @@ EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...)
 {
     EjsString   *sp, *result;
     va_list     args;
-    int         len;
+    ssize       len;
 
     va_start(args, src);
     for (len = 0, sp = src; sp; ) {
@@ -1871,7 +1868,7 @@ EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...)
 
 int ejsStartsWithMulti(Ejs *ejs, EjsString *sp, cchar *pat)
 {
-    int     i, j, len;
+    ssize   i, len;
 
     mprAssert(sp);
     mprAssert(pat);
@@ -1882,7 +1879,7 @@ int ejsStartsWithMulti(Ejs *ejs, EjsString *sp, cchar *pat)
     len = strlen(pat);
     
     for (i = 0; pat[i] && i < sp->length; i++) {
-        if (sp->value[i] != pat[j]) {
+        if (sp->value[i] != pat[i]) {
             break;
         }
     }
@@ -2058,7 +2055,8 @@ int ejsContainsStringAnyCase(Ejs *ejs, EjsString *sp, EjsString *pat)
 
 int ejsContainsMulti(Ejs *ejs, EjsString *sp, cchar *pat)
 {
-    int     i, j, k, len;
+    ssize   len;
+    int     i, j, k;
 
     mprAssert(sp);
     mprAssert(pat);

@@ -123,7 +123,9 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 
 #define GET_BYTE()      *(FRAME)->pc++
 #define GET_DOUBLE()    ejsDecodeDouble(ejs, &(FRAME)->pc)
-#define GET_INT()       GET_NUM()
+#define GET_INT()       ((int) GET_NUM())
+
+//  MOB OPT - returns 64 bits, but most cases only need 32 bits
 #define GET_NUM()       ejsDecodeNum(ejs, &(FRAME)->pc)
 #define GET_NAME()      getNameArg(ejs, FRAME)
 #define GET_STRING()    getStringArg(ejs, FRAME)
@@ -133,7 +135,6 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 #define THIS            FRAME->function.boundThis
 #define FILL(mark)      while (mark < FRAME->pc) { *mark++ = EJS_OP_NOP; }
 
-#define DEBUG_IDE 1
 #if BLD_DEBUG && DEBUG_IDE
     static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode);
     static int opcount[256];

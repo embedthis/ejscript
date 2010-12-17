@@ -234,8 +234,8 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFile     *from, *to;
     cchar       *toPath;
+    ssize       bytes;
     char        *buf;
-    int         bytes;
     int         rc;
 
     mprAssert(argc == 1);
@@ -575,7 +575,7 @@ static EjsObj *joinPathExt(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *pathLength(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, (int) strlen(fp->value));
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) strlen(fp->value));
 }
 
 

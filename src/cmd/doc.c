@@ -2607,7 +2607,6 @@ static EjsDoc *getDoc(Ejs *ejs, void *vp, int slotNum)
 
 static EjsDoc *getDuplicateDoc(Ejs *ejs, MprChar *duplicate)
 {
-    EjsName         qname;
     EjsDoc          *doc;
     EjsObj          *vp;
     EjsLookup       lookup;
@@ -2638,7 +2637,7 @@ static EjsDoc *getDuplicateDoc(Ejs *ejs, MprChar *duplicate)
         if ((slotNum = ejsLookupVar(ejs, vp, WEN(property), &lookup)) < 0) {
             if (ejsIsType(ejs, vp)) {
                 vp = (EjsObj*) ((EjsType*) vp)->prototype;
-                if ((slotNum = ejsLookupVar(ejs, vp, qname, &lookup)) < 0) {
+                if ((slotNum = ejsLookupVar(ejs, vp, WEN(property), &lookup)) < 0) {
                     mprFree(dup);
                     return 0;
                 }

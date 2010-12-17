@@ -663,7 +663,7 @@ extern int ejsIs(EjsAny *obj, int slot);
         of the variable.
     @ingroup EjsObj
  */
-extern EjsAny *ejsAlloc(Ejs *ejs, struct EjsType *type, int extra);
+extern EjsAny *ejsAlloc(Ejs *ejs, struct EjsType *type, ssize extra);
 
 /** 
     Cast a variable to a new type
@@ -1264,8 +1264,8 @@ typedef struct EjsEx {
 
 typedef struct EjsConstants {
     char          *pool;                    /**< Constant pool string data */
-    int           poolSize;                 /**< Size of constant pool storage in bytes */
-    int           poolLength;               /**< Length of used bytes in constant pool */
+    ssize         poolSize;                 /**< Size of constant pool storage in bytes */
+    ssize         poolLength;               /**< Length of used bytes in constant pool */
     int           indexSize;                /**< Size of index in elements */
     int           indexCount;               /**< Number of constants used in index */
     int           locked;                   /**< No more additions allowed */
@@ -1286,7 +1286,7 @@ typedef struct EjsLine {
 
 
 typedef struct EjsDebug {
-    int        size;                        /**< Size of lines[] in elements */
+    ssize      size;                        /**< Size of lines[] in elements */
     int        numLines;                    /**< Number of entries in lines[] */
     EjsLine    lines[0];
 } EjsDebug;
@@ -1624,11 +1624,11 @@ typedef struct EjsByteArray {
     uchar           *value;             /**< Data bytes in the array */
     int             async;              /**< Async mode */
     int             endian;             /**< Endian encoding */
-    int             length;             /**< Length property */
     int             growInc;            /**< Current read position */
+    ssize           length;             /**< Length property */
+    ssize           readPosition;       /**< Current read position */
+    ssize           writePosition;      /**< Current write position */
     int             swap;               /**< I/O must swap bytes due to endian byte ordering */
-    int             readPosition;       /**< Current read position */
-    int             writePosition;      /**< Current write position */
     bool            growable;           /**< Aray is growable */
     EjsObj          *listeners;         /**< Event listeners in async mode */
 } EjsByteArray;
@@ -1654,7 +1654,7 @@ typedef struct EjsByteArray {
     @return A new byte array instance
     @ingroup EjsByteArray
  */
-extern EjsByteArray *ejsCreateByteArray(Ejs *ejs, int size);
+extern EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size);
 
 /** 
     Set the I/O byte array positions
@@ -1667,7 +1667,7 @@ extern EjsByteArray *ejsCreateByteArray(Ejs *ejs, int size);
     @param writePosition New write position to set
     @ingroup EjsByteArray
  */
-extern void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, int readPosition, int writePosition);
+extern void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosition, ssize writePosition);
 
 /** 
     Copy data into a byte array
@@ -1679,15 +1679,15 @@ extern void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, int readPositio
     @param length Length of the data to copy
     @return Zero if successful, otherwise a negative MPR error code.
  */
-extern int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, int offset, char *data, ssize length);
+extern int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, char *data, ssize length);
 
 extern void ejsResetByteArray(EjsByteArray *ba);
-extern int ejsGetByteArrayAvailable(EjsByteArray *ba);
-extern int ejsGetByteArrayRoom(EjsByteArray *ba);
-extern int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, int size);
+extern ssize ejsGetByteArrayAvailable(EjsByteArray *ba);
+extern ssize ejsGetByteArrayRoom(EjsByteArray *ba);
+extern int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize size);
 
 extern struct EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
-extern bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, int require);
+extern bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require);
 
 /** 
     Date class
@@ -2119,9 +2119,9 @@ typedef struct EjsHttp {
     char            *certFile;                  /**< SSL certificate file */
     int             closed;                     /**< Http is closed and "close" event has been issued */
     int             error;                      /**< Http errored and "error" event has been issued */
-    int             readCount;                  /**< Count of body bytes read */
-    int             requestContentCount;        /**< Count of bytes written from requestContent */
-    int             writeCount;                 /**< Count of bytes written via write() */
+    ssize           readCount;                  /**< Count of body bytes read */
+    ssize           requestContentCount;        /**< Count of bytes written from requestContent */
+    ssize           writeCount;                 /**< Count of bytes written via write() */
 } EjsHttp;
 
 
@@ -2224,7 +2224,7 @@ extern EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsStr
     @defgroup EjsNull EjsNull
     @see EjsNull ejsCreateIsNull
  */
-typedef EjsAny EjsNull;
+typedef EjsObj EjsNull;
 
 /** 
     Determine if a variable is a null
@@ -2431,9 +2431,9 @@ extern EjsWorker *ejsCreateWorker(Ejs *ejs);
     @see EjsVoid
  */
 
-typedef EjsAny EjsVoid;
+typedef EjsObj EjsVoid;
 
-extern EjsVoid  *ejsCreateUndefined(Ejs *ejs);
+extern EjsVoid *ejsCreateUndefined(Ejs *ejs);
 
 #define ejsIsUndefined(ejs, obj) (obj && TYPE(obj)->id == ES_Void)
 
@@ -2458,9 +2458,8 @@ typedef struct EjsXmlState {
     struct EjsType  *xmlType;
     struct EjsType  *xmlListType;
     int             topOfStack;
-    long            inputSize;
-    long            inputPos;
-//  XX
+    ssize           inputSize;
+    ssize           inputPos;
     cchar           *inputBuf;
     cchar           *filename;
 } EjsXmlState;

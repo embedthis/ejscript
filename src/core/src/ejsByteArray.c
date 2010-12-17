@@ -13,7 +13,7 @@ static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
 static EjsObj *ba_toString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv);
 
 static int  flushByteArray(Ejs *ejs, EjsByteArray *ap);
-static int  getInput(Ejs *ejs, EjsByteArray *ap, int required);
+static ssize  getInput(Ejs *ejs, EjsByteArray *ap, ssize required);
 static int  lookupByteArrayProperty(Ejs *ejs, EjsByteArray *ap, EjsName qname);
 
 static MPR_INLINE int swap16(EjsByteArray *ap, int a);
@@ -24,7 +24,7 @@ static int putByte(EjsByteArray *ap, int value);
 static int putInteger(EjsByteArray *ap, int value);
 static int putLong(EjsByteArray *ap, int64 value);
 static int putShort(EjsByteArray *ap, int value);
-static int putString(EjsByteArray *ap, EjsString *value, int len);
+static int putString(EjsByteArray *ap, EjsString *value, ssize len);
 static int putNumber(EjsByteArray *ap, MprNumber value);
 static int putDouble(EjsByteArray *ap, double value);
 
@@ -102,7 +102,7 @@ static int deleteByteArrayProperty(struct Ejs *ejs, EjsByteArray *ap, int slot)
 }
 
 
-static int getByteArrayPropertyCount(Ejs *ejs, EjsByteArray *ap)
+static ssize getByteArrayPropertyCount(Ejs *ejs, EjsByteArray *ap)
 {
     return ap->length;
 }
@@ -330,7 +330,7 @@ static EjsObj *ba_setAsync(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_available(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ap->writePosition - ap->readPosition);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) (ap->writePosition - ap->readPosition));
 }
 
 
@@ -374,7 +374,7 @@ static EjsObj *ba_compact(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 static EjsObj *ba_copyIn(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     EjsByteArray    *src;
-    int             i, destOffset, srcOffset, count;
+    ssize           i, destOffset, srcOffset, count;
 
     destOffset = ejsGetInt(ejs, argv[0]);
     src = (EjsByteArray*) argv[1];
@@ -399,7 +399,7 @@ static EjsObj *ba_copyIn(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     for (i = 0; i < count; i++) {
         ap->value[destOffset++] = src->value[srcOffset++];
     }
-    return (EjsObj*) ejsCreateNumber(ejs, count);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) count);
 }
 
 
@@ -410,7 +410,8 @@ static EjsObj *ba_copyIn(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 static EjsObj *ba_copyOut(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     EjsByteArray    *dest;
-    int             i, srcOffset, destOffset, count;
+    ssize           count;
+    int             i, srcOffset, destOffset;
 
     srcOffset = ejsGetInt(ejs, argv[0]);
     dest = (EjsByteArray*) argv[1];
@@ -431,7 +432,7 @@ static EjsObj *ba_copyOut(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     for (i = 0; i < count; i++) {
         dest->value[destOffset++] = ap->value[srcOffset++];
     }
-    return (EjsObj*) ejsCreateNumber(ejs, count);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) count);
 }
 
 
@@ -480,9 +481,9 @@ static EjsObj *nextByteArrayKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
         return 0;
     }
     if (ip->index < ap->readPosition) {
-        ip->index = ap->readPosition;
+        ip->index = (int) ap->readPosition;
     }
-    if (ip->index < ap->writePosition) {
+    if (ip->index < (int) ap->writePosition) {
         return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);
@@ -513,8 +514,8 @@ static EjsObj *nextByteArrayValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
-    if (ip->index < ap->readPosition) {
-        ip->index = ap->readPosition;
+    if (ip->index < (int) ap->readPosition) {
+        ip->index = (int) ap->readPosition;
     }
     if (ip->index < ap->writePosition) {
         return (EjsObj*) ejsCreateNumber(ejs, ap->value[ip->index++]);
@@ -553,7 +554,7 @@ static EjsObj *ba_flush(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_getLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ap->length);
+    return (EjsObj*) ejsCreateNumber(ejs, (int) ap->length);
 }
 
 
@@ -587,7 +588,7 @@ static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_growable(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ap->length);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) ap->length);
 }
 
 
@@ -600,13 +601,14 @@ static EjsObj *ba_growable(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 static EjsObj *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     EjsByteArray    *buffer;
-    int             offset, count, i;
+    ssize           offset, count;
+    int             i;
 
     mprAssert(1 <= argc && argc <= 3);
 
     buffer = (EjsByteArray*) argv[0];
     offset = (argc == 2) ? ejsGetInt(ejs, argv[1]) : 0;
-    count = (argc == 3) ? ejsGetInt(ejs, argv[2]) : buffer->length;
+    count = (argc == 3) ? ejsGetInt(ejs, argv[2]) : (int) buffer->length;
 
     if (count < 0) {
         count = buffer->length;
@@ -632,7 +634,7 @@ static EjsObj *ba_read(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
     if (ap->emitter && availableBytes(ap) && !ejs->exception) {
         ejsSendEvent(ejs, ap->emitter, "writable", NULL, (EjsObj*) ap);
     }
-    return (EjsObj*) ejsCreateNumber(ejs, count);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) count);
 }
 
 
@@ -770,7 +772,7 @@ static EjsObj *ba_readLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_readPosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ap->readPosition);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) ap->readPosition);
 }
 
 
@@ -823,7 +825,7 @@ static EjsObj *ba_readShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 static EjsObj *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
     EjsObj  *result;
-    int     count;
+    ssize   count;
 
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
 
@@ -875,7 +877,7 @@ static EjsObj *ba_off(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_room(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, room(ap));
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) room(ap));
 }
 
 
@@ -900,7 +902,8 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
     EjsByteArray    *bp;
     EjsString       *sp;
     EjsObj          *vp;
-    int             i, len, wrote;
+    ssize           len, wrote;
+    int             i;
 
     mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
@@ -979,7 +982,7 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
     if (ap->emitter && wrote > 0 && availableBytes(ap) > 0) {
         ejsSendEvent(ejs, ap->emitter, "readable", NULL, (EjsObj*) ap);
     }
-    return ejsCreateNumber(ejs, wrote);
+    return ejsCreateNumber(ejs, (MprNumber) wrote);
 }
 
 
@@ -1075,7 +1078,7 @@ static EjsObj *ba_writeLong(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_writePosition(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ap->writePosition);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) ap->writePosition);
 }
 
 
@@ -1120,7 +1123,7 @@ static int flushByteArray(Ejs *ejs, EjsByteArray *ap)
 }
 
 
-int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, int len)
+int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, ssize len)
 {
     if (len > ap->length) {
         ap->value = mprRealloc(ap->value, len);
@@ -1141,7 +1144,7 @@ int ejsGrowByteArray(Ejs *ejs, EjsByteArray *ap, int len)
     must be read. Short fills are not permitted. Return the count of bytes available or 0 if the required number of 
     bytes can't be read. Return -ve on errors.
  */
-static int getInput(Ejs *ejs, EjsByteArray *ap, int required)
+static ssize getInput(Ejs *ejs, EjsByteArray *ap, ssize required)
 {
     if (availableBytes(ap) == 0) {
         ap->writePosition = ap->readPosition = 0;
@@ -1158,9 +1161,9 @@ static int getInput(Ejs *ejs, EjsByteArray *ap, int required)
 }
 
 
-bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, int require)
+bool ejsMakeRoomInByteArray(Ejs *ejs, EjsByteArray *ap, ssize require)
 {
-    int     newLen;
+    ssize   newLen;
 
     if (room(ap) < require) {
         if (ap->emitter && availableBytes(ap)) {
@@ -1286,12 +1289,12 @@ static int putNumber(EjsByteArray *ap, MprNumber value)
 }
 
 
-static int putString(EjsByteArray *ap, EjsString *str, int len)
+static int putString(EjsByteArray *ap, EjsString *str, ssize len)
 {
     //  MOB -- this must do encoding
     mprMemcpy(&ap->value[ap->writePosition], room(ap), str->value, len);
     ap->writePosition += len;
-    return len;
+    return (int) len;
 }
 
 /********************************* Public Support API *****************************/
@@ -1304,7 +1307,7 @@ void ejsResetByteArray(EjsByteArray *ba)
 }
 
 
-void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, int readPosition, int writePosition)
+void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, ssize readPosition, ssize writePosition)
 {
     if (readPosition >= 0) {
         ba->readPosition = readPosition;
@@ -1315,7 +1318,7 @@ void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, int readPosition, int 
 }
 
 
-int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, int offset, char *data, ssize length)
+int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, char *data, ssize length)
 {
     int     i;
 
@@ -1335,20 +1338,20 @@ int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, int offset, char *data, ssize
 }
 
 
-int ejsGetByteArrayAvailable(EjsByteArray *ba)
+ssize ejsGetByteArrayAvailable(EjsByteArray *ba)
 {
     return availableBytes(ba);
 }
 
 
-int ejsGetByteArrayRoom(EjsByteArray *ba)
+ssize ejsGetByteArrayRoom(EjsByteArray *ba)
 {
     return room(ba);
 }
 
 /*********************************** Factory **********************************/
 
-EjsByteArray *ejsCreateByteArray(Ejs *ejs, int size)
+EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size)
 {
     EjsByteArray    *ap;
 

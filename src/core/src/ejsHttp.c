@@ -14,13 +14,13 @@ static EjsObj   *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
 static int      httpCallback(EjsHttp *hp, MprEvent *event);
 static void     httpNotify(HttpConn *conn, int state, int notifyFlags);
 static void     prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data);
-static int      readTransfer(Ejs *ejs, EjsHttp *hp, int count);
+static ssize    readTransfer(Ejs *ejs, EjsHttp *hp, ssize count);
 static void     sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp);
 static void     sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp);
 static EjsObj   *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EjsObj **argv);
 static bool     waitForResponseHeaders(EjsHttp *hp, int timeout);
 static bool     waitForState(EjsHttp *hp, int state, int timeout, int throw);
-static int      writeHttpData(Ejs *ejs, EjsHttp *hp);
+static ssize    writeHttpData(Ejs *ejs, EjsHttp *hp);
 
 /************************************ Methods *********************************/
 /*  
@@ -104,14 +104,14 @@ EjsObj *http_set_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 EjsObj *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    int     len;
+    ssize     len;
 
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
     }
     len = httpGetContentLength(hp->conn);
     if (len > 0) {
-        return (EjsObj*) ejsCreateNumber(ejs, len);
+        return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) len);
     }
     return (EjsObj*) ejs->minusOneValue;
 }
@@ -174,13 +174,13 @@ static EjsObj *http_set_certificate(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **ar
  */
 static EjsObj *http_contentLength(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    int     length;
+    ssize     length;
 
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
     }
     length = httpGetContentLength(hp->conn);
-    return (EjsObj*) ejsCreateNumber(ejs, length);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) length);
 }
 
 
@@ -486,7 +486,7 @@ static EjsObj *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsByteArray    *buffer;
     HttpConn        *conn;
-    int             offset, count, contentLength;
+    ssize           offset, count, contentLength;
 
     conn = hp->conn;
     buffer = (EjsByteArray*) argv[0];
@@ -517,7 +517,7 @@ static EjsObj *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     ejsCopyToByteArray(ejs, buffer, buffer->writePosition, (char*) mprGetBufStart(hp->responseContent), count);
     ejsSetByteArrayPositions(ejs, buffer, -1, buffer->writePosition + count);
     mprAdjustBufStart(hp->responseContent, count);
-    return (EjsObj*) ejsCreateNumber(ejs, count);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) count);
 }
 
 
@@ -529,7 +529,8 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     EjsObj      *result;
     HttpConn    *conn;
-    int         count, timeout;
+    ssize       count;
+    int         timeout;
     
     count = (argc == 1) ? ejsGetInt(ejs, argv[0]) : -1;
     conn = hp->conn;
@@ -841,7 +842,7 @@ static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsNumber *http_write(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    int     nbytes;
+    ssize     nbytes;
 
     hp->data = ejsCreateByteArray(ejs, -1);
     if (ejsWriteToByteArray(ejs, hp->data, 1, &argv[0]) < 0) {
@@ -856,7 +857,7 @@ static EjsNumber *http_write(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
             httpEnableConnEvents(hp->conn);
         }
     }
-    return ejsCreateNumber(ejs, nbytes);
+    return ejsCreateNumber(ejs, (MprNumber) nbytes);
 }
 
 
@@ -871,7 +872,7 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
     EjsNumber       *written;
     EjsUri          *uriObj;
     HttpConn        *conn;
-    int             length, nbytes;
+    ssize           length, nbytes;
 
     conn = hp->conn;
     hp->responseCache = 0;
@@ -982,11 +983,11 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
     Read the required number of bytes into the response content buffer. Count < 0 means transfer the entire content.
     Returns the number of bytes read.
  */ 
-static int readTransfer(Ejs *ejs, EjsHttp *hp, int count)
+static ssize readTransfer(Ejs *ejs, EjsHttp *hp, ssize count)
 {
     MprBuf      *buf;
     HttpConn    *conn;
-    int         len, space, nbytes;
+    ssize       len, space, nbytes;
 
     conn = hp->conn;
 
@@ -1017,11 +1018,11 @@ static int readTransfer(Ejs *ejs, EjsHttp *hp, int count)
 /* 
     Write another block of data
  */
-static int writeHttpData(Ejs *ejs, EjsHttp *hp)
+static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
 {
     EjsByteArray    *ba;
     HttpConn        *conn;
-    int             count, nbytes;
+    ssize           count, nbytes;
 
     conn = hp->conn;
     ba = hp->data;
@@ -1352,60 +1353,62 @@ static bool waitForResponseHeaders(EjsHttp *hp, int timeout)
  */
 void ejsGetHttpLimits(Ejs *ejs, EjsObj *obj, HttpLimits *limits, int server) 
 {
-    ejsSetPropertyByName(ejs, obj, EN("chunk"), ejsCreateNumber(ejs, limits->chunkSize));
-    ejsSetPropertyByName(ejs, obj, EN("receive"), ejsCreateNumber(ejs, limits->receiveBodySize));
+    ejsSetPropertyByName(ejs, obj, EN("chunk"), ejsCreateNumber(ejs, (MprNumber) limits->chunkSize));
+    ejsSetPropertyByName(ejs, obj, EN("receive"), ejsCreateNumber(ejs, (MprNumber) limits->receiveBodySize));
     ejsSetPropertyByName(ejs, obj, EN("reuse"), ejsCreateNumber(ejs, limits->keepAliveCount));
-    ejsSetPropertyByName(ejs, obj, EN("transmission"), ejsCreateNumber(ejs, limits->transmissionBodySize));
-    ejsSetPropertyByName(ejs, obj, EN("upload"), ejsCreateNumber(ejs, limits->uploadSize));
+    ejsSetPropertyByName(ejs, obj, EN("transmission"), ejsCreateNumber(ejs, (MprNumber) limits->transmissionBodySize));
+    ejsSetPropertyByName(ejs, obj, EN("upload"), ejsCreateNumber(ejs, (MprNumber) limits->uploadSize));
     ejsSetPropertyByName(ejs, obj, EN("inactivityTimeout"), 
         ejsCreateNumber(ejs, limits->inactivityTimeout / MPR_TICKS_PER_SEC));
     ejsSetPropertyByName(ejs, obj, EN("requestTimeout"), ejsCreateNumber(ejs, limits->requestTimeout / MPR_TICKS_PER_SEC));
     ejsSetPropertyByName(ejs, obj, EN("sessionTimeout"), ejsCreateNumber(ejs, limits->sessionTimeout / MPR_TICKS_PER_SEC));
 
     if (server) {
-        ejsSetPropertyByName(ejs, obj, EN("clients"), ejsCreateNumber(ejs, limits->clientCount));
-        ejsSetPropertyByName(ejs, obj, EN("header"), ejsCreateNumber(ejs, limits->headerSize));
-        ejsSetPropertyByName(ejs, obj, EN("headers"), ejsCreateNumber(ejs, limits->headerCount));
-        ejsSetPropertyByName(ejs, obj, EN("requests"), ejsCreateNumber(ejs, limits->requestCount));
-        ejsSetPropertyByName(ejs, obj, EN("sessions"), ejsCreateNumber(ejs, limits->sessionCount));
-        ejsSetPropertyByName(ejs, obj, EN("stageBuffer"), ejsCreateNumber(ejs, limits->stageBufferSize));
-        ejsSetPropertyByName(ejs, obj, EN("uri"), ejsCreateNumber(ejs, limits->uriSize));
+        ejsSetPropertyByName(ejs, obj, EN("clients"), ejsCreateNumber(ejs, (MprNumber) limits->clientCount));
+        ejsSetPropertyByName(ejs, obj, EN("header"), ejsCreateNumber(ejs, (MprNumber) limits->headerSize));
+        ejsSetPropertyByName(ejs, obj, EN("headers"), ejsCreateNumber(ejs, (MprNumber) limits->headerCount));
+        ejsSetPropertyByName(ejs, obj, EN("requests"), ejsCreateNumber(ejs, (MprNumber) limits->requestCount));
+        ejsSetPropertyByName(ejs, obj, EN("sessions"), ejsCreateNumber(ejs, (MprNumber) limits->sessionCount));
+        ejsSetPropertyByName(ejs, obj, EN("stageBuffer"), ejsCreateNumber(ejs, (MprNumber) limits->stageBufferSize));
+        ejsSetPropertyByName(ejs, obj, EN("uri"), ejsCreateNumber(ejs, (MprNumber) limits->uriSize));
     }
 }
 
 
 /*
-    Set the limit field:    *limit = obj[field]
+    Set the limit field: 
+        *limit = obj[field]
  */
-static void setLimit(Ejs *ejs, EjsObj *obj, cchar *field, int *limit, int factor)
+static int setLimit(Ejs *ejs, EjsObj *obj, cchar *field, int factor)
 {
     EjsObj      *vp;
 
     if ((vp = ejsGetPropertyByName(ejs, obj, EN(field))) != 0) {
-        *limit = ejsGetInt(ejs, ejsToNumber(ejs, vp)) * factor;
+        return ejsGetInt(ejs, ejsToNumber(ejs, vp)) * factor;
     }
+    return 0;
 }
 
 
 void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server) 
 {
-    setLimit(ejs, obj, "chunk", &limits->chunkSize, 1);
-    setLimit(ejs, obj, "inactivityTimeout", &limits->inactivityTimeout, MPR_TICKS_PER_SEC);
-    setLimit(ejs, obj, "receive", &limits->receiveBodySize, 1);
-    setLimit(ejs, obj, "reuse", &limits->keepAliveCount, 1);
-    setLimit(ejs, obj, "requestTimeout", &limits->requestTimeout, MPR_TICKS_PER_SEC);
-    setLimit(ejs, obj, "sessionTimeout", &limits->sessionTimeout, MPR_TICKS_PER_SEC);
-    setLimit(ejs, obj, "transmission", &limits->transmissionBodySize, 1);
-    setLimit(ejs, obj, "upload", &limits->uploadSize, 1);
+    limits->chunkSize = setLimit(ejs, obj, "chunk", 1);
+    limits->inactivityTimeout = setLimit(ejs, obj, "inactivityTimeout", MPR_TICKS_PER_SEC);
+    limits->receiveBodySize = setLimit(ejs, obj, "receive", 1);
+    limits->keepAliveCount = setLimit(ejs, obj, "reuse", 1);
+    limits->requestTimeout = setLimit(ejs, obj, "requestTimeout", MPR_TICKS_PER_SEC);
+    limits->sessionTimeout = setLimit(ejs, obj, "sessionTimeout", MPR_TICKS_PER_SEC);
+    limits->transmissionBodySize = setLimit(ejs, obj, "transmission", 1);
+    limits->uploadSize = setLimit(ejs, obj, "upload", 1);
 
     if (server) {
-        setLimit(ejs, obj, "clients", &limits->clientCount, 1);
-        setLimit(ejs, obj, "requests", &limits->requestCount, 1);
-        setLimit(ejs, obj, "sessions", &limits->sessionCount, 1);
-        setLimit(ejs, obj, "stageBuffer", &limits->stageBufferSize, 1);
-        setLimit(ejs, obj, "uri", &limits->uriSize, 1);
-        setLimit(ejs, obj, "headers", &limits->headerCount, 1);
-        setLimit(ejs, obj, "header", &limits->headerSize, 1);
+        limits->clientCount = setLimit(ejs, obj, "clients", 1);
+        limits->requestCount = setLimit(ejs, obj, "requests", 1);
+        limits->sessionCount = setLimit(ejs, obj, "sessions", 1);
+        limits->stageBufferSize = setLimit(ejs, obj, "stageBuffer", 1);
+        limits->uriSize = setLimit(ejs, obj, "uri", 1);
+        limits->headerCount = setLimit(ejs, obj, "headers", 1);
+        limits->headerSize = setLimit(ejs, obj, "header", 1);
     }
 }
 

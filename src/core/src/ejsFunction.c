@@ -388,7 +388,7 @@ EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
         return NULL;
     }
     mprSetManager(code, manageCode);
-    code->codeLen = len;
+    code->codeLen = (int) len;
     code->module = module;
     code->debug = debug;
     memcpy(code->byteCode, byteCode, len);

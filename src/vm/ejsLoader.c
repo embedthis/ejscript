@@ -344,11 +344,11 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
     mp = &tmod;
     memset(&tmod, 0, sizeof(tmod));
     mp->file = file;
-    nameToken = ejsModuleReadNum(ejs, mp);
-    version   = ejsModuleReadNum(ejs, mp);
+    nameToken = ejsModuleReadInt(ejs, mp);
+    version   = ejsModuleReadInt(ejs, mp);
     checksum  = ejsModuleReadInt32(ejs, mp);
-    poolSize  = ejsModuleReadNum(ejs, mp);
-    poolCount = ejsModuleReadNum(ejs, mp);
+    poolSize  = ejsModuleReadInt(ejs, mp);
+    poolCount = ejsModuleReadInt(ejs, mp);
 
     if (mp->hasError || poolSize <= 0 || poolSize > EJS_MAX_POOL) {
         return 0;
@@ -415,9 +415,9 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     mprAssert(mp);
 
     name = ejsModuleReadConst(ejs, mp);
-    checksum  = ejsModuleReadNum(ejs, mp);
-    minVersion = ejsModuleReadNum(ejs, mp);
-    maxVersion = ejsModuleReadNum(ejs, mp);
+    checksum  = ejsModuleReadInt(ejs, mp);
+    minVersion = ejsModuleReadInt(ejs, mp);
+    maxVersion = ejsModuleReadInt(ejs, mp);
     
     if (mp->hasError) {
         return MPR_ERR_CANT_READ;
@@ -463,8 +463,8 @@ static int loadBlockSection(Ejs *ejs, EjsModule *mp)
 
     qname.space = ejsCreateStringFromAsc(ejs, EJS_BLOCK_NAMESPACE);
     qname.name = ejsModuleReadConst(ejs, mp);
-    slotNum = ejsModuleReadNum(ejs, mp);
-    numSlot = ejsModuleReadNum(ejs, mp);
+    slotNum = ejsModuleReadInt(ejs, mp);
+    numSlot = ejsModuleReadInt(ejs, mp);
 
     if (mp->hasError) {
         return MPR_ERR_CANT_READ;
@@ -518,12 +518,12 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     ifixup = 0;
     
     qname = ejsModuleReadName(ejs, mp);
-    attributes = ejsModuleReadNum(ejs, mp);
-    slotNum = ejsModuleReadNum(ejs, mp);
+    attributes = ejsModuleReadInt(ejs, mp);
+    slotNum = ejsModuleReadInt(ejs, mp);
     ejsModuleReadType(ejs, mp, &baseType, &fixup, &baseClassName, 0);
-    numTypeProp = ejsModuleReadNum(ejs, mp);
-    numInstanceProp = ejsModuleReadNum(ejs, mp);
-    numInterfaces = ejsModuleReadNum(ejs, mp);
+    numTypeProp = ejsModuleReadInt(ejs, mp);
+    numInstanceProp = ejsModuleReadInt(ejs, mp);
+    numInterfaces = ejsModuleReadInt(ejs, mp);
 
     if (mp->hasError) {
         return MPR_ERR_CANT_READ;
@@ -671,15 +671,15 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     strict = 0;
     qname = ejsModuleReadName(ejs, mp);
 
-    attributes = ejsModuleReadNum(ejs, mp);
+    attributes = ejsModuleReadInt(ejs, mp);
     strict = ejsModuleReadByte(ejs, mp);
     ejsModuleReadType(ejs, mp, &returnType, &fixup, &returnTypeName, 0);
-    slotNum = ejsModuleReadNum(ejs, mp);
-    numProp = ejsModuleReadNum(ejs, mp);
-    numArgs = ejsModuleReadNum(ejs, mp);
-    numDefault = ejsModuleReadNum(ejs, mp);
-    numExceptions = ejsModuleReadNum(ejs, mp);
-    codeLen = ejsModuleReadNum(ejs, mp);
+    slotNum = ejsModuleReadInt(ejs, mp);
+    numProp = ejsModuleReadInt(ejs, mp);
+    numArgs = ejsModuleReadInt(ejs, mp);
+    numDefault = ejsModuleReadInt(ejs, mp);
+    numExceptions = ejsModuleReadInt(ejs, mp);
+    codeLen = ejsModuleReadInt(ejs, mp);
     
     if (mp->hasError) {
         return MPR_ERR_CANT_READ;
@@ -856,12 +856,12 @@ static int loadExceptionSection(Ejs *ejs, EjsModule *mp)
 
     for (i = 0; i < code->numHandlers; i++) {
         flags        = ejsModuleReadByte(ejs, mp);
-        tryStart     = ejsModuleReadNum(ejs, mp);
-        tryEnd       = ejsModuleReadNum(ejs, mp);
-        handlerStart = ejsModuleReadNum(ejs, mp);
-        handlerEnd   = ejsModuleReadNum(ejs, mp);
-        numBlocks    = ejsModuleReadNum(ejs, mp);
-        numStack     = ejsModuleReadNum(ejs, mp);
+        tryStart     = ejsModuleReadInt(ejs, mp);
+        tryEnd       = ejsModuleReadInt(ejs, mp);
+        handlerStart = ejsModuleReadInt(ejs, mp);
+        handlerEnd   = ejsModuleReadInt(ejs, mp);
+        numBlocks    = ejsModuleReadInt(ejs, mp);
+        numStack     = ejsModuleReadInt(ejs, mp);
         ejsModuleReadType(ejs, mp, &catchType, &fixup, 0, 0);
         if (mp->hasError) {
             return MPR_ERR_CANT_READ;
@@ -894,8 +894,8 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     current = getCurrentBlock(mp);
     qname = ejsModuleReadName(ejs, mp);
     
-    attributes = ejsModuleReadNum(ejs, mp);
-    slotNum = ejsModuleReadNum(ejs, mp);
+    attributes = ejsModuleReadInt(ejs, mp);
+    slotNum = ejsModuleReadInt(ejs, mp);
     ejsModuleReadType(ejs, mp, &type, &fixup, &propTypeName, 0);
 
     /*
@@ -1534,7 +1534,7 @@ int ejsModuleReadType(Ejs *ejs, EjsModule *mp, EjsType **typeRef, EjsTypeFixup *
         typeName->name = 0;
         typeName->space = 0;
     }
-    t = ejsModuleReadNum(ejs, mp);
+    t = ejsModuleReadInt(ejs, mp);
     slot = -1;
     qname.name = 0;
     qname.space = 0;

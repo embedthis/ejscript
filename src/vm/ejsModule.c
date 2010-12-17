@@ -247,8 +247,7 @@ int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, ssize len)
 
 int ejsAddConstant(Ejs *ejs, EjsConstants *constants, cchar *str)
 {
-    ssize       len;
-    int         oldLen;
+    ssize       len, oldLen;
 
     if (constants->locked) {
         mprError("Constant pool for module is locked. Can't add constant \"%s\".",  str);
@@ -366,7 +365,8 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     EjsLine     *line;
     EjsCode     *code;
     MprOffset   prior;
-    int         i, size, length;
+    ssize       size;
+    int         i, length;
 
     mp = fun->body.code->module;
     code = fun->body.code;
@@ -387,7 +387,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
         mprAssert(0);
         return 0;
     }
-    length = ejsModuleReadNum(ejs, mp);
+    length = ejsModuleReadInt(ejs, mp);
     if (!mp->hasError) {
         size = sizeof(EjsDebug) + length * sizeof(EjsLine);
         if ((debug = mprAllocBlock(size, MPR_ALLOC_MANAGER)) != 0) {
@@ -396,7 +396,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
             debug->numLines = length;
             for (i = 0; i < debug->numLines; i++) {
                 line = &debug->lines[i];
-                line->offset = ejsModuleReadNum(ejs, mp);
+                line->offset = ejsModuleReadInt(ejs, mp);
                 line->source = ejsModuleReadMultiAsWide(ejs, mp);
             }
         }
@@ -420,14 +420,13 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
     EjsCode     *code;
     EjsDebug    *debug;
     MprChar     *str, *tok, *path, *line, *source;
-    uint        offset;
-    int         i;
+    int         i, offset;
 
     code = fun->body.code;
     if (code == 0) {
         return MPR_ERR_CANT_FIND;
     }
-    offset = (uint) (pc - code->byteCode) - 1;
+    offset = (int) (pc - code->byteCode) - 1;
     debug = code->debug;
     if (debug == 0) {
         if (code->debugOffset == 0) {
@@ -465,7 +464,7 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
         *pathp = wclone(path);
     }
     if (linep) {
-        *linep = wtoi(line, 10, NULL);
+        *linep = (int) wtoi(line, 10, NULL);
     }
     if (sourcep) {
         *sourcep = wclone(source);
@@ -669,7 +668,7 @@ EjsString *ejsModuleReadConst(Ejs *ejs, EjsModule *mp)
 {
     int     t;
 
-    t = ejsModuleReadNum(ejs, mp);
+    t = ejsModuleReadInt(ejs, mp);
     return ejsCreateStringFromConst(ejs, mp, t);
 }
 
@@ -703,7 +702,7 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
 
     mprAssert(mp);
 
-    len = ejsModuleReadNum(ejs, mp);
+    len = ejsModuleReadInt(ejs, mp);
     if (mp->hasError || (buf = mprAlloc(len)) == 0) {
         return NULL;
     }
@@ -730,6 +729,12 @@ MprChar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
     result = amtow(str, NULL);
     mprFree(str);
     return result;
+}
+
+
+int ejsModuleReadInt(Ejs *ejs, EjsModule *mp)
+{
+    return (int) ejsModuleReadNum(ejs, mp);
 }
 
 
@@ -777,9 +782,9 @@ EjsName ejsModuleReadName(Ejs *ejs, EjsModule *mp)
     EjsName     qname;
     int         t;
 
-    t = ejsModuleReadNum(ejs, mp);
+    t = ejsModuleReadInt(ejs, mp);
     qname.name = ejsCreateStringFromConst(ejs, mp, t);
-    t = ejsModuleReadNum(ejs, mp);
+    t = ejsModuleReadInt(ejs, mp);
     qname.space = ejsCreateStringFromConst(ejs, mp, t);
     return qname;
 }
@@ -814,7 +819,7 @@ int64 ejsSwapInt64(Ejs *ejs, int64 a)
     }
     low = a & 0xFFFFFFFF;
     high = (a >> 32) & 0xFFFFFFFF;
-    return  (double) ((low & 0xFF) << 24 | (low & 0xFF00 << 8) | (low & 0xFF0000 >> 8) | (low & 0xFF000000 >> 16) |
+    return (int64) ((low & 0xFF) << 24 | (low & 0xFF00 << 8) | (low & 0xFF0000 >> 8) | (low & 0xFF000000 >> 16) |
             ((high & 0xFF) << 24 | (high & 0xFF00 << 8) | (high & 0xFF0000 >> 8) | (high & 0xFF000000 >> 16)) << 32);
 }
 
@@ -830,7 +835,7 @@ double ejsSwapDouble(Ejs *ejs, double a)
         return a;
     }
     alias.d = a;
-    return ejsSwapInt64(ejs, alias.i);
+    return (double) ejsSwapInt64(ejs, alias.i);
 }
 
 

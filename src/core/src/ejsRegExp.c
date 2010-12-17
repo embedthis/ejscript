@@ -96,7 +96,7 @@ static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     EjsArray    *results;
     EjsString   *match, *str;
     int         matches[EJS_MAX_REGEX_MATCHES * 3];
-    int         start, len, i, count, index;
+    int         count, start, len, i, index;
 
     str = (EjsString*) argv[0];
     if (argc == 2) {
@@ -106,7 +106,7 @@ static EjsObj *regex_exec(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
     }
     rp->matched = 0;
     mprAssert(rp->compiled);
-    count = pcre_exec(rp->compiled, NULL, str->value, str->length, start, 0, matches, sizeof(matches) / sizeof(int));
+    count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, start, 0, matches, sizeof(matches) / sizeof(int));
     if (count < 0) {
         rp->endLastMatch = 0;
         return (EjsObj*) ejs->nullValue;
@@ -181,7 +181,7 @@ static EjsObj *regex_test(Ejs *ejs, EjsRegExp *rp, int argc, EjsObj **argv)
 
     str = (EjsString*) argv[0];
     mprAssert(rp->compiled);
-    count = pcre_exec(rp->compiled, NULL, str->value, str->length, rp->endLastMatch, 0, 0, 0);
+    count = pcre_exec(rp->compiled, NULL, str->value, (int) str->length, rp->endLastMatch, 0, 0, 0);
     if (count < 0) {
         rp->endLastMatch = 0;
         return (EjsObj*) ejs->falseValue;

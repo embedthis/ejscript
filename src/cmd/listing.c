@@ -284,7 +284,8 @@ static void lstDependency(EjsMod *mp, EjsModule *module, EjsModule *dependant)
 static void lstEndModule(EjsMod *mp, EjsModule *module)
 {
     char    *pp, *end;
-    int     i, size;
+    ssize   size;
+    int     i;
 
     mprAssert(mp);
 

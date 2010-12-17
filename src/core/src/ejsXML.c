@@ -19,8 +19,8 @@ static EjsObj *xml_parent(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv);
 
 static bool allDigitsForXml(EjsString *name);
 static bool deepCompare(EjsXML *lhs, EjsXML *rhs);
-static int readStringData(MprXml *xp, void *data, char *buf, int size);
-static int readFileData(MprXml *xp, void *data, char *buf, int size);
+static ssize readStringData(MprXml *xp, void *data, char *buf, ssize size);
+static ssize readFileData(MprXml *xp, void *data, char *buf, ssize size);
 
 /*********************************** Helpers **********************************/
 
@@ -759,7 +759,7 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     MprBuf      *buf;
     MprFile     *file;
     char        *filename;
-    int         bytes, len;
+    ssize       bytes, len;
 
     if (argc != 1 || !ejsIsString(ejs, argv[0])) {
         ejsThrowArgError(ejs, "Bad args. Usage: save(filename);");
@@ -780,14 +780,12 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
         mprFree(buf);
         return 0;
     }
-
     file = mprOpen(filename,  O_CREAT | O_TRUNC | O_WRONLY | O_TEXT, 0664);
     if (file == 0) {
         ejsThrowIOError(ejs, "Can't open: %s, %d", filename, mprGetOsError(ejs));
         mprFree(filename);
         return 0;
     }
-
     len = mprGetBufLength(buf);
     bytes = mprWrite(file, buf->start, len);
     if (bytes != len) {
@@ -977,7 +975,7 @@ int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *node)
 }
 
 
-static int readFileData(MprXml *xp, void *data, char *buf, int size)
+static ssize readFileData(MprXml *xp, void *data, char *buf, ssize size)
 {
     mprAssert(xp);
     mprAssert(data);
@@ -988,10 +986,10 @@ static int readFileData(MprXml *xp, void *data, char *buf, int size)
 }
 
 
-static int readStringData(MprXml *xp, void *data, char *buf, int size)
+static ssize readStringData(MprXml *xp, void *data, char *buf, ssize size)
 {
     EjsXmlState *parser;
-    int         rc, len;
+    ssize       len, rc;
 
     mprAssert(xp);
     mprAssert(buf);

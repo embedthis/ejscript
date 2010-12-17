@@ -669,8 +669,7 @@ static void genLogicalOp(EcCompiler *cp, EcNode *np)
         popStack(cp, 1);
         processNode(cp, np->right);
     }
-
-    rightLen = mprGetBufLength(rightCode->buf);
+    rightLen = (int) mprGetBufLength(rightCode->buf);
 
     /*
         Now copy the code to the output code buffer
@@ -687,7 +686,6 @@ static void genLogicalOp(EcCompiler *cp, EcNode *np)
         ecEncodeOpcode(cp, (doneIfTrue) ? EJS_OP_BRANCH_TRUE: EJS_OP_BRANCH_FALSE);
         ecEncodeInt32(cp, rightLen);
     }
-
     copyCodeBuffer(cp, state->code, rightCode);
     mprAssert(state == cp->state);
     LEAVE(cp);
@@ -1281,8 +1279,9 @@ static int injectCode(Ejs *ejs, EjsFunction *fun, EcCodeGen *extra)
     }
     old = fun->body.code;
     codeLen = (fun->body.code) ? old->codeLen : 0;
-    extraCodeLen = mprGetBufLength(extra->buf);
+    extraCodeLen = (int) mprGetBufLength(extra->buf);
     len = codeLen + extraCodeLen;
+
     if (extraCodeLen == 0 || len == 0) {
         return 0;
     }
@@ -1762,10 +1761,10 @@ static void genDo(EcCompiler *cp, EcNode *np)
      */
     condLen = bodyLen = 0;
     if (np->forLoop.condCode) {
-        condLen = mprGetBufLength(np->forLoop.condCode->buf);
+        condLen = (int) mprGetBufLength(np->forLoop.condCode->buf);
     }
     if (np->forLoop.bodyCode) {
-        bodyLen = mprGetBufLength(np->forLoop.bodyCode->buf);
+        bodyLen = (int) mprGetBufLength(np->forLoop.bodyCode->buf);
     }
 
     /*
@@ -1786,7 +1785,7 @@ static void genDo(EcCompiler *cp, EcNode *np)
     if (np->forLoop.cond) {
         pushStack(cp, 1);
     }
-    continueLabel = mprGetBufLength(cp->state->code->buf);
+    continueLabel = (int) mprGetBufLength(cp->state->code->buf);
 
     /*
         Add the body
@@ -1811,7 +1810,7 @@ static void genDo(EcCompiler *cp, EcNode *np)
         popStack(cp, 1);
     }
 
-    breakLabel = mprGetBufLength(cp->state->code->buf);
+    breakLabel = (int) mprGetBufLength(cp->state->code->buf);
     patchJumps(cp, EC_JUMP_BREAK, breakLabel);
     patchJumps(cp, EC_JUMP_CONTINUE, continueLabel);
 
@@ -1903,13 +1902,13 @@ static void genFor(EcCompiler *cp, EcNode *np)
     perLoopLen = condLen = bodyLen = 0;
 
     if (np->forLoop.condCode) {
-        condLen = mprGetBufLength(np->forLoop.condCode->buf);
+        condLen = (int) mprGetBufLength(np->forLoop.condCode->buf);
     }
     if (np->forLoop.bodyCode) {
-        bodyLen = mprGetBufLength(np->forLoop.bodyCode->buf);
+        bodyLen = (int) mprGetBufLength(np->forLoop.bodyCode->buf);
     }
     if (np->forLoop.perLoopCode) {
-        perLoopLen = mprGetBufLength(np->forLoop.perLoopCode->buf);
+        perLoopLen = (int) mprGetBufLength(np->forLoop.perLoopCode->buf);
     }
 
     /*
@@ -1964,7 +1963,7 @@ static void genFor(EcCompiler *cp, EcNode *np)
     if (np->forLoop.bodyCode) {
         copyCodeBuffer(cp, state->code, np->forLoop.bodyCode);
     }
-    continueLabel = mprGetBufLength(state->code->buf);
+    continueLabel = (int) mprGetBufLength(state->code->buf);
     if (np->forLoop.perLoopCode) {
         copyCodeBuffer(cp, state->code, np->forLoop.perLoopCode);
     }
@@ -1980,7 +1979,7 @@ static void genFor(EcCompiler *cp, EcNode *np)
         ecEncodeOpcode(cp, EJS_OP_GOTO);
         ecEncodeInt32(cp, -len);
     }
-    breakLabel = mprGetBufLength(state->code->buf);
+    breakLabel = (int) mprGetBufLength(state->code->buf);
     discardStackItems(cp, startMark);
 
     patchJumps(cp, EC_JUMP_BREAK, breakLabel);
@@ -2142,7 +2141,7 @@ static void genForIn(EcCompiler *cp, EcNode *np)
     }
 #endif
     discardStackItems(cp, startMark);
-    breakLabel = mprGetBufLength(state->code->buf);
+    breakLabel = (int) mprGetBufLength(state->code->buf);
 
     patchJumps(cp, EC_JUMP_BREAK, breakLabel);
     patchJumps(cp, EC_JUMP_CONTINUE, 0);
@@ -2209,7 +2208,7 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
     len = 4;
     for (next = firstDefault; next < count; next++) {
         if (buffers[next]) {
-            len = mprGetBufLength(buffers[next]->buf) + 4;
+            len = (int) mprGetBufLength(buffers[next]->buf) + 4;
             if (len >= 0x7f) {
                 needLongJump = 1;
                 break;
@@ -2236,7 +2235,7 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
         } else {
             ecEncodeByte(cp, len);
         }
-        len += mprGetBufLength(buffers[next]->buf);
+        len += (int) mprGetBufLength(buffers[next]->buf);
     }
     /*
         Add one more jump to jump over the entire jump table
@@ -2466,8 +2465,8 @@ static void genIf(EcCompiler *cp, EcNode *np)
         Calculate jump lengths. Then length will vary depending on if the jump at the end of the "then" block
         can jump over the "else" block with a short jump.
      */
-    elseLen = (np->tenary.elseCode) ? mprGetBufLength(np->tenary.elseCode->buf) : 0;
-    thenLen = mprGetBufLength(np->tenary.thenCode->buf);
+    elseLen = (np->tenary.elseCode) ? (int) mprGetBufLength(np->tenary.elseCode->buf) : 0;
+    thenLen = (int) mprGetBufLength(np->tenary.thenCode->buf);
     thenLen += (elseLen < 0x7f && cp->optimizeLevel > 0) ? 2 : 5;
 
     /*
@@ -3075,7 +3074,7 @@ static void genSwitch(EcCompiler *cp, EcNode *np)
     }
     popStack(cp, 1);
 
-    totalLen = mprGetBufLength(state->code->buf);
+    totalLen = (int) mprGetBufLength(state->code->buf);
     patchJumps(cp, EC_JUMP_BREAK, totalLen);
 
     /*
@@ -3750,7 +3749,7 @@ static EcCodeGen *allocCodeBuffer(EcCompiler *cp)
 
 static int getCodeLength(EcCompiler *cp, EcCodeGen *code)
 {
-    return mprGetBufLength(code->buf);
+    return (int) mprGetBufLength(code->buf);
 }
 
 
@@ -3774,7 +3773,7 @@ static void copyCodeBuffer(EcCompiler *cp, EcCodeGen *dest, EcCodeGen *src)
     /*
         Copy the code
      */
-    baseOffset = mprGetBufLength(dest->buf);
+    baseOffset = (int) mprGetBufLength(dest->buf);
     if (mprPutBlockToBuf(dest->buf, mprGetBufStart(src->buf), len) != len) {
         mprAssert(0);
         return;
@@ -3854,7 +3853,7 @@ static int flushModule(MprFile *file, EcCodeGen *code)
 {
     int         len;
 
-    len = mprGetBufLength(code->buf);
+    len = (int) mprGetBufLength(code->buf);
     if (len > 0) {
         if (mprWrite(file, mprGetBufStart(code->buf), len) != len) {
             return EJS_ERR;
@@ -3890,7 +3889,7 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
         LEAVE(cp);
         return;
     }
-    mprAssert(mprGetBufLength(mp->code->buf) > 0);
+    mprAssert((int) mprGetBufLength(mp->code->buf) > 0);
 
     if (cp->errorCount > 0) {
         LEAVE(cp);
@@ -3899,7 +3898,7 @@ static void createInitializer(EcCompiler *cp, EjsModule *mp)
     state->code = mp->code;
     cp->directiveState = state;
     code = cp->state->code;
-    len = mprGetBufLength(code->buf);
+    len = (int) mprGetBufLength(code->buf);
     mprAssert(len > 0);
     ecEncodeOpcode(cp, EJS_OP_END_CODE);
 
@@ -4044,7 +4043,7 @@ static void addDebug(EcCompiler *cp, EcNode *np)
     if (source[0] == '}' && source[1] == 0) {
         return;
     }
-    offset = mprGetBufLength(code->buf);
+    offset = (int) mprGetBufLength(code->buf);
     source = mfmt("%s|%d|%w", np->loc.filename, np->loc.lineNumber, np->loc.source);
     addDebugLine(cp, code, offset, source);
     code->lastLineNumber = np->loc.lineNumber;
@@ -4519,7 +4518,7 @@ static void setFunctionCode(EcCompiler *cp, EjsFunction *fun, EcCodeGen *code)
     EjsEx       *ex;
     int         next, len;
 
-    len = mprGetBufLength(code->buf);
+    len = (int) mprGetBufLength(code->buf);
     mprAssert(len >= 0);
     if (len > 0) {
         ejsSetFunctionCode(cp->ejs, fun, cp->state->currentModule, (uchar*) mprGetBufStart(code->buf), len, code->debug);
