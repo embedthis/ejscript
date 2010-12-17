@@ -39,7 +39,7 @@ static void pushScope(EjsModule *mp, EjsBlock *block, EjsObj *obj);
 static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion);
 static int  trimModule(Ejs *ejs, char *name);
 
-#if !BLD_FEATURE_STATIC
+#if !BLD_STATIC
 static int  loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *path);
 #endif
 
@@ -118,7 +118,7 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
             for a backing DSO.
          */
         if ((nativeModule = ejsLookupNativeModule(ejs, mp->name)) == 0) {
-#if !BLD_FEATURE_STATIC
+#if !BLD_STATIC
             loadNativeLibrary(ejs, mp, mp->path);
             nativeModule = ejsLookupNativeModule(ejs, mp->name);
 #endif
@@ -696,7 +696,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     mprAssert(numArgs >= 0 && numArgs < EJS_MAX_ARGS);
     mprAssert(numExceptions >= 0 && numExceptions < EJS_MAX_EXCEPTIONS);
 
-    mprLog(9, "Loading function %N at slot %d", qname, slotNum);
+    mprLog(9, "Loading function %N at slot %d", &qname, slotNum);
 
     /*
         Read the code
@@ -912,7 +912,7 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
         /*  Only doing for namespaces currently */
         value = (EjsObj*) ejsCreateNamespace(ejs, str);
     }
-    mprLog(9, "Loading property %N at slot %d", qname, slotNum);
+    mprLog(9, "Loading property %N at slot %d", &qname, slotNum);
 
     if (attributes & EJS_PROP_NATIVE) {
         mp->hasNative = 1;
@@ -979,7 +979,7 @@ static int loadDocSection(Ejs *ejs, EjsModule *mp)
 }
 
 
-#if !BLD_FEATURE_STATIC
+#if !BLD_STATIC
 /*
     Check if a native module exists at the given path. If so, load it. If the path is a scripted module
     but has a corresponding native module, then load that. Return 1 if loaded, -1 for errors, 0 if no

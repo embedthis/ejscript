@@ -29,8 +29,8 @@
 
 /***************************** Forward Declarations ***************************/
 
-static void     addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, size_t len);
-static void     addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, size_t len);
+static void     addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, ssize len);
+static void     addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, ssize len);
 static void     addTokenToLiteral(EcCompiler *cp, EcNode *np);
 static void     appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNode *value);
 static EcNode   *appendNode(EcNode *top, EcNode *np);
@@ -45,7 +45,7 @@ static EcNode   *createNode(EcCompiler *cp, int kind, EjsString *name);
 static void     dummy(int junk);
 static EcNode   *expected(EcCompiler *cp, cchar *str);
 static int      getToken(EcCompiler *cp);
-static inline EjsString *tokenString(EcCompiler *cp);
+static EjsString *tokenString(EcCompiler *cp);
 static EcNode   *insertNode(EcNode *top, EcNode *np, int pos);
 static EcNode   *linkNode(EcNode *np, EcNode *node);
 static EcNode   *parseAnnotatableDirective(EcCompiler *cp, EcNode *attributes);
@@ -9940,7 +9940,7 @@ static void addTokenToLiteral(EcCompiler *cp, EcNode *np)
 }
 
 
-static void addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, size_t count)
+static void addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, ssize count)
 {
     MprBuf      *buf;
 
@@ -9952,7 +9952,7 @@ static void addCharsToLiteral(EcCompiler *cp, EcNode *np, MprChar *str, size_t c
 }
 
 
-static void addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, size_t count)
+static void addAscToLiteral(EcCompiler *cp, EcNode *np, cchar *str, ssize count)
 {
     MprBuf      *buf;
     MprChar     c;
@@ -10028,7 +10028,7 @@ void ecSetCertFile(EcCompiler *cp, cchar *certFile)
 }
 
 
-static inline EjsString *tokenString(EcCompiler *cp)
+static EjsString *tokenString(EcCompiler *cp)
 {
     if (cp->token) {
         return ejsCreateString(cp->ejs, cp->token->text, cp->token->length);

@@ -3,8 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libhttp"
-    ProjectGUID="91d8c562-9134-4639-bc02-2b745e3aa090
-"
+    ProjectGUID="9f58b6d7-6e3d-4655-a0fe-8c62212af9f1"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -66,7 +65,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -137,7 +136,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -163,8 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{307f8af5-54ee-4e7b-a710-970cdf8c51eb
-}"
+            UniqueIdentifier="{3f2d7e82-343d-4633-a029-4eeda4a430b5}"
             >
             <File
                 RelativePath="..\..\..\buildConfig.h"
@@ -182,8 +180,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{ef7a01f1-2646-4cd8-98dd-02537d626d80
-}"
+            UniqueIdentifier="{c9d5d664-3b38-445d-997a-6ec38e966569}"
             >
             <File
                 RelativePath="..\..\..\src\deps\http\httpLib.c"

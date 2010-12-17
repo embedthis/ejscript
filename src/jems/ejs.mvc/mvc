@@ -912,13 +912,13 @@ print(e)
 
     function findTop(dir: Path) {
         do {
-            if (exists(dir.join("buildConfig.make"))) {
+            if (exists(dir.join("configure"))) {
                 return dir
             }
             prev = dir
             dir = dir.parent
         } while (!dir.same(prev))
-        throw "Can't find buildConfig.make in local source tree"
+        throw "Can't find configure in local source tree"
     }
 
     /*  

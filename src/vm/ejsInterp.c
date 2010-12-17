@@ -159,8 +159,8 @@ static void callProperty(Ejs *ejs, EjsAny *obj, int slotNum, EjsAny *thisObj, in
 static void checkExceptionHandlers(Ejs *ejs);
 static void createExceptionBlock(Ejs *ejs, EjsEx *ex, int flags);
 static EjsAny *evalBinaryExpr(Ejs *ejs, EjsAny *lhs, EjsOpCode opcode, EjsAny *rhs);
-static inline uint findEndException(Ejs *ejs);
-static inline EjsEx *findExceptionHandler(Ejs *ejs, int kind);
+static uint findEndException(Ejs *ejs);
+static EjsEx *findExceptionHandler(Ejs *ejs, int kind);
 static EjsName getNameArg(Ejs *ejs, EjsFrame *fp);
 static EjsAny *getNthBase(Ejs *ejs, EjsAny *obj, int nthBase);
 static EjsAny *getNthBaseFromBottom(Ejs *ejs, EjsAny *obj, int nthBase);
@@ -2710,7 +2710,7 @@ EjsAny *ejsRunFunctionBySlot(Ejs *ejs, EjsAny *thisObj, int slotNum, int argc, v
         fun = ejsGetProperty(ejs, TYPE(thisObj)->prototype, slotNum);
     }
     if (fun == 0) {
-        ejsThrowReferenceError(ejs, "Can't find function at slot %d in %N", slotNum, TYPE(thisObj)->qname);
+        ejsThrowReferenceError(ejs, "Can't find function at slot %d in %N", slotNum, &TYPE(thisObj)->qname);
         return 0;
     }
     return ejsRunFunction(ejs, fun, thisObj, argc, argv);
@@ -2986,7 +2986,7 @@ static bool manageExceptions(Ejs *ejs)
 }
 
 
-static inline EjsEx *findExceptionHandler(Ejs *ejs, int kind)
+static EjsEx *findExceptionHandler(Ejs *ejs, int kind)
 {
     EjsEx       *ex;
     EjsFrame    *fp;
@@ -3016,7 +3016,7 @@ static inline EjsEx *findExceptionHandler(Ejs *ejs, int kind)
 }
 
 
-static inline EjsEx *inHandler(Ejs *ejs, int kind)
+static EjsEx *inHandler(Ejs *ejs, int kind)
 {
     EjsEx       *ex;
     EjsFrame    *fp;
@@ -3045,7 +3045,7 @@ static inline EjsEx *inHandler(Ejs *ejs, int kind)
 /*
     Find the end of the last catch/finally handler.
  */
-static inline uint findEndException(Ejs *ejs)
+static uint findEndException(Ejs *ejs)
 {
     EjsFrame    *fp;
     EjsEx       *best, *ex;

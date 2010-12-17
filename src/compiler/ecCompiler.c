@@ -116,6 +116,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     EjsModule   *mp;
     MprList     *nodes;
     EjsBlock    *block;
+    EcLocation  loc;
     cchar       *ext;
     char        *msg;
     int         i, j, next, nextModule, lflags, rc, frozen;
@@ -156,7 +157,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             lflags = cp->strict ? EJS_LOADER_STRICT : 0;
             if ((rc = ejsLoadModule(cp->ejs, ejsCreateStringFromAsc(ejs, argv[i]), -1, -1, lflags)) < 0) {
                 msg = mprAsprintf("Error initializing module %s\n%s", argv[i], ejsGetErrorMsg(cp->ejs, 1));
-                EcLocation loc;
                 loc.filename = sclone(argv[i]);
                 if (rc == MPR_ERR_CANT_INITIALIZE) {
                     ecError(cp, "Error", &loc, msg);

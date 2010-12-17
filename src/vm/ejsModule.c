@@ -194,7 +194,7 @@ static void manageConstants(EjsConstants *cp, int flags)
 }
 
 
-EjsConstants *ejsCreateConstants(Ejs *ejs, int count, size_t size)
+EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size)
 {
     EjsConstants    *constants;
 
@@ -224,7 +224,7 @@ EjsConstants *ejsCreateConstants(Ejs *ejs, int count, size_t size)
 }
 
 
-int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, size_t len)
+int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, ssize len)
 {
     int     indexSize;
 
@@ -247,7 +247,7 @@ int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, size_t len)
 
 int ejsAddConstant(Ejs *ejs, EjsConstants *constants, cchar *str)
 {
-    size_t      len;
+    ssize       len;
     int         oldLen;
 
     if (constants->locked) {
@@ -300,7 +300,7 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
 EjsDebug *ejsCreateDebug(Ejs *ejs)
 {
     EjsDebug    *debug;
-    size_t      size;
+    ssize       size;
 
     size = sizeof(EjsDebug) + (EJS_DEBUG_INCR * sizeof(EjsLine));
     if ((debug = mprAllocBlock(size, MPR_ALLOC_MANAGER)) == 0) {
@@ -317,7 +317,7 @@ int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, MprChar *source)
 {
     EjsDebug    *debug;
     EjsLine     *line;
-    size_t      len;
+    ssize       len;
 
     mprAssert(debugp);
     

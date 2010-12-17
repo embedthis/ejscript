@@ -1315,7 +1315,7 @@ void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, int readPosition, int 
 }
 
 
-int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, int offset, char *data, size_t length)
+int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, int offset, char *data, ssize length)
 {
     int     i;
 

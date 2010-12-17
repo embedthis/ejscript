@@ -43,16 +43,18 @@ TARGETS			+= $(patsubst %,$(DEST)/%, ejsLib.c ejs.c ejsc.c ejsmod.c ejssql.c sql
 dist packageExtra:	prep $(TARGETS) $(DIST_VER) $(FLAT_VER) cleanup
 	
 prep:
-	@$(call log) "[Prepare]" "Package directories"
+	$(call log) "[Prepare]" "Package directories"
 	rm -fr $(STAGING) $(DIST_VER) $(DIST_PERM) $(FLAT_VER) $(FLAT_PERM)
 	mkdir -p $(REL_DIR) $(TDIR)/src/include/master $(TDIR)/src/deps/ejs $(TDIR)/doc/api $(TDIR)/doc/man
 
 $(INC_DEST)/ejs.h: $(EJS_HEADERS)
-	@dist $(EJS_HEADERS) $(EC_HEADERS) | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >$(INC_DEST)/ejs.h
-	@echo '#include "ejs.slots.h"' >>$(INC_DEST)/ejs.h
+	TITLE="$(BLD_NAME) Header" \
+	dist $(EJS_HEADERS) $(EC_HEADERS) | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >$(INC_DEST)/ejs.h
+	echo '#include "ejs.slots.h"' >>$(INC_DEST)/ejs.h
 
 $(INC_DEST)/ejs.slots.h: $(SLOT_HEADERS)
-	@dist $(SLOT_HEADERS) >$(INC_DEST)/ejs.slots.h
+	TITLE="$(BLD_NAME) Slot files" \
+	dist $(SLOT_HEADERS) >$(INC_DEST)/ejs.slots.h
 
 $(INC_DEST)/sqlite3.h: $(BLD_TOP)/src/include/sqlite3.h
 	cp $(BLD_TOP)/src/include/sqlite3.h $(INC_DEST)/sqlite3.h
@@ -60,6 +62,7 @@ $(INC_DEST)/sqlite3.h: $(BLD_TOP)/src/include/sqlite3.h
 $(DEST)/ejsLib.c: $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES)
 	echo '#define EJS_DEFINE_OPTABLE 1' >$(DEST)/ejsLib.c
 	echo '#include "ejs.h"' >>$(DEST)/ejsLib.c
+	TITLE="$BLD_NAME Library Source" \
 	dist $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES) $(EC_SOURCES) | \
         csplit -s -f tmpEjsLib. - '/#include.*ejsByteGoto.h/'
 	(cat tmpEjsLib.00 ; cat $(SRC)/include/ejsByteGoto.h ; \
@@ -67,28 +70,34 @@ $(DEST)/ejsLib.c: $(EJS_SOURCES) $(DB_SOURCES) $(WEB_SOURCES)
 		then tail +2 tmpEjsLib.01 ; \
 		else tail --lines=+2 tmpEjsLib.01 ; \
 	fi ) | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sqlConf' >>$(DEST)/ejsLib.c
-	@rm -f tmpEjsLib.*
+	rm -f tmpEjsLib.*
 
 $(DEST)/ejsc.c: $(EJS_HEADERS) $(EC_HEADERS) $(SRC)/cmd/ejsc.c
 	echo '#include "ejs.h"' >$(DEST)/ejsc.c
+	TITLE="$(BLD_NAME) Compiler Source" \
 	dist $(SRC)/cmd/ejsc.c | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sql' >>$(DEST)/ejsc.c
 
 $(DEST)/ejs.c: $(EJS_HEADERS) $(SRC)/cmd/ejs.c
 	echo '#include "ejs.h"' >$(DEST)/ejs.c
+	TITLE="$(BLD_NAME) Shell Source" \
 	dist $(SRC)/cmd/ejs.c | egrep -v '#inc.*ejs|#inc.*ec|#inc.*sql' >>$(DEST)/ejs.c
 
 $(DEST)/ejsmod.c: $(EJSMOD_HEADERS) $(EJSMOD_SOURCES)
 	echo '#include "ejs.h"' >$(DEST)/ejsmod.c
+	TITLE="$(BLD_NAME) Manager Source" \
 	dist $(EJSMOD_HEADERS) $(EJSMOD_SOURCES) | egrep -v '#include.*ejs|#include.*ec|#include.*sql' >>$(DEST)/ejsmod.c
 
 $(DEST)/ejssql.c: $(JEMS)/ejs.db.sqlite/src/ejssql.c
+	TITLE="$(BLD_NAME) SQLite Shell Source" \
 	dist $(SQLITE_HEADERS) $(SRC)//jems/ejs.db.sqlite/src/ejssql.c | \
 		egrep -v '#include.*ejs|#include.*sqlite3' >$(DEST)/ejssql.c
 
 $(DEST)/sqlite3.c: $(SQLITE_SOURCES) $(SQLITE_HEADERS)
+	TITLE="$(BLD_NAME) SQLite Library Source" \
 	dist $(SQLITE_HEADERS) $(SQLITE_SOURCES) | egrep -v '#include.*ejs|#include.*sqlite3' >$(DEST)/sqlite3.c
 
 $(DEST)/ejs.es: $(ES_SOURCES)
+	TITLE="$(BLD_NAME) Core Module" \
 	dist $(ES_SOURCES)  | egrep -v 'use strict' >$(DEST)/ejs.es
 
 $(DIST_VER):

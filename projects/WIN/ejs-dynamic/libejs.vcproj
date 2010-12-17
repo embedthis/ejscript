@@ -3,8 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libejs"
-    ProjectGUID="84d9897c-160f-457c-80a4-3e92350993fd
-"
+    ProjectGUID="edc6767d-5dbc-4efe-9783-d45daf25dce0"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -66,7 +65,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -137,7 +136,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -163,8 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{6ce84aaf-fb00-4509-8640-f98a6188d530
-}"
+            UniqueIdentifier="{76989437-6447-4b89-8072-67496118599b}"
             >
             <File
                 RelativePath="..\..\..\buildConfig.h"
@@ -290,8 +288,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{3bf8b711-1891-4857-af35-8730467d0e42
-}"
+            UniqueIdentifier="{dc7b6b82-2f80-47a2-ab12-9aa377810784}"
             >
             <File
                 RelativePath="..\..\..\src\core\src\ejsApp.c"
@@ -398,6 +395,10 @@
                 >
             </File>
             <File
+                RelativePath="..\..\..\src\core\src\ejsPot.c"
+                >
+            </File>
+            <File
                 RelativePath="..\..\..\src\core\src\ejsReflect.c"
                 >
             </File>
@@ -458,15 +459,11 @@
                 >
             </File>
             <File
-                RelativePath="..\..\..\src\vm\ejsGarbage.c"
+                RelativePath="..\..\..\src\vm\ejsHelper.c"
                 >
             </File>
             <File
                 RelativePath="..\..\..\src\vm\ejsInterp.c"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\vm\ejsList.c"
                 >
             </File>
             <File
@@ -486,10 +483,6 @@
                 >
             </File>
             <File
-                RelativePath="..\..\..\src\vm\ejsVar.c"
-                >
-            </File>
-            <File
                 RelativePath="..\..\..\src\compiler\ecAst.c"
                 >
             </File>
@@ -498,7 +491,7 @@
                 >
             </File>
             <File
-                RelativePath="..\..\..\src\compiler\ecCompile.c"
+                RelativePath="..\..\..\src\compiler\ecCompiler.c"
                 >
             </File>
             <File

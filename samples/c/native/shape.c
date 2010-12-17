@@ -23,7 +23,7 @@
     If you would like to use this sample in a static program, remove this test
     and manually invoke the SampleModuleInit function in your main program.
  */
-#if !BLD_FEATURE_STATIC
+#if !BLD_STATIC
 
 /*
     Indent so that genDepend won't warn first time when this file doesn't exist
@@ -494,7 +494,7 @@ int sample_Init(MprCtx ctx)
     return ejsAddNativeModule(ctx, "sample", configureSampleTypes, _ES_CHECKSUM_sample, EJS_MODULE_ETERNAL);
 }
 
-#endif /* !BLD_FEATURE_STATIC */
+#endif /* !BLD_STATIC */
 
 /*
     @copy   default

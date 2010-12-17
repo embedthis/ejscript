@@ -213,7 +213,8 @@ static EjsObj *sock_port(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 static EjsObj *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     EjsByteArray    *ba;
-    int             offset, count, nbytes;
+    ssize           nbytes;
+    int             offset, count;
 
     ba = (EjsByteArray*) argv[0];
     offset = (argc >= 1) ? ejsGetInt(ejs, argv[1]) : 0;
@@ -275,7 +276,8 @@ static EjsObj *sock_off(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 static int writeSocketData(Ejs *ejs, EjsSocket *sp)
 {
     EjsByteArray    *ba;
-    int             count, nbytes;
+    ssize           nbytes;
+    int             count;
 
     ba = sp->data;
     nbytes = 0;

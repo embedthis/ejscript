@@ -105,3 +105,4 @@ src/include/ejs*.slots.h
 bin/.kdbgrc.*
 */i386-wrs-vxworks
 out
+*.sdf

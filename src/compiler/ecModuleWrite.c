@@ -985,7 +985,7 @@ void ecEncodeMulti(EcCompiler *cp, cchar *str)
 void ecEncodeWideAsMulti(EcCompiler *cp, MprChar *str)
 {
     char    *mstr;
-    size_t  len;
+    ssize  len;
 
     mprAssert(cp);
 

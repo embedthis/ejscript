@@ -62,17 +62,10 @@
         <div class="contentLeft">
             <h1>The Configure Program</h1>
             <p>The <b>configure</b> program is used to tailor the software's configuration to suit your needs. It is
-            the master configuration tool and it will create the "buildConfig.*" configuration files.</p>
-            <p>There are three such files:</p>
-            <ul>
-                <li>buildConfig.make</li>
-                <li>buildConfig.sh</li>
-                <li>buildConfig.h</li>
-            </ul>
-            <p>The relevant file is included by make files, shell scripts and by C source files to control the build
-            process. They have however, basically the same contents &mdash; just in different formats. You should
-            <b>NOT</b> edit these files as it is very easy to introduce inconsistencies between the files that can be
-            very difficult to diagnose.</p>
+            the master configuration tool and it will create the "buildConfig.h" configuration file.</p>
+            <p>The universal configuration file is included by make files, shell scripts and by C source files to 
+            control the build process. You should <b>NOT</b> edit this file as it is very easy to introduce 
+            inconsistencies between the files that can be very difficult to diagnose.</p>
             <p>You may run configure with no options to accept the factory defaults &mdash; this is a good starting
             point. The <b>configure</b> program will begin with the default settings supplied in the
             "build/standard.default" file. Then it will apply the various options specified on the command line. You

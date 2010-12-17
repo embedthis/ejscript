@@ -21,8 +21,8 @@
 #
 #	To remove, use make uninstall-ITEM, where ITEM is a component above.
 
-include			build/make/Makefile.top
-include			build/make/Makefile.ejs
+include	    build/make/Makefile.top
+include		build/make/Makefile.ejs
 
 ifeq	($(BLD_CROSS),0)
 testExtra: 

@@ -240,7 +240,7 @@ typedef struct EjsString {
     struct EjsType   *type;
     struct EjsString *next;              /* Hash chain link when interning */
     struct EjsString *prev;
-    size_t           length;
+    ssize            length;
     MprChar          value[0];
 } EjsString;
 
@@ -1017,11 +1017,11 @@ extern int ejsBlendObject(Ejs *ejs, EjsObj *dest, EjsObj *src, int overwrite);
     @return A string object
     @ingroup EjsString
  */
-extern EjsString *ejsCreateString(Ejs *ejs, MprChar *value, size_t len);
+extern EjsString *ejsCreateString(Ejs *ejs, MprChar *value, ssize len);
 extern EjsString *ejsCreateStringFromConst(Ejs *ejs, struct EjsModule *mp, int index);
 extern EjsString *ejsCreateStringFromAsc(Ejs *ejs, cchar *value);
-extern EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, size_t len);
-extern EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, size_t len);
+extern EjsString *ejsCreateStringFromBytes(Ejs *ejs, cchar *value, ssize len);
+extern EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, ssize len);
 
 /** 
     Create an empty string object. This creates an uninitialized string object of the requrired size. Once initialized,
@@ -1031,10 +1031,10 @@ extern EjsString *ejsCreateStringFromMulti(Ejs *ejs, cchar *value, size_t len);
     @return A string object
     @ingroup EjsString
  */
-extern EjsString *ejsCreateBareString(Ejs *ejs, size_t len);
+extern EjsString *ejsCreateBareString(Ejs *ejs, ssize len);
 
 //  MOB DOC
-extern EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, size_t len);
+extern EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len);
 
 /** 
     Intern a string object. This stores the string in the internal string pool. This is required if the string was
@@ -1046,24 +1046,24 @@ extern EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, size_t le
     @ingroup EjsString
  */
 extern EjsString *ejsInternString(Ejs *ejs, EjsString *sp);
-extern EjsString *ejsInternMulti(struct Ejs *ejs, cchar *value, size_t len);
-extern EjsString *ejsInternAsc(struct Ejs *ejs, cchar *value, size_t len);
-extern EjsString *ejsInternWide(struct Ejs *ejs, MprChar *value, size_t len);
+extern EjsString *ejsInternMulti(struct Ejs *ejs, cchar *value, ssize len);
+extern EjsString *ejsInternAsc(struct Ejs *ejs, cchar *value, ssize len);
+extern EjsString *ejsInternWide(struct Ejs *ejs, MprChar *value, ssize len);
 extern void ejsManageIntern(Ejs *ejs, int flags);
 
 extern int       ejsAtoi(Ejs *ejs, EjsString *sp, int radix);
 extern EjsString *ejsCatString(Ejs *ejs, EjsString *dest, EjsString *src);
 extern EjsString *ejsCatStrings(Ejs *ejs, EjsString *src, ...);
-extern EjsString *ejsSubstring(Ejs *ejs, EjsString *src, size_t start, size_t len);
+extern EjsString *ejsSubstring(Ejs *ejs, EjsString *src, ssize start, ssize len);
 extern int       ejsCompareString(Ejs *ejs, EjsString *s1, EjsString *s2);
-extern int       ejsCompareSubstring(Ejs *ejs, EjsString *s1, EjsString *s2, size_t offset, size_t len);
+extern int       ejsCompareSubstring(Ejs *ejs, EjsString *s1, EjsString *s2, ssize offset, ssize len);
 extern EjsString *ejsToLower(Ejs *ejs, EjsString *sp);
 extern EjsString *ejsToUpper(Ejs *ejs, EjsString *sp);
-extern EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, size_t len);
+extern EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, ssize len);
 
 //  MIXED modes
 extern int       ejsCompareMulti(Ejs *ejs, EjsString *s1, cchar *s2);
-extern int       ejsCompareWide(Ejs *ejs, EjsString *s1, MprChar *s2, size_t len);
+extern int       ejsCompareWide(Ejs *ejs, EjsString *s1, MprChar *s2, ssize len);
 extern int       ejsContainsChar(Ejs *ejs, EjsString *sp, int charPat);
 extern int       ejsContainsMulti(Ejs *ejs, EjsString *sp, cchar *pat);
 extern int       ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat);
@@ -1273,8 +1273,8 @@ typedef struct EjsConstants {
     EjsString     **index;                  /**< Interned string index */
 } EjsConstants;
 
-extern EjsConstants *ejsCreateConstants(Ejs *ejs, int count, size_t size);
-extern int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, size_t size);
+extern EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size);
+extern int ejsGrowConstants(Ejs *ejs, EjsConstants *constants, ssize size);
 extern int ejsAddConstant(Ejs *ejs, EjsConstants *constants, cchar *str);
 
 #define EJS_DEBUG_INCR 16
@@ -1484,9 +1484,9 @@ extern EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep);
 extern int ejsDefineException(Ejs *ejs, struct EjsType *obj, int slot, uint tryOffset,
     uint tryLength, uint handlerOffset, uint handlerLength, int flags);
 extern void ejsOffsetExceptions(EjsFunction *mp, int offset);
-extern int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, struct EjsModule *module, cuchar *byteCode, size_t len, 
+extern int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, struct EjsModule *module, cuchar *byteCode, ssize len, 
     EjsDebug *debug);
-extern EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, struct EjsModule *module, cuchar *byteCode, size_t len, 
+extern EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, struct EjsModule *module, cuchar *byteCode, ssize len, 
     EjsDebug *debug);
 extern void ejsManageFunction(EjsFunction *fun, int flags);
 extern void ejsShowOpFrequency(Ejs *ejs);
@@ -1679,7 +1679,7 @@ extern void ejsSetByteArrayPositions(Ejs *ejs, EjsByteArray *ba, int readPositio
     @param length Length of the data to copy
     @return Zero if successful, otherwise a negative MPR error code.
  */
-extern int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, int offset, char *data, size_t length);
+extern int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, int offset, char *data, ssize length);
 
 extern void ejsResetByteArray(EjsByteArray *ba);
 extern int ejsGetByteArrayAvailable(EjsByteArray *ba);
@@ -2862,7 +2862,7 @@ extern void     ejsServiceEvents(Ejs *ejs, int timeout, int flags);
 extern void     ejsSetSqliteMemCtx(MprThreadLocal *tls);
 extern void     ejsSetSqliteTls(MprThreadLocal *tls);
 
-#if BLD_FEATURE_EJS_ALL_IN_ONE || BLD_FEATURE_STATIC
+#if BLD_FEATURE_EJS_ALL_IN_ONE || BLD_STATIC
 extern int      ejs_events_Init(Ejs *ejs);
 extern int      ejs_xml_Init(Ejs *ejs);
 extern int      ejs_io_Init(Ejs *ejs);

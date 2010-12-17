@@ -3,8 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="ejsc"
-    ProjectGUID="aa597d00-0add-4f46-8526-43d8cd689cb2
-"
+    ProjectGUID="0929ce4a-a7e9-4297-9787-99404c2c95d7"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -71,7 +70,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -146,7 +145,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -171,8 +170,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{4bf80bc2-6b2f-47b9-a8c6-889bd87021ec
-}"
+            UniqueIdentifier="{11546678-5144-4b10-a9e1-bc949e14aa3d}"
             >
             <File
                 RelativePath="..\..\..\buildConfig.h"
@@ -190,8 +188,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{2b817e94-d33e-44fc-b54d-483186714a3e
-}"
+            UniqueIdentifier="{66ac6375-176b-46a7-8bf1-8d8c8b5a893f}"
             >
             <File
                 RelativePath="..\..\..\src\cmd\ejsc.c"

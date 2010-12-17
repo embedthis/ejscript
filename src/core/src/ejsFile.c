@@ -682,7 +682,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     EjsObj          *vp;
     EjsString       *str;
     cchar           *buf;
-    size_t          len;
+    ssize          len;
     int             i, written;
 
     mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));

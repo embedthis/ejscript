@@ -10,7 +10,7 @@
 
 /*********************************** Forward **********************************/
 
-static int allocNotifier(int flags, size_t size);
+static int allocNotifier(int flags, ssize size);
 static int  configureEjs(Ejs *ejs);
 static int  defineTypes(Ejs *ejs);
 static void manageEjs(Ejs *ejs, int flags);
@@ -51,8 +51,10 @@ static void manageEjsService(EjsService *sp, int flags)
         mprLock(sp->mutex);
         mprMarkHash(sp->nativeModules);
         mprUnlock(sp->mutex);
+
     } else if (flags & MPR_MANAGE_FREE) {
         mprRemoveRoot(sp);
+        sp->mutex = NULL;
     }
 }
 
@@ -185,9 +187,11 @@ static void manageEjs(Ejs *ejs, int flags)
         mprSetLogHandler(NULL, NULL);
 
         sp = ejs->service;
-        mprLock(sp->mutex);
-        mprRemoveItem(sp->vmlist, ejs);
-        mprUnlock(sp->mutex);
+        if (sp->mutex) {
+            lock(sp);
+            mprRemoveItem(sp->vmlist, ejs);
+            unlock(sp);
+        }
     }
 }
 
@@ -312,7 +316,7 @@ static int defineTypes(Ejs *ejs)
      */
     ejsAddNativeModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), configureEjs, _ES_CHECKSUM_ejs, 0);
 
-#if BLD_FEATURE_EJS_ALL_IN_ONE || BLD_FEATURE_STATIC
+#if BLD_FEATURE_EJS_ALL_IN_ONE || BLD_STATIC
 #if BLD_FEATURE_SQLITE
     ejs_db_sqlite_Init(ejs);
 #endif
@@ -423,7 +427,7 @@ void ejsSetSearchPath(Ejs *ejs, EjsArray *paths)
 EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 {
     EjsArray    *ap;
-    char        *dir, *next, *tok;
+    char        *relModDir, *dir, *next, *tok;
 
     ap = ejsCreateArray(ejs, 0);
 
@@ -437,6 +441,7 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
         mprFree(next);
         return (EjsArray*) ap;
     }
+    relModDir = 0;
 #if VXWORKS
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetCurrentPath(ejs)));
 #else
@@ -445,16 +450,12 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
         "." : APP_EXE_DIR/../modules : /usr/lib/ejs/1.0.0/modules
      */
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, "."));
-    char *relModDir;
     relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAppDir(ejs)));
 #ifdef BLD_MOD_NAME
-{
-    char *relModDir;
     relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
     mprFree(relModDir);
-}
 #endif
 #ifdef BLD_MOD_PREFIX
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_MOD_PREFIX));
@@ -907,7 +908,7 @@ int ejsFreeze(Ejs *ejs, int freeze)
     Global memory allocation handler. This is invoked when there is no notifier to handle an allocation failure.
     The interpreter has an allocNotifier (see ejsService: allocNotifier) and it will handle allocation errors.
  */
-static int allocNotifier(int flags, size_t size)
+static int allocNotifier(int flags, ssize size)
 {
     EjsService  *sp;
     Ejs         *ejs;

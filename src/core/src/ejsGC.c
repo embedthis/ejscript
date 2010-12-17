@@ -84,7 +84,9 @@ void ejsConfigureGCType(Ejs *ejs)
         return;
     }
     ejsBindAccess(ejs, type, ES_GC_enabled, (EjsProc) getEnable, (EjsProc) setEnable);
+#if ES_GC_newQuota
     ejsBindAccess(ejs, type, ES_GC_newQuota, (EjsProc) getWorkQuota, (EjsProc) setWorkQuota);
+#endif
     ejsBindMethod(ejs, type, ES_GC_run, (EjsProc) runGC);
 }
 

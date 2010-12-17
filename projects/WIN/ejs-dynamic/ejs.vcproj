@@ -3,8 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="ejs"
-    ProjectGUID="a0705ecc-d939-47c7-8cf2-7d1bbdafacf1
-"
+    ProjectGUID="022b56a2-abcf-4310-9931-0f4a74ff8b98"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -66,7 +65,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -136,7 +135,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -161,8 +160,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{daaa673f-5fd7-493a-8091-4a078d8ee924
-}"
+            UniqueIdentifier="{b2c1de6c-f0c2-460d-8c57-4b4db916b7e1}"
             >
             <File
                 RelativePath="..\..\..\buildConfig.h"
@@ -180,8 +178,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{a98e7a57-ef45-4d87-a2a4-d53de2afe288
-}"
+            UniqueIdentifier="{d5e44e7d-0d5c-45a5-9895-04c37b7308e4}"
             >
             <File
                 RelativePath="..\..\..\src\cmd\ejs.c"

@@ -1053,7 +1053,7 @@ void ecManageStream(EcStream *sp, int flags)
 }
 
 
-void *ecCreateStream(EcCompiler *cp, size_t size, cchar *path, void *manager)
+void *ecCreateStream(EcCompiler *cp, ssize size, cchar *path, void *manager)
 {
     EcLocation  *loc;
     EcStream    *sp;
@@ -1074,7 +1074,7 @@ void *ecCreateStream(EcCompiler *cp, size_t size, cchar *path, void *manager)
 }
 
 
-void ecSetStreamBuf(EcStream *sp, cchar *contents, size_t len)
+void ecSetStreamBuf(EcStream *sp, cchar *contents, ssize len)
 {
     MprChar     *buf;
 
@@ -1140,7 +1140,7 @@ int ecOpenFileStream(EcCompiler *cp, cchar *path)
 }
 
 
-int ecOpenMemoryStream(EcCompiler *cp, cchar *contents, size_t len)
+int ecOpenMemoryStream(EcCompiler *cp, cchar *contents, ssize len)
 {
     EcMemStream     *ms;
 
