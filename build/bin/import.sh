@@ -12,6 +12,7 @@
 IDIR=.import
 PP_ARGS=
 PROGRAM=${0}
+export PATH=out/bin:$PATH
 
 log() {
     tag=$1
@@ -121,6 +122,13 @@ syncFiles() {
 }
 
 
+function getabs() {
+    local dir=`pwd`
+    cd `dirname "$1"` >/dev/null
+    echo `pwd`/`basename "$1"`
+    cd $dir >/dev/null
+}
+
 #
 #   Main
 #
@@ -177,8 +185,12 @@ if [ "`git branch | grep master`" != "* master" ] ; then
     echo "Sync only in default branch" 
     echo 255 
 fi
-DIR=`getpath -a "."`
-ARCHIVE=`getpath -a "$1"`
+
+# DIR=`getpath -a "."`
+# ARCHIVE=`getpath -a "$1"`
+DIR=`pwd`
+
+ARCHIVE=`getabs "$1"`
 
 if [ ! -f "$ARCHIVE" ] ; then
     echo "Can't find $ARCHIVE"

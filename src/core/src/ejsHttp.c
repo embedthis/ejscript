@@ -339,8 +339,7 @@ static EjsObj *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         return 0;
     }
     str = (char*) ejsToMulti(ejs, argv[0]);
-    str = sclone(str);
-    slower(str);
+    str = slower(str);
     value = httpGetHeader(hp->conn, str);
     mprFree(str);
     if (value) {

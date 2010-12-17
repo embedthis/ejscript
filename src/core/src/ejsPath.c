@@ -800,7 +800,7 @@ static EjsObj *getPortablePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     lower = (argc >= 1 && argv[0] == (EjsObj*) ejs->trueValue);
     path = mprGetPortablePath(fp->value);
     if (lower) {
-        slower(path);
+        path = slower(path);
     }
     return (EjsObj*) ejsCreatePathFromAsc(ejs, path);
 }

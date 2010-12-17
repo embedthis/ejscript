@@ -121,7 +121,6 @@ MAIN(httpMain, int argc, char *argv[])
     while (!mprIsComplete()) {
         mprServiceEvents(NULL, -1, 0);
     }
-
     if (benchmark) {
         elapsed = (double) (mprGetTime(mpr) - start);
         if (fetchCount == 0) {
@@ -306,8 +305,7 @@ static bool parseArgs(Mpr *mpr, int argc, char **argv)
             if (nextArg >= argc) {
                 return 0;
             } else {
-                protocol = sclone(argv[++nextArg]);
-                supper(protocol);
+                protocol = supper(argv[++nextArg]);
             }
 
         } else if (strcmp(argp, "--put") == 0) {

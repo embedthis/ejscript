@@ -2050,8 +2050,7 @@ int httpConnect(HttpConn *conn, cchar *method, cchar *url)
     httpSetState(conn, HTTP_STATE_CONNECTED);
     conn->sentCredentials = 0;
 
-    method = tx->method = sclone(method);
-    supper(tx->method);
+    method = tx->method = supper(method);
     tx->parsedUri = httpCreateUri(url, 0);
 
     if (openConnection(conn, url) == 0) {
@@ -6710,7 +6709,7 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
     traced = traceRequest(conn, packet);
 
     method = getToken(conn, " ");
-    supper(method);
+    method = supper(method);
 
     switch (method[0]) {
     case 'D':
@@ -6780,8 +6779,7 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
         httpProtocolError(conn, HTTP_CODE_NOT_ACCEPTABLE, "Unsupported HTTP protocol");
     }
     rx->flags |= methodFlags;
-    rx->method = method;
-    supper(rx->method);
+    rx->method = supper(method);
 
     if (httpSetUri(conn, uri) < 0) {
         httpProtocolError(conn, HTTP_CODE_BAD_REQUEST, "Bad URL format");
@@ -6850,7 +6848,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
     HttpTx      *tx;
     HttpLimits  *limits;
     MprBuf      *content;
-    char        *key, *value, *tok, *tp;
+    char        *key, *value, *tok;
     cchar       *oldValue;
     int         len, count, keepAlive;
 
@@ -6875,7 +6873,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
         while (isspace((int) *value)) {
             value++;
         }
-        slower(key);
+        key = slower(key);
 
         LOG(8, "Key %s, value %s", key, value);
         if (strspn(key, "%<>/\\") > 0) {
@@ -7082,8 +7080,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
 
         case 't':
             if (strcmp(key, "transfer-encoding") == 0) {
-                slower(value);
-                if (strcmp(value, "chunked") == 0) {
+                if (scasecmp(value, "chunked") == 0) {
                     rx->flags |= HTTP_REC_CHUNKED;
                     /*  
                         This will be revised by the chunk filter as chunks are processed and will be set to zero when the
@@ -7116,13 +7113,11 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
 
         case 'w':
             if (strcmp(key, "www-authenticate") == 0) {
-                tp = value;
+                conn->authType = value = slower(value);
                 while (*value && !isspace((int) *value)) {
                     value++;
                 }
                 *value++ = '\0';
-                slower(tp);
-                conn->authType = sclone(slower(tp));
                 if (!parseAuthenticate(conn, value)) {
                     httpError(conn, HTTP_CODE_BAD_REQUEST, "Bad Authentication header");
                     break;
@@ -7633,7 +7628,7 @@ cchar *httpGetHeader(HttpConn *conn, cchar *key)
         mprAssert(conn->rx);
         return 0;
     }
-    return mprLookupHash(conn->rx->headers, slower(sclone(key)));
+    return mprLookupHash(conn->rx->headers, slower(key));
 }
 
 
@@ -10724,13 +10719,17 @@ HttpUri *httpCreateUri(cchar *uri, int complete)
             if (last_delim <= cp) {
                 up->ext = cp + 1;
 #if BLD_WIN_LIKE
-                slower(up->ext);
+                for (cp = up->ext; *cp; cp++) {
+                    *cp = (char) tolower((int) *cp);
+                }
 #endif
             }
         } else {
             up->ext = cp + 1;
 #if BLD_WIN_LIKE
-            slower(up->ext);
+            for (cp = up->ext; *cp; cp++) {
+                *cp = (char) tolower((int) *cp);
+            }
 #endif
         }
     }
@@ -10808,13 +10807,17 @@ HttpUri *httpCreateUriFromParts(cchar *scheme, cchar *host, int port, cchar *pat
             if (last_delim <= cp) {
                 up->ext = cp + 1;
 #if BLD_WIN_LIKE
-                slower(up->ext);
+                for (cp = up->ext; *cp; cp++) {
+                    *cp = (char) tolower((int) *cp);
+                }
 #endif
             }
         } else {
             up->ext = cp + 1;
 #if BLD_WIN_LIKE
-            slower(up->ext);
+            for (cp = up->ext; *cp; cp++) {
+                *cp = (char) tolower((int) *cp);
+            }
 #endif
         }
     }
@@ -10869,13 +10872,17 @@ HttpUri *httpCloneUri(HttpUri *base, int complete)
             if (last_delim <= cp) {
                 up->ext = cp + 1;
 #if BLD_WIN_LIKE
-                slower(up->ext);
+                for (cp = up->ext; *cp; cp++) {
+                    *cp = (char) tolower((int) *cp);
+                }
 #endif
             }
         } else {
             up->ext = cp + 1;
 #if BLD_WIN_LIKE
-            slower(up->ext);
+            for (cp = up->ext; *cp; cp++) {
+                *cp = (char) tolower((int) *cp);
+            }
 #endif
         }
     }
