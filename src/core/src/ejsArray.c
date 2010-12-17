@@ -127,7 +127,7 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
 static int deleteArrayPropertyByName(Ejs *ejs, EjsArray *ap, EjsName qname)
 {
     if (isdigit((int) qname.name->value[0])) {
-        return deleteArrayProperty(ejs, ap, wtoi(qname.name->value, 10, NULL));
+        return deleteArrayProperty(ejs, ap, (int) wtoi(qname.name->value, 10, NULL));
     }
     return (ejs->potHelpers.deletePropertyByName)(ejs, ap, qname);
 }
@@ -1468,7 +1468,7 @@ static EjsArray *unshiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 static int growArray(Ejs *ejs, EjsArray *ap, int len)
 {
     EjsObj      **dp;
-    int     i, size, count, factor;
+    int         i, size, count, factor;
 
     mprAssert(ap);
 
@@ -1478,7 +1478,7 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
     if (len <= ap->length) {
         return 0;
     }
-    size = mprGetBlockSize(ap->data) / sizeof(EjsObj*);
+    size = (int) (mprGetBlockSize(ap->data) / sizeof(EjsObj*));
 
     /*
         Allocate or grow the data structures.

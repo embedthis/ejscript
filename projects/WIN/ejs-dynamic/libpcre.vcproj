@@ -3,8 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libpcre"
-    ProjectGUID="1f747ebb-1225-47d5-a61e-bc838acaed06
-"
+    ProjectGUID="9d0c6622-c8bc-4ed0-8360-a674bc43291f"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -66,7 +65,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -137,7 +136,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -163,8 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{ff7070e6-acbb-411e-9d9a-0ea4f717f762
-}"
+            UniqueIdentifier="{4f030dfa-5107-4e23-a6d8-90b72077986c}"
             >
             <File
                 RelativePath="..\..\..\buildConfig.h"
@@ -182,8 +180,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{a9561a9e-01ca-447d-a28f-92ed6ec3ba0a
-}"
+            UniqueIdentifier="{5328cbf4-cee9-4f66-977c-16b2ce90ab21}"
             >
             <File
                 RelativePath="..\..\..\src\deps\pcre\pcre.c"

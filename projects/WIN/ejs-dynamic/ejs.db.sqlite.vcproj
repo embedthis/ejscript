@@ -3,8 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="ejs.db.sqlite"
-    ProjectGUID="cc25e5cc-9e1e-4935-a807-0f559a9fc7af
-"
+    ProjectGUID="ab98836d-8b0b-48f0-9a84-23279c7865e1"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -66,7 +65,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -137,7 +136,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -163,8 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{555f004c-c456-4a30-b485-099f05e157e3
-}"
+            UniqueIdentifier="{56caddca-440c-4221-b686-9a68942cc250}"
             >
             <File
                 RelativePath="..\..\..\buildConfig.h"
@@ -182,8 +180,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{3aabfdc8-1740-4487-a7ef-234f8f46659c
-}"
+            UniqueIdentifier="{f84506b6-73d1-45e9-a8bc-635cd46fb1a8}"
             >
             <File
                 RelativePath="..\..\..\src\jems\ejs.db.sqlite\src\ejsSqlite.c"

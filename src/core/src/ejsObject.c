@@ -146,7 +146,7 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             if ((type = ejsCreateArchetype(ejs, NULL, prototype)) == 0) {
                 return 0;
             }
-            ejsSetPropertyByName(ejs, prototype, qname, type);
+            ejsSetPropertyByName(ejs, prototype, EN("constructor"), type);
         }
     }
     obj = ejsCreate(ejs, type, 0);
@@ -195,7 +195,7 @@ static EjsObj *obj_defineProperty(Ejs *ejs, EjsObj *unused, int argc, EjsObj **a
     }
     if ((slotNum = ejsLookupProperty(ejs, obj, qname)) >= 0) {
         if (ejsPropertyHasTrait(ejs, obj, slotNum, EJS_TRAIT_FIXED)) {
-            ejsThrowTypeError(ejs, "Property \"%N\" is not configurable", qname);
+            ejsThrowTypeError(ejs, "Property \"%N\" is not configurable", &qname);
             return 0;
         }
     }

@@ -374,7 +374,7 @@ static void manageCode(EjsCode *code, int flags)
 }
 
 
-EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, size_t len, 
+EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, 
     EjsDebug *debug)
 {
     EjsCode     *code;
@@ -388,7 +388,7 @@ EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
         return NULL;
     }
     mprSetManager(code, manageCode);
-    code->codeLen = len;
+    code->codeLen = (int) len;
     code->module = module;
     code->debug = debug;
     memcpy(code->byteCode, byteCode, len);
@@ -399,7 +399,7 @@ EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
 /*
     Set the byte code for a script function
  */
-int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, size_t len, EjsDebug *debug)
+int ejsSetFunctionCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *byteCode, ssize len, EjsDebug *debug)
 {
     mprAssert(fun);
     mprAssert(byteCode);

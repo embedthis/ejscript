@@ -113,12 +113,12 @@
                 </li>
                 <li>
                     <h3>Run configure for the new target operating system.</h3>
-                    <p>When ready, run configure to generate the buildConfig.make, buildConfig.sh and buildConfig.h
+                    <p>When ready, run configure to generate the buildConfig.h, buildConfig.sh and buildConfig.h
                     master build files. For example:</p>
                     <pre>
 ./configure --disable-all --host=powerpc-wrs-vxworks
 </pre>
-                    <p>After running configure, check the output in build/buildConfig.make. If your system is UNIX like
+                    <p>After running configure, check the output in buildConfig.h. If your system is UNIX like
                     or windows like, you may need to edit the parseSystemConfiguration function in the configure script
                     and add a new definition for your O/S. This function controls the UNIX_LIKE and WIN_LIKE
                     defines.</p>

@@ -16,7 +16,7 @@ static EjsObj *getAllocatedMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) mem->bytesAllocated);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->bytesAllocated);
 }
 
 
@@ -46,7 +46,7 @@ static EjsObj *getMaxMemory(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) mem->maxMemory);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->maxMemory);
 }
 
 
@@ -73,7 +73,7 @@ static EjsObj *getRedline(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) mem->redLine);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->redLine);
 }
 
 
@@ -104,7 +104,7 @@ static EjsObj *getResident(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     MprMemStats    *mem;
 
     mem = mprGetMemStats(ejs);
-    return (EjsObj*) ejsCreateNumber(ejs, (int) mem->rss);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) mem->rss);
 }
 
 

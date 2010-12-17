@@ -3,8 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="ejsmod"
-    ProjectGUID="ed737368-ecec-4a73-b3a0-96694685e762
-"
+    ProjectGUID="c2f91681-237b-468f-bfc5-bb6303831831"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -66,7 +65,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -136,7 +135,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -161,8 +160,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{d8bc4613-5746-4569-9bbe-442e5db36ab1
-}"
+            UniqueIdentifier="{c57b2a8d-86ef-4d03-8a62-6e7652951187}"
             >
             <File
                 RelativePath="..\..\..\buildConfig.h"
@@ -180,8 +178,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{969154c3-9d75-4a66-b03c-673d8540b9ab
-}"
+            UniqueIdentifier="{b1143b9a-81cf-4319-8af7-64ab347a246b}"
             >
             <File
                 RelativePath="..\..\..\src\cmd\ejsmod.c"

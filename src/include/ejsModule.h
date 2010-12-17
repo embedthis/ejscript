@@ -326,6 +326,7 @@ extern int          ejsSetModuleConstants(Ejs *ejs, EjsModule *mp, EjsConstants 
 extern void         ejsModuleReadBlock(Ejs *ejs, EjsModule *module, char *buf, int len);
 extern int          ejsModuleReadByte(Ejs *ejs, EjsModule *module);
 extern EjsString    *ejsModuleReadConst(Ejs *ejs, EjsModule *module);
+extern int          ejsModuleReadInt(Ejs *ejs, EjsModule *module);
 extern int          ejsModuleReadInt32(Ejs *ejs, EjsModule *module);
 extern EjsName      ejsModuleReadName(Ejs *ejs, EjsModule *module);
 extern int64        ejsModuleReadNum(Ejs *ejs, EjsModule *module);

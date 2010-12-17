@@ -3,8 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libmprssl"
-    ProjectGUID="aebbb835-69cb-4617-82af-5f9585d927ec
-"
+    ProjectGUID="e5cf64ab-2917-4980-afb4-cbf956ead18e"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -66,7 +65,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -137,7 +136,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../..;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -163,8 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{fee4d51d-87b0-497d-b679-a1d54b05cc44
-}"
+            UniqueIdentifier="{721664d8-2cfd-47e5-90a3-a6d9e2fc3574}"
             >
             <File
                 RelativePath="..\..\..\buildConfig.h"
@@ -182,8 +180,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{5500e9af-e626-4d55-9386-f93582f024f0
-}"
+            UniqueIdentifier="{af9dacb3-789c-49f9-ab2f-ec41e359f5c7}"
             >
             <File
                 RelativePath="..\..\..\src\deps\mpr\mprSsl.c"

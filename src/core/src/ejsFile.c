@@ -25,7 +25,7 @@
 static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv);
 static int mapMode(cchar *mode);
 static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv);
-static int readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, int offset, int count);
+static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssize count);
 
 #if BLD_CC_MMU && FUTURE
 static void *mapFile(EjsFile *fp, uint size, int mode);
@@ -481,7 +481,7 @@ static EjsObj *readFileBytes(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     EjsByteArray    *result;
     MprPath         info;
-    int             count, totalRead;
+    ssize           count, totalRead;
 
     if (argc == 0) {
         count = -1;
@@ -536,7 +536,8 @@ static EjsObj *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     EjsString       *result;
     MprPath         info;
-    int             count, totalRead;
+    ssize           totalRead;
+    int             count;
 
     if (argc == 0) {
         count = -1;
@@ -587,7 +588,7 @@ static EjsObj *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     EjsByteArray    *buffer;
     MprPath         info;
-    int             count, offset, totalRead;
+    ssize           offset, count, totalRead;
 
     mprAssert(1 <= argc && argc <= 3);
 
@@ -629,7 +630,7 @@ static EjsObj *readFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         return (EjsObj*) ejs->zeroValue;
     }
     ejsSetByteArrayPositions(ejs, buffer, -1, offset + totalRead);
-    return (EjsObj*) ejsCreateNumber(ejs, totalRead);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) totalRead);
 }
 
 
@@ -682,8 +683,8 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     EjsObj          *vp;
     EjsString       *str;
     cchar           *buf;
-    size_t          len;
-    int             i, written;
+    ssize           len, written;
+    int             i;
 
     mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
@@ -722,7 +723,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         written += len;
         /* Use GC to free buf as it may not be allocated */
     }
-    return (EjsObj*) ejsCreateNumber(ejs, written);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) written);
 }
 
 
@@ -731,9 +732,9 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 /*  
     Read the specified count of bytes into the byte array. Grow the array if required and growable
  */
-static int readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, int offset, int count)
+static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssize count)
 {
-    int     len, bytes;
+    ssize   len, bytes;
 
     if (count <= 0) {
         return 0;

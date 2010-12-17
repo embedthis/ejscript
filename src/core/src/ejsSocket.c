@@ -213,7 +213,7 @@ static EjsObj *sock_port(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 static EjsObj *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     EjsByteArray    *ba;
-    int             offset, count, nbytes;
+    ssize           nbytes, offset, count;
 
     ba = (EjsByteArray*) argv[0];
     offset = (argc >= 1) ? ejsGetInt(ejs, argv[1]) : 0;
@@ -249,7 +249,7 @@ static EjsObj *sock_read(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     ba->writePosition += nbytes;
     sp->mask |= MPR_READABLE;
     enableSocketEvents(sp, socketIOEvent);
-    return (EjsObj*) ejsCreateNumber(ejs, nbytes);
+    return (EjsObj*) ejsCreateNumber(ejs, (int) nbytes);
 }
 
 
@@ -272,10 +272,10 @@ static EjsObj *sock_off(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 }
 
 
-static int writeSocketData(Ejs *ejs, EjsSocket *sp)
+static ssize writeSocketData(Ejs *ejs, EjsSocket *sp)
 {
     EjsByteArray    *ba;
-    int             count, nbytes;
+    ssize           nbytes, count;
 
     ba = sp->data;
     nbytes = 0;
@@ -311,7 +311,7 @@ static int writeSocketData(Ejs *ejs, EjsSocket *sp)
  */
 static EjsNumber *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
-    int     nbytes;
+    ssize     nbytes;
 
     if (sp->data) {
         ejsResetByteArray(sp->data);
@@ -328,7 +328,7 @@ static EjsNumber *sock_write(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
     if (sp->async) {
         enableSocketEvents(sp, socketIOEvent);
     }
-    return ejsCreateNumber(ejs, nbytes);
+    return ejsCreateNumber(ejs, (MprNumber) nbytes);
 }
 
 

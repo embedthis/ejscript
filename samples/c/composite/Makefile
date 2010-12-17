@@ -9,7 +9,7 @@ BUILD_CROSS		:= 0
 
 include 		.makedep
 
-ifeq			($(BLD_FEATURE_STATIC),0)
+ifeq			($(BLD_STATIC),0)
 compileFirst: 	sample.mod
 
 sample.mod: shape.es

@@ -545,7 +545,7 @@ int ejsInsertPotProperties(Ejs *ejs, EjsPot *obj, int incr, int offset)
 static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
 {
     EjsProperties   *props;
-    size_t          size;
+    ssize          size;
     int             factor, oldSize;
 
     mprAssert(obj);

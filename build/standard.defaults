@@ -9,7 +9,7 @@
 #	dynamically linked with the ability to load modules. 
 #
 #	These initial defaults are read by configure when first creating the
-#	configuration files: buildConfig.make, buildConfig.sh and buildConfig.h
+#	buildConfig.h configuration file.
 #
 ###############################################################################
 #
@@ -24,6 +24,7 @@ BLD_CHAR=char
 BLD_CLEAN_INSTALL=0						# Overwrite existing installations
 BLD_LICENSE=gpl
 BLD_COMMERCIAL=0
+BLD_STATIC=0
 
 #
 #
@@ -91,7 +92,3 @@ BLD_FEATURE_LEGACY_API=0
 #
 BLD_FEATURE_ROMFS=0
 
-#
-#   Only shared building supported
-#
-BLD_FEATURE_STATIC=0

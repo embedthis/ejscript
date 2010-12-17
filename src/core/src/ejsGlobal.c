@@ -49,15 +49,12 @@ static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 static EjsObj *g_breakpoint(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
 #if BLD_DEBUG && DEBUG_IDE
-#if BLD_HOST_CPU_ARCH == MPR_CPU_IX86 || BLD_HOST_CPU_ARCH == MPR_CPU_IX64
-#if WINCE
-    /* Do nothing */
-#elif BLD_WIN_LIKE
-    __asm { int 3 };
-#else
-    asm("int $03");
-#endif
-#endif
+	#if BLD_WIN_LIKE && !MPR_64_BIT
+        __asm { int 3 };
+    #elif (MACOSX || LINUX) && (BLD_HOST_CPU_ARCH == MPR_CPU_IX86 || BLD_HOST_CPU_ARCH == MPR_CPU_IX64)
+        asm("int $03");
+        /*  __asm__ __volatile__ ("int $03"); */
+    #endif
 #endif
     return 0;
 }
@@ -346,7 +343,8 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsString   *s;
     EjsObj      *args, *vp;
     cchar       *data;
-    int         i, count, rc;
+    ssize       rc;
+    int         i, count;
 
     mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
@@ -360,7 +358,7 @@ static EjsObj *g_printLine(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
                 return 0;
             }
             data = ejsToMulti(ejs, s);
-            rc = write(1, data, strlen(data));
+            rc = write(1, data, (int) strlen(data));
             if ((i+1) < count) {
                 rc = write(1, " ", 1);
             }

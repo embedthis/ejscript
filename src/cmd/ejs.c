@@ -500,7 +500,6 @@ static char *readline(cchar *msg)
 static int consoleGets(EcStream *stream)
 {
     char    prompt[MPR_MAX_STRING], *line, *cp;
-    int     len;
 
     if (stream->flags & EC_STREAM_EOL) {
         return 0;
@@ -514,9 +513,9 @@ static int consoleGets(EcStream *stream)
         return -1;
     }
     cp = strim(line, "\r\n", MPR_TRIM_BOTH);
-    ecSetStreamBuf(stream, cp, strlen(cp));
+    ecSetStreamBuf(stream, cp, slen(cp));
     stream->flags |= EC_STREAM_EOL;
-    return len;
+    return (int) slen(cp);
 }
 
 

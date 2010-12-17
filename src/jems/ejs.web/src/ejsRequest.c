@@ -141,7 +141,7 @@ static EjsObj *createFiles(Ejs *ejs, EjsRequest *req)
             ejsSetPropertyByName(ejs, file, EN("clientFilename"), ejsCreateStringFromAsc(ejs, up->clientFilename));
             ejsSetPropertyByName(ejs, file, EN("contentType"), ejsCreateStringFromAsc(ejs, up->contentType));
             ejsSetPropertyByName(ejs, file, EN("name"), ejsCreateStringFromAsc(ejs, hp->key));
-            ejsSetPropertyByName(ejs, file, EN("size"), ejsCreateNumber(ejs, up->size));
+            ejsSetPropertyByName(ejs, file, EN("size"), ejsCreateNumber(ejs, (MprNumber) up->size));
             ejsSetPropertyByName(ejs, files, EN(hp->key), file);
         }
     }
@@ -411,7 +411,7 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         return mapNull(ejs, value);
 
     case ES_ejs_web_Request_contentLength:
-        return ejsCreateNumber(ejs, conn ? conn->rx->length : 0);
+        return ejsCreateNumber(ejs, conn ? (MprNumber) conn->rx->length : 0);
 
     case ES_ejs_web_Request_contentType:
         if (conn) {
@@ -1003,7 +1003,7 @@ static EjsObj *req_on(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 static EjsObj *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
     EjsByteArray    *ba;
-    int             offset, count, nbytes;
+    ssize           offset, count, nbytes;
 
     if (!connOk(ejs, req, 1)) return 0;
 
@@ -1037,7 +1037,7 @@ static EjsObj *req_read(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
         }
     }
     ba->writePosition += nbytes;
-    return (EjsObj*) ejsCreateNumber(ejs, nbytes);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) nbytes);
 }
 
 
@@ -1115,7 +1115,8 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     EjsByteArray    *ba;
     HttpQueue       *q;
     HttpConn        *conn;
-    int             err, len, written, i;
+    ssize           len, written;
+    int             err, i;
 
     if (!connOk(ejs, req, 1)) return 0;
 
@@ -1217,7 +1218,7 @@ static EjsObj *req_writeFile(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
  */
 static EjsObj *req_written(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, req->written);
+    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) req->written);
 }
 
 
