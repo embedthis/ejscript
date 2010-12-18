@@ -1271,7 +1271,7 @@ static EjsObj *split(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
 
     mprAssert(1 <= argc && argc <= 2);
 
-    limit = (argc == 2) ? ejsGetInt(ejs, argv[1]): MAXSIZE;
+    limit = (argc == 2) ? ejsGetInt(ejs, argv[1]): MAXSSIZE;
     results = ejsCreateArray(ejs, 0);
 
     if (ejsIsString(ejs, argv[0])) {
@@ -2392,7 +2392,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
     mprAssert(0 < len && len < MAXINT);
 
     ejs->intern.accesses++;
-    len = mtow(NULL, MAXSIZE, value, len);
+    len = mtow(NULL, MAXSSIZE, value, len);
     mprAssert(len < MAXINT);
 
     /*

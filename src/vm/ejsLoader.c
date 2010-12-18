@@ -161,7 +161,7 @@ static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion)
     mprAssert(filename && *filename);
 
     if ((path = ejsSearchForModule(ejs, filename, minVersion, maxVersion)) == 0) {
-        mprLog(2, "Can't find module file \"%s.mod\"", filename);
+        mprLog(2, "Can't find module file \"%s\"", filename);
         if (minVersion <= 0 && maxVersion <= 0) {
             ejsThrowReferenceError(ejs,  "Can't find module file \"%s\"", filename);
         } else if (minVersion == 0 && maxVersion == EJS_MAX_VERSION) {

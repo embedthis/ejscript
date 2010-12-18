@@ -44,6 +44,7 @@ module red 1 {
 
 assert(x == "GLOBAL")
 
+var red2
 module red 2 {
     var x = "RED-2"
     assert(x == "RED-2")
