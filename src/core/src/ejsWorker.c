@@ -44,6 +44,7 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     EjsNamespace    *ns;
     EjsName         sname;
     cchar           *name;
+    static int      workerSeqno = 0;
 
     ejsFreeze(ejs, 1);
     worker->ejs = ejs;
@@ -63,7 +64,9 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     if (name) {
         worker->name = sclone(name);
     } else {
-        worker->name = mprAsprintf("worker-%d", mprGetListCount(ejs->workers));
+        lock(ejs);
+        worker->name = mprAsprintf("worker-%d", workerSeqno++);
+        unlock(ejs);
     }
 
     /*

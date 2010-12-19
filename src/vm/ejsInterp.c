@@ -3825,7 +3825,7 @@ static void manageBreakpoint(Ejs *ejs)
     This code is only active when building in debug mode and debugging in an IDE
  */
 static int ejsOpCount = 0;
-static int doDebug = 0;
+static int doDebug = 1;
 
 static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
 {

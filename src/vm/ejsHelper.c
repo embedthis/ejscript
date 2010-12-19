@@ -29,7 +29,7 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
     mprAssert(type->manager);
     mprSetManager(vp, type->manager);
 #if UNUSED
-    //  MOB - OPT
+    //  MOB - Can't do this here as it would change the generation in frozen sections
     if (MPR->heap.requireGC) {
         ejsAttention(ejs);
     }

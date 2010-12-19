@@ -52,6 +52,7 @@ static void manageModule(EjsModule *mp, int flags)
         mprMark(mp->initializer);
         mprMark(mp->constants);
         mprMark(mp->doc);
+        mprMark(mp->scope);
         mprMark(mp->currentMethod);
         mprMarkList(mp->current);
 
@@ -283,11 +284,6 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
     if (value & 0x1) {
         str = &constants->pool[value >> 1];
         constants->index[index] = sp = ejsInternMulti(ejs, str, slen(str));
-#if UNUSED
-        //  MOB - can't do this because multiple modules may share the same string. So hold/release may release
-        //  when another modules still needs the string. Must mark all intern in ejsManageIntern.
-        mprHold(sp);
-#endif
     }
     mprAssert(constants->index[index]);
     return constants->index[index];

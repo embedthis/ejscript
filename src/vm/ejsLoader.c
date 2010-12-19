@@ -424,7 +424,7 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     }
     if (ejsLookupModule(ejs, name, minVersion, maxVersion) == 0) {
         saveCallback = ejs->loaderCallback;
-        nextModule = ejsGetLength(ejs, ejs->modules);
+        nextModule = mprGetListCount(ejs->modules);
         ejs->loaderCallback = NULL;
 
         mprLog(6, "    Load dependency section %@", name);

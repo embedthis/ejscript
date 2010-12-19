@@ -221,9 +221,6 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
             rp->options = parseFlags(rp, &flags[1]);
             *flags = 0;
         }
-        if (rp->compiled) {
-            free(rp->compiled);
-        }
         //  MOB - UNICODE is pattern meant to be 
         rp->compiled = pcre_compile2(rp->pattern, rp->options, &errCode, &errMsg, &column, NULL);
         if (rp->compiled == NULL) {

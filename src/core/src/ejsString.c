@@ -2531,6 +2531,7 @@ static void linkString(Ejs *ejs, EjsString *head, EjsString *sp)
     mprAssert(sp != head);
     mprAssert(sp->next == NULL);
     mprAssert(sp->prev == NULL);
+    mprAssert(sp->type);
 
     sp->next = head->next;
     sp->prev = head;
@@ -2651,11 +2652,18 @@ void ejsManageIntern(Ejs *ejs, int flags)
         }
 #endif
     } else if (flags & MPR_MANAGE_FREE) {
+        /*
+            MOB - Need to unlink strings now as when they are freed later, the intern structure may not exist in memory.
+         */
         for (i = intern->size - 1; i >= 0; i--) {
             head = &intern->buckets[i];
             for (sp = head->next; sp != head; sp = next) {
                 next = sp->next;
+#if UNUSED
                 mprFree(sp);
+#else
+                unlinkString(sp);
+#endif
             }
         }
     }

@@ -936,6 +936,8 @@ static EcNode *parseQualifiedNameIdentifier(EcCompiler *cp)
             getToken(cp);
             np = createNode(cp, N_QNAME, NULL);
             vp = ejsParse(cp->ejs, cp->token->text, -1);
+            //  MOB - cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
+            mprAssert(0);
             np->literal.var = vp;
             break;
 
@@ -943,6 +945,7 @@ static EcNode *parseQualifiedNameIdentifier(EcCompiler *cp)
             getToken(cp);
             np = createNode(cp, N_QNAME, NULL);
             vp = (EjsObj*) tokenString(cp);
+            //  MOB - cant set literal.var in a QNAME. clashes with "name" union structure. Not marked.
             np->literal.var = vp;
             break;
 

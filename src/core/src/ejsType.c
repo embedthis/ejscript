@@ -872,6 +872,8 @@ static void manageType(EjsType *type, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         ejsManageFunction(&type->constructor, flags);
+        mprMark(type->qname.name);
+        mprMark(type->qname.space);
         mprMark(type->prototype);
         mprMark(type->baseType);
         mprMarkList(type->implements);
