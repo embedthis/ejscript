@@ -96,7 +96,7 @@ EjsString *ejsFormatReservedNamespace(Ejs *ejs, EjsName *typeName, EjsString *sp
 
     if (typeName) {
         if (typeName->space && typeName->space == ejs->publicString) {
-            namespace = ejsSprintf(ejs, "[%N,%@]", typeName, spaceName);
+            namespace = ejsSprintf(ejs, "[%N,%@]", *typeName, spaceName);
         } else {
             namespace = ejsSprintf(ejs, "[%@,%@]", typeName->name, spaceName);
         }

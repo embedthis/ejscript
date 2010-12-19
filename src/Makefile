@@ -39,7 +39,7 @@ $(EJS_MOD): $(EJS_FILES)
 	$(call log) [Compile] "Core Ejs Classes"
 	rm -f *.mod *.slots.h
 	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) --out ejs.mod --bind --require "" $(EJS_FILES)
-	mv *.mod $(BLD_MOD_DIR)
+	cp *.mod $(BLD_MOD_DIR)
 	$(call log) [Generate] "Core listings and slot files"
 	$(BLD_BUILD_BIN_DIR)/ejsmod --showDebug --require "" $(LISTING) --cslots $(call mod, ejs)
 	changed=0 ; \

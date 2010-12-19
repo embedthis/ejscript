@@ -299,7 +299,7 @@ EjsType *ejsConfigureNativeType(Ejs *ejs, EjsName qname, int instanceSize, void 
     EjsType     *type;
 
     if ((type = ejsGetTypeByName(ejs, qname)) == 0) {
-        mprError("Can't find %N type", &qname);
+        mprError("Can't find %N type", qname);
         return 0;
     }
     type->instanceSize = instanceSize;

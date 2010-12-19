@@ -564,6 +564,9 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     if (slotNum < 0) {
         slotNum = ejsGetPropertyCount(ejs, ejs->global);
     }
+if (slotNum == 5) {
+         mprBreakpoint();
+}
     if (type == 0) {
         type = ejsCreateType(ejs, qname, mp, baseType, NULL, sizeof(EjsPot), slotNum, numTypeProp, numInstanceProp, 
             attributes);
@@ -696,7 +699,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
     mprAssert(numArgs >= 0 && numArgs < EJS_MAX_ARGS);
     mprAssert(numExceptions >= 0 && numExceptions < EJS_MAX_EXCEPTIONS);
 
-    mprLog(9, "Loading function %N at slot %d", &qname, slotNum);
+    mprLog(9, "Loading function %N at slot %d", qname, slotNum);
 
     /*
         Read the code
@@ -912,7 +915,7 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
         /*  Only doing for namespaces currently */
         value = (EjsObj*) ejsCreateNamespace(ejs, str);
     }
-    mprLog(9, "Loading property %N at slot %d", &qname, slotNum);
+    mprLog(9, "Loading property %N at slot %d", qname, slotNum);
 
     if (attributes & EJS_PROP_NATIVE) {
         mp->hasNative = 1;

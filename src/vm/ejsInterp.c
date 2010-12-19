@@ -2726,7 +2726,7 @@ EjsAny *ejsRunFunctionByName(Ejs *ejs, EjsAny *container, EjsName qname, EjsAny 
         thisObj = ejs->global;
     }
     if ((fun = ejsGetPropertyByName(ejs, container, qname)) == 0) {
-        ejsThrowReferenceError(ejs, "Can't find function %N", &qname);
+        ejsThrowReferenceError(ejs, "Can't find function %N", qname);
         return 0;
     }
     return ejsRunFunction(ejs, fun, thisObj, argc, argv);
