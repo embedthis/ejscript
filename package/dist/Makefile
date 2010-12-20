@@ -6,17 +6,13 @@
 
 include 		.makedep
 
-STAGING			:= $(PWD)/staging
-TDIR			:= $(STAGING)/ejs-$(BLD_VERSION)
+STAGE_DIR		:= $(BLD_OUT_DIR)/staging
 REL_DIR			:= $(BLD_OUT_DIR)/releases
+TDIR			:= $(STAGE_DIR)/ejs-$(BLD_VERSION)
 DIST_VER_NAME	:= ejs-$(BLD_VERSION)-dist.tgz
 DIST_PERM_NAME	:= ejs-dist.tgz
-DIST_VER		:= $(REL_DIR)/$(DIST_VER_NAME)
-DIST_PERM		:= $(REL_DIR)/$(DIST_PERM_NAME)
 FLAT_VER_NAME	:= ejs-$(BLD_VERSION)-flat.tgz
 FLAT_PERM_NAME	:= ejs-flat.tgz
-FLAT_VER		:= $(REL_DIR)/$(FLAT_VER_NAME)
-FLAT_PERM		:= $(REL_DIR)/$(FLAT_PERM_NAME)
 SRC				:= ../../src
 JEMS			:= $(SRC)/jems
 DEST			:= $(TDIR)/src/deps/ejs
@@ -31,7 +27,8 @@ EC_SOURCES		+= $(shell find $(SRC)/compiler -name '*.c')
 ES_SOURCES		+= $(shell find $(SRC)/core $(JEMS)/ejs.cjs \
 				    $(JEMS)/ejs.unix $(JEMS)/ejs.db $(JEMS)/ejs.db.mapper \
 					$(JEMS)/ejs.db.sqlite $(JEMS)/ejs.web $(JEMS)/ejs.template -name '*.es' | \
-					egrep -v 'SAVE|save|legacy|Archive|old|sample.es|XmlGlobal.es|ejsmvc.es|Jsdb.es|Mysql.es|ejspage.es|\/test\/') 
+					egrep -v 'SAVE|save|legacy|Archive|old|sample.es|XmlGlobal.es|ejsmvc.es' | \
+					egrep -v 'Jsdb.es|Mysql.es|ejspage.es|\/test\/') 
 EJSMOD_HEADERS	+= $(SRC)/cmd/ejsmod.h
 EJSMOD_SOURCES	+= $(patsubst %,$(SRC)/cmd/%.c, doc docFiles ejsmod listing slotGen)
 DB_SOURCES		+= $(JEMS)/ejs.db.sqlite/src/ejsSqlite.c
@@ -42,12 +39,11 @@ TARGETS			+= $(patsubst %,$(INC_DEST)/%, ejs.h sqlite3.h)
 TARGETS			+= $(patsubst %,$(MASTER)/%, ejs.slots.h)
 TARGETS			+= $(patsubst %,$(DEST)/%, ejsLib.c ejs.c ejsc.c ejsmod.c ejssql.c sqlite3.c ejs.es)
 
-dist packageExtra:	prep $(TARGETS) $(DIST_VER) $(FLAT_VER) cleanup
+dist packageExtra:	clean prep $(TARGETS) $(REL_DIR)/$(DIST_VER_NAME) $(REL_DIR)/$(FLAT_VER_NAME) cleanup
 	
 prep:
 	$(call log) "[Prepare]" "Package directories"
-	rm -fr $(STAGING) $(DIST_VER) $(DIST_PERM) $(FLAT_VER) $(FLAT_PERM)
-	mkdir -p $(REL_DIR) $(TDIR)/src/include/master $(TDIR)/src/deps/ejs $(TDIR)/doc/api $(TDIR)/doc/man
+	mkdir -p $(STAGE_DIR) $(REL_DIR) $(TDIR)/src/include/master $(TDIR)/src/deps/ejs $(TDIR)/doc/api $(TDIR)/doc/man
 
 $(INC_DEST)/ejs.h: $(EJS_HEADERS)
 	TITLE="$(BLD_NAME) Header" \
@@ -102,29 +98,30 @@ $(DEST)/ejs.es: $(ES_SOURCES)
 	TITLE="$(BLD_NAME) Core Module" \
 	dist $(ES_SOURCES)  | egrep -v 'use strict' >$(DEST)/ejs.es
 
-$(DIST_VER):
+$(REL_DIR)/$(DIST_VER_NAME):
 	cp $(BLD_TOP)/doc/api/ejsBare.html $(TDIR)/doc/api
 	cp $(BLD_TOP)/doc/man/*.1 $(TDIR)/doc/man
 	cp -r $(BLD_LIB_DIR)/www $(DEST)
 	cp Makefile.dist $(DEST)/Makefile
 	cp $(BLD_BIN_DIR)/*.cmd $(BLD_BIN_DIR)/jem $(BLD_BIN_DIR)/mvc $(DEST)
-	$(call log) "[Generate]" "tar cfz $(DIST_VER) -C $(STAGING) ."
-	tar cfz $(DIST_VER) -C $(STAGING) .
+	$(call log) "[Generate]" "tar cfz $(REL_DIR)/$(DIST_VER_NAME) -C $(STAGE_DIR) ."
+	tar cfz $(REL_DIR)/$(DIST_VER_NAME) -C $(STAGE_DIR) .
 	cd $(REL_DIR) ; ln -s $(DIST_VER_NAME) $(DIST_PERM_NAME)
 
-flat $(FLAT_VER):
+flat $(REL_DIR)/$(FLAT_VER_NAME):
 	mv $(TDIR)/src/deps/ejs/www $(TDIR)
 	find $(TDIR)/src -type f | xargs -I % mv % $(TDIR) 
 	cp $(SRC)/include/pcre.h $(SRC)/include/http.h $(SRC)/include/mpr.h $(SRC)/include/mprSsl.h $(TDIR) 
 	cp $(SRC)/deps/mpr/mprLib.c $(SRC)/deps/mpr/mprSsl.c $(TDIR)
 	cp $(SRC)/deps/http/httpLib.c $(SRC)/deps/pcre/pcre.c $(TDIR)
 	rm -fr $(TDIR)/doc $(TDIR)/src $(TDIR)/Makefile
-	$(call log) "[Generate]" "tar cfz $(FLAT_VER) -C $(STAGING) ."
-	tar cfz $(FLAT_VER) -C $(STAGING) .
-	cd $(REL_DIR) ; ln -s $(FLAT_VER_NAME) $(FLAT_PERM_NAME)
+	$(call log) "[Generate]" "tar cfz $(REL_DIR)/$(FLAT_VER_NAME) -C $(STAGE_DIR) ."
+	tar cfz $(REL_DIR)/$(FLAT_VER_NAME) -C $(STAGE_DIR) .
+	ln -s $(FLAT_VER_NAME) $(REL_DIR)/$(FLAT_PERM_NAME)
 
 cleanup:
-	rm -fr $(STAGING)
+	rm -fr $(STAGE_DIR)
 
 cleanExtra:
-	rm -fr $(STAGING) $(REL_DIR)/*.tgz
+	rm -fr $(STAGE_DIR) $(REL_DIR)/$(DIST_VER_NAME) $(REL_DIR)/$(DIST_PERM_NAME) 
+	rm -fr $(REL_DIR)/$(FLAT_VER_NAME) $(REL_DIR)/$(FLAT_PERM_NAME)
