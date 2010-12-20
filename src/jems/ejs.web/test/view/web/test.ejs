@@ -1,0 +1,106 @@
+
+<%
+
+/*
+
+    %@ view "embedthis.com::MyView" %
+
+    data = {
+        "Item 1": {
+            icon: "/uri/1.gif",
+            expanded: true,
+            children: {
+            }
+        }, 
+        "Item 2": {
+            icon: "/uri/2.gif",
+            //  OPTIONAL
+            uri: "/onclick",
+            expand: true,
+            style: "bold",
+            children: {
+            },
+        }
+    }
+    tree(data, {remote: "/get/more/data"})
+
+    grid = [ {name: "Jim", phone: 1234 } ]
+    table(grid, {click: "/abc/onclick", key: "name", showHeader: true, method: "POST"})
+    table(grid, {click: "abc", key: "name", showHeader: true, method: "POST"})
+    table(grid, {pivot: true})
+    table(grid, {domid: "myTable", remote: true, style: "live-table", key: "name", showHeader: true, pivot: true})
+
+    textarea("name", {value: null, click: true, uri: "/more"})
+    textarea("name", {value: "Some Message", refresh: "/more"})
+
+
+    text("name", {value: null, click: true, uri: "/more"})
+    text("name", {value: "Some Message", refresh: "/more"})
+
+
+    tabs({Overview: "pane-1", Edit: "pane-2"})
+    tabs({Overview: "pane-1", Edit: "pane-2"}, { click: true })
+    tabs({Overview: "pane-1", Edit: "pane-2"}, { remote: true, click: true })
+    tabs({Overview: { scheme: "https", host: "localhost", path: "/pane-1", Edit: "pane-2"}}, { click: true })
+
+    alert(null, { domid: "alert", refresh: "/getStatus", "period": 1000, xyz: 1234 })
+    alert("My message", { domid: "alert", refresh: "/getStatus", "period": 1000, xyz: 1234 })
+
+    securityToken()
+
+    script()
+    stylesheet()
+
+    record = {phone: 1234, name: "Peter", urgent: true, priority: 0}
+    form(record)
+    radio("priority", ["low", "med", "high"])
+    radio("priority", {low: 0, med: 1, high: 2})
+    radio("priority", [{low: 0}, {med: 0.5}, {high: 1.0}])
+    endform()
+
+    progress(23, { remote: "/getStatus" })
+
+    request.warn("Big warning")
+    request.error("Some text")
+    flash()
+    flash(["error", "warn"])
+
+    mail("Jim Smith", "jim@example.com")
+
+    list("priority", ["low", "med", "high"])
+    list("priority", [["3", "low"], ["5", "med"], ["9", "high"]])
+    list("priority", [{low: 3}, {med: 5}, {high: 9}])
+
+    link("hello world", {remote: true, uri: "http://example.com:7777/bing"}) 
+    link("hello world", {remote: "http://example.com:7777/bing"}) 
+    link("hello world", {click: true, uri: "http://example.com:7777/bing"}) 
+    link("hello world", {remote: true, uri: "http://example.com:7777/bing"}) 
+
+    form(record, {remote: true, uri: "/checkout"})
+        input("phone") 
+        input("name") 
+        input("urgent") 
+    endform()
+
+    image("pic.jpg", {"class": "blue"})
+    image("pic.jpg", {domid: "mob", click: true, uri: "http://example.com:7777/bing"}) 
+
+    form(null, {remote: true, uri: "/checkout"})
+    endform()
+
+    form(null, "/checkout")
+    endform()
+
+    form(null, {uri: "/checkout", method: "DELETE", id: 0})
+    endform()
+
+    checkbox("urgent", "MoveIt", {value: "MoveIt", xstyle: "bold"})
+    buttonLink("Hello World", "checkout")
+    button("submit", "OK")
+    label("hello world", {domid: "mob", click: true, uri: "http://example.com:7777/bing"}) 
+
+    var str = "<p>Para</p>"
+    %= str %
+    @@str
+*/
+%>
