@@ -2466,6 +2466,7 @@ static int rebuildIntern(Ejs *ejs)
 
     oldBuckets = ejs->intern.buckets;
     newSize = getInternHashSize(ejs->intern.count);
+    oldSize = 0;
     if (oldBuckets) {
         oldSize = ejs->intern.size;
         if (oldSize > newSize) {
@@ -2508,8 +2509,6 @@ static int rebuildIntern(Ejs *ejs)
         sp->next = sp->prev = sp;
     }
     if (oldBuckets) {
-        //  MOB -- remove
-        int oldCount = ejs->intern.count;
         ejs->intern.count = 0;
         for (i = 0; i < oldSize; i++) {
             head = &oldBuckets[i];
@@ -2520,7 +2519,6 @@ static int rebuildIntern(Ejs *ejs)
                 ejsInternString(ejs, sp);
             }
         }
-        mprAssert(oldCount >= ejs->intern.count);
     }
     return 0;
 }

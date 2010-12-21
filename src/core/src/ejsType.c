@@ -899,10 +899,10 @@ void ejsCreateTypeType(Ejs *ejs)
         helpers via objectType->type->helpers. So we set it to the Type type. We keep objectType->baseType == 0
         because Object has no base type. Similarly for the Type type.
      */
-    TYPE(&ejs->objectType->constructor) = ejs->typeType;
-    TYPE(&ejs->blockType->constructor) = ejs->typeType;
-    TYPE(&ejs->stringType->constructor) = ejs->typeType;
-    TYPE(&ejs->typeType->constructor) = ejs->objectType;
+    TYPE(ejs->objectType) = ejs->typeType;
+    TYPE(ejs->blockType) = ejs->typeType;
+    TYPE(ejs->stringType) = ejs->typeType;
+    TYPE(ejs->typeType) = ejs->objectType;
 }
 
 
