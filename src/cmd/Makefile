@@ -54,7 +54,7 @@ $(BLD_BIN_DIR)/ejsmod$(BLD_EXE): $(OBJECTS)
 	bld --exe $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) --search "$(BLD_EJS_LIBPATHS)" --libs "$(BLD_EJS_LIBS)" \
 		ejsmod doc docFiles listing slotGen
 
-docFiles.c: images/banner.jpg doc.css images/inherit.gif
+docFiles: images/banner.jpg doc.css images/inherit.gif
 	$(call setlibpath) ; makerom images/banner.jpg doc.css images/inherit.gif | \
 		sed 's/BLD_FEATURE_ROMFS/1/;s/mpr.h/ejsmod.h/;s/MprRomInode defaultRomFiles/DocFile docFiles/' >docFiles.c
 
