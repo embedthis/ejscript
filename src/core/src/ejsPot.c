@@ -289,7 +289,7 @@ int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
         return -1;
     }
     slots = props->slots;
-    if ((hash = props->hash) == 0) {
+    if ((hash = props->hash) == 0 || hash->size == 0) {
         /* No hash. Just do a linear search */
         if (qname.space) {
             for (slotNum = 0; slotNum < obj->numProp; slotNum++) {
