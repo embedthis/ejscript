@@ -4,8 +4,10 @@
      */
     request.dontAutoFinalize()
     Timer(5000, function () {
+print("INSIDE TIMER")
         try {
             request.finalize()
+print("AFTER FINALIZE TIMER")
         } catch {}
     }, request).start()
 %>

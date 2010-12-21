@@ -126,9 +126,6 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
         return 0;
     }
     mprEnableGC(save);
-#if UNUSED
-    mprCollectGarbage(MPR_GC_ALL);
-#endif
     return ejs;
 }
 
