@@ -553,7 +553,7 @@ static void catchSignal(int signo, siginfo_t *info, void *arg)
 
     mpr = mprGetMpr();
     if (mpr) {
-#if DEBUG_IDE
+#if DEBUG_IDE && 0
         if (signo == SIGINT) {
             return;
         }

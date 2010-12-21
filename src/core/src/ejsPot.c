@@ -285,7 +285,7 @@ int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
     mprAssert(qname.name);
     mprAssert(ejsIsPot(ejs, obj));
 
-    if ((props = obj->properties) == 0) {
+    if ((props = obj->properties) == 0 || obj->numProp == 0) {
         return -1;
     }
     slots = props->slots;
@@ -319,6 +319,8 @@ int ejsLookupPotProperty(struct Ejs *ejs, EjsPot *obj, EjsName qname)
             We assume that names rarely clash with different namespaces. We do this so variable lookup and do a one
             hash probe and find matching names. Lookup will then pick the right namespace.
          */
+        mprAssert(props->hash);
+        mprAssert(props->hash->size > 0);
         index = whash(qname.name->value, qname.name->length) % props->hash->size;
         if (qname.space) {
             mprAssert(hash->buckets);
@@ -791,7 +793,7 @@ int ejsGetHashSize(int numProp)
 {
     int     i;
 
-    for (i = 0; i < hashSizes[i]; i++) {
+    for (i = 0; hashSizes[i]; i++) {
         if (numProp < hashSizes[i]) {
             return hashSizes[i];
         }
@@ -882,6 +884,7 @@ int ejsMakeHash(Ejs *ejs, EjsPot *obj)
         }
         hash->buckets = (int*) (((char*) hash) + sizeof(EjsHash));
         hash->size = newHashSize;
+        mprAssert(newHashSize > 0);
         obj->properties->hash = hash;
     }
     hash = obj->properties->hash;

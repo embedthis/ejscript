@@ -108,7 +108,6 @@ static EjsObj *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     //  TODO -- should fire if currently readable / writable (also socket etc)
     ejsAddObserver(ejs, &sp->emitter, argv[0], argv[1]);
-    mprHold(sp->emitter);
     return 0;
 }
 
@@ -739,7 +738,6 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
             mprFree(sp->server);
             sp->server = 0;
         }
-        mprRelease(sp->emitter);
     }
 }
 
