@@ -236,7 +236,13 @@ module ejs {
         native function quote(): String
 
         /**
-            Remove characters from a string. Remove the elements from @start to @end inclusive. 
+            Remove characters from a string. Remove the elements from @start to Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=8 ts=8 expandtab
+
+    @end inclusive. 
             @param start Numeric index of the first element to remove. Negative indicies measure from the end of the string.
             -1 is the last character element.
             @param end Numeric index of one past the last element to remove
@@ -539,5 +545,11 @@ module ejs {
     for this software and support services are available from Embedthis 
     Software at http://www.embedthis.com 
     
+    Local variables:
+    tab-width: 4
+    c-basic-offset: 4
+    End:
+    vim: sw=8 ts=8 expandtab
+
     @end
  */
