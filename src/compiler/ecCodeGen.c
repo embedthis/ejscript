@@ -150,7 +150,7 @@ int ecCodeGen(EcCompiler *cp)
     if (ecEnterState(cp) < 0) {
         return EJS_ERR;
     }
-    count = mprGetListCount(cp->nodes);
+    count = mprGetListLength(cp->nodes);
     for (i = 0; i < count && !cp->error; i++) {
         np = mprGetItem(cp->nodes, i);
         cp->fileState = cp->state;
@@ -196,7 +196,7 @@ int ecCodeGen(EcCompiler *cp)
             Don't generate the default module unless it contains some real code or definitions and 
             we have more than one module.
          */
-        if (mprGetListCount(cp->modules) == 1 || mp->globalProperties || mp->hasInitializer || 
+        if (mprGetListLength(cp->modules) == 1 || mp->globalProperties || mp->hasInitializer || 
                 ejsCompareMulti(cp->ejs, mp->name, EJS_DEFAULT_MODULE) != 0) {
             mp->initialized = 0;
             processModule(cp, mp);
@@ -967,7 +967,7 @@ static int genCallArgs(EcCompiler *cp, EcNode *np)
         return 0;
     }
     processNode(cp, np);
-    return mprGetListCount(np->children);
+    return mprGetListLength(np->children);
 }
 
 
@@ -1510,7 +1510,7 @@ static void genDassign(EcCompiler *cp, EcNode *np)
 
     ENTER(cp);
 
-    count = mprGetListCount(np->children);
+    count = mprGetListLength(np->children);
     for (next = 0; (field = getNextNode(cp, np, &next)) != 0; ) {
         mprAssert(field->kind == N_FIELD);
         if (next < count) {
@@ -2013,7 +2013,7 @@ static void genForIn(EcCompiler *cp, EcNode *np)
     state->captureBreak = 0;
     iterVar = np->forInLoop.iterVar;
     iterGet = np->forInLoop.iterGet;
-    varCount = mprGetListCount(iterVar->children);
+    varCount = mprGetListLength(iterVar->children);
 
     ecStartBreakableStatement(cp, EC_JUMP_BREAK | EC_JUMP_CONTINUE);
     processNode(cp, iterVar);
@@ -2173,7 +2173,7 @@ static void genDefaultParameterCode(EcCompiler *cp, EcNode *np, EjsFunction *fun
     parameters = np->function.parameters;
     mprAssert(parameters);
 
-    count = mprGetListCount(parameters->children);
+    count = mprGetListLength(parameters->children);
     buffers = (EcCodeGen**) mprAllocZeroed(count * sizeof(EcCodeGen*));
 
     for (next = 0; (child = getNextNode(cp, parameters, &next)) && !cp->error; ) {
@@ -2899,7 +2899,7 @@ static void genSuper(EcCompiler *cp, EcNode *np)
     mprAssert(np->kind == N_SUPER);
 
     if (np->left) {
-        argc = mprGetListCount(np->left->children);
+        argc = mprGetListLength(np->left->children);
         if (argc > 0) {
             processNode(cp, np->left);
         }

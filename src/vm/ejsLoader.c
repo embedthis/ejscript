@@ -79,7 +79,7 @@ int ejsLoadModule(Ejs *ejs, EjsString *path, int minVersion, int maxVersion, int
         status = loadScriptModule(ejs, trimmedPath, minVersion, maxVersion, flags);
 #if UNUSED
         EjsModule  *mp;
-        nextModule = mprGetListCount(ejs->modules);
+        nextModule = mprGetListLength(ejs->modules);
         if ((status = loadScriptModule(ejs, trimmedPath, minVersion, maxVersion, flags)) == 0) {
             /*
                 Do fixups and run initializers when all dependent modules are loaded. Solves forward ref problem.
@@ -188,7 +188,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
 
     created = 0;
     mp = 0;
-    firstModule = mprGetListCount(ejs->modules);
+    firstModule = mprGetListLength(ejs->modules);
 
     while ((sectionType = mprGetc(file)) >= 0) {
         if (sectionType < 0 || sectionType >= EJS_SECT_MAX) {
@@ -396,7 +396,7 @@ static int loadEndModuleSection(Ejs *ejs, EjsModule *mp)
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_MODULE_END, mp);
     }
-    mprAssert(mprGetListCount(mp->current) == 1);
+    mprAssert(mprGetListLength(mp->current) == 1);
     mprFree(mp->current);
     mp->current = 0;
     mp->file = 0;
@@ -424,7 +424,7 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
     }
     if (ejsLookupModule(ejs, name, minVersion, maxVersion) == 0) {
         saveCallback = ejs->loaderCallback;
-        nextModule = mprGetListCount(ejs->modules);
+        nextModule = mprGetListLength(ejs->modules);
         ejs->loaderCallback = NULL;
 
         mprLog(6, "    Load dependency section %@", name);
@@ -1047,7 +1047,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
     }
     mprLog(5, "Loading module %s", path);
     mprEnableFileBuffering(file, 0, 0);
-    firstModule = mprGetListCount(ejs->modules);
+    firstModule = mprGetListLength(ejs->modules);
 
     /*
         Read module file header
@@ -1505,7 +1505,7 @@ static EjsLoadState *createLoadState(Ejs *ejs, int flags)
 
     ls = mprAllocObj(EjsLoadState, manageLoadState);
     ls->typeFixups = mprCreateList(ejs);
-    ls->firstModule = mprGetListCount(ejs->modules);
+    ls->firstModule = mprGetListLength(ejs->modules);
     ls->flags = flags;
     return ls;
 }

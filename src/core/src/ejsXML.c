@@ -74,7 +74,7 @@ static EjsObj *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
             if (xml->elements == 0) {
                 return (EjsObj*) ejs->emptyString;
             }
-            if (xml->elements && mprGetListCount(xml->elements) == 1) {
+            if (xml->elements && mprGetListLength(xml->elements) == 1) {
                 //  TODO - what about PI and comments?
                 item = mprGetFirstItem(xml->elements);
                 if (item->kind == EJS_XML_TEXT) {
@@ -160,7 +160,7 @@ static EjsObj *nextXmlKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         return 0;
     }
 
-    for (; ip->index < mprGetListCount(xml->elements); ip->index++) {
+    for (; ip->index < mprGetListLength(xml->elements); ip->index++) {
         return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);
@@ -193,7 +193,7 @@ static EjsObj *nextXmlValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         return 0;
     }
 
-    for (; ip->index < mprGetListCount(xml->elements); ip->index++) {
+    for (; ip->index < mprGetListLength(xml->elements); ip->index++) {
         vp = (EjsXML*) mprGetItem(xml->elements, ip->index);
         if (vp == 0) {
             continue;
@@ -219,7 +219,7 @@ static EjsObj *getXmlValues(Ejs *ejs, EjsObj *ap, int argc, EjsObj **argv)
 
 static int getXmlPropertyCount(Ejs *ejs, EjsXML *xml)
 {
-    return mprGetListCount(xml->elements);
+    return mprGetListLength(xml->elements);
 }
 
 
@@ -360,7 +360,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
             return last;
 
         } else {
-            index = mprGetListCount(xml->attributes);
+            index = mprGetListLength(xml->attributes);
         }
     }
     //  TODO - namespace work to do here
@@ -395,7 +395,7 @@ static EjsXML *createValueNode(Ejs *ejs, EjsXML *elt, EjsObj *value)
     if ((str = (EjsString*) ejsCast(ejs, value, ejs->stringType)) == NULL) {
         return 0;
     }
-    if (mprGetListCount(elt->elements) == 1) {
+    if (mprGetListLength(elt->elements) == 1) {
         /*
             Update an existing text element
          */
@@ -506,7 +506,7 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
         if (elt == 0) {
             return 0;
         }
-        index = mprGetListCount(xml->elements);
+        index = mprGetListLength(xml->elements);
         xml = ejsAppendToXML(ejs, xml, createValueNode(ejs, elt, value));
 
     } else {
@@ -542,11 +542,11 @@ static bool deepCompare(EjsXML *lhs, EjsXML *rhs)
     } else  if (lhs->qname.name != rhs->qname.name) {
         return 0;
 
-    } else if (mprGetListCount(lhs->attributes) != mprGetListCount(rhs->attributes)) {
+    } else if (mprGetListLength(lhs->attributes) != mprGetListLength(rhs->attributes)) {
         //  TODO - must compare all the attributes
         return 0;
 
-    } else if (mprGetListCount(lhs->elements) != mprGetListCount(rhs->elements)) {
+    } else if (mprGetListLength(lhs->elements) != mprGetListLength(rhs->elements)) {
         //  TODO - must compare all the children
         return 0;
 
@@ -554,7 +554,7 @@ static bool deepCompare(EjsXML *lhs, EjsXML *rhs)
         return 0;
 
     } else {
-        for (i = 0; i < mprGetListCount(lhs->elements); i++) {
+        for (i = 0; i < mprGetListLength(lhs->elements); i++) {
             l = mprGetItem(lhs->elements, i);
             r = mprGetItem(rhs->elements, i);
             if (! deepCompare(l, r)) {
@@ -853,7 +853,7 @@ static EjsObj *xmlToString(Ejs *ejs, EjsObj *obj, int argc, EjsObj **argv)
  */
 static EjsObj *xmlLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetListCount(xml->elements));
+    return (EjsObj*) ejsCreateNumber(ejs, mprGetListLength(xml->elements));
 }
 
 

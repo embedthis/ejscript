@@ -85,13 +85,13 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
 
     case ES_String:
         buf = mprCreateBuf(MPR_BUFSIZE, -1);
-        if (mprGetListCount(vp->elements) == 1) {
+        if (mprGetListLength(vp->elements) == 1) {
             elt = mprGetFirstItem(vp->elements);
             if (elt->kind == EJS_XML_ELEMENT) {
                 if (elt->elements == 0) {
                     return (EjsObj*) ejs->emptyString;
                 }
-                if (elt->elements && mprGetListCount(elt->elements) == 1) {
+                if (elt->elements && mprGetListLength(elt->elements) == 1) {
                     //  TODO - what about PI and comments?
                     item = mprGetFirstItem(elt->elements);
                     if (item->kind == EJS_XML_TEXT) {
@@ -158,7 +158,7 @@ static int deleteXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname)
 
 static int getXmlListPropertyCount(Ejs *ejs, EjsXML *list)
 {
-    return mprGetListCount(list->elements);
+    return mprGetListLength(list->elements);
 }
 
 
@@ -225,7 +225,7 @@ static EjsObj *nextXmlListKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv
         return 0;
     }
 
-    for (; ip->index < mprGetListCount(xml->elements); ip->index++) {
+    for (; ip->index < mprGetListLength(xml->elements); ip->index++) {
         return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);
@@ -258,7 +258,7 @@ static EjsObj *nextXmlListValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **ar
         return 0;
     }
 
-    for (; ip->index < mprGetListCount(xml->elements); ip->index++) {
+    for (; ip->index < mprGetListLength(xml->elements); ip->index++) {
         vp = (EjsXML*) mprGetItem(xml->elements, ip->index);
         if (vp == 0) {
             continue;
@@ -374,7 +374,7 @@ static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsNa
             If the target is a list it must have 1 element. So switch to it.
             TODO - could we get resolve to do this?
          */
-        if (mprGetListCount(targetObject->elements) != 1) {
+        if (mprGetListLength(targetObject->elements) != 1) {
             /* Spec says so - TODO why no error? */
             return 0;
         }
@@ -394,7 +394,7 @@ static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsNa
     if (list->targetProperty.name && list->targetProperty.name->value[0] == '@') {
         elt->kind = EJS_XML_ATTRIBUTE;
         attList = ejsGetPropertyByName(ejs, (EjsObj*) targetObject, list->targetProperty);
-        if (attList && mprGetListCount(attList->elements) > 0) {
+        if (attList && mprGetListLength(attList->elements) > 0) {
             /* Spec says so. But this surely means you can't update an attribute? */
             return 0;
         }
@@ -403,7 +403,7 @@ static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsNa
         elt->qname.name = 0;
     }
 
-    index = mprGetListCount(list->elements);
+    index = mprGetListLength(list->elements);
 
     if (elt->kind != EJS_XML_ATTRIBUTE) {
         if (targetObject) {
@@ -417,7 +417,7 @@ static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsNa
                 j = -1;
             } 
             if (j < 0) {
-                j = mprGetListCount(targetObject->elements) - 1;
+                j = mprGetListLength(targetObject->elements) - 1;
             }
             //  TODO - really need to wrap this ejsInsertXML(EjsXML *xml, int index, EjsXML *node)
             if (targetObject->elements == 0) {
@@ -475,7 +475,7 @@ static int updateElement(Ejs *ejs, EjsXML *list, EjsXML *elt, int index, EjsObj 
         if (elt->parent) {
             index = mprLookupItem(elt->parent->elements, elt);
             mprAssert(index >= 0);
-            for (j = 0; j < mprGetListCount(((EjsXML*) value)->elements); j++) {
+            for (j = 0; j < mprGetListLength(((EjsXML*) value)->elements); j++) {
                 mprInsertItemAtPos(elt->parent->elements, index, value);
             }
         }
@@ -528,7 +528,7 @@ static int setXmlListPropertyByName(Ejs *ejs, EjsXML *list, EjsName qname, EjsOb
         }
     }
     index = ejsAtoi(ejs, qname.name, 10);
-    if (index >= mprGetListCount(list->elements)) {
+    if (index >= mprGetListLength(list->elements)) {
         /*
             Create, then fall through to update
          */
@@ -613,7 +613,7 @@ static EjsXML *resolve(Ejs *ejs, EjsXML *xml)
         /* Resolved to an XML object */
         return xml;
     }
-    if (mprGetListCount(xml->elements) > 0) {
+    if (mprGetListLength(xml->elements) > 0) {
         /* Resolved to a list of items */
         return xml;
     }
@@ -736,7 +736,7 @@ static EjsObj *xmlListToString(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 
 static EjsObj *xlLength(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetListCount(xml->elements));
+    return (EjsObj*) ejsCreateNumber(ejs, mprGetListLength(xml->elements));
 }
 
 

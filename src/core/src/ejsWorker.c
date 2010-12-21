@@ -238,7 +238,7 @@ static int reapJoins(Ejs *ejs, EjsObj *workers)
 
     if (workers == 0 || workers == ejs->nullValue) {
         /* Join all */
-        count = mprGetListCount(ejs->workers);
+        count = mprGetListLength(ejs->workers);
         for (i = 0; i < count; i++) {
             worker = mprGetItem(ejs->workers, i);
             if (worker->state >= EJS_WORKER_COMPLETE) {

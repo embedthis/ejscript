@@ -89,7 +89,7 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
     mprAddItem(sp->vmlist, ejs);
     mprUnlock(sp->mutex);
 
-    ejs->empty = require && mprGetListCount(require) == 0;
+    ejs->empty = require && mprGetListLength(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
     ejs->argv = argv;

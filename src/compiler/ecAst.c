@@ -148,7 +148,7 @@ int ecAstProcess(EcCompiler *cp)
         /*
             Loop over each source file
          */
-        count = mprGetListCount(cp->nodes);
+        count = mprGetListLength(cp->nodes);
         for (i = 0; i < count && !cp->fatalError; i++) {
             /*
                 Looping through the input source files. A single top level node describes the source file.
@@ -598,7 +598,7 @@ static void validateClass(EcCompiler *cp, EcNode *np)
         }
     }
     if (type->implements) {
-        if (mprGetListCount(type->implements) > 1 || 
+        if (mprGetListLength(type->implements) > 1 || 
                 (type->baseType && ejsCompareMulti(ejs, type->baseType->qname.name, "Object") != 0)) {
             //  MOB -- fix. Should support multiple implements
             astError(cp, np, "Only one implements or one extends supported");
@@ -951,7 +951,7 @@ static EjsFunction *defineFunction(EcCompiler *cp, EcNode *np)
         }
     }
     parameters = np->function.parameters;
-    numArgs = (parameters) ? mprGetListCount(parameters->children) : 0;
+    numArgs = (parameters) ? mprGetListLength(parameters->children) : 0;
     
     if (np->function.resultType) {
         np->attributes |= np->function.resultType->attributes;

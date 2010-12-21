@@ -431,7 +431,7 @@ static int generateNamespaceClassTableEntries(EjsMod *mp, cchar *namespace)
             out(mp, "<td>&nbsp;</td></tr>\n");
         }
     }
-    count = mprGetListCount(classes);
+    count = mprGetListLength(classes);
     mprFree(classes);
     return count;
 }
@@ -934,7 +934,7 @@ static void generateClassPageHeader(EjsMod *mp, EjsObj *obj, EjsName qname, EjsT
         out(mp, "<p class='classBrief'>%s</p>\n\n", doc->brief);
         out(mp, "<p class='classDescription'>%s</p>\n\n", doc->description);
 
-        count = mprGetListCount(doc->see);
+        count = mprGetListLength(doc->see);
         if (count > 0) {
             out(mp, "<h3>See Also</h3><p class='detail'>\n");
             for (next = 0; (see = mprGetNextItem(doc->see, &next)) != 0; ) {
@@ -1605,7 +1605,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
             out(mp, "<dl><dt>Description</dt><dd>%s</dd></dl>\n", doc->description);
         }
 
-        count = mprGetListCount(doc->params);
+        count = mprGetListLength(doc->params);
         if (count > 0) {
             out(mp, "<dl><dt>Parameters</dt>\n");
             out(mp, "<dd><table class='parameters' summary ='parameters'>\n");
@@ -1640,7 +1640,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
             out(mp, "</dl>");
         }
 
-        count = mprGetListCount(doc->options);
+        count = mprGetListLength(doc->options);
         if (count > 0) {
             out(mp, "<dl><dt>Options</dt>\n");
             out(mp, "<dd><table class='parameters' summary ='options'>\n");
@@ -1652,7 +1652,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
             out(mp, "</dl>");
         }
         
-        count = mprGetListCount(doc->events);
+        count = mprGetListLength(doc->events);
         if (count > 0) {
             out(mp, "<dl><dt>Events</dt>\n");
             out(mp, "<dd><table class='parameters' summary ='events'>\n");
@@ -1667,7 +1667,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
         if (doc->returns) {
             out(mp, "<dl><dt>Returns</dt>\n<dd>%s</dd></dl>\n", doc->returns);
         }
-        count = mprGetListCount(doc->throws);
+        count = mprGetListLength(doc->throws);
         if (count > 0) {
             out(mp, "<dl><dt>Throws</dt><dd>\n");
             for (next = 0; (thrown = (MprKeyValue*) mprGetNextItem(doc->throws, &next)) != 0; ) {
@@ -1695,7 +1695,7 @@ static void generateMethod(EjsMod *mp, FunRec *fp)
         if (doc->example) {
             out(mp, "<dl><dt>Example</dt>\n<dd><pre>%s</pre></dd></dl>\n", doc->example);
         }
-        count = mprGetListCount(doc->see);
+        count = mprGetListLength(doc->see);
         if (count > 0) {
             out(mp, "<dl><dt>See Also</dt>\n<dd>\n");
             for (next = 0; (see = mprGetNextItem(doc->see, &next)) != 0; ) {

@@ -258,7 +258,7 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
         For each module on the command line
      */
     for (i = 0; i < argc && !mp->fatalError; i++) {
-        moduleCount = mprGetListCount(ejs->modules);
+        moduleCount = mprGetListLength(ejs->modules);
         ejs->userData = mp;
         if (!mprPathExists(argv[i], R_OK)) {
             mprError("Can't access module %s", argv[i]);
@@ -279,7 +279,7 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
             for (next = moduleCount; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
                 getDepends(ejs, depends, module);
             }
-            count = mprGetListCount(depends);
+            count = mprGetListLength(depends);
             for (next = 1; (module = mprGetNextItem(depends, &next)) != 0; ) {
                 int version = module->version;
                 mprPrintf("%@-%d.%d.%d%s", module->name, EJS_MAJOR(version), EJS_MINOR(version), EJS_PATCH(version),

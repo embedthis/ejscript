@@ -5701,7 +5701,7 @@ static EcNode *parseForStatement(EcCompiler *cp)
     if (initializer == 0 && cp->error) {
         return LEAVE(cp, 0);
     }
-    if (initializer && mprGetListCount(initializer->children) > 2) {
+    if (initializer && mprGetListLength(initializer->children) > 2) {
         return LEAVE(cp, parseError(cp, "Too many iteration variables"));
     }
     if (getToken(cp) == T_SEMICOLON) {
@@ -7679,7 +7679,7 @@ static EcNode *parseParameterInit(EcCompiler *cp, EcNode *args)
          */
         assignOp = createNode(cp, N_ASSIGN_OP, NULL);
         assignOp = appendNode(assignOp, np->left);
-        mprAssert(mprGetListCount(np->children) == 1);
+        mprAssert(mprGetListLength(np->children) == 1);
 
         mprRemoveItemAtPos(np->children, 0);
         assignOp = appendNode(assignOp, parseNonAssignmentExpression(cp));
@@ -9809,7 +9809,7 @@ static EcNode *insertNode(EcNode *np, EcNode *child, int pos)
     if (index < 0) {
         return 0;
     }
-    len = mprGetListCount(list);
+    len = mprGetListLength(list);
     if (len > 0) {
         np->left = (EcNode*) list->items[0];
     }

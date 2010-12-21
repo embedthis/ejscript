@@ -340,7 +340,7 @@ static EjsObj *nextPathKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
-    if (ip->index < mprGetListCount(fp->files)) {
+    if (ip->index < mprGetListLength(fp->files)) {
         return (EjsObj*) ejsCreateNumber(ejs, ip->index++);
     }
     ejsThrowStopIteration(ejs);
@@ -374,7 +374,7 @@ static EjsObj *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
         ejsThrowReferenceError(ejs, "Wrong type");
         return 0;
     }
-    if (ip->index < mprGetListCount(fp->files)) {
+    if (ip->index < mprGetListLength(fp->files)) {
         dp = (MprDirEntry*) mprGetItem(fp->files, ip->index++);
         return (EjsObj*) ejsCreatePathFromAsc(ejs, dp->name);
     }

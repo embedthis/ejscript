@@ -115,7 +115,7 @@ static void createDependencySection(EcCompiler *cp)
         If merging, don't need references to dependent modules as they are aggregated onto the output
      */
     if (mp->dependencies && !cp->merge) {
-        count = mprGetListCount(mp->dependencies);
+        count = mprGetListLength(mp->dependencies);
         for (i = 0; i < count; i++) {
             module = (EjsModule*) mprGetItem(mp->dependencies, i);
 
@@ -336,7 +336,7 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
     mprAssert(instanceTraits >= 0);
     ecEncodeNum(cp, instanceTraits);
     
-    interfaceCount = (type->implements) ? mprGetListCount(type->implements) : 00;
+    interfaceCount = (type->implements) ? mprGetListLength(type->implements) : 00;
     mprAssert(interfaceCount >= 0);
     ecEncodeNum(cp, interfaceCount);
 
