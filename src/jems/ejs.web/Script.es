@@ -29,7 +29,8 @@ module ejs.web {
     function ScriptBuilder(request: Request): Function {
         if (!request.filename.exists) {
             request.writeError(Http.NotFound, "Cannot find " + request.pathInfo) 
-            return null
+            /* Simple abort request */
+            throw true
         }
         try {
             return Loader.require(request.filename, request.config).app

@@ -14,7 +14,7 @@ server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
     Web.serve(request, router)
 })
-App.log.info("Listen on ", HTTP)
+App.log.info("Listen on", HTTP)
 server.listen(HTTP)
 
 //  Start secure server

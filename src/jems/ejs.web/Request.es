@@ -907,20 +907,22 @@ module ejs.web {
                 contains an exception backtrace.
          */
         function writeError(status: Number, ...msgs): Void {
-            this.status = status
-            let msg = msgs.join(" ").replace(/.*Error Exception: /, "")
-            let title = "Request Error for \"" + pathInfo + "\""
-            if (config.log.showClient) {
-                let text = "<pre>" + escapeHtml(msg) + "</pre>\r\n" +
-                    '<p>To prevent errors being displayed in the "browser, ' + 
-                    'set <b>log.showClient</b> to false in the ejsrc file.</p>\r\n'
-                try {
-                    setHeader("Content-Type", "text/html")
-                    write(errorBody(title, text))
-                } catch {}
+            if (!finalized) {
+                this.status = status
+                let msg = msgs.join(" ").replace(/.*Error Exception: /, "")
+                let title = "Request Error for \"" + pathInfo + "\""
+                if (config.log.showClient) {
+                    let text = "<pre>" + escapeHtml(msg) + "</pre>\r\n" +
+                        '<p>To prevent errors being displayed in the "browser, ' + 
+                        'set <b>log.showClient</b> to false in the ejsrc file.</p>\r\n'
+                    try {
+                        setHeader("Content-Type", "text/html")
+                        write(errorBody(title, text))
+                    } catch {}
+                }
+                finalize()
+                log.debug(1, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
             }
-            finalize()
-            log.debug(1, "Request error (" + status + ") for: \"" + uri + "\". " + msg)
         }
 
         /**

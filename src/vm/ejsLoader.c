@@ -564,9 +564,6 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     if (slotNum < 0) {
         slotNum = ejsGetPropertyCount(ejs, ejs->global);
     }
-if (slotNum == 5) {
-         mprBreakpoint();
-}
     if (type == 0) {
         type = ejsCreateType(ejs, qname, mp, baseType, NULL, sizeof(EjsPot), slotNum, numTypeProp, numInstanceProp, 
             attributes);

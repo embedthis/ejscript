@@ -279,7 +279,8 @@ module ejs {
         //  MOB -- Is this required to stop xh being GC'd
         private var xh: XMLHttp
 
-        /** @hide
+        /** 
+            @hide
             Fetch a URL. This is a convenience method to asynchronously invoke an Http method without waiting. 
             It can be useful to wait for completion using App.waitForEvent(http, "close"))
             @param method Http method. This is typically "GET" or "POST"

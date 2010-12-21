@@ -1446,6 +1446,12 @@ static void manageHttp(EjsHttp *http, int flags)
         mprMark(http->emitter);
         mprMark(http->data);
         mprMark(http->limits);
+        mprMark(http->requestContent);
+        mprMark(http->responseContent);
+        mprMark(http->uri);
+        mprMark(http->method);
+        mprMark(http->keyFile);
+        mprMark(http->certFile);
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (http->conn) {

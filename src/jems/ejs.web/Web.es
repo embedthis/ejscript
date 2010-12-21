@@ -208,6 +208,7 @@ module ejs.web {
                     request.setupFlash()
                 }
                 let response
+print("APP " + app)
                 if (app.bound != global) {
                     response = app(request)
                 } else {
