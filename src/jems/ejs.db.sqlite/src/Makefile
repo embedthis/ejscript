@@ -36,3 +36,11 @@ $(BLD_BIN_DIR)/ejssql$(BLD_EXE): $(BLD_LIB_DIR)/libsqlite3$(BLD_LIB)
 	bld --exe $(BLD_BIN_DIR)/ejssql$(BLD_EXE) --libs "$(BLD_MPR_LIBS)" ejssql sqlite3
 
 
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

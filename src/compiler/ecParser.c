@@ -1864,7 +1864,7 @@ static EcNode *parseComprehensionExpression(EcCompiler *cp, EcNode *literalEleme
 
     ENTER(cp);
     //  MOB
-	np = 0;
+    np = 0;
     return LEAVE(cp, np);
 }
 

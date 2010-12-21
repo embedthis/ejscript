@@ -20,3 +20,11 @@ $(BLD_BIN_DIR)/jem.cmd: jem.cmd
 	$(call log) "[Generate]" "jem.cmd"
 	cp jem.cmd $(BLD_BIN_DIR)/jem.cmd
 	chmod 755 $(BLD_BIN_DIR)/jem.cmd
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

@@ -18,3 +18,11 @@ $(BLD_LIB_DIR)/www: Makefile www/*
 
 cleanExtra:
 	rm -rf $(BLD_LIB_DIR)/www
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

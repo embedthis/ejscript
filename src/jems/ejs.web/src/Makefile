@@ -13,3 +13,11 @@ compileExtra:	$(TARGET)
 
 $(TARGET): $(OBJECTS) $(call lib, mpr) $(call vlib, ejs) $(call mod, ejs, ejs.web)
 	bld --library $(TARGET) --libs "ejs http $(BLD_SSL_LIBS) $(BLD_MPR_LIBS)" $(OBJECTS)
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

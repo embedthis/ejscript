@@ -82,3 +82,11 @@ cleanExtra:
 
 makeListForVs:
 	find . -name '*.es' | egrep -v test\/|sample\/|Tar.es|jem.es|ejsmvc|ejspage|sample|jsgi
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

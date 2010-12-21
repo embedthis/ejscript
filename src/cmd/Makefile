@@ -57,3 +57,11 @@ $(BLD_BIN_DIR)/ejsmod$(BLD_EXE): $(OBJECTS)
 docFiles.c: images/banner.jpg doc.css images/inherit.gif
 	$(call setlibpath) ; makerom images/banner.jpg doc.css images/inherit.gif | \
 		sed 's/BLD_FEATURE_ROMFS/1/;s/mpr.h/ejsmod.h/;s/MprRomInode defaultRomFiles/DocFile docFiles/' >docFiles.c
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

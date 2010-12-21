@@ -13,3 +13,11 @@ compileExtra:	$(TARGET)
 
 $(TARGET): $(OBJECTS) $(call lib, mpr) $(call vlib, ejs)
 	bld --library $(TARGET) --libs "ejs $(BLD_MPR_LIBS)" $(OBJECTS)
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

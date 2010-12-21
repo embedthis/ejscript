@@ -17,3 +17,11 @@ $(BLD_BIN_DIR)/ejscgi$(BLD_EXE): $(OBJECTS)
 		--modules "ejs.web$(BLD_SHOBJ)" $(BLD_OBJ_DIR)/ejsCgiHandler$(BLD_OBJ)
 
 
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

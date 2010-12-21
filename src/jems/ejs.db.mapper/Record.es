@@ -758,12 +758,12 @@ module ejs.db.mapper {
             if (col == undefined) {
                 return undefined
             }
-			if (value == undefined) {
-				throw new Error("Field \"" + field + "\" is undefined")
-			}
-			if (value == null) {
-				throw new Error("Field \"" + field + "\" is null")
-			}
+            if (value == undefined) {
+                throw new Error("Field \"" + field + "\" is undefined")
+            }
+            if (value == null) {
+                throw new Error("Field \"" + field + "\" is null")
+            }
             switch (col.ejsType) {
             case Boolean:
                 if (value is String) {

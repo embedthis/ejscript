@@ -231,30 +231,30 @@ static void markValues(Ejs *ejs)
     for (i = 0; i < EJS_MAX_SPECIAL; i++) {
         mprMark(ejs->values[i]);
     }
-	mprMark(ejs->commaProtString);
-	mprMark(ejs->ejsSpace);
-	mprMark(ejs->emptySpace);
-	mprMark(ejs->emptyString);
-	mprMark(ejs->falseValue);
-	mprMark(ejs->infinityValue);
-	mprMark(ejs->internalSpace);
-	mprMark(ejs->iterator);
-	mprMark(ejs->iteratorSpace);
-	mprMark(ejs->lengthString);
-	mprMark(ejs->maxValue);
-	mprMark(ejs->minValue);
-	mprMark(ejs->minusOneValue);
-	mprMark(ejs->nanValue);
-	mprMark(ejs->negativeInfinityValue);
-	mprMark(ejs->nopFunction);
-	mprMark(ejs->nullValue);
-	mprMark(ejs->oneValue);
-	mprMark(ejs->publicSpace);
-	mprMark(ejs->publicString);
-	mprMark(ejs->trueValue);
-	mprMark(ejs->undefinedValue);
-	mprMark(ejs->zeroValue);
-	mprMark(ejs->nopFunction);
+    mprMark(ejs->commaProtString);
+    mprMark(ejs->ejsSpace);
+    mprMark(ejs->emptySpace);
+    mprMark(ejs->emptyString);
+    mprMark(ejs->falseValue);
+    mprMark(ejs->infinityValue);
+    mprMark(ejs->internalSpace);
+    mprMark(ejs->iterator);
+    mprMark(ejs->iteratorSpace);
+    mprMark(ejs->lengthString);
+    mprMark(ejs->maxValue);
+    mprMark(ejs->minValue);
+    mprMark(ejs->minusOneValue);
+    mprMark(ejs->nanValue);
+    mprMark(ejs->negativeInfinityValue);
+    mprMark(ejs->nopFunction);
+    mprMark(ejs->nullValue);
+    mprMark(ejs->oneValue);
+    mprMark(ejs->publicSpace);
+    mprMark(ejs->publicString);
+    mprMark(ejs->trueValue);
+    mprMark(ejs->undefinedValue);
+    mprMark(ejs->zeroValue);
+    mprMark(ejs->nopFunction);
 }
 
 

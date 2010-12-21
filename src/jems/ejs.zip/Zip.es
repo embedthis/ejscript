@@ -34,7 +34,7 @@ module ejs.tar {
             Cmd.sh(cmd)
         }
 
-		//	MOB -- incomplete
+        //  MOB -- incomplete
         function cat(...files): String {
             let cmd = "tar xOzf " + path + " " + files.join(" ")
             cmd = cmd.replace(/\\/g, "\\\\")

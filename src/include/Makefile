@@ -13,3 +13,11 @@ cleanExtra:
 	mkdir -p $(BLD_INC_DIR)
 	cp master/*slots.h $(BLD_INC_DIR)
 
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

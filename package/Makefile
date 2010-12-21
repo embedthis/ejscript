@@ -10,3 +10,11 @@ PRE_DIRS		= $(BLD_HOST_OS) dist
 
 dependExtra:
 	[ "$(shell echo *.sh)" != "*.sh" ] && chmod +x *.sh ; true
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

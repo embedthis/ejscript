@@ -2689,18 +2689,18 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
     ejs->emptyString = (EjsString*) ejsCreateStringFromAsc(ejs, "");
 
 #if UNUSED
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_BLOCK_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_CONSTRUCTOR_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_EJS_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_INIT_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_INTERNAL_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_ITERATOR_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_META_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PRIVATE_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PROTECTED_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PROTOTYPE_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PUBLIC_NAMESPACE));
-	ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_WORKER_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_BLOCK_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_CONSTRUCTOR_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_EJS_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_INIT_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_INTERNAL_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_ITERATOR_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_META_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PRIVATE_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PROTECTED_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PROTOTYPE_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_PUBLIC_NAMESPACE));
+    ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_WORKER_NAMESPACE));
     ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_CONSTRUCTOR_NAMESPACE));
     ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_EJS_NAMESPACE));
     ejsSetSpecial(ejs, -1, ejsCreateStringFromAsc(ejs, EJS_INITIALIZER_NAME));

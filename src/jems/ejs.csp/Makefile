@@ -20,3 +20,11 @@ $(BLD_BIN_DIR)/ejspage: ejspage.es
 $(BLD_BIN_DIR)/ejspage.cmd: ejspage.cmd
 	cp ejspage.cmd $(BLD_BIN_DIR)/ejspage.cmd
 	chmod 755 $(BLD_BIN_DIR)/ejspage.cmd
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#

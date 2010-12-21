@@ -29,3 +29,11 @@ run:
 		echo -e '\nMemory Size' $$size | sed 's/ bench.es/ K/' )&
 	$(call log) "[Test]" "ejs bench.es" 
 	$(call setlibpath) ; $(BLD_BIN_DIR)/ejs bench.es 
+
+#
+#   Local variables:
+#   tab-width: 4
+#   c-basic-offset: 4
+#   End:
+#   vim: sw=4 ts=4
+#
