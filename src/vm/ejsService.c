@@ -181,6 +181,8 @@ static void manageEjs(Ejs *ejs, int flags)
         state = ejs->masterState;
         if (state->stackBase) {
             mprVirtFree(state->stackBase, state->stackSize);
+            state->stackBase = 0;
+            ejs->masterState = 0;
         }
         //  MOB - should not be here. This is global across all interpreters
         mprSetAltLogData(NULL);

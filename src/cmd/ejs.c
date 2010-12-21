@@ -553,7 +553,7 @@ static void catchSignal(int signo, siginfo_t *info, void *arg)
 
     mpr = mprGetMpr();
     if (mpr) {
-#if DEBUG_IDE && 0
+#if DEBUG_IDE
         if (signo == SIGINT) {
             return;
         }
@@ -563,7 +563,7 @@ static void catchSignal(int signo, siginfo_t *info, void *arg)
             mprLog(1, "Exiting immediately ...");
             mprTerminate(0);
         } else {
-            mprLog(1, "Executing a graceful exit. Waiting for all requests to complete");
+            mprLog(1, "Executing a graceful exit. Waiting for all requests to complete.");
             mprTerminate(MPR_GRACEFUL);
         }
     }

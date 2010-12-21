@@ -2657,11 +2657,7 @@ void ejsManageIntern(Ejs *ejs, int flags)
             head = &intern->buckets[i];
             for (sp = head->next; sp != head; sp = next) {
                 next = sp->next;
-#if UNUSED
-                mprFree(sp);
-#else
                 unlinkString(sp);
-#endif
             }
         }
     }
