@@ -153,7 +153,6 @@ static void manageToken(EcToken *tp, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(tp->text);
         ecMarkLocation(&tp->loc);
-        mprMark(tp->next);
     }
 }
 

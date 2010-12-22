@@ -467,14 +467,14 @@ typedef struct Ejs {
     cchar               **argv;             /**< Command line args */
     int                 argc;               /**< Count of command line args */
     int                 flags;              /**< Execution flags */
-    int                 gc;                 /**< GC required (don't make bit field */
     int                 exitStatus;         /**< Status to exit() */
     int                 firstGlobal;        /**< First global to examine for GC */
     int                 joining;            /**< In Worker.join */
     int                 serializeDepth;     /**< Serialization depth */
     int                 spreadArgs;         /**< Count of spread args */
+    int                 yieldRequired;      /**< GC yield required (don't make bit field) */
 #if UNUSED
-    int                 yield;              /**< GC yield required (don't make bit field */
+    int                 gc;                 /**< GC required (don't make bit field) */
 #endif
     uint                compiling: 1;       /**< Currently executing the compiler */
     uint                empty: 1;           /**< Interpreter will be created empty */

@@ -489,7 +489,7 @@ int ejsEvalModule(cchar *path)
     Ejs             *ejs;
     Mpr             *mpr;
 
-    mpr = mprCreate(0, NULL, MPR_USER_GC);
+    mpr = mprCreate(0, NULL, 0);
     if ((service = ejsCreateService()) == 0) {
         mprFree(mpr);
         return MPR_ERR_MEMORY;
@@ -927,7 +927,7 @@ static int allocNotifier(int flags, ssize size)
         //  MOB -- can this be a deadly embrace?
         mprLock(sp->mutex);
         for (next = 0; (ejs = mprGetNextItem(sp->vmlist, &next)) != 0; ) {
-            ejs->gc = 1;
+            ejs->yieldRequired = 1;
             ejsAttention(ejs);
         }
         mprUnlock(sp->mutex);

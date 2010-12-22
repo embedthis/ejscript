@@ -7521,8 +7521,11 @@ static bool processRunning(HttpConn *conn)
 {
     int     canProceed;
 
+    canProceed = 0;
+
     if (conn->abortPipeline) {
         httpSetState(conn, HTTP_STATE_COMPLETE);
+        canProceed = 1;
     } else {
         if (conn->server) {
             httpProcessPipeline(conn);
@@ -7807,11 +7810,9 @@ static void waitHandler(HttpConn *conn, struct MprEvent *event)
 {
     httpCallEvent(conn, event->mask);
     httpEnableConnEvents(conn);
-#if UNUSED
     if (conn->cond) {
         mprSignalCond(conn->cond);
     }
-#endif
 }
 
 
@@ -7822,7 +7823,7 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
 {
     Http        *http;
     MprTime     expire;
-    int         eventMask, remainingTime, addedHandler, saveAsync, flags;
+    int         eventMask, remainingTime, addedHandler, saveAsync;
 
     http = conn->http;
 
@@ -7845,29 +7846,17 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
     } else {
         addedHandler = 0;
     }
-#if UNUSED
-    if (conn->cond == 0) {
-        conn->cond = mprCreateCond();
-    }
-#endif
     http->now = mprGetTime(conn);
     expire = http->now + timeout;
+    conn->cond = mprCreateCond();
+
     while (!conn->error && conn->state < state && conn->sock && !mprIsSocketEof(conn->sock)) {
         remainingTime = (int) (expire - http->now);
         if (remainingTime <= 0) {
             break;
         }
         mprAssert(!mprSocketHasPendingData(conn->sock));
-#if UNUSED
-        if (0 && mprHasEventsThread()) {
-            mprWaitForCond(conn->cond, remainingTime);
-        } else {
-            mprServiceEvents(dispatcher, remainingTime, MPR_SERVICE_ONE_THING);
-        }
-#else
-        flags = mprHasEventsThread() ? MPR_SERVICE_ONLY : 0;
-        mprServiceEvents(dispatcher, remainingTime, MPR_SERVICE_ONE_THING | flags);
-#endif
+        mprWaitForCond(conn->cond, remainingTime);
     }
     if (addedHandler && conn->waitHandler.fd >= 0) {
         mprRemoveWaitHandler(&conn->waitHandler);

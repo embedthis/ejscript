@@ -97,6 +97,11 @@ int ecCompile(EcCompiler *cp, int argc, char **argv)
     Ejs     *ejs;
     int     rc, saveCompiling, frozen;
 
+#if BLD_DEBUG
+    MprThread   *tp;
+    
+    tp = mprGetCurrentThread();
+#endif
     ejs = cp->ejs;
     saveCompiling = ejs->compiling;
     ejs->compiling = 1;
@@ -183,7 +188,9 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
             ejsFreeze(ejs, frozen);
         }
-        mprCollectGarbage(MPR_GC_FROM_USER);
+        if (!frozen) {
+            mprYield(NULL, 0);
+        }
     }
 
     /*
@@ -217,7 +224,9 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     ejsPopBlock(ejs);
     cp->nodes = NULL;
     ejsFreeze(ejs, frozen);
-    mprCollectGarbage(MPR_GC_FROM_USER);
+    if (!frozen) {
+        mprYield(NULL, 0);
+    }
 
     if (cp->errorCount > 0) {
         return EJS_ERR;
@@ -353,7 +362,7 @@ int ejsEvalFile(cchar *path)
     Ejs             *ejs;
     Mpr             *mpr;
 
-    mpr = mprCreate(0, NULL, MPR_USER_GC);
+    mpr = mprCreate(0, NULL, 0);
     if ((service = ejsCreateService(mpr)) == 0) {
         mprFree(mpr);
         return MPR_ERR_MEMORY;
@@ -381,7 +390,7 @@ int ejsEvalScript(cchar *script)
     Ejs             *ejs;
     Mpr             *mpr;
 
-    mpr = mprCreate(0, NULL, MPR_USER_GC);
+    mpr = mprCreate(0, NULL, 0);
     if ((service = ejsCreateService(mpr)) == 0) {
         mprFree(mpr);
         return MPR_ERR_MEMORY;

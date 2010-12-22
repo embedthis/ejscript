@@ -220,6 +220,7 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
     MprTime     expires;
     int         rc, remaining;
 
+    mprAssert(0);
     if (timeout < 0) {
         timeout = INT_MAX;
     }
@@ -261,7 +262,7 @@ static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     int     timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]): MPR_MAX_TIMEOUT;
-    ejsServiceEvents(ejs, timeout, 0);
+    mprSleep(timeout);
     return 0;
 }
 

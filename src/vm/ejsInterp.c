@@ -1560,17 +1560,10 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             Special circumstances need attention. Exceptions, exiting and garbage collection.
          */
         CASE (EJS_OP_ATTENTION):
-            if (ejs->gc && !FRAME->freeze) {
-                ejs->gc = 0;
-                mprCollectGarbage(MPR_GC_FROM_USER);
+            if (ejs->yieldRequired && !FRAME->freeze) {
+                ejs->yieldRequired = 0;
+                mprYield(NULL, 0);
             }
-#if UNUSED && MPR_GC_WORKERS > 0
-            /* Do yield first */
-            if (ejs->yield && !FRAME->freeze) {
-                ejs->yield = 0;
-                mprYieldThread();
-            }
-#endif
             /* Must lock with ejsAttention */
             mprLock(ejs->mutex);
             mprAssert(FRAME->attentionPc);

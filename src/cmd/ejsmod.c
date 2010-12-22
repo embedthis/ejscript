@@ -42,7 +42,7 @@ MAIN(ejsmodMain, int argc, char **argv)
     /*
         Initialze the Multithreaded Portable Runtime (MPR)
      */
-    mpr = mprCreate(argc, argv, MPR_USER_GC);
+    mpr = mprCreate(argc, argv, 0);
     mprSetAppName(argv[0], 0, 0);
     app = mprAllocObj(App, manageApp);
     mprAddRoot(app);

@@ -38,11 +38,7 @@ static EjsObj *runGC(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     int     deep;
 
     deep = ((argc == 1) && ejsIsBoolean(ejs, argv[1]));
-    mprCollectGarbage(MPR_GC_FROM_USER);
-    if (deep) {
-        mprCollectGarbage(MPR_GC_FROM_USER);
-        mprCollectGarbage(MPR_GC_FROM_USER);
-    }
+    mprRequestGC(deep);
     return 0;
 }
 
