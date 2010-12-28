@@ -666,7 +666,6 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
 
     strict = 0;
     qname = ejsModuleReadName(ejs, mp);
-
     attributes = ejsModuleReadInt(ejs, mp);
     strict = ejsModuleReadByte(ejs, mp);
     ejsModuleReadType(ejs, mp, &returnType, &fixup, &returnTypeName, 0);

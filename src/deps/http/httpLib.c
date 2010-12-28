@@ -6754,6 +6754,7 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
     ssize       len;
     char        *start, *end;
 
+int created = 0;
     if (packet == NULL) {
         return 0;
     }
@@ -6761,7 +6762,6 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
         return 0;
     }
     //  MOB
-    int created = 0;
     if (conn->rx == NULL) {
         conn->rx = httpCreateRx(conn);
         conn->tx = httpCreateTx(conn, NULL);
