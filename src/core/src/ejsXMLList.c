@@ -48,7 +48,7 @@ static EjsObj *cloneXmlList(Ejs *ejs, EjsXML *list, bool deep)
     EjsXML  *newList;
 
     //  TODO - implement deep copy
-    newList = (EjsXML*) ejsCreate(ejs, TYPE(list), 0);
+    newList = ejsCreateObj(ejs, TYPE(list), 0);
     if (newList == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -102,16 +102,13 @@ static EjsObj *xlCast(Ejs *ejs, EjsXML *vp, EjsType *type)
         }
         for (next = 0; (elt = mprGetNextItem(vp->elements, &next)) != 0; ) {
             if (ejsXMLToString(ejs, buf, elt, -1) < 0) {
-                mprFree(buf);
                 return 0;
             }
             if (next < vp->elements->length) {
                 mprPutStringToBuf(buf, " ");
             }
         }
-        result = (EjsObj*) ejsCreateStringFromAsc(ejs, (char*) buf->start);
-        mprFree(buf);
-        return result;
+        return (EjsObj*) ejsCreateStringFromAsc(ejs, (char*) buf->start);
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -592,7 +589,6 @@ static EjsXML *shallowCopy(Ejs *ejs, EjsXML *xml)
         }
     }
     if (mprHasMemError(ejs)) {
-        mprFree(root);
         return 0;
     }
     return root;
@@ -693,7 +689,6 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     EjsString       *sp;
     MprBuf          *buf;
-    EjsObj          *result;
     cchar           *cp;
 
     /*
@@ -710,9 +705,7 @@ static EjsObj *xmlListToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     }
     mprPutCharToBuf(buf, '"');
     mprAddNullToBuf(buf);
-    result = (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
-    mprFree(buf);
-    return result;
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
 }
 
 

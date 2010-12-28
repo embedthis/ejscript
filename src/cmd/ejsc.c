@@ -77,6 +77,9 @@ MAIN(ejscMain, int argc, char **argv)
         } else if (strcmp(argp, "--debug") == 0) {
             debug = 1;
 
+        } else if (strcmp(argp, "--debugger") == 0) {
+            mprSetDebugMode(1);
+
         } else if (strcmp(argp, "--doc") == 0) {
             doc = 1;
 
@@ -288,9 +291,7 @@ MAIN(ejscMain, int argc, char **argv)
     if (cp->errorCount > 0) {
         err++;
     }
-    mprFree(app);
-    mprStop(mpr);
-    mprFree(mpr);
+    mprDestroy(mpr);
     return err;
 }
 

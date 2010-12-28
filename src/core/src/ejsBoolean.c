@@ -239,11 +239,11 @@ void ejsCreateBooleanType(Ejs *ejs)
     /*
         Pre-create the only two valid instances for boolean
      */
-    vp = (EjsBoolean*) ejsCreate(ejs, type, 0);
+    vp = ejsCreateObj(ejs, type, 0);
     vp->value = 1;
     ejs->trueValue = (EjsObj*) vp;
 
-    vp = (EjsBoolean*) ejsCreate(ejs, type, 0);
+    vp = ejsCreateObj(ejs, type, 0);
     vp->value = 0;
     ejs->falseValue = (EjsObj*) vp;
 }

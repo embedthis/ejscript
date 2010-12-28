@@ -192,7 +192,7 @@ void ejsCreateNullType(Ejs *ejs)
     type->helpers.getProperty      = (EjsGetPropertyHelper) getNullProperty;
     type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeNullOperator;
 
-    ejs->nullValue = ejsCreate(ejs, type, 0);
+    ejs->nullValue = ejsCreateObj(ejs, type, 0);
     ejsSetName(ejs->nullValue, "null");
 }
 

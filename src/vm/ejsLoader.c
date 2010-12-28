@@ -95,12 +95,9 @@ int ejsLoadModule(Ejs *ejs, EjsString *path, int minVersion, int maxVersion, int
                 }
             }
         }
-        mprFree(ejs->loadState);
         ejs->loadState = 0;
 #endif
     }
-    mprFree(trimmedPath);
-    mprFree(name);
     return status;
 }
 
@@ -190,7 +187,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
     mp = 0;
     firstModule = mprGetListLength(ejs->modules);
 
-    while ((sectionType = mprGetc(file)) >= 0) {
+    while ((sectionType = mprGetFileChar(file)) >= 0) {
         if (sectionType < 0 || sectionType >= EJS_SECT_MAX) {
             mprError("Bad section type %d in %@", sectionType, mp->name);
             return MPR_ERR_CANT_LOAD;
@@ -267,7 +264,6 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
         if (rc < 0) {
             if (mp && mp->name && created) {
                 ejsRemoveModule(ejs, mp);
-                mprFree(mp);
             }
             return rc;
         }
@@ -278,7 +274,6 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
             if (fixupTypes(ejs, mp->loadState->typeFixups) < 0) {
                 return MPR_ERR_CANT_LOAD;
             }
-            mprFree(mp->loadState);
             mp->loadState = 0;
         }
         //  MOB rationalize down to just ejs flag
@@ -310,7 +305,7 @@ static EjsConstants *loadConstants(Ejs *ejs, MprFile *file, int poolCount, int p
     if ((constants = ejsCreateConstants(ejs, poolCount, poolSize)) == 0) {
         return 0;
     }
-    if (mprRead(file, constants->pool, poolSize) != poolSize) {
+    if (mprReadFile(file, constants->pool, poolSize) != poolSize) {
         return 0;
     }
     constants->poolLength = poolSize;
@@ -397,7 +392,6 @@ static int loadEndModuleSection(Ejs *ejs, EjsModule *mp)
         (ejs->loaderCallback)(ejs, EJS_SECT_MODULE_END, mp);
     }
     mprAssert(mprGetListLength(mp->current) == 1);
-    mprFree(mp->current);
     mp->current = 0;
     mp->file = 0;
     return 0;
@@ -611,9 +605,11 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
             }
         }
     }
+#if UNUSED
     if (mp->flags & EJS_LOADER_BUILTIN) {
         BUILTIN(type) = 1;
     }
+#endif
     slotNum = ejsDefineProperty(ejs, ejs->global, slotNum, qname, ejs->typeType, attributes, (EjsObj*) type);
     if (slotNum < 0) {
         ejsThrowMemoryError(ejs);
@@ -705,8 +701,7 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         if ((code = mprAlloc(codeLen)) == 0) {
             return MPR_ERR_MEMORY;
         }
-        if (mprRead(mp->file, code, codeLen) != codeLen) {
-            mprFree(code);
+        if (mprReadFile(mp->file, code, codeLen) != codeLen) {
             return MPR_ERR_CANT_READ;
         }
         if (currentType) {
@@ -747,16 +742,17 @@ static int loadFunctionSection(Ejs *ejs, EjsModule *mp)
         fun = ejsCreateFunction(ejs, qname.name, code, codeLen, numArgs, numDefault, numExceptions, returnType, attributes, 
             mp, mp->scope, strict);
         if (fun == 0) {
-            mprFree(code);
             return MPR_ERR_MEMORY;
         }
     }
     mprAssert(fun->block.pot.isBlock);
     mprAssert(fun->block.pot.isFunction);
 
+#if UNUSED
     if (mp->flags & EJS_LOADER_BUILTIN) {
         BUILTIN(fun) = 1;
     }
+#endif
     if (numProp > 0) {
         fun->activation = ejsCreateActivation(ejs, fun, numProp);
     }
@@ -831,7 +827,7 @@ static int loadDebugSection(Ejs *ejs, EjsModule *mp)
     mprAssert(!fun->isNativeProc);
     size = ejsModuleReadInt32(ejs, mp);
     fun->body.code->debugOffset = mprGetFilePosition(mp->file);
-    mprSeek(mp->file, SEEK_CUR, size);
+    mprSeekFile(mp->file, SEEK_CUR, size);
     if (ejs->loaderCallback) {
         (ejs->loaderCallback)(ejs, EJS_SECT_DEBUG, mp, fun);
     }
@@ -932,10 +928,12 @@ static int loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType)
     if (slotNum < 0) {
         return MPR_ERR_CANT_WRITE;
     }
+#if UNUSED
     if (mp->flags & EJS_LOADER_BUILTIN) {
         value = ejsGetProperty(ejs, current, slotNum);
         BUILTIN(value) = 1;
     }
+#endif
     if (fixup) {
         if (ejsIsFunction(ejs, current)) {
             fixupKind = EJS_FIXUP_LOCAL;
@@ -998,11 +996,9 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
         *cp = '\0';
     }
     path = sjoin(bare, BLD_SHOBJ, NULL);
-    mprFree(bare);
 
     if (! mprPathExists(path, R_OK)) {
         mprError("Native module not found %s", path);
-        mprFree(path);
         return MPR_ERR_CANT_ACCESS;
     }
 
@@ -1020,7 +1016,6 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
     }
     mprLog(5, "Loading native module %s", path);
     mm = mprLoadModule(path, initName, ejs);
-    mprFree(path);
     return (mm == 0) ? MPR_ERR_CANT_OPEN : 1;
 }
 #endif
@@ -1040,9 +1035,8 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
     if ((path = search(ejs, filename, minVersion, maxVersion)) == 0) {
         return MPR_ERR_CANT_ACCESS;
     }
-    if ((file = mprOpen(path, O_RDONLY | O_BINARY, 0666)) == NULL) {
+    if ((file = mprOpenFile(path, O_RDONLY | O_BINARY, 0666)) == NULL) {
         ejsThrowIOError(ejs, "Can't open module file %s", path);
-        mprFree(path);
         return MPR_ERR_CANT_OPEN;
     }
     mprLog(5, "Loading module %s", path);
@@ -1053,7 +1047,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
         Read module file header
      */
     status = 0;
-    if ((mprRead(file, &hdr, sizeof(hdr))) != sizeof(hdr)) {
+    if ((mprReadFile(file, &hdr, sizeof(hdr))) != sizeof(hdr)) {
         ejsThrowIOError(ejs, "Can't read module file %s, corrupt header", path);
         status = MPR_ERR_CANT_LOAD;
 
@@ -1076,15 +1070,12 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
             }
         }
     }
-    mprFree(file);
-    mprFree(path);
-
     if (status) {
         for (next = firstModule; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
             mprRemoveItem(ejs->modules, mp);
-            mprFree(mp);
         }
     }
+    mprCloseFile(file);
     return status;
 }
 
@@ -1297,7 +1288,6 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
     } else {
         result = mprJoinPath(dir, best->name);
     }
-    mprFree(files);
     return result;
 }
 
@@ -1405,15 +1395,12 @@ static char *searchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int ma
             while (searchDir && *searchDir) {
                 filename = mprJoinPath(searchDir, basename);
                 if ((path = probe(ejs, filename, minVersion, maxVersion)) != 0) {
-                    mprFree(bootSearch);
                     return path;
                 }
                 searchDir = stok(NULL, MPR_SEARCH_SEP, &tok);
             }
-            mprFree(bootSearch);
 
         } else {
-
             /* Search bin/../modules */
             dp = mprGetAppDir();
             dp = mprGetPathParent(dp);
@@ -1456,8 +1443,6 @@ char *ejsSearchForModule(Ejs *ejs, cchar *moduleName, int minVersion, int maxVer
     if (path) {
         mprLog(6, "Found %s at %s", name, path);
     }
-    mprFree(name);
-    mprFree(withDotMod);
     return path;
 }
 

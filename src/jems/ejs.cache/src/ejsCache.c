@@ -148,7 +148,7 @@ static void cacheTimer(EjsWebControl *control, MprEvent *event)
         }
         if (count == 0) {
             control->cacheTimer = 0;
-            mprFree(event);
+            mprRemoveEvent(event);
         }
         mprUnlock(master->mutex);
     }

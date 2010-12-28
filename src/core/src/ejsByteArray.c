@@ -1358,7 +1358,7 @@ EjsByteArray *ejsCreateByteArray(Ejs *ejs, ssize size)
     /*
         No need to invoke constructor
      */
-    ap = (EjsByteArray*) ejsCreate(ejs, ejs->byteArrayType, 0);
+    ap = ejsCreateObj(ejs, ejs->byteArrayType, 0);
     if (ap == 0) {
         return 0;
     }
@@ -1382,7 +1382,8 @@ static void manageByteArray(EjsByteArray *ap, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(ap->emitter);
         mprMark(ap->listeners);
-        mprMark(ap->type);
+        //  MOB -- is this required
+        mprMark(TYPE(ap));
     }
 }
 

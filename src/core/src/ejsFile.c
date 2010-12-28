@@ -62,14 +62,14 @@ static EjsObj *getFileProperty(Ejs *ejs, EjsFile *fp, int slotNum)
     //  must check against mapped size here.
     c = fp->mapped[slotNum];
 #else
-    offset = mprSeek(fp->file, SEEK_CUR, 0);
+    offset = mprSeekFile(fp->file, SEEK_CUR, 0);
     if (offset != slotNum) {
-        if (mprSeek(fp->file, SEEK_SET, slotNum) != slotNum) {
+        if (mprSeekFile(fp->file, SEEK_SET, slotNum) != slotNum) {
             ejsThrowIOError(ejs, "Can't seek to file offset");
             return 0;
         }
     }
-    c = mprPeekc(fp->file);
+    c = mprPeekFileChar(fp->file);
     if (c < 0) {
         ejsThrowIOError(ejs, "Can't read file");
         return 0;
@@ -116,7 +116,7 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
     }
     c = ejsIsNumber(ejs, value) ? ejsGetInt(ejs, value) : ejsGetInt(ejs, ejsToNumber(ejs, value));
 
-    offset = mprSeek(fp->file, SEEK_CUR, 0);
+    offset = mprSeekFile(fp->file, SEEK_CUR, 0);
     if (slotNum < 0) {
         //  could have an mprGetPosition(file) API
         slotNum = offset;
@@ -125,11 +125,11 @@ static int setFileProperty(Ejs *ejs, EjsFile *fp, int slotNum, EjsObj *value)
 #if BLD_CC_MMU && FUTURE
     fp->mapped[slotNum] = c;
 #else
-    if (offset != slotNum && mprSeek(fp->file, SEEK_SET, slotNum) != slotNum) {
+    if (offset != slotNum && mprSeekFile(fp->file, SEEK_SET, slotNum) != slotNum) {
         ejsThrowIOError(ejs, "Can't seek to file offset");
         return 0;
     }
-    if (mprPutc(fp->file, c) < 0) {
+    if (mprPutFileChar(fp->file, c) < 0) {
         ejsThrowIOError(ejs, "Can't write file");
         return 0;
     }
@@ -239,13 +239,13 @@ static EjsObj *canWriteFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
 {
     if (fp->mode & FILE_OPEN && fp->mode & FILE_WRITE) {
-        if (mprFlush(fp->file) < 0) {
+        if (mprFlushFile(fp->file) < 0) {
             ejsThrowIOError(ejs, "Can't flush file data");
             return 0;
         }
     }
     if (fp->file) {
-        mprFree(fp->file);
+        mprCloseFile(fp->file);
         fp->file = 0;
     }
 #if BLD_CC_MMU && FUTURE
@@ -255,7 +255,6 @@ static EjsObj *closeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     }
 #endif
     fp->mode = 0;
-    mprFree(fp->modeString);
     fp->modeString = 0;
     return 0;
 }
@@ -309,14 +308,14 @@ static EjsObj *nextValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
 
     if (ip->index < fp->info.size) {
 #if !BLD_CC_MMU || 1
-        if (mprSeek(fp->file, SEEK_CUR, 0) != ip->index) {
-            if (mprSeek(fp->file, SEEK_SET, ip->index) != ip->index) {
+        if (mprSeekFile(fp->file, SEEK_CUR, 0) != ip->index) {
+            if (mprSeekFile(fp->file, SEEK_SET, ip->index) != ip->index) {
                 ejsThrowIOError(ejs, "Can't seek to %d", ip->index);
                 return 0;
             }
         }
         ip->index++;
-        return (EjsObj*) ejsCreateNumber(ejs, mprGetc(fp->file));
+        return (EjsObj*) ejsCreateNumber(ejs, mprGetFileChar(fp->file));
 #else
         return (EjsObj*) ejsCreateNumber(ejs, fp->mapped[ip->index++]);
 #endif
@@ -384,7 +383,7 @@ static EjsObj *setFilePosition(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         return 0;
     }
     pos = ejsGetInt(ejs, argv[0]);
-    if (mprSeek(fp->file, SEEK_SET, pos) != pos) {
+    if (mprSeekFile(fp->file, SEEK_SET, pos) != pos) {
         ejsThrowIOError(ejs, "Can't seek to %ld", pos);
     }
     return 0;
@@ -441,14 +440,13 @@ static EjsObj *openFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         }
     }
 
-    if (fp->file) {
-        mprFree(fp->file);
-    }
     fp->modeString = sclone(mode);
     fp->perms = perms;
 
-    //  MOB -- who ensure this gets closed?
-    fp->file = mprOpen(fp->path, omode, perms);
+    if (fp->file) {
+        mprCloseFile(fp->file);
+    }
+    fp->file = mprOpenFile(fp->path, omode, perms);
     if (fp->file == 0) {
         ejsThrowIOError(ejs, "Can't open %s", fp->path);
         return 0;
@@ -571,7 +569,7 @@ static EjsObj *readFileString(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    totalRead = mprRead(fp->file, result->value, count);
+    totalRead = mprReadFile(fp->file, result->value, count);
     if (totalRead != count) {
         ejsThrowIOError(ejs, "Can't read from file: %s", fp->path);
         return 0;
@@ -665,7 +663,7 @@ EjsObj *truncateFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
     int     size;
 
     size = ejsGetInt(ejs, argv[0]);
-    if (mprTruncate(fp->path, size) < 0) {
+    if (mprTruncateFile(fp->path, size) < 0) {
         ejsThrowIOError(ejs, "Cant truncate %s", fp->path);
     }
     return 0;
@@ -716,7 +714,7 @@ EjsObj *writeFile(Ejs *ejs, EjsFile *fp, int argc, EjsObj **argv)
             buf = awtom(((EjsString*) str)->value, &len);
             break;
         }
-        if (mprWrite(fp->file, buf, len) != len) {
+        if (mprWriteFile(fp->file, buf, len) != len) {
             ejsThrowIOError(ejs, "Can't write to %s", fp->path);
             return 0;
         }
@@ -744,7 +742,7 @@ static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssi
         ejsGrowByteArray(ejs, ap, ap->length + (count - len));
         len = ap->length - offset;
     }
-    bytes = mprRead(fp->file, &ap->value[offset], len);
+    bytes = mprReadFile(fp->file, &ap->value[offset], len);
     if (bytes < 0) {
         ejsThrowIOError(ejs, "Error reading from %s", fp->path);
     }
@@ -825,7 +823,7 @@ EjsFile *ejsCreateFile(Ejs *ejs, cchar *path)
 
     mprAssert(path && *path);
 
-    fp = (EjsFile*) ejsCreate(ejs, ejs->fileType, 0);
+    fp = ejsCreateObj(ejs, ejs->fileType, 0);
     if (fp == 0) {
         return 0;
     }
@@ -842,7 +840,7 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     mprAssert(fd >= 0);
     mprAssert(name);
 
-    if ((fp = (EjsFile*) ejsCreate(ejs, ejs->fileType, 0)) == NULL) {
+    if ((fp = ejsCreateObj(ejs, ejs->fileType, 0)) == NULL) {
         return NULL;
     }
     fp->perms = EJS_FILE_PERMS;
@@ -853,7 +851,7 @@ EjsFile *ejsCreateFileFromFd(Ejs *ejs, int fd, cchar *name, int mode)
     if (mode & (O_WRONLY | O_RDWR)) {
         fp->mode |= FILE_WRITE;
     }
-    if ((fp->file = mprAttachFd(fd, name, mode)) == 0) {
+    if ((fp->file = mprAttachFileFd(fd, name, mode)) == 0) {
         return 0;
     }
     fp->attached = 1;
@@ -872,11 +870,12 @@ static void manageFile(void *ptr, int flags)
         mprMark(fp->file);
         mprMark(fp->path);
         mprMark(fp->modeString);
-        mprMark(fp->type);
+        //  MOB - is type needed
+        mprMark(TYPE(fp));
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (fp->file && !fp->attached) {
-            closeFile(fp->type->ejs, fp, 0, NULL);
+            closeFile(TYPE(fp)->ejs, fp, 0, NULL);
         }
     }
 }

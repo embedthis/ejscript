@@ -310,8 +310,8 @@ static void bindBlock(EcCompiler *cp, EcNode *np)
             /*
                 Mark the parent block as needing to be created to hold this block.
              */
-            if (cp->state->prev->letBlockNode) {
-                cp->state->prev->letBlockNode->createBlockObject = 1;
+            if (cp->state->next->letBlockNode) {
+                cp->state->next->letBlockNode->createBlockObject = 1;
             }
         }
     }
@@ -478,7 +478,6 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     EcNode          *constructorNode;
     EjsName         qname;
     EjsNamespace    *nsp;
-    char            *name;
     int             fatt, attributes, slotNum;
     
     mprAssert(np->kind == N_CLASS);
@@ -536,9 +535,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
             This slot may be reclaimed during fixup if not required. Instance initializers are prepended to the constructor.
          */
         //  MOB -- rethink name
-        name = mprAsprintf("-%@-", type->qname.name);
-        qname.name = ejsCreateStringFromAsc(ejs, name);
-        mprFree(name);
+        qname.name = ejsCreateStringFromAsc(ejs, mprAsprintf("-%@-", type->qname.name));
         qname.space = ejsCreateStringFromAsc(ejs, EJS_INIT_NAMESPACE);
         fatt = EJS_TRAIT_HIDDEN | EJS_PROP_STATIC;
         ejsDefineProperty(ejs, (EjsObj*) type, 0, qname, ejs->functionType, fatt, ejs->nullValue);
@@ -864,7 +861,7 @@ static void astDot(EcCompiler *cp, EcNode *np)
  */
     case N_LITERAL:
     case N_OBJECT_LITERAL:
-        cp->state->onLeft = cp->state->prev->onLeft;
+        cp->state->onLeft = cp->state->next->onLeft;
         break;
 
     default:
@@ -1666,6 +1663,7 @@ static void astName(EcCompiler *cp, EcNode *np)
 static void astBindName(EcCompiler *cp, EcNode *np)
 {
     Ejs             *ejs;
+    EjsType         *type;
     EjsLookup       *lookup;
     EjsFunction     *fun, *currentFunction;
     EcNode          *left;
@@ -1844,7 +1842,8 @@ static void astBindName(EcCompiler *cp, EcNode *np)
     }
 #endif
 
-#if UNUSED
+#if UNUSED || 1
+    //  MOB -- restore some binding
     if (lookup->slotNum >= 0) {
         /*
             Unbind if slot number won't fit in one byte or the object is not a standard Object. The bound op codes 
@@ -1858,7 +1857,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
             /*
                 Unbind non-core globals
              */
-            if ((lookup->slotNum >= ES_global_NUM_CLASS_PROP) && !(lookup->ref && BUILTIN(lookup->ref))) {
+            if ((lookup->slotNum >= ES_global_NUM_CLASS_PROP) /* UNUSED && !(lookup->ref && BUILTIN(lookup->ref)) */) {
                 lookup->bind = 0;
             }
         }
@@ -1870,7 +1869,7 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                  */
                 lookup->bind = 0;
 
-            } else if (type->dynamicInstance && !BUILTIN(type)) {
+            } else if (type->dynamicInstance /* && !BUILTIN(type) */) {
                 /*
                     Don't bind non-core dynamic properties
                  */
@@ -1888,10 +1887,12 @@ static void astBindName(EcCompiler *cp, EcNode *np)
                 }
             }
 
+#if UNUSED
         } else if (ejsIsPrototype(ejs, np->lookup.obj)) {
             if (!BUILTIN(np->lookup.obj)) {
                 lookup->bind = 0;
             }
+#endif
         }
         if (lookup->trait && lookup->trait->attributes & EJS_TRAIT_GETTER) {
             lookup->bind = 0;
@@ -2419,7 +2420,7 @@ static void astUseNamespace(EcCompiler *cp, EcNode *np)
                     Apply the namespace URI to all upper blocks
                     MOB -- not right
                  */
-                for (s = cp->state; s; s = s->prev) {
+                for (s = cp->state; s; s = s->next) {
                     s->nspace = namespace->value;
                     if (s == cp->blockState) {
                         break;
@@ -3351,7 +3352,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
 
     rc = 0;
     ejs = cp->ejs;
-    VISITED(type) = 1;
+    SET_VISITED(type, 1);
     np = (EcNode*) type->typeData;
     baseType = type->baseType;
 
@@ -3377,7 +3378,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
                 mprAddItem(type->implements, iface);
             } else {
                 astError(cp, np, "Can't find interface \"%s\"", child->qname.name);
-                VISITED(type) = 0;
+                SET_VISITED(type, 0);
                 LEAVE(cp);
                 return;
             }
@@ -3386,7 +3387,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
     if (baseType == 0) {
         if (! (!ejs->initialized && type->qname.name == ejs->objectType->qname.name) && !np->klass.isInterface) {
             astError(cp, np, "Can't find base type for %s", type->qname.name);
-            VISITED(type) = 0;
+            SET_VISITED(type, 0);
             LEAVE(cp);
             return;
         }
@@ -3502,7 +3503,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
             }
         }
     }
-    VISITED(type) = 0;
+    SET_VISITED(type, 0);
     LEAVE(cp);
 }
 
@@ -3541,7 +3542,6 @@ static EjsNamespace *resolveNamespace(EcCompiler *cp, EcNode *np, EjsBlock *bloc
             slotNum = ejsLookupProperty(ejs, block, np->qname);
             mprAssert(slotNum >= 0);
             if (slotNum >= 0) {
-                mprFree((char*) np->qname.space);
                 /*
                     Change the name to use the namespace URI. This will change the property name and set
                     "modified" so that the caller can modify the derrived names (type->qname)

@@ -115,7 +115,7 @@ EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
 {
     EjsNamespace    *np;
 
-    np = ejsCreate(ejs, ejs->namespaceType, 0);
+    np = ejsCreateObj(ejs, ejs->namespaceType, 0);
     if (np) {
         np->value = name;
     }

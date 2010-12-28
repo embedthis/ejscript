@@ -241,8 +241,6 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                             ejsThrowIOError(ejs, "Can't update query result set name");
                             return 0;
                         }
-                    } else {
-                        mprFree((char*) qname.name);
                     }
                 }
             } else {
@@ -284,7 +282,6 @@ static void *allocBlock(int size)
 
 static void freeBlock(void *ptr)
 {
-    mprFree(ptr);
 }
 
 
@@ -345,7 +342,6 @@ static sqlite3_mutex *allocMutex(int kind)
 
 static void freeMutex(sqlite3_mutex *mutex)
 {
-    mprFree(mutex);
 }
 
 

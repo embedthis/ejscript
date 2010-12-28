@@ -17,7 +17,8 @@ static void manageFrame(EjsFrame *frame, int flags)
             ejsManageFunction((EjsFunction*) frame, flags);
             mprMark(frame->orig);
             mprMark(frame->caller);
-            mprMark(((EjsObj*) frame)->type);
+            //  MOB -- is this needed?
+            mprMark(TYPE(frame));
             /* Marking the stack is done in ejsGarbage.c:mark() */
 #if BLD_DEBUG
             mprMark(frame->loc.source);
@@ -41,7 +42,7 @@ static EjsFrame *allocFrame(Ejs *ejs, int numProp)
         return 0;
     }
     mprSetManager(obj, manageFrame);
-    TYPE(obj) = ejs->frameType;
+    SET_TYPE(obj, ejs->frameType);
     return (EjsFrame*) obj;
 }
 
@@ -53,7 +54,7 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
 {
     EjsFrame    *fp;
 
-    fp = (EjsFrame*) ejsCreate(ejs, ejs->frameType, 0);
+    fp = ejsCreateObj(ejs, ejs->frameType, 0);
     if (fp == 0) {
         return 0;
     }
@@ -91,7 +92,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
         ejsMakeHash(ejs, obj);
     }
     ejsZeroSlots(ejs, &obj->properties->slots[numProp], size - numProp);
-    DYNAMIC(obj) = 1;
+    SET_DYNAMIC(obj, 1);
 
     frame->orig = fun;
     frame->function.name = fun->name;

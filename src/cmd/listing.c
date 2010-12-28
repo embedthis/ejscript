@@ -91,7 +91,6 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
         modules = va_arg(args, MprList*);
         nextModule = va_arg(args, int);
         lstClose(mp, modules, nextModule);
-        mprFree(lst);
         return;
 
     case EJS_SECT_EXCEPTION:
@@ -116,7 +115,6 @@ void emListingLoadCallback(Ejs *ejs, int kind, ...)
         name = va_arg(args, char*);
         hdr = va_arg(args, EjsModuleHdr*);
         lstOpen(mp, name, hdr);
-        mprFree(lst);
         return;
 
     case EJS_SECT_PROPERTY:
@@ -209,7 +207,7 @@ static void lstClose(EjsMod *mp, MprList *modules, int firstModule)
             lstEndModule(mp, module);
         }
     }
-    mprFree(mp->file);
+    mprCloseFile(mp->file);
     mp->file = 0;
 }
 
@@ -225,14 +223,12 @@ static int lstOpen(EjsMod *mp, char *moduleFilename, EjsModuleHdr *hdr)
         *ext = '\0';
     }
     path = sjoin(name, EJS_LISTING_EXT, NULL);
-    if ((mp->file = mprOpen(path,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
+    if ((mp->file = mprOpenFile(path,  O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664)) == 0) {
         mprError("Can't create %s", path);
-        mprFree(path);
         return EJS_ERR;
     }
     mprEnableFileBuffering(mp->file, 0, 0);
     mprFprintf(mp->file, "#\n#  %s -- Module Listing for %s\n#\n", path, moduleFilename);
-    mprFree(path);
     return 0;
 }
 
@@ -801,7 +797,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
     if (VISITED(obj)) {
         return;
     }
-    VISITED(obj) = 1;
+    SET_VISITED(obj, 1);
 
     if (obj == ejs->global) {
         type = (EjsType*) obj;
@@ -940,7 +936,7 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
             lstSlotAssignments(mp, module, obj, i, vp);
         }
     }
-    VISITED(obj) = 0;
+    SET_VISITED(obj, 0);
 }
 
 

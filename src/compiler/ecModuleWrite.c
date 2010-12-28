@@ -141,7 +141,7 @@ static void createDependencySection(EcCompiler *cp)
             if (cp->fatalError) {
                 return;
             }
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
+mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);  //MOB
             mp->checksum += sumString(module->name);
 mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
             mprLog(7, "    dependency section for %s from module %s", module->name, mp->name);
@@ -187,7 +187,7 @@ static void createGlobalProperties(EcCompiler *cp)
     for (next = 0; (prop = (EjsName*) mprGetNextItem(mp->globalProperties, &next)) != 0; ) {
         slotNum = ejsLookupProperty(ejs, ejs->global, *prop);
         vp = ejsGetProperty(ejs, ejs->global, slotNum);
-        VISITED(vp) = 0;
+        SET_VISITED(vp, 0);
     }
 }
 
@@ -208,7 +208,7 @@ static void createGlobalType(EcCompiler *cp, EjsType *type)
     if (VISITED(type) || type->module != mp) {
         return;
     }
-    VISITED(type) = 1;
+    SET_VISITED(type, 1);
 
     if (type->baseType && !VISITED(type->baseType)) {
         createGlobalType(cp, type->baseType);
@@ -755,7 +755,7 @@ void ecAddConstants(EcCompiler *cp, EjsAny *block)
     if (VISITED(block)) {
         return;
     }
-    VISITED(block) = 1;
+    SET_VISITED(block, 1);
 
     numTraits = ejsGetPropertyCount(ejs, block);
     for (i = 0; i < numTraits; i++) {
@@ -774,7 +774,7 @@ void ecAddConstants(EcCompiler *cp, EjsAny *block)
             }
         }
     }
-    VISITED(block) = 0;
+    SET_VISITED(block, 0);
 }
 
 
@@ -870,8 +870,8 @@ void ecEncodeGlobal(EcCompiler *cp, EjsAny *obj, EjsName qname)
     /*
         If binding globals, we can encode the slot number of the type.
      */
-    if (BUILTIN(obj) || cp->bind) {
-        slotNum = ejsLookupProperty(ejs, ejs->global, qname);
+    slotNum = ejsLookupProperty(ejs, ejs->global, qname);
+    if (slotNum < ES_global_NUM_CLASS_PROP || cp->bind) {
         if (slotNum >= 0) {
             ecEncodeNum(cp, (slotNum << 2) | EJS_ENCODE_GLOBAL_SLOT);
             return;

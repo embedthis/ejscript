@@ -165,19 +165,9 @@ static EcToken *getLexToken(EcCompiler *cp)
         cp->putback = tp->next;
         prev = cp->token;
         cp->token = tp;
-        if (prev) {
-            prev->next = cp->freeTokens;
-            cp->freeTokens = prev;
-        }
     } else {
-        if ((tp = cp->freeTokens) != 0) {
-            cp->freeTokens = tp->next;
-            tp->next = NULL;
-            cp->token = tp;
-        } else {
-            if ((cp->token = mprAllocObj(EcToken, manageToken)) == 0) {
-                return 0;
-            }
+        if ((cp->token = mprAllocObj(EcToken, manageToken)) == 0) {
+            return 0;
         }
         initializeToken(cp->token, cp->stream);
     }
@@ -347,7 +337,6 @@ int ecGetToken(EcCompiler *cp)
                  */
                 if (cp->doc) {
                     if (tp->text && tp->text[0] == '*' && tp->text[1] != '*') {
-                        mprFree(cp->docToken);
                         cp->docToken = mprMemdup(tp->text, tp->length * sizeof(MprChar));;
                     }
                 }
@@ -978,7 +967,6 @@ static int addFormattedStringToToken(EcToken *tp, char *fmt, ...)
     va_start(args, fmt);
     buf = mprAsprintfv(fmt, args);
     addStringToToken(tp, buf);
-    mprFree(buf);
     va_end(args);
     return 0;
 }
@@ -1103,7 +1091,7 @@ void manageFileStream(EcFileStream *fs, int flags)
         mprMark(fs->file);
 
     } else if (flags & MPR_MANAGE_FREE) {
-        mprFree(fs->file);
+        mprCloseFile(fs->file);
     }
 }
 
@@ -1117,20 +1105,16 @@ int ecOpenFileStream(EcCompiler *cp, cchar *path)
     if ((fs = ecCreateStream(cp, sizeof(EcFileStream), path, manageFileStream)) == 0) {
         return MPR_ERR_MEMORY;
     }
-    if ((fs->file = mprOpen(path, O_RDONLY | O_BINARY, 0666)) == 0) {
-        mprFree(fs);
+    if ((fs->file = mprOpenFile(path, O_RDONLY | O_BINARY, 0666)) == 0) {
         return MPR_ERR_CANT_OPEN;
     }
     if (mprGetPathInfo(path, &info) < 0 || info.size < 0) {
-        mprFree(fs);
         return MPR_ERR_CANT_ACCESS;
     }
     if ((contents = mprAlloc((int) info.size + 1)) == 0) {
-        mprFree(fs);
         return MPR_ERR_MEMORY;
     }
-    if (mprRead(fs->file, contents, (int) info.size) != (int) info.size) {
-        mprFree(fs);
+    if (mprReadFile(fs->file, contents, (int) info.size) != (int) info.size) {
         return MPR_ERR_CANT_READ;
     }
     contents[info.size] = '\0';
@@ -1166,8 +1150,6 @@ int ecOpenConsoleStream(EcCompiler *cp, EcStreamGet getInput, cchar *contents)
 
 void ecCloseStream(EcCompiler *cp)
 {
-    /* This will close file streams */
-    mprFree(cp->stream);
     cp->stream = 0;
 }
 

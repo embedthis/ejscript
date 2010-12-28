@@ -25,7 +25,7 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
     if ((vp = mprAllocBlock(type->instanceSize + extra, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == NULL) {
         return NULL;
     }
-    vp->type = type;
+    SET_TYPE(vp, type);
     mprAssert(type->manager);
     mprSetManager(vp, type->manager);
 #if UNUSED
@@ -63,9 +63,9 @@ EjsAny *ejsCast(Ejs *ejs, EjsAny *vp, EjsType *targetType)
 
 
 /*
-    Create a new instance of a variable. Delegate to the type specific create.
+    Create a new instance of an object. Delegate to the type specific create.
  */
-EjsAny *ejsCreate(Ejs *ejs, EjsType *type, int numSlots)
+EjsAny *ejsCreateObj(Ejs *ejs, EjsType *type, int numSlots)
 {
 #if VXWORKS
     /*
@@ -87,18 +87,21 @@ EjsAny *ejsCreate(Ejs *ejs, EjsType *type, int numSlots)
  */
 EjsAny *ejsClone(Ejs *ejs, EjsAny *src, bool deep)
 {
-    EjsAny  *dest;
+    EjsAny      *dest;
+    EjsType     *type;
     
     if (src == 0) {
         return 0;
     }
     mprAssert(TYPE(src)->helpers.clone);
     if (VISITED(src) == 0) {
-        VISITED(src) = 1;
+        type = ((EjsObj*) src)->type;
+        SET_VISITED(src, 1);
         dest = (TYPE(src)->helpers.clone)(ejs, src, deep);
+#if UNUSED
         BUILTIN(dest) = BUILTIN(src);
-        DYNAMIC(dest) = DYNAMIC(src);
-        VISITED(src) = 0;
+#endif
+        ((EjsObj*) dest)->type = type;
     } else {
         dest = src;
     }
@@ -426,7 +429,7 @@ EjsAny *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, void *argv)
 
     mprAssert(type);
 
-    vp = ejsCreate(ejs, type, 0);
+    vp = ejsCreateObj(ejs, type, 0);
     if (vp == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -440,8 +443,11 @@ EjsAny *ejsCreateInstance(Ejs *ejs, EjsType *type, int argc, void *argv)
 
 /************************************* Misc ***********************************/
 
-static void missingHelper(Ejs *ejs, EjsType *type, cchar *helper) 
+static void missingHelper(Ejs *ejs, EjsObj *obj, cchar *helper) 
 {
+    EjsType     *type;
+
+    type = TYPE(obj);
     ejsThrowInternalError(ejs, "The \"%s\" helper is not defined for this type \"%@\"", helper, type->qname.name);
 }
 
@@ -614,21 +620,21 @@ EjsAny *ejsInvokeOperatorDefault(Ejs *ejs, EjsAny *lhs, int opcode, EjsAny *rhs)
 static int defineProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname, EjsType *propType, int64 attributes, 
     EjsObj *value)
 {
-    missingHelper(ejs, obj->type, "defineProperty");
+    missingHelper(ejs, obj, "defineProperty");
     return MPR_ERR_BAD_STATE;
 }
 
 
 static int deleteProperty(Ejs *ejs, EjsObj *obj, int slotNum)
 {
-    missingHelper(ejs, obj->type, "deleteProperty");
+    missingHelper(ejs, obj, "deleteProperty");
     return MPR_ERR_BAD_STATE;
 }
 
 
 static int deletePropertyByName(Ejs *ejs, EjsObj *obj, EjsName qname)
 {
-    missingHelper(ejs, obj->type, "deletePropertyByName");
+    missingHelper(ejs, obj, "deletePropertyByName");
     return MPR_ERR_BAD_STATE;
 }
 
@@ -677,7 +683,7 @@ static int setProperty(Ejs *ejs, EjsObj *obj, int slotNum, EjsObj *value)
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
-    missingHelper(ejs, obj->type, "setProperty");
+    missingHelper(ejs, obj, "setProperty");
     return MPR_ERR_BAD_STATE;
 }
 
@@ -688,7 +694,7 @@ static int setPropertyName(Ejs *ejs, EjsObj *obj, int slotNum, EjsName qname)
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
-    missingHelper(ejs, obj->type, "setPropertyName");
+    missingHelper(ejs, obj, "setPropertyName");
     return MPR_ERR_BAD_STATE;
 }
 
@@ -699,7 +705,7 @@ static int setPropertyTraits(Ejs *ejs, EjsObj *obj, int slot, EjsType *type, int
         ejsThrowReferenceError(ejs, "Object is null");
         return EJS_ERR;
     }
-    missingHelper(ejs, obj->type, "setPropertyTraits");
+    missingHelper(ejs, obj, "setPropertyTraits");
     return MPR_ERR_BAD_STATE;
 }
 

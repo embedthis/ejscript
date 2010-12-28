@@ -67,7 +67,7 @@ EjsIterator *ejsCreateIterator(Ejs *ejs, EjsAny *obj, EjsProc nativeNext, bool d
 {
     EjsIterator     *ip;
 
-    ip = (EjsIterator*) ejsCreate(ejs, ejs->iteratorType, 0);
+    ip = ejsCreateObj(ejs, ejs->iteratorType, 0);
     if (ip) {
         ip->index = 0;
         ip->indexVar = 0;
@@ -101,7 +101,7 @@ void ejsCreateIteratorType(Ejs *ejs)
         ES_iterator_Iterator, sizeof(EjsIterator), (MprManager) manageIterator, EJS_OBJ_HELPERS);
 
     //  MOB - check this is used
-    ejs->iterator = (EjsIterator*) ejsCreate(ejs, type, 0);
+    ejs->iterator = ejsCreateObj(ejs, type, 0);
 
     //  MOB - surely stop iteration could be an instance?
     type = ejs->stopIterationType = ejsCreateNativeType(ejs, N(EJS_ITERATOR_NAMESPACE, "StopIteration"), 

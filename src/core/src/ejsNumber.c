@@ -413,7 +413,7 @@ EjsNumber *ejsCreateNumber(Ejs *ejs, MprNumber value)
     } else if (value == -1) {
         return ejs->minusOneValue;
     }
-    vp = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
+    vp = ejsCreateObj(ejs, ejs->numberType, 0);
     if (vp != 0) {
         vp->value = value;
     }
@@ -434,23 +434,23 @@ void ejsCreateNumberType(Ejs *ejs)
     type->helpers.clone = (EjsCloneHelper) cloneNumber;
     type->helpers.invokeOperator = (EjsInvokeOperatorHelper) invokeNumberOperator;
 
-    ejs->zeroValue = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
+    ejs->zeroValue = ejsCreateObj(ejs, ejs->numberType, 0);
     ejs->zeroValue->value = 0;
-    ejs->oneValue = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
+    ejs->oneValue = ejsCreateObj(ejs, ejs->numberType, 0);
     ejs->oneValue->value = 1;
-    ejs->minusOneValue = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
+    ejs->minusOneValue = ejsCreateObj(ejs, ejs->numberType, 0);
     ejs->minusOneValue->value = -1;
 
-    ejs->infinityValue = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
+    ejs->infinityValue = ejsCreateObj(ejs, ejs->numberType, 0);
     ejs->infinityValue->value = 1.0 / zero;
-    ejs->negativeInfinityValue = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
+    ejs->negativeInfinityValue = ejsCreateObj(ejs, ejs->numberType, 0);
     ejs->negativeInfinityValue->value = -1.0 / zero;
-    ejs->nanValue = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
+    ejs->nanValue = ejsCreateObj(ejs, ejs->numberType, 0);
     ejs->nanValue->value = 0.0 / zero;
 
-    ejs->maxValue = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
+    ejs->maxValue = ejsCreateObj(ejs, ejs->numberType, 0);
     ejs->maxValue->value = 1.7976931348623157e+308;
-    ejs->minValue = (EjsNumber*) ejsCreate(ejs, ejs->numberType, 0);
+    ejs->minValue = ejsCreateObj(ejs, ejs->numberType, 0);
     ejs->minValue->value = 5e-324;
 }
 

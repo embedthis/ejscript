@@ -166,7 +166,8 @@ static void manageFileSystem(EjsFileSystem *fs, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         if (!VISITED(fs)) {
-            mprMark(fs->type);
+            //  MOB -- type required
+            mprMark(TYPE(fs));
             mprMark(fs->path);
         }
     }
@@ -178,7 +179,7 @@ EjsFileSystem *ejsCreateFileSystem(Ejs *ejs, cchar *path)
     EjsFileSystem   *fs;
     EjsObj          *arg;
 
-    fs = (EjsFileSystem*) ejsCreate(ejs, ejs->fileSystemType, 0);
+    fs = ejsCreateObj(ejs, ejs->fileSystemType, 0);
     if (fs == 0) {
         return 0;
     }

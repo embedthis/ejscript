@@ -76,7 +76,7 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     if (sp->server) {
         ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
-        mprFree(sp->server);
+        httpDestroyServer(sp->server);
         sp->server = 0;
         mprRelease(sp);
     }
@@ -158,7 +158,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     endpoint = (argc >= 1) ? argv[0] : ejs->nullValue;
 
     if (sp->server) {
-        mprFree(sp->server);
+        httpDestroyServer(sp->server);
         sp->server = 0;
     }
     if (endpoint == ejs->nullValue) {
@@ -221,7 +221,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     httpSetServerNotifier(server, (HttpNotifier) stateChangeNotifier);
     if (httpStartServer(server) < 0) {
         ejsThrowIOError(ejs, "Can't listen on %s", address->value);
-        mprFree(sp->server);
+        httpDestroyServer(sp->server);
         sp->server = 0;
         return 0;
     }
@@ -527,9 +527,10 @@ static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
         }
         HTTP_NOTIFY(q->conn, 0, HTTP_NOTIFY_READABLE);
 
+#if UNUSED
     } else if (conn->writeComplete) {
         httpFreePacket(q, packet);
-
+#endif
     } else {
         httpJoinPacketForService(q, packet, 0);
         HTTP_NOTIFY(q->conn, 0, HTTP_NOTIFY_READABLE);
@@ -738,7 +739,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
             ejsSendEvent(sp->ejs, sp->emitter, "close", NULL, sp);
         }
         if (sp->server) {
-            mprFree(sp->server);
+            httpDestroyServer(sp->server);
             sp->server = 0;
         }
     }

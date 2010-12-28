@@ -14,6 +14,7 @@
 static void manageState(EcState *state, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(state->next);
         mprMark(state->code);
         mprMark(state->currentClass);
         mprMark(state->currentClassNode);
@@ -27,11 +28,9 @@ static void manageState(EcState *state, int flags)
         mprMark(state->letBlockNode);
         mprMark(state->nspace);
         mprMark(state->optimizedLetBlock);
-        mprMark(state->prev);
         mprMark(state->staticCodeBuf);
         mprMark(state->topVarBlockNode);
         mprMark(state->varBlock);
-        mprMark(state->next);
     }
 }
 
@@ -44,20 +43,14 @@ int ecEnterState(EcCompiler *cp)
 {
     EcState     *state;
 
-    if ((state = cp->freeStates) != NULL) {
-        cp->freeStates = state->next;
-        state->next = NULL;
-    } else {
-        if ((state = mprAllocBlock(sizeof(EcState), MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
-            return MPR_ERR_MEMORY;
-        }
-        mprSetManager(state, manageState);
+    if ((state = mprAllocBlock(sizeof(EcState), MPR_ALLOC_ZERO | MPR_ALLOC_MANAGER)) == 0) {
+        return MPR_ERR_MEMORY;
     }
-
+    mprSetManager(state, manageState);
     if (cp->state) {
         *state = *cp->state;
     }
-    state->prev = cp->state;
+    state->next = cp->state;
     cp->state = state;
     return 0;
 }
@@ -65,13 +58,7 @@ int ecEnterState(EcCompiler *cp)
 
 void ecLeaveState(EcCompiler *cp)
 {
-    EcState     *state;
-
-    state = cp->state;
-    state->next = cp->freeStates;
-    cp->freeStates = state;
-
-    cp->state = cp->state->prev;
+    cp->state = cp->state->next;
 }
 
 

@@ -85,7 +85,7 @@ static EjsAny *createException(Ejs *ejs, EjsType *type, cchar* fmt, va_list fmtA
     if (ejs->errorType->constructor.body.proc) {
         error = (EjsError*) ejsCreateInstance(ejs, type, 1, argv);
     } else {
-        error = ejsCreate(ejs, type, 0);
+        error = ejsCreateObj(ejs, type, 0);
         ejsSetProperty(ejs, error, ES_Error_message, ejsCreateStringFromAsc(ejs, msg));
     }
     return error;
@@ -357,7 +357,6 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
     } else {
         buf = sclone("");
     }
-    mprFree(ejs->errorMsg);
     ejs->errorMsg = buf;
     return buf;
 }

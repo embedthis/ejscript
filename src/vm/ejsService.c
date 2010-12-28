@@ -103,7 +103,7 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
         ejs->bootSearch = getenv("EJSPATH");
     }
     if (ejsInitStack(ejs) < 0) {
-        mprFree(ejs);
+        ejsDestroy(ejs);
         mprEnableGC(save);
         return 0;
     }
@@ -111,7 +111,7 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
         if (ejs->exception) {
             ejsReportError(ejs, "Can't initialize interpreter");
         }
-        mprFree(ejs);
+        ejsDestroy(ejs);
         mprEnableGC(save);
         return 0;
     }
@@ -121,7 +121,7 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
 #endif
     if (mprHasMemError(ejs)) {
         mprError("Memory allocation error during initialization");
-        mprFree(ejs);
+        ejsDestroy(ejs);
         mprEnableGC(save);
         return 0;
     }
@@ -130,10 +130,30 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
 }
 
 
-static void manageEjs(Ejs *ejs, int flags)
+void ejsDestroy(Ejs *ejs)
 {
     EjsService  *sp;
     EjsState    *state;
+
+    sp = ejs->service;
+    if (sp) {
+        ejsDestroyIntern(ejs);
+        state = ejs->masterState;
+        if (state->stackBase) {
+            mprVirtFree(state->stackBase, state->stackSize);
+            state->stackBase = 0;
+            ejs->masterState = 0;
+        }
+        lock(sp);
+        mprRemoveItem(sp->vmlist, ejs);
+        unlock(sp);
+        ejs->service = 0;
+    }
+}
+
+
+static void manageEjs(Ejs *ejs, int flags)
+{
     EjsBlock    *block;
     EjsObj      *vp, **vpp, **top;
 
@@ -172,25 +192,7 @@ static void manageEjs(Ejs *ejs, int flags)
         ejsManageIntern(ejs, flags);
 
     } else if (flags & MPR_MANAGE_FREE) {
-        ejsManageIntern(ejs, flags);
-        //  MOB -- is this required - NO
-        ejsClearException(ejs);
-        state = ejs->masterState;
-        if (state->stackBase) {
-            mprVirtFree(state->stackBase, state->stackSize);
-            state->stackBase = 0;
-            ejs->masterState = 0;
-        }
-        //  MOB - should not be here. This is global across all interpreters
-        mprSetAltLogData(NULL);
-        mprSetLogHandler(NULL, NULL);
-
-        sp = ejs->service;
-        if (sp->mutex) {
-            lock(sp);
-            mprRemoveItem(sp->vmlist, ejs);
-            unlock(sp);
-        }
+        ejsDestroy(ejs);
     }
 }
 
@@ -391,13 +393,16 @@ static int loadStandardModules(Ejs *ejs, MprList *require)
     if (require) {
         for (next = 0; rc == 0 && (name = mprGetNextItem(require, &next)) != 0; ) {
             flags = EJS_LOADER_STRICT;
+#if UNUSED
             if (strcmp(name, "ejs") == 0) {
                 flags |= EJS_LOADER_BUILTIN;
             }
+#endif
             rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, name), ver, ver, flags);
         }
     } else {
-        rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), ver, ver, EJS_LOADER_STRICT | EJS_LOADER_BUILTIN);
+        rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), ver, ver, 
+                EJS_LOADER_STRICT /* UNUSED | EJS_LOADER_BUILTIN */);
     }
     return rc;
 }
@@ -437,7 +442,6 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
             ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, dir));
             dir = stok(NULL, MPR_SEARCH_SEP, &tok);
         }
-        mprFree(next);
         return (EjsArray*) ap;
     }
     relModDir = 0;
@@ -454,7 +458,6 @@ EjsArray *ejsCreateSearchPath(Ejs *ejs, cchar *search)
 #ifdef BLD_MOD_NAME
     relModDir = mprAsprintf("%s/../%s", mprGetAppDir(ejs), BLD_MOD_NAME);
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, mprGetAbsPath(relModDir)));
-    mprFree(relModDir);
 #endif
 #ifdef BLD_MOD_PREFIX
     ejsSetProperty(ejs, ap, -1, ejsCreatePathFromAsc(ejs, BLD_MOD_PREFIX));
@@ -488,26 +491,27 @@ int ejsEvalModule(cchar *path)
     EjsService      *service;   
     Ejs             *ejs;
     Mpr             *mpr;
+    int             status;
 
-    mpr = mprCreate(0, NULL, 0);
-    if ((service = ejsCreateService()) == 0) {
-        mprFree(mpr);
-        return MPR_ERR_MEMORY;
+    status = 0;
+
+    if ((mpr = mprCreate(0, NULL, 0)) != 0) {
+        status = MPR_ERR_MEMORY;
+
+    } else if ((service = ejsCreateService()) == 0) {
+        status = MPR_ERR_MEMORY;
+
+    } else if ((ejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
+        status = MPR_ERR_MEMORY;
+
+    } else if (ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, 0) < 0) {
+        status = MPR_ERR_CANT_READ;
+
+    } else if (ejsRun(ejs) < 0) {
+        status = EJS_ERR;
     }
-    if ((ejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
-        mprFree(mpr);
-        return MPR_ERR_MEMORY;
-    }
-    if (ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, 0) < 0) {
-        mprFree(mpr);
-        return MPR_ERR_CANT_READ;
-    }
-    if (ejsRun(ejs) < 0) {
-        mprFree(mpr);
-        return EJS_ERR;
-    }
-    mprFree(mpr);
-    return 0;
+    mprDestroy(mpr);
+    return status;
 }
 
 
@@ -534,13 +538,15 @@ int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
     ejs->methodName = methodName;
     mprRelayEvent(ejs->dispatcher, (MprEventProc) runProgram, ejs, NULL);
 
+#if UNUSED
     if (ejs->flags & EJS_FLAG_NOEXIT) {
         /*
             If the script calls App.noexit(), this will service events until App.exit() is called.
             TODO - should deprecate noexit()
          */
-        mprServiceEvents(ejs->dispatcher, -1, 0);
+        mprServiceEvents(-1, 0);
     }
+#endif
     if (ejs->exception) {
         return EJS_ERR;
     }
@@ -685,7 +691,6 @@ int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, int a
             av[i + 2] = argv[i];
         }
         ejsRunFunctionBySlot(ejs, emitter, ES_Emitter_fireThis, argc + 2, av);
-        mprFree(av);
     }
     return 0;
 }
@@ -842,7 +847,6 @@ static void logHandler(int flags, int level, cchar *msg)
         file = (MprFile*) mpr->logData;
         mprPrintfError("%s", msg);
     }
-    mprFree(amsg);
     solo--;
 }
 
@@ -869,16 +873,14 @@ int ejsStartMprLogging(char *logSpec)
         file = mpr->fileSystem->stdError;
 
     } else {
-        if ((file = mprOpen(logSpec, O_CREAT | O_WRONLY | O_TRUNC | O_TEXT, 0664)) == 0) {
+        if ((file = mprOpenFile(logSpec, O_CREAT | O_WRONLY | O_TRUNC | O_TEXT, 0664)) == 0) {
             mprPrintfError("Can't open log file %s\n", logSpec);
-            mprFree(logSpec);
             return EJS_ERR;
         }
     }
     mprSetLogFd(mprGetFileFd(file));
     mprSetLogLevel(level);
     mprSetLogHandler(logHandler, (void*) file);
-    mprFree(logSpec);
     return 0;
 }
 
@@ -931,7 +933,6 @@ static int allocNotifier(int flags, ssize size)
             ejsAttention(ejs);
         }
         mprUnlock(sp->mutex);
-        return MPR_DELAY_GC;
     }
     return 0;
 }
@@ -1004,7 +1005,6 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
     } else {
         mprError("%s", msg);
     }
-    mprFree(buf);
     va_end(arg);
 }
 

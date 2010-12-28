@@ -98,12 +98,13 @@ EjsObj *sock_set_async(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 
 /*
     function close(): Void
+    MOB - should support graceful option
  */
 static EjsObj *sock_close(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
 {
     ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
     if (sp->sock) {
-        mprFree(sp->sock);
+        mprCloseSocket(sp->sock, 0);
         sp->sock = 0;
     }
     return 0;
@@ -338,7 +339,7 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
 {
     Ejs     *ejs;
 
-    ejs = sp->type->ejs;
+    ejs = TYPE(sp)->ejs;
     if (sp->waitHandler.fd < 0) {
         mprInitWaitHandler(&sp->waitHandler, sp->sock->fd, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp);
     } else {
@@ -370,7 +371,7 @@ static int socketListenEvent(EjsSocket *listen, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = listen->type->ejs;
+    ejs = TYPE(listen)->ejs;
     if (listen->emitter) {
         ejsSendEvent(ejs, listen->emitter, "accept", NULL, (EjsObj*) listen);
     }
@@ -383,7 +384,7 @@ static int socketIOEvent(EjsSocket *sp, MprEvent *event)
 {
     Ejs     *ejs;
 
-    ejs = sp->type->ejs;
+    ejs = TYPE(sp)->ejs;
     if (event->mask & MPR_READABLE) {
         if (sp->emitter) {
             ejsSendEvent(ejs, sp->emitter, "readable", NULL, (EjsObj*) sp);
@@ -418,7 +419,7 @@ EjsSocket *ejsCreateSocket(Ejs *ejs)
 {
     EjsSocket     *sp;
 
-    sp = (EjsSocket*) ejsCreate(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
+    sp = ejsCreateObj(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
     if (sp == 0) {
         return 0;
     }

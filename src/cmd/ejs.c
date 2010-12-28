@@ -44,7 +44,7 @@ MAIN(ejsMain, int argc, char **argv)
     Ejs             *ejs;
     cchar           *cmd, *className, *method, *homeDir;
     char            *argp, *searchPath, *modules, *name, *tok, *extraFiles;
-    int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, debugger, optimizeLevel, warnLevel, strict;
+    int             nextArg, err, ecFlags, stats, merge, bind, noout, debug, optimizeLevel, warnLevel, strict;
 
     /*  
         Initialize Multithreaded Portable Runtime (MPR)
@@ -70,7 +70,6 @@ MAIN(ejsMain, int argc, char **argv)
     bind = 1;
     noout = 1;
     debug = 1;
-    debugger = 0;
     warnLevel = 1;
     optimizeLevel = 9;
     strict = 0;
@@ -132,7 +131,7 @@ MAIN(ejsMain, int argc, char **argv)
             debug = 1;
 
         } else if (strcmp(argp, "--debugger") == 0) {
-            debugger = 1;
+            mprSetDebugMode(1);
 
         } else if (strcmp(argp, "--files") == 0 || strcmp(argp, "-f") == 0) {
             /* Compatibility with mozilla shell */
@@ -264,7 +263,6 @@ MAIN(ejsMain, int argc, char **argv)
             mpr->name);
         return -1;
     }
-    mprSetDebugMode(debugger);
 
     app->ejsService = ejsCreateService(mpr);
     if (app->ejsService == 0) {
@@ -317,10 +315,7 @@ MAIN(ejsMain, int argc, char **argv)
         mprPrintMem("Memory Usage", 0);
     }
 #endif
-    // MOB - simplify 
-    mprFree(app);
-    mprStop(mpr);
-    mprFree(mpr);
+    mprDestroy(mpr);
     return err;
 }
 
@@ -418,7 +413,6 @@ static int interpretCommands(EcCompiler *cp, cchar *cmd)
         cp->errorCount = 0;
         cp->fatalError = 0;
         err = 0;
-        mprServiceEvents(ejs->dispatcher, 0, 0);
     }
     ecCloseStream(cp);
     return 0;

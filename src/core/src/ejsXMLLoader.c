@@ -36,7 +36,6 @@ MprXml *ejsCreateXmlParser(Ejs *ejs, EjsXML *xml, cchar *filename)
         Create the parser stack
      */
     if ((parser = mprAllocObj(EjsXmlState, manageXmlParser)) == 0) {
-        mprFree(xp);
         return 0;
     }
     parser->ejs = ejs;
@@ -194,7 +193,7 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
     if (VISITED(node)) {
         return 0;
     }
-    VISITED(node) = 1;
+    SET_VISITED(node, 1);
 
     if (node->kind == EJS_XML_LIST) {
         for (next = 0; (elt = mprGetNextItem(node->elements, &next)) != 0; ) {
@@ -264,7 +263,7 @@ int ejsXMLToString(Ejs *ejs, MprBuf *buf, EjsXML *node, int indentLevel)
         mprPutStringToBuf(buf, ejsToMulti(ejs, xml->value));
         break;
     }
-    VISITED(node) = 0;
+    SET_VISITED(node, 0);
     return 0;
 }
 

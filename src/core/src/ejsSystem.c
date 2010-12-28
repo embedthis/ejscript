@@ -28,11 +28,11 @@ static EjsObj *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (status) {
         ejsThrowError(ejs, "Command failed: %s\n\nExit status: %d\n\nError Output: \n%s\nPrevious Output: \n%s\n", 
             cmdline, status, err, output);
-        mprFree(cmd);
+        mprDestroyCmd(cmd);
         return 0;
     }
     result = ejsCreateStringFromAsc(ejs, output);
-    mprFree(cmd);
+    mprDestroyCmd(cmd);
     return (EjsObj*) result;
 }
 
@@ -52,9 +52,8 @@ static EjsObj *system_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, &err, 0);
     if (status) {
         ejsThrowError(ejs, "Can't run command: %@\nDetails: %s", ejsToString(ejs, argv[0]), err);
-        mprFree(err);
     }
-    mprFree(cmd);
+    mprDestroyCmd(cmd);
     return 0;
 }
 
@@ -76,7 +75,7 @@ static EjsObj *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         ejsThrowError(ejs, "Can't run command: %@", ejsToString(ejs, argv[0]));
     }
     pid = cmd->pid;
-    mprFree(cmd);
+    mprDestroyCmd(cmd);
     return (EjsObj*) ejsCreateNumber(ejs, pid);
 }
 

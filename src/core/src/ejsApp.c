@@ -142,6 +142,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*  
     Control if the application will exit when the last script completes.
     static function noexit(exit: Boolean): void
@@ -151,6 +152,7 @@ static EjsObj *app_noexit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     ejs->flags |= EJS_FLAG_NOEXIT;
     return 0;
 }
+#endif
 
 
 #if UNUSED
@@ -212,8 +214,9 @@ static EjsObj *app_createSearch(Ejs *ejs, EjsObj *app, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*  
-    Need this routine because ejs->exiting must be tested for workers
+    Need this routine because ejs->exiting must be tested by workers
  */
 void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
 {
@@ -227,7 +230,7 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
     expires = mprGetTime(ejs) + timeout;
     remaining = timeout;
     do {
-        rc = mprServiceEvents(ejs->dispatcher, remaining, MPR_SERVICE_ONE_THING);
+        rc = mprWaitForEvent(ejs->dispatcher, remaining);
         if (rc > 0 && flags & MPR_SERVICE_ONE_THING) {
             break;
         }
@@ -237,18 +240,24 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
         }
     } while (remaining > 0 && !mprIsExiting(ejs) && !ejs->exiting && !ejs->exception);
 }
+#endif
 
 
 /*  
-    static function eventLoop(timeout: Number = -1, oneEvent: Boolean = false): void
+    static function eventLoop(timeout: Number = -1): void
  */
 static EjsObj *app_eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    int     timeout, oneEvent;
+    int     timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : INT_MAX;
+#if UNUSED
     oneEvent = (argc > 1) ? (argv[1] == ejs->trueValue) : 0;
     ejsServiceEvents(ejs, timeout, oneEvent ? MPR_SERVICE_ONE_THING: 0);
+#endif
+    do {
+        mprWaitForEvent(ejs->dispatcher, timeout); 
+    } while (!ejs->exiting);
     return 0;
 }
 
@@ -291,7 +300,9 @@ void ejsConfigureAppType(Ejs *ejs)
 #if ES_App_name && UNUSED
     ejsBindAccess(ejs, type, ES_App_name, (EjsProc) app_name, (EjsProc) app_set_name);
 #endif
+#if UNUSED
     ejsBindMethod(ejs, type, ES_App_noexit, (EjsProc) app_noexit);
+#endif
     ejsBindMethod(ejs, type, ES_App_createSearch, (EjsProc) app_createSearch);
     ejsBindAccess(ejs, type, ES_App_search, (EjsProc) app_search, (EjsProc) app_set_search);
     ejsBindMethod(ejs, type, ES_App_eventLoop, (EjsProc) app_eventLoop);

@@ -44,9 +44,7 @@ EjsAny *ejsClonePot(Ejs *ejs, EjsAny *vp, bool deep)
     if ((dest = ejsCreatePot(ejs, TYPE(src), numProp)) == 0) {
         return 0;
     }
-    BUILTIN(dest) = BUILTIN(src);
-    DYNAMIC(dest) = DYNAMIC(src);
-
+    dest->obj = src->obj;
     dest->isBlock = src->isBlock;
     dest->isFrame = src->isFrame;
     dest->isFunction = src->isFunction;
@@ -1027,7 +1025,7 @@ void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
         if (numProp > 0) {
             growSlots(ejs, obj, numProp);
         }
-        DYNAMIC(obj) = 1;
+        SET_DYNAMIC(obj, 1);
     } else {
         if ((obj = ejsAlloc(ejs, type, sizeof(EjsProperties) + numProp * sizeof(EjsSlot))) == 0) {
             return 0;

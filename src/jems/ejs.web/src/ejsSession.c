@@ -149,7 +149,6 @@ EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
             id = mprMemdup(value, len + 1);
             id[len] = '\0';
             session = ejsGetPropertyByName(ejs, server->sessions, EN(id));
-            mprFree(id);
             break;
         }
     }
@@ -180,7 +179,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     now = mprGetTime(ejs);
 
     ejsLockService(ejs);
-    if ((session = ejsCreate(ejs, ejs->sessionType, 0)) == 0) {
+    if ((session = ejsCreateObj(ejs, ejs->sessionType, 0)) == 0) {
         ejsUnlockService(ejs);
         return 0;
     }
@@ -193,7 +192,6 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     mprSprintf(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(session->expire), (int) now, next);
     id = mprGetMD5Hash(idBuf, sizeof(idBuf), "x");
     if (id == 0) {
-        mprFree(session);
         ejsUnlockService(ejs);
         return 0;
     }
@@ -206,13 +204,11 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     count = ejsGetPropertyCount(ejs, (EjsObj*) server->sessions);
     if (count >= limits->sessionCount) {
         ejsThrowResourceError(ejs, "Too many sessions: %d, limit %d", count, limits->sessionCount);
-        mprFree(session);
         ejsUnlockService(ejs);
         return 0;
     }
     slotNum = ejsSetPropertyByName(ejs, server->sessions, EN(session->id), session);
     if (slotNum < 0) {
-        mprFree(session);
         ejsUnlockService(ejs);
         return 0;
     }
@@ -312,7 +308,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
             if ((session = ejsGetProperty(ejs, (EjsObj*) sessions, i)) == 0) {
                 continue;
             }
-            if (session->pot.type == ejs->sessionType) {
+            if (TYPE(session) == ejs->sessionType) {
                 mprLog(7, "Check session %s timeout %d, expires %d secs", session->id, 
                    session->timeout / MPR_TICKS_PER_SEC,
                    (int) (session->expire - now) / MPR_TICKS_PER_SEC);
@@ -331,7 +327,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
         count = ejsCompactPot(ejs, sessions);
         if (count == 0) {
             server->sessionTimer = 0;
-            mprFree(event);
+            mprRemoveEvent(event);
         }
         mprUnlock(ejs->mutex);
     }

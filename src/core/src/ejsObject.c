@@ -149,7 +149,7 @@ static EjsObj *obj_create(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             ejsSetPropertyByName(ejs, prototype, EN("constructor"), type);
         }
     }
-    obj = ejsCreate(ejs, type, 0);
+    obj = ejsCreateObj(ejs, type, 0);
     if (properties) {
         count = ejsGetPropertyCount(ejs, properties);
         for (slotNum = 0; slotNum < count; slotNum++) {
@@ -271,7 +271,7 @@ static EjsObj *obj_freeze(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     int         slotNum, numProp;
 
     obj = (EjsObj*) argv[0];
-    DYNAMIC(obj) = 0;
+    SET_DYNAMIC(obj, 0);
     numProp = ejsGetPropertyCount(ejs, obj);
     for (slotNum = 0; slotNum < numProp; slotNum++) {
         if ((trait = ejsGetPropertyTraits(ejs, obj, slotNum)) != 0) {
@@ -646,7 +646,7 @@ static EjsObj *obj_preventExtensions(Ejs *ejs, EjsObj *unused, int argc, EjsObj 
     EjsObj      *obj;
 
     obj = argv[0];
-    DYNAMIC(obj) = 0;
+    SET_DYNAMIC(obj, 0);
     return obj;
 }
 
@@ -667,7 +667,7 @@ static EjsObj *obj_seal(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             trait->attributes |= EJS_TRAIT_FIXED;
         }
     }
-    DYNAMIC(obj) = 0;
+    SET_DYNAMIC(obj, 0);
     return 0;
 }
 

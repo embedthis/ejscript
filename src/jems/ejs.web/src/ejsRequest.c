@@ -598,7 +598,6 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
                     getDefaultString(ejs, req->query, NULL),
                     getDefaultString(ejs, req->reference, NULL), 0);
             }
-            mprFree(path);
         }
         return req->uri;
 
@@ -621,7 +620,7 @@ static EjsName getRequestPropertyName(Ejs *ejs, EjsRequest *req, int slotNum)
 {
     EjsName     qname;
 
-    qname = ejsGetPropertyName(ejs, req->pot.type->prototype, slotNum);
+    qname = ejsGetPropertyName(ejs, TYPE(req)->prototype, slotNum);
     if (qname.name == 0) {
         qname = ejsGetPotPropertyName(ejs, &req->pot, slotNum);
     }
@@ -633,7 +632,7 @@ static int lookupRequestProperty(Ejs *ejs, EjsRequest *req, EjsName qname)
 {
     int slotNum;
     
-    slotNum = ejsLookupProperty(ejs, req->pot.type->prototype, qname);
+    slotNum = ejsLookupProperty(ejs, TYPE(req)->prototype, qname);
     if (slotNum < 0) {
         slotNum = ejsLookupPotProperty(ejs, &req->pot, qname);
     }
@@ -1260,7 +1259,7 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     mprAssert(dir && *dir);
 
     type = ejsGetTypeByName(ejs, N("ejs.web", "Request"));
-    if (type == NULL || (req = (EjsRequest*) ejsCreate(ejs, type, 0)) == NULL) {
+    if (type == NULL || (req = ejsCreateObj(ejs, type, 0)) == NULL) {
         return 0;
     }
     req->running = 1;

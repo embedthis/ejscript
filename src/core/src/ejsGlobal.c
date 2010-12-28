@@ -172,7 +172,6 @@ static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprFileSystem   *fs;
     MprBuf          *buf;
-    EjsObj          *result;
     int             c;
 
     fs = mprGetMpr()->fileSystem;
@@ -196,9 +195,7 @@ static EjsObj *input(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
         return (EjsObj*) ejs->nullValue;
     }
     mprAddNullToBuf(buf);
-    result = (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
-    mprFree(buf);
-    return result;
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
 }
  */
 
@@ -393,7 +390,7 @@ void ejsCreateGlobalBlock(Ejs *ejs)
     block->isGlobal = 1;
     block->pot.numProp = (ejs->empty) ? 0: ES_global_NUM_CLASS_PROP;
     block->pot.shortScope = 1;
-    DYNAMIC(block) = 1;
+    SET_DYNAMIC(block, 1);
     ejsSetName(block, "global");
 #if BLD_DEBUG
     ejs->globalBlock = block;

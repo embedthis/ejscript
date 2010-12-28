@@ -21,8 +21,7 @@ static int parseFlags(EjsRegExp *rp, MprChar *flags);
  */
 static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 {
-    EjsString   *result;
-    char        *flags;
+    char    *flags;
 
     switch (type->id) {
     case ES_Boolean:
@@ -30,9 +29,7 @@ static EjsAny *castRegExp(Ejs *ejs, EjsRegExp *rp, EjsType *type)
 
     case ES_String:
         flags = makeFlags(rp);
-        result = ejsSprintf(ejs, "/%w/%s", rp->pattern, flags);
-        mprFree(flags);
-        return result;
+        return ejsSprintf(ejs, "/%w/%s", rp->pattern, flags);
 
     default:
         ejsThrowTypeError(ejs, "Can't cast to this type");
@@ -211,7 +208,7 @@ EjsRegExp *ejsCreateRegExp(Ejs *ejs, EjsString *pattern)
         ejsThrowArgError(ejs, "Bad regular expression pattern. Must start with '/'");
         return 0;
     }
-    rp = (EjsRegExp*) ejsCreate(ejs, ejs->regExpType, 0);
+    rp = ejsCreateObj(ejs, ejs->regExpType, 0);
     if (rp != 0) {
         /*
             Strip off flags for passing to pcre_compile2

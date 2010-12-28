@@ -219,8 +219,6 @@ static EjsVar *sql(Ejs *ejs, EjsDb *db, int argc, EjsVar **argv)
                         if (ejsSetPropertyByName(ejs, row, &qname, svalue) < 0) {
                             /* TODO */
                         }
-                    } else {
-                        mprFree((char*) qname.name);
                     }
                 }
             } else {

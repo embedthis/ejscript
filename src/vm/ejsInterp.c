@@ -427,7 +427,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 Stack after         [XML]
          */
         CASE (EJS_OP_LOAD_XML):
-            v1 = ejsCreate(ejs, ejs->xmlType, 0);
+            v1 = ejsCreateObj(ejs, ejs->xmlType, 0);
             str = GET_STRING();
             ejsLoadXMLString(ejs, (EjsXML*) v1, str);
             push(v1);
@@ -2169,13 +2169,13 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                             BREAK;
                         }
                     }
-                    obj = ejsCreate(ejs, fun->archetype, 0);
+                    obj = ejsCreateObj(ejs, fun->archetype, 0);
                 } else {
                     ejsThrowReferenceError(ejs, "Can't locate type");
                     BREAK;
                 }
             } else {
-                obj = ejsCreate(ejs, (EjsType*) v1, 0);
+                obj = ejsCreateObj(ejs, (EjsType*) v1, 0);
             }
             push(obj);
             ejs->result = obj;
@@ -2195,7 +2195,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             argc = GET_INT();
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
-            vp = ejsCreate(ejs, type, 0);
+            vp = ejsCreateObj(ejs, type, 0);
             for (i = 1 - (argc * 2); i <= 0; ) {
                 indexVar = ejsToNumber(ejs, state.stack[i++]);
                 if (ejs->exception) BREAK;
@@ -2223,7 +2223,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             argc = GET_INT();
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
-            vp = ejsCreate(ejs, type, 0);
+            vp = ejsCreateObj(ejs, type, 0);
             for (i = 1 - (argc * 3); i <= 0; ) {
                 spaceVar = ejsToString(ejs, state.stack[i++]);
                 if (ejs->exception) BREAK;
@@ -2842,7 +2842,7 @@ static void callConstructor(Ejs *ejs, EjsType *type, int argc, int stackAdjust)
     mprAssert(ejs->exception == 0);
     mprAssert(ejs->state->fp->attentionPc == 0);
 
-    obj = ejsCreate(ejs, type, 0);
+    obj = ejsCreateObj(ejs, type, 0);
     ejsClearAttention(ejs);
     
     mprAssert(type->constructor.block.pot.isFunction);
@@ -3385,6 +3385,7 @@ void ejsExit(Ejs *ejs, int status)
     //  TODO - should pass status back
     //  MOB -- what about graceful exiting 
     ejs->exiting = 1;
+    mprSignalDispatcher(ejs->dispatcher);
 }
 
 
@@ -3505,7 +3506,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         if (thisObj == NULL) {
             freezeState = ejs->state->fp->freeze;
             ejs->state->fp->freeze = 1;
-            thisObj = ejsCreate(ejs, type, 0);
+            thisObj = ejsCreateObj(ejs, type, 0);
             ejs->state->fp->freeze = freezeState;
         }
         result = thisObj;
@@ -3579,9 +3580,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         fp = ejsCreateFrame(ejs, fun, thisObj, argc, argv);
         fp->function.block.prev = state->bp;
         fp->caller = state->fp;
-        if (fp->caller) {
-            fp->freeze = fp->caller->freeze;
-        }
+        fp->freeze = (fp->caller) ? fp->caller->freeze : ejs->freeze;
         fp->stackBase = state->stack;
         fp->stackReturn = state->stack - argc - stackAdjust;
         state->fp = fp;
@@ -3688,11 +3687,7 @@ void ejsLog(Ejs *ejs, const char *fmt, ...)
 #if UNUSED
 void ejsShowStack(Ejs *ejs, EjsFunction *fp)
 {
-    char    *stack;
-    
-    stack = ejsFormatStack(ejs, NULL);
-    mprLog(7, "Stack\n%s", stack);
-    mprFree(stack);
+    mprLog(7, "Stack\n%s", ejsFormatStack(ejs, NULL));
 }
 #endif
 

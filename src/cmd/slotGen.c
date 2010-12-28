@@ -71,13 +71,12 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
 
     if (file == 0) {
         path = sjoin(ejsToMulti(ejs, mp->name), ".slots.h", NULL);
-        localFile = file = mprOpen(path, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
+        localFile = file = mprOpenFile(path, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
     } else {
         path = sclone(file->path);
     }
     if (file == 0) {
         mprError("Can't open %s", path);
-        mprFree(path);
         return MPR_ERR_CANT_OPEN;
     }
     mprEnableFileBuffering(file, 0, 0);
@@ -103,19 +102,17 @@ static int createSlotFile(EjsMod *bp, EjsModule *mp, MprFile *file)
     type = ejsCreateType(ejs, N(EJS_EJS_NAMESPACE, EJS_GLOBAL), NULL, NULL, NULL, sizeof(EjsType), slotNum, 
         ejsGetPropertyCount(ejs, ejs->global), 0, 0);
     type->constructor.block = *(EjsBlock*) ejs->global;
-    TYPE(type) = ejs->typeType;
+    SET_TYPE(type, ejs->typeType);
     type->constructor.block.pot.isType = 1;
 
     if (genType(bp, file, mp, type, mp->firstGlobal, mp->lastGlobal, 1) < 0) {
         mprError("Can't generate slot file for module %@", mp->name);
-        mprFree(path);
-        mprFree(localFile);
+        mprCloseFile(localFile);
         return EJS_ERR;
     }
     mprFprintf(file, "\n#define _ES_CHECKSUM_%s   %d\n", moduleName, mp->checksum);
     mprFprintf(file, "\n#endif\n");
-    mprFree(localFile);
-    mprFree(path);
+    mprCloseFile(localFile);
     return 0;
 }
 
@@ -160,9 +157,6 @@ static void defineSlot(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, 
             mprFprintf(file, "%-70s %d\n", nameBuf, slotNum);
         }
     }
-    mprFree(typeStr);
-    mprFree(funStr);
-    mprFree(nameStr);
 }
 
 
@@ -172,7 +166,6 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
 
     typeStr = mapFullName(bp->ejs, &type->qname, 1);
     if (*typeStr == '\0') {
-        mprFree(typeStr);
         typeStr = sclone(EJS_GLOBAL);
     }
     for (sp = typeStr; *sp; sp++) {
@@ -186,7 +179,6 @@ static void defineSlotCount(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *t
         mprSprintf(name, sizeof(name), "#define ES_%s_NUM_INHERITED_PROP", typeStr);
         mprFprintf(file, "%-70s %d\n", name, type->numInherited);
     }
-    mprFree(typeStr);
 }
 
 
@@ -327,14 +319,14 @@ static int genType(EjsMod *bp, MprFile *file, EjsModule *mp, EjsType *type, int 
         if (nt->module != mp) {
             continue;
         }
-        VISITED(vp) = 1;
+        SET_VISITED(vp, 1);
 
         count = ejsGetPropertyCount(ejs, (EjsObj*) nt);
         if (genType(bp, file, mp, nt, 0, count, 0) < 0) {
-            VISITED(vp) = 0;
+            SET_VISITED(vp, 0);
             return EJS_ERR;
         }
-        VISITED(vp) = 0;
+        SET_VISITED(vp, 0);
     }
     return 0;
 }

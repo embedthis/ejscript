@@ -61,10 +61,13 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
 }
 
         
+void ecDestroyCompiler(EcCompiler *cp)
+{
+}
+
+
 static void manageCompiler(EcCompiler *cp, int flags)
 {
-    EcToken     *tp;
-
     if (flags & MPR_MANAGE_MARK) {
         mprMark(cp->certFile);
         mprMark(cp->docToken);
@@ -73,8 +76,6 @@ static void manageCompiler(EcCompiler *cp, int flags)
         mprMark(cp->keywords);
         mprMark(cp->peekToken);
         mprMark(cp->putback);
-        //  MOB -- don't want to mark free states that are out of scope. Get rid of freeStates?
-        mprMark(cp->freeStates);
         mprMark(cp->state);
         mprMark(cp->stream);
         mprMark(cp->token);
@@ -84,10 +85,6 @@ static void manageCompiler(EcCompiler *cp, int flags)
         mprMarkList(cp->modules);
         mprMark(cp->errorMsg);
         mprMarkList(cp->nodes);
-
-        for (tp = cp->freeTokens; tp; tp = tp->next) {
-            mprMark(tp);
-        }
     }
 }
 
@@ -297,11 +294,11 @@ int ejsLoadScriptFile(Ejs *ejs, cchar *path, cchar *cache, int flags)
             ejsThrowSyntaxError(ejs, "%s", ec->errorMsg ? ec->errorMsg : "Can't parse script");
         }
         mprRemoveRoot(ec);
-        mprFree(ec);
+        ecDestroyCompiler(ec);
         return EJS_ERR;
     }
     mprRemoveRoot(ec);
-    mprFree(ec);
+    ecDestroyCompiler(ec);
 
     if (ejsRun(ejs) < 0) {
         return EJS_ERR;
@@ -330,7 +327,7 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
     }
     if (ecOpenMemoryStream(cp, ejsToMulti(ejs, script), script->length) < 0) {
         mprError("Can't open memory stream");
-        mprFree(cp);
+        ecDestroyCompiler(cp);
         return EJS_ERR;
     }
     path = "__script__";
@@ -339,12 +336,12 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
             ejsThrowSyntaxError(ejs, "%s", cp->errorMsg ? cp->errorMsg : "Can't parse script");
         }
         mprRemoveRoot(cp);
-        mprFree(cp);
+        ecDestroyCompiler(cp);
         return EJS_ERR;
     }
     ecCloseStream(cp);
     mprRemoveRoot(cp);
-    mprFree(cp);
+    ecDestroyCompiler(cp);
 
     if (ejsRun(ejs) < 0) {
         return EJS_ERR;
@@ -364,19 +361,19 @@ int ejsEvalFile(cchar *path)
 
     mpr = mprCreate(0, NULL, 0);
     if ((service = ejsCreateService(mpr)) == 0) {
-        mprFree(mpr);
+        mprDestroy(mpr);
         return MPR_ERR_MEMORY;
     }
     if ((ejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
-        mprFree(mpr);
+        mprDestroy(mpr);
         return MPR_ERR_MEMORY;
     }
     if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
-        mprFree(mpr);
+        mprDestroy(mpr);
         return MPR_ERR;
     }
-    mprFree(mpr);
+    mprDestroy(mpr);
     return 0;
 }
 
@@ -392,19 +389,19 @@ int ejsEvalScript(cchar *script)
 
     mpr = mprCreate(0, NULL, 0);
     if ((service = ejsCreateService(mpr)) == 0) {
-        mprFree(mpr);
+        mprDestroy(mpr);
         return MPR_ERR_MEMORY;
     }
     if ((ejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
-        mprFree(mpr);
+        mprDestroy(mpr);
         return MPR_ERR_MEMORY;
     }
     if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromAsc(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
-        mprFree(mpr);
+        mprDestroy(mpr);
         return MPR_ERR;
     }
-    mprFree(mpr);
+    mprDestroy(mpr);
     return 0;
 }
 
@@ -495,7 +492,6 @@ void ecErrorv(EcCompiler *cp, cchar *severity, EcLocation *loc, cchar *fmt, va_l
             pointer = makeHighlight(cp, loc->source, loc->column);
             errorMsg = mprAsprintf("%s: %s: %s: %d: %s\n  %w  \n  %s", appName, severity, loc->filename, 
                 loc->lineNumber, msg, loc->source, pointer);
-            mprFree(pointer);
         } else if (loc->lineNumber >= 0) {
             errorMsg = mprAsprintf("%s: %s: %s: %d: %s", appName, severity, loc->filename, loc->lineNumber, msg);
         } else {

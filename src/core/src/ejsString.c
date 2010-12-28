@@ -539,9 +539,9 @@ static EjsObj *formatString(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
                 return 0;
             }
             result = buildString(ejs, result, buf, wlen(buf));
-            mprFree(buf);
             last = i + 1;
             nextArg++;
+
         } else if (kind == '%') {
             MprChar percent[1];
             percent[0] = '%';
@@ -1406,7 +1406,6 @@ static EjsObj *toCamel(Ejs *ejs, EjsString *sp, int argc, EjsObj **argv)
  */
 EjsString *ejsStringToJSON(Ejs *ejs, EjsObj *vp)
 {
-    EjsString   *result;
     EjsString   *sp;
     MprBuf      *buf;
     int         i, c;
@@ -1429,9 +1428,7 @@ EjsString *ejsStringToJSON(Ejs *ejs, EjsObj *vp)
     }
     mprPutCharToBuf(buf, '"');
     mprAddNullToBuf(buf);
-    result = ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
-    mprFree(buf);
-    return result;
+    return ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
 }
 
 
@@ -2413,7 +2410,6 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
                 }
             }
             if (i == sp->length && value[i] == 0) {
-                mprFree(src);
                 ejs->intern.reuse++;
                 return sp;
             }
@@ -2529,7 +2525,7 @@ static void linkString(Ejs *ejs, EjsString *head, EjsString *sp)
     mprAssert(sp != head);
     mprAssert(sp->next == NULL);
     mprAssert(sp->prev == NULL);
-    mprAssert(sp->type);
+    mprAssert(sp->obj.type);
 
     sp->next = head->next;
     sp->prev = head;
@@ -2550,7 +2546,7 @@ static void unlinkString(EjsString *sp)
 #if BLD_MEMORY_DEBUG
     sp->next = sp->prev = NULL;
 #endif
-    --sp->type->ejs->intern.count;
+    --sp->obj.type->ejs->intern.count;
 }
 
 
@@ -2630,11 +2626,29 @@ void ejsManageString(EjsString *sp, int flags)
 }
 
 
-void ejsManageIntern(Ejs *ejs, int flags)
+void ejsDestroyIntern(Ejs *ejs)
 {
     EjsIntern   *intern;
     EjsString   *sp, *head, *next;
     int         i;
+
+    /*
+        Unlink strings now as when they are freed later, the intern structure may not exist in memory.
+     */
+    intern = &ejs->intern;
+    for (i = intern->size - 1; i >= 0; i--) {
+        head = &intern->buckets[i];
+        for (sp = head->next; sp != head; sp = next) {
+            next = sp->next;
+            unlinkString(sp);
+        }
+    }
+}
+
+
+void ejsManageIntern(Ejs *ejs, int flags)
+{
+    EjsIntern   *intern;
 
     intern = &ejs->intern;
 
@@ -2650,16 +2664,7 @@ void ejsManageIntern(Ejs *ejs, int flags)
         }
 #endif
     } else if (flags & MPR_MANAGE_FREE) {
-        /*
-            MOB - Need to unlink strings now as when they are freed later, the intern structure may not exist in memory.
-         */
-        for (i = intern->size - 1; i >= 0; i--) {
-            head = &intern->buckets[i];
-            for (sp = head->next; sp != head; sp = next) {
-                next = sp->next;
-                unlinkString(sp);
-            }
-        }
+        ejsDestroyIntern(ejs);
     }
 }
 

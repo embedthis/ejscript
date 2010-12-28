@@ -5,7 +5,7 @@
 
 module ejs {
 
-    use strict
+    // use strict
 
     /** 
         ByteArrays provide a growable, integer indexed, in-memory store for bytes. ByteArrays can be used as a simple 

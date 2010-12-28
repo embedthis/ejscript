@@ -104,8 +104,8 @@ static EjsType *createTypeVar(Ejs *ejs, EjsType *typeType, int numProp)
     mprInitList(&type->constructor.block.namespaces);
     type->ejs = ejs;
     obj = (EjsPot*) type;
-    TYPE(obj) = typeType;
-    DYNAMIC(obj) = dynamic;
+    SET_TYPE(obj, typeType);
+    SET_DYNAMIC(obj, dynamic);
     obj->isType = 1;
     obj->isBlock = 1;
     ejsSetMemRef(obj);
@@ -430,7 +430,7 @@ EjsType *ejsGetType(Ejs *ejs, int slotNum)
 
 EjsPot *ejsGetPrototype(Ejs *ejs, EjsAny *obj)
 {
-    return ((EjsObj*) obj)->type->prototype;
+    return TYPE(obj)->prototype;
 }
 
 
@@ -899,10 +899,10 @@ void ejsCreateTypeType(Ejs *ejs)
         helpers via objectType->type->helpers. So we set it to the Type type. We keep objectType->baseType == 0
         because Object has no base type. Similarly for the Type type.
      */
-    TYPE(ejs->objectType) = ejs->typeType;
-    TYPE(ejs->blockType) = ejs->typeType;
-    TYPE(ejs->stringType) = ejs->typeType;
-    TYPE(ejs->typeType) = ejs->objectType;
+    SET_TYPE(ejs->objectType, ejs->typeType);
+    SET_TYPE(ejs->blockType, ejs->typeType);
+    SET_TYPE(ejs->stringType, ejs->typeType);
+    SET_TYPE(ejs->typeType, ejs->objectType);
 }
 
 

@@ -67,6 +67,9 @@ MAIN(ejsmodMain, int argc, char **argv)
             mp->cslots = 1;
             mp->genSlots = 1;
             
+        } else if (strcmp(argp, "--debugger") == 0) {
+            mprSetDebugMode(1);
+
         } else if (strcmp(argp, "--depends") == 0) {
             mp->depends = 1;
             
@@ -206,10 +209,8 @@ MAIN(ejsmodMain, int argc, char **argv)
     if (mp->errorCount > 0) {
         err = -1;
     }
-    mprFree(ejs);
-    if (mprStop(mpr)) {
-        mprFree(mpr);
-    }
+    ejsDestroy(ejs);
+    mprDestroy(mpr);
     return err;
 }
 
@@ -247,7 +248,7 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
     ejs = mp->ejs;
     
     if (output) {
-        outfile = mprOpen(output, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
+        outfile = mprOpenFile(output, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, 0664);
     } else {
         outfile = 0;
     }
@@ -286,13 +287,12 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
                     (next >= count) ? "" : " ");
             }
             printf("\n");
-            mprFree(depends);
         }
     }
     if (mp->html || mp->xml) {
         emCreateDoc(mp);
     }
-    mprFree(outfile);
+    mprCloseFile(outfile);
     return 0;
 }
 
@@ -329,7 +329,7 @@ static int setLogging(Mpr *mpr, char *logSpec)
     if (strcmp(logSpec, "stdout") == 0) {
         file = mpr->fileSystem->stdOutput;
     } else {
-        if ((file = mprOpen(logSpec, O_WRONLY, 0664)) == 0) {
+        if ((file = mprOpenFile(logSpec, O_WRONLY, 0664)) == 0) {
             mprPrintfError("Can't open log file %s\n", logSpec);
             return EJS_ERR;
         }

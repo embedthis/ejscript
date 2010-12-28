@@ -236,40 +236,38 @@ static EjsObj *copyPath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     cchar       *toPath;
     ssize       bytes;
     char        *buf;
-    int         rc;
 
     mprAssert(argc == 1);
+
+    from = to = 0;
     if ((toPath = getPathString(ejs, argv[0])) == 0) {
         return 0;
     }
-    from = mprOpen(fp->value, O_RDONLY | O_BINARY, 0);
+    from = mprOpenFile(fp->value, O_RDONLY | O_BINARY, 0);
     if (from == 0) {
         ejsThrowIOError(ejs, "Cant open %s", fp->value);
         return 0;
     }
-    to = mprOpen(toPath, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, EJS_FILE_PERMS);
+    to = mprOpenFile(toPath, O_CREAT | O_WRONLY | O_TRUNC | O_BINARY, EJS_FILE_PERMS);
     if (to == 0) {
         ejsThrowIOError(ejs, "Cant create %s", toPath);
-        mprFree(from);
+        mprCloseFile(from);
         return 0;
     }
     if ((buf = mprAlloc(MPR_BUFSIZE)) == NULL) {
         ejsThrowMemoryError(ejs);
-        mprFree(to);
-        mprFree(from);
+        mprCloseFile(to);
+        mprCloseFile(from);
         return 0;
     }
-    rc = 0;
-    while ((bytes = mprRead(from, buf, MPR_BUFSIZE)) > 0) {
-        if (mprWrite(to, buf, bytes) != bytes) {
+    while ((bytes = mprReadFile(from, buf, MPR_BUFSIZE)) > 0) {
+        if (mprWriteFile(to, buf, bytes) != bytes) {
             ejsThrowIOError(ejs, "Write error to %s", toPath);
-            rc = 0;
             break;
         }
     }
-    mprFree(from);
-    mprFree(to);
-    mprFree(buf);
+    mprCloseFile(from);
+    mprCloseFile(to);
     return 0;
 }
 
@@ -354,7 +352,6 @@ static EjsObj *nextPathKey(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsObj *getPathIterator(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    mprFree(fp->files);
     fp->files = mprGetPathFiles(fp->value, 0);
     return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, (EjsProc) nextPathKey, 0, NULL);
 }
@@ -389,7 +386,6 @@ static EjsObj *nextPathValue(Ejs *ejs, EjsIterator *ip, int argc, EjsObj **argv)
  */
 static EjsObj *getPathValues(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    mprFree(fp->files);
     fp->files = mprGetPathFiles(fp->value, 0);
     return (EjsObj*) ejsCreateIterator(ejs, (EjsObj*) fp, (EjsProc) nextPathValue, 0, NULL);
 }
@@ -442,7 +438,6 @@ static EjsObj *getPathFiles(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
             }
         }
     }
-    mprFree(list);
     return (EjsObj*) array;
 }
 
@@ -823,7 +818,7 @@ static EjsObj *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
     path = ejsToMulti(ejs, argv[0]);
 
-    file = mprOpen(path, O_RDONLY | O_BINARY, 0);
+    file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
     if (file == 0) {
         ejsThrowIOError(ejs, "Can't open %s", path);
         return 0;
@@ -835,12 +830,13 @@ static EjsObj *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     result = ejsCreateByteArray(ejs, (int) mprGetFileSize(file));
     if (result == 0) {
         ejsThrowMemoryError(ejs);
+        mprCloseFile(file);
         return 0;
     }
 
     rc = 0;
     offset = 0;
-    while ((bytes = mprRead(file, buffer, MPR_BUFSIZE)) > 0) {
+    while ((bytes = mprReadFile(file, buffer, MPR_BUFSIZE)) > 0) {
         if (ejsCopyToByteArray(ejs, result, offset, buffer, bytes) < 0) {
             ejsThrowMemoryError(ejs);
             rc = -1;
@@ -849,8 +845,7 @@ static EjsObj *readBytes(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         offset += bytes;
     }
     ejsSetByteArrayPositions(ejs, result, 0, offset);
-
-    mprFree(file);
+    mprCloseFile(file);
     return (EjsObj*) result;
 }
 
@@ -878,7 +873,7 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         return 0;
     }
 
-    file = mprOpen(path, O_RDONLY | O_BINARY, 0);
+    file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
     if (file == 0) {
         ejsThrowIOError(ejs, "Can't open %s", path);
         return 0;
@@ -891,12 +886,12 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     result = ejsCreateArray(ejs, 0);
     if (result == NULL || data == NULL) {
         ejsThrowMemoryError(ejs);
-        mprFree(file);
+        mprCloseFile(file);
         return 0;
     }
 
     rc = 0;
-    while ((bytes = mprRead(file, buffer, MPR_BUFSIZE)) > 0) {
+    while ((bytes = mprReadFile(file, buffer, MPR_BUFSIZE)) > 0) {
         if (mprPutBlockToBuf(data, buffer, bytes) != bytes) {
             ejsThrowMemoryError(ejs);
             rc = -1;
@@ -921,8 +916,7 @@ static EjsObj *readLines(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         //  MOB - UNICODE ENCODING
         ejsSetProperty(ejs, result, lineno++, ejsCreateStringFromAsc(ejs, start, (int) (cp - start)));
     }
-    mprFree(file);
-    mprFree(data);
+    mprCloseFile(file);
     return (EjsObj*) result;
 }
 
@@ -936,15 +930,14 @@ static EjsObj *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
     MprFile     *file;
     MprBuf      *data;
-    EjsObj      *result;
     cchar       *path;
     char        buffer[MPR_BUFSIZE];
-    int         bytes, rc;
+    int         bytes;
 
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
     path = ejsToMulti(ejs, argv[0]);
 
-    file = mprOpen(path, O_RDONLY | O_BINARY, 0);
+    file = mprOpenFile(path, O_RDONLY | O_BINARY, 0);
     if (file == 0) {
         ejsThrowIOError(ejs, "Can't open %s", path);
         return 0;
@@ -956,22 +949,18 @@ static EjsObj *readFileAsString(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     data = mprCreateBuf(0, (int) mprGetFileSize(file) + 1);
     if (data == 0) {
         ejsThrowMemoryError(ejs);
+        mprCloseFile(file);
         return 0;
     }
-
-    rc = 0;
-    while ((bytes = mprRead(file, buffer, MPR_BUFSIZE)) > 0) {
+    while ((bytes = mprReadFile(file, buffer, MPR_BUFSIZE)) > 0) {
         if (mprPutBlockToBuf(data, buffer, bytes) != bytes) {
             ejsThrowMemoryError(ejs);
-            rc = -1;
             break;
         }
     }
+    mprCloseFile(file);
     //  MOB - UNICODE ENCODING
-    result = (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(data),  mprGetBufLength(data));
-    mprFree(file);
-    mprFree(data);
-    return result;
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(data),  mprGetBufLength(data));
 }
 
 
@@ -1115,7 +1104,6 @@ static EjsObj *getPathFileSize(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
  */
 static EjsObj *pathToJSON(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    EjsObj  *result;
     MprBuf  *buf;
     int     i, c, len;
 
@@ -1133,9 +1121,7 @@ static EjsObj *pathToJSON(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     }
     mprPutCharToBuf(buf, '"');
     mprAddNullToBuf(buf);
-    result = (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
-    mprFree(buf);
-    return result;
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
 }
 
 
@@ -1165,7 +1151,7 @@ static EjsObj *truncatePath(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
     int     size;
 
     size = ejsGetInt(ejs, argv[0]);
-    if (mprTruncate(fp->value, size) < 0) {
+    if (mprTruncateFile(fp->value, size) < 0) {
         ejsThrowIOError(ejs, "Cant truncate %s", fp->value);
     }
     return 0;
@@ -1195,22 +1181,23 @@ static EjsObj *writeToFile(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
         Create fails if already present
      */
     mprDeletePath(path);
-    file = mprOpen(path, O_CREAT | O_WRONLY | O_BINARY, permissions);
+    file = mprOpenFile(path, O_CREAT | O_WRONLY | O_BINARY, permissions);
     if (file == 0) {
         ejsThrowIOError(ejs, "Cant create %s", path);
+        mprCloseFile(file);
         return 0;
     }
 
     for (i = 0; i < args->length; i++) {
         data = ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, (EjsObj*) args, i)));
         length = (int) strlen(data);
-        bytes = mprWrite(file, data, length);
+        bytes = mprWriteFile(file, data, length);
         if (bytes != length) {
             ejsThrowIOError(ejs, "Write error to %s", path);
             break;
         }
     }
-    mprFree(file);
+    mprCloseFile(file);
     return 0;
 }
 #endif
@@ -1235,7 +1222,7 @@ EjsPath *ejsCreatePath(Ejs *ejs, EjsString *path)
 {
     EjsPath     *fp;
 
-    fp = (EjsPath*) ejsCreate(ejs, ejs->pathType, 0);
+    fp = ejsCreateObj(ejs, ejs->pathType, 0);
     if (fp == 0) {
         return 0;
     }

@@ -674,6 +674,7 @@ typedef struct EcJump {
     Some state fields are inherited. We keep a linked list from EcCompiler.
  */
 typedef struct EcState {
+    struct EcState  *next;                  /* State stack */
     uint            blockIsMethod    : 1;   /* Current function is a method */
     uint            captureBreak     : 1;   /* Capture break/continue inside a catch/finally block */
     uint            captureFinally   : 1;   /* Capture break/continue with a finally block */
@@ -717,11 +718,9 @@ typedef struct EcState {
     EcCodeGen       *staticCodeBuf;         /* Class static level code generation buffer */
     EcCodeGen       *instanceCodeBuf;       /* Class instance level code generation buffer */
 
-    struct EcState  *prev;                  /* State stack */
     struct EcState  *prevBlockState;        /* Block state stack */
     struct EcState  *breakState;            /* State for breakable blocks */
     struct EcState  *classState;            /* State for current class */
-    struct EcState  *next;                  /* Next state when on free list */
 } EcState;
 
 
@@ -748,8 +747,6 @@ typedef struct EcCompiler {
     MprHashTable *keywords;
     EcStream    *stream;
     EcToken     *putback;                   /* List of active putback tokens */
-    EcState     *freeStates;                /* Free list of states */
-    EcToken     *freeTokens;                /* Free list of tokens */
     EjsString   *docToken;                  /* Last doc token */
 
     EcState     *fileState;                 /* Top level state for the file */
@@ -819,6 +816,7 @@ extern void         ecGenConditionalCode(EcCompiler *cp, EcNode *np, EjsModule *
 extern int          ecCodeGen(EcCompiler *cp);
 extern int          ecCompile(EcCompiler *cp, int argc, char **path);
 extern EcCompiler   *ecCreateCompiler(struct Ejs *ejs, int flags);
+extern void         ecDestroyCompiler(EcCompiler *cp);
 extern void         ecInitLexer(EcCompiler *cp);
 extern EcNode       *ecCreateNode(EcCompiler *cp, int kind);
 extern void         ecFreeToken(EcCompiler *cp, EcToken *token);

@@ -28,7 +28,7 @@ static EjsUri *castToUri(Ejs *ejs, EjsObj *arg)
 {
     EjsUri  *up;
 
-    up = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    up = ejsCreateObj(ejs, ejs->uriType, 0);
     if (ejsIsString(ejs, arg)) {
         up->uri = httpCreateUri(up, ejsToMulti(ejs, arg), 0);
 
@@ -55,7 +55,7 @@ static EjsUri *cloneUri(Ejs *ejs, EjsUri *src, bool deep)
 {
     EjsUri     *dest;
 
-    dest = (EjsUri*) ejsCreate(ejs, src->type, 0);
+    dest = ejsCreateObj(ejs, TYPE(src), 0);
     /*  Deep copy will complete the uri */
     dest->uri = httpCloneUri(src->uri, deep);
     return dest;
@@ -214,7 +214,6 @@ static EjsObj *uri_absolute(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
             httpJoinUriPath(uri, baseUri, uri);
         }
         httpCompleteUri(result->uri, baseUri);
-        mprFree(baseUri);
     } else {
         result = cloneUri(ejs, up, 0);
         httpCompleteUri(result->uri, NULL);
@@ -526,10 +525,6 @@ static EjsObj *uri_join(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
         oldUri = uri;
         uri = httpJoinUri(oldUri, 1, &other);
-        mprFree(oldUri);
-        if (!ejsIsUri(ejs, arg)) {
-            mprFree(other);
-        }
     }
     result->uri = uri;
     return (EjsObj*) result;
@@ -690,11 +685,8 @@ static EjsObj *uri_resolve(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 
     uri = up->uri;
     target = toHttpUri(ejs, argv[0], 0);
-    result = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    result = ejsCreateObj(ejs, ejs->uriType, 0);
     uri = httpResolveUri(uri, 1, &target, 0);
-    if (!ejsIsUri(ejs, argv[0])) {
-        mprFree(target);
-    }
     if (up->uri == uri) {
         uri = httpCloneUri(uri, 0);
     }
@@ -712,7 +704,7 @@ static EjsObj *uri_relative(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
     HttpUri     *baseUri;
 
     baseUri = toHttpUri(ejs, argv[0], 0);
-    result = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    result = ejsCreateObj(ejs, ejs->uriType, 0);
     result->uri = httpGetRelativeUri(baseUri, up->uri, 1);
     return (EjsObj*) result;
 }
@@ -818,7 +810,6 @@ static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     EjsArray    *options;
     EjsObj      *obj, *value;
-    EjsUri      *uri;
     MprBuf      *buf;
     cchar       *pattern, *cp, *ep, *str;
     char        *token;
@@ -860,9 +851,7 @@ static EjsObj *uri_template(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
         }
     }
     mprAddNullToBuf(buf);
-    uri = ejsCreateUriFromMulti(ejs, mprGetBufStart(buf));
-    mprFree(buf);
-    return (EjsObj*) uri;
+    return (EjsObj*) ejsCreateUriFromMulti(ejs, mprGetBufStart(buf));
 }
 
 
@@ -912,7 +901,6 @@ static EjsObj *uri_trimExt(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_set_uri(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    mprFree(up->uri);
     up->uri = httpCreateUri(ejsToMulti(ejs, argv[0]), 0);
     return 0;
 }
@@ -937,7 +925,7 @@ static EjsObj *completeUri(Ejs *ejs, EjsUri *up, EjsObj *missing, int includeQue
     if (missing == 0 || ejsIsNull(ejs, missing) || ejsIsUndefined(ejs, missing)) {
         missingUri = 0;
     } else if (ejsGetPropertyCount(ejs, missing) > 0) {
-        missingUri = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+        missingUri = ejsCreateObj(ejs, ejs->uriType, 0);
         missingUri->uri = createHttpUriFromHash(ejs, missing, 1);
     } else {
         missingUri = ejsToUri(ejs, missing);
@@ -1117,7 +1105,7 @@ EjsUri *ejsCreateUri(Ejs *ejs, EjsString *path)
 {
     EjsUri      *up;
 
-    if ((up = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0)) == NULL) {
+    if ((up = ejsCreateObj(ejs, ejs->uriType, 0)) == NULL) {
         return 0;
     }
     uri_constructor(ejs, up, 1, (EjsObj**) &path);
@@ -1130,7 +1118,7 @@ EjsUri *ejsCreateUriFromMulti(Ejs *ejs, cchar *path)
     EjsUri      *up;
     EjsObj      *arg;
 
-    up = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    up = ejsCreateObj(ejs, ejs->uriType, 0);
     if (up == 0) {
         return 0;
     }
@@ -1145,7 +1133,7 @@ EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cc
 {
     EjsUri      *up;
 
-    up = (EjsUri*) ejsCreate(ejs, ejs->uriType, 0);
+    up = ejsCreateObj(ejs, ejs->uriType, 0);
     if (up == 0) {
         return 0;
     }
@@ -1159,7 +1147,6 @@ static void manageUri(EjsUri *up, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(up->uri);
     } else if (flags & MPR_MANAGE_FREE) {
-        mprFree(up->uri);
     }
 }
 

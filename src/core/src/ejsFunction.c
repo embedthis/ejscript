@@ -28,7 +28,7 @@ static EjsFunction *createFunction(Ejs *ejs, EjsType *type, int numProp)
         return 0;
     }
     fun->block.pot.isFunction = 1;
-    DYNAMIC(fun) = 1;
+    SET_DYNAMIC(fun, 1);
     return fun;
 }
 
@@ -472,7 +472,7 @@ EjsFunction *ejsCreateSimpleFunction(Ejs *ejs, EjsString *name, int attributes)
 {
     EjsFunction     *fun;
 
-    if ((fun = (EjsFunction*) ejsCreate(ejs, ejs->functionType, 0)) == NULL) {
+    if ((fun = ejsCreateObj(ejs, ejs->functionType, 0)) == NULL) {
         return 0;
     }
     fun->name = name;

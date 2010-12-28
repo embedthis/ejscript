@@ -97,15 +97,9 @@ EjsAny *ejsDeserialize(Ejs *ejs, EjsString *str)
 
 static EjsObj *parseLiteral(Ejs *ejs, JsonState *js)
 {
-    MprBuf      *buf;
-    EjsObj      *vp;
-
     mprAssert(js);
 
-    buf = mprCreateBuf(0, 0);
-    vp = parseLiteralInner(ejs, buf, js);
-    mprFree(buf);
-    return vp;
+    return parseLiteralInner(ejs, mprCreateBuf(0, 0), js);
 }
 
 
@@ -381,7 +375,6 @@ static EjsObj *parseLiteralInner(Ejs *ejs, MprBuf *buf, JsonState *js)
                     }
                 }
                 mprAssert(vp);
-                mprFree(valueBuf);
             } else {
                 getNextJsonToken(buf, &value, js);
                 js->error = js->next;
@@ -457,11 +450,13 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
         if ((arg = ejsGetPropertyByName(ejs, options, EN("indent"))) != 0) {
             if (ejsIsString(ejs, arg)) {
                json.indent = (char*) ejsToMulti(ejs, arg);
+                //  MOB - get another solution to hold
                 mprHold(json.indent);
             } else if (ejsIsNumber(ejs, arg)) {
                 i = ejsGetInt(ejs, arg);
                 if (0 <= i && i < MPR_MAX_STRING) {
                     json.indent = mprAlloc(i + 1);
+                    //  MOB - get another solution to hold
                     mprHold(json.indent);
                     memset(json.indent, ' ', i);
                     json.indent[i] = '\0';
@@ -483,6 +478,7 @@ EjsString *ejsSerialize(Ejs *ejs, EjsAny *vp, EjsObj *options)
         }
     }
     result = serialize(ejs, vp, &json);
+    //  MOB - get another solution to hold
     mprRelease(json.indent);
     return result;
 }
@@ -525,7 +521,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
         mprPutCharToWideBuf(json->buf, '\n');
     }
     if (++ejs->serializeDepth <= json->depth && !VISITED(obj)) {
-        VISITED(obj) = 1;
+        SET_VISITED(obj, 1);
         for (slotNum = 0; slotNum < count && !ejs->exception; slotNum++) {
             trait = ejsGetPropertyTraits(ejs, obj, slotNum);
             if (trait && (trait->attributes & (EJS_TRAIT_HIDDEN | EJS_TRAIT_DELETED | EJS_FUN_INITIALIZER | 
@@ -534,7 +530,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             }
             pp = ejsGetProperty(ejs, obj, slotNum);
             if (ejs->exception) {
-                VISITED(obj) = 0;
+                SET_VISITED(obj, 0);
                 json->nest--;
                 return 0;
             }
@@ -593,7 +589,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
             if (sv == 0 || !ejsIsString(ejs, sv)) {
                 if (ejs->exception) {
                     ejsThrowTypeError(ejs, "Can't serialize property %@", qname.name);
-                    VISITED(obj) = 0;
+                    SET_VISITED(obj, 0);
                     return 0;
                 }
             } else {
@@ -613,7 +609,7 @@ static EjsString *serialize(Ejs *ejs, EjsAny *vp, Json *json)
                 mprPutCharToWideBuf(json->buf, '\n');
             }
         }
-        VISITED(obj) = 0;
+        SET_VISITED(obj, 0);
     }
     --ejs->serializeDepth; 
     if (json->pretty || json->indent) {

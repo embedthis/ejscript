@@ -286,12 +286,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
         if (!ejs->joining) {
             break;
         }
-        /*
-            MOB BUG - there is a race here. If another thread is calling ServiceEvents and services the worker
-            onclose message, then this may hang forever.  Set delay to 20.
-         */
-        remaining = 20;
-        ejsServiceEvents(ejs, remaining, MPR_SERVICE_ONE_THING);
+        mprWaitForEvent(ejs->dispatcher, remaining);
         remaining = (int) mprGetRemainingTime(mark, timeout);
     } while (remaining > 0 && !ejs->exception);
 
@@ -409,11 +404,11 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
 
     switch (msg->callbackSlot) {
     case ES_Worker_onerror:
-        event = ejsCreate(ejs, ejs->errorEventType, 0);
+        event = ejsCreateObj(ejs, ejs->errorEventType, 0);
         break;
     case ES_Worker_onclose:
     case ES_Worker_onmessage:
-        event = ejsCreate(ejs, ejs->eventType, 0);
+        event = ejsCreateObj(ejs, ejs->eventType, 0);
         break;
     default:
         mprAssert(msg->callbackSlot == 0);
@@ -456,12 +451,15 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     if (msg->callbackSlot == ES_Worker_onclose) {
         mprAssert(!worker->inside);
+#if UNUSED
         worker->ejs->finished = 1;
+#endif
         worker->state = EJS_WORKER_COMPLETE;
         LOG(5, "Worker.doMessage: complete");
         /* Worker and insider interpreter are now eligible for garbage collection */
         removeWorker(worker);
     }
+    mprSignalDispatcher(ejs->dispatcher);
     worker->event = 0;
     return 0;
 }
@@ -683,7 +681,8 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
 static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
 {
     MprTime     mark;
-    int         remaining, timeout;
+    MprTime     remaining;
+    int         timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]): MAXINT;
     if (timeout < 0) {
@@ -694,8 +693,8 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
 
     worker->gotMessage = 0;
     do {
-        ejsServiceEvents(ejs, remaining, MPR_SERVICE_ONE_THING);
-        remaining = (int) mprGetRemainingTime(mark, timeout);
+        mprWaitForEvent(ejs->dispatcher, remaining);
+        remaining = mprGetRemainingTime(mark, timeout);
     } while (!worker->gotMessage && remaining > 0 && !ejs->exception);
 
     if (worker->gotMessage) {
@@ -758,7 +757,7 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
 
 EjsWorker *ejsCreateWorker(Ejs *ejs)
 {
-    return (EjsWorker*) ejsCreate(ejs, ejs->workerType, 0);
+    return ejsCreateObj(ejs, ejs->workerType, 0);
 }
 
 

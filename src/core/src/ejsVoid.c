@@ -191,7 +191,7 @@ void ejsCreateVoidType(Ejs *ejs)
     type->helpers.invokeOperator   = (EjsInvokeOperatorHelper) invokeVoidOperator;
     type->helpers.getProperty      = (EjsGetPropertyHelper) getVoidProperty;
 
-    ejs->undefinedValue = ejsCreate(ejs, type, 0);
+    ejs->undefinedValue = ejsCreateObj(ejs, type, 0);
     ejsSetName(ejs->undefinedValue, "undefined");
 }
 

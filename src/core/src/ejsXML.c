@@ -34,7 +34,7 @@ static EjsObj *cloneXml(Ejs *ejs, EjsXML *xml, bool deep)
 {
     EjsXML  *newXML;
 
-    newXML = (EjsXML*) ejsCreate(ejs, TYPE(xml), 0);
+    newXML = ejsCreateObj(ejs, TYPE(xml), 0);
     if (newXML == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -84,11 +84,9 @@ static EjsObj *castXml(Ejs *ejs, EjsXML *xml, EjsType *type)
         }
         buf = mprCreateBuf(MPR_BUFSIZE, -1);
         if (ejsXMLToString(ejs, buf, xml, -1) < 0) {
-            mprFree(buf);
             return 0;
         }
         result = (EjsObj*) ejsCreateStringFromAsc(ejs, (char*) buf->start);
-        mprFree(buf);
         return result;
 
     default:
@@ -327,7 +325,6 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
             str = mrejoin(str, NULL, " ", sv->value, NULL);
         }
         value = (EjsObj*) ejsCreateString(ejs, str, -1);
-        mprFree(str);
 
     } else {
         value = ejsCast(ejs, value, ejs->stringType);
@@ -355,7 +352,6 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
             /*
                 Found a match. So replace its value
              */
-            mprFree(lastElt->value);
             lastElt->value = (EjsString*) value;
             return last;
 
@@ -401,7 +397,6 @@ static EjsXML *createValueNode(Ejs *ejs, EjsXML *elt, EjsObj *value)
          */
         text = mprGetFirstItem(elt->elements);
         if (text->kind == EJS_XML_TEXT) {
-            mprFree(text->value);
             text->value = str;
             return elt;
         }
@@ -650,7 +645,6 @@ EjsXML *ejsDeepCopyXML(Ejs *ejs, EjsXML *xml)
         }
     }
     if (mprHasMemError(ejs)) {
-        mprFree(root);
         return 0;
     }
     return root;
@@ -725,7 +719,7 @@ static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     filename = ejsToMulti(ejs, argv[0]);
-    file = mprOpen(filename, O_RDONLY, 0664);
+    file = mprOpenFile(filename, O_RDONLY, 0664);
     if (file == 0) {
         ejsThrowIOError(ejs, "Can't open: %s", filename);
         return 0;
@@ -734,8 +728,7 @@ static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     xp = ejsCreateXmlParser(ejs, xml, filename);
     if (xp == 0) {
         ejsThrowMemoryError(ejs);
-        mprFree(xp);
-        mprFree(file);
+        mprCloseFile(file);
         return 0;
     }
     mprXmlSetInputStream(xp, readFileData, (void*) file);
@@ -744,12 +737,10 @@ static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
         if (! ejsHasException(ejs)) {
             ejsThrowIOError(ejs, "Can't parse XML file: %s\nDetails %s",  filename, mprXmlGetErrorMsg(xp));
         }
-        mprFree(xp);
-        mprFree(file);
+        mprCloseFile(file);
         return 0;
     }
-    mprFree(xp);
-    mprFree(file);
+    mprCloseFile(file);
     return 0;
 }
 
@@ -777,27 +768,22 @@ static EjsObj *saveXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
        Convert XML to a string
      */
     if (ejsXMLToString(ejs, buf, xml, 0) < 0) {
-        mprFree(buf);
         return 0;
     }
-    file = mprOpen(filename,  O_CREAT | O_TRUNC | O_WRONLY | O_TEXT, 0664);
+    file = mprOpenFile(filename,  O_CREAT | O_TRUNC | O_WRONLY | O_TEXT, 0664);
     if (file == 0) {
         ejsThrowIOError(ejs, "Can't open: %s, %d", filename, mprGetOsError(ejs));
-        mprFree(filename);
         return 0;
     }
     len = mprGetBufLength(buf);
-    bytes = mprWrite(file, buf->start, len);
+    bytes = mprWriteFile(file, buf->start, len);
     if (bytes != len) {
         ejsThrowIOError(ejs, "Can't write to: %s", filename);
-        mprFree(filename);
-        mprFree(file);
+        mprCloseFile(file);
         return 0;
     }
-    mprWrite(file, "\n", 1);
-    mprFree(buf);
-    mprFree(file);
-    mprFree(filename);
+    mprWriteFile(file, "\n", 1);
+    mprCloseFile(file);
     return 0;
 }
 
@@ -811,7 +797,6 @@ static EjsString *xmlToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 {
     EjsString       *sp;
     MprBuf          *buf;
-    EjsString       *result;
     cchar           *cp;
 
     /*
@@ -828,9 +813,7 @@ static EjsString *xmlToJson(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
     }
     mprPutCharToBuf(buf, '"');
     mprAddNullToBuf(buf);
-    result = ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
-    mprFree(buf);
-    return result;
+    return ejsCreateStringFromAsc(ejs, mprGetBufStart(buf));
 }
 
 
@@ -982,7 +965,7 @@ static ssize readFileData(MprXml *xp, void *data, char *buf, ssize size)
     mprAssert(buf);
     mprAssert(size > 0);
 
-    return mprRead((MprFile*) data, buf, size);
+    return mprReadFile((MprFile*) data, buf, size);
 }
 
 
@@ -1070,7 +1053,6 @@ void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
     if (mprXmlParse(xp) < 0 && !ejsHasException(ejs)) {
         ejsThrowSyntaxError(ejs, "Can't parse XML string: %s", mprXmlGetErrorMsg(xp));
     }
-    mprFree(xp);
 }
 
 

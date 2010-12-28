@@ -127,7 +127,7 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
     mprAssert(tp->args);
     mprAssert(tp->callback);
 
-    ejs = tp->type->ejs;
+    ejs = TYPE(tp)->ejs;
     thisObj = (tp->callback->boundThis) ? tp->callback->boundThis : tp;
     ejsRunFunction(ejs, tp->callback, thisObj, tp->args->length, tp->args->data);
     if (ejs->exception) {

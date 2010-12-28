@@ -1953,7 +1953,7 @@ struct EcNode *parseXMLInitializer(EcCompiler *cp)
     if (ejs->xmlType == 0) {
         return LEAVE(cp, parseError(cp, "No XML support configured"));
     }
-    np->literal.var = (EjsObj*) ejsCreate(ejs, ejs->xmlType, 0);
+    np->literal.var = (EjsObj*) ejsCreateObj(ejs, ejs->xmlType, 0);
 
     switch (peekToken(cp)) {
     case T_XML_COMMENT_START:
@@ -2482,9 +2482,7 @@ static EcNode *parseRegularExpression(EcCompiler *cp)
         getToken(cp);
     }
     prefix = wclone(cp->token->text);
-
     id = ecGetRegExpToken(cp, prefix);
-    mprFree(prefix);
     cp->peekToken = 0;
     updateDebug(cp);
 
@@ -8828,7 +8826,6 @@ static int parseVersion(EcCompiler *cp, int parseMax)
     if ((p = mtok(next, ".", &next)) != 0) {
         patch = (int) wtoi(p, 10, NULL);
     }
-    mprFree(str);
     return EJS_MAKE_VERSION(major, minor, patch);
 }
 
@@ -9011,7 +9008,7 @@ static EcNode *parsePragmaItem(EcCompiler *cp)
                     new namespace value. Note that functions and classes null this so it does not propagate into classes or
                     functions.
                  */
-                for (upper = cp->state->prev; upper; upper = upper->prev) {
+                for (upper = cp->state->next; upper; upper = upper->next) {
                     upper->defaultNamespace = np->qname.name;
                     if (upper == cp->blockState) {
                         break;
@@ -9139,8 +9136,6 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
         apath = mprGetAbsPath(path);
         md5 = mprGetMD5Hash(apath, (int) strlen(apath), NULL);
         np->qname.name = ejsSprintf(cp->ejs, "%s-%s-%d", EJS_INTERNAL_NAMESPACE, md5, cp->uid++);
-        mprFree(md5);
-        mprFree(apath);
     } else {
         np->qname.name = ejsCreateStringFromAsc(cp->ejs, EJS_INTERNAL_NAMESPACE);
     }
@@ -9616,7 +9611,6 @@ static void appendDocString(EcCompiler *cp, EcNode *np, EcNode *parameter, EcNod
                 found++;
             }
         }
-        mprFree(np->doc);
         if (found) {
             np->doc = ejsSprintf(ejs, "%s\n@default %s %@", np->doc, parameter->qname.name, defaultValue);
         } else {
@@ -10016,7 +10010,6 @@ void ecSetTabWidth(EcCompiler *cp, int width)
 void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 {
     if (outputFile) {
-        mprFree(cp->outputFile);
         //  MOB UNICODE
         cp->outputFile = sclone(outputFile);
     }
@@ -10026,7 +10019,6 @@ void ecSetOutputFile(EcCompiler *cp, cchar *outputFile)
 void ecSetCertFile(EcCompiler *cp, cchar *certFile)
 {
     //  MOB UNICODE
-    mprFree(cp->certFile);
     cp->certFile = sclone(certFile);
 }
 

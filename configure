@@ -2036,6 +2036,8 @@ postGen() {
     build/bin/makedep
     touch "${CONFIG_H}"
     touch ${BLD_OUT_DIR}/.needDepend
+    echo -e "  # Clean old objects ..."
+    make clean 2>&1 >/dev/null
 }
 
 

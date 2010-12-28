@@ -57,8 +57,7 @@ static void manageModule(EjsModule *mp, int flags)
         mprMarkList(mp->current);
 
     } else if (flags & MPR_MANAGE_FREE) {
-        mprFree(mp->file);
-        mp->file = 0;
+        mprCloseFile(mp->file);
     }
 }
 
@@ -185,8 +184,8 @@ static void manageConstants(EjsConstants *cp, int flags)
         EjsString   **sp;
         for (sp = (EjsString**) &cp->index[cp->indexCount - 1]; sp >= (EjsString**) cp->index; sp--) {
             if (!(PTOI(*sp) & 0x1)) {
+                //  MOB -- get another solution for hold/release
                 mprRelease(*sp);
-                // mprFree(*sp);
             }
         }
         mprRelease(cp->index);
@@ -220,6 +219,7 @@ EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size)
     }
     constants->index[0] = ejs->emptyString;
     constants->indexCount = 1;
+    //  MOB -- get another solution for hold/release
     mprHold(constants->index);
     return constants;
 }
@@ -370,7 +370,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     debug = NULL;
 
     if (mp->file == 0) {
-        if ((mp->file = mprOpen(mp->path, O_RDONLY | O_BINARY, 0666)) == NULL) {
+        if ((mp->file = mprOpenFile(mp->path, O_RDONLY | O_BINARY, 0666)) == NULL) {
             ejsThrowIOError(ejs, "Can't open module file %s", mp->path);
             return NULL;
         }
@@ -378,8 +378,8 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     } else {
         prior = mprGetFilePosition(mp->file);
     }
-    if (mprSeek(mp->file, SEEK_SET, code->debugOffset) != code->debugOffset) {
-        mprSeek(mp->file, SEEK_SET, prior);
+    if (mprSeekFile(mp->file, SEEK_SET, code->debugOffset) != code->debugOffset) {
+        mprSeekFile(mp->file, SEEK_SET, prior);
         mprAssert(0);
         return 0;
     }
@@ -398,13 +398,12 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
         }
     }
     if (prior) {
-        mprSeek(mp->file, SEEK_SET, prior);
+        mprSeekFile(mp->file, SEEK_SET, prior);
     } else {
-        mprFree(mp->file);
+        mprCloseFile(mp->file);
         mp->file = 0;
     }
     if (mp->hasError) {
-        mprFree(debug);
         return NULL;
     }
     return debug;
@@ -636,7 +635,7 @@ void ejsModuleReadBlock(Ejs *ejs, EjsModule *mp, char *buf, int len)
 {
     mprAssert(mp);
 
-    if (mprRead(mp->file, buf, len) != len) {
+    if (mprReadFile(mp->file, buf, len) != len) {
         mp->hasError = 1;
     }
 }
@@ -648,7 +647,7 @@ int ejsModuleReadByte(Ejs *ejs, EjsModule *mp)
 
     mprAssert(mp);
 
-    if ((c = mprGetc(mp->file)) < 0) {
+    if ((c = mprGetFileChar(mp->file)) < 0) {
         mp->hasError = 1;
         return 0;
     }
@@ -678,7 +677,7 @@ int ejsModuleReadInt32(Ejs *ejs, EjsModule *mp)
 
     mprAssert(mp);
 
-    if (mprRead(mp->file, buf, 4) != 4) {
+    if (mprReadFile(mp->file, buf, 4) != 4) {
         mp->hasError = 1;
         return 0;
     }
@@ -702,7 +701,7 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
     if (mp->hasError || (buf = mprAlloc(len)) == 0) {
         return NULL;
     }
-    if (mprRead(mp->file, buf, len) != len) {
+    if (mprReadFile(mp->file, buf, len) != len) {
         mp->hasError = 1;
         return NULL;
     }
@@ -715,16 +714,10 @@ char *ejsModuleReadMulti(Ejs *ejs, EjsModule *mp)
  */
 MprChar *ejsModuleReadMultiAsWide(Ejs *ejs, EjsModule *mp)
 {
-    MprChar     *result;
-    char        *str;
-
     mprAssert(mp);
 
     //  MOB OPT - need direct multi to wide without the double copy
-    str = ejsModuleReadMulti(ejs, mp);
-    result = amtow(str, NULL);
-    mprFree(str);
-    return result;
+    return amtow(ejsModuleReadMulti(ejs, mp), NULL);
 }
 
 
@@ -748,7 +741,7 @@ int64 ejsModuleReadNum(Ejs *ejs, EjsModule *mp)
     mprAssert(mp);
     mprAssert(mp->file);
 
-    if ((c = mprGetc(mp->file)) < 0) {
+    if ((c = mprGetFileChar(mp->file)) < 0) {
         mp->hasError = 1;
         return 0;
     }
@@ -758,7 +751,7 @@ int64 ejsModuleReadNum(Ejs *ejs, EjsModule *mp)
     shift = 6;
     
     while (c & 0x80) {
-        if ((c = mprGetc(mp->file)) < 0) {
+        if ((c = mprGetFileChar(mp->file)) < 0) {
             mp->hasError = 1;
             return 0;
         }
