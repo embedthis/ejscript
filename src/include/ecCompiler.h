@@ -174,7 +174,9 @@ typedef struct EcNode {
 
     struct EcCompiler   *cp;                    /* Compiler instance reference */
 
+#if BLD_CC_UNNAMED_UNIONS
     union {
+#endif
 #if UNUSED
         struct {
             EcCodeGen   *rightCode;
@@ -378,7 +380,9 @@ typedef struct EcNode {
             Node        object;
             Node        statement;
         } with;
+#if BLD_CC_UNNAMED_UNIONS
     };
+#endif
 } EcNode;
 
 
