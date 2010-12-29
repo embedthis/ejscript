@@ -54,7 +54,7 @@ static void manageModule(EjsModule *mp, int flags)
         mprMark(mp->doc);
         mprMark(mp->scope);
         mprMark(mp->currentMethod);
-        mprMarkList(mp->current);
+        mprMark(mp->current);
 
     } else if (flags & MPR_MANAGE_FREE) {
         mprCloseFile(mp->file);
@@ -171,25 +171,13 @@ static void manageConstants(EjsConstants *cp, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(cp->pool);
         mprMark(cp->table);
-#if UNUSED || 1
         mprMark(cp->index);
         for (i = 0; i < cp->indexCount; i++) {
             if (!(PTOI(cp->index[i]) & 0x1)) {
                 mprMark(cp->index[i]);
             }
         }
-#endif
     } else if (flags & MPR_MANAGE_FREE) {
-#if UNUSED
-        EjsString   **sp;
-        for (sp = (EjsString**) &cp->index[cp->indexCount - 1]; sp >= (EjsString**) cp->index; sp--) {
-            if (!(PTOI(*sp) & 0x1)) {
-                //  MOB -- get another solution for hold/release
-                mprRelease(*sp);
-            }
-        }
-        mprRelease(cp->index);
-#endif
     }
 }
 

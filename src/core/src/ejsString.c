@@ -20,7 +20,7 @@ static EjsString *buildString(Ejs *ejs, EjsString *result, MprChar *str, ssize l
 static int indexof(MprChar *str, ssize len, EjsString *pattern, int patternLength, int dir);
 static void linkString(Ejs *ejs, EjsString *head, EjsString *sp);
 static int rebuildIntern(Ejs *ejs);
-static void unlinkString(EjsString *sp);
+static void unlinkString(Ejs *ejs, EjsString *sp);
 
 /************************************* Code ***********************************/
 /*
@@ -2254,10 +2254,10 @@ EjsString *ejsInternString(Ejs *ejs, EjsString *str)
     EjsString   *head, *sp;
     int         index, i;
 
-    //  MOB - use macro for these that are enabled in BLD_DEBUG
-    ejs->intern.accesses++;
-    index = whash(str->value, str->length) % ejs->intern.size;
-    if ((head = &ejs->intern.buckets[index]) != NULL) {
+    spinlock(ejs->intern);
+    ejs->intern->accesses++;
+    index = whash(str->value, str->length) % ejs->intern->size;
+    if ((head = &ejs->intern->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next) {
             if (sp->length == str->length) {
                 for (i = 0; i < sp->length && i < str->length; i++) {
@@ -2266,17 +2266,23 @@ EjsString *ejsInternString(Ejs *ejs, EjsString *str)
                     }
                 }
                 if (i == sp->length && i == str->length) {
-                    ejs->intern.reuse++;
+                    ejs->intern->reuse++;
+                    if (mprIsDead(sp)) {
+                        mprRevive(sp);
+                        break;
+                    }
+                    spinunlock(ejs->intern);
                     return sp;
                 }
             }
         }
     }
     linkString(ejs, head, str);
-    if (ejs->intern.count > ejs->intern.size) {
+    if (ejs->intern->count > ejs->intern->size) {
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ejs);
     }
+    spinunlock(ejs->intern);
     return str;
 }
 
@@ -2292,9 +2298,10 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
 
     mprAssert(0 <= len && len < MAXINT);
 
-    ejs->intern.accesses++;
-    index = whash(value, len) % ejs->intern.size;
-    if ((head = &ejs->intern.buckets[index]) != NULL) {
+    spinlock(ejs->intern);
+    ejs->intern->accesses++;
+    index = whash(value, len) % ejs->intern->size;
+    if ((head = &ejs->intern->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next) {
             if (sp->length == len) {
                 end = min(sp->length, len);
@@ -2304,7 +2311,12 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
                     }
                 }
                 if (i == sp->length) {
-                    ejs->intern.reuse++;
+                    ejs->intern->reuse++;
+                    if (mprIsDead(sp)) {
+                        mprRevive(sp);
+                        break;
+                    }
+                    spinunlock(ejs->intern);
                     return sp;
                 }
             }
@@ -2316,10 +2328,11 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
     }
     sp->length = len;
     linkString(ejs, head, sp);
-    if (ejs->intern.count > ejs->intern.size) {
+    if (ejs->intern->count > ejs->intern->size) {
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ejs);
     }
+    spinunlock(ejs->intern);
     return sp;
 }
 
@@ -2332,9 +2345,10 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
 
     mprAssert(0 <= len && len < MAXINT);
 
-    ejs->intern.accesses++;
-    index = shash(value, len) % ejs->intern.size;
-    if ((head = &ejs->intern.buckets[index]) != NULL) {
+    spinlock(ejs->intern);
+    ejs->intern->accesses++;
+    index = shash(value, len) % ejs->intern->size;
+    if ((head = &ejs->intern->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next) {
             if (sp->length == len) {
                 end = min(len, sp->length);
@@ -2344,7 +2358,13 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                     }
                 }
                 if (i == sp->length) {
-                    ejs->intern.reuse++;
+                    ejs->intern->reuse++;
+                    //  MOB - OPT this somehow
+                    if (mprIsDead(sp)) {
+                        mprRevive(sp);
+                        break;
+                    }
+                    spinunlock(ejs->intern);
                     return sp;
                 }
             }
@@ -2363,11 +2383,12 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
     }
     sp->length = len;
     linkString(ejs, head, sp);
-    // printf("INTERN %d %s\n", ejs->intern.count, sp->value);
-    if (ejs->intern.count > ejs->intern.size) {
+    // printf("INTERN %d %s\n", ejs->intern->count, sp->value);
+    if (ejs->intern->count > ejs->intern->size) {
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ejs);
     }
+    spinunlock(ejs->intern);
     return sp;
 }
 
@@ -2383,12 +2404,11 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
 EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
 {
     EjsString   *head, *sp, src;
-    ssize      i, end;
+    ssize       i, end;
     int         index;
 
     mprAssert(0 < len && len < MAXINT);
 
-    ejs->intern.accesses++;
     len = mtow(NULL, MAXSSIZE, value, len);
     mprAssert(len < MAXINT);
 
@@ -2400,8 +2420,10 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
         src->length = mtow(src->value, len + 1, value, len);
         value = src->value;
     }
-    index = whash(value, len) % ejs->intern.size;
-    if ((head = &ejs->intern.buckets[index]) != NULL) {
+    spinlock(ejs->intern);
+    ejs->intern->accesses++;
+    index = whash(value, len) % ejs->intern->size;
+    if ((head = &ejs->intern->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next) {
             end = min(len, sp->length);
             for (i = 0; i < end && value[i]; i++) {
@@ -2410,16 +2432,22 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
                 }
             }
             if (i == sp->length && value[i] == 0) {
-                ejs->intern.reuse++;
+                ejs->intern->reuse++;
+                if (mprIsDead(sp)) {
+                    mprRevive(sp);
+                    break;
+                }
+                spinunlock(ejs->intern);
                 return sp;
             }
         }
     }
     linkString(ejs, head, src);
-    if (ejs->intern.count > ejs->intern.size) {
+    if (ejs->intern->count > ejs->intern->size) {
         /*  Remake the entire hash - should not happen often */
         rebuildIntern(ejs);
     }
+    spinunlock(ejs->intern);
     return sp;
 }
 #endif /* BLD_CHAR_LEN > 1 */
@@ -2438,6 +2466,9 @@ static int getInternHashSize(int size)
 }
 
 
+/*
+    Must be called locked except at startup
+ */
 static int rebuildIntern(Ejs *ejs)
 {
     EjsString   *oldBuckets, *sp, *next, *head;
@@ -2445,73 +2476,30 @@ static int rebuildIntern(Ejs *ejs)
 
     mprAssert(ejs);
 
-#if UNUSED
-    if (ejs->intern.buckets) {
-        for (count = 0, i = 0; i < ejs->intern.size; i++) {
-            head = &ejs->intern.buckets[i];
-            for (sp = head->next; sp != head; sp = sp->next) {
-                count++;
-            }
-        }
-    }
-    ejs->intern.count = count;
-    if (ejs->intern.count && ejs->intern.count <= ejs->intern.size) {
-        return 0;
-    }
-#endif
-
-    oldBuckets = ejs->intern.buckets;
-    newSize = getInternHashSize(ejs->intern.count);
+    oldBuckets = ejs->intern->buckets;
+    newSize = getInternHashSize(ejs->intern->count);
     oldSize = 0;
     if (oldBuckets) {
-        oldSize = ejs->intern.size;
+        oldSize = ejs->intern->size;
         if (oldSize > newSize) {
             return 0;
         }
     }
-#if BLD_DEBUG && 0
-    if (oldBuckets) {
-        int     bigest, bigIndex;
-
-        bigest = 0;
-
-        printf("Resize Intern Hash from %d/%d to %d\n", ejs->intern.count, oldSize, newSize);
-        printf("Intern Chain Lengths\n");
-        for (i = 0; i < oldSize; i++) {
-            int count = 0;
-            head = &oldBuckets[i];
-            for (sp = head->next; sp != head; sp = sp->next) {
-                count++;
-            }
-            printf("Chain %d length %d: ", i, count);
-            for (sp = head->next; sp != head; sp = sp->next) {
-                printf("%w ", sp->value);
-            }
-            printf("\n");
-            if (count > bigest) {
-                bigIndex = i;
-                bigest = count;
-            }
-        }
-        printf("Longest chain length %d, index %d\n", bigest, bigIndex);
-    }
-#endif
-    if ((ejs->intern.buckets = mprAllocZeroed((newSize * sizeof(EjsString)))) == NULL) {
+    if ((ejs->intern->buckets = mprAllocZeroed((newSize * sizeof(EjsString)))) == NULL) {
         return MPR_ERR_MEMORY;
     }
-    ejs->intern.size = newSize;
+    ejs->intern->size = newSize;
     for (i = 0; i < newSize; i++) {
-        sp = &ejs->intern.buckets[i];
+        sp = &ejs->intern->buckets[i];
         sp->next = sp->prev = sp;
     }
     if (oldBuckets) {
-        ejs->intern.count = 0;
+        ejs->intern->count = 0;
         for (i = 0; i < oldSize; i++) {
             head = &oldBuckets[i];
             for (sp = head->next; sp != head; sp = next) {
                 next = sp->next;
-                sp->next = sp->prev = NULL;
-                // print("RETAIN %s\n", sp->value);
+                sp->next = sp->prev = sp;
                 ejsInternString(ejs, sp);
             }
         }
@@ -2523,30 +2511,40 @@ static int rebuildIntern(Ejs *ejs)
 static void linkString(Ejs *ejs, EjsString *head, EjsString *sp)
 {
     mprAssert(sp != head);
-    mprAssert(sp->next == NULL);
-    mprAssert(sp->prev == NULL);
-    mprAssert(sp->obj.type);
+    mprAssert(sp->next == NULL || sp->next == sp);
+    mprAssert(sp->prev == NULL || sp->next == sp);
 
+    //  MOB -- must make sure lock is a macro in release mode
+
+    spinlock(ejs->intern);
     sp->next = head->next;
     sp->prev = head;
     head->next->prev = sp;
     head->next = sp;
-
     mprAssert(sp != sp->next);
     mprAssert(sp != sp->prev);
-    ejs->intern.count++;
+    ejs->intern->count++;
+    spinunlock(ejs->intern);
 }
 
 
-static void unlinkString(EjsString *sp)
+/*
+    Unlink a string from the intern cache. This unlinks from the hash chains. 
+    This routine is idempotent. ejsDestroyIntern takes advantage of this.
+ */
+static void unlinkString(Ejs *ejs, EjsString *sp)
 {
-    //  MOB - lock required if shared over interpreters
-    sp->prev->next = sp->next;
-    sp->next->prev = sp->prev;
-#if BLD_MEMORY_DEBUG
-    sp->next = sp->prev = NULL;
-#endif
-    --sp->obj.type->ejs->intern.count;
+    /*
+        Some strings are not interned (ejsCreateBareString). These have sp->next == NULL
+     */
+    if (sp->next) {
+        spinlock(ejs->intern);
+        sp->prev->next = sp->next;
+        sp->next->prev = sp->prev;
+        sp->next = sp->prev = sp;
+        ejs->intern->count--;
+        spinunlock(ejs->intern);
+    }
 }
 
 
@@ -2593,7 +2591,7 @@ EjsString *ejsCreateBareString(Ejs *ejs, ssize len)
     EjsString   *sp;
     
     mprAssert(0 <= len && len < MAXINT);
-    if ((sp = (EjsString*) ejsAlloc(ejs, ejs->stringType, (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, ejs->stringType, (len + 1) * sizeof(MprChar))) != NULL) {
         sp->length = len;
         sp->value[0] = 0;
         sp->value[len] = 0;
@@ -2607,7 +2605,7 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
     EjsString   *sp;
     
     mprAssert(0 <= len && len < MAXINT);
-    if ((sp = (EjsString*) ejsAlloc(ejs, ejs->stringType, (len + 1) * sizeof(MprChar))) != NULL) {
+    if ((sp = ejsAlloc(ejs, ejs->stringType, (len + 1) * sizeof(MprChar))) != NULL) {
         memcpy(sp->value, value, (len + 1) * sizeof(MprChar));
         sp->length = len;
         sp->value[len] = 0;
@@ -2619,13 +2617,14 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
 void ejsManageString(EjsString *sp, int flags)
 {
     if (flags & MPR_MANAGE_FREE) {
-        if (sp->next) {
-            unlinkString(sp);
-        }
+        unlinkString(TYPE(sp)->ejs, sp);
     }
 }
 
 
+/*
+    Only called when destroying the interpreter
+ */
 void ejsDestroyIntern(Ejs *ejs)
 {
     EjsIntern   *intern;
@@ -2635,12 +2634,12 @@ void ejsDestroyIntern(Ejs *ejs)
     /*
         Unlink strings now as when they are freed later, the intern structure may not exist in memory.
      */
-    intern = &ejs->intern;
+    intern = ejs->intern;
     for (i = intern->size - 1; i >= 0; i--) {
         head = &intern->buckets[i];
         for (sp = head->next; sp != head; sp = next) {
             next = sp->next;
-            unlinkString(sp);
+            unlinkString(ejs, sp);
         }
     }
 }
@@ -2648,21 +2647,8 @@ void ejsDestroyIntern(Ejs *ejs)
 
 void ejsManageIntern(Ejs *ejs, int flags)
 {
-    EjsIntern   *intern;
-
-    intern = &ejs->intern;
-
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(intern->buckets);
-#if UNUSED
-        /* Should not mark all strings as it prevents them being un-interned */
-        for (i = intern->size - 1; i >= 0; i--) {
-            head = &intern->buckets[i];
-            for (sp = head->next; sp != head; sp = sp->next) {
-                mprMark(sp);
-            }
-        }
-#endif
+        mprMark(ejs->intern->buckets);
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyIntern(ejs);
     }
@@ -2674,6 +2660,7 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
     rebuildIntern(ejs);
 
     ejsCloneObjHelpers(ejs, type);
+    type->mutex = mprCreateLock();
     type->helpers.cast = (EjsCastHelper) castString;
     type->helpers.clone = (EjsCloneHelper) cloneString;
     type->helpers.getProperty = (EjsGetPropertyHelper) getStringProperty;

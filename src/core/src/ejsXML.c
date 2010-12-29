@@ -369,7 +369,7 @@ static int setXmlPropertyAttributeByName(Ejs *ejs, EjsXML *xml, EjsName qname, E
     qn.name = ejsSubstring(ejs, qname.name, 1, -1);
     attribute = ejsCreateXML(ejs, EJS_XML_ATTRIBUTE, qn, xml, (EjsString*) value);
     if (xml->attributes == 0) {
-        xml->attributes = mprCreateList(xml);
+        xml->attributes = mprCreateList(-1, 0);
     }
     mprSetItem(xml->attributes, index, attribute);
     return index;
@@ -479,10 +479,9 @@ static int setXmlPropertyByName(Ejs *ejs, EjsXML *xml, EjsName qname, EjsObj *va
             }
         }
     }
-
     if (xml->elements == 0) {
         //  TODO - need routine to do this centrally so we can control the default number of elements in the list?
-        xml->elements = mprCreateList(xml);
+        xml->elements = mprCreateList(-1, 0);
     }
     elt = lastElt;
     index = last;
@@ -624,7 +623,7 @@ EjsXML *ejsDeepCopyXML(Ejs *ejs, EjsXML *xml)
     //  TODO - must copy inScopeNamespaces?
 
     if (xml->attributes) {
-        root->attributes = mprCreateList(root);
+        root->attributes = mprCreateList(-1, 0);
         for (next = 0; (elt = (EjsXML*) mprGetNextItem(xml->attributes, &next)) != 0; ) {
             elt = ejsDeepCopyXML(ejs, elt);
             if (elt) {
@@ -634,7 +633,7 @@ EjsXML *ejsDeepCopyXML(Ejs *ejs, EjsXML *xml)
         }
     }
     if (xml->elements) {
-        root->elements = mprCreateList(root);
+        root->elements = mprCreateList(-1, 0);
         for (next = 0; (elt = mprGetNextItem(xml->elements, &next)) != 0; ) {
             mprAssert(ejsIsXML(ejs, elt));
             elt = ejsDeepCopyXML(ejs, elt);
@@ -897,9 +896,8 @@ EjsXML *ejsSetXML(Ejs *ejs, EjsXML *xml, int index, EjsXML *node)
     if (xml == 0 || node == 0) {
         return 0;
     }
-
     if (xml->elements == 0) {
-        xml->elements = mprCreateList(xml);
+        xml->elements = mprCreateList(-1, 0);
 
     } else {
         old = (EjsXML*) mprGetItem(xml->elements, index);
@@ -925,9 +923,8 @@ EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *xml, EjsXML *node)
         return 0;
     }
     if (xml->elements == 0) {
-        xml->elements = mprCreateList(xml);
+        xml->elements = mprCreateList(-1, 0);
     }
-
     if (node->kind == EJS_XML_LIST) {
         for (next = 0; (elt = mprGetNextItem(node->elements, &next)) != 0; ) {
             if (xml->kind != EJS_XML_LIST) {
@@ -951,7 +948,7 @@ EjsXML *ejsAppendToXML(Ejs *ejs, EjsXML *xml, EjsXML *node)
 int ejsAppendAttributeToXML(Ejs *ejs, EjsXML *parent, EjsXML *node)
 {
     if (parent->attributes == 0) {
-        parent->attributes = mprCreateList(parent);
+        parent->attributes = mprCreateList(-1, 0);
     }
     node->parent = parent;
     return mprAddItem(parent->attributes, node);

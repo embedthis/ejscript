@@ -80,11 +80,11 @@ static void manageCompiler(EcCompiler *cp, int flags)
         mprMark(cp->stream);
         mprMark(cp->token);
         mprMark(cp->outputFile);
-        mprMarkList(cp->fixups);
-        mprMarkList(cp->require);
-        mprMarkList(cp->modules);
+        mprMark(cp->fixups);
+        mprMark(cp->require);
+        mprMark(cp->modules);
         mprMark(cp->errorMsg);
-        mprMarkList(cp->nodes);
+        mprMark(cp->nodes);
     }
 }
 
@@ -124,7 +124,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     int         i, j, next, nextModule, lflags, rc, frozen;
 
     ejs = cp->ejs;
-    if ((nodes = mprCreateList()) == 0) {
+    if ((nodes = mprCreateList(-1, 0)) == 0) {
         return EJS_ERR;
     }
     cp->nodes = nodes;

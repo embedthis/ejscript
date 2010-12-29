@@ -881,7 +881,7 @@ static void manageType(EjsType *type, int flags)
         mprMark(type->qname.space);
         mprMark(type->prototype);
         mprMark(type->baseType);
-        mprMarkList(type->implements);
+        mprMark(type->implements);
     }
 }
 

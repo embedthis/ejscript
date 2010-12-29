@@ -22,18 +22,15 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
     mprAssert(type);
     mprAssert(extra >= 0);
 
+    //  MOB - OPT could have dedicated ejsAlloc as a macro when assign is zero
     if ((vp = mprAllocBlock(type->instanceSize + extra, MPR_ALLOC_MANAGER | MPR_ALLOC_ZERO)) == NULL) {
         return NULL;
     }
+    //  MOB - OPT can do direct assign
     SET_TYPE(vp, type);
     mprAssert(type->manager);
+    //  MOB - OPT inline here
     mprSetManager(vp, type->manager);
-#if UNUSED
-    //  MOB - Can't do this here as it would change the generation in frozen sections
-    if (MPR->heap.requireGC) {
-        ejsAttention(ejs);
-    }
-#endif
     return vp;
 }
 

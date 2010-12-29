@@ -527,7 +527,7 @@ int ecRemoveModule(EcCompiler *cp, EjsModule *mp)
 
 int ecResetModuleList(EcCompiler *cp)
 {
-    cp->modules = mprCreateList(cp);
+    cp->modules = mprCreateList(-1, 0);
     if (cp->modules == 0) {
         return EJS_ERR;
     }
@@ -10047,8 +10047,8 @@ static void manageNode(EcNode *node, int flags)
         mprMark(node->blockRef);
         mprMark(node->namespaceRef);
         mprMark(node->typeNode);
-        mprMarkList(node->children);
-        mprMarkList(node->namespaces);
+        mprMark(node->children);
+        mprMark(node->namespaces);
         mprMark(node->code);
         mprMark(node->doc);
 
@@ -10074,10 +10074,10 @@ static void manageNode(EcNode *node, int flags)
         case N_CLASS:
             mprMark(node->klass.implements);
             mprMark(node->klass.constructor);
-            mprMarkList(node->klass.staticProperties);
-            mprMarkList(node->klass.instanceProperties);
-            mprMarkList(node->klass.classMethods);
-            mprMarkList(node->klass.methods);
+            mprMark(node->klass.staticProperties);
+            mprMark(node->klass.instanceProperties);
+            mprMark(node->klass.classMethods);
+            mprMark(node->klass.methods);
             mprMark(node->klass.ref);
             mprMark(node->klass.initializer);
             mprMark(node->klass.publicSpace);
@@ -10212,7 +10212,7 @@ static void manageNode(EcNode *node, int flags)
             break;
 
         case N_PROGRAM:
-            mprMarkList(node->program.dependencies);
+            mprMark(node->program.dependencies);
             break;
 
         case N_REF:
@@ -10314,7 +10314,7 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
         np->subId = token->subId;
     }
     //  MOB OPT - do this on demand
-    np->children = mprCreateList(np);
+    np->children = mprCreateList(-1, 0);
     if (token && token->loc.source) {
         np->loc = token->loc;
     }

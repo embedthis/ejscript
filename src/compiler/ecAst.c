@@ -2337,7 +2337,7 @@ static void astModule(EcCompiler *cp, EcNode *np)
     state->currentModule = mp;
 
     if (mp->dependencies == 0) {
-        mp->dependencies = mprCreateList(ejs);
+        mp->dependencies = mprCreateList(-1, 0);
         core = ejsLookupModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), 0, 0);
         if (core && core != mp && mprLookupItem(mp->dependencies, core) < 0) {
             mprAddItem(mp->dependencies, core);
@@ -2493,7 +2493,7 @@ static void astRequire(EcCompiler *cp, EcNode *np)
 
         } else if (mp != currentModule) {
             if (currentModule->dependencies == 0) {
-                currentModule->dependencies = mprCreateList(ejs);
+                currentModule->dependencies = mprCreateList(-1, 0);
             }
             if (mprLookupItem(currentModule->dependencies, mp) < 0 && 
                     mprAddItem(currentModule->dependencies, mp) < 0) {
@@ -3370,7 +3370,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
         }
     }
     if (np->klass.implements) {
-        type->implements = mprCreateList(type);
+        type->implements = mprCreateList(-1, 0);
         next = 0;
         while ((child = getNextAstNode(cp, np->klass.implements, &next))) {
             iface = (EjsType*) getTypeProperty(cp, ejs->global, child->qname);
@@ -3695,7 +3695,7 @@ static void addGlobalProperty(EcCompiler *cp, EcNode *np, EjsName *qname)
     mprAssert(up);
 
     if (up->globalProperties == 0) {
-        up->globalProperties = mprCreateList(up);
+        up->globalProperties = mprCreateList(-1, 0);
     }
     //  TODO OPT - should this be a hash?
     for (next = 0; (p = (EjsName*) mprGetNextItem(up->globalProperties, &next)) != 0; ) {
@@ -3840,7 +3840,7 @@ static EjsNamespace *createHoistNamespace(EcCompiler *cp, EjsObj *obj)
 
     letBlockNode = cp->state->letBlockNode;
     if (letBlockNode->namespaces == 0) {
-        letBlockNode->namespaces = mprCreateList(letBlockNode);
+        letBlockNode->namespaces = mprCreateList(-1, 0);
     }
     mprAddItem(letBlockNode->namespaces, namespace);
     ejsAddNamespaceToBlock(ejs, (EjsBlock*) cp->state->optimizedLetBlock, namespace);

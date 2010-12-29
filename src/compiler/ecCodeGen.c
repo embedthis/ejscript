@@ -182,7 +182,7 @@ int ecCodeGen(EcCompiler *cp)
     /*
         Now generate code for all the modules
      */
-    modules = mprCreateList(ejs);
+    modules = mprCreateList(-1, 0);
     for (next = 0; (mp = mprGetNextItem(cp->modules, &next)) != 0; ) {
         orderModule(cp, modules, mp);
     }
@@ -3689,8 +3689,8 @@ static void manageCodeGen(EcCodeGen *code, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(code->buf);
-        mprMarkList(code->jumps);
-        mprMarkList(code->exceptions);
+        mprMark(code->jumps);
+        mprMark(code->exceptions);
         mprMark(code->debug);
     }
 }
@@ -3718,14 +3718,14 @@ static EcCodeGen *allocCodeBuffer(EcCompiler *cp)
         cp->fatalError = 1;
         return 0;
     }
-    if ((code->exceptions = mprCreateList()) == 0) {
+    if ((code->exceptions = mprCreateList(-1, 0)) == 0) {
         mprAssert(0);
         return 0;
     }
     /*
         Jumps are fully processed before the state is freed
      */
-    code->jumps = mprCreateList();
+    code->jumps = mprCreateList(-1, 0);
     if (code->jumps == 0) {
         mprAssert(0);
         return 0;

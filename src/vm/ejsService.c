@@ -35,9 +35,9 @@ EjsService *ejsCreateService()
     mprGetMpr()->ejsService = sp;
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
 
-    sp->nativeModules = mprCreateHash(-1, MPR_HASH_PERM_KEYS | MPR_HASH_UNICODE);
+    sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS | MPR_HASH_UNICODE);
     sp->mutex = mprCreateLock();
-    sp->vmlist = mprCreateList();
+    sp->vmlist = mprCreateList(-1, 0);
     return sp;
 }
 
@@ -47,12 +47,13 @@ static void manageEjsService(EjsService *sp, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(sp->http);
         mprMark(sp->mutex);
+        lock(sp);
         mprMark(sp->vmlist);
-        mprLock(sp->mutex);
-        mprMarkHash(sp->nativeModules);
-        mprUnlock(sp->mutex);
+        mprMark(sp->nativeModules);
+        unlock(sp);
 
     } else if (flags & MPR_MANAGE_FREE) {
+        //  MOB -- get rid of this. App should mark the service
         mprRemoveRoot(sp);
         sp->mutex = NULL;
     }
@@ -76,19 +77,17 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
 {
     EjsService  *sp;
     Ejs         *ejs;
-    int         save;
     static int  seqno = 0;
 
-    save = mprEnableGC(0);
     if ((ejs = mprAllocObj(Ejs, manageEjs)) == NULL) {
-        mprEnableGC(save);
         return 0;
     }
     sp = ejs->service = mprGetMpr()->ejsService;
-    mprLock(sp->mutex);
+    lock(sp);
     mprAddItem(sp->vmlist, ejs);
-    mprUnlock(sp->mutex);
+    unlock(sp);
 
+    ejs->intern = &sp->intern;
     ejs->empty = require && mprGetListLength(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
@@ -96,15 +95,14 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
 
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC));
     ejs->dispatcher = mprCreateDispatcher(mprAsprintf("ejsDispatcher-%d", seqno++), 1);
-    ejs->modules = mprCreateList();
-    ejs->workers = mprCreateList();
+    ejs->modules = mprCreateList(-1, 0);
+    ejs->workers = mprCreateList(0, 0);
         
     if ((ejs->bootSearch = searchPath) == 0) {
         ejs->bootSearch = getenv("EJSPATH");
     }
     if (ejsInitStack(ejs) < 0) {
         ejsDestroy(ejs);
-        mprEnableGC(save);
         return 0;
     }
     if (defineTypes(ejs) < 0 || loadStandardModules(ejs, require) < 0) {
@@ -112,7 +110,6 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
             ejsReportError(ejs, "Can't initialize interpreter");
         }
         ejsDestroy(ejs);
-        mprEnableGC(save);
         return 0;
     }
     ejsFreezeGlobal(ejs);
@@ -122,10 +119,8 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
     if (mprHasMemError(ejs)) {
         mprError("Memory allocation error during initialization");
         ejsDestroy(ejs);
-        mprEnableGC(save);
         return 0;
     }
-    mprEnableGC(save);
     return ejs;
 }
 
@@ -158,7 +153,7 @@ static void manageEjs(Ejs *ejs, int flags)
     EjsObj      *vp, **vpp, **top;
 
     if (flags & MPR_MANAGE_MARK) {
-        mprMarkList(ejs->modules);
+        mprMark(ejs->modules);
         mprMark(ejs->applications);
         mprMark(ejs->coreTypes);
         mprMark(ejs->doc);
@@ -170,9 +165,10 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->result);
         mprMark(ejs->search);
         mprMark(ejs->dispatcher);
-        mprMarkList(ejs->workers);
+        mprMark(ejs->workers);
         mprMark(ejs->global);
 
+//  MOB - RACE
         /*
             Mark active call stack
          */
@@ -926,13 +922,12 @@ static int allocNotifier(int flags, ssize size)
 
     } else if (flags & MPR_MEM_YIELD) {
         sp = MPR->ejsService;
-        //  MOB -- can this be a deadly embrace?
-        mprLock(sp->mutex);
+        lock(sp);
         for (next = 0; (ejs = mprGetNextItem(sp->vmlist, &next)) != 0; ) {
-            ejs->yieldRequired = 1;
+            ejs->gc = 1;
             ejsAttention(ejs);
         }
-        mprUnlock(sp->mutex);
+        unlock(sp);
     }
     return 0;
 }

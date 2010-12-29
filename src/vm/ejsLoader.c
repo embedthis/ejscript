@@ -360,7 +360,7 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
     if ((mp = ejsCreateModule(ejs, name, version, constants)) == NULL) {
         return 0;
     }
-    mp->current = mprCreateList(mp);
+    mp->current = mprCreateList(-1, 0);
     pushScope(mp, (EjsBlock*) ejs->global, ejs->global);
     mp->checksum = checksum;
     *created = 1;
@@ -428,7 +428,7 @@ static int loadDependencySection(Ejs *ejs, EjsModule *mp)
             return rc;
         }
         if (mp->dependencies == 0) {
-            mp->dependencies = mprCreateList(mp);
+            mp->dependencies = mprCreateList(-1, 0);
         }
         for (next = nextModule; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
             mprAddItem(mp->dependencies, module);
@@ -592,7 +592,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
         Read implemented interfaces. Add to type->implements. Create fixup record if the interface type is not yet known.
      */
     if (numInterfaces > 0) {
-        type->implements = mprCreateList(type);
+        type->implements = mprCreateList(numInterfaces, 0);
         for (i = 0; i < numInterfaces; i++) {
             if (ejsModuleReadType(ejs, mp, &iface, &ifixup, &ifaceClassName, 0) < 0) {
                 return MPR_ERR_CANT_READ;
@@ -1478,7 +1478,7 @@ static int alreadyLoaded(Ejs *ejs, EjsString *name, int minVersion, int maxVersi
 void manageLoadState(EjsLoadState *ls, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMarkList(ls->typeFixups);
+        mprMark(ls->typeFixups);
     }
 }
 
@@ -1488,7 +1488,7 @@ static EjsLoadState *createLoadState(Ejs *ejs, int flags)
     EjsLoadState    *ls;
 
     ls = mprAllocObj(EjsLoadState, manageLoadState);
-    ls->typeFixups = mprCreateList(ejs);
+    ls->typeFixups = mprCreateList(-1, 0);
     ls->firstModule = mprGetListLength(ejs->modules);
     ls->flags = flags;
     return ls;
@@ -1660,12 +1660,12 @@ static void manageDoc(EjsDoc *doc, int flags)
         mprMark(doc->stability);
         mprMark(doc->spec);
         mprMark(doc->duplicate);
-        mprMarkList(doc->defaults);
-        mprMarkList(doc->params);
-        mprMarkList(doc->options);
-        mprMarkList(doc->events);
-        mprMarkList(doc->see);
-        mprMarkList(doc->throws);
+        mprMark(doc->defaults);
+        mprMark(doc->params);
+        mprMark(doc->options);
+        mprMark(doc->events);
+        mprMark(doc->see);
+        mprMark(doc->throws);
     }
 }
 

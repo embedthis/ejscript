@@ -227,14 +227,14 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
     if (timeout < 0) {
         timeout = INT_MAX;
     }
-    expires = mprGetTime(ejs) + timeout;
+    expires = mprGetTime() + timeout;
     remaining = timeout;
     do {
         rc = mprWaitForEvent(ejs->dispatcher, remaining);
         if (rc > 0 && flags & MPR_SERVICE_ONE_THING) {
             break;
         }
-        remaining = (int) (expires - mprGetTime(ejs));
+        remaining = (int) (expires - mprGetTime());
         if (ejs->exception) {
             ejsClearException(ejs);
         }
@@ -248,16 +248,19 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
  */
 static EjsObj *app_eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    int     timeout;
+    MprTime     mark, remaining;
+    int         timeout;
 
     timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : INT_MAX;
-#if UNUSED
-    oneEvent = (argc > 1) ? (argv[1] == ejs->trueValue) : 0;
-    ejsServiceEvents(ejs, timeout, oneEvent ? MPR_SERVICE_ONE_THING: 0);
-#endif
+    if (timeout < 0) {
+        timeout = INT_MAX;
+    }
+    mark = mprGetTime();
+    remaining = timeout;
     do {
-        mprWaitForEvent(ejs->dispatcher, timeout); 
-    } while (!ejs->exiting);
+        mprWaitForEvent(ejs->dispatcher, remaining); 
+        remaining = mprGetRemainingTime(mark, timeout);
+    } while (!ejs->exiting && remaining > 0);
     return 0;
 }
 
@@ -268,10 +271,7 @@ static EjsObj *app_eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
  */
 static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    int     timeout;
-
-    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]): MPR_MAX_TIMEOUT;
-    mprSleep(timeout);
+    app_eventLoop(ejs, NULL, argc, argv);
     return 0;
 }
 

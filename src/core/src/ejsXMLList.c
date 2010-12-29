@@ -418,7 +418,7 @@ static EjsXML *createElement(Ejs *ejs, EjsXML *list, EjsXML *targetObject, EjsNa
             }
             //  TODO - really need to wrap this ejsInsertXML(EjsXML *xml, int index, EjsXML *node)
             if (targetObject->elements == 0) {
-                targetObject->elements = mprCreateList(targetObject);
+                targetObject->elements = mprCreateList(-1, 0);
             }
             /*
                 Insert into the target object
@@ -580,7 +580,7 @@ static EjsXML *shallowCopy(Ejs *ejs, EjsXML *xml)
         return 0;
     }
     if (xml->elements) {
-        root->elements = mprCreateList(root);
+        root->elements = mprCreateList(-1, 0);
         for (next = 0; (elt = mprGetNextItem(xml->elements, &next)) != 0; ) {
             mprAssert(ejsIsXML(ejs, elt));
             if (elt) {
@@ -786,7 +786,7 @@ EjsXML *ejsCreateXMLList(Ejs *ejs, EjsXML *targetObject, EjsName targetProperty)
         return 0;
     }
     list->kind = EJS_XML_LIST;
-    list->elements = mprCreateList(list);
+    list->elements = mprCreateList(-1, 0);
     list->targetObject = targetObject;
 
     if (targetProperty.name) {

@@ -54,8 +54,8 @@ MAIN(ejsmodMain, int argc, char **argv)
         return MPR_ERR_MEMORY;
     }
     app->mod = mp;
-    mp->lstRecords = mprCreateList(mp);
-    mp->blocks = mprCreateList(mp);
+    mp->lstRecords = mprCreateList(0, 0);
+    mp->blocks = mprCreateList(0, 0);
     mp->docDir = ".";
     
     for (nextArg = 1; nextArg < argc; nextArg++) {
@@ -129,7 +129,7 @@ MAIN(ejsmodMain, int argc, char **argv)
                 err++;
             } else {
                 if (requiredModules == 0) {
-                    requiredModules = mprCreateList(mpr);
+                    requiredModules = mprCreateList(-1, 0);
                 }
                 modules = sclone(argv[++nextArg]);
                 name = stok(modules, " \t", &tok);
@@ -159,7 +159,7 @@ MAIN(ejsmodMain, int argc, char **argv)
         mp->listing = 1;
     }
     if (mp->depends && requiredModules == 0) {
-        requiredModules = mprCreateList(mpr);
+        requiredModules = mprCreateList(-1, 0);
     }
 
     if (err) {
@@ -276,7 +276,7 @@ static int process(EjsMod *mp, cchar *output, int argc, char **argv)
             }
         }
         if (mp->depends) {
-            depends = mprCreateList(ejs);
+            depends = mprCreateList(-1, 0);
             for (next = moduleCount; (module = mprGetNextItem(ejs->modules, &next)) != 0; ) {
                 getDepends(ejs, depends, module);
             }
