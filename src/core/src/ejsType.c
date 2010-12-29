@@ -700,11 +700,6 @@ int ejsBindAccess(Ejs *ejs, void *obj, int slotNum, void *getter, void *setter)
     }
     if (setter) {
         fun = ejsGetProperty(ejs, obj, slotNum);
-        int x = ejsIsFunction(ejs, fun);
-        if (fun->setter) {
-            x = ejsIsFunction(ejs, fun->setter);
-            x = ejsIsFunction(ejs, fun->setter);
-        }
         if (fun == 0 || !ejsIsFunction(ejs, fun) || fun->setter == 0 || !ejsIsFunction(ejs, fun->setter)) {
             ejs->hasError = 1;
             mprError("Attempt to bind non-existant setter function for slot %d in \"%s\"", slotNum, ejsGetName(obj));

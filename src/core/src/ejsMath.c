@@ -201,7 +201,7 @@ static EjsObj *math_random(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int64   data[16];
     int     i;
-    mprGetRandomBytes(ejs, (char*) data, sizeof(data), 0);
+    mprGetRandomBytes((char*) data, sizeof(data), 0);
     uvalue = 0;
     for (i = 0; i < sizeof(data) / sizeof(int64); i++) {
         uvalue += data[i];
