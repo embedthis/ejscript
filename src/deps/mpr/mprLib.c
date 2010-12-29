@@ -3178,8 +3178,8 @@ int mprAtomCas(void * volatile *addr, void *expected, cvoid *value)
             *addr = value;
             return 1;
         }
-        return 0;
         mprGlobalUnlock();
+        return 0;
     #endif
 }
 
