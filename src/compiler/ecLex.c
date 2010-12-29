@@ -136,7 +136,7 @@ void ecInitLexer(EcCompiler *cp)
     int             size;
 
     size = sizeof(keywords) / sizeof(ReservedWord);
-    if ((cp->keywords = mprCreateHash(size, MPR_HASH_UNICODE)) == 0) {
+    if ((cp->keywords = mprCreateHash(size, MPR_HASH_UNICODE | MPR_HASH_STATIC_KEYS | MPR_HASH_STATIC_VALUES)) == 0) {
         return;
     }
     for (rp = keywords; rp->name; rp++) {

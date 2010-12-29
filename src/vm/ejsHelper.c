@@ -92,13 +92,14 @@ EjsAny *ejsClone(Ejs *ejs, EjsAny *src, bool deep)
     }
     mprAssert(TYPE(src)->helpers.clone);
     if (VISITED(src) == 0) {
-        type = ((EjsObj*) src)->type;
+        type = TYPE(src);
         SET_VISITED(src, 1);
         dest = (TYPE(src)->helpers.clone)(ejs, src, deep);
 #if UNUSED
         BUILTIN(dest) = BUILTIN(src);
+        SET_TYPE(dest, type);
 #endif
-        ((EjsObj*) dest)->type = type;
+        SET_VISITED(src, 0);
     } else {
         dest = src;
     }

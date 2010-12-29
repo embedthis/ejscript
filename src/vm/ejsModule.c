@@ -192,7 +192,7 @@ EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size)
         return NULL;
     }
     if (ejs->compiling) {
-        if ((constants->table = mprCreateHash(EJS_DOC_HASH_SIZE, 0)) == 0) {
+        if ((constants->table = mprCreateHash(EJS_DOC_HASH_SIZE, MPR_HASH_STATIC_VALUES)) == 0) {
             return 0;
         }
     }

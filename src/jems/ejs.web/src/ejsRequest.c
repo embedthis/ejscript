@@ -1131,7 +1131,7 @@ static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     }
     for (i = 0; i < args->length; i++) {
         data = args->data[i];
-        switch (data->type->id) {
+        switch (TYPE(data)->id) {
         case ES_String:
             s = (EjsString*) data;
             if ((written = httpWriteBlock(q, s->value, s->length)) != s->length) {
