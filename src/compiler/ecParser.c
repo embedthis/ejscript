@@ -675,7 +675,7 @@ static EcNode *parseXMLText(EcCompiler *cp, EcNode *np)
         if (getToken(cp) == T_EOF || cp->token->tokenId == T_ERR || cp->token->tokenId == T_NOP) {
             return 0;
         }
-        if (isalnum(cp->token->text[0]) && count > 0) {
+        if (isalnum((int) cp->token->text[0]) && count > 0) {
             addAscToLiteral(cp, np, " ", 1);
         }
         addTokenToLiteral(cp, np);
