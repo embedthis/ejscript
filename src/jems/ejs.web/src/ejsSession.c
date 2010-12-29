@@ -83,13 +83,13 @@ static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsObj *val
  */
 static void noteSessionActivity(Ejs *ejs, EjsSession *sp)
 {
-    sp->expire = mprGetTime(ejs) + sp->timeout;
+    sp->expire = mprGetTime() + sp->timeout;
 }
 
 
 void ejsSetSessionTimeout(Ejs *ejs, EjsSession *sp, int timeout)
 {
-    sp->expire = mprGetTime(ejs) + timeout;
+    sp->expire = mprGetTime() + timeout;
 }
 
 
@@ -101,7 +101,7 @@ void ejsUpdateSessionLimits(Ejs *ejs, EjsHttpServer *server)
 
     if (server->sessions && server->server) {
         timeout = server->server->limits->sessionTimeout;
-        now = mprGetTime(ejs);
+        now = mprGetTime();
         count = ejsGetPropertyCount(ejs, (EjsObj*) server->sessions);
         for (i = count - 1; i >= 0; i--) {
             session = ejsGetProperty(ejs, (EjsObj*) server->sessions, i);
@@ -176,7 +176,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     if (timeout <= 0) {
         timeout = limits->sessionTimeout;
     }
-    now = mprGetTime(ejs);
+    now = mprGetTime();
 
     ejsLockService(ejs);
     if ((session = ejsCreateObj(ejs, ejs->sessionType, 0)) == 0) {
@@ -281,7 +281,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
         limits = server->server->limits;
         count = ejsGetPropertyCount(ejs, (EjsObj*) sessions);
         mprLog(6, "Check for sessions count %d/%d", count, limits->sessionCount);
-        now = mprGetTime(server);
+        now = mprGetTime();
 
         /*
             Start pruning at 80% of the max

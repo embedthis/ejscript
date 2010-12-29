@@ -1385,7 +1385,7 @@ static EcNode *parseFunctionExpression(EcCompiler *cp)
         np->qname.name = tokenString(cp);
     }
     if (np->qname.name == 0) {
-        np->qname.name = ejsSprintf(cp->ejs, "--fun_%d-%d--", np->seqno, (int) mprGetTime(np));
+        np->qname.name = ejsSprintf(cp->ejs, "--fun_%d-%d--", np->seqno, (int) mprGetTime());
     }
     np->qname.space = state->inFunction ? cp->ejs->emptyString : cp->fileState->nspace;
 
@@ -1574,7 +1574,7 @@ static EcNode *parseLiteralField(EcCompiler *cp)
             object literal seqno. This permits setters and getters to share the same name and thus when
             ejsDefineProperty is called -- they will get cross-linked.
          */
-        fp->qname.name = ejsSprintf(cp->ejs, "--fun_%d-%d--", fp->seqno, (int) mprGetTime(fp));
+        fp->qname.name = ejsSprintf(cp->ejs, "--fun_%d-%d--", fp->seqno, (int) mprGetTime());
         fp->qname.space = cp->fileState->nspace;
         mprAssert(cp->state->topVarBlockNode);
         appendNode(cp->state->topVarBlockNode, fp);

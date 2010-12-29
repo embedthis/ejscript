@@ -269,7 +269,7 @@ static EjsObj *date_Date(Ejs *ejs, EjsDate *date, int argc, EjsObj **argv)
 
     if (args->length == 0) {
         /* Now */
-        date->value = mprGetTime(ejs);
+        date->value = mprGetTime();
 
     } else if (args->length == 1) {
         vp = ejsGetProperty(ejs, (EjsObj*) args, 0);
@@ -734,7 +734,7 @@ static EjsObj *date_nextDay(Ejs *ejs, EjsDate *dp, int argc, EjsObj **argv)
  */
 static EjsObj *date_now(Ejs *ejs, EjsDate *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, mprGetTime(ejs));
+    return (EjsObj*) ejsCreateNumber(ejs, mprGetTime());
 }
 
 

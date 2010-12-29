@@ -279,7 +279,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
 
     LOG(5, "Worker.join: joining %d", ejs->joining);
 
-    mark = mprGetTime(ejs);
+    mark = mprGetTime();
     remaining = timeout;
     do {
         ejs->joining = !reapJoins(ejs, workers);
@@ -688,7 +688,7 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
     if (timeout < 0) {
         timeout = MAXINT;
     }
-    mark = mprGetTime(ejs);
+    mark = mprGetTime();
     remaining = timeout;
 
     worker->gotMessage = 0;

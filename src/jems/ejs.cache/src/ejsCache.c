@@ -105,7 +105,7 @@ static EjsObj *writeCache(Ejs *ejs, EjsCache *cp, int argc, EjsObj **argv)
 #if FUTURE
 static void cacheActivity(Ejs *ejs, EjsCache *sp)
 {
-    sp->expire = mprGetTime(ejs) + sp->timeout   MPR_TICKS_PER_SEC;
+    sp->expire = mprGetTime() + sp->timeout   MPR_TICKS_PER_SEC;
 }
 
 
@@ -119,8 +119,7 @@ static void cacheTimer(EjsWebControl *control, MprEvent *event)
     MprTime    now;
     int        i, count, deleted;
 
-    now = mprGetTime(control);
-
+    now = mprGetTime();
     caches = control->caches;
     ejs = control->master;
     if (master == 0) {

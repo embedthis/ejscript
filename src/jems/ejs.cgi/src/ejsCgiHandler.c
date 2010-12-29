@@ -1,15 +1,15 @@
 /*
- *  ejsCgi.c -- CGI web framework handler.
- *
- *  The ejs handler supports the Ejscript web framework for applications using server-side Javascript. 
- *
- *  Copyright (c) All Rights Reserved. See details at the end of the file.
- *
- *  TODO
- *      - Input post data
- *          - How does Ejscript get post data that is not www encoded?
- *      - make more robust against bad input
- *      - return code diagnostics
+    ejsCgi.c -- CGI web framework handler.
+  
+    The ejs handler supports the Ejscript web framework for applications using server-side Javascript. 
+  
+    Copyright (c) All Rights Reserved. See details at the end of the file.
+  
+    TODO
+        - Input post data
+            - How does Ejscript get post data that is not www encoded?
+        - make more robust against bad input
+        - return code diagnostics
  */
 /********************************** Includes ************************************/
 
@@ -32,7 +32,7 @@ static char *makeDateString(MprPath *sbuf);
 static void processRequest();
 
 /*
- *  Control callbacks
+    Control callbacks
  */
 static void discardOutput(void *handle);
 static void logError(void *handle, cchar *msg);
@@ -44,7 +44,7 @@ static int setVar(void *handle, int collection, int field, EjsVar *value);
 static int writeBlock(void *handle, cchar *buf, int size);
 
 /*
- *  Routines for Request, Response and Host objects
+    Routines for Request, Response and Host objects
  */
 static EjsVar *createHeaders(Ejs *ejs, MprHashTable *table);
 static EjsVar *createString(Ejs *ejs, cchar *value);
@@ -67,7 +67,7 @@ static MprHashTable     *formVars;
 static FILE             *debugFile;
 
 /*
- *  Parsed request details
+    Parsed request details
  */
 static int              contentLength = -1;
 static char             *contentType;
@@ -82,7 +82,7 @@ static char             *scriptName;
 static char             *uri;
 
 /*
- *  Response fields
+    Response fields
  */
 static int              headersEmitted;
 static char             *input;
@@ -110,7 +110,7 @@ MAIN(ejsCgiMain, int argc, char **argv)
     int     nextArg, err;
 
     /*
-     *  Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
+        Create the Embedthis Portable Runtime (MPR) and setup a memory failure handler
      */
     mpr = mprCreate(argc, argv, ejsMemoryFailure);
     mprSetAppName(mpr, argv[0], 0, 0);
@@ -198,7 +198,7 @@ MAIN(ejsCgiMain, int argc, char **argv)
 
 /*********************************** Request Processing ***************************/
 /*
- *  Create an initialize the Ejscript Web Framework control block
+    Create an initialize the Ejscript Web Framework control block
  */
 static int initControlBlock() 
 {
@@ -209,7 +209,7 @@ static int initControlBlock()
     }
 
     /*
-     *  These are the callbacks from the web framework into the gateway
+        These are the callbacks from the web framework into the gateway
      */
     control->discardOutput = discardOutput;
     control->logError = logError;
@@ -235,36 +235,36 @@ static int initControlBlock()
 
 
 /*
- *  Get a request and parse environment and request Uri. Given:
+    Get a request and parse environment and request Uri. Given:
  *
- *      http /simple.cgi/abc/def?a=b&c=d
- *      DOCUMENT_ROOT=/Users/mob/hg/appweb/src/server/web
- *      GATEWAY_INTERFACE=CGI/1.1
- *      CONTENT_LENGTH=NNN 
- *      CONTENT_TYPE
- *      PATH_INFO=/abc/def
- *      PATH_TRANSLATED=/Users/mob/hg/appweb/src/server/web/ab/def
- *      QUERY_STRING=a=b&c=d
- *      REMOTE_ADDR=10.0.0.1234
- *      REMOTE_HOST
- *      REMOTE_PORT
- *      REQUEST_URI=/simple.cgi
- *      REQUEST_METHOD=GET
- *      REQUEST_TRANSPORT=http
- *      SCRIPT_FILENAME=/Users/mob/hg/appweb/src/server/web/simple.cgi
- *      SERVER_NAME=127.0.0.1:7777
- *      SERVER_PORT=7777
- *      SERVER_SOFTWARE=Embedthis-Appweb/3.0A.1
- *      SERVER_PROTOCOL=http
- *      HTTP_ACCEPT=
- *      HTTP_COOKIE=
- *      HTTP_REFERRER=
- *      HTTP_CONNECTION=Keep-Alive
- *      HTTP_HOST=127.0.0.1
- *      HTTP_USER_AGENT=Embedthis-http/3.0A.1
- *      HTTPS
- *      HTTP_*
- *      PATH=
+        http /simple.cgi/abc/def?a=b&c=d
+        DOCUMENT_ROOT=/Users/mob/hg/appweb/src/server/web
+        GATEWAY_INTERFACE=CGI/1.1
+        CONTENT_LENGTH=NNN 
+        CONTENT_TYPE
+        PATH_INFO=/abc/def
+        PATH_TRANSLATED=/Users/mob/hg/appweb/src/server/web/ab/def
+        QUERY_STRING=a=b&c=d
+        REMOTE_ADDR=10.0.0.1234
+        REMOTE_HOST
+        REMOTE_PORT
+        REQUEST_URI=/simple.cgi
+        REQUEST_METHOD=GET
+        REQUEST_TRANSPORT=http
+        SCRIPT_FILENAME=/Users/mob/hg/appweb/src/server/web/simple.cgi
+        SERVER_NAME=127.0.0.1:7777
+        SERVER_PORT=7777
+        SERVER_SOFTWARE=Embedthis-Appweb/3.0A.1
+        SERVER_PROTOCOL=http
+        HTTP_ACCEPT=
+        HTTP_COOKIE=
+        HTTP_REFERRER=
+        HTTP_CONNECTION=Keep-Alive
+        HTTP_HOST=127.0.0.1
+        HTTP_USER_AGENT=Embedthis-http/3.0A.1
+        HTTPS
+        HTTP_*
+        PATH=
  */
 static int getRequest() 
 {
@@ -357,7 +357,7 @@ static void processRequest()
     }
 
     /*
-     *  Set default response headers
+        Set default response headers
      */
     setHeader(NULL, 0, "Content-Type", "text/html");
     setHeader(NULL, 0, "Last-Modified", currentDate);
@@ -436,7 +436,7 @@ static void discardOutput(void *handle)
 
 #if FUTURE
 /*
- *  Define a form variable as an ejs property in the params[] collection. Support a.b.c syntax
+    Define a form variable as an ejs property in the params[] collection. Support a.b.c syntax
  */
 static void defineParam(Ejs *ejs, EjsVar *params, cchar *key, cchar *value)
 {
@@ -450,7 +450,7 @@ static void defineParam(Ejs *ejs, EjsVar *params, cchar *key, cchar *value)
     mprAssert(params);
 
     /*
-     *  name.name.name
+        name.name.name
      */
     if (strchr(key, '.') == 0) {
         ejsName(&qname, "", key);
@@ -521,7 +521,7 @@ static cchar *getHeader(void *handle, cchar *key)
 
 #if UNUSED
 /*
- *  Add a response cookie
+    Add a response cookie
  */
 static void setCookie(void *handle, cchar *name, cchar *value, cchar *path, cchar *cookieDomain, int lifetime, bool isSecure)
 {
@@ -537,11 +537,11 @@ static void setCookie(void *handle, cchar *name, cchar *value, cchar *path, ccha
     hostName = getHeader(handle, "HTTP_HOST");
 
     /*
-     *  Fix for Safari and Bonjour addresses with a trailing ".". Safari discards cookies without a domain specifier
-     *  or with a domain that includes a trailing ".". Solution: include an explicit domain and trim the trailing ".".
+        Fix for Safari and Bonjour addresses with a trailing ".". Safari discards cookies without a domain specifier
+        or with a domain that includes a trailing ".". Solution: include an explicit domain and trim the trailing ".".
      *
-     *   User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_6; en-us) 
-     *       AppleWebKit/530.0+ (KHTML, like Gecko) Version/3.1.2 Safari/525.20.1
+         User-Agent: Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_5_6; en-us) 
+             AppleWebKit/530.0+ (KHTML, like Gecko) Version/3.1.2 Safari/525.20.1
      */
     if (cookieDomain == 0 && userAgent && strstr(userAgent, "AppleWebKit") != 0) {
         domain = mprStrdup(mpr, hostName);
@@ -562,7 +562,7 @@ static void setCookie(void *handle, cchar *name, cchar *value, cchar *path, ccha
         domainAtt = "";
     }
     if (lifetime > 0) {
-        mprDecodeUniversalTime(mpr, &tm, mprGetTime(mpr) + (lifetime * MPR_TICKS_PER_SEC));
+        mprDecodeUniversalTime(mpr, &tm, mprGetTime() + (lifetime * MPR_TICKS_PER_SEC));
         mprFormatTime(mpr, MPR_RFC_DATE, &tm);
         expiresAtt = "; expires=";
         expires = dateStr;
@@ -577,7 +577,7 @@ static void setCookie(void *handle, cchar *name, cchar *value, cchar *path, ccha
     }
 
     /*
-     *  Allow multiple cookie headers. Even if the same name. Later definitions take precedence
+        Allow multiple cookie headers. Even if the same name. Later definitions take precedence
      */
     setHeader(handle, 1, "Set-Cookie", 
         mprStrcat(mpr, -1, name, "=", value, "; path=", path, domainAtt, domain, expiresAtt, expires, secure, NULL));
@@ -593,7 +593,7 @@ static void logError(void *handle, cchar *msg)
 
 
 /*
- *  Add a response header
+    Add a response header
  */
 static void setHeader(void *handle, bool allowMultiple, cchar *key, cchar *fmt, ...)
 {
@@ -625,7 +625,7 @@ static int setVar(void *handle, int collection, int field, EjsVar *value)
 
 
 /*
- *  Write data to the client. Will buffer and flush as required. will create headers if required.
+    Write data to the client. Will buffer and flush as required. will create headers if required.
  */
 static int writeBlock(void *handle, cchar *buf, int size)
 {
@@ -649,11 +649,11 @@ static int writeBlock(void *handle, cchar *buf, int size)
 /*********************************************************************************/
 #if UNUSED
 /*
- *  Virtual Host, Request and Response objects. Better to create properties virtually as it is much faster
+    Virtual Host, Request and Response objects. Better to create properties virtually as it is much faster
  */
 
 /*
- *  Get a variable from one of the virtual objects: Host, Request, Response
+    Get a variable from one of the virtual objects: Host, Request, Response
  */
 static EjsVar *getVar(void *handle, int collection, int field)
 {
@@ -661,7 +661,7 @@ static EjsVar *getVar(void *handle, int collection, int field)
     char        *s, *cp;
 
     /*
-     *  TODO - should cache some of this instead of recreating each time
+        TODO - should cache some of this instead of recreating each time
      */
     switch (field) {
 
@@ -793,7 +793,7 @@ static int createFormData()
 
 
 /*
- *  Create a string variable
+    Create a string variable
  */
 static EjsVar *createString(Ejs *ejs, cchar *value)
 {
@@ -805,7 +805,7 @@ static EjsVar *createString(Ejs *ejs, cchar *value)
 
 
 /*
- *  A header object from a given hash table
+    A header object from a given hash table
  */  
 static EjsVar *createHeaders(Ejs *ejs, MprHashTable *table)
 {
@@ -825,7 +825,7 @@ static EjsVar *createHeaders(Ejs *ejs, MprHashTable *table)
 
 
 /*
- *  Emit all headers
+    Emit all headers
  */
 static void emitHeaders()
 {
@@ -851,7 +851,7 @@ static void emitHeaders()
 
 
 /*
- *  Flush all output and emit headers first if required
+    Flush all output and emit headers first if required
  */
 static void flushOutput(MprBuf *buf)
 {
@@ -874,7 +874,7 @@ static void flushOutput(MprBuf *buf)
 
 
 /*
- *  Decode the query and post form data into formVars
+    Decode the query and post form data into formVars
  */
 static void decodeFormData(cchar *data)
 {
@@ -885,7 +885,7 @@ static void decodeFormData(cchar *data)
     buflen = strlen(buf);
 
     /*
-     *  Crack the input into name/value pairs 
+        Crack the input into name/value pairs 
      */
     for (key = strtok(buf, "&"); key; key = strtok(0, "&")) {
         if ((value = strchr(key, '=')) != 0) {
@@ -899,7 +899,7 @@ static void decodeFormData(cchar *data)
 
 
 /*
- *  Read post data
+    Read post data
  */
 static int getPostData()
 {
@@ -969,7 +969,7 @@ static void descape(char* src)
 
 
 /*
- *  Get a date string. If sbuf is non-null, get the modified time of that file. If null, then get the current system time.
+    Get a date string. If sbuf is non-null, get the modified time of that file. If null, then get the current system time.
  */
 static char *makeDateString(MprPath *sbuf)
 {
@@ -977,7 +977,7 @@ static char *makeDateString(MprPath *sbuf)
     struct tm   tm;
 
     if (sbuf == 0) {
-        when = mprGetTime(mpr);
+        when = mprGetTime();
     } else {
         when = (MprTime) sbuf->mtime * MPR_TICKS_PER_SEC;
     }
@@ -992,33 +992,33 @@ int main(int argc, char **argv) { return 0; }
 
 
 /*
- *  @copy   default
- *
- *  Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
- *  Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
- *
- *  This software is distributed under commercial and open source licenses.
- *  You may use the GPL open source license described below or you may acquire
- *  a commercial license from Embedthis Software. You agree to be fully bound
- *  by the terms of either license. Consult the LICENSE.TXT distributed with
- *  this software for full details.
- *
- *  This software is open source; you can redistribute it and/or modify it
- *  under the terms of the GNU General Public License as published by the
- *  Free Software Foundation; either version 2 of the License, or (at your
- *  option) any later version. See the GNU General Public License for more
- *  details at: http://www.embedthis.com/downloads/gplLicense.html
- *
- *  This program is distributed WITHOUT ANY WARRANTY; without even the
- *  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *
- *  This GPL license does NOT permit incorporating this software into
- *  proprietary programs. If you are unable to comply with the GPL, you must
- *  acquire a commercial license to use this software. Commercial licenses
- *  for this software and support services are available from Embedthis
- *  Software at http://www.embedthis.com
- *
- *  Local variables:
+    @copy   default
+  
+    Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
+    Copyright (c) Michael O'Brien, 1993-2011. All Rights Reserved.
+  
+    This software is distributed under commercial and open source licenses.
+    You may use the GPL open source license described below or you may acquire
+    a commercial license from Embedthis Software. You agree to be fully bound
+    by the terms of either license. Consult the LICENSE.TXT distributed with
+    this software for full details.
+  
+    This software is open source; you can redistribute it and/or modify it
+    under the terms of the GNU General Public License as published by the
+    Free Software Foundation; either version 2 of the License, or (at your
+    option) any later version. See the GNU General Public License for more
+    details at: http://www.embedthis.com/downloads/gplLicense.html
+  
+    This program is distributed WITHOUT ANY WARRANTY; without even the
+    implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+  
+    This GPL license does NOT permit incorporating this software into
+    proprietary programs. If you are unable to comply with the GPL, you must
+    acquire a commercial license to use this software. Commercial licenses
+    for this software and support services are available from Embedthis
+    Software at http://www.embedthis.com
+  
+    Local variables:
     tab-width: 4
     c-basic-offset: 4
     End:

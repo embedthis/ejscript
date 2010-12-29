@@ -2000,7 +2000,7 @@ static int setClientHeaders(HttpConn *conn)
             conn->tx = 0;
             return MPR_ERR_CANT_CREATE;
         }
-        conn->authCnonce = mprAsprintf("%s:%s:%x", http->secret, conn->authRealm, (uint) mprGetTime(conn)); 
+        conn->authCnonce = mprAsprintf("%s:%s:%x", http->secret, conn->authRealm, (uint) mprGetTime()); 
 
         mprSprintf(a1Buf, sizeof(a1Buf), "%s:%s:%s", conn->authUser, conn->authRealm, conn->authPassword);
         len = strlen(a1Buf);
@@ -2287,7 +2287,7 @@ HttpConn *httpCreateConn(Http *http, HttpServer *server)
     conn->port = -1;
     conn->retries = HTTP_RETRIES;
     conn->server = server;
-    conn->time = mprGetTime(conn);
+    conn->time = mprGetTime();
     conn->lastActivity = conn->time;
     conn->callback = (HttpCallback) httpEvent;
     conn->callbackArg = conn;
@@ -2473,7 +2473,7 @@ void httpConsumeLastRequest(HttpConn *conn)
     if (!conn->sock || conn->state < HTTP_STATE_FIRST) {
         return;
     }
-    mark = mprGetTime(conn);
+    mark = mprGetTime();
     requestTimeout = conn->limits->requestTimeout ? conn->limits->requestTimeout : INT_MAX;
     while (!httpIsEof(conn) && mprGetRemainingTime(mark, requestTimeout) > 0) {
         if (httpRead(conn, junk, sizeof(junk)) <= 0) {
@@ -2491,7 +2491,7 @@ void httpCallEvent(HttpConn *conn, int mask)
     MprEvent    e;
 
     e.mask = mask;
-    e.timestamp = mprGetTime(conn);
+    e.timestamp = mprGetTime();
     httpEvent(conn, &e);
 }
 
@@ -3767,7 +3767,7 @@ void httpAddConn(Http *http, HttpConn *conn)
 {
     lock(http);
     mprAddItem(http->connections, conn);
-    conn->started = mprGetTime(conn);
+    conn->started = mprGetTime();
     conn->seqno = http->connCount++;
     if ((http->now + MPR_TICKS_PER_SEC) < conn->started) {
         updateCurrentDate(http);
@@ -3792,7 +3792,7 @@ int httpCreateSecret(Http *http)
 
     if (mprGetRandomBytes(bytes, sizeof(bytes), 0) < 0) {
         mprError("Can't get sufficient random data for secure SSL operation. If SSL is used, it may not be secure.");
-        now = mprGetTime(http); 
+        now = mprGetTime(); 
         pid = (int) getpid();
         cp = (char*) &now;
         bp = bytes;
@@ -7891,7 +7891,7 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
     } else {
         addedHandler = 0;
     }
-    http->now = mprGetTime(conn);
+    http->now = mprGetTime();
     expire = http->now + timeout;
 
     while (!conn->error && conn->state < state && conn->sock && !mprIsSocketEof(conn->sock)) {
@@ -8840,7 +8840,7 @@ HttpConn *httpAcceptConn(HttpServer *server)
             conn->ip, conn->port, conn->sock->ip, conn->sock->port);
     }
     e.mask = MPR_READABLE;
-    e.timestamp = mprGetTime(server);
+    e.timestamp = mprGetTime();
     (conn->callback)(conn->callbackArg, &e);
     return conn;
 }
@@ -9939,7 +9939,7 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
             expires = PTOL(mprLookupHash(rx->loc->expires, ""));
         }
         if (expires) {
-            mprDecodeUniversalTime(&tm, mprGetTime(conn) + (expires * MPR_TICKS_PER_SEC));
+            mprDecodeUniversalTime(&tm, mprGetTime() + (expires * MPR_TICKS_PER_SEC));
             hdr = mprFormatTime(MPR_HTTP_DATE, &tm);
             httpAddHeader(conn, "Cache-Control", "max-age=%d", expires);
             httpAddHeader(conn, "Expires", "%s", hdr);

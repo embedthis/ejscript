@@ -821,7 +821,7 @@ static EjsObj *http_wait(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
             timeout = INT_MAX;
         }
     }
-    mark = mprGetTime(ejs);
+    mark = mprGetTime();
     if (!waitForState(hp, HTTP_STATE_COMPLETE, timeout, 0)) {
         return (EjsObj*) ejs->falseValue;
     }
@@ -1230,7 +1230,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
         timeout = 0;
     }
     remaining = timeout;
-    mark = mprGetTime(hp);
+    mark = mprGetTime();
     redirectCount = 0;
     success = count = 0;
 
@@ -1276,7 +1276,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
             /* Can't auto-retry with manual writes */
             break;
         }
-        remaining = (int) (mark + timeout - mprGetTime(conn));
+        remaining = (int) (mark + timeout - mprGetTime());
         if (count > 0 && remaining <= 0) {
             break;
         }
