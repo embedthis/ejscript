@@ -130,7 +130,7 @@ MAIN(ejsMain, int argc, char **argv)
         } else if (strcmp(argp, "--debug") == 0) {
             debug = 1;
 
-        } else if (strcmp(argp, "--debugger") == 0) {
+        } else if (strcmp(argp, "--debugger") == 0 || strcmp(argp, "-D") == 0) {
             mprSetDebugMode(1);
 
         } else if (strcmp(argp, "--files") == 0 || strcmp(argp, "-f") == 0) {
@@ -269,7 +269,7 @@ MAIN(ejsMain, int argc, char **argv)
         return MPR_ERR_MEMORY;
     }
     ejsInitCompiler(app->ejsService);
-    ejs = ejsCreateVm(searchPath, app->modules, argc - nextArg, (cchar **) &argv[nextArg], 0);
+    ejs = ejsCreate(searchPath, app->modules, argc - nextArg, (cchar **) &argv[nextArg], 0);
     if (ejs == 0) {
         return MPR_ERR_MEMORY;
     }
@@ -459,6 +459,7 @@ static char *readline(cchar *msg)
     }
     prompt = msg;
     el_set(eh, EL_PROMPT, issuePrompt);
+    el_set(eh, EL_SIGNAL, 1);
     str = el_gets(eh, &count); 
     if (str && count > 0) { 
         result = strdup(str); 
@@ -553,11 +554,11 @@ static void catchSignal(int signo, siginfo_t *info, void *arg)
 #endif
         mprLog(2, "Received signal %d", signo);
         if (signo == SIGTERM) {
-            mprLog(1, "Exiting immediately ...");
-            mprTerminate(0);
-        } else {
             mprLog(1, "Executing a graceful exit. Waiting for all requests to complete.");
             mprTerminate(MPR_GRACEFUL);
+        } else {
+            mprLog(1, "Exiting immediately ...");
+            mprTerminate(0);
         }
     }
 }

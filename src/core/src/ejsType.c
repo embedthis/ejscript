@@ -877,6 +877,7 @@ static void manageType(EjsType *type, int flags)
         mprMark(type->prototype);
         mprMark(type->baseType);
         mprMark(type->implements);
+        mprMark(type->typeData);
     }
 }
 

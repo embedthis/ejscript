@@ -260,7 +260,7 @@ static EjsObj *app_eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     do {
         mprWaitForEvent(ejs->dispatcher, remaining); 
         remaining = mprGetRemainingTime(mark, timeout);
-    } while (!ejs->exiting && remaining > 0);
+    } while (!ejs->exiting && remaining > 0 && !mprIsComplete());
     return 0;
 }
 

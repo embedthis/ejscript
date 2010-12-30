@@ -3834,7 +3834,6 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
             offset = 0;
         }
         optable = ejsGetOptable(ejs);
-        save = mprEnableGC(0);
         if (ejsGetDebugInfo(ejs, (EjsFunction*) fp, fp->pc, &fp->loc.filename, &fp->loc.lineNumber, &fp->loc.source) >= 0) {
             mprLog(6, "%0s %04d: [%d] %02x: %-35s # %s:%d %w",
                 mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
@@ -3845,7 +3844,6 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
             ejsShowOpFrequency(ejs);
         }
 #endif
-        mprEnableGC(save);
         mprAssert(state->stack >= fp->stackReturn);
     }
     ejsOpCount++;

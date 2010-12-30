@@ -964,7 +964,6 @@
 		C9188AF6115DAB760018846C /* core */ = {
 			isa = PBXGroup;
 			children = (
-				C9F8C9A7128C848100FD3A5D /* ejsPot.c */,
 				C9188B31115DAC060018846C /* ejsApp.c */,
 				C9188B32115DAC060018846C /* ejsArray.c */,
 				C9188B33115DAC060018846C /* ejsBlock.c */,
@@ -991,6 +990,7 @@
 				C9188B48115DAC060018846C /* ejsNumber.c */,
 				C9188B49115DAC060018846C /* ejsObject.c */,
 				C9188B4A115DAC060018846C /* ejsPath.c */,
+				C9F8C9A7128C848100FD3A5D /* ejsPot.c */,
 				C9188B4B115DAC060018846C /* ejsReflect.c */,
 				C9188B4C115DAC060018846C /* ejsRegExp.c */,
 				C9188B4D115DAC060018846C /* ejsSocket.c */,

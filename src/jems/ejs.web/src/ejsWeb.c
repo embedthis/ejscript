@@ -34,7 +34,7 @@ static EjsObj *req_worker(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
     EjsRequest  *nreq;
     HttpConn    *conn;
 
-    if ((nejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((nejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
         //  MOB THROW
         return 0;
     }

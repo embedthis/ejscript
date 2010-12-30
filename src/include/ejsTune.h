@@ -77,6 +77,7 @@ extern "C" {
 
 #define EJS_XML_BUF_MAX             (256 * 1024)    /* Max XML document size */
 #define EJS_HASH_MIN_PROP           8               /* Min props to hash */
+#define EJS_MAX_COLLISIONS          4               /* Max intern string collion chain */
 
 #define EJS_SQLITE_TIMEOUT          30000           /* Database busy timeout */
 #define EJS_SESSION_TIMEOUT         1800

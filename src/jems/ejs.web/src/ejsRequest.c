@@ -219,7 +219,7 @@ static EjsObj *createResponseHeaders(Ejs *ejs, EjsRequest *req)
         conn = req->conn;
         if (conn) {
             /* Get default headers */
-            for (hp = 0; (hp = mprGetNextHash(conn->tx->headers, hp)) != 0; ) {
+            for (hp = 0; (hp = mprGetNextHash(conn->txheaders, hp)) != 0; ) {
                 ejsSetPropertyByName(ejs, req->responseHeaders, EN(hp->key), ejsCreateStringFromAsc(ejs, hp->data));
             }
             conn->fillHeaders = (HttpFillHeadersProc) fillResponseHeaders;

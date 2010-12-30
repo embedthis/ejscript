@@ -14,12 +14,18 @@ static int internHashSizes[] = {
      389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 0
 };
 
+static MprSpin      internLock;
+
+#define ilock()     mprSpinLock(&internLock);
+#define iunlock()   mprSpinUnlock(&internLock);
+
 /***************************** Forward Declarations ***************************/
 
 static EjsString *buildString(Ejs *ejs, EjsString *result, MprChar *str, ssize len);
 static int indexof(MprChar *str, ssize len, EjsString *pattern, int patternLength, int dir);
 static void linkString(Ejs *ejs, EjsString *head, EjsString *sp);
-static int rebuildIntern(Ejs *ejs);
+static void manageIntern(EjsIntern *intern, int flags);
+static int rebuildIntern(EjsIntern *intern);
 static void unlinkString(Ejs *ejs, EjsString *sp);
 
 /************************************* Code ***********************************/
@@ -2252,13 +2258,14 @@ EjsString *ejsTruncateString(Ejs *ejs, EjsString *sp, ssize len)
 EjsString *ejsInternString(Ejs *ejs, EjsString *str)
 {
     EjsString   *head, *sp;
-    int         index, i;
+    int         index, i, step;
 
-    spinlock(ejs->intern);
+    ilock();
+    step = 0;
     ejs->intern->accesses++;
     index = whash(str->value, str->length) % ejs->intern->size;
     if ((head = &ejs->intern->buckets[index]) != NULL) {
-        for (sp = head->next; sp != head; sp = sp->next) {
+        for (sp = head->next; sp != head; sp = sp->next, step++) {
             if (sp->length == str->length) {
                 for (i = 0; i < sp->length && i < str->length; i++) {
                     if (sp->value[i] != str->value[i]) {
@@ -2271,18 +2278,18 @@ EjsString *ejsInternString(Ejs *ejs, EjsString *str)
                         mprRevive(sp);
                         break;
                     }
-                    spinunlock(ejs->intern);
+                    iunlock();
                     return sp;
                 }
             }
         }
     }
     linkString(ejs, head, str);
-    if (ejs->intern->count > ejs->intern->size) {
+    iunlock();
+    if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
-        rebuildIntern(ejs);
+        rebuildIntern(ejs->intern);
     }
-    spinunlock(ejs->intern);
     return str;
 }
 
@@ -2293,16 +2300,17 @@ EjsString *ejsInternString(Ejs *ejs, EjsString *str)
 EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
 {
     EjsString   *head, *sp;
-    ssize      i, end;
-    int         index;
+    ssize       i, end;
+    int         index, step;
 
     mprAssert(0 <= len && len < MAXINT);
 
-    spinlock(ejs->intern);
+    ilock();
+    step = 0;
     ejs->intern->accesses++;
     index = whash(value, len) % ejs->intern->size;
     if ((head = &ejs->intern->buckets[index]) != NULL) {
-        for (sp = head->next; sp != head; sp = sp->next) {
+        for (sp = head->next; sp != head; sp = sp->next, step++) {
             if (sp->length == len) {
                 end = min(sp->length, len);
                 for (i = 0; i < end && value[i]; i++) {
@@ -2316,7 +2324,7 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
                         mprRevive(sp);
                         break;
                     }
-                    spinunlock(ejs->intern);
+                    iunlock();
                     return sp;
                 }
             }
@@ -2328,11 +2336,11 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
     }
     sp->length = len;
     linkString(ejs, head, sp);
-    if (ejs->intern->count > ejs->intern->size) {
+    iunlock();
+    if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
-        rebuildIntern(ejs);
+        rebuildIntern(ejs->intern);
     }
-    spinunlock(ejs->intern);
     return sp;
 }
 
@@ -2340,16 +2348,17 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
 EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
 {
     EjsString   *head, *sp;
-    ssize      i, end;
-    int         index;
+    ssize       i, end;
+    int         index, step;
 
     mprAssert(0 <= len && len < MAXINT);
 
-    spinlock(ejs->intern);
+    step = 0;
+    ilock();
     ejs->intern->accesses++;
     index = shash(value, len) % ejs->intern->size;
     if ((head = &ejs->intern->buckets[index]) != NULL) {
-        for (sp = head->next; sp != head; sp = sp->next) {
+        for (sp = head->next; sp != head; sp = sp->next, step++) {
             if (sp->length == len) {
                 end = min(len, sp->length);
                 for (i = 0; i < end && value[i]; i++) {
@@ -2364,7 +2373,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                         mprRevive(sp);
                         break;
                     }
-                    spinunlock(ejs->intern);
+                    iunlock();
                     return sp;
                 }
             }
@@ -2383,12 +2392,11 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
     }
     sp->length = len;
     linkString(ejs, head, sp);
-    // printf("INTERN %d %s\n", ejs->intern->count, sp->value);
-    if (ejs->intern->count > ejs->intern->size) {
+    iunlock();
+    if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
-        rebuildIntern(ejs);
+        rebuildIntern(ejs->intern);
     }
-    spinunlock(ejs->intern);
     return sp;
 }
 
@@ -2420,7 +2428,7 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
         src->length = mtow(src->value, len + 1, value, len);
         value = src->value;
     }
-    spinlock(ejs->intern);
+    ilock();
     ejs->intern->accesses++;
     index = whash(value, len) % ejs->intern->size;
     if ((head = &ejs->intern->buckets[index]) != NULL) {
@@ -2437,17 +2445,17 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
                     mprRevive(sp);
                     break;
                 }
-                spinunlock(ejs->intern);
+                iunlock();
                 return sp;
             }
         }
     }
     linkString(ejs, head, src);
-    if (ejs->intern->count > ejs->intern->size) {
+    iunlock();
+    if (step > EJS_MAX_COLLISIONS) {
         /*  Remake the entire hash - should not happen often */
-        rebuildIntern(ejs);
+        rebuildIntern(ejs->intern);
     }
-    spinunlock(ejs->intern);
     return sp;
 }
 #endif /* BLD_CHAR_LEN > 1 */
@@ -2469,38 +2477,37 @@ static int getInternHashSize(int size)
 /*
     Must be called locked except at startup
  */
-static int rebuildIntern(Ejs *ejs)
+static int rebuildIntern(EjsIntern *intern)
 {
     EjsString   *oldBuckets, *sp, *next, *head;
     int         i, newSize, oldSize;
 
-    mprAssert(ejs);
+    mprAssert(intern);
 
-    oldBuckets = ejs->intern->buckets;
-    newSize = getInternHashSize(ejs->intern->count);
+    oldBuckets = intern->buckets;
+    newSize = getInternHashSize(intern->size * 2);
     oldSize = 0;
     if (oldBuckets) {
-        oldSize = ejs->intern->size;
+        oldSize = intern->size;
         if (oldSize > newSize) {
             return 0;
         }
     }
-    if ((ejs->intern->buckets = mprAllocZeroed((newSize * sizeof(EjsString)))) == NULL) {
+    if ((intern->buckets = mprAllocZeroed((newSize * sizeof(EjsString)))) == NULL) {
         return MPR_ERR_MEMORY;
     }
-    ejs->intern->size = newSize;
+    intern->size = newSize;
     for (i = 0; i < newSize; i++) {
-        sp = &ejs->intern->buckets[i];
+        sp = &intern->buckets[i];
         sp->next = sp->prev = sp;
     }
     if (oldBuckets) {
-        ejs->intern->count = 0;
         for (i = 0; i < oldSize; i++) {
             head = &oldBuckets[i];
             for (sp = head->next; sp != head; sp = next) {
                 next = sp->next;
                 sp->next = sp->prev = sp;
-                ejsInternString(ejs, sp);
+                ejsInternString(intern->ejs, sp);
             }
         }
     }
@@ -2508,42 +2515,38 @@ static int rebuildIntern(Ejs *ejs)
 }
 
 
+/*
+    Must be called locked
+ */
 static void linkString(Ejs *ejs, EjsString *head, EjsString *sp)
 {
     mprAssert(sp != head);
     mprAssert(sp->next == NULL || sp->next == sp);
     mprAssert(sp->prev == NULL || sp->next == sp);
 
-    //  MOB -- must make sure lock is a macro in release mode
-
-    spinlock(ejs->intern);
     sp->next = head->next;
     sp->prev = head;
     head->next->prev = sp;
     head->next = sp;
     mprAssert(sp != sp->next);
     mprAssert(sp != sp->prev);
-    ejs->intern->count++;
-    spinunlock(ejs->intern);
 }
 
 
 /*
     Unlink a string from the intern cache. This unlinks from the hash chains. 
     This routine is idempotent. ejsDestroyIntern takes advantage of this.
+    Must be called locked.
  */
 static void unlinkString(Ejs *ejs, EjsString *sp)
 {
     /*
-        Some strings are not interned (ejsCreateBareString). These have sp->next == NULL
+        Some strings are not interned (ejsCreateBareString). These have sp->next == NULL.
      */
     if (sp->next) {
-        spinlock(ejs->intern);
         sp->prev->next = sp->next;
         sp->next->prev = sp->prev;
         sp->next = sp->prev = sp;
-        ejs->intern->count--;
-        spinunlock(ejs->intern);
     }
 }
 
@@ -2617,48 +2620,62 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
 void ejsManageString(EjsString *sp, int flags)
 {
     if (flags & MPR_MANAGE_FREE) {
+        ilock();
         unlinkString(TYPE(sp)->ejs, sp);
+        iunlock();
     }
 }
 
 
-/*
-    Only called when destroying the interpreter
- */
-void ejsDestroyIntern(Ejs *ejs)
+EjsIntern *ejsCreateIntern(Ejs *ejs)
 {
     EjsIntern   *intern;
+    
+    intern = mprAllocObj(EjsIntern, manageIntern);
+    intern->ejs = ejs;
+    return intern;
+}
+
+
+void ejsDestroyIntern(EjsIntern *intern)
+{
     EjsString   *sp, *head, *next;
     int         i;
 
     /*
         Unlink strings now as when they are freed later, the intern structure may not exist in memory.
      */
-    intern = ejs->intern;
     for (i = intern->size - 1; i >= 0; i--) {
         head = &intern->buckets[i];
         for (sp = head->next; sp != head; sp = next) {
             next = sp->next;
-            unlinkString(ejs, sp);
+            ilock();
+            unlinkString(intern->ejs, sp);
+            iunlock();
         }
     }
 }
 
 
-void ejsManageIntern(Ejs *ejs, int flags)
+static void manageIntern(EjsIntern *intern, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(ejs->intern->buckets);
+        mprMark(intern->buckets);
     } else if (flags & MPR_MANAGE_FREE) {
-        ejsDestroyIntern(ejs);
+        ejsDestroyIntern(intern);
     }
 }
 
 
 void ejsInitStringType(Ejs *ejs, EjsType *type)
 {
-    rebuildIntern(ejs);
+    static int firstTime = 1;
 
+    if (firstTime) {
+        mprInitSpinLock(&internLock);
+        firstTime = 0;
+    }
+    rebuildIntern(ejs->intern);
     ejsCloneObjHelpers(ejs, type);
     type->mutex = mprCreateLock();
     type->helpers.cast = (EjsCastHelper) castString;

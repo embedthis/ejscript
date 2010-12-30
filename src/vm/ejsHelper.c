@@ -100,6 +100,7 @@ EjsAny *ejsClone(Ejs *ejs, EjsAny *src, bool deep)
         SET_TYPE(dest, type);
 #endif
         SET_VISITED(src, 0);
+        SET_VISITED(dest, 0);
     } else {
         dest = src;
     }

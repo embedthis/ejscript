@@ -72,7 +72,7 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
     /*
         Create a new interpreter and an "inside" worker object and pair it with the current "outside" worker.
      */
-    if ((wejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((wejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -778,7 +778,7 @@ static void manageWorker(EjsWorker *worker, int flags)
             removeWorker(worker);
 #if UNUSED
             if (worker->pair) {
-                mprFree(worker->pair->ejs);
+                ejsDestroy(worker->pair->ejs);
             }
 #endif
         }

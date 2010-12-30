@@ -37,7 +37,7 @@ EjsService *ejsCreateService()
 
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS | MPR_HASH_UNICODE);
     sp->mutex = mprCreateLock();
-    sp->vmlist = mprCreateList(-1, 0);
+    sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     return sp;
 }
 
@@ -47,14 +47,10 @@ static void manageEjsService(EjsService *sp, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(sp->http);
         mprMark(sp->mutex);
-        lock(sp);
         mprMark(sp->vmlist);
         mprMark(sp->nativeModules);
-        unlock(sp);
 
     } else if (flags & MPR_MANAGE_FREE) {
-        //  MOB -- get rid of this. App should mark the service
-        mprRemoveRoot(sp);
         sp->mutex = NULL;
     }
 }
@@ -73,7 +69,7 @@ EjsService *ejsGetService()
     @param argc Count of command line args 
     @param argv Array of command line args
  */
-Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
+Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
 {
     EjsService  *sp;
     Ejs         *ejs;
@@ -87,7 +83,11 @@ Ejs *ejsCreateVm(cchar *searchPath, MprList *require, int argc, cchar **argv, in
     mprAddItem(sp->vmlist, ejs);
     unlock(sp);
 
+#if FUTURE
     ejs->intern = &sp->intern;
+#else
+    ejs->intern = ejsCreateIntern(ejs);
+#endif
     ejs->empty = require && mprGetListLength(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
@@ -132,7 +132,6 @@ void ejsDestroy(Ejs *ejs)
 
     sp = ejs->service;
     if (sp) {
-        ejsDestroyIntern(ejs);
         state = ejs->masterState;
         if (state->stackBase) {
             mprVirtFree(state->stackBase, state->stackSize);
@@ -143,6 +142,7 @@ void ejsDestroy(Ejs *ejs)
         mprRemoveItem(sp->vmlist, ejs);
         unlock(sp);
         ejs->service = 0;
+        ejsDestroyIntern(ejs->intern);
     }
 }
 
@@ -167,6 +167,7 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->dispatcher);
         mprMark(ejs->workers);
         mprMark(ejs->global);
+        mprMark(ejs->intern);
 
 //  MOB - RACE
         /*
@@ -185,7 +186,6 @@ static void manageEjs(Ejs *ejs, int flags)
             }
         }
         markValues(ejs);
-        ejsManageIntern(ejs, flags);
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroy(ejs);
@@ -497,7 +497,7 @@ int ejsEvalModule(cchar *path)
     } else if ((service = ejsCreateService()) == 0) {
         status = MPR_ERR_MEMORY;
 
-    } else if ((ejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
+    } else if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
         status = MPR_ERR_MEMORY;
 
     } else if (ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, 0) < 0) {

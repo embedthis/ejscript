@@ -30,11 +30,11 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     ejsLoadHttpService(ejs);
 
-    hp->conn = httpCreateClient(ejs->http, ejs->dispatcher);
-    if (hp->conn == 0) {
+    if ((hp->conn = httpCreateClient(ejs->http, ejs->dispatcher)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
+    httpPrepClientConn(hp->conn);
     httpSetConnNotifier(hp->conn, httpNotify);
     httpSetConnContext(hp->conn, hp);
     if (argc == 1 && argv[0] != ejs->nullValue) {
@@ -62,7 +62,7 @@ EjsObj *http_on(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     ejsAddObserver(ejs, &hp->emitter, argv[0], argv[1]);
 
     conn = hp->conn;
-    if (conn->readq->count > 0) {
+    if (conn->readq && conn->readq->count > 0) {
         ejsSendEvent(ejs, hp->emitter, "readable", NULL, (EjsObj*) hp);
     }
     if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
@@ -126,6 +126,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
         hp->conn = httpCreateClient(ejs->http, ejs->dispatcher);
+        httpPrepClientConn(hp->conn);
         httpSetConnNotifier(hp->conn, httpNotify);
         httpSetConnContext(hp->conn, hp);
     }
@@ -247,7 +248,10 @@ static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     EjsObj  *data;
 
     if (argc == 2 && argv[1] != ejs->nullValue) {
+#if UNUSED
+        //  MOB - why was this here?
         httpPrepClientConn(hp->conn);
+#endif
         mprFlushBuf(hp->requestContent);
         data = argv[1];
         if (ejsGetPropertyCount(ejs, data) > 0) {
@@ -307,7 +311,7 @@ static EjsObj *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
 
     conn = hp->conn;
     headers = (EjsObj*) ejsCreateEmptyPot(ejs);
-    for (p = 0; (p = mprGetNextHash(conn->tx->headers, p)) != 0; ) {
+    for (p = 0; (p = mprGetNextHash(conn->txheaders, p)) != 0; ) {
         ejsSetPropertyByName(ejs, headers, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
     }
     return (EjsObj*) headers;
@@ -1200,6 +1204,7 @@ static bool expired(EjsHttp *hp)
     }
 }
 #endif
+
 
 /*  
     Wait for the connection to acheive a requested state

@@ -327,6 +327,7 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
     }
     if (ecOpenMemoryStream(cp, ejsToMulti(ejs, script), script->length) < 0) {
         mprError("Can't open memory stream");
+        mprRemoveRoot(cp);
         ecDestroyCompiler(cp);
         return EJS_ERR;
     }
@@ -364,10 +365,12 @@ int ejsEvalFile(cchar *path)
         mprDestroy(mpr);
         return MPR_ERR_MEMORY;
     }
-    if ((ejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
+    mprAddRoot(service);
+    if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
         mprDestroy(mpr);
         return MPR_ERR_MEMORY;
     }
+    mprAddRoot(ejs);
     if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
         mprDestroy(mpr);
@@ -392,10 +395,12 @@ int ejsEvalScript(cchar *script)
         mprDestroy(mpr);
         return MPR_ERR_MEMORY;
     }
-    if ((ejs = ejsCreateVm(NULL, NULL, 0, NULL, 0)) == 0) {
+    mprAddRoot(service);
+    if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
         mprDestroy(mpr);
         return MPR_ERR_MEMORY;
     }
+    mprAddRoot(ejs);
     if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromAsc(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
         mprDestroy(mpr);
