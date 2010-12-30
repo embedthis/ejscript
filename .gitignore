@@ -111,3 +111,4 @@ future
 SAVE
 src/jems/ejs.web/test/table
 src/jems/ejs.web/test/view/TODO
+src/core/test/http/.pidfile
