@@ -28,7 +28,9 @@ static EjsObj *sock_Socket(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         ejsThrowMemoryError(ejs);
         return 0;
     }
+#if UNUSED
     sp->waitHandler.fd = -1;
+#endif
     return (EjsObj*) sp;
 }
 
@@ -140,7 +142,7 @@ static EjsObj *sock_connect(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "Socket is closed");
         return 0;
     }
-    if (mprOpenClientSocket(sp->sock, sp->address, sp->port, 0) < 0) {
+    if (mprConnectSocket(sp->sock, sp->address, sp->port, 0) < 0) {
         ejsThrowArgError(ejs, "Can't open client socket");
         return 0;
     }
@@ -185,7 +187,7 @@ static EjsObj *sock_listen(Ejs *ejs, EjsSocket *sp, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "Socket is closed");
         return 0;
     }
-    if (mprOpenServerSocket(sp->sock, sp->address, sp->port, 0) < 0) {
+    if (mprListenOnSocket(sp->sock, sp->address, sp->port, 0) < 0) {
         ejsThrowArgError(ejs, "Can't open listening socket");
         return 0;
     }
@@ -340,12 +342,10 @@ static void enableSocketEvents(EjsSocket *sp, int (*proc)(EjsSocket *sp, MprEven
     Ejs     *ejs;
 
     ejs = TYPE(sp)->ejs;
-    if (sp->waitHandler.fd < 0) {
-        mprInitWaitHandler(&sp->waitHandler, sp->sock->fd, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp);
+    if (sp->sock->handler == 0) {
+        mprAddSocketHandler(sp->sock, sp->mask, ejs->dispatcher, (MprEventProc) proc, sp);
     } else {
-        //  TODO - need API for this
-        sp->waitHandler.proc = (MprEventProc) proc;
-        mprEnableWaitEvents(&sp->waitHandler, sp->mask);
+        mprEnableSocketEvents(sp->sock, sp->mask);
     }
 }
 
@@ -414,17 +414,13 @@ static void manageSocket(EjsSocket *sp, int flags)
 }
 
 
-
 EjsSocket *ejsCreateSocket(Ejs *ejs)
 {
-    EjsSocket     *sp;
-
-    sp = ejsCreateObj(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
-    if (sp == 0) {
-        return 0;
-    }
+    return ejsCreateObj(ejs, ejsGetTypeByName(ejs, N(EJS_EJS_NAMESPACE, "Socket")), 0);
+#if UNUSED
     sp->waitHandler.fd = -1;
     return sp;
+#endif
 }
 
 

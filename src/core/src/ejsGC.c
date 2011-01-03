@@ -38,7 +38,7 @@ static EjsObj *runGC(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     int     deep;
 
     deep = ((argc == 1) && ejsIsBoolean(ejs, argv[1]));
-    mprRequestGC(1, deep);
+    mprRequestGC(MPR_FORCE_GC | (deep ? MPR_COMPLETE_GC : 0));
     return 0;
 }
 

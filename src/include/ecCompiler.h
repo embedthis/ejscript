@@ -11,7 +11,6 @@
 
 #include    "ejs.h"
 #include    "ejsTune.h"
-#include    "ejsCore.h"
 
 #ifdef __cplusplus
 extern "C" {

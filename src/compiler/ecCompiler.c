@@ -186,7 +186,7 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             ejsFreeze(ejs, frozen);
         }
         if (!frozen) {
-            mprYield(NULL, 0);
+            mprGC(0);
         }
     }
 
@@ -221,8 +221,8 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     ejsPopBlock(ejs);
     cp->nodes = NULL;
     ejsFreeze(ejs, frozen);
-    if (!frozen) {
-        mprYield(NULL, 0);
+    if (!frozen && (ejs->gc || MPR->heap.gc)) {
+        mprGC(0);
     }
 
     if (cp->errorCount > 0) {
@@ -362,21 +362,21 @@ int ejsEvalFile(cchar *path)
 
     mpr = mprCreate(0, NULL, 0);
     if ((service = ejsCreateService(mpr)) == 0) {
-        mprDestroy(mpr);
+        mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(service);
     if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
-        mprDestroy(mpr);
+        mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(ejs);
     if (ejsLoadScriptFile(ejs, path, NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
-        mprDestroy(mpr);
+        mprDestroy(0);
         return MPR_ERR;
     }
-    mprDestroy(mpr);
+    mprDestroy(MPR_GRACEFUL);
     return 0;
 }
 
@@ -392,21 +392,21 @@ int ejsEvalScript(cchar *script)
 
     mpr = mprCreate(0, NULL, 0);
     if ((service = ejsCreateService(mpr)) == 0) {
-        mprDestroy(mpr);
+        mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(service);
     if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
-        mprDestroy(mpr);
+        mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(ejs);
     if (ejsLoadScriptLiteral(ejs, ejsCreateStringFromAsc(ejs, script), NULL, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG) == 0) {
         ejsReportError(ejs, "Error in program");
-        mprDestroy(mpr);
+        mprDestroy(0);
         return MPR_ERR;
     }
-    mprDestroy(mpr);
+    mprDestroy(MPR_GRACEFUL);
     return 0;
 }
 

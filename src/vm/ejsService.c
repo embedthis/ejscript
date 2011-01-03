@@ -173,16 +173,18 @@ static void manageEjs(Ejs *ejs, int flags)
         /*
             Mark active call stack
          */
-        for (block = ejs->state->bp; block; block = block->prev) {
-            mprMark(block);
-        }
-        /*
-            Mark the evaluation stack. Stack itself is virtually allocated and immune from GC.
-         */
-        top = ejs->state->stack;
-        for (vpp = ejs->state->stackBase; vpp <= top; vpp++) {
-            if ((vp = *vpp) != NULL) {
-                mprMark(vp);
+        if (ejs->masterState) {
+            for (block = ejs->state->bp; block; block = block->prev) {
+                mprMark(block);
+            }
+            /*
+                Mark the evaluation stack. Stack itself is virtually allocated and immune from GC.
+             */
+            top = ejs->state->stack;
+            for (vpp = ejs->state->stackBase; vpp <= top; vpp++) {
+                if ((vp = *vpp) != NULL) {
+                    mprMark(vp);
+                }
             }
         }
         markValues(ejs);
@@ -506,7 +508,7 @@ int ejsEvalModule(cchar *path)
     } else if (ejsRun(ejs) < 0) {
         status = EJS_ERR;
     }
-    mprDestroy(mpr);
+    mprDestroy(MPR_GRACEFUL);
     return status;
 }
 
