@@ -244,9 +244,24 @@ typedef struct EjsLoc {
 #define VISITED(vp)             ((((EjsObj*) vp)->xtype) & EJS_MASK_VISITED)
 #define TYPE(vp)                ((EjsType*) ((((EjsObj*) vp)->xtype) & EJS_MASK_TYPE))
 
-#define SET_VISITED(vp, value)  ((EjsObj*) vp)->xtype = ((value) << EJS_SHIFT_VISITED) | (((EjsObj*) vp)->xtype & ~EJS_MASK_VISITED)
-#define SET_DYNAMIC(vp, value)  ((EjsObj*) vp)->xtype = (((size_t) value) << EJS_SHIFT_DYNAMIC) | (((EjsObj*) vp)->xtype & ~EJS_MASK_DYNAMIC)
-#define SET_TYPE(vp, value)     ((EjsObj*) vp)->xtype = (((size_t) value) << EJS_SHIFT_TYPE) | (((EjsObj*) vp)->xtype & ~EJS_MASK_TYPE)
+#define SET_VISITED(vp, value)  ((EjsObj*) vp)->xtype = \
+                                    ((value) << EJS_SHIFT_VISITED) | (((EjsObj*) vp)->xtype & ~EJS_MASK_VISITED)
+#define SET_DYNAMIC(vp, value)  ((EjsObj*) vp)->xtype = \
+                                    (((size_t) value) << EJS_SHIFT_DYNAMIC) | (((EjsObj*) vp)->xtype & ~EJS_MASK_DYNAMIC)
+#if BLD_DEBUG
+#define SET_TYPE_NAME(vp, t) if (t) { \
+                                    ((EjsObj*) vp)->kind = ((EjsType*) t)->qname.name->value; \
+                                    ((EjsObj*) vp)->type = ((EjsType*) t); \
+                                } else
+#else
+#define SET_TYPE_NAME(vp, type)
+#endif
+
+#define SET_TYPE(vp, value)      if (1) { \
+                                    ((EjsObj*) vp)->xtype = \
+                                        (((size_t) value) << EJS_SHIFT_TYPE) | (((EjsObj*) vp)->xtype & ~EJS_MASK_TYPE); \
+                                    SET_TYPE_NAME(vp, value); \
+                                } else
 
 typedef void EjsAny;
 
@@ -256,13 +271,16 @@ typedef struct EjsObj {
 #endif
         ssize           xtype;
 #if DEBUG_IDE && BLD_CC_UNNAMED_UNIONS
-        struct EjsType  *type;
         struct {
             uint        visited : 1;        /* Has been traversed */
             uint        dynamic : 1;        /* Object may be modified */
             ssize       typeBits: MPR_BITS - 2;
         } bits;
     };
+#endif
+#if BLD_DEBUG
+    char                *kind;
+    struct EjsType      *type;
 #endif
 } EjsObj;
 

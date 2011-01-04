@@ -22,13 +22,10 @@
 //#define THREAD_STYLE SQLITE_CONFIG_SERIALIZED
 
 /*
-    Map mutex locking onto Ejscript/MPR locking routines for platforms not supported by SQLite
+    Map allocation and mutex routines
  */
-#if VXWORKS
+#define MAP_ALLOC   1
 #define MAP_MUTEXES 1
-#else
-#define MAP_MUTEXES 1
-#endif
 
 /*
     Ejscript Sqlite class object
@@ -39,12 +36,6 @@ typedef struct EjsSqlite {
     Ejs             *ejs;           /* Interp reference */
     int             memory;         /* In-memory database */
 } EjsSqlite;
-
-/********************************** Forwards **********************************/
-
-#if UNUSED
-static int sqldbDestructor(EjsSqlite **db);
-#endif
 
 /************************************ Code ************************************/
 /*
@@ -62,19 +53,6 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
     db->ejs = ejs;
     options = argv[0];
     
-#if UNUSED
-    EjsSqlite       **dbp;
-    /*
-        Create a destructor object so we can cleanup and close the database. Must create after the ctx so it will be
-        invoked before the ctx is freed. 
-     */
-    if ((dbp = mprAllocObj(ejs, void*, sqldbDestructor)) == 0) {
-        ejsThrowMemoryError(ejs);
-        return 0;
-    }
-    *dbp = db;
-#endif
-
     /*
         MOB - this will create a database if it doesn't exist. Should have more control over creating databases.
      */
@@ -97,7 +75,7 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
                 return 0;
             }
             //  MOB TODO - should be configurable somewhere
-            sqlite3_soft_heap_limit(2 * 1024 * 1024);
+            sqlite3_soft_heap_limit(20 * 1024 * 1024);
             sqlite3_busy_timeout(sdb, EJS_SQLITE_TIMEOUT);
         } else {
             ejsThrowArgError(ejs, "Unknown SQLite database URI %s", path);
@@ -105,24 +83,8 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
         }
     }
     db->sdb = sdb;
-    return 0;
+    return (EjsObj*) db;
 }
-
-
-#if UNUSED
-static int sqldbDestructor(EjsSqlite **dbp)
-{
-    EjsSqlite   *db;
-
-    db = *dbp;
-
-    if (db->sdb) {
-        sqlite3_close(db->sdb);
-        db->sdb = 0;
-    }
-    return 0;
-}
-#endif
 
 
 /*
@@ -236,7 +198,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
                         qname = EN(tableName);
                     }
                     if (ejsLookupProperty(ejs, (EjsObj*) row, qname) < 0) {
-                        svalue = (EjsObj*) ejsCreateStringFromMulti(ejs, value, strlen(value));
+                        svalue = (EjsObj*) ejsCreateStringFromMulti(ejs, value, slen(value));
                         if (ejsSetPropertyByName(ejs, (EjsObj*) row, qname, svalue) < 0) {
                             ejsThrowIOError(ejs, "Can't update query result set name");
                             return 0;
@@ -272,22 +234,33 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
 }
 
 
-/*********************************** Malloc ********************************/
+/*********************************** Alloc ********************************/
+#if MAP_ALLOC
 
 static void *allocBlock(int size)
 {
-    return mprAlloc(size);
+    void    *ptr;
+
+    if ((ptr = mprAlloc(size)) != 0) {
+        mprHold(ptr);
+    }
+    return ptr;
 }
 
 
 static void freeBlock(void *ptr)
 {
+    mprRelease(ptr);
 }
 
 
 static void *reallocBlock(void *ptr, int size)
 {
-    return mprRealloc(ptr, size);
+    mprRelease(ptr);
+    if ((ptr =  mprRealloc(ptr, size)) == 0) {
+        mprHold(ptr);
+    }
+    return ptr;
 }
 
 
@@ -317,6 +290,8 @@ static void termAllocator(void *data)
 struct sqlite3_mem_methods mem = {
     allocBlock, freeBlock, reallocBlock, blockSize, roundBlockSize, initAllocator, termAllocator, NULL 
 };
+
+#endif /* MAP_ALLOC */
 
 /*********************************** Mutex ********************************/
 /*
@@ -386,6 +361,7 @@ struct sqlite3_mutex_methods mut = {
 static int manageSqlite(EjsSqlite *db, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        ejsManagePot(db, flags);
     } else if (flags & MPR_MANAGE_FREE) {
         if (db->sdb) {
             sqliteClose(db->ejs, db, 0, 0);
@@ -406,7 +382,9 @@ static int configureSqliteTypes(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_close, (EjsProc) sqliteClose);
     ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_sql, (EjsProc) sqliteSql);
 
+#if MAP_ALLOC
     sqlite3_config(SQLITE_CONFIG_MALLOC, &mem);
+#endif
 #if MAP_MUTEXES
     sqlite3_config(SQLITE_CONFIG_MUTEX, &mut);
 #endif
