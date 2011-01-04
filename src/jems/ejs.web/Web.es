@@ -260,7 +260,7 @@ module ejs.web {
                 serve(request, router)
             })
             server.listen(address)
-            App.eventLoop()
+            App.run()
         }
 
         /**
@@ -296,7 +296,7 @@ module ejs.web {
                 }
             })
             server.listen(address)
-            App.eventLoop()
+            App.run()
         }
     }
 }

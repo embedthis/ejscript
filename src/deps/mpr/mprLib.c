@@ -742,14 +742,10 @@ static MprMem *freeBlock(MprMem *mp)
 #if BLD_CC_MMU
     MprRegion   *region;
 #endif
-    int a, b;
-    
-    a = b = 0;
     BREAKPOINT(mp);
 
     size = GET_SIZE(mp);
-    // mprAssert(size < 8 * 1024 * 1024);
-    after = next = prev = NULL;
+    prev = NULL;
     
     /*
         Coalesce with next if it is free
@@ -759,7 +755,6 @@ static MprMem *freeBlock(MprMem *mp)
     //  MOB - GET_NEXT should be safe lockfree in the sweeper.
     next = GET_NEXT(mp);
     if (next && IS_FREE(next)) {
-        a = 1;
         BREAKPOINT(next);
         //  MOB - lockfree race here as someone else may claim this block
         unlinkBlock((MprFreeMem*) next);
@@ -782,7 +777,6 @@ static MprMem *freeBlock(MprMem *mp)
      */
     prev = GET_PRIOR(mp);
     if (prev && IS_FREE(prev)) {
-        b = 1;
         BREAKPOINT(prev);
         //  MOB - lockfree race here as someone else may claim this block
         unlinkBlock((MprFreeMem*) prev);
@@ -824,8 +818,6 @@ static MprMem *freeBlock(MprMem *mp)
     } else
 #endif
     {
-        MprMem *prior;
-        prior = GET_PRIOR(mp);
         linkBlock(mp);
         unlockHeap();
     }
@@ -1094,18 +1086,31 @@ void mprWakeGCService()
 
 void mprRequestGC(int flags)
 {
+    MprThread   *tp;
+    int         wasSticky;
+
     mprLog(7, "DEBUG: mprRequestGC");
+
+    tp = mprGetCurrentThread();
+    wasSticky = tp->stickyYield;
+    if (flags & MPR_COMPLETE_GC) {
+        mprYield(MPR_YIELD_STICKY);
+    }
+
     if ((flags & MPR_FORCE_GC) || (heap->newCount > heap->newQuota)) {
         heap->extraSweeps = (flags & MPR_COMPLETE_GC) ? 3 : 0;
-        if (!(heap->flags & MPR_OWN_GC)) {
-            mprSignalCond(heap->markerCond);
-        }
-        if (flags & MPR_WAIT_GC) {
-            mprYield(MPR_YIELD_BLOCK);
+        if (heap->flags & MPR_OWN_GC) {
+            mprGC(flags);
         } else {
-            mprYield(0);
+            mprSignalCond(heap->markerCond);
+            if (flags & MPR_WAIT_GC) {
+                mprYield(MPR_YIELD_BLOCK);
+            } else {
+                mprYield(0);
+            }
         }
     }
+    tp->stickyYield = wasSticky;
 }
 
 
@@ -1123,7 +1128,7 @@ static void synchronize()
     priorFree = heap->stats.bytesFree;
 
 #if BLD_MEMORY_STATS
-    mprLog(5, "GC Complete: MARKED %d/%d, SWEPT %d/%d, freed %d, bytesFree %d (before %d), newCount %d/%d \n",
+    mprLog(7, "GC Complete: MARKED %d/%d, SWEPT %d/%d, freed %d, bytesFree %d (before %d), newCount %d/%d \n",
            heap->stats.marked, heap->stats.markVisited,
            heap->stats.swept, heap->stats.sweepVisited, 
            (int) heap->stats.freed, (int) heap->stats.bytesFree, priorFree, oldCount, heap->newQuota);
@@ -1174,8 +1179,6 @@ static void sweep()
     MprRegion   *rp, *region, *nextRegion, *prior;
     MprMem      *mp, *next;
     MprManager  mgr;
-//  MOB
-    MprMem *prev = NULL;
     
     if (!heap->enabled) {
         mprLog(7, "DEBUG: sweep: Abort sweep - GC disabled");
@@ -1216,7 +1219,6 @@ static void sweep()
         /*
             This code assumes that no other code coalesces blocks and that splitting blocks will be done lock-free
          */
-        prev = NULL;
         for (mp = region->start; mp; mp = next) {
             CHECK(mp);
             INC(sweepVisited);
@@ -1234,7 +1236,6 @@ static void sweep()
                  */
                 next = GET_NEXT(mp);
             }
-            prev = mp;
         }
 
         /*
@@ -1362,8 +1363,7 @@ static void marker(void *unused, MprThread *tp)
     tp->stickyYield = 1;
     tp->yielded = 1;
 
-    //  MOB - remove extraSweeps
-    while (!mprIsExiting() || heap->extraSweeps > 0) {
+    while (!mprIsStoppingCore()) {
         if (heap->extraSweeps <= 0) {
             mprWaitForCond(heap->markerCond, -1);
             mark();
@@ -1384,9 +1384,8 @@ static void sweeper(void *unused, MprThread *tp)
 {
     mprLog(5, "DEBUG: sweeper thread started");
 
-    //  MOB - remove extraSweeps
     MPR->sweeping = 1;
-    while (!mprIsExiting() || heap->extraSweeps > 0) {
+    while (!mprIsStoppingCore()) {
         sweep();
         mprYield(MPR_YIELD_BLOCK);
     }
@@ -1551,7 +1550,7 @@ void mprVerifyMem()
     MprMem      *mp;
     MprFreeMem  *freeq, *fp;
     uchar       *ptr;
-    int         i, usize, index;
+    int         i, usize;
     
     lockHeap();
     for (region = heap->regions; region; region = region->next) {
@@ -1560,7 +1559,7 @@ void mprVerifyMem()
         }
     }
     for (i = 0, freeq = heap->freeq; freeq != heap->freeEnd; freeq++, i++) {
-        index = (int) (freeq - heap->freeq);
+        // int index = (int) (freeq - heap->freeq);
         for (fp = freeq->next; fp != freeq; fp = fp->next) {
             mp = (MprMem*) fp;
             CHECK(mp);
@@ -1695,11 +1694,11 @@ static void *getNextRoot()
 static void printQueueStats() 
 {
     MprFreeMem  *freeq;
-    int         i, index;
+    int         i;
 
     printf("\nFree Queue Stats\n Bucket                     Size   Count\n");
     for (i = 0, freeq = heap->freeq; freeq != heap->freeEnd; freeq++, i++) {
-        index = (int) (freeq - heap->freeq);
+        // int index = (int) (freeq - heap->freeq);
         if (freeq->info.stats.count) {
             printf("%7d %24d %7d\n", i, freeq->info.stats.minSize, freeq->info.stats.count);
         }
@@ -2455,18 +2454,13 @@ static void manageMpr(Mpr *mpr, int flags)
         mprMark(mpr->waitService);
         mprMark(mpr->workerService);
         mprMark(mpr->heap.markerCond);
-
-#if UNUSED
-    } else if (flags & MPR_MANAGE_FREE) {
-        if ((mpr->flags & MPR_STARTED) && !(mpr->flags & MPR_STOPPED)) {
-            mprStop();
-        }
-        mprDestroyMemService();
-#endif
     }
 }
 
 
+/*
+    Destroy the Mpr
+ */
 bool mprDestroy(int flags)
 {
     MprTime     mark;
@@ -2475,35 +2469,76 @@ bool mprDestroy(int flags)
     stopped = 1;
 
     mprLock(MPR->mutex);
-    if (MPR->flags & MPR_STOPPED) {
+    if (MPR->flags & MPR_DESTROYING) {
         mprUnlock(MPR->mutex);
         return 0;
     }
-    MPR->flags |= MPR_STOPPED;
+    MPR->flags |= MPR_DESTROYING;
+
     mprYield(MPR_YIELD_STICKY);
 
     if (flags & MPR_GRACEFUL) {
         mprTerminate(MPR_GRACEFUL);
-        for (mark = mprGetTime(); !mprIsComplete() && mprGetRemainingTime(mark, 2000 * 100) > 0; mprSleep(10)) ;
+        for (mark = mprGetTime(); !mprIsIdle() && mprGetRemainingTime(mark, MPR_TIMEOUT_STOP) > 0; mprSleep(10)) ;
     } else {
         mprTerminate(0);
     }
+    if (mprIsIdle()) {
+        MPR->flags |= MPR_FINISHED;
+    }
+
     if (MPR->flags & MPR_STARTED) {
-        mprStopSocketService();
-        if (!mprStopWorkerService(MPR_TIMEOUT_STOP_TASK)) {
+        if (!mprStopModuleService()) {
             stopped = 0;
         }
-        if (!mprStopThreadService(MPR_TIMEOUT_STOP_TASK)) {
-            stopped = 0;
-        }
-        mprStopModuleService();
         mprStopOsService();
     }
     mprDestroyMemService();
-    if (!mprIsComplete()) {
+
+    if (!mprIsIdle()) {
         stopped = 0;
     }
     return stopped;
+}
+
+
+/*
+    Start termination of the Mpr. May be called by mprDestroy or elsewhere.
+ */
+void mprTerminate(bool graceful)
+{
+    mprLog(MPR_CONFIG, "Exiting started");
+    
+    /*
+        Set the stopping flag. Services should stop accepting new requests.
+     */
+    mprSpinLock(MPR->spin);
+    if (MPR->flags & MPR_STOPPING) {
+        mprSpinUnlock(MPR->spin);
+        return;
+    }
+    MPR->flags |= MPR_STOPPING;
+    mprSpinUnlock(MPR->spin);
+
+    /*
+        Request a full GC sweep to allow managers to close files, commands and the like.
+     */
+    mprRequestGC(MPR_FORCE_GC | MPR_COMPLETE_GC | ((graceful) ? MPR_WAIT_GC : 0));
+
+    /*
+        Wake up everybody. Services and GC threads should exit immediately.
+        Disptachers will keep running until finished is true.
+     */
+    MPR->flags |= MPR_STOPPING_CORE;
+    mprRequestGC(MPR_FORCE_GC);
+    mprResumeThreads();
+    mprStopWorkerService();
+    mprWakeDispatchers();
+    mprWakeWaitService();
+
+    if (! graceful) {
+        exit(0);
+    }
 }
 
 
@@ -2548,44 +2583,23 @@ static void serviceEventsThread(void *data, MprThread *tp)
 
 
 /*
-    Start termination of the Mpr. This call initiates the exit process. 
+    Services should call this to determine if they should accept new services
  */
-void mprTerminate(bool graceful)
+bool mprIsStopping()
 {
-    mprLog(MPR_CONFIG, "Exiting started");
-    
-    mprSpinLock(MPR->spin);
-    if (MPR->flags & MPR_EXITING) {
-        mprSpinUnlock(MPR->spin);
-        return;
-    }
-    MPR->flags |= MPR_EXITING;
-    mprSpinUnlock(MPR->spin);
-
-    /*
-        Request a full GC sweep to ensure all managers can close files and commands
-        Wake up dispatchers, threads and any threads waiting on GC sync
-     */
-    mprRequestGC(MPR_FORCE_GC | MPR_COMPLETE_GC);
-    mprWakeDispatchers();
-    mprWakeWaitService();
-    mprResumeThreads();
-
-    if (! graceful) {
-        exit(0);
-    }
+    return MPR->flags & MPR_STOPPING;
 }
 
 
-bool mprIsExiting()
+bool mprIsStoppingCore()
 {
-    return MPR->flags & MPR_EXITING;
+    return MPR->flags & MPR_STOPPING_CORE;
 }
 
 
-bool mprIsComplete()
+bool mprIsFinished()
 {
-    return (MPR->flags & MPR_EXITING) && mprIsIdle();
+    return (MPR->flags & MPR_FINISHED) ? 1 : 0;
 }
 
 
@@ -3780,18 +3794,14 @@ ssize mprPutFmtToBuf(MprBuf *bp, cchar *fmt, ...)
 {
     va_list     ap;
     char        *buf;
-    ssize       rc, space;
 
     if (fmt == 0) {
         return 0;
     }
     va_start(ap, fmt);
-    space = mprGetBufSpace(bp);
-    space += (bp->maxsize - bp->buflen);
     buf = mprAsprintfv(fmt, ap);
-    rc = mprPutStringToBuf(bp, buf);
     va_end(ap);
-    return rc;
+    return mprPutStringToBuf(bp, buf);
 }
 
 
@@ -4224,10 +4234,7 @@ static void resetCmd(MprCmd *cmd)
 
 void mprDisconnectCmd(MprCmd *cmd)
 {
-    MprCmdFile      *files;
-    int             i;
-
-    files = cmd->files;
+    int     i;
 
     lock(cmd);
     for (i = 0; i < MPR_CMD_MAX_PIPE; i++) {
@@ -4432,23 +4439,25 @@ int mprStartCmd(MprCmd *cmd, int argc, char **argv, char **envp, int flags)
 
 #if BLD_UNIX_LIKE || VXWORKS
     {
-        int     stdinFd, stdoutFd, stderrFd, nonBlock, mask;
+        int     stdoutFd, stderrFd, mask;
       
-        stdinFd = cmd->files[MPR_CMD_STDIN].fd; 
         stdoutFd = cmd->files[MPR_CMD_STDOUT].fd; 
         stderrFd = cmd->files[MPR_CMD_STDERR].fd; 
-        nonBlock = 1;
 
         /*
             Put the stdout and stderr into non-blocking mode. Windows can't do this because both ends of the pipe
             share the same blocking mode (Ugh!).
          */
 #if VXWORKS
-        if (stdoutFd >= 0) {
-            ioctl(stdoutFd, FIONBIO, (int) &nonBlock);
-        }
-        if (stderrFd >= 0) {
-            ioctl(stderrFd, FIONBIO, (int) &nonBlock);
+        {
+            int nonBlock = 1;
+
+            if (stdoutFd >= 0) {
+                ioctl(stdoutFd, FIONBIO, (int) &nonBlock);
+            }
+            if (stderrFd >= 0) {
+                ioctl(stderrFd, FIONBIO, (int) &nonBlock);
+            }
         }
 #else
         if (stdoutFd >= 0) {
@@ -4492,10 +4501,7 @@ int mprStartCmd(MprCmd *cmd, int argc, char **argv, char **envp, int flags)
 
 int mprMakeCmdIO(MprCmd *cmd)
 {
-    MprCmdFile  *files;
-    int         rc;
-
-    files = cmd->files;
+    int     rc;
 
     rc = 0;
     if (cmd->flags & MPR_CMD_IN) {
@@ -4732,9 +4738,9 @@ int mprWaitForCmd(MprCmd *cmd, int timeout)
 int mprReapCmd(MprCmd *cmd, int timeout)
 {
     MprTime     mark;
-    int         flags, rc, status, waitrc;
+    int         status;
 
-    flags = rc = status = waitrc = 0;
+    status = 0;
     lock(cmd);
     if (timeout < 0) {
         timeout = MAXINT;
@@ -4743,6 +4749,9 @@ int mprReapCmd(MprCmd *cmd, int timeout)
 
     while (cmd->pid) {
 #if BLD_UNIX_LIKE
+{
+        int     flags, waitrc;
+
         /*
             WARNING: this will block here if the process has not completed and requiredEof is zero. Only happens
             if creating a command and not opening any stdout or stderr output which users SHOULD do.
@@ -4772,6 +4781,7 @@ int mprReapCmd(MprCmd *cmd, int timeout)
         } else {
             mprAssert(waitrc == 0);
         }
+}
 #endif
 #if VXWORKS
         /*
@@ -4787,6 +4797,9 @@ int mprReapCmd(MprCmd *cmd, int timeout)
         cmd->pid = 0;
 #endif
 #if BLD_WIN_LIKE
+{
+        int     rc;
+
         if ((rc = WaitForSingleObject(cmd->process, 10)) != WAIT_OBJECT_0) {
             if (rc == WAIT_TIMEOUT) {
                 mprUnlock(cmd->mutex);
@@ -4809,6 +4822,7 @@ int mprReapCmd(MprCmd *cmd, int timeout)
             cmd->pid = 0;
             break;
         }
+}
 #endif
         /* Prevent busy waiting */
         mprSleep(10);
@@ -5333,7 +5347,7 @@ static int startProcess(MprCmd *cmd)
         }
         if (cmd->flags & MPR_CMD_IN) {
             if (files[MPR_CMD_STDIN].clientFd >= 0) {
-                rc = dup2(files[MPR_CMD_STDIN].clientFd, 0);
+                dup2(files[MPR_CMD_STDIN].clientFd, 0);
                 close(files[MPR_CMD_STDIN].fd);
             } else {
                 close(0);
@@ -5341,7 +5355,7 @@ static int startProcess(MprCmd *cmd)
         }
         if (cmd->flags & MPR_CMD_OUT) {
             if (files[MPR_CMD_STDOUT].clientFd >= 0) {
-                rc = dup2(files[MPR_CMD_STDOUT].clientFd, 1);
+                dup2(files[MPR_CMD_STDOUT].clientFd, 1);
                 close(files[MPR_CMD_STDOUT].fd);
             } else {
                 close(1);
@@ -5349,7 +5363,7 @@ static int startProcess(MprCmd *cmd)
         }
         if (cmd->flags & MPR_CMD_ERR) {
             if (files[MPR_CMD_STDERR].clientFd >= 0) {
-                rc = dup2(files[MPR_CMD_STDERR].clientFd, 2);
+                dup2(files[MPR_CMD_STDERR].clientFd, 2);
                 close(files[MPR_CMD_STDERR].fd);
             } else {
                 close(2);
@@ -5362,7 +5376,7 @@ static int startProcess(MprCmd *cmd)
             rc = execv(cmd->program, cmd->argv);
         }
         err = errno;
-        printf("Can't exec %s, err %d\n", cmd->program, err);
+        printf("Can't exec %s, rc %d, err %d\n", cmd->program, rc, err);
 
         /*
             Use _exit to avoid flushing I/O any other I/O.
@@ -5857,26 +5871,27 @@ void mprResetCond(MprCond *cp)
  */
 int mprWaitForMultiCond(MprCond *cp, int timeout)
 {
-    MprTime     now, expire;
     int         rc;
 #if BLD_UNIX_LIKE
     struct timespec     waitTill;
     struct timeval      current;
     int                 usec;
+#else
+    MprTime     now, expire;
 #endif
 
-    rc = 0;
     if (timeout < 0) {
         timeout = MAXINT;
     }
-    now = mprGetTime();
-    expire = now + timeout;
 
 #if BLD_UNIX_LIKE
     gettimeofday(&current, NULL);
     usec = current.tv_usec + (timeout % 1000) * 1000;
     waitTill.tv_sec = current.tv_sec + (timeout / 1000) + (usec / 1000000);
     waitTill.tv_nsec = (usec % 1000000) * 1000;
+#else
+    now = mprGetTime();
+    expire = now + timeout;
 #endif
 
 #if BLD_WIN_LIKE
@@ -6168,7 +6183,7 @@ char *mprEncode64(cchar *s)
     uint    shiftbuf;
     char    *buffer, *bp;
     ssize   len;
-    int     x, i, j, shift;
+    int     i, j, shift;
 
     len = strlen(s) * 2;
     if ((buffer = mprAlloc(len + 1)) == 0) {
@@ -6183,7 +6198,6 @@ char *mprEncode64(cchar *s)
         }
         shift = 18;
         for (i = ++j; i < 4 && bp < &buffer[len] ; i++) {
-            x = (shiftbuf >> shift) & 0x3f;
             *bp++ = encodeMap[(shiftbuf >> shift) & 0x3f];
             shift -= 6;
         }
@@ -6522,12 +6536,10 @@ static int getPathInfo(MprDiskFileSystem *fileSystem, cchar *path, MprPath *info
 
 static MprFile *openFile(MprFileSystem *fileSystem, cchar *path, int omode, int perms)
 {
-    MprDiskFileSystem   *dfs;
-    MprFile             *file;
+    MprFile     *file;
     
     mprAssert(path);
 
-    dfs = (MprDiskFileSystem*) fileSystem;
     file = mprAllocObj(MprFile, manageDiskFile);
     if (file == 0) {
         return NULL;
@@ -6966,7 +6978,7 @@ MprDiskFileSystem *mprCreateDiskFileSystem(cchar *path)
 
 
 static void dequeueDispatcher(MprDispatcher *dispatcher);
-static void dispatchEvents(MprDispatcher *dispatcher);
+static int dispatchEvents(MprDispatcher *dispatcher);
 static MprTime getDispatcherIdleTime(MprDispatcher *dispatcher, MprTime timeout);
 static MprTime getIdleTime(MprEventService *es, MprTime timeout);
 static MprDispatcher *getNextReadyDispatcher(MprEventService *es);
@@ -7122,11 +7134,17 @@ int mprServiceEvents(int timeout, int flags)
 
     do {
         eventCount = es->eventCount;
-        if (mprIsExiting()) {
-            if (mprIsComplete()) {
+        /* 
+            If stopping, switch to a short timeout. Keep servicing events until finished to allow upper level services 
+            to complete current requests.
+         */
+        if (mprIsStopping()) {
+            if (mprIsStoppingCore()) {
                 break;
             }
-            expires = min(expires, start + MPR_TIMEOUT_STOP);
+            if (!mprGetDebugMode()) {
+                expires = min(expires, start + MPR_TIMEOUT_STOP);
+            }
         }
         while ((dp = getNextReadyDispatcher(es)) != NULL) {
             serviceDispatcher(dp);
@@ -7195,15 +7213,23 @@ int mprWaitForEvent(MprDispatcher *dispatcher, int timeout)
     unlock(es);
 
     do {
-        if (mprIsExiting()) {
-            if (mprIsComplete()) {
+        /* 
+            If stopping, switch to a short timeout. Keep servicing events until finished to allow upper level services 
+            to complete current requests.
+         */
+        if (mprIsStopping()) {
+            if (mprIsStoppingCore()) {
                 break;
             }
-            expires = min(expires, start + MPR_TIMEOUT_STOP);
+            if (!mprGetDebugMode()) {
+                expires = min(expires, start + MPR_TIMEOUT_STOP);
+            }
         }
         if (runEvents) {
             makeRunnable(dispatcher);
-            dispatchEvents(dispatcher);
+            if (dispatchEvents(dispatcher)) {
+                break;
+            }
         }
         lock(es);
         delay = getDispatcherIdleTime(dispatcher, expires - es->now);
@@ -7220,7 +7246,7 @@ int mprWaitForEvent(MprDispatcher *dispatcher, int timeout)
         dispatcher->waitingOnCond = 0;
         mprResetYield();
         es->now = mprGetTime();
-    } while (es->now < expires && !mprIsComplete());
+    } while (es->now < expires && !mprIsFinished());
 
     if (!wasRunning) {
         scheduleDispatcher(dispatcher);
@@ -7255,7 +7281,6 @@ int mprDispatchersAreIdle()
 
     es = MPR->eventService;
     runQ = &es->runQ;
-    idle = 0;
     lock(es);
     dispatcher = runQ->next;
     if (dispatcher == runQ) {
@@ -7341,7 +7366,7 @@ void mprScheduleDispatcher(MprDispatcher *dispatcher)
 /*
     Dispatch events for a dispatcher. A dispatcher is ever only run on one thread, and so this code is single-threaded.
  */
-static void dispatchEvents(MprDispatcher *dispatcher)
+static int dispatchEvents(MprDispatcher *dispatcher)
 {
     MprEventService     *es;
     MprEvent            *event;
@@ -7368,17 +7393,15 @@ static void dispatchEvents(MprDispatcher *dispatcher)
         es->eventCount += count;
         mprWakeWaitService();
     }
+    return count;
 }
 
 
 static void serviceDispatcher(MprDispatcher *dispatcher)
 {
-    MprEventService     *es;
-
     mprAssert(isRunning(dispatcher));
     mprAssert(dispatcher->owner == 0);
     
-    es = dispatcher->service;
     dispatcher->owner = mprGetCurrentOsThread();
 
     if (dispatcher == MPR->nonBlock) {
@@ -7463,7 +7486,7 @@ static MprTime getIdleTime(MprEventService *es, MprTime timeout)
 
     if (readyQ->next != readyQ) {
         delay = 0;
-    } else if (mprIsExiting()) {
+    } else if (mprIsStoppingCore()) {
         delay = 10;
     } else {
         delay = MPR_MAX_TIMEOUT;
@@ -7767,7 +7790,6 @@ char *mprUriEncode(cchar *inbuf, int map)
     if ((result = mprAlloc(len)) == 0) {
         return 0;
     }
-    ip = inbuf;
     op = result;
 
     while ((c = (uchar) (*inbuf++)) != 0) {
@@ -9945,7 +9967,7 @@ static int growEvents(MprWaitService *ws)
 int mprAddNotifier(MprWaitService *ws, MprWaitHandler *wp, int mask)
 {
     struct kevent   *kp, *start;
-    int             fd, oldlen;
+    int             fd;
 
     mprAssert(wp);
 
@@ -9982,7 +10004,6 @@ int mprAddNotifier(MprWaitService *ws, MprWaitHandler *wp, int mask)
         ws->interestCount += kp - start;
 
         if (fd >= ws->handlerMax) {
-            oldlen = ws->handlerMax;
             ws->handlerMax = fd + 32;
             if ((ws->handlerMap = mprRealloc(ws->handlerMap, sizeof(MprWaitHandler*) * ws->handlerMax)) == 0) {
                 return MPR_ERR_MEMORY;
@@ -10001,7 +10022,7 @@ int mprAddNotifier(MprWaitService *ws, MprWaitHandler *wp, int mask)
 void mprRemoveNotifier(MprWaitHandler *wp)
 {
     MprWaitService  *ws;
-    int             fd, old;
+    int             fd;
 
     ws = wp->service;
     lock(ws);
@@ -10010,7 +10031,6 @@ void mprRemoveNotifier(MprWaitHandler *wp)
     if (wp->flags & MPR_WAIT_ADDED) {
         fd = wp->fd;
         mprAssert(fd >= 0);
-        old = ws->interestMax;
         mprAssert(ws->handlerMap[fd] == wp);
         if (ws->handlerMap[fd]) {
             if ((ws->interestCount + 2) >= ws->interestMax) {
@@ -10045,7 +10065,7 @@ int mprWaitForSingleIO(int fd, int mask, int timeout)
 {
     struct timespec ts;
     struct kevent   interest[2], events[1];
-    int             kq, interestCount, rc, err;
+    int             kq, interestCount, rc;
 
     if (timeout < 0) {
         timeout = MAXINT;
@@ -10063,7 +10083,6 @@ int mprWaitForSingleIO(int fd, int mask, int timeout)
 
     mask = 0;
     rc = kevent(kq, interest, interestCount, events, 1, &ts);
-    err = errno;
     close(kq);
     if (rc < 0) {
         mprLog(6, "Kevent returned %d, errno %d", rc, errno);
@@ -10130,7 +10149,7 @@ static void serviceIO(MprWaitService *ws, int count)
     MprWaitHandler      *wp;
     struct kevent       *kev;
     char                buf[128];
-    int                 fd, i, mask, err, rc;
+    int                 fd, i, mask, err;
 
     lock(ws);
     for (i = 0; i < count; i++) {
@@ -10139,7 +10158,7 @@ static void serviceIO(MprWaitService *ws, int count)
         mprAssert(fd < ws->handlerMax);
         if ((wp = ws->handlerMap[fd]) == 0) {
             if (kev->filter == EVFILT_READ && fd == ws->breakPipe[MPR_READ_PIPE]) {
-                rc = read(fd, buf, sizeof(buf));
+                (void) read(fd, buf, sizeof(buf));
             }
             continue;
         }
@@ -10188,13 +10207,13 @@ static void serviceIO(MprWaitService *ws, int count)
 void mprWakeNotifier()
 {
     MprWaitService  *ws;
-    int             c, rc;
+    int             c;
 
     ws = MPR->waitService;
     if (!ws->wakeRequested) {
         ws->wakeRequested = 1;
         c = 0;
-        rc = write(ws->breakPipe[MPR_WRITE_PIPE], (char*) &c, 1);
+        (void) write(ws->breakPipe[MPR_WRITE_PIPE], (char*) &c, 1);
     }
 }
 
@@ -12227,21 +12246,25 @@ int mprStartModuleService()
 /*
     Stop all modules
  */
-void mprStopModuleService()
+int mprStopModuleService()
 {
     MprModuleService    *ms;
     MprModule           *mp;
-    int                 next;
+    int                 next, stopped;
 
+    stopped = 1;
     ms = MPR->moduleService;
     mprAssert(ms);
     mprLock(ms->mutex);
     for (next = 0; (mp = mprGetNextItem(ms->modules, &next)) != 0; ) {
         if (mp->stop) {
-            mp->stop(mp);
+            if (mp->stop(mp) < 0) {
+                stopped = 0;
+            }
         }
     }
     mprUnlock(ms->mutex);
+    return stopped;
 }
 
 
@@ -12683,17 +12706,18 @@ char *mprGetAbsPath(cchar *pathArg)
  */
 char *mprGetCurrentPath()
 {
-    MprFileSystem   *fs;
     char            dir[MPR_MAX_PATH];
 
-    fs = mprLookupFileSystem(dir);
     if (getcwd(dir, sizeof(dir)) == 0) {
         return mprGetAbsPath("/");
     }
 
 #if VXWORKS
 {
-    char    sep[2];
+    MprFileSystem   *fs;
+    char            sep[2];
+
+    fs = mprLookupFileSystem(dir);
 
     /*
         Vx will sometimes just return a drive with no path.
@@ -12705,6 +12729,8 @@ char *mprGetCurrentPath()
     }
 }
 #elif BLD_WIN_LIKE
+    MprFileSystem   *fs;
+    fs = mprLookupFileSystem(dir);
     mprMapSeparators(dir, fs->separators[0]);
 #endif
     return sclone(dir);
@@ -12977,10 +13003,8 @@ char *mprGetPathParent(cchar *path)
 
 char *mprGetPortablePath(cchar *path)
 {
-    MprFileSystem   *fs;
-    char            *result, *cp;
+    char    *result, *cp;
 
-    fs = mprLookupFileSystem(path);
     result = mprGetTransformedPath(path, 0);
     for (cp = result; *cp; cp++) {
         if (*cp == '\\') {
@@ -12997,8 +13021,7 @@ char *mprGetPortablePath(cchar *path)
 char *mprGetRelPath(cchar *pathArg)
 {
     MprFileSystem   *fs;
-    char            home[MPR_MAX_FNAME], *hp, *cp, *result, *tmp, *path;
-    ssize           len;
+    char            home[MPR_MAX_FNAME], *hp, *cp, *result, *path;
     int             homeSegments, i, commonSegments, sep;
 
     fs = mprLookupFileSystem(pathArg);
@@ -13010,7 +13033,7 @@ char *mprGetRelPath(cchar *pathArg)
     /*
         Must clean to ensure a minimal relative path result.
      */
-    path = tmp = mprGetNormalizedPath(pathArg);
+    path = mprGetNormalizedPath(pathArg);
 
     if (!isAbsPath(fs, path)) {
         return path;
@@ -13033,7 +13056,6 @@ char *mprGetRelPath(cchar *pathArg)
         strcpy(home, ".");
     }
     home[sizeof(home) - 2] = '\0';
-    len = strlen(home);
 
     /*
         Count segments in home working directory. Ignore trailing separators.
@@ -13200,7 +13222,9 @@ int mprMakeDir(cchar *path, int perms, bool makeMissing)
     }
     if (makeMissing && !isRoot(fs, path)) {
         parent = mprGetPathParent(path);
-        rc = mprMakeDir(parent, perms, makeMissing);
+        if ((rc = mprMakeDir(parent, perms, makeMissing)) < 0) {
+            return rc;
+        }
         return fs->makeDir(fs, path, perms);
     }
     return MPR_ERR_CANT_CREATE;
@@ -13221,20 +13245,21 @@ int mprMakeLink(cchar *path, cchar *target, bool hard)
 
 char *mprGetTempPath(cchar *tempDir)
 {
-    MprFileSystem   *fs;
     MprFile         *file;
     char            *dir, *path;
     int             i, now;
     static int      tempSeed = 0;
 
-    fs = mprLookupFileSystem(tempDir ? tempDir : (cchar*) "/");
-
     if (tempDir == 0) {
 #if WINCE
         dir = sclone("/Temp");
 #elif BLD_WIN_LIKE
+{
+        MprFileSystem   *fs;
+        fs = mprLookupFileSystem(tempDir ? tempDir : (cchar*) "/");
         dir = sclone(getenv("TEMP"));
         mprMapSeparators(dir, defaultSep(fs));
+}
 #elif VXWORKS
         dir = sclone(".");
 #else
@@ -13354,7 +13379,7 @@ static char *fromCygPath(cchar *path)
 char *mprGetNormalizedPath(cchar *pathArg)
 {
     MprFileSystem   *fs;
-    char            *dupPath, *path, *sp, *dp, *mark, **segments;
+    char            *path, *sp, *dp, *mark, **segments;
     ssize           len;
     int             addSep, i, segmentCount, hasDot, last, sep;
 
@@ -13371,7 +13396,6 @@ char *mprGetNormalizedPath(cchar *pathArg)
     if ((path = mprAlloc(len + 2)) == 0) {
         return NULL;
     }
-    dupPath = path;
     strcpy(path, pathArg);
     sep = (sp = firstSep(fs, path)) ? *sp : defaultSep(fs);
 
@@ -13380,14 +13404,13 @@ char *mprGetNormalizedPath(cchar *pathArg)
         Map separators to the first separator found
      */
     hasDot = segmentCount = 0;
-    for (sp = dp = mark = path; *sp; ) {
+    for (sp = dp = path; *sp; ) {
         if (isSep(fs, *sp)) {
             *sp = sep;
             segmentCount++;
             while (isSep(fs, sp[1])) {
                 sp++;
             }
-            mark = sp + 1;
         } 
         if (*sp == '.') {
             hasDot++;
@@ -13513,17 +13536,6 @@ char *mprGetNormalizedPath(cchar *pathArg)
     *dp = '\0';
     return path;
 }
-
-
-#if UNUSED
-cchar *mprGetPathSeparator(cchar *path)
-{
-    MprFileSystem   *fs;
-
-    fs = mprLookupFileSystem(path);
-    return fs->separators;
-}
-#endif
 
 
 bool mprIsPathSeparator(cchar *path, cchar c)
@@ -13664,22 +13676,18 @@ int mprSamePath(cchar *path1, cchar *path2)
 int mprSamePathCount(cchar *path1, cchar *path2, ssize len)
 {
     MprFileSystem   *fs;
-    char            *tmpPath1, *tmpPath2;
     cchar           *p1, *p2;
 
     fs = mprLookupFileSystem(path1);
-    tmpPath1 = tmpPath2 = 0;
 
     /*
         Convert to absolute paths to compare. TODO - resolve symlinks.
      */
     if (!isFullPath(fs, path1)) {
-        tmpPath1 = mprGetAbsPath(path1);
-        path1 = tmpPath1;
+        path1 = mprGetAbsPath(path1);
     }
     if (!isFullPath(fs, path2)) {
-        tmpPath2 = mprGetAbsPath(path2);
-        path2 = tmpPath2;
+        path2 = mprGetAbsPath(path2);
     }
     if (fs->caseSensitive) {
         for (p1 = path1, p2 = path2; *p1 && *p2 && len > 0; p1++, p2++, len--) {
@@ -13716,7 +13724,7 @@ char *mprSearchPath(cchar *file, int flags, cchar *search, ...)
             while (dir && *dir) {
                 mprLog(5, "mprSearchForFile: %s in directory %s", file, nextDir);
                 path = mprJoinPath(dir, file);
-                if (mprPathExists(path, R_OK)) {
+                if (mprPathExists(path, access)) {
                     mprLog(5, "mprSearchForFile: found %s", path);
                     return mprGetNormalizedPath(path);
                 }
@@ -13726,7 +13734,7 @@ char *mprSearchPath(cchar *file, int flags, cchar *search, ...)
         } else {
             mprLog(5, "mprSearchForFile: %s in directory %s", file, nextDir);
             path = mprJoinPath(nextDir, file);
-            if (mprPathExists(path, R_OK)) {
+            if (mprPathExists(path, access)) {
                 mprLog(5, "mprSearchForFile: found %s", path);
                 return mprGetNormalizedPath(path);
             }
@@ -13744,10 +13752,7 @@ char *mprSearchPath(cchar *file, int flags, cchar *search, ...)
  */
 char *mprGetTransformedPath(cchar *path, int flags)
 {
-    MprFileSystem       *fs;
-    char                *result;
-
-    fs = mprLookupFileSystem(path);
+    char    *result;
 
 #if BLD_WIN_LIKE && FUTURE
     if (flags & MPR_PATH_CYGWIN) {
@@ -14757,12 +14762,16 @@ static char *sprintfCore(char *buf, ssize maxsize, cchar *spec, va_list arg)
                     outString(&fmt, qname.name->value, qname.name->length);
                     BPUT(&fmt, ':');
                     BPUT(&fmt, ':');
+#if UNUSED
                     es = va_arg(arg, MprEjsString*);
+#endif
                     outString(&fmt, qname.space->value, qname.space->length);
 #else
                     outWideString(&fmt, qname.name->value, qname.name->length);
                     BPUT(&fmt, ':');
+#if UNUSED
                     es = va_arg(arg, MprEjsString*);
+#endif
                     outWideString(&fmt, qname.space->value, qname.space->length);
 #endif
                 } else {
@@ -16191,11 +16200,6 @@ int mprStartSocketService()
 }
 
 
-void mprStopSocketService(MprSocketService *ss)
-{
-}
-
-
 static MprSocketProvider *createStandardProvider(MprSocketService *ss)
 {
     MprSocketProvider   *provider;
@@ -16263,8 +16267,6 @@ static MprSocket *createSocket(struct MprSsl *ssl)
 
 static void manageSocket(MprSocket *sp, int flags)
 {
-    MprSocketService    *ss;
-
     if (flags & MPR_MANAGE_MARK) {
         mprMark(sp->acceptIp);
         mprMark(sp->ip);
@@ -16273,7 +16275,6 @@ static void manageSocket(MprSocket *sp, int flags)
         mprMark(sp->handler);
 
     } else if (flags & MPR_MANAGE_FREE) {
-        ss = sp->service;
         if (sp->fd >= 0) {
             sp->mutex = 0;
             mprCloseSocket(sp, 1);
@@ -16510,7 +16511,6 @@ static int connectSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
     datagram = sp->flags & MPR_SOCKET_DATAGRAM;
 
     if (mprGetSocketInfo(ip, port, &family, &protocol, &addr, &addrlen) < 0) {
-        err = mprGetSocketError(sp);
         closesocket(sp->fd);
         sp->fd = -1;
         unlock(sp);
@@ -16518,7 +16518,6 @@ static int connectSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
     }
     sp->fd = (int) socket(family, datagram ? SOCK_DGRAM: SOCK_STREAM, protocol);
     if (sp->fd < 0) {
-        err = mprGetSocketError(sp);
         unlock(sp);
         return MPR_ERR_CANT_OPEN;
     }
@@ -16534,7 +16533,6 @@ static int connectSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
     if (broadcast) {
         int flag = 1;
         if (setsockopt(sp->fd, SOL_SOCKET, SO_BROADCAST, (char *) &flag, sizeof(flag)) < 0) {
-            err = mprGetSocketError(sp);
             closesocket(sp->fd);
             sp->fd = -1;
             unlock(sp);
@@ -16564,7 +16562,6 @@ static int connectSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
                 }
             } 
             if (errno != EISCONN) {
-                err = mprGetSocketError(sp);
                 closesocket(sp->fd);
                 sp->fd = -1;
                 unlock(sp);
@@ -16650,11 +16647,9 @@ void mprCloseSocket(MprSocket *sp, bool gracefully)
 static void closeSocket(MprSocket *sp, bool gracefully)
 {
     MprSocketService    *ss;
-    MprWaitService      *service;
     MprTime             timesUp;
     char                buf[16];
 
-    service = MPR->waitService;
     ss = MPR->socketService;
 
     lock(sp);
@@ -17742,7 +17737,7 @@ char *itos(char *buf, int count, int64 value, int radix)
     while (dp < endp && *cp) {
         *dp++ = *cp++;
     }
-    *dp++ = '\0';
+    *dp = '\0';
     return buf;
 }
 
@@ -17799,8 +17794,8 @@ char *sclone(cchar *str)
     size = len + 1;
     if ((ptr = mprAlloc(size)) != NULL) {
         memcpy(ptr, str, len);
+        ptr[len] = '\0';
     }
-    ptr[len] = '\0';
     return ptr;
 }
 
@@ -18564,13 +18559,12 @@ static void manageTestService(MprTestService *ts, int flags)
 int mprParseTestArgs(MprTestService *sp, int argc, char *argv[])
 {
     cchar       *programName;
-    char        *argp, *logSpec;
+    char        *argp;
     int         err, i, depth, nextArg, outputVersion;
 
     i = 0;
     err = 0;
     outputVersion = 0;
-    logSpec = "stderr:1";
 
     programName = mprGetPathBase(argv[0]);
     sp->name = BLD_PRODUCT;
@@ -19585,10 +19579,13 @@ bool mprStopThreadService(int timeout)
     MprThreadService    *ts;
 
     ts = MPR->threadService;
+#if UNUSED
+    //  MOB - moved to mprDestroy
     while (timeout > 0 && ts->threads->length > 1) {
         mprSleep(50);
         timeout -= 50;
     }
+#endif
     return ts->threads->length <= 1;
 }
 
@@ -19906,11 +19903,12 @@ int mprSetThreadData(MprThreadLocal *tls, void *value)
 {
     bool    err;
 
-    err = 1;
 #if BLD_UNIX_LIKE
     err = pthread_setspecific(tls->key, value) != 0;
 #elif BLD_WIN_LIKE
     err = TlsSetValue(tls->key, value) != 0;
+#else
+    err = 1;
 #endif
     return (err) ? MPR_ERR_CANT_WRITE: 0;
 }
@@ -20105,7 +20103,7 @@ int mprStartWorkerService()
 }
 
 
-bool mprStopWorkerService(int timeout)
+bool mprStopWorkerService()
 {
     MprWorkerService    *ws;
     MprWorker           *worker;
@@ -20117,24 +20115,13 @@ bool mprStopWorkerService(int timeout)
         mprRemoveEvent(ws->pruneTimer);
     }
     /*
-        Wait until all tasks and threads have exited
+        Wake up all idle threads. Busy threads take care of themselves. An idle thread will wakeup, exit and be 
+        removed from the busy list and then delete the thread. We progressively remove the last thread in the idle
+        list. ChangeState will move the threads to the busy queue.
      */
-    while (timeout > 0 && ws->numThreads > 0) {
-        /*
-            Wake up all idle threads. Busy threads take care of themselves. An idle thread will wakeup, exit and be 
-            removed from the busy list and then delete the thread. We progressively remove the last thread in the idle
-            list. ChangeState will move the threads to the busy queue.
-         */
-        for (next = -1; (worker = (MprWorker*) mprGetPrevItem(ws->idleThreads, &next)) != 0; ) {
-            changeState(worker, MPR_WORKER_BUSY);
-        }
-        mprUnlock(ws->mutex);
-        mprSleep(50);
-        timeout -= 50;
-        mprLock(ws->mutex);
+    for (next = -1; (worker = (MprWorker*) mprGetPrevItem(ws->idleThreads, &next)) != 0; ) {
+        changeState(worker, MPR_WORKER_BUSY);
     }
-    mprAssert(ws->idleThreads->length == 0);
-    mprAssert(ws->busyThreads->length == 0);
     mprUnlock(ws->mutex);
     return ws->numThreads == 0;
 }
@@ -20425,7 +20412,6 @@ static void manageWorker(MprWorker *worker, int flags)
 static void workerMain(MprWorker *worker, MprThread *tp)
 {
     MprWorkerService    *ws;
-    int                 rc;
 
     ws = MPR->workerService;
     mprAssert(worker->state == MPR_WORKER_BUSY);
@@ -20433,7 +20419,7 @@ static void workerMain(MprWorker *worker, MprThread *tp)
 
     mprLock(ws->mutex);
 
-    while (!(worker->state & MPR_WORKER_PRUNED) && !mprIsExiting()) {
+    while (!(worker->state & MPR_WORKER_PRUNED) && !mprIsStopping()) {
         if (worker->proc) {
             mprUnlock(ws->mutex);
             (*worker->proc)(worker->data, worker);
@@ -20453,7 +20439,7 @@ static void workerMain(MprWorker *worker, MprThread *tp)
             Sleep till there is more work to do. Yield for GC first.
          */
         mprYield(MPR_YIELD_STICKY);
-        rc = mprWaitForCond(worker->idleCond, -1);
+        mprWaitForCond(worker->idleCond, -1);
         mprResetYield();
         mprLock(ws->mutex);
     }
@@ -20918,18 +20904,18 @@ MprTime mprMakeTime(struct tm *tp)
 {
     MprTime     when, alternate;
     struct tm   t;
-    int         offset, year, rc;
+    int         offset, year;
 
     when = makeTime(tp);
     year = tp->tm_year;
     if (MIN_YEAR <= year && year <= MAX_YEAR) {
-        rc = localTime(&t, when);
+        localTime(&t, when);
         offset = getTimeZoneOffsetFromTm(&t);
     } else {
         t = *tp;
         t.tm_year = 110;
         alternate = makeTime(&t);
-        rc = localTime(&t, alternate);
+        localTime(&t, alternate);
         offset = getTimeZoneOffsetFromTm(&t);
     }
     return when - offset;
@@ -22843,12 +22829,10 @@ MprWaitHandler *mprInitWaitHandler(MprWaitHandler *wp, int fd, int mask, MprDisp
 
 MprWaitHandler *mprCreateWaitHandler(int fd, int mask, MprDispatcher *dispatcher, MprEventProc proc, void *data)
 {
-    MprWaitService  *ws;
     MprWaitHandler  *wp;
 
     mprAssert(fd >= 0);
 
-    ws = MPR->waitService;
     if ((wp = mprAllocObj(MprWaitHandler, manageWaitHandler)) == 0) {
         return 0;
     }
@@ -25884,14 +25868,12 @@ static int parseNext(MprXml *xp, int state)
  */
 static MprXmlToken getToken(MprXml *xp, int state)
 {
-    MprBuf      *tokBuf, *inBuf;
+    MprBuf      *tokBuf;
     char        *cp;
     int         c, rc;
 
-    tokBuf = xp->tokBuf;
-    inBuf = xp->inBuf;
-
     mprAssert(state >= 0);
+    tokBuf = xp->tokBuf;
 
     if ((c = getNextChar(xp)) < 0) {
         return MPR_XMLTOK_EOF;

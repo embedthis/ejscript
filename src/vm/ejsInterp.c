@@ -1576,7 +1576,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 mprResetMemError(ejs);
                 ejsThrowMemoryError(ejs);
             }
-            if (ejs->exiting || mprIsExiting(ejs)) {
+            if (ejs->exiting || mprIsStopping(ejs)) {
                 goto done;
             }
             if (ejs->exception && !manageExceptions(ejs)) {
@@ -2678,7 +2678,7 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
         }
         VM(ejs, fun, thisObj, argc, 0);
         ejs->state->stack -= argc;
-        if (ejs->exiting || mprIsExiting(ejs)) {
+        if (ejs->exiting || mprIsStopping(ejs)) {
             ejsAttention(ejs);
         }
     }
@@ -2851,7 +2851,7 @@ static void callConstructor(Ejs *ejs, EjsType *type, int argc, int stackAdjust)
     } else {
         VM(ejs, (EjsFunction*) type, obj, argc, stackAdjust);
         ejs->state->stack -= (argc + stackAdjust);
-        if (ejs->exiting || mprIsExiting(ejs)) {
+        if (ejs->exiting || mprIsStopping(ejs)) {
             ejsAttention(ejs);
         }
     }
@@ -3511,7 +3511,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
         result = thisObj;
         if (!type->hasConstructor) {
             ejs->state->stack -= (argc + stackAdjust);
-            if (ejs->exiting || mprIsExiting(ejs)) {
+            if (ejs->exiting || mprIsStopping(ejs)) {
                 ejsAttention(ejs);
             }
             return;

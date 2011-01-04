@@ -130,7 +130,7 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     int     status;
 
     status = argc == 0 ? 0 : ejsGetInt(ejs, argv[0]);
-    mprBreakpoint();
+    // mprBreakpoint();
     //  TODO -- Make more uniform. Zero status won't exit immediately but non-zero will????
     if (status != 0) {
         exit(status);
@@ -238,15 +238,40 @@ void ejsServiceEvents(Ejs *ejs, int timeout, int flags)
         if (ejs->exception) {
             ejsClearException(ejs);
         }
-    } while (remaining > 0 && !mprIsExiting(ejs) && !ejs->exiting && !ejs->exception);
+    } while (remaining > 0 && !mprIsStopping(ejs) && !ejs->exiting && !ejs->exception);
 }
 #endif
 
 
 /*  
-    static function eventLoop(timeout: Number = -1): void
+    static function run(timeout: Number = -1, oneEvent: Boolean = false): void
  */
-static EjsObj *app_eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    MprTime     mark, remaining;
+    int         oneEvent, timeout;
+
+    timeout = (argc > 0) ? ejsGetInt(ejs, argv[0]) : INT_MAX;
+    oneEvent = (argc > 1) ? ejsGetInt(ejs, argv[1]) : 0;
+
+    if (timeout < 0) {
+        timeout = INT_MAX;
+    }
+    mark = mprGetTime();
+    remaining = timeout;
+    do {
+        mprWaitForEvent(ejs->dispatcher, remaining); 
+        remaining = mprGetRemainingTime(mark, timeout);
+    } while (!oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
+    return 0;
+}
+
+
+/*  
+    Pause the application. This services events while asleep.
+    static function sleep(delay: Number = -1): void
+ */
+static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprTime     mark, remaining;
     int         timeout;
@@ -260,18 +285,7 @@ static EjsObj *app_eventLoop(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     do {
         mprWaitForEvent(ejs->dispatcher, remaining); 
         remaining = mprGetRemainingTime(mark, timeout);
-    } while (!ejs->exiting && remaining > 0 && !mprIsComplete());
-    return 0;
-}
-
-
-/*  
-    Pause the application
-    static function sleep(delay: Number = -1): void
- */
-static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
-{
-    app_eventLoop(ejs, NULL, argc, argv);
+    } while (!ejs->exiting && remaining > 0 && !mprIsStopping());
     return 0;
 }
 
@@ -304,8 +318,10 @@ void ejsConfigureAppType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_App_noexit, (EjsProc) app_noexit);
 #endif
     ejsBindMethod(ejs, type, ES_App_createSearch, (EjsProc) app_createSearch);
+#if ES_App_run
+    ejsBindMethod(ejs, type, ES_App_run, (EjsProc) app_run);
+#endif
     ejsBindAccess(ejs, type, ES_App_search, (EjsProc) app_search, (EjsProc) app_set_search);
-    ejsBindMethod(ejs, type, ES_App_eventLoop, (EjsProc) app_eventLoop);
     ejsBindMethod(ejs, type, ES_App_sleep, (EjsProc) app_sleep);
 
 #if FUTURE

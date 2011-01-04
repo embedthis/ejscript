@@ -28,4 +28,4 @@ if (Config.SSL) {
     App.log.info("Secure listen on ", HTTPS)
     secureServer.listen(HTTPS)
 }
-App.eventLoop()
+App.run()

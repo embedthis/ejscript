@@ -14,4 +14,3 @@ http.get(HTTP + "/index.html")
 assert(http.readString(6) == "<html>")
 assert(http.readString(6) == "<head>")
 http.close()
-

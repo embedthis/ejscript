@@ -127,14 +127,6 @@ module ejs {
         native static function createSearch(searchPath: String? = null): Array
 
         /** 
-            Run the event loop. This is typically done automatically by the hosting program and is not normally required
-                in user programs.
-            @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
-                call returns immediately.
-         */
-        native static function eventLoop(timeout: Number = -1): Void
-
-        /** 
             Change the application's Working directory
             @param value The path to the new working directory
          */
@@ -258,6 +250,26 @@ module ejs {
         native static function putenv(name: String, value: String): Void
 
         /** 
+            Run the application event loop. This is typically done automatically by the hosting program and is not 
+            normally required in user programs.
+            @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
+                call returns immediately. Set to -1 for no timeout.
+            @param oneEvent If true, return immediately after servicing at least one ejs event.
+         */
+        native static function run(timeout: Number = -1, oneEvent: Boolean = false): Void
+
+        /**
+            Run the application event loop. This is typically done automatically by the hosting program and is not 
+            normally required in user programs.
+            @param timeout Timeout to block waiting for an event in milliseconds before returning. If an event occurs, the
+                call returns immediately. Set to -1 for no timeout.
+            @param oneEvent If true, return immediately after servicing at least one ejs event.
+            @hide
+         */
+        static function eventLoop(timeout: Number = -1, oneEvent: Boolean = false): Void
+            run(timeout, oneEvent)
+
+        /** 
             The current module search path. Set to an array of Paths.
          */
         native static function get search(): Array
@@ -313,7 +325,13 @@ module ejs {
          */
         # Config.Legacy
         static function serviceEvents(count: Number = -1, timeout: Number = -1): Void {
-            eventLoop(timeout)
+            if (count < 0) {
+                run(timeout, false)
+            } else {
+                for (i in count) {
+                    run(timeout, true)
+                }
+            }
         }
 
         static function updateLog(): Void {
@@ -334,7 +352,8 @@ module ejs {
             let done
             function callback(event) done = true
             obj.on(events, callback)
-            App.eventLoop(timeout)
+            for (let mark = new Date; !done && mark.elapsed < timeout; )
+                App.run(timeout - mark.elapsed, true)
             obj.off(events, callback)
             return done
         }

@@ -89,12 +89,15 @@ static int      writeBody(HttpConn *conn, MprList *files);
 
 MAIN(httpMain, int argc, char *argv[])
 {
-    Mpr         *mpr;
     MprTime     start;
     double      elapsed;
 
-    mpr = mprCreate(argc, argv, MPR_USER_EVENTS_THREAD | MPR_MARK_THREAD);
-    app = mprAllocObj(App, manageApp);
+    if (mprCreate(argc, argv, MPR_USER_EVENTS_THREAD | MPR_MARK_THREAD) == 0) {
+        return MPR_ERR_MEMORY;
+    }
+    if ((app = mprAllocObj(App, manageApp)) == 0) {
+        return MPR_ERR_MEMORY;
+    }
     mprAddRoot(app);
 
     initSettings();
@@ -121,10 +124,8 @@ MAIN(httpMain, int argc, char *argv[])
     start = mprGetTime();
     app->http = httpCreate();
     processing();
+    mprServiceEvents(-1, 0);
 
-    while (!mprIsComplete()) {
-        mprServiceEvents(-1, 0);
-    }
     if (app->benchmark) {
         elapsed = (double) (mprGetTime() - start);
         if (app->fetchCount == 0) {
@@ -575,7 +576,7 @@ static int processThread(HttpConn *conn, MprEvent *event)
         }
         httpSetCredentials(conn, app->username, app->password);
     }
-    while (!mprIsExiting(conn) && (app->success || app->continueOnErrors)) {
+    while (!mprIsStopping(conn) && (app->success || app->continueOnErrors)) {
         if (app->singleStep) waitForUser();
         if (app->files && !app->upload) {
             for (next = 0; (path = mprGetNextItem(app->files, &next)) != 0; ) {
@@ -680,7 +681,7 @@ static int issueRequest(HttpConn *conn, cchar *url, MprList *files)
     httpSetRetries(conn, app->retries);
     httpSetTimeout(conn, app->timeout, app->timeout);
 
-    for (redirectCount = count = 0; count <= conn->retries && redirectCount < 16 && !mprIsExiting(conn); count++) {
+    for (redirectCount = count = 0; count <= conn->retries && redirectCount < 16 && !mprIsStopping(conn); count++) {
         if (prepRequest(conn, files) < 0) {
             return MPR_ERR_CANT_OPEN;
         }
@@ -726,12 +727,11 @@ static int issueRequest(HttpConn *conn, cchar *url, MprList *files)
 static int reportResponse(HttpConn *conn, cchar *url, MprTime elapsed)
 {
     HttpRx      *rx;
-    cchar       *msg;
     char        *responseHeaders;
     ssize       contentLen;
     int         status;
 
-    if (mprIsExiting(conn)) {
+    if (mprIsStopping(conn)) {
         return 0;
     }
 
@@ -740,7 +740,6 @@ static int reportResponse(HttpConn *conn, cchar *url, MprTime elapsed)
     if (contentLen < 0) {
         contentLen = conn->rx->readContent;
     }
-    msg = httpGetStatusMessage(conn);
 
     mprLog(6, "Response status %d, elapsed %ld", status, elapsed);
     if (conn->error) {
@@ -828,7 +827,7 @@ static int setContentLength(HttpConn *conn, MprList *files)
     MprPath     info;
     char        *path, *pair;
     ssize       len;
-    int         next, count;
+    int         next;
 
     len = 0;
     if (app->upload) {
@@ -845,7 +844,6 @@ static int setContentLength(HttpConn *conn, MprList *files)
         }
     }
     if (app->formData) {
-        count = mprGetListLength(app->formData);
         for (next = 0; (pair = mprGetNextItem(app->formData, &next)) != 0; ) {
             len += strlen(pair);
         }
@@ -957,11 +955,11 @@ static void finishThread(MprThread *tp)
 
 static void waitForUser()
 {
-    int     c, rc;
+    int     c;
 
     mprLock(app->mutex);
     mprPrintf("Pause: ");
-    rc = read(0, (char*) &c, 1);
+    (void) read(0, (char*) &c, 1);
     mprUnlock(app->mutex);
 }
 
@@ -1019,7 +1017,6 @@ static char *resolveUrl(HttpConn *conn, cchar *url)
 static void showOutput(HttpConn *conn, cchar *buf, ssize count)
 {
     HttpRx      *rx;
-    ssize       rc;
     int         i, c;
     
     rx = conn->rx;
@@ -1031,7 +1028,7 @@ static void showOutput(HttpConn *conn, cchar *buf, ssize count)
         return;
     }
     if (!app->printable) {
-        rc = write(1, (char*) buf, count);
+        (void) write(1, (char*) buf, count);
         return;
     }
 
@@ -1042,7 +1039,7 @@ static void showOutput(HttpConn *conn, cchar *buf, ssize count)
         }
     }
     if (!app->isBinary) {
-        rc = write(1, (char*) buf, count);
+        (void) write(1, (char*) buf, count);
         return;
     }
     for (i = 0; i < count; i++) {

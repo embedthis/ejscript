@@ -735,7 +735,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
 
     } else {
         //  MOB - find better way. If ejs has been manageFreed, then the stack will be unpinned
-        if (!mprIsExiting()) {
+        if (!mprIsStopping()) {
             ejsSendEvent(sp->ejs, sp->emitter, "close", NULL, sp);
         }
         if (sp->server) {

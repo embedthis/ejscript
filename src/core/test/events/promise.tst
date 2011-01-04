@@ -2,7 +2,7 @@
     Simple Promise testing
  */
 
-GC.enabled = false
+// GC.enabled = false
 
 var state
 

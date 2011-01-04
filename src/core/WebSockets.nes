@@ -144,7 +144,7 @@ module ejs {
                 let timeout = 5   1000
                 let when: Date = new Date
                 while (state != Loaded && when.elapsed < timeout) {
-                    App.eventLoop(timeout, true)
+                    App.run(timeout, true)
                 }
             }
         }

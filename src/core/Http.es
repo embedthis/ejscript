@@ -276,9 +276,6 @@ module ejs {
             throw "Not yet implemented"
         }
 
-        //  MOB -- Is this required to stop xh being GC'd
-        private var xh: XMLHttp
-
         /** 
             @hide
             Fetch a URL. This is a convenience method to asynchronously invoke an Http method without waiting. 
@@ -289,7 +286,7 @@ module ejs {
             @param callback Optional function to invoke on completion of the request.
           */
         function fetch(method: String, uri: Uri, data: *, callback: Function = null) {
-            xh = XMLHttp(this)
+            let xh = XMLHttp(this)
             xh.open(method, uri)
             xh.send(data)
             xh.onreadystatechange = function () {

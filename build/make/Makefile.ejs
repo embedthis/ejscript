@@ -27,6 +27,9 @@ cross-ppc:
 config32:
 	./configure --debug --host=i386-apple-darwin --build=i386-apple-darwin --without-ssl 
 
+mob:
+	./configure --release --host=i386-apple-darwin --build=i386-apple-darwin --without-ssl --enable-assert
+
 config64:
 	./configure --host=x86_64-apple-darwin --build=x86_64-apple-darwin
 

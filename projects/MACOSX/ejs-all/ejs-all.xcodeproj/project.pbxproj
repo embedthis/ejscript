@@ -202,7 +202,6 @@
 		C9D452C811ECDC0600F029C8 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C9D452CB11ECDC1000F029C8 /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
 		C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
-		C9E540E112BC334B0049C9FD /* libmatrixsslstatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9E540E012BC334B0049C9FD /* libmatrixsslstatic.a */; };
 		C9F4C61F10B5D7B80046EFF4 /* ejsRequest.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */; };
 		C9F4C62110B5D7B80046EFF4 /* ejsSession.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */; };
 		C9F8C9A8128C848100FD3A5D /* ejsPot.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F8C9A7128C848100FD3A5D /* ejsPot.c */; };
@@ -784,7 +783,6 @@
 		C99A340B10C2F35200F6C7BC /* ejsByteCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCode.h; path = ../../../src/include/ejsByteCode.h; sourceTree = SOURCE_ROOT; };
 		C99A340C10C2F35200F6C7BC /* ejsByteCodeTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteCodeTable.h; path = ../../../src/include/ejsByteCodeTable.h; sourceTree = SOURCE_ROOT; };
 		C99A340D10C2F35200F6C7BC /* ejsByteGoto.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsByteGoto.h; path = ../../../src/include/ejsByteGoto.h; sourceTree = SOURCE_ROOT; };
-		C99A340E10C2F35200F6C7BC /* ejsModule.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsModule.h; path = ../../../src/include/ejsModule.h; sourceTree = SOURCE_ROOT; };
 		C99A340F10C2F35200F6C7BC /* ejsTune.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsTune.h; path = ../../../src/include/ejsTune.h; sourceTree = SOURCE_ROOT; };
 		C99A341110C2F35200F6C7BC /* ejsWeb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ejsWeb.h; path = ../../../src/include/ejsWeb.h; sourceTree = SOURCE_ROOT; };
 		C99A341210C2F35200F6C7BC /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; name = Makefile; path = ../../../src/include/Makefile; sourceTree = SOURCE_ROOT; };
@@ -892,7 +890,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */,
-				C9E540E112BC334B0049C9FD /* libmatrixsslstatic.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1180,7 +1177,6 @@
 				C99A340B10C2F35200F6C7BC /* ejsByteCode.h */,
 				C99A340C10C2F35200F6C7BC /* ejsByteCodeTable.h */,
 				C99A340D10C2F35200F6C7BC /* ejsByteGoto.h */,
-				C99A340E10C2F35200F6C7BC /* ejsModule.h */,
 				C99A340F10C2F35200F6C7BC /* ejsTune.h */,
 				C99A341110C2F35200F6C7BC /* ejsWeb.h */,
 				C99A341210C2F35200F6C7BC /* Makefile */,
@@ -2442,7 +2438,7 @@
 		C97623C20FD06EC4009C78E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = i386;
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -2471,7 +2467,7 @@
 		C97623C30FD06EC4009C78E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = YES;
 				HEADER_SEARCH_PATHS = (

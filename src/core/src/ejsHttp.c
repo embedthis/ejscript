@@ -1243,7 +1243,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
         httpFinalize(conn);
     }
     while (conn->state < state && count < conn->retries && redirectCount < 16 && 
-           !conn->error && !ejs->exiting && !mprIsExiting(conn)) {
+           !conn->error && !ejs->exiting && !mprIsStopping(conn)) {
         count++;
         if ((rc = httpWait(conn, ejs->dispatcher, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {

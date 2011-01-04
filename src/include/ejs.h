@@ -261,7 +261,7 @@ typedef struct EjsObj {
             uint        visited : 1;        /* Has been traversed */
             uint        dynamic : 1;        /* Object may be modified */
             ssize       typeBits: MPR_BITS - 2;
-        };
+        } bits;
     };
 #endif
 } EjsObj;

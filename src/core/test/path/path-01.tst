@@ -21,7 +21,6 @@ p = new Path(TestPath)
 assert(p.exists)
 assert(p.isRegular)
 assert(!p.isDir)
-breakpoint();
 assert(!p.isOpen)
 assert(p.isRelative)
 assert(!p.isAbsolute)
