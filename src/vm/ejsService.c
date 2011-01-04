@@ -94,9 +94,13 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     ejs->argv = argv;
 
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC));
-    ejs->dispatcher = mprCreateDispatcher(mprAsprintf("ejsDispatcher-%d", seqno++), 1);
     ejs->modules = mprCreateList(-1, 0);
     ejs->workers = mprCreateList(0, 0);
+
+    lock(sp);
+    ejs->name = mprAsprintf("ejs-%d", seqno++);
+    ejs->dispatcher = mprCreateDispatcher(mprAsprintf("ejsDispatcher-%d", seqno), 1);
+    unlock(sp);
         
     if ((ejs->bootSearch = searchPath) == 0) {
         ejs->bootSearch = getenv("EJSPATH");
@@ -132,6 +136,7 @@ void ejsDestroy(Ejs *ejs)
 
     sp = ejs->service;
     if (sp) {
+        ejsRemoveWorkers(ejs);
         state = ejs->masterState;
         if (state->stackBase) {
             mprVirtFree(state->stackBase, state->stackSize);
@@ -153,6 +158,7 @@ static void manageEjs(Ejs *ejs, int flags)
     EjsObj      *vp, **vpp, **top;
 
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(ejs->name);
         mprMark(ejs->modules);
         mprMark(ejs->applications);
         mprMark(ejs->coreTypes);

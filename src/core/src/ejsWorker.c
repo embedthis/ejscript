@@ -136,12 +136,33 @@ static void removeWorker(EjsWorker *worker)
     mprAssert(worker);
 
     ejs = worker->ejs;
-    lock(ejs);
-    mprRemoveItem(ejs->workers, worker);
-    if (ejs->joining) {
-        /* Must wake mprServiceEvents as the call to mprServiceEvents in join() has a race */
-        mprWakeWaitService(ejs);
+    if (ejs) {
+        lock(ejs);
+        if (ejs->workers) {
+            mprRemoveItem(ejs->workers, worker);
+        }
+        if (ejs->joining) {
+            mprSignalDispatcher(ejs->dispatcher);
+        }
+        worker->ejs = 0;
+        unlock(ejs);
     }
+}
+
+
+/*
+    Called when destroying ejs
+ */
+void ejsRemoveWorkers(Ejs *ejs)
+{
+    EjsWorker   *worker;
+    int         next;
+
+    lock(ejs);
+    for (next = 0; (worker = mprGetNextItem(ejs->workers, &next)) != NULL; ) {
+        worker->ejs = 0;
+    }
+    ejs->workers = 0;
     unlock(ejs);
 }
 
@@ -670,7 +691,10 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
     ejs = (!worker->inside) ? worker->pair->ejs : ejs;
     worker->terminated = 1;
     ejs->exiting = 1;
-    mprWakeWaitService(ejs);
+    mprSignalDispatcher(ejs->dispatcher);
+#if UNUSED
+    mprWakeWaitService();
+#endif
     return 0;
 }
 
@@ -775,12 +799,9 @@ static void manageWorker(EjsWorker *worker, int flags)
     } else if (flags & MPR_MANAGE_FREE) {
         if (!worker->inside) {
             /* Remove here also incase an explicit mprFree on the worker */
-            removeWorker(worker);
-#if UNUSED
-            if (worker->pair) {
-                ejsDestroy(worker->pair->ejs);
+            if (worker->ejs) {
+                removeWorker(worker);
             }
-#endif
         }
         if (worker->pair) {
             if (worker->pair->pair) {

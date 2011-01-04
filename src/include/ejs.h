@@ -392,6 +392,7 @@ extern EjsAny *ejsGetSpecial(struct Ejs *ejs, int index);
     @see ejsCreate, ejsCreateService, ejsAppendSearchPath, ejsSetSearchPath, ejsEvalFile, ejsEvalScript, ejsExit
  */
 typedef struct Ejs {
+    char                *name;              /**< Unique interpreter name */
     EjsAny              *exception;         /**< Pointer to exception object */
     EjsAny              *result;            /**< Last expression result */
     struct EjsState     *state;             /**< Current evaluation state and stack */
@@ -2442,6 +2443,7 @@ typedef struct EjsWorker {
 } EjsWorker;
 
 extern EjsWorker *ejsCreateWorker(Ejs *ejs);
+extern void ejsRemoveWorkers(Ejs *ejs);
 
 /** 
     Void class
