@@ -17,10 +17,14 @@ for (i in COUNT) {
 }
 
 server.on("readable", function (event, request: Request) {
+print("READABLE " + pathInfo)
     switch (pathInfo) {
     case "/single":
+print("SINGLE")
         write(data)
+print("FINALIZE")
         finalize()
+print("DONE WITH FINALIZE")
         break
 
 /* FUTURE
@@ -45,17 +49,19 @@ server.on("readable", function (event, request: Request) {
 let http = new Http
 http.fetch("GET", HTTP + "/single", null)
 App.waitForEvent(http, "close", 30000)
+print("STATUS " + http.status)
+
 assert(http.status == 200)
-// print(http.response.length)
+
+print("LENGTH " + http.response.length)
 assert(http.response.length == 273322)
-// print(http.response)
+
 assert(http.response.contains("aa: 4095"))
 http.close()
 
 
 /* FUTURE
 //  Multiple writes by the server
-
 let http = new Http
 http.fetch("GET", HTTP + "/multiple", null)
 App.waitForEvent(http, "close", 30000)

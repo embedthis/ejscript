@@ -1382,7 +1382,7 @@ static void manageByteArray(EjsByteArray *ap, int flags)
     if (flags & MPR_MANAGE_MARK) {
         mprMark(ap->emitter);
         mprMark(ap->listeners);
-        //  MOB -- is this required
+        mprMark(ap->value);
         mprMark(TYPE(ap));
     }
 }

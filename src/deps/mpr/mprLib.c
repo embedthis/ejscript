@@ -1135,7 +1135,6 @@ static void synchronize()
 #endif
     heap->mustYield = 1;
     if (heap->notifier) {
-        mprLog(4, "DEBUG: Call notifier");
         (heap->notifier)(MPR_MEM_YIELD, 0);
     }
     if (mprSyncThreads(MPR_TIMEOUT_GC_SYNC * 100)) {
@@ -10318,7 +10317,7 @@ static void manageList(MprList *lp, int flags)
         mprMark(lp->items);
         if (!(lp->flags & MPR_LIST_STATIC_VALUES)) {
             for (i = 0; i < lp->length; i++) {
-                mprAssert(mprIsValid(lp->items[i]));
+                mprAssert(lp->items[i] == 0 || mprIsValid(lp->items[i]));
                 mprMark(lp->items[i]);
             }
         }

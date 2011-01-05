@@ -1012,6 +1012,7 @@ static bool matchAuth(HttpConn *conn, HttpStage *handler)
     if ((ad = mprAllocObj(AuthData, NULL)) == 0) {
         return 1;
     }
+    //  MOB -- fix
 #if UNUSED
     if (auth == 0) {
         httpError(conn, HTTP_CODE_UNAUTHORIZED, "Access Denied, Authorization not enabled");
@@ -1716,9 +1717,6 @@ static void incomingChunkData(HttpQueue *q, HttpPacket *packet)
             rx->chunkState = HTTP_CHUNK_DATA;
         }
         mprAssert(mprGetBufLength(buf) == 0);
-#if UNUSED
-        httpFreePacket(q, packet);
-#endif
         mprLog(5, "chunkFilter: start incoming chunk of %d bytes", rx->chunkSize);
         break;
 
@@ -4612,13 +4610,7 @@ static void freeNetPackets(HttpQueue *q, ssize bytes)
             /*
                 This will remove the packet from the queue and will re-enable upstream disabled queues.
              */
-#if UNUSED
-            if ((packet = httpGetPacket(q)) != 0) {
-                httpFreePacket(q, packet);
-            }
-#else
             httpGetPacket(q);
-#endif
         }
         mprAssert(bytes >= 0);
         if (bytes == 0 && (q->first == NULL || !(q->first->flags & HTTP_PACKET_END))) {
@@ -5747,9 +5739,6 @@ void httpDiscardData(HttpQueue *q, bool removePackets)
                 }
                 q->count -= httpGetPacketLength(packet);
                 mprAssert(q->count >= 0);
-#if UNUSED
-                httpFreePacket(q, packet);
-#endif
                 continue;
             } else {
                 len = httpGetPacketLength(packet);
@@ -6292,9 +6281,6 @@ static void rangeService(HttpQueue *q, HttpRangeProc fill)
             if (endpos < range->start) {
                 /* Packet is before the next range, so discard the entire packet */
                 tx->pos += bytes;
-#if UNUSED
-                httpFreePacket(q, packet);
-#endif
                 break;
 
             } else if (tx->pos > range->end) {
@@ -6589,13 +6575,6 @@ static void manageRx(HttpRx *rx, int flags)
         mprMark(rx->alias);
         mprMark(rx->dir);
 
-#if UNUSED
-        HttpPacket  *packet;
-        for (packet = rx->freePackets; packet; packet = packet->next) {
-            mprMark(packet);
-        }
-#endif
-
     } else if (flags & MPR_MANAGE_FREE) {
         if (rx->conn) {
             rx->conn->rx = 0;
@@ -6720,7 +6699,6 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
 }
 
 
-#if UNUSED && KEEP
 static int traceRequest(HttpConn *conn, HttpPacket *packet)
 {
     MprBuf  *content;
@@ -6737,7 +6715,6 @@ static int traceRequest(HttpConn *conn, HttpPacket *packet)
     }
     return 0;
 }
-#endif
 
 
 /*  
@@ -6748,7 +6725,7 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
 {
     HttpRx      *rx;
     char        *method, *uri, *protocol;
-    int         methodFlags;
+    int         methodFlags, traced, level;
 
     mprLog(4, "New request from %s:%d to %s:%d", conn->ip, conn->port, conn->sock->ip, conn->sock->port);
 
@@ -6833,12 +6810,11 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
         httpProtocolError(conn, HTTP_CODE_BAD_REQUEST, "Bad URL format");
     }
     httpSetState(conn, HTTP_STATE_FIRST);
-#if UNUSED
+
     traced = traceRequest(conn, packet);
     if (!traced && (level = httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_FIRST, NULL)) >= 0) {
         mprLog(level, "%s %s %s", rx->method, uri, protocol);
     }
-#endif
 }
 
 
@@ -8365,11 +8341,6 @@ static void freeSentPackets(HttpQueue *q, ssize bytes)
             mprAssert(q->count >= 0);
         }
         if (httpGetPacketLength(packet) == 0) {
-#if UNUSED
-            if ((packet = httpGetPacket(q)) != 0) {
-                httpFreePacket(q, packet);
-            }
-#endif
             httpGetPacket(q);
         }
         mprAssert(bytes >= 0);
@@ -8603,12 +8574,6 @@ int httpStartServer(HttpServer *server)
         mprError("Can't open a socket on %s, port %d", server->ip, server->port);
         return MPR_ERR_CANT_OPEN;
     }
-#if UNUSED
-    if (mprListenOnSocket(server->sock) < 0) {
-        mprError("Can't listen on %s, port %d", server->ip, server->port);
-        return MPR_ERR_CANT_OPEN;
-    }
-#endif
     proto = mprIsSocketSecure(server->sock) ? "HTTPS" : "HTTP";
     ip = server->ip;
     if (ip == 0 || *ip == '\0') {
@@ -9920,7 +9885,7 @@ void httpWriteHeaders(HttpConn *conn, HttpPacket *packet)
             }
         } else {
             if (parsedUri->query && *parsedUri->query) {
-                mprPutFmtToBuf(buf, "%s?%s %s\r\n", parsedUri->path, parsedUri->query, conn->protocol);
+                mprPutFmtToBuf(buf, "%s?%s %s", parsedUri->path, parsedUri->query, conn->protocol);
             } else {
                 mprPutStringToBuf(buf, parsedUri->path);
                 mprPutCharToBuf(buf, ' ');
@@ -10278,12 +10243,7 @@ static void incomingUploadData(HttpQueue *q, HttpPacket *packet)
         /* 
            Quicker to free the buffer so the packets don't have to be joined the next time 
          */
-#if UNUSED
-        packet = httpGetPacket(q);
-        httpFreePacket(q, packet);
-#else
         httpGetPacket(q);
-#endif
         mprAssert(q->count >= 0);
     }
 }

@@ -20,6 +20,7 @@ server.on("readable", function (event, request) {
 function watch(event, request) {
     //  Respond to request and trigger session events. Save record of events.
     events[event] = true
+    // print("WATCH " + event)
 }
 server.on(["close", "createSession", "destroySession", "readable"], watch)
 

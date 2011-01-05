@@ -197,6 +197,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     }
     session->id = sclone(id);
 
+    //  MOB - locking
     if (server->sessions == 0) {
         server->sessions = ejsCreateEmptyPot(ejs);
         ejsSetProperty(ejs, server, ES_ejs_web_HttpServer_sessions, server->sessions);
@@ -276,6 +277,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
 
     /*  
         This could be on the primary event thread. Can't block long.  MOB -- is this lock really needed
+        MOB -- BUG. Other locks are on the service object
      */
     if (sessions && server->server && mprTryLock(ejs->mutex)) {
         limits = server->server->limits;
@@ -337,7 +339,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
 static void manageSession(EjsSession *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        ;
+        ejsManagePot(sp, flags);
     } else {
         ;
     }

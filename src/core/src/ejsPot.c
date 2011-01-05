@@ -1050,6 +1050,7 @@ void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
         }
     }
 #if BLD_DEBUG
+    //  MOB - macro for this
     obj->mem = MPR_GET_MEM(obj);
 #endif
     return obj;

@@ -282,7 +282,8 @@ module ejs {
             It can be useful to wait for completion using App.waitForEvent(http, "close"))
             @param method Http method. This is typically "GET" or "POST"
             @param uri URL to fetch
-            @param data Body data to send with the request. Set to null for no data.
+            @param data Body data to send with the request. Set to null for no data. If set to null, the request
+                will be finalized. If not set to null, finalize() must be called after writing all data.
             @param callback Optional function to invoke on completion of the request.
           */
         function fetch(method: String, uri: Uri, data: *, callback: Function = null) {

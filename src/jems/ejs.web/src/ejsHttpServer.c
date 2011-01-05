@@ -716,6 +716,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         ejsManagePot(sp, flags);
+        mprMark(sp->ejs);
         mprMark(sp->server);
         mprMark(sp->sessionTimer);
         mprMark(sp->ssl);
@@ -735,8 +736,14 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
 
     } else {
         //  MOB - find better way. If ejs has been manageFreed, then the stack will be unpinned
-        if (!mprIsStopping()) {
+        if (!mprIsStopping() && sp->ejs && sp->ejs->service) {
             ejsSendEvent(sp->ejs, sp->emitter, "close", NULL, sp);
+        }
+        sp->sessions = 0;
+        //  MOB - locking race
+        if (sp->sessionTimer) {
+            mprRemoveEvent(sp->sessionTimer);
+            sp->sessionTimer = 0;
         }
         if (sp->server) {
             httpDestroyServer(sp->server);
@@ -750,7 +757,7 @@ static EjsHttpServer *createHttpServer(Ejs *ejs, EjsType *type, int size)
 {
     EjsHttpServer   *sp;
 
-    if ((sp = (EjsHttpServer*) ejsAlloc(ejs, type, 0)) == NULL) {
+    if ((sp = ejsCreatePot(ejs, type, 0)) == NULL) {
         return NULL;
     }
     sp->ejs = ejs;

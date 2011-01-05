@@ -249,7 +249,7 @@ typedef struct EjsLoc {
 #define SET_DYNAMIC(vp, value)  ((EjsObj*) vp)->xtype = \
                                     (((size_t) value) << EJS_SHIFT_DYNAMIC) | (((EjsObj*) vp)->xtype & ~EJS_MASK_DYNAMIC)
 #if BLD_DEBUG
-#define SET_TYPE_NAME(vp, t) if (t) { \
+#define SET_TYPE_NAME(vp, t) if (t && ((EjsType*) t)->qname.name) { \
                                     ((EjsObj*) vp)->kind = ((EjsType*) t)->qname.name->value; \
                                     ((EjsObj*) vp)->type = ((EjsType*) t); \
                                 } else

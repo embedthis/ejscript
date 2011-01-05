@@ -25,7 +25,7 @@ public class MyDb {
 
 let server = new HttpServer
 server.on("readable", function (event, request: Request) {
-    let [,params.controller, params.action] = pathInfo.toString().split("/")
+    [,params.controller, params.action] = pathInfo.toString().split("/")
     request.config.mode = "debug",
     request.config.database = {
         "class": "MyDb",

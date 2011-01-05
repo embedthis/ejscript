@@ -1,5 +1,4 @@
 require ejs.web
-require ejs.web.jsgi
 
 exports.app = function() { 
     setStatus(200)

@@ -2685,6 +2685,7 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
     type->helpers.lookupProperty = (EjsLookupPropertyHelper) lookupStringProperty;
     type->numericIndicies = 1;
     type->manager = (MprManager) ejsManageString;
+    type->qname = N("ejs", "String");
     
     /*
         Standard string values. Create here so modules do not have to export these strings

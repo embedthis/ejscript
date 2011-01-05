@@ -7120,6 +7120,10 @@ static EcNode *parseVariableBinding(EcCompiler *cp, EcNode *np, EcNode *attribut
     case T_LBRACE:
         initialize = parsePattern(cp);
         for (next = 0; (elt = mprGetNextItem(initialize->children, &next)) != 0 && !cp->error; ) {
+            mprAssert(elt->kind == N_FIELD);
+            if (elt->field.expr->kind != N_QNAME) {
+                return LEAVE(cp, parseError(cp, "Bad destructuring variable declaration"));
+            }
             var = createNode(cp, N_VAR, NULL);
             var->qname = elt->field.expr->qname;
             var->name.varKind = np->def.varKind;
