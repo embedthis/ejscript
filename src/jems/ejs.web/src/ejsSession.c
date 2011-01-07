@@ -340,8 +340,6 @@ static void manageSession(EjsSession *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         ejsManagePot(sp, flags);
-    } else {
-        ;
     }
 }
 

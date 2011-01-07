@@ -1636,6 +1636,7 @@ static void setDoc(Ejs *ejs, EjsModule *mp, void *vp, int slotNum)
 }
 
 
+#if UNUSED
 static void manageDocStrings(MprHashTable *strings, int flags)
 {
     MprHash     *hp;
@@ -1646,6 +1647,7 @@ static void manageDocStrings(MprHashTable *strings, int flags)
         }
     }
 }
+#endif
 
 
 static void manageDoc(EjsDoc *doc, int flags)
@@ -1681,7 +1683,9 @@ EjsDoc *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, EjsString *docString)
     doc->docString = docString;
     if (ejs->doc == 0) {
         ejs->doc = mprCreateHash(EJS_DOC_HASH_SIZE, 0);
+#if UNUSED
         mprSetManager(ejs->doc, manageDocStrings);
+#endif
     }
     mprSprintf(key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
     mprAddHash(ejs->doc, key, doc);

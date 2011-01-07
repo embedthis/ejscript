@@ -165,11 +165,9 @@ static EjsObj *size(Ejs *ejs, EjsFileSystem *fp, int argc, EjsObj **argv)
 static void manageFileSystem(EjsFileSystem *fs, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        if (!VISITED(fs)) {
-            //  MOB -- type required
-            mprMark(TYPE(fs));
-            mprMark(fs->path);
-        }
+        //  MOB -- type required
+        mprMark(TYPE(fs));
+        mprMark(fs->path);
     }
 }
 

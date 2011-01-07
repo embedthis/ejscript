@@ -22,22 +22,21 @@ static int  runSpecificMethod(Ejs *ejs, cchar *className, cchar *methodName);
 static int  searchForMethod(Ejs *ejs, cchar *methodName, EjsType **typeReturn);
 
 /************************************* Code ***********************************/
-/*  
-    Initialize the ejs subsystem
- */
-EjsService *ejsCreateService()
+
+static EjsService *createService()
 {
     EjsService  *sp;
 
     if ((sp = mprAllocObj(EjsService, manageEjsService)) == NULL) {
         return 0;
     }
-    mprGetMpr()->ejsService = sp;
+    MPR->ejsService = sp;
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
 
     sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS | MPR_HASH_UNICODE);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
+    ejsInitCompiler(sp);
     return sp;
 }
 
@@ -56,11 +55,12 @@ static void manageEjsService(EjsService *sp, int flags)
 }
 
 
+#if UNUSED
 EjsService *ejsGetService()
 {
-    return mprGetMpr()->ejsService;
+    return MPR->ejsService;
 }
-
+#endif
 
 /*  
     Create a new interpreter
@@ -78,16 +78,21 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     if ((ejs = mprAllocObj(Ejs, manageEjs)) == NULL) {
         return 0;
     }
-    sp = ejs->service = mprGetMpr()->ejsService;
-    lock(sp);
+    mprAddRoot(ejs);
+
+    if ((sp = MPR->ejsService) == 0) {
+        sp = createService();
+        sp->master = ejs;
+    }
+    ejs->service = sp;
     mprAddItem(sp->vmlist, ejs);
-    unlock(sp);
 
 #if FUTURE
     ejs->intern = &sp->intern;
 #else
     ejs->intern = ejsCreateIntern(ejs);
 #endif
+    ejs->freeze = 1;
     ejs->empty = require && mprGetListLength(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
@@ -107,6 +112,7 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     }
     if (ejsInitStack(ejs) < 0) {
         ejsDestroy(ejs);
+        mprRemoveRoot(ejs);
         return 0;
     }
     if (defineTypes(ejs) < 0 || loadStandardModules(ejs, require) < 0) {
@@ -114,6 +120,7 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
             ejsReportError(ejs, "Can't initialize interpreter");
         }
         ejsDestroy(ejs);
+        mprRemoveRoot(ejs);
         return 0;
     }
     ejsFreezeGlobal(ejs);
@@ -123,8 +130,10 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     if (mprHasMemError(ejs)) {
         mprError("Memory allocation error during initialization");
         ejsDestroy(ejs);
+        mprRemoveRoot(ejs);
         return 0;
     }
+    mprRemoveRoot(ejs);
     return ejs;
 }
 
@@ -141,11 +150,10 @@ void ejsDestroy(Ejs *ejs)
         if (state->stackBase) {
             mprVirtFree(state->stackBase, state->stackSize);
             state->stackBase = 0;
-            ejs->masterState = 0;
+            //  MOB - was masterState
+            ejs->state = 0;
         }
-        lock(sp);
         mprRemoveItem(sp->vmlist, ejs);
-        unlock(sp);
         ejs->service = 0;
         ejsDestroyIntern(ejs->intern);
     }
@@ -154,10 +162,12 @@ void ejsDestroy(Ejs *ejs)
 
 static void manageEjs(Ejs *ejs, int flags)
 {
+    EjsState    *state;
     EjsBlock    *block;
     EjsObj      *vp, **vpp, **top;
 
     if (flags & MPR_MANAGE_MARK) {
+        mprAssert(!ejs->workerComplete);
         mprMark(ejs->name);
         mprMark(ejs->modules);
         mprMark(ejs->applications);
@@ -169,17 +179,23 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->masterState);
         mprMark(ejs->mutex);
         mprMark(ejs->result);
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) == MPR->heap.active));
+
         mprMark(ejs->search);
         mprMark(ejs->dispatcher);
         mprMark(ejs->workers);
         mprMark(ejs->global);
         mprMark(ejs->intern);
 
-//  MOB - RACE
         /*
             Mark active call stack
          */
-        if (ejs->masterState) {
+        if (ejs->state) {
+            for (state = ejs->state; state; state = state->prev) {
+                mprMark(state->fp);
+                mprMark(state->bp);
+                mprMark(state->internal);
+            }
             for (block = ejs->state->bp; block; block = block->prev) {
                 mprMark(block);
             }
@@ -258,6 +274,9 @@ static void markValues(Ejs *ejs)
     mprMark(ejs->publicString);
     mprMark(ejs->trueValue);
     mprMark(ejs->undefinedValue);
+
+    //  MOB
+    mprAssert(ejs->undefinedValue == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->undefinedValue)) != MPR->heap.dead));
     mprMark(ejs->zeroValue);
     mprMark(ejs->nopFunction);
 }
@@ -502,9 +521,10 @@ int ejsEvalModule(cchar *path)
     if ((mpr = mprCreate(0, NULL, 0)) != 0) {
         status = MPR_ERR_MEMORY;
 
+#if UNUSED
     } else if ((service = ejsCreateService()) == 0) {
         status = MPR_ERR_MEMORY;
-
+#endif
     } else if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
         status = MPR_ERR_MEMORY;
 
@@ -538,6 +558,8 @@ static int runProgram(Ejs *ejs, MprEvent *event)
 
 int ejsRunProgram(Ejs *ejs, cchar *className, cchar *methodName)
 {
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+
     ejs->className = className;
     ejs->methodName = methodName;
     mprRelayEvent(ejs->dispatcher, (MprEventProc) runProgram, ejs, NULL);
@@ -896,6 +918,7 @@ int ejsFreeze(Ejs *ejs, int freeze)
     if (ejs->state->fp) {
         old = ejs->state->fp->freeze;
     } else {
+        //  MOB OPT - get rid of this and have a dummy state+frame at all times
         old = ejs->freeze;
     }
     if (freeze != -1) {
@@ -928,12 +951,14 @@ static int allocNotifier(int flags, ssize size)
         mprPrintfError("Memory request for %d bytes exceeds memory red-line\n", size);
         mprPrintfError("Total memory used %d\n", (int) mprGetMem());
 
-    } else if (flags & MPR_MEM_YIELD) {
+    } else if (flags & MPR_MEM_ATTENTION) {
         sp = MPR->ejsService;
         lock(sp);
         for (next = 0; (ejs = mprGetNextItem(sp->vmlist, &next)) != 0; ) {
             ejs->gc = 1;
+#if UNUSED
             ejsAttention(ejs);
+#endif
         }
         unlock(sp);
     }
@@ -1003,7 +1028,7 @@ void ejsReportError(Ejs *ejs, char *fmt, ...)
         msg = buf = mprAsprintfv(fmt, arg);
     }
     if (ejs->exception) {
-        char *name = mprGetMpr()->name;
+        char *name = MPR->name;
         mprRawLog(0, "%s: %s\n", name, msg);
     } else {
         mprError("%s", msg);

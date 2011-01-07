@@ -172,6 +172,9 @@ static void manageConstants(EjsConstants *cp, int flags)
         mprMark(cp->pool);
         mprMark(cp->table);
         mprMark(cp->index);
+        /*
+            Racing here, but okay. May miss a few new elements, but they will be picked up on the next sweep.
+         */
         for (i = 0; i < cp->indexCount; i++) {
             if (!(PTOI(cp->index[i]) & 0x1)) {
                 mprMark(cp->index[i]);
@@ -301,6 +304,7 @@ int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, MprChar *source)
     EjsDebug    *debug;
     EjsLine     *line;
     ssize       len;
+    int         numLines;
 
     mprAssert(debugp);
     
@@ -318,11 +322,14 @@ int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, MprChar *source)
     }
     if (debug->numLines > 0 && offset == debug->lines[debug->numLines - 1].offset) {
         line = &debug->lines[debug->numLines - 1];
+        numLines = debug->numLines;
     } else {
-        line = &debug->lines[debug->numLines++];
+        line = &debug->lines[debug->numLines];
+        numLines = debug->numLines + 1;
     }
     line->source = source;
     line->offset = offset;
+    debug->numLines = numLines;
     return 0;
 }
 

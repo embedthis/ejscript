@@ -16,6 +16,9 @@ static int internHashSizes[] = {
 
 static MprSpin      internLock;
 
+/*
+    FUTURE - this locking is for when the intern array works over all interpreters
+ */
 #define ilock()     mprSpinLock(&internLock);
 #define iunlock()   mprSpinUnlock(&internLock);
 
@@ -2274,10 +2277,8 @@ EjsString *ejsInternString(Ejs *ejs, EjsString *str)
                 }
                 if (i == sp->length && i == str->length) {
                     ejs->intern->reuse++;
-                    if (mprIsDead(sp)) {
-                        mprRevive(sp);
-                        break;
-                    }
+                    /* Revive incase almost stale or dead */
+                    mprRevive(sp);
                     iunlock();
                     return sp;
                 }
@@ -2320,10 +2321,8 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
                 }
                 if (i == sp->length) {
                     ejs->intern->reuse++;
-                    if (mprIsDead(sp)) {
-                        mprRevive(sp);
-                        break;
-                    }
+                    /* Revive incase almost stale or dead */
+                    mprRevive(sp);
                     iunlock();
                     return sp;
                 }
@@ -2368,11 +2367,8 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                 }
                 if (i == sp->length) {
                     ejs->intern->reuse++;
-                    //  MOB - OPT this somehow
-                    if (mprIsDead(sp)) {
-                        mprRevive(sp);
-                        break;
-                    }
+                    /* Revive incase almost stale or dead */
+                    mprRevive(sp);
                     iunlock();
                     return sp;
                 }
@@ -2441,10 +2437,8 @@ EjsString *ejsInternMulti(Ejs *ejs, cchar *value, ssize len)
             }
             if (i == sp->length && value[i] == 0) {
                 ejs->intern->reuse++;
-                if (mprIsDead(sp)) {
-                    mprRevive(sp);
-                    break;
-                }
+                /* Revive incase almost stale or dead */
+                mprRevive(sp);
                 iunlock();
                 return sp;
             }
@@ -2619,7 +2613,10 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
 
 void ejsManageString(EjsString *sp, int flags)
 {
-    if (flags & MPR_MANAGE_FREE) {
+    if (flags & MPR_MANAGE_MARK) {
+        mprMark(TYPE(sp));
+
+    } else if (flags & MPR_MANAGE_FREE) {
         ilock();
         unlinkString(TYPE(sp)->ejs, sp);
         iunlock();
@@ -2661,6 +2658,7 @@ static void manageIntern(EjsIntern *intern, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(intern->buckets);
+
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroyIntern(intern);
     }

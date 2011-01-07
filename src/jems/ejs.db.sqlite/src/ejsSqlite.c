@@ -31,7 +31,7 @@
     Ejscript Sqlite class object
  */
 typedef struct EjsSqlite {
-    EjsObj          obj;            /* Extends Object */
+    EjsPot          pot;            /* Extends Object */
     sqlite3         *sdb;           /* Sqlite handle */
     Ejs             *ejs;           /* Interp reference */
     int             memory;         /* In-memory database */
@@ -362,6 +362,7 @@ static int manageSqlite(EjsSqlite *db, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         ejsManagePot(db, flags);
+
     } else if (flags & MPR_MANAGE_FREE) {
         if (db->sdb) {
             sqliteClose(db->ejs, db, 0, 0);

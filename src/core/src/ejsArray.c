@@ -1711,6 +1711,7 @@ static void manageArray(EjsArray *ap, int flags)
     int         i;
 
     if (flags & MPR_MANAGE_MARK) {
+        //  MOB RACEX
         for (i = ap->length - 1; i >= 0; i--) {
             if ((vp = ap->data[i]) != 0) {
                 mprMark(vp);

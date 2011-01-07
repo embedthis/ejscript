@@ -732,12 +732,8 @@ static EjsObj *loadXml(Ejs *ejs, EjsXML *xml, int argc, EjsObj **argv)
     }
     mprXmlSetInputStream(xp, readFileData, (void*) file);
 
-    if (mprXmlParse(xp) < 0) {
-        if (! ejsHasException(ejs)) {
-            ejsThrowIOError(ejs, "Can't parse XML file: %s\nDetails %s",  filename, mprXmlGetErrorMsg(xp));
-        }
-        mprCloseFile(file);
-        return 0;
+    if (mprXmlParse(xp) < 0 && !ejsHasException(ejs)) {
+        ejsThrowIOError(ejs, "Can't parse XML file: %s\nDetails %s",  filename, mprXmlGetErrorMsg(xp));
     }
     mprCloseFile(file);
     return 0;
@@ -1044,7 +1040,7 @@ void ejsLoadXMLString(Ejs *ejs, EjsXML *xml, EjsString *xmlString)
     xp = ejsCreateXmlParser(ejs, xml, "string");
     parser = mprXmlGetParseArg(xp);
     parser->inputBuf = ejsToMulti(ejs, xmlString);
-    parser->inputSize = (int) strlen(parser->inputBuf);
+    parser->inputSize = slen(parser->inputBuf);
     mprXmlSetInputStream(xp, readStringData, (void*) 0);
 
     if (mprXmlParse(xp) < 0 && !ejsHasException(ejs)) {

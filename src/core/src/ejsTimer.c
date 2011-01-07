@@ -141,7 +141,9 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
         }
     }
     if (!tp->repeat) {
-        mprRelease(tp);
+        mprRemoveRoot(tp);
+        tp->event = 0;
+    } else {
     }
     return 0;
 }
@@ -174,7 +176,7 @@ static EjsObj *timer_stop(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
 {
     if (tp->event) {
         mprRemoveEvent(tp->event);
-        mprRelease(tp);
+        mprRemoveRoot(tp);
         tp->event = 0;
     }
     return 0;

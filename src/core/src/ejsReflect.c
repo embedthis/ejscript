@@ -155,11 +155,7 @@ EjsObj *ejsGetTypeOf(Ejs *ejs, EjsObj *vp)
 static void manageReflect(EjsReflect *rp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        if (rp->subject) {
-            mprmark(rp->subject);
-        }
-    } else if (flags & MPR_MANAGE_FREE) {
-        ;
+        mprMark(rp->subject);
     }
 }
 

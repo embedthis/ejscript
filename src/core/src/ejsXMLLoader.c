@@ -15,10 +15,12 @@ static int  parserHandler(MprXml *xp, int state, cchar *tagName, cchar *attName,
 
 /************************************* Code ***********************************/
 
-//  MOB - unused
 static void manageXmlParser(EjsXmlState *parser, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(parser->inputBuf);
+        mprMark(parser->filename);
+
     } else if (flags & MPR_MANAGE_FREE) {
     }
 }

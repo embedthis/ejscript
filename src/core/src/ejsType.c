@@ -876,8 +876,10 @@ static void manageType(EjsType *type, int flags)
         mprMark(type->qname.space);
         mprMark(type->prototype);
         mprMark(type->baseType);
+        mprMark(type->mutex);
         mprMark(type->implements);
         mprMark(type->typeData);
+        mprMark(type->module);
     }
 }
 

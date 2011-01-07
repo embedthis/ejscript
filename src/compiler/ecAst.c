@@ -1549,6 +1549,8 @@ static EjsObj *evalNode(EcCompiler *cp, EcNode *np)
     ejsSetPropertyName(ejs, (EjsObj*) ejs->configType, ES_Config_Legacy, EN("Legacy"));
     result = ejsRunInitializer(ejs, mp);
     cp->debug = saveDebug;
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+
     if (result == 0) {
         ejsClearException(ejs);
         return 0;

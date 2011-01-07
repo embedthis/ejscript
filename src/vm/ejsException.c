@@ -12,14 +12,13 @@ static uchar trapByteCode[] = { EJS_OP_ATTENTION };
 
 /************************************ Code ************************************/
 /*
-    Redirect the VM to the ATTENTION op code. This code must be async-thread safe. Do very, very little here.
+    Redirect the VM to the ATTENTION op code
  */
 void ejsAttention(Ejs *ejs)
 {
     EjsFrame    *frame;
     uchar       *pc;
 
-    mprLock(ejs->mutex);
     frame = ejs->state->fp;
     /* Must still handle exceptions even if frozen */
     if (frame && frame->attentionPc == 0 /* MOB && !frame->freeze */) {
@@ -31,7 +30,6 @@ void ejsAttention(Ejs *ejs)
         frame->pc = trapByteCode;
         frame->attentionPc = pc;
     }
-    mprUnlock(ejs->mutex);
 }
 
 

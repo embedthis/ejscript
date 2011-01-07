@@ -1146,7 +1146,6 @@ static void manageUri(EjsUri *up, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(up->uri);
-    } else if (flags & MPR_MANAGE_FREE) {
     }
 }
 

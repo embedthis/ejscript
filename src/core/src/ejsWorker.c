@@ -144,7 +144,12 @@ static void removeWorker(EjsWorker *worker)
         if (ejs->joining) {
             mprSignalDispatcher(ejs->dispatcher);
         }
-        worker->ejs = 0;
+        /* Accelerate GC */
+        worker->pair->ejs->workerComplete = 1;
+        worker->pair->ejs = 0;
+        worker->pair->pair = 0;
+        worker->pair = 0;
+        worker->ejs = 0;        
         unlock(ejs);
     }
 }
@@ -316,7 +321,7 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
     }
     result = (ejs->joining) ? MPR_ERR_TIMEOUT: 0;
     ejs->joining = 0;
-    LOG(5, "Worker.join: result %d", result);
+    LOG(7, "Worker.join: result %d", result);
     return result;
 }
 
@@ -560,8 +565,6 @@ static void manageMessage(Message *msg, int flags)
         mprMark(msg->data);
         mprMark(msg->message);
         mprMark(msg->stack);
-
-    } else if (flags & MPR_MANAGE_FREE) {
     }
 }
 

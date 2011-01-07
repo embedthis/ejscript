@@ -14,7 +14,9 @@
 /********************************** Forwards **********************************/
 
 typedef struct App {
+#if UNUSED
     EjsService  *ejsService;
+#endif
     Ejs         *ejs;
     EcCompiler  *compiler;
     MprList     *modules;
@@ -43,6 +45,8 @@ MAIN(ejscMain, int argc, char **argv)
     mprSetAppName(argv[0], 0, 0);
     app = mprAllocObj(App, manageApp);
     mprAddRoot(app);
+
+    //  MOB -- remove this
     mprEnableGC(0);
 
     if (mprStart() < 0) {
@@ -244,10 +248,12 @@ MAIN(ejscMain, int argc, char **argv)
         return -1;
     }
 
+#if UNUSED
     app->ejsService = ejsCreateService(mpr);
     if (app->ejsService == 0) {
         return MPR_ERR_MEMORY;
     }
+#endif
     ejsFlags = EJS_FLAG_NO_INIT;
     if (doc) {
         ejsFlags |= EJS_FLAG_DOC;
@@ -300,11 +306,11 @@ static void manageApp(App *app, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(app->compiler);
+#if UNUSED
         mprMark(app->ejsService);
+#endif
         mprMark(app->ejs);
         mprMark(app->modules);
-
-    } else if (flags & MPR_MANAGE_FREE) {
     }
 }
 

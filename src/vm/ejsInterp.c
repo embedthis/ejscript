@@ -115,6 +115,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 /*
     Must clear attentionPc when changing the PC. Otherwise the next instruction will jump to a bad (stale) location.
  */
+//  MOB -- should not need to clear attentionPc
 #define SET_PC(fp, value) \
     if (1) { \
         (fp)->pc = (uchar*) (value); \
@@ -153,6 +154,8 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
     #define CASE(opcode) case opcode
 #endif
 
+#define CHECK_GC if (MPR->heap.mustYield && !(ejs->freeze || ejs->state->fp->freeze)) mprYield(0)
+
 /******************************** Forward Declarations ************************/
 
 static void callInterfaceInitializers(Ejs *ejs, EjsType *type);
@@ -169,8 +172,8 @@ static EjsAny *getNthBlock(Ejs *ejs, int nth);
 static EjsString *getString(Ejs *ejs, EjsFrame *fp, int num);
 static EjsString *getStringArg(Ejs *ejs, EjsFrame *fp);
 static EjsObj *getGlobalArg(Ejs *ejs, EjsFrame *fp);
-static bool manageExceptions(Ejs *ejs);
 static EjsBlock *popExceptionBlock(Ejs *ejs);
+static bool processException(Ejs *ejs);
 static void storeProperty(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, EjsName name, EjsObj *value);
 static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slotNum, EjsObj *value);
 static void storePropertyToScope(Ejs *ejs, EjsName qname, EjsObj *value);
@@ -213,6 +216,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     mprAssert(!mprHasMemError(ejs));
     mprAssert(!ejs->exception);
     mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
     vp = 0;
     slotNum = -1;
@@ -265,6 +269,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
          */
         CASE (EJS_OP_RETURN_VALUE):
             ejs->result = pop(ejs);
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             if (FRAME->caller == 0) {
                 goto done;
             }
@@ -292,6 +297,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                             }
                         }
                     }
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
                 }
             }
             if (FRAME->getter) {
@@ -346,6 +352,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
          */
         CASE (EJS_OP_SAVE_RESULT):
             ejs->result = pop(ejs);
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             BREAK;
 
         /* Load Constants ----------------------------------------------- */
@@ -1472,6 +1479,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                 }
             }
             ejs->result = type;
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             BREAK;
 
         /*
@@ -1560,18 +1568,16 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             Special circumstances need attention. Exceptions, exiting and garbage collection.
          */
         CASE (EJS_OP_ATTENTION):
-            if (!FRAME->freeze && (ejs->gc || MPR->heap.gc)) {
-                mprGC(0);
+            if (!FRAME->freeze && ejs->gc) {
+                ejs->gc = 0;
+                mprYield(0);
             }
-            /* Must lock with ejsAttention */
-            mprLock(ejs->mutex);
             mprAssert(FRAME->attentionPc);
             if (FRAME->attentionPc) {
                 FRAME->pc = FRAME->attentionPc;
                 mprAssert(FRAME->pc);
                 FRAME->attentionPc = 0;
             }
-            mprUnlock(ejs->mutex);
             if (mprHasMemError(ejs) && !ejs->exception) {
                 mprResetMemError(ejs);
                 ejsThrowMemoryError(ejs);
@@ -1579,7 +1585,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             if (ejs->exiting || mprIsStopping(ejs)) {
                 goto done;
             }
-            if (ejs->exception && !manageExceptions(ejs)) {
+            if (ejs->exception && !processException(ejs)) {
                 goto done;
             }
             BREAK;
@@ -1595,6 +1601,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
          */
         CASE (EJS_OP_POP):
             ejs->result = pop(ejs);
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             mprAssert(ejs->exception || ejs->result);
             BREAK;
 
@@ -1727,6 +1734,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
         CASE (EJS_OP_GOTO):
             offset = GET_WORD();
             SET_PC(FRAME, &FRAME->pc[offset]);
+            CHECK_GC;
             BREAK;
 
         /*
@@ -1736,6 +1744,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
         CASE (EJS_OP_GOTO_8):
             offset = (schar) GET_BYTE();
             SET_PC(FRAME, &FRAME->pc[offset]);
+            CHECK_GC;
             BREAK;
 
         /*
@@ -1804,6 +1813,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
                     SET_PC(FRAME, &FRAME->pc[offset]);
                 }
             }
+            CHECK_GC;
             BREAK;
 
         /*
@@ -1931,10 +1941,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             result = evalBinaryExpr(ejs, v1, opcode, v2);
             if (!ejsIsBoolean(ejs, result)) {
                 ejsThrowTypeError(ejs, "Result of a comparision must be boolean");
-            } else {
-                if (((EjsBoolean*) result)->value) {
-                    SET_PC(FRAME, &FRAME->pc[offset]);
-                }
+            } else if (((EjsBoolean*) result)->value) {
+                SET_PC(FRAME, &FRAME->pc[offset]);
             }
             BREAK;
 
@@ -2178,6 +2186,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
             }
             push(obj);
             ejs->result = obj;
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
             BREAK;
                 
             /*
@@ -2478,6 +2487,7 @@ static void storePropertyToSlot(Ejs *ejs, EjsObj *thisObj, EjsAny *obj, int slot
     }
     ejsSetProperty(ejs, obj, slotNum, value);
     ejs->result = value;
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 }
 
 
@@ -2599,6 +2609,8 @@ EjsObj *ejsRunInitializer(Ejs *ejs, EjsModule *mp)
     EjsModule   *dp;
     int         next;
 
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    
     if (mp->initialized || !mp->hasInitializer) {
         mp->initialized = 1;
         return ejs->nullValue;
@@ -2627,8 +2639,10 @@ int ejsRun(Ejs *ejs)
     EjsModule   *mp;
     int         next;
 
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+
     /*
-        This is used by ejs to interpret scripts. OPT. Should not run through old modules every time
+        This is used by ejs to interpret scripts. MOB OPT. Should not run through old modules every time
      */
     for (next = 0; (mp = (EjsModule*) mprGetNextItem(ejs->modules, &next)) != 0;) {
         //MOB - need to keep a list of non-initialized modules
@@ -2638,6 +2652,7 @@ int ejsRun(Ejs *ejs)
         if (ejsRunInitializer(ejs, mp) == 0) {
             return EJS_ERR;
         }
+        mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
     }
     return 0;
 }
@@ -2651,6 +2666,7 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
     mprAssert(fun);
     mprAssert(ejsIsFunction(ejs, fun));
     mprAssert(ejs->exception == 0);
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
     if (ejs->exception) {
         return 0;
@@ -2671,6 +2687,7 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
         if (ejs->result == 0) {
             ejs->result = ejs->nullValue;
         }
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
     } else {
         for (i = 0; i < argc; i++) {
@@ -2856,6 +2873,7 @@ static void callConstructor(Ejs *ejs, EjsType *type, int argc, int stackAdjust)
         }
     }
     ejs->result = obj;
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 }
 #endif
 
@@ -2955,8 +2973,7 @@ static EjsBlock *popExceptionBlock(Ejs *ejs)
 /*
     Manage exceptions. Bubble up the exception until we find an exception handler for it.
  */
-//MOB - rename 
-static bool manageExceptions(Ejs *ejs)
+static bool processException(Ejs *ejs)
 {
     EjsState        *state;
 
@@ -3286,19 +3303,19 @@ int ejsInitStack(Ejs *ejs)
 {
     EjsState    *state;
 
-    state = ejs->state = ejs->masterState = mprAllocBlock(sizeof(EjsState), MPR_ALLOC_ZERO);
+    if ((state = mprAllocBlock(sizeof(EjsState), MPR_ALLOC_ZERO)) == 0) {
+        mprSetMemError(ejs);
+        return EJS_ERR;
+    }
+    ejs->state = ejs->masterState = state;
 
     /*
         Allocate the stack
-     */
-    state->stackSize = MPR_PAGE_ALIGN(EJS_STACK_MAX, mprGetPageSize(ejs));
-
-    /*
         This will allocate memory virtually for systems with virutal memory. Otherwise, it will just use malloc.
         TODO - create a guard page
      */
-    state->stackBase = mprVirtAlloc(state->stackSize, MPR_MAP_READ | MPR_MAP_WRITE);
-    if (state->stackBase == 0) {
+    state->stackSize = MPR_PAGE_ALIGN(EJS_STACK_MAX, mprGetPageSize(ejs));
+    if ((state->stackBase = mprVirtAlloc(state->stackSize, MPR_MAP_READ | MPR_MAP_WRITE)) == 0) {
         mprSetMemError(ejs);
         return EJS_ERR;
     }
@@ -3495,7 +3512,8 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
 
     mprAssert(fun);
     mprAssert(ejs->exception == 0);
-    mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);    
+    mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);  
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
     state = ejs->state;
     result = 0;
@@ -3569,10 +3587,13 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
             return;
         }
         ejsClearAttention(ejs);
+freezeState = ejs->state->fp->freeze;
         result = (fun->body.proc)(ejs, thisObj, argc, argv);
+ejs->state->fp->freeze = freezeState;
         if (result == 0) {
             result = ejs->nullValue;
         }
+mprAssert(result == 0 || (MPR_GET_GEN(MPR_GET_MEM(result)) != MPR->heap.dead));
         state->stack -= (argc + stackAdjust);
 
     } else {
@@ -3589,6 +3610,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
     if (result) {
         ejs->result = result;
     }
+mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 }
 
 
@@ -3769,7 +3791,7 @@ typedef struct EjsBreakpoint {
 } EjsBreakpoint;
 
 
-static void manageBreakpoint(Ejs *ejs)
+static void bkpt(Ejs *ejs)
 {
     EjsFrame        *fp;
     EjsState        *state;

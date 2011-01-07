@@ -15,8 +15,7 @@
 static EjsObj *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprCmd      *cmd;
-    EjsString   *result;
-    cchar       *cmdline;
+    char        *cmdline;
     char        *err, *output;
     int         status;
 
@@ -24,16 +23,18 @@ static EjsObj *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
     cmd = mprCreateCmd(ejs->dispatcher);
     cmdline = ejsToMulti(ejs, argv[0]);
+    mprHold(cmdline);
     status = mprRunCmd(cmd, cmdline, &output, &err, 0);
     if (status) {
         ejsThrowError(ejs, "Command failed: %s\n\nExit status: %d\n\nError Output: \n%s\nPrevious Output: \n%s\n", 
             cmdline, status, err, output);
         mprDestroyCmd(cmd);
+        mprRelease(cmdline);
         return 0;
     }
-    result = ejsCreateStringFromAsc(ejs, output);
     mprDestroyCmd(cmd);
-    return (EjsObj*) result;
+    mprRelease(cmdline);
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, output);
 }
 
 

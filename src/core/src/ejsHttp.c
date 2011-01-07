@@ -1440,6 +1440,8 @@ static void manageHttp(EjsHttp *http, int flags)
         mprMark(http->method);
         mprMark(http->keyFile);
         mprMark(http->certFile);
+        mprMark(TYPE(http));
+        mprMark(http->conn);
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (http->conn) {

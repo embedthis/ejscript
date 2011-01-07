@@ -17,6 +17,7 @@ server.on("readable", function (event, request) {
 App.log.info("Listen on", HTTP)
 server.listen(HTTP)
 
+/*
 //  Start secure server
 if (Config.SSL) {
     var secureServer: HttpServer = new HttpServer("web")
@@ -28,4 +29,5 @@ if (Config.SSL) {
     App.log.info("Secure listen on ", HTTPS)
     secureServer.listen(HTTPS)
 }
+*/
 App.run()

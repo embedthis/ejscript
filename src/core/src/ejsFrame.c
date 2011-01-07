@@ -12,6 +12,7 @@
 
 static void manageFrame(EjsFrame *frame, int flags)
 {
+    mprAssert(frame);
     if (frame) {
         if (flags & MPR_MANAGE_MARK) {
             ejsManageFunction((EjsFunction*) frame, flags);

@@ -61,6 +61,7 @@ EcCompiler *ecCreateCompiler(Ejs *ejs, int flags)
 }
 
         
+//  MOB - remove
 void ecDestroyCompiler(EcCompiler *cp)
 {
 }
@@ -185,10 +186,16 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
             ejsFreeze(ejs, frozen);
         }
+        mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+
         if (!frozen) {
-            mprGC(0);
+            mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+            mprYield(0);
+            mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
         }
     }
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+
 
     /*
         Allocate the eval frame stack. This is used for property lookups. We have one dummy block at the top always.
@@ -219,25 +226,25 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
         }
     }
     ejsPopBlock(ejs);
-    cp->nodes = NULL;
-    ejsFreeze(ejs, frozen);
-    if (!frozen && (ejs->gc || MPR->heap.gc)) {
-        mprGC(0);
-    }
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
-    if (cp->errorCount > 0) {
-        return EJS_ERR;
-    }
     /*
         Add compiled modules to the interpreter
      */
     for (next = 0; ((mp = (EjsModule*) mprGetNextItem(cp->modules, &next)) != 0); ) {
         ejsAddModule(cp->ejs, mp);
     }
-    return 0;
+    cp->nodes = NULL;
+    ejsFreeze(ejs, frozen);
+    if (!frozen) {
+        mprYield(0);
+    }
+    mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    return (cp->errorCount > 0) ? EJS_ERR: 0;
 }
 
 
+//  MOB - remove this
 int ejsInitCompiler(EjsService *service)
 {
     service->loadScriptLiteral = loadScriptLiteral;
@@ -356,16 +363,17 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
  */
 int ejsEvalFile(cchar *path)
 {
-    EjsService      *service;   
     Ejs             *ejs;
     Mpr             *mpr;
 
     mpr = mprCreate(0, NULL, 0);
+#if UNUSED
+    EjsService      *service;   
     if ((service = ejsCreateService(mpr)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
-    mprAddRoot(service);
+#endif
     if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
@@ -386,16 +394,18 @@ int ejsEvalFile(cchar *path)
  */
 int ejsEvalScript(cchar *script)
 {
-    EjsService      *service;   
     Ejs             *ejs;
     Mpr             *mpr;
 
     mpr = mprCreate(0, NULL, 0);
+#if UNUSED
+    EjsService      *service;   
     if ((service = ejsCreateService(mpr)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
     mprAddRoot(service);
+#endif
     if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;

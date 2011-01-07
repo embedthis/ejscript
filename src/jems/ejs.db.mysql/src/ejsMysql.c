@@ -15,9 +15,8 @@
 
 /*********************************** Locals ***********************************/
 
-typedef struct EjsDb
-{
-    EjsObj       obj;
+typedef struct EjsDb {
+    EjsObj          obj;
     sqlite3         *sdb;               /* Sqlite handle */
     MprHeap         *arena;             /* Memory context arena */
     MprThreadLocal  *tls;               /* Thread local data for setting Sqlite memory context */
@@ -344,7 +343,7 @@ static EjsVar *tables(Ejs *ejs, EjsDb *db, int argc, EjsVar **argv)
 static void manageDb(EjsDb *db, int flags)
 {
     if (flags == MPR_MANAGE_MARK) {
-        ;
+        mprManagePot;
     } else {
         if (db->sdb) {
             ejsSetDbMemoryContext(db->tls, db->arena);
@@ -360,8 +359,7 @@ void ejsConfigureDbTypes(Ejs *ejs)
 {
     EjsType     *type;
 
-    type = (EjsType*) ejsConfigureNativeType(ejs, "ejs.db", Database, sizeof(EjsDb), (MprManager) manageDb, 
-        EJS_DEFAULT_HELPERS);
+    type = (EjsType*) ejsConfigureNativeType(ejs, "ejs.db", Database, sizeof(EjsDb), (MprManager) manageDb, 0);
 
     ejsBindMethod(ejs, type, ES_ejs_db_Database_Database, (EjsProc) dbConstructor);
     ejsBindMethod(ejs, type, ES_ejs_db_Database_close, (EjsProc) closeDb);

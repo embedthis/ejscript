@@ -519,6 +519,7 @@ typedef struct Ejs {
     uint                freeze: 1;          /**< Freeze GC sync -- don't do a GC sync */
     uint                hasError: 1;        /**< Interpreter has an initialization error */
     uint                initialized: 1;     /**< Interpreter fully initialized and not empty */
+    uint                workerComplete: 1;  /**< TEMP MOB */
 
     EjsAny              *exceptionArg;      /**< Exception object for catch block */
 
@@ -527,6 +528,8 @@ typedef struct Ejs {
     MprList             *modules;           /**< Loaded modules */
 
     void                (*loaderCallback)(struct Ejs *ejs, int kind, ...);
+
+    //  MOB - what is this for?
     void                *userData;          /**< User data */
 
     EjsObj              *coreTypes;         /**< Core type instances */
@@ -2973,6 +2976,7 @@ typedef struct EjsLookup {
 typedef struct EjsService {
     EjsObj          *(*loadScriptLiteral)(Ejs *ejs, EjsString *script, cchar *cache);
     EjsObj          *(*loadScriptFile)(Ejs *ejs, cchar *path, cchar *cache);
+    Ejs             *master;            /**< Master interpreter */
     MprList         *vmlist;
     MprHashTable    *nativeModules;
     Http            *http;
@@ -2982,12 +2986,15 @@ typedef struct EjsService {
     MprMutex        *mutex;             /**< Multithread locking */
 } EjsService;
 
+#if UNUSED
 extern EjsService *ejsGetService();
+#endif
 extern int ejsInitCompiler(EjsService *service);
 extern void ejsAttention(Ejs *ejs);
 extern void ejsClearAttention(Ejs *ejs);
 
 /*********************************** Prototypes *******************************/
+#if UNUSED
 /**
     Open the Ejscript service
     @description One Ejscript service object is required per application. From this service, interpreters
@@ -2996,6 +3003,7 @@ extern void ejsClearAttention(Ejs *ejs);
     @ingroup Ejs
  */
 extern EjsService *ejsCreateService();
+#endif
 
 /**
     Create an ejs virtual machine 
