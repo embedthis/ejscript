@@ -78,7 +78,7 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
         httpDestroyServer(sp->server);
         sp->server = 0;
-        mprRelease(sp);
+        mprRemoveRoot(sp);
     }
     return 0;
 }
@@ -162,7 +162,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         sp->server = 0;
     }
     if (endpoint == ejs->nullValue) {
-        mprHold(sp);
+        mprAddRoot(sp);
         if (ejs->loc) {
             ejs->loc->context = sp;
         } else {
@@ -173,7 +173,7 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     }
     if (ejs->loc) {
         /* Being called hosted - ignore endpoint value */
-        mprHold(sp);
+        mprAddRoot(sp);
         ejs->loc->context = sp;
         return (EjsObj*) ejs->nullValue;
     }

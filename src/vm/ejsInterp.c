@@ -3841,7 +3841,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     EjsFrame        *fp;
     EjsState        *state;
     EjsOptable      *optable;
-    int             offset, save;
+    int             offset;
 #if UNUSED
     static int      showFrequency = 1;
 #endif
