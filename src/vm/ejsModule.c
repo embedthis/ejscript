@@ -89,7 +89,7 @@ int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, in
 
     sp = ejs->service;
     mprLock(sp->mutex);
-    if (mprAddHash(sp->nativeModules, nm->name->value, nm) == 0) {
+    if (mprAddKey(sp->nativeModules, nm->name->value, nm) == 0) {
         mprUnlock(sp->mutex);
         return EJS_ERR;
     }
@@ -253,7 +253,7 @@ int ejsAddConstant(Ejs *ejs, EjsConstants *constants, cchar *str)
     oldLen = constants->poolLength;
     constants->poolLength += len;
 
-    mprAddHash(constants->table, str, ITOP(constants->indexCount));
+    mprAddKey(constants->table, str, ITOP(constants->indexCount));
     constants->index[constants->indexCount] = ITOP(oldLen << 1 | 1);
     return constants->indexCount++;
 }

@@ -824,7 +824,7 @@ int ecAddModuleConstant(EcCompiler *cp, EjsModule *mp, cchar *str)
         return PTOI(hp->data);
     }
     index = ejsAddConstant(cp->ejs, constants, str);
-    mprAddHash(constants->table, str, ITOP(index));
+    mprAddKey(constants->table, str, ITOP(index));
     return index;
 }
 

@@ -339,8 +339,7 @@ static EjsObj *http_header(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
     }
-    str = (char*) ejsToMulti(ejs, argv[0]);
-    str = slower(str);
+    str = slower(ejsToMulti(ejs, argv[0]));
     value = httpGetHeader(hp->conn, str);
     if (value) {
         result = (EjsObj*) ejsCreateStringFromAsc(ejs, value);
@@ -710,7 +709,7 @@ static void setupTrace(Ejs *ejs, HttpTrace *trace, int dir, EjsObj *options)
         tp->include = mprCreateHash(0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
-                mprAddHash(tp->include, ejsToMulti(ejs, ejsToString(ejs, ext)), "");
+                mprAddKey(tp->include, ejsToMulti(ejs, ejsToString(ejs, ext)), "");
             }
         }
     }
@@ -722,7 +721,7 @@ static void setupTrace(Ejs *ejs, HttpTrace *trace, int dir, EjsObj *options)
         tp->exclude = mprCreateHash(0, 0);
         for (i = 0; i < extensions->length; i++) {
             if ((ext = ejsGetProperty(ejs, extensions, i)) != 0) {
-                mprAddHash(tp->exclude, ejsToMulti(ejs, ejsToString(ejs, ext)), "");
+                mprAddKey(tp->exclude, ejsToMulti(ejs, ejsToString(ejs, ext)), "");
             }
         }
     }

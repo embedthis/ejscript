@@ -1688,7 +1688,7 @@ EjsDoc *ejsCreateDoc(Ejs *ejs, void *vp, int slotNum, EjsString *docString)
 #endif
     }
     mprSprintf(key, sizeof(key), "%Lx %d", PTOL(vp), slotNum);
-    mprAddHash(ejs->doc, key, doc);
+    mprAddKey(ejs->doc, key, doc);
     return doc;
 }
 

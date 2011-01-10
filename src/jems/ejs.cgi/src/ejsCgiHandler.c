@@ -287,7 +287,7 @@ static int getRequest()
             len = cp - ep;
             mprMemcpy(key, sizeof(key), ep, len);
             key[len] = '\0';
-            mprAddHash(requestHeaders, key, ++cp);
+            mprAddKey(requestHeaders, key, ++cp);
             if (debugFile) {
                 fprintf(debugFile, "%-20s = %s\n", key, cp);
             }
@@ -300,19 +300,19 @@ static int getRequest()
 
 #if BLD_DEBUG
     if (dummy) {
-        mprAddHash(requestHeaders, "SCRIPT_NAME", mprStrdup(mpr, "/cgi/ejscgi"));
-        mprAddHash(requestHeaders, "DOCUMENT_ROOT", mprStrdup(mpr, "/Users/mob/hg/carmen"));
-        mprAddHash(requestHeaders, "PATH_TRANSLATED", mprStrdup(mpr, "/Users/mob/hg/carmen"));
-        mprAddHash(requestHeaders, "QUERY_STRING", mprStrdup(mpr, "a=b&c=d"));
+        mprAddKey(requestHeaders, "SCRIPT_NAME", mprStrdup(mpr, "/cgi/ejscgi"));
+        mprAddKey(requestHeaders, "DOCUMENT_ROOT", mprStrdup(mpr, "/Users/mob/hg/carmen"));
+        mprAddKey(requestHeaders, "PATH_TRANSLATED", mprStrdup(mpr, "/Users/mob/hg/carmen"));
+        mprAddKey(requestHeaders, "QUERY_STRING", mprStrdup(mpr, "a=b&c=d"));
 
-        mprAddHash(requestHeaders, "PATH_INFO", mprStrdup(mpr, "/carmen/stock/"));
-        mprAddHash(requestHeaders, "REQUEST_URI", mprStrdup(mpr, "/cgi-bin/ejscgi/carmen/stock/"));
+        mprAddKey(requestHeaders, "PATH_INFO", mprStrdup(mpr, "/carmen/stock/"));
+        mprAddKey(requestHeaders, "REQUEST_URI", mprStrdup(mpr, "/cgi-bin/ejscgi/carmen/stock/"));
 
-//        mprAddHash(requestHeaders, "PATH_INFO", mprStrdup(mpr, "/carmen/web/style.css"));
-//        mprAddHash(requestHeaders, "REQUEST_URI", mprStrdup(mpr, "/cgi-bin/ejscgi/carmen/web/style.css"));
+//        mprAddKey(requestHeaders, "PATH_INFO", mprStrdup(mpr, "/carmen/web/style.css"));
+//        mprAddKey(requestHeaders, "REQUEST_URI", mprStrdup(mpr, "/cgi-bin/ejscgi/carmen/web/style.css"));
 
-//        mprAddHash(requestHeaders, "PATH_INFO", mprStrdup(mpr, "/carmen/web/images/banner.jpg"));
-//        mprAddHash(requestHeaders, "REQUEST_URI", mprStrdup(mpr, "/cgi-bin/ejscgi/carmen/web/images/banner.jpg"));
+//        mprAddKey(requestHeaders, "PATH_INFO", mprStrdup(mpr, "/carmen/web/images/banner.jpg"));
+//        mprAddKey(requestHeaders, "REQUEST_URI", mprStrdup(mpr, "/cgi-bin/ejscgi/carmen/web/images/banner.jpg"));
 
     }
 #endif
@@ -606,7 +606,7 @@ static void setHeader(void *handle, bool allowMultiple, cchar *key, cchar *fmt, 
     if (allowMultiple) {
         mprAddDuplicateHash(responseHeaders, key, value);
     } else {
-        mprAddHash(responseHeaders, key, value);
+        mprAddKey(responseHeaders, key, value);
     }
 }
 
@@ -893,7 +893,7 @@ static void decodeFormData(cchar *data)
             decodedValue = mprUrlDecode(mpr, value);
         }
         decodedKey = mprUrlDecode(mpr, key);
-        mprAddHash(formVars, key, value);
+        mprAddKey(formVars, key, value);
     }
 }
 

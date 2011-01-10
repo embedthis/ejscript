@@ -143,7 +143,7 @@ void ecInitLexer(EcCompiler *cp)
 #if BLD_CHAR_LEN > 1
         rp->name = amtow(cp->keywords, rp->name, NULL);
 #endif
-        mprAddHash(cp->keywords, rp->name, rp);
+        mprAddKey(cp->keywords, rp->name, rp);
     }
 }
 
