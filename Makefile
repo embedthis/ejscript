@@ -44,6 +44,9 @@ ifeq    ($(BLD_HOST_OS),WIN)
 	fi
 endif
 
+ext:
+	./configure --with-mpr=../mpr --with-ssl=../mpr --with-http=../http --with-pcre=../pcre
+
 #
 #   Local variables:
 #   tab-width: 4
