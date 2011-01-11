@@ -8,11 +8,12 @@ include 		.makedep
 
 JEM				:= ejs.web
 TARGET			:= $(BLD_MOD_DIR)/$(JEM)$(BLD_LIB)
+MAKE_IFLAGS		+= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS)
 
 compileExtra:	$(TARGET)
 
 $(TARGET): $(OBJECTS) $(call lib, mpr) $(call vlib, ejs) $(call mod, ejs, ejs.web)
-	bld --library $(TARGET) --libs "ejs http $(BLD_SSL_LIBS) $(BLD_MPR_LIBS)" $(OBJECTS)
+	bld --library $(TARGET) --search "$(BLD_SSL_LIBPATHS)" --libs "ejs http $(BLD_SSL_LIBS) $(BLD_MPR_LIBS)" $(OBJECTS)
 
 #
 #   Local variables:

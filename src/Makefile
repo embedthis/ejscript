@@ -60,7 +60,7 @@ $(EJS_MOD): $(EJS_FILES)
 	fi
 
 $(EJS_LIB): $(EJS_SOURCES) $(EJS_OBJECTS) $(call lib, mpr)
-	bld --library $(EJS_LIB) --libs "$(BLD_EJS_WITHLIBS)" $(EJS_OBJECTS)
+	bld --library $(EJS_LIB) --search "$(BLD_EJS_WITHPATHS)" --libs "$(BLD_EJS_WITHLIBS)" $(EJS_OBJECTS)
 
 cleanExtra:
 	find . -name '*.lst' -o -name '*.mod' -o -name '*.jem' -type f | xargs rm -f

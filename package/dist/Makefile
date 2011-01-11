@@ -16,8 +16,9 @@ FLAT_PERM_NAME	:= ejs-flat.tgz
 SRC				:= ../../src
 JEMS			:= $(SRC)/jems
 DEST			:= $(TDIR)/src/deps/ejs
-INC_DEST  		:= $(TDIR)/src/include
-MASTER  		:= $(INC_DEST)/master
+# INC_DEST  		:= $(TDIR)/src/include
+INC_DEST  		:= $(DEST)
+MASTER  		:= $(TDIR)/src/include/master
 DOC_DEST		:= $(TDIR)/doc
 EJS_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ejsTune ejsByteCode ejsByteCodeTable ejs ejsWeb)
 SLOT_HEADERS	+= $(shell find $(SRC)/include/master -name 'ejs*slots.h')
@@ -111,7 +112,7 @@ $(REL_DIR)/$(DIST_VER_NAME):
 flat $(REL_DIR)/$(FLAT_VER_NAME):
 	mv $(TDIR)/src/deps/ejs/www $(TDIR)
 	find $(TDIR)/src -type f | xargs -I % mv % $(TDIR) 
-	cp $(SRC)/include/pcre.h $(SRC)/include/http.h $(SRC)/include/mpr.h $(SRC)/include/mprSsl.h $(TDIR) 
+	cp $(SRC)/deps/pcre/pcre.h $(SRC)/deps/http/http.h $(SRC)/deps/mpr/mpr.h $(SRC)/deps/mpr/mprSsl.h $(TDIR) 
 	cp $(SRC)/deps/mpr/mprLib.c $(SRC)/deps/mpr/mprSsl.c $(TDIR)
 	cp $(SRC)/deps/http/httpLib.c $(SRC)/deps/pcre/pcre.c $(TDIR)
 	rm -fr $(TDIR)/doc $(TDIR)/src $(TDIR)/Makefile

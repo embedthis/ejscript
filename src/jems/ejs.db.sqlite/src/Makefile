@@ -7,7 +7,7 @@
 include 			.makedep
 
 JEM				:= ejs.db.sqlite
-MAKE_IFLAGS		+= $(BLD_SQLITE_IFLAGS)
+MAKE_IFLAGS		+= $(BLD_SQLITE_IFLAGS) $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS)
 ifeq ($(BLD_HOST_WIN),1)
 	MAKE_DFLAGS	+= -D_CRT_SECURE_NO_WARNINGS
 endif

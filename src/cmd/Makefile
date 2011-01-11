@@ -6,9 +6,10 @@
 
 include 		.makedep
 
-TOOLS		+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
-TOOLS		+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) 
-TARGETS		+= $(BLD_BIN_DIR)/ejs$(BLD_EXE) 
+MAKE_IFLAGS		+= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS)
+TOOLS			+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
+TOOLS			+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) 
+TARGETS			+= $(BLD_BIN_DIR)/ejs$(BLD_EXE) 
 
 ifeq	($(BLD_CC_EDITLINE),1)
 	LIBS		+= edit curses
