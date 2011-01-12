@@ -145,10 +145,12 @@ static void removeWorker(EjsWorker *worker)
             mprSignalDispatcher(ejs->dispatcher);
         }
         /* Accelerate GC */
-        worker->pair->ejs->workerComplete = 1;
-        worker->pair->ejs = 0;
-        worker->pair->pair = 0;
-        worker->pair = 0;
+        if (worker->pair) {
+            worker->pair->ejs->workerComplete = 1;
+            worker->pair->ejs = 0;
+            worker->pair->pair = 0;
+            worker->pair = 0;
+        }
         worker->ejs = 0;        
         unlock(ejs);
     }

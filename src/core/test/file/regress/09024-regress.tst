@@ -20,9 +20,9 @@ var provoke = function()
     var s: TextStream = Path(datafile).openTextStream("rt")
     while (line = s.readLine()) {
         /*
-         *  Test and ensure each line is the right length. This will catch dropping bytes
+            Test and ensure each line is the right length. This will catch dropping bytes
          */
-        // assert(line.length == 49)
+        assert(line.length == 49)
         // print(line.length)
     }
     s.close()
