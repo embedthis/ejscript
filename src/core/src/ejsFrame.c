@@ -21,7 +21,7 @@ static void manageFrame(EjsFrame *frame, int flags)
             //  MOB -- is this needed?
             mprMark(TYPE(frame));
             /* Marking the stack is done in ejsGarbage.c:mark() */
-#if BLD_DEBUG
+#if BLD_DEBUG && UNUSED
             mprMark(frame->loc.source);
             mprMark(frame->loc.filename);
 #endif

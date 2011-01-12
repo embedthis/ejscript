@@ -405,7 +405,7 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
 }
 
 
-int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *linep, MprChar **sourcep)
+EjsLine *ejsGetDebugLine(Ejs *ejs, EjsFunction *fun, uchar *pc)
 {
     EjsCode     *code;
     EjsDebug    *debug;
@@ -414,17 +414,17 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
 
     code = fun->body.code;
     if (code == 0) {
-        return MPR_ERR_CANT_FIND;
+        return NULL;
     }
     offset = (int) (pc - code->byteCode) - 1;
     debug = code->debug;
     if (debug == 0) {
         if (code->debugOffset == 0) {
-            return MPR_ERR_CANT_FIND;
+            return NULL;
         }
         if (debug == 0 && code->debugOffset) {
             if ((debug = loadDebug(ejs, fun)) == 0) {
-                return MPR_ERR_CANT_READ;
+                return NULL;
             }
             code->debug = debug;
         }
@@ -441,20 +441,32 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
         if (i > 0) {
             i--;
         }
-        //  TODO OPT - this is pretty expensive
-        str = wclone(debug->lines[i].source);
-        path = wtok(str, "|", &tok);
-        line = wtok(NULL, "|", &tok);
-        source = tok;
-    } else {
-        path = line = source = "";
-        i = -1;
+        return &debug->lines[i];
     }
+    return NULL;
+}
+
+
+int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *linep, MprChar **sourcep)
+{
+    EjsCode     *code;
+    EjsDebug    *debug;
+    EjsLine     *line;
+    MprChar     *str, *tok, *path, *lineno, *source;
+    int         i, offset;
+
+    if ((line = ejsGetDebugLine(ejs, fun, pc)) == 0) {
+        return MPR_ERR_CANT_FIND;
+    }
+    str = wclone(line->source);
+    path = wtok(str, "|", &tok);
+    lineno = wtok(NULL, "|", &tok);
+    source = tok;
     if (pathp) {
         *pathp = wclone(path);
     }
     if (linep) {
-        *linep = (int) wtoi(line, 10, NULL);
+        *linep = (int) wtoi(lineno, 10, NULL);
     }
     if (sourcep) {
         *sourcep = wclone(source);

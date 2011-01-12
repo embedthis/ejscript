@@ -201,11 +201,12 @@ module ejs {
                 result = args
             }
             on(["cancel", "error", "success"], wakeup)
-            timer = new Timer(timeout, wakeup)
-            timer.start()
+            let t = new Timer(timeout, wakeup)
+            t.start()
             while (!waitComplete && !complete) {
                 App.run(timeout, true)
             }
+            t.stop()
             return result
         }
 

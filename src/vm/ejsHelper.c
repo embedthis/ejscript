@@ -836,7 +836,7 @@ EjsAny *ejsParse(Ejs *ejs, MprChar *str, int preferredType)
     case ES_Boolean:
         return ejsCreateBoolean(ejs, parseBoolean(ejs, buf));
 
-#if BLD_FEATURE_REGEXP
+#if BLD_FEATURE_PCRE
     case ES_RegExp:
         return ejsCreateRegExp(ejs, ejsCreateString(ejs, buf, -1));
 #endif

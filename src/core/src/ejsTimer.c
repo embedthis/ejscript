@@ -143,6 +143,7 @@ static int timerCallback(EjsTimer *tp, MprEvent *e)
     if (!tp->repeat) {
         mprRemoveRoot(tp);
         tp->event = 0;
+        tp->ejs = 0;
     } else {
     }
     return 0;
@@ -159,6 +160,8 @@ static EjsObj *timer_start(Ejs *ejs, EjsTimer *tp, int argc, EjsObj **argv)
     if (tp->event == 0) {
         flags = tp->repeat ? MPR_EVENT_CONTINUOUS : 0;
         mprAddRoot(tp);
+        /* Need to mark ejs as there may be no global references */
+        tp->ejs = ejs;
         tp->event = mprCreateEvent(ejs->dispatcher, "timer", tp->period, (MprEventProc) timerCallback, tp, flags);
         if (tp->event == 0) {
             ejsThrowMemoryError(ejs);
@@ -191,6 +194,7 @@ static void manageTimer(EjsTimer *tp, int flags)
         mprMark(tp->callback);
         mprMark(tp->args);
         mprMark(tp->onerror);
+        mprMark(tp->ejs);
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (tp->event) {

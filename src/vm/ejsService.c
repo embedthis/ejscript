@@ -97,8 +97,8 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
 
     lock(sp);
     ejs->name = mprAsprintf("ejs-%d", seqno++);
-    ejs->dispatcher = mprCreateDispatcher(mprAsprintf("ejsDispatcher-%d", seqno), 1);
     unlock(sp);
+    ejs->dispatcher = mprCreateDispatcher(mprAsprintf("ejsDispatcher-%d", seqno), 1);
         
     if ((ejs->bootSearch = searchPath) == 0) {
         ejs->bootSearch = getenv("EJSPATH");
@@ -117,9 +117,6 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
         return 0;
     }
     ejsFreezeGlobal(ejs);
-#if UNUSED && KEEP
-    startLogging(ejs);
-#endif
     if (mprHasMemError(ejs)) {
         mprError("Memory allocation error during initialization");
         ejsDestroy(ejs);
@@ -160,7 +157,6 @@ static void manageEjs(Ejs *ejs, int flags)
     EjsObj      *vp, **vpp, **top;
 
     if (flags & MPR_MANAGE_MARK) {
-        mprAssert(!ejs->workerComplete);
         mprMark(ejs->name);
         mprMark(ejs->modules);
         mprMark(ejs->applications);
@@ -183,20 +179,21 @@ static void manageEjs(Ejs *ejs, int flags)
          */
         if (ejs->state) {
             for (state = ejs->state; state; state = state->prev) {
+                mprMark(state);
                 mprMark(state->fp);
                 mprMark(state->bp);
                 mprMark(state->internal);
             }
-            for (block = ejs->state->bp; block; block = block->prev) {
-                mprMark(block);
-            }
+
             /*
                 Mark the evaluation stack. Stack itself is virtually allocated and immune from GC.
              */
             top = ejs->state->stack;
-            for (vpp = ejs->state->stackBase; vpp <= top; vpp++) {
-                if ((vp = *vpp) != NULL) {
-                    mprMark(vp);
+            if (top) {
+                for (vpp = ejs->state->stackBase; vpp <= top; vpp++) {
+                    if ((vp = *vpp) != NULL) {
+                        mprMark(vp);
+                    }
                 }
             }
         }

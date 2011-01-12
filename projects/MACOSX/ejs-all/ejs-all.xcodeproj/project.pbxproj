@@ -202,6 +202,7 @@
 		C9D452C811ECDC0600F029C8 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C9D452CB11ECDC1000F029C8 /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
 		C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
+		C9E9E86212DD060B007F1A97 /* libmatrixsslstatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9E540E012BC334B0049C9FD /* libmatrixsslstatic.a */; };
 		C9F4C61F10B5D7B80046EFF4 /* ejsRequest.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */; };
 		C9F4C62110B5D7B80046EFF4 /* ejsSession.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */; };
 		C9F8C9A8128C848100FD3A5D /* ejsPot.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F8C9A7128C848100FD3A5D /* ejsPot.c */; };
@@ -889,6 +890,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9E9E86212DD060B007F1A97 /* libmatrixsslstatic.a in Frameworks */,
 				C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2446,6 +2448,9 @@
 				HEADER_SEARCH_PATHS = (
 					../../../out/include,
 					../../../src/include,
+					../../../src/deps/mpr,
+					../../../src/deps/http,
+					../../../src/deps/pcre,
 				);
 				JEMS = $SRCROOT/../../../src/jems;
 				LIBRARY_SEARCH_PATHS = (

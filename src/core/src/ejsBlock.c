@@ -30,13 +30,6 @@ EjsBlock *ejsCloneBlock(Ejs *ejs, EjsBlock *src, bool deep)
 }
 
 
-#if BLD_DEBUG
-void ejsSetBlockLocation(EjsBlock *block, EjsLoc *loc)
-{
-    block->loc = *loc; 
-}
-#endif
-
 /********************************* Namespaces *******************************/
 
 void ejsResetBlockNamespaces(Ejs *ejs, EjsBlock *block)
@@ -159,12 +152,9 @@ void ejsManageBlock(EjsBlock *block, int flags)
             for (b = block->scope; b; b = b->scope) {
                 mprMark(b);
             }
-#if UNUSED
-            //  TODO MOB - this should not be required as GC in mark() follows the block caller/prev chain
             for (b = block->prev; b; b = b->prev) {
                 mprMark(b);
             }
-#endif
             /*
                 Don't mark stack as the VM will mark that
                 Don't mark locations as they are always inherited from a frame which will mark them for us

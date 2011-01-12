@@ -555,6 +555,12 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
 
     props = obj->properties;
     oldSize = props ? props->size : 0;
+    
+    if (obj == ejs->global) {
+        if (slotCount > 500) { //MOB
+            mprGetAppDir();
+        }
+    }
 
     if (slotCount > oldSize) {
         if (slotCount > EJS_LOTSA_PROP) {
@@ -587,8 +593,8 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
             if (props == 0) {
                 return EJS_ERR;
             }
-            obj->properties = props;
             ejsZeroSlots(ejs, &props->slots[props->size], (slotCount - props->size));
+            obj->properties = props;
         }
         props->size = slotCount;
     }
@@ -1064,7 +1070,7 @@ void ejsManagePot(void *ptr, int flags)
 {
     EjsSlot     *sp;
     EjsPot      *obj;
-    int         i;
+    int         i, numProp;
 
     if (ptr) {
         obj = (EjsPot*) ptr;
@@ -1076,13 +1082,21 @@ void ejsManagePot(void *ptr, int flags)
             if (obj->separateHash) {
                 mprMark(obj->properties->hash);
             }
-            for (sp = obj->properties->slots, i = 0; i < obj->numProp; i++, sp++) {
-                mprMark(sp->qname.name);
-                mprMark(sp->qname.space);
-                mprMark(sp->value.ref);
+            /*
+                Cache numProp incase the object grows while traversing
+                //  MOB - assumes that objects dont shrink
+             */
+            numProp = obj->numProp;
+            for (sp = obj->properties->slots, i = 0; i < numProp; i++, sp++) {
+                //  MOB -- should not need this test. But seems to be a race with property creation
+                if (sp->qname.name) {
+                    mprMark(sp->qname.name);
+                    mprMark(sp->qname.space);
+                    mprMark(sp->value.ref);
 #if MOB && CONSIDER
-                mprMark(sp->trait.type);
+                    mprMark(sp->trait.type);
 #endif
+                }
             }
         }
     }
