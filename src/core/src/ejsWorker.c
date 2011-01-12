@@ -803,7 +803,7 @@ static void manageWorker(EjsWorker *worker, int flags)
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (!worker->inside) {
-            /* Remove here also incase an explicit mprFree on the worker */
+            //  MOB - race with freeing ejs
             if (worker->ejs) {
                 removeWorker(worker);
             }
