@@ -1707,17 +1707,18 @@ EjsArray *ejsCreateArray(Ejs *ejs, int size)
 
 static void manageArray(EjsArray *ap, int flags)
 {
-    EjsObj      *vp;
-    int         i;
+    EjsObj      *vp, **data;
+    int         i, length;
 
     if (flags & MPR_MANAGE_MARK) {
-        //  MOB RACEX
-        for (i = ap->length - 1; i >= 0; i--) {
-            if ((vp = ap->data[i]) != 0) {
+        mprMark(ap->data);
+        length = ap->length;
+        data = ap->data;
+        for (i = length - 1; i >= 0; i--) {
+            if ((vp = data[i]) != 0) {
                 mprMark(vp);
             }
         }
-        mprMark(ap->data);
 #if MOB && CONSIDER
         mprMark(ap->pot.type);
 #endif
