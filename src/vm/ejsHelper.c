@@ -28,6 +28,7 @@ EjsAny *ejsAlloc(Ejs *ejs, EjsType *type, ssize extra)
     }
     //  MOB - OPT can do direct assign
     SET_TYPE(vp, type);
+    ejsSetMemRef(vp);
     mprAssert(type->manager);
     //  MOB - OPT inline here
     mprSetManager(vp, type->manager);

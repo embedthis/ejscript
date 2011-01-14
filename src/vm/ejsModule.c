@@ -34,6 +34,7 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
     } else if ((mp->constants = ejsCreateConstants(ejs, EJS_INDEX_INCR, EC_BUFSIZE)) == NULL) {
         return 0;
     }
+    mp->constants->mp = mp;
     mprAssert(mp->checksum == 0);
     return mp;
 }
@@ -55,9 +56,14 @@ static void manageModule(EjsModule *mp, int flags)
         mprMark(mp->scope);
         mprMark(mp->currentMethod);
         mprMark(mp->current);
+        mprMark(mp->ejs);
 
     } else if (flags & MPR_MANAGE_FREE) {
         mprCloseFile(mp->file);
+        if (mp->ejs) {
+            mprAssert(mp->ejs->name);
+            ejsRemoveModule(mp->ejs, mp);
+        }
     }
 }
 
@@ -88,26 +94,16 @@ int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, in
     nm->flags = flags;
 
     sp = ejs->service;
-    mprLock(sp->mutex);
     if (mprAddKey(sp->nativeModules, nm->name->value, nm) == 0) {
-        mprUnlock(sp->mutex);
         return EJS_ERR;
     }
-    mprUnlock(sp->mutex);
     return 0;
 }
 
 
 EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, EjsString *name) 
 {
-    EjsNativeModule     *nm;
-    EjsService          *sp;
-
-    sp = ejs->service;
-    mprLock(sp->mutex);
-    nm = mprLookupHash(sp->nativeModules, name->value);
-    mprUnlock(sp->mutex);
-    return nm;
+    return mprLookupHash(ejs->service->nativeModules, name->value);
 }
 
 
@@ -151,6 +147,9 @@ EjsModule *ejsLookupModule(Ejs *ejs, EjsString *name, int minVersion, int maxVer
 int ejsAddModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
+    //MOB
+    mprAssert(ejs->modules->length < 40);
+    mp->ejs = ejs;
     return mprAddItem(ejs->modules, mp);
 }
 
@@ -158,7 +157,19 @@ int ejsAddModule(Ejs *ejs, EjsModule *mp)
 int ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
+    mp->ejs = 0;
     return mprRemoveItem(ejs->modules, mp);
+}
+
+
+void ejsRemoveModules(Ejs *ejs)
+{
+    EjsModule   *mp;
+    int         next;
+
+    for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
+        mp->ejs = 0;
+    }
 }
 
 
@@ -181,6 +192,9 @@ static void manageConstants(EjsConstants *cp, int flags)
             }
         }
     } else if (flags & MPR_MANAGE_FREE) {
+        //MOB
+        i = 7;
+        i = 10;
     }
 }
 
@@ -210,8 +224,10 @@ EjsConstants *ejsCreateConstants(Ejs *ejs, int count, ssize size)
     }
     constants->index[0] = ejs->emptyString;
     constants->indexCount = 1;
+#if UNUSED
     //  MOB -- get another solution for hold/release
     mprHold(constants->index);
+#endif
     return constants;
 }
 
@@ -409,7 +425,6 @@ EjsLine *ejsGetDebugLine(Ejs *ejs, EjsFunction *fun, uchar *pc)
 {
     EjsCode     *code;
     EjsDebug    *debug;
-    MprChar     *str, *tok, *path, *line, *source;
     int         i, offset;
 
     code = fun->body.code;
@@ -449,11 +464,9 @@ EjsLine *ejsGetDebugLine(Ejs *ejs, EjsFunction *fun, uchar *pc)
 
 int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *linep, MprChar **sourcep)
 {
-    EjsCode     *code;
-    EjsDebug    *debug;
     EjsLine     *line;
     MprChar     *str, *tok, *path, *lineno, *source;
-    int         i, offset;
+    int         i;
 
     if ((line = ejsGetDebugLine(ejs, fun, pc)) == 0) {
         return MPR_ERR_CANT_FIND;

@@ -192,7 +192,7 @@ void ejsCreateVoidType(Ejs *ejs)
     type->helpers.getProperty      = (EjsGetPropertyHelper) getVoidProperty;
 
     ejs->undefinedValue = ejsCreateObj(ejs, type, 0);
-    ejsSetName(ejs->undefinedValue, "undefined");
+    mprSetName(ejs->undefinedValue, "undefined");
 }
 
 

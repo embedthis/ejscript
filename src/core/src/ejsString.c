@@ -2332,6 +2332,14 @@ EjsString *ejsInternWide(Ejs *ejs, MprChar *value, ssize len)
     if ((sp = ejsAlloc(ejs, ejs->stringType, (len + 1) * sizeof(MprChar))) != NULL) {
         memcpy(sp->value, value, len * sizeof(MprChar));
         sp->value[len] = 0;
+#if UNUSED
+        if (strcmp(value, "multithread") == 0) {
+            MprThread *tp = mprGetCurrentThread();
+            MprMem *mp = MPR_GET_MEM(sp);
+            printf("EJS %s %p, ALLOCATE multithread GEN %d MARK %d, active %d\n", ejs->name, ejs, (int) MPR_GET_GEN(mp), (int) MPR_GET_MARK(mp), MPR->heap.active);
+            printf("\n");
+        }
+#endif
     }
     sp->length = len;
     linkString(ejs, head, sp);
@@ -2369,6 +2377,14 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
                     ejs->intern->reuse++;
                     /* Revive incase almost stale or dead */
                     mprRevive(sp);
+#if UNUSED
+                    if (strcmp(value, "multithread") == 0) {
+                        MprThread *tp = mprGetCurrentThread();
+                        MprMem *mp = MPR_GET_MEM(sp);
+                        printf("EJS %s, @@@@ REVIVE MULTITHREAD GEN %d MARK %d, active %d\n", ejs->name, (int) MPR_GET_GEN(mp), (int) MPR_GET_MARK(mp), MPR->heap.active);
+                        printf("\n");
+                    }
+#endif
                     iunlock();
                     return sp;
                 }
@@ -2614,6 +2630,11 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
 void ejsManageString(EjsString *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+#if UNUSED
+        if (strcmp(sp->value, "multithread") == 0) {
+            LOG(2, "manage string multithread in ejs %s, sp %x", TYPE(sp)->ejs->name, sp);
+        }
+#endif
         mprMark(TYPE(sp));
 
     } else if (flags & MPR_MANAGE_FREE) {
@@ -2684,6 +2705,8 @@ void ejsInitStringType(Ejs *ejs, EjsType *type)
     type->numericIndicies = 1;
     type->manager = (MprManager) ejsManageString;
     type->qname = N("ejs", "String");
+    SET_TYPE_NAME(type->qname.name, type);
+    SET_TYPE_NAME(type->qname.space, type);
     
     /*
         Standard string values. Create here so modules do not have to export these strings

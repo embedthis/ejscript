@@ -3356,6 +3356,7 @@ static void fixupClass(EcCompiler *cp, EjsType *type)
     ejs = cp->ejs;
     SET_VISITED(type, 1);
     np = (EcNode*) type->typeData;
+    type->typeData = 0;
     baseType = type->baseType;
 
     if (baseType == 0) {
@@ -3697,7 +3698,7 @@ static void addGlobalProperty(EcCompiler *cp, EcNode *np, EjsName *qname)
     mprAssert(up);
 
     if (up->globalProperties == 0) {
-        up->globalProperties = mprCreateList(-1, 0);
+        up->globalProperties = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     }
     //  TODO OPT - should this be a hash?
     for (next = 0; (p = (EjsName*) mprGetNextItem(up->globalProperties, &next)) != 0; ) {

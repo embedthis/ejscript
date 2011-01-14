@@ -122,7 +122,10 @@ static void addWorker(Ejs *ejs, EjsWorker *worker)
     mprAssert(worker->state == EJS_WORKER_BEGIN);
     mprAssert(!worker->inside);
 
+    //  MOB - locking not needed
     lock(ejs);
+    //  MOB
+    mprAssert(ejs->workers->length < 10);
     mprAddItem(ejs->workers, worker);
     unlock(ejs);
 }

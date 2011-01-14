@@ -66,7 +66,7 @@ EjsFrame *ejsCreateCompilerFrame(Ejs *ejs, EjsFunction *fun)
     fp->function.isConstructor = fun->isConstructor;
     fp->function.isInitializer = fun->isInitializer;
     fp->function.staticMethod = fun->staticMethod;
-    ejsSetName(fp, MPR_NAME("frame"));
+    mprSetName(fp, "frame");
     return fp;
 }
 
@@ -141,9 +141,6 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
         }
     }
     ejsCopyName(frame, fun);
-#if BLD_DEBUG
-    frame->function.block.pot.mem = MPR_GET_MEM(frame);
-#endif
     return frame;
 }
 

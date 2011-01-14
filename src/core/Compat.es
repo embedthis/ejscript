@@ -75,11 +75,11 @@ module ejs {
 
 /*
     Ease backward compatibility
-*/
 
-module ejs.xml { }
-module ejs.sys { }
-module ejs.io { }
+    module ejs.xml { }
+    module ejs.sys { }
+    module ejs.io { }
+*/
 
 /*
     @copy   default

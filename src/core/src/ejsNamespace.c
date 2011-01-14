@@ -119,7 +119,7 @@ EjsNamespace *ejsCreateNamespace(Ejs *ejs, EjsString *name)
     if (np) {
         np->value = name;
     }
-    ejsSetName(np, MPR_NAME("namespace"));
+    mprSetName(np, "namespace");
     return np;
 }
 

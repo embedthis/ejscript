@@ -111,9 +111,24 @@ static int deleteArrayProperty(Ejs *ejs, EjsArray *ap, int slot)
         mprAssert(0);
         return EJS_ERR;
     }
+#if MOB
+{
+    int i, size;
+    size = mprGetBlockSize(ap->data) / sizeof(EjsObj*);
+    for (i = 0; i < size; i++) {
+        printf("0x%p ", ap->data[i]);
+        mprAssert(ap->data[i] == 0 || mprIsValid(ap->data[i]));
+    }
+    printf("\n");
+}
+    if (ejsSetProperty(ejs, ap, slot, 0) < 0) {
+        return EJS_ERR;
+    }
+#else
     if (ejsSetProperty(ejs, ap, slot, ejs->undefinedValue) < 0) {
         return EJS_ERR;
     }
+#endif
     if ((slot + 1) == ap->length) {
         ap->length--;
     }
@@ -592,7 +607,7 @@ static EjsArray *cloneArrayMethod(Ejs *ejs, EjsArray *ap, int argc, EjsObj **arg
 static EjsArray *compactArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 {
     EjsObj      **data, **src, **dest;
-    int     i;
+    int         i, oldLen;
 
     data = ap->data;
     src = dest = &data[0];
@@ -602,7 +617,11 @@ static EjsArray *compactArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         }
         *dest++ = *src;
     }
+    oldLen = ap->length;
     ap->length = (int) (dest - &data[0]);
+    for (i = ap->length; i < oldLen; i++) {
+        *dest++ = ejs->undefinedValue;
+    }
     return ap;
 }
 
@@ -1478,7 +1497,15 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
     if (len <= ap->length) {
         return 0;
     }
+#if UNUSED || 1
+    size = mprGetBlockSize(ap->data);
+    mprAssert(size == mprGetBlockSize(ap->data));
+    mprAssert(size == mprGetBlockSize(ap->data));
+    mprAssert(size == mprGetBlockSize(ap->data));
     size = (int) (mprGetBlockSize(ap->data) / sizeof(EjsObj*));
+#else
+    size = ap->length;
+#endif
 
     /*
         Allocate or grow the data structures.
@@ -1498,19 +1525,36 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
         if (ap->data == 0) {
             mprAssert(ap->length == 0);
             mprAssert(count > 0);
-            if ((ap->data = mprAlloc(sizeof(EjsObj*) * count)) == 0) {
+            // MOB mprAssert(ejs->state->fp == 0 || strstr(ejs->state->fp->line->source, "utest|505|pair") == 0);
+            if ((ap->data = mprAllocZeroed(sizeof(EjsObj*) * count)) == 0) {
                 return EJS_ERR;
+            }
+            {
+                int i, size;
+                size = mprGetBlockSize(ap->data) / sizeof(EjsObj*);
+                for (i = 0; i < size; i++) {
+                    mprAssert(ap->data[i] == 0 || mprIsValid(ap->data[i]));
+                }
             }
         } else {
             mprAssert(size > 0);
             if ((ap->data = mprRealloc(ap->data, sizeof(EjsObj*) * count)) == 0) {
                 return EJS_ERR;
             }
+            {
+                int i, size;
+                size = mprGetBlockSize(ap->data) / sizeof(EjsObj*);
+                for (i = 0; i < size; i++) {
+                    mprAssert(ap->data[i] == 0 || mprIsValid(ap->data[i]));
+                }
+            }
         }
         dp = &ap->data[ap->length];
         for (i = ap->length; i < count; i++) {
             *dp++ = ejs->undefinedValue;
         }
+    } else {
+        mprNop(ITOP(size));
     }
     ap->length = len;
     return 0;
@@ -1711,7 +1755,6 @@ static void manageArray(EjsArray *ap, int flags)
     int         i, length;
 
     if (flags & MPR_MANAGE_MARK) {
-        mprMark(ap->data);
         length = ap->length;
         data = ap->data;
         for (i = length - 1; i >= 0; i--) {
@@ -1719,6 +1762,7 @@ static void manageArray(EjsArray *ap, int flags)
                 mprMark(vp);
             }
         }
+        mprMark(data);
 #if MOB && CONSIDER
         mprMark(ap->pot.type);
 #endif

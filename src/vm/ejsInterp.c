@@ -99,6 +99,9 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 
 #define CHECK_VALUE(value, thisObj, obj, slotNum) checkGetter(ejs, value, thisObj, obj, slotNum)
 
+//  MOB - remove need for ejs->freeze
+#define CHECK_GC() if (MPR->heap.mustYield && !(ejs->freeze || ejs->state->fp->freeze)) { mprYield(0); } else 
+
 /*
     Set a slot value when we don't know if the object is an EjsObj
  */
@@ -145,8 +148,6 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
     #define BREAK break
     #define CASE(opcode) case opcode
 #endif
-
-#define CHECK_GC if (MPR->heap.mustYield && !(ejs->freeze || ejs->state->fp->freeze)) mprYield(0)
 
 /******************************** Forward Declarations ************************/
 
@@ -1559,10 +1560,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             Special circumstances need attention. Exceptions, exiting and garbage collection.
          */
         CASE (EJS_OP_ATTENTION):
-            if (!FRAME->freeze && ejs->gc) {
-                ejs->gc = 0;
-                mprYield(0);
-            }
+            CHECK_GC();
             mprAssert(FRAME->attentionPc);
             if (FRAME->attentionPc) {
                 FRAME->pc = FRAME->attentionPc;
@@ -1725,7 +1723,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         CASE (EJS_OP_GOTO):
             offset = GET_WORD();
             SET_PC(FRAME, &FRAME->pc[offset]);
-            CHECK_GC;
+            CHECK_GC();
             BREAK;
 
         /*
@@ -1735,7 +1733,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         CASE (EJS_OP_GOTO_8):
             offset = (schar) GET_BYTE();
             SET_PC(FRAME, &FRAME->pc[offset]);
-            CHECK_GC;
+            CHECK_GC();
             BREAK;
 
         /*
@@ -1804,7 +1802,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                     SET_PC(FRAME, &FRAME->pc[offset]);
                 }
             }
-            CHECK_GC;
+            CHECK_GC();
             BREAK;
 
         /*

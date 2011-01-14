@@ -13,6 +13,7 @@ assert(a.toString() == '')
 
 a = [ "one", "two", "three" ]
 assert(a.length == 3)
+
 b = a.clone(true)
 assert(b.length == 3)
 assert(b is Array)
@@ -57,6 +58,7 @@ assert(a.length == 0)
 a = [ 1,,,4,,, ]
 a[20] = 7
 delete a[20]
+assert(a.length == 20)
 assert(a.compact() == "1,4")
 assert(a.length == 2)
 

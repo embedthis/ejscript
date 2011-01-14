@@ -125,9 +125,6 @@ EjsBlock *ejsCreateBlock(Ejs *ejs, int size)
     block->pot.shortScope = 1;
     block->pot.isBlock = 1;
     mprInitList(&block->namespaces);
-#if BLD_DEBUG
-    block->pot.mem = MPR_GET_MEM(block);
-#endif
     return block;
 }
 
@@ -140,6 +137,11 @@ void ejsManageBlock(EjsBlock *block, int flags)
 
     if (block) {
         if (flags & MPR_MANAGE_MARK) {
+#if UNUSED
+if (block == block->pot.obj.type->ejs->globalBlock) {
+    printf("Manage global numprop %d in ejs %s\n", block->pot.numProp, block->pot.obj.type->ejs->name);
+}
+#endif
             ejsManagePot(block, flags);
             mprMark(block->prevException);
 
@@ -149,9 +151,16 @@ void ejsManageBlock(EjsBlock *block, int flags)
                     mprMark(item);
                 }
             }
+            /* This is the lexical block scope */
             for (b = block->scope; b; b = b->scope) {
+#if FUTURE
+                if (b->pot.shortScope) {
+                    break;
+                }
+#endif
                 mprMark(b);
             }
+            /* This is the activation (call) chain */
             for (b = block->prev; b; b = b->prev) {
                 mprMark(b);
             }

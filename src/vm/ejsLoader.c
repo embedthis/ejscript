@@ -1071,7 +1071,7 @@ static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVe
     }
     if (status) {
         for (next = firstModule; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
-            mprRemoveItem(ejs->modules, mp);
+            ejsRemoveModule(ejs, mp);
         }
     }
     mprCloseFile(file);

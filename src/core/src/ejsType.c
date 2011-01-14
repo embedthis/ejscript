@@ -174,8 +174,9 @@ static void createBootPrototype(Ejs *ejs, EjsType *type, cchar *name)
         return;
     }
     type->prototype->isPrototype = 1;
-    ejsSetName(type, name);
-    ejsSetName(type->prototype, name);
+    //  MOB - won't work for unicode-16
+    mprSetName(type, name);
+    mprSetName(type->prototype, name);
     ejsSetPropertyByName(ejs, ejs->coreTypes, type->qname, type);
 }
 
@@ -206,7 +207,7 @@ int ejsBootstrapTypes(Ejs *ejs)
     ejs->objectType->prototype = &protostub;
 
     ejs->coreTypes = ejsCreateEmptyPot(ejs);
-    ejsSetName(ejs->coreTypes, "coreTypes");
+    mprSetName(ejs->coreTypes, "coreTypes");
     createBootPrototype(ejs, ejs->typeType, "Type");
     createBootPrototype(ejs, ejs->objectType, "Object");
     createBootPrototype(ejs, ejs->stringType, "String");
@@ -252,7 +253,7 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
     type->baseType = baseType;
     type->instanceSize = instanceSize;
     setAttributes(type, attributes);
-    ejsSetName(type, MPR_NAME("type"));
+    mprSetName(type, "type");
 
     if (prototype) {
         type->prototype = prototype;
@@ -260,7 +261,7 @@ EjsType *ejsCreateType(Ejs *ejs, EjsName qname, EjsModule *up, EjsType *baseType
         if ((type->prototype = ejsCreatePot(ejs, ejs->objectType, numInstanceProp)) == 0) {
             return 0;
         }
-        ejsSetName(type->prototype, MPR_NAME("type"));
+        mprSetName(type->prototype, "prototype");
     }
     type->prototype->isPrototype = 1;
 

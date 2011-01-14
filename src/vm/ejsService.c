@@ -78,6 +78,8 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
         sp->master = ejs;
     }
     ejs->service = sp;
+    //  MOB
+    mprAssert(sp->vmlist->length < 20);
     mprAddItem(sp->vmlist, ejs);
 
 #if FUTURE
@@ -85,14 +87,19 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
 #else
     ejs->intern = ejsCreateIntern(ejs);
 #endif
+    //  MOB -- remove need for freeze
     ejs->freeze = 1;
     ejs->empty = require && mprGetListLength(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
     ejs->argv = argv;
-
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC));
-    ejs->modules = mprCreateList(-1, 0);
+
+    /*
+        Modules are not marked in the modules list. This way, modules are collected when not references.
+        Workers are marked. This way workers are preserved to run in the background until they exit.
+     */
+    ejs->modules = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     ejs->workers = mprCreateList(0, 0);
 
     lock(sp);
@@ -124,6 +131,8 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
         return 0;
     }
     mprRemoveRoot(ejs);
+    ejs->freeze = 0;
+    // printf("CREATE %s\n", ejs->name);
     return ejs;
 }
 
@@ -135,6 +144,7 @@ void ejsDestroy(Ejs *ejs)
 
     sp = ejs->service;
     if (sp) {
+        ejsRemoveModules(ejs);
         ejsRemoveWorkers(ejs);
         state = ejs->masterState;
         if (state->stackBase) {
@@ -147,18 +157,18 @@ void ejsDestroy(Ejs *ejs)
         ejs->service = 0;
         ejsDestroyIntern(ejs->intern);
     }
+    // printf("DESTROY %s\n", ejs->name);
 }
 
 
 static void manageEjs(Ejs *ejs, int flags)
 {
-    EjsState    *state;
-    EjsBlock    *block;
+    EjsState    *start, *state;
     EjsObj      *vp, **vpp, **top;
 
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(ejs->global);
         mprMark(ejs->name);
-        mprMark(ejs->modules);
         mprMark(ejs->applications);
         mprMark(ejs->coreTypes);
         mprMark(ejs->doc);
@@ -171,14 +181,15 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->search);
         mprMark(ejs->dispatcher);
         mprMark(ejs->workers);
-        mprMark(ejs->global);
+        mprMark(ejs->modules);
         mprMark(ejs->intern);
 
         /*
             Mark active call stack
          */
-        if (ejs->state) {
-            for (state = ejs->state; state; state = state->prev) {
+        start = ejs->state;
+        if (start) {
+            for (state = start; state; state = state->prev) {
                 mprMark(state);
                 mprMark(state->fp);
                 mprMark(state->bp);
@@ -188,12 +199,10 @@ static void manageEjs(Ejs *ejs, int flags)
             /*
                 Mark the evaluation stack. Stack itself is virtually allocated and immune from GC.
              */
-            top = ejs->state->stack;
-            if (top) {
-                for (vpp = ejs->state->stackBase; vpp <= top; vpp++) {
-                    if ((vp = *vpp) != NULL) {
-                        mprMark(vp);
-                    }
+            top = start->stack;
+            for (vpp = start->stackBase; vpp <= top; vpp++) {
+                if ((vp = *vpp) != NULL) {
+                    mprMark(vp);
                 }
             }
         }

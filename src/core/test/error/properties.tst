@@ -4,6 +4,7 @@
 
 try {
     throw new Error("Boom")
+
 } catch (e) {
     assert(e.message == "Boom")
     assert(e.filename == "properties.tst")

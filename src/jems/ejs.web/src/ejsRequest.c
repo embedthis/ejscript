@@ -566,9 +566,8 @@ static void *getRequestProperty(Ejs *ejs, EjsRequest *req, int slotNum)
         }
         if (req->session) {
             return createString(ejs, req->session->id);
-        } else {
-            return ejs->nullValue;
         }
+        return ejs->nullValue;
 
     case ES_ejs_web_Request_status:
         if (conn) {
@@ -1312,6 +1311,7 @@ static void manageRequest(EjsRequest *req, int flags)
     if (flags & MPR_MANAGE_MARK) {
         ejsManagePot(req, flags);
         mprMark(req->absHome);
+        mprMark(req->conn);
         mprMark(req->cookies);
         mprMark(req->dir);
         mprMark(req->emitter);

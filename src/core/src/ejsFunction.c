@@ -534,11 +534,9 @@ int ejsInitFunction(Ejs *ejs, EjsFunction *fun, EjsString *name, cuchar *byteCod
 #endif
     }
     fun->name = name;
-    ejsSetName(fun, MPR_NAME("function"));
     setFunctionAttributes(fun, attributes);
-#if BLD_DEBUG
-    fun->block.pot.mem = MPR_GET_MEM(fun);
-#endif
+    mprSetName(fun, "function");
+    //  MOB - need function for this - perhaps wrap both above and below into ejsSetPotName
     return 0;
 }
 

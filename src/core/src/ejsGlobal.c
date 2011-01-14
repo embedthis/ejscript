@@ -391,7 +391,7 @@ void ejsCreateGlobalBlock(Ejs *ejs)
     block->pot.numProp = (ejs->empty) ? 0: ES_global_NUM_CLASS_PROP;
     block->pot.shortScope = 1;
     SET_DYNAMIC(block, 1);
-    ejsSetName(block, "global");
+    mprSetName(block, "global");
 #if BLD_DEBUG
     ejs->globalBlock = block;
 #endif

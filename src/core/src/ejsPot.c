@@ -390,6 +390,12 @@ int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
         obj->numProp = slotNum + 1;
     }
     mprAssert(obj->numProp <= obj->properties->size);
+#if BLD_DEBUG
+    if (obj == ejs->global && obj->numProp > 180) {
+        mprAssert(obj != ejs->global || obj->numProp < 180);
+        mprBreakpoint();
+    }
+#endif
     return slotNum;
 }
 
@@ -1055,10 +1061,7 @@ void *ejsCreatePot(Ejs *ejs, EjsType *type, int numProp)
             ejsZeroSlots(ejs, obj->properties->slots, obj->properties->size);
         }
     }
-#if BLD_DEBUG
-    //  MOB - macro for this
-    obj->mem = MPR_GET_MEM(obj);
-#endif
+    ejsSetMemRef(obj);
     return obj;
 }
 
