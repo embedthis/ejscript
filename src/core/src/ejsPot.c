@@ -391,8 +391,8 @@ int ejsGetSlot(Ejs *ejs, EjsPot *obj, int slotNum)
     }
     mprAssert(obj->numProp <= obj->properties->size);
 #if BLD_DEBUG
-    if (obj == ejs->global && obj->numProp > 180) {
-        mprAssert(obj != ejs->global || obj->numProp < 180);
+    if (obj == ejs->global && obj->numProp > 220) {
+        mprAssert(obj != ejs->global || obj->numProp < 220);
         mprBreakpoint();
     }
 #endif
