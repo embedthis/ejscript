@@ -48,7 +48,6 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->mutex);
         mprMark(sp->vmlist);
         mprMark(sp->nativeModules);
-
     } else if (flags & MPR_MANAGE_FREE) {
         sp->mutex = NULL;
     }
@@ -156,8 +155,8 @@ void ejsDestroy(Ejs *ejs)
         mprRemoveItem(sp->vmlist, ejs);
         ejs->service = 0;
         ejsDestroyIntern(ejs->intern);
+        ejs->result = 0;
     }
-    // printf("DESTROY %s\n", ejs->name);
 }
 
 

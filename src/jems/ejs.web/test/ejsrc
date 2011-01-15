@@ -7,7 +7,7 @@
     log: {
         enable: true,
         location: "stdout",
-        level: 4,
+        level: 0,
         match: null,
         showClient: true,
     },

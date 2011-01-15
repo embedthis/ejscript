@@ -172,8 +172,8 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         return (EjsObj*) ejs->nullValue;
     }
     if (ejs->loc) {
-        /* Being called hosted - ignore endpoint value */
         mprAddRoot(sp);
+        /* Being called hosted - ignore endpoint value */
         ejs->loc->context = sp;
         return (EjsObj*) ejs->nullValue;
     }
@@ -735,10 +735,12 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->incomingStages);
 
     } else {
-        //  MOB - find better way. If ejs has been manageFreed, then the stack will be unpinned
+#if UNUSED
+        //  MOB -- can't do this. ejs and everything else could be dead.
         if (!mprIsStopping() && sp->ejs && sp->ejs->service) {
             ejsSendEvent(sp->ejs, sp->emitter, "close", NULL, sp);
         }
+#endif
         sp->sessions = 0;
         //  MOB - locking race
         if (sp->sessionTimer) {
