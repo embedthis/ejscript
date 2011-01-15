@@ -150,6 +150,7 @@ int ejsAddModule(Ejs *ejs, EjsModule *mp)
     //MOB
     mprAssert(ejs->modules->length < 40);
     mp->ejs = ejs;
+    //MOB printf("Add modules (before) len %d mustYield %d newCount %d\n", ejs->modules->length, MPR->heap.mustYield, MPR->heap.newCount);
     return mprAddItem(ejs->modules, mp);
 }
 
@@ -158,6 +159,7 @@ int ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
     mprAssert(ejs->modules);
     mp->ejs = 0;
+    //MOB printf("Remove modules (before) %d\n", ejs->modules->length);
     return mprRemoveItem(ejs->modules, mp);
 }
 

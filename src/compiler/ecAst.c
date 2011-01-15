@@ -540,7 +540,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
         fatt = EJS_TRAIT_HIDDEN | EJS_PROP_STATIC;
         ejsDefineProperty(ejs, (EjsObj*) type, 0, qname, ejs->functionType, fatt, ejs->nullValue);
         constructorNode = np->klass.constructor;
-        if (constructorNode && !constructorNode->function.isDefaultConstructor) {
+        if (constructorNode && !constructorNode->function.isDefault) {
             type->hasConstructor = 1;
         }
 #if MOB
@@ -744,7 +744,7 @@ static void astClass(EcCompiler *cp, EcNode *np)
         Only need to do this if this is a default constructor, ie. does not exist in the class body.
      */
     constructor = np->klass.constructor;
-    if (constructor && constructor->function.isDefaultConstructor) {
+    if (constructor && constructor->function.isDefault) {
         astFunction(cp, constructor);
     }
     removeScope(cp);
@@ -942,8 +942,12 @@ static EjsFunction *defineFunction(EcCompiler *cp, EcNode *np)
         block = getBlockForDefinition(cp, np, state->varBlock, np->attributes);
 
     } else {
-        block = state->optimizedLetBlock;
-        if (state->optimizedLetBlock != state->varBlock) {
+        if (np->function.isExpression) {
+            block = state->letBlock;
+        } else {
+            block = state->optimizedLetBlock;
+        }
+        if (block != state->varBlock && block != ejs->global) {
             state->letBlockNode->createBlockObject = 1;
         }
     }
@@ -1153,6 +1157,8 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
 
     if (np->function.isMethod) {
         block = getBlockForDefinition(cp, np, state->varBlock, np->attributes);
+    } else if (np->function.isExpression) {
+        block = state->letBlock;
     } else {
         block = state->optimizedLetBlock;
     }

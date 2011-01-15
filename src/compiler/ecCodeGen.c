@@ -1402,11 +1402,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
 
         constructor = state->currentFunction = (EjsFunction*) type;
         mprAssert(constructor);
-#if UNUSED
-        state->currentFunctionName = constructorNode->qname.name;
-#endif
-
-        if (constructorNode->function.isDefaultConstructor) {
+        if (constructorNode->function.isDefault) {
             /*
                 No constructor exists, so generate the default constructor. Append the default constructor 
                 instructions after any initialization code. Will only get here if there is no required instance 
@@ -1453,9 +1449,6 @@ static void genClass(EcCompiler *cp, EcNode *np)
                         }
                     }
                 }
-#if UNUSED
-                ejsSetFunctionCode(ejs, constructor, state->currentModule, byteCode, len, debug);
-#endif
                 /*
                     Adjust existing exception blocks to accomodate injected code.
                     Then define new try/catch blocks encountered.

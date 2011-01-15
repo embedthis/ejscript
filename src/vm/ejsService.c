@@ -930,10 +930,6 @@ int ejsFreeze(Ejs *ejs, int freeze)
  */
 static int allocNotifier(int flags, ssize size)
 {
-    EjsService  *sp;
-    Ejs         *ejs;
-    int         next;
-
     if (flags & MPR_MEM_DEPLETED) {
         mprPrintfError("Can't allocate memory block of size %d\n", size);
         mprPrintfError("Total memory used %d\n", (int) mprGetMem());
@@ -942,14 +938,18 @@ static int allocNotifier(int flags, ssize size)
     } else if (flags & MPR_MEM_LOW) {
         mprPrintfError("Memory request for %d bytes exceeds memory red-line\n", size);
         mprPrintfError("Total memory used %d\n", (int) mprGetMem());
-
+#if UNUSED
     } else if (flags & MPR_MEM_ATTENTION) {
+        EjsService  *sp;
+        Ejs         *ejs;
+        int         next;
         sp = MPR->ejsService;
         lock(sp);
         for (next = 0; (ejs = mprGetNextItem(sp->vmlist, &next)) != 0; ) {
             ejs->gc = 1;
         }
         unlock(sp);
+#endif
     }
     return 0;
 }

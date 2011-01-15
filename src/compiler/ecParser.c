@@ -1379,6 +1379,7 @@ static EcNode *parseFunctionExpression(EcCompiler *cp)
         return LEAVE(cp, unexpected(cp));
     }
     np = createNode(cp, N_FUNCTION, NULL);
+    np->function.isExpression = 1;
 
     if (peekToken(cp) == T_ID) {
         getToken(cp);
@@ -8109,7 +8110,7 @@ static EcNode *parseClassDefinition(EcCompiler *cp, EcNode *attributeNode)
         applyAttributes(cp, constructor, 0, ejsCreateStringFromAsc(cp->ejs, EJS_PUBLIC_NAMESPACE));
         constructor->function.isMethod = 1;
         constructor->function.isConstructor = 1;
-        constructor->function.isDefaultConstructor = 1;
+        constructor->function.isDefault = 1;
     }
     return LEAVE(cp, np);
 }
@@ -10161,7 +10162,9 @@ static void manageNode(EcNode *node, int flags)
             mprMark(node->function.body);
             mprMark(node->function.parameters);
             mprMark(node->function.constructorSettings);
+#if UNUSED
             mprMark(node->function.expressionRef);
+#endif
             mprMark(node->function.functionVar);
             break;
 
