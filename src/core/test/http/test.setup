@@ -1,2 +1,5 @@
+test.skip("SKIP HTTP MOB")
+/*
 App.config.test.http_port ||= "6700"
 httpService("start.es")
+*/

@@ -468,7 +468,6 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
 {
     EjsLine     *line;
     MprChar     *str, *tok, *path, *lineno, *source;
-    int         i;
 
     if ((line = ejsGetDebugLine(ejs, fun, pc)) == 0) {
         return MPR_ERR_CANT_FIND;
@@ -486,7 +485,7 @@ int ejsGetDebugInfo(Ejs *ejs, EjsFunction *fun, uchar *pc, char **pathp, int *li
     if (sourcep) {
         *sourcep = wclone(source);
     }
-    return i;
+    return 0;
 }
 
 

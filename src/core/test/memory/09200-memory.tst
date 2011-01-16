@@ -9,13 +9,6 @@ if (Config.OS == "MACOSX" || Config.OS == "LINUX") {
     assert(allocated < Memory.system) 
     assert(allocated < Memory.maximum) 
 
-/*
-    redline = Memory.redline
-    assert(redline > 0) 
-    assert(redline < Memory.system) 
-    assert(redline < Memory.maximum) 
-*/
-
     resident = Memory.allocated
     assert(resident > 0) 
     assert(resident < Memory.system) 
@@ -50,7 +43,7 @@ if (Config.OS == "MACOSX" || Config.OS == "LINUX") {
     Test memory redline getter / setter
  */
 assert(Memory.maximum > 0)
-assert(Memory.redline < Memory.maximum)
+assert(Memory.redline <= Memory.maximum)
 
 v = 2147483647
 Memory.maximum = v
