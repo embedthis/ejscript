@@ -10205,7 +10205,7 @@ static void serviceIO(MprWaitService *ws, int count)
             } else if (err == EBADF) {
                 /* File descriptor was closed */
                 mprRemoveNotifier(wp);
-                mprLog(0, "kqueue: invalid file descriptor %d, fd %d", wp->fd);
+                mprLog(7, "kqueue: invalid file descriptor %d, fd %d", wp->fd);
             }
             continue;
         }
