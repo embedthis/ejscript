@@ -208,7 +208,7 @@ enumerable class Test {
     }
 
     function runThread(): Void {
-        for (nth = 0; nth < iterations; nth++) {
+        for (nth = 0; nth < iterations && !finish; nth++) {
             for each (dir in testDirs) {
                 runGroupTests(dir)
             }
