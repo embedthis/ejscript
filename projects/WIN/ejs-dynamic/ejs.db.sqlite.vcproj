@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="ejs.db.sqlite"
-    ProjectGUID="ab98836d-8b0b-48f0-9a84-23279c7865e1"
+    ProjectGUID="1fa7db6a-5d2a-426c-a74d-98f6ac43ceb5"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -65,7 +65,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -136,7 +136,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -162,25 +162,17 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{56caddca-440c-4221-b686-9a68942cc250}"
+            UniqueIdentifier="{b0376c49-ffe2-4384-b420-0d19613f552e}"
             >
             <File
-                RelativePath="..\..\..\buildConfig.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\mpr.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\mprSsl.h"
+                RelativePath="..\..\..\out\include\buildConfig.h"
                 >
             </File>
         </Filter>
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{f84506b6-73d1-45e9-a8bc-635cd46fb1a8}"
+            UniqueIdentifier="{51b4aa3f-2d5f-480f-a2af-5474cb6fdc1c}"
             >
             <File
                 RelativePath="..\..\..\src\jems\ejs.db.sqlite\src\ejsSqlite.c"

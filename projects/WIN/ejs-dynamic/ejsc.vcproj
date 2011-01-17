@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="ejsc"
-    ProjectGUID="0929ce4a-a7e9-4297-9787-99404c2c95d7"
+    ProjectGUID="bc816f00-311f-40b6-bc79-03d9f20b4521"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -70,7 +70,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -145,7 +145,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -170,25 +170,17 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{11546678-5144-4b10-a9e1-bc949e14aa3d}"
+            UniqueIdentifier="{7c38bbc6-4ff1-4237-a87e-cb8e09538480}"
             >
             <File
-                RelativePath="..\..\..\buildConfig.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\mpr.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\mprSsl.h"
+                RelativePath="..\..\..\out\include\buildConfig.h"
                 >
             </File>
         </Filter>
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{66ac6375-176b-46a7-8bf1-8d8c8b5a893f}"
+            UniqueIdentifier="{a896f0b1-bd7f-4917-bfe3-7aad244367ab}"
             >
             <File
                 RelativePath="..\..\..\src\cmd\ejsc.c"

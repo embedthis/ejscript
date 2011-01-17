@@ -725,7 +725,7 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
 
     worker->gotMessage = 0;
     do {
-        mprWaitForEvent(ejs->dispatcher, remaining);
+        mprWaitForEvent(ejs->dispatcher, (int) remaining);
         remaining = mprGetRemainingTime(mark, timeout);
     } while (!worker->gotMessage && remaining > 0 && !ejs->exception);
 
