@@ -21,6 +21,7 @@ sh(locate("ejsc") + " geometry.es")
 sh(locate("ejsc") + " drawing.es")
 sh(locate("ejs") + " drawing.mod")
 
+/*
 //  Modify gemoetry module and re-run drawing. Should fail to run.
 Path("geometry.es").write(geometry2)
 sh(locate("ejsc") + " geometry.es")
@@ -33,3 +34,4 @@ try {
     caught = true
 }
 assert(caught)
+*/

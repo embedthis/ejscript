@@ -26,6 +26,7 @@ static EjsObj *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mprHold(cmdline);
     status = mprRunCmd(cmd, cmdline, &output, &err, 0);
     if (status) {
+        if (strstr(cmdline, "ejs drawing.mod") == 0) { mprBreakpoint(); }
         ejsThrowError(ejs, "Command failed: %s\n\nExit status: %d\n\nError Output: \n%s\nPrevious Output: \n%s\n", 
             cmdline, status, err, output);
         mprDestroyCmd(cmd);

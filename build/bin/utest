@@ -78,8 +78,13 @@ enumerable class Test {
             throw "Can't find configure"
         }
         _top = path.dirname.absolute
-        _bin = _top.join("out/bin").absolute
-        _lib = _top.join("out/lib").absolute
+//      _top.join("out/bin").absolute
+//      _lib = _top.join("out/lib").absolute
+        _bin = App.exeDir
+        _lib = App.exeDir.join("../lib")
+        if (!_lib.exists) {
+            _lib = _bin
+        }
         parseBuildConfig(_top.join("out/include/buildConfig.h"));
     }
 
