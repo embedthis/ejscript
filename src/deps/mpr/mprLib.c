@@ -1057,12 +1057,6 @@ static void triggerGC(int flags)
 }
 
 
-void mprWakeGC()
-{
-    triggerGC(1);
-}
-
-
 void mprRequestGC(int flags)
 {
     int     i, count;
@@ -4817,8 +4811,10 @@ int mprReapCmd(MprCmd *cmd, int timeout)
         }
         if (status != STILL_ACTIVE) {
             cmd->status = status;
-            CloseHandle(cmd->process);
-            CloseHandle(cmd->thread);
+            rc = CloseHandle(cmd->process);
+            mprAssert(rc != 0);
+            rc = CloseHandle(cmd->thread);
+            mprAssert(rc != 0);
             cmd->process = 0;
             cmd->pid = 0;
             break;
@@ -5192,6 +5188,7 @@ static int startProcess(MprCmd *cmd)
         }
         return MPR_ERR_CANT_CREATE;
     }
+    cmd->thread = procInfo.hThread;
     cmd->process = procInfo.hProcess;
     cmd->pid = procInfo.dwProcessId;
     return 0;
