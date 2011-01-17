@@ -1,6 +1,5 @@
-
 /*
- *	Test variable scope: public, private, internal, protected
+  	Test variable scope: public, private, internal, protected
  */
 use strict
 

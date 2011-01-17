@@ -29,7 +29,7 @@ static int indexof(MprChar *str, ssize len, EjsString *pattern, int patternLengt
 static void linkString(Ejs *ejs, EjsString *head, EjsString *sp);
 static void manageIntern(EjsIntern *intern, int flags);
 static int rebuildIntern(EjsIntern *intern);
-static void unlinkString(Ejs *ejs, EjsString *sp);
+static void unlinkString(EjsString *sp);
 
 /************************************* Code ***********************************/
 /*
@@ -2484,9 +2484,6 @@ static int getInternHashSize(int size)
 }
 
 
-/*
-    Must be called locked except at startup
- */
 static int rebuildIntern(EjsIntern *intern)
 {
     EjsString   *oldBuckets, *sp, *next, *head;
@@ -2548,7 +2545,7 @@ static void linkString(Ejs *ejs, EjsString *head, EjsString *sp)
     This routine is idempotent. ejsDestroyIntern takes advantage of this.
     Must be called locked.
  */
-static void unlinkString(Ejs *ejs, EjsString *sp)
+static void unlinkString(EjsString *sp)
 {
     /*
         Some strings are not interned (ejsCreateBareString). These have sp->next == NULL.
@@ -2630,16 +2627,11 @@ EjsString *ejsCreateNonInternedString(Ejs *ejs, MprChar *value, ssize len)
 void ejsManageString(EjsString *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-#if UNUSED
-        if (strcmp(sp->value, "multithread") == 0) {
-            LOG(2, "manage string multithread in ejs %s, sp %x", TYPE(sp)->ejs->name, sp);
-        }
-#endif
         mprMark(TYPE(sp));
 
     } else if (flags & MPR_MANAGE_FREE) {
         ilock();
-        unlinkString(TYPE(sp)->ejs, sp);
+        unlinkString(sp);
         iunlock();
     }
 }
@@ -2663,15 +2655,15 @@ void ejsDestroyIntern(EjsIntern *intern)
     /*
         Unlink strings now as when they are freed later, the intern structure may not exist in memory.
      */
+    ilock();
     for (i = intern->size - 1; i >= 0; i--) {
         head = &intern->buckets[i];
         for (sp = head->next; sp != head; sp = next) {
             next = sp->next;
-            ilock();
-            unlinkString(intern->ejs, sp);
-            iunlock();
+            unlinkString(sp);
         }
     }
+    iunlock();
 }
 
 

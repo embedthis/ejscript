@@ -8,7 +8,7 @@ use strict
 
 	class Shape {
 
-		public static var publicVar: Number = 1
+		public static var classVar: Number = 1
 
 		public function Shape() {
 		}
@@ -23,7 +23,7 @@ var b : "Embedthis.com"::Shape
 
 x = "Embedthis.com"::Shape.hello()
 assert(x == 7)
-assert("Embedthis.com"::Shape.publicVar == 1)
+assert("Embedthis.com"::Shape.classVar == 1)
 
 
 use namespace "Embedthis.com"

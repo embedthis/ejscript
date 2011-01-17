@@ -2578,7 +2578,7 @@ bool mprServicesAreIdle()
 
     idle = mprGetListLength(MPR->workerService->busyThreads) == 0 && 
            mprGetListLength(MPR->cmdService->cmds) == 0 && 
-           mprDispatchersAreIdle();
+           mprDispatchersAreIdle() && !MPR->eventing;
     if (!idle) {
         mprLog(1, "Testing idle: cmds %d, threads %d, dispatchers %d, marking %d, sweeping %d",
             mprGetListLength(MPR->workerService->busyThreads),
@@ -7156,6 +7156,7 @@ int mprServiceEvents(int timeout, int flags)
 #if WIN
     mprInitWindow();
 #endif
+    MPR->eventing = 1;
     es = MPR->eventService;
     beginEventCount = eventCount = es->eventCount;
 
@@ -7189,6 +7190,7 @@ int mprServiceEvents(int timeout, int flags)
         es->now = mprGetTime();
     } while (es->now < expires && !justOne);
 
+    MPR->eventing = 0;
     return abs(es->eventCount - beginEventCount);
 }
 
