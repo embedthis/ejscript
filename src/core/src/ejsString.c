@@ -2363,6 +2363,7 @@ EjsString *ejsInternAsc(Ejs *ejs, cchar *value, ssize len)
     step = 0;
     ilock();
     ejs->intern->accesses++;
+    mprAssert(ejs->intern->size > 0);
     index = shash(value, len) % ejs->intern->size;
     if ((head = &ejs->intern->buckets[index]) != NULL) {
         for (sp = head->next; sp != head; sp = sp->next, step++) {
