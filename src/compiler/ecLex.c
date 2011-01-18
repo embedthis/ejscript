@@ -1118,7 +1118,7 @@ int ecOpenFileStream(EcCompiler *cp, cchar *path)
         return MPR_ERR_CANT_READ;
     }
     contents[info.size] = '\0';
-    ecSetStreamBuf((EcStream*) fs, contents, info.size);
+    ecSetStreamBuf((EcStream*) fs, contents, (ssize) info.size);
     return 0;
 }
 

@@ -141,6 +141,7 @@ void ejsDestroy(Ejs *ejs)
     EjsService  *sp;
     EjsState    *state;
 
+    ejs->destroying = 1;
     sp = ejs->service;
     if (sp) {
         printf("DESTRROY INTERP %s count %d\n", ejs->name, sp->vmlist->length);

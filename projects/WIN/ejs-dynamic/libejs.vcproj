@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libejs"
-    ProjectGUID="edc6767d-5dbc-4efe-9783-d45daf25dce0"
+    ProjectGUID="73b93455-0c68-451e-8045-ae1d4dadea6d"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -65,7 +65,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -77,7 +77,7 @@
             <Tool
                 Name="VCLinkerTool"
                 AdditionalLibraryDirectories="$(OutDir)"
-                AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib ws2_32.lib"
+                AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib libpcre.def ws2_32.lib"
                 ModuleDefinitionFile="libejs.def"
                 Targetmachine="1"
                 SubSystem="1"
@@ -136,7 +136,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -147,7 +147,7 @@
             <Tool
                 Name="VCLinkerTool"
                 AdditionalLibraryDirectories="$(OutDir)"
-                AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib ws2_32.lib"
+                AdditionalDependencies="libmpr.lib libhttp.lib libsqlite3.lib libpcre.def ws2_32.lib"
                 ModuleDefinitionFile="libejs.def"
                 Targetmachine="1"
                 SubSystem="1"
@@ -162,82 +162,14 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{76989437-6447-4b89-8072-67496118599b}"
+            UniqueIdentifier="{df7a151b-f4a1-47c4-b9b8-1c20f239623e}"
             >
             <File
-                RelativePath="..\..\..\buildConfig.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\mpr.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\mprSsl.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.cache.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.cjs.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.db.couch.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.db.mapper.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.db.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.db.sqlite.slots.h"
+                RelativePath="..\..\..\out\include\buildConfig.h"
                 >
             </File>
             <File
                 RelativePath="..\..\..\src\include\ejs.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.io.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.sys.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.tar.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.template.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.unix.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.web.jsgi.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.web.slots.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejs.xml.slots.h"
                 >
             </File>
             <File
@@ -250,14 +182,6 @@
             </File>
             <File
                 RelativePath="..\..\..\src\include\ejsByteGoto.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejsCore.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\ejsModule.h"
                 >
             </File>
             <File
@@ -288,7 +212,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{dc7b6b82-2f80-47a2-ab12-9aa377810784}"
+            UniqueIdentifier="{90f288c0-2d5a-4749-becc-e5f62ec81414}"
             >
             <File
                 RelativePath="..\..\..\src\core\src\ejsApp.c"

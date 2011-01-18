@@ -260,7 +260,7 @@ static EjsObj *app_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mark = mprGetTime();
     remaining = timeout;
     do {
-        mprWaitForEvent(ejs->dispatcher, remaining); 
+        mprWaitForEvent(ejs->dispatcher, (int) remaining); 
         remaining = mprGetRemainingTime(mark, timeout);
     } while (!oneEvent && !ejs->exiting && remaining > 0 && !mprIsStopping());
     return 0;
@@ -283,7 +283,7 @@ static EjsObj *app_sleep(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mark = mprGetTime();
     remaining = timeout;
     do {
-        mprWaitForEvent(ejs->dispatcher, remaining); 
+        mprWaitForEvent(ejs->dispatcher, (int) remaining); 
         remaining = mprGetRemainingTime(mark, timeout);
     } while (!ejs->exiting && remaining > 0 && !mprIsStopping());
     return 0;

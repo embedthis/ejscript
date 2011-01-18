@@ -168,12 +168,10 @@ void ejsRemoveWorkers(Ejs *ejs)
     EjsWorker   *worker;
     int         next;
 
-    lock(ejs);
     for (next = 0; (worker = mprGetNextItem(ejs->workers, &next)) != NULL; ) {
         worker->ejs = 0;
     }
     ejs->workers = 0;
-    unlock(ejs);
 }
 
 
@@ -725,7 +723,7 @@ static EjsObj *workerWaitForMessage(Ejs *ejs, EjsWorker *worker, int argc, EjsOb
 
     worker->gotMessage = 0;
     do {
-        mprWaitForEvent(ejs->dispatcher, remaining);
+        mprWaitForEvent(ejs->dispatcher, (int) remaining);
         remaining = mprGetRemainingTime(mark, timeout);
     } while (!worker->gotMessage && remaining > 0 && !ejs->exception);
 
@@ -806,10 +804,7 @@ static void manageWorker(EjsWorker *worker, int flags)
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (!worker->inside) {
-            //  MOB - race with freeing ejs
-            if (worker->ejs) {
-                removeWorker(worker);
-            }
+            removeWorker(worker);
         }
         if (worker->pair) {
             if (worker->pair->pair) {

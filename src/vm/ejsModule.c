@@ -42,6 +42,8 @@ EjsModule *ejsCreateModule(Ejs *ejs, EjsString *name, int version, EjsConstants 
 
 static void manageModule(EjsModule *mp, int flags)
 {
+    Ejs     *ejs;
+
     if (flags & MPR_MANAGE_MARK) {
         mprMark(mp->name);
         mprMark(mp->vname);
@@ -60,9 +62,10 @@ static void manageModule(EjsModule *mp, int flags)
 
     } else if (flags & MPR_MANAGE_FREE) {
         mprCloseFile(mp->file);
-        if (mp->ejs) {
-            mprAssert(mp->ejs->name);
-            ejsRemoveModule(mp->ejs, mp);
+        ejs = mp->ejs;
+        if (ejs && ejs->modules) {
+            mprAssert(ejs->name);
+            ejsRemoveModule(ejs, mp);
         }
     }
 }
@@ -155,12 +158,12 @@ int ejsAddModule(Ejs *ejs, EjsModule *mp)
 }
 
 
-int ejsRemoveModule(Ejs *ejs, EjsModule *mp)
+void ejsRemoveModule(Ejs *ejs, EjsModule *mp)
 {
-    mprAssert(ejs->modules);
     mp->ejs = 0;
-    //MOB printf("Remove modules (before) %d\n", ejs->modules->length);
-    return mprRemoveItem(ejs->modules, mp);
+    if (ejs->modules) {
+        mprRemoveItem(ejs->modules, mp);
+    }
 }
 
 
@@ -172,6 +175,7 @@ void ejsRemoveModules(Ejs *ejs)
     for (next = 0; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
         mp->ejs = 0;
     }
+    ejs->modules = 0;
 }
 
 

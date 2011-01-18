@@ -1,7 +1,6 @@
 LIBRARY libejs.dll
 EXPORTS
 __dummyEjsDebug
-__mask@@NegDouble@
 dummy_Reflection
 ecAddCStringConstant
 ecAddConstants
@@ -24,6 +23,7 @@ ecCreateModuleHeader
 ecCreateModuleSection
 ecCreateNode
 ecCreateStream
+ecDestroyCompiler
 ecEncodeBlock
 ecEncodeByte
 ecEncodeByteAtPos
@@ -189,6 +189,7 @@ ejsCreateFunction
 ejsCreateFunctionType
 ejsCreateGlobalBlock
 ejsCreateInstance
+ejsCreateIntern
 ejsCreateIterator
 ejsCreateIteratorType
 ejsCreateModule
@@ -200,6 +201,7 @@ ejsCreateNull
 ejsCreateNullType
 ejsCreateNumber
 ejsCreateNumberType
+ejsCreateObj
 ejsCreateObjHelpers
 ejsCreatePath
 ejsCreatePathFromAsc
@@ -209,7 +211,6 @@ ejsCreateRegExp
 ejsCreateRegExpType
 ejsCreateReservedNamespace
 ejsCreateSearchPath
-ejsCreateService
 ejsCreateSimpleFunction
 ejsCreateSocket
 ejsCreateString
@@ -223,7 +224,6 @@ ejsCreateUndefined
 ejsCreateUri
 ejsCreateUriFromMulti
 ejsCreateUriFromParts
-ejsCreateVm
 ejsCreateVoidType
 ejsCreateWorker
 ejsCreateXML
@@ -242,6 +242,8 @@ ejsDefineTypeNamespaces
 ejsDeleteProperty
 ejsDeletePropertyByName
 ejsDeserialize
+ejsDestroy
+ejsDestroyIntern
 ejsDisableFunction
 ejsEmptyName
 ejsEmptyWideName
@@ -262,6 +264,7 @@ ejsGetBoolean
 ejsGetByteArrayAvailable
 ejsGetByteArrayRoom
 ejsGetDebugInfo
+ejsGetDebugLine
 ejsGetDouble
 ejsGetErrorMsg
 ejsGetException
@@ -284,7 +287,6 @@ ejsGetPropertyByName
 ejsGetPropertyName
 ejsGetPropertyTraits
 ejsGetPrototype
-ejsGetService
 ejsGetSlot
 ejsGetSpecial
 ejsGetType
@@ -335,7 +337,6 @@ ejsMakeHash
 ejsMakeRoomInByteArray
 ejsManageBlock
 ejsManageFunction
-ejsManageIntern
 ejsManagePot
 ejsManageString
 ejsManageXML
@@ -343,6 +344,7 @@ ejsMarkName
 ejsModuleReadBlock
 ejsModuleReadByte
 ejsModuleReadConst
+ejsModuleReadInt
 ejsModuleReadInt32
 ejsModuleReadMulti
 ejsModuleReadMultiAsWide
@@ -365,8 +367,10 @@ ejsRemoveItem
 ejsRemoveItemAtPos
 ejsRemoveLastItem
 ejsRemoveModule
+ejsRemoveModules
 ejsRemoveObserver
 ejsRemovePotProperty
+ejsRemoveWorkers
 ejsReportError
 ejsResetBlockNamespaces
 ejsResetByteArray
@@ -380,8 +384,6 @@ ejsSearchForModule
 ejsSendEvent
 ejsSendEventv
 ejsSerialize
-ejsServiceEvents
-ejsSetBlockLocation
 ejsSetByteArrayPositions
 ejsSetFunctionCode
 ejsSetFunctionName

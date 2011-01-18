@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="ejsc"
-    ProjectGUID="0929ce4a-a7e9-4297-9787-99404c2c95d7"
+    ProjectGUID="cd5e3529-d03e-4a16-a416-afe8dad31609"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -29,9 +29,11 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Build Ejscript Modules"
-				CommandLine="if not exist $(ProjectDir)\..\..\..\bin\ejs.mod echo Building ejs.mod &amp; cd $(ProjectDir)/../../../src/core &amp; $(TargetDir)\ejsc --debug --optimize 9 --bind --require &amp;&amp; --out ../../bin/ejs.mod core/App.es core/Array.es core/BinaryStream.es core/Block.es core/Boolean.es core/ByteArray.es core/Cmd.es core/CmdArgs.es core/Compat.es core/Config.es core/Date.es core/Debug.es core/Emitter.es core/Error.es core/File.es core/FileSystem.es core/Frame.es core/Function.es core/GC.es core/Global.es core/Http.es core/Iterator.es core/JSON.es core/Loader.es core/Locale.es core/Logger.es core/Math.es core/Memory.es core/Name.es core/Namespace.es core/Null.es core/Number.es core/Object.es core/Path.es core/Promise.es core/Reflect.es core/RegExp.es core/Socket.es core/Stream.es core/String.es core/System.es core/TextStream.es core/Timer.es core/Type.es core/Uri.es core/Void.es core/Worker.es core/XML.es core/XMLHttp.es core/XMLList.es &#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\src\include\ejs.slots.h echo Building ejs.slots.h &amp; cd $(ProjectDir)/../../src/core $(TargetDir)\ejsmod --showBuiltin --showDebug --empty --listing --cslots $(ProjectDir)/../../../bin/ejs.mod &amp; copy *.slots.h ../include&#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\bin\ejs.mod echo Building ejs.mod &amp; cd $(ProjectDir)/../../../src/jems &amp; $(TargetDir)\ejsc --debug --optimize 9 ejs.cache/Cache.es ejs.cjs/CommonJS.es ejs.db/Database.es ejs.db/DatabaseConnector.es ejs.db.couch/Couch.es ejs.db.mapper/Record.es ejs.db.sqlite/Sqlite.es ejs.tar/Tar.es ejs.unix/Unix.es ejs.web/Cascade.es ejs.web/CommonLog.es ejs.web/ContentType.es ejs.web/Controller.es ejs.web/Dir.es ejs.web/Google.es ejs.web/Head.es ejs.web/Html.es ejs.web/HttpServer.es ejs.web/MethodOverride.es ejs.web/Middleware.es ejs.web/Mvc.es ejs.web/Request.es ejs.web/Router.es ejs.web/Session.es ejs.web/ShowExceptions.es ejs.web/Static.es ejs.web/Template.es ejs.web/UploadFile.es ejs.web/UrlMap.es ejs.web/Utils.es ejs.web/View.es ejs.web/Web.es ejs.web.jsgi/Cascade.es ejs.web.jsgi/Head.es ejs.web.jsgi/Static.es ejs.template/TemplateParser.es &#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\src\include\ejs.web.slots.h echo Building jem slots &amp; cd $(ProjectDir)/../../src/jems $(TargetDir)\ejsmod --showDebug --listing --cslots  ../../bin/ejs.cache.mod  ../../bin/ejs.cjs.mod  ../../bin/ejs.db.mod  ../../bin/ejs.db.couch.mod  ../../bin/ejs.db.mapper.mod  ../../bin/ejs.db.sqlite.mod  ../../bin/ejs.tar.mod  ../../bin/ejs.unix.mod  ../../bin/ejs.web.mod  ../../bin/ejs.web.jsgi.mod  ../../bin/ejs.template.mod &amp; copy *.slots.h ../include&#x0D;&#x0A;"
-				Outputs="$(ProjectDir)/../../../bin/ejs.mod"
+				CommandLine="if not exist $(TargetDir)\ejs.mod echo Building ejs.mod &amp; cd $(ProjectDir)/../../../src &amp; $(TargetDir)\ejsc --debug --optimize 9 --bind --require &amp;&amp; --out $(TargetDir)/ejs.mod core/App.es core/Array.es core/BinaryStream.es core/Block.es core/Boolean.es core/ByteArray.es core/Cmd.es core/CmdArgs.es core/Compat.es core/Config.es core/Date.es core/Debug.es core/Emitter.es core/Error.es core/File.es core/FileSystem.es core/Frame.es core/Function.es core/GC.es core/Global.es core/Http.es core/Iterator.es core/JSON.es core/Loader.es core/Locale.es core/Logger.es core/Math.es core/Memory.es core/Name.es core/Namespace.es core/Null.es core/Number.es core/Object.es core/Path.es core/Promise.es core/Reflect.es core/RegExp.es core/Socket.es core/Stream.es core/String.es core/System.es core/TextStream.es core/Timer.es core/Type.es core/Uri.es core/Void.es core/Worker.es core/XML.es core/XMLHttp.es core/XMLList.es&#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\out\include\ejs.slots.h echo Building ejs.slots.h &amp; $(TargetDir)\ejsmod --showDebug --require &amp;&amp; --listing --cslots $(TargetDir)\ejs.mod &amp; copy *.slots.h $(ProjectDir)\..\..\..\out\include&#x0D;&#x0A; if not exist $(TargetDir)\ejs.web.mod echo Building jems &amp; cd $(ProjectDir)\..\..\..\src\jems &amp; $(TargetDir)\ejsc --debug --optimize 9 ejs.cjs/CommonJS.es ejs.db/Database.es ejs.db/DatabaseConnector.es ejs.db.couch/Couch.es ejs.db.mapper/Record.es ejs.db.sqlite/Sqlite.es ejs.tar/Tar.es ejs.unix/Unix.es ejs.web/Cascade.es ejs.web/CommonLog.es ejs.web/ContentType.es ejs.web/Controller.es ejs.web/Dir.es ejs.web/Google.es ejs.web/Head.es ejs.web/Html.es ejs.web/HttpServer.es ejs.web/MethodOverride.es ejs.web/Middleware.es ejs.web/Mvc.es ejs.web/Request.es ejs.web/Router.es ejs.web/Session.es ejs.web/ShowExceptions.es ejs.web/Static.es ejs.web/Template.es ejs.web/UploadFile.es ejs.web/UrlMap.es ejs.web/Utils.es ejs.web/View.es ejs.web/Web.es ejs.web.jsgi/Cascade.es ejs.web.jsgi/Head.es ejs.web.jsgi/Static.es ejs.template/TemplateParser.es &amp; copy *.mod $(TargetDir)&#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\out\include\ejs.web.slots.h echo Building jem slots &amp; cd $(TargetDir) &amp; $(TargetDir)\ejsmod --showDebug --listing --cslots ejs.db.mod ejs.db.couch.mod ejs.db.mapper.mod ejs.db.sqlite.mod  ejs.tar.mod  ejs.unix.mod ejs.web.mod ejs.template.mod &amp; copy *.slots.h $(ProjectDir)\..\..\..\out\include&#x0D;&#x0A;"
+				Outputs="$(ProjectDir)/../../../out/bin/ejs.mod"
 			/>
+
+
             <Tool
                 Name="VCManagedResourceCompilerTool"
             />
@@ -70,7 +72,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="1"
                 FavorSizeOrSpeed="1"
@@ -104,9 +106,11 @@
 			<Tool
 				Name="VCCustomBuildTool"
 				Description="Build Ejscript Modules"
-				CommandLine="if not exist $(ProjectDir)\..\..\..\bin\ejs.mod echo Building ejs.mod &amp; cd $(ProjectDir)/../../../src/core &amp; $(TargetDir)\ejsc --debug --optimize 9 --bind --require &amp;&amp; --out ../../bin/ejs.mod core/App.es core/Array.es core/BinaryStream.es core/Block.es core/Boolean.es core/ByteArray.es core/Cmd.es core/CmdArgs.es core/Compat.es core/Config.es core/Date.es core/Debug.es core/Emitter.es core/Error.es core/File.es core/FileSystem.es core/Frame.es core/Function.es core/GC.es core/Global.es core/Http.es core/Iterator.es core/JSON.es core/Loader.es core/Locale.es core/Logger.es core/Math.es core/Memory.es core/Name.es core/Namespace.es core/Null.es core/Number.es core/Object.es core/Path.es core/Promise.es core/Reflect.es core/RegExp.es core/Socket.es core/Stream.es core/String.es core/System.es core/TextStream.es core/Timer.es core/Type.es core/Uri.es core/Void.es core/Worker.es core/XML.es core/XMLHttp.es core/XMLList.es &#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\src\include\ejs.slots.h echo Building ejs.slots.h &amp; cd $(ProjectDir)/../../src/core $(TargetDir)\ejsmod --showBuiltin --showDebug --empty --listing --cslots $(ProjectDir)/../../../bin/ejs.mod &amp; copy *.slots.h ../include&#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\bin\ejs.mod echo Building ejs.mod &amp; cd $(ProjectDir)/../../../src/jems &amp; $(TargetDir)\ejsc --debug --optimize 9 ejs.cache/Cache.es ejs.cjs/CommonJS.es ejs.db/Database.es ejs.db/DatabaseConnector.es ejs.db.couch/Couch.es ejs.db.mapper/Record.es ejs.db.sqlite/Sqlite.es ejs.tar/Tar.es ejs.unix/Unix.es ejs.web/Cascade.es ejs.web/CommonLog.es ejs.web/ContentType.es ejs.web/Controller.es ejs.web/Dir.es ejs.web/Google.es ejs.web/Head.es ejs.web/Html.es ejs.web/HttpServer.es ejs.web/MethodOverride.es ejs.web/Middleware.es ejs.web/Mvc.es ejs.web/Request.es ejs.web/Router.es ejs.web/Session.es ejs.web/ShowExceptions.es ejs.web/Static.es ejs.web/Template.es ejs.web/UploadFile.es ejs.web/UrlMap.es ejs.web/Utils.es ejs.web/View.es ejs.web/Web.es ejs.web.jsgi/Cascade.es ejs.web.jsgi/Head.es ejs.web.jsgi/Static.es ejs.template/TemplateParser.es &#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\src\include\ejs.web.slots.h echo Building jem slots &amp; cd $(ProjectDir)/../../src/jems $(TargetDir)\ejsmod --showDebug --listing --cslots  ../../bin/ejs.cache.mod  ../../bin/ejs.cjs.mod  ../../bin/ejs.db.mod  ../../bin/ejs.db.couch.mod  ../../bin/ejs.db.mapper.mod  ../../bin/ejs.db.sqlite.mod  ../../bin/ejs.tar.mod  ../../bin/ejs.unix.mod  ../../bin/ejs.web.mod  ../../bin/ejs.web.jsgi.mod  ../../bin/ejs.template.mod &amp; copy *.slots.h ../include&#x0D;&#x0A;"
-				Outputs="$(ProjectDir)/../../../bin/ejs.mod"
+				CommandLine="if not exist $(TargetDir)\ejs.mod echo Building ejs.mod &amp; cd $(ProjectDir)/../../../src &amp; $(TargetDir)\ejsc --debug --optimize 9 --bind --require &amp;&amp; --out $(TargetDir)/ejs.mod core/App.es core/Array.es core/BinaryStream.es core/Block.es core/Boolean.es core/ByteArray.es core/Cmd.es core/CmdArgs.es core/Compat.es core/Config.es core/Date.es core/Debug.es core/Emitter.es core/Error.es core/File.es core/FileSystem.es core/Frame.es core/Function.es core/GC.es core/Global.es core/Http.es core/Iterator.es core/JSON.es core/Loader.es core/Locale.es core/Logger.es core/Math.es core/Memory.es core/Name.es core/Namespace.es core/Null.es core/Number.es core/Object.es core/Path.es core/Promise.es core/Reflect.es core/RegExp.es core/Socket.es core/Stream.es core/String.es core/System.es core/TextStream.es core/Timer.es core/Type.es core/Uri.es core/Void.es core/Worker.es core/XML.es core/XMLHttp.es core/XMLList.es&#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\out\include\ejs.slots.h echo Building ejs.slots.h &amp; $(TargetDir)\ejsmod --showDebug --require &amp;&amp; --listing --cslots $(TargetDir)\ejs.mod &amp; copy *.slots.h $(ProjectDir)\..\..\..\out\include&#x0D;&#x0A; if not exist $(TargetDir)\ejs.web.mod echo Building jems &amp; cd $(ProjectDir)\..\..\..\src\jems &amp; $(TargetDir)\ejsc --debug --optimize 9 ejs.cjs/CommonJS.es ejs.db/Database.es ejs.db/DatabaseConnector.es ejs.db.couch/Couch.es ejs.db.mapper/Record.es ejs.db.sqlite/Sqlite.es ejs.tar/Tar.es ejs.unix/Unix.es ejs.web/Cascade.es ejs.web/CommonLog.es ejs.web/ContentType.es ejs.web/Controller.es ejs.web/Dir.es ejs.web/Google.es ejs.web/Head.es ejs.web/Html.es ejs.web/HttpServer.es ejs.web/MethodOverride.es ejs.web/Middleware.es ejs.web/Mvc.es ejs.web/Request.es ejs.web/Router.es ejs.web/Session.es ejs.web/ShowExceptions.es ejs.web/Static.es ejs.web/Template.es ejs.web/UploadFile.es ejs.web/UrlMap.es ejs.web/Utils.es ejs.web/View.es ejs.web/Web.es ejs.web.jsgi/Cascade.es ejs.web.jsgi/Head.es ejs.web.jsgi/Static.es ejs.template/TemplateParser.es &amp; copy *.mod $(TargetDir)&#x0D;&#x0A; if not exist $(ProjectDir)\..\..\..\out\include\ejs.web.slots.h echo Building jem slots &amp; cd $(TargetDir) &amp; $(TargetDir)\ejsmod --showDebug --listing --cslots ejs.db.mod ejs.db.couch.mod ejs.db.mapper.mod ejs.db.sqlite.mod  ejs.tar.mod  ejs.unix.mod ejs.web.mod ejs.template.mod &amp; copy *.slots.h $(ProjectDir)\..\..\..\out\include&#x0D;&#x0A;"
+				Outputs="$(ProjectDir)/../../../out/bin/ejs.mod"
 			/>
+
+
             <Tool
                 Name="VCManagedResourceCompilerTool"
             />
@@ -145,7 +149,7 @@
                 CompileAs="0"
                 StringPooling="true"
                 MinimalRebuild="true"
-                AdditionalIncludeDirectories="../../../src/include/master;../../../out/include;../../../src/include"
+                AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
                 PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
                 Optimization="0"
                 FavorSizeOrSpeed="1"
@@ -170,25 +174,17 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{11546678-5144-4b10-a9e1-bc949e14aa3d}"
+            UniqueIdentifier="{30c44a4e-e5e9-42c0-a0d7-81ea6ff9d730}"
             >
             <File
-                RelativePath="..\..\..\buildConfig.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\mpr.h"
-                >
-            </File>
-            <File
-                RelativePath="..\..\..\src\include\mprSsl.h"
+                RelativePath="..\..\..\out\include\buildConfig.h"
                 >
             </File>
         </Filter>
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{66ac6375-176b-46a7-8bf1-8d8c8b5a893f}"
+            UniqueIdentifier="{d4204734-a3f1-4652-bc92-ec8db413c41d}"
             >
             <File
                 RelativePath="..\..\..\src\cmd\ejsc.c"

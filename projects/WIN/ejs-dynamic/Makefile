@@ -11,24 +11,22 @@ SRC			= ../../../src
 CMD			= ../../../src/cmd
 DEPS		= ../../../src/deps
 JEMS		= ../../../src/jems
-MPR_HDR 	= $(BLD_TOP)/buildConfig.h $(shell find $(SRC)/include -name 'mpr*.h')
+MPR_HDR 	= $(BLD_INC_DIR)/buildConfig.h $(shell find $(SRC)/include -name 'mpr*.h')
 LIBS		= ws2_32.lib
 PROJECTS	= libmpr.vcproj libsqlite3.vcproj libmprssl.vcproj libpcre.vcproj libhttp.vcproj libejs.vcproj \
 			  ejsmod.vcproj ejsc.vcproj ejs.vcproj ejssql.vcproj ejs.web.vcproj ejs.db.sqlite.vcproj ejs.web.vcproj
 
-MAKE_IFLAGS	= -I$(BLD_TOP)/src/include/master $(BLD_REGEXP_IFLAGS) $(BLD_MPR_IFLAGS)
-ifeq ($(BLD_FEATURE_OPENSSL),1)
-	SSL_IFLAGS	+= $(BLD_OPENSSL_IFLAGS)
-endif
-ifeq ($(BLD_FEATURE_MATRIXSSL),1)
-	SSL_IFLAGS	+= $(BLD_MATRIXSSL_IFLAGS)
-endif
+MAKE_IFLAGS	+= $(BLD_MPR_IFLAGS) -I$(BLD_TOP)/src/include/master $(BLD_PCRE_IFLAGS) $(BLD_HTTP_IFLAGS)
+SSL_IFLAGS	+= $(BLD_OPENSSL_IFLAGS)
+SSL_IFLAGS	+= $(BLD_MATRIXSSL_IFLAGS)
 
 compileExtra: prep $(PROJECTS)
 
-prep:
-	if ls ../../../bin/*.def >/dev/null 2>&1 ; then \
-		cp ../../../bin/*.def . ; \
+prep: Makefile
+	if ls $(BLD_BIN_DIR)/*.def >/dev/null 2>&1 ; then \
+		for f in $(BLD_BIN_DIR)/*.def ; do \
+			cp $$f $$.tmp ; cat $$.tmp | grep -v mask@@NegDouble >$$f ; rm -f $$.tmp ; \
+		done ; \
 	fi
 
 libmpr.vcproj: Makefile buildConfig.override
@@ -54,7 +52,7 @@ libsqlite3.vcproj: Makefile buildConfig.override
 	
 libejs.vcproj: Makefile buildConfig.override
 	makeVsProj --project libejs.vcproj --library ejs --dflags "$(DFLAGS)" \
-		--def libejs.def --libs "libmpr.lib libhttp.lib libsqlite3.lib $(LIBS)" $(MPR_HDR) \
+		--def libejs.def --libs "libmpr.lib libhttp.lib libsqlite3.lib libpcre.def $(LIBS)" $(MPR_HDR) \
 	    $(shell find $(SRC)/include -name 'ejs*.h') \
 	    $(shell find $(SRC)/core $(SRC)/vm $(SRC)/compiler -name '*.c')
 	
