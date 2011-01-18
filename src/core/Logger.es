@@ -165,9 +165,11 @@ module ejs {
 
         function set level(level: Number): void {
             _level = level
-            if (this == App.log) {
-                nativeLogLevel = level
-            }
+            /*
+                if (this == App.log) {
+                    nativeLogLevel = level
+                }
+             */
         }
 
         function get location()

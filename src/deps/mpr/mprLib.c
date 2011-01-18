@@ -6575,6 +6575,8 @@ static MprFile *openFile(MprFileSystem *fileSystem, cchar *path, int omode, int 
             if (file->fd < 0) {
                 file = NULL;
             }
+        } else {
+            file = NULL;
         }
 #else
         file = NULL;
@@ -20553,6 +20555,8 @@ static void manageWorker(MprWorker *worker, int flags)
 static void workerMain(MprWorker *worker, MprThread *tp)
 {
     MprWorkerService    *ws;
+	int state = worker->state;
+	int state2;
 
     ws = MPR->workerService;
     mprAssert(worker->state == MPR_WORKER_BUSY);
@@ -20561,6 +20565,7 @@ static void workerMain(MprWorker *worker, MprThread *tp)
     mprLock(ws->mutex);
 
     while (!(worker->state & MPR_WORKER_PRUNED) && !mprIsStopping()) {
+		state2 = worker->state;
         if (worker->proc) {
             mprUnlock(ws->mutex);
             (*worker->proc)(worker->data, worker);
@@ -20596,13 +20601,15 @@ static int changeState(MprWorker *worker, int state)
 {
     MprWorkerService    *ws;
     MprList             *lp;
+    int                 wake;
 
     mprAssert(worker->state != state);
 
-    ws = worker->workerService;
-
+    wake = 0;
     lp = 0;
+    ws = worker->workerService;
     mprLock(ws->mutex);
+
     switch (worker->state) {
     case MPR_WORKER_BUSY:
         lp = ws->busyThreads;
@@ -20616,7 +20623,7 @@ static int changeState(MprWorker *worker, int state)
         if (!(worker->flags & MPR_WORKER_DEDICATED)) {
             lp = ws->idleThreads;
         }
-        mprSignalCond(worker->idleCond); 
+        wake = 1;
         break;
         
     case MPR_WORKER_PRUNED:
@@ -20640,11 +20647,6 @@ static int changeState(MprWorker *worker, int state)
         if (!(worker->flags & MPR_WORKER_DEDICATED)) {
             lp = ws->idleThreads;
         }
-#if UNUSED
-        if (mprGetListLength(ws->busyThreads) == 0) {
-            print("NOW IDLE");
-        }
-#endif
         break;
 
     case MPR_WORKER_PRUNED:
@@ -20661,6 +20663,9 @@ static int changeState(MprWorker *worker, int state)
         }
     }
     mprUnlock(ws->mutex);
+    if (wake) {
+        mprSignalCond(worker->idleCond); 
+    }
     return 0;
 }
 

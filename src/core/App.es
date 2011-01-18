@@ -399,7 +399,9 @@ module ejs {
             if (log.match) {
                 App.log.match = log.match
             }
-            Logger.nativeLevel = log.level
+            /* MOB - This messes up Appweb 
+                Logger.nativeLevel = log.level
+             */
         }
 
         /*  Append search paths */

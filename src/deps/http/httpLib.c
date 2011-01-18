@@ -6717,7 +6717,6 @@ static int traceRequest(HttpConn *conn, HttpPacket *packet)
     cchar   *endp;
     int     len;
 
-    mprLog(6, "Request from %s:%d to %s:%d", conn->ip, conn->port, conn->sock->ip, conn->sock->port);
     if (httpShouldTrace(conn, HTTP_TRACE_RX, HTTP_TRACE_HEADER, conn->tx->extension) >= 0) {
         content = packet->content;
         endp = strstr((char*) content->start, "\r\n\r\n");
