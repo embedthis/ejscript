@@ -141,6 +141,7 @@ void ejsDestroy(Ejs *ejs)
     EjsService  *sp;
     EjsState    *state;
 
+    ejs->destroying = 1;
     sp = ejs->service;
     if (sp) {
         ejsRemoveModules(ejs);
