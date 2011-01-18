@@ -607,7 +607,7 @@ static EjsObj *uri_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 static EjsObj *uri_set_path(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
     up->uri->path = httpNormalizeUriPath(ejsToMulti(ejs, argv[0]));
-    up->uri->ext = (char*) mprGetPathExtension(up->uri->path);
+    up->uri->ext = mprGetPathExtension(up->uri->path);
     return 0;
 }
 
