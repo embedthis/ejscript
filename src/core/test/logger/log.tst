@@ -76,6 +76,7 @@ log.redirect(tmpfile + ":2")
 log.debug(1, "one")
 log.debug(2, "two")
 log.debug(3, "three")       // Should not be logged
+log.close()
 
 let data = tmpfile.readString()
 assert(data == "top: 1: one\ntop: 2: two\n")
