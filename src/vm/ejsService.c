@@ -131,7 +131,6 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     }
     mprRemoveRoot(ejs);
     ejs->freeze = 0;
-    printf("CREATE INTERP %s interp %d\n", ejs->name, sp->vmlist->length);
     return ejs;
 }
 
@@ -144,7 +143,6 @@ void ejsDestroy(Ejs *ejs)
     ejs->destroying = 1;
     sp = ejs->service;
     if (sp) {
-        printf("DESTRROY INTERP %s count %d\n", ejs->name, sp->vmlist->length);
         ejsRemoveModules(ejs);
         ejsRemoveWorkers(ejs);
         state = ejs->masterState;

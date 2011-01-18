@@ -19,3 +19,4 @@ http.get(HTTP + "/sleep.ejs")
 mark = new Date
 assert(http.wait(333) == false)
 assert(mark.elapsed > 300)
+http.close()

@@ -130,7 +130,9 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         httpSetConnNotifier(hp->conn, httpNotify);
         httpSetConnContext(hp->conn, hp);
     }
+#if UNUSED
     mprRemoveRoot(hp);
+#endif
     return 0;
 }
 
@@ -903,12 +905,16 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         ejsThrowIOError(ejs, "Can't issue request for \"%s\"", hp->uri);
         return 0;
     }
+#if UNUSED
     mprAddRoot(hp);
+#endif
 
     if (mprGetBufLength(hp->requestContent) > 0) {
         nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent));
         if (nbytes < 0) {
+#if UNUSED
             mprRemoveRoot(hp);
+#endif
             ejsThrowIOError(ejs, "Can't write request data for \"%s\"", hp->uri);
             return 0;
         } else if (nbytes > 0) {
@@ -955,7 +961,9 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
             }
             sendHttpCloseEvent(ejs, hp);
         }
+#if UNUSED
         mprRemoveRoot(hp);
+#endif
         break;
 
     case 0:

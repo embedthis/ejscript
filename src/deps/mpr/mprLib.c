@@ -6554,11 +6554,6 @@ static MprFile *openFile(MprFileSystem *fileSystem, cchar *path, int omode, int 
     file->path = sclone(path);
     file->fd = open(path, omode, perms);
     if (file->fd < 0) {
-        //  MOB - remove trace
-        int err = GetLastError();
-        printf("Can't open %s omode %d, perms %d, error %d\n", path, omode, perms, err);
-        printf("Access %d\n", access(path, R_OK));
-        printf("REOPEN %d\n", open(path, omode, perms));
         return NULL;
     }
     return file;
@@ -6646,42 +6641,17 @@ static int deletePath(MprDiskFileSystem *fileSystem, cchar *path)
     }
 #if WIN
 {
-#if OLD
-    //  MOB -- remove
-    /*
-        NOTE: Windows delete makes a file pending delete which prevents immediate recreation. Rename and then delete.
-     */
     int i, rc, retries;
     retries = 20;
     for (i = 0; i < retries; i++) {
-        if (DeleteFile((char*) path) != 0) {
-            return 0;
-        }
-        if (GetLastError() == ERROR_FILE_NOT_FOUND) {
+        rc = DeleteFile((char*) path);
+        if (rc != 0) {
+            rc = 0;
             break;
         }
-        //  MOB - must be a better way
-        mprSleep(2);
+        mprSleep(10);
     }
-    return MPR_ERR_CANT_DELETE;
-#else
-    char tmp[MPR_MAX_PATH];
-    //  MOB - cleanup
-    int err;
-    if (!GetTempFileName(mprGetPathDir(path), ".tmp", 0, tmp)) {
-        err = GetLastError();
-        return MPR_ERR_CANT_DELETE;
-    }
-    if (!MoveFileEx(path, tmp, MOVEFILE_REPLACE_EXISTING)) {
-        err = GetLastError();
-        return MPR_ERR_CANT_DELETE;
-    }
-    if (!DeleteFile(tmp)) {
-        err = GetLastError();
-        return MPR_ERR_CANT_DELETE;
-    } 
-    return 0;
-#endif
+    return (i == retries) ? MPR_ERR_CANT_DELETE : 0;
 }
 #else
     return unlink((char*) path);
@@ -12707,7 +12677,7 @@ static MPR_INLINE char *lastSep(MprFileSystem *fs, cchar *path)
 }
 
 /*
-    This copies a file.
+    This copies the filename at the designated path
  */
 int mprCopyPath(cchar *fromName, cchar *toName, int mode)
 {
@@ -12726,8 +12696,6 @@ int mprCopyPath(cchar *fromName, cchar *toName, int mode)
     while ((count = mprReadFile(from, buf, sizeof(buf))) > 0) {
         mprWriteFile(to, buf, count);
     }
-    mprCloseFile(from);
-    mprCloseFile(to);
     return 0;
 }
 
