@@ -653,6 +653,7 @@ FUTURE & KEEP
                 http.upload(URL, files, fields)
          */
         function upload(uri: String, files: Object, fields: Object? = null): Void {
+            reset()
             let boundary = "<<Upload Boundary - " + md5(Date.now()) + ">>"
             setHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
             post(uri)

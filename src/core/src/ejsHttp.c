@@ -34,7 +34,7 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    httpPrepClientConn(hp->conn);
+    httpPrepClientConn(hp->conn, 0);
     httpSetConnNotifier(hp->conn, httpNotify);
     httpSetConnContext(hp->conn, hp);
     if (argc == 1 && argv[0] != ejs->nullValue) {
@@ -126,7 +126,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
         hp->conn = httpCreateClient(ejs->http, ejs->dispatcher);
-        httpPrepClientConn(hp->conn);
+        httpPrepClientConn(hp->conn, 0);
         httpSetConnNotifier(hp->conn, httpNotify);
         httpSetConnContext(hp->conn, hp);
     }
@@ -250,10 +250,10 @@ static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     EjsObj  *data;
 
     if (argc == 2 && argv[1] != ejs->nullValue) {
-#if UNUSED
-        //  MOB - why was this here?
-        httpPrepClientConn(hp->conn);
-#endif
+        /*
+            Must prep here to re-create a new Tx headers store
+         */
+        httpPrepClientConn(hp->conn, 0);
         mprFlushBuf(hp->requestContent);
         data = argv[1];
         if (ejsGetPropertyCount(ejs, data) > 0) {
@@ -313,7 +313,7 @@ static EjsObj *http_getRequestHeaders(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **
 
     conn = hp->conn;
     headers = (EjsObj*) ejsCreateEmptyPot(ejs);
-    for (p = 0; (p = mprGetNextHash(conn->txheaders, p)) != 0; ) {
+    for (p = 0; conn->tx && (p = mprGetNextHash(conn->tx->headers, p)) != 0; ) {
         ejsSetPropertyByName(ejs, headers, EN(p->key), ejsCreateStringFromAsc(ejs, p->data));
     }
     return (EjsObj*) headers;
@@ -491,6 +491,7 @@ static EjsObj *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     offset = (argc >= 2) ? ejsGetInt(ejs, argv[1]) : 0;
     count = (argc >= 3) ? ejsGetInt(ejs, argv[2]): -1;
 
+    //  MOB - why does this use waitForResponseHeaders and http_readString uses waitForState
     if (!waitForResponseHeaders(hp, -1)) {
         return 0;
     }
@@ -541,10 +542,11 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
             timeout = INT_MAX;
         }
     }
-    if (!waitForState(hp, HTTP_STATE_CONTENT, timeout, 0)) {
+    if (!waitForState(hp, HTTP_STATE_CONTENT, timeout, 1)) {
         return 0;
     }
     if ((count = readTransfer(ejs, hp, count)) < 0) {
+        mprAssert(ejs->exception);
         return 0;
     }
     //  MOB - UNICODE ENCODING
@@ -569,7 +571,7 @@ EjsObj *http_off(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_reset(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    httpPrepClientConn(hp->conn);
+    httpPrepClientConn(hp->conn, 0);
     return 0;
 }
 
@@ -1133,7 +1135,6 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
                 prepForm(ejs, hp, (char*) qname.name, vp);
             }
         } else {
-            //  MOB -- must prevent GC here
             key = ejsToMulti(ejs, qname.name);
             if (ejsIsArray(ejs, vp)) {
                 value = ejsToJSON(ejs, vp, NULL);
@@ -1236,6 +1237,9 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
         return 1;
     }
     if (conn->state < HTTP_STATE_CONNECTED) {
+        if (throw && ejs->exception == 0) {
+            ejsThrowIOError(ejs, "Http request failed: not connected");
+        }
         return 0;
     }
     if (timeout < 0) {
@@ -1257,7 +1261,8 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
                 if (url) {
                     uri = httpCreateUri(url, 0);
                     hp->uri = httpUriToString(uri, 1);
-                    httpPrepClientConn(conn);
+                    httpPrepClientConn(conn, count);
+                    count = 0;
                 }
                 count--; 
                 redirectCount++;
@@ -1299,7 +1304,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
         if (conn->rx == 0 || conn->rx->status != HTTP_CODE_UNAUTHORIZED) {
             httpSetKeepAliveCount(conn, -1);
         }
-        httpPrepClientConn(conn);
+        httpPrepClientConn(conn, count);
         if (startHttpRequest(ejs, hp, NULL, 0, NULL) < 0) {
             return 0;
         }

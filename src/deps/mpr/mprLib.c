@@ -20555,8 +20555,6 @@ static void manageWorker(MprWorker *worker, int flags)
 static void workerMain(MprWorker *worker, MprThread *tp)
 {
     MprWorkerService    *ws;
-	int state = worker->state;
-	int state2;
 
     ws = MPR->workerService;
     mprAssert(worker->state == MPR_WORKER_BUSY);
@@ -20565,7 +20563,6 @@ static void workerMain(MprWorker *worker, MprThread *tp)
     mprLock(ws->mutex);
 
     while (!(worker->state & MPR_WORKER_PRUNED) && !mprIsStopping()) {
-		state2 = worker->state;
         if (worker->proc) {
             mprUnlock(ws->mutex);
             (*worker->proc)(worker->data, worker);
