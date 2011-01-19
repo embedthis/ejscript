@@ -2632,6 +2632,12 @@ int mprMakeArgv(cchar *program, cchar *cmd, int *argcp, char ***argvp)
             while ((*cp != '\0') && (*cp != '"')) {
                 cp++;
             }
+        } else if (*cp == '\'') {
+            cp++;
+            argv[argc] = cp;
+            while ((*cp != '\0') && (*cp != '\'')) {
+                cp++;
+            }
         } else {
             argv[argc] = cp;
             while (*cp != '\0' && !isspace((int) *cp)) {
@@ -14229,7 +14235,7 @@ int mprWaitForSingleIO(int fd, int mask, int timeout)
 
     rc = poll(fds, 1, timeout);
     if (rc < 0) {
-        mprLog(2, "Poll returned %d, errno %d", rc, mprGetOsError());
+        mprLog(8, "Poll returned %d, errno %d", rc, mprGetOsError());
     } else if (rc > 0) {
         if (fds[0].revents & POLLIN) {
             mask |= MPR_READABLE;
