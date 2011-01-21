@@ -810,6 +810,17 @@ module ejs.web {
             }
         }
 
+        function showRequest(): Void {
+            write("request: {\r\n") 
+            for (let [key,value] in this) {
+                if (key == "server" || key == "config") {
+                    continue
+                }
+                write("  " + key + ": " +  serialize(value, {pretty: true}) + ",\r\n")
+            }
+            write("}\r\n")
+        }
+
         /**
             Configure tracing for this request. Tracing is initialized by the owning HttpServer and is typically
             defined to trace the first line of requests and responses at level 2, headers at level 3 and body content

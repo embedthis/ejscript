@@ -2062,6 +2062,11 @@ int httpConnect(HttpConn *conn, cchar *method, cchar *url)
     conn->tx->method = supper(method);
     conn->tx->parsedUri = httpCreateUri(url, 0);
 
+#if BLD_DEBUG
+    conn->startTime = mprGetTime();
+    conn->startTicks = mprGetTicks();
+#endif
+
     if (openConnection(conn, url) == 0) {
         return MPR_ERR_CANT_OPEN;
     }
@@ -5463,7 +5468,7 @@ void httpDestroyPipeline(HttpConn *conn)
             for (q = qhead->nextQ; q != qhead; q = q->nextQ) {
                 if (q->close && q->flags & HTTP_QUEUE_OPEN) {
                     q->flags &= ~HTTP_QUEUE_OPEN;
-                    HTTP_TIME(conn, q->stage->name, "close", q->stage->close(q));
+                    q->stage->close(q);
                 }
             }
         }
@@ -5785,12 +5790,13 @@ bool httpFlushQueue(HttpQueue *q, bool blocking)
     HttpQueue   *next;
     int         oldMode;
 
+    conn = q->conn;
     LOG(6, "httpFlushQueue blocking %d", blocking);
+    mprAssert(conn->sock);
 
-    if (q->flags & HTTP_QUEUE_DISABLED) {
+    if (q->flags & HTTP_QUEUE_DISABLED || conn->sock == 0) {
         return 0;
     }
-    conn = q->conn;
     do {
         oldMode = mprSetSocketBlockingMode(conn->sock, blocking);
         httpScheduleQueue(q);
@@ -5799,6 +5805,9 @@ bool httpFlushQueue(HttpQueue *q, bool blocking)
             httpScheduleQueue(next);
         }
         httpServiceQueues(conn);
+        if (conn->sock == 0) {
+            break;
+        }
         mprSetSocketBlockingMode(conn->sock, oldMode);
     } while (blocking && q->count >= q->max);
     return (q->count < q->max) ? 1 : 0;
@@ -6606,17 +6615,6 @@ static void manageRx(HttpRx *rx, int flags)
 
 void httpDestroyRx(HttpRx *rx)
 {
-#if BLD_DEBUG
-    if (httpShouldTrace(rx->conn, 0, HTTP_TRACE_TIME, NULL)) {
-        MprTime     elapsed = mprGetTime() - rx->startTime;
-#if MPR_HIGH_RES_TIMER
-        if (elapsed < 1000) {
-            mprLog(4, "TIME: Request %s took %,d msec %,d ticks", rx->uri, elapsed, mprGetTicks() - rx->startTicks);
-        } else
-#endif
-            mprLog(4, "TIME: Request %s took %,d msec", rx->uri, elapsed);
-    }
-#endif
     if (rx->conn) {
         rx->conn->rx = 0;
         rx->conn = 0;
@@ -6681,9 +6679,6 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
     if (packet == NULL) {
         return 0;
     }
-    if (conn->server && !httpValidateLimits(conn->server, HTTP_VALIDATE_OPEN_REQUEST, conn)) {
-        return 0;
-    }
     if (conn->rx == NULL) {
         conn->rx = httpCreateRx(conn);
         conn->tx = httpCreateTx(conn, NULL);
@@ -6706,6 +6701,9 @@ static bool parseIncoming(HttpConn *conn, HttpPacket *packet)
         return 0;
     }
     if (conn->server) {
+        if (!httpValidateLimits(conn->server, HTTP_VALIDATE_OPEN_REQUEST, conn)) {
+            return 0;
+        }
         parseRequestLine(conn, packet);
     } else {
         parseResponseLine(conn, packet);
@@ -6765,8 +6763,8 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
     methodFlags = 0;
 
 #if BLD_DEBUG
-    rx->startTime = mprGetTime();
-    rx->startTicks = mprGetTicks();
+    conn->startTime = mprGetTime();
+    conn->startTicks = mprGetTicks();
 #endif
 
     method = getToken(conn, " ");
@@ -6820,7 +6818,6 @@ static void parseRequestLine(HttpConn *conn, HttpPacket *packet)
     if (methodFlags == 0) {
         httpProtocolError(conn, HTTP_CODE_BAD_METHOD, "Unknown method");
     }
-
     uri = getToken(conn, " ");
     if (*uri == '\0') {
         httpProtocolError(conn, HTTP_CODE_BAD_REQUEST, "Bad HTTP request. Empty URI");
@@ -7518,6 +7515,29 @@ static bool processRunning(HttpConn *conn)
 }
 
 
+#if BLD_DEBUG
+static void measure(HttpConn *conn)
+{
+    MprTime     elapsed;
+    cchar       *uri;
+
+    uri = (conn->server) ? conn->rx->uri : conn->tx->parsedUri->path;
+   
+    if (httpShouldTrace(conn, 0, HTTP_TRACE_TIME, NULL) >= 0) {
+        elapsed = mprGetTime() - conn->startTime;
+#if MPR_HIGH_RES_TIMER
+        if (elapsed < 1000) {
+            mprLog(4, "TIME: Request %s took %,d msec %,d ticks", uri, elapsed, mprGetTicks() - conn->startTicks);
+        } else
+#endif
+            mprLog(4, "TIME: Request %s took %,d msec", uri, elapsed);
+    }
+}
+#else
+#define measure(conn)
+#endif
+
+
 static bool processCompletion(HttpConn *conn)
 {
     HttpPacket  *packet;
@@ -7526,6 +7546,7 @@ static bool processCompletion(HttpConn *conn)
     mprAssert(conn->state == HTTP_STATE_COMPLETE);
 
     httpDestroyPipeline(conn);
+    measure(conn);
 
     if (conn->server) {
         conn->rx->conn = 0;
@@ -7534,10 +7555,8 @@ static bool processCompletion(HttpConn *conn)
         conn->tx = 0;
         packet = conn->input;
         more = packet && !conn->connError && (mprGetBufLength(packet->content) > 0);
-        if (conn->server) {
-            httpValidateLimits(conn->server, HTTP_VALIDATE_CLOSE_REQUEST, conn);
-            httpPrepServerConn(conn);
-        }
+        httpValidateLimits(conn->server, HTTP_VALIDATE_CLOSE_REQUEST, conn);
+        httpPrepServerConn(conn);
         return more;
     }
     return 0;
@@ -8530,6 +8549,7 @@ HttpServer *httpCreateServer(Http *http, cchar *ip, int port, MprDispatcher *dis
     server->clientLoad = mprCreateHash(HTTP_CLIENTS_HASH, MPR_HASH_STATIC_VALUES);
     server->async = 1;
     server->http = http;
+    server->limits = http->serverLimits;
     server->port = port;
     server->ip = sclone(ip);
     server->waitHandler.fd = -1;
@@ -8538,7 +8558,6 @@ HttpServer *httpCreateServer(Http *http, cchar *ip, int port, MprDispatcher *dis
         server->name = server->ip;
     }
     server->software = sclone(HTTP_NAME);
-    server->limits = httpCreateLimits(1);
     server->loc = httpInitLocation(http, 1);
     return server;
 }
@@ -8651,11 +8670,13 @@ int httpValidateLimits(HttpServer *server, int event, HttpConn *conn)
 
     limits = server->limits;
     mprAssert(conn->server == server);
+    lock(server->http);
 
     switch (event) {
     case HTTP_VALIDATE_OPEN_CONN:
         if (server->clientCount >= limits->clientCount) {
             //  MOB -- will CLOSE_CONN get called and thus set the limit to negative?
+            unlock(server->http);
             httpConnError(conn, HTTP_CODE_SERVICE_UNAVAILABLE, 
                 "Too many concurrent clients %d/%d", server->clientCount, limits->clientCount);
             return 0;
@@ -8680,6 +8701,7 @@ int httpValidateLimits(HttpServer *server, int event, HttpConn *conn)
     case HTTP_VALIDATE_OPEN_REQUEST:
         if (server->requestCount >= limits->requestCount) {
             //  MOB -- will CLOSE_REQUEST get called and thus set the limit to negative?
+            unlock(server->http);
             httpConnError(conn, HTTP_CODE_SERVICE_UNAVAILABLE, 
                 "Too many concurrent requests %d/%d", server->requestCount, limits->requestCount);
             return 0;
@@ -8695,6 +8717,7 @@ int httpValidateLimits(HttpServer *server, int event, HttpConn *conn)
     }
     mprLog(6, "Validate request. Counts: requests: %d/%d, clients %d/%d", 
         server->requestCount, limits->requestCount, server->clientCount, limits->clientCount);
+    unlock(server->http);
     return 1;
 }
 
@@ -9028,8 +9051,6 @@ static void manageStage(HttpStage *stage, int flags)
         mprMark(stage->name);
         mprMark(stage->stageData);
         mprMark(stage->extensions);
-
-    } else if (flags & MPR_MANAGE_FREE) {
     }
 }
 
@@ -9932,7 +9953,7 @@ void httpWriteHeaders(HttpConn *conn, HttpPacket *packet)
             }
         }
     }
-    if ((level = httpShouldTrace(conn, HTTP_TRACE_TX, HTTP_TRACE_FIRST, NULL)) == mprGetLogLevel(tx)) {
+    if ((level = httpShouldTrace(conn, HTTP_TRACE_TX, HTTP_TRACE_FIRST, NULL)) >= mprGetLogLevel(tx)) {
         mprAddNullToBuf(buf);
         mprLog(level, "%s", mprGetBufStart(buf));
     }

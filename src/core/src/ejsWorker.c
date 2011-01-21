@@ -775,10 +775,14 @@ static void handleError(Ejs *ejs, EjsWorker *worker, EjsObj *exception, int thro
         msg->stack = ejsGetPropertyByName(ejs, e, EN("stack"));
     } else {
         msg->message = e;
-        msg->stack = (EjsObj*) ejs->emptyString;
+        msg->stack = 0;
     }
     if (throwOutside) {
-        ejsThrowStateError(ejs, "%@\n%@", ejsToString(ejs, msg->message), ejsToString(ejs, msg->stack));
+        if (msg->stack) {
+            ejsThrowStateError(ejs, "%@\n%@", ejsToString(ejs, msg->message), ejsToString(ejs, msg->stack));
+        } else {
+            ejsThrowStateError(ejs, "%@", ejsToString(ejs, msg->message));
+        }
     }
     dispatcher = ejs->dispatcher;
     mprCreateEvent(dispatcher, "doMessage-error", 0, (MprEventProc) doMessage, msg, 0);

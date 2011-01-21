@@ -21,12 +21,14 @@
 #
 #	To remove, use make uninstall-ITEM, where ITEM is a component above.
 
+BUILD_DEPTH	?= 2
+
 include	    build/make/Makefile.top
 include		build/make/Makefile.ejs
 
 ifeq	($(BLD_CROSS),0)
 testExtra: 
-	$(BLD_BIN_DIR)/ejs $(BLD_TOOLS_DIR)/utest -v src
+	$(BLD_BIN_DIR)/ejs $(BLD_TOOLS_DIR)/utest -v -d $(BUILD_DEPTH) src
 endif
 
 diff import sync:
@@ -34,6 +36,9 @@ diff import sync:
 	import.sh --$@ ../mpr/out/releases/mpr-dist.tgz
 	import.sh --$@ ../pcre/out/releases/pcre-dist.tgz
 	import.sh --$@ ../http/out/releases/http-dist.tgz
+
+compileFinal:
+	make dist
 
 testExtra: test-projects
 

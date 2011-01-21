@@ -1052,10 +1052,10 @@ void ejsUnlockService(Ejs *ejs)
 void ejsLoadHttpService(Ejs *ejs)
 {
     ejsLockService(ejs);
-    if (ejs->service->http == 0) {
-        ejs->service->http = httpCreate(ejs->service);
+    if (mprGetMpr()->httpService == 0) {
+        httpCreate(ejs->service);
     }
-    ejs->http = ejs->service->http;
+    ejs->http = ejs->service->http = mprGetMpr()->httpService;
     ejsUnlockService(ejs);
 }
 
