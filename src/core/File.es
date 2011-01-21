@@ -142,11 +142,12 @@ module ejs {
 
         /** 
             Read a block of data from a file into a byte array. This will advance the read file's position.
+                This will read up to $count bytes that will fit into the provided buffer. 
             @param buffer Destination byte array for the read data.
             @param offset Offset in the byte array to place the data. If the offset is -1, then data is
                 appended to the buffer write $position which is then updated. 
             @param count Number of bytes to read. If -1, read much as the buffer will hold up to the entire file if the 
-            buffer is of sufficient size or is growable.
+                buffer is of sufficient size or is growable.
             @return A count of the bytes actually read. Returns null on end of file.
             @throws IOError if the file could not be read.
          */

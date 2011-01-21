@@ -739,7 +739,9 @@ static ssize readData(Ejs *ejs, EjsFile *fp, EjsByteArray *ap, ssize offset, ssi
     }
     len = ap->length - offset;
     if (len < count) {
-        ejsGrowByteArray(ejs, ap, ap->length + (count - len));
+        if (ap->resizable) {
+            ejsGrowByteArray(ejs, ap, ap->length + (count - len));
+        }
         len = ap->length - offset;
     }
     bytes = mprReadFile(fp->file, &ap->value[offset], len);

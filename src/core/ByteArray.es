@@ -8,7 +8,7 @@ module ejs {
     // use strict
 
     /** 
-        ByteArrays provide a growable, integer indexed, in-memory store for bytes. ByteArrays can be used as a simple 
+        ByteArrays provide a resizable, integer indexed, in-memory store for bytes. ByteArrays can be used as a simple 
         array type to store and encode data as bytes or they can be used as buffered loop-back Streams.
         
         When used as a simple byte array, the ByteArray class offers a low level set of methods to insert and 
@@ -16,7 +16,7 @@ module ejs {
         can be used to get and put blocks of data. In this mode, the $readPosition and $writePosition properties are ignored.
 
         Access to the byte array is from index zero up to the size defined by the length property. When constructed, 
-        the ByteArray can be designated as growable, in which case the initial size will grow as required to accomodate 
+        the ByteArray can be designated as resizable, in which case the initial size will grow as required to accomodate 
         data and the length property will be updated accordingly.
         
         ByteArrays provide additional write methods to store data at the location specified by the $writePosition 
@@ -54,9 +54,9 @@ module ejs {
             Create a new array.
             @param size The initial size of the byte array. If not supplied a default buffer size will be used which is
             typically 4K or larger.
-            @param growable Set to true to automatically grow the array as required to fit written data.
+            @param resizable Set to true to automatically grow the array as required to fit written data.
          */
-        native function ByteArray(size: Number = -1, growable: Boolean = true)
+        native function ByteArray(size: Number = -1, resizable: Boolean = true)
 
         /** 
             Number of bytes that are currently available for reading. This consists of the bytes available
@@ -93,7 +93,7 @@ module ejs {
             @param src Source byte array containing the data elements to copy
             @param srcOffset Location in the source buffer from which to copy the data. Defaults to the start.
             @param count Number of bytes to copy. Set to -1 to read all the src buffer.
-            @return the number of bytes written into the array. If the array is not growable and there is insufficient
+            @return the number of bytes written into the array. If the array is not resizable and there is insufficient
                 room, this may be less than the requested amount.
          */
         native function copyIn(destOffset: Number, src: ByteArray, srcOffset: Number = 0, count: Number = -1): Number
@@ -144,9 +144,9 @@ module ejs {
         native function flush(dir: Number = Stream.BOTH): Void
 
         /**
-            Is the ByteArray is growable.
+            Is the ByteArray is resizable.
          */
-        native function get growable(): Boolean
+        native function get resizable(): Boolean
 
         /** 
             Iterator for this array to be used by "for (v in array)". This will return array indicies.
@@ -315,7 +315,7 @@ module ejs {
             Write data to the ByteArray.
             Data is written to the current $writePosition. If the data argument is itself a ByteArray, the available data 
             from the byte array will be copied, ie. the $data byte array will not have its readPosition adjusted. If the 
-            byte array is growable, the underlying data storage will grow to accomodate written data. If the data will not
+            byte array is resizable, the underlying data storage will grow to accomodate written data. If the data will not
             fit in the ByteArray, the call may return having only written a portion of the data.
             @duplicate Stream.write
          */

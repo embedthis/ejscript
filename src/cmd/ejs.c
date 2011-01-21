@@ -335,9 +335,6 @@ static void manageApp(App *app, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(app->files);
-#if UNUSED
-        mprMark(app->ejsService);
-#endif
         mprMark(app->ejs);
         mprMark(app->compiler);
         mprMark(app->modules);

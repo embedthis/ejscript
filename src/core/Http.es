@@ -671,9 +671,9 @@ FUTURE & KEEP
                 write('Content-Type: ' + Uri(file).mimeType + "\r\n\r\n")
 
                 let f = File(file, "r")
-                let data = new ByteArray
+                let data = new ByteArray(System.Bufsize, false)
                 while (f.read(data) > 0) {
-                    write(data)
+                    let n = write(data)
                 }
                 f.close()
                 write("\r\n")
