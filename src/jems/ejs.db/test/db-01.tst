@@ -28,5 +28,3 @@ assert(db.connectionOptions.name == "file://test.sdb")
 assert(db.getTables() == "History,Portfolio,Stocks,Trades")
 assert(db.getColumns("Trades") == "id,date,stockId,quantity,price")
 db.close()
-
-

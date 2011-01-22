@@ -22,7 +22,7 @@
 //#define THREAD_STYLE SQLITE_CONFIG_SERIALIZED
 
 /*
-    Map allocation and mutex routines
+    Map allocation and mutex routines. Can't use this (yet) as allocated memory must be marked
  */
 #define MAP_ALLOC   1
 #define MAP_MUTEXES 1
@@ -77,6 +77,7 @@ static EjsObj *sqliteConstructor(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **arg
             //  MOB TODO - should be configurable somewhere
             sqlite3_soft_heap_limit(20 * 1024 * 1024);
             sqlite3_busy_timeout(sdb, EJS_SQLITE_TIMEOUT);
+
         } else {
             ejsThrowArgError(ejs, "Unknown SQLite database URI %s", path);
             return 0;
@@ -257,7 +258,7 @@ static void freeBlock(void *ptr)
 static void *reallocBlock(void *ptr, int size)
 {
     mprRelease(ptr);
-    if ((ptr =  mprRealloc(ptr, size)) == 0) {
+    if ((ptr =  mprRealloc(ptr, size)) != 0) {
         mprHold(ptr);
     }
     return ptr;
@@ -294,9 +295,6 @@ struct sqlite3_mem_methods mem = {
 #endif /* MAP_ALLOC */
 
 /*********************************** Mutex ********************************/
-/*
-    Mutex mapping for platforms not yet supported by SQLite
- */
 #if MAP_MUTEXES
 
 static int initMutex(void) { 
@@ -311,12 +309,18 @@ static int termMutex(void) {
 
 static sqlite3_mutex *allocMutex(int kind)
 {
-    return (sqlite3_mutex*) mprCreateLock();
+    MprMutex    *lock;
+
+    if ((lock = mprCreateLock()) != 0) {
+        mprHold(lock);
+    }
+    return (sqlite3_mutex*) lock;
 }
 
 
 static void freeMutex(sqlite3_mutex *mutex)
 {
+    mprRelease((MprMutex*) mutex);
 }
 
 
