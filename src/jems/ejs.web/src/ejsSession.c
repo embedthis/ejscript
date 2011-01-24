@@ -216,6 +216,13 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     session->index = slotNum;
 
     if (server->sessionTimer == 0) {
+#if UNUSED
+        extern int stopSeqno;
+        if (stopSeqno == -1) {
+            MprMem *mp = MPR_GET_MEM(server);
+            stopSeqno = mp->seqno;
+        }
+#endif
         server->sessionTimer = mprCreateTimerEvent(ejs->dispatcher, "sessionTimer", EJS_TIMER_PERIOD, 
             (MprEventProc) sessionTimer, server, MPR_EVENT_CONTINUOUS);
     }

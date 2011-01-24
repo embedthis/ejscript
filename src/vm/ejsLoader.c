@@ -105,7 +105,7 @@ int ejsLoadModule(Ejs *ejs, EjsString *path, int minVersion, int maxVersion, int
 static int initializeModule(Ejs *ejs, EjsModule *mp)
 {
     EjsNativeModule     *nativeModule;
-    int                 priorGen;
+    int                 priorGen, old;
 
     priorGen = 0;
 
@@ -144,9 +144,12 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
         }
     }
     mp->configured = 1;
+    old = ejsFreeze(ejs, 1);
     if (ejsRunInitializer(ejs, mp) == 0) {
+        ejsFreeze(ejs, old);
         return MPR_ERR_CANT_INITIALIZE;
     }
+    ejsFreeze(ejs, old);
     return 0;
 }
 

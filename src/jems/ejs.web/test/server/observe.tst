@@ -6,10 +6,13 @@ require ejs.web
 const HTTP = ":" + (App.config.test.http_port || 6700)
 load("../utils.es")
 
+events = {}
 server = new HttpServer
 assert(server.address == null)
 
-events = {}
+/*
+    Listen for incoming Http requests
+ */
 server.on("readable", function (event, request) {
     events[event] = true
     request.session
@@ -17,17 +20,18 @@ server.on("readable", function (event, request) {
     request.finalize()
 })
 
+/*
+    Listen for server events of interest. Save record of events.
+ */
 function watch(event, request) {
-    //  Respond to request and trigger session events. Save record of events.
     events[event] = true
-    // print("WATCH " + event)
 }
 server.on(["close", "createSession", "destroySession", "readable"], watch)
 
 //  Run server and fetch one request
 assert(server.sessions == null)
 server.listen(HTTP)
-http = fetch(HTTP)
+http = fetch(HTTP + "/")
 
 //  Sessions should now exist with one sesson object
 assert(server.sessions)
@@ -40,4 +44,3 @@ assert(events.close)
 assert(events.readable)
 assert(events.createSession)
 assert(events.destroySession)
-

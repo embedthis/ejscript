@@ -10,7 +10,7 @@ var success
 var w = new Worker
 w.onmessage = function(e) {
     let msg = e.data
-    let http = fetch(HTTP)
+    let http = fetch(HTTP + "/")
     assert(http.response == "Hello World")
     assert(http.status == Http.Ok)
     success = true

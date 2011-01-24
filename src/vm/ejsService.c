@@ -81,13 +81,15 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     mprAssert(sp->vmlist->length < 20);
     mprAddItem(sp->vmlist, ejs);
 
+    if ((ejs->state = mprAllocZeroed(sizeof(EjsState))) == 0) {
+        return 0;
+    }
+
 #if FUTURE
     ejs->intern = &sp->intern;
 #else
     ejs->intern = ejsCreateIntern(ejs);
 #endif
-    //  MOB -- remove need for freeze
-    ejs->freeze = 1;
     ejs->empty = require && mprGetListLength(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
@@ -101,6 +103,7 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     ejs->modules = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     ejs->workers = mprCreateList(0, 0);
 
+    //  MOB Refactor
     lock(sp);
     ejs->name = mprAsprintf("ejs-%d", seqno++);
     unlock(sp);
@@ -114,6 +117,7 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
         mprRemoveRoot(ejs);
         return 0;
     }
+    ejs->state->frozen = 1;
     if (defineTypes(ejs) < 0 || loadStandardModules(ejs, require) < 0) {
         if (ejs->exception) {
             ejsReportError(ejs, "Can't initialize interpreter");
@@ -130,7 +134,10 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
         return 0;
     }
     mprRemoveRoot(ejs);
-    ejs->freeze = 0;
+    ejs->state->frozen = 0;
+#if UNUSED
+    mprLog(0, "CREATE %s", ejs->name);
+#endif
     return ejs;
 }
 
@@ -140,16 +147,18 @@ void ejsDestroy(Ejs *ejs)
     EjsService  *sp;
     EjsState    *state;
 
+#if UNUSED
+    mprLog(0, "DESTROY %s", ejs->name);
+#endif
     ejs->destroying = 1;
     sp = ejs->service;
     if (sp) {
         ejsRemoveModules(ejs);
         ejsRemoveWorkers(ejs);
-        state = ejs->masterState;
+        state = ejs->state;
         if (state->stackBase) {
             mprVirtFree(state->stackBase, state->stackSize);
             state->stackBase = 0;
-            //  MOB - was masterState
             ejs->state = 0;
         }
         mprRemoveItem(sp->vmlist, ejs);
@@ -166,6 +175,9 @@ static void manageEjs(Ejs *ejs, int flags)
     EjsObj      *vp, **vpp, **top;
 
     if (flags & MPR_MANAGE_MARK) {
+#if UNUSED
+mprLog(0, "MARK EJS %s", ejs->name);
+#endif
         mprMark(ejs->global);
         mprMark(ejs->name);
         mprMark(ejs->applications);
@@ -174,7 +186,9 @@ static void manageEjs(Ejs *ejs, int flags)
         mprMark(ejs->errorMsg);
         mprMark(ejs->exception);
         mprMark(ejs->exceptionArg);
+#if UNUSED
         mprMark(ejs->masterState);
+#endif
         mprMark(ejs->mutex);
         mprMark(ejs->result);
         mprMark(ejs->search);
@@ -193,6 +207,7 @@ static void manageEjs(Ejs *ejs, int flags)
                 mprMark(state->fp);
                 mprMark(state->bp);
                 mprMark(state->internal);
+                mprMark(state->t1);
             }
 
             /*
@@ -209,6 +224,9 @@ static void manageEjs(Ejs *ejs, int flags)
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroy(ejs);
+#if UNUSED
+        mprLog(0, "AFTER DESTROY %s", ejs->name);
+#endif
     }
 }
 
@@ -906,19 +924,11 @@ int ejsFreeze(Ejs *ejs, int freeze)
 {
     int     old;
 
-    if (ejs->state->fp) {
-        old = ejs->state->fp->freeze;
-    } else {
-        //  MOB OPT - get rid of this and have a dummy state+frame at all times
-        old = ejs->freeze;
-    }
+    old = ejs->state->frozen;
     if (freeze != -1) {
-        if (ejs->state->fp) {
-            ejs->state->fp->freeze = freeze;
-        } else {
-            ejs->freeze = freeze;
-        }
+        ejs->state->frozen = freeze;
     }
+    //printf("SET FREEZE for %s to %d was %d\n", ejs->name, freeze, old);
     return old;
 }
 

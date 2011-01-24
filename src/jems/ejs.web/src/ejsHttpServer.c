@@ -715,6 +715,9 @@ HttpStage *ejsAddWebHandler(Http *http)
 static void manageHttpServer(EjsHttpServer *sp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+#if UNUSED
+        mprLog(0, "MARK httpServer for %s", sp->ejs->name);
+#endif
         ejsManagePot(sp, flags);
         mprMark(sp->ejs);
         mprMark(sp->server);
@@ -736,6 +739,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
 
     } else {
 #if UNUSED
+        mprLog(0, "FREE httpServer for %s", sp->ejs->name);
         //  MOB -- can't do this. ejs and everything else could be dead.
         if (!mprIsStopping() && sp->ejs && sp->ejs->service) {
             ejsSendEvent(sp->ejs, sp->emitter, "close", NULL, sp);
@@ -765,6 +769,9 @@ static EjsHttpServer *createHttpServer(Ejs *ejs, EjsType *type, int size)
     sp->ejs = ejs;
     sp->async = 1;
     httpInitTrace(sp->trace);
+#if UNUSED
+    mprLog(0, "CREATE HttpServer %p for %s", sp, sp->ejs->name);
+#endif
     return sp;
 }
 

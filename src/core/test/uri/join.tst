@@ -2,8 +2,6 @@
     Uri.join()
  */
 
-//  Join
-
 u = Uri("/a").join("b")
 assert(u == "/a/b")
 
@@ -50,6 +48,9 @@ assert(u == "/a/b/c/d")
 
 u = Uri("/a").join(Path("b"), Uri("c"), {path: "d"})
 assert(u == "/a/b/c/d")
+
+u = Uri("/a").join(Path("b"), {scheme: "http", path: "/d"})
+assert(u == "http://localhost/d")
 
 u = Uri("/a").join(Path("b"), {scheme: "http", path: "/d"})
 assert(u == "http://localhost/d")

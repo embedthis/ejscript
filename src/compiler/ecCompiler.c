@@ -103,6 +103,8 @@ int ecCompile(EcCompiler *cp, int argc, char **argv)
     ejs = cp->ejs;
     saveCompiling = ejs->compiling;
     ejs->compiling = 1;
+    
+    //  MOB -- remove this. Should not be required.
     frozen = ejsFreeze(ejs, -1);
 
     rc = compileInner(cp, argc, argv);
@@ -153,6 +155,9 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     /*
         Compile source files and load any module files
      */
+    MprThread *tp = mprGetCurrentThread();
+    mprAssert(tp->yielded == 0);
+    
     for (i = 0; i < argc && !cp->fatalError; i++) {
         ext = mprGetPathExtension(argv[i]);
         if (scasecmp(ext, "mod") == 0 || scasecmp(ext, BLD_SHOBJ) == 0) {
@@ -183,12 +188,19 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             mprAddItem(nodes, 0);
         } else  {
 //  MOB -- freeze not required unless evaling in AST phase
+            mprAssert(tp->yielded == 0);
+            mprAssert(!MPR->marking);
+            
+            //  MOB - move this deeper (gradually)
             frozen = ejsFreeze(ejs, 1);
 // printf(">>>>>>>>>>> Before parse MUST BE NO GC\n");
             mprAddItem(nodes, ecParseFile(cp, argv[i]));
 // printf("<<<<<<<<<<<< AFTER parse\n");
             ejsFreeze(ejs, frozen);
         }
+        mprAssert(tp->yielded == 0);
+
+        mprAssert(!MPR->marking);
         mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
 #if UNUSED

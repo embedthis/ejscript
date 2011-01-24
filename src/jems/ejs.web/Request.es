@@ -194,7 +194,8 @@ module ejs.web {
         /** 
             Original HTTP request method used by the client. If the method is overridden by including a "-ejs-method-" 
             parameter in a POST request or by defining an X-HTTP-METHOD-OVERRIDE Http header, the original method used by
-            the client is stored in this property and the method property reflects the newly defined value.
+            the client is stored in this property and the method property reflects the newly defined value. If method is
+            not overridden, originalMethod will be null.
          */
         enumerable var originalMethod: String
 

@@ -99,8 +99,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 
 #define CHECK_VALUE(value, thisObj, obj, slotNum) checkGetter(ejs, value, thisObj, obj, slotNum)
 
-//  MOB - remove need for ejs->freeze
-#define CHECK_GC() if (MPR->heap.mustYield && !(ejs->freeze || ejs->state->fp->freeze)) { mprYield(0); } else 
+#define CHECK_GC() if (MPR->heap.mustYield && !(ejs->state->frozen)) { mprYield(0); } else 
 
 /*
     Set a slot value when we don't know if the object is an EjsObj
@@ -195,7 +194,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     EjsNamespace *nsp;
     EjsString   *str;
     uchar       *mark;
-    int         i, offset, count, opcode, attributes, freezeState;
+    int         i, offset, count, opcode, attributes, frozen;
 
 #if BLD_UNIX_LIKE || VXWORKS 
     /*
@@ -216,9 +215,11 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     state = mprAlloc(sizeof(EjsState));
     *state = *ejs->state;
     state->prev = ejs->state;
+    state->frozen = ejs->state->frozen;
     ejs->state = state;
 
     callFunction(ejs, fun, otherThis, argc, stackAdjust);
+    mprAssert(state->fp);
     FRAME->caller = 0;
 
 #if BLD_UNIX_LIKE || VXWORKS 
@@ -298,6 +299,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             state->bp = FRAME->function.block.prev;
             newFrame = FRAME->caller;
             FRAME = newFrame;
+            CHECK_GC();
             BREAK;
 
         /*
@@ -313,6 +315,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             state->bp = FRAME->function.block.prev;
             newFrame = FRAME->caller;
             FRAME = newFrame;
+            CHECK_GC();
             BREAK;
 
         /*
@@ -2186,13 +2189,12 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
              Stack after         []
              */
         CASE (EJS_OP_NEW_ARRAY):
-            freezeState = FRAME->freeze;
-            FRAME->freeze = 1;
+frozen = ejsFreeze(ejs, 1);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
-            vp = ejsCreateObj(ejs, type, 0);
+            state->t1 = vp = ejsCreateObj(ejs, type, 0);
             for (i = 1 - (argc * 2); i <= 0; ) {
                 indexVar = ejsToNumber(ejs, state->stack[i++]);
                 if (ejs->exception) BREAK;
@@ -2203,7 +2205,8 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             }
             state->stack -= (argc * 2);
             push(vp);
-            FRAME->freeze = freezeState;
+            state->t1 = 0;
+ejsFreeze(ejs, frozen);
             BREAK;
 
         /*
@@ -2214,13 +2217,12 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 Stack after         []
          */
         CASE (EJS_OP_NEW_OBJECT):
-            freezeState = FRAME->freeze;
-            FRAME->freeze = 1;
+frozen = ejsFreeze(ejs, 1);
             type = GET_TYPE();
             argc = GET_INT();
             argc += ejs->spreadArgs;
             ejs->spreadArgs = 0;
-            vp = ejsCreateObj(ejs, type, 0);
+            state->t1 = vp = ejsCreateObj(ejs, type, 0);
             for (i = 1 - (argc * 3); i <= 0; ) {
                 spaceVar = ejsToString(ejs, state->stack[i++]);
                 if (ejs->exception) BREAK;
@@ -2235,7 +2237,8 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
             }
             state->stack -= (argc * 3);
             push(vp);
-            FRAME->freeze = freezeState;
+            state->t1 = 0;
+ejsFreeze(ejs, frozen);
             BREAK;
 
 
@@ -3292,10 +3295,15 @@ int ejsInitStack(Ejs *ejs)
 {
     EjsState    *state;
 
+#if UNUSED
     if ((state = mprAllocBlock(sizeof(EjsState), MPR_ALLOC_ZERO)) == 0) {
         mprSetMemError(ejs);
         return EJS_ERR;
     }
+#endif
+    state = ejs->state;
+    mprAssert(state);
+
     /*
         Allocate the stack
         This will allocate memory virtually for systems with virutal memory. Otherwise, it will just use malloc.
@@ -3307,7 +3315,9 @@ int ejsInitStack(Ejs *ejs)
         return EJS_ERR;
     }
     state->stack = &state->stackBase[-1];
+#if UNUSED
     ejs->state = ejs->masterState = state;
+#endif
     return 0;
 }
 
@@ -3496,7 +3506,7 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
     EjsType         *type;
     EjsObj          **argv;
     EjsObj          *result, **sp;
-    int             count, i, freezeState;
+    int             count, i, fstate;
 
     mprAssert(fun);
     mprAssert(ejs->exception == 0);
@@ -3505,14 +3515,19 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
 
     state = ejs->state;
     result = 0;
+//  MOB
+int oldFstate = state->frozen;
+
+#if UNUSED
+    if (MPR->heap.mustYield && !state->frozen) { 
+        mprYield(0); 
+    }
+#endif
 
     if (unlikely(ejsIsType(ejs, fun))) {
         type = (EjsType*) fun;
         if (thisObj == NULL) {
-            freezeState = ejs->state->fp->freeze;
-            ejs->state->fp->freeze = 1;
             thisObj = ejsCreateObj(ejs, type, 0);
-            ejs->state->fp->freeze = freezeState;
         }
         result = thisObj;
         if (!type->hasConstructor) {
@@ -3575,9 +3590,9 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
             return;
         }
         ejsClearAttention(ejs);
-freezeState = ejs->state->fp->freeze;
+fstate = state->frozen;
         result = (fun->body.proc)(ejs, thisObj, argc, argv);
-ejs->state->fp->freeze = freezeState;
+state->frozen = fstate;
         if (result == 0) {
             result = ejs->nullValue;
         }
@@ -3588,7 +3603,6 @@ mprAssert(result == 0 || (MPR_GET_GEN(MPR_GET_MEM(result)) != MPR->heap.dead));
         fp = ejsCreateFrame(ejs, fun, thisObj, argc, argv);
         fp->function.block.prev = state->bp;
         fp->caller = state->fp;
-        fp->freeze = (fp->caller) ? fp->caller->freeze : ejs->freeze;
         fp->stackBase = state->stack;
         fp->stackReturn = state->stack - argc - stackAdjust;
         state->fp = fp;
@@ -3599,6 +3613,14 @@ mprAssert(result == 0 || (MPR_GET_GEN(MPR_GET_MEM(result)) != MPR->heap.dead));
         ejs->result = result;
     }
 mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    //  MOB - is this the best place for this?
+#if UNUSED
+    if (MPR->heap.mustYield && !(state->frozen)) { 
+        mprYield(0); 
+    }
+#endif
+    mprAssert(ejs->state->fp);
+    // mprAssert(!state->frozen);
 }
 
 
@@ -3834,11 +3856,12 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     static int      showFrequency = 1;
 #endif
 
+    mprAssert(!MPR->marking);
     state = ejs->state;
     fp = state->fp;
     opcount[opcode]++;
 
-    if (ejs->initialized && doDebug) {
+    if (1 || ejs->initialized && doDebug) {
         offset = (int) (fp->pc - fp->function.body.code->byteCode) - 1;
         if (offset < 0) {
             offset = 0;
