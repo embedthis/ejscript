@@ -252,6 +252,7 @@ static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (argc == 2 && argv[1] != ejs->nullValue) {
         /*
             Must prep here to re-create a new Tx headers store
+            MOB - why. This prevents Http.setHeaders
          */
         httpPrepClientConn(hp->conn, 0);
         mprFlushBuf(hp->requestContent);
@@ -1263,8 +1264,10 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
                 if (url) {
                     uri = httpCreateUri(url, 0);
                     hp->uri = httpUriToString(uri, 1);
+#if UNUSED
                     httpPrepClientConn(conn, count);
                     count = 0;
+#endif
                 }
                 count--; 
                 redirectCount++;
@@ -1302,11 +1305,11 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
         if (hp->requestContentCount > 0) {
             mprAdjustBufStart(hp->requestContent, -hp->requestContentCount);
         }
-        /* Force a new connection */
+        /* Force a new connection - MOB why. Slow for ordinary redirects */
         if (conn->rx == 0 || conn->rx->status != HTTP_CODE_UNAUTHORIZED) {
             httpSetKeepAliveCount(conn, -1);
         }
-        httpPrepClientConn(conn, count);
+        httpPrepClientConn(conn, 1);
         if (startHttpRequest(ejs, hp, NULL, 0, NULL) < 0) {
             return 0;
         }
