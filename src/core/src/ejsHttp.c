@@ -250,11 +250,13 @@ static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     EjsObj  *data;
 
     if (argc == 2 && argv[1] != ejs->nullValue) {
+#if UNUSED
         /*
             Must prep here to re-create a new Tx headers store
             MOB - why. This prevents Http.setHeaders
          */
         httpPrepClientConn(hp->conn, 0);
+#endif
         mprFlushBuf(hp->requestContent);
         data = argv[1];
         if (ejsGetPropertyCount(ejs, data) > 0) {

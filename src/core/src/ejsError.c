@@ -92,12 +92,9 @@ static EjsType *defineType(Ejs *ejs, cchar *name, int id)
 {
     EjsType     *type;
 
-    //  MOB -- remove this type and just use EjsObj - bug what about castError helper
-    type = ejsCreateNativeType(ejs, N("ejs", name), id, sizeof(EjsError), NULL, EJS_POT_HELPERS);
-
+    type = ejsCreateNativeType(ejs, N("ejs", name), id, sizeof(EjsError), ejsManagePot, EJS_POT_HELPERS);
     //  MOB -- why?
     type->constructor.block.nobind = 1;
-
     type->helpers.cast = (EjsCastHelper) castError;
     return type;
 }

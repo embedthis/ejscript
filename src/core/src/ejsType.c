@@ -218,8 +218,9 @@ int ejsBootstrapTypes(Ejs *ejs)
 static int defaultManager(EjsObj *ev, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        mprAssert(!TYPE(ev)->isPot);
 #if UNUSED
-        //  MOB -- should not do this
+            //  MOB -- should this be done?
             mprMark(ev->type);
         }
 #endif
@@ -288,6 +289,7 @@ EjsType *ejsCreateNativeType(Ejs *ejs, EjsName qname, int id, int instanceSize, 
     type->manager = manager ? manager : defaultManager;
     if (helpers == EJS_POT_HELPERS) {
         ejsClonePotHelpers(ejs, type);
+        mprAssert(manager);
     } else if (helpers == EJS_OBJ_HELPERS) {
         ejsCloneObjHelpers(ejs, type);
     }
