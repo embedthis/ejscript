@@ -585,7 +585,7 @@ static EjsObj *ba_setLength(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
  */
 static EjsObj *ba_resizable(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ap->resizable ? ejs->trueValue : ejs->falseValue;
+    return ap->resizable ? (EjsObj*) ejs->trueValue : (EjsObj*) ejs->falseValue;
 }
 
 
