@@ -33,7 +33,7 @@ static EjsService *createService()
     MPR->ejsService = sp;
     mprSetMemNotifier((MprMemNotifier) allocNotifier);
 
-    sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS | MPR_HASH_UNICODE);
+    sp->nativeModules = mprCreateHash(-1, MPR_HASH_STATIC_KEYS);
     sp->mutex = mprCreateLock();
     sp->vmlist = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     ejsInitCompiler(sp);
@@ -48,6 +48,7 @@ static void manageEjsService(EjsService *sp, int flags)
         mprMark(sp->mutex);
         mprMark(sp->vmlist);
         mprMark(sp->nativeModules);
+
     } else if (flags & MPR_MANAGE_FREE) {
         sp->mutex = NULL;
     }
@@ -351,7 +352,7 @@ static int defineTypes(Ejs *ejs)
     /*  
         Define the native module configuration routines.
      */
-    ejsAddNativeModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), configureEjs, _ES_CHECKSUM_ejs, 0);
+    ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
 
 #if BLD_FEATURE_EJS_ALL_IN_ONE || BLD_STATIC
 #if BLD_FEATURE_SQLITE
@@ -1062,9 +1063,12 @@ void ejsLoadHttpService(Ejs *ejs)
 {
     ejsLockService(ejs);
     if (mprGetMpr()->httpService == 0) {
-        httpCreate(ejs->service);
+        httpCreate();
     }
     ejs->http = ejs->service->http = mprGetMpr()->httpService;
+    if (ejs->http == 0) {
+        mprError("Can't load Http Service");
+    }
     ejsUnlockService(ejs);
 }
 

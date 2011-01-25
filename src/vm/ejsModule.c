@@ -83,20 +83,23 @@ static void manageNativeModule(EjsNativeModule *nm, int flags)
     Register a native module callback to be invoked when it it time to configure the module. This is used by loadable modules
     when they are built statically.
  */
-int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, int checksum, int flags)
+int ejsAddNativeModule(Ejs *ejs, cchar *name, EjsNativeCallback callback, int checksum, int flags)
 {
     EjsService          *sp;
     EjsNativeModule     *nm;
 
+    sp = ejs->service;
+    if (ejsLookupNativeModule(ejs, name)) {
+        return 0;
+    }
     if ((nm = mprAllocObj(EjsNativeModule, manageNativeModule)) == NULL) {
         return MPR_ERR_MEMORY;
     }
-    nm->name = sclone(name->value);
+    nm->name = sclone(name);
     nm->callback = callback;
     nm->checksum = checksum;
     nm->flags = flags;
 
-    sp = ejs->service;
     if (mprAddKey(sp->nativeModules, nm->name, nm) == 0) {
         return EJS_ERR;
     }
@@ -104,9 +107,9 @@ int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, in
 }
 
 
-EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, EjsString *name) 
+EjsNativeModule *ejsLookupNativeModule(Ejs *ejs, cchar *name) 
 {
-    return mprLookupHash(ejs->service->nativeModules, name->value);
+    return mprLookupHash(ejs->service->nativeModules, name);
 }
 
 

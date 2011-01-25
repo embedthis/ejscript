@@ -380,6 +380,7 @@ static int configureSqliteTypes(Ejs *ejs)
 {
     EjsType     *type;
     EjsPot      *prototype;
+    static int  initialized = 0;
     
     type = (EjsType*) ejsConfigureNativeType(ejs, N("ejs.db", "Sqlite"), sizeof(EjsSqlite), manageSqlite, EJS_POT_HELPERS);
     prototype = type->prototype;
@@ -387,25 +388,30 @@ static int configureSqliteTypes(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_close, (EjsProc) sqliteClose);
     ejsBindMethod(ejs, prototype, ES_ejs_db_Sqlite_sql, (EjsProc) sqliteSql);
 
+    if (!initialized) {
+        initialized++;
 #if MAP_ALLOC
-    sqlite3_config(SQLITE_CONFIG_MALLOC, &mem);
+        sqlite3_config(SQLITE_CONFIG_MALLOC, &mem);
 #endif
 #if MAP_MUTEXES
-    sqlite3_config(SQLITE_CONFIG_MUTEX, &mut);
+        sqlite3_config(SQLITE_CONFIG_MUTEX, &mut);
 #endif
-    sqlite3_config(THREAD_STYLE);
-    if (sqlite3_initialize() != SQLITE_OK) {
-        mprError("Can't initialize SQLite");
-        return MPR_ERR_CANT_INITIALIZE;
+        sqlite3_config(THREAD_STYLE);
+        if (sqlite3_initialize() != SQLITE_OK) {
+            mprError("Can't initialize SQLite");
+            return MPR_ERR_CANT_INITIALIZE;
+        }
     }
     return 0;
 }
 
 
+/*
+    Module load entry point. This must be idempotent as it will be called for each new interpreter created.
+ */
 int ejs_db_sqlite_Init(Ejs *ejs, MprModule *mp)
 {
-    return ejsAddNativeModule(ejs, ejsCreateStringFromAsc(ejs, "ejs.db.sqlite"), configureSqliteTypes, 
-        _ES_CHECKSUM_ejs_db_sqlite, EJS_LOADER_ETERNAL);
+    return ejsAddNativeModule(ejs, "ejs.db.sqlite", configureSqliteTypes, _ES_CHECKSUM_ejs_db_sqlite, EJS_LOADER_ETERNAL);
 }
 
 #endif /* BLD_FEATURE_SQLITE */

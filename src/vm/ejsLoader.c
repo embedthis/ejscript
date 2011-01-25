@@ -114,10 +114,10 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
             See if a native module initialization routine has been registered. If so, use that. Otherwise, look
             for a backing DSO.
          */
-        if ((nativeModule = ejsLookupNativeModule(ejs, mp->name)) == 0) {
+        if ((nativeModule = ejsLookupNativeModule(ejs, ejsToMulti(ejs, mp->name))) == 0) {
 #if !BLD_STATIC
             loadNativeLibrary(ejs, mp, mp->path);
-            nativeModule = ejsLookupNativeModule(ejs, mp->name);
+            nativeModule = ejsLookupNativeModule(ejs, ejsToMulti(ejs, mp->name));
 #endif
             if (nativeModule == NULL) {
                 if (ejs->exception == 0) {

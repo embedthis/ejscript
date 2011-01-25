@@ -102,12 +102,11 @@ static int configureWebTypes(Ejs *ejs)
 
 
 /*  
-    Module load entry point
+    Module load entry point. This must be idempotent as it will be called for each new interpreter created.
  */
 int ejs_web_Init(Ejs *ejs, MprModule *mp)
 {
-    return ejsAddNativeModule(ejs, ejsCreateStringFromAsc(ejs, "ejs.web"), configureWebTypes, 
-        _ES_CHECKSUM_ejs_web, EJS_LOADER_ETERNAL);
+    return ejsAddNativeModule(ejs, "ejs.web", configureWebTypes, _ES_CHECKSUM_ejs_web, EJS_LOADER_ETERNAL);
 }
 
 
