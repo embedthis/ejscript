@@ -74,9 +74,7 @@ typedef struct EjsMod {
     MprFile     *file;                      /* Current output file handle */
     EjsModule   *module;                    /* Current unit */
     EjsFunction *fun;                       /* Current function to disassemble */
-    
     uchar       *pc;
-
 } EjsMod;
 
 

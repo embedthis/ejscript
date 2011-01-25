@@ -10,17 +10,9 @@
 
 /****************************** Forward Declarations **************************/
 
-typedef struct App {
-#if UNUSED
-    EjsService  *ejsService;
-#endif
-    Ejs         *ejs;
-    EjsMod      *mod;
-} App;
-
 static void getDepends(Ejs *ejs, MprList *list, EjsModule *mp);
 static void logger(int flags, int level, const char *msg);
-static void manageApp(App *app, int flags);
+static void manageMod(EjsMod *mp, int flags);
 static int  process(EjsMod *mp, cchar *output, int argc, char **argv);
 static void require(MprList *list, cchar *name);
 static int  setLogging(Mpr *mpr, char *logSpec);
@@ -30,7 +22,6 @@ static int  setLogging(Mpr *mpr, char *logSpec);
 MAIN(ejsmodMain, int argc, char **argv)
 {
     Mpr             *mpr;
-    App             *app;
     EjsMod          *mp;
     Ejs             *ejs;
     MprList         *requiredModules;
@@ -46,19 +37,17 @@ MAIN(ejsmodMain, int argc, char **argv)
      */
     mpr = mprCreate(argc, argv, 0);
     mprSetAppName(argv[0], 0, 0);
-    app = mprAllocObj(App, manageApp);
-    mprAddRoot(app);
 
     /*
         Allocate the primary control structure
      */
-    if ((mp = mprAlloc(sizeof(EjsMod))) == NULL) {
+    if ((mp = mprAllocObj(EjsMod, manageMod)) == NULL) {
         return MPR_ERR_MEMORY;
     }
-    app->mod = mp;
+    mprAddRoot(mp);
     mp->lstRecords = mprCreateList(0, 0);
     mp->blocks = mprCreateList(0, 0);
-    mp->docDir = ".";
+    mp->docDir = sclone(".");
     
     for (nextArg = 1; nextArg < argc; nextArg++) {
         argp = argv[nextArg];
@@ -86,7 +75,7 @@ MAIN(ejsmodMain, int argc, char **argv)
             if (nextArg >= argc) {
                 err++;
             } else {
-                mp->docDir = argv[++nextArg];
+                mp->docDir = sclone(argv[++nextArg]);
                 mp->html = 1;
             }
             
@@ -152,18 +141,15 @@ MAIN(ejsmodMain, int argc, char **argv)
             break;
         }
     }
-    
     if (argc == nextArg) {
         err++;
     }
-    
     if (mp->genSlots == 0 && mp->listing == 0 && mp->html == 0 && mp->xml == 0 && mp->depends == 0) {
         mp->listing = 1;
     }
     if (mp->depends && requiredModules == 0) {
         requiredModules = mprCreateList(-1, 0);
     }
-
     if (err) {
         /*
             Examples:
@@ -188,12 +174,6 @@ MAIN(ejsmodMain, int argc, char **argv)
     /*
         Need an interpreter to load modules
      */
-#if UNUSED
-    app->ejsService = ejsCreateService(mpr); 
-    if (app->ejsService == 0) {
-        return MPR_ERR_MEMORY;
-    }
-#endif
     flags = EJS_FLAG_NO_INIT;
     if (mp->html || mp->xml) {
         flags |= EJS_FLAG_DOC;
@@ -202,7 +182,6 @@ MAIN(ejsmodMain, int argc, char **argv)
     if (ejs == 0) {
         return MPR_ERR_MEMORY;
     }
-    app->ejs = ejs;
     mp->ejs = ejs;
 
     if (nextArg < argc) {
@@ -213,20 +192,29 @@ MAIN(ejsmodMain, int argc, char **argv)
     if (mp->errorCount > 0) {
         err = -1;
     }
+    mprRemoveRoot(mp);
     ejsDestroy(ejs);
     mprDestroy(MPR_GRACEFUL);
     return err;
 }
 
 
-static void manageApp(App *app, int flags)
+static void manageMod(EjsMod *mp, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-#if UNUSED
-        mprMark(app->ejsService);
-#endif
-        mprMark(app->ejs);
-        mprMark(app->mod);
+        mprMark(mp->ejs);
+        mprMark(mp->currentLine);
+        mprMark(mp->currentFileName);
+        mprMark(mp->lstRecords);
+        mprMark(mp->packages);
+        mprMark(mp->blocks);
+        mprMark(mp->currentBlock);
+        mprMark(mp->docDir);
+        mprMark(mp->path);
+        mprMark(mp->file);
+        mprMark(mp->module);
+        mprMark(mp->fun);
+        mprMark(mp->pc);
     }
 }
 
