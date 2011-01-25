@@ -23,6 +23,7 @@ server.listen(HTTP)
 //  Fetch and create a new session object per request
 assert(Object.getOwnPropertyCount(server.sessions) == 0)
 http = fetch(HTTP + "/")
+http.reset()
 http = fetch(HTTP + "/")
 assert(Object.getOwnPropertyCount(server.sessions) == 2)
 
