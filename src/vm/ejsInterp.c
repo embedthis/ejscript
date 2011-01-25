@@ -2663,9 +2663,14 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
     if (ejs->exception) {
         return 0;
     }
+    //  MOB -is this required 
+#if TEST
+    mprAssert(ejs->state->fp->attentionPc == 0);
+#endif
     ejsClearAttention(ejs);
     
     if (thisObj == 0) {
+        //  MOB - simplify
         if ((thisObj = fun->boundThis) == 0) {
             thisObj = ejs->state->fp->function.boundThis;
         }
@@ -2675,7 +2680,13 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
             ejsThrowArgError(ejs, "Native function is not defined");
             return 0;
         }
+//  MOB - need faster solution
+//  MOB -- just so that all args get marked
+for (i = 0; i < argc; i++) {
+    pushOutside(ejs, ((EjsAny**) argv)[i]);
+}
         ejs->result = (fun->body.proc)(ejs, thisObj, argc, argv);
+ejs->state->stack -= argc;
         if (ejs->result == 0) {
             ejs->result = ejs->nullValue;
         }
@@ -3515,8 +3526,6 @@ static void callFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, 
 
     state = ejs->state;
     result = 0;
-//  MOB
-int oldFstate = state->frozen;
 
 #if UNUSED
     if (MPR->heap.mustYield && !state->frozen) { 
@@ -3861,7 +3870,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     fp = state->fp;
     opcount[opcode]++;
 
-    if (1 || ejs->initialized && doDebug) {
+    if (ejs->initialized && doDebug) {
         offset = (int) (fp->pc - fp->function.body.code->byteCode) - 1;
         if (offset < 0) {
             offset = 0;
@@ -3869,18 +3878,11 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
         optable = ejsGetOptable(ejs);
         fp->line = ejsGetDebugLine(ejs, (EjsFunction*) fp, fp->pc);
 #if UNUSED
-        if (ejsGetDebugInfo(ejs, (EjsFunction*) fp, fp->pc, &fp->loc.filename, &fp->loc.lineNumber, &fp->loc.source) >= 0) {
-            mprLog(6, "%0s %04d: [%d] %02x: %-35s # %s:%d %w",
-                mprGetCurrentThreadName(fp), offset, (int) (state->stack - fp->stackReturn),
-                (uchar) opcode, optable[opcode].name, fp->loc.filename, fp->loc.lineNumber, fp->loc.source);
-        }
-#if UNUSED
         if (showFrequency && ((once % 1000) == 999)) {
             ejsShowOpFrequency(ejs);
         }
 #endif
         mprAssert(state->stack >= fp->stackReturn);
-#endif
     }
     ejsOpCount++;
     return opcode;

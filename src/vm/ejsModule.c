@@ -91,13 +91,13 @@ int ejsAddNativeModule(Ejs *ejs, EjsString *name, EjsNativeCallback callback, in
     if ((nm = mprAllocObj(EjsNativeModule, manageNativeModule)) == NULL) {
         return MPR_ERR_MEMORY;
     }
-    nm->name = name;
+    nm->name = sclone(name->value);
     nm->callback = callback;
     nm->checksum = checksum;
     nm->flags = flags;
 
     sp = ejs->service;
-    if (mprAddKey(sp->nativeModules, nm->name->value, nm) == 0) {
+    if (mprAddKey(sp->nativeModules, nm->name, nm) == 0) {
         return EJS_ERR;
     }
     return 0;
@@ -305,18 +305,21 @@ EjsString *ejsCreateStringFromConst(Ejs *ejs, EjsModule *mp, int index)
 
 /************************************************** Debug ******************************************************/
 
-EjsDebug *ejsCreateDebug(Ejs *ejs)
+EjsDebug *ejsCreateDebug(Ejs *ejs, int length)
 {
     EjsDebug    *debug;
     ssize       size;
+    int         count;
 
-    size = sizeof(EjsDebug) + (EJS_DEBUG_INCR * sizeof(EjsLine));
+    count = (length > 0) ? length : EJS_DEBUG_INCR;
+    size = sizeof(EjsDebug) + (count * sizeof(EjsLine));
     if ((debug = mprAllocBlock(size, MPR_ALLOC_MANAGER)) == 0) {
         return NULL;
     }
     mprSetManager(debug, manageDebug);
-    debug->size = EJS_DEBUG_INCR;
-    debug->numLines = 0;
+    debug->size = count;
+    debug->numLines = length;
+    debug->magic = EJS_DEBUG_MAGIC;
     return debug;
 }
 
@@ -331,9 +334,10 @@ int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, MprChar *source)
     mprAssert(debugp);
     
     if (*debugp == 0) {
-        *debugp = ejsCreateDebug(ejs);
+        *debugp = ejsCreateDebug(ejs, 0);
     }
     debug = *debugp;
+    mprAssert(debug->magic == EJS_DEBUG_MAGIC);
     if (debug->numLines >= debug->size) {
         debug->size += EJS_DEBUG_INCR;
         len = sizeof(EjsDebug) + (debug->size * sizeof(EjsLine));
@@ -352,6 +356,8 @@ int ejsAddDebugLine(Ejs *ejs, EjsDebug **debugp, int offset, MprChar *source)
     line->source = source;
     line->offset = offset;
     debug->numLines = numLines;
+    //  MOB
+    mprAssert(debug->numLines < 20000);
     return 0;
 }
 
@@ -360,10 +366,14 @@ static void manageDebug(EjsDebug *debug, int flags)
 {
     int     i;
 
+    mprAssert(debug->magic == EJS_DEBUG_MAGIC);
+
     if (flags & MPR_MANAGE_MARK) {
         for (i = 0; i < debug->numLines; i++) {
             mprMark(debug->lines[i].source);
         }
+    } else if (flags & MPR_MANAGE_FREE) {
+        debug->magic = 7;
     }
 }
 
@@ -378,7 +388,6 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     EjsLine     *line;
     EjsCode     *code;
     MprOffset   prior;
-    ssize       size;
     int         i, length;
 
     mp = fun->body.code->module;
@@ -402,11 +411,8 @@ static EjsDebug *loadDebug(Ejs *ejs, EjsFunction *fun)
     }
     length = ejsModuleReadInt(ejs, mp);
     if (!mp->hasError) {
-        size = sizeof(EjsDebug) + length * sizeof(EjsLine);
-        if ((debug = mprAllocBlock(size, MPR_ALLOC_MANAGER)) != 0) {
-            mprSetManager(debug, manageDebug);
-            debug->size = length;
-            debug->numLines = length;
+        if ((debug = ejsCreateDebug(ejs, length)) != 0) {
+            mprAssert(debug->numLines == length);
             for (i = 0; i < debug->numLines; i++) {
                 line = &debug->lines[i];
                 line->offset = ejsModuleReadInt(ejs, mp);

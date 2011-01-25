@@ -12,12 +12,16 @@
 
 #include    "ejs.h"
 #include    "ejsWeb.h"
-#include    "ejs.web.slots.h"
+
+/*********************************** Locals ***********************************/
+
+static MprMutex     *sessionLock;
 
 /*********************************** Forwards *********************************/
 
 static void noteSessionActivity(Ejs *ejs, EjsSession *sp);
 static void sessionTimer(EjsHttpServer *sp, MprEvent *event);
+static void startSessionTimer(Ejs *ejs, EjsHttpServer *server);
 
 /************************************* Code ***********************************/
 
@@ -25,7 +29,7 @@ static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
 {
     EjsObj      *vp;
 
-    ejsLockService(ejs);
+    mprLock(sessionLock);
     vp = ejs->potHelpers.getProperty(ejs, (EjsObj*) sp, slotNum);
     if (vp) {
         vp = ejsDeserialize(ejs, (EjsString*) vp);
@@ -34,7 +38,7 @@ static EjsObj *getSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum)
         vp = (EjsObj*) ejs->emptyString;
     }
     noteSessionActivity(ejs, sp);
-    ejsUnlockService(ejs);
+    mprUnlock(sessionLock);
     return vp;
 }
 
@@ -44,7 +48,7 @@ static EjsObj *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName qname)
     EjsObj      *vp;
     int         slotNum;
 
-    ejsLockService(ejs);
+    mprLock(sessionLock);
 
     qname.space = ejs->emptyString;
     slotNum = ejs->potHelpers.lookupProperty(ejs, sp, qname);
@@ -60,20 +64,19 @@ static EjsObj *getSessionPropertyByName(Ejs *ejs, EjsSession *sp, EjsName qname)
         }
     }
     noteSessionActivity(ejs, sp);
-    ejsUnlockService(ejs);
+    mprUnlock(sessionLock);
     return vp;
 }
 
 
 static int setSessionProperty(Ejs *ejs, EjsSession *sp, int slotNum, EjsObj *value)
 {
-    ejsLockService(ejs);
-
+    mprLock(sessionLock);
     //  MOB BUG - this won't work multithreaded
     value = (EjsObj*) ejsToJSON(ejs, value, NULL);
     slotNum = ejs->potHelpers.setProperty(ejs, (EjsObj*) sp, slotNum, value);
     noteSessionActivity(ejs, sp);
-    ejsUnlockService(ejs);
+    mprUnlock(sessionLock);
     return slotNum;
 }
 
@@ -111,6 +114,9 @@ void ejsUpdateSessionLimits(Ejs *ejs, EjsHttpServer *server)
 }
 
 
+/*
+    Return the session object corresponding to a request cookie
+ */
 EjsSession *ejsGetSession(Ejs *ejs, EjsRequest *req)
 {
     EjsSession      *session;
@@ -178,26 +184,25 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     }
     now = mprGetTime();
 
-    ejsLockService(ejs);
     if ((session = ejsCreateObj(ejs, ejs->sessionType, 0)) == 0) {
-        ejsUnlockService(ejs);
         return 0;
     }
     session->timeout = timeout;
     session->expire = now + timeout;
+
     /*  
         Use an MD5 prefix of "x" to avoid the hash being interpreted as a numeric index.
      */
+    mprLock(sessionLock);
     next = ejs->nextSession++;
     mprSprintf(idBuf, sizeof(idBuf), "%08x%08x%d", PTOI(ejs) + PTOI(session->expire), (int) now, next);
     id = mprGetMD5Hash(idBuf, sizeof(idBuf), "x");
     if (id == 0) {
-        ejsUnlockService(ejs);
+        mprUnlock(sessionLock);
         return 0;
     }
     session->id = sclone(id);
 
-    //  MOB - locking
     if (server->sessions == 0) {
         server->sessions = ejsCreateEmptyPot(ejs);
         ejsSetProperty(ejs, server, ES_ejs_web_HttpServer_sessions, server->sessions);
@@ -205,28 +210,17 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     count = ejsGetPropertyCount(ejs, (EjsObj*) server->sessions);
     if (count >= limits->sessionCount) {
         ejsThrowResourceError(ejs, "Too many sessions: %d, limit %d", count, limits->sessionCount);
-        ejsUnlockService(ejs);
+        mprUnlock(sessionLock);
         return 0;
     }
     slotNum = ejsSetPropertyByName(ejs, server->sessions, EN(session->id), session);
     if (slotNum < 0) {
-        ejsUnlockService(ejs);
+        mprUnlock(sessionLock);
         return 0;
     }
     session->index = slotNum;
-
-    if (server->sessionTimer == 0) {
-#if UNUSED
-        extern int stopSeqno;
-        if (stopSeqno == -1) {
-            MprMem *mp = MPR_GET_MEM(server);
-            stopSeqno = mp->seqno;
-        }
-#endif
-        server->sessionTimer = mprCreateTimerEvent(ejs->dispatcher, "sessionTimer", EJS_TIMER_PERIOD, 
-            (MprEventProc) sessionTimer, server, MPR_EVENT_CONTINUOUS);
-    }
-    ejsUnlockService(ejs);
+    startSessionTimer(ejs, server);
+    mprUnlock(sessionLock);
 
     mprLog(3, "Created new session %s. Count %d/%d", id, slotNum + 1, limits->sessionCount);
     if (server->emitter) {
@@ -243,28 +237,52 @@ int ejsDestroySession(Ejs *ejs, EjsHttpServer *server, EjsSession *session)
 {
     int     slotNum;
 
+    mprLock(sessionLock);
     if (session && server->sessions) {
         if (server) {
             ejsSendEvent(ejs, server->emitter, "destroySession", NULL, (EjsObj*) ejsCreateStringFromAsc(ejs, session->id));
         }
         if ((slotNum = ejsLookupProperty(ejs, server->sessions, EN(session->id))) >= 0) {
             ejsDeleteProperty(ejs, server->sessions, slotNum);
+            mprUnlock(sessionLock);
             return 1;
         }
     }
+    mprUnlock(sessionLock);
     return 0;
 }
 
 
-#if UNUSED
-/*  
-    function get count(): Number
- */
-static EjsObj *sess_count(Ejs *ejs, EjsSession *sp, int argc, EjsObj **argv)
+static void startSessionTimer(Ejs *ejs, EjsHttpServer *server)
 {
-    return (EjsObj*) ejsCreateNumber(ejs, ejsGetPropertyCount(ejs, ejs->sessions));
-}
+    mprLock(sessionLock);
+    if (server->sessionTimer == 0) {
+        // printf("START TIMER %s\n", server->name);
+        //  MOB - should session timers run on the ejs->dispatcher or nonblock. Are sessions owned by one interp
+        //  or by the service
+#if MOB
+        server->sessionTimer = mprCreateTimerEvent(ejs->dispatcher, "sessionTimer", EJS_TIMER_PERIOD, 
+            (MprEventProc) sessionTimer, server, 0 /* | MPR_EVENT_QUICK */);
+#else
+        server->sessionTimer = mprCreateEvent(ejs->dispatcher, "sessionTimer", EJS_TIMER_PERIOD, 
+                                                   (MprEventProc) sessionTimer, server, 0);
+        
 #endif
+    }
+    mprUnlock(sessionLock);
+}
+
+
+void ejsStopSessionTimer(EjsHttpServer *server)
+{
+    mprLock(sessionLock);
+    if (server->sessionTimer) {
+        mprLog(0, "STOP TIMER %s %s\n", server->name, server->ejs->name);
+        mprRemoveEvent(server->sessionTimer);
+        server->sessionTimer = 0;
+    }
+    mprUnlock(sessionLock);
+}
 
 
 /*  
@@ -272,21 +290,29 @@ static EjsObj *sess_count(Ejs *ejs, EjsSession *sp, int argc, EjsObj **argv)
  */
 static void sessionTimer(EjsHttpServer *server, MprEvent *event)
 {
+    mprAssert(!server->ejs->destroying);
+    mprAssert(server->ejs->name);
+    mprLog(0, "@@@@@@ RUN TIMER %s in ejs %s", server->name, server->ejs->name);
+#if UNUSED
     Ejs             *ejs;
     EjsPot          *sessions;
     EjsSession      *session;
     MprTime         now;
     HttpLimits      *limits;
-    int             i, count, soon, redline;
+    int             i, count, removed, soon, redline;
 
     sessions = server->sessions;
     ejs = server->ejs;
+    mprAssert(!ejs->destroying);
+    mprAssert(ejs->name);
+    // mprLog(0, "TIMER %s", ejs->name);
 
+//  MOB - locking
     /*  
         This could be on the primary event thread. Can't block long.  MOB -- is this lock really needed
-        MOB -- BUG. Other locks are on the service object
      */
-    if (sessions && server->server && mprTryLock(ejs->mutex)) {
+    if (sessions && server->server && mprTryLock(sessionLock)) {
+        removed = 0;
         limits = server->server->limits;
         count = ejsGetPropertyCount(ejs, (EjsObj*) sessions);
         mprLog(6, "Check for sessions count %d/%d", count, limits->sessionCount);
@@ -297,9 +323,9 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
          */
         redline = limits->sessionCount * 8 / 10;
         if (count > redline) {
-            /* Expire oldest sessions */
             /*
-                One quick swipe to find sessions that are 80% expired
+                Over redline. Must prune some sessions. Expire the oldest sessions.
+                One quick swipe to find sessions that are 80% expired.
              */
             soon = limits->sessionTimeout / 5;
             for (i = count - 1; soon > 0 && i >= 0; i--) {
@@ -309,7 +335,7 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
                 if ((session->expire - now) < soon) {
                     mprLog(3, "Too many sessions. Pruning session %s", session->id);
                     ejsDeleteProperty(ejs, (EjsObj*) sessions, i);
-                    count--;
+                    removed++;
                 }
             }
         }
@@ -330,16 +356,20 @@ static void sessionTimer(EjsHttpServer *server, MprEvent *event)
                     mprLog(3, "Session expired: %s (timeout %d secs)", 
                         session->id, session->timeout / MPR_TICKS_PER_SEC);
                     ejsDeleteProperty(ejs, (EjsObj*) sessions, i);
+                    removed++;
                 }
             }
         }
-        count = ejsCompactPot(ejs, sessions);
+        if (removed) {
+            count = ejsCompactPot(ejs, sessions);
+        }
         if (count == 0) {
             server->sessionTimer = 0;
             mprRemoveEvent(event);
         }
-        mprUnlock(ejs->mutex);
+        mprUnlock(sessionLock);
     }
+#endif
 }
 
 
@@ -359,14 +389,17 @@ void ejsConfigureSessionType(Ejs *ejs)
 
     type = ejs->sessionType = ejsConfigureNativeType(ejs, N("ejs.web", "Session"), sizeof(EjsSession), manageSession, 
         EJS_POT_HELPERS);
+    mprAssert(type->mutex == 0);
+    if (sessionLock == 0) {
+        sessionLock = type->mutex = mprCreateLock();
+        //  MOB -- redo
+        mprHold(sessionLock);
+    }
+
     helpers = &type->helpers;
     helpers->getProperty = (EjsGetPropertyHelper) getSessionProperty;
     helpers->getPropertyByName = (EjsGetPropertyByNameHelper) getSessionPropertyByName;
     helpers->setProperty = (EjsSetPropertyHelper) setSessionProperty;
-
-#if UNUSED
-    ejsBindMethod(ejs, type, ES_ejs_web_Session_count, (EjsFun) sess_count);
-#endif
 }
 
 

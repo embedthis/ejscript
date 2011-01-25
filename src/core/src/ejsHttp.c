@@ -250,13 +250,12 @@ static EjsObj *http_form(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     EjsObj  *data;
 
     if (argc == 2 && argv[1] != ejs->nullValue) {
-#if UNUSED
         /*
-            Must prep here to re-create a new Tx headers store
-            MOB - why. This prevents Http.setHeaders
+            Prep here to reset the state. The ensures the current headers will be preserved.
+            Users may have called setHeader to define custom headers. Users must call reset if they want to clear 
+            prior headers.
          */
-        httpPrepClientConn(hp->conn, 0);
-#endif
+        httpPrepClientConn(hp->conn, 1);
         mprFlushBuf(hp->requestContent);
         data = argv[1];
         if (ejsGetPropertyCount(ejs, data) > 0) {

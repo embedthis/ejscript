@@ -77,6 +77,9 @@ static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
     if (sp->server) {
         ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
         httpDestroyServer(sp->server);
+#if MOB
+        ejsStopSessionTimer(sp);
+#endif
         sp->server = 0;
         mprRemoveRoot(sp);
     }
@@ -736,7 +739,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprMark(sp->sessions);
         mprMark(sp->outgoingStages);
         mprMark(sp->incomingStages);
-
+        
     } else {
 #if UNUSED
         mprLog(0, "FREE httpServer for %s", sp->ejs->name);
@@ -745,12 +748,13 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
             ejsSendEvent(sp->ejs, sp->emitter, "close", NULL, sp);
         }
 #endif
+#if UNUSED 
+        mprLog(0, "DESTROY HttpServer %s in %s", sp->name, sp->ejs->name);
+#endif
         sp->sessions = 0;
-        //  MOB - locking race
-        if (sp->sessionTimer) {
-            mprRemoveEvent(sp->sessionTimer);
-            sp->sessionTimer = 0;
-        }
+#if MOB
+        ejsStopSessionTimer(sp);
+#endif
         if (sp->server) {
             httpDestroyServer(sp->server);
             sp->server = 0;
@@ -767,10 +771,15 @@ static EjsHttpServer *createHttpServer(Ejs *ejs, EjsType *type, int size)
         return NULL;
     }
     sp->ejs = ejs;
+#if UNUSED
+    static int serverCount = 0;
+    //  Messes up the real server name
+    sp->name = mprAsprintf("server-%d", serverCount++);
+#endif
     sp->async = 1;
     httpInitTrace(sp->trace);
 #if UNUSED
-    mprLog(0, "CREATE HttpServer %p for %s", sp, sp->ejs->name);
+    mprLog(0, "CREATE HttpServer %s in %s", sp->name, sp->ejs->name);
 #endif
     return sp;
 }
@@ -782,6 +791,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     EjsPot      *prototype;
 
     type = ejsConfigureNativeType(ejs, N("ejs.web", "HttpServer"), sizeof(EjsHttpServer), manageHttpServer, EJS_POT_HELPERS);
+    ejs->httpServerType = type;
     type->helpers.create = (EjsCreateHelper) createHttpServer;
 
     prototype = type->prototype;
@@ -803,6 +813,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_verifyClients, (EjsProc) hs_verifyClients);
     ejsBindMethod(ejs, prototype, ES_ejs_web_HttpServer_software, (EjsProc) hs_software);
 
+    /* One time initializations */
     ejsLoadHttpService(ejs);
     ejsAddWebHandler(ejs->http);
 }

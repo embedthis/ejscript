@@ -360,9 +360,14 @@ static void manageCode(EjsCode *code, int flags)
 {
     int     i;
 
+    mprAssert(code->magic == EJS_CODE_MAGIC);
+
     if (flags & MPR_MANAGE_MARK) {
         mprMark(code->module);
         mprMark(code->debug);
+        if (code->debug) {
+            mprAssert(code->debug->magic == EJS_DEBUG_MAGIC);
+        }
         if (code->handlers) {
             mprMark(code->handlers);
             for (i = 0; i < code->numHandlers; i++) {
@@ -391,6 +396,7 @@ EjsCode *ejsCreateCode(Ejs *ejs, EjsFunction *fun, EjsModule *module, cuchar *by
     code->codeLen = (int) len;
     code->module = module;
     code->debug = debug;
+    code->magic = EJS_CODE_MAGIC;
     memcpy(code->byteCode, byteCode, len);
     return code;
 }

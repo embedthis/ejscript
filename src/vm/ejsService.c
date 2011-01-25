@@ -106,8 +106,9 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     //  MOB Refactor
     lock(sp);
     ejs->name = mprAsprintf("ejs-%d", seqno++);
-    unlock(sp);
     ejs->dispatcher = mprCreateDispatcher(mprAsprintf("ejsDispatcher-%d", seqno), 1);
+    // printf("CREATE DISPATCHER %s\n", ejs->dispatcher->name);
+    unlock(sp);
         
     if ((ejs->bootSearch = searchPath) == 0) {
         ejs->bootSearch = getenv("EJSPATH");
@@ -165,6 +166,7 @@ void ejsDestroy(Ejs *ejs)
         ejs->service = 0;
         ejsDestroyIntern(ejs->intern);
         ejs->result = 0;
+        mprDestroyDispatcher(ejs->dispatcher);
     }
 }
 
@@ -186,9 +188,6 @@ mprLog(0, "MARK EJS %s", ejs->name);
         mprMark(ejs->errorMsg);
         mprMark(ejs->exception);
         mprMark(ejs->exceptionArg);
-#if UNUSED
-        mprMark(ejs->masterState);
-#endif
         mprMark(ejs->mutex);
         mprMark(ejs->result);
         mprMark(ejs->search);

@@ -170,6 +170,7 @@ extern void ejsUpdateSessionLimits(Ejs *ejs, EjsHttpServer *server);
 
 extern void ejsSendRequestCloseEvent(Ejs *ejs, EjsRequest *req);
 extern void ejsSendRequestErrorEvent(Ejs *ejs, EjsRequest *req);
+extern void ejsStopSessionTimer(EjsHttpServer *server);
 
 /******************************* Internal APIs ********************************/
 

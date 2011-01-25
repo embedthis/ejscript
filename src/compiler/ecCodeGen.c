@@ -1299,7 +1299,8 @@ static int injectCode(Ejs *ejs, EjsFunction *fun, EcCodeGen *extra)
     debug = old->debug;
     if (debug && debug->numLines > 0) {
         for (i = 0; i < debug->numLines; i++) {
-            if (ejsAddDebugLine(ejs, &fun->body.code->debug, debug->lines[i].offset + extraCodeLen, debug->lines[i].source) < 0) {
+            if (ejsAddDebugLine(ejs, &fun->body.code->debug, debug->lines[i].offset + extraCodeLen, 
+                    debug->lines[i].source) < 0) {
                 return MPR_ERR_MEMORY;
             }
         }
@@ -1443,6 +1444,7 @@ static void genClass(EcCompiler *cp, EcNode *np)
                 }
                 if (constructor->body.code) {
                     debug = constructor->body.code->debug;
+                    mprAssert(debug->magic == EJS_DEBUG_MAGIC);
                     if (debug && debug->numLines > 0) {
                         for (i = 0; i < debug->numLines; i++) {
                             addDebugLine(cp, code, debug->lines[i].offset, debug->lines[i].source);
@@ -3684,6 +3686,9 @@ static void manageCodeGen(EcCodeGen *code, int flags)
         mprMark(code->buf);
         mprMark(code->jumps);
         mprMark(code->exceptions);
+        if (code->debug) {
+            mprAssert(code->debug->magic == EJS_DEBUG_MAGIC);
+        }
         mprMark(code->debug);
     }
 }
@@ -4013,6 +4018,7 @@ static int mapToken(EcCompiler *cp, int tokenId)
 
 static void addDebugLine(EcCompiler *cp, EcCodeGen *code, int offset, MprChar *source)
 {
+    mprAssert(code->debug == 0 || code->debug->magic == EJS_DEBUG_MAGIC);
     if (ejsAddDebugLine(cp->ejs, &code->debug, offset, source) < 0) {
         genError(cp, 0, "Can't allocate memory for debug section");
         return;

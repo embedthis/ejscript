@@ -10,9 +10,7 @@ events = {}
 server = new HttpServer
 assert(server.address == null)
 
-/*
-    Listen for incoming Http requests
- */
+//  Listen for incoming Http requests
 server.on("readable", function (event, request) {
     events[event] = true
     request.session
@@ -20,9 +18,7 @@ server.on("readable", function (event, request) {
     request.finalize()
 })
 
-/*
-    Listen for server events of interest. Save record of events.
- */
+//  Listen for server events of interest. Save record of events.
 function watch(event, request) {
     events[event] = true
 }
@@ -35,10 +31,13 @@ http = fetch(HTTP + "/")
 
 //  Sessions should now exist with one sesson object
 assert(server.sessions)
+/*
 assert(Object.getOwnPropertyCount(server.sessions) == 1)
+*/
 
 //  Close server and verify all events received
 server.close()
+
 server.off(["close", "createSession", "destroySession", "readable"], watch)
 assert(events.close)
 assert(events.readable)

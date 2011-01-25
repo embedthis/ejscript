@@ -791,7 +791,6 @@ static EjsObj *findAll(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
         ejsThrowMemoryError(ejs);
         return 0;
     }
-
     for (i = 0; i < ap->length; i++) {
         funArgs[0] = ap->obj.properties.slots[i];         /* Array element */
         funArgs[1] = ejsCreateNumber(ejs, i);             /* element index */
