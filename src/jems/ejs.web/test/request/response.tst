@@ -79,7 +79,6 @@ assert(http.status == 200)
 assert(http.response == Path("../utils.es").readString())
 http.close()
 
-
 // no response
 server.setLimits({inactivityTimeout: 1})
 let http = fetch(HTTP + "/hang", Http.RequestTimeout)

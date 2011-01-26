@@ -7,7 +7,7 @@ const HTTP = ":" + (App.config.test.http_port || "6700")
 
 server = new HttpServer
 server.listen(HTTP)
-// server.trace(0, ["headers", "first", "body", "request", "response"])
+// server.trace(0, ["headers", "first", "body", "request", "response", "time"])
 load("../utils.es")
 
 server.on("readable", function (event, request: Request) {
