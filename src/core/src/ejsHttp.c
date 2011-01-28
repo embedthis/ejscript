@@ -1136,7 +1136,7 @@ static void prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data)
                 newPrefix = mprAsprintf("%s.%@", prefix, qname.name);
                 prepForm(ejs, hp, newPrefix, vp);
             } else {
-                prepForm(ejs, hp, (char*) qname.name, vp);
+                prepForm(ejs, hp, (char*) qname.name->value, vp);
             }
         } else {
             key = ejsToMulti(ejs, qname.name);

@@ -5,6 +5,46 @@
 
     MOB
         - How to capture stderr
+        - How to quote args
+        - Need sync and async Cmd support
+
+    Usage:
+        cmd = Cmd("command line with quoted args")
+        cmd.env = { "PATH": "/usr/bin" }
+        cmd.on("readable", function ()) {})
+        cmd.timeout = 1000
+
+        cmd.start("command line with quoted args", {detach: true})
+        cmd.start()
+        cmd.wait()
+
+        cmd.write(buf)
+        cmd.finalize()
+        cmd.read(buf)
+        data = cmd.readString()
+        status = cmd.status
+        cmd.error.read(buf)
+        print(cmd.response)
+
+    Helpers
+        data = Cmd.run(command)
+        data = Cmd.daemon(command)
+        data = Cmd.sh(command)
+
+        cmd()   => Cmd.sh
+    
+        cmd('
+            ls
+            date
+        ')
+
+`        pwd ; ls .....
+Shell does
+        >file
+        2>file
+        <file
+        | pipe
+
  */
 
 module ejs {
@@ -170,7 +210,8 @@ module ejs {
             Run a command using the system command shell and wait for completion. This supports pipelines.
          */
         static function sh(cmdline: String, data: String = null): String
-            run(("/bin/sh -c \"" + cmdline + "\"").trim('\n'), data)
+            run(("/bin/sh -c \"" + cmdline.replace(/\\/g, "\\\\") + "\"").trim('\n'), data)
+
 
         /**
             Execute a command/program. The call blocks while executing the command.

@@ -106,7 +106,7 @@ module ejs {
                 } else {
                     stream = File(path).open("wa+")
                 }
-                if (_outStream && stream != _outStream) {
+                if (_outStream && stream != _outStream && _outStream != Logger.nativeStream) {
                     _outStream.close()
                 }
                 _outStream = stream
