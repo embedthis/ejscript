@@ -60,7 +60,7 @@ http.close()
 http.setCookie(cookie)
 http.get(HTTP + "/reuse-cookie")
 http.finalize()
-do { App.eventLoop(10, true) } while(!http.wait())
+do { App.run(10, true) } while(!http.wait())
 assert(http.status == 200)
 http.close()
 

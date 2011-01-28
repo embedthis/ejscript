@@ -27,4 +27,4 @@ server.listen(address)
     print("SW " + server.software)
 */
 
-App.eventLoop()
+App.run()
