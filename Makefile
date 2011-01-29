@@ -27,7 +27,7 @@ include	    build/make/Makefile.top
 include		build/make/Makefile.ejs
 
 ifeq	($(BLD_CROSS),0)
-testExtra: 
+DISABLEtestExtra: 
 	$(BLD_BIN_DIR)/ejs $(BLD_TOOLS_DIR)/utest -v -d $(BUILD_DEPTH) src
 endif
 
