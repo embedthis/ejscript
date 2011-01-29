@@ -40,7 +40,7 @@ diff import sync:
 compileFinal:
 	make dist
 
-testExtra: test-projects
+DISABLEtestExtra: test-projects
 
 test-projects:
 ifeq    ($(BLD_HOST_OS),WIN)
