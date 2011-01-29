@@ -699,7 +699,8 @@ HttpStage *ejsAddWebHandler(Http *http)
         return http->ejsHandler;
     }
     //  MOB HTTP_STAGE_THREAD
-    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_VARS);
+    //  MOB -- should there be a module here
+    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_VARS, NULL);
     if (handler == 0) {
         return 0;
     }

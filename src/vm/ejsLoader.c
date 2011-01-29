@@ -982,12 +982,11 @@ static int loadDocSection(Ejs *ejs, EjsModule *mp)
 #if !BLD_STATIC
 /*
     Check if a native module exists at the given path. If so, load it. If the path is a scripted module
-    but has a corresponding native module, then load that. Return 1 if loaded, -1 for errors, 0 if no
-    native module found.
+    but has a corresponding native module, then load that.
  */
 static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
 {
-    MprModule   *mm;
+    MprModule   *native;
     char        *bare, *path, *moduleName, initName[MPR_MAX_PATH], *cp;
 
     /*
@@ -1017,8 +1016,11 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
         }
     }
     mprLog(5, "Loading native module %s", path);
-    mm = mprLoadModule(path, initName, ejs);
-    return (mm == 0) ? MPR_ERR_CANT_OPEN : 1;
+    native = mprCreateModule(mp->name->value, path, initName, ejs);
+    if (mprLoadModule(native) < 0) {
+        return MPR_ERR_CANT_READ;
+    }
+    return 0;
 }
 #endif
 
