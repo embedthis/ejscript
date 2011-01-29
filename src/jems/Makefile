@@ -37,6 +37,7 @@ $(MODULES): $(LOADABLE_FILES) $(call mod, ejs)
 	$(call log) [Compile] "Jems"
 	rm -f *.mod *.slots.h
 	$(BIN_DIR)/ejsc $(_ESFLAGS) $(LOADABLE_FILES)
+	cp *.mod $(BLD_BUILD_MOD_DIR)
 	mv *.mod $(BLD_MOD_DIR)
 	$(call log) [Generate] "Jem listings and slot files"
 	$(BIN_DIR)/ejsmod --showDebug $(LISTING) --cslots $(MODULES)
