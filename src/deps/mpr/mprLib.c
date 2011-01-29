@@ -5534,6 +5534,7 @@ static int makeChannel(MprCmd *cmd, int index)
 int startProcess(MprCmd *cmd)
 {
     MprCmdTaskFn    entryFn;
+    MprModule       *mp;
     SYM_TYPE        symType;
     char            *entryPoint, *program;
     int             i, pri;
@@ -12580,17 +12581,12 @@ MprModule *mprCreateModule(cchar *name, cchar *path, cchar *entry, void *data)
     if ((mp = mprAllocObj(MprModule, manageModule)) == 0) {
         return 0;
     }
-    index = mprAddItem(ms->modules, mp);
     mp->name = sclone(name);
     mp->path = sclone(path);
     mp->entry = sclone(entry);
     mp->moduleData = data;
     mp->lastActivity = mprGetTime();
-    mp->handle = 0;
-    mp->start = 0;
-    mp->stop = 0;
-    mp->timeout = 0;
-
+    index = mprAddItem(ms->modules, mp);
     if (index < 0 || mp->name == 0) {
         return 0;
     }
@@ -12668,6 +12664,18 @@ void *mprLookupModuleData(cchar *name)
         return NULL;
     }
     return module->moduleData;
+}
+
+
+void mprSetModuleTimeout(MprModule *module, int timeout)
+{
+    module->timeout = timeout;
+}
+
+
+void mprSetModuleFinalizer(MprModule *module, MprModuleProc stop)
+{
+    module->stop = stop;
 }
 
 
@@ -22788,9 +22796,10 @@ int mprLoadNativeModule(MprModule *mp)
         mprError("Can't load module %s\nReason: \"%s\"", mp->path, dlerror());
         return MPR_ERR_CANT_OPEN;
     } 
+    mp->handle = handle;
+
     if (mp->entry) {
         if ((fn = (MprModuleEntry) dlsym(handle, mp->entry)) != 0) {
-            mp->handle = handle;
             if ((fn)(mp->moduleData, mp) < 0) {
                 mprError("Initialization for module %s failed", mp->name);
                 dlclose(handle);
@@ -22952,7 +22961,7 @@ int mprGetRandomBytes(char *buf, int length, int block)
 }
 
 
-int mprLoadModule(MprModule *mp)
+int mprLoadNativeModule(MprModule *mp)
 {
     MprModuleEntry  fn;
     SYM_TYPE        symType;
@@ -23001,7 +23010,7 @@ int mprLoadModule(MprModule *mp)
 }
 
 
-void mprUnloadModule(MprModule *mp)
+void mprUnloadNativeModule(MprModule *mp)
 {
     unldByModuleId((MODULE_ID) mp->handle, 0);
 }
@@ -24643,7 +24652,7 @@ int mprGetRandomBytes(char *buf, int length, int block)
 }
 
 
-int mprLoadModule(MprModule *mp)
+int mprLoadNativeModule(MprModule *mp)
 {
     MprModuleEntry  fn;
     char            *baseName;
@@ -24651,8 +24660,8 @@ int mprLoadModule(MprModule *mp)
 
     mprAssert(mp);
     baseName = mprGetPathBase(mp->path);
-    if ((handle = GetModuleHandle(baseName)) == 0 && (handle = LoadLibrary(path)) == 0) {
-        mprError("Can't load module %s\nReason: \"%d\"\n",  path, mprGetOsError());
+    if ((handle = GetModuleHandle(baseName)) == 0 && (handle = LoadLibrary(mp->path)) == 0) {
+        mprError("Can't load module %s\nReason: \"%d\"\n", mp->path, mprGetOsError());
         return MPR_ERR_CANT_READ;
     } 
     mp->handle = handle;
@@ -24662,7 +24671,7 @@ int mprLoadModule(MprModule *mp)
             FreeLibrary((HINSTANCE) handle);
             return MPR_ERR_CANT_ACCESS;
         }
-        if ((fn)(data, mp) < 0) {
+        if ((fn)(mp->moduleData, mp) < 0) {
             mprError("Initialization for module %s failed", mp->name);
             FreeLibrary((HINSTANCE) handle);
             return MPR_ERR_CANT_INITIALIZE;
@@ -24672,10 +24681,10 @@ int mprLoadModule(MprModule *mp)
 }
 
 
-void mprUnloadModule(MprModule *mp)
+int mprUnloadNativeModule(MprModule *mp)
 {
     mprAssert(mp->handle);
-    FreeLibrary((HINSTANCE) mp->handle);
+    return FreeLibrary((HINSTANCE) mp->handle) != 0 ? 0 : MPR_ERR_ABORTED;
 }
 
 
