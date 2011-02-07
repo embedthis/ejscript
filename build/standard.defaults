@@ -77,7 +77,7 @@ if [ "$BLD_FEATURE_DEVICE" = "" ] ; then
 fi
 
 #
-#   Floating point support
+#   Floating point support (required)
 #
 BLD_FEATURE_FLOAT=1
 

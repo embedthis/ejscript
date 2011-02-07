@@ -18,12 +18,16 @@ applyDependencies()
 
 manageFeatures()
 {
-    BLD_FEATURE_MPR=1
-
+    if [ "$BLD_FEATURE_FLOAT" = 0 ] ; then
+        echo " "
+        echo "Floating point support is required."
+        echo "Enabling the floating point support."
+        BLD_FEATURE_FLOAT=1
+    fi
     if [ "$BLD_FEATURE_AUTH_PAM" = 1 ] ; then
         if [ "$BLD_HOST_OS" = WIN  -o "$BLD_HOST_OS" = VXWORKS ] ; then
             echo " "
-            echo "PAM authorization is only support on UNIX"
+            echo "PAM authorization is only support on UNIX."
             BLD_FEATURE_AUTH_PAM=0
             BLD_FEATURE_AUTH_FILE=1
         fi
@@ -31,7 +35,7 @@ manageFeatures()
     if [ "$BLD_FEATURE_AUTH_PAM" = 0 -a "$BLD_FEATURE_AUTH_FILE" = 0 ] ; then
         echo " "
         echo "Must have one auth backend enabled (PAM or FILE)."
-        echo "Enabling the auth-file authorization backend"
+        echo "Enabling the auth-file authorization backend."
         BLD_FEATURE_AUTH_FILE=1
     fi
 }
@@ -84,22 +88,33 @@ Examples:
 
 parseArg()
 {
-    local ARG SW
+    local ARG SW lower
 
 	ARG="${1#*=}"
 	[ "$ARG" = "$1" ] && ARG=
 
     SW=`echo ${1#--} | tr '[A-Z]' '[a-z]'`
+    lower=`echo ${ARG#--} | tr '[A-Z]' '[a-z]'`
     case ${SW} in
+    auth=*)
+        if [ "$lower" = "file" ] ; then
+            BLD_FEATURE_AUTH_FILE=1
+            BLD_FEATURE_AUTH_PAM=0
+        elif [ "$lower" = "pam" ] ; then
+            BLD_FEATURE_AUTH_FILE=0
+            BLD_FEATURE_AUTH_PAM=1
+        else
+            echo "Unknown authorization backend for --auth"
+            exit 255
+        fi
+        ;;
 	disable-all)
         BLD_DISABLE_ALL=1
         BLD_FEATURE_ASSERT=0
-        BLD_FEATURE_FLOAT=0
         BLD_FEATURE_LEGACY_API=0
         ;;
 	enable-all)
         BLD_FEATURE_ASSERT=1
-        BLD_FEATURE_FLOAT=1
         BLD_FEATURE_LEGACY_API=1
         ;;
     port=*)

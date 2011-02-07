@@ -15,12 +15,13 @@ static int internHashSizes[] = {
 };
 
 static MprSpin      internLock;
+static MprSpin      *ispin = &internLock;
 
 /*
     FUTURE - this locking is for when the intern array works over all interpreters
  */
-#define ilock()     mprSpinLock(&internLock);
-#define iunlock()   mprSpinUnlock(&internLock);
+#define ilock()     mprSpinLock(ispin);
+#define iunlock()   mprSpinUnlock(ispin);
 
 /***************************** Forward Declarations ***************************/
 

@@ -46,6 +46,8 @@ $(MODULES): $(LOADABLE_FILES) $(call mod, ejs)
 		diff $$f $(BLD_INC_DIR) >/dev/null 2>&1 || (printf "%12s %s\n" "[Install]" $$f ; cp $$f $(BLD_INC_DIR)) ; rm -f $$f;\
 	done
 
+packagePrep: buildJems $(DOC)
+
 packageExtra: buildJems $(DOC)
 
 #

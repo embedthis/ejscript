@@ -38,7 +38,7 @@ static EjsObj *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     HttpConn    *conn;
 
-    if ((conn = httpAcceptConn(sp->server)) == 0) {
+    if ((conn = httpAcceptConn(sp->server, NULL)) == 0) {
         /* Just ignore */
         mprError("Can't accept connection");
         return 0;
