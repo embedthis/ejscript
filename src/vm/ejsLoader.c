@@ -30,6 +30,7 @@ static int  loadDebugSection(Ejs *ejs, EjsModule *mp);
 static int  loadExceptionSection(Ejs *ejs, EjsModule *mp);
 static int  loadFunctionSection(Ejs *ejs, EjsModule *mp);
 static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, int *created, int flags);
+static int  loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *path);
 static int  loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr, int flags);
 static int  loadPropertySection(Ejs *ejs, EjsModule *mp, int sectionType);
 static int  loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVersion, int flags);
@@ -38,11 +39,6 @@ static void popScope(EjsModule *mp, int keepScope);
 static void pushScope(EjsModule *mp, EjsBlock *block, EjsObj *obj);
 static char *search(Ejs *ejs, cchar *filename, int minVersion, int maxVersion);
 static int  trimModule(Ejs *ejs, char *name);
-
-#if !BLD_STATIC
-static int  loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *path);
-#endif
-
 static void setDoc(Ejs *ejs, EjsModule *mp, void *vp, int slotNum);
 
 /******************************************************************************/
@@ -115,10 +111,8 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
             for a backing DSO.
          */
         if ((nativeModule = ejsLookupNativeModule(ejs, ejsToMulti(ejs, mp->name))) == 0) {
-#if !BLD_STATIC
             loadNativeLibrary(ejs, mp, mp->path);
             nativeModule = ejsLookupNativeModule(ejs, ejsToMulti(ejs, mp->name));
-#endif
             if (nativeModule == NULL) {
                 if (ejs->exception == 0) {
                     ejsThrowIOError(ejs, "Can't load or initialize the native module file \"%s\"", mp->path);
@@ -979,7 +973,6 @@ static int loadDocSection(Ejs *ejs, EjsModule *mp)
 }
 
 
-#if !BLD_STATIC
 /*
     Check if a native module exists at the given path. If so, load it. If the path is a scripted module
     but has a corresponding native module, then load that.
@@ -1022,7 +1015,6 @@ static int loadNativeLibrary(Ejs *ejs, EjsModule *mp, cchar *modPath)
     }
     return 0;
 }
-#endif
 
 
 static int loadScriptModule(Ejs *ejs, cchar *filename, int minVersion, int maxVersion, int flags)

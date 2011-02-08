@@ -1,5 +1,5 @@
 /*
- *  Shape.es - Sample module with Shape class
+    Shape.es - Sample module with Shape class
  */
 
 module sample
@@ -12,17 +12,17 @@ module sample
 		var width: num
 
         /*
-         *  Native constructor function must have its actual implementation be supplied by a C function
+            Native constructor function must have its actual implementation be supplied by a C function
          */
 		native function Shape(height: num, width: num)
 
         /*
-         *  Native function must have its actual implementation be supplied by a C function
+            Native function must have its actual implementation be supplied by a C function
          */
 		public native function area(): num
 
         /*
-         *  Script function with no native counterpart.
+            Script function with no native counterpart.
          */
 		public function moveTo(x: num, y: num): void {
             this.x = x

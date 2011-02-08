@@ -6,10 +6,7 @@
 
 include 	.makedep
 
-ifeq ($(BLD_FEATURE_SAMPLES),1)
-	PRE_DIRS	:= c
-endif
-
+PRE_DIRS	:= c
 
 #
 #   Local variables:

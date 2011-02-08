@@ -354,7 +354,7 @@ static int defineTypes(Ejs *ejs)
      */
     ejsAddNativeModule(ejs, "ejs", configureEjs, _ES_CHECKSUM_ejs, 0);
 
-#if BLD_FEATURE_EJS_ALL_IN_ONE || BLD_STATIC
+#if BLD_FEATURE_EJS_ALL_IN_ONE
 #if BLD_FEATURE_SQLITE
     ejs_db_sqlite_Init(ejs, NULL);
 #endif

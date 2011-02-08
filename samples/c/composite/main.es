@@ -1,5 +1,5 @@
 /*
- *  main.es -- Main test script for the native sample.
+    main.es -- Main test script for the native sample.
  */
 
 require sample 

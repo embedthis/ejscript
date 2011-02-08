@@ -42,7 +42,7 @@ $(EJS_MOD): $(EJS_FILES)
 	cp *.mod $(BLD_BUILD_MOD_DIR)
 	mv *.mod $(BLD_MOD_DIR)
 	$(call log) [Generate] "Core listings and slot files"
-	$(BLD_BUILD_BIN_DIR)/ejsmod --showDebug --require "" $(LISTING) --cslots $(call mod, ejs)
+	$(BLD_BUILD_BIN_DIR)/ejsmod --showAsm --require "" $(LISTING) --cslots $(call mod, ejs)
 	changed=0 ; \
 	for f in *.slots.h ; do \
 		if [ -f $(BLD_INC_DIR)/$$f ] ; then \

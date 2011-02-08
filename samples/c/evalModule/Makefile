@@ -5,9 +5,10 @@
 #
 
 EXPORT_OBJECTS	:= 0
-BUILD_CROSS		:= 0
 
 include 		.makedep
+
+MAKE_IFLAGS		:= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS)
 
 compileExtra: main$(BLD_EXE) test.mod
 
@@ -15,11 +16,10 @@ test.mod: Test.es
 	$(call setlibpath) ; ejsc --out test.mod Test.es
 
 main$(BLD_EXE) : $(OBJECTS) $(BLD_EJS_MAKEDEP)
-	@bld --exe main$(BLD_EXE) --shared --search "$(BLD_LIB_DIR) $(BLD_LIB_PREFIX)" \
-		--libs "$(BLD_EJS_LIBS)" $(OBJECTS)
+	bld --exe main$(BLD_EXE) --shared --search "$(BLD_LIB_DIR)" --libs "$(BLD_EJS_LIBS)" $(OBJECTS)
 
 cleanExtra:
-	@rm -f *.mod main$(BLD_EXE)
+	rm -f *.mod main$(BLD_EXE)
 
 #
 #   Local variables:

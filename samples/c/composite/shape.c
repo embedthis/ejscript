@@ -16,12 +16,6 @@
 #include    "ejs.h"
 
 /*
-    If you would like to use this sample in a static program, remove this test
-    and manually invoke the sample_Init function in your main program.
- */
-#if !BLD_STATIC
-
-/*
     Indent so that genDepend won't warn first time when this file doesn't exist
  */
     #include   "sample.slots.h"
@@ -31,20 +25,20 @@
     The constructor's job is to initialize a bare object instance
   
     function Constructor(height: num, width: num)
-  /
-static EjsVar *constructor(Ejs *ejs, EjsVar *sp, int argc, EjsVar **argv)
+ */
+static EjsObj *constructor(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
     mprAssert(sp);
     mprAssert(argc == 2);
 
-    mprLog(ejs, 1, "Shape()");
+    mprLog(1, "Shape()");
 
-    ejsSetProperty(ejs, sp, ES_sample_Shape_x, (EjsVar*) ejs->zeroValue);
-    ejsSetProperty(ejs, sp, ES_sample_Shape_y, (EjsVar*) ejs->zeroValue);
+    ejsSetProperty(ejs, sp, ES_sample_Shape_x, (EjsObj*) ejs->zeroValue);
+    ejsSetProperty(ejs, sp, ES_sample_Shape_y, (EjsObj*) ejs->zeroValue);
     ejsSetProperty(ejs, sp, ES_sample_Shape_height, argv[0]);
     ejsSetProperty(ejs, sp, ES_sample_Shape_width, argv[1]);
 
-    return (EjsVar*) sp;
+    return (EjsObj*) sp;
 }
 
 
@@ -53,18 +47,18 @@ static EjsVar *constructor(Ejs *ejs, EjsVar *sp, int argc, EjsVar **argv)
   
     function area(): Number
  */
-static EjsVar *area(Ejs *ejs, EjsVar *sp, int argc, EjsVar **argv)
+static EjsObj *area(Ejs *ejs, EjsObj *sp, int argc, EjsObj **argv)
 {
     int     height, width;
 
     mprAssert(argc == 0);
 
-    mprLog(ejs, 1, "Shape.area()");
+    mprLog(1, "Shape.area()");
 
-    height = ejsGetInt(ejsGetProperty(ejs, sp, ES_sample_Shape_height));
-    width = ejsGetInt(ejsGetProperty(ejs, sp, ES_sample_Shape_width));
+    height = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_sample_Shape_height));
+    width = ejsGetInt(ejs, ejsGetProperty(ejs, sp, ES_sample_Shape_width));
 
-    return (EjsVar*) ejsCreateNumber(ejs, height * width);
+    return (EjsObj*) ejsCreateNumber(ejs, height * width);
     return 0;
 }
 
@@ -75,22 +69,22 @@ static int configureSampleTypes(Ejs *ejs)
 {
     EjsType     *type;
 
-    mprLog(ejs, 1, "Loading Sample module\n");
+    mprLog(1, "Loading Sample module\n");
 
     /*
-     *  Get the Shape class object. This will be created from the mod file for us.
+        Get the Shape class object. This will be created from the mod file for us.
      */
-    type = ejsGetTypeByName(ejs, "sample", "Shape");
+    type = ejsGetTypeByName(ejs, N("sample", "Shape"));
     if (type == 0) {
-        mprError(ejs, "Can't find type Shape");
+        mprError("Can't find type Shape");
         return MPR_ERR;
     }
 
     /*
-     *  Bind the C functions to the JavaScript functions. We use the slot definitions generated
-     *  by ejsmod from Shape.es.
+        Bind the C functions to the JavaScript functions. We use the slot definitions generated
+        by ejsmod from Shape.es.
      */
-    ejsBindMethod(ejs, type, ES_sample_Shape_Shape, (EjsNativeFunction) constructor);
+    ejsBindConstructor(ejs, type, constructor);
     ejsBindMethod(ejs, type, ES_sample_Shape_area, (EjsNativeFunction) area);
     return 0;
 }
@@ -104,12 +98,12 @@ static int configureSampleTypes(Ejs *ejs)
     the module with the first letter mapped to lower case and with any "." characters 
     converted to underscores.
  */
-int sample_Init(MprCtx ctx)
+int sample_Init(Ejs *ejs, MprModule *module)
 {
-    return ejsAddNativeModule(ctx, "sample", configureSampleTypes, _ES_CHECKSUM_sample, EJS_MODULE_ETERNAL);
+    return ejsAddNativeModule(ejs, "sample", configureSampleTypes, _ES_CHECKSUM_sample, EJS_LOADER_ETERNAL);
 }
 
-#endif /* !BLD_FEATURE_STAITC */
+
 /*
     @copy   default
     

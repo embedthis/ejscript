@@ -573,6 +573,7 @@ EjsObj *http_off(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_reset(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
+    httpResetCredentials(hp->conn);
     httpPrepClientConn(hp->conn, 0);
     return 0;
 }
@@ -625,7 +626,11 @@ static EjsObj *http_set_retries(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
  */
 static EjsObj *http_setCredentials(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
-    httpSetCredentials(hp->conn, ejsToMulti(ejs, argv[0]), ejsToMulti(ejs, argv[1]));
+    if (ejsIsNull(ejs, argv[0])) {
+        httpResetCredentials(hp->conn);
+    } else {
+        httpSetCredentials(hp->conn, ejsToMulti(ejs, argv[0]), ejsToMulti(ejs, argv[1]));
+    }
     return 0;
 }
 

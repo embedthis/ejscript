@@ -20,12 +20,6 @@
 #include    "ejs.h"
 
 /*
-    If you would like to use this sample in a static program, remove this test
-    and manually invoke the SampleModuleInit function in your main program.
- */
-#if !BLD_STATIC
-
-/*
     Indent so that genDepend won't warn first time when this file doesn't exist
  */
  #include   "sample.slots.h"
@@ -36,7 +30,7 @@
  */
 
 typedef struct Shape {
-    EjsVar      var;                /* Logically extends Object */
+    EjsObj      var;                /* Logically extends Object */
     int         x;                  /* x property */
     int         y;                  /* y property */
     int         height;             /* height property */
@@ -64,11 +58,11 @@ Shape *create(Ejs *ejs, EjsType *type, int size)
     @param sp is set to the object instance to clone. 
     @return The newly copied object
  */
-static EjsVar *cloneShape(Ejs *ejs, Shape *sp, bool deep)
+static EjsObj *cloneShape(Ejs *ejs, Shape *sp, bool deep)
 {
     Shape   *newShape;
 
-    newShape = (Shape*) ejsCreate(ejs, sp->var.type, 0);
+    newShape = ejsCreateObj(ejs, sp->var.type, 0);
     if (newShape == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
@@ -79,7 +73,7 @@ static EjsVar *cloneShape(Ejs *ejs, Shape *sp, bool deep)
     newShape->height = sp->height;
     newShape->width = sp->width;
 
-    return (EjsVar*) newShape;
+    return (EjsObj*) newShape;
 }
 
 /*
@@ -90,22 +84,22 @@ static EjsVar *cloneShape(Ejs *ejs, Shape *sp, bool deep)
     @param slotNum Slot number of the property to retrieve. The VM maps the property names to slots.
     @return the property value
  */
-static EjsVar *getProperty(Ejs *ejs, Shape *sp, int slotNum)
+static EjsObj *getProperty(Ejs *ejs, Shape *sp, int slotNum)
 {
     mprAssert(sp);
 
     switch (slotNum) {
     case ES_sample_Shape_x:
-        return (EjsVar*) ejsCreateNumber(ejs, sp->x);
+        return (EjsObj*) ejsCreateNumber(ejs, sp->x);
 
     case ES_sample_Shape_y:
-        return (EjsVar*) ejsCreateNumber(ejs, sp->x);
+        return (EjsObj*) ejsCreateNumber(ejs, sp->x);
 
     case ES_sample_Shape_height:
-        return (EjsVar*) ejsCreateNumber(ejs, sp->height);
+        return (EjsObj*) ejsCreateNumber(ejs, sp->height);
 
     case ES_sample_Shape_width:
-        return (EjsVar*) ejsCreateNumber(ejs, sp->width);
+        return (EjsObj*) ejsCreateNumber(ejs, sp->width);
 
     default:
         ejsThrowReferenceError(ejs, "Bad slot reference");
@@ -144,7 +138,7 @@ static EjsName getPropertyName(Ejs *ejs, Shape *sp, int slotNum)
     switch (slotNum) {
         case ES_sample_Shape_x: {
             static EjsName qname;
-            qname.name = "y";
+            qname.name = ejsCreateStringFromAsc(ejs, "y");
             qname.space = 0;
             return qname;
         }
@@ -157,14 +151,14 @@ static EjsName getPropertyName(Ejs *ejs, Shape *sp, int slotNum)
 
         case ES_sample_Shape_height: {
             static EjsName qname;
-            qname.name = "height";
+            qname.name = ejsCreateStringFromAsc(ejs, "height");
             qname.space = 0;
             return qname;
          }
 
         case ES_sample_Shape_width: {
             static EjsName qname;
-            qname.name = "width";
+            qname.name = ejsCreateStringFromAsc(ejs, "width");
             qname.space = 0;
             return qname;
         }
@@ -190,20 +184,23 @@ static EjsName getPropertyName(Ejs *ejs, Shape *sp, int slotNum)
  */
 static int lookupProperty(Ejs *ejs, Shape *sp, EjsName *qname)
 {
-    if (strcmp(qname->name, "x") == 0) {
+    MprChar     *name;
+
+    name = qname->name->value;
+    if (mcmp(name, "x") == 0) {
         return ES_sample_Shape_x;
 
-    } else if (strcmp(qname->name, "y") == 0) {
+    } else if (mcmp(name, "y") == 0) {
         return ES_sample_Shape_y;
 
-    } else if (strcmp(qname->name, "height") == 0) {
+    } else if (mcmp(name, "height") == 0) {
         return ES_sample_Shape_height;
 
-    } else if (strcmp(qname->name, "width") == 0) {
+    } else if (mcmp(name, "width") == 0) {
         return ES_sample_Shape_width;
 
     } else {
-        ejsThrowReferenceError(ejs, "Can't find property %s", qname->name);
+        ejsThrowReferenceError(ejs, "Can't find property %@", qname->name);
         return EJS_ERR;
     }
 }
@@ -216,25 +213,25 @@ static int lookupProperty(Ejs *ejs, Shape *sp, EjsName *qname)
     @param slotNum Slot number of the property to update. The VM maps the property names to slots.
     @param value Value to write to the property.
  */ 
-static int setProperty(Ejs *ejs, Shape *sp, int slotNum, EjsVar *value)
+static int setProperty(Ejs *ejs, Shape *sp, int slotNum, EjsObj *value)
 {
     mprAssert(sp);
 
     switch (slotNum) {
     case ES_sample_Shape_x:
-        sp->x = ejsGetInt(value);
+        sp->x = ejsGetInt(ejs, value);
         break;
 
     case ES_sample_Shape_y:
-        sp->y = ejsGetInt(value);
+        sp->y = ejsGetInt(ejs, value);
         break;
 
     case ES_sample_Shape_height:
-        sp->height = ejsGetInt(value);
+        sp->height = ejsGetInt(ejs, value);
         break;
 
     case ES_sample_Shape_width:
-        sp->width = ejsGetInt(value);
+        sp->width = ejsGetInt(ejs, value);
         break;
 
     default:
@@ -256,9 +253,9 @@ static int setProperty(Ejs *ejs, Shape *sp, int slotNum, EjsVar *value)
     @param sp is set to the object instance.
     @returns the function result or 0 if an exception is thrown.
  */
-static EjsVar *castVar(Ejs *ejs, Shape *sp, EjsType *type)
+static EjsObj *castVar(Ejs *ejs, Shape *sp, EjsType *type)
 {
-    return (EjsVar*) ejsCreateString(ejs, "[object Shape]");
+    return (EjsObj*) ejsCreateString(ejs, "[object Shape]");
 }
 
 /*
@@ -299,12 +296,12 @@ static int finalizeVar(Ejs *ejs, Shape *sp)
     Destroy the instance. The default implementation is to just call the GC ejsFreeVar routine which will 
     either free the memory or return it to a type specific pool, ready for reuse
  */
-static void destroyVar(Ejs *ejs, EjsVar *obj)
+static void destroyVar(Ejs *ejs, EjsObj *obj)
 {
     ejsFreeVar(ejs, obj);
 }
 
-int defineProperty(Ejs *ejs, EjsVar *vp, int slotNum, EjsName *name, EjsType *propType, int attributes, EjsVar *value)
+int defineProperty(Ejs *ejs, EjsObj *vp, int slotNum, EjsName *name, EjsType *propType, int attributes, EjsObj *value)
 {
     ejsThrowReferenceError(ejs, "Can't define properties in this sample");
     return EJS_ERR;
@@ -318,23 +315,23 @@ int defineProperty(Ejs *ejs, EjsVar *vp, int slotNum, EjsName *name, EjsType *pr
     @param opCode Bytecode opcode to invoke.
     @param rhs Right hand side object.
  */
-static EjsVar *invokeOperator(Ejs *ejs, Shape *lhs, int opCode, Shape *rhs)
+static EjsObj *invokeOperator(Ejs *ejs, Shape *lhs, int opCode, Shape *rhs)
 {
     switch (opCode) {
 
     case EJS_OP_COMPARE_EQ: case EJS_OP_COMPARE_STRICTLY_EQ:
     case EJS_OP_COMPARE_LE: case EJS_OP_COMPARE_GE:
-        return (EjsVar*) ejsCreateBoolean(ejs, lhs == rhs);
+        return (EjsObj*) ejsCreateBoolean(ejs, lhs == rhs);
 
     case EJS_OP_COMPARE_NE: case EJS_OP_COMPARE_STRICTLY_NE:
     case EJS_OP_COMPARE_LT: case EJS_OP_COMPARE_GT:
-        return (EjsVar*) ejsCreateBoolean(ejs, !(lhs == rhs));
+        return (EjsObj*) ejsCreateBoolean(ejs, !(lhs == rhs));
 
     default:
         /*
             Pass to the standard Object helpers to implement other op codes
          */
-        return (ejs->defaultHelpers->invokeOperator)(ejs, (EjsVar*) lhs, opCode, (EjsVar*) rhs);
+        return (ejs->defaultHelpers->invokeOperator)(ejs, (EjsObj*) lhs, opCode, (EjsObj*) rhs);
     }
     return 0;
 }
@@ -342,7 +339,7 @@ static EjsVar *invokeOperator(Ejs *ejs, Shape *lhs, int opCode, Shape *rhs)
 /*
     Mark the non-native properties for the garbage collector
  */
-static void markVar(Ejs *ejs, EjsVar *parent, EjsVar *sp)
+static void markVar(Ejs *ejs, EjsObj *parent, EjsObj *sp)
 {
     /*
         Call ejsMarkVar on all contained Ejscript properties or objects.
@@ -357,7 +354,7 @@ static void markVar(Ejs *ejs, EjsVar *parent, EjsVar *sp)
     @param sloNum Property slot number to set.
     @param name Property name to set.
  */
-static EjsVar *setPropertyName(Ejs *ejs, Shape *sp, int slotNum, EjsName *name)
+static EjsObj *setPropertyName(Ejs *ejs, Shape *sp, int slotNum, EjsName *name)
 {
     ejsThrowReferenceError(ejs, "Can't define property names for this type");
     return 0;
@@ -370,19 +367,19 @@ static EjsVar *setPropertyName(Ejs *ejs, Shape *sp, int slotNum, EjsName *name)
 
     function Constructor(height: num, width: num
  */
-static EjsVar *constructor(Ejs *ejs, Shape *sp, int argc, EjsVar **argv)
+static EjsObj *constructor(Ejs *ejs, Shape *sp, int argc, EjsObj **argv)
 {
     mprAssert(sp);
     mprAssert(argc == 2);
 
-    mprLog(ejs, 1, "Shape()\n");
+    mprLog(1, "Shape()\n");
 
     sp->x = 0;
     sp->y = 0;
-    sp->height = ejsGetInt(argv[0]);
-    sp->width = ejsGetInt(argv[0]);
+    sp->height = ejsGetInt(ejs, argv[0]);
+    sp->width = ejsGetInt(ejs, argv[0]);
 
-    return (EjsVar*) sp;
+    return (EjsObj*) sp;
 }
 
 /*
@@ -390,9 +387,9 @@ static EjsVar *constructor(Ejs *ejs, Shape *sp, int argc, EjsVar **argv)
 
     function area() num
  */
-static EjsVar *area(Ejs *ejs, Shape *sp, int argc, EjsVar **argv)
+static EjsObj *area(Ejs *ejs, Shape *sp, int argc, EjsObj **argv)
 {
-    return (EjsVar*) ejsCreateNumber(ejs, sp->height *sp->width);
+    return (EjsObj*) ejsCreateNumber(ejs, sp->height *sp->width);
 }
 
 /******************************************************************************/
@@ -402,17 +399,15 @@ static EjsVar *area(Ejs *ejs, Shape *sp, int argc, EjsVar **argv)
 
 EjsType *ejsDefineShapeType(Ejs *ejs)
 {
-    EjsTypeHelpers  *helpers;
+    EjsHelpers      *helpers;
     EjsType         *type;
-    EjsName         qname;
 
     /*
         Get the Shape class object. This will be created from the mod file for us. But we need to set the object
         instance size.
      */
-    type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, ejsName(&qname, EJS_PUBLIC_NAMESPACE, "Shape"));
-    if (type == 0) {
-        mprError(ejs, "Can't find property %s:%s", qname.space, qname.name);
+    if ((type = (EjsType*) ejsGetPropertyByName(ejs, ejs->global, N(EJS_PUBLIC_NAMESPACE, "Shape"))) == 0) {
+        mprError("Can't find class Shape");
         return 0;
     }
     type->instanceSize = sizeof(Shape);
@@ -420,7 +415,7 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
     /*
         Define the helper functions.
      */
-    helpers = type->helpers;
+    helpers = &type->helpers;
     helpers->clone                  = (EjsCloneHelper) cloneShape;
     helpers->create                 = (EjsCreateHelper) create;
     helpers->getProperty            = (EjsGetPropertyHelper) getProperty;
@@ -449,8 +444,8 @@ EjsType *ejsDefineShapeType(Ejs *ejs)
         Bind the C functions to the JavaScript functions. We use the slot definitions generated
         by ejsmod from Shape.es.
      */
-    ejsBindMethod(ejs, type, ES_sample_Shape_Shape,  (EjsProc) constructor);
-    ejsBindMethod(ejs, type, ES_sample_Shape_area, (EjsProc) area);
+    ejsBindConstructor(ejs, type, constructor);
+    ejsBindMethod(ejs, type, ES_sample_Shape_area, area);
 
     return type;
 }
@@ -468,14 +463,14 @@ int configureSampleTypes(Ejs *ejs)
 {
     EjsType     *type;
 
-    mprLog(ejs, 1, "Loading Sample module");
+    mprLog(1, "Loading Sample module");
 
     /*
         Get the Shape class object. This will be created from the mod file for us.
      */
-    type = ejsGetTypeByName(ejs, "sample", "Shape");
+    type = ejsGetTypeByName(ejs, N("sample", "Shape"));
     if (type == 0) {
-        mprError(ejs, "Can't find type Shape");
+        mprError("Can't find type Shape");
         return MPR_ERR_CANT_ACCESS;
     }
 
@@ -483,18 +478,16 @@ int configureSampleTypes(Ejs *ejs)
         Bind the C functions to the JavaScript functions. We use the slot definitions generated
         by ejsmod from Shape.es.
      */
-    ejsBindMethod(ejs, type, ES_sample_Shape_Shape, (EjsProc) constructor);
-    ejsBindMethod(ejs, type, ES_sample_Shape_area, (EjsProc) area);
+    ejsBindConstructor(ejs, type, constructor);
+    ejsBindMethod(ejs, type, ES_sample_Shape_area, area);
     return 0;
 }
 
 
-int sample_Init(MprCtx ctx)
+int sample_Init(Ejs *ejs, MprModule *module)
 {
-    return ejsAddNativeModule(ctx, "sample", configureSampleTypes, _ES_CHECKSUM_sample, EJS_MODULE_ETERNAL);
+    return ejsAddNativeModule(ejs, "sample", configureSampleTypes, _ES_CHECKSUM_sample, EJS_LOADER_ETERNAL);
 }
-
-#endif /* !BLD_STATIC */
 
 /*
     @copy   default

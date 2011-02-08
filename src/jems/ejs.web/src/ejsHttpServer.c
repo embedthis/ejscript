@@ -566,33 +566,29 @@ static EjsHttpServer *getServerContext(HttpConn *conn)
     if ((sp = httpGetServerContext(conn->server)) != 0) {
         return sp;
     }
-    if (conn->tx->handler->match) {
-        /*
-            Hosted handler. Must supply a location block which defines the HttpServer instance.
-         */
-        loc = conn->rx->loc;
-        if (loc == 0 || loc->context == 0) {
-            mprError("Location block is not defined for request");
-            return 0;
-        }
-        sp = (EjsHttpServer*) loc->context;
-        ejs = sp->ejs;
-        dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-        dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->value : conn->documentRoot;
-        if (sp->server == 0) {
-            /* Don't set limits or pipeline. That will come from the embedding server */
-            sp->server = conn->server;
-            sp->server->ssl = loc->ssl;
-            sp->ip = sclone(conn->server->ip);
-            sp->port = conn->server->port;
-            sp->dir = sclone(dir);
-        }
-        httpSetServerContext(conn->server, sp);
-        httpSetRequestNotifier(conn, (HttpNotifier) stateChangeNotifier);
-        return sp;
+    /*
+        Hosted handler. Must supply a location block which defines the HttpServer instance.
+     */
+    loc = conn->rx->loc;
+    if (loc == 0 || loc->context == 0) {
+        mprError("Location block is not defined for request");
+        return 0;
     }
-    mprError("Server context not defined for request");
-    return NULL;
+    sp = (EjsHttpServer*) loc->context;
+    ejs = sp->ejs;
+    dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
+    dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->value : conn->documentRoot;
+    if (sp->server == 0) {
+        /* Don't set limits or pipeline. That will come from the embedding server */
+        sp->server = conn->server;
+        sp->server->ssl = loc->ssl;
+        sp->ip = sclone(conn->server->ip);
+        sp->port = conn->server->port;
+        sp->dir = sclone(dir);
+    }
+    httpSetServerContext(conn->server, sp);
+    httpSetRequestNotifier(conn, (HttpNotifier) stateChangeNotifier);
+    return sp;
 }
 
 
@@ -689,7 +685,7 @@ static void processEjs(HttpQueue *q)
 /* 
     Create the http pipeline handler for ejs.
  */
-HttpStage *ejsAddWebHandler(Http *http)
+HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
 {
     HttpStage   *handler;
 
@@ -698,9 +694,7 @@ HttpStage *ejsAddWebHandler(Http *http)
     if (http->ejsHandler) {
         return http->ejsHandler;
     }
-    //  MOB HTTP_STAGE_THREAD
-    //  MOB -- should there be a module here
-    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_VARS, NULL);
+    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_VARS, module);
     if (handler == 0) {
         return 0;
     }
@@ -816,7 +810,7 @@ void ejsConfigureHttpServerType(Ejs *ejs)
 
     /* One time initializations */
     ejsLoadHttpService(ejs);
-    ejsAddWebHandler(ejs->http);
+    ejsAddWebHandler(ejs->http, NULL);
 }
 
 

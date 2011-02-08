@@ -11,6 +11,9 @@ Files:
 To build:
     make
 
+To build and show commands:
+    make TRACE=1
+
 To run:
     ./main
 

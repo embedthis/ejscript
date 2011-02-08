@@ -50,25 +50,22 @@ typedef struct EjsMod {
 
     int         cslots;                     /* Create C slot definitions */
     int         depends;                    /* Print module dependencies */
+    int         error;                      /* Unresolved error */
+    int         errorCount;                 /* Count of all errors */
     int         exitOnError;                /* Exit if module file errors are detected */
+    int         fatalError;                 /* Any a fatal error - Can't continue */
     int         firstGlobal;                /* First global to examine */
     int         genSlots;                   /* Set if either cslots || jsslots */
     int         listing;                    /* Generate listing file */
-    int         showDebug;                  /* Show debug instructions */
+    int         memError;                   /* Memory error */
+    int         showAsm;                    /* Show assembly bytes */
     int         verbosity;                  /* Verbosity level */
+    int         warningCount;               /* Count of all warnings */
     int         warnOnError;                /* Warn if module file errors are detected */
 
     char        *docDir;                    /* Directory to generate HTML doc */
     bool        html;                       /* Generate HTML doc */
     bool        xml;                        /* Generate XML doc */
-    
-    int         error;                      /* Unresolved error */
-    int         fatalError;                 /* Any a fatal error - Can't continue */
-    int         memError;                   /* Memory error */
-    
-    int         errorCount;                 /* Count of all errors */
-    int         warningCount;               /* Count of all warnings */
-    int         showAsm;                    /* Display assember bytes */
     
     char        *path;                      /* Current output file path */
     MprFile     *file;                      /* Current output file handle */

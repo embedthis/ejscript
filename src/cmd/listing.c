@@ -688,16 +688,12 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
         }
         opt = &optable[opcode];
 
-        if (mp->showDebug) {
+        if (mp->showAsm) {
             /*
                 Output address [stack] opcode
                 Format:  "address: [stackDepth] opcode <args> ..."
              */
             mprFprintf(mp->file,  "    %04d: [%d] %02x ", address, stack, opcode);
-            mp->showAsm = 1;
-
-        } else {
-            mp->showAsm = 0;
         }
         nbytes = decodeOperands(mp, opt, argbuf, (int) sizeof(argbuf), (int) (mp->pc - start), &stackEffect);
 

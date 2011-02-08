@@ -5,11 +5,11 @@
 #
 
 EXPORT_OBJECTS	:= 0
-BUILD_CROSS		:= 0
 
 include 		.makedep
 
-ifeq			($(BLD_STATIC),0)
+MAKE_IFLAGS		:= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS)
+
 compileFirst: 	sample.mod
 
 sample.mod: shape.es
@@ -19,16 +19,10 @@ sample.mod: shape.es
 compileExtra: sample.mod sample$(BLD_SHOBJ)
 
 sample$(BLD_SHOBJ) : $(OBJECTS) $(BLD_EJS_MAKEDEP) sample.slots.h
-	@bld --shared --library sample --shared --search "$(BLD_LIB_DIR) $(BLD_LIB_PREFIX)" \
-		--libs "$(BLD_EJS_LIBS)" $(OBJECTS)
-
-else
-compileExtra:
-	@$(call log) "[Notice]" "Skip building composite sample. Requires \"configure --enable-shared\"."
-endif
+	bld --shared --library sample --shared --search "$(BLD_LIB_DIR)" --libs "$(BLD_EJS_LIBS)" $(OBJECTS)
 
 cleanExtra:
-	@rm -f *.lst *.mod *$(BLD_LIB)
+	rm -f *.lst *.mod *$(BLD_LIB)
 
 #
 #   Local variables:

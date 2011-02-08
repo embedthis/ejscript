@@ -17,6 +17,11 @@
 /*
    Prototype (instance) slots for "global" type 
  */
+
+
+/*
+    Class property slots for the "Shape" type 
+ */
 #define ES_sample_Shape_NUM_CLASS_PROP                                 0
 
 /*
@@ -31,6 +36,6 @@
 #define ES_sample_Shape_NUM_INSTANCE_PROP                              6
 #define ES_sample_Shape_NUM_INHERITED_PROP                             0
 
-#define _ES_CHECKSUM_sample   7574
+#define _ES_CHECKSUM_sample   7416
 
 #endif

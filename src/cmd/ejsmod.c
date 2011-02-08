@@ -81,6 +81,7 @@ MAIN(ejsmodMain, int argc, char **argv)
             
         } else if (strcmp(argp, "--listing") == 0) {
             mp->listing = 1;
+            mp->showAsm = 1;
             
         } else if (strcmp(argp, "--log") == 0) {
             /*
@@ -107,9 +108,6 @@ MAIN(ejsmodMain, int argc, char **argv)
             } else {
                 searchPath = argv[++nextArg];
             }
-
-        } else if (strcmp(argp, "--showDebug") == 0) {
-            mp->showDebug++;
 
         } else if (strcmp(argp, "--version") == 0 || strcmp(argp, "-V") == 0) {
             mprPrintfError("%s %s-%s\n", BLD_NAME, BLD_VERSION, BLD_NUMBER);  
@@ -165,7 +163,6 @@ MAIN(ejsmodMain, int argc, char **argv)
             "  --out                 # Output file for all C slots (implies --cslots)\n"
             "  --require \"modules\"   # List of modules to preload\n"
             "  --search ejsPath      # Module file search path\n"
-            "  --showDebug           # Show debug instructions\n"
             "  --version             # Emit the program version information\n"
             "  --warn                # Warn about undocumented methods or parameters in doc\n\n", mpr->name);
         return -1;
