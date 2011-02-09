@@ -114,3 +114,4 @@ src/jems/ejs.web/test/view/TODO
 src/core/test/http/.pidfile
 *.tdat
 .pidfile
+samples/c/*/main
