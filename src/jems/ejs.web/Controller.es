@@ -420,7 +420,7 @@ module ejs.web {
          */
         private function openDatabase(request: Request) {
             let dbconfig = config.database
-            let dbclass = dbconfig["dbclass"]
+            let dbclass = dbconfig["class"]
             let options = dbconfig[config.mode]
             if (dbclass) {
                 if (dbconfig.module && !global[dbclass]) {

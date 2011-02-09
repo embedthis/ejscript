@@ -1748,7 +1748,7 @@ These files are also created:
 require ejs.web
     
 let server: HttpServer = new HttpServer
-var router = new Router
+var router = new Router(Router.Restful)
 
 server.on("readable", function (event, request) {
     App.log.info(request.method, request.uri, request.scheme)
