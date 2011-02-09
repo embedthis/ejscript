@@ -196,6 +196,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     uchar       *mark;
     int         i, offset, count, opcode, attributes, frozen;
 
+    MPR_VERIFY_MEM();
+
 #if BLD_UNIX_LIKE || VXWORKS 
     /*
         Direct threading computed goto processing. Include computed goto jump table.
@@ -1408,7 +1410,9 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 AddNamespaceRef
          */
         CASE (EJS_OP_ADD_NAMESPACE_REF):
+            MPR_VERIFY_MEM();
             ejsAddNamespaceToBlock(ejs, state->bp, (EjsNamespace*) pop(ejs));
+            MPR_VERIFY_MEM();
             BREAK;
 
         /*
@@ -1459,6 +1463,7 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 DefineClass <type>
          */
         CASE (EJS_OP_DEFINE_CLASS):
+            MPR_VERIFY_MEM();
             type = GET_TYPE();
             if (type == 0 || !ejsIsType(ejs, type)) {
                 ejsThrowReferenceError(ejs, "Reference is not a class");
@@ -1466,11 +1471,14 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
                 type->constructor.block.scope = state->bp;
                 if (type && type->hasInitializer) {
                     fun = ejsGetProperty(ejs, (EjsObj*) type, 0);
+                    MPR_VERIFY_MEM();
                     callFunction(ejs, fun, (EjsObj*) type, 0, 0);
+                    MPR_VERIFY_MEM();
                     if (type->implements && !ejs->exception) {
                         callInterfaceInitializers(ejs, type);
                     }
                     state->bp = &FRAME->function.block;
+                    MPR_VERIFY_MEM();
                 }
             }
             ejs->result = type;
@@ -2234,7 +2242,8 @@ frozen = ejsFreeze(ejs, 1);
                     EjsName qname = { nameVar, spaceVar };
                     ejsDefineProperty(ejs, vp, -1, qname, NULL, attributes, v1);
                 }
-            }
+            } 
+            MPR_VERIFY_MEM();
             state->stack -= (argc * 3);
             push(vp);
             state->t1 = 0;
@@ -2641,6 +2650,7 @@ int ejsRun(Ejs *ejs)
         if (mp->initialized) {
             continue;
         }
+        MPR_VERIFY_MEM();
         if (ejsRunInitializer(ejs, mp) == 0) {
             return EJS_ERR;
         }
@@ -2659,6 +2669,7 @@ EjsAny *ejsRunFunction(Ejs *ejs, EjsFunction *fun, EjsAny *thisObj, int argc, vo
     mprAssert(ejsIsFunction(ejs, fun));
     mprAssert(ejs->exception == 0);
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+    MPR_VERIFY_MEM();
 
     if (ejs->exception) {
         return 0;
@@ -3865,6 +3876,7 @@ static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode)
     static int      showFrequency = 1;
 #endif
 
+    MPR_VERIFY_MEM();
     mprAssert(!MPR->marking);
     state = ejs->state;
     fp = state->fp;

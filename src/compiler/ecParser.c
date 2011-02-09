@@ -9122,7 +9122,7 @@ static EcNode *parseProgram(EcCompiler *cp, cchar *path)
     int         next;
 
     ENTER(cp);
-
+    
     ejs = cp->ejs;
     state = cp->state;
     state->strict = cp->strict;
@@ -10315,6 +10315,7 @@ static EcNode *createNode(EcCompiler *cp, int kind, EjsString *name)
         peekToken(cp);
     }
     token = cp->token;
+
     if (token) {
         np->tokenId = token->tokenId;
         np->groupMask = token->groupMask;

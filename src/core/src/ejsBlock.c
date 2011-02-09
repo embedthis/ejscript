@@ -145,12 +145,14 @@ if (block == block->pot.obj.type->ejs->globalBlock) {
             ejsManagePot(block, flags);
             mprMark(block->prevException);
 
-            if (block->namespaces.length > 0) {
-                mprMark(block->namespaces.items);
-                for (next = 0; ((item = (EjsObj*) mprGetNextItem(&block->namespaces, &next)) != 0); ) {
-                    mprMark(item);
-                }
+            /*
+                Must mark each item of the list as the list itself is not allocated
+             */
+            mprMark(block->namespaces.items);
+            for (next = 0; ((item = (EjsObj*) mprGetNextItem(&block->namespaces, &next)) != 0); ) {
+                mprMark(item);
             }
+
             /* This is the lexical block scope */
             for (b = block->scope; b; b = b->scope) {
 #if FUTURE

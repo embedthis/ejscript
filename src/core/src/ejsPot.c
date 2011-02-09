@@ -896,6 +896,7 @@ int ejsMakeHash(Ejs *ejs, EjsPot *obj)
         hash->size = newHashSize;
         mprAssert(newHashSize > 0);
         obj->properties->hash = hash;
+        obj->separateHash = 1;
     }
     hash = obj->properties->hash;
     mprAssert(hash);
@@ -909,7 +910,6 @@ int ejsMakeHash(Ejs *ejs, EjsPot *obj)
             sp->hashChain = -1;
         }
     }
-    obj->separateHash = 1;
 
     /*
         Rehash existing properties

@@ -143,9 +143,11 @@ static EjsObj *g_eval(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     } else {
         cache = ejsToMulti(ejs, argv[1]);
     }
+    MPR_VERIFY_MEM();
     if (ejsLoadScriptLiteral(ejs, script, cache, EC_FLAGS_NO_OUT | EC_FLAGS_DEBUG | EC_FLAGS_THROW | EC_FLAGS_VISIBLE) < 0) {
         return 0;
     }
+    MPR_VERIFY_MEM();
     return ejs->result;
 }
 
@@ -208,6 +210,8 @@ static EjsObj *g_load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     cchar       *path, *cache, *cp;
 
+    MPR_VERIFY_MEM();
+
     path = ejsToMulti(ejs, argv[0]);
     cache = (argc < 2) ? 0 : ejsToMulti(ejs, argv[1]);
 
@@ -234,6 +238,7 @@ static EjsObj *g_md5(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     EjsString   *str;
     char        *hash;
 
+    MPR_VERIFY_MEM();
     str = (EjsString*) argv[0];
     hash = mprGetMD5Hash(ejsToMulti(ejs, str), str->length, NULL);
     return (EjsObj*) ejsCreateStringFromAsc(ejs, hash);
