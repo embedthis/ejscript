@@ -405,7 +405,11 @@ MOB - uri not supported
                 case "string":
                 case "time":
                 case "timestamp":
+                    text(name, options)
+                    break
                 case "text":
+                    options.cols ||= 60
+                    options.rows ||= 10
                     text(name, options)
                     break
                 case "boolean":
@@ -415,6 +419,7 @@ MOB - uri not supported
                     throw "input control: Unknown field type: " + datatype + " for field " + name
                 }
             } catch (e) {
+//  MOB
 print("CATCH " + e)
                 text(name, options)
             }
