@@ -12,7 +12,7 @@
 /*
     native static function get enabled(): Boolean
  */
-static EjsObj *getEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsObj *gc_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     return (EjsObj*) ((mprGetMpr()->heap.enabled) ? ejs->trueValue: ejs->falseValue);
 }
@@ -21,7 +21,7 @@ static EjsObj *getEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 /*
     native static function set enabled(on: Boolean): Void
  */
-static EjsObj *setEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsObj *gc_set_enabled(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     mprAssert(argc == 1 && ejsIsBoolean(ejs, argv[0]));
     mprGetMpr()->heap.enabled = ejsGetBoolean(ejs, argv[0]);
@@ -33,7 +33,7 @@ static EjsObj *setEnable(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
     run(deep: Boolean = false)
     MOB -- change args to be a string "check", "all"
  */
-static EjsObj *runGC(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsObj *gc_run(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     deep;
 
@@ -50,7 +50,7 @@ static EjsObj *runGC(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 /*
     native static function get newQuota(): Number
  */
-static EjsObj *getNewQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsObj *gc_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     return (EjsObj*) ejsCreateNumber(ejs, mprGetMpr()->heap.newQuota);
 }
@@ -59,7 +59,7 @@ static EjsObj *getNewQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 /*
     native static function set newQuota(quota: Number): Void
  */
-static EjsObj *setNewQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+static EjsObj *gc_set_newQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 {
     int     quota;
 
@@ -75,6 +75,16 @@ static EjsObj *setNewQuota(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
 }
 
 
+/*
+    verify(): Void
+ */
+static EjsObj *gc_verify(Ejs *ejs, EjsObj *thisObj, int argc, EjsObj **argv)
+{
+    mprVerifyMem();
+    return 0;
+}
+
+
 void ejsConfigureGCType(Ejs *ejs)
 {
     EjsType         *type;
@@ -83,9 +93,12 @@ void ejsConfigureGCType(Ejs *ejs)
         mprError("Can't find GC type");
         return;
     }
-    ejsBindAccess(ejs, type, ES_GC_enabled, (EjsProc) getEnable, (EjsProc) setEnable);
-    ejsBindAccess(ejs, type, ES_GC_newQuota, (EjsProc) getNewQuota, (EjsProc) setNewQuota);
-    ejsBindMethod(ejs, type, ES_GC_run, (EjsProc) runGC);
+    ejsBindAccess(ejs, type, ES_GC_enabled, gc_enabled, gc_set_enabled);
+    ejsBindAccess(ejs, type, ES_GC_newQuota, gc_newQuota, gc_set_newQuota);
+    ejsBindMethod(ejs, type, ES_GC_run, gc_run);
+#if ES_GC_verify
+    ejsBindMethod(ejs, type, ES_GC_verify, gc_verify);
+#endif
 }
 
 /*
