@@ -4,6 +4,8 @@
     Copyright (c) All Rights Reserved. See details at the end of the file.
 
     MOB
+        - Need daemon
+        - Need Cmd.kill(pid)
         - How to capture stderr
         - How to quote args
         - Need sync and async Cmd support
