@@ -76,10 +76,9 @@ assert(http.response.contains("Request content body of 21 bytes is too big. Limi
 http.close()
 
 //  Test inactivityTimeout
-// GC.enabled = false
 let http = fetch(HTTP + "/inactivity", Http.RequestTimeout)
 assert(http.status == Http.RequestTimeout)
-assert(http.response.contains("Inactive request timed out, exceeded inactivity timeout 1 sec"))
+assert(http.response.contains("Inactive request timed out. Exceeded inactivity timeout of 1 sec."))
 http.close()
 
 server.close()
