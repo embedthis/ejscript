@@ -275,6 +275,7 @@ module ejs.db.sqlite {
         function query(cmd: String, tag: String = "SQL", trace: Boolean = false): Array {
             //  TODO - need to access Database.traceAll
             //  TODO - need to better logging framework
+            //  MOB -- but Database does tracing outside this 
             if (trace) {
                 print(tag + ": " + cmd)
             }

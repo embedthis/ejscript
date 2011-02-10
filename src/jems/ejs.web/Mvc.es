@@ -93,10 +93,7 @@ module ejs.web {
             let dirs = config.directories
             let appmod = dirs.cache.join(config.mvc.appmod)
 
-            //  MOB -- fix when allowing loading multiple applications
-            if (!global.BaseController) {
-                global.load(appmod)
-            }
+//  MOB - document preloaded
             if (!config.cache.preloaded) {
                 let ext = config.extensions
                 let dir = request.dir
@@ -126,6 +123,8 @@ module ejs.web {
                 } else {
                     loadComponent(request, mod)
                 }
+            } else if (!global.BaseController) {
+                global.load(appmod)
             }
             // FUTURE request.logger = logger
         }

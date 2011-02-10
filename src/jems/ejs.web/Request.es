@@ -925,7 +925,7 @@ module ejs.web {
                 let title = "Request Error for \"" + pathInfo + "\""
                 if (config.log.showClient) {
                     let text = "<pre>" + escapeHtml(msg) + "</pre>\r\n" +
-                        '<p>To prevent errors being displayed in the "browser, ' + 
+                        '<p>To prevent errors being displayed in the browser, ' + 
                         'set <b>log.showClient</b> to false in the ejsrc file.</p>\r\n'
                     try {
                         setHeader("Content-Type", "text/html")

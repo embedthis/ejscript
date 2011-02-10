@@ -241,6 +241,8 @@ module ejs {
         @spec ejs
      */
     native function print(...args): void
+
+    //  MOB DOC
     function printf(fmt, ...args)
         App.outputStream.write(fmt.format(args))
 
