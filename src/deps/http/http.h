@@ -1334,7 +1334,7 @@ typedef struct HttpConn {
     MprDispatcher   *dispatcher;            /**< Event dispatcher */
     HttpNotifier    notifier;               /**< Connection Http state change notification callback */
     HttpNotifier    requestNotifier;        /**< Request Http state change notification callback */
-    MprWaitHandler  waitHandler;            /**< I/O wait handler */
+    MprWaitHandler  *waitHandler;           /**< I/O wait handler */
     struct HttpServer *server;              /**< Server object (if releveant) */
     MprSocket       *sock;                  /**< Underlying socket handle */
 
@@ -1928,9 +1928,10 @@ extern void httpRemoveUploadFile(HttpConn *conn, cchar *id);
 #define HTTP_PUT                0x20        /**< PUT method  */
 #define HTTP_TRACE              0x40        /**< TRACE method  */
 #define HTTP_METHOD_MASK        0x7F        /**< Method mask */
-#define HTTP_REC_CREATE_ENV     0x80        /**< Must create env for this request */
-#define HTTP_REC_IF_MODIFIED    0x100       /**< If-[un]modified-since supplied */
-#define HTTP_REC_CHUNKED        0x200       /**< Content is chunk encoded */
+#define HTTP_CREATE_ENV         0x80        /**< Must create env for this request */
+#define HTTP_IF_MODIFIED        0x100       /**< If-[un]modified-since supplied */
+#define HTTP_CHUNKED            0x200       /**< Content is chunk encoded */
+#define HTTP_UPLOAD             0x400       /**< Content has uploaded file content */
 
 /*  
     Incoming chunk encoding states
@@ -2003,7 +2004,6 @@ typedef struct HttpRx {
     char            *referrer;              /**< Refering URL */
     char            *userAgent;             /**< User-Agent header */
     int             form;                   /**< Using mime-type application/x-www-form-urlencoded */
-    int             upload;                 /**< Using uploadFilter ("multipart/form-data) */
 
     MprHashTable    *formVars;              /**< Query and post data variables */
     HttpRange       *ranges;                /**< Data ranges for body data */
@@ -2641,7 +2641,7 @@ typedef struct  HttpServer {
     Http            *http;                  /**< Http service object */
     HttpLoc         *loc;                   /**< Default location block */
     HttpLimits      *limits;                /**< Server resource limits */
-    MprWaitHandler  waitHandler;            /**< I/O wait handler */
+    MprWaitHandler  *waitHandler;           /**< I/O wait handler */
     MprHashTable    *clientLoad;            /**< Table of active client IPs and connection counts */
     char            *serverRoot;            /**< Directory for server configuration */
     char            *documentRoot;          /**< Directory for documents */

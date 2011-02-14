@@ -89,6 +89,7 @@ module ejs {
                 } else {
                     /* Missing cache mod file */
                     if (initializers[path] && config.cache.preloaded) {
+                        //  Everything compiled flat - everything in App.mod
                         //  MOB -- warning. This prevents reload working. Should rebuild all and reload.
                         initializer = initializers[path]
                         signatures[path] = exports = {}
@@ -128,6 +129,7 @@ module ejs {
         public static function cached(id: Path, config = App.config, cachedir: Path = null): Path {
             config ||= App.config
             if (id && config.cache.enable) {
+                //  MOB - should Path("cache") be used?
                 let dir = cachedir || Path(config.directories.cache) || Path("cache")
                 if (dir.exists) {
                     return Path(dir).join(md5(id)).joinExt('.mod')

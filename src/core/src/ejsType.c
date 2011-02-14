@@ -447,6 +447,7 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsPot *obj, int destOffse
         int count, bool resetScope)
 {
     EjsFunction     *fun;
+    EjsObj          *vp;
     int             i;
 
     mprAssert(obj);
@@ -468,6 +469,14 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsPot *obj, int destOffse
                 fun->boundThis = 0;
                 fun->boundArgs = 0;
                 fun->block.scope = (EjsBlock*) type;
+            }
+        }
+    }
+    for (i = destOffset; i < (destOffset + count); i++) {
+        if ((vp = ejsGetProperty(ejs, obj, i)) != 0 && !ejsIsNull(ejs, vp) && !ejsIsFunction(ejs, vp)) {
+            EjsName qname = ejsGetPropertyName(ejs, obj, i);
+            if (ejsIsType(ejs, vp)) {
+                ejsSetProperty(ejs, obj, i, ejs->nullValue);
             }
         }
     }

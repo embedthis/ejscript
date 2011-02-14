@@ -94,7 +94,12 @@ module ejs.web {
             let appmod = dirs.cache.join(config.mvc.appmod)
 
 //  MOB - document preloaded
-            if (!config.cache.preloaded) {
+            if (config.cache.preloaded) {
+                //  Flat compilation - everything in App.mod
+                if (!global.BaseController) {
+                    global.load(appmod)
+                }
+            } else {
                 let ext = config.extensions
                 let dir = request.dir
                 request.log.debug(4, "MVC init at \"" + dir + "\"")
@@ -116,15 +121,16 @@ module ejs.web {
                 }
                 let controller = params.controller = params.controller.toPascal()
                 let mod = dirs.cache.join(controller).joinExt(ext.mod)
-                if (!mod.exists || config.cache.reload) {
-                    files = [dirs.controllers.join(controller).joinExt(ext.es)]
-                    deps = [dirs.controllers.join("Base").joinExt(ext.es)]
-                    loadComponent(request, mod, files, deps)
-                } else {
-                    loadComponent(request, mod)
+                if (controller != "Base") {
+                    if (!global[controller + "Controller"] || (mod.exists && !config.cache.reload)) {
+print("MOB SIMPLE LOAD (exists and !reload): " + mod)
+                        loadComponent(request, mod)
+                    } else {
+                        files = [dirs.controllers.join(controller).joinExt(ext.es)]
+                        deps = [dirs.controllers.join("Base").joinExt(ext.es)]
+                        loadComponent(request, mod, files, deps)
+                    }
                 }
-            } else if (!global.BaseController) {
-                global.load(appmod)
             }
             // FUTURE request.logger = logger
         }
@@ -140,6 +146,8 @@ module ejs.web {
                 code += path.readString()
             }
             request.log.debug(2, "Rebuild component: " + mod + " files: " + files)
+print("CODE", code)
+print("Mvc.Rebuild - eval: code save to: " + mod)
             eval(code, mod)
         }
 
@@ -152,33 +160,36 @@ module ejs.web {
             @param deps Extra file dependencies
          */
         public function loadComponent(request: Request, mod: Path, files: Array? = null, deps: Array? = null) {
-            let rebuild
-            if (mod.exists) {
-                rebuild = false
-                if (request.config.cache.reload) {
-                    let when = mod.modified
-                    for each (file in (files + deps)) {
-                        if (file.exists && file.modified > when) {
-                            rebuild = true
-                        }
+            let rebuild = false
+            if (mod.exists && request.config.cache.reload) {
+                let when = mod.modified
+                for each (file in (files + deps)) {
+                    if (file.exists && file.modified > when) {
+                        rebuild = true
                     }
                 }
-            } else {
-                rebuild = true
             }
+print("MOB Mvc.loadComponent: " + mod + ", exists: " + mod.exists + ", rebuild: " + rebuild + ", loaded: " + loaded[mod])
             if (rebuild) {
                 rebuildComponent(request, mod, files)
             } else if (!loaded[mod]) {
-                request.log.debug(4, "Reload component : " + mod)
+                //  MOB 4
+                request.log.debug(2, "Load component : " + mod)
                 try {
+//  MOB - is a module its full path or just its basename
+print("  LOAD " + mod)
+                    request.log.debug(2, "Mvc.loadComponent: load component : " + mod)
                     global.load(mod)
                     loaded[mod] = new Date
+print("  LOADED " + mod)
                 } catch (e) {
+                    request.log.debug(2, "Mvc.loadComponent: Load failed, rebuild component: " + mod)
                     rebuildComponent(request, mod, files)
                 }
 
             } else {
-                request.log.debug(4, "Use existing component: " + mod)
+                //  MOB 4
+                request.log.debug(2, "Mvc.loadComponent: skip load for: " + mod)
             }
         }
     }

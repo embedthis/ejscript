@@ -92,9 +92,7 @@ int ecCreateModuleSection(EcCompiler *cp)
     if (cp->fatalError) {
         return MPR_ERR_CANT_WRITE;
     }
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
     mp->checksum += (sumString(mp->name) & EJS_ENCODE_MAX_WORD);
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
     ecEncodeInt32AtPos(cp, checksumOffset, mp->checksum);
     return 0;
 }
@@ -141,9 +139,7 @@ static void createDependencySection(EcCompiler *cp)
             if (cp->fatalError) {
                 return;
             }
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);  //MOB
             mp->checksum += sumString(module->name);
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
             mprLog(7, "    dependency section for %s from module %s", module->name, mp->name);
         }
     }
@@ -377,11 +373,8 @@ static void createClassSection(EcCompiler *cp, EjsPot *block, int slotNum, EjsPo
             createSection(cp, prototype, slotNum);
         }
     }
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
     mp->checksum += sumNum(ejsGetPropertyCount(ejs, type) + instanceTraits + interfaceCount);
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
     mp->checksum += sumString(type->qname.name);
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
     ecEncodeByte(cp, EJS_SECT_CLASS_END);
 }
 
@@ -484,20 +477,14 @@ static void createFunctionSection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
         createSection(cp, activation, i);
     }
     ecEncodeByte(cp, EJS_SECT_FUNCTION_END);
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
     mp->checksum += sumNum(fun->numArgs + numProp - fun->numArgs);
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
     if (code && code->numHandlers) {
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
         mp->checksum += sumNum(code->numHandlers);
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
     }
     if (ejsContainsMulti(ejs, qname.name, "--fun_")) {
         /* Don't sum the name for dynamic functions */
     } else {
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
         mp->checksum += sumString(qname.name);
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
     }
 }
 
@@ -636,9 +623,7 @@ static void createPropertySection(EcCompiler *cp, EjsPot *block, int slotNum, Ej
             ecEncodeConst(cp, 0);
         }
     }
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
     mp->checksum += sumString(qname.name);
-mprAssert(0 <= mp->checksum && mp->checksum < 0x1FFFFFFF);
 }
 
 
@@ -1166,7 +1151,6 @@ static int sumString(EjsString *name)
             checksum += *cp;
         }
     }
-mprAssert(0 <= checksum && checksum < 0x1FFFFFFF);
     return checksum;
 }
 

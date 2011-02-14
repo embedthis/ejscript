@@ -71,6 +71,7 @@ int ejsLoadModule(Ejs *ejs, EjsString *path, int minVersion, int maxVersion, int
     }
     name = mprGetPathBase(trimmedPath);
 
+    //  MOB - just using base name for module names
     if ((status = alreadyLoaded(ejs, ejsCreateStringFromAsc(ejs, name), minVersion, maxVersion)) == 0) {
         status = loadScriptModule(ejs, trimmedPath, minVersion, maxVersion, flags);
 #if UNUSED
@@ -353,6 +354,7 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
         return 0;
     }
     mp->constants = constants;
+    //  MOB - this is storing just the name base not the full path
     name = ejsCreateStringFromConst(ejs, mp, nameToken);
     if ((mp = ejsCreateModule(ejs, name, version, constants)) == NULL) {
         return 0;
@@ -509,6 +511,7 @@ static int loadClassSection(Ejs *ejs, EjsModule *mp)
     ifixup = 0;
     
     qname = ejsModuleReadName(ejs, mp);
+//    mprAssert(strcmp(qname.name->value, "Record") != 0);
     attributes = ejsModuleReadInt(ejs, mp);
     slotNum = ejsModuleReadInt(ejs, mp);
     ejsModuleReadType(ejs, mp, &baseType, &fixup, &baseClassName, 0);
@@ -1461,6 +1464,7 @@ static int alreadyLoaded(Ejs *ejs, EjsString *name, int minVersion, int maxVersi
 {
     EjsModule   *mp;
 
+    //  MOB - this is looking up full path as the name of the module. This is not right.
     if ((mp = ejsLookupModule(ejs, name, minVersion, maxVersion)) == 0) {
         return 0;
     }

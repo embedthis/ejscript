@@ -223,6 +223,13 @@ module ejs.unix {
         }
     }
 
+    /** 
+        Sleep the application for the given number of milliseconds. Events will be serviced while asleep.
+        @param delay Time in milliseconds to sleep. Set to -1 to sleep forever.
+     */
+    function sleep(delay: Number): void
+        App.sleep(delay)
+
     /**
         Create a temporary file. Creates a new, uniquely named temporary file.
         @param directory Directory in which to create the temp file.

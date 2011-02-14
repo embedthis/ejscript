@@ -66,13 +66,14 @@ module ejs.db.mapper {
         /*
             Initialize the model. This should be called by the model as its very first call.
          */
-        _keyName = "id"
-        _className = Object.getName(this)
-
-        _model = this
-        _assocName = _className.toCamel()
-        _foreignId = _className.toCamel() + _keyName.toPascal()
-        _tableName = plural(_className).toPascal()
+        if (Object.getName(this) != "Record") {
+            _keyName = "id"
+            _className = Object.getName(this)
+            _model = this
+            _assocName = _className.toCamel()
+            _foreignId = _className.toCamel() + _keyName.toPascal()
+            _tableName = plural(_className).toPascal()
+        }
 
         use default namespace public
 

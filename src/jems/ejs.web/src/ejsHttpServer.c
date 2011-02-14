@@ -665,7 +665,7 @@ static void startEjs(HttpQueue *q)
     HttpRx      *rx;
 
     rx = q->conn->rx;
-    if (!rx->form && !rx->upload) {
+    if (!rx->form && !(rx->flags & HTTP_UPLOAD)) {
         runEjs(q);
     }
 }
@@ -676,7 +676,7 @@ static void processEjs(HttpQueue *q)
     HttpRx      *rx;
 
     rx = q->conn->rx;
-    if (rx->form || rx->upload) {
+    if (rx->form || (rx->flags & HTTP_UPLOAD)) {
         runEjs(q);
     }
 }

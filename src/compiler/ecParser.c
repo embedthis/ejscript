@@ -6497,6 +6497,7 @@ static EcNode *parseDirective(EcCompiler *cp)
 
     /* EmptyStatement */
     case T_SEMICOLON:
+        getToken(cp);
         np = parseEmptyStatement(cp);
         break;
 

@@ -138,7 +138,6 @@ module ejs {
          */
         native static function get dir(): Path
 
-
         /** 
             The directory containing the application executable
          */
@@ -285,7 +284,7 @@ module ejs {
         native static function setEnv(name: String, value: String): Boolean
 
         /** 
-            Sleep the application for the given number of milliseconds
+            Sleep the application for the given number of milliseconds. Events will be serviced while asleep.
             @param delay Time in milliseconds to sleep. Set to -1 to sleep forever.
          */
         native static function sleep(delay: Number = -1): Void

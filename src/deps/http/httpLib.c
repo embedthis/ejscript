@@ -1663,7 +1663,7 @@ static void incomingChunkData(HttpQueue *q, HttpPacket *packet)
     conn = q->conn;
     rx = conn->rx;
 
-    if (!(rx->flags & HTTP_REC_CHUNKED)) {
+    if (!(rx->flags & HTTP_CHUNKED)) {
         httpSendPacketToNext(q, packet);
         return;
     }
@@ -2261,7 +2261,6 @@ HttpConn *httpCreateConn(Http *http, HttpServer *server, MprDispatcher *dispatch
     conn->canProceed = 1;
     conn->limits = (server) ? server->limits : http->clientLimits;
     conn->keepAliveCount = (conn->limits->keepAliveCount) ? conn->limits->keepAliveCount : -1;
-    conn->waitHandler.fd = -1;
 
     conn->protocol = http->protocol;
     conn->port = -1;
@@ -2339,6 +2338,7 @@ static void manageConn(HttpConn *conn, int flags)
         mprMark(conn->errorMsg);
         mprMark(conn->host);
         mprMark(conn->ip);
+        mprMark(conn->waitHandler);
 
         httpMarkQueueHead(&conn->serviceq);
         httpManageTrace(&conn->trace[0], flags);
@@ -2373,8 +2373,9 @@ void httpCloseConn(HttpConn *conn)
 
     if (conn->sock) {
         mprLog(6, "Closing connection");
-        if (conn->waitHandler.fd >= 0) {
-            mprRemoveWaitHandler(&conn->waitHandler);
+        if (conn->waitHandler) {
+            mprRemoveWaitHandler(conn->waitHandler);
+            conn->waitHandler = 0;
         }
         mprCloseSocket(conn->sock, 0);
         conn->sock = 0;
@@ -2609,21 +2610,21 @@ void httpEnableConnEvents(HttpConn *conn)
         }
         if (conn->startingThread) {
             conn->startingThread = 0;
-            if (conn->waitHandler.fd >= 0) {
-                mprRemoveWaitHandler(&conn->waitHandler);
-                conn->waitHandler.fd = -1;
+            if (conn->waitHandler) {
+                mprRemoveWaitHandler(conn->waitHandler);
+                conn->waitHandler = 0;
             }
         }
         if (eventMask) {
-            if (conn->waitHandler.fd < 0) {
-                mprInitWaitHandler(&conn->waitHandler, conn->sock->fd, eventMask, conn->dispatcher, 
+            if (conn->waitHandler == 0) {
+                conn->waitHandler = mprCreateWaitHandler(conn->sock->fd, eventMask, conn->dispatcher, 
                     (MprEventProc) conn->callback, conn->callbackArg, 0);
-            } else if (eventMask != conn->waitHandler.desiredMask) {
-                mprEnableWaitEvents(&conn->waitHandler, eventMask);
+            } else if (eventMask != conn->waitHandler->desiredMask) {
+                mprEnableWaitEvents(conn->waitHandler, eventMask);
             }
         } else {
-            if (conn->waitHandler.fd >= 0 && eventMask != conn->waitHandler.desiredMask) {
-                mprEnableWaitEvents(&conn->waitHandler, eventMask);
+            if (conn->waitHandler && eventMask != conn->waitHandler->desiredMask) {
+                mprEnableWaitEvents(conn->waitHandler, eventMask);
             }
         }
         mprEnableDispatcher(conn->dispatcher);
@@ -2668,7 +2669,7 @@ static HttpPacket *getPacket(HttpConn *conn, ssize *bytesToRead)
              */
             if (req->remainingContent) {
                 len = req->remainingContent;
-                if (req->flags & HTTP_REC_CHUNKED) {
+                if (req->flags & HTTP_CHUNKED) {
                     len = max(len, HTTP_BUFSIZE);
                 }
             }
@@ -7134,7 +7135,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
                 if (newDate) {
                     rx->since = newDate;
                     rx->ifModified = ifModified;
-                    rx->flags |= HTTP_REC_IF_MODIFIED;
+                    rx->flags |= HTTP_IF_MODIFIED;
                 }
 
             } else if ((strcmp(key, "if-match") == 0) || (strcmp(key, "if-none-match") == 0)) {
@@ -7145,7 +7146,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
                     *tok = '\0';
                 }
                 rx->ifMatch = ifMatch;
-                rx->flags |= HTTP_REC_IF_MODIFIED;
+                rx->flags |= HTTP_IF_MODIFIED;
                 value = sclone(value);
                 word = stok(value, " ,", &tok);
                 while (word) {
@@ -7160,7 +7161,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
                     *tok = '\0';
                 }
                 rx->ifMatch = 1;
-                rx->flags |= HTTP_REC_IF_MODIFIED;
+                rx->flags |= HTTP_IF_MODIFIED;
                 value = sclone(value);
                 word = stok(value, " ,", &tok);
                 while (word) {
@@ -7213,7 +7214,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
         case 't':
             if (strcmp(key, "transfer-encoding") == 0) {
                 if (scasecmp(value, "chunked") == 0) {
-                    rx->flags |= HTTP_REC_CHUNKED;
+                    rx->flags |= HTTP_CHUNKED;
                     /*  
                         This will be revised by the chunk filter as chunks are processed and will be set to zero when the
                         last chunk has been received.
@@ -7262,7 +7263,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
     if (conn->protocol == 0 && !keepAlive) {
         conn->keepAliveCount = 0;
     }
-    if (!(rx->flags & HTTP_REC_CHUNKED)) {
+    if (!(rx->flags & HTTP_CHUNKED)) {
         /*  
             Step over "\r\n" after headers. As an optimization, don't do this if chunked so chunking can parse a single
             chunk delimiter of "\r\nSIZE ...\r\n"
@@ -7461,7 +7462,7 @@ static bool analyseContent(HttpConn *conn, HttpPacket *packet)
     q = &tx->queue[HTTP_QUEUE_RECEIVE];
 
     content = packet->content;
-    if (rx->flags & HTTP_REC_CHUNKED) {
+    if (rx->flags & HTTP_CHUNKED) {
         if ((remaining = getChunkPacketSize(conn, content)) == 0) {
             /* Need more data or bad chunk specification */
             if (mprGetBufLength(content) > 0) {
@@ -7548,7 +7549,7 @@ static bool processContent(HttpConn *conn, HttpPacket *packet)
         return conn->error;
     }
     if (rx->remainingContent == 0) {
-        if (!(rx->flags & HTTP_REC_CHUNKED) || (rx->chunkState == HTTP_CHUNK_EOF)) {
+        if (!(rx->flags & HTTP_CHUNKED) || (rx->chunkState == HTTP_CHUNK_EOF)) {
             rx->eof = 1;
             httpSendPacketToNext(q, httpCreateEndPacket());
         }
@@ -7723,7 +7724,7 @@ bool httpContentNotModified(HttpConn *conn)
     rx = conn->rx;
     tx = conn->tx;
 
-    if (rx->flags & HTTP_REC_IF_MODIFIED) {
+    if (rx->flags & HTTP_IF_MODIFIED) {
         /*  
             If both checks, the last modification time and etag, claim that the request doesn't need to be
             performed, skip the transfer. TODO - need to check if fileInfo is actually set.
@@ -7913,14 +7914,14 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
         return MPR_ERR_BAD_STATE;
     } 
     saveAsync = conn->async;
-    if (conn->waitHandler.fd < 0) {
+    if (conn->waitHandler == 0) {
         conn->async = 1;
         eventMask = MPR_READABLE;
         if (!conn->writeComplete) {
             eventMask |= MPR_WRITABLE;
         }
-        mprInitWaitHandler(&conn->waitHandler, conn->sock->fd, eventMask, conn->dispatcher, (MprEventProc) waitHandler, 
-                conn, 0);
+        conn->waitHandler = mprCreateWaitHandler(conn->sock->fd, eventMask, conn->dispatcher, (MprEventProc) waitHandler, 
+            conn, 0);
         addedHandler = 1;
     } else {
         addedHandler = 0;
@@ -7939,8 +7940,9 @@ int httpWait(HttpConn *conn, MprDispatcher *dispatcher, int state, int timeout)
             break;
         }
     }
-    if (addedHandler && conn->waitHandler.fd >= 0) {
-        mprRemoveWaitHandler(&conn->waitHandler);
+    if (addedHandler && conn->waitHandler) {
+        mprRemoveWaitHandler(conn->waitHandler);
+        conn->waitHandler = 0;
         conn->async = saveAsync;
     }
     if (conn->sock == 0 || conn->error) {
@@ -8646,7 +8648,6 @@ HttpServer *httpCreateServer(Http *http, cchar *ip, int port, MprDispatcher *dis
     server->limits = mprMemdup(http->serverLimits, sizeof(HttpLimits));
     server->port = port;
     server->ip = sclone(ip);
-    server->waitHandler.fd = -1;
     server->dispatcher = dispatcher;
     if (server->ip && server->ip) {
         server->name = server->ip;
@@ -8660,8 +8661,9 @@ HttpServer *httpCreateServer(Http *http, cchar *ip, int port, MprDispatcher *dis
 void httpDestroyServer(HttpServer *server)
 {
     mprLog(4, "Destroy server %s", server->name);
-    if (server->waitHandler.fd >= 0) {
-        mprRemoveWaitHandler(&server->waitHandler);
+    if (server->waitHandler) {
+        mprRemoveWaitHandler(server->waitHandler);
+        server->waitHandler = 0;
     }
     destroyServerConnections(server);
     if (server->sock) {
@@ -8688,6 +8690,7 @@ static int manageServer(HttpServer *server, int flags)
         mprMark(server->sock);
         mprMark(server->dispatcher);
         mprMark(server->ssl);
+        mprMark(server->waitHandler);
 
     } else if (flags & MPR_MANAGE_FREE) {
         httpDestroyServer(server);
@@ -8739,8 +8742,8 @@ int httpStartServer(HttpServer *server)
             return MPR_ERR_CANT_OPEN;
         }
     }
-    if (server->async) {
-        mprInitWaitHandler(&server->waitHandler, server->sock->fd, MPR_SOCKET_READABLE, server->dispatcher,
+    if (server->async && server->waitHandler ==  0) {
+        server->waitHandler = mprCreateWaitHandler(server->sock->fd, MPR_SOCKET_READABLE, server->dispatcher,
             (MprEventProc) httpAcceptConn, server, (server->dispatcher) ? 0 : MPR_WAIT_NEW_DISPATCHER);
     } else {
         mprSetSocketBlockingMode(server->sock, 1);
@@ -8834,8 +8837,8 @@ HttpConn *httpAcceptConn(HttpServer *server, MprEvent *event)
         This will block in sync mode until a connection arrives
      */
     sock = mprAcceptSocket(server->sock);
-    if (server->waitHandler.fd >= 0) {
-        mprEnableWaitEvents(&server->waitHandler, MPR_READABLE);
+    if (server->waitHandler) {
+        mprEnableWaitEvents(server->waitHandler, MPR_READABLE);
     }
     if (sock == 0) {
         return 0;
@@ -10215,7 +10218,7 @@ static bool matchUpload(HttpConn *conn, HttpStage *filter)
     pat = "multipart/form-data";
     len = strlen(pat);
     if (sncasecmp(rx->mimeType, pat, len) == 0) {
-        rx->upload = 1;
+        rx->flags |= HTTP_UPLOAD;
         return 1;
     } else {
         return 0;

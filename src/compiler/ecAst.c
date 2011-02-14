@@ -498,7 +498,7 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     if (np->klass.isInterface) {
         attributes |= EJS_TYPE_INTERFACE;
     }
-    
+    mprAssert(strcmp(np->qname.name->value, "BaseController") != 0);
     type = ejsCreateType(ejs, np->qname, state->currentModule, NULL, NULL, sizeof(EjsPot), slotNum, 0, 0, attributes);
     if (type == 0) {
         astError(cp, np, "Can't create type %s", type->qname.name);
@@ -1249,7 +1249,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
 
     if (!np->function.isConstructor) {
         if (resolveName(cp, np, (EjsObj*) block, np->qname) < 0) {
-            astError(cp, np, "Internal error. Can't resolve function %s", np->qname.name);
+            astError(cp, np, "Internal error. Can't resolve function %@", np->qname.name);
         }
         if (np->lookup.slotNum >= 0) {
             setAstDocString(ejs, np, np->lookup.obj, np->lookup.slotNum);
@@ -1259,7 +1259,7 @@ static EjsFunction *bindFunction(EcCompiler *cp, EcNode *np)
         qname.name = np->qname.name;
         if (resolveName(cp, np, ejs->global, qname) < 0) {
             if (resolveName(cp, np, ejs->global, np->qname) < 0) {
-                astError(cp, np, "Internal error. Can't resolve constructor %s", np->qname.name);
+                astError(cp, np, "Internal error. Can't resolve constructor %@", np->qname.name);
             }
         }
         if (np->lookup.slotNum >= 0) {
@@ -3019,7 +3019,7 @@ static EjsModule *createModule(EcCompiler *cp, EcNode *np)
             mp->compiling = 1;
         }
     }
-    if (mp->initializer == 0 || mp->initializer->activation) {
+    if (mp->initializer == 0 /* MOB BUG || mp->initializer->activation */) {
         mp->initializer = createModuleInitializer(cp, np, mp);
     }
     np->module.ref = mp;
