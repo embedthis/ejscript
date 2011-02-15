@@ -62,7 +62,7 @@ $(DOC_DIR)/index.html: Makefile $(MODULES) $(DOC_SRC)
 
 doc: $(DOC_DIR)/index.html
 
-buildJems:
+buildJems: Makefile
 	set -e ; \
 	mkdir -p "$(BLD_ABS_JEM_DIR)" ; \
 	for j in $(JEMS) ; do \
@@ -70,8 +70,13 @@ buildJems:
 		target="$(BLD_ABS_JEM_DIR)/$$vj/$$vj.jem" ; \
 		if [ ! -f $$target -o $(BLD_ABS_MOD_DIR)/$$j.mod -nt $$target ] ; then \
 			cd $$j >/dev/null ; \
+			$(call log) "[Build]" "jem --field version --value $(BLD_VERSION) edit" ; \
 			jem --field version --value $(BLD_VERSION) edit ; \
-			[ -f $(BLD_ABS_MOD_DIR)/$$vj.mod ] && jem setdeps $(BLD_ABS_MOD_DIR)/$$vj.mod ; \
+			if [ -f $(BLD_ABS_MOD_DIR)/$$vj.mod ] ; then \
+		   		$(call log) "[Build]" "jem setdeps $(BLD_ABS_MOD_DIR)/$$vj.mod" ; \
+		   		jem setdeps $(BLD_ABS_MOD_DIR)/$$vj.mod ; \
+			fi ; \
+			$(call log) "[Build]" "jem build" ; \
 			jem build ; \
 			$(call log) "[Publish]" "jem --to $(BLD_ABS_JEM_DIR) publish $$vj" ; \
 			jem --to $(BLD_ABS_JEM_DIR) publish $$vj ; \
