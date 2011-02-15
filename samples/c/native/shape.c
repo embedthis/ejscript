@@ -62,7 +62,7 @@ static EjsObj *cloneShape(Ejs *ejs, Shape *sp, bool deep)
 {
     Shape   *newShape;
 
-    newShape = ejsCreateObj(ejs, sp->var.type, 0);
+    newShape = ejsCreateObj(ejs, TYPE(sp), 0);
     if (newShape == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
