@@ -430,16 +430,10 @@ static int loadStandardModules(Ejs *ejs, MprList *require)
     if (require) {
         for (next = 0; rc == 0 && (name = mprGetNextItem(require, &next)) != 0; ) {
             flags = EJS_LOADER_STRICT;
-#if UNUSED
-            if (strcmp(name, "ejs") == 0) {
-                flags |= EJS_LOADER_BUILTIN;
-            }
-#endif
             rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, name), ver, ver, flags);
         }
     } else {
-        rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), ver, ver, 
-                EJS_LOADER_STRICT /* UNUSED | EJS_LOADER_BUILTIN */);
+        rc += ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs"), ver, ver, EJS_LOADER_STRICT);
     }
     return rc;
 }

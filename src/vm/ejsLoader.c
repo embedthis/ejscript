@@ -65,35 +65,18 @@ int ejsLoadModule(Ejs *ejs, EjsString *path, int minVersion, int maxVersion, int
 
     mprAssert(path);
 
+    /*
+        Note the cannonical name for a module is the basename of the module without extension
+     */
     trimmedPath = sclone(ejsToMulti(ejs, path));
     if ((version = trimModule(ejs, trimmedPath)) != 0) {
         minVersion = maxVersion = version;
     }
     name = mprGetPathBase(trimmedPath);
 
-    //  MOB - just using base name for module names
-    if ((status = alreadyLoaded(ejs, ejsCreateStringFromAsc(ejs, name), minVersion, maxVersion)) == 0) {
+    if (flags & EJS_LOADER_RELOAD ||
+            (status = alreadyLoaded(ejs, ejsCreateStringFromAsc(ejs, name), minVersion, maxVersion)) == 0) {
         status = loadScriptModule(ejs, trimmedPath, minVersion, maxVersion, flags);
-#if UNUSED
-        EjsModule  *mp;
-        nextModule = mprGetListLength(ejs->modules);
-        if ((status = loadScriptModule(ejs, trimmedPath, minVersion, maxVersion, flags)) == 0) {
-            /*
-                Do fixups and run initializers when all dependent modules are loaded. Solves forward ref problem.
-             */
-            if (fixupTypes(ejs, ejs->loadState->typeFixups) == 0) {
-                //  MOB rationalize down to just ejs flag
-                if (!ejs->empty && !(flags & EJS_LOADER_NO_INIT) && !(ejs->flags & EJS_FLAG_NO_INIT)) {
-                    for (next = nextModule; (mp = mprGetNextItem(ejs->modules, &next)) != 0; ) {
-                        if ((status = initializeModule(ejs, mp)) < 0) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        ejs->loadState = 0;
-#endif
     }
     return status;
 }
@@ -109,7 +92,7 @@ static int initializeModule(Ejs *ejs, EjsModule *mp)
     if (mp->hasNative && !mp->configured) {
         /*
             See if a native module initialization routine has been registered. If so, use that. Otherwise, look
-            for a backing DSO.
+            for a backing shared library.
          */
         if ((nativeModule = ejsLookupNativeModule(ejs, ejsToMulti(ejs, mp->name))) == 0) {
             loadNativeLibrary(ejs, mp, mp->path);
@@ -237,6 +220,7 @@ static int loadSections(Ejs *ejs, MprFile *file, cchar *path, EjsModuleHdr *hdr,
             if ((mp = loadModuleSection(ejs, file, hdr, &created, flags)) == 0) {
                 return MPR_ERR_CANT_LOAD;
             }
+            // MOB - should remove the old module?
             ejsAddModule(ejs, mp);
             mp->path = sclone(path);
             mp->file = file;
@@ -354,7 +338,7 @@ static EjsModule *loadModuleSection(Ejs *ejs, MprFile *file, EjsModuleHdr *hdr, 
         return 0;
     }
     mp->constants = constants;
-    //  MOB - this is storing just the name base not the full path
+    //  MOB - this is storing just the name base not the full path. This is correct!
     name = ejsCreateStringFromConst(ejs, mp, nameToken);
     if ((mp = ejsCreateModule(ejs, name, version, constants)) == NULL) {
         return 0;

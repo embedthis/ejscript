@@ -222,7 +222,7 @@ static EjsObj *g_load(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
             return (ejs->service->loadScriptFile)(ejs, path, cache);
         }
     } else {
-        ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, 0);
+        ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, EJS_LOADER_RELOAD);
         return (ejs->exception) ? 0 : ejs->result;
     }
     return 0;

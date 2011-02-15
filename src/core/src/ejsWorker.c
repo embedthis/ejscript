@@ -368,7 +368,7 @@ static void loadFile(EjsWorker *worker, cchar *path)
 
     } else {
         /* Error reporting via thrown exceptions */
-        ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, 0);
+        ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, EJS_LOADER_RELOAD);
     }
 }
 
