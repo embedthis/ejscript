@@ -9916,7 +9916,7 @@ static void applyAttributes(EcCompiler *cp, EcNode *np, EcNode *attributeNode, E
             nspace = ejsFormatReservedNamespace(cp->ejs, &state->currentClassName, nspace);
         }
     } else {
-        if (cp->visibleGlobals) {
+        if (cp->visibleGlobals && !(attributeNode && attributeNode->qname.space)) {
             nspace = ejsCreateStringFromAsc(cp->ejs, EJS_EMPTY_NAMESPACE);
         } else if (ejsCompareMulti(cp->ejs, nspace, EJS_INTERNAL_NAMESPACE) == 0) {
             nspace = cp->fileState->nspace;

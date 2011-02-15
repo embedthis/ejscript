@@ -498,7 +498,6 @@ static EjsType *defineClass(EcCompiler *cp, EcNode *np)
     if (np->klass.isInterface) {
         attributes |= EJS_TYPE_INTERFACE;
     }
-    mprAssert(strcmp(np->qname.name->value, "BaseController") != 0);
     type = ejsCreateType(ejs, np->qname, state->currentModule, NULL, NULL, sizeof(EjsPot), slotNum, 0, 0, attributes);
     if (type == 0) {
         astError(cp, np, "Can't create type %s", type->qname.name);

@@ -353,7 +353,7 @@ class EjsMvc {
                 Make flat configuration file
              */
             flat = dirs.cache.join("_flat_.es")
-            makeFile(flat, "App.config.cache.preloaded = true", "Flat Configuration")
+            makeFile(flat, "App.config.cache.flat = true", "Flat Configuration")
             esPages += [flat]
 
             files += esPages

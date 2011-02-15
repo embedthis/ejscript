@@ -474,7 +474,6 @@ static int inheritProperties(Ejs *ejs, EjsType *type, EjsPot *obj, int destOffse
     }
     for (i = destOffset; i < (destOffset + count); i++) {
         if ((vp = ejsGetProperty(ejs, obj, i)) != 0 && !ejsIsNull(ejs, vp) && !ejsIsFunction(ejs, vp)) {
-            EjsName qname = ejsGetPropertyName(ejs, obj, i);
             if (ejsIsType(ejs, vp)) {
                 ejsSetProperty(ejs, obj, i, ejs->nullValue);
             }

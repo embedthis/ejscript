@@ -19998,6 +19998,7 @@ MprThreadService *mprCreateThreadService()
 void mprStopThreadService()
 {
     mprClearList(MPR->threadService->threads);
+    MPR->threadService->threads->mutex = 0;
     MPR->threadService->mutex = 0;
 }
 

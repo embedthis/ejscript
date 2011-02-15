@@ -88,7 +88,6 @@ module ejs.web {
             request.params.controller = request.params.controller.toPascal()
             cname ||= (request.params.controller + "Controller")
             _initRequest = request
-breakpoint()
             let c: Controller = new global[cname](request)
             c.request = request
             _initRequest = null
