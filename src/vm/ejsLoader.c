@@ -1221,7 +1221,7 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
 {
     MprDirEntry     *dp, *best;
     MprList         *files;
-    char            *dir, *base, *ext, *result;
+    char            *dir, *base, *ext;
     int             nameLen, version, next, bestVersion;
 
     mprAssert(ejs);
@@ -1266,12 +1266,7 @@ static char *probe(Ejs *ejs, cchar *path, int minVersion, int maxVersion)
             }
         }
     }
-    if (best == 0) {
-        result = 0;
-    } else {
-        result = mprJoinPath(dir, best->name);
-    }
-    return result;
+    return (best == 0) ? 0 : mprJoinPath(dir, best->name);
 }
 
 

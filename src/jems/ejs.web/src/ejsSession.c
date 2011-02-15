@@ -209,9 +209,7 @@ EjsSession *ejsCreateSession(Ejs *ejs, EjsRequest *req, int timeout, bool secure
     }
     count = ejsGetPropertyCount(ejs, (EjsObj*) server->sessions);
     if (count >= limits->sessionCount) {
-        ejsThrowResourceError(ejs, "Too many sessions: %d, limit %d", count, limits->sessionCount);
-        mprUnlock(sessionLock);
-        return 0;
+        mprError("Too many sessions: %d, limit %d", count, limits->sessionCount);
     }
     slotNum = ejsSetPropertyByName(ejs, server->sessions, EN(session->id), session);
     if (slotNum < 0) {
