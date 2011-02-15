@@ -579,7 +579,7 @@ static int growSlots(Ejs *ejs, EjsPot *obj, int slotCount)
         if (props == 0) {
             mprAssert(obj->numProp == 0);
             mprAssert(slotCount > 0);
-            if ((props = mprAlloc(size)) == 0) {
+            if ((props = mprAllocZeroed(size)) == 0) {
                 return EJS_ERR;
             }
             obj->properties = props;

@@ -206,7 +206,6 @@
 		C9D452C811ECDC0600F029C8 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
 		C9D452CB11ECDC1000F029C8 /* libmprssl.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627B60FD077E7009C78E1 /* libmprssl.dylib */; };
 		C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C97627A60FD077A7009C78E1 /* libmpr.dylib */; };
-		C9E9E86212DD060B007F1A97 /* libmatrixsslstatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9E540E012BC334B0049C9FD /* libmatrixsslstatic.a */; };
 		C9F4C61F10B5D7B80046EFF4 /* ejsRequest.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */; };
 		C9F4C62110B5D7B80046EFF4 /* ejsSession.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */; };
 		C9F8C9A8128C848100FD3A5D /* ejsPot.c in Sources */ = {isa = PBXBuildFile; fileRef = C9F8C9A7128C848100FD3A5D /* ejsPot.c */; };
@@ -817,7 +816,6 @@
 		C9D4528711ECDA4300F029C8 /* http */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = http; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D452B411ECDBA300F029C8 /* http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = http.c; path = ../../../src/deps/http/http.c; sourceTree = SOURCE_ROOT; };
 		C9E540DD12BC32E30049C9FD /* buildConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = buildConfig.h; path = ../../../out/include/buildConfig.h; sourceTree = SOURCE_ROOT; };
-		C9E540E012BC334B0049C9FD /* libmatrixsslstatic.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmatrixsslstatic.a; path = ../../../out/lib/libmatrixsslstatic.a; sourceTree = SOURCE_ROOT; };
 		C9F4C61810B5D7B80046EFF4 /* ejsRequest.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsRequest.c; path = ../../../src/jems/ejs.web/src/ejsRequest.c; sourceTree = SOURCE_ROOT; };
 		C9F4C61A10B5D7B80046EFF4 /* ejsSession.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsSession.c; path = ../../../src/jems/ejs.web/src/ejsSession.c; sourceTree = SOURCE_ROOT; };
 		C9F8C9A7128C848100FD3A5D /* ejsPot.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsPot.c; path = ../../../src/core/src/ejsPot.c; sourceTree = SOURCE_ROOT; };
@@ -894,7 +892,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C9E9E86212DD060B007F1A97 /* libmatrixsslstatic.a in Frameworks */,
 				C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1344,7 +1341,6 @@
 		C9D84A2F1051B5BA0022DB20 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				C9E540E012BC334B0049C9FD /* libmatrixsslstatic.a */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -2448,7 +2444,7 @@
 		C97623C20FD06EC4009C78E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = i386;
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
