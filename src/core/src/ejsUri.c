@@ -573,7 +573,7 @@ static EjsObj *uri_local(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
  */
 static EjsObj *uri_mimeType(Ejs *ejs, EjsUri *up, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprLookupMimeType(up->uri->ext));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprLookupMime(NULL, up->uri->ext));
 }
 
 

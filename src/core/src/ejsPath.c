@@ -687,7 +687,7 @@ static EjsObj *pa_map(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 
 EjsObj *getMimeType(Ejs *ejs, EjsPath *fp, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprLookupMimeType(fp->value));
+    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprLookupMime(NULL, fp->value));
 }
 
 

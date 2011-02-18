@@ -121,7 +121,7 @@ static EjsObj *hs_on(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     HttpLimits  *limits;
-    
+
     if (sp->limits == 0) {
         sp->limits = ejsCreateEmptyPot(ejs);
         limits = (sp->server) ? sp->server->limits : ejs->http->serverLimits;
@@ -130,7 +130,7 @@ static EjsObj *hs_setLimits(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
     }
     ejsBlendObject(ejs, sp->limits, argv[0], 1);
     if (sp->server) {
-        limits = sp->server->limits;
+        limits = (sp->server) ? sp->server->limits : ejs->http->serverLimits;
         ejsSetHttpLimits(ejs, limits, sp->limits, 1);
         ejsUpdateSessionLimits(ejs, sp);
     }
@@ -154,6 +154,7 @@ static EjsObj *hs_isSecure(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     HttpServer  *server;
+    HttpHost    *host;
     EjsString   *address;
     EjsObj      *endpoint;
     EjsPath     *root;
@@ -187,41 +188,41 @@ static EjsObj *hs_listen(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
         The server uses the ejsDispatcher. This is VERY important. All connections will inherit this also.
         This serializes all activity on one dispatcher.
      */
-    if ((server = httpCreateServer(ejs->http, sp->ip, sp->port, ejs->dispatcher)) == 0) {
-        ejsThrowIOError(ejs, "Can't create server object");
+    if ((server = httpCreateServer(sp->ip, sp->port, ejs->dispatcher, HTTP_CREATE_HOST)) == 0) {
+        ejsThrowIOError(ejs, "Can't create Http server object");
         return 0;
     }
     sp->server = server;
     if (sp->limits) {
-        ejsSetHttpLimits(ejs, sp->server->limits, sp->limits, 1);
+        ejsSetHttpLimits(ejs, server->limits, sp->limits, 1);
     }
     if (sp->incomingStages || sp->outgoingStages || sp->connector) {
         setHttpPipeline(ejs, sp);
     }
     if (sp->ssl) {
-        httpSetServerSsl(server, sp->ssl);
+        httpSecureServer(server->ip, sp->port, sp->ssl);
     }
     if (sp->name) {
         httpSetServerName(server, sp->name);
     }
-    httpSetServerSoftware(server, EJS_HTTPSERVER_NAME);
+    httpSetSoftware(server->http, EJS_HTTPSERVER_NAME);
     httpSetServerAsync(server, sp->async);
+    httpSetServerContext(server, sp);
+    httpSetServerNotifier(server, (HttpNotifier) stateChangeNotifier);
 
+    /*
+        This is only required for when http is using non-ejs handlers and/or filters
+     */
+    host = mprGetFirstItem(server->hosts);
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
     if (ejsIsPath(ejs, root)) {
-        //  MOB -- why is this needed? remove?
-        server->documentRoot = sclone(root->value);
+        httpSetHostDocumentRoot(host, root->value);
     }
     root = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_serverRoot);
     if (ejsIsPath(ejs, root)) {
-        server->serverRoot = sclone(root->value);
+        httpSetHostServerRoot(host, root->value);
     }
 
-    //  MOB -- who make sure that the sp object is permanent?
-    //      or (better) have  a destructor that closes the entire connection (and all requests) if goes out of scope
-
-    httpSetServerContext(server, sp);
-    httpSetServerNotifier(server, (HttpNotifier) stateChangeNotifier);
     if (httpStartServer(server) < 0) {
         ejsThrowIOError(ejs, "Can't listen on %s", address->value);
         httpDestroyServer(sp->server);
@@ -392,6 +393,8 @@ static EjsObj *hs_verifyClients(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **
 
 /************************************ Support *************************************/
 
+//  MOB - rethink this. This should really go into the HttpHost object
+
 static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp) 
 {
     EjsString       *vs;
@@ -463,8 +466,10 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
         setupConnTrace(conn);
         break;
 
-    case HTTP_STATE_PARSED:
-        conn->tx->handler = (conn->error) ? conn->http->passHandler : conn->http->ejsHandler;
+    case HTTP_STATE_FIRST:
+        if (!(conn->rx->flags & (HTTP_OPTIONS | HTTP_TRACE))) {
+            conn->tx->handler = (conn->error) ? conn->http->passHandler : conn->http->ejsHandler;
+        }
         break;
 
     case HTTP_STATE_COMPLETE:
@@ -577,7 +582,7 @@ static EjsHttpServer *getServerContext(HttpConn *conn)
     sp = (EjsHttpServer*) loc->context;
     ejs = sp->ejs;
     dirPath = ejsGetProperty(ejs, (EjsObj*) sp, ES_ejs_web_HttpServer_documentRoot);
-    dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->value : conn->documentRoot;
+    dir = (dirPath && ejsIsPath(ejs, dirPath)) ? dirPath->value : conn->host->documentRoot;
     if (sp->server == 0) {
         /* Don't set limits or pipeline. That will come from the embedding server */
         sp->server = conn->server;
@@ -605,9 +610,10 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 
     req = ejsCreateRequest(ejs, sp, conn, dir);
     httpSetConnContext(conn, req);
+#if UNUSED
     conn->dispatcher = ejs->dispatcher;
-    conn->documentRoot = conn->server->documentRoot;
     conn->tx->handler = ejs->http->ejsHandler;
+#endif
 
 #if FUTURE
     if (sp->pipe) {

@@ -11,7 +11,7 @@
 
 static EjsObj   *getDateHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
 static EjsObj   *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
-static int      httpCallback(EjsHttp *hp, MprEvent *event);
+static void     httpIOEvent(HttpConn *conn, MprEvent *event);
 static void     httpNotify(HttpConn *conn, int state, int notifyFlags);
 static void     prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data);
 static ssize    readTransfer(Ejs *ejs, EjsHttp *hp, ssize count);
@@ -92,8 +92,8 @@ EjsObj *http_set_async(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 
     conn = hp->conn;
     async = (argv[0] == (EjsObj*) ejs->trueValue);
-    httpSetCallback(conn, (HttpCallback) httpCallback, hp);
     httpSetAsync(conn, async);
+    httpSetIOCallback(conn, httpIOEvent);
     return 0;
 }
 
@@ -1057,15 +1057,16 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
 
 
 /*  
-    Respond to an IO event
+    Respond to an IO event. This wraps the standard httpEvent() call.
  */
-static int httpCallback(EjsHttp *hp, MprEvent *event)
+static void httpIOEvent(HttpConn *conn, MprEvent *event)
 {
-    HttpConn    *conn;
+    EjsHttp     *hp;
     Ejs         *ejs;
 
-    mprAssert(hp->conn->async);
-    conn = hp->conn;
+    mprAssert(conn->async);
+
+    hp = conn->context;
     ejs = TYPE(hp)->ejs;
 
     //  MOB -- what if this is deleted?
@@ -1076,7 +1077,6 @@ static int httpCallback(EjsHttp *hp, MprEvent *event)
             writeHttpData(ejs, hp);
         }
     }
-    return 0;
 }
 
 
