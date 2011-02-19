@@ -2023,8 +2023,8 @@ static HttpConn *openConnection(HttpConn *conn, cchar *url)
 #endif
     }
     if (*url == '/') {
-        ip = (http->proxyHost) ? http->proxyHost : "localhost";
-        port = (http->proxyHost) ? http->proxyPort : 80;
+        ip = (http->proxyHost) ? http->proxyHost : http->defaultClientHost;
+        port = (http->proxyHost) ? http->proxyPort : http->defaultClientPort;
     } else {
         ip = (http->proxyHost) ? http->proxyHost : uri->host;
         port = (http->proxyHost) ? http->proxyPort : uri->port;
@@ -3727,6 +3727,9 @@ static void manageHost(HttpHost *host, int flags)
         mprMark(host->logFormat);
         mprMark(host->logPath);
         mprMark(host->limits);
+
+    } else if (flags & MPR_MANAGE_FREE) {
+        httpRemoveHost(MPR->httpService, host);
     }
 }
 
@@ -4351,9 +4354,11 @@ Http *httpCreate()
     http->protocol = sclone("HTTP/1.1");
     http->mutex = mprCreateLock(http);
     http->stages = mprCreateHash(-1, 0);
-    http->hosts = mprCreateList(-1, 0);
-    http->servers = mprCreateList(-1, 0);
+    http->hosts = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
+    http->servers = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     http->connections = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
+    http->defaultClientHost = sclone("127.0.0.1");
+    http->defaultClientPort = 80;
 
     updateCurrentDate(http);
     http->statusCodes = mprCreateHash(41, MPR_HASH_STATIC_VALUES | MPR_HASH_STATIC_KEYS);
@@ -4385,8 +4390,9 @@ static void manageHttp(Http *http, int flags)
     int         next;
 
     if (flags & MPR_MANAGE_MARK) {
+        /* Note servers and hosts are static values - contents are not marked so they can be collected */
         mprMark(http->servers);
-        mprMark(http->endpoints);
+        mprMark(http->hosts);
         mprMark(http->connections);
         mprMark(http->stages);
         mprMark(http->statusCodes);
@@ -4404,11 +4410,10 @@ static void manageHttp(Http *http, int flags)
         mprMark(http->protocol);
         mprMark(http->proxyHost);
         mprMark(http->servers);
-        mprMark(http->hosts);
         mprMark(http->defaultClientHost);
 
         /*
-            Servers keep connections alive until a timeout. Keep marking even if no other references
+            Servers keep connections alive until a timeout. Keep marking even if no other references.
          */
         lock(http);
         for (next = 0; (conn = mprGetNextItem(http->connections, &next)) != 0; ) {
@@ -4435,7 +4440,7 @@ void httpAddServer(Http *http, HttpServer *server)
 
 void httpRemoveServer(Http *http, HttpServer *server)
 {
-    mprAddItem(http->servers, server);
+    mprRemoveItem(http->servers, server);
 }
 
 
@@ -8758,7 +8763,7 @@ static void parseHeaders(HttpConn *conn, HttpPacket *packet)
                 if (rx->cookie && *rx->cookie) {
                     rx->cookie = sjoin(rx->cookie, "; ", value, NULL);
                 } else {
-                    rx->cookie = value;
+                    rx->cookie = sclone(value);
                 }
 
             } else if (strcmp(key, "connection") == 0) {
@@ -10356,6 +10361,7 @@ void httpDestroyServer(HttpServer *server)
         mprCloseSocket(server->sock, 0);
         server->sock = 0;
     }
+    httpRemoveServer(MPR->httpService, server);
 }
 
 
@@ -10368,9 +10374,6 @@ static int manageServer(HttpServer *server, int flags)
         mprMark(server->waitHandler);
         mprMark(server->clientLoad);
         mprMark(server->hosts);
-#if UNUSED
-        mprMark(server->defaultHost);
-#endif
         mprMark(server->name);
         mprMark(server->ip);
         mprMark(server->context);

@@ -1058,28 +1058,14 @@ void ejsLoadXMLCString(Ejs *ejs, EjsXML *xml, cchar *xmlString)
 void ejsManageXML(EjsXML *xml, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
-        if (xml->parent && !VISITED(xml->parent)) {
-            mprMark(xml->parent);
-        }
-        if (xml->targetObject && !VISITED(xml->targetObject)) {
-            mprMark(xml->targetObject);
-        }
+        mprMark(xml->parent);
+        mprMark(xml->targetObject);
         mprMark(xml->attributes);
         mprMark(xml->elements);
         mprMark(xml->namespaces);
-#if UNUSED
-        EjsObj          *item;
-        int             next;
-        for (next = 0; (item = mprGetNextItem(xml->attributes, &next)) != 0; ) {
-            mprMark(item);
-        }
-        for (next = 0; (item = mprGetNextItem(xml->elements, &next)) != 0; ) {
-            mprMark(item);
-        }
-        for (next = 0; (item = mprGetNextItem(xml->namespaces, &next)) != 0; ) {
-            mprMark(item);
-        }
-#endif
+        mprMark(xml->qname.name);
+        mprMark(xml->qname.space);
+        mprMark(xml->value);
     }
 }
 
