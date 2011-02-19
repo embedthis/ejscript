@@ -414,7 +414,6 @@ static EjsObj *workerLookup(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     Process a message sent from postMessage. This may run inside the worker or outside in the parent depending on the
     direction of the message. But it ALWAYS runs in the appropriate thread for the interpreter.
  */
-
 static int doMessage(Message *msg, MprEvent *mprEvent)
 {
     Ejs         *ejs;

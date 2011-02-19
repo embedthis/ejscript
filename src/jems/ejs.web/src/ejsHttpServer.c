@@ -753,9 +753,7 @@ static void manageHttpServer(EjsHttpServer *sp, int flags)
         mprLog(0, "DESTROY HttpServer %s in %s", sp->name, sp->ejs->name);
 #endif
         sp->sessions = 0;
-#if MOB
         ejsStopSessionTimer(sp);
-#endif
         if (sp->server) {
             httpDestroyServer(sp->server);
             sp->server = 0;

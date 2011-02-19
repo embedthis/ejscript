@@ -137,7 +137,7 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     }
     mprRemoveRoot(ejs);
     ejs->state->frozen = 0;
-#if UNUSED || 1
+#if DEBUG_IDE
     mprLog(0, "CREATE %s, length %d", ejs->name, sp->vmlist->length);
 #endif
     return ejs;
@@ -149,7 +149,7 @@ void ejsDestroy(Ejs *ejs)
     EjsService  *sp;
     EjsState    *state;
 
-#if UNUSED || 1
+#if DEBUG_IDE
     mprLog(0, "DESTROY %s, length %d", ejs->name, ejs->service->vmlist->length);
 #endif
     ejs->destroying = 1;
@@ -178,7 +178,7 @@ static void manageEjs(Ejs *ejs, int flags)
     EjsObj      *vp, **vpp, **top;
 
     if (flags & MPR_MANAGE_MARK) {
-#if UNUSED || 1
+#if DEBUG_IDE
 mprLog(0, "MARK EJS %s, length %d", ejs->name, ejs->service->vmlist->length);
 #endif
         mprMark(ejs->global);
@@ -224,9 +224,6 @@ mprLog(0, "MARK EJS %s, length %d", ejs->name, ejs->service->vmlist->length);
 
     } else if (flags & MPR_MANAGE_FREE) {
         ejsDestroy(ejs);
-#if UNUSED
-        mprLog(0, "AFTER DESTROY %s", ejs->name);
-#endif
     }
 }
 

@@ -259,7 +259,7 @@ static void startSessionTimer(Ejs *ejs, EjsHttpServer *server)
         //  MOB - should session timers run on the ejs->dispatcher or nonblock. Are sessions owned by one interp
         //  or by the service
         server->sessionTimer = mprCreateTimerEvent(ejs->dispatcher, "sessionTimer", EJS_TIMER_PERIOD, 
-            (MprEventProc) sessionTimer, server, 0 /* | MPR_EVENT_QUICK */);
+            (MprEventProc) sessionTimer, server, MPR_EVENT_STATIC_DATA /* | MPR_EVENT_QUICK */);
     }
     mprUnlock(sessionLock);
 }
@@ -269,7 +269,6 @@ void ejsStopSessionTimer(EjsHttpServer *server)
 {
     mprLock(sessionLock);
     if (server->sessionTimer) {
-        mprLog(0, "STOP TIMER %s %s\n", server->name, server->ejs->name);
         mprRemoveEvent(server->sessionTimer);
         server->sessionTimer = 0;
     }
