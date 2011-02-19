@@ -30,7 +30,7 @@ static EjsObj *httpConstructor(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     ejsLoadHttpService(ejs);
 
-    if ((hp->conn = httpCreateClient(ejs->http, ejs->dispatcher)) == 0) {
+    if ((hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
@@ -125,7 +125,7 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (hp->conn) {
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
-        hp->conn = httpCreateClient(ejs->http, ejs->dispatcher);
+        hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher);
         httpPrepClientConn(hp->conn, 0);
         httpSetConnNotifier(hp->conn, httpNotify);
         httpSetConnContext(hp->conn, hp);
@@ -1265,7 +1265,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
     while (conn->state < state && count < conn->retries && redirectCount < 16 && 
            !conn->error && !ejs->exiting && !mprIsStopping(conn)) {
         count++;
-        if ((rc = httpWait(conn, ejs->dispatcher, HTTP_STATE_PARSED, remaining)) == 0) {
+        if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
             if (httpNeedRetry(conn, &url)) {
                 if (url) {
                     uri = httpCreateUri(url, 0);
@@ -1277,7 +1277,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
                 }
                 count--; 
                 redirectCount++;
-            } else if (httpWait(conn, ejs->dispatcher, state, remaining) == 0) {
+            } else if (httpWait(conn, state, remaining) == 0) {
                 success = 1;
                 break;
             }
