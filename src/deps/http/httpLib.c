@@ -4405,6 +4405,7 @@ static void manageHttp(Http *http, int flags)
         mprMark(http->proxyHost);
         mprMark(http->servers);
         mprMark(http->hosts);
+        mprMark(http->defaultClientHost);
 
         /*
             Servers keep connections alive until a timeout. Keep marking even if no other references

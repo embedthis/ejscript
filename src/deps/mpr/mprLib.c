@@ -17290,10 +17290,7 @@ static int connectSocket(MprSocket *sp, cchar *ip, int port, int initialFlags)
  */
 void mprDisconnectSocket(MprSocket *sp)
 {
-    mprAssert(sp);
-    mprAssert(sp->provider);
-
-    if (sp->provider) {
+    if (sp && sp->provider) {
         sp->provider->disconnectSocket(sp);
     }
 }
@@ -19343,7 +19340,7 @@ int mprParseTestArgs(MprTestService *sp, int argc, char *argv[])
                 }
             }
 
-        } else if (strcmp(argp, "--debugger") == 0 || strcmp(argp, "-d") == 0) {
+        } else if (strcmp(argp, "--debugger") == 0 || strcmp(argp, "-D") == 0) {
             mprSetDebugMode(1);
             sp->debugOnFailures = 1;
 
