@@ -4786,7 +4786,7 @@ static bool isIdle()
     unlock(http);
     if (!mprServicesAreIdle()) {
         if (lastTrace < now) {
-            mprLog(0, "Waiting for MPR services complete");
+            mprLog(4, "Waiting for MPR services complete");
             lastTrace = now;
         }
         return 0;
@@ -5725,7 +5725,8 @@ static HttpStage *mapToFile(HttpConn *conn, HttpStage *handler)
     HttpRx      *rx;
     HttpTx      *tx;
     HttpHost    *host;
-    MprPath     *info;
+    MprPath     *info, ginfo;
+    char        *gfile;
 
     rx = conn->rx;
     tx = conn->tx;
@@ -5745,9 +5746,20 @@ static HttpStage *mapToFile(HttpConn *conn, HttpStage *handler)
         rx->auth = rx->dir->auth;
         if (info->isDir) {
             handler = processDirectory(conn, handler);
-        } else if (info->valid) {
-            tx->etag = mprAsprintf("\"%x-%Lx-%Lx\"", info->inode, info->size, info->mtime);
-        } else {
+
+        } else if (!info->valid) {
+            /*
+                File not found. See if a compressed variant exists.
+             */
+            if (rx->acceptEncoding && strstr(rx->acceptEncoding, "gzip") != 0) {
+                gfile = mprAsprintf("%s.gz", tx->filename);
+                if (mprGetPathInfo(gfile, &ginfo) == 0) {
+                    tx->filename = gfile;
+                    tx->fileInfo = ginfo;
+                    httpSetHeader(conn, "Content-Encoding", "gzip");
+                    return handler;
+                }
+            }
             if (!(rx->flags & HTTP_PUT) && (handler->flags & HTTP_STAGE_VERIFY_ENTITY) && 
                     (rx->auth == 0 || rx->auth->type == 0)) {
                 httpError(conn, HTTP_CODE_NOT_FOUND, "Can't open document: %s", tx->filename);
@@ -11765,6 +11777,7 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
     HttpTx      *tx;
     HttpRange   *range;
     MprTime     expires;
+    MprPath     *info;
     cchar       *mimeType;
     char        *hdr;
     struct tm   tm;
@@ -11773,6 +11786,7 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
 
     rx = conn->rx;
     tx = conn->tx;
+    info = &tx->fileInfo;
 
     httpAddSimpleHeader(conn, "Date", conn->http->currentDate);
 
@@ -11791,6 +11805,9 @@ static void setHeaders(HttpConn *conn, HttpPacket *packet)
             httpAddHeader(conn, "Cache-Control", "max-age=%d", expires);
             httpAddHeader(conn, "Expires", "%s", hdr);
         }
+    }
+    if (tx->etag == 0 && info->valid) {
+        tx->etag = mprAsprintf("\"%x-%Lx-%Lx\"", info->inode, info->size, info->mtime);
     }
     if (tx->etag) {
         httpAddHeader(conn, "ETag", "%s", tx->etag);
