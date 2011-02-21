@@ -143,7 +143,17 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     } else if (argc >= 2) {
         signal = ejsGetInt(ejs, argv[0]);
     }
-    if (kill(pid, signal) < 0) {
+#if BLD_WIN_LIKE
+{
+    HANDLE handle = OpenProcess(DELETE, 0, pid);
+    rc = TERMINATE_PROCESS(pid, signal) == 0;
+}
+#elif VXWORKS
+    rc = taskDelete(cmd->pid);
+#else
+    rc = kill(pid, signal);
+#endif
+    if (rc < 0) {
         if (cmd->throw) {
             ejsThrowIOError(ejs, "Can't kill %d with signal %d, errno %d", pid, signal, errno);
         }
@@ -206,7 +216,6 @@ static EjsObj *cmd_pid(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 static ssize readCmdData(Ejs *ejs, EjsCmd *cmd, ssize count)
 {
     MprBuf      *buf;
-    HttpConn    *conn;
     ssize       space, nbytes;
 
     if (cmd->mc == 0) {
