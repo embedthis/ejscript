@@ -150,7 +150,7 @@
 #define ES_XML                                                         129
 #define ES_XMLHttp                                                     130
 #define ES_XMLList                                                     131
-#define ES_cmd                                                         132
+#define ES_XXXcmd                                                      132
 #define ES_global_NUM_CLASS_PROP                                       133
 
 /*
@@ -216,8 +216,8 @@
 #define ES_encodeObjects_items                                         0
 #define ES_ejs_worker_postMessage_data                                 0
 #define ES_ejs_worker_postMessage_ports                                1
-#define ES_cmd_cmdline                                                 0
-#define ES_cmd_data                                                    1
+#define ES_XXXcmd_cmdline                                              0
+#define ES_XXXcmd_data                                                 1
 
 
 /*
@@ -451,10 +451,10 @@
 /*
     Class property slots for the "Cmd" type 
  */
-#define ES_Cmd_daemon                                                  0
-#define ES_Cmd_kill                                                    1
-#define ES_Cmd_run                                                     2
-#define ES_Cmd_sh                                                      3
+#define ES_Cmd_XXXdaemon                                               0
+#define ES_Cmd_XXXkill                                                 1
+#define ES_Cmd_XXXrun                                                  2
+#define ES_Cmd_XXXsh                                                   3
 #define ES_Cmd_NUM_CLASS_PROP                                          4
 
 /*
@@ -480,20 +480,20 @@
 #define ES_Cmd_timeout                                                 17
 #define ES_Cmd_wait                                                    18
 #define ES_Cmd_write                                                   19
-#define ES_Cmd_exec                                                    20
+#define ES_Cmd_XXXexec                                                 20
 #define ES_Cmd_NUM_INSTANCE_PROP                                       21
 #define ES_Cmd_NUM_INHERITED_PROP                                      0
 
 /*
     Local slots for methods in type "Cmd" 
  */
-#define ES_Cmd_daemon_cmdline                                          0
-#define ES_Cmd_kill_pid                                                0
-#define ES_Cmd_kill_signal                                             1
-#define ES_Cmd_run_cmdline                                             0
-#define ES_Cmd_run_data                                                1
-#define ES_Cmd_sh_command                                              0
-#define ES_Cmd_sh_data                                                 1
+#define ES_Cmd_XXXdaemon_cmdline                                       0
+#define ES_Cmd_XXXkill_pid                                             0
+#define ES_Cmd_XXXkill_signal                                          1
+#define ES_Cmd_XXXrun_cmdline                                          0
+#define ES_Cmd_XXXrun_data                                             1
+#define ES_Cmd_XXXsh_command                                           0
+#define ES_Cmd_XXXsh_data                                              1
 
 
 /*
@@ -2246,6 +2246,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1368281
+#define _ES_CHECKSUM_ejs   1369865
 
 #endif

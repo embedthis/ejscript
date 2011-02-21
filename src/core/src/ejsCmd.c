@@ -589,6 +589,7 @@ static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 
 void ejsConfigureCmdType(Ejs *ejs)
 {
+#if DEBUG_IDE
     EjsType     *type;
     EjsPot      *prototype;
 
@@ -639,6 +640,7 @@ void ejsConfigureCmdType(Ejs *ejs)
 
     ejsBindMethod(ejs, prototype, ES_Cmd_wait, cmd_wait);
     ejsBindMethod(ejs, prototype, ES_Cmd_write, cmd_write);
+#endif
 }
 
 /*
