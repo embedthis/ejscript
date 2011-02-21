@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="libpcre"
-    ProjectGUID="ab359e28-cfa5-412e-9558-620bb92d6b07"
+    ProjectGUID="45563556-ad5d-4a3d-8c47-63062c90835a"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -162,7 +162,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{c638dc17-3a68-42b2-82bb-96ab8564f49c}"
+            UniqueIdentifier="{4ba9e98d-b324-443d-8055-4b31b9dd9642}"
             >
             <File
                 RelativePath="..\..\..\out\include\buildConfig.h"
@@ -172,7 +172,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{8e9132d0-a033-4a95-9170-5a1e6878cfd0}"
+            UniqueIdentifier="{f0faa7fb-313c-4167-a571-c768a6be57aa}"
             >
             <File
                 RelativePath="..\..\..\src\deps\pcre\pcre.c"

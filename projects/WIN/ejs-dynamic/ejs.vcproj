@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="ejs"
-    ProjectGUID="3fc22154-7762-4b61-a50e-300e3df7029f"
+    ProjectGUID="e811731c-138f-452c-9a08-24f36ef70c28"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -160,7 +160,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{4f1da851-5743-4f1c-98b5-986e522f8bc2}"
+            UniqueIdentifier="{1e2652f4-06b9-426c-80e3-5841bc66b94d}"
             >
             <File
                 RelativePath="..\..\..\out\include\buildConfig.h"
@@ -170,7 +170,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{354deb3d-c9da-4b16-a9af-3b1bffb1f4ab}"
+            UniqueIdentifier="{be85bae6-59fb-4a5c-8a3f-646eb9a6d0a1}"
             >
             <File
                 RelativePath="..\..\..\src\cmd\ejs.c"

@@ -116,3 +116,4 @@ src/core/test/http/.pidfile
 .pidfile
 samples/c/*/main
 samples/c/*/*.def
+access.log

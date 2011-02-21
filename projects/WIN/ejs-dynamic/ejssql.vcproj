@@ -3,7 +3,7 @@
     ProjectType="Visual C++"
     Version="8.00"
     Name="ejssql"
-    ProjectGUID="e55c4376-9dd0-43a5-812c-035e94ba1eaf"
+    ProjectGUID="27ca576e-8bf9-47f1-ba2b-6577bc27015a"
     RootNamespace=""
     Keyword="Win32Proj"
     TargetFrameworkVersion="0"
@@ -160,7 +160,7 @@
         <Filter
             Name="Header Files"
             Filter="h;hpp;hxx;hm;inl;inc;xsd"
-            UniqueIdentifier="{2382da45-b04d-43e8-8774-c1a298537865}"
+            UniqueIdentifier="{60754596-8357-4cbf-ae25-73ccf8dd3a5e}"
             >
             <File
                 RelativePath="..\..\..\out\include\buildConfig.h"
@@ -170,7 +170,7 @@
         <Filter
             Name="Source Files"
             Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-            UniqueIdentifier="{2a3f0a14-e992-45fc-84b7-846ff91b0507}"
+            UniqueIdentifier="{c2f0b311-0237-4803-81de-085fa18312e8}"
             >
             <File
                 RelativePath="..\..\..\src\jems\ejs.db.sqlite\src\ejssql.c"

@@ -13,6 +13,7 @@ assert(http.response == "Hello One")
 //  Select app "two"
 http.get(HTTP + "/dispach.es?route=cascade&select=two")
 assert(http.response == "Hello Two")
+http.close()
 
 //  Select catch all app
 http.get(HTTP + "/dispach.es?route=cascade")

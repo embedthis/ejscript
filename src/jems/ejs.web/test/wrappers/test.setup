@@ -1,10 +1,6 @@
 
-if (!App.getenv("NOSERVER")) {
+if (test.phase == "init" && !App.getenv("NOSERVER")) {
     Path("access.log").remove()
 }
 
 httpService("start.es")
-
-if (!App.getenv("NOSERVER")) {
-    Path("access.log").remove()
-}
