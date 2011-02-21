@@ -4,11 +4,16 @@
 defineComponent() {
     local name path partial
 
+echo DEFINE WINSDK
+echo PROBE --name winsdk --search "$1" $file
+echo PATH $PATH
+env
     if [ $BLD_CROSS = 1 -a $KIND = HOST -a $BLD_HOST_OS != "WIN" ] ; then 
         return 0
     fi
     name=winsdk
     path=`probe --name winsdk --dir --search "$1" "Include/WinBase.h"`
+echo AFTER PROBE path $path
     if [ "$path" = "" ] ; then
         warnComponent "Windows SDK" "Download from http://msdn.microsoft.com/en-us/windowsserver/bb980924.aspx\n"
         return
@@ -25,6 +30,7 @@ setWinEnv()
     name=cc
     eval file=\$BLD_${KIND}_CC
 
+echo SET WIN ENV
 echo PROBE --name winsdk --search "$1" $file
 echo PATH $PATH
 env

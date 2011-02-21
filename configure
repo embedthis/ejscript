@@ -709,6 +709,10 @@ convertSearchPath() {
     local x
 
 echo MOB CONVERT_SEARCH_PATH >&2
+echo PATH $PATH >&2
+env >&2
+echo type sort >&2
+type sort >&2
     if [ "$1" != "" ] ; then
         [ "$verbose" -gt 2 ] && echo "ConvertPath expanding $1" 1>&2
         echo $1 | sed "s/[  ]'/=/g" | tr "=" "\n" | sed "s/'//g" |
@@ -1152,7 +1156,9 @@ probe()
 locate() {
     local file="$1"
     local search="$2"
+echo MOB 5555 >&2
     search=`convertSearchPath "$search"`
+echo MOB 6666 >&2
     local dir=`probe --name "$file" --search "$search" "$file"`
     dir=`cygpath -u "$dir"`
     echo "'"`dirname "$dir"`"'"
@@ -2242,6 +2248,7 @@ setSystemConfiguration
 #
 [ $quiet = 0 ] && echo -e "  # Prepare search path ..."
 . build/search.config
+echo MOB 111
 BUILD_SEARCH_PATH=`convertSearchPath "$BUILD_SEARCH_PATH"`:$PATH
 HOST_SEARCH_PATH=`convertSearchPath "$HOST_SEARCH_PATH"`:$PATH
 if [ "$ENV_BUILD_SEARCH_PATH" != "" ] ; then
@@ -2250,6 +2257,7 @@ fi
 if [ "$ENV_HOST_SEARCH_PATH" != "" ] ; then
     HOST_SEARCH_PATH=`convertSearchPath "$ENV_HOST_SEARCH_PATH"`:"$HOST_SEARCH_PATH"
 fi
+echo MOB 2222
 
 #
 #   Read the base configuration 
