@@ -196,8 +196,6 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     uchar       *mark;
     int         i, offset, count, opcode, attributes, frozen;
 
-    MPR_VERIFY_MEM();
-
 #if BLD_UNIX_LIKE || VXWORKS 
     /*
         Direct threading computed goto processing. Include computed goto jump table.
@@ -209,6 +207,8 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     mprAssert(!ejs->exception);
     mprAssert(ejs->state->fp == 0 || ejs->state->fp->attentionPc == 0);
     mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
+
+    MPR_VERIFY_MEM();
 
     vp = 0;
     slotNum = -1;

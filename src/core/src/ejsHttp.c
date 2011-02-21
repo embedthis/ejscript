@@ -14,7 +14,7 @@ static EjsObj   *getStringHeader(Ejs *ejs, EjsHttp *hp, cchar *key);
 static void     httpIOEvent(HttpConn *conn, MprEvent *event);
 static void     httpNotify(HttpConn *conn, int state, int notifyFlags);
 static void     prepForm(Ejs *ejs, EjsHttp *hp, char *prefix, EjsObj *data);
-static ssize    readTransfer(Ejs *ejs, EjsHttp *hp, ssize count);
+static ssize    readHttpData(Ejs *ejs, EjsHttp *hp, ssize count);
 static void     sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp);
 static void     sendHttpErrorEvent(Ejs *ejs, EjsHttp *hp);
 static EjsObj   *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, EjsObj **argv);
@@ -510,7 +510,7 @@ static EjsObj *http_read(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     } else {
         ejsSetByteArrayPositions(ejs, buffer, 0, 0);
     }
-    if ((count = readTransfer(ejs, hp, count)) < 0) {
+    if ((count = readHttpData(ejs, hp, count)) < 0) {
         mprAssert(ejs->exception);
         return 0;
     } 
@@ -547,7 +547,7 @@ static EjsObj *http_readString(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
     if (!waitForState(hp, HTTP_STATE_CONTENT, timeout, 1)) {
         return 0;
     }
-    if ((count = readTransfer(ejs, hp, count)) < 0) {
+    if ((count = readHttpData(ejs, hp, count)) < 0) {
         mprAssert(ejs->exception);
         return 0;
     }
@@ -993,7 +993,7 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
     Read the required number of bytes into the response content buffer. Count < 0 means transfer the entire content.
     Returns the number of bytes read.
  */ 
-static ssize readTransfer(Ejs *ejs, EjsHttp *hp, ssize count)
+static ssize readHttpData(Ejs *ejs, EjsHttp *hp, ssize count)
 {
     MprBuf      *buf;
     HttpConn    *conn;
