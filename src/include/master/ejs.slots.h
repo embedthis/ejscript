@@ -452,7 +452,7 @@
     Class property slots for the "Cmd" type 
  */
 #define ES_Cmd_XXXdaemon                                               0
-#define ES_Cmd_XXXkill                                                 1
+#define ES_Cmd_kill                                                    1
 #define ES_Cmd_XXXrun                                                  2
 #define ES_Cmd_XXXsh                                                   3
 #define ES_Cmd_NUM_CLASS_PROP                                          4
@@ -488,8 +488,8 @@
     Local slots for methods in type "Cmd" 
  */
 #define ES_Cmd_XXXdaemon_cmdline                                       0
-#define ES_Cmd_XXXkill_pid                                             0
-#define ES_Cmd_XXXkill_signal                                          1
+#define ES_Cmd_kill_pid                                                0
+#define ES_Cmd_kill_signal                                             1
 #define ES_Cmd_XXXrun_cmdline                                          0
 #define ES_Cmd_XXXrun_data                                             1
 #define ES_Cmd_XXXsh_command                                           0
@@ -2246,6 +2246,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1369865
+#define _ES_CHECKSUM_ejs   1369601
 
 #endif
