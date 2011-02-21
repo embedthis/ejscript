@@ -185,7 +185,7 @@
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{60754596-8357-4cbf-ae25-73ccf8dd3a5e}"
+			UniqueIdentifier="{7d66ebb1-37bb-4a4f-b337-4357a19142bd}"
 			>
 			<File
 				RelativePath="..\..\..\out\include\buildConfig.h"
@@ -195,7 +195,7 @@
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{c2f0b311-0237-4803-81de-085fa18312e8}"
+			UniqueIdentifier="{fda4ff22-aee8-4f73-a1de-697d13fbf847}"
 			>
 			<File
 				RelativePath="..\..\..\src\jems\ejs.db.sqlite\src\ejssql.c"

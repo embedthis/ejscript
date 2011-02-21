@@ -187,7 +187,7 @@
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{7992298a-6373-482a-87ec-de25ca763b31}"
+			UniqueIdentifier="{6e617e99-25ce-4f74-9688-942fa65e695a}"
 			>
 			<File
 				RelativePath="..\..\..\out\include\buildConfig.h"
@@ -237,7 +237,7 @@
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{95361328-dbca-42a2-bee0-5e2f6b334cef}"
+			UniqueIdentifier="{061621f5-d63d-4019-8a82-ba12b0894c32}"
 			>
 			<File
 				RelativePath="..\..\..\src\compiler\ecAst.c"
@@ -289,6 +289,10 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\vm\ejsByteCode.c"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\src\core\src\ejsCmd.c"
 				>
 			</File>
 			<File

@@ -187,7 +187,7 @@
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{85945945-fb72-4c69-b383-d5ab150d2138}"
+			UniqueIdentifier="{dd4bc3f2-88bb-4dcf-b8fd-5fa51c48d9d8}"
 			>
 			<File
 				RelativePath="..\..\..\out\include\buildConfig.h"
@@ -197,7 +197,7 @@
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{96f3cc5f-f687-4a03-a918-982050562915}"
+			UniqueIdentifier="{886b8d89-430f-443a-afbe-cb05050ce4ce}"
 			>
 			<File
 				RelativePath="..\..\..\src\deps\mpr\mprSsl.c"

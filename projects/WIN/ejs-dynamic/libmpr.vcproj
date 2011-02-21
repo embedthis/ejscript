@@ -26,6 +26,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description="Build Ejscript Modules"
+				CommandLine="echo Install buildConfig.h &amp; cp buildConfig.win $(ProjectDir)/../../../out/include&#x0D;&#x0A;"
+				Outputs="$(ProjectDir)/../../../out/include/buildConfig.h"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -110,6 +113,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				Description="Build Ejscript Modules"
+				CommandLine="echo Install buildConfig.h &amp; cp buildConfig.win $(ProjectDir)/../../../out/include&#x0D;&#x0A;"
+				Outputs="$(ProjectDir)/../../../out/include/buildConfig.h"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -187,7 +193,7 @@
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{62270915-bdc7-4114-be25-bcd7e56a9fcd}"
+			UniqueIdentifier="{3eee2fee-4cc8-43bf-be1d-d74433ab9c10}"
 			>
 			<File
 				RelativePath="..\..\..\out\include\buildConfig.h"
@@ -197,7 +203,7 @@
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{95a761bc-6a4c-4ca1-bcd7-b5bf32755cb5}"
+			UniqueIdentifier="{994ea06e-85ac-4eaf-beb6-9848eca198ab}"
 			>
 			<File
 				RelativePath="..\..\..\src\deps\mpr\mprLib.c"
