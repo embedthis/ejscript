@@ -1,8 +1,0 @@
-			<Tool
-				Name="VCCustomBuildTool"
-				Description="Build Ejscript Modules"
-				CommandLine="echo Install buildConfig.h to out/include &amp; cp buildConfig.win $(ProjectDir)/../../../out/include/buildConfig.h &#x0D;&#x0A;"
-				Outputs="$(ProjectDir)/../../../out/include/buildConfig.h"
-			/>
-
-

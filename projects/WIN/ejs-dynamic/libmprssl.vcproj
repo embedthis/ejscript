@@ -41,7 +41,7 @@
 				Optimization="1"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../../packages/openssl/openssl-1.0.0a/inc32;../../../../packages/matrixssl/matrixssl-1-8-8-open;../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
+				AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -124,7 +124,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				FavorSizeOrSpeed="1"
-				AdditionalIncludeDirectories="../../../../packages/openssl/openssl-1.0.0a/inc32;../../../../packages/matrixssl/matrixssl-1-8-8-open;../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
+				AdditionalIncludeDirectories="../../../src/deps/mpr;../../../src/include/master;../../../src/deps/pcre;../../../src/deps/http;../../../out/include;../../../src/include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;;_REENTRANT;_MT"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -187,7 +187,7 @@
 		<Filter
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
-			UniqueIdentifier="{dd4bc3f2-88bb-4dcf-b8fd-5fa51c48d9d8}"
+			UniqueIdentifier="{c63c9b87-0363-4fa4-a6af-d7749ae82ba6}"
 			>
 			<File
 				RelativePath="..\..\..\out\include\buildConfig.h"
@@ -197,7 +197,7 @@
 		<Filter
 			Name="Source Files"
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
-			UniqueIdentifier="{886b8d89-430f-443a-afbe-cb05050ce4ce}"
+			UniqueIdentifier="{4d5ddb83-bd1c-4616-8fea-9de0d55fbf38}"
 			>
 			<File
 				RelativePath="..\..\..\src\deps\mpr\mprSsl.c"

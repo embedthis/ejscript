@@ -4,10 +4,10 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2009. All Rights Reserved.
 #
 
-CONFIG		= src/include/master/buildConfig.h
+CONFIG		= buildConfig.win
 
 include     .makedep
-include     $(BLD_TOP)/$(CONFIG)
+include     $(CONFIG)
 
 SRC			= ../../../src
 CMD			= ../../../src/cmd
@@ -24,7 +24,7 @@ SSL_IFLAGS	+= $(BLD_MATRIXSSL_IFLAGS)
 
 compileExtra: prep $(PROJECTS)
 
-prep: Makefile $(BLD_TOP)/$(CONFIG)
+prep: Makefile $(CONFIG)
 	if ls $(BLD_BIN_DIR)/*.def >/dev/null 2>&1 ; then \
 		for f in $(BLD_BIN_DIR)/*.def ; do \
 			cp $$f $$.tmp ; \
@@ -33,60 +33,60 @@ prep: Makefile $(BLD_TOP)/$(CONFIG)
 		done ; \
 	fi
 
-setup.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+setup.vcproj: Makefile $(CONFIG)
 	# hand crafted
 	# 	makeVsProj --project setup.vcproj --custom setup.custom 
 	
-libmpr.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+libmpr.vcproj: Makefile $(CONFIG)
 	makeVsProj --project libmpr.vcproj --library mpr --dflags "$(DFLAGS)" \
 		--def libmpr.def --libs "$(LIBS)" $(MPR_HDR) $(DEPS)/mpr/mprLib.c
 	
-libmprssl.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+libmprssl.vcproj: Makefile $(CONFIG)
 	makeVsProj --project libmprssl.vcproj --library mprSsl --dflags "$(DFLAGS)" \
 		--iflags "$(SSL_IFLAGS)" --def libmprssl.def --libs "libmpr.lib $(LIBS)" \
 	    $(MPR_HDR) $(DEPS)/mpr/mprSsl.c
 	
-libpcre.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+libpcre.vcproj: Makefile $(CONFIG)
 	makeVsProj --project libpcre.vcproj --library pcre --dflags "$(DFLAGS)" \
 		--def libpcre.def --libs "libmpr.lib $(LIBS)" $(MPR_HDR) $(DEPS)/pcre/pcre.c
 	
-libhttp.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+libhttp.vcproj: Makefile $(CONFIG)
 	makeVsProj --project libhttp.vcproj --library http --dflags "$(DFLAGS)" \
 		--def libhttp.def --libs "libmpr.lib $(LIBS)" $(MPR_HDR) $(DEPS)/http/httpLib.c
 	
-libsqlite3.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+libsqlite3.vcproj: Makefile $(CONFIG)
 	makeVsProj --project libsqlite3.vcproj --library sqlite3 --dflags "$(DFLAGS)" \
 		--def libsqlite3.def --libs "libmpr.lib $(LIBS)" $(MPR_HDR) $(JEMS)/ejs.db.sqlite/src/sqlite3.c
 	
-libejs.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+libejs.vcproj: Makefile $(CONFIG)
 	makeVsProj --project libejs.vcproj --library ejs --dflags "$(DFLAGS)" \
-		--def libejs.def --libs "libmpr.lib libhttp.lib libsqlite3.lib libpcre.def $(LIBS)" $(MPR_HDR) \
+		--def libejs.def --libs "libmpr.lib libhttp.lib libsqlite3.lib libejs.def $(LIBS)" $(MPR_HDR) \
 	    $(shell find $(SRC)/include -name 'ejs*.h') \
 	    $(shell find $(SRC)/core $(SRC)/vm $(SRC)/compiler -name '*.c')
 	
-ejsc.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+ejsc.vcproj: Makefile $(CONFIG)
 	makeVsProj --project ejsc.vcproj --exe ejsc.exe --search "$(BLD_EJS_LIBPATHS)" --dflags "$(DFLAGS)" \
 		--custom ejsc.custom --libs "$(LIBS) libejs.lib libmpr.lib" $(MPR_HDR) $(SRC)/cmd/ejsc.c
 
-ejsmod.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+ejsmod.vcproj: Makefile $(CONFIG)
 	makeVsProj --project ejsmod.vcproj --exe ejsmod.exe --search "$(BLD_EJS_LIBPATHS)" --dflags "$(DFLAGS)" \
 		--libs "$(LIBS) libejs.lib libmpr.lib" $(MPR_HDR) \
 	    $(CMD)/ejsmod.c $(CMD)/doc.c $(CMD)/docFiles.c $(CMD)/listing.c $(CMD)/slotGen.c
 
-ejs.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+ejs.vcproj: Makefile $(CONFIG)
 	makeVsProj --project ejs.vcproj --exe ejs.exe --search "$(BLD_EJS_LIBPATHS)" --dflags "$(DFLAGS)" \
 		--libs "$(LIBS) libejs.lib libmpr.lib" $(MPR_HDR) $(SRC)/cmd/ejs.c
 
-ejssql.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+ejssql.vcproj: Makefile $(CONFIG)
 	makeVsProj --project ejssql.vcproj --exe ejssql.exe --search "$(BLD_MPR_LIBPATHS)" --dflags "$(DFLAGS)" \
 		--libs "$(LIBS) libsqlite3.lib" $(MPR_HDR) $(JEMS)/ejs.db.sqlite/src/ejssql.c
 
-ejs.db.sqlite.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+ejs.db.sqlite.vcproj: Makefile $(CONFIG)
 	makeVsProj --project ejs.db.sqlite.vcproj --library ec --dflags "$(DFLAGS)" \
 		--def ejs.db.sqlite.def --libs "libmpr.lib libhttp.lib libejs.lib libsqlite3.lib $(LIBS)" $(MPR_HDR) \
 	    $(JEMS)/ejs.db.sqlite/src/ejsSqlite.c
 
-ejs.web.vcproj: Makefile $(BLD_TOP)/$(CONFIG)
+ejs.web.vcproj: Makefile $(CONFIG)
 	makeVsProj --project ejs.web.vcproj --library ec --dflags "$(DFLAGS)" \
 		--def ejs.web.def --libs "libmpr.lib libhttp.lib libejs.lib $(LIBS)" $(MPR_HDR) \
 	    $(shell find $(JEMS)/ejs.web/src/ -name '*.c')

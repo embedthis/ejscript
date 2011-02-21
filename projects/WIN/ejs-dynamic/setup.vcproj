@@ -24,7 +24,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Build Ejscript Modules"
-				CommandLine="echo Install buildConfig.h to out/include &amp; cp buildConfig.win $(ProjectDir)/../../../out/include/buildConfig.h&#x0D;&#x0A;"
+				CommandLine="if not exist $(ProjectDir)/../../../out/include/buildConfig.h echo Install buildConfig.h to out/include &amp; cp buildConfig.win $(ProjectDir)/../../../out/include/buildConfig.h&#x0D;&#x0A;"
 				Outputs="$(ProjectDir)/../../../out/include/buildConfig.h"
 			/>
 			<Tool
@@ -98,7 +98,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Build Ejscript Modules"
-				CommandLine="echo Install buildConfig.h to out/include &amp; cp buildConfig.win $(ProjectDir)/../../../out/include/buildConfig.h&#x0D;&#x0A;"
+				CommandLine="if not exist $(ProjectDir)/../../../out/include/buildConfig.h echo Install buildConfig.h to out/include &amp; cp buildConfig.win $(ProjectDir)/../../../out/include/buildConfig.h&#x0D;&#x0A;"
 				Outputs="$(ProjectDir)/../../../out/include/buildConfig.h"
 			/>
 			<Tool

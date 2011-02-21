@@ -128,7 +128,7 @@ static EjsObj *cmd_flush(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    int     pid, signal;
+    int     rc, pid, signal;
 
     signal = SIGINT;
 
@@ -145,8 +145,9 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
 #if BLD_WIN_LIKE
 {
-    HANDLE handle = OpenProcess(DELETE, 0, pid);
-    rc = TERMINATE_PROCESS(pid, signal) == 0;
+    HANDLE	handle;
+	handle = OpenProcess(DELETE, 0, pid);
+    rc = TerminateProcess(handle, signal) == 0;
 }
 #elif VXWORKS
     rc = taskDelete(cmd->pid);
