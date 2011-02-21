@@ -4504,22 +4504,12 @@ int httpSetNamedVirtualServers(Http *http, cchar *ip, int port)
 void httpAddHost(Http *http, HttpHost *host)
 {
     mprAddItem(http->hosts, host);
-#if UNUSED
-    if (http->defaultHost == 0) {
-        http->defaultHost = host;
-    }
-#endif
 }
 
 
 void httpRemoveHost(Http *http, HttpHost *host)
 {
     mprRemoveItem(http->hosts, host);
-#if UNUSED
-    if (host == http->defaultHost) {
-        http->defaultHost = mprGetFirstItem(http->hosts);
-    }
-#endif
 }
 
 
@@ -5688,9 +5678,6 @@ static HttpStage *findHandler(HttpConn *conn)
                 path = sjoin(tx->filename, ".", hp->key, NULL);
                 if (mprGetPathInfo(path, &tx->fileInfo) == 0) {
                     mprLog(5, "findHandler: Adding extension, new path %s\n", path);
-#if UNUSED
-                    tx->filename = path;
-#endif
                     httpSetUri(conn, sjoin(rx->uri, ".", hp->key, NULL), NULL);
                     break;
                 }
@@ -7630,23 +7617,9 @@ ssize httpRead(HttpConn *conn, char *buf, ssize size)
     
     while (q->count == 0 && !conn->async && conn->sock && (conn->state <= HTTP_STATE_CONTENT)) {
         httpServiceQueues(conn);
-#if UNUSED
-        events = MPR_READABLE;
-        if (conn->sock && !mprSocketHasPendingData(conn->sock)) {
-            if (mprIsSocketEof(conn->sock)) {
-                break;
-            }
-            inactivityTimeout = conn->limits->inactivityTimeout ? conn->limits->inactivityTimeout : INT_MAX;
-            events = mprWaitForSingleIO(conn->sock->fd, MPR_READABLE, inactivityTimeout);
-        }
-        if (events) {
-            httpCallEvent(conn, MPR_READABLE);
-        }
-#else
         if (conn->sock) {
             httpWait(conn, 0, MPR_TIMEOUT_SOCKETS);
         }
-#endif
     }
     //  MOB - better place for this?
     conn->lastActivity = conn->http->now;
@@ -9590,9 +9563,6 @@ static void waitHandler(HttpConn *conn, struct MprEvent *event)
 }
 
 
-/*  
-    Wait for the Http object to achieve a given state. Timeout is total wait time in msec. If <= 0, then dont wait.
- */
 int httpWait(HttpConn *conn, int state, MprTime timeout)
 {
     Http        *http;
@@ -9629,7 +9599,8 @@ int httpWait(HttpConn *conn, int state, MprTime timeout)
     http->now = mprGetTime();
     expire = http->now + timeout;
 
-    while (!conn->error && conn->state < state && conn->sock && !mprIsSocketEof(conn->sock)) {
+    while (!conn->error && conn->state <= state && conn->sock && !mprIsSocketEof(conn->sock)) {
+        httpServiceQueues(conn);
         remainingTime = (expire - http->now);
         if (remainingTime <= 0) {
             break;

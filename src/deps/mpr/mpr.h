@@ -1027,7 +1027,7 @@ struct  MprXml;
 #define MPR_TIMEOUT_SOCKETS     10000       /**< General sockets timeout */
 #define MPR_TIMEOUT_LOG_STAMP   3600000     /**< Time between log time stamps (1 hr) */
 #define MPR_TIMEOUT_PRUNER      600000      /**< Time between pruner runs (10 min) */
-#define MPR_TIMEOUT_START_TASK  2000        /**< Time to start tasks running */
+#define MPR_TIMEOUT_START_TASK  10000       /**< Time to start tasks running */
 #define MPR_TIMEOUT_STOP_TASK   10000       /**< Time to stop or reap tasks */
 #define MPR_TIMEOUT_STOP_THREAD 10000       /**< Time to stop running threads */
 #define MPR_TIMEOUT_STOP        5000        /**< Wait when stopping resources */
@@ -1314,6 +1314,7 @@ extern void mprResetCond(MprCond *cond);
     @return Zero if the event was signalled. Returns < 0 for a timeout.
     @ingroup MprSynch
  */
+//  MOB - should be MprTime
 extern int mprWaitForCond(MprCond *cond, int timeout);
 
 /**
@@ -5713,8 +5714,8 @@ extern void mprManagePoll(MprWaitService *ws, int flags);
 extern void mprManageSelect(MprWaitService *ws, int flags);
 #endif
 
-#if BLD_WIN_LIKE
 extern int  mprInitWindow();
+#if BLD_WIN_LIKE
 extern void mprSetWinMsgCallback(MprWaitService *ws, MprMsgCallback callback);
 extern void mprServiceWinIO(MprWaitService *ws, int sockFd, int winMask);
 #endif
@@ -7018,6 +7019,7 @@ typedef struct Mpr {
     MprOsThread     mainOsThread;           /**< Main OS thread ID */
     MprMutex        *mutex;                 /**< Thread synchronization */
     MprSpin         *spin;                  /**< Quick thread synchronization */
+    MprCond         *cond;                  /**< Sync after starting events thread */
 
     char            *emptyString;           /**< Empty string */
 #if BLD_WIN_LIKE
