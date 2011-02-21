@@ -621,6 +621,10 @@ void ejsConfigureCmdType(Ejs *ejs)
 
     ejsBindConstructor(ejs, type, cmd_constructor);
     ejsBindMethod(ejs, type, ES_Cmd_kill, cmd_kill);
+#if FUTURE
+    ejsBindMethod(ejs, type, ES_Cmd_run, cmd_run);
+    ejsBindMethod(ejs, type, ES_Cmd_exec, cmd_exec);
+#endif
 
     ejsBindMethod(ejs, prototype, ES_Cmd_close, cmd_close);
     ejsBindAccess(ejs, prototype, ES_Cmd_error, cmd_error, 0);
