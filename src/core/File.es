@@ -91,13 +91,16 @@ module ejs {
         override iterator native function getValues(): Iterator
 
         /** 
-            Is the file open.
+            Is the file open
+            MOB - doc
          */
         native function get isOpen(): Boolean
 
+//  MOB - is this implemented?
         /** @duplicate Stream.off */
         native function off(name, observer: Function): Void
 
+//  MOB - is this implemented?
         /** @duplicate Stream.on */
         native function on(name, observer: Function): Void
 

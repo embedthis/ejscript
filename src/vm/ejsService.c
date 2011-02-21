@@ -138,7 +138,7 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     mprRemoveRoot(ejs);
     ejs->state->frozen = 0;
 #if DEBUG_IDE
-    mprLog(0, "CREATE %s, length %d", ejs->name, sp->vmlist->length);
+    mprLog(2, "CREATE %s, length %d", ejs->name, sp->vmlist->length);
 #endif
     return ejs;
 }
@@ -150,7 +150,9 @@ void ejsDestroy(Ejs *ejs)
     EjsState    *state;
 
 #if DEBUG_IDE
-    mprLog(0, "DESTROY %s, length %d", ejs->name, ejs->service->vmlist->length);
+    if (ejs->service) {
+        mprLog(2, "DESTROY %s, length %d", ejs->name, ejs->service->vmlist->length);
+    }
 #endif
     ejs->destroying = 1;
     sp = ejs->service;
@@ -179,7 +181,9 @@ static void manageEjs(Ejs *ejs, int flags)
 
     if (flags & MPR_MANAGE_MARK) {
 #if DEBUG_IDE
-mprLog(0, "MARK EJS %s, length %d", ejs->name, ejs->service->vmlist->length);
+        if (ejs->service) {
+            mprLog(2, "MARK EJS %s, length %d", ejs->name, ejs->service->vmlist->length);
+        }
 #endif
         mprMark(ejs->global);
         mprMark(ejs->name);
@@ -388,7 +392,9 @@ static int configureEjs(Ejs *ejs)
     ejsConfigureAppType(ejs);
     ejsConfigureArrayType(ejs);
     ejsConfigureByteArrayType(ejs);
+    ejsConfigureCmdType(ejs);
     ejsConfigureDateType(ejs);
+    ejsConfigureDebugType(ejs);
     ejsConfigureFunctionType(ejs);
     ejsConfigureGCType(ejs);
     ejsConfigureHttpType(ejs);

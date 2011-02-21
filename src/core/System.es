@@ -35,23 +35,28 @@ module ejs {
         native static function get ipaddr(): String
 
         /**
+MOB - remove
             Execute a command/program.
             @param cmd Command or program to execute
             @return a text stream connected to the programs standard output.
             @throws IOError if the command exits with non-zero status. 
+            @hide
          */
         native static function run(cmd: String): String
 
         //  TODO - TEMP and unsupported
+        // MOB - remove
         /**
             Run a program without capturing stdout.
             @hide
          */
         native static function runx(cmd: String): Void
 
+        //  MOB - remove
         /** @hide */
         native static function daemon(cmd: String): Number
 
+        //  MOB - remove
         //  TEMP. TODO - windows
         /**
             Run a command using the system command shell. This allows pipelines and also works better cross platform on
@@ -62,6 +67,7 @@ module ejs {
             return System.run("/bin/sh -c \"" + args + "\"").trim('\n')
         }
 
+        //  MOB - remove
         /**  
             TEMP deprecated
             @hide
@@ -69,6 +75,7 @@ module ejs {
         static function cmd(args): String
             sh(args)
 
+        //  MOB - remove
         /** @hide TODO TEMP */
         native static function exec(args): String
     }

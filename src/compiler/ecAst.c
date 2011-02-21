@@ -1425,7 +1425,7 @@ static void astFunction(EcCompiler *cp, EcNode *np)
                      */
                     if (ejs->initialized || fun->resultType == 0 || 
                             fun->resultType->qname.name != ejs->voidType->qname.name) {
-                        astError(cp, np, "Function \"%s\" must return a value",  np->qname.name);
+                        astError(cp, np, "Function \"%@\" must return a value",  np->qname.name);
                     }
                 }
             }

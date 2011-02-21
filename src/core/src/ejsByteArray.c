@@ -816,7 +816,9 @@ static EjsObj *ba_readShort(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 
 
 /*
-    Read a UTF-8 string from the array. Read data from the read position up to the write position but not more than count characters.
+    Read a UTF-8 string from the array. Read data from the read position up to the write position but not more 
+    than count characters.
+
     function readString(count: Number = -1): String
  */
 static EjsObj *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
@@ -915,7 +917,6 @@ EjsNumber *ejsWriteToByteArray(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **ar
         }
         args = (EjsArray*) vp;
     }
-
     if (availableBytes(ap) == 0) {
         ap->writePosition = ap->readPosition = 0;
     }
@@ -1381,7 +1382,9 @@ static void manageByteArray(EjsByteArray *ap, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
         mprMark(ap->emitter);
+#if UNUSED
         mprMark(ap->listeners);
+#endif
         mprMark(ap->value);
         mprMark(TYPE(ap));
     }
@@ -1410,43 +1413,43 @@ void ejsConfigureByteArrayType(Ejs *ejs)
     helpers->lookupProperty = (EjsLookupPropertyHelper) lookupByteArrayProperty;
     helpers->setProperty = (EjsSetPropertyHelper) setByteArrayProperty;
     
-    ejsBindConstructor(ejs, type, (EjsProc) ba_ByteArray);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_on, (EjsProc) ba_on);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_available, (EjsProc) ba_available);
-    ejsBindAccess(ejs, prototype, ES_ByteArray_async, (EjsProc) ba_async, (EjsProc) ba_setAsync);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_close, (EjsProc) ba_close);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_compact, (EjsProc) ba_compact);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_copyIn, (EjsProc) ba_copyIn);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_copyOut, (EjsProc) ba_copyOut);
-    ejsBindAccess(ejs, prototype, ES_ByteArray_endian, (EjsProc) endian, (EjsProc) setEndian);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_flush, (EjsProc) ba_flush);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_resizable, (EjsProc) ba_resizable);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_length, (EjsProc) ba_getLength);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_iterator_get, (EjsProc) ba_get);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_iterator_getValues, (EjsProc) ba_getValues);
+    ejsBindConstructor(ejs, type, ba_ByteArray);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_on, ba_on);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_available, ba_available);
+    ejsBindAccess(ejs, prototype, ES_ByteArray_async, ba_async, ba_setAsync);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_close, ba_close);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_compact, ba_compact);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_copyIn, ba_copyIn);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_copyOut, ba_copyOut);
+    ejsBindAccess(ejs, prototype, ES_ByteArray_endian, endian, setEndian);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_flush, ba_flush);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_resizable, ba_resizable);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_length, ba_getLength);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_iterator_get, ba_get);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_iterator_getValues, ba_getValues);
 #if ES_ByteArray_off
-    ejsBindMethod(ejs, prototype, ES_ByteArray_off, (EjsProc) ba_off);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_off, ba_off);
 #endif
-    ejsBindMethod(ejs, prototype, ES_ByteArray_read, (EjsProc) ba_read);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_readBoolean, (EjsProc) ba_readBoolean);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_readByte, (EjsProc) ba_readByte);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_readDate, (EjsProc) ba_readDate);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_readDouble, (EjsProc) ba_readDouble);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_readInteger, (EjsProc) ba_readInteger);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_readLong, (EjsProc) ba_readLong);
-    ejsBindAccess(ejs, prototype, ES_ByteArray_readPosition, (EjsProc) ba_readPosition,(EjsProc) ba_setReadPosition);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_readShort, (EjsProc) ba_readShort);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_readString, (EjsProc) ba_readString);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_reset, (EjsProc) ba_reset);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_room, (EjsProc) ba_room);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_toString, (EjsProc) ba_toString);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_write, (EjsProc) ejsWriteToByteArray);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_writeByte, (EjsProc) ba_writeByte);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_writeShort, (EjsProc) ba_writeShort);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_writeInteger, (EjsProc) ba_writeInteger);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_writeLong, (EjsProc) ba_writeLong);
-    ejsBindMethod(ejs, prototype, ES_ByteArray_writeDouble, (EjsProc) ba_writeDouble);
-    ejsBindAccess(ejs, prototype, ES_ByteArray_writePosition, (EjsProc) ba_writePosition, (EjsProc) ba_setWritePosition);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_read, ba_read);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readBoolean, ba_readBoolean);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readByte, ba_readByte);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readDate, ba_readDate);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readDouble, ba_readDouble);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readInteger, ba_readInteger);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readLong, ba_readLong);
+    ejsBindAccess(ejs, prototype, ES_ByteArray_readPosition, ba_readPosition,ba_setReadPosition);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readShort, ba_readShort);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_readString, ba_readString);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_reset, ba_reset);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_room, ba_room);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_toString, ba_toString);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_write, ejsWriteToByteArray);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_writeByte, ba_writeByte);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_writeShort, ba_writeShort);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_writeInteger, ba_writeInteger);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_writeLong, ba_writeLong);
+    ejsBindMethod(ejs, prototype, ES_ByteArray_writeDouble, ba_writeDouble);
+    ejsBindAccess(ejs, prototype, ES_ByteArray_writePosition, ba_writePosition, ba_setWritePosition);
 }
 
 

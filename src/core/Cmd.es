@@ -55,25 +55,6 @@ module ejs {
             System.runx(cmdline)
         }
     }
-
-    /**
-        Data event issued to the callback function.
-     */
-    # FUTURE
-    class CmdDataEvent extends Event {
-        /**
-            Mask of pending events. Set to include $Read and/or $Write values.
-         */
-        public var eventMask: Number
-    }
-
-    /**
-        Error event issued to the callback function if any errors occur dcmdlineng an Cmd request.
-     */
-    # FUTURE
-    class CmdErrorEvent extends Event {
-    }
-
 }
 
 

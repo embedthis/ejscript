@@ -119,11 +119,6 @@ module ejs {
     native function assert(condition: Boolean): Void
 
     /** 
-        Convenient way to trap to the debugger
-     */
-    native function breakpoint(): Void
-
-    /** 
         Replace the base type of a type with an exact clone. 
         @param klass Class in which to replace the base class.
         @spec ejs

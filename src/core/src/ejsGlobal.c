@@ -41,26 +41,6 @@ static EjsObj *g_assert(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
 }
 
 
-#if MOVE_TO_DEBUG_CLASS || 1
-/*  
-    Trap to the debugger
-    static function breakpoint(): Void
- */
-static EjsObj *g_breakpoint(Ejs *ejs, EjsObj *vp, int argc, EjsObj **argv)
-{
-#if BLD_DEBUG && DEBUG_IDE
-    #if BLD_WIN_LIKE && !MPR_64_BIT
-        __asm { int 3 };
-    #elif (MACOSX || LINUX) && (BLD_HOST_CPU_ARCH == MPR_CPU_IX86 || BLD_HOST_CPU_ARCH == MPR_CPU_IX64)
-        asm("int $03");
-        /*  __asm__ __volatile__ ("int $03"); */
-    #endif
-#endif
-    return 0;
-}
-#endif
-
-
 //  MOB -- would this be better as blend(obj, obj, obj, ...)
 /*  
     function blend(dest: Object, src: Object, overwrite: Boolean = true): void
@@ -420,7 +400,6 @@ void ejsConfigureGlobalBlock(Ejs *ejs)
     mprAssert(block);
     
     ejsBindFunction(ejs, block, ES_assert, g_assert);
-    ejsBindFunction(ejs, block, ES_breakpoint, g_breakpoint);
     ejsBindFunction(ejs, block, ES_cloneBase, (EjsProc) g_cloneBase);
     ejsBindFunction(ejs, block, ES_eval, g_eval);
     ejsBindFunction(ejs, block, ES_hashcode, g_hashcode);

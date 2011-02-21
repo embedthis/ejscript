@@ -11,7 +11,6 @@ module ejs {
         @spec ejs
         @stability prototype
      */
-    # FUTURE
     class Debug {
 
         use default namespace public
@@ -19,21 +18,26 @@ module ejs {
         /**
             Break to the debugger. Suspend execution and break to the debugger.
          */ 
-        native function breakpoint(): void
+        native static function breakpoint(): void
 
         /**
             The current debug mode. This property is read-write. Setting mode to true will put the application in 
             debug mode. When debug mode is enabled, the runtime will typically suspend timeouts and will take other 
             actions to make debugging easier.
          */
-        native function get mode(): Boolean
+        native static function get mode(): Boolean
 
         /**
             @duplicate Debug.mode
             @param value True to turn debug mode on or off.
          */
-        native function set mode(value: Boolean): void
+        native static function set mode(value: Boolean): void
     }
+
+    /** 
+        Convenient way to trap to the debugger
+     */
+    native function breakpoint(): Void
 }
 
 

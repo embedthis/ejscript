@@ -159,14 +159,12 @@ void ejsConfigureSystemType(Ejs *ejs)
         mprError("Can't find System type");
         return;
     }
-    ejsBindMethod(ejs, type, ES_System_daemon, (EjsProc) system_daemon);
-    ejsBindMethod(ejs, type, ES_System_exec, (EjsProc) system_exec);
-    ejsBindMethod(ejs, type, ES_System_run, (EjsProc) system_run);
-    ejsBindMethod(ejs, type, ES_System_runx, (EjsProc) system_runx);
-    ejsBindMethod(ejs, type, ES_System_hostname, (EjsProc) system_hostname);
-#if ES_System_ipaddr
-    ejsBindMethod(ejs, type, ES_System_ipaddr, (EjsProc) system_ipaddr);
-#endif
+    ejsBindMethod(ejs, type, ES_System_daemon, system_daemon);
+    ejsBindMethod(ejs, type, ES_System_exec, system_exec);
+    ejsBindMethod(ejs, type, ES_System_run, system_run);
+    ejsBindMethod(ejs, type, ES_System_runx, system_runx);
+    ejsBindMethod(ejs, type, ES_System_hostname, system_hostname);
+    ejsBindMethod(ejs, type, ES_System_ipaddr, system_ipaddr);
 }
 
 /*
