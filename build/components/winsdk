@@ -27,7 +27,9 @@ setWinEnv()
 
 echo PROBE --name winsdk --search "$1" $file
 echo PATH $PATH
+env
     cc=`probe --verbose --name winsdk --search "$1" $file`
+echo AFTER PROBE
 
     eval WINSDK=\$CFG_${KIND}_WINSDK
     if [ "$WINSDK" = "" ] ; then

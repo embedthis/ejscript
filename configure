@@ -708,6 +708,7 @@ remapDir() {
 convertSearchPath() {
     local x
 
+echo MOB CONVERT_SEARCH_PATH >&2
     if [ "$1" != "" ] ; then
         [ "$verbose" -gt 2 ] && echo "ConvertPath expanding $1" 1>&2
         echo $1 | sed "s/[  ]'/=/g" | tr "=" "\n" | sed "s/'//g" |
@@ -725,6 +726,7 @@ convertSearchPath() {
             fi
         done | grep -v '^$' | tr '\n' : | sed 's/:$//'
     fi
+echo MOB AFTER CONVERT_SEARCH_PATH >&2
 }
 
 
