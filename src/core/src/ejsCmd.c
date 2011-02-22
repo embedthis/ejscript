@@ -150,7 +150,8 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     rc = TerminateProcess(handle, signal) == 0;
 }
 #elif VXWORKS
-    rc = taskDelete(cmd->pid);
+    // CRASH    rc = taskDelete(cmd->pid);
+    rc = taskDelete(pid);
 #else
     rc = kill(pid, signal);
 #endif
