@@ -717,13 +717,11 @@ static void interp(EjsMod *mp, EjsModule *module, EjsFunction *fun)
             }
             mprFprintf(mp->file,  " %s\n", argbuf);
         }
-
         stack += stackEffect;
 
         if (opcode == EJS_OP_RETURN_VALUE || opcode == EJS_OP_RETURN) {
             stack = 0;
         }
-
         if (stack < 0) {
             if (mp->warnOnError) {
                 mprPrintfError("Instruction stack is negative %d\n", stack);

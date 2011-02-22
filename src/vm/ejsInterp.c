@@ -137,7 +137,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
     #define traceCode(ejs, opcode) opcode
 #endif
 
-#if BLD_UNIX_LIKE || VXWORKS
+#if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
     #define CASE(opcode) opcode
     #define BREAK goto *opcodeJump[opcode = traceCode(ejs, GET_BYTE())]
 #else
@@ -196,7 +196,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     uchar       *mark;
     int         i, offset, count, opcode, attributes, frozen;
 
-#if BLD_UNIX_LIKE || VXWORKS 
+#if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -224,7 +224,7 @@ static void VM(Ejs *ejs, EjsFunction *fun, EjsAny *otherThis, int argc, int stac
     mprAssert(state->fp);
     FRAME->caller = 0;
 
-#if BLD_UNIX_LIKE || VXWORKS 
+#if BLD_UNIX_LIKE || (VXWORKS && !BLD_CC_DIAB)
     /*
         Direct threading computed goto processing. Include computed goto jump table.
      */
@@ -2413,7 +2413,7 @@ ejsFreeze(ejs, frozen);
             mprAssert(0);
             BREAK;
 
-#if !BLD_UNIX_LIKE && !VXWORKS
+#if !BLD_UNIX_LIKE && !(VXWORKS && !BLD_CC_DIAB)
         }
     }
 #endif

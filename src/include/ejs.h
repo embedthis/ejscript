@@ -516,6 +516,7 @@ typedef struct Ejs {
     int                 gc;                 /**< GC required (don't make bit field) */
     uint                compiling: 1;       /**< Currently executing the compiler */
     uint                destroying: 1;      /**< Interpreter is being destroyed */
+    uint                dontExit: 1;        /**< Prevent App.exit() from exiting */
     uint                empty: 1;           /**< Interpreter will be created empty */
     uint                exiting: 1;         /**< VM should exit */
     uint                hasError: 1;        /**< Interpreter has an initialization error */

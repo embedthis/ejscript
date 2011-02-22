@@ -1109,12 +1109,15 @@ int ecOpenFileStream(EcCompiler *cp, cchar *path)
         return MPR_ERR_CANT_OPEN;
     }
     if (mprGetPathInfo(path, &info) < 0 || info.size < 0) {
+        mprCloseFile(fs->file);
         return MPR_ERR_CANT_ACCESS;
     }
     if ((contents = mprAlloc((int) info.size + 1)) == 0) {
+        mprCloseFile(fs->file);
         return MPR_ERR_MEMORY;
     }
     if (mprReadFile(fs->file, contents, (int) info.size) != (int) info.size) {
+        mprCloseFile(fs->file);
         return MPR_ERR_CANT_READ;
     }
     contents[info.size] = '\0';

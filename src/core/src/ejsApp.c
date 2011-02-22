@@ -129,14 +129,14 @@ static EjsObj *app_exit(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int     status;
 
-    status = argc == 0 ? 0 : ejsGetInt(ejs, argv[0]);
-    // mprBreakpoint();
-    //  TODO -- Make more uniform. Zero status won't exit immediately but non-zero will????
-    if (status != 0) {
-        exit(status);
-    } else {
-        mprTerminate(MPR_GRACEFUL);
-        ejsAttention(ejs);
+    if (!ejs->dontExit) {
+        status = argc == 0 ? 0 : ejsGetInt(ejs, argv[0]);
+        if (status != 0) {
+            exit(status);
+        } else {
+            mprTerminate(MPR_GRACEFUL);
+            ejsAttention(ejs);
+        }
     }
     return 0;
 }
