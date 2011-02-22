@@ -217,8 +217,7 @@ MOB - TEST
             cmd.wait()
             if (cmd.status != 0) {
                 //  MOB - error does not have readString()
-print("STATUS " + cmd.status)
-print("TYPE " + typeOf(cmd.error))
+print("Cmd.run error: status " + cmd.status)
                 throw new IOError(cmd.error.readString())
             }
             return cmd.readString()
