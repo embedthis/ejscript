@@ -12,9 +12,10 @@
 /*
     function run(cmd: String): String
  */
-static EjsObj *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprCmd      *cmd;
+    EjsString   *result;
     char        *cmdline;
     char        *err, *output;
     int         status;
@@ -28,13 +29,14 @@ static EjsObj *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     if (status) {
         ejsThrowError(ejs, "Command failed: %s\n\nExit status: %d\n\nError Output: \n%s\nPrevious Output: \n%s\n", 
             cmdline, status, err, output);
-        mprDestroyCmd(cmd);
         mprRelease(cmdline);
+        mprDestroyCmd(cmd);
         return 0;
     }
-    mprDestroyCmd(cmd);
+    result = ejsCreateStringFromAsc(ejs, output);
     mprRelease(cmdline);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, output);
+    mprDestroyCmd(cmd);
+    return result;
 }
 
 
