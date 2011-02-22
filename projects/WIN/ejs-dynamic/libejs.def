@@ -375,6 +375,7 @@ EXPORTS
   ejsReportError
   ejsResetBlockNamespaces
   ejsResetByteArray
+  ejsResetByteArrayIfEmpty
   ejsRun
   ejsRunFunction
   ejsRunFunctionByName

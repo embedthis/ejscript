@@ -12,7 +12,7 @@ if (!Path("/bin").exists) {
     cmd = new Cmd
     let parent = App.dir.parent
     cmd.start("/bin/pwd", {dir: parent})
-    assert(cmd.response.trim() == parent)
+    assert(parent.same(cmd.response.trim()))
 
     //  Set environment
     cmd = new Cmd

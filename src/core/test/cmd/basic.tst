@@ -14,5 +14,5 @@ if (!Path("/bin").exists) {
 
     //  Command with failing status
     cmd = Cmd("/bin/ls /asdfasdf")
-    assert(cmd.status == 1)
+    assert(cmd.status != 0)
 }
