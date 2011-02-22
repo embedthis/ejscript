@@ -1,0 +1,3 @@
+#!/usr/bin/env ejs
+
+dump(App.args)

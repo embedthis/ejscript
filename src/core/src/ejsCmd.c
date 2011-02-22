@@ -19,6 +19,7 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv);
 static EjsCmd *cmd_constructor(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     cmd->error = ejs->nullValue;
+    cmd->timeout = -1;
     if (argc >= 1) {
         cmd_start(ejs, cmd, argc, argv);
     }
@@ -211,6 +212,7 @@ static EjsObj *cmd_pid(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 }
 
 
+#if UNUSED
 /*  
     Read the required number of bytes into the response content buffer. Count < 0 means transfer the entire content.
     Returns the number of bytes read.
@@ -251,6 +253,7 @@ static ssize readCmdData(Ejs *ejs, EjsCmd *cmd, ssize count)
     }
     return min(count, mprGetBufLength(buf));
 }
+#endif
 
 
 /**
@@ -286,13 +289,19 @@ static EjsObj *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         }
         count = buffer->length - buffer->writePosition;
     }
-    if ((nbytes = readCmdData(ejs, cmd, count)) < 0) {
-        return 0;
+    nbytes = mprGetBufLength(cmd->stdoutBuf);
+    if (nbytes == 0) {
+        if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
+            ejsThrowStateError(ejs, "Command timed out");
+            return 0;
+        }
+        nbytes = mprGetBufLength(cmd->stdoutBuf);
     }
-    ejsCopyToByteArray(ejs, buffer, buffer->writePosition, (char*) mprGetBufStart(cmd->stdoutBuf), nbytes);
-    ejsSetByteArrayPositions(ejs, buffer, -1, buffer->writePosition + nbytes);
-    mprAdjustBufStart(cmd->stdoutBuf, nbytes);
-    return (EjsObj*) ejsCreateNumber(ejs, nbytes);
+    count = min(count, nbytes);
+    ejsCopyToByteArray(ejs, buffer, buffer->writePosition, (char*) mprGetBufStart(cmd->stdoutBuf), count);
+    ejsSetByteArrayPositions(ejs, buffer, -1, buffer->writePosition + count);
+    mprAdjustBufStart(cmd->stdoutBuf, count);
+    return (EjsObj*) ejsCreateNumber(ejs, count);
 }
 
 
@@ -313,23 +322,19 @@ static EjsString *cmd_readString(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     if (count < 0) {
         count = MAXSSIZE;
     }
-    if (readCmdData(ejs, cmd, count) < 0) {
-        return 0;
-    }
     nbytes = mprGetBufLength(cmd->stdoutBuf);
-    result = ejsCreateStringFromBytes(ejs, mprGetBufStart(cmd->stdoutBuf), nbytes);
-    mprAdjustBufEnd(cmd->stdoutBuf, nbytes);
+    if (nbytes == 0) {
+        if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
+            ejsThrowStateError(ejs, "Command timed out");
+            return 0;
+        }
+        nbytes = mprGetBufLength(cmd->stdoutBuf);
+    }
+    count = min(count, nbytes);
+    result = ejsCreateStringFromBytes(ejs, mprGetBufStart(cmd->stdoutBuf), count);
+    mprAdjustBufEnd(cmd->stdoutBuf, count);
     mprResetBufIfEmpty(cmd->stdoutBuf);
     return result;
-}
-
-
-static void createArgs(EjsCmd *cmd, int *pargc, char ***pargv, char ***penv)
-{
-    //  MOB - UNICODE
-    *pargc = cmd->argc;
-    *pargv = cmd->argv;
-    *penv = cmd->env;
 }
 
 
@@ -427,8 +432,9 @@ static void cmdCallback(MprCmd *mc, int channel, void *data)
  */
 static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    char    *command, **av, **env, *err;
-    int     rc, flags, ac;
+    EjsArray    *ap;
+    char        *command, *err;
+    int         rc, flags, i;
 
     if (argc >= 1) {
         cmd->command = argv[0];
@@ -440,13 +446,6 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "Missing command line");
         return 0;
     }
-    if (ejsIsString(ejs, cmd->command)) {
-        command = ejsToMulti(ejs, argv[0]);
-        if (mprMakeArgv(NULL, command, &cmd->argc, &cmd->argv) < 0 || cmd->argv == 0) {
-            ejsThrowArgError(ejs, "Can't parse command line");
-            return 0;
-        }
-    }
     if ((cmd->mc = mprCreateCmd(ejs->dispatcher)) == 0) {
         return 0;
     }
@@ -457,10 +456,29 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     if (cmd->stderrBuf == 0) {
         cmd->stderrBuf = mprCreateBuf(MPR_BUFSIZE, -1);
     }
-    createArgs(cmd, &ac, &av, &env);
+    if (ejsIsArray(ejs, cmd->command)) {
+        ap = (EjsArray*) cmd->command;
+        if ((cmd->argv = mprAlloc(sizeof(void*) * (ap->length + 1))) == 0) {
+            ejsThrowMemoryError(ejs);
+            return 0;
+        }
+        for (i = 0; i < ap->length; i++) {
+            cmd->argv[i] = ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, cmd->command, i)));
+        }
+        cmd->argv[i] = 0;
+        cmd->argc = ap->length;
+
+    } else {
+        cmd->command = ejsToString(ejs, cmd->command);
+        command = ejsToMulti(ejs, argv[0]);
+        if (mprMakeArgv(command, &cmd->argc, &cmd->argv, 0) < 0 || cmd->argv == 0) {
+            ejsThrowArgError(ejs, "Can't parse command line");
+            return 0;
+        }
+    }
     flags = parseOptions(ejs, cmd);
 
-    if ((rc = mprStartCmd(cmd->mc, ac, av, env, flags)) < 0) {
+    if ((rc = mprStartCmd(cmd->mc, cmd->argc, cmd->argv, cmd->env, flags)) < 0) {
         if (rc == MPR_ERR_CANT_ACCESS) {
             err = mprAsprintf("Can't access command %s", cmd->argv[0]);
         } else if (MPR_ERR_CANT_OPEN) {
@@ -494,7 +512,7 @@ static EjsObj *cmd_status(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "No active command");
         return 0;
     }
-    if (mprWaitForCmd(cmd->mc, MPR_TIMEOUT_STOP_TASK) < 0) {
+    if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
         ejsThrowStateError(ejs, "Command still active");
     }
     if (mprGetCmdExitStatus(cmd->mc, &status) < 0) {
@@ -503,6 +521,8 @@ static EjsObj *cmd_status(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     return (EjsObj*) ejsCreateNumber(ejs, status);
 }
+
+
 
 
 /**
@@ -531,14 +551,9 @@ static EjsObj *cmd_stop(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 /**
     function get timeout(): Number
  */
-static EjsObj *cmd_timeout(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsNumber *cmd_timeout(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-#if FUTURE
-    //  MOB - who does anything with this timeout?  MprCmd does not have this feature
     return ejsCreateNumber(ejs, cmd->timeout);
-#else
-    return (EjsObj*) ejs->zeroValue;
-#endif
 }
 
 
@@ -547,9 +562,7 @@ static EjsObj *cmd_timeout(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_set_timeout(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-#if FUTURE
     cmd->timeout = ejsGetInt(ejs, argv[0]);
-#endif
     return 0;
 }
 
@@ -561,8 +574,7 @@ static EjsObj *cmd_wait(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     int     timeout;
 
-    timeout = argc > 0 ? ejsGetInt(ejs, argv[0]) : -1;
-
+    timeout = argc > 0 ? ejsGetInt(ejs, argv[0]) : cmd->timeout;
     if (cmd->mc == 0) {
         ejsThrowStateError(ejs, "No active command");
         return 0;
@@ -732,7 +744,7 @@ static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     char    **argVector;
     int     argCount;
 
-    mprMakeArgv(NULL, ejsToMulti(ejs, argv[0]), &argCount, &argVector);
+    mprMakeArgv(ejsToMulti(ejs, argv[0]), &argCount, &argVector, 0);
     execv(argVector[0], argVector);
 #endif
     ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));
@@ -768,7 +780,7 @@ static void manageEjsCmd(EjsCmd *cmd, int flags)
 
 void ejsConfigureCmdType(Ejs *ejs)
 {
-#if DEBUG_IDE
+#if DEBUG_IDE || 1
     EjsType     *type;
     EjsPot      *prototype;
 

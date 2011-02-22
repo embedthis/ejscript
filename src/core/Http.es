@@ -604,6 +604,7 @@ FUTURE & KEEP
 
         /** 
             Http response status code from the Http response status line, e.g. 200. Set to null if unknown.
+            This command will block until the request completes.
          */
         native function get status(): Number
 

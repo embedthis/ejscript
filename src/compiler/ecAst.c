@@ -1044,10 +1044,10 @@ static int defineParameters(EcCompiler *cp, EcNode *np)
     }
     fun->numDefault = numDefault;
     if (np->function.getter && fun->numArgs != 0) {
-        astError(cp, np, "Getter function \"%s\" must not define parameters.", np->qname.name);
+        astError(cp, np, "Getter function \"%@\" must not define parameters.", np->qname.name);
     }
     if (np->function.setter && fun->numArgs != 1) {
-        astError(cp, np, "Setter function \"%s\" must define exactly one parameter.", np->qname.name);
+        astError(cp, np, "Setter function \"%@\" must define exactly one parameter.", np->qname.name);
     }
     return 0;
 }

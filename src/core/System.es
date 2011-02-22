@@ -19,8 +19,8 @@ module ejs {
 
         use default namespace public
 
-        //  TODO - Should be many more system contants. Is this the right place for them?
-        //  TODO - should be tunable
+        //  MOB - Should be many more system contants. Is this the right place for them?
+        //  MOB - should be tunable
         public static const Bufsize: Number = 1024
 
         /**
@@ -35,48 +35,49 @@ module ejs {
         native static function get ipaddr(): String
 
         /**
-MOB - remove
             Execute a command/program.
             @param cmd Command or program to execute
             @return a text stream connected to the programs standard output.
             @throws IOError if the command exits with non-zero status. 
             @hide
+            MOB - remove
          */
         native static function run(cmd: String): String
 
-        //  TODO - TEMP and unsupported
-        // MOB - remove
         /**
             Run a program without capturing stdout.
             @hide
+            MOB - remove
          */
         native static function runx(cmd: String): Void
 
-        //  MOB - remove
-        /** @hide */
+        /** 
+            @hide 
+            MOB - remove
+         */
         native static function daemon(cmd: String): Number
 
-        //  MOB - remove
-        //  TEMP. TODO - windows
         /**
             Run a command using the system command shell. This allows pipelines and also works better cross platform on
             Windows Cygwin.
             @hide
+            MOB - remove
          */
         static function sh(args): String {
             return System.run("/bin/sh -c \"" + args + "\"").trim('\n')
         }
 
-        //  MOB - remove
         /**  
-            TEMP deprecated
             @hide
+            MOB - remove
         */
         static function cmd(args): String
             sh(args)
 
-        //  MOB - remove
-        /** @hide TODO TEMP */
+        /** 
+            @hide TODO TEMP 
+            MOB - remove
+         */
         native static function exec(args): String
     }
 }

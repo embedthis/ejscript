@@ -93,7 +93,7 @@ static EjsObj *system_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     char    **argVector;
     int     argCount;
 
-    mprMakeArgv(NULL, ejsToMulti(ejs, argv[0]), &argCount, &argVector);
+    mprMakeArgv(ejsToMulti(ejs, argv[0]), &argCount, &argVector, 0);
     execv(argVector[0], argVector);
 #endif
     ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));

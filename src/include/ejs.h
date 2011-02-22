@@ -1747,6 +1747,7 @@ typedef struct EjsCmd {
     int             argc;
     int             async;              /**< Async mode */
     int             throw;
+    MprTime         timeout;
 } EjsCmd;
 
 

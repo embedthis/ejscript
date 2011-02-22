@@ -9,52 +9,241 @@ module ejs {
     /**
         The Cmd class supports invoking other programs on the same system. 
         @spec ejs
-        @stability prototype
      */
-    class Cmd {
+    class Cmd implements Stream {
 
         use default namespace public
 
         /**
-            Run a command using the system command shell and wait for completion. This supports pipelines.
-            @param cmdline Command or program to execute
-            @param data Optional data to write to the command on it's standard input. Not implemented.
-            @returns The command output from it's standard output.
-            @throws IOError if the command exits with non-zero status. The exception object will contain the command's
-                standard error output. 
-         */
-        static function sh(cmdline: String, data: String? = null): String {
-            return run(("/bin/sh -c \"" + cmdline.replace(/\\/g, "\\\\") + "\"").trim('\n'), data)
-        }
-
-        /**
-            Execute a command/program.
-            @param cmdline Command or program to execute
-            @param data Optional data to write to the command on it's standard input. Not implemented.
-            @returns The command output from it's standard output.
-            @throws IOError if the command exits with non-zero status. The exception object will contain the command's
-                standard error output. 
-         */
-        static function run(cmdline: String, data: String? = null): String
-            System.run(cmdline)
-
-        /**
-            Execute a command and detach. This will not capture output nor will it wait for the command to complete
-            @param cmdline Command or program to execute
-            @returns The commands process ID
-         */
-        static function daemon(cmdline: String): Number 
-            System.daemon(cmdline)
-
-        /**
-            Run a command and don't capture output. Output and errors go to the existing stdout
-            TODO - temporary until Cmd provides more flexible support
+            Cached command output
             @hide
          */
-        static function runx(cmdline: String): Void {
-            System.runx(cmdline)
+        private var _response: String
+
+        /**
+            Create an Cmd object. The Cmd object is initialized with the optional command line. If a command line is
+            provided, the command is immediately started.
+            @param cmdline The (optional) command line to initialize with. If a command line is provided, the start()
+                method is automatically invoked after the command is constructed. The cmdline may be either a string or
+                an array of arguments.
+            @param options. Command options hash. Supported options are:
+            @options detach Boolean If true, run the command in the background. Do not capture the command's stdout or
+                stderr, nor collect status. Defaults to false.
+            @options dir Path or String. Directory to set as the current working directory for the command.
+            @options exception Boolean If true, throw exceptions if the command returns a non-zero status code. 
+                Defaults to false.
+         */
+        native function Cmd(cmdline: Object = null, options: Object = null)
+
+        /**
+            Close the connection to the command and free up all associated resources. It is not normally required to call 
+            $close. But it can be useful to force a command termination. After calling close, the command status and
+            unread response data are not accessible.
+MOB - TEST
+         */
+        native function close(): Void 
+
+        /**
+            The error stream object for the command's stderr output 
+MOB - TEST
+         */
+        native function get error(): Stream
+
+        /**
+            Hash of environment strings for the command.
+MOB - TEST
+         */
+        native function get env(): Object
+        native function set env(values: Object): Void
+
+        /** 
+            Signals the end of write data. Finalize() must be called to properly signify the end of write data.
+MOB - TEST
+         */
+        native function finalize(): Void 
+
+        /**
+            @duplicate Stream.flush
+MOB - TEST
+         */
+//  MOB - what does this do?
+        native function flush(dir: Number = Stream.BOTH): Void
+
+        /** 
+            @duplicate Stream.on
+            @event readable Issued when output data to read.
+            @event writable Issued when the connection to the command is writable to accept data.
+            @event complete Issued when the command completes
+            @event error Issued if the $error stream is readable.
+
+            All events are called with the signature:
+            function (event: String, cmd: Cmd): Void
+MOB - why have cmd as an arg. Surely "this" will be set to the cmd?
+MOB - TEST
+         */
+        native function on(name, listener: Function): Void
+
+        /** 
+            @duplicate Stream.off
+MOB - TEST
+         */
+        native function off(name, listener: Function): Void
+
+        //  MOB - return 0 if command not started or killed
+        native function get pid(): Number
+
+        /**
+            @duplicate Stream.read
+         */
+        native function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
+
+        /**
+            Read the data from the command output as a string. This reads from the command's standard output. 
+            @param count of bytes to read. Returns the entire output data contents if count is -1.
+            @returns a string of $count characters beginning at the start of the output data.
+            @throws IOError if an I/O error occurs.
+         */
+        native function readString(count: Number = -1): String
+
+        /**
+            Read the data from the command as an array of lines. This reads from the command's standard output.
+            @param count of linese to read. Returns the entire output contents if count is -1.
+            @returns a string containing count lines of data starting with the first line of output data
+            @throws IOError if an I/O error occurs.
+         */
+        function readLines(count: Number = -1): Array {
+            let stream: TextStream = TextStream(this)
+            result = stream.readLines()
+            return result
+        }
+
+        /**
+            Read the command output as an XML document. This reads from the command's standard output.
+            @returns the output content as an XML object 
+            @throws IOError if an I/O error occurs.
+         */
+        function readXml(): XML
+            XML(readString())
+
+        /**
+            Return the command output data as a string. This is an alias for $readString() but it will cache the 
+                output data and may be called multiple times. This reads from the command's standard output.
+            @returns the output as a string of characters.
+            @throws IOError if an I/O error occurs.
+         */
+        function get response(): String {
+            if (!_response) {
+                _response = readString()
+            }
+            return _response
+        }
+
+        /**
+            Start the command.
+            @param cmdline Command line to use. The cmdline may be either a string or an array of strings.
+            @param options Command options. Sames as options in $Cmd
+            @throws IOError if the request was cannot be issued to the remote server.
+         */
+// MOB - confusing allowing Cmd(command) and Cmd().start(command)
+        native function start(cmdline: Object, options: Object = {}): Void
+
+        /**
+            Get the command exit status. This command will block until the command has completed. Use wait(0) to 
+            test if the command has completed.
+            @return The command exit status
+         */
+        native function get status(): Number
+
+        native function stop(signal: Number = 2): Boolean
+
+        /**
+            Command timeout before the command is forcibly killed and a completion event issued. 
+            This is the number of milliseconds for the command to complete.
+MOB - TEST
+         */
+        native function get timeout(): Number
+        native function set timeout(msec: Number): Void
+
+        /**
+            Wait for a command to complete.
+            @param timeout Time in seconds to wait for the command to complete. If unspecified the $timeout propoperty
+                value is used instead
+            @return True if the request successfully completes.
+MOB - TEST
+         */
+        native function wait(timeout: Number = -1): Boolean
+
+        /**
+            @duplicate Stream.write
+            Call finalize to signify the end of write data.
+         */
+        native function write(...data): Number
+
+
+        /* Static Helper Methods */
+
+        static function daemon(cmdline: Object): Number {
+            let cmd = new Cmd
+            cmd.start(cmdline, {detach: true})
+            cmd.start()
+            return cmd.pid
+        }
+
+        //  MOB - similar to start, but replaces the current process
+        native function exec(cmdline: String = null, options: Object = {}): Void
+
+        /**
+            @param signal If pid is greater than zero, the signal is sent to the process whoes ID is pid. If pid is
+                zero, the signal is sent to all processes in the process group.
+            @return True if successful
+         */
+        native static function kill(pid: Number, signal: Number = 2): Boolean
+
+        /**
+            Execute a command/program. The call blocks while executing the command.
+            @param command Command or program to execute
+            @param data Optional data to write to the command on it's standard input.
+            @returns The command output from it's standard output.
+            @throws IOError if the command exits with non-zero status. The exception object will contain the command's
+                standard error output. 
+         */
+        static function run(cmdline: Object, data: Object = null): String {
+            let cmd = new Cmd
+            cmd.start(cmdline)
+            if (data) {
+                cmd.write(data)
+                cmd.finalize()
+            }
+            cmd.wait()
+            if (cmd.status != 0) {
+                //  MOB - error does not have readString()
+print("STATUS " + cmd.status)
+print("TYPE " + typeOf(cmd.error))
+                throw new IOError(cmd.error.readString())
+            }
+            return cmd.readString()
+        }
+
+        /*
+            Run a command using the system command shell and wait for completion. This supports pipelines.
+            Any response trailing newline is trimmed.
+MOB - describe throw
+         */
+        static function sh(command: Object, data: Object = null): String {
+            if (command is String) {
+                //  MOB - validate quoting and look on forum
+                return run(("/bin/sh -c \"" + command.replace(/\\/g, "\\\\") + "\"").trim('\n'), data).trimEnd()
+            } else {
+                let args = command.join(" ").replace(/\\/g, "\\\\").trim('\n')
+                return run(["/bin/sh", "-c"] + [args], data).trimEnd()
+            }
         }
     }
+
+    //  DOC
+    //  MOB - or should this be named sh()
+    function sh(cmdline: Object, data: Object = null): String
+        Cmd.sh(cmdline, data)
 }
 
 

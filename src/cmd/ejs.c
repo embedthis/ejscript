@@ -58,7 +58,9 @@ MAIN(ejsMain, int argc, char **argv)
         Initialize Multithreaded Portable Runtime (MPR)
      */
     mpr = mprCreate(argc, argv, 0);
+#if UNUSED
     mprSetAppName(argv[0], 0, 0);
+#endif
     setupSignals();
     app = mprAllocObj(App, manageApp);
     mprAddRoot(app);
