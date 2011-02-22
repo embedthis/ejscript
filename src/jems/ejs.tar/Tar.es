@@ -30,17 +30,17 @@ module ejs.tar {
         function create(): Void {
             let cmd = "tar czf " + path + " " + files.join(" ")
             cmd = cmd.replace(/\\/g, "\\\\")
-            Cmd.sh(cmd)
+            System.sh(cmd)
         }
         function extract(...files): Void {
             let cmd = "tar xzf " + path + " " + files.join(" ")
             cmd = cmd.replace(/\\/g, "\\\\")
-            Cmd.sh(cmd)
+            System.sh(cmd)
         }
         function cat(...files): String {
             let cmd = "tar xOzf " + path + " " + files.join(" ")
             cmd = cmd.replace(/\\/g, "\\\\")
-            return Cmd.sh(cmd)
+            return System.sh(cmd)
         }
     }
 }
