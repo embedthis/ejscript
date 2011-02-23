@@ -117,3 +117,6 @@ src/core/test/http/.pidfile
 samples/c/*/main
 samples/c/*/*.def
 access.log
+*.so
+build.log
+.cpy_copied
