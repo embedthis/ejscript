@@ -252,7 +252,7 @@ static EjsString *cmd_readString(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     count = min(count, nbytes);
     result = ejsCreateStringFromBytes(ejs, mprGetBufStart(cmd->stdoutBuf), count);
-    mprAdjustBufEnd(cmd->stdoutBuf, count);
+    mprAdjustBufStart(cmd->stdoutBuf, count);
     mprResetBufIfEmpty(cmd->stdoutBuf);
     return result;
 }
@@ -272,6 +272,8 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
     buf = 0;
     switch (channel) {
     case MPR_CMD_STDIN:
+        ejsSendEvent(cmd->ejs, cmd->emitter, "writable", NULL, cmd);
+        mprEnableCmdEvents(mc, channel);
         return;
     case MPR_CMD_STDOUT:
         buf = cmd->stdoutBuf;
@@ -564,12 +566,13 @@ static EjsObj *cmd_wait(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 /**
     function write(...data): Number
  */
-static EjsObj *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    EjsArray    *args;
-    EjsString   *sp;
-    EjsObj      *vp;
-    int         i, wrote;
+    EjsArray        *args;
+    EjsByteArray    *bp;
+    EjsString       *sp;
+    EjsObj          *vp;
+    int             i, wrote, len;
 
     mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
@@ -590,10 +593,16 @@ static EjsObj *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         if ((vp = ejsGetProperty(ejs, args, i)) == 0) {
             continue;
         }
-        sp = (EjsString*) ejsToString(ejs, vp);
-        wrote += mprWriteCmd(cmd->mc, MPR_CMD_STDIN, sp->value, sp->length);
+        if (ejsIsByteArray(ejs, vp)) {
+            bp = (EjsByteArray*) vp;
+            len = bp->writePosition - bp->readPosition;
+            wrote += mprWriteCmd(cmd->mc, MPR_CMD_STDIN, (char*) &bp->value[bp->readPosition], len);
+        } else {
+            sp = (EjsString*) ejsToString(ejs, vp);
+            wrote += mprWriteCmd(cmd->mc, MPR_CMD_STDIN, sp->value, sp->length);
+        }
     }
-    return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) wrote);
+    return ejsCreateNumber(ejs, (MprNumber) wrote);
 }
 
 

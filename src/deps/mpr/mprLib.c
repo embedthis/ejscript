@@ -4170,6 +4170,7 @@ static void manageCmd(MprCmd *cmd, int flags);
 static void resetCmd(MprCmd *cmd);
 static int sanitizeArgs(MprCmd *cmd, int argc, char **argv, char **env);
 static int startProcess(MprCmd *cmd);
+static void stdinCallback(MprCmd *cmd, MprEvent *event);
 static void stdoutCallback(MprCmd *cmd, MprEvent *event);
 static void stderrCallback(MprCmd *cmd, MprEvent *event);
 
@@ -4539,17 +4540,22 @@ int mprRunCmdV(MprCmd *cmd, int argc, char **argv, char **out, char **err, int f
 void mprAddCmdHandlers(MprCmd *cmd)
 {
 #if BLD_UNIX_LIKE || VXWORKS
-    int     stdoutFd, stderrFd, mask;
+    int     stdinFd, stdoutFd, stderrFd, mask;
   
+    stdinFd = cmd->files[MPR_CMD_STDIN].fd; 
     stdoutFd = cmd->files[MPR_CMD_STDOUT].fd; 
     stderrFd = cmd->files[MPR_CMD_STDERR].fd; 
+
     /*
         Put the stdout and stderr into non-blocking mode. Windows can't do this because both ends of the pipe
-        share the same blocking mode (Ugh!).
+        share the same blocking mode (Ugh!). So Windows must poll.
      */
 #if VXWORKS
     {
         int nonBlock = 1;
+        if (stdinFd >= 0) {
+            ioctl(stdinFd, FIONBIO, (int) &nonBlock);
+        }
         if (stdoutFd >= 0) {
             ioctl(stdoutFd, FIONBIO, (int) &nonBlock);
         }
@@ -4558,6 +4564,9 @@ void mprAddCmdHandlers(MprCmd *cmd)
         }
     }
 #else
+    if (stdinFd >= 0) {
+        fcntl(stdinFd, F_SETFL, fcntl(stdinFd, F_GETFL) | O_NONBLOCK);
+    }
     if (stdoutFd >= 0) {
         fcntl(stdoutFd, F_SETFL, fcntl(stdoutFd, F_GETFL) | O_NONBLOCK);
     }
@@ -4565,6 +4574,10 @@ void mprAddCmdHandlers(MprCmd *cmd)
         fcntl(stderrFd, F_SETFL, fcntl(stderrFd, F_GETFL) | O_NONBLOCK);
     }
 #endif
+    if (stdinFd >= 0) {
+        cmd->handlers[MPR_CMD_STDIN] = mprCreateWaitHandler(stdinFd, MPR_WRITABLE, cmd->dispatcher,
+            (MprEventProc) stdinCallback, cmd, 0);
+    }
     if (stdoutFd >= 0) {
         cmd->handlers[MPR_CMD_STDOUT] = mprCreateWaitHandler(stdoutFd, MPR_READABLE, cmd->dispatcher,
             (MprEventProc) stdoutCallback, cmd, 0);
@@ -4770,9 +4783,6 @@ ssize mprReadCmd(MprCmd *cmd, int channel, char *buf, ssize bufsize)
 }
 
 
-/*
-    Non-blocking read from a pipe. For windows which doesn't seem to have non-blocking pipes!
- */
 int mprWriteCmd(MprCmd *cmd, int channel, char *buf, ssize bufsize)
 {
 #if BLD_WIN_LIKE
@@ -4789,11 +4799,14 @@ int mprWriteCmd(MprCmd *cmd, int channel, char *buf, ssize bufsize)
 
 void mprEnableCmdEvents(MprCmd *cmd, int channel)
 {
+    int     mask;
+
+    mask = (channel == MPR_CMD_STDIN) ? MPR_WRITABLE : MPR_READABLE;
 #if BLD_UNIX_LIKE || VXWORKS
     lock(cmd);
     if (cmd->handlers[channel]) {
         mprAssert(cmd->flags & MPR_CMD_ASYNC);
-        mprEnableWaitEvents(cmd->handlers[channel], MPR_READABLE);
+        mprEnableWaitEvents(cmd->handlers[channel], mask);
     }
     unlock(cmd);
 #endif
@@ -4846,6 +4859,20 @@ static int serviceWinCmdEvents(MprCmd *cmd, int channel, int timeout)
 #endif /* BLD_WIN_LIKE && !WINCE */
 
 
+static void invokeCallback(MprCmd *cmd, int channel)
+{
+    mprAssert(cmd);
+    mprAssert(channel >= 0);
+
+    /*
+        Don't invoke the callback if a handler is already defined
+     */
+    if (channel >= 0 && cmd->callback && cmd->handlers[channel] == 0) {
+        (cmd->callback)(cmd, channel, cmd->callbackData);
+    }
+}
+
+
 /*
     Poll for I/O events on CGI pipes
  */
@@ -4857,30 +4884,36 @@ void mprPollCmd(MprCmd *cmd, int timeout)
 #if BLD_WIN_LIKE && !WINCE
     if (cmd->files[MPR_CMD_STDOUT].handle) {
         if (serviceWinCmdEvents(cmd, MPR_CMD_STDOUT, timeout) > 0 && (cmd->flags & MPR_CMD_OUT)) {
-            channel = MPR_CMD_STDOUT;
+            invokeCallback(cmd, MPR_CMD_STDOUT);
         }
     } else if (cmd->files[MPR_CMD_STDERR].handle) {
         if (serviceWinCmdEvents(cmd, MPR_CMD_STDERR, timeout) > 0 && (cmd->flags & MPR_CMD_ERR)) {
-            channel = MPR_CMD_STDERR;
+            invokeCallback(cmd, MPR_CMD_STDERR);
         }
     }
-#else
-    if (cmd->files[MPR_CMD_STDOUT].fd >= 0) {
-        if (mprWaitForSingleIO(cmd->files[MPR_CMD_STDOUT].fd, MPR_READABLE, timeout)) {
-            channel = MPR_CMD_STDOUT;
-        }
-    } else if (cmd->files[MPR_CMD_STDERR].fd >= 0) {
-        if (mprWaitForSingleIO(cmd->files[MPR_CMD_STDERR].fd, MPR_READABLE, timeout)) {
-            channel = MPR_CMD_STDERR;
+#if UNUSED
+    if (cmd->files[MPR_CMD_STDIN].handle) {
+        if (serviceWinCmdEvents(cmd, MPR_CMD_STDIN, timeout) > 0 && (cmd->flags & MPR_CMD_IN)) {
+            invokeCallback(cmd, MPR_CMD_STDIN);
         }
     }
 #endif
-    /*
-        Don't invoke callback if there is also a handler registered for the channel
-     */
-    if (channel >= 0 && cmd->callback && cmd->handlers[channel] == 0) {
-        (cmd->callback)(cmd, channel, cmd->callbackData);
+#else
+    if (cmd->files[MPR_CMD_STDOUT].fd >= 0) {
+        if (mprWaitForSingleIO(cmd->files[MPR_CMD_STDOUT].fd, MPR_READABLE, timeout)) {
+            invokeCallback(cmd, MPR_CMD_STDOUT);
+        }
+    } else if (cmd->files[MPR_CMD_STDERR].fd >= 0) {
+        if (mprWaitForSingleIO(cmd->files[MPR_CMD_STDERR].fd, MPR_READABLE, timeout)) {
+            invokeCallback(cmd, MPR_CMD_STDERR);
+        }
     }
+    if (cmd->files[MPR_CMD_STDIN].fd >= 0) {
+        if (mprWaitForSingleIO(cmd->files[MPR_CMD_STDIN].fd, MPR_WRITABLE, timeout)) {
+            invokeCallback(cmd, MPR_CMD_STDIN);
+        }
+    }
+#endif
 }
 
 
@@ -4910,11 +4943,19 @@ int mprWaitForCmd(MprCmd *cmd, int timeout)
             }
         }
         unlock(cmd);
+
+#if UNUSED
         mprPollCmd(cmd, timeout);
         remaining = (expires - mprGetTime());
         if (cmd->pid == 0 || remaining <= 0) {
             break;
         }
+#else
+        if (cmd->pid == 0 || remaining <= 0) {
+            break;
+        }
+#endif
+        //  MOB - remove delay
         delay = remaining;
 
         if (cmd->flags & MPR_CMD_ASYNC) {
@@ -4922,6 +4963,8 @@ int mprWaitForCmd(MprCmd *cmd, int timeout)
             mprAddRoot(cmd);
             mprWaitForEvent(cmd->dispatcher, delay);
             mprRemoveRoot(cmd);
+        } else {
+            mprPollCmd(cmd, timeout);
         }
         remaining = (expires - mprGetTime());
     } while (cmd->pid && remaining >= 0);
@@ -5060,6 +5103,8 @@ static void cmdCallback(MprCmd *cmd, int channel, void *data)
     buf = 0;
     switch (channel) {
     case MPR_CMD_STDIN:
+        mprAssert(0);
+        // mprEnableCmdEvents(cmd, MPR_CMD_STDIN, MPR_WRITABLE);
         return;
     case MPR_CMD_STDOUT:
         buf = cmd->stdoutBuf;
@@ -5099,6 +5144,14 @@ static void cmdCallback(MprCmd *cmd, int channel, void *data)
         mprAdjustBufEnd(buf, len);
     }
     mprEnableCmdEvents(cmd, channel);
+}
+
+
+static void stdinCallback(MprCmd *cmd, MprEvent *event)
+{
+    if (cmd->callback) {
+        (cmd->callback)(cmd, MPR_CMD_STDIN, cmd->callbackData);
+    }
 }
 
 

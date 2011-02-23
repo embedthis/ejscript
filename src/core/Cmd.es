@@ -69,7 +69,6 @@ module ejs {
         /** 
             @duplicate Stream.on
             @event readable Issued when output data to read.
-MOB - when is writable issued
             @event writable Issued when the connection to the command is writable to accept data.
             @event complete Issued when the command completes
             @event error Issued if the $error stream is readable.

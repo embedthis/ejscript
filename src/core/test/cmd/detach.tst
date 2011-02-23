@@ -10,8 +10,8 @@ if (!Path("/usr/bin/true").exists) {
 
     //  Commands block by default
     let mark = new Date
-    cmd = Cmd("/bin/sleep 2")
-    assert(mark.elapsed > 1500)
+    cmd = Cmd("/bin/sleep 1")
+    assert(mark.elapsed > 250)
 
     //  Detached command
     let mark = new Date
