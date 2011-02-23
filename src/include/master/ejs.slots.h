@@ -485,6 +485,7 @@
     Local slots for methods in type "Cmd" 
  */
 #define ES_Cmd_daemon_cmdline                                          0
+#define ES_Cmd_daemon_options                                          1
 #define ES_Cmd_exec_cmdline                                            0
 #define ES_Cmd_exec_options                                            1
 #define ES_Cmd_kill_pid                                                0
@@ -2245,6 +2246,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1366831
+#define _ES_CHECKSUM_ejs   1367943
 
 #endif
