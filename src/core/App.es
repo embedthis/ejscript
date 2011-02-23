@@ -248,6 +248,7 @@ module ejs {
          */
         native static function putenv(name: String, value: String): Void
 
+        //  MOB -- could return Boolean - true if one event was serviced
         /** 
             Run the application event loop. This is typically done automatically by the hosting program and is not 
             normally required in user programs.
@@ -264,6 +265,7 @@ module ejs {
                 call returns immediately. Set to -1 for no timeout.
             @param oneEvent If true, return immediately after servicing at least one ejs event.
             @hide
+            MOB - remove
          */
         static function eventLoop(timeout: Number = -1, oneEvent: Boolean = false): Void
             run(timeout, oneEvent)

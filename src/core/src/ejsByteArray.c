@@ -845,17 +845,21 @@ static EjsObj *ba_readString(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv
 }
 
 
+void ejsResetByteArrayIfEmpty(Ejs *ejs, EjsByteArray *ap)
+{
+    if (ap->writePosition == ap->readPosition) {
+        ap->writePosition = ap->readPosition = 0;
+    }
+}
+
+
 /*
     Reset the read and write position pointers if there is no available data.
     function reset(): Void
  */
 static EjsObj *ba_reset(Ejs *ejs, EjsByteArray *ap, int argc, EjsObj **argv)
 {
-    mprAssert(argc == 0);
-
-    if (ap->writePosition == ap->readPosition) {
-        ap->writePosition = ap->readPosition = 0;
-    }
+    ejsResetByteArrayIfEmpty(ejs, ap);
     return 0;
 }
 
@@ -1327,6 +1331,9 @@ int ejsCopyToByteArray(Ejs *ejs, EjsByteArray *ba, ssize offset, char *data, ssi
     mprAssert(ba);
     mprAssert(data);
 
+    if (offset < 0) {
+        offset = ba->writePosition;
+    }
     if (!ejsMakeRoomInByteArray(ejs, ba, offset + length)) {
         return EJS_ERR;
     }

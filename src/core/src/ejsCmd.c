@@ -14,11 +14,11 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv);
 
 /************************************ Methods *********************************/
 /*
-    function Cmd(cmdline, options)
+    function Cmd(cmdline: Object, options: Object)
  */
 static EjsCmd *cmd_constructor(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    cmd->error = ejs->nullValue;
+    cmd->ejs = ejs;
     cmd->timeout = -1;
     if (argc >= 1) {
         cmd_start(ejs, cmd, argc, argv);
@@ -40,43 +40,15 @@ static EjsObj *cmd_close(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 }
 
 
-#if UNUSED
-/**
-    function get cmdline(): String
- */
-static EjsObj *cmd_cmdline(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
-{
-    return cmd->command;
-}
-
-
-/**
-    function set cmdline(value: String): Void
- */
-static EjsObj *cmd_cmdline(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
-{
-    cmd->command = argv[0];
-    return 0;
-}
-#endif
-
-
 /**
     function get error(): Stream
  */
-static EjsObj *cmd_error(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsByteArray *cmd_error(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    int     fd;
-
     if (cmd->error == 0) {
-        if ((fd = mprGetCmdFd(cmd->mc, MPR_CMD_STDOUT)) < 0) {
-            //  MOB
-        }
-        if ((cmd->error = ejsCreateFileFromFd(ejs, fd, "error", O_RDONLY)) == 0) {
-            //  MOB
-        }
+        cmd->error = ejsCreateByteArray(ejs, -1);
     }
-    return (EjsObj*) cmd->error;
+    return cmd->error;
 }
 
 
@@ -109,17 +81,16 @@ static EjsObj *cmd_finalize(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         return 0;
     }
     mprFinalizeCmd(cmd->mc);
-    mprCloseCmdFd(cmd->mc, MPR_CMD_STDIN);
     return 0;
 }
 
 
 /**
-    function flush(dir: Number = Stream.BOTH): Stream
+    function flush(dir: Number = Stream.BOTH): Void
  */
 static EjsObj *cmd_flush(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    //  MOB
+    /* Nothing to do */
     return 0;
 }
 
@@ -171,19 +142,13 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    //  MOB - check what "this" is set to in callback function
-    cmd->async = 1;
     ejsAddObserver(ejs, &cmd->emitter, argv[0], argv[1]);
-
-#if FUTURE
-    if (cmd->mc && conn->readq->count > 0) {
-        ejsSendEvent(ejs, hp->emitter, "readable", NULL, (EjsObj*) hp);
+    if (!cmd->async) {
+        cmd->async = 1;
+        if (cmd->mc) {
+            mprAddCmdHandlers(cmd->mc);
+        }
     }
-    if (!conn->writeComplete && !conn->error && HTTP_STATE_CONNECTED <= conn->state && conn->state < HTTP_STATE_COMPLETE &&
-            conn->writeq->ioCount == 0) {
-        ejsSendEvent(ejs, hp->emitter, "writable", NULL, (EjsObj*) hp);
-    }
-#endif
     return 0;
 }
 
@@ -194,7 +159,6 @@ static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 static EjsObj *cmd_off(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     ejsRemoveObserver(ejs, cmd->emitter, argv[0], argv[1]);
-    //  MOB -- who to know to turn async off?
     return 0;
 }
 
@@ -202,64 +166,20 @@ static EjsObj *cmd_off(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 /**
     function pid(): Number
  */
-static EjsObj *cmd_pid(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsNumber *cmd_pid(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    if (cmd->mc == 0) {
-        ejsThrowStateError(ejs, "No active command");
-        return 0;
+    if (cmd->mc == 0 || cmd->mc->pid == 0) {
+        // ejsThrowStateError(ejs, "No active command");
+        return ejs->zeroValue;
     }
-    return (EjsObj*) ejsCreateNumber(ejs, cmd->mc->pid);
+    return ejsCreateNumber(ejs, cmd->mc->pid);
 }
-
-
-#if UNUSED
-/*  
-    Read the required number of bytes into the response content buffer. Count < 0 means transfer the entire content.
-    Returns the number of bytes read.
- */ 
-static ssize readCmdData(Ejs *ejs, EjsCmd *cmd, ssize count)
-{
-    MprBuf      *buf;
-    ssize       space, nbytes;
-
-    if (cmd->mc == 0) {
-        ejsThrowStateError(ejs, "No active command");
-        return 0;
-    }
-    if (cmd->stdoutBuf == 0) {
-        cmd->stdoutBuf = mprCreateBuf(MPR_BUFSIZE, -1);
-    }
-    buf = cmd->stdoutBuf;
-    mprResetBufIfEmpty(buf);
-    while (count < 0 || mprGetBufLength(buf) < count) {
-        if (mprGetBufSpace(buf) < MPR_BUFSIZE) {
-            if (mprGrowBuf(buf, MPR_BUFSIZE) < 0) {
-                ejsThrowMemoryError(ejs);
-                return -1;
-            }
-        }
-        space = mprGetBufSpace(buf);
-        if ((nbytes = mprReadCmd(cmd->mc, MPR_CMD_STDOUT, mprGetBufEnd(buf), space)) < 0) {
-            ejsThrowIOError(ejs, "Can't read required data");
-            return MPR_ERR_CANT_READ;
-        }
-        mprAdjustBufEnd(buf, nbytes);
-        if (nbytes == 0) {
-            break;
-        }
-    }
-    if (count < 0) {
-        return mprGetBufLength(buf);
-    }
-    return min(count, mprGetBufLength(buf));
-}
-#endif
 
 
 /**
     function read(buffer: ByteArray, offset: Number = 0, count: Number = -1): Number
  */
-static EjsObj *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     EjsByteArray    *buffer;
     ssize           offset, count, nbytes;
@@ -290,7 +210,7 @@ static EjsObj *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         count = buffer->length - buffer->writePosition;
     }
     nbytes = mprGetBufLength(cmd->stdoutBuf);
-    if (nbytes == 0) {
+    if (nbytes == 0 && !cmd->async) {
         if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
             ejsThrowStateError(ejs, "Command timed out");
             return 0;
@@ -301,7 +221,7 @@ static EjsObj *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     ejsCopyToByteArray(ejs, buffer, buffer->writePosition, (char*) mprGetBufStart(cmd->stdoutBuf), count);
     ejsSetByteArrayPositions(ejs, buffer, -1, buffer->writePosition + count);
     mprAdjustBufStart(cmd->stdoutBuf, count);
-    return (EjsObj*) ejsCreateNumber(ejs, count);
+    return ejsCreateNumber(ejs, count);
 }
 
 
@@ -338,6 +258,84 @@ static EjsString *cmd_readString(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 }
 
 
+static void cmdIOCallback(MprCmd *mc, int channel, void *data)
+{
+    EjsCmd          *cmd;
+    EjsByteArray    *ba;
+    MprBuf          *buf;
+    ssize           len, space;
+
+    /*
+        Note: stdin, stdout and stderr are named from the client's perspective
+     */
+    cmd = data;
+    buf = 0;
+    switch (channel) {
+    case MPR_CMD_STDIN:
+        return;
+    case MPR_CMD_STDOUT:
+        buf = cmd->stdoutBuf;
+        break;
+    case MPR_CMD_STDERR:
+        buf = cmd->stderrBuf;
+        break;
+    }
+    /*
+        Read and aggregate the result into a single string
+     */
+    mprResetBufIfEmpty(buf);
+    space = mprGetBufSpace(buf);
+    if (space < (MPR_BUFSIZE / 4)) {
+        if (mprGrowBuf(buf, MPR_BUFSIZE) < 0) {
+            mprCloseCmdFd(mc, channel);
+            return;
+        }
+        space = mprGetBufSpace(buf);
+    }
+    len = mprReadCmd(mc, channel, mprGetBufEnd(buf), space);
+    if (len <= 0) {
+        if (len == 0 || (len < 0 && !(errno == EAGAIN || EWOULDBLOCK))) {
+            if (channel == MPR_CMD_STDOUT) {
+                /*
+                    Now that stdout is complete, enable stderr to receive an EOF or any error output.
+                    This is serialized to eliminate both stdin and stdout events on different threads at the same time.
+                    Do before closing as the stderr event may come on another thread and we want to ensure avoid locking.
+                 */
+                mprCloseCmdFd(mc, channel);
+                mprEnableCmdEvents(mc, MPR_CMD_STDERR);
+            } else {
+                mprCloseCmdFd(mc, channel);
+            }
+        }
+    } else {
+        mprAdjustBufEnd(buf, len);
+    }
+    mprEnableCmdEvents(mc, channel);
+
+    if (channel == MPR_CMD_STDERR) {
+        if (cmd->error == 0) {
+            cmd->error = ejsCreateByteArray(cmd->ejs, -1);
+        }
+        ba = cmd->error;
+        ejsCopyToByteArray(cmd->ejs, ba, ba->writePosition, mprGetBufStart(buf), len);
+        ba->writePosition += len;
+        mprAdjustBufStart(buf, len);
+    }
+    if (cmd->async) {
+        if (channel == MPR_CMD_STDOUT) {
+            ejsSendEvent(cmd->ejs, cmd->emitter, "readable", NULL, cmd);
+        }
+        if (channel == MPR_CMD_STDERR) {
+            if (len > 0) {
+                ejsSendEvent(cmd->ejs, cmd->emitter, "error", NULL, cmd);
+            } else {
+                ejsSendEvent(cmd->ejs, cmd->emitter, "complete", NULL, cmd);
+            }
+        }
+    }
+}
+
+
 static int parseOptions(Ejs *ejs, EjsCmd *cmd)
 {
     EjsObj      *value;
@@ -363,6 +361,9 @@ static int parseOptions(Ejs *ejs, EjsCmd *cmd)
                 cmd->throw = 1;
             }
         }
+        if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("timeout"))) != 0) {
+            cmd->timeout = ejsGetInt(ejs, value);
+        }
     }
     if (cmd->async) {
         flags |= MPR_CMD_ASYNC;
@@ -371,91 +372,12 @@ static int parseOptions(Ejs *ejs, EjsCmd *cmd)
 }
 
 
-//  MOB - unique name
-static void cmdCallback(MprCmd *mc, int channel, void *data)
-{
-    EjsCmd      *cmd;
-    MprBuf      *buf;
-    ssize       len, space;
-
-    /*
-        Note: stdin, stdout and stderr are named from the client's perspective
-     */
-    cmd = data;
-    buf = 0;
-    switch (channel) {
-    case MPR_CMD_STDIN:
-        return;
-    case MPR_CMD_STDOUT:
-        buf = cmd->stdoutBuf;
-        break;
-    case MPR_CMD_STDERR:
-        buf = cmd->stderrBuf;
-        break;
-    }
-    /*
-        Read and aggregate the result into a single string
-     */
-    space = mprGetBufSpace(buf);
-    if (space < (MPR_BUFSIZE / 4)) {
-        if (mprGrowBuf(buf, MPR_BUFSIZE) < 0) {
-            mprCloseCmdFd(mc, channel);
-            return;
-        }
-        space = mprGetBufSpace(buf);
-    }
-    len = mprReadCmd(mc, channel, mprGetBufEnd(buf), space);
-    if (len <= 0) {
-        if (len == 0 || (len < 0 && !(errno == EAGAIN || EWOULDBLOCK))) {
-            if (channel == MPR_CMD_STDOUT && mc->flags & MPR_CMD_ERR) {
-                /*
-                    Now that stdout is complete, enable stderr to receive an EOF or any error output.
-                    This is serialized to eliminate both stdin and stdout events on different threads at the same time.
-                    Do before closing as the stderr event may come on another thread and we want to ensure avoid locking.
-                 */
-                mprCloseCmdFd(mc, channel);
-                mprEnableCmdEvents(mc, MPR_CMD_STDERR);
-            } else {
-                mprCloseCmdFd(mc, channel);
-            }
-            return;
-        }
-    } else {
-        mprAdjustBufEnd(buf, len);
-    }
-    mprEnableCmdEvents(mc, channel);
-}
-
-
-/**
-    function start(cmdline: String = null, options: Object = {}): Void
- */
-static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static bool setCmdArgs(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     EjsArray    *ap;
-    char        *command, *err;
-    int         rc, flags, i;
+    char        *command;
+    int         i;
 
-    if (argc >= 1) {
-        cmd->command = argv[0];
-    }
-    if (argc >= 2) {
-        cmd->options = argv[1];
-    }
-    if (cmd->command == ejs->nullValue) {
-        ejsThrowStateError(ejs, "Missing command line");
-        return 0;
-    }
-    if ((cmd->mc = mprCreateCmd(ejs->dispatcher)) == 0) {
-        return 0;
-    }
-    mprSetCmdCallback(cmd->mc, cmdCallback, cmd);
-    if (cmd->stdoutBuf == 0) {
-        cmd->stdoutBuf = mprCreateBuf(MPR_BUFSIZE, -1);
-    }
-    if (cmd->stderrBuf == 0) {
-        cmd->stderrBuf = mprCreateBuf(MPR_BUFSIZE, -1);
-    }
     if (ejsIsArray(ejs, cmd->command)) {
         ap = (EjsArray*) cmd->command;
         if ((cmd->argv = mprAlloc(sizeof(void*) * (ap->length + 1))) == 0) {
@@ -476,25 +398,78 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
             return 0;
         }
     }
+    return 1;
+}
+
+
+/**
+    function start(cmdline: Object, options: Object = null): Void
+ */
+static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+{
+    EjsName     qname;
+    char        *err, **env;
+    int         rc, flags, len, i, status;
+
+    cmd->command = argv[0];
+    cmd->options = (argc >=2 ) ? argv[1] : 0;
+
+    if (cmd->command == ejs->nullValue) {
+        ejsThrowStateError(ejs, "Missing command line");
+        return 0;
+    }
+    if ((cmd->mc = mprCreateCmd(ejs->dispatcher)) == 0) {
+        return 0;
+    }
+    mprSetCmdCallback(cmd->mc, cmdIOCallback, cmd);
+    if (cmd->stdoutBuf == 0) {
+        cmd->stdoutBuf = mprCreateBuf(MPR_BUFSIZE, -1);
+    }
+    if (cmd->stderrBuf == 0) {
+        cmd->stderrBuf = mprCreateBuf(MPR_BUFSIZE, -1);
+    }
+    if (!setCmdArgs(ejs, cmd, argc, argv)) {
+        return 0;
+    }
+    if (cmd->env) {
+        len = ejsGetPropertyCount(ejs, cmd->env);
+        if ((env = mprAlloc(sizeof(void*) * (len + 1))) == 0) {
+            ejsThrowMemoryError(ejs);
+            return 0;
+        }
+        for (i = 0; i < len; i++) {
+            qname = ejsGetPropertyName(ejs, cmd->env, i);
+            env[i] = mprAsprintf("%s=%s", qname.name->value, 
+                ejsToMulti(ejs, ejsToString(ejs, ejsGetProperty(ejs, cmd->env, i))));
+        }
+        env[i] = 0;
+    } else {
+        env = 0;
+    }
     flags = parseOptions(ejs, cmd);
 
-    if ((rc = mprStartCmd(cmd->mc, cmd->argc, cmd->argv, cmd->env, flags)) < 0) {
+    if ((rc = mprStartCmd(cmd->mc, cmd->argc, cmd->argv, env, flags)) < 0) {
         if (rc == MPR_ERR_CANT_ACCESS) {
-            err = mprAsprintf("Can't access command %s", cmd->argv[0]);
+            err = "Can't access command";
         } else if (MPR_ERR_CANT_OPEN) {
-            err = mprAsprintf("Can't open standard I/O for command %s", cmd->argv[0]);
+            err = "Can't open standard I/O for command";
         } else if (rc == MPR_ERR_CANT_CREATE) {
-            err = mprAsprintf("Can't create process for %s", cmd->argv[0]);
+            err = "Can't create process";
         } else {
             err = "";
         }
-        ejsThrowError(ejs, "Command failed: %s\n\nError %d, %s\n\nError Output: %s", cmd->command, rc, err);
+        ejsThrowError(ejs, "Command failed: %s\nError Output: %s", cmd->argv[0], err);
         return 0;
     }
     if (!(flags & MPR_CMD_DETACH)) {
-        if (mprWaitForCmd(cmd->mc, -1) < 0) {
+        if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
             //  MOB - more diagnostics - why cant wait
-            ejsThrowStateError(ejs, "Timeout waiting for command to complete: %s", cmd->command);
+            ejsThrowStateError(ejs, "Timeout %d msec waiting for command to complete: %s", cmd->timeout, cmd->argv[0]);
+        }
+        if (cmd->throw) {
+            if (mprGetCmdExitStatus(cmd->mc, &status) < 0 || status != 0) {
+                ejsThrowIOError(ejs, "Command failure: %s", mprGetBufStart(cmd->stderrBuf));
+            }
         }
     }
     return 0;
@@ -504,7 +479,7 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 /**
     function get status(): Number
  */
-static EjsObj *cmd_status(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsNumber *cmd_status(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     int     status;
 
@@ -519,7 +494,7 @@ static EjsObj *cmd_status(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "Status not ready to collect");
         return 0;
     }
-    return (EjsObj*) ejsCreateNumber(ejs, status);
+    return ejsCreateNumber(ejs, status);
 }
 
 
@@ -580,9 +555,9 @@ static EjsObj *cmd_wait(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         return 0;
     }
     if (mprWaitForCmd(cmd->mc, timeout) < 0) {
-        ejsThrowStateError(ejs, "Can't wait for command");
+        return ejs->falseValue;
     }
-    return 0;
+    return ejs->trueValue;
 }
 
 
@@ -591,15 +566,10 @@ static EjsObj *cmd_wait(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    EjsArray        *args;
-    EjsByteArray    *bp;
-    EjsString       *sp;
-    EjsDate         *dp;
-    EjsNumber       *np;
-    EjsObj          *vp;
-    char            bvalue;
-    ssize           len;
-    int             i, wrote;
+    EjsArray    *args;
+    EjsString   *sp;
+    EjsObj      *vp;
+    int         i, wrote;
 
     mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 
@@ -620,123 +590,15 @@ static EjsObj *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         if ((vp = ejsGetProperty(ejs, args, i)) == 0) {
             continue;
         }
-        switch (TYPE(vp)->id) {
-        case ES_Boolean:
-            bvalue = ejsGetBoolean(ejs, vp);
-            wrote = mprWriteCmd(cmd->mc, MPR_CMD_STDIN, &bvalue, 1);
-            break;
-
-        case ES_Date:
-            //  MOB - is this really the best way to encode. 
-            dp = (EjsDate*) vp;
-            wrote = mprWriteCmd(cmd->mc, MPR_CMD_STDIN, (char*) &dp->value, sizeof(MprNumber));
-            break;
-
-        case ES_Number:
-            np = (EjsNumber*) vp;
-            wrote = mprWriteCmd(cmd->mc, MPR_CMD_STDIN, (char*) &np->value, sizeof(MprNumber));
-            break;
-
-        default:
-            vp = (EjsObj*) ejsToString(ejs, vp);
-            /* Fall through */
-
-        case ES_String:
-            sp = (EjsString*) vp;
-            //  MOB - encoding
-            //  MOB - what about blocking
-            wrote = mprWriteCmd(cmd->mc, MPR_CMD_STDIN, sp->value, sp->length);
-            break;
-
-
-        case ES_ByteArray:
-            bp = (EjsByteArray*) vp;
-            //  MOB - should this update the byte array source?
-            len = ejsGetByteArrayAvailable(bp);
-            wrote = mprWriteCmd(cmd->mc, MPR_CMD_STDIN, (char*) &bp->value[bp->readPosition], len);
-            break;
-        }
+        sp = (EjsString*) ejsToString(ejs, vp);
+        wrote += mprWriteCmd(cmd->mc, MPR_CMD_STDIN, sp->value, sp->length);
     }
     return (EjsObj*) ejsCreateNumber(ejs, (MprNumber) wrote);
 }
 
 
-#if OLD && UNUSED
 /*
-    function run(cmd: String): String
- */
-static EjsObj *cmd_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
-{
-    MprCmd      *cmd;
-    char        *cmdline;
-    char        *err, *output;
-    int         status;
-
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
-
-    cmd = mprCreateCmd(ejs->dispatcher);
-    cmdline = ejsToMulti(ejs, argv[0]);
-    mprHold(cmdline);
-    status = mprRunCmd(cmd, cmdline, &output, &err, 0);
-    if (status) {
-        ejsThrowError(ejs, "Command failed: %s\n\nExit status: %d\n\nError Output: \n%s\nPrevious Output: \n%s\n", 
-            cmdline, status, err, output);
-        mprDestroyCmd(cmd);
-        mprRelease(cmdline);
-        return 0;
-    }
-    mprDestroyCmd(cmd);
-    mprRelease(cmdline);
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, output);
-}
-
-
-/*
-    function runx(cmd: String): Void
- */
-static EjsObj *cmd_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
-{
-    MprCmd      *cmd;
-    char        *err;
-    int         status;
-
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
-
-    cmd = mprCreateCmd(ejs->dispatcher);
-    status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, &err, 0);
-    if (status) {
-        ejsThrowError(ejs, "Can't run command: %@\nDetails: %s", ejsToString(ejs, argv[0]), err);
-    }
-    mprDestroyCmd(cmd);
-    return 0;
-}
-
-
-//  TODO - refactor and rename
-/*
-    function daemon(cmd: String): Number
- */
-static EjsObj *cmd_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
-{
-    MprCmd      *cmd;
-    int         status, pid;
-
-    mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
-
-    cmd = mprCreateCmd(ejs->dispatcher);
-    status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, NULL, MPR_CMD_DETACH);
-    if (status) {
-        ejsThrowError(ejs, "Can't run command: %@", ejsToString(ejs, argv[0]));
-    }
-    pid = cmd->pid;
-    mprDestroyCmd(cmd);
-    return (EjsObj*) ejsCreateNumber(ejs, pid);
-}
-
-
-//  TODO - refactor and rename
-/*
-    function exec(cmd: String): Void
+    function exec(cmd: Object): Void
  */
 static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -750,7 +612,6 @@ static EjsObj *cmd_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     ejsThrowStateError(ejs, "Can't exec %@", ejsToString(ejs, argv[0]));
     return 0;
 }
-#endif /* OLD && UNUSED */
 
 
 /************************************ Factory *********************************/
@@ -780,28 +641,8 @@ static void manageEjsCmd(EjsCmd *cmd, int flags)
 
 void ejsConfigureCmdType(Ejs *ejs)
 {
-#if DEBUG_IDE || 1
     EjsType     *type;
     EjsPot      *prototype;
-
-#if UNUSED
-    EjsType     *type;
-    EjsHelpers  *helpers;
-
-    type = ejs->cmdType = ejsConfigureNativeType(ejs, N("ejs", "Cmd"), sizeof(EjsCmd), 
-        (MprManager) manageCmd, EJS_POT_HELPERS);
-    prototype = type->prototype;
-
-    helpers = &type->helpers;
-    helpers->cast = (EjsCastHelper) castByteArrayVar;
-    helpers->clone = (EjsCloneHelper) cloneByteArrayVar;
-    helpers->deleteProperty = (EjsDeletePropertyHelper) deleteByteArrayProperty;
-    helpers->getProperty = (EjsGetPropertyHelper) getByteArrayProperty;
-    helpers->getPropertyCount = (EjsGetPropertyCountHelper) getByteArrayPropertyCount;
-    helpers->invokeOperator = (EjsInvokeOperatorHelper) invokeByteArrayOperator;
-    helpers->lookupProperty = (EjsLookupPropertyHelper) lookupByteArrayProperty;
-    helpers->setProperty = (EjsSetPropertyHelper) setByteArrayProperty;
-#endif
 
     if ((type = ejsGetTypeByName(ejs, N("ejs", "Cmd"))) == 0) {
         mprError("Can't find Cmd type");
@@ -813,10 +654,7 @@ void ejsConfigureCmdType(Ejs *ejs)
 
     ejsBindConstructor(ejs, type, cmd_constructor);
     ejsBindMethod(ejs, type, ES_Cmd_kill, cmd_kill);
-#if FUTURE
-    ejsBindMethod(ejs, type, ES_Cmd_run, cmd_run);
     ejsBindMethod(ejs, type, ES_Cmd_exec, cmd_exec);
-#endif
 
     ejsBindMethod(ejs, prototype, ES_Cmd_close, cmd_close);
     ejsBindAccess(ejs, prototype, ES_Cmd_error, cmd_error, 0);
@@ -824,7 +662,6 @@ void ejsConfigureCmdType(Ejs *ejs)
     ejsBindMethod(ejs, prototype, ES_Cmd_finalize, cmd_finalize);
     ejsBindMethod(ejs, prototype, ES_Cmd_flush, cmd_flush);
     ejsBindMethod(ejs, prototype, ES_Cmd_on, cmd_on);
-
     ejsBindMethod(ejs, prototype, ES_Cmd_off, cmd_off);
     ejsBindAccess(ejs, prototype, ES_Cmd_pid, cmd_pid, 0);
     ejsBindMethod(ejs, prototype, ES_Cmd_read, cmd_read);
@@ -836,7 +673,6 @@ void ejsConfigureCmdType(Ejs *ejs)
 
     ejsBindMethod(ejs, prototype, ES_Cmd_wait, cmd_wait);
     ejsBindMethod(ejs, prototype, ES_Cmd_write, cmd_write);
-#endif
 }
 
 /*

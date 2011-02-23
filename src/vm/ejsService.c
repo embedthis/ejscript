@@ -709,6 +709,7 @@ int ejsRemoveObserver(Ejs *ejs, EjsObj *emitter, EjsObj *name, EjsObj *listener)
 }
 
 
+//  MOB - most users are setting thisObj to null. What should this be?
 int ejsSendEventv(Ejs *ejs, EjsObj *emitter, cchar *name, EjsAny *thisObj, int argc, void *args)
 {
     EjsObj  **av, **argv;

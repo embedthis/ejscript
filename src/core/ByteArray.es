@@ -268,7 +268,6 @@ module ejs {
          */
         native function readShort(): Number
 
-//  MOB -- 
         /** 
             Read a data from the array as a string. Read data from the $readPosition to a string up to the $writePosition,
             but not more than count characters. If insufficient data, a "writable" event will be issued indicating that 

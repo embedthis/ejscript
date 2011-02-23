@@ -5,6 +5,7 @@
 
 module ejs {
 
+    //  MOB - rename emitter to something else
     /** 
         The emitter class provides a publish/subscribe model of communication. It supports the registration of observers
         who want to subscribe to events of interest. 

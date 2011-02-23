@@ -40,11 +40,6 @@ module ejs.unix {
     function close(file: File): Void
      */
 
-/* MOB
-    function cmd(args): String
-        System.sh(args)
-*/
-
     /**
         Copy a file. If the destination file already exists, the old copy will be overwritten as part of the copy operation.
         @param fromPath Original file to copy.
@@ -101,14 +96,8 @@ module ejs.unix {
         @hide
         @deprecated 2.0.0
      */
-    function kill(pid: Number, signal: Number = 2): Void {
-        if (Config.OS == "WIN" || Config.OS == "CYGWIN") {
-            System.run("/bin/kill -f -" + signal + " " + pid)
-        } else {
-            // print("RUN " + "/bin/kill -" + signal + " " + pid)
-            System.run("/bin/kill -" + signal + " " + pid)
-        }
-    }
+    function kill(pid: Number, signal: Number = 2): Void 
+        Cmd.kill(pid, signal)
 
     //  TODO - good to add ability to do a regexp on the path or a filter function
     //  TODO - good to add ** to go recursively to any depth
