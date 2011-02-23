@@ -69,7 +69,7 @@ module ejs {
         /** 
             @duplicate Stream.on
             @event readable Issued when output data to read.
-            @event writable Issued when the connection to the command is writable to accept data.
+            @event writable Issued when the command can accept more write data.
             @event complete Issued when the command completes
             @event error Issued if the $error stream is readable.
 
