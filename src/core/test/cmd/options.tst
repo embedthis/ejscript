@@ -4,7 +4,7 @@
 
 let ejs = App.exePath
 
-if (!Path("/usr/bin/true").exists) {
+if (!Path("/bin/echo").exists) {
     test.skip("Only run on unix systems")
 } else {
 
@@ -17,7 +17,7 @@ if (!Path("/usr/bin/true").exists) {
     //  Set environment
     cmd = new Cmd
     cmd.env = { "WEATHER": "sunny" }
-    cmd.start("/usr/bin/env")
+    cmd.start("/bin/sh -c env")
     assert(cmd.response.contains("WEATHER=sunny"))
     assert(cmd.env.WEATHER == "sunny")
 }

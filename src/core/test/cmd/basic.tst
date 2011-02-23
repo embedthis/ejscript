@@ -4,15 +4,15 @@
 
 let ejs = App.exePath
 
-if (!Path("/usr/bin/true").exists) {
+if (!Path("/bin/echo").exists) {
     test.skip("Only run on unix systems")
 } else {
 
     //  Simple command
-    cmd = Cmd("/usr/bin/true")
+    cmd = Cmd("/bin/echo")
     assert(cmd.status == 0)
 
     //  Command with failing status
-    cmd = Cmd("/usr/bin/false")
+    cmd = Cmd("/bin/ls /asdfasdf")
     assert(cmd.status == 1)
 }

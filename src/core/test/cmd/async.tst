@@ -4,7 +4,7 @@
 
 let ejs = App.exePath
 
-if (!Path("/usr/bin/true").exists) {
+if (!Path("/bin/echo").exists) {
     test.skip("Only run on unix systems")
 } else {
 
