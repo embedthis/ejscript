@@ -464,10 +464,12 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         return 0;
     }
     if (!(flags & MPR_CMD_DETACH)) {
+        mprAssert(cmd->mc);
         if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
             //  MOB - more diagnostics - why cant wait
             ejsThrowStateError(ejs, "Timeout %d msec waiting for command to complete: %s", cmd->timeout, cmd->argv[0]);
         }
+        mprAssert(cmd->mc);
         if (cmd->throw) {
             if (mprGetCmdExitStatus(cmd->mc, &status) < 0 || status != 0) {
                 ejsThrowIOError(ejs, "Command failure: %s", mprGetBufStart(cmd->stderrBuf));
