@@ -2505,7 +2505,6 @@ void httpPrepServerConn(HttpConn *conn)
         conn->abortPipeline = 0;
         conn->canProceed = 1;
         conn->complete = 0;
-        conn->connError = 0;
         conn->error = 0;
         conn->errorMsg = 0;
         conn->flags = 0;
@@ -9188,15 +9187,14 @@ static bool processContent(HttpConn *conn, HttpPacket *packet)
     rx = conn->rx;
     q = conn->tx->queue[HTTP_QUEUE_RECEIVE];
 
-    if (packet == NULL) {
-        return 0;
-    }
     if (conn->complete || conn->connError || rx->remainingContent <= 0) {
         //  MOB -- this needs checking - upload too much data
         httpSetState(conn, HTTP_STATE_RUNNING);
         return 1;
     }
-    mprAssert(packet);
+    if (packet == NULL) {
+        return 0;
+    }
     if (!analyseContent(conn, packet)) {
         if (conn->connError) {
             /* Abort the content state if there is a connection oriented error */
@@ -9231,7 +9229,8 @@ static bool processRunning(HttpConn *conn)
             httpProcessPipeline(conn);
         }
         if (conn->server) {
-            if (conn->complete || conn->writeComplete || conn->error) {
+            //  MOB - simplify test
+            if (conn->complete || conn->writeComplete) {
                 httpSetState(conn, HTTP_STATE_COMPLETE);
                 canProceed = 1;
             } else {
@@ -12211,7 +12210,6 @@ static void incomingUploadData(HttpQueue *q, HttpPacket *packet)
     if (httpGetPacketLength(packet) == 0) {
         if (up->contentState != HTTP_UPLOAD_CONTENT_END) {
             httpError(conn, HTTP_CODE_BAD_REQUEST, "Client supplied insufficient upload data");
-            return;
         }
         httpSendPacketToNext(q, packet);
         return;
@@ -12474,8 +12472,7 @@ static int writeToFile(HttpQueue *q, char *data, ssize len)
     file = up->currentFile;
 
     if ((file->size + len) > limits->uploadSize) {
-        httpLimitError(conn, HTTP_CODE_REQUEST_TOO_LARGE, "Uploaded file %s exceeds maximum %d", 
-            up->tmpPath, limits->uploadSize);
+        httpLimitError(conn, HTTP_CODE_REQUEST_TOO_LARGE, "Uploaded file exceeds maximum %d", limits->uploadSize);
         return MPR_ERR_CANT_WRITE;
     }
     if (len > 0) {
