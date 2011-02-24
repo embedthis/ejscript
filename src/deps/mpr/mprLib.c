@@ -2449,6 +2449,7 @@ Mpr *mprCreate(int argc, char **argv, int flags)
 
     mpr->dispatcher = mprCreateDispatcher("main", 1);
     mpr->nonBlock = mprCreateDispatcher("nonblock", 1);
+    mpr->searchPath = sclone(getenv("PATH"));
 
     startThreads(flags);
 
@@ -2493,6 +2494,7 @@ static void manageMpr(Mpr *mpr, int flags)
         mprMark(mpr->mutex);
         mprMark(mpr->spin);
         mprMark(mpr->emptyString);
+        mprMark(mpr->searchPath);
         mprMark(mpr->heap.markerCond);
     }
 }
@@ -4633,13 +4635,12 @@ int mprStartCmd(MprCmd *cmd, int argc, char **argv, char **envp, int flags)
         mprAssert(!MPR_ERR_MEMORY);
         return MPR_ERR_MEMORY;
     }
-    if (access(program, X_OK) < 0) {
-        program = mprJoinPathExt(program, BLD_EXE);
-        if (access(program, X_OK) < 0) {
-            mprLog(1, "cmd: can't access %s, errno %d", program, mprGetOsError());
-            return MPR_ERR_CANT_ACCESS;
-        }
+    if ((program = mprSearchPath(program, MPR_SEARCH_EXE, MPR->searchPath, NULL)) == 0) {
+        mprLog(1, "cmd: can't access %s, errno %d", cmd->program, mprGetOsError());
+        return MPR_ERR_CANT_ACCESS;
     }
+    cmd->program = cmd->argv[0] = program;
+
     if (mprGetPathInfo(program, &info) == 0 && info.isDir) {
         mprLog(1, "cmd: program \"%s\", is a directory", program);
         return MPR_ERR_CANT_ACCESS;
@@ -4835,9 +4836,6 @@ static int serviceWinCmdEvents(MprCmd *cmd, int channel, int timeout)
 {
     int     rc, count, status;
 
-    if (mprGetDebugMode()) {
-        timeout = MAXINT;
-    }
     if (channel == MPR_CMD_STDIN) {
         /* Nothing better to do */
         return 1;
@@ -4850,6 +4848,9 @@ static int serviceWinCmdEvents(MprCmd *cmd, int channel, int timeout)
     }
     if (cmd->process == 0) {
         return 1;
+    }
+    if (mprGetDebugMode()) {
+        timeout = MAXINT;
     }
     if ((status = WaitForSingleObject(cmd->process, timeout)) == WAIT_OBJECT_0) {
         if (cmd->requiredEof == 0) {
@@ -14525,9 +14526,12 @@ char *mprSearchPath(cchar *file, int flags, cchar *search, ...)
     va_start(args, search);
     access = (flags & MPR_SEARCH_EXE) ? X_OK : R_OK;
 
-    for (nextDir = (char*) search; nextDir; nextDir = va_arg(args, char*)) {
-
-        if (strchr(nextDir, MPR_SEARCH_SEP_CHAR)) {
+    if (mprIsAbsPath(file)) {
+        if (mprPathExists(file, access)) {
+            return sclone(file);
+        }
+    } else {
+        for (nextDir = (char*) search; nextDir; nextDir = va_arg(args, char*)) {
             tok = NULL;
             nextDir = sclone(nextDir);
             dir = stok(nextDir, MPR_SEARCH_SEP, &tok);
@@ -14538,15 +14542,14 @@ char *mprSearchPath(cchar *file, int flags, cchar *search, ...)
                     mprLog(5, "mprSearchForFile: found %s", path);
                     return mprGetNormalizedPath(path);
                 }
+                if ((flags & MPR_SEARCH_EXE) && *BLD_EXE) {
+                    path = mprJoinPathExt(path, BLD_EXE);
+                    if (mprPathExists(path, access)) {
+                        mprLog(5, "mprSearchForFile: found %s", path);
+                        return mprGetNormalizedPath(path);
+                    }
+                }
                 dir = stok(0, MPR_SEARCH_SEP, &tok);
-            }
-
-        } else {
-            mprLog(5, "mprSearchForFile: %s in directory %s", file, nextDir);
-            path = mprJoinPath(nextDir, file);
-            if (mprPathExists(path, access)) {
-                mprLog(5, "mprSearchForFile: found %s", path);
-                return mprGetNormalizedPath(path);
             }
         }
     }
