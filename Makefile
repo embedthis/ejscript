@@ -27,7 +27,7 @@ include	    build/make/Makefile.top
 include		build/make/Makefile.ejs
 
 ifeq	($(BLD_CROSS),0)
-DISABLEtestExtra: 
+testExtra: 
 	$(BLD_BIN_DIR)/ejs $(BLD_TOOLS_DIR)/utest -v -d $(BUILD_DEPTH) src
 endif
 
@@ -40,7 +40,7 @@ diff import sync:
 compileFinal:
 	make dist
 
-DISABLEtestExtra: test-projects
+testExtra: test-projects
 
 test-projects:
 ifeq    ($(BLD_HOST_OS),WIN)
