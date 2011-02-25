@@ -11,11 +11,11 @@
 /************************************ Methods *********************************/
 /*
     function run(cmd: String): String
+    MOB - remove
  */
 static EjsString *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprCmd      *cmd;
-    EjsString   *result;
     char        *cmdline;
     char        *err, *output;
     int         status;
@@ -23,25 +23,22 @@ static EjsString *system_run(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     cmd = mprCreateCmd(ejs->dispatcher);
+    ejs->result = cmd;
     cmdline = ejsToMulti(ejs, argv[0]);
-    mprHold(cmdline);
     status = mprRunCmd(cmd, cmdline, &output, &err, 0);
     if (status) {
-        ejsThrowError(ejs, "Command failed: %s\n\nExit status: %d\n\nError Output: \n%s\nPrevious Output: \n%s\n", 
-            cmdline, status, err, output);
-        mprRelease(cmdline);
+        ejsThrowError(ejs, "Command failed: status: %d\n\nError Output: \n%s\nPrevious Output: \n%s\n", status, err, output);
         mprDestroyCmd(cmd);
         return 0;
     }
-    result = ejsCreateStringFromAsc(ejs, output);
-    mprRelease(cmdline);
     mprDestroyCmd(cmd);
-    return result;
+    return ejsCreateStringFromAsc(ejs, output);
 }
 
 
 /*
     function runx(cmd: String): Void
+    MOB - remove
  */
 static EjsObj *system_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
@@ -52,6 +49,7 @@ static EjsObj *system_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     cmd = mprCreateCmd(ejs->dispatcher);
+    ejs->result = cmd;
     status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, &err, 0);
     if (status) {
         ejsThrowError(ejs, "Can't run command: %@\nDetails: %s", ejsToString(ejs, argv[0]), err);
@@ -61,11 +59,11 @@ static EjsObj *system_runx(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 }
 
 
-//  TODO - refactor and rename
 /*
     function daemon(cmd: String): Number
+    MOB - remove
  */
-static EjsObj *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsNumber *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     MprCmd      *cmd;
     int         status, pid;
@@ -73,13 +71,14 @@ static EjsObj *system_daemon(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
     mprAssert(argc == 1 && ejsIsString(ejs, argv[0]));
 
     cmd = mprCreateCmd(ejs->dispatcher);
+    ejs->result = cmd;
     status = mprRunCmd(cmd, ejsToMulti(ejs, argv[0]), NULL, NULL, MPR_CMD_DETACH);
     if (status) {
         ejsThrowError(ejs, "Can't run command: %@", ejsToString(ejs, argv[0]));
     }
     pid = cmd->pid;
     mprDestroyCmd(cmd);
-    return (EjsObj*) ejsCreateNumber(ejs, pid);
+    return ejsCreateNumber(ejs, pid);
 }
 
 
@@ -104,9 +103,9 @@ static EjsObj *system_exec(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 /*
     function get hostname(): String
  */
-static EjsObj *system_hostname(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsString *system_hostname(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
-    return (EjsObj*) ejsCreateStringFromAsc(ejs, mprGetHostName(ejs));
+    return ejsCreateStringFromAsc(ejs, mprGetHostName(ejs));
 }
 
 
