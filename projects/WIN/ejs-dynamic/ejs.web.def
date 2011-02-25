@@ -1,17 +1,17 @@
 LIBRARY ejs.web.dll
 EXPORTS
-  ejsAddWebHandler
-  ejsConfigureHttpServerType
-  ejsConfigureRequestType
-  ejsConfigureSessionType
-  ejsCreateRequest
-  ejsCreateSession
-  ejsDestroySession
-  ejsGetSession
-  ejsSendRequestCloseEvent
-  ejsSendRequestErrorEvent
-  ejsSendRequestEvent
-  ejsSetSessionTimeout
-  ejsStopSessionTimer
-  ejsUpdateSessionLimits
-  ejs_web_Init
+ejsAddWebHandler
+ejsConfigureHttpServerType
+ejsConfigureRequestType
+ejsConfigureSessionType
+ejsCreateRequest
+ejsCreateSession
+ejsDestroySession
+ejsGetSession
+ejsSendRequestCloseEvent
+ejsSendRequestErrorEvent
+ejsSendRequestEvent
+ejsSetSessionTimeout
+ejsStopSessionTimer
+ejsUpdateSessionLimits
+ejs_web_Init

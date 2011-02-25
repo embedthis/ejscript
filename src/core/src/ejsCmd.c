@@ -221,7 +221,7 @@ static EjsNumber *cmd_read(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     ejsCopyToByteArray(ejs, buffer, buffer->writePosition, (char*) mprGetBufStart(cmd->stdoutBuf), count);
     ejsSetByteArrayPositions(ejs, buffer, -1, buffer->writePosition + count);
     mprAdjustBufStart(cmd->stdoutBuf, count);
-    return ejsCreateNumber(ejs, count);
+    return ejsCreateNumber(ejs, (MprNumber) count);
 }
 
 
@@ -532,7 +532,7 @@ static EjsObj *cmd_stop(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsNumber *cmd_timeout(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    return ejsCreateNumber(ejs, cmd->timeout);
+    return ejsCreateNumber(ejs, (MprNumber) cmd->timeout);
 }
 
 
@@ -551,7 +551,7 @@ static EjsObj *cmd_set_timeout(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsObj *cmd_wait(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    int     timeout;
+    MprTime     timeout;
 
     timeout = argc > 0 ? ejsGetInt(ejs, argv[0]) : cmd->timeout;
     if (cmd->mc == 0) {
@@ -574,7 +574,8 @@ static EjsNumber *cmd_write(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     EjsByteArray    *bp;
     EjsString       *sp;
     EjsObj          *vp;
-    int             i, wrote, len;
+    ssize           len;
+    int             i, wrote;
 
     mprAssert(argc == 1 && ejsIsArray(ejs, argv[0]));
 

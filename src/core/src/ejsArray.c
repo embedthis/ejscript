@@ -1486,7 +1486,8 @@ static EjsArray *unshiftArray(Ejs *ejs, EjsArray *ap, int argc, EjsObj **argv)
 static int growArray(Ejs *ejs, EjsArray *ap, int len)
 {
     EjsObj      **dp;
-    int         i, size, count, factor;
+    ssize       size, factor, count;
+    int         i;
 
     mprAssert(ap);
 
@@ -1496,15 +1497,8 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
     if (len <= ap->length) {
         return 0;
     }
-#if UNUSED || 1
     size = mprGetBlockSize(ap->data);
-    mprAssert(size == mprGetBlockSize(ap->data));
-    mprAssert(size == mprGetBlockSize(ap->data));
-    mprAssert(size == mprGetBlockSize(ap->data));
     size = (int) (mprGetBlockSize(ap->data) / sizeof(EjsObj*));
-#else
-    size = ap->length;
-#endif
 
     /*
         Allocate or grow the data structures.
@@ -1528,24 +1522,10 @@ static int growArray(Ejs *ejs, EjsArray *ap, int len)
             if ((ap->data = mprAllocZeroed(sizeof(EjsObj*) * count)) == 0) {
                 return EJS_ERR;
             }
-            {
-                int i, size;
-                size = mprGetBlockSize(ap->data) / sizeof(EjsObj*);
-                for (i = 0; i < size; i++) {
-                    mprAssert(ap->data[i] == 0 || mprIsValid(ap->data[i]));
-                }
-            }
         } else {
             mprAssert(size > 0);
             if ((ap->data = mprRealloc(ap->data, sizeof(EjsObj*) * count)) == 0) {
                 return EJS_ERR;
-            }
-            {
-                int i, size;
-                size = mprGetBlockSize(ap->data) / sizeof(EjsObj*);
-                for (i = 0; i < size; i++) {
-                    mprAssert(ap->data[i] == 0 || mprIsValid(ap->data[i]));
-                }
             }
         }
         dp = &ap->data[ap->length];
