@@ -120,3 +120,4 @@ access.log
 *.so
 build.log
 .cpy_copied
+*.cltmp
