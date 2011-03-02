@@ -647,7 +647,7 @@ static void runEjs(HttpQueue *q)
     HttpConn        *conn;
 
     conn = q->conn;
-    if (!conn->abortPipeline) {
+    if (!conn->connError) {
         if ((req = httpGetConnContext(conn)) == 0) {
             if ((sp = getServerContext(conn)) == 0) {
                 return;
