@@ -8,11 +8,22 @@ if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
 } else {
 
-    //  Error stream
+    //  error response property
+    cmd = Cmd("/bin/ls /asdf", {detach: true})
+    let gotError
+    cmd.on("error", function(event, c) {
+        gotError = true
+    })
+    cmd.wait()
+    assert(gotError)
+    assert(cmd.error.contains("ls:"))
+    assert(cmd.error.contains("/asdf: No such file or directory"))
+
+    //  ErrorStream
     cmd = Cmd("/bin/ls /asdf", {detach: true})
     let msg = new ByteArray
     cmd.on("error", function(event, c) {
-        cmd.error.read(msg, -1)
+        cmd.errorStream.read(msg, -1)
     })
     cmd.wait()
     assert(msg.available > 0)

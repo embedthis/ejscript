@@ -530,9 +530,9 @@ FUTURE & KEEP
         native function reset(): Void
 
         /** 
-            Response body content. The first time this property is read, the response content will be read and buffered.
-            Don't use this property in async mode as it will block. Set to the response as a string of characters. If 
-            the response has no body content, the empty string will be returned.
+            Response body content as a string. The first time this property is read, the response content will be read 
+            and buffered.  Don't use this property in async mode as it will block. Set to the response as a string of 
+            characters. If the response has no body content, the empty string will be returned.
             @throws IOError if an I/O error occurs.
          */
         native function get response(): String

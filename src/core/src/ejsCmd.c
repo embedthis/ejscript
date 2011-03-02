@@ -41,9 +41,9 @@ static EjsObj *cmd_close(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 
 
 /**
-    function get error(): Stream
+    function get errorStream(): Stream
  */
-static EjsByteArray *cmd_error(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
+static EjsByteArray *cmd_errorStream(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
     if (cmd->error == 0) {
         cmd->error = ejsCreateByteArray(ejs, -1);
@@ -145,9 +145,12 @@ static EjsObj *cmd_on(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     ejsAddObserver(ejs, &cmd->emitter, argv[0], argv[1]);
     if (!cmd->async) {
         cmd->async = 1;
+#if UNUSED
         if (cmd->mc) {
+            //  MOB -- but handlers always added anyway
             mprAddCmdHandlers(cmd->mc);
         }
+#endif
     }
     return 0;
 }
@@ -297,23 +300,14 @@ static void cmdIOCallback(MprCmd *mc, int channel, void *data)
     len = mprReadCmd(mc, channel, mprGetBufEnd(buf), space);
     if (len <= 0) {
         if (len == 0 || (len < 0 && !(errno == EAGAIN || EWOULDBLOCK))) {
-            if (channel == MPR_CMD_STDOUT) {
-                /*
-                    Now that stdout is complete, enable stderr to receive an EOF or any error output.
-                    This is serialized to eliminate both stdin and stdout events on different threads at the same time.
-                    Do before closing as the stderr event may come on another thread and we want to ensure avoid locking.
-                 */
-                mprCloseCmdFd(mc, channel);
-                mprEnableCmdEvents(mc, MPR_CMD_STDERR);
-            } else {
-                mprCloseCmdFd(mc, channel);
-            }
+            mprCloseCmdFd(mc, channel);
         }
     } else {
         mprAdjustBufEnd(buf, len);
     }
-    mprEnableCmdEvents(mc, channel);
-
+    if (len > 0) {
+        mprEnableCmdEvents(mc, channel);
+    }
     if (channel == MPR_CMD_STDERR) {
         if (cmd->error == 0) {
             cmd->error = ejsCreateByteArray(cmd->ejs, -1);
@@ -366,9 +360,6 @@ static int parseOptions(Ejs *ejs, EjsCmd *cmd)
         if ((value = ejsGetPropertyByName(ejs, cmd->options, EN("timeout"))) != 0) {
             cmd->timeout = ejsGetInt(ejs, value);
         }
-    }
-    if (cmd->async) {
-        flags |= MPR_CMD_ASYNC;
     }
     return flags;
 }
@@ -450,6 +441,10 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     flags = parseOptions(ejs, cmd);
 
+#if UNUSED
+    //  MOB - temp only
+    flags |= MPR_CMD_ASYNC;
+#endif
     if ((rc = mprStartCmd(cmd->mc, cmd->argc, cmd->argv, env, flags)) < 0) {
         if (rc == MPR_ERR_CANT_ACCESS) {
             err = "Can't access command";
@@ -465,14 +460,16 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     if (!(flags & MPR_CMD_DETACH)) {
         mprAssert(cmd->mc);
+        mprFinalizeCmd(cmd->mc);
         if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
-            //  MOB - more diagnostics - why cant wait
             ejsThrowStateError(ejs, "Timeout %d msec waiting for command to complete: %s", cmd->timeout, cmd->argv[0]);
+            return 0;
         }
         mprAssert(cmd->mc);
         if (cmd->throw) {
-            if (mprGetCmdExitStatus(cmd->mc, &status) < 0 || status != 0) {
-                ejsThrowIOError(ejs, "Command failure: %s", mprGetBufStart(cmd->stderrBuf));
+            status = mprGetCmdExitStatus(cmd->mc);
+            if (status != 0) {
+                ejsThrowIOError(ejs, "Command failure: %s, exit status %d", mprGetBufStart(cmd->stderrBuf), status);
             }
         }
     }
@@ -485,8 +482,6 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
  */
 static EjsNumber *cmd_status(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 {
-    int     status;
-
     if (cmd->mc == 0) {
         ejsThrowStateError(ejs, "No active command");
         return 0;
@@ -494,14 +489,8 @@ static EjsNumber *cmd_status(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     if (mprWaitForCmd(cmd->mc, cmd->timeout) < 0) {
         ejsThrowStateError(ejs, "Command still active");
     }
-    if (mprGetCmdExitStatus(cmd->mc, &status) < 0) {
-        ejsThrowStateError(ejs, "Status not ready to collect");
-        return 0;
-    }
-    return ejsCreateNumber(ejs, status);
+    return ejsCreateNumber(ejs, mprGetCmdExitStatus(cmd->mc));
 }
-
-
 
 
 /**
@@ -523,8 +512,6 @@ static EjsObj *cmd_stop(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     return ejs->trueValue;
 }
-
-
 
 
 /**
@@ -669,7 +656,7 @@ void ejsConfigureCmdType(Ejs *ejs)
     ejsBindMethod(ejs, type, ES_Cmd_exec, cmd_exec);
 
     ejsBindMethod(ejs, prototype, ES_Cmd_close, cmd_close);
-    ejsBindAccess(ejs, prototype, ES_Cmd_error, cmd_error, 0);
+    ejsBindAccess(ejs, prototype, ES_Cmd_errorStream, cmd_errorStream, 0);
     ejsBindAccess(ejs, prototype, ES_Cmd_env, cmd_env, cmd_set_env);
     ejsBindMethod(ejs, prototype, ES_Cmd_finalize, cmd_finalize);
     ejsBindMethod(ejs, prototype, ES_Cmd_flush, cmd_flush);

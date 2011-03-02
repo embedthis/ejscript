@@ -188,6 +188,10 @@ struct HttpUri;
 #define HTTP_CODE_CLIENT_ERROR              551
 #define HTTP_CODE_LIMIT_ERROR               552
 
+#define HTTP_CODE_MASK                      0xFFFF
+#define HTTP_ABORT                          0x10000         /* Abort the request, immediately close the conn */
+#define HTTP_CLOSE                          0x20000         /* Close the conn at the completion of the request */
+
 typedef int (*HttpRangeProc)(struct HttpQueue *q, struct HttpPacket *packet);
 typedef cchar *(*HttpGetPassword)(struct HttpAuth *auth, cchar *realm, cchar *user);
 typedef bool (*HttpValidateCred)(struct HttpAuth *auth, cchar *realm, char *user, cchar *pass, cchar *required, char **msg);
@@ -1281,7 +1285,6 @@ extern void httpHandleOptionsTrace(HttpQueue *q);
 /*  
     Connection / Request states
  */
-//  MOB - make origin zero
 #define HTTP_STATE_BEGIN            1       /**< Ready for a new request */
 #define HTTP_STATE_CONNECTED        2       /**< Connection received or made */
 #define HTTP_STATE_FIRST            3       /**< First request line has been parsed */
@@ -1363,18 +1366,11 @@ typedef struct HttpConn {
 
     int             state;                  /**< Connection state */
     int             flags;                  /**< Connection flags */
-    int             abortPipeline;          /**< Connection errors (not proto errors) abort the pipeline */
     int             advancing;              /**< In httpProcess (reentrancy prevention) */
-    int             complete;               /**< Request is complete and should step through all remaining states */
-    int             writeComplete;          /**< All write data has been sent for the current request */
+    int             writeComplete;          /**< All write data has been sent (set by connectors) */
     int             error;                  /**< A request error has occurred */
     int             connError;              /**< A connection error has occurred */
-    int             protoError;             /**< A protocol error has occurred - try to respond */
 
-#if UNUSED
-    //  MOB implement
-    int             threaded;               /**< Request running in a thread */
-#endif
     HttpLimits      *limits;                /**< Service limits */
     Http            *http;                  /**< Http service object  */
     MprHashTable    *stages;                /**< Stages in pipeline */
@@ -1392,7 +1388,7 @@ typedef struct HttpConn {
     HttpQueue       *writeq;                /**< Start of the write pipeline */
     MprTime         started;                /**< When the connection started */
     MprTime         lastActivity;           /**< Last activity on the connection */
-    MprEvent        runEvent;               /**< Event when running the handler */
+    MprEvent        *timeout;               /**< Connection or request has timed out */
     void            *context;               /**< Embedding context */
     char            *boundary;              /**< File upload boundary */
     char            *errorMsg;              /**< Error message for the last request (if any) */
@@ -1403,7 +1399,7 @@ typedef struct HttpConn {
     int             followRedirects;        /**< Follow redirects for client requests */
     int             keepAliveCount;         /**< Count of remaining keep alive requests for this connection */
     int             http10;                 /**< Using legacy HTTP/1.0 */
-    int             startingThread;         /**< Need to allocate worker thread */
+
     int             port;                   /**< Remote port */
     int             retries;                /**< Client request retries */
     int             secure;                 /**< Using https */
@@ -1515,7 +1511,6 @@ extern void httpDiscardTransmitData(HttpConn *conn);
     @ingroup HttpTx
  */
 extern void httpError(HttpConn *conn, int status, cchar *fmt, ...);
-extern void httpLimitError(HttpConn *conn, int status, cchar *fmt, ...);
 
 /**
     Get the async mode value for the connection
@@ -1732,6 +1727,8 @@ extern void httpMatchHost(HttpConn *conn);
 extern void httpMatchHandler(HttpConn *conn);
 
 extern char *httpGetExtension(HttpConn *conn);
+extern void httpConnTimeout(HttpConn *conn);
+extern void httpDisconnect(HttpConn *conn);
 
 /**
     Aliases 
@@ -2215,11 +2212,9 @@ extern cvoid *httpGetStageData(HttpConn *conn, cchar *key);
 extern HttpRx *httpCreateRx(HttpConn *conn);
 extern void httpDestroyRx(HttpRx *rx);
 extern void httpCloseRx(struct HttpConn *conn);
-extern void httpConnError(struct HttpConn *conn, int status, cchar *fmt, ...);
 extern bool httpContentNotModified(HttpConn *conn);
 extern HttpRange *httpCreateRange(HttpConn *conn, int start, int end);
 extern int  httpMapToStorage(HttpConn *conn);
-extern void httpProtocolError(struct HttpConn *conn, int status, cchar *fmt, ...);
 extern void httpProcess(HttpConn *conn, HttpPacket *packet);
 extern void httpProcessWriteEvent(HttpConn *conn);
 extern bool httpProcessCompletion(HttpConn *conn);
@@ -2943,7 +2938,7 @@ extern void httpSetHostLogRotation(HttpHost *host, int logCount, int logSize);
 extern void httpSetHostName(HttpHost *host, cchar *name);
 extern void httpSetHostProtocol(HttpHost *host, cchar *protocol);
 extern void httpSetHostTrace(HttpHost *host, int level, int mask);
-extern void httpSetHostTraceFilter(HttpHost *host, int len, cchar *include, cchar *exclude);
+extern void httpSetHostTraceFilter(HttpHost *host, ssize len, cchar *include, cchar *exclude);
 extern void httpSetHostServerRoot(HttpHost *host, cchar *dir);
 extern int  httpSetupTrace(HttpHost *host, cchar *ext);
 extern void httpAddHostToServer(HttpServer *server, HttpHost *host);
