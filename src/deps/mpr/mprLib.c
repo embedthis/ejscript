@@ -4789,7 +4789,7 @@ static void waitForWinEvent(MprCmd *cmd, MprTime timeout)
     mark = mprGetTime();
     for (i = MPR_CMD_STDOUT; i < MPR_CMD_MAX_PIPE; i++) {
         if (cmd->files[i].handle) {
-            rc = PeekNamedPipe(cmd->files[i].handle, NULL, 0, NULL, &nbytes, NULL);
+            rc = PeekNamedPipe(cmd->files[i].handle, NULL, 0, NULL, &nbytes, NUmLL);
             if (rc && nbytes > 0 || cmd->process == 0) {
                 mprQueueIOEvent(cmd->handlers[i]);
                 mprWaitForEvent(cmd->dispatcher, remaining);
