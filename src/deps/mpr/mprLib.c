@@ -4789,7 +4789,7 @@ static void waitForWinEvent(MprCmd *cmd, MprTime timeout)
     mark = mprGetTime();
     for (i = MPR_CMD_STDOUT; i < MPR_CMD_MAX_PIPE; i++) {
         if (cmd->files[i].handle) {
-            rc = PeekNamedPipe(cmd->files[i].handle, NULL, 0, NULL, &nbytes, NUmLL);
+            rc = PeekNamedPipe(cmd->files[i].handle, NULL, 0, NULL, &nbytes, NULL);
             if (rc && nbytes > 0 || cmd->process == 0) {
                 mprQueueIOEvent(cmd->handlers[i]);
                 mprWaitForEvent(cmd->dispatcher, remaining);
@@ -16932,6 +16932,7 @@ static void signalHandler(int signo, siginfo_t *info, void *arg)
     maskSignal(signo);
     ip = &ssp->info[signo];
     ip->siginfo = *info;
+    ip->siginfo.si_signo = signo;
     ip->arg = arg;
     ip->triggered = 1;
     ssp->hasSignals = 1;
@@ -17095,7 +17096,7 @@ static void standardSignalHandler(void *ignored, MprSignal *sp)
     if (sp->signo == SIGTERM) {
         mprTerminate(MPR_EXIT_GRACEFUL);
 
-    } else if (sp->signo == SIGABRT) {
+    } else if (sp->signo == SIGINT) {
         mprTerminate(MPR_EXIT_IMMEDIATE);
 
     } else if (sp->signo == SIGPIPE || sp->signo == SIGXFSZ) {
