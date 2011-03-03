@@ -10,9 +10,9 @@ if (!Path("/bin").exists) {
 
     //  Wait for completion
     let mark = new Date
-    cmd = Cmd("/bin/sleep 2", {detach: true})
+    cmd = Cmd("/bin/sleep 1", {detach: true})
     assert(cmd.wait())
-    assert(mark.elapsed >= 2000)
+    assert(mark.elapsed >= 900)
 
     //  Timeout in Wait
     let mark = new Date

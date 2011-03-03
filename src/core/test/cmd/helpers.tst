@@ -10,6 +10,7 @@ if (!Path("/bin").exists) {
 
     //  Cmd.run
     assert(App.dir.same(Cmd.run("/bin/pwd").trim()))
+    assert(App.dir.same(Cmd.run("pwd").trim()))
 
     //  Cmd.sh
     assert(App.dir.same(Cmd.sh("pwd")))
@@ -17,9 +18,9 @@ if (!Path("/bin").exists) {
     assert(deserialize(response) == "./args,a,b,c")
 
     //  sh quoting
-    response = Cmd.sh(['./args', 'a b', 'c'])
-    assert(deserialize(response) == "./args,a b,c")
+    response = Cmd.sh([ejs, 'args', 'a b', 'c'])
+    assert(deserialize(response) == "args,a b,c")
 
-    response = Cmd.sh('./args "a b" c')
+    response = Cmd.sh(ejs + ' ./args "a b" c')
     assert(deserialize(response) == "./args,a b,c")
 }

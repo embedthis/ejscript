@@ -2994,6 +2994,7 @@ typedef struct EjsService {
     MprList         *vmlist;
     MprHashTable    *nativeModules;
     Http            *http;
+    uint            dontExit: 1;        /**< Prevent App.exit() from exiting */
 #if FUTURE
     EjsIntern       intern;             /**< Interned Unicode string hash - shared over all interps */
 #endif

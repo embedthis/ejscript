@@ -2116,7 +2116,9 @@ int ejsContainsString(Ejs *ejs, EjsString *sp, EjsString *pat)
 
 char *ejsToMulti(Ejs *ejs, EjsAny *ev)
 {
-    mprAssert(ev);
+    if (ev == 0) {
+        ev = ejs->emptyString;
+    }
     if (!ejsIsString(ejs, ev)) {
         if ((ev = ejsCast(ejs, ev, ejs->stringType)) == 0) {
             return "";

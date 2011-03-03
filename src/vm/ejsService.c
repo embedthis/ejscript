@@ -95,6 +95,7 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
     ejs->argv = argv;
+    ejs->dontExit = sp->dontExit;
     ejs->flags |= (flags & (EJS_FLAG_NO_INIT | EJS_FLAG_DOC));
 
     /*
@@ -536,7 +537,7 @@ int ejsEvalModule(cchar *path)
     } else if (ejsRun(ejs) < 0) {
         status = EJS_ERR;
     }
-    mprDestroy(MPR_GRACEFUL);
+    mprDestroy(MPR_EXIT_DEFAULT);
     return status;
 }
 
@@ -1078,6 +1079,16 @@ EjsAny *ejsGetSpecial(Ejs *ejs, int index)
 {
     mprAssert(index < EJS_MAX_SPECIAL);
     return ejs->values[index];
+}
+
+void ejsDisableExit(Ejs *ejs)
+{
+    EjsService  *sp;
+
+    sp = MPR->ejsService;
+    if (sp) {
+        sp->dontExit = 1;
+    }
 }
 
 /*

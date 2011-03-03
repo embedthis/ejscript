@@ -315,6 +315,10 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
         if (!ejs->joining) {
             break;
         }
+        if (mprShouldAbortRequests()) {
+            ejsThrowStateError(ejs, "Program instructed to exit");
+            break;
+        }
         mprWaitForEvent(ejs->dispatcher, remaining);
         remaining = (int) mprGetRemainingTime(mark, timeout);
     } while (remaining > 0 && !ejs->exception);

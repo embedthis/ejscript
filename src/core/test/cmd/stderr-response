@@ -1,0 +1,3 @@
+#!/bin/sh
+# Send output to stderr
+find /bin >&2

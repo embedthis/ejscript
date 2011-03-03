@@ -315,7 +315,7 @@ MAIN(ejsMain, int argc, char **argv)
     }
 #endif
     ejsDestroy(ejs);
-    mprDestroy(MPR_GRACEFUL);
+    mprDestroy(MPR_EXIT_DEFAULT);
     return err;
 }
 
