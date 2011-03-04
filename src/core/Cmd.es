@@ -284,7 +284,9 @@ module ejs {
                     Cygwin will parse as  argv[1] == c:/path \a \b
                     Windows will parse as argv[1] == c:/path "a b"
              */
-            command = command.toString().trimEnd('\n').replace(/\"/g, '\\\"')   // .replace(/\'/g, '\\\'')
+            if (Config.OS == "WIN") {
+                command = command.toString().trimEnd('\n').replace(/\"/g, '\\\"')   // .replace(/\'/g, '\\\'')
+            }
             return run(["/bin/sh", "-c", command], data).trimEnd()
         }
     }
