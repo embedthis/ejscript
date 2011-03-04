@@ -5068,14 +5068,15 @@ static int sanitizeArgs(MprCmd *cmd, int argc, char **argv, char **env)
 
 #if BLD_UNIX_LIKE
     char    *cp, **envp;
-    int     index, i, hasPath, hasLibPath;
+    int     ecount, index, i, hasPath, hasLibPath;
 
     cmd->argv = argv;
     cmd->argc = argc;
     cmd->env = 0;
 
     if (env) {
-        if ((envp = mprAlloc((i + 3) * sizeof(char*))) == NULL) {
+        for (ecount = 0; env && env[ecount]; ecount++) ;
+        if ((envp = mprAlloc((ecount + 3) * sizeof(char*))) == NULL) {
             mprAssert(!MPR_ERR_MEMORY);
             return MPR_ERR_MEMORY;
         }
@@ -5925,7 +5926,7 @@ int mprWaitForCond(MprCond *cp, MprTime timeout)
                 rc = 0;
             } else if (rc != 0) {
                 mprAssert(rc == 0);
-                mprError("pthread_cond_timedwait error rc %d errno %d", rc, errno);
+                mprError("pthread_cond_timedwait error rc %d", rc);
                 rc = MPR_ERR;
             }
 #endif
