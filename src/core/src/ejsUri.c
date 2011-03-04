@@ -1145,6 +1145,7 @@ EjsUri *ejsCreateUriFromParts(Ejs *ejs, cchar *scheme, cchar *host, int port, cc
 static void manageUri(EjsUri *up, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        ejsManagePot(up, flags);
         mprMark(up->uri);
     }
 }
