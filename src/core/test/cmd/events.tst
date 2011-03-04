@@ -2,7 +2,7 @@
     events.tst - Test I/O events: readable, writable, complete, error
  */
 
-let ejs = App.exePath
+let ejs = App.exePath.portable
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
@@ -43,6 +43,7 @@ if (!Path("/bin").exists) {
     cmd.on("error", function(event, c) {
         gotEvent = event
     })
+    cmd.finalize()
     cmd.wait()
     assert(gotEvent == "error")
 }

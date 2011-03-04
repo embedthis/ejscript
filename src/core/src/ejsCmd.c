@@ -441,10 +441,6 @@ static EjsObj *cmd_start(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
     }
     flags = parseOptions(ejs, cmd);
 
-#if UNUSED
-    //  MOB - temp only
-    flags |= MPR_CMD_ASYNC;
-#endif
     if ((rc = mprStartCmd(cmd->mc, cmd->argc, cmd->argv, env, flags)) < 0) {
         if (rc == MPR_ERR_CANT_ACCESS) {
             err = "Can't access command";
@@ -545,6 +541,7 @@ static EjsObj *cmd_wait(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         ejsThrowStateError(ejs, "No active command");
         return 0;
     }
+    /* NOTE: mprWaitForCmd will auto-finalize */
     if (mprWaitForCmd(cmd->mc, timeout) < 0) {
         return ejs->falseValue;
     }

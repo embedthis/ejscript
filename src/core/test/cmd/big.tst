@@ -2,7 +2,7 @@
     big.tst - Write big data with writable events
  */
 
-let ejs = App.exePath
+let ejs = App.exePath.portable
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
@@ -13,6 +13,7 @@ if (!Path("/bin").exists) {
     for (i in 1000) {
         data.write(i + ": aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")
     }
+    let finalized
     let count = data.available
     cmd = new Cmd
     cmd.start("/bin/cat", {detach: true})
@@ -21,9 +22,14 @@ if (!Path("/bin").exists) {
         data.readPosition += len
         if (data.available == 0) {
             cmd.finalize()
+            finalized = true
         }
     })
-    cmd.wait()
-    assert(cmd.response.length == count)
-    assert(cmd.status == 0)
+    let completed = cmd.wait(5000)
+    assert(completed)
+    assert(finalized)
+    if (completed) {
+        assert(cmd.response.length == count)
+        assert(cmd.status == 0)
+    }
 }

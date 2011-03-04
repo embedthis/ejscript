@@ -2,7 +2,7 @@
     error.tst
  */
 
-let ejs = App.exePath
+let ejs = App.exePath.portable
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
@@ -14,6 +14,7 @@ if (!Path("/bin").exists) {
     cmd.on("error", function(event, c) {
         gotError = true
     })
+    cmd.finalize()
     cmd.wait()
     assert(gotError)
     assert(cmd.error.contains("ls:"))
@@ -25,6 +26,7 @@ if (!Path("/bin").exists) {
     cmd.on("error", function(event, c) {
         cmd.errorStream.read(msg, -1)
     })
+    cmd.finalize()
     cmd.wait()
     assert(msg.available > 0)
     assert(msg.toString().contains("ls:"))

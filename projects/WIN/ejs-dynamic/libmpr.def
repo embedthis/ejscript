@@ -13,7 +13,6 @@ EXPORTS
   itos
   mprAcceptSocket
   mprActivateWorker
-  mprAddCmdHandlers
   mprAddDuplicateKey
   mprAddFileSystem
   mprAddItem
@@ -24,6 +23,7 @@ EXPORTS
   mprAddNullToBuf
   mprAddRoot
   mprAddSocketHandler
+  mprAddStandardSignals
   mprAddTestGroup
   mprAdjustBufEnd
   mprAdjustBufStart
@@ -75,6 +75,7 @@ EXPORTS
   mprCreateModuleService
   mprCreateNotifierService
   mprCreateOsService
+  mprCreateSignalService
   mprCreateSocket
   mprCreateSocketService
   mprCreateSpinLock
@@ -271,7 +272,6 @@ EXPORTS
   mprLookupModule
   mprLookupModuleData
   mprMakeArgv
-  mprMakeCmdIO
   mprMakeDir
   mprMakeLink
   mprMakeTime
@@ -291,7 +291,6 @@ EXPORTS
   mprParseTime
   mprPathExists
   mprPeekFileChar
-  mprPollCmd
   mprPopItem
   mprPrintMem
   mprPrintf
@@ -315,7 +314,6 @@ EXPORTS
   mprReadRegistry
   mprReadSocket
   mprRealloc
-  mprReapCmd
   mprRecallWaitHandler
   mprRefillBuf
   mprRelayEvent
@@ -330,6 +328,7 @@ EXPORTS
   mprRemoveNotifier
   mprRemoveRangeOfItems
   mprRemoveRoot
+  mprRemoveSignalHandler
   mprRemoveSocketHandler
   mprRemoveWaitHandler
   mprReportTestResults
@@ -355,6 +354,7 @@ EXPORTS
   mprSeekFile
   mprSendFileToSocket
   mprServiceEvents
+  mprServiceSignals
   mprServiceWinIO
   mprServicesAreIdle
   mprSetAltLogData
@@ -368,6 +368,7 @@ EXPORTS
   mprSetCurrentThreadPriority
   mprSetDebugMode
   mprSetDomainName
+  mprSetExitStrategy
   mprSetHostName
   mprSetHwnd
   mprSetIdleCallback
@@ -405,6 +406,8 @@ EXPORTS
   mprSetThreadStackSize
   mprSetWinMsgCallback
   mprSetWorkerStackSize
+  mprShouldAbortRequests
+  mprShouldDenyNewRequests
   mprSignalCond
   mprSignalDispatcher
   mprSignalMultiCond
@@ -433,6 +436,7 @@ EXPORTS
   mprStopModule
   mprStopModuleService
   mprStopOsService
+  mprStopSignalService
   mprStopThreadService
   mprTerminate
   mprTrimPathExtension

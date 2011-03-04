@@ -2,7 +2,7 @@
     search.tst - Use search paths to locate executable
  */
 
-let ejs = App.exePath
+let ejs = App.exePath.portable
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")

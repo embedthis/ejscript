@@ -4,18 +4,15 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
 
-EXPORT_OBJECTS	:= 0
 BUILD_CROSS		:= 0
 
 include 		.makedep
 
+MAKE_IFLAGS		+= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS) $(BLD_PCRE_IFLAGS)
 TARGETS			+= $(BLD_BIN_DIR)/genbyte$(BLD_EXE)
 
 compileExtra: 	$(TARGETS) 
 
-#
-#	Make the compiler
-#
 $(BLD_BIN_DIR)/genbyte$(BLD_EXE): $(OBJECTS)
 	bld --exe $(BLD_BIN_DIR)/genbyte$(BLD_EXE) --search "$(BLD_MPR_LIBPATHS)" --libs "$(BLD_MPR_LIBS)" "genbyte$(BLD_OBJ)"
 

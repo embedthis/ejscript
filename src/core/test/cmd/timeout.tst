@@ -2,7 +2,7 @@
     timeout.tst
  */
 
-let ejs = App.exePath
+let ejs = App.exePath.portable
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")

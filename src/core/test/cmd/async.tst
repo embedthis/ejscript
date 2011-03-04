@@ -2,7 +2,7 @@
     async.tst
  */
 
-let ejs = App.exePath
+let ejs = App.exePath.portable
 
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
@@ -17,6 +17,7 @@ if (!Path("/bin").exists) {
         assert(this == global)
         cmd.read(response, -1)
     })
-    cmd.wait()
+    cmd.finalize()
+    assert(cmd.wait(5000))
     assert(response.toString().trim() == "Hello World")
 }

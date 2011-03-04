@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     dir = (argc == 2) ? argv[1] : ".";
     genByteCodeHeader(mpr, dir);
     genByteGotoHeader(mpr, dir);
-    mprFree(mpr);
+    mprDestroy(mpr);
     return 0;
 }
 
@@ -50,7 +50,7 @@ static void genByteCodeHeader(Mpr *mpr, cchar *dir)
     char        *path;
 
     path = mprJoinPath(mpr, dir, "ejsByteCode.h");
-    file = mprOpen(mpr, path, O_WRONLY | O_CREAT | O_TRUNC, 0664);
+    file = mprOpenFile(mpr, path, O_WRONLY | O_CREAT | O_TRUNC, 0664);
     if (file == 0) {
         mprError(mpr, "Can't open %s", path);
         return;
@@ -63,7 +63,7 @@ static void genByteCodeHeader(Mpr *mpr, cchar *dir)
     }
     mprFprintf(file, "} EjsOpCode;\n");
     footer(file);
-    mprFree(file);
+    mprCloseFile(file);
 }
 
 
@@ -74,7 +74,7 @@ static void genByteGotoHeader(Mpr *mpr, cchar *dir)
     char        *path;
 
     path = mprJoinPath(mpr, dir, "ejsByteGoto.h");
-    file = mprOpen(mpr, path, O_WRONLY | O_CREAT | O_TRUNC, 0664);
+    file = mprOpenFile(mpr, path, O_WRONLY | O_CREAT | O_TRUNC, 0664);
     if (file == 0) {
         mprError(mpr, "Can't open %s", path);
         return;
@@ -87,7 +87,7 @@ static void genByteGotoHeader(Mpr *mpr, cchar *dir)
     }
     mprFprintf(file, "};\n");
     // footer(file);
-    mprFree(file);
+    mprCloseFile(file);
 }
 
 
