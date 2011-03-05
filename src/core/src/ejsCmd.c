@@ -109,10 +109,12 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
             pid = cmd->mc->pid;
         } else {
             ejsThrowStateError(ejs, "No process to kill");
+            return 0;
         }
     } else if (argc >= 1) {
         pid = ejsGetInt(ejs, argv[0]);
-    } else if (argc >= 2) {
+    } 
+    if (argc >= 2) {
         signal = ejsGetInt(ejs, argv[0]);
     }
 #if BLD_WIN_LIKE

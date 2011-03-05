@@ -125,8 +125,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     cchar       *ext;
     char        *msg;
     int         i, j, next, nextModule, lflags, rc, frozen;
-//  MOB Debug
-    MprThread *tp = mprGetCurrentThread();
 
     ejs = cp->ejs;
     if ((nodes = mprCreateList(-1, 0)) == 0) {
@@ -157,8 +155,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
     /*
         Compile source files and load any module files
      */
-    mprAssert(tp->yielded == 0);
-    
     for (i = 0; i < argc && !cp->fatalError; i++) {
         ext = mprGetPathExtension(argv[i]);
         if (scasecmp(ext, "mod") == 0 || scasecmp(ext, BLD_SHOBJ) == 0) {
@@ -188,8 +184,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
             //  MOB -- does this really need to be added?
             mprAddItem(nodes, 0);
         } else  {
-//  MOB -- freeze not required unless evaling in AST phase
-            mprAssert(tp->yielded == 0);
             mprAssert(!MPR->marking);
             
             //  MOB - move this deeper (gradually)
@@ -199,8 +193,6 @@ static int compileInner(EcCompiler *cp, int argc, char **argv)
 // printf("<<<<<<<<<<<< AFTER parse\n");
             ejsFreeze(ejs, frozen);
         }
-        mprAssert(tp->yielded == 0);
-
         mprAssert(!MPR->marking);
         mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->heap.dead));
 
