@@ -21,7 +21,7 @@ http.on("close", function (event, http) {
 http.get(HTTP + "/async.es")
 let mark = new Date
 while (!complete && mark.elapsed < TIMEOUT) {
-    App.eventLoop(TIMEOUT - mark.elapsed, 1)
+    App.run(TIMEOUT - mark.elapsed, 1)
 }
 
 assert(http.status == 200)

@@ -54,7 +54,7 @@ http.close()
 //  Delayed-finalize 
 events = {}
 let http = fetch(HTTP + "/delayed-finalize")
-for (i = 0; i < 1000 && !events.close; i++) App.eventLoop(10, 1)
+for (i = 0; i < 1000 && !events.close; i++) App.run(10, 1)
 assert(events.close && events.writable)
 assert(!(events.error && events.readable))
 http.close()
@@ -65,7 +65,7 @@ events = {}
 let http = new Http
 http.post(HTTP + "/post", "Some Data")
 http.wait()
-for (i = 0; i < 1000 && !events.close; i++) App.eventLoop(10, 1)
+for (i = 0; i < 1000 && !events.close; i++) App.run(10, 1)
 assert(events.close && events.readable && events.writable)
 assert(!(events.error))
 http.close()
@@ -79,7 +79,7 @@ http.write("Some")
 http.flush()
 //  close without finalization
 http.close()
-for (i = 0; i < 1000 && !events.close; i++) App.eventLoop(10, 1)
+for (i = 0; i < 1000 && !events.close; i++) App.run(10, 1)
 assert(events.close && events.error && events.readable && events.writable)
 http.close()
 

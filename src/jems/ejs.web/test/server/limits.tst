@@ -26,7 +26,7 @@ http = new Http
 http.get(HTTP)
 
 //  Pump events to allow rhe requests to be serviced
-App.eventLoop(250)
+App.run(250)
 try {
     //  This should throw because the request limit will prevent the connection from succeeding.
     http.status
