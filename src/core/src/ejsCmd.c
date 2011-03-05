@@ -115,7 +115,7 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
         pid = ejsGetInt(ejs, argv[0]);
     } 
     if (argc >= 2) {
-        signal = ejsGetInt(ejs, argv[0]);
+        signal = ejsGetInt(ejs, argv[1]);
     }
 #if BLD_WIN_LIKE
 {
