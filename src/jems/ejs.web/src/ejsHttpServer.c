@@ -491,10 +491,10 @@ static void stateChangeNotifier(HttpConn *conn, int state, int notifyFlags)
         /*  IO event notification for the request.  */
         if (req && req->emitter) {
             if (notifyFlags & HTTP_NOTIFY_READABLE) {
-                ejsSendEvent(ejs, req->emitter, "readable", NULL, (EjsObj*) req);
+                ejsSendEvent(ejs, req->emitter, "readable", NULL, req);
             } 
             if (notifyFlags & HTTP_NOTIFY_WRITABLE) {
-                ejsSendEvent(ejs, req->emitter, "writable", NULL, (EjsObj*) req);
+                ejsSendEvent(ejs, req->emitter, "writable", NULL, req);
             }
         }
         break;
@@ -533,16 +533,10 @@ static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
         if (rx->form) {
             httpAddVarsFromQueue(q);
         }
-        HTTP_NOTIFY(q->conn, 0, HTTP_NOTIFY_READABLE);
-
-#if UNUSED
-    } else if (conn->writeComplete) {
-        httpFreePacket(q, packet);
-#endif
     } else {
         httpJoinPacketForService(q, packet, 0);
-        HTTP_NOTIFY(q->conn, 0, HTTP_NOTIFY_READABLE);
     }
+    HTTP_NOTIFY(q->conn, 0, HTTP_NOTIFY_READABLE);
 }
 
 
@@ -640,6 +634,9 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 }
 
 
+/*
+    Note: this may be called multiple times for async, long-running requests.
+ */
 static void runEjs(HttpQueue *q)
 {
     EjsHttpServer   *sp;
@@ -677,13 +674,19 @@ static void startEjs(HttpQueue *q)
 }
 
 
+//  MOB - does this get called once or multiple times?
 static void processEjs(HttpQueue *q)
 {
+    HttpConn    *conn;
     HttpRx      *rx;
 
-    rx = q->conn->rx;
+    conn = q->conn;
+    rx = conn->rx;
     if (rx->form || (rx->flags & HTTP_UPLOAD)) {
         runEjs(q);
+    }
+    if (conn->error) {
+        httpFinalize(conn);
     }
 }
 

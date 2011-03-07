@@ -7,6 +7,7 @@ const WAIT_TIMEOUT = 30000
 
 public function fetch(url: String, status: Number = Http.Ok): Http {
     let http = new Http
+    http.retries = 0
     http.get(url)
     http.wait(WAIT_TIMEOUT)
     if (http.status != status) {

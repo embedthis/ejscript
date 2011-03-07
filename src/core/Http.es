@@ -214,6 +214,7 @@ module ejs {
         native function get async(): Boolean
         native function set async(enable: Boolean): Void
 
+        //  MOB - does this do an abortive close?
         /** 
             @duplicate Stream.close 
             This closes any open network connection and resets the http object to be ready for another connection. 

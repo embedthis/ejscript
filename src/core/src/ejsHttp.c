@@ -123,6 +123,8 @@ EjsObj *http_available(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
 {
     if (hp->conn) {
+        //  MOB - should this do more to 
+        httpFinalize(hp->conn);
         sendHttpCloseEvent(ejs, hp);
         httpDestroyConn(hp->conn);
         hp->conn = httpCreateConn(ejs->http, NULL, ejs->dispatcher);
@@ -130,9 +132,6 @@ static EjsObj *http_close(Ejs *ejs, EjsHttp *hp, int argc, EjsObj **argv)
         httpSetConnNotifier(hp->conn, httpNotify);
         httpSetConnContext(hp->conn, hp);
     }
-#if UNUSED
-    mprRemoveRoot(hp);
-#endif
     return 0;
 }
 
@@ -914,16 +913,9 @@ static EjsObj *startHttpRequest(Ejs *ejs, EjsHttp *hp, char *method, int argc, E
         ejsThrowIOError(ejs, "Can't issue request for \"%s\"", hp->uri);
         return 0;
     }
-#if UNUSED
-    mprAddRoot(hp);
-#endif
-
     if (mprGetBufLength(hp->requestContent) > 0) {
         nbytes = httpWriteBlock(conn->writeq, mprGetBufStart(hp->requestContent), mprGetBufLength(hp->requestContent));
         if (nbytes < 0) {
-#if UNUSED
-            mprRemoveRoot(hp);
-#endif
             ejsThrowIOError(ejs, "Can't write request data for \"%s\"", hp->uri);
             return 0;
         } else if (nbytes > 0) {
@@ -970,9 +962,6 @@ static void httpNotify(HttpConn *conn, int state, int notifyFlags)
             }
             sendHttpCloseEvent(ejs, hp);
         }
-#if UNUSED
-        mprRemoveRoot(hp);
-#endif
         break;
 
     case 0:
@@ -1262,7 +1251,7 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
     if (!conn->async) {
         httpFinalize(conn);
     }
-    while (conn->state < state && count < conn->retries && redirectCount < 16 && 
+    while (conn->state < state && count <= conn->retries && redirectCount < 16 && 
            !conn->error && !ejs->exiting && !mprIsStopping(conn)) {
         count++;
         if ((rc = httpWait(conn, HTTP_STATE_PARSED, remaining)) == 0) {
