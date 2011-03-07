@@ -7719,10 +7719,10 @@ static EcNode *parseParameter(EcCompiler *cp, bool rest)
 
     np = parseParameterKind(cp);
     parameter = parseTypedPattern(cp);
-    parameter->qname.space = cp->ejs->emptyString;
-
+    if (parameter) {
+        parameter->qname.space = cp->ejs->emptyString;
+    }
     np = appendNode(np, parameter);
-
     if (parameter) {
         if (STRICT_MODE(cp)) {
             if (parameter->typeNode == 0 && !rest) {
