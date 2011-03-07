@@ -3,7 +3,6 @@
  */
 require ejs.web
 
-/*MOB
 const HTTP = ":" + (App.config.test.http_port || "6700")
 const COUNT = 1000
 
@@ -19,12 +18,11 @@ print("DONT")
         dontAutoFinalize()
 print("SETUP ON")
         on("readable", function (event) {
-print("RRRRR")
             // read(commetData, -1) == null)
             let len = read(commetData, -1)
-print("LEN " + len + " BA " + commetData.available) 
+print("READ " + len + " total available " + commetData.available) 
             if (read(commetData, -1) == null) {
-print("WRITE HELLO WORLD")
+print("EOF - write HELLO WORLD")
                 write("Hello World")
                 finalize()
             }
@@ -42,12 +40,16 @@ print("STARTED")
 var commetData = new ByteArray
 let http = new Http
 let done = 0
+let total = 0
 http.async = true
 http.on("writable", function (event, h) {
+    //  MOB - was 1000
     if (done < 1000) {
-print("WRITE " + done)
-        http.write("%05d abcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxyz\r\n".format(done++))
+        let s = "%05d abcaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaxyz\r\n".format(done++)
+        http.write(s)
         http.flush()
+        total += s.length
+print("WRITE " + s.length + " total " + total)
     } else {
 print("FINALIZE " + done)
         http.finalize()
@@ -61,9 +63,10 @@ print("WAITED")
 
 assert(http.status == 200)
 assert(http.response == "Hello World")
+/*
 assert(commetData.toString().contains("0001 abc"))
 assert(commetData.toString().contains("0099 abc"))
 assert(commetData.available == 70000)
+*/
 
 server.close()
-*/

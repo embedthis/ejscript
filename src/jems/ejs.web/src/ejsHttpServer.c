@@ -37,8 +37,11 @@ static EjsObj *hs_address(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 static EjsObj *hs_accept(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     HttpConn    *conn;
+    MprEvent    event;
 
-    if ((conn = httpAcceptConn(sp->server, NULL)) == 0) {
+    memset(&event, 0, sizeof(MprEvent));
+    event.dispatcher = sp->server->dispatcher;
+    if ((conn = httpAcceptConn(sp->server, &event)) == 0) {
         /* Just ignore */
         mprError("Can't accept connection");
         return 0;
