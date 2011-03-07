@@ -1,21 +1,5 @@
 /*
     Test events
-
-
-    MOB - issues
-        - Long running (timer) script. Should it keep running if the connection is closed?
-            - How to do a background script?
-        - Bug in chunk parsing code
-            - Missing http.finalize (and calling http.close()) causes the client to return and not close because
-                the final chunk did not get completed  -- but conn is closed (read == -1) and the socket is not getting 
-                closed.
-        - Missing error event by calling finalize on a closed socket
-
-    ACTIONS:
-        1. http.close should call http.finalize() if required
-        2. Consider how to do background / long running scripts
-        2. Fix readEvent
-        3. 
  */
 require ejs.web
 
@@ -50,7 +34,6 @@ server.on("readable", function (event, request: Request) {
 
     case "/error":
         //  The finalize may fail due to a lost connection
-//  MOB -- not getting an error event for this
         Timer(200, function() { try { finalize() } catch {} }).start()
         break
 
@@ -59,7 +42,6 @@ server.on("readable", function (event, request: Request) {
     }
 })
 
-/**MOB
 //  Simple 
 events = {}
 let http = fetch(HTTP + "/success")
@@ -85,8 +67,6 @@ for (i = 0; i < 1000 && !events.close; i++) App.run(10, 1)
 assert(events.close && events.readable && events.writable)
 assert(!(events.error))
 http.close()
-
-**/
 
 //  Error
 events = {}
