@@ -181,9 +181,9 @@ static void manageEjs(Ejs *ejs, int flags)
     EjsObj      *vp, **vpp, **top;
 
     if (flags & MPR_MANAGE_MARK) {
-#if DEBUG_IDE
+#if DEBUG_IDE && 0
         if (ejs->service) {
-            mprLog(2, "MARK EJS %s, length %d", ejs->name, ejs->service->vmlist->length);
+            printf("MARK EJS %s, length %d", ejs->name, ejs->service->vmlist->length);
         }
 #endif
         mprMark(ejs->global);

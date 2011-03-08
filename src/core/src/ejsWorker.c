@@ -307,11 +307,14 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
     int         result, remaining;
 
     LOG(5, "Worker.join: joining %d", ejs->joining);
-
+    mprAssert(!MPR->marking);
+    
     mark = mprGetTime();
     remaining = timeout;
     do {
+        mprAssert(!MPR->marking);
         ejs->joining = !reapJoins(ejs, workers);
+        mprAssert(!MPR->marking);
         if (!ejs->joining) {
             break;
         }
@@ -320,8 +323,11 @@ static int join(Ejs *ejs, EjsObj *workers, int timeout)
             break;
         }
         mprWaitForEvent(ejs->dispatcher, remaining);
+        mprAssert(!MPR->marking);
         remaining = (int) mprGetRemainingTime(mark, timeout);
+        mprAssert(!MPR->marking);
     } while (remaining > 0 && !ejs->exception);
+    mprAssert(!MPR->marking);
 
     if (ejs->exception) {
         return 0;
@@ -343,6 +349,7 @@ static EjsObj *workerJoin(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
 
     workers = (argc > 0) ? argv[0] : NULL;
     timeout = (argc == 2) ? ejsGetInt(ejs, argv[1]) : MAXINT;
+    mprAssert(!MPR->marking);
 
     return (join(ejs, workers, timeout) == 0) ? (EjsObj*) ejs->trueValue: (EjsObj*) ejs->falseValue;
 }

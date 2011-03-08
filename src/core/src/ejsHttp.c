@@ -1031,9 +1031,7 @@ static ssize writeHttpData(Ejs *ejs, EjsHttp *hp)
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;
         }
-        mprYield(MPR_YIELD_STICKY);
         nbytes = httpWriteBlock(conn->writeq, (cchar*) &ba->value[ba->readPosition], count);
-        mprResetYield();
         if (nbytes < 0) {
             ejsThrowIOError(ejs, "Can't write to socket");
             return 0;
