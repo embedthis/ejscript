@@ -2339,6 +2339,7 @@ static void showMem(MprMem *mp)
 #endif
 
 
+//  MOB - remove
 static void checkYielded()
 {
     MprThreadService    *ts;
