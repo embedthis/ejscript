@@ -630,6 +630,7 @@ static void genLogicalOp(EcCompiler *cp, EcNode *np)
 
     state = cp->state;
     saveCode = state->code;
+    rightCode = 0;
 
     mprAssert(np->kind == N_BINARY_OP);
 
@@ -657,6 +658,8 @@ static void genLogicalOp(EcCompiler *cp, EcNode *np)
     pushStack(cp, 1);
     popStack(cp, 1);
 
+    //  MOB - remove test
+    mprAssert(np->right);
     if (np->right) {
         state->code = allocCodeBuffer(cp);
         rightCode = state->code;
