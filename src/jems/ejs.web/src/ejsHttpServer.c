@@ -534,7 +534,7 @@ static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
         }
         httpPutForService(q, packet, 0);
         if (rx->form) {
-            httpAddVarsFromQueue(q);
+            rx->formVars = httpAddVarsFromQueue(rx->formVars, q);
         }
     } else {
         httpJoinPacketForService(q, packet, 0);
@@ -640,56 +640,52 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 /*
     Note: this may be called multiple times for async, long-running requests.
  */
-static void runEjs(HttpQueue *q)
-{
-    EjsHttpServer   *sp;
-    EjsRequest      *req;
-    HttpConn        *conn;
-
-    conn = q->conn;
-    if (!conn->connError) {
-        if ((req = httpGetConnContext(conn)) == 0) {
-            if ((sp = getServerContext(conn)) == 0) {
-                return;
-            }
-            if ((req = createRequest(sp, conn)) == 0) {
-                return;
-            }
-        }
-        sp = httpGetServerContext(conn->server);
-        if (!req->accepted) {
-            /* Server accept event */
-            req->accepted = 1;
-            ejsSendEvent(sp->ejs, sp->emitter, "readable", (EjsObj*) req, (EjsObj*) req);
-        }
-    }
-}
-
-
 static void startEjs(HttpQueue *q)
 {
-    HttpRx      *rx;
+    EjsHttpServer   *sp;
 
-    rx = q->conn->rx;
-    if (!rx->form && !(rx->flags & HTTP_UPLOAD)) {
-        runEjs(q);
+    mprAssert(httpGetConnContext(q->conn) == 0);
+   
+    if ((sp = getServerContext(q->conn)) == 0) {
+        return;
     }
+    createRequest(sp, q->conn);
+
+#if UNUSED
+    if ((req = httpGetConnContext(conn)) == 0) {
+        if ((sp = getServerContext(conn)) == 0) {
+            return;
+        }
+        if ((req = createRequest(sp, conn)) == 0) {
+            return;
+        }
+    }
+    sp = httpGetServerContext(conn->server);
+    if (!req->accepted) {
+        /* Server accept event */
+        req->accepted = 1;
+        ejsSendEvent(sp->ejs, sp->emitter, "readable", (EjsObj*) req, (EjsObj*) req);
+    }
+#endif
 }
 
 
-//  MOB - does this get called once or multiple times?
 static void processEjs(HttpQueue *q)
 {
-    HttpConn    *conn;
-    HttpRx      *rx;
+    HttpConn        *conn;
+    EjsHttpServer   *sp;
+    EjsRequest      *req;
 
     conn = q->conn;
-    rx = conn->rx;
-    if (rx->form || (rx->flags & HTTP_UPLOAD)) {
-        runEjs(q);
-    }
-    if (conn->error) {
-        httpFinalize(conn);
+
+    sp = httpGetServerContext(conn->server);
+    req = httpGetConnContext(conn);
+
+    if (sp && req && !req->accepted) {
+        //  MOB - is this the best place for this?
+        /* Server accept event */
+        req->accepted = 1;
+        ejsSendEvent(sp->ejs, sp->emitter, "readable", (EjsObj*) req, (EjsObj*) req);
     }
 }
 
@@ -706,7 +702,7 @@ HttpStage *ejsAddWebHandler(Http *http, MprModule *module)
     if (http->ejsHandler) {
         return http->ejsHandler;
     }
-    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_VARS, module);
+    handler = httpCreateHandler(http, "ejsHandler", HTTP_STAGE_ALL | HTTP_STAGE_QUERY_VARS | HTTP_STAGE_FORM_VARS, module);
     if (handler == 0) {
         return 0;
     }
