@@ -7,7 +7,8 @@
 #
 #	Order matters
 #
-LOADABLE	= ejs.jem ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.sqlite ejs.tar ejs.unix ejs.web ejs.template ejs.mvc
+LOADABLE	= ejs.jem ejs.cjs ejs.db ejs.db.couch ejs.db.mapper ejs.db.sqlite ejs.tar ejs.unix ejs.web ejs.template
+TOOLS		= ejs.jem ejs.mvc
 FILTER	 	= /sample/|/legacy/|^ejs.jem/|ejsmvc|Archive|\/test\/
 DOC_SRC		= $(shell find ../core -name '*.es' | egrep -v "$(FILTER)")
 DOC_SRC		+= $(shell find $(LOADABLE) -name '*.es' | egrep -v "$(FILTER)")
@@ -22,8 +23,16 @@ DOC			:= $(DOC_DIR)/index.html
 #	Build dependencies for ejs.jem first so that all jems can use the jem command
 #
 compileFirst:
-	$(MAKE) -C ejs.unix module
-	$(MAKE) -C ejs.tar module
+	$(MAKE) --no-print-directory TRACE=$(TRACE) -C ejs.unix module
+	$(MAKE) --no-print-directory TRACE=$(TRACE) -C ejs.tar module
+
+#
+#	Just for xcode
+#
+xmodules:
+	for d in $(LOADABLE) ; do  \
+		$(MAKE) --no-print-directory TRACE=$(TRACE) -C $$d module ; \
+	done
 
 packagePrep: $(DOC)
 

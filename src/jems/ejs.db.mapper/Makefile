@@ -9,9 +9,12 @@ include 	.makedep
 NAME		= ejs.db.mapper
 MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
-TARGETS		+= $(BLD_MOD_DIR)/$(NAME).mod $(BLD_JEM_DIR)/$(JEM)
+MODULE		+= $(BLD_MOD_DIR)/$(NAME).mod 
+TARGETS		+= $(ODULE) $(BLD_JEM_DIR)/$(JEM)
 
 compileExtra: $(TARGETS)
+
+module: $(MODULE)
 
 $(BLD_MOD_DIR)/$(MOD): *.es
 	$(call log) [Compile] "$(NAME)"

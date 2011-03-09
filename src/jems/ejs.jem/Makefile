@@ -29,7 +29,7 @@ $(BLD_JEM_DIR)/$(JEM): $(BLD_BIN_DIR)/jem package.json
 	rm -f $(JEM).jem
 
 $(BLD_BIN_DIR)/jem: jem.es
-	$(call log) "[Generate]" $(BLD_BIN_DIR)/jem
+	$(call log) "[Generate]" jem
 	cp jem.es $(BLD_BIN_DIR)/jem
 	chmod 755 $(BLD_BIN_DIR)/jem
 

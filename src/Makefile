@@ -33,6 +33,11 @@ tools:
 
 modules: $(EJS_MOD)
 
+#
+#	Just for xcode
+#
+xmodules: modules
+
 library: $(EJS_LIB)
 
 $(EJS_MOD): $(EJS_FILES)
