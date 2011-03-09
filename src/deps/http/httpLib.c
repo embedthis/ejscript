@@ -9528,10 +9528,11 @@ int httpWait(HttpConn *conn, int state, MprTime timeout)
     }
     http->now = mprGetTime();
     expire = http->now + timeout;
+    remainingTime = expire - http->now;
 
     while (!conn->error && conn->state < state) {
         workDone = httpServiceQueues(conn);
-        remainingTime = (expire - http->now);
+        remainingTime = expire - http->now;
         if (remainingTime <= 0) {
             break;
         }
