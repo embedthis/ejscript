@@ -12,7 +12,7 @@ TOOLS		= ejs.jem ejs.mvc
 FILTER	 	= /sample/|/legacy/|^ejs.jem/|ejsmvc|Archive|\/test\/
 DOC_SRC		= $(shell find ../core -name '*.es' | egrep -v "$(FILTER)")
 DOC_SRC		+= $(shell find $(LOADABLE) -name '*.es' | egrep -v "$(FILTER)")
-PRE_DIRS	:= $(TOOLS) $(LOADABLE)
+PRE_DIRS	:= $(LOADABLE) $(TOOLS)
 
 include 	.makedep
 
