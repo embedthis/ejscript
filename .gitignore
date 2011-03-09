@@ -121,3 +121,4 @@ access.log
 build.log
 .cpy_copied
 *.cltmp
+.embedthis
