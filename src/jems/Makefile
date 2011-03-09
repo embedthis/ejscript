@@ -41,7 +41,6 @@ $(MODULES): $(LOADABLE_FILES) $(call mod, ejs)
 	mv *.mod $(BLD_MOD_DIR)
 	$(call log) [Generate] "Jem listings and slot files"
 	$(BIN_DIR)/ejsmod $(LISTING) --cslots $(MODULES)
-	cp *.slots.h /tmp
 	for f in *.slots.h ; do \
 		diff $$f $(BLD_INC_DIR) >/dev/null 2>&1 || (printf "%12s %s\n" "[Install]" $$f ; cp $$f $(BLD_INC_DIR)) ; rm -f $$f;\
 	done

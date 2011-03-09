@@ -37,9 +37,6 @@ diff import sync:
 	import.sh --$@ ../pcre/out/releases/pcre-dist.tgz
 	import.sh --$@ ../http/out/releases/http-dist.tgz
 
-compileFinal:
-	make dist
-
 testExtra: test-projects
 
 test-projects:
