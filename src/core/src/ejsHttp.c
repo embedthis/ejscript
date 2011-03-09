@@ -1399,6 +1399,15 @@ void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server)
     limits->sessionTimeout = setLimit(ejs, obj, "sessionTimeout", MPR_TICKS_PER_SEC);
     limits->transmissionBodySize = setLimit(ejs, obj, "transmission", 1);
     limits->uploadSize = setLimit(ejs, obj, "upload", 1);
+    if (limits->requestTimeout <= 0) {
+        limits->requestTimeout = MPR_MAX_TIMEOUT;
+    }
+    if (limits->inactivityTimeout <= 0) {
+        limits->inactivityTimeout = MPR_MAX_TIMEOUT;
+    }
+    if (limits->sessionTimeout <= 0) {
+        limits->sessionTimeout = MPR_MAX_TIMEOUT;
+    }
 
     if (server) {
         limits->clientCount = setLimit(ejs, obj, "clients", 1);
