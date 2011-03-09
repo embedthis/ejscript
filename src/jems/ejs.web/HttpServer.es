@@ -143,7 +143,11 @@ MOB - more explanation about what is in the ServerRoot
             }
             let dirs = config.directories
             for (let [key,value] in dirs) {
-                dirs[key] = documentRoot.join(value)
+                //  MOB - multiple servers will keep prepending the doc root
+                //  MOB - TEMP hack
+                if (!value.toString().startsWith(documentRoot)) {
+                    dirs[key] = documentRoot.join(value)
+                }
             }
         }
 
