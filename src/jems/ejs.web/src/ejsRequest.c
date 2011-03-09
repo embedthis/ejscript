@@ -1103,6 +1103,7 @@ static EjsObj *req_trace(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 
 /*  
     Write text to the client. This call writes the arguments back to the client's browser. 
+ 
     function write(data: Object): Void
  */
 static EjsObj *req_write(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)

@@ -1240,6 +1240,8 @@ static bool waitForState(EjsHttp *hp, int state, int timeout, int throw)
     }
     if (timeout < 0) {
         timeout = 0;
+    } else if (mprGetDebugMode()) {
+        timeout = INT_MAX;
     }
     remaining = timeout;
     mark = mprGetTime();

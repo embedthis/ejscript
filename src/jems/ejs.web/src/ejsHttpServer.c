@@ -78,7 +78,7 @@ static EjsObj *hs_set_async(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv
 static EjsObj *hs_close(Ejs *ejs, EjsHttpServer *sp, int argc, EjsObj **argv)
 {
     if (sp->server) {
-        ejsSendEvent(ejs, sp->emitter, "close", NULL, (EjsObj*) sp);
+        ejsSendEvent(ejs, sp->emitter, "close", NULL, sp);
         httpDestroyServer(sp->server);
 #if MOB
         ejsStopSessionTimer(sp);
@@ -643,49 +643,46 @@ static EjsRequest *createRequest(EjsHttpServer *sp, HttpConn *conn)
 static void startEjs(HttpQueue *q)
 {
     EjsHttpServer   *sp;
+    EjsRequest      *req;
+    HttpConn        *conn;
 
-    mprAssert(httpGetConnContext(q->conn) == 0);
+    conn = q->conn;
+    mprAssert(httpGetConnContext(conn) == 0);
    
-    if ((sp = getServerContext(q->conn)) == 0) {
+    if ((sp = getServerContext(conn)) == 0) {
         return;
     }
-    createRequest(sp, q->conn);
-
-#if UNUSED
-    if ((req = httpGetConnContext(conn)) == 0) {
-        if ((sp = getServerContext(conn)) == 0) {
-            return;
-        }
-        if ((req = createRequest(sp, conn)) == 0) {
-            return;
-        }
-    }
-    sp = httpGetServerContext(conn->server);
-    if (!req->accepted) {
+    createRequest(sp, conn);
+    req = httpGetConnContext(conn);
+    if (req && !req->accepted) {
         /* Server accept event */
         req->accepted = 1;
-        ejsSendEvent(sp->ejs, sp->emitter, "readable", (EjsObj*) req, (EjsObj*) req);
+        ejsSendEvent(sp->ejs, sp->emitter, "readable", req, req);
+        if (conn->rx->startAfterContent && conn->rx->eof) {
+            /* 
+                If form or upload, then all content is already buffered and no more input data will arrive. So can send
+                the EOF notification here
+             */
+            HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
+        }
     }
-#endif
 }
 
 
 static void processEjs(HttpQueue *q)
 {
     HttpConn        *conn;
+    
+    conn = q->conn;
+#if UNUSED
     EjsHttpServer   *sp;
     EjsRequest      *req;
-
-    conn = q->conn;
-
     sp = httpGetServerContext(conn->server);
     req = httpGetConnContext(conn);
+#endif
 
-    if (sp && req && !req->accepted) {
-        //  MOB - is this the best place for this?
-        /* Server accept event */
-        req->accepted = 1;
-        ejsSendEvent(sp->ejs, sp->emitter, "readable", (EjsObj*) req, (EjsObj*) req);
+    if (conn->readq->count > 0) {
+        HTTP_NOTIFY(conn, 0, HTTP_NOTIFY_READABLE);
     }
 }
 
