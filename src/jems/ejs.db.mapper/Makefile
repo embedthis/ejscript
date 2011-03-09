@@ -1,12 +1,12 @@
 #
-#	Makefile for the ejs.db.couch - CouchDB database support
+#	Makefile for the ejs.db.mapper - Database ORM mapping
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
 
 include 	.makedep
 
-NAME		= ejs.db.couch
+NAME		= ejs.db.mapper
 MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
 TARGETS		+= $(BLD_MOD_DIR)/$(NAME).mod $(BLD_JEM_DIR)/$(JEM)
@@ -20,7 +20,7 @@ $(BLD_MOD_DIR)/$(MOD): *.es
 	$(BLD_BUILD_BIN_DIR)/ejsmod --cslots $(MOD)
 	diff $(NAME).slots.h $(BLD_INC_DIR) >/dev/null 2>&1 || cp $(NAME).slots.h $(BLD_INC_DIR) 
 	cp *.mod $(BLD_BUILD_MOD_DIR) ; mv *.mod $(BLD_MOD_DIR)
-	rm -f $(NAME).slots.h
+	rm -f *.slots.h
 
 $(BLD_JEM_DIR)/$(JEM): $(BLD_MOD_DIR)/$(MOD) package.json
 	jem --field version --value $(BLD_VERSION) edit

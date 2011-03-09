@@ -1,24 +1,45 @@
 #
-#	Makefile for the ejs.web jem
+#	Makefile for the ejs.web - Web Framework
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
 
 include 	.makedep
 
-PRE_DIRS	+= src
-TARGETS		+= $(BLD_LIB_DIR)/www
+NAME		= ejs.web
+MOD			= $(NAME).mod
+JEM			= $(NAME)-$(BLD_VERSION)
+PRE_DIRS	= src
+TARGETS		+= $(BLD_MOD_DIR)/$(NAME).mod $(BLD_LIB_DIR)/www $(BLD_JEM_DIR)/$(JEM)
 
 compileExtra: $(TARGETS)
 
-$(BLD_LIB_DIR)/www: Makefile www/*
+$(BLD_MOD_DIR)/$(MOD): *.es
+	$(call log) [Compile] "$(NAME)"
+	rm -f *.mod *.slots.h
+	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) *.es
+	$(BLD_BUILD_BIN_DIR)/ejsmod --cslots $(MOD)
+	diff $(NAME).slots.h $(BLD_INC_DIR) >/dev/null 2>&1 || cp $(NAME).slots.h $(BLD_INC_DIR) 
+	cp *.mod $(BLD_BUILD_MOD_DIR) ; mv *.mod $(BLD_MOD_DIR)
+	rm -f $(NAME).slots.h
+
+$(BLD_JEM_DIR)/$(JEM): $(BLD_MOD_DIR)/$(MOD) package.json
+	jem --field version --value $(BLD_VERSION) edit
+	jem setdeps $(BLD_MOD_DIR)/$(MOD)
+	jem build
+	jem --to $(BLD_JEM_DIR) publish $(JEM)
+	rm -f $(JEM).jem
+
+$(BLD_LIB_DIR)/www: www/*
 	$(call log) [Copy] "www to $(BLD_LIB_DIR)/www"
+	rm -fr $(BLD_LIB_DIR)/www
 	mkdir -p $(BLD_LIB_DIR)/www/images
 	mkdir -p $(BLD_LIB_DIR)/www/themes
 	cp -r www/* $(BLD_LIB_DIR)/www
 
 cleanExtra:
 	rm -rf $(BLD_LIB_DIR)/www
+	rm -fr $(BLD_JEM_DIR)/$(JEM)
 
 #
 #   Local variables:

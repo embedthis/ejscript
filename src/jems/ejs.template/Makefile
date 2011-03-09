@@ -6,11 +6,29 @@
 
 include 	.makedep
 
-FILES		+= TemplateParser.es
-TARGETS		+= $(BLD_BIN_DIR)/ejspage
-TARGETS		+= $(BLD_BIN_DIR)/ejspage.cmd
+NAME		= ejs.template
+MOD			= $(NAME).mod
+JEM			= $(NAME)-$(BLD_VERSION)
+TARGETS		+= $(BLD_MOD_DIR)/$(NAME).mod $(BLD_JEM_DIR)/$(JEM)
+TARGETS		+= $(BLD_BIN_DIR)/ejspage $(BLD_BIN_DIR)/ejspage.cmd
 
 compileExtra: $(TARGETS)
+
+$(BLD_MOD_DIR)/$(MOD): *.es
+	$(call log) [Compile] "$(NAME)"
+	rm -f *.mod *.slots.h
+	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) *.es
+	$(BLD_BUILD_BIN_DIR)/ejsmod --cslots $(MOD)
+	diff $(NAME).slots.h $(BLD_INC_DIR) >/dev/null 2>&1 || cp $(NAME).slots.h $(BLD_INC_DIR) 
+	cp *.mod $(BLD_BUILD_MOD_DIR) ; mv *.mod $(BLD_MOD_DIR)
+	rm -f $(NAME).slots.h
+
+$(BLD_JEM_DIR)/$(JEM): $(BLD_MOD_DIR)/$(MOD) package.json
+	jem --field version --value $(BLD_VERSION) edit
+	jem setdeps $(BLD_MOD_DIR)/$(MOD)
+	jem build
+	jem --to $(BLD_JEM_DIR) publish $(JEM)
+	rm -f $(JEM).jem
 
 $(BLD_BIN_DIR)/ejspage: ejspage
 	@$(call log) "[Update]" ejspage
@@ -20,6 +38,9 @@ $(BLD_BIN_DIR)/ejspage: ejspage
 $(BLD_BIN_DIR)/ejspage.cmd: ejspage.cmd
 	cp ejspage.cmd $(BLD_BIN_DIR)/ejspage.cmd
 	chmod 755 $(BLD_BIN_DIR)/ejspage.cmd
+
+cleanExtra:
+	rm -fr $(BLD_JEM_DIR)/$(JEM)
 
 #
 #   Local variables:

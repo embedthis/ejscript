@@ -1,12 +1,12 @@
 #
-#	Makefile for the ejs.db.couch - CouchDB database support
+#	Makefile for the ejs.db - Database support
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
 
 include 	.makedep
 
-NAME		= ejs.db.couch
+NAME		= ejs.db
 MOD			= $(NAME).mod
 JEM			= $(NAME)-$(BLD_VERSION)
 TARGETS		+= $(BLD_MOD_DIR)/$(NAME).mod $(BLD_JEM_DIR)/$(JEM)

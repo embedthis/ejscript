@@ -21,6 +21,9 @@ $(BLD_BIN_DIR)/ejspage.cmd: ejspage.cmd
 	cp ejspage.cmd $(BLD_BIN_DIR)/ejspage.cmd
 	chmod 755 $(BLD_BIN_DIR)/ejspage.cmd
 
+cleanExtra:
+	rm -fr $(BLD_JEM_DIR)/$(JEM)
+
 #
 #   Local variables:
 #   tab-width: 4
