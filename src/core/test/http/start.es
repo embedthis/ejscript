@@ -10,8 +10,11 @@ let HTTPS = "*:" + (App.config.test.ssl_port || "6743")
 let server: HttpServer = new HttpServer("web")
 let router: Router = new Router(Router.Top)
 
+router.show()
+
 server.on("readable", function (event, request) {
-    // App.log.info(request.method, request.uri, request.scheme)
+    App.log.info(request.method, request.uri, request.scheme)
+    // dump(request)
     Web.serve(request, router)
 })
 // App.log.info("Listen on", HTTP)
