@@ -227,6 +227,7 @@ module ejs {
          */
         native static function kill(pid: Number, signal: Number = 2): Boolean
 
+        //  MOB - should this take options as an arg?
         /**
             Execute a command/program. The call blocks while executing the command.
             @param command Command or program to execute
@@ -249,6 +250,7 @@ module ejs {
             return cmd.readString()
         }
 
+        //  MOB - should this take options as an arg?
         /**
             Run a command using the system command shell and wait for completion. On Windows, this requires that
             /bin/sh.exe is installed (See Cygwin). 
