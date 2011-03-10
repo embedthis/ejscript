@@ -29,11 +29,11 @@ configureProduct() {
 		;;
 
     complete)
-        [ $TASK != Package -a $QUIET = 0 ] && echo -e "#\n#  ${TASK} Complete\n#" ; true
+        [ $TASK != Package -a $QUIET = 0 ] && log ${TASK} Complete ; true
         ;;
 
 	configure)
-		# [ $QUIET = 0 ] && echo -e "\n#\n#  Configuring ${BLD_NAME}\n#"
+		# [ $QUIET = 0 ] && log Configure ${BLD_NAME} ; true
 		;;
 
 	copy)

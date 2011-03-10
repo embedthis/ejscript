@@ -65,6 +65,6 @@ fi
 if [ "${TASK}" = Install ] ; then
     bash "${BLD_BIN_PREFIX}/linkup" $TASK "$ROOT_DIR"
 elif [ -f /tmp/linkup$$ ] ; then
-    bash -x /tmp/linkup$$ $TASK "$ROOT_DIR"
+    bash /tmp/linkup$$ $TASK "$ROOT_DIR"
     rm -f /tmp/linkup$$
 fi
