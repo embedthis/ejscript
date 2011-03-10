@@ -244,13 +244,14 @@
 #define ES_App_inputStream                                             21
 #define ES_App_loadrc                                                  22
 #define ES_App_outputStream                                            23
-#define ES_App_putenv                                                  24
-#define ES_App_run                                                     25
-#define ES_App_search                                                  26
-#define ES_App_sleep                                                   27
-#define ES_App_updateLog                                               28
-#define ES_App_waitForEvent                                            29
-#define ES_App_NUM_CLASS_PROP                                          30
+#define ES_App_pid                                                     24
+#define ES_App_putenv                                                  25
+#define ES_App_run                                                     26
+#define ES_App_search                                                  27
+#define ES_App_sleep                                                   28
+#define ES_App_updateLog                                               29
+#define ES_App_waitForEvent                                            30
+#define ES_App_NUM_CLASS_PROP                                          31
 
 /*
    Prototype (instance) slots for "App" type 
@@ -2246,6 +2247,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1368053
+#define _ES_CHECKSUM_ejs   1368371
 
 #endif
