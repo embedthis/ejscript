@@ -1146,7 +1146,7 @@ int ecOpenConsoleStream(EcCompiler *cp, EcStreamGet getInput, cchar *contents)
         return MPR_ERR_MEMORY;
     }
     cs->stream.getInput = getInput;
-    ecSetStreamBuf((EcStream*) cs, contents, contents ? strlen(contents) : 0);
+    ecSetStreamBuf((EcStream*) cs, sclone(contents), contents ? strlen(contents) : 0);
     return 0;
 }
 

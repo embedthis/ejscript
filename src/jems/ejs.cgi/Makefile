@@ -4,9 +4,9 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
 
-include 		.makedep
+include 	.makedep
 
-PRE_DIRS		+= src
+PRE_DIRS	+= src
 
 #
 #   Local variables:

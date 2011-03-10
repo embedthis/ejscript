@@ -42,7 +42,7 @@ library: $(EJS_LIB)
 
 $(EJS_MOD): $(EJS_FILES)
 	$(call log) [Compile] "Core Ejs Classes"
-	rm -f *.mod *.slots.h
+	rm -f *.mod *.slots.h $(BLD_BUILD_MOD_DIR)/*.mod $(BLD_MOD_DIR)/*.mod
 	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) --out ejs.mod --bind --require "" $(EJS_FILES)
 	cp *.mod $(BLD_BUILD_MOD_DIR)
 	mv *.mod $(BLD_MOD_DIR)

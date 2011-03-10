@@ -296,7 +296,7 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
 {
     EjsString   *str, *tag, *msg, *message;
     EjsObj      *stack, *error, *saveException;
-    char        *buf;
+    char        *buf, *stackStr;
 
     error = ejs->exception;
     message = 0;
@@ -332,7 +332,8 @@ cchar *ejsGetErrorMsg(Ejs *ejs, int withStack)
         msg = ejsToString(ejs, message);
     }
     if (ejsIsA(ejs, error, ejs->errorType)) {
-        if (stack) {
+        stackStr = (stack) ? ejsToMulti(ejs, stack) : 0;
+        if (stackStr && *stackStr) {
             buf = mprAsprintf("%@: %@\nStack:\n%s", tag, msg, (stack) ? ejsToMulti(ejs, stack) : "");
         } else {
             buf = mprAsprintf("%@: %@", tag, msg);

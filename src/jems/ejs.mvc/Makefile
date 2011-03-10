@@ -14,9 +14,9 @@ TARGETS		+= $(BLD_JEM_DIR)/$(JEM)
 
 compileExtra: $(TARGETS)
 
-#	$(BLD_MOD_DIR)/$(MOD): *.es
-#		$(call log) [Compile] "$(NAME)"
-#		rm -f *.mod *.slots.h
+#	$(BLD_MOD_DIR)/$(MOD): *.es $(BLD_MOD_DIR)/ejs.mod
+#		$(call log) [Compile] "$(MOD)"
+#		rm -f *.mod *.slots.h $(BLD_BUILD_MOD_DIR)/$(MOD) $(BLD_MOD_DIR)/$(MOD)
 #		$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) *.es
 #		$(BLD_BUILD_BIN_DIR)/ejsmod --cslots $(MOD)
 #		diff $(NAME).slots.h $(BLD_INC_DIR) >/dev/null 2>&1 || cp $(NAME).slots.h $(BLD_INC_DIR) 

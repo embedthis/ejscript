@@ -1,5 +1,5 @@
 #
-#	Makefile for the ejs jem
+#	Makefile for the ejs core 
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
