@@ -45,13 +45,13 @@ EXPORTS
   httpCreateAlias
   httpCreateAuth
   httpCreateBareDir
+  httpCreateCGIVars
   httpCreateConfiguredServer
   httpCreateConn
   httpCreateConnector
   httpCreateDataPacket
   httpCreateDir
   httpCreateEndPacket
-  httpCreateEnvVars
   httpCreateFilter
   httpCreateGroup
   httpCreateHandler
