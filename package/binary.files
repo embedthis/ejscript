@@ -15,7 +15,9 @@ cpy -e -m 0755 package/uninstall.sh "${BLD_BIN_PREFIX}/uninstall"
 cpy -e -m 0755 package/linkup "${BLD_BIN_PREFIX}/linkup"
 
 cpy -m 755 -s -d ${BLD_BIN_DIR} ejs${BLD_EXE} "${BLD_BIN_PREFIX}"
-cpy -m 755 -s -d ${BLD_BIN_DIR} angel${BLD_EXE} "${BLD_BIN_PREFIX}"
+if [ $BLD_HOST_OS != VXWORKS ] ; then
+    cpy -m 755 -s -d ${BLD_BIN_DIR} angel${BLD_EXE} "${BLD_BIN_PREFIX}"
+fi
 
 if [ -x "${BLD_BIN_DIR}/ejsc${BLD_EXE}" ] ; then
     cpy -m 755 -s -d ${BLD_BIN_DIR} ejsc${BLD_EXE} "${BLD_BIN_PREFIX}"
