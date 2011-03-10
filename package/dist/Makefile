@@ -21,21 +21,21 @@ INC_DEST  		:= $(DEST)
 MASTER  		:= $(TDIR)/src/include/master
 DOC_DEST		:= $(TDIR)/doc
 EJS_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ejsTune ejsByteCode ejsByteCodeTable ejs ejsWeb)
-SLOT_HEADERS	+= $(shell find $(SRC)/include/master -name 'ejs*slots.h')
+SLOT_HEADERS	+= $(shell find $(SRC)/include/master -name 'ejs*slots.h' | sort)
 EC_HEADERS		+= $(patsubst %,$(SRC)/include/%.h, ecCompiler)
-EJS_SOURCES		+= $(shell find $(SRC)/vm $(SRC)/core -name '*.c') 
-EC_SOURCES		+= $(shell find $(SRC)/compiler -name '*.c') 
+EJS_SOURCES		+= $(shell find $(SRC)/vm $(SRC)/core -name '*.c' | sort) 
+EC_SOURCES		+= $(shell find $(SRC)/compiler -name '*.c' | sort) 
 ES_SOURCES		+= $(shell find $(SRC)/core $(JEMS)/ejs.cjs \
 				    $(JEMS)/ejs.unix $(JEMS)/ejs.db $(JEMS)/ejs.db.mapper \
 					$(JEMS)/ejs.db.sqlite $(JEMS)/ejs.web $(JEMS)/ejs.template -name '*.es' | \
 					egrep -v 'SAVE|save|legacy|Archive|old|sample.es|XmlGlobal.es|mvc.es' | \
-					egrep -v 'Jsdb.es|Mysql.es|ejspage.es|\/test\/') 
+					egrep -v 'Jsdb.es|Mysql.es|ejspage.es|\/test\/' | sort) 
 EJSMOD_HEADERS	+= $(SRC)/cmd/ejsmod.h
 EJSMOD_SOURCES	+= $(patsubst %,$(SRC)/cmd/%.c, doc docFiles ejsmod listing slotGen)
 DB_SOURCES		+= $(JEMS)/ejs.db.sqlite/src/ejsSqlite.c
 SQLITE_HEADERS	+= $(SRC)/include/sqlite3.h
 SQLITE_SOURCES	+= $(JEMS)/ejs.db.sqlite/src/sqlite3.c
-WEB_SOURCES		+= $(shell find $(JEMS)/ejs.web -name '*.c' | egrep -v 'SAVE|save|legacy|Archive')
+WEB_SOURCES		+= $(shell find $(JEMS)/ejs.web -name '*.c' | egrep -v 'SAVE|save|legacy|Archive' | sort)
 TARGETS			+= $(patsubst %,$(INC_DEST)/%, ejs.h sqlite3.h)
 TARGETS			+= $(patsubst %,$(MASTER)/%, ejs.slots.h)
 TARGETS			+= $(patsubst %,$(DEST)/%, ejsLib.c ejs.c ejsc.c ejsmod.c ejssql.c sqlite3.c ejs.es)
