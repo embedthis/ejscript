@@ -8,9 +8,6 @@ include 		.makedep
 
 PRE_DIRS		= $(BLD_HOST_OS) dist
 
-packagePrep:
-	$(call log) [Notice] "Building jems"
-
 dependExtra:
 	[ "$(shell echo *.sh)" != "*.sh" ] && chmod +x *.sh ; true
 
