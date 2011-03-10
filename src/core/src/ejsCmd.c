@@ -122,7 +122,11 @@ static EjsObj *cmd_kill(Ejs *ejs, EjsCmd *cmd, int argc, EjsObj **argv)
 #if BLD_WIN_LIKE
 {
     HANDLE	handle;
-	handle = OpenProcess(DELETE, 0, pid);
+	handle = OpenProcess(PROCESS_TERMINATE, 0, pid);
+    if (handle == 0) {
+        ejsThrowIOError(ejs, "Can't find process ID %d", pid);
+        return 0;
+    }
     rc = TerminateProcess(handle, signal) == 0;
 }
 #elif VXWORKS
