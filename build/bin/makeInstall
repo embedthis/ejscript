@@ -469,3 +469,24 @@ fi
 [ "$BROWSER" = 1 -a "$DRY_RUN" = "" ] && launchBrowser
 
 configureProduct complete
+
+if [ "$BARE" = 1 ] ; then
+    #
+    #   Flatten the tree
+    #
+    if [ "$ROOT_DIR" = "/" -o "$ROOT_DIR" = "c:/" ] ; then
+        echo "WARNING: Can't do bare deploy to the root directory"
+        exit 255
+    fi
+    mkdir -p ${ROOT_DIR}/bin ${ROOT_DIR}/lib ${ROOT_DIR}/mod
+	mv ${BLD_BIN_PREFIX}/* ${ROOT_DIR}/bin
+	mv ${BLD_LIB_PREFIX}/* ${ROOT_DIR}/lib
+	mv ${BLD_MOD_PREFIX}/* ${ROOT_DIR}/mod
+	rm -f ${BLD_MOD_PREFIX}/fileList.txt
+    #
+    #   Try to be careful with removals
+    #
+	rm -fr ${ROOT_DIR}/usr/lib/${BLD_PRODUCT}
+	rmdir ${ROOT_DIR}/usr/lib
+	rmdir ${ROOT_DIR}/usr
+fi
