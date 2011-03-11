@@ -10,14 +10,16 @@ if [ "${TASK}" = Remove -a -f "${BLD_BIN_PREFIX}/linkup" ] ; then
     cp "${BLD_BIN_PREFIX}/linkup" /tmp/linkup$$
 fi
 
-cpy -t -w -e doc/licenses/LICENSE.TXT doc/product/README.TXT COPYRIGHT.TXT "${BLD_VER_PREFIX}"
-cpy -e -m 0755 package/uninstall.sh "${BLD_BIN_PREFIX}/uninstall"
-cpy -e -m 0755 package/linkup "${BLD_BIN_PREFIX}/linkup"
+if [ "${BARE}" = 0 ] ; then
+    cpy -t -w -e doc/licenses/LICENSE.TXT doc/product/README.TXT COPYRIGHT.TXT "${BLD_VER_PREFIX}"
+    cpy -e -m 0755 package/uninstall.sh "${BLD_BIN_PREFIX}/uninstall"
+    cpy -e -m 0755 package/linkup "${BLD_BIN_PREFIX}/linkup"
+    if [ $BLD_HOST_OS != VXWORKS ] ; then
+        cpy -m 755 -s -d ${BLD_BIN_DIR} angel${BLD_EXE} "${BLD_BIN_PREFIX}"
+    fi
+fi
 
 cpy -m 755 -s -d ${BLD_BIN_DIR} ejs${BLD_EXE} "${BLD_BIN_PREFIX}"
-if [ $BLD_HOST_OS != VXWORKS ] ; then
-    cpy -m 755 -s -d ${BLD_BIN_DIR} angel${BLD_EXE} "${BLD_BIN_PREFIX}"
-fi
 
 if [ -x "${BLD_BIN_DIR}/ejsc${BLD_EXE}" ] ; then
     cpy -m 755 -s -d ${BLD_BIN_DIR} ejsc${BLD_EXE} "${BLD_BIN_PREFIX}"
@@ -25,21 +27,23 @@ fi
 if [ -x "${BLD_BIN_DIR}/ejsc${BLD_EXE}" ] ; then
     cpy -m 755 -s -d ${BLD_BIN_DIR} ejsmod${BLD_EXE} "${BLD_BIN_PREFIX}"
 fi
-cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_VER_PREFIX}/web"
-cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_LIB_PREFIX}/www"
-cpy -m 755 -d ${BLD_BIN_DIR} mvc ejspage jem "${BLD_BIN_PREFIX}"
-if [ $BLD_HOST_OS = WIN ] ; then
-    cpy -m 755 -d ${BLD_BIN_DIR} mvc.cmd ejspage.cmd jem.cmd "${BLD_BIN_PREFIX}"
-fi
-if [ "$BLD_FEATURE_SQLITE" = 1 ] ; then
-    cpy -m 755 -s -d ${BLD_BIN_DIR} ejssql${BLD_EXE} "${BLD_BIN_PREFIX}"
+
+if [ "${BARE}" = 0 ] ; then
+    cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_VER_PREFIX}/web"
+    cpy -m 644 -d "${BLD_LIB_DIR}/www" "*" "${BLD_LIB_PREFIX}/www"
+    cpy -m 755 -d ${BLD_BIN_DIR} mvc ejspage jem "${BLD_BIN_PREFIX}"
+    if [ $BLD_HOST_OS = WIN ] ; then
+        cpy -m 755 -d ${BLD_BIN_DIR} mvc.cmd ejspage.cmd jem.cmd "${BLD_BIN_PREFIX}"
+    fi
+    if [ "$BLD_FEATURE_SQLITE" = 1 ] ; then
+        cpy -m 755 -s -d ${BLD_BIN_DIR} ejssql${BLD_EXE} "${BLD_BIN_PREFIX}"
+    fi
+    if [ -x "${BLD_JEM_DIR}" ] ; then
+        cpy -d ${BLD_JEM_DIR} "*" "${BLD_JEM_PREFIX}"
+    fi
 fi
 
-if [ -x "${BLD_JEM_DIR}" ] ; then
-    cpy -d ${BLD_JEM_DIR} "*" "${BLD_JEM_PREFIX}"
-fi
 cpy -d ${BLD_MOD_DIR} "*.mod" "${BLD_MOD_PREFIX}"
-
 if `ls ${BLD_MOD_DIR}/*${BLD_SHOBJ} >/dev/null 2>&1` ; then
 	cpy -s -m 755 -d ${BLD_MOD_DIR} "*${BLD_SHOBJ}" "${BLD_MOD_PREFIX}"
 fi
@@ -65,7 +69,9 @@ fi
 #   fi
 
 if [ "${TASK}" = Install ] ; then
-    bash "${BLD_BIN_PREFIX}/linkup" $TASK "$ROOT_DIR"
+    if [ "${BARE}" = 0 ] ; then
+        bash "${BLD_BIN_PREFIX}/linkup" $TASK "$ROOT_DIR"
+    fi
 elif [ -f /tmp/linkup$$ ] ; then
     bash /tmp/linkup$$ $TASK "$ROOT_DIR"
     rm -f /tmp/linkup$$
