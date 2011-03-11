@@ -1,0 +1,858 @@
+Identifier
+	Identifier
+	ContextuallyReservedIdentifier
+
+PropertyIdentifier
+	Identifier
+	ReservedIdentifier
+
+NameExpression
+	Identifier
+	NamespaceExpression :: PropertyIdentifier
+
+NamespaceExpression
+	NameExpression
+	StringLiteral
+
+ParenExpression
+	( CommaExpressionallowColon, allowIn )
+
+FunctionExpressiona, b
+	function PropertyIdentifier FunctionSignature FunctionExpressionBodya, b
+	function FunctionSignature FunctionExpressionBodya, b
+
+FunctionExpressionBodya, b
+	{ Directiveslocal }
+	CommaExpressiona, b
+
+ObjectInitialisernoColon
+	InitialiserAttribute { FieldList }
+
+ObjectInitialiserallowColon
+	InitialiserAttribute { FieldList }
+	InitialiserAttribute { FieldList } : TypeExpression
+
+FieldList
+	EMPTY
+	Field
+	Field , FieldList
+
+Field
+	InitialiserAttribute FieldName : AssignmentExpressionallowColon, allowIn
+	InitialiserAttribute get FieldName GetterSignature FunctionExpressionBodyallowColon, allowIn
+	InitialiserAttribute set FieldName SetterSignature FunctionExpressionBodyallowColon, allowIn
+	__proto__ : AssignmentExpressionallowColon, allowIn
+
+InitialiserAttribute
+	EMPTY
+	const
+	var
+
+FieldName
+	NameExpression
+	StringLiteral
+	NumberLiteral
+	[lookahead !{__proto__}] ReservedIdentifier
+
+ArrayInitialisernoColon
+	InitialiserAttribute [ ArrayElements ]
+
+ArrayInitialiserallowColon
+	InitialiserAttribute [ ArrayElements ]
+	InitialiserAttribute [ ArrayElements ] : TypeExpression
+
+ArrayElements
+	ArrayElementList
+	ArrayComprehension
+
+ArrayElementList
+	EMPTY
+	AssignmentExpressionallowColon, allowIn
+	SpreadExpression
+	, ArrayElementList
+	AssignmentExpressionallowColon, allowIn , ArrayElementList
+
+SpreadExpression
+	É AssignmentExpressionallowColon, allowIn
+
+ArrayComprehension
+	AssignmentExpressionallowColon, allowIn ComprehensionExpression
+
+ComprehensionExpression
+	for ( TypedPatternnoIn in CommaExpressionallowColon, allowIn ) ComprehensionClause
+	for each ( TypedPatternnoIn in CommaExpressionallowColon, allowIn ) ComprehensionClause
+	let ( LetBindingList ) ComprehensionClause
+	if ParenExpression ComprehensionClause
+
+ComprehensionClause
+	EMPTY
+	ComprehensionExpression
+
+PrimaryExpressiona, b
+	null
+	true
+	false
+	DoubleLiteral
+	DecimalLiteral
+	StringLiteral
+	RegExpInitialiser
+	ArrayInitialisera
+	ObjectInitialisera
+	FunctionExpressiona, b
+	ThisExpression
+	LetExpressiona, b
+	ParenExpression
+	NameExpression
+
+ThisExpression
+	this
+	this [no line break] function
+	this [no line break] generator
+
+LetExpressiona, b
+	let ( LetBindingList ) CommaExpressiona, b
+
+LetBindingList
+	EMPTY
+	VariableBindingListallowIn
+
+Arguments
+	( )
+	( SpreadExpression )
+	( ArgumentList )
+	( ArgumentList , SpreadExpression )
+
+ArgumentList
+	AssignmentExpressionallowColon, allowIn
+	ArgumentList , AssignmentExpressionallowColon, allowIn
+
+PropertyOperator
+	. ReservedIdentifier
+	. NameExpression
+	Brackets
+	TypeApplication
+
+Brackets
+	[ CommaExpressionnoColon, allowIn ]
+	[ SliceExpression  ]
+
+SliceExpression
+	OptionalExpressionnoColon : OptionalExpressionnoColon
+	OptionalExpressionnoColon : OptionalExpressionnoColon : OptionalExpressionallowColon
+	:: OptionalExpressionallowColon
+	OptionalExpressionnoColon ::
+
+OptionalExpressiona
+	EMPTY
+	CommaExpressiona, allowIn
+
+TypeApplication
+	.< TypeExpressionList >
+
+MemberExpressiona, b
+	PrimaryExpressiona, b
+	new MemberExpressiona, b Arguments
+	SuperExpression PropertyOperator
+	MemberExpressiona, b PropertyOperator
+
+SuperExpression
+	super
+	super ParenExpression
+
+CallExpressiona, b
+	MemberExpressiona, b Arguments
+	CallExpressiona, b Arguments
+	CallExpressiona, b PropertyOperator
+
+NewExpressiona, b
+	MemberExpressiona, b
+	new NewExpressiona, b
+
+LeftHandSideExpressiona, b
+	NewExpressiona, b
+	CallExpressiona, b
+
+PostfixExpressiona, b
+	LeftHandSideExpressiona, b
+	LeftHandSideExpressiona, b [no line break] ++
+	LeftHandSideExpressiona, b [no line break] --
+
+UnaryExpressiona, b
+	PostfixExpressiona, b
+	delete PostfixExpressiona, b
+	void UnaryExpressiona, b
+	typeof UnaryExpressiona, b
+	++  PostfixExpressiona, b
+	-- PostfixExpressiona, b
+	+ UnaryExpressiona, b
+	- UnaryExpressiona, b
+	~ UnaryExpressiona, b
+	! UnaryExpressiona, b
+	type TypeExpression
+
+MultiplicativeExpressiona, b
+	UnaryExpressiona, b
+	MultiplicativeExpressiona, b * UnaryExpressiona, b
+	MultiplicativeExpressiona, b / UnaryExpressiona, b
+	MultiplicativeExpressiona, b % UnaryExpressiona, b
+
+AdditiveExpressiona, b
+	MultiplicativeExpressiona, b
+	AdditiveExpressiona, b + MultiplicativeExpressiona, b
+	AdditiveExpressiona, b - MultiplicativeExpressiona, b
+
+ShiftExpressiona, b
+	AdditiveExpressiona, b 
+	ShiftExpressiona, b << AdditiveExpressiona, b
+	ShiftExpressiona, b >> AdditiveExpressiona, b
+	ShiftExpressiona, b >>> AdditiveExpressiona, b
+
+RelationalExpressiona, b
+	ShiftExpressiona, b
+	RelationalExpressiona, b < ShiftExpressiona, b
+	RelationalExpressiona, b > ShiftExpressiona, b
+	RelationalExpressiona, b <= ShiftExpressiona, b
+	RelationalExpressiona, b >= ShiftExpressiona, b
+	RelationalExpressiona, b [b == allowIn] in ShiftExpressiona, b
+	RelationalExpressiona, b instanceof ShiftExpressiona, b
+	RelationalExpressiona, b cast TypeExpression
+	RelationalExpressiona, b is TypeExpression
+	RelationalExpressiona, b like TypeExpression
+
+EqualityExpressiona, b
+	RelationalExpressiona, b
+	EqualityExpressiona, b == RelationalExpressiona, b
+	EqualityExpressiona, b != RelationalExpressiona, b
+	EqualityExpressiona, b === RelationalExpressiona, b
+	EqualityExpressiona, b !== RelationalExpressiona, b
+
+BitwiseAndExpressiona, b
+	EqualityExpressiona, b
+	BitwiseAndExpressiona, b & EqualityExpressiona, b
+
+BitwiseXorExpressiona, b
+	BitwiseAndExpressiona, b
+	BitwiseXorExpressiona, b ^ BitwiseAndExpressiona, b
+
+BitwiseOrExpressiona, b
+	BitwiseXorExpressiona, b
+	BitwiseOrExpressiona, b | BitwiseXorExpressiona, b
+
+LogicalAndExpressiona, b
+	BitwiseOrExpressiona, b
+	LogicalAndExpressiona, b && BitwiseOrExpressiona, b
+
+LogicalOrExpressiona, b
+	LogicalAndExpressiona, b
+	LogicalOrExpressiona, b || LogicalAndExpressiona, b
+
+ConditionalExpressiona, b
+	YieldExpressiona, b
+	LogicalOrExpressiona, b
+	LogicalOrExpressiona, b ? AssignmentExpressionnoColon, b 
+	                    : AssignmentExpressiona, b
+
+NonAssignmentExpressiona, b
+	YieldExpressiona, b
+	LogicalOrExpressiona, b
+	LogicalOrExpressiona, b ? NonAssignmentExpressionnoColon, b 
+	                    : NonAssignmentExpressiona, b
+
+YieldExpressiona, b
+	yield
+	yield [no line break] AssignmentExpressiona, b
+
+AssignmentExpressiona, b
+	ConditionalExpressiona, b
+	Patterna, b, allowExpr = AssignmentExpressiona, b
+	SimplePatterna, b, allowExpr CompoundAssignmentOperator AssignmentExpressiona, b
+
+CompoundAssignmentOperator
+	*=
+	/=
+	%=
+	+=
+	-=
+	<<=
+	>>=
+	>>>=
+	&=
+	^=
+	|=
+	&&=
+	||=
+
+CommaExpressiona, b
+	AssignmentExpressiona, b
+	CommaExpressiona, b , AssignmentExpressiona, b
+
+PATTERNS
+
+g = { allowExpr, noExpr }
+
+Patterna, b, g
+	SimplePatterna, b, g
+	ObjectPatterna, b, g
+	ArrayPatterng
+
+SimplePatterna, b, noExpr
+	Identifier
+
+SimplePatterna, b, allowExpr
+	LeftHandSideExpressiona, b
+
+ObjectPatterng
+	{ FieldListPatterng }
+
+FieldListPatterng
+	EMPTY
+	FieldPatterng
+	FieldListPatterng ,
+	FieldListPatterng , FieldPatterng
+
+FieldPatterng
+	FieldName
+	FieldName : PatternallowColon, allowIn, g
+
+ArrayPatterng
+	[ ElementListPatterng ]
+
+ElementListPatterng
+	EMPTY
+	ElementPatterng
+	É SimplePatternallowColon, allowIn, g
+	, ElementListPatterng
+	ElementPatterng , ElementListPatterng
+
+ElementPatterng
+	PatternallowColon, allowIn, g
+
+TypedIdentifier
+	Identifier
+	Identifier : TypeExpression
+
+TypedPatternb
+	PatternnoColon, b, noExpr
+	PatternnoColon, b, noExpr : TypeExpression
+
+LikenedPatternb
+	PatternnoColon, b, noExpr like TypeExpression
+
+TYPE EXPRESSIONS
+
+TypeExpression
+	BasicTypeExpression
+	? BasicTypeExpression
+	! BasicTypeExpression
+
+BasicTypeExpression
+	*
+	null
+	undefined
+	TypeName
+	FunctionType
+	UnionType
+	RecordType
+	ArrayType
+
+TypeName
+	NameExpression
+	NameExpression TypeApplication
+
+FunctionType
+	function FunctionSignatureType
+
+FunctionSignatureType
+	TypeParameters ( ) ResultType
+	TypeParameters ( ParametersType ) ResultType
+	TypeParameters ( this : TypeName ) ResultType
+	TypeParameters ( this : TypeName , ParametersType ) ResultType
+
+ParametersType
+	RestParameterType
+	NonRestParametersType
+	NonRestParametersType , RestParameterType
+
+NonRestParametersType
+	ParameterType , NonRestParametersType
+	ParameterType
+	OptionalParametersType
+
+OptionalParametersType
+	OptionalParameterType
+	OptionalParameterType , OptionalParametersType
+
+OptionalParameterType
+	ParameterType =
+
+ParameterType
+	TypeExpression
+	Identifier : TypeExpression
+
+RestParameterType
+	É
+	É Identifier
+
+UnionType
+	( TypeUnionList )
+
+TypeUnionList
+	EMPTY
+	NoEMPTYypeUnionList
+
+NoEMPTYypeUnionList
+	TypeExpression
+	TypeExpression | NoEMPTYypeUnionList
+
+RecordType
+	{ FieldTypeList }
+
+FieldTypeList
+	EMPTY
+	FieldType
+	FieldType , FieldTypeList
+
+FieldType
+	FieldName
+	FieldName : TypeExpression
+
+ArrayType
+	[ ElementTypeList ]
+
+ElementTypeList
+	EMPTY
+	TypeExpression
+	É TypeExpression
+	, ElementTypeList
+	TypeExpression , ElementTypeList
+
+TypeExpressionList
+	TypeExpression
+	TypeExpressionList , TypeExpression
+
+STATEMENTS
+
+Statementw
+	BlockStatement
+	BreakStatement Semicolonw
+	ContinueStatement Semicolonw
+	DoWhileStatement Semicolonabbrev
+	EmptyStatement
+	ExpressionStatement Semicolonw
+	ForStatementw
+	IfStatementw
+	LabeledStatementw
+	LetBlockStatement
+	ReturnStatement Semicolonw
+	SwitchStatement
+	SwitchTypeStatement
+	ThrowStatement Semicolonw
+	TryStatement
+	WhileStatementw
+	WithStatementw
+
+Substatementw
+	Statementw
+	VariableDefinitionnoIn, statement
+
+Semicolonabbrev 
+	;
+	VirtualSemicolon
+	EMPTY
+
+SemicolonnoShortIf
+	;
+	VirtualSemicolon
+	EMPTY
+
+Semicolonfull
+	;
+	VirtualSemicolon
+
+EmptyStatement
+	;
+
+ExpressionStatement
+	[lookahead !{ {, const, function, let, var }] CommaExpressionallowColon, allowIn
+
+BlockStatement
+	{ Directiveslocal }
+
+LabeledStatementw
+	Identifier : Substatementw
+
+LetBlockStatement
+	let ( LetBindingList ) { Directiveslocal }
+
+IfStatementabbrev
+	if ParenExpression Substatementabbrev
+	if ParenExpression SubstatementnoShortIf else Substatementabbrev
+
+IfStatementfull
+	if ParenExpression Substatementfull
+	if ParenExpression SubstatementnoShortIf else Substatementfull
+
+IfStatementnoShortIf
+	if ParenExpression SubstatementnoShortIf else SubstatementnoShortIf
+
+WithStatementw
+	with ParenExpression Substatementw
+
+SwitchStatement
+	switch ParenExpression { CaseElements }
+
+CaseElements
+	CaseClausesfull DefaultClausefull CaseClausesabbrev
+	CaseClausesfull DefaultClauseabbrev
+	CaseClausesabbrev
+
+CaseClausesw
+	EMPTY
+	CaseClausesfull CaseClausew
+
+CaseClausew
+	case CommaExpressionallowColon, allowIn : Directiveslocal, w
+
+DefaultClausew
+	default : Directiveslocal, w
+
+SwitchTypeStatement
+	switch type ParenExpression { TypeCaseElements }
+
+TypeCaseElements
+	TypeCaseElement
+	TypeCaseElements TypeCaseElement
+
+TypeCaseElement
+	case ( TypedPatternallowColon, allowIn ) { Directiveslocal }
+
+DoWhileStatement
+	do Substatementfull while ParenExpression
+
+WhileStatementw
+	while ParenExpression Substatementw
+
+ForStatementw
+	for ( ForInitialiser ; OptionalExpressionallowColon ; OptionalExpressionallowColon ) Substatementw
+	for ( ForInBinding in CommaExpressionallowColon, allowIn ) Substatementw
+	for each ( ForInBinding in CommaExpressionallowColon, allowIn ) Substatementw
+
+ForInitialiser
+	EMPTY
+	CommaExpressionallowColon, noIn
+	VariableDefinitionnoIn, t
+
+ForInBinding
+	PatternallowColon, noIn, allowExpr
+	VariableDefinitionKindlocal VariableBindingnoIn
+
+ContinueStatement
+	continue
+	continue [no line break] Identifier
+
+BreakStatement
+	break
+	break [no line break] Identifier
+
+ReturnStatement
+	return
+	return [no line break] CommaExpressionallowColon, allowIn
+
+ThrowStatement
+	throw CommaExpressionallowColon, allowIn
+
+TryStatement
+	try { Directiveslocal } CatchClauses
+	try { Directiveslocal } CatchClauses finally { Directiveslocal }
+	try { Directiveslocal } finally { Directiveslocal }
+
+CatchClauses
+	CatchClause
+	CatchClauses CatchClause
+
+CatchClause
+	catch ( Parameter ) { Directiveslocal }
+
+SuperStatement
+	super ( Arguments )
+
+DIRECTIVES
+
+Directivest
+	EMPTY
+	DirectivesPrefixt Directivet, abbrev
+
+DirectivesPrefixt
+	EMPTY
+	DirectivesPrefixt Directivet, full
+
+Directiveclass, w
+	Pragmaclass
+	static [no line break] { Directiveslocal }
+	AttributedDirectiveclass, w
+
+Directiveinterface, w
+	Pragmainterface
+	AttributedDirectiveinterface, w
+
+Directiveconstructor, w
+	Pragmalocal
+	SuperStatement Semicolonw
+	Statementw
+	AttributedDirectivelocal, w
+
+Directivet, w
+	Pragmat
+	Statementw
+	AttributedDirectivet, w
+
+AttributedDirectiveglobal, w
+	Attribute [no line break] AttributedDirectiveglobal, w
+	VariableDefinitionallowIn, global Semicolonw
+	FunctionDefinitionglobal, w
+	NamespaceDefinition Semicolonw
+	ClassDeclaration Semicolonw
+	ClassDefinition
+	InterfaceDeclaration Semicolonw
+	InterfaceDefinition
+	TypeDeclaration Semicolonw
+	TypeDefinition Semicolonw
+
+AttributedDirectiveclass, w
+	Attribute [no line break] AttributedDirectiveclass, w
+	VariableDefinitionallowIn, class Semicolonw
+	FunctionDefinitionclass, w
+	NamespaceDefinition Semicolonw
+	TypeDefinition Semicolonw
+
+AttributedDirectiveinterface, w
+	Attribute [no line break] AttributedDirectiveinterface, w
+	FunctionDeclarationinterface Semicolonw
+
+AttributedDirectivelocal, w
+	VariableDefinitionallowIn, local Semicolonw
+	FunctionDefinitionlocal, w
+
+Attribute
+	NamespaceExpression
+	dynamic
+	final
+	override
+	__proto__
+	static
+
+DEFINITIONS
+
+VariableDefinitionb, t
+	VariableDefinitionKindt VariableBindingListb 
+
+VariableDefinitionKindstatement
+	var
+
+VariableDefinitionKindt
+	const
+	let
+	var
+
+VariableBindingListb
+	VariableBindingb
+	VariableBindingListb , VariableBindingb
+
+VariableBindingb
+	TypedIdentifier
+	TypedPatternb VariableInitialisationb
+
+VariableInitialisationb
+	= AssignmentExpressionallowColon, b
+
+FunctionDeclarationinterface
+	function PropertyIdentifier FunctionSignatureType
+
+FunctionDeclarationt
+	function PropertyIdentifier FunctionSignatureType
+	function get PropertyIdentifier GetterSignature
+	function set PropertyIdentifier SetterSignature
+
+FunctionDefinitionclass, w
+	function Identifier [Identifier == outer classname] ConstructorSignature { Directivesconstructor }
+	function PropertyIdentifier FunctionSignature FunctionBodyallowIn, w
+	function get PropertyIdentifier GetterSignature FunctionBodyallowIn, w
+	function set PropertyIdentifier SetterSignature FunctionBodyallowIn, w
+	native FunctionDeclarationclass
+
+FunctionDefinitionlocal, w
+	const function PropertyIdentifier FunctionSignature FunctionBodyallowIn, w
+	function PropertyIdentifier FunctionSignature FunctionBodyallowIn, w
+
+FunctionDefinitiont, w
+	const function PropertyIdentifier FunctionSignature FunctionBodyallowIn, w
+	function PropertyIdentifier FunctionSignature FunctionBodyallowIn, w
+	function get PropertyIdentifier GetterSignature FunctionBodyallowIn, w
+	function set PropertyIdentifier SetterSignature FunctionBodyallowIn, w
+	native FunctionDeclarationt
+
+FunctionSignature
+	TypeParameters ( ) ResultTypeOrLike
+	TypeParameters ( Parameters ) ResultTypeOrLike
+	TypeParameters ( this : TypeName ) ResultTypeOrLike
+	TypeParameters ( this : TypeName , Parameters ) ResultTypeOrLike
+
+GetterSignature
+	( ) ResultTypeOrLike
+
+SetterSignature
+	( Parameter ) ResultTypeVoid
+
+FunctionBodya, b, w
+	{ Directiveslocal }
+	CommaExpressiona, b Semicolonw
+
+TypeParameters
+	EMPTY
+	.< TypeParameterList > 
+
+TypeParameterList
+	Identifier
+	TypeParametersList , Identifier
+
+Parameters
+	RestParameter
+	NonRestParameters
+	NonRestParameters , RestParameter
+
+NonRestParameters
+	Parameter , NonRestParameters
+	Parameter
+	OptionalParameters
+
+OptionalParameters
+	OptionalParameter
+	OptionalParameter , OptionalParameters
+
+OptionalParameter
+	Parameter = NonAssignmentExpressionallowIn
+
+Parameter
+	ParameterAttribute TypedPatternallowIn
+	ParameterAttribute LikenedPatternallowIn
+
+ParameterAttribute
+	EMPTY
+	const
+
+RestParameter
+	É 
+	É Identifier
+
+ResultTypeOrLike
+	ResultType
+	like TypeExpression
+
+ResultType
+	EMPTY
+	: void
+	: TypeExpression
+
+ResultTypeVoid
+	EMPTY
+	: void
+
+ConstructorSignature
+	( ) ConstructorInitialiser
+	( Parameters ) ConstructorInitialiser
+
+ConstructorInitialiser
+	EMPTY
+	SettingList
+	SettingList , SuperInitialiser
+	SuperInitialiser
+
+SettingList
+	Setting
+	SettingList , Setting
+
+Setting
+	PatternallowIn, allowExpr VariableInitialisationallowIn
+
+SuperInitialiser
+	super Arguments
+
+ClassDeclaration
+	class Identifier TypeSignature
+
+ClassDefinition
+	class Identifier TypeSignature ClassInheritance ClassBody
+
+TypeSignature
+	TypeParameters
+	TypeParameters !
+
+ClassInheritance
+	EMPTY
+	extends TypeName
+	implements TypeNameList
+	extends TypeName implements TypeNameList
+
+TypeNameList
+	TypeName
+	TypeNameList , TypeName
+
+ClassBody
+	{ Directivesclass }
+
+InterfaceDeclaration
+	interface Identifier TypeSignature
+
+InterfaceDefinition
+	interface Identifier TypeSignature InterfaceInheritance InterfaceBody
+
+InterfaceInheritance
+	EMPTY
+	extends TypeNameList
+
+InterfaceBody
+	{ Directivesinterface }
+
+TypeDeclaration
+	type Identifier TypeSignature
+
+TypeDefinition
+	type Identifier TypeSignature TypeInitialisation
+
+TypeInitialisation
+	= TypeExpression
+
+NamespaceDefinition
+	namespace Identifier NamespaceInitialisation
+
+NamespaceInitialisation
+	EMPTY
+	= NamespaceExpression
+
+Pragmat
+	UsePragmat Semicolonfull
+
+UsePragmat
+	use PragmaItemst
+
+PragmaItemst
+	PragmaItemt
+	PragmaItemst , PragmaItemt
+
+PragmaItemlocal
+	namespace NamespaceExpression
+	strict
+
+PragmaItemglobal
+	default namespace NamespaceExpression
+	namespace NamespaceExpression
+	standard
+	strict
+
+PragmaItemt
+	default namespace NamespaceExpression
+	namespace NamespaceExpression
+	strict
+
+Program
+	Directives
