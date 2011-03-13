@@ -472,7 +472,7 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     if (callback == 0 || callback == ejs->nullValue) {
         if (msg->callbackSlot == ES_Worker_onmessage) {
-            mprLog(1, "Discard message as no onmessage handler defined for worker");
+            mprLog(6, "Discard message as no onmessage handler defined for worker");
             
         } else if (msg->callbackSlot == ES_Worker_onerror) {
             if (msg->message && ejsIsString(ejs, msg->message)) {

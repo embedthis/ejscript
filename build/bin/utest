@@ -179,6 +179,7 @@ enumerable class Test {
         /*  Levels are ignored */
         if (logSpec) {
 //  MOB -- use Logger?
+//  MOB -- does not support "stdout"
             parts = logSpec.split(":")
             logPath = new Path(parts[0])
             out = File(logPath).open("aw")

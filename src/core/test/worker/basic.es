@@ -3,5 +3,4 @@
  */
 
 assert(self)
-breakpoint()
 exit()

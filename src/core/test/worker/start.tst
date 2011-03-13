@@ -2,6 +2,7 @@
     Start Worker Tests
  */
 
+//  Test onclose. Ignore posted message from worker.es
 w = new Worker
 w.load("worker.es")
 let exitCount = 0
@@ -11,8 +12,8 @@ w.onclose = function (e) {
 Worker.join(w)
 assert(exitCount == 1)
 
-//  Test start with a name
 
+//  Test start with a name. Ignore posted message
 w = new Worker(null, { name: "funny-worker" })
 exitCount = 0
 w.load("worker.es")
@@ -23,8 +24,8 @@ w.onclose = function (e) {
 Worker.join(w)
 assert(exitCount == 1)
 
-//  Test receiving a message from the started script
 
+//  Test receiving a message from the started script
 w = new Worker("worker.es")
 w.onmessage = function (e) {
     let o = deserialize(e.data)
