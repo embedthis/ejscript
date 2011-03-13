@@ -55,6 +55,9 @@ static void manageEjsService(EjsService *sp, int flags)
 }
 
 
+static int ecount = 0;
+static int emax = 0;
+
 /*  
     Create a new interpreter
     @param searchPath Array of paths to search for modules. Must be persistent.
@@ -107,6 +110,11 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
 
     //  MOB Refactor
     lock(sp);
+if (++ecount > emax) {
+    emax = ecount;
+    mprLog(2, "\n@@@@@@@@@@@@@@@@@ EMAX %d\n", emax);
+    mprNop(0);
+}
     ejs->name = mprAsprintf("ejs-%d", seqno++);
     ejs->dispatcher = mprCreateDispatcher(mprAsprintf("ejsDispatcher-%d", seqno), 1);
     // printf("CREATE DISPATCHER %s\n", ejs->dispatcher->name);
@@ -158,6 +166,9 @@ void ejsDestroy(Ejs *ejs)
     ejs->destroying = 1;
     sp = ejs->service;
     if (sp) {
+lock(sp);
+ecount--;
+unlock(sp);
         ejsRemoveModules(ejs);
         ejsRemoveWorkers(ejs);
         state = ejs->state;

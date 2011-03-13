@@ -246,6 +246,9 @@ static EjsObj *workerEval(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **argv)
  */
 static EjsObj *workerExit(Ejs *ejs, EjsWorker *unused, int argc, EjsObj **argv)
 {
+    /*
+        Setting exiting causes the VM to suspend processing this interpreter
+     */
     ejs->exiting = 1;
     ejsAttention(ejs);
     return 0;
@@ -705,12 +708,10 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
      */
     mprAssert(worker->pair && worker->pair->ejs);
     ejs = (!worker->inside) ? worker->pair->ejs : ejs;
+    //  MOB - who else uses this?
     worker->terminated = 1;
     ejs->exiting = 1;
     mprSignalDispatcher(ejs->dispatcher);
-#if UNUSED
-    mprWakeWaitService();
-#endif
     return 0;
 }
 
