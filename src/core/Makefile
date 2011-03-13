@@ -4,9 +4,50 @@
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #
 
-include 	.makedep
+include 		.makedep
 
-POST_DIRS	+= src
+LISTING			+= --listing
+POST_DIRS		+= src
+EJS_MOD			+= $(call mod, ejs)
+EJS_FILES		+= $(shell echo *.es | sort)
+
+compileExtra: modules
+
+modules: $(EJS_MOD)
+
+#
+#	Just for xcode
+#
+xmodules: modules
+
+$(EJS_MOD): $(EJS_FILES)
+	$(call log) [Compile] "Core Ejs Classes"
+	rm -f *.mod *.slots.h $(BLD_BUILD_MOD_DIR)/*.mod $(BLD_MOD_DIR)/*.mod
+	$(BLD_BUILD_BIN_DIR)/ejsc $(_ESFLAGS) --out ejs.mod --bind --require "" $(EJS_FILES)
+	cp *.mod $(BLD_BUILD_MOD_DIR)
+	mv *.mod $(BLD_MOD_DIR)
+	$(call log) [Generate] "Core listings and slot files"
+	$(BLD_BUILD_BIN_DIR)/ejsmod --require "" $(LISTING) --cslots $(call mod, ejs)
+	changed=0 ; \
+	for f in *.slots.h ; do \
+		if [ -f $(BLD_INC_DIR)/$$f ] ; then \
+			if ! diff $$f $(BLD_INC_DIR)/$$f >/dev/null 2>&1; then \
+				printf "%12s %s\n" "[Install]" $(subst $(BLD_OUT_DIR),,$(BLD_INC_DIR)/$$f) ; \
+				cp $$f $(BLD_INC_DIR) ; \
+				changed=1 ; \
+			fi ; \
+		fi ; \
+		rm -f $$f; \
+	done ; \
+	if [ "$$changed" = 1 -a "$(RETRY)" = "" ] ; then \
+		echo ; \
+		$(call log) [Notice] "Rebuild with Modified Slot Definitions" ; \
+		$(MAKE) TRACE=$(TRACE) RETRY=1 $(MAKECMDGOALS) ; \
+	fi
+
+cleanExtra:
+	find . -name '*.lst' -o -name '*.mod' -o -name '*.jem' -type f | xargs rm -f
+	rm -f *.slots.h
 
 #
 #   Local variables:
