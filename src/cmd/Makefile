@@ -7,17 +7,15 @@
 include 		.makedep
 
 MAKE_IFLAGS		+= $(BLD_MPR_IFLAGS) $(BLD_HTTP_IFLAGS)
-TOOLS			+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
-TOOLS			+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) 
-TOOLS			+= $(BLD_BIN_DIR)/ejs$(BLD_EXE) 
+TARGETS			+= $(BLD_BIN_DIR)/ejsc$(BLD_EXE)
+TARGETS			+= $(BLD_BIN_DIR)/ejsmod$(BLD_EXE) 
+TARGETS			+= $(BLD_BIN_DIR)/ejs$(BLD_EXE) 
 
 ifeq	($(BLD_CC_EDITLINE),1)
 	LIBS		+= edit curses
 endif
 
-compileExtra: tools $(TARGETS)
-
-tools: $(TOOLS)
+compileExtra: $(TARGETS)
 
 EJS_OBJECTS		+= $(BLD_OBJ_DIR)/ejs$(BLD_OBJ)
 ifeq ($(BLD_FEATURE_ROMFS),1)

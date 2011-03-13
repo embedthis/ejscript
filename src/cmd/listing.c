@@ -794,7 +794,6 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
     SET_VISITED(obj, 1);
 
     if (obj == ejs->global) {
-        type = (EjsType*) obj;
         mprFprintf(mp->file,  "\n#\n"
             "#  Global slot assignments (Num prop %d)\n"
             "#\n", ejsGetPropertyCount(ejs, obj));
@@ -920,7 +919,6 @@ static void lstSlotAssignments(EjsMod *mp, EjsModule *module, EjsObj *parent, in
         count = ejsGetPropertyCount(ejs, obj);
     }
     for (; i < count; i++) {
-        trait = ejsGetPropertyTraits(ejs, obj, i);
         qname = ejsGetPropertyName(ejs, obj, i);
         vp = ejsGetProperty(ejs, obj, i);
         if (vp == 0) {
