@@ -128,6 +128,7 @@ module ejs {
          */
         native function postMessage(data: Object, ports: Array? = null): Void
 
+        //  MOB - more description?
         /**
             Terminate the worker
          */

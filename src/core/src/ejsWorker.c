@@ -493,9 +493,6 @@ static int doMessage(Message *msg, MprEvent *mprEvent)
     }
     if (msg->callbackSlot == ES_Worker_onclose) {
         mprAssert(!worker->inside);
-#if UNUSED
-        worker->ejs->finished = 1;
-#endif
         worker->state = EJS_WORKER_COMPLETE;
         LOG(5, "Worker.doMessage: complete");
         /* Worker and insider interpreter are now eligible for garbage collection */
@@ -702,14 +699,11 @@ static EjsObj *workerTerminate(Ejs *ejs, EjsWorker *worker, int argc, EjsObj **a
     if (worker->state >= EJS_WORKER_COMPLETE) {
         return 0;
     }
-  
     /*
         Switch to the inside worker if called from outside
      */
     mprAssert(worker->pair && worker->pair->ejs);
     ejs = (!worker->inside) ? worker->pair->ejs : ejs;
-    //  MOB - who else uses this?
-    worker->terminated = 1;
     ejs->exiting = 1;
     mprSignalDispatcher(ejs->dispatcher);
     return 0;
@@ -809,13 +803,13 @@ EjsWorker *ejsCreateWorker(Ejs *ejs)
 static void manageWorker(EjsWorker *worker, int flags)
 {
     if (flags & MPR_MANAGE_MARK) {
+        mprMark(worker->ejs);
         ejsManagePot(worker, flags);
         mprMark(worker->event);
         mprMark(worker->name);
         mprMark(worker->scriptFile);
         mprMark(worker->scriptLiteral);
         mprMark(worker->pair);
-        mprMark(worker->ejs);
 
     } else if (flags & MPR_MANAGE_FREE) {
         if (!worker->inside) {

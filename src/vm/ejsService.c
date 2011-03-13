@@ -115,6 +115,7 @@ if (++ecount > emax) {
     mprLog(2, "\n@@@@@@@@@@@@@@@@@ EMAX %d\n", emax);
     mprNop(0);
 }
+mprLog(2, "Create %d\n", ecount);
     ejs->name = mprAsprintf("ejs-%d", seqno++);
     ejs->dispatcher = mprCreateDispatcher(mprAsprintf("ejsDispatcher-%d", seqno), 1);
     // printf("CREATE DISPATCHER %s\n", ejs->dispatcher->name);
@@ -168,6 +169,7 @@ void ejsDestroy(Ejs *ejs)
     if (sp) {
 lock(sp);
 ecount--;
+mprLog(2, "Destroy %d\n", ecount);
 unlock(sp);
         ejsRemoveModules(ejs);
         ejsRemoveWorkers(ejs);
