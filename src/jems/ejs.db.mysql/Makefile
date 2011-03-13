@@ -8,6 +8,8 @@ include 	.makedep
 
 # PRE_DIRS	+= src
 
+module:
+
 #
 #   Local variables:
 #   tab-width: 4

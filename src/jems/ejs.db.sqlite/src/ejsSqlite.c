@@ -153,7 +153,7 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
         defaultTableName = 0;
         ncol = sqlite3_column_count(stmt);
         for (rowNum = 0; ; rowNum++) {
-            if ((rc = sqlite3_step(stmt)) == SQLITE_ROW) {
+            if (sqlite3_step(stmt) == SQLITE_ROW) {
                 row = ejsCreateEmptyPot(ejs);
                 if (row == 0) {
                     sqlite3_finalize(stmt);
@@ -210,7 +210,6 @@ static EjsObj *sqliteSql(Ejs *ejs, EjsSqlite *db, int argc, EjsObj **argv)
             } else {
                 rc = sqlite3_finalize(stmt);
                 stmt = 0;
-
                 if (rc != SQLITE_SCHEMA) {
                     retries = 0;
                     for (cmd = tail; isspace((int) *cmd); cmd++) {

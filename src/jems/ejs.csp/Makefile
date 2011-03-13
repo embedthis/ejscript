@@ -12,6 +12,8 @@ TARGETS		+= $(BLD_BIN_DIR)/ejspage.cmd
 
 compileExtra: $(TARGETS)
 
+module:
+
 $(BLD_BIN_DIR)/ejspage: ejspage.es
 	@$(call log) "[Update]" ejspage.es
 	cp ejspage.es $(BLD_BIN_DIR)/ejspage

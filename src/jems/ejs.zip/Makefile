@@ -6,6 +6,8 @@
 
 include 	.makedep
 
+module:
+
 #
 #   Local variables:
 #   tab-width: 4

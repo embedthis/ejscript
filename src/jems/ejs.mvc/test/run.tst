@@ -28,14 +28,13 @@ sleep(2000)
 
 try {
     let http = new Http
-
     //  Get the home page
     http.get(HTTP + "/")
     assert(http.status == 200)
     assert(http.response.contains("Welcome to Ejscript"))
 
 } finally {
-    kill(pid)
+    Cmd.kill(pid, 9)
     rmdir("junk", true)
 }
 

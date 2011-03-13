@@ -14,6 +14,8 @@ TARGETS		+= $(BLD_JEM_DIR)/$(JEM)
 
 compileExtra: $(TARGETS)
 
+module:
+
 #	$(BLD_MOD_DIR)/$(MOD): *.es $(BLD_MOD_DIR)/ejs.mod
 #		$(call log) [Compile] "$(MOD)"
 #		rm -f *.mod *.slots.h $(BLD_BUILD_MOD_DIR)/$(MOD) $(BLD_MOD_DIR)/$(MOD)

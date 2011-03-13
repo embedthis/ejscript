@@ -417,7 +417,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
             vs = ejsGetProperty(ejs, sp->outgoingStages, i);
             if (vs && ejsIsString(ejs, vs)) {
                 name = vs->value;
-                if ((stage = httpLookupStage(http, name)) == 0) {
+                if (httpLookupStage(http, name) == 0) {
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
                     return;
                 }
@@ -431,7 +431,7 @@ static void setHttpPipeline(Ejs *ejs, EjsHttpServer *sp)
             vs = ejsGetProperty(ejs, sp->incomingStages, i);
             if (vs && ejsIsString(ejs, vs)) {
                 name = vs->value;
-                if ((stage = httpLookupStage(http, name)) == 0) {
+                if (httpLookupStage(http, name) == 0) {
                     ejsThrowArgError(ejs, "Can't find pipeline stage name %s", name);
                     return;
                 }
@@ -521,11 +521,9 @@ static void closeEjs(HttpQueue *q)
 static void incomingEjsData(HttpQueue *q, HttpPacket *packet)
 {
     HttpConn        *conn;
-    HttpTx          *trans;
     HttpRx          *rx;
 
     conn = q->conn;
-    trans = conn->tx;
     rx = conn->rx;
 
     if (httpGetPacketLength(packet) == 0) {

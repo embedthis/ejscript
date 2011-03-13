@@ -20,13 +20,15 @@ sh("cd junk ; " + mvc + " generate scaffold post title:string body:text")
 sh("cd junk ; " + mvc + " compile")
 
 //  Start web server
-chdir("junk")
-let pid = System.daemon(ejs + " start.es")
-assert(pid)
-chdir("..")
-sleep(2000)
+let pid
 
 try {
+    chdir("junk")
+    pid = System.daemon(ejs + " start.es")
+    assert(pid)
+    chdir("..")
+
+    sleep(2000)
     let http = new Http
 
     //  Get the home page
@@ -59,7 +61,7 @@ try {
     assert(http.response.contains("The quick brown fox"))
 
 } finally {
-    kill(pid)
+    Cmd.kill(pid, 9)
     rmdir("junk", true)
 }
 
