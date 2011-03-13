@@ -201,7 +201,6 @@
 		C98FD60812E50ECC00F76138 /* http.h in Headers */ = {isa = PBXBuildFile; fileRef = C98FD60712E50ECC00F76138 /* http.h */; };
 		C9902A691161776B00473F37 /* ejsFrame.c in Sources */ = {isa = PBXBuildFile; fileRef = C9902A681161776B00473F37 /* ejsFrame.c */; };
 		C9A0708010A3573C00F48512 /* ejsSqlite.c in Sources */ = {isa = PBXBuildFile; fileRef = C9A0707F10A3573C00F48512 /* ejsSqlite.c */; };
-		C9AA6944130F1A9D00918B92 /* libmatrixsslstatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C9AA6943130F1A9D00918B92 /* libmatrixsslstatic.a */; };
 		C9CD7647131245C0007794B0 /* ejsCmd.c in Sources */ = {isa = PBXBuildFile; fileRef = C9CD7646131245C0007794B0 /* ejsCmd.c */; };
 		C9D452B511ECDBA300F029C8 /* http.c in Sources */ = {isa = PBXBuildFile; fileRef = C9D452B411ECDBA300F029C8 /* http.c */; };
 		C9D452C711ECDC0600F029C8 /* libhttp.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = C95E4FDB10EBFD9300982610 /* libhttp.dylib */; };
@@ -815,7 +814,6 @@
 		C9A0708C10A3583000F48512 /* package.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = package.json; path = ../../../src/jems/ejs.web/package.json; sourceTree = SOURCE_ROOT; };
 		C9A070A310A3586E00F48512 /* Request.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Request.es; path = ../../../src/jems/ejs.web/Request.es; sourceTree = SOURCE_ROOT; };
 		C9A070A510A3586E00F48512 /* Session.es */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Session.es; path = ../../../src/jems/ejs.web/Session.es; sourceTree = SOURCE_ROOT; };
-		C9AA6943130F1A9D00918B92 /* libmatrixsslstatic.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libmatrixsslstatic.a; path = ../../../out/lib/libmatrixsslstatic.a; sourceTree = SOURCE_ROOT; };
 		C9CD7646131245C0007794B0 /* ejsCmd.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = ejsCmd.c; path = ../../../src/core/src/ejsCmd.c; sourceTree = SOURCE_ROOT; };
 		C9D4528711ECDA4300F029C8 /* http */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = http; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D452B411ECDBA300F029C8 /* http.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = http.c; path = ../../../src/deps/http/http.c; sourceTree = SOURCE_ROOT; };
@@ -897,7 +895,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9D84AF41051C1940022DB20 /* libmpr.dylib in Frameworks */,
-				C9AA6944130F1A9D00918B92 /* libmatrixsslstatic.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1347,7 +1344,6 @@
 		C9D84A2F1051B5BA0022DB20 /* Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				C9AA6943130F1A9D00918B92 /* libmatrixsslstatic.a */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1857,7 +1853,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\necho make -C $SRC TRACE=1 xmodules\nmake -C $SRC TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\necho make -C $SRC/jems TRACE=1 xmodules\nmake -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\n";
+			shellScript = "export BIN_DIR=$BUILT_PRODUCTS_DIR\nexport DYLD_LIBRARY_PATH=$BUILT_PRODUCTS_DIR\necho make -C $SRC/core TRACE=1 xmodules\nmake -C $SRC/core TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\necho make -C $SRC/jems TRACE=1 xmodules\nmake -C $SRC/jems TRACE=1 xmodules && cp $OUT/modules/*.mod $BUILT_PRODUCTS_DIR || exit 255\necho make -C $SRC/jems/ejs.mvc TRACE=1 compile\nmake -C $SRC/jems/ejs.mvc TRACE=1 compile && cp $OUT/bin/mvc $BUILT_PRODUCTS_DIR || exit 255\n";
 			showEnvVarsInLog = 0;
 		};
 		C97A5EC511E81E9B00BB0981 /* ShellScript */ = {
@@ -2452,10 +2448,11 @@
 		C97623C20FD06EC4009C78E1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = YES;
 				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG_IDE=1";
 				HEADER_SEARCH_PATHS = (
 					../../../out/include,
@@ -2465,10 +2462,8 @@
 					../../../src/deps/pcre,
 				);
 				JEMS = $SRCROOT/../../../src/jems;
-				LIBRARY_SEARCH_PATHS = (
-					../../../out/lib,
-					../../../out/modules,
-				);
+				LIBRARY_SEARCH_PATHS = ../../../out/lib;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = ../../../out/lib;
 				MOD = $BUILT_PRODUCTS_DIR;
 				OTHER_LDFLAGS = (
 					"-lcrypto",
@@ -2484,23 +2479,28 @@
 		C97623C30FD06EC4009C78E1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				BBIN = $SRCROOT/../../../build/bin;
 				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG_IDE=1";
 				HEADER_SEARCH_PATHS = (
 					../../../out/include,
 					../../../src/include,
+					../../../src/deps/mpr,
+					../../../src/deps/http,
+					../../../src/deps/pcre,
 				);
 				JEMS = $SRCROOT/../../../src/jems;
-				LIBRARY_SEARCH_PATHS = (
-					../../../out/lib,
-					../../../out/modules,
-				);
+				LIBRARY_SEARCH_PATHS = ../../../out/lib;
+				"LIBRARY_SEARCH_PATHS[arch=*]" = ../../../out/lib;
 				MOD = $BUILT_PRODUCTS_DIR;
 				OTHER_LDFLAGS = (
 					"-lcrypto",
 					"-lssl",
 				);
+				OUT = $SRCROOT/../../../out;
 				SDKROOT = macosx10.6;
 				SRC = $SRCROOT/../../../src;
 				TOP = $SRCROOT/../../..;
