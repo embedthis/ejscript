@@ -41,7 +41,8 @@ module ejs.unix {
      */
 
     /**
-        Copy a file. If the destination file already exists, the old copy will be overwritten as part of the copy operation.
+        Copy a file. If the destination file already exists, the old copy will be overwritten as part of the 
+        copy operation.
         @param fromPath Original file to copy.
         @param toPath New destination file path name.
         @throws IOError if the copy is not successful.
@@ -98,6 +99,24 @@ module ejs.unix {
      */
     function kill(pid: Number, signal: Number = 2): Void 
         Cmd.kill(pid, signal)
+
+    /** @hide */
+    function killall(name: Object, signal: Number = 2, ...except): Void {
+        let cmd = new Cmd
+        if (Config.OS == "WIN") {
+            cmd.start(["/bin/sh", "-c", "/bin/ps -W | awk '{print $4,$8}'"])
+        } else {
+            cmd.start(["/bin/sh", "-c", "/bin/ps -e | awk '{print $1,$4}'"])
+        }
+        for each (line in cmd.readLines()) {
+            let [pid,command] = line.split(" ")
+            if ((name is Regexp && name.test(command)) || command.search(name.toString())) {
+                if (except.length == 0 || !except.find(function(e, index, arrr) { return e == pid })) {
+                    Cmd.kill(pid, signal)
+                }
+            }
+        }
+    }
 
     //  TODO - good to add ability to do a regexp on the path or a filter function
     //  TODO - good to add ** to go recursively to any depth
