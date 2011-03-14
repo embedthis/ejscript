@@ -19,15 +19,15 @@ module ejs {
         use default namespace public
 
         /**
-          Async mode is not yet supported
-          @hide 
+            Async mode is not yet supported
+            @hide 
           */
         function get async(): Boolean
             false
 
         /** 
-          Async mode is not yet supported
-          @hide 
+            Async mode is not yet supported
+            @hide 
          */
         function set async(enable: Boolean): Void {
             if (enable) {

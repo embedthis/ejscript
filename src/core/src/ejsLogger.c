@@ -30,19 +30,37 @@ static EjsObj *logger_set_nativeLevel(Ejs *ejs, EjsObj *unused, int argc, EjsObj
 /*  
     function get nativeStream(): Stream
  */
-static EjsObj *logger_nativeStream(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+static EjsFile *logger_nativeStream(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
 {
     int     fd;
 
     if (ejs->nativeStream == 0) {
-        if ((fd = mprGetLogFd(ejs)) >= 0) {
+        if ((fd = mprGetLogFd()) >= 0) {
             ejs->nativeStream = ejsCreateFileFromFd(ejs, fd, "mpr-logger", O_WRONLY);
-            return (EjsObj*) ejs->nativeStream;
+            return ejs->nativeStream;
         } else {
             ejs->nativeStream = (EjsFile*) ejs->nullValue;
         }
     }
-    return (EjsObj*) ejs->nativeStream;
+    return ejs->nativeStream;
+}
+
+
+/*  
+    function set nativeStream(stream: Stream): Void
+ */
+static EjsObj *logger_set_nativeStream(Ejs *ejs, EjsObj *unused, int argc, EjsObj **argv)
+{
+    EjsFile  *stream;
+
+    stream = (EjsFile*) argv[0];
+    if (!ejsIsFile(ejs, stream)) {
+        ejsThrowError(ejs, "Argument is not a file stream");
+        return 0;
+    }
+    mprSetLogFd(mprGetFileFd(stream->file));
+    ejs->nativeStream = stream;
+    return 0;
 }
 
 
@@ -55,8 +73,8 @@ void ejsConfigureLoggerType(Ejs *ejs)
     type = ejsGetTypeByName(ejs, N("ejs", "Logger"));
     mprAssert(type);
 
-    ejsBindAccess(ejs, type, ES_Logger_nativeLevel, (EjsProc) logger_nativeLevel, (EjsProc) logger_set_nativeLevel);
-    ejsBindMethod(ejs, type, ES_Logger_nativeStream, (EjsProc) logger_nativeStream);
+    ejsBindAccess(ejs, type, ES_Logger_nativeLevel, logger_nativeLevel, logger_set_nativeLevel);
+    ejsBindAccess(ejs, type, ES_Logger_nativeStream, logger_nativeStream, logger_set_nativeStream);
 }
 
 

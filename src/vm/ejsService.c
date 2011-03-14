@@ -824,7 +824,6 @@ static void logHandler(int flags, int level, cchar *msg)
     static int  solo = 0;
     char        *prefix, *tag, *amsg, lbuf[16], buf[MPR_MAX_STRING];
 
-    //  MOB - not thread safe
     if (solo > 0) {
         return;
     }

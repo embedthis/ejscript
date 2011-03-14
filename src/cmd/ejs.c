@@ -288,7 +288,6 @@ MAIN(ejsMain, int argc, char **argv)
     ecSetOptimizeLevel(cp, optimizeLevel);
     ecSetWarnLevel(cp, warnLevel);
     ecSetStrictMode(cp, strict);
-
     if (nextArg < argc) {
         mprAddItem(app->files, sclone(argv[nextArg]));
     }

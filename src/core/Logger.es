@@ -106,9 +106,12 @@ module ejs {
                 } else {
                     stream = File(path).open("wa+")
                 }
-                if (_outStream && stream != _outStream && _outStream != Logger.nativeStream) {
-                    _outStream.close()
-                }
+                /*
+                    Rely on GC to close. Otherwise this may close stderr
+                    if (_outStream && stream != _outStream && _outStream != Logger.nativeStream) {
+                        _outStream.close()
+                    }
+                 */
                 _outStream = stream
             }
             _location = location
@@ -195,9 +198,9 @@ module ejs {
         /**
             Logging stream for native code logging instrumentation.  This controls logging from C code.
             This is initialized at startup via a command line "--log spec" switch and/or the ejsrc "log.location" field.
-            Thereafter, this field is readonly.
          */
         static native function get nativeStream(): Stream
+        static native function set nativeStream(stream: Stream): Void
 
         /** 
             The name of this logger.
