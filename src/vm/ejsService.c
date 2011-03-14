@@ -138,7 +138,7 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     mprRemoveRoot(ejs);
     ejs->state->frozen = 0;
 #if DEBUG_IDE
-    mprLog(2, "CREATE %s, length %d", ejs->name, sp->vmlist->length);
+    mprLog(5, "CREATE %s, length %d", ejs->name, sp->vmlist->length);
 #endif
     return ejs;
 }
@@ -151,7 +151,7 @@ void ejsDestroy(Ejs *ejs)
 
 #if DEBUG_IDE
     if (ejs->service) {
-        mprLog(2, "DESTROY %s, length %d", ejs->name, ejs->service->vmlist->length);
+        mprLog(5, "DESTROY %s, length %d", ejs->name, ejs->service->vmlist->length);
     }
 #endif
     ejs->destroying = 1;
