@@ -2786,7 +2786,7 @@ static void bindVariableDefinition(EcCompiler *cp, EcNode *np)
                  */
                 trait = ejsGetPropertyTraits(ejs, np->lookup.obj, np->lookup.slotNum);
                 if (!typeIsCompatible(cp, trait->type, (EjsType*) typeNode->lookup.ref)) {
-                    astError(cp, np, "Redefinition of \"%s\" is not compatible with prior definition", np->qname.name);
+                    astError(cp, np, "Redefinition of \"%@\" is not compatible with prior definition", np->qname.name);
                     LEAVE(cp);
                     return;
                 }
