@@ -25,8 +25,10 @@ $(BLD_MOD_DIR)/$(MOD): *.es $(BLD_MOD_DIR)/ejs.mod
 	cp *.mod $(BLD_BUILD_MOD_DIR) ; mv *.mod $(BLD_MOD_DIR)
 	rm -f *.slots.h
 
-$(BLD_JEM_DIR)/$(JEM): $(BLD_MOD_DIR)/$(MOD) package.json
+package.json: Makefile $(BLD_INC_DIR)/buildConfig.h
 	jem --field version --value $(BLD_VERSION) edit
+
+$(BLD_JEM_DIR)/$(JEM): $(BLD_MOD_DIR)/$(MOD) package.json
 	jem setdeps $(BLD_MOD_DIR)/$(MOD)
 	jem build
 	jem --to $(BLD_JEM_DIR) publish $(JEM)

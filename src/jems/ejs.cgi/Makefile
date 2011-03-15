@@ -1,5 +1,5 @@
 #
-#	Makefile for the ejs.web.cgi jem
+#	Makefile for the ejs.cgi jem
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #

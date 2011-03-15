@@ -18,6 +18,12 @@ applyDependencies()
 
 manageFeatures()
 {
+    if [ "$BLD_FEATURE_ROMFS" = 1 -a "$BLD_CROSS" = 0 ] ; then
+        echo
+        echo "ROM-based storage is only supported if doing cross-compilation"
+        echo
+        exit 255
+    fi
     if [ "$BLD_FEATURE_FLOAT" = 0 ] ; then
         echo " "
         echo "Floating point support is required."

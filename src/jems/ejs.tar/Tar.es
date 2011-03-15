@@ -29,16 +29,19 @@ module ejs.tar {
         }
         function create(): Void {
             let cmd = "tar czf " + path + " " + files.join(" ")
+            //  MOB - should not need to do on Windows
             cmd = cmd.replace(/\\/g, "\\\\")
             System.sh(cmd)
         }
         function extract(...files): Void {
             let cmd = "tar xzf " + path + " " + files.join(" ")
+            //  MOB - should not need to do on Windows
             cmd = cmd.replace(/\\/g, "\\\\")
             System.sh(cmd)
         }
         function cat(...files): String {
             let cmd = "tar xOzf " + path + " " + files.join(" ")
+            //  MOB - should not need to do on Windows
             cmd = cmd.replace(/\\/g, "\\\\")
             return System.sh(cmd)
         }

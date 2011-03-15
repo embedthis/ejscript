@@ -22,9 +22,27 @@ DOC			:= $(DOC_DIR)/index.html
 #
 #	Build dependencies for ejs.jem first so that all jems can use the jem command
 #
-compileFirst:
-	$(MAKE) --no-print-directory TRACE=$(TRACE) -C ejs.unix module
-	$(MAKE) --no-print-directory TRACE=$(TRACE) -C ejs.tar module
+compileFirst: tools
+
+compileLast: extraTools
+
+#
+#	Build modules required by build tools (jem)
+#
+tools:
+	$(MAKE) --no-print-directory TRACE=$(TRACE) BUILDING_NATIVE=$(BUILDING_NATIVE) -C ejs.unix module
+	$(MAKE) --no-print-directory TRACE=$(TRACE) BUILDING_NATIVE=$(BUILDING_NATIVE) -C ejs.tar module
+	$(MAKE) --no-print-directory TRACE=$(TRACE) BUILDING_NATIVE=$(BUILDING_NATIVE) -C ejs.jem compile
+
+#
+#	For natively building extra tools (ejspage, ejssql, mvc)
+#
+extraTools:
+ifeq ($(BLD_CROSS),1)
+	$(MAKE) --no-print-directory TRACE=$(TRACE) BUILDING_NATIVE=1 -C ejs.template compile
+	$(MAKE) --no-print-directory TRACE=$(TRACE) BUILDING_NATIVE=1 -C ejs.mvc compile
+	$(MAKE) --no-print-directory TRACE=$(TRACE) BUILDING_NATIVE=1 -C ejs.db.sqlite compile
+endif
 
 #
 #	Just for xcode

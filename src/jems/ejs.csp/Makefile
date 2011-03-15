@@ -1,5 +1,5 @@
 #
-#	Makefile for the ejs.web.template jem. Web page templating engine and template command.
+#	Makefile for the ejs.csp jem. Web page templating engine for C/C++
 #
 #	Copyright (c) Embedthis Software LLC, 2003-2011. All Rights Reserved.
 #

@@ -6,7 +6,7 @@
 
 include 	.makedep
 
-PRE_DIRS	= src
+PRE_DIRS	+= src
 
 module:
 

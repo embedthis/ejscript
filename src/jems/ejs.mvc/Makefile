@@ -25,8 +25,10 @@ module:
 #		cp *.mod $(BLD_BUILD_MOD_DIR) ; mv *.mod $(BLD_MOD_DIR)
 #		rm -f $(NAME).slots.h
 
-$(BLD_JEM_DIR)/$(JEM): $(BLD_BIN_DIR)/mvc package.json
+package.json: Makefile $(BLD_INC_DIR)/buildConfig.h
 	jem --field version --value $(BLD_VERSION) edit
+
+$(BLD_JEM_DIR)/$(JEM): $(BLD_BIN_DIR)/mvc package.json
 	jem build
 	jem --to $(BLD_JEM_DIR) publish $(JEM)
 	rm -f $(JEM).jem

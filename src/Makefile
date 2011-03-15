@@ -12,16 +12,25 @@ EJS_OBJECTS		+= $(patsubst %.c,$(BLD_OBJ_DIR)/%$(BLD_OBJ),$(notdir $(EJS_SOURCES
 
 include 		.makedep
 
-compileFirst:
-	$(call log) [Notice] "Building Native Ejs Toolchain"
+compileFirst: tools 
+
+compileExtra: core library
+
+compileFinal: extraTools
+
+#
+#	These are the required tools to build Ejscript: (ejs, ejsc, ejsmod, jem)
+#
+tools:
+	$(call log) [Notice] "Building Native Ejs Toolchain (ejsc, ejs, ejsmod)"
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/deps -C deps compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/vm -C vm compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/compiler -C compiler compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/core/src -C core/src compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR) -C . library
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/cmd -C cmd compile
-
-compileExtra: core library
+	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/core -C core compile
+	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/jems -C jems tools
 
 core: dummy
 	echo
@@ -32,6 +41,16 @@ library: $(EJS_LIB)
 
 $(EJS_LIB): $(EJS_SOURCES) $(EJS_OBJECTS)
 	bld --library $(EJS_LIB) --search "$(BLD_EJS_WITHPATHS)" --libs "$(BLD_EJS_WITHLIBS)" $(EJS_OBJECTS)
+
+#
+#	Build extra native tools (ejspage, ejssql, mvc)
+#
+extraTools:
+ifeq ($(BLD_CROSS),1)
+	echo
+	$(call log) "[Notice]" "Build extra native tools (ejspage, ejssql, mvc)"
+	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/jems -C jems extraTools
+endif
 
 cleanExtra:
 	find . -name '*.lst' -o -name '*.mod' -o -name '*.jem' -type f | xargs rm -f
