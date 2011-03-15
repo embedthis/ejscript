@@ -150,7 +150,7 @@ void ejsDestroy(Ejs *ejs)
     EjsService  *sp;
     EjsState    *state;
 
-#if DEBUG_IDE
+#if DEBUG_IDE && 0
     if (ejs->service) {
         mprLog(5, "DESTROY %s, length %d", ejs->name, ejs->service->vmlist->length);
     }

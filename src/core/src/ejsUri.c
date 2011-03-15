@@ -1028,7 +1028,6 @@ static HttpUri *createHttpUriFromHash(Ejs *ejs, EjsObj *arg, int complete)
     if (uriObj) {
         return toHttpUri(ejs, uriObj, 1);
     }
-
     schemeObj = ejsGetPropertyByName(ejs, arg, EN("scheme"));
     scheme = (schemeObj && ejsIsString(ejs, schemeObj)) ? ejsToMulti(ejs, schemeObj) : 0;
 

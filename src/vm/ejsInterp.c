@@ -130,7 +130,7 @@ static MPR_INLINE void checkGetter(Ejs *ejs, EjsAny *value, EjsAny *thisObj, Ejs
 #define THIS            FRAME->function.boundThis
 #define FILL(mark)      while (mark < FRAME->pc) { *mark++ = EJS_OP_NOP; }
 
-#if DEBUG_IDE
+#if DEBUG_IDE && 0
     static EjsOpCode traceCode(Ejs *ejs, EjsOpCode opcode);
     static int opcount[256];
 #else
@@ -3851,7 +3851,7 @@ static void bkpt(Ejs *ejs)
 #endif
 
 
-#if DEBUG_IDE 
+#if DEBUG_IDE && 0
 /*
     This code is only active when building in debug mode and debugging in an IDE
  */
