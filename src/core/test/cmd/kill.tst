@@ -25,8 +25,11 @@ if (!Path("/bin").exists) {
     assert(pid2 > 0)
     Cmd.killall(/sleep.*60/, 2)
 
+/*
     //  Killall with preserving self
+    //  Can't easily test this without endangering build farm and other ejs processes
     let pid = Cmd.daemon(["ejs", "-c", "App.run()"])
     assert(pid > 0)
     Cmd.killall("ejs", 2, App.pid)
+*/
 }
