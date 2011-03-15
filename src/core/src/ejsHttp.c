@@ -1423,7 +1423,7 @@ void ejsSetHttpLimits(Ejs *ejs, HttpLimits *limits, EjsObj *obj, int server)
 
 static void sendHttpCloseEvent(Ejs *ejs, EjsHttp *hp)
 {
-    if (!hp->closed) {
+    if (!hp->closed && ejs->service) {
         hp->closed = 1;
         if (hp->emitter) {
             ejsSendEvent(ejs, hp->emitter, "close", NULL, (EjsObj*) hp);

@@ -132,7 +132,7 @@ EjsFrame *ejsCreateFrame(Ejs *ejs, EjsFunction *fun, EjsObj *thisObj, int argc, 
 
     if (argc > 0) {
         frame->argc = argc;
-        if ((uint) argc < (fun->numArgs - fun->numDefault) || (uint) argc > fun->numArgs) {
+        if ((uint) argc < (fun->numArgs - fun->numDefault - fun->rest) || (uint) argc > fun->numArgs) {
             ejsThrowArgError(ejs, "Incorrect number of arguments");
             return 0;
         }

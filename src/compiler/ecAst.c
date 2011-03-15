@@ -1026,6 +1026,11 @@ static int defineParameters(EcCompiler *cp, EcNode *np)
         nameNode = 0;
         if (child->left->kind == N_QNAME) {
             nameNode = child->left;
+#if UNUSED
+            if (numDefault) {
+                astError(cp, np, "Can't have non-default parameters after default parameters");
+            }
+#endif
         } else if (child->left->kind == N_ASSIGN_OP) {
             numDefault++;
             nameNode = child->left->left;
@@ -1045,8 +1050,7 @@ static int defineParameters(EcCompiler *cp, EcNode *np)
     fun->numDefault = numDefault;
     if (np->function.getter && fun->numArgs != 0) {
         astError(cp, np, "Getter function \"%@\" must not define parameters.", np->qname.name);
-    }
-    if (np->function.setter && fun->numArgs != 1) {
+    } else if (np->function.setter && fun->numArgs != 1) {
         astError(cp, np, "Setter function \"%@\" must define exactly one parameter.", np->qname.name);
     }
     return 0;

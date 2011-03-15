@@ -451,9 +451,10 @@
 #define ES_Cmd_exec                                                    1
 #define ES_Cmd_kill                                                    2
 #define ES_Cmd_killall                                                 3
-#define ES_Cmd_run                                                     4
-#define ES_Cmd_sh                                                      5
-#define ES_Cmd_NUM_CLASS_PROP                                          6
+#define ES_Cmd_ps                                                      4
+#define ES_Cmd_run                                                     5
+#define ES_Cmd_sh                                                      6
+#define ES_Cmd_NUM_CLASS_PROP                                          7
 
 /*
    Prototype (instance) slots for "Cmd" type 
@@ -492,9 +493,10 @@
 #define ES_Cmd_exec_options                                            1
 #define ES_Cmd_kill_pid                                                0
 #define ES_Cmd_kill_signal                                             1
-#define ES_Cmd_killall_name                                            0
+#define ES_Cmd_killall_pattern                                         0
 #define ES_Cmd_killall_signal                                          1
-#define ES_Cmd_killall_except                                          2
+#define ES_Cmd_killall_preserve                                        2
+#define ES_Cmd_ps_pattern                                              0
 #define ES_Cmd_run_command                                             0
 #define ES_Cmd_run_data                                                1
 #define ES_Cmd_sh_command                                              0
@@ -2251,6 +2253,6 @@
 #define ES_XMLList_NUM_INSTANCE_PROP                                   20
 #define ES_XMLList_NUM_INHERITED_PROP                                  0
 
-#define _ES_CHECKSUM_ejs   1375606
+#define _ES_CHECKSUM_ejs   1379636
 
 #endif
