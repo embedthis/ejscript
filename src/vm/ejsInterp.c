@@ -3613,7 +3613,9 @@ mprAssert(ejs->result == 0 || (MPR_GET_GEN(MPR_GET_MEM(ejs->result)) != MPR->hea
         state->stack -= (argc + stackAdjust);
 
     } else {
-        fp = ejsCreateFrame(ejs, fun, thisObj, argc, argv);
+        if ((fp = ejsCreateFrame(ejs, fun, thisObj, argc, argv)) == 0) {
+            return;
+        }
         fp->function.block.prev = state->bp;
         fp->caller = state->fp;
         fp->stackBase = state->stack;

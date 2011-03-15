@@ -4,6 +4,7 @@
 
 let ejs = App.exePath.portable
 
+//  MOB -- should run on windows too!
 if (!Path("/bin").exists) {
     test.skip("Only run on unix systems")
 } else {
