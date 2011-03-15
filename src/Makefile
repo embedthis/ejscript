@@ -22,7 +22,8 @@ compileFinal: extraTools
 #	These are the required tools to build Ejscript: (ejs, ejsc, ejsmod, jem)
 #
 tools:
-	$(call log) [Notice] "Building Ejs Toolchain for $(BLD_BUILD_SYSTEM) (ejsc, ejs, ejsmod)"
+	echo
+	$(call log) [Notice] "Building Ejs Toolchain for ($(BLD_BUILD_SYSTEM)) (ejsc, ejs, ejsmod)"
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/deps -C deps compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/vm -C vm compile
 	$(MAKE) -S --no-print-directory BUILDING_NATIVE=1 TRACE=$(TRACE) DIR=$(DIR)/compiler -C compiler compile
@@ -34,7 +35,7 @@ tools:
 
 core: dummy
 	echo
-	$(call log) [Notice] "Building for Target $(BLD_HOST_SYSTEM)"
+	$(call log) [Notice] "Building $(BLD_NAME) for ($(BLD_HOST_SYSTEM))"
 	$(MAKE) -S --no-print-directory TRACE=$(TRACE) DIR=$(DIR)/core -C core 
 
 library: $(EJS_LIB)
