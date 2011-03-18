@@ -58,6 +58,7 @@ typedef struct EjsHttpServer {
     EjsArray        *outgoingStages;            /**< Outgoing Http pipeline stages */
 } EjsHttpServer;
 
+extern EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *server, bool deep);
 
 /** 
     Request Class
@@ -73,6 +74,7 @@ typedef struct EjsRequest {
     HttpConn        *conn;              /**< Underlying Http connection object */
     EjsHttpServer   *server;            /**< Owning server */
 
+    EjsObj          *app;               /**< Application build function. Used when threaded */
     EjsObj          *absHome;           /**< Absolute URI to the home of the application from this request */
     EjsObj          *emitter;           /**< Event emitter */
     EjsPath         *dir;               /**< Home directory containing the application */
@@ -121,7 +123,7 @@ typedef struct EjsRequest {
 extern EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cchar *dir);
 
 /** 
-    Clone a new request. This is used to clone a request from one interpreter into another.
+    Clone a request into another interpreter.
     @param ejs Ejs interpreter handle returned from $ejsCreate
     @param req Original request to copy
     @param deep Ignored

@@ -27,9 +27,11 @@ static EjsPath *clonePath(Ejs *ejs, EjsPath *src, bool deep)
 {
     EjsPath     *dest;
 
-    dest = (EjsPath*) ejsClone(ejs, (EjsObj*) src, deep);
-    dest->info = src->info;
+    if ((dest = ejsCreateObj(ejs, TYPE(src), 0)) == 0) {
+        return 0;
+    }
     dest->value = sclone(src->value);
+    dest->info = src->info;
     return dest;
 }
 

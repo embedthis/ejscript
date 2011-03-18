@@ -71,8 +71,9 @@ static EjsObj *workerConstructor(Ejs *ejs, EjsWorker *worker, int argc, EjsObj *
 
     /*
         Create a new interpreter and an "inside" worker object and pair it with the current "outside" worker.
+        The worker interpreter gets a new dispatcher
      */
-    if ((wejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((wejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }

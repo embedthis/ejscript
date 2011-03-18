@@ -594,7 +594,6 @@ static EjsArray *cloneArrayMethod(Ejs *ejs, EjsArray *ap, int argc, EjsObj **arg
     mprAssert(argc == 0 || ejsIsBoolean(ejs, argv[0]));
 
     deep = (argc == 1) ? ((EjsBoolean*) argv[0])->value : 0;
-
     return ejsCloneArray(ejs, ap, deep);
 }
 

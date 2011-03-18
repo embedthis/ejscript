@@ -16,45 +16,63 @@ static int configureWebTypes(Ejs *ejs);
 
 /************************************ Code ************************************/
 
-static int requestWorker(EjsRequest *req)
+static int requestWorker(EjsRequest *req, MprEvent *event)
 {
     Ejs         *ejs;
-    EjsObj      *argv[1];
+    EjsObj      *argv[2];
 
     ejs = req->ejs;
-    argv[0] = (EjsObj*) req;
-    ejsRunFunctionBySlot(ejs, ejs->global, ES_ejs_web_Web_workerHelper, 1, argv);
+    mprAssert(ejs);
+    mprAssert(req->app);
+    
+    argv[0] = (EjsObj*) req->app;
+    argv[1] = (EjsObj*) req;
+    ejsRunFunctionBySlot(ejs, ejs->webType, ES_ejs_web_Web_workerHelper, 2, argv);
+    //  MOB - does this need to send a readable event / NOTIFY ... READABLE
     return 0; 
 }
 
 
-static EjsObj *req_worker(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
+/*
+    static function worker(app: Function, req: Request): Void
+ */
+static EjsObj *req_worker(Ejs *ejs, EjsObj *web, int argc, EjsObj **argv)
 {
     Ejs         *nejs;
-    EjsRequest  *nreq;
+    EjsRequest  *req, *nreq;
+    EjsObj      *app;
     HttpConn    *conn;
 
-    if ((nejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
-        //  MOB THROW
-        return 0;
-    }
-    nejs->loc = ejs->loc;
-    if (ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, "ejs.web"), -1, -1, EJS_LOADER_RELOAD) < 0) {
-        mprError("Can't load ejs.web.mod: %s", ejsGetErrorMsg(ejs, 1));
+    app = argv[0];
+    req = (EjsRequest*) argv[1];
+    if ((nejs = ejsCreate(0, 0, 0, 0, 0, 0)) == 0) {
+        ejsThrowStateError(ejs, "Can't create interpreter to service request");
         return 0;
     }
     conn = req->conn;
-    nreq = 0;
-#if FUTURE
-    nreq = ejsCloneRequest(ejs, req, 1);
-#endif
-    httpSetConnContext(req->conn, nreq);
-    conn->dispatcher = nejs->dispatcher;
+    conn->mark = nejs;
+    conn->newDispatcher = nejs->dispatcher;
+    
+    nejs->loc = ejs->loc;
+    if (ejsLoadModule(nejs, ejsCreateStringFromAsc(nejs, "ejs.web"), -1, -1, EJS_LOADER_RELOAD) < 0) {
+        ejsThrowStateError(ejs, "Can't load ejs.web.mod: %s", ejsGetErrorMsg(nejs, 1));
+        return 0;
+    }
+    //  MOB -- not really doing a clone. This is a minimal copy. Should rename perhaps?
+    if ((nreq = ejsCloneRequest(nejs, req, 1)) == 0) {
+        ejsThrowStateError(ejs, "Can't clone request");
+        return 0;
+    }
+    httpSetConnContext(conn, nreq);
+    nreq->app = app;
 
-    //  MOB -- need to schedule event to pick up the request
-    //  MOB -- missing server object **** Remove from Request.server
-    //      may need documentRoot and serverRoot in Request then
-    if (mprCreateEvent(nejs->dispatcher, "RequestWorker", 0, (MprEventProc) requestWorker, nreq, 0) < 0) {
+    //  MOB -- not really doing a clone. This is a minimal copy. Should rename perhaps?
+    if ((nreq->server = ejsCloneHttpServer(nejs, req->server, 1)) == 0) {
+        ejsThrowStateError(ejs, "Can't clone request");
+        return 0;
+    }
+    conn->workerEvent = mprCreateEvent(conn->dispatcher, "RequestWorker", 0, requestWorker, nreq, MPR_EVENT_DONT_QUEUE);
+    if (conn->workerEvent == 0) {
         ejsThrowStateError(ejs, "Can't create worker event");
     }
     return 0;
@@ -81,15 +99,14 @@ static int configureWebTypes(Ejs *ejs)
     EjsType     *type;
     int         slotNum;
 
-    type = ejsGetTypeByName(ejs, N("ejs.web", "Web"));
-    if (type == 0) {
-        mprError("Can't find Web class");
+    if ((type = ejsGetTypeByName(ejs, N("ejs.web", "Web"))) == 0) {
+        mprError("Can't find ejs.web::Web class");
         ejs->hasError = 1;
         return MPR_ERR_CANT_INITIALIZE;
     }
     ejs->webType = type;
 
-    ejsBindMethod(ejs, type, ES_ejs_web_Web_worker, (EjsProc) req_worker);
+    ejsBindMethod(ejs, type, ES_ejs_web_Web_worker, req_worker);
 
     if ((slotNum = ejsLookupProperty(ejs, ejs->global, N("ejs.web", "escapeHtml"))) != 0) {
         ejsBindFunction(ejs, ejs->global, slotNum, web_escapeHtml);

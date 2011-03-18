@@ -69,7 +69,7 @@ static EjsObj *g_cloneBase(Ejs *ejs, EjsObj *ignored, int argc, EjsObj **argv)
     mprAssert(argc == 1);
     
     type = (EjsType*) argv[0];
-    type->baseType = (EjsType*) ejsClone(ejs, (EjsObj*) type->baseType, 0);
+    type->baseType = (EjsType*) ejsClone(ejs, type->baseType, 0);
     return 0;
 }
 

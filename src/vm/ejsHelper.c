@@ -507,6 +507,7 @@ static EjsObj *castObj(Ejs *ejs, EjsObj *obj, EjsType *type)
 
 static EjsObj *cloneObj(Ejs *ejs, EjsObj *obj, bool deep)
 {
+    //  MOB - is this sufficient
     return obj;
 }
 

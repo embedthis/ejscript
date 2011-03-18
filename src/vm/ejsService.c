@@ -59,12 +59,8 @@ static void manageEjsService(EjsService *sp, int flags)
 
 /*  
     Create a new interpreter
-    @param searchPath Array of paths to search for modules. Must be persistent.
-    @param require List of modules to pre-load
-    @param argc Count of command line args 
-    @param argv Array of command line args
  */
-Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
+Ejs *ejsCreate(MprDispatcher *dispatcher, cchar *searchPath, MprList *require, int argc, cchar **argv, int flags)
 {
     EjsService  *sp;
     Ejs         *ejs;
@@ -80,18 +76,12 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
         sp->master = ejs;
     }
     ejs->service = sp;
-    //  MOB
-    mprAssert(sp->vmlist->length < 20);
     mprAddItem(sp->vmlist, ejs);
 
     if ((ejs->state = mprAllocZeroed(sizeof(EjsState))) == 0) {
         return 0;
     }
-#if FUTURE
-    ejs->intern = &sp->intern;
-#else
     ejs->intern = ejsCreateIntern(ejs);
-#endif
     ejs->empty = require && mprGetListLength(require) == 0;
     ejs->mutex = mprCreateLock(ejs);
     ejs->argc = argc;
@@ -106,10 +96,13 @@ Ejs *ejsCreate(cchar *searchPath, MprList *require, int argc, cchar **argv, int 
     ejs->modules = mprCreateList(-1, MPR_LIST_STATIC_VALUES);
     ejs->workers = mprCreateList(0, 0);
 
-    //  MOB Refactor
     lock(sp);
-    ejs->name = mprAsprintf("ejs-%d", seqno++);
-    ejs->dispatcher = mprCreateDispatcher(mprAsprintf("ejsDispatcher-%d", seqno), 1);
+    if (dispatcher == 0) {
+        ejs->name = mprAsprintf("ejs-%d", seqno++);
+        ejs->dispatcher = mprCreateDispatcher(ejs->name, 1);
+    } else {
+        ejs->dispatcher = dispatcher;
+    }
     unlock(sp);
         
     if ((ejs->bootSearch = searchPath) == 0) {
@@ -528,7 +521,7 @@ int ejsEvalModule(cchar *path)
     if ((mpr = mprCreate(0, NULL, 0)) != 0) {
         status = MPR_ERR_MEMORY;
 
-    } else if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
+    } else if ((ejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
         status = MPR_ERR_MEMORY;
 
     } else if (ejsLoadModule(ejs, ejsCreateStringFromAsc(ejs, path), -1, -1, 0) < 0) {

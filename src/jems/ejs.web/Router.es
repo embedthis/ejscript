@@ -291,7 +291,6 @@ module ejs.web {
             case Top:
                 addHandlers()
                 addDefault(StaticBuilder)
-                // addCatchall()
                 break
             case Restful:
                 addHome("@Base/")
@@ -576,7 +575,7 @@ module ejs.web {
             } else if (!template) {
                 template = "*"
             }
-            let line = "  %-24s %-24s %-7s %s".format(r.name, target, method, template)
+            let line = "  %-24s %s %-24s %-7s %s".format(r.name, r.threaded ? "T": " ", target, method, template)
             if (extra) {
                 if (params && Object.getOwnPropertyCount(params) > 0) {
                     if (!(params.action && Object.getOwnPropertyCount(params) == 1)) {

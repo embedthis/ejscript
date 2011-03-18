@@ -3011,6 +3011,7 @@ extern void ejsClearAttention(Ejs *ejs);
         interpreters. One interpreter can be designated as a master interpreter and then it can be cloned by supplying 
         the master interpreter to this call. A master interpreter provides the standard system types and clone interpreters 
         can quickly be created an utilize the master interpreter's types. This saves memory and speeds initialization.
+    @param dispatcher Mpr event dispatcher to use for servicing I/O and other events.
     @param search Module search path to use. Set to NULL for the default search path.
     @param require Optional list of required modules to load. If NULL, the following modules will be loaded:
         ejs, ejs.io, ejs.events, ejs.xml, ejs.sys and ejs.unix.
@@ -3024,7 +3025,7 @@ extern void ejsClearAttention(Ejs *ejs);
     @return A new interpreter
     @ingroup Ejs
  */
-extern Ejs *ejsCreate(cchar *search, MprList *require, int argc, cchar **argv, int flags);
+extern Ejs *ejsCreate(MprDispatcher *dispatcher, cchar *search, MprList *require, int argc, cchar **argv, int flags);
 extern void ejsDestroy(Ejs *ejs);
 
 /**

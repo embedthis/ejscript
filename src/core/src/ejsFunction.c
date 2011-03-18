@@ -62,8 +62,7 @@ EjsFunction *ejsCloneFunction(Ejs *ejs, EjsFunction *src, int deep)
 {
     EjsFunction     *dest;
 
-    dest = (EjsFunction*) ejsCloneBlock(ejs, &src->block, deep);
-    if (dest == 0) {
+    if ((dest = (EjsFunction*) ejsCloneBlock(ejs, &src->block, deep)) == 0) {
         return 0;
     }
     dest->body.code = src->body.code;

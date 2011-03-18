@@ -382,18 +382,11 @@ int ejsLoadScriptLiteral(Ejs *ejs, EjsString *script, cchar *cache, int flags)
  */
 int ejsEvalFile(cchar *path)
 {
-    Ejs             *ejs;
-    Mpr             *mpr;
+    Ejs     *ejs;
+    Mpr     *mpr;
 
     mpr = mprCreate(0, NULL, 0);
-#if UNUSED
-    EjsService      *service;   
-    if ((service = ejsCreateService(mpr)) == 0) {
-        mprDestroy(0);
-        return MPR_ERR_MEMORY;
-    }
-#endif
-    if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((ejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
     }
@@ -413,19 +406,11 @@ int ejsEvalFile(cchar *path)
  */
 int ejsEvalScript(cchar *script)
 {
-    Ejs             *ejs;
-    Mpr             *mpr;
+    Ejs     *ejs;
+    Mpr     *mpr;
 
     mpr = mprCreate(0, NULL, 0);
-#if UNUSED
-    EjsService      *service;   
-    if ((service = ejsCreateService(mpr)) == 0) {
-        mprDestroy(0);
-        return MPR_ERR_MEMORY;
-    }
-    mprAddRoot(service);
-#endif
-    if ((ejs = ejsCreate(NULL, NULL, 0, NULL, 0)) == 0) {
+    if ((ejs = ejsCreate(NULL, NULL, NULL, 0, NULL, 0)) == 0) {
         mprDestroy(0);
         return MPR_ERR_MEMORY;
     }

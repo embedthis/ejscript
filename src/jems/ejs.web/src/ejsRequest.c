@@ -1225,30 +1225,32 @@ static EjsObj *req_written(Ejs *ejs, EjsRequest *req, int argc, EjsObj **argv)
 
 
 /************************************ Factory *************************************/
-#if UNUSED
+/*
+    Clone the request object into the "ejs" interpreter
+
+    This does a "minimal" clone for speed. It does not support doing 1/2 processing on one request and then cloning to 
+    another request.
+ */
 EjsRequest *ejsCloneRequest(Ejs *ejs, EjsRequest *req, bool deep)
 {
-    EjsRequest  *newReq;
+    HttpConn    *conn;
+    EjsRequest  *nreq;
 
-    mprAssert(0);
-    newReq = (EjsRequest*) ejsCloneObject(ejs, (EjsObj*) req, deep);
-    if (newReq == 0) {
+    if ((nreq = ejsAlloc(ejs, ejs->requestType, 0)) == 0) {
         ejsThrowMemoryError(ejs);
         return 0;
     }
-    newReq->conn = req->conn;
-    newReq->ejs = req->ejs;
-    newReq->dir = ejsCreatePath(ejs, req->dir->path);
-
-    //  MOB -- should these two be EjsPath
-    newReq->home = sclone(req->home);
-    newReq->absHome = sclone(req->absHome);
-
-    //  MOB -- problematic. This is a cross-interp link
-    newReq->server = req->server;
-    return newReq;
+    conn = req->conn;
+    nreq->conn = conn;
+    nreq->ejs = ejs;
+    nreq->dir = ejsClone(ejs, req->dir, 1);
+    nreq->filename = ejsClone(ejs, req->filename, 1);
+    nreq->pathInfo = (EjsObj*) ejsCreateStringFromAsc(ejs, conn->rx->pathInfo);
+    nreq->scriptName = (EjsObj*) ejsCreateStringFromAsc(ejs, conn->rx->scriptName);
+    nreq->accepted = req->accepted;
+    nreq->running = req->running;
+    return nreq;
 }
-#endif
 
 
 EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cchar *dir)
@@ -1275,6 +1277,8 @@ EjsRequest *ejsCreateRequest(Ejs *ejs, EjsHttpServer *server, HttpConn *conn, cc
     } else {
         req->dir = ejsCreatePathFromAsc(ejs, mprGetRelPath(dir));
     }
+    mprAssert(!VISITED(req->dir));
+    //  MOB -- why replicate these two
     req->pathInfo = (EjsObj*) ejsCreateStringFromAsc(ejs, rx->pathInfo);
     req->scriptName = (EjsObj*) ejsCreateStringFromAsc(ejs, rx->scriptName);
     return req;

@@ -763,21 +763,28 @@ static EjsHttpServer *createHttpServer(Ejs *ejs, EjsType *type, int size)
 {
     EjsHttpServer   *sp;
 
-    if ((sp = ejsCreatePot(ejs, type, 0)) == NULL) {
-        return NULL;
+    if ((sp = ejsCreatePot(ejs, type, 0)) == 0) {
+        return 0;
     }
     sp->ejs = ejs;
-#if UNUSED
-    static int serverCount = 0;
-    //  Messes up the real server name
-    sp->name = mprAsprintf("server-%d", serverCount++);
-#endif
     sp->async = 1;
     httpInitTrace(sp->trace);
-#if UNUSED
-    mprLog(0, "CREATE HttpServer %s in %s", sp->name, sp->ejs->name);
-#endif
     return sp;
+}
+
+
+EjsHttpServer *ejsCloneHttpServer(Ejs *ejs, EjsHttpServer *sp, bool deep)
+{
+    EjsHttpServer   *nsp;
+
+    if ((nsp = ejsClone(ejs, sp, deep)) == 0) {
+        return 0;
+    }
+    nsp->ejs = ejs;
+    nsp->async = sp->async;
+    nsp->server = sp->server;
+    httpInitTrace(nsp->trace);
+    return nsp;
 }
 
 
