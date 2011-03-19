@@ -110,6 +110,7 @@ module ejs.web {
                     files += dirs.src.find("*" + ext.es)
                     files += [dirs.controllers.join("Base").joinExt(ext.es)]
                 }
+print("LOAD " + appmod + " files " + files + " deps " + deps)
                 loadComponent(request, appmod, files, deps)
 
                 /* Load controller */
@@ -120,7 +121,7 @@ module ejs.web {
                 let controller = params.controller = params.controller.toPascal()
                 let mod = dirs.cache.join(controller).joinExt(ext.mod)
                 if (controller != "Base") {
-                    if (!global[controller + "Controller"] || (mod.exists && !config.cache.reload)) {
+                    if (!global[controller + "Controller"] && mod.exists && !config.cache.reload) {
                         loadComponent(request, mod)
                     } else {
                         files = [dirs.controllers.join(controller).joinExt(ext.es)]

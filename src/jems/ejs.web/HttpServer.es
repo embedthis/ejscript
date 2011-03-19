@@ -36,6 +36,7 @@ module ejs.web {
          */
         enumerable var config: Object
 
+//  MOB - better named documents
         /** 
             Default local directory for web documents to serve. This is used as the default Request.dir value.
          */
@@ -83,6 +84,7 @@ module ejs.web {
         native function get port(): Number 
 
 
+//  MOB - better named home
         /** 
             Default root directory for the server. The app does not change its current directory to this path.
          */
@@ -129,6 +131,15 @@ MOB - more explanation about what is in the ServerRoot
                 })
             }
             server.listen("127.0.0.1:7777")
+
+//  MOB - better HttpServer(options)
+            {
+                home: "dir"
+                documents: "web"
+                threaded: true
+                ejsrc: "ejsrc"
+                other config to blend
+            }
          */
         function HttpServer(documentRoot: Path = ".", serverRoot: Path = ".") {
             this.documentRoot = documentRoot
