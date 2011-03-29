@@ -110,7 +110,6 @@ module ejs.web {
                     files += dirs.src.find("*" + ext.es)
                     files += [dirs.controllers.join("Base").joinExt(ext.es)]
                 }
-print("LOAD " + appmod + " files " + files + " deps " + deps)
                 loadComponent(request, appmod, files, deps)
 
                 /* Load controller */
